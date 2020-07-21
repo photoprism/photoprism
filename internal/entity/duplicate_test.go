@@ -31,7 +31,7 @@ func TestAddDuplicate(t *testing.T) {
 
 		if err := duplicate.Find(); err != nil {
 			t.Fatal(err)
-		} else if duplicate.FileHash !=  "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818"{
+		} else if duplicate.FileHash != "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818" {
 			t.Fatal("file hash should be 3cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		} else if duplicate.ModTime != time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix() {
 			t.Fatalf("mod time should be %d", time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix())

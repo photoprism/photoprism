@@ -50,11 +50,15 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200717063959-46b1a0cd1772 h1:M49UNOTa5sLj
 github.com/dsoprea/go-exif/v2 v2.0.0-20200717063959-46b1a0cd1772/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200717071058-9393e7afd446 h1:ruDG+2wFz+k/mDNy8x1UqWEItWNLXpvGlLv05+TlZt4=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200717071058-9393e7afd446/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200721051611-3a80916d1fb8 h1:CDv1mPzK6J1vdCeXGoVdFKJqKKTTfnbsPIu9VcWkurM=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200721051611-3a80916d1fb8/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717053412-08f1b6708903/go.mod h1:0nsO1ce0mh5czxGeLo4+OCZ/C6Eo6ZlMWsz7rH/Gxv8=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717063959-46b1a0cd1772 h1:l/wfrK3wEH7sYpJe+Y8ZdFJW3AmsDgPoAQq2RLgKPSQ=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717063959-46b1a0cd1772/go.mod h1:0nsO1ce0mh5czxGeLo4+OCZ/C6Eo6ZlMWsz7rH/Gxv8=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717071058-9393e7afd446 h1:96yylb+JH415u6V7ykNtnEBLaZUwS1S31TnAezcvnNE=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717071058-9393e7afd446/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200721051611-3a80916d1fb8 h1:xMu5i9w1hAuS+0v7pw44wd4Y7eJoxfYiCkRQnEEvGd4=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200721051611-3a80916d1fb8/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200520190950-3ae4ff88a0d1 h1:8Tbo+OYgg7i2G3fltmpWq1if1e752aMX7Zv/sNWWJUk=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200520190950-3ae4ff88a0d1/go.mod h1:UwRKreeVikXn5OarSnt4OqovcEjsIgZVuc5svj7G5w4=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1 h1:R/EEzpxqQxeEcJ/z0EFTI1U6XsuOnepyp5o1uZg5c2E=

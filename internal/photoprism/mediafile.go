@@ -848,7 +848,7 @@ func (m *MediaFile) AspectRatio() float32 {
 		return 0
 	}
 
-	aspectRatio := float32(math.Round((width / height)*100)/100)
+	aspectRatio := float32(math.Round((width/height)*100) / 100)
 
 	return aspectRatio
 }

@@ -6,8 +6,8 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200717071058-9393e7afd446 // indirect
-	github.com/dsoprea/go-exif/v3 v3.0.0-20200717071058-9393e7afd446
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200721051611-3a80916d1fb8 // indirect
+	github.com/dsoprea/go-exif/v3 v3.0.0-20200721051611-3a80916d1fb8
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
 	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200717085400-dd2ba56ee6b8
