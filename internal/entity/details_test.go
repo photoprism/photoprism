@@ -97,6 +97,9 @@ func TestDetails_NoCopyright(t *testing.T) {
 func TestNewDetails(t *testing.T) {
 	t.Run("add to photo", func(t *testing.T) {
 		p := NewPhoto()
+
+		assert.Equal(t, TitleUnknown, p.PhotoTitle)
+
 		d := NewDetails(p)
 		p.Details = &d
 		d.Subject = "Foo Bar"

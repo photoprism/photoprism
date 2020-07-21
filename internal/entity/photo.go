@@ -92,6 +92,7 @@ type Photo struct {
 // NewPhoto creates a photo entity.
 func NewPhoto() Photo {
 	return Photo{
+		PhotoTitle:   TitleUnknown,
 		PhotoType:    TypeImage,
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,

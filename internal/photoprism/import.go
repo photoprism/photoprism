@@ -84,6 +84,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		}()
 	}
 
+	filesImported := 0
 	indexOpt := IndexOptionsAll()
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
@@ -132,6 +133,8 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return result
 			}
 
+			done[fileName] = fs.Found
+
 			if !fs.IsMedia(fileName) {
 				return nil
 			}
@@ -139,6 +142,11 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			mf, err := NewMediaFile(fileName)
 
 			if err != nil {
+				return nil
+			}
+
+			if mf.FileSize() == 0 {
+				log.Infof("import: skipped empty file %s", txt.Quote(mf.BaseName()))
 				return nil
 			}
 
@@ -153,11 +161,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if done[f.FileName()].Processed() {
+				if f.FileSize() == 0 || done[f.FileName()].Processed() {
 					continue
 				}
 
 				files = append(files, f)
+				filesImported++
 				done[f.FileName()] = fs.Processed
 			}
 
@@ -216,7 +225,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		log.Error(err.Error())
 	}
 
-	if len(done) > 0 {
+	if filesImported > 0 {
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("import: %s", err)
 		}

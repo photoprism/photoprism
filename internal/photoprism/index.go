@@ -151,6 +151,11 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 				return nil
 			}
 
+			if mf.FileSize() == 0 {
+				log.Infof("index: skipped empty file %s", txt.Quote(mf.BaseName()))
+				return nil
+			}
+
 			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, opt.Rescan) {
 				return nil
 			}
@@ -170,7 +175,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 					continue
 				}
 
-				if ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), opt.Rescan) {
+				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), opt.Rescan) {
 					done[f.FileName()] = fs.Found
 					continue
 				}
