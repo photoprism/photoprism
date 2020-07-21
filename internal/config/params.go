@@ -66,7 +66,7 @@ type Params struct {
 	HttpServerPassword string `yaml:"http-password" flag:"http-password"`
 	SipsBin            string `yaml:"sips-bin" flag:"sips-bin"`
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
-	DarktableUnlock    bool   `yaml:"darktable-unlock" flag:"darktable-unlock"`
+	DarktablePresets   bool   `yaml:"darktable-presets" flag:"darktable-presets"`
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
 	FFmpegBin          string `yaml:"ffmpeg-bin" flag:"ffmpeg-bin"`
 	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`

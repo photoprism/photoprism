@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-func TestConfig_DarktableUnlock(t *testing.T) {
+func TestConfig_DarktablePresets(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.False(t, c.DarktableUnlock())
+	assert.False(t, c.DarktablePresets())
 }
 
 func TestConfig_Darktablebin(t *testing.T) {

@@ -191,9 +191,9 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
 	cli.BoolFlag{
-		Name:   "darktable-unlock",
-		Usage:  "disable presets to run multiple instances concurrently",
-		EnvVar: "PHOTOPRISM_DARKTABLE_UNLOCK",
+		Name:   "darktable-presets",
+		Usage:  "use darktable presets (disables concurrent raw to jpeg conversion)",
+		EnvVar: "PHOTOPRISM_DARKTABLE_PRESETS",
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",

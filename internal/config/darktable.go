@@ -5,7 +5,7 @@ func (c *Config) DarktableBin() string {
 	return findExecutable(c.params.DarktableBin, "darktable-cli")
 }
 
-// DarktableUnlock checks if presets should be disabled to run multiple instances concurrently.
-func (c *Config) DarktableUnlock() bool {
-	return c.params.DarktableUnlock
+// DarktablePresets checks if presets should be enabled (disables concurrent raw to jpeg conversion).
+func (c *Config) DarktablePresets() bool {
+	return c.params.DarktablePresets
 }
