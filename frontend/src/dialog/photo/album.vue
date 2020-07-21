@@ -69,19 +69,19 @@
                 this.$emit('cancel');
             },
             confirm() {
-                if(this.album === "" && this.newAlbum) {
+                if (this.album === "" && this.newAlbum) {
                     this.loading = true;
 
                     this.newAlbum.save().then((a) => {
                         this.loading = false;
                         this.$emit('confirm', a.UID);
                     });
-                } else {
+                } else if (this.album) {
                     this.$emit('confirm', this.album);
                 }
             },
             queryServer(q) {
-                if(this.loading) {
+                if (this.loading) {
                     return;
                 }
 
@@ -97,7 +97,7 @@
                 Album.search(params).then(response => {
                     this.loading = false;
 
-                    if(response.models.length > 0 && !this.album) {
+                    if (response.models.length > 0 && !this.album) {
                         this.album = response.models[0].UID;
                     }
 
@@ -107,7 +107,7 @@
             },
         },
         watch: {
-            search (q) {
+            search(q) {
                 const exists = this.albums.findIndex((album) => album.Title === q);
 
                 if (exists !== -1 || !q) {
