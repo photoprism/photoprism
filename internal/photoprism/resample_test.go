@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/disintegration/imaging"
@@ -60,11 +61,16 @@ func TestThumb_Filename(t *testing.T) {
 
 	t.Run("", func(t *testing.T) {
 		filename, err := thumb.Filename("99988", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
-		assert.Nil(t, err)
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg", filename)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, strings.HasSuffix(filename, "/storage/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
 	})
 	t.Run("hash too short", func(t *testing.T) {
 		_, err := thumb.Filename("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+
 		if err == nil {
 			t.FailNow()
 		}

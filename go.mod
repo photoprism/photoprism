@@ -18,13 +18,13 @@ require (
 	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.3
-	github.com/go-errors/errors v1.1.1 // indirect
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/golang/geo v0.0.0-20200319012246-673a6f80352d
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/open-location-code/go v0.0.0-20200603075809-e28188e71340
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.9.0
+	github.com/h2non/filetype v1.1.0
 	github.com/jinzhu/gorm v1.9.14
 	github.com/jinzhu/inflection v1.0.0
 	github.com/json-iterator/go v1.1.10 // indirect

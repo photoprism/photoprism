@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -522,6 +523,8 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			t.Fatalf("length is %d, should be 4", len(related.Files))
 		}
 
+		t.Logf("FILE: %s, %s", related.Main.FileType(), related.Main.MimeType())
+
 		assert.Equal(t, "2015-02-04.jpg", related.Main.BaseName())
 
 		assert.Equal(t, "2015-02-04.jpg", related.Files[0].BaseName())
@@ -650,12 +653,12 @@ func TestMediaFile_RelName(t *testing.T) {
 	}
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		filename := mediaFile.RelName("/go/src/github.com/photoprism/photoprism/assets/")
+		filename := mediaFile.RelName(conf.AssetsPath())
 		assert.Equal(t, "examples/tree_white.jpg", filename)
 	})
 
 	t.Run("directory without end slash", func(t *testing.T) {
-		filename := mediaFile.RelName("/go/src/github.com/photoprism/photoprism/assets")
+		filename := mediaFile.RelName(conf.AssetsPath())
 		assert.Equal(t, "examples/tree_white.jpg", filename)
 	})
 	t.Run("directory not part of filename", func(t *testing.T) {
@@ -663,7 +666,7 @@ func TestMediaFile_RelName(t *testing.T) {
 		assert.Equal(t, conf.ExamplesPath()+"/tree_white.jpg", filename)
 	})
 	t.Run("directory equals example path", func(t *testing.T) {
-		filename := mediaFile.RelName("/go/src/github.com/photoprism/photoprism/assets/examples")
+		filename := mediaFile.RelName(conf.ExamplesPath())
 		assert.Equal(t, "tree_white.jpg", filename)
 	})
 }
@@ -679,11 +682,11 @@ func TestMediaFile_RelativePath(t *testing.T) {
 	}
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		path := mediaFile.RelPath("/go/src/github.com/photoprism/photoprism/assets/")
+		path := mediaFile.RelPath(conf.AssetsPath() + "/")
 		assert.Equal(t, "examples", path)
 	})
 	t.Run("directory without end slash", func(t *testing.T) {
-		path := mediaFile.RelPath("/go/src/github.com/photoprism/photoprism/assets")
+		path := mediaFile.RelPath(conf.AssetsPath())
 		assert.Equal(t, "examples", path)
 	})
 	t.Run("directory equals filepath", func(t *testing.T) {
@@ -692,7 +695,7 @@ func TestMediaFile_RelativePath(t *testing.T) {
 	})
 	t.Run("directory does not match filepath", func(t *testing.T) {
 		path := mediaFile.RelPath("xxx")
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples", path)
+		assert.Equal(t, conf.ExamplesPath(), path)
 	})
 
 	mediaFile, err = NewMediaFile(conf.ExamplesPath() + "/.photoprism/example.jpg")
@@ -724,15 +727,15 @@ func TestMediaFile_RelativeBasename(t *testing.T) {
 	}
 
 	t.Run("directory with end slash", func(t *testing.T) {
-		basename := mediaFile.RelPrefix("/go/src/github.com/photoprism/photoprism/assets/", true)
+		basename := mediaFile.RelPrefix(conf.AssetsPath()+"/", true)
 		assert.Equal(t, "examples/tree_white", basename)
 	})
 	t.Run("directory without end slash", func(t *testing.T) {
-		basename := mediaFile.RelPrefix("/go/src/github.com/photoprism/photoprism/assets", true)
+		basename := mediaFile.RelPrefix(conf.AssetsPath(), true)
 		assert.Equal(t, "examples/tree_white", basename)
 	})
 	t.Run("directory equals example path", func(t *testing.T) {
-		basename := mediaFile.RelPrefix("/go/src/github.com/photoprism/photoprism/assets/examples/", true)
+		basename := mediaFile.RelPrefix(conf.ExamplesPath(), true)
 		assert.Equal(t, "tree_white", basename)
 	})
 
@@ -796,7 +799,7 @@ func TestMediaFile_MimeType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
+		assert.Equal(t, "image/tiff", mediaFile.MimeType())
 
 	})
 
@@ -805,7 +808,7 @@ func TestMediaFile_MimeType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "text/plain; charset=utf-8", mediaFile.MimeType())
+		assert.Equal(t, "", mediaFile.MimeType())
 	})
 
 	t.Run("iphone_7.json", func(t *testing.T) {
@@ -813,7 +816,7 @@ func TestMediaFile_MimeType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "text/plain; charset=utf-8", mediaFile.MimeType())
+		assert.Equal(t, "", mediaFile.MimeType())
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
@@ -821,7 +824,7 @@ func TestMediaFile_MimeType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
+		assert.Equal(t, "image/heif", mediaFile.MimeType())
 	})
 
 	t.Run("IMG_4120.AAE", func(t *testing.T) {
@@ -829,7 +832,31 @@ func TestMediaFile_MimeType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "text/xml; charset=utf-8", mediaFile.MimeType())
+		assert.Equal(t, "", mediaFile.MimeType())
+	})
+
+	t.Run("earth.mov", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "earth.mov")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, "video/quicktime", f.MimeType())
+		}
+	})
+
+	t.Run("blue-go-video.mp4", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "blue-go-video.mp4")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, "video/mp4", f.MimeType())
+		}
+	})
+
+	t.Run("earth.avi", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "earth.avi")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, "video/x-msvideo", f.MimeType())
+		}
 	})
 }
 
@@ -1087,6 +1114,7 @@ func TestMediaFile_IsRaw(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, true, mediaFile.IsRaw())
 	})
 	t.Run("/elephants.jpg", func(t *testing.T) {
@@ -1134,7 +1162,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, fs.TypeJson, mediaFile.FileType())
-		assert.Equal(t, "text/plain; charset=utf-8", mediaFile.MimeType())
+		assert.Equal(t, "", mediaFile.MimeType())
 		assert.Equal(t, false, mediaFile.IsTiff())
 	})
 	t.Run("/purple.tiff", func(t *testing.T) {
@@ -1145,7 +1173,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, fs.TypeTiff, mediaFile.FileType())
-		assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
+		assert.Equal(t, "image/tiff", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsTiff())
 	})
 	t.Run("/example.tiff", func(t *testing.T) {
@@ -1156,7 +1184,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, fs.TypeTiff, mediaFile.FileType())
-		assert.Equal(t, "application/octet-stream", mediaFile.MimeType())
+		assert.Equal(t, "image/tiff", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsTiff())
 	})
 }
@@ -1285,7 +1313,7 @@ func TestMediaFile_IsSidecar(t *testing.T) {
 }
 
 func TestMediaFile_IsPhoto(t *testing.T) {
-	t.Run("/iphone_7.json", func(t *testing.T) {
+	t.Run("iphone_7.json", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.json")
@@ -1294,14 +1322,14 @@ func TestMediaFile_IsPhoto(t *testing.T) {
 		}
 		assert.Equal(t, false, mediaFile.IsPhoto())
 	})
-	t.Run("/iphone_7.xmp", func(t *testing.T) {
+	t.Run("iphone_7.xmp", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.xmp")
 		assert.Nil(t, err)
 		assert.Equal(t, false, mediaFile.IsPhoto())
 	})
-	t.Run("/iphone_7.heic", func(t *testing.T) {
+	t.Run("iphone_7.heic", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
@@ -1310,7 +1338,7 @@ func TestMediaFile_IsPhoto(t *testing.T) {
 		}
 		assert.Equal(t, true, mediaFile.IsPhoto())
 	})
-	t.Run("/canon_eos_6d.dng", func(t *testing.T) {
+	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
@@ -1319,7 +1347,7 @@ func TestMediaFile_IsPhoto(t *testing.T) {
 		}
 		assert.Equal(t, true, mediaFile.IsPhoto())
 	})
-	t.Run("/elephants.jpg", func(t *testing.T) {
+	t.Run("elephants.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
@@ -1329,25 +1357,37 @@ func TestMediaFile_IsPhoto(t *testing.T) {
 }
 
 func TestMediaFile_IsVideo(t *testing.T) {
-	t.Run("/christmas.mp4", func(t *testing.T) {
-		conf := config.TestConfig()
+	conf := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/christmas.mp4")
-		if err != nil {
+	t.Run("christmas.mp4", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "christmas.mp4")); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.Equal(t, false, f.IsPhoto())
+			assert.Equal(t, true, f.IsVideo())
+			assert.Equal(t, false, f.IsJson())
+			assert.Equal(t, false, f.IsSidecar())
 		}
-		assert.Equal(t, false, mediaFile.IsPhoto())
 	})
-	t.Run("/canon_eos_6d.dng", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
-
-		if err != nil {
+	t.Run("canon_eos_6d.dng", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "canon_eos_6d.dng")); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.Equal(t, true, f.IsPhoto())
+			assert.Equal(t, false, f.IsVideo())
+			assert.Equal(t, false, f.IsJson())
+			assert.Equal(t, false, f.IsSidecar())
 		}
-
-		assert.Equal(t, true, mediaFile.IsPhoto())
+	})
+	t.Run("iphone_7.json", func(t *testing.T) {
+		if f, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "iphone_7.json")); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, false, f.IsPhoto())
+			assert.Equal(t, false, f.IsVideo())
+			assert.Equal(t, true, f.IsJson())
+			assert.Equal(t, true, f.IsSidecar())
+		}
 	})
 }
 
@@ -1844,7 +1884,7 @@ func TestMediaFile_JsonName(t *testing.T) {
 		}
 
 		name := mediaFile.JsonName()
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples/blue-go-video.mp4.json", name)
+		assert.True(t, strings.HasSuffix(name, "/assets/examples/blue-go-video.mp4.json"))
 	})
 }
 
@@ -1941,7 +1981,7 @@ func TestMediaFile_SubDirectory(t *testing.T) {
 		}
 
 		subdir := mediaFile.SubDir("xxx")
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples/xxx", subdir)
+		assert.True(t, strings.HasSuffix(subdir, "/assets/examples/xxx"))
 	})
 }
 

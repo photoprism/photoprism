@@ -294,32 +294,44 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		matches = append(matches, name)
 	}
 
-	for _, filename := range matches {
-		resultFile, err := NewMediaFile(filename)
+	for _, fileName := range matches {
+		f, err := NewMediaFile(fileName)
 
 		if err != nil {
+			log.Warnf("mediafile: %s in %s", err, txt.Quote(filepath.Base(fileName)))
 			continue
 		}
 
-		if result.Main == nil && resultFile.IsJpeg() {
-			result.Main = resultFile
-		} else if resultFile.IsRaw() {
-			result.Main = resultFile
-		} else if resultFile.IsHEIF() {
-			result.Main = resultFile
-		} else if resultFile.IsJpeg() && len(result.Main.FileName()) > len(resultFile.FileName()) {
-			result.Main = resultFile
-		} else if resultFile.IsImageOther() {
-			result.Main = resultFile
-		} else if resultFile.IsVideo() {
-			result.Main = resultFile
+		if f.FileSize() == 0 {
+			log.Warnf("mediafile: %s is empty", txt.Quote(filepath.Base(fileName)))
+			continue
 		}
 
-		result.Files = append(result.Files, resultFile)
+		if result.Main == nil && f.IsJpeg() {
+			result.Main = f
+		} else if f.IsRaw() {
+			result.Main = f
+		} else if f.IsHEIF() {
+			result.Main = f
+		} else if f.IsJpeg() && len(result.Main.FileName()) > len(f.FileName()) {
+			result.Main = f
+		} else if f.IsImageOther() {
+			result.Main = f
+		} else if f.IsVideo() {
+			result.Main = f
+		}
+
+		result.Files = append(result.Files, f)
 	}
 
-	if result.Main == nil {
-		return result, fmt.Errorf("no main file found for %s", txt.Quote(m.BaseName()))
+	if len(result.Files) == 0 || result.Main == nil {
+		t := m.MimeType()
+
+		if t == "" {
+			t = "unknown type"
+		}
+
+		return result, fmt.Errorf("no supported files found for %s (%s)", txt.Quote(m.BaseName()), t)
 	}
 
 	// Add hidden JPEG if exists.
@@ -622,9 +634,24 @@ func (m *MediaFile) IsGif() bool {
 	return m.MimeType() == fs.MimeTypeGif
 }
 
+// IsTiff returns true if this is a TIFF file.
+func (m *MediaFile) IsTiff() bool {
+	return m.HasFileType(fs.TypeTiff) && m.MimeType() == fs.MimeTypeTiff
+}
+
+// IsHEIF returns true if this is a High Efficiency Image File Format file.
+func (m *MediaFile) IsHEIF() bool {
+	return m.MimeType() == fs.MimeTypeHEIF
+}
+
 // IsBitmap returns true if this is a bitmap file.
 func (m *MediaFile) IsBitmap() bool {
 	return m.MimeType() == fs.MimeTypeBitmap
+}
+
+// IsVideo returns true if this is a video file.
+func (m *MediaFile) IsVideo() bool {
+	return strings.HasPrefix(m.MimeType(), "video/")
 }
 
 // IsJson return true if this media file is a json sidecar file.
@@ -641,6 +668,8 @@ func (m *MediaFile) FileType() fs.FileType {
 		return fs.TypePng
 	case m.IsGif():
 		return fs.TypeGif
+	case m.IsHEIF():
+		return fs.TypeHEIF
 	case m.IsBitmap():
 		return fs.TypeBitmap
 	default:
@@ -667,11 +696,6 @@ func (m *MediaFile) IsRaw() bool {
 	return m.HasFileType(fs.TypeRaw)
 }
 
-// IsTiff returns true if this is a TIFF file.
-func (m *MediaFile) IsTiff() bool {
-	return m.HasFileType(fs.TypeTiff)
-}
-
 // IsImageOther returns true if this is a PNG, GIF, BMP or TIFF file.
 func (m *MediaFile) IsImageOther() bool {
 	switch {
@@ -680,11 +704,6 @@ func (m *MediaFile) IsImageOther() bool {
 	default:
 		return false
 	}
-}
-
-// IsHEIF returns true if this is a High Efficiency Image File Format file.
-func (m *MediaFile) IsHEIF() bool {
-	return m.HasFileType(fs.TypeHEIF)
 }
 
 // IsXMP returns true if this is a XMP sidecar file.
@@ -697,14 +716,9 @@ func (m *MediaFile) IsSidecar() bool {
 	return m.MediaType() == fs.MediaSidecar
 }
 
-// IsVideo returns true if this is a video file.
-func (m *MediaFile) IsVideo() bool {
-	return m.MediaType() == fs.MediaVideo
-}
-
 // IsPlayableVideo returns true if this is a supported video file format.
 func (m *MediaFile) IsPlayableVideo() bool {
-	return m.MediaType() == fs.MediaVideo && m.HasFileType(fs.TypeMP4)
+	return m.IsVideo() && m.HasFileType(fs.TypeMP4)
 }
 
 // IsPhoto returns true if this file is a photo / image.

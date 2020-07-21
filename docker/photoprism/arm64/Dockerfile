@@ -41,6 +41,7 @@ RUN apt-get update && apt-get upgrade && \
     make \
     wget \
     git \
+    gettext \
     tzdata \
     gconf-service
 

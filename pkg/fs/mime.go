@@ -1,8 +1,9 @@
 package fs
 
 import (
-	"net/http"
 	"os"
+
+	"github.com/h2non/filetype"
 )
 
 const (
@@ -10,6 +11,8 @@ const (
 	MimeTypePng    = "image/png"
 	MimeTypeGif    = "image/gif"
 	MimeTypeBitmap = "image/bmp"
+	MimeTypeTiff   = "image/tiff"
+	MimeTypeHEIF   = "image/heif"
 )
 
 // MimeType returns the mime type of a file, empty string if unknown.
@@ -22,14 +25,14 @@ func MimeType(filename string) string {
 
 	defer handle.Close()
 
-	// Only the first 512 bytes are used to sniff the content type.
-	buffer := make([]byte, 512)
+	// Only the first 261 bytes are used to sniff the content type.
+	buffer := make([]byte, 261)
 
-	_, err = handle.Read(buffer)
-
-	if err != nil {
+	if _, err := handle.Read(buffer); err != nil {
 		return ""
+	} else if t, err := filetype.Get(buffer); err != nil {
+		return ""
+	} else {
+		return t.MIME.Value
 	}
-
-	return http.DetectContentType(buffer)
 }
