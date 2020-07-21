@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -98,7 +99,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
-			log.Errorf("import: %s", err)
+			log.Errorf("import: %s", strings.Replace(err.Error(), importPath, "", 1))
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
