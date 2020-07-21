@@ -7,7 +7,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture`Test places page`
     .page`${testcafeconfig.url}`
 
-/*test('#1 Test places', async t => {
+test('#1 Test places', async t => {
     await t
         .click(Selector('.nav-places'))
         .expect(Selector('#map').exists, {timeout: 15000}).ok()
@@ -18,7 +18,7 @@ fixture`Test places page`
     await t
         .expect(Selector('div.p-map-control').visible).ok()
         .expect(getLocation()).contains('Berlin');
-});*/
+});
 
 test('#2 Open photo from places', async t => {
    //TODO replace wait
