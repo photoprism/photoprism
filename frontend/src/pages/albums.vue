@@ -142,7 +142,7 @@
                       @click.stop.prevent="edit(album)"
                       class="body-2 ma-0 action-title-edit"
                       :data-uid="album.UID">
-                    {{ album.getDateString() }}
+                    {{ album.getDateString() | capitalize }}
                   </h3>
 
                   <v-spacer></v-spacer>
