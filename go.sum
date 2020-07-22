@@ -48,9 +48,13 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200520183328-015129a9efd5/go.mod h1:9EXlP
 github.com/dsoprea/go-exif/v2 v2.0.0-20200604193436-ca8584a0e1c4/go.mod h1:9EXlPeHfblFFnwu5UOqmP2eoZfJyAZ2Ri/Vki33ajO0=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200721051611-3a80916d1fb8 h1:CDv1mPzK6J1vdCeXGoVdFKJqKKTTfnbsPIu9VcWkurM=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200721051611-3a80916d1fb8/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200722033536-33ee3a8313da h1:1ubirlp6OR6CJHOlo1xRd7WkaiKbdLc1WppIR9hKaxU=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200722033536-33ee3a8313da/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717053412-08f1b6708903/go.mod h1:0nsO1ce0mh5czxGeLo4+OCZ/C6Eo6ZlMWsz7rH/Gxv8=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200721051611-3a80916d1fb8 h1:xMu5i9w1hAuS+0v7pw44wd4Y7eJoxfYiCkRQnEEvGd4=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200721051611-3a80916d1fb8/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200722033536-33ee3a8313da h1:L/UYVj2DUQWlKl9ppghzcisZofMs5P1E/FawUaPMHwU=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200722033536-33ee3a8313da/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1 h1:R/EEzpxqQxeEcJ/z0EFTI1U6XsuOnepyp5o1uZg5c2E=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1/go.mod h1:UwRKreeVikXn5OarSnt4OqovcEjsIgZVuc5svj7G5w4=
 github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb h1:gwjJjUr6FY7zAWVEueFPrcRHhd9+IK81TcItbqw2du4=
@@ -71,6 +75,8 @@ github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d h
 github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d/go.mod h1:pqKB+ijp27cEcrHxhXVgUUMlSDRuGJJp1E+20Lj5H0E=
 github.com/dsoprea/go-png-image-structure v0.0.0-20200615034826-4cfc78940228 h1:GKAdOrszPH3mQ44eRg2kw9zBW0hi2L78ZNjkTx+cte0=
 github.com/dsoprea/go-png-image-structure v0.0.0-20200615034826-4cfc78940228/go.mod h1:aDYQkL/5gfRNZkoxiLTSWU4Y8/gV/4MVsy/MU9uwTak=
+github.com/dsoprea/go-png-image-structure v0.0.0-20200717084940-ebc583cbd8bd h1:6CCSfUqW085rOMWxSqal7/KR8SQcziqolKmZooqiD1s=
+github.com/dsoprea/go-png-image-structure v0.0.0-20200717084940-ebc583cbd8bd/go.mod h1:aDYQkL/5gfRNZkoxiLTSWU4Y8/gV/4MVsy/MU9uwTak=
 github.com/dsoprea/go-tiff-image-structure v0.0.0-20200717073440-8ac81ec8b423 h1:aIXEGtyKFKqeNW2rc4cx3J2TLxQ9F5fwWPSbq6p6Fq8=
 github.com/dsoprea/go-tiff-image-structure v0.0.0-20200717073440-8ac81ec8b423/go.mod h1:we+M+yrq8ifsA33a7C7p8E1ztBbdDYjMIC8RMm8KPL8=
 github.com/dsoprea/go-utility v0.0.0-20200512094054-1abbbc781176 h1:CfXezFYb2STGOd1+n1HshvE191zVx+QX3A1nML5xxME=
@@ -372,6 +378,8 @@ golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae h1:Ih9Yo4hSPImZOpfGuA4bR/ORKTAbhZo2AbWNRCnevdo=
 golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200720211630-cb9d2d5c5666 h1:gVCS+QOncANNPlmlO1AhlU3oxs4V9z+gTtPwIk3p2N8=
+golang.org/x/sys v0.0.0-20200720211630-cb9d2d5c5666/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0 h1:g61tztE5qeGQ89tm6NTjjM9VPIm088od1l6aSorWRWg=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

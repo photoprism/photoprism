@@ -6,14 +6,14 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200721051611-3a80916d1fb8 // indirect
-	github.com/dsoprea/go-exif/v3 v3.0.0-20200721051611-3a80916d1fb8
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200722033536-33ee3a8313da // indirect
+	github.com/dsoprea/go-exif/v3 v3.0.0-20200722033536-33ee3a8313da
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
 	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200717085400-dd2ba56ee6b8
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d // indirect
-	github.com/dsoprea/go-png-image-structure v0.0.0-20200615034826-4cfc78940228
+	github.com/dsoprea/go-png-image-structure v0.0.0-20200717084940-ebc583cbd8bd
 	github.com/dsoprea/go-tiff-image-structure v0.0.0-20200717073440-8ac81ec8b423
 	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
@@ -54,7 +54,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
+	golang.org/x/sys v0.0.0-20200720211630-cb9d2d5c5666 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.9
 	gopkg.in/yaml.v2 v2.3.0
