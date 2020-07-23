@@ -856,7 +856,7 @@ msgstr "Item"
 
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "Les JPEGS et vignettes sont automatiquement rendus selons les besoins."
+msgstr "Les JPEGS et vignettes sont automatiquement rendus selon les besoins."
 
 #: src/dialog/photo/details.vue:463
 msgid "Keywords"
