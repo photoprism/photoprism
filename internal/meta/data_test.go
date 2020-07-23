@@ -80,15 +80,23 @@ func TestData_Megapixels(t *testing.T) {
 }
 
 func TestData_HasDocumentID(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+	t.Run("6ba7b810-9dad-11d1-80b4-00c04fd430c8", func(t *testing.T) {
 		data := Data{
-			DocumentID: "asdfg12345hjyt6",
+			DocumentID: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
 		}
 
 		assert.Equal(t, true, data.HasDocumentID())
 	})
 
-	t.Run("false", func(t *testing.T) {
+	t.Run("asdfg12345hjyt6", func(t *testing.T) {
+		data := Data{
+			DocumentID: "asdfg12345hjyt6",
+		}
+
+		assert.Equal(t, false, data.HasDocumentID())
+	})
+
+	t.Run("asdfg12345hj", func(t *testing.T) {
 		data := Data{
 			DocumentID: "asdfg12345hj",
 		}
@@ -100,7 +108,7 @@ func TestData_HasDocumentID(t *testing.T) {
 func TestData_HasInstanceID(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		data := Data{
-			InstanceID: "asdfg12345hjyt6",
+			InstanceID: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
 		}
 
 		assert.Equal(t, true, data.HasInstanceID())

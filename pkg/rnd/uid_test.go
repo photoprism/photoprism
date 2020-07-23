@@ -45,14 +45,6 @@ func TestIsHex(t *testing.T) {
 
 }
 
-func TestIsUUID(t *testing.T) {
-	assert.True(t, IsUUID("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"))
-	assert.True(t, IsUUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"))
-	assert.False(t, IsUUID("55785BAC-9H4B-4747-B090-EE123FFEE437"))
-	assert.True(t, IsUUID("550e8400-e29b-11d4-a716-446655440000"))
-	assert.False(t, IsUUID("4B1FEF2D1CF4A5BE38B263E0637EDEAD"))
-}
-
 func TestIsUID(t *testing.T) {
 	assert.True(t, IsUID("lt9k3pw1wowuy3c2", 'l'))
 	assert.True(t, IsUID("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb", 'l'))

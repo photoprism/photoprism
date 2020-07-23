@@ -275,7 +275,7 @@ func TestJSON(t *testing.T) {
 
 		// t.Logf("DATA: %+v", data)
 
-		assert.Equal(t, "4b1fef2d1cf4a5be38b263e0637edead", data.DocumentID)
+		assert.Equal(t, "", data.DocumentID)
 		assert.Equal(t, "dafbfeb8-a129-4e7c-9cf0-e7996a701cdb", data.InstanceID)
 		assert.Equal(t, CodecJpeg, data.Codec)
 		assert.Equal(t, "0s", data.Duration.String())

@@ -16,6 +16,7 @@ import (
 	"github.com/dsoprea/go-png-image-structure"
 	"github.com/dsoprea/go-tiff-image-structure"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
@@ -280,7 +281,9 @@ func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 	}
 
 	if value, ok := tags["ImageUniqueID"]; ok {
-		data.DocumentID = SanitizeUID(value)
+		if id := rnd.SanitizeUUID(value); id != "" {
+			data.DocumentID = id
+		}
 	}
 
 	if value, ok := tags["PixelXDimension"]; ok {

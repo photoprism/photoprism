@@ -58,11 +58,6 @@ func IsLowerAlnum(s string) bool {
 	return true
 }
 
-// Returns true if the string looks like a standard UUID.
-func IsUUID(s string) bool {
-	return len(s) == 36 && IsHex(s)
-}
-
 // IsUID returns true if string is a seemingly unique id.
 func IsUID(s string, prefix byte) bool {
 	// Regular UUID.
