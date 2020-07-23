@@ -10,7 +10,7 @@ require (
 	github.com/dsoprea/go-exif/v3 v3.0.0-20200722033536-33ee3a8313da
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
-	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200717085400-dd2ba56ee6b8
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200722150319-963817537a6c
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d // indirect
 	github.com/dsoprea/go-png-image-structure v0.0.0-20200717084940-ebc583cbd8bd

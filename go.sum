@@ -57,8 +57,8 @@ github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb h1:gwjJjUr6FY7zAWV
 github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb/go.mod h1:kYIdx9N9NaOyD7U6D+YtExN7QhRm+5kq7//yOsRXQtM=
 github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 h1:YDRiMEm32T60Kpm35YzOK9ZHgjsS1Qrid+XskNcsdp8=
 github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413/go.mod h1:kYIdx9N9NaOyD7U6D+YtExN7QhRm+5kq7//yOsRXQtM=
-github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200717085400-dd2ba56ee6b8 h1:cXCR9FOOkTEZ3t+asmy3lLv2AKYAah2igfx7WnNnVMc=
-github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200717085400-dd2ba56ee6b8/go.mod h1:ZoOP3yUG0HD1T4IUjIFsz/2OAB2yB4YX6NSm4K+uJRg=
+github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200722150319-963817537a6c h1:R6HIPcYl8wrYa5BJ63BcRYP49GzBSd97UPKmjt2jBUA=
+github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200722150319-963817537a6c/go.mod h1:ZoOP3yUG0HD1T4IUjIFsz/2OAB2yB4YX6NSm4K+uJRg=
 github.com/dsoprea/go-logging v0.0.0-20190624164917-c4f10aab7696 h1:VGFnZAcLwPpt1sHlAxml+pGLZz9A2s+K/s1YNhPC91Y=
 github.com/dsoprea/go-logging v0.0.0-20190624164917-c4f10aab7696/go.mod h1:Nm/x2ZUNRW6Fe5C3LxdY1PyZY5wmDv/s5dkPJ/VB3iA=
 github.com/dsoprea/go-logging v0.0.0-20200517223158-a10564966e9d h1:F/7L5wr/fP/SKeO5HuMlNEX9Ipyx2MbH2rV9G4zJRpk=
