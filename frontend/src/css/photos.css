@@ -35,7 +35,9 @@
 }
 
 #photoprism .p-photo-mosaic .p-photo-merged,
-#photoprism .p-photo-cards .p-photo-merged {
+#photoprism .p-photo-cards .p-photo-merged,
+#photoprism .p-photo-mosaic .p-photo-live,
+#photoprism .p-photo-cards .p-photo-live {
     top: 4px;
     left: 4px;
 }
@@ -57,16 +59,26 @@
     bottom: 4px;
 }
 
+#photoprism .p-photo-cards .action-select,
+#photoprism .p-photo-mosaic .action-select,
 #photoprism .p-photo-cards .p-photo-select,
 #photoprism .p-photo-mosaic .p-photo-select {
     right: 4px;
     bottom: 4px;
 }
 
+#photoprism .p-albums-cards .action-select,
 #photoprism .p-albums-cards .p-album-select,
-#photoprism .p-labels-cards .p-label-select {
+#photoprism .p-labels-cards .p-label-select,
+#photoprism .p-folders-cards .p-folder-select,
+#photoprism .p-files-cards .p-file-select {
     right: 4px;
     bottom: 4px;
+}
+
+#photoprism .p-albums-cards .action-share {
+    top: 4px;
+    left: 4px;
 }
 
 #photoprism .p-labels-cards .p-label-count {
@@ -84,6 +96,19 @@
     background-color: rgba(100, 100, 100, 0.5) !important;
 }
 
+#photoprism .p-album-desc button,
 #photoprism .p-photo-desc button {
     text-align: left;
+}
+
+#photoprism .p-photo video {
+    width: 100% !important;
+    height: auto !important;
+    position: absolute;
+    overflow: hidden;
+}
+
+#photoprism table.photo-files tbody tr td:first-child {
+    width: 30%;
+    padding: 0 16px 0 24px;
 }

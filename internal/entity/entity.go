@@ -29,14 +29,18 @@ type Types map[string]interface{}
 
 // List of database entities and their table names.
 var Entities = Types{
+	"errors":          &Error{},
+	"people":          &Person{},
 	"accounts":        &Account{},
+	"folders":         &Folder{},
+	"duplicates":      &Duplicate{},
 	"files":           &File{},
 	"files_share":     &FileShare{},
 	"files_sync":      &FileSync{},
 	"photos":          &Photo{},
-	"descriptions":    &Description{},
+	"details":         &Details{},
 	"places":          &Place{},
-	"locations":       &Location{},
+	"cells":           &Cell{},
 	"cameras":         &Camera{},
 	"lenses":          &Lens{},
 	"countries":       &Country{},
@@ -47,16 +51,21 @@ var Entities = Types{
 	"photos_labels":   &PhotoLabel{},
 	"keywords":        &Keyword{},
 	"photos_keywords": &PhotoKeyword{},
+	"passwords":       &Password{},
 	"links":           &Link{},
+}
+
+type RowCount struct {
+	Count int
 }
 
 // WaitForMigration waits for the database migration to be successful.
 func (list Types) WaitForMigration() {
 	attempts := 100
-
 	for name := range list {
 		for i := 0; i <= attempts; i++ {
-			if err := Db().Raw(fmt.Sprintf("DESCRIBE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
+			count := RowCount{}
+			if err := Db().Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
 				// log.Debugf("entity: table %s migrated", name)
 				break
 			} else {
@@ -75,11 +84,11 @@ func (list Types) WaitForMigration() {
 // Truncate removes all data from tables without dropping them.
 func (list Types) Truncate() {
 	for name := range list {
-		if err := Db().Raw(fmt.Sprintf("TRUNCATE TABLE `%s`", name)).Scan(&struct{}{}).Error; err == nil {
+		if err := Db().Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
 			log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
-			log.Debugf("entity: truncate %s (%s)", err.Error(), name)
+			log.Debugf("entity: %s in %s", err, name)
 		}
 	}
 }
@@ -110,11 +119,12 @@ func (list Types) Drop() {
 
 // Creates default database entries for test and production.
 func CreateDefaultFixtures() {
+	CreateDefaultUsers()
 	CreateUnknownPlace()
+	CreateUnknownLocation()
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
-	CreateViews()
 }
 
 // MigrateDb creates all tables and inserts default entities as needed.
@@ -137,13 +147,20 @@ func ResetTestFixtures() {
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.
-func InitTestDb(dsn string) *Gorm {
+func InitTestDb(driver, dsn string) *Gorm {
 	if HasDbProvider() {
 		return nil
 	}
 
+	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+		driver = "sqlite3"
+		dsn = ".test.db"
+	}
+
+	log.Infof("initializing %s test db in %s", driver, dsn)
+
 	db := &Gorm{
-		Driver: "mysql",
+		Driver: driver,
 		Dsn:    dsn,
 	}
 

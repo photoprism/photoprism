@@ -1,97 +1,94 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
-	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/gin-gonic/gin"
 )
 
 // POST /api/v1/batch/photos/archive
-func BatchPhotosArchive(router *gin.RouterGroup, conf *config.Config) {
+func BatchPhotosArchive(router *gin.RouterGroup) {
 	router.POST("/batch/photos/archive", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
-
-		start := time.Now()
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
-		log.Infof("photos: archiving %#v", f.Photos)
+		log.Infof("archive: adding %s", f.String())
 
-		err := entity.Db().Where("photo_uuid IN (?)", f.Photos).Delete(&entity.Photo{}).Error
+		// Soft delete by setting deleted_at to current date.
+		err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
+
+		// Remove archived photos from albums.
+		logError("archive", entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("hidden", true).Error)
 
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("photos: %s", err)
 		}
 
-		elapsed := int(time.Since(start).Seconds())
-
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig()
 
 		event.EntitiesArchived("photos", f.Photos)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos archived in %d s", elapsed)})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionArchived))
 	})
 }
 
 // POST /api/v1/batch/photos/restore
-func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
+func BatchPhotosRestore(router *gin.RouterGroup) {
 	router.POST("/batch/photos/restore", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
-
-		start := time.Now()
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
-		log.Infof("restoring photos: %#v", f.Photos)
+		log.Infof("archive: restoring %s", f.String())
 
-		err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).
+		err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", f.Photos).
 			UpdateColumn("deleted_at", gorm.Expr("NULL")).Error
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -99,79 +96,78 @@ func BatchPhotosRestore(router *gin.RouterGroup, conf *config.Config) {
 			log.Errorf("photos: %s", err)
 		}
 
-		elapsed := int(time.Since(start).Seconds())
-
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig()
 
 		event.EntitiesRestored("photos", f.Photos)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos restored in %d s", elapsed)})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionRestored))
 	})
 }
 
 // POST /api/v1/batch/albums/delete
-func BatchAlbumsDelete(router *gin.RouterGroup, conf *config.Config) {
+func BatchAlbumsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/albums/delete", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionDelete)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if len(f.Albums) == 0 {
-			log.Error("no albums selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no albums selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoAlbumsSelected)
 			return
 		}
 
-		log.Infof("albums: deleting %#v", f.Albums)
+		log.Infof("albums: deleting %s", f.String())
 
-		entity.Db().Where("album_uuid IN (?)", f.Albums).Delete(&entity.Album{})
-		entity.Db().Where("album_uuid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
+		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.Album{})
+		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig()
 
 		event.EntitiesDeleted("albums", f.Albums)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("albums deleted")})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgAlbumsDeleted))
 	})
 }
 
 // POST /api/v1/batch/photos/private
-func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
+func BatchPhotosPrivate(router *gin.RouterGroup) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionPrivate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
-
-		start := time.Now()
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
-		log.Infof("marking photos as private: %#v", f.Photos)
+		log.Infof("photos: mark %s as private", f.String())
 
-		err := entity.Db().Model(entity.Photo{}).Where("photo_uuid IN (?)", f.Photos).UpdateColumn("photo_private", gorm.Expr("IF (`photo_private`, 0, 1)")).Error
+		err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private",
+			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -183,43 +179,52 @@ func BatchPhotosPrivate(router *gin.RouterGroup, conf *config.Config) {
 			event.EntitiesUpdated("photos", entities)
 		}
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		UpdateClientConfig()
 
-		elapsed := time.Since(start)
-
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("photos marked as private in %s", elapsed)})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionProtected))
 	})
 }
 
 // POST /api/v1/batch/labels/delete
-func BatchLabelsDelete(router *gin.RouterGroup, conf *config.Config) {
+func BatchLabelsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionDelete)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Selection
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if len(f.Labels) == 0 {
 			log.Error("no labels selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no labels selected")})
+			Abort(c, http.StatusBadRequest, i18n.ErrNoLabelsSelected)
 			return
 		}
 
-		log.Infof("labels: deleting %#v", f.Labels)
+		log.Infof("labels: deleting %s", f.String())
 
-		entity.Db().Where("label_uuid IN (?)", f.Labels).Delete(&entity.Label{})
+		var labels entity.Labels
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		if err := entity.Db().Where("label_uid IN (?)", f.Labels).Find(&labels).Error; err != nil {
+			Error(c, http.StatusInternalServerError, err, i18n.ErrDeleteFailed)
+			return
+		}
+
+		for _, label := range labels {
+			logError("labels", label.Delete())
+		}
+
+		UpdateClientConfig()
 
 		event.EntitiesDeleted("labels", f.Labels)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("labels deleted")})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgLabelsDeleted))
 	})
 }

@@ -2,7 +2,10 @@ package photoprism
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
+	"runtime/debug"
+	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -23,12 +26,19 @@ func NewResample(conf *config.Config) *Resample {
 }
 
 // Start creates default thumbnails for all files in originalsPath.
-func (rs *Resample) Start(force bool) error {
-	if err := mutex.Worker.Start(); err != nil {
+func (rs *Resample) Start(force bool) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("resample: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
+	if err := mutex.MainWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.Worker.Stop()
+	defer mutex.MainWorker.Stop()
 
 	originalsPath := rs.conf.OriginalsPath()
 	thumbnailsPath := rs.conf.ThumbPath()
@@ -46,26 +56,30 @@ func (rs *Resample) Start(force bool) error {
 		}()
 	}
 
-	done := make(map[string]bool)
-	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+	done := make(fs.Done)
+	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
 		log.Infof("resample: %s", err)
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`resample: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
+		log.Infof(`resample: ignored "%s"`, fs.RelName(fileName, originalsPath))
 	}
 
-	err := godirwalk.Walk(originalsPath, &godirwalk.Options{
+	err = godirwalk.Walk(originalsPath, &godirwalk.Options{
+		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			log.Errorf("resample: %s", strings.Replace(err.Error(), originalsPath, "", 1))
+			return godirwalk.SkipNode
+		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
-				if err := recover(); err != nil {
-					log.Errorf("resample: %s [panic]", err)
+				if r := recover(); r != nil {
+					log.Errorf("resample: %s (panic)\nstack: %s", r, debug.Stack())
 				}
 			}()
 
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return errors.New("resample: canceled")
 			}
 
@@ -82,9 +96,9 @@ func (rs *Resample) Start(force bool) error {
 				return nil
 			}
 
-			done[fileName] = true
+			done[fileName] = fs.Processed
 
-			relativeName := mf.RelativeName(originalsPath)
+			relativeName := mf.RelName(originalsPath)
 
 			event.Publish("index.thumbnails", event.Data{
 				"fileName": relativeName,

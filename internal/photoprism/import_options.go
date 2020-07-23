@@ -1,6 +1,7 @@
 package photoprism
 
 type ImportOptions struct {
+	Albums                 []string
 	Path                   string
 	Move                   bool
 	RemoveDotFiles         bool

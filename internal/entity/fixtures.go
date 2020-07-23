@@ -2,6 +2,10 @@ package entity
 
 // CreateTestFixtures inserts all known entities into the database for testing.
 func CreateTestFixtures() {
+	if err := Admin.SetPassword("photoprism"); err != nil {
+		log.Error(err)
+	}
+
 	CreateLabelFixtures()
 	CreateCameraFixtures()
 	CreateCountryFixtures()
@@ -10,11 +14,12 @@ func CreateTestFixtures() {
 	CreateAccountFixtures()
 	CreateLinkFixtures()
 	CreatePhotoAlbumFixtures()
+	CreateFolderFixtures()
 	CreateFileFixtures()
 	CreateKeywordFixtures()
 	CreatePhotoKeywordFixtures()
 	CreateCategoryFixtures()
-	CreateLocationFixtures()
+	CreateCellFixtures()
 	CreatePlaceFixtures()
 	CreateFileShareFixtures()
 	CreateFileSyncFixtures()

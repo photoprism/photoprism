@@ -18,7 +18,7 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		return results, err
 	}
 
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("labels: %+v", f)))
+	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("labels: search %s", form.Serialize(f, true))))
 
 	s := UnscopedDb()
 
@@ -31,7 +31,7 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		Group("labels.id")
 
 	if f.ID != "" {
-		s = s.Where("labels.label_uuid = ?", f.ID)
+		s = s.Where("labels.label_uid = ?", f.ID)
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -82,10 +82,10 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	}
 
-	if f.Count > 0 && f.Count <= 1000 {
+	if f.Count > 0 && f.Count <= MaxResults {
 		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
-		s = s.Limit(100).Offset(0)
+		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

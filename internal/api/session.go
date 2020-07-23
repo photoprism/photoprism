@@ -4,60 +4,137 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/internal/session"
 )
 
 // POST /api/v1/session
-func CreateSession(router *gin.RouterGroup, conf *config.Config) {
+func CreateSession(router *gin.RouterGroup) {
 	router.POST("/session", func(c *gin.Context) {
 		var f form.Login
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
-		if !conf.CheckPassword(f.Password) {
-			c.AbortWithStatusJSON(400, gin.H{"error": "Invalid password"})
+		var data session.Data
+
+		id := SessionID(c)
+
+		if s := Session(id); s.Valid() {
+			data = s
+		} else {
+			data = session.Data{}
+			id = ""
+		}
+
+		conf := service.Config()
+
+		if f.HasToken() {
+			links := entity.FindValidLinks(f.Token, "")
+
+			if len(links) == 0 {
+				c.AbortWithStatusJSON(400, gin.H{"error": "Invalid link"})
+			}
+
+			data.Tokens = []string{f.Token}
+
+			for _, link := range links {
+				data.Shares = append(data.Shares, link.ShareUID)
+				link.Redeem()
+			}
+
+			// Upgrade from anonymous to guest. Don't downgrade.
+			if data.User.Anonymous() {
+				data.User = entity.Guest
+			}
+		} else if f.HasCredentials() {
+			user := entity.FindPersonByUserName(f.UserName)
+
+			if user == nil {
+				c.AbortWithStatusJSON(400, gin.H{"error": "Invalid user name or password"})
+				return
+			}
+
+			if user.InvalidPassword(f.Password) {
+				c.AbortWithStatusJSON(400, gin.H{"error": "Invalid user name or password"})
+				return
+			}
+
+			data.User = *user
+		} else {
+			c.AbortWithStatusJSON(400, gin.H{"error": "Password required, please try again"})
 			return
 		}
 
-		user := gin.H{"ID": 1, "FirstName": "Admin", "LastName": "", "Role": "admin", "Email": "photoprism@localhost"}
+		if err := service.Session().Update(id, data); err != nil {
+			id = service.Session().Create(data)
+		}
 
-		token := service.Session().Create(user)
+		c.Header("X-Session-ID", id)
 
-		c.Header("X-Session-Token", token)
-
-		s := gin.H{"token": token, "user": user, "config": conf.ClientConfig()}
-
-		c.JSON(http.StatusOK, s)
+		if data.User.Anonymous() {
+			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id, "data": data, "config": conf.GuestConfig()})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id, "data": data, "config": conf.UserConfig()})
+		}
 	})
 }
 
-// DELETE /api/v1/session/
-func DeleteSession(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/session/:token", func(c *gin.Context) {
-		token := c.Param("token")
+// DELETE /api/v1/session/:id
+func DeleteSession(router *gin.RouterGroup) {
+	router.DELETE("/session/:id", func(c *gin.Context) {
+		id := c.Param("id")
 
-		service.Session().Delete(token)
+		service.Session().Delete(id)
 
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "token": token})
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id})
 	})
 }
 
-// Returns true, if user doesn't have a valid session token
-func Unauthorized(c *gin.Context, conf *config.Config) bool {
-	// Always return false if site is public
-	if conf.Public() {
-		return false
+// Gets session id from HTTP header.
+func SessionID(c *gin.Context) string {
+	return c.GetHeader("X-Session-ID")
+}
+
+// Session returns the current session data.
+func Session(id string) session.Data {
+	// Return fake admin session if site is public.
+	if service.Config().Public() {
+		return session.Data{User: entity.Admin}
 	}
 
-	// Get session token from HTTP header
-	token := c.GetHeader("X-Session-Token")
+	// Check if session id is valid.
+	return service.Session().Get(id)
+}
 
-	// Check if session token is valid
-	return !service.Session().Exists(token)
+// Auth returns the session if user is authorized for the current action.
+func Auth(id string, resource acl.Resource, action acl.Action) session.Data {
+	sess := Session(id)
+
+	if acl.Permissions.Deny(resource, sess.User.Role(), action) {
+		return session.Data{}
+	}
+
+	return sess
+}
+
+// InvalidPreviewToken returns true if the token is invalid.
+func InvalidPreviewToken(c *gin.Context) bool {
+	token := c.Param("token")
+
+	if token == "" {
+		token = c.Query("t")
+	}
+
+	return service.Config().InvalidPreviewToken(token)
+}
+
+// InvalidDownloadToken returns true if the token is invalid.
+func InvalidDownloadToken(c *gin.Context) bool {
+	return service.Config().InvalidDownloadToken(c.Query("t"))
 }

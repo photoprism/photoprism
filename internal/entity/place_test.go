@@ -2,45 +2,52 @@ package entity
 
 import (
 	"testing"
-	"time"
 
+	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateUnknownPlace(t *testing.T) {
-	r := UnknownPlace.FirstOrCreate()
+	r := FirstOrCreatePlace(&UnknownPlace)
 	assert.True(t, r.Unknown())
 }
 
 func TestFindPlaceByLabel(t *testing.T) {
 	t.Run("find by id", func(t *testing.T) {
-		r := FindPlaceByLabel("1ef744d1e280", "")
+		r := FindPlace(s2.TokenPrefix+"1ef744d1e280", "")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, "de", r.LocCountry)
+		assert.Equal(t, "de", r.PlaceCountry)
 	})
 	t.Run("find by id", func(t *testing.T) {
-		r := FindPlaceByLabel("85d1ea7d3278", "")
+		r := FindPlace(s2.TokenPrefix+"85d1ea7d3278", "")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
 		}
-		assert.Equal(t, "mx", r.LocCountry)
+		assert.Equal(t, "mx", r.PlaceCountry)
 	})
 	t.Run("find by label", func(t *testing.T) {
-		r := FindPlaceByLabel("", "KwaDukuza, KwaZulu-Natal, South Africa")
+		r := FindPlace("", "KwaDukuza, KwaZulu-Natal, South Africa")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, "za", r.LocCountry)
+		assert.Equal(t, "za", r.PlaceCountry)
 	})
 	t.Run("not matching", func(t *testing.T) {
-		r := FindPlaceByLabel("111", "xxx")
+		r := FindPlace("111", "xxx")
+
+		if r != nil {
+			t.Fatal("result should be nil")
+		}
+	})
+	t.Run("not matching empty label", func(t *testing.T) {
+		r := FindPlace("111", "")
 
 		if r != nil {
 			t.Fatal("result should be nil")
@@ -50,32 +57,74 @@ func TestFindPlaceByLabel(t *testing.T) {
 
 func TestPlace_Find(t *testing.T) {
 	t.Run("record exists", func(t *testing.T) {
-		m := PlaceFixtures.Get("teotihuacan")
-		r := m.Find()
-		assert.Nil(t, r)
+		m := PlaceFixtures.Get("mexico")
+		if err := m.Find(); err != nil {
+			t.Fatal(err)
+		}
 	})
 	t.Run("record does not exist", func(t *testing.T) {
 		place := &Place{
-			ID:          "1110",
-			LocLabel:    "test",
-			LocCity:     "testCity",
-			LocState:    "",
-			LocCountry:  "",
-			LocKeywords: "",
-			LocNotes:    "",
-			LocFavorite: false,
-			PhotoCount:  0,
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-			New:         false,
+			ID:            s2.TokenPrefix + "1110",
+			PlaceLabel:    "test",
+			PlaceCity:     "testCity",
+			PlaceState:    "",
+			PlaceCountry:  "",
+			PlaceKeywords: "",
+			PlaceFavorite: false,
+			PhotoCount:    0,
+			CreatedAt:     Timestamp(),
+			UpdatedAt:     Timestamp(),
 		}
-		r := place.Find()
-		assert.Equal(t, "record not found", r.Error())
+		err := place.Find()
+		assert.EqualError(t, err, "record not found")
 	})
 }
 
-func TestPlace_FirstOrCreate(t *testing.T) {
-	m := PlaceFixtures.Pointer("zinkwazi")
-	r := m.FirstOrCreate()
-	assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.LocLabel)
+func TestFirstOrCreatePlace(t *testing.T) {
+	t.Run("existing place", func(t *testing.T) {
+		m := PlaceFixtures.Pointer("zinkwazi")
+		r := FirstOrCreatePlace(m)
+		assert.Equal(t, "KwaDukuza, KwaZulu-Natal, South Africa", r.PlaceLabel)
+	})
+	t.Run("ID empty", func(t *testing.T) {
+		p := &Place{ID: ""}
+		assert.Nil(t, FirstOrCreatePlace(p))
+	})
+	t.Run("PlaceLabel empty", func(t *testing.T) {
+		p := &Place{ID: "abcde44", PlaceLabel: ""}
+		assert.Nil(t, FirstOrCreatePlace(p))
+	})
+}
+
+func TestPlace_LongCity(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		p := Place{PlaceCity: "veryveryveryverylongcity"}
+		assert.True(t, p.LongCity())
+	})
+	t.Run("false", func(t *testing.T) {
+		p := Place{PlaceCity: "short"}
+		assert.False(t, p.LongCity())
+	})
+}
+
+func TestPlace_NoCity(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		p := Place{PlaceCity: ""}
+		assert.True(t, p.NoCity())
+	})
+	t.Run("false", func(t *testing.T) {
+		p := Place{PlaceCity: "short"}
+		assert.False(t, p.NoCity())
+	})
+}
+
+func TestPlace_CityContains(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		p := Place{PlaceCity: "Munich"}
+		assert.True(t, p.CityContains("Munich"))
+	})
+	t.Run("false", func(t *testing.T) {
+		p := Place{PlaceCity: "short"}
+		assert.False(t, p.CityContains("ich"))
+	})
 }

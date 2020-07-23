@@ -6,16 +6,18 @@ import (
 
 // GeoResult represents a photo for displaying it on a map.
 type GeoResult struct {
-	ID            string    `json:"ID"`
-	PhotoLat      float32   `json:"Lat"`
-	PhotoLng      float32   `json:"Lng"`
-	PhotoUUID     string    `json:"PhotoUUID"`
-	PhotoTitle    string    `json:"PhotoTitle"`
-	PhotoFavorite bool      `json:"PhotoFavorite"`
-	FileHash      string    `json:"FileHash"`
-	FileWidth     int       `json:"FileWidth"`
-	FileHeight    int       `json:"FileHeight"`
-	TakenAt       time.Time `json:"TakenAt"`
+	ID               string    `json:"-"`
+	PhotoUID         string    `json:"UID"`
+	PhotoType        string    `json:"Type,omitempty"`
+	PhotoLat         float32   `json:"Lat"`
+	PhotoLng         float32   `json:"Lng"`
+	PhotoTitle       string    `json:"Title"`
+	PhotoDescription string    `json:"Description,omitempty"`
+	PhotoFavorite    bool      `json:"Favorite,omitempty"`
+	FileHash         string    `json:"Hash"`
+	FileWidth        int       `json:"Width"`
+	FileHeight       int       `json:"Height"`
+	TakenAt          time.Time `json:"TakenAt"`
 }
 
 func (g GeoResult) Lat() float64 {

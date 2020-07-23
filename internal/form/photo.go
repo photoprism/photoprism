@@ -6,45 +6,53 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
-type Description struct {
-	PhotoID          uint   `json:"PhotoID" deepcopier:"skip"`
-	PhotoDescription string `json:"PhotoDescription"`
-	PhotoKeywords    string `json:"PhotoKeywords"`
-	PhotoNotes       string `json:"PhotoNotes"`
-	PhotoSubject     string `json:"PhotoSubject"`
-	PhotoArtist      string `json:"PhotoArtist"`
-	PhotoCopyright   string `json:"PhotoCopyright"`
-	PhotoLicense     string `json:"PhotoLicense"`
+type Details struct {
+	PhotoID   uint   `json:"PhotoID" deepcopier:"skip"`
+	Keywords  string `json:"Keywords"`
+	Notes     string `json:"Notes"`
+	Subject   string `json:"Subject"`
+	Artist    string `json:"Artist"`
+	Copyright string `json:"Copyright"`
+	License   string `json:"License"`
 }
 
 // Photo represents a photo edit form.
 type Photo struct {
-	TakenAt          time.Time   `json:"TakenAt"`
-	TakenAtLocal     time.Time   `json:"TakenAtLocal"`
-	TakenSrc         string      `json:"TakenSrc"`
-	TimeZone         string      `json:"TimeZone"`
-	PhotoTitle       string      `json:"PhotoTitle"`
-	TitleSrc         string      `json:"TitleSrc"`
-	Description      Description `json:"Description"`
-	DescriptionSrc   string      `json:"DescriptionSrc"`
-	PhotoFavorite    bool        `json:"PhotoFavorite"`
-	PhotoPrivate     bool        `json:"PhotoPrivate"`
-	PhotoVideo       bool        `json:"PhotoVideo"`
-	PhotoReview      bool        `json:"PhotoReview"`
-	PhotoLat         float32     `json:"PhotoLat"`
-	PhotoLng         float32     `json:"PhotoLng"`
-	PhotoAltitude    int         `json:"PhotoAltitude"`
-	PhotoIso         int         `json:"PhotoIso"`
-	PhotoFocalLength int         `json:"PhotoFocalLength"`
-	PhotoFNumber     float32     `json:"PhotoFNumber"`
-	PhotoExposure    string      `json:"PhotoExposure"`
-	CameraID         uint        `json:"CameraID"`
-	CameraSrc        string      `json:"CameraSrc"`
-	LensID           uint        `json:"LensID"`
-	LocationID       string      `json:"LocationID"`
-	LocationSrc      string      `json:"LocationSrc"`
-	PlaceID          string      `json:"PlaceID"`
-	PhotoCountry     string      `json:"PhotoCountry"`
+	PhotoType        string    `json:"Type"`
+	TypeSrc          string    `json:"TypeSrc"`
+	TakenAt          time.Time `json:"TakenAt"`
+	TakenAtLocal     time.Time `json:"TakenAtLocal"`
+	TakenSrc         string    `json:"TakenSrc"`
+	TimeZone         string    `json:"TimeZone"`
+	PhotoYear        int       `json:"Year"`
+	PhotoMonth       int       `json:"Month"`
+	PhotoDay         int       `json:"Day"`
+	PhotoTitle       string    `json:"Title"`
+	TitleSrc         string    `json:"TitleSrc"`
+	PhotoDescription string    `json:"Description"`
+	DescriptionSrc   string    `json:"DescriptionSrc"`
+	Details          Details   `json:"Details"`
+	PhotoFavorite    bool      `json:"Favorite"`
+	PhotoPrivate     bool      `json:"Private"`
+	PhotoReview      bool      `json:"Review"`
+	PhotoScan        bool      `json:"Scan"`
+	PhotoPanorama    bool      `json:"Panorama"`
+	PhotoAltitude    int       `json:"Altitude"`
+	PhotoLat         float32   `json:"Lat"`
+	PhotoLng         float32   `json:"Lng"`
+	PhotoIso         int       `json:"Iso"`
+	PhotoFocalLength int       `json:"FocalLength"`
+	PhotoFNumber     float32   `json:"FNumber"`
+	PhotoExposure    string    `json:"Exposure"`
+	PhotoCountry     string    `json:"Country"`
+	CellID           string    `json:"CellID"`
+	CellAccuracy     int       `json:"CellAccuracy"`
+	PlaceID          string    `json:"PlaceID"`
+	PlaceSrc         string    `json:"PlaceSrc"`
+	CameraID         uint      `json:"CameraID"`
+	CameraSrc        string    `json:"CameraSrc"`
+	LensID           uint      `json:"LensID"`
+	OriginalName     string    `json:"OriginalName"`
 }
 
 func NewPhoto(m interface{}) (f Photo, err error) {

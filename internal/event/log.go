@@ -21,9 +21,9 @@ func (h *Hook) Fire(entry *logrus.Entry) error {
 	h.hub.Publish(Message{
 		Name: "log." + entry.Level.String(),
 		Fields: Data{
-			"time":  entry.Time,
-			"level": entry.Level.String(),
-			"msg":   entry.Message,
+			"time":    entry.Time,
+			"level":   entry.Level.String(),
+			"message": entry.Message,
 		},
 	})
 

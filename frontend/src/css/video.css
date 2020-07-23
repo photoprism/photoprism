@@ -23,9 +23,18 @@
 }
 
 #photoprism .p-video-dialog {
-    overflow: hidden !important;
+    z-index: 1600;
 }
 
 #photoprism .p-video-player {
     overflow: hidden !important;
+}
+
+#photoprism .vm--modal {
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
 }

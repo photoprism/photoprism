@@ -30,7 +30,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	router.Use(Logger(), Recovery())
 
 	// Set template directory
-	router.LoadHTMLGlob(conf.HttpTemplatesPath() + "/*")
+	router.LoadHTMLGlob(conf.TemplatesPath() + "/*")
 
 	registerRoutes(router, conf)
 

@@ -1,0 +1,19 @@
+{
+  "albumData": {
+    "title": "iPhone",
+    "description": "",
+    "access": "protected",
+    "location": "",
+    "date": {
+      "timestamp": "1320701674",
+      "formatted": "Nov 7, 2011, 9:34:34 PM UTC"
+    },
+    "geoData": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "altitude": 0.0,
+      "latitudeSpan": 0.0,
+      "longitudeSpan": 0.0
+    }
+  }
+}

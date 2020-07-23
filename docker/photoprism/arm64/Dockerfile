@@ -41,6 +41,7 @@ RUN apt-get update && apt-get upgrade && \
     make \
     wget \
     git \
+    gettext \
     tzdata \
     gconf-service
 
@@ -57,7 +58,7 @@ RUN curl -L \
 RUN ldconfig
 
 # Install NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update && \
     apt-get install nodejs && \
     apt-get clean && \
@@ -69,12 +70,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.14.2
+ENV GOLANG_VERSION 1.14.6
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "bb6d22fe5806352c3d0826676654e09b6e41eb1af52e8d506d3fa85adf7f8d88 *go.tgz" | sha256sum -c -; \
+	echo "291bccfd7d7f1915599bbcc90e49d9fccfcb0004b7c62a2f5cdf0f96a09d6a3e *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -138,38 +139,30 @@ ENV TF_CPP_MIN_LOG_LEVEL 2
 
 ENV PATH /photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
+ENV PHOTOPRISM_ASSETS_PATH /photoprism/assets
 ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
 ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
-ENV PHOTOPRISM_TIDB_PATH /photoprism/database
-ENV PHOTOPRISM_TEMP_PATH /photoprism/temp
-ENV PHOTOPRISM_CACHE_PATH /photoprism/cache
-ENV PHOTOPRISM_CONFIG_PATH /photoprism/config
-ENV PHOTOPRISM_CONFIG_FILE /photoprism/config/photoprism.yml
-ENV PHOTOPRISM_ASSETS_PATH /photoprism/assets
-ENV PHOTOPRISM_RESOURCES_PATH /photoprism/assets/resources
 ENV PHOTOPRISM_LOG_FILENAME /photoprism/photoprism.log
 ENV PHOTOPRISM_PID_FILENAME /photoprism/photoprism.pid
 
 # Copy files to /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
-COPY --from=build /root/.local/share/photoprism /photoprism/assets
-COPY --from=build /root/.config/photoprism /photoprism/config
+COPY --from=build /root/.photoprism/assets /photoprism/assets
 
 # Create directories
 RUN mkdir -p \
     /photoprism/originals \
     /photoprism/import \
-    /photoprism/database \
-    /photoprism/temp \
-    /photoprism/cache
+    /photoprism/storage/settings \
+    /photoprism/storage/cache
 
 RUN chmod -R 777 /photoprism
 
 # Show photoprism version
 RUN photoprism -v
 
-# Expose http and database ports
-EXPOSE 2342 2343 4000
+# Expose http port
+EXPOSE 2342
 
 # Run server
 CMD photoprism start

@@ -19,6 +19,8 @@ const (
 	AccountSyncStatusSynced   = "synced"
 )
 
+type Accounts []Account
+
 // Account represents a remote service account for uploading, downloading or syncing media files.
 type Account struct {
 	ID            uint   `gorm:"primary_key"`
@@ -59,13 +61,13 @@ func CreateAccount(form form.Account) (model *Account, err error) {
 		SyncStatus:   AccountSyncStatusRefresh,
 	}
 
-	err = model.Save(form)
+	err = model.SaveForm(form)
 
 	return model, err
 }
 
-// Save updates the entity using form data and stores it in the database.
-func (m *Account) Save(form form.Account) error {
+// Saves the entity using form data and stores it in the database.
+func (m *Account) SaveForm(form form.Account) error {
 	db := Db()
 
 	if err := deepcopier.Copy(m).From(form); err != nil {
@@ -110,4 +112,24 @@ func (m *Account) Directories() (result fs.FileInfos, err error) {
 	sort.Sort(result)
 
 	return result, err
+}
+
+// Updates multiple columns in the database.
+func (m *Account) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
+}
+
+// Updates a column in the database.
+func (m *Account) Update(attr string, value interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Save updates the existing or inserts a new row.
+func (m *Account) Save() error {
+	return Db().Save(m).Error
+}
+
+// Create inserts a new row to the database.
+func (m *Account) Create() error {
+	return Db().Create(m).Error
 }

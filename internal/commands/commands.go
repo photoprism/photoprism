@@ -18,7 +18,7 @@ import (
 
 var log = event.Log
 
-// chilAlreadyRunning test if a .pid file at filePath is a running proccess.
+// childAlreadyRunning tests if a .pid file at filePath is a running proccess.
 // it returns the pid value and the running status (true or false).
 func childAlreadyRunning(filePath string) (pid int, running bool) {
 	if !fs.FileExists(filePath) {

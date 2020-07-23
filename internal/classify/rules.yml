@@ -3177,6 +3177,8 @@ plate rack:
 plate:
   label: plate
   threshold: 0.18
+  categories:
+    - food
 
 polaroid camera:
   label: camera
@@ -4020,8 +4022,7 @@ hourglass:
   threshold: 0.6
 
 packet:
-  label: package
-  priority: -1
+  see: ignore
 
 swing:
   label: moment

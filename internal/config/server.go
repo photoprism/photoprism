@@ -47,68 +47,36 @@ func (c *Config) HttpServerPassword() string {
 	return c.params.HttpServerPassword
 }
 
-// HttpTemplatesPath returns the server templates path.
-func (c *Config) HttpTemplatesPath() string {
-	return filepath.Join(c.ResourcesPath(), "templates")
+// TemplatesPath returns the server templates path.
+func (c *Config) TemplatesPath() string {
+	return filepath.Join(c.AssetsPath(), "templates")
 }
 
-// HttpTemplateExists returns true if a template with the given name exists (e.g. index.tmpl).
-func (c *Config) HttpTemplateExists(name string) bool {
-	return fs.FileExists(filepath.Join(c.HttpTemplatesPath(), name))
+// TemplateExists returns true if a template with the given name exists (e.g. index.tmpl).
+func (c *Config) TemplateExists(name string) bool {
+	return fs.FileExists(filepath.Join(c.TemplatesPath(), name))
 }
 
-// HttpDefaultTemplate returns the name of the default template (e.g. index.tmpl).
-func (c *Config) HttpDefaultTemplate() string {
-	if c.HttpTemplateExists(c.Settings().Templates.Default) {
+// TemplateName returns the name of the default template (e.g. index.tmpl).
+func (c *Config) TemplateName() string {
+	if c.TemplateExists(c.Settings().Templates.Default) {
 		return c.Settings().Templates.Default
 	}
 
 	return "index.tmpl"
 }
 
-// HttpFaviconsPath returns the favicons path.
-func (c *Config) HttpFaviconsPath() string {
-	return filepath.Join(c.HttpStaticPath(), "favicons")
+// StaticPath returns the static assets path.
+func (c *Config) StaticPath() string {
+	return filepath.Join(c.AssetsPath(), "static")
 }
 
-// HttpStaticPath returns the static server assets path (//server/static/*).
-func (c *Config) HttpStaticPath() string {
-	return filepath.Join(c.ResourcesPath(), "static")
+// BuildPath returns the static build path.
+func (c *Config) BuildPath() string {
+	return filepath.Join(c.StaticPath(), "build")
 }
 
-// HttpStaticBuildPath returns the static build path (//server/static/build/*).
-func (c *Config) HttpStaticBuildPath() string {
-	return filepath.Join(c.HttpStaticPath(), "build")
-}
-
-// TidbServerHost returns the host for the built-in TiDB server. (empty for all interfaces).
-func (c *Config) TidbServerHost() string {
-	if c.params.TidbServerHost == "" {
-		return "127.0.0.1"
-	}
-
-	return c.params.TidbServerHost
-}
-
-// TidbServerPort returns the port for the built-in TiDB server.
-func (c *Config) TidbServerPort() uint {
-	if c.params.TidbServerPort == 0 {
-		return 2343
-	}
-
-	return c.params.TidbServerPort
-}
-
-// TidbServerPassword returns the password for the built-in TiDB server.
-func (c *Config) TidbServerPassword() string {
-	return c.params.TidbServerPassword
-}
-
-// TidbServerPath returns the database storage path for the built-in TiDB server.
-func (c *Config) TidbServerPath() string {
-	if c.params.TidbServerPath == "" {
-		return filepath.Join(c.ResourcesPath(), "/database")
-	}
-
-	return fs.Abs(c.params.TidbServerPath)
+// ImgPath returns the static image path.
+func (c *Config) ImgPath() string {
+	return filepath.Join(c.StaticPath(), "img")
 }

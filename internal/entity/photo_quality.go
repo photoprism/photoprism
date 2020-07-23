@@ -42,8 +42,10 @@ func (m *Photo) QualityScore() (score int) {
 
 	blacklisted := false
 
-	if m.Description.PhotoKeywords != "" {
-		keywords := txt.Words(m.Description.PhotoKeywords)
+	details := m.GetDetails()
+
+	if details.Keywords != "" {
+		keywords := txt.Words(details.Keywords)
 
 		for _, w := range keywords {
 			w = strings.ToLower(w)
@@ -59,7 +61,7 @@ func (m *Photo) QualityScore() (score int) {
 		score++
 	}
 
-	if score < 3 && (m.PhotoVideo || m.EditedAt != nil) {
+	if score < 3 && (m.PhotoType != TypeImage || m.EditedAt != nil) {
 		score = 3
 	}
 

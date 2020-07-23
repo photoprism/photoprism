@@ -15,12 +15,10 @@ import (
 
 // NewApiTest returns new API test helper
 func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config) {
-	conf = config.TestConfig()
-	service.SetConfig(conf)
 	gin.SetMode(gin.TestMode)
 	app = gin.New()
 	router = app.Group("/api/v1")
-	return app, router, conf
+	return app, router, service.Config()
 }
 
 // Performs API request with empty request body.
@@ -46,6 +44,7 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.DebugLevel)
 
 	c := config.TestConfig()
+	service.SetConfig(c)
 
 	code := m.Run()
 

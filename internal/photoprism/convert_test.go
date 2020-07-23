@@ -28,7 +28,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
 		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
-		outputName := conf.ExamplesPath() + "/gopher-video.jpg"
+		outputName := conf.ExamplesPath() + "/.photoprism/gopher-video.jpg"
 
 		_ = os.Remove(outputName)
 
@@ -49,13 +49,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 		assert.Equal(t, jpegFile.FileName(), outputName)
 		assert.Truef(t, fs.FileExists(jpegFile.FileName()), "output file does not exist: %s", jpegFile.FileName())
 
-		metaData, err := jpegFile.MetaData()
-
-		if err != nil {
-			t.Log(err)
-		} else {
-			t.Logf("video metadata: %+v", metaData)
-		}
+		t.Logf("video metadata: %+v", jpegFile.MetaData())
 
 		_ = os.Remove(outputName)
 	})
@@ -79,11 +73,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		infoJpeg, err := imageJpeg.MetaData()
-
-		if err != nil {
-			t.Fatalf("%s for %s", err.Error(), imageJpeg.FileName())
-		}
+		infoJpeg := imageJpeg.MetaData()
 
 		assert.Equal(t, jpegFilename, imageJpeg.fileName)
 
@@ -105,7 +95,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
 		}
 
-		assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
+		assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/.photoprism/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
 
 		if imageRaw == nil {
 			t.Fatal("imageRaw is nil")
@@ -113,7 +103,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 		assert.NotEqual(t, rawFilename, imageRaw.fileName)
 
-		infoRaw, err := imageRaw.MetaData()
+		infoRaw := imageRaw.MetaData()
 
 		assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 	})
@@ -125,7 +115,42 @@ func TestConvert_ToJson(t *testing.T) {
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
 		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
-		outputName := conf.ExamplesPath() + "/gopher-video.json"
+		outputName := conf.ExamplesPath() + "/.photoprism/gopher-video.json"
+
+		_ = os.Remove(outputName)
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+		assert.Falsef(t, fs.FileExists(outputName), "output file must not exist: %s", outputName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		jsonFile, err := convert.ToJson(mf)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if jsonFile == nil {
+			t.Fatal("jsonFile should not be nil")
+		}
+
+		assert.Equal(t, jsonFile.FileName(), outputName)
+		assert.Truef(t, fs.FileExists(jsonFile.FileName()), "output file does not exist: %s", jsonFile.FileName())
+		assert.False(t, jsonFile.IsJpeg())
+		assert.False(t, jsonFile.IsMedia())
+		assert.False(t, jsonFile.IsVideo())
+		assert.True(t, jsonFile.IsSidecar())
+
+		_ = os.Remove(outputName)
+	})
+
+	t.Run("IMG_4120.JPG", func(t *testing.T) {
+		fileName := conf.ExamplesPath() + "/IMG_4120.JPG"
+		outputName := conf.ExamplesPath() + "/.photoprism/IMG_4120.json"
 
 		_ = os.Remove(outputName)
 
@@ -197,31 +222,37 @@ func TestConvert_Start(t *testing.T) {
 
 	convert := NewConvert(conf)
 
-	convert.Start(conf.ImportPath())
+	err := convert.Start(conf.ImportPath())
 
-	jpegFilename := conf.ImportPath() + "/raw/canon_eos_6d.jpg"
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	jpegFilename := conf.ImportPath() + "/raw/.photoprism/canon_eos_6d.jpg"
 
 	assert.True(t, fs.FileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
 	image, err := NewMediaFile(jpegFilename)
 
 	if err != nil {
-		t.Fatal(err.Error())
+		t.Fatal(err)
 	}
 
 	assert.Equal(t, jpegFilename, image.fileName, "FileName must be the same")
 
-	infoRaw, err := image.MetaData()
+	infoRaw := image.MetaData()
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "UpdateCamera model should be Canon EOS M10")
 
-	existingJpegFilename := conf.ImportPath() + "/raw/IMG_2567.jpg"
+	existingJpegFilename := conf.ImportPath() + "/raw/.photoprism/IMG_2567.jpg"
 
 	oldHash := fs.Hash(existingJpegFilename)
 
-	os.Remove(existingJpegFilename)
+	_ = os.Remove(existingJpegFilename)
 
-	convert.Start(conf.ImportPath())
+	if err := convert.Start(conf.ImportPath()); err != nil {
+		t.Fatal(err)
+	}
 
 	newHash := fs.Hash(existingJpegFilename)
 

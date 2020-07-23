@@ -2,6 +2,7 @@ package workers
 
 import (
 	"fmt"
+	"runtime/debug"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -18,27 +19,47 @@ type Sync struct {
 	conf *config.Config
 }
 
-// NewSync returns a new service sync worker.
+// NewSync returns a new sync worker.
 func NewSync(conf *config.Config) *Sync {
 	return &Sync{
 		conf: conf,
 	}
 }
 
+// logError logs an error message if err is not nil.
+func (worker *Sync) logError(err error) {
+	if err != nil {
+		log.Errorf("sync-worker: %s", err.Error())
+	}
+}
+
+// logWarn logs a warning message if err is not nil.
+func (worker *Sync) logWarn(err error) {
+	if err != nil {
+		log.Warnf("sync-worker: %s", err.Error())
+	}
+}
+
 // Start starts the sync worker.
-func (s *Sync) Start() (err error) {
-	if err := mutex.Sync.Start(); err != nil {
-		event.Error(fmt.Sprintf("sync: %s", err.Error()))
+func (worker *Sync) Start() (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("sync-worker: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
+	if err := mutex.SyncWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.Sync.Stop()
+	defer mutex.SyncWorker.Stop()
 
 	f := form.AccountSearch{
 		Sync: true,
 	}
 
-	accounts, err := query.Accounts(f)
+	accounts, err := query.AccountSearch(f)
 
 	for _, a := range accounts {
 		if a.AccType != remote.ServiceWebDAV {
@@ -46,7 +67,15 @@ func (s *Sync) Start() (err error) {
 		}
 
 		if a.AccErrors > a.RetryLimit {
-			log.Warnf("sync: %s failed more than %d times", a.AccName, a.RetryLimit)
+			a.AccErrors = 0
+			a.AccSync = false
+
+			if err := entity.Db().Save(&a).Error; err != nil {
+				worker.logError(err)
+			} else {
+				log.Warnf("sync-worker: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
+			}
+
 			continue
 		}
 
@@ -59,7 +88,7 @@ func (s *Sync) Start() (err error) {
 
 		switch a.SyncStatus {
 		case entity.AccountSyncStatusRefresh:
-			if complete, err := s.refresh(a); err != nil {
+			if complete, err := worker.refresh(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -77,7 +106,7 @@ func (s *Sync) Start() (err error) {
 				}
 			}
 		case entity.AccountSyncStatusDownload:
-			if complete, err := s.download(a); err != nil {
+			if complete, err := worker.download(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -91,7 +120,7 @@ func (s *Sync) Start() (err error) {
 				}
 			}
 		case entity.AccountSyncStatusUpload:
-			if complete, err := s.upload(a); err != nil {
+			if complete, err := worker.upload(a); err != nil {
 				accErrors++
 				accError = err.Error()
 			} else if complete {
@@ -108,23 +137,17 @@ func (s *Sync) Start() (err error) {
 			syncStatus = entity.AccountSyncStatusRefresh
 		}
 
-		if mutex.Sync.Canceled() {
+		if mutex.SyncWorker.Canceled() {
 			return nil
 		}
 
-		if err := entity.Db().First(&a, a.ID).Error; err != nil {
-			log.Errorf("sync: %s", err.Error())
-			return err
-		}
-
 		// Only update the following fields to avoid overwriting other settings
-		a.AccError = accError
-		a.AccErrors = accErrors
-		a.SyncStatus = syncStatus
-		a.SyncDate = syncDate
-
-		if err := entity.Db().Save(&a).Error; err != nil {
-			log.Errorf("sync: %s", err.Error())
+		if err := a.Updates(map[string]interface{}{
+			"AccError":   accError,
+			"AccErrors":  accErrors,
+			"SyncStatus": syncStatus,
+			"SyncDate":   syncDate}); err != nil {
+			worker.logError(err)
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})
 		}

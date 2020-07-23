@@ -5,14 +5,15 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/yaml.v2"
 )
 
-// DisableSettings returns true if the user is not allowed to change settings.
-func (c *Config) DisableSettings() bool {
-	return c.params.DisableSettings
+// SettingsHidden returns true if the user is not allowed to change settings.
+func (c *Config) SettingsHidden() bool {
+	return c.params.SettingsHidden
 }
 
 type TemplateSettings struct {
@@ -25,10 +26,10 @@ type MapsSettings struct {
 }
 
 type IndexSettings struct {
-	Path    string `json:"path" yaml:"path"`
-	Convert bool   `json:"convert" yaml:"convert"`
-	Rescan  bool   `json:"rescan" yaml:"rescan"`
-	Group   bool   `json:"group" yaml:"group"`
+	Path      string `json:"path" yaml:"path"`
+	Convert   bool   `json:"convert" yaml:"convert"`
+	Rescan    bool   `json:"rescan" yaml:"rescan"`
+	Sequences bool   `json:"sequences" yaml:"sequences"`
 }
 
 type ImportSettings struct {
@@ -37,16 +38,19 @@ type ImportSettings struct {
 }
 
 type FeatureSettings struct {
+	Upload   bool `json:"upload" yaml:"upload"`
+	Download bool `json:"download" yaml:"download"`
 	Archive  bool `json:"archive" yaml:"archive"`
 	Private  bool `json:"private" yaml:"private"`
 	Review   bool `json:"review" yaml:"review"`
-	Upload   bool `json:"upload" yaml:"upload"`
-	Import   bool `json:"import" yaml:"import"`
+	Files    bool `json:"files" yaml:"files"`
+	Moments  bool `json:"moments" yaml:"moments"`
 	Labels   bool `json:"labels" yaml:"labels"`
 	Places   bool `json:"places" yaml:"places"`
-	Download bool `json:"download" yaml:"download"`
 	Edit     bool `json:"edit" yaml:"edit"`
 	Share    bool `json:"share" yaml:"share"`
+	Library  bool `json:"library" yaml:"library"`
+	Import   bool `json:"import" yaml:"import"`
 	Logs     bool `json:"logs" yaml:"logs"`
 }
 
@@ -74,16 +78,19 @@ func NewSettings() *Settings {
 			Style:   "streets",
 		},
 		Features: FeatureSettings{
+			Upload:   true,
+			Download: true,
 			Archive:  true,
 			Review:   true,
 			Private:  true,
-			Upload:   true,
-			Import:   true,
+			Files:    true,
+			Moments:  true,
 			Labels:   true,
 			Places:   true,
-			Download: true,
 			Edit:     true,
 			Share:    true,
+			Library:  true,
+			Import:   true,
 			Logs:     true,
 		},
 		Import: ImportSettings{
@@ -91,17 +98,17 @@ func NewSettings() *Settings {
 			Move: false,
 		},
 		Index: IndexSettings{
-			Path:    "/",
-			Rescan:  false,
-			Convert: true,
-			Group:   true,
+			Path:      "/",
+			Rescan:    false,
+			Convert:   true,
+			Sequences: true,
 		},
 	}
 }
 
 // Propagate updates settings in other packages as needed.
-func (s *Settings) Propagate() {
-
+func (s Settings) Propagate() {
+	i18n.SetLocale(s.Language)
 }
 
 // Load uses a yaml config file to initiate the configuration entity.
@@ -150,8 +157,10 @@ func (c *Config) initSettings() {
 	p := c.SettingsFile()
 
 	if err := c.settings.Load(p); err != nil {
-		log.Error(err)
+		log.Info(err)
 	}
+
+	i18n.SetDir(c.LocalesPath())
 
 	c.settings.Propagate()
 }

@@ -2,7 +2,7 @@ import User from "model/user";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
 
-let chai = require('../../../node_modules/chai/chai');
+let chai = require("chai/chai");
 let assert = chai.assert;
 
 describe("model/user", () => {

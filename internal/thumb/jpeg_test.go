@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +14,7 @@ func TestJpeg(t *testing.T) {
 	for _, ext := range formats {
 		t.Run(ext, func(t *testing.T) {
 			src := "testdata/example." + ext
-			dst := "testdata/example." + ext + ".jpg"
+			dst := "testdata/example." + ext + fs.JpegExt
 
 			assert.NoFileExists(t, dst)
 

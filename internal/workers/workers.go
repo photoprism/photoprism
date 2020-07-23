@@ -21,10 +21,12 @@ func Start(conf *config.Config) {
 			case <-stop:
 				log.Info("shutting down workers")
 				ticker.Stop()
-				mutex.Share.Cancel()
-				mutex.Sync.Cancel()
+				mutex.MetaWorker.Cancel()
+				mutex.ShareWorker.Cancel()
+				mutex.SyncWorker.Cancel()
 				return
 			case <-ticker.C:
+				StartMeta(conf)
 				StartShare(conf)
 				StartSync(conf)
 			}
@@ -37,13 +39,25 @@ func Stop() {
 	stop <- true
 }
 
+// StartMeta runs the metadata worker once.
+func StartMeta(conf *config.Config) {
+	if !mutex.WorkersBusy() {
+		go func() {
+			worker := NewMeta(conf)
+			if err := worker.Start(); err != nil {
+				log.Warnf("meta-worker: %s", err)
+			}
+		}()
+	}
+}
+
 // StartShare runs the share worker once.
 func StartShare(conf *config.Config) {
-	if !mutex.Share.Busy() {
+	if !mutex.ShareWorker.Busy() {
 		go func() {
-			s := NewShare(conf)
-			if err := s.Start(); err != nil {
-				log.Error(err)
+			worker := NewShare(conf)
+			if err := worker.Start(); err != nil {
+				log.Warnf("share-worker: %s", err)
 			}
 		}()
 	}
@@ -51,11 +65,11 @@ func StartShare(conf *config.Config) {
 
 // StartShare runs the sync worker once.
 func StartSync(conf *config.Config) {
-	if !mutex.Sync.Busy() {
+	if !mutex.SyncWorker.Busy() {
 		go func() {
-			s := NewSync(conf)
-			if err := s.Start(); err != nil {
-				log.Error(err)
+			worker := NewSync(conf)
+			if err := worker.Start(); err != nil {
+				log.Warnf("sync-worker: %s", err)
 			}
 		}()
 	}

@@ -94,6 +94,7 @@ func TestIgnoreList_Ignored(t *testing.T) {
 		expectIgnored := []string{
 			"testdata/directory/bar.txt",
 			"testdata/directory/baz.xml",
+			"testdata/directory/subdirectory/bar",
 			"testdata/directory/subdirectory/example.txt",
 			"testdata/directory/subdirectory/foo.txt",
 		}
@@ -119,5 +120,51 @@ func TestIgnoreList_Ignored(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, 0, len(ignore.Ignored()))
+	})
+}
+
+func TestNewIgnoreItem(t *testing.T) {
+	t.Run("case sensitive false", func(t *testing.T) {
+		ignore := NewIgnoreItem("testdata/directory", "Test_", false)
+		assert.Equal(t, "test_", ignore.Pattern)
+	})
+
+	t.Run("case sensitive true", func(t *testing.T) {
+		ignore := NewIgnoreItem("testdata/directory", "Test_", true)
+		assert.Equal(t, "Test_", ignore.Pattern)
+	})
+}
+
+func TestIgnoreList_AppendItems(t *testing.T) {
+	t.Run("error", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".xyz", false, false)
+		assert.Error(t, ignoreList.AppendItems("", []string{"__test_"}))
+	})
+
+	t.Run("success", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".xyz", false, false)
+		assert.Nil(t, ignoreList.AppendItems("testdata/directory", []string{"__test_"}))
+	})
+}
+
+func TestIgnoreList_Dir(t *testing.T) {
+	t.Run("error empty directory name", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".xyz", false, false)
+		assert.Error(t, ignoreList.Dir(""))
+	})
+
+	t.Run("error empty ignore file name", func(t *testing.T) {
+		ignoreList := NewIgnoreList("", false, false)
+		assert.Error(t, ignoreList.Dir("testdata"))
+	})
+
+	t.Run("no file found", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".xyz", false, false)
+		assert.Error(t, ignoreList.Dir("./testdata"))
+	})
+
+	t.Run("nil", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".ppignore", false, false)
+		assert.Nil(t, ignoreList.Dir("./testdata/directory"))
 	})
 }

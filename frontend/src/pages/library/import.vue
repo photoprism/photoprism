@@ -1,94 +1,93 @@
 <template>
-    <div class="p-tab p-tab-import">
-        <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
-            <v-container fluid>
-                <p class="subheading">
-                    <span v-if="fileName">{{ $gettext('Importing') }} {{fileName}}...</span>
-                    <span v-else-if="busy">{{ $gettext('Importing files from import folder...') }}</span>
-                    <span v-else-if="completed">{{ $gettext('Done.') }}</span>
-                    <span v-else>{{ $gettext('Press button to start importing...') }}</span>
-                </p>
+  <div class="p-tab p-tab-import">
+    <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
+      <v-container fluid>
+        <p class="subheading">
+          <span v-if="fileName"><translate :translate-params="{name: fileName}">Importing %{name}…</translate></span>
+          <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
+          <span v-else-if="completed"><translate>Done.</translate></span>
+          <span v-else><translate>Press button to start importing…</translate></span>
+        </p>
 
-                <v-autocomplete
-                        @change="onChange"
-                        color="secondary-dark"
-                        class="my-3"
-                        hide-details hide-no-data flat solo
-                        v-model="settings.import.path"
-                        browser-autocomplete="off"
-                        :items="dirs"
-                        :loading="loading"
-                        :disabled="busy || loading"
-                        item-text="name"
-                        item-value="path"
-                >
-                </v-autocomplete>
+        <v-autocomplete
+                @change="onChange"
+                color="secondary-dark"
+                class="my-3 input-import-folder"
+                hide-details hide-no-data flat solo
+                v-model="settings.import.path"
+                browser-autocomplete="off"
+                :items="dirs"
+                :loading="loading"
+                :disabled="busy || loading"
+                item-text="name"
+                item-value="path"
+        >
+        </v-autocomplete>
 
-                <p class="options">
-                    <v-progress-linear color="secondary-dark" :value="completed"
-                                       :indeterminate="busy"></v-progress-linear>
-                </p>
+        <p class="options">
+          <v-progress-linear color="secondary-dark" :value="completed"
+                             :indeterminate="busy"></v-progress-linear>
+        </p>
 
-                <v-layout wrap align-top class="pb-2">
-                    <v-flex xs12 class="px-2 pb-2 pt-2">
-                        <v-checkbox
-                                @change="onChange"
-                                :disabled="busy"
-                                class="ma-0 pa-0"
-                                v-model="settings.import.move"
-                                color="secondary-dark"
-                                :label="labels.move"
-                                :hint="hints.move"
-                                prepend-icon="delete"
-                                persistent-hint
-                        >
-                        </v-checkbox>
-                    </v-flex>
-                    <v-flex xs12 class="px-2 pb-2 pt-2">
-                        <p class="body-1 pt-2">
-                            <translate>Imported files will be sorted by date
-                                and given a unique name to avoid duplicates.</translate>
-                            <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
-                            <translate>Original file names will be stored and indexed.</translate>
-                                <translate>Note that you can as well manage and re-index your originals manually.</translate>
-                        </p>
-                    </v-flex>
-                </v-layout>
+        <v-layout wrap align-top class="pb-2">
+          <v-flex xs12 class="px-2 pb-2 pt-2">
+            <v-checkbox
+                    @change="onChange"
+                    :disabled="busy"
+                    class="ma-0 pa-0"
+                    v-model="settings.import.move"
+                    color="secondary-dark"
+                    :label="labels.move"
+                    :hint="hints.move"
+                    prepend-icon="delete"
+                    persistent-hint
+            >
+            </v-checkbox>
+          </v-flex>
+          <v-flex xs12 class="px-2 pb-2 pt-2">
+            <p class="body-1 pt-2">
+              <translate>Imported files will be sorted by date and given a unique name to avoid duplicates.</translate>
+              <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
+              <translate>Original file names will be stored and indexed.</translate>
+              <translate>Note that you can as well manage and re-index your originals manually.</translate>
+            </p>
+          </v-flex>
+        </v-layout>
 
-                <v-btn
-                        :disabled="!busy"
-                        color="secondary-dark"
-                        class="white--text ml-0"
-                        depressed
-                        @click.stop="cancelImport()"
-                >
-                    <translate>Cancel</translate>
-                </v-btn>
+        <v-btn
+                :disabled="!busy"
+                color="secondary-dark"
+                class="white--text ml-0 action-cancel"
+                depressed
+                @click.stop="cancelImport()"
+        >
+          <translate>Cancel</translate>
+        </v-btn>
 
-                <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
-                       :disabled="busy"
-                       color="secondary-dark"
-                       class="white--text ml-0 hidden-xs-only"
-                       depressed
-                       @click.stop="showUpload()"
-                >
-                    <translate>Upload</translate>
-                    <v-icon right dark>cloud_upload</v-icon>
-                </v-btn>
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
+               :disabled="busy"
+               color="secondary-dark"
+               class="white--text ml-0 hidden-xs-only action-upload"
+               depressed
+               @click.stop="showUpload()"
+        >
+          <translate>Upload</translate>
+          <v-icon right dark>cloud_upload</v-icon>
+        </v-btn>
 
-                <v-btn
-                        :disabled="busy"
-                        color="secondary-dark"
-                        class="white--text ml-0 mt-2"
-                        depressed
-                        @click.stop="startImport()"
-                >
-                    <translate>Import</translate>
-                    <v-icon right dark>create_new_folder</v-icon>
-                </v-btn>
-            </v-container>
-        </v-form>
-    </div>
+        <v-btn
+                :disabled="busy"
+                color="secondary-dark"
+                class="white--text ml-0 mt-2 action-import"
+                depressed
+                @click.stop="startImport()"
+        >
+          <translate>Import</translate>
+          <v-icon right dark>create_new_folder</v-icon>
+        </v-btn>
+      </v-container>
+    </v-form>
+  </div>
 </template>
 
 <script>
@@ -97,12 +96,13 @@
     import Notify from "common/notify";
     import Event from "pubsub-js";
     import Settings from "model/settings";
-    import Util from "../../common/util";
+    import Util from "common/util";
+    import {Folder, RootImport} from "model/folder";
 
     export default {
         name: 'p-tab-import',
         data() {
-            const root = {"name": "All files in import folder", "path": "/"}
+            const root = {"path": "/", "name": this.$gettext("All files from import folder")}
 
             return {
                 settings: new Settings(this.$config.settings()),
@@ -195,22 +195,23 @@
         created() {
             this.subscriptionId = Event.subscribe('import', this.handleEvent);
             this.loading = true;
-            Api.get('import').then((r) => {
-                const subDirs = r.data.dirs ? r.data.dirs : [];
+
+            Folder.findAllUncached(RootImport).then((r) => {
+                const folders = r.models ? r.models : [];
                 const currentPath = this.settings.import.path;
                 let found = currentPath === this.root.path;
 
                 this.dirs = [this.root];
 
-                for (let i = 0; i < subDirs.length; i++) {
-                    if(currentPath === subDirs[i]) {
+                for (let i = 0; i < folders.length; i++) {
+                    if (currentPath === folders[i].Path) {
                         found = true;
                     }
 
-                    this.dirs.push({name: Util.truncate(subDirs[i], 100, "..."), path: subDirs[i]});
+                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
                 }
 
-                if(!found) {
+                if (!found) {
                     this.settings.import.path = this.root.path;
                 }
             }).finally(() => this.loading = false);

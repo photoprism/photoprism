@@ -5,8 +5,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func TestPhotoSearchForm(t *testing.T) {
@@ -16,7 +14,33 @@ func TestPhotoSearchForm(t *testing.T) {
 }
 
 func TestParseQueryString(t *testing.T) {
+	t.Run("path", func(t *testing.T) {
+		form := &PhotoSearch{Query: "path:123abc/,EFG"}
 
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "123abc/,EFG", form.Path)
+	})
+
+	t.Run("folder", func(t *testing.T) {
+		form := &PhotoSearch{Query: "folder:123abc/,EFG"}
+
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "123abc/,EFG", form.Path)
+	})
 	t.Run("valid query", func(t *testing.T) {
 		form := &PhotoSearch{Query: "label:cat query:\"fooBar baz\" before:2019-01-15 camera:23 favorite:false dist:25000 lat:33.45343166666667"}
 
@@ -25,11 +49,11 @@ func TestParseQueryString(t *testing.T) {
 		log.Debugf("%+v\n", form)
 
 		if err != nil {
-			t.Fatal("err should be nil")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "cat", form.Label)
-		assert.Equal(t, "foobar baz", form.Query)
+		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, 23, form.Camera)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, false, form.Favorite)
@@ -37,7 +61,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, float32(33.45343), form.Lat)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
-		form := &PhotoSearch{Query: "chroma:200 title:\"test\" after:2018-01-15 duplicate:false  favorite:true lng:33.45343166666667"}
+		form := &PhotoSearch{Query: "chroma:200 title:\"test\" after:2018-01-15 favorite:true lng:33.45343166666667"}
 
 		err := form.ParseQueryString()
 
@@ -50,8 +74,22 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, uint8(200), form.Chroma)
 		assert.Equal(t, "test", form.Title)
 		assert.Equal(t, time.Date(2018, 01, 15, 0, 0, 0, 0, time.UTC), form.After)
-		assert.Equal(t, false, form.Duplicate)
 		assert.Equal(t, float32(33.45343), form.Lng)
+	})
+	t.Run("valid query with filter", func(t *testing.T) {
+		form := &PhotoSearch{Query: "label:cat title:\"fooBar baz\"", Filter: "label:dog"}
+
+		err := form.ParseQueryString()
+
+		log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "dog", form.Label)
+		assert.Equal(t, "label:dog", form.Filter)
+		assert.Equal(t, "fooBar baz", form.Title)
 	})
 	t.Run("valid query with umlauts", func(t *testing.T) {
 		form := &PhotoSearch{Query: "title:\"tübingen\""}
@@ -61,7 +99,7 @@ func TestParseQueryString(t *testing.T) {
 		log.Debugf("%+v\n", form)
 
 		if err != nil {
-			t.Fatal("err should be nil")
+			t.Fatal(err)
 		}
 
 		assert.Equal(t, "tübingen", form.Title)
@@ -72,7 +110,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -85,7 +123,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err != nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		assert.True(t, form.Favorite)
@@ -96,7 +134,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -109,7 +147,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -122,7 +160,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -135,7 +173,7 @@ func TestParseQueryString(t *testing.T) {
 		err := form.ParseQueryString()
 
 		if err == nil {
-			t.Fatal("err should NOT be nil")
+			t.Fatal(err)
 		}
 
 		log.Debugf("%+v\n", form)
@@ -147,4 +185,44 @@ func TestParseQueryString(t *testing.T) {
 func TestNewPhotoSearch(t *testing.T) {
 	r := NewPhotoSearch("cat")
 	assert.IsType(t, PhotoSearch{}, r)
+}
+
+func TestPhotoSearch_Serialize(t *testing.T) {
+	form := PhotoSearch{
+		Query:   "foo BAR",
+		Private: true,
+		Photo:   false,
+		Lat:     1.5,
+		Lng:     -10.33333,
+		Year:    2002,
+		Chroma:  1,
+		Diff:    424242,
+		Before:  time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC),
+	}
+
+	result := form.Serialize()
+
+	t.Logf("SERIALIZED: %s", result)
+
+	assert.IsType(t, "string", result)
+}
+
+func TestPhotoSearch_SerializeAll(t *testing.T) {
+	form := PhotoSearch{
+		Query:   "foo BAR",
+		Private: true,
+		Photo:   false,
+		Lat:     1.5,
+		Lng:     -10.33333,
+		Year:    2002,
+		Chroma:  1,
+		Diff:    424242,
+		Before:  time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC),
+	}
+
+	result := form.SerializeAll()
+
+	t.Logf("SERIALIZED: %s", result)
+
+	assert.IsType(t, "string", result)
 }

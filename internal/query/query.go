@@ -1,9 +1,33 @@
 /*
-This package contains PhotoPrism database queries.
+
+Package query contains frequently used database queries for use in commands and API.
+
+Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    to describe our software, run your own server, for educational purposes, but not for
+    offering commercial goods, products, or services without prior written permission.
+    In other words, please ask.
+
+Feel free to send an e-mail to hello@photoprism.org if you have questions,
+want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
+https://docs.photoprism.org/developer-guide/
 
-https://github.com/photoprism/photoprism/wiki
 */
 package query
 
@@ -17,9 +41,18 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/inflection"
 )
 
 var log = event.Log
+
+const (
+	MySQL  = "mysql"
+	SQLite = "sqlite3"
+)
+
+// Max result limit for queries.
+const MaxResults = 10000
 
 // About 1km ('good enough' for now)
 const SearchRadius = 0.009
@@ -53,6 +86,11 @@ func UnscopedDb() *gorm.DB {
 	return entity.Db().Unscoped()
 }
 
+// DbDialect returns the sql dialect name.
+func DbDialect() string {
+	return Db().Dialect().GetName()
+}
+
 // LikeAny returns a where condition that matches any keyword in search.
 func LikeAny(col, search string) (where string) {
 	var wheres []string
@@ -69,22 +107,40 @@ func LikeAny(col, search string) (where string) {
 		} else {
 			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
 		}
+
+		singular := inflection.Singular(w)
+
+		if singular != w {
+			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, singular))
+		}
 	}
 
 	return strings.Join(wheres, " OR ")
 }
 
 // AnySlug returns a where condition that matches any slug in search.
-func AnySlug(col, search string) (where string) {
+func AnySlug(col, search, sep string) (where string) {
 	if search == "" {
 		return ""
+	}
+
+	if sep == "" {
+		sep = " "
 	}
 
 	var wheres []string
 	var words []string
 
-	for _, w := range strings.Split(search, " ") {
-		words = append(words, slug.Make(strings.TrimSpace(w)))
+	for _, w := range strings.Split(search, sep) {
+		w = strings.TrimSpace(w)
+
+		words = append(words, slug.Make(w))
+
+		singular := inflection.Singular(w)
+
+		if singular != w {
+			words = append(words, slug.Make(singular))
+		}
 	}
 
 	if len(words) == 0 {

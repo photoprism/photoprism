@@ -33,6 +33,10 @@ var MediaTypes = map[FileType]MediaType{
 }
 
 func GetMediaType(fileName string) MediaType {
+	if fileName == "" {
+		return MediaOther
+	}
+
 	result, ok := MediaTypes[GetFileType(fileName)]
 
 	if !ok {
@@ -40,4 +44,13 @@ func GetMediaType(fileName string) MediaType {
 	}
 
 	return result
+}
+
+func IsMedia(fileName string) bool {
+	switch GetMediaType(fileName) {
+	case MediaRaw, MediaImage, MediaVideo:
+		return true
+	default:
+		return false
+	}
 }

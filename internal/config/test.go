@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"os"
+	"path/filepath"
 	"sync"
 	"testing"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/urfave/cli"
 )
 
@@ -34,24 +36,41 @@ func testDataPath(assetsPath string) string {
 // NewTestParams inits valid params used for testing
 func NewTestParams() *Params {
 	assetsPath := fs.Abs("../../assets")
+	storagePath := fs.Abs("../../storage")
+	testDataPath := filepath.Join(storagePath, "testdata")
 
-	testDataPath := testDataPath(assetsPath)
+	dbDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
+	dbDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+
+	// Config example for MySQL / MariaDB:
+	//   dbDriver = MySQL,
+	//   dbDsn = "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
+
+	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == "" {
+		dbDriver = SQLite
+		dbDsn = ".test.db"
+	}
 
 	c := &Params{
+		Name:           "PhotoPrism",
+		Version:        "0.0.0",
+		Copyright:      "(c) 2018-2020 Michael Mayer",
 		Debug:          true,
 		Public:         true,
 		ReadOnly:       false,
 		DetectNSFW:     true,
 		UploadNSFW:     false,
-		DarktableBin:   "/usr/bin/darktable-cli",
-		ExifToolBin:    "/usr/bin/exiftool",
+		SidecarPath:    fs.HiddenPath,
 		AssetsPath:     assetsPath,
+		StoragePath:    testDataPath,
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		DatabaseDriver: "mysql",
-		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
+		SettingsPath:   testDataPath + "/settings",
+		DatabaseDriver: dbDriver,
+		DatabaseDsn:    dbDsn,
+		AdminPassword:  "photoprism",
 	}
 
 	return c
@@ -60,18 +79,18 @@ func NewTestParams() *Params {
 // NewTestParamsError inits invalid params used for testing
 func NewTestParamsError() *Params {
 	assetsPath := fs.Abs("../..")
-
-	testDataPath := testDataPath("../../assets")
+	testDataPath := fs.Abs("../../storage/testdata")
 
 	c := &Params{
 		DarktableBin:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
+		StoragePath:    testDataPath,
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		DatabaseDriver: "mysql",
-		DatabaseDsn:    "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
+		DatabaseDriver: SQLite,
+		DatabaseDsn:    ".test-error.db",
 	}
 
 	return c
@@ -95,7 +114,21 @@ func NewTestConfig() *Config {
 	testConfigMutex.Lock()
 	defer testConfigMutex.Unlock()
 
-	c := &Config{params: NewTestParams()}
+	c := &Config{
+		params: NewTestParams(),
+		token:  rnd.Token(8),
+	}
+
+	s := NewSettings()
+
+	if err := os.MkdirAll(c.SettingsPath(), os.ModePerm); err != nil {
+		log.Fatalf("config: %s", err.Error())
+	}
+
+	if err := s.Save(filepath.Join(c.SettingsPath(), "settings.yml")); err != nil {
+		log.Fatalf("config: %s", err.Error())
+	}
+
 	c.initSettings()
 
 	if err := c.Init(context.Background()); err != nil {
@@ -105,7 +138,7 @@ func NewTestConfig() *Config {
 	c.InitTestDb()
 
 	thumb.Size = c.ThumbSize()
-	thumb.Limit = c.ThumbLimit()
+	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
 
@@ -115,12 +148,13 @@ func NewTestConfig() *Config {
 // NewTestErrorConfig inits invalid config used for testing
 func NewTestErrorConfig() *Config {
 	c := &Config{params: NewTestParamsError()}
-	err := c.Init(context.Background())
-	if err != nil {
+
+	c.initSettings()
+
+	if err := c.Init(context.Background()); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	c.InitDb()
 	return c
 }
 
@@ -130,6 +164,8 @@ func CliTestContext() *cli.Context {
 
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")
+	globalSet.String("storage-path", config.StoragePath, "doc")
+	globalSet.String("sidecar-path", config.SidecarPath, "doc")
 	globalSet.String("config-file", config.ConfigFile, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
@@ -137,6 +173,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("temp-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
+	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 
 	app := cli.NewApp()
@@ -144,6 +181,8 @@ func CliTestContext() *cli.Context {
 
 	c := cli.NewContext(app, globalSet, nil)
 
+	LogError(c.Set("storage-path", config.StoragePath))
+	LogError(c.Set("sidecar-path", config.SidecarPath))
 	LogError(c.Set("config-file", config.ConfigFile))
 	LogError(c.Set("assets-path", config.AssetsPath))
 	LogError(c.Set("originals-path", config.OriginalsPath))
@@ -151,6 +190,7 @@ func CliTestContext() *cli.Context {
 	LogError(c.Set("temp-path", config.TempPath))
 	LogError(c.Set("cache-path", config.CachePath))
 	LogError(c.Set("darktable-cli", config.DarktableBin))
+	LogError(c.Set("admin-password", config.AdminPassword))
 	LogError(c.Set("detect-nsfw", "true"))
 
 	return c
@@ -200,7 +240,7 @@ func (c *Config) DownloadTestData(t *testing.T) {
 
 // UnzipTestData in default test folder
 func (c *Config) UnzipTestData(t *testing.T) {
-	if _, err := fs.Unzip(TestDataZip, testDataPath(c.AssetsPath())); err != nil {
+	if _, err := fs.Unzip(TestDataZip, c.StoragePath()); err != nil {
 		t.Fatalf("config: could not unzip test data: %s", err.Error())
 	}
 }

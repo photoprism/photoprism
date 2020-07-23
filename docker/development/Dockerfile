@@ -42,6 +42,7 @@ RUN apt-get update && apt-get upgrade && \
     nano \
     wget \
     git \
+    gettext \
     mysql-client \
     tzdata \
     gconf-service \
@@ -49,7 +50,8 @@ RUN apt-get update && apt-get upgrade && \
     firefox \
     libheif-examples \
     exiftool \
-    ffmpeg
+    ffmpeg \
+    lsof
 
 # Install RAW to JPEG converter
 RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_18.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
@@ -73,7 +75,7 @@ RUN curl -L \
 RUN ldconfig
 
 # Install NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update && \
     apt-get install nodejs && \
     apt-get clean && \
@@ -85,12 +87,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.14.2
+ENV GOLANG_VERSION 1.14.6
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "6272d6e940ecb71ea5636ddb5fab3933e087c1356173c61f4a803895e947ebb3 *go.tgz" | sha256sum -c -; \
+	echo "5c566ddc2e0bcfc25c26a5dc44a440fcc0177f7350c1f01952b34d5989a0d287 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -122,8 +124,8 @@ COPY /docker/development/.my.cnf /root/.my.cnf
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port 2342 plus 2343 for TiDB and 9515 for chromedriver
-EXPOSE 2342 2343 9515
+# Expose HTTP port 2342 plus 9515 for chromedriver
+EXPOSE 2342 9515
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null

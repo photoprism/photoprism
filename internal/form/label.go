@@ -2,7 +2,7 @@ package form
 
 // Label represents a label edit form.
 type Label struct {
-	LabelName     string `json:"LabelName"`
+	LabelName     string `json:"Name"`
 	Uncertainty   int    `json:"Uncertainty"`
-	LabelPriority int    `json:"LabelPriority"`
+	LabelPriority int    `json:"Priority"`
 }

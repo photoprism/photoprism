@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
+	"strings"
 	"sync"
 
-	"github.com/jinzhu/gorm"
 	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
@@ -15,7 +16,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -26,8 +26,7 @@ type Index struct {
 	tensorFlow   *classify.TensorFlow
 	nsfwDetector *nsfw.Detector
 	convert      *Convert
-	db           *gorm.DB
-	q            *query.Query
+	files        *Files
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -37,8 +36,7 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
 		convert:      convert,
-		db:           conf.Db(),
-		q:            query.New(conf.Db()),
+		files:        NewFiles(),
 	}
 
 	return i
@@ -54,12 +52,18 @@ func (ind *Index) thumbPath() string {
 
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
-	mutex.Worker.Cancel()
+	mutex.MainWorker.Cancel()
 }
 
 // Start indexes media files in the originals directory.
-func (ind *Index) Start(opt IndexOptions) map[string]bool {
-	done := make(map[string]bool)
+func (ind *Index) Start(opt IndexOptions) fs.Done {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
+	done := make(fs.Done)
 	originalsPath := ind.originalsPath()
 	optionsPath := filepath.Join(originalsPath, opt.Path)
 
@@ -68,12 +72,12 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		return done
 	}
 
-	if err := mutex.Worker.Start(); err != nil {
+	if err := mutex.MainWorker.Start(); err != nil {
 		event.Error(fmt.Sprintf("index: %s", err.Error()))
 		return done
 	}
 
-	defer mutex.Worker.Stop()
+	defer mutex.MainWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", err.Error())
@@ -94,42 +98,70 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		}()
 	}
 
-	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+	if err := ind.files.Init(); err != nil {
+		log.Errorf("index: %s", err)
+	}
+
+	filesIndexed := 0
+	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
 		log.Infof("index: %s", err)
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`index: ignored "%s"`, fs.RelativeName(fileName, originalsPath))
+		log.Infof(`index: ignored "%s"`, fs.RelName(fileName, originalsPath))
 	}
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
+		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			log.Errorf("index: %s", strings.Replace(err.Error(), originalsPath, "", 1))
+			return godirwalk.SkipNode
+		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
-			defer func() {
-				if err := recover(); err != nil {
-					log.Errorf("index: %s [panic]", err)
-				}
-			}()
-
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return errors.New("indexing canceled")
 			}
 
 			isDir := info.IsDir()
 			isSymlink := info.IsSymlink()
+			relName := fs.RelName(fileName, originalsPath)
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
+				if (isSymlink || isDir) && result != filepath.SkipDir {
+					folder := entity.NewFolder(entity.RootOriginals, relName, nil)
+
+					if err := folder.Create(); err == nil {
+						log.Infof("index: added folder /%s", folder.Path)
+					}
+				}
+
 				return result
+			}
+
+			done[fileName] = fs.Found
+
+			if !fs.IsMedia(fileName) {
+				return nil
 			}
 
 			mf, err := NewMediaFile(fileName)
 
-			if err != nil || !mf.IsMedia() {
+			if err != nil {
+				log.Error(err)
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(ind.conf.Settings().Index.Group)
+			if mf.FileSize() == 0 {
+				log.Infof("index: skipped empty file %s", txt.Quote(mf.BaseName()))
+				return nil
+			}
+
+			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, opt.Rescan) {
+				return nil
+			}
+
+			related, err := mf.RelatedFiles(ind.conf.Settings().Index.Sequences)
 
 			if err != nil {
 				log.Warnf("index: %s", err.Error())
@@ -140,15 +172,26 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if done[f.FileName()] {
+				if done[f.FileName()].Processed() {
+					continue
+				}
+
+				if f.FileSize() == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), opt.Rescan) {
+					done[f.FileName()] = fs.Found
 					continue
 				}
 
 				files = append(files, f)
-				done[f.FileName()] = true
+				filesIndexed++
+				done[f.FileName()] = fs.Processed
 			}
 
-			done[fileName] = true
+			done[fileName] = fs.Processed
+
+			if len(files) == 0 || related.Main == nil {
+				// Nothing to do.
+				return nil
+			}
 
 			related.Files = files
 
@@ -172,13 +215,38 @@ func (ind *Index) Start(opt IndexOptions) map[string]bool {
 		log.Error(err.Error())
 	}
 
-	if len(done) > 0 {
+	if filesIndexed > 0 {
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("index: %s", err)
 		}
+	} else {
+		log.Infof("index: no new or modified files")
 	}
 
 	runtime.GC()
 
 	return done
+}
+
+// File indexes a single file and returns the result.
+func (ind *Index) File(name string) (result IndexResult) {
+	file, err := NewMediaFile(name)
+
+	if err != nil {
+		result.Err = err
+		result.Status = IndexFailed
+
+		return result
+	}
+
+	related, err := file.RelatedFiles(false)
+
+	if err != nil {
+		result.Err = err
+		result.Status = IndexFailed
+
+		return result
+	}
+
+	return IndexRelated(related, ind, IndexOptionsAll())
 }

@@ -101,4 +101,9 @@ func TestS2(t *testing.T) {
 
 		assert.Equal(t, "", token)
 	})
+	t.Run("invalid code", func(t *testing.T) {
+		token := S2("xxx")
+
+		assert.Equal(t, "", token)
+	})
 }

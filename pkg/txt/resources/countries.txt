@@ -1,0 +1,422 @@
+AD:Andorra
+FR:France
+FR:Frankreich
+SK:Slovakia
+AT:Austria
+AT:Wörthersee
+AT:Österreich
+AT:Vienna
+AT:Salzburg
+AT:Klagenfurt
+AT:Innsbruck
+HU:Hungary
+GE:Georgia Republic
+VA:Vatican City
+PL:Poland
+PL:Warsaw
+PL:Warschau
+KH:Cambodia
+LA:Vientiane
+LA:Lao Republic
+VN:Vietnam
+DK:Denmark
+MM:Myanmar
+CZ:Czechia
+CZ:Czech
+CH:Zurich
+CH:Zürich
+CH:St Gallen
+CH:Basel
+CH:Lucerne
+CH:Luzern
+CH:Switzerland
+CH:Swiss
+CH:Schweiz
+BE:Belgium
+SE:Sweden
+SE:Sverige
+SE:Schweden
+SE:Gotland
+SE:Öland
+FO:Faroe
+AL:Albania
+MK:Macedonia
+ME:Montenegro
+FI:Finland
+SM:San Marino
+MD:Moldova
+BY:Belarus
+BR:Brazil
+BR:Brasil
+RU:Russia
+UA:Ukraine
+GB:United Kingdom
+GB:London
+GB:Scotland
+GB:Edinburgh
+GB:England
+GB:Britain
+GB:Buckingham
+IM:Isle of Man
+IE:Ireland
+IE:Dublin
+DE:Deutschland
+DE:Germany
+DE:Aachen
+DE:Steglitz
+DE:Friedrichshain
+DE:Berghain
+DE:Bundestag
+DE:Grunewald
+DE:Charlottenburg
+DE:Wilmersdorf
+DE:Tempelhof
+DE:Schönefeld
+DE:Reichstag
+DE:Kreuzberg
+DE:Ostsee
+DE:Nordsee
+DE:Wannsee
+DE:Berlin
+DE:Pfalz
+DE:Mannheim
+DE:Heidelberg
+DE:Stuttgart
+DE:Bisingen
+DE:Balingen
+DE:Hechingen
+DE:Swabian
+DE:Schwäbische
+DE:Albtrauf
+DE:München
+DE:Württemberg
+DE:Bayern
+DE:Erfurt
+DE:Leipzig
+DE:Schwerin
+DE:Greifswald
+DE:Dresden
+DE:Nürnberg
+DE:Würzburg
+DE:Munich
+DE:Frankfurt
+DE:Brandenburg
+DE:Hamburg
+DE:Tübingen
+DE:Tubingen
+DE:Köln
+DE:Dortmund
+DE:Düsseldorf
+DE:Cologne
+DE:Saarland
+DE:Saarbrücken
+DE:Konstanz
+DE:Reichenau
+LV:Latvia
+LV:Lettland
+LT:Lithuania
+LT:Litauen
+EE:Estonia
+AU:Australia
+AU:Melbourne
+AU:Perth
+AU:Tasmania
+AU:Tasmanien
+AU:Sydney
+ZA:Capetown
+ZA:Durban
+ZA:Pretoria
+ZA:Kapstadt
+ZA:Johannesburg
+ZA:South Africa
+SZ:Eswatini
+SZ:Swaziland
+RO:Romania
+EC:Ecuador
+MX:Mexico
+CO:Colombia
+US:California
+US:Washington
+US:New York
+US:NYC
+US:Florida
+US:Cape Canaveral
+US:San Francisco
+US:Oakland
+US:San Diego
+US:Los Angeles
+US:Seattle
+US:Chicago
+US:Miami
+US:Dallas
+US:Houston
+US:Las Vegas
+US:Minneapolis
+US:Kansas
+US:Wisconsin
+US:Michigan
+US:Illinois
+US:Boston
+US:Massachusetts
+US:Connecticut
+US:New Jersey
+US:Delaware
+US:Orlando
+US:Detroit
+US:Nevada
+US:Texas
+US:USA
+US:United States
+MN:Mongolia
+CL:Chile
+RW:Rwanda
+TR:Turkey
+KG:Kyrgyzstan
+BT:Bhutan
+NP:Nepal
+BD:Bangladesh
+JO:Jordan
+SY:Syria
+LB:Lebanon
+BG:Bulgaria
+GR:Greece
+GR:Hellas
+KP:North Korea
+KP:DPRK
+KP:DPR Korea
+DZ:Algeria
+TN:Tunisia
+LY:Libya
+MR:Mauritania
+GM:Gambia
+SN:Senegal
+GW:Guinea Bissau
+SL:Sierra Leone
+GN:Guinea
+CI:Ivory Coast
+LR:Liberia
+GH:Ghana
+TG:Togo
+BF:Burkina Faso
+BJ:Benin
+ML:Mali
+NE:Niger
+NG:Nigeria
+SD:Sudan
+CF:Central African
+GQ:Equatorial Guinea
+GA:Gabon
+CG:Congo Brazzaville
+CD:Congo
+UG:Uganda
+KE:Kenya
+SO:Somalia
+ET:Ethiopia
+DJ:Djibouti
+CM:Cameroon
+NA:Namibia
+AO:Angola
+BI:Burundi
+TZ:Tanzania
+ZM:Zambia
+ZW:Zimbabwe
+ZW:Rhodesia
+MZ:Mozambique
+MW:Malawi
+UZ:Uzbekistan
+TJ:Tajikistan
+KZ:Kazakhstan
+HR:Croatia
+SI:Slovenia
+TM:Turkmenistan
+BO:Bolivia
+GG:Guernsey
+CN:China
+CN:Shanghai
+CN:上海市
+CN:Peking
+CN:北京市
+CN:Beijing
+VE:Venezuela
+VG:Virgin Island
+AR:Argentina
+AR:Argentine
+UY:Uruguay
+PY:Paraguay
+SR:Suriname
+GY:Guyana
+NI:Nicaragua
+CR:Costa Rica
+PA:Panama
+HN:Honduras
+BZ:Belize
+PE:Peru
+PT:Portugal
+ER:Eritrea
+IS:Iceland
+IS:Ísland
+AF:Afghanistan
+IN:India
+IN:Indien
+ID:Indonesia
+IQ:Iraq
+IQ:Irak
+IR:Iran
+IR:Persia
+YE:Yemen
+QA:Qatar
+KW:Kuwait
+OM:Oman
+TL:East Timor
+PK:Pakistan
+SA:Saudi Arabia
+KR:South Korea
+AE:United Arab
+AE:UAE
+CY:Cyprus
+DM:Dominica
+HT:Haiti
+HT:Hayti
+CU:Cuba
+PG:New Guinea
+AM:Armenia
+AZ:Azerbaijan
+MT:Malta
+IT:Italy
+IT:Milan
+IT:Mailand
+IT:Neapel
+IT:Palermo
+IT:Genua
+IT:Florenz
+IT:Bologna
+IT:Venezia
+IT:Venedig
+IT:Italien
+JE:Jersey Island
+BH:Bahrain
+JP:Japan
+JP:Tokyo
+JP:東京都
+JP:Fukushima
+JP:Nippon
+JP:Nihon
+PH:Pilipinas
+PH:Filipinas
+PH:Philippines
+MG:Madagascar
+TW:Taiwan
+TW:Taipei
+CV:Cape Verde
+KM:Comoros
+MU:Mauritius
+ST:São Tomé
+ST:Príncipe
+SC:Seychelles
+SC:Seychellen
+MV:Maldives
+SG:Singapore
+LK:Sri Lanka
+KN:Saint Kitts
+KN:Nevis
+AG:Antigua
+AG:Barbuda
+MS:Montserrat
+BS:Bahamas
+TC:Turks Island
+TC:Caicos Island
+BB:Barbados
+VC:Saint Vincent
+GD:Grenada
+LC:Saint Lucia
+JM:Jamaica
+TT:Trinidad
+TT:Tobago
+NZ:New Zealand
+KI:Kiribati
+FJ:Fiji
+FJ:Bligh Island
+MH:Marshall Island
+FM:Micronesia
+NR:Nauru
+PW:Palau
+MC:Monaco
+LI:Liechtenstein
+GI:Gibraltar
+ES:Spain
+ES:Spanien
+ES:Andalusien
+ES:Andalusia
+ES:Canarias
+ES:Granada
+ES:Madrid
+ES:Barcelona
+ES:Córdoba
+ES:Seville
+ES:Málaga
+ES:Bilbao
+ES:Valencia
+ES:España
+ES:Espana
+CA:Canada
+CA:Kanada
+CA:Vancouver
+CA:British Columbia
+CA:Montreal
+CA:Toronto
+CA:Ottawa
+CA:Quebec
+CA:Ontario
+CA:Alberta
+CA:Niagara Falls
+IL:Israel
+IL:Holy Land
+EG:Egypt
+EG:Ägypten
+EG:Aegypten
+SV:El Salvador
+GT:Guatemala
+NU:Niue
+SS:South Sudan
+RS:Serbia
+SB:Solomon Island
+WS:Samoa
+BW:Gaborone
+BW:Botswana
+BW:Botsuana
+SH:Saint Helena
+GS:Sandwich Island
+BM:Bermuda
+IO:British Indian
+TH:Thailand
+XK:Kosovo
+LS:Lesotho
+BN:Brunei
+MY:Malaysia
+LU:Luxembourg
+AI:Anguilla
+VU:Vanuatu
+TV:Tuvalu
+GL:Greenland
+CK:Cook Island
+KY:Cayman Island
+FK:Falkland Island
+PN:Pitcairn Island
+TK:Tokelau
+TO:Tonga
+FR:Réunion
+FR:Strassburg
+FR:Strasbourg
+FR:Straßburg
+FR:Paris
+NL:Netherlands
+NL:Holland
+TD:Chad
+BA:Bosnia
+BA:Herzegovina
+NO:Norway
+NO:Norwegen
+MA:Morocco
+PS:Palestine
+HM:McDonald Island
+HM:Heard Island

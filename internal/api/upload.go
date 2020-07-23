@@ -1,15 +1,15 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -17,15 +17,18 @@ import (
 )
 
 // POST /api/v1/upload/:path
-func Upload(router *gin.RouterGroup, conf *config.Config) {
+func Upload(router *gin.RouterGroup) {
 	router.POST("/upload/:path", func(c *gin.Context) {
+		conf := service.Config()
 		if conf.ReadOnly() || !conf.Settings().Features.Upload {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrReadOnly)
+			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
 			return
 		}
 
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpload)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -35,7 +38,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		f, err := c.MultipartForm()
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -48,7 +51,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 		p := path.Join(conf.ImportPath(), "upload", subPath)
 
 		if err := os.MkdirAll(p, os.ModePerm); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -58,7 +61,7 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 			log.Debugf("upload: saving file %s", txt.Quote(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+				AbortBadRequest(c)
 				return
 			}
 
@@ -94,15 +97,17 @@ func Upload(router *gin.RouterGroup, conf *config.Config) {
 					}
 				}
 
-				c.AbortWithStatusJSON(http.StatusForbidden, ErrUploadNSFW)
+				Abort(c, http.StatusForbidden, i18n.ErrOffensiveUpload)
 				return
 			}
 		}
 
-		elapsed := time.Since(start)
+		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("%d files uploaded in %s", uploaded, elapsed)
+		msg := i18n.Msg(i18n.MsgFilesUploadedIn, uploaded, elapsed)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%d files uploaded in %s", uploaded, elapsed)})
+		log.Info(msg)
+
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
 	})
 }

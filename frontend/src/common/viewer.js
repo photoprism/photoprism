@@ -1,8 +1,39 @@
+/*
+
+Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    to describe our software, run your own server, for educational purposes, but not for
+    offering commercial goods, products, or services without prior written permission.
+    In other words, please ask.
+
+Feel free to send an e-mail to hello@photoprism.org if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+https://docs.photoprism.org/developer-guide/
+
+*/
+
 import PhotoSwipe from "photoswipe";
 import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 import Event from "pubsub-js";
+import stripHtml from "string-strip-html";
 
-const thumbs = window.clientConfig.thumbnails;
+const thumbs = window.__CONFIG__.thumbs;
 
 class Viewer {
     constructor() {
@@ -26,7 +57,7 @@ class Viewer {
 
     show(items, index = 0) {
         if (!Array.isArray(items) || items.length === 0 || index >= items.length) {
-            console.log("Array passed to gallery was empty:", items);
+            console.log("photo list passed to gallery was empty:", items);
             return;
         }
 
@@ -53,16 +84,32 @@ class Viewer {
             counterEl: false,
             arrowEl: true,
             preloaderEl: true,
-            getImageURLForShare: function (button) {
-                const item = gallery.currItem;
+            addCaptionHTMLFn: function(item, captionEl /*, isFake */) {
+                // item      - slide object
+                // captionEl - caption DOM element
+                // isFake    - true when content is added to fake caption container
+                //             (used to get size of next or previous caption)
 
-                if(button.id === "original") {
-                    button.label = button.template.replace("size", item.original_w + " × " + item.original_h);
-                    return item.download_url;
-                } else {
-                    button.label = button.template.replace("size", item[button.id].w + " × " + item[button.id].h);
-                    return item[button.id].src + "?download=1";
+                if(!item.title) {
+                    captionEl.children[0].innerHTML = "";
+                    return false;
                 }
+
+                captionEl.children[0].innerHTML = stripHtml(item.title);
+
+                if(item.playable) {
+                    captionEl.children[0].innerHTML += " <i aria-hidden=\"true\" class=\"v-icon material-icons theme--dark\">movie_creation</i>";
+                }
+
+                if(item.description) {
+                    captionEl.children[0].innerHTML += "<br><span class=\"description\">" + stripHtml(item.description) + "</span>";
+                }
+
+                if(item.playable) {
+                    captionEl.children[0].innerHTML = "<button>" + captionEl.children[0].innerHTML + "</button>";
+                }
+
+                return true;
             },
         };
 
@@ -76,9 +123,12 @@ class Viewer {
 
         this.gallery = gallery;
 
-        gallery.listen("beforeChange", function() {
-            Event.publish("viewer.change", {gallery: gallery, item: gallery.currItem});
-        });
+        gallery.listen("close", () => Event.publish("viewer.pause"));
+        gallery.listen("shareLinkClick", () => Event.publish("viewer.pause"));
+        gallery.listen("initialZoomIn", () => Event.publish("viewer.pause"));
+        gallery.listen("initialZoomOut", () => Event.publish("viewer.pause"));
+
+        gallery.listen("beforeChange", () => Event.publish("viewer.change", {gallery: gallery, item: gallery.currItem}));
 
         gallery.listen("beforeResize", () => {
             realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
@@ -117,12 +167,14 @@ class Viewer {
 
     static mapViewportToImageSize(viewportWidth, viewportHeight) {
         for (let i = 0; i < thumbs.length; i++) {
-            if (thumbs[i].Width >= viewportWidth || thumbs[i].Height >= viewportHeight) {
-                return thumbs[i].Name;
+            let t = thumbs[i];
+
+            if (t.w >= viewportWidth || t.h >= viewportHeight) {
+                return t.size;
             }
         }
 
-        return "fit_720";
+        return "fit_7680";
     }
 }
 

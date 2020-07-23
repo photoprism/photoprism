@@ -10,9 +10,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -21,15 +24,19 @@ import (
 )
 
 // POST /api/v1/zip
-func CreateZip(router *gin.RouterGroup, conf *config.Config) {
+func CreateZip(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDownload)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
+		conf := service.Config()
+
 		if !conf.Settings().Features.Download {
-			c.AbortWithStatusJSON(http.StatusForbidden, ErrFeatureDisabled)
+			AbortFeatureDisabled(c)
 			return
 		}
 
@@ -37,20 +44,22 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		start := time.Now()
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
-		if len(f.Photos) == 0 {
-			log.Error("no photos selected")
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst("no photos selected")})
+		if f.Empty() {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
-		files, err := query.FilesByUUID(f.Photos, 1000, 0)
+		files, err := query.FileSelection(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			Error(c, http.StatusBadRequest, err, i18n.ErrZipFailed)
+			return
+		} else if len(files) == 0 {
+			Abort(c, http.StatusNotFound, i18n.ErrNoFilesForDownload)
 			return
 		}
 
@@ -61,16 +70,14 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
-			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip folder")})
+			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
 		}
 
 		newZipFile, err := os.Create(zipFileName)
 
 		if err != nil {
-			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
 		}
 
@@ -80,20 +87,18 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 		defer zipWriter.Close()
 
 		for _, f := range files {
-			fileName := path.Join(conf.OriginalsPath(), f.FileName)
+			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 			fileAlias := f.ShareFileName()
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
-					log.Error(err)
-					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst("failed to create zip file")})
+					Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 					return
 				}
 				log.Infof("zip: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
 			} else {
-				log.Warnf("zip: %s is missing", txt.Quote(f.FileName))
-				f.FileMissing = true
-				conf.Db().Save(&f)
+				log.Warnf("zip: file %s is missing", txt.Quote(f.FileName))
+				logError("zip", f.Update("FileMissing", true))
 			}
 		}
 
@@ -101,13 +106,19 @@ func CreateZip(router *gin.RouterGroup, conf *config.Config) {
 
 		log.Infof("zip: archive %s created in %s", txt.Quote(zipBaseName), time.Since(start))
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("zip created in %d s", elapsed), "filename": zipBaseName})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})
 }
 
 // GET /api/v1/zip/:filename
-func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
+func DownloadZip(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
+		if InvalidDownloadToken(c) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
+		conf := service.Config()
 		zipBaseName := filepath.Base(c.Param("filename"))
 		zipPath := path.Join(conf.TempPath(), "zip")
 		zipFileName := path.Join(zipPath, zipBaseName)
@@ -123,7 +134,7 @@ func DownloadZip(router *gin.RouterGroup, conf *config.Config) {
 		c.File(zipFileName)
 
 		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("zip: could not remove %s (%s)", txt.Quote(zipFileName), err.Error())
+			log.Errorf("zip: failed removing %s (%s)", txt.Quote(zipFileName), err.Error())
 		}
 	})
 }

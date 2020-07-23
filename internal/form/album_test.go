@@ -8,14 +8,14 @@ import (
 func TestNewAlbum(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var album = struct {
-			AlbumName        string
+			AlbumTitle       string
 			AlbumDescription string
 			AlbumNotes       string
 			AlbumOrder       string
 			AlbumTemplate    string
 			AlbumFavorite    bool
 		}{
-			AlbumName:        "Foo",
+			AlbumTitle:       "Foo",
 			AlbumDescription: "bar",
 			AlbumNotes:       "test notes",
 			AlbumOrder:       "newest",
@@ -29,7 +29,7 @@ func TestNewAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Foo", r.AlbumName)
+		assert.Equal(t, "Foo", r.AlbumTitle)
 		assert.Equal(t, "bar", r.AlbumDescription)
 		assert.Equal(t, "test notes", r.AlbumNotes)
 		assert.Equal(t, "newest", r.AlbumOrder)

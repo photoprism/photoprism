@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/disintegration/imaging"
@@ -27,7 +28,7 @@ func TestResample_Start(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.ResourcesPath(), conf.DisableTensorFlow())
+	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
@@ -60,11 +61,16 @@ func TestThumb_Filename(t *testing.T) {
 
 	t.Run("", func(t *testing.T) {
 		filename, err := thumb.Filename("99988", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
-		assert.Nil(t, err)
-		assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg", filename)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, strings.HasSuffix(filename, "/storage/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
 	})
 	t.Run("hash too short", func(t *testing.T) {
 		_, err := thumb.Filename("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+
 		if err == nil {
 			t.FailNow()
 		}
@@ -173,13 +179,13 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		res, err := thumb.Create(&img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		res, err := thumb.Create(img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil || res == nil {
 			t.Fatal("err should be nil and res should NOT be nil")
 		}
 
-		thumbnail := *res
+		thumbnail := res
 		bounds := thumbnail.Bounds()
 
 		assert.Equal(t, 150, bounds.Dx())
@@ -200,13 +206,13 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		res, err := thumb.Create(&img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		res, err := thumb.Create(img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err == nil || res == nil {
 			t.Fatal("err and res should NOT be nil")
 		}
 
-		thumbnail := *res
+		thumbnail := res
 
 		assert.Equal(t, "resample: width has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()
@@ -226,13 +232,13 @@ func TestThumb_Create(t *testing.T) {
 			t.Errorf("can't open original: %s", err)
 		}
 
-		res, err := thumb.Create(&img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		res, err := thumb.Create(img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err == nil || res == nil {
 			t.Fatal("err and res should NOT be nil")
 		}
 
-		thumbnail := *res
+		thumbnail := res
 
 		assert.Equal(t, "resample: height has an invalid value (-1)", err.Error())
 		bounds := thumbnail.Bounds()

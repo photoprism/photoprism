@@ -1,3 +1,33 @@
+/*
+
+Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    to describe our software, run your own server, for educational purposes, but not for
+    offering commercial goods, products, or services without prior written permission.
+    In other words, please ask.
+
+Feel free to send an e-mail to hello@photoprism.org if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+https://docs.photoprism.org/developer-guide/
+
+*/
+
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import Api from "common/api";
@@ -8,7 +38,7 @@ import Dialogs from "dialog/dialogs";
 import Event from "pubsub-js";
 import GetTextPlugin from "vue-gettext";
 import Log from "common/log";
-import PhotoPrism from "photoprism.vue";
+import PhotoPrism from "app.vue";
 import Router from "vue-router";
 import Routes from "routes";
 import {config, session} from "session";
@@ -21,12 +51,15 @@ import VueLuxon from "vue-luxon";
 import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
+import VueModal from "vue-js-modal";
 import Hls from "hls.js";
+import {$gettext, Mount} from "common/vm";
 
 // Initialize helpers
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.get("public");
+const isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
 // HTTP Live Streaming (video support)
 window.Hls = Hls;
@@ -41,7 +74,7 @@ Vue.prototype.$log = Log;
 Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
-Vue.prototype.$isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+Vue.prototype.$isMobile = isMobile;
 
 // Register Vuetify
 Vue.use(Vuetify, {"theme": config.theme});
@@ -54,11 +87,13 @@ Vue.use(GetTextPlugin, {
     translations: config.translations,
     silent: true, // !config.values.debug,
     defaultLanguage: Vue.config.language,
+    autoAddKeyAttributes: true,
 });
 
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
+Vue.use(VueModal, {dynamic: true, dynamicDefaults: {clickToClose: true}});
 Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
@@ -96,17 +131,21 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-    if (to.meta.title) {
-        config.page.title = to.meta.title;
-        window.document.title = "PhotoPrism: " + to.meta.title;
+    if (to.meta.title && config.values.siteTitle !== to.meta.title) {
+        config.page.title = $gettext(to.meta.title);
+        window.document.title = config.values.siteTitle + ": " + config.page.title;
     } else {
-        config.page.title = "";
-        window.document.title = "PhotoPrism";
+        config.page.title = config.values.siteTitle;
+        window.document.title = config.values.siteTitle + ": " + config.values.siteCaption;
     }
 });
 
-// Run app
-new Vue({
-    router,
-    render: h => h(PhotoPrism),
-}).$mount("#photoprism");
+// Pull client config every 10 minutes in case push fails (except on mobile to save battery).
+if (isMobile) {
+    document.body.classList.add("mobile");
+} else {
+    setInterval(() => config.update(), 600000);
+}
+
+// Start application.
+Mount(Vue, PhotoPrism, router);

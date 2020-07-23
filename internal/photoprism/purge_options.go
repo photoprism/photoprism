@@ -1,8 +1,10 @@
 package photoprism
 
+import "github.com/photoprism/photoprism/pkg/fs"
+
 type PurgeOptions struct {
 	Path   string
-	Ignore map[string]bool
+	Ignore fs.Done
 	Dry    bool
 	Hard   bool
 }

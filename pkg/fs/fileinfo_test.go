@@ -92,3 +92,25 @@ func TestFileInfos_Swap(t *testing.T) {
 	assert.Equal(t, "CATYELLOW.jpg", infos[0].Name)
 	assert.Equal(t, "test.jpg", infos[1].Name)
 }
+
+func TestFileInfos_Len(t *testing.T) {
+	infos := FileInfos{
+		{Name: "test.jpg", Abs: "/test.jpg", Size: 10990, Dir: false},
+		{Name: "CATYELLOW.jpg", Abs: "/CATYELLOW.jpg", Size: 70790, Dir: false},
+		{Name: "directory", Abs: "/directory", Size: 256, Dir: true},
+		{Name: "linked", Abs: "/linked", Size: 256, Dir: true},
+	}
+
+	assert.Equal(t, 4, infos.Len())
+}
+
+func TestFileInfos_Abs(t *testing.T) {
+	infos := FileInfos{
+		{Name: "test.jpg", Abs: "/test.jpg", Size: 10990, Dir: false},
+		{Name: "CATYELLOW.jpg", Abs: "/CATYELLOW.jpg", Size: 70790, Dir: false},
+		{Name: "directory", Abs: "/directory", Size: 256, Dir: true},
+		{Name: "linked", Abs: "/linked", Size: 256, Dir: true},
+	}
+
+	assert.Equal(t, []string{"/test.jpg", "/CATYELLOW.jpg", "/directory", "/linked"}, infos.Abs())
+}

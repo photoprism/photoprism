@@ -4017,9 +4017,9 @@ var rules = LabelRules{
 		Categories: []string{"animal"},
 	},
 	"packet": {
-		Label:      "package",
-		Threshold:  0.000000,
-		Priority:   -1,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
 		Categories: []string{},
 	},
 	"paddle": {
@@ -4326,7 +4326,7 @@ var rules = LabelRules{
 		Label:      "plate",
 		Threshold:  0.180000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"food"},
 	},
 	"plate rack": {
 		Label:      "",

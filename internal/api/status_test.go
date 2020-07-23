@@ -9,8 +9,8 @@ import (
 
 func TestGetStatus(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		GetStatus(router, conf)
+		app, router, _ := NewApiTest()
+		GetStatus(router)
 		r := PerformRequest(app, "GET", "/api/v1/status")
 		val := gjson.Get(r.Body.String(), "status")
 		assert.Equal(t, "operational", val.String())

@@ -1,0 +1,22 @@
+#photoprism-help h3 {
+    margin: 1em 0 1em 0;
+    padding: 0;
+}
+
+#photoprism-help p {
+    margin: 0 0 1em 0;
+    padding: 0;
+}
+
+#photoprism p a.highlight,
+#photoprism #photoprism-help p a{
+    color: #222;
+    text-decoration: none;
+    text-shadow: -3px 0px 3px rgba(84, 226, 255, 0.15), 3px 0px 3px rgba(84, 226, 255, 0.15), 6px 0px 6px rgba(84, 226, 255, 0.15), -6px 0px 6px rgba(84, 226, 255, 0.15);
+    /* text-shadow: -3px 0px 3px rgba(255, 255, 0, 0.5), 3px 0px 3px rgba(255, 255, 0, 0.5), 6px 0px 6px rgba(255, 255, 0, 0.5), -6px 0px 6px rgba(255, 255, 0, 0.5); */
+}
+
+#photoprism .v-alert a {
+    color: inherit;
+    text-decoration: none;
+}

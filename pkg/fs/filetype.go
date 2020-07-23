@@ -36,6 +36,11 @@ const (
 type FileExtensions map[string]FileType
 type TypeExtensions map[FileType][]string
 
+const (
+	YamlExt = ".yml"
+	JpegExt = ".jpg"
+)
+
 // FileExt contains the filename extensions of file formats known to PhotoPrism.
 var FileExt = FileExtensions{
 	".bmp":  TypeBitmap,
@@ -43,6 +48,7 @@ var FileExt = FileExtensions{
 	".tif":  TypeTiff,
 	".tiff": TypeTiff,
 	".png":  TypePng,
+	".pn":   TypePng,
 	".crw":  TypeRaw,
 	".cr2":  TypeRaw,
 	".nef":  TypeRaw,
@@ -106,6 +112,24 @@ var FileExt = FileExtensions{
 	".json": TypeJson,
 }
 
+func (m FileExtensions) Known(name string) bool {
+	if name == "" {
+		return false
+	}
+
+	ext := strings.ToLower(filepath.Ext(name))
+
+	if ext == "" {
+		return false
+	}
+
+	if _, ok := m[ext]; ok {
+		return true
+	}
+
+	return false
+}
+
 func (m FileExtensions) TypeExt() TypeExtensions {
 	result := make(TypeExtensions)
 
@@ -125,7 +149,7 @@ var TypeExt = FileExt.TypeExt()
 
 // Find returns the first filename with the same base name and a given type.
 func (t FileType) Find(fileName string, stripSequence bool) string {
-	base := Base(fileName, stripSequence)
+	base := BasePrefix(fileName, stripSequence)
 	dir := filepath.Dir(fileName)
 
 	prefix := filepath.Join(dir, base)
@@ -159,4 +183,48 @@ func GetFileType(fileName string) FileType {
 	}
 
 	return result
+}
+
+// FindFirst searches a list of directories for the first file with the same base name and a given type.
+func (t FileType) FindFirst(fileName string, dirs []string, baseDir string, stripSequence bool) string {
+	fileBase := BasePrefix(fileName, stripSequence)
+	fileBaseLower := strings.ToLower(fileBase)
+	fileBaseUpper := strings.ToUpper(fileBase)
+
+	fileDir := filepath.Dir(fileName)
+	search := append([]string{fileDir}, dirs...)
+
+	for _, ext := range TypeExt[t] {
+		lastDir := ""
+
+		for _, dir := range search {
+			if dir == "" || dir == lastDir {
+				continue
+			}
+
+			lastDir = dir
+
+			if dir != fileDir {
+				if filepath.IsAbs(dir) {
+					dir = filepath.Join(dir, RelName(fileDir, baseDir))
+				} else {
+					dir = filepath.Join(fileDir, dir)
+				}
+			}
+
+			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
+				return filepath.Join(dir, info.Name())
+			}
+
+			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
+				return filepath.Join(dir, info.Name())
+			}
+
+			if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
+				return filepath.Join(dir, info.Name())
+			}
+		}
+	}
+
+	return ""
 }

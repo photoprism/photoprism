@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -52,11 +53,21 @@ func TestLabel_SetName(t *testing.T) {
 	})
 }
 
-func TestLabel_FirstOrCreate(t *testing.T) {
+func TestFirstOrCreateLabel(t *testing.T) {
 	label := LabelFixtures.Get("flower")
-	r := label.FirstOrCreate()
-	assert.Equal(t, "Flower", r.LabelName)
-	assert.Equal(t, "flower", r.LabelSlug)
+	result := FirstOrCreateLabel(&label)
+
+	if result == nil {
+		t.Fatal("result should not be nil")
+	}
+
+	if result.LabelName != label.LabelName {
+		t.Errorf("LabelName should be the same: %s %s", result.LabelName, label.LabelName)
+	}
+
+	if result.LabelSlug != label.LabelSlug {
+		t.Errorf("LabelName should be the same: %s %s", result.LabelSlug, label.LabelSlug)
+	}
 }
 
 func TestLabel_Update(t *testing.T) {
@@ -69,7 +80,8 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "customslug", Label.CustomSlug)
 		assert.Equal(t, "label", Label.LabelName)
 
-		err := Label.Update(*classifyLabel)
+		err := Label.UpdateClassify(*classifyLabel)
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -88,7 +100,7 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "", Label.CustomSlug)
 		assert.Equal(t, "label12", Label.LabelName)
 
-		err := Label.Update(*classifyLabel)
+		err := Label.UpdateClassify(*classifyLabel)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -108,7 +120,7 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "labelslug2", Label.CustomSlug)
 		assert.Equal(t, "label34", Label.LabelName)
 
-		err := Label.Update(*classifyLabel)
+		err := Label.UpdateClassify(*classifyLabel)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -118,5 +130,92 @@ func TestLabel_Update(t *testing.T) {
 		assert.Equal(t, "classify", Label.CustomSlug)
 		assert.Equal(t, "Classify", Label.LabelName)
 
+	})
+}
+
+func TestLabel_Save(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		label := NewLabel("Unicorn2000", 5)
+		initialDate := label.UpdatedAt
+		err := label.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		afterDate := label.UpdatedAt
+
+		assert.True(t, afterDate.After(initialDate))
+
+	})
+}
+
+func TestLabel_Delete(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		label := NewLabel("LabelToBeDeleted", 5)
+		err := label.Save()
+		assert.False(t, label.Deleted())
+
+		var labels Labels
+
+		if err := Db().Where("label_name = ?", label.LabelName).Find(&labels).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, labels, 1)
+
+		err = label.Delete()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := Db().Where("label_name = ?", label.LabelName).Find(&labels).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, labels, 0)
+	})
+}
+
+func TestLabel_Restore(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		label := &Label{DeletedAt: &deleteTime, LabelName: "ToBeRestored"}
+		err := label.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, label.Deleted())
+
+		err = label.Restore()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, label.Deleted())
+	})
+}
+
+func TestFindLabel(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		label := &Label{LabelSlug: "find-me-label", LabelName: "Find Me"}
+		err := label.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		r := FindLabel("find-me-label")
+		assert.Equal(t, "Find Me", r.LabelName)
+	})
+	t.Run("nil", func(t *testing.T) {
+		r := FindLabel("XXX")
+		assert.Nil(t, r)
+	})
+
+}
+
+func TestLabel_Links(t *testing.T) {
+	t.Run("1 result", func(t *testing.T) {
+		label := LabelFixtures.Get("flower")
+		links := label.Links()
+		assert.Equal(t, "6jxf3jfn2k", links[0].LinkToken)
 	})
 }

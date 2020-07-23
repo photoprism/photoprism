@@ -1,74 +1,60 @@
-PhotoPrism: Browse your life in pictures
+PhotoPrism: Browse Your Life in Pictures
 ========================================
 
-[![License: GPL](https://img.shields.io/badge/license-GPL-blue.svg)][license]
+[![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
 [![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
-[![Documentation](https://readthedocs.org/projects/photoprism-docs/badge/?version=latest&style=flat)][docs]
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
+[![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@browseyourlife-00acee.svg)][twitter]
 
-PhotoPrism is a server-based application for browsing, organizing and sharing your personal photo collection.
+PhotoPrism™ is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
 Say goodbye to solutions that force you to upload your visual memories to the cloud.
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
-More screenshots: https://github.com/photoprism/photoprism/wiki/Screenshots
+## What to expect... ##
 
-## What to expect ##
-
-* Clearly structured Web interface for browsing, organizing and sharing your personal photo collection
-* Import everything without worrying about duplicates or [RAW to JPEG conversion][wiki:raw]
-* [Geocoding][wiki:geocoding], [XMP support][wiki:xmp] and [automated tagging][wiki:classification] 
+* clearly structured Web interface for browsing, organizing and sharing your personal photo collection
+* import everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/)
+* [geocoding](https://docs.photoprism.org/developer-guide/metadata/geocoding/), [XMP support](https://docs.photoprism.org/developer-guide/metadata/xmp/) and [automated tagging](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow
+
+## Try our demo ##
+
+You're welcome to play with the demo at [demo.photoprism.org](https://demo.photoprism.org).
+Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
 ## For the early birds ##
 
-You're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org).
-Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) - 
+all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
-Step-by-step [installation instructions](https://docs.photoprism.org/en/latest/getting-started/) can be found
-in our [User Guide](https://docs.photoprism.org/en/latest/).
-Developers can skip this and move on to the [Developer Guide](https://docs.photoprism.org/en/latest/developer-guide/).
+Next, you'll have to [index or import](https://docs.photoprism.org/user-guide/library/import-vs-index/) 
+existing files. Please be patient, this will take a while depending on the size of your library.
 
-All you need is a Web browser and [Docker](https://store.docker.com/search?type=edition&offering=community)
-to run the server. It is available for Mac, Linux and Windows.
+Already indexed photos can be browsed in [Photos](https://docs.photoprism.org/user-guide/organize/browse/) 
+while videos show up in [Videos](https://docs.photoprism.org/user-guide/organize/video/).
+Counts are continuously updated in the navigation.
 
-There is also a [pre-installed Raspberry Pi image here](https://github.com/guysoft/PhotoPrismPi).
+If photos are missing, they might be in [review](https://docs.photoprism.org/user-guide/organize/review/) due to low quality or missing metadata.
+You can turn this and other features off in [Settings](https://docs.photoprism.org/user-guide/settings/ui/), depending on
+your specific use case.
 
-Note that this is work in progress. We do our best to provide a complete, stable version.
-If you have a question, don't hesitate to ask in our [help forum][help] 
-or [contact us via email](mailto:hello@photoprism.org).
-
-## Why this has to be free software ##
-
-The development of every commercial product is focused on monetization.
-We've [built similar apps more than once](https://github.com/photoprism/photoprism/wiki/Mediencenter) 
-and every single time the constraints of working
-in a profit-oriented corporate environment were an impediment.
-
-We are sure we can do better with only a fraction of the budget. Simplicity - the art of maximizing the 
-amount of work not done - can be very powerful.
-Go itself is a [great example](https://talks.golang.org/2015/simplicity-is-complicated.slide).
-
-Our long-term goal is to become an open platform for machine 
-learning [research](https://github.com/photoprism/photoprism/wiki/Research) based on real-world photo collections.
-We're already in contact with data scientists who like our idea.
-
-## How to contribute ##
+## Contributions ##
 
 We welcome contributions of any kind. If you have a bug or an idea, read our 
-[guide](https://docs.photoprism.org/en/latest/developer-guide/) before opening an issue.
+[guide](https://docs.photoprism.org/developer-guide/) before opening an issue.
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
 
-Please follow us on [Twitter][twitter] and join our [developers mailing list](https://groups.google.com/a/photoprism.org/forum/#!forum/developers) 
-to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
+Follow us on [Twitter][twitter] to receive regular project updates and discuss development 
+related topics. Don't be afraid to ask stupid questions.
 
-## Free beer ##
+## Funding ##
 
 This project is about freedom and privacy but not necessarily about free beer. We feel like it
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
@@ -78,49 +64,42 @@ It's fair to say that users with basic needs will have no monthly costs. We were
 per dollar than commercial projects and learned a lot on top of it.
 An earlier version of this document contained a rough number, but at the end of the day it doesn't matter.
 
-Basically all established OSS companies make 90% of their revenue with enterprise customers, that's why private users 
+Most established OSS companies make the bulk of their revenue with enterprise customers, that's why private users 
 and single developers typically get everything for free. Obviously that doesn't work if you have only private users
-that refuse to share their data on top of it. In our opinion it would have made sense to finance this like all 
-public infrastructure, our expenses are peanuts compared to building a road.
+that refuse to share their data on top of it.
 
 Looking forward, specific solutions for funding development and maintenance could be to...
 
   - sell a tested & supported version in the app store while our contributors and other developers can 
     continue to use Docker or build from source
+  - provide additional features to users who support us financially, maybe with a different license similar to GitLab
+  - develop a one-click solution for private cloud hosting together with selected providers we trust
   - offer a geodata, public events and maps subscription since OpenStreetMap doesn't want us to use their development 
     API for production, which is perfectly fine
 
 ## Donations ##
 
-You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
-especially if you need help with using our software. They will match every donation in the first year.
+You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
+especially if you have feature requests or need help with using our software.
+They will match every donation in the first year.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/photoprism). 
 Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
 [contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
-have to charge for a geodata subscription later.
+have to charge for a geodata subscription and/or additional features later (see [tiers](https://github.com/sponsors/lastzero/dashboard/tiers)).
 
-Also please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project, 
-it provides additional motivation to keep going.
+Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
+It provides additional motivation to keep going.
 
 Ideas backed by a sponsor are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 Thank you very much! <3
 
-## Public and corporate sponsorship ##
+## Trademarks ##
 
-We spent weeks asking organizations like [The Prototype Fund](https://prototypefund.de/en/) for help 
-and also tried to cooperate with companies like Mapbox and Cewe.
-You would think it's easier to get a few dollars with [our background](http://docs.photoprism.org/en/latest/team/) 
-and [working code](https://demo.photoprism.org/).
-
-If any of those organizations changes their mind, they are welcome to [reach out to us](mailto:hello@photoprism.org).
-
-## Disclaimer ##
-
-We'd like to remind everyone that we are not full-time marketing specialists but developers who work a lot and 
-enjoy a bit of sarcasm from time to time. Please let us know when there is an issue with our "nuance and tone" 
-and we'll find a solution.
+PhotoPrism™ is a registered trademark of Michael Mayer. You may use it as required to describe 
+our software, run your own server, for educational purposes, but not for offering commercial 
+goods, products, or services without prior written permission. In other words, please ask.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
@@ -133,7 +112,7 @@ and we'll find a solution.
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://travis-ci.org/photoprism/photoprism
-[docs]: https://docs.photoprism.org/en/latest/
+[docs]: https://docs.photoprism.org/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
 [twitter]: https://twitter.com/browseyourlife

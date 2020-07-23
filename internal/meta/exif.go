@@ -3,45 +3,53 @@ package meta
 import (
 	"fmt"
 	"math"
-	"path"
 	"path/filepath"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/dsoprea/go-exif/v2"
-	"github.com/dsoprea/go-exif/v2/common"
+	"github.com/dsoprea/go-exif/v3"
+	exifcommon "github.com/dsoprea/go-exif/v3/common"
+	heicexif "github.com/dsoprea/go-heic-exif-extractor"
 	"github.com/dsoprea/go-jpeg-image-structure"
 	"github.com/dsoprea/go-png-image-structure"
+	"github.com/dsoprea/go-tiff-image-structure"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
+var exifIfdMapping *exifcommon.IfdMapping
+var exifTagIndex = exif.NewTagIndex()
+
 const DateTimeZero = "0000:00:00 00:00:00"
+
+func init() {
+	exifIfdMapping = exifcommon.NewIfdMapping()
+
+	if err := exifcommon.LoadStandardIfds(exifIfdMapping); err != nil {
+		log.Errorf("metadata: %s", err.Error())
+	}
+}
 
 // ValidDateTime returns true if a date string looks valid and is not zero.
 func ValidDateTime(s string) bool {
 	return len(s) == len(DateTimeZero) && s != DateTimeZero
 }
 
-// SanitizeString removes unwanted character from an exif value string.
-func SanitizeString(value string) string {
-	value = strings.TrimSpace(value)
-	return strings.Replace(value, "\"", "", -1)
-}
-
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func Exif(fileName string) (data Data, err error) {
-	err = data.Exif(fileName)
+func Exif(fileName string, fileType fs.FileType) (data Data, err error) {
+	err = data.Exif(fileName, fileType)
 
 	return data, err
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func (data *Data) Exif(fileName string) (err error) {
+func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("%s (exif metadata)", e)
+			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, txt.Quote(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 
@@ -49,12 +57,12 @@ func (data *Data) Exif(fileName string) (err error) {
 	var rawExif []byte
 	var parsed bool
 
-	fileExtension := strings.ToLower(path.Ext(fileName))
+	logName := txt.Quote(filepath.Base(fileName))
 
-	if fileExtension == ".jpg" || fileExtension == ".jpeg" {
-		jmp := jpegstructure.NewJpegMediaParser()
+	if fileType == fs.TypeJpeg {
+		jpegMp := jpegstructure.NewJpegMediaParser()
 
-		sl, err := jmp.ParseFile(fileName)
+		sl, err := jpegMp.ParseFile(fileName)
 
 		if err != nil {
 			return err
@@ -63,18 +71,20 @@ func (data *Data) Exif(fileName string) (err error) {
 		_, rawExif, err = sl.Exif()
 
 		if err != nil {
-			if err.Error() == "no exif data" {
-				return fmt.Errorf("no exif data in %s", txt.Quote(filepath.Base(fileName)))
+			if strings.HasPrefix(err.Error(), "no exif header") {
+				return fmt.Errorf("metadata: no exif header in %s (parse jpeg)", logName)
+			} else if strings.HasPrefix(err.Error(), "no exif data") {
+				log.Debugf("metadata: failed parsing %s, starting brute-force search (parse jpeg)", logName)
 			} else {
-				log.Warnf("exif: %s (parse jpeg)", err)
+				log.Warnf("metadata: %s in %s, starting brute-force search (parse jpeg)", err, logName)
 			}
 		} else {
 			parsed = true
 		}
-	} else if fileExtension == ".png" {
-		pmp := pngstructure.NewPngMediaParser()
+	} else if fileType == fs.TypePng {
+		pngMp := pngstructure.NewPngMediaParser()
 
-		cs, err := pmp.ParseFile(fileName)
+		cs, err := pngMp.ParseFile(fileName)
 
 		if err != nil {
 			return err
@@ -84,9 +94,49 @@ func (data *Data) Exif(fileName string) (err error) {
 
 		if err != nil {
 			if err.Error() == "file does not have EXIF" {
-				return fmt.Errorf("no exif data in %s", txt.Quote(filepath.Base(fileName)))
+				return fmt.Errorf("metadata: no exif header in %s (parse png)", logName)
 			} else {
-				log.Warnf("exif: %s (parse png)", err)
+				log.Warnf("metadata: %s in %s (parse png)", err, logName)
+			}
+		} else {
+			parsed = true
+		}
+	} else if fileType == fs.TypeHEIF {
+		heicMp := heicexif.NewHeicExifMediaParser()
+
+		cs, err := heicMp.ParseFile(fileName)
+
+		if err != nil {
+			return err
+		}
+
+		_, rawExif, err = cs.Exif()
+
+		if err != nil {
+			if err.Error() == "file does not have EXIF" {
+				return fmt.Errorf("metadata: no exif header in %s (parse heic)", logName)
+			} else {
+				log.Warnf("metadata: %s in %s (parse heic)", err, logName)
+			}
+		} else {
+			parsed = true
+		}
+	} else if fileType == fs.TypeTiff {
+		tiffMp := tiffstructure.NewTiffMediaParser()
+
+		cs, err := tiffMp.ParseFile(fileName)
+
+		if err != nil {
+			return err
+		}
+
+		_, rawExif, err = cs.Exif()
+
+		if err != nil {
+			if err.Error() == "file does not have EXIF" {
+				return fmt.Errorf("metadata: no exif header in %s (parse tiff)", logName)
+			} else {
+				log.Warnf("metadata: %s in %s (parse tiff)", err, logName)
 			}
 		} else {
 			parsed = true
@@ -100,65 +150,42 @@ func (data *Data) Exif(fileName string) (err error) {
 		rawExif, err = exif.SearchFileAndExtractExif(fileName)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("metadata: no exif header in %s (search and extract)", logName)
 		}
-	}
-
-	// Enumerate tags in EXIF block.
-	ti := exif.NewTagIndex()
-
-	if err := exif.LoadStandardTags(ti); err != nil {
-		return err
 	}
 
 	if data.All == nil {
 		data.All = make(map[string]string)
 	}
 
-	visitor := func(fqIfdPath string, ifdIndex int, ite *exif.IfdTagEntry) (err error) {
-		tagId := ite.TagId()
-		tagType := ite.TagType()
+	// Enumerate tags in EXIF block.
+	opt := exif.ScanOptions{}
+	entries, _, err := exif.GetFlatExifData(rawExif, &opt)
 
-		ifdPath, err := im.StripPathPhraseIndices(fqIfdPath)
-
-		if err != nil {
-			return nil
+	for _, entry := range entries {
+		if entry.TagName != "" && entry.Formatted != "" {
+			data.All[entry.TagName] = strings.Split(entry.FormattedFirst, "\x00")[0]
 		}
-
-		it, err := ti.Get(ifdPath, tagId)
-
-		if err != nil {
-			return nil
-		}
-
-		valueString := ""
-
-		if tagType != exifcommon.TypeUndefined {
-			valueString, err = ite.FormatFirst()
-
-			if err != nil {
-				log.Errorf("exif: %s", err.Error())
-
-				return nil
-			}
-
-			if it.Name != "" && valueString != "" {
-				data.All[it.Name] = strings.Split(valueString, "\x00")[0]
-			}
-		}
-
-		return nil
-	}
-
-	_, err = exif.Visit(exifcommon.IfdStandard, im, ti, rawExif, visitor)
-
-	if err != nil {
-		return err
 	}
 
 	tags := data.All
 
-	// Cherry-pick the values that we care about.
+	_, index, err := exif.Collect(exifIfdMapping, exifTagIndex, rawExif)
+
+	if err != nil {
+		log.Debugf("metadata: %s in %s (exif collect)", err.Error(), logName)
+	} else {
+		if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
+			if gi, err := ifd.GpsInfo(); err == nil {
+				data.Lat = float32(gi.Latitude.Decimal())
+				data.Lng = float32(gi.Longitude.Decimal())
+				data.Altitude = gi.Altitude
+			} else {
+				log.Debugf("exif: %s in %s (gps info)", err, logName)
+				log.Infof("metadata: failed parsing gps coordinates in %s (exif)", logName)
+			}
+		}
+	}
 
 	if value, ok := tags["Artist"]; ok {
 		data.Artist = SanitizeString(value)
@@ -253,24 +280,24 @@ func (data *Data) Exif(fileName string) (err error) {
 	}
 
 	if value, ok := tags["ImageUniqueID"]; ok {
-		data.UniqueID = value
+		data.DocumentID = SanitizeUID(value)
 	}
 
-	if value, ok := tags["ImageWidth"]; ok {
+	if value, ok := tags["PixelXDimension"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Width = i
 		}
-	} else if value, ok := tags["PixelXDimension"]; ok {
+	} else if value, ok := tags["ImageWidth"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Width = i
 		}
 	}
 
-	if value, ok := tags["ImageLength"]; ok {
+	if value, ok := tags["PixelYDimension"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Height = i
 		}
-	} else if value, ok := tags["PixelYDimension"]; ok {
+	} else if value, ok := tags["ImageLength"]; ok {
 		if i, err := strconv.Atoi(value); err == nil {
 			data.Height = i
 		}
@@ -282,22 +309,6 @@ func (data *Data) Exif(fileName string) (err error) {
 		}
 	} else {
 		data.Orientation = 1
-	}
-
-	_, index, err := exif.Collect(im, ti, rawExif)
-
-	if err != nil {
-		return err
-	}
-
-	if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdPathStandardGps); err == nil {
-		if gi, err := ifd.GpsInfo(); err == nil {
-			data.Lat = float32(gi.Latitude.Decimal())
-			data.Lng = float32(gi.Longitude.Decimal())
-			data.Altitude = gi.Altitude
-		} else {
-			log.Warnf("exif: %s (gps info)", err)
-		}
 	}
 
 	if data.Lat != 0 && data.Lng != 0 {
@@ -315,6 +326,8 @@ func (data *Data) Exif(fileName string) (err error) {
 
 	if value, ok := tags["DateTimeOriginal"]; ok && ValidDateTime(value) {
 		takenAt = value
+	} else if value, ok := tags["DateTimeDigitized"]; ok && ValidDateTime(value) {
+		takenAt = value
 	} else if value, ok := tags["CreateDate"]; ok && ValidDateTime(value) {
 		takenAt = value
 	} else if value, ok := tags["DateTime"]; ok && ValidDateTime(value) {
@@ -322,30 +335,40 @@ func (data *Data) Exif(fileName string) (err error) {
 	}
 
 	if ValidDateTime(takenAt) {
+		takenAt = strings.ReplaceAll(takenAt, "/", ":")
+		takenAt = strings.ReplaceAll(takenAt, "-", ":")
+
 		if taken, err := time.Parse("2006:01:02 15:04:05", takenAt); err == nil {
 			data.TakenAtLocal = taken.Round(time.Second)
 			data.TakenAt = data.TakenAtLocal
 
 			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-				log.Warnf("exif: unknown time zone %s", data.TimeZone)
+				log.Warnf("metadata: unknown time zone %s in %s (exif)", data.TimeZone, logName)
 			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", takenAt, loc); err == nil {
 				data.TakenAt = tl.Round(time.Second).UTC()
 			} else {
-				log.Errorf("exif: %s", err.Error()) // this should never happen
+				log.Errorf("metadata: %s in %s (exif time)", err.Error(), logName) // this should never happen
 			}
 		} else {
-			log.Warnf("exif: invalid time %s", takenAt)
+			log.Warnf("metadata: invalid time %s in %s (exif)", takenAt, logName)
 		}
 	}
 
 	if value, ok := tags["Flash"]; ok {
 		if i, err := strconv.Atoi(value); err == nil && i&1 == 1 {
+			data.AddKeyword(KeywordFlash)
 			data.Flash = true
 		}
 	}
 
 	if value, ok := tags["ImageDescription"]; ok {
-		data.Description = SanitizeString(value)
+		data.AutoAddKeywords(value)
+		data.Description = SanitizeDescription(value)
+	}
+
+	if value, ok := tags["ProjectionType"]; ok {
+		data.AddKeyword(KeywordPanorama)
+		data.Projection = SanitizeString(value)
 	}
 
 	data.All = tags

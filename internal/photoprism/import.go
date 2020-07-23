@@ -6,7 +6,9 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -41,10 +43,15 @@ func (imp *Import) originalsPath() string {
 	return imp.conf.OriginalsPath()
 }
 
+// thumbPath returns the thumbnails cache path as string.
+func (imp *Import) thumbPath() string {
+	return imp.conf.ThumbPath()
+}
+
 // Start imports media files from a directory and converts/indexes them as needed.
-func (imp *Import) Start(opt ImportOptions) map[string]bool {
+func (imp *Import) Start(opt ImportOptions) fs.Done {
 	var directories []string
-	done := make(map[string]bool)
+	done := make(fs.Done)
 	ind := imp.index
 	importPath := opt.Path
 
@@ -53,12 +60,12 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		return done
 	}
 
-	if err := mutex.Worker.Start(); err != nil {
+	if err := mutex.MainWorker.Start(); err != nil {
 		event.Error(fmt.Sprintf("import: %s", err.Error()))
 		return done
 	}
 
-	defer mutex.Worker.Stop()
+	defer mutex.MainWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("import: %s", err.Error())
@@ -78,26 +85,31 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		}()
 	}
 
+	filesImported := 0
 	indexOpt := IndexOptionsAll()
-	ignore := fs.NewIgnoreList(IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(importPath); err != nil {
 		log.Infof("import: %s", err)
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`import: ignored "%s"`, fs.RelativeName(fileName, importPath))
+		log.Infof(`import: ignored "%s"`, fs.RelName(fileName, importPath))
 	}
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
+		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			log.Errorf("import: %s", strings.Replace(err.Error(), importPath, "", 1))
+			return godirwalk.SkipNode
+		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
 			defer func() {
-				if err := recover(); err != nil {
-					log.Errorf("import: %s [panic]", err)
+				if r := recover(); r != nil {
+					log.Errorf("import: %s (panic)\nstack: %s", r, debug.Stack())
 				}
 			}()
 
-			if mutex.Worker.Canceled() {
+			if mutex.MainWorker.Canceled() {
 				return errors.New("import canceled")
 			}
 
@@ -111,16 +123,35 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 			}
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
+				if isDir && result != filepath.SkipDir {
+					folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), nil)
+
+					if err := folder.Create(); err == nil {
+						log.Infof("import: added folder /%s", folder.Path)
+					}
+				}
+
 				return result
+			}
+
+			done[fileName] = fs.Found
+
+			if !fs.IsMedia(fileName) {
+				return nil
 			}
 
 			mf, err := NewMediaFile(fileName)
 
-			if err != nil || !mf.IsMedia() {
+			if err != nil {
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(imp.conf.Settings().Index.Group)
+			if mf.FileSize() == 0 {
+				log.Infof("import: skipped empty file %s", txt.Quote(mf.BaseName()))
+				return nil
+			}
+
+			related, err := mf.RelatedFiles(imp.conf.Settings().Index.Sequences)
 
 			if err != nil {
 				event.Error(fmt.Sprintf("import: %s", err.Error()))
@@ -131,15 +162,16 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if done[f.FileName()] {
+				if f.FileSize() == 0 || done[f.FileName()].Processed() {
 					continue
 				}
 
 				files = append(files, f)
-				done[f.FileName()] = true
+				filesImported++
+				done[f.FileName()] = fs.Processed
 			}
 
-			done[fileName] = true
+			done[fileName] = fs.Processed
 
 			related.Files = files
 
@@ -169,9 +201,9 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
-					log.Errorf("import: could not delete empty folder %s (%s)", txt.Quote(fs.RelativeName(directory, importPath)), err)
+					log.Errorf("import: failed deleting empty folder %s (%s)", txt.Quote(fs.RelName(directory, importPath)), err)
 				} else {
-					log.Infof("import: deleted empty folder %s", txt.Quote(fs.RelativeName(directory, importPath)))
+					log.Infof("import: deleted empty folder %s", txt.Quote(fs.RelName(directory, importPath)))
 				}
 			}
 		}
@@ -185,7 +217,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 			}
 
 			if err := os.Remove(file); err != nil {
-				log.Errorf("import: could not remove %s (%s)", txt.Quote(fs.RelativeName(file, importPath)), err.Error())
+				log.Errorf("import: failed removing %s (%s)", txt.Quote(fs.RelName(file, importPath)), err.Error())
 			}
 		}
 	}
@@ -194,7 +226,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 		log.Error(err.Error())
 	}
 
-	if len(done) > 0 {
+	if filesImported > 0 {
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("import: %s", err)
 		}
@@ -207,7 +239,7 @@ func (imp *Import) Start(opt ImportOptions) map[string]bool {
 
 // Cancel stops the current import operation.
 func (imp *Import) Cancel() {
-	mutex.Worker.Cancel()
+	mutex.MainWorker.Cancel()
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
@@ -218,7 +250,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	if !mediaFile.IsSidecar() {
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
-			existingFilename := filepath.Join(imp.conf.OriginalsPath(), f.FileName)
+			existingFilename := FileName(f.FileRoot, f.FileName)
 			if fs.FileExists(existingFilename) {
 				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", txt.Quote(filepath.Base(mediaFile.FileName())), txt.Quote(f.FileName), mediaFile.Hash())
 			} else {
@@ -236,12 +268,12 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
-			return result, fmt.Errorf("%s already exists", txt.Quote(fs.RelativeName(result, imp.originalsPath())))
+			return result, fmt.Errorf("%s already exists", txt.Quote(fs.RelName(result, imp.originalsPath())))
 		}
 
 		iteration++
 
-		result = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%04d", iteration)+fileExtension)
+		result = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%05d", iteration)+fileExtension)
 	}
 
 	return result, nil

@@ -9,10 +9,10 @@ import (
 
 func TestSkipWalk(t *testing.T) {
 	t.Run("done", func(t *testing.T) {
-		done := make(map[string]bool)
+		done := make(Done)
 		ignore := NewIgnoreList(".ppignore", true, false)
 
-		done["foo.jpg"] = true
+		done["foo.jpg"] = Found
 
 		if skip, result := SkipWalk("testdata/directory", true, false, done, ignore); skip {
 			assert.Nil(t, result)
@@ -20,13 +20,13 @@ func TestSkipWalk(t *testing.T) {
 			t.Fatal("should be skipped")
 		}
 
-		assert.True(t, done["foo.jpg"])
-		assert.True(t, done["testdata/directory"])
+		assert.True(t, done["foo.jpg"].Exists())
+		assert.True(t, done["testdata/directory"].Exists())
 		assert.Equal(t, 2, len(done))
 	})
 
 	t.Run("symlink", func(t *testing.T) {
-		done := make(map[string]bool)
+		done := make(Done)
 		ignore := NewIgnoreList(".ppignore", true, false)
 
 		if skip, result := SkipWalk("testdata/directory/subdirectory/symlink", false, true, done, ignore); skip {
@@ -47,15 +47,15 @@ func TestSkipWalk(t *testing.T) {
 			t.Fatal("should be skipped")
 		}
 
-		assert.True(t, done["testdata/linked"])
-		assert.True(t, done["testdata/directory/subdirectory/symlink"])
-		assert.True(t, done["testdata/directory/subdirectory/symlink/self"])
-		assert.True(t, done["testdata/directory/subdirectory/symlink/self/self"])
+		assert.True(t, done["testdata/linked"].Exists())
+		assert.True(t, done["testdata/directory/subdirectory/symlink"].Exists())
+		assert.True(t, done["testdata/directory/subdirectory/symlink/self"].Exists())
+		assert.True(t, done["testdata/directory/subdirectory/symlink/self/self"].Exists())
 		assert.Equal(t, 4, len(done))
 	})
 
 	t.Run("godirwalk", func(t *testing.T) {
-		done := make(map[string]bool)
+		done := make(Done)
 		var skipped []string
 		var skippedDirs []string
 		testPath := "testdata"
@@ -75,10 +75,10 @@ func TestSkipWalk(t *testing.T) {
 					return result
 				}
 
-				done[fileName] = true
+				done[fileName] = Found
 
 				if textName := TypeText.Find(fileName, false); textName != "" {
-					done[textName] = true
+					done[textName] = Found
 				}
 
 				return nil

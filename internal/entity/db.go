@@ -7,12 +7,29 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+)
+
+// Database drivers (sql dialects).
+const (
+	MySQL  = "mysql"
+	SQLite = "sqlite3"
 )
 
 var dbProvider DbProvider
 
 type DbProvider interface {
 	Db() *gorm.DB
+}
+
+// IsDialect returns true if the given sql dialect is used.
+func IsDialect(name string) bool {
+	return name == Db().Dialect().GetName()
+}
+
+// DbDialect returns the sql dialect name.
+func DbDialect() string {
+	return Db().Dialect().GetName()
 }
 
 // SetDbProvider sets the provider to get a gorm db connection.
@@ -78,6 +95,8 @@ func (g *Gorm) Connect() {
 
 	db.LogMode(false)
 	db.SetLogger(log)
+	db.DB().SetMaxIdleConns(4)
+	db.DB().SetMaxOpenConns(256)
 
 	g.db = db
 }

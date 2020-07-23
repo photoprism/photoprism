@@ -9,9 +9,9 @@ import (
 
 func TestGetGeo(t *testing.T) {
 	t.Run("get geo", func(t *testing.T) {
-		app, router, conf := NewApiTest()
+		app, router, _ := NewApiTest()
 
-		GetGeo(router, conf)
+		GetGeo(router)
 
 		result := PerformRequest(app, "GET", "/api/v1/geo")
 		assert.Equal(t, http.StatusOK, result.Code)

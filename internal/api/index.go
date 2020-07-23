@@ -1,44 +1,34 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// GET /api/v1/index
-func GetIndexingOptions(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/index", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+// POST /api/v1/index
+func StartIndexing(router *gin.RouterGroup) {
+	router.POST("/index", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
-		dirs, err := fs.Dirs(conf.OriginalsPath(), true)
+		conf := service.Config()
 
-		if err != nil {
-			log.Errorf("index: %s", err)
-		}
-
-		c.JSON(http.StatusOK, gin.H{"dirs": dirs})
-	})
-}
-
-// POST /api/v1/index
-func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/index", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		if !conf.Settings().Features.Library {
+			AbortFeatureDisabled(c)
 			return
 		}
 
@@ -47,7 +37,7 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 		var f form.IndexOptions
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -57,14 +47,14 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		indOpt := photoprism.IndexOptions{
 			Rescan:  f.Rescan,
-			Convert: f.Convert && !conf.ReadOnly(),
+			Convert: f.Convert && conf.SidecarWritable(),
 			Path:    filepath.Clean(f.Path),
 		}
 
 		if len(indOpt.Path) > 1 {
-			event.Info(fmt.Sprintf("indexing files in %s", txt.Quote(indOpt.Path)))
+			event.InfoMsg(i18n.MsgIndexingFiles, txt.Quote(indOpt.Path))
 		} else {
-			event.Info("indexing originals...")
+			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}
 
 		indexed := ind.Start(indOpt)
@@ -80,24 +70,42 @@ func StartIndexing(router *gin.RouterGroup, conf *config.Config) {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		} else if len(files) > 0 || len(photos) > 0 {
-			event.Info(fmt.Sprintf("removed %d files and %d photos", len(files), len(photos)))
+			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
+		}
+
+		moments := service.Moments()
+
+		if err := moments.Start(); err != nil {
+			log.Warnf("moments: %s", err)
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
-		event.Success(fmt.Sprintf("indexing completed in %d s", elapsed))
-		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
+		msg := i18n.Msg(i18n.MsgIndexingCompletedIn, elapsed)
 
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("indexing completed in %d s", elapsed)})
+		event.Success(msg)
+		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+
+		UpdateClientConfig()
+
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
 	})
 }
 
 // DELETE /api/v1/index
-func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
+func CancelIndexing(router *gin.RouterGroup) {
 	router.DELETE("/index", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		conf := service.Config()
+
+		if !conf.Settings().Features.Library {
+			AbortFeatureDisabled(c)
 			return
 		}
 
@@ -105,6 +113,6 @@ func CancelIndexing(router *gin.RouterGroup, conf *config.Config) {
 
 		ind.Cancel()
 
-		c.JSON(http.StatusOK, gin.H{"message": "indexing canceled"})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgIndexingCanceled))
 	})
 }

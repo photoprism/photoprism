@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/maps"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
@@ -26,6 +26,24 @@ func (m *Photo) GetTimeZone() string {
 	return result
 }
 
+// CountryName returns the photo country name.
+func (m *Photo) CountryName() string {
+	if name, ok := maps.CountryNames[m.CountryCode()]; ok {
+		return name
+	}
+
+	return UnknownCountry.CountryName
+}
+
+// CountryCode returns the photo country code.
+func (m *Photo) CountryCode() string {
+	if len(m.PhotoCountry) != 2 {
+		m.PhotoCountry = UnknownCountry.ID
+	}
+
+	return m.PhotoCountry
+}
+
 // GetTakenAt returns UTC time for TakenAtLocal.
 func (m *Photo) GetTakenAt() time.Time {
 	loc, err := time.LoadLocation(m.TimeZone)
@@ -43,52 +61,69 @@ func (m *Photo) GetTakenAt() time.Time {
 
 // UpdateLocation updates location and labels based on latitude and longitude.
 func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classify.Labels) {
-	var location = NewLocation(m.PhotoLat, m.PhotoLng)
+	if m.HasLatLng() {
+		var location = NewCell(m.PhotoLat, m.PhotoLng)
 
-	err := location.Find(geoApi)
+		err := location.Find(geoApi)
 
-	if err == nil {
-		if location.Place.New {
-			event.Publish("count.places", event.Data{
-				"count": 1,
-			})
+		if location.Place == nil {
+			log.Warnf("photo: location place is nil (uid %s, location %s) - bug?", m.PhotoUID, location.ID)
 		}
 
-		m.Location = location
-		m.LocationID = location.ID
-		m.Place = location.Place
-		m.PlaceID = location.PlaceID
-		m.PhotoCountry = location.CountryCode()
+		if err == nil && location.Place != nil && location.ID != UnknownLocation.ID {
+			m.Cell = location
+			m.CellID = location.ID
+			m.Place = location.Place
+			m.PlaceID = location.PlaceID
+			m.PhotoCountry = location.CountryCode()
 
-		if m.TakenSrc != SrcManual {
-			m.TimeZone = m.GetTimeZone()
-			m.TakenAt = m.GetTakenAt()
+			if m.TakenSrc != SrcManual {
+				m.TimeZone = m.GetTimeZone()
+				m.TakenAt = m.GetTakenAt()
+			}
+
+			FirstOrCreateCountry(NewCountry(location.CountryCode(), location.CountryName()))
+
+			locCategory := location.Category()
+			keywords = append(keywords, location.Keywords()...)
+
+			// Append category from reverse location lookup
+			if locCategory != "" {
+				labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
+			}
+
+			return keywords, labels
 		}
-
-		country := NewCountry(location.CountryCode(), location.CountryName()).FirstOrCreate()
-
-		if country.New {
-			event.Publish("count.countries", event.Data{
-				"count": 1,
-			})
-		}
-
-		locCategory := location.Category()
-		keywords = append(keywords, location.Keywords()...)
-
-		// Append category from reverse location lookup
-		if locCategory != "" {
-			labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
-		}
-	} else {
-		log.Warn(err)
-
-		m.Place = &UnknownPlace
-		m.PlaceID = UnknownPlace.ID
 	}
 
-	if m.Place != nil && (m.PhotoCountry == "" || m.PhotoCountry == UnknownCountry.Code()) {
-		m.PhotoCountry = m.Place.LocCountry
+	keywords = []string{}
+	labels = classify.Labels{}
+
+	if m.UnknownLocation() {
+		m.Cell = &UnknownLocation
+		m.CellID = UnknownLocation.ID
+	} else if err := m.LoadLocation(); err == nil {
+		m.Place = m.Cell.Place
+		m.PlaceID = m.Cell.PlaceID
+	} else {
+		log.Warn(err)
+	}
+
+	if m.UnknownPlace() {
+		m.Place = &UnknownPlace
+		m.PlaceID = UnknownPlace.ID
+	} else if err := m.LoadPlace(); err == nil {
+		m.PhotoCountry = m.Place.CountryCode()
+	} else {
+		log.Warn(err)
+	}
+
+	if m.UnknownCountry() {
+		m.EstimateCountry()
+	}
+
+	if m.HasCountry() {
+		FirstOrCreateCountry(NewCountry(m.CountryCode(), m.CountryName()))
 	}
 
 	return keywords, labels

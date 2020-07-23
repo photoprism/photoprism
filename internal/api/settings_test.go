@@ -9,8 +9,8 @@ import (
 
 func TestGetSettings(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		GetSettings(router, conf)
+		app, router, _ := NewApiTest()
+		GetSettings(router)
 		r := PerformRequest(app, "GET", "/api/v1/settings")
 		val := gjson.Get(r.Body.String(), "theme")
 		assert.NotEmpty(t, val.String())
@@ -21,25 +21,26 @@ func TestGetSettings(t *testing.T) {
 }
 
 func TestSaveSettings(t *testing.T) {
-	/* t.Run("successful request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		GetSettings(router, conf)
+	t.Run("successful request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetSettings(router)
 		r := PerformRequest(app, "GET", "/api/v1/settings")
 		val := gjson.Get(r.Body.String(), "language")
-		assert.Equal(t, "de", val.String())
+		assert.Equal(t, "en", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 
-		SaveSettings(router, conf)
-		r2 := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"language": "en"}`)
-		val2 := gjson.Get(r2.Body.String(), "language")
-		assert.Equal(t, "en", val2.String())
+		SaveSettings(router)
+		r2 := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"language": "de"}`)
 		assert.Equal(t, http.StatusOK, r2.Code)
-		r3 := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"language": "de"}`)
+		r4 := PerformRequest(app, "GET", "/api/v1/settings")
+		val2 := gjson.Get(r4.Body.String(), "language")
+		assert.Equal(t, "de", val2.String())
+		r3 := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"language": "en"}`)
 		assert.Equal(t, http.StatusOK, r3.Code)
-	}) */
+	})
 	t.Run("bad request", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		SaveSettings(router, conf)
+		app, router, _ := NewApiTest()
+		SaveSettings(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"language": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})

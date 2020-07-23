@@ -6,6 +6,17 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
+// JpegSize returns the size limit for automatically converted files in `PIXELS` (720-30000).
+func (c *Config) JpegSize() int {
+	if c.params.JpegSize < 720 {
+		return 720
+	} else if c.params.JpegSize > 30000 {
+		return 30000
+	}
+
+	return c.params.JpegSize
+}
+
 // JpegQuality returns the jpeg quality for resampling, use 95 for high-quality thumbs (25-100).
 func (c *Config) JpegQuality() int {
 	if c.params.JpegQuality > 100 {
@@ -40,29 +51,37 @@ func (c *Config) ThumbPath() string {
 	return c.CachePath() + "/thumbnails"
 }
 
-// ThumbUncached returns true for on-demand rendering of default thumbnails (high memory and cpu usage).
+// ThumbUncached checks if on-demand thumbnail rendering is enabled (high memory and cpu usage).
 func (c *Config) ThumbUncached() bool {
 	return c.params.ThumbUncached
 }
 
-// ThumbSize returns the default thumbnail size limit in pixels (720-3840).
+// ThumbSize returns the pre-rendered thumbnail size limit in pixels (720-7680).
 func (c *Config) ThumbSize() int {
-	if c.params.ThumbSize > 3840 {
-		return 3840
+	size := c.params.ThumbSize
+
+	if size < 720 {
+		size = 720 // Mobile, TV
+	} else if size > 7680 {
+		size = 7680 // 8K Ultra HD
 	}
 
-	if c.params.ThumbSize < 720 {
-		return 720
-	}
-
-	return c.params.ThumbSize
+	return size
 }
 
-// ThumbLimit returns the on-demand thumbnail size limit in pixels (720-3840).
-func (c *Config) ThumbLimit() int {
-	if c.params.ThumbLimit > 3840 || c.params.ThumbLimit < 720 || c.ThumbSize() > c.params.ThumbLimit {
-		return c.ThumbSize()
+// ThumbSizeUncached returns the on-demand rendering size limit in pixels (720-7680).
+func (c *Config) ThumbSizeUncached() int {
+	limit := c.params.ThumbSizeUncached
+
+	if limit < 720 {
+		limit = 720 // Mobile, TV
+	} else if limit > 7680 {
+		limit = 7680 // 8K Ultra HD
 	}
 
-	return c.params.ThumbLimit
+	if c.ThumbSize() > limit {
+		limit = c.ThumbSize()
+	}
+
+	return limit
 }

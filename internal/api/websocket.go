@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -29,9 +30,9 @@ type clientInfo struct {
 }
 
 var wsAuth = struct {
-	authenticated map[string]bool
-	mutex         sync.RWMutex
-}{authenticated: make(map[string]bool)}
+	user  map[string]entity.Person
+	mutex sync.RWMutex
+}{user: make(map[string]entity.Person)}
 
 func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config) {
 	defer ws.Close()
@@ -47,26 +48,33 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 			break
 		}
 
-		log.Debugf("websocket: received %d bytes", len(m))
-
 		var info clientInfo
 
 		if err := json.Unmarshal(m, &info); err != nil {
-			log.Error(err)
+			// Do nothing.
 		} else {
-			if service.Session().Exists(info.SessionToken) {
-				log.Debug("websocket: authenticated")
-
+			if sess := Session(info.SessionToken); sess.Valid() {
 				wsAuth.mutex.Lock()
-				wsAuth.authenticated[connId] = true
+				wsAuth.user[connId] = sess.User
 				wsAuth.mutex.Unlock()
+
+				var clientConfig config.ClientConfig
+
+				if sess.User.Guest() {
+					clientConfig = conf.GuestConfig()
+				} else if sess.User.Registered() {
+					clientConfig = conf.UserConfig()
+				} else {
+					clientConfig = conf.PublicConfig()
+				}
 
 				writeMutex.Lock()
 				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
-				if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data(conf.ClientConfig())}); err != nil {
-					log.Error(err)
+				if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data{"config": clientConfig}}); err != nil {
+					// Do nothing.
 				}
+
 				writeMutex.Unlock()
 			}
 		}
@@ -75,7 +83,22 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 
 func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	pingTicker := time.NewTicker(15 * time.Second)
-	s := event.Subscribe("log.*", "notify.*", "index.*", "upload.*", "import.*", "config.*", "count.*", "photos.*", "albums.*", "labels.*", "sync.*")
+	s := event.Subscribe(
+		"log.*",
+		"notify.*",
+		"index.*",
+		"upload.*",
+		"import.*",
+		"config.*",
+		"count.*",
+		"photos.*",
+		"cameras.*",
+		"lenses.*",
+		"countries.*",
+		"albums.*",
+		"labels.*",
+		"sync.*",
+	)
 
 	defer func() {
 		pingTicker.Stop()
@@ -83,31 +106,42 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 		ws.Close()
 
 		wsAuth.mutex.Lock()
-		wsAuth.authenticated[connId] = false
+		wsAuth.user[connId] = entity.UnknownPerson
 		wsAuth.mutex.Unlock()
 	}()
 
 	for {
 		select {
 		case <-pingTicker.C:
+			writeMutex.Lock()
 			ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
+
 			if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+				writeMutex.Unlock()
 				return
 			}
+
+			writeMutex.Unlock()
 		case msg := <-s.Receiver:
 			wsAuth.mutex.RLock()
-			auth := wsAuth.authenticated[connId]
+
+			user := entity.UnknownPerson
+
+			if hit, ok := wsAuth.user[connId]; ok {
+				user = hit
+			}
+
 			wsAuth.mutex.RUnlock()
 
-			if auth {
+			if user.Registered() {
 				writeMutex.Lock()
 				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
 				if err := ws.WriteJSON(gin.H{"event": msg.Name, "data": msg.Fields}); err != nil {
 					writeMutex.Unlock()
-					log.Debug(err)
 					return
 				}
+
 				writeMutex.Unlock()
 			}
 		}
@@ -115,14 +149,14 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 }
 
 // GET /api/v1/ws
-func Websocket(router *gin.RouterGroup, conf *config.Config) {
+func Websocket(router *gin.RouterGroup) {
 	if router == nil {
-		log.Error("websocket: router is nil")
 		return
 	}
 
+	conf := service.Config()
+
 	if conf == nil {
-		log.Error("websocket: conf is nil")
 		return
 	}
 
@@ -131,8 +165,8 @@ func Websocket(router *gin.RouterGroup, conf *config.Config) {
 		r := c.Request
 
 		ws, err := wsConnection.Upgrade(w, r, nil)
+
 		if err != nil {
-			log.Error(err)
 			return
 		}
 
@@ -142,13 +176,14 @@ func Websocket(router *gin.RouterGroup, conf *config.Config) {
 
 		connId := rnd.UUID()
 
+		// Init connection.
+		wsAuth.mutex.Lock()
 		if conf.Public() {
-			wsAuth.mutex.Lock()
-			wsAuth.authenticated[connId] = true
-			wsAuth.mutex.Unlock()
+			wsAuth.user[connId] = entity.Admin
+		} else {
+			wsAuth.user[connId] = entity.UnknownPerson
 		}
-
-		log.Debug("websocket: connected")
+		wsAuth.mutex.Unlock()
 
 		go wsWriter(ws, &writeMutex, connId)
 

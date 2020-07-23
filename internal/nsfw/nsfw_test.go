@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var modelPath, _ = filepath.Abs("../../assets/resources/nsfw")
+var modelPath, _ = filepath.Abs("../../assets/nsfw")
 
 var detector = New(modelPath)
 

@@ -11,6 +11,7 @@ import (
 func TestFileExists(t *testing.T) {
 	assert.True(t, FileExists("./testdata/test.jpg"))
 	assert.False(t, FileExists("./foo.jpg"))
+	assert.False(t, FileExists(""))
 }
 
 func TestPathExists(t *testing.T) {

@@ -1,4 +1,34 @@
-class Model {
+/*
+
+Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    to describe our software, run your own server, for educational purposes, but not for
+    offering commercial goods, products, or services without prior written permission.
+    In other words, please ask.
+
+Feel free to send an e-mail to hello@photoprism.org if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+https://docs.photoprism.org/developer-guide/
+
+*/
+
+export class Model {
     constructor(values) {
         this.__originalValues = {};
 
@@ -37,15 +67,22 @@ class Model {
                 let val;
                 if (defaults.hasOwnProperty(key)) {
                     switch (typeof defaults[key]) {
-                    case "bigint":
-                    case "number":
-                        val = parseFloat(this[key]);
-                        break;
-                    case "boolean":
-                        val = !!this[key];
-                        break;
-                    default:
-                        val = this[key];
+                        case "string":
+                            if(this[key] === null || this[key] === undefined) {
+                                val = "";
+                            }  else {
+                                val = this[key];
+                            }
+                            break;
+                        case "bigint":
+                        case "number":
+                            val = parseFloat(this[key]);
+                            break;
+                        case "boolean":
+                            val = !!this[key];
+                            break;
+                        default:
+                            val = this[key];
                     }
                 } else {
                     val = this[key];
@@ -58,6 +95,16 @@ class Model {
         }
 
         return result;
+    }
+
+    wasChanged() {
+        const changed = this.getValues(true);
+
+        if(!changed) {
+            return false;
+        }
+
+        return !(changed.constructor === Object && Object.keys(changed).length === 0);
     }
 
     getDefaults() {

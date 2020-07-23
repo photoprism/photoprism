@@ -7,10 +7,16 @@ import (
 )
 
 var photoIconSvg = []byte(`
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-<path d="M0 0h24v24H0z" fill="none"/>
-<path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-</svg>`)
+<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/>
+<path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/></svg>`)
+
+var rawIconSvg = []byte(`
+<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><circle cx="12" cy="12" r="3.2"/>
+<path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+<path d="M0 0h24v24H0z" fill="none"/></svg>`)
+
+var fileIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+<path d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z"/><path d="M0 0h24v24H0z" fill="none"/></svg>`)
 
 var videoIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 <path d="M0 0h24v24H0z" fill="none"/><path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg>`)
@@ -38,6 +44,14 @@ func GetSvg(router *gin.RouterGroup) {
 		c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 	})
 
+	router.GET("/svg/raw", func(c *gin.Context) {
+		c.Data(http.StatusOK, "image/svg+xml", rawIconSvg)
+	})
+
+	router.GET("/svg/file", func(c *gin.Context) {
+		c.Data(http.StatusOK, "image/svg+xml", fileIconSvg)
+	})
+
 	router.GET("/svg/video", func(c *gin.Context) {
 		c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 	})
@@ -47,6 +61,10 @@ func GetSvg(router *gin.RouterGroup) {
 	})
 
 	router.GET("/svg/album", func(c *gin.Context) {
+		c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+	})
+
+	router.GET("/svg/folder", func(c *gin.Context) {
 		c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 	})
 

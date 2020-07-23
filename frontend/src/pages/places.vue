@@ -1,33 +1,33 @@
 <template>
-    <v-container fluid fill-height class="pa-0 p-page p-page-places">
-        <div id="map" style="width: 100%; height: 100%;">
-            <div class="p-map-control">
-                <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
-                    <v-text-field class="pa-0 ma-0"
-                                  single-line
-                                  solo
-                                  flat
-                                  :label="labels.search"
-                                  prepend-inner-icon="search"
-                                  clearable
-                                  hide-details
-                                  browser-autocomplete="off"
-                                  color="secondary-dark"
-                                  @click:clear="clearQuery"
-                                  v-model="filter.q"
-                                  @keyup.enter.native="formChange"
-                    ></v-text-field>
-                </div>
-            </div>
+  <v-container fluid fill-height class="pa-0 p-page p-page-places">
+    <div id="map" style="width: 100%; height: 100%;">
+      <div class="p-map-control">
+        <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
+          <v-text-field class="pa-0 ma-0 input-search"
+                        single-line
+                        solo
+                        flat
+                        :label="labels.search"
+                        prepend-inner-icon="search"
+                        clearable
+                        hide-details
+                        browser-autocomplete="off"
+                        color="secondary-dark"
+                        @click:clear="clearQuery"
+                        v-model="filter.q"
+                        @keyup.enter.native="formChange"
+          ></v-text-field>
         </div>
-    </v-container>
+      </div>
+    </div>
+  </v-container>
 </template>
 
 <script>
     import Photo from "model/photo";
     import mapboxgl from "mapbox-gl";
-    import Api from "../common/api";
-    import Thumb from "../model/thumb";
+    import Api from "common/api";
+    import Thumb from "model/thumb";
 
     export default {
         name: 'p-page-places',
@@ -40,6 +40,121 @@
         },
         data() {
             const s = this.$config.values.settings.maps;
+            const filter = {
+                q: this.query(),
+            };
+
+            const settings = this.$config.settings();
+
+            if (settings && settings.features.private) {
+                filter.public = true;
+            }
+
+            if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+                filter.quality = 3;
+            }
+
+            let mapFont = ['Roboto', 'sans-serif'];
+            let mapOptions = {
+                container: "map",
+                style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=xCDwZsNKW3rlveVG0WUU",
+                attributionControl: true,
+                customAttribution: this.attribution,
+                zoom: 0,
+            };
+
+            if (s.style === "offline") {
+                mapFont = ["Open Sans Semibold"];
+                mapOptions = {
+                    container: "map",
+                    style: {
+                        "version": 8,
+                        "sources": {
+                            "world": {
+                                "type": "geojson",
+                                "data": "/static/geo/world.json",
+                                "maxzoom": 6
+                            }
+                        },
+                        "glyphs": "/static/font/{fontstack}/{range}.pbf",
+                        "layers": [
+                            {
+                                "id": "background",
+                                "type": "background",
+                                "paint": {
+                                    "background-color": "#aadafe"
+                                }
+                            },
+                            {
+                                id: "land",
+                                type: "fill",
+                                source: "world",
+                                // "source-layer": "land",
+                                paint: {
+                                    "fill-color": "#cbe5ca",
+                                },
+                            },
+                            {
+                                "id": "country-abbrev",
+                                "type": "symbol",
+                                "source": "world",
+                                "maxzoom": 3,
+                                "layout": {
+                                    "text-field": "{abbrev}",
+                                    "text-font": ["Open Sans Semibold"],
+                                    "text-transform": "uppercase",
+                                    "text-max-width": 20,
+                                    "text-size": {
+                                        "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
+                                    },
+                                    "text-letter-spacing": {
+                                        "stops": [[4, 0], [5, 1], [6, 2]]
+                                    },
+                                    "text-line-height": {
+                                        "stops": [[5, 1.2], [6, 2]]
+                                    }
+                                },
+                                "paint": {
+                                    "text-halo-color": "#fff",
+                                    "text-halo-width": 1
+                                },
+                            },
+                            {
+                                "id": "country-border",
+                                "type": "line",
+                                "source": "world",
+                                "paint": {
+                                    "line-color": "#226688",
+                                    "line-opacity": 0.25,
+                                    "line-dasharray": [6, 2, 2, 2],
+                                    "line-width": 1.2
+                                }
+                            },
+                            {
+                                "id": "country-name",
+                                "type": "symbol",
+                                "minzoom": 3,
+                                "source": "world",
+                                "layout": {
+                                    "text-field": "{name}",
+                                    "text-font": ["Open Sans Semibold"],
+                                    "text-max-width": 20,
+                                    "text-size": {
+                                        "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
+                                    }
+                                },
+                                "paint": {
+                                    "text-halo-color": "#fff",
+                                    "text-halo-width": 1
+                                },
+                            },
+                        ],
+                    },
+                    attributionControl: true,
+                    customAttribution: this.attribution,
+                    zoom: 0,
+                };
+            }
 
             return {
                 initialized: false,
@@ -49,18 +164,11 @@
                 loading: false,
                 url: 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=xCDwZsNKW3rlveVG0WUU',
                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-                options: {
-                    container: "map",
-                    style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=xCDwZsNKW3rlveVG0WUU",
-                    attributionControl: true,
-                    customAttribution: this.attribution,
-                    zoom: 0,
-                },
+                options: mapOptions,
+                mapFont: mapFont,
                 photos: [],
                 result: {},
-                filter: {
-                    q: this.query(),
-                },
+                filter: filter,
                 lastFilter: {},
                 labels: {
                     search: this.$gettext("Search"),
@@ -79,11 +187,11 @@
                 }
 
                 if (this.photos.length > 0) {
-                    const index = this.photos.findIndex((p) => p.PhotoUUID === id);
+                    const index = this.photos.findIndex((p) => p.UID === id);
 
                     this.$viewer.show(Thumb.fromPhotos(this.photos), index)
                 } else {
-                    this.$notify.warning("No photos found");
+                    this.$notify.warn(this.$gettext("No photos found"));
                 }
             },
             formChange() {
@@ -94,6 +202,14 @@
                 this.search();
             },
             updateQuery() {
+                this.filter.q = this.filter.q.trim();
+                const len = this.filter.q.length;
+
+                if (len > 1 && len < 3) {
+                    this.$notify.error(this.$gettext("Search term too short"));
+                    return;
+                }
+
                 if (this.query() !== this.filter.q) {
                     if (this.filter.q) {
                         this.$router.replace({name: "place", params: {q: this.filter.q}});
@@ -120,7 +236,7 @@
                     if (!response.data.features || response.data.features.length === 0) {
                         this.loading = false;
 
-                        this.$notify.warning("No photos found");
+                        this.$notify.warn(this.$gettext("No photos found"));
 
                         return;
                     }
@@ -131,7 +247,13 @@
                     this.map.getSource("photos").setData(this.result);
 
                     if (this.filter.q || !this.initialized) {
-                        this.map.fitBounds(this.result.bbox, {maxZoom: 17, padding: 100, duration: this.settings.animate, essential: false, animate: this.settings.animate > 0});
+                        this.map.fitBounds(this.result.bbox, {
+                            maxZoom: 17,
+                            padding: 100,
+                            duration: this.settings.animate,
+                            essential: false,
+                            animate: this.settings.animate > 0
+                        });
                     }
 
                     this.initialized = true;
@@ -143,7 +265,7 @@
             renderMap() {
                 this.map = new mapboxgl.Map(this.options);
 
-                this.map.addControl(new mapboxgl.NavigationControl({showCompass: false}, 'top-right'));
+                this.map.addControl(new mapboxgl.NavigationControl({showCompass: true}, 'top-right'));
                 this.map.addControl(new mapboxgl.FullscreenControl({container: document.querySelector('body')}));
                 this.map.addControl(new mapboxgl.GeolocateControl({
                     positionOptions: {
@@ -166,17 +288,16 @@
                     let id = features[i].id;
 
                     let marker = this.markers[id];
+                    let token = this.$config.previewToken();
                     if (!marker) {
                         let el = document.createElement('div');
                         el.className = 'marker';
-                        el.title = props.PhotoTitle;
-                        el.style.backgroundImage =
-                            'url(/api/v1/thumbnails/' +
-                            props.FileHash + '/tile_50)';
+                        el.title = props.Title;
+                        el.style.backgroundImage = `url(/api/v1/t/${props.Hash}/${token}/tile_50)`;
                         el.style.width = '50px';
                         el.style.height = '50px';
 
-                        el.addEventListener('click', () => this.openPhoto(props.PhotoUUID));
+                        el.addEventListener('click', () => this.openPhoto(props.UID));
                         marker = this.markers[id] = new mapboxgl.Marker({
                             element: el
                         }).setLngLat(coords);
@@ -240,7 +361,7 @@
                     filter: ['has', 'point_count'],
                     layout: {
                         'text-field': '{point_count_abbreviated}',
-                        'text-font': ['Roboto', 'sans-serif'],
+                        'text-font': this.mapFont,
                         'text-size': 13
                     }
                 });

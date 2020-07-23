@@ -51,6 +51,20 @@ var FileSyncFixtures = FileSyncMap{
 		CreatedAt:  time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 	},
+	"FileSync3": {
+		FileID:     1000000,
+		AccountID:  1000000,
+		RemoteName: "name for remote sync",
+		Status:     "new",
+		Error:      "",
+		Errors:     0,
+		File:       &FileFixturesExampleJPG,
+		Account:    &AccountFixtureWebdavDummy,
+		RemoteDate: time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		RemoteSize: int64(60),
+		CreatedAt:  time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:  time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+	},
 }
 
 // CreateFileSyncFixtures inserts known entities into the database for testing.

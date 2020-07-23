@@ -1,30 +1,27 @@
 package api
 
 import (
-	"fmt"
-	"io/ioutil"
 	"net/http"
-	"path"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GET /api/v1/labels
-func GetLabels(router *gin.RouterGroup, conf *config.Config) {
+func GetLabels(router *gin.RouterGroup) {
 	router.GET("/labels", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionSearch)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -33,7 +30,7 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -52,33 +49,35 @@ func GetLabels(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// PUT /api/v1/labels/:uuid
-func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.PUT("/labels/:uuid", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+// PUT /api/v1/labels/:uid
+func UpdateLabel(router *gin.RouterGroup) {
+	router.PUT("/labels/:uid", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Label
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
-		id := c.Param("uuid")
-		m, err := query.LabelByUUID(id)
+		id := c.Param("uid")
+		m, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrLabelNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
 		m.SetName(f.LabelName)
 		entity.Db().Save(&m)
 
-		event.Success("label saved")
+		event.SuccessMsg(i18n.MsgLabelSaved)
 
 		PublishLabelEvent(EntityUpdated, id, c)
 
@@ -86,27 +85,31 @@ func UpdateLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// POST /api/v1/labels/:uuid/like
+// POST /api/v1/labels/:uid/like
 //
 // Parameters:
-//   uuid: string Label UUID
-func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.POST("/labels/:uuid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+//   uid: string Label UID
+func LikeLabel(router *gin.RouterGroup) {
+	router.POST("/labels/:uid/like", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
-		id := c.Param("uuid")
-		label, err := query.LabelByUUID(id)
+		id := c.Param("uid")
+		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		label.LabelFavorite = true
-		entity.Db().Save(&label)
+		if err := label.Update("LabelFavorite", true); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
 
 		if label.LabelPriority < 0 {
 			event.Publish("count.labels", event.Data{
@@ -120,27 +123,31 @@ func LikeLabel(router *gin.RouterGroup, conf *config.Config) {
 	})
 }
 
-// DELETE /api/v1/labels/:uuid/like
+// DELETE /api/v1/labels/:uid/like
 //
 // Parameters:
-//   uuid: string Label UUID
-func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
-	router.DELETE("/labels/:uuid/like", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+//   uid: string Label UID
+func DislikeLabel(router *gin.RouterGroup) {
+	router.DELETE("/labels/:uid/like", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
-		id := c.Param("uuid")
-		label, err := query.LabelByUUID(id)
+		id := c.Param("uid")
+		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		label.LabelFavorite = false
-		entity.Db().Save(&label)
+		if err := label.Update("LabelFavorite", false); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
 
 		if label.LabelPriority < 0 {
 			event.Publish("count.labels", event.Data{
@@ -151,94 +158,5 @@ func DislikeLabel(router *gin.RouterGroup, conf *config.Config) {
 		PublishLabelEvent(EntityUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
-	})
-}
-
-// GET /api/v1/labels/:uuid/thumbnail/:type
-//
-// Example: /api/v1/labels/cheetah/thumbnail/tile_500
-//
-// Parameters:
-//   uuid: string Label UUID
-//   type: string Thumbnail type, see photoprism.ThumbnailTypes
-func LabelThumbnail(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/labels/:uuid/thumbnail/:type", func(c *gin.Context) {
-		typeName := c.Param("type")
-		labelUUID := c.Param("uuid")
-		start := time.Now()
-
-		thumbType, ok := thumb.Types[typeName]
-
-		if !ok {
-			log.Errorf("label: invalid thumb type %s", txt.Quote(typeName))
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		gc := conf.Cache()
-		cacheKey := fmt.Sprintf("label-thumbnail:%s:%s", labelUUID, typeName)
-
-		if cacheData, ok := gc.Get(cacheKey); ok {
-			log.Debugf("label: %s cache hit [%s]", cacheKey, time.Since(start))
-			c.Data(http.StatusOK, "image/jpeg", cacheData.([]byte))
-			return
-		}
-
-		f, err := query.LabelThumbByUUID(labelUUID)
-
-		if err != nil {
-			log.Errorf(err.Error())
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		fileName := path.Join(conf.OriginalsPath(), f.FileName)
-
-		if !fs.FileExists(fileName) {
-			log.Errorf("label: could not find original for %s", fileName)
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-
-			// Set missing flag so that the file doesn't show up in search results anymore
-			f.FileMissing = true
-			conf.Db().Save(&f)
-			return
-		}
-
-		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsLimit() {
-			log.Debugf("label: using original, thumbnail size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
-
-			c.File(fileName)
-
-			return
-		}
-
-		var thumbnail string
-
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
-		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
-		}
-
-		if err != nil {
-			log.Errorf("label: %s", err)
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		thumbData, err := ioutil.ReadFile(thumbnail)
-
-		if err != nil {
-			log.Errorf("label: %s", err)
-			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
-			return
-		}
-
-		gc.Set(cacheKey, thumbData, time.Hour*4)
-
-		log.Debugf("label: %s cached [%s]", cacheKey, time.Since(start))
-
-		c.Data(http.StatusOK, "image/jpeg", thumbData)
 	})
 }

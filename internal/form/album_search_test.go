@@ -3,7 +3,6 @@ package form
 import (
 	"testing"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +30,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 		assert.Equal(t, 10, form.Count)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
-		form := &AlbumSearch{Query: "name:album1 favorite:false offset:100 order:newest query:\"query text\""}
+		form := &AlbumSearch{Query: "title:album1 favorite:false offset:100 order:newest query:\"query text\""}
 
 		err := form.ParseQueryString()
 
@@ -41,7 +40,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 			t.Fatal("err should be nil")
 		}
 
-		assert.Equal(t, "album1", form.Name)
+		assert.Equal(t, "album1", form.Title)
 		assert.Equal(t, false, form.Favorite)
 		assert.Equal(t, 100, form.Offset)
 		assert.Equal(t, "newest", form.Order)

@@ -4,48 +4,62 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // GET /api/v1/settings
-func GetSettings(router *gin.RouterGroup, conf *config.Config) {
+func GetSettings(router *gin.RouterGroup) {
 	router.GET("/settings", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceSettings, acl.ActionRead)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
-		s := conf.Settings()
-
-		c.JSON(http.StatusOK, s)
+		if settings := service.Config().Settings(); settings != nil {
+			c.JSON(http.StatusOK, settings)
+		} else {
+			Abort(c, http.StatusNotFound, i18n.ErrNotFound)
+		}
 	})
 }
 
 // POST /api/v1/settings
-func SaveSettings(router *gin.RouterGroup, conf *config.Config) {
+func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
-		if conf.DisableSettings() || Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceSettings, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
-		s := conf.Settings()
+		conf := service.Config()
 
-		if err := c.BindJSON(s); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+		if conf.SettingsHidden() {
+			AbortUnauthorized(c)
 			return
 		}
 
-		if err := s.Save(conf.SettingsFile()); err != nil {
+		settings := conf.Settings()
+
+		if err := c.BindJSON(settings); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
+		if err := settings.Save(conf.SettingsFile()); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
-		event.Publish("config.updated", event.Data(conf.ClientConfig()))
-		log.Infof("settings saved")
+		UpdateClientConfig()
 
-		c.JSON(http.StatusOK, s)
+		log.Infof(i18n.Msg(i18n.MsgSettingsSaved))
+
+		c.JSON(http.StatusOK, settings)
 	})
 }

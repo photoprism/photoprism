@@ -11,24 +11,40 @@ services:
       - "~/.cache/npm:/root/.cache/npm"
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
-      PHOTOPRISM_URL: "http://localhost:2342/"
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
+      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Personal Photo Management"
+      PHOTOPRISM_SITE_AUTHOR: "@browseyourlife"
+      PHOTOPRISM_DEBUG: "false"
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_PUBLIC: "true"
       PHOTOPRISM_UPLOAD_NSFW: "false"
-      PHOTOPRISM_DETECT_NSFW: "true"
+      PHOTOPRISM_DETECT_NSFW: "false"
       PHOTOPRISM_PID_FILENAME: "photoprism.pid"
       PHOTOPRISM_LOG_FILENAME: "photoprism.log"
       PHOTOPRISM_DETACH_SERVER: "true"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_TIDB_HOST: "0.0.0.0"
-      PHOTOPRISM_TIDB_PORT: 2343
-      PHOTOPRISM_TIDB_PASSWORD: "photoprism"
-      PHOTOPRISM_DATABASE_DRIVER: "tidb"
-      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(localhost:2343)/photoprism?parseTime=true"
-      PHOTOPRISM_TEST_DSN: "root:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true"
-      PHOTOPRISM_TITLE: "PhotoPrism"
-      PHOTOPRISM_SUBTITLE: "Browse your life"
-      PHOTOPRISM_DESCRIPTION: "Personal Photo Management tested by Travis CI."
-      PHOTOPRISM_AUTHOR: "PhotoPrism.org"
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(photoprism-db:4001)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      PHOTOPRISM_TEST_DRIVER: "sqlite"
+      PHOTOPRISM_TEST_DSN: ".test.db"
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"
+      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
+      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      PHOTOPRISM_THUMB_FILTER: "lanczos"    # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true"     # Enable on-demand thumbnail rendering (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048           # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096         # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680  # On-demand rendering size limit (default 7680, min 720, max 7680)
+      PHOTOPRISM_JPEG_SIZE: 7680            # Size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_QUALITY: 90           # Set to 95 for high-quality thumbnails (requires more storage)
+      PHOTOPRISM_DARKTABLE_PRESETS: "false" # Use darktable presets (disables concurrent raw to jpeg conversion)
+      PHOTOPRISM_SIDECAR_JSON: "true"       # Read metadata from JSON sidecar files created by exiftool
+      PHOTOPRISM_SIDECAR_YAML: "true"       # Backup photo metadata to YAML sidecar files
       CODECOV_TOKEN:
       CODECOV_ENV:
       CODECOV_URL:
@@ -44,7 +60,7 @@ services:
 
   photoprism-db:
     image: mariadb:10.5
-    command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=ON --innodb-lock-wait-timeout=120
+    command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
     expose:
       - "4001"
     volumes:

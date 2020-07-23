@@ -128,4 +128,18 @@ func TestLabels(t *testing.T) {
 
 		assert.Equal(t, "cake", result[0].LabelSlug)
 	})
+
+	t.Run("search for label landscape", func(t *testing.T) {
+		f := form.LabelSearch{
+			Query: "landscape",
+		}
+
+		result, err := Labels(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "flower", result[0].LabelSlug)
+	})
 }

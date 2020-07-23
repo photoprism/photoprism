@@ -2,14 +2,14 @@ package workers
 
 import (
 	"fmt"
-	"path"
 	"path/filepath"
+	"runtime/debug"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
@@ -21,30 +21,43 @@ type Share struct {
 	conf *config.Config
 }
 
-// NewShare returns a new service share worker.
+// NewShare returns a new share worker.
 func NewShare(conf *config.Config) *Share {
 	return &Share{conf: conf}
 }
 
+// logError logs an error message if err is not nil.
+func (worker *Share) logError(err error) {
+	if err != nil {
+		log.Errorf("share-worker: %s", err.Error())
+	}
+}
+
 // Start starts the share worker.
-func (s *Share) Start() (err error) {
-	if err := mutex.Share.Start(); err != nil {
-		event.Error(fmt.Sprintf("share: %s", err.Error()))
+func (worker *Share) Start() (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("share-worker: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
+	if err := mutex.ShareWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.Share.Stop()
+	defer mutex.ShareWorker.Stop()
 
 	f := form.AccountSearch{
 		Share: true,
 	}
 
 	// Find accounts for which sharing is enabled
-	accounts, err := query.Accounts(f)
+	accounts, err := query.AccountSearch(f)
 
 	// Upload newly shared files
 	for _, a := range accounts {
-		if mutex.Share.Canceled() {
+		if mutex.ShareWorker.Canceled() {
 			return nil
 		}
 
@@ -55,7 +68,7 @@ func (s *Share) Start() (err error) {
 		files, err := query.FileShares(a.ID, entity.FileShareNew)
 
 		if err != nil {
-			log.Errorf("share: %s", err.Error())
+			worker.logError(err)
 			continue
 		}
 
@@ -68,7 +81,7 @@ func (s *Share) Start() (err error) {
 		existingDirs := make(map[string]string)
 
 		for _, file := range files {
-			if mutex.Share.Canceled() {
+			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
@@ -76,35 +89,35 @@ func (s *Share) Start() (err error) {
 
 			if _, ok := existingDirs[dir]; !ok {
 				if err := client.CreateDir(dir); err != nil {
-					log.Errorf("share: could not create folder %s", dir)
+					log.Errorf("share-worker: failed creating folder %s", dir)
 					continue
 				}
 			}
 
-			srcFileName := path.Join(s.conf.OriginalsPath(), file.File.FileName)
+			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 
 			if a.ShareSize != "" {
 				thumbType, ok := thumb.Types[a.ShareSize]
 
 				if !ok {
-					log.Errorf("share: invalid size %s", a.ShareSize)
+					log.Errorf("share-worker: invalid size %s", a.ShareSize)
 					continue
 				}
 
-				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, s.conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 
 				if err != nil {
-					log.Errorf("share: %s", err)
+					worker.logError(err)
 					continue
 				}
 			}
 
 			if err := client.Upload(srcFileName, file.RemoteName); err != nil {
-				log.Errorf("share: %s", err.Error())
+				worker.logError(err)
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: uploaded %s to %s", file.RemoteName, a.AccName)
+				log.Infof("share-worker: uploaded %s to %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareShared
@@ -114,19 +127,17 @@ func (s *Share) Start() (err error) {
 				file.Status = entity.FileShareError
 			}
 
-			if mutex.Share.Canceled() {
+			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
-			if err := entity.Db().Save(&file).Error; err != nil {
-				log.Errorf("share: %s", err.Error())
-			}
+			worker.logError(entity.Db().Save(&file).Error)
 		}
 	}
 
 	// Remove previously shared files if expired
 	for _, a := range accounts {
-		if mutex.Share.Canceled() {
+		if mutex.ShareWorker.Canceled() {
 			return nil
 		}
 
@@ -137,7 +148,7 @@ func (s *Share) Start() (err error) {
 		files, err := query.ExpiredFileShares(a)
 
 		if err != nil {
-			log.Errorf("share: %s", err.Error())
+			worker.logError(err)
 			continue
 		}
 
@@ -149,7 +160,7 @@ func (s *Share) Start() (err error) {
 		client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
 
 		for _, file := range files {
-			if mutex.Share.Canceled() {
+			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
@@ -157,14 +168,14 @@ func (s *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: removed %s from %s", file.RemoteName, a.AccName)
+				log.Infof("share-worker: removed %s from %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareRemoved
 			}
 
 			if err := entity.Db().Save(&file).Error; err != nil {
-				log.Errorf("share: %s", err.Error())
+				worker.logError(err)
 			}
 		}
 	}

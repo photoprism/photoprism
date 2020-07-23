@@ -1,0 +1,10 @@
+* {
+    tls off
+    gzip
+    
+    proxy / photoprism:2342 {
+        # Test broken websocket connection.
+        # websocket
+        transparent
+    }
+}

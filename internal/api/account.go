@@ -1,25 +1,32 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // GET /api/v1/accounts
-func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
+func GetAccounts(router *gin.RouterGroup) {
 	router.GET("/accounts", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionSearch)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -28,14 +35,14 @@ func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
 		err := c.MustBindWith(&f, binding.Form)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
-		result, err := query.Accounts(f)
+		result, err := query.AccountSearch(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
@@ -51,10 +58,12 @@ func GetAccounts(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func GetAccount(router *gin.RouterGroup, conf *config.Config) {
+func GetAccount(router *gin.RouterGroup) {
 	router.GET("/accounts/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -63,37 +72,59 @@ func GetAccount(router *gin.RouterGroup, conf *config.Config) {
 		if m, err := query.AccountByID(id); err == nil {
 			c.JSON(http.StatusOK, m)
 		} else {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 		}
 	})
 }
 
-// GET /api/v1/accounts/:id/dirs
+// GET /api/v1/accounts/:id/folders
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func GetAccountDirs(router *gin.RouterGroup, conf *config.Config) {
-	router.GET("/accounts/:id/dirs", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+func GetAccountFolders(router *gin.RouterGroup) {
+	router.GET("/accounts/:id/folders", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
+		start := time.Now()
 		id := ParseUint(c.Param("id"))
+		cache := service.Cache()
+		cacheKey := fmt.Sprintf("account-folders:%d", id)
+
+		if cacheData, err := cache.Get(cacheKey); err == nil {
+			var cached fs.FileInfos
+
+			if err := json.Unmarshal(cacheData, &cached); err != nil {
+				log.Errorf("account-folders: %s", err)
+			} else {
+				log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+				c.JSON(http.StatusOK, cached)
+				return
+			}
+		}
 
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
 		list, err := m.Directories()
 
 		if err != nil {
-			log.Errorf("account: %s", err.Error())
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrConnectionFailed)
+			log.Errorf("account-folders: %s", err.Error())
+			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
+		}
+
+		if c, err := json.Marshal(list); err == nil {
+			logError("account-folders", cache.Set(cacheKey, c))
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
 		c.JSON(http.StatusOK, list)
@@ -104,10 +135,12 @@ func GetAccountDirs(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
+func ShareWithAccount(router *gin.RouterGroup) {
 	router.POST("/accounts/:id/share", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpload)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -116,22 +149,22 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
 		var f form.AccountShare
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		dst := f.Destination
-		files, err := query.FilesByUUID(f.Photos, 1000, 0)
+		files, err := query.FilesByUID(f.Photos, 1000, 0)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -139,47 +172,49 @@ func ShareWithAccount(router *gin.RouterGroup, conf *config.Config) {
 			dstFileName := dst + "/" + file.ShareFileName()
 
 			fileShare := entity.NewFileShare(file.ID, m.ID, dstFileName)
-			fileShare.FirstOrCreate()
+			entity.FirstOrCreateFileShare(fileShare)
 		}
 
-		workers.StartShare(conf)
+		workers.StartShare(service.Config())
 
 		c.JSON(http.StatusOK, files)
 	})
 }
 
 // POST /api/v1/accounts
-func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
+func CreateAccount(router *gin.RouterGroup) {
 	router.POST("/accounts", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionCreate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
 		var f form.Account
 
 		if err := c.BindJSON(&f); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
 		if err := f.ServiceDiscovery(); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
 		}
 
 		m, err := entity.CreateAccount(f)
 
-		log.Debugf("create account: %+v %+v", f, m)
+		log.Debugf("account: creating %+v %+v", f, m)
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
+			AbortBadRequest(c)
 			return
 		}
 
-		event.Success("account created")
+		event.SuccessMsg(i18n.MsgAccountCreated)
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -189,10 +224,12 @@ func CreateAccount(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
+func UpdateAccount(router *gin.RouterGroup) {
 	router.PUT("/accounts/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -201,7 +238,7 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrPhotoNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
@@ -210,30 +247,30 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 
 		if err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
 		// 2) Update form with values from request
 		if err := c.BindJSON(&f); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest, ErrFormInvalid)
+			AbortBadRequest(c)
 			return
 		}
 
 		// 3) Save model with values from form
-		if err := m.Save(f); err != nil {
+		if err := m.SaveForm(f); err != nil {
 			log.Error(err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, ErrSaveFailed)
+			AbortSaveFailed(c)
 			return
 		}
 
-		event.Success("account saved")
+		event.SuccessMsg(i18n.MsgAccountSaved)
 
 		m, err = query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			AbortEntityNotFound(c)
 			return
 		}
 
@@ -245,10 +282,12 @@ func UpdateAccount(router *gin.RouterGroup, conf *config.Config) {
 //
 // Parameters:
 //   id: string Account ID as returned by the API
-func DeleteAccount(router *gin.RouterGroup, conf *config.Config) {
+func DeleteAccount(router *gin.RouterGroup) {
 	router.DELETE("/accounts/:id", func(c *gin.Context) {
-		if Unauthorized(c, conf) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, ErrUnauthorized)
+		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionDelete)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
 			return
 		}
 
@@ -257,16 +296,16 @@ func DeleteAccount(router *gin.RouterGroup, conf *config.Config) {
 		m, err := query.AccountByID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, ErrAccountNotFound)
+			Abort(c, http.StatusNotFound, i18n.ErrAccountNotFound)
 			return
 		}
 
 		if err := m.Delete(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, txt.UcFirst(err.Error()))
+			Error(c, http.StatusInternalServerError, err, i18n.ErrDeleteFailed)
 			return
 		}
 
-		event.Success("account deleted")
+		event.SuccessMsg(i18n.MsgAccountDeleted)
 
 		c.JSON(http.StatusOK, m)
 	})

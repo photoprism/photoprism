@@ -31,11 +31,12 @@ func Zip(filename string, files []string) error {
 }
 
 func AddToZip(zipWriter *zip.Writer, filename string) error {
-
 	fileToZip, err := os.Open(filename)
+
 	if err != nil {
 		return err
 	}
+
 	defer fileToZip.Close()
 
 	// Get the file information
@@ -64,6 +65,7 @@ func AddToZip(zipWriter *zip.Writer, filename string) error {
 // Extract Zip file in destination directory
 func Unzip(src, dest string) (fileNames []string, err error) {
 	r, err := zip.OpenReader(src)
+
 	if err != nil {
 		return fileNames, err
 	}

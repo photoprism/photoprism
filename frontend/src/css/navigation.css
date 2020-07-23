@@ -1,0 +1,44 @@
+#p-navigation {
+    z-index: 10;
+}
+
+#p-navigation .nav-count {
+    opacity: 0.5;
+    position: absolute;
+    left: 80px;
+    width: 40px;
+    display: inline-block;
+    text-align: right;
+}
+
+.v-list__group__header .v-list__group__header__append-icon {
+    padding-left: 8px !important;
+}
+
+#photoprism .p-page a,
+#photoprism .v-toolbar a,
+#photoprism .text-link {
+    text-decoration: none;
+    color: #333333;
+}
+
+#photoprism .theme--dark.v-sheet .text-link,
+#photoprism .theme--dark.v-card .text-link {
+    color: white;
+}
+
+#photoprism-info {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 0 5px;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    border-radius: 5px 0 0 0;
+}
+
+#photoprism-info a {
+    text-decoration: none;
+    font-size: 12px;
+    color: #000;
+}

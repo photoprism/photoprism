@@ -10,18 +10,18 @@ import (
 
 func TestGetPhotos(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
+		app, router, _ := NewApiTest()
 
-		GetPhotos(router, ctx)
+		GetPhotos(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos?count=10")
-		len := gjson.Get(r.Body.String(), "#")
-		assert.LessOrEqual(t, int64(3), len.Int())
+		count := gjson.Get(r.Body.String(), "#")
+		assert.LessOrEqual(t, int64(2), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 
 	t.Run("invalid request", func(t *testing.T) {
-		app, router, ctx := NewApiTest()
-		GetPhotos(router, ctx)
+		app, router, _ := NewApiTest()
+		GetPhotos(router)
 		result := PerformRequest(app, "GET", "/api/v1/photos?xxx=10")
 		assert.Equal(t, http.StatusBadRequest, result.Code)
 	})

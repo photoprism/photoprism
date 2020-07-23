@@ -25,10 +25,20 @@ func TestNewCountry(t *testing.T) {
 	})
 }
 
-func TestCountry_FirstOrCreate(t *testing.T) {
+func TestFirstOrCreateCountry(t *testing.T) {
 	t.Run("es", func(t *testing.T) {
 		country := NewCountry("es", "spain")
-		country.FirstOrCreate()
+		country = FirstOrCreateCountry(country)
+		if country == nil {
+			t.Fatal("country should not be nil")
+		}
+	})
+	t.Run("de", func(t *testing.T) {
+		country := &Country{ID: "de"}
+		r := FirstOrCreateCountry(country)
+		if r == nil {
+			t.Fatal("country should not be nil")
+		}
 	})
 }
 

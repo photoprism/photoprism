@@ -9,6 +9,10 @@ import (
 	"github.com/urfave/cli"
 )
 
+func TestConfig_TestdataPath2(t *testing.T) {
+	assert.Equal(t, "/xxx/testdata", testDataPath("/xxx"))
+}
+
 func TestTestCliContext(t *testing.T) {
 	result := CliTestContext()
 
@@ -37,7 +41,7 @@ func TestNewTestParamsError(t *testing.T) {
 	assert.IsType(t, new(Params), c)
 
 	assert.Equal(t, fs.Abs("../.."), c.AssetsPath)
-	assert.Equal(t, "../../assets/testdata/cache", c.CachePath)
+	assert.Equal(t, fs.Abs("../../storage/testdata/cache"), c.CachePath)
 	assert.False(t, c.Debug)
 }
 

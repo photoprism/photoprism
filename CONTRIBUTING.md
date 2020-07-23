@@ -19,7 +19,7 @@ Of all the tools we tested, Twitter works best to get and give continuous feedba
 
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
-Our [Developer Guide](https://docs.photoprism.org/en/latest/developer-guide/) contains all information necessary to get you started.
+Our [Developer Guide](https://docs.photoprism.org/developer-guide/) contains all information necessary to get you started.
 
 Our [step-by-step guide](https://github.com/photoprism/photoprism/wiki/Pull-Requests) explains how to submit new features, bugfixes and documentation.
 

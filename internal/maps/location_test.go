@@ -176,10 +176,10 @@ func TestLocation_Assign(t *testing.T) {
 		lat := -21.976301666666668
 		lng := 49.148046666666666
 		id := s2.Token(lat, lng)
-		log.Printf("ID: %s", id)
+		// log.Printf("ID: %s", id)
 		o, err := places.FindLocation(id)
 
-		log.Printf("Output: %+v", o)
+		// log.Printf("Output: %+v", o)
 
 		if err != nil {
 			t.Fatal(err)
@@ -193,9 +193,8 @@ func TestLocation_Assign(t *testing.T) {
 
 		assert.Equal(t, "Indian Ocean", l.LocName)
 		assert.Equal(t, "", l.LocCategory)
-		assert.Equal(t, "Unknown", l.LocCity)
-		// TODO: Should be zz for international waters, fixed in places server
-		// assert.Equal(t, "", l.LocCountry)
+		assert.Equal(t, "", l.LocCity)
+		assert.Equal(t, "zz", l.LocCountry)
 	})
 }
 
@@ -242,6 +241,14 @@ func TestLocation_S2Token(t *testing.T) {
 		l := NewLocation("123", "Indian ocean", "", "", "Nürnberg", "Bayern", "de", "", []string{})
 
 		assert.Equal(t, "123", l.S2Token())
+	})
+}
+
+func TestLocation_PrefixedToken(t *testing.T) {
+	t.Run("123", func(t *testing.T) {
+		l := NewLocation("123", "Indian ocean", "", "", "Nürnberg", "Bayern", "de", "", []string{})
+
+		assert.Equal(t, s2.TokenPrefix+"123", l.PrefixedToken())
 	})
 }
 

@@ -1,12 +1,48 @@
+/*
+
+Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    to describe our software, run your own server, for educational purposes, but not for
+    offering commercial goods, products, or services without prior written permission.
+    In other words, please ask.
+
+Feel free to send an e-mail to hello@photoprism.org if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+https://docs.photoprism.org/developer-guide/
+
+*/
+
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
+@import url("animate.css");
+@import url("navigation.css");
+@import url("logs.css");
+@import url("visibility.css");
+@import url("tables.css");
 @import url("video.css");
-@import url("colorchange.css");
 @import url("maps.css");
 @import url("viewer.css");
 @import url("photos.css");
 @import url("labels.css");
+@import url("files.css");
+@import url("help.css");
 
 html,
 body {
@@ -14,7 +50,7 @@ body {
 }
 
 body {
-    background: rgb(250, 250, 250);
+    background-color: #fafafa;
     color: #333333;
     font-family: Roboto, sans-serif;
 }
@@ -30,7 +66,7 @@ main {
     z-index: 1;
 }
 
-#p-busy-overlay {
+#busy-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -41,20 +77,7 @@ main {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-#p-navigation {
-    z-index: 10;
-}
-
-#p-navigation .p-navigation-count {
-    opacity: 0.5;
-    position: absolute;
-    left: 80px;
-    width: 40px;
-    display: inline-block;
-    text-align: right;
-}
-
-#photoprism div.loading {
+#photoprism div.fullscreen {
     position: fixed;
     top: 0;
     left: 0;
@@ -62,25 +85,33 @@ main {
     bottom: 0;
 }
 
-#photoprism div.loading p {
-    color: #616161;
+#photoprism div.logo-large {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
 }
 
-#photoprism div.loading div.bar {
-    margin: 0;
-    width: 100%;
-    height: 8px;
-    animation: colorchange 3s infinite;
-    -webkit-animation: colorchange 3s infinite;
+#photoprism div.loading-logo {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+}
+
+#photoprism div.loading-bar {
+    position: fixed;
+    bottom: 15%;
+    right: 10%;
+    left: 10%;
 }
 
 #photoprism main .p-results a {
     color: #333333;
-}
-
-#photoprism main .p-inline-edit a,
-#photoprism main .p-inline-edit a span {
-    cursor: text;
 }
 
 #photoprism .v-badge__badge {
@@ -91,143 +122,32 @@ main {
     top: -8px;
 }
 
-#photoprism .p-pointer {
+#photoprism .clickable {
     cursor: pointer;
 }
 
-#photoprism .p-logs {
-    color: white;
+#photoprism button:focus {
+    outline: none;
 }
 
-#photoprism .p-log-empty,
-#photoprism .p-log-message{
-    display: block;
-    text-align: left;
-    font-size: 1em;
-    font-family: monospace;
-    white-space: normal;
-    color: white;
-    padding: 4px;
-    margin: 0;
+#photoprism .p-scroll-top {
+    top: 72px;
+    right: 8px;
 }
 
-#photoprism .p-log-empty {
-    font-weight: normal;
+#photoprism .float-left {
+    float: left;
 }
 
-#photoprism .p-log-message {
-    font-weight: bold;
+#photoprism .float-right {
+    float: right;
 }
 
-#photoprism .p-log-message span {
-    color: #FEFEFE;
-    font-weight: normal;
+#photoprism .p-page pre {
+    overflow: auto;
 }
 
-#photoprism .p-log-fatal,
-#photoprism .p-log-critical,
-#photoprism .p-log-error {
-    color: #F48FB1;
-}
-
-#photoprism .p-log-warning {
-    color: #FFD600;
-}
-
-#photoprism .p-log-fatal {
-    color: #FFECB3;
-}
-
-#photoprism .p-log-info {
-    color: #82B1FF;
-}
-
-#photoprism .p-log-debug {
-    color: #DDDDDD;
-}
-
-#photoprism .p-clickable {
-    cursor: pointer;
-}
-
-#photoprism .p-rounded {
-    border-radius: 50%;
-}
-
-/* Feature Flags */
-
-.p-experimental,
-.p-debug,
-.p-public,
-.p-readonly {
-    display: none;
-}
-
-body.experimental #photoprism .p-experimental,
-body.debug #photoprism .p-debug,
-body.public #photoprism .p-public,
-body.readonly #photoprism .p-readonly {
-    display: block;
-}
-
-div.v-dialog table.v-table thead th,
-div.v-dialog table.v-table tbody td,
-div.v-dialog table.v-table tfoot td {
-    padding: 0 16px;
-}
-
-table.v-table tbody td,
-table.v-table tbody td input,
-table.v-table tbody td label.v-label,
-table.v-table tfoot td,
-table.v-table tfoot td input,
-table.v-table tfoot td label.v-label
-{
-    font-weight: 400;
-    font-size: 13px;
-}
-
-table.v-table tbody td div.v-input__slot,
-table.v-table tfoot td div.v-input__slot {
-    padding: 0 !important;
-}
-
-#photoprism .opacity-0 {
-    opacity: 0 !important;
-}
-
-#photoprism .opacity-50 {
-    opacity: 0.5 !important;
-}
-
-#photoprism .opacity-60 {
-    opacity: 0.6 !important;
-}
-
-#photoprism .opacity-70 {
-    opacity: 0.7 !important;
-}
-
-#photoprism .opacity-75 {
-    opacity: 0.75 !important;
-}
-
-#photoprism .opacity-80 {
-    opacity: 0.8 !important;
-}
-
-#photoprism .opacity-85 {
-    opacity: 0.85 !important;
-}
-
-#photoprism .opacity-90 {
-    opacity: 0.9 !important;
-}
-
-#photoprism .opacity-95 {
-    opacity: 0.95 !important;
-}
-
-#photoprism .opacity-100 {
-    opacity: 1 !important;
+#photoprism .v-card button,
+#photoprism .v-card .caption {
+    overflow-wrap: anywhere;
 }

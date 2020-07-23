@@ -3,23 +3,56 @@ package entity
 import "github.com/photoprism/photoprism/internal/classify"
 
 const (
-	// data sources
+	// Data sources.
 	SrcAuto     = ""
 	SrcManual   = "manual"
+	SrcEstimate = "estimate"
+	SrcName     = "name"
 	SrcMeta     = "meta"
 	SrcXmp      = "xmp"
+	SrcYaml     = "yaml"
 	SrcLocation = classify.SrcLocation
 	SrcImage    = classify.SrcImage
 
-	// sort orders
-	SortOrderRelevance = "relevance"
+	// Sort orders.
+	SortOrderAdded     = "added"
 	SortOrderNewest    = "newest"
 	SortOrderOldest    = "oldest"
-	SortOrderImported  = "imported"
+	SortOrderName      = "name"
 	SortOrderSimilar   = "similar"
+	SortOrderRelevance = "relevance"
+	SortOrderEdited    = "edited"
 
-	// unknown values
+	// Unknown values.
 	YearUnknown  = -1
 	MonthUnknown = -1
+	DayUnknown   = -1
 	TitleUnknown = "Unknown"
+
+	// Content types.
+	TypeDefault = ""
+	TypeImage   = "image"
+	TypeLive    = "live"
+	TypeVideo   = "video"
+	TypeRaw     = "raw"
+	TypeText    = "text"
+
+	// Root directories.
+	RootUnknown   = ""
+	RootOriginals = "/"
+	RootExamples  = "examples"
+	RootSidecar   = "sidecar"
+	RootImport    = "import"
+	RootPath      = "/"
+
+	// Panorama projections.
+	ProjectionDefault         = ""
+	ProjectionEquirectangular = "equirectangular"
+	ProjectionCubestrip       = "cubestrip"
+	ProjectionCylindrical     = "cylindrical"
+
+	// Event names.
+	Updated = "updated"
+	Created = "created"
+	Deleted = "deleted"
 )
