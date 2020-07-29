@@ -100,6 +100,10 @@ export const Languages = () => [
         "text": $gettext("Russian"),
         "value": "ru",
     },
+    {
+        "text": $gettext("Chinese"),
+        "value": "zh",
+    },
 ];
 
 export const Themes = () => [
