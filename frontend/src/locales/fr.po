@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 2.4\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/pages/albums.vue:467 src/share/albums.vue:347
@@ -840,7 +840,7 @@ msgstr "Échec de l'indexation"
 
 #: src/pages/library/index.vue:6
 msgid "Indexing media and sidecar files…"
-msgstr "Indexation des média et et des fichiers annexes en cours"
+msgstr "Indexation des média et et des fichiers annexes en cours…"
 
 #: src/dialog/account/edit.vue:362
 msgid "Interval"
@@ -856,7 +856,8 @@ msgstr "Item"
 
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "Les JPEGS et vignettes sont automatiquement rendus selon les besoins."
+msgstr ""
+"Les JPEGS et vignettes sont automatiquement affichés selon les besoins."
 
 #: src/dialog/photo/details.vue:463
 msgid "Keywords"
