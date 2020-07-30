@@ -31,15 +31,15 @@ msgstr ""
 msgid "%{n} results"
 msgstr ""
 
-#: src/options/options.js:198
+#: src/options/options.js:202
 msgid "1 hour"
 msgstr ""
 
-#: src/options/options.js:200
+#: src/options/options.js:204
 msgid "12 hours"
 msgstr ""
 
-#: src/options/options.js:199
+#: src/options/options.js:203
 msgid "4 hours"
 msgstr ""
 
@@ -96,23 +96,23 @@ msgstr ""
 msgid "Added"
 msgstr ""
 
-#: src/options/options.js:208
+#: src/options/options.js:212
 msgid "After 1 day"
 msgstr ""
 
-#: src/options/options.js:209
+#: src/options/options.js:213
 msgid "After 3 days"
 msgstr ""
 
-#: src/options/options.js:210
+#: src/options/options.js:214
 msgid "After 7 days"
 msgstr ""
 
-#: src/options/options.js:212
+#: src/options/options.js:216
 msgid "After one month"
 msgstr ""
 
-#: src/options/options.js:214
+#: src/options/options.js:218
 msgid "After one year"
 msgstr ""
 
@@ -120,11 +120,11 @@ msgstr ""
 msgid "After selecting photos or videos from search results, you can add them to existing or new albums using the context menu."
 msgstr ""
 
-#: src/options/options.js:213
+#: src/options/options.js:217
 msgid "After two months"
 msgstr ""
 
-#: src/options/options.js:211
+#: src/options/options.js:215
 msgid "After two weeks"
 msgstr ""
 
@@ -292,15 +292,15 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: src/options/options.js:233
+#: src/options/options.js:237
 msgid "Black"
 msgstr ""
 
-#: src/options/options.js:229
+#: src/options/options.js:233
 msgid "Blue"
 msgstr ""
 
-#: src/options/options.js:230
+#: src/options/options.js:234
 msgid "Brown"
 msgstr ""
 
@@ -385,6 +385,10 @@ msgstr ""
 
 #: src/dialog/photo/info.vue:173
 msgid "Checked"
+msgstr ""
+
+#: src/options/options.js:104
+msgid "Chinese"
 msgstr ""
 
 #: src/dialog/photo/files.vue:120
@@ -509,15 +513,15 @@ msgstr ""
 msgid "Current Password"
 msgstr ""
 
-#: src/options/options.js:228
+#: src/options/options.js:232
 msgid "Cyan"
 msgstr ""
 
-#: src/options/options.js:111
+#: src/options/options.js:115
 msgid "Cyano"
 msgstr ""
 
-#: src/options/options.js:201
+#: src/options/options.js:205
 msgid "Daily"
 msgstr ""
 
@@ -525,7 +529,7 @@ msgstr ""
 msgid "Day"
 msgstr ""
 
-#: src/options/options.js:107
+#: src/options/options.js:111
 msgid "Default"
 msgstr ""
 
@@ -660,7 +664,7 @@ msgstr ""
 msgid "Errors"
 msgstr ""
 
-#: src/options/options.js:202
+#: src/options/options.js:206
 msgid "Every two days"
 msgstr ""
 
@@ -698,7 +702,7 @@ msgstr ""
 msgid "Failure while importing uploaded files"
 msgstr ""
 
-#: src/options/options.js:141
+#: src/options/options.js:145
 msgid "Fast"
 msgstr ""
 
@@ -776,15 +780,15 @@ msgstr ""
 msgid "German"
 msgstr ""
 
-#: src/options/options.js:223
+#: src/options/options.js:227
 msgid "Gold"
 msgstr ""
 
-#: src/options/options.js:226
+#: src/options/options.js:230
 msgid "Green"
 msgstr ""
 
-#: src/options/options.js:232
+#: src/options/options.js:236
 msgid "Grey"
 msgstr ""
 
@@ -820,7 +824,7 @@ msgstr ""
 msgid "Hide Private"
 msgstr ""
 
-#: src/options/options.js:164
+#: src/options/options.js:168
 msgid "Hybrid"
 msgstr ""
 
@@ -835,7 +839,7 @@ msgstr ""
 msgid "image"
 msgstr ""
 
-#: src/options/options.js:179
+#: src/options/options.js:183
 msgid "Image"
 msgstr ""
 
@@ -940,7 +944,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/options/options.js:115
+#: src/options/options.js:119
 msgid "Lavender"
 msgstr ""
 
@@ -970,7 +974,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: src/options/options.js:225
+#: src/options/options.js:229
 msgid "Lime"
 msgstr ""
 
@@ -987,7 +991,7 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: src/options/options.js:187
+#: src/options/options.js:191
 msgid "Live"
 msgstr ""
 
@@ -1027,7 +1031,7 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
-#: src/options/options.js:219
+#: src/options/options.js:223
 msgid "Magenta"
 msgstr ""
 
@@ -1043,7 +1047,7 @@ msgstr ""
 msgid "Manual Upload"
 msgstr ""
 
-#: src/options/options.js:145
+#: src/options/options.js:149
 msgid "Medium"
 msgstr ""
 
@@ -1067,8 +1071,8 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: src/options/options.js:119
-#: src/options/options.js:172
+#: src/options/options.js:123
+#: src/options/options.js:176
 msgid "Moonlight"
 msgstr ""
 
@@ -1138,8 +1142,8 @@ msgstr ""
 msgid "Name too long"
 msgstr ""
 
-#: src/options/options.js:197
-#: src/options/options.js:207
+#: src/options/options.js:201
+#: src/options/options.js:211
 #: src/pages/settings/sync.vue:129
 msgid "Never"
 msgstr ""
@@ -1205,7 +1209,7 @@ msgstr ""
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
-#: src/options/options.js:137
+#: src/options/options.js:141
 msgid "None"
 msgstr ""
 
@@ -1242,7 +1246,7 @@ msgid "Nothing to see here yet. Be patient."
 msgstr ""
 
 #: src/component/navigation.vue:385
-#: src/options/options.js:156
+#: src/options/options.js:160
 msgid "Offline"
 msgstr ""
 
@@ -1252,7 +1256,7 @@ msgstr ""
 msgid "Oldest first"
 msgstr ""
 
-#: src/options/options.js:203
+#: src/options/options.js:207
 msgid "Once a week"
 msgstr ""
 
@@ -1278,11 +1282,11 @@ msgstr ""
 msgid "One result"
 msgstr ""
 
-#: src/options/options.js:123
+#: src/options/options.js:127
 msgid "Onyx"
 msgstr ""
 
-#: src/options/options.js:222
+#: src/options/options.js:226
 msgid "Orange"
 msgstr ""
 
@@ -1353,7 +1357,7 @@ msgstr ""
 msgid "Photos"
 msgstr ""
 
-#: src/options/options.js:220
+#: src/options/options.js:224
 msgid "Pink"
 msgstr ""
 
@@ -1429,7 +1433,7 @@ msgstr ""
 msgid "Projection"
 msgstr ""
 
-#: src/options/options.js:218
+#: src/options/options.js:222
 msgid "Purple"
 msgstr ""
 
@@ -1445,11 +1449,11 @@ msgstr ""
 msgid "Random"
 msgstr ""
 
-#: src/options/options.js:127
+#: src/options/options.js:131
 msgid "Raspberry"
 msgstr ""
 
-#: src/options/options.js:183
+#: src/options/options.js:187
 msgid "Raw"
 msgstr ""
 
@@ -1469,7 +1473,7 @@ msgstr ""
 msgid "Recently edited"
 msgstr ""
 
-#: src/options/options.js:221
+#: src/options/options.js:225
 msgid "Red"
 msgstr ""
 
@@ -1577,7 +1581,7 @@ msgstr ""
 msgid "Season"
 msgstr ""
 
-#: src/options/options.js:131
+#: src/options/options.js:135
 msgid "Seaweed"
 msgstr ""
 
@@ -1671,7 +1675,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: src/options/options.js:149
+#: src/options/options.js:153
 msgid "Slow"
 msgstr ""
 
@@ -1720,7 +1724,7 @@ msgstr ""
 msgid "Storage Folder"
 msgstr ""
 
-#: src/options/options.js:160
+#: src/options/options.js:164
 msgid "Streets"
 msgstr ""
 
@@ -1760,7 +1764,7 @@ msgstr ""
 msgid "Taken before"
 msgstr ""
 
-#: src/options/options.js:227
+#: src/options/options.js:231
 msgid "Teal"
 msgstr ""
 
@@ -1814,7 +1818,7 @@ msgstr ""
 msgid "Token"
 msgstr ""
 
-#: src/options/options.js:168
+#: src/options/options.js:172
 msgid "Topographic"
 msgstr ""
 
@@ -1946,7 +1950,7 @@ msgstr ""
 #: src/model/file.js:172
 #: src/model/photo.js:489
 #: src/model/photo.js:503
-#: src/options/options.js:191
+#: src/options/options.js:195
 msgid "Video"
 msgstr ""
 
@@ -1979,7 +1983,7 @@ msgstr ""
 msgid "Whatever it is, we'd love to hear from you!"
 msgstr ""
 
-#: src/options/options.js:231
+#: src/options/options.js:235
 msgid "White"
 msgstr ""
 
@@ -1993,7 +1997,7 @@ msgstr ""
 msgid "Year"
 msgstr ""
 
-#: src/options/options.js:224
+#: src/options/options.js:228
 msgid "Yellow"
 msgstr ""
 
