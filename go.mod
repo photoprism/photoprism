@@ -7,7 +7,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
 	github.com/dsoprea/go-exif/v2 v2.0.0-20200722033536-33ee3a8313da // indirect
-	github.com/dsoprea/go-exif/v3 v3.0.0-20200722033536-33ee3a8313da
+	github.com/dsoprea/go-exif/v3 v3.0.0-20200731080332-74a1612f2042
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
 	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200722150319-963817537a6c

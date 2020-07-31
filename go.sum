@@ -51,6 +51,8 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200722033536-33ee3a8313da/go.mod h1:oKrjk
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717053412-08f1b6708903/go.mod h1:0nsO1ce0mh5czxGeLo4+OCZ/C6Eo6ZlMWsz7rH/Gxv8=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200722033536-33ee3a8313da h1:L/UYVj2DUQWlKl9ppghzcisZofMs5P1E/FawUaPMHwU=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200722033536-33ee3a8313da/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200731080332-74a1612f2042 h1:CtHLMdsG3DQ0Xriz60+KNI6Tq8AjuYFZwtZkG+2SNzw=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200731080332-74a1612f2042/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1 h1:R/EEzpxqQxeEcJ/z0EFTI1U6XsuOnepyp5o1uZg5c2E=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1/go.mod h1:UwRKreeVikXn5OarSnt4OqovcEjsIgZVuc5svj7G5w4=
 github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb h1:gwjJjUr6FY7zAWVEueFPrcRHhd9+IK81TcItbqw2du4=
