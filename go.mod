@@ -6,7 +6,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200722033536-33ee3a8313da // indirect
+	github.com/dsoprea/go-exif/v2 v2.0.0-20200731080332-74a1612f2042 // indirect
 	github.com/dsoprea/go-exif/v3 v3.0.0-20200731080332-74a1612f2042
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
@@ -19,7 +19,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
-	github.com/golang/geo v0.0.0-20200319012246-673a6f80352d
+	github.com/golang/geo v0.0.0-20200730024412-e86565bf3f35
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/open-location-code/go v0.0.0-20200603075809-e28188e71340
 	github.com/gorilla/websocket v1.4.2
