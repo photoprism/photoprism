@@ -247,7 +247,7 @@ msgstr "Approuver"
 #: src/component/photo/clipboard.vue:155 src/pages/settings/general.vue:415
 #: src/routes.js:178 src/share/photo/clipboard.vue:74
 msgid "Archive"
-msgstr "Archiver"
+msgstr "Archives"
 
 #: src/dialog/photo/info.vue:181
 msgid "Archived"
