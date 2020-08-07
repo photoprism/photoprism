@@ -353,7 +353,7 @@ export class Photo extends RestModel {
     }
 
     downloadAll() {
-        if (!this.Files) {
+        if (this.Files.length === 1) {
             let link = document.createElement("a");
             link.href = `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
             link.download = this.baseName(false);
