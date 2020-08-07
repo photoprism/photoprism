@@ -50,30 +50,26 @@ func TestMediaFile_Location(t *testing.T) {
 	t.Run("cat_brown.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		f, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		_, err = mediaFile.Location()
+		loc, err := f.Location()
 
-		assert.Error(t, err)
-
-		/*
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if err = location.Find("places"); err != nil {
+		if err = loc.Find("places"); err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Tübingen", location.City())
-		assert.Equal(t, "de", location.CountryCode())
-		assert.Equal(t, "Germany", location.CountryName())
-		assert.True(t, strings.HasPrefix(location.ID, s2.TokenPrefix+"4799e4a5"))
-		*/
+		assert.Equal(t, "Tübingen", loc.City())
+		assert.Equal(t, "de", loc.CountryCode())
+		assert.Equal(t, "Germany", loc.CountryName())
+		assert.True(t, strings.HasPrefix(loc.ID, s2.TokenPrefix+"4799e4a5"))
 	})
 	t.Run("dog_orange.jpg", func(t *testing.T) {
 		conf := config.TestConfig()

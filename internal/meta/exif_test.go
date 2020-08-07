@@ -18,28 +18,21 @@ func TestExif(t *testing.T) {
 		// t.Logf("all: %+v", data.All)
 
 		assert.Equal(t, "Michael Mayer", data.Artist)
-        // Expected: 2020-01-01T16:28:23Z
-		assert.Equal(t, "2020-01-07T10:56:29Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
-        // Expected: 2020-01-01T17:28:23Z
-		assert.Equal(t, "2020-01-07T10:56:29Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-01-01T16:28:23Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-01-01T17:28:23Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "Example file for development", data.Description)
 		assert.Equal(t, "This is a legal notice", data.Copyright)
-		// Expected: 540
-		assert.Equal(t, 2736, data.Height)
-		// Expected: 720
-		assert.Equal(t, 3648, data.Width)
-		// Expected: 52.45969
-		assert.Equal(t, float32(0), data.Lat)
-		// Expected: 13.321832
-		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 540, data.Height)
+		assert.Equal(t, 720, data.Width)
+		assert.Equal(t, float32(52.45969), data.Lat)
+		assert.Equal(t, float32(13.321832), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
-		// Expected: 1/50
-		assert.Equal(t, "", data.Exposure)
+		assert.Equal(t, "1/50", data.Exposure)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
 		assert.Equal(t, "", data.CameraOwner)
 		assert.Equal(t, "", data.CameraSerial)
-		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 27, data.FocalLength)
 		assert.Equal(t, 1, int(data.Orientation))
 
 		// TODO: Values are empty - why?
@@ -192,10 +185,10 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
-		assert.Equal(t, "1/1111", data.Exposure)
+		assert.Equal(t, "1/1100", data.Exposure)
 		assert.Equal(t, "SAMSUNG", data.CameraMake)
 		assert.Equal(t, "GT-I9000", data.CameraModel)
-		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 3, data.FocalLength)
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.LensMake)
 		assert.Equal(t, "", data.LensModel)
