@@ -361,16 +361,17 @@ export class Photo extends RestModel {
             return;
         }
 
-        this.Files.forEach((file) => {
-            if (!file || !file.Hash) {
-                console.warn("no file hash found for download", file);
-                return;
-            }
+        let uidList = [];
+        for (let file of this.Files) {
+            uidList.push(file.PhotoUID);
+        }
 
+        Api.post("zip", {"photos": uidList}).then(res => {
             let link = document.createElement("a");
-            link.href = `/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`;
-            link.download = this.fileBase(file.Name);
+            link.href = `/api/v1/zip/${res.data.filename}?t=${config.downloadToken()}`;
+            link.download = this.baseName(false);
             link.click();
+            return;
         });
     }
 
