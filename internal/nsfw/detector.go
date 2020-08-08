@@ -1,3 +1,5 @@
+// +build !NOTENSORFLOW
+
 package nsfw
 
 import (

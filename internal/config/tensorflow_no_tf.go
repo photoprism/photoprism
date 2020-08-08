@@ -1,21 +1,19 @@
-// +build !NOTENSORFLOW
+// +build NOTENSORFLOW
 
 package config
 
 import (
 	"path/filepath"
-
-	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
 // TensorFlowVersion returns the TenorFlow framework version.
 func (c *Config) TensorFlowVersion() string {
-	return tf.Version()
+	return "NONE"
 }
 
 // TensorFlowOff returns true if TensorFlow should NOT be used for image classification (or anything else).
 func (c *Config) TensorFlowOff() bool {
-	return c.params.TensorFlowOff
+	return true
 }
 
 // TensorFlowModelPath returns the TensorFlow model path.

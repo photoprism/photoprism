@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -x
 PHOTOPRISM_DATE=`date -u +%y%m%d`
 PHOTOPRISM_VERSION=`git describe --always`
 
@@ -27,7 +27,7 @@ fi
 
 if [[ $1 == "debug" ]]; then
   echo "Building development binary..."
-	go build -ldflags "-X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}-DEBUG" -o $2 cmd/photoprism/photoprism.go
+	go build -tags NOTENSORFLOW -ldflags "-X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}-DEBUG" -o $2 cmd/photoprism/photoprism.go
 	du -h $2
 	echo "Done."
 elif [[ $1 == "race" ]]; then
