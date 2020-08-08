@@ -155,14 +155,11 @@ func TestMediaFile_Exif_DNG(t *testing.T) {
 	assert.Equal(t, 1, info.Orientation)
 	assert.Equal(t, "Canon EOS 6D", info.CameraModel)
 	assert.Equal(t, "Canon", info.CameraMake)
-	// Expected: EF24-105mm f/4L IS USM
-	assert.Equal(t, "", info.LensModel)
+	assert.Equal(t, "EF24-105mm f/4L IS USM", info.LensModel)
 	assert.Equal(t, "", info.Artist)
-	// Expected: 65
-	assert.Equal(t, 0, info.FocalLength)
+	assert.Equal(t, 65, info.FocalLength)
 	assert.Equal(t, "1/60", info.Exposure)
-	// Expected: float32(4.971)
-	assert.Equal(t, float32(0), info.Aperture)
+	assert.Equal(t, float32(4.971), info.Aperture)
 	assert.Equal(t, 1000, info.Iso)
 	assert.Equal(t, float32(0), info.Lat)
 	assert.Equal(t, float32(0), info.Lng)

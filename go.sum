@@ -48,9 +48,13 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200520183328-015129a9efd5/go.mod h1:9EXlP
 github.com/dsoprea/go-exif/v2 v2.0.0-20200604193436-ca8584a0e1c4/go.mod h1:9EXlPeHfblFFnwu5UOqmP2eoZfJyAZ2Ri/Vki33ajO0=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200731080332-74a1612f2042 h1:FcMmwRzpaLe+hhQ/413BoF55E1wFZs+J5PgQYN8sF1o=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200731080332-74a1612f2042/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200807075213-089aa48c91e6 h1:jkmCBceHmez4ArDFqcIrjFhPTTIV2IlWiF/QTeubgOs=
+github.com/dsoprea/go-exif/v2 v2.0.0-20200807075213-089aa48c91e6/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717053412-08f1b6708903/go.mod h1:0nsO1ce0mh5czxGeLo4+OCZ/C6Eo6ZlMWsz7rH/Gxv8=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200731080332-74a1612f2042 h1:CtHLMdsG3DQ0Xriz60+KNI6Tq8AjuYFZwtZkG+2SNzw=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200731080332-74a1612f2042/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200807075213-089aa48c91e6 h1:AWLaaemM6TvO4DVwMtXibJKpWWfyw+tiZwYUiueLPzE=
+github.com/dsoprea/go-exif/v3 v3.0.0-20200807075213-089aa48c91e6/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1 h1:R/EEzpxqQxeEcJ/z0EFTI1U6XsuOnepyp5o1uZg5c2E=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1/go.mod h1:UwRKreeVikXn5OarSnt4OqovcEjsIgZVuc5svj7G5w4=
 github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb h1:gwjJjUr6FY7zAWVEueFPrcRHhd9+IK81TcItbqw2du4=
@@ -71,8 +75,12 @@ github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d h
 github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d/go.mod h1:pqKB+ijp27cEcrHxhXVgUUMlSDRuGJJp1E+20Lj5H0E=
 github.com/dsoprea/go-png-image-structure v0.0.0-20200717084940-ebc583cbd8bd h1:6CCSfUqW085rOMWxSqal7/KR8SQcziqolKmZooqiD1s=
 github.com/dsoprea/go-png-image-structure v0.0.0-20200717084940-ebc583cbd8bd/go.mod h1:aDYQkL/5gfRNZkoxiLTSWU4Y8/gV/4MVsy/MU9uwTak=
+github.com/dsoprea/go-png-image-structure v0.0.0-20200807080309-a98d4e94ac82 h1:RdwKOEEe2ND/JmoKh6I/EQlR9idKJTDOMffPFK6vN2M=
+github.com/dsoprea/go-png-image-structure v0.0.0-20200807080309-a98d4e94ac82/go.mod h1:aDYQkL/5gfRNZkoxiLTSWU4Y8/gV/4MVsy/MU9uwTak=
 github.com/dsoprea/go-tiff-image-structure v0.0.0-20200717073440-8ac81ec8b423 h1:aIXEGtyKFKqeNW2rc4cx3J2TLxQ9F5fwWPSbq6p6Fq8=
 github.com/dsoprea/go-tiff-image-structure v0.0.0-20200717073440-8ac81ec8b423/go.mod h1:we+M+yrq8ifsA33a7C7p8E1ztBbdDYjMIC8RMm8KPL8=
+github.com/dsoprea/go-tiff-image-structure v0.0.0-20200807080429-5631a803a91b h1:0RmQug1S1/hpzATPKJzTj1NBG93aFxzYZFKPIXjNkGU=
+github.com/dsoprea/go-tiff-image-structure v0.0.0-20200807080429-5631a803a91b/go.mod h1:we+M+yrq8ifsA33a7C7p8E1ztBbdDYjMIC8RMm8KPL8=
 github.com/dsoprea/go-utility v0.0.0-20200512094054-1abbbc781176 h1:CfXezFYb2STGOd1+n1HshvE191zVx+QX3A1nML5xxME=
 github.com/dsoprea/go-utility v0.0.0-20200512094054-1abbbc781176/go.mod h1:95+K3z2L0mqsVYd6yveIv1lmtT3tcQQ3dVakPySffW8=
 github.com/dsoprea/go-utility v0.0.0-20200711062821-fab8125e9bdf h1:/w4QxepU4AHh3AuO6/g8y/YIIHH5+aKP3Bj8sg5cqhU=
