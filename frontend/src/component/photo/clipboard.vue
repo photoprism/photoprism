@@ -214,7 +214,6 @@
               for (let i = 0; i < this.selection.length; i++) {
                 new Photo().find(this.selection[i]).then(photo => {
                   for (let j = 0; j < photo.Files.length; j++) {
-                    window.console.log(photo.Files);
                     photoUIDs.push(photo.Files[j].PhotoUID);
                     if ((i === this.selection.length - 1) && (j === photo.Files.length - 1)) {
                       if (photoUIDs.length === 1) {
