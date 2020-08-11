@@ -1,6 +1,9 @@
 import Folder from "model/folder";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
+import {Settings} from "luxon";
+Settings.defaultLocale = "en"
+Settings.defaultZoneName = "UTC"
 
 let chai = require("chai/chai");
 let assert = chai.assert;
