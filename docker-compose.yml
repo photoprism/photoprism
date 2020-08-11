@@ -1,14 +1,16 @@
 version: '3.5'
 
 services:
-  caddy:
-    image: abiosoft/caddy:1.0.3-no-stats
-    depends_on:
-     - photoprism
-    ports:
-      - 2015:2015
-    volumes:
-      - ./docker/development/Caddyfile:/etc/Caddyfile
+  # caddy:
+  #  image: caddy:2
+  #  depends_on:
+  #   - photoprism
+  #  ports:
+  #    - "80:80"
+  #    - "443:443"
+  #  volumes:
+  #    - ./docker/development/caddy:/data/caddy/pki/authorities/local
+  #    - ./docker/development/caddy/Caddyfile:/etc/caddy/Caddyfile
 
   photoprism:
     build: .
