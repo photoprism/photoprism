@@ -41,7 +41,7 @@
                           </v-img>
                         </td>
                       </tr>
-                      <tr v-if="!file.Sidecar && !file.Primary && !file.Root">
+                      <tr v-if="!file.Sidecar && !file.Primary && file.Root === '/'">
                         <td>
                           <translate>Actions</translate>
                         </td>
