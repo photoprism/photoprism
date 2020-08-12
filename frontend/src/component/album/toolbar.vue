@@ -21,6 +21,10 @@
         <v-icon>share</v-icon>
       </v-btn>
 
+      <v-btn icon @click.stop="download" v-if="$config.feature('download')" class="hidden-xs-only action-download" :title="$gettext('Download')">
+        <v-icon>get_app</v-icon>
+      </v-btn>
+
       <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
         <v-icon>view_list</v-icon>
       </v-btn>
@@ -62,106 +66,117 @@
   </v-form>
 </template>
 <script>
-    import Event from "pubsub-js";
+import Event from "pubsub-js";
+import Notify from "../../common/notify";
 
-    export default {
-        name: 'p-album-toolbar',
-        props: {
-            album: Object,
-            filter: Object,
-            settings: Object,
-            refresh: Function,
-            filterChange: Function,
+export default {
+    name: 'p-album-toolbar',
+    props: {
+        album: Object,
+        filter: Object,
+        settings: Object,
+        refresh: Function,
+        filterChange: Function,
+    },
+    data() {
+        const cameras = [{
+            ID: 0,
+            Name: this.$gettext('All Cameras')
+        }].concat(this.$config.get('cameras'));
+        const countries = [{
+            ID: '',
+            Name: this.$gettext('All Countries')
+        }].concat(this.$config.get('countries'));
+
+        return {
+            experimental: this.$config.get("experimental"),
+            isFullScreen: !!document.fullscreenElement,
+            categories: this.$config.albumCategories(),
+            searchExpanded: false,
+            options: {
+                'views': [
+                    {value: 'mosaic', text: this.$gettext('Mosaic')},
+                    {value: 'cards', text: this.$gettext('Cards')},
+                    {value: 'list', text: this.$gettext('List')},
+                ],
+                'countries': countries,
+                'cameras': cameras,
+                'sorting': [
+                    {value: 'added', text: this.$gettext('Recently added')},
+                    {value: 'edited', text: this.$gettext('Recently edited')},
+                    {value: 'newest', text: this.$gettext('Newest first')},
+                    {value: 'oldest', text: this.$gettext('Oldest first')},
+                    {value: 'name', text: this.$gettext('Sort by file name')},
+                    {value: 'similar', text: this.$gettext('Group by similarity')},
+                    {value: 'relevance', text: this.$gettext('Most relevant')},
+                ],
+            },
+            dialog: {
+                share: false,
+                upload: false,
+                edit: false,
+            },
+            labels: {
+                title: this.$gettext("Album Name"),
+                description: this.$gettext("Description"),
+                search: this.$gettext("Search"),
+                view: this.$gettext("View"),
+                country: this.$gettext("Country"),
+                camera: this.$gettext("Camera"),
+                sort: this.$gettext("Sort Order"),
+                category: this.$gettext("Category"),
+            },
+            titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
+            growDesc: false,
+        };
+    },
+    methods: {
+        webdavUpload() {
+            this.dialog.share = false;
+            this.dialog.upload = true;
         },
-        data() {
-            const cameras = [{
-                ID: 0,
-                Name: this.$gettext('All Cameras')
-            }].concat(this.$config.get('cameras'));
-            const countries = [{
-                ID: '',
-                Name: this.$gettext('All Countries')
-            }].concat(this.$config.get('countries'));
-
-            return {
-                experimental: this.$config.get("experimental"),
-                isFullScreen: !!document.fullscreenElement,
-                categories: this.$config.albumCategories(),
-                searchExpanded: false,
-                options: {
-                    'views': [
-                        {value: 'mosaic', text: this.$gettext('Mosaic')},
-                        {value: 'cards', text: this.$gettext('Cards')},
-                        {value: 'list', text: this.$gettext('List')},
-                    ],
-                    'countries': countries,
-                    'cameras': cameras,
-                    'sorting': [
-                        {value: 'added', text: this.$gettext('Recently added')},
-                        {value: 'edited', text: this.$gettext('Recently edited')},
-                        {value: 'newest', text: this.$gettext('Newest first')},
-                        {value: 'oldest', text: this.$gettext('Oldest first')},
-                        {value: 'name', text: this.$gettext('Sort by file name')},
-                        {value: 'similar', text: this.$gettext('Group by similarity')},
-                        {value: 'relevance', text: this.$gettext('Most relevant')},
-                    ],
-                },
-                dialog: {
-                    share: false,
-                    upload: false,
-                    edit: false,
-                },
-                labels: {
-                    title: this.$gettext("Album Name"),
-                    description: this.$gettext("Description"),
-                    search: this.$gettext("Search"),
-                    view: this.$gettext("View"),
-                    country: this.$gettext("Country"),
-                    camera: this.$gettext("Camera"),
-                    sort: this.$gettext("Sort Order"),
-                    category: this.$gettext("Category"),
-                },
-                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-                growDesc: false,
-            };
+        showUpload() {
+            Event.publish("dialog.upload");
         },
-        methods: {
-            webdavUpload() {
-                this.dialog.share = false;
-                this.dialog.upload = true;
-            },
-            showUpload() {
-                Event.publish("dialog.upload");
-            },
-            expand() {
-                this.searchExpanded = !this.searchExpanded;
-                this.growDesc = !this.growDesc;
-            },
-            updateAlbum() {
-                if (this.album.wasChanged()) {
-                    this.album.update();
-                }
-            },
-            dropdownChange() {
-                this.filterChange();
+        expand() {
+            this.searchExpanded = !this.searchExpanded;
+            this.growDesc = !this.growDesc;
+        },
+        updateAlbum() {
+            if (this.album.wasChanged()) {
+                this.album.update();
+            }
+        },
+        dropdownChange() {
+            this.filterChange();
 
-                if (window.innerWidth < 600) {
-                    this.searchExpanded = false;
-                }
+            if (window.innerWidth < 600) {
+                this.searchExpanded = false;
+            }
 
-                if (this.filter.order !== this.album.Order) {
-                    this.album.Order = this.filter.order;
-                    this.updateAlbum()
-                }
-            },
-            setView(name) {
-                this.settings.view = name;
-                this.filterChange();
-            },
-            clearQuery() {
-                this.filter.q = '';
-                this.filterChange();
-            },
-        }
-    };
+            if (this.filter.order !== this.album.Order) {
+                this.album.Order = this.filter.order;
+                this.updateAlbum()
+            }
+        },
+        setView(name) {
+            this.settings.view = name;
+            this.filterChange();
+        },
+        clearQuery() {
+            this.filter.q = '';
+            this.filterChange();
+        },
+        download() {
+            this.onDownload(`/api/v1/albums/${this.album.UID}/dl?t=${this.$config.downloadToken()}`);
+        },
+        onDownload(path) {
+            Notify.success(this.$gettext("Downloading…"));
+            const link = document.createElement('a')
+            link.href = path;
+            link.download = "album.zip";
+            link.click();
+        },
+    }
+};
 </script>
