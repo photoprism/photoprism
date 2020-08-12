@@ -119,6 +119,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         tzdata \
         libheif-examples \
         darktable \
+        rawtherapee \
         exiftool \
         ffmpeg && \
     apt-get update && \

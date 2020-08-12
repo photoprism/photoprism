@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-utils \
         add-apt-key \
         exiftool \
+        rawtherapee \
         ffmpeg
 
 # Copy dependencies

@@ -49,6 +49,7 @@ RUN apt-get update && apt-get upgrade && \
     firefox \
     libheif-examples \
     exiftool \
+    rawtherapee \
     ffmpeg \
     lsof
 
