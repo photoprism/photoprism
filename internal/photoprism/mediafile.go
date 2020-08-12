@@ -313,12 +313,14 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = f
 		} else if f.IsHEIF() {
 			result.Main = f
-		} else if f.IsJpeg() && len(result.Main.FileName()) > len(f.FileName()) {
-			result.Main = f
 		} else if f.IsImageOther() {
 			result.Main = f
 		} else if f.IsVideo() {
 			result.Main = f
+		} else if result.Main != nil && f.IsJpeg() {
+			if result.Main.IsJpeg() && len(result.Main.FileName()) > len(f.FileName()) {
+				result.Main = f
+			}
 		}
 
 		result.Files = append(result.Files, f)
