@@ -63,7 +63,7 @@ export const MonthsShort = () => {
     let result = [];
 
     for (let i = 1; i <= 12; i++) {
-        result.push({"value": i + 1, "text": i.toString().padStart(2, "0")});
+        result.push({"value": i, "text": i.toString().padStart(2, "0")});
     }
 
     result.push({"value": -1, "text": $gettext("Unknown")});
