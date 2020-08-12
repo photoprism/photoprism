@@ -89,4 +89,5 @@ var SpecialWords = map[string]string{
 	"saarbrucken":        "Saarbrücken",
 	"saarbruecken":       "Saarbrücken",
 	"zuerich":            "Zürich",
+	"wg":                 "WG",
 }
