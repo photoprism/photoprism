@@ -15,7 +15,7 @@ import (
 func TestIndexRelated(t *testing.T) {
 	conf := config.TestConfig()
 
-	testFile, err := NewMediaFile("testdata/2018-04-12 19:24:49.gif")
+	testFile, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
 
 	if err != nil {
 		t.Fatal(err)
@@ -38,7 +38,7 @@ func TestIndexRelated(t *testing.T) {
 		}
 	}
 
-	mainFile, err := NewMediaFile(filepath.Join(testPath, "2018-04-12 19:24:49.gif"))
+	mainFile, err := NewMediaFile(filepath.Join(testPath, "2018-04-12 19_24_49.gif"))
 
 	if err != nil {
 		t.Fatal(err)
