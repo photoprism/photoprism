@@ -67,7 +67,7 @@
 </template>
 <script>
 import Event from "pubsub-js";
-import Notify from "../../common/notify";
+import Notify from "common/notify";
 
 export default {
     name: 'p-album-toolbar',
