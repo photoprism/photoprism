@@ -65,6 +65,7 @@ type Params struct {
 	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`
 	HttpServerPassword string `yaml:"http-password" flag:"http-password"`
 	SipsBin            string `yaml:"sips-bin" flag:"sips-bin"`
+	RawtherapeeBin     string `yaml:"rawtherapee-bin" flag:"rawtherapee-bin"`
 	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
 	DarktablePresets   bool   `yaml:"darktable-presets" flag:"darktable-presets"`
 	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`

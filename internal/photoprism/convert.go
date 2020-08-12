@@ -170,7 +170,7 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 	if mf.IsRaw() {
 		if c.conf.SipsBin() != "" {
 			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, mf.FileName())
-		} else if c.conf.DarktableBin() != "" {
+		} else if c.conf.DarktableBin() != "" && mf.Extension() != ".cr3" {
 			var args []string
 
 			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
@@ -189,6 +189,12 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 			}
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
+		} else if c.conf.RawtherapeeBin() != "" {
+			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
+
+			args := []string{"-o", jpegName, "-d", jpegQuality, "-js3", "-b8", "-c", mf.FileName()}
+
+			result = exec.Command(c.conf.RawtherapeeBin(), args...)
 		} else {
 			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(mf.BaseName()))
 		}

@@ -161,11 +161,6 @@ func (c *Config) ImportPath() string {
 	return fs.Abs(c.params.ImportPath)
 }
 
-// SipsBin returns the sips executable file name.
-func (c *Config) SipsBin() string {
-	return findExecutable(c.params.SipsBin, "sips")
-}
-
 // ExifToolBin returns the exiftool executable file name.
 func (c *Config) ExifToolBin() string {
 	return findExecutable(c.params.ExifToolBin, "exiftool")
@@ -206,11 +201,6 @@ func (c *Config) SidecarPathIsAbs() bool {
 // SidecarWritable returns true if sidecar files can be created.
 func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
-}
-
-// HeifConvertBin returns the heif-convert executable file name.
-func (c *Config) HeifConvertBin() string {
-	return findExecutable(c.params.HeifConvertBin, "heif-convert")
 }
 
 // FFmpegBin returns the ffmpeg executable file name.

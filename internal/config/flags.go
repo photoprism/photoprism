@@ -185,6 +185,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_SETTINGS_HIDDEN",
 	},
 	cli.StringFlag{
+		Name:   "rawtherapee-bin",
+		Usage:  "rawtherapee-cli executable `FILENAME`",
+		Value:  "rawtherapee-cli",
+		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
+	},
+	cli.StringFlag{
 		Name:   "darktable-bin",
 		Usage:  "darktable-cli executable `FILENAME`",
 		Value:  "darktable-cli",
@@ -298,7 +304,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",
 		Usage:  "choose 95 for high-quality thumbnails (25-100)",
-		Value:  90,
+		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
 }

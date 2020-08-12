@@ -86,6 +86,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "settings-hidden", conf.SettingsHidden())
 
 	// External binaries and sidecar configuration.
+	fmt.Printf("%-25s %s\n", "rawtherapee-bin", conf.RawtherapeeBin())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
 	fmt.Printf("%-25s %t\n", "darktable-presets", conf.DarktablePresets())
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
