@@ -1,8 +1,12 @@
 version: '3.3'
 
-# Example docker-compose config file for production use
-# Container image on Docker Hub: https://hub.docker.com/r/photoprism/photoprism/
-# To keep photoprism running, add "restart: always"
+# Example Docker Compose config file for PhotoPrism (Intel / AMD64)
+#
+# Documentation : https://docs.photoprism.org/getting-started/docker-compose/
+# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
+#
+# Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
+# e.g. when running PhotoPrism on a public server outside your home network.
 #
 # Usage: docker-compose up
 
@@ -35,9 +39,9 @@ services:
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Initial admin password (can be changed in settings)
       PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # Change to "mysql" for external MySQL or MariaDB
       # PHOTOPRISM_DATABASE_DRIVER: "mysql"          # Using MariaDB or MySQL instead of SQLite is optional
-      # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
-      # PHOTOPRISM_SIDECAR_JSON: "true"              # Read metadata from JSON sidecar files created by exiftool
-      # PHOTOPRISM_SIDECAR_YAML: "true"              # Backup photo metadata to YAML sidecar files
+      # PHOTOPRISM_DATABASE_DSN: "user:passwd@tcp(photoprism-db:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      PHOTOPRISM_SIDECAR_JSON: "true"                # Read metadata from JSON sidecar files created by exiftool
+      PHOTOPRISM_SIDECAR_YAML: "true"                # Backup photo metadata to YAML sidecar files
       PHOTOPRISM_THUMB_FILTER: "lanczos"             # Resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "false"             # Enable on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
@@ -46,26 +50,22 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Use darktable presets (disables concurrent raw to jpeg conversion)
-      PHOTOPRISM_STORAGE_PATH: "/photoprism/storage" # Storage PATH for generated files like cache and index
+      PHOTOPRISM_STORAGE_PATH: "/photoprism/storage" # Storage PATH for cache, settings and SQLite database
     volumes:
+      - /photoprism/storage                          # Keep cache and settings when upgrading or restarting
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import"       # [local path]:[container path] (optional)
-      - "photoprism-storage:/photoprism/storage"     # Keep cache, settings and database
 
-  # photoprism-db: # Uncomment, if you want to use MariaDB instead of SQLite
-  #  image: mariadb:10.5 # Alternatively mysql:8.0
-  #  restart: unless-stopped
-  #  command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
-  #  volumes:
-  #    - "photoprism-database:/var/lib/mysql"
-  #  environment:
-  #    MYSQL_ROOT_PASSWORD: photoprism
-  #    MYSQL_USER: photoprism
-  #    MYSQL_PASSWORD: photoprism
-  #    MYSQL_DATABASE: photoprism
-
-volumes: # keep this
-  photoprism-storage:
-    driver: local
-#  photoprism-database:
-#    driver: local
+# Uncomment the following lines to use MariaDB instead of SQLite for improved performance & scalability
+#
+#  photoprism-db:
+#    image: mariadb:10.5 # Alternatively mysql:8.0
+#    restart: unless-stopped
+#    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+#    volumes:
+#      - /var/lib/mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: photoprism
+#      MYSQL_USER: user
+#      MYSQL_PASSWORD: passwd
+#      MYSQL_DATABASE: photoprism
