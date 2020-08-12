@@ -72,4 +72,4 @@ services:
       MYSQL_DATABASE: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20200327
+    image: photoprism/webdav:20200812

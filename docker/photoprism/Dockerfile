@@ -1,4 +1,4 @@
-FROM photoprism/development:20200721 as build
+FROM photoprism/development:20200812 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -8,7 +8,7 @@ COPY . .
 RUN make dep build-js install
 
 # Same base image as photoprism/development
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND noninteractive
@@ -39,8 +39,8 @@ COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_fra
 RUN ldconfig
 
 # Install RAW to JPEG converter
-RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_18.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
-    wget -qO - https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_18.04/Release.key | apt-key add - && \
+RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
+    wget -qO - https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_20.04/Release.key | apt-key add - && \
     apt-get update && \
     apt-get install darktable && \
     apt-get upgrade && \

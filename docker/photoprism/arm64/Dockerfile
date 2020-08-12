@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as build
+FROM ubuntu:20.04 as build
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
@@ -70,12 +70,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.14.6
+ENV GOLANG_VERSION 1.15
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "291bccfd7d7f1915599bbcc90e49d9fccfcb0004b7c62a2f5cdf0f96a09d6a3e *go.tgz" | sha256sum -c -; \
+	echo "7e18d92f61ddf480a4f9a57db09389ae7b9dadf68470d0cb9c00d734a0c57f8d *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -101,7 +101,7 @@ COPY . .
 RUN make dep build-js install
 
 # Same base image as photoprism/development
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND noninteractive

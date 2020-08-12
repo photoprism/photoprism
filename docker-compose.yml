@@ -19,9 +19,7 @@ services:
       - photoprism-db
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343"
-    expose:
-      - "2343" # Acceptance Tests
+      - "2343:2343" # Acceptance Tests
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
@@ -78,7 +76,7 @@ services:
       MYSQL_DATABASE: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20200327
+    image: photoprism/webdav:20200812
 
 volumes:
   go-mod:
