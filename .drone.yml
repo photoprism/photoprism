@@ -1,0 +1,54 @@
+---
+kind: pipeline
+type: exec
+name: default
+
+platform:
+  arch: amd64
+  os: linux
+
+steps:
+  - name: up
+    commands:
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+
+  - name: test-develop
+    environment:
+      CODECOV_TOKEN:
+        from_secret: codecov_token
+      CODECOV_URL: "https://codecov.io/gh/photoprism/photoprism"
+    commands:
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test-js test-codecov install migrate
+    when:
+      branch:
+        - develop
+
+  - name: test-master
+    commands:
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+    when:
+      branch:
+        - master
+
+  - name: down
+    commands:
+      - docker-compose -f docker-compose.drone.yml down
+    when:
+      status:
+        - failure
+        - success
+
+  - name: deploy
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
+      - make docker-photoprism docker-demo
+    when:
+      status:
+        - success
+      branch:
+        - master
