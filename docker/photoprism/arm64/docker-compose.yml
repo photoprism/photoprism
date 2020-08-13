@@ -54,7 +54,7 @@ services:
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Use darktable presets (disables concurrent raw to jpeg conversion)
       PHOTOPRISM_STORAGE_PATH: "/photoprism/storage" # Storage PATH for cache, settings and SQLite database
     volumes:
-      - /photoprism/storage                          # Keep cache and settings when upgrading or restarting
+      - "/photoprism/storage"                        # Keep cache and settings when upgrading or restarting
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import"       # [local path]:[container path] (optional)
 
@@ -65,17 +65,17 @@ services:
 #    restart: unless-stopped
 #    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
 #    volumes:
-#      - /var/lib/mysql
+#      - "/var/lib/mysql"
 #    environment:
 #      MYSQL_ROOT_PASSWORD: photoprism
 #      MYSQL_USER: user
 #      MYSQL_PASSWORD: passwd
 #      MYSQL_DATABASE: photoprism
 
-# Uncomment the following lines to upgrade automatically whenever there are new container images available:
+# Uncomment the following lines to upgrade automatically whenever there are new images available:
 #
 #  watchtower:
-#    restart: unless-stopped
 #    image: containrrr/watchtower
+#    restart: unless-stopped
 #    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
+#      - "/var/run/docker.sock:/var/run/docker.sock"
