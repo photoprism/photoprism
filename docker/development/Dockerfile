@@ -51,7 +51,8 @@ RUN apt-get update && apt-get upgrade && \
     exiftool \
     rawtherapee \
     ffmpeg \
-    lsof
+    lsof \
+    apache2-utils
 
 # Install Chromium Browser via .deb
 RUN add-apt-repository -y ppa:xalt7x/chromium-deb-vaapi
@@ -117,7 +118,6 @@ RUN wget "https://dl.photoprism.org/fixtures/testdata.zip?${BUILD_TAG}" -O /tmp/
 
 # Install additional tools for development
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/miku/zek/cmd/...
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
 RUN echo "alias go=richgo" > /root/.bash_aliases
