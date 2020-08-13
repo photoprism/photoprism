@@ -3,7 +3,7 @@ PhotoPrism: Browse Your Life in Pictures
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
-[![Build Status](https://travis-ci.org/photoprism/photoprism.png?branch=develop)][ci]
+[![Build Status](https://drone.photoprism.app/api/badges/photoprism/photoprism/status.svg?ref=refs/heads/develop)][ci]
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
@@ -111,7 +111,7 @@ goods, products, or services without prior written permission. In other words, p
 [paypal]: https://www.paypal.me/photoprism
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
-[ci]: https://travis-ci.org/photoprism/photoprism
+[ci]: https://drone.photoprism.app/photoprism/photoprism
 [docs]: https://docs.photoprism.org/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
