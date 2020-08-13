@@ -56,7 +56,7 @@ services:
       - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
       - "~/Pictures/Import:/photoprism/import"       # [local path]:[container path] (optional)
 
-# Uncomment the following lines to use MariaDB instead of SQLite for improved performance & scalability
+# Uncomment the following lines to use MariaDB instead of SQLite for improved performance & scalability:
 #
 #  photoprism-db:
 #    image: mariadb:10.5 # Alternatively mysql:8.0
@@ -69,3 +69,11 @@ services:
 #      MYSQL_USER: user
 #      MYSQL_PASSWORD: passwd
 #      MYSQL_DATABASE: photoprism
+
+# Uncomment the following lines to upgrade automatically whenever there are new container images available:
+#
+#  watchtower:
+#    restart: unless-stopped
+#    image: containrrr/watchtower
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
