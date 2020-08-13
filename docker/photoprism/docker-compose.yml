@@ -61,7 +61,7 @@ services:
 #  photoprism-db:
 #    image: mariadb:10.5 # Alternatively mysql:8.0
 #    restart: unless-stopped
-#    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+#    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
 #    volumes:
 #      - /var/lib/mysql
 #    environment:
