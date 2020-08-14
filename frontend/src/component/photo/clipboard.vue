@@ -121,7 +121,7 @@
     <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
                             @confirm="batchArchivePhotos"></p-photo-archive-dialog>
     <p-share-upload-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
-                           @confirm="dialog.share = false"></p-share-upload-dialog>
+                           @confirm="onShared"></p-share-upload-dialog>
   </div>
 </template>
 <script>
@@ -229,6 +229,10 @@
             edit() {
                 // Open Edit Dialog
                 Event.publish("dialog.edit", {selection: this.selection, album: this.album, index: 0});
+            },
+            onShared() {
+                this.dialog.share = false;
+                this.clearClipboard();
             },
         }
     };
