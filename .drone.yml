@@ -66,22 +66,6 @@ platform:
   os: linux
 
 steps:
-  - name: up
-    commands:
-      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
-
-  - name: test
-    commands:
-      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
-
-  - name: down
-    commands:
-      - docker-compose -f docker-compose.drone.yml down
-    when:
-      status:
-        - failure
-        - success
-
   - name: deploy
     environment:
       DOCKER_USERNAME:
@@ -91,9 +75,6 @@ steps:
     commands:
       - scripts/docker-login.sh
       - make docker-photoprism-arm64
-    when:
-      status:
-        - success
 
   - name: clean
     commands:
