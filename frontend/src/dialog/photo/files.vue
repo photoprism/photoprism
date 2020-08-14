@@ -41,17 +41,21 @@
                           </v-img>
                         </td>
                       </tr>
-                      <tr v-if="!file.Sidecar && !file.Primary && file.Root === '/'">
+                      <tr>
                         <td>
                           <translate>Actions</translate>
                         </td>
                         <td>
+                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-download"
+                                 @click.stop.prevent="download(file)">
+                            <translate>Download</translate>
+                          </v-btn>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-primary"
-                                 @click.stop.prevent="primary(file)" v-if="file.Type === 'jpg' && !file.Primary">
+                                 @click.stop.prevent="primary(file)" v-if="file.Type === 'jpg' && !file.Primary && file.Root === '/'">
                             <translate>Primary</translate>
                           </v-btn>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-unstack"
-                                 @click.stop.prevent="unstack(file)">
+                                 @click.stop.prevent="unstack(file)" v-if="!file.Sidecar && !file.Primary && file.Root === '/'">
                             <translate>Unstack</translate>
                           </v-btn>
                         </td>
@@ -78,7 +82,7 @@
                         <td>
                           <translate>Name</translate>
                         </td>
-                        <td @click.stop.prevent="download(file)" class="clickable">{{ file.Name }}</td>
+                        <td>{{ file.Name }}</td>
                       </tr>
                       <tr v-if="file.OriginalName">
                         <td>
