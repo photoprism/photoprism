@@ -22,7 +22,7 @@
               :data-uid="photo.UID"
               v-bind:class="{ selected: $clipboard.has(photo) }"
               class="p-photo"
-              xs4 sm3 md2 xl1 d-flex
+              xs4 sm3 md2 lg1 d-flex
       >
         <v-hover>
           <v-card tile slot-scope="{ hover }"
