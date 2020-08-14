@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: exec
-name: default
+name: linux-amd64
 
 platform:
   arch: amd64
@@ -51,3 +51,53 @@ steps:
         - success
       branch:
         - master
+
+---
+kind: pipeline
+type: exec
+name: linux-arm64
+
+trigger:
+  branch:
+    - master
+
+platform:
+  arch: arm64
+  os: linux
+
+steps:
+  - name: up
+    commands:
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+
+  - name: test
+    commands:
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+
+  - name: down
+    commands:
+      - docker-compose -f docker-compose.drone.yml down
+    when:
+      status:
+        - failure
+        - success
+
+  - name: deploy
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
+      - make docker-photoprism-arm64
+    when:
+      status:
+        - success
+
+  - name: clean
+    commands:
+      - docker system prune -f
+    when:
+      status:
+        - success
