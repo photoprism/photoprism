@@ -366,6 +366,11 @@ func TestCountryCode(t *testing.T) {
 		result := CountryCode("zz")
 		assert.Equal(t, "zz", result)
 	})
+
+	t.Run("2018/Oktober 2018/1.-7. Oktober 2018 Berlin/_MG_9831-112.jpg", func(t *testing.T) {
+		result := CountryCode("2018/Oktober 2018/1.-7. Oktober 2018 Berlin/_MG_9831-112.jpg")
+		assert.Equal(t, "de", result)
+	})
 }
 
 func TestYear(t *testing.T) {

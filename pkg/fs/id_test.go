@@ -122,4 +122,5 @@ func TestIsGenerated(t *testing.T) {
 	assert.True(t, IsGenerated("2013-06-06_DMC-LX5_P1080235.JPG"))
 	assert.False(t, IsGenerated("The quick brown fox jumps over the lazy dog"))
 	assert.False(t, IsGenerated("QUICK BROWN FOX"))
+	assert.True(t, IsGenerated("_MG_9831-112.jpg"))
 }

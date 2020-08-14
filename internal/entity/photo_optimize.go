@@ -25,8 +25,8 @@ func (m *Photo) EstimateCountry() {
 		countryCode = code
 	}
 
-	if countryCode == unknown && !fs.IsGenerated(m.PhotoName) {
-		if code := txt.CountryCode(m.PhotoName); code != unknown {
+	if countryCode == unknown {
+		if code := txt.CountryCode(m.PhotoName); code != unknown && !fs.IsGenerated(m.PhotoName) {
 			countryCode = code
 		} else if code := txt.CountryCode(m.PhotoPath); code != unknown {
 			countryCode = code

@@ -21,8 +21,8 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
 		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
 		m.EstimateCountry()
-		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
-		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
+		assert.Equal(t, "de", m.CountryCode())
+		assert.Equal(t, "Germany", m.CountryName())
 	})
 
 	t.Run("de", func(t *testing.T) {
