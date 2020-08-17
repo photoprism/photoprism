@@ -1,9 +1,17 @@
+.PHONY: ;
+.SILENT: ;               # no need for @
+.ONESHELL: ;             # recipes execute in same shell
+.NOTPARALLEL: ;          # wait for target to finish
+.EXPORT_ALL_VARIABLES: ; # send all vars to shell
+
 export GO111MODULE=on
+
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
 
 HASRICHGO := $(shell which richgo)
+
 ifdef HASRICHGO
     GOTEST=richgo test
 else
@@ -67,7 +75,7 @@ clean-local-cache:
 clean-local-config:
 	rm -f ~/.photoprism/storage/settings/*
 dep-js:
-	(cd frontend &&	npm install --silent)
+	(cd frontend &&	npm install --silent && npm audit fix)
 dep-go:
 	go build -v ./...
 dep-upgrade:

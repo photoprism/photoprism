@@ -61,13 +61,19 @@
                         </td>
                       </tr>
                       <tr>
-                        <td>
-                          <translate>UID</translate>
+                        <td title="Unique ID">
+                          UID
                         </td>
                         <td>{{ file.UID | uppercase }}</td>
                       </tr>
-                      <tr>
+                      <tr v-if="file.InstanceID" title="XMP">
                         <td>
+                          <translate>Instance ID</translate>
+                        </td>
+                        <td>{{ file.InstanceID | uppercase }}</td>
+                      </tr>
+                      <tr>
+                        <td title="SHA-1">
                           <translate>Hash</translate>
                         </td>
                         <td>{{ file.Hash }}</td>

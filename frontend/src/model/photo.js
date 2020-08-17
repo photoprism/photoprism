@@ -49,8 +49,8 @@ export const DayUnknown = -1;
 export class Photo extends RestModel {
     getDefaults() {
         return {
-            DocumentID: "",
             UID: "",
+            DocumentID: "",
             Type: TypeImage,
             TypeSrc: "",
             Favorite: false,

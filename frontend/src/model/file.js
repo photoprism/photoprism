@@ -38,9 +38,9 @@ import {$gettext} from "common/vm";
 export class File extends RestModel {
     getDefaults() {
         return {
-            InstanceID: "",
             UID: "",
             PhotoUID: "",
+            InstanceID: "",
             Root: "/",
             Name: "",
             OriginalName: "",
