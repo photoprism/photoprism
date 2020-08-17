@@ -58,6 +58,7 @@ ENV PATH /photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin
 ENV PHOTOPRISM_ASSETS_PATH /photoprism/assets
 ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
 ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
+ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage
 ENV PHOTOPRISM_LOG_FILENAME /photoprism/photoprism.log
 ENV PHOTOPRISM_PID_FILENAME /photoprism/photoprism.pid
 
