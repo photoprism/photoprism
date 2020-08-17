@@ -112,6 +112,15 @@ DE:Saarland
 DE:Saarbrücken
 DE:Konstanz
 DE:Reichenau
+DE:Meckenheim
+DE:Wiesbaden
+DE:Lahnstein
+DE:Augsburg
+DE:Freinsheim
+DE:Speyer
+DE:Marburg
+DE:Mechtersheim
+DE:Dürkheim
 LV:Latvia
 LV:Lettland
 LT:Lithuania
