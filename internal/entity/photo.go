@@ -817,7 +817,7 @@ func (m *Photo) SetDescription(desc, source string) {
 
 // SetTakenAt changes the photo date if not empty and from the same source.
 func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
-	if taken.IsZero() || taken.Year() < 1000 {
+	if taken.IsZero() || taken.Year() < 1000 || taken.Year() > txt.YearMax {
 		return
 	}
 
