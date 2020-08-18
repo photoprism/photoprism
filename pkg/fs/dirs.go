@@ -63,6 +63,7 @@ var OriginalPaths = []string{
 	"~/Bilder",
 	"~/fotos",
 	"~/Fotos",
+	"/var/lib/photoprism/originals",
 }
 
 var ImportPaths = []string{
@@ -86,6 +87,16 @@ var ImportPaths = []string{
 	"~/Photos/Import",
 	"~/import",
 	"~/Import",
+	"/var/lib/photoprism/import",
+}
+
+var AssetPaths = []string{
+	"/photoprism/assets",
+	"~/.photoprism/assets",
+	"~/photoprism/assets",
+	"photoprism/assets",
+	"assets",
+	"/var/lib/photoprism/assets",
 }
 
 // Dirs returns a slice of directories in a path, optional recursively and with symlinks.

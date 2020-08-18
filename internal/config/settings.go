@@ -157,7 +157,7 @@ func (c *Config) initSettings() {
 	p := c.SettingsFile()
 
 	if err := c.settings.Load(p); err != nil {
-		log.Info(err)
+		log.Debugln(err)
 	}
 
 	i18n.SetDir(c.LocalesPath())
