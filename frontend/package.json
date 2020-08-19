@@ -62,7 +62,7 @@
     "eventsource-polyfill": "^0.9.6",
     "file-loader": "^3.0.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
-    "hls.js": "^0.14.8",
+    "hls.js": "^0.14.9",
     "html-webpack-plugin": "^4.3.0",
     "http-proxy-middleware": "^1.0.5",
     "i18n-iso-countries": "^6.0.0",
@@ -79,7 +79,7 @@
     "material-design-icons-iconfont": "^5.0.1",
     "mediaelement": "^4.2.16",
     "mini-css-extract-plugin": "^0.7.0",
-    "minimist": ">=1.2.5",
+    "minimist": "^1.2.5",
     "mocha": "^8.1.1",
     "moment-timezone": "^0.5.31",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
@@ -125,7 +125,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-md5-hash": "0.0.6",
-    "webpack-merge": "^5.1.1"
+    "webpack-merge": "^5.1.2"
   },
   "engines": {
     "node": ">= 8.0.0",
