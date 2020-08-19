@@ -136,6 +136,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
 		ReadOnly:        c.ReadOnly(),
+		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Thumbs:          Thumbs,

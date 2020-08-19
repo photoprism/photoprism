@@ -268,6 +268,13 @@ export default [
         component: Settings,
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 0},
+        beforeEnter: (to, from, next) => {
+            if (c.disableSettings) {
+                next({name: "home"});
+            } else {
+                next();
+            }
+        },
     },
     {
         name: "settings_sync",
@@ -275,6 +282,13 @@ export default [
         component: Settings,
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 1},
+        beforeEnter: (to, from, next) => {
+            if (c.disableSettings) {
+                next({name: "home"});
+            } else {
+                next();
+            }
+        },
     },
     {
         name: "settings_account",
@@ -282,6 +296,13 @@ export default [
         component: Settings,
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 2},
+        beforeEnter: (to, from, next) => {
+            if (c.disableSettings) {
+                next({name: "home"});
+            } else {
+                next();
+            }
+        },
     },
     {
         name: "discover",
