@@ -61,6 +61,7 @@ func main() {
 		commands.ConvertCommand,
 		commands.ResampleCommand,
 		commands.MigrateCommand,
+		commands.ResetCommand,
 		commands.ConfigCommand,
 		commands.PasswdCommand,
 		commands.VersionCommand,
