@@ -10,7 +10,7 @@ require (
 	github.com/dsoprea/go-exif/v3 v3.0.0-20200807075213-089aa48c91e6
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
-	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200722150319-963817537a6c
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20200807080200-98ca71ef1508
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d // indirect
 	github.com/dsoprea/go-png-image-structure v0.0.0-20200807080309-a98d4e94ac82
@@ -21,16 +21,16 @@ require (
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/golang/geo v0.0.0-20200730024412-e86565bf3f35
 	github.com/golang/protobuf v1.4.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20200603075809-e28188e71340
+	github.com/google/open-location-code/go v0.0.0-20200805234123-bf1466f508dc
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.9.0
 	github.com/h2non/filetype v1.1.0
-	github.com/jinzhu/gorm v1.9.14
+	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
-	github.com/karrick/godirwalk v1.15.6
-	github.com/leandro-lugaresi/hub v1.1.0
+	github.com/karrick/godirwalk v1.16.1
+	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.4.0
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.0.3
@@ -54,9 +54,9 @@ require (
 	github.com/tidwall/pretty v1.0.1 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.4
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20200707034311-ab3426394381
+	golang.org/x/net v0.0.0-20200813134508-3edf25e44fcc
 	golang.org/x/sys v0.0.0-20200819035508-9a32b3aa38f5 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.9

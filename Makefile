@@ -74,6 +74,8 @@ clean-local-cache:
 	rm -rf ~/.photoprism/storage/cache/*
 clean-local-config:
 	rm -f ~/.photoprism/storage/settings/*
+dep-list:
+	go list -u -m -json all | go-mod-outdated -direct
 dep-js:
 	(cd frontend &&	npm install --silent && npm audit fix)
 dep-go:
@@ -139,8 +141,6 @@ test-verbose:
 test-race:
 	$(info Running all Go unit tests with race detection in verbose mode...)
 	$(GOTEST) -tags slow -race -timeout 60m -v ./pkg/... ./internal/...
-codecov-token:
-	echo $(CODECOV_TOKEN)
 test-codecov:
 	$(info Running all Go unit tests with code coverage report for codecov...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
