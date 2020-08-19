@@ -51,9 +51,14 @@ func resetAction(ctx *cli.Context) error {
 
 	log.Infoln("dropping existing tables")
 	tables.Drop()
-	log.Infoln("creating new tables")
-	tables.Migrate()
-	tables.WaitForMigration()
+
+	log.Infoln("restoring default schema")
+	entity.MigrateDb()
+
+	if conf.AdminPassword() != "" {
+		log.Infoln("restoring initial admin password")
+		entity.Admin.InitPassword(conf.AdminPassword())
+	}
 
 	log.Infof("database reset completed in %s", time.Since(start))
 
