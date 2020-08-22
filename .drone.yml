@@ -9,6 +9,9 @@ platform:
 
 steps:
   - name: up
+    environment:
+      CODECOV_TOKEN:
+        from_secret: codecov_token
     commands:
       - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
