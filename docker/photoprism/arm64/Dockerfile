@@ -43,7 +43,10 @@ RUN apt-get update && apt-get upgrade && \
     git \
     gettext \
     tzdata \
-    gconf-service
+    gconf-service \
+    seccomp \
+    libseccomp-dev \
+    libseccomp2
 
 # Install & configure TensorFlow for C
 #
@@ -118,6 +121,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         tzdata \
         libheif-examples \
+        libseccomp2 \
         darktable \
         rawtherapee \
         exiftool \

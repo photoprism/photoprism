@@ -158,18 +158,21 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
+	docker pull ubuntu:20.04
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
 docker-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
 docker-photoprism-arm64:
+	docker pull ubuntu:20.04
 	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
 docker-webdav:
+	docker pull golang:1
 	scripts/docker-build.sh webdav $(DOCKER_TAG)
 	scripts/docker-push.sh webdav $(DOCKER_TAG)
 lint-js:

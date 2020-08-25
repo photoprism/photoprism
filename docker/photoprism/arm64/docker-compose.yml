@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Raspberry Pi / ARM64)
 #
@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     security_opt:
       - seccomp:unconfined
+      - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
     healthcheck: # Optional

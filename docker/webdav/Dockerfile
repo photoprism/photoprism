@@ -1,4 +1,4 @@
-FROM golang:1.15
+FROM golang:1
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 

@@ -15,6 +15,9 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
     depends_on:
       - photoprism-db
     ports:
@@ -76,7 +79,7 @@ services:
       MYSQL_DATABASE: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20200812
+    image: photoprism/webdav:20200825
 
 volumes:
   go-mod:

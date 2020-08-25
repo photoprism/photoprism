@@ -54,12 +54,12 @@ require (
 	github.com/tidwall/pretty v1.0.1 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.4
-	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
+	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20200813134508-3edf25e44fcc
+	golang.org/x/net v0.0.0-20200822124328-c89045814202
 	golang.org/x/sys v0.0.0-20200819035508-9a32b3aa38f5 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
-	gopkg.in/ugjka/go-tz.v2 v2.0.9
+	gopkg.in/ugjka/go-tz.v2 v2.0.10
 	gopkg.in/yaml.v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

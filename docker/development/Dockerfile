@@ -28,6 +28,8 @@ RUN apt-get update && apt-get upgrade && \
     libhdf5-serial-dev \
     libpng-dev \
     libzmq3-dev \
+    libx264-dev \
+    libx265-dev \
     pkg-config \
     software-properties-common \
     rsync \
@@ -52,7 +54,10 @@ RUN apt-get update && apt-get upgrade && \
     rawtherapee \
     ffmpeg \
     lsof \
-    apache2-utils
+    apache2-utils \
+    seccomp \
+    libseccomp-dev \
+    libseccomp2
 
 # Install Chromium Browser via .deb
 RUN add-apt-repository -y ppa:xalt7x/chromium-deb-vaapi
