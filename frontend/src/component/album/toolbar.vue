@@ -9,34 +9,34 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
+      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="titles.reload">
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.edit = true" class="action-edit">
+      <v-btn icon @click.stop="dialog.edit = true" class="action-edit" :title="titles.edit">
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')" class="action-share">
+      <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')" class="action-share" :title="titles.share">
         <v-icon>share</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="download" v-if="$config.feature('download')" class="hidden-xs-only action-download" :title="$gettext('Download')">
+      <v-btn icon @click.stop="download" v-if="$config.feature('download')" class="hidden-xs-only action-download" :title="titles.download">
         <v-icon>get_app</v-icon>
       </v-btn>
 
-      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
+      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="titles.view">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
+      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="titles.view">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn icon v-else @click.stop="setView('cards')">
+      <v-btn icon v-else @click.stop="setView('cards')" :title="titles.view">
         <v-icon>view_column</v-icon>
       </v-btn>
 
       <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down action-upload">
+             class="hidden-sm-and-down action-upload" :title="titles.upload">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
     </v-toolbar>
@@ -126,6 +126,15 @@ export default {
                 sort: this.$gettext("Sort Order"),
                 category: this.$gettext("Category"),
             },
+          titles: {
+            reload: this.$gettext("Reload"),
+            view: this.$gettext("Toggle View"),
+            upload: this.$gettext("Upload"),
+            edit: this.$gettext("Edit"),
+            share: this.$gettext("Share"),
+            download: this.$gettext("Download"),
+            search: this.$gettext("Expand Search"),
+          },
             titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
             growDesc: false,
         };

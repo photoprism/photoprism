@@ -29,16 +29,16 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" class="action-reload">
+        <v-btn icon @click.stop="refresh" class="action-reload" :title="titles.reload">
           <v-icon>refresh</v-icon>
         </v-btn>
 
         <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-               class="hidden-sm-and-down">
+               class="hidden-sm-and-down" :title="titles.upload">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
 
-        <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'">
+        <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'" :title="titles.add">
           <v-icon>add</v-icon>
         </v-btn>
       </v-toolbar>
@@ -255,6 +255,11 @@
                     search: this.$gettext("Search"),
                     title: this.$gettext("Album Name"),
                     category: this.$gettext("Category"),
+                },
+                titles: {
+                  reload: this.$gettext("Reload"),
+                  upload: this.$gettext("Upload"),
+                  add: this.$gettext("Add Album"),
                 },
                 mouseDown: {
                     index: -1,

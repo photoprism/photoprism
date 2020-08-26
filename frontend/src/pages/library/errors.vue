@@ -16,12 +16,12 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="reload" class="action-reload">
+      <v-btn icon @click.stop="reload" class="action-reload" :title="titles.reload">
         <v-icon>refresh</v-icon>
       </v-btn>
 
       <v-btn icon href="https://github.com/photoprism/photoprism/issues" target="_blank" class="action-bug-report"
-             title="Bug Report">
+             :title="titles.bug">
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>
@@ -112,6 +112,10 @@
                 details: {
                     show: false,
                     err: {"Level": "", "Message": "", "Time": ""},
+                },
+                titles: {
+                  reload: this.$gettext("Reload"),
+                  bug: this.$gettext("Report Bug"),
                 },
             };
         },

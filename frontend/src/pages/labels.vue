@@ -19,14 +19,14 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" class="action-reload">
+        <v-btn icon @click.stop="refresh" class="action-reload" :title="titles.reload">
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all">
+        <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all" :title="titles.more">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon @click.stop="showImportant" class="action-show-important">
+        <v-btn v-else icon @click.stop="showImportant" class="action-show-important" :title="titles.less">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
@@ -195,6 +195,11 @@
                 labels: {
                     search: this.$gettext("Search"),
                     name: this.$gettext("Label Name"),
+                },
+                titles: {
+                  reload: this.$gettext("Reload"),
+                  more: this.$gettext("Show more"),
+                  less: this.$gettext("Show less"),
                 },
                 titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
                 mouseDown: {

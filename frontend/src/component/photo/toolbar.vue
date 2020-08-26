@@ -17,26 +17,26 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
+      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="titles.reload">
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
+      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="titles.view">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
+      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="titles.view">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn icon v-else @click.stop="setView('cards')">
+      <v-btn icon v-else @click.stop="setView('cards')" :title="titles.view">
         <v-icon>view_column</v-icon>
       </v-btn>
 
       <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down action-upload">
+             class="hidden-sm-and-down action-upload" :title="titles.upload">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search">
+      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search" :title="titles.search">
         <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
       </v-btn>
     </v-toolbar>
@@ -208,6 +208,12 @@
                     before: this.$gettext("Taken before"),
                     after: this.$gettext("Taken after"),
                 },
+              titles: {
+                reload: this.$gettext("Reload"),
+                view: this.$gettext("Toggle View"),
+                upload: this.$gettext("Upload"),
+                search: this.$gettext("Expand Search"),
+              },
             };
         },
         computed: {
