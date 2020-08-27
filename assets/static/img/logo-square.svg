@@ -6,7 +6,6 @@
         </style>
         <linearGradient id="b905e2c4-4772-4914-b70f-44b4d19aca4b" x1="26.38" y1="231.72" x2="231.72" y2="26.38"
                         gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#fff"/>
             <stop offset="0" stop-color="#c2fde4"/>
             <stop offset="0.8" stop-color="#cdc6e9"/>
         </linearGradient>
