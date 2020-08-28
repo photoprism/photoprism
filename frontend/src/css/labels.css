@@ -6,4 +6,5 @@
 #photoprism main .p-inline-edit a,
 #photoprism main .p-inline-edit a span {
     cursor: text;
+    color: inherit;
 }

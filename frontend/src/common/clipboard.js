@@ -29,8 +29,12 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import RestModel from "model/rest";
+import Notify from "common/notify";
+import {$gettext} from "./vm";
 
-class Clipboard {
+export const MaxItems = 500;
+
+export default class Clipboard {
     /**
      * @param {Storage} storage
      * @param {string} key
@@ -42,6 +46,7 @@ class Clipboard {
         this.selectionMap = {};
         this.selection = [];
         this.lastId = "";
+        this.maxItems = MaxItems;
 
         this.loadFromStorage();
     }
@@ -59,7 +64,7 @@ class Clipboard {
     }
 
     toggle(model) {
-        if(!model || !(model instanceof RestModel)) {
+        if (!model || !(model instanceof RestModel)) {
             console.log("Clipboard::toggle() - not a model:", model);
             return;
         }
@@ -72,6 +77,11 @@ class Clipboard {
         const index = this.selection.indexOf(id);
 
         if (index === -1) {
+            if (this.selection.length >= this.maxItems) {
+                Notify.warn($gettext("Can't select more items"));
+                return;
+            }
+
             this.selection.push(id);
             this.selectionMap["id:" + id] = true;
             this.lastId = id;
@@ -85,7 +95,7 @@ class Clipboard {
     }
 
     add(model) {
-        if(!model || !(model instanceof RestModel)) {
+        if (!model || !(model instanceof RestModel)) {
             console.log("Clipboard::add() - not a model:", model);
             return;
         }
@@ -96,7 +106,14 @@ class Clipboard {
     }
 
     addId(id) {
-        if (this.hasId(id)) return;
+        if (this.hasId(id)) {
+            return;
+        }
+
+        if (this.selection.length >= this.maxItems) {
+            Notify.warn($gettext("Can't select more items"));
+            return;
+        }
 
         this.selection.push(id);
         this.selectionMap["id:" + id] = true;
@@ -106,14 +123,14 @@ class Clipboard {
     }
 
     addRange(rangeEnd, models) {
-        if(!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
+        if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
             console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
             return;
         }
 
         let rangeStart = models.findIndex((photo) => photo.UID === this.lastId);
 
-        if(rangeStart === -1) {
+        if (rangeStart === -1) {
             this.toggle(models[rangeEnd]);
             return 1;
         }
@@ -132,7 +149,7 @@ class Clipboard {
     }
 
     has(model) {
-        if(!model || !(model instanceof RestModel)) {
+        if (!model || !(model instanceof RestModel)) {
             console.log("Clipboard::has() - not a model:", model);
             return;
         }
@@ -145,7 +162,7 @@ class Clipboard {
     }
 
     remove(model) {
-        if(!model || !(model instanceof RestModel)) {
+        if (!model || !(model instanceof RestModel)) {
             console.log("Clipboard::remove() - not a model:", model);
             return;
         }
@@ -188,5 +205,3 @@ class Clipboard {
         this.storage.removeItem(this.storageKey);
     }
 }
-
-export default Clipboard;
