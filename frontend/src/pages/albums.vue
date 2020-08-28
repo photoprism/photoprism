@@ -200,8 +200,8 @@ import Album from "model/album";
 import {DateTime} from "luxon";
 import Event from "pubsub-js";
 import RestModel from "model/rest";
-import {MaxItems} from "../common/clipboard";
-import Notify from "../common/notify";
+import {MaxItems} from "common/clipboard";
+import Notify from "common/notify";
 
 export default {
   name: 'p-page-albums',
