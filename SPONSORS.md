@@ -31,12 +31,15 @@ Thank you very much to all of our sponsors and donors (including those that want
 
 [@mpodshivalin](https://github.com/mpodshivalin) (GitHub Sponsors, July 2020)
 
+[@kvtong93](https://github.com/kvtong93) (GitHub Sponsors, September 2020)
+
 For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
 ## Donations ##
 
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, 
-Klemens Guder, [Greg](https://github.com/oziee)
+Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
+[INIT_6](https://twitter.com/init_3)
 
 [patreon]: https://www.patreon.com/photoprism
 [paypal]: https://www.paypal.me/photoprism
