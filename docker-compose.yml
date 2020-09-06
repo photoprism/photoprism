@@ -1,6 +1,8 @@
 version: '3.5'
 
 services:
+  # Uncomment the following lines to test with Caddy as reverse proxy:
+  #
   # caddy:
   #  image: caddy:2
   #  depends_on:
