@@ -137,6 +137,11 @@ func (c *Config) ConfigFile() string {
 	return c.params.ConfigFile
 }
 
+// CredentialsFile returns the api credentials file name for hosted services like maps & places.
+func (c *Config) CredentialsFile() string {
+	return filepath.Join(c.SettingsPath(), "credentials.yml")
+}
+
 // SettingsFile returns the user settings file name.
 func (c *Config) SettingsFile() string {
 	return filepath.Join(c.SettingsPath(), "settings.yml")
@@ -194,7 +199,7 @@ func (c *Config) ExifToolBin() string {
 	return findExecutable(c.params.ExifToolBin, "exiftool")
 }
 
-// SidecarJson returns true if metadata should be synced with json sidecar files as used by exiftool.
+// Automatically create JSON sidecar files using Exiftool.
 func (c *Config) SidecarJson() bool {
 	if !c.SidecarWritable() || c.ExifToolBin() == "" {
 		return false
@@ -203,7 +208,7 @@ func (c *Config) SidecarJson() bool {
 	return c.params.SidecarJson
 }
 
-// SidecarYaml returns true if metadata should be synced with PhotoPrism YAML sidecar files.
+// Automatically backup metadata to YAML sidecar files.
 func (c *Config) SidecarYaml() bool {
 	if !c.SidecarWritable() {
 		return false
@@ -212,7 +217,7 @@ func (c *Config) SidecarYaml() bool {
 	return c.params.SidecarYaml
 }
 
-// SidecarPath returns the storage path for automatically created sidecar files.
+// SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
 	if c.params.SidecarPath == "" {
 		c.params.SidecarPath = filepath.Join(c.StoragePath(), "sidecar")

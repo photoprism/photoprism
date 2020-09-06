@@ -24,8 +24,10 @@ type Location struct {
 
 const ApiName = "photoprism places"
 
-var ReverseLookupURL = "https://places.photoprism.org/v1/location/%s"
-var client = &http.Client{Timeout: 60 * time.Second} // TODO: Change timeout if needed
+var Key = ""
+var UserAgent = "PhotoPrism/DEVELOP"
+var ReverseLookupURL = "https://places.photoprism.pro/v1/location/%s?key=%s"
+var client = &http.Client{Timeout: 60 * time.Second}
 
 func NewLocation(id string, lat, lng float64, name, category string, place Place, cached bool) *Location {
 	result := &Location{
@@ -63,7 +65,7 @@ func FindLocation(id string) (result Location, err error) {
 		}
 	}
 
-	url := fmt.Sprintf(ReverseLookupURL, id)
+	url := fmt.Sprintf(ReverseLookupURL, id, Key)
 
 	log.Debugf("api: sending request to %s (%s)", url, ApiName)
 
@@ -73,6 +75,8 @@ func FindLocation(id string) (result Location, err error) {
 		log.Errorf("api: %s (%s)", err.Error(), ApiName)
 		return result, err
 	}
+
+	req.Header.Set("User-Agent", UserAgent)
 
 	var r *http.Response
 

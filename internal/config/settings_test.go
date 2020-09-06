@@ -9,6 +9,7 @@ import (
 
 func TestNewSettings(t *testing.T) {
 	c := NewSettings()
+
 	assert.IsType(t, new(Settings), c)
 }
 
@@ -16,9 +17,9 @@ func TestSettings_Load(t *testing.T) {
 	t.Run("existing filename", func(t *testing.T) {
 		c := NewSettings()
 
-		err := c.Load("testdata/config.yml")
-
-		assert.Nil(t, err)
+		if err := c.Load("testdata/config.yml"); err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, "lavendel", c.Theme)
 		assert.Equal(t, "english", c.Language)
@@ -43,9 +44,9 @@ func TestSettings_Save(t *testing.T) {
 		assert.Equal(t, "lavendel", c.Theme)
 		assert.Equal(t, "german", c.Language)
 
-		err := c.Save("testdata/configEmpty.yml")
-
-		assert.Nil(t, err)
+		if err := c.Save("testdata/configEmpty.yml"); err != nil {
+			t.Fatal(err)
+		}
 	})
 	t.Run("not existing filename", func(t *testing.T) {
 		c := NewSettings()
@@ -55,9 +56,7 @@ func TestSettings_Save(t *testing.T) {
 		assert.Equal(t, "lavendel", c.Theme)
 		assert.Equal(t, "german", c.Language)
 
-		err := c.Save("testdata/configEmpty123.yml")
-
-		if err != nil {
+		if err := c.Save("testdata/configEmpty123.yml"); err != nil {
 			t.Fatal(err)
 		}
 

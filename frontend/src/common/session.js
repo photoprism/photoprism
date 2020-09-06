@@ -138,9 +138,9 @@ export default class Session {
         return "";
     }
 
-    getFirstName() {
+    getGivenName() {
         if (this.isUser()) {
-            return this.user.FirstName;
+            return this.user.GivenName;
         }
 
         return "";
@@ -148,7 +148,7 @@ export default class Session {
 
     getFullName() {
         if (this.isUser()) {
-            return this.user.FirstName + " " + this.user.LastName;
+            return this.user.GivenName + " " + this.user.FamilyName;
         }
 
         return "";
@@ -159,7 +159,7 @@ export default class Session {
     }
 
     isAdmin() {
-        return this.user && this.user.hasId() && this.user.Admin;
+        return this.user && this.user.hasId() && this.user.RoleAdmin;
     }
 
     isAnonymous() {

@@ -14,72 +14,138 @@ type People []Person
 
 // Person represents a real person that can also be a user if a password is set.
 type Person struct {
-	ID            int        `gorm:"primary_key" json:"ID" yaml:"-"`
-	PersonUID     string     `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
-	UserName      string     `gorm:"type:varchar(32);" json:"UserName" yaml:"UserName,omitempty"`
-	FirstName     string     `gorm:"type:varchar(32);" json:"FirstName" yaml:"FirstName,omitempty"`
-	LastName      string     `gorm:"type:varchar(32);" json:"LastName" yaml:"LastName,omitempty"`
-	DisplayName   string     `gorm:"type:varchar(64);" json:"DisplayName" yaml:"DisplayName,omitempty"`
-	UserEmail     string     `gorm:"type:varchar(255);" json:"Email" yaml:"Email,omitempty"`
-	UserInfo      string     `gorm:"type:text;" json:"Info" yaml:"Info,omitempty"`
-	UserPath      string     `json:"UserPath" yaml:"UserPath,omitempty"`
-	UserActive    bool       `json:"Active" yaml:"Active,omitempty"`
-	UserConfirmed bool       `json:"Confirmed" yaml:"Confirmed,omitempty"`
-	RoleAdmin     bool       `json:"Admin" yaml:"Admin,omitempty"`
-	RoleGuest     bool       `json:"Guest" yaml:"Guest,omitempty"`
-	RoleChild     bool       `json:"Child" yaml:"Child,omitempty"`
-	RoleFamily    bool       `json:"Family" yaml:"Family,omitempty"`
-	RoleFriend    bool       `json:"Friend" yaml:"Friend,omitempty"`
-	IsArtist      bool       `json:"Artist" yaml:"Artist,omitempty"`
-	IsSubject     bool       `json:"Subject" yaml:"Subject,omitempty"`
-	CanEdit       bool       `json:"CanEdit" yaml:"CanEdit,omitempty"`
-	CanComment    bool       `json:"CanComment" yaml:"CanComment,omitempty"`
-	CanUpload     bool       `json:"CanUpload" yaml:"CanUpload,omitempty"`
-	CanDownload   bool       `json:"CanDownload" yaml:"CanDownload,omitempty"`
-	WebDAV        bool       `gorm:"column:webdav" json:"WebDAV" yaml:"WebDAV,omitempty"`
-	ApiToken      string     `json:"ApiToken" yaml:"ApiToken,omitempty"`
-	BirthYear     int        `json:"BirthYear" yaml:"BirthYear,omitempty"`
-	BirthMonth    int        `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
-	BirthDay      int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
-	LoginAttempts int        `json:"-" yaml:"-,omitempty"`
-	LoginAt       *time.Time `json:"-" yaml:"-"`
-	CreatedAt     time.Time  `json:"CreatedAt" yaml:"-"`
-	UpdatedAt     time.Time  `json:"UpdatedAt" yaml:"-"`
-	DeletedAt     *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	ID              int        `gorm:"primary_key" json:"ID" yaml:"-"`
+	PersonUID       string     `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
+	ParentUID       string     `gorm:"type:varbinary(42);" json:"ParentUID" yaml:"ParentUID,omitempty"`
+	UserUUID        string     `gorm:"type:varbinary(42);index;" json:"UserUUID" yaml:"UserUUID,omitempty"`
+	UserName        string     `gorm:"size:64;" json:"UserName" yaml:"UserName,omitempty"`
+	UserLocale      string     `gorm:"size:64;" json:"UserLocale" yaml:"UserLocale,omitempty"`
+	TimeZone        string     `gorm:"size:255;" json:"TimeZone" yaml:"TimeZone,omitempty"`
+	PrimaryEmail    string     `gorm:"size:255;index;" json:"PrimaryEmail" yaml:"PrimaryEmail,omitempty"`
+	BackupEmail     string     `gorm:"size:255;" json:"BackupEmail" yaml:"BackupEmail,omitempty"`
+	DisplayName     string     `gorm:"size:255;" json:"DisplayName" yaml:"DisplayName,omitempty"`
+	DisplayLocation string     `gorm:"size:255;" json:"DisplayLocation" yaml:"DisplayLocation,omitempty"`
+	DisplayBio      string     `gorm:"type:text;" json:"DisplayBio" yaml:"DisplayBio,omitempty"`
+	NamePrefix      string     `gorm:"size:64;" json:"NamePrefix" yaml:"NamePrefix,omitempty"`
+	GivenName       string     `gorm:"size:128;" json:"GivenName" yaml:"GivenName,omitempty"`
+	FamilyName      string     `gorm:"size:128;" json:"FamilyName" yaml:"FamilyName,omitempty"`
+	NameSuffix      string     `gorm:"size:64;" json:"NameSuffix" yaml:"NameSuffix,omitempty"`
+	AvatarUID       string     `gorm:"type:varbinary(42);" json:"AvatarUID" yaml:"AvatarUID,omitempty"`
+	AvatarURL       string     `gorm:"size:255;" json:"AvatarURL" yaml:"AvatarURL,omitempty"`
+	FeedURL         string     `gorm:"size:255;" json:"FeedURL" yaml:"FeedURL,omitempty"`
+	FeedType        string     `gorm:"size:64" json:"FeedType" yaml:"FeedType,omitempty"`
+	FeedFollow      bool       `json:"FeedFollow" yaml:"FeedFollow,omitempty"`
+	BlogURL         string     `gorm:"size:255;" json:"BlogURL" yaml:"BlogURL,omitempty"`
+	BlogType        string     `gorm:"size:64;" json:"BlogType" yaml:"BlogType,omitempty"`
+	BlogFollow      bool       `json:"BlogFollow" yaml:"BlogFollow,omitempty"`
+	CompanyURL      string     `gorm:"size:255;" json:"CompanyURL" yaml:"CompanyURL,omitempty"`
+	CompanyName     string     `gorm:"size:128;" json:"CompanyName" yaml:"CompanyName,omitempty"`
+	CompanyPhone    string     `gorm:"size:255;" json:"CompanyPhone" yaml:"CompanyPhone,omitempty"`
+	PrimaryPhone    string     `gorm:"size:255;" json:"PrimaryPhone" yaml:"PrimaryPhone,omitempty"`
+	DepartmentName  string     `gorm:"size:255;" json:"DepartmentName" yaml:"DepartmentName,omitempty"`
+	JobTitle        string     `gorm:"size:255;" json:"JobTitle" yaml:"JobTitle,omitempty"`
+	AddressLat      float32    `gorm:"type:FLOAT;index;" json:"AddressLat" yaml:"AddressLat,omitempty"`
+	AddressLng      float32    `gorm:"type:FLOAT;index;" json:"AddressLng" yaml:"AddressLng,omitempty"`
+	AddressLine1    string     `gorm:"size:255;" json:"AddressLine1" yaml:"AddressLine1,omitempty"`
+	AddressLine2    string     `gorm:"size:255;" json:"AddressLine2" yaml:"AddressLine2,omitempty"`
+	AddressZip      string     `gorm:"size:255;" json:"AddressZip" yaml:"AddressZip,omitempty"`
+	AddressCity     string     `gorm:"size:255;" json:"AddressCity" yaml:"AddressCity,omitempty"`
+	AddressState    string     `gorm:"size:255;" json:"AddressState" yaml:"AddressState,omitempty"`
+	AddressCountry  string     `gorm:"type:varbinary(2);default:'zz'" json:"AddressCountry" yaml:"AddressCountry,omitempty"`
+	BirthYear       int        `json:"BirthYear" yaml:"BirthYear,omitempty"`
+	BirthMonth      int        `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
+	BirthDay        int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
+	TermsAccepted   bool       `json:"TermsAccepted" yaml:"TermsAccepted,omitempty"`
+	IsActive        bool       `json:"IsActive" yaml:"IsActive,omitempty"`
+	IsConfirmed     bool       `json:"IsConfirmed" yaml:"IsConfirmed,omitempty"`
+	IsPro           bool       `json:"IsPro" yaml:"IsPro,omitempty"`
+	IsSponsor       bool       `json:"IsSponsor" yaml:"IsSponsor,omitempty"`
+	IsContributor   bool       `json:"IsContributor" yaml:"IsContributor,omitempty"`
+	IsArtist        bool       `json:"IsArtist" yaml:"IsArtist,omitempty"`
+	IsSubject       bool       `json:"IsSubject" yaml:"IsSubject,omitempty"`
+	RoleAdmin       bool       `json:"RoleAdmin" yaml:"RoleAdmin,omitempty"`
+	RoleGuest       bool       `json:"RoleGuest" yaml:"RoleGuest,omitempty"`
+	RoleChild       bool       `json:"RoleChild" yaml:"RoleChild,omitempty"`
+	RoleFamily      bool       `json:"RoleFamily" yaml:"RoleFamily,omitempty"`
+	RoleFriend      bool       `json:"RoleFriend" yaml:"RoleFriend,omitempty"`
+	CanEdit         bool       `json:"CanEdit" yaml:"CanEdit,omitempty"`
+	CanDelete       bool       `json:"CanDelete" yaml:"CanDelete,omitempty"`
+	CanIndex        bool       `json:"CanIndex" yaml:"CanIndex,omitempty"`
+	CanShare        bool       `json:"CanShare" yaml:"CanShare,omitempty"`
+	CanComment      bool       `json:"CanComment" yaml:"CanComment,omitempty"`
+	CanUpload       bool       `json:"CanUpload" yaml:"CanUpload,omitempty"`
+	CanDownload     bool       `json:"CanDownload" yaml:"CanDownload,omitempty"`
+	HideLabels      bool       `json:"HideLabels" yaml:"HideLabels,omitempty"`
+	HidePlaces      bool       `json:"HidePlaces" yaml:"HidePlaces,omitempty"`
+	HidePeople      bool       `json:"HidePeople" yaml:"HidePeople,omitempty"`
+	HidePrivate     bool       `json:"HidePrivate" yaml:"HidePrivate,omitempty"`
+	HideLibrary     bool       `json:"HideLibrary" yaml:"HideLibrary,omitempty"`
+	HideSettings    bool       `json:"HideSettings" yaml:"HideSettings,omitempty"`
+	WebDAV          bool       `gorm:"column:webdav" json:"WebDAV" yaml:"WebDAV,omitempty"`
+	StoragePath     string     `gorm:"column:storage_path;size:255;" json:"StoragePath" yaml:"StoragePath,omitempty"`
+	ApiToken        string     `gorm:"column:api_token;size:255;" json:"ApiToken" yaml:"ApiToken,omitempty"`
+	ApiSecret       string     `gorm:"column:api_secret;size:255;" json:"-" yaml:"-"`
+	AmazonID        string     `gorm:"column:amazon_id;size:255;" json:"AmazonID" yaml:"AmazonID,omitempty"`
+	AppleID         string     `gorm:"column:apple_id;size:255;" json:"AppleID" yaml:"AppleID,omitempty"`
+	EyeEmID         string     `gorm:"column:eyeem_id;size:255;" json:"EyeEmID" yaml:"EyeEmID,omitempty"`
+	FacebookID      string     `gorm:"column:facebook_id;size:255;" json:"FacebookID" yaml:"FacebookID,omitempty"`
+	FlickrID        string     `gorm:"column:flickr_id;size:255;" json:"FlickrID" yaml:"FlickrID,omitempty"`
+	GitHubID        string     `gorm:"column:github_id;size:255;" json:"GitHubID" yaml:"GitHubID,omitempty"`
+	GitLabID        string     `gorm:"column:gitlab_id;size:255;" json:"GitLabID" yaml:"GitLabID,omitempty"`
+	GoogleID        string     `gorm:"column:google_id;size:255;" json:"GoogleID" yaml:"GoogleID,omitempty"`
+	InstagramID     string     `gorm:"column:instagram_id;size:255;" json:"InstagramID" yaml:"InstagramID,omitempty"`
+	LinkedinID      string     `gorm:"column:linkedin_id;size:255;" json:"LinkedinID" yaml:"LinkedinID,omitempty"`
+	MastodonID      string     `gorm:"column:mastodon_id;size:255;" json:"MastodonID" yaml:"MastodonID,omitempty"`
+	NextcloudID     string     `gorm:"column:nextcloud_id;size:255;" json:"NextcloudID" yaml:"NextcloudID,omitempty"`
+	TelegramID      string     `gorm:"column:telegram_id;size:255;" json:"TelegramID" yaml:"TelegramID,omitempty"`
+	TwitterID       string     `gorm:"column:twitter_id;size:255;" json:"TwitterID" yaml:"TwitterID,omitempty"`
+	WhatsAppID      string     `gorm:"column:whatsapp_id;size:255;" json:"WhatsAppID" yaml:"WhatsAppID,omitempty"`
+	YouTubeID       string     `gorm:"column:youtube_id;size:255;" json:"YouTubeID" yaml:"YouTubeID,omitempty"`
+	UserNotes       string     `gorm:"type:text;" json:"UserNotes" yaml:"UserNotes,omitempty"`
+	LoginAttempts   int        `json:"-" yaml:"-,omitempty"`
+	LoginAt         *time.Time `json:"-" yaml:"-"`
+	CreatedAt       time.Time  `json:"CreatedAt" yaml:"-"`
+	UpdatedAt       time.Time  `json:"UpdatedAt" yaml:"-"`
+	DeletedAt       *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+}
+
+// TableName the database table name.
+func (Person) TableName() string {
+	return "people"
 }
 
 // Default admin user.
 var Admin = Person{
-	ID:            1,
-	UserName:      "admin",
-	DisplayName:   "Admin",
-	RoleAdmin:     true,
-	UserActive:    true,
-	UserConfirmed: true,
+	ID:          1,
+	UserName:    "admin",
+	DisplayName: "Admin",
+	RoleAdmin:   true,
+	IsActive:    true,
+	IsConfirmed: true,
 }
 
 // Anonymous, public user without own account.
 var UnknownPerson = Person{
-	ID:            -1,
-	PersonUID:     "u000000000000001",
-	UserName:      "",
-	DisplayName:   "Anonymous",
-	RoleAdmin:     false,
-	RoleGuest:     false,
-	UserActive:    false,
-	UserConfirmed: false,
+	ID:          -1,
+	PersonUID:   "u000000000000001",
+	UserName:    "",
+	DisplayName: "Anonymous",
+	RoleAdmin:   false,
+	RoleGuest:   false,
+	IsActive:    false,
+	IsConfirmed: false,
 }
 
 // Guest user without own account for link sharing.
 var Guest = Person{
-	ID:            -2,
-	PersonUID:     "u000000000000002",
-	UserName:      "",
-	DisplayName:   "Guest",
-	RoleAdmin:     false,
-	RoleGuest:     true,
-	UserActive:    false,
-	UserConfirmed: false,
+	ID:          -2,
+	PersonUID:   "u000000000000002",
+	UserName:    "",
+	DisplayName: "Guest",
+	RoleAdmin:   false,
+	RoleGuest:   true,
+	IsActive:    false,
+	IsConfirmed: false,
 }
 
 // CreateDefaultUsers initializes the database with default user accounts.

@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// ClientConfig contains HTTP client / Web UI config values
+// ClientConfig represents HTTP client / Web UI config values.
 type ClientConfig struct {
 	Name            string              `json:"name"`
 	Version         string              `json:"version"`
@@ -26,6 +26,9 @@ type ClientConfig struct {
 	ReadOnly        bool                `json:"readonly"`
 	UploadNSFW      bool                `json:"uploadNSFW"`
 	Public          bool                `json:"public"`
+	Pro             bool                `json:"pro"`
+	Sponsor         bool                `json:"sponsor"`
+	Contributor     bool                `json:"contributor"`
 	Experimental    bool                `json:"experimental"`
 	DisableSettings bool                `json:"disableSettings"`
 	AlbumCategories []string            `json:"albumCategories"`
@@ -34,6 +37,8 @@ type ClientConfig struct {
 	Lenses          []entity.Lens       `json:"lenses"`
 	Countries       []entity.Country    `json:"countries"`
 	Thumbs          []Thumb             `json:"thumbs"`
+	ApiKey          string              `json:"apiKey"`
+	MapsKey         string              `json:"mapsKey"`
 	DownloadToken   string              `json:"downloadToken"`
 	PreviewToken    string              `json:"previewToken"`
 	JSHash          string              `json:"jsHash"`

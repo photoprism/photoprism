@@ -130,6 +130,7 @@ func NewTestConfig() *Config {
 	}
 
 	c.initSettings()
+	c.initCredentials()
 
 	if err := c.Init(context.Background()); err != nil {
 		log.Fatalf("config: %s", err.Error())
@@ -150,6 +151,7 @@ func NewTestErrorConfig() *Config {
 	c := &Config{params: NewTestParamsError()}
 
 	c.initSettings()
+	c.initCredentials()
 
 	if err := c.Init(context.Background()); err != nil {
 		log.Fatalf("config: %s", err.Error())

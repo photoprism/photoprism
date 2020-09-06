@@ -16,15 +16,18 @@ func (c *Config) SettingsHidden() bool {
 	return c.params.SettingsHidden
 }
 
+// TemplateSettings represents HTML template settings for the Web UI.
 type TemplateSettings struct {
 	Default string `json:"default" yaml:"default"`
 }
 
+// MapsSettings represents maps settings (for places).
 type MapsSettings struct {
 	Animate int    `json:"animate" yaml:"animate"`
 	Style   string `json:"style" yaml:"style"`
 }
 
+// IndexSettings represents indexing settings.
 type IndexSettings struct {
 	Path      string `json:"path" yaml:"path"`
 	Convert   bool   `json:"convert" yaml:"convert"`
@@ -32,11 +35,13 @@ type IndexSettings struct {
 	Sequences bool   `json:"sequences" yaml:"sequences"`
 }
 
+// ImportSettings represents import settings.
 type ImportSettings struct {
 	Path string `json:"path" yaml:"path"`
 	Move bool   `json:"move" yaml:"move"`
 }
 
+// FeatureSettings represents feature flags, mainly for the Web UI.
 type FeatureSettings struct {
 	Upload   bool `json:"upload" yaml:"upload"`
 	Download bool `json:"download" yaml:"download"`
@@ -54,7 +59,7 @@ type FeatureSettings struct {
 	Logs     bool `json:"logs" yaml:"logs"`
 }
 
-// Settings contains Web UI settings
+// Settings represents user settings for Web UI, indexing, and import.
 type Settings struct {
 	Theme     string           `json:"theme" yaml:"theme"`
 	Language  string           `json:"language" yaml:"language"`
@@ -65,7 +70,7 @@ type Settings struct {
 	Index     IndexSettings    `json:"index" yaml:"index"`
 }
 
-// NewSettings returns a empty Settings
+// NewSettings creates a new Settings instance.
 func NewSettings() *Settings {
 	return &Settings{
 		Theme:    "default",
@@ -111,7 +116,7 @@ func (s Settings) Propagate() {
 	i18n.SetLocale(s.Language)
 }
 
-// Load uses a yaml config file to initiate the configuration entity.
+// Load user settings from file.
 func (s *Settings) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
 		return fmt.Errorf("settings file not found: %s", txt.Quote(fileName))
@@ -132,7 +137,7 @@ func (s *Settings) Load(fileName string) error {
 	return nil
 }
 
-// Save uses a yaml config file to initiate the configuration entity.
+// Save user settings to a file.
 func (s *Settings) Save(fileName string) error {
 	data, err := yaml.Marshal(s)
 

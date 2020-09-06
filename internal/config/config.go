@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"fmt"
 	"runtime"
 	"strings"
 	"sync"
@@ -11,6 +12,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/maps/places"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -23,11 +25,12 @@ var once sync.Once
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
-	once     sync.Once
-	db       *gorm.DB
-	params   *Params
-	settings *Settings
-	token    string
+	once        sync.Once
+	db          *gorm.DB
+	params      *Params
+	settings    *Settings
+	credentials *Credentials
+	token       string
 }
 
 func init() {
@@ -67,6 +70,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	}
 
 	c.initSettings()
+	c.initCredentials()
 
 	return c
 }
@@ -79,12 +83,14 @@ func (c *Config) Propagate() {
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
+	places.UserAgent = c.UserAgent()
 
 	c.Settings().Propagate()
+	c.Credentials().Propagate()
 }
 
 // Init initialises the database connection and dependencies.
-func (c *Config) Init(ctx context.Context) error {
+func (c *Config) Init(_ context.Context) error {
 	c.Propagate()
 	return c.connectDb()
 }
@@ -97,6 +103,11 @@ func (c *Config) Name() string {
 // Version returns the application version.
 func (c *Config) Version() string {
 	return c.params.Version
+}
+
+// UserAgent returns a HTTP user agent string based on app name & version.
+func (c *Config) UserAgent() string {
+	return fmt.Sprintf("%s/%s", c.Name(), c.Version())
 }
 
 // Copyright returns the application copyright.
