@@ -227,22 +227,22 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-json, j",
-		Usage:  "read metadata from JSON sidecar files created by exiftool",
+		Usage:  "automatically create JSON sidecar files using Exiftool",
 		EnvVar: "PHOTOPRISM_SIDECAR_JSON",
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-yaml, y",
-		Usage:  "backup photo metadata to YAML sidecar files",
+		Usage:  "automatically backup metadata to YAML sidecar files",
 		EnvVar: "PHOTOPRISM_SIDECAR_YAML",
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-hidden",
-		Usage:  "create JSON and YAML sidecar files in .photoprism if enabled",
+		Usage:  "store generated sidecar files in a hidden .photoprism directory",
 		EnvVar: "PHOTOPRISM_SIDECAR_HIDDEN",
 	},
 	cli.StringFlag{
 		Name:   "sidecar-path",
-		Usage:  "storage `PATH` for automatically created sidecar files (relative or absolute)",
+		Usage:  "storage `PATH` for generated sidecar files (relative or absolute)",
 		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.BoolFlag{
