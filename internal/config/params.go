@@ -17,6 +17,7 @@ import (
 const (
 	MySQL  = "mysql"
 	SQLite = "sqlite3"
+	// Postgres = "postgres" // TODO: Requires GORM 2.0 for generic column data types
 )
 
 // Params provides a struct in which application configuration is stored.
