@@ -32,6 +32,7 @@ func NewCredentials() *Credentials {
 // Propagate updates api credentials in other packages.
 func (a *Credentials) Propagate() {
 	places.Key = a.Key
+	places.Secret = a.Secret
 }
 
 // Sanitize verifies and sanitizes api credentials;

@@ -1,6 +1,7 @@
 package places
 
 import (
+	"crypto/sha1"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -24,9 +25,10 @@ type Location struct {
 
 const ApiName = "photoprism places"
 
-var Key = ""
+var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
+var Secret = "photoprism"
 var UserAgent = "PhotoPrism/DEVELOP"
-var ReverseLookupURL = "https://places.photoprism.pro/v1/location/%s?key=%s"
+var ReverseLookupURL = "https://places.photoprism.pro/v1/location/%s"
 var client = &http.Client{Timeout: 60 * time.Second}
 
 func NewLocation(id string, lat, lng float64, name, category string, place Place, cached bool) *Location {
@@ -65,7 +67,7 @@ func FindLocation(id string) (result Location, err error) {
 		}
 	}
 
-	url := fmt.Sprintf(ReverseLookupURL, id, Key)
+	url := fmt.Sprintf(ReverseLookupURL, id)
 
 	log.Debugf("api: sending request to %s (%s)", url, ApiName)
 
@@ -77,6 +79,11 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	req.Header.Set("User-Agent", UserAgent)
+
+	if Key != "" {
+		req.Header.Set("X-Key", Key)
+		req.Header.Set("X-Signature", fmt.Sprintf("%x", sha1.Sum([]byte(Key+url+Secret))))
+	}
 
 	var r *http.Response
 
