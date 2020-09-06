@@ -235,11 +235,6 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "automatically backup metadata to YAML sidecar files",
 		EnvVar: "PHOTOPRISM_SIDECAR_YAML",
 	},
-	cli.BoolFlag{
-		Name:   "sidecar-hidden",
-		Usage:  "store generated sidecar files in a hidden .photoprism directory",
-		EnvVar: "PHOTOPRISM_SIDECAR_HIDDEN",
-	},
 	cli.StringFlag{
 		Name:   "sidecar-path",
 		Usage:  "storage `PATH` for generated sidecar files (relative or absolute)",
