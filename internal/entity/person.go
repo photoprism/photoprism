@@ -21,8 +21,8 @@ type Person struct {
 	ParentUID       string     `gorm:"type:varbinary(42);" json:"ParentUID" yaml:"ParentUID,omitempty"`
 	UserUUID        string     `gorm:"type:varbinary(42);index;" json:"UUID" yaml:"UUID,omitempty"`
 	UserName        string     `gorm:"size:64;" json:"UserName" yaml:"UserName,omitempty"`
-	UserLocale      string     `gorm:"size:64;" json:"UserLocale" yaml:"UserLocale,omitempty"`
-	TimeZone        string     `gorm:"size:255;" json:"TimeZone" yaml:"TimeZone,omitempty"`
+	UserLocale      string     `gorm:"type:varbinary(64);default:'en';" json:"UserLocale" yaml:"UserLocale,omitempty"`
+	TimeZone        string     `gorm:"type:varbinary(64);default:'UTC';" json:"TimeZone" yaml:"TimeZone,omitempty"`
 	PrimaryEmail    string     `gorm:"size:255;index;" json:"PrimaryEmail" yaml:"PrimaryEmail,omitempty"`
 	BackupEmail     string     `gorm:"size:255;" json:"BackupEmail" yaml:"BackupEmail,omitempty"`
 	DisplayName     string     `gorm:"size:128;" json:"DisplayName" yaml:"DisplayName,omitempty"`
@@ -33,19 +33,19 @@ type Person struct {
 	FamilyName      string     `gorm:"size:128;" json:"FamilyName" yaml:"FamilyName,omitempty"`
 	NameSuffix      string     `gorm:"size:64;" json:"NameSuffix" yaml:"NameSuffix,omitempty"`
 	AvatarUID       string     `gorm:"type:varbinary(42);" json:"AvatarUID" yaml:"AvatarUID,omitempty"`
-	AvatarURL       string     `gorm:"size:255;" json:"AvatarURL" yaml:"AvatarURL,omitempty"`
-	FeedURL         string     `gorm:"size:255;" json:"FeedURL" yaml:"FeedURL,omitempty"`
-	FeedType        string     `gorm:"size:32" json:"FeedType" yaml:"FeedType,omitempty"`
+	AvatarURL       string     `gorm:"type:varbinary(255);" json:"AvatarURL" yaml:"AvatarURL,omitempty"`
+	FeedURL         string     `gorm:"type:varbinary(255);" json:"FeedURL" yaml:"FeedURL,omitempty"`
+	FeedType        string     `gorm:"type:varbinary(32);" json:"FeedType" yaml:"FeedType,omitempty"`
 	FeedFollow      bool       `json:"FeedFollow" yaml:"FeedFollow,omitempty"`
-	BlogURL         string     `gorm:"size:255;" json:"BlogURL" yaml:"BlogURL,omitempty"`
-	BlogType        string     `gorm:"size:32;" json:"BlogType" yaml:"BlogType,omitempty"`
+	BlogURL         string     `gorm:"type:varbinary(255);" json:"BlogURL" yaml:"BlogURL,omitempty"`
+	BlogType        string     `gorm:"type:varbinary(32);" json:"BlogType" yaml:"BlogType,omitempty"`
 	BlogFollow      bool       `json:"BlogFollow" yaml:"BlogFollow,omitempty"`
-	CompanyURL      string     `gorm:"size:255;" json:"CompanyURL" yaml:"CompanyURL,omitempty"`
+	CompanyURL      string     `gorm:"type:varbinary(255);" json:"CompanyURL" yaml:"CompanyURL,omitempty"`
 	CompanyName     string     `gorm:"size:128;" json:"CompanyName" yaml:"CompanyName,omitempty"`
 	CompanyPhone    string     `gorm:"size:32;" json:"CompanyPhone" yaml:"CompanyPhone,omitempty"`
 	PrimaryPhone    string     `gorm:"size:32;" json:"PrimaryPhone" yaml:"PrimaryPhone,omitempty"`
 	DepartmentName  string     `gorm:"size:128;" json:"DepartmentName" yaml:"DepartmentName,omitempty"`
-	JobTitle        string     `gorm:"size:128;" json:"JobTitle" yaml:"JobTitle,omitempty"`
+	JobTitle        string     `gorm:"size:64;" json:"JobTitle" yaml:"JobTitle,omitempty"`
 	BirthYear       int        `json:"BirthYear" yaml:"BirthYear,omitempty"`
 	BirthMonth      int        `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
 	BirthDay        int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
