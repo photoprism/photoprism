@@ -1,18 +1,12 @@
 <template>
   <div class="p-page p-page-login">
-    <v-toolbar flat color="secondary">
-      <v-toolbar-title>
-        {{ $config.get("siteCaption") }}
-      </v-toolbar-title>
-    </v-toolbar>
-
     <v-form dense ref="form" autocomplete="off" class="p-form-login" @submit.prevent="login" accept-charset="UTF-8">
       <v-card flat tile class="ma-2 application">
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 class="pa-2">
               <p class="subheading">
-                <translate>Please enter your name and password to proceed:</translate>
+                <translate>Please enter your name and password:</translate>
               </p>
             </v-flex>
             <v-flex xs12 class="pa-2">
