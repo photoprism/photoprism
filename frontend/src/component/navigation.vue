@@ -7,7 +7,7 @@
           tile
           :size="40"
           class="clickable"
-          @click.stop="goHome"
+          @click.stop="showNavigation()"
       >
         <img src="/static/img/logo-avatar.svg" alt="Logo">
       </v-avatar>
