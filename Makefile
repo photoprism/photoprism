@@ -66,7 +66,7 @@ install-assets:
 	mkdir -p ~/.photoprism/assets
 	mkdir -p ~/Pictures/Originals
 	mkdir -p ~/Pictures/Import
-	cp -r assets/static assets/profiles assets/templates assets/nasnet assets/nsfw ~/.photoprism/assets
+	cp -r assets/locales assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
 	find ~/.photoprism/assets -name '.*' -type f -delete
 clean-local-assets:
 	rm -rf ~/.photoprism/assets/*
