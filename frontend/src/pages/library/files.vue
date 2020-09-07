@@ -15,7 +15,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" :title="titles.reload">
+        <v-btn icon @click.stop="refresh" :title="$gettext('Reload')">
           <v-icon>refresh</v-icon>
         </v-btn>
       </v-toolbar>
@@ -169,13 +169,6 @@ export default {
       files: {
         limit: Folder.limit(),
         offset: 0,
-      },
-      labels: {
-        search: this.$gettext("Search"),
-        name: this.$gettext("Folder Name"),
-      },
-      titles: {
-        reload: this.$gettext("Reload"),
       },
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
       mouseDown: {

@@ -9,34 +9,34 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="titles.reload">
+      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="$gettext('Reload')">
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.edit = true" class="action-edit" :title="titles.edit">
+      <v-btn icon @click.stop="dialog.edit = true" class="action-edit" :title="$gettext('Edit')">
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')" class="action-share" :title="titles.share">
+      <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')" class="action-share" :title="$gettext('Share')">
         <v-icon>share</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="download" v-if="$config.feature('download')" class="hidden-xs-only action-download" :title="titles.download">
+      <v-btn icon @click.stop="download" v-if="$config.feature('download')" class="hidden-xs-only action-download" :title="$gettext('Download')">
         <v-icon>get_app</v-icon>
       </v-btn>
 
-      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="titles.view">
+      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="$gettext('Toggle View')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="titles.view">
+      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="$gettext('Toggle View')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn icon v-else @click.stop="setView('cards')" :title="titles.view">
+      <v-btn icon v-else @click.stop="setView('cards')" :title="$gettext('Toggle View')">
         <v-icon>view_column</v-icon>
       </v-btn>
 
       <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down action-upload" :title="titles.upload">
+             class="hidden-sm-and-down action-upload" :title="$gettext('Upload')">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
     </v-toolbar>
@@ -116,25 +116,6 @@ export default {
                 upload: false,
                 edit: false,
             },
-            labels: {
-                title: this.$gettext("Album Name"),
-                description: this.$gettext("Description"),
-                search: this.$gettext("Search"),
-                view: this.$gettext("View"),
-                country: this.$gettext("Country"),
-                camera: this.$gettext("Camera"),
-                sort: this.$gettext("Sort Order"),
-                category: this.$gettext("Category"),
-            },
-          titles: {
-            reload: this.$gettext("Reload"),
-            view: this.$gettext("Toggle View"),
-            upload: this.$gettext("Upload"),
-            edit: this.$gettext("Edit"),
-            share: this.$gettext("Share"),
-            download: this.$gettext("Download"),
-            search: this.$gettext("Expand Search"),
-          },
             titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
             growDesc: false,
         };

@@ -6,7 +6,7 @@
       <v-toolbar flat color="secondary">
         <v-text-field class="pt-3 pr-3 input-search"
                       single-line
-                      :label="labels.search"
+                      :label="$gettext('Search')"
                       prepend-inner-icon="search"
                       browser-autocomplete="off"
                       clearable
@@ -19,14 +19,14 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" class="action-reload" :title="titles.reload">
+        <v-btn icon @click.stop="refresh" class="action-reload" :title="$gettext('Reload')">
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all" :title="titles.more">
+        <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all" :title="$gettext('Show more')">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon @click.stop="showImportant" class="action-show-important" :title="titles.less">
+        <v-btn v-else icon @click.stop="showImportant" class="action-show-important" :title="$gettext('Show less')">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
@@ -124,7 +124,7 @@
                       <v-text-field
                           v-model="label.Name"
                           :rules="[titleRule]"
-                          :label="labels.name"
+                          :label="$gettext('Label Name')"
                           color="secondary-dark"
                           single-line
                           autofocus
@@ -194,15 +194,6 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
-      labels: {
-        search: this.$gettext("Search"),
-        name: this.$gettext("Label Name"),
-      },
-      titles: {
-        reload: this.$gettext("Reload"),
-        more: this.$gettext("Show more"),
-        less: this.$gettext("Show less"),
-      },
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
       mouseDown: {
         index: -1,

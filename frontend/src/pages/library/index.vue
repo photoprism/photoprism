@@ -37,8 +37,8 @@
                     class="ma-0 pa-0"
                     v-model="settings.index.rescan"
                     color="secondary-dark"
-                    :label="labels.rescan"
-                    :hint="hints.rescan"
+                    :label="$gettext('Complete Rescan')"
+                    :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
                     prepend-icon="cached"
                     persistent-hint
             >
@@ -111,15 +111,6 @@
                 source: null,
                 root: root,
                 dirs: [root],
-                labels: {
-                    rescan: this.$gettext("Complete Rescan"),
-                    convert: this.$gettext("Convert to JPEG"),
-                    path: this.$gettext("Folder"),
-                },
-                hints: {
-                    rescan: this.$gettext("Re-index all originals, including already indexed and unchanged files."),
-                    convert: this.$gettext("File types like RAW might need to be converted so that they can be displayed in a browser. JPEGs will be stored in the same folder next to the original using the best possible quality."),
-                }
             }
         },
         methods: {

@@ -151,11 +151,6 @@ export default {
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
-      labels: {
-        search: this.$gettext("Search"),
-        title: this.$gettext("Album Name"),
-        category: this.$gettext("Category"),
-      },
       mouseDown: {
         index: -1,
         timeStamp: -1,

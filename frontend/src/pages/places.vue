@@ -7,7 +7,7 @@
                         single-line
                         solo
                         flat
-                        :label="labels.search"
+                        :label="$gettext('Search')"
                         prepend-inner-icon="search"
                         clearable
                         hide-details
@@ -170,9 +170,6 @@
                 result: {},
                 filter: filter,
                 lastFilter: {},
-                labels: {
-                    search: this.$gettext("Search"),
-                },
                 config: this.$config.values,
                 settings: s,
             }

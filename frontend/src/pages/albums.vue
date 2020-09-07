@@ -7,7 +7,7 @@
         <v-text-field @keyup.enter.native="updateQuery"
                       single-line
                       class="hidden-xs-only mr-3"
-                      :label="labels.search"
+                      :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"
                       clearable
@@ -19,7 +19,7 @@
 
         <v-select @change="updateQuery"
                   single-line
-                  :label="labels.category"
+                  :label="$gettext('Category')"
                   color="secondary-dark"
                   v-model="filter.category"
                   :items="categories"
@@ -29,16 +29,16 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" class="action-reload" :title="titles.reload">
+        <v-btn icon @click.stop="refresh" class="action-reload" :title="$gettext('Reload')">
           <v-icon>refresh</v-icon>
         </v-btn>
 
         <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-               class="hidden-sm-and-down" :title="titles.upload">
+               class="hidden-sm-and-down" :title="$gettext('Upload')">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
 
-        <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'" :title="titles.add">
+        <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'" :title="$gettext('Add Album')">
           <v-icon>add</v-icon>
         </v-btn>
       </v-toolbar>
@@ -254,16 +254,6 @@ export default {
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
-      labels: {
-        search: this.$gettext("Search"),
-        title: this.$gettext("Album Name"),
-        category: this.$gettext("Category"),
-      },
-      titles: {
-        reload: this.$gettext("Reload"),
-        upload: this.$gettext("Upload"),
-        add: this.$gettext("Add Album"),
-      },
       mouseDown: {
         index: -1,
         timeStamp: -1,

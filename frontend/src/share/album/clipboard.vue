@@ -21,7 +21,7 @@
 
         <v-btn
                 fab dark small
-                :title="labels.download"
+                :title="$gettext('Download')"
                 color="download"
                 @click.stop="download()"
                 class="action-download"
@@ -65,13 +65,6 @@
                     share: false,
                     upload: false,
                 },
-                labels: {
-                    share: this.$gettext("Share"),
-                    download: this.$gettext("Download"),
-                    clone: this.$gettext("Add to album"),
-                    delete: this.$gettext("Delete"),
-                },
-
             };
         },
         methods: {

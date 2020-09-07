@@ -13,7 +13,7 @@
 
               <v-text-field
                       :disabled="loading"
-                      :label="labels.username"
+                      :label="$gettext('Name')"
                       color="accent"
                       v-model="username"
                       flat solo required
@@ -23,7 +23,7 @@
             <v-flex xs12 class="pa-2">
               <v-text-field
                       :disabled="loading"
-                      :label="labels.password"
+                      :label="$gettext('Password')"
                       color="accent"
                       v-model="password"
                       flat solo required
@@ -62,10 +62,6 @@
                 username: "admin",
                 password: "",
                 nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
-                labels: {
-                    username: this.$gettext("Name"),
-                    password: this.$gettext("Password"),
-                }
             };
         },
         methods: {

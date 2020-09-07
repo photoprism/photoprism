@@ -21,7 +21,7 @@
 
         <v-btn
                 fab dark small
-                :title="labels.share"
+                :title="$gettext('Share')"
                 color="share"
                 @click.stop="shareDialog()"
                 :disabled="selection.length !== 1"
@@ -32,7 +32,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.edit"
+                :title="$gettext('Edit')"
                 color="edit"
                 :disabled="selection.length !== 1"
                 @click.stop="editDialog()"
@@ -42,7 +42,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.download"
+                :title="$gettext('Download')"
                 color="download"
                 @click.stop="download()"
                 class="action-download"
@@ -53,7 +53,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.clone"
+                :title="$gettext('Add to album')"
                 color="album"
                 :disabled="selection.length === 0"
                 @click.stop="dialog.album = true"
@@ -64,7 +64,7 @@
         <v-btn
                 fab dark small
                 color="remove"
-                :title="labels.delete"
+                :title="$gettext('Delete')"
                 @click.stop="dialog.delete = true"
                 :disabled="selection.length === 0"
                 class="action-delete"
@@ -109,14 +109,6 @@
                     album: false,
                     edit: false,
                 },
-                labels: {
-                    edit: this.$gettext("Edit"),
-                    share: this.$gettext("Share"),
-                    download: this.$gettext("Download"),
-                    clone: this.$gettext("Add to album"),
-                    delete: this.$gettext("Delete"),
-                },
-
             };
         },
         methods: {

@@ -21,7 +21,7 @@
 
         <v-btn
                 fab dark small
-                :title="labels.download"
+                :title="$gettext('Download')"
                 color="download"
                 @click.stop="download()"
                 :disabled="!$config.feature('download')"
@@ -64,16 +64,6 @@
                     archive: false,
                     album: false,
                     share: false,
-                },
-                labels: {
-                    share: this.$gettext("Share"),
-                    private: this.$gettext("Change private flag"),
-                    edit: this.$gettext("Edit"),
-                    addToAlbum: this.$gettext("Add to album"),
-                    removeFromAlbum: this.$gettext("Remove"),
-                    archive: this.$gettext("Archive"),
-                    restore: this.$gettext("Restore"),
-                    download: this.$gettext("Download"),
                 },
             };
         },

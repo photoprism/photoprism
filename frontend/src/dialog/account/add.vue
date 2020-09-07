@@ -12,7 +12,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.url"
+                    :label="$gettext('Service URL')"
                     placeholder="https://www.example.com/"
                     color="secondary-dark"
                     v-model="model.AccURL"
@@ -22,7 +22,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.user"
+                    :label="$gettext('Username')"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccUser"
@@ -32,7 +32,7 @@
             <v-text-field
                     hide-details
                     browser-autocomplete="off"
-                    :label="label.pass"
+                    :label="$gettext('Password')"
                     placeholder="optional"
                     color="secondary-dark"
                     v-model="model.AccPass"
@@ -75,9 +75,6 @@
                 search: null,
                 model: new Account(),
                 label: {
-                    url: this.$gettext("Service URL"),
-                    user: this.$gettext("Username"),
-                    pass: this.$gettext("Password"),
                     cancel: this.$gettext("Cancel"),
                     confirm: this.$gettext("Connect"),
                 }

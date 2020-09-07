@@ -17,26 +17,26 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="titles.reload">
+      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="$gettext('Reload')">
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="titles.view">
+      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="$gettext('Toggle View')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="titles.view">
+      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="$gettext('Toggle View')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn icon v-else @click.stop="setView('cards')" :title="titles.view">
+      <v-btn icon v-else @click.stop="setView('cards')" :title="$gettext('Toggle View')">
         <v-icon>view_column</v-icon>
       </v-btn>
 
       <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down action-upload" :title="titles.upload">
+             class="hidden-sm-and-down action-upload" :title="$gettext('Upload')">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search" :title="titles.search">
+      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search" :title="$gettext('Expand Search')">
         <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
       </v-btn>
     </v-toolbar>
@@ -49,7 +49,7 @@
         <v-layout row wrap>
           <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
             <v-select @change="dropdownChange"
-                      :label="labels.country"
+                      :label="$gettext('Country')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="ID"
@@ -62,7 +62,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
             <v-select @change="dropdownChange"
-                      :label="labels.camera"
+                      :label="$gettext('Camera')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="ID"
@@ -73,7 +73,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
             <v-select @change="dropdownChange"
-                      :label="labels.view"
+                      :label="$gettext('View')"
                       flat solo hide-details
                       color="secondary-dark"
                       v-model="settings.view"
@@ -83,7 +83,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
             <v-select @change="dropdownChange"
-                      :label="labels.sort"
+                      :label="$gettext('Sort Order')"
                       flat solo hide-details
                       color="secondary-dark"
                       v-model="filter.order"
@@ -92,7 +92,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
             <v-select @change="dropdownChange"
-                      :label="labels.year"
+                      :label="$gettext('Year')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="value"
@@ -103,7 +103,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
             <v-select @change="dropdownChange"
-                      :label="labels.month"
+                      :label="$gettext('Month')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="value"
@@ -125,7 +125,7 @@
           </v-flex -->
           <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
             <v-select @change="dropdownChange"
-                      :label="labels.color"
+                      :label="$gettext('Color')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="Slug"
@@ -136,7 +136,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
             <v-select @change="dropdownChange"
-                      :label="labels.category"
+                      :label="$gettext('Category')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="Slug"
@@ -194,26 +194,6 @@
                         {value: 'relevance', text: this.$gettext('Most relevant')},
                     ],
                 },
-                labels: {
-                    search: this.$gettext("Search"),
-                    view: this.$gettext("View"),
-                    country: this.$gettext("Country"),
-                    camera: this.$gettext("Camera"),
-                    lens: this.$gettext("Lens"),
-                    year: this.$gettext("Year"),
-                    month: this.$gettext("Month"),
-                    color: this.$gettext("Color"),
-                    category: this.$gettext("Category"),
-                    sort: this.$gettext("Sort Order"),
-                    before: this.$gettext("Taken before"),
-                    after: this.$gettext("Taken after"),
-                },
-              titles: {
-                reload: this.$gettext("Reload"),
-                view: this.$gettext("Toggle View"),
-                upload: this.$gettext("Upload"),
-                search: this.$gettext("Expand Search"),
-              },
             };
         },
         computed: {

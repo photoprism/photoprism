@@ -22,7 +22,7 @@
                 <v-text-field hide-details
                               v-model="model.Title"
                               :rules="[titleRule]"
-                              :label="labels.title"
+                              :label="$gettext('Name')"
                               color="secondary-dark"
                               class="input-title"
                 ></v-text-field>
@@ -38,7 +38,7 @@
               <v-flex xs12 pa-2>
                 <v-textarea auto-grow hide-details
                             browser-autocomplete="off"
-                            :label="labels.description"
+                            :label="$gettext('Description')"
                             :rows="1"
                             :key="growDesc"
                             v-model="model.Description"
@@ -50,7 +50,7 @@
                 <v-combobox hide-details :search-input.sync="model.Category"
                             v-model="model.Category"
                             :items="categories"
-                            :label="labels.category"
+                            :label="$gettext('Category')"
                             :allow-overflow="false"
                             return-masked-value
                             color="secondary-dark"
@@ -60,7 +60,7 @@
               </v-flex>
               <v-flex xs12 md6 pa-2>
                 <v-select
-                        :label="labels.sort"
+                        :label="$gettext('Sort Order')"
                         hide-details
                         v-model="model.Order"
                         :items="sorting"
@@ -117,16 +117,6 @@
                 ],
                 categories: this.$config.albumCategories(),
                 titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-                labels: {
-                    title: this.$gettext("Name"),
-                    description: this.$gettext("Description"),
-                    search: this.$gettext("Search"),
-                    view: this.$gettext("View"),
-                    country: this.$gettext("Country"),
-                    camera: this.$gettext("Camera"),
-                    sort: this.$gettext("Sort Order"),
-                    category: this.$gettext("Category"),
-                },
             }
         },
         methods: {

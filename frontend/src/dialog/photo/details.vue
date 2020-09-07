@@ -40,7 +40,7 @@
                         :disabled="disabled"
                         :rules="[textRule]"
                         hide-details
-                        :label="labels.title"
+                        :label="$gettext('Title')"
                         placeholder=""
                         color="secondary-dark"
                         browser-autocomplete="off"
@@ -128,7 +128,7 @@
                 <v-autocomplete
                         @change="updateTime"
                         :disabled="disabled"
-                        :label="labels.timezone"
+                        :label="$gettext('Time Zone')"
                         browser-autocomplete="off"
                         hide-details hide-no-data
                         color="secondary-dark"
@@ -145,7 +145,7 @@
                         :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
                         :readonly="!!(model.Lat || model.Lng)"
-                        :label="labels.country"
+                        :label="$gettext('Country')"
                         hide-details hide-no-data
                         browser-autocomplete="off"
                         color="secondary-dark"
@@ -162,7 +162,7 @@
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.altitude"
+                        :label="$gettext('Altitude (m)')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.Altitude"
@@ -176,7 +176,7 @@
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.latitude"
+                        :label="$gettext('Latitude')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.Lat"
@@ -190,7 +190,7 @@
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.longitude"
+                        :label="$gettext('Longitude')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.Lng"
@@ -202,7 +202,7 @@
                 <v-select
                         :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
-                        :label="labels.camera"
+                        :label="$gettext('Camera')"
                         browser-autocomplete="off"
                         hide-details
                         color="secondary-dark"
@@ -232,7 +232,7 @@
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.exposure"
+                        :label="$gettext('Exposure')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.Exposure"
@@ -244,7 +244,7 @@
                 <v-select
                         :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                         :disabled="disabled"
-                        :label="labels.lens"
+                        :label="$gettext('Lens')"
                         browser-autocomplete="off"
                         hide-details
                         color="secondary-dark"
@@ -261,7 +261,7 @@
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.fnumber"
+                        :label="$gettext('F Number')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.FNumber"
@@ -274,7 +274,7 @@
                         :disabled="disabled"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.focallength"
+                        :label="$gettext('Focal Length')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.FocalLength"
@@ -289,7 +289,7 @@
                         hide-details
                         browser-autocomplete="off"
                         auto-grow
-                        :label="labels.subject"
+                        :label="$gettext('Subject')"
                         placeholder=""
                         :rows="1"
                         color="secondary-dark"
@@ -304,7 +304,7 @@
                         :rules="[textRule]"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.artist"
+                        :label="$gettext('Artist')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.Details.Artist"
@@ -318,7 +318,7 @@
                         :rules="[textRule]"
                         hide-details
                         browser-autocomplete="off"
-                        :label="labels.copyright"
+                        :label="$gettext('Copyright')"
                         placeholder=""
                         color="secondary-dark"
                         v-model="model.Details.Copyright"
@@ -333,7 +333,7 @@
                         hide-details
                         browser-autocomplete="off"
                         auto-grow
-                        :label="labels.license"
+                        :label="$gettext('License')"
                         placeholder=""
                         :rows="1"
                         color="secondary-dark"
@@ -349,7 +349,7 @@
                         hide-details
                         browser-autocomplete="off"
                         auto-grow
-                        :label="labels.description"
+                        :label="$gettext('Description')"
                         placeholder=""
                         :rows="1"
                         color="secondary-dark"
@@ -364,7 +364,7 @@
                         hide-details
                         browser-autocomplete="off"
                         auto-grow
-                        :label="labels.keywords"
+                        :label="$gettext('Keywords')"
                         placeholder=""
                         :rows="1"
                         color="secondary-dark"
@@ -379,7 +379,7 @@
                         hide-details
                         browser-autocomplete="off"
                         auto-grow
-                        :label="labels.notes"
+                        :label="$gettext('Notes')"
                         placeholder=""
                         :rows="1"
                         color="secondary-dark"
@@ -434,35 +434,6 @@
                 readonly: this.$config.get("readonly"),
                 options: options,
                 countries: countries,
-                labels: {
-                    search: this.$gettext("Search"),
-                    view: this.$gettext("View"),
-                    country: this.$gettext("Country"),
-                    camera: this.$gettext("Camera"),
-                    lens: this.$gettext("Lens"),
-                    year: this.$gettext("Year"),
-                    color: this.$gettext("Color"),
-                    category: this.$gettext("Category"),
-                    sort: this.$gettext("Sort Order"),
-                    before: this.$gettext("Taken before"),
-                    after: this.$gettext("Taken after"),
-                    language: this.$gettext("Language"),
-                    timezone: this.$gettext("Time Zone"),
-                    title: this.$gettext("Title"),
-                    latitude: this.$gettext("Latitude"),
-                    longitude: this.$gettext("Longitude"),
-                    altitude: this.$gettext("Altitude (m)"),
-                    exposure: this.$gettext("Exposure"),
-                    fnumber: this.$gettext("F Number"),
-                    focallength: this.$gettext("Focal Length"),
-                    subject: this.$gettext("Subject"),
-                    artist: this.$gettext("Artist"),
-                    copyright: this.$gettext("Copyright"),
-                    license: this.$gettext("License"),
-                    description: this.$gettext("Description"),
-                    keywords: this.$gettext("Keywords"),
-                    notes: this.$gettext("Notes"),
-                },
                 showDatePicker: false,
                 showTimePicker: false,
                 invalidDate: false,

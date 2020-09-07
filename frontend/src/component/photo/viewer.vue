@@ -15,29 +15,29 @@
 
           <div class="pswp__counter"></div>
 
-          <button class="pswp__button pswp__button--close action-close" :title="titles.close"></button>
+          <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')"></button>
 
           <button class="pswp__button action-download" style="background: none;" @click.exact="onDownload"
-                  :title="titles.download" v-if="config.settings.features.download">
+                  :title="$gettext('Download')" v-if="config.settings.features.download">
             <v-icon size="16" color="white">get_app</v-icon>
           </button>
 
           <button class="pswp__button action-edit hidden-shared-only" style="background: none;" @click.exact="onEdit"
-                  :title="titles.edit">
+                  :title="$gettext('Edit')">
             <v-icon size="16" color="white">edit</v-icon>
           </button>
 
           <button class="pswp__button action-like hidden-shared-only" style="background: none;"
-                  @click.exact="onLike" :title="titles.like">
+                  @click.exact="onLike" :title="$gettext('Like')">
             <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
-          <button class="pswp__button pswp__button--fs action-toogle-fullscreen" :title="titles.fullscreen"></button>
+          <button class="pswp__button pswp__button--fs action-toogle-fullscreen" :title="$gettext('Fullscreen')"></button>
 
-          <button class="pswp__button pswp__button--zoom action-zoom" :title="titles.zoom"></button>
+          <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
 
-          <button class="pswp__button" style="background: none;" @click.exact="onSlideshow" :title="titles.slideshow">
+          <button class="pswp__button" style="background: none;" @click.exact="onSlideshow" :title="$gettext('Start/Stop Slideshow')">
             <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
             <v-icon v-show="interval" size="16" color="white">pause</v-icon>
           </button>
@@ -89,15 +89,6 @@
                 slideshow: {
                     active: false,
                     next: 0,
-                },
-                titles: {
-                  slideshow: this.$gettext("Start/Stop Slideshow"),
-                  zoom: this.$gettext("Zoom in/out"),
-                  fullscreen: this.$gettext("Fullscreen"),
-                  like: this.$gettext("Like"),
-                  edit: this.$gettext("Edit"),
-                  download: this.$gettext("Download"),
-                  close: this.$gettext("Close"),
                 },
             };
         },

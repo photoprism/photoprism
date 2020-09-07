@@ -21,7 +21,7 @@
 
         <v-btn
                 fab dark small
-                :title="labels.share"
+                :title="$gettext('Share')"
                 color="share"
                 @click.stop="dialog.share = true"
                 :disabled="selection.length === 0"
@@ -32,7 +32,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.edit"
+                :title="$gettext('Edit')"
                 color="edit"
                 :disabled="selection.length === 0"
                 @click.stop="edit"
@@ -43,7 +43,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.private"
+                :title="$gettext('Change private flag')"
                 color="private"
                 :disabled="selection.length === 0"
                 @click.stop="batchPrivate"
@@ -54,7 +54,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.download"
+                :title="$gettext('Download')"
                 color="download"
                 @click.stop="download()"
                 v-if="context !== 'archive' && $config.feature('download')"
@@ -64,7 +64,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.addToAlbum"
+                :title="$gettext('Add to album')"
                 color="album"
                 :disabled="selection.length === 0"
                 @click.stop="dialog.album = true"
@@ -76,7 +76,7 @@
         <v-btn
                 fab dark small
                 color="remove"
-                :title="labels.archive"
+                :title="$gettext('Archive')"
                 @click.stop="dialog.archive = true"
                 :disabled="selection.length === 0"
                 v-if="!album && context !== 'archive' && $config.feature('archive')"
@@ -87,7 +87,7 @@
         <v-btn
                 fab dark small
                 color="restore"
-                :title="labels.restore"
+                :title="$gettext('Restore')"
                 @click.stop="batchRestorePhotos"
                 :disabled="selection.length === 0"
                 v-if="!album && context === 'archive'"
@@ -97,7 +97,7 @@
         </v-btn>
         <v-btn
                 fab dark small
-                :title="labels.removeFromAlbum"
+                :title="$gettext('Remove')"
                 color="remove"
                 @click.stop="removeFromAlbum"
                 :disabled="selection.length === 0"
@@ -145,16 +145,6 @@
                     archive: false,
                     album: false,
                     share: false,
-                },
-                labels: {
-                    share: this.$gettext("Share"),
-                    private: this.$gettext("Change private flag"),
-                    edit: this.$gettext("Edit"),
-                    addToAlbum: this.$gettext("Add to album"),
-                    removeFromAlbum: this.$gettext("Remove"),
-                    archive: this.$gettext("Archive"),
-                    restore: this.$gettext("Restore"),
-                    download: this.$gettext("Download"),
                 },
             };
         },
