@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-14 19:44+0000\n"
-"PO-Revision-Date: 2020-07-14 22:16+0200\n"
+"PO-Revision-Date: 2020-09-04 13:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -61,7 +61,7 @@ msgstr "Kategorie nicht gefunden"
 
 #: messages.go:81
 msgid "Album not found"
-msgstr "Album nicht gefunden - gelöscht?"
+msgstr "Album nicht gefunden"
 
 #: messages.go:82
 msgid "Not available in public mode"

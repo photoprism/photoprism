@@ -186,7 +186,7 @@ msgstr "Alle Länder"
 
 #: src/pages/library/import.vue:105
 msgid "All files from import folder"
-msgstr "Gesamten Import-Ordner durchsuchen"
+msgstr "Alle Ordner durchsuchen"
 
 #: src/component/photo/toolbar.vue:175
 msgid "All Lenses"
@@ -477,7 +477,7 @@ msgstr "Land"
 
 #: src/dialog/photo/album.vue:63
 msgid "Create album"
-msgstr "Album erstellen"
+msgstr "Erstellen"
 
 #: src/dialog/photo/info.vue:149
 msgid "Created"
