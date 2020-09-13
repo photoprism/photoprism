@@ -9,7 +9,7 @@ import (
 // Keyword used for full text search
 type Keyword struct {
 	ID      uint   `gorm:"primary_key"`
-	Keyword string `gorm:"type:varchar(64);index;"`
+	Keyword string `gorm:"type:VARCHAR(64);index;"`
 	Skip    bool
 }
 

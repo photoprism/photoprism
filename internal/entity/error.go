@@ -11,8 +11,8 @@ import (
 type Error struct {
 	ID           uint      `gorm:"primary_key" json:"ID" yaml:"ID"`
 	ErrorTime    time.Time `sql:"index" json:"Time" yaml:"Time"`
-	ErrorLevel   string    `gorm:"type:varbinary(32)" json:"Level" yaml:"Level"`
-	ErrorMessage string    `gorm:"type:varbinary(2048)" json:"Message" yaml:"Message"`
+	ErrorLevel   string    `gorm:"type:VARBINARY(32)" json:"Level" yaml:"Level"`
+	ErrorMessage string    `gorm:"type:VARBINARY(2048)" json:"Message" yaml:"Message"`
 }
 
 type Errors []Error

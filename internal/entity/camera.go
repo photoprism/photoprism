@@ -12,13 +12,13 @@ import (
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
 	ID                uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	CameraSlug        string     `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"-"`
-	CameraName        string     `gorm:"type:varchar(255);" json:"Name" yaml:"Name"`
-	CameraMake        string     `gorm:"type:varchar(255);" json:"Make" yaml:"Make,omitempty"`
-	CameraModel       string     `gorm:"type:varchar(255);" json:"Model" yaml:"Model,omitempty"`
-	CameraType        string     `gorm:"type:varchar(255);" json:"Type,omitempty" yaml:"Type,omitempty"`
-	CameraDescription string     `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CameraNotes       string     `gorm:"type:text;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CameraSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
+	CameraName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
+	CameraMake        string     `gorm:"type:VARCHAR(255);" json:"Make" yaml:"Make,omitempty"`
+	CameraModel       string     `gorm:"type:VARCHAR(255);" json:"Model" yaml:"Model,omitempty"`
+	CameraType        string     `gorm:"type:VARCHAR(255);" json:"Type,omitempty" yaml:"Type,omitempty"`
+	CameraDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CameraNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`

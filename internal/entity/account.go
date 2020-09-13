@@ -24,23 +24,23 @@ type Accounts []Account
 // Account represents a remote service account for uploading, downloading or syncing media files.
 type Account struct {
 	ID            uint   `gorm:"primary_key"`
-	AccName       string `gorm:"type:varchar(255);"`
-	AccOwner      string `gorm:"type:varchar(255);"`
-	AccURL        string `gorm:"type:varbinary(512);"`
-	AccType       string `gorm:"type:varbinary(255);"`
-	AccKey        string `gorm:"type:varbinary(255);"`
-	AccUser       string `gorm:"type:varbinary(255);"`
-	AccPass       string `gorm:"type:varbinary(255);"`
-	AccError      string `gorm:"type:varbinary(512);"`
+	AccName       string `gorm:"type:VARCHAR(255);"`
+	AccOwner      string `gorm:"type:VARCHAR(255);"`
+	AccURL        string `gorm:"type:VARBINARY(512);"`
+	AccType       string `gorm:"type:VARBINARY(255);"`
+	AccKey        string `gorm:"type:VARBINARY(255);"`
+	AccUser       string `gorm:"type:VARBINARY(255);"`
+	AccPass       string `gorm:"type:VARBINARY(255);"`
+	AccError      string `gorm:"type:VARBINARY(512);"`
 	AccErrors     int
 	AccShare      bool
 	AccSync       bool
 	RetryLimit    int
-	SharePath     string `gorm:"type:varbinary(255);"`
-	ShareSize     string `gorm:"type:varbinary(16);"`
+	SharePath     string `gorm:"type:VARBINARY(255);"`
+	ShareSize     string `gorm:"type:VARBINARY(16);"`
 	ShareExpires  int
-	SyncPath      string `gorm:"type:varbinary(255);"`
-	SyncStatus    string `gorm:"type:varbinary(16);"`
+	SyncPath      string `gorm:"type:VARBINARY(255);"`
+	SyncStatus    string `gorm:"type:VARBINARY(16);"`
 	SyncInterval  int
 	SyncDate      sql.NullTime `deepcopier:"skip"`
 	SyncUpload    bool

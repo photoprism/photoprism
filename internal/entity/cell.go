@@ -12,10 +12,10 @@ import (
 
 // Cell represents a S2 cell with location data.
 type Cell struct {
-	ID           string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	CellName     string    `gorm:"type:varchar(255);" json:"Name" yaml:"Name,omitempty"`
-	CellCategory string    `gorm:"type:varchar(64);" json:"Category" yaml:"Category,omitempty"`
-	PlaceID      string    `gorm:"type:varbinary(42);default:'zz'" json:"-" yaml:"PlaceID"`
+	ID           string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	CellName     string    `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
+	CellCategory string    `gorm:"type:VARCHAR(64);" json:"Category" yaml:"Category,omitempty"`
+	PlaceID      string    `gorm:"type:VARBINARY(42);default:'zz'" json:"-" yaml:"PlaceID"`
 	Place        *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
 	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
