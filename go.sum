@@ -158,6 +158,8 @@ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/
 github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXiIaQGbYVAs8BPL6v8lEs=
 github.com/google/open-location-code/go v0.0.0-20200805234123-bf1466f508dc h1:5o8mwzXVSBcozZ0Ry1Twel6LWli2q4NIa/QfxmaClqA=
 github.com/google/open-location-code/go v0.0.0-20200805234123-bf1466f508dc/go.mod h1:eJfRN6aj+kR/rnua/rw9jAgYhqoMHldQkdTi+sePRKk=
+github.com/google/open-location-code/go v0.0.0-20200910235652-4c861c2fa9dc h1:RH376QjUXMELdfjjt2M0UBH9YFS7qlcL1EH+Y0ZapOQ=
+github.com/google/open-location-code/go v0.0.0-20200910235652-4c861c2fa9dc/go.mod h1:eJfRN6aj+kR/rnua/rw9jAgYhqoMHldQkdTi+sePRKk=
 github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
 github.com/google/pprof v0.0.0-20190515194954-54271f7e092f/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
 github.com/google/pprof v0.0.0-20200212024743-f11f1df84d12/go.mod h1:ZgVRPoUq/hfqzAqh7sHMqb3I9Rq5C59dIz2SbBwJ4eM=

@@ -21,7 +21,7 @@ require (
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/golang/geo v0.0.0-20200730024412-e86565bf3f35
 	github.com/golang/protobuf v1.4.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20200805234123-bf1466f508dc
+	github.com/google/open-location-code/go v0.0.0-20200910235652-4c861c2fa9dc
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.9.0
 	github.com/h2non/filetype v1.1.0
