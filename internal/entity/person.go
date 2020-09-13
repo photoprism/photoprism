@@ -32,9 +32,9 @@ type Person struct {
 	ConfirmToken    string     `gorm:"type:VARBINARY(128);" json:"-" yaml:"-"`
 	BackupEmail     string     `gorm:"size:255;" json:"BackupEmail" yaml:"BackupEmail,omitempty"`
 	UserURL         string     `gorm:"type:VARBINARY(255);" json:"URL" yaml:"URL,omitempty"`
+	CompanyURL      string     `gorm:"type:VARBINARY(255);" json:"CompanyURL" yaml:"CompanyURL,omitempty"`
 	UserPhone       string     `gorm:"size:32;" json:"Phone" yaml:"Phone,omitempty"`
 	CompanyPhone    string     `gorm:"size:32;" json:"CompanyPhone" yaml:"CompanyPhone,omitempty"`
-	CompanyURL      string     `gorm:"type:VARBINARY(255);" json:"CompanyURL" yaml:"CompanyURL,omitempty"`
 	CompanyName     string     `gorm:"size:128;" json:"CompanyName" yaml:"CompanyName,omitempty"`
 	DepartmentName  string     `gorm:"size:128;" json:"DepartmentName" yaml:"DepartmentName,omitempty"`
 	JobTitle        string     `gorm:"size:64;" json:"JobTitle" yaml:"JobTitle,omitempty"`
@@ -45,7 +45,6 @@ type Person struct {
 	UserAvatar      string     `gorm:"type:VARBINARY(255);" json:"Avatar" yaml:"Avatar,omitempty"`
 	UserSettings    string     `gorm:"type:LONGTEXT;" json:"-" yaml:"-"`
 	UserAccounts    string     `gorm:"type:LONGTEXT;" json:"-" yaml:"-"`
-	UserNotes       string     `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
 	UserActive      bool       `json:"Active" yaml:"Active,omitempty"`
 	TermsAccepted   bool       `json:"TermsAccepted" yaml:"TermsAccepted,omitempty"`
 	IsArtist        bool       `json:"IsArtist" yaml:"IsArtist,omitempty"`
