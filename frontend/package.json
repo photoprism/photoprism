@@ -28,7 +28,7 @@
     "@babel/runtime": "^7.11.2",
     "@fortawesome/fontawesome-free": "^5.14.0",
     "acorn": "^6.4.1",
-    "ajv": "^6.12.4",
+    "ajv": "^6.12.5",
     "autoprefixer": "^9.8.6",
     "axios": "^0.19.2",
     "axios-mock-adapter": "^1.18.2",
