@@ -44,7 +44,6 @@ type Person struct {
 	BirthDay        int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
 	UserName        string     `gorm:"size:64;" json:"UserName" yaml:"UserName,omitempty"`
 	UserSettings    string     `gorm:"type:LONGTEXT;" json:"-" yaml:"-"`
-	TermsAccepted   bool       `json:"TermsAccepted" yaml:"TermsAccepted,omitempty"`
 	IsActive        bool       `json:"IsActive" yaml:"IsActive,omitempty"`
 	IsConfirmed     bool       `json:"IsConfirmed" yaml:"IsConfirmed,omitempty"`
 	IsArtist        bool       `json:"IsArtist" yaml:"IsArtist,omitempty"`
@@ -62,6 +61,7 @@ type Person struct {
 	ApiSecret       string     `gorm:"column:api_secret;type:VARBINARY(128);" json:"-" yaml:"-"`
 	LoginAttempts   int        `json:"-" yaml:"-"`
 	LoginAt         *time.Time `json:"-" yaml:"-"`
+	EulaSigned      *time.Time `json:"EulaSigned" yaml:"EulaSigned,omitempty"`
 	CreatedAt       time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt       time.Time  `json:"UpdatedAt" yaml:"-"`
 	DeletedAt       *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`

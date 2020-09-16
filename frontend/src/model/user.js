@@ -63,7 +63,6 @@ export class User extends RestModel {
             BirthDay: -1,
             UserName: "",
             UserSettings: "",
-            TermsAccepted: false,
             IsActive: false,
             IsConfirmed: false,
             IsArtist: false,
@@ -75,6 +74,7 @@ export class User extends RestModel {
             RoleFriend: false,
             WebDAV: false,
             StoragePath: "",
+            EulaSigned: "",
             CreatedAt: "",
             UpdatedAt: "",
         };
