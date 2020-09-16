@@ -185,7 +185,7 @@ describe('common/session', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
         assert.isFalse(session.user.hasId());
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData();
         assert.equal(session.user.GivenName, "");
         session.setData(values);
@@ -193,7 +193,7 @@ describe('common/session', () => {
         assert.equal(session.user.RoleAdmin, true);
         const result = session.getUser();
         assert.equal(result.ID, 5);
-        assert.equal(result.Email, "test@test.com");
+        assert.equal(result.PrimaryEmail, "test@test.com");
         session.deleteData();
         assert.isFalse(session.user.hasId());
     });
@@ -201,11 +201,11 @@ describe('common/session', () => {
     it('should get user email', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.getEmail();
         assert.equal(result, "test@test.com");
-        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
         const result2 = session.getEmail();
         assert.equal(result2, "");
@@ -215,11 +215,11 @@ describe('common/session', () => {
     it('should get user firstname', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.getGivenName();
         assert.equal(result, "Max");
-        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
         const result2 = session.getGivenName();
         assert.equal(result2, "");
@@ -229,11 +229,11 @@ describe('common/session', () => {
     it('should get user full name', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.getFullName();
         assert.equal(result, "Max Last");
-        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
         const result2 = session.getFullName();
         assert.equal(result2, "");
@@ -243,7 +243,7 @@ describe('common/session', () => {
     it('should test whether user is set', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isUser();
         assert.equal(result, true);
@@ -253,7 +253,7 @@ describe('common/session', () => {
     it('should test whether user is admin', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isAdmin();
         assert.equal(result, true);
@@ -263,7 +263,7 @@ describe('common/session', () => {
     it('should test whether user is anonymous', () => {
         const storage = window.localStorage;
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isAnonymous();
         assert.equal(result, false);
@@ -272,7 +272,7 @@ describe('common/session', () => {
 
     it('should test login and logout', async () => {
         mock
-            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, Email: "test@test.com"}}})
+            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, PrimaryEmail: "test@test.com"}}})
             .onDelete("session/8877").reply(200);
         const storage = window.localStorage;
         const session = new Session(storage, config);
@@ -280,7 +280,7 @@ describe('common/session', () => {
         assert.equal(session.storage.data, undefined);
         await session.login("test@test.com", "passwd");
         assert.equal(session.session_id, 8877);
-        assert.equal(session.storage.data, '{"user":{"ID":1,"Email":"test@test.com"}}');
+        assert.equal(session.storage.data, '{"user":{"ID":1,"PrimaryEmail":"test@test.com"}}');
         await session.logout();
         assert.equal(session.session_id, null);
         mock.reset();
@@ -289,7 +289,7 @@ describe('common/session', () => {
     //TODO Why does it make other tests fail?
     /*it('should test onLogout', async () => {
         mock
-            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, Email: "test@test.com"}}})
+            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, PrimaryEmail: "test@test.com"}}})
             .onDelete("session/8877").reply(200);
         const storage = window.localStorage;
         const session = new Session(storage, config);
@@ -297,7 +297,7 @@ describe('common/session', () => {
         //assert.equal(session.storage.data, undefined);
         await session.login("test@test.com", "passwd");
         assert.equal(session.session_id, 8877);
-        assert.equal(session.storage.data, '{"user":{"ID":1,"Email":"test@test.com"}}');
+        assert.equal(session.storage.data, '{"user":{"ID":1,"PrimaryEmail":"test@test.com"}}');
         await session.onLogout();
         assert.equal(session.session_id, null);
         mock.reset();

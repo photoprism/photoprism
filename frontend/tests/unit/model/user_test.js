@@ -9,14 +9,14 @@ describe("model/user", () => {
     const mock = new MockAdapter(Api);
 
     it("should get entity name",  () => {
-        const values = {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", Role: "admin"};
+        const values = {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", Role: "admin"};
         const user = new User(values);
         const result = user.getEntityName();
         assert.equal(result, "Max Last");
     });
 
     it("should get id",  () => {
-        const values = {ID: 5, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", Role: "admin"};
+        const values = {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", Role: "admin"};
         const user = new User(values);
         const result = user.getId();
         assert.equal(result, 5);
@@ -52,7 +52,7 @@ describe("model/user", () => {
 
     it("should get change password",  async() => {
         mock.onPut("users/54/password").reply(200,  {password: "old", new_password: "new"});
-        const values = {ID: 54, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", Role: "admin"};
+        const values = {ID: 54, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", Role: "admin"};
         const user = new User(values);
         const result = await user.changePassword("old", "new");
         assert.equal(result.new_password, "new");
@@ -60,7 +60,7 @@ describe("model/user", () => {
 
     it("should save profile",  async() => {
         mock.onPost("users/55/profile").reply(200,  {GivenName: "MaxNew", FamilyName: "LastNew"});
-        const values = {ID: 55, GivenName: "Max", FamilyName: "Last", Email: "test@test.com", Role: "admin"};
+        const values = {ID: 55, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", Role: "admin"};
         const user = new User(values);
         assert.equal(user.GivenName, "Max");
         assert.equal(user.FamilyName, "Last");

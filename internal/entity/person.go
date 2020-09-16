@@ -44,8 +44,9 @@ type Person struct {
 	BirthDay        int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
 	UserName        string     `gorm:"size:64;" json:"UserName" yaml:"UserName,omitempty"`
 	UserSettings    string     `gorm:"type:LONGTEXT;" json:"-" yaml:"-"`
-	UserActive      bool       `json:"UserActive" yaml:"UserActive,omitempty"`
 	TermsAccepted   bool       `json:"TermsAccepted" yaml:"TermsAccepted,omitempty"`
+	IsActive        bool       `json:"IsActive" yaml:"IsActive,omitempty"`
+	IsConfirmed     bool       `json:"IsConfirmed" yaml:"IsConfirmed,omitempty"`
 	IsArtist        bool       `json:"IsArtist" yaml:"IsArtist,omitempty"`
 	IsSubject       bool       `json:"IsSubject" yaml:"IsSubject,omitempty"`
 	RoleAdmin       bool       `json:"RoleAdmin" yaml:"RoleAdmin,omitempty"`
@@ -78,7 +79,7 @@ var Admin = Person{
 	UserName:    "admin",
 	DisplayName: "Admin",
 	RoleAdmin:   true,
-	UserActive:  true,
+	IsActive:    true,
 }
 
 // Anonymous, public user without own account.
@@ -90,7 +91,7 @@ var UnknownPerson = Person{
 	DisplayName: "Anonymous",
 	RoleAdmin:   false,
 	RoleGuest:   false,
-	UserActive:  false,
+	IsActive:    false,
 }
 
 // Guest user without own account for link sharing.
@@ -102,7 +103,7 @@ var Guest = Person{
 	DisplayName: "Guest",
 	RoleAdmin:   false,
 	RoleGuest:   true,
-	UserActive:  false,
+	IsActive:    false,
 }
 
 // CreateDefaultUsers initializes the database with default user accounts.
