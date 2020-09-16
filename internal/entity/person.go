@@ -19,7 +19,7 @@ type Person struct {
 	AddressID       int        `gorm:"default:1" json:"-" yaml:"-"`
 	PersonUID       string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	ParentUID       string     `gorm:"type:VARBINARY(42);" json:"ParentUID" yaml:"ParentUID,omitempty"`
-	UserUUID        string     `gorm:"type:VARBINARY(42);index;" json:"UUID" yaml:"UUID,omitempty"`
+	GlobalUID       string     `gorm:"type:VARBINARY(42);index;" json:"GlobalUID" yaml:"GlobalUID,omitempty"`
 	UserName        string     `gorm:"size:64;" json:"UserName" yaml:"UserName,omitempty"`
 	DisplayName     string     `gorm:"size:128;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	DisplayLocation string     `gorm:"size:128;" json:"DisplayLocation" yaml:"DisplayLocation,omitempty"`

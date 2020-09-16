@@ -39,7 +39,7 @@ export class User extends RestModel {
             UID: "",
             Address: {},
             ParentUID: "",
-            UUID: "",
+            GlobalUID: "",
             UserName: "",
             DisplayName: "",
             DisplayLocation: "",

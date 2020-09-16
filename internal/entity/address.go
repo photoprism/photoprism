@@ -11,7 +11,7 @@ type Addresses []Address
 type Address struct {
 	ID             int        `gorm:"primary_key" json:"ID" yaml:"ID"`
 	CellID         string     `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"CellID"`
-	AddressUUID    string     `gorm:"type:VARBINARY(42);index;" json:"UUID" yaml:"UUID,omitempty"`
+	GlobalUID      string     `gorm:"type:VARBINARY(42);index;" json:"GlobalUID" yaml:"GlobalUID,omitempty"`
 	AddressLat     float32    `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	AddressLng     float32    `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	AddressLine1   string     `gorm:"size:255;" json:"Line1" yaml:"Line1,omitempty"`
