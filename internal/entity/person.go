@@ -20,7 +20,6 @@ type Person struct {
 	PersonUID       string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	ParentUID       string     `gorm:"type:VARBINARY(42);" json:"ParentUID" yaml:"ParentUID,omitempty"`
 	GlobalUID       string     `gorm:"type:VARBINARY(42);index;" json:"GlobalUID" yaml:"GlobalUID,omitempty"`
-	UserName        string     `gorm:"size:64;" json:"UserName" yaml:"UserName,omitempty"`
 	DisplayName     string     `gorm:"size:128;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	DisplayLocation string     `gorm:"size:128;" json:"DisplayLocation" yaml:"DisplayLocation,omitempty"`
 	DisplayBio      string     `gorm:"type:TEXT;" json:"DisplayBio" yaml:"DisplayBio,omitempty"`
@@ -28,12 +27,14 @@ type Person struct {
 	GivenName       string     `gorm:"size:128;" json:"GivenName" yaml:"GivenName,omitempty"`
 	FamilyName      string     `gorm:"size:128;" json:"FamilyName" yaml:"FamilyName,omitempty"`
 	NameSuffix      string     `gorm:"size:64;" json:"NameSuffix" yaml:"NameSuffix,omitempty"`
-	UserEmail       string     `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
-	ConfirmToken    string     `gorm:"type:VARBINARY(128);" json:"-" yaml:"-"`
+	PrimaryEmail    string     `gorm:"size:255;index;" json:"PrimaryEmail" yaml:"PrimaryEmail,omitempty"`
 	BackupEmail     string     `gorm:"size:255;" json:"BackupEmail" yaml:"BackupEmail,omitempty"`
-	UserURL         string     `gorm:"type:VARBINARY(255);" json:"URL" yaml:"URL,omitempty"`
+	PersonURL       string     `gorm:"type:VARBINARY(255);" json:"PersonURL" yaml:"PersonURL,omitempty"`
+	PersonPhone     string     `gorm:"size:32;" json:"PersonPhone" yaml:"PersonPhone,omitempty"`
+	PersonStatus    string     `gorm:"type:VARBINARY(32);" json:"PersonStatus" yaml:"PersonStatus,omitempty"`
+	PersonAvatar    string     `gorm:"type:VARBINARY(255);" json:"PersonAvatar" yaml:"PersonAvatar,omitempty"`
+	PersonAccounts  string     `gorm:"type:LONGTEXT;" json:"-" yaml:"-"`
 	CompanyURL      string     `gorm:"type:VARBINARY(255);" json:"CompanyURL" yaml:"CompanyURL,omitempty"`
-	UserPhone       string     `gorm:"size:32;" json:"Phone" yaml:"Phone,omitempty"`
 	CompanyPhone    string     `gorm:"size:32;" json:"CompanyPhone" yaml:"CompanyPhone,omitempty"`
 	CompanyName     string     `gorm:"size:128;" json:"CompanyName" yaml:"CompanyName,omitempty"`
 	DepartmentName  string     `gorm:"size:128;" json:"DepartmentName" yaml:"DepartmentName,omitempty"`
@@ -41,11 +42,9 @@ type Person struct {
 	BirthYear       int        `json:"BirthYear" yaml:"BirthYear,omitempty"`
 	BirthMonth      int        `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
 	BirthDay        int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
-	UserStatus      string     `gorm:"type:VARBINARY(255);" json:"Status" yaml:"Status,omitempty"`
-	UserAvatar      string     `gorm:"type:VARBINARY(255);" json:"Avatar" yaml:"Avatar,omitempty"`
+	UserName        string     `gorm:"size:64;" json:"UserName" yaml:"UserName,omitempty"`
 	UserSettings    string     `gorm:"type:LONGTEXT;" json:"-" yaml:"-"`
-	UserAccounts    string     `gorm:"type:LONGTEXT;" json:"-" yaml:"-"`
-	UserActive      bool       `json:"Active" yaml:"Active,omitempty"`
+	UserActive      bool       `json:"UserActive" yaml:"UserActive,omitempty"`
 	TermsAccepted   bool       `json:"TermsAccepted" yaml:"TermsAccepted,omitempty"`
 	IsArtist        bool       `json:"IsArtist" yaml:"IsArtist,omitempty"`
 	IsSubject       bool       `json:"IsSubject" yaml:"IsSubject,omitempty"`
@@ -56,6 +55,8 @@ type Person struct {
 	RoleFriend      bool       `json:"RoleFriend" yaml:"RoleFriend,omitempty"`
 	WebDAV          bool       `gorm:"column:webdav" json:"WebDAV" yaml:"WebDAV,omitempty"`
 	StoragePath     string     `gorm:"column:storage_path;type:VARBINARY(255);" json:"StoragePath" yaml:"StoragePath,omitempty"`
+	ConfirmToken    string     `gorm:"type:VARBINARY(128);" json:"-" yaml:"-"`
+	ResetToken      string     `gorm:"type:VARBINARY(128);" json:"-" yaml:"-"`
 	ApiToken        string     `gorm:"column:api_token;type:VARBINARY(128);" json:"-" yaml:"-"`
 	ApiSecret       string     `gorm:"column:api_secret;type:VARBINARY(128);" json:"-" yaml:"-"`
 	LoginAttempts   int        `json:"-" yaml:"-"`

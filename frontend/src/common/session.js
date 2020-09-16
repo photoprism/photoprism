@@ -132,7 +132,7 @@ export default class Session {
 
     getEmail() {
         if (this.isUser()) {
-            return this.user.Email;
+            return this.user.PrimaryEmail;
         }
 
         return "";
