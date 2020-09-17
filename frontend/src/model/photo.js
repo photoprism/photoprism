@@ -39,6 +39,7 @@ import {$gettext} from "common/vm";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
+export const CodecHvc1 = "hvc1";
 export const TypeMP4 = "mp4";
 export const TypeJpeg = "jpg";
 export const TypeImage = "image";
@@ -249,7 +250,7 @@ export class Photo extends RestModel {
             return false;
         }
 
-        return this.Files.findIndex(f => f.Codec === CodecAvc1) !== -1 || this.Files.findIndex(f => f.Type === TypeMP4) !== -1;
+        return this.Files.findIndex(f => f.Codec === CodecAvc1) !== -1 || this.Files.findIndex(f => f.Type === TypeMP4) !== -1 || (navigator.userAgent.indexOf("Safari") != -1 && this.Files.findIndex(f => f.Codec === CodecHvc1) !== -1) ;
     }
 
     videoFile() {
