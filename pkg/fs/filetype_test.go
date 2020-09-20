@@ -133,3 +133,40 @@ func TestFileType_FindFirst(t *testing.T) {
 		assert.Equal(t, Abs("testdata/directory/example.bmp"), result)
 	})
 }
+
+func TestNormalizedExt(t *testing.T) {
+	t.Run("none", func(t *testing.T) {
+		result := NormalizedExt("testdata/test")
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("dot", func(t *testing.T) {
+		result := NormalizedExt("testdata/test.")
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("test.z", func(t *testing.T) {
+		result := NormalizedExt("testdata/test.z")
+		assert.Equal(t, "z", result)
+	})
+
+	t.Run("test.jpg", func(t *testing.T) {
+		result := NormalizedExt("testdata/test.jpg")
+		assert.Equal(t, "jpg", result)
+	})
+
+	t.Run("test.PNG", func(t *testing.T) {
+		result := NormalizedExt("testdata/test.PNG")
+		assert.Equal(t, "png", result)
+	})
+
+	t.Run("test.MOV", func(t *testing.T) {
+		result := NormalizedExt("testdata/test.MOV")
+		assert.Equal(t, "mov", result)
+	})
+
+	t.Run("test.xmp", func(t *testing.T) {
+		result := NormalizedExt("testdata/test.xMp")
+		assert.Equal(t, "xmp", result)
+	})
+}
