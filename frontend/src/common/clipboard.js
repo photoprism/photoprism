@@ -32,7 +32,7 @@ import RestModel from "model/rest";
 import Notify from "common/notify";
 import {$gettext} from "./vm";
 
-export const MaxItems = 500;
+export const MaxItems = 999;
 
 export default class Clipboard {
     /**
