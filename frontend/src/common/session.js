@@ -53,7 +53,7 @@ export default class Session {
             this.data = dataJson !== "undefined" ? JSON.parse(dataJson) : null;
         }
 
-        if(this.data && this.data.user) {
+        if (this.data && this.data.user) {
             this.user = new User(this.data.user);
         }
 
@@ -62,7 +62,7 @@ export default class Session {
         }
 
         Event.subscribe("session.logout", () => {
-            this.onLogout();
+            return this.onLogout();
         });
 
         Event.subscribe("websocket.connected", () => {
@@ -108,6 +108,10 @@ export default class Session {
         return this.session_id;
     }
 
+    hasId() {
+        return !!this.session_id;
+    }
+
     deleteId() {
         this.session_id = null;
         this.storage.removeItem("session_id");
@@ -116,7 +120,7 @@ export default class Session {
     }
 
     setData(data) {
-        if(!data) {
+        if (!data) {
             return;
         }
 
@@ -167,7 +171,7 @@ export default class Session {
     }
 
     hasToken(token) {
-        if(!this.data || !this.data.tokens) {
+        if (!this.data || !this.data.tokens) {
             return false;
         }
 
@@ -192,7 +196,7 @@ export default class Session {
         try {
             Socket.send(JSON.stringify(clientInfo));
         } catch (e) {
-            if(this.config.debug) {
+            if (this.config.debug) {
                 console.log("session: can't use websocket, not connected (yet)");
             }
         }
@@ -203,10 +207,13 @@ export default class Session {
 
         return Api.post("session", {username, password, token}).then(
             (resp) => {
-                this.setConfig(resp.data.config);
-                this.setId(resp.data.id);
-                this.setData(resp.data.data);
-                this.sendClientInfo();
+                return new Promise(resolve => {
+                    this.setConfig(resp.data.config);
+                    this.setId(resp.data.id);
+                    this.setData(resp.data.data);
+                    this.sendClientInfo();
+                    resolve();
+                });
             }
         );
     }
@@ -222,20 +229,25 @@ export default class Session {
         );
     }
 
-    onLogout() {
+    onLogout(noRedirect) {
         this.deleteId();
-        window.location = "/";
+        if (noRedirect !== true) {
+            window.location = "/";
+        }
+        return Promise.resolve();
     }
 
-    logout() {
-        const id = this.getId();
-
-        this.deleteId();
-
-        Api.delete("session/" + id).then(
-            () => {
-                window.location = "/";
-            }
-        );
+    logout(noRedirect) {
+        if (this.hasId()) {
+            return Api.delete("session/" + this.getId())
+                .then(() => {
+                    return this.onLogout(noRedirect);
+                })
+                .catch(() => {
+                    return this.onLogout(noRedirect);
+                });
+        } else {
+            return this.onLogout(noRedirect);
+        }
     }
 }
