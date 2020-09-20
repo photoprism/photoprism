@@ -207,13 +207,10 @@ export default class Session {
 
         return Api.post("session", {username, password, token}).then(
             (resp) => {
-                return new Promise(resolve => {
-                    this.setConfig(resp.data.config);
-                    this.setId(resp.data.id);
-                    this.setData(resp.data.data);
-                    this.sendClientInfo();
-                    resolve();
-                });
+                this.setConfig(resp.data.config);
+                this.setId(resp.data.id);
+                this.setData(resp.data.data);
+                this.sendClientInfo();
             }
         );
     }
