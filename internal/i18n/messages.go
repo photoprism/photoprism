@@ -28,6 +28,8 @@ const (
 	ErrNoAlbumsSelected
 	ErrNoFilesForDownload
 	ErrZipFailed
+	ErrInvalidCredentials
+	ErrInvalidLink
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -93,6 +95,8 @@ var Messages = MessageMap{
 	ErrNoAlbumsSelected:   gettext("No albums selected"),
 	ErrNoFilesForDownload: gettext("No files available for download"),
 	ErrZipFailed:          gettext("Failed to create zip file"),
+	ErrInvalidCredentials: gettext("Invalid credentials"),
+	ErrInvalidLink:        gettext("Invalid link"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),

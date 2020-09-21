@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 	"net/http"
@@ -39,7 +40,7 @@ func TestCreateSession(t *testing.T) {
 		CreateSession(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/session", `{"username": "admin", "password": "xxx"}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "Invalid user name or password", val.String())
+		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }

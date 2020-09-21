@@ -269,13 +269,27 @@ func (m *Person) InvalidPassword(password string) bool {
 		return true
 	}
 
+	time.Sleep(time.Second * 5 * time.Duration(m.LoginAttempts))
+
 	pw := FindPassword(m.PersonUID)
 
 	if pw == nil {
 		return true
 	}
 
-	return pw.InvalidPassword(password)
+	if pw.InvalidPassword(password) {
+		if err := Db().Model(m).UpdateColumn("login_attempts", gorm.Expr("login_attempts + ?", 1)).Error; err != nil {
+			log.Errorf("person: %s (update login attempts)", err)
+		}
+
+		return true
+	}
+
+	if err := Db().Model(m).Updates(map[string]interface{}{"login_attempts": 0, "login_at": Timestamp()}).Error; err != nil {
+		log.Errorf("person: %s (update last login)", err)
+	}
+
+	return false
 }
 
 // Role returns the user role for ACL permission checks.
