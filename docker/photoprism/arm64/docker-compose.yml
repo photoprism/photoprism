@@ -14,6 +14,8 @@ services:
   photoprism:
     image: photoprism/photoprism-arm64:latest
     restart: unless-stopped
+    # Uncomment and edit the following line to set a specific user and group id:
+    # user: "1000:1000"
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
