@@ -16,7 +16,7 @@
                       :label="$gettext('Name')"
                       color="accent"
                       v-model="username"
-                      flat solo required
+                      flat solo required hide-details
                       type="text"
               ></v-text-field>
             </v-flex>
@@ -26,21 +26,21 @@
                       :label="$gettext('Password')"
                       color="accent"
                       v-model="password"
-                      flat solo required
+                      flat solo required hide-details
                       :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                       :type="showPassword ? 'text' : 'password'"
                       @click:append="showPassword = !showPassword"
                       @keyup.enter.native="login"
               ></v-text-field>
             </v-flex>
-            <v-flex xs12 class="pa-2">
+            <v-flex xs12 class="px-2 py-3">
               <v-btn color="secondary-dark"
                      class="white--text ml-0"
                      depressed
                      :disabled="loading || !this.password || !this.username"
                      @click.stop="login">
                 <translate>Sign in</translate>
-                <v-icon right dark>vpn_key</v-icon>
+                <v-icon right dark>login</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>

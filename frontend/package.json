@@ -76,7 +76,7 @@
     "karma-webpack": "^4.0.2",
     "luxon": "^1.25.0",
     "mapbox-gl": "^1.12.0",
-    "material-design-icons-iconfont": "^5.0.1",
+    "material-design-icons-iconfont": "^6.1.0",
     "mediaelement": "^4.2.16",
     "mini-css-extract-plugin": "^0.7.0",
     "minimist": "^1.2.5",
