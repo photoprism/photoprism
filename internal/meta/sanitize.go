@@ -29,6 +29,7 @@ var UnwantedDescriptions = map[string]bool{
 	"burst":                  true,
 	"sdr_HDRB":               true,
 	"cof":                    true,
+	"qrf":                    true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
