@@ -18,7 +18,7 @@
     </v-toolbar>
     <v-toolbar dark flat color="navigation darken-1">
     </v-toolbar>
-    <div id="photoprism-info"><a href="https://photoprism.org/" target="_blank">Shared with PhotoPrism™</a></div>
+    <div id="photoprism-info"><a href="https://photoprism.org/" target="_blank">Shared with PhotoPrism®</a></div>
   </div>
 </template>
 

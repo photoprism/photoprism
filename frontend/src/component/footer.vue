@@ -4,7 +4,7 @@
       <v-layout wrap align-top>
         <v-flex xs12 sm6 class="px-0 pb-2 body-1">
           <router-link to="/about">
-            PhotoPrism™
+            PhotoPrism®
             {{$config.get("version")}}
             <br>© 2018-2020 Michael Mayer
           </router-link>
