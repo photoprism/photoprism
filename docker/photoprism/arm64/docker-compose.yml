@@ -14,7 +14,7 @@ services:
   photoprism:
     image: photoprism/photoprism-arm64:latest
     restart: unless-stopped
-    # Uncomment and edit the following line to set a specific user and group id:
+    # Uncomment and edit the following line to set a specific user / group id:
     # user: "1000:1000"
     security_opt:
       - seccomp:unconfined
@@ -77,7 +77,7 @@ services:
 #      MYSQL_PASSWORD: passwd
 #      MYSQL_DATABASE: photoprism
 
-# Uncomment the following lines to upgrade automatically whenever there are new images available:
+# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
 #
 #  watchtower:
 #    image: containrrr/watchtower
