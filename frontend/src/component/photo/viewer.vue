@@ -27,6 +27,11 @@
             <v-icon size="16" color="white">edit</v-icon>
           </button>
 
+          <button class="pswp__button action-archive hidden-shared-only" style="background: none;"
+                  @click.exact="onArchive" :title="$gettext('Archive')">
+            <v-icon size="16" color="white">archive</v-icon>
+          </button>
+
           <button class="pswp__button action-like hidden-shared-only" style="background: none;"
                   @click.exact="onLike" :title="$gettext('Like')">
             <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
@@ -115,6 +120,9 @@
             },
             onLike() {
                 this.item.toggleLike();
+            },
+            onArchive() {
+              this.item.archive().then(() => Notify.success(this.$gettext("Selection archived")));
             },
             onPlay() {
                 if (this.item && this.item.playable) {

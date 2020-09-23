@@ -60,6 +60,11 @@ export class Thumb extends Model {
         }
     }
 
+    archive() {
+        this.favorite = !this.favorite;
+        return Api.post("batch/photos/archive", {"photos": [this.uid]});
+    }
+
     static thumbNotFound() {
         const result = {
             uid: "",
