@@ -30,13 +30,6 @@ if no similar [idea](https://github.com/photoprism/photoprism/labels/idea)
 or [todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
 Please don't use the issue tracker to ask general questions.
 
-We also maintain a couple of pages in our [Wiki](https://github.com/photoprism/photoprism/wiki)
-for collecting interesting ideas and feedback, e.g.
-[Related](https://github.com/photoprism/photoprism/wiki/Related),
-[Love](https://github.com/photoprism/photoprism/wiki/Love),
-[Concerns](https://github.com/photoprism/photoprism/wiki/Concerns) and
-[Research](https://github.com/photoprism/photoprism/wiki/Research).
-
 ## Reporting bugs ##
 
 Please use the [GitHub issue tracker](https://github.com/photoprism/photoprism/issues) to report clearly identified bugs and impediments to us.
