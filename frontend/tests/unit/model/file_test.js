@@ -76,7 +76,7 @@ describe("model/file", () => {
         assert.equal(file3.thumbnailUrl("abc"), "/api/v1/svg/raw");
     });
 
-    it("should return downlaload url",  () => {
+    it("should return download url",  () => {
         const values = {
             InstanceID: 5,
             UID: "ABC123",

@@ -238,7 +238,7 @@ func TestAccount_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		initalDate := model.UpdatedAt
+		initialDate := model.UpdatedAt
 
 		err = model.Save()
 
@@ -246,7 +246,7 @@ func TestAccount_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 		afterDate := model.UpdatedAt
-		assert.True(t, afterDate.After(initalDate))
+		assert.True(t, afterDate.After(initialDate))
 	})
 }
 

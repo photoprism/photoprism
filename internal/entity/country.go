@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/maps"
 )
 
-// altCountryNames defines mapping between different names for the same countriy
+// altCountryNames defines mapping between different names for the same country
 var altCountryNames = map[string]string{
 	"United States of America": "USA",
 	"United States":            "USA",

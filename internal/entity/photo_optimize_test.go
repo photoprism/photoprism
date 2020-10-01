@@ -65,7 +65,7 @@ func TestPhoto_Optimize(t *testing.T) {
 			t.Error("photo should NOT be updated")
 		}
 	})
-	t.Run("photo withouth id", func(t *testing.T) {
+	t.Run("photo without id", func(t *testing.T) {
 		photo := Photo{}
 		bool, err := photo.Optimize()
 		assert.Error(t, err)
