@@ -85,7 +85,7 @@ func TestOSM_State(t *testing.T) {
 	t.Run("Berlin", func(t *testing.T) {
 
 		a := Address{CountryCode: "de", City: "Berlin", State: "Berlin", HouseNumber: "63", Suburb: "Neukölln"}
-		l := &Location{LocCategory: "natural", LocName: "Nice title", LocType: "hill", LocDisplayName: "dipslay name", Address: a}
+		l := &Location{LocCategory: "natural", LocName: "Nice title", LocType: "hill", LocDisplayName: "display name", Address: a}
 		assert.Equal(t, "Berlin", l.State())
 	})
 }
@@ -94,7 +94,7 @@ func TestOSM_Suburb(t *testing.T) {
 	t.Run("Neukölln", func(t *testing.T) {
 
 		a := Address{CountryCode: "de", City: "Berlin", State: "Berlin", HouseNumber: "63", Suburb: "Neukölln"}
-		l := &Location{LocCategory: "natural", LocName: "Nice title", LocType: "hill", LocDisplayName: "dipslay name", Address: a}
+		l := &Location{LocCategory: "natural", LocName: "Nice title", LocType: "hill", LocDisplayName: "display name", Address: a}
 		assert.Equal(t, "Neukölln", l.Suburb())
 	})
 }
@@ -103,7 +103,7 @@ func TestOSM_CountryCode(t *testing.T) {
 	t.Run("de", func(t *testing.T) {
 
 		a := Address{CountryCode: "de", City: "Berlin", State: "Berlin", HouseNumber: "63", Suburb: "Neukölln"}
-		l := &Location{LocCategory: "natural", LocName: "Nice title", LocType: "hill", LocDisplayName: "dipslay name", Address: a}
+		l := &Location{LocCategory: "natural", LocName: "Nice title", LocType: "hill", LocDisplayName: "display name", Address: a}
 		assert.Equal(t, "de", l.CountryCode())
 	})
 }
