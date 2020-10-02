@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"path/filepath"
@@ -641,6 +642,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		photo.PhotoQuality = photo.QualityScore()
 
+		if isJSON(details.Subject) {
+			var parsedKeywords []string
+			if err := json.Unmarshal([]byte(details.Subject), &parsedKeywords); err == nil {
+				details.Subject = strings.Join(parsedKeywords, ", ")
+			}
+		}
+
 		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s in %s (save photo)", err, logName)
 			result.Status = IndexFailed
@@ -731,6 +739,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	return result
+}
+
+func isJSON(s string) bool {
+	var js map[string]interface{}
+	return json.Unmarshal([]byte(s), &js) == nil
+
 }
 
 // NSFW returns true if media file might be offensive and detection is enabled.
