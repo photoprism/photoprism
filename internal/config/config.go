@@ -12,8 +12,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/maps/places"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/pro"
+	"github.com/photoprism/photoprism/internal/pro/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/sirupsen/logrus"
@@ -25,12 +26,12 @@ var once sync.Once
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
-	once        sync.Once
-	db          *gorm.DB
-	params      *Params
-	settings    *Settings
-	credentials *Credentials
-	token       string
+	once     sync.Once
+	db       *gorm.DB
+	params   *Params
+	settings *Settings
+	pro      *pro.Config
+	token    string
 }
 
 func init() {
@@ -70,7 +71,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	}
 
 	c.initSettings()
-	c.initCredentials()
+	c.initPro()
 
 	return c
 }
@@ -86,7 +87,7 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 
 	c.Settings().Propagate()
-	c.Credentials().Propagate()
+	c.Pro().Propagate()
 }
 
 // Init initialises the database connection and dependencies.
@@ -266,4 +267,25 @@ func (c *Config) OriginalsLimit() int64 {
 
 	// Megabyte.
 	return c.params.OriginalsLimit * 1024 * 1024
+}
+
+// initPro initializes photoprism.pro api credentials.
+func (c *Config) initPro() {
+	c.pro = pro.NewConfig(c.Version())
+	p := c.ProConfigFile()
+
+	if err := c.pro.Load(p); err == nil {
+		// Do nothing.
+	} else if err := c.pro.Refresh(); err != nil {
+		log.Errorf("pro: %s", err)
+	} else if err := c.pro.Save(p); err != nil {
+		log.Errorf("pro: %s", err)
+	}
+
+	c.pro.Propagate()
+}
+
+// Config returns the photoprism.pro api credentials.
+func (c *Config) Pro() *pro.Config {
+	return c.pro
 }

@@ -12,9 +12,9 @@ import (
 )
 
 var basicAuth = struct {
-	user  map[string]entity.Person
+	user  map[string]entity.User
 	mutex sync.RWMutex
-}{user: make(map[string]entity.Person)}
+}{user: make(map[string]entity.User)}
 
 func GetCredentials(c *gin.Context) (username, password, raw string) {
 	data := c.GetHeader("Authorization")
@@ -53,11 +53,11 @@ func BasicAuth() gin.HandlerFunc {
 		defer basicAuth.mutex.Unlock()
 
 		if user, ok := basicAuth.user[raw]; ok {
-			c.Set(gin.AuthUserKey, user.PersonUID)
+			c.Set(gin.AuthUserKey, user.UserUID)
 			return
 		}
 
-		user := entity.FindPersonByUserName(username)
+		user := entity.FindUserByName(username)
 
 		if user != nil {
 			invalid = user.InvalidPassword(password)
@@ -71,6 +71,6 @@ func BasicAuth() gin.HandlerFunc {
 
 		basicAuth.user[raw] = *user
 
-		c.Set(gin.AuthUserKey, user.PersonUID)
+		c.Set(gin.AuthUserKey, user.UserUID)
 	}
 }

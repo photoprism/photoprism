@@ -54,7 +54,7 @@ func CreateSession(router *gin.RouterGroup) {
 				data.User = entity.Guest
 			}
 		} else if f.HasCredentials() {
-			user := entity.FindPersonByUserName(f.UserName)
+			user := entity.FindUserByName(f.UserName)
 
 			if user == nil {
 				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})

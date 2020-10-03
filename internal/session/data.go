@@ -19,17 +19,17 @@ func (list UIDs) String() string {
 }
 
 type Data struct {
-	User   entity.Person `json:"user"`   // Session user, guest or anonymous person.
-	Tokens []string      `json:"tokens"` // Slice of secret share tokens.
-	Shares UIDs          `json:"shares"` // Slice of shared entity UIDs.
+	User   entity.User `json:"user"`   // Session user, guest or anonymous person.
+	Tokens []string    `json:"tokens"` // Slice of secret share tokens.
+	Shares UIDs        `json:"shares"` // Slice of shared entity UIDs.
 }
 
 func (s Data) Saved() Saved {
-	return Saved{User: s.User.PersonUID, Tokens: s.Tokens}
+	return Saved{User: s.User.UserUID, Tokens: s.Tokens}
 }
 
 func (s Data) Invalid() bool {
-	return s.User.ID == 0 || s.User.PersonUID == "" || (s.Guest() && s.NoShares())
+	return s.User.ID == 0 || s.User.UserUID == "" || (s.Guest() && s.NoShares())
 }
 
 func (s Data) Valid() bool {

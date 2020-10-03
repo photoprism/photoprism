@@ -142,9 +142,9 @@ export default class Session {
         return "";
     }
 
-    getGivenName() {
+    getNickName() {
         if (this.isUser()) {
-            return this.user.GivenName;
+            return this.user.NickName;
         }
 
         return "";
@@ -152,7 +152,7 @@ export default class Session {
 
     getFullName() {
         if (this.isUser()) {
-            return this.user.GivenName + " " + this.user.FamilyName;
+            return this.user.FullName;
         }
 
         return "";

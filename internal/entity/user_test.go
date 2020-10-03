@@ -7,24 +7,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFindPersonByUserName(t *testing.T) {
+func TestFindUserByName(t *testing.T) {
 	t.Run("admin", func(t *testing.T) {
-		m := FindPersonByUserName("admin")
+		m := FindUserByName("admin")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
 		}
 
 		assert.Equal(t, 1, m.ID)
-		assert.NotEmpty(t, m.PersonUID)
+		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "admin", m.UserName)
-		assert.Equal(t, "Admin", m.DisplayName)
+		assert.Equal(t, "Admin", m.FullName)
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
 
 	t.Run("unknown", func(t *testing.T) {
-		m := FindPersonByUserName("")
+		m := FindUserByName("")
 
 		if m != nil {
 			t.Fatal("result should be nil")
@@ -32,7 +32,7 @@ func TestFindPersonByUserName(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		m := FindPersonByUserName("xxx")
+		m := FindUserByName("xxx")
 
 		if m != nil {
 			t.Fatal("result should be nil")
@@ -40,9 +40,9 @@ func TestFindPersonByUserName(t *testing.T) {
 	})
 }
 
-func TestPerson_InvalidPassword(t *testing.T) {
+func TestUser_InvalidPassword(t *testing.T) {
 	t.Run("admin", func(t *testing.T) {
-		m := FindPersonByUserName("admin")
+		m := FindUserByName("admin")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -51,24 +51,24 @@ func TestPerson_InvalidPassword(t *testing.T) {
 		assert.False(t, m.InvalidPassword("photoprism"))
 	})
 	t.Run("no password existing", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000010", UserName: "Hans", DisplayName: ""}
+		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
 		p.Save()
 		assert.True(t, p.InvalidPassword("abcdef"))
 
 	})
 	t.Run("not registered", func(t *testing.T) {
-		p := Person{PersonUID: "u12", UserName: "", DisplayName: ""}
+		p := User{UserUID: "u12", UserName: "", FullName: ""}
 		assert.True(t, p.InvalidPassword("abcdef"))
 	})
 	t.Run("password empty", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000011", UserName: "User", DisplayName: ""}
+		p := User{UserUID: "u000000000000011", UserName: "User", FullName: ""}
 		assert.True(t, p.InvalidPassword(""))
 	})
 }
 
-func TestPerson_Save(t *testing.T) {
+func TestUser_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		p := Person{}
+		p := User{}
 
 		err := p.Save()
 
@@ -78,11 +78,11 @@ func TestPerson_Save(t *testing.T) {
 	})
 }
 
-func TestFirstOrCreatePerson(t *testing.T) {
+func TestFirstOrCreateUser(t *testing.T) {
 	t.Run("not existing", func(t *testing.T) {
-		p := &Person{ID: 555}
+		p := &User{ID: 555}
 
-		result := FirstOrCreatePerson(p)
+		result := FirstOrCreateUser(p)
 		if result == nil {
 			t.Fatal("result should not be nil")
 		}
@@ -91,14 +91,14 @@ func TestFirstOrCreatePerson(t *testing.T) {
 
 	})
 	t.Run("existing", func(t *testing.T) {
-		p := &Person{ID: 1234}
+		p := &User{ID: 1234}
 		err := p.Save()
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		result := FirstOrCreatePerson(p)
+		result := FirstOrCreateUser(p)
 
 		if result == nil {
 			t.Fatal("result should not be nil")
@@ -107,24 +107,24 @@ func TestFirstOrCreatePerson(t *testing.T) {
 	})
 }
 
-func TestFindPersonByUID(t *testing.T) {
+func TestFindUserByUID(t *testing.T) {
 	t.Run("guest", func(t *testing.T) {
-		m := FindPersonByUID("u000000000000002")
+		m := FindUserByUID("u000000000000002")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
 		}
 
 		assert.Equal(t, -2, m.ID)
-		assert.NotEmpty(t, m.PersonUID)
+		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "", m.UserName)
-		assert.Equal(t, "Guest", m.DisplayName)
+		assert.Equal(t, "Guest", m.FullName)
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
 
 	t.Run("unknown", func(t *testing.T) {
-		m := FindPersonByUID("")
+		m := FindUserByUID("")
 
 		if m != nil {
 			t.Fatal("result should be nil")
@@ -132,7 +132,7 @@ func TestFindPersonByUID(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		m := FindPersonByUID("xxx")
+		m := FindUserByUID("xxx")
 
 		if m != nil {
 			t.Fatal("result should be nil")
@@ -140,75 +140,75 @@ func TestFindPersonByUID(t *testing.T) {
 	})
 }
 
-func TestPerson_String(t *testing.T) {
+func TestUser_String(t *testing.T) {
 	t.Run("return UID", func(t *testing.T) {
-		p := Person{PersonUID: "abc123", UserName: "", DisplayName: ""}
+		p := User{UserUID: "abc123", UserName: "", FullName: ""}
 		assert.Equal(t, "abc123", p.String())
 	})
 	t.Run("return display name", func(t *testing.T) {
-		p := Person{PersonUID: "abc123", UserName: "", DisplayName: "Test"}
+		p := User{UserUID: "abc123", UserName: "", FullName: "Test"}
 		assert.Equal(t, "Test", p.String())
 	})
 	t.Run("return user name", func(t *testing.T) {
-		p := Person{PersonUID: "abc123", UserName: "Super-User", DisplayName: "Test"}
+		p := User{UserUID: "abc123", UserName: "Super-User", FullName: "Test"}
 		assert.Equal(t, "Super-User", p.String())
 	})
 }
 
-func TestPerson_Admin(t *testing.T) {
+func TestUser_Admin(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleAdmin: true}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleAdmin: true}
 		assert.True(t, p.Admin())
 	})
 	t.Run("false", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleAdmin: false}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleAdmin: false}
 		assert.False(t, p.Admin())
 	})
 }
 
-func TestPerson_Anonymous(t *testing.T) {
+func TestUser_Anonymous(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		p := Person{PersonUID: "", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "", UserName: "Hanna", FullName: ""}
 		assert.True(t, p.Anonymous())
 	})
 	t.Run("false", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleAdmin: true}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleAdmin: true}
 		assert.False(t, p.Anonymous())
 	})
 }
 
-func TestPerson_Guest(t *testing.T) {
+func TestUser_Guest(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		p := Person{PersonUID: "", UserName: "Hanna", DisplayName: "", RoleGuest: true}
+		p := User{UserUID: "", UserName: "Hanna", FullName: "", RoleGuest: true}
 		assert.True(t, p.Guest())
 	})
 	t.Run("false", func(t *testing.T) {
-		p := Person{PersonUID: "", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "", UserName: "Hanna", FullName: ""}
 		assert.False(t, p.Guest())
 	})
 }
 
-func TestPerson_SetPassword(t *testing.T) {
+func TestUser_SetPassword(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
 		if err := p.SetPassword("abcdefgt"); err != nil {
 			t.Fatal(err)
 		}
 	})
 	t.Run("not registered", func(t *testing.T) {
-		p := Person{PersonUID: "", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "", UserName: "Hanna", FullName: ""}
 		assert.Error(t, p.SetPassword("abchjy"))
 
 	})
 	t.Run("password too short", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
 		assert.Error(t, p.SetPassword("abc"))
 	})
 }
 
-func TestPerson_InitPassword(t *testing.T) {
+func TestUser_InitPassword(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000009", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "u000000000000009", UserName: "Hanna", FullName: ""}
 		assert.Nil(t, FindPassword("u000000000000009"))
 		p.InitPassword("abcdek")
 		m := FindPassword("u000000000000009")
@@ -218,7 +218,7 @@ func TestPerson_InitPassword(t *testing.T) {
 		}
 	})
 	t.Run("already existing", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000010", UserName: "Hans", DisplayName: ""}
+		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
 		p.Save()
 		p.SetPassword("hutfdt")
 		assert.NotNil(t, FindPassword("u000000000000010"))
@@ -230,42 +230,42 @@ func TestPerson_InitPassword(t *testing.T) {
 		}
 	})
 	t.Run("not registered", func(t *testing.T) {
-		p := Person{PersonUID: "u12", UserName: "", DisplayName: ""}
+		p := User{UserUID: "u12", UserName: "", FullName: ""}
 		assert.Nil(t, FindPassword("u12"))
 		p.InitPassword("dcjygkh")
 		assert.Nil(t, FindPassword("u12"))
 	})
 	t.Run("password empty", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000011", UserName: "User", DisplayName: ""}
+		p := User{UserUID: "u000000000000011", UserName: "User", FullName: ""}
 		assert.Nil(t, FindPassword("u000000000000011"))
 		p.InitPassword("")
 		assert.Nil(t, FindPassword("u000000000000011"))
 	})
 }
 
-func TestPerson_Role(t *testing.T) {
+func TestUser_Role(t *testing.T) {
 	t.Run("admin", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleAdmin: true}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleAdmin: true}
 		assert.Equal(t, acl.Role("admin"), p.Role())
 	})
 	t.Run("child", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleChild: true}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleChild: true}
 		assert.Equal(t, acl.Role("child"), p.Role())
 	})
 	t.Run("family", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleFamily: true}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleFamily: true}
 		assert.Equal(t, acl.Role("family"), p.Role())
 	})
 	t.Run("friend", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleFriend: true}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleFriend: true}
 		assert.Equal(t, acl.Role("friend"), p.Role())
 	})
 	t.Run("guest", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: "", RoleGuest: true}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: "", RoleGuest: true}
 		assert.Equal(t, acl.Role("guest"), p.Role())
 	})
 	t.Run("default", func(t *testing.T) {
-		p := Person{PersonUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
 		assert.Equal(t, acl.Role("*"), p.Role())
 	})
 }

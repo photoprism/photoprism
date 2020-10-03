@@ -34,7 +34,7 @@ func New(expiration time.Duration, cachePath string) *Session {
 			log.Errorf("session: %s", err)
 		} else {
 			for key, saved := range savedItems {
-				user := entity.FindPersonByUID(saved.User)
+				user := entity.FindUserByUID(saved.User)
 
 				if user == nil {
 					continue

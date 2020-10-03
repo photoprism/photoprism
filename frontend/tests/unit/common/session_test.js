@@ -186,11 +186,11 @@ describe('common/session', () => {
         const storage = new StorageShim();
         const session = new Session(storage, config);
         assert.isFalse(session.user.hasId());
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData();
-        assert.equal(session.user.GivenName, "");
+        assert.equal(session.user.FullName, "");
         session.setData(values);
-        assert.equal(session.user.GivenName, "Max");
+        assert.equal(session.user.FullName, "Max Last");
         assert.equal(session.user.RoleAdmin, true);
         const result = session.getUser();
         assert.equal(result.ID, 5);
@@ -202,27 +202,27 @@ describe('common/session', () => {
     it('should get user email', () => {
         const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.getEmail();
         assert.equal(result, "test@test.com");
-        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values2 = {"user": {NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
         const result2 = session.getEmail();
         assert.equal(result2, "");
         session.deleteData();
     });
 
-    it('should get user firstname', () => {
+    it('should get user nick name', () => {
         const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
-        const result = session.getGivenName();
-        assert.equal(result, "Max");
-        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const result = session.getNickName();
+        assert.equal(result, "Foo");
+        const values2 = {"user": {NickName: "Bar", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
-        const result2 = session.getGivenName();
+        const result2 = session.getNickName();
         assert.equal(result2, "");
         session.deleteData();
     });
@@ -230,11 +230,11 @@ describe('common/session', () => {
     it('should get user full name', () => {
         const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.getFullName();
         assert.equal(result, "Max Last");
-        const values2 = {"user": {GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values2 = {"user": {NickName: "Bar", FullName: "Max New", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
         const result2 = session.getFullName();
         assert.equal(result2, "");
@@ -244,7 +244,7 @@ describe('common/session', () => {
     it('should test whether user is set', () => {
         const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isUser();
         assert.equal(result, true);
@@ -254,7 +254,7 @@ describe('common/session', () => {
     it('should test whether user is admin', () => {
         const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isAdmin();
         assert.equal(result, true);
@@ -264,7 +264,7 @@ describe('common/session', () => {
     it('should test whether user is anonymous', () => {
         const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, GivenName: "Max", FamilyName: "Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isAnonymous();
         assert.equal(result, false);
