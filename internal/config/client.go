@@ -26,9 +26,6 @@ type ClientConfig struct {
 	ReadOnly        bool                `json:"readonly"`
 	UploadNSFW      bool                `json:"uploadNSFW"`
 	Public          bool                `json:"public"`
-	Pro             bool                `json:"pro"`
-	Sponsor         bool                `json:"sponsor"`
-	Contributor     bool                `json:"contributor"`
 	Experimental    bool                `json:"experimental"`
 	DisableSettings bool                `json:"disableSettings"`
 	AlbumCategories []string            `json:"albumCategories"`
@@ -37,7 +34,7 @@ type ClientConfig struct {
 	Lenses          []entity.Lens       `json:"lenses"`
 	Countries       []entity.Country    `json:"countries"`
 	Thumbs          []Thumb             `json:"thumbs"`
-	ApiKey          string              `json:"apiKey"`
+	Status          string              `json:"status"`
 	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken"`
 	PreviewToken    string              `json:"previewToken"`
@@ -144,7 +141,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
-		ApiKey:          "",
+		Status:          "",
 		MapKey:          "",
 		Thumbs:          Thumbs,
 		Colors:          colors.All.List(),
@@ -187,7 +184,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		Experimental:    false,
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
-		ApiKey:          c.Pro().ApiKey(),
+		Status:          c.Pro().Status,
 		MapKey:          c.Pro().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
@@ -221,7 +218,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
-		ApiKey:          c.Pro().ApiKey(),
+		Status:          c.Pro().Status,
 		MapKey:          c.Pro().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),

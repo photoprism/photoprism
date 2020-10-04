@@ -22,4 +22,5 @@ const (
 	ResourcePeople     Resource = "people"
 	ResourcePhotos     Resource = "photos"
 	ResourcePlaces     Resource = "places"
+	ResourceFeedback   Resource = "feedback"
 )

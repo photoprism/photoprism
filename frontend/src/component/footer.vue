@@ -11,11 +11,11 @@
         </v-flex>
 
         <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-xs-left text-sm-right">
-          <a href="https://docs.photoprism.org/credits/" class="secondary-dark--text"
+          <a href="https://docs.photoprism.org/credits/" class="primary--text text--darken-4"
              target="_blank">Thank you</a> to everyone who made this possible!
           <br>
           <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
-             class="secondary-dark--text" target="_blank">
+             class="primary--text text--darken-4" target="_blank">
             3rd-party software packages</a>
         </v-flex>
       </v-layout>

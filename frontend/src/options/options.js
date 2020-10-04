@@ -236,3 +236,12 @@ export const Colors = () => [
     {"Example": "#9E9E9E", "Name": $gettext("Grey"), "Slug": "grey"},
     {"Example": "#212121", "Name": $gettext("Black"), "Slug": "black"},
 ];
+
+export const FeedbackCategories = () => [
+    {"value": "help", "text": $gettext("Customer Support")},
+    {"value": "feedback", "text": $gettext("Product Feedback")},
+    {"value": "feature", "text": $gettext("Feature Request")},
+    {"value": "bug", "text": $gettext("Bug Report")},
+    {"value": "donations", "text": $gettext("Donations")},
+    {"value": "other", "text": $gettext("Other")},
+];

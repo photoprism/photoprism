@@ -41,11 +41,6 @@ func NewConfig(version string) *Config {
 	}
 }
 
-// ApiKey returns the photoprism.pro api key.
-func (c *Config) ApiKey() string {
-	return c.Key
-}
-
 // MapKey returns the maps api key.
 func (c *Config) MapKey() string {
 	if sess, err := c.DecodeSession(); err != nil {

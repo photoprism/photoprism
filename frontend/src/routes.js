@@ -41,6 +41,7 @@ import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
 import Discover from "pages/discover.vue";
 import About from "pages/about/about.vue";
+import Feedback from "pages/about/feedback.vue";
 import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
 import {$gettext} from "common/vm";
@@ -57,6 +58,12 @@ export default [
         name: "about",
         path: "/about",
         component: About,
+        meta: {title: c.name, auth: false},
+    },
+    {
+        name: "feedback",
+        path: "/feedback",
+        component: Feedback,
         meta: {title: c.name, auth: false},
     },
     {
