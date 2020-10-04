@@ -1,0 +1,278 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-04 17:41+0300\n"
+"PO-Revision-Date: 2020-10-04 18:04+0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"Language: ru\n"
+
+#: messages.go:71
+msgid "Unexpected error, please try again"
+msgstr "Неожиданная ошибка попробуйте еще раз"
+
+#: messages.go:72
+msgid "Invalid request"
+msgstr "Неправильный запрос"
+
+#: messages.go:73
+msgid "Changes could not be saved"
+msgstr "Изменения не будут сохранены"
+
+#: messages.go:74
+msgid "Could not be deleted"
+msgstr "Не будет удалено"
+
+#: messages.go:75
+#, c-format
+msgid "%s already exists"
+msgstr "%s уже существует"
+
+#: messages.go:76 messages.go:79
+msgid "Not found on server, deleted?"
+msgstr "Не найдено на сервере, удалено?"
+
+#: messages.go:77
+msgid "File not found"
+msgstr "Файл не найден"
+
+#: messages.go:78
+msgid "Selection not found"
+msgstr "Выделение не найдено"
+
+#: messages.go:80
+msgid "Account not found"
+msgstr "Учетная запись не найдена"
+
+#: messages.go:81
+msgid "User not found"
+msgstr "Пользователь не найден"
+
+#: messages.go:82
+msgid "Label not found"
+msgstr "Метка не найдена"
+
+#: messages.go:83
+msgid "Album not found"
+msgstr "Альбом не найден"
+
+#: messages.go:84
+msgid "Not available in public mode"
+msgstr "Не доступно в публичном режиме"
+
+#: messages.go:85
+msgid "not available in read-only mode"
+msgstr "не доступно в режиме только для чтения"
+
+#: messages.go:86
+msgid "Please log in and try again"
+msgstr "Пожалуйста войдите и попробуйте еще раз"
+
+#: messages.go:87
+msgid "Upload might be offensive"
+msgstr "Загрузка может быть оскорбительной"
+
+#: messages.go:88
+msgid "No items selected"
+msgstr "Нет выделенных элементов"
+
+#: messages.go:89
+msgid "Failed creating file, please check permissions"
+msgstr "Не удалось создать файл, пожалуйста проверьте права доступа"
+
+#: messages.go:90
+msgid "Failed creating folder, please check permissions"
+msgstr "Не удалось создать папку, пожалуйста проверьте права доступа"
+
+#: messages.go:91
+msgid "Could not connect, please try again"
+msgstr "Нет соединения, попробуйте еще раз"
+
+#: messages.go:92
+msgid "Invalid password, please try again"
+msgstr "Неверный пароль, пожалуйста попробуйте еще раз"
+
+#: messages.go:93
+msgid "Feature disabled"
+msgstr "Данная возможность отключена"
+
+#: messages.go:94
+msgid "No labels selected"
+msgstr "Нет выделенных меток"
+
+#: messages.go:95
+msgid "No albums selected"
+msgstr "Нет выделенных альбомов"
+
+#: messages.go:96
+msgid "No files available for download"
+msgstr "Нет файлов, доступных для скачивания"
+
+#: messages.go:97
+msgid "Failed to create zip file"
+msgstr "Не удалось создать zip файл"
+
+#: messages.go:98
+msgid "Invalid credentials"
+msgstr "Неверные учетные данные"
+
+#: messages.go:99
+msgid "Invalid link"
+msgstr "Неверная ссылка"
+
+#: messages.go:102
+msgid "Changes successfully saved"
+msgstr "Изменения сохранены"
+
+#: messages.go:103
+msgid "Album created"
+msgstr "Альбом создан"
+
+#: messages.go:104
+msgid "Album saved"
+msgstr "\\альбом сохранен"
+
+#: messages.go:105
+#, c-format
+msgid "Album %s deleted"
+msgstr "Альбом %s удален"
+
+#: messages.go:106
+msgid "Album contents cloned"
+msgstr "Содержимое альбома скоприровано"
+
+#: messages.go:107
+msgid "File removed from stack"
+msgstr "Файл удален из очереди"
+
+#: messages.go:108
+#, c-format
+msgid "Selection added to %s"
+msgstr "Выделение добавлено к %s"
+
+#: messages.go:109
+#, c-format
+msgid "One entry added to %s"
+msgstr "Один элемент добавлен к %s"
+
+#: messages.go:110
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d элементов добавлено к %s"
+
+#: messages.go:111
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Один элемент удален из %s"
+
+#: messages.go:112
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d элементов удалено из %s"
+
+#: messages.go:113
+msgid "Account created"
+msgstr "Учетная запись создана"
+
+#: messages.go:114
+msgid "Account saved"
+msgstr "Учетная запись сохранена"
+
+#: messages.go:115
+msgid "Account deleted"
+msgstr "Учетная запись удалена"
+
+#: messages.go:116
+msgid "Settings saved"
+msgstr "Настройки сохранены"
+
+#: messages.go:117
+msgid "Password changed"
+msgstr "Пароль изменен"
+
+#: messages.go:118
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Импортирование завершено за %d c"
+
+#: messages.go:119
+msgid "Import canceled"
+msgstr "Импортирование отменено"
+
+#: messages.go:120
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Индексирование завершено за %d с"
+
+#: messages.go:121
+msgid "Indexing originals..."
+msgstr "Индексирование Оригиналов..."
+
+#: messages.go:122
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Индексирование файлов в %s"
+
+#: messages.go:123
+msgid "Indexing canceled"
+msgstr "Индексирование отменено"
+
+#: messages.go:124
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "Удаление %d файлов и %d фотографий"
+
+#: messages.go:125
+#, c-format
+msgid "Moving files from %s"
+msgstr "Перемещение файлов из %s"
+
+#: messages.go:126
+#, c-format
+msgid "Copying files from %s"
+msgstr "Копирование файлов из %s"
+
+#: messages.go:127
+msgid "Labels deleted"
+msgstr "Метки удалены"
+
+#: messages.go:128
+msgid "Label saved"
+msgstr "Метки сохранены"
+
+#: messages.go:129
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d файлов загружено за %d с"
+
+#: messages.go:130
+msgid "Selection archived"
+msgstr "Выбранное помещено в архив"
+
+#: messages.go:131
+msgid "Selection restored"
+msgstr "Выбранное восстановлено"
+
+#: messages.go:132
+msgid "Selection marked as private"
+msgstr "Выбранное помечено как приватное"
+
+#: messages.go:133
+msgid "Albums deleted"
+msgstr "Альбом удален"
+
+#: messages.go:134
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip архив создан за %d с"
