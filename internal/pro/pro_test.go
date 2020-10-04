@@ -108,6 +108,8 @@ func TestConfig_Refresh(t *testing.T) {
 			t.Fatal(err)
 		} else if sess.Expired() {
 			t.Fatal("session expired")
+		} else {
+			t.Logf("api session: %+v", sess)
 		}
 
 		if err := c.Save(fileName); err != nil {

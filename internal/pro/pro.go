@@ -32,7 +32,10 @@ https://docs.photoprism.org/developer-guide/
 package pro
 
 import (
+	"sync"
+
 	"github.com/photoprism/photoprism/internal/event"
 )
 
 var log = event.Log
+var mutex = sync.Mutex{}

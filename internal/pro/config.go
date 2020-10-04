@@ -41,44 +41,58 @@ func NewConfig(version string) *Config {
 	}
 }
 
+// ApiKey returns the photoprism.pro api key.
+func (c *Config) ApiKey() string {
+	return c.Key
+}
+
+// MapKey returns the maps api key.
+func (c *Config) MapKey() string {
+	if sess, err := c.DecodeSession(); err != nil {
+		return ""
+	} else {
+		return sess.MapKey
+	}
+}
+
 // Propagate updates photoprism.pro api credentials in other packages.
-func (p *Config) Propagate() {
-	places.Key = p.Key
-	places.Secret = p.Secret
+func (c *Config) Propagate() {
+	places.Key = c.Key
+	places.Secret = c.Secret
 }
 
 // Sanitize verifies and sanitizes photoprism.pro api credentials.
-func (p *Config) Sanitize() {
-	p.Key = strings.ToLower(p.Key)
+func (c *Config) Sanitize() {
+	c.Key = strings.ToLower(c.Key)
 
-	if p.Secret != "" {
-		if p.Key != fmt.Sprintf("%x", sha1.Sum([]byte(p.Secret))) {
-			p.Key = ""
-			p.Secret = ""
-			p.Session = ""
-			p.Status = ""
+	if c.Secret != "" {
+		if c.Key != fmt.Sprintf("%x", sha1.Sum([]byte(c.Secret))) {
+			c.Key = ""
+			c.Secret = ""
+			c.Session = ""
+			c.Status = ""
 		}
 	}
 }
 
 // DecodeSession decodes photoprism.pro api session data.
-func (p *Config) DecodeSession() (Session, error) {
-	p.Sanitize()
+func (c *Config) DecodeSession() (Session, error) {
+	c.Sanitize()
 
 	result := Session{}
 
-	if p.Session == "" {
+	if c.Session == "" {
 		return result, fmt.Errorf("empty session")
 	}
 
-	s, err := hex.DecodeString(p.Session)
+	s, err := hex.DecodeString(c.Session)
 
 	if err != nil {
 		return result, err
 	}
 
 	hash := sha256.New()
-	hash.Write([]byte(p.Secret))
+	hash.Write([]byte(c.Secret))
 
 	var b []byte
 
@@ -105,22 +119,25 @@ func (p *Config) DecodeSession() (Session, error) {
 }
 
 // Refresh updates photoprism.pro api credentials.
-func (p *Config) Refresh() (err error) {
-	p.Sanitize()
+func (c *Config) Refresh() (err error) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	c.Sanitize()
 	client := &http.Client{Timeout: 60 * time.Second}
 	url := ApiURL
 	method := http.MethodPost
 	var req *http.Request
 
-	if p.Key != "" {
-		url = fmt.Sprintf(ApiURL+"/%s", p.Key)
+	if c.Key != "" {
+		url = fmt.Sprintf(ApiURL+"/%s", c.Key)
 		method = http.MethodPut
 		log.Debugf("pro: updating api key for maps & places")
 	} else {
 		log.Debugf("pro: requesting api key for maps & places")
 	}
 
-	if j, err := json.Marshal(NewRequest(p.Version)); err != nil {
+	if j, err := json.Marshal(NewRequest(c.Version)); err != nil {
 		return err
 	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
 		return err
@@ -146,7 +163,7 @@ func (p *Config) Refresh() (err error) {
 		return err
 	}
 
-	err = json.NewDecoder(r.Body).Decode(p)
+	err = json.NewDecoder(r.Body).Decode(c)
 
 	if err != nil {
 		log.Errorf("pro: %s", err.Error())
@@ -157,10 +174,13 @@ func (p *Config) Refresh() (err error) {
 }
 
 // Load photoprism.pro api credentials from a YAML file.
-func (p *Config) Load(fileName string) error {
+func (c *Config) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
 		return fmt.Errorf("api key file not found: %s", txt.Quote(fileName))
 	}
+
+	mutex.Lock()
+	defer mutex.Unlock()
 
 	yamlConfig, err := ioutil.ReadFile(fileName)
 
@@ -168,33 +188,36 @@ func (p *Config) Load(fileName string) error {
 		return err
 	}
 
-	if err := yaml.Unmarshal(yamlConfig, p); err != nil {
+	if err := yaml.Unmarshal(yamlConfig, c); err != nil {
 		return err
 	}
 
-	p.Sanitize()
-	p.Propagate()
+	c.Sanitize()
+	c.Propagate()
 
 	return nil
 }
 
 // Save photoprism.pro api credentials to a YAML file.
-func (p *Config) Save(fileName string) error {
-	p.Sanitize()
+func (c *Config) Save(fileName string) error {
+	mutex.Lock()
+	defer mutex.Unlock()
 
-	data, err := yaml.Marshal(p)
+	c.Sanitize()
+
+	data, err := yaml.Marshal(c)
 
 	if err != nil {
 		return err
 	}
 
-	p.Propagate()
+	c.Propagate()
 
 	if err := ioutil.WriteFile(fileName, data, os.ModePerm); err != nil {
 		return err
 	}
 
-	p.Propagate()
+	c.Propagate()
 
 	return nil
 }

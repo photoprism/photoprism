@@ -283,6 +283,23 @@ func (c *Config) initPro() {
 	}
 
 	c.pro.Propagate()
+
+	ticker := time.NewTicker(time.Hour * 24)
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				if err := c.pro.Refresh(); err != nil {
+					log.Errorf("pro: %s", err)
+				} else if err := c.pro.Save(p); err != nil {
+					log.Errorf("pro: %s", err)
+				} else {
+					c.pro.Propagate()
+				}
+			}
+		}
+	}()
 }
 
 // Config returns the photoprism.pro api credentials.

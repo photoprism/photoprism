@@ -38,7 +38,7 @@ type ClientConfig struct {
 	Countries       []entity.Country    `json:"countries"`
 	Thumbs          []Thumb             `json:"thumbs"`
 	ApiKey          string              `json:"apiKey"`
-	MapsKey         string              `json:"mapsKey"`
+	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken"`
 	PreviewToken    string              `json:"previewToken"`
 	JSHash          string              `json:"jsHash"`
@@ -144,6 +144,8 @@ func (c *Config) PublicConfig() ClientConfig {
 		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
+		ApiKey:          "",
+		MapKey:          "",
 		Thumbs:          Thumbs,
 		Colors:          colors.All.List(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
@@ -185,6 +187,8 @@ func (c *Config) GuestConfig() ClientConfig {
 		Experimental:    false,
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
+		ApiKey:          c.Pro().ApiKey(),
+		MapKey:          c.Pro().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
@@ -217,6 +221,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
+		ApiKey:          c.Pro().ApiKey(),
+		MapKey:          c.Pro().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),

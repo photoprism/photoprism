@@ -4,8 +4,8 @@ import "time"
 
 // Session represents photoprism.pro api session data.
 type Session struct {
-	MaptilerKey string
-	ExpiresAt   string
+	MapKey    string
+	ExpiresAt string
 }
 
 // Expired tests if the api session is expired.

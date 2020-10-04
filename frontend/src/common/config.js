@@ -87,7 +87,7 @@ export default class Config {
             console.log("config: new values", values);
         }
 
-        if(values.jsHash && this.values.jsHash !== values.jsHash) {
+        if (values.jsHash && this.values.jsHash !== values.jsHash) {
             Event.publish("dialog.reload", {values});
         }
 
