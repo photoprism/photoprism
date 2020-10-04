@@ -2,6 +2,7 @@ package webdav
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -84,7 +85,7 @@ func TestClient_Download(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	tempDir := os.TempDir() + rnd.UUID()
+	tempDir := filepath.Join(os.TempDir(), rnd.UUID())
 	tempFile := tempDir + "/foo.jpg"
 
 	if len(files) == 0 {
@@ -110,7 +111,7 @@ func TestClient_DownloadDir(t *testing.T) {
 	assert.IsType(t, Client{}, c)
 
 	t.Run("non-recursive", func(t *testing.T) {
-		tempDir := os.TempDir() + rnd.UUID()
+		tempDir := filepath.Join(os.TempDir(), rnd.UUID())
 
 		if errs := c.DownloadDir("Photos", tempDir, false, false); len(errs) > 0 {
 			t.Fatal(errs)
@@ -122,7 +123,7 @@ func TestClient_DownloadDir(t *testing.T) {
 	})
 
 	t.Run("recursive", func(t *testing.T) {
-		tempDir := os.TempDir() + rnd.UUID()
+		tempDir := filepath.Join(os.TempDir(), rnd.UUID())
 
 		if errs := c.DownloadDir("Photos", tempDir, true, false); len(errs) > 0 {
 			t.Fatal(errs)

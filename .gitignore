@@ -16,6 +16,7 @@
 *.log
 *.db
 *.db-journal
+docker-compose.override.yml
 
 # Binaries for programs and plugins
 *.exe
