@@ -34,6 +34,7 @@ import PAccountEditDialog from "./account/edit.vue";
 import PPhotoArchiveDialog from "./photo/archive.vue";
 import PPhotoAlbumDialog from "./photo/album.vue";
 import PPhotoEditDialog from "./photo/edit.vue";
+import PFileDeleteDialog from "./file/delete.vue";
 import PAlbumEditDialog from "./album/edit.vue";
 import PAlbumDeleteDialog from "./album/delete.vue";
 import PLabelDeleteDialog from "./label/delete.vue";
@@ -53,6 +54,7 @@ dialogs.install = (Vue) => {
     Vue.component("p-photo-archive-dialog", PPhotoArchiveDialog);
     Vue.component("p-photo-album-dialog", PPhotoAlbumDialog);
     Vue.component("p-photo-edit-dialog", PPhotoEditDialog);
+    Vue.component("p-file-delete-dialog", PFileDeleteDialog);
     Vue.component("p-album-edit-dialog", PAlbumEditDialog);
     Vue.component("p-album-delete-dialog", PAlbumDeleteDialog);
     Vue.component("p-label-delete-dialog", PLabelDeleteDialog);

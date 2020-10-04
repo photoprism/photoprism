@@ -416,10 +416,10 @@ func (m *Photo) IndexKeywords() error {
 
 // PreloadFiles prepares gorm scope to retrieve photo file
 func (m *Photo) PreloadFiles() {
-	q := Db().NewScope(nil).DB().
+	q := Db().
 		Table("files").
 		Select(`files.*`).
-		Where("files.photo_id = ?", m.ID).
+		Where("files.deleted_at IS NULL AND files.photo_id = ?", m.ID).
 		Order("files.file_name DESC")
 
 	logError(q.Scan(&m.Files))

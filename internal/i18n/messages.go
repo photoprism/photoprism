@@ -37,6 +37,7 @@ const (
 	MsgAlbumDeleted
 	MsgAlbumCloned
 	MsgFileUnstacked
+	MsgFileDeleted
 	MsgSelectionAddedTo
 	MsgEntryAddedTo
 	MsgEntriesAddedTo
@@ -105,6 +106,7 @@ var Messages = MessageMap{
 	MsgAlbumDeleted:          gettext("Album %s deleted"),
 	MsgAlbumCloned:           gettext("Album contents cloned"),
 	MsgFileUnstacked:         gettext("File removed from stack"),
+	MsgFileDeleted:           gettext("File deleted"),
 	MsgSelectionAddedTo:      gettext("Selection added to %s"),
 	MsgEntryAddedTo:          gettext("One entry added to %s"),
 	MsgEntriesAddedTo:        gettext("%d entries added to %s"),

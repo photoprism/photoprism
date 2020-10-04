@@ -487,6 +487,19 @@ export default {
           }
 
           break;
+        case 'deleted':
+          this.dirty = true;
+          this.complete = false;
+
+          for (let i = 0; i < data.entities.length; i++) {
+            const uid = data.entities[i];
+
+            this.removeResult(this.results, uid);
+            this.removeResult(this.viewer.results, uid);
+            this.$clipboard.removeId(uid);
+          }
+
+          break;
         case 'created':
           this.dirty = true;
           this.scrollDisabled = false;

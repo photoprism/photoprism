@@ -186,7 +186,7 @@ export class Photo extends RestModel {
     }
 
     localDate(time) {
-        if(!this.TakenAtLocal) {
+        if (!this.TakenAtLocal) {
             return this.utcDate();
         }
 
@@ -574,6 +574,10 @@ export class Photo extends RestModel {
         return Api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
+    deleteFile(fileUID) {
+        return Api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) => Promise.resolve(this.setValues(r.data)));
+    }
+
     like() {
         this.Favorite = true;
         return Api.post(this.getEntityResource() + "/like");
@@ -632,7 +636,7 @@ export class Photo extends RestModel {
         }
 
         return Api.put(this.getEntityResource(), values).then((resp) => {
-            if(values.Type || values.Lat) {
+            if (values.Type || values.Lat) {
                 config.update();
             }
 

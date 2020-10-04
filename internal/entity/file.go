@@ -134,6 +134,25 @@ func (m File) Changed(fileSize int64, modTime time.Time) bool {
 	return true
 }
 
+// Delete permanently deletes the entity from the database.
+func (m *File) DeletePermanently() error {
+	Db().Unscoped().Delete(FileShare{}, "file_id = ?", m.ID)
+	Db().Unscoped().Delete(FileSync{}, "file_id = ?", m.ID)
+
+	return Db().Unscoped().Delete(m).Error
+}
+
+// Delete deletes the entity from the database.
+func (m *File) Delete(permanently bool) error {
+	if permanently {
+		return m.DeletePermanently()
+	}
+
+	Db().Delete(File{}, "id = ?", m.ID)
+
+	return Db().Delete(m).Error
+}
+
 // Purge removes a file from the index by marking it as missing.
 func (m *File) Purge() error {
 	return Db().Unscoped().Model(m).Updates(map[string]interface{}{"file_missing": true, "file_primary": false}).Error

@@ -471,6 +471,7 @@ export default {
           this.loadMore();
 
           break;
+        case 'deleted':
         case 'archived':
           this.dirty = true;
           this.complete = false;

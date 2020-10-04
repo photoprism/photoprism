@@ -1,5 +1,5 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="350" class="p-album-delete-dialog" @keydown.esc="cancel">
+  <v-dialog lazy v-model="show" persistent max-width="350" class="p-file-delete-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -8,7 +8,7 @@
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
             <div class="subheading pr-1">
-              <translate key="Are you sure you want to delete these albums?">Are you sure you want to delete these albums?</translate>
+              <translate>Are you sure you want to permanently delete this file?</translate>
             </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
@@ -27,7 +27,7 @@
 </template>
 <script>
 export default {
-  name: 'p-album-delete-dialog',
+  name: 'p-file-delete-dialog',
   props: {
     show: Boolean,
   },
