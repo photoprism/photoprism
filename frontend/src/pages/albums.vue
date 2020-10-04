@@ -38,7 +38,8 @@
           <v-icon>cloud_upload</v-icon>
         </v-btn>
 
-        <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'" :title="$gettext('Add Album')">
+        <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'"
+               :title="$gettext('Add Album')">
           <v-icon>add</v-icon>
         </v-btn>
       </v-toolbar>
@@ -381,6 +382,12 @@ export default {
         } else {
           this.offset = offset + count;
           this.page++;
+
+          this.$nextTick(() => {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+              this.$emit("scrollRefresh");
+            }
+          });
         }
       }).catch(() => {
         this.scrollDisabled = false;
@@ -467,7 +474,11 @@ export default {
         } else {
           this.$notify.info(this.$gettext('More than 20 albums found'));
 
-          this.$nextTick(() => this.$emit("scrollRefresh"));
+          this.$nextTick(() => {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+              this.$emit("scrollRefresh");
+            }
+          });
         }
       }).finally(() => {
         this.dirty = false;

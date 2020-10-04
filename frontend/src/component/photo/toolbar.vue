@@ -36,7 +36,8 @@
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search" :title="$gettext('Expand Search')">
+      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search"
+             :title="$gettext('Expand Search')">
         <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
       </v-btn>
     </v-toolbar>
@@ -151,93 +152,93 @@
   </v-form>
 </template>
 <script>
-    import Event from "pubsub-js";
-    import * as options from "options/options";
+import Event from "pubsub-js";
+import * as options from "options/options";
 
-    export default {
-        name: 'p-photo-toolbar',
-        props: {
-            dirty: Boolean,
-            filter: Object,
-            settings: Object,
-            refresh: Function,
-            filterChange: Function,
-        },
-        data() {
-            return {
-                experimental: this.$config.get("experimental"),
-                isFullScreen: !!document.fullscreenElement,
-                config: this.$config.values,
-                searchExpanded: false,
-                all: {
-                    countries: [{ID: "", Name: this.$gettext("All Countries")}],
-                    cameras: [{ID: 0, Name: this.$gettext("All Cameras")}],
-                    lenses: [{ID: 0, Name: this.$gettext("All Lenses")}],
-                    colors: [{Slug: "", Name: this.$gettext("All Colors")}],
-                    categories: [{Slug: "", Name: this.$gettext("All Categories")}],
-                    months: [{value: 0, text: this.$gettext("All Months")}],
-                    years: [{value: 0, text: this.$gettext("All Years")}],
-                },
-                options: {
-                    'views': [
-                        {value: 'mosaic', text: this.$gettext('Mosaic')},
-                        {value: 'cards', text: this.$gettext('Cards')},
-                        {value: 'list', text: this.$gettext('List')},
-                    ],
-                    'sorting': [
-                        {value: 'added', text: this.$gettext('Recently added')},
-                        {value: 'edited', text: this.$gettext('Recently edited')},
-                        {value: 'newest', text: this.$gettext('Newest first')},
-                        {value: 'oldest', text: this.$gettext('Oldest first')},
-                        {value: 'name', text: this.$gettext('Sort by file name')},
-                        {value: 'similar', text: this.$gettext('Group by similarity')},
-                        {value: 'relevance', text: this.$gettext('Most relevant')},
-                    ],
-                },
-            };
-        },
-        computed: {
-            countryOptions() {
-                return this.all.countries.concat(this.config.countries);
-            },
-            cameraOptions() {
-                return this.all.cameras.concat(this.config.cameras);
-            },
-            lensOptions() {
-                return this.all.lenses.concat(this.config.lenses);
-            },
-            categoryOptions() {
-                return this.all.categories.concat(this.config.categories);
-            },
-        },
-        methods: {
-            colorOptions() {
-                return this.all.colors.concat(options.Colors());
-            },
-            monthOptions() {
-                return this.all.months.concat(options.Months());
-            },
-            yearOptions() {
-                return this.all.years.concat(options.IndexedYears());
-            },
-            dropdownChange() {
-                this.filterChange();
-
-                if (window.innerWidth < 600) {
-                    this.searchExpanded = false;
-                }
-            },
-            setView(name) {
-                this.settings.view = name;
-                this.filterChange();
-            },
-            clearQuery() {
-                this.filter.q = '';
-                this.filterChange();
-            },
-            showUpload() {
-                Event.publish("dialog.upload");
-            }
-        },
+export default {
+  name: 'p-photo-toolbar',
+  props: {
+    dirty: Boolean,
+    filter: Object,
+    settings: Object,
+    refresh: Function,
+    filterChange: Function,
+  },
+  data() {
+    return {
+      experimental: this.$config.get("experimental"),
+      isFullScreen: !!document.fullscreenElement,
+      config: this.$config.values,
+      searchExpanded: false,
+      all: {
+        countries: [{ID: "", Name: this.$gettext("All Countries")}],
+        cameras: [{ID: 0, Name: this.$gettext("All Cameras")}],
+        lenses: [{ID: 0, Name: this.$gettext("All Lenses")}],
+        colors: [{Slug: "", Name: this.$gettext("All Colors")}],
+        categories: [{Slug: "", Name: this.$gettext("All Categories")}],
+        months: [{value: 0, text: this.$gettext("All Months")}],
+        years: [{value: 0, text: this.$gettext("All Years")}],
+      },
+      options: {
+        'views': [
+          {value: 'mosaic', text: this.$gettext('Mosaic')},
+          {value: 'cards', text: this.$gettext('Cards')},
+          {value: 'list', text: this.$gettext('List')},
+        ],
+        'sorting': [
+          {value: 'added', text: this.$gettext('Recently added')},
+          {value: 'edited', text: this.$gettext('Recently edited')},
+          {value: 'newest', text: this.$gettext('Newest first')},
+          {value: 'oldest', text: this.$gettext('Oldest first')},
+          {value: 'name', text: this.$gettext('Sort by file name')},
+          {value: 'similar', text: this.$gettext('Group by similarity')},
+          {value: 'relevance', text: this.$gettext('Most relevant')},
+        ],
+      },
     };
+  },
+  computed: {
+    countryOptions() {
+      return this.all.countries.concat(this.config.countries);
+    },
+    cameraOptions() {
+      return this.all.cameras.concat(this.config.cameras);
+    },
+    lensOptions() {
+      return this.all.lenses.concat(this.config.lenses);
+    },
+    categoryOptions() {
+      return this.all.categories.concat(this.config.categories);
+    },
+  },
+  methods: {
+    colorOptions() {
+      return this.all.colors.concat(options.Colors());
+    },
+    monthOptions() {
+      return this.all.months.concat(options.Months());
+    },
+    yearOptions() {
+      return this.all.years.concat(options.IndexedYears());
+    },
+    dropdownChange() {
+      this.filterChange();
+
+      if (window.innerWidth < 600) {
+        this.searchExpanded = false;
+      }
+    },
+    setView(name) {
+      this.settings.view = name;
+      this.filterChange();
+    },
+    clearQuery() {
+      this.filter.q = '';
+      this.filterChange();
+    },
+    showUpload() {
+      Event.publish("dialog.upload");
+    }
+  },
+};
 </script>

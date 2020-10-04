@@ -38,11 +38,11 @@
                  @click.stop.prevent="onClick($event, props.index)"
           >
             <v-layout
-                    slot="placeholder"
-                    fill-height
-                    align-center
-                    justify-center
-                    ma-0
+                slot="placeholder"
+                fill-height
+                align-center
+                justify-center
+                ma-0
             >
               <v-progress-circular indeterminate
                                    color="accent lighten-5"></v-progress-circular>
@@ -106,129 +106,129 @@
   </div>
 </template>
 <script>
-    export default {
-        name: 'p-photo-list',
-        props: {
-            photos: Array,
-            selection: Array,
-            openPhoto: Function,
-            editPhoto: Function,
-            openLocation: Function,
-            album: Object,
-            filter: Object,
+export default {
+  name: 'p-photo-list',
+  props: {
+    photos: Array,
+    selection: Array,
+    openPhoto: Function,
+    editPhoto: Function,
+    openLocation: Function,
+    album: Object,
+    filter: Object,
+  },
+  data() {
+    let m = this.$gettext("Couldn't find anything.");
+
+    m += " " + this.$gettext("Try again using other filters or keywords.");
+
+    if (this.$config.feature("review")) {
+      m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
+    }
+
+    let showName = this.filter.order === 'name'
+
+    return {
+      notFoundMessage: m,
+      'selected': [],
+      'listColumns': [
+        {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
+        {text: this.$gettext('Title'), value: 'Title', sortable: false},
+        {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
+        {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
+        {
+          text: showName ? this.$gettext('Name') : this.$gettext('Location'),
+          class: 'hidden-xs-only',
+          value: showName ? 'FileName' : 'PlaceLabel',
+          sortable: false
         },
-        data() {
-            let m = this.$gettext("Couldn't find anything.");
-
-            m += " " + this.$gettext("Try again using other filters or keywords.");
-
-            if (this.$config.feature("review")) {
-                m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
-            }
-
-            let showName = this.filter.order === 'name'
-
-            return {
-                notFoundMessage: m,
-                'selected': [],
-                'listColumns': [
-                    {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
-                    {text: this.$gettext('Title'), value: 'Title', sortable: false},
-                    {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
-                    {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
-                    {
-                        text: showName ? this.$gettext('Name') : this.$gettext('Location'),
-                        class: 'hidden-xs-only',
-                        value: showName ? 'FileName' : 'PlaceLabel',
-                        sortable: false
-                    },
-                    {text: '', value: '', align: 'center', sortable: false},
-                ],
-                showName: showName,
-                showLocation: this.$config.settings().features.places,
-                hidePrivate: this.$config.settings().features.private,
-                mouseDown: {
-                    index: -1,
-                    timeStamp: -1,
-                },
-            };
-        },
-        watch: {
-            photos: function (photos) {
-                this.selected.splice(0);
-
-                for (let i = 0; i <= photos.length; i++) {
-                    if (this.$clipboard.has(photos[i])) {
-                        this.selected.push(photos[i]);
-                    }
-                }
-            },
-            selection: function () {
-                this.refreshSelection();
-            },
-        },
-        methods: {
-            downloadFile(index) {
-                const photo = this.photos[index];
-                const link = document.createElement('a')
-                link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
-                link.download = photo.FileName;
-                link.click()
-            },
-            onSelect(ev, index) {
-                if (ev.shiftKey) {
-                    this.selectRange(index);
-                } else {
-                    this.$clipboard.toggle(this.photos[index]);
-                }
-            },
-            onMouseDown(ev, index) {
-                this.mouseDown.index = index;
-                this.mouseDown.timeStamp = ev.timeStamp;
-            },
-            onClick(ev, index) {
-                let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
-
-                if (longClick || this.selection.length > 0) {
-                    if (longClick || ev.shiftKey) {
-                        this.selectRange(index);
-                    } else {
-                        this.$clipboard.toggle(this.photos[index]);
-                    }
-                } else if (this.photos[index]) {
-                    let photo = this.photos[index];
-
-                    if (photo.Type === 'video' && photo.isPlayable()) {
-                        this.openPhoto(index, true);
-                    } else {
-                        this.openPhoto(index, false);
-                    }
-                }
-            },
-            onContextMenu(ev, index) {
-                if (this.$isMobile) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    this.selectRange(index);
-                }
-            },
-            selectRange(index) {
-                this.$clipboard.addRange(index, this.photos);
-            },
-            refreshSelection() {
-                this.selected.splice(0);
-
-                for (let i = 0; i <= this.photos.length; i++) {
-                    if (this.$clipboard.has(this.photos[i])) {
-                        this.selected.push(this.photos[i]);
-                    }
-                }
-            },
-        },
-        mounted: function () {
-            this.$nextTick(function () {
-                this.refreshSelection();
-            })
-        }
+        {text: '', value: '', align: 'center', sortable: false},
+      ],
+      showName: showName,
+      showLocation: this.$config.settings().features.places,
+      hidePrivate: this.$config.settings().features.private,
+      mouseDown: {
+        index: -1,
+        timeStamp: -1,
+      },
     };
+  },
+  watch: {
+    photos: function (photos) {
+      this.selected.splice(0);
+
+      for (let i = 0; i <= photos.length; i++) {
+        if (this.$clipboard.has(photos[i])) {
+          this.selected.push(photos[i]);
+        }
+      }
+    },
+    selection: function () {
+      this.refreshSelection();
+    },
+  },
+  methods: {
+    downloadFile(index) {
+      const photo = this.photos[index];
+      const link = document.createElement('a')
+      link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
+      link.download = photo.FileName;
+      link.click()
+    },
+    onSelect(ev, index) {
+      if (ev.shiftKey) {
+        this.selectRange(index);
+      } else {
+        this.$clipboard.toggle(this.photos[index]);
+      }
+    },
+    onMouseDown(ev, index) {
+      this.mouseDown.index = index;
+      this.mouseDown.timeStamp = ev.timeStamp;
+    },
+    onClick(ev, index) {
+      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+
+      if (longClick || this.selection.length > 0) {
+        if (longClick || ev.shiftKey) {
+          this.selectRange(index);
+        } else {
+          this.$clipboard.toggle(this.photos[index]);
+        }
+      } else if (this.photos[index]) {
+        let photo = this.photos[index];
+
+        if (photo.Type === 'video' && photo.isPlayable()) {
+          this.openPhoto(index, true);
+        } else {
+          this.openPhoto(index, false);
+        }
+      }
+    },
+    onContextMenu(ev, index) {
+      if (this.$isMobile) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.selectRange(index);
+      }
+    },
+    selectRange(index) {
+      this.$clipboard.addRange(index, this.photos);
+    },
+    refreshSelection() {
+      this.selected.splice(0);
+
+      for (let i = 0; i <= this.photos.length; i++) {
+        if (this.$clipboard.has(this.photos[i])) {
+          this.selected.push(this.photos[i]);
+        }
+      }
+    },
+  },
+  mounted: function () {
+    this.$nextTick(function () {
+      this.refreshSelection();
+    })
+  }
+};
 </script>
