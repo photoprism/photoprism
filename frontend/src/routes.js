@@ -64,7 +64,7 @@ export default [
         name: "feedback",
         path: "/feedback",
         component: Feedback,
-        meta: {title: c.name, auth: false},
+        meta: {title: c.name, auth: true},
     },
     {
         name: "license",

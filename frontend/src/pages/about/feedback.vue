@@ -5,7 +5,7 @@
         <translate>Your message has been sent</translate>
       </v-toolbar-title>
       <v-toolbar-title v-else>
-        <translate>Whatever it is, we'd love to hear from you!</translate>
+        <translate>How can we help?</translate>
       </v-toolbar-title>
 
       <!-- v-spacer></v-spacer>
@@ -44,15 +44,7 @@
         <v-flex xs12 class="pa-2">
           <v-textarea required auto-grow flat solo hide-details browser-autocomplete="off"
                       v-model="form.Message" rows="10" :rules="[v => !!v || $gettext('Required')]"
-                      :label="$gettext('Your Message')"></v-textarea>
-        </v-flex>
-
-        <v-flex xs12 sm6 class="pa-2">
-          <v-text-field flat solo hide-details required browser-autocomplete="off"
-                        color="secondary-dark" :rules="[v => !!v || $gettext('Required')]"
-                        background-color="secondary-light"
-                        :label="$gettext('E-Mail')" type="email" v-model="form.UserEmail">
-          </v-text-field>
+                      :label="$gettext('Message')"></v-textarea>
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
@@ -60,6 +52,14 @@
                         color="secondary-dark"
                         background-color="secondary-light"
                         :label="$gettext('Name')" type="text" v-model="form.UserName">
+          </v-text-field>
+        </v-flex>
+
+        <v-flex xs12 sm6 class="pa-2">
+          <v-text-field flat solo hide-details required browser-autocomplete="off"
+                        color="secondary-dark" :rules="[v => !!v || $gettext('Required')]"
+                        background-color="secondary-light"
+                        :label="$gettext('E-Mail')" type="email" v-model="form.UserEmail">
           </v-text-field>
         </v-flex>
 

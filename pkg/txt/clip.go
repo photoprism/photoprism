@@ -24,3 +24,11 @@ func Clip(s string, size int) string {
 
 	return s
 }
+
+func TrimLen(s string, size int) string {
+	if len(s) < size || size < 4 {
+		return s
+	}
+
+	return Clip(s, size-3) + "..."
+}

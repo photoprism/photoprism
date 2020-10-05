@@ -14,6 +14,13 @@ import (
 // POST /api/v1/feedback
 func SendFeedback(router *gin.RouterGroup) {
 	router.POST("/feedback", func(c *gin.Context) {
+		conf := service.Config()
+
+		if conf.Public() {
+			Abort(c, http.StatusForbidden, i18n.ErrPublic)
+			return
+		}
+
 		s := Auth(SessionID(c), acl.ResourceFeedback, acl.ActionCreate)
 
 		if s.Invalid() {
@@ -21,7 +28,6 @@ func SendFeedback(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
 		conf.UpdatePro()
 
 		var f form.Feedback
