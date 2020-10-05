@@ -39,7 +39,7 @@ For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, 
 Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
-[INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray
+[INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon
 
 [patreon]: https://www.patreon.com/photoprism
 [paypal]: https://www.paypal.me/photoprism
