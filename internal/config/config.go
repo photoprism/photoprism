@@ -271,12 +271,10 @@ func (c *Config) OriginalsLimit() int64 {
 
 // UpdatePro updates photoprism.pro api credentials.
 func (c *Config) UpdatePro() {
-	p := c.ProConfigFile()
-
 	if err := c.pro.Refresh(); err != nil {
-		log.Errorf("pro: %s", err)
-	} else if err := c.pro.Save(p); err != nil {
-		log.Errorf("pro: %s", err)
+		log.Debugf("pro: %s", err)
+	} else if err := c.pro.Save(); err != nil {
+		log.Debugf("pro: %s", err)
 	} else {
 		c.pro.Propagate()
 	}
@@ -284,15 +282,14 @@ func (c *Config) UpdatePro() {
 
 // initPro initializes photoprism.pro api credentials.
 func (c *Config) initPro() {
-	c.pro = pro.NewConfig(c.Version())
-	p := c.ProConfigFile()
+	c.pro = pro.NewConfig(c.Version(), c.ProConfigFile())
 
-	if err := c.pro.Load(p); err == nil {
+	if err := c.pro.Load(); err == nil {
 		// Do nothing.
 	} else if err := c.pro.Refresh(); err != nil {
-		log.Errorf("pro: %s", err)
-	} else if err := c.pro.Save(p); err != nil {
-		log.Errorf("pro: %s", err)
+		log.Debugf("pro: %s", err)
+	} else if err := c.pro.Save(); err != nil {
+		log.Debugf("pro: %s", err)
 	}
 
 	c.pro.Propagate()

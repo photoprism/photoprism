@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -23,21 +24,23 @@ import (
 
 // Config represents photoprism.pro api credentials for maps & geodata.
 type Config struct {
-	Key     string `json:"key" yaml:"key"`
-	Secret  string `json:"secret" yaml:"secret"`
-	Session string `json:"session" yaml:"session"`
-	Status  string `json:"status" yaml:"status"`
-	Version string `json:"version" yaml:"version"`
+	Key      string `json:"key" yaml:"key"`
+	Secret   string `json:"secret" yaml:"secret"`
+	Session  string `json:"session" yaml:"session"`
+	Status   string `json:"status" yaml:"status"`
+	Version  string `json:"version" yaml:"version"`
+	FileName string `json:"-" yaml:"-"`
 }
 
 // NewConfig creates a new photoprism.pro api credentials instance.
-func NewConfig(version string) *Config {
+func NewConfig(version string, fileName string) *Config {
 	return &Config{
-		Key:     "",
-		Secret:  "",
-		Session: "",
-		Status:  "",
-		Version: version,
+		Key:      "",
+		Secret:   "",
+		Session:  "",
+		Status:   "",
+		Version:  version,
+		FileName: fileName,
 	}
 }
 
@@ -118,6 +121,10 @@ func (c *Config) Refresh() (err error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
+	if err := os.MkdirAll(filepath.Dir(c.FileName), os.ModePerm); err != nil {
+		return err
+	}
+
 	c.Sanitize()
 	client := &http.Client{Timeout: 60 * time.Second}
 	url := ApiURL
@@ -169,15 +176,15 @@ func (c *Config) Refresh() (err error) {
 }
 
 // Load photoprism.pro api credentials from a YAML file.
-func (c *Config) Load(fileName string) error {
-	if !fs.FileExists(fileName) {
-		return fmt.Errorf("api key file not found: %s", txt.Quote(fileName))
+func (c *Config) Load() error {
+	if !fs.FileExists(c.FileName) {
+		return fmt.Errorf("api key file not found: %s", txt.Quote(c.FileName))
 	}
 
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	yamlConfig, err := ioutil.ReadFile(fileName)
+	yamlConfig, err := ioutil.ReadFile(c.FileName)
 
 	if err != nil {
 		return err
@@ -194,7 +201,7 @@ func (c *Config) Load(fileName string) error {
 }
 
 // Save photoprism.pro api credentials to a YAML file.
-func (c *Config) Save(fileName string) error {
+func (c *Config) Save() error {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -208,7 +215,11 @@ func (c *Config) Save(fileName string) error {
 
 	c.Propagate()
 
-	if err := ioutil.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(c.FileName), os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := ioutil.WriteFile(c.FileName, data, os.ModePerm); err != nil {
 		return err
 	}
 
