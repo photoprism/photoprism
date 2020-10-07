@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -196,6 +197,12 @@ func (c *Config) Load() error {
 
 	c.Sanitize()
 	c.Propagate()
+
+	if sess, err := c.DecodeSession(); err != nil {
+		return err
+	} else if sess.Expired() {
+		return errors.New("session expired")
+	}
 
 	return nil
 }

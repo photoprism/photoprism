@@ -124,23 +124,15 @@ func TestConfig_DecodeSession(t *testing.T) {
 	t.Run("pro3.yml", func(t *testing.T) {
 		c := NewConfig("develop", "testdata/pro3.yml")
 
-		if err := c.Load(); err != nil {
-			t.Fatal(err)
-		}
+		err := c.Load()
+
+		assert.EqualError(t, err, "session expired")
 
 		assert.Equal(t, "8dd8b115d052f91ac74b1c2475e305009366c487", c.Key)
 		assert.Equal(t, "ddf4ce46afbf6c16a6bd8555ab1e4efb", c.Secret)
 		assert.Equal(t, "7607796238c26b2d95007957b05c72d63f504346576bc2aa064a6dc54344de47d2ab38422bd1d061c067a16ef517e6054d8b7f5336c120431935518277fed45e49472aaf740cac1bc33ab2e362c767007a59e953e9973709", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
 		assert.Equal(t, "develop", c.Version)
-
-		if sess, err := c.DecodeSession(); err != nil {
-			t.Fatal(err)
-		} else if sess.Expired() {
-			t.Logf("expired session: %+v", sess)
-		} else {
-			t.Errorf("session should be expired: %+v", sess)
-		}
 	})
 }
 
