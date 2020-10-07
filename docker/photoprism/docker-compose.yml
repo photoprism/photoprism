@@ -21,11 +21,12 @@ services:
       - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-    healthcheck: # Optional
-      test: "photoprism status"
-      interval: 60s
-      timeout: 15s
-      retries: 5
+    # Uncomment the following lines to enable regular health checks:
+    # healthcheck:
+    #   test: "photoprism status"
+    #   interval: 60s
+    #   timeout: 15s
+    #   retries: 5
     environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
@@ -41,7 +42,7 @@ services:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SETTINGS_HIDDEN: "false"            # Users can not view or change settings
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Initial admin password (can be changed in settings)
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Initial admin password - PLEASE CHANGE!
       PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # Change to "mysql" for external MySQL or MariaDB
       # PHOTOPRISM_DATABASE_DRIVER: "mysql"          # Using MariaDB or MySQL instead of SQLite is optional
       # PHOTOPRISM_DATABASE_DSN: "user:passwd@tcp(photoprism-db:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
