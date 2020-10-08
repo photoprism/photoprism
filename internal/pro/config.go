@@ -135,9 +135,9 @@ func (c *Config) Refresh() (err error) {
 	if c.Key != "" {
 		url = fmt.Sprintf(ApiURL+"/%s", c.Key)
 		method = http.MethodPut
-		log.Debugf("pro: updating api key for maps & places")
+		log.Debugf("getting updated api key for maps & places from %s", ApiHost())
 	} else {
-		log.Debugf("pro: requesting api key for maps & places")
+		log.Debugf("requesting api key for maps & places from %s", ApiHost())
 	}
 
 	if j, err := json.Marshal(NewRequest(c.Version)); err != nil {
@@ -159,17 +159,15 @@ func (c *Config) Refresh() (err error) {
 	}
 
 	if err != nil {
-		log.Errorf("pro: %s", err.Error())
 		return err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("api key request for maps & places failed with code %d", r.StatusCode)
+		err = fmt.Errorf("getting api key from %s failed (error %d)", ApiHost(), r.StatusCode)
 		return err
 	}
 
 	err = json.NewDecoder(r.Body).Decode(c)
 
 	if err != nil {
-		log.Errorf("pro: %s", err.Error())
 		return err
 	}
 
@@ -179,7 +177,7 @@ func (c *Config) Refresh() (err error) {
 // Load photoprism.pro api credentials from a YAML file.
 func (c *Config) Load() error {
 	if !fs.FileExists(c.FileName) {
-		return fmt.Errorf("api key file not found: %s", txt.Quote(c.FileName))
+		return fmt.Errorf("settings file not found: %s", txt.Quote(c.FileName))
 	}
 
 	mutex.Lock()

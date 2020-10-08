@@ -172,5 +172,9 @@ func (c *Config) initSettings() {
 
 // Settings returns the current user settings.
 func (c *Config) Settings() *Settings {
+	if c.settings == nil {
+		c.initSettings()
+	}
+
 	return c.settings
 }

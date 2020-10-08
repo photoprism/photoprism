@@ -43,11 +43,13 @@ func statusAction(ctx *cli.Context) error {
 		status = string(body)
 	}
 
-	fmt.Println(status)
+	message := gjson.Get(status, "status").String()
 
-	message := gjson.Get(status, "status")
-
-	fmt.Printf("status %s\n", message.String())
+	if message != "" {
+		fmt.Println(message)
+	} else {
+		fmt.Println("unknown")
+	}
 
 	return nil
 }

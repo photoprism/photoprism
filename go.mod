@@ -2,7 +2,7 @@ module github.com/photoprism/photoprism
 
 require (
 	github.com/allegro/bigcache v1.2.1
-	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
+	github.com/araddon/dateparse v0.0.0-20201001162425-8aadafed4dc4
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.2.0
@@ -35,8 +35,8 @@ require (
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.0.3
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
-	github.com/manifoldco/promptui v0.7.0
-	github.com/mattn/go-colorable v0.1.7 // indirect
+	github.com/manifoldco/promptui v0.8.0
+	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/melihmucuk/geocache v0.0.0-20160621165317-521b336a001c
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -46,17 +46,17 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/shopspring/decimal v1.2.0 // indirect
-	github.com/sirupsen/logrus v1.6.0
+	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1
-	github.com/studio-b12/gowebdav v0.0.0-20200303150724-9380631c29a1
+	github.com/studio-b12/gowebdav v0.0.0-20200929080739-bdacfab94796
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.6.1
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.4
-	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
+	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20200904194848-62affa334b73
-	golang.org/x/sys v0.0.0-20200819035508-9a32b3aa38f5 // indirect
+	golang.org/x/net v0.0.0-20201006153459-a7d1128ccaa0
+	golang.org/x/sys v0.0.0-20201008063127-280f808b4a53 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.10
 	gopkg.in/yaml.v2 v2.3.0

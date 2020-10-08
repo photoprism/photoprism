@@ -59,8 +59,10 @@ func (c *Config) TemplateExists(name string) bool {
 
 // TemplateName returns the name of the default template (e.g. index.tmpl).
 func (c *Config) TemplateName() string {
-	if c.TemplateExists(c.Settings().Templates.Default) {
-		return c.Settings().Templates.Default
+	if s := c.Settings(); s != nil {
+		if c.TemplateExists(s.Templates.Default) {
+			return s.Templates.Default
+		}
 	}
 
 	return "index.tmpl"

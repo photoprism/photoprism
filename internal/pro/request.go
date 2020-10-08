@@ -1,6 +1,9 @@
 package pro
 
-import "runtime"
+import (
+	"net/url"
+	"runtime"
+)
 
 var ApiURL = "https://api-int.photoprism.pro/v1/hello"
 
@@ -20,4 +23,16 @@ func NewRequest(version string) *Request {
 		ClientArch:    runtime.GOARCH,
 		ClientCPU:     runtime.NumCPU(),
 	}
+}
+
+// ApiHost returns the full API URL host name.
+func ApiHost() string {
+	u, err := url.Parse(ApiURL)
+
+	if err != nil {
+		log.Warn(err)
+		return ""
+	}
+
+	return u.Host
 }

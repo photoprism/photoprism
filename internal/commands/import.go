@@ -33,13 +33,10 @@ func importAction(ctx *cli.Context) error {
 		return config.ErrReadOnly
 	}
 
-	if err := conf.CreateDirectories(); err != nil {
-		return err
-	}
-
-	cctx, cancel := context.WithCancel(context.Background())
+	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	if err := conf.Init(cctx); err != nil {
+
+	if err := conf.Init(); err != nil {
 		return err
 	}
 

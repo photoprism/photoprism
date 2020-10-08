@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"net/http"
 	"runtime"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var FeedbackURL = ApiURL + "/%s/feedback"
@@ -52,7 +53,7 @@ func (c *Config) SendFeedback(f form.Feedback) (err error) {
 	method := http.MethodPost
 	var req *http.Request
 
-	log.Debugf("pro: sending feedback")
+	log.Debugf("sending feedback to %s", ApiHost())
 
 	if j, err := json.Marshal(feedback); err != nil {
 		return err
@@ -74,17 +75,15 @@ func (c *Config) SendFeedback(f form.Feedback) (err error) {
 	}
 
 	if err != nil {
-		log.Errorf("pro: %s", err.Error())
 		return err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("sending feedback failed with code %d", r.StatusCode)
+		err = fmt.Errorf("sending feedback to %s failed (error %d)", ApiHost(), r.StatusCode)
 		return err
 	}
 
 	err = json.NewDecoder(r.Body).Decode(c)
 
 	if err != nil {
-		log.Errorf("pro: %s", err.Error())
 		return err
 	}
 

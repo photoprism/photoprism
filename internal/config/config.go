@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"fmt"
 	"runtime"
 	"strings"
@@ -70,9 +69,6 @@ func NewConfig(ctx *cli.Context) *Config {
 		token:  rnd.Token(8),
 	}
 
-	c.initSettings()
-	c.initPro()
-
 	return c
 }
 
@@ -90,9 +86,17 @@ func (c *Config) Propagate() {
 	c.Pro().Propagate()
 }
 
-// Init initialises the database connection and dependencies.
-func (c *Config) Init(_ context.Context) error {
+// Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
+func (c *Config) Init() error {
+	if err := c.CreateDirectories(); err != nil {
+		return err
+	}
+
+	c.initSettings()
+	c.initPro()
+
 	c.Propagate()
+
 	return c.connectDb()
 }
 
@@ -269,27 +273,27 @@ func (c *Config) OriginalsLimit() int64 {
 	return c.params.OriginalsLimit * 1024 * 1024
 }
 
-// UpdatePro updates photoprism.pro api credentials.
+// UpdatePro updates photoprism.pro api credentials for maps & places.
 func (c *Config) UpdatePro() {
 	if err := c.pro.Refresh(); err != nil {
-		log.Debugf("pro: %s", err)
+		log.Debugf("config: %s", err)
 	} else if err := c.pro.Save(); err != nil {
-		log.Debugf("pro: %s", err)
+		log.Debugf("config: %s", err)
 	} else {
 		c.pro.Propagate()
 	}
 }
 
-// initPro initializes photoprism.pro api credentials.
+// initPro initializes photoprism.pro api credentials for maps & places.
 func (c *Config) initPro() {
 	c.pro = pro.NewConfig(c.Version(), c.ProConfigFile())
 
 	if err := c.pro.Load(); err == nil {
 		// Do nothing.
 	} else if err := c.pro.Refresh(); err != nil {
-		log.Debugf("pro: %s", err)
+		log.Debugf("config: %s", err)
 	} else if err := c.pro.Save(); err != nil {
-		log.Debugf("pro: %s", err)
+		log.Debugf("config: %s", err)
 	}
 
 	c.pro.Propagate()
@@ -308,5 +312,9 @@ func (c *Config) initPro() {
 
 // Config returns the photoprism.pro api credentials.
 func (c *Config) Pro() *pro.Config {
+	if c.pro == nil {
+		c.initPro()
+	}
+
 	return c.pro
 }

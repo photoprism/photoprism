@@ -39,9 +39,10 @@ func resetAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
-	cctx, cancel := context.WithCancel(context.Background())
+	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	if err := conf.Init(cctx); err != nil {
+
+	if err := conf.Init(); err != nil {
 		return err
 	}
 

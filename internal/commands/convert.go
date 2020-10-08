@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -26,11 +27,14 @@ func convertAction(ctx *cli.Context) error {
 		return config.ErrReadOnly
 	}
 
-	if err := conf.CreateDirectories(); err != nil {
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := conf.Init(); err != nil {
 		return err
 	}
 
-	log.Infof("converting RAW images in %s to JPEG", conf.OriginalsPath())
+	log.Infof("creating JPEGs for other files types in %s", conf.OriginalsPath())
 
 	convert := service.Convert()
 
@@ -40,7 +44,7 @@ func convertAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("image conversion completed in %s", elapsed)
+	log.Infof("converting to JPEG completed in %s", elapsed)
 
 	return nil
 }
