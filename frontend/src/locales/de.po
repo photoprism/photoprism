@@ -332,7 +332,7 @@ msgstr "Durchsuche indizierte Dateien und Verzeichnisse."
 
 #: src/options/options.js:248
 msgid "Bug Report"
-msgstr "Fehlerbericht"
+msgstr "Fehler melden"
 
 #: src/common/notify.js:72
 msgid "Busy, please wait…"
@@ -716,7 +716,7 @@ msgstr "Favoriten"
 
 #: src/options/options.js:247
 msgid "Feature Request"
-msgstr "Funktionsanfrage"
+msgstr "Feature Request"
 
 #: src/component/navigation.vue:350 src/component/navigation.vue:33
 msgid "Feedback"
@@ -1058,11 +1058,11 @@ msgstr "Mittel"
 
 #: src/pages/about/feedback.vue:1
 msgid "Message"
-msgstr "Nachricht"
+msgstr "Feedback"
 
 #: src/pages/about/feedback.vue:111
 msgid "Message sent"
-msgstr "Nachricht gesendet"
+msgstr "Feedback gesendet"
 
 #: src/dialog/photo/files.vue:148
 msgid "Missing"
@@ -1591,7 +1591,7 @@ msgstr "Auswahl wiederhergestellt"
 
 #: src/pages/about/feedback.vue:46
 msgid "Send"
-msgstr "Abschicken"
+msgstr "Senden"
 
 #: src/pages/settings/sync.vue:109
 msgid "Server"
