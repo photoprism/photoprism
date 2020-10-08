@@ -34,7 +34,7 @@ func convertAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating JPEGs for other files types in %s", conf.OriginalsPath())
+	log.Infof("creating JPEGs for other file types in %s", conf.OriginalsPath())
 
 	convert := service.Convert()
 
