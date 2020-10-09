@@ -5,7 +5,7 @@
         <translate>Your message has been sent</translate>
       </v-toolbar-title>
       <v-toolbar-title v-else>
-        <translate>How can we help?</translate>
+        <translate>Contact Us</translate>
       </v-toolbar-title>
 
       <!-- v-spacer></v-spacer>
@@ -44,7 +44,7 @@
         <v-flex xs12 class="pa-2">
           <v-textarea required auto-grow flat solo hide-details browser-autocomplete="off"
                       v-model="form.Message" rows="10" :rules="[v => !!v || $gettext('Required')]"
-                      :label="$gettext('Message')"></v-textarea>
+                      :label="$gettext('How can we help?')"></v-textarea>
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
