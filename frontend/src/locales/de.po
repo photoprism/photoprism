@@ -280,7 +280,7 @@ msgstr "Diesen Account wirklich löschen?"
 
 #: src/dialog/file/delete.vue:10
 msgid "Are you sure you want to permanently delete this file?"
-msgstr "Diese Datei endgültig löschen?"
+msgstr "Diese Datei unwiderruflich löschen?"
 
 #: src/dialog/photo/details.vue:723
 msgid "Artist"
