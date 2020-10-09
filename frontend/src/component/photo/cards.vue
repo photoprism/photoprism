@@ -61,7 +61,7 @@
                   v-if="photo.Type === 'live'"
                   v-show="hover"
               >
-                <video width="500" height="500" autoplay loop muted playsinline>
+                <video width="500" height="500" autoplay loop muted playsinline :key="photo.videoUrl()">
                   <source :src="photo.videoUrl()" type="video/mp4">
                 </video>
               </v-layout>
