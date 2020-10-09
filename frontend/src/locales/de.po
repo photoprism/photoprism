@@ -328,7 +328,7 @@ msgstr "Durchsuche indizierte Dateien und Verzeichnisse."
 
 #: src/options/options.js:244
 msgid "Bug Report"
-msgstr "Fehler melden"
+msgstr "Fehlerbericht"
 
 #: src/common/notify.js:72
 msgid "Busy, please wait…"
@@ -513,7 +513,7 @@ msgstr "Aktuelles Passwort"
 
 #: src/options/options.js:241
 msgid "Customer Support"
-msgstr "Kunden Support"
+msgstr "Support-Anfrage"
 
 #: src/options/options.js:232
 msgid "Cyan"
@@ -1423,7 +1423,7 @@ msgstr "Privat"
 
 #: src/options/options.js:242
 msgid "Product Feedback"
-msgstr "Produkt Feedback"
+msgstr "Allgemeines Feedback"
 
 #: src/dialog/photo/files.vue:118
 msgid "Projection"
