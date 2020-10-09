@@ -62,7 +62,7 @@
     "eventsource-polyfill": "^0.9.6",
     "file-loader": "^3.0.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
-    "hls.js": "^0.14.13",
+    "hls.js": "^0.14.14",
     "html-webpack-plugin": "^4.5.0",
     "http-proxy-middleware": "^1.0.5",
     "i18n-iso-countries": "^6.1.0",
