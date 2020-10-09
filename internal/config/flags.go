@@ -33,7 +33,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "admin-password",
-		Usage:  "initial admin password (can be changed in settings)",
+		Usage:  "initial admin password",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.IntFlag{
