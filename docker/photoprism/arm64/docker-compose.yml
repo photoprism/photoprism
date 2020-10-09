@@ -21,13 +21,15 @@ services:
       - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-    # Uncomment the following lines to enable regular health checks:
+    # Uncomment the following lines to enable regular health checks (causes automatic restarts):
     # healthcheck:
     #   test: "photoprism status"
     #   interval: 60s
     #   timeout: 15s
     #   retries: 5
-    environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
+    #
+    # Run "photoprism help" and "photoprism config" too see all config options and current values:
+    environment:
       PHOTOPRISM_ADMIN_PASSWORD: "please-change"     # Initial admin password: PLEASE CHANGE!
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
@@ -56,6 +58,10 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Use darktable presets (disables concurrent raw to jpeg conversion)
+      # You may optionally set user, group and/or file permissions using environment variables:
+      # UID: 1000
+      # GID: 1000
+      # UMASK: 0000
     volumes:
       # Storage folder for settings, index & sidecar files (DON'T REMOVE):
       - "~/.photoprism:/photoprism/storage"
