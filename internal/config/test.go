@@ -146,10 +146,6 @@ func NewTestConfig() *Config {
 func NewTestErrorConfig() *Config {
 	c := &Config{params: NewTestParamsError()}
 
-	if err := c.Init(); err != nil {
-		log.Fatalf("config: %s", err.Error())
-	}
-
 	return c
 }
 
