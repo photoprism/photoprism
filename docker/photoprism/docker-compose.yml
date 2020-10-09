@@ -57,12 +57,15 @@ services:
       PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Use darktable presets (disables concurrent raw to jpeg conversion)
     volumes:
-      - "~/PhotoPrism/Storage:/photoprism/storage"   # Folder for settings, index & sidecar files: DON'T REMOVE!
-      - "~/Pictures:/photoprism/originals"           # Original photo & video files [local path]:[container path]
+      # Storage folder for settings, index & sidecar files (DON'T REMOVE):
+      - "~/.photoprism:/photoprism/storage"
+      # Your personal photo and video collection ([local path]:[container path]):
+      - "~/Pictures:/photoprism/originals"
       # Multiple folders can be indexed by mounting them as subfolders of /photoprism/originals:
       # - "~/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
       # - "~/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
-      - "~/PhotoPrism/Import:/photoprism/import"     # Mounting the import folder is optional (see docs)
+      # Mounting the import folder is optional (see docs):
+      # - "~/Import:/photoprism/import"
 
 # Uncomment the following lines to use MariaDB instead of SQLite for improved performance & scalability:
 #
