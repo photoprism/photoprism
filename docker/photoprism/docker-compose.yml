@@ -23,7 +23,7 @@ services:
       - 2342:2342 # [local port]:[container port]
     # Uncomment the following lines to enable regular health checks (causes automatic restarts):
     # healthcheck:
-    #   test: "photoprism status"
+    #   test: ["CMD", "photoprism", "status"]
     #   interval: 60s
     #   timeout: 15s
     #   retries: 5
