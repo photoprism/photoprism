@@ -139,7 +139,7 @@ export default [
     },
     {
         name: "folder",
-        path: "/folders/:uid:/:slug",
+        path: "/folders/:uid/:slug",
         component: AlbumPhotos,
         meta: {title: $gettext("Folders"), auth: true},
     },
