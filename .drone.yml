@@ -49,7 +49,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism docker-demo
+      - make docker-photoprism docker-photoprism-pull docker-demo
     when:
       status:
         - success
