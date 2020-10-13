@@ -121,4 +121,4 @@ COPY --chown=root:root /docker/photoprism/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Run server
-CMD photoprism start
+CMD ["photoprism", "start"]
