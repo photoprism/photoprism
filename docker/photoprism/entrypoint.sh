@@ -5,11 +5,11 @@ if [[ ${UMASK} ]]; then
 fi
 
 if [[ ${UID} ]] && [[ ${GID} ]] && [[ ${UID} != "0" ]] && [[ $(id -u) = "0" ]]; then
-  usermod -u ${UID} photoprism
-  usermod -g ${GID} photoprism
+  groupadd -f -g ${GID} ${GID}
+  usermod -o -u ${UID} -g ${GID} photoprism
   gosu ${UID}:${GID} "$@" &
 elif [[ ${UID} ]] && [[ ${UID} != "0" ]] && [[ $(id -u) = "0" ]]; then
-  usermod -u ${UID} photoprism
+  usermod -o -u ${UID} photoprism
   gosu ${UID} "$@" &
 else
   "$@" &
