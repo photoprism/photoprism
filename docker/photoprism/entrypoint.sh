@@ -15,7 +15,7 @@ else
   "$@" &
 fi
 
-photoprism_pid=$!
+PHOTOPRISM_PID=$!
 
-trap "kill $photoprism_pid" INT TERM
+trap "kill $PHOTOPRISM_PID" INT TERM
 wait
