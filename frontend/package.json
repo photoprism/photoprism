@@ -19,7 +19,7 @@
     "gettext-compile": "gettext-compile --output src/locales/translations.json src/locales/*.po"
   },
   "dependencies": {
-    "@babel/cli": "^7.11.6",
+    "@babel/cli": "^7.12.0",
     "@babel/core": "^7.11.6",
     "@babel/plugin-transform-runtime": "^7.11.5",
     "@babel/polyfill": "^7.11.5",

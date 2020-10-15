@@ -104,6 +104,10 @@ export const Languages = () => [
         "text": $gettext("Chinese"),
         "value": "zh",
     },
+    {
+        "text": $gettext("Hindi"),
+        "value": "hi",
+    },
 ];
 
 export const Themes = () => [
