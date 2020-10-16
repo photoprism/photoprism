@@ -6,14 +6,14 @@ especially if you have feature requests or need help with using our software.
 They will match every donation in the first year.
 In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
 Our sponsors and contributors will get for free whatever we might have to 
-[charge](https://docs.photoprism.org/funding/) for a geodata, public events and maps 
+[charge](https://docs.photoprism.org/funding/) for a geodata, public events, and maps 
 subscription later.
 
-Also please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
+Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
 it provides additional motivation to keep going.
 
-Ideas backed by a sponsor are marked with a golden [sponsor][issues:sponsor] label.
-Let us know if we mistakenly label an idea as [unfunded][issues:unfunded].
+Ideas backed by a sponsor are marked with a golden [sponsor][issues: sponsor] label.
+Let us know if we mistakenly label an idea as [unfunded][issues: unfunded].
 
 Thank you very much to all of our sponsors and donors (including those that want to stay private)!
 
