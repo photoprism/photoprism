@@ -25,24 +25,24 @@ func NewIgnoreItem(dir, pattern string, caseSensitive bool) IgnoreItem {
 }
 
 // Ignore returns true if the file name "base" in the directory "dir" should be ignored.
-func (i IgnoreItem) Ignore(dir, base string) (result bool) {
+func (i IgnoreItem) Ignore(dir, base string) bool {
 	if !strings.HasPrefix(dir+"/", i.Dir) {
 		// different directory prefix: don't look any further
 		return false
-	}
-
-	if strings.HasPrefix(i.Pattern, "*") {
-		// file name ends with pattern (e.g. ".jpg")
-		result = strings.HasSuffix(base, i.Pattern[1:])
-	} else if strings.HasSuffix(i.Pattern, "*") {
-		// file name starts with pattern (e.g. "screenshot")
-		result = strings.HasPrefix(base, i.Pattern[:len(i.Pattern)-2])
 	} else if i.Pattern == base {
 		// file name is the same as pattern (no wildcard)
-		result = true
+		return true
 	}
 
-	return result
+	if ignore, err := filepath.Match(i.Pattern, filepath.Join(dir, base)); ignore && err == nil {
+		return true
+	}
+
+	if ignore, err := filepath.Match(i.Pattern, base); ignore && err == nil {
+		return true
+	}
+
+	return false
 }
 
 // IgnoreItem represents a list of name patterns to be ignored.
