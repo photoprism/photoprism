@@ -74,7 +74,7 @@ Looking forward, specific solutions for funding development and maintenance coul
     continue to use Docker or build from source
   - provide additional features to users who support us financially, maybe with a different license similar to GitLab
   - develop a one-click solution for private cloud hosting together with selected providers we trust
-  - offer a geodata, public events and maps subscription since OpenStreetMap doesn't want us to use their development 
+  - offer a geodata, public events, and maps subscription since OpenStreetMap doesn't want us to use their development 
     API for production, which is perfectly fine
 
 ## Donations ##
