@@ -44,6 +44,9 @@ import (
 
 const IgnoreFile = ".ppignore"
 const HiddenPath = ".photoprism"
+const PathSeparator = string(filepath.Separator)
+const Home = "~"
+const HomePath = Home + PathSeparator
 
 // FileExists returns true if file exists and is not a directory.
 func FileExists(fileName string) bool {
@@ -86,7 +89,7 @@ func Abs(name string) string {
 		return ""
 	}
 
-	if len(name) > 2 && name[:2] == "~/" {
+	if len(name) > 2 && name[:2] == HomePath {
 		if usr, err := user.Current(); err == nil {
 			name = filepath.Join(usr.HomeDir, name[2:])
 		}
@@ -121,6 +124,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 
 	// Make File
 	var fdir string
+
 	if lastIndex := strings.LastIndex(fileName, string(os.PathSeparator)); lastIndex > -1 {
 		fdir = fileName[:lastIndex]
 	}
@@ -136,6 +140,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 	}
 
 	defer fd.Close()
+
 	_, err = io.Copy(fd, rc)
 	if err != nil {
 		return fileName, err
@@ -153,6 +158,7 @@ func Download(filepath string, url string) error {
 	if err != nil {
 		return err
 	}
+
 	defer out.Close()
 
 	// Get the data
@@ -160,6 +166,7 @@ func Download(filepath string, url string) error {
 	if err != nil {
 		return err
 	}
+
 	defer resp.Body.Close()
 
 	// Check server response

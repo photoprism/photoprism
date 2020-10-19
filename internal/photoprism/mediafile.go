@@ -439,7 +439,7 @@ func (m *MediaFile) RelPath(directory string) string {
 	}
 
 	// Use empty string for current / root directory.
-	if pathname == "." || pathname == "/" {
+	if pathname == "." || pathname == "/" || pathname == "\\" {
 		pathname = ""
 	}
 

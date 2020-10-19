@@ -18,15 +18,15 @@ type IgnoreItem struct {
 // NewIgnoreItem returns a pointer to a new IgnoreItem instance.
 func NewIgnoreItem(dir, pattern string, caseSensitive bool) IgnoreItem {
 	if caseSensitive {
-		return IgnoreItem{Dir: dir + "/", Pattern: pattern}
+		return IgnoreItem{Dir: dir + PathSeparator, Pattern: pattern}
 	} else {
-		return IgnoreItem{Dir: strings.ToLower(dir) + "/", Pattern: strings.ToLower(pattern)}
+		return IgnoreItem{Dir: strings.ToLower(dir) + PathSeparator, Pattern: strings.ToLower(pattern)}
 	}
 }
 
 // Ignore returns true if the file name "base" in the directory "dir" should be ignored.
 func (i IgnoreItem) Ignore(dir, base string) bool {
-	if !strings.HasPrefix(dir+"/", i.Dir) {
+	if !strings.HasPrefix(dir+PathSeparator, i.Dir) {
 		// different directory prefix: don't look any further
 		return false
 	} else if i.Pattern == base {
