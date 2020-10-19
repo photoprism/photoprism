@@ -278,6 +278,10 @@ func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 		data.Projection = SanitizeString(value)
 	}
 
+	data.Keywords = SanitizeMeta(data.Keywords)
+	data.Subject = SanitizeMeta(data.Subject)
+	data.Artist = SanitizeMeta(data.Artist)
+
 	data.All = tags
 
 	return nil

@@ -383,4 +383,38 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 3, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
+
+	t.Run("digikam.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/digikam.jpg", fs.TypeJpeg)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//  t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "", data.Codec)
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "2020-10-17T15:48:24Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-10-17T17:48:24Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 2736, data.Height)
+		assert.Equal(t, 3648, data.Width)
+		assert.Equal(t, float32(52.46052), data.Lat)
+		assert.Equal(t, float32(13.331402), data.Lng)
+		assert.Equal(t, 84, data.Altitude)
+		assert.Equal(t, "1/50", data.Exposure)
+		assert.Equal(t, "HUAWEI", data.CameraMake)
+		assert.Equal(t, "ELE-L29", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, 27, data.FocalLength)
+		assert.Equal(t, 0, int(data.Orientation))
+	})
 }

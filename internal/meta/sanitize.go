@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"encoding/json"
 	"regexp"
 	"strings"
 
@@ -96,6 +97,25 @@ func SanitizeDescription(s string) string {
 		s = ""
 	} else if strings.HasPrefix(s, "DCIM\\") && !strings.Contains(s, " ") {
 		s = ""
+	}
+
+	return s
+}
+
+// SanitizeMeta normalizes metadata fields that may contain JSON arrays like keywords and subject.
+func SanitizeMeta(s string) string {
+	if s == "" {
+		return ""
+	} else if strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
+		var words []string
+
+		if err := json.Unmarshal([]byte(s), &words); err != nil {
+			return s
+		}
+
+		s = strings.Join(words, ", ")
+	} else {
+		s = SanitizeString(s)
 	}
 
 	return s
