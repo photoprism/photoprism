@@ -1,7 +1,7 @@
+subdirectory/animals/dog.*
 *.txt
 test.md
 
 # This is a comment
 somefile.*
 baz*
-bar

@@ -15,9 +15,10 @@ func TestDirs(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, result, 7)
+		assert.Len(t, result, 8)
 		assert.Contains(t, result, "/directory")
 		assert.Contains(t, result, "/directory/subdirectory")
+		assert.Contains(t, result, "/directory/subdirectory/animals")
 		assert.Contains(t, result, "/linked")
 	})
 
@@ -30,6 +31,7 @@ func TestDirs(t *testing.T) {
 
 		assert.Contains(t, result, "/directory")
 		assert.Contains(t, result, "/directory/subdirectory")
+		assert.Contains(t, result, "/directory/subdirectory/animals")
 		assert.Contains(t, result, "/linked")
 	})
 

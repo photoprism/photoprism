@@ -34,8 +34,8 @@ func (i IgnoreItem) Ignore(dir, base string) bool {
 		return true
 	}
 
-	if ignore, err := filepath.Match(i.Pattern, filepath.Join(dir, base)); ignore && err == nil {
-		return true
+	if strings.ContainsRune(i.Pattern, filepath.Separator) {
+		base = filepath.Join(RelName(dir, i.Dir), base)
 	}
 
 	if ignore, err := filepath.Match(i.Pattern, base); ignore && err == nil {

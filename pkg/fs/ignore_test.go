@@ -94,6 +94,9 @@ func TestIgnoreList_Ignored(t *testing.T) {
 		expectIgnored := []string{
 			"testdata/directory/bar.txt",
 			"testdata/directory/baz.xml",
+			"testdata/directory/subdirectory/animals/dog.json",
+			"testdata/directory/subdirectory/animals/gopher.json",
+			"testdata/directory/subdirectory/animals/gopher.md",
 			"testdata/directory/subdirectory/bar",
 			"testdata/directory/subdirectory/example.txt",
 			"testdata/directory/subdirectory/foo.txt",
