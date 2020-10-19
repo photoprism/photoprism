@@ -3,6 +3,8 @@
 Think of open-source development as free training with a visible outcome.
 Exploring new technologies is easier than in commercial environments,
 where development effort is more focused on immediate results.
+Consider it as an analytical process that expands both the master and the 
+editors knowledge, including others viewing it.
 
 We welcome contributions of any kind including pull requests, ideas, bug reports,
 testing, writing documentation, tutorials and blog posts. If you help with development,
@@ -22,6 +24,7 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 Our [Developer Guide](https://docs.photoprism.org/developer-guide/) contains all information necessary to get you started.
 
 Our [step-by-step guide](https://github.com/photoprism/photoprism/wiki/Pull-Requests) explains how to submit new features, bugfixes and documentation.
+Just go for it and you will eventually find your way in the world of open source.
 
 ## Feature requests ##
 
