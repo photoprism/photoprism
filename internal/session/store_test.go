@@ -63,6 +63,24 @@ func TestSession_Update(t *testing.T) {
 	}
 }
 
+func TestSession_UpdateError(t *testing.T) {
+	s := New(time.Hour, "testdata")
+
+	data := Data{
+		User: entity.Admin,
+	}
+
+	id := s.Create(data)
+	t.Logf("id: %s", id)
+	assert.Equal(t, 48, len(id))
+	newData := Data{
+		User:   entity.Guest,
+		Shares: UIDs{"a000000000000001"},
+	}
+	err := s.Update("", newData)
+	assert.Equal(t, "session: empty id", err.Error())
+}
+
 func TestSession_Delete(t *testing.T) {
 	s := New(time.Hour, "testdata")
 	s.Delete("abc")
@@ -78,6 +96,8 @@ func TestSession_Get(t *testing.T) {
 	id := s.Create(data)
 	t.Logf("id: %s", id)
 	assert.Equal(t, 48, len(id))
+
+	assert.Empty(t, s.Get(""))
 
 	cachedData := s.Get(id)
 

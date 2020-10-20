@@ -1,5 +1,7 @@
 package form
 
+import "github.com/ulule/deepcopier"
+
 // Feedback represents support requests / customer feedback.
 type Feedback struct {
 	Category    string `json:"Category"`
@@ -12,4 +14,10 @@ type Feedback struct {
 
 func (f Feedback) Empty() bool {
 	return len(f.Category) < 1 || len(f.Message) < 3 || len(f.UserEmail) < 5
+}
+
+func NewFeedback(m interface{}) (f Feedback, err error) {
+	err = deepcopier.Copy(m).To(&f)
+
+	return f, err
 }
