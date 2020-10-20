@@ -1,4 +1,4 @@
-FROM photoprism/development:20201004 as build
+FROM photoprism/development:20201020 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -117,7 +117,7 @@ RUN photoprism -v
 EXPOSE 2342
 
 # Configure entrypoint
-COPY --chown=root:root /docker/photoprism/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Run server

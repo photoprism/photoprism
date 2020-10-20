@@ -58,7 +58,8 @@ RUN apt-get update && apt-get upgrade && \
     seccomp \
     libseccomp-dev \
     libseccomp2 \
-    fonts-roboto
+    fonts-roboto \
+    sudo
 
 # Install Chromium Browser via .deb
 RUN add-apt-repository -y ppa:xalt7x/chromium-deb-vaapi
@@ -101,12 +102,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.15.2
+ENV GOLANG_VERSION 1.15.3
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "b49fda1ca29a1946d6bb2a5a6982cf07ccd2aba849289508ee0f9918f6bb4552 *go.tgz" | sha256sum -c -; \
+	echo "010a88df924a81ec21b293b5da8f9b11c176d27c0ee3962dc1738d2352d3c02d *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -138,6 +139,7 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-ou
 RUN useradd photoprism -m -d /photoprism && \
     chmod 777 /photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
+    echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     chown -R photoprism:photoprism /photoprism && \
     find /go -type d -print0 | xargs -0 chmod 777 && \
     find /go -type f -print0 | xargs -0 chmod a+rw

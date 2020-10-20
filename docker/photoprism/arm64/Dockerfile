@@ -73,12 +73,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.15.2
+ENV GOLANG_VERSION 1.15.3
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "c8ec460cc82d61604b048f9439c06bd591722efce5cd48f49e19b5f6226bd36d *go.tgz" | sha256sum -c -; \
+	echo "b8b88a87ada918ef5189fa5938ef4c46a4f61952a34317612aaac705f4275f80 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -208,7 +208,7 @@ RUN photoprism -v
 EXPOSE 2342
 
 # Configure entrypoint
-COPY --chown=root:root /docker/photoprism/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Run server
