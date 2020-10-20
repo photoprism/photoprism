@@ -260,16 +260,6 @@ func TestFile_Panorama(t *testing.T) {
 	})
 }
 
-/*func TestFile_PrimaryFile(t *testing.T) {
-	t.Run("return primary file", func(t *testing.T) {
-		file, err := PrimaryFile("pt9jtdre2lvl0y11")
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, "ft8es39w45bnlqdw", file.FileUID)
-	})
-}*/
-
 func TestFile_Delete(t *testing.T) {
 	t.Run("permanently", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBePermanentlyDeleted", FileRoot: "", PhotoID: 5678}

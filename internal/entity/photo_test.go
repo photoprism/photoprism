@@ -899,14 +899,3 @@ func TestPhoto_Links(t *testing.T) {
 		assert.Equal(t, "7jxf3jfn2k", links[0].LinkToken)
 	})
 }
-
-/*func TestPhoto_PrimaryFile(t *testing.T) {
-	t.Run("return", func(t *testing.T) {
-		photo := PhotoFixtures.Pointer("Photo04")
-		file, err := photo.PrimaryFile()
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, "ft8es39w45bnlqdw", file.FileUID)
-	})
-}*/
