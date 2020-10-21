@@ -283,15 +283,17 @@ func (m *MediaFile) JsonName() string {
 
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
-	// escape any meta characters in the file name
 	var prefix string
 
 	if stripSequence {
+		// Strip common name sequences like "copy 2" and escape meta characters.
 		prefix = regexp.QuoteMeta(m.AbsPrefix(true))
 	} else {
+		// Use strict file name matching and escape meta characters.
 		prefix = regexp.QuoteMeta(m.AbsPrefix(false) + ".")
 	}
 
+	// Find related files.
 	matches, err := filepath.Glob(prefix + "*")
 
 	if err != nil {
