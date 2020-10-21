@@ -284,7 +284,15 @@ func (m *MediaFile) JsonName() string {
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
 	// escape any meta characters in the file name
-	matches, err := filepath.Glob(regexp.QuoteMeta(m.AbsPrefix(stripSequence)) + "*")
+	var prefix string
+
+	if stripSequence {
+		prefix = regexp.QuoteMeta(m.AbsPrefix(true))
+	} else {
+		prefix = regexp.QuoteMeta(m.AbsPrefix(false) + ".")
+	}
+
+	matches, err := filepath.Glob(prefix + "*")
 
 	if err != nil {
 		return result, err
