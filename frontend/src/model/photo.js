@@ -129,7 +129,7 @@ export class Photo extends RestModel {
 
     localDayString() {
         if (!this.TakenAtLocal) {
-            return new Date().getDay().toString().padStart(2, "0");
+            return new Date().getDate().toString().padStart(2, "0");
         }
 
         if (!this.Day || this.Day <= 0) {

@@ -124,7 +124,8 @@ describe("model/photo", () => {
         const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
         const photo = new Photo(values);
         const result = photo.localDayString();
-        assert.equal(result, "02");
+        // Current day of the month (changes):
+        assert.equal(result.length, 2);
         const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC", Day: 8};
         const photo2 = new Photo(values2);
         const result2 = photo2.localDayString();
