@@ -8,7 +8,7 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.4.1\n"
 "Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: nl\n"
@@ -74,11 +74,11 @@ msgstr "Alle landen"
 
 #: src/dialog/p-album-delete-dialog.vue:9
 msgid "Are you sure you want to delete these albums?"
-msgstr "Weet je zeker dat je deze albums wil verwijderen?"
+msgstr "Weet je zeker dat je deze albums wilt verwijderen?"
 
 #: src/dialog/p-photo-delete-dialog.vue:9 src/dialog/p-photo-edit-dialog.vue:9
 msgid "Are you sure you want to delete these photos?"
-msgstr "Weet je zeker dat je deze foto’s wil verwijderen?"
+msgstr "Weet je zeker dat je deze foto’s wilt verwijderen?"
 
 #: src/component/p-album-search.vue:134 src/component/p-photo-list.vue:53
 #: src/component/p-photo-toolbar.vue:186
@@ -297,7 +297,7 @@ msgstr "Nog niet geïmplementeerd"
 
 #: src/pages/settings/logs.vue:5
 msgid "Nothing to see here yet. Be patient."
-msgstr "Niets te zien hier. Weer geduldig."
+msgstr "Nog niets te zien hier. Wees geduldig."
 
 #: src/pages/library/upload.vue:8
 msgid "of"
@@ -357,7 +357,7 @@ msgstr "Recent geïmporteerd"
 
 #: src/component/p-photo-clipboard.vue:204
 msgid "remove failed: unknown album"
-msgstr "verwijder mislukte: onbekend album"
+msgstr "verwijderen mislukt: onbekend album"
 
 #: src/component/p-photo-clipboard.vue:152
 msgid "Remove from album"
@@ -446,12 +446,11 @@ msgstr "Verhaal vlag geschakeld"
 
 #: src/pages/albums.vue:36
 msgid "Try again using a different term or"
-msgstr "Probeer opnieuw met een andere trefwoord of"
+msgstr "Probeer opnieuw met een ander trefwoord of"
 
 #: src/pages/labels.vue:30
 msgid "Try again using a related or otherwise similar term."
-msgstr ""
-"Probeer opnieuww met een gerelateerd of anders vergelijkbaar trefwoord."
+msgstr "Probeer opnieuw met een gerelateerd of ander vergelijkbaar trefwoord."
 
 #: src/component/p-photo-details.vue:6 src/component/p-photo-mosaic.vue:6
 #: src/component/p-photo-tiles.vue:6
