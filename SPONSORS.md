@@ -33,6 +33,8 @@ Thank you very much to all of our sponsors and donors (including those that want
 
 [@kvtong93](https://github.com/kvtong93) (GitHub Sponsors, September 2020)
 
+[Thomas Eizinger](https://github.com/thomaseizinger) (GitHub Sponsors, October 2020)
+
 For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
 ## Donations ##
