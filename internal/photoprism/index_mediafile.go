@@ -422,6 +422,34 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
 			}
+
+			if photo.CameraSrc == entity.SrcAuto {
+				// Set UpdateCamera, Lens, Focal Length and F Number.
+				photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
+
+				if photo.Camera != nil {
+					photo.CameraID = photo.Camera.ID
+				} else {
+					photo.CameraID = entity.UnknownCamera.ID
+				}
+
+				if photo.CameraID != entity.UnknownCamera.ID {
+					photo.CameraSrc = entity.SrcMeta
+				}
+
+				photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
+
+				if photo.Lens != nil {
+					photo.LensID = photo.Lens.ID
+				} else {
+					photo.LensID = entity.UnknownLens.ID
+				}
+
+				photo.PhotoFocalLength = m.FocalLength()
+				photo.PhotoFNumber = m.FNumber()
+				photo.PhotoIso = m.Iso()
+				photo.PhotoExposure = m.Exposure()
+			}
 		}
 
 		if photo.TypeSrc == entity.SrcAuto {

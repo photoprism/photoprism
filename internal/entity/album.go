@@ -27,21 +27,21 @@ type Albums []Album
 // Album represents a photo album
 type Album struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	AlbumUID         string     `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
-	CoverUID         string     `gorm:"type:varbinary(42);" json:"CoverUID" yaml:"CoverUID,omitempty"`
-	FolderUID        string     `gorm:"type:varbinary(42);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
-	AlbumSlug        string     `gorm:"type:varbinary(255);index;" json:"Slug" yaml:"Slug"`
-	AlbumType        string     `gorm:"type:varbinary(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
-	AlbumTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title"`
-	AlbumLocation    string     `gorm:"type:varchar(255);" json:"Location" yaml:"Location,omitempty"`
-	AlbumCategory    string     `gorm:"type:varchar(255);index;" json:"Category" yaml:"Category,omitempty"`
-	AlbumCaption     string     `gorm:"type:text;" json:"Caption" yaml:"Caption,omitempty"`
-	AlbumDescription string     `gorm:"type:text;" json:"Description" yaml:"Description,omitempty"`
-	AlbumNotes       string     `gorm:"type:text;" json:"Notes" yaml:"Notes,omitempty"`
-	AlbumFilter      string     `gorm:"type:varbinary(1024);" json:"Filter" yaml:"Filter,omitempty"`
-	AlbumOrder       string     `gorm:"type:varbinary(32);" json:"Order" yaml:"Order,omitempty"`
-	AlbumTemplate    string     `gorm:"type:varbinary(255);" json:"Template" yaml:"Template,omitempty"`
-	AlbumCountry     string     `gorm:"type:varbinary(2);index:idx_albums_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
+	AlbumUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	CoverUID         string     `gorm:"type:VARBINARY(42);" json:"CoverUID" yaml:"CoverUID,omitempty"`
+	FolderUID        string     `gorm:"type:VARBINARY(42);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
+	AlbumSlug        string     `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"Slug"`
+	AlbumType        string     `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
+	AlbumTitle       string     `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title"`
+	AlbumLocation    string     `gorm:"type:VARCHAR(255);" json:"Location" yaml:"Location,omitempty"`
+	AlbumCategory    string     `gorm:"type:VARCHAR(255);index;" json:"Category" yaml:"Category,omitempty"`
+	AlbumCaption     string     `gorm:"type:TEXT;" json:"Caption" yaml:"Caption,omitempty"`
+	AlbumDescription string     `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
+	AlbumNotes       string     `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
+	AlbumFilter      string     `gorm:"type:VARBINARY(1024);" json:"Filter" yaml:"Filter,omitempty"`
+	AlbumOrder       string     `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
+	AlbumTemplate    string     `gorm:"type:VARBINARY(255);" json:"Template" yaml:"Template,omitempty"`
+	AlbumCountry     string     `gorm:"type:VARBINARY(2);index:idx_albums_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
 	AlbumYear        int        `gorm:"index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	AlbumMonth       int        `gorm:"index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
 	AlbumDay         int        `json:"Day" yaml:"Day,omitempty"`

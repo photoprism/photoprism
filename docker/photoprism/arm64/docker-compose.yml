@@ -14,17 +14,23 @@ services:
   photoprism:
     image: photoprism/photoprism-arm64:latest
     restart: unless-stopped
+    # Uncomment and edit the following line to set a specific user / group id:
+    # user: "1000:1000"
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-    healthcheck: # Optional
-      test: "photoprism status"
-      interval: 60s
-      timeout: 15s
-      retries: 5
-    environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
+    # Uncomment the following lines to enable regular health checks (causes automatic restarts):
+    # healthcheck:
+    #   test: ["CMD", "photoprism", "status"]
+    #   interval: 60s
+    #   timeout: 15s
+    #   retries: 5
+    #
+    # Run "photoprism help" and "photoprism config" too see all config options and current values:
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: "please-change"     # Initial admin password: PLEASE CHANGE!
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
@@ -39,10 +45,9 @@ services:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SETTINGS_HIDDEN: "false"            # Users can not view or change settings
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Initial admin password (can be changed in settings)
-      PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # Change to "mysql" for external MySQL or MariaDB
-      # PHOTOPRISM_DATABASE_DRIVER: "mysql"          # Using MariaDB or MySQL instead of SQLite is optional
-      # PHOTOPRISM_DATABASE_DSN: "user:passwd@tcp(photoprism-db:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # SQLite is an embedded database that doesn't require a server
+      # PHOTOPRISM_DATABASE_DRIVER: "mysql"          # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:insecure@tcp(mariadb:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
       PHOTOPRISM_SIDECAR_JSON: "true"                # Automatically create JSON sidecar files using Exiftool
       PHOTOPRISM_SIDECAR_YAML: "true"                # Automatically backup metadata to YAML sidecar files
       PHOTOPRISM_THUMB_FILTER: "lanczos"             # Resample filter, best to worst: blackman, lanczos, cubic, linear
@@ -53,29 +58,36 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Use darktable presets (disables concurrent raw to jpeg conversion)
+      # You may optionally set user, group and/or file permissions using environment variables:
+      # UID: 1000
+      # GID: 1000
+      # UMASK: 0000
     volumes:
-      - "~/Pictures:/photoprism/originals"           # [local path]:[container path]
+      # Storage folder for settings, index & sidecar files (DON'T REMOVE):
+      - "~/.photoprism:/photoprism/storage"
+      # Your personal photo and video collection ([local path]:[container path]):
+      - "~/Pictures:/photoprism/originals"
       # Multiple folders can be indexed by mounting them as subfolders of /photoprism/originals:
       # - "~/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
       # - "~/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
-      - "~/PhotoPrism/Storage:/photoprism/storage"   # Settings, index, sidecar files, and generated thumbnails
-      - "~/PhotoPrism/Import:/photoprism/import"     # Mounting the import folder is optional (see docs)
+      # Mounting the import folder is optional (see docs):
+      # - "~/Import:/photoprism/import"
 
 # Uncomment the following lines to use MariaDB instead of SQLite for improved performance & scalability:
 #
-#  photoprism-db:
-#    image: mariadb:10.5 # Alternatively mysql:8.0
+#  mariadb:
+#    image: mariadb:10.5
 #    restart: unless-stopped
 #    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
 #    volumes:
 #      - "/var/lib/mysql"
 #    environment:
-#      MYSQL_ROOT_PASSWORD: photoprism
-#      MYSQL_USER: user
-#      MYSQL_PASSWORD: passwd
+#      MYSQL_ROOT_PASSWORD: please-change
+#      MYSQL_USER: photoprism
+#      MYSQL_PASSWORD: insecure
 #      MYSQL_DATABASE: photoprism
 
-# Uncomment the following lines to upgrade automatically whenever there are new images available:
+# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
 #
 #  watchtower:
 #    image: containrrr/watchtower

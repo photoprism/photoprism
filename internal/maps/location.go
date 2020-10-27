@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/maps/osm"
-	"github.com/photoprism/photoprism/internal/maps/places"
+	"github.com/photoprism/photoprism/internal/pro/places"
 	"github.com/photoprism/photoprism/pkg/s2"
 )
 

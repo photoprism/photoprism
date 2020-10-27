@@ -32,17 +32,17 @@ func TestNewFileInfos(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result := NewFileInfos(infos, "/")
+	result := NewFileInfos(infos, PathSeparator)
 
 	if len(result) < 1 {
 		t.Fatal("empty result")
 	}
 
 	expected := map[string]FileInfo{
-		"test.jpg":      {Abs: "/test.jpg", Size: 10990, Dir: false},
-		"CATYELLOW.jpg": {Abs: "/CATYELLOW.jpg", Size: 70790, Dir: false},
-		"directory":     {Abs: "/directory", Size: 4096, Dir: true},
-		"linked":        {Abs: "/linked", Size: 4096, Dir: true},
+		"test.jpg":      {Abs: PathSeparator + "test.jpg", Size: 10990, Dir: false},
+		"CATYELLOW.jpg": {Abs: PathSeparator + "CATYELLOW.jpg", Size: 70790, Dir: false},
+		"directory":     {Abs: PathSeparator + "directory", Size: 4096, Dir: true},
+		"linked":        {Abs: PathSeparator + "linked", Size: 4096, Dir: true},
 	}
 
 	for _, file := range result {

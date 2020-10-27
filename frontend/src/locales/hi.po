@@ -1,0 +1,1907 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: easygettext\n"
+"X-Generator: Poedit 2.4.1\n"
+"Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
+
+#: src/pages/albums.vue:472 src/share/albums.vue:344
+msgid "%{n} albums found"
+msgstr "%{n} एल्बम मिले"
+
+#: src/pages/album/photos.vue:368 src/share/photos.vue:411
+msgid "%{n} entries found"
+msgstr "%{n} प्रविष्टियां मिलीं"
+
+#: src/dialog/share/upload.vue:114
+msgid "%{n} files uploaded"
+msgstr "%{n} फ़ाइलें अपलोड की गईं"
+
+#: src/pages/library/files.vue:413
+msgid "%{n} folders found"
+msgstr "%{n} फ़ोल्डर मिले"
+
+#: src/pages/labels.vue:445
+msgid "%{n} labels found"
+msgstr "%{n} लेबल मिले"
+
+#: src/pages/photos.vue:401
+msgid "%{n} results"
+msgstr "%{n} परिणाम"
+
+#: src/options/options.js:202
+msgid "1 hour"
+msgstr "1 घंटा"
+
+#: src/options/options.js:204
+msgid "12 hours"
+msgstr "12 घंटा"
+
+#: src/options/options.js:203
+msgid "4 hours"
+msgstr "4 घंटा"
+
+#: src/dialog/share.vue:72
+msgid "A click will copy it to your clipboard."
+msgstr "एक क्लिक इसे आपके क्लिपबोर्ड पर कॉपी कर देगा।"
+
+#: src/component/navigation.vue:342 src/component/navigation.vue:25
+msgid "About"
+msgstr "के बारे में"
+
+#: src/dialog/share/upload.vue:106 src/model/account.js:91 src/pages/settings.vue:12
+msgid "Account"
+msgstr "लेखा"
+
+#: src/dialog/photo/info.vue:141
+msgid "Accuracy"
+msgstr "शुद्धता"
+
+#: src/dialog/photo/labels.vue:110
+msgid "Action"
+msgstr "कार्य"
+
+#: src/dialog/photo/files.vue:29
+msgid "Actions"
+msgstr "क्रिया"
+
+#: src/pages/albums.vue:133
+msgid "Add Album"
+msgstr "एल्बम जोड़ें"
+
+#: src/pages/settings/general.vue:320
+msgid "Add files to your library via Web Upload."
+msgstr "वेब अपलोड के माध्यम से अपनी लाइब्रेरी में फाइलें जोड़ें।"
+
+#: src/dialog/share.vue:76
+msgid "Add Link"
+msgstr "लिंक जोड़ें"
+
+#: src/pages/albums.vue:112
+msgid "Add photos or videos from search results by selecting them."
+msgstr "उन्हें चुनकर खोज परिणामों से फ़ोटो या वीडियो जोड़ें।"
+
+#: src/dialog/account/add.vue:5 src/pages/settings/sync.vue:46
+msgid "Add Server"
+msgstr "सर्वर जोड़े"
+
+#: src/component/album/clipboard.vue:137 src/component/file/clipboard.vue:89
+#: src/component/label/clipboard.vue:64 src/component/photo/clipboard.vue:165
+#: src/dialog/photo/album.vue:61
+msgid "Add to album"
+msgstr "एल्बम में जोड़ें"
+
+#: src/dialog/photo/files.vue:156
+msgid "Added"
+msgstr "जोड़ा गया"
+
+#: src/options/options.js:212
+msgid "After 1 day"
+msgstr "1 दिन बाद"
+
+#: src/options/options.js:213
+msgid "After 3 days"
+msgstr "3 दिन बाद"
+
+#: src/options/options.js:214
+msgid "After 7 days"
+msgstr "7 दिन बाद"
+
+#: src/options/options.js:216
+msgid "After one month"
+msgstr "एक महिने बाद"
+
+#: src/options/options.js:218
+msgid "After one year"
+msgstr "एक साल बाद"
+
+#: src/pages/albums.vue:43
+msgid ""
+"After selecting photos or videos from search results, you can add them to existing or new "
+"albums using the context menu."
+msgstr ""
+"खोज परिणामों से फ़ोटो या वीडियो का चयन करने के बाद, आप उन्हें संदर्भ मेनू का उपयोग करके मौजूदा या नए एल्बम में "
+"जोड़ सकते हैं।"
+
+#: src/options/options.js:217
+msgid "After two months"
+msgstr "दो महीने के बाद"
+
+#: src/options/options.js:215
+msgid "After two weeks"
+msgstr "दो हफ्ते बाद"
+
+#: src/model/album.js:161
+msgid "Album"
+msgstr "एल्बम"
+
+#: src/dialog/photo/album.vue:93
+msgid "Album Name"
+msgstr "एल्बम का नाम"
+
+#: src/component/navigation.vue:166 src/component/navigation.vue:175 src/routes.js:111
+#: src/share/routes.js:15 src/share/routes.js:22
+msgid "Albums"
+msgstr "एल्बम"
+
+#: src/component/album/clipboard.vue:159
+msgid "Albums deleted"
+msgstr "एल्बम हटाए गए"
+
+#: src/pages/albums.vue:380 src/share/albums.vue:258
+msgid "All %{n} albums loaded"
+msgstr "सभी %{n} एल्बम लोड किए गए"
+
+#: src/pages/album/photos.vue:251 src/share/photos.vue:300
+msgid "All %{n} entries loaded"
+msgstr "सभी %{n} प्रविष्टियाँ भरी हुई हैं"
+
+#: src/pages/labels.vue:350
+msgid "All %{n} labels loaded"
+msgstr "सभी %{n} लेबल लोड किए गए"
+
+#: src/component/album/toolbar.vue:84 src/component/photo/toolbar.vue:175
+msgid "All Cameras"
+msgstr "सभी कैमरे"
+
+#: src/component/photo/toolbar.vue:178 src/pages/albums.vue:232 src/pages/albums.vue:577
+#: src/share/albums.vue:129
+msgid "All Categories"
+msgstr "सब वर्ग"
+
+#: src/component/photo/toolbar.vue:177
+msgid "All Colors"
+msgstr "सभी रंग"
+
+#: src/component/album/toolbar.vue:88 src/component/photo/toolbar.vue:174
+msgid "All Countries"
+msgstr "सभी देश"
+
+#: src/pages/about/feedback.vue:115
+msgid "All fields are required"
+msgstr "सभी फ़ील्ड आवश्यक हैं"
+
+#: src/pages/library/import.vue:105
+msgid "All files from import folder"
+msgstr "आयात फ़ोल्डर से सभी फ़ाइलें"
+
+#: src/component/photo/toolbar.vue:176
+msgid "All Lenses"
+msgstr "सभी लेंस"
+
+#: src/component/photo/toolbar.vue:179
+msgid "All Months"
+msgstr "सभी महीने"
+
+#: src/pages/library/index.vue:98
+msgid "All originals"
+msgstr "सभी मूल"
+
+#: src/component/photo/toolbar.vue:180
+msgid "All Years"
+msgstr "सभी वर्ष"
+
+#: src/dialog/share.vue:74
+msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgstr "वैकल्पिक रूप से, आप Nextcloud की तरह सीधे WebDAV सर्वर पर फाइल अपलोड कर सकते हैं।"
+
+#: src/dialog/photo/info.vue:133
+msgid "Altitude"
+msgstr "ऊंचाई"
+
+#: src/dialog/photo/details.vue:409
+msgid "Altitude (m)"
+msgstr "ऊंचाई (एम)"
+
+#: src/common/api.js:76
+msgid "An error occurred - are you offline?"
+msgstr "एक त्रुटि हुई - क्या आप ऑफ़लाइन हैं?"
+
+#: src/pages/settings/general.vue:773
+msgid "Animation"
+msgstr "एनीमेशन"
+
+#: src/dialog/share.vue:73
+msgid "Any private photos and videos remain private and won't be shared."
+msgstr "कोई भी निजी फ़ोटो और वीडियो निजी रहेंगे और उन्हें साझा नहीं किया जाएगा।"
+
+#: src/dialog/account/edit.vue:594
+msgid "API Key"
+msgstr "एपीआई कुंजी"
+
+#: src/dialog/photo/details.vue:124
+msgid "Apply"
+msgstr "लागू"
+
+#: src/component/photo/cards.vue:127 src/dialog/photo/details.vue:123
+msgid "Approve"
+msgstr "मंजूर"
+
+#: src/component/navigation.vue:114 src/component/photo/cards.vue:124
+#: src/component/photo/clipboard.vue:193 src/pages/settings/general.vue:415 src/routes.js:185
+msgid "Archive"
+msgstr "पुरालेख"
+
+#: src/dialog/photo/info.vue:181
+msgid "Archived"
+msgstr "संग्रहीत"
+
+#: src/dialog/photo/archive.vue:10
+msgid "Are you sure you want to archive the selection?"
+msgstr "क्या आप वाकई चयन को संग्रहीत करना चाहते हैं?"
+
+#: src/dialog/album/delete.vue:10
+msgid "Are you sure you want to delete these albums?"
+msgstr "क्या आप वाकई इन एल्बम को हटाना चाहते हैं?"
+
+#: src/dialog/label/delete.vue:9
+msgid "Are you sure you want to delete these labels?"
+msgstr "क्या आप वाकई इन लेबल को हटाना चाहते हैं?"
+
+#: src/dialog/account/remove.vue:9
+msgid "Are you sure you want to delete this account?"
+msgstr "क्या आप वाकई इस खाते को हटाना चाहते हैं?"
+
+#: src/dialog/file/delete.vue:10
+msgid "Are you sure you want to permanently delete this file?"
+msgstr "क्या आप वाकई इस फ़ाइल को स्थायी रूप से हटाना चाहते हैं?"
+
+#: src/dialog/photo/details.vue:723
+msgid "Artist"
+msgstr "कलाकार"
+
+#: src/dialog/photo/files.vue:124
+msgid "Aspect Ratio"
+msgstr "आस्पेक्ट अनुपात"
+
+#: src/pages/settings/account.vue:70
+msgid "At least 6 characters."
+msgstr "कम से कम 6 वर्ण।"
+
+#: src/pages/settings/general.vue:131
+msgid ""
+"Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgstr "स्वचालित रूप से अन्य फ़ाइल प्रकारों के लिए JPEG बनाएं ताकि उन्हें एक ब्राउज़र में प्रदर्शित किया जा सके।"
+
+#: src/pages/settings.vue:8
+msgid "Backup"
+msgstr "बैकअप"
+
+#: src/options/options.js:237
+msgid "Black"
+msgstr "काली"
+
+#: src/options/options.js:233
+msgid "Blue"
+msgstr "नीला"
+
+#: src/options/options.js:234
+msgid "Brown"
+msgstr "भूरा"
+
+#: src/pages/settings/general.vue:544
+msgid "Browse and edit image classification labels."
+msgstr "छवि वर्गीकरण लेबल ब्राउज़ करें और संपादित करें।"
+
+#: src/pages/settings/general.vue:480
+msgid "Browse indexed files and folders in Library."
+msgstr "लाइब्रेरी में अनुक्रमित फ़ाइलों और फ़ोल्डरों को ब्राउज़ करें।"
+
+#: src/options/options.js:244
+msgid "Bug Report"
+msgstr "बग रिपोर्ट"
+
+#: src/common/notify.js:72
+msgid "Busy, please wait…"
+msgstr "व्यस्त, कृपया प्रतीक्षा करें ..."
+
+#: src/component/navigation.vue:205 src/routes.js:124 src/routes.js:131
+msgid "Calendar"
+msgstr "पंचांग"
+
+#: src/component/photo/list.vue:138 src/component/photo/toolbar.vue:232
+#: src/dialog/photo/details.vue:506 src/share/photo/list.vue:115
+msgid "Camera"
+msgstr "कैमरा"
+
+#: src/dialog/photo/info.vue:70
+msgid "Camera Serial"
+msgstr "कैमरा सीरियल"
+
+#: src/pages/album/photos.vue:257 src/pages/photos.vue:292 src/share/photos.vue:306
+msgid "Can't load more, limit reached"
+msgstr "अधिक लोड नहीं किया जा सकता, सीमा तक पहुंच गया"
+
+#: src/common/clipboard.js:81 src/common/clipboard.js:114 src/pages/albums.vue:517
+#: src/pages/albums.vue:533 src/pages/labels.vue:286 src/pages/labels.vue:302
+#: src/pages/library/files.vue:297 src/pages/library/files.vue:313 src/share/albums.vue:385
+#: src/share/albums.vue:401
+msgid "Can't select more items"
+msgstr "अधिक आइटम का चयन नहीं किया जा सकता"
+
+#: src/dialog/account/add.vue:78 src/dialog/account/edit.vue:95 src/dialog/account/remove.vue:13
+#: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:42 src/dialog/file/delete.vue:15
+#: src/dialog/label/delete.vue:13 src/dialog/photo/album.vue:15 src/dialog/reload.vue:11
+#: src/dialog/share.vue:149 src/dialog/share/upload.vue:29 src/pages/library/import.vue:34
+#: src/pages/library/index.vue:26
+msgid "Cancel"
+msgstr "रद्द करना"
+
+#: src/component/album/toolbar.vue:99 src/component/photo/toolbar.vue:185
+msgid "Cards"
+msgstr "पत्ते"
+
+#: src/component/photo/toolbar.vue:415 src/dialog/album/edit.vue:189
+#: src/pages/about/feedback.vue:62 src/pages/albums.vue:78
+msgid "Category"
+msgstr "वर्ग"
+
+#: src/pages/settings/account.vue:26
+msgid "Change"
+msgstr "परिवर्तन"
+
+#: src/pages/settings/general.vue:448
+msgid "Change photo titles, locations and other metadata."
+msgstr "फोटो शीर्षक, स्थान और अन्य मेटाडेटा बदलें।"
+
+#: src/component/photo/clipboard.vue:116
+msgid "Change private flag"
+msgstr "निजी ध्वज बदलें"
+
+#: src/dialog/photo/info.vue:173
+msgid "Checked"
+msgstr "चेक किए गए"
+
+#: src/options/options.js:104
+msgid "Chinese"
+msgstr "चीनी"
+
+#: src/dialog/photo/files.vue:136
+msgid "Chroma"
+msgstr "क्रोमा"
+
+#: src/component/photo/viewer.vue:45 src/dialog/photo/details.vue:120 src/dialog/share.vue:86
+#: src/pages/library/errors.vue:56
+msgid "Close"
+msgstr "बंद करे"
+
+#: src/dialog/photo/files.vue:96
+msgid "Codec"
+msgstr "कोडेक"
+
+#: src/component/photo/toolbar.vue:384
+msgid "Color"
+msgstr "रंग"
+
+#: src/pages/discover.vue:4
+msgid "Colors"
+msgstr "रंग की"
+
+#: src/pages/library/index.vue:113
+msgid "Complete Rescan"
+msgstr "पूरा रेसकान"
+
+#: src/dialog/photo/labels.vue:109
+msgid "Confidence"
+msgstr "आत्मविश्वास"
+
+#: src/dialog/account/add.vue:79
+msgid "Connect"
+msgstr "जुडिये"
+
+#: src/dialog/webdav.vue:4 src/pages/settings/sync.vue:42
+msgid "Connect via WebDAV"
+msgstr "WebDAV के माध्यम से कनेक्ट करें"
+
+#: src/pages/about/feedback.vue:7
+msgid "Contact Us"
+msgstr "संपर्क करें"
+
+#: src/pages/albums.vue:109
+msgid "Contains %{n} entries."
+msgstr "इसमें %{n} प्रविष्टियाँ हैं।"
+
+#: src/pages/albums.vue:106
+msgid "Contains one entry."
+msgstr "एक प्रविष्टि शामिल है।"
+
+#: src/pages/about/about.vue:4
+msgid "Contributors"
+msgstr "योगदानकर्ता"
+
+#: src/pages/settings/general.vue:130
+msgid "Convert to JPEG"
+msgstr "JPEG में कनवर्ट करें"
+
+#: src/pages/library/index.vue:173
+msgid "Converting"
+msgstr "परिवर्तित"
+
+#: src/dialog/share.vue:164 src/dialog/webdav.vue:82
+msgid "Copied to clipboard"
+msgstr "क्लिपबोर्ड पर नकल"
+
+#: src/pages/library.vue:12 src/pages/library.vue:1
+msgid "Copy"
+msgstr "प्रतिलिपि"
+
+#: src/dialog/photo/details.vue:753
+msgid "Copyright"
+msgstr "कॉपीराइट"
+
+#: src/component/photo/cards.vue:9 src/component/photo/list.vue:9
+#: src/component/photo/mosaic.vue:9 src/pages/albums.vue:39 src/pages/albums.vue:48
+#: src/pages/labels.vue:35 src/pages/library/files.vue:36 src/share/albums.vue:16
+#: src/share/photo/cards.vue:9 src/share/photo/list.vue:9 src/share/photo/mosaic.vue:9
+msgid "Couldn't find anything"
+msgstr "कुछ भी नहीं मिला"
+
+#: src/component/photo/list.vue:121 src/share/photo/list.vue:102
+msgid "Couldn't find anything."
+msgstr "कुछ भी नहीं मिला"
+
+#: src/component/photo/cards.vue:6 src/component/photo/list.vue:6
+#: src/component/photo/mosaic.vue:6 src/share/photo/cards.vue:6 src/share/photo/list.vue:6
+#: src/share/photo/mosaic.vue:6
+msgid "Couldn't find recently edited"
+msgstr "हाल ही में संपादित नहीं मिला"
+
+#: src/component/photo/toolbar.vue:201 src/dialog/photo/details.vue:375
+msgid "Country"
+msgstr "देश"
+
+#: src/dialog/photo/album.vue:62
+msgid "Create album"
+msgstr "एल्बम बनाओ"
+
+#: src/dialog/photo/info.vue:149
+msgid "Created"
+msgstr "बनाया था"
+
+#: src/pages/library/index.vue:179
+msgid "Creating thumbnails for"
+msgstr "के लिए थंबनेल बनाना"
+
+#: src/pages/settings/account.vue:38
+msgid "Current Password"
+msgstr "वर्तमान पासवर्ड"
+
+#: src/options/options.js:241
+msgid "Customer Support"
+msgstr "ग्राहक सहेयता"
+
+#: src/options/options.js:232
+msgid "Cyan"
+msgstr "सियान"
+
+#: src/options/options.js:115
+msgid "Cyano"
+msgstr "Cyano"
+
+#: src/options/options.js:205
+msgid "Daily"
+msgstr "रोज"
+
+#: src/dialog/photo/details.vue:174
+msgid "Day"
+msgstr "दिन"
+
+#: src/options/options.js:111
+msgid "Default"
+msgstr "चूक"
+
+#: src/dialog/account/edit.vue:228
+msgid "Default Folder"
+msgstr "डिफ़ॉल्ट फ़ोल्डर"
+
+#: src/component/album/clipboard.vue:161 src/component/label/clipboard.vue:88
+#: src/dialog/account/remove.vue:15 src/dialog/album/delete.vue:18 src/dialog/file/delete.vue:18
+#: src/dialog/label/delete.vue:15 src/dialog/photo/files.vue:42 src/dialog/share.vue:290
+msgid "Delete"
+msgstr "हटाएं"
+
+#: src/dialog/album/edit.vue:163 src/dialog/photo/details.vue:820
+msgid "Description"
+msgstr "विवरण"
+
+#: src/dialog/webdav.vue:22
+msgid "Detailed instructions can be found in our User Guide."
+msgstr "विस्तृत निर्देश हमारे उपयोगकर्ता गाइड में पाए जा सकते हैं।"
+
+#: src/dialog/photo/edit.vue:23
+msgid "Details"
+msgstr "विवरण"
+
+#: src/dialog/photo/files.vue:241
+msgid "Dimensions"
+msgstr "आयाम"
+
+#: src/dialog/account/edit.vue:61 src/dialog/account/edit.vue:120
+msgid "Disabled"
+msgstr "विकलांग"
+
+#: src/routes.js:318 src/routes.js:325 src/routes.js:332 src/routes.js:339
+msgid "Discover"
+msgstr "डिस्कवर"
+
+#: src/options/options.js:245
+msgid "Donations"
+msgstr "दान"
+
+#: src/dialog/photo/details.vue:127 src/dialog/share.vue:150
+msgid "Done"
+msgstr "किया हुआ"
+
+#: src/dialog/upload.vue:39 src/pages/library/import.vue:7 src/pages/library/index.vue:7
+msgid "Done."
+msgstr "किया हुआ |"
+
+#: src/component/album/clipboard.vue:113 src/component/album/toolbar.vue:89
+#: src/component/file/clipboard.vue:65 src/component/photo/clipboard.vue:141
+#: src/component/photo/viewer.vue:54 src/dialog/photo/files.vue:33
+#: src/pages/settings/general.vue:351 src/share/album/clipboard.vue:64
+#: src/share/photo/clipboard.vue:65 src/share/photos.vue:68
+msgid "Download"
+msgstr "डाउनलोड"
+
+#: src/dialog/account/edit.vue:391
+msgid "Download remote files"
+msgstr "दूरस्थ फ़ाइलें डाउनलोड करें"
+
+#: src/pages/settings/general.vue:352
+msgid "Download single files and zip archives."
+msgstr "एकल फाइलें और ज़िप अभिलेखागार डाउनलोड करें।"
+
+#: src/component/album/clipboard.vue:173 src/component/album/toolbar.vue:164
+#: src/component/file/clipboard.vue:100 src/component/label/clipboard.vue:125
+#: src/component/photo/clipboard.vue:213 src/component/photo/viewer.vue:163
+#: src/share/album/clipboard.vue:86 src/share/photo/clipboard.vue:87 src/share/photos.vue:533
+msgid "Downloading…"
+msgstr "डाउनलोड कर रहा है ..."
+
+#: src/pages/library/files.vue:39
+msgid "Duplicates will be skipped and only appear once."
+msgstr "डुप्लिकेट को छोड़ दिया जाएगा और केवल एक बार दिखाई देगा।"
+
+#: src/options/options.js:92
+msgid "Dutch"
+msgstr "डच"
+
+#: src/pages/about/feedback.vue:165
+msgid "E-Mail"
+msgstr "ईमेल"
+
+#: src/component/album/clipboard.vue:89 src/component/album/toolbar.vue:54
+#: src/component/photo/clipboard.vue:90 src/component/photo/viewer.vue:83
+#: src/pages/settings/general.vue:447
+msgid "Edit"
+msgstr "संपादित करें"
+
+#: src/dialog/album/edit.vue:8
+msgid "Edit %{name}"
+msgstr "%{name} संपादित करें"
+
+#: src/dialog/account/edit.vue:162
+msgid "Edit Account"
+msgstr "खाता संपादित करें"
+
+#: src/dialog/photo/edit.vue:97
+msgid "Edit Photo"
+msgstr "फ़ोटो संपादित करें"
+
+#: src/dialog/photo/info.vue:165
+msgid "Edited"
+msgstr "संपादित"
+
+#: src/dialog/account/edit.vue:60 src/dialog/account/edit.vue:119
+msgid "Enabled"
+msgstr "सक्रिय"
+
+#: src/options/options.js:76
+msgid "English"
+msgstr "अंग्रेज़ी"
+
+#: src/dialog/photo/files.vue:142
+msgid "Error"
+msgstr "त्रुटि"
+
+#: src/component/navigation.vue:311
+msgid "Errors"
+msgstr "त्रुटियाँ"
+
+#: src/options/options.js:206
+msgid "Every two days"
+msgstr "हेर दो दिनों"
+
+#: src/pages/settings/general.vue:67
+msgid "Exclude content marked as private from search results, shared albums, labels and places."
+msgstr "खोज परिणामों, साझा एल्बम, लेबल और स्थानों से निजी के रूप में चिह्नित सामग्री को बाहर निकालें।"
+
+#: src/component/photo/toolbar.vue:144
+msgid "Expand Search"
+msgstr "खोज का विस्तार करें"
+
+#: src/dialog/account/edit.vue:288 src/dialog/share.vue:167
+msgid "Expires"
+msgstr "समय-सीमा समाप्त"
+
+#: src/dialog/photo/details.vue:568
+msgid "Exposure"
+msgstr "संसर्ग"
+
+#: src/dialog/photo/details.vue:632
+msgid "F Number"
+msgstr "एफ नंबर"
+
+#: src/dialog/share.vue:164 src/dialog/webdav.vue:82
+msgid "Failed copying to clipboard"
+msgstr "क्लिपबोर्ड पर प्रतिलिपि बनाना विफल रहा"
+
+#: src/dialog/share.vue:196
+msgid "Failed removing link"
+msgstr "लिंक हटाने में विफल"
+
+#: src/dialog/share.vue:184
+msgid "Failed updating link"
+msgstr "लिंक अपडेट करने में विफल"
+
+#: src/dialog/upload.vue:238
+msgid "Failure while importing uploaded files"
+msgstr "अपलोड की गई फ़ाइलों को आयात करते समय विफलता"
+
+#: src/options/options.js:145
+msgid "Fast"
+msgstr "तेज"
+
+#: src/dialog/photo/info.vue:77
+msgid "Favorite"
+msgstr "पसंदीदा"
+
+#: src/component/navigation.vue:127 src/routes.js:157
+msgid "Favorites"
+msgstr "पसंदीदा"
+
+#: src/options/options.js:243
+msgid "Feature Request"
+msgstr "महत्वपूर्ण लेख मांगना"
+
+#: src/component/navigation.vue:350 src/component/navigation.vue:33
+msgid "Feedback"
+msgstr "प्रतिपुष्टि"
+
+#: src/model/file.js:233
+msgid "File"
+msgstr "फ़ाइल"
+
+#: src/routes.js:217
+msgid "File Browser"
+msgstr "फ़ाइल ब्राउज़र"
+
+#: src/dialog/photo/edit.vue:31
+msgid "Files"
+msgstr "फ़ाइलें"
+
+#: src/pages/settings/general.vue:163
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' belong to the same photo."
+msgstr "क्रमिक नाम वाली फाइलें जैसे 'IMG_1234 (2)' या 'IMG_1234 कॉपी 2' एक ही फोटो से संबंधित हैं।"
+
+#: src/dialog/photo/details.vue:661
+msgid "Focal Length"
+msgstr "फोकल लम्बाई"
+
+#: src/dialog/account/edit.vue:326 src/dialog/account/edit.vue:332 src/dialog/photo/info.vue:24
+#: src/dialog/share/upload.vue:147 src/model/folder.js:187 src/pages/library/files.vue:81
+msgid "Folder"
+msgstr "फ़ोल्डर"
+
+#: src/pages/library/files.vue:415
+msgid "Folder contains %{n} files"
+msgstr "फ़ोल्डर में %{n} फाइलें हैं"
+
+#: src/pages/library/files.vue:407
+msgid "Folder is empty"
+msgstr "फ़ोल्डर खाली है"
+
+#: src/component/navigation.vue:184 src/routes.js:137 src/routes.js:144
+msgid "Folders"
+msgstr "फ़ोल्डर"
+
+#: src/options/options.js:84
+msgid "French"
+msgstr "फ्रेंच"
+
+#: src/component/photo/viewer.vue:141
+msgid "Fullscreen"
+msgstr "पूर्ण स्क्रीन"
+
+#: src/pages/settings.vue:4
+msgid "General"
+msgstr "सामान्य"
+
+#: src/options/options.js:80
+msgid "German"
+msgstr "जर्मन"
+
+#: src/options/options.js:227
+msgid "Gold"
+msgstr "सोना"
+
+#: src/options/options.js:230
+msgid "Green"
+msgstr "हरा"
+
+#: src/options/options.js:236
+msgid "Grey"
+msgstr "धूसर"
+
+#: src/component/album/toolbar.vue:110 src/component/photo/toolbar.vue:194
+#: src/dialog/album/edit.vue:115
+msgid "Group by similarity"
+msgstr "समानता से समूह"
+
+#: src/dialog/photo/files.vue:60
+msgid "Hash"
+msgstr "हैश"
+
+#: src/pages/help.vue:4
+msgid "Help"
+msgstr "मदद"
+
+#: src/component/navigation.vue:302
+msgid "Hidden"
+msgstr "छिपा हुआ"
+
+#: src/routes.js:223
+msgid "Hidden Files"
+msgstr "छिपी हुई फाइलें"
+
+#: src/pages/settings/general.vue:416
+msgid "Hide photos that have been moved to archive."
+msgstr "उन तस्वीरों को छिपाएं जिन्हें संग्रह में स्थानांतरित किया गया है।"
+
+#: src/pages/settings/general.vue:66
+msgid "Hide Private"
+msgstr "निजी छिपाएँ"
+
+#: src/pages/about/feedback.vue:106
+msgid "How can we help?"
+msgstr "हम आपकी सहायता किस तरह से कर सकते है?"
+
+#: src/options/options.js:168
+msgid "Hybrid"
+msgstr "संकर"
+
+#: src/component/photo/cards.vue:13 src/component/photo/list.vue:13
+#: src/component/photo/mosaic.vue:13 src/pages/library/files.vue:40
+msgid ""
+"If a file you expect is missing, please re-index your library and wait until indexing has been "
+"completed."
+msgstr ""
+"यदि आपकी अपेक्षा की गई फ़ाइल गायब है, तो कृपया अपनी लाइब्रेरी को फिर से अनुक्रमित करें और तब तक प्रतीक्षा करें "
+"जब तक कि अनुक्रमण पूरा नहीं हो जाता।"
+
+#: src/dialog/photo/labels.vue:122
+msgid "image"
+msgstr "छवि"
+
+#: src/options/options.js:183
+msgid "Image"
+msgstr "छवि"
+
+#: src/pages/library/import.vue:43 src/pages/settings/general.vue:607
+msgid "Import"
+msgstr "आयात"
+
+#: src/pages/library/import.vue:156
+msgid "Import failed"
+msgstr "आयात विफल रहा"
+
+#: src/pages/library/import.vue:25
+msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgstr ""
+"आयातित फ़ाइलों को दिनांक के अनुसार क्रमबद्ध किया जाएगा और डुप्लिकेट से बचने के लिए एक अनूठा नाम दिया जाएगा।"
+
+#: src/pages/settings/general.vue:608
+msgid "Imported files will be sorted by date and given a unique name."
+msgstr "आयातित फ़ाइलों को तिथि के अनुसार हल किया जाएगा और एक अनूठा नाम दिया जाएगा।"
+
+#: src/pages/library/import.vue:5
+msgid "Importing %{name}…"
+msgstr "%{name} आयात कर रहा है…"
+
+#: src/pages/library/import.vue:6
+msgid "Importing files to originals…"
+msgstr "मूल करने के लिए फ़ाइलें आयात कर रहा है ..."
+
+#: src/dialog/photo/files.vue:159 src/dialog/photo/files.vue:168
+msgid "in"
+msgstr "में"
+
+#: src/pages/library.vue:4
+msgid "Index"
+msgstr "सूची"
+
+#: src/pages/library/index.vue:167
+msgid "Indexing"
+msgstr "इंडेक्सिंग"
+
+#: src/pages/library/index.vue:149
+msgid "Indexing failed"
+msgstr "अनुक्रमण विफल रहा"
+
+#: src/pages/library/index.vue:6
+msgid "Indexing media and sidecar files…"
+msgstr "मीडिया और साइडकार फ़ाइलों को अनुक्रमित करना ..."
+
+#: src/dialog/photo/files.vue:54
+msgid "Instance ID"
+msgstr "इंस्टेंस आईडी"
+
+#: src/dialog/account/edit.vue:362
+msgid "Interval"
+msgstr "मध्यान्तर"
+
+#: src/dialog/photo/details.vue:516
+msgid "Invalid date"
+msgstr "अमान्य तिथि"
+
+#: src/model/rest.js:155
+msgid "Item"
+msgstr "मद"
+
+#: src/pages/library/import.vue:26
+msgid "JPEGs and thumbnails are automatically rendered as needed."
+msgstr "JPEG और थंबनेल स्वचालित रूप से आवश्यकतानुसार प्रस्तुत किए जाते हैं।"
+
+#: src/dialog/photo/details.vue:851
+msgid "Keywords"
+msgstr "कीवर्ड"
+
+#: src/dialog/photo/labels.vue:107 src/model/label.js:97
+msgid "Label"
+msgstr "लेबल"
+
+#: src/dialog/photo/labels.vue:57 src/pages/labels.vue:442
+msgid "Label Name"
+msgstr "लेबल का नाम"
+
+#: src/component/navigation.vue:263 src/dialog/photo/edit.vue:27
+#: src/pages/settings/general.vue:543 src/routes.js:236
+msgid "Labels"
+msgstr "लेबल"
+
+#: src/component/label/clipboard.vue:111
+msgid "Labels deleted"
+msgstr "लेबल हटा दिए गए"
+
+#: src/pages/settings/general.vue:265
+msgid "Language"
+msgstr "भाषा"
+
+#: src/pages/settings/sync.vue:113
+msgid "Last Backup"
+msgstr "पिछला बैकअप"
+
+#: src/dialog/photo/details.vue:442 src/dialog/photo/info.vue:117
+msgid "Latitude"
+msgstr "अक्षांश"
+
+#: src/options/options.js:119
+msgid "Lavender"
+msgstr "लैवेंडर"
+
+#: src/dialog/photo/details.vue:599
+msgid "Lens"
+msgstr "लेंस"
+
+#: src/pages/settings/general.vue:512
+msgid "Let PhotoPrism create albums from past events."
+msgstr "बता दें कि PhotoPrism पिछले इवेंट्स से एल्बम बनाता है।"
+
+#: src/component/navigation.vue:276 src/component/navigation.vue:285
+#: src/pages/settings/general.vue:6 src/pages/settings/general.vue:575 src/routes.js:255
+#: src/routes.js:262 src/routes.js:269
+msgid "Library"
+msgstr "पुस्तकालय"
+
+#: src/component/navigation.vue:358 src/component/navigation.vue:41
+#: src/dialog/photo/details.vue:788 src/pages/about/license.vue:4
+msgid "License"
+msgstr "लाइसेंस"
+
+#: src/component/photo/viewer.vue:111
+msgid "Like"
+msgstr "पसंद"
+
+#: src/options/options.js:229
+msgid "Lime"
+msgstr "चूना"
+
+#: src/pages/library/files.vue:417
+msgid "Limit reached, showing first %{n} files"
+msgstr "पहले %{n} फ़ाइलों को दिखाते हुए, सीमा समाप्त हो गई"
+
+#: src/model/link.js:105
+msgid "Link"
+msgstr "संपर्क"
+
+#: src/component/album/toolbar.vue:100 src/component/photo/toolbar.vue:186
+msgid "List"
+msgstr "सूची"
+
+#: src/options/options.js:191
+msgid "Live"
+msgstr "लाइव"
+
+#: src/dialog/photo/details.vue:275
+msgid "Local Time"
+msgstr "स्थानीय समय"
+
+#: src/dialog/photo/labels.vue:123
+msgid "location"
+msgstr "स्थान"
+
+#: src/component/photo/list.vue:140 src/dialog/album/edit.vue:137 src/share/photo/list.vue:117
+msgid "Location"
+msgstr "स्थान"
+
+#: src/pages/library/errors.vue:35
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or there are other "
+"potential issues."
+msgstr "जब भी PhotoPrism टूटी हुई फ़ाइलों में आता है, या अन्य संभावित मुद्दे हैं, तो लॉग संदेश यहां दिखाई देते हैं।"
+
+#: src/component/navigation.vue:384
+msgid "Login"
+msgstr "लॉग इन करें"
+
+#: src/component/navigation.vue:372
+msgid "Logout"
+msgstr "लॉग आउट"
+
+#: src/pages/library.vue:17 src/pages/settings/general.vue:639
+msgid "Logs"
+msgstr "लॉग्स"
+
+#: src/dialog/photo/details.vue:475 src/dialog/photo/info.vue:125
+msgid "Longitude"
+msgstr "देशान्तर"
+
+#: src/options/options.js:223
+msgid "Magenta"
+msgstr "मैजेंटा"
+
+#: src/dialog/photo/files.vue:130
+msgid "Main Color"
+msgstr "मुखय रंग"
+
+#: src/dialog/photo/labels.vue:121
+msgid "manual"
+msgstr "गाइड"
+
+#: src/dialog/account/edit.vue:45
+msgid "Manual Upload"
+msgstr "मैनुअल अपलोड"
+
+#: src/options/options.js:149
+msgid "Medium"
+msgstr "मध्यम"
+
+#: src/pages/about/feedback.vue:111
+msgid "Message sent"
+msgstr "मैसेज बेजा गया"
+
+#: src/dialog/photo/files.vue:148
+msgid "Missing"
+msgstr "लापता"
+
+#: src/component/navigation.vue:218 src/pages/settings/general.vue:511 src/routes.js:98
+#: src/routes.js:105
+msgid "Moments"
+msgstr "लम्हें"
+
+#: src/component/navigation.vue:73
+msgid "Monochrome"
+msgstr "एक रंग का"
+
+#: src/component/photo/toolbar.vue:353 src/dialog/photo/details.vue:207
+msgid "Month"
+msgstr "महीना"
+
+#: src/options/options.js:123 src/options/options.js:176
+msgid "Moonlight"
+msgstr "चांदनी"
+
+#: src/pages/albums.vue:475 src/share/albums.vue:347
+msgid "More than 20 albums found"
+msgstr "20 से अधिक एल्बम मिले"
+
+#: src/pages/labels.vue:447
+msgid "More than 20 labels found"
+msgstr "20 से अधिक लेबल मिले"
+
+#: src/pages/album/photos.vue:371 src/share/photos.vue:414
+msgid "More than 50 entries found"
+msgstr "50 से अधिक प्रविष्टियाँ मिलीं"
+
+#: src/pages/photos.vue:404
+msgid "More than 50 results"
+msgstr "50 से अधिक परिणाम"
+
+#: src/component/album/toolbar.vue:98 src/component/photo/toolbar.vue:184
+msgid "Mosaic"
+msgstr "मौज़ेक"
+
+#: src/component/album/toolbar.vue:111 src/component/photo/toolbar.vue:195
+#: src/dialog/album/edit.vue:116
+msgid "Most relevant"
+msgstr "सबसे ज़रूरी"
+
+#: src/pages/library.vue:9 src/pages/library.vue:1
+msgid "Move"
+msgstr "चाल"
+
+#: src/pages/library/import.vue:120
+msgid "Move Files"
+msgstr "फ़ाइलें ले जाएँ"
+
+#: src/common/vm.js:8 src/common/vm.js:9 src/common/vm.js:12 src/common/vm.js:13
+msgid "msgid"
+msgid_plural "plural"
+msgstr[0] "बहुवचन"
+msgstr[1] "msgid"
+
+#: src/component/photo/list.vue:140 src/dialog/account/edit.vue:488 src/dialog/album/edit.vue:113
+#: src/dialog/photo/files.vue:72 src/dialog/photo/files.vue:240 src/dialog/photo/info.vue:30
+#: src/pages/about/feedback.vue:132 src/pages/login.vue:58 src/share/photo/list.vue:117
+msgid "Name"
+msgstr "नाम"
+
+#: src/component/album/toolbar.vue:119 src/dialog/album/edit.vue:119
+#: src/dialog/photo/labels.vue:112 src/pages/labels.vue:197 src/pages/library/files.vue:173
+msgid "Name too long"
+msgstr "नाम बहुत लंबा"
+
+#: src/options/options.js:201 src/options/options.js:211 src/pages/settings/sync.vue:129
+msgid "Never"
+msgstr "कभी नहीँ"
+
+#: src/pages/settings/account.vue:66
+msgid "New Password"
+msgstr "नया पासवर्ड"
+
+#: src/component/album/toolbar.vue:107 src/component/photo/toolbar.vue:191
+#: src/dialog/album/edit.vue:112
+msgid "Newest first"
+msgstr "नवीनतम पहले"
+
+#: src/dialog/photo/archive.vue:15 src/dialog/photo/info.vue:192 src/dialog/photo/info.vue:219
+#: src/dialog/photo/info.vue:246 src/dialog/photo/info.vue:273
+msgid "No"
+msgstr "नहीं"
+
+#: src/pages/albums.vue:468 src/share/albums.vue:340
+msgid "No albums found"
+msgstr "कोई एल्बम नहीं मिला"
+
+#: src/pages/album/photos.vue:364 src/share/photos.vue:407
+msgid "No entries found"
+msgstr "कोई प्रविष्टि नहीं मिली"
+
+#: src/dialog/photo/labels.vue:17
+msgid "No labels found"
+msgstr "कोई लेबल नहीं मिला"
+
+#: src/pages/places.vue:197 src/pages/places.vue:242
+msgid "No photos found"
+msgstr "कोई फ़ोटो नहीं मिला"
+
+#: src/pages/photos.vue:397
+msgid "No results"
+msgstr "कोई परिणाम नहीं"
+
+#: src/pages/settings/sync.vue:17
+msgid "No servers configured."
+msgstr "कोई सर्वर कॉन्फ़िगर नहीं किया गया।"
+
+#: src/pages/library/errors.vue:32
+msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgstr "इस कीवर्ड से कोई चेतावनी या त्रुटि नहीं है। ध्यान दें कि खोज केस-संवेदी है।"
+
+#: src/component/photo/cards.vue:15 src/component/photo/cards.vue:1
+#: src/component/photo/list.vue:15 src/component/photo/list.vue:1
+#: src/component/photo/list.vue:126 src/component/photo/mosaic.vue:15
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50 src/pages/settings/general.vue:99
+msgid ""
+"Non-photographic and low-quality images require a review before they appear in search results."
+msgstr ""
+"गैर-फोटोग्राफिक और निम्न-गुणवत्ता वाली छवियों को खोज परिणामों में प्रदर्शित होने से पहले समीक्षा की आवश्यकता "
+"होती है।"
+
+#: src/options/options.js:141
+msgid "None"
+msgstr "कोई नहीं"
+
+#: src/model/thumb.js:66
+msgid "Not Found"
+msgstr "नहीं मिला"
+
+#: src/pages/people.vue:3
+msgid "Not implemented yet"
+msgstr "अभी तक लागु नहीं किया"
+
+#: src/pages/library/import.vue:28
+msgid "Note that you can as well manage and re-index your originals manually."
+msgstr "ध्यान दें कि आप अपने मूल को मैन्युअल रूप से प्रबंधित और पुन: अनुक्रमित कर सकते हैं।"
+
+#: src/pages/settings/sync.vue:34
+msgid "Note:"
+msgstr "ध्यान दें:"
+
+#: src/dialog/account/add.vue:20
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service "
+"for backup and file upload."
+msgstr ""
+"नोट: केवल WebDAV सर्वर, जैसे Nextcloud या PhotoPrism, को बैकअप और फ़ाइल अपलोड के लिए दूरस्थ सेवा के रूप में "
+"कॉन्फ़िगर किया जा सकता है।"
+
+#: src/pages/settings/account.vue:20
+msgid "Note: Updating the password will not revoke access from already authenticated users."
+msgstr "नोट: पासवर्ड अपडेट करने से पहले से ही प्रमाणित उपयोगकर्ताओं तक पहुंच रद्द नहीं होगी।"
+
+#: src/dialog/photo/details.vue:882
+msgid "Notes"
+msgstr "नोट्स"
+
+#: src/pages/library/logs.vue:5
+msgid "Nothing to see here yet. Be patient."
+msgstr "यहां देखने के लिए कुछ भी नहीं है। धैर्य रखें।"
+
+#: src/component/navigation.vue:396 src/options/options.js:160
+msgid "Offline"
+msgstr "ऑफलाइन"
+
+#: src/component/album/toolbar.vue:108 src/component/photo/toolbar.vue:192
+#: src/dialog/album/edit.vue:113
+msgid "Oldest first"
+msgstr "सबसे पुराना पहले"
+
+#: src/options/options.js:207
+msgid "Once a week"
+msgstr "सप्ताह मेँ एक बार"
+
+#: src/pages/albums.vue:470 src/share/albums.vue:342
+msgid "One album found"
+msgstr "एक एल्बम मिला"
+
+#: src/pages/album/photos.vue:366 src/share/photos.vue:409
+msgid "One entry found"
+msgstr "एक प्रविष्टि मिली"
+
+#: src/pages/library/files.vue:409
+msgid "One file found"
+msgstr "एक फ़ाइल मिली"
+
+#: src/pages/library/files.vue:411
+msgid "One folder found"
+msgstr "एक फ़ोल्डर मिला"
+
+#: src/pages/photos.vue:399
+msgid "One result"
+msgstr "एक परिणाम"
+
+#: src/options/options.js:127
+msgid "Onyx"
+msgstr "गोमेद"
+
+#: src/options/options.js:226
+msgid "Orange"
+msgstr "संतरा"
+
+#: src/dialog/account/edit.vue:350
+msgid "Original"
+msgstr "मूल"
+
+#: src/pages/library/import.vue:27
+msgid "Original file names will be stored and indexed."
+msgstr "मूल फ़ाइल नाम संग्रहीत और अनुक्रमित किए जाएंगे।"
+
+#: src/dialog/photo/files.vue:78 src/dialog/photo/info.vue:36
+msgid "Original Name"
+msgstr "मूल नाम"
+
+#: src/component/navigation.vue:293 src/pages/library/files.vue:6
+#: src/pages/settings/general.vue:479
+msgid "Originals"
+msgstr "मूल"
+
+#: src/options/options.js:246
+msgid "Other"
+msgstr "अन्य"
+
+#: src/dialog/photo/info.vue:101
+msgid "Panorama"
+msgstr "चित्रमाला"
+
+#: src/component/navigation.vue:81
+msgid "Panoramas"
+msgstr "पैनोरामा"
+
+#: src/dialog/account/add.vue:109 src/dialog/account/edit.vue:561 src/dialog/share.vue:148
+#: src/pages/login.vue:85
+msgid "Password"
+msgstr "कुंजिका"
+
+#: src/pages/settings/account.vue:91
+msgid "Password changed"
+msgstr "पासवर्ड बदला गया"
+
+#: src/routes.js:249
+msgid "People"
+msgstr "लोग"
+
+#: src/dialog/share.vue:71
+msgid "People you share a link with will be able to view public contents."
+msgstr "जिन लोगों के साथ आप लिंक साझा करते हैं, वे सार्वजनिक सामग्री देख पाएंगे।"
+
+#: src/model/photo.js:652
+msgid "Photo"
+msgstr "तस्वीर"
+
+#: src/pages/albums.vue:52
+msgid ""
+"PhotoPrism continuously analyzes your library to find special moments, journeys and places."
+msgstr ""
+"PhotoPrism विशेष क्षणों, यात्राओं और स्थानों को खोजने के लिए आपकी लाइब्रेरी का लगातार विश्लेषण करता है।"
+
+#: src/dialog/reload.vue:4
+msgid "PhotoPrism has been updated…"
+msgstr "PhotoPrism अपडेट किया गया है ..."
+
+#: src/pages/about/about.vue:59
+msgid "PhotoPrism® is a registered trademark of Michael Mayer."
+msgstr "PhotoPrism® माइकल मेयर का एक पंजीकृत ट्रेडमार्क है।"
+
+#: src/component/navigation.vue:55 src/component/navigation.vue:64
+msgid "Photos"
+msgstr "तस्वीरें"
+
+#: src/options/options.js:224
+msgid "Pink"
+msgstr "गुलाबी"
+
+#: src/dialog/photo/info.vue:109
+msgid "Place"
+msgstr "स्थान"
+
+#: src/component/navigation.vue:231 src/component/navigation.vue:240
+#: src/pages/settings/general.vue:124 src/pages/settings/general.vue:671 src/routes.js:192
+#: src/routes.js:198 src/routes.js:204 src/routes.js:211
+msgid "Places"
+msgstr "स्थान"
+
+#: src/pages/settings/account.vue:99
+msgid "Please confirm your new password."
+msgstr "कृपया अपने नए पासवर्ड की पुष्टि करें।"
+
+#: src/dialog/upload.vue:45
+msgid "Please don't upload photos containing offensive content."
+msgstr "कृपया आक्रामक सामग्री वाले फ़ोटो अपलोड न करें।"
+
+#: src/pages/login.vue:8
+msgid "Please enter your name and password:"
+msgstr "कृपया अपना नाम और पासवर्ड दर्ज करें:"
+
+#: src/options/options.js:96
+msgid "Polish"
+msgstr "पोलिश"
+
+#: src/dialog/photo/files.vue:110
+msgid "Portrait"
+msgstr "चित्र"
+
+#: src/dialog/account/edit.vue:414
+msgid "Preserve filenames"
+msgstr "फ़ाइल नाम संरक्षित करें"
+
+#: src/pages/library/import.vue:8
+msgid "Press button to start importing…"
+msgstr "आयात शुरू करने के लिए बटन दबाएं ..."
+
+#: src/pages/library/index.vue:8
+msgid "Press button to start indexing…"
+msgstr "अनुक्रमण शुरू करने के लिए बटन दबाएं ..."
+
+#: src/dialog/upload.vue:22 src/dialog/upload.vue:4
+msgid "Press enter to create a new album."
+msgstr "एक नया एल्बम बनाने के लिए एंटर दबाएं।"
+
+#: src/dialog/photo/files.vue:17
+msgid "Preview"
+msgstr "पूर्वावलोकन"
+
+#: src/dialog/photo/files.vue:36 src/dialog/photo/files.vue:102 src/dialog/photo/files.vue:234
+msgid "Primary"
+msgstr "मुख्य"
+
+#: src/component/navigation.vue:140 src/dialog/photo/info.vue:85 src/routes.js:178
+msgid "Private"
+msgstr "निजी"
+
+#: src/options/options.js:242
+msgid "Product Feedback"
+msgstr "उत्पाद प्रतिक्रिया"
+
+#: src/dialog/photo/files.vue:118
+msgid "Projection"
+msgstr "प्रक्षेपण"
+
+#: src/options/options.js:222
+msgid "Purple"
+msgstr "बैंगनी"
+
+#: src/pages/settings/general.vue:98
+msgid "Quality Filter"
+msgstr "गुणवत्ता फ़िल्टर"
+
+#: src/dialog/photo/info.vue:56
+msgid "Quality Score"
+msgstr "गुणवत्ता स्कोर"
+
+#: src/pages/discover.vue:16
+msgid "Random"
+msgstr "बिना सोचे समझे"
+
+#: src/options/options.js:131
+msgid "Raspberry"
+msgstr "रसभरी"
+
+#: src/options/options.js:187
+msgid "Raw"
+msgstr "कच्चा"
+
+#: src/pages/library/index.vue:114
+msgid "Re-index all originals, including already indexed and unchanged files."
+msgstr "पहले से अनुक्रमित और अपरिवर्तित फ़ाइलों सहित सभी मूल पुन: अनुक्रमित करें।"
+
+#: src/component/album/toolbar.vue:105 src/component/photo/toolbar.vue:189
+#: src/dialog/album/edit.vue:110
+msgid "Recently added"
+msgstr "हाल ही में जोड़ा"
+
+#: src/component/album/toolbar.vue:106 src/component/photo/toolbar.vue:190
+#: src/dialog/album/edit.vue:111
+msgid "Recently edited"
+msgstr "हाल ही में संपादित किया गया"
+
+#: src/options/options.js:225
+msgid "Red"
+msgstr "लाल"
+
+#: src/component/album/toolbar.vue:38 src/component/photo/toolbar.vue:65 src/dialog/reload.vue:15
+#: src/pages/albums.vue:98 src/pages/labels.vue:80 src/pages/library/errors.vue:65
+#: src/pages/library/files.vue:63
+msgid "Reload"
+msgstr "पुनः लोड करें"
+
+#: src/dialog/reload.vue:58 src/pages/settings/general.vue:377
+msgid "Reloading…"
+msgstr "पुन: लोड ..."
+
+#: src/dialog/account/edit.vue:104
+msgid "Remote Sync"
+msgstr "रिमोट सिंक"
+
+#: src/component/photo/clipboard.vue:242
+msgid "Remove"
+msgstr "हटाना"
+
+#: src/component/photo/clipboard.vue:188
+msgid "remove failed: unknown album"
+msgstr "निकालें विफल: अज्ञात एल्बम"
+
+#: src/pages/library/import.vue:121
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be deleted, they "
+"remain in their current location."
+msgstr ""
+"स्टोरेज को सेव करने के लिए इंपोर्टेड फाइल्स निकालें। असमर्थित फ़ाइल प्रकार कभी भी हटाए नहीं जाएंगे, वे अपने "
+"वर्तमान स्थान पर बने रहेंगे।"
+
+#: src/pages/library/errors.vue:85
+msgid "Report Bug"
+msgstr "रिपोर्ट बग"
+
+#: src/common/api.js:60
+msgid "Request failed - invalid response"
+msgstr "अनुरोध विफल - अमान्य प्रतिक्रिया"
+
+#: src/pages/about/feedback.vue:72 src/pages/about/feedback.vue:103
+#: src/pages/about/feedback.vue:161
+msgid "Required"
+msgstr "अपेक्षित"
+
+#: src/dialog/photo/info.vue:64
+msgid "Resolution"
+msgstr "रिज़ॉल्यूशन"
+
+#: src/component/photo/clipboard.vue:218
+msgid "Restore"
+msgstr "पुनर्स्थापित"
+
+#: src/pages/settings/account.vue:95
+msgid "Retype Password"
+msgstr "पासवर्ड फिर से लिखें"
+
+#: src/component/navigation.vue:105 src/routes.js:171
+msgid "Review"
+msgstr "समीक्षा"
+
+#: src/options/options.js:100
+msgid "Russian"
+msgstr "रूसी"
+
+#: src/dialog/account/edit.vue:98 src/dialog/album/edit.vue:45 src/dialog/share.vue:60
+msgid "Save"
+msgstr "सहेजें"
+
+#: src/dialog/photo/info.vue:93
+msgid "Scan"
+msgstr "स्कैन"
+
+#: src/component/navigation.vue:97
+msgid "Scans"
+msgstr "स्कैन"
+
+#: src/component/photo/toolbar.vue:33 src/pages/albums.vue:46 src/pages/labels.vue:46
+#: src/pages/library/errors.vue:33 src/pages/places.vue:30 src/routes.js:242
+msgid "Search"
+msgstr "खोज"
+
+#: src/pages/settings/general.vue:672
+msgid "Search and display photos on a map."
+msgstr "मानचित्र पर फ़ोटो खोजें और प्रदर्शित करें।"
+
+#: src/pages/album/photos.vue:285 src/pages/albums.vue:405 src/pages/labels.vue:375
+#: src/pages/library/errors.vue:124 src/pages/library/files.vue:338 src/pages/photos.vue:320
+#: src/pages/places.vue:212 src/share/albums.vue:277 src/share/photos.vue:328
+msgid "Search term too short"
+msgstr "खोज शब्द बहुत छोटा है"
+
+#: src/pages/discover.vue:12
+msgid "Season"
+msgstr "मौसम"
+
+#: src/options/options.js:135
+msgid "Seaweed"
+msgstr "समुद्री सिवार"
+
+#: src/dialog/share.vue:256
+msgid "Secret"
+msgstr "गुप्त"
+
+#: src/dialog/upload.vue:121
+msgid "Select albums or create a new one"
+msgstr "एल्बम का चयन करें या एक नया बनाएँ"
+
+#: src/component/photo/clipboard.vue:162
+msgid "Selection archived"
+msgstr "चयन को संग्रहीत किया गया"
+
+#: src/component/photo/clipboard.vue:175
+msgid "Selection restored"
+msgstr "चयन बहाल"
+
+#: src/pages/about/feedback.vue:46
+msgid "Send"
+msgstr "संदेश"
+
+#: src/pages/settings/sync.vue:109
+msgid "Server"
+msgstr "सर्वर"
+
+#: src/dialog/account/add.vue:61 src/dialog/account/edit.vue:513 src/dialog/share.vue:146
+msgid "Service URL"
+msgstr "सेवा URL"
+
+#: src/component/navigation.vue:325 src/component/navigation.vue:334
+#: src/component/navigation.vue:8 src/component/navigation.vue:17 src/routes.js:276
+#: src/routes.js:290 src/routes.js:304
+msgid "Settings"
+msgstr "समायोजन"
+
+#: src/pages/settings/general.vue:381
+msgid "Settings saved"
+msgstr "सेटिंग्स को सहेजा गया"
+
+#: src/dialog/share/upload.vue:32
+msgid "Setup"
+msgstr "सेट अप"
+
+#: src/component/album/clipboard.vue:65 src/component/album/toolbar.vue:71
+#: src/component/photo/clipboard.vue:65 src/pages/settings/general.vue:383
+msgid "Share"
+msgstr "शेयर"
+
+#: src/dialog/share.vue:6
+msgid "Share %{name}"
+msgstr "शेयर %{name}"
+
+#: src/share/albums.vue:52
+msgid "Shared with you."
+msgstr "आपके साथ साझा।"
+
+#: src/pages/labels.vue:112
+msgid "Show less"
+msgstr "कम दिखाएं"
+
+#: src/pages/settings/general.vue:576
+msgid "Show Library in navigation menu."
+msgstr "नेविगेशन मेनू में लाइब्रेरी दिखाएं।"
+
+#: src/pages/labels.vue:97
+msgid "Show more"
+msgstr "और दिखाओ"
+
+#: src/pages/settings/general.vue:640
+msgid "Show server logs in Library."
+msgstr "लायब्रेरी में सर्वर लॉग दिखाएं।"
+
+#: src/pages/photos.vue:286
+msgid "Showing all %{n} results"
+msgstr "सभी %{n} परिणाम दिखा रहा है"
+
+#: src/model/file.js:174
+msgid "Sidecar"
+msgstr "एक प्रकार का मादक द्रव्य"
+
+#: src/pages/login.vue:20
+msgid "Sign in"
+msgstr "साइन इन करें"
+
+#: src/pages/discover.vue:8
+msgid "Similar"
+msgstr "समान"
+
+#: src/dialog/account/edit.vue:261 src/dialog/photo/files.vue:84 src/dialog/photo/files.vue:242
+msgid "Size"
+msgstr "आकार"
+
+#: src/options/options.js:153
+msgid "Slow"
+msgstr "धीरे"
+
+#: src/component/album/toolbar.vue:109 src/component/photo/toolbar.vue:193
+#: src/dialog/album/edit.vue:114
+msgid "Sort by file name"
+msgstr "फ़ाइल नाम से क्रमबद्ध करें"
+
+#: src/component/photo/toolbar.vue:293 src/dialog/album/edit.vue:228
+msgid "Sort Order"
+msgstr "क्रमबद्ध आदेश"
+
+#: src/dialog/photo/labels.vue:108
+msgid "Source"
+msgstr "स्रोत"
+
+#: src/options/options.js:88
+msgid "Spanish"
+msgstr "स्पेनिश"
+
+#: src/pages/settings/general.vue:162
+msgid "Stack Sequences"
+msgstr "स्टैक सीक्वेंस"
+
+#: src/component/navigation.vue:89
+msgid "Stacks"
+msgstr "ढेर"
+
+#: src/pages/library/index.vue:30
+msgid "Start"
+msgstr "शुरू"
+
+#: src/component/photo/viewer.vue:154
+msgid "Start/Stop Slideshow"
+msgstr "शुरू / बंद स्लाइड शो"
+
+#: src/component/navigation.vue:249
+msgid "States"
+msgstr "राज्य अमेरिका"
+
+#: src/dialog/photo/files.vue:244
+msgid "Status"
+msgstr "स्थिति"
+
+#: src/dialog/photo/files.vue:66
+msgid "Storage Folder"
+msgstr "भंडारण फ़ोल्डर"
+
+#: src/options/options.js:164
+msgid "Streets"
+msgstr "सड़कें"
+
+#: src/pages/settings/general.vue:742
+msgid "Style"
+msgstr "अंदाज"
+
+#: src/dialog/photo/details.vue:692
+msgid "Subject"
+msgstr "विषय"
+
+#: src/dialog/account/add.vue:21
+msgid "Support for additional services, like Google Drive, will be added over time."
+msgstr "अतिरिक्त सेवाओं के लिए समर्थन, जैसे Google ड्राइव, समय के साथ जोड़ा जाएगा।"
+
+#: src/pages/settings/sync.vue:111
+msgid "Sync"
+msgstr "सिंक"
+
+#: src/dialog/account/edit.vue:460
+msgid "Sync raw images"
+msgstr "कच्ची छवियों को सिंक करें"
+
+#: src/component/photo/list.vue:137 src/dialog/photo/info.vue:50 src/share/photo/list.vue:114
+msgid "Taken"
+msgstr "लिया"
+
+#: src/options/options.js:231
+msgid "Teal"
+msgstr "टील"
+
+#: src/dialog/photo/details.vue:442
+msgid "Text too long"
+msgstr "बहुत लंबा पाठ"
+
+#: src/pages/library/index.vue:35
+msgid "The index currently contains %{n} hidden files."
+msgstr "सूचकांक में वर्तमान में %{n} छिपी हुई फाइलें हैं।"
+
+#: src/pages/library/index.vue:36
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet or there are "
+"duplicates."
+msgstr "उनके प्रारूप का समर्थन नहीं किया जा सकता है, वे अभी तक जेपीईजी में परिवर्तित नहीं हुए हैं या डुप्लिकेट हैं।"
+
+#: src/pages/settings/general.vue:234
+msgid "Theme"
+msgstr "विषय"
+
+#: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, edit, and delete "
+"files from your computer or smartphone as if they were local."
+msgstr ""
+"यह मूल फ़ोल्डर को नेटवर्क ड्राइव के रूप में मापता है और आपको अपने कंप्यूटर या स्मार्टफोन से फ़ाइलों को खोलने, "
+"संपादित करने और हटाने की अनुमति देता है जैसे कि वे स्थानीय थे।"
+
+#: src/dialog/photo/details.vue:305
+msgid "Time UTC"
+msgstr "समय यूटीसी"
+
+#: src/dialog/photo/details.vue:337
+msgid "Time Zone"
+msgstr "समय क्षेत्र"
+
+#: src/component/photo/list.vue:136 src/dialog/photo/details.vue:144 src/dialog/photo/info.vue:44
+#: src/share/photo/list.vue:113
+msgid "Title"
+msgstr "शीर्षक"
+
+#: src/pages/albums.vue:257 src/share/albums.vue:153
+msgid "Title too long"
+msgstr "शीर्षक बहुत लंबा है"
+
+#: src/app.js:135 src/share.js:135
+msgid "to"
+msgstr "सेवा"
+
+#: src/component/album/toolbar.vue:106 src/component/album/toolbar.vue:121
+#: src/component/album/toolbar.vue:135 src/component/photo/toolbar.vue:81
+#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:110
+msgid "Toggle View"
+msgstr "टॉगल दृश्य"
+
+#: src/dialog/share.vue:257
+msgid "Token"
+msgstr "टोकन"
+
+#: src/options/options.js:172
+msgid "Topographic"
+msgstr "स्थलाकृतिक"
+
+#: src/pages/about/about.vue:56
+msgid "Trademarks"
+msgstr "ट्रेडमार्क"
+
+#: src/component/photo/cards.vue:12 src/component/photo/list.vue:12
+#: src/component/photo/list.vue:123 src/component/photo/mosaic.vue:12 src/pages/albums.vue:42
+#: src/pages/albums.vue:51 src/pages/labels.vue:38 src/share/albums.vue:19
+#: src/share/photo/cards.vue:12 src/share/photo/list.vue:12 src/share/photo/list.vue:104
+#: src/share/photo/mosaic.vue:12
+msgid "Try again using other filters or keywords."
+msgstr "अन्य फ़िल्टर या कीवर्ड का उपयोग करके फिर से प्रयास करें।"
+
+#: src/dialog/account/edit.vue:620 src/dialog/photo/files.vue:90 src/dialog/photo/files.vue:243
+#: src/dialog/photo/info.vue:15
+msgid "Type"
+msgstr "प्रकार"
+
+#: src/dialog/photo/details.vue:432 src/dialog/photo/info.vue:254 src/model/album.js:122
+#: src/model/photo.js:401 src/model/photo.js:415 src/model/photo.js:438 src/model/photo.js:452
+#: src/model/photo.js:529 src/model/photo.js:542 src/options/options.js:15
+#: src/options/options.js:29 src/options/options.js:43 src/options/options.js:57
+#: src/options/options.js:69 src/pages/library/errors.vue:204 src/pages/library/errors.vue:211
+#: src/pages/library/logs.vue:32
+msgid "Unknown"
+msgstr "अनजान"
+
+#: src/component/navigation.vue:192 src/routes.js:150
+msgid "Unsorted"
+msgstr "अवर्गीकृत"
+
+#: src/dialog/photo/files.vue:39
+msgid "Unstack"
+msgstr "unstack"
+
+#: src/dialog/photo/files.vue:165 src/dialog/photo/info.vue:157
+msgid "Updated"
+msgstr "अपडेट किया गया"
+
+#: src/component/album/toolbar.vue:152 src/component/navigation.vue:61
+#: src/component/photo/toolbar.vue:127 src/dialog/share/upload.vue:35 src/dialog/upload.vue:8
+#: src/dialog/upload.vue:54 src/pages/albums.vue:115 src/pages/library/import.vue:38
+#: src/pages/settings/general.vue:319 src/pages/settings/sync.vue:110
+msgid "Upload"
+msgstr "डालना"
+
+#: src/dialog/upload.vue:234
+msgid "Upload complete"
+msgstr "अपलोड पूरा हुआ"
+
+#: src/dialog/upload.vue:38
+msgid "Upload complete. Indexing…"
+msgstr "अपलोड पूरा हुआ। अनुक्रमण ..."
+
+#: src/dialog/upload.vue:34
+msgid "Upload failed"
+msgstr "अपलोड विफल"
+
+#: src/dialog/account/edit.vue:437
+msgid "Upload local files"
+msgstr "स्थानीय फ़ाइलें अपलोड करें"
+
+#: src/pages/settings/general.vue:384
+msgid "Upload to WebDAV and share links with friends."
+msgstr "WebDAV पर अपलोड करें और दोस्तों के साथ लिंक साझा करें।"
+
+#: src/dialog/upload.vue:36
+msgid "Uploading %{n} of %{t}…"
+msgstr "%{t} का %{n} अपलोड हो रहा है…"
+
+#: src/dialog/upload.vue:138 src/dialog/upload.vue:146 src/dialog/upload.vue:187
+msgid "Uploading photos…"
+msgstr "फ़ोटो अपलोड हो रही हैं…"
+
+#: src/dialog/upload.vue:46
+msgid "Uploads that may contain such images will be rejected automatically."
+msgstr "ऐसे चित्र शामिल होने वाले अपलोड स्वचालित रूप से अस्वीकार कर दिए जाएंगे।"
+
+#: src/dialog/share.vue:189
+msgid "URL"
+msgstr "यूआरएल"
+
+#: src/model/user.js:116
+msgid "User"
+msgstr "उपयोगकर्ता"
+
+#: src/pages/settings/general.vue:38
+msgid "User Interface"
+msgstr "प्रयोक्ता इंटरफ़ेस"
+
+#: src/dialog/account/add.vue:85 src/dialog/account/edit.vue:537 src/dialog/share.vue:147
+msgid "Username"
+msgstr "उपयोगकर्ता नाम"
+
+#: src/model/file.js:172 src/model/photo.js:489 src/model/photo.js:503 src/options/options.js:195
+msgid "Video"
+msgstr "वीडियो"
+
+#: src/component/navigation.vue:153 src/routes.js:164
+msgid "Videos"
+msgstr "वीडियो"
+
+#: src/component/photo/toolbar.vue:263
+msgid "View"
+msgstr "राय"
+
+#: src/dialog/webdav.vue:8
+msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
+msgstr "WebDAV क्लाइंट निम्न URL का उपयोग करके PhotoPrism से जुड़ सकते हैं:"
+
+#: src/pages/settings/sync.vue:35
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to "
+"PhotoPrism."
+msgstr "Microsoft के Windows Explorer या Apple के खोजक जैसे WebDAV क्लाइंट सीधे PhotoPrism से जुड़ सकते हैं।"
+
+#: src/dialog/share.vue:81 src/dialog/share/upload.vue:7
+msgid "WebDAV Upload"
+msgstr "WebDAV अपलोड करें"
+
+#: src/options/options.js:235
+msgid "White"
+msgstr "सफेद"
+
+#: src/component/photo/toolbar.vue:322 src/dialog/photo/details.vue:240
+msgid "Year"
+msgstr "साल"
+
+#: src/options/options.js:228
+msgid "Yellow"
+msgstr "पीला"
+
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/files.vue:105 src/dialog/photo/files.vue:113
+#: src/dialog/photo/files.vue:151 src/dialog/photo/info.vue:191 src/dialog/photo/info.vue:218
+#: src/dialog/photo/info.vue:245 src/dialog/photo/info.vue:272
+msgid "Yes"
+msgstr "हाँ"
+
+#: src/component/album/clipboard.vue:164 src/share/album/clipboard.vue:77
+msgid "You can only download one album"
+msgstr "आप केवल एक एल्बम डाउनलोड कर सकते हैं"
+
+#: src/component/label/clipboard.vue:116
+msgid "You can only download one label"
+msgstr "आप केवल एक लेबल डाउनलोड कर सकते हैं"
+
+#: src/component/album/clipboard.vue:117 src/component/album/clipboard.vue:130
+msgid "You may only select one item"
+msgstr "आप केवल एक आइटम का चयन कर सकते हैं"
+
+#: src/pages/about/about.vue:60
+msgid ""
+"You may use it as required to describe our software, run your own server, for educational "
+"purposes, but not for offering commercial goods, products, or services without prior written "
+"permission. In other words, please ask."
+msgstr ""
+"आप हमारे सॉफ़्टवेयर का वर्णन करने के लिए, शैक्षिक उद्देश्यों के लिए, अपना स्वयं का सर्वर चलाने के लिए इसका उपयोग "
+"कर सकते हैं, लेकिन पूर्व लिखित अनुमति के बिना वाणिज्यिक वस्तुओं, उत्पादों या सेवाओं की पेशकश करने के लिए नहीं। दूसरे "
+"शब्दों में, कृपया पूछें।"
+
+#: src/pages/about/feedback.vue:4
+msgid "Your message has been sent"
+msgstr "आपका सन्देश भेज दिया गया है"
+
+#: src/component/photo/viewer.vue:146
+msgid "Zoom in/out"
+msgstr "ज़ूम इन / आउट करें"

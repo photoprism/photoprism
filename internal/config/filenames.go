@@ -137,9 +137,9 @@ func (c *Config) ConfigFile() string {
 	return c.params.ConfigFile
 }
 
-// CredentialsFile returns the api credentials file name for hosted services like maps & places.
-func (c *Config) CredentialsFile() string {
-	return filepath.Join(c.SettingsPath(), "credentials.yml")
+// ProConfigFile returns the photoprism.pro api config file name.
+func (c *Config) ProConfigFile() string {
+	return filepath.Join(c.SettingsPath(), "pro.yml")
 }
 
 // SettingsFile returns the user settings file name.

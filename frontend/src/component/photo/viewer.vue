@@ -33,7 +33,7 @@
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
-          <button class="pswp__button pswp__button--fs action-toogle-fullscreen" :title="$gettext('Fullscreen')"></button>
+          <button class="pswp__button pswp__button--fs action-toggle-fullscreen" :title="$gettext('Fullscreen')"></button>
 
           <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
 

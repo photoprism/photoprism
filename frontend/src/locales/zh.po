@@ -1242,8 +1242,8 @@ msgid "PhotoPrism has been updated…"
 msgstr "已更新PhotoPrism…"
 
 #: src/pages/about/about.vue:74
-msgid "PhotoPrism™ is a registered trademark of Michael Mayer."
-msgstr "PhotoPrism™ 由Michael Mayer注册为商标."
+msgid "PhotoPrism® is a registered trademark of Michael Mayer."
+msgstr "PhotoPrism® 由Michael Mayer注册为商标."
 
 #: src/component/navigation.vue:52 src/component/navigation.vue:61
 msgid "Photos"

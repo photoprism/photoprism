@@ -33,6 +33,7 @@ func TestConfig_HttpServerMode2(t *testing.T) {
 
 func TestConfig_TemplateName(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	c.initSettings()
 
 	assert.Equal(t, "index.tmpl", c.TemplateName())
 	c.settings.Templates.Default = "rainbow.tmpl"

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"fmt"
 	"runtime"
 	"strings"
@@ -12,8 +11,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/maps/places"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/pro"
+	"github.com/photoprism/photoprism/internal/pro/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/sirupsen/logrus"
@@ -25,12 +25,12 @@ var once sync.Once
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
-	once        sync.Once
-	db          *gorm.DB
-	params      *Params
-	settings    *Settings
-	credentials *Credentials
-	token       string
+	once     sync.Once
+	db       *gorm.DB
+	params   *Params
+	settings *Settings
+	pro      *pro.Config
+	token    string
 }
 
 func init() {
@@ -69,9 +69,6 @@ func NewConfig(ctx *cli.Context) *Config {
 		token:  rnd.Token(8),
 	}
 
-	c.initSettings()
-	c.initCredentials()
-
 	return c
 }
 
@@ -86,12 +83,20 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 
 	c.Settings().Propagate()
-	c.Credentials().Propagate()
+	c.Pro().Propagate()
 }
 
-// Init initialises the database connection and dependencies.
-func (c *Config) Init(_ context.Context) error {
+// Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
+func (c *Config) Init() error {
+	if err := c.CreateDirectories(); err != nil {
+		return err
+	}
+
+	c.initSettings()
+	c.initPro()
+
 	c.Propagate()
+
 	return c.connectDb()
 }
 
@@ -227,6 +232,11 @@ func (c *Config) Shutdown() {
 func (c *Config) Workers() int {
 	numCPU := runtime.NumCPU()
 
+	// Limit number of workers when using SQLite to avoid database locking issues.
+	if c.DatabaseDriver() == SQLite && numCPU > 8 && c.params.Workers <= 0 {
+		return 8
+	}
+
 	if c.params.Workers > 0 && c.params.Workers <= numCPU {
 		return c.params.Workers
 	}
@@ -266,4 +276,50 @@ func (c *Config) OriginalsLimit() int64 {
 
 	// Megabyte.
 	return c.params.OriginalsLimit * 1024 * 1024
+}
+
+// UpdatePro updates photoprism.pro api credentials for maps & places.
+func (c *Config) UpdatePro() {
+	if err := c.pro.Refresh(); err != nil {
+		log.Debugf("config: %s", err)
+	} else if err := c.pro.Save(); err != nil {
+		log.Debugf("config: %s", err)
+	} else {
+		c.pro.Propagate()
+	}
+}
+
+// initPro initializes photoprism.pro api credentials for maps & places.
+func (c *Config) initPro() {
+	c.pro = pro.NewConfig(c.Version(), c.ProConfigFile())
+
+	if err := c.pro.Load(); err == nil {
+		// Do nothing.
+	} else if err := c.pro.Refresh(); err != nil {
+		log.Debugf("config: %s", err)
+	} else if err := c.pro.Save(); err != nil {
+		log.Debugf("config: %s", err)
+	}
+
+	c.pro.Propagate()
+
+	ticker := time.NewTicker(time.Hour * 24)
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				c.UpdatePro()
+			}
+		}
+	}()
+}
+
+// Config returns the photoprism.pro api credentials.
+func (c *Config) Pro() *pro.Config {
+	if c.pro == nil {
+		c.initPro()
+	}
+
+	return c.pro
 }

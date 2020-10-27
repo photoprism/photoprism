@@ -104,6 +104,10 @@ export const Languages = () => [
         "text": $gettext("Chinese"),
         "value": "zh",
     },
+    {
+        "text": $gettext("Hindi"),
+        "value": "hi",
+    },
 ];
 
 export const Themes = () => [
@@ -235,4 +239,13 @@ export const Colors = () => [
     {"Example": "#F5F5F5", "Name": $gettext("White"), "Slug": "white"},
     {"Example": "#9E9E9E", "Name": $gettext("Grey"), "Slug": "grey"},
     {"Example": "#212121", "Name": $gettext("Black"), "Slug": "black"},
+];
+
+export const FeedbackCategories = () => [
+    {"value": "help", "text": $gettext("Customer Support")},
+    {"value": "feedback", "text": $gettext("Product Feedback")},
+    {"value": "feature", "text": $gettext("Feature Request")},
+    {"value": "bug", "text": $gettext("Bug Report")},
+    {"value": "donations", "text": $gettext("Donations")},
+    {"value": "other", "text": $gettext("Other")},
 ];

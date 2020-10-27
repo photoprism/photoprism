@@ -20,6 +20,8 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    # Uncomment and edit the following line to set a specific user / group id:
+    # user: "1000:1000"
     depends_on:
       - photoprism-db
     ports:

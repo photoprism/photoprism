@@ -23,7 +23,7 @@ const page = new Page();
 //TODO Check count in navi gets updated --> gt/lt or matches count of images
 //TODO videos - play video
 
-/*test('#1 Scroll to top', async t => {
+test('#1 Scroll to top', async t => {
     await t
         .click(Selector('.nav-photos'))
         .click(Selector('.p-expand-search'));
@@ -468,7 +468,7 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
     logger.clear();
     await t
         .expect(Selector('div').withAttribute('data-uid', FirstReviewPhoto).exists, {timeout: 5000}).ok();
-});*/
+});
 
 //TODO edited values stay after reindex!!
 //TODO test camera, lens
@@ -794,7 +794,7 @@ test('#8 Change primary file', async t => {
         .expect(FirstFileAfterChange).contains('photos8_2_ski.jpg');
 });
 
-/*test('#9 Navigate from card view to place', async t => {
+test('#9 Navigate from card view to place', async t => {
     await t.click(Selector('.p-expand-search'));
     await page.setFilter('view', 'Cards');
     await t
@@ -832,4 +832,37 @@ test('#10 Ungroup files', async t => {
     const PhotoCountAfterUngroup = await Selector('button.action-title-edit').count;
     await t
         .expect(PhotoCountAfterUngroup).eql(2);
-});*/
+});
+
+test('#11 Delete non primary file', async t => {
+    await page.openNav();
+    await t
+        .click(Selector('.nav-library'))
+        //TODO Connecting... error must be moved somewhere else
+        .click(Selector('#tab-import'))
+        .click(Selector('.input-import-folder input'), {timeout: 5000})
+        .click(Selector('div.v-list__tile__title').withText('/pizza'))
+        .click(Selector('.action-import'))
+        //TODO replace wait
+        .wait(30000)
+        .click(Selector('.nav-photos'))
+        .click(Selector('.p-expand-search'));
+    await page.search('mogale');
+    const PhotoCount = await Selector('button.action-title-edit').count;
+
+    const Photo = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
+    await t
+        .expect(PhotoCount).eql(1)
+        .click(Selector('button.action-title-edit').withAttribute('data-uid', Photo))
+        .click(Selector('#tab-files'))
+    const FileCount = await Selector('li.v-expansion-panel__container').count;
+    await t
+        .expect(FileCount).eql(2)
+        .click(Selector('li.v-expansion-panel__container').nth(1))
+        .click(Selector('.action-delete'))
+        .click(Selector('.action-confirm'))
+        .wait(12000)
+    const FileCountAfterDeletion = await Selector('li.v-expansion-panel__container').count;
+    await t
+        .expect(FileCountAfterDeletion).eql(1);
+});

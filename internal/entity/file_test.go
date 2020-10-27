@@ -259,3 +259,34 @@ func TestFile_Panorama(t *testing.T) {
 		assert.False(t, file.Panorama())
 	})
 }
+
+func TestFile_Delete(t *testing.T) {
+	t.Run("permanently", func(t *testing.T) {
+		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBePermanentlyDeleted", FileRoot: "", PhotoID: 5678}
+
+		err := file.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "ToBePermanentlyDeleted", file.FileName)
+
+		err2 := file.Delete(true)
+
+		assert.Nil(t, err2)
+	})
+	t.Run("not permanently", func(t *testing.T) {
+		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeDeleted", FileRoot: "", PhotoID: 5678}
+
+		err := file.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "ToBeDeleted", file.FileName)
+
+		err2 := file.Delete(false)
+
+		assert.Nil(t, err2)
+	})
+}

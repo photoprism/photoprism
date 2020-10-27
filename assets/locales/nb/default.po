@@ -1,0 +1,282 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-06 07:40+0000\n"
+"PO-Revision-Date: 2020-10-07 10:22+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nb\n"
+
+#: messages.go:72
+msgid "Unexpected error, please try again"
+msgstr "Uventet feil, prøv på nytt"
+
+#: messages.go:73
+msgid "Invalid request"
+msgstr "Ugyldig forespørsel"
+
+#: messages.go:74
+msgid "Changes could not be saved"
+msgstr "Kan ikke lagre endringer"
+
+#: messages.go:75
+msgid "Could not be deleted"
+msgstr "Kan ikke slettes"
+
+#: messages.go:76
+#, c-format
+msgid "%s already exists"
+msgstr "%s eksisterer allerede"
+
+#: messages.go:77 messages.go:80
+msgid "Not found on server, deleted?"
+msgstr "Finnes ikke på serveren, slettet?"
+
+#: messages.go:78
+msgid "File not found"
+msgstr "Fil ikke funnet"
+
+#: messages.go:79
+msgid "Selection not found"
+msgstr "Finner ikke utvalg"
+
+#: messages.go:81
+msgid "Account not found"
+msgstr "Konto ikke funnet"
+
+#: messages.go:82
+msgid "User not found"
+msgstr "Bruker ikke funnet"
+
+#: messages.go:83
+msgid "Label not found"
+msgstr "Merkelapp ikke funnet"
+
+#: messages.go:84
+msgid "Album not found"
+msgstr "Album ikke funnet"
+
+#: messages.go:85
+msgid "Not available in public mode"
+msgstr "Ikke tilgjengelig i offentlig modus"
+
+#: messages.go:86
+msgid "not available in read-only mode"
+msgstr "ikke tilgjengelig i skrivebeskyttet modus"
+
+#: messages.go:87
+msgid "Please log in and try again"
+msgstr "Vennligst logg inn og prøv igjen"
+
+#: messages.go:88
+msgid "Upload might be offensive"
+msgstr "Opplastingen kan være støtende"
+
+#: messages.go:89
+msgid "No items selected"
+msgstr "Ingen elementer valgt"
+
+#: messages.go:90
+msgid "Failed creating file, please check permissions"
+msgstr "Kunne ikke opprette fil, vennligst sjekk tillatelser"
+
+#: messages.go:91
+msgid "Failed creating folder, please check permissions"
+msgstr "Kunne ikke opprette mappe, vennligst sjekk tillatelser"
+
+#: messages.go:92
+msgid "Could not connect, please try again"
+msgstr "Kunne ikke koble til, vennligst prøv igjen"
+
+#: messages.go:93
+msgid "Invalid password, please try again"
+msgstr "Ugyldig passord, vennligst prøv igjen"
+
+#: messages.go:94
+msgid "Feature disabled"
+msgstr "Tjeneste deaktivert"
+
+#: messages.go:95
+msgid "No labels selected"
+msgstr "Ingen merkelapper valgt"
+
+#: messages.go:96
+msgid "No albums selected"
+msgstr "Ingen albumer valgt"
+
+#: messages.go:97
+msgid "No files available for download"
+msgstr "Ingen filer tilgjengelig for nedlasting"
+
+#: messages.go:98
+msgid "Failed to create zip file"
+msgstr "Kunne ikke opprette zip-arkiv"
+
+#: messages.go:99
+msgid "Invalid credentials"
+msgstr "Ugyldige innloggingsdetaljer"
+
+#: messages.go:100
+msgid "Invalid link"
+msgstr "Ugyldig lenke"
+
+#: messages.go:103
+msgid "Changes successfully saved"
+msgstr "Endringene ble lagret"
+
+#: messages.go:104
+msgid "Album created"
+msgstr "Album opprettet"
+
+#: messages.go:105
+msgid "Album saved"
+msgstr "Album lagret"
+
+#: messages.go:106
+#, c-format
+msgid "Album %s deleted"
+msgstr "Album %s slettet"
+
+#: messages.go:107
+msgid "Album contents cloned"
+msgstr "Albuminnhold duplisert"
+
+#: messages.go:108
+msgid "File removed from stack"
+msgstr "Fil fjernet fra samling"
+
+#: messages.go:109
+msgid "File deleted"
+msgstr "Fil slettet"
+
+#: messages.go:110
+#, c-format
+msgid "Selection added to %s"
+msgstr "Utvalg lagt til %s"
+
+#: messages.go:111
+#, c-format
+msgid "One entry added to %s"
+msgstr "En oppføring lagt til %s"
+
+#: messages.go:112
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d oppføringer lagt til %s"
+
+#: messages.go:113
+#, c-format
+msgid "One entry removed from %s"
+msgstr "En oppføring fjernet fra %s"
+
+#: messages.go:114
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d oppføringer fjernet fra %s"
+
+#: messages.go:115
+msgid "Account created"
+msgstr "Konto opprettet"
+
+#: messages.go:116
+msgid "Account saved"
+msgstr "Konto lagret"
+
+#: messages.go:117
+msgid "Account deleted"
+msgstr "Konto slettet"
+
+#: messages.go:118
+msgid "Settings saved"
+msgstr "Innstillinger lagret"
+
+#: messages.go:119
+msgid "Password changed"
+msgstr "Passord endret"
+
+#: messages.go:120
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Import fullført på %d s"
+
+#: messages.go:121
+msgid "Import canceled"
+msgstr "Import avbrutt"
+
+#: messages.go:122
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Indeksering fullført på %d s"
+
+#: messages.go:123
+msgid "Indexing originals..."
+msgstr "Indekserer originaler…"
+
+#: messages.go:124
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Indekserer filer i %s"
+
+#: messages.go:125
+msgid "Indexing canceled"
+msgstr "Indeksering avbrutt"
+
+#: messages.go:126
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "Fjernet %d filer og %d foto"
+
+#: messages.go:127
+#, c-format
+msgid "Moving files from %s"
+msgstr "Flytter filer fra %s"
+
+#: messages.go:128
+#, c-format
+msgid "Copying files from %s"
+msgstr "Kopierer filer fra %s"
+
+#: messages.go:129
+msgid "Labels deleted"
+msgstr "Merkelapper slettet"
+
+#: messages.go:130
+msgid "Label saved"
+msgstr "Merkelapper lagret"
+
+#: messages.go:131
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d filer lastet opp på %d s"
+
+#: messages.go:132
+msgid "Selection archived"
+msgstr "Utvalg lagret"
+
+#: messages.go:133
+msgid "Selection restored"
+msgstr "Utvalg gjenopprettet"
+
+#: messages.go:134
+msgid "Selection marked as private"
+msgstr "Utvalg markert som privat"
+
+#: messages.go:135
+msgid "Albums deleted"
+msgstr "Albumer slettet"
+
+#: messages.go:136
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip opprettet på %d s"

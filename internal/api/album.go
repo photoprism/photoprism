@@ -447,13 +447,12 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		for _, f := range p {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
-
 			fileAlias := f.ShareFileName()
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
-					Abort(c, http.StatusInternalServerError, i18n.ErrCreateFile)
+					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 				log.Infof("album: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
@@ -463,6 +462,5 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		log.Infof("album: archive %s created in %s", txt.Quote(zipFileName), time.Since(start))
-		_ = zipWriter.Close()
 	})
 }

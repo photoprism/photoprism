@@ -60,13 +60,13 @@
               </v-flex>
               <v-flex xs12 md6 pa-2>
                 <v-select
-                        :label="$gettext('Sort Order')"
-                        hide-details
-                        v-model="model.Order"
-                        :items="sorting"
-                        item-value="value"
-                        item-text="text"
-                        color="secondary-dark">
+                    :label="$gettext('Sort Order')"
+                    hide-details
+                    v-model="model.Order"
+                    :items="sorting"
+                    item-value="value"
+                    item-text="text"
+                    color="secondary-dark">
                 </v-select>
               </v-flex>
             </v-layout>
@@ -93,52 +93,52 @@
   </v-dialog>
 </template>
 <script>
-    import Album from "model/album";
+import Album from "model/album";
 
-    export default {
-        name: 'p-album-edit-dialog',
-        props: {
-            show: Boolean,
-            album: Object,
-        },
-        data() {
-            return {
-                model: new Album(),
-                growDesc: false,
-                loading: false,
-                sorting: [
-                    {value: 'added', text: this.$gettext('Recently added')},
-                    {value: 'edited', text: this.$gettext('Recently edited')},
-                    {value: 'newest', text: this.$gettext('Newest first')},
-                    {value: 'oldest', text: this.$gettext('Oldest first')},
-                    {value: 'name', text: this.$gettext('Sort by file name')},
-                    {value: 'similar', text: this.$gettext('Group by similarity')},
-                    {value: 'relevance', text: this.$gettext('Most relevant')},
-                ],
-                categories: this.$config.albumCategories(),
-                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-            }
-        },
-        methods: {
-            expand() {
-                this.growDesc = !this.growDesc;
-            },
-            close() {
-                this.$emit('close');
-            },
-            confirm() {
-                this.model.update().then((m) => {
-                    this.categories = this.$config.albumCategories();
-                    this.$emit('close');
-                });
-            },
-        },
-        watch: {
-            show: function (show) {
-                if (show) {
-                    this.model = this.album.clone();
-                }
-            }
-        },
+export default {
+  name: 'p-album-edit-dialog',
+  props: {
+    show: Boolean,
+    album: Object,
+  },
+  data() {
+    return {
+      model: new Album(),
+      growDesc: false,
+      loading: false,
+      sorting: [
+        {value: 'added', text: this.$gettext('Recently added')},
+        {value: 'edited', text: this.$gettext('Recently edited')},
+        {value: 'newest', text: this.$gettext('Newest first')},
+        {value: 'oldest', text: this.$gettext('Oldest first')},
+        {value: 'name', text: this.$gettext('Sort by file name')},
+        {value: 'similar', text: this.$gettext('Group by similarity')},
+        {value: 'relevance', text: this.$gettext('Most relevant')},
+      ],
+      categories: this.$config.albumCategories(),
+      titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
     }
+  },
+  methods: {
+    expand() {
+      this.growDesc = !this.growDesc;
+    },
+    close() {
+      this.$emit('close');
+    },
+    confirm() {
+      this.model.update().then((m) => {
+        this.categories = this.$config.albumCategories();
+        this.$emit('close');
+      });
+    },
+  },
+  watch: {
+    show: function (show) {
+      if (show) {
+        this.model = this.album.clone();
+      }
+    }
+  },
+}
 </script>

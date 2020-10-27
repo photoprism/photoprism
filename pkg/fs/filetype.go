@@ -228,3 +228,12 @@ func (t FileType) FindFirst(fileName string, dirs []string, baseDir string, stri
 
 	return ""
 }
+
+// NormalizedExt returns the file extension without dot and in lowercase.
+func NormalizedExt(fileName string) string {
+	if dot := strings.LastIndex(fileName, "."); dot != -1 && len(fileName[dot+1:]) >= 1 {
+		return strings.ToLower(fileName[dot+1:])
+	}
+
+	return ""
+}

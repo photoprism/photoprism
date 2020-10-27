@@ -346,7 +346,7 @@ func TestMediaFileCanonicalName(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, "20180111_110938_B6B8AB4F", mediaFile.CanonicalName())
+	assert.Equal(t, "20180111_110938_7D8F8A23", mediaFile.CanonicalName())
 }
 
 func TestMediaFileCanonicalNameFromFile(t *testing.T) {

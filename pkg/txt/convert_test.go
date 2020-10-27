@@ -13,6 +13,11 @@ func TestTime(t *testing.T) {
 		assert.Equal(t, "2018-04-12 19:24:49 +0000 UTC", result.String())
 	})
 
+	t.Run("2018", func(t *testing.T) {
+		result := Time("2018")
+		assert.True(t, result.IsZero())
+	})
+
 	t.Run("2018-04-12 19/24/49.gif", func(t *testing.T) {
 		result := Time("2018-04-12 19/24/49.gif")
 		assert.False(t, result.IsZero())
@@ -219,6 +224,10 @@ func TestIsTime(t *testing.T) {
 
 	t.Run("telegram_2020_01_30_09_57_18.jpg", func(t *testing.T) {
 		assert.False(t, IsTime("telegram_2020_01_30_09_57_18.jpg"))
+	})
+
+	t.Run("", func(t *testing.T) {
+		assert.False(t, IsTime(""))
 	})
 
 	t.Run("Screenshot 2019_05_21 at 10.45.52.png", func(t *testing.T) {

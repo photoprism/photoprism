@@ -15,7 +15,7 @@ Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
     to describe our software, run your own server, for educational purposes, but not for
     offering commercial goods, products, or services without prior written permission.
     In other words, please ask.
@@ -130,7 +130,7 @@ export class Photo extends RestModel {
 
     localDayString() {
         if (!this.TakenAtLocal) {
-            return new Date().getDay().toString().padStart(2, "0");
+            return new Date().getDate().toString().padStart(2, "0");
         }
 
         if (!this.Day || this.Day <= 0) {
@@ -187,7 +187,7 @@ export class Photo extends RestModel {
     }
 
     localDate(time) {
-        if(!this.TakenAtLocal) {
+        if (!this.TakenAtLocal) {
             return this.utcDate();
         }
 
@@ -575,6 +575,10 @@ export class Photo extends RestModel {
         return Api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) => Promise.resolve(this.setValues(r.data)));
     }
 
+    deleteFile(fileUID) {
+        return Api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) => Promise.resolve(this.setValues(r.data)));
+    }
+
     like() {
         this.Favorite = true;
         return Api.post(this.getEntityResource() + "/like");
@@ -633,7 +637,7 @@ export class Photo extends RestModel {
         }
 
         return Api.put(this.getEntityResource(), values).then((resp) => {
-            if(values.Type || values.Lat) {
+            if (values.Type || values.Lat) {
                 config.update();
             }
 

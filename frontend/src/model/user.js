@@ -15,7 +15,7 @@ Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
     to describe our software, run your own server, for educational purposes, but not for
     offering commercial goods, products, or services without prior written permission.
     In other words, please ask.
@@ -36,44 +36,38 @@ import {$gettext} from "common/vm";
 export class User extends RestModel {
     getDefaults() {
         return {
-            ID: 0,
             UID: "",
             Address: {},
-            AddressID: 1,
-            ParentUID: "",
-            UserUUID: "",
+            MotherUID: "",
+            FatherUID: "",
+            GlobalUID: "",
+            FullName: "",
+            NickName: "",
+            MaidenName: "",
+            ArtistName: "",
             UserName: "",
-            UserLocale: "",
-            TimeZone: "",
+            UserStatus: "",
+            UserDisabled: false,
+            UserSettings: "",
             PrimaryEmail: "",
+            EmailConfirmed: false,
             BackupEmail: "",
-            DisplayName: "",
-            DisplayLocation: "",
-            DisplayBio: "",
-            NamePrefix: "",
-            GivenName: "",
-            FamilyName: "",
-            NameSuffix: "",
-            AvatarUID: "",
-            AvatarURL: "",
-            FeedURL: "",
-            FeedType: "",
-            FeedFollow: false,
-            BlogURL: "",
-            BlogType: "",
-            BlogFollow: false,
-            CompanyURL: "",
+            PersonURL: "",
+            PersonPhone: "",
+            PersonStatus: "",
+            PersonAvatar: "",
+            PersonLocation: "",
+            PersonBio: "",
+            BusinessURL: "",
+            BusinessPhone: "",
+            BusinessEmail: "",
             CompanyName: "",
-            CompanyPhone: "",
-            PrimaryPhone: "",
             DepartmentName: "",
             JobTitle: "",
+            BirthYear: -1,
+            BirthMonth: -1,
+            BirthDay: -1,
             TermsAccepted: false,
-            IsActive: false,
-            IsConfirmed: false,
-            IsPro: false,
-            IsSponsor: false,
-            IsContributor: false,
             IsArtist: false,
             IsSubject: false,
             RoleAdmin: false,
@@ -81,26 +75,18 @@ export class User extends RestModel {
             RoleChild: false,
             RoleFamily: false,
             RoleFriend: false,
-            CanEdit: false,
-            CanDelete: false,
-            CanIndex: false,
-            CanShare: false,
-            CanComment: false,
-            CanUpload: false,
-            CanDownload: false,
             WebDAV: false,
-            ApiToken: "",
-            UserAccounts: "",
-            UserNotes: "",
-            LoginAttempts: 0,
-            LoginAt: "",
+            StoragePath: "",
+            CanInvite: false,
+            InviteToken: "",
+            InvitedBy: "",
             CreatedAt: "",
             UpdatedAt: "",
         };
     }
 
     getEntityName() {
-        return this.GivenName + " " + this.FamilyName;
+        return this.FullName ? this.FullName : this.UserName;
     }
 
     getRegisterForm() {

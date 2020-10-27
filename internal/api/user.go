@@ -29,7 +29,7 @@ func ChangePassword(router *gin.RouterGroup) {
 		}
 
 		uid := c.Param("uid")
-		m := entity.FindPersonByUID(uid)
+		m := entity.FindUserByUID(uid)
 
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)

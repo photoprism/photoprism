@@ -30,9 +30,9 @@ type clientInfo struct {
 }
 
 var wsAuth = struct {
-	user  map[string]entity.Person
+	user  map[string]entity.User
 	mutex sync.RWMutex
-}{user: make(map[string]entity.Person)}
+}{user: make(map[string]entity.User)}
 
 func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config) {
 	defer ws.Close()
@@ -106,7 +106,7 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 		ws.Close()
 
 		wsAuth.mutex.Lock()
-		wsAuth.user[connId] = entity.UnknownPerson
+		wsAuth.user[connId] = entity.UnknownUser
 		wsAuth.mutex.Unlock()
 	}()
 
@@ -125,7 +125,7 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 		case msg := <-s.Receiver:
 			wsAuth.mutex.RLock()
 
-			user := entity.UnknownPerson
+			user := entity.UnknownUser
 
 			if hit, ok := wsAuth.user[connId]; ok {
 				user = hit
@@ -181,7 +181,7 @@ func Websocket(router *gin.RouterGroup) {
 		if conf.Public() {
 			wsAuth.user[connId] = entity.Admin
 		} else {
-			wsAuth.user[connId] = entity.UnknownPerson
+			wsAuth.user[connId] = entity.UnknownUser
 		}
 		wsAuth.mutex.Unlock()
 

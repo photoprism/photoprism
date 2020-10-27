@@ -30,7 +30,7 @@ func resampleAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
 
-	if err := conf.CreateDirectories(); err != nil {
+	if err := conf.Init(); err != nil {
 		return err
 	}
 

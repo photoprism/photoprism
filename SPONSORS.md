@@ -6,10 +6,10 @@ especially if you have feature requests or need help with using our software.
 They will match every donation in the first year.
 In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
 Our sponsors and contributors will get for free whatever we might have to 
-[charge](https://docs.photoprism.org/funding/) for a geodata, public events and maps 
+[charge](https://docs.photoprism.org/funding/) for a geodata, public events, and maps 
 subscription later.
 
-Also please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
+Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
 it provides additional motivation to keep going.
 
 Ideas backed by a sponsor are marked with a golden [sponsor][issues:sponsor] label.
@@ -39,7 +39,7 @@ For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, 
 Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
-[INIT_6](https://twitter.com/init_3)
+[INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon
 
 [patreon]: https://www.patreon.com/photoprism
 [paypal]: https://www.paypal.me/photoprism

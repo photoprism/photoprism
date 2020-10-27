@@ -17,12 +17,12 @@
     </v-card>
     <v-layout row wrap class="p-results">
       <v-flex
-              v-for="(photo, index) in photos"
-              :key="index"
-              :data-uid="photo.UID"
-              class="p-photo"
-              xs12 sm6 md4 lg3 d-flex
-              v-bind:class="{ 'is-selected': $clipboard.has(photo) }"
+          v-for="(photo, index) in photos"
+          :key="index"
+          :data-uid="photo.UID"
+          class="p-photo"
+          xs12 sm6 md4 lg3 d-flex
+          v-bind:class="{ 'is-selected': $clipboard.has(photo) }"
       >
         <v-hover>
           <v-card tile slot-scope="{ hover }"
@@ -37,27 +37,27 @@
                    @click.stop.prevent="onClick($event, index)"
             >
               <v-layout
-                      slot="placeholder"
-                      fill-height
-                      align-center
-                      justify-center
-                      ma-0
+                  slot="placeholder"
+                  fill-height
+                  align-center
+                  justify-center
+                  ma-0
 
               >
                 <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
               </v-layout>
 
               <v-layout
-                      fill-height
-                      align-center
-                      justify-center
-                      ma-0
-                      class="p-photo-live"
-                      style="overflow: hidden;"
-                      v-if="photo.Type === 'live'"
-                      v-show="hover"
+                  fill-height
+                  align-center
+                  justify-center
+                  ma-0
+                  class="p-photo-live"
+                  style="overflow: hidden;"
+                  v-if="photo.Type === 'live'"
+                  v-show="hover"
               >
-                <video width="500" height="500" autoplay loop muted playsinline>
+                <video width="500" height="500" autoplay loop muted playsinline :key="photo.videoUrl()">
                   <source :src="photo.videoUrl()" type="video/mp4">
                 </video>
               </v-layout>
@@ -158,70 +158,70 @@
   </v-container>
 </template>
 <script>
-    export default {
-        name: 'p-photo-cards',
-        props: {
-            photos: Array,
-            selection: Array,
-            openPhoto: Function,
-            editPhoto: Function,
-            openLocation: Function,
-            album: Object,
-            filter: Object,
-        },
-        data() {
-            return {
-                showLocation: this.$config.settings().features.places,
-                hidePrivate: this.$config.settings().features.private,
-                debug: this.$config.get('debug'),
-                mouseDown: {
-                    index: -1,
-                    timeStamp: -1,
-                },
-            };
-        },
-        methods: {
-            downloadFile(index) {
-                const photo = this.photos[index];
-                const link = document.createElement('a')
-                link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
-                link.download = photo.FileName;
-                link.click();
-            },
-            onSelect(ev, index) {
-                if (ev.shiftKey) {
-                    this.selectRange(index);
-                } else {
-                    this.$clipboard.toggle(this.photos[index]);
-                }
-            },
-            onMouseDown(ev, index) {
-                this.mouseDown.index = index;
-                this.mouseDown.timeStamp = ev.timeStamp;
-            },
-            onClick(ev, index) {
-                let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
-
-                if (longClick || this.selection.length > 0) {
-                    if (longClick || ev.shiftKey) {
-                        this.selectRange(index);
-                    } else {
-                        this.$clipboard.toggle(this.photos[index]);
-                    }
-                } else {
-                    this.openPhoto(index, false);
-                }
-            },
-            onContextMenu(ev, index) {
-                if (this.$isMobile) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    this.selectRange(index);
-                }
-            },
-            selectRange(index) {
-                this.$clipboard.addRange(index, this.photos);
-            },
-        }
+export default {
+  name: 'p-photo-cards',
+  props: {
+    photos: Array,
+    selection: Array,
+    openPhoto: Function,
+    editPhoto: Function,
+    openLocation: Function,
+    album: Object,
+    filter: Object,
+  },
+  data() {
+    return {
+      showLocation: this.$config.settings().features.places,
+      hidePrivate: this.$config.settings().features.private,
+      debug: this.$config.get('debug'),
+      mouseDown: {
+        index: -1,
+        timeStamp: -1,
+      },
     };
+  },
+  methods: {
+    downloadFile(index) {
+      const photo = this.photos[index];
+      const link = document.createElement('a')
+      link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
+      link.download = photo.FileName;
+      link.click();
+    },
+    onSelect(ev, index) {
+      if (ev.shiftKey) {
+        this.selectRange(index);
+      } else {
+        this.$clipboard.toggle(this.photos[index]);
+      }
+    },
+    onMouseDown(ev, index) {
+      this.mouseDown.index = index;
+      this.mouseDown.timeStamp = ev.timeStamp;
+    },
+    onClick(ev, index) {
+      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+
+      if (longClick || this.selection.length > 0) {
+        if (longClick || ev.shiftKey) {
+          this.selectRange(index);
+        } else {
+          this.$clipboard.toggle(this.photos[index]);
+        }
+      } else {
+        this.openPhoto(index, false);
+      }
+    },
+    onContextMenu(ev, index) {
+      if (this.$isMobile) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.selectRange(index);
+      }
+    },
+    selectRange(index) {
+      this.$clipboard.addRange(index, this.photos);
+    },
+  }
+};
 </script>

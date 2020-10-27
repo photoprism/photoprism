@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/session"
 )
@@ -38,7 +39,7 @@ func CreateSession(router *gin.RouterGroup) {
 			links := entity.FindValidLinks(f.Token, "")
 
 			if len(links) == 0 {
-				c.AbortWithStatusJSON(400, gin.H{"error": "Invalid link"})
+				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidLink)})
 			}
 
 			data.Tokens = []string{f.Token}
@@ -53,21 +54,21 @@ func CreateSession(router *gin.RouterGroup) {
 				data.User = entity.Guest
 			}
 		} else if f.HasCredentials() {
-			user := entity.FindPersonByUserName(f.UserName)
+			user := entity.FindUserByName(f.UserName)
 
 			if user == nil {
-				c.AbortWithStatusJSON(400, gin.H{"error": "Invalid user name or password"})
+				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 				return
 			}
 
 			if user.InvalidPassword(f.Password) {
-				c.AbortWithStatusJSON(400, gin.H{"error": "Invalid user name or password"})
+				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 				return
 			}
 
 			data.User = *user
 		} else {
-			c.AbortWithStatusJSON(400, gin.H{"error": "Password required, please try again"})
+			c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidPassword)})
 			return
 		}
 

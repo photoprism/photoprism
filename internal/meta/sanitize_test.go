@@ -137,3 +137,19 @@ func TestSanitizeDescription(t *testing.T) {
 		}
 	})
 }
+
+func TestSanitizeUID(t *testing.T) {
+	t.Run("77d9a719ede3f95915abd081d7b7cb2c", func(t *testing.T) {
+		result := SanitizeUID("77d9a719ede3f95915abd081d7b7CB2c")
+		assert.Equal(t, "77d9a719ede3f95915abd081d7b7cb2c", result)
+	})
+	t.Run("77d", func(t *testing.T) {
+		result := SanitizeUID("77d")
+		assert.Equal(t, "", result)
+	})
+	t.Run(":77d9a719ede3f95915abd081d7b7cb2c", func(t *testing.T) {
+		result := SanitizeUID(":77d9a719ede3f95915abd081d7b7CB2c")
+		assert.Equal(t, "77d9a719ede3f95915abd081d7b7cb2c", result)
+	})
+
+}

@@ -181,6 +181,9 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	data.Title = SanitizeTitle(data.Title)
 	data.Description = SanitizeDescription(data.Description)
+	data.Keywords = SanitizeMeta(data.Keywords)
+	data.Subject = SanitizeMeta(data.Subject)
+	data.Artist = SanitizeMeta(data.Artist)
 
 	return nil
 }

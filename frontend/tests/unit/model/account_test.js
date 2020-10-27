@@ -61,7 +61,7 @@ describe("model/account", () => {
         const values2 = {ID: 6, Title: "Crazy Cat 2", UID: 783};
         const photo2 = new Photo(values2);
         const Photos = [photo, photo2];
-        account.Share(Photos, "destinaton").then(
+        account.Share(Photos, "destination").then(
             (response) => {
                 assert.equal(response, "share success");
                 done();

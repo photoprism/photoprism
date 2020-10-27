@@ -9,7 +9,7 @@ PhotoPrism: Browse Your Life in Pictures
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@browseyourlife-00acee.svg)][twitter]
 
-PhotoPrism™ is a server-based application for browsing, organizing and sharing your personal photo collection.
+PhotoPrism® is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
 Say goodbye to solutions that force you to upload your visual memories to the cloud.
 
@@ -74,7 +74,7 @@ Looking forward, specific solutions for funding development and maintenance coul
     continue to use Docker or build from source
   - provide additional features to users who support us financially, maybe with a different license similar to GitLab
   - develop a one-click solution for private cloud hosting together with selected providers we trust
-  - offer a geodata, public events and maps subscription since OpenStreetMap doesn't want us to use their development 
+  - offer a geodata, public events, and maps subscription since OpenStreetMap doesn't want us to use their development 
     API for production, which is perfectly fine
 
 ## Donations ##
@@ -97,7 +97,7 @@ Thank you very much! <3
 
 ## Trademarks ##
 
-PhotoPrism™ is a registered trademark of Michael Mayer. You may use it as required to describe 
+PhotoPrism® is a registered trademark of Michael Mayer. You may use it as required to describe 
 our software, run your own server, for educational purposes, but not for offering commercial 
 goods, products, or services without prior written permission. In other words, please ask.
 

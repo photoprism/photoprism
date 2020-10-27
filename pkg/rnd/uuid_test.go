@@ -36,4 +36,5 @@ func TestSanitizeUUID(t *testing.T) {
 	assert.Equal(t, "", SanitizeUUID("55785BAC-9H4B-4747-B090-EE123FFEE437"))
 	assert.Equal(t, "550e8400-e29b-11d4-a716-446655440000", SanitizeUUID("550e8400-e29b-11d4-a716-446655440000"))
 	assert.Equal(t, "", SanitizeUUID("4B1FEF2D1CF4A5BE38B263E0637EDEAD"))
+	assert.Equal(t, "", SanitizeUUID(""))
 }

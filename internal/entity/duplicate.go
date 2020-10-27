@@ -11,9 +11,9 @@ type DuplicatesMap map[string]Duplicate
 
 // Duplicate represents an exact file duplicate.
 type Duplicate struct {
-	FileName string `gorm:"type:varbinary(768);primary_key;" json:"Name" yaml:"Name"`
-	FileRoot string `gorm:"type:varbinary(16);primary_key;default:'/';" json:"Root" yaml:"Root,omitempty"`
-	FileHash string `gorm:"type:varbinary(128);default:'';index" json:"Hash" yaml:"Hash,omitempty"`
+	FileName string `gorm:"type:VARBINARY(768);primary_key;" json:"Name" yaml:"Name"`
+	FileRoot string `gorm:"type:VARBINARY(16);primary_key;default:'/';" json:"Root" yaml:"Root,omitempty"`
+	FileHash string `gorm:"type:VARBINARY(128);default:'';index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize int64  `json:"Size" yaml:"Size,omitempty"`
 	ModTime  int64  `json:"ModTime" yaml:"-"`
 }

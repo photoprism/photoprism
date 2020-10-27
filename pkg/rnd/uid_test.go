@@ -31,6 +31,7 @@ func TestIsPPID(t *testing.T) {
 	assert.True(t, IsPPID("lt9k3pw1wowuy3c2", 'l'))
 	assert.False(t, IsPPID("lt9k3pw1wowuy3c2123", 'l'))
 	assert.False(t, IsPPID("lt9k3pw1wowuy3c2123", 'l'))
+	assert.False(t, IsPPID("lt9k3pw1AAA-owuy3c2123", 'l'))
 	assert.False(t, IsPPID("", 'l'))
 	assert.False(t, IsPPID("lt9k3pw1w  ?owuy  3c2123", 'l'))
 }
@@ -42,7 +43,6 @@ func TestIsHex(t *testing.T) {
 	assert.False(t, IsHex("550e8400-e29b-11d4-a716_446655440000"))
 	assert.True(t, IsHex("4B1FEF2D1CF4A5BE38B263E0637EDEAD"))
 	assert.False(t, IsHex(""))
-
 }
 
 func TestIsUID(t *testing.T) {
@@ -55,4 +55,10 @@ func TestIsUID(t *testing.T) {
 	assert.False(t, IsUID("123", '1'))
 	assert.False(t, IsUID("_", '_'))
 	assert.False(t, IsUID("", '_'))
+}
+
+func TestIsLowerAlnum(t *testing.T) {
+	assert.False(t, IsLowerAlnum("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"))
+	assert.True(t, IsLowerAlnum("dafbe7996a701cdb"))
+	assert.False(t, IsLowerAlnum(""))
 }

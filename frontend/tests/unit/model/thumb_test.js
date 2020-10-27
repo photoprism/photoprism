@@ -133,6 +133,12 @@ describe("model/thumb", () => {
 
     });
 
+    it("should test from files",  () => {
+        const Photos = [];
+        const result = Thumb.fromFiles(Photos);
+        assert.equal(result, "");
+    });
+
     it("should test from photo",  () => {
         const values = {
             ID: 8,
@@ -260,6 +266,9 @@ describe("model/thumb", () => {
         const result2 = Thumb.calculateSize(file3, 900, 450);
         assert.equal(result2.width,  397);
         assert.equal(result2.height,  450);
+        const result4 = Thumb.calculateSize(file3, 900, 950);
+        assert.equal(result4.width,  750);
+        assert.equal(result4.height,  850);
     });
 
 });

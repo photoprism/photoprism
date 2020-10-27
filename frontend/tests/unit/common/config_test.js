@@ -1,6 +1,7 @@
 import Config from "common/config";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
+import StorageShim from "node-storage-shim";
 
 window.__CONFIG__ = {
     "name": "PhotoPrism",
@@ -152,14 +153,14 @@ window.__CONFIG__ = {
 let chai = require("chai/chai");
 let assert = chai.assert;
 
-const config2 = new Config(window.localStorage, window.__CONFIG__);
+const config2 = new Config(new StorageShim(), window.__CONFIG__);
 
 describe("common/config", () => {
 
     const mock = new MockAdapter(Api);
 
     it("should get all config values",  () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const values = {siteTitle: "Foo", name: "testConfig", year: "2300"};
 
         const config = new Config(storage, values);
@@ -168,7 +169,7 @@ describe("common/config", () => {
     });
 
     it("should set multiple config values",  () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const values = {siteTitle: "Foo", country: "Germany", city: "Hamburg"};
         const newValues = {siteTitle: "Foo", new: "xxx", city: "Berlin", debug: true, settings: {theme: "lavender"}};
         const config = new Config(storage, values);
@@ -186,7 +187,7 @@ describe("common/config", () => {
     });
 
     it("should store values",  () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const values = {siteTitle: "Foo", country: "Germany", city: "Hamburg"};
         const config = new Config(storage, values);
         assert.equal(config.storage["config"], undefined);
@@ -196,7 +197,7 @@ describe("common/config", () => {
     });
 
     it("should set and get single config value",  () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const values = {};
 
         const config = new Config(storage, values);

@@ -28,6 +28,8 @@ const (
 	ErrNoAlbumsSelected
 	ErrNoFilesForDownload
 	ErrZipFailed
+	ErrInvalidCredentials
+	ErrInvalidLink
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -35,6 +37,7 @@ const (
 	MsgAlbumDeleted
 	MsgAlbumCloned
 	MsgFileUnstacked
+	MsgFileDeleted
 	MsgSelectionAddedTo
 	MsgEntryAddedTo
 	MsgEntriesAddedTo
@@ -93,6 +96,8 @@ var Messages = MessageMap{
 	ErrNoAlbumsSelected:   gettext("No albums selected"),
 	ErrNoFilesForDownload: gettext("No files available for download"),
 	ErrZipFailed:          gettext("Failed to create zip file"),
+	ErrInvalidCredentials: gettext("Invalid credentials"),
+	ErrInvalidLink:        gettext("Invalid link"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),
@@ -101,6 +106,7 @@ var Messages = MessageMap{
 	MsgAlbumDeleted:          gettext("Album %s deleted"),
 	MsgAlbumCloned:           gettext("Album contents cloned"),
 	MsgFileUnstacked:         gettext("File removed from stack"),
+	MsgFileDeleted:           gettext("File deleted"),
 	MsgSelectionAddedTo:      gettext("Selection added to %s"),
 	MsgEntryAddedTo:          gettext("One entry added to %s"),
 	MsgEntriesAddedTo:        gettext("%d entries added to %s"),

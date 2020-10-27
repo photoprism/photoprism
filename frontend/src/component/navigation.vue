@@ -363,7 +363,15 @@
             <v-list-tile :to="{ name: 'about' }" :exact="true" @click="" class="nav-about">
               <v-list-tile-content>
                 <v-list-tile-title>
-                  <translate key="Help">Help</translate>
+                  <translate>About</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile :to="{ name: 'feedback' }" :exact="true" @click="" v-show="!public && auth" class="nav-feedback">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate>Feedback</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>

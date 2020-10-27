@@ -39,6 +39,7 @@ acceptance-restart:
 	cp -f storage/acceptance/settings/settingsBackup.yml storage/acceptance/settings/settings.yml
 	rm -rf storage/acceptance/originals/2010
 	rm -rf storage/acceptance/originals/2013
+	rm -rf storage/acceptance/originals/2017
 	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --settings-path ./storage/acceptance/settings --originals-path ./storage/acceptance/originals --sidecar-json=false --sidecar-yaml=false start -d
 acceptance-restore-db:
 	cp -f storage/acceptance/settings/settingsBackup.yml storage/acceptance/settings/settings.yml
@@ -51,6 +52,8 @@ stop:
 	go run cmd/photoprism/photoprism.go stop
 terminal:
 	docker-compose exec photoprism bash
+root-terminal:
+	docker-compose exec -u root photoprism bash
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
 generate:
@@ -164,6 +167,10 @@ docker-development:
 docker-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
+docker-photoprism-local:
+	scripts/docker-build.sh photoprism
+docker-photoprism-pull:
+	docker pull photoprism/photoprism:latest
 docker-photoprism-arm64:
 	docker pull ubuntu:20.04
 	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)

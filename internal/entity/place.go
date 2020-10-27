@@ -10,12 +10,12 @@ import (
 
 // Place used to associate photos to places
 type Place struct {
-	ID            string    `gorm:"type:varbinary(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	PlaceLabel    string    `gorm:"type:varbinary(768);unique_index;" json:"Label" yaml:"Label"`
-	PlaceCity     string    `gorm:"type:varchar(255);" json:"City" yaml:"City,omitempty"`
-	PlaceState    string    `gorm:"type:varchar(255);" json:"State" yaml:"State,omitempty"`
-	PlaceCountry  string    `gorm:"type:varbinary(2);" json:"Country" yaml:"Country,omitempty"`
-	PlaceKeywords string    `gorm:"type:varchar(255);" json:"Keywords" yaml:"Keywords,omitempty"`
+	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
+	PlaceLabel    string    `gorm:"type:VARBINARY(768);unique_index;" json:"Label" yaml:"Label"`
+	PlaceCity     string    `gorm:"type:VARCHAR(255);" json:"City" yaml:"City,omitempty"`
+	PlaceState    string    `gorm:"type:VARCHAR(255);" json:"State" yaml:"State,omitempty"`
+	PlaceCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
+	PlaceKeywords string    `gorm:"type:VARCHAR(255);" json:"Keywords" yaml:"Keywords,omitempty"`
 	PlaceFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoCount    int       `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	CreatedAt     time.Time `json:"CreatedAt" yaml:"-"`

@@ -33,4 +33,4 @@ RUN photoprism index
 RUN photoprism moments
 
 # Start PhotoPrism server
-CMD photoprism --public start
+CMD ["photoprism", "--public", "start"]

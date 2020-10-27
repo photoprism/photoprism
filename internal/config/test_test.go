@@ -48,6 +48,10 @@ func TestNewTestParamsError(t *testing.T) {
 func TestNewTestErrorConfig(t *testing.T) {
 	c := NewTestErrorConfig()
 
+	if err := c.connectDb(); err != nil {
+		t.Fatal(err)
+	}
+
 	db := c.Db()
 
 	assert.IsType(t, &gorm.DB{}, db)
