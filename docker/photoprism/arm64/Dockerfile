@@ -207,6 +207,9 @@ RUN photoprism -v
 # Expose http port
 EXPOSE 2342
 
+# Mountable volumes
+VOLUME ["/photoprism/storage", "/photoprism/originals", "/photoprism/import"]
+
 # Configure entrypoint
 COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
