@@ -136,7 +136,7 @@ describe("model/photo", () => {
         const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
         const photo = new Photo(values);
         const result = photo.localMonthString();
-        assert.equal(result, "09");
+        assert.equal(result, (new Date().getMonth() + 1).toString().padStart(2, "0"));
         const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC", Month: 8};
         const photo2 = new Photo(values2);
         const result2 = photo2.localMonthString();

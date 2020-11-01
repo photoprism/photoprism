@@ -80,13 +80,13 @@ clean-local-config:
 dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-js:
-	(cd frontend &&	npm install --silent && npm audit fix)
+	(cd frontend &&	npm install --silent --legacy-peer-deps && npm audit fix)
 dep-go:
 	go build -v ./...
 dep-upgrade:
 	go get -u -t ./...
 dep-upgrade-js:
-	(cd frontend &&	npm --depth 3 update)
+	(cd frontend &&	npm --depth 3 update --legacy-peer-deps)
 dep-tensorflow:
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh

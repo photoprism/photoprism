@@ -141,7 +141,7 @@ export class Photo extends RestModel {
 
     localMonthString() {
         if (!this.TakenAtLocal) {
-            return new Date().getMonth().toString().padStart(2, "0");
+            return (new Date().getMonth() + 1).toString().padStart(2, "0");
         }
 
         if (!this.Month || this.Month <= 0) {
