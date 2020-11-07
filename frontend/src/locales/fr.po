@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 2.4\n"
+"X-Generator: Poedit 2.4.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/pages/albums.vue:467 src/share/albums.vue:347
@@ -1459,11 +1459,11 @@ msgstr "Sauvegarder"
 
 #: src/dialog/photo/info.vue:93
 msgid "Scan"
-msgstr "Analyser"
+msgstr "Numérisée"
 
 #: src/component/navigation.vue:94
 msgid "Scans"
-msgstr "Analyses"
+msgstr "Numérisée"
 
 #: src/component/album/toolbar.vue:117 src/component/photo/toolbar.vue:198
 #: src/component/photo/toolbar.vue:33 src/dialog/album/edit.vue:123
