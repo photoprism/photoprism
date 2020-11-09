@@ -1562,7 +1562,7 @@ msgstr "Numérisée"
 
 #: src/component/navigation.vue:97
 msgid "Scans"
-msgstr "Numérisations"
+msgstr "Numérisée"
 
 #: src/component/photo/toolbar.vue:41 src/pages/albums.vue:91
 #: src/pages/labels.vue:66 src/pages/library/errors.vue:46
