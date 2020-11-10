@@ -23,7 +23,7 @@
                           item-text="Title"
                           item-value="UID"
                           :allow-overflow="false"
-                          :label="labels.album"
+                          :label="$gettext('Select albums or create a new one')"
                           return-object
               >
                 <template v-slot:no-data>
@@ -111,9 +111,6 @@
                 started: 0,
                 review: this.$config.feature("review"),
                 safe: !this.$config.get("uploadNSFW"),
-                labels: {
-                    album: this.$gettext("Select albums or create a new one"),
-                },
             }
         },
         methods: {

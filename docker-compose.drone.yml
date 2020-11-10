@@ -1,0 +1,146 @@
+version: '3.5'
+
+services:
+  photoprism:
+    build: .
+    image: photoprism/photoprism:develop
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    depends_on:
+      - photoprism-db
+    volumes:
+      - "~/.cache/npm:/root/.cache/npm"
+      - "~/.cache/go-mod:/go/pkg/mod"
+    environment:
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
+      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Personal Photo Management"
+      PHOTOPRISM_SITE_AUTHOR: "@browseyourlife"
+      PHOTOPRISM_DEBUG: "false"
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_PUBLIC: "true"
+      PHOTOPRISM_UPLOAD_NSFW: "false"
+      PHOTOPRISM_DETECT_NSFW: "false"
+      PHOTOPRISM_PID_FILENAME: "photoprism.pid"
+      PHOTOPRISM_LOG_FILENAME: "photoprism.log"
+      PHOTOPRISM_DETACH_SERVER: "true"
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(photoprism-db:4001)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      PHOTOPRISM_TEST_DRIVER: "sqlite"
+      PHOTOPRISM_TEST_DSN: ".test.db"
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"
+      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
+      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      PHOTOPRISM_THUMB_FILTER: "lanczos"    # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true"     # Enable on-demand thumbnail rendering (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048           # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096         # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680  # On-demand rendering size limit (default 7680, min 720, max 7680)
+      PHOTOPRISM_JPEG_SIZE: 7680            # Size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_QUALITY: 92           # Set to 95 for high-quality thumbnails (25-100)
+      PHOTOPRISM_DARKTABLE_PRESETS: "false" # Use darktable presets (disables concurrent raw to jpeg conversion)
+      PHOTOPRISM_SIDECAR_JSON: "true"       # Read metadata from JSON sidecar files created by exiftool
+      PHOTOPRISM_SIDECAR_YAML: "true"       # Backup photo metadata to YAML sidecar files
+      CODECOV_TOKEN:
+      CODECOV_ENV:
+      CODECOV_URL:
+      CODECOV_SLUG:
+      VCS_COMMIT_ID:
+      VCS_BRANCH_NAME:
+      VCS_PULL_REQUEST:
+      VCS_SLUG:
+      VCS_TAG:
+      CI_BUILD_URL:
+      CI_BUILD_ID:
+      CI_JOB_ID:
+      CI:
+      DRONE:
+      DRONE_BRANCH:
+      DRONE_BUILD_ACTION:
+      DRONE_BUILD_CREATED:
+      DRONE_BUILD_EVENT:
+      DRONE_BUILD_FINISHED:
+      DRONE_BUILD_NUMBER:
+      DRONE_BUILD_PARENT:
+      DRONE_BUILD_STARTED:
+      DRONE_BUILD_STATUS:
+      DRONE_CALVER:
+      DRONE_COMMIT:
+      DRONE_COMMIT_AFTER:
+      DRONE_COMMIT_AUTHOR:
+      DRONE_COMMIT_AUTHOR_AVATAR:
+      DRONE_COMMIT_AUTHOR_EMAIL:
+      DRONE_COMMIT_AUTHOR_NAME:
+      DRONE_COMMIT_BEFORE:
+      DRONE_COMMIT_BRANCH:
+      DRONE_COMMIT_LINK:
+      DRONE_COMMIT_MESSAGE:
+      DRONE_COMMIT_REF:
+      DRONE_COMMIT_SHA:
+      DRONE_DEPLOY_TO:
+      DRONE_FAILED_STAGES:
+      DRONE_FAILED_STEPS:
+      DRONE_GIT_HTTP_URL:
+      DRONE_GIT_SSH_URL:
+      DRONE_PULL_REQUEST:
+      DRONE_REMOTE_URL:
+      DRONE_REPO:
+      DRONE_REPO_BRANCH:
+      DRONE_REPO_LINK:
+      DRONE_REPO_NAME:
+      DRONE_REPO_NAMESPACE:
+      DRONE_REPO_OWNER:
+      DRONE_REPO_PRIVATE:
+      DRONE_REPO_SCM:
+      DRONE_REPO_VISIBILITY:
+      DRONE_SEMVER:
+      DRONE_SEMVER_BUILD:
+      DRONE_SEMVER_ERROR:
+      DRONE_SEMVER_MAJOR:
+      DRONE_SEMVER_MINOR:
+      DRONE_SEMVER_PATCH:
+      DRONE_SEMVER_PRERELEASE:
+      DRONE_SEMVER_SHORT:
+      DRONE_SOURCE_BRANCH:
+      DRONE_STAGE_ARCH:
+      DRONE_STAGE_DEPENDS_ON:
+      DRONE_STAGE_FINISHED:
+      DRONE_STAGE_KIND:
+      DRONE_STAGE_MACHINE:
+      DRONE_STAGE_NAME:
+      DRONE_STAGE_NUMBER:
+      DRONE_STAGE_OS:
+      DRONE_STAGE_STARTED:
+      DRONE_STAGE_STATUS:
+      DRONE_STAGE_TYPE:
+      DRONE_STAGE_VARIANT:
+      DRONE_STEP_NAME:
+      DRONE_STEP_NUMBER:
+      DRONE_SYSTEM_HOST:
+      DRONE_SYSTEM_HOSTNAME:
+      DRONE_SYSTEM_PROTO:
+      DRONE_SYSTEM_VERSION:
+      DRONE_TAG:
+      DRONE_TARGET_BRANCH:
+
+  photoprism-db:
+    image: mariadb:10.5
+    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+    expose:
+      - "4001"
+    volumes:
+      - "./scripts/reset-test-db.sql:/docker-entrypoint-initdb.d/reset-test-db.sql"
+    environment:
+      MYSQL_ROOT_PASSWORD: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: photoprism
+      MYSQL_DATABASE: photoprism
+
+  webdav-dummy:
+    image: photoprism/webdav:20200825

@@ -3,6 +3,8 @@ package meta
 import (
 	"math"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Data represents image meta data.
@@ -73,7 +75,7 @@ func (data Data) AspectRatio() float32 {
 
 // Portrait returns true if it's a portrait picture or video based on width and height.
 func (data Data) Portrait() bool {
-	return data.Width < data.Height
+	return data.ActualWidth() < data.ActualHeight()
 }
 
 // Megapixels returns the resolution in megapixels.
@@ -83,12 +85,12 @@ func (data Data) Megapixels() int {
 
 // HasDocumentID returns true if a DocumentID exists.
 func (data Data) HasDocumentID() bool {
-	return len(data.DocumentID) >= 15
+	return rnd.IsUUID(data.DocumentID)
 }
 
 // HasInstanceID returns true if an InstanceID exists.
 func (data Data) HasInstanceID() bool {
-	return len(data.InstanceID) >= 15
+	return rnd.IsUUID(data.InstanceID)
 }
 
 // HasTimeAndPlace if data contains a time and gps position.

@@ -37,8 +37,8 @@
                     class="ma-0 pa-0"
                     v-model="settings.import.move"
                     color="secondary-dark"
-                    :label="labels.move"
-                    :hint="hints.move"
+                    :label="$gettext('Move Files')"
+                    :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
                     prepend-icon="delete"
                     persistent-hint
             >
@@ -115,13 +115,6 @@
                 source: null,
                 root: root,
                 dirs: [root],
-                labels: {
-                    move: this.$gettext("Move Files"),
-                    path: this.$gettext("Folder"),
-                },
-                hints: {
-                    move: this.$gettext("Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."),
-                }
             }
         },
         methods: {

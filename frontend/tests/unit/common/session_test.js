@@ -150,6 +150,7 @@ import {config} from "session";
 import Session from "common/session";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
+import StorageShim from "node-storage-shim";
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -163,13 +164,13 @@ describe('common/session', () => {
     });
 
     it('should construct session', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
         assert.equal(session.session_id, null);
     });
 
     it('should set, get and delete token', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
         assert.equal(session.hasToken("1uhovi0e"), false);
         assert.equal(session.session_id, null);
@@ -182,58 +183,58 @@ describe('common/session', () => {
     });
 
     it('should set, get and delete user', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
         assert.isFalse(session.user.hasId());
-        const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData();
-        assert.equal(session.user.FirstName, "");
+        assert.equal(session.user.FullName, "");
         session.setData(values);
-        assert.equal(session.user.FirstName, "Max");
-        assert.equal(session.user.Admin, true);
+        assert.equal(session.user.FullName, "Max Last");
+        assert.equal(session.user.RoleAdmin, true);
         const result = session.getUser();
         assert.equal(result.ID, 5);
-        assert.equal(result.Email, "test@test.com");
+        assert.equal(result.PrimaryEmail, "test@test.com");
         session.deleteData();
         assert.isFalse(session.user.hasId());
     });
 
     it('should get user email', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.getEmail();
         assert.equal(result, "test@test.com");
-        const values2 = {"user": {FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values2 = {"user": {NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
         const result2 = session.getEmail();
         assert.equal(result2, "");
         session.deleteData();
     });
 
-    it('should get user firstname', () => {
-        const storage = window.localStorage;
+    it('should get user nick name', () => {
+        const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
-        const result = session.getFirstName();
-        assert.equal(result, "Max");
-        const values2 = {"user": {FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const result = session.getNickName();
+        assert.equal(result, "Foo");
+        const values2 = {"user": {NickName: "Bar", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
-        const result2 = session.getFirstName();
+        const result2 = session.getNickName();
         assert.equal(result2, "");
         session.deleteData();
     });
 
     it('should get user full name', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.getFullName();
         assert.equal(result, "Max Last");
-        const values2 = {"user": {FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values2 = {"user": {NickName: "Bar", FullName: "Max New", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values2);
         const result2 = session.getFullName();
         assert.equal(result2, "");
@@ -241,9 +242,9 @@ describe('common/session', () => {
     });
 
     it('should test whether user is set', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isUser();
         assert.equal(result, true);
@@ -251,9 +252,9 @@ describe('common/session', () => {
     });
 
     it('should test whether user is admin', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isAdmin();
         assert.equal(result, true);
@@ -261,9 +262,9 @@ describe('common/session', () => {
     });
 
     it('should test whether user is anonymous', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
-        const values = {"user": {ID: 5, FirstName: "Max", LastName: "Last", Email: "test@test.com", Admin: true}};
+        const values = {"user": {ID: 5, NickName: "Foo", FullName: "Max Last", PrimaryEmail: "test@test.com", RoleAdmin: true}};
         session.setData(values);
         const result = session.isAnonymous();
         assert.equal(result, false);
@@ -272,16 +273,15 @@ describe('common/session', () => {
 
     it('should test login and logout', async () => {
         mock
-            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, Email: "test@test.com"}}})
-            .onDelete("session/8877").reply(200);
-        const storage = window.localStorage;
+            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, PrimaryEmail: "test@test.com"}}})
+            .onDelete("session/8877").reply(200)
+            .onDelete("session/123").reply(200);
+        const storage = new StorageShim();
         const session = new Session(storage, config);
-        assert.equal(session.session_id, null);
-        assert.equal(session.storage.data, undefined);
         await session.login("test@test.com", "passwd");
         assert.equal(session.session_id, 8877);
-        assert.equal(session.storage.data, '{"user":{"ID":1,"Email":"test@test.com"}}');
-        await session.logout();
+        assert.equal(session.storage.data, '{"user":{"ID":1,"PrimaryEmail":"test@test.com"}}');
+        await session.logout(true);
         assert.equal(session.session_id, null);
         mock.reset();
     });
@@ -289,7 +289,7 @@ describe('common/session', () => {
     //TODO Why does it make other tests fail?
     /*it('should test onLogout', async () => {
         mock
-            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, Email: "test@test.com"}}})
+            .onPost("session").reply(200, {id: "8877", data: {user: {ID: 1, PrimaryEmail: "test@test.com"}}})
             .onDelete("session/8877").reply(200);
         const storage = window.localStorage;
         const session = new Session(storage, config);
@@ -297,7 +297,7 @@ describe('common/session', () => {
         //assert.equal(session.storage.data, undefined);
         await session.login("test@test.com", "passwd");
         assert.equal(session.session_id, 8877);
-        assert.equal(session.storage.data, '{"user":{"ID":1,"Email":"test@test.com"}}');
+        assert.equal(session.storage.data, '{"user":{"ID":1,"PrimaryEmail":"test@test.com"}}');
         await session.onLogout();
         assert.equal(session.session_id, null);
         mock.reset();
@@ -305,7 +305,7 @@ describe('common/session', () => {
     });*/
 
     it('should use session storage', () => {
-        const storage = window.sessionStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
         assert.equal(storage.getItem("session_storage"), null);
         session.useSessionStorage();
@@ -314,7 +314,7 @@ describe('common/session', () => {
     });
 
     it('should use local storage', () => {
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
         assert.equal(storage.getItem("session_storage"), null);
         session.useLocalStorage();
@@ -325,7 +325,7 @@ describe('common/session', () => {
     it('should test redeem token', async () => {
         mock
             .onPost("session").reply(200, {id: "123", data: {token: "123token"}});
-        const storage = window.localStorage;
+        const storage = new StorageShim();
         const session = new Session(storage, config);
         assert.equal(session.data, null);
         await session.redeemToken("token123");

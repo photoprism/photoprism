@@ -149,27 +149,6 @@ func TestConfig_ImportPath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(result, "/storage/testdata/import"))
 }
 
-func TestConfig_SipsBin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.SipsBin()
-	assert.Equal(t, "", bin)
-}
-
-func TestConfig_DarktableBin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.DarktableBin()
-	assert.Equal(t, "/usr/bin/darktable-cli", bin)
-}
-
-func TestConfig_HeifConvertBin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.HeifConvertBin()
-	assert.Equal(t, "/usr/bin/heif-convert", bin)
-}
-
 func TestConfig_ExifToolBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

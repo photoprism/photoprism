@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -75,10 +76,15 @@ func TestConfig_TestdataPath(t *testing.T) {
 }
 
 func TestConfig_CreateDirectories(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	err := c.CreateDirectories()
+	testConfigMutex.Lock()
+	defer testConfigMutex.Unlock()
 
-	if err != nil {
+	c := &Config{
+		params: NewTestParams(),
+		token:  rnd.Token(8),
+	}
+
+	if err := c.CreateDirectories(); err != nil {
 		t.Fatal(err)
 	}
 }

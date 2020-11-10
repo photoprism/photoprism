@@ -1,0 +1,282 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-20 21:13+0200\n"
+"PO-Revision-Date: 2020-10-20 21:35+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl_NL\n"
+
+#: messages.go:72
+msgid "Unexpected error, please try again"
+msgstr "Onverwachte fout, probeer het opnieuw"
+
+#: messages.go:73
+msgid "Invalid request"
+msgstr "Ongeldige aanvraag"
+
+#: messages.go:74
+msgid "Changes could not be saved"
+msgstr "Wijzigingen kunnen niet worden opgeslagen"
+
+#: messages.go:75
+msgid "Could not be deleted"
+msgstr "Kan niet verwijderd worden"
+
+#: messages.go:76
+#, c-format
+msgid "%s already exists"
+msgstr "%s bestaat al"
+
+#: messages.go:77 messages.go:80
+msgid "Not found on server, deleted?"
+msgstr "Niet gevonden op de server, verwijderd?"
+
+#: messages.go:78
+msgid "File not found"
+msgstr "Bestand niet gevonden"
+
+#: messages.go:79
+msgid "Selection not found"
+msgstr "Selectie niet gevonden"
+
+#: messages.go:81
+msgid "Account not found"
+msgstr "Account niet gevonden"
+
+#: messages.go:82
+msgid "User not found"
+msgstr "Gebruiker niet gevonden"
+
+#: messages.go:83
+msgid "Label not found"
+msgstr "Label niet gevonden"
+
+#: messages.go:84
+msgid "Album not found"
+msgstr "Album niet gevonden"
+
+#: messages.go:85
+msgid "Not available in public mode"
+msgstr "Niet beschikbaar in publieke modus"
+
+#: messages.go:86
+msgid "not available in read-only mode"
+msgstr "niet beschikbaar in alleen-lezen modus"
+
+#: messages.go:87
+msgid "Please log in and try again"
+msgstr "Log in en probeer opnieuw"
+
+#: messages.go:88
+msgid "Upload might be offensive"
+msgstr "Upload kan aanstootgevend zijn"
+
+#: messages.go:89
+msgid "No items selected"
+msgstr "Geen items geselecteerd"
+
+#: messages.go:90
+msgid "Failed creating file, please check permissions"
+msgstr "Bestand aanmaken mislukt, controleer alstublieft de rechten"
+
+#: messages.go:91
+msgid "Failed creating folder, please check permissions"
+msgstr "Folder aanmaken mislukt, controleer alstublieft de rechten"
+
+#: messages.go:92
+msgid "Could not connect, please try again"
+msgstr "Kan niet verbinden, probeer alstublieft opnieuw"
+
+#: messages.go:93
+msgid "Invalid password, please try again"
+msgstr "Fout wachtwoord, probeer alstublieft opnieuw"
+
+#: messages.go:94
+msgid "Feature disabled"
+msgstr "Functie uitgeschakeld"
+
+#: messages.go:95
+msgid "No labels selected"
+msgstr "Geen labels geselecteerd"
+
+#: messages.go:96
+msgid "No albums selected"
+msgstr "Geen albums geselecteerd"
+
+#: messages.go:97
+msgid "No files available for download"
+msgstr "Geen bestanden beschikbaar om te downloaden"
+
+#: messages.go:98
+msgid "Failed to create zip file"
+msgstr "Maken van zip-bestand is mislukt"
+
+#: messages.go:99
+msgid "Invalid credentials"
+msgstr "Ongeldige inloggegevens"
+
+#: messages.go:100
+msgid "Invalid link"
+msgstr "Ongeldige link"
+
+#: messages.go:103
+msgid "Changes successfully saved"
+msgstr "Wijzigingen succesvol opgeslagen"
+
+#: messages.go:104
+msgid "Album created"
+msgstr "Album gemaakt"
+
+#: messages.go:105
+msgid "Album saved"
+msgstr "Album opgeslagen"
+
+#: messages.go:106
+#, c-format
+msgid "Album %s deleted"
+msgstr "Album %s verwijderd"
+
+#: messages.go:107
+msgid "Album contents cloned"
+msgstr "Albuminhoud gekopieerd"
+
+#: messages.go:108
+msgid "File removed from stack"
+msgstr "Bestand uit stapel verwijderd"
+
+#: messages.go:109
+msgid "File deleted"
+msgstr "Bestand verwijderd"
+
+#: messages.go:110
+#, c-format
+msgid "Selection added to %s"
+msgstr "Selectie toegevoegd aan %s"
+
+#: messages.go:111
+#, c-format
+msgid "One entry added to %s"
+msgstr "Eén item toegevoegd aan %s"
+
+#: messages.go:112
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d items toegevoegd aan %s"
+
+#: messages.go:113
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Eén item verwijderd uit %s"
+
+#: messages.go:114
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d items verwijderd uit %s"
+
+#: messages.go:115
+msgid "Account created"
+msgstr "Account aangemaakt"
+
+#: messages.go:116
+msgid "Account saved"
+msgstr "Account opgeslagen"
+
+#: messages.go:117
+msgid "Account deleted"
+msgstr "Account verwijderd"
+
+#: messages.go:118
+msgid "Settings saved"
+msgstr "Instellingen opgeslagen"
+
+#: messages.go:119
+msgid "Password changed"
+msgstr "Wachtwoord aangepast"
+
+#: messages.go:120
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Importeren voltooid in %d s"
+
+#: messages.go:121
+msgid "Import canceled"
+msgstr "Importeren geannuleerd"
+
+#: messages.go:122
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Indexeren voltooid in %d s"
+
+#: messages.go:123
+msgid "Indexing originals..."
+msgstr "Originelen indexeren…"
+
+#: messages.go:124
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Bestanden indexeren in %s"
+
+#: messages.go:125
+msgid "Indexing canceled"
+msgstr "Indexeren geannuleerd"
+
+#: messages.go:126
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "%d bestanden en %d foto’s verwijderd"
+
+#: messages.go:127
+#, c-format
+msgid "Moving files from %s"
+msgstr "Bestanden verplaatsen uit %s"
+
+#: messages.go:128
+#, c-format
+msgid "Copying files from %s"
+msgstr "Bestanden kopiëren uit %s"
+
+#: messages.go:129
+msgid "Labels deleted"
+msgstr "Labels verwijderd"
+
+#: messages.go:130
+msgid "Label saved"
+msgstr "Labels opgeslagen"
+
+#: messages.go:131
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d bestanden geüpload in %d s"
+
+#: messages.go:132
+msgid "Selection archived"
+msgstr "Selectie gearchiveerd"
+
+#: messages.go:133
+msgid "Selection restored"
+msgstr "Selectie hersteld"
+
+#: messages.go:134
+msgid "Selection marked as private"
+msgstr "Selectie gemarkeerd als privé"
+
+#: messages.go:135
+msgid "Albums deleted"
+msgstr "Albums verwijderd"
+
+#: messages.go:136
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip gemaakt in %d s"

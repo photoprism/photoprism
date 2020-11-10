@@ -10,604 +10,1638 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: usercopypaste\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/pages/albums.vue:274
-msgid " albums found"
-msgstr " альбомов найдено"
+#: src/pages/albums.vue:465 src/share/albums.vue:344
+msgid "%{n} albums found"
+msgstr "%{n} альбомов найдено"
 
-#: src/pages/albums.vue:209
-msgid " albums loaded"
-msgstr " альбомов загружено"
+#: src/pages/album/photos.vue:362 src/share/photos.vue:410
+msgid "%{n} entries found"
+msgstr "%{n} совпадений найдено"
 
-#: src/pages/labels.vue:244
-msgid " labels found"
-msgstr " меток найдено"
+#: src/dialog/share/upload.vue:114
+msgid "%{n} files uploaded"
+msgstr "%{n} метки загружены"
 
-#: src/pages/labels.vue:175
-msgid " labels loaded"
-msgstr " метки загружены"
+#: src/pages/library/files.vue:413
+msgid "%{n} folders found"
+msgstr "%{n} папок найдено"
 
-#: src/pages/album/photos.vue:222 src/pages/photos.vue:234
-msgid " photos found"
-msgstr " фотографий найдено"
+#: src/pages/labels.vue:439
+msgid "%{n} labels found"
+msgstr "%{n} меток найдено"
 
-#: src/pages/album/photos.vue:148 src/pages/photos.vue:161
-msgid " photos loaded"
-msgstr " фотографий загружено"
+#: src/pages/photos.vue:395
+msgid "%{n} results"
+msgstr "%{n} результатов"
 
-#: src/pages/events.vue:81
-msgid "4 Day"
-msgstr "4 Дня"
+#: src/options/options.js:202
+msgid "1 hour"
+msgstr "1 час"
 
-#: src/component/p-photo-clipboard.vue:175
-#: src/dialog/p-photo-album-dialog.vue:61
+#: src/options/options.js:204
+msgid "12 hours"
+msgstr "12 часов"
+
+#: src/options/options.js:203
+msgid "4 hours"
+msgstr "4 часа"
+
+#: src/dialog/share.vue:103
+msgid "A click will copy it to your clipboard."
+msgstr "Нажмите, что бы скопировать"
+
+#: src/model/account.js:91 src/pages/settings.vue:20
+msgid "Account"
+msgstr "Учетная запись"
+
+#: src/dialog/photo/info.vue:173
+msgid "Accuracy"
+msgstr "Точность"
+
+#: src/dialog/photo/labels.vue:110
+msgid "Action"
+msgstr "Действие"
+
+#: src/dialog/photo/files.vue:45
+msgid "Actions"
+msgstr "Действия"
+
+#: src/pages/albums.vue:172
+msgid "Add photos or videos from search results by selecting them."
+msgstr "Добавьте фотографии или видеозаписи из результатов поиска выбрав их."
+
+#: src/dialog/account/add.vue:5 src/pages/settings/sync.vue:69
+msgid "Add Server"
+msgstr "Добавить сервер"
+
+#: src/dialog/photo/album.vue:61
 msgid "Add to album"
-msgstr "Добавить в альбом"
+msgstr "Добавить сервер"
 
-#: src/dialog/photo-edit/labels.vue:36
+#: src/dialog/photo/files.vue:166
 msgid "Added"
 msgstr "Добавлено"
 
-#: src/component/p-album-toolbar.vue:153 src/dialog/p-photo-album-dialog.vue:60
-#: src/pages/albums.vue:176
-msgid "Album Name"
-msgstr "Названия альбома"
+#: src/options/options.js:212
+msgid "After 1 day"
+msgstr "Спустя день"
 
-#: src/component/p-navigation.vue:110 src/component/p-navigation.vue:119
+#: src/options/options.js:213
+msgid "After 3 days"
+msgstr "Спустя 3 дня"
+
+#: src/options/options.js:214
+msgid "After 7 days"
+msgstr "Спустя 7 дней"
+
+#: src/options/options.js:216
+msgid "After one month"
+msgstr "Спустя месяц"
+
+#: src/options/options.js:218
+msgid "After one year"
+msgstr "Спустя год"
+
+#: src/pages/albums.vue:64
+msgid ""
+"After selecting photos or videos from search results, you can add them to "
+"existing or new albums using the context menu."
+msgstr ""
+"Выбрав фотографии и видеозаписи из результатов поиска, вы можете добавить их "
+"в существующий альбом или создать новый."
+
+#: src/options/options.js:217
+msgid "After two months"
+msgstr "Спустя 2 месяца"
+
+#: src/options/options.js:215
+msgid "After two weeks"
+msgstr "Спустя 2 недели"
+
+#: src/model/album.js:161
+msgid "Album"
+msgstr "Альбомы"
+
+#: src/component/navigation.vue:182 src/component/navigation.vue:191
+#: src/routes.js:104 src/share/routes.js:15 src/share/routes.js:22
 msgid "Albums"
 msgstr "Альбомы"
 
-#: src/component/p-album-clipboard.vue:102
+#: src/component/album/clipboard.vue:159
 msgid "Albums deleted"
 msgstr "Альбом удален"
 
-#: src/pages/album/photos.vue:148 src/pages/albums.vue:209
-#: src/pages/labels.vue:175 src/pages/photos.vue:161
-msgid "All "
-msgstr "Все "
+#: src/pages/albums.vue:379 src/share/albums.vue:258
+msgid "All %{n} albums loaded"
+msgstr "Всего %{n} альбомов загружено"
 
-#: src/component/p-album-toolbar.vue:124 src/component/p-photo-toolbar.vue:150
+#: src/pages/album/photos.vue:251 src/share/photos.vue:299
+msgid "All %{n} entries loaded"
+msgstr "Всего %{n} совпадений загружено"
+
+#: src/pages/labels.vue:350
+msgid "All %{n} labels loaded"
+msgstr "Всего %{n} меток загружено"
+
+#: src/component/album/toolbar.vue:84 src/component/photo/toolbar.vue:174
 msgid "All Cameras"
 msgstr "Все Камеры"
 
-#: src/component/p-photo-toolbar.vue:153
+#: src/component/photo/toolbar.vue:177 src/pages/albums.vue:231
+#: src/pages/albums.vue:566 src/share/albums.vue:129
 msgid "All Categories"
 msgstr "Все Категории"
 
-#: src/component/p-photo-toolbar.vue:152
+#: src/component/photo/toolbar.vue:176
 msgid "All Colors"
 msgstr "Все Цвета"
 
-#: src/component/p-album-toolbar.vue:128 src/component/p-photo-toolbar.vue:149
+#: src/component/album/toolbar.vue:88 src/component/photo/toolbar.vue:173
 msgid "All Countries"
 msgstr "Все Страны"
 
-#: src/component/p-photo-toolbar.vue:151
+#: src/pages/library/import.vue:105
+msgid "All files from import folder"
+msgstr "Все файлы из папки импорта"
+
+#: src/component/photo/toolbar.vue:175
 msgid "All Lenses"
 msgstr "Все Объективы"
 
-#: src/component/p-photo-toolbar.vue:199
+#: src/component/photo/toolbar.vue:178
+msgid "All Months"
+msgstr "Все Месяца"
+
+#: src/pages/library/index.vue:98
+msgid "All originals"
+msgstr "Оригиналы"
+
+#: src/component/photo/toolbar.vue:179
 msgid "All Years"
 msgstr "Все Года"
 
-#: src/component/p-navigation.vue:85 src/component/p-navigation.vue:98
-#: src/component/p-photo-clipboard.vue:177
-#: src/dialog/p-photo-archive-dialog.vue:16
+#: src/dialog/share.vue:105
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Так же, вы можете загрузить файлы прямо на WebDAV сервер, например Nextcloud"
+
+#: src/dialog/photo/info.vue:165
+msgid "Altitude"
+msgstr "Высота"
+
+#: src/common/api.js:76
+msgid "An error occurred - are you offline?"
+msgstr "Ошибка - вы находитесь вне сети?"
+
+#: src/dialog/share.vue:104
+msgid "Any private photos and videos remain private and won't be shared."
+msgstr ""
+"Все личные фотографии и видеозаписи останутся конфиденциальными и не будут "
+"опубликованы"
+
+#: src/dialog/photo/details.vue:398
+msgid "Apply"
+msgstr "Принять"
+
+#: src/component/photo/cards.vue:185 src/dialog/photo/details.vue:397
+msgid "Approve"
+msgstr "Поддтвердить"
+
+#: src/component/navigation.vue:130 src/component/photo/cards.vue:181
+#: src/routes.js:178
 msgid "Archive"
 msgstr "Архив"
 
-#: src/dialog/p-photo-archive-dialog.vue:9
-msgid "Are you sure you want to archive these photos?"
+#: src/dialog/photo/info.vue:220
+msgid "Archived"
+msgstr "В архиве"
+
+#: src/dialog/photo/archive.vue:9
+msgid "Are you sure you want to archive the selection?"
 msgstr "Вы действительно хотите архивировать эти фотографии?"
 
-#: src/dialog/p-album-delete-dialog.vue:9
+#: src/dialog/album/delete.vue:9
 msgid "Are you sure you want to delete these albums?"
 msgstr "Вы действительно хотите удалить эти альбомы?"
 
-#: src/pages/login.vue:3
-msgid "Authentication required"
-msgstr "Требуется авторизация"
+#: src/dialog/label/delete.vue:9
+msgid "Are you sure you want to delete these labels?"
+msgstr "Вы действительно хотите удалить эти альбомы?"
 
-#: src/component/p-album-toolbar.vue:151 src/component/p-photo-list.vue:53
-#: src/component/p-photo-toolbar.vue:171 src/dialog/photo-edit/meta.vue:311
-#: src/dialog/photo-edit/todo.vue:34
+#: src/dialog/account/remove.vue:9
+msgid "Are you sure you want to delete this account?"
+msgstr "Вы действительно хотите удалить эти альбомы?"
+
+#: src/dialog/photo/files.vue:136
+msgid "Aspect Ratio"
+msgstr "Соотношение сторон"
+
+#: src/pages/settings.vue:16
+msgid "Backup"
+msgstr "Резервная копия"
+
+#: src/options/options.js:237
+msgid "Black"
+msgstr "Назад"
+
+#: src/options/options.js:233
+msgid "Blue"
+msgstr "Синий"
+
+#: src/options/options.js:234
+msgid "Brown"
+msgstr "Коричневый"
+
+#: src/common/notify.js:72
+msgid "Busy, please wait…"
+msgstr "В работе, пожалуйста ждите..."
+
+#: src/component/navigation.vue:222 src/routes.js:117 src/routes.js:124
+msgid "Calendar"
+msgstr "Календарь"
+
+#: src/component/photo/list.vue:138 src/share/photo/list.vue:115
 msgid "Camera"
 msgstr "Камера"
 
-#: src/dialog/p-album-delete-dialog.vue:13
-#: src/dialog/p-photo-album-dialog.vue:29
-#: src/dialog/p-photo-archive-dialog.vue:13 src/pages/library/import.vue:20
-#: src/pages/library/originals.vue:52
+#: src/dialog/photo/info.vue:82
+msgid "Camera Serial"
+msgstr "Камера"
+
+#: src/pages/album/photos.vue:257 src/pages/photos.vue:292
+#: src/share/photos.vue:305
+msgid "Can't load more, limit reached"
+msgstr "Не могу загрузить больше, достигнут лимит"
+
+#: src/common/clipboard.js:81 src/common/clipboard.js:114
+#: src/pages/albums.vue:506 src/pages/albums.vue:522 src/pages/labels.vue:286
+#: src/pages/labels.vue:302 src/pages/library/files.vue:297
+#: src/pages/library/files.vue:313 src/share/albums.vue:385
+#: src/share/albums.vue:401
+msgid "Can't select more items"
+msgstr "Нельзя выбрать больше элемнтов"
+
+#: src/dialog/account/add.vue:78 src/dialog/account/edit.vue:257
+#: src/dialog/account/remove.vue:13 src/dialog/album/delete.vue:13
+#: src/dialog/album/edit.vue:80 src/dialog/label/delete.vue:13
+#: src/dialog/photo/album.vue:30 src/dialog/reload.vue:15
+#: src/dialog/share.vue:149 src/dialog/share/upload.vue:52
+#: src/pages/library/import.vue:63 src/pages/library/index.vue:55
 msgid "Cancel"
 msgstr "Отменить"
 
-#: src/component/p-photo-toolbar.vue:175 src/dialog/photo-edit/meta.vue:315
-#: src/dialog/photo-edit/todo.vue:38
-msgid "Category"
-msgstr "Категория"
+#: src/component/album/toolbar.vue:99 src/component/photo/toolbar.vue:184
+msgid "Cards"
+msgstr "Карточки"
 
-#: src/dialog/photo-edit/meta.vue:269
+#: src/pages/settings/account.vue:58
+msgid "Change"
+msgstr "Изменить"
+
+#: src/dialog/photo/info.vue:212
+msgid "Checked"
+msgstr "Выбран"
+
+#: src/options/options.js:104
+msgid "Chinese"
+msgstr "Китайский"
+
+#: src/dialog/photo/files.vue:148
+msgid "Chroma"
+msgstr "Цветовая гамма"
+
+#: src/dialog/photo/details.vue:393 src/dialog/share.vue:119
+#: src/pages/library/errors.vue:76
 msgid "Close"
 msgstr "Закрыть"
 
-#: src/component/p-photo-toolbar.vue:174 src/dialog/photo-edit/meta.vue:314
-#: src/dialog/photo-edit/todo.vue:37
-msgid "Color"
-msgstr "Цвет"
+#: src/dialog/photo/files.vue:112
+msgid "Codec"
+msgstr "Кодек"
 
 #: src/pages/discover.vue:11
 msgid "Colors"
 msgstr "Цвета"
 
-#: src/pages/library/originals.vue:98
-msgid "Convert RAW to JPEG"
-msgstr "Конвертировать RAW в JPEG"
+#: src/dialog/photo/labels.vue:109
+msgid "Confidence"
+msgstr "Конфиденциально"
 
-#: src/component/p-album-toolbar.vue:150 src/component/p-photo-toolbar.vue:170
-#: src/dialog/photo-edit/meta.vue:310 src/dialog/photo-edit/todo.vue:33
-msgid "Country"
-msgstr "Страна"
+#: src/dialog/account/add.vue:79
+msgid "Connect"
+msgstr "Соединен"
 
-#: src/dialog/p-photo-album-dialog.vue:62
+#: src/dialog/webdav.vue:8 src/pages/settings/sync.vue:62
+msgid "Connect via WebDAV"
+msgstr "Соединиться через WebDAV"
+
+#: src/pages/albums.vue:169
+msgid "Contains %{n} entries."
+msgstr "Содержит %{n} элементов"
+
+#: src/pages/albums.vue:166
+msgid "Contains one entry."
+msgstr "Содержит один элемент"
+
+#: src/pages/library/index.vue:173
+msgid "Converting"
+msgstr "Импортирование"
+
+#: src/dialog/share.vue:164 src/dialog/webdav.vue:82
+msgid "Copied to clipboard"
+msgstr "Скопировано в буфер обмена"
+
+#: src/pages/library.vue:19
+msgid "Copy"
+msgstr "Копировать"
+
+#: src/component/photo/cards.vue:9 src/component/photo/list.vue:9
+#: src/component/photo/mosaic.vue:9 src/pages/albums.vue:60
+#: src/pages/albums.vue:69 src/pages/labels.vue:48
+#: src/pages/library/files.vue:37 src/share/albums.vue:18
+#: src/share/photo/cards.vue:9 src/share/photo/list.vue:9
+#: src/share/photo/mosaic.vue:9
+msgid "Couldn't find anything"
+msgstr "Ничего не найдено"
+
+#: src/component/photo/list.vue:121 src/share/photo/list.vue:102
+msgid "Couldn't find anything."
+msgstr "Ничего не найден"
+
+#: src/component/photo/cards.vue:6 src/component/photo/list.vue:6
+#: src/component/photo/mosaic.vue:6 src/share/photo/cards.vue:6
+#: src/share/photo/list.vue:6 src/share/photo/mosaic.vue:6
+msgid "Couldn't find recently edited"
+msgstr "Не найдено недавно отредактированных"
+
+#: src/dialog/photo/album.vue:62
 msgid "Create album"
 msgstr "Создать альбом"
 
-#: src/pages/events.vue:84
-msgid "Custom Daily"
-msgstr "Произвольное ежедневно"
+#: src/dialog/photo/info.vue:188
+msgid "Created"
+msgstr "Создано"
 
-#: src/pages/events.vue:85
-msgid "Custom Weekly"
-msgstr "Произвольное еженедельно"
+#: src/pages/library/index.vue:179
+msgid "Creating thumbnails for"
+msgstr "Сформировать предпросмотр"
 
-#: src/pages/events.vue:80
-msgid "Day"
-msgstr "День"
+#: src/options/options.js:232
+msgid "Cyan"
+msgstr "Сине-зеленый"
 
-#: src/component/p-album-clipboard.vue:86
-#: src/dialog/p-album-delete-dialog.vue:16
+#: src/options/options.js:115
+msgid "Cyano"
+msgstr "Сине-зеленый"
+
+#: src/options/options.js:205
+msgid "Daily"
+msgstr "Ежедневно"
+
+#: src/options/options.js:111
+msgid "Default"
+msgstr "По умолчанию"
+
+#: src/dialog/account/remove.vue:16 src/dialog/album/delete.vue:16
+#: src/dialog/label/delete.vue:16
 msgid "Delete"
 msgstr "Удалить"
 
-#: src/component/p-album-toolbar.vue:136 src/component/p-photo-toolbar.vue:158
-#: src/dialog/p-photo-edit-dialog.vue:32
+#: src/dialog/webdav.vue:41
+msgid "Detailed instructions can be found in our User Guide."
+msgstr "Подробные инструкции вы можете найти в нашем руководстве пользователя"
+
+#: src/dialog/photo/edit.vue:32
 msgid "Details"
 msgstr "Подробно"
 
-#: src/component/p-navigation.vue:181
+#: src/dialog/photo/files.vue:215
+msgid "Dimensions"
+msgstr "Размеры"
+
+#: src/routes.js:311 src/routes.js:318 src/routes.js:325 src/routes.js:332
 msgid "Discover"
 msgstr "Исследование"
 
-#: src/component/p-album-clipboard.vue:85
-#: src/component/p-photo-clipboard.vue:179
+#: src/dialog/photo/details.vue:402 src/dialog/share.vue:150
+msgid "Done"
+msgstr "Готово"
+
+#: src/dialog/upload.vue:55 src/pages/library/import.vue:7
+#: src/pages/library/index.vue:7
+msgid "Done."
+msgstr "Готово."
+
+#: src/dialog/photo/files.vue:50
 msgid "Download"
 msgstr "Скачать"
 
-#: src/component/p-album-clipboard.vue:117
-#: src/component/p-photo-clipboard.vue:268
-msgid "Downloading..."
-msgstr "Скачивание…"
+#: src/component/album/clipboard.vue:173 src/component/album/toolbar.vue:164
+#: src/component/file/clipboard.vue:100 src/component/label/clipboard.vue:125
+#: src/component/photo/clipboard.vue:213 src/component/photo/viewer.vue:163
+#: src/share/album/clipboard.vue:86 src/share/photo/clipboard.vue:87
+#: src/share/photos.vue:531
+msgid "Downloading…"
+msgstr "Скачивание..."
 
-#: src/dialog/photo-edit/files.vue:62
-msgid "Duplicate"
-msgstr "Дубликат"
+#: src/pages/library/files.vue:40
+msgid "Duplicates will be skipped and only appear once."
+msgstr "Повторы будут пропущены и добавлены только раз"
 
-#: src/component/p-photo-clipboard.vue:173
-msgid "Edit"
-msgstr "Редактировать"
+#: src/options/options.js:92
+msgid "Dutch"
+msgstr "Немецкий"
 
-#: src/pages/library/upload.vue:126
+#: src/dialog/album/edit.vue:11
+msgid "Edit %{name}"
+msgstr "Редактировать %{name}"
+
+#: src/dialog/photo/edit.vue:97
+msgid "Edit Photo"
+msgstr "Редактировать фотографию"
+
+#: src/dialog/photo/info.vue:204
+msgid "Edited"
+msgstr "Отредактировано"
+
+#: src/options/options.js:76
+msgid "English"
+msgstr "Английский"
+
+#: src/dialog/photo/files.vue:154
+msgid "Error"
+msgstr "Ошибка"
+
+#: src/component/navigation.vue:334
+msgid "Errors"
+msgstr "Ошибки"
+
+#: src/options/options.js:206
+msgid "Every two days"
+msgstr "Каждые два дня"
+
+#: src/dialog/share.vue:167
+msgid "Expires"
+msgstr "Ожидаемое время"
+
+#: src/dialog/share.vue:164 src/dialog/webdav.vue:82
+msgid "Failed copying to clipboard"
+msgstr "Не удалось скопировать в буфер обмена"
+
+#: src/dialog/share.vue:196
+msgid "Failed removing link"
+msgstr "Не удалось удалить ссылку"
+
+#: src/dialog/share.vue:184
+msgid "Failed updating link"
+msgstr "Не удалось загрузить ссылку"
+
+#: src/dialog/upload.vue:238
 msgid "Failure while importing uploaded files"
 msgstr "Импортирование загруженных файлов не удалось"
 
-#: src/component/p-photo-list.vue:54
+#: src/options/options.js:145
+msgid "Fast"
+msgstr "Быстро"
+
+#: src/dialog/photo/info.vue:89
 msgid "Favorite"
 msgstr "В избранном"
 
-#: src/component/p-navigation.vue:142
+#: src/component/navigation.vue:143 src/routes.js:150
 msgid "Favorites"
 msgstr "Избранное"
 
-#: src/dialog/p-photo-edit-dialog.vue:46
+#: src/model/file.js:233
+msgid "File"
+msgstr "Файлы"
+
+#: src/routes.js:210
+msgid "File Browser"
+msgstr "Файловый менеджер"
+
+#: src/dialog/photo/edit.vue:40
 msgid "Files"
 msgstr "Файлы"
 
-#: src/pages/settings.vue:11
+#: src/dialog/photo/info.vue:32 src/model/folder.js:187
+#: src/pages/library/files.vue:109
+msgid "Folder"
+msgstr "Папки"
+
+#: src/pages/library/files.vue:415
+msgid "Folder contains %{n} files"
+msgstr "Папка содержит %{n} файлов"
+
+#: src/pages/library/files.vue:407
+msgid "Folder is empty"
+msgstr "Папка пуста"
+
+#: src/component/navigation.vue:200 src/routes.js:130 src/routes.js:137
+msgid "Folders"
+msgstr "Папки"
+
+#: src/options/options.js:84
+msgid "French"
+msgstr "Французкий"
+
+#: src/pages/settings.vue:12
 msgid "General"
 msgstr "Основные"
 
-#: src/pages/library/originals.vue:99
-msgid "Groom metadata and estimate locations"
-msgstr "Извлечь метаданные и определить местоположение"
+#: src/options/options.js:80
+msgid "German"
+msgstr "Немецкий"
 
-#: src/dialog/photo-edit/files.vue:58
-msgid "Height"
-msgstr "Высота"
+#: src/options/options.js:227
+msgid "Gold"
+msgstr "Золото"
 
-#: src/pages/library.vue:18 src/pages/library/import.vue:30
+#: src/options/options.js:230
+msgid "Green"
+msgstr "Зеленый"
+
+#: src/options/options.js:236
+msgid "Grey"
+msgstr "Серый"
+
+#: src/component/album/toolbar.vue:110 src/component/photo/toolbar.vue:193
+#: src/dialog/album/edit.vue:115
+msgid "Group by similarity"
+msgstr "Группировать похожие"
+
+#: src/dialog/photo/files.vue:76
+msgid "Hash"
+msgstr "Хэш"
+
+#: src/component/navigation.vue:365 src/pages/help.vue:4
+msgid "Help"
+msgstr "Помощь"
+
+#: src/component/navigation.vue:325
+msgid "Hidden"
+msgstr "Скрытый"
+
+#: src/routes.js:216
+msgid "Hidden Files"
+msgstr "Скрытые файлы"
+
+#: src/options/options.js:168
+msgid "Hybrid"
+msgstr "Гибрид"
+
+#: src/component/photo/cards.vue:13 src/component/photo/list.vue:13
+#: src/component/photo/mosaic.vue:13 src/pages/library/files.vue:41
+msgid ""
+"If a file you expect is missing, please re-index your library and wait until "
+"indexing has been completed."
+msgstr ""
+"Если вы не нашли нудный вам файл, пожалуйста переиндексируйте свою "
+"библиотеку и ждите пока процесс будет полностью завершен."
+
+#: src/dialog/photo/labels.vue:122
+msgid "image"
+msgstr "изображение"
+
+#: src/options/options.js:183
+msgid "Image"
+msgstr "Изображение"
+
+#: src/pages/library/import.vue:84
 msgid "Import"
 msgstr "Импортировать"
 
-#: src/pages/library/import.vue:87
+#: src/pages/library/import.vue:156
 msgid "Import failed"
 msgstr "Импортирование не удалось"
 
-#: src/pages/library/originals.vue:62
+#: src/pages/library/import.vue:48
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Импортированные файлы будут отсортированы по датам и получат уникальные "
+"имена."
+
+#: src/pages/library/import.vue:5
+msgid "Importing %{name}…"
+msgstr "Импортирование %{name}..."
+
+#: src/pages/library/import.vue:6
+msgid "Importing files to originals…"
+msgstr "Импортирование файлов из папки..."
+
+#: src/dialog/photo/files.vue:168 src/dialog/photo/files.vue:174
+msgid "in"
+msgstr "в"
+
+#: src/pages/library.vue:11
 msgid "Index"
 msgstr "Индексировать"
 
-#: src/pages/library/originals.vue:133
+#: src/pages/library/index.vue:167
+msgid "Indexing"
+msgstr "Индексирование"
+
+#: src/pages/library/index.vue:149
 msgid "Indexing failed"
 msgstr "Индексирование не удалось"
 
-#: src/dialog/photo-edit/labels.vue:34
+#: src/pages/library/index.vue:6
+msgid "Indexing media and sidecar files…"
+msgstr "Индексирование фотографий и коллекций файлов..."
+
+#: src/dialog/photo/files.vue:70
+msgid "Instance ID"
+msgstr "Идентификатор узла"
+
+#: src/dialog/photo/details.vue:516
+msgid "Invalid date"
+msgstr "Неверная дата"
+
+#: src/model/rest.js:155
+msgid "Item"
+msgstr "Элемент"
+
+#: src/pages/library/import.vue:49
+msgid "JPEGs and thumbnails are automatically rendered as needed."
+msgstr ""
+"изобажения JPEG и файлы предпросмотра генерируются автоматически, если "
+"необходимо"
+
+#: src/dialog/photo/labels.vue:107 src/model/label.js:97
 msgid "Label"
 msgstr "Метка"
 
-#: src/component/p-navigation.vue:155 src/dialog/p-photo-edit-dialog.vue:39
+#: src/component/navigation.vue:285 src/dialog/photo/edit.vue:36
+#: src/routes.js:229
 msgid "Labels"
 msgstr "Метки"
 
-#: src/dialog/photo-edit/meta.vue:319 src/dialog/photo-edit/todo.vue:42
-#: src/pages/settings/general.vue:53
-msgid "Language"
-msgstr "Язык"
+#: src/component/label/clipboard.vue:111
+msgid "Labels deleted"
+msgstr "Метка удалена"
 
-#: src/component/p-photo-toolbar.vue:172 src/dialog/photo-edit/meta.vue:312
-#: src/dialog/photo-edit/todo.vue:35
-msgid "Lens"
-msgstr "Объектив"
+#: src/pages/settings/sync.vue:113
+msgid "Last Backup"
+msgstr "Последняя резервная копия"
 
-#: src/component/p-navigation.vue:213
+#: src/dialog/photo/info.vue:149
+msgid "Latitude"
+msgstr "Широта"
+
+#: src/options/options.js:119
+msgid "Lavender"
+msgstr "Лаванда"
+
+#: src/component/navigation.vue:299 src/component/navigation.vue:308
+#: src/pages/settings/general.vue:8 src/routes.js:248 src/routes.js:255
+#: src/routes.js:262
 msgid "Library"
 msgstr "Библиотека"
 
-#: src/component/p-album-toolbar.vue:137 src/component/p-photo-toolbar.vue:159
+#: src/component/navigation.vue:373 src/pages/about/license.vue:4
+msgid "License"
+msgstr "Лицензия"
+
+#: src/options/options.js:229
+msgid "Lime"
+msgstr "Лайм"
+
+#: src/pages/library/files.vue:417
+msgid "Limit reached, showing first %{n} files"
+msgstr "Лимит превышен, отображение первых %{n} файлов"
+
+#: src/model/link.js:105
+msgid "Link"
+msgstr "Ссылка"
+
+#: src/component/album/toolbar.vue:100 src/component/photo/toolbar.vue:185
 msgid "List"
 msgstr "Список"
 
-#: src/component/p-photo-list.vue:52
+#: src/options/options.js:191
+msgid "Live"
+msgstr "Прямой эфир"
+
+#: src/dialog/photo/labels.vue:123
+msgid "location"
+msgstr "местоположение"
+
+#: src/component/photo/list.vue:140 src/share/photo/list.vue:117
 msgid "Location"
 msgstr "Местоположение"
 
-#: src/component/p-navigation.vue:249
+#: src/pages/library/errors.vue:51
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Сообщения журнала появляются здесь всякий раз когда PhotoPrism сталкивается "
+"с поврежденными файлами или другими потенциальными проблемами."
+
+#: src/component/navigation.vue:399
 msgid "Login"
 msgstr "Login"
 
-#: src/component/p-navigation.vue:237
+#: src/component/navigation.vue:387
 msgid "Logout"
 msgstr "Выйти"
 
-#: src/pages/library.vue:32
+#: src/pages/library.vue:24
 msgid "Logs"
 msgstr "Журнал"
 
-#: src/dialog/photo-edit/files.vue:61
+#: src/dialog/photo/info.vue:157
+msgid "Longitude"
+msgstr "Долгота"
+
+#: src/options/options.js:223
+msgid "Magenta"
+msgstr "Пурпурный"
+
+#: src/dialog/photo/files.vue:142
+msgid "Main Color"
+msgstr "Цвет"
+
+#: src/dialog/photo/labels.vue:121
+msgid "manual"
+msgstr "руководство"
+
+#: src/options/options.js:149
+msgid "Medium"
+msgstr "Средний"
+
+#: src/dialog/photo/files.vue:160
 msgid "Missing"
 msgstr "Пропущенно"
 
-#: src/component/p-navigation.vue:69
+#: src/component/navigation.vue:237 src/routes.js:91 src/routes.js:98
+msgid "Moments"
+msgstr "Моменты"
+
+#: src/component/navigation.vue:88
 msgid "Monochrome"
 msgstr "Монохром"
 
-#: src/pages/events.vue:83
-msgid "Month"
-msgstr "Месяц"
+#: src/options/options.js:123 src/options/options.js:176
+msgid "Moonlight"
+msgstr "Лунный свет"
 
-#: src/pages/albums.vue:277
+#: src/pages/albums.vue:468 src/share/albums.vue:347
 msgid "More than 20 albums found"
 msgstr "Более 20 альбомов найдено"
 
-#: src/pages/labels.vue:246
+#: src/pages/labels.vue:441
 msgid "More than 20 labels found"
 msgstr "Более 20 меток найдено"
 
-#: src/pages/album/photos.vue:225 src/pages/photos.vue:237
-msgid "More than 50 photos found"
-msgstr "Более 50 фотографий найдено"
+#: src/pages/album/photos.vue:365 src/share/photos.vue:413
+msgid "More than 50 entries found"
+msgstr "Более 50 файлов найдено"
 
-#: src/component/p-album-toolbar.vue:135 src/component/p-photo-toolbar.vue:157
+#: src/pages/photos.vue:398
+msgid "More than 50 results"
+msgstr "Более 50 результатов"
+
+#: src/component/album/toolbar.vue:98 src/component/photo/toolbar.vue:183
 msgid "Mosaic"
 msgstr "Мозайка"
 
-#: src/dialog/photo-edit/files.vue:55
+#: src/component/album/toolbar.vue:111 src/component/photo/toolbar.vue:194
+#: src/dialog/album/edit.vue:116
+msgid "Most relevant"
+msgstr "Наиболее востребованные"
+
+#: src/pages/library.vue:16
+msgid "Move"
+msgstr "Переместить"
+
+#: src/common/vm.js:8 src/common/vm.js:9 src/common/vm.js:12
+#: src/common/vm.js:13
+msgid "msgid"
+msgid_plural "plural"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/component/photo/list.vue:140 src/dialog/photo/files.vue:88
+#: src/dialog/photo/files.vue:214 src/dialog/photo/info.vue:38
+#: src/share/photo/list.vue:117
 msgid "Name"
 msgstr "Название"
 
-#: src/component/p-album-toolbar.vue:143 src/component/p-photo-toolbar.vue:163
+#: src/component/album/toolbar.vue:119 src/dialog/album/edit.vue:119
+#: src/dialog/photo/labels.vue:112 src/pages/labels.vue:197
+#: src/pages/library/files.vue:173
+msgid "Name too long"
+msgstr "Название слишком длинное"
+
+#: src/options/options.js:201 src/options/options.js:211
+#: src/pages/settings/sync.vue:129
+msgid "Never"
+msgstr "Никогда"
+
+#: src/component/album/toolbar.vue:107 src/component/photo/toolbar.vue:190
+#: src/dialog/album/edit.vue:112
 msgid "Newest first"
 msgstr "Сначала новые"
 
-#: src/pages/events.vue:57
-msgid "Next"
-msgstr "Следующее"
+#: src/dialog/photo/archive.vue:13
+msgid "No"
+msgstr "Нет"
 
-#: src/pages/albums.vue:270
+#: src/pages/albums.vue:461 src/share/albums.vue:340
 msgid "No albums found"
 msgstr "Альбомов не найдено"
 
-#: src/pages/albums.vue:44
-msgid "No albums matched your search"
-msgstr "Нет совпадений среди альбовом по Вашему запросу"
+#: src/pages/album/photos.vue:358 src/share/photos.vue:406
+msgid "No entries found"
+msgstr "Файлов не найдены"
 
-#: src/pages/labels.vue:44
-msgid "No labels matched your search"
-msgstr "Нет совпадений меток по Вашему запросу"
-
-#: src/pages/album/photos.vue:218 src/pages/photos.vue:230
+#: src/pages/places.vue:191 src/pages/places.vue:236
 msgid "No photos found"
 msgstr "Фотографии не найдены"
 
-#: src/component/p-photo-details.vue:5 src/component/p-photo-mosaic.vue:5
-#: src/component/p-photo-tiles.vue:5
-msgid "No photos matched your search"
-msgstr "Нет совпадений среди фотографий по Вашему запросу"
+#: src/pages/photos.vue:391
+msgid "No results"
+msgstr "Нет результатов"
 
-#: src/component/p-photo-clipboard.vue:223
-#: src/component/p-photo-clipboard.vue:253 src/pages/people.vue:3
+#: src/pages/library/errors.vue:48
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Нет предупреждений или ошибок содержащих эти слова. Имейте в виду, что поиск "
+"регистрозависимый."
+
+#: src/component/photo/cards.vue:15 src/component/photo/list.vue:15
+#: src/component/photo/list.vue:126 src/component/photo/mosaic.vue:15
+#: src/dialog/upload.vue:67
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Не фотографичные или изображения низкого качества сначала нужно одобрить, "
+"прежде чем они отразятся в результатах поиска."
+
+#: src/options/options.js:141
+msgid "None"
+msgstr "Ничего"
+
+#: src/model/thumb.js:66
+msgid "Not Found"
+msgstr "Ничего не найдено"
+
+#: src/pages/people.vue:3
 msgid "Not implemented yet"
 msgstr "Еще не реализованно"
+
+#: src/pages/library/import.vue:51
+msgid "Note that you can as well manage and re-index your originals manually."
+msgstr ""
+"Учтите что вы можете просмотреть и переиндексировать ваши оригиналы в ручном "
+"режиме."
+
+#: src/pages/settings/sync.vue:51
+msgid "Note:"
+msgstr "Примечание:"
+
+#: src/dialog/account/add.vue:44
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr "Пометка"
+
+#: src/pages/settings/account.vue:49
+msgid ""
+"Note: Updating the password will not revoke access from already "
+"authenticated users."
+msgstr ""
+"Примечание: Изменение пароля не отключит доступ уже авторизованных "
+"пользователей."
 
 #: src/pages/library/logs.vue:5
 msgid "Nothing to see here yet. Be patient."
 msgstr "Пока что тут нечего смотреть. Будьте терпеливы."
 
-#: src/component/p-album-toolbar.vue:144 src/component/p-photo-toolbar.vue:164
+#: src/component/navigation.vue:411 src/options/options.js:160
+msgid "Offline"
+msgstr "Не в сети"
+
+#: src/component/album/toolbar.vue:108 src/component/photo/toolbar.vue:191
+#: src/dialog/album/edit.vue:113
 msgid "Oldest first"
 msgstr "Сначала старые"
 
-#: src/pages/albums.vue:272
+#: src/options/options.js:207
+msgid "Once a week"
+msgstr "Раз в неделю"
+
+#: src/pages/albums.vue:463 src/share/albums.vue:342
 msgid "One album found"
 msgstr "Один альбом найден"
 
-#: src/pages/photos.vue:232
-msgid "One photo found"
-msgstr "Одна фотография найдена"
+#: src/pages/album/photos.vue:360 src/share/photos.vue:408
+msgid "One entry found"
+msgstr "Одна файл найдена"
 
-#: src/pages/library.vue:11
+#: src/pages/library/files.vue:409
+msgid "One file found"
+msgstr "Один файл найден"
+
+#: src/pages/library/files.vue:411
+msgid "One folder found"
+msgstr "Один альбом найден"
+
+#: src/pages/photos.vue:393
+msgid "One result"
+msgstr "Один результат"
+
+#: src/options/options.js:127
+msgid "Onyx"
+msgstr "Оникс"
+
+#: src/options/options.js:226
+msgid "Orange"
+msgstr "Оранжевый"
+
+#: src/dialog/account/edit.vue:350
+msgid "Original"
+msgstr "Оригиналы"
+
+#: src/pages/library/import.vue:50
+msgid "Original file names will be stored and indexed."
+msgstr "Оригинальные имена файлов будут запомнены и проиндексированы."
+
+#: src/dialog/photo/files.vue:94 src/dialog/photo/info.vue:44
+msgid "Original Name"
+msgstr "Оригинальное Название"
+
+#: src/component/navigation.vue:316 src/pages/library/files.vue:6
 msgid "Originals"
 msgstr "Оригиналы"
 
-#: src/pages/login.vue:45
+#: src/dialog/photo/info.vue:128
+msgid "Panorama"
+msgstr "Панорама"
+
+#: src/component/navigation.vue:96
+msgid "Panoramas"
+msgstr "Панорамы"
+
+#: src/dialog/share.vue:148
 msgid "Password"
 msgstr "Пароль"
 
-#: src/component/p-navigation.vue:51 src/component/p-navigation.vue:60
+#: src/pages/settings/account.vue:91
+msgid "Password changed"
+msgstr "Пароль изменен"
+
+#: src/routes.js:242
+msgid "People"
+msgstr "Люди"
+
+#: src/dialog/share.vue:102
+msgid "People you share a link with will be able to view public contents."
+msgstr ""
+"Люди, с которыми вы поделились ссылкой будут иметь возможность просматривать "
+"ваш публичный контент."
+
+#: src/model/photo.js:648
+msgid "Photo"
+msgstr "Фотографии"
+
+#: src/pages/albums.vue:73
+msgid ""
+"PhotoPrism continuously analyzes your library to find special moments, "
+"journeys and places."
+msgstr ""
+"PhotoPrism непрерывно анализирует вашу библиотеку что бы найти особенные "
+"события, путешествия и места."
+
+#: src/dialog/reload.vue:4
+msgid "PhotoPrism has been updated…"
+msgstr "PhotoPrism был обновлен..."
+
+#: src/pages/about/about.vue:81
+msgid "PhotoPrism® is a registered trademark of Michael Mayer."
+msgstr ""
+"PhotoPrism® - это зарегистрированный торговый знак принадлежащий Майклу "
+"Майеру (Michael Mayer)."
+
+#: src/component/navigation.vue:70 src/component/navigation.vue:79
 msgid "Photos"
 msgstr "Фотографии"
 
-#: src/component/p-photo-clipboard.vue:210
-msgid "Photos archived"
-msgstr "Фотографии архивированы"
+#: src/options/options.js:224
+msgid "Pink"
+msgstr "Розовый"
 
-#: src/component/p-photo-clipboard.vue:218
-msgid "Photos restored"
-msgstr "Фотографии востановлены"
+#: src/dialog/photo/info.vue:141
+msgid "Place"
+msgstr "Место"
 
-#: src/component/p-navigation.vue:168
+#: src/component/navigation.vue:252 src/component/navigation.vue:261
+#: src/pages/settings/general.vue:306 src/routes.js:185 src/routes.js:191
+#: src/routes.js:197 src/routes.js:204
 msgid "Places"
 msgstr "Места"
 
-#: src/pages/login.vue:10
-msgid "Please enter your password to proceed:"
-msgstr "Пожалуйста, введите пароль что бы продолжить:"
+#: src/dialog/upload.vue:62
+msgid "Please don't upload photos containing offensive content."
+msgstr "Пожалуйста не загружайте фотографии содержащие недопустимый контент."
 
-#: src/pages/library/originals.vue:97
-msgid "Pre-render thumbnails"
-msgstr "Сформировать предпросмотр"
+#: src/pages/login.vue:8
+msgid "Please enter your name and password:"
+msgstr "Пожалуйста, введите ваше имя и пароль что бы продолжить:"
 
-#: src/pages/events.vue:37
-msgid "Prev"
-msgstr "Предыдущая"
+#: src/options/options.js:96
+msgid "Polish"
+msgstr "Глянец"
 
-#: src/dialog/photo-edit/files.vue:59
+#: src/dialog/photo/files.vue:124
+msgid "Portrait"
+msgstr "Портрет"
+
+#: src/pages/library/import.vue:8
+msgid "Press button to start importing…"
+msgstr "Нажмите кнопку что бы начать импортирование..."
+
+#: src/pages/library/index.vue:8
+msgid "Press button to start indexing…"
+msgstr "Нажмите кнопку что бы начать индексирование..."
+
+#: src/dialog/upload.vue:32
+msgid "Press enter to create a new album."
+msgstr "Нажмите enter что бы создать новый альбом."
+
+#: src/dialog/photo/files.vue:20
+msgid "Preview"
+msgstr "Предпросмотр"
+
+#: src/dialog/photo/files.vue:54 src/dialog/photo/files.vue:118
+#: src/dialog/photo/files.vue:208
 msgid "Primary"
 msgstr "Главная"
 
-#: src/dialog/photo-edit/labels.vue:35
-msgid "Priority"
-msgstr "Приоритет"
+#: src/component/navigation.vue:156 src/dialog/photo/info.vue:102
+#: src/routes.js:171
+msgid "Private"
+msgstr "Приватный"
 
-#: src/pages/discover.vue:29
+#: src/dialog/photo/files.vue:130
+msgid "Projection"
+msgstr "Проекция"
+
+#: src/options/options.js:222
+msgid "Purple"
+msgstr "Фиолетовый"
+
+#: src/dialog/photo/info.vue:68
+msgid "Quality Score"
+msgstr "Показатель Качества"
+
+#: src/pages/discover.vue:23
 msgid "Random"
 msgstr "Случайно"
 
-#: src/component/p-album-toolbar.vue:142 src/component/p-photo-toolbar.vue:162
-msgid "Recently imported"
+#: src/options/options.js:131
+msgid "Raspberry"
+msgstr "Малиновый"
+
+#: src/options/options.js:187
+msgid "Raw"
+msgstr "Исходный"
+
+#: src/component/album/toolbar.vue:105 src/component/photo/toolbar.vue:188
+#: src/dialog/album/edit.vue:110
+msgid "Recently added"
 msgstr "Недавно добавленные"
 
-#: src/pages/settings/general.vue:69
-msgid "Reloading..."
-msgstr "Перезагрузка…"
+#: src/component/album/toolbar.vue:106 src/component/photo/toolbar.vue:189
+#: src/dialog/album/edit.vue:111
+msgid "Recently edited"
+msgstr "Недавно добавленные"
 
-#: src/component/p-photo-clipboard.vue:176
-msgid "Remove"
-msgstr "Удалить"
+#: src/options/options.js:225
+msgid "Red"
+msgstr "Красный"
 
-#: src/component/p-photo-clipboard.vue:237
+#: src/dialog/reload.vue:24
+msgid "Reload"
+msgstr "Перезагрузка"
+
+#: src/dialog/reload.vue:58 src/pages/settings/general.vue:377
+msgid "Reloading…"
+msgstr "Перезагрузка..."
+
+#: src/component/photo/clipboard.vue:188
 msgid "remove failed: unknown album"
 msgstr "не могу удалить: неизвестный альбом"
 
-#: src/component/p-photo-clipboard.vue:178
-msgid "Restore"
-msgstr "Восстановить"
+#: src/common/api.js:60
+msgid "Request failed - invalid response"
+msgstr "Запрос не удался - неверный ответ"
 
-#: src/pages/settings/general.vue:32
+#: src/dialog/photo/info.vue:76
+msgid "Resolution"
+msgstr "Разрешение"
+
+#: src/component/navigation.vue:121 src/routes.js:164
+msgid "Review"
+msgstr "Нуждается в обзоре"
+
+#: src/options/options.js:100
+msgid "Russian"
+msgstr "Русский"
+
+#: src/dialog/account/edit.vue:261 src/dialog/album/edit.vue:85
+#: src/dialog/share.vue:91
 msgid "Save"
 msgstr "Сохранить"
 
-#: src/component/p-album-toolbar.vue:148 src/component/p-photo-toolbar.vue:168
-#: src/dialog/photo-edit/meta.vue:308 src/dialog/photo-edit/todo.vue:31
-#: src/pages/albums.vue:175 src/pages/labels.vue:134 src/pages/places.vue:63
+#: src/dialog/photo/info.vue:115
+msgid "Scan"
+msgstr "Сканировать"
+
+#: src/component/navigation.vue:112
+msgid "Scans"
+msgstr "Сканы"
+
+#: src/routes.js:235
 msgid "Search"
 msgstr "Поиск"
 
-#: src/pages/discover.vue:23
+#: src/pages/album/photos.vue:279 src/pages/albums.vue:398
+#: src/pages/labels.vue:369 src/pages/library/errors.vue:124
+#: src/pages/library/files.vue:338 src/pages/photos.vue:314
+#: src/pages/places.vue:206 src/share/albums.vue:277 src/share/photos.vue:327
+msgid "Search term too short"
+msgstr "Поисковой запрос слишком короткий"
+
+#: src/pages/discover.vue:19
 msgid "Season"
 msgstr "Сезон"
 
-#: src/component/p-navigation.vue:225
+#: src/options/options.js:135
+msgid "Seaweed"
+msgstr "Водоросли"
+
+#: src/component/photo/clipboard.vue:162
+msgid "Selection archived"
+msgstr "Выбранное добавлено в архив"
+
+#: src/component/photo/clipboard.vue:175
+msgid "Selection restored"
+msgstr "Выбранное восстановлено"
+
+#: src/pages/settings/sync.vue:109
+msgid "Server"
+msgstr "Серер"
+
+#: src/dialog/share.vue:146
+msgid "Service URL"
+msgstr "Адрес сервера"
+
+#: src/component/navigation.vue:348 src/component/navigation.vue:357
+#: src/routes.js:269 src/routes.js:283 src/routes.js:297
 msgid "Settings"
 msgstr "Настройки"
 
-#: src/pages/settings/general.vue:73
+#: src/pages/settings/general.vue:381
 msgid "Settings saved"
 msgstr "Настрокйки сохранены"
 
-#: src/component/p-photo-clipboard.vue:172
-msgid "Share"
-msgstr "Поделиться"
+#: src/dialog/share/upload.vue:56
+msgid "Setup"
+msgstr "Настройка"
 
-#: src/dialog/p-photo-edit-dialog.vue:2
-msgid "Sharing"
-msgstr "Поделиться"
+#: src/dialog/share.vue:6
+msgid "Share %{name}"
+msgstr "Поделится %{name}"
 
-#: src/dialog/photo-edit/files.vue:60
+#: src/share/albums.vue:83
+msgid "Shared with you."
+msgstr "Поделились с вами."
+
+#: src/pages/photos.vue:286
+msgid "Showing all %{n} results"
+msgstr "Показать все %{n} результатов."
+
+#: src/model/file.js:174
 msgid "Sidecar"
 msgstr ""
 
-#: src/pages/login.vue:27
+#: src/pages/login.vue:41
 msgid "Sign in"
 msgstr "Войти"
 
-#: src/pages/discover.vue:17
+#: src/pages/discover.vue:15
 msgid "Similar"
 msgstr "Похожие"
 
-#: src/pages/library/originals.vue:96
-msgid "Skip unchanged files"
-msgstr "Пропустить не измененные файлы"
+#: src/dialog/photo/files.vue:100 src/dialog/photo/files.vue:216
+msgid "Size"
+msgstr "Размео"
 
-#: src/component/p-album-toolbar.vue:152 src/component/p-photo-toolbar.vue:176
-#: src/dialog/photo-edit/meta.vue:316 src/dialog/photo-edit/todo.vue:39
-msgid "Sort By"
-msgstr "Сортировать по"
+#: src/options/options.js:153
+msgid "Slow"
+msgstr "Медленно"
 
-#: src/component/p-photo-clipboard.vue:174
-msgid "Story"
-msgstr "История"
+#: src/component/album/toolbar.vue:109 src/component/photo/toolbar.vue:192
+#: src/dialog/album/edit.vue:114
+msgid "Sort by file name"
+msgstr "Сортировать по имени файла"
 
-#: src/component/p-photo-toolbar.vue:178 src/dialog/photo-edit/meta.vue:318
-#: src/dialog/photo-edit/todo.vue:41
-msgid "Taken after"
-msgstr "Снято после"
+#: src/dialog/photo/labels.vue:108
+msgid "Source"
+msgstr "Источник"
 
-#: src/component/p-photo-list.vue:51
-msgid "Taken At"
+#: src/options/options.js:88
+msgid "Spanish"
+msgstr "Испанский"
+
+#: src/component/navigation.vue:104
+msgid "Stacks"
+msgstr "Очереди"
+
+#: src/pages/library/index.vue:65
+msgid "Start"
+msgstr "Начать"
+
+#: src/component/navigation.vue:271
+msgid "States"
+msgstr "Государства"
+
+#: src/dialog/photo/files.vue:218
+msgid "Status"
+msgstr "Статус"
+
+#: src/dialog/photo/files.vue:82
+msgid "Storage Folder"
+msgstr "Папка хранения"
+
+#: src/options/options.js:164
+msgid "Streets"
+msgstr "Улицы"
+
+#: src/dialog/account/add.vue:45
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Поддержка дополнительных служб, таких как Google диск будут добавлены вскоре."
+
+#: src/pages/settings/sync.vue:111
+msgid "Sync"
+msgstr "Синхронизация"
+
+#: src/component/photo/list.vue:137 src/dialog/photo/info.vue:62
+#: src/share/photo/list.vue:114
+msgid "Taken"
 msgstr "Дата съемки"
 
-#: src/component/p-photo-toolbar.vue:177 src/dialog/photo-edit/meta.vue:317
-#: src/dialog/photo-edit/todo.vue:40
-msgid "Taken before"
-msgstr "Снято до"
+#: src/options/options.js:231
+msgid "Teal"
+msgstr "Бирюзовый"
 
-#: src/dialog/photo-edit/todo.vue:43 src/pages/settings/general.vue:54
-msgid "Theme"
-msgstr "Тема"
+#: src/dialog/photo/details.vue:442
+msgid "Text too long"
+msgstr "Название слишком длинное"
 
-#: src/dialog/photo-edit/meta.vue:320
-msgid "Time Zone"
-msgstr "Часовой пояс"
+#: src/pages/library/index.vue:77
+msgid "The index currently contains %{n} hidden files."
+msgstr "Индекс на данный момент содержит %{n} скрытых файлов."
 
-#: src/component/p-photo-list.vue:50
+#: src/pages/library/index.vue:78
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Их формат может быть не поддерживаемым, они не были конвертированы в JPEG "
+"или это дубликаты."
+
+#: src/dialog/webdav.vue:29 src/pages/settings/sync.vue:53
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Подключение папки с Оригиналами как сетевой папки позволит Вам открывать, "
+"редактировать и удалять файлы с вашего компьютера или смартфона, так как "
+"если бы они находились на вашем устройстве."
+
+#: src/component/photo/list.vue:136 src/dialog/photo/info.vue:56
+#: src/share/photo/list.vue:113
 msgid "Title"
 msgstr "Название"
 
-#: src/component/p-album-toolbar.vue:155 src/pages/albums.vue:173
+#: src/pages/albums.vue:256 src/share/albums.vue:153
 msgid "Title too long"
 msgstr "Название слишком длинное"
 
-#: src/component/p-photo-clipboard.vue:192
-msgid "Toggled private flag"
-msgstr "Включен флаг приватности"
+#: src/app.js:135 src/share.js:135
+msgid "to"
+msgstr "в"
 
-#: src/component/p-photo-clipboard.vue:200
-msgid "Toggled story flag"
-msgstr "Фключен флаг История"
+#: src/options/options.js:172
+msgid "Topographic"
+msgstr "Топографический"
 
-#: src/pages/albums.vue:47
-msgid "Try again using a different term or create a new album"
-msgstr "Попробуйте еще раз, используя другой запрос или создайте новый альбом"
+#: src/pages/about/about.vue:79
+msgid "Trademarks"
+msgstr "Товарные знаки"
 
-#: src/pages/labels.vue:45
-msgid "Try again using a related or otherwise similar term."
-msgstr "Попробуйте еще раз использовать смежный или похожий запрос."
+#: src/component/photo/cards.vue:12 src/component/photo/list.vue:12
+#: src/component/photo/list.vue:123 src/component/photo/mosaic.vue:12
+#: src/pages/albums.vue:63 src/pages/albums.vue:72 src/pages/labels.vue:51
+#: src/share/albums.vue:21 src/share/photo/cards.vue:12
+#: src/share/photo/list.vue:12 src/share/photo/list.vue:104
+#: src/share/photo/mosaic.vue:12
+msgid "Try again using other filters or keywords."
+msgstr "Попробуйте еще раз используя другие фильтры или слова в запросе."
 
-#: src/component/p-photo-details.vue:6 src/component/p-photo-mosaic.vue:6
-#: src/component/p-photo-tiles.vue:6
-msgid ""
-"Try using other terms and search options such as category, country and "
-"camera."
-msgstr ""
-"Попробуйте другой запрос или опции поиска, такие как категория, страна и "
-"камера."
-
-#: src/dialog/photo-edit/files.vue:56 src/pages/events.vue:88
+#: src/dialog/photo/files.vue:106 src/dialog/photo/files.vue:217
+#: src/dialog/photo/info.vue:15
 msgid "Type"
 msgstr "Тип"
 
-#: src/dialog/photo-edit/meta.vue:300 src/dialog/photo-edit/meta.vue:301
-#: src/dialog/photo-edit/todo.vue:23 src/dialog/photo-edit/todo.vue:24
+#: src/dialog/photo/details.vue:432 src/dialog/photo/info.vue:254
+#: src/model/album.js:122 src/model/photo.js:401 src/model/photo.js:415
+#: src/model/photo.js:438 src/model/photo.js:452 src/model/photo.js:529
+#: src/model/photo.js:542 src/options/options.js:15 src/options/options.js:29
+#: src/options/options.js:43 src/options/options.js:57
+#: src/options/options.js:69 src/pages/library/errors.vue:204
+#: src/pages/library/errors.vue:211 src/pages/library/logs.vue:32
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: src/pages/library.vue:25 src/pages/library/upload.vue:32
+#: src/component/navigation.vue:209 src/routes.js:143
+msgid "Unsorted"
+msgstr "Не отсортировано"
+
+#: src/dialog/photo/files.vue:58
+msgid "Unstack"
+msgstr "Убрать из очереди"
+
+#: src/dialog/photo/files.vue:172 src/dialog/photo/info.vue:196
+msgid "Updated"
+msgstr "Обновлено"
+
+#: src/dialog/share/upload.vue:60 src/dialog/upload.vue:9
+#: src/dialog/upload.vue:77 src/pages/library/import.vue:73
+#: src/pages/settings/sync.vue:110
 msgid "Upload"
 msgstr "Загрузка"
 
-#: src/pages/library/upload.vue:121
+#: src/dialog/upload.vue:234
 msgid "Upload complete"
 msgstr "Загрузка завершена"
 
-#: src/pages/library/upload.vue:83
-msgid "Uploading photos..."
+#: src/dialog/upload.vue:54
+msgid "Upload complete. Indexing…"
+msgstr "Загрузка завершена. Индексирование..."
+
+#: src/dialog/upload.vue:50
+msgid "Upload failed"
+msgstr "Загрузка не удалась"
+
+#: src/dialog/upload.vue:52
+msgid "Uploading %{n} of %{t}…"
+msgstr "Загрузка %{n} из %{t}..."
+
+#: src/dialog/upload.vue:138 src/dialog/upload.vue:146
+#: src/dialog/upload.vue:187
+msgid "Uploading photos…"
 msgstr "Загрузка фотографий..."
 
-#: src/component/p-navigation.vue:77
-msgid "Vibrant"
-msgstr "Вибрант"
+#: src/dialog/upload.vue:63
+msgid "Uploads that may contain such images will be rejected automatically."
+msgstr ""
+"Загрузки, которые могут содержать такие изображение будут автоматически "
+"отменены."
 
-#: src/component/p-album-toolbar.vue:149 src/component/p-photo-toolbar.vue:169
-#: src/dialog/photo-edit/meta.vue:309 src/dialog/photo-edit/todo.vue:32
-msgid "View"
-msgstr "Обзор"
+#: src/model/user.js:116
+msgid "User"
+msgstr "Пользоватлеь"
 
-#: src/pages/events.vue:82
-msgid "Week"
-msgstr "Неделя"
+#: src/pages/settings/general.vue:80
+msgid "User Interface"
+msgstr "Пользовательский интерфейс"
 
-#: src/dialog/photo-edit/files.vue:57
-msgid "Width"
-msgstr "Ширина"
+#: src/dialog/share.vue:147
+msgid "Username"
+msgstr "Имя пользователя"
 
-#: src/component/p-photo-toolbar.vue:173 src/dialog/photo-edit/meta.vue:313
-#: src/dialog/photo-edit/todo.vue:36
-msgid "Year"
-msgstr "Год"
+#: src/model/file.js:172 src/model/photo.js:489 src/model/photo.js:503
+#: src/options/options.js:195
+msgid "Video"
+msgstr "Видео"
 
-#: src/component/p-album-clipboard.vue:108
+#: src/component/navigation.vue:169 src/routes.js:157
+msgid "Videos"
+msgstr "Видео"
+
+#: src/dialog/webdav.vue:12
+msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
+msgstr ""
+"WebDAV клиенты могут подключаться к PhotoPrism используя следующий адрес:"
+
+#: src/pages/settings/sync.vue:52
+msgid ""
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to PhotoPrism."
+msgstr ""
+"WebDAV клиенты, такие как Microsoft Windows Проводник или Apple Finder, "
+"могут подключаться к PhotoPrism напрямую."
+
+#: src/dialog/share.vue:113 src/dialog/share/upload.vue:7
+msgid "WebDAV Upload"
+msgstr "WebDAV загрузка"
+
+#: src/pages/about/about.vue:4
+msgid "Whatever it is, we'd love to hear from you!"
+msgstr "Что бы там не было, мы будет рады выслушать Вас!"
+
+#: src/options/options.js:235
+msgid "White"
+msgstr "Белый"
+
+#: src/pages/about/about.vue:32
+msgid "Who we are"
+msgstr "Кто мы такие"
+
+#: src/options/options.js:228
+msgid "Yellow"
+msgstr "Желтый"
+
+#: src/dialog/photo/archive.vue:16 src/dialog/photo/files.vue:120
+#: src/dialog/photo/files.vue:126 src/dialog/photo/files.vue:162
+msgid "Yes"
+msgstr "Да"
+
+#: src/component/album/clipboard.vue:164 src/share/album/clipboard.vue:77
 msgid "You can only download one album"
 msgstr "Вы можете загрузить только один альбом"
 
-#~ msgid "Done."
-#~ msgstr "Готово."
+#: src/component/label/clipboard.vue:116
+msgid "You can only download one label"
+msgstr "Вы можете загрузить только одну метку"
+
+#: src/component/album/clipboard.vue:117 src/component/album/clipboard.vue:130
+msgid "You may only select one item"
+msgstr "Вы можете выбрать только один элемент"
+
+#: src/pages/about/about.vue:82
+msgid ""
+"You may use it as required to describe our software, run your own server, "
+"for educational purposes, but not for offering commercial goods, products, "
+"or services without prior written permission. In other words, please ask."
+msgstr ""
+"Вы можете использовать его по мере необходимости для описания нашего "
+"программного обеспечения, запуска собственного сервера, в образовательных "
+"целях, но не для предложения коммерческих товаров, продуктов или услуг без "
+"предварительного письменного разрешения. Другими словами, спрашивайте."
+
+#~ msgid " photos found"
+#~ msgstr " фотографий найдено"
+
+#~ msgid " photos loaded"
+#~ msgstr " фотографий загружено"
+
+#~ msgid "4 Day"
+#~ msgstr "4 Дня"
+
+#~ msgid "Album Name"
+#~ msgstr "Названия альбома"
+
+#~ msgid "All "
+#~ msgstr "Все "
+
+#~ msgid "Authentication required"
+#~ msgstr "Требуется авторизация"
+
+#~ msgid "Category"
+#~ msgstr "Категория"
+
+#~ msgid "Convert RAW to JPEG"
+#~ msgstr "Конвертировать RAW в JPEG"
+
+#~ msgid "Country"
+#~ msgstr "Страна"
+
+#~ msgid "Custom Daily"
+#~ msgstr "Произвольное ежедневно"
+
+#~ msgid "Custom Weekly"
+#~ msgstr "Произвольное еженедельно"
+
+#~ msgid "Day"
+#~ msgstr "День"
+
+#~ msgid "Duplicate"
+#~ msgstr "Дубликат"
+
+#~ msgid "Groom metadata and estimate locations"
+#~ msgstr "Извлечь метаданные и определить местоположение"
+
+#~ msgid "Height"
+#~ msgstr "Высота"
+
+#~ msgid "Language"
+#~ msgstr "Язык"
+
+#~ msgid "Lens"
+#~ msgstr "Объектив"
+
+#~ msgid "Month"
+#~ msgstr "Месяц"
+
+#~ msgid "Next"
+#~ msgstr "Следующее"
+
+#~ msgid "No albums matched your search"
+#~ msgstr "Нет совпадений среди альбовом по Вашему запросу"
+
+#~ msgid "No labels matched your search"
+#~ msgstr "Нет совпадений меток по Вашему запросу"
+
+#~ msgid "No photos matched your search"
+#~ msgstr "Нет совпадений среди фотографий по Вашему запросу"
+
+#~ msgid "Priority"
+#~ msgstr "Приоритет"
+
+#~ msgid "Remove"
+#~ msgstr "Удалить"
+
+#~ msgid "Restore"
+#~ msgstr "Восстановить"
+
+#~ msgid "Share"
+#~ msgstr "Поделиться"
+
+#~ msgid "Sharing"
+#~ msgstr "Поделиться"
+
+#~ msgid "Skip unchanged files"
+#~ msgstr "Пропустить не измененные файлы"
+
+#~ msgid "Sort By"
+#~ msgstr "Сортировать по"
+
+#~ msgid "Story"
+#~ msgstr "История"
+
+#~ msgid "Taken after"
+#~ msgstr "Снято после"
+
+#~ msgid "Taken before"
+#~ msgstr "Снято до"
+
+#~ msgid "Theme"
+#~ msgstr "Тема"
+
+#~ msgid "Time Zone"
+#~ msgstr "Часовой пояс"
+
+#~ msgid "Toggled private flag"
+#~ msgstr "Включен флаг приватности"
+
+#~ msgid "Toggled story flag"
+#~ msgstr "Фключен флаг История"
+
+#~ msgid ""
+#~ "Try using other terms and search options such as category, country and "
+#~ "camera."
+#~ msgstr ""
+#~ "Попробуйте другой запрос или опции поиска, такие как категория, страна и "
+#~ "камера."
+
+#~ msgid "Vibrant"
+#~ msgstr "Вибрант"
+
+#~ msgid "View"
+#~ msgstr "Обзор"
+
+#~ msgid "Week"
+#~ msgstr "Неделя"
+
+#~ msgid "Width"
+#~ msgstr "Ширина"
+
+#~ msgid "Year"
+#~ msgstr "Год"
 
 #~ msgid "Finding your position..."
 #~ msgstr "Поиск вашего метоположения..."
 
 #~ msgid "Geolocation is not available"
 #~ msgstr "Геолокация не доступна"
-
-#~ msgid "Importing"
-#~ msgstr "Импортирование"
-
-#~ msgid "Importing files from directory..."
-#~ msgstr "Импортирование файлов из папки..."
-
-#~ msgid "Indexing photos and sidecar files..."
-#~ msgstr "Индексирование фотографий и sidecar файлов..."
 
 #~ msgid "Maintenance"
 #~ msgstr "Поддержка"
@@ -627,12 +1661,6 @@ msgstr "Вы можете загрузить только один альбом"
 #~ msgid "Press button to import photos from directory..."
 #~ msgstr "Нажмите кнопку что бы импортировать фотографии из папки..."
 
-#~ msgid "Press button to start indexing..."
-#~ msgstr "Нажмите кнопку что бы начать индексирование..."
-
-#~ msgid "Private"
-#~ msgstr "Приватный"
-
 #~ msgid "Remove from album"
 #~ msgstr "Удалить из альбома"
 
@@ -644,15 +1672,6 @@ msgstr "Вы можете загрузить только один альбом"
 
 #~ msgid "Skip existing photos and sidecar files"
 #~ msgstr "Пропустить существующие фотографии и файлы sidecar"
-
-#~ msgid "Start"
-#~ msgstr "Начать"
-
-#~ msgid "Upload complete. Indexing..."
-#~ msgstr "Загрузка завершена. Индексирование..."
-
-#~ msgid "Upload failed"
-#~ msgstr "Загрузка не удалась"
 
 #~ msgid "Uploading"
 #~ msgstr "Загрузка"

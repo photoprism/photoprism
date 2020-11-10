@@ -29,11 +29,11 @@
                                  @click.exact="openFile(file)"
                           >
                             <v-layout
-                                    slot="placeholder"
-                                    fill-height
-                                    align-center
-                                    justify-center
-                                    ma-0
+                                slot="placeholder"
+                                fill-height
+                                align-center
+                                justify-center
+                                ma-0
                             >
                               <v-progress-circular indeterminate
                                                    color="accent lighten-5"></v-progress-circular>
@@ -41,29 +41,46 @@
                           </v-img>
                         </td>
                       </tr>
-                      <tr v-if="!file.Sidecar && !file.Primary && !file.Root">
+                      <tr>
                         <td>
                           <translate>Actions</translate>
                         </td>
                         <td>
+                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-download"
+                                 @click.stop.prevent="downloadFile(file)">
+                            <translate>Download</translate>
+                          </v-btn>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-primary"
-                                 @click.stop.prevent="primary(file)" v-if="file.Type === 'jpg' && !file.Primary">
+                                 @click.stop.prevent="primaryFile(file)"
+                                 v-if="features.edit && file.Type === 'jpg' && !file.Primary && file.Root === '/'">
                             <translate>Primary</translate>
                           </v-btn>
                           <v-btn small depressed dark color="secondary-dark" class="ma-0 action-unstack"
-                                 @click.stop.prevent="unstack(file)">
+                                 @click.stop.prevent="unstackFile(file)"
+                                 v-if="features.edit && !file.Sidecar && !file.Primary && file.Root === '/'">
                             <translate>Unstack</translate>
+                          </v-btn>
+                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-delete"
+                                 @click.stop.prevent="showDeleteDialog(file)"
+                                 v-if="features.edit && !file.Primary">
+                            <translate>Delete</translate>
                           </v-btn>
                         </td>
                       </tr>
                       <tr>
-                        <td>
-                          <translate>UID</translate>
+                        <td title="Unique ID">
+                          UID
                         </td>
                         <td>{{ file.UID | uppercase }}</td>
                       </tr>
-                      <tr>
+                      <tr v-if="file.InstanceID" title="XMP">
                         <td>
+                          <translate>Instance ID</translate>
+                        </td>
+                        <td>{{ file.InstanceID | uppercase }}</td>
+                      </tr>
+                      <tr>
+                        <td title="SHA-1">
                           <translate>Hash</translate>
                         </td>
                         <td>{{ file.Hash }}</td>
@@ -78,7 +95,7 @@
                         <td>
                           <translate>Name</translate>
                         </td>
-                        <td @click.stop.prevent="download(file)" class="clickable">{{ file.Name }}</td>
+                        <td>{{ file.Name }}</td>
                       </tr>
                       <tr v-if="file.OriginalName">
                         <td>
@@ -108,13 +125,17 @@
                         <td>
                           <translate>Primary</translate>
                         </td>
-                        <td><translate>Yes</translate></td>
+                        <td>
+                          <translate>Yes</translate>
+                        </td>
                       </tr>
                       <tr v-if="file.Portrait">
                         <td>
                           <translate>Portrait</translate>
                         </td>
-                        <td><translate>Yes</translate></td>
+                        <td>
+                          <translate>Yes</translate>
+                        </td>
                       </tr>
                       <tr v-if="file.Projection">
                         <td>
@@ -150,19 +171,27 @@
                         <td>
                           <translate>Missing</translate>
                         </td>
-                        <td><translate>Yes</translate></td>
+                        <td>
+                          <translate>Yes</translate>
+                        </td>
                       </tr>
                       <tr>
                         <td>
                           <translate>Added</translate>
                         </td>
-                        <td>{{ formatTime(file.CreatedAt) }} <translate>in</translate> {{ Math.round(file.CreatedIn / 1000000) | number('0,0') }} ms</td>
+                        <td>{{ formatTime(file.CreatedAt) }}
+                          <translate>in</translate>
+                          {{ Math.round(file.CreatedIn / 1000000) | number('0,0') }} ms
+                        </td>
                       </tr>
                       <tr v-if="file.UpdatedIn">
                         <td>
                           <translate>Updated</translate>
                         </td>
-                        <td>{{ formatTime(file.UpdatedAt) }} <translate>in</translate> {{ Math.round(file.UpdatedIn / 1000000) | number('0,0') }} ms</td>
+                        <td>{{ formatTime(file.UpdatedAt) }}
+                          <translate>in</translate>
+                          {{ Math.round(file.UpdatedIn / 1000000) | number('0,0') }} ms
+                        </td>
                       </tr>
                       </tbody>
                     </table>
@@ -174,60 +203,82 @@
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
+    <p-file-delete-dialog :show="deleteFile.dialog" @cancel="closeDeleteDialog"
+                           @confirm="confirmDeleteFile"></p-file-delete-dialog>
   </div>
 </template>
 
 <script>
-    import Thumb from "model/thumb";
-    import {DateTime} from "luxon";
+import Thumb from "model/thumb";
+import {DateTime} from "luxon";
 
-    export default {
-        name: 'p-tab-photo-files',
-        props: {
-            model: Object,
-            uid: String,
+export default {
+  name: 'p-tab-photo-files',
+  props: {
+    model: Object,
+    uid: String,
+  },
+  data() {
+    return {
+      state: [true],
+      deleteFile: {
+        dialog: false,
+        file: null,
+      },
+      features: this.$config.settings().features,
+      config: this.$config.values,
+      readonly: this.$config.get("readonly"),
+      selected: [],
+      listColumns: [
+        {
+          text: this.$gettext('Primary'),
+          value: 'Primary',
+          sortable: false,
+          align: 'center',
+          class: 'p-col-primary'
         },
-        data() {
-            return {
-                state: [true],
-                config: this.$config.values,
-                readonly: this.$config.get("readonly"),
-                selected: [],
-                listColumns: [
-                    {
-                        text: this.$gettext('Primary'),
-                        value: 'Primary',
-                        sortable: false,
-                        align: 'center',
-                        class: 'p-col-primary'
-                    },
-                    {text: this.$gettext('Name'), value: 'Name', sortable: false, align: 'left'},
-                    {text: this.$gettext('Dimensions'), value: '', sortable: false, class: 'hidden-sm-and-down'},
-                    {text: this.$gettext('Size'), value: 'Size', sortable: false, class: 'hidden-xs-only'},
-                    {text: this.$gettext('Type'), value: '', sortable: false, align: 'left'},
-                    {text: this.$gettext('Status'), value: '', sortable: false, align: 'left'},
-                ],
-            };
-        },
-        computed: {},
-        methods: {
-            openFile(file) {
-                this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
-            },
-            download(file) {
-                file.download();
-            },
-            unstack(file) {
-                this.model.unstackFile(file.UID);
-            },
-            primary(file) {
-                this.model.primaryFile(file.UID);
-            },
-            formatTime(s) {
-                return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);
-            },
-            refresh() {
-            },
-        },
+        {text: this.$gettext('Name'), value: 'Name', sortable: false, align: 'left'},
+        {text: this.$gettext('Dimensions'), value: '', sortable: false, class: 'hidden-sm-and-down'},
+        {text: this.$gettext('Size'), value: 'Size', sortable: false, class: 'hidden-xs-only'},
+        {text: this.$gettext('Type'), value: '', sortable: false, align: 'left'},
+        {text: this.$gettext('Status'), value: '', sortable: false, align: 'left'},
+      ],
     };
+  },
+  computed: {},
+  methods: {
+    openFile(file) {
+      this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
+    },
+    downloadFile(file) {
+      file.download();
+    },
+    showDeleteDialog(file) {
+      this.deleteFile.dialog = true;
+      this.deleteFile.file = file;
+    },
+    closeDeleteDialog() {
+      this.deleteFile.dialog = false;
+      this.deleteFile.file = null;
+    },
+    confirmDeleteFile() {
+      if(this.deleteFile.file && this.deleteFile.file.UID) {
+        this.model.deleteFile(this.deleteFile.file.UID).finally(() => this.closeDeleteDialog());
+      } else {
+        this.closeDeleteDialog();
+      }
+    },
+    unstackFile(file) {
+      this.model.unstackFile(file.UID);
+    },
+    primaryFile(file) {
+      this.model.primaryFile(file.UID);
+    },
+    formatTime(s) {
+      return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);
+    },
+    refresh() {
+    },
+  },
+};
 </script>

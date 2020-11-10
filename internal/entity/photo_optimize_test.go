@@ -21,8 +21,8 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
 		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
 		m.EstimateCountry()
-		assert.Equal(t, UnknownCountry.ID, m.CountryCode())
-		assert.Equal(t, UnknownCountry.CountryName, m.CountryName())
+		assert.Equal(t, "de", m.CountryCode())
+		assert.Equal(t, "Germany", m.CountryName())
 	})
 
 	t.Run("de", func(t *testing.T) {
@@ -65,7 +65,7 @@ func TestPhoto_Optimize(t *testing.T) {
 			t.Error("photo should NOT be updated")
 		}
 	})
-	t.Run("photo withouth id", func(t *testing.T) {
+	t.Run("photo without id", func(t *testing.T) {
 		photo := Photo{}
 		bool, err := photo.Optimize()
 		assert.Error(t, err)

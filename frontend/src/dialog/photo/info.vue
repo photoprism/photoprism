@@ -257,7 +257,7 @@
                 const months = Info.months("long");
 
                 for (let i = 0; i < months.length; i++) {
-                    result.push({"Month": i + 1, "Name": months[i]});
+                    result.push({"Month": i + 1, "UserName": months[i]});
                 }
 
                 return result;

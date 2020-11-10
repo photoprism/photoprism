@@ -134,13 +134,47 @@ func TestMediaFile_Exif_JPEG(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "equirectangular", data.Projection)
 	})
+
+	t.Run("digikam.jpg", func(t *testing.T) {
+		img, err := NewMediaFile("testdata/digikam.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		data := img.MetaData()
+
+		assert.Empty(t, err)
+
+		assert.IsType(t, meta.Data{}, data)
+
+		assert.Equal(t, "jpeg", data.Codec)
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "2020-10-17T15:48:24Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-10-17T17:48:24Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "Berlin, Shop", data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 375, data.Height)
+		assert.Equal(t, 500, data.Width)
+		assert.Equal(t, float32(52.46052), data.Lat)
+		assert.Equal(t, float32(13.331403), data.Lng)
+		assert.Equal(t, 84, data.Altitude)
+		assert.Equal(t, "1/50", data.Exposure)
+		assert.Equal(t, "HUAWEI", data.CameraMake)
+		assert.Equal(t, "ELE-L29", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, 27, data.FocalLength)
+		assert.Equal(t, 1, int(data.Orientation))
+	})
 }
 
 func TestMediaFile_Exif_DNG(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
 	conf := config.TestConfig()
 
 	img, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")

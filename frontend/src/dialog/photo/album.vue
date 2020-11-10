@@ -19,7 +19,7 @@
                     hide-no-data
                     item-text="Title"
                     item-value="UID"
-                    :label="labels.select"
+                    :label="$gettext('Album Name')"
                     color="secondary-dark"
                     flat solo
                     class="input-album"
@@ -58,7 +58,6 @@
                 albums: [],
                 items: [],
                 labels: {
-                    select: this.$gettext("Album Name"),
                     addToAlbum: this.$gettext("Add to album"),
                     createAlbum: this.$gettext("Create album"),
                 }

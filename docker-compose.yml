@@ -1,25 +1,32 @@
 version: '3.5'
 
 services:
-  caddy:
-    image: abiosoft/caddy:1.0.3-no-stats
-    depends_on:
-     - photoprism
-    ports:
-      - 2015:2015
-    volumes:
-      - ./docker/development/Caddyfile:/etc/Caddyfile
+  # Uncomment the following lines to test with Caddy as reverse proxy:
+  #
+  # caddy:
+  #  image: caddy:2
+  #  depends_on:
+  #   - photoprism
+  #  ports:
+  #    - "80:80"
+  #    - "443:443"
+  #  volumes:
+  #    - ./docker/development/caddy:/data/caddy/pki/authorities/local
+  #    - ./docker/development/caddy/Caddyfile:/etc/caddy/Caddyfile
 
   photoprism:
     build: .
     image: photoprism/photoprism:develop
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    # Uncomment and edit the following line to set a specific user / group id:
+    # user: "1000:1000"
     depends_on:
       - photoprism-db
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343"
-    expose:
-      - "2343" # Acceptance Tests
+      - "2343:2343" # Acceptance Tests
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
@@ -55,14 +62,14 @@ services:
       # PHOTOPRISM_THUMB_SIZE: 4096         # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680  # On-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680            # Size limit for converted image files in pixels (720-30000)
-      PHOTOPRISM_JPEG_QUALITY: 90           # Set to 95 for high-quality thumbnails (requires more storage)
+      PHOTOPRISM_JPEG_QUALITY: 92           # Set to 95 for high-quality thumbnails (25-100)
       PHOTOPRISM_DARKTABLE_PRESETS: "false" # Use darktable presets (disables concurrent raw to jpeg conversion)
       PHOTOPRISM_SIDECAR_JSON: "true"       # Read metadata from JSON sidecar files created by exiftool
       PHOTOPRISM_SIDECAR_YAML: "true"       # Backup photo metadata to YAML sidecar files
 
   photoprism-db:
     image: mariadb:10.5
-    command: mysqld --port=4001 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=1024 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
     expose:
       - "4001"
     ports:
@@ -76,7 +83,7 @@ services:
       MYSQL_DATABASE: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20200327
+    image: photoprism/webdav:20200825
 
 volumes:
   go-mod:

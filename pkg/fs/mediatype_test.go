@@ -37,3 +37,13 @@ func TestGetMediaType(t *testing.T) {
 		assert.Equal(t, MediaOther, result)
 	})
 }
+
+func TestIsMedia(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		assert.True(t, IsMedia("testdata/test.jpg"))
+	})
+
+	t.Run("false", func(t *testing.T) {
+		assert.False(t, IsMedia("/IMG_4120.XXX"))
+	})
+}

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"flag"
 	"os"
 	"path/filepath"
@@ -129,9 +128,7 @@ func NewTestConfig() *Config {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	c.initSettings()
-
-	if err := c.Init(context.Background()); err != nil {
+	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 
@@ -148,12 +145,6 @@ func NewTestConfig() *Config {
 // NewTestErrorConfig inits invalid config used for testing
 func NewTestErrorConfig() *Config {
 	c := &Config{params: NewTestParamsError()}
-
-	c.initSettings()
-
-	if err := c.Init(context.Background()); err != nil {
-		log.Fatalf("config: %s", err.Error())
-	}
 
 	return c
 }

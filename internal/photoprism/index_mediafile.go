@@ -131,11 +131,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			result.Status = IndexDuplicate
 			return result
 		}
-
-		if !fileExists && m.MetaData().HasInstanceID() {
-			fileQuery = entity.UnscopedDb().First(&file, "uuid = ?", m.MetaData().InstanceID)
-			fileExists = fileQuery.Error == nil
-		}
 	}
 
 	if !fileExists {
@@ -255,7 +250,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if metaData := m.MetaData(); metaData.Error == nil {
+			file.FileCodec = metaData.Codec
 			file.FileProjection = metaData.Projection
+
+			if metaData.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, txt.Quote(metaData.InstanceID))
+
+				file.InstanceID = metaData.InstanceID
+			}
 		}
 	case m.IsXMP():
 		// TODO: Proof-of-concept for indexing XMP sidecar files
@@ -309,15 +311,15 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document id %s", logName, txt.Quote(metaData.DocumentID))
+				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
 
-			if metaData.HasInstanceID() && file.UUID == "" {
-				log.Debugf("index: %s has instance id %s", logName, txt.Quote(metaData.InstanceID))
+			if metaData.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, txt.Quote(metaData.InstanceID))
 
-				file.UUID = metaData.InstanceID
+				file.InstanceID = metaData.InstanceID
 			}
 
 			file.FileCodec = metaData.Codec
@@ -329,6 +331,34 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
+			}
+
+			if photo.CameraSrc == entity.SrcAuto {
+				// Set UpdateCamera, Lens, Focal Length and F Number.
+				photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
+
+				if photo.Camera != nil {
+					photo.CameraID = photo.Camera.ID
+				} else {
+					photo.CameraID = entity.UnknownCamera.ID
+				}
+
+				if photo.CameraID != entity.UnknownCamera.ID {
+					photo.CameraSrc = entity.SrcMeta
+				}
+
+				photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
+
+				if photo.Lens != nil {
+					photo.LensID = photo.Lens.ID
+				} else {
+					photo.LensID = entity.UnknownLens.ID
+				}
+
+				photo.PhotoFocalLength = m.FocalLength()
+				photo.PhotoFNumber = m.FNumber()
+				photo.PhotoIso = m.Iso()
+				photo.PhotoExposure = m.Exposure()
 			}
 		}
 
@@ -370,15 +400,15 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document id %s", logName, txt.Quote(metaData.DocumentID))
+				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
 
-			if metaData.HasInstanceID() && file.UUID == "" {
-				log.Debugf("index: %s has instance id %s", logName, txt.Quote(metaData.InstanceID))
+			if metaData.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, txt.Quote(metaData.InstanceID))
 
-				file.UUID = metaData.InstanceID
+				file.InstanceID = metaData.InstanceID
 			}
 
 			file.FileCodec = metaData.Codec
@@ -391,6 +421,34 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
+			}
+
+			if photo.CameraSrc == entity.SrcAuto {
+				// Set UpdateCamera, Lens, Focal Length and F Number.
+				photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
+
+				if photo.Camera != nil {
+					photo.CameraID = photo.Camera.ID
+				} else {
+					photo.CameraID = entity.UnknownCamera.ID
+				}
+
+				if photo.CameraID != entity.UnknownCamera.ID {
+					photo.CameraSrc = entity.SrcMeta
+				}
+
+				photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
+
+				if photo.Lens != nil {
+					photo.LensID = photo.Lens.ID
+				} else {
+					photo.LensID = entity.UnknownLens.ID
+				}
+
+				photo.PhotoFocalLength = m.FocalLength()
+				photo.PhotoFNumber = m.FNumber()
+				photo.PhotoIso = m.Iso()
+				photo.PhotoExposure = m.Exposure()
 			}
 		}
 
@@ -468,15 +526,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document id %s", logName, txt.Quote(metaData.DocumentID))
+				log.Debugf("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
-			}
-
-			if metaData.HasInstanceID() && file.UUID == "" {
-				log.Debugf("index: %s has instance id %s", logName, txt.Quote(metaData.InstanceID))
-
-				file.UUID = metaData.InstanceID
 			}
 		}
 
@@ -488,6 +540,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.CameraID = photo.Camera.ID
 			} else {
 				photo.CameraID = entity.UnknownCamera.ID
+			}
+
+			if photo.CameraID != entity.UnknownCamera.ID {
+				photo.CameraSrc = entity.SrcMeta
 			}
 
 			photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
@@ -594,11 +650,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		w := txt.Keywords(details.Keywords)
 
 		if !fs.IsGenerated(fileBase) {
-			w = append(w, txt.FilenameKeywords(filePath)...)
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
 		w = append(w, locKeywords...)
+		w = append(w, txt.FilenameKeywords(filePath)...)
 		w = append(w, txt.FilenameKeywords(file.OriginalName)...)
 		w = append(w, file.FileMainColor)
 		w = append(w, labels.Keywords()...)

@@ -63,7 +63,7 @@ export const MonthsShort = () => {
     let result = [];
 
     for (let i = 1; i <= 12; i++) {
-        result.push({"value": i + 1, "text": i.toString().padStart(2, "0")});
+        result.push({"value": i, "text": i.toString().padStart(2, "0")});
     }
 
     result.push({"value": -1, "text": $gettext("Unknown")});
@@ -99,6 +99,14 @@ export const Languages = () => [
     {
         "text": $gettext("Russian"),
         "value": "ru",
+    },
+    {
+        "text": $gettext("Chinese"),
+        "value": "zh",
+    },
+    {
+        "text": $gettext("Hindi"),
+        "value": "hi",
     },
 ];
 
@@ -231,4 +239,13 @@ export const Colors = () => [
     {"Example": "#F5F5F5", "Name": $gettext("White"), "Slug": "white"},
     {"Example": "#9E9E9E", "Name": $gettext("Grey"), "Slug": "grey"},
     {"Example": "#212121", "Name": $gettext("Black"), "Slug": "black"},
+];
+
+export const FeedbackCategories = () => [
+    {"value": "help", "text": $gettext("Customer Support")},
+    {"value": "feedback", "text": $gettext("Product Feedback")},
+    {"value": "feature", "text": $gettext("Feature Request")},
+    {"value": "bug", "text": $gettext("Bug Report")},
+    {"value": "donations", "text": $gettext("Donations")},
+    {"value": "other", "text": $gettext("Other")},
 ];

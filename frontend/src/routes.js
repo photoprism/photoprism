@@ -15,7 +15,7 @@ Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
     to describe our software, run your own server, for educational purposes, but not for
     offering commercial goods, products, or services without prior written permission.
     In other words, please ask.
@@ -41,6 +41,7 @@ import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
 import Discover from "pages/discover.vue";
 import About from "pages/about/about.vue";
+import Feedback from "pages/about/feedback.vue";
 import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
 import {$gettext} from "common/vm";
@@ -58,6 +59,12 @@ export default [
         path: "/about",
         component: About,
         meta: {title: c.name, auth: false},
+    },
+    {
+        name: "feedback",
+        path: "/feedback",
+        component: Feedback,
+        meta: {title: c.name, auth: true},
     },
     {
         name: "license",
@@ -132,7 +139,7 @@ export default [
     },
     {
         name: "folder",
-        path: "/folders/:uid:/:slug",
+        path: "/folders/:uid/:slug",
         component: AlbumPhotos,
         meta: {title: $gettext("Folders"), auth: true},
     },
@@ -268,6 +275,13 @@ export default [
         component: Settings,
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 0},
+        beforeEnter: (to, from, next) => {
+            if (c.disableSettings) {
+                next({name: "home"});
+            } else {
+                next();
+            }
+        },
     },
     {
         name: "settings_sync",
@@ -275,6 +289,13 @@ export default [
         component: Settings,
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 1},
+        beforeEnter: (to, from, next) => {
+            if (c.disableSettings) {
+                next({name: "home"});
+            } else {
+                next();
+            }
+        },
     },
     {
         name: "settings_account",
@@ -282,6 +303,13 @@ export default [
         component: Settings,
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 2},
+        beforeEnter: (to, from, next) => {
+            if (c.disableSettings) {
+                next({name: "home"});
+            } else {
+                next();
+            }
+        },
     },
     {
         name: "discover",

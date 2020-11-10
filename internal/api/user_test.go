@@ -7,7 +7,7 @@ import (
 )
 
 func TestChangePassword(t *testing.T) {
-	t.Run("not existing person", func(t *testing.T) {
+	t.Run("not existing user", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		ChangePassword(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/users/xxx/password", `{}`)

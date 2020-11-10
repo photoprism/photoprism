@@ -21,7 +21,7 @@
   {{if .config.SiteAuthor}}<meta name="author" content="{{ .config.SiteAuthor }}">{{end}}
   {{if .config.SiteDescription}}<meta name="description" content="{{ .config.SiteDescription }}"/>{{end}}
 
-  {{template "favicons.tmpl" .}}
+{{template "favicons.tmpl" .}}
 
   <link rel="stylesheet" href="/static/build/share.css?{{ .config.CSSHash }}">
   <link rel="manifest" href="/static/manifest.json">

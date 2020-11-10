@@ -17,19 +17,19 @@ type Files []File
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
 	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`
-	UUID            string        `gorm:"type:varbinary(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	Photo           *Photo        `json:"-" yaml:"-"`
 	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
-	PhotoUID        string        `gorm:"type:varbinary(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
-	FileUID         string        `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName        string        `gorm:"type:varbinary(768);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot        string        `gorm:"type:varbinary(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
-	OriginalName    string        `gorm:"type:varbinary(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
-	FileHash        string        `gorm:"type:varbinary(128);index" json:"Hash" yaml:"Hash,omitempty"`
+	PhotoUID        string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
+	InstanceID      string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	FileUID         string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	FileName        string        `gorm:"type:VARBINARY(768);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileRoot        string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	OriginalName    string        `gorm:"type:VARBINARY(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	FileHash        string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize        int64         `json:"Size" yaml:"Size,omitempty"`
-	FileCodec       string        `gorm:"type:varbinary(32)" json:"Codec" yaml:"Codec,omitempty"`
-	FileType        string        `gorm:"type:varbinary(32)" json:"Type" yaml:"Type,omitempty"`
-	FileMime        string        `gorm:"type:varbinary(64)" json:"Mime" yaml:"Mime,omitempty"`
+	FileCodec       string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
+	FileType        string        `gorm:"type:VARBINARY(32)" json:"Type" yaml:"Type,omitempty"`
+	FileMime        string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
 	FilePrimary     bool          `json:"Primary" yaml:"Primary,omitempty"`
 	FileSidecar     bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
 	FileMissing     bool          `json:"Missing" yaml:"Missing,omitempty"`
@@ -39,11 +39,11 @@ type File struct {
 	FileWidth       int           `json:"Width" yaml:"Width,omitempty"`
 	FileHeight      int           `json:"Height" yaml:"Height,omitempty"`
 	FileOrientation int           `json:"Orientation" yaml:"Orientation,omitempty"`
-	FileProjection  string        `gorm:"type:varbinary(16);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileProjection  string        `gorm:"type:VARBINARY(16);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
 	FileAspectRatio float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
-	FileMainColor   string        `gorm:"type:varbinary(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
-	FileColors      string        `gorm:"type:varbinary(9);" json:"Colors" yaml:"Colors,omitempty"`
-	FileLuminance   string        `gorm:"type:varbinary(9);" json:"Luminance" yaml:"Luminance,omitempty"`
+	FileMainColor   string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
+	FileColors      string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
+	FileLuminance   string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma      uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileError       string        `gorm:"type:varbinary(512)" json:"Error" yaml:"Error,omitempty"`
@@ -132,6 +132,25 @@ func (m File) Changed(fileSize int64, modTime time.Time) bool {
 	}
 
 	return true
+}
+
+// Delete permanently deletes the entity from the database.
+func (m *File) DeletePermanently() error {
+	Db().Unscoped().Delete(FileShare{}, "file_id = ?", m.ID)
+	Db().Unscoped().Delete(FileSync{}, "file_id = ?", m.ID)
+
+	return Db().Unscoped().Delete(m).Error
+}
+
+// Delete deletes the entity from the database.
+func (m *File) Delete(permanently bool) error {
+	if permanently {
+		return m.DeletePermanently()
+	}
+
+	Db().Delete(File{}, "id = ?", m.ID)
+
+	return Db().Delete(m).Error
 }
 
 // Purge removes a file from the index by marking it as missing.

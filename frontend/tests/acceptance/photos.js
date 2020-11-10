@@ -473,6 +473,7 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
 //TODO edited values stay after reindex!!
 //TODO test camera, lens
 //TODO access video from list + edit
+//TODO Update country from coordinates
 test('#7 Edit photo/video', async t => {
     await page.openNav();
     await t
@@ -484,7 +485,7 @@ test('#7 Edit photo/video', async t => {
         .click(Selector('button.action-title-edit').withAttribute('data-uid', FirstPhoto))
         .expect(Selector('input[aria-label="Latitude"]').visible).ok()
         .expect(Selector('button.action-previous').getAttribute('disabled')).eql('disabled');
-        logger.clear();
+    logger.clear();
     await t
         .click(Selector('button.action-next'));
     //const request1 = await logger.requests[0].response.body;
@@ -525,7 +526,7 @@ test('#7 Edit photo/video', async t => {
 
     logger.clear();
     await t
-        .typeText(Selector('.input-title input'), 'Not saved photo title', { replace: true })
+        .typeText(Selector('.input-title input'), 'Not saved photo title', {replace: true})
         .click(Selector('button.action-close'))
         .click(Selector('button.action-date-edit').withAttribute('data-uid', FirstPhoto))
         .expect(Selector('.input-title input').value).eql(FirstPhotoTitle)
@@ -542,11 +543,9 @@ test('#7 Edit photo/video', async t => {
         .pressKey('ctrl+a delete')
         .typeText(Selector('.input-local-time input'), '04:30:30', { replace: true })
         .pressKey('enter')
+        .typeText(Selector('.input-altitude input'), '-1', { replace: true })
         .typeText(Selector('.input-latitude input'), '41.15333', { replace: true })
         .typeText(Selector('.input-longitude input'), '20.168331', { replace: true })
-        .typeText(Selector('.input-altitude input'), '-1', { replace: true })
-        .click(Selector('.input-country input'))
-        .click(Selector('div').withText('Afghanistan').parent('div[role="listitem"]'))
         //.click(Selector('.input-camera input'))
         //.hover(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
         //.click(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
@@ -585,11 +584,8 @@ test('#7 Edit photo/video', async t => {
         .expect(Selector('.input-day input').value).eql('15')
         .expect(Selector('.input-month input').value).eql('07')
         .expect(Selector('.input-year input').value).eql('Unknown')
-        .expect(Selector('.input-latitude input').value).eql('41.15333')
-        .expect(Selector('.input-longitude input').value).eql('20.168331')
         .expect(Selector('.input-altitude input').value).eql('-1')
         .expect(Selector('div').withText('Albania').visible).ok()
-        .expect(Selector('div').withText('Afghanistan').visible).notOk()
         //.expect(Selector('div').withText('Apple iPhone 6').visible).ok()
         //.expect(Selector('div').withText('Apple iPhone 5s back camera 4.15mm f/2.2').visible).ok()
         .expect(Selector('.input-iso input').value).eql('32')
@@ -604,6 +600,18 @@ test('#7 Edit photo/video', async t => {
         .expect(Selector('.input-description textarea').value).eql('Description of a nice image :)')
         .expect(Selector('.input-notes textarea').value).contains('Some notes')
         .expect(Selector('.input-keywords textarea').value).contains('cat')
+        /*.typeText(Selector('.input-latitude input'), '49.34035', { replace: true })
+        .typeText(Selector('.input-longitude input'), '-123.43104', { replace: true })
+        .click(Selector('button.action-approve'))
+        .click(Selector('button.action-done'));
+    await t
+        .click(Selector('button.action-reload'));
+    await t
+        .expect(Selector('button.action-title-edit').withAttribute('data-uid', FirstPhoto).innerText).eql('New Photo Title')
+        .click(Selector('button.action-date-edit').withAttribute('data-uid', FirstPhoto));
+    await t
+        .expect(Selector('div').withText('Canada').visible).ok()
+        .expect(Selector('div').withText('Albania').visible).notOk();*/
     if (FirstPhotoTitle.empty || FirstPhotoTitle === "")
     { await t
         .click(Selector('.input-title input'))
@@ -824,4 +832,37 @@ test('#10 Ungroup files', async t => {
     const PhotoCountAfterUngroup = await Selector('button.action-title-edit').count;
     await t
         .expect(PhotoCountAfterUngroup).eql(2);
+});
+
+test('#11 Delete non primary file', async t => {
+    await page.openNav();
+    await t
+        .click(Selector('.nav-library'))
+        //TODO Connecting... error must be moved somewhere else
+        .click(Selector('#tab-import'))
+        .click(Selector('.input-import-folder input'), {timeout: 5000})
+        .click(Selector('div.v-list__tile__title').withText('/pizza'))
+        .click(Selector('.action-import'))
+        //TODO replace wait
+        .wait(30000)
+        .click(Selector('.nav-photos'))
+        .click(Selector('.p-expand-search'));
+    await page.search('mogale');
+    const PhotoCount = await Selector('button.action-title-edit').count;
+
+    const Photo = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
+    await t
+        .expect(PhotoCount).eql(1)
+        .click(Selector('button.action-title-edit').withAttribute('data-uid', Photo))
+        .click(Selector('#tab-files'))
+    const FileCount = await Selector('li.v-expansion-panel__container').count;
+    await t
+        .expect(FileCount).eql(2)
+        .click(Selector('li.v-expansion-panel__container').nth(1))
+        .click(Selector('.action-delete'))
+        .click(Selector('.action-confirm'))
+        .wait(12000)
+    const FileCountAfterDeletion = await Selector('li.v-expansion-panel__container').count;
+    await t
+        .expect(FileCountAfterDeletion).eql(1);
 });

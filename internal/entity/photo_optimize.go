@@ -25,8 +25,8 @@ func (m *Photo) EstimateCountry() {
 		countryCode = code
 	}
 
-	if countryCode == unknown && !fs.IsGenerated(m.PhotoName) {
-		if code := txt.CountryCode(m.PhotoName); code != unknown {
+	if countryCode == unknown {
+		if code := txt.CountryCode(m.PhotoName); code != unknown && !fs.IsGenerated(m.PhotoName) {
 			countryCode = code
 		} else if code := txt.CountryCode(m.PhotoPath); code != unknown {
 			countryCode = code
@@ -73,8 +73,8 @@ func (m *Photo) EstimatePlace() {
 		log.Errorf("photo: %s (estimate place)", err.Error())
 		m.EstimateCountry()
 	} else {
-		if days := recentPhoto.TakenAt.Sub(m.TakenAt) / (time.Hour * 24); days < -3 || days > 3 {
-			log.Debugf("photo: can't estimate position of %s, %d days time difference", m, days)
+		if hours := recentPhoto.TakenAt.Sub(m.TakenAt) / time.Hour; hours < -36 || hours > 36 {
+			log.Debugf("photo: can't estimate position of %s, %d hours time difference", m, hours)
 		} else if recentPhoto.HasPlace() {
 			m.Place = recentPhoto.Place
 			m.PlaceID = recentPhoto.PlaceID

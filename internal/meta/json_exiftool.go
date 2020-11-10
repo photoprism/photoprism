@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
 	"gopkg.in/ugjka/go-tz.v2/tz"
@@ -165,13 +166,13 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	// Validate and normalize optional DocumentID.
-	if len(data.DocumentID) > 0 {
-		data.DocumentID = SanitizeUID(data.DocumentID)
+	if data.DocumentID != "" {
+		data.DocumentID = rnd.SanitizeUUID(data.DocumentID)
 	}
 
 	// Validate and normalize optional InstanceID.
-	if len(data.InstanceID) > 0 {
-		data.InstanceID = SanitizeUID(data.InstanceID)
+	if data.InstanceID != "" {
+		data.InstanceID = rnd.SanitizeUUID(data.InstanceID)
 	}
 
 	if data.Projection == "equirectangular" {
@@ -180,6 +181,9 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	data.Title = SanitizeTitle(data.Title)
 	data.Description = SanitizeDescription(data.Description)
+	data.Keywords = SanitizeMeta(data.Keywords)
+	data.Subject = SanitizeMeta(data.Subject)
+	data.Artist = SanitizeMeta(data.Artist)
 
 	return nil
 }

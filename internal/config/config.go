@@ -1,7 +1,7 @@
 package config
 
 import (
-	"context"
+	"fmt"
 	"runtime"
 	"strings"
 	"sync"
@@ -12,6 +12,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/pro"
+	"github.com/photoprism/photoprism/internal/pro/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/sirupsen/logrus"
@@ -27,6 +29,7 @@ type Config struct {
 	db       *gorm.DB
 	params   *Params
 	settings *Settings
+	pro      *pro.Config
 	token    string
 }
 
@@ -66,8 +69,6 @@ func NewConfig(ctx *cli.Context) *Config {
 		token:  rnd.Token(8),
 	}
 
-	c.initSettings()
-
 	return c
 }
 
@@ -79,13 +80,23 @@ func (c *Config) Propagate() {
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
+	places.UserAgent = c.UserAgent()
 
 	c.Settings().Propagate()
+	c.Pro().Propagate()
 }
 
-// Init initialises the database connection and dependencies.
-func (c *Config) Init(ctx context.Context) error {
+// Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
+func (c *Config) Init() error {
+	if err := c.CreateDirectories(); err != nil {
+		return err
+	}
+
+	c.initSettings()
+	c.initPro()
+
 	c.Propagate()
+
 	return c.connectDb()
 }
 
@@ -97,6 +108,11 @@ func (c *Config) Name() string {
 // Version returns the application version.
 func (c *Config) Version() string {
 	return c.params.Version
+}
+
+// UserAgent returns a HTTP user agent string based on app name & version.
+func (c *Config) UserAgent() string {
+	return fmt.Sprintf("%s/%s", c.Name(), c.Version())
 }
 
 // Copyright returns the application copyright.
@@ -216,6 +232,11 @@ func (c *Config) Shutdown() {
 func (c *Config) Workers() int {
 	numCPU := runtime.NumCPU()
 
+	// Limit number of workers when using SQLite to avoid database locking issues.
+	if c.DatabaseDriver() == SQLite && numCPU > 8 && c.params.Workers <= 0 {
+		return 8
+	}
+
 	if c.params.Workers > 0 && c.params.Workers <= numCPU {
 		return c.params.Workers
 	}
@@ -255,4 +276,50 @@ func (c *Config) OriginalsLimit() int64 {
 
 	// Megabyte.
 	return c.params.OriginalsLimit * 1024 * 1024
+}
+
+// UpdatePro updates photoprism.pro api credentials for maps & places.
+func (c *Config) UpdatePro() {
+	if err := c.pro.Refresh(); err != nil {
+		log.Debugf("config: %s", err)
+	} else if err := c.pro.Save(); err != nil {
+		log.Debugf("config: %s", err)
+	} else {
+		c.pro.Propagate()
+	}
+}
+
+// initPro initializes photoprism.pro api credentials for maps & places.
+func (c *Config) initPro() {
+	c.pro = pro.NewConfig(c.Version(), c.ProConfigFile())
+
+	if err := c.pro.Load(); err == nil {
+		// Do nothing.
+	} else if err := c.pro.Refresh(); err != nil {
+		log.Debugf("config: %s", err)
+	} else if err := c.pro.Save(); err != nil {
+		log.Debugf("config: %s", err)
+	}
+
+	c.pro.Propagate()
+
+	ticker := time.NewTicker(time.Hour * 24)
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				c.UpdatePro()
+			}
+		}
+	}()
+}
+
+// Config returns the photoprism.pro api credentials.
+func (c *Config) Pro() *pro.Config {
+	if c.pro == nil {
+		c.initPro()
+	}
+
+	return c.pro
 }

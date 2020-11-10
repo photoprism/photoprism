@@ -15,7 +15,7 @@ Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
     to describe our software, run your own server, for educational purposes, but not for
     offering commercial goods, products, or services without prior written permission.
     In other words, please ask.
@@ -53,7 +53,7 @@ export default class Session {
             this.data = dataJson !== "undefined" ? JSON.parse(dataJson) : null;
         }
 
-        if(this.data && this.data.user) {
+        if (this.data && this.data.user) {
             this.user = new User(this.data.user);
         }
 
@@ -62,7 +62,7 @@ export default class Session {
         }
 
         Event.subscribe("session.logout", () => {
-            this.onLogout();
+            return this.onLogout();
         });
 
         Event.subscribe("websocket.connected", () => {
@@ -108,6 +108,10 @@ export default class Session {
         return this.session_id;
     }
 
+    hasId() {
+        return !!this.session_id;
+    }
+
     deleteId() {
         this.session_id = null;
         this.storage.removeItem("session_id");
@@ -116,7 +120,7 @@ export default class Session {
     }
 
     setData(data) {
-        if(!data) {
+        if (!data) {
             return;
         }
 
@@ -132,15 +136,15 @@ export default class Session {
 
     getEmail() {
         if (this.isUser()) {
-            return this.user.Email;
+            return this.user.PrimaryEmail;
         }
 
         return "";
     }
 
-    getFirstName() {
+    getNickName() {
         if (this.isUser()) {
-            return this.user.FirstName;
+            return this.user.NickName;
         }
 
         return "";
@@ -148,7 +152,7 @@ export default class Session {
 
     getFullName() {
         if (this.isUser()) {
-            return this.user.FirstName + " " + this.user.LastName;
+            return this.user.FullName;
         }
 
         return "";
@@ -159,7 +163,7 @@ export default class Session {
     }
 
     isAdmin() {
-        return this.user && this.user.hasId() && this.user.Admin;
+        return this.user && this.user.hasId() && this.user.RoleAdmin;
     }
 
     isAnonymous() {
@@ -167,7 +171,7 @@ export default class Session {
     }
 
     hasToken(token) {
-        if(!this.data || !this.data.tokens) {
+        if (!this.data || !this.data.tokens) {
             return false;
         }
 
@@ -192,7 +196,7 @@ export default class Session {
         try {
             Socket.send(JSON.stringify(clientInfo));
         } catch (e) {
-            if(this.config.debug) {
+            if (this.config.debug) {
                 console.log("session: can't use websocket, not connected (yet)");
             }
         }
@@ -222,20 +226,25 @@ export default class Session {
         );
     }
 
-    onLogout() {
+    onLogout(noRedirect) {
         this.deleteId();
-        window.location = "/";
+        if (noRedirect !== true) {
+            window.location = "/";
+        }
+        return Promise.resolve();
     }
 
-    logout() {
-        const id = this.getId();
-
-        this.deleteId();
-
-        Api.delete("session/" + id).then(
-            () => {
-                window.location = "/";
-            }
-        );
+    logout(noRedirect) {
+        if (this.hasId()) {
+            return Api.delete("session/" + this.getId())
+                .then(() => {
+                    return this.onLogout(noRedirect);
+                })
+                .catch(() => {
+                    return this.onLogout(noRedirect);
+                });
+        } else {
+            return this.onLogout(noRedirect);
+        }
     }
 }

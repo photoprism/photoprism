@@ -33,7 +33,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "admin-password",
-		Usage:  "initial admin password (can be changed in settings)",
+		Usage:  "initial admin password",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.IntFlag{
@@ -185,6 +185,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_SETTINGS_HIDDEN",
 	},
 	cli.StringFlag{
+		Name:   "rawtherapee-bin",
+		Usage:  "rawtherapee-cli executable `FILENAME`",
+		Value:  "rawtherapee-cli",
+		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
+	},
+	cli.StringFlag{
 		Name:   "darktable-bin",
 		Usage:  "darktable-cli executable `FILENAME`",
 		Value:  "darktable-cli",
@@ -221,22 +227,17 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-json, j",
-		Usage:  "read metadata from JSON sidecar files created by exiftool",
+		Usage:  "automatically create JSON sidecar files using Exiftool",
 		EnvVar: "PHOTOPRISM_SIDECAR_JSON",
 	},
 	cli.BoolFlag{
 		Name:   "sidecar-yaml, y",
-		Usage:  "backup photo metadata to YAML sidecar files",
+		Usage:  "automatically backup metadata to YAML sidecar files",
 		EnvVar: "PHOTOPRISM_SIDECAR_YAML",
-	},
-	cli.BoolFlag{
-		Name:   "sidecar-hidden",
-		Usage:  "create JSON and YAML sidecar files in .photoprism if enabled",
-		EnvVar: "PHOTOPRISM_SIDECAR_HIDDEN",
 	},
 	cli.StringFlag{
 		Name:   "sidecar-path",
-		Usage:  "storage `PATH` for automatically created sidecar files (relative or absolute)",
+		Usage:  "storage `PATH` for generated sidecar files (relative or absolute)",
 		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.BoolFlag{
@@ -298,7 +299,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",
 		Usage:  "choose 95 for high-quality thumbnails (25-100)",
-		Value:  90,
+		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
 }

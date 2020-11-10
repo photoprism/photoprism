@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// ClientConfig contains HTTP client / Web UI config values
+// ClientConfig represents HTTP client / Web UI config values.
 type ClientConfig struct {
 	Name            string              `json:"name"`
 	Version         string              `json:"version"`
@@ -34,6 +34,8 @@ type ClientConfig struct {
 	Lenses          []entity.Lens       `json:"lenses"`
 	Countries       []entity.Country    `json:"countries"`
 	Thumbs          []Thumb             `json:"thumbs"`
+	Status          string              `json:"status"`
+	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken"`
 	PreviewToken    string              `json:"previewToken"`
 	JSHash          string              `json:"jsHash"`
@@ -136,8 +138,11 @@ func (c *Config) PublicConfig() ClientConfig {
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
 		ReadOnly:        c.ReadOnly(),
+		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
+		Status:          "",
+		MapKey:          "",
 		Thumbs:          Thumbs,
 		Colors:          colors.All.List(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
@@ -179,6 +184,8 @@ func (c *Config) GuestConfig() ClientConfig {
 		Experimental:    false,
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
+		Status:          c.Pro().Status,
+		MapKey:          c.Pro().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
@@ -211,6 +218,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),
 		Thumbs:          Thumbs,
+		Status:          c.Pro().Status,
+		MapKey:          c.Pro().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),

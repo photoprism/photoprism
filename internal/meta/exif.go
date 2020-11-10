@@ -11,11 +11,8 @@ import (
 
 	"github.com/dsoprea/go-exif/v3"
 	exifcommon "github.com/dsoprea/go-exif/v3/common"
-	heicexif "github.com/dsoprea/go-heic-exif-extractor"
-	"github.com/dsoprea/go-jpeg-image-structure"
-	"github.com/dsoprea/go-png-image-structure"
-	"github.com/dsoprea/go-tiff-image-structure"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
@@ -54,105 +51,13 @@ func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 	}()
 
 	// Extract raw EXIF block.
-	var rawExif []byte
-	var parsed bool
+	rawExif, err := RawExif(fileName, fileType)
+
+	if err != nil {
+		return err
+	}
 
 	logName := txt.Quote(filepath.Base(fileName))
-
-	if fileType == fs.TypeJpeg {
-		jpegMp := jpegstructure.NewJpegMediaParser()
-
-		sl, err := jpegMp.ParseFile(fileName)
-
-		if err != nil {
-			return err
-		}
-
-		_, rawExif, err = sl.Exif()
-
-		if err != nil {
-			if strings.HasPrefix(err.Error(), "no exif header") {
-				return fmt.Errorf("metadata: no exif header in %s (parse jpeg)", logName)
-			} else if strings.HasPrefix(err.Error(), "no exif data") {
-				log.Debugf("metadata: failed parsing %s, starting brute-force search (parse jpeg)", logName)
-			} else {
-				log.Warnf("metadata: %s in %s, starting brute-force search (parse jpeg)", err, logName)
-			}
-		} else {
-			parsed = true
-		}
-	} else if fileType == fs.TypePng {
-		pngMp := pngstructure.NewPngMediaParser()
-
-		cs, err := pngMp.ParseFile(fileName)
-
-		if err != nil {
-			return err
-		}
-
-		_, rawExif, err = cs.Exif()
-
-		if err != nil {
-			if err.Error() == "file does not have EXIF" {
-				return fmt.Errorf("metadata: no exif header in %s (parse png)", logName)
-			} else {
-				log.Warnf("metadata: %s in %s (parse png)", err, logName)
-			}
-		} else {
-			parsed = true
-		}
-	} else if fileType == fs.TypeHEIF {
-		heicMp := heicexif.NewHeicExifMediaParser()
-
-		cs, err := heicMp.ParseFile(fileName)
-
-		if err != nil {
-			return err
-		}
-
-		_, rawExif, err = cs.Exif()
-
-		if err != nil {
-			if err.Error() == "file does not have EXIF" {
-				return fmt.Errorf("metadata: no exif header in %s (parse heic)", logName)
-			} else {
-				log.Warnf("metadata: %s in %s (parse heic)", err, logName)
-			}
-		} else {
-			parsed = true
-		}
-	} else if fileType == fs.TypeTiff {
-		tiffMp := tiffstructure.NewTiffMediaParser()
-
-		cs, err := tiffMp.ParseFile(fileName)
-
-		if err != nil {
-			return err
-		}
-
-		_, rawExif, err = cs.Exif()
-
-		if err != nil {
-			if err.Error() == "file does not have EXIF" {
-				return fmt.Errorf("metadata: no exif header in %s (parse tiff)", logName)
-			} else {
-				log.Warnf("metadata: %s in %s (parse tiff)", err, logName)
-			}
-		} else {
-			parsed = true
-		}
-	}
-
-	if !parsed {
-		// Fallback to an optimistic, brute-force search.
-		var err error
-
-		rawExif, err = exif.SearchFileAndExtractExif(fileName)
-
-		if err != nil {
-			return fmt.Errorf("metadata: no exif header in %s (search and extract)", logName)
-		}
-	}
 
 	if data.All == nil {
 		data.All = make(map[string]string)
@@ -280,7 +185,9 @@ func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 	}
 
 	if value, ok := tags["ImageUniqueID"]; ok {
-		data.DocumentID = SanitizeUID(value)
+		if id := rnd.SanitizeUUID(value); id != "" {
+			data.DocumentID = id
+		}
 	}
 
 	if value, ok := tags["PixelXDimension"]; ok {
@@ -370,6 +277,10 @@ func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
 		data.AddKeyword(KeywordPanorama)
 		data.Projection = SanitizeString(value)
 	}
+
+	data.Keywords = SanitizeMeta(data.Keywords)
+	data.Subject = SanitizeMeta(data.Subject)
+	data.Artist = SanitizeMeta(data.Artist)
 
 	data.All = tags
 

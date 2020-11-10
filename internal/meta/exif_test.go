@@ -15,6 +15,8 @@ func TestExif(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		// t.Logf("all: %+v", data.All)
+
 		assert.Equal(t, "Michael Mayer", data.Artist)
 		assert.Equal(t, "2020-01-01T16:28:23Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2020-01-01T17:28:23Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
@@ -143,8 +145,8 @@ func TestExif(t *testing.T) {
 		assert.True(t, data.TakenAtLocal.IsZero())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
-		assert.Equal(t, 3272, data.Height)
-		assert.Equal(t, 4940, data.Width)
+		assert.Equal(t, 0, data.Height)
+		assert.Equal(t, 0, data.Width)
 		assert.Equal(t, float32(-38.405193), data.Lat)
 		assert.Equal(t, float32(144.18896), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
@@ -258,7 +260,7 @@ func TestExif(t *testing.T) {
 		if err := data.JSON("testdata/orientation.json", "foo.jpg"); err != nil {
 			assert.EqualError(t, err, "metadata: original name foo.jpg does not match orientation.jpg (exiftool)")
 		} else {
-			t.Error("error expected when providing wrong orginal name")
+			t.Error("error expected when providing wrong original name")
 		}
 	})
 
@@ -380,5 +382,39 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 29, data.FocalLength)
 		assert.Equal(t, 3, data.Orientation)
 		assert.Equal(t, "", data.Projection)
+	})
+
+	t.Run("digikam.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/digikam.jpg", fs.TypeJpeg)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//  t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "", data.Codec)
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, "2020-10-17T15:48:24Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-10-17T17:48:24Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, 2736, data.Height)
+		assert.Equal(t, 3648, data.Width)
+		assert.Equal(t, float32(52.46052), data.Lat)
+		assert.Equal(t, float32(13.331402), data.Lng)
+		assert.Equal(t, 84, data.Altitude)
+		assert.Equal(t, "1/50", data.Exposure)
+		assert.Equal(t, "HUAWEI", data.CameraMake)
+		assert.Equal(t, "ELE-L29", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, 27, data.FocalLength)
+		assert.Equal(t, 0, int(data.Orientation))
 	})
 }

@@ -22,7 +22,7 @@
                 <v-text-field hide-details
                               v-model="model.Title"
                               :rules="[titleRule]"
-                              :label="labels.title"
+                              :label="$gettext('Name')"
                               color="secondary-dark"
                               class="input-title"
                 ></v-text-field>
@@ -38,7 +38,7 @@
               <v-flex xs12 pa-2>
                 <v-textarea auto-grow hide-details
                             browser-autocomplete="off"
-                            :label="labels.description"
+                            :label="$gettext('Description')"
                             :rows="1"
                             :key="growDesc"
                             v-model="model.Description"
@@ -50,7 +50,7 @@
                 <v-combobox hide-details :search-input.sync="model.Category"
                             v-model="model.Category"
                             :items="categories"
-                            :label="labels.category"
+                            :label="$gettext('Category')"
                             :allow-overflow="false"
                             return-masked-value
                             color="secondary-dark"
@@ -60,13 +60,13 @@
               </v-flex>
               <v-flex xs12 md6 pa-2>
                 <v-select
-                        :label="labels.sort"
-                        hide-details
-                        v-model="model.Order"
-                        :items="sorting"
-                        item-value="value"
-                        item-text="text"
-                        color="secondary-dark">
+                    :label="$gettext('Sort Order')"
+                    hide-details
+                    v-model="model.Order"
+                    :items="sorting"
+                    item-value="value"
+                    item-text="text"
+                    color="secondary-dark">
                 </v-select>
               </v-flex>
             </v-layout>
@@ -93,62 +93,52 @@
   </v-dialog>
 </template>
 <script>
-    import Album from "model/album";
+import Album from "model/album";
 
-    export default {
-        name: 'p-album-edit-dialog',
-        props: {
-            show: Boolean,
-            album: Object,
-        },
-        data() {
-            return {
-                model: new Album(),
-                growDesc: false,
-                loading: false,
-                sorting: [
-                    {value: 'added', text: this.$gettext('Recently added')},
-                    {value: 'edited', text: this.$gettext('Recently edited')},
-                    {value: 'newest', text: this.$gettext('Newest first')},
-                    {value: 'oldest', text: this.$gettext('Oldest first')},
-                    {value: 'name', text: this.$gettext('Sort by file name')},
-                    {value: 'similar', text: this.$gettext('Group by similarity')},
-                    {value: 'relevance', text: this.$gettext('Most relevant')},
-                ],
-                categories: this.$config.albumCategories(),
-                titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-                labels: {
-                    title: this.$gettext("Name"),
-                    description: this.$gettext("Description"),
-                    search: this.$gettext("Search"),
-                    view: this.$gettext("View"),
-                    country: this.$gettext("Country"),
-                    camera: this.$gettext("Camera"),
-                    sort: this.$gettext("Sort Order"),
-                    category: this.$gettext("Category"),
-                },
-            }
-        },
-        methods: {
-            expand() {
-                this.growDesc = !this.growDesc;
-            },
-            close() {
-                this.$emit('close');
-            },
-            confirm() {
-                this.model.update().then((m) => {
-                    this.categories = this.$config.albumCategories();
-                    this.$emit('close');
-                });
-            },
-        },
-        watch: {
-            show: function (show) {
-                if (show) {
-                    this.model = this.album.clone();
-                }
-            }
-        },
+export default {
+  name: 'p-album-edit-dialog',
+  props: {
+    show: Boolean,
+    album: Object,
+  },
+  data() {
+    return {
+      model: new Album(),
+      growDesc: false,
+      loading: false,
+      sorting: [
+        {value: 'added', text: this.$gettext('Recently added')},
+        {value: 'edited', text: this.$gettext('Recently edited')},
+        {value: 'newest', text: this.$gettext('Newest first')},
+        {value: 'oldest', text: this.$gettext('Oldest first')},
+        {value: 'name', text: this.$gettext('Sort by file name')},
+        {value: 'similar', text: this.$gettext('Group by similarity')},
+        {value: 'relevance', text: this.$gettext('Most relevant')},
+      ],
+      categories: this.$config.albumCategories(),
+      titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
     }
+  },
+  methods: {
+    expand() {
+      this.growDesc = !this.growDesc;
+    },
+    close() {
+      this.$emit('close');
+    },
+    confirm() {
+      this.model.update().then((m) => {
+        this.categories = this.$config.albumCategories();
+        this.$emit('close');
+      });
+    },
+  },
+  watch: {
+    show: function (show) {
+      if (show) {
+        this.model = this.album.clone();
+      }
+    }
+  },
+}
 </script>

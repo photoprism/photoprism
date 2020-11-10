@@ -1,9 +1,17 @@
+.PHONY: ;
+.SILENT: ;               # no need for @
+.ONESHELL: ;             # recipes execute in same shell
+.NOTPARALLEL: ;          # wait for target to finish
+.EXPORT_ALL_VARIABLES: ; # send all vars to shell
+
 export GO111MODULE=on
+
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
 
 HASRICHGO := $(shell which richgo)
+
 ifdef HASRICHGO
     GOTEST=richgo test
 else
@@ -17,21 +25,22 @@ install: install-bin install-assets
 test: test-js test-go
 test-go: reset-test-db run-test-go
 test-short: reset-test-db run-test-short
-acceptance-all: acceptance-start acceptance-firefox acceptance-restart acceptance stop
+acceptance-all: acceptance-start acceptance acceptance-restart acceptance-firefox stop
 test-all: test acceptance-all
 fmt: fmt-js fmt-go
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-share clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
 acceptance-start:
-	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --settings-path ./storage/acceptance/settings --originals-path ./storage/acceptance/originals --sidecar-hidden=false --sidecar-json=false --sidecar-yaml=false start -d
+	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --settings-path ./storage/acceptance/settings --originals-path ./storage/acceptance/originals --sidecar-json=false --sidecar-yaml=false start -d
 acceptance-restart:
 	go run cmd/photoprism/photoprism.go stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/settings/settingsBackup.yml storage/acceptance/settings/settings.yml
 	rm -rf storage/acceptance/originals/2010
 	rm -rf storage/acceptance/originals/2013
-	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --settings-path ./storage/acceptance/settings --originals-path ./storage/acceptance/originals --sidecar-hidden=false --sidecar-json=false --sidecar-yaml=false start -d
+	rm -rf storage/acceptance/originals/2017
+	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --settings-path ./storage/acceptance/settings --originals-path ./storage/acceptance/originals --sidecar-json=false --sidecar-yaml=false start -d
 acceptance-restore-db:
 	cp -f storage/acceptance/settings/settingsBackup.yml storage/acceptance/settings/settings.yml
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
@@ -43,6 +52,8 @@ stop:
 	go run cmd/photoprism/photoprism.go stop
 terminal:
 	docker-compose exec photoprism bash
+root-terminal:
+	docker-compose exec -u root photoprism bash
 migrate:
 	go run cmd/photoprism/photoprism.go migrate
 generate:
@@ -58,7 +69,7 @@ install-assets:
 	mkdir -p ~/.photoprism/assets
 	mkdir -p ~/Pictures/Originals
 	mkdir -p ~/Pictures/Import
-	cp -r assets/static assets/templates assets/nasnet assets/nsfw ~/.photoprism/assets
+	cp -r assets/locales assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
 	find ~/.photoprism/assets -name '.*' -type f -delete
 clean-local-assets:
 	rm -rf ~/.photoprism/assets/*
@@ -66,14 +77,16 @@ clean-local-cache:
 	rm -rf ~/.photoprism/storage/cache/*
 clean-local-config:
 	rm -f ~/.photoprism/storage/settings/*
+dep-list:
+	go list -u -m -json all | go-mod-outdated -direct
 dep-js:
-	(cd frontend &&	npm install --silent)
+	(cd frontend &&	npm install --silent --legacy-peer-deps && npm audit fix)
 dep-go:
 	go build -v ./...
 dep-upgrade:
 	go get -u -t ./...
 dep-upgrade-js:
-	(cd frontend &&	npm --depth 3 update)
+	(cd frontend &&	npm --depth 3 update --legacy-peer-deps)
 dep-tensorflow:
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
@@ -134,7 +147,7 @@ test-race:
 test-codecov:
 	$(info Running all Go unit tests with code coverage report for codecov...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
-	scripts/codecov.sh
+	scripts/codecov.sh -t $(CODECOV_TOKEN)
 test-coverage:
 	$(info Running all Go unit tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
@@ -148,18 +161,25 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
+	docker pull ubuntu:20.04
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
 docker-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
+docker-photoprism-local:
+	scripts/docker-build.sh photoprism
+docker-photoprism-pull:
+	docker pull photoprism/photoprism:latest
 docker-photoprism-arm64:
+	docker pull ubuntu:20.04
 	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
 docker-webdav:
+	docker pull golang:1
 	scripts/docker-build.sh webdav $(DOCKER_TAG)
 	scripts/docker-push.sh webdav $(DOCKER_TAG)
 lint-js:

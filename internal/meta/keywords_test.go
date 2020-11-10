@@ -52,4 +52,14 @@ func TestData_AutoAddKeywords(t *testing.T) {
 
 		assert.Equal(t, "", data.Keywords)
 	})
+
+	t.Run("ignore because too short", func(t *testing.T) {
+		data := NewData()
+
+		assert.Equal(t, "", data.Keywords)
+
+		data.AutoAddKeywords("es")
+
+		assert.Equal(t, "", data.Keywords)
+	})
 }

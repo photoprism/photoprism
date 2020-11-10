@@ -21,7 +21,7 @@
 
         <v-btn
                 fab dark small
-                :title="labels.download"
+                :title="$gettext('Download')"
                 color="download"
                 @click.stop="download()"
                 class="action-download"
@@ -33,7 +33,7 @@
 
         <v-btn
                 fab dark small
-                :title="labels.addToAlbum"
+                :title="$gettext('Add to album')"
                 color="album"
                 :disabled="selection.length === 0"
                 @click.stop="dialog.album = true"
@@ -74,12 +74,6 @@
                     album: false,
                     edit: false,
                 },
-                labels: {
-                    download: this.$gettext("Download"),
-                    addToAlbum: this.$gettext("Add to album"),
-                    removeFromAlbum: this.$gettext("Remove"),
-                },
-
             };
         },
         methods: {

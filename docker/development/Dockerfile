@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
@@ -7,11 +7,11 @@ ARG BUILD_TAG
 ENV DEBIAN_FRONTEND noninteractive
 
 # Configure apt-get
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
-RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends
-RUN echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests
-RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes
-RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
+    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
+    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install dev / build dependencies
 RUN apt-get update && apt-get upgrade && \
@@ -28,6 +28,8 @@ RUN apt-get update && apt-get upgrade && \
     libhdf5-serial-dev \
     libpng-dev \
     libzmq3-dev \
+    libx264-dev \
+    libx265-dev \
     pkg-config \
     software-properties-common \
     rsync \
@@ -46,18 +48,28 @@ RUN apt-get update && apt-get upgrade && \
     mysql-client \
     tzdata \
     gconf-service \
-    chromium-browser \
     firefox \
     libheif-examples \
     exiftool \
+    rawtherapee \
     ffmpeg \
-    lsof
+    lsof \
+    apache2-utils \
+    seccomp \
+    libseccomp-dev \
+    libseccomp2 \
+    fonts-roboto \
+    sudo
+
+# Install Chromium Browser via .deb
+RUN add-apt-repository -y ppa:xalt7x/chromium-deb-vaapi
+COPY /docker/development/pin-xalt7x-chromium-deb-vaapi /etc/apt/preferences.d/pin-xalt7x-chromium-deb-vaapi
 
 # Install RAW to JPEG converter
-RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_18.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
-    wget -qO - https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_18.04/Release.key | apt-key add - && \
+RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
+    wget -qO - https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_20.04/Release.key | apt-key add - && \
     apt-get update && \
-    apt-get install darktable && \
+    apt-get install chromium-browser chromium-codecs-ffmpeg-extra darktable && \
     apt-get upgrade && \
     apt-get dist-upgrade
 
@@ -81,18 +93,21 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Set default https://en.wikipedia.org/wiki/Umask
+RUN umask 0000
+
 # Install and configure NodeJS Package Manager (npm)
 ENV NODE_ENV production
 RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.14.6
+ENV GOLANG_VERSION 1.15.3
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "5c566ddc2e0bcfc25c26a5dc44a440fcc0177f7350c1f01952b34d5989a0d287 *go.tgz" | sha256sum -c -; \
+	echo "010a88df924a81ec21b293b5da8f9b11c176d27c0ee3962dc1738d2352d3c02d *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -102,30 +117,43 @@ RUN set -eux; \
 ENV GOPATH /go
 ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:/usr/local/go/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV TMPDIR /tmp
 ENV GO111MODULE on
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Download TensorFlow model and test files
-RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
-RUN wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip
-RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip
-RUN wget "https://dl.photoprism.org/fixtures/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
+RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
+    wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
+    wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
+    wget "https://dl.photoprism.org/fixtures/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # Install additional tools for development
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/miku/zek/cmd/...
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo
-RUN echo "alias go=richgo" > /root/.bash_aliases
+RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated && \
+    env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports && \
+    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk && \
+    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo && \
+    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu && \
+    echo "alias go=richgo" > /root/.bash_aliases
 
-# MariaDB test database settings
-COPY /docker/development/.my.cnf /root/.my.cnf
+# Create photoprism user and directory for deployment
+RUN useradd photoprism -m -d /photoprism && \
+    chmod 777 /photoprism && \
+    echo "alias go=richgo" > /photoprism/.bash_aliases && \
+    echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    chown -R photoprism:photoprism /photoprism && \
+    find /go -type d -print0 | xargs -0 chmod 777 && \
+    find /go -type f -print0 | xargs -0 chmod a+rw
+
+# Copy mysql client config for development
+COPY --chown=root:root /docker/development/.my.cnf /root/.my.cnf
+COPY --chown=photoprism:photoprism /docker/development/.my.cnf /photoprism/.my.cnf
+RUN chmod 644 /root/.my.cnf /photoprism/.my.cnf
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port 2342 plus 9515 for chromedriver
-EXPOSE 2342 9515
+# Expose HTTP port 2342, 2343 plus 9515 for chromedriver
+EXPOSE 2342 2343 9515
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null

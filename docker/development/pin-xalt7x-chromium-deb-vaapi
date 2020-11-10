@@ -1,0 +1,3 @@
+Package: *
+Pin: release o=LP-PPA-xalt7x-chromium-deb-vaapi
+Pin-Priority: 1337

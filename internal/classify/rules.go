@@ -3675,7 +3675,7 @@ var rules = LabelRules{
 		Categories: []string{"portrait"},
 	},
 	"minivan": {
-		Label:      "minivan",
+		Label:      "car",
 		Threshold:  0.400000,
 		Priority:   0,
 		Categories: []string{"vehicle"},

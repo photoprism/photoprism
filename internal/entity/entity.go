@@ -30,7 +30,8 @@ type Types map[string]interface{}
 // List of database entities and their table names.
 var Entities = Types{
 	"errors":          &Error{},
-	"people":          &Person{},
+	"addresses":       &Address{},
+	"users":           &User{},
 	"accounts":        &Account{},
 	"folders":         &Folder{},
 	"duplicates":      &Duplicate{},
@@ -85,7 +86,7 @@ func (list Types) WaitForMigration() {
 func (list Types) Truncate() {
 	for name := range list {
 		if err := Db().Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
-			log.Debugf("entity: removed all data from %s", name)
+			// log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
 			log.Debugf("entity: %s in %s", err, name)
@@ -119,6 +120,7 @@ func (list Types) Drop() {
 
 // Creates default database entries for test and production.
 func CreateDefaultFixtures() {
+	CreateUnknownAddress()
 	CreateDefaultUsers()
 	CreateUnknownPlace()
 	CreateUnknownLocation()

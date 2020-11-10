@@ -4,8 +4,6 @@ import (
 	"archive/zip"
 	"fmt"
 	"net/http"
-	"os"
-	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -425,7 +423,6 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		conf := service.Config()
 		a, err := query.AlbumByUID(c.Param("uid"))
 
 		if err != nil {
@@ -440,39 +437,22 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		zipPath := path.Join(conf.TempPath(), "album")
 		zipToken := rnd.Token(3)
-		zipBaseName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
-		zipFileName := path.Join(zipPath, zipBaseName)
+		zipFileName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
 
-		if err := os.MkdirAll(zipPath, 0700); err != nil {
-			log.Error(err)
-			Abort(c, http.StatusInternalServerError, i18n.ErrCreateFolder)
-			return
-		}
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipFileName))
 
-		newZipFile, err := os.Create(zipFileName)
-
-		if err != nil {
-			log.Error(err)
-			Abort(c, http.StatusInternalServerError, i18n.ErrCreateFile)
-			return
-		}
-
-		defer newZipFile.Close()
-
-		zipWriter := zip.NewWriter(newZipFile)
+		zipWriter := zip.NewWriter(c.Writer)
 		defer func() { _ = zipWriter.Close() }()
 
 		for _, f := range p {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
-
 			fileAlias := f.ShareFileName()
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
 					log.Error(err)
-					Abort(c, http.StatusInternalServerError, i18n.ErrCreateFile)
+					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 				log.Infof("album: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
@@ -481,22 +461,6 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			}
 		}
 
-		log.Infof("album: archive %s created in %s", txt.Quote(zipBaseName), time.Since(start))
-		_ = zipWriter.Close()
-		newZipFile.Close()
-
-		if !fs.FileExists(zipFileName) {
-			log.Errorf("could not find zip file: %s", zipFileName)
-			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
-			return
-		}
-
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipBaseName))
-
-		c.File(zipFileName)
-
-		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("album: could not remove %s (%s)", txt.Quote(zipFileName), err.Error())
-		}
+		log.Infof("album: archive %s created in %s", txt.Quote(zipFileName), time.Since(start))
 	})
 }

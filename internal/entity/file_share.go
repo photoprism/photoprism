@@ -15,9 +15,9 @@ const (
 type FileShare struct {
 	FileID     uint   `gorm:"primary_key;auto_increment:false"`
 	AccountID  uint   `gorm:"primary_key;auto_increment:false"`
-	RemoteName string `gorm:"primary_key;auto_increment:false;type:varbinary(255)"`
-	Status     string `gorm:"type:varbinary(16);"`
-	Error      string `gorm:"type:varbinary(512);"`
+	RemoteName string `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)"`
+	Status     string `gorm:"type:VARBINARY(16);"`
+	Error      string `gorm:"type:VARBINARY(512);"`
 	Errors     int
 	File       *File
 	Account    *Account

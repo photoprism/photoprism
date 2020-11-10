@@ -9,7 +9,7 @@ import (
 type PhotoLabel struct {
 	PhotoID     uint   `gorm:"primary_key;auto_increment:false"`
 	LabelID     uint   `gorm:"primary_key;auto_increment:false;index"`
-	LabelSrc    string `gorm:"type:varbinary(8);"`
+	LabelSrc    string `gorm:"type:VARBINARY(8);"`
 	Uncertainty int    `gorm:"type:SMALLINT"`
 	Photo       *Photo `gorm:"PRELOAD:false"`
 	Label       *Label `gorm:"PRELOAD:true"`

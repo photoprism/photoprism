@@ -16,12 +16,12 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="reload" class="action-reload">
+      <v-btn icon @click.stop="reload" class="action-reload" :title="$gettext('Reload')">
         <v-icon>refresh</v-icon>
       </v-btn>
 
       <v-btn icon href="https://github.com/photoprism/photoprism/issues" target="_blank" class="action-bug-report"
-             title="Bug Report">
+             :title="$gettext('Report Bug')">
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>

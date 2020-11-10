@@ -43,19 +43,31 @@ func (c *Config) CreateDirectories() error {
 		return result
 	}
 
-	if err := os.MkdirAll(c.AssetsPath(), os.ModePerm); err != nil {
+	notFoundError := func(name string) error {
+		return fmt.Errorf("%s path not found, run 'photoprism config' to check configuration values", name)
+	}
+
+	if c.AssetsPath() == "" {
+		return notFoundError("assets")
+	} else if err := os.MkdirAll(c.AssetsPath(), os.ModePerm); err != nil {
 		return createError(c.AssetsPath(), err)
 	}
 
-	if err := os.MkdirAll(c.StoragePath(), os.ModePerm); err != nil {
+	if c.StoragePath() == "" {
+		return notFoundError("storage")
+	} else if err := os.MkdirAll(c.StoragePath(), os.ModePerm); err != nil {
 		return createError(c.StoragePath(), err)
 	}
 
-	if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
+	if c.OriginalsPath() == "" {
+		return notFoundError("originals")
+	} else if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
 		return createError(c.OriginalsPath(), err)
 	}
 
-	if err := os.MkdirAll(c.ImportPath(), os.ModePerm); err != nil {
+	if c.ImportPath() == "" {
+		return notFoundError("import")
+	} else if err := os.MkdirAll(c.ImportPath(), os.ModePerm); err != nil {
 		return createError(c.ImportPath(), err)
 	}
 
@@ -65,35 +77,51 @@ func (c *Config) CreateDirectories() error {
 		}
 	}
 
-	if err := os.MkdirAll(c.CachePath(), os.ModePerm); err != nil {
+	if c.CachePath() == "" {
+		return notFoundError("cache")
+	} else if err := os.MkdirAll(c.CachePath(), os.ModePerm); err != nil {
 		return createError(c.CachePath(), err)
 	}
 
-	if err := os.MkdirAll(c.ThumbPath(), os.ModePerm); err != nil {
+	if c.ThumbPath() == "" {
+		return notFoundError("thumbs")
+	} else if err := os.MkdirAll(c.ThumbPath(), os.ModePerm); err != nil {
 		return createError(c.ThumbPath(), err)
 	}
 
-	if err := os.MkdirAll(c.SettingsPath(), os.ModePerm); err != nil {
+	if c.SettingsPath() == "" {
+		return notFoundError("settings")
+	} else if err := os.MkdirAll(c.SettingsPath(), os.ModePerm); err != nil {
 		return createError(c.SettingsPath(), err)
 	}
 
-	if err := os.MkdirAll(c.TempPath(), os.ModePerm); err != nil {
+	if c.TempPath() == "" {
+		return notFoundError("temp")
+	} else if err := os.MkdirAll(c.TempPath(), os.ModePerm); err != nil {
 		return createError(c.TempPath(), err)
 	}
 
-	if err := os.MkdirAll(c.TensorFlowModelPath(), os.ModePerm); err != nil {
+	if c.TensorFlowModelPath() == "" {
+		return notFoundError("tensorflow model")
+	} else if err := os.MkdirAll(c.TensorFlowModelPath(), os.ModePerm); err != nil {
 		return createError(c.TensorFlowModelPath(), err)
 	}
 
-	if err := os.MkdirAll(c.BuildPath(), os.ModePerm); err != nil {
+	if c.BuildPath() == "" {
+		return notFoundError("build")
+	} else if err := os.MkdirAll(c.BuildPath(), os.ModePerm); err != nil {
 		return createError(c.BuildPath(), err)
 	}
 
-	if err := os.MkdirAll(filepath.Dir(c.PIDFilename()), os.ModePerm); err != nil {
+	if filepath.Dir(c.PIDFilename()) == "" {
+		return notFoundError("pid file")
+	} else if err := os.MkdirAll(filepath.Dir(c.PIDFilename()), os.ModePerm); err != nil {
 		return createError(filepath.Dir(c.PIDFilename()), err)
 	}
 
-	if err := os.MkdirAll(filepath.Dir(c.LogFilename()), os.ModePerm); err != nil {
+	if filepath.Dir(c.LogFilename()) == "" {
+		return notFoundError("log file")
+	} else if err := os.MkdirAll(filepath.Dir(c.LogFilename()), os.ModePerm); err != nil {
 		return createError(filepath.Dir(c.LogFilename()), err)
 	}
 
@@ -107,6 +135,11 @@ func (c *Config) ConfigFile() string {
 	}
 
 	return c.params.ConfigFile
+}
+
+// ProConfigFile returns the photoprism.pro api config file name.
+func (c *Config) ProConfigFile() string {
+	return filepath.Join(c.SettingsPath(), "pro.yml")
 }
 
 // SettingsFile returns the user settings file name.
@@ -161,17 +194,12 @@ func (c *Config) ImportPath() string {
 	return fs.Abs(c.params.ImportPath)
 }
 
-// SipsBin returns the sips executable file name.
-func (c *Config) SipsBin() string {
-	return findExecutable(c.params.SipsBin, "sips")
-}
-
 // ExifToolBin returns the exiftool executable file name.
 func (c *Config) ExifToolBin() string {
 	return findExecutable(c.params.ExifToolBin, "exiftool")
 }
 
-// SidecarJson returns true if metadata should be synced with json sidecar files as used by exiftool.
+// Automatically create JSON sidecar files using Exiftool.
 func (c *Config) SidecarJson() bool {
 	if !c.SidecarWritable() || c.ExifToolBin() == "" {
 		return false
@@ -180,7 +208,7 @@ func (c *Config) SidecarJson() bool {
 	return c.params.SidecarJson
 }
 
-// SidecarYaml returns true if metadata should be synced with PhotoPrism YAML sidecar files.
+// Automatically backup metadata to YAML sidecar files.
 func (c *Config) SidecarYaml() bool {
 	if !c.SidecarWritable() {
 		return false
@@ -189,7 +217,7 @@ func (c *Config) SidecarYaml() bool {
 	return c.params.SidecarYaml
 }
 
-// SidecarPath returns the storage path for automatically created sidecar files.
+// SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
 	if c.params.SidecarPath == "" {
 		c.params.SidecarPath = filepath.Join(c.StoragePath(), "sidecar")
@@ -206,11 +234,6 @@ func (c *Config) SidecarPathIsAbs() bool {
 // SidecarWritable returns true if sidecar files can be created.
 func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
-}
-
-// HeifConvertBin returns the heif-convert executable file name.
-func (c *Config) HeifConvertBin() string {
-	return findExecutable(c.params.HeifConvertBin, "heif-convert")
 }
 
 // FFmpegBin returns the ffmpeg executable file name.
@@ -275,6 +298,11 @@ func (c *Config) StoragePath() string {
 
 // AssetsPath returns the path to static assets.
 func (c *Config) AssetsPath() string {
+	if c.params.AssetsPath == "" {
+		// Try to find the right directory by iterating through a list.
+		c.params.AssetsPath = fs.FindDir(fs.AssetPaths)
+	}
+
 	return fs.Abs(c.params.AssetsPath)
 }
 

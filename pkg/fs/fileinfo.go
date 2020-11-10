@@ -1,8 +1,8 @@
 package fs
 
 import (
-	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -16,21 +16,21 @@ type FileInfo struct {
 }
 
 func NewFileInfo(info os.FileInfo, dir string) FileInfo {
-	if dir == "/" {
-		dir = ""
-	} else if len(dir) > 0 {
-		if dir[len(dir)-1:] == "/" {
+	if dir != PathSeparator && len(dir) > 0 {
+		if dir[len(dir)-1:] == PathSeparator {
 			dir = dir[:len(dir)-1]
 		}
 
-		if dir[0:1] != "/" {
-			dir = "/" + dir
+		if dir[0:1] != PathSeparator {
+			dir = PathSeparator + dir
 		}
+	} else {
+		dir = PathSeparator
 	}
 
 	result := FileInfo{
 		Name: info.Name(),
-		Abs:  fmt.Sprintf("%s/%s", dir, info.Name()),
+		Abs:  filepath.Join(dir, info.Name()),
 		Size: info.Size(),
 		Date: info.ModTime(),
 		Dir:  info.IsDir(),

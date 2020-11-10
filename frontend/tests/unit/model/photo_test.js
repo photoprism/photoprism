@@ -34,6 +34,7 @@ mock
             Type: "mp4",
             Hash: "1xxbgdt55"}]})
     .onDelete("api/v1/photos/abc123/unlike").reply(200)
+    .onDelete("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud").reply(200, {"success": "successfully deleted"})
     .onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/unstack").reply(200, {"success": "ok"})
     .onPost("api/v1/photos/pqbemz8276mhtobh/label", {Name: "Cat", Priority: 10}).reply(200, {"success": "ok"})
     .onPut("api/v1/photos/pqbemz8276mhtobh/label/12345", {Uncertainty: 0}).reply(200, {"success": "ok"})
@@ -119,6 +120,54 @@ describe("model/photo", () => {
         assert.equal(result.height, 160);
     });
 
+    it("should get local day string",  () => {
+        const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
+        const photo = new Photo(values);
+        const result = photo.localDayString();
+        // Current day of the month (changes):
+        assert.equal(result.length, 2);
+        const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC", Day: 8};
+        const photo2 = new Photo(values2);
+        const result2 = photo2.localDayString();
+        assert.equal(result2, "08");
+    });
+
+    it("should get local month string",  () => {
+        const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
+        const photo = new Photo(values);
+        const result = photo.localMonthString();
+        assert.equal(result, (new Date().getMonth() + 1).toString().padStart(2, "0"));
+        const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC", Month: 8};
+        const photo2 = new Photo(values2);
+        const result2 = photo2.localMonthString();
+        assert.equal(result2, "08");
+    });
+
+    it("should get local year string",  () => {
+        const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
+        const photo = new Photo(values);
+        const result = photo.localYearString();
+        assert.equal(result, "2020");
+        const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC", Year: 2010};
+        const photo2 = new Photo(values2);
+        const result2 = photo2.localYearString();
+        assert.equal(result2, "2010");
+    });
+
+    it("should get local date string",  () => {
+        const values = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
+        const photo = new Photo(values);
+        const result = photo.localDateString();
+        assert.equal(result, "2012-07-08T14:45:39");
+    });
+
+    it("should get local date",  () => {
+        const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "Indian/Reunion"};
+        const photo = new Photo(values);
+        const result = photo.localDate();
+        assert.equal(String(result), "2012-07-08T14:45:39.000Z");
+    });
+
     it("should get date string",  () => {
         const values = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
         const photo = new Photo(values);
@@ -132,6 +181,14 @@ describe("model/photo", () => {
         const photo3 = new Photo(values3);
         const result3 = photo3.getDateString();
         assert.equal(result3, "Sunday, July 8, 2012");
+        const values4 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", Month: -1};
+        const photo4 = new Photo(values4);
+        const result4 = photo4.getDateString();
+        assert.equal(result4, "2012");
+        const values5 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", Day: -1};
+        const photo5 = new Photo(values5);
+        const result5 = photo5.getDateString();
+        assert.equal(result5, "July 2012");
     });
 
     it("should get short date string",  () => {
@@ -147,6 +204,14 @@ describe("model/photo", () => {
         const photo3 = new Photo(values3);
         const result3 = photo3.shortDateString();
         assert.equal(result3, "Jul 8, 2012");
+        const values4 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", Month: -1};
+        const photo4 = new Photo(values4);
+        const result4 = photo4.shortDateString();
+        assert.equal(result4, "2012");
+        const values5 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", Day: -1};
+        const photo5 = new Photo(values5);
+        const result5 = photo5.shortDateString();
+        assert.equal(result5, "July 2012");
     });
 
     it("should test whether photo has location",  () => {
@@ -624,6 +689,35 @@ describe("model/photo", () => {
         photo.unstackFile("fqbfk181n4ca5sud").then(
             (response) => {
                 assert.equal(response.success, "ok");
+                done();
+            }
+        ).catch(
+            (error) => {
+                done(error);
+            }
+        );
+    });
+
+    it("should delete file",  (done) => {
+        const values = {
+            ID: 10,
+            UID: "pqbemz8276mhtobh",
+            Files: [{
+                UID: "fqbfk181n4ca5sud",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: false,
+                Type: "mp4",
+                Hash: "1xxbgdt55"},
+                {
+                UID: "fqbfk181n4ca5abc",
+                Name: "1980/01/superCuteKitten.mp4",
+                Primary: true,
+                Type: "mp4",
+                Hash: "1xxbgdt89"}]};
+        const photo = new Photo(values);
+        photo.deleteFile("fqbfk181n4ca5sud").then(
+            (response) => {
+                assert.equal(response.success, "successfully deleted");
                 done();
             }
         ).catch(

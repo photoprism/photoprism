@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/maps"
 )
 
-// altCountryNames defines mapping between different names for the same countriy
+// altCountryNames defines mapping between different names for the same country
 var altCountryNames = map[string]string{
 	"United States of America": "USA",
 	"United States":            "USA",
@@ -16,11 +16,11 @@ var altCountryNames = map[string]string{
 
 // Country represents a country location, used for labeling photos.
 type Country struct {
-	ID                 string `gorm:"type:varbinary(2);primary_key" json:"ID" yaml:"ID"`
-	CountrySlug        string `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"-"`
+	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
+	CountrySlug        string `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
 	CountryName        string `json:"Name" yaml:"Name,omitempty"`
-	CountryDescription string `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CountryNotes       string `gorm:"type:text;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CountryDescription string `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CountryNotes       string `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CountryPhoto       *Photo `json:"-" yaml:"-"`
 	CountryPhotoID     uint   `json:"-" yaml:"-"`
 	New                bool   `gorm:"-" json:"-" yaml:"-"`

@@ -17,3 +17,12 @@ func TestClip(t *testing.T) {
 		assert.Equal(t, "", Clip("", -1))
 	})
 }
+
+func TestTrimLen(t *testing.T) {
+	t.Run("len < size", func(t *testing.T) {
+		assert.Equal(t, "fox!", TrimLen("fox!", 6))
+	})
+	t.Run("len > size", func(t *testing.T) {
+		assert.Equal(t, "I'm ...", TrimLen("I'm ä lazy BRoWN fox!", 8))
+	})
+}

@@ -17,26 +17,27 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
+      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="$gettext('Reload')">
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
+      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="$gettext('Toggle View')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
+      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="$gettext('Toggle View')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn icon v-else @click.stop="setView('cards')">
+      <v-btn icon v-else @click.stop="setView('cards')" :title="$gettext('Toggle View')">
         <v-icon>view_column</v-icon>
       </v-btn>
 
       <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down action-upload">
+             class="hidden-sm-and-down action-upload" :title="$gettext('Upload')">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search">
+      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search"
+             :title="$gettext('Expand Search')">
         <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
       </v-btn>
     </v-toolbar>
@@ -49,7 +50,7 @@
         <v-layout row wrap>
           <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
             <v-select @change="dropdownChange"
-                      :label="labels.country"
+                      :label="$gettext('Country')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="ID"
@@ -62,7 +63,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
             <v-select @change="dropdownChange"
-                      :label="labels.camera"
+                      :label="$gettext('Camera')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="ID"
@@ -73,7 +74,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
             <v-select @change="dropdownChange"
-                      :label="labels.view"
+                      :label="$gettext('View')"
                       flat solo hide-details
                       color="secondary-dark"
                       v-model="settings.view"
@@ -83,7 +84,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
             <v-select @change="dropdownChange"
-                      :label="labels.sort"
+                      :label="$gettext('Sort Order')"
                       flat solo hide-details
                       color="secondary-dark"
                       v-model="filter.order"
@@ -92,7 +93,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
             <v-select @change="dropdownChange"
-                      :label="labels.year"
+                      :label="$gettext('Year')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="value"
@@ -103,7 +104,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
             <v-select @change="dropdownChange"
-                      :label="labels.month"
+                      :label="$gettext('Month')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="value"
@@ -125,7 +126,7 @@
           </v-flex -->
           <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
             <v-select @change="dropdownChange"
-                      :label="labels.color"
+                      :label="$gettext('Color')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="Slug"
@@ -136,7 +137,7 @@
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
             <v-select @change="dropdownChange"
-                      :label="labels.category"
+                      :label="$gettext('Category')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="Slug"
@@ -151,107 +152,93 @@
   </v-form>
 </template>
 <script>
-    import Event from "pubsub-js";
-    import * as options from "options/options";
+import Event from "pubsub-js";
+import * as options from "options/options";
 
-    export default {
-        name: 'p-photo-toolbar',
-        props: {
-            dirty: Boolean,
-            filter: Object,
-            settings: Object,
-            refresh: Function,
-            filterChange: Function,
-        },
-        data() {
-            return {
-                experimental: this.$config.get("experimental"),
-                isFullScreen: !!document.fullscreenElement,
-                config: this.$config.values,
-                searchExpanded: false,
-                all: {
-                    countries: [{ID: "", Name: this.$gettext("All Countries")}],
-                    cameras: [{ID: 0, Name: this.$gettext("All Cameras")}],
-                    lenses: [{ID: 0, Name: this.$gettext("All Lenses")}],
-                    colors: [{Slug: "", Name: this.$gettext("All Colors")}],
-                    categories: [{Slug: "", Name: this.$gettext("All Categories")}],
-                    months: [{value: 0, text: this.$gettext("All Months")}],
-                    years: [{value: 0, text: this.$gettext("All Years")}],
-                },
-                options: {
-                    'views': [
-                        {value: 'mosaic', text: this.$gettext('Mosaic')},
-                        {value: 'cards', text: this.$gettext('Cards')},
-                        {value: 'list', text: this.$gettext('List')},
-                    ],
-                    'sorting': [
-                        {value: 'added', text: this.$gettext('Recently added')},
-                        {value: 'edited', text: this.$gettext('Recently edited')},
-                        {value: 'newest', text: this.$gettext('Newest first')},
-                        {value: 'oldest', text: this.$gettext('Oldest first')},
-                        {value: 'name', text: this.$gettext('Sort by file name')},
-                        {value: 'similar', text: this.$gettext('Group by similarity')},
-                        {value: 'relevance', text: this.$gettext('Most relevant')},
-                    ],
-                },
-                labels: {
-                    search: this.$gettext("Search"),
-                    view: this.$gettext("View"),
-                    country: this.$gettext("Country"),
-                    camera: this.$gettext("Camera"),
-                    lens: this.$gettext("Lens"),
-                    year: this.$gettext("Year"),
-                    month: this.$gettext("Month"),
-                    color: this.$gettext("Color"),
-                    category: this.$gettext("Category"),
-                    sort: this.$gettext("Sort Order"),
-                    before: this.$gettext("Taken before"),
-                    after: this.$gettext("Taken after"),
-                },
-            };
-        },
-        computed: {
-            countryOptions() {
-                return this.all.countries.concat(this.config.countries);
-            },
-            cameraOptions() {
-                return this.all.cameras.concat(this.config.cameras);
-            },
-            lensOptions() {
-                return this.all.lenses.concat(this.config.lenses);
-            },
-            categoryOptions() {
-                return this.all.categories.concat(this.config.categories);
-            },
-        },
-        methods: {
-            colorOptions() {
-                return this.all.colors.concat(options.Colors());
-            },
-            monthOptions() {
-                return this.all.months.concat(options.Months());
-            },
-            yearOptions() {
-                return this.all.years.concat(options.IndexedYears());
-            },
-            dropdownChange() {
-                this.filterChange();
-
-                if (window.innerWidth < 600) {
-                    this.searchExpanded = false;
-                }
-            },
-            setView(name) {
-                this.settings.view = name;
-                this.filterChange();
-            },
-            clearQuery() {
-                this.filter.q = '';
-                this.filterChange();
-            },
-            showUpload() {
-                Event.publish("dialog.upload");
-            }
-        },
+export default {
+  name: 'p-photo-toolbar',
+  props: {
+    dirty: Boolean,
+    filter: Object,
+    settings: Object,
+    refresh: Function,
+    filterChange: Function,
+  },
+  data() {
+    return {
+      experimental: this.$config.get("experimental"),
+      isFullScreen: !!document.fullscreenElement,
+      config: this.$config.values,
+      searchExpanded: false,
+      all: {
+        countries: [{ID: "", Name: this.$gettext("All Countries")}],
+        cameras: [{ID: 0, Name: this.$gettext("All Cameras")}],
+        lenses: [{ID: 0, Name: this.$gettext("All Lenses")}],
+        colors: [{Slug: "", Name: this.$gettext("All Colors")}],
+        categories: [{Slug: "", Name: this.$gettext("All Categories")}],
+        months: [{value: 0, text: this.$gettext("All Months")}],
+        years: [{value: 0, text: this.$gettext("All Years")}],
+      },
+      options: {
+        'views': [
+          {value: 'mosaic', text: this.$gettext('Mosaic')},
+          {value: 'cards', text: this.$gettext('Cards')},
+          {value: 'list', text: this.$gettext('List')},
+        ],
+        'sorting': [
+          {value: 'added', text: this.$gettext('Recently added')},
+          {value: 'edited', text: this.$gettext('Recently edited')},
+          {value: 'newest', text: this.$gettext('Newest first')},
+          {value: 'oldest', text: this.$gettext('Oldest first')},
+          {value: 'name', text: this.$gettext('Sort by file name')},
+          {value: 'similar', text: this.$gettext('Group by similarity')},
+          {value: 'relevance', text: this.$gettext('Most relevant')},
+        ],
+      },
     };
+  },
+  computed: {
+    countryOptions() {
+      return this.all.countries.concat(this.config.countries);
+    },
+    cameraOptions() {
+      return this.all.cameras.concat(this.config.cameras);
+    },
+    lensOptions() {
+      return this.all.lenses.concat(this.config.lenses);
+    },
+    categoryOptions() {
+      return this.all.categories.concat(this.config.categories);
+    },
+  },
+  methods: {
+    colorOptions() {
+      return this.all.colors.concat(options.Colors());
+    },
+    monthOptions() {
+      return this.all.months.concat(options.Months());
+    },
+    yearOptions() {
+      return this.all.years.concat(options.IndexedYears());
+    },
+    dropdownChange() {
+      this.filterChange();
+
+      if (window.innerWidth < 600) {
+        this.searchExpanded = false;
+      }
+    },
+    setView(name) {
+      this.settings.view = name;
+      this.filterChange();
+    },
+    clearQuery() {
+      this.filter.q = '';
+      this.filterChange();
+    },
+    showUpload() {
+      Event.publish("dialog.upload");
+    }
+  },
+};
 </script>

@@ -51,6 +51,7 @@ var FileExt = FileExtensions{
 	".pn":   TypePng,
 	".crw":  TypeRaw,
 	".cr2":  TypeRaw,
+	".cr3":  TypeRaw,
 	".nef":  TypeRaw,
 	".arw":  TypeRaw,
 	".dng":  TypeRaw,
@@ -73,7 +74,6 @@ var FileExt = FileExtensions{
 	".3fr":  TypeRaw,
 	".ari":  TypeRaw,
 	".bay":  TypeRaw,
-	".cr3":  TypeRaw,
 	".cap":  TypeRaw,
 	".data": TypeRaw,
 	".dcs":  TypeRaw,
@@ -224,6 +224,15 @@ func (t FileType) FindFirst(fileName string, dirs []string, baseDir string, stri
 				return filepath.Join(dir, info.Name())
 			}
 		}
+	}
+
+	return ""
+}
+
+// NormalizedExt returns the file extension without dot and in lowercase.
+func NormalizedExt(fileName string) string {
+	if dot := strings.LastIndex(fileName, "."); dot != -1 && len(fileName[dot+1:]) >= 1 {
+		return strings.ToLower(fileName[dot+1:])
 	}
 
 	return ""

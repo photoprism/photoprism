@@ -15,7 +15,7 @@ Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    PhotoPrism™ is a registered trademark of Michael Mayer.  You may use it as required
+    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
     to describe our software, run your own server, for educational purposes, but not for
     offering commercial goods, products, or services without prior written permission.
     In other words, please ask.
@@ -36,39 +36,57 @@ import {$gettext} from "common/vm";
 export class User extends RestModel {
     getDefaults() {
         return {
-            ID: 0,
             UID: "",
+            Address: {},
+            MotherUID: "",
+            FatherUID: "",
+            GlobalUID: "",
+            FullName: "",
+            NickName: "",
+            MaidenName: "",
+            ArtistName: "",
             UserName: "",
-            FirstName: "",
-            LastName: "",
-            DisplayName: "",
-            Email: "",
-            Info: "",
-            Notes: "",
-            Active: false,
-            Confirmed: false,
-            Admin: false,
-            Guest: false,
-            Child: false,
-            Family: false,
-            Friend: false,
-            Artist: false,
-            Subject: false,
-            CanEdit: false,
-            CanComment: false,
-            CanUpload: false,
-            CanDownload: false,
+            UserStatus: "",
+            UserDisabled: false,
+            UserSettings: "",
+            PrimaryEmail: "",
+            EmailConfirmed: false,
+            BackupEmail: "",
+            PersonURL: "",
+            PersonPhone: "",
+            PersonStatus: "",
+            PersonAvatar: "",
+            PersonLocation: "",
+            PersonBio: "",
+            BusinessURL: "",
+            BusinessPhone: "",
+            BusinessEmail: "",
+            CompanyName: "",
+            DepartmentName: "",
+            JobTitle: "",
+            BirthYear: -1,
+            BirthMonth: -1,
+            BirthDay: -1,
+            TermsAccepted: false,
+            IsArtist: false,
+            IsSubject: false,
+            RoleAdmin: false,
+            RoleGuest: false,
+            RoleChild: false,
+            RoleFamily: false,
+            RoleFriend: false,
             WebDAV: false,
-            ApiToken: "",
-            LoginAttempts: 0,
-            LoginAt: "",
+            StoragePath: "",
+            CanInvite: false,
+            InviteToken: "",
+            InvitedBy: "",
             CreatedAt: "",
             UpdatedAt: "",
         };
     }
 
     getEntityName() {
-        return this.FirstName + " " + this.LastName;
+        return this.FullName ? this.FullName : this.UserName;
     }
 
     getRegisterForm() {

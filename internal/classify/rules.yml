@@ -2914,12 +2914,6 @@ minibus:
   categories:
     - vehicle
 
-minivan:
-  label: minivan
-  threshold: 0.4
-  categories:
-    - vehicle
-
 mixing bowl:
   label: bowl
   threshold: 0.2
@@ -2932,6 +2926,12 @@ mobile home:
 model t:
   label: car
   threshold: 0.3
+  categories:
+    - vehicle
+
+minivan:
+  label: car
+  threshold: 0.4
   categories:
     - vehicle
 

@@ -283,8 +283,18 @@ func (m *MediaFile) JsonName() string {
 
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
-	// escape any meta characters in the file name
-	matches, err := filepath.Glob(regexp.QuoteMeta(m.AbsPrefix(stripSequence)) + "*")
+	var prefix string
+
+	if stripSequence {
+		// Strip common name sequences like "copy 2" and escape meta characters.
+		prefix = regexp.QuoteMeta(m.AbsPrefix(true))
+	} else {
+		// Use strict file name matching and escape meta characters.
+		prefix = regexp.QuoteMeta(m.AbsPrefix(false) + ".")
+	}
+
+	// Find related files.
+	matches, err := filepath.Glob(prefix + "*")
 
 	if err != nil {
 		return result, err
@@ -313,12 +323,14 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = f
 		} else if f.IsHEIF() {
 			result.Main = f
-		} else if f.IsJpeg() && len(result.Main.FileName()) > len(f.FileName()) {
-			result.Main = f
 		} else if f.IsImageOther() {
 			result.Main = f
 		} else if f.IsVideo() {
 			result.Main = f
+		} else if result.Main != nil && f.IsJpeg() {
+			if result.Main.IsJpeg() && len(result.Main.FileName()) > len(f.FileName()) {
+				result.Main = f
+			}
 		}
 
 		result.Files = append(result.Files, f)
@@ -437,7 +449,7 @@ func (m *MediaFile) RelPath(directory string) string {
 	}
 
 	// Use empty string for current / root directory.
-	if pathname == "." || pathname == "/" {
+	if pathname == "." || pathname == "/" || pathname == "\\" {
 		pathname = ""
 	}
 

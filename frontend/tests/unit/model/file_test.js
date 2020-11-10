@@ -1,6 +1,9 @@
 import File from "model/file";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
+import {Settings} from "luxon";
+Settings.defaultLocale = "en"
+Settings.defaultZoneName = "UTC"
 
 let chai = require("chai/chai");
 let assert = chai.assert;
@@ -73,7 +76,7 @@ describe("model/file", () => {
         assert.equal(file3.thumbnailUrl("abc"), "/api/v1/svg/raw");
     });
 
-    it("should return downlaload url",  () => {
+    it("should return download url",  () => {
         const values = {
             InstanceID: 5,
             UID: "ABC123",

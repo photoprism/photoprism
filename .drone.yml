@@ -1,0 +1,88 @@
+---
+kind: pipeline
+type: exec
+name: linux-amd64
+
+platform:
+  arch: amd64
+  os: linux
+
+steps:
+  - name: up
+    environment:
+      CODECOV_TOKEN:
+        from_secret: codecov_token
+    commands:
+      - docker-compose -f docker-compose.drone.yml pull
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+
+  - name: test-develop
+    environment:
+      CODECOV_TOKEN:
+        from_secret: codecov_token
+    commands:
+      - docker-compose -f docker-compose.drone.yml exec -e CODECOV_TOKEN=$${CODECOV_TOKEN} -T photoprism make all test-js test-codecov install migrate
+    when:
+      branch:
+        - develop
+
+  - name: test-master
+    commands:
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+    when:
+      branch:
+        - master
+
+  - name: down
+    commands:
+      - docker-compose -f docker-compose.drone.yml down
+    when:
+      status:
+        - failure
+        - success
+
+  - name: deploy
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
+      - make docker-photoprism docker-photoprism-pull docker-demo
+    when:
+      status:
+        - success
+      branch:
+        - master
+
+---
+kind: pipeline
+type: exec
+name: linux-arm64
+
+trigger:
+  branch:
+    - master
+
+platform:
+  arch: arm64
+  os: linux
+
+steps:
+  - name: deploy
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
+      - make docker-photoprism-arm64
+
+  - name: clean
+    commands:
+      - docker system prune -f
+    when:
+      status:
+        - success

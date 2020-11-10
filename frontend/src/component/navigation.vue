@@ -3,21 +3,24 @@
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
     <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small"
                @click.stop="showNavigation()">
-      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
-
+      <v-avatar
+          tile
+          :size="40"
+          class="clickable"
+          @click.stop="showNavigation()"
+      >
+        <img src="/static/img/logo-avatar.svg" alt="Logo">
+      </v-avatar>
       <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-avatar
-              tile
-              :size="28"
-              class="clickable"
-              @click.stop="openUpload"
-              v-show="!drawer"
-      >
-        <img src="/static/img/logo-white.svg" alt="Logo">
-      </v-avatar>
+      <v-btn icon @click.stop="openUpload()" v-if="auth && !config.readonly && $config.feature('upload')"
+             class="action-upload" :title="$gettext('Upload')">
+        <v-icon>cloud_upload</v-icon>
+      </v-btn>
+
+      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
     </v-toolbar>
     <v-toolbar dark flat color="navigation darken-1">
     </v-toolbar>
@@ -360,7 +363,15 @@
             <v-list-tile :to="{ name: 'about' }" :exact="true" @click="" class="nav-about">
               <v-list-tile-content>
                 <v-list-tile-title>
-                  <translate key="Help">Help</translate>
+                  <translate>About</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile :to="{ name: 'feedback' }" :exact="true" @click="" v-show="!public && auth" class="nav-feedback">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate>Feedback</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>

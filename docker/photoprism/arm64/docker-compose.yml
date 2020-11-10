@@ -1,24 +1,36 @@
-version: '3.3'
+version: '3.5'
 
-# Example docker-compose config file for production use
-# Container image on Docker Hub: https://hub.docker.com/r/photoprism/photoprism/
-# To keep photoprism running, add "restart: always"
+# Example Docker Compose config file for PhotoPrism (Raspberry Pi / ARM64)
+#
+# Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
+# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism-arm64/
+#
+# Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
+# e.g. when running PhotoPrism on a public server outside your home network.
 #
 # Usage: docker-compose up
 
 services:
   photoprism:
     image: photoprism/photoprism-arm64:latest
+    restart: unless-stopped
+    # Uncomment and edit the following line to set a specific user / group id:
+    # user: "1000:1000"
     security_opt:
       - seccomp:unconfined
+      - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-    healthcheck: # Optional
-      test: "photoprism status"
-      interval: 60s
-      timeout: 15s
-      retries: 5
-    environment: # Run "photoprism help" and "photoprism config" too see all config options and current values
+    # Uncomment the following lines to enable regular health checks (causes automatic restarts):
+    # healthcheck:
+    #   test: ["CMD", "photoprism", "status"]
+    #   interval: 60s
+    #   timeout: 15s
+    #   retries: 5
+    #
+    # Run "photoprism help" and "photoprism config" too see all config options and current values:
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: "please-change"     # Initial admin password: PLEASE CHANGE!
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
@@ -33,26 +45,52 @@ services:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_SETTINGS_HIDDEN: "false"            # Users can not view or change settings
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Initial admin password (can be changed in settings)
-      PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # Change to "mysql" for external MySQL or MariaDB
-      # PHOTOPRISM_DATABASE_DRIVER: "mysql"          # Using MariaDB or MySQL instead of SQLite is optional
-      # PHOTOPRISM_DATABASE_DSN: "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
-      # PHOTOPRISM_SIDECAR_JSON: "true"              # Read metadata from JSON sidecar files created by exiftool
-      # PHOTOPRISM_SIDECAR_YAML: "true"              # Backup photo metadata to YAML sidecar files
+      PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # SQLite is an embedded database that doesn't require a server
+      # PHOTOPRISM_DATABASE_DRIVER: "mysql"          # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:insecure@tcp(mariadb:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      PHOTOPRISM_SIDECAR_JSON: "true"                # Automatically create JSON sidecar files using Exiftool
+      PHOTOPRISM_SIDECAR_YAML: "true"                # Automatically backup metadata to YAML sidecar files
       PHOTOPRISM_THUMB_FILTER: "lanczos"             # Resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "false"             # Enable on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
       # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
-      PHOTOPRISM_JPEG_QUALITY: 90                    # Set to 95 for high-quality thumbnails (requires more storage)
+      PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Use darktable presets (disables concurrent raw to jpeg conversion)
-      PHOTOPRISM_STORAGE_PATH: "/photoprism/storage" # Storage PATH for generated files like cache and index
+      # You may optionally set user, group and/or file permissions using environment variables:
+      # UID: 1000
+      # GID: 1000
+      # UMASK: 0000
     volumes:
-      - "~/Pictures/Originals:/photoprism/originals" # [local path]:[container path]
-      - "~/Pictures/Import:/photoprism/import"       # [local path]:[container path] (optional)
-      - "photoprism-storage:/photoprism/storage"     # Keep cache, settings and database
+      # Storage folder for settings, index & sidecar files (DON'T REMOVE):
+      - "~/.photoprism:/photoprism/storage"
+      # Your personal photo and video collection ([local path]:[container path]):
+      - "~/Pictures:/photoprism/originals"
+      # Multiple folders can be indexed by mounting them as subfolders of /photoprism/originals:
+      # - "~/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
+      # - "~/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
+      # Mounting the import folder is optional (see docs):
+      # - "~/Import:/photoprism/import"
 
-volumes: # keep this
-  photoprism-storage:
-    driver: local
+# Uncomment the following lines to use MariaDB instead of SQLite for improved performance & scalability:
+#
+#  mariadb:
+#    image: mariadb:10.5
+#    restart: unless-stopped
+#    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+#    volumes:
+#      - "/var/lib/mysql"
+#    environment:
+#      MYSQL_ROOT_PASSWORD: please-change
+#      MYSQL_USER: photoprism
+#      MYSQL_PASSWORD: insecure
+#      MYSQL_DATABASE: photoprism
+
+# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
+#
+#  watchtower:
+#    image: containrrr/watchtower
+#    restart: unless-stopped
+#    volumes:
+#      - "/var/run/docker.sock:/var/run/docker.sock"

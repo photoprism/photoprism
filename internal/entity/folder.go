@@ -19,15 +19,15 @@ type Folders []Folder
 
 // Folder represents a file system directory.
 type Folder struct {
-	Path              string     `gorm:"type:varbinary(255);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
-	Root              string     `gorm:"type:varbinary(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
-	FolderUID         string     `gorm:"type:varbinary(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	FolderType        string     `gorm:"type:varbinary(16);" json:"Type" yaml:"Type,omitempty"`
-	FolderTitle       string     `gorm:"type:varchar(255);" json:"Title" yaml:"Title,omitempty"`
-	FolderCategory    string     `gorm:"type:varchar(255);index;" json:"Category" yaml:"Category,omitempty"`
-	FolderDescription string     `gorm:"type:text;" json:"Description,omitempty" yaml:"Description,omitempty"`
-	FolderOrder       string     `gorm:"type:varbinary(32);" json:"Order" yaml:"Order,omitempty"`
-	FolderCountry     string     `gorm:"type:varbinary(2);index:idx_folders_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
+	Path              string     `gorm:"type:VARBINARY(255);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
+	Root              string     `gorm:"type:VARBINARY(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
+	FolderUID         string     `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	FolderType        string     `gorm:"type:VARBINARY(16);" json:"Type" yaml:"Type,omitempty"`
+	FolderTitle       string     `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title,omitempty"`
+	FolderCategory    string     `gorm:"type:VARCHAR(255);index;" json:"Category" yaml:"Category,omitempty"`
+	FolderDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	FolderOrder       string     `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
+	FolderCountry     string     `gorm:"type:VARBINARY(2);index:idx_folders_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
 	FolderYear        int        `gorm:"index:idx_folders_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	FolderMonth       int        `gorm:"index:idx_folders_country_year_month;" json:"Month" yaml:"Month,omitempty"`
 	FolderDay         int        `json:"Day" yaml:"Day,omitempty"`

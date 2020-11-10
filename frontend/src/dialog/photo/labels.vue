@@ -23,7 +23,7 @@
               <v-text-field
                       v-model="props.item.Label.Name"
                       :rules="[nameRule]"
-                      :label="labels.name"
+                      :label="$gettext('Label Name')"
                       color="secondary-dark"
                       single-line
                       autofocus
@@ -65,7 +65,7 @@
                   :rules="[nameRule]"
                   color="secondary-dark"
                   browser-autocomplete="off"
-                  :label="labels.addLabel"
+                  :label="$gettext('')"
                   single-line
                   flat solo hide-details
                   autofocus
@@ -109,11 +109,6 @@
                     {text: this.$gettext('Confidence'), value: 'Uncertainty', sortable: false, align: 'center'},
                     {text: this.$gettext('Action'), value: '', sortable: false, align: 'center'},
                 ],
-                labels: {
-                    addLabel: "",
-                    search: this.$gettext("Search"),
-                    name: this.$gettext("Label Name"),
-                },
                 nameRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
             };
         },

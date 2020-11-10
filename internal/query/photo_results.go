@@ -60,6 +60,7 @@ type PhotoResult struct {
 	PlaceCity        string        `json:"PlaceCity"`
 	PlaceState       string        `json:"PlaceState"`
 	PlaceCountry     string        `json:"PlaceCountry"`
+	InstanceID       string        `json:"InstanceID"`
 	FileID           uint          `json:"-"` // File
 	FileUID          string        `json:"FileUID"`
 	FileRoot         string        `json:"FileRoot"`

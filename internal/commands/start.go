@@ -45,10 +45,6 @@ func startAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
 
-	if err := conf.CreateDirectories(); err != nil {
-		return err
-	}
-
 	if ctx.IsSet("config") {
 		fmt.Printf("NAME                  VALUE\n")
 		fmt.Printf("detach-server         %t\n", conf.DetachServer())
@@ -60,18 +56,14 @@ func startAction(ctx *cli.Context) error {
 		return nil
 	}
 
-	// pass this context down the chain
-	cctx, cancel := context.WithCancel(context.Background())
-
 	if conf.HttpServerPort() < 1 || conf.HttpServerPort() > 65535 {
 		log.Fatal("server port must be a number between 1 and 65535")
 	}
 
-	if err := conf.CreateDirectories(); err != nil {
-		log.Fatal(err)
-	}
+	// pass this context down the chain
+	cctx, cancel := context.WithCancel(context.Background())
 
-	if err := conf.Init(cctx); err != nil {
+	if err := conf.Init(); err != nil {
 		log.Fatal(err)
 	}
 

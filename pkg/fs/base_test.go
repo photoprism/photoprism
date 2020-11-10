@@ -126,6 +126,10 @@ func TestBase(t *testing.T) {
 		result := BasePrefix("20180506_091537_DSC02122(-2.7).JPG", true)
 		assert.Equal(t, "20180506_091537_DSC02122", result)
 	})
+	t.Run("1996 001.jpg", func(t *testing.T) {
+		result := BasePrefix("1996 001.jpg", true)
+		assert.Equal(t, "1996 001", result)
+	})
 }
 
 func TestRelBase(t *testing.T) {

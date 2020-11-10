@@ -2357,6 +2357,7 @@ cierto
 ciertos
 cinco
 claro
+cof
 comentó
 como
 conmigo

@@ -17,12 +17,12 @@
     </v-card>
     <v-layout row wrap class="p-results">
       <v-flex
-              v-for="(photo, index) in photos"
-              :key="index"
-              :data-uid="photo.UID"
-              v-bind:class="{ selected: $clipboard.has(photo) }"
-              class="p-photo"
-              xs4 sm3 md2 xl1 d-flex
+          v-for="(photo, index) in photos"
+          :key="index"
+          :data-uid="photo.UID"
+          v-bind:class="{ selected: $clipboard.has(photo) }"
+          class="p-photo"
+          xs4 sm3 md2 lg1 d-flex
       >
         <v-hover>
           <v-card tile slot-scope="{ hover }"
@@ -36,27 +36,27 @@
                    @click.stop.prevent="onClick($event, index)"
             >
               <v-layout
-                      slot="placeholder"
-                      fill-height
-                      align-center
-                      justify-center
-                      ma-0
+                  slot="placeholder"
+                  fill-height
+                  align-center
+                  justify-center
+                  ma-0
               >
                 <v-progress-circular indeterminate
                                      color="accent lighten-5"></v-progress-circular>
               </v-layout>
 
               <v-layout
-                      fill-height
-                      align-center
-                      justify-center
-                      ma-0
-                      class="p-photo-live"
-                      style="overflow: hidden;"
-                      v-if="photo.Type === 'live'"
-                      v-show="hover"
+                  fill-height
+                  align-center
+                  justify-center
+                  ma-0
+                  class="p-photo-live"
+                  style="overflow: hidden;"
+                  v-if="photo.Type === 'live'"
+                  v-show="hover"
               >
-                <video width="224" height="224" autoplay loop muted playsinline>
+                <video width="224" height="224" autoplay loop muted playsinline :key="photo.videoUrl()">
                   <source :src="photo.videoUrl()" type="video/mp4">
                 </video>
               </v-layout>
@@ -67,7 +67,7 @@
                 <v-icon color="white">lock</v-icon>
               </v-btn>
 
-              <v-btn v-if="hover || selection.length && $clipboard.has(photo)"  :ripple="false"
+              <v-btn v-if="hover || selection.length && $clipboard.has(photo)" :ripple="false"
                      icon flat small absolute
                      :class="selection.length && $clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
                      @click.stop.prevent="onSelect($event, index)">
@@ -119,60 +119,60 @@
   </v-container>
 </template>
 <script>
-    export default {
-        name: 'p-photo-mosaic',
-        props: {
-            photos: Array,
-            selection: Array,
-            openPhoto: Function,
-            editPhoto: Function,
-            album: Object,
-            filter: Object,
-        },
-        data() {
-            return {
-                hidePrivate: this.$config.settings().features.private,
-                mouseDown: {
-                    index: -1,
-                    timeStamp: -1,
-                },
-            };
-        },
-        methods: {
-            onSelect(ev, index) {
-                if (ev.shiftKey) {
-                    this.selectRange(index);
-                } else {
-                    this.$clipboard.toggle(this.photos[index]);
-                }
-            },
-            onMouseDown(ev, index) {
-                this.mouseDown.index = index;
-                this.mouseDown.timeStamp = ev.timeStamp;
-            },
-            onClick(ev, index) {
-                let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
-
-                if (longClick || this.selection.length > 0) {
-                    if (longClick || ev.shiftKey) {
-                        this.selectRange(index);
-                    } else {
-                        this.$clipboard.toggle(this.photos[index]);
-                    }
-                } else {
-                    this.openPhoto(index, false);
-                }
-            },
-            onContextMenu(ev, index) {
-                if (this.$isMobile) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    this.selectRange(index);
-                }
-            },
-            selectRange(index) {
-                this.$clipboard.addRange(index, this.photos);
-            }
-        },
+export default {
+  name: 'p-photo-mosaic',
+  props: {
+    photos: Array,
+    selection: Array,
+    openPhoto: Function,
+    editPhoto: Function,
+    album: Object,
+    filter: Object,
+  },
+  data() {
+    return {
+      hidePrivate: this.$config.settings().features.private,
+      mouseDown: {
+        index: -1,
+        timeStamp: -1,
+      },
     };
+  },
+  methods: {
+    onSelect(ev, index) {
+      if (ev.shiftKey) {
+        this.selectRange(index);
+      } else {
+        this.$clipboard.toggle(this.photos[index]);
+      }
+    },
+    onMouseDown(ev, index) {
+      this.mouseDown.index = index;
+      this.mouseDown.timeStamp = ev.timeStamp;
+    },
+    onClick(ev, index) {
+      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+
+      if (longClick || this.selection.length > 0) {
+        if (longClick || ev.shiftKey) {
+          this.selectRange(index);
+        } else {
+          this.$clipboard.toggle(this.photos[index]);
+        }
+      } else {
+        this.openPhoto(index, false);
+      }
+    },
+    onContextMenu(ev, index) {
+      if (this.$isMobile) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.selectRange(index);
+      }
+    },
+    selectRange(index) {
+      this.$clipboard.addRange(index, this.photos);
+    }
+  },
+};
 </script>

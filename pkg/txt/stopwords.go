@@ -2362,6 +2362,7 @@ var StopWords = map[string]bool{
 	"ciertos":          true,
 	"cinco":            true,
 	"claro":            true,
+	"cof":              true,
 	"comentó":          true,
 	"como":             true,
 	"conmigo":          true,
