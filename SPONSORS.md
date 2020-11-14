@@ -37,6 +37,10 @@ Thank you very much to all of our sponsors and donors (including those that want
 
 [@FreshMosh](https://github.com/FreshMosh) (GitHub Sponsors, November 2020)
 
+Cooper (Patreon, November 2020)
+
+[Asim Aslam](https://github.com/asim) (GitHub Sponsors, November 2020)
+
 For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
 ## Donations ##
