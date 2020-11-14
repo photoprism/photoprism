@@ -1361,7 +1361,7 @@ msgstr "Primaire"
 #: src/component/navigation.vue:140 src/dialog/photo/info.vue:85
 #: src/routes.js:171
 msgid "Private"
-msgstr "Privées"
+msgstr "Privée"
 
 #: src/dialog/photo/files.vue:111
 msgid "Projection"
@@ -1477,11 +1477,11 @@ msgstr "Sauvegarder"
 
 #: src/dialog/photo/info.vue:93
 msgid "Scan"
-msgstr "Scannées"
+msgstr "Scannée"
 
 #: src/component/navigation.vue:97
 msgid "Scans"
-msgstr "Scan"
+msgstr "Scans"
 
 #: src/component/photo/toolbar.vue:33 src/pages/albums.vue:46
 #: src/pages/labels.vue:46 src/pages/library/errors.vue:33
