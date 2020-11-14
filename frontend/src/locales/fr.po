@@ -1477,11 +1477,11 @@ msgstr "Sauvegarder"
 
 #: src/dialog/photo/info.vue:93
 msgid "Scan"
-msgstr "Analyser"
+msgstr "Scannées"
 
 #: src/component/navigation.vue:97
 msgid "Scans"
-msgstr "Analyses"
+msgstr "Scan"
 
 #: src/component/photo/toolbar.vue:33 src/pages/albums.vue:46
 #: src/pages/labels.vue:46 src/pages/library/errors.vue:33
