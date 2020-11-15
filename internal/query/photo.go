@@ -86,7 +86,7 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 // ResetPhotoQuality resets the quality of photos without primary file to -1.
 func ResetPhotoQuality() error {
 	return Db().Table("photos").
-		Where("id IN (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id)").
+		Where("id IN (SELECT id FROM (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id) AS tmp)").
 		Update("photo_quality", -1).Error
 }
 
