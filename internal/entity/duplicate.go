@@ -46,9 +46,24 @@ func AddDuplicate(fileName, fileRoot, fileHash string, fileSize, modTime int64) 
 	return nil
 }
 
-// Find returns a photo from the database.
+func RemoveDuplicate(fileName, fileRoot string) error {
+	if fileName == "" {
+		return fmt.Errorf("duplicate: file name must not be empty (remove)")
+	} else if fileRoot == "" {
+		return fmt.Errorf("duplicate: file root must not be empty (remove)")
+	}
+
+	if err := UnscopedDb().Delete(Duplicate{}, "file_name = ? AND file_root = ?", fileName, fileRoot).Error; err != nil {
+		log.Errorf("duplicate: %s (remove %s)", err, txt.Quote(fileName))
+		return err
+	}
+
+	return nil
+}
+
+// Find returns a duplicate from the database.
 func (m *Duplicate) Find() error {
-	return UnscopedDb().First(m, "file_name = ?", m.FileName).Error
+	return UnscopedDb().First(m, "file_name = ? AND file_root = ?", m.FileName, m.FileRoot).Error
 }
 
 // Create inserts a new row to the database.

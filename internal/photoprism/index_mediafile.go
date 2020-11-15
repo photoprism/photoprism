@@ -115,10 +115,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		"baseName": filepath.Base(fileName),
 	})
 
+	// Try to find existing file by path and name.
 	fileQuery = entity.UnscopedDb().First(&file, "file_name = ? AND (file_root = ? OR file_root = '')", fileName, fileRoot)
 	fileExists = fileQuery.Error == nil
 
-	if !fileExists && !m.IsSidecar() {
+	// Try to find existing file by hash. Skip this for sidecar files, and files outside the originals folder.
+	if !fileExists && !m.IsSidecar() && m.Root() == entity.RootOriginals {
 		fileHash = m.Hash()
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
 		fileExists = fileQuery.Error == nil
@@ -133,9 +135,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Try to find existing photo by file path and name.
 	if !fileExists {
 		photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
+		// Try to find existing photo by exact time and location.
 		if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
 			metaData = m.MetaData()
 			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
@@ -145,6 +149,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
+		// Try to find existing photo by unique image id.
 		if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
 			photoQuery = entity.UnscopedDb().First(&photo, "uuid = ?", m.MetaData().DocumentID)
 
@@ -169,8 +174,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		return result
 	}
 
+	// Remove file from duplicates table if exists.
+	if err := entity.RemoveDuplicate(m.RootRelName(), m.Root()); err != nil {
+		log.Error(err)
+	}
+
 	details := photo.GetDetails()
 
+	// Try to recover photo metadata from backup if not exists.
 	if !photoExists {
 		photo.PhotoQuality = -1
 
@@ -186,6 +197,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Calculate SHA1 file hash if not exists.
 	if fileHash == "" {
 		fileHash = m.Hash()
 	}
@@ -194,6 +206,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	photo.PhotoName = fileBase
 	file.FileError = ""
 
+	// Flag first JPEG as primary file for this photo.
 	if !file.FilePrimary {
 		if photoExists {
 			if q := entity.UnscopedDb().Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {

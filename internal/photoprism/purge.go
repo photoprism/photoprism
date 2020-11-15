@@ -176,7 +176,11 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	}
 
 	if err := entity.UpdatePhotoCounts(); err != nil {
-		log.Errorf("purge: %s", err)
+		log.Errorf("purge: %s (update photo counts)", err)
+	}
+
+	if err := query.CleanDuplicates(); err != nil {
+		log.Errorf("purge: %s (clean duplicates)", err)
 	}
 
 	return purgedFiles, purgedPhotos, nil
