@@ -30,13 +30,13 @@ type Index struct {
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, convert *Convert) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, convert *Convert, files *Files) *Index {
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
 		convert:      convert,
-		files:        NewFiles(),
+		files:        files,
 	}
 
 	return i

@@ -31,7 +31,7 @@ func (m *Files) Init() error {
 	defer m.mutex.Unlock()
 
 	if len(m.files) > 0 {
-		// Already initialized.
+		m.count = len(m.files)
 		return nil
 	}
 
@@ -61,6 +61,16 @@ func (m *Files) Done() {
 
 	m.count = 0
 	m.files = make(query.FileMap)
+}
+
+// Remove a file from the lookup table.
+func (m *Files) Remove(fileName, fileRoot string) {
+	key := path.Join(fileRoot, fileName)
+
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	delete(m.files, key)
 }
 
 // Ignore tests of a file requires indexing, file name must be relative to the originals path.

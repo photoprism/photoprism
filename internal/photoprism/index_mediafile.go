@@ -125,13 +125,18 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
 		fileExists = fileQuery.Error == nil
 
-		if fileExists && fs.FileExists(FileName(file.FileRoot, file.FileName)) {
+		if !fileExists {
+			// Do nothing.
+		} else if fs.FileExists(FileName(file.FileRoot, file.FileName)) {
 			if err := entity.AddDuplicate(m.RootRelName(), m.Root(), m.Hash(), m.FileSize(), m.ModTime().Unix()); err != nil {
 				log.Error(err)
 			}
 
 			result.Status = IndexDuplicate
 			return result
+		} else if err := file.Rename(m.RootRelName(), m.Root()); err != nil {
+			log.Errorf("index: %s in %s", err.Error(), logName)
+			file.FileError = err.Error()
 		}
 	}
 

@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"strings"
 	"time"
 
@@ -213,6 +214,17 @@ func (m *File) UpdateVideoInfos() error {
 // Updates a column in the database.
 func (m *File) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Updates multiple columns in the database.
+func (m *File) Updates(values File) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
+}
+
+// Rename updates the file name.
+func (m *File) Rename(fileName, rootName string) error {
+	log.Infof("file: %s was renamed to %s", txt.Quote(m.FileName), txt.Quote(fileName))
+	return m.Updates(File{FileName: fileName, FileRoot: rootName})
 }
 
 // RelatedPhoto returns the related photo entity.

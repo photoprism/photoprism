@@ -9,7 +9,7 @@ import (
 var onceIndex sync.Once
 
 func initIndex() {
-	services.Index = photoprism.NewIndex(Config(), Classify(), NsfwDetector(), Convert())
+	services.Index = photoprism.NewIndex(Config(), Classify(), NsfwDetector(), Convert(), Files())
 }
 
 func Index() *photoprism.Index {

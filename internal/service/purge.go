@@ -9,7 +9,7 @@ import (
 var oncePurge sync.Once
 
 func initPurge() {
-	services.Purge = photoprism.NewPurge(Config())
+	services.Purge = photoprism.NewPurge(Config(), Files())
 }
 
 func Purge() *photoprism.Purge {

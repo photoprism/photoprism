@@ -54,7 +54,7 @@ func TestIndexRelated(t *testing.T) {
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, convert)
+	ind := NewIndex(conf, tf, nd, convert, NewFiles())
 	opt := IndexOptionsAll()
 
 	result := IndexRelated(related, ind, opt)

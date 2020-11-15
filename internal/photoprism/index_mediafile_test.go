@@ -22,7 +22,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		nd := nsfw.New(conf.NSFWModelPath())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert)
+		ind := NewIndex(conf, tf, nd, convert, NewFiles())
 		indexOpt := IndexOptionsAll()
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
@@ -43,7 +43,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		nd := nsfw.New(conf.NSFWModelPath())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert)
+		ind := NewIndex(conf, tf, nd, convert, NewFiles())
 		indexOpt := IndexOptionsAll()
 
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4")
