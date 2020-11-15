@@ -43,6 +43,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.4.0
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/shopspring/decimal v1.2.0 // indirect
@@ -50,15 +51,16 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/studio-b12/gowebdav v0.0.0-20200929080739-bdacfab94796
 	github.com/tensorflow/tensorflow v1.15.2
-	github.com/tidwall/gjson v1.6.1
+	github.com/tidwall/gjson v1.6.3
+	github.com/tidwall/match v1.0.2 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
-	github.com/urfave/cli v1.22.4
-	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
+	github.com/urfave/cli v1.22.5
+	golang.org/x/crypto v0.0.0-20201112155050-0c6587e931a9
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20201009032441-dbdefad45b89
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	golang.org/x/sys v0.0.0-20201008063127-280f808b4a53 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
-	gopkg.in/ugjka/go-tz.v2 v2.0.10
+	gopkg.in/ugjka/go-tz.v2 v2.0.12
 	gopkg.in/yaml.v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )
