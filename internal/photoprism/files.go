@@ -11,6 +11,7 @@ import (
 
 // Files represents a list of already indexed file names and their unix modification timestamps.
 type Files struct {
+	count int
 	files query.FileMap
 	mutex sync.RWMutex
 }
@@ -44,8 +45,22 @@ func (m *Files) Init() error {
 		return fmt.Errorf("%s (query indexed files)", err.Error())
 	} else {
 		m.files = files
+		m.count = len(files)
 		return nil
 	}
+}
+
+// Done should be called after all files have been processed.
+func (m *Files) Done() {
+	if (len(m.files) - m.count) == 0 {
+		return
+	}
+
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	m.count = 0
+	m.files = make(query.FileMap)
 }
 
 // Ignore tests of a file requires indexing, file name must be relative to the originals path.

@@ -102,6 +102,8 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 		log.Errorf("index: %s", err)
 	}
 
+	defer ind.files.Done()
+
 	filesIndexed := 0
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
