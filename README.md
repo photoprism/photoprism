@@ -82,10 +82,10 @@ Looking forward, specific solutions for funding development and maintenance coul
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
 They will match every donation in the first year.
-In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/photoprism). 
+In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife). 
 Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
 [contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
-have to charge for a geodata subscription and/or additional features later (see [tiers](https://github.com/sponsors/lastzero/dashboard/tiers)).
+have to charge for a geodata subscription and/or additional features later.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
@@ -105,10 +105,9 @@ goods, products, or services without prior written permission. In other words, p
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
 [wiki:geocoding]: https://github.com/photoprism/photoprism/wiki/Geocoding
 [wiki:raw]: https://github.com/photoprism/photoprism/wiki/Converting-RAW-to-JPEG
-[help]: https://groups.google.com/a/photoprism.org/forum/#!forum/help
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [patreon]: https://www.patreon.com/photoprism
-[paypal]: https://www.paypal.me/photoprism
+[paypal]: https://www.paypal.me/browseyourlife
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://drone.photoprism.app/photoprism/photoprism

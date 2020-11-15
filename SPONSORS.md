@@ -50,6 +50,6 @@ Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau
 
 [patreon]: https://www.patreon.com/photoprism
-[paypal]: https://www.paypal.me/photoprism
+[paypal]: https://www.paypal.me/browseyourlife
 [issues:sponsor]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor
 [issues:unfunded]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded
