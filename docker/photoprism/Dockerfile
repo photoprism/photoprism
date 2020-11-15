@@ -117,7 +117,7 @@ RUN photoprism -v
 EXPOSE 2342
 
 # Mountable volumes
-VOLUME ["/photoprism/storage", "/photoprism/originals", "/photoprism/import"]
+# VOLUME ["/photoprism/storage"]
 
 # Configure entrypoint
 COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
