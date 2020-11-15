@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"github.com/photoprism/photoprism/internal/query"
 	"os"
 	"path"
 	"path/filepath"
@@ -166,6 +167,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				res := ind.MediaFile(f, indexOpt, "")
+
+				if res.Indexed() && f.IsJpeg() {
+					if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
+						log.Errorf("import: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+						query.SetFileError(res.FileUID, err.Error())
+					}
+				}
 
 				log.Infof("import: %s related %s file %s", res, f.FileType(), txt.Quote(f.RelName(ind.originalsPath())))
 			}
