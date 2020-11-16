@@ -49,13 +49,13 @@ func Token(size uint) string {
 }
 
 func TestNewPro(t *testing.T) {
-	c := NewConfig("develop", "testdata/new.yml")
+	c := NewConfig("0.0.0", "testdata/new.yml")
 
 	assert.IsType(t, &Config{}, c)
 }
 
 func TestNewProRequest(t *testing.T) {
-	r := NewRequest("develop")
+	r := NewRequest("0.0.0")
 
 	assert.IsType(t, &Request{}, r)
 
@@ -72,7 +72,7 @@ func TestConfig_Refresh(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		fileName := fmt.Sprintf("testdata/pro.%s.yml", Token(8))
 
-		c := NewConfig("develop", fileName)
+		c := NewConfig("0.0.0", fileName)
 
 		if err := c.Refresh(); err != nil {
 			t.Fatal(err)
@@ -80,7 +80,7 @@ func TestConfig_Refresh(t *testing.T) {
 
 		assert.Len(t, c.Key, 40)
 		assert.Len(t, c.Secret, 32)
-		assert.Equal(t, "develop", c.Version)
+		assert.Equal(t, "0.0.0", c.Version)
 
 		if sess, err := c.DecodeSession(); err != nil {
 			t.Fatal(err)
@@ -102,7 +102,7 @@ func TestConfig_Refresh(t *testing.T) {
 
 		assert.Len(t, c.Key, 40)
 		assert.Len(t, c.Secret, 32)
-		assert.Equal(t, "develop", c.Version)
+		assert.Equal(t, "0.0.0", c.Version)
 
 		if sess, err := c.DecodeSession(); err != nil {
 			t.Fatal(err)
@@ -122,7 +122,7 @@ func TestConfig_Refresh(t *testing.T) {
 
 func TestConfig_DecodeSession(t *testing.T) {
 	t.Run("pro3.yml", func(t *testing.T) {
-		c := NewConfig("develop", "testdata/pro3.yml")
+		c := NewConfig("0.0.0", "testdata/pro3.yml")
 
 		err := c.Load()
 
@@ -132,13 +132,13 @@ func TestConfig_DecodeSession(t *testing.T) {
 		assert.Equal(t, "ddf4ce46afbf6c16a6bd8555ab1e4efb", c.Secret)
 		assert.Equal(t, "7607796238c26b2d95007957b05c72d63f504346576bc2aa064a6dc54344de47d2ab38422bd1d061c067a16ef517e6054d8b7f5336c120431935518277fed45e49472aaf740cac1bc33ab2e362c767007a59e953e9973709", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
-		assert.Equal(t, "develop", c.Version)
+		assert.Equal(t, "0.0.0", c.Version)
 	})
 }
 
 func TestConfig_Load(t *testing.T) {
 	t.Run("pro1.yml", func(t *testing.T) {
-		c := NewConfig("develop", "testdata/pro1.yml")
+		c := NewConfig("0.0.0", "testdata/pro1.yml")
 
 		if err := c.Load(); err != nil {
 			t.Logf(err.Error())
@@ -148,10 +148,10 @@ func TestConfig_Load(t *testing.T) {
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
-		assert.Equal(t, "develop", c.Version)
+		assert.Equal(t, "0.0.0", c.Version)
 	})
 	t.Run("pro2.yml", func(t *testing.T) {
-		c := NewConfig("develop", "testdata/pro2.yml")
+		c := NewConfig("0.0.0", "testdata/pro2.yml")
 
 		if err := c.Load(); err != nil {
 			t.Logf(err.Error())
@@ -164,7 +164,7 @@ func TestConfig_Load(t *testing.T) {
 		assert.Equal(t, "200925-f8e2b580-Darwin-i386-DEBUG", c.Version)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
-		c := NewConfig("develop", "testdata/pro_xxx.yml")
+		c := NewConfig("0.0.0", "testdata/pro_xxx.yml")
 
 		if err := c.Load(); err == nil {
 			t.Fatal("file should not exist")
@@ -180,7 +180,7 @@ func TestConfig_Save(t *testing.T) {
 	t.Run("existing filename", func(t *testing.T) {
 		assert.FileExists(t, "testdata/pro1.yml")
 
-		c := NewConfig("develop", "testdata/pro1.yml")
+		c := NewConfig("0.0.0", "testdata/pro1.yml")
 
 		if err := c.Load(); err != nil {
 			t.Logf(err.Error())
@@ -190,7 +190,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
-		assert.Equal(t, "develop", c.Version)
+		assert.Equal(t, "0.0.0", c.Version)
 
 		c.FileName = "testdata/pro-save.yml"
 
@@ -204,7 +204,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
-		assert.Equal(t, "develop", c.Version)
+		assert.Equal(t, "0.0.0", c.Version)
 
 		assert.FileExists(t, "testdata/pro-save.yml")
 
@@ -216,10 +216,10 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
-		assert.Equal(t, "develop", c.Version)
+		assert.Equal(t, "0.0.0", c.Version)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
-		c := NewConfig("develop", "testdata/pro_new.yml")
+		c := NewConfig("0.0.0", "testdata/pro_new.yml")
 		c.Key = "F60F5B25D59C397989E3CD374F81CDD7710A4FCA"
 		c.Secret = "foo"
 		c.Session = "bar"

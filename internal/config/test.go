@@ -168,7 +168,7 @@ func CliTestContext() *cli.Context {
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 
 	app := cli.NewApp()
-	app.Version = "test"
+	app.Version = "0.0.0"
 
 	c := cli.NewContext(app, globalSet, nil)
 
