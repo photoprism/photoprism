@@ -120,7 +120,7 @@ RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes
 RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install additional distribution packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade && apt-get install -y --no-install-recommends \
         ca-certificates \
         tzdata \
         libheif-examples \
@@ -129,8 +129,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         rawtherapee \
         exiftool \
         ffmpeg && \
-    apt-get update && \
-    apt-get upgrade && \
     apt-get dist-upgrade && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
