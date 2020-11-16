@@ -10,9 +10,14 @@ platform:
 steps:
   - name: up
     environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
       CODECOV_TOKEN:
         from_secret: codecov_token
     commands:
+      - scripts/docker-login.sh
       - docker-compose -f docker-compose.drone.yml pull
       - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
