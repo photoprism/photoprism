@@ -107,7 +107,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				} else {
 					prg.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
-					log.Infof("purge: removed file %s", txt.Quote(file.FileName))
+					log.Infof("purge: flagged file %s as deleted", txt.Quote(file.FileName))
 				}
 			}
 		}
@@ -158,7 +158,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				if opt.Hard {
 					log.Infof("purge: permanently deleted %s", txt.Quote(photo.PhotoName))
 				} else {
-					log.Infof("purge: removed %s", txt.Quote(photo.PhotoName))
+					log.Infof("purge: flagged photo %s as deleted", txt.Quote(photo.PhotoName))
 				}
 			}
 		}
