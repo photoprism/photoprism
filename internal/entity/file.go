@@ -120,14 +120,17 @@ func (m *File) ShareFileName() string {
 
 // Changed returns true if new and old file size or modified time are different.
 func (m File) Changed(fileSize int64, modTime time.Time) bool {
-	if m.DeletedAt != nil {
+	// Assume previously missing files were changed and require re-indexing.
+	if m.FileMissing || m.DeletedAt != nil {
 		return true
 	}
 
+	// File size has changed.
 	if m.FileSize != fileSize {
 		return true
 	}
 
+	// Modification time has changed.
 	if m.ModTime == modTime.Unix() {
 		return false
 	}
@@ -217,14 +220,31 @@ func (m *File) Update(attr string, value interface{}) error {
 }
 
 // Updates multiple columns in the database.
-func (m *File) Updates(values File) error {
+func (m *File) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Rename updates the file name.
-func (m *File) Rename(fileName, rootName string) error {
-	log.Infof("file: %s was renamed to %s", txt.Quote(m.FileName), txt.Quote(fileName))
-	return m.Updates(File{FileName: fileName, FileRoot: rootName})
+// Rename updates the file name and path of a file in the database.
+func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
+	// Update file name and root folder.
+	if err := m.Updates(map[string]interface{}{
+		"FileName": fileName,
+		"FileRoot": rootName,
+		}); err != nil {
+		return err
+	}
+
+	log.Infof("file: renamed %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
+
+	// Update photo path and name if possible.
+	if p := m.RelatedPhoto(); p != nil {
+		return p.Updates(map[string]interface{}{
+			"PhotoPath": filePath,
+			"PhotoName": fileBase,
+		})
+	}
+
+	return nil
 }
 
 // RelatedPhoto returns the related photo entity.

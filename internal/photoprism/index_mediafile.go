@@ -134,7 +134,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 			result.Status = IndexDuplicate
 			return result
-		} else if err := file.Rename(m.RootRelName(), m.Root()); err != nil {
+		} else if err := file.Rename(m.RootRelName(), m.Root(), filePath, fileBase); err != nil {
 			log.Errorf("index: %s in %s", err.Error(), logName)
 			file.FileError = err.Error()
 		}
