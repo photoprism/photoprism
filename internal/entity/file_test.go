@@ -11,7 +11,8 @@ import (
 func TestFirstFileByHash(t *testing.T) {
 	t.Run("not existing file", func(t *testing.T) {
 		f, err := FirstFileByHash("xxx")
-		assert.Equal(t, "record not found", err.Error())
+
+		assert.EqualError(t, err, "record not found")
 		assert.Equal(t, uint(0), f.ID)
 	})
 	t.Run("existing file", func(t *testing.T) {
@@ -70,23 +71,42 @@ func TestFile_Changed(t *testing.T) {
 	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 	t.Run("different modified times", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
-		time := time.Date(2020, 01, 15, 0, 0, 0, 0, time.UTC)
-		assert.Equal(t, true, file.Changed(500, time))
+		d := time.Date(2020, 01, 15, 0, 0, 0, 0, time.UTC)
+		assert.Equal(t, true, file.Changed(500, d))
 	})
 	t.Run("different sizes", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 600, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
-		time := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
-		assert.Equal(t, true, file.Changed(500, time))
+		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+		assert.Equal(t, true, file.Changed(500, d))
 	})
 	t.Run("no change", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
-		time := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
-		assert.Equal(t, false, file.Changed(500, time))
+		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+		assert.Equal(t, false, file.Changed(500, d))
 	})
 	t.Run("deleted", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
-		time := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
-		assert.Equal(t, true, file.Changed(500, time))
+		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+		assert.Equal(t, false, file.Changed(500, d))
+	})
+}
+
+func TestFile_Missing(t *testing.T) {
+	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+
+	t.Run("deleted", func(t *testing.T) {
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
+		assert.Equal(t, true, file.Missing())
+	})
+
+	t.Run("missing", func(t *testing.T) {
+		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		assert.Equal(t, true, file.Missing())
+	})
+
+	t.Run("not_missing", func(t *testing.T) {
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		assert.Equal(t, false, file.Missing())
 	})
 }
 
@@ -98,7 +118,7 @@ func TestFile_Create(t *testing.T) {
 	})
 	t.Run("file already exists", func(t *testing.T) {
 		file := &File{PhotoID: 123, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
-		file.Create()
+		assert.Nil(t, file.Create())
 		assert.Error(t, file.Create())
 	})
 	t.Run("success", func(t *testing.T) {

@@ -49,7 +49,7 @@ func (r IndexResult) Failed() bool {
 }
 
 func (r IndexResult) Success() bool {
-	return r.Err == nil && r.FileID > 0
+	return r.Err == nil && (r.FileID > 0 || r.Stacked() || r.Skipped())
 }
 
 func (r IndexResult) Indexed() bool {
@@ -58,6 +58,10 @@ func (r IndexResult) Indexed() bool {
 
 func (r IndexResult) Stacked() bool {
 	return r.Status == IndexStacked
+}
+
+func (r IndexResult) Skipped() bool {
+	return r.Status == IndexSkipped
 }
 
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (result IndexResult) {
@@ -100,6 +104,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	fileHash := ""
 	fileChanged := true
+	fileRenamed := false
 	fileExists := false
 	fileStacked := false
 
@@ -133,10 +138,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 
 			result.Status = IndexDuplicate
+
 			return result
 		} else if err := file.Rename(m.RootRelName(), m.Root(), filePath, fileBase); err != nil {
-			log.Errorf("index: %s in %s", err.Error(), logName)
-			file.FileError = err.Error()
+			log.Errorf("index: %s in %s (rename)", err.Error(), logName)
+
+			result.Status = IndexFailed
+			result.Err = err
+
+			return result
+		} else {
+			fileRenamed = true
 		}
 	}
 
@@ -165,10 +177,15 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	} else {
 		photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
 
-		fileChanged = file.Changed(fileSize, modTime)
-
-		if fileChanged {
+		if fileRenamed {
+			fileChanged = true
+			log.Debugf("index: %s was renamed", txt.Quote(m.BaseName()))
+		} else if file.Changed(fileSize, modTime) {
+			fileChanged = true
 			log.Debugf("index: %s was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", txt.Quote(m.BaseName()), fileSize, file.FileSize, modTime.Unix(), file.ModTime)
+		} else if file.Missing() {
+			fileChanged = true
+			log.Debugf("index: %s was missing", txt.Quote(m.BaseName()))
 		}
 	}
 
@@ -231,11 +248,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	if photo.PhotoQuality == -1 && file.FilePrimary {
-		// restore photos that have been purged automatically
+		// Restore photos that have been purged automatically.
 		photo.DeletedAt = nil
 	} else if photo.DeletedAt != nil {
-		// don't waste time indexing deleted / archived photos
+		// Don't waste time indexing deleted / archived photos.
 		result.Status = IndexArchived
+
+		// Remove missing flag from file.
+		if err = file.Undelete(); err != nil {
+			log.Errorf("index: %s in %s (undelete)", err.Error(), logName)
+		}
+
 		return result
 	}
 

@@ -120,11 +120,6 @@ func (m *File) ShareFileName() string {
 
 // Changed returns true if new and old file size or modified time are different.
 func (m File) Changed(fileSize int64, modTime time.Time) bool {
-	// Assume previously missing files were changed and require re-indexing.
-	if m.FileMissing || m.DeletedAt != nil {
-		return true
-	}
-
 	// File size has changed.
 	if m.FileSize != fileSize {
 		return true
@@ -136,6 +131,11 @@ func (m File) Changed(fileSize int64, modTime time.Time) bool {
 	}
 
 	return true
+}
+
+// Missing returns true if this file is current missing or marked as deleted.
+func (m File) Missing() bool {
+	return m.FileMissing || m.DeletedAt != nil
 }
 
 // Delete permanently deletes the entity from the database.
@@ -224,17 +224,24 @@ func (m *File) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Rename updates the file name and path of a file in the database.
+// Rename updates the name and path of this file.
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
-	// Update file name and root folder.
+	// Update database row.
 	if err := m.Updates(map[string]interface{}{
 		"FileName": fileName,
 		"FileRoot": rootName,
+		"FileMissing": false,
+		"DeletedAt": nil,
 		}); err != nil {
 		return err
 	}
 
-	log.Infof("file: renamed %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
+	m.FileName = fileName
+	m.FileRoot = rootName
+	m.FileMissing = false
+	m.DeletedAt = nil
+
+	log.Debugf("file: renamed %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
 
 	// Update photo path and name if possible.
 	if p := m.RelatedPhoto(); p != nil {
@@ -243,6 +250,30 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 			"PhotoName": fileBase,
 		})
 	}
+
+	return nil
+}
+
+// Undelete removes the missing flag from this file.
+func (m *File) Undelete() error {
+	if !m.Missing() {
+		return nil
+	}
+
+	// Update database row.
+	err := m.Updates(map[string]interface{}{
+		"FileMissing": false,
+		"DeletedAt": nil,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	log.Debugf("file: removed missing flag from %s", txt.Quote(m.FileName))
+
+	m.FileMissing = false
+	m.DeletedAt = nil
 
 	return nil
 }
