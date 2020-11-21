@@ -227,6 +227,8 @@ func (m *File) Updates(values interface{}) error {
 
 // Rename updates the name and path of this file.
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
+	log.Debugf("file: renaming %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
+
 	// Update database row.
 	if err := m.Updates(map[string]interface{}{
 		"FileName":    fileName,
@@ -241,8 +243,6 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	m.FileRoot = rootName
 	m.FileMissing = false
 	m.DeletedAt = nil
-
-	log.Debugf("file: renamed %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
 
 	// Update photo path and name if possible.
 	if p := m.RelatedPhoto(); p != nil {
