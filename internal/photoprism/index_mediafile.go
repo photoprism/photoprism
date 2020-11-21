@@ -49,7 +49,7 @@ func (r IndexResult) Failed() bool {
 }
 
 func (r IndexResult) Success() bool {
-	return r.Err == nil && (r.FileID > 0 || r.Stacked() || r.Skipped())
+	return r.Err == nil && (r.FileID > 0 || r.Stacked() || r.Skipped() || r.Archived())
 }
 
 func (r IndexResult) Indexed() bool {
@@ -62,6 +62,10 @@ func (r IndexResult) Stacked() bool {
 
 func (r IndexResult) Skipped() bool {
 	return r.Status == IndexSkipped
+}
+
+func (r IndexResult) Archived() bool {
+	return r.Status == IndexArchived
 }
 
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (result IndexResult) {
@@ -247,7 +251,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	if photo.PhotoQuality == -1 && file.FilePrimary {
+	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore photos that have been purged automatically.
 		photo.DeletedAt = nil
 	} else if photo.DeletedAt != nil {
@@ -724,7 +728,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.IndexKeywords(); err != nil {
 			log.Errorf("index: %s in %s (save keywords)", err, logName)
 		}
-	} else {
+	} else if photo.DeletedAt == nil {
 		if photo.PhotoQuality >= 0 {
 			photo.PhotoQuality = photo.QualityScore()
 		}
