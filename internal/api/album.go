@@ -3,6 +3,7 @@ package api
 import (
 	"archive/zip"
 	"fmt"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"net/http"
 	"strconv"
 	"strings"
@@ -23,6 +24,19 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// ClearAlbumThumbCache removes all cached album covers e.g. after adding or removed photos.
+func ClearAlbumThumbCache(uid string) {
+	cache := service.Cache()
+
+	for typeName, _ := range thumb.Types {
+		cacheKey := fmt.Sprintf("album-thumbs:%s:%s", uid, typeName)
+
+		if err := cache.Delete(cacheKey); err == nil {
+			log.Debugf("album: removed %s from cache", cacheKey)
+		}
+	}
+}
 
 // GET /api/v1/albums
 func GetAlbums(router *gin.RouterGroup) {
@@ -362,6 +376,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), txt.Quote(a.Title()))
 			}
 
+			ClearAlbumThumbCache(a.AlbumUID)
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
@@ -407,6 +422,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), txt.Quote(txt.Quote(a.Title())))
 			}
 
+			ClearAlbumThumbCache(a.AlbumUID)
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 		}
 
