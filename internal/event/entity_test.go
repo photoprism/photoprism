@@ -1,9 +1,10 @@
 package event
 
 import (
+	"testing"
+
 	"github.com/leandro-lugaresi/hub"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestEntitiesUpdated(t *testing.T) {

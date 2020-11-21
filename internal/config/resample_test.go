@@ -1,9 +1,10 @@
 package config
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestConfig_ConvertSize(t *testing.T) {

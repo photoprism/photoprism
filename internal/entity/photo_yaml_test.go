@@ -1,10 +1,11 @@
 package entity
 
 import (
-	"github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPhoto_Yaml(t *testing.T) {

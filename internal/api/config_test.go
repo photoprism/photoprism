@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
 )

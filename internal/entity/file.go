@@ -2,9 +2,10 @@ package entity
 
 import (
 	"fmt"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"strings"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"

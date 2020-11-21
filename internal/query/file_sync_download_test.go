@@ -1,8 +1,9 @@
 package query
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetDownloadFileID(t *testing.T) {

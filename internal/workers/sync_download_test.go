@@ -1,9 +1,10 @@
 package workers
 
 import (
-	"github.com/photoprism/photoprism/internal/entity"
 	"strings"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"

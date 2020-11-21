@@ -1,9 +1,10 @@
 package query
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPhotosResults_Merged(t *testing.T) {

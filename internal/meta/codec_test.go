@@ -1,8 +1,9 @@
 package meta
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestData_CodecAvc1(t *testing.T) {

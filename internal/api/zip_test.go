@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/tidwall/gjson"
 )
 
 func TestCreateZip(t *testing.T) {

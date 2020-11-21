@@ -1,10 +1,11 @@
 package colors
 
 import (
-	"github.com/lucasb-eyer/go-colorful"
-	"github.com/stretchr/testify/assert"
 	"image/color"
 	"testing"
+
+	"github.com/lucasb-eyer/go-colorful"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestColorful(t *testing.T) {

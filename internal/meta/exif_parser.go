@@ -8,9 +8,9 @@ import (
 
 	"github.com/dsoprea/go-exif/v3"
 	heicexif "github.com/dsoprea/go-heic-exif-extractor"
-	"github.com/dsoprea/go-jpeg-image-structure"
-	"github.com/dsoprea/go-png-image-structure"
-	"github.com/dsoprea/go-tiff-image-structure"
+	jpegstructure "github.com/dsoprea/go-jpeg-image-structure"
+	pngstructure "github.com/dsoprea/go-png-image-structure"
+	tiffstructure "github.com/dsoprea/go-tiff-image-structure"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )

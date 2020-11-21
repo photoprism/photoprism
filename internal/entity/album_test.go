@@ -1,9 +1,10 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/internal/form"
 	"testing"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/pkg/txt"

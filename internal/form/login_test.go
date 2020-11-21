@@ -1,8 +1,9 @@
 package form
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLogin_HasToken(t *testing.T) {

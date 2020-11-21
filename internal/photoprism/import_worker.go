@@ -1,10 +1,11 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/query"
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/photoprism/photoprism/internal/query"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
