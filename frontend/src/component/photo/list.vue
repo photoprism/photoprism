@@ -116,6 +116,7 @@ export default {
     openLocation: Function,
     album: Object,
     filter: Object,
+    context: String,
   },
   data() {
     let m = this.$gettext("Couldn't find anything.");

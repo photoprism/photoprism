@@ -228,11 +228,11 @@ func (m *File) Updates(values interface{}) error {
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	// Update database row.
 	if err := m.Updates(map[string]interface{}{
-		"FileName": fileName,
-		"FileRoot": rootName,
+		"FileName":    fileName,
+		"FileRoot":    rootName,
 		"FileMissing": false,
-		"DeletedAt": nil,
-		}); err != nil {
+		"DeletedAt":   nil,
+	}); err != nil {
 		return err
 	}
 
@@ -263,7 +263,7 @@ func (m *File) Undelete() error {
 	// Update database row.
 	err := m.Updates(map[string]interface{}{
 		"FileMissing": false,
-		"DeletedAt": nil,
+		"DeletedAt":   nil,
 	})
 
 	if err != nil {

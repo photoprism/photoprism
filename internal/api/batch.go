@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -11,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
+	"net/http"
 )
 
 // POST /api/v1/batch/photos/archive
@@ -57,6 +56,56 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		event.EntitiesArchived("photos", f.Photos)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionArchived))
+	})
+}
+
+// POST /api/v1/batch/photos/approve
+func BatchPhotosApprove(router *gin.RouterGroup) {
+	router.POST("batch/photos/approve", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		var f form.Selection
+
+		if err := c.BindJSON(&f); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
+		if len(f.Photos) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		log.Infof("photos: approving %s", f.String())
+
+		photos, err := query.PhotoSelection(f)
+
+		if err != nil {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		var approved entity.Photos
+
+		for _, p := range photos {
+			if err := p.Approve(); err != nil {
+				log.Errorf("photo: %s (approve)", err.Error())
+			} else {
+				approved = append(approved, p)
+				SavePhotoAsYaml(p)
+			}
+		}
+
+		UpdateClientConfig()
+
+		event.EntitiesUpdated("photos", approved)
+
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionApproved))
 	})
 }
 

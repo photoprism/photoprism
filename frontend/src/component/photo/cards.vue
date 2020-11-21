@@ -173,17 +173,18 @@
                 </div>
               </div>
             </v-card-title>
-            <v-card-actions v-if="photo.Quality < 3 && $config.feature('review')">
+            <v-card-actions v-if="photo.Quality < 3 && context === 'review'">
               <v-layout row wrap align-center>
                 <v-flex xs12>
                   <div class="text-xs-center">
                     <v-btn color="secondary-dark" small flat dark @click.stop="photo.archive()"
-                           class="action-approve text-xs-center">
+                           class="action-archive text-xs-center">
                       <translate>Archive</translate>
                     </v-btn>
                     <v-btn color="secondary-dark" small depressed dark @click.stop="photo.approve()"
                            class="action-approve text-xs-center">
                       <translate>Approve</translate>
+                      <v-icon right dark small>check</v-icon>
                     </v-btn>
                   </div>
                 </v-flex>
@@ -206,6 +207,7 @@ export default {
     openLocation: Function,
     album: Object,
     filter: Object,
+    context: String,
   },
   data() {
     return {

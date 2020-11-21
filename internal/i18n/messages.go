@@ -60,6 +60,7 @@ const (
 	MsgLabelsDeleted
 	MsgLabelSaved
 	MsgFilesUploadedIn
+	MsgSelectionApproved
 	MsgSelectionArchived
 	MsgSelectionRestored
 	MsgSelectionProtected
@@ -129,6 +130,7 @@ var Messages = MessageMap{
 	MsgLabelsDeleted:         gettext("Labels deleted"),
 	MsgLabelSaved:            gettext("Label saved"),
 	MsgFilesUploadedIn:       gettext("%d files uploaded in %d s"),
+	MsgSelectionApproved:     gettext("Selection approved"),
 	MsgSelectionArchived:     gettext("Selection archived"),
 	MsgSelectionRestored:     gettext("Selection restored"),
 	MsgSelectionProtected:    gettext("Selection marked as private"),
