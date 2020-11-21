@@ -55,9 +55,6 @@ RUN apt-get update && apt-get upgrade && \
     ffmpeg \
     lsof \
     apache2-utils \
-    seccomp \
-    libseccomp-dev \
-    libseccomp2 \
     fonts-roboto \
     sudo
 
