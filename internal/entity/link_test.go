@@ -28,13 +28,13 @@ func TestLink_Expired(t *testing.T) {
 
 	link.LinkExpires = oneDay
 
-	assert.False(t, link.Expired())
+	assert.True(t, link.Expired())
 
 	link.LinkExpires = oneDay * 8
 
-	assert.True(t, link.Expired())
+	assert.False(t, link.Expired())
 
-	link.LinkExpires = oneDay
+	link.LinkExpires = oneDay * 300
 	link.LinkViews = 9
 	link.MaxViews = 10
 
