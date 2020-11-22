@@ -22,8 +22,6 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 * [geocoding](https://docs.photoprism.org/developer-guide/metadata/geocoding/), [XMP support](https://docs.photoprism.org/developer-guide/metadata/xmp/) and [automated tagging](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow
 
-## Try our demo ##
-
 You're welcome to play with the demo at [demo.photoprism.org](https://demo.photoprism.org).
 
 ## Getting started ##
