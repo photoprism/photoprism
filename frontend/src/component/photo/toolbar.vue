@@ -14,6 +14,10 @@
                     @click:clear="clearQuery"
                     @keyup.enter.native="filterChange"
       ></v-text-field>
+      <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')"
+             @click.stop="searchExpanded = !searchExpanded">
+        <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
+      </v-btn>
 
       <v-spacer></v-spacer>
 
@@ -36,10 +40,6 @@
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')"
-             @click.stop="searchExpanded = !searchExpanded">
-        <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
-      </v-btn>
     </v-toolbar>
 
     <v-card v-show="searchExpanded"
