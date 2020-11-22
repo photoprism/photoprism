@@ -177,14 +177,13 @@
               <v-layout row wrap align-center>
                 <v-flex xs12>
                   <div class="text-xs-center">
-                    <v-btn color="secondary-dark" small flat dark @click.stop="photo.archive()"
-                           class="action-archive text-xs-center">
-                      <translate>Archive</translate>
+                    <v-btn color="secondary-dark" small depressed dark @click.stop="photo.archive()"
+                    class="action-archive text-xs-center" :title="labels.archive">
+                      <v-icon dark>archive</v-icon>
                     </v-btn>
                     <v-btn color="secondary-dark" small depressed dark @click.stop="photo.approve()"
-                           class="action-approve text-xs-center">
-                      <translate>Approve</translate>
-                      <v-icon right dark small>check</v-icon>
+                           class="action-approve text-xs-center" :title="labels.approve">
+                      <v-icon dark>check</v-icon>
                     </v-btn>
                   </div>
                 </v-flex>
@@ -214,6 +213,10 @@ export default {
       showLocation: this.$config.settings().features.places,
       hidePrivate: this.$config.settings().features.private,
       debug: this.$config.get('debug'),
+      labels: {
+        approve: this.$gettext("Approve"),
+        archive: this.$gettext("Archive"),
+      },
       mouseDown: {
         index: -1,
         timeStamp: -1,
