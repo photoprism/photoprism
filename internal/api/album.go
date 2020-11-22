@@ -33,7 +33,7 @@ func ClearAlbumThumbCache(uid string) {
 		cacheKey := fmt.Sprintf("album-thumbs:%s:%s", uid, typeName)
 
 		if err := cache.Delete(cacheKey); err == nil {
-			log.Debugf("album: removed %s from cache", cacheKey)
+			log.Debugf("removed %s from cache", cacheKey)
 		}
 	}
 }

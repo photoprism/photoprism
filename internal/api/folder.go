@@ -25,6 +25,17 @@ type FoldersResponse struct {
 	Cached    bool            `json:"cached,omitempty"`
 }
 
+// ClearFoldersCache removes folder lists from cache e.g. after indexing.
+func ClearFoldersCache(rootName string) {
+	cache := service.Cache()
+
+	cacheKey := fmt.Sprintf("folders:%s:%t:%t", rootName, true, false)
+
+	if err := cache.Delete(cacheKey); err == nil {
+		log.Debugf("removed %s from cache", cacheKey)
+	}
+}
+
 // GetFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
 func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
@@ -52,7 +63,7 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
 		path := c.Param("path")
 
-		cacheKey := fmt.Sprintf("folders:%s:%t:%t", filepath.Join(rootPath, path), recursive, listFiles)
+		cacheKey := fmt.Sprintf("folders:%s:%t:%t", filepath.Join(rootName, path), recursive, listFiles)
 
 		if !uncached {
 			if cacheData, err := cache.Get(cacheKey); err == nil {
