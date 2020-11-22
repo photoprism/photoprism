@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/pages/albums.vue:273 src/share/albums.vue:248
@@ -886,7 +886,7 @@ msgstr "Importation des fichiers vers le dossier des originaux…"
 
 #: src/dialog/photo/files.vue:159 src/dialog/photo/files.vue:168
 msgid "in"
-msgstr "dans"
+msgstr "en"
 
 #: src/pages/library.vue:4
 msgid "Index"
