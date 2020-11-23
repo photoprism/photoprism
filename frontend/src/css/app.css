@@ -151,3 +151,8 @@ main {
 #photoprism .v-card .caption {
     overflow-wrap: anywhere;
 }
+
+#photoprism .drop-zone {
+    background-color: rgb(66,66,66, 0.3) ;
+    border: #424242 2px dashed;
+}

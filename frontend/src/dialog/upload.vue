@@ -60,25 +60,27 @@
             <v-progress-linear color="secondary-dark" v-model="completed"
                                :indeterminate="indexing"></v-progress-linear>
 
-            <p class="body-1" v-if="safe">
-              <translate>Please don't upload photos containing offensive content.</translate>
-              <translate>Uploads that may contain such images will be rejected automatically.</translate>
-            </p>
+             <v-container @drop="drop" @dragover="dragover" @dragleave="dragleave" :class="{'drop-zone': draggedOver}">
+              <p class="body-1" v-if="safe">
+                <translate>Please don't upload photos containing offensive content.</translate>
+                <translate>Uploads that may contain such images will be rejected automatically.</translate>
+              </p>
 
-            <p class="body-1" v-if="review">
-              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
-            </p>
+              <p class="body-1" v-if="review">
+                <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+              </p>
 
-            <v-btn
-                :disabled="busy"
-                color="secondary-dark"
-                class="white--text ml-0 mt-2 action-upload"
-                depressed
-                @click.stop="uploadDialog()"
-            >
-              <translate key="Upload">Upload</translate>
-              <v-icon right dark>cloud_upload</v-icon>
-            </v-btn>
+              <v-btn
+                      :disabled="busy"
+                      color="secondary-dark"
+                      class="white--text ml-0 mt-2 action-upload"
+                      depressed
+                      @click.stop="uploadDialog()"
+              >
+                <translate key="Upload">Upload</translate>
+                <v-icon right dark>cloud_upload</v-icon>
+              </v-btn>
+            </v-container>
           </v-container>
         </v-form>
 
@@ -112,6 +114,7 @@ export default {
       started: 0,
       review: this.$config.feature("review"),
       safe: !this.$config.get("uploadNSFW"),
+      draggedOver: false,
     }
   },
   methods: {
@@ -240,7 +243,21 @@ export default {
         });
       });
     },
-  },
+    drop(ev) {
+      ev.preventDefault();
+      this.draggedOver=false;
+      this.$refs.upload.files = event.dataTransfer.files;
+      this.upload(); // Trigger the upload event manually
+    },
+    dragover(event) {
+      event.preventDefault();
+      // Add some visual fluff to show the user can drop its files
+      this.draggedOver = true;
+    },
+    dragleave(event) {
+      // Clean up
+      this.draggedOver = false;
+    },
   watch: {
     show: function () {
       this.reset();
