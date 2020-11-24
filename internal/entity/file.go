@@ -2,9 +2,10 @@ package entity
 
 import (
 	"fmt"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"strings"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
@@ -226,13 +227,15 @@ func (m *File) Updates(values interface{}) error {
 
 // Rename updates the name and path of this file.
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
+	log.Debugf("file: renaming %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
+
 	// Update database row.
 	if err := m.Updates(map[string]interface{}{
-		"FileName": fileName,
-		"FileRoot": rootName,
+		"FileName":    fileName,
+		"FileRoot":    rootName,
 		"FileMissing": false,
-		"DeletedAt": nil,
-		}); err != nil {
+		"DeletedAt":   nil,
+	}); err != nil {
 		return err
 	}
 
@@ -240,8 +243,6 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	m.FileRoot = rootName
 	m.FileMissing = false
 	m.DeletedAt = nil
-
-	log.Debugf("file: renamed %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
 
 	// Update photo path and name if possible.
 	if p := m.RelatedPhoto(); p != nil {
@@ -263,7 +264,7 @@ func (m *File) Undelete() error {
 	// Update database row.
 	err := m.Updates(map[string]interface{}{
 		"FileMissing": false,
-		"DeletedAt": nil,
+		"DeletedAt":   nil,
 	})
 
 	if err != nil {

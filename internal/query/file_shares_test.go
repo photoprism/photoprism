@@ -1,10 +1,11 @@
 package query
 
 import (
-	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFileShares(t *testing.T) {

@@ -2,9 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"

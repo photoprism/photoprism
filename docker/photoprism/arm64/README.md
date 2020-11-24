@@ -12,7 +12,7 @@ wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
 sudo docker-compose up
 ```
 
-Image name on Docker Hub: [`photoprism/photoprism-arm64`](https://hub.docker.com/repository/docker/photoprism/photoprism-arm64)
+Image name on Docker Hub: [`photoprism/photoprism-arm64`](https://hub.docker.com/r/photoprism/photoprism-arm64)
 
 ## Operating System and Hardware Requirements ##
 
@@ -26,6 +26,7 @@ Make sure your docker compose configuration contains the following setting:
   photoprism:
     security_opt:
       - seccomp:unconfined
+      - apparmor:unconfined
 ```
 
 Alternatively, you can run the image on [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi). It's a 64bit Ubuntu Server with Docker pre-installed.

@@ -1,8 +1,9 @@
 package workers
 
 import (
-	"github.com/photoprism/photoprism/internal/mutex"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/mutex"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"

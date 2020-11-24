@@ -1,10 +1,11 @@
 package query
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestLabels(t *testing.T) {

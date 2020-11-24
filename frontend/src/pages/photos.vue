@@ -14,12 +14,14 @@
       <p-photo-clipboard :refresh="refresh" :selection="selection" :context="context"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
+                      :context="context"
                       :photos="results"
                       :selection="selection"
                       :filter="filter"
                       :edit-photo="editPhoto"
                       :open-photo="openPhoto"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
+                    :context="context"
                     :photos="results"
                     :selection="selection"
                     :filter="filter"
@@ -27,6 +29,7 @@
                     :edit-photo="editPhoto"
                     :open-location="openLocation"></p-photo-list>
       <p-photo-cards v-else
+                     :context="context"
                      :photos="results"
                      :selection="selection"
                      :filter="filter"
@@ -129,7 +132,9 @@ export default {
         return "photos";
       }
 
-      if (this.staticFilter.archived) {
+      if (this.staticFilter.review) {
+        return "review";
+      } else if (this.staticFilter.archived) {
         return "archive";
       } else if (this.staticFilter.favorite) {
         return "favorites";
@@ -454,8 +459,14 @@ export default {
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
 
-            this.updateResult(this.results, values);
-            this.updateResult(this.viewer.results, values);
+            if (this.context === "review" && values.Quality >= 3) {
+              this.removeResult(this.results, values.UID);
+              this.removeResult(this.viewer.results, values.UID);
+              this.$clipboard.removeId(values.UID);
+            } else {
+              this.updateResult(this.results, values);
+              this.updateResult(this.viewer.results, values);
+            }
           }
           break;
         case 'restored':

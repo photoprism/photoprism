@@ -98,7 +98,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 			} else if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
-					log.Infof("purge: file %s would be removed", txt.Quote(file.FileName))
+					log.Infof("purge: file %s would be flagged as missing", txt.Quote(file.FileName))
 					continue
 				}
 
@@ -107,7 +107,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				} else {
 					prg.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
-					log.Infof("purge: flagged file %s as deleted", txt.Quote(file.FileName))
+					log.Infof("purge: flagged file %s as missing", txt.Quote(file.FileName))
 				}
 			}
 		}
@@ -159,6 +159,11 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 					log.Infof("purge: permanently deleted %s", txt.Quote(photo.PhotoName))
 				} else {
 					log.Infof("purge: flagged photo %s as deleted", txt.Quote(photo.PhotoName))
+				}
+
+				// Remove files from lookup table.
+				for _, file := range photo.AllFiles() {
+					prg.files.Remove(file.FileName, file.FileRoot)
 				}
 			}
 		}

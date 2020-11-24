@@ -6,6 +6,7 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
+// Details contains detailed photo information
 type Details struct {
 	PhotoID   uint   `json:"PhotoID" deepcopier:"skip"`
 	Keywords  string `json:"Keywords"`
@@ -55,6 +56,7 @@ type Photo struct {
 	OriginalName     string    `json:"OriginalName"`
 }
 
+// NewPhoto creates Photo struct from interface
 func NewPhoto(m interface{}) (f Photo, err error) {
 	err = deepcopier.Copy(m).To(&f)
 

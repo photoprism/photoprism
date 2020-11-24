@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dsoprea/go-exif/v3"
@@ -19,6 +20,7 @@ import (
 
 var exifIfdMapping *exifcommon.IfdMapping
 var exifTagIndex = exif.NewTagIndex()
+var exifMutex = sync.Mutex{}
 
 const DateTimeZero = "0000:00:00 00:00:00"
 
@@ -44,6 +46,9 @@ func Exif(fileName string, fileType fs.FileType) (data Data, err error) {
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
 func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
+	exifMutex.Lock()
+	defer exifMutex.Unlock()
+
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, txt.Quote(filepath.Base(fileName)), debug.Stack())

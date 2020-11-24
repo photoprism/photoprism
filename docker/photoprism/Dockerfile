@@ -1,4 +1,4 @@
-FROM photoprism/development:20201020 as build
+FROM photoprism/development:20201121 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -26,7 +26,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         tzdata \
         libheif-examples \
-        libseccomp2 \
         gnupg \
         gpg-agent \
         apt-utils \

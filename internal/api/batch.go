@@ -60,6 +60,56 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 	})
 }
 
+// POST /api/v1/batch/photos/approve
+func BatchPhotosApprove(router *gin.RouterGroup) {
+	router.POST("batch/photos/approve", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		var f form.Selection
+
+		if err := c.BindJSON(&f); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
+		if len(f.Photos) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		log.Infof("photos: approving %s", f.String())
+
+		photos, err := query.PhotoSelection(f)
+
+		if err != nil {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		var approved entity.Photos
+
+		for _, p := range photos {
+			if err := p.Approve(); err != nil {
+				log.Errorf("photo: %s (approve)", err.Error())
+			} else {
+				approved = append(approved, p)
+				SavePhotoAsYaml(p)
+			}
+		}
+
+		UpdateClientConfig()
+
+		event.EntitiesUpdated("photos", approved)
+
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionApproved))
+	})
+}
+
 // POST /api/v1/batch/photos/restore
 func BatchPhotosRestore(router *gin.RouterGroup) {
 	router.POST("/batch/photos/restore", func(c *gin.Context) {

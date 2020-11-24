@@ -77,7 +77,7 @@ func (m *Link) Expired() bool {
 	now := Timestamp()
 	expires := m.ModifiedAt.Add(Seconds(m.LinkExpires))
 
-	return now.Before(expires)
+	return now.After(expires)
 }
 
 func (m *Link) SetSlug(s string) {

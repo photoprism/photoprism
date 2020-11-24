@@ -133,6 +133,7 @@ export default {
     editPhoto: Function,
     album: Object,
     filter: Object,
+    context: String,
   },
   data() {
     return {

@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/photoprism/photoprism/internal/service"
 	"net/http"
+
+	"github.com/photoprism/photoprism/internal/service"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"

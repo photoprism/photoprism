@@ -74,7 +74,7 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Select("photos.*").
 		Joins("JOIN files a ON photos.id = a.photo_id ").
-		Joins("LEFT JOIN files b ON a.photo_id = b.photo_id AND a.id != b.id AND b.file_missing = 0").
+		Joins("LEFT JOIN files b ON a.photo_id = b.photo_id AND a.id != b.id AND b.file_missing = 0 AND b.file_root = '/'").
 		Where("a.file_missing = 1 AND b.id IS NULL").
 		Where("photos.photo_type <> ?", entity.TypeText).
 		Group("photos.id").

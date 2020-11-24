@@ -1,9 +1,10 @@
 package config
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestConfig_FindExecutable(t *testing.T) {

@@ -130,7 +130,7 @@ func IndexedFiles() (result FileMap, err error) {
 	// Query indexed files.
 	var files []File
 
-	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM files WHERE file_missing = 0").Scan(&files).Error; err != nil {
+	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM files WHERE file_missing = 0 AND deleted_at IS NULL").Scan(&files).Error; err != nil {
 		return result, err
 	}
 

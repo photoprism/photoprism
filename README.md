@@ -21,27 +21,26 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 * import everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/)
 * [geocoding](https://docs.photoprism.org/developer-guide/metadata/geocoding/), [XMP support](https://docs.photoprism.org/developer-guide/metadata/xmp/) and [automated tagging](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow
+* you're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org)
 
-## Try our demo ##
-
-You're welcome to play with the demo at [demo.photoprism.org](https://demo.photoprism.org).
-Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
-
-## For the early birds ##
+## Getting started ##
 
 Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) - 
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
-Next, you'll have to [index or import](https://docs.photoprism.org/user-guide/library/import-vs-index/) 
-existing files. Please be patient, this will take a while depending on the size of your library.
+Next, you'll have to [index](https://docs.photoprism.org/user-guide/library/import-vs-index/) 
+your library. Please be patient, this will take a while depending on the size of your photo collection.
 
-Already indexed photos can be browsed in [Photos](https://docs.photoprism.org/user-guide/organize/browse/) 
+Already indexed photos can be browsed in [Photos](https://docs.photoprism.org/user-guide/organize/browse/)
 while videos show up in [Videos](https://docs.photoprism.org/user-guide/organize/video/).
 Counts are continuously updated in the navigation.
 
-If photos are missing, they might be in [review](https://docs.photoprism.org/user-guide/organize/review/) due to low quality or missing metadata.
+If files are missing, they might be in [Review](https://docs.photoprism.org/user-guide/organize/review/) due to low quality or missing metadata.
 You can turn this and other features off in [Settings](https://docs.photoprism.org/user-guide/settings/ui/), depending on
 your specific use case.
+
+Note that this is work in progress. We do our best to provide a complete, stable version. 
+Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
 ## Contributions ##
 

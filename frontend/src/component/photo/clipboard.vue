@@ -25,10 +25,22 @@
             color="share"
             @click.stop="dialog.share = true"
             :disabled="selection.length === 0"
-            v-if="context !== 'archive' && $config.feature('share')"
+            v-if="context !== 'archive' && context !== 'review' && $config.feature('share')"
             class="action-share"
         >
           <v-icon>cloud</v-icon>
+        </v-btn>
+
+        <v-btn
+            fab dark small
+            :title="$gettext('Approve')"
+            color="share"
+            @click.stop="batchApprove"
+            :disabled="selection.length === 0"
+            v-if="context === 'review'"
+            class="action-approve"
+        >
+          <v-icon>check</v-icon>
         </v-btn>
         <v-btn
             fab dark small
@@ -152,6 +164,13 @@ export default {
     clearClipboard() {
       this.$clipboard.clear();
       this.expanded = false;
+    },
+    batchApprove() {
+      Api.post("batch/photos/approve", {"photos": this.selection}).then(() => this.onApproved());
+    },
+    onApproved() {
+      Notify.success(this.$gettext("Selection approved"));
+      this.clearClipboard();
     },
     batchArchivePhotos() {
       this.dialog.archive = false;

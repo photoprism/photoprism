@@ -1,9 +1,10 @@
 package colors
 
 import (
-	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLightMap_Hex(t *testing.T) {

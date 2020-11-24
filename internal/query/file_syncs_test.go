@@ -1,9 +1,10 @@
 package query
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestFileSyncs(t *testing.T) {

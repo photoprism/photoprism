@@ -891,6 +891,15 @@ func (m *Photo) AllFilesMissing() bool {
 	return count == 0
 }
 
+// AllFiles returns all files of this photo.
+func (m *Photo) AllFiles() (files Files) {
+	if err := UnscopedDb().Where("files.photo_id = ?", m.ID).Find(&files).Error; err != nil {
+		log.Error(err)
+	}
+
+	return files
+}
+
 // Delete deletes the entity from the database.
 func (m *Photo) Delete(permanently bool) error {
 	if permanently {
@@ -899,7 +908,7 @@ func (m *Photo) Delete(permanently bool) error {
 
 	Db().Delete(File{}, "photo_id = ?", m.ID)
 
-	return Db().Delete(m).Error
+	return m.Updates(map[string]interface{}{"DeletedAt": Timestamp(), "PhotoQuality": -1})
 }
 
 // Delete permanently deletes the entity from the database.

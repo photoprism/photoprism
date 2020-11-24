@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/tidwall/gjson"
 	"net/http"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,9 +1,10 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/internal/classify"
 	"testing"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/classify"
 
 	"github.com/stretchr/testify/assert"
 )

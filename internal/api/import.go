@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -58,6 +59,8 @@ func StartImport(router *gin.RouterGroup) {
 		path = filepath.Clean(path)
 
 		imp := service.Import()
+
+		ClearFoldersCache(entity.RootImport)
 
 		var opt photoprism.ImportOptions
 

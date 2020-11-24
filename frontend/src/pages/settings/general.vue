@@ -45,7 +45,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                       @change="onChange"
-                      :disabled="busy || readonly"
+                      :disabled="busy"
                       class="ma-0 pa-0 input-convert"
                       v-model="settings.index.convert"
                       color="secondary-dark"

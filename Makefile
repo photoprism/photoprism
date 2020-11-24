@@ -27,7 +27,7 @@ test-go: reset-test-db run-test-go
 test-short: reset-test-db run-test-short
 acceptance-all: acceptance-start acceptance acceptance-restart acceptance-firefox stop
 test-all: test acceptance-all
-fmt: fmt-js fmt-go
+fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-share clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets

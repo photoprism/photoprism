@@ -78,7 +78,7 @@ func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
 
 	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
 		Joins("JOIN albums ON albums.album_uid = ?", albumUID).
-		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid").
+		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos.taken_at DESC").
 		First(&file).Error; err != nil {

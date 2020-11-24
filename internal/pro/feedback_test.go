@@ -1,9 +1,10 @@
 package pro
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewFeedback(t *testing.T) {

@@ -16,6 +16,7 @@
                          :album="model" context="album"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
+                      context="album"
                       :photos="results"
                       :selection="selection"
                       :filter="filter"
@@ -23,6 +24,7 @@
                       :edit-photo="editPhoto"
                       :open-photo="openPhoto"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
+                    context="album"
                     :photos="results"
                     :selection="selection"
                     :filter="filter"
@@ -31,6 +33,7 @@
                     :edit-photo="editPhoto"
                     :open-location="openLocation"></p-photo-list>
       <p-photo-cards v-else
+                     context="album"
                      :photos="results"
                      :selection="selection"
                      :filter="filter"

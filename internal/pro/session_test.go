@@ -1,9 +1,10 @@
 package pro
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSession_Expired(t *testing.T) {
