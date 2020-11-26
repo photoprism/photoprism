@@ -11,7 +11,7 @@ PhotoPrism: Browse Your Life in Pictures
 
 PhotoPrism® is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
-Say goodbye to solutions that force you to upload your visual memories to the cloud.
+Say goodbye to solutions that force you to upload your visual memories to the cloud!
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
@@ -23,7 +23,7 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
   based on Google TensorFlow
 * you're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org)
 
-## Getting started ##
+## Getting Started ##
 
 Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) - 
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
@@ -41,6 +41,14 @@ your specific use case.
 
 Note that this is work in progress. We do our best to provide a complete, stable version. 
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+
+## Feature Requests ##
+
+Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
+what needs testing, and which feature requests are going to be implemented next.
+
+Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+Ideas backed by one or more [sponsors](SPONSORS.md) will be prioritized as well.
 
 ## Contributions ##
 
@@ -80,7 +88,6 @@ Looking forward, specific solutions for funding development and maintenance coul
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
-They will match every donation in the first year.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife). 
 Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
 [contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
