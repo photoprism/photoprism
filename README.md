@@ -20,8 +20,8 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 * Our clearly structured user interface makes organizing and sharing your personal photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Import everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
-* Automatic image classification based on Google TensorFlow. In addition, our indexer detects colors, 
-  chroma, luminance, projection, location type, quality, and many other properties.
+* Automatic image classification based on Google TensorFlow. In addition, our indexer detects _colors_, 
+  _chroma_, _luminance_, _projection_, _location type_, _quality_, and many other properties.
 * Includes four high-resolution world maps to see where you've been and for rediscovering 
   long-forgotten shots.
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to 
@@ -37,17 +37,6 @@ You're welcome to play with our public demo at [demo.photoprism.org](https://dem
 
 Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) - 
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
-
-Next, you'll have to [index](https://docs.photoprism.org/user-guide/library/import-vs-index/) 
-your library. Please be patient, this will take a while depending on the size of your photo collection.
-
-Already indexed photos can be browsed in [Photos](https://docs.photoprism.org/user-guide/organize/browse/)
-while videos show up in [Videos](https://docs.photoprism.org/user-guide/organize/video/).
-Counts are continuously updated in the navigation.
-
-If files are missing, they might be in [Review](https://docs.photoprism.org/user-guide/organize/review/) due to low quality or missing metadata.
-You can turn this and other features off in [Settings](https://docs.photoprism.org/user-guide/settings/ui/), depending on
-your specific use case.
 
 We do our best to provide a complete, stable version very soon. Check the 
 [roadmap](https://github.com/photoprism/photoprism/projects/5) for open issues.
