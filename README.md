@@ -19,7 +19,7 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 * Our clearly structured [user interface](https://photoprism.pro/features) makes organizing and sharing your personal photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
-* Import everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
+* Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _projection_, 
   _location type_, _quality_, and many other properties.
