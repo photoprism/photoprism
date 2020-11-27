@@ -68,7 +68,7 @@ would be a mistake to state there will be no costs, because clearly we have huge
 will have a price tag and then maybe you'd like to have some extra features that need to be developed.
 
 It's fair to say that users with basic needs will have no monthly costs. We were also way more effective 
-per dollar than commercial projects and learned a lot on top of it.
+per dollar than investor-backed startups and learned a lot on top of it.
 An earlier version of this document contained a rough number, but at the end of the day it doesn't matter.
 
 Most established OSS companies make the bulk of their revenue with enterprise customers, that's why private users 
@@ -77,9 +77,9 @@ that refuse to share their data on top of it.
 
 Looking forward, specific solutions for funding development and maintenance could be to...
 
+  - provide additional benefits to our sponsors
   - sell a tested & supported version in the app store while our contributors and other developers can 
     continue to use Docker or build from source
-  - provide additional features to users who support us financially, maybe with a different license similar to GitLab
   - develop a one-click solution for private cloud hosting together with selected providers we trust
   - offer a geodata, public events, and maps subscription since OpenStreetMap doesn't want us to use their development 
     API for production, which is perfectly fine
@@ -88,10 +88,12 @@ Looking forward, specific solutions for funding development and maintenance coul
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
+
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife). 
 Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
 [contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
 have to charge for a geodata subscription and/or additional features later.
+If we manage to find enough sponsors backing our project, we can keep all features free for everyone!
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.

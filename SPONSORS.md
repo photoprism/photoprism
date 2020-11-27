@@ -3,14 +3,15 @@ Let's join forces
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
-They will match every donation in the first year.
-In addition, you can find us on [Patreon][patreon] and [PayPal][paypal].
-Our sponsors and contributors will get for free whatever we might have to 
-[charge](https://docs.photoprism.org/funding/) for a geodata, public events, and maps 
-subscription later.
 
-Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) here on GitHub if you like this project, 
-it provides additional motivation to keep going.
+In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife). 
+Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
+[contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
+have to charge for a geodata subscription and/or additional features later.
+If we manage to find enough sponsors backing our project, we can keep all features free for everyone!
+
+Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
+It provides additional motivation to keep going.
 
 Ideas backed by a sponsor are marked with a golden [sponsor][issues:sponsor] label.
 Let us know if we mistakenly label an idea as [unfunded][issues:unfunded].
@@ -40,6 +41,10 @@ Cooper (Patreon, November 2020)
 [Asim Aslam](https://github.com/asim) (GitHub Sponsors, November 2020)
 
 Garn Penrod (Patreon, November 2020)
+
+[@anaxmedia](https://github.com/anaxmedia) (GitHub Sponsors, November 2020)
+
+[Kevin Anderson](https://github.com/kevinanderson1) (GitHub Sponsors, November 2020)
 
 For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
 
