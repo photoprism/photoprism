@@ -11,19 +11,29 @@ PhotoPrism: Browse Your Life in Pictures
 
 PhotoPrism® is a server-based application for browsing, organizing and sharing your personal photo collection.
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
-Say goodbye to solutions that force you to upload your visual memories to the cloud.
+Say goodbye to solutions that force you to upload your visual memories to the cloud!
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
-## What to expect... ##
+## Key Features ##
 
-* clearly structured Web interface for browsing, organizing and sharing your personal photo collection
-* import everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/)
-* [geocoding](https://docs.photoprism.org/developer-guide/metadata/geocoding/), [XMP support](https://docs.photoprism.org/developer-guide/metadata/xmp/) and [automated tagging](https://docs.photoprism.org/developer-guide/metadata/classification/) 
-  based on Google TensorFlow
-* you're welcome to play with our demo at [demo.photoprism.org](https://demo.photoprism.org)
+* Our clearly structured user interface makes organizing and sharing your personal photo collection as easy as 
+  it should be — whether it’s on a phone, tablet, or desktop computer.
+* Import everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
+* Automatic image classification based on Google TensorFlow. In addition, our indexer detects colors, 
+  chroma, luminance, projection, location type, quality, and many other properties.
+* Includes four high-resolution world maps to see where you've been and for rediscovering 
+  long-forgotten shots.
+* WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to 
+  PhotoPrism so that you to can open, edit, and delete files from your computer or phone as if they were local. 
+  You may easily sync your pictures with [Nextcloud](https://nextcloud.com/) as well.  
+* PhotoPrism feels like a native app and, of course, you can also add it to your home screen.
 
-## Getting started ##
+## Try PhotoPrism ##
+
+You're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org).
+
+## Getting Started ##
 
 Step-by-step installation instructions can be found on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) - 
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
@@ -39,8 +49,17 @@ If files are missing, they might be in [Review](https://docs.photoprism.org/user
 You can turn this and other features off in [Settings](https://docs.photoprism.org/user-guide/settings/ui/), depending on
 your specific use case.
 
-Note that this is work in progress. We do our best to provide a complete, stable version. 
+We do our best to provide a complete, stable version very soon. Check the 
+[roadmap](https://github.com/photoprism/photoprism/projects/5) for open issues.
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+
+## Feature Requests ##
+
+Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
+what needs testing, and which feature requests are going to be implemented next.
+
+Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+Ideas backed by one or more [sponsors](SPONSORS.md) will be prioritized as well.
 
 ## Contributions ##
 
@@ -60,7 +79,7 @@ would be a mistake to state there will be no costs, because clearly we have huge
 will have a price tag and then maybe you'd like to have some extra features that need to be developed.
 
 It's fair to say that users with basic needs will have no monthly costs. We were also way more effective 
-per dollar than commercial projects and learned a lot on top of it.
+per dollar than investor-backed startups and learned a lot on top of it.
 An earlier version of this document contained a rough number, but at the end of the day it doesn't matter.
 
 Most established OSS companies make the bulk of their revenue with enterprise customers, that's why private users 
@@ -69,9 +88,9 @@ that refuse to share their data on top of it.
 
 Looking forward, specific solutions for funding development and maintenance could be to...
 
+  - provide additional benefits to our sponsors
   - sell a tested & supported version in the app store while our contributors and other developers can 
     continue to use Docker or build from source
-  - provide additional features to users who support us financially, maybe with a different license similar to GitLab
   - develop a one-click solution for private cloud hosting together with selected providers we trust
   - offer a geodata, public events, and maps subscription since OpenStreetMap doesn't want us to use their development 
     API for production, which is perfectly fine
@@ -80,11 +99,12 @@ Looking forward, specific solutions for funding development and maintenance coul
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
-They will match every donation in the first year.
+
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife). 
 Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
 [contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
 have to charge for a geodata subscription and/or additional features later.
+If we manage to find enough sponsors backing our project, we can keep all features free for everyone!
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
