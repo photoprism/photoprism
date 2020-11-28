@@ -90,14 +90,13 @@ Looking forward, specific solutions for funding development and maintenance coul
 
 ## Donations ##
 
-You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
-especially if you have feature requests or need help with using our software.
+This open-source project is made possible thanks to our generous sponsors.
+Donations enable us to pay for infrastructure, develop new features, and keep them free for everyone!
 
-In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife). 
-Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
-[contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
-have to charge for a geodata subscription and/or additional features later.
-If we manage to find enough sponsors backing our project, we can keep all features free for everyone!
+You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
+especially if you have feature requests or need help with using our software.
+In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
+and [PayPal](https://www.paypal.me/browseyourlife). 
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
