@@ -23,8 +23,8 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _projection_, 
   _location type_, _quality_, and many other properties.
-* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been and for rediscovering 
-  long-forgotten shots.
+* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
+  and for rediscovering long-forgotten shots.
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may 
   [connect](https://docs.photoprism.org/user-guide/backup/webdav/) directly to PhotoPrism so that you to can open, 
   edit, and delete files from your computer or phone as if they were local. 
@@ -92,10 +92,13 @@ Looking forward, specific solutions for funding development and maintenance coul
 
 You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
-In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
-and [PayPal](https://www.paypal.me/browseyourlife).
+In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
+and [PayPal](https://www.paypal.me/browseyourlife). 
 
-Donations enable us to pay for infrastructure, develop new features, and keep them free for everyone.
+This helps us...
+
+* pay for hosting, hardware and external services like satellite maps
+* develop new features, and keep them free for everyone 🌈
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
