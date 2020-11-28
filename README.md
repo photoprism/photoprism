@@ -90,18 +90,17 @@ Looking forward, specific solutions for funding development and maintenance coul
 
 ## Donations ##
 
-This open-source project is made possible thanks to our generous sponsors.
-Donations enable us to pay for infrastructure, develop new features, and keep them free for everyone!
-
 You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
-and [PayPal](https://www.paypal.me/browseyourlife). 
+and [PayPal](https://www.paypal.me/browseyourlife).
+
+Donations enable us to pay for infrastructure, develop new features, and keep them free for everyone.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
 
-Ideas backed by a sponsor are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
+Ideas backed by one or more eligible [sponsors](https://docs.photoprism.org/funding/) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 Thank you very much! <3
