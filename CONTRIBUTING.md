@@ -25,7 +25,7 @@ The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what ta
 what needs testing, and which feature requests are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
-Ideas backed by one or more [sponsors](SPONSORS.md) will be prioritized as well.
+Ideas backed by one or more eligible [sponsors](SPONSORS.md) will be prioritized as well.
 
 You are welcome to add specific feature requests directly to our [GitHub issue tracker](https://github.com/photoprism/photoprism/issues)
 if no similar [idea](https://github.com/photoprism/photoprism/labels/idea)
