@@ -1,14 +1,14 @@
 Thank you very much to all of our sponsors!
 ===========================================
 
-Your donations help us...
+Your continuous support helps...
 
-* pay for hosting, hardware and external services like satellite maps
-* develop new features, and keep them free for everyone 🌈
+* to pay for hosting, hardware and external services like satellite maps
+* developing new features, and keeping them free for everyone 🌈
 
 Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, and which feature requests are going to be implemented next. Please give ideas you like a thumbs-up, so that we know what is most popular.
 
-Ideas backed by one or more eligible [sponsors](https://docs.photoprism.org/funding/) will be prioritized as well. Let us know if we mistakenly label an idea as unfunded.
+Ideas backed by one or more eligible sponsors will be prioritized as well. Let us know if we mistakenly label an idea as unfunded.
 
 ---
 
