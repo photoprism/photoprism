@@ -46,14 +46,12 @@ Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCs
 
 ## Roadmap ##
 
-Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
+Our vision is to provide the most user-friendly solution for browsing, organizing and sharing your personal photo collection.
+The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which feature requests are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
 Ideas backed by one or more [sponsors](SPONSORS.md) will be prioritized as well.
-
-Our long-term vision is to provide the most user-friendly solution for browsing, 
-organizing and sharing your personal photo collection.
 
 ## Contributions ##
 
