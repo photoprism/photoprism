@@ -34,6 +34,8 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ## Getting Started ##
 
+You're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
+
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
@@ -42,21 +44,16 @@ We do our best to provide a complete, stable version very soon. Check the
 [roadmap](https://github.com/photoprism/photoprism/projects/5) for open issues.
 Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
-## Try PhotoPrism ##
-
-You're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
-
-## Our Vision ##
-
-We strive to provide the most user-friendly solution for browsing, organizing and sharing your personal photo collection.
-
-## Feature Requests ##
+## Roadmap ##
 
 Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which feature requests are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
 Ideas backed by one or more [sponsors](SPONSORS.md) will be prioritized as well.
+
+Our long-term vision is to provide the most user-friendly solution for browsing, 
+organizing and sharing your personal photo collection.
 
 ## Contributions ##
 
@@ -107,7 +104,7 @@ Your continuous support helps...
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
 
-Ideas backed by one or more eligible sponsors are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
+Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 Thank you very much! <3
