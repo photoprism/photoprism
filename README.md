@@ -70,7 +70,7 @@ This project is about freedom and privacy but not necessarily about free beer. W
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
 will have a price tag and then maybe you'd like to have some extra features that need to be developed.
 
-You're most welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
+You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
 especially if you have feature requests or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
 and [PayPal](https://www.paypal.me/browseyourlife). 
@@ -83,10 +83,10 @@ Your continuous support helps...
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
 
+Thank you very much! <3
+
 Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
-
-Thank you very much! <3
 
 ## Trademarks ##
 
