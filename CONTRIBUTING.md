@@ -3,8 +3,6 @@
 Think of open-source development as free training with a visible outcome.
 Exploring new technologies is easier than in commercial environments,
 where development effort is more focused on immediate results.
-Consider it as an analytical process that expands both the master and the 
-editors knowledge, including others viewing it.
 
 We welcome contributions of any kind including pull requests, ideas, bug reports,
 testing, writing documentation, tutorials and blog posts. If you help with development,
