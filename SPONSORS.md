@@ -38,7 +38,7 @@ Garn Penrod (Patreon, November 2020)
 
 [Kevin Anderson](https://github.com/kevinanderson1) (GitHub Sponsors, November 2020)
 
-For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
+For a full list of GitHub sponsors, see https://github.com/sponsors/photoprism.
 
 ## Donations ##
 
