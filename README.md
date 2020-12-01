@@ -74,9 +74,6 @@ You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/p
 especially if you have feature requests or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
 and [PayPal](https://www.paypal.me/browseyourlife). 
-Note that we've recently [switched](https://github.com/sponsors/lastzero) to a 
-new [GitHub Sponsors](https://github.com/sponsors/photoprism) account for our organization 
-so that donations can be shared more easily.
 
 Your continuous support helps...
 
@@ -90,6 +87,10 @@ Thank you very much! <3
 
 Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+
+*Note that we've recently moved GitHub Sponsors from [sponsors/lastzero](https://github.com/sponsors/lastzero) to an 
+[organization account](https://github.com/sponsors/photoprism) so that donations can be shared more easily.
+Tiers are more affordable now while benefits stay mostly the same.*
 
 ## Trademarks ##
 
