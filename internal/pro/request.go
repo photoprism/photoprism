@@ -5,7 +5,7 @@ import (
 	"runtime"
 )
 
-var ApiURL = "https://api-int.photoprism.pro/v1/hello"
+var ApiURL = "https://api.photoprism.app/v1/hello"
 
 // photoprism.pro api credentials request incl basic runtime specs for statistical evaluation.
 type Request struct {

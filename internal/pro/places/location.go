@@ -28,7 +28,7 @@ const ApiName = "photoprism places"
 var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
 var Secret = "photoprism"
 var UserAgent = "PhotoPrism/0.0.0"
-var ReverseLookupURL = "https://places.photoprism.pro/v1/location/%s"
+var ReverseLookupURL = "https://places.photoprism.app/v1/location/%s"
 var client = &http.Client{Timeout: 60 * time.Second}
 
 func NewLocation(id string, lat, lng float64, name, category string, place Place, cached bool) *Location {

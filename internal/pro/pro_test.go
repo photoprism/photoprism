@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.DebugLevel)
 
-	ApiURL = "https://api-int.photoprism.pro/v1/hello"
+	ApiURL = "https://api-int.photoprism.app/v1/hello"
 
 	code := m.Run()
 
