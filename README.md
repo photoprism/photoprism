@@ -74,8 +74,9 @@ You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/p
 especially if you have feature requests or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
 and [PayPal](https://www.paypal.me/browseyourlife). 
-Note that we've recently [switched](https://github.com/sponsors/lastzero) to a new GitHub Sponsors account 
-for our organization so that donations can be shared more easily.
+Note that we've recently [switched](https://github.com/sponsors/lastzero) to a 
+new [GitHub Sponsors](https://github.com/sponsors/photoprism) account for our organization 
+so that donations can be shared more easily.
 
 Your continuous support helps...
 
