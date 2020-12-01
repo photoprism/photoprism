@@ -1,24 +1,21 @@
-Let's join forces
-=================
+Thank you very much to all of our sponsors!
+===========================================
 
-You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/lastzero), 
-especially if you have feature requests or need help with using our software.
+Your continuous support helps...
 
-In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife). 
-Our [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) and 
-[contributors](https://github.com/photoprism/photoprism/graphs/contributors/) will get for free whatever we might 
-have to charge for a geodata subscription and/or additional features later.
-If we manage to find enough sponsors backing our project, we can keep all features free for everyone!
+* to pay for hosting, hardware and external services like satellite maps
+* developing new features, and keeping them free for everyone 🌈
 
-Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
-It provides additional motivation to keep going.
+Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, and which feature requests are going to be implemented next. Please give ideas you like a thumbs-up, so that we know what is most popular.
 
-Ideas backed by a sponsor are marked with a golden [sponsor][issues:sponsor] label.
-Let us know if we mistakenly label an idea as [unfunded][issues:unfunded].
+Ideas backed by one or more eligible sponsors will be prioritized as well. Let us know if we mistakenly label an idea as unfunded.
 
-Thank you very much to all of our sponsors and donors (including those that want to stay private)!
+*Note that we've recently moved GitHub Sponsors from [sponsors/lastzero](https://github.com/sponsors/lastzero) to an 
+[organization account](https://github.com/sponsors/photoprism) so that donations can be shared more easily.
+Tiers are more affordable now while benefits stay mostly the same.
+You can also find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife).*
 
-## Sponsors ##
+---
 
 [Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
 
@@ -46,7 +43,7 @@ Garn Penrod (Patreon, November 2020)
 
 [Kevin Anderson](https://github.com/kevinanderson1) (GitHub Sponsors, November 2020)
 
-For a full list of GitHub sponsors, see https://github.com/sponsors/lastzero.
+For a full list of GitHub sponsors, see https://github.com/sponsors/photoprism.
 
 ## Donations ##
 
