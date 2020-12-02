@@ -104,19 +104,14 @@ RUN mkdir -p \
     /photoprism/import \
     /photoprism/storage/settings \
     /photoprism/storage/cache && \
-    chmod 777 /photoprism && \
     chown -R photoprism:photoprism /photoprism && \
-    find /photoprism -type d -print0 | xargs -0 chmod 777 && \
-    find /photoprism -type f -print0 | xargs -0 chmod a+rw
+    chmod -R a+rw /photoprism
 
 # Show photoprism version
 RUN photoprism -v
 
 # Expose http port
 EXPOSE 2342
-
-# Mountable volumes
-# VOLUME ["/photoprism/storage"]
 
 # Configure entrypoint
 COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
