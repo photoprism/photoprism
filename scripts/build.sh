@@ -22,7 +22,7 @@ if [[ $OS == "Windows_NT" ]]; then
     fi
 else
     PHOTOPRISM_OS=`uname -s`
-    PHOTOPRISM_ARCH=`uname -p`
+    PHOTOPRISM_ARCH=`uname -m`
 fi
 
 if [[ $1 == "debug" ]]; then
