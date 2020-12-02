@@ -21,8 +21,8 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
-  based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _panoramic projection_, 
-  _category_, _quality_, and many other properties.
+  based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, 
+  _location type_, and many other properties.
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
   and for rediscovering long-forgotten shots.
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may 
