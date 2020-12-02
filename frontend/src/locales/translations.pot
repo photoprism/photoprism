@@ -97,7 +97,7 @@ msgstr ""
 
 #: src/component/album/clipboard.vue:132
 #: src/component/file/clipboard.vue:85
-#: src/component/label/clipboard.vue:63
+#: src/component/label/clipboard.vue:64
 #: src/component/photo/clipboard.vue:187
 #: src/dialog/photo/album.vue:17
 msgid "Add to album"
@@ -393,9 +393,9 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:344
+#: src/component/photo/toolbar.vue:345
 #: src/dialog/album/edit.vue:161
-#: src/pages/about/feedback.vue:91
+#: src/pages/about/feedback.vue:93
 #: src/pages/albums.vue:104
 msgid "Category"
 msgstr ""
@@ -435,7 +435,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:320
+#: src/component/photo/toolbar.vue:321
 msgid "Color"
 msgstr ""
 
@@ -576,13 +576,13 @@ msgid "Default Folder"
 msgstr ""
 
 #: src/component/album/clipboard.vue:153
-#: src/component/label/clipboard.vue:84
+#: src/component/label/clipboard.vue:85
 #: src/dialog/account/remove.vue:15
 #: src/dialog/album/delete.vue:18
 #: src/dialog/file/delete.vue:18
 #: src/dialog/label/delete.vue:15
 #: src/dialog/photo/files.vue:42
-#: src/dialog/share.vue:228
+#: src/dialog/share.vue:229
 msgid "Delete"
 msgstr ""
 
@@ -671,7 +671,7 @@ msgstr ""
 msgid "Dutch"
 msgstr ""
 
-#: src/pages/about/feedback.vue:164
+#: src/pages/about/feedback.vue:166
 msgid "E-Mail"
 msgstr ""
 
@@ -885,7 +885,7 @@ msgstr ""
 msgid "Hindi"
 msgstr ""
 
-#: src/pages/about/feedback.vue:123
+#: src/pages/about/feedback.vue:125
 msgid "How can we help?"
 msgstr ""
 
@@ -984,7 +984,7 @@ msgid "Label"
 msgstr ""
 
 #: src/dialog/photo/labels.vue:48
-#: src/pages/labels.vue:308
+#: src/pages/labels.vue:309
 msgid "Label Name"
 msgstr ""
 
@@ -1204,7 +1204,7 @@ msgstr[1] ""
 #: src/dialog/photo/files.vue:72
 #: src/dialog/photo/files.vue:29
 #: src/dialog/photo/info.vue:30
-#: src/pages/about/feedback.vue:141
+#: src/pages/about/feedback.vue:143
 #: src/pages/login.vue:67
 #: src/share/photo/list.vue:28
 msgid "Name"
@@ -1600,9 +1600,9 @@ msgstr ""
 msgid "Request failed - invalid response"
 msgstr ""
 
-#: src/pages/about/feedback.vue:102
-#: src/pages/about/feedback.vue:122
-#: src/pages/about/feedback.vue:162
+#: src/pages/about/feedback.vue:104
+#: src/pages/about/feedback.vue:124
+#: src/pages/about/feedback.vue:164
 msgid "Required"
 msgstr ""
 
