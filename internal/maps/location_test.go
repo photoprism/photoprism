@@ -192,7 +192,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Unknown", l.LocName)
+		assert.Equal(t, "Indian Ocean", l.LocName)
 		assert.Equal(t, "", l.LocCategory)
 		assert.Equal(t, "Unknown", l.LocCity)
 		assert.Equal(t, "zz", l.LocCountry)
