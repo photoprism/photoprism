@@ -174,11 +174,11 @@ export const MapsStyle = () => [
     },
     {
         "text": $gettext("Topographic"),
-        "value": "topo",
+        "value": "topographique",
     },
     {
-        "text": $gettext("Moonlight"),
-        "value": "darkmatter",
+        "text": $gettext("Outdoor"),
+        "value": "outdoor",
     },
 ];
 
