@@ -112,17 +112,19 @@ func PhotosCheck(limit int, offset int) (entities entity.Photos, err error) {
 
 // IdenticalPhotos returns photos sharing the same exact time, location and camera serial.
 func IdenticalPhotos() (entities entity.Photos, err error) {
-	err = Db().Table("photos").
+	err = UnscopedDb().Table("photos").
 		Select("photos.*").
-		Joins(`JOIN photos dup ON photos.id < dup.id 
-				AND photos.photo_lat = dup.photo_lat 
-				AND photos.photo_lng = dup.photo_lng 
-				AND photos.taken_at = dup.taken_at 
-				AND photos.camera_serial = dup.camera_serial`).
-		Where(`photos.photo_single = 0 
+		Joins(`JOIN photos dup ON photos.id < dup.id
+				AND photos.photo_single = 0 
 				AND dup.photo_single = 0 
 				AND photos.deleted_at IS NULL 
-				AND dup.deleted_at IS NULL`).
+				AND dup.deleted_at IS NULL
+				AND ((photos.photo_lat = dup.photo_lat 
+				AND photos.photo_lng = dup.photo_lng 
+				AND photos.taken_at = dup.taken_at 
+				AND photos.camera_id = dup.camera_id
+				AND photos.camera_serial = dup.camera_serial) OR
+				(photos.uuid <> '' AND photos.uuid = dup.uuid))`).
 		Group("photos.id").
 		Find(&entities).Error
 

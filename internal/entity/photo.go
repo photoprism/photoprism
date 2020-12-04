@@ -1015,10 +1015,9 @@ func (m *Photo) MapKey() string {
 func (m *Photo) Stack() (identical Photos, err error) {
 	if err := Db().
 		Where("id <> ?", m.ID).
-		Where("taken_at = ?", m.TakenAt).
-		Where("cell_id = ?", m.CellID).
-		Where("camera_serial = ?", m.CameraSerial).
 		Where("photo_single = 0").
+		Where("(taken_at = ? AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
+			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).
 		Find(&identical).Error; err != nil {
 		return identical, err
 	}
@@ -1028,9 +1027,18 @@ func (m *Photo) Stack() (identical Photos, err error) {
 			return identical, err
 		}
 
-		UnscopedDb().Model(PhotoKeyword{}).Where("photo_id = ?", photo.ID).Updates(PhotoKeyword{PhotoID: m.ID})
-		UnscopedDb().Model(PhotoLabel{}).Where("photo_id = ?", photo.ID).Updates(PhotoLabel{PhotoID: m.ID})
-		UnscopedDb().Model(PhotoAlbum{}).Where("photo_uid = ?", photo.PhotoUID).Updates(PhotoAlbum{PhotoUID: m.PhotoUID})
+		switch DbDialect() {
+		case MySQL:
+			UnscopedDb().Exec("UPDATE IGNORE `photos_keywords` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE IGNORE `photos_labels` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE IGNORE `photos_albums` SET `photo_uid` = ? WHERE (photo_uid = ?)", m.PhotoUID, photo.PhotoUID)
+		case SQLite:
+			UnscopedDb().Exec("UPDATE OR IGNORE `photos_keywords` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE OR IGNORE `photos_labels` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE OR IGNORE `photos_albums` SET `photo_uid` = ? WHERE (photo_uid = ?)", m.PhotoUID, photo.PhotoUID)
+		default:
+			log.Warnf("photo: unknown SQL dialect (stack)")
+		}
 
 		if err := photo.Updates(map[string]interface{}{"DeletedAt": Timestamp(), "PhotoQuality": -1}); err != nil {
 			return identical, err
