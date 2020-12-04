@@ -23,7 +23,7 @@ type Location struct {
 	Cached      bool    `json:"-"`
 }
 
-const ApiName = "photoprism places"
+const ApiName = "places"
 
 var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
 var Secret = "photoprism"
@@ -44,23 +44,24 @@ func NewLocation(id string, lat, lng float64, name, category string, place Place
 
 	return result
 }
+
 func FindLocation(id string) (result Location, err error) {
 	if len(id) > 16 || len(id) == 0 {
-		return result, fmt.Errorf("api: invalid location id %s (%s)", id, ApiName)
+		return result, fmt.Errorf("invalid cell %s (%s)", id, ApiName)
 	}
 
 	start := time.Now()
 	lat, lng := s2.LatLng(id)
 
 	if lat == 0.0 || lng == 0.0 {
-		return result, fmt.Errorf("api: skipping lat %f, lng %f (%s)", lat, lng, ApiName)
+		return result, fmt.Errorf("skipping lat %f, lng %f (%s)", lat, lng, ApiName)
 	}
 
 	if hit, err := cache.Get(id); err == nil {
-		log.Debugf("api: cache hit for lat %f, lng %f (%s)", lat, lng, ApiName)
+		log.Debugf("places: cache hit for lat %f, lng %f", lat, lng)
 		var cached Location
 		if err := json.Unmarshal(hit, &cached); err != nil {
-			log.Errorf("api: %s (%s)", err.Error(), ApiName)
+			log.Errorf("places: %s", err.Error())
 		} else {
 			cached.Cached = true
 			return cached, nil
@@ -69,12 +70,12 @@ func FindLocation(id string) (result Location, err error) {
 
 	url := fmt.Sprintf(ReverseLookupURL, id)
 
-	log.Debugf("api: sending request to %s (%s)", url, ApiName)
+	log.Debugf("places: sending request to %s", url)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
-		log.Errorf("api: %s (%s)", err.Error(), ApiName)
+		log.Errorf("places: %s", err.Error())
 		return result, err
 	}
 
@@ -96,31 +97,29 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	if err != nil {
-		log.Errorf("api: %s", err.Error())
+		log.Errorf("places: %s (http request)", err.Error())
 		return result, err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("api: request failed with status code %d (%s)", r.StatusCode, ApiName)
-		log.Error(err)
+		err = fmt.Errorf("request failed with code %d (%s)", r.StatusCode, ApiName)
 		return result, err
 	}
 
 	err = json.NewDecoder(r.Body).Decode(&result)
 
 	if err != nil {
-		log.Errorf("api: %s (%s)", err.Error(), ApiName)
+		log.Errorf("places: %s (decode json)", err.Error())
 		return result, err
 	}
 
 	if result.ID == "" {
-		log.Debugf("api: %+v", result)
-		return result, fmt.Errorf("api: no result for %s (%s)", id, ApiName)
+		return result, fmt.Errorf("no result for %s (%s)", id, ApiName)
 	}
 
 	if cached, err := json.Marshal(result); err == nil {
 		if err := cache.Set(id, cached); err != nil {
-			log.Errorf("api: %s (%s)", id, ApiName)
+			log.Errorf("places: %s (cache)", err)
 		} else {
-			log.Debugf("cached %s [%s]", id, time.Since(start))
+			log.Debugf("places: cached cell %s [%s]", id, time.Since(start))
 		}
 	}
 

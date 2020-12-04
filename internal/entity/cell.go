@@ -50,7 +50,7 @@ func (m *Cell) Find(api string) error {
 	db := Db()
 
 	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
-		log.Debugf("places: found cell id %s", m.ID)
+		log.Debugf("location: found cell %s", m.ID)
 		return nil
 	}
 
@@ -59,7 +59,6 @@ func (m *Cell) Find(api string) error {
 	}
 
 	if err := l.QueryApi(api); err != nil {
-		log.Errorf("places: %s (query cell id %s)", err, m.ID)
 		return err
 	}
 
@@ -81,13 +80,13 @@ func (m *Cell) Find(api string) error {
 				"count": 1,
 			})
 
-			log.Infof("places: added place id %s [%s]", place.ID, time.Since(start))
+			log.Infof("location: added place %s [%s]", place.ID, time.Since(start))
 
 			m.Place = place
 		} else if found := FindPlace(l.PrefixedToken(), l.Label()); found != nil {
 			m.Place = found
 		} else {
-			log.Errorf("places: %s (create place id %s)", createErr, place.ID)
+			log.Errorf("location: %s (create place %s)", createErr, place.ID)
 			m.Place = &UnknownPlace
 		}
 	}
@@ -97,14 +96,14 @@ func (m *Cell) Find(api string) error {
 	m.CellCategory = l.Category()
 
 	if createErr := db.Create(m).Error; createErr == nil {
-		log.Debugf("places: added cell id %s [%s]", m.ID, time.Since(start))
+		log.Debugf("location: added cell %s [%s]", m.ID, time.Since(start))
 		return nil
 	} else if findErr := db.Preload("Place").First(m, "id = ?", m.ID).Error; findErr != nil {
-		log.Errorf("places: %s (create cell id %s)", createErr, m.ID)
-		log.Errorf("places: %s (find cell id %s)", findErr, m.ID)
+		log.Errorf("location: %s (create cell %s)", createErr, m.ID)
+		log.Errorf("location: %s (find cell %s)", findErr, m.ID)
 		return createErr
 	} else {
-		log.Debugf("places: found cell id %s after trying again [%s]", m.ID, time.Since(start))
+		log.Debugf("location: found cell %s [%s]", m.ID, time.Since(start))
 	}
 
 	return nil
@@ -118,12 +117,12 @@ func (m *Cell) Create() error {
 // FirstOrCreateCell fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateCell(m *Cell) *Cell {
 	if m.ID == "" {
-		log.Errorf("places: cell id must not be empty")
+		log.Errorf("location: cell must not be empty")
 		return nil
 	}
 
 	if m.PlaceID == "" {
-		log.Errorf("places: place id must not be empty (first or create cell id %s)", m.ID)
+		log.Errorf("location: place must not be empty (first or create cell %s)", m.ID)
 		return nil
 	}
 
@@ -136,7 +135,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 	} else if err := Db().Where("id = ?", m.ID).Preload("Place").First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("places: %s (first or create cell id %s)", createErr, m.ID)
+		log.Errorf("location: %s (first or create cell %s)", createErr, m.ID)
 	}
 
 	return nil
@@ -145,7 +144,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 // Keywords returns search keywords for a location.
 func (m *Cell) Keywords() (result []string) {
 	if m.Place == nil {
-		log.Errorf("places: place for cell id %s is nil - you might have found a bug", m.ID)
+		log.Errorf("location: place for cell %s is nil - you might have found a bug", m.ID)
 		return result
 	}
 

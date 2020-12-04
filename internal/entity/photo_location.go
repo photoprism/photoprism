@@ -67,10 +67,8 @@ func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classif
 		err := location.Find(geoApi)
 
 		if location.Place == nil {
-			log.Warnf("photo: location place is nil (uid %s, location %s) - bug?", m.PhotoUID, location.ID)
-		}
-
-		if err == nil && location.Place != nil && location.ID != UnknownLocation.ID {
+			log.Warnf("photo: failed fetching geo data (uid %s, cell %s)", m.PhotoUID, location.ID)
+		} else if err == nil && location.ID != UnknownLocation.ID {
 			m.Cell = location
 			m.CellID = location.ID
 			m.Place = location.Place

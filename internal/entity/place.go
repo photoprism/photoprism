@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/maps"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Place used to associate photos to places
@@ -45,7 +44,7 @@ func FindPlace(id string, label string) *Place {
 
 	if label == "" {
 		if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
-			log.Debugf("places: %s (find place id %s)", err.Error(), id)
+			log.Debugf("places: failed finding %s", id)
 			return nil
 		} else {
 			return &place
@@ -53,7 +52,6 @@ func FindPlace(id string, label string) *Place {
 	}
 
 	if err := Db().Where("id = ? OR place_label = ?", id, label).First(&place).Error; err != nil {
-		log.Debugf("places: %s (find place id %s, label %s)", err.Error(), id, txt.Quote(label))
 		return nil
 	} else {
 		return &place
@@ -77,12 +75,12 @@ func (m *Place) Create() error {
 // FirstOrCreatePlace fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePlace(m *Place) *Place {
 	if m.ID == "" {
-		log.Errorf("places: place id must not be empty (first or create)")
+		log.Errorf("places: place must not be empty (first or create)")
 		return nil
 	}
 
 	if m.PlaceLabel == "" {
-		log.Errorf("places: label must not be empty (first or create place id %s)", m.ID)
+		log.Errorf("places: label must not be empty (first or create place %s)", m.ID)
 		return nil
 	}
 
@@ -95,7 +93,7 @@ func FirstOrCreatePlace(m *Place) *Place {
 	} else if err := Db().Where("id = ? OR place_label = ?", m.ID, m.PlaceLabel).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("places: %s (create place id %s)", createErr, m.ID)
+		log.Errorf("places: %s (create place %s)", createErr, m.ID)
 	}
 
 	return nil

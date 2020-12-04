@@ -57,7 +57,7 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 	}
 
 	if _, _, err := m.Stat(); err != nil {
-		return m, fmt.Errorf("mediafile: %s not found", txt.Quote(m.BaseName()))
+		return m, fmt.Errorf("media: %s not found", txt.Quote(m.BaseName()))
 	}
 
 	return m, nil
@@ -117,7 +117,7 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 		m.takenAt = data.TakenAt.UTC()
 		m.takenAtSrc = entity.SrcMeta
 
-		log.Infof("mediafile: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
+		log.Infof("media: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
 
 		return m.takenAt, m.takenAtSrc
 	}
@@ -126,7 +126,7 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 		m.takenAt = nameTime
 		m.takenAtSrc = entity.SrcName
 
-		log.Infof("mediafile: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
+		log.Infof("media: %s was taken at %s (%s)", filepath.Base(m.fileName), m.takenAt.String(), m.takenAtSrc)
 
 		return m.takenAt, m.takenAtSrc
 	}
@@ -136,18 +136,18 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 	fileInfo, err := times.Stat(m.FileName())
 
 	if err != nil {
-		log.Warnf("mediafile: %s (file stat)", err.Error())
-		log.Infof("mediafile: %s was taken at %s (now)", filepath.Base(m.fileName), m.takenAt.String())
+		log.Warnf("media: %s (file stat)", err.Error())
+		log.Infof("media: %s was taken at %s (now)", filepath.Base(m.fileName), m.takenAt.String())
 
 		return m.takenAt, m.takenAtSrc
 	}
 
 	if fileInfo.HasBirthTime() {
 		m.takenAt = fileInfo.BirthTime().UTC()
-		log.Infof("mediafile: %s was taken at %s (file birth time)", filepath.Base(m.fileName), m.takenAt.String())
+		log.Infof("media: %s was taken at %s (file birth time)", filepath.Base(m.fileName), m.takenAt.String())
 	} else {
 		m.takenAt = fileInfo.ModTime().UTC()
-		log.Infof("mediafile: %s was taken at %s (file mod time)", filepath.Base(m.fileName), m.takenAt.String())
+		log.Infof("media: %s was taken at %s (file mod time)", filepath.Base(m.fileName), m.takenAt.String())
 	}
 
 	return m.takenAt, m.takenAtSrc
@@ -308,12 +308,12 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		f, err := NewMediaFile(fileName)
 
 		if err != nil {
-			log.Warnf("mediafile: %s in %s", err, txt.Quote(filepath.Base(fileName)))
+			log.Warnf("media: %s in %s", err, txt.Quote(filepath.Base(fileName)))
 			continue
 		}
 
 		if f.FileSize() == 0 {
-			log.Warnf("mediafile: %s is empty", txt.Quote(filepath.Base(fileName)))
+			log.Warnf("media: %s is empty", txt.Quote(filepath.Base(fileName)))
 			continue
 		}
 
@@ -843,7 +843,7 @@ func (m *MediaFile) Width() int {
 
 	if m.width < 0 {
 		if err := m.decodeDimensions(); err != nil {
-			log.Debugf("mediafile: %s", err)
+			log.Debugf("media: %s", err)
 		}
 	}
 
@@ -858,7 +858,7 @@ func (m *MediaFile) Height() int {
 
 	if m.height < 0 {
 		if err := m.decodeDimensions(); err != nil {
-			log.Debugf("mediafile: %s", err)
+			log.Debugf("media: %s", err)
 		}
 	}
 
@@ -903,14 +903,14 @@ func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, er
 	thumbType, ok := thumb.Types[typeName]
 
 	if !ok {
-		log.Errorf("mediafile: invalid type %s", typeName)
-		return "", fmt.Errorf("mediafile: invalid type %s", typeName)
+		log.Errorf("media: invalid type %s", typeName)
+		return "", fmt.Errorf("media: invalid type %s", typeName)
 	}
 
 	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, thumbType.Width, thumbType.Height, thumbType.Options...)
 
 	if err != nil {
-		err = fmt.Errorf("mediafile: failed creating thumbnail for %s (%s)", txt.Quote(m.BaseName()), err)
+		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", txt.Quote(m.BaseName()), err)
 		log.Error(err)
 		return "", err
 	}
@@ -936,11 +936,11 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("mediafile: no new thumbnails created for %s", m.BasePrefix(false))))
+			log.Debug(capture.Time(start, fmt.Sprintf("media: no new thumbnails created for %s", m.BasePrefix(false))))
 		case 1:
-			log.Info(capture.Time(start, fmt.Sprintf("mediafile: one thumbnail created for %s", m.BasePrefix(false))))
+			log.Info(capture.Time(start, fmt.Sprintf("media: one thumbnail created for %s", m.BasePrefix(false))))
 		default:
-			log.Info(capture.Time(start, fmt.Sprintf("mediafile: %d thumbnails created for %s", count, m.BasePrefix(false))))
+			log.Info(capture.Time(start, fmt.Sprintf("media: %d thumbnails created for %s", count, m.BasePrefix(false))))
 		}
 	}()
 
@@ -959,7 +959,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 		}
 
 		if fileName, err := thumb.Filename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
-			log.Errorf("mediafile: failed creating %s (%s)", txt.Quote(name), err)
+			log.Errorf("media: failed creating %s (%s)", txt.Quote(name), err)
 
 			return err
 		} else {
@@ -971,7 +971,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				img, err := imaging.Open(m.FileName(), imaging.AutoOrientation(true))
 
 				if err != nil {
-					log.Errorf("mediafile: %s in %s", err.Error(), txt.Quote(m.BaseName()))
+					log.Errorf("media: %s in %s", err.Error(), txt.Quote(m.BaseName()))
 					return err
 				}
 
@@ -990,7 +990,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if err != nil {
-				log.Errorf("mediafile: failed creating %s (%s)", txt.Quote(name), err)
+				log.Errorf("media: failed creating %s (%s)", txt.Quote(name), err)
 				return err
 			}
 
