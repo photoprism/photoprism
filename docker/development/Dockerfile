@@ -151,7 +151,7 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Expose HTTP port 2342, 2343 plus 9515 for chromedriver
 EXPOSE 2342 2343 9515
-VOLUME /var/lib/photoprism /go
+VOLUME /var/lib/photoprism
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null
