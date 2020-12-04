@@ -1,4 +1,4 @@
-package pro
+package hub
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/pro/places"
+	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/yaml.v2"
@@ -128,12 +128,12 @@ func (c *Config) Refresh() (err error) {
 
 	c.Sanitize()
 	client := &http.Client{Timeout: 60 * time.Second}
-	url := ApiURL
+	url := ServiceURL
 	method := http.MethodPost
 	var req *http.Request
 
 	if c.Key != "" {
-		url = fmt.Sprintf(ApiURL+"/%s", c.Key)
+		url = fmt.Sprintf(ServiceURL+"/%s", c.Key)
 		method = http.MethodPut
 		log.Debugf("getting updated api key for maps & places from %s", ApiHost())
 	} else {

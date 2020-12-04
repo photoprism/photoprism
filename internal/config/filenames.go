@@ -143,9 +143,9 @@ func (c *Config) ConfigFile() string {
 	return c.params.ConfigFile
 }
 
-// ProConfigFile returns the backend api config file name.
-func (c *Config) ProConfigFile() string {
-	return filepath.Join(c.SettingsPath(), "pro.yml")
+// HubConfigFile returns the backend api config file name.
+func (c *Config) HubConfigFile() string {
+	return filepath.Join(c.SettingsPath(), "hub.yml")
 }
 
 // SettingsFile returns the user settings file name.

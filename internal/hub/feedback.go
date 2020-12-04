@@ -1,4 +1,4 @@
-package pro
+package hub
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var FeedbackURL = ApiURL + "/%s/feedback"
+var FeedbackURL = ServiceURL + "/%s/feedback"
 
 type Feedback struct {
 	Category      string `json:"Category"`
@@ -28,7 +28,7 @@ type Feedback struct {
 	ClientCPU     int    `json:"ClientCPU"`
 }
 
-// NewFeedback creates a new photoprism.pro key request instance.
+// NewFeedback creates a new hub feedback instance.
 func NewFeedback(version string) *Feedback {
 	return &Feedback{
 		ClientVersion: version,

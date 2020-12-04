@@ -11,9 +11,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/hub"
+	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/pro"
-	"github.com/photoprism/photoprism/internal/pro/places"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/sirupsen/logrus"
@@ -29,7 +29,7 @@ type Config struct {
 	db       *gorm.DB
 	params   *Params
 	settings *Settings
-	pro      *pro.Config
+	hub      *hub.Config
 	token    string
 }
 
@@ -83,7 +83,7 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 
 	c.Settings().Propagate()
-	c.Pro().Propagate()
+	c.Hub().Propagate()
 }
 
 // Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
@@ -93,7 +93,7 @@ func (c *Config) Init() error {
 	}
 
 	c.initSettings()
-	c.initPro()
+	c.initHub()
 
 	c.Propagate()
 
@@ -278,30 +278,30 @@ func (c *Config) OriginalsLimit() int64 {
 	return c.params.OriginalsLimit * 1024 * 1024
 }
 
-// UpdatePro updates backend api credentials for maps & places.
-func (c *Config) UpdatePro() {
-	if err := c.pro.Refresh(); err != nil {
+// UpdateHub updates backend api credentials for maps & places.
+func (c *Config) UpdateHub() {
+	if err := c.hub.Refresh(); err != nil {
 		log.Debugf("config: %s", err)
-	} else if err := c.pro.Save(); err != nil {
+	} else if err := c.hub.Save(); err != nil {
 		log.Debugf("config: %s", err)
 	} else {
-		c.pro.Propagate()
+		c.hub.Propagate()
 	}
 }
 
-// initPro initializes backend api credentials for maps & places.
-func (c *Config) initPro() {
-	c.pro = pro.NewConfig(c.Version(), c.ProConfigFile())
+// initHub initializes PhotoPrism hub config.
+func (c *Config) initHub() {
+	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile())
 
-	if err := c.pro.Load(); err == nil {
+	if err := c.hub.Load(); err == nil {
 		// Do nothing.
-	} else if err := c.pro.Refresh(); err != nil {
+	} else if err := c.hub.Refresh(); err != nil {
 		log.Debugf("config: %s", err)
-	} else if err := c.pro.Save(); err != nil {
+	} else if err := c.hub.Save(); err != nil {
 		log.Debugf("config: %s", err)
 	}
 
-	c.pro.Propagate()
+	c.hub.Propagate()
 
 	ticker := time.NewTicker(time.Hour * 24)
 
@@ -309,17 +309,17 @@ func (c *Config) initPro() {
 		for {
 			select {
 			case <-ticker.C:
-				c.UpdatePro()
+				c.UpdateHub()
 			}
 		}
 	}()
 }
 
-// Config returns the backend api credentials.
-func (c *Config) Pro() *pro.Config {
-	if c.pro == nil {
-		c.initPro()
+// Hub returns the PhotoPrism hub config.
+func (c *Config) Hub() *hub.Config {
+	if c.hub == nil {
+		c.initHub()
 	}
 
-	return c.pro
+	return c.hub
 }

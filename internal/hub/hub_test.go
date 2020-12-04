@@ -1,4 +1,4 @@
-package pro
+package hub
 
 import (
 	"crypto/rand"
@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.DebugLevel)
 
-	ApiURL = "https://api-int.photoprism.app/v1/hello"
+	ServiceURL = "https://hub-int.photoprism.app/v1/hello"
 
 	code := m.Run()
 
@@ -48,13 +48,13 @@ func Token(size uint) string {
 	return string(result[:size])
 }
 
-func TestNewPro(t *testing.T) {
+func TestNewConfig(t *testing.T) {
 	c := NewConfig("0.0.0", "testdata/new.yml")
 
 	assert.IsType(t, &Config{}, c)
 }
 
-func TestNewProRequest(t *testing.T) {
+func TestNewRequest(t *testing.T) {
 	r := NewRequest("0.0.0")
 
 	assert.IsType(t, &Request{}, r)
@@ -70,7 +70,7 @@ func TestNewProRequest(t *testing.T) {
 
 func TestConfig_Refresh(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		fileName := fmt.Sprintf("testdata/pro.%s.yml", Token(8))
+		fileName := fmt.Sprintf("testdata/hub.%s.yml", Token(8))
 
 		c := NewConfig("0.0.0", fileName)
 
@@ -121,8 +121,8 @@ func TestConfig_Refresh(t *testing.T) {
 }
 
 func TestConfig_DecodeSession(t *testing.T) {
-	t.Run("pro3.yml", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/pro3.yml")
+	t.Run("hub3.yml", func(t *testing.T) {
+		c := NewConfig("0.0.0", "testdata/hub3.yml")
 
 		err := c.Load()
 
@@ -137,8 +137,8 @@ func TestConfig_DecodeSession(t *testing.T) {
 }
 
 func TestConfig_Load(t *testing.T) {
-	t.Run("pro1.yml", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/pro1.yml")
+	t.Run("hub1.yml", func(t *testing.T) {
+		c := NewConfig("0.0.0", "testdata/hub1.yml")
 
 		if err := c.Load(); err != nil {
 			t.Logf(err.Error())
@@ -150,8 +150,8 @@ func TestConfig_Load(t *testing.T) {
 		assert.Equal(t, "unregistered", c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 	})
-	t.Run("pro2.yml", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/pro2.yml")
+	t.Run("hub2.yml", func(t *testing.T) {
+		c := NewConfig("0.0.0", "testdata/hub2.yml")
 
 		if err := c.Load(); err != nil {
 			t.Logf(err.Error())
@@ -164,7 +164,7 @@ func TestConfig_Load(t *testing.T) {
 		assert.Equal(t, "200925-f8e2b580-Darwin-i386-DEBUG", c.Version)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/pro_xxx.yml")
+		c := NewConfig("0.0.0", "testdata/hub_xxx.yml")
 
 		if err := c.Load(); err == nil {
 			t.Fatal("file should not exist")
@@ -178,9 +178,9 @@ func TestConfig_Load(t *testing.T) {
 
 func TestConfig_Save(t *testing.T) {
 	t.Run("existing filename", func(t *testing.T) {
-		assert.FileExists(t, "testdata/pro1.yml")
+		assert.FileExists(t, "testdata/hub1.yml")
 
-		c := NewConfig("0.0.0", "testdata/pro1.yml")
+		c := NewConfig("0.0.0", "testdata/hub1.yml")
 
 		if err := c.Load(); err != nil {
 			t.Logf(err.Error())
@@ -192,13 +192,13 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "unregistered", c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 
-		c.FileName = "testdata/pro-save.yml"
+		c.FileName = "testdata/hub-save.yml"
 
 		if err := c.Save(); err != nil {
 			t.Fatal(err)
 		}
 
-		defer os.Remove("testdata/pro-save.yml")
+		defer os.Remove("testdata/hub-save.yml")
 
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
@@ -206,7 +206,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "unregistered", c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 
-		assert.FileExists(t, "testdata/pro-save.yml")
+		assert.FileExists(t, "testdata/hub-save.yml")
 
 		if err := c.Load(); err != nil {
 			t.Logf(err.Error())
@@ -219,7 +219,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "0.0.0", c.Version)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/pro_new.yml")
+		c := NewConfig("0.0.0", "testdata/hub_new.yml")
 		c.Key = "F60F5B25D59C397989E3CD374F81CDD7710A4FCA"
 		c.Secret = "foo"
 		c.Session = "bar"
@@ -236,9 +236,9 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "", c.Secret)
 		assert.Equal(t, "", c.Session)
 
-		assert.FileExists(t, "testdata/pro_new.yml")
+		assert.FileExists(t, "testdata/hub_new.yml")
 
-		if err := os.Remove("testdata/pro_new.yml"); err != nil {
+		if err := os.Remove("testdata/hub_new.yml"); err != nil {
 			t.Fatal(err)
 		}
 	})

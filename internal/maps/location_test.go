@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/pro/places"
+	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
 )
