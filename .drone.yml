@@ -5,9 +5,9 @@ name: linux-amd64
 
 trigger:
   branch:
-    - master
-    - develop
-    - main
+  - master
+  - develop
+  - main
 
 platform:
   arch: amd64
@@ -78,7 +78,7 @@ name: pull-request
 
 trigger:
   event:
-    - pull_request
+  - pull_request
 
 platform:
   arch: amd64
