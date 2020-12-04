@@ -70,7 +70,7 @@ func (m *Photo) EstimatePlace() {
 		Where("place_id <> '' AND place_id <> 'zz' AND place_src <> '' AND place_src <> ?", SrcEstimate).
 		Order(gorm.Expr(dateExpr, m.TakenAt)).
 		Preload("Place").First(&recentPhoto).Error; err != nil {
-		log.Errorf("photo: %s (estimate place)", err.Error())
+		log.Debugf("photo: can't estimate place at %s", m.TakenAt)
 		m.EstimateCountry()
 	} else {
 		if hours := recentPhoto.TakenAt.Sub(m.TakenAt) / time.Hour; hours < -36 || hours > 36 {
@@ -98,6 +98,10 @@ func (m *Photo) Optimize() (updated bool, err error) {
 	}
 
 	current := *m
+
+	if m.HasLatLng() && !m.HasLocation() {
+		m.UpdateLocation()
+	}
 
 	m.EstimatePlace()
 

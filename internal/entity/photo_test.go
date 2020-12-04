@@ -48,7 +48,7 @@ func TestSavePhotoForm(t *testing.T) {
 
 		m := PhotoFixtures["Photo08"]
 
-		err := SavePhotoForm(m, f, "places")
+		err := SavePhotoForm(m, f)
 
 		if err != nil {
 			t.Fatal(err)

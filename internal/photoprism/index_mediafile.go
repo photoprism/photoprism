@@ -615,7 +615,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		var locLabels classify.Labels
-		locKeywords, locLabels = photo.UpdateLocation(ind.conf.GeoCodingApi())
+		locKeywords, locLabels = photo.UpdateLocation()
 		labels = append(labels, locLabels...)
 	}
 

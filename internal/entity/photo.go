@@ -114,7 +114,7 @@ func NewPhoto() Photo {
 }
 
 // SavePhotoForm saves a model in the database using form data.
-func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
+func SavePhotoForm(model Photo, form form.Photo) error {
 	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng || model.PhotoCountry != form.PhotoCountry
 
 	if err := deepcopier.Copy(&model).From(form); err != nil {
@@ -138,7 +138,7 @@ func SavePhotoForm(model Photo, form form.Photo, geoApi string) error {
 	}
 
 	if locChanged && model.PlaceSrc == SrcManual {
-		locKeywords, labels := model.UpdateLocation(geoApi)
+		locKeywords, labels := model.UpdateLocation()
 
 		model.AddLabels(labels)
 

@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -81,6 +83,7 @@ func (c *Config) Propagate() {
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
 	places.UserAgent = c.UserAgent()
+	entity.GeoApi = c.GeoApi()
 
 	c.Settings().Propagate()
 	c.Hub().Propagate()
@@ -257,9 +260,9 @@ func (c *Config) WakeupInterval() time.Duration {
 	return time.Duration(c.params.WakeupInterval) * time.Second
 }
 
-// GeoCodingApi returns the preferred geo coding api (none, osm or places).
-func (c *Config) GeoCodingApi() string {
-	switch c.params.GeoCodingApi {
+// GeoApi returns the preferred geo coding api (none, osm or places).
+func (c *Config) GeoApi() string {
+	switch c.params.GeoApi {
 	case "places":
 		return "places"
 	case "osm":

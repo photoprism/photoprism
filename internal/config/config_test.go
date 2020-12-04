@@ -284,14 +284,14 @@ func TestConfig_WakeupInterval(t *testing.T) {
 	assert.Equal(t, time.Duration(900000000000), c.WakeupInterval())
 }
 
-func TestConfig_GeoCodingApi(t *testing.T) {
+func TestConfig_GeoApi(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "", c.GeoCodingApi())
-	c.params.GeoCodingApi = "places"
-	assert.Equal(t, "places", c.GeoCodingApi())
-	c.params.GeoCodingApi = "osm"
-	assert.Equal(t, "osm", c.GeoCodingApi())
+	assert.Equal(t, "", c.GeoApi())
+	c.params.GeoApi = "places"
+	assert.Equal(t, "places", c.GeoApi())
+	c.params.GeoApi = "osm"
+	assert.Equal(t, "osm", c.GeoApi())
 }
 
 func TestConfig_OriginalsLimit(t *testing.T) {

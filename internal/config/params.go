@@ -81,7 +81,7 @@ type Params struct {
 	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`
 	DetectNSFW         bool   `yaml:"detect-nsfw" flag:"detect-nsfw"`
 	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
-	GeoCodingApi       string `yaml:"geocoding-api" flag:"geocoding-api"`
+	GeoApi             string `yaml:"geo-api" flag:"geo-api"`
 	DownloadToken      string `yaml:"download-token" flag:"download-token"`
 	PreviewToken       string `yaml:"preview-token" flag:"preview-token"`
 	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`

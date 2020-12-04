@@ -68,7 +68,6 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
 		uid := c.Param("uid")
 		m, err := query.PhotoByUID(uid)
 
@@ -93,7 +92,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		}
 
 		// 3) Save model with values from form
-		if err := entity.SavePhotoForm(m, f, conf.GeoCodingApi()); err != nil {
+		if err := entity.SavePhotoForm(m, f); err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}

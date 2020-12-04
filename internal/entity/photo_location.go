@@ -60,11 +60,11 @@ func (m *Photo) GetTakenAt() time.Time {
 }
 
 // UpdateLocation updates location and labels based on latitude and longitude.
-func (m *Photo) UpdateLocation(geoApi string) (keywords []string, labels classify.Labels) {
+func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	if m.HasLatLng() {
 		var location = NewCell(m.PhotoLat, m.PhotoLng)
 
-		err := location.Find(geoApi)
+		err := location.Find(GeoApi)
 
 		if location.Place == nil {
 			log.Warnf("photo: failed fetching geo data (uid %s, cell %s)", m.PhotoUID, location.ID)

@@ -97,8 +97,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "sidecar-yaml", conf.SidecarYaml())
 	fmt.Printf("%-25s %s\n", "sidecar-path", conf.SidecarPath())
 
-	// Places / Geocoding API configuration.
-	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())
+	// Geo data API.
+	fmt.Printf("%-25s %s\n", "geo-api", conf.GeoApi())
 
 	// Thumbs, resampling and download security token.
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())

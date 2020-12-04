@@ -29,7 +29,7 @@ func NewShare(conf *config.Config) *Share {
 // logError logs an error message if err is not nil.
 func (worker *Share) logError(err error) {
 	if err != nil {
-		log.Errorf("share-worker: %s", err.Error())
+		log.Errorf("share: %s", err.Error())
 	}
 }
 
@@ -37,7 +37,7 @@ func (worker *Share) logError(err error) {
 func (worker *Share) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("share-worker: %s (panic)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("share: %s (panic)\nstack: %s", r, debug.Stack())
 			log.Error(err)
 		}
 	}()
@@ -89,7 +89,7 @@ func (worker *Share) Start() (err error) {
 
 			if _, ok := existingDirs[dir]; !ok {
 				if err := client.CreateDir(dir); err != nil {
-					log.Errorf("share-worker: failed creating folder %s", dir)
+					log.Errorf("share: failed creating folder %s", dir)
 					continue
 				}
 			}
@@ -100,7 +100,7 @@ func (worker *Share) Start() (err error) {
 				thumbType, ok := thumb.Types[a.ShareSize]
 
 				if !ok {
-					log.Errorf("share-worker: invalid size %s", a.ShareSize)
+					log.Errorf("share: invalid size %s", a.ShareSize)
 					continue
 				}
 
@@ -117,7 +117,7 @@ func (worker *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share-worker: uploaded %s to %s", file.RemoteName, a.AccName)
+				log.Infof("share: uploaded %s to %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareShared
@@ -168,7 +168,7 @@ func (worker *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share-worker: removed %s from %s", file.RemoteName, a.AccName)
+				log.Infof("share: removed %s from %s", file.RemoteName, a.AccName)
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareRemoved
