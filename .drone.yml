@@ -3,15 +3,14 @@ kind: pipeline
 type: exec
 name: linux-amd64
 
-trigger:
-  branch:
-  - master
-  - develop
-  - main
-
 platform:
   arch: amd64
   os: linux
+
+trigger:
+  event:
+    exclude:
+      - pull_request
 
 steps:
   - name: up
@@ -26,10 +25,6 @@ steps:
       - scripts/docker-login.sh
       - docker-compose -f docker-compose.drone.yml pull
       - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
-    when:
-      event:
-        exclude:
-          - pull_request
 
   - name: test-develop
     environment:
@@ -76,30 +71,31 @@ kind: pipeline
 type: exec
 name: pull-request
 
-trigger:
-  event:
-  - pull_request
-
 platform:
   arch: amd64
   os: linux
 
+trigger:
+  event:
+    include:
+      - pull_request
+
 steps:
   - name: up
-      commands:
-        - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+    commands:
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
   - name: test
-      commands:
-        - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+    commands:
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
 
   - name: down
-      commands:
-        - docker-compose -f docker-compose.drone.yml down
-      when:
-        status:
-          - failure
-          - success
+    commands:
+      - docker-compose -f docker-compose.drone.yml down
+    when:
+      status:
+        - failure
+        - success
 
 ---
 kind: pipeline
