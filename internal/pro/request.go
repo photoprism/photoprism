@@ -7,7 +7,7 @@ import (
 
 var ApiURL = "https://api.photoprism.app/v1/hello"
 
-// photoprism.pro api credentials request incl basic runtime specs for statistical evaluation.
+// backend api credentials request incl basic runtime specs for statistical evaluation.
 type Request struct {
 	ClientVersion string `json:"ClientVersion"`
 	ClientOS      string `json:"ClientOS"`

@@ -157,7 +157,7 @@ clean:
 	rm -f *.log
 	rm -rf node_modules
 	rm -rf storage/testdata
-	rm -rf storage/backups
+	rm -rf storage/backup
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:

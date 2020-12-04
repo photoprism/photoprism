@@ -59,6 +59,12 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.StoragePath(), err)
 	}
 
+	if c.BackupPath() == "" {
+		return notFoundError("backup")
+	} else if err := os.MkdirAll(c.BackupPath(), os.ModePerm); err != nil {
+		return createError(c.BackupPath(), err)
+	}
+
 	if c.OriginalsPath() == "" {
 		return notFoundError("originals")
 	} else if err := os.MkdirAll(c.OriginalsPath(), os.ModePerm); err != nil {
@@ -137,7 +143,7 @@ func (c *Config) ConfigFile() string {
 	return c.params.ConfigFile
 }
 
-// ProConfigFile returns the photoprism.pro api config file name.
+// ProConfigFile returns the backend api config file name.
 func (c *Config) ProConfigFile() string {
 	return filepath.Join(c.SettingsPath(), "pro.yml")
 }
@@ -294,6 +300,15 @@ func (c *Config) StoragePath() string {
 	}
 
 	return fs.Abs(c.params.StoragePath)
+}
+
+// BackupPath returns the backup storage path.
+func (c *Config) BackupPath() string {
+	if fs.PathExists(c.params.BackupPath) {
+		return fs.Abs(c.params.BackupPath)
+	}
+
+	return filepath.Join(c.StoragePath(), "backup")
 }
 
 // AssetsPath returns the path to static assets.

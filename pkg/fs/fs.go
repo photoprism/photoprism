@@ -61,6 +61,10 @@ func FileExists(fileName string) bool {
 
 // PathExists returns true if path exists and is a directory or symlink.
 func PathExists(path string) bool {
+	if path == "" {
+		return false
+	}
+
 	info, err := os.Stat(path)
 
 	if err != nil {

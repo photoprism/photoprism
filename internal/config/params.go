@@ -49,6 +49,7 @@ type Params struct {
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
 	StoragePath        string `yaml:"storage-path" flag:"storage-path"`
+	BackupPath         string `yaml:"backup-path" flag:"backup-path"`
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	OriginalsLimit     int64  `yaml:"originals-limit" flag:"originals-limit"`
@@ -120,6 +121,7 @@ func NewParams(ctx *cli.Context) *Params {
 func (c *Params) expandFilenames() {
 	c.SettingsPath = fs.Abs(c.SettingsPath)
 	c.StoragePath = fs.Abs(c.StoragePath)
+	c.BackupPath = fs.Abs(c.BackupPath)
 	c.AssetsPath = fs.Abs(c.AssetsPath)
 	c.CachePath = fs.Abs(c.CachePath)
 	c.OriginalsPath = fs.Abs(c.OriginalsPath)

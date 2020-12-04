@@ -61,9 +61,10 @@ ENV TMPDIR /tmp
 
 # Storage path names
 ENV PHOTOPRISM_ASSETS_PATH /photoprism/assets
+ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage
+ENV PHOTOPRISM_BACKUP_PATH /var/lib/photoprism
 ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
 ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
-ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage
 ENV PHOTOPRISM_LOG_FILENAME /photoprism/photoprism.log
 ENV PHOTOPRISM_PID_FILENAME /photoprism/photoprism.pid
 
@@ -100,12 +101,13 @@ COPY --from=build /root/.photoprism/assets /photoprism/assets
 
 # Create directories
 RUN mkdir -p \
+    /var/lib/photoprism \
     /photoprism/originals \
     /photoprism/import \
     /photoprism/storage/settings \
     /photoprism/storage/cache && \
-    chown -R photoprism:photoprism /photoprism && \
-    chmod -R a+rw /photoprism
+    chown -R photoprism:photoprism /photoprism /var/lib/photoprism && \
+    chmod -R a+rw /photoprism /var/lib/photoprism
 
 # Show photoprism version
 RUN photoprism -v
@@ -116,6 +118,7 @@ EXPOSE 2342
 # Configure entrypoint
 COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
+VOLUME /var/lib/photoprism
 
 # Run server
 CMD ["photoprism", "start"]

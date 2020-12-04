@@ -23,7 +23,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Config represents photoprism.pro api credentials for maps & geodata.
+// Config represents backend api credentials for maps & geodata.
 type Config struct {
 	Key      string `json:"key" yaml:"key"`
 	Secret   string `json:"secret" yaml:"secret"`
@@ -33,7 +33,7 @@ type Config struct {
 	FileName string `json:"-" yaml:"-"`
 }
 
-// NewConfig creates a new photoprism.pro api credentials instance.
+// NewConfig creates a new backend api credentials instance.
 func NewConfig(version string, fileName string) *Config {
 	return &Config{
 		Key:      "",
@@ -54,13 +54,13 @@ func (c *Config) MapKey() string {
 	}
 }
 
-// Propagate updates photoprism.pro api credentials in other packages.
+// Propagate updates backend api credentials in other packages.
 func (c *Config) Propagate() {
 	places.Key = c.Key
 	places.Secret = c.Secret
 }
 
-// Sanitize verifies and sanitizes photoprism.pro api credentials.
+// Sanitize verifies and sanitizes backend api credentials.
 func (c *Config) Sanitize() {
 	c.Key = strings.ToLower(c.Key)
 
@@ -74,7 +74,7 @@ func (c *Config) Sanitize() {
 	}
 }
 
-// DecodeSession decodes photoprism.pro api session data.
+// DecodeSession decodes backend api session data.
 func (c *Config) DecodeSession() (Session, error) {
 	c.Sanitize()
 
@@ -117,7 +117,7 @@ func (c *Config) DecodeSession() (Session, error) {
 	return result, nil
 }
 
-// Refresh updates photoprism.pro api credentials.
+// Refresh updates backend api credentials.
 func (c *Config) Refresh() (err error) {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -174,7 +174,7 @@ func (c *Config) Refresh() (err error) {
 	return nil
 }
 
-// Load photoprism.pro api credentials from a YAML file.
+// Load backend api credentials from a YAML file.
 func (c *Config) Load() error {
 	if !fs.FileExists(c.FileName) {
 		return fmt.Errorf("settings file not found: %s", txt.Quote(c.FileName))
@@ -205,7 +205,7 @@ func (c *Config) Load() error {
 	return nil
 }
 
-// Save photoprism.pro api credentials to a YAML file.
+// Save backend api credentials to a YAML file.
 func (c *Config) Save() error {
 	mutex.Lock()
 	defer mutex.Unlock()

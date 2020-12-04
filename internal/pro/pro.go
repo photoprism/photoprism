@@ -1,6 +1,6 @@
 /*
 
-Package pro contains photoprism.pro api config & clients.
+Package pro contains backend api config & clients.
 
 Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
 

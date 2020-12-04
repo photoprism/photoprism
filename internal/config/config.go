@@ -278,7 +278,7 @@ func (c *Config) OriginalsLimit() int64 {
 	return c.params.OriginalsLimit * 1024 * 1024
 }
 
-// UpdatePro updates photoprism.pro api credentials for maps & places.
+// UpdatePro updates backend api credentials for maps & places.
 func (c *Config) UpdatePro() {
 	if err := c.pro.Refresh(); err != nil {
 		log.Debugf("config: %s", err)
@@ -289,7 +289,7 @@ func (c *Config) UpdatePro() {
 	}
 }
 
-// initPro initializes photoprism.pro api credentials for maps & places.
+// initPro initializes backend api credentials for maps & places.
 func (c *Config) initPro() {
 	c.pro = pro.NewConfig(c.Version(), c.ProConfigFile())
 
@@ -315,7 +315,7 @@ func (c *Config) initPro() {
 	}()
 }
 
-// Config returns the photoprism.pro api credentials.
+// Config returns the backend api credentials.
 func (c *Config) Pro() *pro.Config {
 	if c.pro == nil {
 		c.initPro()

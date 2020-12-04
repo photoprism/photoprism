@@ -86,6 +86,12 @@ func TestConfig_SettingsPath(t *testing.T) {
 	assert.Contains(t, c.SettingsPath(), "/storage/testdata/settings")
 }
 
+func TestConfig_BackupPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Contains(t, c.BackupPath(), "/storage/testdata/backup")
+}
+
 func TestConfig_PIDFilename(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

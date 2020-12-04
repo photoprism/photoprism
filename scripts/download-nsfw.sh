@@ -8,13 +8,13 @@ MODEL_PATH="assets/nsfw"
 MODEL_ZIP="/tmp/photoprism/nsfw.zip"
 MODEL_HASH="2e03ad3c6aec27c270c650d0574ff2a6291d992b  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
-MODEL_BACKUP="storage/backups/nsfw-$TODAY"
+MODEL_BACKUP="storage/backup/nsfw-$TODAY"
 
 echo "Installing $MODEL_NAME model for TensorFlow..."
 
 # Create directories
 mkdir -p /tmp/photoprism
-mkdir -p storage/backups
+mkdir -p storage/backup
 
 # Check for update
 if [[ -f ${MODEL_ZIP} ]] && [[ `sha1sum ${MODEL_ZIP}` == ${MODEL_HASH} ]]; then
