@@ -46,7 +46,7 @@ ProxyRequests off
             <pre>
 http {
   server {
-    server_mame example.com
+    server_name example.com
     client_max_body_size 500M;
     
     location / {
