@@ -275,17 +275,22 @@ func (c *Config) StoragePath() string {
 		storageDir := fs.Abs(dirName)
 
 		// Find existing directories.
-		if fs.PathExists(originalsDir) && !c.ReadOnly() {
+		if fs.PathWritable(originalsDir) && !c.ReadOnly() {
 			return originalsDir
-		} else if fs.PathExists(storageDir) && c.ReadOnly() {
+		} else if fs.PathWritable(storageDir) && c.ReadOnly() {
 			return storageDir
+		}
+
+		// Fallback to backup storage path.
+		if fs.PathWritable(c.params.BackupPath) {
+			return fs.Abs(filepath.Join(c.params.BackupPath, dirName))
 		}
 
 		// Use .photoprism in home directory?
 		if usr, _ := user.Current(); usr.HomeDir != "" {
 			p := fs.Abs(filepath.Join(usr.HomeDir, fs.HiddenPath, dirName))
 
-			if fs.PathExists(p) || c.ReadOnly() {
+			if fs.PathWritable(p) || c.ReadOnly() {
 				return p
 			}
 		}
@@ -304,7 +309,7 @@ func (c *Config) StoragePath() string {
 
 // BackupPath returns the backup storage path.
 func (c *Config) BackupPath() string {
-	if fs.PathExists(c.params.BackupPath) {
+	if fs.PathWritable(c.params.BackupPath) {
 		return fs.Abs(c.params.BackupPath)
 	}
 
