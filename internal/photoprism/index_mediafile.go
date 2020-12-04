@@ -160,22 +160,25 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if !fileExists {
 		photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
-		// Try to find existing photo by exact time and location.
-		if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
-			metaData = m.MetaData()
-			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
+		// Add file to existing photo (file stack)?
+		if o.Stack {
+			// Try to find existing photo by exact time and location.
+			if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
+				metaData = m.MetaData()
+				photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
 
-			if photoQuery.Error == nil {
-				fileStacked = true
+				if photoQuery.Error == nil {
+					fileStacked = true
+				}
 			}
-		}
 
-		// Try to find existing photo by unique image id.
-		if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
-			photoQuery = entity.UnscopedDb().First(&photo, "uuid = ?", m.MetaData().DocumentID)
+			// Try to find existing photo by unique image id.
+			if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
+				photoQuery = entity.UnscopedDb().First(&photo, "uuid = ?", m.MetaData().DocumentID)
 
-			if photoQuery.Error == nil {
-				fileStacked = true
+				if photoQuery.Error == nil {
+					fileStacked = true
+				}
 			}
 		}
 	} else {
@@ -210,6 +213,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Try to recover photo metadata from backup if not exists.
 	if !photoExists {
 		photo.PhotoQuality = -1
+		photo.PhotoSingle = !o.Stack
 
 		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {

@@ -16,7 +16,7 @@ type Files struct {
 	mutex sync.RWMutex
 }
 
-// NewFiles returns a new Files instance pointer.
+// NewFiles returns a new Files instance.
 func NewFiles() *Files {
 	m := &Files{
 		files: make(query.FileMap),
@@ -42,7 +42,7 @@ func (m *Files) Init() error {
 	files, err := query.IndexedFiles()
 
 	if err != nil {
-		return fmt.Errorf("%s (query indexed files)", err.Error())
+		return fmt.Errorf("%s (find indexed files)", err.Error())
 	} else {
 		m.files = files
 		m.count = len(files)

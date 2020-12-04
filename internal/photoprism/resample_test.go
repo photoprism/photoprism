@@ -32,7 +32,7 @@ func TestResample_Start(t *testing.T) {
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, convert, NewFiles())
+	ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
 
 	imp := NewImport(conf, ind, convert)
 	opt := ImportOptionsMove(conf.ImportPath())

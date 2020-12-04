@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
@@ -30,6 +31,11 @@ func (m Photos) UIDs() []string {
 	return result
 }
 
+// MapKey returns a key referencing time and location for indexing.
+func MapKey(takenAt time.Time, cellId string) string {
+	return path.Join(strconv.FormatInt(takenAt.Unix(), 36), cellId)
+}
+
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint         `gorm:"primary_key" yaml:"-"`
@@ -48,6 +54,7 @@ type Photo struct {
 	PhotoName        string       `gorm:"type:VARBINARY(255);" json:"Name" yaml:"-"`
 	OriginalName     string       `gorm:"type:VARBINARY(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoSingle      bool         `json:"Single" yaml:"Single,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool         `json:"Panorama" yaml:"Panorama,omitempty"`
@@ -997,4 +1004,40 @@ func (m *Photo) Links() Links {
 // PrimaryFile returns the primary file for this photo.
 func (m *Photo) PrimaryFile() (File, error) {
 	return PrimaryFile(m.PhotoUID)
+}
+
+// MapKey returns a key referencing time and location for indexing.
+func (m *Photo) MapKey() string {
+	return MapKey(m.TakenAt, m.CellID)
+}
+
+// Stack merges the photo with identical ones.
+func (m *Photo) Stack() (identical Photos, err error) {
+	if err := Db().
+		Where("id <> ?", m.ID).
+		Where("taken_at = ?", m.TakenAt).
+		Where("cell_id = ?", m.CellID).
+		Where("camera_serial = ?", m.CameraSerial).
+		Where("photo_single = 0").
+		Find(&identical).Error; err != nil {
+		return identical, err
+	}
+
+	for _, photo := range identical {
+		if err := UnscopedDb().Model(File{}).Where("photo_id = ?", photo.ID).Updates(File{PhotoID: m.ID, PhotoUID: m.PhotoUID}).Error; err != nil {
+			return identical, err
+		}
+
+		UnscopedDb().Model(PhotoKeyword{}).Where("photo_id = ?", photo.ID).Updates(PhotoKeyword{PhotoID: m.ID})
+		UnscopedDb().Model(PhotoLabel{}).Where("photo_id = ?", photo.ID).Updates(PhotoLabel{PhotoID: m.ID})
+		UnscopedDb().Model(PhotoAlbum{}).Where("photo_uid = ?", photo.PhotoUID).Updates(PhotoAlbum{PhotoUID: m.PhotoUID})
+
+		if err := photo.Updates(map[string]interface{}{"DeletedAt": Timestamp(), "PhotoQuality": -1}); err != nil {
+			return identical, err
+		}
+	}
+
+	_, err = m.Optimize()
+
+	return identical, err
 }

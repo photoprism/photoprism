@@ -78,3 +78,14 @@ func TestPhotosCheck(t *testing.T) {
 	}
 	assert.IsType(t, entity.Photos{}, result)
 }
+
+func TestIdenticalPhotos(t *testing.T) {
+	result, err := IdenticalPhotos()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.IsType(t, entity.Photos{}, result)
+	// t.Logf("%+v", result)
+}

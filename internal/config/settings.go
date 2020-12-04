@@ -33,6 +33,7 @@ type IndexSettings struct {
 	Convert   bool   `json:"convert" yaml:"convert"`
 	Rescan    bool   `json:"rescan" yaml:"rescan"`
 	Sequences bool   `json:"sequences" yaml:"sequences"`
+	Stack     bool   `json:"stack" yaml:"stack"`
 }
 
 // ImportSettings represents import settings.
@@ -107,6 +108,7 @@ func NewSettings() *Settings {
 			Rescan:    false,
 			Convert:   true,
 			Sequences: true,
+			Stack:     true,
 		},
 	}
 }

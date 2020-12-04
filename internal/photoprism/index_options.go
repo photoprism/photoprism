@@ -4,6 +4,7 @@ type IndexOptions struct {
 	Path    string
 	Rescan  bool
 	Convert bool
+	Stack   bool
 }
 
 func (o *IndexOptions) SkipUnchanged() bool {
@@ -16,6 +17,19 @@ func IndexOptionsAll() IndexOptions {
 		Path:    "/",
 		Rescan:  true,
 		Convert: true,
+		Stack:   true,
+	}
+
+	return result
+}
+
+// IndexOptionsSingle returns new index options for unstacked, single files.
+func IndexOptionsSingle() IndexOptions {
+	result := IndexOptions{
+		Path:    "/",
+		Rescan:  true,
+		Convert: true,
+		Stack:   false,
 	}
 
 	return result
