@@ -417,4 +417,25 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 27, data.FocalLength)
 		assert.Equal(t, 0, int(data.Orientation))
 	})
+
+	t.Run("notebook.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/notebook.jpg", fs.TypeJpeg)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//  t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, 3000, data.Height)
+		assert.Equal(t, 4000, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/24", data.Exposure)
+		assert.Equal(t, "HMD Global", data.CameraMake)
+		assert.Equal(t, "Nokia X71", data.CameraModel)
+		assert.Equal(t, 26, data.FocalLength)
+		assert.Equal(t, 6, int(data.Orientation))
+	})
 }
