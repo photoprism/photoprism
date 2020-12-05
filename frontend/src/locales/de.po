@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/pages/albums.vue:273 src/share/albums.vue:248
@@ -95,7 +95,7 @@ msgid "Add Server"
 msgstr "Server hinzufügen"
 
 #: src/component/album/clipboard.vue:132 src/component/file/clipboard.vue:85
-#: src/component/label/clipboard.vue:63 src/component/photo/clipboard.vue:187
+#: src/component/label/clipboard.vue:64 src/component/photo/clipboard.vue:187
 #: src/dialog/photo/album.vue:17
 msgid "Add to album"
 msgstr "Hinzufügen"
@@ -375,8 +375,8 @@ msgstr "Abbrechen"
 msgid "Cards"
 msgstr "Karteikarten"
 
-#: src/component/photo/toolbar.vue:344 src/dialog/album/edit.vue:161
-#: src/pages/about/feedback.vue:91 src/pages/albums.vue:104
+#: src/component/photo/toolbar.vue:345 src/dialog/album/edit.vue:161
+#: src/pages/about/feedback.vue:93 src/pages/albums.vue:104
 msgid "Category"
 msgstr "Kategorie"
 
@@ -413,7 +413,7 @@ msgstr "Schließen"
 msgid "Codec"
 msgstr "Codec"
 
-#: src/component/photo/toolbar.vue:320
+#: src/component/photo/toolbar.vue:321
 msgid "Color"
 msgstr "Farbe"
 
@@ -540,10 +540,10 @@ msgstr "Standard"
 msgid "Default Folder"
 msgstr "Standard Ordner"
 
-#: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:84
+#: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:85
 #: src/dialog/account/remove.vue:15 src/dialog/album/delete.vue:18
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:15
-#: src/dialog/photo/files.vue:42 src/dialog/share.vue:228
+#: src/dialog/photo/files.vue:42 src/dialog/share.vue:229
 msgid "Delete"
 msgstr "Löschen"
 
@@ -617,7 +617,7 @@ msgstr "Duplikate werden übersprungen und erscheinen nur einmal."
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: src/pages/about/feedback.vue:164
+#: src/pages/about/feedback.vue:166
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -824,9 +824,9 @@ msgstr "Privates ausblenden"
 
 #: src/options/options.js:108
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
-#: src/pages/about/feedback.vue:123
+#: src/pages/about/feedback.vue:125
 msgid "How can we help?"
 msgstr "Wie können wir helfen?"
 
@@ -930,7 +930,7 @@ msgstr "Suchbegriffe"
 msgid "Label"
 msgstr "Kategorie"
 
-#: src/dialog/photo/labels.vue:48 src/pages/labels.vue:308
+#: src/dialog/photo/labels.vue:48 src/pages/labels.vue:309
 msgid "Label Name"
 msgstr "Name"
 
@@ -1082,7 +1082,7 @@ msgstr "Monochrom"
 msgid "Month"
 msgstr "Monat"
 
-#: src/options/options.js:127 src/options/options.js:180
+#: src/options/options.js:127
 msgid "Moonlight"
 msgstr "Moonlight"
 
@@ -1129,7 +1129,7 @@ msgstr[1] ""
 #: src/component/photo/list.vue:33 src/dialog/account/edit.vue:359
 #: src/dialog/album/edit.vue:105 src/dialog/photo/files.vue:72
 #: src/dialog/photo/files.vue:29 src/dialog/photo/info.vue:30
-#: src/pages/about/feedback.vue:141 src/pages/login.vue:67
+#: src/pages/about/feedback.vue:143 src/pages/login.vue:67
 #: src/share/photo/list.vue:28
 msgid "Name"
 msgstr "Name"
@@ -1312,6 +1312,10 @@ msgstr "Originale"
 #: src/options/options.js:250
 msgid "Other"
 msgstr "Sonstiges"
+
+#: src/options/options.js:180
+msgid "Outdoor"
+msgstr "Outdoor"
 
 #: src/dialog/photo/info.vue:101
 msgid "Panorama"
@@ -1514,8 +1518,8 @@ msgstr "Fehler melden"
 msgid "Request failed - invalid response"
 msgstr "Anfrage fehlgeschlagen - ungültige Antwort"
 
-#: src/pages/about/feedback.vue:102 src/pages/about/feedback.vue:122
-#: src/pages/about/feedback.vue:162
+#: src/pages/about/feedback.vue:104 src/pages/about/feedback.vue:124
+#: src/pages/about/feedback.vue:164
 msgid "Required"
 msgstr "Erforderlich"
 
@@ -1586,10 +1590,8 @@ msgid "Select albums or create a new one"
 msgstr "Alben auswählen oder neue erstellen"
 
 #: src/component/photo/clipboard.vue:33
-#, fuzzy
-#| msgid "Selection archived"
 msgid "Selection approved"
-msgstr "Auswahl archiviert"
+msgstr "Auswahl übernommen"
 
 #: src/component/photo/clipboard.vue:42
 msgid "Selection archived"
@@ -1747,8 +1749,8 @@ msgid "Sync"
 msgstr "Sync"
 
 #: src/dialog/account/edit.vue:335
-msgid "Sync raw images"
-msgstr "RAW-Dateien sichern"
+msgid "Sync raw and video files"
+msgstr "RAWs und Videos kopieren"
 
 #: src/component/photo/list.vue:30 src/dialog/photo/info.vue:50
 #: src/share/photo/list.vue:25
@@ -1995,7 +1997,7 @@ msgstr ""
 
 #: src/pages/about/feedback.vue:4
 msgid "Your message has been sent"
-msgstr "Nachricht versendet, vielen Dank!"
+msgstr "Ihre Nachricht wurde gesendet"
 
 #: src/component/photo/viewer.vue:135
 msgid "Zoom in/out"

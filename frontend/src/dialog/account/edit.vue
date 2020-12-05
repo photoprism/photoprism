@@ -177,7 +177,7 @@
                     :disabled="!model.AccSync"
                     hide-details
                     color="secondary-dark"
-                    :label="$gettext('Sync raw images')"
+                    :label="$gettext('Sync raw and video files')"
                     v-model="model.SyncRaw"
             ></v-checkbox>
           </v-flex>

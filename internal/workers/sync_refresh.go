@@ -51,11 +51,9 @@ func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
 			// Select supported types for download
 			mediaType := fs.GetMediaType(file.Name)
 			switch mediaType {
-			case fs.MediaImage:
+			case fs.MediaImage, fs.MediaSidecar:
 				f.Status = entity.FileSyncNew
-			case fs.MediaSidecar:
-				f.Status = entity.FileSyncNew
-			case fs.MediaRaw:
+			case fs.MediaRaw, fs.MediaVideo:
 				if a.SyncRaw {
 					f.Status = entity.FileSyncNew
 				}
@@ -68,7 +66,7 @@ func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
 				continue
 			}
 
-			if f.Status == entity.FileSyncIgnore && mediaType == fs.MediaRaw && a.SyncRaw {
+			if f.Status == entity.FileSyncIgnore && a.SyncRaw && (mediaType == fs.MediaRaw || mediaType == fs.MediaVideo) {
 				worker.logError(f.Update("Status", entity.FileSyncNew))
 			}
 

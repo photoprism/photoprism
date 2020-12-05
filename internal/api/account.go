@@ -274,6 +274,10 @@ func UpdateAccount(router *gin.RouterGroup) {
 			return
 		}
 
+		if m.AccSync {
+			workers.StartSync(service.Config())
+		}
+
 		c.JSON(http.StatusOK, m)
 	})
 }

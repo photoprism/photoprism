@@ -3,10 +3,10 @@ package fs
 type MediaType string
 
 const (
-	MediaRaw     MediaType = "raw"
 	MediaImage   MediaType = "image"
-	MediaVideo   MediaType = "video"
 	MediaSidecar MediaType = "sidecar"
+	MediaRaw     MediaType = "raw"
+	MediaVideo   MediaType = "video"
 	MediaOther   MediaType = "other"
 )
 
