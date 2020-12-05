@@ -45,6 +45,9 @@ import (
 
 var log = event.Log
 
+const SyncTimeout = time.Second * 45
+const AsyncTimeout = time.Minute * 20
+
 type Client struct {
 	client *gowebdav.Client
 }
@@ -55,7 +58,9 @@ func New(url, user, pass string) Client {
 
 	clt.SetTimeout(10 * time.Minute) // TODO: Change timeout if needed
 
-	result := Client{client: clt}
+	result := Client{
+		client: clt,
+	}
 
 	return result
 }
@@ -90,7 +95,20 @@ func (c Client) Files(dir string) (result fs.FileInfos, err error) {
 }
 
 // Directories returns all sub directories in path as string slice.
-func (c Client) Directories(root string, recursive bool) (result fs.FileInfos, err error) {
+func (c Client) Directories(root string, recursive bool, timeout time.Duration) (result fs.FileInfos, err error) {
+	start := time.Now()
+
+	result, err = c.fetchDirs(root, recursive, start, timeout)
+
+	if time.Now().Sub(start) >= timeout {
+		log.Warnf("webdav: read dir timeout reached")
+	}
+
+	return result, err
+}
+
+// fetchDirs recursively fetches all directories until the timeout is reached.
+func (c Client) fetchDirs(root string, recursive bool, start time.Time, timeout time.Duration) (result fs.FileInfos, err error) {
 	files, err := c.readDir(root)
 
 	if err != nil {
@@ -110,8 +128,8 @@ func (c Client) Directories(root string, recursive bool) (result fs.FileInfos, e
 
 		result = append(result, info)
 
-		if recursive {
-			subDirs, err := c.Directories(info.Abs, true)
+		if recursive && time.Now().Sub(start) < timeout {
+			subDirs, err := c.fetchDirs(info.Abs, true, start, timeout)
 
 			if err != nil {
 				return result, err
@@ -182,7 +200,7 @@ func (c Client) DownloadDir(from, to string, recursive, force bool) (errs []erro
 		return errs
 	}
 
-	dirs, err := c.Directories(from, false)
+	dirs, err := c.Directories(from, false, AsyncTimeout)
 
 	for _, dir := range dirs {
 		errs = append(errs, c.DownloadDir(dir.Abs, to, true, force)...)

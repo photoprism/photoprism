@@ -106,7 +106,7 @@ func (m *Account) Delete() error {
 func (m *Account) Directories() (result fs.FileInfos, err error) {
 	if m.AccType == remote.ServiceWebDAV {
 		c := webdav.New(m.AccURL, m.AccUser, m.AccPass)
-		result, err = c.Directories("/", true)
+		result, err = c.Directories("/", true, webdav.SyncTimeout)
 	}
 
 	sort.Sort(result)
