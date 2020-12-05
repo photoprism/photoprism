@@ -663,7 +663,7 @@ func (m *MediaFile) IsBitmap() bool {
 
 // IsVideo returns true if this is a video file.
 func (m *MediaFile) IsVideo() bool {
-	return strings.HasPrefix(m.MimeType(), "video/")
+	return strings.HasPrefix(m.MimeType(), "video/") || m.MediaType() == fs.MediaVideo
 }
 
 // IsJson return true if this media file is a json sidecar file.
@@ -730,7 +730,7 @@ func (m *MediaFile) IsSidecar() bool {
 
 // IsPlayableVideo returns true if this is a supported video file format.
 func (m *MediaFile) IsPlayableVideo() bool {
-	return m.IsVideo() && m.HasFileType(fs.TypeMP4)
+	return m.IsVideo() && m.HasFileType(fs.TypeMp4)
 }
 
 // IsPhoto returns true if this file is a photo / image.

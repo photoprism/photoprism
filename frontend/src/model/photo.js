@@ -249,7 +249,7 @@ export class Photo extends RestModel {
             return false;
         }
 
-        return this.Files.findIndex(f => f.Codec === CodecAvc1) !== -1 || this.Files.findIndex(f => f.Type === TypeMP4) !== -1;
+        return this.Files.findIndex(f => f.Video) !== -1;
     }
 
     videoFile() {

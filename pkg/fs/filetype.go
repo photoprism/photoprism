@@ -20,8 +20,17 @@ const (
 	TypeRaw      FileType = "raw"  // RAW image file.
 	TypeHEIF     FileType = "heif" // High Efficiency Image File Format
 	TypeMov      FileType = "mov"  // Video files.
-	TypeMP4      FileType = "mp4"
+	TypeMp4      FileType = "mp4"
+	TypeHEVC     FileType = "hevc"
 	TypeAvi      FileType = "avi"
+	Type3gp      FileType = "3gp"
+	Type3g2      FileType = "3g2"
+	TypeFlv      FileType = "flv"
+	TypeMkv      FileType = "mkv"
+	TypeMpg      FileType = "mpg"
+	TypeOgv      FileType = "ogv"
+	TypeWebm     FileType = "webm"
+	TypeWMV      FileType = "wmv"
 	TypeXMP      FileType = "xmp"  // Adobe XMP sidecar file (XML).
 	TypeAAE      FileType = "aae"  // Apple sidecar file (XML).
 	TypeXML      FileType = "xml"  // XML metadata / config / sidecar file.
@@ -39,6 +48,8 @@ type TypeExtensions map[FileType][]string
 const (
 	YamlExt = ".yml"
 	JpegExt = ".jpg"
+	AvcExt  = ".mp4"
+	HevcExt = ".hevc"
 )
 
 // FileExt contains the filename extensions of file formats known to PhotoPrism.
@@ -57,7 +68,17 @@ var FileExt = FileExtensions{
 	".dng":  TypeRaw,
 	".mov":  TypeMov,
 	".avi":  TypeAvi,
-	".mp4":  TypeMP4,
+	".mp4":  TypeMp4,
+	".hevc": TypeHEVC,
+	".3gp":  Type3gp,
+	".3g2":  Type3g2,
+	".flv":  TypeFlv,
+	".mkv":  TypeMkv,
+	".mpg":  TypeMpg,
+	".mpeg": TypeMpg,
+	".ogv":  TypeOgv,
+	".webm": TypeWebm,
+	".wmv":  TypeWMV,
 	".yml":  TypeYaml,
 	".yaml": TypeYaml,
 	".jpg":  TypeJpeg,

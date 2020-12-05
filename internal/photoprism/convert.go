@@ -286,3 +286,79 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 
 	return NewMediaFile(jpegName)
 }
+
+// AvcConvertCommand returns the command for converting video files to AVC1.
+func (c *Convert) AvcConvertCommand(mf *MediaFile, avcName string) (result *exec.Cmd, useMutex bool, err error) {
+	if mf.IsVideo() {
+		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), avcName)
+	} else {
+		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", mf.FileType(), txt.Quote(mf.BaseName()))
+	}
+
+	return result, useMutex, nil
+}
+
+// ToAvc1 converts a single video file to AVC1 if possible.
+func (c *Convert) ToAvc1(video *MediaFile) (*MediaFile, error) {
+	if !video.Exists() {
+		return nil, fmt.Errorf("convert: can not convert to avc1, file does not exist (%s)", video.RelName(c.conf.OriginalsPath()))
+	}
+
+	if video.IsPlayableVideo() {
+		return video, nil
+	}
+
+	avcName := fs.TypeMp4.FindFirst(video.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().Index.Sequences)
+
+	mediaFile, err := NewMediaFile(avcName)
+
+	if err == nil && mediaFile.IsPlayableVideo() {
+		return mediaFile, nil
+	}
+
+	if !c.conf.SidecarWritable() {
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", video.RelName(c.conf.OriginalsPath()))
+	}
+
+	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt, c.conf.Settings().Index.Sequences)
+	fileName := video.RelName(c.conf.OriginalsPath())
+
+	log.Debugf("convert: %s -> %s", fileName, filepath.Base(avcName))
+
+	event.Publish("index.converting", event.Data{
+		"fileType": video.FileType(),
+		"fileName": fileName,
+		"baseName": filepath.Base(fileName),
+		"xmpName":  "",
+	})
+
+	cmd, useMutex, err := c.AvcConvertCommand(video, avcName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if useMutex {
+		// Make sure only one command is executed at a time.
+		// See https://photo.stackexchange.com/questions/105969/darktable-cli-fails-because-of-locked-database-file
+		c.cmdMutex.Lock()
+		defer c.cmdMutex.Unlock()
+	}
+
+	// Fetch command output.
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
+	// Run convert command.
+	if err := cmd.Run(); err != nil {
+		if stderr.String() != "" {
+			return nil, errors.New(stderr.String())
+		} else {
+			return nil, err
+		}
+	}
+
+	return NewMediaFile(avcName)
+}

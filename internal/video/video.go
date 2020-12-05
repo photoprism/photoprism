@@ -45,7 +45,7 @@ type Type struct {
 type TypeMap map[string]Type
 
 var TypeMP4 = Type{
-	Format: fs.TypeMP4,
+	Format: fs.TypeMp4,
 	Width:  0,
 	Height: 0,
 	Public: true,

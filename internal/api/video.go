@@ -3,11 +3,12 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/internal/service"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/video"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -60,7 +61,7 @@ func GetVideo(router *gin.RouterGroup) {
 
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
-		if !fs.FileExists(fileName) {
+		if mf, err := photoprism.NewMediaFile(fileName); err != nil {
 			log.Errorf("video: file %s is missing", txt.Quote(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 
@@ -68,6 +69,18 @@ func GetVideo(router *gin.RouterGroup) {
 			logError("video", f.Update("FileMissing", true))
 
 			return
+		} else if !mf.IsPlayableVideo() {
+			conv := service.Convert()
+			avcFile, err := conv.ToAvc1(mf)
+
+			if err != nil {
+				log.Errorf("video: failed transcoding %s", txt.Quote(f.FileName))
+				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
+
+				return
+			}
+
+			fileName = avcFile.FileName()
 		}
 
 		if c.Query("download") != "" {
