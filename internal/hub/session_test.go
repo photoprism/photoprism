@@ -1,4 +1,4 @@
-package pro
+package hub
 
 import (
 	"testing"

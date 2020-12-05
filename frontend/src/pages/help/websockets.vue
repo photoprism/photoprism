@@ -13,16 +13,16 @@
         <v-card class="white">
           <v-card-text>
             <p>
-              In this <a target="_blank" href="https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-reverse-proxy-websockets-with-apache-2-4/">tutorial</a>, you will learn how to configure Apache Web Server 2.4 to reverse proxy WebSockets.
+              In this <a target="_blank" href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html">document</a>, you will learn how to configure Apache Web Server 2.4 to reverse proxy WebSockets.
             </p>
             <p>
-              Example configuration:
+              Example configuration (where "photoprism" is the name or IP of your server):
             </p>
             <pre>
 RewriteEngine on
-RewriteCond ${HTTP:Upgrade} websocket [NC]
-RewriteCond ${HTTP:Connection} upgrade [NC]
-RewriteRule .* "ws:/photoprism:2342/$1" [P,L]
+RewriteCond %{HTTP:Upgrade} websocket [NC]
+RewriteCond %{HTTP:Connection} upgrade [NC]
+RewriteRule ^/?(.*) "ws://photoprism:2342/$1" [P,L]
 
 ProxyPass / http://photoprism:2342/
 ProxyPassReverse / http://photoprism:2342/
@@ -46,7 +46,7 @@ ProxyRequests off
             <pre>
 http {
   server {
-    server_mame example.com
+    server_name example.com
     client_max_body_size 500M;
     
     location / {

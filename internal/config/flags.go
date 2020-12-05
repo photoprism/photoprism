@@ -123,8 +123,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "storage-path",
-		Usage:  "storage `PATH` for generated files like cache and index",
+		Usage:  "storage `PATH` for cache, database and sidecar files",
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
+	},
+	cli.StringFlag{
+		Name:   "backup-path",
+		Usage:  "backup storage `PATH`",
+		EnvVar: "PHOTOPRISM_BACKUP_PATH",
 	},
 	cli.StringFlag{
 		Name:   "import-path",
@@ -251,10 +256,10 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
 	cli.StringFlag{
-		Name:   "geocoding-api, g",
-		Usage:  "geocoding api (none, osm or places)",
+		Name:   "geo-api, g",
+		Usage:  "geo data api (none, osm or places)",
 		Value:  "places",
-		EnvVar: "PHOTOPRISM_GEOCODING_API",
+		EnvVar: "PHOTOPRISM_GEO_API",
 	},
 	cli.StringFlag{
 		Name:   "download-token",

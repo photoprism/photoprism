@@ -364,10 +364,10 @@ describe("model/photo", () => {
         const values2 = {ID: 9, UID: "ABC163"};
         const photo2 = new Photo(values2);
         assert.equal(photo2.isPlayable(), false);
-        const values3 = {ID: 10, UID: "ABC127", Filename: "1980/01/superCuteKitten.mp4", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
+        const values3 = {ID: 10, UID: "ABC127", Filename: "1980/01/superCuteKitten.mp4", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Video: true, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
         const photo3 = new Photo(values3);
         assert.equal(photo3.isPlayable(), true);
-        const values4 = {ID: 1, UID: "ABC128", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53", Codec: "avc1"}]};
+        const values4 = {ID: 1, UID: "ABC128", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Video: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53", Codec: "avc1"}]};
         const photo4 = new Photo(values4);
         assert.equal(photo4.isPlayable(), true);
     });

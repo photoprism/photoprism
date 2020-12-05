@@ -17,12 +17,12 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ## Key Features ##
 
-* Our clearly structured [user interface](https://demo.photoprism.org/) makes organizing and sharing your personal photo collection as easy as 
+* Our clearly structured [user interface](https://demo.photoprism.org/) makes browsing and organizing your personal photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
-  based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _projection_, 
-  _location type_, _quality_, and many other properties.
+  based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, 
+  _location type_, and many other properties.
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
   and for rediscovering long-forgotten shots.
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may 
@@ -68,10 +68,10 @@ related topics. Don't be afraid to ask stupid questions.
 
 This project is about freedom and privacy but not necessarily about free beer. We feel like it
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
-will have a price tag and then maybe you'd like to have some extra features that need to be developed.
+will have a price tag, and then maybe you'd like to have some extra features that need to be developed.
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
-especially if you have feature requests or need help with using our software.
+especially if you have feature requests, or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
 and [PayPal](https://www.paypal.me/browseyourlife). 
 

@@ -102,27 +102,37 @@ func (data *Data) GPhoto(jsonData []byte) (err error) {
 		return err
 	}
 
-	if s := p.SanitizedTitle(); s != "" {
+	if s := p.SanitizedTitle(); s != "" && data.Title == "" {
 		data.Title = s
 	}
 
-	if s := p.SanitizedDescription(); s != "" {
+	if s := p.SanitizedDescription(); s != "" && data.Description == "" {
 		data.Description = s
 	}
 
-	if p.Views > 0 {
+	if p.Views > 0 && data.Views == 0 {
 		data.Views = p.Views
 	}
 
 	if p.TakenAt.Exists() {
-		data.TakenAt = p.TakenAt.Time()
-		data.TakenAtLocal = p.TakenAt.Time()
+		if data.TakenAt.IsZero() {
+			data.TakenAt = p.TakenAt.Time()
+		}
+
+		if data.TakenAtLocal.IsZero() {
+			data.TakenAtLocal = p.TakenAt.Time()
+		}
 	}
 
 	if p.Geo.Exists() {
-		data.Lat = float32(p.Geo.Lat)
-		data.Lng = float32(p.Geo.Lng)
-		data.Altitude = int(p.Geo.Altitude)
+		if data.Lat == 0 && data.Lng == 0 {
+			data.Lat = float32(p.Geo.Lat)
+			data.Lng = float32(p.Geo.Lng)
+		}
+
+		if data.Altitude == 0 {
+			data.Altitude = int(p.Geo.Altitude)
+		}
 	}
 
 	// Set time zone and calculate UTC time.

@@ -69,6 +69,7 @@ func configAction(ctx *cli.Context) error {
 	// Main directories.
 	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())
 	fmt.Printf("%-25s %s\n", "storage-path", conf.StoragePath())
+	fmt.Printf("%-25s %s\n", "backup-path", conf.BackupPath())
 	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
 	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
@@ -96,8 +97,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "sidecar-yaml", conf.SidecarYaml())
 	fmt.Printf("%-25s %s\n", "sidecar-path", conf.SidecarPath())
 
-	// Places / Geocoding API configuration.
-	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoCodingApi())
+	// Geo data API.
+	fmt.Printf("%-25s %s\n", "geo-api", conf.GeoApi())
 
 	// Thumbs, resampling and download security token.
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())

@@ -18,6 +18,7 @@ import (
 )
 
 var log = event.Log
+var GeoApi = "places"
 
 func logError(result *gorm.DB) {
 	if result.Error != nil {

@@ -1,24 +1,26 @@
-package pro
+package hub
 
 import (
 	"net/url"
 	"runtime"
 )
 
-var ApiURL = "https://api-int.photoprism.pro/v1/hello"
+var ServiceURL = "https://hub.photoprism.app/v1/hello"
 
-// photoprism.pro api credentials request incl basic runtime specs for statistical evaluation.
+// Backend api credentials request incl basic runtime specs.
 type Request struct {
 	ClientVersion string `json:"ClientVersion"`
+	ClientSerial  string `json:"ClientSerial"`
 	ClientOS      string `json:"ClientOS"`
 	ClientArch    string `json:"ClientArch"`
 	ClientCPU     int    `json:"ClientCPU"`
 }
 
-// NewRequest creates a new photoprism.pro key request instance.
-func NewRequest(version string) *Request {
+// NewRequest creates a new hub key request instance.
+func NewRequest(version, serial string) *Request {
 	return &Request{
 		ClientVersion: version,
+		ClientSerial:  serial,
 		ClientOS:      runtime.GOOS,
 		ClientArch:    runtime.GOARCH,
 		ClientCPU:     runtime.NumCPU(),
@@ -27,7 +29,7 @@ func NewRequest(version string) *Request {
 
 // ApiHost returns the full API URL host name.
 func ApiHost() string {
-	u, err := url.Parse(ApiURL)
+	u, err := url.Parse(ServiceURL)
 
 	if err != nil {
 		log.Warn(err)

@@ -56,6 +56,7 @@ func main() {
 		commands.IndexCommand,
 		commands.ImportCommand,
 		commands.MomentsCommand,
+		commands.OptimizeCommand,
 		commands.PurgeCommand,
 		commands.CopyCommand,
 		commands.ConvertCommand,

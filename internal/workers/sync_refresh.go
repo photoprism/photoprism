@@ -16,7 +16,7 @@ func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
 
 	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
 
-	subDirs, err := client.Directories(a.SyncPath, true)
+	subDirs, err := client.Directories(a.SyncPath, true, webdav.AsyncTimeout)
 
 	if err != nil {
 		log.Error(err)
@@ -51,11 +51,9 @@ func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
 			// Select supported types for download
 			mediaType := fs.GetMediaType(file.Name)
 			switch mediaType {
-			case fs.MediaImage:
+			case fs.MediaImage, fs.MediaSidecar:
 				f.Status = entity.FileSyncNew
-			case fs.MediaSidecar:
-				f.Status = entity.FileSyncNew
-			case fs.MediaRaw:
+			case fs.MediaRaw, fs.MediaVideo:
 				if a.SyncRaw {
 					f.Status = entity.FileSyncNew
 				}
@@ -64,11 +62,11 @@ func (worker *Sync) refresh(a entity.Account) (complete bool, err error) {
 			f = entity.FirstOrCreateFileSync(f)
 
 			if f == nil {
-				log.Errorf("sync-worker: file sync entity should not be nil - bug?")
+				log.Errorf("sync: file sync entity should not be nil - bug?")
 				continue
 			}
 
-			if f.Status == entity.FileSyncIgnore && mediaType == fs.MediaRaw && a.SyncRaw {
+			if f.Status == entity.FileSyncIgnore && a.SyncRaw && (mediaType == fs.MediaRaw || mediaType == fs.MediaVideo) {
 				worker.logError(f.Update("Status", entity.FileSyncNew))
 			}
 

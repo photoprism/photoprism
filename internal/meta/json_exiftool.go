@@ -63,7 +63,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 				}
 			}
 
-			if !jsonValue.Exists() {
+			// Skip empty values.
+			if !jsonValue.Exists() || !fieldValue.IsZero() {
 				continue
 			}
 
@@ -94,12 +95,14 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
-	// Calculate latitude and longitude if exists.
-	if data.GPSPosition != "" {
-		data.Lat, data.Lng = GpsToLatLng(data.GPSPosition)
-	} else if data.GPSLatitude != "" && data.GPSLongitude != "" {
-		data.Lat = GpsToDecimal(data.GPSLatitude)
-		data.Lng = GpsToDecimal(data.GPSLongitude)
+	// Set latitude and longitude if known and not already set.
+	if data.Lat == 0 && data.Lng == 0 {
+		if data.GPSPosition != "" {
+			data.Lat, data.Lng = GpsToLatLng(data.GPSPosition)
+		} else if data.GPSLatitude != "" && data.GPSLongitude != "" {
+			data.Lat = GpsToDecimal(data.GPSLatitude)
+			data.Lng = GpsToDecimal(data.GPSLongitude)
+		}
 	}
 
 	// Set time zone and calculate UTC time.

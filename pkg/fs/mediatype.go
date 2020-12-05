@@ -3,10 +3,10 @@ package fs
 type MediaType string
 
 const (
-	MediaRaw     MediaType = "raw"
 	MediaImage   MediaType = "image"
-	MediaVideo   MediaType = "video"
 	MediaSidecar MediaType = "sidecar"
+	MediaRaw     MediaType = "raw"
+	MediaVideo   MediaType = "video"
 	MediaOther   MediaType = "other"
 )
 
@@ -19,8 +19,17 @@ var MediaTypes = map[FileType]MediaType{
 	TypeBitmap:   MediaImage,
 	TypeHEIF:     MediaImage,
 	TypeAvi:      MediaVideo,
-	TypeMP4:      MediaVideo,
+	TypeHEVC:     MediaVideo,
+	TypeMp4:      MediaVideo,
 	TypeMov:      MediaVideo,
+	Type3gp:      MediaVideo,
+	Type3g2:      MediaVideo,
+	TypeFlv:      MediaVideo,
+	TypeMkv:      MediaVideo,
+	TypeMpg:      MediaVideo,
+	TypeOgv:      MediaVideo,
+	TypeWebm:     MediaVideo,
+	TypeWMV:      MediaVideo,
 	TypeXMP:      MediaSidecar,
 	TypeXML:      MediaSidecar,
 	TypeAAE:      MediaSidecar,

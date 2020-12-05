@@ -134,12 +134,12 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-ou
 
 # Create photoprism user and directory for deployment
 RUN useradd photoprism -m -d /photoprism && \
-    chmod 777 /photoprism && \
+    mkdir -p /var/lib/photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    chown -R photoprism:photoprism /photoprism && \
-    find /go -type d -print0 | xargs -0 chmod 777 && \
-    find /go -type f -print0 | xargs -0 chmod a+rw
+    chown -R photoprism:photoprism /photoprism /var/lib/photoprism && \
+    chmod -R a+rw /photoprism /var/lib/photoprism /go && \
+    find /go -type d -print0 | xargs -0 chmod 777
 
 # Copy mysql client config for development
 COPY --chown=root:root /docker/development/.my.cnf /root/.my.cnf
@@ -151,6 +151,7 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Expose HTTP port 2342, 2343 plus 9515 for chromedriver
 EXPOSE 2342 2343 9515
+VOLUME /var/lib/photoprism
 
 # Keep container running (services can be started manually using a terminal)
 CMD tail -f /dev/null

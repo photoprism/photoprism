@@ -20,6 +20,12 @@ func TestPathExists(t *testing.T) {
 	assert.False(t, PathExists("./testdata3ggdtgdg"))
 }
 
+func TestPathWritable(t *testing.T) {
+	assert.True(t, PathExists("./testdata"))
+	assert.False(t, PathExists("./testdata/test.jpg"))
+	assert.False(t, PathExists("./testdata3ggdtgdg"))
+}
+
 func TestOverwrite(t *testing.T) {
 	data := make([]byte, 3)
 	data[1] = 3

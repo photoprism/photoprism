@@ -33,6 +33,7 @@ type IndexSettings struct {
 	Convert   bool   `json:"convert" yaml:"convert"`
 	Rescan    bool   `json:"rescan" yaml:"rescan"`
 	Sequences bool   `json:"sequences" yaml:"sequences"`
+	Stack     bool   `json:"stack" yaml:"stack"`
 }
 
 // ImportSettings represents import settings.
@@ -107,6 +108,7 @@ func NewSettings() *Settings {
 			Rescan:    false,
 			Convert:   true,
 			Sequences: true,
+			Stack:     true,
 		},
 	}
 }
@@ -151,18 +153,20 @@ func (s *Settings) Save(fileName string) error {
 		return err
 	}
 
-	s.Propagate()
-
 	return nil
 }
 
 // initSettings initializes user settings from a config file.
 func (c *Config) initSettings() {
 	c.settings = NewSettings()
-	p := c.SettingsFile()
+	fileName := c.SettingsFile()
 
-	if err := c.settings.Load(p); err != nil {
-		log.Debugln(err)
+	if err := c.settings.Load(fileName); err == nil {
+		log.Debugf("config: loaded settings from %s ", fileName)
+	} else if err := c.settings.Save(fileName); err != nil {
+		log.Errorf("failed creating %s: %s", fileName, err)
+	} else {
+		log.Debugf("config: created %s ", fileName)
 	}
 
 	i18n.SetDir(c.LocalesPath())

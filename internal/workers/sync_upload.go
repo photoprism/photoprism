@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -25,7 +27,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 	}
 
 	if len(files) == 0 {
-		log.Infof("sync-worker: upload complete for %s", a.AccName)
+		log.Infof("sync: upload complete for %s", a.AccName)
 		event.Publish("sync.uploaded", event.Data{"account": a})
 		return true, nil
 	}
@@ -44,7 +46,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 
 		if _, ok := existingDirs[remoteDir]; !ok {
 			if err := client.CreateDir(remoteDir); err != nil {
-				log.Errorf("sync-worker: failed creating remote folder %s", remoteDir)
+				log.Errorf("sync: failed creating remote folder %s", remoteDir)
 				continue // try again next time
 			}
 		}
@@ -54,7 +56,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 			continue // try again next time
 		}
 
-		log.Infof("sync-worker: uploaded %s to %s on %s", fileName, remoteName, a.AccName)
+		log.Infof("sync: uploaded %s to %s (%s)", txt.Quote(file.FileName), txt.Quote(remoteName), a.AccName)
 
 		fileSync := entity.NewFileSync(a.ID, remoteName)
 		fileSync.Status = entity.FileSyncUploaded

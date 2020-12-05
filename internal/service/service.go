@@ -19,6 +19,7 @@ var services struct {
 	Classify *classify.TensorFlow
 	Convert  *photoprism.Convert
 	Files    *photoprism.Files
+	Photos   *photoprism.Photos
 	Import   *photoprism.Import
 	Index    *photoprism.Index
 	Moments  *photoprism.Moments

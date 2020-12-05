@@ -45,7 +45,7 @@ func StartMeta(conf *config.Config) {
 		go func() {
 			worker := NewMeta(conf)
 			if err := worker.Start(); err != nil {
-				log.Warnf("meta-worker: %s", err)
+				log.Warnf("metadata: %s", err)
 			}
 		}()
 	}
@@ -57,7 +57,7 @@ func StartShare(conf *config.Config) {
 		go func() {
 			worker := NewShare(conf)
 			if err := worker.Start(); err != nil {
-				log.Warnf("share-worker: %s", err)
+				log.Warnf("share: %s", err)
 			}
 		}()
 	}
@@ -69,7 +69,7 @@ func StartSync(conf *config.Config) {
 		go func() {
 			worker := NewSync(conf)
 			if err := worker.Start(); err != nil {
-				log.Warnf("sync-worker: %s", err)
+				log.Warnf("sync: %s", err)
 			}
 		}()
 	}

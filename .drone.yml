@@ -7,6 +7,11 @@ platform:
   arch: amd64
   os: linux
 
+trigger:
+  event:
+    exclude:
+      - pull_request
+
 steps:
   - name: up
     environment:
@@ -60,6 +65,37 @@ steps:
         - success
       branch:
         - master
+
+---
+kind: pipeline
+type: exec
+name: pull-request
+
+platform:
+  arch: amd64
+  os: linux
+
+trigger:
+  event:
+    include:
+      - pull_request
+
+steps:
+  - name: up
+    commands:
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+
+  - name: test
+    commands:
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+
+  - name: down
+    commands:
+      - docker-compose -f docker-compose.drone.yml down
+    when:
+      status:
+        - failure
+        - success
 
 ---
 kind: pipeline

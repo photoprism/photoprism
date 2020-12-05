@@ -1,8 +1,8 @@
-package pro
+package hub
 
 import "time"
 
-// Session represents photoprism.pro api session data.
+// Session represents backend api session data.
 type Session struct {
 	MapKey    string
 	ExpiresAt string

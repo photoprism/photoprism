@@ -1,4 +1,4 @@
-package pro
+package hub
 
 import (
 	"bytes"
@@ -17,30 +17,32 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/pro/places"
+	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/yaml.v2"
 )
 
-// Config represents photoprism.pro api credentials for maps & geodata.
+// Config represents backend api credentials for maps & geodata.
 type Config struct {
 	Key      string `json:"key" yaml:"key"`
 	Secret   string `json:"secret" yaml:"secret"`
 	Session  string `json:"session" yaml:"session"`
 	Status   string `json:"status" yaml:"status"`
 	Version  string `json:"version" yaml:"version"`
+	Serial   string `json:"serial" yaml:"serial"`
 	FileName string `json:"-" yaml:"-"`
 }
 
-// NewConfig creates a new photoprism.pro api credentials instance.
-func NewConfig(version string, fileName string) *Config {
+// NewConfig creates a new backend api credentials instance.
+func NewConfig(version, fileName, serial string) *Config {
 	return &Config{
 		Key:      "",
 		Secret:   "",
 		Session:  "",
 		Status:   "",
 		Version:  version,
+		Serial:   serial,
 		FileName: fileName,
 	}
 }
@@ -54,13 +56,13 @@ func (c *Config) MapKey() string {
 	}
 }
 
-// Propagate updates photoprism.pro api credentials in other packages.
+// Propagate updates backend api credentials in other packages.
 func (c *Config) Propagate() {
 	places.Key = c.Key
 	places.Secret = c.Secret
 }
 
-// Sanitize verifies and sanitizes photoprism.pro api credentials.
+// Sanitize verifies and sanitizes backend api credentials.
 func (c *Config) Sanitize() {
 	c.Key = strings.ToLower(c.Key)
 
@@ -74,7 +76,7 @@ func (c *Config) Sanitize() {
 	}
 }
 
-// DecodeSession decodes photoprism.pro api session data.
+// DecodeSession decodes backend api session data.
 func (c *Config) DecodeSession() (Session, error) {
 	c.Sanitize()
 
@@ -117,7 +119,7 @@ func (c *Config) DecodeSession() (Session, error) {
 	return result, nil
 }
 
-// Refresh updates photoprism.pro api credentials.
+// Refresh updates backend api credentials.
 func (c *Config) Refresh() (err error) {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -128,19 +130,19 @@ func (c *Config) Refresh() (err error) {
 
 	c.Sanitize()
 	client := &http.Client{Timeout: 60 * time.Second}
-	url := ApiURL
+	url := ServiceURL
 	method := http.MethodPost
 	var req *http.Request
 
 	if c.Key != "" {
-		url = fmt.Sprintf(ApiURL+"/%s", c.Key)
+		url = fmt.Sprintf(ServiceURL+"/%s", c.Key)
 		method = http.MethodPut
 		log.Debugf("getting updated api key for maps & places from %s", ApiHost())
 	} else {
 		log.Debugf("requesting api key for maps & places from %s", ApiHost())
 	}
 
-	if j, err := json.Marshal(NewRequest(c.Version)); err != nil {
+	if j, err := json.Marshal(NewRequest(c.Version, c.Serial)); err != nil {
 		return err
 	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
 		return err
@@ -174,7 +176,7 @@ func (c *Config) Refresh() (err error) {
 	return nil
 }
 
-// Load photoprism.pro api credentials from a YAML file.
+// Load backend api credentials from a YAML file.
 func (c *Config) Load() error {
 	if !fs.FileExists(c.FileName) {
 		return fmt.Errorf("settings file not found: %s", txt.Quote(c.FileName))
@@ -205,7 +207,7 @@ func (c *Config) Load() error {
 	return nil
 }
 
-// Save photoprism.pro api credentials to a YAML file.
+// Save backend api credentials to a YAML file.
 func (c *Config) Save() error {
 	mutex.Lock()
 	defer mutex.Unlock()

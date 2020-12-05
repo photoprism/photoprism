@@ -29,8 +29,8 @@ func TestMediaFile_Location(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Takasago", location.City())
-		assert.Equal(t, "Hyogo Prefecture", location.State())
+		assert.Equal(t, "高砂市", location.City())
+		assert.Equal(t, "兵庫県", location.State())
 		assert.Equal(t, "Japan", location.CountryName())
 		assert.Equal(t, "", location.Category())
 		assert.True(t, strings.HasPrefix(location.ID, s2.TokenPrefix+"3554df45"))
@@ -44,8 +44,8 @@ func TestMediaFile_Location(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Takasago", location2.City())
-		assert.Equal(t, "Hyogo Prefecture", location2.State())
+		assert.Equal(t, "高砂市", location2.City())
+		assert.Equal(t, "兵庫県", location2.State())
 	})
 	t.Run("cat_brown.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -83,7 +83,7 @@ func TestMediaFile_Location(t *testing.T) {
 		if _, err := mediaFile.Location(); err == nil {
 			t.Fatal("mediaFile.Location() should return error")
 		} else {
-			assert.Equal(t, "mediafile: no latitude and longitude in metadata", err.Error())
+			assert.Equal(t, "media: no latitude and longitude in metadata", err.Error())
 		}
 	})
 	t.Run("Random.docx", func(t *testing.T) {

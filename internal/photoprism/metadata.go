@@ -29,7 +29,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 
 		// Parse regular JSON sidecar files ("img_1234.json").
 		if jsonFile := fs.TypeJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); jsonFile == "" {
-			log.Debugf("mediafile: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
+			log.Debugf("media: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
 		} else if jsonErr := m.metaData.JSON(jsonFile, m.BaseName()); jsonErr != nil {
 			log.Debug(jsonErr)
 		} else {
@@ -38,7 +38,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 
 		if err != nil {
 			m.metaData.Error = err
-			log.Debugf("mediafile: %s", err.Error())
+			log.Debugf("media: %s", err.Error())
 		}
 	})
 

@@ -28,3 +28,4 @@ index:
   convert: true
   rescan: false
   sequences: true
+  stack: true

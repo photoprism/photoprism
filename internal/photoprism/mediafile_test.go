@@ -1725,7 +1725,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
 
-		assert.EqualError(t, err, "mediafile: failed creating thumbnail for canon_eos_6d.xmp (image: unknown format)")
+		assert.EqualError(t, err, "media: failed creating thumbnail for canon_eos_6d.xmp (image: unknown format)")
 
 		t.Log(thumbnail)
 	})
@@ -1738,7 +1738,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 		thumbnail, err := image.Thumbnail(thumbsPath, "invalid_500")
 
-		assert.EqualError(t, err, "mediafile: invalid type invalid_500")
+		assert.EqualError(t, err, "media: invalid type invalid_500")
 
 		t.Log(thumbnail)
 	})
@@ -1783,7 +1783,7 @@ func TestMediaFile_Resample(t *testing.T) {
 			t.Fatal("err should not be nil")
 		}
 
-		assert.Equal(t, "mediafile: invalid type xxx_500", err.Error())
+		assert.Equal(t, "media: invalid type xxx_500", err.Error())
 		assert.Empty(t, thumbnail)
 	})
 

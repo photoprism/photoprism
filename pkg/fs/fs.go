@@ -40,6 +40,8 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 const IgnoreFile = ".ppignore"
@@ -59,8 +61,12 @@ func FileExists(fileName string) bool {
 	return err == nil && !info.IsDir()
 }
 
-// PathExists returns true if path exists and is a directory or symlink.
+// PathExists tests if a path exists, and is a directory or symlink.
 func PathExists(path string) bool {
+	if path == "" {
+		return false
+	}
+
 	info, err := os.Stat(path)
 
 	if err != nil {
@@ -70,6 +76,25 @@ func PathExists(path string) bool {
 	m := info.Mode()
 
 	return m&os.ModeDir != 0 || m&os.ModeSymlink != 0
+}
+
+// PathWritable tests if a path exists and is writable.
+func PathWritable(path string) bool {
+	if !PathExists(path) {
+		return false
+	}
+
+	tmpName := filepath.Join(path, "."+rnd.Token(8))
+
+	if f, err := os.Create(tmpName); err != nil {
+		return false
+	} else if err := f.Close(); err != nil {
+		return false
+	} else if err := os.Remove(tmpName); err != nil {
+		return false
+	}
+
+	return true
 }
 
 // Overwrite overwrites the file with data. Creates file if not present.

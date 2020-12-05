@@ -29,7 +29,7 @@ func SendFeedback(router *gin.RouterGroup) {
 			return
 		}
 
-		conf.UpdatePro()
+		conf.UpdateHub()
 
 		var f form.Feedback
 
@@ -43,7 +43,7 @@ func SendFeedback(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := conf.Pro().SendFeedback(f); err != nil {
+		if err := conf.Hub().SendFeedback(f); err != nil {
 			log.Error(err)
 			AbortSaveFailed(c)
 			return

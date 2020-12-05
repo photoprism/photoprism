@@ -44,7 +44,7 @@ func TestClient_Directories(t *testing.T) {
 	assert.IsType(t, Client{}, c)
 
 	t.Run("non-recursive", func(t *testing.T) {
-		dirs, err := c.Directories("", false)
+		dirs, err := c.Directories("", false, SyncTimeout)
 
 		if err != nil {
 			t.Fatal(err)
@@ -62,7 +62,7 @@ func TestClient_Directories(t *testing.T) {
 	})
 
 	t.Run("recursive", func(t *testing.T) {
-		dirs, err := c.Directories("", true)
+		dirs, err := c.Directories("", true, SyncTimeout)
 
 		if err != nil {
 			t.Fatal(err)

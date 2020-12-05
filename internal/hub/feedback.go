@@ -1,4 +1,4 @@
-package pro
+package hub
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var FeedbackURL = ApiURL + "/%s/feedback"
+var FeedbackURL = ServiceURL + "/%s/feedback"
 
 type Feedback struct {
 	Category      string `json:"Category"`
@@ -23,15 +23,17 @@ type Feedback struct {
 	UserAgent     string `json:"UserAgent"`
 	ApiKey        string `json:"ApiKey"`
 	ClientVersion string `json:"ClientVersion"`
+	ClientSerial  string `json:"ClientSerial"`
 	ClientOS      string `json:"ClientOS"`
 	ClientArch    string `json:"ClientArch"`
 	ClientCPU     int    `json:"ClientCPU"`
 }
 
-// NewFeedback creates a new photoprism.pro key request instance.
-func NewFeedback(version string) *Feedback {
+// NewFeedback creates a new hub feedback instance.
+func NewFeedback(version, serial string) *Feedback {
 	return &Feedback{
 		ClientVersion: version,
+		ClientSerial:  serial,
 		ClientOS:      runtime.GOOS,
 		ClientArch:    runtime.GOARCH,
 		ClientCPU:     runtime.NumCPU(),
@@ -39,7 +41,7 @@ func NewFeedback(version string) *Feedback {
 }
 
 func (c *Config) SendFeedback(f form.Feedback) (err error) {
-	feedback := NewFeedback(c.Version)
+	feedback := NewFeedback(c.Version, c.Serial)
 	feedback.Category = f.Category
 	feedback.Subject = txt.TrimLen(f.Message, 50)
 	feedback.Message = f.Message

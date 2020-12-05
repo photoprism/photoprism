@@ -69,12 +69,12 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 	}
 
 	if len(relatedFiles) == 0 {
-		log.Infof("sync-worker: download complete for %s", a.AccName)
+		log.Infof("sync: download complete for %s", a.AccName)
 		event.Publish("sync.downloaded", event.Data{"account": a})
 		return true, nil
 	}
 
-	log.Infof("sync-worker: downloading from %s", a.AccName)
+	log.Infof("sync: downloading from %s", a.AccName)
 
 	client := webdav.New(a.AccURL, a.AccUser, a.AccPass)
 
@@ -95,14 +95,14 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 			}
 
 			if file.Errors > a.RetryLimit {
-				log.Debugf("sync-worker: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
+				log.Debugf("sync: downloading %s failed more than %d times", file.RemoteName, a.RetryLimit)
 				continue
 			}
 
 			localName := baseDir + file.RemoteName
 
 			if _, err := os.Stat(localName); err == nil {
-				log.Warnf("sync-worker: download skipped, %s already exists", localName)
+				log.Warnf("sync: download skipped, %s already exists", localName)
 				file.Status = entity.FileSyncExists
 			} else {
 				if err := client.Download(file.RemoteName, localName, false); err != nil {
@@ -110,7 +110,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 					file.Errors++
 					file.Error = err.Error()
 				} else {
-					log.Infof("sync-worker: downloaded %s from %s", file.RemoteName, a.AccName)
+					log.Infof("sync: downloaded %s from %s", file.RemoteName, a.AccName)
 					file.Status = entity.FileSyncDownloaded
 				}
 
@@ -159,7 +159,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 			related.Files = rf
 
 			if a.SyncFilenames {
-				log.Infof("sync-worker: indexing %s and related files", file.RemoteName)
+				log.Infof("sync: indexing %s and related files", file.RemoteName)
 				indexJobs <- photoprism.IndexJob{
 					FileName: mf.FileName(),
 					Related:  related,
@@ -167,7 +167,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 					Ind:      service.Index(),
 				}
 			} else {
-				log.Infof("sync-worker: importing %s and related files", file.RemoteName)
+				log.Infof("sync: importing %s and related files", file.RemoteName)
 				importJobs <- photoprism.ImportJob{
 					FileName:  mf.FileName(),
 					Related:   related,

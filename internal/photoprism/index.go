@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
@@ -27,16 +29,18 @@ type Index struct {
 	nsfwDetector *nsfw.Detector
 	convert      *Convert
 	files        *Files
+	photos       *Photos
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, convert *Convert, files *Files) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, convert *Convert, files *Files, photos *Photos) *Index {
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
 		convert:      convert,
 		files:        files,
+		photos:       photos,
 	}
 
 	return i
@@ -217,6 +221,12 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 		log.Error(err.Error())
 	}
 
+	if opt.Stack {
+		if err := ind.StackIdenticalPhotos(); err != nil {
+			log.Errorf("index: %s", err)
+		}
+	}
+
 	if filesIndexed > 0 {
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("index: %s", err)
@@ -230,8 +240,29 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	return done
 }
 
+// StackIdenticalPhotos stacks files that belong to the same photo.
+func (ind *Index) StackIdenticalPhotos() error {
+	photos, err := query.IdenticalPhotos()
+
+	if err != nil {
+		return err
+	}
+
+	for _, photo := range photos {
+		if merged, err := photo.Stack(); err != nil {
+			log.Errorf("index: %s", err)
+		} else {
+			log.Infof("index: merged photo uid %s with %s", photo.PhotoUID, merged.UIDs())
+			event.EntitiesUpdated("photos", []entity.Photo{photo})
+			event.EntitiesDeleted("photos", merged.UIDs())
+		}
+	}
+
+	return nil
+}
+
 // File indexes a single file and returns the result.
-func (ind *Index) File(name string) (result IndexResult) {
+func (ind *Index) SingleFile(name string) (result IndexResult) {
 	file, err := NewMediaFile(name)
 
 	if err != nil {
@@ -250,5 +281,5 @@ func (ind *Index) File(name string) (result IndexResult) {
 		return result
 	}
 
-	return IndexRelated(related, ind, IndexOptionsAll())
+	return IndexRelated(related, ind, IndexOptionsSingle())
 }

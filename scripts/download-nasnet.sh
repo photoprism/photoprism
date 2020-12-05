@@ -8,13 +8,13 @@ MODEL_PATH="assets/nasnet"
 MODEL_ZIP="/tmp/photoprism/nasnet.zip"
 MODEL_HASH="f18b801354e95cade497b4f12e8d2537d04c04f6  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
-MODEL_BACKUP="storage/backups/nasnet-$TODAY"
+MODEL_BACKUP="storage/backup/nasnet-$TODAY"
 
 echo "Installing $MODEL_NAME model for TensorFlow..."
 
 # Create directories
 mkdir -p /tmp/photoprism
-mkdir -p storage/backups
+mkdir -p storage/backup
 
 # Check for update
 if [[ -f ${MODEL_ZIP} ]] && [[ `sha1sum ${MODEL_ZIP}` == ${MODEL_HASH} ]]; then

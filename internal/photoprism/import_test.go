@@ -16,7 +16,7 @@ func TestNewImport(t *testing.T) {
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, convert, NewFiles())
+	ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
 	imp := NewImport(conf, ind, convert)
 
 	assert.IsType(t, &Import{}, imp)
@@ -31,7 +31,7 @@ func TestImport_DestinationFilename(t *testing.T) {
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, convert, NewFiles())
+	ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
 
 	imp := NewImport(conf, ind, convert)
 
@@ -63,7 +63,7 @@ func TestImport_Start(t *testing.T) {
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, convert, NewFiles())
+	ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
 
 	imp := NewImport(conf, ind, convert)
 

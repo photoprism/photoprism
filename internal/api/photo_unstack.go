@@ -131,7 +131,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		ind := service.Index()
 
 		// Index new, unstacked file.
-		if res := ind.File(mediaFile.FileName()); res.Failed() {
+		if res := ind.SingleFile(mediaFile.FileName()); res.Failed() {
 			log.Errorf("photo: %s (unstack %s)", res.Err, txt.Quote(baseName))
 			AbortSaveFailed(c)
 			return
@@ -148,7 +148,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		oldPrimaryName := photoprism.FileName(oldPrimary.FileRoot, oldPrimary.FileName)
 
 		// Re-index old, existing primary file.
-		if res := ind.File(oldPrimaryName); res.Failed() {
+		if res := ind.SingleFile(oldPrimaryName); res.Failed() {
 			log.Errorf("photo: %s (unstack %s)", res.Err, txt.Quote(baseName))
 			AbortSaveFailed(c)
 			return

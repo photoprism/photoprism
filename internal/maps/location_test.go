@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/pro/places"
+	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/stretchr/testify/assert"
 )
@@ -46,9 +46,9 @@ func TestLocation_Assign(t *testing.T) {
 		}
 
 		assert.Equal(t, "Comici I", l.LocName)
-		assert.Equal(t, "Plan de Gralba, Trentino-Alto Adige, Italy", l.LocLabel)
+		assert.Equal(t, "Santa Cristina Gherdëina, Trentino-Alto Adige, Italy", l.LocLabel)
 		assert.IsType(t, []string{}, l.Keywords())
-		assert.Equal(t, "südtirol", l.KeywordString())
+		assert.Equal(t, "christina, cristina, gröden, santa, südtirol, valgardena", l.KeywordString())
 	})
 
 	t.Run("BerlinFernsehturm", func(t *testing.T) {
@@ -62,7 +62,8 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Fernsehturm Berlin", o.Name())
+		assert.Equal(t, "Berliner Fernsehturm", o.Name())
+		assert.Equal(t, "Berlin", o.City())
 		assert.Equal(t, "Berlin", o.State())
 		assert.Equal(t, "de", o.CountryCode())
 
@@ -72,7 +73,7 @@ func TestLocation_Assign(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Fernsehturm Berlin", l.LocName)
+		assert.Equal(t, "Berliner Fernsehturm", l.LocName)
 		assert.Equal(t, "Berlin, Germany", l.LocLabel)
 		assert.IsType(t, []string{}, l.Keywords())
 		assert.Equal(t, "", l.KeywordString())
@@ -120,7 +121,7 @@ func TestLocation_Assign(t *testing.T) {
 		}
 
 		assert.Equal(t, "Airport", l.LocName)
-		assert.Equal(t, "Kloten, Zurich, Switzerland", l.LocLabel)
+		assert.Equal(t, "Kloten, Zürich, Switzerland", l.LocLabel)
 	})
 
 	t.Run("AirportTegel", func(t *testing.T) {
@@ -141,7 +142,7 @@ func TestLocation_Assign(t *testing.T) {
 		}
 
 		assert.Equal(t, "Airport", l.LocName)
-		assert.Equal(t, "Berlin, Germany", l.LocLabel)
+		assert.Equal(t, "Tegel, Berlin, Germany", l.LocLabel)
 	})
 
 	t.Run("SouthAfrica", func(t *testing.T) {
@@ -193,7 +194,7 @@ func TestLocation_Assign(t *testing.T) {
 
 		assert.Equal(t, "Indian Ocean", l.LocName)
 		assert.Equal(t, "", l.LocCategory)
-		assert.Equal(t, "", l.LocCity)
+		assert.Equal(t, "Unknown", l.LocCity)
 		assert.Equal(t, "zz", l.LocCountry)
 	})
 }
