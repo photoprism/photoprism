@@ -2,6 +2,9 @@ package config
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -33,6 +36,7 @@ type Config struct {
 	settings *Settings
 	hub      *hub.Config
 	token    string
+	serial   string
 }
 
 func init() {
@@ -95,12 +99,38 @@ func (c *Config) Init() error {
 		return err
 	}
 
+	if err := c.initStorage(); err != nil {
+		return err
+	}
+
 	c.initSettings()
 	c.initHub()
 
 	c.Propagate()
 
 	return c.connectDb()
+}
+
+// initStorage initializes storage directories with a random serial.
+func (c *Config) initStorage() error {
+	const serialName = "serial"
+
+	c.serial = rnd.PPID('z')
+
+	storageName := filepath.Join(c.StoragePath(), serialName)
+	backupName := filepath.Join(c.BackupPath(), serialName)
+
+	if data, err := ioutil.ReadFile(storageName); err == nil {
+		c.serial = string(data)
+	} else if data, err := ioutil.ReadFile(backupName); err == nil {
+		c.serial = string(data)
+	} else if err := ioutil.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
+		return fmt.Errorf("failed creating %s: %s", storageName, err)
+	} else if err := ioutil.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
+		return fmt.Errorf("failed creating %s: %s", backupName, err)
+	}
+
+	return nil
 }
 
 // Name returns the application name ("PhotoPrism").
@@ -294,7 +324,7 @@ func (c *Config) UpdateHub() {
 
 // initHub initializes PhotoPrism hub config.
 func (c *Config) initHub() {
-	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile())
+	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial)
 
 	if err := c.hub.Load(); err == nil {
 		// Do nothing.

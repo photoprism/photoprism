@@ -30,17 +30,19 @@ type Config struct {
 	Session  string `json:"session" yaml:"session"`
 	Status   string `json:"status" yaml:"status"`
 	Version  string `json:"version" yaml:"version"`
+	Serial   string `json:"serial" yaml:"serial"`
 	FileName string `json:"-" yaml:"-"`
 }
 
 // NewConfig creates a new backend api credentials instance.
-func NewConfig(version string, fileName string) *Config {
+func NewConfig(version, fileName, serial string) *Config {
 	return &Config{
 		Key:      "",
 		Secret:   "",
 		Session:  "",
 		Status:   "",
 		Version:  version,
+		Serial:   serial,
 		FileName: fileName,
 	}
 }
@@ -140,7 +142,7 @@ func (c *Config) Refresh() (err error) {
 		log.Debugf("requesting api key for maps & places from %s", ApiHost())
 	}
 
-	if j, err := json.Marshal(NewRequest(c.Version)); err != nil {
+	if j, err := json.Marshal(NewRequest(c.Version, c.Serial)); err != nil {
 		return err
 	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
 		return err

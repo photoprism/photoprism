@@ -9,14 +9,15 @@ import (
 
 func TestNewFeedback(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		feedback := NewFeedback("xxx")
+		feedback := NewFeedback("xxx", "zqkunt22r0bewti9")
 		assert.Equal(t, "xxx", feedback.ClientVersion)
+		assert.Equal(t, "zqkunt22r0bewti9", feedback.ClientSerial)
 	})
 }
 
 func TestSendFeedback(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/new.yml")
+		c := NewConfig("0.0.0", "testdata/new.yml", "zqkunt22r0bewti9")
 
 		feedback := Feedback{
 			Category:      "Bug Report",
