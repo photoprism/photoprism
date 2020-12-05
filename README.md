@@ -68,10 +68,10 @@ related topics. Don't be afraid to ask stupid questions.
 
 This project is about freedom and privacy but not necessarily about free beer. We feel like it
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
-will have a price tag and then maybe you'd like to have some extra features that need to be developed.
+will have a price tag, and then maybe you'd like to have some extra features that need to be developed.
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
-especially if you have feature requests or need help with using our software.
+especially if you have feature requests, or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
 and [PayPal](https://www.paypal.me/browseyourlife). 
 
