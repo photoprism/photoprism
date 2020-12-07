@@ -1023,13 +1023,13 @@ func (m *Photo) Stack(meta, uuid bool) (identical Photos, err error) {
 
 	switch {
 	case meta && uuid:
-		stmt.Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
+		stmt = stmt.Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
 			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID)
 	case meta:
-		stmt.Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
+		stmt = stmt.Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
 			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID)
 	case uuid:
-		stmt.Where("uuid <> '' AND uuid = ?", m.UUID)
+		stmt = stmt.Where("uuid <> '' AND uuid = ?", m.UUID)
 	}
 
 	if err := stmt.Find(&identical).Error; err != nil {

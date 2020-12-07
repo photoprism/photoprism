@@ -121,7 +121,7 @@ func MatchingPhotos(meta, uuid bool) (entities entity.Photos, err error) {
 
 	switch {
 	case meta && uuid:
-		stmt.Joins(`JOIN photos dup ON photos.id < dup.id
+		stmt = stmt.Joins(`JOIN photos dup ON photos.id < dup.id
 				AND photos.photo_single = 0 AND dup.photo_single = 0
 				AND photos.deleted_at IS NULL AND dup.deleted_at IS NULL
 				AND ((photos.taken_src = 'meta' AND dup.taken_src = 'meta' 
@@ -132,7 +132,7 @@ func MatchingPhotos(meta, uuid bool) (entities entity.Photos, err error) {
 				AND photos.camera_serial = dup.camera_serial) OR
 				(photos.uuid <> '' AND photos.uuid = dup.uuid))`)
 	case meta:
-		stmt.Joins(`JOIN photos dup ON photos.id < dup.id
+		stmt = stmt.Joins(`JOIN photos dup ON photos.id < dup.id
 				AND photos.photo_single = 0 
 				AND dup.photo_single = 0 
 				AND photos.deleted_at IS NULL AND dup.deleted_at IS NULL
@@ -143,7 +143,7 @@ func MatchingPhotos(meta, uuid bool) (entities entity.Photos, err error) {
 				AND photos.camera_id = dup.camera_id
 				AND photos.camera_serial = dup.camera_serial))`)
 	case uuid:
-		stmt.Joins(`JOIN photos dup ON photos.id < dup.id
+		stmt = stmt.Joins(`JOIN photos dup ON photos.id < dup.id
 				AND photos.photo_single = 0	AND dup.photo_single = 0
 				AND photos.deleted_at IS NULL AND dup.deleted_at IS NULL
 				AND (photos.uuid <> '' AND photos.uuid = dup.uuid)`)
