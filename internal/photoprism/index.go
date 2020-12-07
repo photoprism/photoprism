@@ -167,7 +167,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(ind.conf.Settings().Index.Sequences)
+			related, err := mf.RelatedFiles(ind.conf.Settings().Stack.Sequences)
 
 			if err != nil {
 				log.Warnf("index: %s", err.Error())
@@ -222,7 +222,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}
 
 	if opt.Stack {
-		if err := ind.StackIdenticalPhotos(); err != nil {
+		if err := ind.StackPhotos(); err != nil {
 			log.Errorf("index: %s", err)
 		}
 	}
@@ -240,16 +240,16 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	return done
 }
 
-// StackIdenticalPhotos stacks files that belong to the same photo.
-func (ind *Index) StackIdenticalPhotos() error {
-	photos, err := query.IdenticalPhotos()
+// StackPhotos stacks files that belong to the same photo.
+func (ind *Index) StackPhotos() error {
+	photos, err := query.MatchingPhotos(ind.conf.Settings().Stack.Meta, ind.conf.Settings().Stack.UUID)
 
 	if err != nil {
 		return err
 	}
 
 	for _, photo := range photos {
-		if merged, err := photo.Stack(); err != nil {
+		if merged, err := photo.Stack(ind.conf.Settings().Stack.Meta, ind.conf.Settings().Stack.UUID); err != nil {
 			log.Errorf("index: %s", err)
 		} else {
 			log.Infof("index: merged photo uid %s with %s", photo.PhotoUID, merged.UIDs())

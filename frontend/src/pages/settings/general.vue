@@ -59,15 +59,73 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                      @change="onChange"
-                      :disabled="busy"
-                      class="ma-0 pa-0 input-sequences"
-                      v-model="settings.index.sequences"
-                      color="secondary-dark"
-                      :label="$gettext('Stack Sequences')"
-                      :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' or \'IMG_1234 copy 2\' belong to the same photo.')"
-                      prepend-icon="photo_library"
-                      persistent-hint
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-stacks"
+                  v-model="settings.index.stacks"
+                  color="secondary-dark"
+                  :label="$gettext('Stacks')"
+                  :hint="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')"
+                  prepend-icon="burst_mode"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+
+      <v-card flat tile class="mt-0 px-1 application" v-show="settings.index.stacks">
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0">
+            <translate>Stack files with matching...</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-stack-meta"
+                  v-model="settings.stack.meta"
+                  color="secondary-dark"
+                  :label="$gettext('Place & Time')"
+                  :hint="$gettext('Stack pictures taken at the exact same time and location based on their metadata.')"
+                  prepend-icon="schedule"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-stack-uuid"
+                  v-model="settings.stack.uuid"
+                  color="secondary-dark"
+                  :label="$gettext('Unique ID')"
+                  :hint="$gettext('Stack files sharing the same unique image or instance identifier.')"
+                  prepend-icon="fingerprint"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-stack-sequences"
+                  v-model="settings.stack.sequences"
+                  color="secondary-dark"
+                  :label="$gettext('File Name Prefix')"
+                  :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
+                  prepend-icon="spellcheck"
+                  persistent-hint
               >
               </v-checkbox>
             </v-flex>

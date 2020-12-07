@@ -35,7 +35,7 @@ func (worker *Sync) relatedDownloads(a entity.Account) (result Downloads, err er
 
 	// Group results by directory and base name
 	for i, file := range files {
-		k := fs.AbsPrefix(file.RemoteName, worker.conf.Settings().Index.Sequences)
+		k := fs.AbsPrefix(file.RemoteName, worker.conf.Settings().Stack.Sequences)
 
 		result[k] = append(result[k], file)
 
@@ -137,7 +137,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 				continue
 			}
 
-			related, err := mf.RelatedFiles(worker.conf.Settings().Index.Sequences)
+			related, err := mf.RelatedFiles(worker.conf.Settings().Stack.Sequences)
 
 			if err != nil {
 				worker.logWarn(err)

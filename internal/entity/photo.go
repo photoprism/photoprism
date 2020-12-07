@@ -1012,13 +1012,27 @@ func (m *Photo) MapKey() string {
 }
 
 // Stack merges the photo with identical ones.
-func (m *Photo) Stack() (identical Photos, err error) {
-	if err := Db().
+func (m *Photo) Stack(meta, uuid bool) (identical Photos, err error) {
+	if !meta && !uuid {
+		return identical, nil
+	}
+
+	stmt := Db().
 		Where("id <> ?", m.ID).
-		Where("photo_single = 0").
-		Where("(taken_at = ? AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
-			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).
-		Find(&identical).Error; err != nil {
+		Where("photo_single = 0")
+
+	switch {
+	case meta && uuid:
+		stmt.Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
+			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID)
+	case meta:
+		stmt.Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
+			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID)
+	case uuid:
+		stmt.Where("uuid <> '' AND uuid = ?", m.UUID)
+	}
+
+	if err := stmt.Find(&identical).Error; err != nil {
 		return identical, err
 	}
 

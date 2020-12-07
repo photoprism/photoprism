@@ -49,7 +49,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		indOpt := photoprism.IndexOptions{
 			Rescan:  f.Rescan,
 			Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
-			Stack:   conf.Settings().Index.Stack,
+			Stack:   conf.Settings().Index.Stacks,
 			Path:    filepath.Clean(f.Path),
 		}
 

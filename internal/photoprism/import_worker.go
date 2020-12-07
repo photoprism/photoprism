@@ -113,7 +113,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 			}
 
-			related, err := f.RelatedFiles(imp.conf.Settings().Index.Sequences)
+			related, err := f.RelatedFiles(imp.conf.Settings().Stack.Sequences)
 
 			if err != nil {
 				log.Errorf("import: %s in %s (find related files)", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))

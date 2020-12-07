@@ -27,21 +27,6 @@ type MapsSettings struct {
 	Style   string `json:"style" yaml:"style"`
 }
 
-// IndexSettings represents indexing settings.
-type IndexSettings struct {
-	Path      string `json:"path" yaml:"path"`
-	Convert   bool   `json:"convert" yaml:"convert"`
-	Rescan    bool   `json:"rescan" yaml:"rescan"`
-	Sequences bool   `json:"sequences" yaml:"sequences"`
-	Stack     bool   `json:"stack" yaml:"stack"`
-}
-
-// ImportSettings represents import settings.
-type ImportSettings struct {
-	Path string `json:"path" yaml:"path"`
-	Move bool   `json:"move" yaml:"move"`
-}
-
 // FeatureSettings represents feature flags, mainly for the Web UI.
 type FeatureSettings struct {
 	Upload   bool `json:"upload" yaml:"upload"`
@@ -60,6 +45,27 @@ type FeatureSettings struct {
 	Logs     bool `json:"logs" yaml:"logs"`
 }
 
+// ImportSettings represents import settings.
+type ImportSettings struct {
+	Path string `json:"path" yaml:"path"`
+	Move bool   `json:"move" yaml:"move"`
+}
+
+// IndexSettings represents indexing settings.
+type IndexSettings struct {
+	Path    string `json:"path" yaml:"path"`
+	Convert bool   `json:"convert" yaml:"convert"`
+	Rescan  bool   `json:"rescan" yaml:"rescan"`
+	Stacks  bool   `json:"stacks" yaml:"stacks"`
+}
+
+// StackSettings represents file stack settings.
+type StackSettings struct {
+	UUID      bool `json:"uuid" yaml:"uuid"`
+	Meta      bool `json:"meta" yaml:"meta"`
+	Sequences bool `json:"sequences" yaml:"sequences"`
+}
+
 // Settings represents user settings for Web UI, indexing, and import.
 type Settings struct {
 	Theme     string           `json:"theme" yaml:"theme"`
@@ -69,6 +75,7 @@ type Settings struct {
 	Features  FeatureSettings  `json:"features" yaml:"features"`
 	Import    ImportSettings   `json:"import" yaml:"import"`
 	Index     IndexSettings    `json:"index" yaml:"index"`
+	Stack     StackSettings    `json:"stack" yaml:"stack"`
 }
 
 // NewSettings creates a new Settings instance.
@@ -104,11 +111,15 @@ func NewSettings() *Settings {
 			Move: false,
 		},
 		Index: IndexSettings{
-			Path:      "/",
-			Rescan:    false,
-			Convert:   true,
-			Sequences: true,
-			Stack:     true,
+			Path:    "/",
+			Rescan:  false,
+			Convert: true,
+			Stacks:  true,
+		},
+		Stack: StackSettings{
+			UUID:      true,
+			Meta:      true,
+			Sequences: false,
 		},
 	}
 }
