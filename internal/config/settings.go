@@ -59,11 +59,11 @@ type IndexSettings struct {
 	Stacks  bool   `json:"stacks" yaml:"stacks"`
 }
 
-// StackSettings represents file stack settings.
+// StackSettings represents settings for files that belong to the same photo.
 type StackSettings struct {
-	UUID      bool `json:"uuid" yaml:"uuid"`
-	Meta      bool `json:"meta" yaml:"meta"`
-	Sequences bool `json:"sequences" yaml:"sequences"`
+	UUID bool `json:"uuid" yaml:"uuid"`
+	Meta bool `json:"meta" yaml:"meta"`
+	Name bool `json:"name" yaml:"name"`
 }
 
 // Settings represents user settings for Web UI, indexing, and import.
@@ -117,16 +117,31 @@ func NewSettings() *Settings {
 			Stacks:  true,
 		},
 		Stack: StackSettings{
-			UUID:      true,
-			Meta:      true,
-			Sequences: false,
+			UUID: true,
+			Meta: true,
+			Name: false,
 		},
 	}
 }
 
 // Propagate updates settings in other packages as needed.
-func (s Settings) Propagate() {
+func (s *Settings) Propagate() {
 	i18n.SetLocale(s.Language)
+}
+
+// StackSequences tests if files should be stacked based on their file name prefix (sequential names).
+func (s Settings) StackSequences() bool {
+	return s.Index.Stacks && s.Stack.Name
+}
+
+// StackUUID tests if files should be stacked based on unique image or instance id.
+func (s Settings) StackUUID() bool {
+	return s.Index.Stacks && s.Stack.UUID
+}
+
+// StackMeta tests if files should be stacked based on their place and time metadata.
+func (s Settings) StackMeta() bool {
+	return s.Index.Stacks && s.Stack.Meta
 }
 
 // Load user settings from file.

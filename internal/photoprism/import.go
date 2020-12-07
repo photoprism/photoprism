@@ -151,7 +151,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return nil
 			}
 
-			related, err := mf.RelatedFiles(imp.conf.Settings().Stack.Sequences)
+			related, err := mf.RelatedFiles(imp.conf.Settings().StackSequences())
 
 			if err != nil {
 				event.Error(fmt.Sprintf("import: %s", err.Error()))

@@ -119,8 +119,8 @@
               <v-checkbox
                   @change="onChange"
                   :disabled="busy"
-                  class="ma-0 pa-0 input-stack-sequences"
-                  v-model="settings.stack.sequences"
+                  class="ma-0 pa-0 input-stack-name"
+                  v-model="settings.stack.name"
                   color="secondary-dark"
                   :label="$gettext('File Name Prefix')"
                   :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"

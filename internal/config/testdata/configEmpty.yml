@@ -31,4 +31,4 @@ index:
 stack:
   uuid: true
   meta: true
-  sequences: false
+  name: false
