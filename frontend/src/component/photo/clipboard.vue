@@ -91,7 +91,7 @@
             :title="$gettext('Archive')"
             @click.stop="dialog.archive = true"
             :disabled="selection.length === 0"
-            v-if="!manualAlbum && context !== 'archive' && $config.feature('archive')"
+            v-if="!isAlbum && context !== 'archive' && $config.feature('archive')"
             class="action-archive"
         >
           <v-icon>archive</v-icon>
@@ -113,7 +113,7 @@
             color="remove"
             @click.stop="removeFromAlbum"
             :disabled="selection.length === 0"
-            v-if="manualAlbum"
+            v-if="isAlbum"
             class="action-delete"
         >
           <v-icon>remove</v-icon>
@@ -153,7 +153,7 @@ export default {
     return {
       config: this.$config.values,
       expanded: false,
-      manualAlbum: this.album && this.album.Type === 'album',
+      isAlbum: this.album && this.album.Type === 'album',
       dialog: {
         archive: false,
         album: false,

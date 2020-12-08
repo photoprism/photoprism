@@ -126,7 +126,12 @@ func (m *Folder) SetValuesFromPath() {
 
 // Slug returns a slug based on the folder title.
 func (m *Folder) Slug() string {
-	return slug.Make(m.FolderTitle)
+	return slug.Make(m.Path)
+}
+
+// RootPath returns the full folder path including root.
+func (m *Folder) RootPath() string {
+	return path.Join(m.Root, m.Path)
 }
 
 // Title returns a human readable folder title.

@@ -29,7 +29,7 @@ import (
 func ClearAlbumThumbCache(uid string) {
 	cache := service.Cache()
 
-	for typeName, _ := range thumb.Types {
+	for typeName := range thumb.Types {
 		cacheKey := fmt.Sprintf("album-thumbs:%s:%s", uid, typeName)
 
 		if err := cache.Delete(cacheKey); err == nil {
@@ -229,7 +229,6 @@ func LikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
 		id := c.Param("uid")
 		album, err := query.AlbumByUID(id)
 
@@ -238,8 +237,10 @@ func LikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		album.AlbumFavorite = true
-		conf.Db().Save(&album)
+		if err := album.Update("AlbumFavorite", true); err != nil {
+			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
+			return
+		}
 
 		UpdateClientConfig()
 		PublishAlbumEvent(EntityUpdated, id, c)
@@ -261,7 +262,6 @@ func DislikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
 		id := c.Param("uid")
 		album, err := query.AlbumByUID(id)
 
@@ -270,8 +270,10 @@ func DislikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		album.AlbumFavorite = false
-		conf.Db().Save(&album)
+		if err := album.Update("AlbumFavorite", false); err != nil {
+			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
+			return
+		}
 
 		UpdateClientConfig()
 		PublishAlbumEvent(EntityUpdated, id, c)

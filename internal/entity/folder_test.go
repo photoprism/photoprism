@@ -127,8 +127,8 @@ func TestFolder_SetValuesFromPath(t *testing.T) {
 
 func TestFolder_Slug(t *testing.T) {
 	t.Run("/", func(t *testing.T) {
-		folder := Folder{FolderTitle: "Beautiful beach"}
-		assert.Equal(t, "beautiful-beach", folder.Slug())
+		folder := Folder{FolderTitle: "Beautiful beach", Root: "sidecar", Path: "ugly/beach"}
+		assert.Equal(t, "ugly-beach", folder.Slug())
 	})
 }
 

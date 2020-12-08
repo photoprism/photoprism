@@ -72,11 +72,11 @@ func (m *Moments) Start() (err error) {
 				Public: true,
 			}
 
-			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumFolder); a != nil {
+			if a := entity.FindFolderAlbum(mom.Slug(), mom.Path); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-				} else if err := a.Update("AlbumPath", mom.Path); err != nil {
+				} else if err := a.UpdatePath(mom.Path); err != nil {
 					log.Errorf("moments: %s (update folder album)", err.Error())
 				} else {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)

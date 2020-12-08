@@ -174,6 +174,11 @@
                       <translate>Add photos or videos from search results by selecting them.</translate>
                     </button>
                   </div>
+                  <div class="caption mb-2" v-else-if="album.Type === 'folder'">
+                    <button @click.exact="edit(album)">
+                      /{{ album.Path | truncate(100) }}
+                    </button>
+                  </div>
 
                   <div class="caption mb-2 d-block" v-if="album.Location">
                     <button @click.exact="edit(album)">
