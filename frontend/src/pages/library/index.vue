@@ -163,6 +163,12 @@
                 const type = ev.split('.')[1];
 
                 switch (type) {
+                    case "folder":
+                        this.action = this.$gettext("Indexing");
+                        this.busy = true;
+                        this.completed = 0;
+                        this.fileName = data.filePath;
+                        break;
                     case "indexing":
                         this.action = this.$gettext("Indexing");
                         this.busy = true;

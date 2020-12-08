@@ -142,6 +142,12 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 					}
 				}
 
+				if isDir {
+					event.Publish("index.folder", event.Data{
+						"filePath": relName,
+					})
+				}
+
 				return result
 			}
 
