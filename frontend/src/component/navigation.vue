@@ -175,7 +175,7 @@
 
         <v-list-tile v-if="mini" to="/albums" @click="" class="nav-albums">
           <v-list-tile-action>
-            <v-icon>folder</v-icon>
+            <v-icon>folder_special</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
@@ -185,22 +185,13 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!mini" prepend-icon="folder" no-action>
+        <v-list-group v-if="!mini" prepend-icon="folder_special" no-action>
           <v-list-tile slot="activator" to="/albums" @click.stop="" class="nav-albums">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Albums">Albums</translate>
                 <span v-if="config.count.albums > 0" class="nav-count">{{ config.count.albums }}</span>
               </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-
-          <v-list-tile to="/folders" class="nav-folders">
-            <v-list-tile-content>
-              <v-list-tile-title>
-                <translate key="Folders">Folders</translate>
-                <span v-show="config.count.folders > 0"
-                      class="nav-count">{{ config.count.folders }}</span></v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
@@ -212,6 +203,20 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list-group>
+
+        <v-list-tile :to="{ name: 'folders' }" @click="" class="nav-folders">
+          <v-list-tile-action>
+            <v-icon>folder</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Folders">Folders</translate>
+              <span v-show="config.count.folders > 0"
+                    class="nav-count">{{ config.count.folders }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
 
         <v-list-tile :to="{ name: 'calendar' }" @click="" class="nav-calendar">
           <v-list-tile-action>

@@ -41,6 +41,7 @@ type Album struct {
 	AlbumFilter      string     `gorm:"type:VARBINARY(1024);" json:"Filter" yaml:"Filter,omitempty"`
 	AlbumOrder       string     `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
 	AlbumTemplate    string     `gorm:"type:VARBINARY(255);" json:"Template" yaml:"Template,omitempty"`
+	AlbumPath        string     `gorm:"type:VARBINARY(768);" json:"Path" yaml:"-"`
 	AlbumCountry     string     `gorm:"type:VARBINARY(2);index:idx_albums_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
 	AlbumYear        int        `gorm:"index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	AlbumMonth       int        `gorm:"index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
@@ -118,7 +119,7 @@ func NewAlbum(albumTitle, albumType string) *Album {
 }
 
 // NewFolderAlbum creates a new folder album.
-func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
+func NewFolderAlbum(albumTitle, albumSlug, albumPath, albumFilter string) *Album {
 	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
 		return nil
 	}
@@ -130,6 +131,7 @@ func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		AlbumType:   AlbumFolder,
 		AlbumTitle:  albumTitle,
 		AlbumSlug:   albumSlug,
+		AlbumPath:   albumPath,
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,

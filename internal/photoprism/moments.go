@@ -76,23 +76,27 @@ func (m *Moments) Start() (err error) {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				} else if err := a.Update("AlbumPath", mom.Path); err != nil {
+					log.Errorf("moments: %s (update folder album)", err.Error())
 				} else {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
-			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Slug(), mom.Path, f.Serialize()); a != nil {
 				a.AlbumYear = mom.FolderYear
 				a.AlbumMonth = mom.FolderMonth
 				a.AlbumDay = mom.FolderDay
 				a.AlbumCountry = mom.FolderCountry
 
 				if err := a.Create(); err != nil {
-					log.Errorf("moments: %s", err)
+					log.Errorf("moments: %s (create folder album)", err)
 				} else {
 					log.Infof("moments: added %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
 			}
 		}
 	}
+
+	// PhotoPath
 
 	// All years and months.
 	if results, err := query.MomentsTime(1); err != nil {

@@ -59,7 +59,7 @@
                 @click.stop="dialog.album = true"
                 class="action-clone"
         >
-          <v-icon>folder</v-icon>
+          <v-icon>folder_special</v-icon>
         </v-btn>
         <v-btn
                 fab dark small
