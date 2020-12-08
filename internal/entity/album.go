@@ -119,8 +119,8 @@ func NewAlbum(albumTitle, albumType string) *Album {
 }
 
 // NewFolderAlbum creates a new folder album.
-func NewFolderAlbum(albumTitle, albumSlug, albumPath, albumFilter string) *Album {
-	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
+func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
+	if albumTitle == "" || albumPath == "" || albumFilter == "" {
 		return nil
 	}
 
@@ -130,7 +130,7 @@ func NewFolderAlbum(albumTitle, albumSlug, albumPath, albumFilter string) *Album
 		AlbumOrder:  SortOrderAdded,
 		AlbumType:   AlbumFolder,
 		AlbumTitle:  albumTitle,
-		AlbumSlug:   albumSlug,
+		AlbumSlug:   slug.Make(albumPath),
 		AlbumPath:   albumPath,
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
@@ -322,7 +322,10 @@ func (m *Album) Update(attr string, value interface{}) error {
 
 // UpdatePath sets a unique path for an albums.
 func (m *Album) UpdatePath(albumPath string) error {
-	if err := m.Update("AlbumPath", albumPath); err != nil {
+	if err := UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{
+		"AlbumPath": albumPath,
+		"AlbumSlug": slug.Make(albumPath),
+	}).Error; err != nil {
 		return err
 	} else if err := UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_path = ? AND id <> ?", albumPath, m.ID).Error; err != nil {
 		return err
