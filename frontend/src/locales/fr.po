@@ -72,7 +72,7 @@ msgstr "Action"
 
 #: src/dialog/photo/files.vue:29
 msgid "Actions"
-msgstr "Images partageant le même identifiant unique d'image."
+msgstr "Actions"
 
 #: src/pages/albums.vue:153
 msgid "Add Album"
