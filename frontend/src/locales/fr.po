@@ -72,7 +72,7 @@ msgstr "Action"
 
 #: src/dialog/photo/files.vue:29
 msgid "Actions"
-msgstr "Images partageant le même identifiant unique d'image?"
+msgstr "Images partageant le même identifiant unique d'image."
 
 #: src/pages/albums.vue:153
 msgid "Add Album"
@@ -1715,7 +1715,7 @@ msgstr "Images partageant le même identifiant unique d'image."
 
 #: src/pages/settings/general.vue:38
 msgid "Stack files with matching..."
-msgstr "Grouper les fichiers en cas de:"
+msgstr "Grouper les fichiers en cas de…"
 
 #: src/pages/settings/general.vue:205
 msgid ""
