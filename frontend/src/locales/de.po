@@ -603,7 +603,7 @@ msgstr ""
 
 #: src/component/album/clipboard.vue:83 src/component/album/toolbar.vue:96
 #: src/component/file/clipboard.vue:41 src/component/label/clipboard.vue:54
-#: src/component/photo/clipboard.vue:93 src/component/photo/viewer.vue:90
+#: src/component/photo/clipboard.vue:94 src/component/photo/viewer.vue:90
 #: src/share/album/clipboard.vue:41 src/share/photo/clipboard.vue:41
 #: src/share/photos.vue:445
 msgid "Downloading…"
@@ -730,10 +730,6 @@ msgstr "Datei"
 #: src/routes.js:217
 msgid "File Browser"
 msgstr "Datei Browser"
-
-#: src/pages/settings/general.vue:248
-msgid "File Name Prefix"
-msgstr "Fortlaufender Name"
 
 #: src/dialog/photo/edit.vue:31
 msgid "Files"
@@ -1506,7 +1502,7 @@ msgstr "Remote Sync"
 msgid "Remove"
 msgstr "Entfernen"
 
-#: src/component/photo/clipboard.vue:68
+#: src/component/photo/clipboard.vue:69
 msgid "remove failed: unknown album"
 msgstr "Löschen nicht möglich: Unbekanntes Album"
 
@@ -1597,21 +1593,25 @@ msgstr "Code"
 msgid "Select albums or create a new one"
 msgstr "Alben auswählen oder neue erstellen"
 
-#: src/component/photo/clipboard.vue:33
+#: src/component/photo/clipboard.vue:34
 msgid "Selection approved"
 msgstr "Auswahl übernommen"
 
-#: src/component/photo/clipboard.vue:42
+#: src/component/photo/clipboard.vue:43
 msgid "Selection archived"
 msgstr "Auswahl archiviert"
 
-#: src/component/photo/clipboard.vue:55
+#: src/component/photo/clipboard.vue:56
 msgid "Selection restored"
 msgstr "Auswahl wiederhergestellt"
 
 #: src/pages/about/feedback.vue:46
 msgid "Send"
 msgstr "Senden"
+
+#: src/pages/settings/general.vue:248
+msgid "Sequential Name"
+msgstr "Fortlaufender Name"
 
 #: src/pages/settings/sync.vue:23
 msgid "Server"
@@ -2033,6 +2033,9 @@ msgstr "Ihre Nachricht wurde gesendet"
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
 
+#~ msgid "File Name Prefix"
+#~ msgstr "Fortlaufender Name"
+
 #~ msgid "Stack Sequences"
 #~ msgstr "Sequenzen gruppieren"
 
@@ -2070,9 +2073,6 @@ msgstr "Zoom in/out"
 
 #~ msgid "UID"
 #~ msgstr "UID"
-
-#~ msgid "Group Sequential"
-#~ msgstr "Sequenzen gruppieren"
 
 #~ msgid "OK"
 #~ msgstr "OK"

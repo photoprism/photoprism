@@ -122,9 +122,9 @@
                   class="ma-0 pa-0 input-stack-name"
                   v-model="settings.stack.name"
                   color="secondary-dark"
-                  :label="$gettext('File Name Prefix')"
+                  :label="$gettext('Sequential Name')"
                   :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
-                  prepend-icon="spellcheck"
+                  prepend-icon="format_list_numbered_rtl"
                   persistent-hint
               >
               </v-checkbox>
