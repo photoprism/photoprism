@@ -80,7 +80,7 @@ msgstr "Neues Album erstellen"
 
 #: src/pages/settings/general.vue:377
 msgid "Add files to your library via Web Upload."
-msgstr "Dateien über den Browser hochladen und indizieren."
+msgstr "Dateien über den Browser hochladen und indexieren."
 
 #: src/dialog/share.vue:91
 msgid "Add Link"
@@ -325,7 +325,7 @@ msgstr "Automatische Bild-Kategorisierung sehen und bearbeiten."
 
 #: src/pages/settings/general.vue:487
 msgid "Browse indexed files and folders in Library."
-msgstr "Durchsuche indizierte Dateien und Verzeichnisse."
+msgstr "Durchsuche Ordner hierarchisch nach indexierten Original-Dateien."
 
 #: src/options/options.js:248
 msgid "Bug Report"
@@ -841,7 +841,7 @@ msgid ""
 "indexing has been completed."
 msgstr ""
 "Falls eine Datei fehlt, muss der Index möglicherweise aktualisiert werden. "
-"Es werden erst alle Dateien gefunden, wenn das Indizieren vollständig "
+"Es werden erst alle Dateien gefunden, wenn das Indexieren vollständig "
 "abgeschlossen ist."
 
 #: src/dialog/photo/labels.vue:32
@@ -892,15 +892,15 @@ msgstr "Index"
 
 #: src/pages/library/index.vue:81
 msgid "Indexing"
-msgstr "Indiziere"
+msgstr "Indexiere"
 
 #: src/pages/library/index.vue:63
 msgid "Indexing failed"
-msgstr "Indizierung fehlgeschlagen"
+msgstr "Indexierung fehlgeschlagen"
 
 #: src/pages/library/index.vue:6
 msgid "Indexing media and sidecar files…"
-msgstr "Indiziere Fotos, Videos und Sidecar-Dateien…"
+msgstr "Indexiere Bilder, Videos und Sidecar-Dateien…"
 
 #: src/dialog/photo/files.vue:54
 msgid "Instance ID"
@@ -1221,7 +1221,7 @@ msgid "Note that you can as well manage and re-index your originals manually."
 msgstr ""
 "Hinweis: Falls die vorhandenen Ordner und Dateinamen beibehalten werden "
 "sollen, ist kein Import notwendig. Die Ordner müssen in diesem Fall manuell "
-"verwaltet und indiziert werden."
+"verwaltet und indexiert werden."
 
 #: src/pages/settings/sync.vue:34
 msgid "Note:"
@@ -1414,7 +1414,7 @@ msgstr "Auf “Import” klicken, um Dateien zu importieren…"
 
 #: src/pages/library/index.vue:8
 msgid "Press button to start indexing…"
-msgstr "Auf “Start” klicken, um Dateien zu indizieren…"
+msgstr "Auf “Start” klicken, um Dateien zu indexieren…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
@@ -1468,7 +1468,7 @@ msgstr "Raw"
 
 #: src/pages/library/index.vue:118
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Bereits bekannte und unveränderte Dateien neu indizieren."
+msgstr "Bereits bekannte und unveränderte Dateien neu indexieren."
 
 #: src/component/album/toolbar.vue:37 src/component/photo/toolbar.vue:35
 #: src/dialog/album/edit.vue:15
@@ -1910,7 +1910,7 @@ msgstr "Vollständig  hochgeladen"
 
 #: src/dialog/upload.vue:38
 msgid "Upload complete. Indexing…"
-msgstr "Upload abgeschlossen. Indiziere…"
+msgstr "Upload abgeschlossen. Indexiere…"
 
 #: src/dialog/upload.vue:34
 msgid "Upload failed"
