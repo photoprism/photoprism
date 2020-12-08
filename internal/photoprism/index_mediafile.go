@@ -114,7 +114,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	photoExists := false
 
-	stripSequence := Config().Settings().Index.Sequences
+	stripSequence := Config().Settings().StackSequences()
 
 	event.Publish("index.indexing", event.Data{
 		"fileHash": fileHash,
@@ -156,29 +156,26 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	// Try to find existing photo by file path and name.
+	// Look for existing photo if file wasn't indexed yet...
 	if !fileExists {
 		photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
 
-		// Add file to existing photo (file stack)?
-		if o.Stack {
-			// Try to find existing photo by exact time and location.
-			if photoQuery.Error != nil && m.MetaData().HasTimeAndPlace() {
-				metaData = m.MetaData()
-				photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
+		// Stack file based on matching location and time metadata?
+		if photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
+			metaData = m.MetaData()
+			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
 
-				if photoQuery.Error == nil {
-					fileStacked = true
-				}
+			if photoQuery.Error == nil {
+				fileStacked = true
 			}
+		}
 
-			// Try to find existing photo by unique image id.
-			if photoQuery.Error != nil && m.MetaData().HasDocumentID() {
-				photoQuery = entity.UnscopedDb().First(&photo, "uuid = ?", m.MetaData().DocumentID)
+		// Stack file based on the same unique ID?
+		if photoQuery.Error != nil && Config().Settings().StackUUID() && m.MetaData().HasDocumentID() {
+			photoQuery = entity.UnscopedDb().First(&photo, "uuid <> '' AND uuid = ?", m.MetaData().DocumentID)
 
-				if photoQuery.Error == nil {
-					fileStacked = true
-				}
+			if photoQuery.Error == nil {
+				fileStacked = true
 			}
 		}
 	} else {

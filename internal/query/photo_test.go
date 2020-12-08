@@ -80,12 +80,43 @@ func TestPhotosCheck(t *testing.T) {
 }
 
 func TestIdenticalPhotos(t *testing.T) {
-	result, err := IdenticalPhotos()
+	t.Run("all", func(t *testing.T) {
+		result, err := MatchingPhotos(true, true)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	assert.IsType(t, entity.Photos{}, result)
-	// t.Logf("%+v", result)
+		assert.IsType(t, entity.Photos{}, result)
+	})
+
+	t.Run("meta", func(t *testing.T) {
+		result, err := MatchingPhotos(true, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, entity.Photos{}, result)
+	})
+
+	t.Run("uuid", func(t *testing.T) {
+		result, err := MatchingPhotos(false, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, entity.Photos{}, result)
+	})
+
+	t.Run("none", func(t *testing.T) {
+		result, err := MatchingPhotos(false, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, entity.Photos{}, result)
+	})
 }
