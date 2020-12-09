@@ -224,6 +224,14 @@ func (m *Moments) Start() (err error) {
 		}
 	}
 
+	if err := query.UpdateFolderDates(); err != nil {
+		log.Errorf("moments: %s (update folder dates)", err.Error())
+	}
+
+	if err := query.UpdateAlbumDates(); err != nil {
+		log.Errorf("moments: %s (update album dates)", err.Error())
+	}
+
 	return nil
 }
 

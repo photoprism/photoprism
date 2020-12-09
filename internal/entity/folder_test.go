@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/form"
 
@@ -10,7 +11,7 @@ import (
 
 func TestNewFolder(t *testing.T) {
 	t.Run("2020/05", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "2020/05", nil)
+		folder := NewFolder(RootOriginals, "2020/05", time.Now().UTC())
 		assert.Equal(t, RootOriginals, folder.Root)
 		assert.Equal(t, "2020/05", folder.Path)
 		assert.Equal(t, "May 2020", folder.FolderTitle)
@@ -27,7 +28,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/2020/05/01/", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "/2020/05/01/", nil)
+		folder := NewFolder(RootOriginals, "/2020/05/01/", time.Now().UTC())
 		assert.Equal(t, "2020/05/01", folder.Path)
 		assert.Equal(t, "May 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
@@ -36,7 +37,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/2020/05/23/", func(t *testing.T) {
-		folder := NewFolder(RootImport, "/2020/05/23/", nil)
+		folder := NewFolder(RootImport, "/2020/05/23/", time.Now().UTC())
 		assert.Equal(t, "2020/05/23", folder.Path)
 		assert.Equal(t, "May 23, 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
@@ -45,7 +46,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/2020/05/23/Iceland 2020", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "/2020/05/23/Iceland 2020", nil)
+		folder := NewFolder(RootOriginals, "/2020/05/23/Iceland 2020", time.Now().UTC())
 		assert.Equal(t, "2020/05/23/Iceland 2020", folder.Path)
 		assert.Equal(t, "Iceland 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
@@ -54,7 +55,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("/London/2020/05/23", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "/London/2020/05/23", nil)
+		folder := NewFolder(RootOriginals, "/London/2020/05/23", time.Now().UTC())
 		assert.Equal(t, "London/2020/05/23", folder.Path)
 		assert.Equal(t, "May 23, 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
@@ -63,7 +64,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("empty", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, "", nil)
+		folder := NewFolder(RootOriginals, "", time.Time{})
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
 		assert.Equal(t, 0, folder.FolderYear)
@@ -72,7 +73,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("root", func(t *testing.T) {
-		folder := NewFolder(RootOriginals, RootPath, nil)
+		folder := NewFolder(RootOriginals, RootPath, time.Time{})
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
 		assert.Equal(t, 0, folder.FolderYear)
@@ -81,13 +82,13 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("pathName equals root path", func(t *testing.T) {
-		folder := NewFolder("", "", nil)
+		folder := NewFolder("", "", time.Now().UTC())
 		assert.Equal(t, "", folder.Path)
 	})
 }
 
 func TestFirstOrCreateFolder(t *testing.T) {
-	folder := NewFolder(RootOriginals, RootPath, nil)
+	folder := NewFolder(RootOriginals, RootPath, time.Now().UTC())
 	result := FirstOrCreateFolder(&folder)
 
 	if result == nil {
@@ -119,7 +120,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 
 func TestFolder_SetValuesFromPath(t *testing.T) {
 	t.Run("/", func(t *testing.T) {
-		folder := NewFolder("new", "", nil)
+		folder := NewFolder("new", "", time.Now().UTC())
 		folder.SetValuesFromPath()
 		assert.Equal(t, "New", folder.FolderTitle)
 	})
@@ -147,7 +148,7 @@ func TestFindFolder(t *testing.T) {
 
 func TestFolder_Updates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		folder := NewFolder("oldRoot", "oldPath", nil)
+		folder := NewFolder("oldRoot", "oldPath", time.Now().UTC())
 
 		assert.Equal(t, "oldRoot", folder.Root)
 		assert.Equal(t, "oldPath", folder.Path)
@@ -168,7 +169,7 @@ func TestFolder_SetForm(t *testing.T) {
 
 		folderForm, err := form.NewFolder(formValues)
 
-		folder := NewFolder("oldRoot", "oldPath", nil)
+		folder := NewFolder("oldRoot", "oldPath", time.Now().UTC())
 
 		assert.Equal(t, "oldRoot", folder.Root)
 		assert.Equal(t, "oldPath", folder.Path)

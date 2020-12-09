@@ -135,7 +135,7 @@ export default [
         path: "/folders",
         component: Albums,
         meta: {title: $gettext("Folders"), auth: true},
-        props: {view: "folder", staticFilter: {type: "folder", order: "slug"}},
+        props: {view: "folder", staticFilter: {type: "folder", order: "default"}},
     },
     {
         name: "folder",

@@ -135,7 +135,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				if (isSymlink || isDir) && result != filepath.SkipDir {
-					folder := entity.NewFolder(entity.RootOriginals, relName, nil)
+					folder := entity.NewFolder(entity.RootOriginals, relName, fs.BirthTime(fileName))
 
 					if err := folder.Create(); err == nil {
 						log.Infof("index: added folder /%s", folder.Path)

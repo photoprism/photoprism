@@ -173,7 +173,7 @@ func TestNewFolderAlbum(t *testing.T) {
 		assert.Equal(t, "label:dog", album.AlbumFilter)
 	})
 	t.Run("title empty", func(t *testing.T) {
-		album := NewFolderAlbum("", "dogs",  "label:dog")
+		album := NewFolderAlbum("", "dogs", "label:dog")
 		assert.Nil(t, album)
 	})
 }

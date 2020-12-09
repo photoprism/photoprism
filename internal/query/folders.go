@@ -18,7 +18,7 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	folders = make(entity.Folders, len(dirs))
 
 	for i, dir := range dirs {
-		newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), nil)
+		newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), fs.BirthTime(filepath.Join(rootPath, dir)))
 
 		if err := newFolder.Create(); err == nil {
 			folders[i] = newFolder
@@ -45,4 +45,15 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 	}
 
 	return folders, nil
+}
+
+// UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
+func UpdateFolderDates() error {
+	return UnscopedDb().Exec(`UPDATE folders
+	INNER JOIN
+	(SELECT photo_path, MAX(photo_year) AS max_photo_year, MAX(photo_month) AS max_photo_month, MAX(photo_day) AS max_photo_day
+	FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	GROUP BY photo_path) AS p ON folders.path = p.photo_path
+	SET folders.folder_year = p.max_photo_year, folders.folder_month = p.max_photo_month, folders.folder_day = p.max_photo_day
+	WHERE p.max_photo_year IS NOT NULL AND p.max_photo_year > 0`).Error
 }

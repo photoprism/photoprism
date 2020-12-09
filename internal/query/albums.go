@@ -178,3 +178,14 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 
 	return results, nil
 }
+
+// UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
+func UpdateAlbumDates() error {
+	return UnscopedDb().Exec(`UPDATE albums
+	INNER JOIN
+	(SELECT photo_path, MAX(photo_year) AS max_photo_year, MAX(photo_month) AS max_photo_month, MAX(photo_day) AS max_photo_day
+	FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	GROUP BY photo_path) AS p ON albums.album_path = p.photo_path
+	SET albums.album_year = p.max_photo_year, albums.album_month = p.max_photo_month, albums.album_day = p.max_photo_day
+	WHERE albums.album_type = 'folder' AND p.max_photo_year IS NOT NULL AND p.max_photo_year > 0`).Error
+}
