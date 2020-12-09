@@ -45,3 +45,11 @@ func TestAlbumFolders(t *testing.T) {
 		t.Logf("folders: %+v", folders)
 	})
 }
+
+func TestUpdateFolderDates(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		if err := UpdateFolderDates(); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
