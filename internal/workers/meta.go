@@ -76,11 +76,18 @@ func (worker *Meta) Start() (err error) {
 
 			done[photo.PhotoUID] = true
 
-			if updated, err := photo.Optimize(worker.conf.Settings().StackMeta(), worker.conf.Settings().StackUUID()); err != nil {
+			updated, merged, err := photo.Optimize(worker.conf.Settings().StackMeta(), worker.conf.Settings().StackUUID())
+
+			if err != nil {
 				log.Errorf("metadata: %s (optimize photo)", err)
 			} else if updated {
 				optimized++
 				log.Debugf("metadata: optimized photo %s", photo.String())
+			}
+
+			for _, m := range merged {
+				log.Infof("metadata: stacked %s", m.PhotoUID)
+				done[m.PhotoUID] = true
 			}
 		}
 

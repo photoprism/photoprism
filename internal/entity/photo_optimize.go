@@ -92,9 +92,9 @@ func (m *Photo) EstimatePlace() {
 }
 
 // Optimize photo data, improve if possible.
-func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, err error) {
+func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, merged Photos, err error) {
 	if !m.HasID() {
-		return false, errors.New("photo: can't maintain, id is empty")
+		return false, merged, errors.New("photo: can't maintain, id is empty")
 	}
 
 	current := *m
@@ -103,10 +103,8 @@ func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, err error) {
 		m.UpdateLocation()
 	}
 
-	if merged, err := m.Stack(stackMeta, stackUuid); err != nil {
+	if merged, err = m.Stack(stackMeta, stackUuid); err != nil {
 		log.Errorf("photo: %s (stack)", err)
-	} else {
-		log.Infof("photo: merged uid %s with %s", m.PhotoUID, merged.UIDs())
 	}
 
 	m.EstimatePlace()
@@ -133,10 +131,10 @@ func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, err error) {
 	checked := Timestamp()
 
 	if reflect.DeepEqual(*m, current) {
-		return false, m.Update("CheckedAt", &checked)
+		return false, merged, m.Update("CheckedAt", &checked)
 	}
 
 	m.CheckedAt = &checked
 
-	return true, m.Save()
+	return true, merged, m.Save()
 }
