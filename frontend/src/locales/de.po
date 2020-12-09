@@ -808,7 +808,7 @@ msgstr "Hilfe"
 
 #: src/component/navigation.vue:307
 msgid "Hidden"
-msgstr "Unsichtbar"
+msgstr "Versteckt"
 
 #: src/routes.js:223
 msgid "Hidden Files"
