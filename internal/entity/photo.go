@@ -1011,29 +1011,36 @@ func (m *Photo) MapKey() string {
 	return MapKey(m.TakenAt, m.CellID)
 }
 
-// Stack merges the photo with identical ones.
-func (m *Photo) Stack(meta, uuid bool) (identical Photos, err error) {
-	if !meta && !uuid {
+// Stack merges a photo with identical ones.
+func (m *Photo) Stack(stackMeta, stackUuid bool) (identical Photos, err error) {
+	if !stackMeta && !stackUuid || m.PhotoSingle || m.DeletedAt != nil {
 		return identical, nil
 	}
 
-	stmt := Db().
-		Where("id <> ?", m.ID).
-		Where("photo_single = 0")
-
 	switch {
-	case meta && uuid:
-		stmt = stmt.Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
-			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID)
-	case meta:
-		stmt = stmt.Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
-			m.TakenAt, m.CellID, m.CameraSerial, m.CameraID)
-	case uuid:
-		stmt = stmt.Where("uuid <> '' AND uuid = ?", m.UUID)
+	case stackMeta && stackUuid && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
+		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+			Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
+				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).Find(&identical).Error; err != nil {
+			return identical, err
+		}
+	case stackMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
+		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+			Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
+				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID).Error; err != nil {
+			return identical, err
+		}
+	case stackUuid && rnd.IsUUID(m.UUID):
+		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+			Where("uuid <> '' AND uuid = ?", m.UUID).Error; err != nil {
+			return identical, err
+		}
+	default:
+		return identical, nil
 	}
 
-	if err := stmt.Find(&identical).Error; err != nil {
-		return identical, err
+	if len(identical) == 0 {
+		return identical, nil
 	}
 
 	for _, photo := range identical {
@@ -1058,8 +1065,6 @@ func (m *Photo) Stack(meta, uuid bool) (identical Photos, err error) {
 			return identical, err
 		}
 	}
-
-	_, err = m.Optimize()
 
 	return identical, err
 }

@@ -9,8 +9,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
@@ -227,13 +225,11 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 		log.Error(err.Error())
 	}
 
-	if opt.Stack {
-		if err := ind.StackPhotos(); err != nil {
-			log.Errorf("index: %s", err)
-		}
-	}
-
 	if filesIndexed > 0 {
+		event.Publish("index.updating", event.Data{
+			"step": "counts",
+		})
+
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("index: %s", err)
 		}
@@ -244,27 +240,6 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	runtime.GC()
 
 	return done
-}
-
-// StackPhotos stacks files that belong to the same photo.
-func (ind *Index) StackPhotos() error {
-	photos, err := query.MatchingPhotos(ind.conf.Settings().StackMeta(), ind.conf.Settings().StackUUID())
-
-	if err != nil {
-		return err
-	}
-
-	for _, photo := range photos {
-		if merged, err := photo.Stack(ind.conf.Settings().StackMeta(), ind.conf.Settings().StackUUID()); err != nil {
-			log.Errorf("index: %s", err)
-		} else {
-			log.Infof("index: merged photo uid %s with %s", photo.PhotoUID, merged.UIDs())
-			event.EntitiesUpdated("photos", []entity.Photo{photo})
-			event.EntitiesDeleted("photos", merged.UIDs())
-		}
-	}
-
-	return nil
 }
 
 // File indexes a single file and returns the result.

@@ -76,7 +76,7 @@ func (worker *Meta) Start() (err error) {
 
 			done[photo.PhotoUID] = true
 
-			if updated, err := photo.Optimize(); err != nil {
+			if updated, err := photo.Optimize(worker.conf.Settings().StackMeta(), worker.conf.Settings().StackUUID()); err != nil {
 				log.Errorf("metadata: %s (optimize photo)", err)
 			} else if updated {
 				optimized++

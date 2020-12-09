@@ -53,13 +53,13 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 func TestPhoto_Optimize(t *testing.T) {
 	t.Run("update", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo19")
-		if updated, err := photo.Optimize(); err != nil {
+		if updated, err := photo.Optimize(true, true); err != nil {
 			t.Fatal(err)
 		} else if !updated {
 			t.Error("photo should be updated")
 		}
 
-		if updated, err := photo.Optimize(); err != nil {
+		if updated, err := photo.Optimize(false, false); err != nil {
 			t.Fatal(err)
 		} else if updated {
 			t.Error("photo should NOT be updated")
@@ -67,7 +67,7 @@ func TestPhoto_Optimize(t *testing.T) {
 	})
 	t.Run("photo without id", func(t *testing.T) {
 		photo := Photo{}
-		bool, err := photo.Optimize()
+		bool, err := photo.Optimize(false, false)
 		assert.Error(t, err)
 		assert.False(t, bool)
 

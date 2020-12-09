@@ -92,7 +92,7 @@ func (m *Photo) EstimatePlace() {
 }
 
 // Optimize photo data, improve if possible.
-func (m *Photo) Optimize() (updated bool, err error) {
+func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, err error) {
 	if !m.HasID() {
 		return false, errors.New("photo: can't maintain, id is empty")
 	}
@@ -101,6 +101,12 @@ func (m *Photo) Optimize() (updated bool, err error) {
 
 	if m.HasLatLng() && !m.HasLocation() {
 		m.UpdateLocation()
+	}
+
+	if merged, err := m.Stack(stackMeta, stackUuid); err != nil {
+		log.Errorf("photo: %s (stack)", err)
+	} else {
+		log.Infof("photo: merged uid %s with %s", m.PhotoUID, merged.UIDs())
 	}
 
 	m.EstimatePlace()
