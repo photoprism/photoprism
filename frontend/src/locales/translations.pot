@@ -51,7 +51,7 @@ msgstr ""
 msgid "A click will copy it to your clipboard."
 msgstr ""
 
-#: src/component/navigation.vue:342
+#: src/component/navigation.vue:347
 #: src/component/navigation.vue:25
 msgid "About"
 msgstr ""
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/pages/albums.vue:153
+#: src/pages/albums.vue:157
 msgid "Add Album"
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr ""
 msgid "Busy, please wait…"
 msgstr ""
 
-#: src/component/navigation.vue:205
+#: src/component/navigation.vue:210
 #: src/routes.js:124
 #: src/routes.js:131
 msgid "Calendar"
@@ -384,7 +384,7 @@ msgstr ""
 #: src/dialog/share.vue:21
 #: src/dialog/share/upload.vue:29
 #: src/pages/library/import.vue:34
-#: src/pages/library/index.vue:26
+#: src/pages/library/index.vue:27
 msgid "Cancel"
 msgstr ""
 
@@ -396,7 +396,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:345
 #: src/dialog/album/edit.vue:161
 #: src/pages/about/feedback.vue:93
-#: src/pages/albums.vue:104
+#: src/pages/albums.vue:108
 msgid "Category"
 msgstr ""
 
@@ -443,7 +443,7 @@ msgstr ""
 msgid "Colors"
 msgstr ""
 
-#: src/pages/library/index.vue:117
+#: src/pages/library/index.vue:120
 msgid "Complete Rescan"
 msgstr ""
 
@@ -480,7 +480,7 @@ msgstr ""
 msgid "Convert to JPEG"
 msgstr ""
 
-#: src/pages/library/index.vue:87
+#: src/pages/library/index.vue:109
 msgid "Converting"
 msgstr ""
 
@@ -539,7 +539,7 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
-#: src/pages/library/index.vue:93
+#: src/pages/library/index.vue:116
 msgid "Creating thumbnails for"
 msgstr ""
 
@@ -626,7 +626,7 @@ msgstr ""
 
 #: src/dialog/upload.vue:39
 #: src/pages/library/import.vue:7
-#: src/pages/library/index.vue:7
+#: src/pages/library/index.vue:8
 msgid "Done."
 msgstr ""
 
@@ -712,7 +712,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/component/navigation.vue:311
+#: src/component/navigation.vue:316
 msgid "Errors"
 msgstr ""
 
@@ -775,7 +775,7 @@ msgstr ""
 msgid "Feature Request"
 msgstr ""
 
-#: src/component/navigation.vue:350
+#: src/component/navigation.vue:355
 #: src/component/navigation.vue:33
 msgid "Feedback"
 msgstr ""
@@ -817,7 +817,7 @@ msgstr ""
 msgid "Folder is empty"
 msgstr ""
 
-#: src/component/navigation.vue:184
+#: src/component/navigation.vue:197
 #: src/routes.js:137
 #: src/routes.js:144
 msgid "Folders"
@@ -865,7 +865,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: src/component/navigation.vue:302
+#: src/component/navigation.vue:307
 msgid "Hidden"
 msgstr ""
 
@@ -943,6 +943,7 @@ msgid "Index"
 msgstr ""
 
 #: src/pages/library/index.vue:81
+#: src/pages/library/index.vue:88
 msgid "Indexing"
 msgstr ""
 
@@ -950,7 +951,7 @@ msgstr ""
 msgid "Indexing failed"
 msgstr ""
 
-#: src/pages/library/index.vue:6
+#: src/pages/library/index.vue:7
 msgid "Indexing media and sidecar files…"
 msgstr ""
 
@@ -988,7 +989,7 @@ msgstr ""
 msgid "Label Name"
 msgstr ""
 
-#: src/component/navigation.vue:263
+#: src/component/navigation.vue:268
 #: src/dialog/photo/edit.vue:27
 #: src/pages/settings/general.vue:530
 #: src/routes.js:236
@@ -1024,8 +1025,8 @@ msgstr ""
 msgid "Let PhotoPrism create albums from past events."
 msgstr ""
 
-#: src/component/navigation.vue:276
-#: src/component/navigation.vue:285
+#: src/component/navigation.vue:281
+#: src/component/navigation.vue:290
 #: src/pages/settings/general.vue:6
 #: src/pages/settings/general.vue:552
 #: src/routes.js:255
@@ -1034,7 +1035,7 @@ msgstr ""
 msgid "Library"
 msgstr ""
 
-#: src/component/navigation.vue:358
+#: src/component/navigation.vue:363
 #: src/component/navigation.vue:41
 #: src/dialog/photo/details.vue:567
 #: src/pages/about/license.vue:4
@@ -1084,11 +1085,11 @@ msgstr ""
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr ""
 
-#: src/component/navigation.vue:384
+#: src/component/navigation.vue:389
 msgid "Login"
 msgstr ""
 
-#: src/component/navigation.vue:372
+#: src/component/navigation.vue:377
 msgid "Logout"
 msgstr ""
 
@@ -1130,7 +1131,7 @@ msgstr ""
 msgid "Missing"
 msgstr ""
 
-#: src/component/navigation.vue:218
+#: src/component/navigation.vue:223
 #: src/pages/settings/general.vue:508
 #: src/routes.js:98
 #: src/routes.js:105
@@ -1320,7 +1321,7 @@ msgstr ""
 msgid "Nothing to see here yet. Be patient."
 msgstr ""
 
-#: src/component/navigation.vue:396
+#: src/component/navigation.vue:401
 #: src/options/options.js:164
 msgid "Offline"
 msgstr ""
@@ -1378,7 +1379,7 @@ msgstr ""
 msgid "Original Name"
 msgstr ""
 
-#: src/component/navigation.vue:293
+#: src/component/navigation.vue:298
 #: src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:486
 msgid "Originals"
@@ -1452,8 +1453,8 @@ msgstr ""
 msgid "Place & Time"
 msgstr ""
 
-#: src/component/navigation.vue:231
-#: src/component/navigation.vue:240
+#: src/component/navigation.vue:236
+#: src/component/navigation.vue:245
 #: src/pages/settings/general.vue:152
 #: src/pages/settings/general.vue:618
 #: src/routes.js:192
@@ -1491,7 +1492,7 @@ msgstr ""
 msgid "Press button to start importing…"
 msgstr ""
 
-#: src/pages/library/index.vue:8
+#: src/pages/library/index.vue:9
 msgid "Press button to start indexing…"
 msgstr ""
 
@@ -1548,7 +1549,7 @@ msgstr ""
 msgid "Raw"
 msgstr ""
 
-#: src/pages/library/index.vue:118
+#: src/pages/library/index.vue:121
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 
@@ -1571,7 +1572,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:53
 #: src/component/photo/toolbar.vue:55
 #: src/dialog/reload.vue:15
-#: src/pages/albums.vue:116
+#: src/pages/albums.vue:120
 #: src/pages/labels.vue:82
 #: src/pages/library/errors.vue:60
 #: src/pages/library/files.vue:96
@@ -1649,7 +1650,7 @@ msgid "Scans"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:41
-#: src/pages/albums.vue:91
+#: src/pages/albums.vue:95
 #: src/pages/labels.vue:66
 #: src/pages/library/errors.vue:46
 #: src/pages/places.vue:28
@@ -1719,8 +1720,8 @@ msgstr ""
 msgid "Service URL"
 msgstr ""
 
-#: src/component/navigation.vue:325
-#: src/component/navigation.vue:334
+#: src/component/navigation.vue:330
+#: src/component/navigation.vue:339
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:17
 #: src/routes.js:276
@@ -1834,7 +1835,7 @@ msgstr ""
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr ""
 
-#: src/pages/library/index.vue:30
+#: src/pages/library/index.vue:31
 msgid "Start"
 msgstr ""
 
@@ -1842,7 +1843,7 @@ msgstr ""
 msgid "Start/Stop Slideshow"
 msgstr ""
 
-#: src/component/navigation.vue:249
+#: src/component/navigation.vue:254
 msgid "States"
 msgstr ""
 
@@ -1892,11 +1893,11 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
-#: src/pages/library/index.vue:35
+#: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr ""
 
-#: src/pages/library/index.vue:36
+#: src/pages/library/index.vue:37
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr ""
 
@@ -2001,7 +2002,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/component/navigation.vue:192
+#: src/component/navigation.vue:184
 #: src/routes.js:150
 msgid "Unsorted"
 msgstr ""
@@ -2015,13 +2016,25 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
+#: src/pages/library/index.vue:100
+msgid "Updating index"
+msgstr ""
+
+#: src/pages/library/index.vue:98
+msgid "Updating moments"
+msgstr ""
+
+#: src/pages/library/index.vue:96
+msgid "Updating stacks"
+msgstr ""
+
 #: src/component/album/toolbar.vue:175
-#: src/component/navigation.vue:130
+#: src/component/navigation.vue:131
 #: src/component/photo/toolbar.vue:123
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
 #: src/dialog/upload.vue:54
-#: src/pages/albums.vue:134
+#: src/pages/albums.vue:138
 #: src/pages/library/import.vue:38
 #: src/pages/settings/general.vue:376
 #: src/pages/settings/sync.vue:24
