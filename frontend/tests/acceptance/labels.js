@@ -81,12 +81,12 @@ test('#2 Rename Label', async t => {
     const LabelZebra = await Selector('div.p-label').nth(0).getAttribute('data-uid');
     await t
         .click(Selector('div.p-label a').nth(0));
-    const FirstPhotoZebra = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
-    const SecondPhotoZebra = await Selector('div.p-photo').nth(1).getAttribute('data-uid');
+    const FirstPhotoZebra = await Selector('div.p-photo', {timeout: 5000}).nth(0).getAttribute('data-uid');
+    const SecondPhotoZebra = await Selector('div.p-photo', {timeout: 5000}).nth(1).getAttribute('data-uid');
     await t
         .click(Selector('.action-title-edit').withAttribute('data-uid', FirstPhotoZebra));
-    const FirstPhotoTitle = await (Selector('.input-title input').value);
-    const FirstPhotoKeywords = await (Selector('.input-keywords textarea').value);
+    const FirstPhotoTitle = await (Selector('.input-title input', {timeout: 5000}).value);
+    const FirstPhotoKeywords = await (Selector('.input-keywords textarea', {timeout: 5000}).value);
     await t
         .expect(FirstPhotoTitle).contains('Zebra')
         .expect(FirstPhotoKeywords).contains('zebra')
@@ -95,8 +95,8 @@ test('#2 Rename Label', async t => {
         .typeText(Selector('.input-rename input'), 'Horse', { replace: true })
         .pressKey('enter')
         .click(Selector('#tab-details'));
-    const FirstPhotoTitleAfterEdit = await (Selector('.input-title input').value);
-    const FirstPhotoKeywordsAfterEdit = await (Selector('.input-keywords textarea').value);
+    const FirstPhotoTitleAfterEdit = await (Selector('.input-title input', {timeout: 5000}).value);
+    const FirstPhotoKeywordsAfterEdit = await (Selector('.input-keywords textarea', {timeout: 5000}).value);
     await t
         .expect(FirstPhotoTitleAfterEdit).contains('Horse')
         .expect(FirstPhotoKeywordsAfterEdit).contains('horse')
@@ -148,7 +148,7 @@ test('#3 Add label to album', async t => {
     await t
         .click(Selector('.nav-albums'))
         .click(Selector('div.p-album').withAttribute('data-uid', AlbumUid));
-    const PhotoCountAfterAdd = await Selector('div.p-photo').count;
+    const PhotoCountAfterAdd = await Selector('div.p-photo', {timeout: 5000}).count;
     await t
         .expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
     await page.selectFromUID(FirstPhotoLandscape);
@@ -156,7 +156,7 @@ test('#3 Add label to album', async t => {
     await page.removeSelected();
     await t
         .click('.action-reload');
-    const PhotoCountAfterDelete = await Selector('div.p-photo').count;
+    const PhotoCountAfterDelete = await Selector('div.p-photo', {timeout: 5000}).count;
     await t
         .expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 2);
 });
@@ -165,14 +165,14 @@ test('#4 Delete label', async t => {
     await t
         .click(Selector('.nav-labels'));
     await page.search('dome');
-    const LabelDome = await Selector('div.p-label').nth(0).getAttribute('data-uid');
+    const LabelDome = await Selector('div.p-label', {timeout: 5000}).nth(0).getAttribute('data-uid');
     await t
         .click(Selector('div.p-label').withAttribute('data-uid', LabelDome));
-    const FirstPhotoDome = await Selector('div.p-photo').nth(0).getAttribute('data-uid');
+    const FirstPhotoDome = await Selector('div.p-photo', {timeout: 5000}).nth(0).getAttribute('data-uid');
     await t
         .click('.nav-labels')
     await page.selectFromUID(LabelDome);
-    const clipboardCount = await Selector('span.count-clipboard');
+    const clipboardCount = await Selector('span.count-clipboard', {timeout: 5000});
     await t
         .expect(clipboardCount.textContent).eql("1");
     await page.deleteSelected();
