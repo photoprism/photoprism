@@ -1189,15 +1189,6 @@ msgstr ""
 msgid "Move Files"
 msgstr ""
 
-#: src/common/vm.js:8
-#: src/common/vm.js:9
-#: src/common/vm.js:12
-#: src/common/vm.js:13
-msgid "msgid"
-msgid_plural "plural"
-msgstr[0] ""
-msgstr[1] ""
-
 #: src/component/photo/list.vue:33
 #: src/dialog/account/edit.vue:359
 #: src/dialog/album/edit.vue:105
