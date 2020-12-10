@@ -108,6 +108,10 @@ export const Languages = () => [
         "text": $gettext("Hindi"),
         "value": "hi",
     },
+    {
+        "text": $gettext("Slovak"),
+        "value": "sk",
+    },
 ];
 
 export const Themes = () => [
