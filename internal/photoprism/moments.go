@@ -72,27 +72,31 @@ func (m *Moments) Start() (err error) {
 				Public: true,
 			}
 
-			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumFolder); a != nil {
+			if a := entity.FindFolderAlbum(mom.Slug(), mom.Path); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				} else if err := a.UpdatePath(mom.Path); err != nil {
+					log.Errorf("moments: %s (update folder album)", err.Error())
 				} else {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
-			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+			} else if a := entity.NewFolderAlbum(mom.Title(), mom.Path, f.Serialize()); a != nil {
 				a.AlbumYear = mom.FolderYear
 				a.AlbumMonth = mom.FolderMonth
 				a.AlbumDay = mom.FolderDay
 				a.AlbumCountry = mom.FolderCountry
 
 				if err := a.Create(); err != nil {
-					log.Errorf("moments: %s", err)
+					log.Errorf("moments: %s (create folder album)", err)
 				} else {
 					log.Infof("moments: added %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
 			}
 		}
 	}
+
+	// PhotoPath
 
 	// All years and months.
 	if results, err := query.MomentsTime(1); err != nil {
@@ -218,6 +222,14 @@ func (m *Moments) Start() (err error) {
 				log.Errorf("moments: failed to create new moment %s (%s)", mom.Title(), f.Serialize())
 			}
 		}
+	}
+
+	if err := query.UpdateFolderDates(); err != nil {
+		log.Errorf("moments: %s (update folder dates)", err.Error())
+	}
+
+	if err := query.UpdateAlbumDates(); err != nil {
+		log.Errorf("moments: %s (update album dates)", err.Error())
 	}
 
 	return nil

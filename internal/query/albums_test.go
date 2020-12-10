@@ -195,3 +195,11 @@ func TestAlbumSearch(t *testing.T) {
 		assert.Equal(t, 0, len(result))
 	})
 }
+
+func TestUpdateAlbumDates(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		if err := UpdateAlbumDates(); err != nil {
+			t.Fatal(err)
+		}
+	})
+}

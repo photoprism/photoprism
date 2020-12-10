@@ -4,6 +4,7 @@
       <v-container fluid>
         <p class="subheading">
           <span v-if="fileName">{{ action }} {{ fileName }}…</span>
+          <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>
           <span v-else><translate>Press button to start indexing…</translate></span>
@@ -163,29 +164,54 @@
                 const type = ev.split('.')[1];
 
                 switch (type) {
+                    case "folder":
+                        this.action = this.$gettext("Indexing");
+                        this.busy = true;
+                        this.completed = 0;
+                        this.fileName = data.filePath;
+
+                        break;
                     case "indexing":
                         this.action = this.$gettext("Indexing");
                         this.busy = true;
                         this.completed = 0;
                         this.fileName = data.fileName;
+
+                        break;
+                    case "updating":
+                        if(data.step === "stacks") {
+                          this.action = this.$gettext("Updating stacks");
+                        } else if (data.step === "moments") {
+                          this.action = this.$gettext("Updating moments");
+                        } else {
+                          this.action = this.$gettext("Updating index");
+                        }
+
+                        this.busy = true;
+                        this.completed = 0;
+                        this.fileName = "";
+
                         break;
                     case "converting":
                         this.action = this.$gettext("Converting");
                         this.busy = true;
                         this.completed = 0;
                         this.fileName = data.fileName;
+
                         break;
                     case "thumbnails":
                         this.action = this.$gettext("Creating thumbnails for");
                         this.busy = true;
                         this.completed = 0;
                         this.fileName = data.fileName;
+
                         break;
                     case 'completed':
                         this.action = "";
                         this.busy = false;
                         this.completed = 100;
                         this.fileName = '';
+
                         break;
                     default:
                         console.log(data)

@@ -28,6 +28,7 @@ type AlbumResult struct {
 	AlbumFilter      string    `json:"Filter"`
 	AlbumOrder       string    `json:"Order"`
 	AlbumTemplate    string    `json:"Template"`
+	AlbumPath        string    `json:"Path"`
 	AlbumCountry     string    `json:"Country"`
 	AlbumYear        int       `json:"Year"`
 	AlbumMonth       int       `json:"Month"`
@@ -112,6 +113,7 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 		Select("albums.*, cp.photo_count,	cl.link_count").
 		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
+		Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL)").
 		Where("albums.deleted_at IS NULL")
 
 	if f.ID != "" {
@@ -175,4 +177,20 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 	}
 
 	return results, nil
+}
+
+// UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
+func UpdateAlbumDates() error {
+	switch DbDialect() {
+	case MySQL:
+		return UnscopedDb().Exec(`UPDATE albums
+		INNER JOIN
+			(SELECT photo_path, MAX(taken_at_local) AS taken_max
+			 FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+			 GROUP BY photo_path) AS p ON albums.album_path = p.photo_path
+		SET albums.album_year = YEAR(taken_max), albums.album_month = MONTH(taken_max), albums.album_day = DAY(taken_max)
+		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
+	default:
+		return nil
+	}
 }

@@ -143,9 +143,10 @@ func IndexedFiles() (result FileMap, err error) {
 
 // CleanDuplicates removes all files from the duplicates table that don't exist in the files table.
 func CleanDuplicates() error {
-	if res := UnscopedDb().Delete(entity.Duplicate{}, "file_hash IN (SELECT file_hash FROM (SELECT d.file_hash FROM duplicates d LEFT JOIN files f ON d.file_hash = f.file_hash AND f.file_missing = 0 AND f.deleted_at IS NULL WHERE f.file_hash IS NULL) AS tmp)"); res.Error != nil {
-		return res.Error
+	if err := UnscopedDb().Delete(entity.Duplicate{}, "file_hash IN (SELECT d.file_hash FROM duplicates d LEFT JOIN files f ON d.file_hash = f.file_hash AND f.file_missing = 0 AND f.deleted_at IS NULL WHERE f.file_hash IS NULL)").Error; err == nil {
+		return nil
 	}
 
-	return nil
+	// MySQL fallback, see https://github.com/photoprism/photoprism/issues/599
+	return UnscopedDb().Delete(entity.Duplicate{}, "file_hash IN (SELECT file_hash FROM (SELECT d.file_hash FROM duplicates d LEFT JOIN files f ON d.file_hash = f.file_hash AND f.file_missing = 0 AND f.deleted_at IS NULL WHERE f.file_hash IS NULL) AS tmp)").Error
 }

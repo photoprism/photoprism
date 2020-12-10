@@ -8,7 +8,6 @@ import (
 )
 
 var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2,}")
-var DateCanonicalRegexp = regexp.MustCompile("\\D\\d{8}_\\d{6}_\\w+\\.")
 var DatePathRegexp = regexp.MustCompile("\\D\\d{4}/\\d{1,2}/?\\d*")
 var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2,}")
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
@@ -53,11 +52,7 @@ func Time(s string) (result time.Time) {
 
 	b := []byte(s)
 
-	if found := DateCanonicalRegexp.Find(b); len(found) > 0 { // Is it a canonical name like "20120727_093920_97425909.jpg"?
-		if date, err := time.Parse("20060102_150405", string(found[1:16])); err == nil {
-			result = date.Round(time.Second).UTC()
-		}
-	} else if found := DateTimeRegexp.Find(b); len(found) > 0 { // Is it a date with time like "2020-01-30_09-57-18"?
+	if found := DateTimeRegexp.Find(b); len(found) > 0 { // Is it a date with time like "2020-01-30_09-57-18"?
 		n := DateIntRegexp.FindAll(found, -1)
 
 		if len(n) != 6 {

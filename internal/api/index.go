@@ -77,6 +77,10 @@ func StartIndexing(router *gin.RouterGroup) {
 			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
 		}
 
+		event.Publish("index.updating", event.Data{
+			"step": "moments",
+		})
+
 		moments := service.Moments()
 
 		if err := moments.Start(); err != nil {

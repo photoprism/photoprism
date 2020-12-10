@@ -38,7 +38,7 @@ type Folder struct {
 	FileCount         int        `gorm:"-" json:"FileCount" yaml:"-"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
-	ModifiedAt        *time.Time `json:"ModifiedAt,omitempty" yaml:"-"`
+	ModifiedAt        time.Time  `json:"ModifiedAt,omitempty" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"-"`
 }
 
@@ -52,13 +52,21 @@ func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // NewFolder creates a new file system directory entity.
-func NewFolder(root, pathName string, modTime *time.Time) Folder {
+func NewFolder(root, pathName string, modTime time.Time) Folder {
 	now := Timestamp()
 
 	pathName = strings.Trim(pathName, string(os.PathSeparator))
 
 	if pathName == RootPath {
 		pathName = ""
+	}
+
+	year := 0
+	month := 0
+
+	if !modTime.IsZero() {
+		year = modTime.Year()
+		month = int(modTime.Month())
 	}
 
 	result := Folder{
@@ -68,9 +76,9 @@ func NewFolder(root, pathName string, modTime *time.Time) Folder {
 		FolderType:    TypeDefault,
 		FolderOrder:   SortOrderName,
 		FolderCountry: UnknownCountry.ID,
-		FolderYear:    0,
-		FolderMonth:   0,
-		ModifiedAt:    modTime,
+		FolderYear:    year,
+		FolderMonth:   month,
+		ModifiedAt:    modTime.UTC(),
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
@@ -95,7 +103,11 @@ func (m *Folder) SetValuesFromPath() {
 		}
 	} else {
 		m.FolderCountry = txt.CountryCode(s)
-		m.FolderYear = txt.Year(s)
+
+		if year := txt.Year(s); year > 0 {
+			m.FolderYear = year
+		}
+
 		s = path.Base(s)
 	}
 
@@ -126,7 +138,12 @@ func (m *Folder) SetValuesFromPath() {
 
 // Slug returns a slug based on the folder title.
 func (m *Folder) Slug() string {
-	return slug.Make(m.FolderTitle)
+	return slug.Make(m.Path)
+}
+
+// RootPath returns the full folder path including root.
+func (m *Folder) RootPath() string {
+	return path.Join(m.Root, m.Path)
 }
 
 // Title returns a human readable folder title.

@@ -31,6 +31,7 @@ type Album struct {
 	CoverUID         string     `gorm:"type:VARBINARY(42);" json:"CoverUID" yaml:"CoverUID,omitempty"`
 	FolderUID        string     `gorm:"type:VARBINARY(42);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
 	AlbumSlug        string     `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"Slug"`
+	AlbumPath        string     `gorm:"type:VARBINARY(768);index;" json:"Path" yaml:"-"`
 	AlbumType        string     `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string     `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title"`
 	AlbumLocation    string     `gorm:"type:VARCHAR(255);" json:"Location" yaml:"Location,omitempty"`
@@ -118,8 +119,8 @@ func NewAlbum(albumTitle, albumType string) *Album {
 }
 
 // NewFolderAlbum creates a new folder album.
-func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
-	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
+func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
+	if albumTitle == "" || albumPath == "" || albumFilter == "" {
 		return nil
 	}
 
@@ -129,7 +130,8 @@ func NewFolderAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		AlbumOrder:  SortOrderAdded,
 		AlbumType:   AlbumFolder,
 		AlbumTitle:  albumTitle,
-		AlbumSlug:   albumSlug,
+		AlbumSlug:   slug.Make(albumPath),
+		AlbumPath:   albumPath,
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -210,10 +212,21 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 }
 
 // FindAlbumBySlug finds a matching album or returns nil.
-func FindAlbumBySlug(slug, albumType string) *Album {
+func FindAlbumBySlug(albumSlug, albumType string) *Album {
 	result := Album{}
 
-	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", slug, albumType).First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", albumSlug, albumType).First(&result).Error; err != nil {
+		return nil
+	}
+
+	return &result
+}
+
+// FindFolderAlbum finds a matching folder album or returns nil.
+func FindFolderAlbum(albumSlug, albumPath string) *Album {
+	result := Album{}
+
+	if err := UnscopedDb().Where("((album_slug <> '' AND album_slug = ?) OR album_path = ?) AND album_type = ?", albumSlug, albumPath, AlbumFolder).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -305,6 +318,20 @@ func (m *Album) SaveForm(f form.Album) error {
 // Updates a column in the database.
 func (m *Album) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// UpdatePath sets a unique path for an albums.
+func (m *Album) UpdatePath(albumPath string) error {
+	if err := UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{
+		"AlbumPath": albumPath,
+		"AlbumSlug": slug.Make(albumPath),
+	}).Error; err != nil {
+		return err
+	} else if err := UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_path = ? AND id <> ?", albumPath, m.ID).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Save updates the existing or inserts a new row.

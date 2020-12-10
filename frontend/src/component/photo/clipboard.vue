@@ -83,7 +83,7 @@
             v-if="context !== 'archive'"
             class="action-album"
         >
-          <v-icon>folder</v-icon>
+          <v-icon>folder_special</v-icon>
         </v-btn>
         <v-btn
             fab dark small
@@ -91,7 +91,7 @@
             :title="$gettext('Archive')"
             @click.stop="dialog.archive = true"
             :disabled="selection.length === 0"
-            v-if="!album && context !== 'archive' && $config.feature('archive')"
+            v-if="!isAlbum && context !== 'archive' && $config.feature('archive')"
             class="action-archive"
         >
           <v-icon>archive</v-icon>
@@ -113,7 +113,7 @@
             color="remove"
             @click.stop="removeFromAlbum"
             :disabled="selection.length === 0"
-            v-if="album"
+            v-if="isAlbum"
             class="action-delete"
         >
           <v-icon>remove</v-icon>
@@ -153,6 +153,7 @@ export default {
     return {
       config: this.$config.values,
       expanded: false,
+      isAlbum: this.album && this.album.Type === 'album',
       dialog: {
         archive: false,
         album: false,

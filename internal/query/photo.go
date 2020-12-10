@@ -85,6 +85,14 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 
 // ResetPhotoQuality resets the quality of photos without primary file to -1.
 func ResetPhotoQuality() error {
+	if err := Db().Table("photos").
+		Where("id IN (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id)").
+		Where("id IN (SELECT id FROM (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id) AS tmp)").
+		Update("photo_quality", -1).Error; err == nil {
+		return nil
+	}
+
+	// MySQL fallback, see https://github.com/photoprism/photoprism/issues/599
 	return Db().Table("photos").
 		Where("id IN (SELECT id FROM (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id) AS tmp)").
 		Update("photo_quality", -1).Error
@@ -105,51 +113,7 @@ func PhotosCheck(limit int, offset int) (entities entity.Photos, err error) {
 		Preload("Cell.Place").
 		Where("checked_at IS NULL OR checked_at < ?", time.Now().Add(-1*time.Hour*24*3)).
 		Where("updated_at < ? OR (cell_id = 'zz' AND photo_lat <> 0)", time.Now().Add(-1*time.Minute*10)).
-		Limit(limit).Offset(offset).Find(&entities).Error
-
-	return entities, err
-}
-
-// MatchingPhotos returns photos sharing the same exact time and location, or unique image id.
-func MatchingPhotos(meta, uuid bool) (entities entity.Photos, err error) {
-	if !meta && !uuid {
-		return entities, nil
-	}
-
-	stmt := UnscopedDb().Table("photos").
-		Select("photos.*")
-
-	switch {
-	case meta && uuid:
-		stmt = stmt.Joins(`JOIN photos dup ON photos.id < dup.id
-				AND photos.photo_single = 0 AND dup.photo_single = 0
-				AND photos.deleted_at IS NULL AND dup.deleted_at IS NULL
-				AND ((photos.taken_src = 'meta' AND dup.taken_src = 'meta' 
-				AND photos.photo_lat = dup.photo_lat 
-				AND photos.photo_lng = dup.photo_lng 
-				AND photos.taken_at = dup.taken_at 
-				AND photos.camera_id = dup.camera_id
-				AND photos.camera_serial = dup.camera_serial) OR
-				(photos.uuid <> '' AND photos.uuid = dup.uuid))`)
-	case meta:
-		stmt = stmt.Joins(`JOIN photos dup ON photos.id < dup.id
-				AND photos.photo_single = 0 
-				AND dup.photo_single = 0 
-				AND photos.deleted_at IS NULL AND dup.deleted_at IS NULL
-				AND ((photos.taken_src = 'meta' AND dup.taken_src = 'meta' 
-				AND photos.photo_lat = dup.photo_lat 
-				AND photos.photo_lng = dup.photo_lng 
-				AND photos.taken_at = dup.taken_at 
-				AND photos.camera_id = dup.camera_id
-				AND photos.camera_serial = dup.camera_serial))`)
-	case uuid:
-		stmt = stmt.Joins(`JOIN photos dup ON photos.id < dup.id
-				AND photos.photo_single = 0	AND dup.photo_single = 0
-				AND photos.deleted_at IS NULL AND dup.deleted_at IS NULL
-				AND (photos.uuid <> '' AND photos.uuid = dup.uuid)`)
-	}
-
-	err = stmt.Group("photos.id").Find(&entities).Error
+		Order("photos.ID ASC").Limit(limit).Offset(offset).Find(&entities).Error
 
 	return entities, err
 }
