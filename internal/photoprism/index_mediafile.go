@@ -175,10 +175,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Look for existing photo if file wasn't indexed yet...
 	if !fileExists {
 		fullBase := m.BasePrefix(false)
-		photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name IN (?)", filePath, []string{fullBase, fileBase})
 
-		if photoQuery.Error == nil {
-			fileBase = photo.PhotoName
+		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase); photoQuery.Error == nil || fileBase == fullBase {
+			// Skip next query.
+		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil {
 			fileStacked = true
 		}
 
@@ -258,7 +258,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Flag first JPEG as primary file for this photo.
 	if !file.FilePrimary {
 		if photoExists {
-			if q := entity.Db().Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
+			if q := entity.UnscopedDb().Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
 				file.FilePrimary = m.IsJpeg()
 			}
 		} else {
@@ -815,8 +815,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		log.Errorf("index: %s in %s (set download id)", err, logName)
 	}
 
-	// Write YAML sidecar file (optional).
-	if file.FilePrimary && Config().SidecarYaml() {
+	if stacked, err := photo.Stack(Config().Settings().StackMeta(), Config().Settings().StackUUID(), true); err != nil {
+		log.Errorf("index: %s in %s (stack)", err.Error(), logName)
+	} else if len(stacked) > 0 {
+		log.Infof("index: merged %s with existing stack", logName)
+		result.Status = IndexStacked
+	} else if file.FilePrimary && Config().SidecarYaml() {
+		// Write YAML sidecar file (optional).
 		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
 		if err := photo.SaveAsYaml(yamlFile); err != nil {

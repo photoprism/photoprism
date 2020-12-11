@@ -1006,10 +1006,12 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]string, err error) {
 	renamed = make(map[string]string)
 
-	newName := m.RelPrefix(Config().OriginalsPath(), false)
+	sidecarPath := Config().SidecarPath()
+	originalsPath := Config().OriginalsPath()
 
-	oldPrefix := fs.RelPrefix(oldFileName, Config().OriginalsPath(), false)
-	globPrefix := filepath.Join(Config().SidecarPath(), oldPrefix) + "."
+	newName := m.RelPrefix(originalsPath, false)
+	oldPrefix := fs.RelPrefix(oldFileName, originalsPath, false)
+	globPrefix := filepath.Join(sidecarPath, oldPrefix) + "."
 
 	matches, err := filepath.Glob(regexp.QuoteMeta(globPrefix) + "*")
 
@@ -1018,12 +1020,25 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 	}
 
 	for _, srcName := range matches {
-		destName := filepath.Join(Config().SidecarPath(), newName+filepath.Ext(srcName))
+		destName := filepath.Join(sidecarPath, newName+filepath.Ext(srcName))
+
+		if fs.FileExists(destName) {
+			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
+
+			if err := os.Remove(srcName); err != nil {
+				log.Errorf("media: failed removing sidecar %s", txt.Quote(fs.RelName(srcName, sidecarPath)))
+			} else {
+				log.Infof("media: removed sidecar %s", txt.Quote(fs.RelName(srcName, sidecarPath)))
+			}
+
+			continue
+		}
 
 		if err := fs.Move(srcName, destName); err != nil {
 			return renamed, err
 		} else {
-			renamed[fs.RelName(srcName, Config().SidecarPath())] = fs.RelName(destName, Config().SidecarPath())
+			log.Infof("media: moved existing sidecar to %s", txt.Quote(newName+filepath.Ext(srcName)))
+			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 		}
 	}
 

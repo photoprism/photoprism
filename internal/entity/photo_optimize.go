@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"time"
@@ -105,7 +106,7 @@ func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, merged Photos
 		m.UpdateLocation()
 	}
 
-	if merged, err = m.Stack(stackMeta, stackUuid); err != nil {
+	if merged, err = m.Stack(stackMeta, stackUuid, true); err != nil {
 		log.Errorf("photo: %s (stack)", err)
 	}
 
@@ -145,51 +146,66 @@ func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, merged Photos
 func (m *Photo) ResolvePrimary() error {
 	var file File
 
-	if err := Db().First(&file, "file_primary = 1 AND photo_id = ?", m.ID).Error; err == nil {
+	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).First(&file).Error; err == nil && file.ID > 0 {
 		return file.ResolvePrimary()
 	}
 
-	if err := Db().First(&file, "file_type = 'jpg' AND photo_id = ?", m.ID).Error; err == nil {
-		file.FilePrimary = true
-		return file.ResolvePrimary()
-	}
-
-	return m.Update("PhotoQuality", -1)
+	return nil
 }
 
-// Stack merges a photo with identical ones.
-func (m *Photo) Stack(stackMeta, stackUuid bool) (identical Photos, err error) {
-	if !stackMeta && !stackUuid || m.PhotoSingle || m.DeletedAt != nil {
+// Identical returns identical photos that can be merged.
+func (m *Photo) Identical(findMeta, findUuid, findOlder bool) (identical Photos, err error) {
+	if !findMeta && !findUuid || m.PhotoSingle || m.DeletedAt != nil {
 		return identical, nil
+	}
+
+	op := "<>"
+
+	if findOlder {
+		op = "<"
 	}
 
 	switch {
-	case stackMeta && stackUuid && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
-		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+	case findMeta && findUuid && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
+		if err := Db().
 			Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
-				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).Find(&identical).Error; err != nil {
+				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).
+			Where(fmt.Sprintf("id %s ? AND photo_single = 0 AND deleted_at IS NULL", op), m.ID).
+			Order("id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
-	case stackMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
-		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+	case findMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
+		if err := Db().
 			Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
-				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID).Error; err != nil {
+				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID).
+			Where(fmt.Sprintf("id %s ? AND photo_single = 0 AND deleted_at IS NULL", op), m.ID).
+			Order("id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
-	case stackUuid && rnd.IsUUID(m.UUID):
-		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
-			Where("uuid <> '' AND uuid = ?", m.UUID).Error; err != nil {
+	case findUuid && rnd.IsUUID(m.UUID):
+		if err := Db().
+			Where(fmt.Sprintf("uuid = ? AND id %s ? AND photo_single = 0 AND deleted_at IS NULL", op), m.UUID, m.ID).
+			Order("id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
-	default:
-		return identical, nil
 	}
 
-	if len(identical) == 0 {
-		return identical, nil
+	return identical, nil
+}
+
+// Stack merges a photo with identical ones.
+func (m *Photo) Stack(stackMeta, stackUuid, stackOlder bool) (identical Photos, err error) {
+	identical, err = m.Identical(stackMeta, stackUuid, stackOlder)
+
+	if len(identical) == 0 || err != nil {
+		return identical, err
 	}
 
 	for _, photo := range identical {
+		if photo.DeletedAt != nil || photo.ID == m.ID {
+			continue
+		}
+
 		if err := UnscopedDb().Exec("UPDATE `files` SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", m.ID, m.PhotoUID, photo.ID).Error; err != nil {
 			return identical, err
 		}
@@ -207,9 +223,14 @@ func (m *Photo) Stack(stackMeta, stackUuid bool) (identical Photos, err error) {
 			log.Warnf("photo: unknown SQL dialect (stack)")
 		}
 
-		if err := photo.Updates(map[string]interface{}{"DeletedAt": Timestamp(), "PhotoQuality": -1}); err != nil {
+		deleted := Timestamp()
+
+		if err := UnscopedDb().Exec("UPDATE `photos` SET photo_quality = -1, deleted_at = ? WHERE id = ?", Timestamp(), photo.ID).Error; err != nil {
 			return identical, err
 		}
+
+		photo.DeletedAt = &deleted
+		photo.PhotoQuality = -1
 	}
 
 	return identical, err

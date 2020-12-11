@@ -3,6 +3,7 @@ package workers
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -22,13 +23,13 @@ func TestPrism_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := worker.Start(); err == nil {
+	if err := worker.Start(time.Second); err == nil {
 		t.Fatal("error expected")
 	}
 
 	mutex.MetaWorker.Stop()
 
-	if err := worker.Start(); err != nil {
+	if err := worker.Start(time.Second); err != nil {
 		t.Fatal(err)
 	}
 }

@@ -98,7 +98,7 @@ func RenameFile(srcRoot, srcName, destRoot, destName string) error {
 		return fmt.Errorf("can't rename %s/%s to %s/%s", srcRoot, srcName, destRoot, destName)
 	}
 
-	return Db().Exec("UPDATE files SET file_root = ?, file_name = ?, file_missing = ?, deleted_at = NULL WHERE file_root = ? AND file_name = ?", destRoot, destName, srcRoot, srcName).Error
+	return Db().Exec("UPDATE files SET file_root = ?, file_name = ?, file_missing = 0, deleted_at = NULL WHERE file_root = ? AND file_name = ?", destRoot, destName, srcRoot, srcName).Error
 }
 
 // SetPhotoPrimary sets a new primary image file for a photo.

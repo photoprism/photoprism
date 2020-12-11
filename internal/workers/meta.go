@@ -30,7 +30,7 @@ func (worker *Meta) originalsPath() string {
 }
 
 // Start starts the metadata worker.
-func (worker *Meta) Start() (err error) {
+func (worker *Meta) Start(delay time.Duration) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("metadata: %s (panic)\nstack: %s", r, debug.Stack())
@@ -53,7 +53,7 @@ func (worker *Meta) Start() (err error) {
 	optimized := 0
 
 	for {
-		photos, err := query.PhotosCheck(limit, offset)
+		photos, err := query.PhotosCheck(limit, offset, delay)
 
 		if err != nil {
 			return err

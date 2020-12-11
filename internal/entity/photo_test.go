@@ -881,7 +881,7 @@ func TestPhoto_Approve(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 3, photo.PhotoQuality)
+		assert.Equal(t, 4, photo.PhotoQuality)
 	})
 	t.Run("quality = 1", func(t *testing.T) {
 		photo := Photo{PhotoQuality: 1}
