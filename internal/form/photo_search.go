@@ -18,6 +18,7 @@ type PhotoSearch struct {
 	Title    string    `form:"title"`
 	Hash     string    `form:"hash"`
 	Primary  bool      `form:"primary"`
+	Single   bool      `form:"single"`
 	Video    bool      `form:"video"`
 	Photo    bool      `form:"photo"`
 	Scan     bool      `form:"scan"`

@@ -53,6 +53,7 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 func TestPhoto_Optimize(t *testing.T) {
 	t.Run("update", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo19")
+
 		if updated, merged, err := photo.Optimize(false, false); err != nil {
 			t.Fatal(err)
 		} else if !updated {
@@ -64,16 +65,16 @@ func TestPhoto_Optimize(t *testing.T) {
 		if updated, merged, err := photo.Optimize(false, false); err != nil {
 			t.Fatal(err)
 		} else if updated {
-			t.Error("photo should NOT be updated")
+			t.Errorf("photo should NOT be updated, merged: %+v", merged)
 		} else if len(merged) > 0 {
-			t.Error("no photos should be merged")
+			t.Errorf("no photos should be merged")
 		}
 	})
 	t.Run("photo without id", func(t *testing.T) {
 		photo := Photo{}
-		bool, merged, err := photo.Optimize(false, false)
+		result, merged, err := photo.Optimize(false, false)
 		assert.Error(t, err)
-		assert.False(t, bool)
+		assert.False(t, result)
 
 		if len(merged) > 0 {
 			t.Error("no photos should be merged")

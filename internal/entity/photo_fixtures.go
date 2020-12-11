@@ -970,7 +970,7 @@ var PhotoFixtures = PhotoMap{
 		TitleSrc:         "",
 		PhotoPath:        "1990/04",
 		PhotoName:        "Photo03",
-		PhotoQuality:     1,
+		PhotoQuality:     -1,
 		PhotoResolution:  2,
 		PhotoFavorite:    false,
 		PhotoPrivate:     false,

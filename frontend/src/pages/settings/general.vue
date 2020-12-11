@@ -12,7 +12,7 @@
 
         <v-card-actions>
           <v-layout wrap align-top>
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                       @change="onChange"
                       :disabled="busy"
@@ -27,7 +27,7 @@
               </v-checkbox>
             </v-flex>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                       @change="onChange"
                       :disabled="busy"
@@ -42,7 +42,7 @@
               </v-checkbox>
             </v-flex>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                       @change="onChange"
                       :disabled="busy"
@@ -56,35 +56,20 @@
               >
               </v-checkbox>
             </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  @change="onChange"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-stacks"
-                  v-model="settings.index.stacks"
-                  color="secondary-dark"
-                  :label="$gettext('Stacks')"
-                  :hint="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')"
-                  prepend-icon="burst_mode"
-                  persistent-hint
-              >
-              </v-checkbox>
-            </v-flex>
           </v-layout>
         </v-card-actions>
       </v-card>
 
-      <v-card flat tile class="mt-0 px-1 application" v-show="settings.index.stacks">
-        <v-card-title primary-title class="pb-0">
+      <v-card flat tile class="mt-0 px-1 application">
+        <v-card-title primary-title class="pb-0" :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
           <h3 class="body-2 mb-0">
-            <translate>Stack files with matching...</translate>
+            <translate>Stacks</translate>
           </h3>
         </v-card-title>
 
         <v-card-actions>
           <v-layout wrap align-top>
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   @change="onChange"
                   :disabled="busy"
@@ -99,7 +84,7 @@
               </v-checkbox>
             </v-flex>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   @change="onChange"
                   :disabled="busy"
@@ -115,7 +100,7 @@
             </v-flex>
 
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   @change="onChange"
                   :disabled="busy"

@@ -158,7 +158,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Look for existing photo if file wasn't indexed yet...
 	if !fileExists {
-		photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fileBase)
+		fullBase := m.BasePrefix(false)
+		photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name IN (?)", filePath, []string{fullBase, fileBase})
+
+		if photoQuery.Error == nil {
+			fileBase = photo.PhotoName
+			fileStacked = true
+		}
 
 		// Stack file based on matching location and time metadata?
 		if photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
@@ -210,7 +216,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Try to recover photo metadata from backup if not exists.
 	if !photoExists {
 		photo.PhotoQuality = -1
-		photo.PhotoSingle = !o.Stack
+		photo.PhotoSingle = o.Single
 
 		if yamlName := fs.TypeYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {

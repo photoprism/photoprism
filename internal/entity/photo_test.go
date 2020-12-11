@@ -460,7 +460,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		assert.Equal(t, "Unknown / 2008", m.PhotoTitle)
 	})
 	t.Run("no location no labels no takenAt", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo19")
+		m := PhotoFixtures.Get("Photo20")
 		classifyLabels := &classify.Labels{}
 		assert.Equal(t, "", m.PhotoTitle)
 		err := m.UpdateTitle(*classifyLabels)
@@ -872,22 +872,28 @@ func TestPhoto_SetFavorite(t *testing.T) {
 func TestPhoto_Approve(t *testing.T) {
 	t.Run("quality = 4", func(t *testing.T) {
 		photo := Photo{PhotoQuality: 4}
-		photo.Save()
 
-		err := photo.Approve()
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 4, photo.PhotoQuality)
+
+		if err := photo.Approve(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 3, photo.PhotoQuality)
 	})
 	t.Run("quality = 1", func(t *testing.T) {
 		photo := Photo{PhotoQuality: 1}
-		photo.Save()
 
-		err := photo.Approve()
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+
+		if err := photo.Approve(); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, 3, photo.PhotoQuality)
 	})
 }

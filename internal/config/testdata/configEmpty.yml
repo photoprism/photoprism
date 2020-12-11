@@ -27,7 +27,6 @@ index:
   path: /
   convert: true
   rescan: false
-  stacks: true
 stack:
   uuid: true
   meta: true

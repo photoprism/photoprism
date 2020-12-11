@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -137,4 +139,78 @@ func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, merged Photos
 	m.CheckedAt = &checked
 
 	return true, merged, m.Save()
+}
+
+// ResolvePrimary ensures there is only one primary file for a photo.
+func (m *Photo) ResolvePrimary() error {
+	var file File
+
+	if err := Db().First(&file, "file_primary = 1 AND photo_id = ?", m.ID).Error; err == nil {
+		return file.ResolvePrimary()
+	}
+
+	if err := Db().First(&file, "file_type = 'jpg' AND photo_id = ?", m.ID).Error; err == nil {
+		file.FilePrimary = true
+		return file.ResolvePrimary()
+	}
+
+	return m.Update("PhotoQuality", -1)
+}
+
+// Stack merges a photo with identical ones.
+func (m *Photo) Stack(stackMeta, stackUuid bool) (identical Photos, err error) {
+	if !stackMeta && !stackUuid || m.PhotoSingle || m.DeletedAt != nil {
+		return identical, nil
+	}
+
+	switch {
+	case stackMeta && stackUuid && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
+		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+			Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
+				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).Find(&identical).Error; err != nil {
+			return identical, err
+		}
+	case stackMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
+		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+			Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
+				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID).Error; err != nil {
+			return identical, err
+		}
+	case stackUuid && rnd.IsUUID(m.UUID):
+		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
+			Where("uuid <> '' AND uuid = ?", m.UUID).Error; err != nil {
+			return identical, err
+		}
+	default:
+		return identical, nil
+	}
+
+	if len(identical) == 0 {
+		return identical, nil
+	}
+
+	for _, photo := range identical {
+		if err := UnscopedDb().Exec("UPDATE `files` SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", m.ID, m.PhotoUID, photo.ID).Error; err != nil {
+			return identical, err
+		}
+
+		switch DbDialect() {
+		case MySQL:
+			UnscopedDb().Exec("UPDATE IGNORE `photos_keywords` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE IGNORE `photos_labels` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE IGNORE `photos_albums` SET `photo_uid` = ? WHERE (photo_uid = ?)", m.PhotoUID, photo.PhotoUID)
+		case SQLite:
+			UnscopedDb().Exec("UPDATE OR IGNORE `photos_keywords` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE OR IGNORE `photos_labels` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
+			UnscopedDb().Exec("UPDATE OR IGNORE `photos_albums` SET `photo_uid` = ? WHERE (photo_uid = ?)", m.PhotoUID, photo.PhotoUID)
+		default:
+			log.Warnf("photo: unknown SQL dialect (stack)")
+		}
+
+		if err := photo.Updates(map[string]interface{}{"DeletedAt": Timestamp(), "PhotoQuality": -1}); err != nil {
+			return identical, err
+		}
+	}
+
+	return identical, err
 }

@@ -160,7 +160,9 @@ func (m *File) Delete(permanently bool) error {
 
 // Purge removes a file from the index by marking it as missing.
 func (m *File) Purge() error {
-	return Db().Unscoped().Model(m).Updates(map[string]interface{}{"file_missing": true, "file_primary": false}).Error
+	m.FileMissing = true
+	m.FilePrimary = false
+	return Db().Unscoped().Exec("UPDATE files SET file_missing = 1, file_primary = 0 WHERE id = ?", m.ID).Error
 }
 
 // AllFilesMissing returns true, if all files for the photo of this file are missing.
@@ -190,6 +192,15 @@ func (m *File) Create() error {
 	return nil
 }
 
+// ResolvePrimary ensures there is only one primary file for a photo..
+func (m *File) ResolvePrimary() error {
+	if m.FilePrimary {
+		return UnscopedDb().Exec("UPDATE `files` SET file_primary = (id = ?) WHERE photo_id = ?", m.ID, m.PhotoID).Error
+	}
+
+	return nil
+}
+
 // Saves the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
@@ -201,7 +212,7 @@ func (m *File) Save() error {
 		return err
 	}
 
-	return nil
+	return m.ResolvePrimary()
 }
 
 // UpdateVideoInfos updates related video infos based on this file.

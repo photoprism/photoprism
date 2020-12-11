@@ -230,7 +230,7 @@ func (m *Photo) Save() error {
 		return err
 	}
 
-	return nil
+	return m.ResolvePrimary()
 }
 
 // Find returns a photo from the database.
@@ -890,7 +890,7 @@ func (m *Photo) AllFilesMissing() bool {
 	count := 0
 
 	if err := Db().Model(&File{}).
-		Where("photo_id = ? AND b.file_missing = 0", m.ID).
+		Where("photo_id = ? AND file_missing = 0", m.ID).
 		Count(&count).Error; err != nil {
 		log.Error(err)
 	}
@@ -1009,62 +1009,4 @@ func (m *Photo) PrimaryFile() (File, error) {
 // MapKey returns a key referencing time and location for indexing.
 func (m *Photo) MapKey() string {
 	return MapKey(m.TakenAt, m.CellID)
-}
-
-// Stack merges a photo with identical ones.
-func (m *Photo) Stack(stackMeta, stackUuid bool) (identical Photos, err error) {
-	if !stackMeta && !stackUuid || m.PhotoSingle || m.DeletedAt != nil {
-		return identical, nil
-	}
-
-	switch {
-	case stackMeta && stackUuid && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
-		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
-			Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
-				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).Find(&identical).Error; err != nil {
-			return identical, err
-		}
-	case stackMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
-		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
-			Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
-				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID).Error; err != nil {
-			return identical, err
-		}
-	case stackUuid && rnd.IsUUID(m.UUID):
-		if err := Db().Where("id > ? AND photo_single = 0", m.ID).
-			Where("uuid <> '' AND uuid = ?", m.UUID).Error; err != nil {
-			return identical, err
-		}
-	default:
-		return identical, nil
-	}
-
-	if len(identical) == 0 {
-		return identical, nil
-	}
-
-	for _, photo := range identical {
-		if err := UnscopedDb().Model(File{}).Where("photo_id = ?", photo.ID).Updates(File{PhotoID: m.ID, PhotoUID: m.PhotoUID}).Error; err != nil {
-			return identical, err
-		}
-
-		switch DbDialect() {
-		case MySQL:
-			UnscopedDb().Exec("UPDATE IGNORE `photos_keywords` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
-			UnscopedDb().Exec("UPDATE IGNORE `photos_labels` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
-			UnscopedDb().Exec("UPDATE IGNORE `photos_albums` SET `photo_uid` = ? WHERE (photo_uid = ?)", m.PhotoUID, photo.PhotoUID)
-		case SQLite:
-			UnscopedDb().Exec("UPDATE OR IGNORE `photos_keywords` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
-			UnscopedDb().Exec("UPDATE OR IGNORE `photos_labels` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
-			UnscopedDb().Exec("UPDATE OR IGNORE `photos_albums` SET `photo_uid` = ? WHERE (photo_uid = ?)", m.PhotoUID, photo.PhotoUID)
-		default:
-			log.Warnf("photo: unknown SQL dialect (stack)")
-		}
-
-		if err := photo.Updates(map[string]interface{}{"DeletedAt": Timestamp(), "PhotoQuality": -1}); err != nil {
-			return identical, err
-		}
-	}
-
-	return identical, err
 }

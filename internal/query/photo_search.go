@@ -198,6 +198,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
+	if f.Single {
+		s = s.Where("photos.photo_single = 1")
+	}
+
 	if f.Country != "" {
 		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), ","))
 	}

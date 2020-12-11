@@ -231,12 +231,6 @@ func (c *Config) InitTestDb() {
 	go entity.SaveErrorMessages()
 }
 
-// TruncateDb drops all contents so that they can be restored from a backup.
-func (c *Config) TruncateDb() {
-	entity.SetDbProvider(c)
-	entity.Entities.Truncate()
-}
-
 // connectDb establishes a database connection.
 func (c *Config) connectDb() error {
 	mutex.Db.Lock()
