@@ -132,11 +132,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if !fileExists && !m.IsSidecar() && m.Root() == entity.RootOriginals {
 		fileHash = m.Hash()
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
-		fileExists = fileQuery.Error == nil
+
+		indFileName := ""
+
+		if fileQuery.Error == nil {
+			fileExists = true
+			indFileName = FileName(file.FileRoot, file.FileName)
+		}
 
 		if !fileExists {
 			// Do nothing.
-		} else if fs.FileExists(FileName(file.FileRoot, file.FileName)) {
+		} else if fs.FileExists(indFileName) {
 			if err := entity.AddDuplicate(m.RootRelName(), m.Root(), m.Hash(), m.FileSize(), m.ModTime().Unix()); err != nil {
 				log.Error(err)
 			}
@@ -151,6 +157,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			result.Err = err
 
 			return result
+		} else if err := m.RenameSidecars(indFileName); err != nil {
+			log.Errorf("index: %s in %s (rename)", err.Error(), logName)
+			fileRenamed = true
 		} else {
 			fileRenamed = true
 		}
@@ -242,7 +251,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Flag first JPEG as primary file for this photo.
 	if !file.FilePrimary {
 		if photoExists {
-			if q := entity.UnscopedDb().Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
+			if q := entity.Db().Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
 				file.FilePrimary = m.IsJpeg()
 			}
 		} else {

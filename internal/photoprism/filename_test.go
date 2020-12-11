@@ -10,7 +10,7 @@ import (
 func TestFileName(t *testing.T) {
 	conf := config.TestConfig()
 	t.Run("sidecar", func(t *testing.T) {
-		assert.Equal(t, ".photoprism/test.jpg", FileName("sidecar", "test.jpg"))
+		assert.Equal(t, conf.SidecarPath()+"/test.jpg", FileName("sidecar", "test.jpg"))
 	})
 	t.Run("import", func(t *testing.T) {
 		assert.Equal(t, conf.ImportPath()+"/test.jpg", FileName("import", "test.jpg"))

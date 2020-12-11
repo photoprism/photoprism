@@ -918,7 +918,7 @@ func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, er
 	return thumbnail, nil
 }
 
-// Thumbnail returns a resampled image of the file.
+// Resample returns a resampled image of the file.
 func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err error) {
 	filename, err := m.Thumbnail(path, typeName)
 
@@ -929,6 +929,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 	return imaging.Open(filename, imaging.AutoOrientation(true))
 }
 
+// ResampleDefault pre-renders default thumbnails.
 func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	count := 0
 	start := time.Now()
@@ -995,6 +996,28 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			count++
+		}
+	}
+
+	return nil
+}
+
+// RenameSidecars moves related sidecar files.
+func (m *MediaFile) RenameSidecars(oldFileName string) (err error) {
+	oldRelPrefix := fs.RelPrefix(oldFileName, Config().OriginalsPath(), false)
+	newRelPrefix := m.RelPrefix(Config().OriginalsPath(), false)
+	globPrefix := filepath.Join(Config().SidecarPath(), oldRelPrefix) + "."
+	matches, err := filepath.Glob(regexp.QuoteMeta(globPrefix) + "*")
+
+	if err != nil {
+		return err
+	}
+
+	for _, fileName := range matches {
+		destName := filepath.Join(Config().SidecarPath(), newRelPrefix + filepath.Ext(fileName))
+
+		if err := fs.Move(fileName, destName); err != nil {
+			return err
 		}
 	}
 

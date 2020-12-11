@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -488,18 +489,20 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, related.Files, 3)
+		assert.GreaterOrEqual(t, len(related.Files), 3)
 
 		for _, result := range related.Files {
 			t.Logf("FileName: %s", result.FileName())
 
 			filename := result.FileName()
-
 			extension := result.Extension()
-
 			baseFilename := filename[0 : len(filename)-len(extension)]
 
-			assert.Equal(t, expectedBaseFilename, baseFilename)
+			if result.IsJpeg() {
+				assert.Contains(t, expectedBaseFilename, "examples/iphone_7")
+			} else {
+				assert.Equal(t, expectedBaseFilename, baseFilename)
+			}
 		}
 	})
 
@@ -1459,7 +1462,7 @@ func TestMediaFile_Jpeg(t *testing.T) {
 	t.Run("iphone_7.json", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.json")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/test.md")
 
 		if err != nil {
 			t.Fatal(err)
@@ -1920,10 +1923,10 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		mediaFile.SetFileName(".photoprism/beach_sand.jpg")
 
 		root, base, path, name := mediaFile.PathNameInfo()
-		assert.Equal(t, "sidecar", root)
+		assert.Equal(t, "", root)
 		assert.Equal(t, "beach_sand", base)
 		assert.Equal(t, "", path)
-		assert.Equal(t, "beach_sand.jpg", name)
+		assert.Equal(t, ".photoprism/beach_sand.jpg", name)
 		mediaFile.SetFileName(initialName)
 	})
 
@@ -2091,5 +2094,47 @@ func TestMediaFile_HasJson(t *testing.T) {
 		}
 
 		assert.True(t, mediaFile.HasJson())
+	})
+}
+
+func TestMediaFile_RenameSidecars(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		jpegExample := filepath.Join(conf.ExamplesPath(), "/limes.jpg")
+		jpegPath := filepath.Join(conf.OriginalsPath(), "2020", "12")
+		jpegName := filepath.Join(jpegPath, "foobar.jpg")
+
+		if err := fs.Copy(jpegExample, jpegName); err != nil {
+			t.Fatal(err)
+		}
+
+		mf, err := NewMediaFile(jpegName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		srcName := filepath.Join(conf.SidecarPath(), "foo/bar.json")
+		dstName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.json")
+
+		if err := ioutil.WriteFile(srcName, []byte("{}"), os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := mf.RenameSidecars(filepath.Join(conf.OriginalsPath(), "foo/bar.jpg")); err != nil {
+			t.Fatal(err)
+		}
+
+		if fs.FileExists(srcName) {
+			t.Errorf("src file still exists: %s", srcName)
+		}
+
+		if !fs.FileExists(dstName) {
+			t.Errorf("dst file not found: %s", srcName)
+		}
+
+		_ = os.Remove(srcName)
+		_ = os.Remove(dstName)
 	})
 }

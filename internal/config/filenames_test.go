@@ -20,6 +20,7 @@ func TestConfig_SidecarJson(t *testing.T) {
 
 func TestConfig_SidecarYaml(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
 	assert.Equal(t, false, c.SidecarYaml())
 	c.params.ReadOnly = true
 	assert.Equal(t, false, c.SidecarJson())
@@ -27,14 +28,17 @@ func TestConfig_SidecarYaml(t *testing.T) {
 
 func TestConfig_SidecarPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
+	assert.Contains(t, c.SidecarPath(), "testdata/sidecar")
+	c.params.SidecarPath = ".photoprism"
 	assert.Equal(t, ".photoprism", c.SidecarPath())
-	c.params.SidecarPath = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/sidecar", c.SidecarPath())
 }
 
 func TestConfig_SidecarPathIsAbs(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
+	assert.Equal(t, true, c.SidecarPathIsAbs())
+	c.params.SidecarPath = ".photoprism"
 	assert.Equal(t, false, c.SidecarPathIsAbs())
 }
 

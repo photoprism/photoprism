@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -27,8 +28,8 @@ func TestConvert_ToJpeg(t *testing.T) {
 	convert := NewConvert(conf)
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
-		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
-		outputName := conf.ExamplesPath() + "/.photoprism/gopher-video.jpg"
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.jpg")
 
 		_ = os.Remove(outputName)
 
@@ -55,7 +56,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 	})
 
 	t.Run("fern_green.jpg", func(t *testing.T) {
-		jpegFilename := conf.ImportPath() + "/fern_green.jpg"
+		jpegFilename := filepath.Join(conf.ImportPath(), "fern_green.jpg")
 
 		assert.Truef(t, fs.FileExists(jpegFilename), "file does not exist: %s", jpegFilename)
 
@@ -79,7 +80,8 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 		assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
 
-		rawFilename := conf.ImportPath() + "/raw/IMG_2567.CR2"
+		rawFilename := filepath.Join(conf.ImportPath(), "raw", "IMG_2567.CR2")
+		jpgFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/IMG_2567.jpg")
 
 		t.Logf("Testing RAW to JPEG convert with %s", rawFilename)
 
@@ -95,7 +97,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 			t.Fatalf("%s for %s", err.Error(), rawFilename)
 		}
 
-		assert.True(t, fs.FileExists(conf.ImportPath()+"/raw/.photoprism/IMG_2567.jpg"), "Jpeg file was not found - is Darktable installed?")
+		assert.True(t, fs.FileExists(jpgFilename), "Jpeg file was not found - is Darktable installed?")
 
 		if imageRaw == nil {
 			t.Fatal("imageRaw is nil")
@@ -106,6 +108,8 @@ func TestConvert_ToJpeg(t *testing.T) {
 		infoRaw := imageRaw.MetaData()
 
 		assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
+
+		_ = os.Remove(jpgFilename)
 	})
 }
 
@@ -114,8 +118,8 @@ func TestConvert_ToJson(t *testing.T) {
 	convert := NewConvert(conf)
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
-		fileName := conf.ExamplesPath() + "/gopher-video.mp4"
-		outputName := conf.ExamplesPath() + "/.photoprism/gopher-video.json"
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.json")
 
 		_ = os.Remove(outputName)
 
@@ -149,8 +153,8 @@ func TestConvert_ToJson(t *testing.T) {
 	})
 
 	t.Run("IMG_4120.JPG", func(t *testing.T) {
-		fileName := conf.ExamplesPath() + "/IMG_4120.JPG"
-		outputName := conf.ExamplesPath() + "/.photoprism/IMG_4120.json"
+		fileName := filepath.Join(conf.ExamplesPath(), "IMG_4120.JPG")
+		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "IMG_4120.json")
 
 		_ = os.Remove(outputName)
 
@@ -228,7 +232,7 @@ func TestConvert_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jpegFilename := conf.ImportPath() + "/raw/.photoprism/canon_eos_6d.jpg"
+	jpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/canon_eos_6d.jpg")
 
 	assert.True(t, fs.FileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
@@ -244,7 +248,7 @@ func TestConvert_Start(t *testing.T) {
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "UpdateCamera model should be Canon EOS M10")
 
-	existingJpegFilename := conf.ImportPath() + "/raw/.photoprism/IMG_2567.jpg"
+	existingJpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "/raw/IMG_2567.jpg")
 
 	oldHash := fs.Hash(existingJpegFilename)
 

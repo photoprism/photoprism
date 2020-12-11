@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -215,7 +216,7 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 
 	conf := config.TestConfig()
 
-	img, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+	img, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "iphone_7.heic"))
 
 	if err != nil {
 		t.Fatal(err)
@@ -265,7 +266,7 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 	assert.Equal(t, false, jpegInfo.Flash)
 	assert.Equal(t, "", jpegInfo.Description)
 
-	if err := os.Remove(conf.ExamplesPath() + "/.photoprism/iphone_7.jpg"); err != nil {
+	if err := os.Remove(filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "iphone_7.jpg")); err != nil {
 		t.Error(err)
 	}
 }
