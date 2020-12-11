@@ -67,7 +67,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		related, err := mediaFile.RelatedFiles(true)
+		related, err := mediaFile.RelatedFiles(conf.Settings().StackSequences())
 
 		if err != nil {
 			log.Errorf("photo: %s (unstack %s)", err, txt.Quote(baseName))
@@ -104,7 +104,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		newPhoto := entity.NewPhoto()
+		newPhoto := entity.NewPhoto(true)
 
 		if err := newPhoto.Create(); err != nil {
 			log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(baseName))

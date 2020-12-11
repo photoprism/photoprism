@@ -97,10 +97,11 @@ type Photo struct {
 }
 
 // NewPhoto creates a photo entity.
-func NewPhoto() Photo {
+func NewPhoto(single bool) Photo {
 	return Photo{
 		PhotoTitle:   TitleUnknown,
 		PhotoType:    TypeImage,
+		PhotoSingle:  single,
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
 		LensID:       UnknownLens.ID,

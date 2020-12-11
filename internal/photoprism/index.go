@@ -253,7 +253,7 @@ func (ind *Index) SingleFile(name string) (result IndexResult) {
 		return result
 	}
 
-	related, err := file.RelatedFiles(false)
+	related, err := file.RelatedFiles(ind.conf.Settings().StackSequences())
 
 	if err != nil {
 		result.Err = err
