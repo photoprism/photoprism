@@ -5,12 +5,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
@@ -19,7 +20,7 @@ import (
 // BackupCommand configures the backup cli command.
 var BackupCommand = cli.Command{
 	Name:   "backup",
-	Usage:  "Creates a database backup",
+	Usage:  "Creates an index database backup",
 	Flags:  backupFlags,
 	Action: backupAction,
 }
@@ -31,7 +32,7 @@ var backupFlags = []cli.Flag{
 	},
 }
 
-// migrateAction automatically migrates or initializes database
+// backupAction creates a database backup.
 func backupAction(ctx *cli.Context) error {
 	start := time.Now()
 
@@ -55,8 +56,7 @@ func backupAction(ctx *cli.Context) error {
 	}
 
 	if _, err := os.Stat(fileName); err == nil && !ctx.Bool("force") {
-		log.Errorf("backup file already exists: %s", fileName)
-		return nil
+		return fmt.Errorf("backup file already exists: %s", fileName)
 	} else if err == nil {
 		log.Warnf("replacing existing backup file")
 	}

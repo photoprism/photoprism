@@ -63,6 +63,7 @@ func main() {
 		commands.ResampleCommand,
 		commands.MigrateCommand,
 		commands.BackupCommand,
+		commands.RestoreCommand,
 		commands.ResetCommand,
 		commands.ConfigCommand,
 		commands.PasswdCommand,

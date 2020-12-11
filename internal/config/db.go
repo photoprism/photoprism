@@ -19,10 +19,10 @@ import (
 )
 
 var dsnPattern = regexp.MustCompile(
-`^(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
-`(?:(?P<net>[^\(]*)(?:\((?P<server>[^\)]*)\))?)?` +
-`\/(?P<name>.*?)` +
-`(?:\?(?P<params>[^\?]*))?$`)
+	`^(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
+		`(?:(?P<net>[^\(]*)(?:\((?P<server>[^\)]*)\))?)?` +
+		`\/(?P<name>.*?)` +
+		`(?:\?(?P<params>[^\?]*))?$`)
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
@@ -229,6 +229,12 @@ func (c *Config) InitTestDb() {
 	entity.Admin.InitPassword(c.AdminPassword())
 
 	go entity.SaveErrorMessages()
+}
+
+// TruncateDb drops all contents so that they can be restored from a backup.
+func (c *Config) TruncateDb() {
+	entity.SetDbProvider(c)
+	entity.Entities.Truncate()
 }
 
 // connectDb establishes a database connection.
