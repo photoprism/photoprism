@@ -70,12 +70,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.15.5
+ENV GOLANG_VERSION 1.15.6
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "a72a0b036beb4193a0214bca3fca4c5d68a38a4ccf098c909f7ce8bf08567c48 *go.tgz" | sha256sum -c -; \
+	echo "f87515b9744154ffe31182da9341d0a61eb0795551173d242c8cad209239e492 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -119,6 +119,8 @@ RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 # Install additional distribution packages
 RUN apt-get update && apt-get upgrade && apt-get install -y --no-install-recommends \
         ca-certificates \
+        mariadb-client \
+        sqlite3 \
         tzdata \
         libheif-examples \
         darktable \

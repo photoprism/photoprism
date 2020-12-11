@@ -45,7 +45,8 @@ RUN apt-get update && apt-get upgrade && \
     wget \
     git \
     gettext \
-    mysql-client \
+    mariadb-client \
+    sqlite3 \
     tzdata \
     gconf-service \
     firefox \
@@ -99,12 +100,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 RUN npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.15.5
+ENV GOLANG_VERSION 1.15.6
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "9a58494e8da722c3aef248c9227b0e9c528c7318309827780f16220998180a0d *go.tgz" | sha256sum -c -; \
+	echo "3918e6cc85e7eaaa6f859f1bdbaac772e7a825b0eb423c63d3ae68b21f84b844 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
