@@ -2115,10 +2115,14 @@ func TestMediaFile_RenameSidecars(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		if err := os.MkdirAll(filepath.Join(conf.SidecarPath(), "foo"), os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
+
 		srcName := filepath.Join(conf.SidecarPath(), "foo/bar.json")
 		dstName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.json")
 
-		if err := ioutil.WriteFile(srcName, []byte("{}"), os.ModePerm); err != nil {
+		if err := ioutil.WriteFile(srcName, []byte("{}"), 0666); err != nil {
 			t.Fatal(err)
 		}
 
