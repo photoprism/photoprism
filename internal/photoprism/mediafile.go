@@ -1003,23 +1003,29 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 }
 
 // RenameSidecars moves related sidecar files.
-func (m *MediaFile) RenameSidecars(oldFileName string) (err error) {
-	oldRelPrefix := fs.RelPrefix(oldFileName, Config().OriginalsPath(), false)
-	newRelPrefix := m.RelPrefix(Config().OriginalsPath(), false)
-	globPrefix := filepath.Join(Config().SidecarPath(), oldRelPrefix) + "."
+func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]string, err error) {
+	renamed = make(map[string]string)
+
+	newName := m.RelPrefix(Config().OriginalsPath(), false)
+
+	oldPrefix := fs.RelPrefix(oldFileName, Config().OriginalsPath(), false)
+	globPrefix := filepath.Join(Config().SidecarPath(), oldPrefix) + "."
+
 	matches, err := filepath.Glob(regexp.QuoteMeta(globPrefix) + "*")
 
 	if err != nil {
-		return err
+		return renamed, err
 	}
 
-	for _, fileName := range matches {
-		destName := filepath.Join(Config().SidecarPath(), newRelPrefix + filepath.Ext(fileName))
+	for _, srcName := range matches {
+		destName := filepath.Join(Config().SidecarPath(), newName+filepath.Ext(srcName))
 
-		if err := fs.Move(fileName, destName); err != nil {
-			return err
+		if err := fs.Move(srcName, destName); err != nil {
+			return renamed, err
+		} else {
+			renamed[fs.RelName(srcName, Config().SidecarPath())] = fs.RelName(destName, Config().SidecarPath())
 		}
 	}
 
-	return nil
+	return renamed, nil
 }

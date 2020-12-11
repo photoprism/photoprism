@@ -9,7 +9,7 @@ import (
 // Moves a file to a new destination.
 func Move(src, dest string) error {
 	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
-	return err
+		return err
 	}
 
 	if err := os.Rename(src, dest); err == nil {

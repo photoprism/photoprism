@@ -1,6 +1,7 @@
 package query
 
 import (
+	"fmt"
 	"path"
 	"strings"
 
@@ -89,6 +90,15 @@ func FileByHash(fileHash string) (file entity.File, err error) {
 	}
 
 	return file, nil
+}
+
+// RenameFile renames an indexed file.
+func RenameFile(srcRoot, srcName, destRoot, destName string) error {
+	if srcRoot == "" || srcName == "" || destRoot == "" || destName == "" {
+		return fmt.Errorf("can't rename %s/%s to %s/%s", srcRoot, srcName, destRoot, destName)
+	}
+
+	return Db().Exec("UPDATE files SET file_root = ?, file_name = ?, file_missing = ?, deleted_at = NULL WHERE file_root = ? AND file_name = ?", destRoot, destName, srcRoot, srcName).Error
 }
 
 // SetPhotoPrimary sets a new primary image file for a photo.

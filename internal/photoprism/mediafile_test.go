@@ -2122,8 +2122,12 @@ func TestMediaFile_RenameSidecars(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := mf.RenameSidecars(filepath.Join(conf.OriginalsPath(), "foo/bar.jpg")); err != nil {
+		if renamed, err := mf.RenameSidecars(filepath.Join(conf.OriginalsPath(), "foo/bar.jpg")); err != nil {
 			t.Fatal(err)
+		} else if len(renamed) != 1 {
+			t.Errorf("len should be 2: %#v", renamed)
+		} else {
+			t.Logf("renamed: %#v", renamed)
 		}
 
 		if fs.FileExists(srcName) {

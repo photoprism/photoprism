@@ -157,10 +157,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			result.Err = err
 
 			return result
-		} else if err := m.RenameSidecars(indFileName); err != nil {
-			log.Errorf("index: %s in %s (rename)", err.Error(), logName)
+		} else if renamedSidecars, err := m.RenameSidecars(indFileName); err != nil {
+			log.Errorf("index: %s in %s (rename sidecars)", err.Error(), logName)
+
 			fileRenamed = true
 		} else {
+			for srcName, destName := range renamedSidecars {
+				if err := query.RenameFile(entity.RootSidecar, srcName, entity.RootSidecar, destName); err != nil {
+					log.Errorf("index: %s in %s (update sidecar index)", err.Error(), filepath.Join(entity.RootSidecar, srcName))
+				}
+			}
+
 			fileRenamed = true
 		}
 	}
