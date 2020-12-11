@@ -2,9 +2,12 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,6 +17,12 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 )
+
+var dsnPattern = regexp.MustCompile(
+`^(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
+`(?:(?P<net>[^\(]*)(?:\((?P<server>[^\)]*)\))?)?` +
+`\/(?P<name>.*?)` +
+`(?:\?(?P<params>[^\?]*))?$`)
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
@@ -40,7 +49,13 @@ func (c *Config) DatabaseDsn() string {
 	if c.params.DatabaseDsn == "" {
 		switch c.DatabaseDriver() {
 		case MySQL:
-			return "photoprism:photoprism@tcp(photoprism-db:3306)/photoprism?parseTime=true"
+			return fmt.Sprintf(
+				"%s:%s@tcp(%s)/%s?charset=utf8mb4,utf8&parseTime=true",
+				c.DatabaseUser(),
+				c.DatabasePassword(),
+				c.DatabaseServer(),
+				c.DatabaseName(),
+			)
 		case SQLite:
 			return filepath.Join(c.StoragePath(), "index.db")
 		default:
@@ -50,6 +65,98 @@ func (c *Config) DatabaseDsn() string {
 	}
 
 	return c.params.DatabaseDsn
+}
+
+// ParseDatabaseDsn parses the database dsn and extracts user, password, database server, and name.
+func (c *Config) ParseDatabaseDsn() {
+	if c.params.DatabaseDsn == "" || c.params.DatabaseServer != "" {
+		return
+	}
+
+	matches := dsnPattern.FindStringSubmatch(c.params.DatabaseDsn)
+	names := dsnPattern.SubexpNames()
+
+	for i, match := range matches {
+		switch names[i] {
+		case "user":
+			c.params.DatabaseUser = match
+		case "password":
+			c.params.DatabasePassword = match
+		case "server":
+			c.params.DatabaseServer = match
+		case "name":
+			c.params.DatabaseName = match
+		}
+	}
+}
+
+// DatabaseServer the database server.
+func (c *Config) DatabaseServer() string {
+	c.ParseDatabaseDsn()
+
+	if c.params.DatabaseServer == "" {
+		return "localhost"
+	}
+
+	return c.params.DatabaseServer
+}
+
+// DatabaseHost the database server host.
+func (c *Config) DatabaseHost() string {
+	if s := strings.Split(c.DatabaseServer(), ":"); len(s) > 0 {
+		return s[0]
+	}
+
+	return c.params.DatabaseServer
+}
+
+// DatabasePort the database server port.
+func (c *Config) DatabasePort() int {
+	const defaultPort = 3306
+
+	if s := strings.Split(c.DatabaseServer(), ":"); len(s) != 2 {
+		return defaultPort
+	} else if port, err := strconv.Atoi(s[1]); err != nil {
+		return defaultPort
+	} else if port < 1 || port > 65535 {
+		return defaultPort
+	} else {
+		return port
+	}
+}
+
+// DatabasePortString the database server port as string.
+func (c *Config) DatabasePortString() string {
+	return strconv.Itoa(c.DatabasePort())
+}
+
+// DatabaseName the database schema name.
+func (c *Config) DatabaseName() string {
+	c.ParseDatabaseDsn()
+
+	if c.params.DatabaseName == "" {
+		return "photoprism"
+	}
+
+	return c.params.DatabaseName
+}
+
+// DatabaseUser returns the database user name.
+func (c *Config) DatabaseUser() string {
+	c.ParseDatabaseDsn()
+
+	if c.params.DatabaseUser == "" {
+		return "photoprism"
+	}
+
+	return c.params.DatabaseUser
+}
+
+// DatabasePassword returns the database user password.
+func (c *Config) DatabasePassword() string {
+	c.ParseDatabaseDsn()
+
+	return c.params.DatabasePassword
 }
 
 // DatabaseConns returns the maximum number of open connections to the database.

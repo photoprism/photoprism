@@ -103,8 +103,30 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-dsn",
-		Usage:  "data source or file name (`DSN`)",
+		Usage:  "sqlite file name, `DSN` is optional for mysql",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
+	},
+	cli.StringFlag{
+		Name:   "database-server",
+		Usage:  "database server `HOST`, port is optional",
+		EnvVar: "PHOTOPRISM_DATABASE_SERVER",
+	},
+	cli.StringFlag{
+		Name:   "database-name",
+		Value:  "photoprism",
+		Usage:  "database `NAME`",
+		EnvVar: "PHOTOPRISM_DATABASE_NAME",
+	},
+	cli.StringFlag{
+		Name:   "database-user",
+		Value:  "photoprism",
+		Usage:  "database user `NAME`",
+		EnvVar: "PHOTOPRISM_DATABASE_USER",
+	},
+	cli.StringFlag{
+		Name:   "database-password",
+		Usage:  "database user `PASSWORD``",
+		EnvVar: "PHOTOPRISM_DATABASE_PASSWORD",
 	},
 	cli.IntFlag{
 		Name:   "database-conns",

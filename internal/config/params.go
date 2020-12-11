@@ -60,6 +60,10 @@ type Params struct {
 	CachePath          string `yaml:"cache-path" flag:"cache-path"`
 	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
 	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
+	DatabaseServer     string `yaml:"database-server" flag:"database-server"`
+	DatabaseName       string `yaml:"database-name" flag:"database-name"`
+	DatabaseUser       string `yaml:"database-user" flag:"database-user"`
+	DatabasePassword   string `yaml:"database-password" flag:"database-password"`
 	DatabaseConns      int    `yaml:"database-conns" flag:"database-conns"`
 	DatabaseConnsIdle  int    `yaml:"database-conns-idle" flag:"database-conns-idle"`
 	HttpServerHost     string `yaml:"http-host" flag:"http-host"`

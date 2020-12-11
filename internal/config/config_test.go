@@ -162,20 +162,6 @@ func TestConfig_ExifToolBin(t *testing.T) {
 	assert.Equal(t, "/usr/bin/exiftool", bin)
 }
 
-func TestConfig_DatabaseDriver(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	driver := c.DatabaseDriver()
-	assert.Equal(t, SQLite, driver)
-}
-
-func TestConfig_DatabaseDsn(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	dsn := c.DatabaseDriver()
-	assert.Equal(t, SQLite, dsn)
-}
-
 func TestConfig_CachePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
