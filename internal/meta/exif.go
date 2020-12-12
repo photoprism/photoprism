@@ -38,14 +38,14 @@ func ValidDateTime(s string) bool {
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func Exif(fileName string, fileType fs.FileType) (data Data, err error) {
+func Exif(fileName string, fileType fs.FileFormat) (data Data, err error) {
 	err = data.Exif(fileName, fileType)
 
 	return data, err
 }
 
 // Exif parses an image file for Exif meta data and returns as Data struct.
-func (data *Data) Exif(fileName string, fileType fs.FileType) (err error) {
+func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 	exifMutex.Lock()
 	defer exifMutex.Unlock()
 

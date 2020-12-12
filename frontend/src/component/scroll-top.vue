@@ -2,7 +2,7 @@
   <transition name="fade-transition">
     <v-btn
             v-if="show"
-            color="accent darken-2"
+            color="transparent"
             dark
             fab
             fixed

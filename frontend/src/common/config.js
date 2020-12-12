@@ -52,12 +52,14 @@ export default class Config {
             this.values = {};
             this.page = {
                 title: "PhotoPrism",
+                caption: "Browse Your Life",
             };
             return;
         }
 
         this.page = {
             title: values.siteTitle,
+            caption: values.siteCaption,
         };
 
         this.values = values;

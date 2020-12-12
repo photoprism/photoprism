@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import Photo from "model/photo";
+import {Photo, TypeVideo, TypeLive} from "model/photo";
 import mapboxgl from "mapbox-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
@@ -191,8 +191,13 @@ export default {
 
       if (this.photos.length > 0) {
         const index = this.photos.findIndex((p) => p.UID === id);
+        const selected = this.photos[index];
 
-        this.$viewer.show(Thumb.fromPhotos(this.photos), index)
+        if (selected.Type === TypeVideo || selected.Type === TypeLive) {
+          this.$modal.show('video', {video: selected, album: null});
+        } else {
+          this.$viewer.show(Thumb.fromPhotos(this.photos), index)
+        }
       } else {
         this.$notify.warn(this.$gettext("No photos found"));
       }

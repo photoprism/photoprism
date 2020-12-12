@@ -1,16 +1,11 @@
 <template>
   <div id="p-navigation">
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
-    <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small"
-               @click.stop="showNavigation()">
-      <v-avatar
-          tile
-          :size="40"
-          class="clickable"
-          @click.stop="showNavigation()"
-      >
-        <img src="/static/img/logo-avatar.svg" alt="Logo">
-      </v-avatar>
+    <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" fixed flat color="navigation darken-1" class="nav-small"
+               @click.stop="showNavigation()" scroll-toolbar-off-screen>
+
+      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
+
       <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -20,9 +15,8 @@
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
     </v-toolbar>
-    <v-toolbar dark flat color="navigation darken-1">
+    <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" flat color="navigation darken-1">
     </v-toolbar>
     </template>
     <v-navigation-drawer
@@ -31,10 +25,11 @@
             :mini-variant="mini"
             :width="270"
             :mobile-break-point="960"
+            :mini-variant-width="80"
             class="nav-sidebar navigation"
             fixed dark app
     >
-      <v-toolbar flat>
+      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown">
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
             <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
@@ -62,7 +57,7 @@
         </v-list-tile>
 
         <v-list-tile v-if="mini" to="/photos" @click="" class="nav-photos">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Photos')">
             <v-icon>photo</v-icon>
           </v-list-tile-action>
 
@@ -135,7 +130,7 @@
         </v-list-group>
 
         <v-list-tile to="/favorites" @click="" class="nav-favorites">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Favorites')">
             <v-icon>favorite</v-icon>
           </v-list-tile-action>
 
@@ -148,7 +143,7 @@
         </v-list-tile>
 
         <v-list-tile to="/private" @click="" class="nav-private" v-show="$config.feature('private')">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Private')">
             <v-icon>lock</v-icon>
           </v-list-tile-action>
 
@@ -161,7 +156,7 @@
         </v-list-tile>
 
         <v-list-tile to="/videos" @click="" class="nav-video">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Videos')">
             <v-icon>movie_creation</v-icon>
           </v-list-tile-action>
 
@@ -174,7 +169,7 @@
         </v-list-tile>
 
         <v-list-tile v-if="mini" to="/albums" @click="" class="nav-albums">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Albums')">
             <v-icon>folder_special</v-icon>
           </v-list-tile-action>
 
@@ -205,8 +200,8 @@
         </v-list-group>
 
         <v-list-tile :to="{ name: 'folders' }" @click="" class="nav-folders">
-          <v-list-tile-action>
-            <v-icon>folder</v-icon>
+          <v-list-tile-action :title="$gettext('Folders')">
+            <v-icon>inbox</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
@@ -219,7 +214,7 @@
         </v-list-tile>
 
         <v-list-tile :to="{ name: 'calendar' }" @click="" class="nav-calendar">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Calendar')">
             <v-icon>date_range</v-icon>
           </v-list-tile-action>
 
@@ -234,7 +229,7 @@
 
         <v-list-tile :to="{ name: 'moments' }" @click="" class="nav-moments"
                      v-show="$config.feature('moments')">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Moments')">
             <v-icon>star</v-icon>
           </v-list-tile-action>
 
@@ -249,7 +244,7 @@
 
         <v-list-tile v-if="mini" :to="{ name: 'places' }" @click="" class="nav-places"
                      v-show="$config.feature('places')">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Places')">
             <v-icon>place</v-icon>
           </v-list-tile-action>
 
@@ -282,7 +277,7 @@
         </v-list-group>
 
         <v-list-tile to="/labels" @click="" class="nav-labels" v-show="$config.feature('labels')">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Labels')">
             <v-icon>label</v-icon>
           </v-list-tile-action>
 
@@ -296,7 +291,7 @@
         </v-list-tile>
 
         <v-list-tile v-if="mini && $config.feature('library')" to="/library" @click="" class="nav-library">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
           </v-list-tile-action>
 
@@ -345,7 +340,7 @@
 
         <template v-if="!config.disableSettings">
           <v-list-tile v-if="mini" to="/settings" @click="" class="nav-settings">
-            <v-list-tile-action>
+            <v-list-tile-action :title="$gettext('Settings')">
               <v-icon>settings</v-icon>
             </v-list-tile-action>
 
@@ -392,7 +387,7 @@
         </template>
 
         <v-list-tile @click="logout" class="nav-logout" v-show="!public && auth">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Logout')">
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>
 
@@ -404,7 +399,7 @@
         </v-list-tile>
 
         <v-list-tile to="/login" @click="" class="nav-login" v-show="!auth">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Login')">
             <v-icon>lock</v-icon>
           </v-list-tile-action>
 
@@ -416,7 +411,7 @@
         </v-list-tile>
 
         <v-list-tile to="/help/websockets" @click="" class="nav-connecting navigation" v-show="$config.disconnected" style="position:fixed; bottom: 0; left:0; right: 0;">
-          <v-list-tile-action>
+          <v-list-tile-action :title="$gettext('Offline')">
             <v-icon color="warning">wifi_off</v-icon>
           </v-list-tile-action>
 

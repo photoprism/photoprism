@@ -178,6 +178,10 @@ docker-photoprism-arm64:
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
+docker-demo-local:
+	scripts/docker-build.sh photoprism
+	scripts/docker-build.sh demo
+	scripts/docker-push.sh demo
 docker-webdav:
 	docker pull golang:1
 	scripts/docker-build.sh webdav $(DOCKER_TAG)

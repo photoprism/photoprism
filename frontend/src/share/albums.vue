@@ -1,7 +1,11 @@
 <template>
   <div class="p-page p-page-albums" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
-
+    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar-title>
+        {{ site.caption }}
+      </v-toolbar-title>
+    </v-toolbar>
     <v-container fluid class="pa-4" v-if="loading">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
@@ -135,6 +139,7 @@ export default {
     }
 
     return {
+      site: this.$config.page,
       categories: categories,
       subscriptions: [],
       listen: false,

@@ -31,7 +31,7 @@ type MediaFile struct {
 	statErr      error
 	modTime      time.Time
 	fileSize     int64
-	fileType     fs.FileType
+	fileType     fs.FileFormat
 	mimeType     string
 	takenAt      time.Time
 	takenAtSrc   string
@@ -50,7 +50,7 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 	m := &MediaFile{
 		fileName: fileName,
 		fileRoot: entity.RootUnknown,
-		fileType: fs.TypeOther,
+		fileType: fs.FormatOther,
 		metaData: meta.NewData(),
 		width:    -1,
 		height:   -1,
@@ -348,7 +348,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden JPEG if exists.
 	if !result.ContainsJpeg() {
-		if jpegName := fs.TypeJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
+		if jpegName := fs.FormatJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
 			if resultFile, err := NewMediaFile(jpegName); err == nil {
 				result.Files = append(result.Files, resultFile)
 			}
@@ -361,7 +361,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 }
 
 // PathNameInfo returns file name infos for indexing.
-func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeName string) {
+func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relativePath, relativeName string) {
 	fileRoot = m.Root()
 
 	var rootPath string
@@ -379,7 +379,7 @@ func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeNa
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.BasePrefix(Config().Settings().StackSequences())
+	fileBase = m.BasePrefix(stripSequence)
 	relativePath = m.RelPath(rootPath)
 	relativeName = m.RelName(rootPath)
 
@@ -402,22 +402,9 @@ func (m *MediaFile) SetFileName(fileName string) {
 	m.fileRoot = entity.RootUnknown
 }
 
-// RootRelName returns the relative filename and automatically detects the root path.
+// RootRelName returns the relative filename, and automatically detects the root path.
 func (m *MediaFile) RootRelName() string {
-	var rootPath string
-
-	switch m.Root() {
-	case entity.RootSidecar:
-		rootPath = Config().SidecarPath()
-	case entity.RootImport:
-		rootPath = Config().ImportPath()
-	case entity.RootExamples:
-		rootPath = Config().ExamplesPath()
-	default:
-		rootPath = Config().OriginalsPath()
-	}
-
-	return m.RelName(rootPath)
+	return m.RelName(m.RootPath())
 }
 
 // RelName returns the relative filename.
@@ -454,6 +441,25 @@ func (m *MediaFile) RelPath(directory string) string {
 	}
 
 	return pathname
+}
+
+// RootPath returns the file root path based on the configuration.
+func (m *MediaFile) RootPath() string {
+	switch m.Root() {
+	case entity.RootSidecar:
+		return Config().SidecarPath()
+	case entity.RootImport:
+		return Config().ImportPath()
+	case entity.RootExamples:
+		return Config().ExamplesPath()
+	default:
+		return Config().OriginalsPath()
+	}
+}
+
+// RootRelPath returns the relative path and automatically detects the root path.
+func (m *MediaFile) RootRelPath() string {
+	return m.RelPath(m.RootPath())
 }
 
 // RelPrefix returns the relative path and file name prefix.
@@ -648,7 +654,7 @@ func (m *MediaFile) IsGif() bool {
 
 // IsTiff returns true if this is a TIFF file.
 func (m *MediaFile) IsTiff() bool {
-	return m.HasFileType(fs.TypeTiff) && m.MimeType() == fs.MimeTypeTiff
+	return m.HasFileType(fs.FormatTiff) && m.MimeType() == fs.MimeTypeTiff
 }
 
 // IsHEIF returns true if this is a High Efficiency Image File Format file.
@@ -668,24 +674,24 @@ func (m *MediaFile) IsVideo() bool {
 
 // IsJson return true if this media file is a json sidecar file.
 func (m *MediaFile) IsJson() bool {
-	return m.HasFileType(fs.TypeJson)
+	return m.HasFileType(fs.FormatJson)
 }
 
 // FileType returns the file type (jpg, gif, tiff,...).
-func (m *MediaFile) FileType() fs.FileType {
+func (m *MediaFile) FileType() fs.FileFormat {
 	switch {
 	case m.IsJpeg():
-		return fs.TypeJpeg
+		return fs.FormatJpeg
 	case m.IsPng():
-		return fs.TypePng
+		return fs.FormatPng
 	case m.IsGif():
-		return fs.TypeGif
+		return fs.FormatGif
 	case m.IsHEIF():
-		return fs.TypeHEIF
+		return fs.FormatHEIF
 	case m.IsBitmap():
-		return fs.TypeBitmap
+		return fs.FormatBitmap
 	default:
-		return fs.GetFileType(m.fileName)
+		return fs.GetFileFormat(m.fileName)
 	}
 }
 
@@ -695,8 +701,8 @@ func (m *MediaFile) MediaType() fs.MediaType {
 }
 
 // HasFileType returns true if this is the given type.
-func (m *MediaFile) HasFileType(fileType fs.FileType) bool {
-	if fileType == fs.TypeJpeg {
+func (m *MediaFile) HasFileType(fileType fs.FileFormat) bool {
+	if fileType == fs.FormatJpeg {
 		return m.IsJpeg()
 	}
 
@@ -705,7 +711,7 @@ func (m *MediaFile) HasFileType(fileType fs.FileType) bool {
 
 // IsRaw returns true if this is a RAW file.
 func (m *MediaFile) IsRaw() bool {
-	return m.HasFileType(fs.TypeRaw)
+	return m.HasFileType(fs.FormatRaw)
 }
 
 // IsImageOther returns true if this is a PNG, GIF, BMP or TIFF file.
@@ -720,7 +726,7 @@ func (m *MediaFile) IsImageOther() bool {
 
 // IsXMP returns true if this is a XMP sidecar file.
 func (m *MediaFile) IsXMP() bool {
-	return m.FileType() == fs.TypeXMP
+	return m.FileType() == fs.FormatXMP
 }
 
 // IsSidecar returns true if this is a sidecar file (containing metadata).
@@ -730,7 +736,7 @@ func (m *MediaFile) IsSidecar() bool {
 
 // IsPlayableVideo returns true if this is a supported video file format.
 func (m *MediaFile) IsPlayableVideo() bool {
-	return m.IsVideo() && m.HasFileType(fs.TypeMp4)
+	return m.IsVideo() && (m.HasFileType(fs.FormatMp4) || m.HasFileType(fs.FormatAvc))
 }
 
 // IsPhoto returns true if this file is a photo / image.
@@ -758,7 +764,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegFilename := fs.FormatJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegFilename == "" {
 		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
@@ -778,7 +784,7 @@ func (m *MediaFile) HasJpeg() bool {
 		return true
 	}
 
-	jpegName := fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegName := fs.FormatJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegName == "" {
 		m.hasJpeg = false
@@ -795,7 +801,7 @@ func (m *MediaFile) HasJson() bool {
 		return true
 	}
 
-	return fs.TypeJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
+	return fs.FormatJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
 }
 
 func (m *MediaFile) decodeDimensions() error {
@@ -918,7 +924,7 @@ func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, er
 	return thumbnail, nil
 }
 
-// Thumbnail returns a resampled image of the file.
+// Resample returns a resampled image of the file.
 func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err error) {
 	filename, err := m.Thumbnail(path, typeName)
 
@@ -929,6 +935,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 	return imaging.Open(filename, imaging.AutoOrientation(true))
 }
 
+// ResampleDefault pre-renders default thumbnails.
 func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	count := 0
 	start := time.Now()
@@ -999,4 +1006,47 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	}
 
 	return nil
+}
+
+// RenameSidecars moves related sidecar files.
+func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]string, err error) {
+	renamed = make(map[string]string)
+
+	sidecarPath := Config().SidecarPath()
+	originalsPath := Config().OriginalsPath()
+
+	newName := m.RelPrefix(originalsPath, false)
+	oldPrefix := fs.RelPrefix(oldFileName, originalsPath, false)
+	globPrefix := filepath.Join(sidecarPath, oldPrefix) + "."
+
+	matches, err := filepath.Glob(regexp.QuoteMeta(globPrefix) + "*")
+
+	if err != nil {
+		return renamed, err
+	}
+
+	for _, srcName := range matches {
+		destName := filepath.Join(sidecarPath, newName+filepath.Ext(srcName))
+
+		if fs.FileExists(destName) {
+			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
+
+			if err := os.Remove(srcName); err != nil {
+				log.Errorf("media: failed removing sidecar %s", txt.Quote(fs.RelName(srcName, sidecarPath)))
+			} else {
+				log.Infof("media: removed sidecar %s", txt.Quote(fs.RelName(srcName, sidecarPath)))
+			}
+
+			continue
+		}
+
+		if err := fs.Move(srcName, destName); err != nil {
+			return renamed, err
+		} else {
+			log.Infof("media: moved existing sidecar to %s", txt.Quote(newName+filepath.Ext(srcName)))
+			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
+		}
+	}
+
+	return renamed, nil
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="p-page p-page-files">
     <v-form ref="form" class="p-files-search" lazy-validation @submit.prevent="updateQuery" dense>
-      <v-toolbar flat color="secondary">
+      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
         <v-toolbar-title>
           <router-link to="/library/files">
             <translate key="Originals">Originals</translate>

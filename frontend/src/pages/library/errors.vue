@@ -1,7 +1,7 @@
 <template>
   <div class="p-page p-page-errors" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-toolbar flat color="secondary">
+    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-text-field class="pt-3 pr-3 input-search"
                     browser-autocomplete="off"
                     single-line

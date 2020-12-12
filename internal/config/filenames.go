@@ -340,3 +340,18 @@ func (c *Config) ExamplesPath() string {
 func (c *Config) TestdataPath() string {
 	return filepath.Join(c.StoragePath(), "testdata")
 }
+
+// MysqlBin returns the mysql executable file name.
+func (c *Config) MysqlBin() string {
+	return findExecutable("", "mysql")
+}
+
+// MysqldumpBin returns the mysqldump executable file name.
+func (c *Config) MysqldumpBin() string {
+	return findExecutable("", "mysqldump")
+}
+
+// SqliteBin returns the sqlite executable file name.
+func (c *Config) SqliteBin() string {
+	return findExecutable("", "sqlite3")
+}

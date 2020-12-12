@@ -50,6 +50,7 @@ func TestIndex_File(t *testing.T) {
 
 	ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
 
-	err := ind.SingleFile("xxx")
+	err := ind.FileName("xxx", IndexOptionsAll())
+
 	assert.Equal(t, IndexFailed, err.Status)
 }

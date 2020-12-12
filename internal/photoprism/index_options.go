@@ -4,7 +4,7 @@ type IndexOptions struct {
 	Path    string
 	Rescan  bool
 	Convert bool
-	Stack   bool
+	Single  bool
 }
 
 func (o *IndexOptions) SkipUnchanged() bool {
@@ -17,7 +17,7 @@ func IndexOptionsAll() IndexOptions {
 		Path:    "/",
 		Rescan:  true,
 		Convert: true,
-		Stack:   true,
+		Single:  false,
 	}
 
 	return result
@@ -29,7 +29,7 @@ func IndexOptionsSingle() IndexOptions {
 		Path:    "/",
 		Rescan:  true,
 		Convert: true,
-		Stack:   false,
+		Single:  true,
 	}
 
 	return result

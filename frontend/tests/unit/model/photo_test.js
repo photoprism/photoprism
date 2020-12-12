@@ -390,18 +390,18 @@ describe("model/photo", () => {
     });
 
     it("should return video url",  () => {
-        const values = {ID: 8, UID: "ABC123", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53"}]};
+        const values = {ID: 8, UID: "ABC123", Filename: "1980/01/superCuteKitten.jpg", Hash: "703cf8f274fbb265d49c6262825780e1", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: true, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53"}]};
         const photo = new Photo(values);
-        assert.equal(photo.videoUrl(), "");
-        const values2 = {ID: 9, UID: "ABC163"};
+        assert.equal(photo.videoUrl(), "/api/v1/videos/703cf8f274fbb265d49c6262825780e1/static/avc");
+        const values2 = {ID: 9, UID: "ABC163", Hash: "2305e512e3b183ec982d60a8b608a8ca501973ba"};
         const photo2 = new Photo(values2);
-        assert.equal(photo2.videoUrl(), false);
+        assert.equal(photo2.videoUrl(), "/api/v1/videos/2305e512e3b183ec982d60a8b608a8ca501973ba/static/avc");
         const values3 = {ID: 10, UID: "ABC127", Filename: "1980/01/superCuteKitten.mp4", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdt55"}]};
         const photo3 = new Photo(values3);
-        assert.equal(photo3.videoUrl(), "/api/v1/videos/1xxbgdt55/static/mp4");
+        assert.equal(photo3.videoUrl(), "/api/v1/videos/1xxbgdt55/static/avc");
         const values4 = {ID: 1, UID: "ABC128", Filename: "1980/01/superCuteKitten.jpg", FileUID: "123fgb", Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.jpg", Primary: false, Type: "jpg", Width: 500, Height: 600, Hash: "1xxbgdt53", Codec: "avc1"}]};
         const photo4 = new Photo(values4);
-        assert.equal(photo4.videoUrl(), "/api/v1/videos/1xxbgdt53/static/mp4");
+        assert.equal(photo4.videoUrl(), "/api/v1/videos/1xxbgdt53/static/avc");
     });
 
     it("should return main file",  () => {

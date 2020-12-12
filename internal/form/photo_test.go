@@ -19,7 +19,7 @@ func TestNewPhoto(t *testing.T) {
 			PhotoFavorite:    false,
 			PhotoPrivate:     false,
 			PhotoType:        "image",
-			PhotoReview:      false,
+			PhotoSingle:      false,
 			PhotoLat:         9.9999,
 			PhotoLng:         8.8888,
 			PhotoAltitude:    2,
@@ -50,7 +50,7 @@ func TestNewPhoto(t *testing.T) {
 		assert.Equal(t, false, r.PhotoFavorite)
 		assert.Equal(t, false, r.PhotoPrivate)
 		assert.Equal(t, "image", r.PhotoType)
-		assert.Equal(t, false, r.PhotoReview)
+		assert.Equal(t, false, r.PhotoSingle)
 		assert.Equal(t, float32(9.9999), r.PhotoLat)
 		assert.Equal(t, float32(8.8888), r.PhotoLng)
 		assert.Equal(t, 2, r.PhotoAltitude)

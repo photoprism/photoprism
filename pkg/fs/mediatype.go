@@ -10,35 +10,36 @@ const (
 	MediaOther   MediaType = "other"
 )
 
-var MediaTypes = map[FileType]MediaType{
-	TypeRaw:      MediaRaw,
-	TypeJpeg:     MediaImage,
-	TypePng:      MediaImage,
-	TypeGif:      MediaImage,
-	TypeTiff:     MediaImage,
-	TypeBitmap:   MediaImage,
-	TypeHEIF:     MediaImage,
-	TypeAvi:      MediaVideo,
-	TypeHEVC:     MediaVideo,
-	TypeMp4:      MediaVideo,
-	TypeMov:      MediaVideo,
-	Type3gp:      MediaVideo,
-	Type3g2:      MediaVideo,
-	TypeFlv:      MediaVideo,
-	TypeMkv:      MediaVideo,
-	TypeMpg:      MediaVideo,
-	TypeOgv:      MediaVideo,
-	TypeWebm:     MediaVideo,
-	TypeWMV:      MediaVideo,
-	TypeXMP:      MediaSidecar,
-	TypeXML:      MediaSidecar,
-	TypeAAE:      MediaSidecar,
-	TypeYaml:     MediaSidecar,
-	TypeText:     MediaSidecar,
-	TypeJson:     MediaSidecar,
-	TypeToml:     MediaSidecar,
-	TypeMarkdown: MediaSidecar,
-	TypeOther:    MediaOther,
+var MediaTypes = map[FileFormat]MediaType{
+	FormatRaw:      MediaRaw,
+	FormatJpeg:     MediaImage,
+	FormatPng:      MediaImage,
+	FormatGif:      MediaImage,
+	FormatTiff:     MediaImage,
+	FormatBitmap:   MediaImage,
+	FormatHEIF:     MediaImage,
+	FormatAvi:      MediaVideo,
+	FormatHEVC:     MediaVideo,
+	FormatAvc:      MediaVideo,
+	FormatMp4:      MediaVideo,
+	FormatMov:      MediaVideo,
+	Format3gp:      MediaVideo,
+	Format3g2:      MediaVideo,
+	FormatFlv:      MediaVideo,
+	FormatMkv:      MediaVideo,
+	FormatMpg:      MediaVideo,
+	FormatOgv:      MediaVideo,
+	FormatWebm:     MediaVideo,
+	FormatWMV:      MediaVideo,
+	FormatXMP:      MediaSidecar,
+	FormatXML:      MediaSidecar,
+	FormatAAE:      MediaSidecar,
+	FormatYaml:     MediaSidecar,
+	FormatText:     MediaSidecar,
+	FormatJson:     MediaSidecar,
+	FormatToml:     MediaSidecar,
+	FormatMarkdown: MediaSidecar,
+	FormatOther:    MediaOther,
 }
 
 func GetMediaType(fileName string) MediaType {
@@ -46,7 +47,7 @@ func GetMediaType(fileName string) MediaType {
 		return MediaOther
 	}
 
-	result, ok := MediaTypes[GetFileType(fileName)]
+	result, ok := MediaTypes[GetFileFormat(fileName)]
 
 	if !ok {
 		result = MediaOther

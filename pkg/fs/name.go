@@ -8,9 +8,8 @@ import (
 )
 
 // FileName returns the a relative filename with the same base and a given extension in a directory.
-func FileName(fileName, dirName, baseDir, fileExt string, stripSequence bool) string {
+func FileName(fileName, dirName, baseDir, fileExt string) string {
 	fileDir := filepath.Dir(fileName)
-	baseName := BasePrefix(fileName, stripSequence)
 
 	if dirName == "" || dirName == "." {
 		dirName = fileDir
@@ -27,7 +26,7 @@ func FileName(fileName, dirName, baseDir, fileExt string, stripSequence bool) st
 		return ""
 	}
 
-	result := filepath.Join(dirName, baseName) + fileExt
+	result := filepath.Join(dirName, filepath.Base(fileName)) + fileExt
 
 	return result
 }

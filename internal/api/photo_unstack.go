@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"path/filepath"
 
@@ -30,10 +31,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
-
-		photoUID := c.Param("uid")
 		fileUID := c.Param("file_uid")
-
 		file, err := query.FileByUID(fileUID)
 
 		if err != nil {
@@ -59,7 +57,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(file.FileRoot, file.FileName)
 		baseName := filepath.Base(fileName)
 
-		mediaFile, err := photoprism.NewMediaFile(fileName)
+		unstackFile, err := photoprism.NewMediaFile(fileName)
 
 		if err != nil {
 			log.Errorf("photo: %s (unstack %s)", err, txt.Quote(baseName))
@@ -67,36 +65,8 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		related, err := mediaFile.RelatedFiles(true)
-
-		if err != nil {
-			log.Errorf("photo: %s (unstack %s)", err, txt.Quote(baseName))
-			AbortEntityNotFound(c)
-			return
-		} else if related.Len() == 0 {
-			log.Errorf("photo: no related files found (unstack %s)", txt.Quote(baseName))
-			AbortEntityNotFound(c)
-			return
-		}
-
-		if related.Len() > 1 {
-			if conf.ReadOnly() {
-				log.Errorf("photo: can't rename files in read only mode (unstack %s)", txt.Quote(baseName))
-				AbortFeatureDisabled(c)
-				return
-			}
-
-			newName := mediaFile.AbsPrefix(true) + "_" + mediaFile.Checksum() + mediaFile.Extension()
-
-			if err := mediaFile.Move(newName); err != nil {
-				log.Errorf("photo: can't rename %s to %s (unstack)", txt.Quote(baseName), txt.Quote(filepath.Base(newName)))
-				AbortUnexpected(c)
-				return
-			}
-		}
-
-		oldPhoto := *file.Photo
-		oldPrimary, err := oldPhoto.PrimaryFile()
+		stackPhoto := *file.Photo
+		stackPrimary, err := stackPhoto.PrimaryFile()
 
 		if err != nil {
 			log.Errorf("photo: can't find primary file for existing photo (unstack %s)", txt.Quote(baseName))
@@ -104,7 +74,49 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		newPhoto := entity.NewPhoto()
+		related, err := unstackFile.RelatedFiles(false)
+
+		if err != nil {
+			log.Errorf("photo: %s (unstack %s)", err, txt.Quote(baseName))
+			AbortEntityNotFound(c)
+			return
+		} else if related.Len() == 0 {
+			log.Errorf("photo: no files found (unstack %s)", txt.Quote(baseName))
+			AbortEntityNotFound(c)
+			return
+		} else if related.Main == nil {
+			log.Errorf("photo: no main file found (unstack %s)", txt.Quote(baseName))
+			AbortEntityNotFound(c)
+			return
+		}
+
+		var files photoprism.MediaFiles
+		unstackSingle := false
+
+		if unstackFile.BasePrefix(false) == stackPhoto.PhotoName {
+			if conf.ReadOnly() {
+				log.Errorf("photo: can't rename files in read only mode (unstack %s)", txt.Quote(baseName))
+				AbortFeatureDisabled(c)
+				return
+			}
+
+			destName := fmt.Sprintf("%s.%s%s", unstackFile.AbsPrefix(false), unstackFile.Checksum(), unstackFile.Extension())
+
+			if err := unstackFile.Move(destName); err != nil {
+				log.Errorf("photo: can't rename %s to %s (unstack)", txt.Quote(unstackFile.BaseName()), txt.Quote(filepath.Base(destName)))
+				AbortUnexpected(c)
+				return
+			}
+
+			files = append(files, unstackFile)
+			unstackSingle = true
+		} else {
+			files = related.Files
+		}
+
+		newPhoto := entity.NewPhoto(true)
+		newPhoto.PhotoPath = unstackFile.RootRelPath()
+		newPhoto.PhotoName = unstackFile.BasePrefix(false)
 
 		if err := newPhoto.Create(); err != nil {
 			log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(baseName))
@@ -112,55 +124,70 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		file.Photo = &newPhoto
-		file.PhotoID = newPhoto.ID
-		file.PhotoUID = newPhoto.PhotoUID
-		file.FileName = mediaFile.RelName(conf.OriginalsPath())
+		for _, r := range files {
+			relName := r.RootRelName()
+			relRoot := r.Root()
 
-		if err := file.Save(); err != nil {
-			log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(baseName))
-
-			if err := newPhoto.Delete(true); err != nil {
-				log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(baseName))
+			if unstackSingle {
+				relName = file.FileName
+				relRoot = file.FileRoot
 			}
 
-			AbortSaveFailed(c)
-			return
+			if err := entity.UnscopedDb().Exec(`UPDATE files 
+				SET photo_id = ?, photo_uid = ?, file_name = ?, file_missing = 0
+				WHERE file_name = ? AND file_root = ?`,
+				newPhoto.ID, newPhoto.PhotoUID, r.RootRelName(),
+				relName, relRoot).Error; err != nil {
+				// Handle error...
+				log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(r.BaseName()))
+
+				// Remove new photo from database.
+				if err := newPhoto.Delete(true); err != nil {
+					log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(r.BaseName()))
+				}
+
+				// Revert file rename.
+				if unstackSingle {
+					if err := r.Move(photoprism.FileName(relRoot, relName)); err != nil {
+						log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(r.BaseName()))
+					}
+				}
+
+				AbortSaveFailed(c)
+				return
+			}
 		}
 
 		ind := service.Index()
 
-		// Index new, unstacked file.
-		if res := ind.SingleFile(mediaFile.FileName()); res.Failed() {
+		// Index unstacked files.
+		if res := ind.FileName(unstackFile.FileName(), photoprism.IndexOptionsSingle()); res.Failed() {
 			log.Errorf("photo: %s (unstack %s)", res.Err, txt.Quote(baseName))
 			AbortSaveFailed(c)
 			return
 		}
 
-		// Reset type for old, existing photo to image.
-		if err := oldPhoto.Update("PhotoType", entity.TypeImage); err != nil {
+		// Reset type for existing photo stack to image.
+		if err := stackPhoto.Update("PhotoType", entity.TypeImage); err != nil {
 			log.Errorf("photo: %s (unstack %s)", err, txt.Quote(baseName))
 			AbortUnexpected(c)
 			return
 		}
 
-		// Get name of old, existing primary file.
-		oldPrimaryName := photoprism.FileName(oldPrimary.FileRoot, oldPrimary.FileName)
-
-		// Re-index old, existing primary file.
-		if res := ind.SingleFile(oldPrimaryName); res.Failed() {
+		// Re-index existing photo stack.
+		if res := ind.FileName(photoprism.FileName(stackPrimary.FileRoot, stackPrimary.FileName), photoprism.IndexOptionsAll()); res.Failed() {
 			log.Errorf("photo: %s (unstack %s)", res.Err, txt.Quote(baseName))
 			AbortSaveFailed(c)
 			return
 		}
 
 		// Notify clients by publishing events.
-		PublishPhotoEvent(EntityCreated, file.PhotoUID, c)
-		PublishPhotoEvent(EntityUpdated, photoUID, c)
+		PublishPhotoEvent(EntityCreated, newPhoto.PhotoUID, c)
+		PublishPhotoEvent(EntityUpdated, stackPhoto.PhotoUID, c)
 
 		event.SuccessMsg(i18n.MsgFileUnstacked)
 
-		p, err := query.PhotoPreloadByUID(photoUID)
+		p, err := query.PhotoPreloadByUID(stackPhoto.PhotoUID)
 
 		if err != nil {
 			AbortEntityNotFound(c)

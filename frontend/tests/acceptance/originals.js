@@ -35,7 +35,7 @@ test('#1 Add originals files to album', async t => {
         .click(Selector('button').withText('BotanicalGarden'))
         .click(Selector('a[href="/library/files/Vacation"]'));
     await page.selectFromUID(KanadaUid);
-    const clipboardCount = await Selector('span.count-clipboard');
+    const clipboardCount = await Selector('span.count-clipboard', {timeout: 5000});
     await t
         .expect(clipboardCount.textContent).eql("1");
     await page.addSelectedToAlbum('KanadaVacation');
@@ -46,7 +46,7 @@ test('#1 Add originals files to album', async t => {
     const AlbumUid = await Selector('div.p-album').nth(0).getAttribute('data-uid');
     await t
         .click(Selector('div.p-album').nth(0));
-    const PhotoCountAfterAdd = await Selector('div.p-photo').count;
+    const PhotoCountAfterAdd = await Selector('div.p-photo', {timeout: 5000}).count;
     await t
         .expect(PhotoCountAfterAdd).eql(2)
         .click(Selector('.nav-albums'));
@@ -62,7 +62,7 @@ test('#2 Download original files', async t => {
         .click(Selector('.nav-originals'));
     const FirstFile = await Selector('div.p-file').nth(0).getAttribute('data-uid');
     await page.selectFromUID(FirstFile);
-    const clipboardCount = await Selector('span.count-clipboard');
+    const clipboardCount = await Selector('span.count-clipboard', {timeout: 5000});
     await t
         .expect(clipboardCount.textContent).eql("1")
         .click(Selector('button.action-menu'))

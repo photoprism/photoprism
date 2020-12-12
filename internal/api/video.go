@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/service"
 
@@ -27,7 +28,7 @@ func GetVideo(router *gin.RouterGroup) {
 		fileHash := c.Param("hash")
 		typeName := c.Param("type")
 
-		_, ok := video.Types[typeName]
+		videoType, ok := video.Types[typeName]
 
 		if !ok {
 			log.Errorf("video: invalid type %s", txt.Quote(typeName))
@@ -69,19 +70,24 @@ func GetVideo(router *gin.RouterGroup) {
 			logError("video", f.Update("FileMissing", true))
 
 			return
-		} else if !mf.IsPlayableVideo() {
-			conv := service.Convert()
-			avcFile, err := conv.ToAvc1(mf)
+		} else if f.FileCodec != string(videoType.Codec) {
+			log.Debugf("video: transcoding %s from %s to avc", txt.Quote(f.FileName), txt.Quote(f.FileCodec))
 
-			if err != nil {
+			start := time.Now()
+			conv := service.Convert()
+
+			if avcFile, err := conv.ToAvc(mf); err != nil {
 				log.Errorf("video: failed transcoding %s", txt.Quote(f.FileName))
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
-
 				return
+			} else {
+				fileName = avcFile.FileName()
 			}
 
-			fileName = avcFile.FileName()
+			log.Debugf("video: transcoding completed in %s", time.Since(start))
 		}
+
+		c.Header("Content-Type", `video/mp4; codecs="avc1"`)
 
 		if c.Query("download") != "" {
 			c.FileAttachment(fileName, f.ShareFileName())

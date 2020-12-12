@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-about">
-    <v-toolbar flat color="secondary">
+    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
         <translate>Contributors</translate>
       </v-toolbar-title>

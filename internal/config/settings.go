@@ -56,7 +56,6 @@ type IndexSettings struct {
 	Path    string `json:"path" yaml:"path"`
 	Convert bool   `json:"convert" yaml:"convert"`
 	Rescan  bool   `json:"rescan" yaml:"rescan"`
-	Stacks  bool   `json:"stacks" yaml:"stacks"`
 }
 
 // StackSettings represents settings for files that belong to the same photo.
@@ -114,7 +113,6 @@ func NewSettings() *Settings {
 			Path:    "/",
 			Rescan:  false,
 			Convert: true,
-			Stacks:  true,
 		},
 		Stack: StackSettings{
 			UUID: true,
@@ -131,17 +129,17 @@ func (s *Settings) Propagate() {
 
 // StackSequences tests if files should be stacked based on their file name prefix (sequential names).
 func (s Settings) StackSequences() bool {
-	return s.Index.Stacks && s.Stack.Name
+	return s.Stack.Name
 }
 
 // StackUUID tests if files should be stacked based on unique image or instance id.
 func (s Settings) StackUUID() bool {
-	return s.Index.Stacks && s.Stack.UUID
+	return s.Stack.UUID
 }
 
 // StackMeta tests if files should be stacked based on their place and time metadata.
 func (s Settings) StackMeta() bool {
-	return s.Index.Stacks && s.Stack.Meta
+	return s.Stack.Meta
 }
 
 // Load user settings from file.

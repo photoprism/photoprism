@@ -11,11 +11,11 @@ import (
 // MigrateCommand is used to register the migrate cli command
 var MigrateCommand = cli.Command{
 	Name:   "migrate",
-	Usage:  "Automatically initializes and migrates the database",
+	Usage:  "Initializes and migrates the index database if needed",
 	Action: migrateAction,
 }
 
-// migrateAction automatically migrates or initializes database
+// migrateAction initializes and migrates the database.
 func migrateAction(ctx *cli.Context) error {
 	start := time.Now()
 

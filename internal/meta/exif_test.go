@@ -9,7 +9,7 @@ import (
 
 func TestExif(t *testing.T) {
 	t.Run("photoshop.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/photoshop.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/photoshop.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -40,7 +40,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("ladybug.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/ladybug.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/ladybug.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -72,7 +72,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("gopro_hd2.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/gopro_hd2.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/gopro_hd2.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -101,7 +101,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("tweethog.png", func(t *testing.T) {
-		_, err := Exif("testdata/tweethog.png", fs.TypePng)
+		_, err := Exif("testdata/tweethog.png", fs.FormatPng)
 
 		if err == nil {
 			t.Fatal("err should NOT be nil")
@@ -111,7 +111,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("iphone_7.heic", func(t *testing.T) {
-		data, err := Exif("testdata/iphone_7.heic", fs.TypeHEIF)
+		data, err := Exif("testdata/iphone_7.heic", fs.FormatHEIF)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -132,7 +132,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("gps-2000.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/gps-2000.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/gps-2000.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -160,7 +160,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("image-2011.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/image-2011.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/image-2011.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -195,7 +195,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("ship.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/ship.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/ship.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -216,7 +216,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("no-exif-data.jpg", func(t *testing.T) {
-		_, err := Exif("testdata/no-exif-data.jpg", fs.TypeJpeg)
+		_, err := Exif("testdata/no-exif-data.jpg", fs.FormatJpeg)
 
 		if err == nil {
 			t.Fatal("err should NOT be nil")
@@ -226,7 +226,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("screenshot.png", func(t *testing.T) {
-		data, err := Exif("testdata/screenshot.png", fs.TypePng)
+		data, err := Exif("testdata/screenshot.png", fs.FormatPng)
 
 		if err != nil {
 			t.Fatal(err)
@@ -237,7 +237,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("orientation.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/orientation.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/orientation.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -265,13 +265,13 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("gopher-preview.jpg", func(t *testing.T) {
-		_, err := Exif("testdata/gopher-preview.jpg", fs.TypeJpeg)
+		_, err := Exif("testdata/gopher-preview.jpg", fs.FormatJpeg)
 
 		assert.EqualError(t, err, "metadata: no exif header in gopher-preview.jpg (search and extract)")
 	})
 
 	t.Run("huawei-gps-error.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/huawei-gps-error.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/huawei-gps-error.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -292,7 +292,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("panorama360.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/panorama360.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/panorama360.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -323,7 +323,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("exif-example.tiff", func(t *testing.T) {
-		data, err := Exif("testdata/exif-example.tiff", fs.TypeTiff)
+		data, err := Exif("testdata/exif-example.tiff", fs.FormatTiff)
 
 		if err != nil {
 			t.Fatal(err)
@@ -354,7 +354,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("out-of-range-500.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/out-of-range-500.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/out-of-range-500.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -385,7 +385,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("digikam.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/digikam.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/digikam.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)
@@ -419,7 +419,7 @@ func TestExif(t *testing.T) {
 	})
 
 	t.Run("notebook.jpg", func(t *testing.T) {
-		data, err := Exif("testdata/notebook.jpg", fs.TypeJpeg)
+		data, err := Exif("testdata/notebook.jpg", fs.FormatJpeg)
 
 		if err != nil {
 			t.Fatal(err)

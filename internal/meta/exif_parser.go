@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-func RawExif(fileName string, fileType fs.FileType) (rawExif []byte, err error) {
+func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("metadata: %s in %s (raw exif panic)\nstack: %s", e, txt.Quote(filepath.Base(fileName)), debug.Stack())
@@ -27,7 +27,7 @@ func RawExif(fileName string, fileType fs.FileType) (rawExif []byte, err error) 
 
 	logName := txt.Quote(filepath.Base(fileName))
 
-	if fileType == fs.TypeJpeg {
+	if fileType == fs.FormatJpeg {
 		jpegMp := jpegstructure.NewJpegMediaParser()
 
 		sl, err := jpegMp.ParseFile(fileName)
@@ -49,7 +49,7 @@ func RawExif(fileName string, fileType fs.FileType) (rawExif []byte, err error) 
 				parsed = true
 			}
 		}
-	} else if fileType == fs.TypePng {
+	} else if fileType == fs.FormatPng {
 		pngMp := pngstructure.NewPngMediaParser()
 
 		cs, err := pngMp.ParseFile(fileName)
@@ -69,7 +69,7 @@ func RawExif(fileName string, fileType fs.FileType) (rawExif []byte, err error) 
 		} else {
 			parsed = true
 		}
-	} else if fileType == fs.TypeHEIF {
+	} else if fileType == fs.FormatHEIF {
 		heicMp := heicexif.NewHeicExifMediaParser()
 
 		cs, err := heicMp.ParseFile(fileName)
@@ -89,7 +89,7 @@ func RawExif(fileName string, fileType fs.FileType) (rawExif []byte, err error) 
 		} else {
 			parsed = true
 		}
-	} else if fileType == fs.TypeTiff {
+	} else if fileType == fs.FormatTiff {
 		tiffMp := tiffstructure.NewTiffMediaParser()
 
 		cs, err := tiffMp.ParseFile(fileName)

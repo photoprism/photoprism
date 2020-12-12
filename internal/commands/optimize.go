@@ -40,7 +40,7 @@ func optimizeAction(ctx *cli.Context) error {
 
 	worker := workers.NewMeta(conf)
 
-	if err := worker.Start(); err != nil {
+	if err := worker.Start(time.Second * 15); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

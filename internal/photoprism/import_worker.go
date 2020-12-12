@@ -87,7 +87,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
-			if !f.HasJpeg() {
+			if f.IsMedia() && !f.HasJpeg() {
 				if jpegFile, err := imp.convert.ToJpeg(f); err != nil {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
 					continue
@@ -105,7 +105,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 			}
 
-			if imp.conf.SidecarJson() && !f.HasJson() {
+			if imp.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
 				if jsonFile, err := imp.convert.ToJson(f); err != nil {
 					log.Errorf("import: %s in %s (create json sidecar)", err.Error(), txt.Quote(f.BaseName()))
 				} else {
@@ -165,6 +165,14 @@ func ImportWorker(jobs <-chan ImportJob) {
 				if sizeLimit > 0 && f.FileSize() > sizeLimit {
 					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", txt.Quote(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
 					continue
+				}
+
+				if ind.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
+					if jsonFile, err := ind.convert.ToJson(f); err != nil {
+						log.Errorf("import: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+					} else {
+						log.Debugf("import: %s created", txt.Quote(jsonFile.BaseName()))
+					}
 				}
 
 				res := ind.MediaFile(f, indexOpt, "")

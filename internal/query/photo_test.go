@@ -2,6 +2,7 @@ package query
 
 import (
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 
@@ -72,7 +73,7 @@ func TestResetPhotosQuality(t *testing.T) {
 }
 
 func TestPhotosCheck(t *testing.T) {
-	result, err := PhotosCheck(10, 0)
+	result, err := PhotosCheck(10, 0, time.Second)
 	if err != nil {
 		t.Fatal(err)
 	}

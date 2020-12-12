@@ -113,6 +113,19 @@
         </tr>
         <tr>
           <td>
+            <translate>Single</translate>
+          </td>
+          <td>
+            <v-switch
+                @change="save"
+                hide-details
+                v-model="model.Single"
+                :label="model.Single ? $gettext('Yes') : $gettext('No')"
+            ></v-switch>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <translate>Scan</translate>
           </td>
           <td>

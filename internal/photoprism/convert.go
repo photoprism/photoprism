@@ -115,7 +115,7 @@ func (c *Convert) Start(path string) error {
 
 // ToJson uses exiftool to export metadata to a json file.
 func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
-	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().StackSequences())
+	jsonName := fs.FormatJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	result, err := NewMediaFile(jsonName)
 
@@ -127,7 +127,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: can't create json sidecar file for %s in read only mode", txt.Quote(mf.BaseName()))
 	}
 
-	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", c.conf.Settings().StackSequences())
+	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json")
 
 	fileName := mf.RelName(c.conf.OriginalsPath())
 
@@ -200,7 +200,7 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(mf.BaseName()))
 		}
 	} else if mf.IsVideo() {
-		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
+		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
 	} else if mf.IsHEIF() {
 		result = exec.Command(c.conf.HeifConvertBin(), mf.FileName(), jpegName)
 	} else {
@@ -220,7 +220,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	jpegName := fs.TypeJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().StackSequences())
+	jpegName := fs.FormatJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -232,12 +232,12 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelName(c.conf.OriginalsPath()))
 	}
 
-	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, c.conf.Settings().StackSequences())
+	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
 	fileName := image.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jpegName))
 
-	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().StackSequences())
+	xmpName := fs.FormatXMP.Find(image.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": image.FileType(),
@@ -287,10 +287,18 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	return NewMediaFile(jpegName)
 }
 
-// AvcConvertCommand returns the command for converting video files to AVC1.
+// AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
 func (c *Convert) AvcConvertCommand(mf *MediaFile, avcName string) (result *exec.Cmd, useMutex bool, err error) {
 	if mf.IsVideo() {
-		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), avcName)
+		// Don't transcode more than one video at the same time.
+		useMutex = true
+		result = exec.Command(
+			c.conf.FFmpegBin(),
+			"-i", mf.FileName(),
+			"-c:v", "libx264",
+			"-f", "mp4",
+			avcName,
+		)
 	} else {
 		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", mf.FileType(), txt.Quote(mf.BaseName()))
 	}
@@ -298,21 +306,17 @@ func (c *Convert) AvcConvertCommand(mf *MediaFile, avcName string) (result *exec
 	return result, useMutex, nil
 }
 
-// ToAvc1 converts a single video file to AVC1 if possible.
-func (c *Convert) ToAvc1(video *MediaFile) (*MediaFile, error) {
+// ToAvc converts a single video file to MPEG-4 AVC.
+func (c *Convert) ToAvc(video *MediaFile) (*MediaFile, error) {
 	if !video.Exists() {
 		return nil, fmt.Errorf("convert: can not convert to avc1, file does not exist (%s)", video.RelName(c.conf.OriginalsPath()))
 	}
 
-	if video.IsPlayableVideo() {
-		return video, nil
-	}
-
-	avcName := fs.TypeMp4.FindFirst(video.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().StackSequences())
+	avcName := fs.FormatAvc.FindFirst(video.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(avcName)
 
-	if err == nil && mediaFile.IsPlayableVideo() {
+	if err == nil && mediaFile.IsVideo() {
 		return mediaFile, nil
 	}
 
@@ -320,7 +324,7 @@ func (c *Convert) ToAvc1(video *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", video.RelName(c.conf.OriginalsPath()))
 	}
 
-	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt, c.conf.Settings().StackSequences())
+	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := video.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(avcName))
@@ -335,6 +339,7 @@ func (c *Convert) ToAvc1(video *MediaFile) (*MediaFile, error) {
 	cmd, useMutex, err := c.AvcConvertCommand(video, avcName)
 
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 

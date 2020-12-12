@@ -2,6 +2,7 @@ import {$gettext} from "common/vm";
 import moment from "moment-timezone";
 import {Info} from "luxon";
 import {config} from "../session";
+import {TypeVideo,TypeImage,TypeLive,TypeRaw} from "../model/photo";
 
 export const TimeZones = () => moment.tz.names();
 
@@ -108,6 +109,10 @@ export const Languages = () => [
         "text": $gettext("Hindi"),
         "value": "hi",
     },
+    {
+        "text": $gettext("Slovak"),
+        "value": "sk",
+    },
 ];
 
 export const Themes = () => [
@@ -185,19 +190,19 @@ export const MapsStyle = () => [
 export const PhotoTypes = () => [
     {
         "text": $gettext("Image"),
-        "value": "image",
+        "value": TypeImage,
     },
     {
         "text": $gettext("Raw"),
-        "value": "raw",
+        "value": TypeRaw,
     },
     {
         "text": $gettext("Live"),
-        "value": "live",
+        "value": TypeLive,
     },
     {
         "text": $gettext("Video"),
-        "value": "video",
+        "value": TypeVideo,
     },
 ];
 
