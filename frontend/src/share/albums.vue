@@ -3,7 +3,7 @@
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        {{ $config.values.siteAuthor }}
+        <translate>Albums</translate>
       </v-toolbar-title>
     </v-toolbar>
     <v-container fluid class="pa-4" v-if="loading">

@@ -2,6 +2,8 @@ import Albums from "share/albums.vue";
 import AlbumPhotos from "share/photos.vue";
 import {$gettext} from "common/vm";
 
+const c = window.__CONFIG__;
+
 export default [
     {
         name: "home",
@@ -12,7 +14,7 @@ export default [
         name: "albums",
         path: "/s/:token",
         component: Albums,
-        meta: {title: $gettext("Albums"), auth: true},
+        meta: {title: c.siteAuthor, auth: true},
         props: {view: "album", staticFilter: {type: "album"}},
     },
     {
