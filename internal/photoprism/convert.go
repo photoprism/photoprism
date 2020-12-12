@@ -115,7 +115,7 @@ func (c *Convert) Start(path string) error {
 
 // ToJson uses exiftool to export metadata to a json file.
 func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
-	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().StackSequences())
+	jsonName := fs.TypeJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	result, err := NewMediaFile(jsonName)
 
@@ -127,7 +127,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: can't create json sidecar file for %s in read only mode", txt.Quote(mf.BaseName()))
 	}
 
-	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", c.conf.Settings().StackSequences())
+	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", false)
 
 	fileName := mf.RelName(c.conf.OriginalsPath())
 
@@ -220,7 +220,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return image, nil
 	}
 
-	jpegName := fs.TypeJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().StackSequences())
+	jpegName := fs.TypeJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -232,12 +232,12 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelName(c.conf.OriginalsPath()))
 	}
 
-	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, c.conf.Settings().StackSequences())
+	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, false)
 	fileName := image.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jpegName))
 
-	xmpName := fs.TypeXMP.Find(image.FileName(), c.conf.Settings().StackSequences())
+	xmpName := fs.TypeXMP.Find(image.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": image.FileType(),
@@ -308,7 +308,7 @@ func (c *Convert) ToAvc1(video *MediaFile) (*MediaFile, error) {
 		return video, nil
 	}
 
-	avcName := fs.TypeMp4.FindFirst(video.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), c.conf.Settings().StackSequences())
+	avcName := fs.TypeMp4.FindFirst(video.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(avcName)
 
@@ -320,7 +320,7 @@ func (c *Convert) ToAvc1(video *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", video.RelName(c.conf.OriginalsPath()))
 	}
 
-	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt, c.conf.Settings().StackSequences())
+	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt, false)
 	fileName := video.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(avcName))

@@ -243,8 +243,8 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 }
 
 // File indexes a single file and returns the result.
-func (ind *Index) SingleFile(name string) (result IndexResult) {
-	file, err := NewMediaFile(name)
+func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult) {
+	file, err := NewMediaFile(fileName)
 
 	if err != nil {
 		result.Err = err
@@ -253,7 +253,7 @@ func (ind *Index) SingleFile(name string) (result IndexResult) {
 		return result
 	}
 
-	related, err := file.RelatedFiles(ind.conf.Settings().StackSequences())
+	related, err := file.RelatedFiles(false)
 
 	if err != nil {
 		result.Err = err
@@ -262,5 +262,5 @@ func (ind *Index) SingleFile(name string) (result IndexResult) {
 		return result
 	}
 
-	return IndexRelated(related, ind, IndexOptionsSingle())
+	return IndexRelated(related, ind, o)
 }

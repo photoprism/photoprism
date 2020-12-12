@@ -361,7 +361,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 }
 
 // PathNameInfo returns file name infos for indexing.
-func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeName string) {
+func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relativePath, relativeName string) {
 	fileRoot = m.Root()
 
 	var rootPath string
@@ -379,7 +379,7 @@ func (m *MediaFile) PathNameInfo() (fileRoot, fileBase, relativePath, relativeNa
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.BasePrefix(Config().Settings().StackSequences())
+	fileBase = m.BasePrefix(stripSequence)
 	relativePath = m.RelPath(rootPath)
 	relativeName = m.RelName(rootPath)
 
@@ -402,22 +402,9 @@ func (m *MediaFile) SetFileName(fileName string) {
 	m.fileRoot = entity.RootUnknown
 }
 
-// RootRelName returns the relative filename and automatically detects the root path.
+// RootRelName returns the relative filename, and automatically detects the root path.
 func (m *MediaFile) RootRelName() string {
-	var rootPath string
-
-	switch m.Root() {
-	case entity.RootSidecar:
-		rootPath = Config().SidecarPath()
-	case entity.RootImport:
-		rootPath = Config().ImportPath()
-	case entity.RootExamples:
-		rootPath = Config().ExamplesPath()
-	default:
-		rootPath = Config().OriginalsPath()
-	}
-
-	return m.RelName(rootPath)
+	return m.RelName(m.RootPath())
 }
 
 // RelName returns the relative filename.
@@ -454,6 +441,25 @@ func (m *MediaFile) RelPath(directory string) string {
 	}
 
 	return pathname
+}
+
+// RootPath returns the file root path based on the configuration.
+func (m *MediaFile) RootPath() string {
+	switch m.Root() {
+	case entity.RootSidecar:
+		return Config().SidecarPath()
+	case entity.RootImport:
+		return Config().ImportPath()
+	case entity.RootExamples:
+		return Config().ExamplesPath()
+	default:
+		return Config().OriginalsPath()
+	}
+}
+
+// RootRelPath returns the relative path and automatically detects the root path.
+func (m *MediaFile) RootRelPath() string {
+	return m.RelName(m.RootPath())
 }
 
 // RelPrefix returns the relative path and file name prefix.

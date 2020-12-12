@@ -92,8 +92,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	photo := entity.NewPhoto(o.Single)
 	metaData := meta.NewData()
 	labels := classify.Labels{}
+	stripSequence := Config().Settings().StackSequences() && !o.Single
 
-	fileRoot, fileBase, filePath, fileName := m.PathNameInfo()
+	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
 
 	logName := txt.Quote(fileName)
 	fileSize, modTime, err := m.Stat()
@@ -113,8 +114,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	fileStacked := false
 
 	photoExists := false
-
-	stripSequence := Config().Settings().StackSequences()
 
 	event.Publish("index.indexing", event.Data{
 		"fileHash": fileHash,

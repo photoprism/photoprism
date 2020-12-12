@@ -1902,7 +1902,7 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		root, base, path, name := mediaFile.PathNameInfo()
+		root, base, path, name := mediaFile.PathNameInfo(true)
 		assert.Equal(t, "examples", root)
 		assert.Equal(t, "blue-go-video", base)
 		assert.Equal(t, "", path)
@@ -1922,7 +1922,7 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		initialName := mediaFile.FileName()
 		mediaFile.SetFileName(".photoprism/beach_sand.jpg")
 
-		root, base, path, name := mediaFile.PathNameInfo()
+		root, base, path, name := mediaFile.PathNameInfo(true)
 		assert.Equal(t, "", root)
 		assert.Equal(t, "beach_sand", base)
 		assert.Equal(t, "", path)
@@ -1945,7 +1945,7 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		t.Log(initialName)
 		mediaFile.SetFileName(filepath.Join(conf.ImportPath(), "beach_sand.jpg"))
 
-		root, base, path, name := mediaFile.PathNameInfo()
+		root, base, path, name := mediaFile.PathNameInfo(true)
 		assert.Equal(t, "import", root)
 		assert.Equal(t, "beach_sand", base)
 		assert.Equal(t, "", path)
@@ -1965,7 +1965,7 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		initialName := mediaFile.FileName()
 		mediaFile.SetFileName("/go/src/github.com/photoprism/notExisting/xxx/beach_sand.jpg")
 
-		root, base, path, name := mediaFile.PathNameInfo()
+		root, base, path, name := mediaFile.PathNameInfo(false)
 		assert.Equal(t, "", root)
 		assert.Equal(t, "beach_sand", base)
 		assert.Equal(t, "/go/src/github.com/photoprism/notExisting/xxx", path)
