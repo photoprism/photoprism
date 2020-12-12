@@ -556,7 +556,6 @@ export default {
       this.lastId = "";
     },
     onUpdate(ev, data) {
-      console.log("EV, DATA", ev, data)
       if (!this.listen) return;
 
       if (!data || !data.entities) {
