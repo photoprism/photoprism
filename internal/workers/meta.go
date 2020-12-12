@@ -86,7 +86,7 @@ func (worker *Meta) Start(delay time.Duration) (err error) {
 			}
 
 			for _, m := range merged {
-				log.Infof("metadata: stacked %s", m.PhotoUID)
+				log.Infof("metadata: merged %s", m.PhotoUID)
 				done[m.PhotoUID] = true
 			}
 		}

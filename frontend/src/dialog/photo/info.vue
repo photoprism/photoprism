@@ -113,7 +113,7 @@
         </tr>
         <tr>
           <td>
-            <translate>Single</translate>
+            <translate>Unstacked</translate>
           </td>
           <td>
             <v-switch
