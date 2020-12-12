@@ -6,7 +6,7 @@ const CodecAvc1 = "avc1"
 const CodecHeic = "heic"
 const CodecXMP = "xmp"
 
-// CodecAvc1 returns true if the video is encoded with H.264/AVC
-func (data Data) CodecAvc1() bool {
+// CodecAvc returns true if the video format is MPEG-4 AVC.
+func (data Data) CodecAvc() bool {
 	return data.Codec == CodecAvc1
 }

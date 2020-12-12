@@ -39,9 +39,13 @@ import {$gettext} from "common/vm";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
-export const TypeMP4 = "mp4";
-export const TypeJpeg = "jpg";
+export const FormatMp4 = "mp4";
+export const FormatAvc = "avc";
+export const FormatJpeg = "jpg";
 export const TypeImage = "image";
+export const TypeVideo= "video";
+export const TypeLive = "live";
+export const TypeRaw = "raw";
 export const YearUnknown = -1;
 export const MonthUnknown = -1;
 export const DayUnknown = -1;
@@ -260,7 +264,7 @@ export class Photo extends RestModel {
         let file = this.Files.find(f => f.Codec === CodecAvc1);
 
         if (!file) {
-            file = this.Files.find(f => f.Type === TypeMP4);
+            file = this.Files.find(f => f.Type === FormatMp4);
         }
 
         if (!file) {
@@ -274,10 +278,10 @@ export class Photo extends RestModel {
         const file = this.videoFile();
 
         if (file) {
-            return `/api/v1/videos/${file.Hash}/${config.previewToken()}/${TypeMP4}`;
+            return `/api/v1/videos/${file.Hash}/${config.previewToken()}/${FormatAvc}`;
         }
 
-        return `/api/v1/videos/${this.Hash}/${config.previewToken()}/${TypeMP4}`;
+        return `/api/v1/videos/${this.Hash}/${config.previewToken()}/${FormatAvc}`;
     }
 
     mainFile() {
@@ -288,7 +292,7 @@ export class Photo extends RestModel {
         let file = this.Files.find(f => !!f.Primary);
 
         if (!file) {
-            file = this.Files.find(f => f.Type === TypeJpeg);
+            file = this.Files.find(f => f.Type === FormatJpeg);
         }
 
         return file;

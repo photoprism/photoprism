@@ -9,128 +9,129 @@ import (
 	"strings"
 )
 
-type FileType string
+type FileFormat string
 
 const (
-	TypeJpeg     FileType = "jpg"  // JPEG image file.
-	TypePng      FileType = "png"  // PNG image file.
-	TypeGif      FileType = "gif"  // GIF image file.
-	TypeTiff     FileType = "tiff" // TIFF image file.
-	TypeBitmap   FileType = "bmp"  // BMP image file.
-	TypeRaw      FileType = "raw"  // RAW image file.
-	TypeHEIF     FileType = "heif" // High Efficiency Image File Format
-	TypeMov      FileType = "mov"  // Video files.
-	TypeMp4      FileType = "mp4"
-	TypeHEVC     FileType = "hevc"
-	TypeAvi      FileType = "avi"
-	Type3gp      FileType = "3gp"
-	Type3g2      FileType = "3g2"
-	TypeFlv      FileType = "flv"
-	TypeMkv      FileType = "mkv"
-	TypeMpg      FileType = "mpg"
-	TypeOgv      FileType = "ogv"
-	TypeWebm     FileType = "webm"
-	TypeWMV      FileType = "wmv"
-	TypeXMP      FileType = "xmp"  // Adobe XMP sidecar file (XML).
-	TypeAAE      FileType = "aae"  // Apple sidecar file (XML).
-	TypeXML      FileType = "xml"  // XML metadata / config / sidecar file.
-	TypeYaml     FileType = "yml"  // YAML metadata / config / sidecar file.
-	TypeToml     FileType = "toml" // Tom's Obvious, Minimal Language sidecar file.
-	TypeJson     FileType = "json" // JSON metadata / config / sidecar file.
-	TypeText     FileType = "txt"  // Text config / sidecar file.
-	TypeMarkdown FileType = "md"   // Markdown text sidecar file.
-	TypeOther    FileType = ""     // Unknown file format.
+	FormatJpeg     FileFormat = "jpg"  // JPEG image file.
+	FormatPng      FileFormat = "png"  // PNG image file.
+	FormatGif      FileFormat = "gif"  // GIF image file.
+	FormatTiff     FileFormat = "tiff" // TIFF image file.
+	FormatBitmap   FileFormat = "bmp"  // BMP image file.
+	FormatRaw      FileFormat = "raw"  // RAW image file.
+	FormatHEIF     FileFormat = "heif" // High Efficiency Image File Format
+	FormatHEVC     FileFormat = "hevc"
+	FormatMov      FileFormat = "mov" // Video files.
+	FormatMp4      FileFormat = "mp4"
+	FormatAvc      FileFormat = "avc"
+	FormatAvi      FileFormat = "avi"
+	Format3gp      FileFormat = "3gp"
+	Format3g2      FileFormat = "3g2"
+	FormatFlv      FileFormat = "flv"
+	FormatMkv      FileFormat = "mkv"
+	FormatMpg      FileFormat = "mpg"
+	FormatOgv      FileFormat = "ogv"
+	FormatWebm     FileFormat = "webm"
+	FormatWMV      FileFormat = "wmv"
+	FormatXMP      FileFormat = "xmp"  // Adobe XMP sidecar file (XML).
+	FormatAAE      FileFormat = "aae"  // Apple sidecar file (XML).
+	FormatXML      FileFormat = "xml"  // XML metadata / config / sidecar file.
+	FormatYaml     FileFormat = "yml"  // YAML metadata / config / sidecar file.
+	FormatToml     FileFormat = "toml" // Tom's Obvious, Minimal Language sidecar file.
+	FormatJson     FileFormat = "json" // JSON metadata / config / sidecar file.
+	FormatText     FileFormat = "txt"  // Text config / sidecar file.
+	FormatMarkdown FileFormat = "md"   // Markdown text sidecar file.
+	FormatOther    FileFormat = ""     // Unknown file format.
 )
 
-type FileExtensions map[string]FileType
-type TypeExtensions map[FileType][]string
+type FileExtensions map[string]FileFormat
+type TypeExtensions map[FileFormat][]string
 
 const (
 	YamlExt = ".yml"
 	JpegExt = ".jpg"
-	AvcExt  = ".mp4"
-	HevcExt = ".hevc"
+	AvcExt  = ".avc"
 )
 
 // FileExt contains the filename extensions of file formats known to PhotoPrism.
 var FileExt = FileExtensions{
-	".bmp":  TypeBitmap,
-	".gif":  TypeGif,
-	".tif":  TypeTiff,
-	".tiff": TypeTiff,
-	".png":  TypePng,
-	".pn":   TypePng,
-	".crw":  TypeRaw,
-	".cr2":  TypeRaw,
-	".cr3":  TypeRaw,
-	".nef":  TypeRaw,
-	".arw":  TypeRaw,
-	".dng":  TypeRaw,
-	".mov":  TypeMov,
-	".avi":  TypeAvi,
-	".mp4":  TypeMp4,
-	".hevc": TypeHEVC,
-	".3gp":  Type3gp,
-	".3g2":  Type3g2,
-	".flv":  TypeFlv,
-	".mkv":  TypeMkv,
-	".mpg":  TypeMpg,
-	".mpeg": TypeMpg,
-	".ogv":  TypeOgv,
-	".webm": TypeWebm,
-	".wmv":  TypeWMV,
-	".yml":  TypeYaml,
-	".yaml": TypeYaml,
-	".jpg":  TypeJpeg,
-	".jpeg": TypeJpeg,
-	".jpe":  TypeJpeg,
-	".jif":  TypeJpeg,
-	".jfif": TypeJpeg,
-	".jfi":  TypeJpeg,
-	".thm":  TypeJpeg,
-	".xmp":  TypeXMP,
-	".aae":  TypeAAE,
-	".heif": TypeHEIF,
-	".heic": TypeHEIF,
-	".3fr":  TypeRaw,
-	".ari":  TypeRaw,
-	".bay":  TypeRaw,
-	".cap":  TypeRaw,
-	".data": TypeRaw,
-	".dcs":  TypeRaw,
-	".dcr":  TypeRaw,
-	".drf":  TypeRaw,
-	".eip":  TypeRaw,
-	".erf":  TypeRaw,
-	".fff":  TypeRaw,
-	".gpr":  TypeRaw,
-	".iiq":  TypeRaw,
-	".k25":  TypeRaw,
-	".kdc":  TypeRaw,
-	".mdc":  TypeRaw,
-	".mef":  TypeRaw,
-	".mos":  TypeRaw,
-	".mrw":  TypeRaw,
-	".nrw":  TypeRaw,
-	".obm":  TypeRaw,
-	".orf":  TypeRaw,
-	".pef":  TypeRaw,
-	".ptx":  TypeRaw,
-	".pxn":  TypeRaw,
-	".r3d":  TypeRaw,
-	".raf":  TypeRaw,
-	".raw":  TypeRaw,
-	".rwl":  TypeRaw,
-	".rw2":  TypeRaw,
-	".rwz":  TypeRaw,
-	".sr2":  TypeRaw,
-	".srf":  TypeRaw,
-	".srw":  TypeRaw,
-	".x3f":  TypeRaw,
-	".xml":  TypeXML,
-	".txt":  TypeText,
-	".md":   TypeMarkdown,
-	".json": TypeJson,
+	".bmp":  FormatBitmap,
+	".gif":  FormatGif,
+	".tif":  FormatTiff,
+	".tiff": FormatTiff,
+	".png":  FormatPng,
+	".pn":   FormatPng,
+	".crw":  FormatRaw,
+	".cr2":  FormatRaw,
+	".cr3":  FormatRaw,
+	".nef":  FormatRaw,
+	".arw":  FormatRaw,
+	".dng":  FormatRaw,
+	".mov":  FormatMov,
+	".avi":  FormatAvi,
+	".mp4":  FormatMp4,
+	".avc":  FormatAvc,
+	".hevc": FormatHEVC,
+	".3gp":  Format3gp,
+	".3g2":  Format3g2,
+	".flv":  FormatFlv,
+	".mkv":  FormatMkv,
+	".mpg":  FormatMpg,
+	".mpeg": FormatMpg,
+	".ogv":  FormatOgv,
+	".webm": FormatWebm,
+	".wmv":  FormatWMV,
+	".yml":  FormatYaml,
+	".yaml": FormatYaml,
+	".jpg":  FormatJpeg,
+	".jpeg": FormatJpeg,
+	".jpe":  FormatJpeg,
+	".jif":  FormatJpeg,
+	".jfif": FormatJpeg,
+	".jfi":  FormatJpeg,
+	".thm":  FormatJpeg,
+	".xmp":  FormatXMP,
+	".aae":  FormatAAE,
+	".heif": FormatHEIF,
+	".heic": FormatHEIF,
+	".3fr":  FormatRaw,
+	".ari":  FormatRaw,
+	".bay":  FormatRaw,
+	".cap":  FormatRaw,
+	".data": FormatRaw,
+	".dcs":  FormatRaw,
+	".dcr":  FormatRaw,
+	".drf":  FormatRaw,
+	".eip":  FormatRaw,
+	".erf":  FormatRaw,
+	".fff":  FormatRaw,
+	".gpr":  FormatRaw,
+	".iiq":  FormatRaw,
+	".k25":  FormatRaw,
+	".kdc":  FormatRaw,
+	".mdc":  FormatRaw,
+	".mef":  FormatRaw,
+	".mos":  FormatRaw,
+	".mrw":  FormatRaw,
+	".nrw":  FormatRaw,
+	".obm":  FormatRaw,
+	".orf":  FormatRaw,
+	".pef":  FormatRaw,
+	".ptx":  FormatRaw,
+	".pxn":  FormatRaw,
+	".r3d":  FormatRaw,
+	".raf":  FormatRaw,
+	".raw":  FormatRaw,
+	".rwl":  FormatRaw,
+	".rw2":  FormatRaw,
+	".rwz":  FormatRaw,
+	".sr2":  FormatRaw,
+	".srf":  FormatRaw,
+	".srw":  FormatRaw,
+	".x3f":  FormatRaw,
+	".xml":  FormatXML,
+	".txt":  FormatText,
+	".md":   FormatMarkdown,
+	".json": FormatJson,
 }
 
 func (m FileExtensions) Known(name string) bool {
@@ -169,7 +170,7 @@ func (m FileExtensions) TypeExt() TypeExtensions {
 var TypeExt = FileExt.TypeExt()
 
 // Find returns the first filename with the same base name and a given type.
-func (t FileType) Find(fileName string, stripSequence bool) string {
+func (t FileFormat) Find(fileName string, stripSequence bool) string {
 	base := BasePrefix(fileName, stripSequence)
 	dir := filepath.Dir(fileName)
 
@@ -194,20 +195,20 @@ func (t FileType) Find(fileName string, stripSequence bool) string {
 	return ""
 }
 
-// GetFileType returns the (expected) type for a given file name.
-func GetFileType(fileName string) FileType {
+// GetFileFormat returns the (expected) type for a given file name.
+func GetFileFormat(fileName string) FileFormat {
 	fileExt := strings.ToLower(filepath.Ext(fileName))
 	result, ok := FileExt[fileExt]
 
 	if !ok {
-		result = TypeOther
+		result = FormatOther
 	}
 
 	return result
 }
 
 // FindFirst searches a list of directories for the first file with the same base name and a given type.
-func (t FileType) FindFirst(fileName string, dirs []string, baseDir string, stripSequence bool) string {
+func (t FileFormat) FindFirst(fileName string, dirs []string, baseDir string, stripSequence bool) string {
 	fileBase := filepath.Base(fileName)
 	fileBasePrefix := BasePrefix(fileName, stripSequence)
 	fileBaseLower := strings.ToLower(fileBasePrefix)
@@ -256,7 +257,7 @@ func (t FileType) FindFirst(fileName string, dirs []string, baseDir string, stri
 }
 
 // FindAll searches a list of directories for files with the same base name and a given type.
-func (t FileType) FindAll(fileName string, dirs []string, baseDir string, stripSequence bool) (results []string) {
+func (t FileFormat) FindAll(fileName string, dirs []string, baseDir string, stripSequence bool) (results []string) {
 	fileBase := filepath.Base(fileName)
 	fileBasePrefix := BasePrefix(fileName, stripSequence)
 	fileBaseLower := strings.ToLower(fileBasePrefix)

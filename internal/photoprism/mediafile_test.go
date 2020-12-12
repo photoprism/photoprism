@@ -1151,7 +1151,7 @@ func TestMediaFile_IsPng(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, fs.TypePng, mediaFile.FileType())
+		assert.Equal(t, fs.FormatPng, mediaFile.FileType())
 		assert.Equal(t, "image/png", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsPng())
 	})
@@ -1165,7 +1165,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.TypeJson, mediaFile.FileType())
+		assert.Equal(t, fs.FormatJson, mediaFile.FileType())
 		assert.Equal(t, "", mediaFile.MimeType())
 		assert.Equal(t, false, mediaFile.IsTiff())
 	})
@@ -1176,7 +1176,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.TypeTiff, mediaFile.FileType())
+		assert.Equal(t, fs.FormatTiff, mediaFile.FileType())
 		assert.Equal(t, "image/tiff", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsTiff())
 	})
@@ -1187,7 +1187,7 @@ func TestMediaFile_IsTiff(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.TypeTiff, mediaFile.FileType())
+		assert.Equal(t, fs.FormatTiff, mediaFile.FileType())
 		assert.Equal(t, "image/tiff", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsTiff())
 	})
@@ -1228,7 +1228,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, fs.TypeBitmap, mediaFile.FileType())
+		assert.Equal(t, fs.FormatBitmap, mediaFile.FileType())
 		assert.Equal(t, "image/bmp", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsBitmap())
 		assert.Equal(t, true, mediaFile.IsImageOther())
@@ -1241,7 +1241,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, fs.TypeGif, mediaFile.FileType())
+		assert.Equal(t, fs.FormatGif, mediaFile.FileType())
 		assert.Equal(t, "image/gif", mediaFile.MimeType())
 		assert.Equal(t, true, mediaFile.IsImageOther())
 	})
@@ -1837,7 +1837,7 @@ func TestMediaFile_FileType(t *testing.T) {
 
 	assert.True(t, m.IsJpeg())
 	assert.Equal(t, "jpg", string(m.FileType()))
-	assert.Equal(t, fs.TypeJpeg, m.FileType())
+	assert.Equal(t, fs.FormatJpeg, m.FileType())
 	assert.Equal(t, ".png", m.Extension())
 }
 

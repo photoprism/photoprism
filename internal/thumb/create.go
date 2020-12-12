@@ -15,15 +15,15 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.FileType) {
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.FileFormat) {
 	method = ResampleFit
 	filter = imaging.Lanczos
-	format = fs.TypeJpeg
+	format = fs.FormatJpeg
 
 	for _, option := range opts {
 		switch option {
 		case ResamplePng:
-			format = fs.TypePng
+			format = fs.FormatPng
 		case ResampleNearestNeighbor:
 			filter = imaging.NearestNeighbor
 		case ResampleDefault:
@@ -165,7 +165,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	var saveOption imaging.EncodeOption
 
-	if filepath.Ext(fileName) == "."+string(fs.TypePng) {
+	if filepath.Ext(fileName) == "."+string(fs.FormatPng) {
 		saveOption = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else if width <= 150 && height <= 150 {
 		saveOption = imaging.JPEGQuality(JpegQualitySmall)

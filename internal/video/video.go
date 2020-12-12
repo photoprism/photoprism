@@ -36,7 +36,8 @@ import (
 )
 
 type Type struct {
-	Format fs.FileType
+	Format fs.FileFormat
+	Codec  fs.FileCodec
 	Width  int
 	Height int
 	Public bool
@@ -44,14 +45,24 @@ type Type struct {
 
 type TypeMap map[string]Type
 
-var TypeMP4 = Type{
-	Format: fs.TypeMp4,
+var TypeMp4 = Type{
+	Format: fs.FormatMp4,
+	Codec:  fs.CodecAvc,
+	Width:  0,
+	Height: 0,
+	Public: true,
+}
+
+var TypeAvc = Type{
+	Format: fs.FormatAvc,
+	Codec:  fs.CodecAvc,
 	Width:  0,
 	Height: 0,
 	Public: true,
 }
 
 var Types = TypeMap{
-	"":    TypeMP4,
-	"mp4": TypeMP4,
+	"":    TypeAvc,
+	"mp4": TypeMp4,
+	"avc": TypeAvc,
 }

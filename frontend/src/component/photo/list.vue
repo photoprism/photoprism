@@ -52,7 +52,7 @@
                    flat icon large absolute class="p-photo-select">
               <v-icon color="white" class="t-select t-on">check_circle</v-icon>
             </v-btn>
-            <v-btn v-else-if="!selection.length && props.item.Type === 'video' && props.item.isPlayable()"
+            <v-btn v-else-if="!selection.length && (props.item.Type === 'video' || props.item.Type === 'live')"
                    :ripple="false"
                    flat icon large absolute class="p-photo-play opacity-75"
                    @click.stop.prevent="openPhoto(props.index, true)">

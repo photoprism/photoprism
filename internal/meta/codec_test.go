@@ -12,7 +12,7 @@ func TestData_CodecAvc1(t *testing.T) {
 			Codec: "avc1",
 		}
 
-		assert.Equal(t, true, data.CodecAvc1())
+		assert.Equal(t, true, data.CodecAvc())
 	})
 
 	t.Run("false", func(t *testing.T) {
@@ -20,6 +20,6 @@ func TestData_CodecAvc1(t *testing.T) {
 			Codec: "heic",
 		}
 
-		assert.Equal(t, false, data.CodecAvc1())
+		assert.Equal(t, false, data.CodecAvc())
 	})
 }

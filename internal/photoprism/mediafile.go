@@ -31,7 +31,7 @@ type MediaFile struct {
 	statErr      error
 	modTime      time.Time
 	fileSize     int64
-	fileType     fs.FileType
+	fileType     fs.FileFormat
 	mimeType     string
 	takenAt      time.Time
 	takenAtSrc   string
@@ -50,7 +50,7 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 	m := &MediaFile{
 		fileName: fileName,
 		fileRoot: entity.RootUnknown,
-		fileType: fs.TypeOther,
+		fileType: fs.FormatOther,
 		metaData: meta.NewData(),
 		width:    -1,
 		height:   -1,
@@ -348,7 +348,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden JPEG if exists.
 	if !result.ContainsJpeg() {
-		if jpegName := fs.TypeJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
+		if jpegName := fs.FormatJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); jpegName != "" {
 			if resultFile, err := NewMediaFile(jpegName); err == nil {
 				result.Files = append(result.Files, resultFile)
 			}
@@ -654,7 +654,7 @@ func (m *MediaFile) IsGif() bool {
 
 // IsTiff returns true if this is a TIFF file.
 func (m *MediaFile) IsTiff() bool {
-	return m.HasFileType(fs.TypeTiff) && m.MimeType() == fs.MimeTypeTiff
+	return m.HasFileType(fs.FormatTiff) && m.MimeType() == fs.MimeTypeTiff
 }
 
 // IsHEIF returns true if this is a High Efficiency Image File Format file.
@@ -674,24 +674,24 @@ func (m *MediaFile) IsVideo() bool {
 
 // IsJson return true if this media file is a json sidecar file.
 func (m *MediaFile) IsJson() bool {
-	return m.HasFileType(fs.TypeJson)
+	return m.HasFileType(fs.FormatJson)
 }
 
 // FileType returns the file type (jpg, gif, tiff,...).
-func (m *MediaFile) FileType() fs.FileType {
+func (m *MediaFile) FileType() fs.FileFormat {
 	switch {
 	case m.IsJpeg():
-		return fs.TypeJpeg
+		return fs.FormatJpeg
 	case m.IsPng():
-		return fs.TypePng
+		return fs.FormatPng
 	case m.IsGif():
-		return fs.TypeGif
+		return fs.FormatGif
 	case m.IsHEIF():
-		return fs.TypeHEIF
+		return fs.FormatHEIF
 	case m.IsBitmap():
-		return fs.TypeBitmap
+		return fs.FormatBitmap
 	default:
-		return fs.GetFileType(m.fileName)
+		return fs.GetFileFormat(m.fileName)
 	}
 }
 
@@ -701,8 +701,8 @@ func (m *MediaFile) MediaType() fs.MediaType {
 }
 
 // HasFileType returns true if this is the given type.
-func (m *MediaFile) HasFileType(fileType fs.FileType) bool {
-	if fileType == fs.TypeJpeg {
+func (m *MediaFile) HasFileType(fileType fs.FileFormat) bool {
+	if fileType == fs.FormatJpeg {
 		return m.IsJpeg()
 	}
 
@@ -711,7 +711,7 @@ func (m *MediaFile) HasFileType(fileType fs.FileType) bool {
 
 // IsRaw returns true if this is a RAW file.
 func (m *MediaFile) IsRaw() bool {
-	return m.HasFileType(fs.TypeRaw)
+	return m.HasFileType(fs.FormatRaw)
 }
 
 // IsImageOther returns true if this is a PNG, GIF, BMP or TIFF file.
@@ -726,7 +726,7 @@ func (m *MediaFile) IsImageOther() bool {
 
 // IsXMP returns true if this is a XMP sidecar file.
 func (m *MediaFile) IsXMP() bool {
-	return m.FileType() == fs.TypeXMP
+	return m.FileType() == fs.FormatXMP
 }
 
 // IsSidecar returns true if this is a sidecar file (containing metadata).
@@ -736,7 +736,7 @@ func (m *MediaFile) IsSidecar() bool {
 
 // IsPlayableVideo returns true if this is a supported video file format.
 func (m *MediaFile) IsPlayableVideo() bool {
-	return m.IsVideo() && m.HasFileType(fs.TypeMp4)
+	return m.IsVideo() && (m.HasFileType(fs.FormatMp4) || m.HasFileType(fs.FormatAvc))
 }
 
 // IsPhoto returns true if this file is a photo / image.
@@ -764,7 +764,7 @@ func (m *MediaFile) Jpeg() (*MediaFile, error) {
 		return m, nil
 	}
 
-	jpegFilename := fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegFilename := fs.FormatJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegFilename == "" {
 		return nil, fmt.Errorf("no jpeg found for %s", m.FileName())
@@ -784,7 +784,7 @@ func (m *MediaFile) HasJpeg() bool {
 		return true
 	}
 
-	jpegName := fs.TypeJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegName := fs.FormatJpeg.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegName == "" {
 		m.hasJpeg = false
@@ -801,7 +801,7 @@ func (m *MediaFile) HasJson() bool {
 		return true
 	}
 
-	return fs.TypeJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
+	return fs.FormatJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
 }
 
 func (m *MediaFile) decodeDimensions() error {

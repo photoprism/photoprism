@@ -305,7 +305,7 @@ func (m *File) RelatedPhoto() *Photo {
 
 // NoJPEG returns true if the file is not a JPEG image file.
 func (m *File) NoJPEG() bool {
-	return m.FileType != string(fs.TypeJpeg)
+	return m.FileType != string(fs.FormatJpeg)
 }
 
 // Links returns all share links for this entity.
