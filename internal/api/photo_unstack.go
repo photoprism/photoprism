@@ -90,6 +90,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
+		var files photoprism.MediaFiles
 		unstackSingle := false
 
 		if unstackFile.BasePrefix(false) == stackPhoto.PhotoName {
@@ -99,10 +100,23 @@ func PhotoUnstack(router *gin.RouterGroup) {
 				return
 			}
 
+			destName := fmt.Sprintf("%s.%s%s", unstackFile.AbsPrefix(false), unstackFile.Checksum(), unstackFile.Extension())
+
+			if err := unstackFile.Move(destName); err != nil {
+				log.Errorf("photo: can't rename %s to %s (unstack)", txt.Quote(unstackFile.BaseName()), txt.Quote(filepath.Base(destName)))
+				AbortUnexpected(c)
+				return
+			}
+
+			files = append(files, unstackFile)
 			unstackSingle = true
+		} else {
+			files = related.Files
 		}
 
 		newPhoto := entity.NewPhoto(true)
+		newPhoto.PhotoPath = unstackFile.RootRelPath()
+		newPhoto.PhotoName = unstackFile.BasePrefix(false)
 
 		if err := newPhoto.Create(); err != nil {
 			log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(baseName))
@@ -110,32 +124,13 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		for _, r := range related.Files {
-			isMain := related.Main.FileName() == r.FileName()
-			relFileName := r.FileName()
+		for _, r := range files {
 			relName := r.RootRelName()
 			relRoot := r.Root()
 
 			if unstackSingle {
-				if unstackFile.FileName() != r.FileName() {
-					continue
-				}
-
-				destName := fmt.Sprintf("%s.%s%s", r.AbsPrefix(false), r.Checksum(), r.Extension())
-
-				if err := r.Move(destName); err != nil {
-					log.Errorf("photo: can't rename %s to %s (unstack)", txt.Quote(r.BaseName()), txt.Quote(filepath.Base(destName)))
-					AbortUnexpected(c)
-					return
-				}
-
-				unstackFile = r
-
-				if isMain {
-					related.Main = r
-				}
-			} else if unstackFile.FileName() == r.FileName() {
-				unstackFile = r
+				relName = file.FileName
+				relRoot = file.FileRoot
 			}
 
 			if err := entity.UnscopedDb().Exec(`UPDATE files 
@@ -152,8 +147,10 @@ func PhotoUnstack(router *gin.RouterGroup) {
 				}
 
 				// Revert file rename.
-				if err := r.Move(relFileName); err != nil {
-					log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(r.BaseName()))
+				if unstackSingle {
+					if err := r.Move(photoprism.FileName(relRoot, relName)); err != nil {
+						log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(r.BaseName()))
+					}
 				}
 
 				AbortSaveFailed(c)

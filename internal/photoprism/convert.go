@@ -127,7 +127,7 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: can't create json sidecar file for %s in read only mode", txt.Quote(mf.BaseName()))
 	}
 
-	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json", false)
+	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json")
 
 	fileName := mf.RelName(c.conf.OriginalsPath())
 
@@ -200,7 +200,7 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(mf.BaseName()))
 		}
 	} else if mf.IsVideo() {
-		result = exec.Command(c.conf.FFmpegBin(), "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
+		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
 	} else if mf.IsHEIF() {
 		result = exec.Command(c.conf.HeifConvertBin(), mf.FileName(), jpegName)
 	} else {
@@ -232,7 +232,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelName(c.conf.OriginalsPath()))
 	}
 
-	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt, false)
+	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
 	fileName := image.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jpegName))
@@ -320,7 +320,7 @@ func (c *Convert) ToAvc1(video *MediaFile) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", video.RelName(c.conf.OriginalsPath()))
 	}
 
-	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt, false)
+	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := video.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(avcName))

@@ -459,7 +459,7 @@ func (m *MediaFile) RootPath() string {
 
 // RootRelPath returns the relative path and automatically detects the root path.
 func (m *MediaFile) RootRelPath() string {
-	return m.RelName(m.RootPath())
+	return m.RelPath(m.RootPath())
 }
 
 // RelPrefix returns the relative path and file name prefix.

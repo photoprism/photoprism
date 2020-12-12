@@ -26,7 +26,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		return result
 	}
 
-	if opt.Convert && !f.HasJpeg() {
+	if opt.Convert && f.IsMedia() && !f.HasJpeg() {
 		if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
 			result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", txt.Quote(f.BaseName()), err.Error())
 			result.Status = IndexFailed
@@ -46,7 +46,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		}
 	}
 
-	if ind.conf.SidecarJson() && !f.HasJson() {
+	if ind.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
 		if jsonFile, err := ind.convert.ToJson(f); err != nil {
 			log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 		} else {
@@ -100,6 +100,14 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 		if sizeLimit > 0 && f.FileSize() > sizeLimit {
 			log.Warnf("index: %s exceeds file size limit (%d / %d MB)", txt.Quote(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
 			continue
+		}
+
+		if ind.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
+			if jsonFile, err := ind.convert.ToJson(f); err != nil {
+				log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+			} else {
+				log.Debugf("index: %s created", txt.Quote(jsonFile.BaseName()))
+			}
 		}
 
 		res := ind.MediaFile(f, opt, "")

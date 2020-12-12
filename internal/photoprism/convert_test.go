@@ -29,7 +29,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
-		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.jpg")
+		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.mp4.jpg")
 
 		_ = os.Remove(outputName)
 
@@ -81,7 +81,7 @@ func TestConvert_ToJpeg(t *testing.T) {
 		assert.Equal(t, "Canon EOS 7D", infoJpeg.CameraModel)
 
 		rawFilename := filepath.Join(conf.ImportPath(), "raw", "IMG_2567.CR2")
-		jpgFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/IMG_2567.jpg")
+		jpgFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/IMG_2567.CR2.jpg")
 
 		t.Logf("Testing RAW to JPEG convert with %s", rawFilename)
 
@@ -119,7 +119,7 @@ func TestConvert_ToJson(t *testing.T) {
 
 	t.Run("gopher-video.mp4", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
-		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.json")
+		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.mp4.json")
 
 		_ = os.Remove(outputName)
 
@@ -154,7 +154,7 @@ func TestConvert_ToJson(t *testing.T) {
 
 	t.Run("IMG_4120.JPG", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "IMG_4120.JPG")
-		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "IMG_4120.json")
+		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "IMG_4120.JPG.json")
 
 		_ = os.Remove(outputName)
 
@@ -232,7 +232,7 @@ func TestConvert_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/canon_eos_6d.jpg")
+	jpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/canon_eos_6d.dng.jpg")
 
 	assert.True(t, fs.FileExists(jpegFilename), "Jpeg file was not found - is Darktable installed?")
 
@@ -248,7 +248,7 @@ func TestConvert_Start(t *testing.T) {
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "UpdateCamera model should be Canon EOS M10")
 
-	existingJpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "/raw/IMG_2567.jpg")
+	existingJpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "/raw/IMG_2567.CR2.jpg")
 
 	oldHash := fs.Hash(existingJpegFilename)
 

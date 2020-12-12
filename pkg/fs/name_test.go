@@ -34,21 +34,21 @@ func TestRel(t *testing.T) {
 
 func TestFileName(t *testing.T) {
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
-		result := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp", true)
+		result := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp")
 
-		assert.Equal(t, "testdata/.photoprism/Test.xmp", result)
+		assert.Equal(t, "testdata/.photoprism/Test (4).jpg.xmp", result)
 	})
 
 	t.Run("Test (3).jpg", func(t *testing.T) {
-		result := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp", false)
+		result := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp")
 
-		assert.Equal(t, "testdata/.photoprism/Test (4).xmp", result)
+		assert.Equal(t, "testdata/.photoprism/Test (4).jpg.xmp", result)
 	})
 
 	t.Run("FOO.XMP", func(t *testing.T) {
-		result := FileName("testdata/FOO.XMP", ".photoprism/sub", Abs("testdata"), ".jpeg", true)
+		result := FileName("testdata/FOO.XMP", ".photoprism/sub", Abs("testdata"), ".jpeg")
 
-		assert.Equal(t, "testdata/.photoprism/sub/FOO.jpeg", result)
+		assert.Equal(t, "testdata/.photoprism/sub/FOO.XMP.jpeg", result)
 	})
 
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
@@ -56,14 +56,14 @@ func TestFileName(t *testing.T) {
 
 		// t.Logf("TEMP DIR, ABS NAME: %s, %s", tempDir, Abs("testdata/Test (4).jpg"))
 
-		result := FileName(Abs("testdata/Test (4).jpg"), tempDir, Abs("testdata"), ".xmp", true)
+		result := FileName(Abs("testdata/Test (4).jpg"), tempDir, Abs("testdata"), ".xmp")
 
-		assert.Equal(t, tempDir+"/Test.xmp", result)
+		assert.Equal(t, tempDir+"/Test (4).jpg.xmp", result)
 	})
 
 	t.Run("empty dir", func(t *testing.T) {
-		result := FileName("testdata/FOO.XMP", "", Abs("testdata"), ".jpeg", true)
+		result := FileName("testdata/FOO.XMP", "", Abs("testdata"), ".jpeg")
 
-		assert.Equal(t, "testdata/FOO.jpeg", result)
+		assert.Equal(t, "testdata/FOO.XMP.jpeg", result)
 	})
 }

@@ -266,7 +266,7 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 	assert.Equal(t, false, jpegInfo.Flash)
 	assert.Equal(t, "", jpegInfo.Description)
 
-	if err := os.Remove(filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "iphone_7.jpg")); err != nil {
+	if err := os.Remove(filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "iphone_7.heic.jpg")); err != nil {
 		t.Error(err)
 	}
 }

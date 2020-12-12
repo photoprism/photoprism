@@ -95,6 +95,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	stripSequence := Config().Settings().StackSequences() && !o.Single
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
+	fullBase := m.BasePrefix(false)
 
 	logName := txt.Quote(fileName)
 	fileSize, modTime, err := m.Stat()
@@ -173,8 +174,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Look for existing photo if file wasn't indexed yet...
 	if !fileExists {
-		fullBase := m.BasePrefix(false)
-
 		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || o.Single {
 			// Skip next query.
 		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_single = 0", filePath, fileBase); photoQuery.Error == nil {
@@ -251,7 +250,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	photo.PhotoPath = filePath
-	photo.PhotoName = fileBase
+
+	if o.Single || photo.PhotoSingle || !stripSequence {
+		photo.PhotoName = fullBase
+	} else {
+		photo.PhotoName = fileBase
+	}
+
 	file.FileError = ""
 
 	// Flag first JPEG as primary file for this photo.
