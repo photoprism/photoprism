@@ -405,9 +405,9 @@ describe("model/photo", () => {
     });
 
     it("should return main file",  () => {
-        const values = {ID: 9, UID: "ABC163"};
+        const values = {ID: 9, UID: "ABC163", Width: 111, Height: 222};
         const photo = new Photo(values);
-        assert.equal(photo.mainFile(), false);
+        assert.equal(photo.mainFile(), photo);
         const values2 = {ID: 10,
             UID: "ABC127",
             Files: [
