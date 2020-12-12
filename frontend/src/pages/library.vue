@@ -6,7 +6,7 @@
             grow
             color="secondary"
             slider-color="secondary-dark"
-            height="64"
+            :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
       <v-tab id="tab-index" ripple @click="changePath('/library')">
         <translate key="Index">Index</translate>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar flat color="secondary">
+    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title><translate>Not implemented yet</translate></v-toolbar-title>
 
       <v-spacer></v-spacer>

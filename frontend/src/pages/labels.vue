@@ -3,7 +3,7 @@
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
-      <v-toolbar flat color="secondary">
+      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
         <v-text-field class="pt-3 pr-3 input-search"
                       single-line
                       :label="$gettext('Search')"

@@ -6,7 +6,7 @@
             grow
             color="secondary"
             slider-color="secondary-dark"
-            height="64"
+            :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         <translate>Colors</translate>

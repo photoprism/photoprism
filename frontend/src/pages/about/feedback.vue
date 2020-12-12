@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-support">
-    <v-toolbar flat color="secondary">
+    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title v-if="sent">
         <translate>Your message has been sent</translate>
       </v-toolbar-title>
