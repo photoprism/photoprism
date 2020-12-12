@@ -191,8 +191,13 @@ export default {
 
       if (this.photos.length > 0) {
         const index = this.photos.findIndex((p) => p.UID === id);
+        const selected = this.photos[index];
 
-        this.$viewer.show(Thumb.fromPhotos(this.photos), index)
+        if (selected.Type === 'video' || selected.Type === 'live') {
+          this.$modal.show('video', {video: selected, album: null});
+        } else {
+          this.$viewer.show(Thumb.fromPhotos(this.photos), index)
+        }
       } else {
         this.$notify.warn(this.$gettext("No photos found"));
       }

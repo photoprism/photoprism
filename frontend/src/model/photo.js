@@ -273,11 +273,11 @@ export class Photo extends RestModel {
     videoUrl() {
         const file = this.videoFile();
 
-        if (!file) {
-            return "";
+        if (file) {
+            return `/api/v1/videos/${file.Hash}/${config.previewToken()}/${TypeMP4}`;
         }
 
-        return `/api/v1/videos/${file.Hash}/${config.previewToken()}/${TypeMP4}`;
+        return `/api/v1/videos/${this.Hash}/${config.previewToken()}/${TypeMP4}`;
     }
 
     mainFile() {
