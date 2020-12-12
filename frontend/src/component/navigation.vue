@@ -3,14 +3,9 @@
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
     <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" fixed flat color="navigation darken-1" class="nav-small"
                @click.stop="showNavigation()" scroll-toolbar-off-screen>
-      <!-- v-avatar
-          tile
-          :size="40"
-          class="clickable"
-          @click.stop="showNavigation()"
-      >
-        <img src="/static/img/logo-avatar.svg" alt="Logo">
-      </v-avatar -->
+
+      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
+
       <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -20,7 +15,6 @@
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
     </v-toolbar>
     <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" flat color="navigation darken-1">
     </v-toolbar>

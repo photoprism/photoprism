@@ -88,7 +88,7 @@ export default [
         name: "photos",
         path: "/photos",
         component: Photos,
-        meta: {title: c.siteCaption, auth: true},
+        meta: {title: c.name, auth: true},
         props: {staticFilter: {photo: "true"}},
     },
     {

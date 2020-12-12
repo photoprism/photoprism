@@ -1,6 +1,7 @@
 <template>
   <div id="p-navigation">
-    <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small"
+               :dense="$vuetify.breakpoint.smAndDown" scroll-toolbar-off-screen>
       <v-toolbar-title>
         <button @click.stop.prevent="goHome">
           {{ page.title }}
@@ -11,14 +12,14 @@
           tile
           :size="28"
           class="clickable"
-          @click.stop.prevent="openDocs"
+          @click.stop.prevent="openSite"
       >
         <img src="/static/img/logo-white.svg" alt="Logo">
       </v-avatar>
     </v-toolbar>
-    <v-toolbar dark flat color="navigation darken-1">
+    <v-toolbar dark flat :dense="$vuetify.breakpoint.smAndDown" color="navigation darken-1">
     </v-toolbar>
-    <div id="photoprism-info"><a href="https://photoprism.org/" target="_blank">Shared with PhotoPrism®</a></div>
+    <div id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Shared with PhotoPrism</a></div>
   </div>
 </template>
 
@@ -63,8 +64,8 @@ export default {
     feature(name) {
       return this.$config.values.settings.features[name];
     },
-    openDocs() {
-      window.open("https://docs.photoprism.org/", "_blank");
+    openSite() {
+      window.open("https://photoprism.app/", "_blank");
     },
     showNavigation() {
       this.drawer = true;

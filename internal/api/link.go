@@ -52,7 +52,11 @@ func UpdateLink(c *gin.Context) {
 		return
 	}
 
-	event.Success("updated share link")
+	UpdateClientConfig()
+
+	event.SuccessMsg(i18n.MsgAlbumSaved)
+
+	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
@@ -73,7 +77,11 @@ func DeleteLink(c *gin.Context) {
 		return
 	}
 
-	event.Success("deleted share link")
+	UpdateClientConfig()
+
+	event.SuccessMsg(i18n.MsgAlbumSaved)
+
+	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
@@ -112,7 +120,11 @@ func CreateLink(c *gin.Context) {
 		return
 	}
 
-	event.Success("added share link")
+	UpdateClientConfig()
+
+	event.SuccessMsg(i18n.MsgAlbumSaved)
+
+	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
