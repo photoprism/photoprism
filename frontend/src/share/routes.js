@@ -21,7 +21,7 @@ export default [
         name: "album",
         path: "/s/:token/:uid",
         component: AlbumPhotos,
-        meta: {title: $gettext("Albums"), auth: true},
+        meta: {title: c.siteAuthor, auth: true},
     },
     {
         path: "*", redirect: {name: "albums"},
