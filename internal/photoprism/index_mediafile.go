@@ -815,19 +815,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		log.Errorf("index: %s in %s (set download id)", err, logName)
 	}
 
-	merged := false
-
-	if o.Single {
+	if o.Single || photo.PhotoSingle {
 		// Do nothing.
-	} else if stacked, err := photo.Stack(Config().Settings().StackMeta(), Config().Settings().StackUUID(), true); err != nil {
-		log.Errorf("index: %s in %s (stack)", err.Error(), logName)
-	} else if len(stacked) > 0 {
-		log.Infof("index: merged %s with existing stack", logName)
+	} else if merged, err := photo.Merge(Config().Settings().StackMeta(), Config().Settings().StackUUID(), true); err != nil {
+		log.Errorf("index: %s in %s (merge)", err.Error(), logName)
+	} else if len(merged) > 0 {
+		log.Infof("index: merged %s with existing photo", logName)
 		result.Status = IndexStacked
-		merged = true
 	}
 
-	if !merged && file.FilePrimary && Config().SidecarYaml() {
+	if file.FilePrimary && Config().SidecarYaml() {
 		// Write YAML sidecar file (optional).
 		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 

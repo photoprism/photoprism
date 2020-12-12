@@ -95,7 +95,7 @@ func (m *Photo) EstimatePlace() {
 }
 
 // Optimize photo data, improve if possible.
-func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, merged Photos, err error) {
+func (m *Photo) Optimize(mergeMeta, mergeUuid bool) (updated bool, merged Photos, err error) {
 	if !m.HasID() {
 		return false, merged, errors.New("photo: can't maintain, id is empty")
 	}
@@ -106,8 +106,8 @@ func (m *Photo) Optimize(stackMeta, stackUuid bool) (updated bool, merged Photos
 		m.UpdateLocation()
 	}
 
-	if merged, err = m.Stack(stackMeta, stackUuid, true); err != nil {
-		log.Errorf("photo: %s (stack)", err)
+	if merged, err = m.Merge(mergeMeta, mergeUuid, true); err != nil {
+		log.Errorf("photo: %s (merge)", err)
 	}
 
 	m.EstimatePlace()
@@ -170,7 +170,7 @@ func (m *Photo) Identical(findMeta, findUuid, findOlder bool) (identical Photos,
 		if err := Db().
 			Where("(taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?) OR (uuid <> '' AND uuid = ?)",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID).
-			Where(fmt.Sprintf("id %s ? AND photo_single = 0 AND deleted_at IS NULL", op), m.ID).
+			Where(fmt.Sprintf("id %s ? AND photo_single = 0 AND deleted_at IS NULL AND edited_at IS NULL", op), m.ID).
 			Order("id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
@@ -178,13 +178,13 @@ func (m *Photo) Identical(findMeta, findUuid, findOlder bool) (identical Photos,
 		if err := Db().
 			Where("taken_at = ? AND taken_src = 'meta' AND cell_id = ? AND camera_serial = ? AND camera_id = ?",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID).
-			Where(fmt.Sprintf("id %s ? AND photo_single = 0 AND deleted_at IS NULL", op), m.ID).
+			Where(fmt.Sprintf("id %s ? AND photo_single = 0 AND deleted_at IS NULL AND edited_at IS NULL", op), m.ID).
 			Order("id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
 	case findUuid && rnd.IsUUID(m.UUID):
 		if err := Db().
-			Where(fmt.Sprintf("uuid = ? AND id %s ? AND photo_single = 0 AND deleted_at IS NULL", op), m.UUID, m.ID).
+			Where(fmt.Sprintf("uuid = ? AND id %s ? AND photo_single = 0 AND deleted_at IS NULL AND edited_at IS NULL", op), m.UUID, m.ID).
 			Order("id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
@@ -193,21 +193,21 @@ func (m *Photo) Identical(findMeta, findUuid, findOlder bool) (identical Photos,
 	return identical, nil
 }
 
-// Stack merges a photo with identical ones.
-func (m *Photo) Stack(stackMeta, stackUuid, stackOlder bool) (identical Photos, err error) {
-	identical, err = m.Identical(stackMeta, stackUuid, stackOlder)
+// Merge photo with identical ones.
+func (m *Photo) Merge(mergeMeta, mergeUuid, mergeOlder bool) (merged Photos, err error) {
+	merged, err = m.Identical(mergeMeta, mergeUuid, mergeOlder)
 
-	if len(identical) == 0 || err != nil {
-		return identical, err
+	if len(merged) == 0 || err != nil {
+		return merged, err
 	}
 
-	for _, photo := range identical {
+	for _, photo := range merged {
 		if photo.DeletedAt != nil || photo.ID == m.ID {
 			continue
 		}
 
 		if err := UnscopedDb().Exec("UPDATE `files` SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", m.ID, m.PhotoUID, photo.ID).Error; err != nil {
-			return identical, err
+			return merged, err
 		}
 
 		switch DbDialect() {
@@ -220,18 +220,18 @@ func (m *Photo) Stack(stackMeta, stackUuid, stackOlder bool) (identical Photos, 
 			UnscopedDb().Exec("UPDATE OR IGNORE `photos_labels` SET `photo_id` = ? WHERE (photo_id = ?)", m.ID, photo.ID)
 			UnscopedDb().Exec("UPDATE OR IGNORE `photos_albums` SET `photo_uid` = ? WHERE (photo_uid = ?)", m.PhotoUID, photo.PhotoUID)
 		default:
-			log.Warnf("photo: unknown SQL dialect (stack)")
+			log.Warnf("photo: unknown SQL dialect (merge)")
 		}
 
 		deleted := Timestamp()
 
 		if err := UnscopedDb().Exec("UPDATE `photos` SET photo_quality = -1, deleted_at = ? WHERE id = ?", Timestamp(), photo.ID).Error; err != nil {
-			return identical, err
+			return merged, err
 		}
 
 		photo.DeletedAt = &deleted
 		photo.PhotoQuality = -1
 	}
 
-	return identical, err
+	return merged, err
 }
