@@ -135,7 +135,7 @@
                       :label="$gettext('Theme')"
                       color="secondary-dark"
                       background-color="secondary-light"
-                      v-model="settings.theme"
+                      v-model="settings.ui.theme"
                       hide-details box
                       class="input-theme"
               ></v-select>
@@ -149,7 +149,7 @@
                       :label="$gettext('Language')"
                       color="secondary-dark"
                       background-color="secondary-light"
-                      v-model="settings.language"
+                      v-model="settings.ui.language"
                       hide-details box
                       class="input-language"
               ></v-select>
@@ -409,7 +409,7 @@
                 this.settings.load();
             },
             onChange() {
-                const reload = this.settings.changed("language");
+                const reload = this.settings.changed("ui", "language");
 
                 if (reload) {
                     this.busy = true;

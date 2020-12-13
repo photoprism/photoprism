@@ -17,50 +17,54 @@ func TestSettings_Load(t *testing.T) {
 	t.Run("existing filename", func(t *testing.T) {
 		c := NewSettings()
 
-		if err := c.Load("testdata/config.yml"); err != nil {
+		if err := c.Load("testdata/settings.yml"); err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "lavendel", c.Theme)
-		assert.Equal(t, "english", c.Language)
+		assert.Equal(t, "onyx", c.UI.Theme)
+		assert.Equal(t, "de", c.UI.Language)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
 		c := NewSettings()
 
-		err := c.Load("testdata/config123.yml")
+		err := c.Load("testdata/settings_123.yml")
 
 		assert.Error(t, err)
 
-		assert.Equal(t, "default", c.Theme)
-		assert.Equal(t, "en", c.Language)
+		assert.Equal(t, "default", c.UI.Theme)
+		assert.Equal(t, "en", c.UI.Language)
 	})
 }
 func TestSettings_Save(t *testing.T) {
 	t.Run("existing filename", func(t *testing.T) {
 		c := NewSettings()
-		c.Theme = "lavendel"
-		c.Language = "german"
 
-		assert.Equal(t, "lavendel", c.Theme)
-		assert.Equal(t, "german", c.Language)
+		assert.Equal(t, "default", c.UI.Theme)
+		assert.Equal(t, "en", c.UI.Language)
 
-		if err := c.Save("testdata/configEmpty.yml"); err != nil {
+		c.UI.Theme = "onyx"
+		c.UI.Language = "de"
+
+		assert.Equal(t, "onyx", c.UI.Theme)
+		assert.Equal(t, "de", c.UI.Language)
+
+		if err := c.Save("testdata/settings.yml"); err != nil {
 			t.Fatal(err)
 		}
 	})
 	t.Run("not existing filename", func(t *testing.T) {
 		c := NewSettings()
-		c.Theme = "lavendel"
-		c.Language = "german"
+		c.UI.Theme = "onyx"
+		c.UI.Language = "de"
 
-		assert.Equal(t, "lavendel", c.Theme)
-		assert.Equal(t, "german", c.Language)
+		assert.Equal(t, "onyx", c.UI.Theme)
+		assert.Equal(t, "de", c.UI.Language)
 
-		if err := c.Save("testdata/configEmpty123.yml"); err != nil {
+		if err := c.Save("testdata/settings_tmp.yml"); err != nil {
 			t.Fatal(err)
 		}
 
-		if err := os.Remove("testdata/configEmpty123.yml"); err != nil {
+		if err := os.Remove("testdata/settings_tmp.yml"); err != nil {
 			t.Fatal(err)
 		}
 	})

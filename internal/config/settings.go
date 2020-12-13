@@ -16,7 +16,14 @@ func (c *Config) SettingsHidden() bool {
 	return c.params.SettingsHidden
 }
 
-// TemplateSettings represents HTML template settings for the Web UI.
+// UISettings represents user interface settings.
+type UISettings struct {
+	Scrollbar bool   `json:"scrollbar" yaml:"scrollbar"`
+	Theme     string `json:"theme" yaml:"theme"`
+	Language  string `json:"language" yaml:"language"`
+}
+
+// TemplateSettings represents template settings for the UI and messaging.
 type TemplateSettings struct {
 	Default string `json:"default" yaml:"default"`
 }
@@ -31,7 +38,6 @@ type MapsSettings struct {
 type FeatureSettings struct {
 	Upload   bool `json:"upload" yaml:"upload"`
 	Download bool `json:"download" yaml:"download"`
-	Archive  bool `json:"archive" yaml:"archive"`
 	Private  bool `json:"private" yaml:"private"`
 	Review   bool `json:"review" yaml:"review"`
 	Files    bool `json:"files" yaml:"files"`
@@ -39,6 +45,8 @@ type FeatureSettings struct {
 	Labels   bool `json:"labels" yaml:"labels"`
 	Places   bool `json:"places" yaml:"places"`
 	Edit     bool `json:"edit" yaml:"edit"`
+	Archive  bool `json:"archive" yaml:"archive"`
+	Delete   bool `json:"delete" yaml:"delete"`
 	Share    bool `json:"share" yaml:"share"`
 	Library  bool `json:"library" yaml:"library"`
 	Import   bool `json:"import" yaml:"import"`
@@ -65,23 +73,31 @@ type StackSettings struct {
 	Name bool `json:"name" yaml:"name"`
 }
 
+// ShareSettings represents photo sharing settings.
+type ShareSettings struct {
+	Title string `json:"title" yaml:"title"`
+}
+
 // Settings represents user settings for Web UI, indexing, and import.
 type Settings struct {
-	Theme     string           `json:"theme" yaml:"theme"`
-	Language  string           `json:"language" yaml:"language"`
+	UI        UISettings       `json:"ui" yaml:"ui"`
 	Templates TemplateSettings `json:"templates" yaml:"templates"`
 	Maps      MapsSettings     `json:"maps" yaml:"maps"`
 	Features  FeatureSettings  `json:"features" yaml:"features"`
 	Import    ImportSettings   `json:"import" yaml:"import"`
 	Index     IndexSettings    `json:"index" yaml:"index"`
 	Stack     StackSettings    `json:"stack" yaml:"stack"`
+	Share     ShareSettings    `json:"share" yaml:"share"`
 }
 
 // NewSettings creates a new Settings instance.
 func NewSettings() *Settings {
 	return &Settings{
-		Theme:    "default",
-		Language: "en",
+		UI: UISettings{
+			Scrollbar: true,
+			Theme:     "default",
+			Language:  "en",
+		},
 		Templates: TemplateSettings{
 			Default: "index.tmpl",
 		},
@@ -124,7 +140,7 @@ func NewSettings() *Settings {
 
 // Propagate updates settings in other packages as needed.
 func (s *Settings) Propagate() {
-	i18n.SetLocale(s.Language)
+	i18n.SetLocale(s.UI.Language)
 }
 
 // StackSequences tests if files should be stacked based on their file name prefix (sequential names).

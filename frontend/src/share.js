@@ -79,8 +79,8 @@ Vue.prototype.$isMobile = isMobile;
 // Register Vuetify
 Vue.use(Vuetify, {"theme": config.theme});
 
-Vue.config.language = config.values.settings.language;
-Settings.defaultLocale = config.values.settings.language;
+Vue.config.language = config.values.settings.ui.language;
+Settings.defaultLocale = Vue.config.language;
 
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {
