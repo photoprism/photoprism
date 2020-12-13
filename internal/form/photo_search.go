@@ -60,6 +60,7 @@ type PhotoSearch struct {
 	Offset   int       `form:"offset" serialize:"-"`
 	Order    string    `form:"order" serialize:"-"`
 	Merged   bool      `form:"merged" serialize:"-"`
+	Format   string    `form:"format"`
 }
 
 func (f *PhotoSearch) GetQuery() string {

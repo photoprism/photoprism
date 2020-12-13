@@ -25,6 +25,7 @@ import (
 //   before:    date   Find photos taken before (format: "2006-01-02")
 //   after:     date   Find photos taken after (format: "2006-01-02")
 //   favorite:  bool   Find favorites only
+//   format:    string Format of the results
 func GetPhotos(router *gin.RouterGroup) {
 	router.GET("/photos", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionSearch)
@@ -62,6 +63,11 @@ func GetPhotos(router *gin.RouterGroup) {
 		if err != nil {
 			log.Error(err)
 			AbortBadRequest(c)
+			return
+		}
+
+		if f.Format == "count" {
+			c.JSON(http.StatusOK, count)
 			return
 		}
 
