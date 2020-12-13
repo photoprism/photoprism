@@ -2,12 +2,15 @@ package entity
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+var lensMutex = sync.Mutex{}
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
@@ -81,6 +84,9 @@ func NewLens(modelName string, makeName string) *Lens {
 
 // Create inserts a new row to the database.
 func (m *Lens) Create() error {
+	lensMutex.Lock()
+	defer lensMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 
@@ -88,9 +94,9 @@ func (m *Lens) Create() error {
 func FirstOrCreateLens(m *Lens) *Lens {
 	result := Lens{}
 
-	if err := Db().Where("lens_slug = ?", m.LensSlug).First(&result).Error; err == nil {
+	if res := Db().Where("lens_slug = ?", m.LensSlug).First(&result); res.Error == nil {
 		return &result
-	} else if createErr := m.Create(); createErr == nil {
+	} else if err := m.Create(); err == nil {
 		if !m.Unknown() {
 			event.EntitiesCreated("lenses", []*Lens{m})
 
@@ -100,10 +106,10 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		}
 
 		return m
-	} else if err := Db().Where("lens_slug = ?", m.LensSlug).First(&result).Error; err == nil {
+	} else if res := Db().Where("lens_slug = ?", m.LensSlug).First(&result); res.Error == nil {
 		return &result
 	} else {
-		log.Errorf("lens: %s (first or create %s)", createErr, m.String())
+		log.Errorf("lens: %s (create %s)", err.Error(), txt.Quote(m.String()))
 	}
 
 	return nil

@@ -4,10 +4,13 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"gopkg.in/yaml.v2"
 )
+
+var photoYamlMutex = sync.Mutex{}
 
 // Yaml returns photo data as YAML string.
 func (m *Photo) Yaml() ([]byte, error) {
@@ -32,6 +35,9 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
 		return err
 	}
+
+	photoYamlMutex.Lock()
+	defer photoYamlMutex.Unlock()
 
 	// Write YAML data to file.
 	if err := ioutil.WriteFile(fileName, data, os.ModePerm); err != nil {

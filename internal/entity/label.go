@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"sync"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -10,6 +11,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+var labelMutex = sync.Mutex{}
 
 type Labels []Label
 
@@ -65,11 +68,17 @@ func NewLabel(name string, priority int) *Label {
 
 // Save updates the existing or inserts a new label.
 func (m *Label) Save() error {
+	labelMutex.Lock()
+	defer labelMutex.Unlock()
+
 	return Db().Save(m).Error
 }
 
 // Create inserts the label to the database.
 func (m *Label) Create() error {
+	labelMutex.Lock()
+	defer labelMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 

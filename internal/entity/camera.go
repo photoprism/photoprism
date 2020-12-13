@@ -2,12 +2,15 @@ package entity
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+var cameraMutex = sync.Mutex{}
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
@@ -169,6 +172,9 @@ func NewCamera(modelName string, makeName string) *Camera {
 
 // Create inserts a new row to the database.
 func (m *Camera) Create() error {
+	cameraMutex.Lock()
+	defer cameraMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 
@@ -176,9 +182,9 @@ func (m *Camera) Create() error {
 func FirstOrCreateCamera(m *Camera) *Camera {
 	result := Camera{}
 
-	if err := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result).Error; err == nil {
+	if res := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result); res.Error == nil {
 		return &result
-	} else if createErr := m.Create(); createErr == nil {
+	} else if err := m.Create(); err == nil {
 		if !m.Unknown() {
 			event.EntitiesCreated("cameras", []*Camera{m})
 
@@ -188,10 +194,10 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		}
 
 		return m
-	} else if err := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result).Error; err == nil {
+	} else if res := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result); res.Error == nil {
 		return &result
 	} else {
-		log.Errorf("camera: %s (first or create %s)", createErr, m.String())
+		log.Errorf("camera: %s (create %s)", err.Error(), txt.Quote(m.String()))
 	}
 
 	return nil
