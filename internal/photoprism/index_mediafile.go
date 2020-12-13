@@ -96,7 +96,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
 	fullBase := m.BasePrefix(false)
-
 	logName := txt.Quote(fileName)
 	fileSize, modTime, err := m.Stat()
 
@@ -821,11 +820,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	if o.Single || photo.PhotoSingle {
 		// Do nothing.
-	} else if merged, err := photo.Merge(Config().Settings().StackMeta(), Config().Settings().StackUUID(), true); err != nil {
+	} else if original, merged, err := photo.Merge(Config().Settings().StackMeta(), Config().Settings().StackUUID()); err != nil {
 		log.Errorf("index: %s in %s (merge)", err.Error(), logName)
-	} else if len(merged) > 0 {
-		log.Infof("index: merged %s with existing photo", logName)
+	} else if len(merged) == 1 && original.ID == photo.ID {
+		log.Infof("index: merged one existing photo with %s", logName)
+	} else if len(merged) > 1 && original.ID == photo.ID {
+		log.Infof("index: merged %d existing photos with %s", len(merged), logName)
+	} else if len(merged) > 0 && original.ID != photo.ID {
+		log.Infof("index: merged %s with existing photo id %d", logName, original.ID)
 		result.Status = IndexStacked
+		return result
 	}
 
 	if file.FilePrimary && Config().SidecarYaml() {
