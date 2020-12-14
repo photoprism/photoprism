@@ -128,7 +128,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 	}
 
 	if m.PlaceID == "" {
-		log.Errorf("location: place must not be empty (first or create cell %s)", m.ID)
+		log.Errorf("location: place must not be empty (find or create cell %s)", m.ID)
 		return nil
 	}
 
@@ -141,7 +141,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 	} else if err := Db().Where("id = ?", m.ID).Preload("Place").First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("location: %s (first or create cell %s)", createErr, m.ID)
+		log.Errorf("location: %s (find or create cell %s)", createErr, m.ID)
 	}
 
 	return nil

@@ -2,8 +2,11 @@ package entity
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
+
+var photoDetailsMutex = sync.Mutex{}
 
 // Details stores additional metadata fields for each photo to improve search performance.
 type Details struct {
@@ -25,6 +28,9 @@ func NewDetails(photo Photo) Details {
 
 // Create inserts a new row to the database.
 func (m *Details) Create() error {
+	photoDetailsMutex.Lock()
+	defer photoDetailsMutex.Unlock()
+
 	if m.PhotoID == 0 {
 		return fmt.Errorf("details: photo id must not be empty (create)")
 	}
@@ -54,7 +60,7 @@ func FirstOrCreateDetails(m *Details) *Details {
 
 		return &result
 	} else {
-		log.Errorf("details: %s (first or create %d)", err, m.PhotoID)
+		log.Errorf("details: %s (find or create %d)", err, m.PhotoID)
 	}
 
 	return nil

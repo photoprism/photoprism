@@ -188,7 +188,7 @@ func FirstOrCreateFolder(m *Folder) *Folder {
 	} else if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("folder: %s (first or create %s)", createErr, m.Path)
+		log.Errorf("folder: %s (find or create %s)", createErr, m.Path)
 	}
 
 	return nil

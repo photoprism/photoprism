@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -17,6 +19,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
+
+var photoMutex = sync.Mutex{}
 
 type Photos []Photo
 
@@ -195,8 +199,11 @@ func (m *Photo) String() string {
 func (m *Photo) FirstOrCreate() error {
 	if err := m.Create(); err == nil {
 		return nil
-	} else if err := m.Find(); err != nil {
-		return fmt.Errorf("photo: %s (first or create %s)", err, m.String())
+	} else if fErr := m.Find(); fErr != nil {
+		name := filepath.Join(m.PhotoPath, m.PhotoName)
+		log.Debugf("photo: %s in %s (create)", err, name)
+		log.Debugf("photo: %s in %s (find after create failed)", fErr, name)
+		return fmt.Errorf("%s / %s", err, fErr)
 	}
 
 	return nil
@@ -204,6 +211,9 @@ func (m *Photo) FirstOrCreate() error {
 
 // Create inserts a new photo to the database.
 func (m *Photo) Create() error {
+	photoMutex.Lock()
+	defer photoMutex.Unlock()
+
 	if err := UnscopedDb().Create(m).Error; err != nil {
 		return err
 	}

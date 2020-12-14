@@ -127,7 +127,7 @@ func FirstOrCreateLabel(m *Label) *Label {
 	} else if err := UnscopedDb().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("label: %s (first or create %s)", createErr, m.LabelSlug)
+		log.Errorf("label: %s (find or create %s)", createErr, m.LabelSlug)
 	}
 
 	return nil
