@@ -98,7 +98,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), ","))
+		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), OrSep))
 	}
 
 	if f.Favorite {
@@ -106,12 +106,12 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.Country != "" {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), ","))
+		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), OrSep))
 	}
 
 	// Filter by media type.
 	if f.Type != "" {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), ","))
+		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), OrSep))
 	}
 
 	if f.Video {
@@ -129,8 +129,8 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
-		} else if strings.Contains(p, ",") {
-			s = s.Where("photos.photo_path IN (?)", strings.Split(p, ","))
+		} else if strings.Contains(p, OrSep) {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, OrSep))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}

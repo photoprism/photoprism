@@ -49,6 +49,7 @@ var log = event.Log
 const (
 	MySQL  = "mysql"
 	SQLite = "sqlite3"
+	OrSep  = "|"
 )
 
 // Max result limit for queries.

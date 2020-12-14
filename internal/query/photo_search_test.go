@@ -546,7 +546,7 @@ func TestPhotoSearch(t *testing.T) {
 
 	t.Run("search for labels", func(t *testing.T) {
 		var f form.PhotoSearch
-		f.Label = "botanical-garden,nature,landscape,park"
+		f.Label = "botanical-garden|nature|landscape|park"
 
 		photos, _, err := PhotoSearch(f)
 
@@ -620,7 +620,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Video = true
 		f.Name = "xxx"
 		f.Original = "xxyy"
-		f.Path = "/xxx,xxx"
+		f.Path = "/xxx|xxx"
 		f.Type = "mp4"
 		f.Stack = true
 		f.Unsorted = true
