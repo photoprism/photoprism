@@ -139,7 +139,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 			isKeyValue = false
 			key = key[:0]
 			value = value[:0]
-		} else if char == ':' {
+		} else if char == ':' && !escaped {
 			isKeyValue = true
 		} else if char == '"' {
 			escaped = !escaped
