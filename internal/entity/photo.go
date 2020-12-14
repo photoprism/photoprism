@@ -227,6 +227,9 @@ func (m *Photo) Create() error {
 
 // Save updates an existing photo or inserts a new one.
 func (m *Photo) Save() error {
+	photoMutex.Lock()
+	defer photoMutex.Unlock()
+
 	if err := UnscopedDb().Save(m).Error; err == nil {
 		// Nothing to do.
 	} else if !strings.Contains(strings.ToLower(err.Error()), "lock") {
