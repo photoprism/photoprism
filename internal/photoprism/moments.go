@@ -72,7 +72,7 @@ func (m *Moments) Start() (err error) {
 				Public: true,
 			}
 
-			if a := entity.FindFolderAlbum(mom.Slug(), mom.Path); a != nil {
+			if a := entity.FindFolderAlbum(mom.Path); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)

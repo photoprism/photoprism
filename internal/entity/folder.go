@@ -4,16 +4,18 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
+
+var folderMutex = sync.Mutex{}
 
 type Folders []Folder
 
@@ -153,13 +155,38 @@ func (m *Folder) Title() string {
 
 // Saves the complete entity in the database.
 func (m *Folder) Create() error {
+	folderMutex.Lock()
+	defer folderMutex.Unlock()
+
 	if err := Db().Create(m).Error; err != nil {
 		return err
+	} else if m.Root != RootOriginals || m.Path == "" {
+		return nil
 	}
 
-	event.Publish("count.folders", event.Data{
-		"count": 1,
-	})
+	f := form.PhotoSearch{
+		Path:   m.Path,
+		Public: true,
+	}
+
+	if a := FindFolderAlbum(m.Path); a != nil {
+		if a.DeletedAt != nil {
+			// Ignore.
+		} else if err := a.UpdateFolder(m.Path, f.Serialize()); err != nil {
+			log.Errorf("folder: %s (update album)", err.Error())
+		}
+	} else if a := NewFolderAlbum(m.Title(), m.Path, f.Serialize()); a != nil {
+		a.AlbumYear = m.FolderYear
+		a.AlbumMonth = m.FolderMonth
+		a.AlbumDay = m.FolderDay
+		a.AlbumCountry = m.FolderCountry
+
+		if err := a.Create(); err != nil {
+			log.Errorf("folder: %s (add album)", err)
+		} else {
+			log.Infof("folder: added album %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+		}
+	}
 
 	return nil
 }
@@ -167,6 +194,10 @@ func (m *Folder) Create() error {
 // FindFolder returns an existing row if exists.
 func FindFolder(root, pathName string) *Folder {
 	pathName = strings.Trim(pathName, string(os.PathSeparator))
+
+	if pathName == RootPath {
+		pathName = ""
+	}
 
 	result := Folder{}
 
