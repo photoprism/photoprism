@@ -2,10 +2,13 @@ package entity
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/maps"
 )
+
+var placeMutex = sync.Mutex{}
 
 // Place used to associate photos to places
 type Place struct {
@@ -69,6 +72,9 @@ func (m *Place) Find() error {
 
 // Create inserts a new row to the database.
 func (m *Place) Create() error {
+	placeMutex.Lock()
+	defer placeMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 

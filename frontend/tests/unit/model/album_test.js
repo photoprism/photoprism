@@ -41,7 +41,7 @@ describe("model/album", () => {
         const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66};
         const album = new Album(values);
         const result = album.thumbnailUrl("xyz");
-        assert.equal(result, "/api/v1/albums/66/t/static/xyz");
+        assert.equal(result, "/api/v1/albums/66/t/public/xyz");
     });
 
     it("should get created date string",  () => {

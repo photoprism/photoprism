@@ -206,7 +206,7 @@ describe("model/thumb", () => {
         assert.equal(result[0].original_w, 500);
     });
 
-    it("should return downlaload url",  () => {
+    it("should return download url",  () => {
         const values = {
             InstanceID: 5,
             UID: "ABC123",
@@ -214,7 +214,7 @@ describe("model/thumb", () => {
             Type: "jpg",
             Name: "1/2/IMG123.jpg"};
         const file = new File(values);
-        assert.equal(Thumb.downloadUrl(file), "/api/v1/dl/54ghtfd?t=1uhovi0e");
+        assert.equal(Thumb.downloadUrl(file), "/api/v1/dl/54ghtfd?t=2lbh9x09");
         const values2 = {
             InstanceID: 5,
             UID: "ABC123",
@@ -232,7 +232,7 @@ describe("model/thumb", () => {
             Type: "jpg",
             Name: "1/2/IMG123.jpg"};
         const file = new File(values);
-        assert.equal(Thumb.thumbnailUrl(file, "abc"), "/api/v1/t/54ghtfd/static/abc");
+        assert.equal(Thumb.thumbnailUrl(file, "abc"), "/api/v1/t/54ghtfd/public/abc");
         const values2 = {
             InstanceID: 5,
             UID: "ABC123",

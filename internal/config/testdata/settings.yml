@@ -1,5 +1,7 @@
-theme: lavendel
-language: german
+ui:
+  scrollbar: true
+  theme: onyx
+  language: de
 templates:
   default: index.tmpl
 maps:
@@ -8,7 +10,6 @@ maps:
 features:
   upload: true
   download: true
-  archive: true
   private: true
   review: true
   files: true
@@ -16,6 +17,8 @@ features:
   labels: true
   places: true
   edit: true
+  archive: true
+  delete: false
   share: true
   library: true
   import: true
@@ -31,3 +34,5 @@ stack:
   uuid: true
   meta: true
   name: false
+share:
+  title: ""

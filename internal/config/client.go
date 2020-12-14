@@ -108,6 +108,10 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "settings")
 	}
 
+	if !c.Settings().UI.Scrollbar {
+		flags = append(flags, "hide-scrollbar")
+	}
+
 	return flags
 }
 
@@ -121,10 +125,10 @@ func (c *Config) PublicConfig() ClientConfig {
 
 	result := ClientConfig{
 		Settings: Settings{
-			Language: settings.Language,
-			Theme:    settings.Theme,
+			UI:       settings.UI,
 			Maps:     settings.Maps,
 			Features: settings.Features,
+			Share:    settings.Share,
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
@@ -161,10 +165,10 @@ func (c *Config) GuestConfig() ClientConfig {
 
 	result := ClientConfig{
 		Settings: Settings{
-			Language: settings.Language,
-			Theme:    settings.Theme,
+			UI:       settings.UI,
 			Maps:     settings.Maps,
 			Features: settings.Features,
+			Share:    settings.Share,
 		},
 		Flags:           "readonly public shared",
 		Name:            c.Name(),

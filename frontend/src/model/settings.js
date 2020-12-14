@@ -32,8 +32,12 @@ import Api from "common/api";
 import Model from "./model";
 
 export class Settings extends Model {
-    changed(key) {
-        return (this[key] !== this.__originalValues[key]);
+    changed(area, key) {
+        if (typeof this.__originalValues[area] === "undefined") {
+            return false;
+        }
+
+        return (this[area][key] !== this.__originalValues[area][key]);
     }
 
     load() {

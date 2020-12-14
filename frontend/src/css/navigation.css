@@ -2,6 +2,12 @@
     z-index: 10;
 }
 
+/* hide scrollbar to save space */
+#p-navigation ::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
 #p-navigation .nav-count {
     opacity: 0.5;
     position: absolute;

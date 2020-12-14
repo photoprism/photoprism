@@ -2,6 +2,7 @@ package entity
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -9,6 +10,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+var cellMutex = sync.Mutex{}
 
 // Cell represents a S2 cell with location data.
 type Cell struct {
@@ -94,6 +97,9 @@ func (m *Cell) Find(api string) error {
 	m.PlaceID = m.Place.ID
 	m.CellName = l.Name()
 	m.CellCategory = l.Category()
+
+	cellMutex.Lock()
+	defer cellMutex.Unlock()
 
 	if createErr := db.Create(m).Error; createErr == nil {
 		log.Debugf("location: added cell %s [%s]", m.ID, time.Since(start))

@@ -69,7 +69,7 @@ export default class Config {
         Event.subscribe("count", (ev, data) => this.onCount(ev, data));
 
         if (this.has("settings")) {
-            this.setTheme(this.get("settings").theme);
+            this.setTheme(this.get("settings").ui.theme);
         } else {
             this.setTheme("default");
         }
@@ -100,7 +100,7 @@ export default class Config {
         }
 
         if (values.settings) {
-            this.setTheme(values.settings.theme);
+            this.setTheme(values.settings.ui.theme);
         }
 
         return this;
