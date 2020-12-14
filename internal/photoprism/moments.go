@@ -76,8 +76,8 @@ func (m *Moments) Start() (err error) {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-				} else if err := a.UpdatePath(mom.Path); err != nil {
-					log.Errorf("moments: %s (update folder album)", err.Error())
+				} else if err := a.UpdateFolder(mom.Path, f.Serialize()); err != nil {
+					log.Errorf("moments: %s (update folder)", err.Error())
 				} else {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
@@ -88,7 +88,7 @@ func (m *Moments) Start() (err error) {
 				a.AlbumCountry = mom.FolderCountry
 
 				if err := a.Create(); err != nil {
-					log.Errorf("moments: %s (create folder album)", err)
+					log.Errorf("moments: %s (create folder)", err)
 				} else {
 					log.Infof("moments: added %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}

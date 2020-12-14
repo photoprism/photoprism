@@ -315,15 +315,16 @@ func (m *Album) SaveForm(f form.Album) error {
 	return Db().Save(m).Error
 }
 
-// Updates a column in the database.
+// Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// UpdatePath sets a unique path for an albums.
-func (m *Album) UpdatePath(albumPath string) error {
+// UpdateFolder updates the path, filter and slug for a folder album.
+func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 	if err := UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{
 		"AlbumPath": albumPath,
+		"AlbumFilter": albumFilter,
 		"AlbumSlug": slug.Make(albumPath),
 	}).Error; err != nil {
 		return err
