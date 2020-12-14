@@ -64,8 +64,8 @@ RUN add-apt-repository -y ppa:xalt7x/chromium-deb-vaapi
 COPY /docker/development/pin-xalt7x-chromium-deb-vaapi /etc/apt/preferences.d/pin-xalt7x-chromium-deb-vaapi
 
 # Install RAW to JPEG converter
-RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
-    wget -qO - https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_20.04/Release.key | apt-key add - && \
+RUN sh -c "echo 'deb http://download.opensuse.org/repositories/home:/pmdpalma:/Ubuntu:/20.04:/bucket/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/home:pmdpalma:Ubuntu:20.04:bucket.list" && \
+    wget -qO - https://download.opensuse.org/repositories/home:pmdpalma:Ubuntu:20.04:bucket/xUbuntu_20.04/Release.key | apt-key add - && \
     apt-get update && \
     apt-get install chromium-browser chromium-codecs-ffmpeg-extra darktable && \
     apt-get upgrade && \

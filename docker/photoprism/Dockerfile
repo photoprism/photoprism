@@ -43,8 +43,8 @@ COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_fra
 RUN ldconfig
 
 # Install RAW to JPEG converter
-RUN sh -c "echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/graphics:darktable.list" && \
-    wget -qO - https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_20.04/Release.key | apt-key add - && \
+RUN sh -c "echo 'deb http://download.opensuse.org/repositories/home:/pmdpalma:/Ubuntu:/20.04:/bucket/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/home:pmdpalma:Ubuntu:20.04:bucket.list" && \
+    wget -qO - https://download.opensuse.org/repositories/home:pmdpalma:Ubuntu:20.04:bucket/xUbuntu_20.04/Release.key | apt-key add - && \
     apt-get update && \
     apt-get install darktable && \
     apt-get upgrade && \
