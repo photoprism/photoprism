@@ -57,7 +57,7 @@ func Serialize(f interface{}, all bool) string {
 				}
 			case string:
 				if val := strings.TrimSpace(strings.ReplaceAll(fieldValue.String(), "\"", "")); val != "" {
-					if strings.Contains(val, " ") {
+					if strings.ContainsAny(val, " :'()[]-+`") {
 						q = append(q, fmt.Sprintf("%s:\"%s\"", fieldName, val))
 					} else {
 						q = append(q, fmt.Sprintf("%s:%s", fieldName, val))

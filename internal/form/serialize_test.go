@@ -55,6 +55,7 @@ type TestForm struct {
 func TestSerialize(t *testing.T) {
 	form := TestForm{
 		Query:   "foo BAR",
+		Name:    "yo/ba:z.JPG",
 		Private: true,
 		Photo:   false,
 		Lat:     1.5,
@@ -67,8 +68,8 @@ func TestSerialize(t *testing.T) {
 		Before:  time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC),
 	}
 
-	expected := "q:\"foo BAR\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true"
-	expectedAll := "q:\"foo BAR\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true count:100 order:name"
+	expected := "q:\"foo BAR\" name:\"yo/ba:z.JPG\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true"
+	expectedAll := "q:\"foo BAR\" name:\"yo/ba:z.JPG\" lat:1.500000 lng:-10.333330 chroma:1 diff:424242 year:2002 before:2019-01-15 private:true count:100 order:name"
 
 	t.Run("value", func(t *testing.T) {
 		result := Serialize(form, false)
