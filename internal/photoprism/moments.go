@@ -199,7 +199,7 @@ func (m *Moments) Start() (err error) {
 					continue
 				}
 
-				if err := form.ParseQueryString(&f); err != nil {
+				if err := form.Unserialize(&f, a.AlbumFilter); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {
 					w := txt.Words(f.Label)

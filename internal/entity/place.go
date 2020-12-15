@@ -13,7 +13,7 @@ var placeMutex = sync.Mutex{}
 // Place used to associate photos to places
 type Place struct {
 	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	PlaceLabel    string    `gorm:"type:VARBINARY(768);unique_index;" json:"Label" yaml:"Label"`
+	PlaceLabel    string    `gorm:"type:VARBINARY(755);unique_index;" json:"Label" yaml:"Label"`
 	PlaceCity     string    `gorm:"type:VARCHAR(255);" json:"City" yaml:"City,omitempty"`
 	PlaceState    string    `gorm:"type:VARCHAR(255);" json:"State" yaml:"State,omitempty"`
 	PlaceCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`

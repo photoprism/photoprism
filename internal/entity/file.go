@@ -24,9 +24,9 @@ type File struct {
 	PhotoUID        string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	InstanceID      string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID         string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName        string        `gorm:"type:VARBINARY(768);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileName        string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot        string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
-	OriginalName    string        `gorm:"type:VARBINARY(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	OriginalName    string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash        string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize        int64         `json:"Size" yaml:"Size,omitempty"`
 	FileCodec       string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
@@ -48,7 +48,7 @@ type File struct {
 	FileLuminance   string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma      uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
-	FileError       string        `gorm:"type:varbinary(512)" json:"Error" yaml:"Error,omitempty"`
+	FileError       string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
 	ModTime         int64         `json:"ModTime" yaml:"-"`
 	CreatedAt       time.Time     `json:"CreatedAt" yaml:"-"`
 	CreatedIn       int64         `json:"CreatedIn" yaml:"-"`

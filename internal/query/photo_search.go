@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -144,6 +146,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_quality = -1")
 		s = s.Where("photos.deleted_at IS NULL")
 	} else if f.Archived {
+		s = s.Where("photos.photo_quality > -1")
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")
@@ -235,28 +238,40 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
+		} else if strings.Contains(p, OrSep) {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, OrSep))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}
 	}
 
-	if f.Name != "" {
-		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(f.Name, "*", "%"))
+	if strings.Contains(f.Name, OrSep) {
+		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, OrSep))
+	} else if f.Name != "" {
+		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
 	}
 
-	if f.Filename != "" {
+	if strings.Contains(f.Filename, OrSep) {
+		s = s.Where("files.file_name IN (?)", strings.Split(f.Filename, OrSep))
+	} else if f.Filename != "" {
 		s = s.Where("files.file_name LIKE ?", strings.ReplaceAll(f.Filename, "*", "%"))
 	}
 
-	if f.Original != "" {
+	if strings.Contains(f.Original, OrSep) {
+		s = s.Where("photos.original_name IN (?)", strings.Split(f.Original, OrSep))
+	} else if f.Original != "" {
 		s = s.Where("photos.original_name LIKE ?", strings.ReplaceAll(f.Original, "*", "%"))
 	}
 
-	if f.Title != "" {
-		s = s.Where("LOWER(photos.photo_title) LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
+	if strings.Contains(f.Title, OrSep) {
+		s = s.Where("photos.photo_title IN (?)", strings.Split(strings.ToLower(f.Title), OrSep))
+	} else if f.Title != "" {
+		s = s.Where("photos.photo_title LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
 	}
 
-	if f.Hash != "" {
+	if strings.Contains(f.Hash, OrSep) {
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), OrSep))
+	} else if f.Hash != "" {
 		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), OrSep))
 	}
 

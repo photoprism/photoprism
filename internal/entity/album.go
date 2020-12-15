@@ -32,7 +32,7 @@ type Album struct {
 	CoverUID         string     `gorm:"type:VARBINARY(42);" json:"CoverUID" yaml:"CoverUID,omitempty"`
 	FolderUID        string     `gorm:"type:VARBINARY(42);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
 	AlbumSlug        string     `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"Slug"`
-	AlbumPath        string     `gorm:"type:VARBINARY(768);index;" json:"Path" yaml:"-"`
+	AlbumPath        string     `gorm:"type:VARBINARY(500);index;" json:"Path" yaml:"-"`
 	AlbumType        string     `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string     `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title"`
 	AlbumLocation    string     `gorm:"type:VARCHAR(255);" json:"Location" yaml:"Location,omitempty"`

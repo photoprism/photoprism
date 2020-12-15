@@ -27,7 +27,7 @@ var dsnPattern = regexp.MustCompile(
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
 	switch strings.ToLower(c.params.DatabaseDriver) {
-	case MySQL, "mariadb":
+	case MySQL, MariaDB:
 		c.params.DatabaseDriver = MySQL
 	case SQLite, "sqlite", "sqllite", "test", "file", "":
 		c.params.DatabaseDriver = SQLite
@@ -48,13 +48,22 @@ func (c *Config) DatabaseDriver() string {
 func (c *Config) DatabaseDsn() string {
 	if c.params.DatabaseDsn == "" {
 		switch c.DatabaseDriver() {
-		case MySQL:
+		case MySQL, MariaDB:
 			return fmt.Sprintf(
-				"%s:%s@tcp(%s)/%s?charset=utf8mb4,utf8&parseTime=true",
+				"%s:%s@tcp(%s)/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
 				c.DatabaseServer(),
 				c.DatabaseName(),
+			)
+		case Postgres:
+			return fmt.Sprintf(
+				"user=%s password=%s dbname=%s host=%s port=%d sslmode=disable TimeZone=UTC",
+				c.DatabaseUser(),
+				c.DatabasePassword(),
+				c.DatabaseName(),
+				c.DatabaseHost(),
+				c.DatabasePort(),
 			)
 		case SQLite:
 			return filepath.Join(c.StoragePath(), "index.db")

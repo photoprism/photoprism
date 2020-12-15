@@ -73,7 +73,7 @@ func backupAction(ctx *cli.Context) error {
 	var cmd *exec.Cmd
 
 	switch conf.DatabaseDriver() {
-	case config.MySQL:
+	case config.MySQL, config.MariaDB:
 		cmd = exec.Command(
 			conf.MysqldumpBin(),
 			"-h", conf.DatabaseHost(),

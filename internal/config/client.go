@@ -232,77 +232,93 @@ func (c *Config) UserConfig() ClientConfig {
 		Server:          NewRuntimeInfo(),
 	}
 
-	c.Db().Table("photos").
+	c.Db().
+		Table("photos").
 		Select("photo_uid, cell_id, photo_lat, photo_lng, taken_at").
 		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
 		Take(&result.Pos)
 
-	c.Db().Table("cameras").
+	c.Db().
+		Table("cameras").
 		Where("camera_slug <> 'zz' AND camera_slug <> ''").
 		Select("COUNT(*) AS cameras").
 		Take(&result.Count)
 
-	c.Db().Table("lenses").
+	c.Db().
+		Table("lenses").
 		Where("lens_slug <> 'zz' AND lens_slug <> ''").
 		Select("COUNT(*) AS lenses").
 		Take(&result.Count)
 
-	c.Db().Table("photos").
+	c.Db().
+		Table("photos").
 		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	c.Db().Table("labels").
+	c.Db().
+		Table("labels").
 		Select("MAX(photo_count) as label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
 		Where("(label_priority >= 0 OR label_favorite = 1)").
 		Take(&result.Count)
 
-	c.Db().Table("albums").
+	c.Db().
+		Table("albums").
 		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 		Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
 		Take(&result.Count)
 
-	c.Db().Table("files").
+	c.Db().
+		Table("files").
 		Select("COUNT(*) AS files").
 		Where("file_missing = 0").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	c.Db().Table("countries").
+	c.Db().
+		Table("countries").
 		Select("(COUNT(*) - 1) AS countries").
 		Take(&result.Count)
 
-	c.Db().Table("places").
+	c.Db().
+		Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id != 'zz'").
 		Take(&result.Count)
 
-	c.Db().Order("country_slug").
+	c.Db().
+		Order("country_slug").
 		Find(&result.Countries)
 
-	c.Db().Where("deleted_at IS NULL").
+	c.Db().
+		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality >= 0 OR photos.deleted_at IS NULL)").
+		Where("deleted_at IS NULL").
 		Limit(10000).Order("camera_slug").
 		Find(&result.Cameras)
 
-	c.Db().Where("deleted_at IS NULL").
+	c.Db().
+		Where("deleted_at IS NULL").
 		Limit(10000).Order("lens_slug").
 		Find(&result.Lenses)
 
-	c.Db().Where("deleted_at IS NULL AND album_favorite = 1").
+	c.Db().
+		Where("deleted_at IS NULL AND album_favorite = 1").
 		Limit(20).Order("album_title").
 		Find(&result.Albums)
 
-	c.Db().Table("photos").
-		Where("photo_year > 0").
+	c.Db().
+		Table("photos").
+		Where("photo_year > 0 AND (photos.photo_quality >= 0 OR photos.deleted_at IS NULL)").
 		Order("photo_year DESC").
 		Pluck("DISTINCT photo_year", &result.Years)
 
-	c.Db().Table("categories").
+	c.Db().
+		Table("categories").
 		Select("l.label_uid, l.custom_slug, l.label_name").
 		Joins("JOIN labels l ON categories.category_id = l.id").
 		Where("l.deleted_at IS NULL").
@@ -311,7 +327,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Limit(1000).Offset(0).
 		Scan(&result.Categories)
 
-	c.Db().Table("albums").
+	c.Db().
+		Table("albums").
 		Select("album_category").
 		Where("deleted_at IS NULL AND album_category <> ''").
 		Group("album_category").

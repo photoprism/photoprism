@@ -15,9 +15,10 @@ import (
 
 // Database drivers (sql dialects).
 const (
-	MySQL  = "mysql"
-	SQLite = "sqlite3"
-	// Postgres = "postgres" // TODO: Requires GORM 2.0 for generic column data types
+	MySQL    = "mysql"
+	MariaDB  = "mariadb"
+	SQLite   = "sqlite3"
+	Postgres = "postgres" // TODO: Requires GORM 2.0 for generic column data types
 )
 
 // Params provides a struct in which application configuration is stored.
@@ -32,6 +33,7 @@ type Params struct {
 	Name               string
 	Version            string
 	Copyright          string
+	ConfigFile         string
 	SiteUrl            string `yaml:"site-url" flag:"site-url"`
 	SitePreview        string `yaml:"site-preview" flag:"site-preview"`
 	SiteTitle          string `yaml:"site-title" flag:"site-title"`
@@ -53,7 +55,6 @@ type Params struct {
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	OriginalsLimit     int64  `yaml:"originals-limit" flag:"originals-limit"`
-	ConfigFile         string
 	SettingsPath       string `yaml:"settings-path" flag:"settings-path"`
 	SettingsHidden     bool   `yaml:"settings-hidden" flag:"settings-hidden"`
 	TempPath           string `yaml:"temp-path" flag:"temp-path"`
