@@ -668,16 +668,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileOrientation = m.Orientation()
 	file.ModTime = modTime.Unix()
 
-	if photoExists {
+	if photoExists || photo.HasID() {
 		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s in %s (save photo)", err.Error(), logName)
+			log.Errorf("index: %s in %s (update existing photo)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
 		}
 	} else {
 		if err := photo.FirstOrCreate(); err != nil {
-			log.Errorf("index: %s in %s (create photo)", err.Error(), logName)
+			log.Errorf("index: %s in %s (find or create photo)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -715,7 +715,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
-			log.Debugf("%s in %s (update title)", err.Error(), logName)
+			log.Debugf("%s in %s (update title)", err, logName)
 		}
 
 		w := txt.Keywords(details.Keywords)
@@ -741,7 +741,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		photo.PhotoQuality = photo.QualityScore()
 
 		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s in %s (save photo)", err, logName)
+			log.Errorf("index: %s in %s (update photo metadata)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -760,7 +760,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s in %s (save photo)", err, logName)
+			log.Errorf("index: %s in %s (update photo quality)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -773,7 +773,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.UpdatedIn = int64(time.Since(start))
 
 		if err := file.Save(); err != nil {
-			log.Errorf("index: failed updating file %s", logName)
+			log.Errorf("index: %s in %s (update existing file)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -782,7 +782,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.CreatedIn = int64(time.Since(start))
 
 		if err := file.Create(); err != nil {
-			log.Errorf("index: failed adding file %s", logName)
+			log.Errorf("index: %s in %s (add new file)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result

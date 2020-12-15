@@ -117,7 +117,7 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 		Where("albums.deleted_at IS NULL")
 
 	if f.ID != "" {
-		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, ","))
+		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, OrSep))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -132,15 +132,15 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 	}
 
 	if f.Type != "" {
-		s = s.Where("albums.album_type IN (?)", strings.Split(f.Type, ","))
+		s = s.Where("albums.album_type IN (?)", strings.Split(f.Type, OrSep))
 	}
 
 	if f.Category != "" {
-		s = s.Where("albums.album_category IN (?)", strings.Split(f.Category, ","))
+		s = s.Where("albums.album_category IN (?)", strings.Split(f.Category, OrSep))
 	}
 
 	if f.Location != "" {
-		s = s.Where("albums.album_location IN (?)", strings.Split(f.Location, ","))
+		s = s.Where("albums.album_location IN (?)", strings.Split(f.Location, OrSep))
 	}
 
 	if f.Favorite {

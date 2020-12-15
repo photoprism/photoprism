@@ -56,7 +56,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {
-		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, ","))
+		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, OrSep))
 		s = s.Order("files.file_primary DESC")
 
 		if result := s.Scan(&results); result.Error != nil {
@@ -78,7 +78,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	var labelIds []uint
 
 	if f.Label != "" {
-		if err := Db().Where(AnySlug("label_slug", f.Label, ",")).Or(AnySlug("custom_slug", f.Label, ",")).Find(&labels).Error; len(labels) == 0 || err != nil {
+		if err := Db().Where(AnySlug("label_slug", f.Label, OrSep)).Or(AnySlug("custom_slug", f.Label, OrSep)).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Errorf("search: labels %s not found", txt.Quote(f.Label))
 			return results, 0, fmt.Errorf("%s not found", txt.Quote(f.Label))
 		} else {
@@ -183,7 +183,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), ","))
+		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), OrSep))
 	}
 
 	if f.Favorite {
@@ -203,21 +203,21 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Country != "" {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), ","))
+		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), OrSep))
 	}
 
 	if f.State != "" {
-		s = s.Where("places.place_state IN (?)", strings.Split(f.State, ","))
+		s = s.Where("places.place_state IN (?)", strings.Split(f.State, OrSep))
 	}
 
 	if f.Category != "" {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
-			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), ","))
+			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), OrSep))
 	}
 
 	// Filter by media type.
 	if f.Type != "" {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), ","))
+		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), OrSep))
 	}
 
 	if f.Video {
@@ -257,7 +257,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Hash != "" {
-		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), ","))
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), OrSep))
 	}
 
 	if f.Portrait {

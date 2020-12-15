@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -120,7 +121,9 @@ func NewAlbum(albumTitle, albumType string) *Album {
 
 // NewFolderAlbum creates a new folder album.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
-	if albumTitle == "" || albumPath == "" || albumFilter == "" {
+	albumSlug := slug.Make(albumPath)
+
+	if albumTitle == "" || albumSlug == "" || albumPath == "" || albumFilter == "" {
 		return nil
 	}
 
@@ -130,7 +133,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 		AlbumOrder:  SortOrderAdded,
 		AlbumType:   AlbumFolder,
 		AlbumTitle:  albumTitle,
-		AlbumSlug:   slug.Make(albumPath),
+		AlbumSlug:   albumSlug,
 		AlbumPath:   albumPath,
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
@@ -223,10 +226,17 @@ func FindAlbumBySlug(albumSlug, albumType string) *Album {
 }
 
 // FindFolderAlbum finds a matching folder album or returns nil.
-func FindFolderAlbum(albumSlug, albumPath string) *Album {
+func FindFolderAlbum(albumPath string) *Album {
+	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
+	albumSlug := slug.Make(albumPath)
+
+	if albumSlug == "" {
+		return nil
+	}
+
 	result := Album{}
 
-	if err := UnscopedDb().Where("((album_slug <> '' AND album_slug = ?) OR album_path = ?) AND album_type = ?", albumSlug, albumPath, AlbumFolder).First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", albumSlug, AlbumFolder).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -315,16 +325,24 @@ func (m *Album) SaveForm(f form.Album) error {
 	return Db().Save(m).Error
 }
 
-// Updates a column in the database.
+// Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
-// UpdatePath sets a unique path for an albums.
-func (m *Album) UpdatePath(albumPath string) error {
+// UpdateFolder updates the path, filter and slug for a folder album.
+func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
+	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
+	albumSlug := slug.Make(albumPath)
+
+	if albumSlug == "" {
+		return nil
+	}
+
 	if err := UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{
-		"AlbumPath": albumPath,
-		"AlbumSlug": slug.Make(albumPath),
+		"AlbumPath":   albumPath,
+		"AlbumFilter": albumFilter,
+		"AlbumSlug":   albumSlug,
 	}).Error; err != nil {
 		return err
 	} else if err := UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_path = ? AND id <> ?", albumPath, m.ID).Error; err != nil {

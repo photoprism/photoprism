@@ -180,9 +180,13 @@ func (m *Camera) Create() error {
 
 // FirstOrCreateCamera returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateCamera(m *Camera) *Camera {
+	if m.CameraSlug == "" {
+		return &UnknownCamera
+	}
+
 	result := Camera{}
 
-	if res := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result); res.Error == nil {
+	if res := Db().Where("camera_slug = ?", m.CameraSlug).First(&result); res.Error == nil {
 		return &result
 	} else if err := m.Create(); err == nil {
 		if !m.Unknown() {
@@ -194,13 +198,13 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		}
 
 		return m
-	} else if res := Db().Where("camera_model = ? AND camera_make = ?", m.CameraModel, m.CameraMake).First(&result); res.Error == nil {
+	} else if res := Db().Where("camera_slug = ?", m.CameraSlug).First(&result); res.Error == nil {
 		return &result
 	} else {
 		log.Errorf("camera: %s (create %s)", err.Error(), txt.Quote(m.String()))
 	}
 
-	return nil
+	return &UnknownCamera
 }
 
 // String returns an identifier that can be used in logs.

@@ -81,12 +81,12 @@ func (m *Place) Create() error {
 // FirstOrCreatePlace fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePlace(m *Place) *Place {
 	if m.ID == "" {
-		log.Errorf("places: place must not be empty (first or create)")
+		log.Errorf("places: place must not be empty (find or create)")
 		return nil
 	}
 
 	if m.PlaceLabel == "" {
-		log.Errorf("places: label must not be empty (first or create place %s)", m.ID)
+		log.Errorf("places: label must not be empty (find or create place %s)", m.ID)
 		return nil
 	}
 

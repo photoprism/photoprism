@@ -92,6 +92,10 @@ func (m *Lens) Create() error {
 
 // FirstOrCreateLens returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateLens(m *Lens) *Lens {
+	if m.LensSlug == "" {
+		return &UnknownLens
+	}
+
 	result := Lens{}
 
 	if res := Db().Where("lens_slug = ?", m.LensSlug).First(&result); res.Error == nil {
@@ -112,7 +116,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		log.Errorf("lens: %s (create %s)", err.Error(), txt.Quote(m.String()))
 	}
 
-	return nil
+	return &UnknownLens
 }
 
 // String returns an identifier that can be used in logs.
