@@ -94,12 +94,12 @@
     "postcss-preset-env": "^6.7.0",
     "postcss-reporter": "^6.0.1",
     "postcss-url": "^8.0.0",
-    "pubsub-js": "^1.9.1",
+    "pubsub-js": "^1.9.2",
     "puppeteer-core": "^5.5.0",
     "regenerator-runtime": "^0.13.7",
     "resolve-url-loader": "^3.1.2",
     "sass-loader": "^7.3.1",
-    "sinon": "^9.2.1",
+    "sinon": "^9.2.2",
     "sockette": "^2.0.6",
     "string-strip-html": "^4.5.1",
     "style-loader": "^0.23.1",
@@ -126,7 +126,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-md5-hash": "0.0.6",
-    "webpack-merge": "^5.5.0"
+    "webpack-merge": "^5.7.0"
   },
   "engines": {
     "node": ">= 8.0.0",
