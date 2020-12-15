@@ -102,8 +102,12 @@ export const Languages = () => [
         "value": "ru",
     },
     {
-        "text": $gettext("Chinese"),
+        "text": $gettext("Chinese Simplified"),
         "value": "zh",
+    },
+    {
+        "text": $gettext("Chinese Traditional"),
+        "value": "zh_tw",
     },
     {
         "text": $gettext("Hindi"),
