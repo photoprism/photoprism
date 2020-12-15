@@ -12,6 +12,8 @@ func TestSetLocale(t *testing.T) {
 	assert.Equal(t, English, locale)
 	SetLocale("De")
 	assert.Equal(t, German, locale)
+	SetLocale("de_AT")
+	assert.Equal(t, German, locale)
 	SetLocale("PL")
 	assert.Equal(t, Polish, locale)
 	SetLocale("")
