@@ -29,10 +29,10 @@ func SetDir(dir string) {
 }
 
 func SetLocale(loc string) {
-	if len(loc) != 2 {
+	if len(loc) < 2 {
 		locale = Default
 	} else {
-		loc = strings.ToLower(loc)
+		loc = strings.ToLower(loc[:2])
 		locale = Locale(loc)
 	}
 
