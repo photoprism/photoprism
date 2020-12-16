@@ -9,16 +9,18 @@ import (
 type Locale string
 
 const (
-	German     Locale = "de"
-	English    Locale = "en"
-	Spanish    Locale = "es"
-	French     Locale = "fr"
-	Dutch      Locale = "nl"
-	Polish     Locale = "pl"
-	Portuguese Locale = "pt"
-	Russian    Locale = "ru"
-	Chinese    Locale = "zh"
-	Default           = English
+	German              Locale = "de"
+	English             Locale = "en"
+	Spanish             Locale = "es"
+	French              Locale = "fr"
+	Dutch               Locale = "nl"
+	Polish              Locale = "pl"
+	Portuguese          Locale = "pt"
+	BrazilianPortuguese Locale = "pt_BR"
+	Russian             Locale = "ru"
+	ChineseSimplified   Locale = "zh"
+	ChineseTraditional  Locale = "zh_TW"
+	Default                    = English
 )
 
 var localeDir = "../../assets/locales"
@@ -29,11 +31,15 @@ func SetDir(dir string) {
 }
 
 func SetLocale(loc string) {
-	if len(loc) < 2 {
-		locale = Default
-	} else {
+	switch len(loc) {
+	case 2:
 		loc = strings.ToLower(loc[:2])
 		locale = Locale(loc)
+	case 5:
+		loc = strings.ToLower(loc[:2]) + "_" + strings.ToUpper(loc[3:5])
+		locale = Locale(loc)
+	default:
+		locale = Default
 	}
 
 	gotext.Configure(localeDir, string(locale), "default")

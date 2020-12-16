@@ -2,8 +2,9 @@ package api
 
 import (
 	"fmt"
-	"github.com/photoprism/photoprism/internal/entity"
 	"net/http"
+
+	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/photoprism/photoprism/internal/service"
 
