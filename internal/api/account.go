@@ -170,7 +170,7 @@ func ShareWithAccount(router *gin.RouterGroup) {
 		}
 
 		for _, file := range files {
-			dstFileName := path.Join(dst, file.ShareFileName())
+			dstFileName := path.Join(dst, file.ShareBase())
 			fileShare := entity.NewFileShare(file.ID, m.ID, dstFileName)
 			entity.FirstOrCreateFileShare(fileShare)
 		}

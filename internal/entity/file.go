@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -12,6 +13,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/ulule/deepcopier"
+)
+
+type DownloadName string
+
+const (
+	DownloadNameFile     DownloadName = "file"
+	DownloadNameOriginal DownloadName = "original"
+	DownloadNameShare    DownloadName = "share"
+	DownloadNameDefault               = DownloadNameFile
 )
 
 type Files []File
@@ -98,8 +108,26 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("FileUID", rnd.PPID('f'))
 }
 
-// ShareFileName returns a meaningful file name useful for sharing.
-func (m *File) ShareFileName() string {
+// Base returns the file name without path.
+func (m *File) Base() string {
+	if m.FileName == "" {
+		return m.ShareBase()
+	}
+
+	return filepath.Base(m.FileName)
+}
+
+// OriginalBase returns the original file name without path.
+func (m *File) OriginalBase() string {
+	if m.OriginalName == "" {
+		return m.Base()
+	}
+
+	return filepath.Base(m.OriginalName)
+}
+
+// ShareBase returns a meaningful file name useful for sharing.
+func (m *File) ShareBase() string {
 	photo := m.RelatedPhoto()
 
 	if photo == nil {

@@ -38,3 +38,7 @@ func SetLocale(loc string) {
 
 	gotext.Configure(localeDir, string(locale), "default")
 }
+
+func (l Locale) Locale() string {
+	return string(l)
+}

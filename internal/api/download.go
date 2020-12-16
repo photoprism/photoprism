@@ -2,7 +2,10 @@ package api
 
 import (
 	"fmt"
+	"github.com/photoprism/photoprism/internal/entity"
 	"net/http"
+
+	"github.com/photoprism/photoprism/internal/service"
 
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
@@ -48,9 +51,31 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		downloadFileName := f.ShareFileName()
+		name := entity.DownloadNameFile
 
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
+		switch c.Query("name") {
+		case "file":
+			name = entity.DownloadNameFile
+		case "share":
+			name = entity.DownloadNameShare
+		case "original":
+			name = entity.DownloadNameOriginal
+		default:
+			name = service.Config().Settings().Download.Name
+		}
+
+		var downloadName string
+
+		switch name {
+		case entity.DownloadNameFile:
+			downloadName = f.Base()
+		case entity.DownloadNameOriginal:
+			downloadName = f.OriginalBase()
+		default:
+			downloadName = f.ShareBase()
+		}
+
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadName))
 
 		c.File(fileName)
 	})

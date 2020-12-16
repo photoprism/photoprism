@@ -36,3 +36,5 @@ stack:
   name: false
 share:
   title: ""
+download:
+  name: file
