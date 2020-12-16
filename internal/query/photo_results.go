@@ -69,6 +69,7 @@ type PhotoResult struct {
 	FileHash         string        `json:"Hash"`
 	FileWidth        int           `json:"Width"`
 	FileHeight       int           `json:"Height"`
+	FilePortrait     bool          `json:"Portrait"`
 	FilePrimary      bool          `json:"-"`
 	FileMissing      bool          `json:"-"`
 	FileVideo        bool          `json:"-"`

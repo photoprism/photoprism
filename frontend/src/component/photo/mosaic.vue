@@ -24,7 +24,7 @@
           v-for="(photo, index) in photos"
           :key="index"
           :data-uid="photo.UID"
-          v-bind:class="{ selected: $clipboard.has(photo) }"
+          v-bind:class="{ selected: $clipboard.has(photo), portrait: photo.Portrait }"
           class="p-photo"
           xs4 sm3 md2 lg1 d-flex
       >
@@ -55,7 +55,7 @@
                   align-center
                   justify-center
                   ma-0
-                  class="p-photo-live"
+                  class="live-player"
                   style="overflow: hidden;"
                   v-if="photo.Type === 'live'"
                   v-show="hover"

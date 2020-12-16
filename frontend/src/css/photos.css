@@ -101,11 +101,16 @@
     text-align: left;
 }
 
-#photoprism .p-photo video {
-    width: 100% !important;
-    height: auto !important;
+#photoprism .live-player video {
+    width: auto;
+    height: 100%;
     position: absolute;
     overflow: hidden;
+}
+
+#photoprism .portrait .live-player video {
+    width: 100%;
+    height: auto;
 }
 
 #photoprism table.photo-files tbody tr td:first-child {
