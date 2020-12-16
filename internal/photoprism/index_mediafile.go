@@ -631,12 +631,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoExposure = m.Exposure()
 		}
 
-		if photo.TakenSrc == entity.SrcAuto {
+		if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName {
 			takenUtc, takenSrc := m.TakenAt()
 			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
 		}
 
 		var locLabels classify.Labels
+
 		locKeywords, locLabels = photo.UpdateLocation()
 		labels = append(labels, locLabels...)
 	}
