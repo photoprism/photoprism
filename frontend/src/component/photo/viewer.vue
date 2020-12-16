@@ -104,6 +104,8 @@ export default {
   created() {
     this.subscriptions['viewer.change'] = Event.subscribe('viewer.change', this.onChange);
     this.subscriptions['viewer.pause'] = Event.subscribe('viewer.pause', this.onPause);
+    this.subscriptions['viewer.show'] = Event.subscribe('viewer.show', this.onShow);
+    this.subscriptions['viewer.hide'] = Event.subscribe('viewer.hide', this.onHide);
   },
   destroyed() {
     this.onPause();
@@ -113,6 +115,12 @@ export default {
     }
   },
   methods: {
+    onShow() {
+      document.body.classList.add("viewer");
+    },
+    onHide() {
+      document.body.classList.remove("viewer");
+    },
     onChange(ev, data) {
       const psp = this.$viewer.gallery;
 
