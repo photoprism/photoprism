@@ -50,6 +50,14 @@ export class Thumb extends Model {
         };
     }
 
+    getId() {
+        return this.uid;
+    }
+
+    hasId() {
+        return !!this.getId();
+    }
+
     toggleLike() {
         this.favorite = !this.favorite;
 

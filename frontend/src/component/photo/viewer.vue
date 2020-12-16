@@ -27,17 +27,25 @@
             <v-icon size="16" color="white">edit</v-icon>
           </button>
 
+          <button class="pswp__button action-select" style="background: none;"
+                  @click.exact="onSelect" :title="$gettext('Select')">
+            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">check_circle</v-icon>
+            <v-icon v-else size="16" color="white">radio_button_off</v-icon>
+          </button>
+
           <button class="pswp__button action-like hidden-shared-only" style="background: none;"
                   @click.exact="onLike" :title="$gettext('Like')">
             <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
-          <button class="pswp__button pswp__button--fs action-toggle-fullscreen" :title="$gettext('Fullscreen')"></button>
+          <button class="pswp__button pswp__button--fs action-toggle-fullscreen"
+                  :title="$gettext('Fullscreen')"></button>
 
           <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
 
-          <button class="pswp__button" style="background: none;" @click.exact="onSlideshow" :title="$gettext('Start/Stop Slideshow')">
+          <button class="pswp__button" style="background: none;" @click.exact="onSlideshow"
+                  :title="$gettext('Start/Stop Slideshow')">
             <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
             <v-icon v-show="interval" size="16" color="white">pause</v-icon>
           </button>
@@ -71,126 +79,130 @@
 </template>
 
 <script>
-    import 'photoswipe/dist/photoswipe.css'
-    import 'photoswipe/dist/default-skin/default-skin.css'
-    import Event from "pubsub-js";
-    import Thumb from "model/thumb";
-    import Photo from "model/photo";
-    import Notify from "common/notify";
+import 'photoswipe/dist/photoswipe.css'
+import 'photoswipe/dist/default-skin/default-skin.css'
+import Event from "pubsub-js";
+import Thumb from "model/thumb";
+import Photo from "model/photo";
+import Notify from "common/notify";
 
-    export default {
-        name: "p-photo-viewer",
-        data() {
-            return {
-                config: this.$config.values,
-                item: new Thumb(),
-                subscriptions: [],
-                interval: false,
-                slideshow: {
-                    active: false,
-                    next: 0,
-                },
-            };
-        },
-        created() {
-            this.subscriptions['viewer.change'] = Event.subscribe('viewer.change', this.onChange);
-            this.subscriptions['viewer.pause'] = Event.subscribe('viewer.pause', this.onPause);
-        },
-        destroyed() {
-            this.onPause();
+export default {
+  name: "p-photo-viewer",
+  data() {
+    return {
+      selection: this.$clipboard.selection,
+      config: this.$config.values,
+      item: new Thumb(),
+      subscriptions: [],
+      interval: false,
+      slideshow: {
+        active: false,
+        next: 0,
+      },
+    };
+  },
+  created() {
+    this.subscriptions['viewer.change'] = Event.subscribe('viewer.change', this.onChange);
+    this.subscriptions['viewer.pause'] = Event.subscribe('viewer.pause', this.onPause);
+  },
+  destroyed() {
+    this.onPause();
 
-            for (let i = 0; i < this.subscriptions.length; i++) {
-                Event.unsubscribe(this.subscriptions[i]);
-            }
-        },
-        methods: {
-            onChange(ev, data) {
-                const psp = this.$viewer.gallery;
-
-                if(psp && this.slideshow.next !== psp.getCurrentIndex()) {
-                    this.onPause();
-                }
-
-                this.item = data.item;
-            },
-            onLike() {
-                this.item.toggleLike();
-            },
-            onPlay() {
-                if (this.item && this.item.playable) {
-                    let photo = new Photo();
-                    photo.find(this.item.uid).then((p) => {
-                        this.$modal.show('video', {video: p, album: null});
-                    });
-                }
-            },
-            onPause() {
-                this.slideshow.active = false;
-
-                if (this.interval) {
-                    clearInterval(this.interval);
-                    this.interval = false;
-                }
-            },
-            onSlideshow() {
-                if (this.interval) {
-                    this.onPause();
-                    return;
-                }
-
-                this.slideshow.active = true;
-
-                const self = this;
-                const psp = this.$viewer.gallery;
-
-                self.interval = setInterval(() => {
-                    if (psp && typeof psp.next === "function") {
-                        psp.next();
-                        this.slideshow.next = psp.getCurrentIndex();
-                    } else {
-                        this.onPause();
-                    }
-                }, 5000);
-            },
-            onDownload() {
-                this.onPause();
-
-                if (!this.item || !this.item.download_url) {
-                    console.warn("photo viewer: no download url");
-                    return;
-                }
-
-                Notify.success(this.$gettext("Downloading…"));
-                let photo = new Photo();
-                photo.find(this.item.uid).then((p) => {
-                    p.downloadAll();
-                });
-            },
-            onEdit() {
-                this.onPause();
-
-                const g = this.$viewer.gallery; // Gallery
-                let index = 0;
-
-                // remove duplicates
-                let filtered = g.items.filter(function (p, i, s) {
-                    return !(i > 0 && p.uid === s[i - 1].uid);
-                });
-
-                let selection = filtered.map((p, i) => {
-                    if (g.currItem.uid === p.uid) {
-                        index = i;
-                    }
-
-                    return p.uid
-                });
-
-                let album = null;
-
-                g.close(); // Close Gallery
-
-                Event.publish("dialog.edit", {selection, album, index}); // Open Edit Dialog
-            }
-        }
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
     }
+  },
+  methods: {
+    onChange(ev, data) {
+      const psp = this.$viewer.gallery;
+
+      if (psp && this.slideshow.next !== psp.getCurrentIndex()) {
+        this.onPause();
+      }
+
+      this.item = data.item;
+    },
+    onLike() {
+      this.item.toggleLike();
+    },
+    onSelect() {
+      this.$clipboard.toggle(this.item);
+    },
+    onPlay() {
+      if (this.item && this.item.playable) {
+        let photo = new Photo();
+        photo.find(this.item.uid).then((p) => {
+          this.$modal.show('video', {video: p, album: null});
+        });
+      }
+    },
+    onPause() {
+      this.slideshow.active = false;
+
+      if (this.interval) {
+        clearInterval(this.interval);
+        this.interval = false;
+      }
+    },
+    onSlideshow() {
+      if (this.interval) {
+        this.onPause();
+        return;
+      }
+
+      this.slideshow.active = true;
+
+      const self = this;
+      const psp = this.$viewer.gallery;
+
+      self.interval = setInterval(() => {
+        if (psp && typeof psp.next === "function") {
+          psp.next();
+          this.slideshow.next = psp.getCurrentIndex();
+        } else {
+          this.onPause();
+        }
+      }, 5000);
+    },
+    onDownload() {
+      this.onPause();
+
+      if (!this.item || !this.item.download_url) {
+        console.warn("photo viewer: no download url");
+        return;
+      }
+
+      Notify.success(this.$gettext("Downloading…"));
+      let photo = new Photo();
+      photo.find(this.item.uid).then((p) => {
+        p.downloadAll();
+      });
+    },
+    onEdit() {
+      this.onPause();
+
+      const g = this.$viewer.gallery; // Gallery
+      let index = 0;
+
+      // remove duplicates
+      let filtered = g.items.filter(function (p, i, s) {
+        return !(i > 0 && p.uid === s[i - 1].uid);
+      });
+
+      let selection = filtered.map((p, i) => {
+        if (g.currItem.uid === p.uid) {
+          index = i;
+        }
+
+        return p.uid
+      });
+
+      let album = null;
+
+      g.close(); // Close Gallery
+
+      Event.publish("dialog.edit", {selection, album, index}); // Open Edit Dialog
+    }
+  }
+}
 </script>

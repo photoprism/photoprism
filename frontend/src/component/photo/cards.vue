@@ -178,7 +178,7 @@
                 <v-flex xs12>
                   <div class="text-xs-center">
                     <v-btn color="secondary-dark" small depressed dark @click.stop="photo.archive()"
-                    class="action-archive text-xs-center" :title="labels.archive">
+                           class="action-archive text-xs-center" :title="labels.archive">
                       <v-icon dark>archive</v-icon>
                     </v-btn>
                     <v-btn color="secondary-dark" small depressed dark @click.stop="photo.approve()"
