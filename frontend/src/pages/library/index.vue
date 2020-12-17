@@ -11,18 +11,18 @@
         </p>
 
         <v-autocomplete
-                @change="onChange"
-                @focus="onFocus"
-                color="secondary-dark"
-                class="my-3 input-index-folder"
-                hide-details hide-no-data flat solo
-                v-model="settings.index.path"
-                browser-autocomplete="off"
-                :items="dirs"
-                :loading="loading"
-                :disabled="busy"
-                item-text="name"
-                item-value="path"
+            @change="onChange"
+            @focus="onFocus"
+            color="secondary-dark"
+            class="my-3 input-index-folder"
+            hide-details hide-no-data flat solo
+            v-model="settings.index.path"
+            browser-autocomplete="off"
+            :items="dirs"
+            :loading="loading"
+            :disabled="busy"
+            item-text="name"
+            item-value="path"
         >
         </v-autocomplete>
 
@@ -34,50 +34,51 @@
         <v-layout wrap align-top class="pb-3">
           <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
             <v-checkbox
-                    @change="onChange"
-                    :disabled="busy"
-                    class="ma-0 pa-0"
-                    v-model="settings.index.rescan"
-                    color="secondary-dark"
-                    :label="$gettext('Complete Rescan')"
-                    :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
-                    prepend-icon="cached"
-                    persistent-hint
+                @change="onChange"
+                :disabled="busy"
+                class="ma-0 pa-0"
+                v-model="settings.index.rescan"
+                color="secondary-dark"
+                :label="$gettext('Complete Rescan')"
+                :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
+                prepend-icon="cached"
+                persistent-hint
             >
             </v-checkbox>
           </v-flex>
         </v-layout>
 
         <v-btn
-                :disabled="!busy"
-                color="secondary-dark"
-                class="white--text ml-0 mt-2 action-cancel"
-                depressed
-                @click.stop="cancelIndexing()"
+            :disabled="!busy"
+            color="secondary-dark"
+            class="white--text ml-0 mt-2 action-cancel"
+            depressed
+            @click.stop="cancelIndexing()"
         >
           <translate>Cancel</translate>
         </v-btn>
 
         <v-btn
-                :disabled="busy"
-                color="secondary-dark"
-                class="white--text ml-0 mt-2 action-index"
-                depressed
-                @click.stop="startIndexing()"
+            :disabled="busy"
+            color="secondary-dark"
+            class="white--text ml-0 mt-2 action-index"
+            depressed
+            @click.stop="startIndexing()"
         >
           <translate>Start</translate>
           <v-icon right dark>update</v-icon>
         </v-btn>
 
         <v-alert
-                :value="true"
-                color="error"
-                icon="priority_high"
-                class="mt-3"
-                outline
-                v-if="config.count.hidden > 1"
+            :value="true"
+            color="error"
+            icon="priority_high"
+            class="mt-3"
+            outline
+            v-if="config.count.hidden > 1"
         >
-          <translate :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>
+          <translate
+              :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>
           <translate>Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.</translate>
         </v-alert>
       </v-container>
@@ -86,172 +87,172 @@
 </template>
 
 <script>
-    import Api from "common/api";
-    import Axios from "axios";
-    import Notify from "common/notify";
-    import Event from "pubsub-js";
-    import Settings from "model/settings";
-    import Util from "common/util";
-    import {Folder, RootOriginals} from "model/folder";
+import Api from "common/api";
+import Axios from "axios";
+import Notify from "common/notify";
+import Event from "pubsub-js";
+import Settings from "model/settings";
+import Util from "common/util";
+import {Folder, RootOriginals} from "model/folder";
 
-    export default {
-        name: 'p-tab-index',
-        data() {
-            const root = {"path": "/", "name": this.$gettext("All originals")}
-            const settings = new Settings(this.$config.settings());
+export default {
+  name: 'p-tab-index',
+  data() {
+    const root = {"path": "/", "name": this.$gettext("All originals")}
+    const settings = new Settings(this.$config.settings());
 
-            return {
-                settings: settings,
-                readonly: this.$config.get("readonly"),
-                config: this.$config.values,
-                started: false,
-                busy: false,
-                loading: false,
-                completed: 0,
-                subscriptionId: "",
-                action: "",
-                fileName: "",
-                source: null,
-                root: root,
-                dirs: [root, {path: settings.index.path, name: "/" + Util.truncate(settings.index.path, 100, "…")}],
-            }
-        },
-        methods: {
-            onChange() {
-                this.settings.save();
-            },
-            onFocus() {
-              if(this.dirs.length > 2 || this.loading) {
-                return;
-              }
+    return {
+      settings: settings,
+      readonly: this.$config.get("readonly"),
+      config: this.$config.values,
+      started: false,
+      busy: false,
+      loading: false,
+      completed: 0,
+      subscriptionId: "",
+      action: "",
+      fileName: "",
+      source: null,
+      root: root,
+      dirs: [root, {path: settings.index.path, name: "/" + Util.truncate(settings.index.path, 100, "…")}],
+    }
+  },
+  methods: {
+    onChange() {
+      this.settings.save();
+    },
+    onFocus() {
+      if (this.dirs.length > 2 || this.loading) {
+        return;
+      }
 
-              this.loading = true;
+      this.loading = true;
 
-              Folder.findAll(RootOriginals).then((r) => {
-                const folders = r.models ? r.models : [];
-                const currentPath = this.settings.index.path;
-                let found = currentPath === this.root.path;
+      Folder.findAll(RootOriginals).then((r) => {
+        const folders = r.models ? r.models : [];
+        const currentPath = this.settings.index.path;
+        let found = currentPath === this.root.path;
 
-                this.dirs = [this.root];
+        this.dirs = [this.root];
 
-                for (let i = 0; i < folders.length; i++) {
-                  if (currentPath === folders[i].Path) {
-                    found = true;
-                  }
+        for (let i = 0; i < folders.length; i++) {
+          if (currentPath === folders[i].Path) {
+            found = true;
+          }
 
-                  this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
-                }
+          this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
+        }
 
-                if (!found) {
-                  this.settings.index.path = this.root.path;
-                }
-              }).finally(() => this.loading = false);
-            },
-            submit() {
-                // DO NOTHING
-            },
-            cancelIndexing() {
-                Api.delete('index');
-            },
-            startIndexing() {
-                this.source = Axios.CancelToken.source();
-                this.started = Date.now();
-                this.busy = true;
-                this.completed = 0;
-                this.fileName = '';
+        if (!found) {
+          this.settings.index.path = this.root.path;
+        }
+      }).finally(() => this.loading = false);
+    },
+    submit() {
+      // DO NOTHING
+    },
+    cancelIndexing() {
+      Api.delete('index');
+    },
+    startIndexing() {
+      this.source = Axios.CancelToken.source();
+      this.started = Date.now();
+      this.busy = true;
+      this.completed = 0;
+      this.fileName = '';
 
-                const ctx = this;
-                Notify.blockUI();
+      const ctx = this;
+      Notify.blockUI();
 
-                Api.post('index', this.settings.index, {cancelToken: this.source.token}).then(function () {
-                    Notify.unblockUI();
-                    ctx.busy = false;
-                    ctx.completed = 100;
-                    ctx.fileName = '';
-                }).catch(function (e) {
-                    Notify.unblockUI();
+      Api.post('index', this.settings.index, {cancelToken: this.source.token}).then(function () {
+        Notify.unblockUI();
+        ctx.busy = false;
+        ctx.completed = 100;
+        ctx.fileName = '';
+      }).catch(function (e) {
+        Notify.unblockUI();
 
-                    if (Axios.isCancel(e)) {
-                        // run in background
-                        return
-                    }
+        if (Axios.isCancel(e)) {
+          // run in background
+          return
+        }
 
-                    Notify.error(ctx.$gettext("Indexing failed"));
+        Notify.error(ctx.$gettext("Indexing failed"));
 
-                    ctx.busy = false;
-                    ctx.completed = 0;
-                    ctx.fileName = '';
-                });
-            },
-            handleEvent(ev, data) {
-                if (this.source) {
-                    this.source.cancel('run in background');
-                    this.source = null;
-                    Notify.unblockUI();
-                }
+        ctx.busy = false;
+        ctx.completed = 0;
+        ctx.fileName = '';
+      });
+    },
+    handleEvent(ev, data) {
+      if (this.source) {
+        this.source.cancel('run in background');
+        this.source = null;
+        Notify.unblockUI();
+      }
 
-                const type = ev.split('.')[1];
+      const type = ev.split('.')[1];
 
-                switch (type) {
-                    case "folder":
-                        this.action = this.$gettext("Indexing");
-                        this.busy = true;
-                        this.completed = 0;
-                        this.fileName = data.filePath;
+      switch (type) {
+        case "folder":
+          this.action = this.$gettext("Indexing");
+          this.busy = true;
+          this.completed = 0;
+          this.fileName = data.filePath;
 
-                        break;
-                    case "indexing":
-                        this.action = this.$gettext("Indexing");
-                        this.busy = true;
-                        this.completed = 0;
-                        this.fileName = data.fileName;
+          break;
+        case "indexing":
+          this.action = this.$gettext("Indexing");
+          this.busy = true;
+          this.completed = 0;
+          this.fileName = data.fileName;
 
-                        break;
-                    case "updating":
-                        if(data.step === "stacks") {
-                          this.action = this.$gettext("Updating stacks");
-                        } else if (data.step === "moments") {
-                          this.action = this.$gettext("Updating moments");
-                        } else {
-                          this.action = this.$gettext("Updating index");
-                        }
+          break;
+        case "updating":
+          if (data.step === "stacks") {
+            this.action = this.$gettext("Updating stacks");
+          } else if (data.step === "moments") {
+            this.action = this.$gettext("Updating moments");
+          } else {
+            this.action = this.$gettext("Updating index");
+          }
 
-                        this.busy = true;
-                        this.completed = 0;
-                        this.fileName = "";
+          this.busy = true;
+          this.completed = 0;
+          this.fileName = "";
 
-                        break;
-                    case "converting":
-                        this.action = this.$gettext("Converting");
-                        this.busy = true;
-                        this.completed = 0;
-                        this.fileName = data.fileName;
+          break;
+        case "converting":
+          this.action = this.$gettext("Converting");
+          this.busy = true;
+          this.completed = 0;
+          this.fileName = data.fileName;
 
-                        break;
-                    case "thumbnails":
-                        this.action = this.$gettext("Creating thumbnails for");
-                        this.busy = true;
-                        this.completed = 0;
-                        this.fileName = data.fileName;
+          break;
+        case "thumbnails":
+          this.action = this.$gettext("Creating thumbnails for");
+          this.busy = true;
+          this.completed = 0;
+          this.fileName = data.fileName;
 
-                        break;
-                    case 'completed':
-                        this.action = "";
-                        this.busy = false;
-                        this.completed = 100;
-                        this.fileName = '';
+          break;
+        case 'completed':
+          this.action = "";
+          this.busy = false;
+          this.completed = 100;
+          this.fileName = '';
 
-                        break;
-                    default:
-                        console.log(data)
-                }
-            },
-        },
-        created() {
-            this.subscriptionId = Event.subscribe('index', this.handleEvent);
-        },
-        destroyed() {
-            Event.unsubscribe(this.subscriptionId);
-        },
-    };
+          break;
+        default:
+          console.log(data)
+      }
+    },
+  },
+  created() {
+    this.subscriptionId = Event.subscribe('index', this.handleEvent);
+  },
+  destroyed() {
+    Event.unsubscribe(this.subscriptionId);
+  },
+};
 </script>
