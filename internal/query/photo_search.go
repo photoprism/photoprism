@@ -280,7 +280,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Mono {
-		s = s.Where("files.file_chroma = 0")
+		s = s.Where("files.file_chroma < 2 OR file_colors = '111111111'")
 	} else if f.Chroma > 9 {
 		s = s.Where("files.file_chroma > ?", f.Chroma)
 	} else if f.Chroma > 0 {
