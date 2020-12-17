@@ -36,13 +36,13 @@ acceptance-start:
 acceptance-restart:
 	go run cmd/photoprism/photoprism.go stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
-	cp -f storage/acceptance/settings/settingsBackup.yml storage/acceptance/settings/settings.yml
+	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
 	rm -rf storage/acceptance/originals/2010
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
 	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --sidecar-json=false --sidecar-yaml=false start -d
 acceptance-restore-db:
-	cp -f storage/acceptance/settings/settingsBackup.yml storage/acceptance/settings/settings.yml
+	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	rm -rf storage/acceptance/originals/2010
 	rm -rf storage/acceptance/originals/2013
