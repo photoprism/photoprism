@@ -232,6 +232,12 @@ func (m *Moments) Start() (err error) {
 		log.Errorf("moments: %s (update album dates)", err.Error())
 	}
 
+	if count, err := BackupAlbums(false); err != nil {
+		log.Errorf("moments: %s (backup albums)", err.Error())
+	} else if count > 0 {
+		log.Debugf("moments: %d albums saved as yaml files", count)
+	}
+
 	return nil
 }
 

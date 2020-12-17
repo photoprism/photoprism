@@ -4,6 +4,8 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 )
 
+type PhotoLabels []PhotoLabel
+
 // PhotoLabel represents the many-to-many relation between Photo and label.
 // Labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {

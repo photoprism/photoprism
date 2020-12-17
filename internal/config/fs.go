@@ -95,16 +95,22 @@ func (c *Config) CreateDirectories() error {
 		return createError(c.ThumbPath(), err)
 	}
 
-	if c.SettingsPath() == "" {
-		return notFoundError("settings")
-	} else if err := os.MkdirAll(c.SettingsPath(), os.ModePerm); err != nil {
-		return createError(c.SettingsPath(), err)
+	if c.ConfigPath() == "" {
+		return notFoundError("config")
+	} else if err := os.MkdirAll(c.ConfigPath(), os.ModePerm); err != nil {
+		return createError(c.ConfigPath(), err)
 	}
 
 	if c.TempPath() == "" {
 		return notFoundError("temp")
 	} else if err := os.MkdirAll(c.TempPath(), os.ModePerm); err != nil {
 		return createError(c.TempPath(), err)
+	}
+
+	if c.AlbumsPath() == "" {
+		return notFoundError("albums")
+	} else if err := os.MkdirAll(c.AlbumsPath(), os.ModePerm); err != nil {
+		return createError(c.AlbumsPath(), err)
 	}
 
 	if c.TensorFlowModelPath() == "" {
@@ -137,29 +143,33 @@ func (c *Config) CreateDirectories() error {
 // ConfigFile returns the config file name.
 func (c *Config) ConfigFile() string {
 	if c.params.ConfigFile == "" || !fs.FileExists(c.params.ConfigFile) {
-		return filepath.Join(c.SettingsPath(), "photoprism.yml")
+		return filepath.Join(c.ConfigPath(), "photoprism.yml")
 	}
 
 	return c.params.ConfigFile
 }
 
+// ConfigPath returns the config path.
+func (c *Config) ConfigPath() string {
+	if c.params.ConfigPath == "" {
+		if fs.PathExists(filepath.Join(c.StoragePath(), "settings")) {
+			return filepath.Join(c.StoragePath(), "settings")
+		}
+
+		return filepath.Join(c.StoragePath(), "config")
+	}
+
+	return fs.Abs(c.params.ConfigPath)
+}
+
 // HubConfigFile returns the backend api config file name.
 func (c *Config) HubConfigFile() string {
-	return filepath.Join(c.SettingsPath(), "hub.yml")
+	return filepath.Join(c.ConfigPath(), "hub.yml")
 }
 
 // SettingsFile returns the user settings file name.
 func (c *Config) SettingsFile() string {
-	return filepath.Join(c.SettingsPath(), "settings.yml")
-}
-
-// SettingsPath returns the config path.
-func (c *Config) SettingsPath() string {
-	if c.params.SettingsPath == "" {
-		return filepath.Join(c.StoragePath(), "settings")
-	}
-
-	return fs.Abs(c.params.SettingsPath)
+	return filepath.Join(c.ConfigPath(), "settings.yml")
 }
 
 // PIDFilename returns the filename for storing the server process id (pid).
@@ -354,4 +364,9 @@ func (c *Config) MysqldumpBin() string {
 // SqliteBin returns the sqlite executable file name.
 func (c *Config) SqliteBin() string {
 	return findExecutable("", "sqlite3")
+}
+
+// AlbumsPath returns the storage path for album YAML files.
+func (c *Config) AlbumsPath() string {
+	return filepath.Join(c.StoragePath(), "albums")
 }

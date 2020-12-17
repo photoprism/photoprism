@@ -33,21 +33,22 @@ type Params struct {
 	Name               string
 	Version            string
 	Copyright          string
+	Debug              bool   `yaml:"debug" flag:"debug"`
+	Public             bool   `yaml:"public" flag:"public"`
+	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
+	Experimental       bool   `yaml:"experimental" flag:"experimental"`
+	ConfigPath         string `yaml:"config-path" flag:"config-path"`
 	ConfigFile         string
+	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
 	SiteUrl            string `yaml:"site-url" flag:"site-url"`
 	SitePreview        string `yaml:"site-preview" flag:"site-preview"`
 	SiteTitle          string `yaml:"site-title" flag:"site-title"`
 	SiteCaption        string `yaml:"site-caption" flag:"site-caption"`
 	SiteDescription    string `yaml:"site-description" flag:"site-description"`
 	SiteAuthor         string `yaml:"site-author" flag:"site-author"`
-	Public             bool   `yaml:"public" flag:"public"`
-	Debug              bool   `yaml:"debug" flag:"debug"`
-	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
-	Experimental       bool   `yaml:"experimental" flag:"experimental"`
-	TensorFlowOff      bool   `yaml:"tf-off" flag:"tf-off"`
+	TensorFlowOff      bool   `yaml:"tensorflow-off" flag:"tensorflow-off"`
 	Workers            int    `yaml:"workers" flag:"workers"`
 	WakeupInterval     int    `yaml:"wakeup-interval" flag:"wakeup-interval"`
-	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
 	LogLevel           string `yaml:"log-level" flag:"log-level"`
 	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
 	StoragePath        string `yaml:"storage-path" flag:"storage-path"`
@@ -55,7 +56,6 @@ type Params struct {
 	ImportPath         string `yaml:"import-path" flag:"import-path"`
 	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
 	OriginalsLimit     int64  `yaml:"originals-limit" flag:"originals-limit"`
-	SettingsPath       string `yaml:"settings-path" flag:"settings-path"`
 	SettingsHidden     bool   `yaml:"settings-hidden" flag:"settings-hidden"`
 	TempPath           string `yaml:"temp-path" flag:"temp-path"`
 	CachePath          string `yaml:"cache-path" flag:"cache-path"`
@@ -124,7 +124,7 @@ func NewParams(ctx *cli.Context) *Params {
 
 // expandFilenames converts path in config to absolute path
 func (c *Params) expandFilenames() {
-	c.SettingsPath = fs.Abs(c.SettingsPath)
+	c.ConfigPath = fs.Abs(c.ConfigPath)
 	c.StoragePath = fs.Abs(c.StoragePath)
 	c.BackupPath = fs.Abs(c.BackupPath)
 	c.AssetsPath = fs.Abs(c.AssetsPath)

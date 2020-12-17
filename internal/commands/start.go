@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/photoprism"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/service"
@@ -106,6 +108,12 @@ func startAction(ctx *cli.Context) error {
 
 	// start web server
 	go server.Start(cctx, conf)
+
+	if count, err := photoprism.RestoreAlbums(false); err != nil {
+		log.Errorf("restore: %s", err)
+	} else if count > 0 {
+		log.Infof("%d albums restored", count)
+	}
 
 	// start share & sync workers
 	workers.Start(conf)

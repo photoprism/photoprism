@@ -65,7 +65,7 @@ func NewTestParams() *Params {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		SettingsPath:   testDataPath + "/settings",
+		ConfigPath:     testDataPath + "/settings",
 		SidecarPath:    testDataPath + "/sidecar",
 		DatabaseDriver: dbDriver,
 		DatabaseDsn:    dbDsn,
@@ -120,11 +120,11 @@ func NewTestConfig() *Config {
 
 	s := NewSettings()
 
-	if err := os.MkdirAll(c.SettingsPath(), os.ModePerm); err != nil {
+	if err := os.MkdirAll(c.ConfigPath(), os.ModePerm); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 
-	if err := s.Save(filepath.Join(c.SettingsPath(), "settings.yml")); err != nil {
+	if err := s.Save(filepath.Join(c.ConfigPath(), "settings.yml")); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 

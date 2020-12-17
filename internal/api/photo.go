@@ -20,17 +20,19 @@ import (
 
 // SavePhotoAsYaml saves photo data as YAML file.
 func SavePhotoAsYaml(p entity.Photo) {
-	conf := service.Config()
+	c := service.Config()
 
 	// Write YAML sidecar file (optional).
-	if conf.SidecarYaml() {
-		yamlFile := p.YamlFileName(conf.OriginalsPath(), conf.SidecarPath())
+	if !c.SidecarYaml() {
+		return
+	}
 
-		if err := p.SaveAsYaml(yamlFile); err != nil {
-			log.Errorf("photo: %s (update yaml)", err)
-		} else {
-			log.Debugf("photo: updated yaml file %s", txt.Quote(filepath.Base(yamlFile)))
-		}
+	fileName := p.YamlFileName(c.OriginalsPath(), c.SidecarPath())
+
+	if err := p.SaveAsYaml(fileName); err != nil {
+		log.Errorf("photo: %s (update yaml)", err)
+	} else {
+		log.Debugf("photo: updated yaml file %s", txt.Quote(filepath.Base(fileName)))
 	}
 }
 
