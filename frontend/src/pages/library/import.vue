@@ -11,6 +11,7 @@
 
         <v-autocomplete
                 @change="onChange"
+                @focus="onFocus"
                 color="secondary-dark"
                 class="my-3 input-import-folder"
                 hide-details hide-no-data flat solo
@@ -18,7 +19,7 @@
                 browser-autocomplete="off"
                 :items="dirs"
                 :loading="loading"
-                :disabled="busy || loading"
+                :disabled="busy"
                 item-text="name"
                 item-value="path"
         >
@@ -103,9 +104,10 @@
         name: 'p-tab-import',
         data() {
             const root = {"path": "/", "name": this.$gettext("All files from import folder")}
+            const settings = new Settings(this.$config.settings());
 
             return {
-                settings: new Settings(this.$config.settings()),
+                settings: settings,
                 started: false,
                 busy: false,
                 loading: false,
@@ -114,12 +116,39 @@
                 fileName: '',
                 source: null,
                 root: root,
-                dirs: [root],
+                dirs: [root, {path: settings.import.path, name: "/" + Util.truncate(settings.import.path, 100, "…")}],
             }
         },
         methods: {
             onChange() {
                 this.settings.save();
+            },
+            onFocus() {
+              if(this.dirs.length > 2 || this.loading) {
+                return;
+              }
+
+              this.loading = true;
+
+              Folder.findAllUncached(RootImport).then((r) => {
+                const folders = r.models ? r.models : [];
+                const currentPath = this.settings.import.path;
+                let found = currentPath === this.root.path;
+
+                this.dirs = [this.root];
+
+                for (let i = 0; i < folders.length; i++) {
+                  if (currentPath === folders[i].Path) {
+                    found = true;
+                  }
+
+                  this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
+                }
+
+                if (!found) {
+                  this.settings.import.path = this.root.path;
+                }
+              }).finally(() => this.loading = false);
             },
             showUpload() {
                 Event.publish("dialog.upload");
@@ -187,27 +216,6 @@
         },
         created() {
             this.subscriptionId = Event.subscribe('import', this.handleEvent);
-            this.loading = true;
-
-            Folder.findAllUncached(RootImport).then((r) => {
-                const folders = r.models ? r.models : [];
-                const currentPath = this.settings.import.path;
-                let found = currentPath === this.root.path;
-
-                this.dirs = [this.root];
-
-                for (let i = 0; i < folders.length; i++) {
-                    if (currentPath === folders[i].Path) {
-                        found = true;
-                    }
-
-                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
-                }
-
-                if (!found) {
-                    this.settings.import.path = this.root.path;
-                }
-            }).finally(() => this.loading = false);
         },
         destroyed() {
             Event.unsubscribe(this.subscriptionId);

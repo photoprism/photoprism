@@ -12,6 +12,7 @@
 
         <v-autocomplete
                 @change="onChange"
+                @focus="onFocus"
                 color="secondary-dark"
                 class="my-3 input-index-folder"
                 hide-details hide-no-data flat solo
@@ -19,7 +20,7 @@
                 browser-autocomplete="off"
                 :items="dirs"
                 :loading="loading"
-                :disabled="busy || loading"
+                :disabled="busy"
                 item-text="name"
                 item-value="path"
         >
@@ -97,9 +98,10 @@
         name: 'p-tab-index',
         data() {
             const root = {"path": "/", "name": this.$gettext("All originals")}
+            const settings = new Settings(this.$config.settings());
 
             return {
-                settings: new Settings(this.$config.settings()),
+                settings: settings,
                 readonly: this.$config.get("readonly"),
                 config: this.$config.values,
                 started: false,
@@ -111,12 +113,39 @@
                 fileName: "",
                 source: null,
                 root: root,
-                dirs: [root],
+                dirs: [root, {path: settings.index.path, name: "/" + Util.truncate(settings.index.path, 100, "…")}],
             }
         },
         methods: {
             onChange() {
                 this.settings.save();
+            },
+            onFocus() {
+              if(this.dirs.length > 2 || this.loading) {
+                return;
+              }
+
+              this.loading = true;
+
+              Folder.findAll(RootOriginals).then((r) => {
+                const folders = r.models ? r.models : [];
+                const currentPath = this.settings.index.path;
+                let found = currentPath === this.root.path;
+
+                this.dirs = [this.root];
+
+                for (let i = 0; i < folders.length; i++) {
+                  if (currentPath === folders[i].Path) {
+                    found = true;
+                  }
+
+                  this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
+                }
+
+                if (!found) {
+                  this.settings.index.path = this.root.path;
+                }
+              }).finally(() => this.loading = false);
             },
             submit() {
                 // DO NOTHING
@@ -220,27 +249,6 @@
         },
         created() {
             this.subscriptionId = Event.subscribe('index', this.handleEvent);
-            this.loading = true;
-
-            Folder.findAll(RootOriginals).then((r) => {
-                const folders = r.models ? r.models : [];
-                const currentPath = this.settings.index.path;
-                let found = currentPath === this.root.path;
-
-                this.dirs = [this.root];
-
-                for (let i = 0; i < folders.length; i++) {
-                    if (currentPath === folders[i].Path) {
-                        found = true;
-                    }
-
-                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
-                }
-
-                if (!found) {
-                    this.settings.index.path = this.root.path;
-                }
-            }).finally(() => this.loading = false);
         },
         destroyed() {
             Event.unsubscribe(this.subscriptionId);
