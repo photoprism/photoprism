@@ -40,6 +40,7 @@ type PhotoResult struct {
 	PhotoExposure    string        `json:"Exposure"`
 	PhotoQuality     int           `json:"Quality"`
 	PhotoResolution  int           `json:"Resolution"`
+	PhotoColor       uint8         `json:"Color"`
 	PhotoScan        bool          `json:"Scan"`
 	PhotoPanorama    bool          `json:"Panorama"`
 	CameraID         uint          `json:"CameraID"` // Camera

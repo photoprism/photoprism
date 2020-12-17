@@ -43,7 +43,7 @@ export const FormatMp4 = "mp4";
 export const FormatAvc = "avc";
 export const FormatJpeg = "jpg";
 export const TypeImage = "image";
-export const TypeVideo= "video";
+export const TypeVideo = "video";
 export const TypeLive = "live";
 export const TypeRaw = "raw";
 export const YearUnknown = -1;
@@ -67,7 +67,7 @@ export class Photo extends RestModel {
             TakenSrc: "",
             TimeZone: "",
             Path: "",
-            Color: "",
+            Color: 0,
             Name: "",
             OriginalName: "",
             Title: "",

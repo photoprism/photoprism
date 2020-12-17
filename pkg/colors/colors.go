@@ -37,7 +37,7 @@ import (
 	"strings"
 )
 
-type Color uint16
+type Color uint8
 type Colors []Color
 
 type Chroma uint8
@@ -120,6 +120,10 @@ var Weights = map[Color]uint16{
 
 func (c Color) Name() string {
 	return Names[c]
+}
+
+func (c Color) Uint8() uint8 {
+	return uint8(c)
 }
 
 func (c Color) Hex() string {
