@@ -7,14 +7,17 @@
             <v-icon size="54" color="secondary-dark lighten-1">delete_outline</v-icon>
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
-            <div class="subheading pr-1"><translate key="Are you sure you want to delete these labels?">Are you sure you want to delete these labels?</translate></div>
+            <div class="subheading pr-1">
+              <translate key="Are you sure you want to delete these labels?">Are you sure you want to delete these labels?</translate>
+            </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
             <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
             <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
-                   class="action-confirm"><translate key="Delete">Delete</translate>
+                   class="action-confirm">
+              <translate key="Delete">Delete</translate>
             </v-btn>
           </v-flex>
         </v-layout>
@@ -23,21 +26,21 @@
   </v-dialog>
 </template>
 <script>
-    export default {
-        name: 'p-label-delete-dialog',
-        props: {
-            show: Boolean,
-        },
-        data() {
-            return {}
-        },
-        methods: {
-            cancel() {
-                this.$emit('cancel');
-            },
-            confirm() {
-                this.$emit('confirm');
-            },
-        }
-    }
+export default {
+  name: 'p-label-delete-dialog',
+  props: {
+    show: Boolean,
+  },
+  data() {
+    return {}
+  },
+  methods: {
+    cancel() {
+      this.$emit('cancel');
+    },
+    confirm() {
+      this.$emit('confirm');
+    },
+  }
+}
 </script>

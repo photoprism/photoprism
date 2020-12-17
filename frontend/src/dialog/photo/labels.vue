@@ -1,33 +1,33 @@
 <template>
   <div class="p-tab p-tab-photo-labels">
     <v-data-table
-            :headers="listColumns"
-            :items="model.Labels"
-            hide-actions
-            class="elevation-0 p-files p-files-list p-results"
-            disable-initial-sort
-            item-key="ID"
-            v-model="selected"
-            :no-data-text="$gettext('No labels found')"
+        :headers="listColumns"
+        :items="model.Labels"
+        hide-actions
+        class="elevation-0 p-files p-files-list p-results"
+        disable-initial-sort
+        item-key="ID"
+        v-model="selected"
+        :no-data-text="$gettext('No labels found')"
     >
       <template v-slot:items="props" class="p-file">
         <td>
           <v-edit-dialog
-                  :return-value.sync="props.item.Label.Name"
-                  lazy
-                  @save="renameLabel(props.item.Label)"
-                  class="p-inline-edit"
+              :return-value.sync="props.item.Label.Name"
+              lazy
+              @save="renameLabel(props.item.Label)"
+              class="p-inline-edit"
           >
             {{ props.item.Label.Name | capitalize }}
             <template v-slot:input>
               <v-text-field
-                      v-model="props.item.Label.Name"
-                      :rules="[nameRule]"
-                      :label="$gettext('Label Name')"
-                      color="secondary-dark"
-                      single-line
-                      autofocus
-                      class="input-rename"
+                  v-model="props.item.Label.Name"
+                  :rules="[nameRule]"
+                  :label="$gettext('Label Name')"
+                  color="secondary-dark"
+                  single-line
+                  autofocus
+                  class="input-rename"
               ></v-text-field>
             </template>
           </v-edit-dialog>
@@ -61,16 +61,16 @@
       <template v-slot:footer v-if="!disabled">
         <td>
           <v-text-field
-                  v-model="newLabel"
-                  :rules="[nameRule]"
-                  color="secondary-dark"
-                  browser-autocomplete="off"
-                  :label="$gettext('')"
-                  single-line
-                  flat solo hide-details
-                  autofocus
-                  @keyup.enter.native="addLabel"
-                  class="input-label"
+              v-model="newLabel"
+              :rules="[nameRule]"
+              color="secondary-dark"
+              browser-autocomplete="off"
+              :label="$gettext('')"
+              single-line
+              flat solo hide-details
+              autofocus
+              @keyup.enter.native="addLabel"
+              class="input-label"
           ></v-text-field>
         </td>
         <td class="text-xs-left">{{ sourceName('manual') }}</td>
@@ -88,83 +88,87 @@
 </template>
 
 <script>
-    import Label from "model/label";
+import Label from "model/label";
 
-    export default {
-        name: 'p-tab-photo-labels',
-        props: {
-            model: Object,
-            uid: String,
-        },
-        data() {
-            return {
-                disabled: !this.$config.feature("edit"),
-                config: this.$config.values,
-                readonly: this.$config.get("readonly"),
-                selected: [],
-                newLabel: "",
-                listColumns: [
-                    {text: this.$gettext('Label'), value: '', sortable: false, align: 'left'},
-                    {text: this.$gettext('Source'), value: 'LabelSrc', sortable: false, align: 'left'},
-                    {text: this.$gettext('Confidence'), value: 'Uncertainty', sortable: false, align: 'center'},
-                    {text: this.$gettext('Action'), value: '', sortable: false, align: 'center'},
-                ],
-                nameRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-            };
-        },
-        computed: {},
-        methods: {
-            refresh() {
-            },
-            sourceName(s) {
-                switch (s) {
-                    case "manual": return this.$gettext("manual");
-                    case "image": return this.$gettext("image");
-                    case "location": return this.$gettext("location");
-                    default: return s;
-                }
-            },
-            removeLabel(label) {
-                if (!label) {
-                    return
-                }
-
-                const name = label.Name;
-
-                this.model.removeLabel(label.ID).then((m) => {
-                    this.$notify.success("removed " + name);
-                });
-            },
-            addLabel() {
-                if (!this.newLabel) {
-                    return
-                }
-
-                this.model.addLabel(this.newLabel).then((m) => {
-                    this.$notify.success("added " + this.newLabel);
-
-                    this.newLabel = "";
-                });
-            },
-            activateLabel(label) {
-                if (!label) {
-                    return
-                }
-
-                this.model.activateLabel(label.ID);
-            },
-            renameLabel(label) {
-                if (!label) {
-                    return
-                }
-
-                this.model.renameLabel(label.ID, label.Name);
-            },
-            searchLabel(label) {
-                this.$router.push({name: 'photos', query: {q: 'label:' + label.Slug}}).catch(err => {
-                });
-                this.$emit('close');
-            },
-        },
+export default {
+  name: 'p-tab-photo-labels',
+  props: {
+    model: Object,
+    uid: String,
+  },
+  data() {
+    return {
+      disabled: !this.$config.feature("edit"),
+      config: this.$config.values,
+      readonly: this.$config.get("readonly"),
+      selected: [],
+      newLabel: "",
+      listColumns: [
+        {text: this.$gettext('Label'), value: '', sortable: false, align: 'left'},
+        {text: this.$gettext('Source'), value: 'LabelSrc', sortable: false, align: 'left'},
+        {text: this.$gettext('Confidence'), value: 'Uncertainty', sortable: false, align: 'center'},
+        {text: this.$gettext('Action'), value: '', sortable: false, align: 'center'},
+      ],
+      nameRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
     };
+  },
+  computed: {},
+  methods: {
+    refresh() {
+    },
+    sourceName(s) {
+      switch (s) {
+        case "manual":
+          return this.$gettext("manual");
+        case "image":
+          return this.$gettext("image");
+        case "location":
+          return this.$gettext("location");
+        default:
+          return s;
+      }
+    },
+    removeLabel(label) {
+      if (!label) {
+        return
+      }
+
+      const name = label.Name;
+
+      this.model.removeLabel(label.ID).then((m) => {
+        this.$notify.success("removed " + name);
+      });
+    },
+    addLabel() {
+      if (!this.newLabel) {
+        return
+      }
+
+      this.model.addLabel(this.newLabel).then((m) => {
+        this.$notify.success("added " + this.newLabel);
+
+        this.newLabel = "";
+      });
+    },
+    activateLabel(label) {
+      if (!label) {
+        return
+      }
+
+      this.model.activateLabel(label.ID);
+    },
+    renameLabel(label) {
+      if (!label) {
+        return
+      }
+
+      this.model.renameLabel(label.ID, label.Name);
+    },
+    searchLabel(label) {
+      this.$router.push({name: 'photos', query: {q: 'label:' + label.Slug}}).catch(err => {
+      });
+      this.$emit('close');
+    },
+  },
+};
 </script>

@@ -1,7 +1,9 @@
 <template>
   <div>
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-      <v-toolbar-title><translate>Not implemented yet</translate></v-toolbar-title>
+      <v-toolbar-title>
+        <translate>Not implemented yet</translate>
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
     </v-toolbar>
@@ -19,11 +21,11 @@
 </template>
 
 <script>
-    export default {
-        name: 'people',
-        data() {
-            return {};
-        },
-        methods: {}
-    };
+export default {
+  name: 'people',
+  data() {
+    return {};
+  },
+  methods: {}
+};
 </script>

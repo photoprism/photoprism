@@ -713,11 +713,11 @@
 </template>
 
 <script>
-    export default {
-        name: 'p-page-license',
-        data() {
-            return {};
-        },
-        methods: {},
-    };
+export default {
+  name: 'p-page-license',
+  data() {
+    return {};
+  },
+  methods: {},
+};
 </script>

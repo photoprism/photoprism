@@ -6,42 +6,42 @@
           <v-layout wrap align-top>
             <v-flex xs12 class="pa-2">
               <v-text-field
-                      hide-details required
-                      :disabled="busy"
-                      browser-autocomplete="off"
-                      :label="$gettext('Current Password')"
-                      color="secondary-dark"
-                      type="password"
-                      placeholder="••••••••"
-                      v-model="oldPassword"
+                  hide-details required
+                  :disabled="busy"
+                  browser-autocomplete="off"
+                  :label="$gettext('Current Password')"
+                  color="secondary-dark"
+                  type="password"
+                  placeholder="••••••••"
+                  v-model="oldPassword"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                      required counter persistent-hint
-                      :disabled="busy"
-                      browser-autocomplete="off"
-                      :label="$gettext('New Password')"
-                      color="secondary-dark"
-                      type="password"
-                      placeholder="••••••••"
-                      v-model="newPassword"
-                      :hint="$gettext('At least 6 characters.')"
+                  required counter persistent-hint
+                  :disabled="busy"
+                  browser-autocomplete="off"
+                  :label="$gettext('New Password')"
+                  color="secondary-dark"
+                  type="password"
+                  placeholder="••••••••"
+                  v-model="newPassword"
+                  :hint="$gettext('At least 6 characters.')"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                      required counter persistent-hint
-                      :disabled="busy"
-                      browser-autocomplete="off"
-                      :label="$gettext('Retype Password')"
-                      color="secondary-dark"
-                      type="password"
-                      placeholder="••••••••"
-                      v-model="confirmPassword"
-                      :hint="$gettext('Please confirm your new password.')"
+                  required counter persistent-hint
+                  :disabled="busy"
+                  browser-autocomplete="off"
+                  :label="$gettext('Retype Password')"
+                  color="secondary-dark"
+                  type="password"
+                  placeholder="••••••••"
+                  v-model="confirmPassword"
+                  :hint="$gettext('Please confirm your new password.')"
               ></v-text-field>
             </v-flex>
 
@@ -71,26 +71,26 @@
 
 <script>
 
-    export default {
-        name: 'p-settings-account',
-        data() {
-            return {
-                oldPassword: "",
-                newPassword: "",
-                confirmPassword: "",
-                busy: false,
-            };
-        },
-        methods: {
-            disabled() {
-                return (this.busy || this.oldPassword === "" || this.newPassword.length < 6 || (this.newPassword !== this.confirmPassword));
-            },
-            confirm() {
-                this.busy = true;
-                this.$session.getUser().changePassword(this.oldPassword, this.newPassword).then(() => {
-                    this.$notify.success(this.$gettext("Password changed"));
-                }).finally(() => this.busy = false)
-            },
-        },
+export default {
+  name: 'p-settings-account',
+  data() {
+    return {
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+      busy: false,
     };
+  },
+  methods: {
+    disabled() {
+      return (this.busy || this.oldPassword === "" || this.newPassword.length < 6 || (this.newPassword !== this.confirmPassword));
+    },
+    confirm() {
+      this.busy = true;
+      this.$session.getUser().changePassword(this.oldPassword, this.newPassword).then(() => {
+        this.$notify.success(this.$gettext("Password changed"));
+      }).finally(() => this.busy = false)
+    },
+  },
+};
 </script>

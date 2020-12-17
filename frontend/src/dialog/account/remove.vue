@@ -7,14 +7,17 @@
             <v-icon size="54" color="secondary-dark lighten-1">delete_outline</v-icon>
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
-            <div class="subheading pr-1"><translate key="Are you sure you want to delete this account?">Are you sure you want to delete this account?</translate></div>
+            <div class="subheading pr-1">
+              <translate key="Are you sure you want to delete this account?">Are you sure you want to delete this account?</translate>
+            </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
             <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
             <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
-                   class="action-confirm"><translate key="Delete">Delete</translate>
+                   class="action-confirm">
+              <translate key="Delete">Delete</translate>
             </v-btn>
           </v-flex>
         </v-layout>
@@ -23,29 +26,29 @@
   </v-dialog>
 </template>
 <script>
-    export default {
-        name: 'p-account-delete-dialog',
-        props: {
-            show: Boolean,
-            model: Object,
-        },
-        data() {
-            return {
-                loading: false,
-            }
-        },
-        methods: {
-            cancel() {
-                this.$emit('cancel');
-            },
-            confirm() {
-                this.loading = true;
-
-                this.model.remove().then(() => {
-                    this.loading = false;
-                    this.$emit('confirm');
-                });
-            },
-        }
+export default {
+  name: 'p-account-delete-dialog',
+  props: {
+    show: Boolean,
+    model: Object,
+  },
+  data() {
+    return {
+      loading: false,
     }
+  },
+  methods: {
+    cancel() {
+      this.$emit('cancel');
+    },
+    confirm() {
+      this.loading = true;
+
+      this.model.remove().then(() => {
+        this.loading = false;
+        this.$emit('confirm');
+      });
+    },
+  }
+}
 </script>

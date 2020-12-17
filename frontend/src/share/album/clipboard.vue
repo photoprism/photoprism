@@ -43,7 +43,6 @@
   </div>
 </template>
 <script>
-import Api from "common/api";
 import Notify from "common/notify";
 import Album from "model/album";
 
