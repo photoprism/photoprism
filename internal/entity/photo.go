@@ -812,7 +812,7 @@ func (m *Photo) SetTitle(title, source string) {
 		return
 	}
 
-	if m.TitleSrc != SrcAuto && m.TitleSrc != source && source != SrcManual && m.HasTitle() {
+	if (SrcPriority[source] < SrcPriority[m.TitleSrc]) && m.HasTitle() {
 		return
 	}
 
@@ -828,7 +828,7 @@ func (m *Photo) SetDescription(desc, source string) {
 		return
 	}
 
-	if m.DescriptionSrc != SrcAuto && m.DescriptionSrc != source && source != SrcManual && m.PhotoDescription != "" {
+	if (SrcPriority[source] < SrcPriority[m.DescriptionSrc]) && m.HasDescription() {
 		return
 	}
 
@@ -842,7 +842,7 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		return
 	}
 
-	if m.TakenSrc != SrcAuto && m.TakenSrc != source && source != SrcManual {
+	if SrcPriority[source] < SrcPriority[m.TakenSrc] && !m.TakenAt.IsZero() {
 		return
 	}
 
