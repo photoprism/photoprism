@@ -13,8 +13,6 @@ version: '3.5'
 services:
   photoprism:
     image: photoprism/photoprism:latest
-    # Uncomment and edit the following line to set a specific user / group id:
-    # user: "1000:1000"
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -63,10 +61,13 @@ services:
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
-      # You may optionally set user, group and/or file permissions using environment variables:
+      # You may optionally set a user / group id using environment variables if your Docker version or NAS does not
+      # support this natively (see next example):
       # UID: 1000
       # GID: 1000
       # UMASK: 0000
+    # Uncomment and edit the following line to set a specific user / group id (native):
+    # user: "1000:1000"
     volumes:
       # Storage folder for settings, index & sidecar files (DON'T REMOVE):
       - "~/.photoprism:/photoprism/storage"
