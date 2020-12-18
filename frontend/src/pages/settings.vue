@@ -31,7 +31,7 @@ import General from "pages/settings/general.vue";
 import Library from "pages/settings/library.vue";
 import Sync from "pages/settings/sync.vue";
 import Account from "pages/settings/account.vue";
-import Server from "pages/settings/server.vue";
+import Advanced from "pages/settings/advanced.vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -61,6 +61,7 @@ export default {
         'path': '/settings',
         'icon': 'tv',
         'public': true,
+        'admin': true,
         'demo': true,
       },
       {
@@ -71,16 +72,18 @@ export default {
         'path': '/settings/library',
         'icon': 'camera_roll',
         'public': true,
+        'admin': true,
         'demo': true,
       },
       {
-        'name': 'settings-system',
-        'component': Server,
-        'label': this.$gettext('Server'),
+        'name': 'settings-advanced',
+        'component': Advanced,
+        'label': this.$gettext('Advanced'),
         'class': '',
-        'path': '/settings/system',
-        'icon': 'dns',
+        'path': '/settings/advanced',
+        'icon': 'build',
         'public': false,
+        'admin': true,
         'demo': false,
       },
       {
@@ -91,6 +94,7 @@ export default {
         'path': '/settings/sync',
         'icon': 'sync_alt',
         'public': true,
+        'admin': true,
         'demo': true,
       },
       {
@@ -101,6 +105,7 @@ export default {
         'path': '/settings/account',
         'icon': 'person',
         'public': false,
+        'admin': true,
         'demo': true,
       },
     ];

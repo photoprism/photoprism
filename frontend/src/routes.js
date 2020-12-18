@@ -318,8 +318,8 @@ export default [
     props: { tab: "settings-account" },
   },
   {
-    name: "settings_system",
-    path: "/settings/system",
+    name: "settings_advanced",
+    path: "/settings/advanced",
     component: Settings,
     meta: {
       title: $gettext("Settings"),
@@ -328,7 +328,7 @@ export default [
       settings: true,
       background: "application-light",
     },
-    props: { tab: "settings-system" },
+    props: { tab: "settings-advanced" },
   },
   {
     name: "discover",
