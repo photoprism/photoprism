@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import tabImport from "pages/library/import.vue";
-import tabIndex from "pages/library/index.vue";
-import tabLogs from "pages/library/logs.vue";
+import Import from "pages/library/import.vue";
+import Index from "pages/library/index.vue";
+import Logs from "pages/library/logs.vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -46,11 +46,6 @@ export default {
   props: {
     tab: String,
   },
-  components: {
-    'p-tab-index': tabIndex,
-    'p-tab-import': tabImport,
-    'p-tab-logs': tabLogs,
-  },
   data() {
     const config = this.$config.values;
     const isDemo = this.$config.get("demo");
@@ -61,7 +56,7 @@ export default {
     const tabs = [
       {
         'name': 'library-index',
-        'component': tabIndex,
+        'component': Index,
         'label': this.$gettext('Index'),
         'class': '',
         'path': '/library',
@@ -71,7 +66,7 @@ export default {
       },
       {
         'name': 'library-import',
-        'component': tabImport,
+        'component': Import,
         'label': this.$gettext('Import'),
         'class': '',
         'path': '/library/import',
@@ -81,7 +76,7 @@ export default {
       },
       {
         'name': 'library-logs',
-        'component': tabLogs,
+        'component': Logs,
         'label': this.$gettext('Logs'),
         'class': '',
         'path': '/library/logs',

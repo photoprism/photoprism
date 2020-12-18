@@ -27,10 +27,10 @@
 </template>
 
 <script>
-import tabGeneral from "pages/settings/general.vue";
-import tabLibrary from "pages/settings/library.vue";
-import tabSync from "pages/settings/sync.vue";
-import tabAccount from "pages/settings/account.vue";
+import General from "pages/settings/general.vue";
+import Library from "pages/settings/library.vue";
+import Sync from "pages/settings/sync.vue";
+import Account from "pages/settings/account.vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -48,19 +48,13 @@ export default {
   props: {
     tab: String,
   },
-  components: {
-    'p-settings-general': tabGeneral,
-    'p-settings-library': tabLibrary,
-    'p-settings-sync': tabSync,
-    'p-settings-account': tabAccount,
-  },
   data() {
     const isDemo = this.$config.get("demo");
     const isPublic = this.$config.get("public");
     const tabs = [
       {
         'name': 'settings-general',
-        'component': tabGeneral,
+        'component': General,
         'label': this.$gettext('General'),
         'class': '',
         'path': '/settings',
@@ -70,7 +64,7 @@ export default {
       },
       {
         'name': 'settings-library',
-        'component': tabLibrary,
+        'component': Library,
         'label': this.$gettext('Library'),
         'class': '',
         'path': '/settings/library',
@@ -80,7 +74,7 @@ export default {
       },
       {
         'name': 'settings-sync',
-        'component': tabSync,
+        'component': Sync,
         'label': this.$gettext('Sync'),
         'class': '',
         'path': '/settings/sync',
@@ -90,7 +84,7 @@ export default {
       },
       {
         'name': 'settings-account',
-        'component': tabAccount,
+        'component': Account,
         'label': this.$gettext('Account'),
         'class': '',
         'path': '/settings/account',
