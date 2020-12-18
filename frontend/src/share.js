@@ -107,7 +107,9 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.admin)) {
+    if (to.matched.some(record => record.meta.settings) && config.values.disable.settings) {
+        next({name: "home"});
+    } else if (to.matched.some(record => record.meta.admin)) {
         if (isPublic || session.isAdmin()) {
             next();
         } else {

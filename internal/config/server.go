@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// DetachServer returns true if server should detach from console (daemon mode).
+// DetachServer tests if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
 	return c.params.DetachServer
 }
@@ -47,7 +47,7 @@ func (c *Config) TemplatesPath() string {
 	return filepath.Join(c.AssetsPath(), "templates")
 }
 
-// TemplateExists returns true if a template with the given name exists (e.g. index.tmpl).
+// TemplateExists tests if a template with the given name exists (e.g. index.tmpl).
 func (c *Config) TemplateExists(name string) bool {
 	return fs.FileExists(filepath.Join(c.TemplatesPath(), name))
 }

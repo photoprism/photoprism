@@ -1,0 +1,172 @@
+<template>
+  <div class="p-tab p-settings-general">
+    <v-form lazy-validation dense
+            ref="form" class="p-form-settings" accept-charset="UTF-8"
+            @submit.prevent="onChange">
+      <v-card flat tile class="mt-0 px-1 application">
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0">
+            <translate>Library</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-private"
+                  v-model="settings.features.private"
+                  color="secondary-dark"
+                  :label="$gettext('Hide Private')"
+                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
+                  prepend-icon="lock"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-review"
+                  v-model="settings.features.review"
+                  color="secondary-dark"
+                  :label="$gettext('Quality Filter')"
+                  :hint="$gettext('Non-photographic and low-quality images require a review before they appear in search results.')"
+                  prepend-icon="remove_red_eye"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy || demo"
+                  class="ma-0 pa-0 input-convert"
+                  v-model="settings.index.convert"
+                  color="secondary-dark"
+                  :label="$gettext('Convert to JPEG')"
+                  :hint="$gettext('Automatically create JPEGs for other file types so that they can be displayed in a browser.')"
+                  prepend-icon="photo_camera"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+
+      <v-card flat tile class="mt-0 px-1 application">
+        <v-card-title primary-title class="pb-0"
+                      :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
+          <h3 class="body-2 mb-0">
+            <translate>Stacks</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-stack-meta"
+                  v-model="settings.stack.meta"
+                  color="secondary-dark"
+                  :label="$gettext('Place & Time')"
+                  :hint="$gettext('Stack pictures taken at the exact same time and location based on their metadata.')"
+                  prepend-icon="schedule"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-stack-uuid"
+                  v-model="settings.stack.uuid"
+                  color="secondary-dark"
+                  :label="$gettext('Unique ID')"
+                  :hint="$gettext('Stack files sharing the same unique image or instance identifier.')"
+                  prepend-icon="fingerprint"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  @change="onChange"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-stack-name"
+                  v-model="settings.stack.name"
+                  color="secondary-dark"
+                  :label="$gettext('Sequential Name')"
+                  :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
+                  prepend-icon="format_list_numbered_rtl"
+                  persistent-hint
+              >
+              </v-checkbox>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+    </v-form>
+
+    <p-about-footer></p-about-footer>
+  </div>
+</template>
+
+<script>
+import Settings from "model/settings";
+import * as options from "options/options";
+
+export default {
+  name: 'p-settings-library',
+  data() {
+    const isDemo = this.$config.get("demo");
+
+    return {
+      demo: isDemo,
+      readonly: this.$config.get("readonly"),
+      experimental: this.$config.get("experimental"),
+      config: this.$config.values,
+      settings: new Settings(this.$config.settings()),
+      options: options,
+      busy: false,
+    };
+  },
+  methods: {
+    load() {
+      this.settings.load();
+    },
+    onChange() {
+      const reload = this.settings.changed("ui", "language");
+
+      if (reload) {
+        this.busy = true;
+      }
+
+      this.settings.save().then((s) => {
+        if (reload) {
+          this.$notify.info(this.$gettext("Reloading…"));
+          this.$notify.blockUI();
+          setTimeout(() => window.location.reload(), 100);
+        } else {
+          this.$notify.success(this.$gettext("Settings saved"));
+        }
+      }).finally(() => this.busy = false)
+    },
+  },
+  created() {
+    this.load();
+  },
+};
+</script>

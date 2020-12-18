@@ -9,6 +9,15 @@ func (c *Config) DisableBackups() bool {
 	return c.params.DisableBackups
 }
 
+// DisableWebDAV tests if the built-in WebDAV server should be disabled.
+func (c *Config) DisableWebDAV() bool {
+	if c.ReadOnly() || c.Demo() {
+		return true
+	}
+
+	return c.params.DisableWebDAV
+}
+
 // DisableSettings tests if users should not be allowed to change settings.
 func (c *Config) DisableSettings() bool {
 	return c.params.DisableSettings

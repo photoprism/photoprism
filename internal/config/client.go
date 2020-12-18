@@ -23,6 +23,7 @@ type ClientConfig struct {
 	SiteDescription string              `json:"siteDescription"`
 	SiteAuthor      string              `json:"siteAuthor"`
 	Debug           bool                `json:"debug"`
+	Demo            bool                `json:"demo"`
 	ReadOnly        bool                `json:"readonly"`
 	UploadNSFW      bool                `json:"uploadNSFW"`
 	Public          bool                `json:"public"`
@@ -139,8 +140,8 @@ func (c *Config) PublicConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:  true,
-			Settings: true,
+			Backups:  c.DisableBackups(),
+			Settings: c.DisableSettings(),
 			Places:   c.DisablePlaces(),
 		},
 		Flags:           strings.Join(c.Flags(), " "),
@@ -154,6 +155,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        c.ReadOnly(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
@@ -183,8 +185,8 @@ func (c *Config) GuestConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:  true,
-			Settings: true,
+			Backups:  c.DisableBackups(),
+			Settings: c.DisableSettings(),
 			Places:   c.DisablePlaces(),
 		},
 		Flags:           "readonly public shared",
@@ -198,6 +200,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        true,
 		UploadNSFW:      c.UploadNSFW(),
 		Public:          true,
@@ -236,6 +239,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        c.ReadOnly(),
 		UploadNSFW:      c.UploadNSFW(),
 		Public:          c.Public(),

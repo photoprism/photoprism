@@ -12,6 +12,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
+		Name:   "demo",
+		Hidden: true,
+		Usage:  "run in demo mode",
+		EnvVar: "PHOTOPRISM_DEMO",
+	},
+	cli.BoolFlag{
 		Name:   "public, p",
 		Usage:  "no authentication required (disables password protection)",
 		EnvVar: "PHOTOPRISM_PUBLIC",
@@ -96,6 +102,11 @@ var GlobalFlags = []cli.Flag{
 		Name:   "disable-backups",
 		Usage:  "don't backup photo and album metadata to YAML files",
 		EnvVar: "PHOTOPRISM_DISABLE_BACKUPS",
+	},
+	cli.BoolFlag{
+		Name:   "disable-webdav",
+		Usage:  "disable built-in WebDAV server",
+		EnvVar: "PHOTOPRISM_DISABLE_WEBDAV",
 	},
 	cli.BoolFlag{
 		Name:   "disable-settings",

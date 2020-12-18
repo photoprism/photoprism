@@ -273,43 +273,29 @@ export default [
         name: "settings",
         path: "/settings",
         component: Settings,
-        meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
-        props: {tab: 0},
-        beforeEnter: (to, from, next) => {
-            if (c.disable.settings) {
-                next({name: "home"});
-            } else {
-                next();
-            }
-        },
+        meta: {title: $gettext("Settings"), auth: true, settings: true, background: "application-light"},
+        props: {tab: "settings-general"},
+    },
+    {
+        name: "settings_library",
+        path: "/settings/library",
+        component: Settings,
+        meta: {title: $gettext("Settings"), auth: true, settings: true, background: "application-light"},
+        props: {tab: "settings-library"},
     },
     {
         name: "settings_sync",
         path: "/settings/sync",
         component: Settings,
-        meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
-        props: {tab: 1},
-        beforeEnter: (to, from, next) => {
-            if (c.disable.settings) {
-                next({name: "home"});
-            } else {
-                next();
-            }
-        },
+        meta: {title: $gettext("Settings"), auth: true, settings: true, background: "application-light"},
+        props: {tab: "settings-sync"},
     },
     {
         name: "settings_account",
         path: "/settings/account",
         component: Settings,
-        meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
-        props: {tab: 2},
-        beforeEnter: (to, from, next) => {
-            if (c.disable.settings) {
-                next({name: "home"});
-            } else {
-                next();
-            }
-        },
+        meta: {title: $gettext("Settings"), auth: true, settings: true, background: "application-light"},
+        props: {tab: "settings-account"},
     },
     {
         name: "discover",

@@ -27,7 +27,7 @@ func (c *Config) CheckPassword(p string) bool {
 	return ap == p
 }
 
-// InvalidDownloadToken returns true if the token is invalid.
+// InvalidDownloadToken tests if the token is invalid.
 func (c *Config) InvalidDownloadToken(t string) bool {
 	return c.DownloadToken() != t
 }
@@ -41,7 +41,7 @@ func (c *Config) DownloadToken() string {
 	return c.params.DownloadToken
 }
 
-// InvalidPreviewToken returns true if the preview token is invalid.
+// InvalidPreviewToken tests if the preview token is invalid.
 func (c *Config) InvalidPreviewToken(t string) bool {
 	return c.PreviewToken() != t && c.DownloadToken() != t
 }

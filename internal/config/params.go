@@ -34,6 +34,7 @@ type Params struct {
 	Version           string
 	Copyright         string
 	Debug             bool   `yaml:"Debug" flag:"debug"`
+	Demo              bool   `yaml:"Demo" flag:"demo"`
 	Public            bool   `yaml:"Public" flag:"public"`
 	ReadOnly          bool   `yaml:"ReadOnly" flag:"read-only"`
 	Experimental      bool   `yaml:"Experimental" flag:"experimental"`
@@ -52,6 +53,7 @@ type Params struct {
 	Workers           int    `yaml:"Workers" flag:"workers"`
 	WakeupInterval    int    `yaml:"WakeupInterval" flag:"wakeup-interval"`
 	DisableBackups    bool   `yaml:"DisableBackups" flag:"disable-backups"`
+	DisableWebDAV     bool   `yaml:"DisableWebDAV" flag:"disable-webdav"`
 	DisableSettings   bool   `yaml:"DisableSettings" flag:"disable-settings"`
 	DisablePlaces     bool   `yaml:"DisablePlaces" flag:"disable-places"`
 	DisableExifTool   bool   `yaml:"DisableExifTool" flag:"disable-exiftool"`

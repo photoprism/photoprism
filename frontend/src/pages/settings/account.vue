@@ -42,6 +42,7 @@
                   placeholder="••••••••"
                   v-model="confirmPassword"
                   :hint="$gettext('Please confirm your new password.')"
+                  @keyup.enter.native="confirm"
               ></v-text-field>
             </v-flex>
 
@@ -57,7 +58,7 @@
                      :disabled="disabled()"
                      class="action-confirm white--text ma-0">
                 <translate>Change</translate>
-                <v-icon right dark>vpn_key</v-icon>
+                <v-icon right dark>keyboard_return</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
@@ -74,7 +75,10 @@
 export default {
   name: 'p-settings-account',
   data() {
+    const isDemo = this.$config.get("demo");
+
     return {
+      demo: isDemo,
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
@@ -83,7 +87,7 @@ export default {
   },
   methods: {
     disabled() {
-      return (this.busy || this.oldPassword === "" || this.newPassword.length < 6 || (this.newPassword !== this.confirmPassword));
+      return (this.demo || this.busy || this.oldPassword === "" || this.newPassword.length < 6 || (this.newPassword !== this.confirmPassword));
     },
     confirm() {
       this.busy = true;

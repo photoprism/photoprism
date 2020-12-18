@@ -59,12 +59,13 @@
               @submit.prevent="add">
 
         <v-btn depressed color="secondary-light" @click.stop="webdavDialog"
-               class="action-webdav-dialog ml-0">
+               class="action-webdav-dialog ml-0" :disabled="demo">
           <translate>Connect via WebDAV</translate>
         </v-btn>
 
         <v-btn color="secondary-dark"
                class="white--text ml-0"
+               :disabled="demo"
                depressed
                @click.stop="add">
           <translate>Add Server</translate>
@@ -91,7 +92,10 @@ import {DateTime} from "luxon";
 export default {
   name: 'p-settings-sync',
   data() {
+    const isDemo = this.$config.get("demo");
+
     return {
+      demo: isDemo,
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
       settings: new Settings(this.$config.values.settings),

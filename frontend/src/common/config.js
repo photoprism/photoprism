@@ -49,6 +49,7 @@ export default class Config {
         if (!values || !values.siteTitle) {
             console.warn("config: values are empty");
             this.debug = true;
+            this.demo = false;
             this.values = {};
             this.page = {
                 title: "PhotoPrism",
@@ -64,6 +65,7 @@ export default class Config {
 
         this.values = values;
         this.debug = !!values.debug;
+        this.demo = !!values.demo;
 
         Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
         Event.subscribe("count", (ev, data) => this.onCount(ev, data));

@@ -234,12 +234,12 @@ func (c *Config) SidecarPath() string {
 	return c.params.SidecarPath
 }
 
-// SidecarPathIsAbs returns true if sidecar path is absolute.
+// SidecarPathIsAbs tests if sidecar path is absolute.
 func (c *Config) SidecarPathIsAbs() bool {
 	return filepath.IsAbs(c.SidecarPath())
 }
 
-// SidecarWritable returns true if sidecar files can be created.
+// SidecarWritable tests if sidecar files can be created.
 func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }

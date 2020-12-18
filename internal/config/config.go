@@ -199,32 +199,41 @@ func (c *Config) SiteAuthor() string {
 	return c.params.SiteAuthor
 }
 
-// Debug returns true if Debug mode is on.
+// Debug tests if debug mode is enabled.
 func (c *Config) Debug() bool {
 	return c.params.Debug
 }
 
-// Public returns true if app requires no authentication.
+// Demo tests if demo mode is enabled.
+func (c *Config) Demo() bool {
+	return c.params.Demo
+}
+
+// Public tests if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
+	if c.Demo() {
+		return true
+	}
+
 	return c.params.Public
 }
 
-// Experimental returns true if experimental features should be enabled.
+// Experimental tests if experimental features should be enabled.
 func (c *Config) Experimental() bool {
 	return c.params.Experimental
 }
 
-// ReadOnly returns true if photo directories are write protected.
+// ReadOnly tests if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.params.ReadOnly
 }
 
-// DetectNSFW returns true if NSFW photos should be detected and flagged.
+// DetectNSFW tests if NSFW photos should be detected and flagged.
 func (c *Config) DetectNSFW() bool {
 	return c.params.DetectNSFW
 }
 
-// UploadNSFW returns true if NSFW photos can be uploaded.
+// UploadNSFW tests if NSFW photos can be uploaded.
 func (c *Config) UploadNSFW() bool {
 	return c.params.UploadNSFW
 }
