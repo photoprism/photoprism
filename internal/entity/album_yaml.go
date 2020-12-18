@@ -13,18 +13,13 @@ import (
 var albumYamlMutex = sync.Mutex{}
 
 // Yaml returns album data as YAML string.
-func (m *Album) Yaml() ([]byte, error) {
+func (m *Album) Yaml() (out []byte, err error) {
 	if err := Db().Model(m).Association("Photos").Find(&m.Photos).Error; err != nil {
 		log.Errorf("album: %s (yaml)", err)
+		return out, err
 	}
 
-	out, err := yaml.Marshal(m)
-
-	if err != nil {
-		return []byte{}, err
-	}
-
-	return out, err
+	return yaml.Marshal(m)
 }
 
 // SaveAsYaml saves album data as YAML file.

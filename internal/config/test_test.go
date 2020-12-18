@@ -26,19 +26,19 @@ func TestTestConfig(t *testing.T) {
 	assert.IsType(t, &gorm.DB{}, c.Db())
 }
 
-func TestNewTestParams(t *testing.T) {
-	c := NewTestParams()
+func TestNewTestOptions(t *testing.T) {
+	c := NewTestOptions()
 
-	assert.IsType(t, new(Params), c)
+	assert.IsType(t, new(Options), c)
 
 	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath)
 	assert.True(t, c.Debug)
 }
 
-func TestNewTestParamsError(t *testing.T) {
-	c := NewTestParamsError()
+func TestNewTestOptionsError(t *testing.T) {
+	c := NewTestOptionsError()
 
-	assert.IsType(t, new(Params), c)
+	assert.IsType(t, new(Options), c)
 
 	assert.Equal(t, fs.Abs("../.."), c.AssetsPath)
 	assert.Equal(t, fs.Abs("../../storage/testdata/cache"), c.CachePath)

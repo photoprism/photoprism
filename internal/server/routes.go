@@ -24,8 +24,15 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	v1 := router.Group("/api/v1")
 	{
 		api.GetStatus(v1)
-		api.GetConfig(v1)
+		api.GetErrors(v1)
 
+		api.GetConfigOptions(v1)
+		api.SaveConfigOptions(v1)
+
+		api.GetSettings(v1)
+		api.SaveSettings(v1)
+
+		api.ChangePassword(v1)
 		api.CreateSession(v1)
 		api.DeleteSession(v1)
 
@@ -108,10 +115,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteAccount(v1)
 		api.UpdateAccount(v1)
 
-		api.GetSettings(v1)
-		api.SaveSettings(v1)
-		api.ChangePassword(v1)
-		api.GetErrors(v1)
 		api.SendFeedback(v1)
 
 		api.GetSvg(v1)

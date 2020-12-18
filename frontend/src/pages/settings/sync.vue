@@ -1,18 +1,18 @@
 <template>
   <div class="p-tab p-settings-sync">
     <v-data-table
+        v-model="selected"
         :headers="listColumns"
         :items="results"
         hide-actions
         disable-initial-sort
         class="elevation-0 p-accounts p-accounts-list p-results"
         item-key="ID"
-        v-model="selected"
         :no-data-text="$gettext('No servers configured.')"
     >
       <template slot="items" slot-scope="props" class="p-account">
         <td>
-          <button @click.stop.prevent="edit(props.item)" class="secondary-dark--text">
+          <button class="secondary-dark--text" @click.stop.prevent="edit(props.item)">
             {{ props.item.AccName }}
           </button>
         </td>
@@ -54,12 +54,12 @@
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </p>
 
-      <v-form lazy-validation dense
-              ref="form" class="p-form-settings mt-2" accept-charset="UTF-8"
+      <v-form ref="form" lazy-validation
+              dense class="p-form-settings mt-2" accept-charset="UTF-8"
               @submit.prevent="add">
 
-        <v-btn depressed color="secondary-light" @click.stop="webdavDialog"
-               class="action-webdav-dialog ml-0" :disabled="demo">
+        <v-btn depressed color="secondary-light" class="action-webdav-dialog ml-0"
+               :disabled="demo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
         </v-btn>
 
@@ -90,7 +90,7 @@ import Account from "model/account";
 import {DateTime} from "luxon";
 
 export default {
-  name: 'p-settings-sync',
+  name: 'PSettingsSync',
   data() {
     const isDemo = this.$config.get("demo");
 
@@ -123,6 +123,9 @@ export default {
         {text: '', value: '', sortable: false, class: 'hidden-xs-only', align: 'right'},
       ],
     };
+  },
+  created() {
+    this.load();
   },
   methods: {
     webdavDialog() {
@@ -188,9 +191,6 @@ export default {
       this.dialog[name] = false;
       this.model = {};
     },
-  },
-  created() {
-    this.load();
   },
 };
 </script>

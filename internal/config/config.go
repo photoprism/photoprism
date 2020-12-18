@@ -10,6 +10,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/jinzhu/gorm"
@@ -32,7 +35,7 @@ var once sync.Once
 type Config struct {
 	once     sync.Once
 	db       *gorm.DB
-	params   *Params
+	options  *Options
 	settings *Settings
 	hub      *hub.Config
 	token    string
@@ -71,14 +74,32 @@ func NewConfig(ctx *cli.Context) *Config {
 	initLogger(ctx.GlobalBool("debug"))
 
 	c := &Config{
-		params: NewParams(ctx),
-		token:  rnd.Token(8),
+		options: NewOptions(ctx),
+		token:   rnd.Token(8),
+	}
+
+	if configFile := c.ConfigFile(); c.options.ConfigFile == "" && fs.FileExists(configFile) {
+		if err := c.options.Load(configFile); err != nil {
+			log.Warnf("config: %s", err)
+		} else {
+			log.Infof("config: loaded options from %s", txt.Quote(configFile))
+		}
 	}
 
 	return c
 }
 
-// Propagate updates config values in other packages as needed.
+// Options returns the raw config options.
+func (c *Config) Options() *Options {
+	if c.options == nil {
+		log.Warnf("config: options should not be nil - bug?")
+		c.options = NewOptions(nil)
+	}
+
+	return c.options
+}
+
+// Propagate updates config options in other packages as needed.
 func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
@@ -135,12 +156,12 @@ func (c *Config) initStorage() error {
 
 // Name returns the application name ("PhotoPrism").
 func (c *Config) Name() string {
-	return c.params.Name
+	return c.options.Name
 }
 
 // Version returns the application version.
 func (c *Config) Version() string {
-	return c.params.Version
+	return c.options.Version
 }
 
 // UserAgent returns a HTTP user agent string based on app name & version.
@@ -150,63 +171,63 @@ func (c *Config) UserAgent() string {
 
 // Copyright returns the application copyright.
 func (c *Config) Copyright() string {
-	return c.params.Copyright
+	return c.options.Copyright
 }
 
 // SiteUrl returns the public server URL (default is "http://localhost:2342/").
 func (c *Config) SiteUrl() string {
-	if c.params.SiteUrl == "" {
+	if c.options.SiteUrl == "" {
 		return "http://localhost:2342/"
 	}
 
-	return c.params.SiteUrl
+	return c.options.SiteUrl
 }
 
 // SitePreview returns the site preview image URL for sharing.
 func (c *Config) SitePreview() string {
-	if c.params.SitePreview == "" {
+	if c.options.SitePreview == "" {
 		return c.SiteUrl() + "static/img/preview.jpg"
 	}
 
-	if !strings.HasPrefix(c.params.SitePreview, "http") {
-		return c.SiteUrl() + c.params.SitePreview
+	if !strings.HasPrefix(c.options.SitePreview, "http") {
+		return c.SiteUrl() + c.options.SitePreview
 	}
 
-	return c.params.SitePreview
+	return c.options.SitePreview
 }
 
 // SiteTitle returns the main site title (default is application name).
 func (c *Config) SiteTitle() string {
-	if c.params.SiteTitle == "" {
+	if c.options.SiteTitle == "" {
 		return c.Name()
 	}
 
-	return c.params.SiteTitle
+	return c.options.SiteTitle
 }
 
 // SiteCaption returns a short site caption.
 func (c *Config) SiteCaption() string {
-	return c.params.SiteCaption
+	return c.options.SiteCaption
 }
 
 // SiteDescription returns a long site description.
 func (c *Config) SiteDescription() string {
-	return c.params.SiteDescription
+	return c.options.SiteDescription
 }
 
 // SiteAuthor returns the site author / copyright.
 func (c *Config) SiteAuthor() string {
-	return c.params.SiteAuthor
+	return c.options.SiteAuthor
 }
 
 // Debug tests if debug mode is enabled.
 func (c *Config) Debug() bool {
-	return c.params.Debug
+	return c.options.Debug
 }
 
 // Demo tests if demo mode is enabled.
 func (c *Config) Demo() bool {
-	return c.params.Demo
+	return c.options.Demo
 }
 
 // Public tests if app runs in public mode and requires no authentication.
@@ -215,41 +236,41 @@ func (c *Config) Public() bool {
 		return true
 	}
 
-	return c.params.Public
+	return c.options.Public
 }
 
 // Experimental tests if experimental features should be enabled.
 func (c *Config) Experimental() bool {
-	return c.params.Experimental
+	return c.options.Experimental
 }
 
 // ReadOnly tests if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
-	return c.params.ReadOnly
+	return c.options.ReadOnly
 }
 
 // DetectNSFW tests if NSFW photos should be detected and flagged.
 func (c *Config) DetectNSFW() bool {
-	return c.params.DetectNSFW
+	return c.options.DetectNSFW
 }
 
 // UploadNSFW tests if NSFW photos can be uploaded.
 func (c *Config) UploadNSFW() bool {
-	return c.params.UploadNSFW
+	return c.options.UploadNSFW
 }
 
 // AdminPassword returns the initial admin password.
 func (c *Config) AdminPassword() string {
-	return c.params.AdminPassword
+	return c.options.AdminPassword
 }
 
 // LogLevel returns the logrus log level.
 func (c *Config) LogLevel() logrus.Level {
 	if c.Debug() {
-		c.params.LogLevel = "debug"
+		c.options.LogLevel = "debug"
 	}
 
-	if logLevel, err := logrus.ParseLevel(c.params.LogLevel); err == nil {
+	if logLevel, err := logrus.ParseLevel(c.options.LogLevel); err == nil {
 		return logLevel
 	} else {
 		return logrus.InfoLevel
@@ -275,12 +296,12 @@ func (c *Config) Workers() int {
 	numCPU := runtime.NumCPU()
 
 	// Limit number of workers when using SQLite to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite && numCPU > 4 && c.params.Workers <= 0 {
+	if c.DatabaseDriver() == SQLite && numCPU > 4 && c.options.Workers <= 0 {
 		return 4
 	}
 
-	if c.params.Workers > 0 && c.params.Workers <= numCPU {
-		return c.params.Workers
+	if c.options.Workers > 0 && c.options.Workers <= numCPU {
+		return c.options.Workers
 	}
 
 	if numCPU > 1 {
@@ -292,16 +313,16 @@ func (c *Config) Workers() int {
 
 // WakeupInterval returns the background worker wakeup interval.
 func (c *Config) WakeupInterval() time.Duration {
-	if c.params.WakeupInterval <= 0 {
+	if c.options.WakeupInterval <= 0 {
 		return 15 * time.Minute
 	}
 
-	return time.Duration(c.params.WakeupInterval) * time.Second
+	return time.Duration(c.options.WakeupInterval) * time.Second
 }
 
 // GeoApi returns the preferred geo coding api (none or places).
 func (c *Config) GeoApi() string {
-	if c.params.DisablePlaces {
+	if c.options.DisablePlaces {
 		return ""
 	}
 
@@ -310,12 +331,12 @@ func (c *Config) GeoApi() string {
 
 // OriginalsLimit returns the file size limit for originals.
 func (c *Config) OriginalsLimit() int64 {
-	if c.params.OriginalsLimit <= 0 || c.params.OriginalsLimit > 100000 {
+	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
 		return -1
 	}
 
 	// Megabyte.
-	return c.params.OriginalsLimit * 1024 * 1024
+	return c.options.OriginalsLimit * 1024 * 1024
 }
 
 // UpdateHub updates backend api credentials for maps & places.

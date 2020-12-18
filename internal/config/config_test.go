@@ -77,13 +77,13 @@ func TestConfig_Copyright(t *testing.T) {
 func TestConfig_ConfigFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.ConfigFile(), "/storage/testdata/settings/photoprism.yml")
+	assert.Contains(t, c.ConfigFile(), "/storage/testdata/config/options.yml")
 }
 
 func TestConfig_SettingsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.ConfigPath(), "/storage/testdata/settings")
+	assert.Contains(t, c.ConfigPath(), "/storage/testdata/config")
 }
 
 func TestConfig_BackupPath(t *testing.T) {
@@ -268,7 +268,7 @@ func TestConfig_GeoApi(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "places", c.GeoApi())
-	c.params.DisablePlaces = true
+	c.options.DisablePlaces = true
 	assert.Equal(t, "", c.GeoApi())
 }
 
@@ -276,7 +276,7 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, int64(-1), c.OriginalsLimit())
-	c.params.OriginalsLimit = 800
+	c.options.OriginalsLimit = 800
 	assert.Equal(t, int64(838860800), c.OriginalsLimit())
 }
 
@@ -284,16 +284,16 @@ func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
-	c.params.SiteUrl = "http://superhost:2342/"
+	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
 }
 
 func TestConfig_SitePreview(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "http://localhost:2342/static/img/preview.jpg", c.SitePreview())
-	c.params.SitePreview = "http://preview.jpg"
+	c.options.SitePreview = "http://preview.jpg"
 	assert.Equal(t, "http://preview.jpg", c.SitePreview())
-	c.params.SitePreview = "preview123.jpg"
+	c.options.SitePreview = "preview123.jpg"
 	assert.Equal(t, "http://localhost:2342/preview123.jpg", c.SitePreview())
 }
 
@@ -301,6 +301,6 @@ func TestConfig_SiteTitle(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "config.test", c.SiteTitle())
-	c.params.SiteTitle = "Cats"
+	c.options.SiteTitle = "Cats"
 	assert.Equal(t, "Cats", c.SiteTitle())
 }

@@ -7,23 +7,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewParams(t *testing.T) {
+func TestNewOptions(t *testing.T) {
 	ctx := CliTestContext()
 
 	assert.True(t, ctx.IsSet("assets-path"))
 	assert.False(t, ctx.Bool("debug"))
 
-	c := NewParams(ctx)
+	c := NewOptions(ctx)
 
-	assert.IsType(t, new(Params), c)
+	assert.IsType(t, new(Options), c)
 
 	assert.Equal(t, fs.Abs("../../assets"), c.AssetsPath)
 	assert.False(t, c.Debug)
 	assert.False(t, c.ReadOnly)
 }
 
-func TestParams_SetValuesFromFile(t *testing.T) {
-	c := NewParams(CliTestContext())
+func TestOptions_SetOptionsFromFile(t *testing.T) {
+	c := NewOptions(CliTestContext())
 
 	err := c.Load("testdata/config.yml")
 
@@ -41,8 +41,8 @@ func TestParams_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, 81, c.HttpPort)
 }
 
-func TestParams_ExpandFilenames(t *testing.T) {
-	p := Params{TempPath: "tmp", ImportPath: "import"}
+func TestOptions_ExpandFilenames(t *testing.T) {
+	p := Options{TempPath: "tmp", ImportPath: "import"}
 	assert.Equal(t, "tmp", p.TempPath)
 	assert.Equal(t, "import", p.ImportPath)
 	p.expandFilenames()

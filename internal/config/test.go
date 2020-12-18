@@ -32,8 +32,8 @@ func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
 }
 
-// NewTestParams inits valid params used for testing
-func NewTestParams() *Params {
+// NewTestOptions inits valid options used for testing
+func NewTestOptions() *Options {
 	assetsPath := fs.Abs("../../assets")
 	storagePath := fs.Abs("../../storage")
 	testDataPath := filepath.Join(storagePath, "testdata")
@@ -50,7 +50,7 @@ func NewTestParams() *Params {
 		dbDsn = ".test.db"
 	}
 
-	c := &Params{
+	c := &Options{
 		Name:           "PhotoPrism",
 		Version:        "0.0.0",
 		Copyright:      "(c) 2018-2020 Michael Mayer",
@@ -65,7 +65,7 @@ func NewTestParams() *Params {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		ConfigPath:     testDataPath + "/settings",
+		ConfigPath:     testDataPath + "/config",
 		SidecarPath:    testDataPath + "/sidecar",
 		DatabaseDriver: dbDriver,
 		DatabaseDsn:    dbDsn,
@@ -75,12 +75,12 @@ func NewTestParams() *Params {
 	return c
 }
 
-// NewTestParamsError inits invalid params used for testing
-func NewTestParamsError() *Params {
+// NewTestOptionsError inits invalid options used for testing
+func NewTestOptionsError() *Options {
 	assetsPath := fs.Abs("../..")
 	testDataPath := fs.Abs("../../storage/testdata")
 
-	c := &Params{
+	c := &Options{
 		DarktableBin:   "/usr/bin/darktable-cli",
 		AssetsPath:     assetsPath,
 		StoragePath:    testDataPath,
@@ -114,8 +114,8 @@ func NewTestConfig() *Config {
 	defer testConfigMutex.Unlock()
 
 	c := &Config{
-		params: NewTestParams(),
-		token:  rnd.Token(8),
+		options: NewTestOptions(),
+		token:   rnd.Token(8),
 	}
 
 	s := NewSettings()
@@ -144,14 +144,14 @@ func NewTestConfig() *Config {
 
 // NewTestErrorConfig inits invalid config used for testing
 func NewTestErrorConfig() *Config {
-	c := &Config{params: NewTestParamsError()}
+	c := &Config{options: NewTestOptionsError()}
 
 	return c
 }
 
 // CliTestContext returns example cli config for testing
 func CliTestContext() *cli.Context {
-	config := NewTestParams()
+	config := NewTestOptions()
 
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.Bool("debug", false, "doc")

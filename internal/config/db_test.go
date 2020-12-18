@@ -15,7 +15,7 @@ func TestConfig_DatabaseDriver(t *testing.T) {
 
 func TestConfig_ParseDatabaseDsn(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	c.params.DatabaseDsn = "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true"
+	c.options.DatabaseDsn = "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true"
 
 	assert.Equal(t, "honeypot:1234", c.DatabaseServer())
 	assert.Equal(t, "honeypot", c.DatabaseHost())

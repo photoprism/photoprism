@@ -34,11 +34,11 @@ func (c *Config) InvalidDownloadToken(t string) bool {
 
 // DownloadToken returns the DOWNLOAD api token (you can optionally use a static value for permanent caching).
 func (c *Config) DownloadToken() string {
-	if c.params.DownloadToken == "" {
-		c.params.DownloadToken = rnd.Token(8)
+	if c.options.DownloadToken == "" {
+		c.options.DownloadToken = rnd.Token(8)
 	}
 
-	return c.params.DownloadToken
+	return c.options.DownloadToken
 }
 
 // InvalidPreviewToken tests if the preview token is invalid.
@@ -48,9 +48,9 @@ func (c *Config) InvalidPreviewToken(t string) bool {
 
 // PreviewToken returns the THUMBNAILS api token (you can optionally use a static value for permanent caching).
 func (c *Config) PreviewToken() string {
-	if c.params.PreviewToken == "" {
-		c.params.PreviewToken = rnd.Token(8)
+	if c.options.PreviewToken == "" {
+		c.options.PreviewToken = rnd.Token(8)
 	}
 
-	return c.params.PreviewToken
+	return c.options.PreviewToken
 }

@@ -8,30 +8,30 @@ import (
 
 // DetachServer tests if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
-	return c.params.DetachServer
+	return c.options.DetachServer
 }
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpHost() string {
-	if c.params.HttpHost == "" {
+	if c.options.HttpHost == "" {
 		return "0.0.0.0"
 	}
 
-	return c.params.HttpHost
+	return c.options.HttpHost
 }
 
 // HttpPort returns the built-in HTTP server port.
 func (c *Config) HttpPort() int {
-	if c.params.HttpPort == 0 {
+	if c.options.HttpPort == 0 {
 		return 2342
 	}
 
-	return c.params.HttpPort
+	return c.options.HttpPort
 }
 
 // HttpMode returns the server mode.
 func (c *Config) HttpMode() string {
-	if c.params.HttpMode == "" {
+	if c.options.HttpMode == "" {
 		if c.Debug() {
 			return "debug"
 		}
@@ -39,7 +39,7 @@ func (c *Config) HttpMode() string {
 		return "release"
 	}
 
-	return c.params.HttpMode
+	return c.options.HttpMode
 }
 
 // TemplatesPath returns the server templates path.

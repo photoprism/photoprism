@@ -9,17 +9,17 @@
         slider-color="secondary-dark"
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
-      <v-tab v-for="(tab, index) in tabs" :key="index" :id="'tab-' + tab.name" :class="tab.class" ripple
-             @click="changePath(tab.path)">
-        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="tab.label">{{ tab.icon }}</v-icon>
+      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple
+             @click="changePath(item.path)">
+        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" left>{{ tab.icon }}</v-icon> {{ tab.label }}
+          <v-icon :size="18" left>{{ item.icon }}</v-icon> {{ item.label }}
         </template>
       </v-tab>
 
       <v-tabs-items touchless>
-        <v-tab-item lazy v-for="(tab, index) in tabs" :key="index">
-          <component v-bind:is="tab.component"></component>
+        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
+          <component :is="item.component"></component>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -31,6 +31,7 @@ import General from "pages/settings/general.vue";
 import Library from "pages/settings/library.vue";
 import Sync from "pages/settings/sync.vue";
 import Account from "pages/settings/account.vue";
+import Server from "pages/settings/server.vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -44,7 +45,7 @@ function initTabs(flag, tabs) {
 }
 
 export default {
-  name: 'p-page-settings',
+  name: 'PPageSettings',
   props: {
     tab: String,
   },
@@ -71,6 +72,16 @@ export default {
         'icon': 'camera_roll',
         'public': true,
         'demo': true,
+      },
+      {
+        'name': 'settings-system',
+        'component': Server,
+        'label': this.$gettext('Server'),
+        'class': '',
+        'path': '/settings/system',
+        'icon': 'dns',
+        'public': false,
+        'demo': false,
       },
       {
         'name': 'settings-sync',
@@ -112,12 +123,12 @@ export default {
       public: isPublic,
       readonly: this.$config.get("readonly"),
       active: active,
-    }
+    };
   },
   methods: {
     changePath: function (path) {
       if (this.$route.path !== path) {
-        this.$router.replace(path)
+        this.$router.replace(path);
       }
     }
   },

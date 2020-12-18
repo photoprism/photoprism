@@ -318,6 +318,19 @@ export default [
     props: { tab: "settings-account" },
   },
   {
+    name: "settings_system",
+    path: "/settings/system",
+    component: Settings,
+    meta: {
+      title: $gettext("Settings"),
+      auth: true,
+      admin: true,
+      settings: true,
+      background: "application-light",
+    },
+    props: { tab: "settings-system" },
+  },
+  {
     name: "discover",
     path: "/discover",
     component: Discover,

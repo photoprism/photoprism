@@ -1,46 +1,46 @@
 <template>
   <div class="p-tab p-settings-account">
-    <v-form dense ref="form" class="form-password" accept-charset="UTF-8">
+    <v-form ref="form" dense class="form-password" accept-charset="UTF-8">
       <v-card flat tile class="ma-2 application">
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 class="pa-2">
               <v-text-field
-                  hide-details required
+                  v-model="oldPassword" hide-details
+                  required
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('Current Password')"
                   color="secondary-dark"
                   type="password"
                   placeholder="••••••••"
-                  v-model="oldPassword"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                  required counter persistent-hint
+                  v-model="newPassword" required counter
+                  persistent-hint
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('New Password')"
                   color="secondary-dark"
                   type="password"
                   placeholder="••••••••"
-                  v-model="newPassword"
                   :hint="$gettext('At least 6 characters.')"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                  required counter persistent-hint
+                  v-model="confirmPassword" required counter
+                  persistent-hint
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('Retype Password')"
                   color="secondary-dark"
                   type="password"
                   placeholder="••••••••"
-                  v-model="confirmPassword"
                   :hint="$gettext('Please confirm your new password.')"
                   @keyup.enter.native="confirm"
               ></v-text-field>
@@ -54,9 +54,9 @@
 
             <v-flex xs12 class="pa-2">
               <v-btn depressed color="secondary-dark"
-                     @click.stop="confirm"
                      :disabled="disabled()"
-                     class="action-confirm white--text ma-0">
+                     class="action-confirm white--text ma-0"
+                     @click.stop="confirm">
                 <translate>Change</translate>
                 <v-icon right dark>keyboard_return</v-icon>
               </v-btn>
@@ -73,7 +73,7 @@
 <script>
 
 export default {
-  name: 'p-settings-account',
+  name: 'PSettingsAccount',
   data() {
     const isDemo = this.$config.get("demo");
 
@@ -93,7 +93,7 @@ export default {
       this.busy = true;
       this.$session.getUser().changePassword(this.oldPassword, this.newPassword).then(() => {
         this.$notify.success(this.$gettext("Password changed"));
-      }).finally(() => this.busy = false)
+      }).finally(() => this.busy = false);
     },
   },
 };

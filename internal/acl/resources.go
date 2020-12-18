@@ -5,6 +5,7 @@ type Resource string
 const (
 	ResourceDefault    Resource = "*"
 	ResourceConfig     Resource = "config"
+	ResourceOptions    Resource = "options"
 	ResourceSettings   Resource = "settings"
 	ResourceLogs       Resource = "logs"
 	ResourceAccounts   Resource = "accounts"

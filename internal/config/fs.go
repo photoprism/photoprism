@@ -44,7 +44,7 @@ func (c *Config) CreateDirectories() error {
 	}
 
 	notFoundError := func(name string) error {
-		return fmt.Errorf("%s path not found, run 'photoprism config' to check configuration values", name)
+		return fmt.Errorf("%s path not found, run 'photoprism config' to check configuration options", name)
 	}
 
 	if c.AssetsPath() == "" {
@@ -142,16 +142,16 @@ func (c *Config) CreateDirectories() error {
 
 // ConfigFile returns the config file name.
 func (c *Config) ConfigFile() string {
-	if c.params.ConfigFile == "" || !fs.FileExists(c.params.ConfigFile) {
-		return filepath.Join(c.ConfigPath(), "photoprism.yml")
+	if c.options.ConfigFile == "" || !fs.FileExists(c.options.ConfigFile) {
+		return filepath.Join(c.ConfigPath(), "options.yml")
 	}
 
-	return c.params.ConfigFile
+	return c.options.ConfigFile
 }
 
 // ConfigPath returns the config path.
 func (c *Config) ConfigPath() string {
-	if c.params.ConfigPath == "" {
+	if c.options.ConfigPath == "" {
 		if fs.PathExists(filepath.Join(c.StoragePath(), "settings")) {
 			return filepath.Join(c.StoragePath(), "settings")
 		}
@@ -159,7 +159,7 @@ func (c *Config) ConfigPath() string {
 		return filepath.Join(c.StoragePath(), "config")
 	}
 
-	return fs.Abs(c.params.ConfigPath)
+	return fs.Abs(c.options.ConfigPath)
 }
 
 // HubConfigFile returns the backend api config file name.
@@ -174,45 +174,45 @@ func (c *Config) SettingsFile() string {
 
 // PIDFilename returns the filename for storing the server process id (pid).
 func (c *Config) PIDFilename() string {
-	if c.params.PIDFilename == "" {
+	if c.options.PIDFilename == "" {
 		return filepath.Join(c.StoragePath(), "photoprism.pid")
 	}
 
-	return fs.Abs(c.params.PIDFilename)
+	return fs.Abs(c.options.PIDFilename)
 }
 
 // LogFilename returns the filename for storing server logs.
 func (c *Config) LogFilename() string {
-	if c.params.LogFilename == "" {
+	if c.options.LogFilename == "" {
 		return filepath.Join(c.StoragePath(), "photoprism.log")
 	}
 
-	return fs.Abs(c.params.LogFilename)
+	return fs.Abs(c.options.LogFilename)
 }
 
 // OriginalsPath returns the originals.
 func (c *Config) OriginalsPath() string {
-	if c.params.OriginalsPath == "" {
+	if c.options.OriginalsPath == "" {
 		// Try to find the right directory by iterating through a list.
-		c.params.OriginalsPath = fs.FindDir(fs.OriginalPaths)
+		c.options.OriginalsPath = fs.FindDir(fs.OriginalPaths)
 	}
 
-	return fs.Abs(c.params.OriginalsPath)
+	return fs.Abs(c.options.OriginalsPath)
 }
 
 // ImportPath returns the import directory.
 func (c *Config) ImportPath() string {
-	if c.params.ImportPath == "" {
+	if c.options.ImportPath == "" {
 		// Try to find the right directory by iterating through a list.
-		c.params.ImportPath = fs.FindDir(fs.ImportPaths)
+		c.options.ImportPath = fs.FindDir(fs.ImportPaths)
 	}
 
-	return fs.Abs(c.params.ImportPath)
+	return fs.Abs(c.options.ImportPath)
 }
 
 // ExifToolBin returns the exiftool executable file name.
 func (c *Config) ExifToolBin() string {
-	return findExecutable(c.params.ExifToolBin, "exiftool")
+	return findExecutable(c.options.ExifToolBin, "exiftool")
 }
 
 // Automatically create JSON sidecar files using Exiftool.
@@ -227,11 +227,11 @@ func (c *Config) BackupYaml() bool {
 
 // SidecarPath returns the storage path for generated sidecar files (relative or absolute).
 func (c *Config) SidecarPath() string {
-	if c.params.SidecarPath == "" {
-		c.params.SidecarPath = filepath.Join(c.StoragePath(), "sidecar")
+	if c.options.SidecarPath == "" {
+		c.options.SidecarPath = filepath.Join(c.StoragePath(), "sidecar")
 	}
 
-	return c.params.SidecarPath
+	return c.options.SidecarPath
 }
 
 // SidecarPathIsAbs tests if sidecar path is absolute.
@@ -246,30 +246,30 @@ func (c *Config) SidecarWritable() bool {
 
 // FFmpegBin returns the ffmpeg executable file name.
 func (c *Config) FFmpegBin() string {
-	return findExecutable(c.params.FFmpegBin, "ffmpeg")
+	return findExecutable(c.options.FFmpegBin, "ffmpeg")
 }
 
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
-	if c.params.TempPath == "" {
+	if c.options.TempPath == "" {
 		return filepath.Join(os.TempDir(), "photoprism")
 	}
 
-	return fs.Abs(c.params.TempPath)
+	return fs.Abs(c.options.TempPath)
 }
 
 // CachePath returns the path for cache files.
 func (c *Config) CachePath() string {
-	if c.params.CachePath == "" {
+	if c.options.CachePath == "" {
 		return filepath.Join(c.StoragePath(), "cache")
 	}
 
-	return fs.Abs(c.params.CachePath)
+	return fs.Abs(c.options.CachePath)
 }
 
 // StoragePath returns the path for generated files like cache and index.
 func (c *Config) StoragePath() string {
-	if c.params.StoragePath == "" {
+	if c.options.StoragePath == "" {
 		const dirName = "storage"
 
 		// Default directories.
@@ -284,8 +284,8 @@ func (c *Config) StoragePath() string {
 		}
 
 		// Fallback to backup storage path.
-		if fs.PathWritable(c.params.BackupPath) {
-			return fs.Abs(filepath.Join(c.params.BackupPath, dirName))
+		if fs.PathWritable(c.options.BackupPath) {
+			return fs.Abs(filepath.Join(c.options.BackupPath, dirName))
 		}
 
 		// Use .photoprism in home directory?
@@ -306,13 +306,13 @@ func (c *Config) StoragePath() string {
 		return originalsDir
 	}
 
-	return fs.Abs(c.params.StoragePath)
+	return fs.Abs(c.options.StoragePath)
 }
 
 // BackupPath returns the backup storage path.
 func (c *Config) BackupPath() string {
-	if fs.PathWritable(c.params.BackupPath) {
-		return fs.Abs(c.params.BackupPath)
+	if fs.PathWritable(c.options.BackupPath) {
+		return fs.Abs(c.options.BackupPath)
 	}
 
 	return filepath.Join(c.StoragePath(), "backup")
@@ -320,12 +320,12 @@ func (c *Config) BackupPath() string {
 
 // AssetsPath returns the path to static assets for models and templates.
 func (c *Config) AssetsPath() string {
-	if c.params.AssetsPath == "" {
+	if c.options.AssetsPath == "" {
 		// Try to find the right directory by iterating through a list.
-		c.params.AssetsPath = fs.FindDir(fs.AssetPaths)
+		c.options.AssetsPath = fs.FindDir(fs.AssetPaths)
 	}
 
-	return fs.Abs(c.params.AssetsPath)
+	return fs.Abs(c.options.AssetsPath)
 }
 
 // LocalesPath returns the translation locales path.
