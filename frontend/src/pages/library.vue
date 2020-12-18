@@ -8,35 +8,17 @@
         slider-color="secondary-dark"
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
-      <v-tab id="tab-index" ripple @click="changePath('/library')">
-        <translate key="Index">Index</translate>
-      </v-tab>
-
-      <v-tab id="tab-import" :disabled="readonly || !$config.feature('import')" ripple
-             @click="changePath('/library/import')">
-        <template v-if="config.settings.import.move">
-          <translate key="Move">Move</translate>
-        </template>
+      <v-tab v-for="(tab, index) in tabs" :key="index" :id="'tab-' + tab.name" :class="tab.class" ripple
+             @click="changePath(tab.path)">
+        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="tab.label">{{ tab.icon }}</v-icon>
         <template v-else>
-          <translate key="Copy">Copy</translate>
+          <v-icon :size="18" left>{{ tab.icon }}</v-icon> {{ tab.label }}
         </template>
-      </v-tab>
-
-      <v-tab id="tab-logs" ripple @click="changePath('/library/logs')" v-if="$config.feature('logs')">
-        <translate key="Logs">Logs</translate>
       </v-tab>
 
       <v-tabs-items touchless>
-        <v-tab-item lazy>
-          <p-tab-index></p-tab-index>
-        </v-tab-item>
-
-        <v-tab-item :disabled="readonly" lazy>
-          <p-tab-import></p-tab-import>
-        </v-tab-item>
-
-        <v-tab-item v-if="$config.feature('logs')">
-          <p-tab-logs></p-tab-logs>
+        <v-tab-item lazy v-for="(tab, index) in tabs" :key="index">
+          <component v-bind:is="tab.component"></component>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -48,10 +30,21 @@ import tabImport from "pages/library/import.vue";
 import tabIndex from "pages/library/index.vue";
 import tabLogs from "pages/library/logs.vue";
 
+function initTabs(flag, tabs) {
+  let i = 0;
+  while(i < tabs.length) {
+    if(!tabs[i][flag]) {
+      tabs.splice(i,1);
+    } else {
+      i++;
+    }
+  }
+}
+
 export default {
   name: 'p-page-library',
   props: {
-    tab: Number
+    tab: String,
   },
   components: {
     'p-tab-index': tabIndex,
@@ -59,10 +52,66 @@ export default {
     'p-tab-logs': tabLogs,
   },
   data() {
+    const config = this.$config.values;
+    const isDemo = this.$config.get("demo");
+    const isPublic = this.$config.get("public");
+    const isReadOnly = this.$config.get("readonly");
+    const canImport = this.$config.feature('import') && !isReadOnly;
+
+    const tabs = [
+      {
+        'name': 'library-index',
+        'component': tabIndex,
+        'label': this.$gettext('Index'),
+        'class': '',
+        'path': '/library',
+        'icon': 'update',
+        'readonly': true,
+        'demo': true,
+      },
+      {
+        'name': 'library-import',
+        'component': tabImport,
+        'label': this.$gettext('Import'),
+        'class': '',
+        'path': '/library/import',
+        'icon': 'perm_media',
+        'readonly': false,
+        'demo': true,
+      },
+      {
+        'name': 'library-logs',
+        'component': tabLogs,
+        'label': this.$gettext('Logs'),
+        'class': '',
+        'path': '/library/logs',
+        'icon': 'notes',
+        'readonly': true,
+        'demo': true,
+      },
+    ];
+
+    if(isDemo) {
+      initTabs("demo", tabs);
+    }
+
+    if(!canImport) {
+      initTabs("readonly", tabs);
+    }
+
+    let active = 0;
+
+    if (typeof this.tab === 'string' && this.tab !== '') {
+      active = tabs.findIndex((t) => t.name === this.tab);
+    }
+
     return {
-      config: this.$config.values,
-      readonly: this.$config.get("readonly"),
-      active: this.tab,
+      tabs: tabs,
+      demo: isDemo,
+      public: isPublic,
+      config: config,
+      readonly: isReadOnly,
+      active: active,
     }
   },
   methods: {

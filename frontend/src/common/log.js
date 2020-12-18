@@ -32,7 +32,7 @@ import Event from "pubsub-js";
 
 class Log {
     constructor() {
-        this.cap = 100;
+        this.cap = 150;
         this.created = new Date;
         this.logs = [
             /* EXAMPLE LOG MESSAGE

@@ -10,8 +10,11 @@
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
       <v-tab v-for="(tab, index) in tabs" :key="index" :id="'tab-' + tab.name" :class="tab.class" ripple
-             @click="changePath(tab.path)" :title="tab.label">
-        <v-icon>{{ tab.icon }}</v-icon>
+             @click="changePath(tab.path)">
+        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="tab.label">{{ tab.icon }}</v-icon>
+        <template v-else>
+          <v-icon :size="18" left>{{ tab.icon }}</v-icon> {{ tab.label }}
+        </template>
       </v-tab>
 
       <v-tabs-items touchless>
@@ -28,52 +31,8 @@ import tabGeneral from "pages/settings/general.vue";
 import tabLibrary from "pages/settings/library.vue";
 import tabSync from "pages/settings/sync.vue";
 import tabAccount from "pages/settings/account.vue";
-import {$gettext} from "common/vm";
 
-const tabs = [
-  {
-    'name': 'settings-general',
-    'component': tabGeneral,
-    'label': $gettext('General'),
-    'class': '',
-    'path': '/settings',
-    'icon': 'tv',
-    'public': true,
-    'demo': true,
-  },
-  {
-    'name': 'settings-library',
-    'component': tabLibrary,
-    'label': $gettext('Library'),
-    'class': '',
-    'path': '/settings/library',
-    'icon': 'camera_roll',
-    'public': true,
-    'demo': true,
-  },
-  {
-    'name': 'settings-sync',
-    'component': tabSync,
-    'label': $gettext('Sync'),
-    'class': '',
-    'path': '/settings/sync',
-    'icon': 'sync_alt',
-    'public': false,
-    'demo': true,
-  },
-  {
-    'name': 'settings-account',
-    'component': tabAccount,
-    'label': $gettext('Account'),
-    'class': '',
-    'path': '/settings/account',
-    'icon': 'vpn_key',
-    'public': false,
-    'demo': true,
-  },
-];
-
-function initTabs(flag) {
+function initTabs(flag, tabs) {
   let i = 0;
   while(i < tabs.length) {
     if(!tabs[i][flag]) {
@@ -98,11 +57,53 @@ export default {
   data() {
     const isDemo = this.$config.get("demo");
     const isPublic = this.$config.get("public");
+    const tabs = [
+      {
+        'name': 'settings-general',
+        'component': tabGeneral,
+        'label': this.$gettext('General'),
+        'class': '',
+        'path': '/settings',
+        'icon': 'tv',
+        'public': true,
+        'demo': true,
+      },
+      {
+        'name': 'settings-library',
+        'component': tabLibrary,
+        'label': this.$gettext('Library'),
+        'class': '',
+        'path': '/settings/library',
+        'icon': 'camera_roll',
+        'public': true,
+        'demo': true,
+      },
+      {
+        'name': 'settings-sync',
+        'component': tabSync,
+        'label': this.$gettext('Sync'),
+        'class': '',
+        'path': '/settings/sync',
+        'icon': 'sync_alt',
+        'public': true,
+        'demo': true,
+      },
+      {
+        'name': 'settings-account',
+        'component': tabAccount,
+        'label': this.$gettext('Account'),
+        'class': '',
+        'path': '/settings/account',
+        'icon': 'person',
+        'public': false,
+        'demo': true,
+      },
+    ];
 
     if(isDemo) {
-      initTabs("demo");
+      initTabs("demo", tabs);
     } else if(isPublic) {
-      initTabs("public");
+      initTabs("public", tabs);
     }
 
     let active = 0;

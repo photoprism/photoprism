@@ -31,6 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import RestModel from "model/rest";
 import Api from "common/api";
 import {$gettext} from "common/vm";
+import {config} from "../session";
 
 export class Account extends RestModel {
     getDefaults() {
@@ -57,7 +58,7 @@ export class Account extends RestModel {
             SyncDate: null,
             SyncFilenames: true,
             SyncUpload: false,
-            SyncDownload: true,
+            SyncDownload: !config.get("readonly"),
             SyncRaw: true,
             CreatedAt: "",
             UpdatedAt: "",

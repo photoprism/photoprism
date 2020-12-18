@@ -190,7 +190,7 @@
                   color="secondary-dark"
                   :label="$gettext('Import')"
                   :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
-                  prepend-icon="create_new_folder"
+                  prepend-icon="perm_media"
                   persistent-hint
               >
               </v-checkbox>
