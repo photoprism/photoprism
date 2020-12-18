@@ -41,6 +41,7 @@ services:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # Don't backup photo and album metadata to YAML files
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disable built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Users can not view or change settings
       PHOTOPRISM_DISABLE_PLACES: "false"             # Disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # Don't create ExifTool JSON files for improved metadata extraction
