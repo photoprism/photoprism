@@ -36,151 +36,186 @@ import stripHtml from "string-strip-html";
 const thumbs = window.__CONFIG__.thumbs;
 
 class Viewer {
-    constructor() {
-        this.el = null;
-        this.gallery = null;
+  constructor() {
+    this.el = null;
+    this.gallery = null;
+  }
+
+  getEl() {
+    if (!this.el) {
+      this.el = document.getElementById("p-photo-viewer");
+
+      if (this.el === null) {
+        let err = "no photo viewer element found";
+        console.warn(err);
+        throw err;
+      }
     }
 
-    getEl() {
-        if (!this.el) {
-            this.el = document.getElementById("p-photo-viewer");
+    return this.el;
+  }
 
-            if (this.el === null) {
-                let err = "no photo viewer element found";
-                console.warn(err);
-                throw err;
-            }
+  show(items, index = 0) {
+    if (!Array.isArray(items) || items.length === 0 || index >= items.length) {
+      console.log("photo list passed to gallery was empty:", items);
+      return;
+    }
+
+    const shareButtons = [
+      {
+        id: "fit_720",
+        template: "Tiny (size)",
+        label: "Tiny",
+        url: "{{raw_image_url}}",
+        download: true,
+      },
+      {
+        id: "fit_1280",
+        template: "Small (size)",
+        label: "Small",
+        url: "{{raw_image_url}}",
+        download: true,
+      },
+      {
+        id: "fit_2048",
+        template: "Medium (size)",
+        label: "Medium",
+        url: "{{raw_image_url}}",
+        download: true,
+      },
+      {
+        id: "fit_2560",
+        template: "Large (size)",
+        label: "Large",
+        url: "{{raw_image_url}}",
+        download: true,
+      },
+      {
+        id: "original",
+        template: "Original (size)",
+        label: "Original",
+        url: "{{raw_image_url}}",
+        download: true,
+      },
+    ];
+
+    const options = {
+      index: index,
+      history: true,
+      preload: [1, 1],
+      focus: true,
+      modal: true,
+      closeEl: true,
+      captionEl: true,
+      fullscreenEl: true,
+      zoomEl: true,
+      shareEl: true,
+      shareButtons: shareButtons,
+      counterEl: false,
+      arrowEl: true,
+      preloaderEl: true,
+      addCaptionHTMLFn: function (item, captionEl /*, isFake */) {
+        // item      - slide object
+        // captionEl - caption DOM element
+        // isFake    - true when content is added to fake caption container
+        //             (used to get size of next or previous caption)
+
+        if (!item.title) {
+          captionEl.children[0].innerHTML = "";
+          return false;
         }
 
-        return this.el;
-    }
+        captionEl.children[0].innerHTML = stripHtml(item.title);
 
-    show(items, index = 0) {
-        if (!Array.isArray(items) || items.length === 0 || index >= items.length) {
-            console.log("photo list passed to gallery was empty:", items);
-            return;
+        if (item.playable) {
+          captionEl.children[0].innerHTML +=
+            ' <i aria-hidden="true" class="v-icon material-icons theme--dark">movie_creation</i>';
         }
 
-        const shareButtons = [
-            {id: "fit_720", template: "Tiny (size)", label: "Tiny", url: "{{raw_image_url}}", download: true},
-            {id: "fit_1280", template: "Small (size)", label: "Small", url: "{{raw_image_url}}", download: true},
-            {id: "fit_2048", template: "Medium (size)", label: "Medium", url: "{{raw_image_url}}", download: true},
-            {id: "fit_2560", template: "Large (size)", label: "Large", url: "{{raw_image_url}}", download: true},
-            {id: "original", template: "Original (size)", label: "Original", url: "{{raw_image_url}}", download: true},
-        ];
-
-        const options = {
-            index: index,
-            history: true,
-            preload: [1, 1],
-            focus: true,
-            modal: true,
-            closeEl: true,
-            captionEl: true,
-            fullscreenEl: true,
-            zoomEl: true,
-            shareEl: true,
-            shareButtons: shareButtons,
-            counterEl: false,
-            arrowEl: true,
-            preloaderEl: true,
-            addCaptionHTMLFn: function(item, captionEl /*, isFake */) {
-                // item      - slide object
-                // captionEl - caption DOM element
-                // isFake    - true when content is added to fake caption container
-                //             (used to get size of next or previous caption)
-
-                if(!item.title) {
-                    captionEl.children[0].innerHTML = "";
-                    return false;
-                }
-
-                captionEl.children[0].innerHTML = stripHtml(item.title);
-
-                if(item.playable) {
-                    captionEl.children[0].innerHTML += " <i aria-hidden=\"true\" class=\"v-icon material-icons theme--dark\">movie_creation</i>";
-                }
-
-                if(item.description) {
-                    captionEl.children[0].innerHTML += "<br><span class=\"description\">" + stripHtml(item.description) + "</span>";
-                }
-
-                if(item.playable) {
-                    captionEl.children[0].innerHTML = "<button>" + captionEl.children[0].innerHTML + "</button>";
-                }
-
-                return true;
-            },
-        };
-
-        let gallery = new PhotoSwipe(this.getEl(), PhotoSwipeUI_Default, items, options);
-        let realViewportWidth;
-        let realViewportHeight;
-        let previousSize;
-        let nextSize;
-        let firstResize = true;
-        let photoSrcWillChange;
-
-        this.gallery = gallery;
-
-        Event.publish("viewer.show");
-
-        gallery.listen("close", () => {
-            Event.publish("viewer.pause");
-            Event.publish("viewer.hide");
-        });
-        gallery.listen("shareLinkClick", () => Event.publish("viewer.pause"));
-        gallery.listen("initialZoomIn", () => Event.publish("viewer.pause"));
-        gallery.listen("initialZoomOut", () => Event.publish("viewer.pause"));
-
-        gallery.listen("beforeChange", () => Event.publish("viewer.change", {gallery: gallery, item: gallery.currItem}));
-
-        gallery.listen("beforeResize", () => {
-            realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
-            realViewportHeight = gallery.viewportSize.y * window.devicePixelRatio;
-
-            if (!previousSize) {
-                previousSize = "tile_720";
-            }
-
-            nextSize = this.constructor.mapViewportToImageSize(realViewportWidth, realViewportHeight);
-
-            if (nextSize !== previousSize) {
-                photoSrcWillChange = true;
-            }
-
-            if (photoSrcWillChange && !firstResize) {
-                gallery.invalidateCurrItems();
-            }
-
-            if (firstResize) {
-                firstResize = false;
-            }
-
-            photoSrcWillChange = false;
-        });
-
-        gallery.listen("gettingData", function (index, item) {
-            item.src = item[nextSize].src;
-            item.w = item[nextSize].w;
-            item.h = item[nextSize].h;
-            previousSize = nextSize;
-        });
-
-        gallery.init();
-    }
-
-    static mapViewportToImageSize(viewportWidth, viewportHeight) {
-        for (let i = 0; i < thumbs.length; i++) {
-            let t = thumbs[i];
-
-            if (t.w >= viewportWidth || t.h >= viewportHeight) {
-                return t.size;
-            }
+        if (item.description) {
+          captionEl.children[0].innerHTML +=
+            '<br><span class="description">' + stripHtml(item.description) + "</span>";
         }
 
-        return "fit_7680";
+        if (item.playable) {
+          captionEl.children[0].innerHTML =
+            "<button>" + captionEl.children[0].innerHTML + "</button>";
+        }
+
+        return true;
+      },
+    };
+
+    let gallery = new PhotoSwipe(this.getEl(), PhotoSwipeUI_Default, items, options);
+    let realViewportWidth;
+    let realViewportHeight;
+    let previousSize;
+    let nextSize;
+    let firstResize = true;
+    let photoSrcWillChange;
+
+    this.gallery = gallery;
+
+    Event.publish("viewer.show");
+
+    gallery.listen("close", () => {
+      Event.publish("viewer.pause");
+      Event.publish("viewer.hide");
+    });
+    gallery.listen("shareLinkClick", () => Event.publish("viewer.pause"));
+    gallery.listen("initialZoomIn", () => Event.publish("viewer.pause"));
+    gallery.listen("initialZoomOut", () => Event.publish("viewer.pause"));
+
+    gallery.listen("beforeChange", () =>
+      Event.publish("viewer.change", { gallery: gallery, item: gallery.currItem })
+    );
+
+    gallery.listen("beforeResize", () => {
+      realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
+      realViewportHeight = gallery.viewportSize.y * window.devicePixelRatio;
+
+      if (!previousSize) {
+        previousSize = "tile_720";
+      }
+
+      nextSize = this.constructor.mapViewportToImageSize(realViewportWidth, realViewportHeight);
+
+      if (nextSize !== previousSize) {
+        photoSrcWillChange = true;
+      }
+
+      if (photoSrcWillChange && !firstResize) {
+        gallery.invalidateCurrItems();
+      }
+
+      if (firstResize) {
+        firstResize = false;
+      }
+
+      photoSrcWillChange = false;
+    });
+
+    gallery.listen("gettingData", function (index, item) {
+      item.src = item[nextSize].src;
+      item.w = item[nextSize].w;
+      item.h = item[nextSize].h;
+      previousSize = nextSize;
+    });
+
+    gallery.init();
+  }
+
+  static mapViewportToImageSize(viewportWidth, viewportHeight) {
+    for (let i = 0; i < thumbs.length; i++) {
+      let t = thumbs[i];
+
+      if (t.w >= viewportWidth || t.h >= viewportHeight) {
+        return t.size;
+      }
     }
+
+    return "fit_7680";
+  }
 }
 
 export default Viewer;

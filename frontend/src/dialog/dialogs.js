@@ -48,22 +48,22 @@ import PReloadDialog from "./reload.vue";
 const dialogs = {};
 
 dialogs.install = (Vue) => {
-    Vue.component("p-account-add-dialog", PAccountAddDialog);
-    Vue.component("p-account-remove-dialog", PAccountRemoveDialog);
-    Vue.component("p-account-edit-dialog", PAccountEditDialog);
-    Vue.component("p-photo-archive-dialog", PPhotoArchiveDialog);
-    Vue.component("p-photo-album-dialog", PPhotoAlbumDialog);
-    Vue.component("p-photo-edit-dialog", PPhotoEditDialog);
-    Vue.component("p-file-delete-dialog", PFileDeleteDialog);
-    Vue.component("p-album-edit-dialog", PAlbumEditDialog);
-    Vue.component("p-album-delete-dialog", PAlbumDeleteDialog);
-    Vue.component("p-label-delete-dialog", PLabelDeleteDialog);
-    Vue.component("p-upload-dialog", PUploadDialog);
-    Vue.component("p-video-dialog", PVideoDialog);
-    Vue.component("p-share-dialog", PShareDialog);
-    Vue.component("p-share-upload-dialog", PShareUploadDialog);
-    Vue.component("p-webdav-dialog", PWebdavDialog);
-    Vue.component("p-reload-dialog", PReloadDialog);
+  Vue.component("PAccountAddDialog", PAccountAddDialog);
+  Vue.component("PAccountRemoveDialog", PAccountRemoveDialog);
+  Vue.component("PAccountEditDialog", PAccountEditDialog);
+  Vue.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
+  Vue.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
+  Vue.component("PPhotoEditDialog", PPhotoEditDialog);
+  Vue.component("PFileDeleteDialog", PFileDeleteDialog);
+  Vue.component("PAlbumEditDialog", PAlbumEditDialog);
+  Vue.component("PAlbumDeleteDialog", PAlbumDeleteDialog);
+  Vue.component("PLabelDeleteDialog", PLabelDeleteDialog);
+  Vue.component("PUploadDialog", PUploadDialog);
+  Vue.component("PVideoDialog", PVideoDialog);
+  Vue.component("PShareDialog", PShareDialog);
+  Vue.component("PShareUploadDialog", PShareUploadDialog);
+  Vue.component("PWebdavDialog", PWebdavDialog);
+  Vue.component("PReloadDialog", PReloadDialog);
 };
 
 export default dialogs;

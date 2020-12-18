@@ -30,219 +30,218 @@ https://docs.photoprism.org/developer-guide/
 
 import Model from "./model";
 import Api from "common/api";
-import {config} from "../session";
-import {$gettext} from "common/vm";
+import { config } from "../session";
+import { $gettext } from "common/vm";
 
 const thumbs = window.__CONFIG__.thumbs;
 
 export class Thumb extends Model {
-    getDefaults() {
-        return {
-            uid: "",
-            title: "",
-            taken: "",
-            description: "",
-            favorite: false,
-            playable: false,
-            original_w: 0,
-            original_h: 0,
-            download_url: "",
-        };
+  getDefaults() {
+    return {
+      uid: "",
+      title: "",
+      taken: "",
+      description: "",
+      favorite: false,
+      playable: false,
+      original_w: 0,
+      original_h: 0,
+      download_url: "",
+    };
+  }
+
+  getId() {
+    return this.uid;
+  }
+
+  hasId() {
+    return !!this.getId();
+  }
+
+  toggleLike() {
+    this.favorite = !this.favorite;
+
+    if (this.favorite) {
+      return Api.post("photos/" + this.uid + "/like");
+    } else {
+      return Api.delete("photos/" + this.uid + "/like");
+    }
+  }
+
+  static thumbNotFound() {
+    const result = {
+      uid: "",
+      title: $gettext("Not Found"),
+      taken: "",
+      description: "",
+      favorite: false,
+      playable: false,
+      original_w: 0,
+      original_h: 0,
+      download_url: "",
+    };
+
+    for (let i = 0; i < thumbs.length; i++) {
+      let t = thumbs[i];
+
+      result[t.size] = {
+        src: "/api/v1/svg/photo",
+        w: t.w,
+        h: t.h,
+      };
     }
 
-    getId() {
-        return this.uid;
+    return result;
+  }
+
+  static fromPhotos(photos) {
+    let result = [];
+    const n = photos.length;
+
+    for (let i = 0; i < n; i++) {
+      result.push(this.fromPhoto(photos[i]));
     }
 
-    hasId() {
-        return !!this.getId();
+    return result;
+  }
+
+  static fromPhoto(photo) {
+    if (photo.Files) {
+      return this.fromFile(photo, photo.mainFile());
     }
 
-    toggleLike() {
-        this.favorite = !this.favorite;
-
-        if (this.favorite) {
-            return Api.post("photos/" + this.uid + "/like");
-        } else {
-            return Api.delete("photos/" + this.uid + "/like");
-        }
+    if (!photo || !photo.Hash) {
+      return this.thumbNotFound();
     }
 
-    static thumbNotFound() {
-        const result = {
-            uid: "",
-            title: $gettext("Not Found"),
-            taken: "",
-            description: "",
-            favorite: false,
-            playable: false,
-            original_w: 0,
-            original_h: 0,
-            download_url: "",
-        };
+    const result = {
+      uid: photo.UID,
+      title: photo.Title,
+      taken: photo.getDateString(),
+      description: photo.Description,
+      favorite: photo.Favorite,
+      playable: photo.isPlayable(),
+      download_url: this.downloadUrl(photo),
+      original_w: photo.Width,
+      original_h: photo.Height,
+    };
 
-        for (let i = 0; i < thumbs.length; i++) {
-            let t = thumbs[i];
+    for (let i = 0; i < thumbs.length; i++) {
+      let t = thumbs[i];
+      let size = photo.calculateSize(t.w, t.h);
 
-            result[t.size] = {
-                src: "/api/v1/svg/photo",
-                w: t.w,
-                h: t.h,
-            };
-        }
-
-        return result;
+      result[t.size] = {
+        src: photo.thumbnailUrl(t.size),
+        w: size.width,
+        h: size.height,
+      };
     }
 
-    static fromPhotos(photos) {
-        let result = [];
-        const n = photos.length;
+    return new this(result);
+  }
 
-        for (let i = 0; i < n; i++) {
-            result.push(this.fromPhoto(photos[i]));
-        }
-
-        return result;
+  static fromFile(photo, file) {
+    if (!photo || !file || !file.Hash) {
+      return this.thumbNotFound();
     }
 
-    static fromPhoto(photo) {
-        if (photo.Files) {
-            return this.fromFile(photo, photo.mainFile());
-        }
+    const result = {
+      uid: photo.UID,
+      title: photo.Title,
+      taken: photo.getDateString(),
+      description: photo.Description,
+      favorite: photo.Favorite,
+      playable: photo.isPlayable(),
+      download_url: this.downloadUrl(file),
+      original_w: file.Width,
+      original_h: file.Height,
+    };
 
-        if (!photo || !photo.Hash) {
-            return this.thumbNotFound();
-        }
+    for (let i = 0; i < thumbs.length; i++) {
+      let t = thumbs[i];
+      let size = this.calculateSize(file, t.w, t.h);
 
-        const result = {
-            uid: photo.UID,
-            title: photo.Title,
-            taken: photo.getDateString(),
-            description: photo.Description,
-            favorite: photo.Favorite,
-            playable: photo.isPlayable(),
-            download_url: this.downloadUrl(photo),
-            original_w: photo.Width,
-            original_h: photo.Height,
-        };
-
-        for (let i = 0; i < thumbs.length; i++) {
-            let t = thumbs[i];
-            let size = photo.calculateSize(t.w, t.h);
-
-            result[t.size] = {
-                src: photo.thumbnailUrl(t.size),
-                w: size.width,
-                h: size.height,
-            };
-        }
-
-        return new this(result);
+      result[t.size] = {
+        src: this.thumbnailUrl(file, t.size),
+        w: size.width,
+        h: size.height,
+      };
     }
 
-    static fromFile(photo, file) {
-        if (!photo || !file || !file.Hash) {
-            return this.thumbNotFound();
-        }
+    return new this(result);
+  }
 
-        const result = {
-            uid: photo.UID,
-            title: photo.Title,
-            taken: photo.getDateString(),
-            description: photo.Description,
-            favorite: photo.Favorite,
-            playable: photo.isPlayable(),
-            download_url: this.downloadUrl(file),
-            original_w: file.Width,
-            original_h: file.Height,
-        };
+  static fromFiles(photos) {
+    let result = [];
 
-        for (let i = 0; i < thumbs.length; i++) {
-            let t = thumbs[i];
-            let size = this.calculateSize(file, t.w, t.h);
-
-            result[t.size] = {
-                src: this.thumbnailUrl(file, t.size),
-                w: size.width,
-                h: size.height,
-            };
-        }
-
-        return new this(result);
+    if (!photos || !photos.length) {
+      return result;
     }
 
-    static fromFiles(photos) {
-        let result = [];
+    const n = photos.length;
 
-        if (!photos || !photos.length) {
-            return result;
+    for (let i = 0; i < n; i++) {
+      let p = photos[i];
+
+      if (!p.Files || !p.Files.length) {
+        continue;
+      }
+
+      for (let j = 0; j < p.Files.length; j++) {
+        let f = p.Files[j];
+
+        if (!f || f.Type !== "jpg") {
+          continue;
         }
 
-        const n = photos.length;
+        let thumb = this.fromFile(p, f);
 
-        for (let i = 0; i < n; i++) {
-            let p = photos[i];
-
-            if (!p.Files || !p.Files.length) {
-                continue;
-            }
-
-            for (let j = 0; j < p.Files.length; j++) {
-                let f = p.Files[j];
-
-                if (!f || f.Type !== "jpg") {
-                    continue;
-                }
-
-                let thumb = this.fromFile(p, f);
-
-                if (thumb) {
-                    result.push(thumb);
-                }
-            }
+        if (thumb) {
+          result.push(thumb);
         }
-
-        return result;
+      }
     }
 
-    static calculateSize(file, width, height) {
-        if (width >= file.Width && height >= file.Height) { // Smaller
-            return {width: file.Width, height: file.Height};
-        }
+    return result;
+  }
 
-        const srcAspectRatio = file.Width / file.Height;
-        const maxAspectRatio = width / height;
-
-        let newW, newH;
-
-        if (srcAspectRatio > maxAspectRatio) {
-            newW = width;
-            newH = Math.round(newW / srcAspectRatio);
-
-        } else {
-            newH = height;
-            newW = Math.round(newH * srcAspectRatio);
-        }
-
-        return {width: newW, height: newH};
+  static calculateSize(file, width, height) {
+    if (width >= file.Width && height >= file.Height) {
+      // Smaller
+      return { width: file.Width, height: file.Height };
     }
 
-    static thumbnailUrl(file, size) {
-        if (!file.Hash) {
-            return "/api/v1/svg/photo";
+    const srcAspectRatio = file.Width / file.Height;
+    const maxAspectRatio = width / height;
 
-        }
+    let newW, newH;
 
-        return `/api/v1/t/${file.Hash}/${config.previewToken()}/${size}`;
+    if (srcAspectRatio > maxAspectRatio) {
+      newW = width;
+      newH = Math.round(newW / srcAspectRatio);
+    } else {
+      newH = height;
+      newW = Math.round(newH * srcAspectRatio);
     }
 
-    static downloadUrl(file) {
-        if (!file || !file.Hash) {
-            return "";
-        }
+    return { width: newW, height: newH };
+  }
 
-        return `/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`;
+  static thumbnailUrl(file, size) {
+    if (!file.Hash) {
+      return "/api/v1/svg/photo";
     }
+
+    return `/api/v1/t/${file.Hash}/${config.previewToken()}/${size}`;
+  }
+
+  static downloadUrl(file) {
+    if (!file || !file.Hash) {
+      return "";
+    }
+
+    return `/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`;
+  }
 }
 
 export default Thumb;

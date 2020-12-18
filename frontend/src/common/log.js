@@ -31,35 +31,35 @@ https://docs.photoprism.org/developer-guide/
 import Event from "pubsub-js";
 
 class Log {
-    constructor() {
-        this.cap = 150;
-        this.created = new Date;
-        this.logs = [
-            /* EXAMPLE LOG MESSAGE
+  constructor() {
+    this.cap = 150;
+    this.created = new Date();
+    this.logs = [
+      /* EXAMPLE LOG MESSAGE
             {
                 "message": "waiting for events",
                 "level": "debug",
                 "time": this.created.toISOString(),
             },
             */
-        ];
+    ];
 
-        this.logId = 0;
+    this.logId = 0;
 
-        Event.subscribe("log", this.onLog.bind(this));
+    Event.subscribe("log", this.onLog.bind(this));
+  }
+
+  onLog(ev, data) {
+    data.id = this.logId++;
+
+    this.logs.unshift(data);
+
+    if (this.logs.length > this.cap) {
+      this.logs.splice(this.cap);
     }
-
-    onLog(ev, data) {
-        data.id = this.logId++;
-
-        this.logs.unshift(data);
-
-        if(this.logs.length > this.cap) {
-            this.logs.splice(this.cap);
-        }
-    }
+  }
 }
 
-const log = new Log;
+const log = new Log();
 
 export default log;

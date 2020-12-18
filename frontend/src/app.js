@@ -41,8 +41,8 @@ import Log from "common/log";
 import PhotoPrism from "app.vue";
 import Router from "vue-router";
 import Routes from "routes";
-import {config, session} from "session";
-import {Settings} from "luxon";
+import { config, session } from "session";
+import { Settings } from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";
 import Vue from "vue";
@@ -53,13 +53,15 @@ import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import VueModal from "vue-js-modal";
 import Hls from "hls.js";
-import {$gettext, Mount} from "common/vm";
+import { $gettext, Mount } from "common/vm";
 
 // Initialize helpers
 const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.get("public");
-const isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+  navigator.userAgent
+);
 
 // HTTP Live Streaming (video support)
 window.Hls = Hls;
@@ -77,23 +79,23 @@ Vue.prototype.$clipboard = clipboard;
 Vue.prototype.$isMobile = isMobile;
 
 // Register Vuetify
-Vue.use(Vuetify, {"theme": config.theme});
+Vue.use(Vuetify, { theme: config.theme });
 
 Vue.config.language = config.values.settings.ui.language;
 Settings.defaultLocale = Vue.config.language.substring(0, 2);
 
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {
-    translations: config.translations,
-    silent: true, // !config.values.debug,
-    defaultLanguage: Vue.config.language,
-    autoAddKeyAttributes: true,
+  translations: config.translations,
+  silent: true, // !config.values.debug,
+  defaultLanguage: Vue.config.language,
+  autoAddKeyAttributes: true,
 });
 
 Vue.use(VueLuxon);
 Vue.use(VueInfiniteScroll);
 Vue.use(VueFullscreen);
-Vue.use(VueModal, {dynamic: true, dynamicDefaults: {clickToClose: true}});
+Vue.use(VueModal, { dynamic: true, dynamicDefaults: { clickToClose: true } });
 Vue.use(VueFilters);
 Vue.use(Components);
 Vue.use(Dialogs);
@@ -101,52 +103,52 @@ Vue.use(Router);
 
 // Configure client-side routing
 const router = new Router({
-    routes: Routes,
-    mode: "history",
-    saveScrollPosition: true,
+  routes: Routes,
+  mode: "history",
+  saveScrollPosition: true,
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.settings) && config.values.disable.settings) {
-        next({name: "home"});
-    } else if (to.matched.some(record => record.meta.admin)) {
-        if (isPublic || session.isAdmin()) {
-            next();
-        } else {
-            next({
-                name: "login",
-                params: {nextUrl: to.fullPath},
-            });
-        }
-    } else if (to.matched.some(record => record.meta.auth)) {
-        if (isPublic || session.isUser()) {
-            next();
-        } else {
-            next({
-                name: "login",
-                params: {nextUrl: to.fullPath},
-            });
-        }
+  if (to.matched.some((record) => record.meta.settings) && config.values.disable.settings) {
+    next({ name: "home" });
+  } else if (to.matched.some((record) => record.meta.admin)) {
+    if (isPublic || session.isAdmin()) {
+      next();
     } else {
-        next();
+      next({
+        name: "login",
+        params: { nextUrl: to.fullPath },
+      });
     }
+  } else if (to.matched.some((record) => record.meta.auth)) {
+    if (isPublic || session.isUser()) {
+      next();
+    } else {
+      next({
+        name: "login",
+        params: { nextUrl: to.fullPath },
+      });
+    }
+  } else {
+    next();
+  }
 });
 
 router.afterEach((to) => {
-    if (to.meta.title && config.values.siteTitle !== to.meta.title) {
-        config.page.title = $gettext(to.meta.title);
-        window.document.title = config.values.siteTitle + ": " + config.page.title;
-    } else {
-        config.page.title = config.values.siteTitle;
-        window.document.title = config.values.siteTitle + ": " + config.values.siteCaption;
-    }
+  if (to.meta.title && config.values.siteTitle !== to.meta.title) {
+    config.page.title = $gettext(to.meta.title);
+    window.document.title = config.values.siteTitle + ": " + config.page.title;
+  } else {
+    config.page.title = config.values.siteTitle;
+    window.document.title = config.values.siteTitle + ": " + config.values.siteCaption;
+  }
 });
 
 // Pull client config every 10 minutes in case push fails (except on mobile to save battery).
 if (isMobile) {
-    document.body.classList.add("mobile");
+  document.body.classList.add("mobile");
 } else {
-    setInterval(() => config.update(), 600000);
+  setInterval(() => config.update(), 600000);
 }
 
 // Start application.

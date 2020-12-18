@@ -30,67 +30,71 @@ https://docs.photoprism.org/developer-guide/
 
 import RestModel from "model/rest";
 import Api from "common/api";
-import {$gettext} from "common/vm";
-import {config} from "../session";
+import { $gettext } from "common/vm";
+import { config } from "../session";
 
 export class Account extends RestModel {
-    getDefaults() {
-        return {
-            ID: 0,
-            AccName: "",
-            AccOwner: "",
-            AccURL: "",
-            AccType: "",
-            AccKey: "",
-            AccUser: "",
-            AccPass: "",
-            AccError: "",
-            AccErrors: 0,
-            AccShare: true,
-            AccSync: false,
-            RetryLimit: 3,
-            SharePath: "/",
-            ShareSize: "",
-            ShareExpires: 0,
-            SyncPath: "/",
-            SyncStatus: "",
-            SyncInterval: 86400,
-            SyncDate: null,
-            SyncFilenames: true,
-            SyncUpload: false,
-            SyncDownload: !config.get("readonly"),
-            SyncRaw: true,
-            CreatedAt: "",
-            UpdatedAt: "",
-            DeletedAt: null,
-        };
-    }
+  getDefaults() {
+    return {
+      ID: 0,
+      AccName: "",
+      AccOwner: "",
+      AccURL: "",
+      AccType: "",
+      AccKey: "",
+      AccUser: "",
+      AccPass: "",
+      AccError: "",
+      AccErrors: 0,
+      AccShare: true,
+      AccSync: false,
+      RetryLimit: 3,
+      SharePath: "/",
+      ShareSize: "",
+      ShareExpires: 0,
+      SyncPath: "/",
+      SyncStatus: "",
+      SyncInterval: 86400,
+      SyncDate: null,
+      SyncFilenames: true,
+      SyncUpload: false,
+      SyncDownload: !config.get("readonly"),
+      SyncRaw: true,
+      CreatedAt: "",
+      UpdatedAt: "",
+      DeletedAt: null,
+    };
+  }
 
-    getEntityName() {
-        return this.AccName;
-    }
+  getEntityName() {
+    return this.AccName;
+  }
 
-    getId() {
-        return this.ID;
-    }
+  getId() {
+    return this.ID;
+  }
 
-    Folders() {
-        return Api.get(this.getEntityResource() + "/folders").then((response) => Promise.resolve(response.data));
-    }
+  Folders() {
+    return Api.get(this.getEntityResource() + "/folders").then((response) =>
+      Promise.resolve(response.data)
+    );
+  }
 
-    Share(photos, dest) {
-        const values = {Photos: photos, Destination: dest};
+  Share(photos, dest) {
+    const values = { Photos: photos, Destination: dest };
 
-        return Api.post(this.getEntityResource() + "/share", values).then((response) => Promise.resolve(response.data));
-    }
+    return Api.post(this.getEntityResource() + "/share", values).then((response) =>
+      Promise.resolve(response.data)
+    );
+  }
 
-    static getCollectionResource() {
-        return "accounts";
-    }
+  static getCollectionResource() {
+    return "accounts";
+  }
 
-    static getModelName() {
-        return $gettext("Account");
-    }
+  static getModelName() {
+    return $gettext("Account");
+  }
 }
 
 export default Account;

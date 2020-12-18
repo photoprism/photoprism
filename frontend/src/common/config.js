@@ -34,198 +34,198 @@ import translations from "locales/translations.json";
 import Api from "./api";
 
 export default class Config {
-    /**
-     * @param {Storage} storage
-     * @param {object} values
-     */
-    constructor(storage, values) {
-        this.disconnected = false;
-        this.storage = storage;
-        this.storage_key = "config";
+  /**
+   * @param {Storage} storage
+   * @param {object} values
+   */
+  constructor(storage, values) {
+    this.disconnected = false;
+    this.storage = storage;
+    this.storage_key = "config";
 
-        this.$vuetify = null;
-        this.translations = translations;
+    this.$vuetify = null;
+    this.translations = translations;
 
-        if (!values || !values.siteTitle) {
-            console.warn("config: values are empty");
-            this.debug = true;
-            this.demo = false;
-            this.values = {};
-            this.page = {
-                title: "PhotoPrism",
-                caption: "Browse Your Life",
-            };
-            return;
-        }
-
-        this.page = {
-            title: values.siteTitle,
-            caption: values.siteCaption,
-        };
-
-        this.values = values;
-        this.debug = !!values.debug;
-        this.demo = !!values.demo;
-
-        Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
-        Event.subscribe("count", (ev, data) => this.onCount(ev, data));
-
-        if (this.has("settings")) {
-            this.setTheme(this.get("settings").ui.theme);
-        } else {
-            this.setTheme("default");
-        }
+    if (!values || !values.siteTitle) {
+      console.warn("config: values are empty");
+      this.debug = true;
+      this.demo = false;
+      this.values = {};
+      this.page = {
+        title: "PhotoPrism",
+        caption: "Browse Your Life",
+      };
+      return;
     }
 
-    update() {
-        Api.get("config").then(
-            (response) => this.setValues(response.data),
-            () => console.warn("failed pulling updated client config")
-        );
+    this.page = {
+      title: values.siteTitle,
+      caption: values.siteCaption,
+    };
+
+    this.values = values;
+    this.debug = !!values.debug;
+    this.demo = !!values.demo;
+
+    Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
+    Event.subscribe("count", (ev, data) => this.onCount(ev, data));
+
+    if (this.has("settings")) {
+      this.setTheme(this.get("settings").ui.theme);
+    } else {
+      this.setTheme("default");
+    }
+  }
+
+  update() {
+    Api.get("config").then(
+      (response) => this.setValues(response.data),
+      () => console.warn("failed pulling updated client config")
+    );
+  }
+
+  setValues(values) {
+    if (!values) return;
+
+    if (this.debug) {
+      console.log("config: new values", values);
     }
 
-    setValues(values) {
-        if (!values) return;
-
-        if (this.debug) {
-            console.log("config: new values", values);
-        }
-
-        if (values.jsHash && this.values.jsHash !== values.jsHash) {
-            Event.publish("dialog.reload", {values});
-        }
-
-        for (let key in values) {
-            if (values.hasOwnProperty(key)) {
-                this.set(key, values[key]);
-            }
-        }
-
-        if (values.settings) {
-            this.setTheme(values.settings.ui.theme);
-        }
-
-        return this;
+    if (values.jsHash && this.values.jsHash !== values.jsHash) {
+      Event.publish("dialog.reload", { values });
     }
 
-    onCount(ev, data) {
-        const type = ev.split(".")[1];
-
-        switch (type) {
-            case "cameras":
-                this.values.count.cameras += data.count;
-                this.update();
-                break;
-            case "lenses":
-                this.values.count.lenses += data.count;
-                break;
-            case "countries":
-                this.values.count.countries += data.count;
-                this.update();
-                break;
-            case "states":
-                this.values.count.states += data.count;
-                break;
-            case "places":
-                this.values.count.places += data.count;
-                break;
-            case "labels":
-                this.values.count.labels += data.count;
-                break;
-            case "videos":
-                this.values.count.videos += data.count;
-                break;
-            case "albums":
-                this.values.count.albums += data.count;
-                break;
-            case "moments":
-                this.values.count.moments += data.count;
-                break;
-            case "months":
-                this.values.count.months += data.count;
-                break;
-            case "folders":
-                this.values.count.folders += data.count;
-                break;
-            case "files":
-                this.values.count.files += data.count;
-                break;
-            case "favorites":
-                this.values.count.favorites += data.count;
-                break;
-            case "review":
-                this.values.count.review += data.count;
-                break;
-            case "private":
-                this.values.count.private += data.count;
-                break;
-            case "photos":
-                this.values.count.photos += data.count;
-                break;
-            default:
-                console.warn("unknown count type", ev, data);
-        }
-
-        this.values.count;
+    for (let key in values) {
+      if (values.hasOwnProperty(key)) {
+        this.set(key, values[key]);
+      }
     }
 
-    setVuetify(instance) {
-        this.$vuetify = instance;
+    if (values.settings) {
+      this.setTheme(values.settings.ui.theme);
     }
 
-    setTheme(name) {
-        this.theme = themes[name] ? themes[name] : themes["default"];
+    return this;
+  }
 
-        if (this.$vuetify) {
-            this.$vuetify.theme = this.theme;
-        }
+  onCount(ev, data) {
+    const type = ev.split(".")[1];
 
-        return this;
+    switch (type) {
+      case "cameras":
+        this.values.count.cameras += data.count;
+        this.update();
+        break;
+      case "lenses":
+        this.values.count.lenses += data.count;
+        break;
+      case "countries":
+        this.values.count.countries += data.count;
+        this.update();
+        break;
+      case "states":
+        this.values.count.states += data.count;
+        break;
+      case "places":
+        this.values.count.places += data.count;
+        break;
+      case "labels":
+        this.values.count.labels += data.count;
+        break;
+      case "videos":
+        this.values.count.videos += data.count;
+        break;
+      case "albums":
+        this.values.count.albums += data.count;
+        break;
+      case "moments":
+        this.values.count.moments += data.count;
+        break;
+      case "months":
+        this.values.count.months += data.count;
+        break;
+      case "folders":
+        this.values.count.folders += data.count;
+        break;
+      case "files":
+        this.values.count.files += data.count;
+        break;
+      case "favorites":
+        this.values.count.favorites += data.count;
+        break;
+      case "review":
+        this.values.count.review += data.count;
+        break;
+      case "private":
+        this.values.count.private += data.count;
+        break;
+      case "photos":
+        this.values.count.photos += data.count;
+        break;
+      default:
+        console.warn("unknown count type", ev, data);
     }
 
-    getValues() {
-        return this.values;
+    this.values.count;
+  }
+
+  setVuetify(instance) {
+    this.$vuetify = instance;
+  }
+
+  setTheme(name) {
+    this.theme = themes[name] ? themes[name] : themes["default"];
+
+    if (this.$vuetify) {
+      this.$vuetify.theme = this.theme;
     }
 
-    storeValues() {
-        this.storage.setItem(this.storage_key, JSON.stringify(this.getValues()));
-        return this;
+    return this;
+  }
+
+  getValues() {
+    return this.values;
+  }
+
+  storeValues() {
+    this.storage.setItem(this.storage_key, JSON.stringify(this.getValues()));
+    return this;
+  }
+
+  set(key, value) {
+    this.values[key] = value;
+    return this;
+  }
+
+  has(key) {
+    return !!this.values[key];
+  }
+
+  get(key) {
+    return this.values[key];
+  }
+
+  feature(name) {
+    return this.values.settings.features[name];
+  }
+
+  settings() {
+    return this.values.settings;
+  }
+
+  downloadToken() {
+    return this.values["downloadToken"];
+  }
+
+  previewToken() {
+    return this.values["previewToken"];
+  }
+
+  albumCategories() {
+    if (this.values["albumCategories"]) {
+      return this.values["albumCategories"];
     }
 
-    set(key, value) {
-        this.values[key] = value;
-        return this;
-    }
-
-    has(key) {
-        return !!this.values[key];
-    }
-
-    get(key) {
-        return this.values[key];
-    }
-
-    feature(name) {
-        return this.values.settings.features[name];
-    }
-
-    settings() {
-        return this.values.settings;
-    }
-
-    downloadToken() {
-        return this.values["downloadToken"];
-    }
-
-    previewToken() {
-        return this.values["previewToken"];
-    }
-
-    albumCategories() {
-        if (this.values["albumCategories"]) {
-            return this.values["albumCategories"];
-        }
-
-        return [];
-    }
+    return [];
+  }
 }

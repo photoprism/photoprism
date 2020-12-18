@@ -30,188 +30,188 @@ https://docs.photoprism.org/developer-guide/
 
 import RestModel from "model/rest";
 import Notify from "common/notify";
-import {$gettext} from "./vm";
+import { $gettext } from "./vm";
 
 export const MaxItems = 999;
 
 export default class Clipboard {
-    /**
-     * @param {Storage} storage
-     * @param {string} key
-     */
-    constructor(storage, key) {
-        this.storageKey = key ? key : "clipboard";
+  /**
+   * @param {Storage} storage
+   * @param {string} key
+   */
+  constructor(storage, key) {
+    this.storageKey = key ? key : "clipboard";
 
-        this.storage = storage;
-        this.selectionMap = {};
-        this.selection = [];
-        this.lastId = "";
-        this.maxItems = MaxItems;
+    this.storage = storage;
+    this.selectionMap = {};
+    this.selection = [];
+    this.lastId = "";
+    this.maxItems = MaxItems;
 
-        this.loadFromStorage();
+    this.loadFromStorage();
+  }
+
+  isModel(model) {
+    if (!model) {
+      console.warn("Clipboard::isModel() - empty model", model);
+      return false;
     }
 
-    isModel(model) {
-        if (!model) {
-            console.warn("Clipboard::isModel() - empty model", model);
-            return false;
-        }
-
-        if (typeof model.getId !== "function") {
-            console.warn("Clipboard::isModel() - model.getId() is not a function", model);
-            return false;
-        }
-
-        return true;
+    if (typeof model.getId !== "function") {
+      console.warn("Clipboard::isModel() - model.getId() is not a function", model);
+      return false;
     }
 
-    loadFromStorage() {
-        const photosJson = this.storage.getItem(this.storageKey);
+    return true;
+  }
 
-        if (photosJson !== null && typeof photosJson !== "undefined") {
-            this.setIds(JSON.parse(photosJson));
-        }
+  loadFromStorage() {
+    const photosJson = this.storage.getItem(this.storageKey);
+
+    if (photosJson !== null && typeof photosJson !== "undefined") {
+      this.setIds(JSON.parse(photosJson));
+    }
+  }
+
+  saveToStorage() {
+    this.storage.setItem(this.storageKey, JSON.stringify(this.selection));
+  }
+
+  toggle(model) {
+    if (!this.isModel(model)) {
+      return;
     }
 
-    saveToStorage() {
-        this.storage.setItem(this.storageKey, JSON.stringify(this.selection));
+    const id = model.getId();
+    this.toggleId(id);
+  }
+
+  toggleId(id) {
+    const index = this.selection.indexOf(id);
+
+    if (index === -1) {
+      if (this.selection.length >= this.maxItems) {
+        Notify.warn($gettext("Can't select more items"));
+        return;
+      }
+
+      this.selection.push(id);
+      this.selectionMap["id:" + id] = true;
+      this.lastId = id;
+    } else {
+      this.selection.splice(index, 1);
+      delete this.selectionMap["id:" + id];
+      this.lastId = "";
     }
 
-    toggle(model) {
-        if (!this.isModel(model)) {
-            return;
-        }
+    this.saveToStorage();
+  }
 
-        const id = model.getId();
-        this.toggleId(id);
+  add(model) {
+    if (!this.isModel(model)) {
+      return;
     }
 
-    toggleId(id) {
-        const index = this.selection.indexOf(id);
+    const id = model.getId();
 
-        if (index === -1) {
-            if (this.selection.length >= this.maxItems) {
-                Notify.warn($gettext("Can't select more items"));
-                return;
-            }
+    this.addId(id);
+  }
 
-            this.selection.push(id);
-            this.selectionMap["id:" + id] = true;
-            this.lastId = id;
-        } else {
-            this.selection.splice(index, 1);
-            delete this.selectionMap["id:" + id];
-            this.lastId = "";
-        }
-
-        this.saveToStorage();
+  addId(id) {
+    if (this.hasId(id)) {
+      return;
     }
 
-    add(model) {
-        if (!this.isModel(model)) {
-            return;
-        }
-
-        const id = model.getId();
-
-        this.addId(id);
+    if (this.selection.length >= this.maxItems) {
+      Notify.warn($gettext("Can't select more items"));
+      return;
     }
 
-    addId(id) {
-        if (this.hasId(id)) {
-            return;
-        }
+    this.selection.push(id);
+    this.selectionMap["id:" + id] = true;
+    this.lastId = id;
 
-        if (this.selection.length >= this.maxItems) {
-            Notify.warn($gettext("Can't select more items"));
-            return;
-        }
+    this.saveToStorage();
+  }
 
-        this.selection.push(id);
-        this.selectionMap["id:" + id] = true;
-        this.lastId = id;
-
-        this.saveToStorage();
+  addRange(rangeEnd, models) {
+    if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
+      console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
+      return;
     }
 
-    addRange(rangeEnd, models) {
-        if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
-            console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
-            return;
-        }
+    let rangeStart = models.findIndex((photo) => photo.UID === this.lastId);
 
-        let rangeStart = models.findIndex((photo) => photo.UID === this.lastId);
-
-        if (rangeStart === -1) {
-            this.toggle(models[rangeEnd]);
-            return 1;
-        }
-
-        if (rangeStart > rangeEnd) {
-            const newEnd = rangeStart;
-            rangeStart = rangeEnd;
-            rangeEnd = newEnd;
-        }
-
-        for (let i = rangeStart; i <= rangeEnd; i++) {
-            this.add(models[i]);
-        }
-
-        return (rangeEnd - rangeStart) + 1;
+    if (rangeStart === -1) {
+      this.toggle(models[rangeEnd]);
+      return 1;
     }
 
-    has(model) {
-        if (!this.isModel(model)) {
-            return;
-        }
-
-        return this.hasId(model.getId());
+    if (rangeStart > rangeEnd) {
+      const newEnd = rangeStart;
+      rangeStart = rangeEnd;
+      rangeEnd = newEnd;
     }
 
-    hasId(id) {
-        return typeof this.selectionMap["id:" + id] !== "undefined";
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      this.add(models[i]);
     }
 
-    remove(model) {
-        if (!this.isModel(model)) {
-            return;
-        }
+    return rangeEnd - rangeStart + 1;
+  }
 
-        this.removeId(model.getId());
+  has(model) {
+    if (!this.isModel(model)) {
+      return;
     }
 
-    removeId(id) {
-        if (!this.hasId(id)) return;
+    return this.hasId(model.getId());
+  }
 
-        const index = this.selection.indexOf(id);
+  hasId(id) {
+    return typeof this.selectionMap["id:" + id] !== "undefined";
+  }
 
-        this.selection.splice(index, 1);
-        this.lastId = "";
-        delete this.selectionMap["id:" + id];
-
-        this.saveToStorage();
+  remove(model) {
+    if (!this.isModel(model)) {
+      return;
     }
 
-    getIds() {
-        return this.selection;
+    this.removeId(model.getId());
+  }
+
+  removeId(id) {
+    if (!this.hasId(id)) return;
+
+    const index = this.selection.indexOf(id);
+
+    this.selection.splice(index, 1);
+    this.lastId = "";
+    delete this.selectionMap["id:" + id];
+
+    this.saveToStorage();
+  }
+
+  getIds() {
+    return this.selection;
+  }
+
+  setIds(ids) {
+    if (!Array.isArray(ids)) return;
+
+    this.selection = ids;
+    this.selectionMap = {};
+    this.lastId = "";
+
+    for (let i = 0; i < this.selection.length; i++) {
+      this.selectionMap["id:" + this.selection[i]] = true;
     }
+  }
 
-    setIds(ids) {
-        if (!Array.isArray(ids)) return;
-
-        this.selection = ids;
-        this.selectionMap = {};
-        this.lastId = "";
-
-        for (let i = 0; i < this.selection.length; i++) {
-            this.selectionMap["id:" + this.selection[i]] = true;
-        }
-    }
-
-    clear() {
-        this.lastId = "";
-        this.selectionMap = {};
-        this.selection.splice(0, this.selection.length);
-        this.storage.removeItem(this.storageKey);
-    }
+  clear() {
+    this.lastId = "";
+    this.selectionMap = {};
+    this.selection.splice(0, this.selection.length);
+    this.storage.removeItem(this.storageKey);
+  }
 }
