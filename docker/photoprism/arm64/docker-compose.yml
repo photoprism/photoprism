@@ -13,7 +13,6 @@ version: '3.5'
 services:
   photoprism:
     image: photoprism/photoprism-arm64:latest
-    restart: unless-stopped
     # Uncomment and edit the following line to set a specific user / group id:
     # user: "1000:1000"
     security_opt:
@@ -22,6 +21,7 @@ services:
     ports:
       - 2342:2342 # [local port]:[container port]
     # Uncomment the following lines to enable regular health checks (causes automatic restarts):
+    # restart: unless-stopped
     # healthcheck:
     #   test: ["CMD", "photoprism", "status"]
     #   interval: 60s
