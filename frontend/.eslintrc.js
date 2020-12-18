@@ -50,6 +50,7 @@ module.exports = {
     semi: ["error", "always"],
     "no-unused-vars": ["warn"],
     "no-console": 0,
+    "no-case-declarations": 0,
     "no-prototype-builtins": 0,
     "prettier-vue/prettier": [
       "error",
