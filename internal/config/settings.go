@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -73,9 +75,14 @@ type StackSettings struct {
 	Name bool `json:"name" yaml:"name"`
 }
 
-// ShareSettings represents photo sharing settings.
+// ShareSettings represents content sharing settings.
 type ShareSettings struct {
 	Title string `json:"title" yaml:"title"`
+}
+
+// DownloadSettings represents content download settings.
+type DownloadSettings struct {
+	Name entity.DownloadName `json:"name" yaml:"name"`
 }
 
 // Settings represents user settings for Web UI, indexing, and import.
@@ -88,6 +95,7 @@ type Settings struct {
 	Index     IndexSettings    `json:"index" yaml:"index"`
 	Stack     StackSettings    `json:"stack" yaml:"stack"`
 	Share     ShareSettings    `json:"share" yaml:"share"`
+	Download  DownloadSettings `json:"download" yaml:"download"`
 }
 
 // NewSettings creates a new Settings instance.
@@ -96,7 +104,7 @@ func NewSettings() *Settings {
 		UI: UISettings{
 			Scrollbar: true,
 			Theme:     "default",
-			Language:  "en",
+			Language:  i18n.Default.Locale(),
 		},
 		Templates: TemplateSettings{
 			Default: "index.tmpl",
@@ -122,11 +130,11 @@ func NewSettings() *Settings {
 			Logs:     true,
 		},
 		Import: ImportSettings{
-			Path: "/",
+			Path: entity.RootPath,
 			Move: false,
 		},
 		Index: IndexSettings{
-			Path:    "/",
+			Path:    entity.RootPath,
 			Rescan:  false,
 			Convert: true,
 		},
@@ -134,6 +142,12 @@ func NewSettings() *Settings {
 			UUID: true,
 			Meta: true,
 			Name: false,
+		},
+		Share: ShareSettings{
+			Title: "",
+		},
+		Download: DownloadSettings{
+			Name: entity.DownloadNameDefault,
 		},
 	}
 }

@@ -2,51 +2,51 @@
   <div>
     <v-container fluid class="pa-0" v-if="selection.length > 0">
       <v-speed-dial
-              fixed bottom right
-              direction="top"
-              v-model="expanded"
-              transition="slide-y-reverse-transition"
-              class="p-clipboard p-file-clipboard"
-              id="t-clipboard"
+          fixed bottom right
+          direction="top"
+          v-model="expanded"
+          transition="slide-y-reverse-transition"
+          class="p-clipboard p-file-clipboard"
+          id="t-clipboard"
       >
         <v-btn
-                fab dark
-                slot="activator"
-                color="accent darken-2"
-                class="action-menu"
+            fab dark
+            slot="activator"
+            color="accent darken-2"
+            class="action-menu"
         >
           <v-icon v-if="selection.length === 0">menu</v-icon>
           <span v-else class="count-clipboard">{{ selection.length }}</span>
         </v-btn>
 
         <v-btn
-                fab dark small
-                :title="$gettext('Download')"
-                color="download"
-                @click.stop="download()"
-                class="action-download"
-                v-if="$config.feature('download')"
-                :disabled="selection.length === 0"
+            fab dark small
+            :title="$gettext('Download')"
+            color="download"
+            @click.stop="download()"
+            class="action-download"
+            v-if="$config.feature('download')"
+            :disabled="selection.length === 0"
         >
           <v-icon>get_app</v-icon>
         </v-btn>
 
         <v-btn
-                fab dark small
-                :title="$gettext('Add to album')"
-                color="album"
-                :disabled="selection.length === 0"
-                @click.stop="dialog.album = true"
-                class="action-album"
+            fab dark small
+            :title="$gettext('Add to album')"
+            color="album"
+            :disabled="selection.length === 0"
+            @click.stop="dialog.album = true"
+            class="action-album"
         >
           <v-icon>folder_special</v-icon>
         </v-btn>
 
         <v-btn
-                fab dark small
-                color="accent"
-                @click.stop="clearClipboard()"
-                class="action-clear"
+            fab dark small
+            color="accent"
+            @click.stop="clearClipboard()"
+            class="action-clear"
         >
           <v-icon>clear</v-icon>
         </v-btn>
@@ -57,52 +57,52 @@
   </div>
 </template>
 <script>
-    import Api from "common/api";
-    import Notify from "common/notify";
+import Api from "common/api";
+import Notify from "common/notify";
 
-    export default {
-        name: 'p-file-clipboard',
-        props: {
-            selection: Array,
-            refresh: Function,
-            clearSelection: Function,
-        },
-        data() {
-            return {
-                expanded: false,
-                dialog: {
-                    album: false,
-                    edit: false,
-                },
-            };
-        },
-        methods: {
-            clearClipboard() {
-                this.clearSelection();
-                this.expanded = false;
-            },
-            addToAlbum(ppid) {
-                this.dialog.album = false;
-
-                Api.post(`albums/${ppid}/photos`, {"files": this.selection}).then(() => this.onAdded());
-            },
-            onAdded() {
-                this.clearClipboard();
-            },
-            download() {
-                Api.post("zip", {"files": this.selection}).then(r => {
-                    this.onDownload("/api/v1/zip/" + r.data.filename + "?t=" + this.$config.downloadToken());
-                });
-
-                this.expanded = false;
-            },
-            onDownload(path) {
-                Notify.success(this.$gettext("Downloading…"));
-                const link = document.createElement('a')
-                link.href = path;
-                link.download = "photos.zip";
-                link.click();
-            },
-        }
+export default {
+  name: 'p-file-clipboard',
+  props: {
+    selection: Array,
+    refresh: Function,
+    clearSelection: Function,
+  },
+  data() {
+    return {
+      expanded: false,
+      dialog: {
+        album: false,
+        edit: false,
+      },
     };
+  },
+  methods: {
+    clearClipboard() {
+      this.clearSelection();
+      this.expanded = false;
+    },
+    addToAlbum(ppid) {
+      this.dialog.album = false;
+
+      Api.post(`albums/${ppid}/photos`, {"files": this.selection}).then(() => this.onAdded());
+    },
+    onAdded() {
+      this.clearClipboard();
+    },
+    download() {
+      Api.post("zip", {"files": this.selection}).then(r => {
+        this.onDownload("/api/v1/zip/" + r.data.filename + "?t=" + this.$config.downloadToken());
+      });
+
+      this.expanded = false;
+    },
+    onDownload(path) {
+      Notify.success(this.$gettext("Downloading…"));
+      const link = document.createElement('a')
+      link.href = path;
+      link.download = "photos.zip";
+      link.click();
+    },
+  }
+};
 </script>

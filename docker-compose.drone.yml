@@ -29,7 +29,10 @@ services:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_DSN: "root:photoprism@tcp(photoprism-db:4001)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      PHOTOPRISM_DATABASE_SERVER: "photoprism-db:4001"
+      PHOTOPRISM_DATABASE_NAME: "photoprism"
+      PHOTOPRISM_DATABASE_USER: "root"
+      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
       PHOTOPRISM_TEST_DSN: ".test.db"
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"

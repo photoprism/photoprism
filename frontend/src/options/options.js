@@ -74,48 +74,64 @@ export const MonthsShort = () => {
 
 export const Languages = () => [
     {
-        "text": $gettext("English"),
+        "text": "English",
+        "translated": $gettext("English"),
         "value": "en",
     },
     {
-        "text": $gettext("German"),
+        "text": "Deutsch",
+        "translated": $gettext("German"),
         "value": "de",
     },
     {
-        "text": $gettext("French"),
-        "value": "fr",
-    },
-    {
-        "text": $gettext("Spanish"),
+        "text": "Español",
+        "translated": $gettext("Spanish"),
         "value": "es",
     },
     {
-        "text": $gettext("Dutch"),
-        "value": "nl",
+        "text": "Français",
+        "translated": $gettext("French"),
+        "value": "fr",
     },
     {
-        "text": $gettext("Polish"),
-        "value": "pl",
-    },
-    {
-        "text": $gettext("Russian"),
-        "value": "ru",
-    },
-    {
-        "text": $gettext("Chinese Simplified"),
-        "value": "zh",
-    },
-    {
-        "text": $gettext("Chinese Traditional"),
-        "value": "zh_tw",
-    },
-    {
-        "text": $gettext("Hindi"),
+        "text": "हिन्दी",
+        "translated": $gettext("Hindi"),
         "value": "hi",
     },
     {
-        "text": $gettext("Slovak"),
+        "text": "Nederlands",
+        "translated": $gettext("Dutch"),
+        "value": "nl",
+    },
+    {
+        "text": "Polski",
+        "translated": $gettext("Polish"),
+        "value": "pl",
+    },
+    {
+        "text": "Português do Brasil",
+        "translated": $gettext("Brazilian Portuguese"),
+        "value": "pt_BR",
+    },
+    {
+        "text": "Русский",
+        "translated": $gettext("Russian"),
+        "value": "ru",
+    },
+    {
+        "text": "Slovenčina",
+        "translated": $gettext("Slovak"),
         "value": "sk",
+    },
+    {
+        "text": "简体中文",
+        "translated": $gettext("Chinese Simplified"),
+        "value": "zh",
+    },
+    {
+        "text": "繁体中文",
+        "translated": $gettext("Chinese Traditional"),
+        "value": "zh_TW",
     },
 ];
 

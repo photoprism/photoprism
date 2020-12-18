@@ -441,7 +441,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 	})
 	t.Run("no location", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
-		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"flower", "plant"}}}
+		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
 		assert.Equal(t, "", m.PhotoTitle)
 		err := m.UpdateTitle(*classifyLabels)
 		if err != nil {
@@ -474,21 +474,21 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 func TestPhoto_AddLabels(t *testing.T) {
 	t.Run("add label", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
-		classifyLabels := classify.Labels{{Name: "cactus", Uncertainty: 30, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
+		classifyLabels := classify.Labels{{Name: "cactus", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"plant"}}}
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
 		assert.Greater(t, len(m.Labels), len1)
 	})
 	t.Run("update label", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		classifyLabels := classify.Labels{{Name: "landscape", Uncertainty: 10, Source: "manual", Priority: 5, Categories: []string{"plant"}}}
+		classifyLabels := classify.Labels{{Name: "landscape", Uncertainty: 10, Source: SrcManual, Priority: 5, Categories: []string{"plant"}}}
 		assert.Equal(t, 20, m.Labels[0].Uncertainty)
-		assert.Equal(t, "image", m.Labels[0].LabelSrc)
+		assert.Equal(t, SrcImage, m.Labels[0].LabelSrc)
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
 		assert.Equal(t, len(m.Labels), len1)
 		assert.Equal(t, 10, m.Labels[0].Uncertainty)
-		assert.Equal(t, "manual", m.Labels[0].LabelSrc)
+		assert.Equal(t, SrcManual, m.Labels[0].LabelSrc)
 	})
 }
 
@@ -496,19 +496,19 @@ func TestPhoto_SetTitle(t *testing.T) {
 	t.Run("empty title", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
-		m.SetTitle("", "manual")
+		m.SetTitle("", SrcManual)
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
 	})
 	t.Run("title not from the same source", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
-		m.SetTitle("NewTitleSet", "image")
+		m.SetTitle("NewTitleSet", SrcAuto)
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
 	})
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
-		m.SetTitle("NewTitleSet", "location")
+		m.SetTitle("NewTitleSet", SrcLocation)
 		assert.Equal(t, "NewTitleSet", m.PhotoTitle)
 	})
 }
@@ -517,19 +517,19 @@ func TestPhoto_SetDescription(t *testing.T) {
 	t.Run("empty description", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
-		m.SetDescription("", "manual")
+		m.SetDescription("", SrcManual)
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 	})
 	t.Run("description not from the same source", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
-		m.SetDescription("new photo description", "image")
+		m.SetDescription("new photo description", SrcName)
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
 	})
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
-		m.SetDescription("new photo description", "manual")
+		m.SetDescription("new photo description", SrcManual)
 		assert.Equal(t, "new photo description", m.PhotoDescription)
 	})
 }
@@ -538,14 +538,14 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 	t.Run("empty taken", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		m.SetTakenAt(time.Time{}, time.Time{}, "", "manual")
+		m.SetTakenAt(time.Time{}, time.Time{}, "", SrcManual)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 	})
 	t.Run("taken not from the same source", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), "", "image")
+			time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), "", SrcAuto)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 	})
 	t.Run("success", func(t *testing.T) {
@@ -553,7 +553,7 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", "location")
+			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcMeta)
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
 	})
@@ -562,7 +562,7 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 		m.SetTakenAt(time.Date(2123, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2123, 12, 11, 10, 7, 18, 0, time.UTC), "", "location")
+			time.Date(2123, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcManual)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 	})
@@ -571,7 +571,7 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Time{}, "test", "location")
+			time.Time{}, "test", SrcXmp)
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 	})
@@ -583,7 +583,7 @@ func TestPhoto_SetCoordinates(t *testing.T) {
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
-		m.SetCoordinates(0, 0, 5, "manual")
+		m.SetCoordinates(0, 0, 5, SrcManual)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
@@ -593,7 +593,7 @@ func TestPhoto_SetCoordinates(t *testing.T) {
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
-		m.SetCoordinates(5.555, 5.555, 5, "image")
+		m.SetCoordinates(5.555, 5.555, 5, SrcImage)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)

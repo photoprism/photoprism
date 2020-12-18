@@ -1,12 +1,12 @@
 <template>
   <div class="p-page p-page-discover">
     <v-tabs
-            v-model="active"
-            flat
-            grow
-            color="secondary"
-            slider-color="secondary-dark"
-            :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
+        v-model="active"
+        flat
+        grow
+        color="secondary"
+        slider-color="secondary-dark"
+        :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         <translate>Colors</translate>
@@ -46,30 +46,30 @@
 </template>
 
 <script>
-    import tabColors from "pages/discover/colors.vue";
-    import tabTodo from "pages/discover/todo.vue";
+import tabColors from "pages/discover/colors.vue";
+import tabTodo from "pages/discover/todo.vue";
 
-    export default {
-        name: 'p-page-settings',
-        props: {
-            tab: Number
-        },
-        components: {
-            'p-tab-discover-colors': tabColors,
-            'p-tab-discover-todo': tabTodo,
-        },
-        data() {
-            return {
-                readonly: this.$config.get("readonly"),
-                active: this.tab,
-            }
-        },
-        methods: {
-            changePath: function (path) {
-                if (this.$route.path !== path) {
-                    this.$router.replace(path)
-                }
-            }
-        },
-    };
+export default {
+  name: 'p-page-settings',
+  props: {
+    tab: Number
+  },
+  components: {
+    'p-tab-discover-colors': tabColors,
+    'p-tab-discover-todo': tabTodo,
+  },
+  data() {
+    return {
+      readonly: this.$config.get("readonly"),
+      active: this.tab,
+    }
+  },
+  methods: {
+    changePath: function (path) {
+      if (this.$route.path !== path) {
+        this.$router.replace(path)
+      }
+    }
+  },
+};
 </script>

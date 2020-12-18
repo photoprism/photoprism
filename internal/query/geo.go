@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -136,12 +138,15 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		}
 	}
 
-	if f.Name != "" {
-		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(f.Name, "*", "%"))
+	if strings.Contains(f.Name, OrSep) {
+		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, OrSep))
+	} else if f.Name != "" {
+		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
 	}
 
 	// Filter by status.
 	if f.Archived {
+		s = s.Where("photos.photo_quality > -1")
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")

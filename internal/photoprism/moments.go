@@ -199,7 +199,7 @@ func (m *Moments) Start() (err error) {
 					continue
 				}
 
-				if err := form.ParseQueryString(&f); err != nil {
+				if err := form.Unserialize(&f, a.AlbumFilter); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {
 					w := txt.Words(f.Label)
@@ -230,6 +230,12 @@ func (m *Moments) Start() (err error) {
 
 	if err := query.UpdateAlbumDates(); err != nil {
 		log.Errorf("moments: %s (update album dates)", err.Error())
+	}
+
+	if count, err := BackupAlbums(false); err != nil {
+		log.Errorf("moments: %s (backup albums)", err.Error())
+	} else if count > 0 {
+		log.Debugf("moments: %d albums saved as yaml files", count)
 	}
 
 	return nil

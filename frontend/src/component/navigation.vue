@@ -1,33 +1,33 @@
 <template>
   <div id="p-navigation">
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
-    <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" fixed flat color="navigation darken-1" class="nav-small"
-               @click.stop="showNavigation()" scroll-toolbar-off-screen>
+      <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" fixed flat color="navigation darken-1" class="nav-small"
+                 @click.stop="showNavigation()" scroll-toolbar-off-screen>
 
-      <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
+        <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
 
-      <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
+        <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
 
-      <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="openUpload()" v-if="auth && !config.readonly && $config.feature('upload')"
-             class="action-upload" :title="$gettext('Upload')">
-        <v-icon>cloud_upload</v-icon>
-      </v-btn>
+        <v-btn icon @click.stop="openUpload()" v-if="auth && !config.readonly && $config.feature('upload')"
+               class="action-upload" :title="$gettext('Upload')">
+          <v-icon>cloud_upload</v-icon>
+        </v-btn>
 
-    </v-toolbar>
-    <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" flat color="navigation darken-1">
-    </v-toolbar>
+      </v-toolbar>
+      <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" flat color="navigation darken-1">
+      </v-toolbar>
     </template>
     <v-navigation-drawer
-            v-if="auth"
-            v-model="drawer"
-            :mini-variant="mini"
-            :width="270"
-            :mobile-break-point="960"
-            :mini-variant-width="80"
-            class="nav-sidebar navigation"
-            fixed dark app
+        v-if="auth"
+        v-model="drawer"
+        :mini-variant="mini"
+        :width="270"
+        :mobile-break-point="960"
+        :mini-variant-width="80"
+        class="nav-sidebar navigation"
+        fixed dark app
     >
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown">
         <v-list class="navigation-home">
@@ -86,7 +86,8 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" @click="" class="nav-panoramas">
+          <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" @click=""
+                       class="nav-panoramas">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Panoramas</translate>
@@ -368,7 +369,8 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile :to="{ name: 'feedback' }" :exact="true" @click="" v-show="!public && auth" class="nav-feedback">
+            <v-list-tile :to="{ name: 'feedback' }" :exact="true" @click="" v-show="!public && auth"
+                         class="nav-feedback">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate>Feedback</translate>
@@ -376,7 +378,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile  :to="{ name: 'license' }" :exact="true" @click="" class="nav-license">
+            <v-list-tile :to="{ name: 'license' }" :exact="true" @click="" class="nav-license">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate key="License">License</translate>
@@ -410,7 +412,8 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/help/websockets" @click="" class="nav-connecting navigation" v-show="$config.disconnected" style="position:fixed; bottom: 0; left:0; right: 0;">
+        <v-list-tile to="/help/websockets" @click="" class="nav-connecting navigation" v-show="$config.disconnected"
+                     style="position:fixed; bottom: 0; left:0; right: 0;">
           <v-list-tile-action :title="$gettext('Offline')">
             <v-icon color="warning">wifi_off</v-icon>
           </v-list-tile-action>
@@ -432,90 +435,90 @@
 </template>
 
 <script>
-    import Album from "model/album";
-    import Event from "pubsub-js";
+import Album from "model/album";
+import Event from "pubsub-js";
 
-    export default {
-        name: "p-navigation",
-        data() {
-            return {
-                drawer: null,
-                mini: true,
-                session: this.$session,
-                public: this.$config.get("public"),
-                readonly: this.$config.get("readonly"),
-                config: this.$config.values,
-                page: this.$config.page,
-                reload: {
-                    subscription: null,
-                    dialog: false,
-                },
-                upload: {
-                    subscription: null,
-                    dialog: false,
-                },
-                edit: {
-                    subscription: null,
-                    dialog: false,
-                    album: null,
-                    selection: [],
-                    index: 0,
-                },
-            };
-        },
-        computed: {
-            auth() {
-                return this.session.auth || this.public
-            },
-        },
-        methods: {
-            openUpload() {
-                if (this.auth && !this.readonly && this.$config.feature('upload')) {
-                    this.upload.dialog = true;
-                } else {
-                    this.goHome();
-                }
-            },
-            feature(name) {
-                return this.$config.values.settings.features[name];
-            },
-            goHome() {
-                if(this.$route.name !== "home") {
-                    this.$router.push({name: "home"});
-                }
-            },
-            showNavigation() {
-                if (this.auth) {
-                    this.drawer = true;
-                    this.mini = false;
-                }
-            },
-            createAlbum() {
-                let name = "New Album";
-                const album = new Album({Title: name, Favorite: true});
-                album.save();
-            },
-            logout() {
-                this.$session.logout();
-            },
-        },
-        created() {
-            this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);
-            this.upload.subscription = Event.subscribe("dialog.upload", () => this.upload.dialog = true);
-
-            this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
-                if (!this.edit.dialog) {
-                    this.edit.index = data.index;
-                    this.edit.selection = data.selection;
-                    this.edit.album = data.album;
-                    this.edit.dialog = true;
-                }
-            });
-        },
-        destroyed() {
-            Event.unsubscribe(this.reload.subscription);
-            Event.unsubscribe(this.upload.subscription);
-            Event.unsubscribe(this.edit.subscription);
-        }
+export default {
+  name: "p-navigation",
+  data() {
+    return {
+      drawer: null,
+      mini: true,
+      session: this.$session,
+      public: this.$config.get("public"),
+      readonly: this.$config.get("readonly"),
+      config: this.$config.values,
+      page: this.$config.page,
+      reload: {
+        subscription: null,
+        dialog: false,
+      },
+      upload: {
+        subscription: null,
+        dialog: false,
+      },
+      edit: {
+        subscription: null,
+        dialog: false,
+        album: null,
+        selection: [],
+        index: 0,
+      },
     };
+  },
+  computed: {
+    auth() {
+      return this.session.auth || this.public
+    },
+  },
+  methods: {
+    openUpload() {
+      if (this.auth && !this.readonly && this.$config.feature('upload')) {
+        this.upload.dialog = true;
+      } else {
+        this.goHome();
+      }
+    },
+    feature(name) {
+      return this.$config.values.settings.features[name];
+    },
+    goHome() {
+      if (this.$route.name !== "home") {
+        this.$router.push({name: "home"});
+      }
+    },
+    showNavigation() {
+      if (this.auth) {
+        this.drawer = true;
+        this.mini = false;
+      }
+    },
+    createAlbum() {
+      let name = "New Album";
+      const album = new Album({Title: name, Favorite: true});
+      album.save();
+    },
+    logout() {
+      this.$session.logout();
+    },
+  },
+  created() {
+    this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);
+    this.upload.subscription = Event.subscribe("dialog.upload", () => this.upload.dialog = true);
+
+    this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
+      if (!this.edit.dialog) {
+        this.edit.index = data.index;
+        this.edit.selection = data.selection;
+        this.edit.album = data.album;
+        this.edit.dialog = true;
+      }
+    });
+  },
+  destroyed() {
+    Event.unsubscribe(this.reload.subscription);
+    Event.unsubscribe(this.upload.subscription);
+    Event.unsubscribe(this.edit.subscription);
+  }
+};
 </script>

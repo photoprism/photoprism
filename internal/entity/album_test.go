@@ -111,7 +111,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var entries []PhotoAlbum
+		var entries PhotoAlbums
 
 		if err := Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
 			t.Fatal(err)
@@ -149,7 +149,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var entries []PhotoAlbum
+		var entries PhotoAlbums
 
 		if err := Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
 			t.Fatal(err)

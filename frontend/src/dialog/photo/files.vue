@@ -204,7 +204,7 @@
       </v-expansion-panel-content>
     </v-expansion-panel>
     <p-file-delete-dialog :show="deleteFile.dialog" @cancel="closeDeleteDialog"
-                           @confirm="confirmDeleteFile"></p-file-delete-dialog>
+                          @confirm="confirmDeleteFile"></p-file-delete-dialog>
   </div>
 </template>
 
@@ -262,7 +262,7 @@ export default {
       this.deleteFile.file = null;
     },
     confirmDeleteFile() {
-      if(this.deleteFile.file && this.deleteFile.file.UID) {
+      if (this.deleteFile.file && this.deleteFile.file.UID) {
         this.model.deleteFile(this.deleteFile.file.UID).finally(() => this.closeDeleteDialog());
       } else {
         this.closeDeleteDialog();

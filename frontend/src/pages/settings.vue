@@ -1,13 +1,13 @@
 <template>
   <div class="p-page p-page-settings">
     <v-tabs
-            v-model="active"
-            flat
-            grow
-            touchless
-            color="secondary"
-            slider-color="secondary-dark"
-            :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
+        v-model="active"
+        flat
+        grow
+        touchless
+        color="secondary"
+        slider-color="secondary-dark"
+        :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
       <v-tab id="tab-settings-general" ripple @click="changePath('/settings')">
         <translate key="General">General</translate>
@@ -37,33 +37,33 @@
 </template>
 
 <script>
-    import tabGeneral from "pages/settings/general.vue";
-    import tabSync from "pages/settings/sync.vue";
-    import tabAccount from "pages/settings/account.vue";
+import tabGeneral from "pages/settings/general.vue";
+import tabSync from "pages/settings/sync.vue";
+import tabAccount from "pages/settings/account.vue";
 
-    export default {
-        name: 'p-page-settings',
-        props: {
-            tab: Number
-        },
-        components: {
-            'p-settings-general': tabGeneral,
-            'p-settings-sync': tabSync,
-            'p-settings-account': tabAccount,
-        },
-        data() {
-            return {
-                public: this.$config.get("public"),
-                readonly: this.$config.get("readonly"),
-                active: this.tab,
-            }
-        },
-        methods: {
-            changePath: function (path) {
-                if (this.$route.path !== path) {
-                    this.$router.replace(path)
-                }
-            }
-        },
-    };
+export default {
+  name: 'p-page-settings',
+  props: {
+    tab: Number
+  },
+  components: {
+    'p-settings-general': tabGeneral,
+    'p-settings-sync': tabSync,
+    'p-settings-account': tabAccount,
+  },
+  data() {
+    return {
+      public: this.$config.get("public"),
+      readonly: this.$config.get("readonly"),
+      active: this.tab,
+    }
+  },
+  methods: {
+    changePath: function (path) {
+      if (this.$route.path !== path) {
+        this.$router.replace(path)
+      }
+    }
+  },
+};
 </script>

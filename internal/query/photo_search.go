@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -28,7 +30,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		Select(`photos.*,
 		files.id AS file_id, files.file_uid, files.instance_id, files.file_primary, files.file_missing, files.file_name,
 		files.file_root, files.file_hash, files.file_codec, files.file_type, files.file_mime, files.file_width, 
-		files.file_height, files.file_aspect_ratio, files.file_orientation, files.file_main_color, 
+		files.file_height, files.file_portrait, files.file_aspect_ratio, files.file_orientation, files.file_main_color, 
 		files.file_colors, files.file_luminance, files.file_chroma, files.file_projection,
 		files.file_diff, files.file_video, files.file_duration, files.file_size,
 		cameras.camera_make, cameras.camera_model,
@@ -144,6 +146,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_quality = -1")
 		s = s.Where("photos.deleted_at IS NULL")
 	} else if f.Archived {
+		s = s.Where("photos.photo_quality > -1")
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")
@@ -235,28 +238,40 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
+		} else if strings.Contains(p, OrSep) {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, OrSep))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}
 	}
 
-	if f.Name != "" {
-		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(f.Name, "*", "%"))
+	if strings.Contains(f.Name, OrSep) {
+		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, OrSep))
+	} else if f.Name != "" {
+		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
 	}
 
-	if f.Filename != "" {
+	if strings.Contains(f.Filename, OrSep) {
+		s = s.Where("files.file_name IN (?)", strings.Split(f.Filename, OrSep))
+	} else if f.Filename != "" {
 		s = s.Where("files.file_name LIKE ?", strings.ReplaceAll(f.Filename, "*", "%"))
 	}
 
-	if f.Original != "" {
+	if strings.Contains(f.Original, OrSep) {
+		s = s.Where("photos.original_name IN (?)", strings.Split(f.Original, OrSep))
+	} else if f.Original != "" {
 		s = s.Where("photos.original_name LIKE ?", strings.ReplaceAll(f.Original, "*", "%"))
 	}
 
-	if f.Title != "" {
-		s = s.Where("LOWER(photos.photo_title) LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
+	if strings.Contains(f.Title, OrSep) {
+		s = s.Where("photos.photo_title IN (?)", strings.Split(strings.ToLower(f.Title), OrSep))
+	} else if f.Title != "" {
+		s = s.Where("photos.photo_title LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
 	}
 
-	if f.Hash != "" {
+	if strings.Contains(f.Hash, OrSep) {
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), OrSep))
+	} else if f.Hash != "" {
 		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), OrSep))
 	}
 
@@ -265,7 +280,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Mono {
-		s = s.Where("files.file_chroma = 0")
+		s = s.Where("files.file_chroma < 2 OR file_colors = '111111111'")
 	} else if f.Chroma > 9 {
 		s = s.Where("files.file_chroma > ?", f.Chroma)
 	} else if f.Chroma > 0 {
@@ -343,7 +358,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("files.file_main_color, photos.cell_id, files.file_diff, taken_at DESC, files.file_primary DESC")
+		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, taken_at DESC, files.file_primary DESC")
 	case entity.SortOrderName:
 		s = s.Order("photos.photo_path, photos.photo_name, files.file_primary DESC")
 	default:

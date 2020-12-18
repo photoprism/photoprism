@@ -127,8 +127,8 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 	}
 
 	if f.Query != "" {
-		likeString := "%" + strings.ToLower(f.Query) + "%"
-		s = s.Where("LOWER(albums.album_title) LIKE ? OR LOWER(albums.album_location) LIKE ?", likeString, likeString)
+		likeString := "%" + f.Query + "%"
+		s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", likeString, likeString)
 	}
 
 	if f.Type != "" {
@@ -193,4 +193,10 @@ func UpdateAlbumDates() error {
 	default:
 		return nil
 	}
+}
+
+// GetAlbums returns a slice of albums.
+func GetAlbums(offset, limit int) (results entity.Albums, err error) {
+	err = UnscopedDb().Table("albums").Select("*").Offset(offset).Limit(limit).Find(&results).Error
+	return results, err
 }

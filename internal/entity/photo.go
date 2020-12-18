@@ -54,9 +54,9 @@ type Photo struct {
 	TitleSrc         string       `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
 	PhotoDescription string       `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
-	PhotoPath        string       `gorm:"type:VARBINARY(768);index:idx_photos_path_name;" json:"Path" yaml:"-"`
+	PhotoPath        string       `gorm:"type:VARBINARY(500);index:idx_photos_path_name;" json:"Path" yaml:"-"`
 	PhotoName        string       `gorm:"type:VARBINARY(255);index:idx_photos_path_name;" json:"Name" yaml:"-"`
-	OriginalName     string       `gorm:"type:VARBINARY(768);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	OriginalName     string       `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoSingle      bool         `json:"Single" yaml:"Single,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
@@ -80,6 +80,7 @@ type Photo struct {
 	PhotoFocalLength int          `json:"FocalLength" yaml:"FocalLength,omitempty"`
 	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"-"`
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
+	PhotoColor       uint8        `json:"Color" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
 	CameraSerial     string       `gorm:"type:VARBINARY(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
@@ -812,7 +813,7 @@ func (m *Photo) SetTitle(title, source string) {
 		return
 	}
 
-	if m.TitleSrc != SrcAuto && m.TitleSrc != source && source != SrcManual && m.HasTitle() {
+	if (SrcPriority[source] < SrcPriority[m.TitleSrc]) && m.HasTitle() {
 		return
 	}
 
@@ -828,7 +829,7 @@ func (m *Photo) SetDescription(desc, source string) {
 		return
 	}
 
-	if m.DescriptionSrc != SrcAuto && m.DescriptionSrc != source && source != SrcManual && m.PhotoDescription != "" {
+	if (SrcPriority[source] < SrcPriority[m.DescriptionSrc]) && m.HasDescription() {
 		return
 	}
 
@@ -842,7 +843,7 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		return
 	}
 
-	if m.TakenSrc != SrcAuto && m.TakenSrc != source && source != SrcManual {
+	if SrcPriority[source] < SrcPriority[m.TakenSrc] && !m.TakenAt.IsZero() {
 		return
 	}
 

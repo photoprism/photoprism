@@ -88,7 +88,7 @@ func CreateZip(router *gin.RouterGroup) {
 
 		for _, f := range files {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
-			fileAlias := f.ShareFileName()
+			fileAlias := f.ShareBase()
 
 			if fs.FileExists(fileName) {
 				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {

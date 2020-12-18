@@ -123,7 +123,12 @@ class Viewer {
 
         this.gallery = gallery;
 
-        gallery.listen("close", () => Event.publish("viewer.pause"));
+        Event.publish("viewer.show");
+
+        gallery.listen("close", () => {
+            Event.publish("viewer.pause");
+            Event.publish("viewer.hide");
+        });
         gallery.listen("shareLinkClick", () => Event.publish("viewer.pause"));
         gallery.listen("initialZoomIn", () => Event.publish("viewer.pause"));
         gallery.listen("initialZoomOut", () => Event.publish("viewer.pause"));

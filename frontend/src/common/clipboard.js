@@ -51,6 +51,20 @@ export default class Clipboard {
         this.loadFromStorage();
     }
 
+    isModel(model) {
+        if (!model) {
+            console.warn("Clipboard::isModel() - empty model", model);
+            return false;
+        }
+
+        if (typeof model.getId !== "function") {
+            console.warn("Clipboard::isModel() - model.getId() is not a function", model);
+            return false;
+        }
+
+        return true;
+    }
+
     loadFromStorage() {
         const photosJson = this.storage.getItem(this.storageKey);
 
@@ -64,8 +78,7 @@ export default class Clipboard {
     }
 
     toggle(model) {
-        if (!model || !(model instanceof RestModel)) {
-            console.log("Clipboard::toggle() - not a model:", model);
+        if (!this.isModel(model)) {
             return;
         }
 
@@ -95,8 +108,7 @@ export default class Clipboard {
     }
 
     add(model) {
-        if (!model || !(model instanceof RestModel)) {
-            console.log("Clipboard::add() - not a model:", model);
+        if (!this.isModel(model)) {
             return;
         }
 
@@ -149,8 +161,7 @@ export default class Clipboard {
     }
 
     has(model) {
-        if (!model || !(model instanceof RestModel)) {
-            console.log("Clipboard::has() - not a model:", model);
+        if (!this.isModel(model)) {
             return;
         }
 
@@ -162,8 +173,7 @@ export default class Clipboard {
     }
 
     remove(model) {
-        if (!model || !(model instanceof RestModel)) {
-            console.log("Clipboard::remove() - not a model:", model);
+        if (!this.isModel(model)) {
             return;
         }
 

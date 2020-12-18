@@ -30,6 +30,14 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "read-only", conf.ReadOnly())
 	fmt.Printf("%-25s %t\n", "experimental", conf.Experimental())
 
+	// Config path and main file.
+	fmt.Printf("%-25s %s\n", "config-path", conf.ConfigPath())
+	fmt.Printf("%-25s %s\n", "config-file", conf.ConfigFile())
+	fmt.Printf("%-25s %s\n", "settings-file", conf.SettingsFile())
+
+	// Passwords.
+	fmt.Printf("%-25s %s\n", "admin-password", conf.AdminPassword())
+
 	// Site information.
 	fmt.Printf("%-25s %s\n", "site-url", conf.SiteUrl())
 	fmt.Printf("%-25s %s\n", "site-preview", conf.SitePreview())
@@ -39,14 +47,11 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "site-author", conf.SiteAuthor())
 
 	// Everything related to TensorFlow.
-	fmt.Printf("%-25s %t\n", "tf-off", conf.TensorFlowOff())
-	fmt.Printf("%-25s %s\n", "tf-version", conf.TensorFlowVersion())
-	fmt.Printf("%-25s %s\n", "tf-model-path", conf.TensorFlowModelPath())
+	fmt.Printf("%-25s %t\n", "tensorflow-off", conf.TensorFlowOff())
+	fmt.Printf("%-25s %s\n", "tensorflow-version", conf.TensorFlowVersion())
+	fmt.Printf("%-25s %s\n", "tensorflow-model-path", conf.TensorFlowModelPath())
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())
 	fmt.Printf("%-25s %t\n", "upload-nsfw", conf.UploadNSFW())
-
-	// Passwords.
-	fmt.Printf("%-25s %s\n", "admin-password", conf.AdminPassword())
 
 	// Background workers and logging.
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())
@@ -76,6 +81,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())
 	fmt.Printf("%-25s %s\n", "storage-path", conf.StoragePath())
 	fmt.Printf("%-25s %s\n", "backup-path", conf.BackupPath())
+	fmt.Printf("%-25s %s\n", "albums-path", conf.AlbumsPath())
 	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
 	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
@@ -87,8 +93,6 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "templates-path", conf.TemplatesPath())
 	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
 	fmt.Printf("%-25s %s\n", "temp-path", conf.TempPath())
-	fmt.Printf("%-25s %s\n", "config-file", conf.ConfigFile())
-	fmt.Printf("%-25s %s\n", "settings-path", conf.SettingsPath())
 	fmt.Printf("%-25s %t\n", "settings-hidden", conf.SettingsHidden())
 
 	// External binaries and sidecar configuration.

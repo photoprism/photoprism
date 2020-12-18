@@ -29,8 +29,8 @@ func TestMsg(t *testing.T) {
 
 	t.Run("already exists german", func(t *testing.T) {
 		SetLocale("de")
-		msgDE := Msg(ErrAlreadyExists, "Eine Katze")
-		assert.Equal(t, "Eine Katze existiert bereits", msgDE)
+		msgTrans := Msg(ErrAlreadyExists, "Eine Katze")
+		assert.Equal(t, "Eine Katze existiert bereits", msgTrans)
 		SetLocale("")
 		msgDefault := Msg(ErrAlreadyExists, "A cat")
 		assert.Equal(t, "A cat already exists", msgDefault)
@@ -38,8 +38,17 @@ func TestMsg(t *testing.T) {
 
 	t.Run("already exists polish", func(t *testing.T) {
 		SetLocale("pl")
-		msgPL := Msg(ErrAlreadyExists, "Kot")
-		assert.Equal(t, "Kot już istnieje", msgPL)
+		msgTrans := Msg(ErrAlreadyExists, "Kot")
+		assert.Equal(t, "Kot już istnieje", msgTrans)
+		SetLocale("")
+		msgDefault := Msg(ErrAlreadyExists, "A cat")
+		assert.Equal(t, "A cat already exists", msgDefault)
+	})
+
+	t.Run("Brazilian Portuguese", func(t *testing.T) {
+		SetLocale("pt_BR")
+		msgTrans := Msg(ErrAlreadyExists, "Gata")
+		assert.Equal(t, "Gata já existe", msgTrans)
 		SetLocale("")
 		msgDefault := Msg(ErrAlreadyExists, "A cat")
 		assert.Equal(t, "A cat already exists", msgDefault)

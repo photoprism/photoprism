@@ -2,7 +2,6 @@ package query
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -46,12 +45,12 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 		var label entity.Label
 
 		slugString := slug.Make(f.Query)
-		likeString := "%" + strings.ToLower(f.Query) + "%"
+		likeString := "%" + f.Query + "%"
 
 		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
 			log.Infof("search: label %s not found", txt.Quote(f.Query))
 
-			s = s.Where("LOWER(labels.label_name) LIKE ?", likeString)
+			s = s.Where("labels.label_name LIKE ?", likeString)
 		} else {
 			labelIds = append(labelIds, label.ID)
 

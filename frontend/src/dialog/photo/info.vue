@@ -13,18 +13,19 @@
         </tr>
         <tr>
           <td :title="model.TypeSrc">
-            <translate>Type</translate> <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
+            <translate>Type</translate>
+            <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>
             <v-select
-                    @change="save"
-                    flat solo
-                    browser-autocomplete="off"
-                    hide-details
-                    color="secondary-dark"
-                    v-model="model.Type"
-                    :items="options.PhotoTypes()"
-                    class="input-type">
+                @change="save"
+                flat solo
+                browser-autocomplete="off"
+                hide-details
+                color="secondary-dark"
+                v-model="model.Type"
+                :items="options.PhotoTypes()"
+                class="input-type">
             </v-select>
           </td>
         </tr>
@@ -46,21 +47,23 @@
           </td>
           <td>
             <v-text-field
-                    @change="save"
-                    flat solo dense hide-details v-model="model.OriginalName"
-                    color="secondary-dark"
+                @change="save"
+                flat solo dense hide-details v-model="model.OriginalName"
+                color="secondary-dark"
             ></v-text-field>
           </td>
         </tr>
         <tr>
           <td :title="model.TitleSrc">
-            <translate>Title</translate> <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
+            <translate>Title</translate>
+            <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>{{ model.Title }}</td>
         </tr>
         <tr>
           <td :title="model.TakenSrc">
-            <translate>Taken</translate> <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
+            <translate>Taken</translate>
+            <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>{{ model.getDateString() }}</td>
         </tr>
@@ -91,10 +94,10 @@
           </td>
           <td>
             <v-switch
-                    @change="save"
-                    hide-details
-                    v-model="model.Favorite"
-                    :label="model.Favorite ? $gettext('Yes') : $gettext('No')"
+                @change="save"
+                hide-details
+                v-model="model.Favorite"
+                :label="model.Favorite ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
@@ -104,10 +107,10 @@
           </td>
           <td>
             <v-switch
-                    @change="save"
-                    hide-details
-                    v-model="model.Private"
-                    :label="model.Private ? $gettext('Yes') : $gettext('No')"
+                @change="save"
+                hide-details
+                v-model="model.Private"
+                :label="model.Private ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
@@ -130,10 +133,10 @@
           </td>
           <td>
             <v-switch
-                    @change="save"
-                    hide-details
-                    v-model="model.Scan"
-                    :label="model.Scan ? $gettext('Yes') : $gettext('No')"
+                @change="save"
+                hide-details
+                v-model="model.Scan"
+                :label="model.Scan ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
@@ -143,16 +146,17 @@
           </td>
           <td>
             <v-switch
-                    @change="save"
-                    hide-details
-                    v-model="model.Panorama"
-                    :label="model.Panorama ? $gettext('Yes') : $gettext('No')"
+                @change="save"
+                hide-details
+                v-model="model.Panorama"
+                :label="model.Panorama ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
         <tr>
           <td :title="model.PlaceSrc">
-            <translate>Place</translate>  <v-icon v-if="model.PlaceSrc === 'manual'" class="src">check</v-icon>
+            <translate>Place</translate>
+            <v-icon v-if="model.PlaceSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>
             {{ model.locationInfo() }}
@@ -188,12 +192,12 @@
           </td>
           <td>
             <v-text-field
-                    @change="save"
-                    flat solo dense hide-details v-model="model.CellAccuracy"
-                    color="secondary-dark"
-                    type="number"
-                    suffix="m"
-                    style="width: 100px;"
+                @change="save"
+                flat solo dense hide-details v-model="model.CellAccuracy"
+                color="secondary-dark"
+                type="number"
+                suffix="m"
+                style="width: 100px;"
             ></v-text-field>
           </td>
         </tr>
@@ -244,51 +248,51 @@
 </template>
 
 <script>
-    import Thumb from "model/thumb";
-    import {DateTime, Info} from "luxon";
-    import * as options from "options/options";
+import Thumb from "model/thumb";
+import {DateTime, Info} from "luxon";
+import * as options from "options/options";
 
-    export default {
-        name: 'p-tab-photo-advanced',
-        props: {
-            model: Object,
-            uid: String,
-        },
-        data() {
-            return {
-                options: options,
-                config: this.$config.values,
-                readonly: this.$config.get("readonly"),
-            };
-        },
-        computed: {
-            monthOptions() {
-                let result = [
-                    {"Month": -1, "Name": this.$gettext("Unknown")},
-                ];
-
-                const months = Info.months("long");
-
-                for (let i = 0; i < months.length; i++) {
-                    result.push({"Month": i + 1, "UserName": months[i]});
-                }
-
-                return result;
-            },
-        },
-        methods: {
-            formatTime(s) {
-                return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);
-            },
-            save() {
-                this.model.update();
-            },
-            close() {
-                this.$emit('close');
-            },
-            openPhoto() {
-                this.$viewer.show(Thumb.fromFiles([this.model]), 0)
-            },
-        },
+export default {
+  name: 'p-tab-photo-advanced',
+  props: {
+    model: Object,
+    uid: String,
+  },
+  data() {
+    return {
+      options: options,
+      config: this.$config.values,
+      readonly: this.$config.get("readonly"),
     };
+  },
+  computed: {
+    monthOptions() {
+      let result = [
+        {"Month": -1, "Name": this.$gettext("Unknown")},
+      ];
+
+      const months = Info.months("long");
+
+      for (let i = 0; i < months.length; i++) {
+        result.push({"Month": i + 1, "UserName": months[i]});
+      }
+
+      return result;
+    },
+  },
+  methods: {
+    formatTime(s) {
+      return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);
+    },
+    save() {
+      this.model.update();
+    },
+    close() {
+      this.$emit('close');
+    },
+    openPhoto() {
+      this.$viewer.show(Thumb.fromFiles([this.model]), 0)
+    },
+  },
+};
 </script>

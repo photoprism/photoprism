@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -24,6 +25,24 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// SaveAlbumAsYaml saves album data as YAML file.
+func SaveAlbumAsYaml(a entity.Album) {
+	c := service.Config()
+
+	// Write YAML sidecar file (optional).
+	if !c.SidecarYaml() {
+		return
+	}
+
+	fileName := a.YamlFileName(c.AlbumsPath())
+
+	if err := a.SaveAsYaml(fileName); err != nil {
+		log.Errorf("album: %s (update yaml)", err)
+	} else {
+		log.Debugf("album: updated yaml file %s", txt.Quote(filepath.Base(fileName)))
+	}
+}
 
 // ClearAlbumThumbCache removes all cached album covers e.g. after adding or removed photos.
 func ClearAlbumThumbCache(uid string) {
@@ -88,14 +107,14 @@ func GetAlbum(router *gin.RouterGroup) {
 		}
 
 		id := c.Param("uid")
-		m, err := query.AlbumByUID(id)
+		a, err := query.AlbumByUID(id)
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
-		c.JSON(http.StatusOK, m)
+		c.JSON(http.StatusOK, a)
 	})
 }
 
@@ -116,13 +135,13 @@ func CreateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		m := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
-		m.AlbumFavorite = f.AlbumFavorite
+		a := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
+		a.AlbumFavorite = f.AlbumFavorite
 
-		log.Debugf("album: creating %+v %+v", f, m)
+		log.Debugf("album: creating %+v %+v", f, a)
 
-		if res := entity.Db().Create(m); res.Error != nil {
-			AbortAlreadyExists(c, txt.Quote(m.AlbumTitle))
+		if res := entity.Db().Create(a); res.Error != nil {
+			AbortAlreadyExists(c, txt.Quote(a.AlbumTitle))
 			return
 		}
 
@@ -130,9 +149,11 @@ func CreateAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		PublishAlbumEvent(EntityCreated, m.AlbumUID, c)
+		PublishAlbumEvent(EntityCreated, a.AlbumUID, c)
 
-		c.JSON(http.StatusOK, m)
+		SaveAlbumAsYaml(*a)
+
+		c.JSON(http.StatusOK, a)
 	})
 }
 
@@ -147,14 +168,14 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		}
 
 		uid := c.Param("uid")
-		m, err := query.AlbumByUID(uid)
+		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
-		f, err := form.NewAlbum(m)
+		f, err := form.NewAlbum(a)
 
 		if err != nil {
 			log.Error(err)
@@ -168,7 +189,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := m.SaveForm(f); err != nil {
+		if err := a.SaveForm(f); err != nil {
 			log.Error(err)
 			AbortSaveFailed(c)
 			return
@@ -180,7 +201,9 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 		PublishAlbumEvent(EntityUpdated, uid, c)
 
-		c.JSON(http.StatusOK, m)
+		SaveAlbumAsYaml(a)
+
+		c.JSON(http.StatusOK, a)
 	})
 }
 
@@ -197,7 +220,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		conf := service.Config()
 		id := c.Param("uid")
 
-		m, err := query.AlbumByUID(id)
+		a, err := query.AlbumByUID(id)
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -206,13 +229,15 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 		PublishAlbumEvent(EntityDeleted, id, c)
 
-		conf.Db().Delete(&m)
+		conf.Db().Delete(&a)
 
 		UpdateClientConfig()
 
-		event.SuccessMsg(i18n.MsgAlbumDeleted, txt.Quote(m.AlbumTitle))
+		SaveAlbumAsYaml(a)
 
-		c.JSON(http.StatusOK, m)
+		event.SuccessMsg(i18n.MsgAlbumDeleted, txt.Quote(a.AlbumTitle))
+
+		c.JSON(http.StatusOK, a)
 	})
 }
 
@@ -230,20 +255,23 @@ func LikeAlbum(router *gin.RouterGroup) {
 		}
 
 		id := c.Param("uid")
-		album, err := query.AlbumByUID(id)
+		a, err := query.AlbumByUID(id)
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
-		if err := album.Update("AlbumFavorite", true); err != nil {
+		if err := a.Update("AlbumFavorite", true); err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}
 
 		UpdateClientConfig()
+
 		PublishAlbumEvent(EntityUpdated, id, c)
+
+		SaveAlbumAsYaml(a)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -263,20 +291,23 @@ func DislikeAlbum(router *gin.RouterGroup) {
 		}
 
 		id := c.Param("uid")
-		album, err := query.AlbumByUID(id)
+		a, err := query.AlbumByUID(id)
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
 
-		if err := album.Update("AlbumFavorite", false); err != nil {
+		if err := a.Update("AlbumFavorite", false); err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}
 
 		UpdateClientConfig()
+
 		PublishAlbumEvent(EntityUpdated, id, c)
+
+		SaveAlbumAsYaml(a)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
 	})
@@ -330,6 +361,8 @@ func CloneAlbums(router *gin.RouterGroup) {
 			event.SuccessMsg(i18n.MsgSelectionAddedTo, txt.Quote(a.Title()))
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
+
+			SaveAlbumAsYaml(a)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgAlbumCloned), "album": a, "added": added})
@@ -379,7 +412,10 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			}
 
 			ClearAlbumThumbCache(a.AlbumUID)
+
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
+
+			SaveAlbumAsYaml(a)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": photos.UIDs(), "added": added})
@@ -425,7 +461,10 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			}
 
 			ClearAlbumThumbCache(a.AlbumUID)
+
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
+
+			SaveAlbumAsYaml(a)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": f.Photos, "removed": removed})

@@ -4,7 +4,8 @@
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
           <v-flex xs9>
-            <h3 class="headline mb-0"><translate :translate-params="{name: model.modelName()}">Share %{name}</translate>
+            <h3 class="headline mb-0">
+              <translate :translate-params="{name: model.modelName()}">Share %{name}</translate>
             </h3>
           </v-flex>
           <v-flex xs3 text-xs-right>

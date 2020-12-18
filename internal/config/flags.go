@@ -22,19 +22,29 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_READONLY",
 	},
 	cli.BoolFlag{
-		Name:   "tf-off",
-		Usage:  "don't use TensorFlow for image classification (or anything else)",
-		EnvVar: "PHOTOPRISM_TENSORFLOW_OFF",
-	},
-	cli.BoolFlag{
 		Name:   "experimental, e",
 		Usage:  "enable experimental features",
 		EnvVar: "PHOTOPRISM_EXPERIMENTAL",
 	},
 	cli.StringFlag{
+		Name:   "config-path",
+		Usage:  "config `PATH`",
+		EnvVar: "PHOTOPRISM_CONFIG_PATH",
+	},
+	cli.StringFlag{
+		Name:   "config-file, c",
+		Usage:  "main config `FILENAME`",
+		EnvVar: "PHOTOPRISM_CONFIG_FILE",
+	},
+	cli.StringFlag{
 		Name:   "admin-password",
 		Usage:  "initial admin password",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
+	},
+	cli.BoolFlag{
+		Name:   "tensorflow-off",
+		Usage:  "don't use TensorFlow for image classification (or anything else)",
+		EnvVar: "PHOTOPRISM_TENSORFLOW_OFF",
 	},
 	cli.IntFlag{
 		Name:   "workers, w",
@@ -195,16 +205,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "temp-path",
 		Usage:  "temporary `PATH` for uploads and downloads",
 		EnvVar: "PHOTOPRISM_TEMP_PATH",
-	},
-	cli.StringFlag{
-		Name:   "config-file, c",
-		Usage:  "load configuration from `FILENAME`",
-		EnvVar: "PHOTOPRISM_CONFIG_FILE",
-	},
-	cli.StringFlag{
-		Name:   "settings-path",
-		Usage:  "settings `PATH`",
-		EnvVar: "PHOTOPRISM_SETTINGS_PATH",
 	},
 	cli.BoolFlag{
 		Name:   "settings-hidden",

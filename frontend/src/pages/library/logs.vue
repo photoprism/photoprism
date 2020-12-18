@@ -14,28 +14,28 @@
 </template>
 
 <script>
-    import {DateTime} from "luxon";
+import {DateTime} from "luxon";
 
-    export default {
-        name: 'p-tab-logs',
-        data() {
-            return {
-                logs: this.$log.logs,
-            };
-        },
-        methods: {
-            level(log) {
-                return log.level.substr(0, 4).toUpperCase();
-            },
-            formatTime(s) {
-                if (!s) {
-                    return this.$gettext("Unknown");
-                }
-
-                return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
-            },
-        },
-        created() {
-        },
+export default {
+  name: 'p-tab-logs',
+  data() {
+    return {
+      logs: this.$log.logs,
     };
+  },
+  methods: {
+    level(log) {
+      return log.level.substr(0, 4).toUpperCase();
+    },
+    formatTime(s) {
+      if (!s) {
+        return this.$gettext("Unknown");
+      }
+
+      return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
+    },
+  },
+  created() {
+  },
+};
 </script>

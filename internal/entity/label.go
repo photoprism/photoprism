@@ -19,12 +19,12 @@ type Labels []Label
 // Label is used for photo, album and location categorization
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	LabelUID         string     `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
-	LabelSlug        string     `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"-"`
-	CustomSlug       string     `gorm:"type:varbinary(255);index;" json:"CustomSlug" yaml:"-"`
+	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	LabelSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
+	CustomSlug       string     `gorm:"type:VARBINARY(255);index;" json:"CustomSlug" yaml:"-"`
 	LabelName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
-	LabelPriority    int        `gorm:"type:VARCHAR(255);" json:"Priority" yaml:"Priority,omitempty"`
-	LabelFavorite    bool       `gorm:"type:VARCHAR(255);" json:"Favorite" yaml:"Favorite,omitempty"`
+	LabelPriority    int        `json:"Priority" yaml:"Priority,omitempty"`
+	LabelFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
 	LabelDescription string     `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	LabelNotes       string     `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
 	LabelCategories  []*Label   `gorm:"many2many:categories;association_jointable_foreignkey:category_id" json:"-" yaml:"-"`
