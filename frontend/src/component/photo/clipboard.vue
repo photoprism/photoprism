@@ -1,17 +1,17 @@
 <template>
   <div>
-    <v-container fluid class="pa-0" v-if="selection.length > 0">
+    <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial
-          fixed bottom right
+          id="t-clipboard" v-model="expanded" fixed
+          bottom
+          right
           direction="top"
-          v-model="expanded"
           transition="slide-y-reverse-transition"
           class="p-clipboard p-photo-clipboard"
-          id="t-clipboard"
       >
         <v-btn
-            fab dark
-            slot="activator"
+            slot="activator" fab
+            dark
             color="accent darken-2"
             class="action-menu"
         >
@@ -20,109 +20,109 @@
         </v-btn>
 
         <v-btn
-            fab dark small
+            v-if="context !== 'archive' && context !== 'review' && config.settings.features.share" fab dark
+            small
             :title="$gettext('Share')"
             color="share"
-            @click.stop="dialog.share = true"
             :disabled="selection.length === 0"
-            v-if="context !== 'archive' && context !== 'review' && $config.feature('share')"
             class="action-share"
+            @click.stop="dialog.share = true"
         >
           <v-icon>cloud</v-icon>
         </v-btn>
 
         <v-btn
-            fab dark small
+            v-if="context === 'review'" fab dark
+            small
             :title="$gettext('Approve')"
             color="share"
-            @click.stop="batchApprove"
             :disabled="selection.length === 0"
-            v-if="context === 'review'"
             class="action-approve"
+            @click.stop="batchApprove"
         >
           <v-icon>check</v-icon>
         </v-btn>
         <v-btn
-            fab dark small
+            v-if="context !== 'archive' && config.settings.features.edit" fab dark
+            small
             :title="$gettext('Edit')"
             color="edit"
             :disabled="selection.length === 0"
-            @click.stop="edit"
-            v-if="context !== 'archive' && $config.feature('edit')"
             class="action-edit"
+            @click.stop="edit"
         >
           <v-icon>edit</v-icon>
         </v-btn>
         <v-btn
-            fab dark small
+            v-if="context !== 'archive' && config.settings.features.private" fab dark
+            small
             :title="$gettext('Change private flag')"
             color="private"
             :disabled="selection.length === 0"
-            @click.stop="batchPrivate"
-            v-if="context !== 'archive' && config.settings.features.private"
             class="action-private"
+            @click.stop="batchPrivate"
         >
           <v-icon>lock</v-icon>
         </v-btn>
         <v-btn
-            fab dark small
+            v-if="context !== 'archive' && config.settings.features.download" fab dark
+            small
             :title="$gettext('Download')"
             color="download"
-            @click.stop="download()"
-            v-if="context !== 'archive' && $config.feature('download')"
             class="action-download"
+            @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            fab dark small
+            v-if="context !== 'archive'" fab dark
+            small
             :title="$gettext('Add to album')"
             color="album"
             :disabled="selection.length === 0"
-            @click.stop="dialog.album = true"
-            v-if="context !== 'archive'"
             class="action-album"
+            @click.stop="dialog.album = true"
         >
           <v-icon>folder_special</v-icon>
         </v-btn>
         <v-btn
-            fab dark small
+            v-if="!isAlbum && context !== 'archive' && config.settings.features.archive" fab dark
+            small
             color="remove"
             :title="$gettext('Archive')"
-            @click.stop="dialog.archive = true"
             :disabled="selection.length === 0"
-            v-if="!isAlbum && context !== 'archive' && $config.feature('archive')"
             class="action-archive"
+            @click.stop="dialog.archive = true"
         >
           <v-icon>archive</v-icon>
         </v-btn>
         <v-btn
-            fab dark small
+            v-if="!album && context === 'archive'" fab dark
+            small
             color="restore"
             :title="$gettext('Restore')"
-            @click.stop="batchRestorePhotos"
             :disabled="selection.length === 0"
-            v-if="!album && context === 'archive'"
             class="action-restore"
+            @click.stop="batchRestorePhotos"
         >
           <v-icon>unarchive</v-icon>
         </v-btn>
         <v-btn
-            fab dark small
+            v-if="isAlbum" fab dark
+            small
             :title="$gettext('Remove')"
             color="remove"
-            @click.stop="removeFromAlbum"
             :disabled="selection.length === 0"
-            v-if="isAlbum"
             class="action-delete"
+            @click.stop="removeFromAlbum"
         >
           <v-icon>remove</v-icon>
         </v-btn>
         <v-btn
             fab dark small
             color="accent"
-            @click.stop="clearClipboard()"
             class="action-clear"
+            @click.stop="clearClipboard()"
         >
           <v-icon>clear</v-icon>
         </v-btn>
@@ -142,7 +142,7 @@ import Notify from "common/notify";
 import Event from "pubsub-js";
 
 export default {
-  name: 'p-photo-clipboard',
+  name: 'PPhotoClipboard',
   props: {
     selection: Array,
     refresh: Function,
@@ -206,7 +206,7 @@ export default {
     removeFromAlbum() {
       if (!this.album) {
         this.$notify.error(this.$gettext("remove failed: unknown album"));
-        return
+        return;
       }
 
       const uid = this.album.UID;
@@ -231,14 +231,14 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = path;
       link.download = "photos.zip";
       link.click();
     },
     edit() {
       // Open Edit Dialog
-      Event.publish("dialog.edit", {selection: this.selection, album: this.album, index: 0});
+      Event.PubSub.publish("dialog.edit", {selection: this.selection, album: this.album, index: 0});
     },
     onShared() {
       this.dialog.share = false;

@@ -19,8 +19,8 @@ module.exports = {
       // Settings for how to process Vue SFC Blocks
       SFCBlocks: {
         template: false,
-        script: true,
-        style: true,
+        script: false,
+        style: false,
       },
 
       // Use prettierrc for prettier options or not (default: `true`)

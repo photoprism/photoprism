@@ -133,7 +133,7 @@ export default {
     photos: function (photos) {
       this.selected.splice(0);
 
-      for (let i = 0; i <= photos.length; i++) {
+      for (let i = 0; i < photos.length; i++) {
         if (this.$clipboard.has(photos[i])) {
           this.selected.push(photos[i]);
         }
@@ -194,7 +194,7 @@ export default {
     refreshSelection() {
       this.selected.splice(0);
 
-      for (let i = 0; i <= this.photos.length; i++) {
+      for (let i = 0; i < this.photos.length; i++) {
         if (this.$clipboard.has(this.photos[i])) {
           this.selected.push(this.photos[i]);
         }
