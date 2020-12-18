@@ -114,7 +114,7 @@
     "url-loader": "^1.1.2",
     "vue": "^2.6.12",
     "vue-fullscreen": "^2.1.6",
-    "vue-gettext": "^2.1.11",
+    "vue-gettext": "^2.1.12",
     "vue-infinite-scroll": "^2.0.2",
     "vue-js-modal": "^2.0.0-rc.6",
     "vue-loader": "^14.2.4",
