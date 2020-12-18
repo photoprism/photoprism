@@ -63,7 +63,7 @@ func TestConfig_TensorFlowVersion(t *testing.T) {
 func TestConfig_TensorFlowDisabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	version := c.TensorFlowOff()
+	version := c.DisableTensorFlow()
 	assert.Equal(t, false, version)
 }
 
@@ -114,29 +114,22 @@ func TestConfig_DetachServer(t *testing.T) {
 func TestConfig_HttpServerHost(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	host := c.HttpServerHost()
+	host := c.HttpHost()
 	assert.Equal(t, "0.0.0.0", host)
 }
 
 func TestConfig_HttpServerPort(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	port := c.HttpServerPort()
+	port := c.HttpPort()
 	assert.Equal(t, 2342, port)
 }
 
 func TestConfig_HttpServerMode(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	mode := c.HttpServerMode()
+	mode := c.HttpMode()
 	assert.Equal(t, "release", mode)
-}
-
-func TestConfig_HttpServerPassword(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	password := c.HttpServerPassword()
-	assert.Equal(t, "", password)
 }
 
 func TestConfig_OriginalsPath(t *testing.T) {
@@ -273,11 +266,9 @@ func TestConfig_WakeupInterval(t *testing.T) {
 func TestConfig_GeoApi(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "", c.GeoApi())
-	c.params.GeoApi = "places"
 	assert.Equal(t, "places", c.GeoApi())
-	c.params.GeoApi = "osm"
-	assert.Equal(t, "osm", c.GeoApi())
+	c.params.DisablePlaces = true
+	assert.Equal(t, "", c.GeoApi())
 }
 
 func TestConfig_OriginalsLimit(t *testing.T) {

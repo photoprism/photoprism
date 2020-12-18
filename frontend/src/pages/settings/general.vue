@@ -327,7 +327,7 @@
               </v-checkbox>
             </v-flex>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2" v-if="!config.disable.places">
               <v-checkbox
                   @change="onChange"
                   :disabled="busy"
@@ -345,7 +345,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card flat tile class="mt-0 px-1 application" v-if="settings.features.places">
+      <v-card flat tile class="mt-0 px-1 application" v-if="settings.features.places && !config.disable.places">
         <v-card-title primary-title class="pb-2">
           <h3 class="body-2 mb-0">
             <translate key="Places">Places</translate>
@@ -400,6 +400,7 @@ export default {
     return {
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
+      config: this.$config.values,
       settings: new Settings(this.$config.settings()),
       options: options,
       busy: false,

@@ -339,7 +339,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <template v-if="!config.disableSettings">
+        <template v-if="!config.disable.settings">
           <v-list-tile v-if="mini" to="/settings" @click="" class="nav-settings">
             <v-list-tile-action :title="$gettext('Settings')">
               <v-icon>settings</v-icon>

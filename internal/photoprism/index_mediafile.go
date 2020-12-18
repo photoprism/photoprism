@@ -560,7 +560,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if file.FilePrimary {
 		primaryFile = file
 
-		if !Config().TensorFlowOff() {
+		if !Config().DisableTensorFlow() {
 			// Image classification via TensorFlow.
 			labels = ind.classifyImage(m)
 
@@ -837,7 +837,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		return result
 	}
 
-	if file.FilePrimary && Config().SidecarYaml() {
+	if file.FilePrimary && Config().BackupYaml() {
 		// Write YAML sidecar file (optional).
 		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 

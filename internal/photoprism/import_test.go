@@ -12,7 +12,7 @@ import (
 func TestNewImport(t *testing.T) {
 	conf := config.TestConfig()
 
-	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
+	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
@@ -27,7 +27,7 @@ func TestImport_DestinationFilename(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
+	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
@@ -59,7 +59,7 @@ func TestImport_Start(t *testing.T) {
 
 	conf.InitializeTestData(t)
 
-	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
+	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 

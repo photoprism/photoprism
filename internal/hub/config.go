@@ -25,12 +25,12 @@ import (
 
 // Config represents backend api credentials for maps & geodata.
 type Config struct {
-	Key      string `json:"key" yaml:"key"`
-	Secret   string `json:"secret" yaml:"secret"`
-	Session  string `json:"session" yaml:"session"`
-	Status   string `json:"status" yaml:"status"`
-	Version  string `json:"version" yaml:"version"`
-	Serial   string `json:"serial" yaml:"serial"`
+	Key      string `json:"key" yaml:"Key"`
+	Secret   string `json:"secret" yaml:"Secret"`
+	Session  string `json:"session" yaml:"Session"`
+	Status   string `json:"status" yaml:"Status"`
+	Version  string `json:"version" yaml:"Version"`
+	Serial   string `json:"serial" yaml:"Serial"`
 	FileName string `json:"-" yaml:"-"`
 }
 

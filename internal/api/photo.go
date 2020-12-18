@@ -23,7 +23,7 @@ func SavePhotoAsYaml(p entity.Photo) {
 	c := service.Config()
 
 	// Write YAML sidecar file (optional).
-	if !c.SidecarYaml() {
+	if !c.BackupYaml() {
 		return
 	}
 

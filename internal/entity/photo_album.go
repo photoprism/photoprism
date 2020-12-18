@@ -13,7 +13,7 @@ type PhotoAlbum struct {
 	Order     int       `json:"Order" yaml:"Order,omitempty"`
 	Hidden    bool      `json:"Hidden" yaml:"Hidden,omitempty"`
 	CreatedAt time.Time `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
-	UpdatedAt time.Time `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
+	UpdatedAt time.Time `json:"UpdatedAt" yaml:"-"`
 	Photo     *Photo    `gorm:"PRELOAD:false" yaml:"-"`
 	Album     *Album    `gorm:"PRELOAD:true" yaml:"-"`
 }

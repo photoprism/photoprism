@@ -27,7 +27,6 @@ type ClientConfig struct {
 	UploadNSFW      bool                `json:"uploadNSFW"`
 	Public          bool                `json:"public"`
 	Experimental    bool                `json:"experimental"`
-	DisableSettings bool                `json:"disableSettings"`
 	AlbumCategories []string            `json:"albumCategories"`
 	Albums          []entity.Album      `json:"albums"`
 	Cameras         []entity.Camera     `json:"cameras"`
@@ -41,6 +40,7 @@ type ClientConfig struct {
 	JSHash          string              `json:"jsHash"`
 	CSSHash         string              `json:"cssHash"`
 	Settings        Settings            `json:"settings"`
+	Disable         ClientDisable       `json:"disable"`
 	Count           ClientCounts        `json:"count"`
 	Pos             ClientPosition      `json:"pos"`
 	Years           []int               `json:"years"`
@@ -50,6 +50,14 @@ type ClientConfig struct {
 	Server          RuntimeInfo         `json:"server"`
 }
 
+// ClientDisable represents disabled client features a user can't turn back on.
+type ClientDisable struct {
+	Backups  bool `json:"backups"`
+	Settings bool `json:"settings"`
+	Places   bool `json:"places"`
+}
+
+// ClientCounts represents photo, video and album counts for the client UI.
 type ClientCounts struct {
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`
@@ -104,7 +112,7 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "readonly")
 	}
 
-	if !c.SettingsHidden() {
+	if !c.DisableSettings() {
 		flags = append(flags, "settings")
 	}
 
@@ -130,6 +138,11 @@ func (c *Config) PublicConfig() ClientConfig {
 			Features: settings.Features,
 			Share:    settings.Share,
 		},
+		Disable: ClientDisable{
+			Backups:  true,
+			Settings: true,
+			Places:   c.DisablePlaces(),
+		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -142,7 +155,6 @@ func (c *Config) PublicConfig() ClientConfig {
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
 		ReadOnly:        c.ReadOnly(),
-		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Status:          "",
@@ -170,6 +182,11 @@ func (c *Config) GuestConfig() ClientConfig {
 			Features: settings.Features,
 			Share:    settings.Share,
 		},
+		Disable: ClientDisable{
+			Backups:  true,
+			Settings: true,
+			Places:   c.DisablePlaces(),
+		},
 		Flags:           "readonly public shared",
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -183,7 +200,6 @@ func (c *Config) GuestConfig() ClientConfig {
 		Debug:           c.Debug(),
 		ReadOnly:        true,
 		UploadNSFW:      c.UploadNSFW(),
-		DisableSettings: true,
 		Public:          true,
 		Experimental:    false,
 		Colors:          colors.All.List(),
@@ -203,7 +219,12 @@ func (c *Config) GuestConfig() ClientConfig {
 // UserConfig returns client configuration values for registered users.
 func (c *Config) UserConfig() ClientConfig {
 	result := ClientConfig{
-		Settings:        *c.Settings(),
+		Settings: *c.Settings(),
+		Disable: ClientDisable{
+			Backups:  c.DisableBackups(),
+			Settings: c.DisableSettings(),
+			Places:   c.DisablePlaces(),
+		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -217,7 +238,6 @@ func (c *Config) UserConfig() ClientConfig {
 		Debug:           c.Debug(),
 		ReadOnly:        c.ReadOnly(),
 		UploadNSFW:      c.UploadNSFW(),
-		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),

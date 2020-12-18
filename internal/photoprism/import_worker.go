@@ -105,7 +105,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 			}
 
-			if imp.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
+			if imp.conf.ExifToolJson() && f.IsMedia() && !f.HasJson() {
 				if jsonFile, err := imp.convert.ToJson(f); err != nil {
 					log.Errorf("import: %s in %s (create json sidecar)", err.Error(), txt.Quote(f.BaseName()))
 				} else {
@@ -167,7 +167,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				if ind.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
+				if ind.conf.ExifToolJson() && f.IsMedia() && !f.HasJson() {
 					if jsonFile, err := ind.convert.ToJson(f); err != nil {
 						log.Errorf("import: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 					} else {

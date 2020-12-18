@@ -13,17 +13,26 @@ func TestConfig_FindExecutable(t *testing.T) {
 
 func TestConfig_SidecarJson(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, false, c.SidecarJson())
-	c.params.ReadOnly = true
-	assert.Equal(t, false, c.SidecarJson())
+
+	assert.Equal(t, true, c.ExifToolJson())
+	assert.Equal(t, c.DisableExifTool(), !c.ExifToolJson())
+
+	c.params.DisableExifTool = true
+
+	assert.Equal(t, false, c.ExifToolJson())
+	assert.Equal(t, c.DisableExifTool(), !c.ExifToolJson())
 }
 
 func TestConfig_SidecarYaml(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, false, c.SidecarYaml())
-	c.params.ReadOnly = true
-	assert.Equal(t, false, c.SidecarJson())
+	assert.Equal(t, true, c.BackupYaml())
+	assert.Equal(t, c.DisableBackups(), !c.BackupYaml())
+
+	c.params.DisableBackups = true
+
+	assert.Equal(t, false, c.BackupYaml())
+	assert.Equal(t, c.DisableBackups(), !c.BackupYaml())
 }
 
 func TestConfig_SidecarPath(t *testing.T) {

@@ -1,40 +1,40 @@
-ui:
-  scrollbar: true
-  theme: onyx
-  language: de
-templates:
-  default: index.tmpl
-maps:
-  animate: 0
-  style: streets
-features:
-  upload: true
-  download: true
-  private: true
-  review: true
-  files: true
-  moments: true
-  labels: true
-  places: true
-  edit: true
-  archive: true
-  delete: false
-  share: true
-  library: true
-  import: true
-  logs: true
-import:
-  path: /
-  move: false
-index:
-  path: /
-  convert: true
-  rescan: false
-stack:
-  uuid: true
-  meta: true
-  name: false
-share:
-  title: ""
-download:
-  name: file
+UI:
+  Scrollbar: true
+  Theme: onyx
+  Language: de
+Templates:
+  Default: index.tmpl
+Maps:
+  Animate: 0
+  Style: streets
+Features:
+  Upload: true
+  Download: true
+  Private: true
+  Review: true
+  Files: true
+  Moments: true
+  Labels: true
+  Places: true
+  Edit: true
+  Archive: true
+  Delete: false
+  Share: true
+  Library: true
+  Import: true
+  Logs: true
+Import:
+  Path: /
+  Move: false
+Index:
+  Path: /
+  Convert: true
+  Rescan: false
+Stack:
+  UUID: true
+  Meta: true
+  Name: false
+Share:
+  Title: ""
+Download:
+  Name: file

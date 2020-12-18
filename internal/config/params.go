@@ -30,71 +30,71 @@ const (
 //
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Params struct {
-	Name               string
-	Version            string
-	Copyright          string
-	Debug              bool   `yaml:"debug" flag:"debug"`
-	Public             bool   `yaml:"public" flag:"public"`
-	ReadOnly           bool   `yaml:"read-only" flag:"read-only"`
-	Experimental       bool   `yaml:"experimental" flag:"experimental"`
-	ConfigPath         string `yaml:"config-path" flag:"config-path"`
-	ConfigFile         string
-	AdminPassword      string `yaml:"admin-password" flag:"admin-password"`
-	SiteUrl            string `yaml:"site-url" flag:"site-url"`
-	SitePreview        string `yaml:"site-preview" flag:"site-preview"`
-	SiteTitle          string `yaml:"site-title" flag:"site-title"`
-	SiteCaption        string `yaml:"site-caption" flag:"site-caption"`
-	SiteDescription    string `yaml:"site-description" flag:"site-description"`
-	SiteAuthor         string `yaml:"site-author" flag:"site-author"`
-	TensorFlowOff      bool   `yaml:"tensorflow-off" flag:"tensorflow-off"`
-	Workers            int    `yaml:"workers" flag:"workers"`
-	WakeupInterval     int    `yaml:"wakeup-interval" flag:"wakeup-interval"`
-	LogLevel           string `yaml:"log-level" flag:"log-level"`
-	AssetsPath         string `yaml:"assets-path" flag:"assets-path"`
-	StoragePath        string `yaml:"storage-path" flag:"storage-path"`
-	BackupPath         string `yaml:"backup-path" flag:"backup-path"`
-	ImportPath         string `yaml:"import-path" flag:"import-path"`
-	OriginalsPath      string `yaml:"originals-path" flag:"originals-path"`
-	OriginalsLimit     int64  `yaml:"originals-limit" flag:"originals-limit"`
-	SettingsHidden     bool   `yaml:"settings-hidden" flag:"settings-hidden"`
-	TempPath           string `yaml:"temp-path" flag:"temp-path"`
-	CachePath          string `yaml:"cache-path" flag:"cache-path"`
-	DatabaseDriver     string `yaml:"database-driver" flag:"database-driver"`
-	DatabaseDsn        string `yaml:"database-dsn" flag:"database-dsn"`
-	DatabaseServer     string `yaml:"database-server" flag:"database-server"`
-	DatabaseName       string `yaml:"database-name" flag:"database-name"`
-	DatabaseUser       string `yaml:"database-user" flag:"database-user"`
-	DatabasePassword   string `yaml:"database-password" flag:"database-password"`
-	DatabaseConns      int    `yaml:"database-conns" flag:"database-conns"`
-	DatabaseConnsIdle  int    `yaml:"database-conns-idle" flag:"database-conns-idle"`
-	HttpServerHost     string `yaml:"http-host" flag:"http-host"`
-	HttpServerPort     int    `yaml:"http-port" flag:"http-port"`
-	HttpServerMode     string `yaml:"http-mode" flag:"http-mode"`
-	HttpServerPassword string `yaml:"http-password" flag:"http-password"`
-	SipsBin            string `yaml:"sips-bin" flag:"sips-bin"`
-	RawtherapeeBin     string `yaml:"rawtherapee-bin" flag:"rawtherapee-bin"`
-	DarktableBin       string `yaml:"darktable-bin" flag:"darktable-bin"`
-	DarktablePresets   bool   `yaml:"darktable-presets" flag:"darktable-presets"`
-	HeifConvertBin     string `yaml:"heifconvert-bin" flag:"heifconvert-bin"`
-	FFmpegBin          string `yaml:"ffmpeg-bin" flag:"ffmpeg-bin"`
-	ExifToolBin        string `yaml:"exiftool-bin" flag:"exiftool-bin"`
-	SidecarJson        bool   `yaml:"sidecar-json" flag:"sidecar-json"`
-	SidecarYaml        bool   `yaml:"sidecar-yaml" flag:"sidecar-yaml"`
-	SidecarPath        string `yaml:"sidecar-path" flag:"sidecar-path"`
-	PIDFilename        string `yaml:"pid-filename" flag:"pid-filename"`
-	LogFilename        string `yaml:"log-filename" flag:"log-filename"`
-	DetachServer       bool   `yaml:"detach-server" flag:"detach-server"`
-	DetectNSFW         bool   `yaml:"detect-nsfw" flag:"detect-nsfw"`
-	UploadNSFW         bool   `yaml:"upload-nsfw" flag:"upload-nsfw"`
-	GeoApi             string `yaml:"geo-api" flag:"geo-api"`
-	DownloadToken      string `yaml:"download-token" flag:"download-token"`
-	PreviewToken       string `yaml:"preview-token" flag:"preview-token"`
-	ThumbFilter        string `yaml:"thumb-filter" flag:"thumb-filter"`
-	ThumbUncached      bool   `yaml:"thumb-uncached" flag:"thumb-uncached"`
-	ThumbSize          int    `yaml:"thumb-size" flag:"thumb-size"`
-	ThumbSizeUncached  int    `yaml:"thumb-size-uncached" flag:"thumb-size-uncached"`
-	JpegSize           int    `yaml:"jpeg-size" flag:"jpeg-size"`
-	JpegQuality        int    `yaml:"jpeg-quality" flag:"jpeg-quality"`
+	Name              string
+	Version           string
+	Copyright         string
+	Debug             bool   `yaml:"Debug" flag:"debug"`
+	Public            bool   `yaml:"Public" flag:"public"`
+	ReadOnly          bool   `yaml:"ReadOnly" flag:"read-only"`
+	Experimental      bool   `yaml:"Experimental" flag:"experimental"`
+	ConfigPath        string `yaml:"ConfigPath" flag:"config-path"`
+	ConfigFile        string
+	AdminPassword     string `yaml:"AdminPassword" flag:"admin-password"`
+	OriginalsPath     string `yaml:"OriginalsPath" flag:"originals-path"`
+	OriginalsLimit    int64  `yaml:"OriginalsLimit" flag:"originals-limit"`
+	ImportPath        string `yaml:"ImportPath" flag:"import-path"`
+	StoragePath       string `yaml:"StoragePath" flag:"storage-path"`
+	SidecarPath       string `yaml:"SidecarPath" flag:"sidecar-path"`
+	TempPath          string `yaml:"TempPath" flag:"temp-path"`
+	BackupPath        string `yaml:"BackupPath" flag:"backup-path"`
+	AssetsPath        string `yaml:"AssetsPath" flag:"assets-path"`
+	CachePath         string `yaml:"CachePath" flag:"cache-path"`
+	Workers           int    `yaml:"Workers" flag:"workers"`
+	WakeupInterval    int    `yaml:"WakeupInterval" flag:"wakeup-interval"`
+	DisableBackups    bool   `yaml:"DisableBackups" flag:"disable-backups"`
+	DisableSettings   bool   `yaml:"DisableSettings" flag:"disable-settings"`
+	DisablePlaces     bool   `yaml:"DisablePlaces" flag:"disable-places"`
+	DisableExifTool   bool   `yaml:"DisableExifTool" flag:"disable-exiftool"`
+	DisableTensorFlow bool   `yaml:"DisableTensorFlow" flag:"disable-tensorflow"`
+	DetectNSFW        bool   `yaml:"DetectNSFW" flag:"detect-nsfw"`
+	UploadNSFW        bool   `yaml:"UploadNSFW" flag:"upload-nsfw"`
+	LogLevel          string `yaml:"LogLevel" flag:"log-level"`
+	LogFilename       string `yaml:"LogFilename" flag:"log-filename"`
+	PIDFilename       string `yaml:"PIDFilename" flag:"pid-filename"`
+	SiteUrl           string `yaml:"SiteUrl" flag:"site-url"`
+	SitePreview       string `yaml:"SitePreview" flag:"site-preview"`
+	SiteTitle         string `yaml:"SiteTitle" flag:"site-title"`
+	SiteCaption       string `yaml:"SiteCaption" flag:"site-caption"`
+	SiteDescription   string `yaml:"SiteDescription" flag:"site-description"`
+	SiteAuthor        string `yaml:"SiteAuthor" flag:"site-author"`
+	DatabaseDriver    string `yaml:"DatabaseDriver" flag:"database-driver"`
+	DatabaseDsn       string `yaml:"DatabaseDsn" flag:"database-dsn"`
+	DatabaseServer    string `yaml:"DatabaseServer" flag:"database-server"`
+	DatabaseName      string `yaml:"DatabaseName" flag:"database-name"`
+	DatabaseUser      string `yaml:"DatabaseUser" flag:"database-user"`
+	DatabasePassword  string `yaml:"DatabasePassword" flag:"database-password"`
+	DatabaseConns     int    `yaml:"DatabaseConns" flag:"database-conns"`
+	DatabaseConnsIdle int    `yaml:"DatabaseConnsIdle" flag:"database-conns-idle"`
+	HttpHost          string `yaml:"HttpHost" flag:"http-host"`
+	HttpPort          int    `yaml:"HttpPort" flag:"http-port"`
+	HttpMode          string `yaml:"HttpMode" flag:"http-mode"`
+	SipsBin           string `yaml:"SipsBin" flag:"sips-bin"`
+	RawtherapeeBin    string `yaml:"RawtherapeeBin" flag:"rawtherapee-bin"`
+	DarktableBin      string `yaml:"DarktableBin" flag:"darktable-bin"`
+	DarktablePresets  bool   `yaml:"DarktablePresets" flag:"darktable-presets"`
+	HeifConvertBin    string `yaml:"HeifConvertBin" flag:"heifconvert-bin"`
+	FFmpegBin         string `yaml:"FFmpegBin" flag:"ffmpeg-bin"`
+	ExifToolBin       string `yaml:"ExifToolBin" flag:"exiftool-bin"`
+	BackupYaml        bool   `yaml:"BackupYaml" flag:"backup-yaml"`
+	DetachServer      bool   `yaml:"DetachServer" flag:"detach-server"`
+	DownloadToken     string `yaml:"DownloadToken" flag:"download-token"`
+	PreviewToken      string `yaml:"PreviewToken" flag:"preview-token"`
+	ThumbFilter       string `yaml:"ThumbFilter" flag:"thumb-filter"`
+	ThumbUncached     bool   `yaml:"ThumbUncached" flag:"thumb-uncached"`
+	ThumbSize         int    `yaml:"ThumbSize" flag:"thumb-size"`
+	ThumbSizeUncached int    `yaml:"ThumbSizeUncached" flag:"thumb-size-uncached"`
+	JpegSize          int    `yaml:"JpegSize" flag:"jpeg-size"`
+	JpegQuality       int    `yaml:"JpegQuality" flag:"jpeg-quality"`
 }
 
 // NewParams creates a new configuration entity by using two methods:

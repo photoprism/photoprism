@@ -9,27 +9,27 @@ import (
 func TestConfig_HttpServerHost2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "0.0.0.0", c.HttpServerHost())
-	c.params.HttpServerHost = "test"
-	assert.Equal(t, "test", c.HttpServerHost())
+	assert.Equal(t, "0.0.0.0", c.HttpHost())
+	c.params.HttpHost = "test"
+	assert.Equal(t, "test", c.HttpHost())
 }
 
 func TestConfig_HttpServerPort2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int(2342), c.HttpServerPort())
-	c.params.HttpServerPort = int(1234)
-	assert.Equal(t, int(1234), c.HttpServerPort())
+	assert.Equal(t, int(2342), c.HttpPort())
+	c.params.HttpPort = int(1234)
+	assert.Equal(t, int(1234), c.HttpPort())
 }
 
 func TestConfig_HttpServerMode2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "release", c.HttpServerMode())
+	assert.Equal(t, "release", c.HttpMode())
 	c.params.Debug = true
-	assert.Equal(t, "debug", c.HttpServerMode())
-	c.params.HttpServerMode = "test"
-	assert.Equal(t, "test", c.HttpServerMode())
+	assert.Equal(t, "debug", c.HttpMode())
+	c.params.HttpMode = "test"
+	assert.Equal(t, "test", c.HttpMode())
 }
 
 func TestConfig_TemplateName(t *testing.T) {

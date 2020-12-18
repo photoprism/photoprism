@@ -11,11 +11,6 @@ func (c *Config) TensorFlowVersion() string {
 	return tf.Version()
 }
 
-// TensorFlowOff returns true if TensorFlow should NOT be used for image classification (or anything else).
-func (c *Config) TensorFlowOff() bool {
-	return c.params.TensorFlowOff
-}
-
 // TensorFlowModelPath returns the TensorFlow model path.
 func (c *Config) TensorFlowModelPath() string {
 	return filepath.Join(c.AssetsPath(), "nasnet")

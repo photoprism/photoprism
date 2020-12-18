@@ -171,17 +171,23 @@ ENV PHOTOPRISM_SITE_DESCRIPTION ""
 ENV PHOTOPRISM_SITE_AUTHOR ""
 ENV PHOTOPRISM_HTTP_HOST "0.0.0.0"
 ENV PHOTOPRISM_HTTP_PORT 2342
-ENV PHOTOPRISM_SETTINGS_HIDDEN "false"
 ENV PHOTOPRISM_DATABASE_DRIVER "sqlite"
-ENV PHOTOPRISM_SIDECAR_JSON "true"
-ENV PHOTOPRISM_SIDECAR_YAML "true"
+ENV PHOTOPRISM_DATABASE_SERVER ""
+ENV PHOTOPRISM_DATABASE_NAME "photoprism"
+ENV PHOTOPRISM_DATABASE_USER "photoprism"
+ENV PHOTOPRISM_DATABASE_PASSWORD ""
+ENV PHOTOPRISM_DISABLE_TENSORFLOW "false"
+ENV PHOTOPRISM_DISABLE_EXIFTOOL "false"
+ENV PHOTOPRISM_DISABLE_BACKUPS "false"
+ENV PHOTOPRISM_DISABLE_SETTINGS "false"
+ENV PHOTOPRISM_DISABLE_PLACES "false"
+ENV PHOTOPRISM_DARKTABLE_PRESETS "false"
 ENV PHOTOPRISM_THUMB_FILTER "lanczos"
 ENV PHOTOPRISM_THUMB_UNCACHED "false"
 ENV PHOTOPRISM_THUMB_SIZE 2048
 ENV PHOTOPRISM_THUMB_SIZE_UNCACHED 7680
 ENV PHOTOPRISM_JPEG_SIZE 7680
 ENV PHOTOPRISM_JPEG_QUALITY 92
-ENV PHOTOPRISM_DARKTABLE_PRESETS "false"
 
 # Copy files to /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
@@ -192,7 +198,7 @@ RUN mkdir -p \
     /var/lib/photoprism \
     /photoprism/originals \
     /photoprism/import \
-    /photoprism/storage/settings \
+    /photoprism/storage/config \
     /photoprism/storage/cache && \
     chown -R photoprism:photoprism /photoprism /var/lib/photoprism && \
     chmod -R a+rw /photoprism /var/lib/photoprism

@@ -11,27 +11,27 @@ func (c *Config) DetachServer() bool {
 	return c.params.DetachServer
 }
 
-// HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
-func (c *Config) HttpServerHost() string {
-	if c.params.HttpServerHost == "" {
+// HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
+func (c *Config) HttpHost() string {
+	if c.params.HttpHost == "" {
 		return "0.0.0.0"
 	}
 
-	return c.params.HttpServerHost
+	return c.params.HttpHost
 }
 
-// HttpServerPort returns the built-in HTTP server port.
-func (c *Config) HttpServerPort() int {
-	if c.params.HttpServerPort == 0 {
+// HttpPort returns the built-in HTTP server port.
+func (c *Config) HttpPort() int {
+	if c.params.HttpPort == 0 {
 		return 2342
 	}
 
-	return c.params.HttpServerPort
+	return c.params.HttpPort
 }
 
-// HttpServerMode returns the server mode.
-func (c *Config) HttpServerMode() string {
-	if c.params.HttpServerMode == "" {
+// HttpMode returns the server mode.
+func (c *Config) HttpMode() string {
+	if c.params.HttpMode == "" {
 		if c.Debug() {
 			return "debug"
 		}
@@ -39,12 +39,7 @@ func (c *Config) HttpServerMode() string {
 		return "release"
 	}
 
-	return c.params.HttpServerMode
-}
-
-// HttpServerPassword returns the password for the user interface (optional).
-func (c *Config) HttpServerPassword() string {
-	return c.params.HttpServerPassword
+	return c.params.HttpMode
 }
 
 // TemplatesPath returns the server templates path.

@@ -13,89 +13,84 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// SettingsHidden returns true if the user is not allowed to change settings.
-func (c *Config) SettingsHidden() bool {
-	return c.params.SettingsHidden
-}
-
 // UISettings represents user interface settings.
 type UISettings struct {
-	Scrollbar bool   `json:"scrollbar" yaml:"scrollbar"`
-	Theme     string `json:"theme" yaml:"theme"`
-	Language  string `json:"language" yaml:"language"`
+	Scrollbar bool   `json:"scrollbar" yaml:"Scrollbar"`
+	Theme     string `json:"theme" yaml:"Theme"`
+	Language  string `json:"language" yaml:"Language"`
 }
 
 // TemplateSettings represents template settings for the UI and messaging.
 type TemplateSettings struct {
-	Default string `json:"default" yaml:"default"`
+	Default string `json:"default" yaml:"Default"`
 }
 
 // MapsSettings represents maps settings (for places).
 type MapsSettings struct {
-	Animate int    `json:"animate" yaml:"animate"`
-	Style   string `json:"style" yaml:"style"`
+	Animate int    `json:"animate" yaml:"Animate"`
+	Style   string `json:"style" yaml:"Style"`
 }
 
 // FeatureSettings represents feature flags, mainly for the Web UI.
 type FeatureSettings struct {
-	Upload   bool `json:"upload" yaml:"upload"`
-	Download bool `json:"download" yaml:"download"`
-	Private  bool `json:"private" yaml:"private"`
-	Review   bool `json:"review" yaml:"review"`
-	Files    bool `json:"files" yaml:"files"`
-	Moments  bool `json:"moments" yaml:"moments"`
-	Labels   bool `json:"labels" yaml:"labels"`
-	Places   bool `json:"places" yaml:"places"`
-	Edit     bool `json:"edit" yaml:"edit"`
-	Archive  bool `json:"archive" yaml:"archive"`
-	Delete   bool `json:"delete" yaml:"delete"`
-	Share    bool `json:"share" yaml:"share"`
-	Library  bool `json:"library" yaml:"library"`
-	Import   bool `json:"import" yaml:"import"`
-	Logs     bool `json:"logs" yaml:"logs"`
+	Upload   bool `json:"upload" yaml:"Upload"`
+	Download bool `json:"download" yaml:"Download"`
+	Private  bool `json:"private" yaml:"Private"`
+	Review   bool `json:"review" yaml:"Review"`
+	Files    bool `json:"files" yaml:"Files"`
+	Moments  bool `json:"moments" yaml:"Moments"`
+	Labels   bool `json:"labels" yaml:"Labels"`
+	Places   bool `json:"places" yaml:"Places"`
+	Edit     bool `json:"edit" yaml:"Edit"`
+	Archive  bool `json:"archive" yaml:"Archive"`
+	Delete   bool `json:"delete" yaml:"Delete"`
+	Share    bool `json:"share" yaml:"Share"`
+	Library  bool `json:"library" yaml:"Library"`
+	Import   bool `json:"import" yaml:"Import"`
+	Logs     bool `json:"logs" yaml:"Logs"`
 }
 
 // ImportSettings represents import settings.
 type ImportSettings struct {
-	Path string `json:"path" yaml:"path"`
-	Move bool   `json:"move" yaml:"move"`
+	Path string `json:"path" yaml:"Path"`
+	Move bool   `json:"move" yaml:"Move"`
 }
 
 // IndexSettings represents indexing settings.
 type IndexSettings struct {
-	Path    string `json:"path" yaml:"path"`
-	Convert bool   `json:"convert" yaml:"convert"`
-	Rescan  bool   `json:"rescan" yaml:"rescan"`
+	Path    string `json:"path" yaml:"Path"`
+	Convert bool   `json:"convert" yaml:"Convert"`
+	Rescan  bool   `json:"rescan" yaml:"Rescan"`
 }
 
 // StackSettings represents settings for files that belong to the same photo.
 type StackSettings struct {
-	UUID bool `json:"uuid" yaml:"uuid"`
-	Meta bool `json:"meta" yaml:"meta"`
-	Name bool `json:"name" yaml:"name"`
+	UUID bool `json:"uuid" yaml:"UUID"`
+	Meta bool `json:"meta" yaml:"Meta"`
+	Name bool `json:"name" yaml:"Name"`
 }
 
 // ShareSettings represents content sharing settings.
 type ShareSettings struct {
-	Title string `json:"title" yaml:"title"`
+	Title string `json:"title" yaml:"Title"`
 }
 
 // DownloadSettings represents content download settings.
 type DownloadSettings struct {
-	Name entity.DownloadName `json:"name" yaml:"name"`
+	Name entity.DownloadName `json:"name" yaml:"Name"`
 }
 
 // Settings represents user settings for Web UI, indexing, and import.
 type Settings struct {
-	UI        UISettings       `json:"ui" yaml:"ui"`
-	Templates TemplateSettings `json:"templates" yaml:"templates"`
-	Maps      MapsSettings     `json:"maps" yaml:"maps"`
-	Features  FeatureSettings  `json:"features" yaml:"features"`
-	Import    ImportSettings   `json:"import" yaml:"import"`
-	Index     IndexSettings    `json:"index" yaml:"index"`
-	Stack     StackSettings    `json:"stack" yaml:"stack"`
-	Share     ShareSettings    `json:"share" yaml:"share"`
-	Download  DownloadSettings `json:"download" yaml:"download"`
+	UI        UISettings       `json:"ui" yaml:"UI"`
+	Templates TemplateSettings `json:"templates" yaml:"Templates"`
+	Maps      MapsSettings     `json:"maps" yaml:"Maps"`
+	Features  FeatureSettings  `json:"features" yaml:"Features"`
+	Import    ImportSettings   `json:"import" yaml:"Import"`
+	Index     IndexSettings    `json:"index" yaml:"Index"`
+	Stack     StackSettings    `json:"stack" yaml:"Stack"`
+	Share     ShareSettings    `json:"share" yaml:"Share"`
+	Download  DownloadSettings `json:"download" yaml:"Download"`
 }
 
 // NewSettings creates a new Settings instance.
@@ -232,6 +227,10 @@ func (c *Config) initSettings() {
 func (c *Config) Settings() *Settings {
 	if c.settings == nil {
 		c.initSettings()
+	}
+
+	if c.DisablePlaces() {
+		c.settings.Features.Places = false
 	}
 
 	return c.settings

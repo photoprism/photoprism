@@ -276,7 +276,7 @@ export default [
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 0},
         beforeEnter: (to, from, next) => {
-            if (c.disableSettings) {
+            if (c.disable.settings) {
                 next({name: "home"});
             } else {
                 next();
@@ -290,7 +290,7 @@ export default [
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 1},
         beforeEnter: (to, from, next) => {
-            if (c.disableSettings) {
+            if (c.disable.settings) {
                 next({name: "home"});
             } else {
                 next();
@@ -304,7 +304,7 @@ export default [
         meta: {title: $gettext("Settings"), auth: true, background: "application-light"},
         props: {tab: 2},
         beforeEnter: (to, from, next) => {
-            if (c.disableSettings) {
+            if (c.disable.settings) {
                 next({name: "home"});
             } else {
                 next();

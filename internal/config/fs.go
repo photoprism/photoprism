@@ -216,21 +216,13 @@ func (c *Config) ExifToolBin() string {
 }
 
 // Automatically create JSON sidecar files using Exiftool.
-func (c *Config) SidecarJson() bool {
-	if !c.SidecarWritable() || c.ExifToolBin() == "" {
-		return false
-	}
-
-	return c.params.SidecarJson
+func (c *Config) ExifToolJson() bool {
+	return !c.DisableExifTool()
 }
 
 // Automatically backup metadata to YAML sidecar files.
-func (c *Config) SidecarYaml() bool {
-	if !c.SidecarWritable() {
-		return false
-	}
-
-	return c.params.SidecarYaml
+func (c *Config) BackupYaml() bool {
+	return !c.DisableBackups()
 }
 
 // SidecarPath returns the storage path for generated sidecar files (relative or absolute).
@@ -266,7 +258,7 @@ func (c *Config) TempPath() string {
 	return fs.Abs(c.params.TempPath)
 }
 
-// CachePath returns the path to the cache.
+// CachePath returns the path for cache files.
 func (c *Config) CachePath() string {
 	if c.params.CachePath == "" {
 		return filepath.Join(c.StoragePath(), "cache")
@@ -326,7 +318,7 @@ func (c *Config) BackupPath() string {
 	return filepath.Join(c.StoragePath(), "backup")
 }
 
-// AssetsPath returns the path to static assets.
+// AssetsPath returns the path to static assets for models and templates.
 func (c *Config) AssetsPath() string {
 	if c.params.AssetsPath == "" {
 		// Try to find the right directory by iterating through a list.

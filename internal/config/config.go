@@ -290,15 +290,13 @@ func (c *Config) WakeupInterval() time.Duration {
 	return time.Duration(c.params.WakeupInterval) * time.Second
 }
 
-// GeoApi returns the preferred geo coding api (none, osm or places).
+// GeoApi returns the preferred geo coding api (none or places).
 func (c *Config) GeoApi() string {
-	switch c.params.GeoApi {
-	case "places":
-		return "places"
-	case "osm":
-		return "osm"
+	if c.params.DisablePlaces {
+		return ""
 	}
-	return ""
+
+	return "places"
 }
 
 // OriginalsLimit returns the file size limit for originals.

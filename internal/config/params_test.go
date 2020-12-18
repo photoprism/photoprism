@@ -38,7 +38,7 @@ func TestParams_SetValuesFromFile(t *testing.T) {
 	assert.Equal(t, "/srv/photoprism/temp", c.TempPath)
 	assert.NotEmpty(t, c.DatabaseDriver)
 	assert.NotEmpty(t, c.DatabaseDsn)
-	assert.Equal(t, 81, c.HttpServerPort)
+	assert.Equal(t, 81, c.HttpPort)
 }
 
 func TestParams_ExpandFilenames(t *testing.T) {
