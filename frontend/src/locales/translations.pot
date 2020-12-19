@@ -31,7 +31,7 @@ msgstr ""
 msgid "%{n} labels found"
 msgstr ""
 
-#: src/pages/photos.vue:363
+#: src/pages/photos.vue:377
 msgid "%{n} results"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 
 #: src/dialog/share/upload.vue:111
 #: src/model/account.js:96
-#: src/pages/settings.vue:70
+#: src/pages/settings.vue:74
 msgid "Account"
 msgstr ""
 
@@ -105,6 +105,10 @@ msgstr ""
 
 #: src/dialog/photo/files.vue:156
 msgid "Added"
+msgstr ""
+
+#: src/pages/settings.vue:52
+msgid "Advanced"
 msgstr ""
 
 #: src/options/options.js:244
@@ -308,6 +312,10 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
+#: src/options/options.js:282
+msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+msgstr ""
+
 #: src/options/options.js:265
 msgid "Blue"
 msgstr ""
@@ -355,7 +363,7 @@ msgid "Camera Serial"
 msgstr ""
 
 #: src/pages/album/photos.vue:212
-#: src/pages/photos.vue:254
+#: src/pages/photos.vue:268
 #: src/share/photos.vue:218
 msgid "Can't load more, limit reached"
 msgstr ""
@@ -543,6 +551,10 @@ msgstr ""
 msgid "Creating thumbnails for"
 msgstr ""
 
+#: src/options/options.js:284
+msgid "Cubic: Moderate Quality, Good Performance"
+msgstr ""
+
 #: src/pages/settings/account.vue:54
 msgid "Current Password"
 msgstr ""
@@ -563,11 +575,15 @@ msgstr ""
 msgid "Daily"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:463
+msgid "Darktable Presets"
+msgstr ""
+
 #: src/dialog/photo/details.vue:137
 msgid "Day"
 msgstr ""
 
-#: src/pages/settings/server.vue:70
+#: src/pages/settings/advanced.vue:76
 msgid "Debug Mode"
 msgstr ""
 
@@ -607,27 +623,27 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: src/pages/settings/server.vue:158
+#: src/pages/settings/advanced.vue:142
 msgid "Disable Backups"
 msgstr ""
 
-#: src/pages/settings/server.vue:137
+#: src/pages/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr ""
 
-#: src/pages/settings/server.vue:202
+#: src/pages/settings/advanced.vue:208
 msgid "Disable ExifTool"
 msgstr ""
 
-#: src/pages/settings/server.vue:180
+#: src/pages/settings/advanced.vue:186
 msgid "Disable Places"
 msgstr ""
 
-#: src/pages/settings/server.vue:224
+#: src/pages/settings/advanced.vue:230
 msgid "Disable TensorFlow"
 msgstr ""
 
-#: src/pages/settings/server.vue:136
+#: src/pages/settings/advanced.vue:164
 msgid "Disable WebDAV"
 msgstr ""
 
@@ -636,7 +652,11 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: src/pages/settings/server.vue:181
+#: src/pages/settings/advanced.vue:464
+msgid "Disables concurrent conversion in favor of using existing presents. Only one file can be converted at a time."
+msgstr ""
+
+#: src/pages/settings/advanced.vue:187
 msgid "Disables reverse geocoding and maps."
 msgstr ""
 
@@ -647,19 +667,19 @@ msgstr ""
 msgid "Discover"
 msgstr ""
 
-#: src/pages/settings/server.vue:159
+#: src/pages/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
 
-#: src/pages/settings/server.vue:203
+#: src/pages/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 
-#: src/pages/settings/server.vue:93
+#: src/pages/settings/advanced.vue:99
 msgid "Don't modify originals directory. Disables import and upload."
 msgstr ""
 
-#: src/pages/settings/server.vue:225
+#: src/pages/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
 msgstr ""
 
@@ -711,6 +731,10 @@ msgstr ""
 msgid "Downloading…"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:281
+msgid "Downscaling Filter"
+msgstr ""
+
 #: src/pages/library/files.vue:39
 msgid "Duplicates will be skipped and only appear once."
 msgstr ""
@@ -747,7 +771,7 @@ msgstr ""
 msgid "Edited"
 msgstr ""
 
-#: src/pages/settings/server.vue:115
+#: src/pages/settings/advanced.vue:121
 msgid "Enable new features currently under development."
 msgstr ""
 
@@ -780,7 +804,7 @@ msgstr ""
 msgid "Expand Search"
 msgstr ""
 
-#: src/pages/settings/server.vue:114
+#: src/pages/settings/advanced.vue:120
 msgid "Experimental Features"
 msgstr ""
 
@@ -897,10 +921,6 @@ msgstr ""
 msgid "German"
 msgstr ""
 
-#: src/pages/settings/server.vue:6
-msgid "Global Options"
-msgstr ""
-
 #: src/options/options.js:259
 msgid "Gold"
 msgstr ""
@@ -970,13 +990,17 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:56
+msgid "Images"
+msgstr ""
+
 #: src/pages/library.vue:42
 #: src/pages/library/import.vue:43
 #: src/pages/settings/general.vue:337
 msgid "Import"
 msgstr ""
 
-#: src/pages/library/import.vue:91
+#: src/pages/library/import.vue:97
 msgid "Import failed"
 msgstr ""
 
@@ -1034,6 +1058,14 @@ msgstr ""
 msgid "Item"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:376
+msgid "JPEG Quality: %{n}"
+msgstr ""
+
+#: src/pages/settings/advanced.vue:429
+msgid "JPEG Size Limit: %{n}px"
+msgstr ""
+
 #: src/pages/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr ""
@@ -1064,6 +1096,10 @@ msgstr ""
 msgid "Labels deleted"
 msgstr ""
 
+#: src/options/options.js:283
+msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+msgstr ""
+
 #: src/pages/settings/general.vue:93
 msgid "Language"
 msgstr ""
@@ -1092,7 +1128,7 @@ msgstr ""
 #: src/component/navigation.vue:280
 #: src/component/navigation.vue:289
 #: src/component/navigation.vue:1006
-#: src/pages/settings.vue:40
+#: src/pages/settings.vue:41
 #: src/pages/settings/general.vue:315
 #: src/pages/settings/library.vue:6
 #: src/routes.js:255
@@ -1118,6 +1154,10 @@ msgstr ""
 
 #: src/pages/library/files.vue:294
 msgid "Limit reached, showing first %{n} files"
+msgstr ""
+
+#: src/options/options.js:285
+msgid "Linear: Very Smooth, Best Performance"
 msgstr ""
 
 #: src/model/link.js:107
@@ -1234,7 +1274,7 @@ msgstr ""
 msgid "More than 50 entries found"
 msgstr ""
 
-#: src/pages/photos.vue:366
+#: src/pages/photos.vue:380
 msgid "More than 50 results"
 msgstr ""
 
@@ -1249,7 +1289,7 @@ msgstr ""
 msgid "Most relevant"
 msgstr ""
 
-#: src/pages/library/import.vue:130
+#: src/pages/library/import.vue:129
 msgid "Move Files"
 msgstr ""
 
@@ -1317,7 +1357,7 @@ msgstr ""
 msgid "No photos found"
 msgstr ""
 
-#: src/pages/photos.vue:359
+#: src/pages/photos.vue:373
 msgid "No results"
 msgstr ""
 
@@ -1389,6 +1429,10 @@ msgstr ""
 msgid "Oldest first"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:332
+msgid "On-demand rendering requires a powerful CPU and is not recommended for smaller home servers, or NAS devices."
+msgstr ""
+
 #: src/options/options.js:239
 msgid "Once a week"
 msgstr ""
@@ -1411,12 +1455,16 @@ msgstr ""
 msgid "One folder found"
 msgstr ""
 
-#: src/pages/photos.vue:361
+#: src/pages/photos.vue:375
 msgid "One result"
 msgstr ""
 
 #: src/options/options.js:159
 msgid "Onyx"
+msgstr ""
+
+#: src/pages/settings/advanced.vue:6
+msgid "Options"
 msgstr ""
 
 #: src/options/options.js:258
@@ -1543,6 +1591,10 @@ msgstr ""
 msgid "Portrait"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:349
+msgid "Pre-Render Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/account/edit.vue:301
 msgid "Preserve filenames"
 msgstr ""
@@ -1609,11 +1661,15 @@ msgstr ""
 msgid "Raw"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:90
+msgid "RAW Conversion"
+msgstr ""
+
 #: src/pages/library/index.vue:122
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 
-#: src/pages/settings/server.vue:92
+#: src/pages/settings/advanced.vue:98
 msgid "Read-Only Library"
 msgstr ""
 
@@ -1661,7 +1717,7 @@ msgstr ""
 msgid "remove failed: unknown album"
 msgstr ""
 
-#: src/pages/library/import.vue:131
+#: src/pages/library/import.vue:130
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr ""
 
@@ -1732,7 +1788,7 @@ msgstr ""
 #: src/pages/labels.vue:225
 #: src/pages/library/errors.vue:39
 #: src/pages/library/files.vue:215
-#: src/pages/photos.vue:282
+#: src/pages/photos.vue:296
 #: src/pages/places.vue:191
 #: src/share/albums.vue:182
 #: src/share/photos.vue:240
@@ -1779,7 +1835,6 @@ msgstr ""
 msgid "Sequential Name"
 msgstr ""
 
-#: src/pages/settings.vue:50
 #: src/pages/settings/sync.vue:26
 msgid "Server"
 msgstr ""
@@ -1803,9 +1858,9 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:30
 #: src/pages/settings/general.vue:45
 #: src/pages/settings/library.vue:47
-#: src/pages/settings/server.vue:30
 msgid "Settings saved"
 msgstr ""
 
@@ -1844,11 +1899,11 @@ msgstr ""
 msgid "Show server logs in Library."
 msgstr ""
 
-#: src/pages/photos.vue:248
+#: src/pages/photos.vue:262
 msgid "Showing all %{n} results"
 msgstr ""
 
-#: src/pages/settings/server.vue:71
+#: src/pages/settings/advanced.vue:77
 msgid "Shows more detailed log messages."
 msgstr ""
 
@@ -1950,7 +2005,7 @@ msgstr ""
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
 
-#: src/pages/settings.vue:60
+#: src/pages/settings.vue:63
 #: src/pages/settings/sync.vue:28
 msgid "Sync"
 msgstr ""
@@ -1988,6 +2043,10 @@ msgstr ""
 #: src/dialog/webdav.vue:17
 #: src/pages/settings/sync.vue:36
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr ""
+
+#: src/pages/settings/advanced.vue:252
+msgid "Thumbnail Generation"
 msgstr ""
 
 #: src/dialog/photo/details.vue:233
@@ -2056,6 +2115,14 @@ msgstr ""
 #: src/dialog/photo/files.vue:32
 #: src/dialog/photo/info.vue:15
 msgid "Type"
+msgstr ""
+
+#: src/pages/settings/advanced.vue:331
+msgid "Uncached Previews"
+msgstr ""
+
+#: src/pages/settings/advanced.vue:300
+msgid "Uncached Size Limit: %{n}px"
 msgstr ""
 
 #: src/pages/settings/library.vue:194

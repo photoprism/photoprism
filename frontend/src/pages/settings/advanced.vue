@@ -136,7 +136,7 @@
 
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0" :title="$gettext('Thumbnail Generation')">
-            <translate>Downscaling</translate>
+            <translate>Images</translate>
           </h3>
         </v-card-title>
 
@@ -147,7 +147,7 @@
                   v-model="settings.ThumbFilter"
                   :disabled="busy"
                   :items="options.ThumbFilters()"
-                  :label="$gettext('Resampling')"
+                  :label="$gettext('Downscaling Filter')"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details box
@@ -161,7 +161,7 @@
                   v-model="settings.ThumbSizeUncached"
                   :min="720"
                   :max="7680"
-                  :step="20"
+                  :step="4"
                   hide-details
                   :disabled="busy"
                   class="mt-0"
@@ -190,7 +190,7 @@
                   v-model="settings.ThumbSize"
                   :min="720"
                   :max="7680"
-                  :step="20"
+                  :step="4"
                   hide-details
                   :disabled="busy"
                   class="mt-0"
