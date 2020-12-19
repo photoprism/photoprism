@@ -299,7 +299,7 @@ msgstr "Seitenverhältnis"
 msgid "At least 6 characters."
 msgstr "Mindestens 6 Zeichen."
 
-#: src/pages/settings/library.vue:114
+#: src/pages/settings/index.vue:114
 msgid ""
 "Automatically create JPEGs for other file types so that they can be "
 "displayed in a browser."
@@ -466,7 +466,7 @@ msgstr "Enthält einen Eintrag."
 msgid "Contributors"
 msgstr "Contributors"
 
-#: src/pages/settings/library.vue:113
+#: src/pages/settings/index.vue:113
 msgid "Convert to JPEG"
 msgstr "Automatisch konvertieren"
 
@@ -541,10 +541,6 @@ msgstr "Cyano"
 msgid "Daily"
 msgstr "Täglich"
 
-#: src/pages/settings/advanced.vue:463
-msgid "Darktable Presets"
-msgstr "Darktable Voreinstellungen"
-
 #: src/dialog/photo/details.vue:137
 msgid "Day"
 msgstr "Tag"
@@ -614,17 +610,16 @@ msgstr "WebDAV deaktivieren"
 msgid "Disabled"
 msgstr "Deaktiviert"
 
-#: src/pages/settings/advanced.vue:464
-msgid ""
-"Disables concurrent conversion in favor of using existing presents. Only one "
-"file can be converted at a time."
-msgstr ""
-"Deaktiviert die gleichzeitige Konvertierung von RAW-Dateien, um Darktable-"
-"Voreinstellungen anwenden zu können."
-
 #: src/pages/settings/advanced.vue:187
 msgid "Disables reverse geocoding and maps."
 msgstr "Deaktiviert Ortsdaten und Landkarten."
+
+#: src/pages/settings/advanced.vue:464
+msgid ""
+"Disables simultaneous conversion of RAW files to apply Darktable presets."
+msgstr ""
+"Deaktiviert die gleichzeitige Konvertierung von RAW-Dateien, um Darktable-"
+"Voreinstellungen anwenden zu können."
 
 #: src/routes.js:337 src/routes.js:344 src/routes.js:351 src/routes.js:358
 msgid "Discover"
@@ -751,7 +746,7 @@ msgstr "Fehler"
 msgid "Every two days"
 msgstr "Jeden zweiten Tag"
 
-#: src/pages/settings/library.vue:72
+#: src/pages/settings/index.vue:72
 msgid ""
 "Exclude content marked as private from search results, shared albums, labels "
 "and places."
@@ -828,7 +823,7 @@ msgstr "Datei Browser"
 msgid "Files"
 msgstr "Dateien"
 
-#: src/pages/settings/library.vue:216
+#: src/pages/settings/index.vue:216
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
@@ -912,7 +907,7 @@ msgstr "Unsichtbare Dateien"
 msgid "Hide photos that have been moved to archive."
 msgstr "Archivierte Inhalte werden nicht in den Suchergebnissen angezeigt."
 
-#: src/pages/settings/library.vue:71
+#: src/pages/settings/index.vue:71
 msgid "Hide Private"
 msgstr "Privates ausblenden"
 
@@ -985,7 +980,7 @@ msgstr "Importiere Dateien nach Originals…"
 msgid "in"
 msgstr "in"
 
-#: src/pages/library.vue:32
+#: src/pages/library.vue:32 src/pages/settings.vue:41
 msgid "Index"
 msgstr "Index"
 
@@ -1082,9 +1077,9 @@ msgstr ""
 "Orten."
 
 #: src/component/navigation.vue:280 src/component/navigation.vue:289
-#: src/component/navigation.vue:1006 src/pages/settings.vue:41
-#: src/pages/settings/general.vue:315 src/pages/settings/library.vue:6
-#: src/routes.js:255 src/routes.js:262 src/routes.js:269
+#: src/component/navigation.vue:1006 src/pages/settings/general.vue:315
+#: src/pages/settings/index.vue:6 src/routes.js:255 src/routes.js:262
+#: src/routes.js:269
 msgid "Library"
 msgstr "Dateien"
 
@@ -1302,7 +1297,7 @@ msgstr ""
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:1
 #: src/component/photo/list.vue:19 src/component/photo/mosaic.vue:15
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50
-#: src/pages/settings/library.vue:93
+#: src/pages/settings/index.vue:93
 msgid ""
 "Non-photographic and low-quality images require a review before they appear "
 "in search results."
@@ -1494,7 +1489,7 @@ msgstr "Pink"
 msgid "Place"
 msgstr "Ort"
 
-#: src/pages/settings/library.vue:173
+#: src/pages/settings/index.vue:173
 msgid "Place & Time"
 msgstr "Gleicher Ort & Zeit"
 
@@ -1571,7 +1566,7 @@ msgstr "Projektion"
 msgid "Purple"
 msgstr "Purpur"
 
-#: src/pages/settings/library.vue:92
+#: src/pages/settings/index.vue:92
 msgid "Quality Filter"
 msgstr "Qualitätsfilter"
 
@@ -1624,7 +1619,7 @@ msgid "Reload"
 msgstr "Neu laden"
 
 #: src/dialog/reload.vue:26 src/pages/settings/general.vue:41
-#: src/pages/settings/library.vue:43
+#: src/pages/settings/index.vue:43
 msgid "Reloading…"
 msgstr "Wird neu geladen…"
 
@@ -1747,7 +1742,7 @@ msgstr "Auswahl wiederhergestellt"
 msgid "Send"
 msgstr "Senden"
 
-#: src/pages/settings/library.vue:215
+#: src/pages/settings/index.vue:215
 msgid "Sequential Name"
 msgstr "Fortlaufender Name"
 
@@ -1768,7 +1763,7 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:45
-#: src/pages/settings/library.vue:47
+#: src/pages/settings/index.vue:47
 msgid "Settings saved"
 msgstr "Einstellungen gespeichert"
 
@@ -1855,21 +1850,21 @@ msgstr "Quelle"
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: src/pages/settings/library.vue:195
+#: src/pages/settings/index.vue:195
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "Bilder mit identischer ID als Stapel indexieren und anzeigen."
 
-#: src/pages/settings/library.vue:174
+#: src/pages/settings/index.vue:174
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
 msgstr "Aufnahmen mit übereinstimmenden Metadaten gruppieren."
 
-#: src/component/navigation.vue:88 src/pages/settings/library.vue:33
+#: src/component/navigation.vue:88 src/pages/settings/index.vue:33
 msgid "Stacks"
 msgstr "Bildstapel"
 
-#: src/pages/settings/library.vue:140
+#: src/pages/settings/index.vue:140
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -2026,7 +2021,7 @@ msgstr "Dynamische Vorschaubilder"
 msgid "Uncached Size Limit: %{n}px"
 msgstr "Dynamische Maximalgröße: %{n}px"
 
-#: src/pages/settings/library.vue:194
+#: src/pages/settings/index.vue:194
 msgid "Unique ID"
 msgstr "Eindeutige Bild-ID"
 
@@ -2111,6 +2106,10 @@ msgstr "Diese werden automatisch erkannt und gelöscht."
 #: src/dialog/share.vue:163
 msgid "URL"
 msgstr "URL"
+
+#: src/pages/settings/advanced.vue:463
+msgid "Use Presets"
+msgstr "Voreinstellungen verwenden"
 
 #: src/model/user.js:122
 msgid "User"
@@ -2206,6 +2205,13 @@ msgstr "Ihre Nachricht wurde gesendet"
 #: src/component/photo/viewer.vue:165
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#~ msgid ""
+#~ "Disables concurrent conversion in favor of using existing presents. Only "
+#~ "one file can be converted at a time."
+#~ msgstr ""
+#~ "Deaktiviert die gleichzeitige Konvertierung von RAW-Dateien, um Darktable-"
+#~ "Voreinstellungen anwenden zu können."
 
 #~ msgid "Backup"
 #~ msgstr "Backup"

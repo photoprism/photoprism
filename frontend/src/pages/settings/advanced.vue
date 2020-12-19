@@ -249,8 +249,8 @@
                   :disabled="busy"
                   class="ma-0 pa-0"
                   color="secondary-dark"
-                  :label="$gettext('Darktable Presets')"
-                  :hint="$gettext('Disables concurrent conversion in favor of using existing presents. Only one file can be converted at a time.')"
+                  :label="$gettext('Use Presets')"
+                  :hint="$gettext('Disables simultaneous conversion of RAW files to apply Darktable presets.')"
                   prepend-icon="tonality"
                   persistent-hint
                   @change="onChange"
