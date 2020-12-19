@@ -313,7 +313,7 @@ msgstr "Schwarz"
 
 #: src/options/options.js:282
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Verbess auf Lanczos, weniger Überschwingungsartefakte"
+msgstr "Blackman: Weniger Überschwingungsartefakte als Lanczos"
 
 #: src/options/options.js:265
 msgid "Blue"
@@ -519,7 +519,7 @@ msgstr "Erstelle Thumbnails für"
 
 #: src/options/options.js:284
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Kubisch: Mittelmäßige Qualität, gute Performance"
+msgstr "Kubisch: Mittlere Qualität, gute Performance"
 
 #: src/pages/settings/account.vue:54
 msgid "Current Password"
@@ -1053,7 +1053,7 @@ msgstr "Kategorien gelöscht"
 
 #: src/options/options.js:283
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Detailerhaltung, minimale Artefakte"
+msgstr "Lanczos: Sehr gute Detailerhaltung, minimale Artefakte"
 
 #: src/pages/settings/general.vue:93
 msgid "Language"
@@ -1107,7 +1107,7 @@ msgstr "Limit erreicht, zeige erste %{n} Dateien"
 
 #: src/options/options.js:285
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "Linear: Sehr weich, beste Performance"
+msgstr "Linear: Weicher Bildeindruck, sehr gute Performance"
 
 #: src/model/link.js:107
 msgid "Link"
