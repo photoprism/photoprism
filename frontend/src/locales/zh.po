@@ -306,7 +306,6 @@ msgid "Black"
 msgstr "黑色"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "布莱克曼：朗佐斯修改，少了响声的神器。"
 
@@ -315,7 +314,6 @@ msgid "Blue"
 msgstr "蓝色"
 
 #: src/options/options.js:116
-#, fuzzy
 msgid "Brazilian Portuguese"
 msgstr "巴西葡萄牙语"
 
@@ -514,7 +512,6 @@ msgid "Creating thumbnails for"
 msgstr "创建缩略图"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "立方体。质量适中，性能良好"
 
@@ -531,7 +528,6 @@ msgid "Cyan"
 msgstr "青色"
 
 #: src/options/options.js:147
-#, fuzzy
 msgid "Cyano"
 msgstr "氰基"
 
@@ -579,35 +575,26 @@ msgid "Dimensions"
 msgstr "尺寸"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
-#| msgid "Last Backup"
 msgid "Disable Backups"
 msgstr "上次备份"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "禁用内置WebDAV服务器。需要重新启动。"
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "禁用ExifTool"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable Places"
 msgstr "已禁用"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "禁用TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable WebDAV"
 msgstr "已禁用"
 
@@ -616,12 +603,10 @@ msgid "Disabled"
 msgstr "已禁用"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "禁用反向地理编码和地图。"
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr "禁止同时转换RAW文件以应用Darktable预设。"
@@ -631,23 +616,18 @@ msgid "Discover"
 msgstr "发现"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "不要将照片和相册元数据备份到YAML文件中。"
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "不要创建ExifTool JSON文件，以改善元数据提取。"
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "不要修改原文件夹。禁止导入、上传、删除。"
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
-#| msgid "Browse and edit image classification labels."
 msgid "Don't use TensorFlow for image classification."
 msgstr "浏览和编辑图像分类标签。"
 
@@ -689,8 +669,6 @@ msgid "Downloading…"
 msgstr "下载中…"
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
-#| msgid "Quality Filter"
 msgid "Downscaling Filter"
 msgstr "质量过滤器"
 
@@ -729,7 +707,6 @@ msgid "Edited"
 msgstr "已编辑"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "启用目前正在开发的新功能。"
 
@@ -776,7 +753,6 @@ msgid "Exposure"
 msgstr "曝光"
 
 #: src/dialog/photo/details.vue:456
-#, fuzzy
 msgid "F Number"
 msgstr "F 数量"
 
@@ -1010,12 +986,10 @@ msgid "Item"
 msgstr "条目"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG质量：%{n}。"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG大小限制：%{n}px"
 
@@ -1046,7 +1020,6 @@ msgid "Labels deleted"
 msgstr "标签已删除"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "兰卓斯：细节保存，最小化的人工制品"
 
@@ -1099,7 +1072,6 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "已达到限制，显示前 %{n} 文件"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "线性。非常平稳，性能最佳"
 
@@ -1351,7 +1323,6 @@ msgid "Oldest first"
 msgstr "最旧的优先"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
@@ -1475,7 +1446,6 @@ msgid "Place"
 msgstr "地点"
 
 #: src/pages/settings/index.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "地点和时间"
 
@@ -1507,7 +1477,6 @@ msgid "Portrait"
 msgstr "人像"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "预渲染尺寸限制：%{n}px"
 
@@ -1574,8 +1543,6 @@ msgid "Raw"
 msgstr "原始"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
-#| msgid "Converting"
 msgid "RAW Conversion"
 msgstr "转换中"
 
@@ -1732,7 +1699,6 @@ msgid "Send"
 msgstr "发送"
 
 #: src/pages/settings/index.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "序列名"
 
@@ -1795,7 +1761,6 @@ msgid "Showing all %{n} results"
 msgstr "显示所有％{n}结果"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "显示更详细的日志信息。"
 
@@ -1842,12 +1807,10 @@ msgid "Spanish"
 msgstr "西班牙文"
 
 #: src/pages/settings/index.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "堆栈文件共享相同的唯一图像或实例标识符。"
 
 #: src/pages/settings/index.vue:174
-#, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
@@ -1858,7 +1821,6 @@ msgid "Stacks"
 msgstr "堆叠"
 
 #: src/pages/settings/index.vue:140
-#, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -1946,7 +1908,6 @@ msgstr ""
 "除文件，就像它们是本地文件一样。"
 
 #: src/pages/settings/advanced.vue:252
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "缩略图生成"
 
@@ -2004,12 +1965,10 @@ msgid "Type"
 msgstr "类型"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "未缓存预览"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "未缓存大小限制：%{n}px"
 
@@ -2032,12 +1991,10 @@ msgid "Unsorted"
 msgstr "未分类"
 
 #: src/dialog/photo/files.vue:39
-#, fuzzy
 msgid "Unstack"
 msgstr "解除堆栈"
 
 #: src/dialog/photo/info.vue:96
-#, fuzzy
 msgid "Unstacked"
 msgstr "非堆叠式"
 
@@ -2046,17 +2003,14 @@ msgid "Updated"
 msgstr "已更新"
 
 #: src/pages/library/index.vue:128
-#, fuzzy
 msgid "Updating index"
 msgstr "更新索引"
 
 #: src/pages/library/index.vue:126
-#, fuzzy
 msgid "Updating moments"
 msgstr "更新时刻"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
 msgid "Updating stacks"
 msgstr "更新堆栈"
 
@@ -2105,7 +2059,6 @@ msgid "URL"
 msgstr "網址"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "使用预设"
 

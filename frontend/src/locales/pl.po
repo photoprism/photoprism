@@ -215,7 +215,6 @@ msgid "All Years"
 msgstr "Wszystkie lata"
 
 #: src/dialog/share.vue:75
-#, fuzzy
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
@@ -313,7 +312,6 @@ msgid "Black"
 msgstr "Czarny"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Czarnoksiężnik: Modyfikacja Lanczosa, Mniej Pierścieniowych Artefaktów"
 
@@ -322,7 +320,6 @@ msgid "Blue"
 msgstr "Niebieski"
 
 #: src/options/options.js:116
-#, fuzzy
 msgid "Brazilian Portuguese"
 msgstr "Brazylijczyk-Portugalczyk"
 
@@ -331,7 +328,6 @@ msgid "Brown"
 msgstr "Brązowy"
 
 #: src/pages/settings/general.vue:294
-#, fuzzy
 msgid "Browse and edit image classification labels."
 msgstr "Przeglądaj i edytuj etykiety klasyfikacji obrazów."
 
@@ -402,7 +398,6 @@ msgid "Change photo titles, locations and other metadata."
 msgstr "Zmień tytuły, lokalizacje i inne metadane zdjęć."
 
 #: src/component/photo/clipboard.vue:142
-#, fuzzy
 msgid "Change private flag"
 msgstr "Zmiana flagi prywatnej"
 
@@ -415,12 +410,10 @@ msgid "Chinese Simplified"
 msgstr "Chiiński uproszczony"
 
 #: src/options/options.js:136
-#, fuzzy
 msgid "Chinese Traditional"
 msgstr "Chiński Tradycyjny"
 
 #: src/dialog/photo/files.vue:136
-#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -442,12 +435,10 @@ msgid "Colors"
 msgstr "Kolory"
 
 #: src/pages/library/index.vue:121
-#, fuzzy
 msgid "Complete Rescan"
 msgstr "Kompletny Rescan"
 
 #: src/dialog/photo/labels.vue:19
-#, fuzzy
 msgid "Confidence"
 msgstr "Zaufanie"
 
@@ -527,7 +518,6 @@ msgid "Creating thumbnails for"
 msgstr "Tworzenie miniaturek dla"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Sześcienny: Umiarkowana jakość, dobra wydajność"
 
@@ -544,7 +534,6 @@ msgid "Cyan"
 msgstr "Cyjan"
 
 #: src/options/options.js:147
-#, fuzzy
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -557,7 +546,6 @@ msgid "Day"
 msgstr "Dzień"
 
 #: src/pages/settings/advanced.vue:76
-#, fuzzy
 msgid "Debug Logs"
 msgstr "Debugowanie dzienników"
 
@@ -593,35 +581,26 @@ msgid "Dimensions"
 msgstr "Wymiary"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
-#| msgid "Last Backup"
 msgid "Disable Backups"
 msgstr "Ostatnia kopia zapasowa"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Wyłączyć wbudowany serwer WebDAV. Wymaga restartu."
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "Wyłączyć ExifTool"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable Places"
 msgstr "Wyłączony"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "Wyłączenie TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable WebDAV"
 msgstr "Wyłączony"
 
@@ -630,12 +609,10 @@ msgid "Disabled"
 msgstr "Wyłączony"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Wyłącza odwrotne geokodowanie i mapy."
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr ""
@@ -647,25 +624,21 @@ msgid "Discover"
 msgstr "Odkryj"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
 "Nie wykonuj kopii zapasowych metadanych zdjęć i albumów do plików YAML."
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 "Nie twórz plików ExifTool JSON w celu ulepszenia ekstrakcji metadanych."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Nie modyfikuj folderu z oryginałami. Wyłącza import, przesyłanie i usuwanie."
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nie używaj TensorFlow do klasyfikacji obrazów."
 
@@ -707,7 +680,6 @@ msgid "Downloading…"
 msgstr "Pobieranie…"
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
 msgid "Downscaling Filter"
 msgstr "Filtr redukujący"
 
@@ -746,7 +718,6 @@ msgid "Edited"
 msgstr "Zmienione"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Włączenie nowych funkcji, które są obecnie rozwijane."
 
@@ -848,10 +819,6 @@ msgid "Files"
 msgstr "Pliki"
 
 #: src/pages/settings/index.vue:216
-#, fuzzy
-#| msgid ""
-#| "Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' "
-#| "belong to the same photo."
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
@@ -912,7 +879,6 @@ msgstr "Szary"
 
 #: src/component/album/toolbar.vue:42 src/component/photo/toolbar.vue:40
 #: src/dialog/album/edit.vue:20
-#, fuzzy
 msgid "Group by similarity"
 msgstr "Grupa według podobieństwa"
 
@@ -983,7 +949,6 @@ msgid "Import failed"
 msgstr "Błąd importu"
 
 #: src/pages/library/import.vue:25
-#, fuzzy
 msgid ""
 "Imported files will be sorted by date and given a unique name to avoid "
 "duplicates."
@@ -992,18 +957,15 @@ msgstr ""
 "aby uniknąć duplikatów."
 
 #: src/pages/settings/general.vue:338
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr ""
 "Importowane pliki będą sortowane według daty i otrzymają unikalną nazwę."
 
 #: src/pages/library/import.vue:5
-#, fuzzy
 msgid "Importing %{name}…"
 msgstr "%{name}...importując.."
 
 #: src/pages/library/import.vue:6
-#, fuzzy
 msgid "Importing files to originals…"
 msgstr "Importowanie plików do oryginałów.."
 
@@ -1024,12 +986,10 @@ msgid "Indexing failed"
 msgstr "Błąd indeksowania"
 
 #: src/pages/library/index.vue:7
-#, fuzzy
 msgid "Indexing media and sidecar files…"
 msgstr "Indeksowanie mediów i plików z wózkiem bocznym.."
 
 #: src/dialog/photo/files.vue:54
-#, fuzzy
 msgid "Instance ID"
 msgstr "Identyfikator Sądu Pierwszej Instancji"
 
@@ -1046,12 +1006,10 @@ msgid "Item"
 msgstr "Element"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "Jakość JPEG: %{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limit rozmiaru JPEG: %{n}px"
 
@@ -1082,7 +1040,6 @@ msgid "Labels deleted"
 msgstr "Usunięte etykiety"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Konserwacja detali, Minimalne artefakty"
 
@@ -1135,7 +1092,6 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "Osiągnięto limit, pokazuję pierwsze %{n} plików"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linearny: Bardzo gładka, najlepsza wydajność"
 
@@ -1165,7 +1121,6 @@ msgid "Location"
 msgstr "Miejsce"
 
 #: src/pages/library/errors.vue:35
-#, fuzzy
 msgid ""
 "Log messages appear here whenever PhotoPrism comes across broken files, or "
 "there are other potential issues."
@@ -1202,7 +1157,6 @@ msgid "manual"
 msgstr "ręcznie"
 
 #: src/dialog/account/edit.vue:56
-#, fuzzy
 msgid "Manual Upload"
 msgstr "Pobieranie ręczne"
 
@@ -1232,7 +1186,6 @@ msgid "Month"
 msgstr "Miesiąc"
 
 #: src/options/options.js:155
-#, fuzzy
 msgid "Moonlight"
 msgstr "Światło księżyca"
 
@@ -1258,7 +1211,6 @@ msgstr "Mozaika"
 
 #: src/component/album/toolbar.vue:43 src/component/photo/toolbar.vue:41
 #: src/dialog/album/edit.vue:21
-#, fuzzy
 msgid "Most relevant"
 msgstr "Najważniejsze"
 
@@ -1309,7 +1261,6 @@ msgid "No entries found"
 msgstr "Nie znaleziono wpisów"
 
 #: src/dialog/photo/labels.vue:33
-#, fuzzy
 msgid "No labels found"
 msgstr "Nie znaleziono żadnych etykiet"
 
@@ -1322,12 +1273,10 @@ msgid "No results"
 msgstr "Brak wyników"
 
 #: src/pages/settings/sync.vue:51
-#, fuzzy
 msgid "No servers configured."
 msgstr "Nie skonfigurowano żadnych serwerów."
 
 #: src/pages/library/errors.vue:32
-#, fuzzy
 msgid ""
 "No warnings or error containing this keyword. Note that search is case-"
 "sensitive."
@@ -1340,7 +1289,6 @@ msgstr ""
 #: src/component/photo/list.vue:19 src/component/photo/mosaic.vue:15
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50
 #: src/pages/settings/index.vue:93
-#, fuzzy
 msgid ""
 "Non-photographic and low-quality images require a review before they appear "
 "in search results."
@@ -1361,7 +1309,6 @@ msgid "Not implemented yet"
 msgstr "Jeszcze nie zaimplementowano"
 
 #: src/pages/library/import.vue:28
-#, fuzzy
 msgid "Note that you can as well manage and re-index your originals manually."
 msgstr ""
 "Należy pamiętać, że oryginałami można również zarządzać i ponownie "
@@ -1372,7 +1319,6 @@ msgid "Note:"
 msgstr "Uwaga:"
 
 #: src/dialog/account/add.vue:22
-#, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
@@ -1382,7 +1328,6 @@ msgstr ""
 "przesyłania plików."
 
 #: src/pages/settings/account.vue:20
-#, fuzzy
 msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
@@ -1409,7 +1354,6 @@ msgid "Oldest first"
 msgstr "Najstarsze na początku"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
@@ -1458,7 +1402,6 @@ msgid "Original"
 msgstr "Oryginał"
 
 #: src/pages/library/import.vue:27
-#, fuzzy
 msgid "Original file names will be stored and indexed."
 msgstr "Oryginalne nazwy plików będą przechowywane i indeksowane."
 
@@ -1468,7 +1411,6 @@ msgstr "Oryginalna nazwa"
 
 #: src/component/navigation.vue:297 src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:249
-#, fuzzy
 msgid "Originals"
 msgstr "Oryginały"
 
@@ -1477,7 +1419,6 @@ msgid "Other"
 msgstr "Inne"
 
 #: src/options/options.js:208
-#, fuzzy
 msgid "Outdoor"
 msgstr "Outdoor"
 
@@ -1503,7 +1444,6 @@ msgid "People"
 msgstr "Ludzie"
 
 #: src/dialog/share.vue:72
-#, fuzzy
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 "Osoby, z którymi dzielisz się linkiem, będą mogły przeglądać publiczne "
@@ -1514,7 +1454,6 @@ msgid "Photo"
 msgstr "Zdjęcie"
 
 #: src/pages/albums.vue:52
-#, fuzzy
 msgid ""
 "PhotoPrism continuously analyzes your library to find special moments, "
 "journeys and places."
@@ -1523,12 +1462,10 @@ msgstr ""
 "podróże i miejsca."
 
 #: src/dialog/reload.vue:4
-#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism został zaktualizowany.."
 
 #: src/pages/about/about.vue:59
-#, fuzzy
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr "PhotoPrism® jest zastrzeżonym znakiem towarowym Michaela Mayera."
 
@@ -1546,7 +1483,6 @@ msgid "Place"
 msgstr "Miejsce"
 
 #: src/pages/settings/index.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "Miejsce i czas"
 
@@ -1562,7 +1498,6 @@ msgid "Please confirm your new password."
 msgstr "Potwierdź nowe hasło."
 
 #: src/dialog/upload.vue:45
-#, fuzzy
 msgid "Please don't upload photos containing offensive content."
 msgstr "Proszę nie wysyłać zdjęć zawierających obraźliwe treści."
 
@@ -1579,7 +1514,6 @@ msgid "Portrait"
 msgstr "Portret"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "Pre-Render Limit rozmiaru: %{n}px"
 
@@ -1614,12 +1548,10 @@ msgid "Private"
 msgstr "Prywatny"
 
 #: src/options/options.js:274
-#, fuzzy
 msgid "Product Feedback"
 msgstr "Informacja zwrotna o produkcie"
 
 #: src/dialog/photo/files.vue:118
-#, fuzzy
 msgid "Projection"
 msgstr "Projekcja"
 
@@ -1628,12 +1560,10 @@ msgid "Purple"
 msgstr "Purpurowy"
 
 #: src/pages/settings/index.vue:92
-#, fuzzy
 msgid "Quality Filter"
 msgstr "Filtr jakościowy"
 
 #: src/dialog/photo/info.vue:59
-#, fuzzy
 msgid "Quality Score"
 msgstr "Wynik jakościowy"
 
@@ -1650,20 +1580,16 @@ msgid "Raw"
 msgstr "RAW"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
-#| msgid "Converting"
 msgid "RAW Conversion"
 msgstr "Konwertuję"
 
 #: src/pages/library/index.vue:122
-#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 "Ponowne indeksowanie wszystkich oryginałów, w tym już zaindeksowanych i "
 "niezmienionych plików."
 
 #: src/pages/settings/advanced.vue:98
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "Tryb tylko do odczytu"
 
@@ -1674,7 +1600,6 @@ msgstr "Ostatnio dodane"
 
 #: src/component/album/toolbar.vue:38 src/component/photo/toolbar.vue:36
 #: src/dialog/album/edit.vue:16
-#, fuzzy
 msgid "Recently edited"
 msgstr "Ostatnio zredagowany"
 
@@ -1690,12 +1615,10 @@ msgstr "Załaduj ponownie"
 
 #: src/dialog/reload.vue:26 src/pages/settings/general.vue:41
 #: src/pages/settings/index.vue:43
-#, fuzzy
 msgid "Reloading…"
 msgstr "Przeładunek.."
 
 #: src/dialog/account/edit.vue:101
-#, fuzzy
 msgid "Remote Sync"
 msgstr "Remote Sync"
 
@@ -1708,7 +1631,6 @@ msgid "remove failed: unknown album"
 msgstr "usunięcie nie powiodło się: nieznany album"
 
 #: src/pages/library/import.vue:130
-#, fuzzy
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
 "deleted, they remain in their current location."
@@ -1759,7 +1681,6 @@ msgid "Scan"
 msgstr "Skanuj"
 
 #: src/component/navigation.vue:96
-#, fuzzy
 msgid "Scans"
 msgstr "Skany"
 
@@ -1770,7 +1691,6 @@ msgid "Search"
 msgstr "Szukaj"
 
 #: src/pages/settings/general.vue:384
-#, fuzzy
 msgid "Search and display photos on a map."
 msgstr "Wyszukiwanie i wyświetlanie zdjęć na mapie."
 
@@ -1778,7 +1698,6 @@ msgstr "Wyszukiwanie i wyświetlanie zdjęć na mapie."
 #: src/pages/labels.vue:225 src/pages/library/errors.vue:39
 #: src/pages/library/files.vue:215 src/pages/photos.vue:296
 #: src/pages/places.vue:191 src/share/albums.vue:182 src/share/photos.vue:240
-#, fuzzy
 msgid "Search term too short"
 msgstr "Zbyt krótki termin wyszukiwania"
 
@@ -1787,7 +1706,6 @@ msgid "Season"
 msgstr "Sezon"
 
 #: src/options/options.js:167
-#, fuzzy
 msgid "Seaweed"
 msgstr "Wodorosty morskie"
 
@@ -1800,22 +1718,18 @@ msgid "Select"
 msgstr "Wybierz"
 
 #: src/dialog/upload.vue:138
-#, fuzzy
 msgid "Select albums or create a new one"
 msgstr "Wybierz albumy lub utwórz nowy"
 
 #: src/component/photo/clipboard.vue:34
-#, fuzzy
 msgid "Selection approved"
 msgstr "Wybór zatwierdzony"
 
 #: src/component/photo/clipboard.vue:43
-#, fuzzy
 msgid "Selection archived"
 msgstr "Wybór archiwizowany"
 
 #: src/component/photo/clipboard.vue:56
-#, fuzzy
 msgid "Selection restored"
 msgstr "Wybór przywrócony"
 
@@ -1824,7 +1738,6 @@ msgid "Send"
 msgstr "Wyślij"
 
 #: src/pages/settings/index.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "Nazwa sekwencyjna"
 
@@ -1871,7 +1784,6 @@ msgid "Show less"
 msgstr "Pokaż mniej"
 
 #: src/pages/settings/general.vue:316
-#, fuzzy
 msgid "Show Library in navigation menu."
 msgstr "Pokaż bibliotekę w menu nawigacyjnym."
 
@@ -1880,22 +1792,18 @@ msgid "Show more"
 msgstr "Pokaż więcej"
 
 #: src/pages/settings/general.vue:360
-#, fuzzy
 msgid "Show server logs in Library."
 msgstr "Pokaż logi serwera w bibliotece."
 
 #: src/pages/photos.vue:262
-#, fuzzy
 msgid "Showing all %{n} results"
 msgstr "Pokazując wszystkie %{n} wyniki"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "Pokazuje bardziej szczegółowe komunikaty dziennika."
 
 #: src/model/file.js:174
-#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -1922,7 +1830,6 @@ msgstr "Wolno"
 
 #: src/component/album/toolbar.vue:41 src/component/photo/toolbar.vue:39
 #: src/dialog/album/edit.vue:19
-#, fuzzy
 msgid "Sort by file name"
 msgstr "Sortowanie według nazwy pliku"
 
@@ -1939,14 +1846,12 @@ msgid "Spanish"
 msgstr "Hiszpański"
 
 #: src/pages/settings/index.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
 "Stos plików udostępniających ten sam unikalny identyfikator obrazu lub "
 "instancji."
 
 #: src/pages/settings/index.vue:174
-#, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
@@ -1955,12 +1860,10 @@ msgstr ""
 "podstawie ich metadanych."
 
 #: src/component/navigation.vue:88 src/pages/settings/index.vue:33
-#, fuzzy
 msgid "Stacks"
 msgstr "Stosy"
 
 #: src/pages/settings/index.vue:140
-#, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -2011,8 +1914,6 @@ msgid "Sync"
 msgstr "Synchronizuj"
 
 #: src/dialog/account/edit.vue:335
-#, fuzzy
-#| msgid "Sync raw images"
 msgid "Sync raw and video files"
 msgstr "Synchronizuj obrazy RAW"
 
@@ -2030,12 +1931,10 @@ msgid "Text too long"
 msgstr "Tekst za długi"
 
 #: src/pages/library/index.vue:36
-#, fuzzy
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indeks zawiera obecnie %{n} ukryte pliki."
 
 #: src/pages/library/index.vue:37
-#, fuzzy
 msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
 "or there are duplicates."
@@ -2048,7 +1947,6 @@ msgid "Theme"
 msgstr "Motyw"
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36
-#, fuzzy
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
@@ -2059,7 +1957,6 @@ msgstr ""
 "jakby były one lokalne."
 
 #: src/pages/settings/advanced.vue:252
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Miniaturka Pokolenie"
 
@@ -2087,7 +1984,6 @@ msgstr "do"
 #: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142
 #: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:72
 #: src/component/photo/toolbar.vue:89 src/component/photo/toolbar.vue:105
-#, fuzzy
 msgid "Toggle View"
 msgstr "Przełączanie widoku (Toggle View)"
 
@@ -2096,12 +1992,10 @@ msgid "Token"
 msgstr "Token"
 
 #: src/options/options.js:204
-#, fuzzy
 msgid "Topographic"
 msgstr "Topograficzny"
 
 #: src/pages/about/about.vue:56
-#, fuzzy
 msgid "Trademarks"
 msgstr "Znaki towarowe"
 
@@ -2111,7 +2005,6 @@ msgstr "Znaki towarowe"
 #: src/share/albums.vue:23 src/share/photo/cards.vue:12
 #: src/share/photo/list.vue:12 src/share/photo/list.vue:15
 #: src/share/photo/mosaic.vue:12
-#, fuzzy
 msgid "Try again using other filters or keywords."
 msgstr "Spróbuj ponownie użyć innych filtrów lub słów kluczowych."
 
@@ -2121,12 +2014,10 @@ msgid "Type"
 msgstr "Typ"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "Niedostępne wywiady"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "Nieobliczony Limit rozmiaru: %{n}px"
 
@@ -2149,12 +2040,10 @@ msgid "Unsorted"
 msgstr "Nieposortowane"
 
 #: src/dialog/photo/files.vue:39
-#, fuzzy
 msgid "Unstack"
 msgstr "Rozpakuj"
 
 #: src/dialog/photo/info.vue:96
-#, fuzzy
 msgid "Unstacked"
 msgstr "Rozpakowany"
 
@@ -2163,17 +2052,14 @@ msgid "Updated"
 msgstr "Zaktualizowano"
 
 #: src/pages/library/index.vue:128
-#, fuzzy
 msgid "Updating index"
 msgstr "Wskaźnik aktualizacyjny"
 
 #: src/pages/library/index.vue:126
-#, fuzzy
 msgid "Updating moments"
 msgstr "Momenty aktualizujące"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
 msgid "Updating stacks"
 msgstr "Aktualizacja stosów"
 
@@ -2206,7 +2092,6 @@ msgid "Upload to WebDAV and share links with friends."
 msgstr "Prześlij do WebDAV i udostępnij link..."
 
 #: src/dialog/upload.vue:36
-#, fuzzy
 msgid "Uploading %{n} of %{t}…"
 msgstr "Przesyłanie %{n} z %{t}.."
 
@@ -2215,7 +2100,6 @@ msgid "Uploading photos…"
 msgstr "Przesyłanie zdjęć…"
 
 #: src/dialog/upload.vue:46
-#, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 "Przesyłki, które mogą zawierać takie obrazy, będą automatycznie odrzucane."
@@ -2225,7 +2109,6 @@ msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "Użyj ustawień wstępnych"
 
@@ -2257,14 +2140,12 @@ msgid "View"
 msgstr "Widok"
 
 #: src/dialog/webdav.vue:8
-#, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
 "Klienci WebDAV mogą połączyć się z PhotoPrism za pomocą następującego adresu "
 "URL:"
 
 #: src/pages/settings/sync.vue:35
-#, fuzzy
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism."
@@ -2273,7 +2154,6 @@ msgstr ""
 "się bezpośrednio z PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
-#, fuzzy
 msgid "WebDAV Upload"
 msgstr "WebDAV Upload"
 
@@ -2302,17 +2182,14 @@ msgid "You can only download one album"
 msgstr "Możesz pobrać tylko jeden album"
 
 #: src/component/label/clipboard.vue:45
-#, fuzzy
 msgid "You can only download one label"
 msgstr "Możesz pobrać tylko jedną etykietę"
 
 #: src/component/album/clipboard.vue:27 src/component/album/clipboard.vue:40
-#, fuzzy
 msgid "You may only select one item"
 msgstr "Możesz wybrać tylko jedną pozycję"
 
 #: src/pages/about/about.vue:60
-#, fuzzy
 msgid ""
 "You may use it as required to describe our software, run your own server, "
 "for educational purposes, but not for offering commercial goods, products, "

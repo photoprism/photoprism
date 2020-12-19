@@ -313,7 +313,6 @@ msgid "Black"
 msgstr "Noir"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman : modification de Lanczos, moins d'artefacts de sonnerie"
 
@@ -520,7 +519,6 @@ msgid "Creating thumbnails for"
 msgstr "Création des vignettes pour"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubique : Qualité modérée, bonne performance"
 
@@ -549,7 +547,6 @@ msgid "Day"
 msgstr "Jour"
 
 #: src/pages/settings/advanced.vue:76
-#, fuzzy
 msgid "Debug Logs"
 msgstr "Journaux de débogage"
 
@@ -586,35 +583,26 @@ msgid "Dimensions"
 msgstr "Dimensions"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
-#| msgid "Last Backup"
 msgid "Disable Backups"
 msgstr "Dernière sauvegarde"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Désactiver le serveur WebDAV intégré. Nécessite un redémarrage."
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "Désactiver l'outil ExifTool"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable Places"
 msgstr "Désactivé"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "Désactiver le TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable WebDAV"
 msgstr "Désactivé"
 
@@ -623,12 +611,10 @@ msgid "Disabled"
 msgstr "Désactivé"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Désactive le géocodage inverse et les cartes."
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr ""
@@ -640,29 +626,24 @@ msgid "Discover"
 msgstr "Découvrir"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
 "Ne sauvegardez pas les métadonnées des photos et des albums dans des "
 "fichiers YAML."
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 "Ne créez pas de fichiers JSON ExifTool pour améliorer l'extraction des "
 "métadonnées."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Ne modifiez pas le dossier des originaux. Désactive l'importation, le "
 "téléchargement et la suppression."
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
-#| msgid "Browse and edit image classification labels."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Parcourir et modifier les étiquettes de classification d'images."
 
@@ -704,8 +685,6 @@ msgid "Downloading…"
 msgstr "Téléchargement en cours…"
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
-#| msgid "Quality Filter"
 msgid "Downscaling Filter"
 msgstr "Filtre de qualité"
 
@@ -744,7 +723,6 @@ msgid "Edited"
 msgstr "Modifié"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Activer les nouvelles fonctionnalités en cours de développement."
 
@@ -1032,12 +1010,10 @@ msgid "Item"
 msgstr "Item"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "Qualité JPEG : %{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limite de taille JPEG : %{n}px"
 
@@ -1069,7 +1045,6 @@ msgid "Labels deleted"
 msgstr "Étiquettes supprimées"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos : Préservation des détails, artefacts minimaux"
 
@@ -1122,7 +1097,6 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "Limite atteinte, affichage des %{n} premiers fichiers"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linéaire : Très lisse, meilleure performance"
 
@@ -1385,7 +1359,6 @@ msgid "Oldest first"
 msgstr "Plus ancien en premier"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
@@ -1546,7 +1519,6 @@ msgid "Portrait"
 msgstr "Portrait"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "Limite de taille avant rendu : %{n}px"
 
@@ -1613,8 +1585,6 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
-#| msgid "Converting"
 msgid "RAW Conversion"
 msgstr "Conversion en cours"
 
@@ -1625,7 +1595,6 @@ msgstr ""
 "inchangés."
 
 #: src/pages/settings/advanced.vue:98
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "Mode lecture seule"
 
@@ -1837,7 +1806,6 @@ msgid "Showing all %{n} results"
 msgstr "Affichage des %{n} résultats"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "Affiche des messages de journal plus détaillés."
 
@@ -1994,7 +1962,6 @@ msgstr ""
 "smartphone comme s'ils étaient locaux."
 
 #: src/pages/settings/advanced.vue:252
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Génération de vignettes"
 
@@ -2052,12 +2019,10 @@ msgid "Type"
 msgstr "Type"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "Avant-premières non cachées"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "Limite de taille non cachée : %{n}px"
 
@@ -2150,7 +2115,6 @@ msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "Utiliser les préréglages"
 

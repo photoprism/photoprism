@@ -79,7 +79,6 @@ msgid "Add Album"
 msgstr "Добавить альбом"
 
 #: src/pages/settings/general.vue:140
-#, fuzzy
 msgid "Add files to your library via Web Upload."
 msgstr "Добавляйте файлы в свою библиотеку через Web Upload."
 
@@ -227,8 +226,6 @@ msgid "Altitude"
 msgstr "Высота"
 
 #: src/dialog/photo/details.vue:306
-#, fuzzy
-#| msgid "Altitude"
 msgid "Altitude (m)"
 msgstr "Высота"
 
@@ -298,12 +295,10 @@ msgid "Aspect Ratio"
 msgstr "Соотношение сторон"
 
 #: src/pages/settings/account.vue:79
-#, fuzzy
 msgid "At least 6 characters."
 msgstr "Не менее 6 символов."
 
 #: src/pages/settings/index.vue:114
-#, fuzzy
 msgid ""
 "Automatically create JPEGs for other file types so that they can be "
 "displayed in a browser."
@@ -316,7 +311,6 @@ msgid "Black"
 msgstr "Назад"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Модификация Ланчос, артефакты Меньшего Кольца"
 
@@ -333,12 +327,10 @@ msgid "Brown"
 msgstr "Коричневый"
 
 #: src/pages/settings/general.vue:294
-#, fuzzy
 msgid "Browse and edit image classification labels."
 msgstr "Просматривайте и редактируйте метки классификации изображений."
 
 #: src/pages/settings/general.vue:250
-#, fuzzy
 msgid "Browse indexed files and folders in Library."
 msgstr "Просматривайте проиндексированные файлы и папки в Библиотеке."
 
@@ -401,13 +393,10 @@ msgid "Change"
 msgstr "Изменить"
 
 #: src/pages/settings/general.vue:228
-#, fuzzy
 msgid "Change photo titles, locations and other metadata."
 msgstr "Изменяйте названия фотографий, местоположения и другие метаданные."
 
 #: src/component/photo/clipboard.vue:142
-#, fuzzy
-#| msgid "Toggled private flag"
 msgid "Change private flag"
 msgstr "Включен флаг приватности"
 
@@ -445,7 +434,6 @@ msgid "Colors"
 msgstr "Цвета"
 
 #: src/pages/library/index.vue:121
-#, fuzzy
 msgid "Complete Rescan"
 msgstr "Полный рескан"
 
@@ -478,8 +466,6 @@ msgid "Contributors"
 msgstr "Авторы"
 
 #: src/pages/settings/index.vue:113
-#, fuzzy
-#| msgid "Convert RAW to JPEG"
 msgid "Convert to JPEG"
 msgstr "Конвертировать RAW в JPEG"
 
@@ -531,7 +517,6 @@ msgid "Creating thumbnails for"
 msgstr "Сформировать предпросмотр"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Кубический: Умеренное качество, хорошая производительность"
 
@@ -579,7 +564,6 @@ msgid "Delete"
 msgstr "Удалить"
 
 #: src/dialog/album/edit.vue:138 src/dialog/photo/details.vue:589
-#, fuzzy
 msgid "Description"
 msgstr "Описание"
 
@@ -596,34 +580,26 @@ msgid "Dimensions"
 msgstr "Размеры"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
-#| msgid "Last Backup"
 msgid "Disable Backups"
 msgstr "Последняя резервная копия"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Отключить встроенный WebDAV сервер. Требуется перезагрузка."
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "Отключить ExifTool"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Places"
 msgid "Disable Places"
 msgstr "Места"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "Отключить TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
 msgid "Disable WebDAV"
 msgstr "Отключить WebDAV"
 
@@ -632,12 +608,10 @@ msgid "Disabled"
 msgstr "Отключено"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Отключает обратное геокодирование и карты."
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr ""
@@ -649,24 +623,20 @@ msgid "Discover"
 msgstr "Исследование"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Не создавайте резервные копии метаданных фото и альбомов в YAML-файлы."
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 "Не создавайте JSON-файлы ExifTool для улучшенного извлечения метаданных."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Не изменяйте папку с оригиналами. Отключает импорт, загрузку и удаление."
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
 msgid "Don't use TensorFlow for image classification."
 msgstr "Не используйте TensorFlow для классификации изображений."
 
@@ -692,12 +662,10 @@ msgid "Download"
 msgstr "Скачать"
 
 #: src/dialog/account/edit.vue:284
-#, fuzzy
 msgid "Download remote files"
 msgstr "Скачать удалённые файлы"
 
 #: src/pages/settings/general.vue:162
-#, fuzzy
 msgid "Download single files and zip archives."
 msgstr "Скачать отдельные файлы и zip-архивы."
 
@@ -710,7 +678,6 @@ msgid "Downloading…"
 msgstr "Скачивание..."
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
 msgid "Downscaling Filter"
 msgstr "Фильтр для удаления окалины"
 
@@ -749,7 +716,6 @@ msgid "Edited"
 msgstr "Отредактировано"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Включить новые функции, которые в настоящее время разрабатываются."
 
@@ -774,7 +740,6 @@ msgid "Every two days"
 msgstr "Каждые два дня"
 
 #: src/pages/settings/index.vue:72
-#, fuzzy
 msgid ""
 "Exclude content marked as private from search results, shared albums, labels "
 "and places."
@@ -799,7 +764,6 @@ msgid "Exposure"
 msgstr "Экспозиция"
 
 #: src/dialog/photo/details.vue:456
-#, fuzzy
 msgid "F Number"
 msgstr "F Номер"
 
@@ -853,7 +817,6 @@ msgid "Files"
 msgstr "Файлы"
 
 #: src/pages/settings/index.vue:216
-#, fuzzy
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
@@ -934,13 +897,10 @@ msgid "Hidden Files"
 msgstr "Скрытые файлы"
 
 #: src/pages/settings/general.vue:206
-#, fuzzy
 msgid "Hide photos that have been moved to archive."
 msgstr "Спрячьте фотографии, которые были перенесены в архив."
 
 #: src/pages/settings/index.vue:71
-#, fuzzy
-#| msgid "Private"
 msgid "Hide Private"
 msgstr "Приватный"
 
@@ -995,10 +955,6 @@ msgstr ""
 "имена."
 
 #: src/pages/settings/general.vue:338
-#, fuzzy
-#| msgid ""
-#| "Imported files will be sorted by date and given a unique name to avoid "
-#| "duplicates."
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr ""
 "Импортированные файлы будут отсортированы по датам и получат уникальные "
@@ -1049,12 +1005,10 @@ msgid "Item"
 msgstr "Элемент"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "Качество JPEG: %{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Ограничение по размеру в формате JPEG: %{n}px"
 
@@ -1087,7 +1041,6 @@ msgid "Labels deleted"
 msgstr "Метка удалена"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Ланчос: Подробное сохранение, Минимальные артефакты"
 
@@ -1112,7 +1065,6 @@ msgid "Lens"
 msgstr "Объектив"
 
 #: src/pages/settings/general.vue:272
-#, fuzzy
 msgid "Let PhotoPrism create albums from past events."
 msgstr "Позвольте PhotoPrism создавать альбомы из прошлых событий."
 
@@ -1141,7 +1093,6 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "Лимит превышен, отображение первых %{n} файлов"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Линейный: Очень гладкая, лучшая производительность"
 
@@ -1207,8 +1158,6 @@ msgid "manual"
 msgstr "руководство"
 
 #: src/dialog/account/edit.vue:56
-#, fuzzy
-#| msgid "Upload"
 msgid "Manual Upload"
 msgstr "Загрузка"
 
@@ -1267,8 +1216,6 @@ msgid "Most relevant"
 msgstr "Наиболее востребованные"
 
 #: src/pages/library/import.vue:129
-#, fuzzy
-#| msgid "Files"
 msgid "Move Files"
 msgstr "Файлы"
 
@@ -1315,8 +1262,6 @@ msgid "No entries found"
 msgstr "Файлов не найдены"
 
 #: src/dialog/photo/labels.vue:33
-#, fuzzy
-#| msgid "%{n} labels found"
 msgid "No labels found"
 msgstr "%{n} меток найдено"
 
@@ -1329,7 +1274,6 @@ msgid "No results"
 msgstr "Нет результатов"
 
 #: src/pages/settings/sync.vue:51
-#, fuzzy
 msgid "No servers configured."
 msgstr "Серверы не настроены."
 
@@ -1408,7 +1352,6 @@ msgid "Oldest first"
 msgstr "Сначала старые"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
@@ -1540,7 +1483,6 @@ msgid "Place"
 msgstr "Место"
 
 #: src/pages/settings/index.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "Место и время"
 
@@ -1552,8 +1494,6 @@ msgid "Places"
 msgstr "Места"
 
 #: src/pages/settings/account.vue:101
-#, fuzzy
-#| msgid "Please enter your name and password:"
 msgid "Please confirm your new password."
 msgstr "Пожалуйста, введите ваше имя и пароль что бы продолжить:"
 
@@ -1574,12 +1514,10 @@ msgid "Portrait"
 msgstr "Портрет"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "Предельный размер: %{n}px"
 
 #: src/dialog/account/edit.vue:301
-#, fuzzy
 msgid "Preserve filenames"
 msgstr "Сохранять имена и фамилии"
 
@@ -1610,7 +1548,6 @@ msgid "Private"
 msgstr "Приватный"
 
 #: src/options/options.js:274
-#, fuzzy
 msgid "Product Feedback"
 msgstr "Обратная связь по продукту"
 
@@ -1623,8 +1560,6 @@ msgid "Purple"
 msgstr "Фиолетовый"
 
 #: src/pages/settings/index.vue:92
-#, fuzzy
-#| msgid "Quality Score"
 msgid "Quality Filter"
 msgstr "Показатель Качества"
 
@@ -1645,20 +1580,16 @@ msgid "Raw"
 msgstr "Исходный"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
-#| msgid "Converting"
 msgid "RAW Conversion"
 msgstr "Импортирование"
 
 #: src/pages/library/index.vue:122
-#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 "Повторное индексирование всех оригиналов, включая уже проиндексированные и "
 "неизмененные файлы."
 
 #: src/pages/settings/advanced.vue:98
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "режим чтения"
 
@@ -1688,7 +1619,6 @@ msgid "Reloading…"
 msgstr "Перезагрузка..."
 
 #: src/dialog/account/edit.vue:101
-#, fuzzy
 msgid "Remote Sync"
 msgstr "Удаленная синхронизация"
 
@@ -1701,7 +1631,6 @@ msgid "remove failed: unknown album"
 msgstr "не могу удалить: неизвестный альбом"
 
 #: src/pages/library/import.vue:130
-#, fuzzy
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
 "deleted, they remain in their current location."
@@ -1762,7 +1691,6 @@ msgid "Search"
 msgstr "Поиск"
 
 #: src/pages/settings/general.vue:384
-#, fuzzy
 msgid "Search and display photos on a map."
 msgstr "Поиск и отображение фотографий на карте."
 
@@ -1790,13 +1718,10 @@ msgid "Select"
 msgstr "Выбрать"
 
 #: src/dialog/upload.vue:138
-#, fuzzy
 msgid "Select albums or create a new one"
 msgstr "Выберите альбомы или создайте новый"
 
 #: src/component/photo/clipboard.vue:34
-#, fuzzy
-#| msgid "Selection archived"
 msgid "Selection approved"
 msgstr "Выбранное добавлено в архив"
 
@@ -1813,7 +1738,6 @@ msgid "Send"
 msgstr "Отправить"
 
 #: src/pages/settings/index.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "Последовательное название"
 
@@ -1860,7 +1784,6 @@ msgid "Show less"
 msgstr "Показать меньше"
 
 #: src/pages/settings/general.vue:316
-#, fuzzy
 msgid "Show Library in navigation menu."
 msgstr "Показать библиотеку в навигационном меню."
 
@@ -1869,7 +1792,6 @@ msgid "Show more"
 msgstr "Показать больше"
 
 #: src/pages/settings/general.vue:360
-#, fuzzy
 msgid "Show server logs in Library."
 msgstr "Показывать логины сервера в Библиотеке."
 
@@ -1878,12 +1800,10 @@ msgid "Showing all %{n} results"
 msgstr "Показать все %{n} результатов."
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "Показывает более подробные сообщения журнала."
 
 #: src/model/file.js:174
-#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -1926,14 +1846,12 @@ msgid "Spanish"
 msgstr "Испанский"
 
 #: src/pages/settings/index.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
 "Стек файлов с одним и тем же уникальным изображением или идентификатором "
 "экземпляра."
 
 #: src/pages/settings/index.vue:174
-#, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
@@ -1946,7 +1864,6 @@ msgid "Stacks"
 msgstr "Очереди"
 
 #: src/pages/settings/index.vue:140
-#, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -1959,7 +1876,6 @@ msgid "Start"
 msgstr "Начать"
 
 #: src/component/photo/viewer.vue:170
-#, fuzzy
 msgid "Start/Stop Slideshow"
 msgstr "Слайд-шоу \"Старт/Стоп"
 
@@ -1998,7 +1914,6 @@ msgid "Sync"
 msgstr "Синхронизация"
 
 #: src/dialog/account/edit.vue:335
-#, fuzzy
 msgid "Sync raw and video files"
 msgstr "Синхронизация сырых и видео файлов"
 
@@ -2042,12 +1957,10 @@ msgstr ""
 "если бы они находились на вашем устройстве."
 
 #: src/pages/settings/advanced.vue:252
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Поколение эскизов"
 
 #: src/dialog/photo/details.vue:233
-#, fuzzy
 msgid "Time UTC"
 msgstr "Время UTC"
 
@@ -2071,7 +1984,6 @@ msgstr "в"
 #: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142
 #: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:72
 #: src/component/photo/toolbar.vue:89 src/component/photo/toolbar.vue:105
-#, fuzzy
 msgid "Toggle View"
 msgstr "Туггл-Вид"
 
@@ -2102,12 +2014,10 @@ msgid "Type"
 msgstr "Тип"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "Незарегистрированные превью"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "Недостигнутое ограничение размера: %{n}px"
 
@@ -2134,8 +2044,6 @@ msgid "Unstack"
 msgstr "Убрать из очереди"
 
 #: src/dialog/photo/info.vue:96
-#, fuzzy
-#| msgid "Unstack"
 msgid "Unstacked"
 msgstr "Убрать из очереди"
 
@@ -2144,18 +2052,14 @@ msgid "Updated"
 msgstr "Обновлено"
 
 #: src/pages/library/index.vue:128
-#, fuzzy
 msgid "Updating index"
 msgstr "Индекс обновления"
 
 #: src/pages/library/index.vue:126
-#, fuzzy
 msgid "Updating moments"
 msgstr "Моменты обновления"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
-#| msgid "Unstack"
 msgid "Updating stacks"
 msgstr "Убрать из очереди"
 
@@ -2184,7 +2088,6 @@ msgid "Upload local files"
 msgstr "Загрузка локальных файлов"
 
 #: src/pages/settings/general.vue:184
-#, fuzzy
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Загружайте WebDAV и делитесь ссылками с друзьями."
 
@@ -2207,7 +2110,6 @@ msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "Использовать предустановки"
 

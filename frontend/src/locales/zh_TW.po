@@ -305,7 +305,6 @@ msgid "Black"
 msgstr "黑色"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "布萊克曼：Lanczos修改，少振鈴文物"
 
@@ -314,7 +313,6 @@ msgid "Blue"
 msgstr "藍色"
 
 #: src/options/options.js:116
-#, fuzzy
 msgid "Brazilian Portuguese"
 msgstr "巴西葡萄牙語"
 
@@ -513,7 +511,6 @@ msgid "Creating thumbnails for"
 msgstr "新增縮圖"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "立方：中等質量，良好性能"
 
@@ -530,7 +527,6 @@ msgid "Cyan"
 msgstr "青色"
 
 #: src/options/options.js:147
-#, fuzzy
 msgid "Cyano"
 msgstr "藍諾"
 
@@ -543,7 +539,6 @@ msgid "Day"
 msgstr "天"
 
 #: src/pages/settings/advanced.vue:76
-#, fuzzy
 msgid "Debug Logs"
 msgstr "調試日誌"
 
@@ -579,35 +574,26 @@ msgid "Dimensions"
 msgstr "尺寸"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
-#| msgid "Last Backup"
 msgid "Disable Backups"
 msgstr "上次備份"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "禁用內置的WebDAV服務器。需要重啟。"
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "禁用ExifTool"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable Places"
 msgstr "已停用"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "禁用TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable WebDAV"
 msgstr "已停用"
 
@@ -616,12 +602,10 @@ msgid "Disabled"
 msgstr "已停用"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "禁用反向地理編碼和地圖。"
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr "禁用同時轉換RAW文件以應用Darktable預設。"
@@ -631,23 +615,18 @@ msgid "Discover"
 msgstr "發現"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "不要將照片和相冊元數據備份到YAML文件中。"
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "不要創建ExifTool JSON文件來改進元數據提取。"
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "不要修改原件文件夾。禁用導入，上傳和刪除。"
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
-#| msgid "Browse and edit image classification labels."
 msgid "Don't use TensorFlow for image classification."
 msgstr "瀏覽以及編輯分類標籤。"
 
@@ -689,8 +668,6 @@ msgid "Downloading…"
 msgstr "下載中…"
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
-#| msgid "Quality Filter"
 msgid "Downscaling Filter"
 msgstr "品質過濾"
 
@@ -729,7 +706,6 @@ msgid "Edited"
 msgstr "已編輯"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "啟用當前正在開發的新功能。"
 
@@ -776,7 +752,6 @@ msgid "Exposure"
 msgstr "曝光"
 
 #: src/dialog/photo/details.vue:456
-#, fuzzy
 msgid "F Number"
 msgstr "F號"
 
@@ -830,10 +805,6 @@ msgid "Files"
 msgstr "檔案"
 
 #: src/pages/settings/index.vue:216
-#, fuzzy
-#| msgid ""
-#| "Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' "
-#| "belong to the same photo."
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
@@ -1014,12 +985,10 @@ msgid "Item"
 msgstr "項目"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG品質：%{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG大小限制：%{n} px"
 
@@ -1050,7 +1019,6 @@ msgid "Labels deleted"
 msgstr "標籤已刪除"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos：保留細節，減少偽像"
 
@@ -1103,7 +1071,6 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "顯示前 %{n} 個檔案"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "線性：非常平滑，最佳性能"
 
@@ -1216,7 +1183,6 @@ msgid "More than 50 results"
 msgstr "找到超過 50 個結果"
 
 #: src/component/album/toolbar.vue:30 src/component/photo/toolbar.vue:30
-#, fuzzy
 msgid "Mosaic"
 msgstr "鑲嵌"
 
@@ -1324,7 +1290,6 @@ msgid "Note:"
 msgstr "注意："
 
 #: src/dialog/account/add.vue:22
-#, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
@@ -1333,7 +1298,6 @@ msgstr ""
 "和文件上傳。"
 
 #: src/pages/settings/account.vue:20
-#, fuzzy
 msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
@@ -1344,7 +1308,6 @@ msgid "Notes"
 msgstr "備註"
 
 #: src/pages/library/logs.vue:5
-#, fuzzy
 msgid "Nothing to see here yet. Be patient."
 msgstr "這裡什麼也看不到。耐心一點。"
 
@@ -1359,14 +1322,12 @@ msgid "Oldest first"
 msgstr "最舊排前"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
 msgstr "按需渲染需要強大的CPU，不建議用於小型家用服務器或NAS設備。"
 
 #: src/options/options.js:239
-#, fuzzy
 msgid "Once a week"
 msgstr "一個星期一次"
 
@@ -1391,7 +1352,6 @@ msgid "One result"
 msgstr "1 個結果"
 
 #: src/options/options.js:159
-#, fuzzy
 msgid "Onyx"
 msgstr "y瑪瑙"
 
@@ -1485,7 +1445,6 @@ msgid "Place"
 msgstr "地點"
 
 #: src/pages/settings/index.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "地點與時間"
 
@@ -1517,7 +1476,6 @@ msgid "Portrait"
 msgstr "人像"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "渲染前大小限制：%{n} px"
 
@@ -1584,8 +1542,6 @@ msgid "Raw"
 msgstr "原始"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
-#| msgid "Converting"
 msgid "RAW Conversion"
 msgstr "轉換中"
 
@@ -1742,7 +1698,6 @@ msgid "Send"
 msgstr "傳送"
 
 #: src/pages/settings/index.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "順序名稱"
 
@@ -1805,7 +1760,6 @@ msgid "Showing all %{n} results"
 msgstr "顯示所有 %{n} 個結果"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "顯示更詳細的日誌消息。"
 
@@ -1852,12 +1806,10 @@ msgid "Spanish"
 msgstr "西班牙文"
 
 #: src/pages/settings/index.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "共享相同唯一映像或實例標識符的堆棧文件。"
 
 #: src/pages/settings/index.vue:174
-#, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
@@ -1868,7 +1820,6 @@ msgid "Stacks"
 msgstr "堆放"
 
 #: src/pages/settings/index.vue:140
-#, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -1907,7 +1858,6 @@ msgid "Subject"
 msgstr "主題"
 
 #: src/dialog/account/add.vue:23
-#, fuzzy
 msgid ""
 "Support for additional services, like Google Drive, will be added over time."
 msgstr "隨著時間的推移，將增加對其他服務的支持，例如Google雲端硬盤。"
@@ -1917,14 +1867,11 @@ msgid "Sync"
 msgstr "同步"
 
 #: src/dialog/account/edit.vue:335
-#, fuzzy
-#| msgid "Sync raw images"
 msgid "Sync raw and video files"
 msgstr "同步 RAW 照片"
 
 #: src/component/photo/list.vue:32 src/dialog/photo/info.vue:52
 #: src/share/photo/list.vue:25
-#, fuzzy
 msgid "Taken"
 msgstr "已採取"
 
@@ -1951,7 +1898,6 @@ msgid "Theme"
 msgstr "主題"
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36
-#, fuzzy
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
@@ -1961,7 +1907,6 @@ msgstr ""
 "除文件，就像它們是本地文件一樣。"
 
 #: src/pages/settings/advanced.vue:252
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "縮圖產生"
 
@@ -1997,12 +1942,10 @@ msgid "Token"
 msgstr "令牌"
 
 #: src/options/options.js:204
-#, fuzzy
 msgid "Topographic"
 msgstr "地形圖"
 
 #: src/pages/about/about.vue:56
-#, fuzzy
 msgid "Trademarks"
 msgstr "商標"
 
@@ -2021,12 +1964,10 @@ msgid "Type"
 msgstr "格式"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "未緩存的預覽"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "未緩存的大小限制：%{n} px"
 
@@ -2049,13 +1990,10 @@ msgid "Unsorted"
 msgstr "未分類"
 
 #: src/dialog/photo/files.vue:39
-#, fuzzy
 msgid "Unstack"
 msgstr "拆箱"
 
 #: src/dialog/photo/info.vue:96
-#, fuzzy
-#| msgid "Instance ID"
 msgid "Unstacked"
 msgstr "實體 ID"
 
@@ -2064,17 +2002,14 @@ msgid "Updated"
 msgstr "已更新"
 
 #: src/pages/library/index.vue:128
-#, fuzzy
 msgid "Updating index"
 msgstr "更新索引"
 
 #: src/pages/library/index.vue:126
-#, fuzzy
 msgid "Updating moments"
 msgstr "更新時刻"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
 msgid "Updating stacks"
 msgstr "更新堆棧"
 
@@ -2123,7 +2058,6 @@ msgid "URL"
 msgstr "網址"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "使用預設"
 
@@ -2155,12 +2089,10 @@ msgid "View"
 msgstr "檢視"
 
 #: src/dialog/webdav.vue:8
-#, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
 
 #: src/pages/settings/sync.vue:35
-#, fuzzy
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism."
@@ -2169,7 +2101,6 @@ msgstr ""
 "PhotoPrism。"
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
-#, fuzzy
 msgid "WebDAV Upload"
 msgstr "WebDAV上傳"
 
@@ -2206,7 +2137,6 @@ msgid "You may only select one item"
 msgstr "你只能選取一個項目"
 
 #: src/pages/about/about.vue:60
-#, fuzzy
 msgid ""
 "You may use it as required to describe our software, run your own server, "
 "for educational purposes, but not for offering commercial goods, products, "

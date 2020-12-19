@@ -311,7 +311,6 @@ msgid "Black"
 msgstr "Preto"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Modificação de Lanczos, Menos artefatos de Anel"
 
@@ -518,7 +517,6 @@ msgid "Creating thumbnails for"
 msgstr "Criando miniaturas para"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Qualidade Moderada, Bom Desempenho"
 
@@ -582,35 +580,26 @@ msgid "Dimensions"
 msgstr "Dimensões"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
-#| msgid "Last Backup"
 msgid "Disable Backups"
 msgstr "Última Cópia de Segurança"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Desativar servidor WebDAV embutido. Requer reinicialização."
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "Desativar o ExifTool"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable Places"
 msgstr "Desativado"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "Desativar TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable WebDAV"
 msgstr "Desativado"
 
@@ -619,12 +608,10 @@ msgid "Disabled"
 msgstr "Desativado"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Desativa a geocodificação reversa e os mapas."
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr ""
@@ -636,25 +623,20 @@ msgid "Discover"
 msgstr "Descobrir"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Não faça backup de metadados de fotos e álbuns para arquivos YAML."
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "Não crie arquivos JSON ExifTool para melhorar a extração de metadados."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Não modifique a pasta dos originais. Desativa a importação, o upload e a "
 "exclusão."
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
-#| msgid "Browse and edit image classification labels."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Navegar e editar as etiquetas de classificação da imagem."
 
@@ -696,8 +678,6 @@ msgid "Downloading…"
 msgstr "Baixando…"
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
-#| msgid "Quality Filter"
 msgid "Downscaling Filter"
 msgstr "Filtro de qualidade"
 
@@ -736,7 +716,6 @@ msgid "Edited"
 msgstr "Editado"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Habilitar novas características atualmente em desenvolvimento."
 
@@ -1026,12 +1005,10 @@ msgid "Item"
 msgstr "Item"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "Qualidade JPEG: %{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limite de tamanho JPEG: %{n}px"
 
@@ -1064,7 +1041,6 @@ msgid "Labels deleted"
 msgstr "Etiquetas excluídas"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Preservação dos detalhes, artefatos mínimos"
 
@@ -1117,7 +1093,6 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "Limite alcançado, mostrando os primeiros %{n} arquivos"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Muito Suave, Melhor Desempenho"
 
@@ -1378,7 +1353,6 @@ msgid "Oldest first"
 msgstr "Mais antigas primeiro"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
@@ -1539,7 +1513,6 @@ msgid "Portrait"
 msgstr "Retrato"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "Limite de tamanho da pré-renderização: %{n}px"
 
@@ -1606,8 +1579,6 @@ msgid "Raw"
 msgstr "Cru"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
-#| msgid "Converting"
 msgid "RAW Conversion"
 msgstr "Convertendo"
 
@@ -1617,7 +1588,6 @@ msgstr ""
 "Reindexe todos originais, incluindo arquivos já indexados e não modificados."
 
 #: src/pages/settings/advanced.vue:98
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "Modo de leitura"
 
@@ -1828,7 +1798,6 @@ msgid "Showing all %{n} results"
 msgstr "Mostrando todos %{n} resultados"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "Mostra mensagens de registro mais detalhadas."
 
@@ -2041,12 +2010,10 @@ msgid "Type"
 msgstr "Tipo"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "Antevisões não alcançadas"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "Limite de tamanho não branqueado: %{n}px"
 
@@ -2138,7 +2105,6 @@ msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "Usar Predefinições"
 

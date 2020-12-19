@@ -18,19 +18,14 @@ msgid "%{n} albums found"
 msgstr "%{n} gevonden albums"
 
 #: src/pages/album/photos.vue:323 src/share/photos.vue:323
-#, fuzzy
 msgid "%{n} entries found"
 msgstr "%{n} vermeldingen gevonden"
 
 #: src/dialog/share/upload.vue:45
-#, fuzzy
-#| msgid " labels loaded"
 msgid "%{n} files uploaded"
 msgstr "%{n} bestanden geüpload"
 
 #: src/pages/library/files.vue:290
-#, fuzzy
-#| msgid " labels found"
 msgid "%{n} folders found"
 msgstr "%{n} mappen gevonden"
 
@@ -39,7 +34,6 @@ msgid "%{n} labels found"
 msgstr "%{n} labels gevonden"
 
 #: src/pages/photos.vue:377
-#, fuzzy
 msgid "%{n} results"
 msgstr "%{n} resultaten"
 
@@ -56,7 +50,6 @@ msgid "4 hours"
 msgstr "4 uren"
 
 #: src/dialog/share.vue:73
-#, fuzzy
 msgid "A click will copy it to your clipboard."
 msgstr "Een klik zal het naar uw klembord kopiëren."
 
@@ -82,13 +75,10 @@ msgid "Actions"
 msgstr "Acties"
 
 #: src/pages/albums.vue:158
-#, fuzzy
-#| msgid "Add to album"
 msgid "Add Album"
 msgstr "Toevoegen aan album"
 
 #: src/pages/settings/general.vue:140
-#, fuzzy
 msgid "Add files to your library via Web Upload."
 msgstr "Voeg bestanden toe aan uw bibliotheek via Web Upload."
 
@@ -97,7 +87,6 @@ msgid "Add Link"
 msgstr "Advertentie aanbiedingen"
 
 #: src/pages/albums.vue:112
-#, fuzzy
 msgid "Add photos or videos from search results by selecting them."
 msgstr ""
 "Voeg foto's of video's uit de zoekresultaten toe door ze te selecteren."
@@ -121,32 +110,26 @@ msgid "Advanced"
 msgstr "Geavanceerd"
 
 #: src/options/options.js:244
-#, fuzzy
 msgid "After 1 day"
 msgstr "Na 1 dag"
 
 #: src/options/options.js:245
-#, fuzzy
 msgid "After 3 days"
 msgstr "Na 3 dagen"
 
 #: src/options/options.js:246
-#, fuzzy
 msgid "After 7 days"
 msgstr "Na 7 dagen"
 
 #: src/options/options.js:248
-#, fuzzy
 msgid "After one month"
 msgstr "Na een maand"
 
 #: src/options/options.js:250
-#, fuzzy
 msgid "After one year"
 msgstr "Na een jaar"
 
 #: src/pages/albums.vue:43
-#, fuzzy
 msgid ""
 "After selecting photos or videos from search results, you can add them to "
 "existing or new albums using the context menu."
@@ -155,12 +138,10 @@ msgstr ""
 "via het contextmenu toevoegen aan bestaande of nieuwe albums."
 
 #: src/options/options.js:249
-#, fuzzy
 msgid "After two months"
 msgstr "Na twee maanden"
 
 #: src/options/options.js:247
-#, fuzzy
 msgid "After two weeks"
 msgstr "Na twee weken"
 
@@ -182,19 +163,14 @@ msgid "Albums deleted"
 msgstr "Albums verwijderd"
 
 #: src/pages/albums.vue:181 src/share/albums.vue:163
-#, fuzzy
-#| msgid " albums loaded"
 msgid "All %{n} albums loaded"
 msgstr " albums geladen"
 
 #: src/pages/album/photos.vue:206 src/share/photos.vue:212
-#, fuzzy
 msgid "All %{n} entries loaded"
 msgstr "Alle %{n} items geladen"
 
 #: src/pages/labels.vue:200
-#, fuzzy
-#| msgid " labels loaded"
 msgid "All %{n} labels loaded"
 msgstr " labels geladen"
 
@@ -208,8 +184,6 @@ msgid "All Categories"
 msgstr "Alle categorieën"
 
 #: src/component/photo/toolbar.vue:23
-#, fuzzy
-#| msgid "All Countries"
 msgid "All Colors"
 msgstr "Alle landen"
 
@@ -222,13 +196,10 @@ msgid "All fields are required"
 msgstr "Alle velden zijn verplicht"
 
 #: src/pages/library/import.vue:12
-#, fuzzy
 msgid "All files from import folder"
 msgstr "Alle bestanden uit de importmap"
 
 #: src/component/photo/toolbar.vue:22
-#, fuzzy
-#| msgid "All Countries"
 msgid "All Lenses"
 msgstr "Alle landen"
 
@@ -237,8 +208,6 @@ msgid "All Months"
 msgstr "Alle maanden"
 
 #: src/pages/library/index.vue:12
-#, fuzzy
-#| msgid "All Countries"
 msgid "All originals"
 msgstr "Alle landen"
 
@@ -247,7 +216,6 @@ msgid "All Years"
 msgstr "Alle jaren"
 
 #: src/dialog/share.vue:75
-#, fuzzy
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
@@ -256,17 +224,14 @@ msgstr ""
 "Nextcloud."
 
 #: src/dialog/photo/info.vue:145
-#, fuzzy
 msgid "Altitude"
 msgstr "Hoogte"
 
 #: src/dialog/photo/details.vue:306
-#, fuzzy
 msgid "Altitude (m)"
 msgstr "Hoogte (m)"
 
 #: src/common/api.js:83
-#, fuzzy
 msgid "An error occurred - are you offline?"
 msgstr "Er is een fout opgetreden. Bent u offline?"
 
@@ -275,7 +240,6 @@ msgid "Animation"
 msgstr "Animatie"
 
 #: src/dialog/share.vue:74
-#, fuzzy
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Alle privéfoto's en -video's blijven privé en worden niet gedeeld."
 
@@ -303,8 +267,6 @@ msgid "Archived"
 msgstr "Gearchiveerd"
 
 #: src/dialog/photo/archive.vue:10
-#, fuzzy
-#| msgid "Are you sure you want to delete these photos?"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Weet je zeker dat je deze foto’s wilt verwijderen?"
 
@@ -313,8 +275,6 @@ msgid "Are you sure you want to delete these albums?"
 msgstr "Weet je zeker dat je deze albums wilt verwijderen?"
 
 #: src/dialog/label/delete.vue:10
-#, fuzzy
-#| msgid "Are you sure you want to delete these albums?"
 msgid "Are you sure you want to delete these labels?"
 msgstr "Weet je zeker dat je deze albums wilt verwijderen?"
 
@@ -335,12 +295,10 @@ msgid "Aspect Ratio"
 msgstr "Verhoudingen"
 
 #: src/pages/settings/account.vue:79
-#, fuzzy
 msgid "At least 6 characters."
 msgstr "Minstens 6 tekens."
 
 #: src/pages/settings/index.vue:114
-#, fuzzy
 msgid ""
 "Automatically create JPEGs for other file types so that they can be "
 "displayed in a browser."
@@ -353,7 +311,6 @@ msgid "Black"
 msgstr "Zwart"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Wijziging, Minder Ringing Artifacts"
 
@@ -370,22 +327,18 @@ msgid "Brown"
 msgstr "Bruin"
 
 #: src/pages/settings/general.vue:294
-#, fuzzy
 msgid "Browse and edit image classification labels."
 msgstr "Bladeren en bewerken van beeldclassificatie-etiketten."
 
 #: src/pages/settings/general.vue:250
-#, fuzzy
 msgid "Browse indexed files and folders in Library."
 msgstr "Blader door geïndexeerde bestanden en mappen in de bibliotheek."
 
 #: src/options/options.js:276
-#, fuzzy
 msgid "Bug Report"
 msgstr "Bugmelding"
 
 #: src/common/notify.js:72
-#, fuzzy
 msgid "Busy, please wait…"
 msgstr "Bezig, wacht even.."
 
@@ -400,14 +353,11 @@ msgid "Camera"
 msgstr "Camera"
 
 #: src/dialog/photo/info.vue:73
-#, fuzzy
-#| msgid "Camera"
 msgid "Camera Serial"
 msgstr "Camera"
 
 #: src/pages/album/photos.vue:212 src/pages/photos.vue:268
 #: src/share/photos.vue:218
-#, fuzzy
 msgid "Can't load more, limit reached"
 msgstr "Kan niet meer laden, limiet bereikt"
 
@@ -416,7 +366,6 @@ msgstr "Kan niet meer laden, limiet bereikt"
 #: src/pages/labels.vue:152 src/pages/library/files.vue:174
 #: src/pages/library/files.vue:190 src/share/albums.vue:290
 #: src/share/albums.vue:306
-#, fuzzy
 msgid "Can't select more items"
 msgstr "Kan niet meer items selecteren"
 
@@ -444,13 +393,10 @@ msgid "Change"
 msgstr "Wijzigen"
 
 #: src/pages/settings/general.vue:228
-#, fuzzy
 msgid "Change photo titles, locations and other metadata."
 msgstr "Wijzig fototitels, locaties en andere metagegevens."
 
 #: src/component/photo/clipboard.vue:142
-#, fuzzy
-#| msgid "Toggled private flag"
 msgid "Change private flag"
 msgstr "Privé vlag geschakeld"
 
@@ -463,12 +409,10 @@ msgid "Chinese Simplified"
 msgstr "Chinees (vereenvoudigd)"
 
 #: src/options/options.js:136
-#, fuzzy
 msgid "Chinese Traditional"
 msgstr "Traditioneel Chinees"
 
 #: src/dialog/photo/files.vue:136
-#, fuzzy
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -478,7 +422,6 @@ msgid "Close"
 msgstr "Sluiten"
 
 #: src/dialog/photo/files.vue:96
-#, fuzzy
 msgid "Codec"
 msgstr "Codec"
 
@@ -491,12 +434,10 @@ msgid "Colors"
 msgstr "Kleuren"
 
 #: src/pages/library/index.vue:121
-#, fuzzy
 msgid "Complete Rescan"
 msgstr "Volledig herscannen"
 
 #: src/dialog/photo/labels.vue:19
-#, fuzzy
 msgid "Confidence"
 msgstr "Vertrouwen"
 
@@ -505,7 +446,6 @@ msgid "Connect"
 msgstr "Verbinden"
 
 #: src/dialog/webdav.vue:4 src/pages/settings/sync.vue:42
-#, fuzzy
 msgid "Connect via WebDAV"
 msgstr "Verbinding maken via WebDAV"
 
@@ -514,12 +454,10 @@ msgid "Contact Us"
 msgstr "Neem contact met ons op"
 
 #: src/pages/albums.vue:109
-#, fuzzy
 msgid "Contains %{n} entries."
 msgstr "Bevat %{n} vermeldingen."
 
 #: src/pages/albums.vue:106
-#, fuzzy
 msgid "Contains one entry."
 msgstr "Bevat één vermelding."
 
@@ -528,7 +466,6 @@ msgid "Contributors"
 msgstr "Medewerkers"
 
 #: src/pages/settings/index.vue:113
-#, fuzzy
 msgid "Convert to JPEG"
 msgstr "Omzetten in JPEG"
 
@@ -550,19 +487,16 @@ msgstr "Copyright"
 #: src/pages/library/files.vue:36 src/share/albums.vue:20
 #: src/share/photo/cards.vue:9 src/share/photo/list.vue:9
 #: src/share/photo/mosaic.vue:9
-#, fuzzy
 msgid "Couldn't find anything"
 msgstr "Kon niets vinden"
 
 #: src/component/photo/list.vue:14 src/share/photo/list.vue:13
-#, fuzzy
 msgid "Couldn't find anything."
 msgstr "Kon niets vinden."
 
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:6
 #: src/component/photo/mosaic.vue:6 src/share/photo/cards.vue:6
 #: src/share/photo/list.vue:6 src/share/photo/mosaic.vue:6
-#, fuzzy
 msgid "Couldn't find recently edited"
 msgstr "Kon niet vinden onlangs bewerkt"
 
@@ -579,12 +513,10 @@ msgid "Created"
 msgstr "Aangemaakt"
 
 #: src/pages/library/index.vue:144
-#, fuzzy
 msgid "Creating thumbnails for"
 msgstr "Het maken van miniaturen voor"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubiek: Gematigde kwaliteit, goede prestaties"
 
@@ -601,7 +533,6 @@ msgid "Cyan"
 msgstr "Cyaan"
 
 #: src/options/options.js:147
-#, fuzzy
 msgid "Cyano"
 msgstr "Cyano"
 
@@ -637,7 +568,6 @@ msgid "Description"
 msgstr "Omschrijving"
 
 #: src/dialog/webdav.vue:23
-#, fuzzy
 msgid "Detailed instructions can be found in our User Guide."
 msgstr ""
 "Gedetailleerde instructies zijn te vinden in onze gebruikershandleiding."
@@ -651,33 +581,26 @@ msgid "Dimensions"
 msgstr "Afmetingen"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
 msgid "Disable Backups"
 msgstr "Back-ups uitschakelen"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Schakel de ingebouwde WebDAV-server uit. Vereist een herstart."
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "Schakel ExifTool uit"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Places"
 msgid "Disable Places"
 msgstr "Locaties"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "Schakel TensorFlow uit"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
 msgid "Disable WebDAV"
 msgstr "WebDAV uitschakelen"
 
@@ -686,12 +609,10 @@ msgid "Disabled"
 msgstr "Uitgeschakeld"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Schakelt de omgekeerde geocodering en kaarten uit."
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr ""
@@ -703,25 +624,21 @@ msgid "Discover"
 msgstr "Ontdek"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Maak geen back-up van foto- en albummetagegevens naar YAML-bestanden."
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 "Maak geen ExifTool JSON-bestanden aan voor een verbeterde metadata-extractie."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Wijzig de map met de originelen niet. Schakel het importeren, uploaden en "
 "verwijderen uit."
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
 msgid "Don't use TensorFlow for image classification."
 msgstr "Gebruik TensorFlow niet voor beeldclassificatie."
 
@@ -747,12 +664,10 @@ msgid "Download"
 msgstr "Download"
 
 #: src/dialog/account/edit.vue:284
-#, fuzzy
 msgid "Download remote files"
 msgstr "Bestanden op afstand downloaden"
 
 #: src/pages/settings/general.vue:162
-#, fuzzy
 msgid "Download single files and zip archives."
 msgstr "Download enkele bestanden en zip-archieven."
 
@@ -761,18 +676,14 @@ msgstr "Download enkele bestanden en zip-archieven."
 #: src/component/photo/clipboard.vue:94 src/component/photo/viewer.vue:102
 #: src/share/album/clipboard.vue:40 src/share/photo/clipboard.vue:40
 #: src/share/photos.vue:445
-#, fuzzy
-#| msgid "Downloading..."
 msgid "Downloading…"
 msgstr "Downloaden…"
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
 msgid "Downscaling Filter"
 msgstr "Downscaling filter"
 
 #: src/pages/library/files.vue:39
-#, fuzzy
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Duplicaten worden overgeslagen en verschijnen slechts één keer."
 
@@ -791,7 +702,6 @@ msgid "Edit"
 msgstr "Bewerken"
 
 #: src/dialog/album/edit.vue:8
-#, fuzzy
 msgid "Edit %{name}"
 msgstr "Bewerken %{name}"
 
@@ -808,7 +718,6 @@ msgid "Edited"
 msgstr "Bewerkt"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Maak nieuwe functies mogelijk die momenteel in ontwikkeling zijn."
 
@@ -829,12 +738,10 @@ msgid "Errors"
 msgstr "Fouten"
 
 #: src/options/options.js:238
-#, fuzzy
 msgid "Every two days"
 msgstr "Om de twee dagen"
 
 #: src/pages/settings/index.vue:72
-#, fuzzy
 msgid ""
 "Exclude content marked as private from search results, shared albums, labels "
 "and places."
@@ -843,13 +750,10 @@ msgstr ""
 "labels en plaatsen."
 
 #: src/component/photo/toolbar.vue:140
-#, fuzzy
-#| msgid "Search"
 msgid "Expand Search"
 msgstr "Zoeken"
 
 #: src/pages/settings/advanced.vue:120
-#, fuzzy
 msgid "Experimental Features"
 msgstr "Experimentele eigenschappen"
 
@@ -858,27 +762,22 @@ msgid "Expires"
 msgstr "Verloopt"
 
 #: src/dialog/photo/details.vue:412
-#, fuzzy
 msgid "Exposure"
 msgstr "Blootstelling"
 
 #: src/dialog/photo/details.vue:456
-#, fuzzy
 msgid "F Number"
 msgstr "F Aantal"
 
 #: src/dialog/share.vue:36 src/dialog/webdav.vue:33
-#, fuzzy
 msgid "Failed copying to clipboard"
 msgstr "Mislukt kopiëren naar klembord"
 
 #: src/dialog/share.vue:68
-#, fuzzy
 msgid "Failed removing link"
 msgstr "Mislukte verwijderingslink"
 
 #: src/dialog/share.vue:56
-#, fuzzy
 msgid "Failed updating link"
 msgstr "Mislukte actualiseringslink"
 
@@ -920,7 +819,6 @@ msgid "Files"
 msgstr "Bestanden"
 
 #: src/pages/settings/index.vue:216
-#, fuzzy
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
@@ -939,12 +837,10 @@ msgid "Folder"
 msgstr "Map"
 
 #: src/pages/library/files.vue:292
-#, fuzzy
 msgid "Folder contains %{n} files"
 msgstr "Map bevat %{n} bestanden"
 
 #: src/pages/library/files.vue:284
-#, fuzzy
 msgid "Folder is empty"
 msgstr "Map is leeg"
 
@@ -983,7 +879,6 @@ msgstr "Grijs"
 
 #: src/component/album/toolbar.vue:42 src/component/photo/toolbar.vue:40
 #: src/dialog/album/edit.vue:20
-#, fuzzy
 msgid "Group by similarity"
 msgstr "Groepering op basis van gelijkenis"
 
@@ -1000,18 +895,14 @@ msgid "Hidden"
 msgstr "Verborgen"
 
 #: src/routes.js:223
-#, fuzzy
 msgid "Hidden Files"
 msgstr "Verborgen bestanden"
 
 #: src/pages/settings/general.vue:206
-#, fuzzy
 msgid "Hide photos that have been moved to archive."
 msgstr "Verberg foto's die zijn verplaatst naar het archief."
 
 #: src/pages/settings/index.vue:71
-#, fuzzy
-#| msgid "Private"
 msgid "Hide Private"
 msgstr "Privé"
 
@@ -1029,7 +920,6 @@ msgstr "Hybride"
 
 #: src/component/photo/cards.vue:13 src/component/photo/list.vue:13
 #: src/component/photo/mosaic.vue:13 src/pages/library/files.vue:40
-#, fuzzy
 msgid ""
 "If a file you expect is missing, please re-index your library and wait until "
 "indexing has been completed."
@@ -1059,7 +949,6 @@ msgid "Import failed"
 msgstr "Importeren mislust"
 
 #: src/pages/library/import.vue:25
-#, fuzzy
 msgid ""
 "Imported files will be sorted by date and given a unique name to avoid "
 "duplicates."
@@ -1068,21 +957,16 @@ msgstr ""
 "naam om duplicaten te voorkomen."
 
 #: src/pages/settings/general.vue:338
-#, fuzzy
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr ""
 "Geïmporteerde bestanden worden gesorteerd op datum en krijgen een unieke "
 "naam."
 
 #: src/pages/library/import.vue:5
-#, fuzzy
-#| msgid "Importing"
 msgid "Importing %{name}…"
 msgstr "Importeren"
 
 #: src/pages/library/import.vue:6
-#, fuzzy
-#| msgid "Importing files from directory..."
 msgid "Importing files to originals…"
 msgstr "Bestanden importeren uit directory…"
 
@@ -1103,13 +987,10 @@ msgid "Indexing failed"
 msgstr "Indexeren mislukt"
 
 #: src/pages/library/index.vue:7
-#, fuzzy
-#| msgid "Indexing photos and sidecar files..."
 msgid "Indexing media and sidecar files…"
 msgstr "Foto’s en sidecar-bestanden aan het indexeren…"
 
 #: src/dialog/photo/files.vue:54
-#, fuzzy
 msgid "Instance ID"
 msgstr "Instantie-ID"
 
@@ -1126,17 +1007,14 @@ msgid "Item"
 msgstr "Item"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-kwaliteit: %{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG-groottegrens: %{n}px"
 
 #: src/pages/library/import.vue:26
-#, fuzzy
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG's en thumbnails worden automatisch weergegeven als dat nodig is."
 
@@ -1159,13 +1037,10 @@ msgid "Labels"
 msgstr "Labels"
 
 #: src/component/label/clipboard.vue:40
-#, fuzzy
-#| msgid "Albums deleted"
 msgid "Labels deleted"
 msgstr "Albums verwijderd"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detailbewaring, Minimale artefacten"
 
@@ -1174,7 +1049,6 @@ msgid "Language"
 msgstr "Taal"
 
 #: src/pages/settings/sync.vue:30
-#, fuzzy
 msgid "Last Backup"
 msgstr "Laatste back-up"
 
@@ -1183,7 +1057,6 @@ msgid "Latitude"
 msgstr "Breedtegraad"
 
 #: src/options/options.js:151
-#, fuzzy
 msgid "Lavender"
 msgstr "Lavendel"
 
@@ -1192,7 +1065,6 @@ msgid "Lens"
 msgstr "Lens"
 
 #: src/pages/settings/general.vue:272
-#, fuzzy
 msgid "Let PhotoPrism create albums from past events."
 msgstr "Laat PhotoPrism albums maken van gebeurtenissen uit het verleden."
 
@@ -1217,12 +1089,10 @@ msgid "Lime"
 msgstr "Limoen"
 
 #: src/pages/library/files.vue:294
-#, fuzzy
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limiet bereikt, toont eerste %{n} bestanden"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineair: Zeer glad, beste prestaties"
 
@@ -1252,7 +1122,6 @@ msgid "Location"
 msgstr "Locatie"
 
 #: src/pages/library/errors.vue:35
-#, fuzzy
 msgid ""
 "Log messages appear here whenever PhotoPrism comes across broken files, or "
 "there are other potential issues."
@@ -1289,8 +1158,6 @@ msgid "manual"
 msgstr "handmatig"
 
 #: src/dialog/account/edit.vue:56
-#, fuzzy
-#| msgid "Upload"
 msgid "Manual Upload"
 msgstr "Uploaden"
 
@@ -1308,7 +1175,6 @@ msgstr "Ontbrekend"
 
 #: src/component/navigation.vue:222 src/component/navigation.vue:805
 #: src/pages/settings/general.vue:271 src/routes.js:98 src/routes.js:105
-#, fuzzy
 msgid "Moments"
 msgstr "Momenten"
 
@@ -1321,7 +1187,6 @@ msgid "Month"
 msgstr "Maand"
 
 #: src/options/options.js:155
-#, fuzzy
 msgid "Moonlight"
 msgstr "Maanlicht"
 
@@ -1334,14 +1199,10 @@ msgid "More than 20 labels found"
 msgstr "Meer dan 20 labels gevonden"
 
 #: src/pages/album/photos.vue:326 src/share/photos.vue:326
-#, fuzzy
-#| msgid "More than 50 photos found"
 msgid "More than 50 entries found"
 msgstr "Meer dan 50 foto’s gevonden"
 
 #: src/pages/photos.vue:380
-#, fuzzy
-#| msgid "More than 50 photos found"
 msgid "More than 50 results"
 msgstr "Meer dan 50 foto’s gevonden"
 
@@ -1351,7 +1212,6 @@ msgstr "Mozaiek"
 
 #: src/component/album/toolbar.vue:43 src/component/photo/toolbar.vue:41
 #: src/dialog/album/edit.vue:21
-#, fuzzy
 msgid "Most relevant"
 msgstr "Meest relevant"
 
@@ -1370,8 +1230,6 @@ msgstr "Naam"
 #: src/component/album/toolbar.vue:51 src/dialog/album/edit.vue:24
 #: src/dialog/photo/labels.vue:22 src/pages/labels.vue:47
 #: src/pages/library/files.vue:50
-#, fuzzy
-#| msgid "Title too long"
 msgid "Name too long"
 msgstr "Titel is te lang"
 
@@ -1404,8 +1262,6 @@ msgid "No entries found"
 msgstr "Geen inzendingen gevonden"
 
 #: src/dialog/photo/labels.vue:33
-#, fuzzy
-#| msgid " labels found"
 msgid "No labels found"
 msgstr "%{n} labels gevonden"
 
@@ -1418,12 +1274,10 @@ msgid "No results"
 msgstr "Geen resultaten"
 
 #: src/pages/settings/sync.vue:51
-#, fuzzy
 msgid "No servers configured."
 msgstr "Geen servers geconfigureerd."
 
 #: src/pages/library/errors.vue:32
-#, fuzzy
 msgid ""
 "No warnings or error containing this keyword. Note that search is case-"
 "sensitive."
@@ -1436,7 +1290,6 @@ msgstr ""
 #: src/component/photo/list.vue:19 src/component/photo/mosaic.vue:15
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50
 #: src/pages/settings/index.vue:93
-#, fuzzy
 msgid ""
 "Non-photographic and low-quality images require a review before they appear "
 "in search results."
@@ -1457,7 +1310,6 @@ msgid "Not implemented yet"
 msgstr "Nog niet geïmplementeerd"
 
 #: src/pages/library/import.vue:28
-#, fuzzy
 msgid "Note that you can as well manage and re-index your originals manually."
 msgstr ""
 "Merk op dat u uw originelen ook handmatig kunt beheren en opnieuw kunt "
@@ -1468,7 +1320,6 @@ msgid "Note:"
 msgstr "Notitie:"
 
 #: src/dialog/account/add.vue:22
-#, fuzzy
 msgid ""
 "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
 "as remote service for backup and file upload."
@@ -1478,7 +1329,6 @@ msgstr ""
 "het uploaden van bestanden."
 
 #: src/pages/settings/account.vue:20
-#, fuzzy
 msgid ""
 "Note: Updating the password will not revoke access from already "
 "authenticated users."
@@ -1505,7 +1355,6 @@ msgid "Oldest first"
 msgstr "Oudste eerst"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
@@ -1514,7 +1363,6 @@ msgstr ""
 "kleinere homeservers of NAS-apparaten."
 
 #: src/options/options.js:239
-#, fuzzy
 msgid "Once a week"
 msgstr "Eenmaal per week"
 
@@ -1523,20 +1371,14 @@ msgid "One album found"
 msgstr "Een album gevonden"
 
 #: src/pages/album/photos.vue:321 src/share/photos.vue:321
-#, fuzzy
-#| msgid "One photo found"
 msgid "One entry found"
 msgstr "Een foto gevonden"
 
 #: src/pages/library/files.vue:286
-#, fuzzy
-#| msgid "One album found"
 msgid "One file found"
 msgstr "Een album gevonden"
 
 #: src/pages/library/files.vue:288
-#, fuzzy
-#| msgid "One album found"
 msgid "One folder found"
 msgstr "Een album gevonden"
 
@@ -1545,7 +1387,6 @@ msgid "One result"
 msgstr "Eén resultaat"
 
 #: src/options/options.js:159
-#, fuzzy
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1562,7 +1403,6 @@ msgid "Original"
 msgstr "Origineel"
 
 #: src/pages/library/import.vue:27
-#, fuzzy
 msgid "Original file names will be stored and indexed."
 msgstr "Originele bestandsnamen worden opgeslagen en geïndexeerd."
 
@@ -1572,7 +1412,6 @@ msgstr "Originele naam"
 
 #: src/component/navigation.vue:297 src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:249
-#, fuzzy
 msgid "Originals"
 msgstr "Originelen"
 
@@ -1585,12 +1424,10 @@ msgid "Outdoor"
 msgstr "Outdoor"
 
 #: src/dialog/photo/info.vue:112
-#, fuzzy
 msgid "Panorama"
 msgstr "Panorama"
 
 #: src/component/navigation.vue:80
-#, fuzzy
 msgid "Panoramas"
 msgstr "Panorama's"
 
@@ -1608,7 +1445,6 @@ msgid "People"
 msgstr "Personen"
 
 #: src/dialog/share.vue:72
-#, fuzzy
 msgid "People you share a link with will be able to view public contents."
 msgstr "Mensen met wie je een link deelt, kunnen de openbare inhoud bekijken."
 
@@ -1617,7 +1453,6 @@ msgid "Photo"
 msgstr "Foto"
 
 #: src/pages/albums.vue:52
-#, fuzzy
 msgid ""
 "PhotoPrism continuously analyzes your library to find special moments, "
 "journeys and places."
@@ -1626,12 +1461,10 @@ msgstr ""
 "reizen en plaatsen te vinden."
 
 #: src/dialog/reload.vue:4
-#, fuzzy
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism is geüpdatet.."
 
 #: src/pages/about/about.vue:59
-#, fuzzy
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr "PhotoPrism® is een geregistreerd handelsmerk van Michael Mayer."
 
@@ -1649,7 +1482,6 @@ msgid "Place"
 msgstr "Plaats"
 
 #: src/pages/settings/index.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "Plaats & Tijd"
 
@@ -1661,18 +1493,14 @@ msgid "Places"
 msgstr "Locaties"
 
 #: src/pages/settings/account.vue:101
-#, fuzzy
 msgid "Please confirm your new password."
 msgstr "Bevestig uw nieuwe wachtwoord."
 
 #: src/dialog/upload.vue:45
-#, fuzzy
 msgid "Please don't upload photos containing offensive content."
 msgstr "Upload geen foto's met aanstootgevende inhoud."
 
 #: src/pages/login.vue:8
-#, fuzzy
-#| msgid "Please enter the admin password to proceed..."
 msgid "Please enter your name and password:"
 msgstr "Voer een beheerderswachtwoord in om verder te gaan…"
 
@@ -1685,30 +1513,22 @@ msgid "Portrait"
 msgstr "Staand"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "Pre-Render Grootte Limiet: %{n}px"
 
 #: src/dialog/account/edit.vue:301
-#, fuzzy
 msgid "Preserve filenames"
 msgstr "Bewaar bestandsnamen"
 
 #: src/pages/library/import.vue:8
-#, fuzzy
-#| msgid "Press button to start indexing..."
 msgid "Press button to start importing…"
 msgstr "Klik knop om indexeren te starten…"
 
 #: src/pages/library/index.vue:9
-#, fuzzy
-#| msgid "Press button to start indexing..."
 msgid "Press button to start indexing…"
 msgstr "Klik knop om indexeren te starten…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
-#, fuzzy
-#| msgid "create a new album"
 msgid "Press enter to create a new album."
 msgstr "maak nieuw album"
 
@@ -1727,12 +1547,10 @@ msgid "Private"
 msgstr "Privé"
 
 #: src/options/options.js:274
-#, fuzzy
 msgid "Product Feedback"
 msgstr "Terugkoppeling van producten"
 
 #: src/dialog/photo/files.vue:118
-#, fuzzy
 msgid "Projection"
 msgstr "Projectie"
 
@@ -1741,12 +1559,10 @@ msgid "Purple"
 msgstr "Paars"
 
 #: src/pages/settings/index.vue:92
-#, fuzzy
 msgid "Quality Filter"
 msgstr "Kwaliteitsfilter"
 
 #: src/dialog/photo/info.vue:59
-#, fuzzy
 msgid "Quality Score"
 msgstr "Kwaliteitsscore"
 
@@ -1755,7 +1571,6 @@ msgid "Random"
 msgstr "Willekeurig"
 
 #: src/options/options.js:163
-#, fuzzy
 msgid "Raspberry"
 msgstr "Framboos"
 
@@ -1764,19 +1579,16 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
 msgid "RAW Conversion"
 msgstr "RAW-omzetting"
 
 #: src/pages/library/index.vue:122
-#, fuzzy
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 "Herindexeer alle originelen, inclusief de reeds geïndexeerde en ongewijzigde "
 "bestanden."
 
 #: src/pages/settings/advanced.vue:98
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "Alleen-lezen modus"
 
@@ -1787,8 +1599,6 @@ msgstr "Recent toegevoegd"
 
 #: src/component/album/toolbar.vue:38 src/component/photo/toolbar.vue:36
 #: src/dialog/album/edit.vue:16
-#, fuzzy
-#| msgid "Recently imported"
 msgid "Recently edited"
 msgstr "Recent geïmporteerd"
 
@@ -1804,13 +1614,10 @@ msgstr "Ververs"
 
 #: src/dialog/reload.vue:26 src/pages/settings/general.vue:41
 #: src/pages/settings/index.vue:43
-#, fuzzy
-#| msgid "Uploading"
 msgid "Reloading…"
 msgstr "Uploaden"
 
 #: src/dialog/account/edit.vue:101
-#, fuzzy
 msgid "Remote Sync"
 msgstr "Synchronisatie op afstand"
 
@@ -1823,7 +1630,6 @@ msgid "remove failed: unknown album"
 msgstr "verwijderen mislukt: onbekend album"
 
 #: src/pages/library/import.vue:130
-#, fuzzy
 msgid ""
 "Remove imported files to save storage. Unsupported file types will never be "
 "deleted, they remain in their current location."
@@ -1832,12 +1638,10 @@ msgstr ""
 "bestandstypen worden nooit verwijderd, ze blijven op hun huidige locatie."
 
 #: src/pages/library/errors.vue:78
-#, fuzzy
 msgid "Report Bug"
 msgstr "Verslag Bug"
 
 #: src/common/api.js:66
-#, fuzzy
 msgid "Request failed - invalid response"
 msgstr "Verzoek mislukt - ongeldig antwoord"
 
@@ -1876,7 +1680,6 @@ msgid "Scan"
 msgstr "Scan"
 
 #: src/component/navigation.vue:96
-#, fuzzy
 msgid "Scans"
 msgstr "Scans"
 
@@ -1887,7 +1690,6 @@ msgid "Search"
 msgstr "Zoeken"
 
 #: src/pages/settings/general.vue:384
-#, fuzzy
 msgid "Search and display photos on a map."
 msgstr "Zoek en toon foto's op een kaart."
 
@@ -1895,7 +1697,6 @@ msgstr "Zoek en toon foto's op een kaart."
 #: src/pages/labels.vue:225 src/pages/library/errors.vue:39
 #: src/pages/library/files.vue:215 src/pages/photos.vue:296
 #: src/pages/places.vue:191 src/share/albums.vue:182 src/share/photos.vue:240
-#, fuzzy
 msgid "Search term too short"
 msgstr "Zoekterm te kort"
 
@@ -1904,7 +1705,6 @@ msgid "Season"
 msgstr "Seizoen"
 
 #: src/options/options.js:167
-#, fuzzy
 msgid "Seaweed"
 msgstr "Zeewier"
 
@@ -1917,22 +1717,18 @@ msgid "Select"
 msgstr "Selecteer"
 
 #: src/dialog/upload.vue:138
-#, fuzzy
 msgid "Select albums or create a new one"
 msgstr "Selecteer albums of maak een nieuwe aan"
 
 #: src/component/photo/clipboard.vue:34
-#, fuzzy
 msgid "Selection approved"
 msgstr "Selectie goedgekeurd"
 
 #: src/component/photo/clipboard.vue:43
-#, fuzzy
 msgid "Selection archived"
 msgstr "Selectie gearchiveerd"
 
 #: src/component/photo/clipboard.vue:56
-#, fuzzy
 msgid "Selection restored"
 msgstr "Selectie hersteld"
 
@@ -1941,7 +1737,6 @@ msgid "Send"
 msgstr "Verzenden"
 
 #: src/pages/settings/index.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "Opeenvolgende naam"
 
@@ -1951,7 +1746,6 @@ msgstr "Server"
 
 #: src/dialog/account/add.vue:64 src/dialog/account/edit.vue:377
 #: src/dialog/share.vue:18
-#, fuzzy
 msgid "Service URL"
 msgstr "Service URL"
 
@@ -1977,12 +1771,10 @@ msgid "Share"
 msgstr "Delen"
 
 #: src/dialog/share.vue:7
-#, fuzzy
 msgid "Share %{name}"
 msgstr "Aandeel %{name}"
 
 #: src/share/albums.vue:56
-#, fuzzy
 msgid "Shared with you."
 msgstr "Met u gedeeld."
 
@@ -1991,7 +1783,6 @@ msgid "Show less"
 msgstr "Toon minder"
 
 #: src/pages/settings/general.vue:316
-#, fuzzy
 msgid "Show Library in navigation menu."
 msgstr "Toon Bibliotheek in het navigatiemenu."
 
@@ -2000,22 +1791,18 @@ msgid "Show more"
 msgstr "Toon meer"
 
 #: src/pages/settings/general.vue:360
-#, fuzzy
 msgid "Show server logs in Library."
 msgstr "Toon serverlogs in Bibliotheek."
 
 #: src/pages/photos.vue:262
-#, fuzzy
 msgid "Showing all %{n} results"
 msgstr "Het tonen van alle %{n} resultaten"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "Toont meer gedetailleerde logboekberichten."
 
 #: src/model/file.js:174
-#, fuzzy
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2042,7 +1829,6 @@ msgstr "Langzaam"
 
 #: src/component/album/toolbar.vue:41 src/component/photo/toolbar.vue:39
 #: src/dialog/album/edit.vue:19
-#, fuzzy
 msgid "Sort by file name"
 msgstr "Sorteren op bestandsnaam"
 
@@ -2059,13 +1845,11 @@ msgid "Spanish"
 msgstr "Spaans"
 
 #: src/pages/settings/index.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
 "Stapel bestanden met dezelfde unieke beeld- of instantie-identificatie."
 
 #: src/pages/settings/index.vue:174
-#, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
@@ -2074,12 +1858,10 @@ msgstr ""
 "van hun metagegevens."
 
 #: src/component/navigation.vue:88 src/pages/settings/index.vue:33
-#, fuzzy
 msgid "Stacks"
 msgstr "Stapels"
 
 #: src/pages/settings/index.vue:140
-#, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -2092,7 +1874,6 @@ msgid "Start"
 msgstr "Start"
 
 #: src/component/photo/viewer.vue:170
-#, fuzzy
 msgid "Start/Stop Slideshow"
 msgstr "Start/Stop Diavoorstelling"
 
@@ -2105,7 +1886,6 @@ msgid "Status"
 msgstr "Status"
 
 #: src/dialog/photo/files.vue:66
-#, fuzzy
 msgid "Storage Folder"
 msgstr "Opslagmap"
 
@@ -2122,7 +1902,6 @@ msgid "Subject"
 msgstr "Onderwerp"
 
 #: src/dialog/account/add.vue:23
-#, fuzzy
 msgid ""
 "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
@@ -2134,7 +1913,6 @@ msgid "Sync"
 msgstr "Synchroniseer"
 
 #: src/dialog/account/edit.vue:335
-#, fuzzy
 msgid "Sync raw and video files"
 msgstr "Ruwe en videobestanden synchroniseren"
 
@@ -2148,18 +1926,14 @@ msgid "Teal"
 msgstr "Teal"
 
 #: src/dialog/photo/details.vue:26
-#, fuzzy
-#| msgid "Title too long"
 msgid "Text too long"
 msgstr "Titel is te lang"
 
 #: src/pages/library/index.vue:36
-#, fuzzy
 msgid "The index currently contains %{n} hidden files."
 msgstr "De index bevat momenteel %{n} verborgen bestanden."
 
 #: src/pages/library/index.vue:37
-#, fuzzy
 msgid ""
 "Their format may not be supported, they haven't been converted to JPEG yet "
 "or there are duplicates."
@@ -2172,7 +1946,6 @@ msgid "Theme"
 msgstr "Thema"
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36
-#, fuzzy
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, "
 "edit, and delete files from your computer or smartphone as if they were "
@@ -2183,12 +1956,10 @@ msgstr ""
 "smartphone alsof ze lokaal zijn."
 
 #: src/pages/settings/advanced.vue:252
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Thumbnail generatie"
 
 #: src/dialog/photo/details.vue:233
-#, fuzzy
 msgid "Time UTC"
 msgstr "Tijd UTC"
 
@@ -2212,7 +1983,6 @@ msgstr "tot"
 #: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142
 #: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:72
 #: src/component/photo/toolbar.vue:89 src/component/photo/toolbar.vue:105
-#, fuzzy
 msgid "Toggle View"
 msgstr "Schakelweergave"
 
@@ -2221,12 +1991,10 @@ msgid "Token"
 msgstr "Token"
 
 #: src/options/options.js:204
-#, fuzzy
 msgid "Topographic"
 msgstr "Topografische"
 
 #: src/pages/about/about.vue:56
-#, fuzzy
 msgid "Trademarks"
 msgstr "Handelsmerken"
 
@@ -2236,8 +2004,6 @@ msgstr "Handelsmerken"
 #: src/share/albums.vue:23 src/share/photo/cards.vue:12
 #: src/share/photo/list.vue:12 src/share/photo/list.vue:15
 #: src/share/photo/mosaic.vue:12
-#, fuzzy
-#| msgid "Try again using a different term or"
 msgid "Try again using other filters or keywords."
 msgstr "Probeer opnieuw met een ander trefwoord of"
 
@@ -2247,12 +2013,10 @@ msgid "Type"
 msgstr "Type"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "Onbekijkbare voorvertoningen"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "Onbereikbare Groottegrens: %{n}px"
 
@@ -2275,12 +2039,10 @@ msgid "Unsorted"
 msgstr "Ongesorteerd"
 
 #: src/dialog/photo/files.vue:39
-#, fuzzy
 msgid "Unstack"
 msgstr "Ontstapel"
 
 #: src/dialog/photo/info.vue:96
-#, fuzzy
 msgid "Unstacked"
 msgstr "Ongestapeld"
 
@@ -2289,17 +2051,14 @@ msgid "Updated"
 msgstr "Bijgewerkt"
 
 #: src/pages/library/index.vue:128
-#, fuzzy
 msgid "Updating index"
 msgstr "Bijwerken van de index"
 
 #: src/pages/library/index.vue:126
-#, fuzzy
 msgid "Updating moments"
 msgstr "Momenten van actualisering"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
 msgid "Updating stacks"
 msgstr "Actualisering van de stapels"
 
@@ -2316,8 +2075,6 @@ msgid "Upload complete"
 msgstr "Uploaden klaar"
 
 #: src/dialog/upload.vue:38
-#, fuzzy
-#| msgid "Upload complete. Indexing..."
 msgid "Upload complete. Indexing…"
 msgstr "Uploaden klaar. Indexeren…"
 
@@ -2326,29 +2083,22 @@ msgid "Upload failed"
 msgstr "Uploaden mislukt"
 
 #: src/dialog/account/edit.vue:318
-#, fuzzy
-#| msgid "Upload failed"
 msgid "Upload local files"
 msgstr "Uploaden mislukt"
 
 #: src/pages/settings/general.vue:184
-#, fuzzy
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Upload naar WebDAV en deel links met vrienden."
 
 #: src/dialog/upload.vue:36
-#, fuzzy
 msgid "Uploading %{n} of %{t}…"
 msgstr "Het uploaden van %{n} van %{t}.."
 
 #: src/dialog/upload.vue:50 src/dialog/upload.vue:58 src/dialog/upload.vue:99
-#, fuzzy
-#| msgid "Uploading photos..."
 msgid "Uploading photos…"
 msgstr "Foto’s uploaden…"
 
 #: src/dialog/upload.vue:46
-#, fuzzy
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 "Uploads die dergelijke beelden kunnen bevatten, worden automatisch geweigerd."
@@ -2358,7 +2108,6 @@ msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "Gebruik Voorinstellingen"
 
@@ -2367,7 +2116,6 @@ msgid "User"
 msgstr "Gebruiker"
 
 #: src/pages/settings/general.vue:6
-#, fuzzy
 msgid "User Interface"
 msgstr "Gebruikersinterface"
 
@@ -2391,13 +2139,11 @@ msgid "View"
 msgstr "Weergave"
 
 #: src/dialog/webdav.vue:8
-#, fuzzy
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr ""
 "WebDAV-cliënten kunnen verbinding maken met PhotoPrism via de volgende URL:"
 
 #: src/pages/settings/sync.vue:35
-#, fuzzy
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
 "connect directly to PhotoPrism."
@@ -2406,8 +2152,6 @@ msgstr ""
 "kunnen rechtstreeks verbinding maken met PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
-#, fuzzy
-#| msgid "Upload"
 msgid "WebDAV Upload"
 msgstr "Uploaden"
 
@@ -2436,19 +2180,14 @@ msgid "You can only download one album"
 msgstr "Je kunt slechts een album downloaden"
 
 #: src/component/label/clipboard.vue:45
-#, fuzzy
-#| msgid "You can only download one album"
 msgid "You can only download one label"
 msgstr "Je kunt slechts een album downloaden"
 
 #: src/component/album/clipboard.vue:27 src/component/album/clipboard.vue:40
-#, fuzzy
-#| msgid "You can only download one album"
 msgid "You may only select one item"
 msgstr "Je kunt slechts een album downloaden"
 
 #: src/pages/about/about.vue:60
-#, fuzzy
 msgid ""
 "You may use it as required to describe our software, run your own server, "
 "for educational purposes, but not for offering commercial goods, products, "

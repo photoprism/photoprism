@@ -310,7 +310,6 @@ msgid "Black"
 msgstr "Čierna"
 
 #: src/options/options.js:282
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczosova úprava, menej zvonivých artefaktov"
 
@@ -319,7 +318,6 @@ msgid "Blue"
 msgstr "Modrá"
 
 #: src/options/options.js:116
-#, fuzzy
 msgid "Brazilian Portuguese"
 msgstr "Brazílska portugalčina"
 
@@ -518,7 +516,6 @@ msgid "Creating thumbnails for"
 msgstr "Vytváranie náhľadov pre"
 
 #: src/options/options.js:284
-#, fuzzy
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubický: Stredná kvalita, dobrý výkon"
 
@@ -547,7 +544,6 @@ msgid "Day"
 msgstr "Deň"
 
 #: src/pages/settings/advanced.vue:76
-#, fuzzy
 msgid "Debug Logs"
 msgstr "Denníky ladenia"
 
@@ -583,35 +579,26 @@ msgid "Dimensions"
 msgstr "Rozmery"
 
 #: src/pages/settings/advanced.vue:142
-#, fuzzy
-#| msgid "Last Backup"
 msgid "Disable Backups"
 msgstr "Posledná Záloha"
 
 #: src/pages/settings/advanced.vue:165
-#, fuzzy
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Zakáže vstavaný server WebDAV. Vyžaduje sa reštart."
 
 #: src/pages/settings/advanced.vue:208
-#, fuzzy
 msgid "Disable ExifTool"
 msgstr "Zakázať ExifTool"
 
 #: src/pages/settings/advanced.vue:186
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable Places"
 msgstr "Vypnuté"
 
 #: src/pages/settings/advanced.vue:230
-#, fuzzy
 msgid "Disable TensorFlow"
 msgstr "Zakázať TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
-#, fuzzy
-#| msgid "Disabled"
 msgid "Disable WebDAV"
 msgstr "Vypnuté"
 
@@ -620,12 +607,10 @@ msgid "Disabled"
 msgstr "Vypnuté"
 
 #: src/pages/settings/advanced.vue:187
-#, fuzzy
 msgid "Disables reverse geocoding and maps."
 msgstr "Zakáže reverzné geokódovanie a mapy."
 
 #: src/pages/settings/advanced.vue:464
-#, fuzzy
 msgid ""
 "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr "Zakáže súčasnú konverziu súborov RAW na použitie predvolieb Darktable."
@@ -635,24 +620,19 @@ msgid "Discover"
 msgstr "Objaviť"
 
 #: src/pages/settings/advanced.vue:143
-#, fuzzy
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Nezálohujte metadáta fotografií a albumov do súborov YAML."
 
 #: src/pages/settings/advanced.vue:209
-#, fuzzy
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "Nevytvárajte súbory ExifTool JSON pre vylepšenú extrakciu metadát."
 
 #: src/pages/settings/advanced.vue:99
-#, fuzzy
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 "Neupravujte priečinok s originálmi. Zakáže import, nahrávanie a mazanie."
 
 #: src/pages/settings/advanced.vue:231
-#, fuzzy
-#| msgid "Browse and edit image classification labels."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Prehliadať a upravovať triediace štítky fotiek."
 
@@ -694,8 +674,6 @@ msgid "Downloading…"
 msgstr "Sťahovanie..."
 
 #: src/pages/settings/advanced.vue:281
-#, fuzzy
-#| msgid "Quality Filter"
 msgid "Downscaling Filter"
 msgstr "Filter Kvality"
 
@@ -734,7 +712,6 @@ msgid "Edited"
 msgstr "Upravené"
 
 #: src/pages/settings/advanced.vue:121
-#, fuzzy
 msgid "Enable new features currently under development."
 msgstr "Povoľte nové funkcie, ktoré sú momentálne vo vývoji."
 
@@ -836,10 +813,6 @@ msgid "Files"
 msgstr "Súbory"
 
 #: src/pages/settings/index.vue:216
-#, fuzzy
-#| msgid ""
-#| "Files with sequential names like 'IMG_1234 (2)' or 'IMG_1234 copy 2' "
-#| "belong to the same photo."
 msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
@@ -1027,12 +1000,10 @@ msgid "Item"
 msgstr "Položka"
 
 #: src/pages/settings/advanced.vue:376
-#, fuzzy
 msgid "JPEG Quality: %{n}"
 msgstr "Kvalita JPEG: %{n}"
 
 #: src/pages/settings/advanced.vue:429
-#, fuzzy
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limit veľkosti JPEG: %{n} px"
 
@@ -1063,7 +1034,6 @@ msgid "Labels deleted"
 msgstr "Štítky vymazané"
 
 #: src/options/options.js:283
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Zachovanie detailov, minimálne artefakty"
 
@@ -1116,7 +1086,6 @@ msgid "Limit reached, showing first %{n} files"
 msgstr "Limit dosiahnutý, zobrazovanie prvých %{n} súborov"
 
 #: src/options/options.js:285
-#, fuzzy
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineárne: veľmi hladké, najlepší výkon"
 
@@ -1378,7 +1347,6 @@ msgid "Oldest first"
 msgstr "Najstaršie navrch"
 
 #: src/pages/settings/advanced.vue:332
-#, fuzzy
 msgid ""
 "On-demand rendering requires a powerful CPU and is not recommended for "
 "smaller home servers, or NAS devices."
@@ -1444,7 +1412,6 @@ msgid "Other"
 msgstr "Ostatné"
 
 #: src/options/options.js:208
-#, fuzzy
 msgid "Outdoor"
 msgstr "Vonkajšie"
 
@@ -1507,7 +1474,6 @@ msgid "Place"
 msgstr "Miesto"
 
 #: src/pages/settings/index.vue:173
-#, fuzzy
 msgid "Place & Time"
 msgstr "Miesto a čas"
 
@@ -1539,7 +1505,6 @@ msgid "Portrait"
 msgstr "Portrét"
 
 #: src/pages/settings/advanced.vue:349
-#, fuzzy
 msgid "Pre-Render Size Limit: %{n}px"
 msgstr "Limit veľkosti pred predbežným vykreslením: %{n} px"
 
@@ -1606,8 +1571,6 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/pages/settings/advanced.vue:96
-#, fuzzy
-#| msgid "Converting"
 msgid "RAW Conversion"
 msgstr "Konvertuje sa"
 
@@ -1618,7 +1581,6 @@ msgstr ""
 "súbory."
 
 #: src/pages/settings/advanced.vue:98
-#, fuzzy
 msgid "Read-Only Mode"
 msgstr "Režim iba na čítanie"
 
@@ -1767,7 +1729,6 @@ msgid "Send"
 msgstr "Odoslať"
 
 #: src/pages/settings/index.vue:215
-#, fuzzy
 msgid "Sequential Name"
 msgstr "Poradové meno"
 
@@ -1830,7 +1791,6 @@ msgid "Showing all %{n} results"
 msgstr "Zobrazovanie všetkých %{n} výsledkov"
 
 #: src/pages/settings/advanced.vue:77
-#, fuzzy
 msgid "Shows more detailed log messages."
 msgstr "Zobrazuje podrobnejšie správy denníka."
 
@@ -1877,14 +1837,12 @@ msgid "Spanish"
 msgstr "Španielsky"
 
 #: src/pages/settings/index.vue:195
-#, fuzzy
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
 "Skladať súbory zdieľajúce rovnaký jedinečný obrázok alebo identifikátor "
 "inštancie."
 
 #: src/pages/settings/index.vue:174
-#, fuzzy
 msgid ""
 "Stack pictures taken at the exact same time and location based on their "
 "metadata."
@@ -1897,7 +1855,6 @@ msgid "Stacks"
 msgstr "Postupnosť"
 
 #: src/pages/settings/index.vue:140
-#, fuzzy
 msgid ""
 "Stacks group files with a similar frame of reference, but differences of "
 "quality, format, size or color."
@@ -1949,8 +1906,6 @@ msgid "Sync"
 msgstr "Synchronizácia"
 
 #: src/dialog/account/edit.vue:335
-#, fuzzy
-#| msgid "Sync raw images"
 msgid "Sync raw and video files"
 msgstr "Synchronizovať fotky formátu raw"
 
@@ -1994,7 +1949,6 @@ msgstr ""
 "lokálne."
 
 #: src/pages/settings/advanced.vue:252
-#, fuzzy
 msgid "Thumbnail Generation"
 msgstr "Generovanie miniatúr"
 
@@ -2052,12 +2006,10 @@ msgid "Type"
 msgstr "Typ"
 
 #: src/pages/settings/advanced.vue:331
-#, fuzzy
 msgid "Uncached Previews"
 msgstr "Neuložené ukážky"
 
 #: src/pages/settings/advanced.vue:300
-#, fuzzy
 msgid "Uncached Size Limit: %{n}px"
 msgstr "Limit veľkosti bez medzipamäte: %{n} px"
 
@@ -2084,8 +2036,6 @@ msgid "Unstack"
 msgstr "Nepostupné"
 
 #: src/dialog/photo/info.vue:96
-#, fuzzy
-#| msgid "Unstack"
 msgid "Unstacked"
 msgstr "Nepostupné"
 
@@ -2094,18 +2044,14 @@ msgid "Updated"
 msgstr "Aktualizované"
 
 #: src/pages/library/index.vue:128
-#, fuzzy
 msgid "Updating index"
 msgstr "Aktualizuje sa index"
 
 #: src/pages/library/index.vue:126
-#, fuzzy
 msgid "Updating moments"
 msgstr "Aktualizujú sa momenty"
 
 #: src/pages/library/index.vue:124
-#, fuzzy
-#| msgid "Unstack"
 msgid "Updating stacks"
 msgstr "Nepostupné"
 
@@ -2154,7 +2100,6 @@ msgid "URL"
 msgstr "URL"
 
 #: src/pages/settings/advanced.vue:463
-#, fuzzy
 msgid "Use Presets"
 msgstr "Použite predvoľby"
 

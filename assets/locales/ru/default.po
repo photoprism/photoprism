@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-19 14:22+0100\n"
-"PO-Revision-Date: 2020-12-19 14:29+0100\n"
+"PO-Revision-Date: 2020-12-19 14:35+0100\n"
 "Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -262,8 +262,6 @@ msgid "%d files uploaded in %d s"
 msgstr "%d файлов загружено за %d с"
 
 #: messages.go:133
-#, fuzzy
-#| msgid "Selection archived"
 msgid "Selection approved"
 msgstr "Утвержденный выбор"
 
