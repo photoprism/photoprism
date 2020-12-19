@@ -57,6 +57,7 @@ export class Photo extends RestModel {
       DocumentID: "",
       Type: TypeImage,
       TypeSrc: "",
+      Stack: 0,
       Favorite: false,
       Private: false,
       Scan: false,

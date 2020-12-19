@@ -89,10 +89,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	file, primaryFile := entity.File{}, entity.File{}
 
-	photo := entity.NewPhoto(o.Single)
+	photo := entity.NewPhoto(o.Stack)
 	metaData := meta.NewData()
 	labels := classify.Labels{}
-	stripSequence := Config().Settings().StackSequences() && !o.Single
+	stripSequence := Config().Settings().StackSequences() && o.Stack
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
 	fullBase := m.BasePrefix(false)
@@ -173,14 +173,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Look for existing photo if file wasn't indexed yet...
 	if !fileExists {
-		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || o.Single {
+		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || !o.Stack {
 			// Skip next query.
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_single = 0", filePath, fileBase); photoQuery.Error == nil {
+		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
 			fileStacked = true
 		}
 
 		// Stack file based on matching location and time metadata?
-		if !o.Single && photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
+		if o.Stack && photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
 			metaData = m.MetaData()
 			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
 
@@ -190,7 +190,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 
 		// Stack file based on the same unique ID?
-		if !o.Single && photoQuery.Error != nil && Config().Settings().StackUUID() && m.MetaData().HasDocumentID() {
+		if o.Stack && photoQuery.Error != nil && Config().Settings().StackUUID() && m.MetaData().HasDocumentID() {
 			photoQuery = entity.UnscopedDb().First(&photo, "uuid <> '' AND uuid = ?", m.MetaData().DocumentID)
 
 			if photoQuery.Error == nil {
@@ -229,7 +229,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Try to recover photo metadata from backup if not exists.
 	if !photoExists {
 		photo.PhotoQuality = -1
-		photo.PhotoSingle = o.Single
+
+		if o.Stack {
+			photo.PhotoStack = entity.IsStackable
+		}
 
 		if yamlName := fs.FormatYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
 			if err := photo.LoadFromYaml(yamlName); err != nil {
@@ -250,7 +253,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	photo.PhotoPath = filePath
 
-	if o.Single || photo.PhotoSingle || !stripSequence {
+	if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
 		photo.PhotoName = fullBase
 	} else {
 		photo.PhotoName = fileBase
@@ -823,7 +826,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		log.Errorf("index: %s in %s (set download id)", err, logName)
 	}
 
-	if o.Single || photo.PhotoSingle {
+	if !o.Stack || photo.PhotoStack == entity.IsUnstacked {
 		// Do nothing.
 	} else if original, merged, err := photo.Merge(Config().Settings().StackMeta(), Config().Settings().StackUUID()); err != nil {
 		log.Errorf("index: %s in %s (merge)", err.Error(), logName)

@@ -201,8 +201,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
-	if f.Single {
-		s = s.Where("photos.photo_single = 1")
+	if f.Stackable {
+		s = s.Where("photos.photo_stack > -1")
+	} else if f.Unstacked {
+		s = s.Where("photos.photo_stack = -1")
 	}
 
 	if f.Country != "" {

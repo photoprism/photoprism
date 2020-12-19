@@ -31,8 +31,8 @@ type PhotoResult struct {
 	PhotoMonth       int           `json:"Month"`
 	PhotoDay         int           `json:"Day"`
 	PhotoCountry     string        `json:"Country"`
+	PhotoStack       int8          `json:"Stack"`
 	PhotoFavorite    bool          `json:"Favorite"`
-	PhotoSingle      bool          `json:"Single"`
 	PhotoPrivate     bool          `json:"Private"`
 	PhotoIso         int           `json:"Iso"`
 	PhotoFocalLength int           `json:"FocalLength"`

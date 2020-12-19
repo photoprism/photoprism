@@ -57,8 +57,8 @@ type Photo struct {
 	PhotoPath        string       `gorm:"type:VARBINARY(500);index:idx_photos_path_name;" json:"Path" yaml:"-"`
 	PhotoName        string       `gorm:"type:VARBINARY(255);index:idx_photos_path_name;" json:"Name" yaml:"-"`
 	OriginalName     string       `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	PhotoStack       int8         `json:"Stack" yaml:"Stack"`
 	PhotoFavorite    bool         `json:"Favorite" yaml:"Favorite,omitempty"`
-	PhotoSingle      bool         `json:"Single" yaml:"Single,omitempty"`
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool         `json:"Panorama" yaml:"Panorama,omitempty"`
@@ -102,11 +102,10 @@ type Photo struct {
 }
 
 // NewPhoto creates a photo entity.
-func NewPhoto(single bool) Photo {
-	return Photo{
+func NewPhoto(stackable bool) Photo {
+	m := Photo{
 		PhotoTitle:   TitleUnknown,
 		PhotoType:    TypeImage,
-		PhotoSingle:  single,
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
 		LensID:       UnknownLens.ID,
@@ -117,6 +116,14 @@ func NewPhoto(single bool) Photo {
 		Cell:         &UnknownLocation,
 		Place:        &UnknownPlace,
 	}
+
+	if stackable {
+		m.PhotoStack = IsStackable
+	} else {
+		m.PhotoStack = IsUnstacked
+	}
+
+	return m
 }
 
 // SavePhotoForm saves a model in the database using form data.

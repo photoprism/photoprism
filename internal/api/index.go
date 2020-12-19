@@ -50,7 +50,7 @@ func StartIndexing(router *gin.RouterGroup) {
 			Rescan:  f.Rescan,
 			Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
 			Path:    filepath.Clean(f.Path),
-			Single:  false,
+			Stack:   true,
 		}
 
 		if len(indOpt.Path) > 1 {

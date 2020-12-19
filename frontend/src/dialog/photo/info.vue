@@ -88,6 +88,21 @@
           <td>{{ model.CameraSerial }}
           </td>
         </tr>
+        <tr v-if="model.Stack < 1">
+          <td>
+            <translate>Stackable</translate>
+          </td>
+          <td>
+            <v-switch
+                @change="save"
+                hide-details
+                :true-value="0"
+                :false-value="-1"
+                v-model="model.Stack"
+                :label="model.Stack ? $gettext('Yes') : $gettext('No')"
+            ></v-switch>
+          </td>
+        </tr>
         <tr>
           <td>
             <translate>Favorite</translate>
@@ -111,19 +126,6 @@
                 hide-details
                 v-model="model.Private"
                 :label="model.Private ? $gettext('Yes') : $gettext('No')"
-            ></v-switch>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <translate>Unstacked</translate>
-          </td>
-          <td>
-            <v-switch
-                @change="save"
-                hide-details
-                v-model="model.Single"
-                :label="model.Single ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>
