@@ -26,6 +26,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetStatus(v1)
 		api.GetErrors(v1)
 
+		api.GetConfig(v1)
 		api.GetConfigOptions(v1)
 		api.SaveConfigOptions(v1)
 
