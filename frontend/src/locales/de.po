@@ -586,7 +586,7 @@ msgstr "Auflösung"
 
 #: src/pages/settings/advanced.vue:142
 msgid "Disable Backups"
-msgstr "Keine Sicherheitskopien anlegen"
+msgstr "Keine Sicherungskopien anlegen"
 
 #: src/pages/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
@@ -633,7 +633,7 @@ msgstr "Entdecken"
 #: src/pages/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
-"Keine YAML-Sicherungskopien für Metadaten von Bilder und Alben erstellen."
+"Keine YAML-Sicherungskopien für Metadaten von Bildern und Alben erstellen."
 
 #: src/pages/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -644,8 +644,8 @@ msgstr ""
 #: src/pages/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
-"Nur lesend auf den Original-Ordner zugreifen. Deaktiviert den Import, "
-"Upload, und das Löschen."
+"Nur lesend auf die Original-Ordner zugreifen. Deaktiviert den Import, Upload "
+"und das Löschen von Bildern."
 
 #: src/pages/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
