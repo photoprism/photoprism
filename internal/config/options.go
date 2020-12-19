@@ -79,7 +79,7 @@ type Options struct {
 	DatabaseConnsIdle int    `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
 	HttpHost          string `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort          int    `yaml:"HttpPort" json:"-" flag:"http-port"`
-	HttpMode          string `yaml:"HttpMode" json:"HttpMode" flag:"http-mode"`
+	HttpMode          string `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	SipsBin           string `yaml:"SipsBin" json:"-" flag:"sips-bin"`
 	RawtherapeeBin    string `yaml:"RawtherapeeBin" json:"-" flag:"rawtherapee-bin"`
 	DarktableBin      string `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
@@ -87,7 +87,6 @@ type Options struct {
 	HeifConvertBin    string `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	FFmpegBin         string `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
 	ExifToolBin       string `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
-	BackupYaml        bool   `yaml:"BackupYaml" json:"BackupYaml" flag:"backup-yaml"`
 	DetachServer      bool   `yaml:"DetachServer" json:"-" flag:"detach-server"`
 	DownloadToken     string `yaml:"DownloadToken" json:"-" flag:"download-token"`
 	PreviewToken      string `yaml:"PreviewToken" json:"-" flag:"preview-token"`

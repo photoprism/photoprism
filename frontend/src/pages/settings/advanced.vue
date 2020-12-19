@@ -6,7 +6,7 @@
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
-            <translate>Global Options</translate>
+            <translate>Options</translate>
           </h3>
         </v-card-title>
 
@@ -59,13 +59,13 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.DisableWebDAV"
+                  v-model="settings.DisableBackups"
                   :disabled="busy"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Disable WebDAV')"
-                  :hint="$gettext('Disable built-in WebDAV server. Requires a restart.')"
-                  prepend-icon="sync_disabled"
+                  :label="$gettext('Disable Backups')"
+                  :hint="$gettext('Don\'t backup photo and album metadata to YAML files.')"
+                  prepend-icon="healing"
                   persistent-hint
                   @change="onChange"
               >
@@ -74,13 +74,13 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.DisableBackups"
+                  v-model="settings.DisableWebDAV"
                   :disabled="busy"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Disable Backups')"
-                  :hint="$gettext('Don\'t backup photo and album metadata to YAML files.')"
-                  prepend-icon="update_disabled"
+                  :label="$gettext('Disable WebDAV')"
+                  :hint="$gettext('Disable built-in WebDAV server. Requires a restart.')"
+                  prepend-icon="sync_disabled"
                   persistent-hint
                   @change="onChange"
               >
@@ -133,6 +133,139 @@
             </v-flex>
           </v-layout>
         </v-card-actions>
+
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0" :title="$gettext('Thumbnail Generation')">
+            <translate>Downscaling</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 class="px-2 pb-2">
+              <v-select
+                  v-model="settings.ThumbFilter"
+                  :disabled="busy"
+                  :items="options.ThumbFilters()"
+                  :label="$gettext('Resampling')"
+                  color="secondary-dark"
+                  background-color="secondary-light"
+                  hide-details box
+                  @change="onChange"
+              ></v-select>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg8 class="px-2 pb-2">
+              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('Uncached Size Limit: %{n}px'), {n: settings.ThumbSizeUncached}) }}</v-subheader>
+              <v-slider
+                  v-model="settings.ThumbSizeUncached"
+                  :min="720"
+                  :max="7680"
+                  :step="20"
+                  hide-details
+                  :disabled="busy"
+                  class="mt-0"
+                  @change="onChange"
+              ></v-slider>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.ThumbUncached"
+                  :disabled="busy"
+                  class="ma-0 pa-0"
+                  color="secondary-dark"
+                  :label="$gettext('Uncached Previews')"
+                  :hint="$gettext('On-demand rendering requires a powerful CPU and is not recommended for smaller home servers, or NAS devices.')"
+                  prepend-icon="memory"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg8 class="px-2 pb-2">
+              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('Pre-Render Size Limit: %{n}px'), {n: settings.ThumbSize}) }}</v-subheader>
+              <v-slider
+                  v-model="settings.ThumbSize"
+                  :min="720"
+                  :max="7680"
+                  :step="20"
+                  hide-details
+                  :disabled="busy"
+                  class="mt-0"
+                  @change="onChange"
+              ></v-slider>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
+              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('JPEG Quality: %{n}'), {n: settings.JpegQuality}) }}</v-subheader>
+              <v-slider
+                  v-model="settings.JpegQuality"
+                  :min="25"
+                  :max="100"
+                  :disabled="busy"
+                  class="mt-0"
+                  @change="onChange"
+              ></v-slider>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0">
+            <translate>RAW Conversion</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 sm8 class="px-2 pb-2">
+              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('JPEG Size Limit: %{n}px'), {n: settings.JpegSize}) }}</v-subheader>
+              <v-flex class="pr-3">
+                <v-slider
+                    v-model="settings.JpegSize"
+                    :min="720"
+                    :max="30000"
+                    :step="20"
+                    :disabled="busy"
+                    class="mt-0"
+                    @change="onChange"
+                ></v-slider>
+              </v-flex>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.DarktablePresets"
+                  :disabled="busy"
+                  class="ma-0 pa-0"
+                  color="secondary-dark"
+                  :label="$gettext('Darktable Presets')"
+                  :hint="$gettext('Disables concurrent conversion in favor of using existing presents. Only one file can be converted at a time.')"
+                  prepend-icon="tonality"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+
+        <!--
+        TODO: Remaining options
+
+        OriginalsLimit: 0,
+        Workers: 0,
+        WakeupInterval: 0,
+
+        SiteUrl: config.values.siteUrl,
+        SitePreview: config.values.siteUrl,
+        SiteTitle: config.values.siteTitle,
+        SiteCaption: config.values.siteCaption,
+        SiteDescription: config.values.siteDescription,
+        SiteAuthor: config.values.siteAuthor,
+        -->
       </v-card>
     </v-form>
 

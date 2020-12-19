@@ -277,3 +277,10 @@ export const FeedbackCategories = () => [
   { value: "donations", text: $gettext("Donations") },
   { value: "other", text: $gettext("Other") },
 ];
+
+export const ThumbFilters = () => [
+  { value: "blackman", text: $gettext("Blackman: Lanczos Modification, Less Ringing Artifacts") },
+  { value: "lanczos", text: $gettext("Lanczos: Detail Preservation, Minimal Artifacts") },
+  { value: "cubic", text: $gettext("Cubic: Moderate Quality, Good Performance") },
+  { value: "linear", text: $gettext("Linear: Very Smooth, Best Performance") },
+];
