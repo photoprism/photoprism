@@ -18,7 +18,7 @@
                   :disabled="busy"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Debug Mode')"
+                  :label="$gettext('Debug Logs')"
                   :hint="$gettext('Shows more detailed log messages.')"
                   prepend-icon="pest_control"
                   persistent-hint
@@ -33,9 +33,9 @@
                   :disabled="busy"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Read-Only Library')"
-                  :hint="$gettext('Don\'t modify originals directory. Disables import and upload.')"
-                  prepend-icon="camera_roll"
+                  :label="$gettext('Read-Only Mode')"
+                  :hint="$gettext('Don\'t modify originals folder. Disables import, upload, and delete.')"
+                  prepend-icon="do_not_touch"
                   persistent-hint
                   @change="onChange"
               >

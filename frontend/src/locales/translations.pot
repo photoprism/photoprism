@@ -584,7 +584,7 @@ msgid "Day"
 msgstr ""
 
 #: src/pages/settings/advanced.vue:76
-msgid "Debug Mode"
+msgid "Debug Logs"
 msgstr ""
 
 #: src/options/options.js:143
@@ -676,7 +676,7 @@ msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 
 #: src/pages/settings/advanced.vue:99
-msgid "Don't modify originals directory. Disables import and upload."
+msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 
 #: src/pages/settings/advanced.vue:231
@@ -1670,7 +1670,7 @@ msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 
 #: src/pages/settings/advanced.vue:98
-msgid "Read-Only Library"
+msgid "Read-Only Mode"
 msgstr ""
 
 #: src/component/album/toolbar.vue:37
