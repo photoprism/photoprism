@@ -351,15 +351,36 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Format == "count" {
+		if f.Merged {
+			s = s.Group("photos.id")
+		}
 		var count int
 		s = s.Count(&count)
 		return nil, count, nil
 	}
 
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
+	if f.Merged {
+		subQuery := s.Select("photos.id").Group("photos.id")
+		if f.Count > 0 && f.Count <= MaxResults {
+			subQuery = subQuery.Limit(f.Count).Offset(f.Offset)
+		} else {
+			subQuery = subQuery.Limit(MaxResults).Offset(f.Offset)
+		}
+		var photos entity.Photos
+		if err := subQuery.Scan(&photos).Error; err != nil {
+			return nil, 0, err
+		}
+		ids := make([]uint, len(photos))
+		for i, p := range photos {
+			ids[i] = p.ID
+		}
+		s = s.Where("photos.id IN (?)", ids)
 	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
+		if f.Count > 0 && f.Count <= MaxResults {
+			s = s.Limit(f.Count).Offset(f.Offset)
+		} else {
+			s = s.Limit(MaxResults).Offset(f.Offset)
+		}
 	}
 
 	if err := s.Scan(&results).Error; err != nil {
