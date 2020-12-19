@@ -39,7 +39,7 @@ func GetConfig(router *gin.RouterGroup) {
 // GET /api/v1/config/options
 func GetConfigOptions(router *gin.RouterGroup) {
 	router.GET("/config/options", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceConfig, acl.ActionRead)
+		s := Auth(SessionID(c), acl.ResourceConfigOptions, acl.ActionRead)
 		conf := service.Config()
 
 		if s.Invalid() || conf.Public() || conf.DisableSettings() {
@@ -54,7 +54,7 @@ func GetConfigOptions(router *gin.RouterGroup) {
 // POST /api/v1/config/options
 func SaveConfigOptions(router *gin.RouterGroup) {
 	router.POST("/config/options", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceConfig, acl.ActionUpdate)
+		s := Auth(SessionID(c), acl.ResourceConfigOptions, acl.ActionUpdate)
 		conf := service.Config()
 
 		if s.Invalid() || conf.Public() || conf.DisableSettings() {
