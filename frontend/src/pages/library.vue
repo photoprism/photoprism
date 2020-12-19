@@ -60,7 +60,7 @@ export default {
         'label': this.$gettext('Index'),
         'class': '',
         'path': '/library',
-        'icon': 'update',
+        'icon': 'camera_roll',
         'readonly': true,
         'demo': true,
       },
