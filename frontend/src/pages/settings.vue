@@ -28,10 +28,10 @@
 
 <script>
 import General from "pages/settings/general.vue";
-import Library from "pages/settings/library.vue";
+import Index from "pages/settings/index.vue";
+import Advanced from "pages/settings/advanced.vue";
 import Sync from "pages/settings/sync.vue";
 import Account from "pages/settings/account.vue";
-import Advanced from "pages/settings/advanced.vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -65,11 +65,11 @@ export default {
         'demo': true,
       },
       {
-        'name': 'settings-library',
-        'component': Library,
-        'label': this.$gettext('Library'),
+        'name': 'settings-index',
+        'component': Index,
+        'label': this.$gettext('Index'),
         'class': '',
-        'path': '/settings/library',
+        'path': '/settings/index',
         'icon': 'camera_roll',
         'public': true,
         'admin': true,

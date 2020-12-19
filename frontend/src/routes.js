@@ -282,8 +282,8 @@ export default [
     props: { tab: "settings-general" },
   },
   {
-    name: "settings_library",
-    path: "/settings/library",
+    name: "settings_index",
+    path: "/settings/index",
     component: Settings,
     meta: {
       title: $gettext("Settings"),
@@ -291,7 +291,7 @@ export default [
       settings: true,
       background: "application-light",
     },
-    props: { tab: "settings-library" },
+    props: { tab: "settings-index" },
   },
   {
     name: "settings_sync",
