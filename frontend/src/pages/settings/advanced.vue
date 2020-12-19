@@ -156,7 +156,9 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg8 class="px-2 pb-2">
-              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('Uncached Size Limit: %{n}px'), {n: settings.ThumbSizeUncached}) }}</v-subheader>
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext('Uncached Size Limit: %{n}px'), {n: settings.ThumbSizeUncached}) }}
+              </v-subheader>
               <v-slider
                   v-model="settings.ThumbSizeUncached"
                   :min="720"
@@ -185,7 +187,9 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg8 class="px-2 pb-2">
-              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('Pre-Render Size Limit: %{n}px'), {n: settings.ThumbSize}) }}</v-subheader>
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext('Pre-Render Size Limit: %{n}px'), {n: settings.ThumbSize}) }}
+              </v-subheader>
               <v-slider
                   v-model="settings.ThumbSize"
                   :min="720"
@@ -199,7 +203,9 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg4 class="px-2 pb-2">
-              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('JPEG Quality: %{n}'), {n: settings.JpegQuality}) }}</v-subheader>
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext('JPEG Quality: %{n}'), {n: settings.JpegQuality}) }}
+              </v-subheader>
               <v-slider
                   v-model="settings.JpegQuality"
                   :min="25"
@@ -221,7 +227,9 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm8 class="px-2 pb-2">
-              <v-subheader class="pa-0">{{ $gettextInterpolate($gettext('JPEG Size Limit: %{n}px'), {n: settings.JpegSize}) }}</v-subheader>
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext('JPEG Size Limit: %{n}px'), {n: settings.JpegSize}) }}
+              </v-subheader>
               <v-flex class="pr-3">
                 <v-slider
                     v-model="settings.JpegSize"
@@ -289,7 +297,7 @@ export default {
       config: this.$config.values,
       settings: new ConfigOptions(),
       options: options,
-      busy: false,
+      busy: this.$config.values.demo,
     };
   },
   created() {
@@ -297,9 +305,18 @@ export default {
   },
   methods: {
     load() {
-      this.settings.load();
+      if (this.busy || this.config.demo) {
+        return;
+      }
+
+      this.busy = true;
+      this.settings.load().finally(() => this.busy = false);
     },
     onChange() {
+      if (this.busy || this.config.demo) {
+        return;
+      }
+
       this.busy = true;
 
       this.settings.save().then(() => {

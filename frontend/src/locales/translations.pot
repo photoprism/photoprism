@@ -1661,7 +1661,7 @@ msgstr ""
 msgid "Raw"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:90
+#: src/pages/settings/advanced.vue:96
 msgid "RAW Conversion"
 msgstr ""
 
@@ -1858,7 +1858,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:30
+#: src/pages/settings/advanced.vue:39
 #: src/pages/settings/general.vue:45
 #: src/pages/settings/library.vue:47
 msgid "Settings saved"

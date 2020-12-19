@@ -84,7 +84,7 @@ export default {
         'icon': 'build',
         'public': false,
         'admin': true,
-        'demo': false,
+        'demo': true,
       },
       {
         'name': 'settings-sync',
