@@ -99,7 +99,7 @@
                 :true-value="0"
                 :false-value="-1"
                 v-model="model.Stack"
-                :label="model.Stack ? $gettext('Yes') : $gettext('No')"
+                :label="model.Stack > - 1 ? $gettext('Yes') : $gettext('No')"
             ></v-switch>
           </td>
         </tr>

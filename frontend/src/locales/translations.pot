@@ -838,7 +838,7 @@ msgstr ""
 msgid "Fast"
 msgstr ""
 
-#: src/dialog/photo/info.vue:80
+#: src/dialog/photo/info.vue:88
 msgid "Favorite"
 msgstr ""
 
@@ -1326,11 +1326,11 @@ msgid "Newest first"
 msgstr ""
 
 #: src/dialog/photo/archive.vue:15
-#: src/dialog/photo/info.vue:261
-#: src/dialog/photo/info.vue:280
-#: src/dialog/photo/info.vue:299
-#: src/dialog/photo/info.vue:318
-#: src/dialog/photo/info.vue:337
+#: src/dialog/photo/info.vue:265
+#: src/dialog/photo/info.vue:285
+#: src/dialog/photo/info.vue:304
+#: src/dialog/photo/info.vue:323
+#: src/dialog/photo/info.vue:342
 msgid "No"
 msgstr ""
 
@@ -1521,7 +1521,7 @@ msgstr ""
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 
-#: src/model/photo.js:674
+#: src/model/photo.js:675
 msgid "Photo"
 msgstr ""
 
@@ -1620,7 +1620,7 @@ msgstr ""
 
 #: src/component/navigation.vue:139
 #: src/component/navigation.vue:534
-#: src/dialog/photo/info.vue:88
+#: src/dialog/photo/info.vue:96
 #: src/routes.js:178
 msgid "Private"
 msgstr ""
@@ -1956,6 +1956,10 @@ msgstr ""
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr ""
 
+#: src/dialog/photo/info.vue:80
+msgid "Stackable"
+msgstr ""
+
 #: src/component/navigation.vue:88
 #: src/pages/settings/index.vue:33
 msgid "Stacks"
@@ -2128,12 +2132,12 @@ msgstr ""
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:21
 #: src/model/album.js:122
-#: src/model/photo.js:406
-#: src/model/photo.js:420
-#: src/model/photo.js:443
-#: src/model/photo.js:457
-#: src/model/photo.js:534
-#: src/model/photo.js:547
+#: src/model/photo.js:407
+#: src/model/photo.js:421
+#: src/model/photo.js:444
+#: src/model/photo.js:458
+#: src/model/photo.js:535
+#: src/model/photo.js:548
 #: src/options/options.js:16
 #: src/options/options.js:30
 #: src/options/options.js:47
@@ -2152,10 +2156,6 @@ msgstr ""
 
 #: src/dialog/photo/files.vue:39
 msgid "Unstack"
-msgstr ""
-
-#: src/dialog/photo/info.vue:96
-msgid "Unstacked"
 msgstr ""
 
 #: src/dialog/photo/files.vue:165
@@ -2245,8 +2245,8 @@ msgid "Username"
 msgstr ""
 
 #: src/model/file.js:172
-#: src/model/photo.js:494
-#: src/model/photo.js:508
+#: src/model/photo.js:495
+#: src/model/photo.js:509
 #: src/options/options.js:227
 msgid "Video"
 msgstr ""
@@ -2291,11 +2291,11 @@ msgstr ""
 #: src/dialog/photo/files.vue:105
 #: src/dialog/photo/files.vue:113
 #: src/dialog/photo/files.vue:151
-#: src/dialog/photo/info.vue:261
-#: src/dialog/photo/info.vue:280
-#: src/dialog/photo/info.vue:299
-#: src/dialog/photo/info.vue:318
-#: src/dialog/photo/info.vue:337
+#: src/dialog/photo/info.vue:265
+#: src/dialog/photo/info.vue:285
+#: src/dialog/photo/info.vue:304
+#: src/dialog/photo/info.vue:323
+#: src/dialog/photo/info.vue:342
 msgid "Yes"
 msgstr ""
 
