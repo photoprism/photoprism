@@ -1,9 +1,10 @@
 <template>
-  <v-form lazy-validation dense
-          ref="form" autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
+  <v-form ref="form" lazy-validation
+          dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
     <v-toolbar :dense="$vuetify.breakpoint.smAndDown" flat color="secondary">
-      <v-text-field class="pt-3 pr-3 input-search"
+      <v-text-field v-model="filter.q"
+                    class="pt-3 pr-3 input-search"
                     browser-autocomplete="off"
                     single-line
                     :label="$gettext('Search')"
@@ -11,106 +12,105 @@
                     clearable
                     color="secondary-dark"
                     @click:clear="clearQuery"
-                    v-model="filter.q"
                     @keyup.enter.native="filterChange"
       ></v-text-field>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="$gettext('Reload')">
+      <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh">
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="$gettext('Toggle View')">
+      <v-btn v-if="settings.view === 'cards'" icon :title="$gettext('Toggle View')" @click.stop="setView('list')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="$gettext('Toggle View')">
+      <v-btn v-else-if="settings.view === 'list'" icon :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn icon v-else @click.stop="setView('cards')" :title="$gettext('Toggle View')">
+      <v-btn v-else icon :title="$gettext('Toggle View')" @click.stop="setView('cards')">
         <v-icon>view_column</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down action-upload" :title="$gettext('Upload')">
+      <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
+             :title="$gettext('Upload')" @click.stop="showUpload()">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="searchExpanded = !searchExpanded" class="p-expand-search"
-             :title="$gettext('Expand Search')">
+      <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')"
+             @click.stop="searchExpanded = !searchExpanded">
         <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
       </v-btn>
     </v-toolbar>
 
-    <v-card class="pt-1"
+    <v-card v-show="searchExpanded"
+            class="pt-1"
             flat
-            color="secondary-light"
-            v-show="searchExpanded">
+            color="secondary-light">
       <v-card-text>
         <v-layout row wrap>
           <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
-            <v-select @change="dropdownChange"
+            <v-select v-model="filter.country"
                       :label="$gettext('Country')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="ID"
                       item-text="Name"
-                      v-model="filter.country"
                       :items="countryOptions"
                       class="input-countries"
+                      @change="dropdownChange"
             >
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
-            <v-select @change="dropdownChange"
+            <v-select v-model="filter.camera"
                       :label="$gettext('Camera')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="ID"
                       item-text="Name"
-                      v-model="filter.camera"
-                      :items="cameraOptions">
+                      :items="cameraOptions"
+                      @change="dropdownChange">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
-            <v-select @change="dropdownChange"
-                      :label="$gettext('View')"
-                      flat solo hide-details
-                      color="secondary-dark"
+            <v-select id="viewSelect"
                       v-model="settings.view"
+                      :label="$gettext('View')" flat solo
+                      hide-details
+                      color="secondary-dark"
                       :items="options.views"
-                      id="viewSelect">
+                      @change="dropdownChange">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
-            <v-select @change="dropdownChange"
+            <v-select v-model="filter.order"
                       :label="$gettext('Sort Order')"
                       flat solo hide-details
                       color="secondary-dark"
-                      v-model="filter.order"
-                      :items="options.sorting">
+                      :items="options.sorting"
+                      @change="dropdownChange">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
-            <v-select @change="dropdownChange"
+            <v-select v-model="filter.year"
                       :label="$gettext('Year')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="value"
                       item-text="text"
-                      v-model="filter.year"
-                      :items="yearOptions()">
+                      :items="yearOptions()"
+                      @change="dropdownChange">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
-            <v-select @change="dropdownChange"
+            <v-select v-model="filter.month"
                       :label="$gettext('Month')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="value"
                       item-text="text"
-                      v-model="filter.month"
-                      :items="monthOptions()">
+                      :items="monthOptions()"
+                      @change="dropdownChange">
             </v-select>
           </v-flex>
           <!-- v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
@@ -125,25 +125,25 @@
               </v-select>
           </v-flex -->
           <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
-            <v-select @change="dropdownChange"
+            <v-select v-model="filter.color"
                       :label="$gettext('Color')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="Slug"
                       item-text="Name"
-                      v-model="filter.color"
-                      :items="colorOptions()">
+                      :items="colorOptions()"
+                      @change="dropdownChange">
             </v-select>
           </v-flex>
           <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
-            <v-select @change="dropdownChange"
+            <v-select v-model="filter.label"
                       :label="$gettext('Category')"
                       flat solo hide-details
                       color="secondary-dark"
                       item-value="Slug"
                       item-text="Name"
-                      v-model="filter.label"
-                      :items="categoryOptions">
+                      :items="categoryOptions"
+                      @change="dropdownChange">
             </v-select>
           </v-flex>
         </v-layout>
@@ -156,7 +156,7 @@ import Event from "pubsub-js";
 import * as options from "options/options";
 
 export default {
-  name: 'p-photo-toolbar',
+  name: 'PPhotoToolbar',
   props: {
     dirty: Boolean,
     filter: Object,

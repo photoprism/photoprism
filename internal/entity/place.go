@@ -2,15 +2,18 @@ package entity
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/maps"
 )
 
+var placeMutex = sync.Mutex{}
+
 // Place used to associate photos to places
 type Place struct {
 	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	PlaceLabel    string    `gorm:"type:VARBINARY(768);unique_index;" json:"Label" yaml:"Label"`
+	PlaceLabel    string    `gorm:"type:VARBINARY(755);unique_index;" json:"Label" yaml:"Label"`
 	PlaceCity     string    `gorm:"type:VARCHAR(255);" json:"City" yaml:"City,omitempty"`
 	PlaceState    string    `gorm:"type:VARCHAR(255);" json:"State" yaml:"State,omitempty"`
 	PlaceCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
@@ -69,18 +72,21 @@ func (m *Place) Find() error {
 
 // Create inserts a new row to the database.
 func (m *Place) Create() error {
+	placeMutex.Lock()
+	defer placeMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 
 // FirstOrCreatePlace fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePlace(m *Place) *Place {
 	if m.ID == "" {
-		log.Errorf("places: place must not be empty (first or create)")
+		log.Errorf("places: place must not be empty (find or create)")
 		return nil
 	}
 
 	if m.PlaceLabel == "" {
-		log.Errorf("places: label must not be empty (first or create place %s)", m.ID)
+		log.Errorf("places: label must not be empty (find or create place %s)", m.ID)
 		return nil
 	}
 

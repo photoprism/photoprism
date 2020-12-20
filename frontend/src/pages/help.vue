@@ -21,17 +21,17 @@
 </template>
 
 <script>
-    import PHelpWebsockets from "./help/websockets.vue"
+import PHelpWebsockets from "./help/websockets.vue"
 
-    export default {
-        name: 'p-page-help',
-        components: {
-            PHelpWebsockets
-        },
-        data() {
-            return {
-                topic: this.$route.params.pathMatch,
-            };
-        },
+export default {
+  name: 'p-page-help',
+  components: {
+    PHelpWebsockets
+  },
+  data() {
+    return {
+      topic: this.$route.params.pathMatch,
     };
+  },
+};
 </script>

@@ -4,6 +4,8 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 )
 
+type PhotoLabels []PhotoLabel
+
 // PhotoLabel represents the many-to-many relation between Photo and label.
 // Labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
@@ -71,7 +73,7 @@ func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 	} else if err := Db().Where("photo_id = ? AND label_id = ?", m.PhotoID, m.LabelID).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("photo-label: %s (first or create)", createErr)
+		log.Errorf("photo-label: %s (find or create)", createErr)
 	}
 
 	return nil

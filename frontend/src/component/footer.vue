@@ -5,7 +5,7 @@
         <v-flex xs12 sm6 class="px-0 pb-2 body-1">
           <router-link to="/about">
             PhotoPrism®
-            {{$config.get("version")}}
+            {{ $config.get("version") }}
             <br>© 2018-2020 Michael Mayer
           </router-link>
         </v-flex>
@@ -24,11 +24,11 @@
 </template>
 
 <script>
-    export default {
-        name: 'p-about-footer',
-        data() {
-            return {};
-        },
-        methods: {},
-    };
+export default {
+  name: 'p-about-footer',
+  data() {
+    return {};
+  },
+  methods: {},
+};
 </script>

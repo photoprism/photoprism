@@ -30,18 +30,19 @@
                   <v-list-tile>
                     <v-list-tile-content>
                       <v-list-tile-title>
-                        <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
+                        <translate
+                            key="Press enter to create a new album.">Press enter to create a new album.</translate>
                       </v-list-tile-title>
                     </v-list-tile-content>
                   </v-list-tile>
                 </template>
                 <template v-slot:selection="data">
                   <v-chip
-                          :key="JSON.stringify(data.item)"
-                          :selected="data.selected"
-                          :disabled="data.disabled"
-                          class="v-chip--select-multi"
-                          @input="data.parent.selectItem(data.item)"
+                      :key="JSON.stringify(data.item)"
+                      :selected="data.selected"
+                      :disabled="data.disabled"
+                      class="v-chip--select-multi"
+                      @input="data.parent.selectItem(data.item)"
                   >
                     <v-icon class="pr-1">folder_special</v-icon>
                     {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
@@ -69,11 +70,11 @@
             </p>
 
             <v-btn
-                    :disabled="busy"
-                    color="secondary-dark"
-                    class="white--text ml-0 mt-2 action-upload"
-                    depressed
-                    @click.stop="uploadDialog()"
+                :disabled="busy"
+                color="secondary-dark"
+                class="white--text ml-0 mt-2 action-upload"
+                depressed
+                @click.stop="uploadDialog()"
             >
               <translate key="Upload">Upload</translate>
               <v-icon right dark>cloud_upload</v-icon>
@@ -86,167 +87,167 @@
   </v-dialog>
 </template>
 <script>
-    import Api from "common/api";
-    import Notify from "common/notify";
-    import Album from "model/album";
+import Api from "common/api";
+import Notify from "common/notify";
+import Album from "model/album";
 
-    export default {
-        name: 'p-tab-upload',
-        props: {
-            show: Boolean,
-        },
-        data() {
-            return {
-                albums: [],
-                selectedAlbums: [],
-                selected: [],
-                loading: false,
-                uploads: [],
-                busy: false,
-                indexing: false,
-                failed: false,
-                current: 0,
-                total: 0,
-                completed: 0,
-                started: 0,
-                review: this.$config.feature("review"),
-                safe: !this.$config.get("uploadNSFW"),
-            }
-        },
-        methods: {
-            findAlbums(q) {
-                if (this.loading) {
-                    return;
+export default {
+  name: 'p-tab-upload',
+  props: {
+    show: Boolean,
+  },
+  data() {
+    return {
+      albums: [],
+      selectedAlbums: [],
+      selected: [],
+      loading: false,
+      uploads: [],
+      busy: false,
+      indexing: false,
+      failed: false,
+      current: 0,
+      total: 0,
+      completed: 0,
+      started: 0,
+      review: this.$config.feature("review"),
+      safe: !this.$config.get("uploadNSFW"),
+    }
+  },
+  methods: {
+    findAlbums(q) {
+      if (this.loading) {
+        return;
+      }
+
+      this.loading = true;
+
+      const params = {
+        q: q,
+        count: 1000,
+        offset: 0,
+        type: "album"
+      };
+
+      Album.search(params).then(response => {
+        this.loading = false;
+        this.albums = response.models;
+      }).catch(() => this.loading = false);
+    },
+    cancel() {
+      if (this.busy) {
+        Notify.info(this.$gettext("Uploading photos…"));
+        return;
+      }
+
+      this.$emit('cancel');
+    },
+    confirm() {
+      if (this.busy) {
+        Notify.info(this.$gettext("Uploading photos…"));
+        return;
+      }
+
+      this.$emit('confirm');
+    },
+    submit() {
+      // DO NOTHING
+    },
+    uploadDialog() {
+      this.$refs.upload.click();
+    },
+    reset() {
+      this.busy = false;
+      this.selected = [];
+      this.uploads = [];
+      this.indexing = false;
+      this.failed = false;
+      this.current = 0;
+      this.total = 0;
+      this.completed = 0;
+      this.started = 0;
+    },
+    upload() {
+      this.selected = this.$refs.upload.files;
+      this.total = this.selected.length;
+
+      if (this.total < 1) {
+        return;
+      }
+
+      this.started = Date.now();
+      this.selected = this.$refs.upload.files;
+      this.total = this.selected.length;
+      this.busy = true;
+      this.indexing = false;
+      this.failed = false;
+      this.current = 0;
+      this.completed = 0;
+      this.uploads = [];
+
+      Notify.info(this.$gettext("Uploading photos…"));
+
+      let addToAlbums = [];
+
+      if (this.selectedAlbums && this.selectedAlbums.length > 0) {
+        this.selectedAlbums.forEach((a) => {
+          if (typeof a === "string") {
+            addToAlbums.push(a)
+          } else if (a instanceof Album && a.UID) {
+            addToAlbums.push(a.UID)
+          }
+        });
+      }
+
+      async function performUpload(ctx) {
+        for (let i = 0; i < ctx.selected.length; i++) {
+          let file = ctx.selected[i];
+          let formData = new FormData();
+
+          ctx.current = i + 1;
+
+          formData.append('files', file);
+
+          await Api.post('upload/' + ctx.started,
+              formData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
                 }
+              }
+          ).then(() => {
+            ctx.completed = Math.round((ctx.current / ctx.total) * 100);
+          }).catch(() => {
+            ctx.completed = Math.round((ctx.current / ctx.total) * 100);
+          })
+        }
+      }
 
-                this.loading = true;
+      performUpload(this).then(() => {
+        this.indexing = true;
+        const ctx = this;
 
-                const params = {
-                    q: q,
-                    count: 1000,
-                    offset: 0,
-                    type: "album"
-                };
-
-                Album.search(params).then(response => {
-                    this.loading = false;
-                    this.albums = response.models;
-                }).catch(() => this.loading = false);
-            },
-            cancel() {
-                if (this.busy) {
-                    Notify.info(this.$gettext("Uploading photos…"));
-                    return;
-                }
-
-                this.$emit('cancel');
-            },
-            confirm() {
-                if (this.busy) {
-                    Notify.info(this.$gettext("Uploading photos…"));
-                    return;
-                }
-
-                this.$emit('confirm');
-            },
-            submit() {
-                // DO NOTHING
-            },
-            uploadDialog() {
-                this.$refs.upload.click();
-            },
-            reset() {
-                this.busy = false;
-                this.selected = [];
-                this.uploads = [];
-                this.indexing = false;
-                this.failed = false;
-                this.current = 0;
-                this.total = 0;
-                this.completed = 0;
-                this.started = 0;
-            },
-            upload() {
-                this.selected = this.$refs.upload.files;
-                this.total = this.selected.length;
-
-                if(this.total < 1) {
-                    return;
-                }
-
-                this.started = Date.now();
-                this.selected = this.$refs.upload.files;
-                this.total = this.selected.length;
-                this.busy = true;
-                this.indexing = false;
-                this.failed = false;
-                this.current = 0;
-                this.completed = 0;
-                this.uploads = [];
-
-                Notify.info(this.$gettext("Uploading photos…"));
-
-                let addToAlbums = [];
-
-                if (this.selectedAlbums && this.selectedAlbums.length > 0) {
-                    this.selectedAlbums.forEach((a) => {
-                        if (typeof a === "string") {
-                            addToAlbums.push(a)
-                        } else if (a instanceof Album && a.UID) {
-                            addToAlbums.push(a.UID)
-                        }
-                    });
-                }
-
-                async function performUpload(ctx) {
-                    for (let i = 0; i < ctx.selected.length; i++) {
-                        let file = ctx.selected[i];
-                        let formData = new FormData();
-
-                        ctx.current = i + 1;
-
-                        formData.append('files', file);
-
-                        await Api.post('upload/' + ctx.started,
-                            formData,
-                            {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            }
-                        ).then(() => {
-                            ctx.completed = Math.round((ctx.current / ctx.total) * 100);
-                        }).catch(() => {
-                            ctx.completed = Math.round((ctx.current / ctx.total) * 100);
-                        })
-                    }
-                }
-
-                performUpload(this).then(() => {
-                    this.indexing = true;
-                    const ctx = this;
-
-                    Api.post('import/upload/' + this.started, {
-                        move: true,
-                        albums: addToAlbums,
-                    }).then(() => {
-                        ctx.reset();
-                        Notify.success(ctx.$gettext("Upload complete"));
-                        ctx.$emit('confirm');
-                    }).catch(() => {
-                        ctx.reset();
-                        Notify.error(ctx.$gettext("Failure while importing uploaded files"));
-                    });
-                });
-            },
-        },
-        watch: {
-            show: function () {
-                this.reset();
-                this.review = this.$config.feature("review");
-                this.safe = !this.$config.get("uploadNSFW");
-                this.findAlbums("");
-            }
-        },
-    };
+        Api.post('import/upload/' + this.started, {
+          move: true,
+          albums: addToAlbums,
+        }).then(() => {
+          ctx.reset();
+          Notify.success(ctx.$gettext("Upload complete"));
+          ctx.$emit('confirm');
+        }).catch(() => {
+          ctx.reset();
+          Notify.error(ctx.$gettext("Failure while importing uploaded files"));
+        });
+      });
+    },
+  },
+  watch: {
+    show: function () {
+      this.reset();
+      this.review = this.$config.feature("review");
+      this.safe = !this.$config.get("uploadNSFW");
+      this.findAlbums("");
+    }
+  },
+};
 </script>

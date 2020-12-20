@@ -29,48 +29,48 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Event from "pubsub-js";
-import {$gettext} from "./vm";
+import { $gettext } from "./vm";
 
 const Notify = {
-    info: function (message) {
-        Event.publish("notify.info", {message});
-    },
-    warn: function (message) {
-        Event.publish("notify.warning", {message});
-    },
-    error: function (message) {
-        Event.publish("notify.error", {message});
-    },
-    success: function (message) {
-        Event.publish("notify.success", {message});
-    },
-    logout: function (message) {
-        Event.publish("notify.error", {message});
-        Event.publish("session.logout", {message});
-    },
-    ajaxStart: function() {
-        Event.publish("ajax.start");
-    },
-    ajaxEnd: function() {
-        Event.publish("ajax.end");
-    },
-    blockUI: function() {
-        const el = document.getElementById("busy-overlay");
+  info: function (message) {
+    Event.publish("notify.info", { message });
+  },
+  warn: function (message) {
+    Event.publish("notify.warning", { message });
+  },
+  error: function (message) {
+    Event.publish("notify.error", { message });
+  },
+  success: function (message) {
+    Event.publish("notify.success", { message });
+  },
+  logout: function (message) {
+    Event.publish("notify.error", { message });
+    Event.publish("session.logout", { message });
+  },
+  ajaxStart: function () {
+    Event.publish("ajax.start");
+  },
+  ajaxEnd: function () {
+    Event.publish("ajax.end");
+  },
+  blockUI: function () {
+    const el = document.getElementById("busy-overlay");
 
-        if(el) {
-            el.style.display = "block";
-        }
-    },
-    unblockUI: function() {
-        const el = document.getElementById("busy-overlay");
+    if (el) {
+      el.style.display = "block";
+    }
+  },
+  unblockUI: function () {
+    const el = document.getElementById("busy-overlay");
 
-        if(el) {
-            el.style.display = "none";
-        }
-    },
-    wait: function () {
-        this.warn($gettext("Busy, please wait…"));
-    },
+    if (el) {
+      el.style.display = "none";
+    }
+  },
+  wait: function () {
+    this.warn($gettext("Busy, please wait…"));
+  },
 };
 
 export default Notify;

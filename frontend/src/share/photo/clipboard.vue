@@ -46,7 +46,6 @@
 <script>
 import Api from "common/api";
 import Notify from "common/notify";
-import Event from "pubsub-js";
 
 export default {
   name: 'p-photo-clipboard',

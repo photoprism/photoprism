@@ -3,42 +3,44 @@
     <v-card raised elevation="24">
       <v-card-title primary-title>
         <div>
-          <h3 class="headline mx-2 my-0"><translate>Add Server</translate></h3>
+          <h3 class="headline mx-2 my-0">
+            <translate>Add Server</translate>
+          </h3>
         </div>
       </v-card-title>
       <v-card-text class="pt-0">
         <v-layout row wrap>
           <v-flex xs12 class="pa-2">
             <v-text-field
-                    hide-details
-                    browser-autocomplete="off"
-                    :label="$gettext('Service URL')"
-                    placeholder="https://www.example.com/"
-                    color="secondary-dark"
-                    v-model="model.AccURL"
+                hide-details
+                browser-autocomplete="off"
+                :label="$gettext('Service URL')"
+                placeholder="https://www.example.com/"
+                color="secondary-dark"
+                v-model="model.AccURL"
             ></v-text-field>
           </v-flex>
           <v-flex xs12 sm6 class="pa-2">
             <v-text-field
-                    hide-details
-                    browser-autocomplete="off"
-                    :label="$gettext('Username')"
-                    placeholder="optional"
-                    color="secondary-dark"
-                    v-model="model.AccUser"
+                hide-details
+                browser-autocomplete="off"
+                :label="$gettext('Username')"
+                placeholder="optional"
+                color="secondary-dark"
+                v-model="model.AccUser"
             ></v-text-field>
           </v-flex>
           <v-flex xs12 sm6 class="pa-2">
             <v-text-field
-                    hide-details
-                    browser-autocomplete="off"
-                    :label="$gettext('Password')"
-                    placeholder="optional"
-                    color="secondary-dark"
-                    v-model="model.AccPass"
-                    :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                    :type="showPassword ? 'text' : 'password'"
-                    @click:append="showPassword = !showPassword"
+                hide-details
+                browser-autocomplete="off"
+                :label="$gettext('Password')"
+                placeholder="optional"
+                color="secondary-dark"
+                v-model="model.AccPass"
+                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                :type="showPassword ? 'text' : 'password'"
+                @click:append="showPassword = !showPassword"
             ></v-text-field>
           </v-flex>
           <v-flex xs12 text-xs-left class="pa-2 caption">
@@ -61,41 +63,41 @@
   </v-dialog>
 </template>
 <script>
-    import Account from "model/account";
+import Account from "model/account";
 
-    export default {
-        name: 'p-account-create-dialog',
-        props: {
-            show: Boolean,
-        },
-        data() {
-            return {
-                showPassword: false,
-                loading: false,
-                search: null,
-                model: new Account(),
-                label: {
-                    cancel: this.$gettext("Cancel"),
-                    confirm: this.$gettext("Connect"),
-                }
-            }
-        },
-        methods: {
-            cancel() {
-                this.$emit('cancel');
-            },
-            confirm() {
-                this.loading = true;
-
-                this.model.save().then((a) => {
-                    this.loading = false;
-                    this.$emit('confirm', a.UID);
-                });
-            },
-        },
-        watch: {
-            show: function (show) {
-            }
-        },
+export default {
+  name: 'p-account-create-dialog',
+  props: {
+    show: Boolean,
+  },
+  data() {
+    return {
+      showPassword: false,
+      loading: false,
+      search: null,
+      model: new Account(),
+      label: {
+        cancel: this.$gettext("Cancel"),
+        confirm: this.$gettext("Connect"),
+      }
     }
+  },
+  methods: {
+    cancel() {
+      this.$emit('cancel');
+    },
+    confirm() {
+      this.loading = true;
+
+      this.model.save().then((a) => {
+        this.loading = false;
+        this.$emit('confirm', a.UID);
+      });
+    },
+  },
+  watch: {
+    show: function (show) {
+    }
+  },
+}
 </script>

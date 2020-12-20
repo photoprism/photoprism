@@ -31,90 +31,96 @@ https://docs.photoprism.org/developer-guide/
 import RestModel from "model/rest";
 import Form from "common/form";
 import Api from "common/api";
-import {$gettext} from "common/vm";
+import { $gettext } from "common/vm";
 
 export class User extends RestModel {
-    getDefaults() {
-        return {
-            UID: "",
-            Address: {},
-            MotherUID: "",
-            FatherUID: "",
-            GlobalUID: "",
-            FullName: "",
-            NickName: "",
-            MaidenName: "",
-            ArtistName: "",
-            UserName: "",
-            UserStatus: "",
-            UserDisabled: false,
-            UserSettings: "",
-            PrimaryEmail: "",
-            EmailConfirmed: false,
-            BackupEmail: "",
-            PersonURL: "",
-            PersonPhone: "",
-            PersonStatus: "",
-            PersonAvatar: "",
-            PersonLocation: "",
-            PersonBio: "",
-            BusinessURL: "",
-            BusinessPhone: "",
-            BusinessEmail: "",
-            CompanyName: "",
-            DepartmentName: "",
-            JobTitle: "",
-            BirthYear: -1,
-            BirthMonth: -1,
-            BirthDay: -1,
-            TermsAccepted: false,
-            IsArtist: false,
-            IsSubject: false,
-            RoleAdmin: false,
-            RoleGuest: false,
-            RoleChild: false,
-            RoleFamily: false,
-            RoleFriend: false,
-            WebDAV: false,
-            StoragePath: "",
-            CanInvite: false,
-            InviteToken: "",
-            InvitedBy: "",
-            CreatedAt: "",
-            UpdatedAt: "",
-        };
-    }
+  getDefaults() {
+    return {
+      UID: "",
+      Address: {},
+      MotherUID: "",
+      FatherUID: "",
+      GlobalUID: "",
+      FullName: "",
+      NickName: "",
+      MaidenName: "",
+      ArtistName: "",
+      UserName: "",
+      UserStatus: "",
+      UserDisabled: false,
+      UserSettings: "",
+      PrimaryEmail: "",
+      EmailConfirmed: false,
+      BackupEmail: "",
+      PersonURL: "",
+      PersonPhone: "",
+      PersonStatus: "",
+      PersonAvatar: "",
+      PersonLocation: "",
+      PersonBio: "",
+      BusinessURL: "",
+      BusinessPhone: "",
+      BusinessEmail: "",
+      CompanyName: "",
+      DepartmentName: "",
+      JobTitle: "",
+      BirthYear: -1,
+      BirthMonth: -1,
+      BirthDay: -1,
+      TermsAccepted: false,
+      IsArtist: false,
+      IsSubject: false,
+      RoleAdmin: false,
+      RoleGuest: false,
+      RoleChild: false,
+      RoleFamily: false,
+      RoleFriend: false,
+      WebDAV: false,
+      StoragePath: "",
+      CanInvite: false,
+      InviteToken: "",
+      InvitedBy: "",
+      CreatedAt: "",
+      UpdatedAt: "",
+    };
+  }
 
-    getEntityName() {
-        return this.FullName ? this.FullName : this.UserName;
-    }
+  getEntityName() {
+    return this.FullName ? this.FullName : this.UserName;
+  }
 
-    getRegisterForm() {
-        return Api.options(this.getEntityResource() + "/register").then(response => Promise.resolve(new Form(response.data)));
-    }
+  getRegisterForm() {
+    return Api.options(this.getEntityResource() + "/register").then((response) =>
+      Promise.resolve(new Form(response.data))
+    );
+  }
 
-    getProfileForm() {
-        return Api.options(this.getEntityResource() + "/profile").then(response => Promise.resolve(new Form(response.data)));
-    }
+  getProfileForm() {
+    return Api.options(this.getEntityResource() + "/profile").then((response) =>
+      Promise.resolve(new Form(response.data))
+    );
+  }
 
-    changePassword(oldPassword, newPassword) {
-        return Api.put(this.getEntityResource() + "/password", {
-            old: oldPassword,
-            new: newPassword,
-        }).then((response) => Promise.resolve(response.data));
-    }
+  changePassword(oldPassword, newPassword) {
+    return Api.put(this.getEntityResource() + "/password", {
+      old: oldPassword,
+      new: newPassword,
+    }).then((response) => Promise.resolve(response.data));
+  }
 
-    saveProfile() {
-        return Api.post(this.getEntityResource() + "/profile", this.getValues()).then((response) => Promise.resolve(this.setValues(response.data)));
-    }
+  saveProfile() {
+    return Api.post(this.getEntityResource() + "/profile", this.getValues()).then((response) =>
+      Promise.resolve(this.setValues(response.data))
+    );
+  }
 
-    static getCollectionResource() {
-        return "users";
-    }
+  static getCollectionResource() {
+    return "users";
+  }
 
-    static getModelName() {
-        return $gettext("User");
-    }
+  static getModelName() {
+    return $gettext("User");
+  }
 }
 
 export default User;

@@ -12,9 +12,9 @@ import (
 
 func TestGetAccounts(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, _ := NewApiTest()
+		app, router, _, sess := NewAdminApiTest()
 		GetAccounts(router)
-		r := PerformRequest(app, "GET", "/api/v1/accounts?count=10")
+		r := AuthenticatedRequest(app, "GET", "/api/v1/accounts?count=10", sess)
 		val := gjson.Get(r.Body.String(), "#(AccName=\"Test Account\").AccURL")
 		count := gjson.Get(r.Body.String(), "#")
 		assert.LessOrEqual(t, int64(1), count.Int())

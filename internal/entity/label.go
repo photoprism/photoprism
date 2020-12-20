@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"sync"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -11,17 +12,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+var labelMutex = sync.Mutex{}
+
 type Labels []Label
 
 // Label is used for photo, album and location categorization
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
-	LabelUID         string     `gorm:"type:varbinary(42);unique_index;" json:"UID" yaml:"UID"`
-	LabelSlug        string     `gorm:"type:varbinary(255);unique_index;" json:"Slug" yaml:"-"`
-	CustomSlug       string     `gorm:"type:varbinary(255);index;" json:"CustomSlug" yaml:"-"`
+	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	LabelSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
+	CustomSlug       string     `gorm:"type:VARBINARY(255);index;" json:"CustomSlug" yaml:"-"`
 	LabelName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
-	LabelPriority    int        `gorm:"type:VARCHAR(255);" json:"Priority" yaml:"Priority,omitempty"`
-	LabelFavorite    bool       `gorm:"type:VARCHAR(255);" json:"Favorite" yaml:"Favorite,omitempty"`
+	LabelPriority    int        `json:"Priority" yaml:"Priority,omitempty"`
+	LabelFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
 	LabelDescription string     `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	LabelNotes       string     `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
 	LabelCategories  []*Label   `gorm:"many2many:categories;association_jointable_foreignkey:category_id" json:"-" yaml:"-"`
@@ -65,11 +68,17 @@ func NewLabel(name string, priority int) *Label {
 
 // Save updates the existing or inserts a new label.
 func (m *Label) Save() error {
+	labelMutex.Lock()
+	defer labelMutex.Unlock()
+
 	return Db().Save(m).Error
 }
 
 // Create inserts the label to the database.
 func (m *Label) Create() error {
+	labelMutex.Lock()
+	defer labelMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 
@@ -118,7 +127,7 @@ func FirstOrCreateLabel(m *Label) *Label {
 	} else if err := UnscopedDb().Where("label_slug = ? OR custom_slug = ?", m.LabelSlug, m.CustomSlug).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("label: %s (first or create %s)", createErr, m.LabelSlug)
+		log.Errorf("label: %s (find or create %s)", createErr, m.LabelSlug)
 	}
 
 	return nil

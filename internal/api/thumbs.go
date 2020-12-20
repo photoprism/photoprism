@@ -159,13 +159,13 @@ func GetThumb(router *gin.RouterGroup) {
 		}
 
 		// Cache thumbnail filename.
-		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareFileName()}); err == nil {
+		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareBase()}); err == nil {
 			logError("thumbnail", cache.Set(cacheKey, cached))
 			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
 		if c.Query("download") != "" {
-			c.FileAttachment(thumbnail, f.ShareFileName())
+			c.FileAttachment(thumbnail, f.ShareBase())
 		} else {
 			c.File(thumbnail)
 		}
@@ -272,13 +272,13 @@ func AlbumThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareFileName()}); err == nil {
+		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareBase()}); err == nil {
 			logError("album-thumbnail", cache.Set(cacheKey, cached))
 			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
 		if c.Query("download") != "" {
-			c.FileAttachment(thumbnail, f.ShareFileName())
+			c.FileAttachment(thumbnail, f.ShareBase())
 		} else {
 			c.File(thumbnail)
 		}
@@ -387,13 +387,13 @@ func LabelThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareFileName()}); err == nil {
+		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareBase()}); err == nil {
 			logError("label-thumbnail", cache.Set(cacheKey, cached))
 			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
 		if c.Query("download") != "" {
-			c.FileAttachment(thumbnail, f.ShareFileName())
+			c.FileAttachment(thumbnail, f.ShareBase())
 		} else {
 			c.File(thumbnail)
 		}

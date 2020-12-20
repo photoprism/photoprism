@@ -117,7 +117,7 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 		Where("albums.deleted_at IS NULL")
 
 	if f.ID != "" {
-		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, ","))
+		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, OrSep))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -127,20 +127,20 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 	}
 
 	if f.Query != "" {
-		likeString := "%" + strings.ToLower(f.Query) + "%"
-		s = s.Where("LOWER(albums.album_title) LIKE ? OR LOWER(albums.album_location) LIKE ?", likeString, likeString)
+		likeString := "%" + f.Query + "%"
+		s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", likeString, likeString)
 	}
 
 	if f.Type != "" {
-		s = s.Where("albums.album_type IN (?)", strings.Split(f.Type, ","))
+		s = s.Where("albums.album_type IN (?)", strings.Split(f.Type, OrSep))
 	}
 
 	if f.Category != "" {
-		s = s.Where("albums.album_category IN (?)", strings.Split(f.Category, ","))
+		s = s.Where("albums.album_category IN (?)", strings.Split(f.Category, OrSep))
 	}
 
 	if f.Location != "" {
-		s = s.Where("albums.album_location IN (?)", strings.Split(f.Location, ","))
+		s = s.Where("albums.album_location IN (?)", strings.Split(f.Location, OrSep))
 	}
 
 	if f.Favorite {
@@ -193,4 +193,10 @@ func UpdateAlbumDates() error {
 	default:
 		return nil
 	}
+}
+
+// GetAlbums returns a slice of albums.
+func GetAlbums(offset, limit int) (results entity.Albums, err error) {
+	err = UnscopedDb().Table("albums").Select("*").Offset(offset).Limit(limit).Find(&results).Error
+	return results, err
 }

@@ -13,7 +13,7 @@ PhotoPrism® is a server-based application for browsing, organizing and sharing 
 It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
 Say goodbye to solutions that force you to upload your visual memories to the cloud!
 
-![](https://dl.photoprism.org/assets/img/preview-cyano.jpg)
+![](https://dl.photoprism.org/assets/img/preview-moonlight.jpg)
 
 ## Key Features ##
 

@@ -53,7 +53,7 @@ func FirstOrCreateAddress(m *Address) *Address {
 	} else if err := Db().Where("cell_id = ?", m.CellID).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("address: %s (first or create %s)", createErr, m.String())
+		log.Errorf("address: %s (find or create %s)", createErr, m.String())
 	}
 
 	return nil

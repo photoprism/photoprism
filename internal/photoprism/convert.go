@@ -269,6 +269,10 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		defer c.cmdMutex.Unlock()
 	}
 
+	if fs.FileExists(jpegName) {
+		return NewMediaFile(jpegName)
+	}
+
 	// Fetch command output.
 	var out bytes.Buffer
 	var stderr bytes.Buffer
@@ -348,6 +352,10 @@ func (c *Convert) ToAvc(video *MediaFile) (*MediaFile, error) {
 		// See https://photo.stackexchange.com/questions/105969/darktable-cli-fails-because-of-locked-database-file
 		c.cmdMutex.Lock()
 		defer c.cmdMutex.Unlock()
+	}
+
+	if fs.FileExists(avcName) {
+		return NewMediaFile(avcName)
 	}
 
 	// Fetch command output.

@@ -21,7 +21,7 @@ require (
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/golang/geo v0.0.0-20200730024412-e86565bf3f35
 	github.com/golang/protobuf v1.4.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20200929001750-55940b489b0e
+	github.com/google/open-location-code/go v0.0.0-20201207181708-05e278b06e60
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.9.0
 	github.com/h2non/filetype v1.1.0
@@ -51,17 +51,16 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/studio-b12/gowebdav v0.0.0-20200929080739-bdacfab94796
 	github.com/tensorflow/tensorflow v1.15.2
-	github.com/tidwall/gjson v1.6.3
+	github.com/tidwall/gjson v1.6.4
 	github.com/tidwall/match v1.0.2 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
-	golang.org/x/crypto v0.0.0-20201112155050-0c6587e931a9
+	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
-	golang.org/x/sys v0.0.0-20201008063127-280f808b4a53 // indirect
+	golang.org/x/net v0.0.0-20201216054612-986b41b23924
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.12
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )
 

@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -98,7 +100,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), ","))
+		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), OrSep))
 	}
 
 	if f.Favorite {
@@ -106,12 +108,12 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.Country != "" {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), ","))
+		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), OrSep))
 	}
 
 	// Filter by media type.
 	if f.Type != "" {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), ","))
+		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), OrSep))
 	}
 
 	if f.Video {
@@ -129,19 +131,22 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
-		} else if strings.Contains(p, ",") {
-			s = s.Where("photos.photo_path IN (?)", strings.Split(p, ","))
+		} else if strings.Contains(p, OrSep) {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, OrSep))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}
 	}
 
-	if f.Name != "" {
-		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(f.Name, "*", "%"))
+	if strings.Contains(f.Name, OrSep) {
+		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, OrSep))
+	} else if f.Name != "" {
+		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
 	}
 
 	// Filter by status.
 	if f.Archived {
+		s = s.Where("photos.photo_quality > -1")
 		s = s.Where("photos.deleted_at IS NOT NULL")
 	} else {
 		s = s.Where("photos.deleted_at IS NULL")

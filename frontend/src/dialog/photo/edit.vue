@@ -21,13 +21,13 @@
         </v-toolbar-items>
       </v-toolbar>
       <v-tabs
-              v-model="active"
-              flat
-              grow
-              color="secondary"
-              slider-color="secondary-dark"
-              :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
-              class="form"
+          v-model="active"
+          flat
+          grow
+          color="secondary"
+          slider-color="secondary-dark"
+          :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
+          class="form"
       >
         <v-tab id="tab-details" ripple>
           <translate key="Details">Details</translate>
@@ -60,7 +60,7 @@
           </v-tab-item>
 
           <v-tab-item lazy v-if="$config.feature('edit')">
-            <p-tab-photo-info :model="model" :uid="uid"  :key="uid" @close="close"></p-tab-photo-info>
+            <p-tab-photo-info :model="model" :uid="uid" :key="uid" @close="close"></p-tab-photo-info>
           </v-tab-item>
         </v-tabs-items>
       </v-tabs>
@@ -68,104 +68,104 @@
   </v-dialog>
 </template>
 <script>
-    import Photo from "model/photo";
-    import PhotoDetails from "./details.vue";
-    import PhotoLabels from "./labels.vue";
-    import PhotoFiles from "./files.vue";
-    import PhotoInfo from "./info.vue";
+import Photo from "model/photo";
+import PhotoDetails from "./details.vue";
+import PhotoLabels from "./labels.vue";
+import PhotoFiles from "./files.vue";
+import PhotoInfo from "./info.vue";
 
-    export default {
-        name: 'p-photo-edit-dialog',
-        props: {
-            index: Number,
-            show: Boolean,
-            selection: Array,
-            album: Object,
-        },
-        components: {
-            'p-tab-photo-details': PhotoDetails,
-            'p-tab-photo-labels': PhotoLabels,
-            'p-tab-photo-files': PhotoFiles,
-            'p-tab-photo-info': PhotoInfo,
-        },
-        computed: {
-            title: function () {
-                if (this.model && this.model.Title) {
-                    return this.model.Title
-                }
+export default {
+  name: 'p-photo-edit-dialog',
+  props: {
+    index: Number,
+    show: Boolean,
+    selection: Array,
+    album: Object,
+  },
+  components: {
+    'p-tab-photo-details': PhotoDetails,
+    'p-tab-photo-labels': PhotoLabels,
+    'p-tab-photo-files': PhotoFiles,
+    'p-tab-photo-info': PhotoInfo,
+  },
+  computed: {
+    title: function () {
+      if (this.model && this.model.Title) {
+        return this.model.Title
+      }
 
-                this.$gettext("Edit Photo");
-            },
-            isPrivate: function () {
-                if (this.model && this.model.Private && this.$config.settings().features.private) {
-                    return this.model.Private
-                }
+      this.$gettext("Edit Photo");
+    },
+    isPrivate: function () {
+      if (this.model && this.model.Private && this.$config.settings().features.private) {
+        return this.model.Private
+      }
 
-                return false;
-            },
-        },
-        data() {
-            return {
-                selected: 0,
-                selectedId: "",
-                model: new Photo,
-                uid: "",
-                loading: false,
-                search: null,
-                items: [],
-                readonly: this.$config.get("readonly"),
-                active: this.tab,
-            }
-        },
-        methods: {
-            changePath: function (path) {
-                /* if (this.$route.path !== path) {
-                    this.$router.replace(path)
-                } */
-            },
-            close() {
-                this.$emit('close');
-            },
-            prev() {
-                if (this.selected > 0) {
-                    this.find(this.selected - 1);
-                }
-            },
-            next() {
-                if(!this.selection) return;
-
-                if (this.selected < this.selection.length) {
-                    this.find(this.selected + 1);
-                }
-            },
-            find(index) {
-                if (this.loading) {
-                    return;
-                }
-
-                if (!this.selection || !this.selection[index]) {
-                    this.$notify.error("Invalid photo selected");
-                    return
-                }
-
-                this.loading = true;
-                this.selected = index;
-                this.selectedId = this.selection[index];
-
-                this.model.find(this.selectedId).then(model => {
-                    model.refreshFileAttr();
-                    this.model = model;
-                    this.loading = false;
-                    this.uid = this.selectedId;
-                }).catch(() => this.loading = false);
-            },
-        },
-        watch: {
-            show: function (show) {
-                if (show) {
-                    this.find(this.index);
-                }
-            }
-        },
+      return false;
+    },
+  },
+  data() {
+    return {
+      selected: 0,
+      selectedId: "",
+      model: new Photo,
+      uid: "",
+      loading: false,
+      search: null,
+      items: [],
+      readonly: this.$config.get("readonly"),
+      active: this.tab,
     }
+  },
+  methods: {
+    changePath: function (path) {
+      /* if (this.$route.path !== path) {
+          this.$router.replace(path)
+      } */
+    },
+    close() {
+      this.$emit('close');
+    },
+    prev() {
+      if (this.selected > 0) {
+        this.find(this.selected - 1);
+      }
+    },
+    next() {
+      if (!this.selection) return;
+
+      if (this.selected < this.selection.length) {
+        this.find(this.selected + 1);
+      }
+    },
+    find(index) {
+      if (this.loading) {
+        return;
+      }
+
+      if (!this.selection || !this.selection[index]) {
+        this.$notify.error("Invalid photo selected");
+        return
+      }
+
+      this.loading = true;
+      this.selected = index;
+      this.selectedId = this.selection[index];
+
+      this.model.find(this.selectedId).then(model => {
+        model.refreshFileAttr();
+        this.model = model;
+        this.loading = false;
+        this.uid = this.selectedId;
+      }).catch(() => this.loading = false);
+    },
+  },
+  watch: {
+    show: function (show) {
+      if (show) {
+        this.find(this.index);
+      }
+    }
+  },
+}
 </script>

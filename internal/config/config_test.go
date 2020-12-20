@@ -63,7 +63,7 @@ func TestConfig_TensorFlowVersion(t *testing.T) {
 func TestConfig_TensorFlowDisabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	version := c.TensorFlowOff()
+	version := c.DisableTensorFlow()
 	assert.Equal(t, false, version)
 }
 
@@ -77,13 +77,13 @@ func TestConfig_Copyright(t *testing.T) {
 func TestConfig_ConfigFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.ConfigFile(), "/storage/testdata/settings/photoprism.yml")
+	assert.Contains(t, c.ConfigFile(), "/storage/testdata/config/options.yml")
 }
 
 func TestConfig_SettingsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.SettingsPath(), "/storage/testdata/settings")
+	assert.Contains(t, c.ConfigPath(), "/storage/testdata/config")
 }
 
 func TestConfig_BackupPath(t *testing.T) {
@@ -114,29 +114,22 @@ func TestConfig_DetachServer(t *testing.T) {
 func TestConfig_HttpServerHost(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	host := c.HttpServerHost()
+	host := c.HttpHost()
 	assert.Equal(t, "0.0.0.0", host)
 }
 
 func TestConfig_HttpServerPort(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	port := c.HttpServerPort()
+	port := c.HttpPort()
 	assert.Equal(t, 2342, port)
 }
 
 func TestConfig_HttpServerMode(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	mode := c.HttpServerMode()
+	mode := c.HttpMode()
 	assert.Equal(t, "release", mode)
-}
-
-func TestConfig_HttpServerPassword(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	password := c.HttpServerPassword()
-	assert.Equal(t, "", password)
 }
 
 func TestConfig_OriginalsPath(t *testing.T) {
@@ -256,6 +249,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.NotEmpty(t, cc.JSHash)
 	assert.NotEmpty(t, cc.CSSHash)
 	assert.Equal(t, true, cc.Debug)
+	assert.Equal(t, false, cc.Demo)
 	assert.Equal(t, false, cc.ReadOnly)
 }
 
@@ -273,18 +267,16 @@ func TestConfig_WakeupInterval(t *testing.T) {
 func TestConfig_GeoApi(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "", c.GeoApi())
-	c.params.GeoApi = "places"
 	assert.Equal(t, "places", c.GeoApi())
-	c.params.GeoApi = "osm"
-	assert.Equal(t, "osm", c.GeoApi())
+	c.options.DisablePlaces = true
+	assert.Equal(t, "", c.GeoApi())
 }
 
 func TestConfig_OriginalsLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, int64(-1), c.OriginalsLimit())
-	c.params.OriginalsLimit = 800
+	c.options.OriginalsLimit = 800
 	assert.Equal(t, int64(838860800), c.OriginalsLimit())
 }
 
@@ -292,16 +284,16 @@ func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
-	c.params.SiteUrl = "http://superhost:2342/"
+	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
 }
 
 func TestConfig_SitePreview(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "http://localhost:2342/static/img/preview.jpg", c.SitePreview())
-	c.params.SitePreview = "http://preview.jpg"
+	c.options.SitePreview = "http://preview.jpg"
 	assert.Equal(t, "http://preview.jpg", c.SitePreview())
-	c.params.SitePreview = "preview123.jpg"
+	c.options.SitePreview = "preview123.jpg"
 	assert.Equal(t, "http://localhost:2342/preview123.jpg", c.SitePreview())
 }
 
@@ -309,6 +301,6 @@ func TestConfig_SiteTitle(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "config.test", c.SiteTitle())
-	c.params.SiteTitle = "Cats"
+	c.options.SiteTitle = "Cats"
 	assert.Equal(t, "Cats", c.SiteTitle())
 }

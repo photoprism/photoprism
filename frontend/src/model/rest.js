@@ -32,173 +32,183 @@ import Api from "common/api";
 import Form from "common/form";
 import Model from "./model";
 import Link from "./link";
-import {$gettext} from "common/vm";
+import { $gettext } from "common/vm";
 
 export class Rest extends Model {
-    getId() {
-        return this.UID ? this.UID : this.ID;
+  getId() {
+    return this.UID ? this.UID : this.ID;
+  }
+
+  hasId() {
+    return !!this.getId();
+  }
+
+  getSlug() {
+    return this.Slug ? this.Slug : "";
+  }
+
+  clone() {
+    return new this.constructor(this.getValues());
+  }
+
+  find(id, params) {
+    return Api.get(this.getEntityResource(id), params).then((resp) =>
+      Promise.resolve(new this.constructor(resp.data))
+    );
+  }
+
+  save() {
+    if (this.hasId()) {
+      return this.update();
     }
 
-    hasId() {
-        return !!this.getId();
+    return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) =>
+      Promise.resolve(this.setValues(resp.data))
+    );
+  }
+
+  update() {
+    return Api.put(this.getEntityResource(), this.getValues(true)).then((resp) =>
+      Promise.resolve(this.setValues(resp.data))
+    );
+  }
+
+  remove() {
+    return Api.delete(this.getEntityResource()).then(() => Promise.resolve(this));
+  }
+
+  getEditForm() {
+    return Api.options(this.getEntityResource()).then((resp) =>
+      Promise.resolve(new Form(resp.data))
+    );
+  }
+
+  getEntityResource(id) {
+    if (!id) {
+      id = this.getId();
     }
 
-    getSlug() {
-        return this.Slug ? this.Slug : "";
+    return this.constructor.getCollectionResource() + "/" + id;
+  }
+
+  getEntityName() {
+    return this.constructor.getModelName() + " " + this.getId();
+  }
+
+  createLink(password, expires) {
+    return Api.post(this.getEntityResource() + "/links", {
+      Password: password ? password : "",
+      Expires: expires ? expires : 0,
+      Slug: this.getSlug(),
+      CanEdit: false,
+      CanComment: false,
+    }).then((resp) => Promise.resolve(new Link(resp.data)));
+  }
+
+  updateLink(link) {
+    let values = link.getValues(false);
+
+    if (link.Token) {
+      values["Token"] = link.getToken();
     }
 
-    clone() {
-        return new this.constructor(this.getValues());
+    if (link.Password) {
+      values["Password"] = link.Password;
     }
 
-    find(id, params) {
-        return Api.get(this.getEntityResource(id), params).then((resp) => Promise.resolve(new this.constructor(resp.data)));
-    }
+    return Api.put(this.getEntityResource() + "/links/" + link.getId(), values).then((resp) =>
+      Promise.resolve(link.setValues(resp.data))
+    );
+  }
 
-    save() {
-        if (this.hasId()) {
-            return this.update();
+  removeLink(link) {
+    return Api.delete(this.getEntityResource() + "/links/" + link.getId()).then((resp) =>
+      Promise.resolve(link.setValues(resp.data))
+    );
+  }
+
+  links() {
+    return Api.get(this.getEntityResource() + "/links").then((resp) => {
+      resp.models = [];
+      resp.count = resp.data.length;
+
+      for (let i = 0; i < resp.data.length; i++) {
+        resp.models.push(new Link(resp.data[i]));
+      }
+
+      return Promise.resolve(resp);
+    });
+  }
+
+  modelName() {
+    return this.constructor.getModelName();
+  }
+
+  static getCollectionResource() {
+    // Needs to be implemented!
+    return "";
+  }
+
+  static getCreateResource() {
+    return this.getCollectionResource();
+  }
+
+  static getCreateForm() {
+    return Api.options(this.getCreateResource()).then((resp) =>
+      Promise.resolve(new Form(resp.data))
+    );
+  }
+
+  static getModelName() {
+    return $gettext("Item");
+  }
+
+  static getSearchForm() {
+    return Api.options(this.getCollectionResource()).then((resp) =>
+      Promise.resolve(new Form(resp.data))
+    );
+  }
+
+  static limit() {
+    return 3333;
+  }
+
+  static search(params) {
+    const options = {
+      params: params,
+    };
+
+    return Api.get(this.getCollectionResource(), options).then((resp) => {
+      let count = resp.data.length;
+      let limit = 0;
+      let offset = 0;
+
+      if (resp.headers) {
+        if (resp.headers["x-count"]) {
+          count = parseInt(resp.headers["x-count"]);
         }
 
-        return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) => Promise.resolve(this.setValues(resp.data)));
-    }
-
-    update() {
-        return Api.put(this.getEntityResource(), this.getValues(true)).then((resp) => Promise.resolve(this.setValues(resp.data)));
-    }
-
-    remove() {
-        return Api.delete(this.getEntityResource()).then(() => Promise.resolve(this));
-    }
-
-    getEditForm() {
-        return Api.options(this.getEntityResource()).then(resp => Promise.resolve(new Form(resp.data)));
-    }
-
-    getEntityResource(id) {
-        if (!id) {
-            id = this.getId();
+        if (resp.headers["x-limit"]) {
+          limit = parseInt(resp.headers["x-limit"]);
         }
 
-        return this.constructor.getCollectionResource() + "/" + id;
-    }
-
-    getEntityName() {
-        return this.constructor.getModelName() + " " + this.getId();
-    }
-
-    createLink(password, expires) {
-        return Api
-            .post(this.getEntityResource() + "/links", {
-                "Password": password ? password : "",
-                "Expires": expires ? expires : 0,
-                "Slug": this.getSlug(),
-                "CanEdit": false,
-                "CanComment": false,
-            })
-            .then((resp) => Promise.resolve(new Link(resp.data)));
-    }
-
-    updateLink(link) {
-        let values = link.getValues(false);
-
-        if(link.Token) {
-            values["Token"] = link.getToken();
+        if (resp.headers["x-offset"]) {
+          offset = parseInt(resp.headers["x-offset"]);
         }
+      }
 
-        if(link.Password) {
-            values["Password"] = link.Password;
-        }
+      resp.models = [];
+      resp.count = count;
+      resp.limit = limit;
+      resp.offset = offset;
 
-        return Api
-            .put(this.getEntityResource() + "/links/" + link.getId(), values)
-            .then((resp) => Promise.resolve(link.setValues(resp.data)));
-    }
+      for (let i = 0; i < resp.data.length; i++) {
+        resp.models.push(new this(resp.data[i]));
+      }
 
-    removeLink(link) {
-        return Api
-            .delete(this.getEntityResource() + "/links/" + link.getId())
-            .then((resp) => Promise.resolve(link.setValues(resp.data)));
-    }
-
-    links() {
-        return Api.get(this.getEntityResource() + "/links").then((resp) => {
-            resp.models = [];
-            resp.count = resp.data.length;
-
-            for (let i = 0; i < resp.data.length; i++) {
-                resp.models.push(new Link(resp.data[i]));
-            }
-
-            return Promise.resolve(resp);
-        });
-    }
-
-    modelName() {
-        return this.constructor.getModelName();
-    }
-
-    static getCollectionResource() {
-        // Needs to be implemented!
-        return "";
-    }
-
-    static getCreateResource() {
-        return this.getCollectionResource();
-    }
-
-    static getCreateForm() {
-        return Api.options(this.getCreateResource()).then(resp => Promise.resolve(new Form(resp.data)));
-    }
-
-    static getModelName() {
-        return $gettext("Item");
-    }
-
-    static getSearchForm() {
-        return Api.options(this.getCollectionResource()).then(resp => Promise.resolve(new Form(resp.data)));
-    }
-
-    static limit() {
-        return 3333;
-    }
-
-    static search(params) {
-        const options = {
-            params: params,
-        };
-
-        return Api.get(this.getCollectionResource(), options).then((resp) => {
-            let count = resp.data.length;
-            let limit = 0;
-            let offset = 0;
-
-            if (resp.headers) {
-                if (resp.headers["x-count"]) {
-                    count = parseInt(resp.headers["x-count"]);
-                }
-
-                if (resp.headers["x-limit"]) {
-                    limit = parseInt(resp.headers["x-limit"]);
-                }
-
-                if (resp.headers["x-offset"]) {
-                    offset = parseInt(resp.headers["x-offset"]);
-                }
-            }
-
-            resp.models = [];
-            resp.count = count;
-            resp.limit = limit;
-            resp.offset = offset;
-
-            for (let i = 0; i < resp.data.length; i++) {
-                resp.models.push(new this(resp.data[i]));
-            }
-
-            return Promise.resolve(resp);
-        });
-    }
+      return Promise.resolve(resp);
+    });
+  }
 }
 
 export default Rest;

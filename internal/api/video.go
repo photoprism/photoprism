@@ -90,7 +90,7 @@ func GetVideo(router *gin.RouterGroup) {
 		c.Header("Content-Type", `video/mp4; codecs="avc1"`)
 
 		if c.Query("download") != "" {
-			c.FileAttachment(fileName, f.ShareFileName())
+			c.FileAttachment(fileName, f.ShareBase())
 		} else {
 			c.File(fileName)
 		}

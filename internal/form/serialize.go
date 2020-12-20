@@ -56,8 +56,8 @@ func Serialize(f interface{}, all bool) string {
 					q = append(q, fmt.Sprintf("%s:%f", fieldName, val))
 				}
 			case string:
-				if val := strings.TrimSpace(strings.ReplaceAll(fieldValue.String(), "\"", "")); val != "" {
-					if strings.Contains(val, " ") {
+				if val := strings.ReplaceAll(fieldValue.String(), "\"", ""); val != "" {
+					if strings.ContainsAny(val, " :'()[]-+`") {
 						q = append(q, fmt.Sprintf("%s:\"%s\"", fieldName, val))
 					} else {
 						q = append(q, fmt.Sprintf("%s:%s", fieldName, val))
@@ -139,7 +139,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 			isKeyValue = false
 			key = key[:0]
 			value = value[:0]
-		} else if char == ':' {
+		} else if char == ':' && !escaped {
 			isKeyValue = true
 		} else if char == '"' {
 			escaped = !escaped

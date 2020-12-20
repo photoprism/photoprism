@@ -30,208 +30,208 @@ https://docs.photoprism.org/developer-guide/
 
 import RestModel from "model/rest";
 import Api from "common/api";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 import Util from "common/util";
-import {config} from "../session";
-import {$gettext} from "common/vm";
+import { config } from "../session";
+import { $gettext } from "common/vm";
 
 export class File extends RestModel {
-    getDefaults() {
-        return {
-            UID: "",
-            PhotoUID: "",
-            InstanceID: "",
-            Root: "/",
-            Name: "",
-            OriginalName: "",
-            Hash: "",
-            Size: 0,
-            ModTime: 0,
-            Codec: "",
-            Type: "",
-            Mime: "",
-            Primary: false,
-            Sidecar: false,
-            Missing: false,
-            Portrait: false,
-            Video: false,
-            Duration: 0,
-            Width: 0,
-            Height: 0,
-            Orientation: 0,
-            Projection: "",
-            AspectRatio: 1.0,
-            MainColor: "",
-            Colors: "",
-            Luminance: "",
-            Diff: 0,
-            Chroma: 0,
-            Notes: "",
-            Error: "",
-            CreatedAt: "",
-            CreatedIn: 0,
-            UpdatedAt: "",
-            UpdatedIn: 0,
-            DeletedAt: "",
-        };
+  getDefaults() {
+    return {
+      UID: "",
+      PhotoUID: "",
+      InstanceID: "",
+      Root: "/",
+      Name: "",
+      OriginalName: "",
+      Hash: "",
+      Size: 0,
+      ModTime: 0,
+      Codec: "",
+      Type: "",
+      Mime: "",
+      Primary: false,
+      Sidecar: false,
+      Missing: false,
+      Portrait: false,
+      Video: false,
+      Duration: 0,
+      Width: 0,
+      Height: 0,
+      Orientation: 0,
+      Projection: "",
+      AspectRatio: 1.0,
+      MainColor: "",
+      Colors: "",
+      Luminance: "",
+      Diff: 0,
+      Chroma: 0,
+      Notes: "",
+      Error: "",
+      CreatedAt: "",
+      CreatedIn: 0,
+      UpdatedAt: "",
+      UpdatedIn: 0,
+      DeletedAt: "",
+    };
+  }
+
+  baseName(truncate) {
+    let result = this.Name;
+    const slash = result.lastIndexOf("/");
+
+    if (slash >= 0) {
+      result = this.Name.substring(slash + 1);
     }
 
-    baseName(truncate) {
-        let result = this.Name;
-        const slash = result.lastIndexOf("/");
-
-        if (slash >= 0) {
-            result = this.Name.substring(slash + 1);
-        }
-
-        if (truncate) {
-            result = Util.truncate(result, truncate, "…");
-        }
-
-        return result;
+    if (truncate) {
+      result = Util.truncate(result, truncate, "…");
     }
 
-    isFile() {
-        return true;
+    return result;
+  }
+
+  isFile() {
+    return true;
+  }
+
+  getEntityName() {
+    return this.Root + "/" + this.Name;
+  }
+
+  thumbnailUrl(size) {
+    if (this.Error) {
+      return "/api/v1/svg/broken";
+    } else if (this.Type === "raw") {
+      return "/api/v1/svg/raw";
     }
 
-    getEntityName() {
-        return this.Root + "/" + this.Name;
+    return `/api/v1/t/${this.Hash}/${config.previewToken()}/${size}`;
+  }
+
+  getDownloadUrl() {
+    return "/api/v1/dl/" + this.Hash + "?t=" + config.downloadToken();
+  }
+
+  download() {
+    if (!this.Hash) {
+      console.warn("no file hash found for download", this);
+      return;
     }
 
-    thumbnailUrl(size) {
-        if (this.Error) {
-            return "/api/v1/svg/broken";
-        } else if (this.Type === "raw") {
-            return "/api/v1/svg/raw";
-        }
+    let link = document.createElement("a");
+    link.href = this.getDownloadUrl();
+    link.download = this.baseName(this.Name);
+    link.click();
+  }
 
-        return `/api/v1/t/${this.Hash}/${config.previewToken()}/${size}`;
+  calculateSize(width, height) {
+    if (width >= this.Width && height >= this.Height) {
+      // Smaller
+      return { width: this.Width, height: this.Height };
     }
 
-    getDownloadUrl() {
-        return "/api/v1/dl/" + this.Hash + "?t=" + config.downloadToken();
+    const srcAspectRatio = this.Width / this.Height;
+    const maxAspectRatio = width / height;
+
+    let newW, newH;
+
+    if (srcAspectRatio > maxAspectRatio) {
+      newW = width;
+      newH = Math.round(newW / srcAspectRatio);
+    } else {
+      newH = height;
+      newW = Math.round(newH * srcAspectRatio);
     }
 
-    download() {
-        if (!this.Hash) {
-            console.warn("no file hash found for download", this);
-            return;
-        }
+    return { width: newW, height: newH };
+  }
 
-        let link = document.createElement("a");
-        link.href = this.getDownloadUrl();
-        link.download = this.baseName(this.Name);
-        link.click();
+  getDateString() {
+    return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
+  }
+
+  getInfo() {
+    let info = [];
+
+    if (this.Type) {
+      info.push(this.Type.toUpperCase());
     }
 
-    calculateSize(width, height) {
-        if (width >= this.Width && height >= this.Height) { // Smaller
-            return {width: this.Width, height: this.Height};
-        }
-
-        const srcAspectRatio = this.Width / this.Height;
-        const maxAspectRatio = width / height;
-
-        let newW, newH;
-
-        if (srcAspectRatio > maxAspectRatio) {
-            newW = width;
-            newH = Math.round(newW / srcAspectRatio);
-
-        } else {
-            newH = height;
-            newW = Math.round(newH * srcAspectRatio);
-        }
-
-        return {width: newW, height: newH};
+    if (this.Duration > 0) {
+      info.push(Util.duration(this.Duration));
     }
 
-    getDateString() {
-        return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
+    this.addSizeInfo(info);
+
+    return info.join(", ");
+  }
+
+  typeInfo() {
+    if (this.Video) {
+      return $gettext("Video");
+    } else if (this.Sidecar) {
+      return $gettext("Sidecar");
     }
 
-    getInfo() {
-        let info = [];
+    return this.Type.toUpperCase();
+  }
 
-        if (this.Type) {
-            info.push(this.Type.toUpperCase());
-        }
+  sizeInfo() {
+    let info = [];
 
-        if (this.Duration > 0) {
-            info.push(Util.duration(this.Duration));
-        }
+    this.addSizeInfo(info);
 
-        this.addSizeInfo(info);
+    return info.join(", ");
+  }
 
-        return info.join(", ");
+  addSizeInfo(info) {
+    if (this.Width && this.Height) {
+      info.push(this.Width + " × " + this.Height);
     }
 
-    typeInfo() {
-        if (this.Video) {
-            return $gettext("Video");
-        } else if (this.Sidecar) {
-            return $gettext("Sidecar");
-        }
+    if (this.Size > 102400) {
+      const size = Number.parseFloat(this.Size) / 1048576;
 
-        return this.Type.toUpperCase();
+      info.push(size.toFixed(1) + " MB");
+    } else if (this.Size) {
+      const size = Number.parseFloat(this.Size) / 1024;
+
+      info.push(size.toFixed(1) + " KB");
     }
+  }
 
-    sizeInfo() {
-        let info = [];
+  toggleLike() {
+    this.Favorite = !this.Favorite;
 
-        this.addSizeInfo(info);
-
-        return info.join(", ");
+    if (this.Favorite) {
+      return Api.post(this.getPhotoResource() + "/like");
+    } else {
+      return Api.delete(this.getPhotoResource() + "/like");
     }
+  }
 
-    addSizeInfo(info) {
-        if (this.Width && this.Height) {
-            info.push(this.Width + " × " + this.Height);
-        }
+  getPhotoResource() {
+    return "photos/" + this.PhotoUID;
+  }
 
-        if (this.Size > 102400) {
-            const size = Number.parseFloat(this.Size) / 1048576;
+  like() {
+    this.Favorite = true;
+    return Api.post(this.getPhotoResource() + "/like");
+  }
 
-            info.push(size.toFixed(1) + " MB");
-        } else if (this.Size) {
-            const size = Number.parseFloat(this.Size) / 1024;
+  unlike() {
+    this.Favorite = false;
+    return Api.delete(this.getPhotoResource() + "/like");
+  }
 
-            info.push(size.toFixed(1) + " KB");
-        }
-    }
+  static getCollectionResource() {
+    return "files";
+  }
 
-    toggleLike() {
-        this.Favorite = !this.Favorite;
-
-        if (this.Favorite) {
-            return Api.post(this.getPhotoResource() + "/like");
-        } else {
-            return Api.delete(this.getPhotoResource() + "/like");
-        }
-    }
-
-    getPhotoResource() {
-        return "photos/" + this.PhotoUID;
-    }
-
-    like() {
-        this.Favorite = true;
-        return Api.post(this.getPhotoResource() + "/like");
-    }
-
-    unlike() {
-        this.Favorite = false;
-        return Api.delete(this.getPhotoResource() + "/like");
-    }
-
-    static getCollectionResource() {
-        return "files";
-    }
-
-    static getModelName() {
-        return $gettext("File");
-    }
+  static getModelName() {
+    return $gettext("File");
+  }
 }
 
 export default File;

@@ -57,7 +57,7 @@ type User struct {
 	RoleFamily     bool       `json:"RoleFamily" yaml:"RoleFamily,omitempty"`
 	RoleFriend     bool       `json:"RoleFriend" yaml:"RoleFriend,omitempty"`
 	WebDAV         bool       `gorm:"column:webdav" json:"WebDAV" yaml:"WebDAV,omitempty"`
-	StoragePath    string     `gorm:"column:storage_path;type:VARBINARY(255);" json:"StoragePath" yaml:"StoragePath,omitempty"`
+	StoragePath    string     `gorm:"column:storage_path;type:VARBINARY(500);" json:"StoragePath" yaml:"StoragePath,omitempty"`
 	CanInvite      bool       `json:"CanInvite" yaml:"CanInvite,omitempty"`
 	InviteToken    string     `gorm:"type:VARBINARY(32);" json:"-" yaml:"-"`
 	InvitedBy      string     `gorm:"type:VARBINARY(32);" json:"-" yaml:"-"`

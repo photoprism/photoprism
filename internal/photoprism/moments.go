@@ -72,12 +72,12 @@ func (m *Moments) Start() (err error) {
 				Public: true,
 			}
 
-			if a := entity.FindFolderAlbum(mom.Slug(), mom.Path); a != nil {
+			if a := entity.FindFolderAlbum(mom.Path); a != nil {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-				} else if err := a.UpdatePath(mom.Path); err != nil {
-					log.Errorf("moments: %s (update folder album)", err.Error())
+				} else if err := a.UpdateFolder(mom.Path, f.Serialize()); err != nil {
+					log.Errorf("moments: %s (update folder)", err.Error())
 				} else {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
@@ -88,7 +88,7 @@ func (m *Moments) Start() (err error) {
 				a.AlbumCountry = mom.FolderCountry
 
 				if err := a.Create(); err != nil {
-					log.Errorf("moments: %s (create folder album)", err)
+					log.Errorf("moments: %s (create folder)", err)
 				} else {
 					log.Infof("moments: added %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				}
@@ -199,12 +199,12 @@ func (m *Moments) Start() (err error) {
 					continue
 				}
 
-				if err := form.ParseQueryString(&f); err != nil {
+				if err := form.Unserialize(&f, a.AlbumFilter); err != nil {
 					log.Errorf("moments: %s", err.Error())
 				} else {
 					w := txt.Words(f.Label)
 					w = append(w, mom.Label)
-					f.Label = strings.Join(txt.UniqueWords(w), ",")
+					f.Label = strings.Join(txt.UniqueWords(w), query.OrSep)
 				}
 
 				if err := a.Update("AlbumFilter", f.Serialize()); err != nil {
@@ -230,6 +230,12 @@ func (m *Moments) Start() (err error) {
 
 	if err := query.UpdateAlbumDates(); err != nil {
 		log.Errorf("moments: %s (update album dates)", err.Error())
+	}
+
+	if count, err := BackupAlbums(false); err != nil {
+		log.Errorf("moments: %s (backup albums)", err.Error())
+	} else if count > 0 {
+		log.Debugf("moments: %d albums saved as yaml files", count)
 	}
 
 	return nil

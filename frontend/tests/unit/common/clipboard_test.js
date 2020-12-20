@@ -20,14 +20,14 @@ describe("common/clipboard", () => {
     });
 
     it("should toggle model",  () => {
-        let spy = sinon.spy(console, "log");
+        // let spy = sinon.spy(console, "log");
         const storage = new StorageShim();
         const key = "clipboard";
 
         const clipboard = new Clipboard(storage, key);
         clipboard.clear();
         clipboard.toggle();
-        assert(spy.calledWith("Clipboard::toggle() - not a model:"));
+        // assert(spy.calledWith("Clipboard::isModel() - empty model"));
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
 
@@ -42,7 +42,7 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection[1], "ABC124");
         clipboard.toggle(photo);
         assert.equal(clipboard.selection[0], "ABC124");
-        console.log.restore();
+        // console.log.restore();
     });
 
     it("should toggle id",  () => {
@@ -58,7 +58,7 @@ describe("common/clipboard", () => {
     });
 
     it("should add model",  () => {
-        let spy = sinon.spy(console, "log");
+        //let spy = sinon.spy(console, "log");
         const storage = new StorageShim();
         const key = "clipboard";
 
@@ -67,7 +67,7 @@ describe("common/clipboard", () => {
         clipboard.add();
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
-        assert(spy.calledWith("Clipboard::add() - not a model:"));
+        // assert(spy.calledWith("Clipboard::add() - not a model:"));
 
         const values = {ID: 5, UID: "ABC124", Title: "Crazy Cat"};
         const photo = new Photo(values);
@@ -75,7 +75,7 @@ describe("common/clipboard", () => {
         assert.equal(clipboard.selection[0], "ABC124");
         clipboard.add(photo);
         assert.equal(clipboard.selection[0], "ABC124");
-        console.log.restore();
+        // console.log.restore();
     });
 
     it("should add id",  () => {
@@ -89,7 +89,7 @@ describe("common/clipboard", () => {
     });
 
     it("should test whether clipboard has model",  () => {
-        let spy = sinon.spy(console, "log");
+        // let spy = sinon.spy(console, "log");
         const storage = new StorageShim();
         const key = "clipboard";
 
@@ -98,7 +98,7 @@ describe("common/clipboard", () => {
         clipboard.has();
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
-        assert(spy.calledWith("Clipboard::has() - not a model:"));
+        // assert(spy.calledWith("Clipboard::has() - not a model:"));
 
         const values = {ID: 5, UID: "ABC124", Title: "Crazy Cat"};
         const photo = new Photo(values);
@@ -110,7 +110,7 @@ describe("common/clipboard", () => {
         const album = new Album(values2);
         const result2 = clipboard.has(album);
         assert.equal(result2, false);
-        console.log.restore();
+        // console.log.restore();
     });
 
     it("should test whether clipboard has id",  () => {
@@ -125,7 +125,7 @@ describe("common/clipboard", () => {
     });
 
     it("should remove model",  () => {
-        let spy = sinon.spy(console, "log");
+        // let spy = sinon.spy(console, "log");
         const storage = new StorageShim();
         const key = "clipboard";
 
@@ -134,7 +134,7 @@ describe("common/clipboard", () => {
         clipboard.remove();
         assert.equal(clipboard.storageKey, "clipboard");
         assert.equal(clipboard.selection, "");
-        assert(spy.calledWith("Clipboard::remove() - not a model:"));
+        // assert(spy.calledWith("Clipboard::remove() - not a model:"));
 
         const values = {ID: 5, UID: "ABC123", Title: "Crazy Cat"};
         const photo = new Photo(values);
@@ -147,7 +147,7 @@ describe("common/clipboard", () => {
         const album = new Album(values2);
         clipboard.remove(album);
         assert.equal(clipboard.selection, "");
-        console.log.restore();
+        // console.log.restore();
     });
 
     it("should set and get ids",  () => {

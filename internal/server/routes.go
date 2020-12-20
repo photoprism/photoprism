@@ -24,8 +24,16 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	v1 := router.Group("/api/v1")
 	{
 		api.GetStatus(v1)
-		api.GetConfig(v1)
+		api.GetErrors(v1)
 
+		api.GetConfig(v1)
+		api.GetConfigOptions(v1)
+		api.SaveConfigOptions(v1)
+
+		api.GetSettings(v1)
+		api.SaveSettings(v1)
+
+		api.ChangePassword(v1)
 		api.CreateSession(v1)
 		api.DeleteSession(v1)
 
@@ -108,10 +116,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteAccount(v1)
 		api.UpdateAccount(v1)
 
-		api.GetSettings(v1)
-		api.SaveSettings(v1)
-		api.ChangePassword(v1)
-		api.GetErrors(v1)
 		api.SendFeedback(v1)
 
 		api.GetSvg(v1)
@@ -127,14 +131,16 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	}
 
 	// WebDAV server for file management, sync and sharing.
-	WebDAV(conf.OriginalsPath(), router.Group("/originals", BasicAuth()), conf)
-	log.Info("webdav: /originals/ waiting for connection")
-
-	if conf.ReadOnly() {
-		log.Info("webdav: /import/ not available in read-only mode")
+	if conf.DisableWebDAV() {
+		log.Info("webdav: server disabled")
 	} else {
-		WebDAV(conf.ImportPath(), router.Group("/import", BasicAuth()), conf)
-		log.Info("webdav: /import/ waiting for connection")
+		WebDAV(conf.OriginalsPath(), router.Group("/originals", BasicAuth()), conf)
+		log.Info("webdav: /originals/ enabled, waiting for requests")
+
+		if conf.ImportPath() != "" {
+			WebDAV(conf.ImportPath(), router.Group("/import", BasicAuth()), conf)
+			log.Info("webdav: /import/ enabled, waiting for requests")
+		}
 	}
 
 	// Default HTML page for client-side rendering and routing via VueJS.

@@ -39,7 +39,7 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		conf := service.Config()
 
-		if conf.SettingsHidden() {
+		if conf.DisableSettings() {
 			AbortUnauthorized(c)
 			return
 		}

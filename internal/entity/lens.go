@@ -2,6 +2,7 @@ package entity
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -9,14 +10,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+var lensMutex = sync.Mutex{}
+
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
 	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
 	LensSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
 	LensName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
-	LensMake        string     `json:"Make" yaml:"Make,omitempty"`
-	LensModel       string     `json:"Model" yaml:"Model,omitempty"`
-	LensType        string     `json:"Type" yaml:"Type,omitempty"`
+	LensMake        string     `gorm:"type:VARCHAR(255);" json:"Make" yaml:"Make,omitempty"`
+	LensModel       string     `gorm:"type:VARCHAR(255);" json:"Model" yaml:"Model,omitempty"`
+	LensType        string     `gorm:"type:VARCHAR(255);" json:"Type" yaml:"Type,omitempty"`
 	LensDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	LensNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt       time.Time  `json:"-" yaml:"-"`
@@ -81,16 +84,23 @@ func NewLens(modelName string, makeName string) *Lens {
 
 // Create inserts a new row to the database.
 func (m *Lens) Create() error {
+	lensMutex.Lock()
+	defer lensMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 
 // FirstOrCreateLens returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateLens(m *Lens) *Lens {
+	if m.LensSlug == "" {
+		return &UnknownLens
+	}
+
 	result := Lens{}
 
-	if err := Db().Where("lens_slug = ?", m.LensSlug).First(&result).Error; err == nil {
+	if res := Db().Where("lens_slug = ?", m.LensSlug).First(&result); res.Error == nil {
 		return &result
-	} else if createErr := m.Create(); createErr == nil {
+	} else if err := m.Create(); err == nil {
 		if !m.Unknown() {
 			event.EntitiesCreated("lenses", []*Lens{m})
 
@@ -100,13 +110,13 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		}
 
 		return m
-	} else if err := Db().Where("lens_slug = ?", m.LensSlug).First(&result).Error; err == nil {
+	} else if res := Db().Where("lens_slug = ?", m.LensSlug).First(&result); res.Error == nil {
 		return &result
 	} else {
-		log.Errorf("lens: %s (first or create %s)", createErr, m.String())
+		log.Errorf("lens: %s (create %s)", err.Error(), txt.Quote(m.String()))
 	}
 
-	return nil
+	return &UnknownLens
 }
 
 // String returns an identifier that can be used in logs.

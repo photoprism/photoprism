@@ -83,7 +83,7 @@ func FirstOrCreateCountry(m *Country) *Country {
 	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("country: %s (first or create %s)", createErr, m.ID)
+		log.Errorf("country: %s (find or create %s)", createErr, m.ID)
 	}
 
 	return nil

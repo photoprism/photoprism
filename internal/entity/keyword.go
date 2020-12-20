@@ -2,9 +2,12 @@ package entity
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+var keywordMutex = sync.Mutex{}
 
 // Keyword used for full text search
 type Keyword struct {
@@ -41,6 +44,9 @@ func (m *Keyword) Save() error {
 
 // Create inserts a new row to the database.
 func (m *Keyword) Create() error {
+	keywordMutex.Lock()
+	defer keywordMutex.Unlock()
+
 	return Db().Create(m).Error
 }
 
@@ -55,7 +61,7 @@ func FirstOrCreateKeyword(m *Keyword) *Keyword {
 	} else if err := Db().Where("keyword = ?", m.Keyword).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("keyword: %s (first or create %s)", createErr, m.Keyword)
+		log.Errorf("keyword: %s (find or create %s)", createErr, m.Keyword)
 	}
 
 	return nil

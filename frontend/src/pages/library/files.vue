@@ -294,8 +294,8 @@ export default {
 
       if (pos === -1) {
         if (this.selection.length >= MaxItems) {
-            Notify.warn(this.$gettext("Can't select more items"));
-            return;
+          Notify.warn(this.$gettext("Can't select more items"));
+          return;
         }
 
         this.selection.push(uid)

@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// ClientConfig represents HTTP client / Web UI config values.
+// ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
 	Name            string              `json:"name"`
 	Version         string              `json:"version"`
@@ -23,11 +23,11 @@ type ClientConfig struct {
 	SiteDescription string              `json:"siteDescription"`
 	SiteAuthor      string              `json:"siteAuthor"`
 	Debug           bool                `json:"debug"`
+	Demo            bool                `json:"demo"`
 	ReadOnly        bool                `json:"readonly"`
 	UploadNSFW      bool                `json:"uploadNSFW"`
 	Public          bool                `json:"public"`
 	Experimental    bool                `json:"experimental"`
-	DisableSettings bool                `json:"disableSettings"`
 	AlbumCategories []string            `json:"albumCategories"`
 	Albums          []entity.Album      `json:"albums"`
 	Cameras         []entity.Camera     `json:"cameras"`
@@ -41,6 +41,7 @@ type ClientConfig struct {
 	JSHash          string              `json:"jsHash"`
 	CSSHash         string              `json:"cssHash"`
 	Settings        Settings            `json:"settings"`
+	Disable         ClientDisable       `json:"disable"`
 	Count           ClientCounts        `json:"count"`
 	Pos             ClientPosition      `json:"pos"`
 	Years           []int               `json:"years"`
@@ -50,6 +51,17 @@ type ClientConfig struct {
 	Server          RuntimeInfo         `json:"server"`
 }
 
+// ClientDisable represents disabled client features a user can't turn back on.
+type ClientDisable struct {
+	Backups    bool `json:"backups"`
+	WebDAV     bool `json:"webdav"`
+	Settings   bool `json:"settings"`
+	Places     bool `json:"places"`
+	ExifTool   bool `json:"exiftool"`
+	TensorFlow bool `json:"tensorflow"`
+}
+
+// ClientCounts represents photo, video and album counts for the client UI.
 type ClientCounts struct {
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`
@@ -104,7 +116,7 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "readonly")
 	}
 
-	if !c.SettingsHidden() {
+	if !c.DisableSettings() {
 		flags = append(flags, "settings")
 	}
 
@@ -115,7 +127,7 @@ func (c *Config) Flags() (flags []string) {
 	return flags
 }
 
-// PublicConfig returns public client config values with as little information as possible.
+// PublicConfig returns public client config options with as little information as possible.
 func (c *Config) PublicConfig() ClientConfig {
 	if c.Public() {
 		return c.UserConfig()
@@ -130,6 +142,14 @@ func (c *Config) PublicConfig() ClientConfig {
 			Features: settings.Features,
 			Share:    settings.Share,
 		},
+		Disable: ClientDisable{
+			Backups:    true,
+			WebDAV:     true,
+			Settings:   c.DisableSettings(),
+			Places:     c.DisablePlaces(),
+			ExifTool:   true,
+			TensorFlow: true,
+		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -141,8 +161,8 @@ func (c *Config) PublicConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        c.ReadOnly(),
-		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Status:          "",
@@ -159,7 +179,7 @@ func (c *Config) PublicConfig() ClientConfig {
 	return result
 }
 
-// GuestConfig returns client config values for the sharing with guests.
+// GuestConfig returns client config options for the sharing with guests.
 func (c *Config) GuestConfig() ClientConfig {
 	settings := c.Settings()
 
@@ -169,6 +189,14 @@ func (c *Config) GuestConfig() ClientConfig {
 			Maps:     settings.Maps,
 			Features: settings.Features,
 			Share:    settings.Share,
+		},
+		Disable: ClientDisable{
+			Backups:    true,
+			WebDAV:     c.DisableWebDAV(),
+			Settings:   c.DisableSettings(),
+			Places:     c.DisablePlaces(),
+			ExifTool:   true,
+			TensorFlow: true,
 		},
 		Flags:           "readonly public shared",
 		Name:            c.Name(),
@@ -181,9 +209,9 @@ func (c *Config) GuestConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        true,
 		UploadNSFW:      c.UploadNSFW(),
-		DisableSettings: true,
 		Public:          true,
 		Experimental:    false,
 		Colors:          colors.All.List(),
@@ -200,10 +228,18 @@ func (c *Config) GuestConfig() ClientConfig {
 	return result
 }
 
-// UserConfig returns client configuration values for registered users.
+// UserConfig returns client configuration options for registered users.
 func (c *Config) UserConfig() ClientConfig {
 	result := ClientConfig{
-		Settings:        *c.Settings(),
+		Settings: *c.Settings(),
+		Disable: ClientDisable{
+			Backups:    c.DisableBackups(),
+			WebDAV:     c.DisableWebDAV(),
+			Settings:   c.DisableSettings(),
+			Places:     c.DisablePlaces(),
+			ExifTool:   c.DisableExifTool(),
+			TensorFlow: c.DisableTensorFlow(),
+		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -215,9 +251,9 @@ func (c *Config) UserConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        c.ReadOnly(),
 		UploadNSFW:      c.UploadNSFW(),
-		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),
@@ -232,77 +268,93 @@ func (c *Config) UserConfig() ClientConfig {
 		Server:          NewRuntimeInfo(),
 	}
 
-	c.Db().Table("photos").
+	c.Db().
+		Table("photos").
 		Select("photo_uid, cell_id, photo_lat, photo_lng, taken_at").
 		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
 		Take(&result.Pos)
 
-	c.Db().Table("cameras").
+	c.Db().
+		Table("cameras").
 		Where("camera_slug <> 'zz' AND camera_slug <> ''").
 		Select("COUNT(*) AS cameras").
 		Take(&result.Count)
 
-	c.Db().Table("lenses").
+	c.Db().
+		Table("lenses").
 		Where("lens_slug <> 'zz' AND lens_slug <> ''").
 		Select("COUNT(*) AS lenses").
 		Take(&result.Count)
 
-	c.Db().Table("photos").
+	c.Db().
+		Table("photos").
 		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	c.Db().Table("labels").
+	c.Db().
+		Table("labels").
 		Select("MAX(photo_count) as label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
 		Where("(label_priority >= 0 OR label_favorite = 1)").
 		Take(&result.Count)
 
-	c.Db().Table("albums").
+	c.Db().
+		Table("albums").
 		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
-		Where("deleted_at IS NULL").
+		Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
 		Take(&result.Count)
 
-	c.Db().Table("files").
+	c.Db().
+		Table("files").
 		Select("COUNT(*) AS files").
 		Where("file_missing = 0").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	c.Db().Table("countries").
+	c.Db().
+		Table("countries").
 		Select("(COUNT(*) - 1) AS countries").
 		Take(&result.Count)
 
-	c.Db().Table("places").
+	c.Db().
+		Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id != 'zz'").
 		Take(&result.Count)
 
-	c.Db().Order("country_slug").
+	c.Db().
+		Order("country_slug").
 		Find(&result.Countries)
 
-	c.Db().Where("deleted_at IS NULL").
+	c.Db().
+		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality >= 0 OR photos.deleted_at IS NULL)").
+		Where("deleted_at IS NULL").
 		Limit(10000).Order("camera_slug").
 		Find(&result.Cameras)
 
-	c.Db().Where("deleted_at IS NULL").
+	c.Db().
+		Where("deleted_at IS NULL").
 		Limit(10000).Order("lens_slug").
 		Find(&result.Lenses)
 
-	c.Db().Where("deleted_at IS NULL AND album_favorite = 1").
+	c.Db().
+		Where("deleted_at IS NULL AND album_favorite = 1").
 		Limit(20).Order("album_title").
 		Find(&result.Albums)
 
-	c.Db().Table("photos").
-		Where("photo_year > 0").
+	c.Db().
+		Table("photos").
+		Where("photo_year > 0 AND (photos.photo_quality >= 0 OR photos.deleted_at IS NULL)").
 		Order("photo_year DESC").
 		Pluck("DISTINCT photo_year", &result.Years)
 
-	c.Db().Table("categories").
+	c.Db().
+		Table("categories").
 		Select("l.label_uid, l.custom_slug, l.label_name").
 		Joins("JOIN labels l ON categories.category_id = l.id").
 		Where("l.deleted_at IS NULL").
@@ -311,7 +363,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Limit(1000).Offset(0).
 		Scan(&result.Categories)
 
-	c.Db().Table("albums").
+	c.Db().
+		Table("albums").
 		Select("album_category").
 		Where("deleted_at IS NULL AND album_category <> ''").
 		Group("album_category").
