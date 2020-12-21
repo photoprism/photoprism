@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-import">
-    <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
+    <v-form ref="form" class="p-photo-import" lazy-validation dense @submit.prevent="submit">
       <v-container fluid>
         <p class="subheading">
           <span v-if="fileName"><translate :translate-params="{name: fileName}">Importing %{name}…</translate></span>
@@ -10,18 +10,18 @@
         </p>
 
         <v-autocomplete
-            @change="onChange"
-            @focus="onFocus"
+            v-model="settings.import.path"
             color="secondary-dark"
             class="my-3 input-import-folder"
-            hide-details hide-no-data flat solo
-            v-model="settings.import.path"
-            browser-autocomplete="off"
+            hide-details
+            hide-no-data flat solo browser-autocomplete="off"
             :items="dirs"
             :loading="loading"
             :disabled="busy"
             item-text="name"
             item-value="path"
+            @change="onChange"
+            @focus="onFocus"
         >
         </v-autocomplete>
 
@@ -33,15 +33,15 @@
         <v-layout wrap align-top class="pb-2">
           <v-flex xs12 class="px-2 pb-2 pt-2">
             <v-checkbox
-                @change="onChange"
+                v-model="settings.import.move"
                 :disabled="busy"
                 class="ma-0 pa-0"
-                v-model="settings.import.move"
                 color="secondary-dark"
                 :label="$gettext('Move Files')"
                 :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
                 prepend-icon="delete"
                 persistent-hint
+                @change="onChange"
             >
             </v-checkbox>
           </v-flex>
@@ -84,7 +84,7 @@
             @click.stop="startImport()"
         >
           <translate>Import</translate>
-          <v-icon right dark>create_new_folder</v-icon>
+          <v-icon right dark>sync</v-icon>
         </v-btn>
       </v-container>
     </v-form>
@@ -101,9 +101,9 @@ import Util from "common/util";
 import {Folder, RootImport} from "model/folder";
 
 export default {
-  name: 'p-tab-import',
+  name: 'PTabImport',
   data() {
-    const root = {"path": "/", "name": this.$gettext("All files from import folder")}
+    const root = {"path": "/", "name": this.$gettext("All files from import folder")};
     const settings = new Settings(this.$config.settings());
 
     return {
@@ -117,7 +117,13 @@ export default {
       source: null,
       root: root,
       dirs: [root, {path: settings.import.path, name: "/" + Util.truncate(settings.import.path, 100, "…")}],
-    }
+    };
+  },
+  created() {
+    this.subscriptionId = Event.subscribe('import', this.handleEvent);
+  },
+  destroyed() {
+    Event.unsubscribe(this.subscriptionId);
   },
   methods: {
     onChange() {
@@ -179,7 +185,7 @@ export default {
 
         if (Axios.isCancel(e)) {
           // run in background
-          return
+          return;
         }
 
         Notify.error(this.$gettext("Import failed"));
@@ -210,15 +216,9 @@ export default {
           this.fileName = '';
           break;
         default:
-          console.log(data)
+          console.log(data);
       }
     },
-  },
-  created() {
-    this.subscriptionId = Event.subscribe('import', this.handleEvent);
-  },
-  destroyed() {
-    Event.unsubscribe(this.subscriptionId);
   },
 };
 </script>

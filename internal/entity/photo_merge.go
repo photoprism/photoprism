@@ -18,15 +18,15 @@ func (m *Photo) ResolvePrimary() error {
 
 // Identical returns identical photos that can be merged.
 func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err error) {
-	if m.PhotoSingle || m.PhotoName == "" {
+	if m.PhotoStack == IsUnstacked || m.PhotoName == "" {
 		return identical, nil
 	}
 
 	switch {
 	case includeMeta && includeUuid && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
 		if err := Db().
-			Where("(taken_at = ? AND taken_src = 'meta' AND photo_single = 0 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
-				"OR (uuid = ? AND photo_single = 0)"+
+			Where("(taken_at = ? AND taken_src = 'meta' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
+				"OR (uuid = ? AND photo_stack > -1)"+
 				"OR (photo_path = ? AND photo_name = ?)",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID, m.PhotoPath, m.PhotoName).
 			Order("id ASC").Find(&identical).Error; err != nil {
@@ -34,7 +34,7 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 		}
 	case includeMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
 		if err := Db().
-			Where("(taken_at = ? AND taken_src = 'meta' AND photo_single = 0 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
+			Where("(taken_at = ? AND taken_src = 'meta' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
 				"OR (photo_path = ? AND photo_name = ?)",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.PhotoPath, m.PhotoName).
 			Order("id ASC").Find(&identical).Error; err != nil {
@@ -42,7 +42,7 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 		}
 	case includeUuid && rnd.IsUUID(m.UUID):
 		if err := Db().
-			Where("(uuid = ? AND photo_single = 0) OR (photo_path = ? AND photo_name = ?)",
+			Where("(uuid = ? AND photo_stack > -1) OR (photo_path = ? AND photo_name = ?)",
 				m.UUID, m.PhotoPath, m.PhotoName).
 			Order("id ASC").Find(&identical).Error; err != nil {
 			return identical, err

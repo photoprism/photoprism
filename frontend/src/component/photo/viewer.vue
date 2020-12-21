@@ -2,7 +2,7 @@
   <div id="p-photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="pswp__bg"></div>
     <div class="pswp__scroll-wrap">
-      <div class="pswp__container" v-bind:class="{ 'slideshow': slideshow.active }">
+      <div class="pswp__container" :class="{ 'slideshow': slideshow.active }">
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
@@ -17,24 +17,24 @@
 
           <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')"></button>
 
-          <button class="pswp__button action-download" style="background: none;" @click.exact="onDownload"
-                  :title="$gettext('Download')" v-if="config.settings.features.download">
+          <button v-if="config.settings.features.download" class="pswp__button action-download" style="background: none;"
+                  :title="$gettext('Download')" @click.exact="onDownload">
             <v-icon size="16" color="white">get_app</v-icon>
           </button>
 
-          <button class="pswp__button action-edit hidden-shared-only" style="background: none;" @click.exact="onEdit"
-                  :title="$gettext('Edit')">
+          <button class="pswp__button action-edit hidden-shared-only" style="background: none;" :title="$gettext('Edit')"
+                  @click.exact="onEdit">
             <v-icon size="16" color="white">edit</v-icon>
           </button>
 
           <button class="pswp__button action-select" style="background: none;"
-                  @click.exact="onSelect" :title="$gettext('Select')">
+                  :title="$gettext('Select')" @click.exact="onSelect">
             <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">check_circle</v-icon>
             <v-icon v-else size="16" color="white">radio_button_off</v-icon>
           </button>
 
           <button class="pswp__button action-like hidden-shared-only" style="background: none;"
-                  @click.exact="onLike" :title="$gettext('Like')">
+                  :title="$gettext('Like')" @click.exact="onLike">
             <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
@@ -44,8 +44,8 @@
 
           <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
 
-          <button class="pswp__button" style="background: none;" @click.exact="onSlideshow"
-                  :title="$gettext('Start/Stop Slideshow')">
+          <button class="pswp__button" style="background: none;" :title="$gettext('Start/Stop Slideshow')"
+                  @click.exact="onSlideshow">
             <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
             <v-icon v-show="interval" size="16" color="white">pause</v-icon>
           </button>
@@ -79,15 +79,15 @@
 </template>
 
 <script>
-import 'photoswipe/dist/photoswipe.css'
-import 'photoswipe/dist/default-skin/default-skin.css'
+import 'photoswipe/dist/photoswipe.css';
+import 'photoswipe/dist/default-skin/default-skin.css';
 import Event from "pubsub-js";
 import Thumb from "model/thumb";
 import Photo from "model/photo";
 import Notify from "common/notify";
 
 export default {
-  name: "p-photo-viewer",
+  name: "PPhotoViewer",
   data() {
     return {
       selection: this.$clipboard.selection,
@@ -202,7 +202,7 @@ export default {
           index = i;
         }
 
-        return p.uid
+        return p.uid;
       });
 
       let album = null;
@@ -212,5 +212,5 @@ export default {
       Event.publish("dialog.edit", {selection, album, index}); // Open Edit Dialog
     }
   }
-}
+};
 </script>

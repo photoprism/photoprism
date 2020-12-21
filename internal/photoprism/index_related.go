@@ -46,7 +46,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		}
 	}
 
-	if ind.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
+	if ind.conf.ExifToolJson() && f.IsMedia() && !f.HasJson() {
 		if jsonFile, err := ind.convert.ToJson(f); err != nil {
 			log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 		} else {
@@ -102,7 +102,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			continue
 		}
 
-		if ind.conf.SidecarJson() && f.IsMedia() && !f.HasJson() {
+		if ind.conf.ExifToolJson() && f.IsMedia() && !f.HasJson() {
 			if jsonFile, err := ind.convert.ToJson(f); err != nil {
 				log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 			} else {

@@ -30,72 +30,72 @@ https://docs.photoprism.org/developer-guide/
 
 import RestModel from "model/rest";
 import Api from "common/api";
-import {DateTime} from "luxon";
-import {config} from "../session";
-import {$gettext} from "common/vm";
+import { DateTime } from "luxon";
+import { config } from "../session";
+import { $gettext } from "common/vm";
 
 export class Label extends RestModel {
-    getDefaults() {
-        return {
-            ID: 0,
-            UID: "",
-            Slug: "",
-            CustomSlug: "",
-            Name: "",
-            Priority: 0,
-            Favorite: false,
-            Description: "",
-            Notes: "",
-            PhotoCount: 0,
-            CreatedAt: "",
-            UpdatedAt: "",
-            DeletedAt: "",
-        };
-    }
+  getDefaults() {
+    return {
+      ID: 0,
+      UID: "",
+      Slug: "",
+      CustomSlug: "",
+      Name: "",
+      Priority: 0,
+      Favorite: false,
+      Description: "",
+      Notes: "",
+      PhotoCount: 0,
+      CreatedAt: "",
+      UpdatedAt: "",
+      DeletedAt: "",
+    };
+  }
 
-    getEntityName() {
-        return this.Slug;
-    }
+  getEntityName() {
+    return this.Slug;
+  }
 
-    getTitle() {
-        return this.Name;
-    }
+  getTitle() {
+    return this.Name;
+  }
 
-    thumbnailUrl(size) {
-        return `/api/v1/labels/${this.getId()}/t/${config.previewToken()}/${size}`;
-    }
+  thumbnailUrl(size) {
+    return `/api/v1/labels/${this.getId()}/t/${config.previewToken()}/${size}`;
+  }
 
-    getDateString() {
-        return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
-    }
+  getDateString() {
+    return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
+  }
 
-    toggleLike() {
-        this.Favorite = !this.Favorite;
+  toggleLike() {
+    this.Favorite = !this.Favorite;
 
-        if (this.Favorite) {
-            return Api.post(this.getEntityResource() + "/like");
-        } else {
-            return Api.delete(this.getEntityResource() + "/like");
-        }
+    if (this.Favorite) {
+      return Api.post(this.getEntityResource() + "/like");
+    } else {
+      return Api.delete(this.getEntityResource() + "/like");
     }
+  }
 
-    like() {
-        this.Favorite = true;
-        return Api.post(this.getEntityResource() + "/like");
-    }
+  like() {
+    this.Favorite = true;
+    return Api.post(this.getEntityResource() + "/like");
+  }
 
-    unlike() {
-        this.Favorite = false;
-        return Api.delete(this.getEntityResource() + "/like");
-    }
+  unlike() {
+    this.Favorite = false;
+    return Api.delete(this.getEntityResource() + "/like");
+  }
 
-    static getCollectionResource() {
-        return "labels";
-    }
+  static getCollectionResource() {
+    return "labels";
+  }
 
-    static getModelName() {
-        return $gettext("Label");
-    }
+  static getModelName() {
+    return $gettext("Label");
+  }
 }
 
 export default Label;

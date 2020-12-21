@@ -9,7 +9,7 @@ import (
 var onceClassify sync.Once
 
 func initClassify() {
-	services.Classify = classify.New(Config().AssetsPath(), Config().TensorFlowOff())
+	services.Classify = classify.New(Config().AssetsPath(), Config().DisableTensorFlow())
 }
 
 func Classify() *classify.TensorFlow {

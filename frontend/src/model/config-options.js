@@ -30,8 +30,41 @@ https://docs.photoprism.org/developer-guide/
 
 import Api from "common/api";
 import Model from "./model";
+import { config } from "../session";
 
-export class Settings extends Model {
+export class ConfigOptions extends Model {
+  getDefaults() {
+    return {
+      Debug: config.values.debug,
+      ReadOnly: config.values.readonly,
+      Experimental: config.values.experimental,
+      OriginalsLimit: 0,
+      Workers: 0,
+      WakeupInterval: 0,
+      DisableBackups: config.values.disable.backups,
+      DisableWebDAV: config.values.disable.webdav,
+      DisableSettings: config.values.disable.settings,
+      DisablePlaces: config.values.disable.places,
+      DisableExifTool: config.values.disable.exiftool,
+      DisableTensorFlow: config.values.disable.tensorflow,
+      DetectNSFW: false,
+      UploadNSFW: config.values.uploadNSFW,
+      DarktablePresets: false,
+      ThumbUncached: true,
+      ThumbFilter: "",
+      ThumbSize: 0,
+      ThumbSizeUncached: 0,
+      JpegSize: 0,
+      JpegQuality: 0,
+      SiteUrl: config.values.siteUrl,
+      SitePreview: config.values.siteUrl,
+      SiteTitle: config.values.siteTitle,
+      SiteCaption: config.values.siteCaption,
+      SiteDescription: config.values.siteDescription,
+      SiteAuthor: config.values.siteAuthor,
+    };
+  }
+
   changed(area, key) {
     if (typeof this.__originalValues[area] === "undefined") {
       return false;
@@ -41,16 +74,16 @@ export class Settings extends Model {
   }
 
   load() {
-    return Api.get("settings").then((response) => {
+    return Api.get("config/options").then((response) => {
       return Promise.resolve(this.setValues(response.data));
     });
   }
 
   save() {
-    return Api.post("settings", this.getValues(true)).then((response) =>
+    return Api.post("config/options", this.getValues(true)).then((response) =>
       Promise.resolve(this.setValues(response.data))
     );
   }
 }
 
-export default Settings;
+export default ConfigOptions;

@@ -27,30 +27,30 @@ func (c *Config) CheckPassword(p string) bool {
 	return ap == p
 }
 
-// InvalidDownloadToken returns true if the token is invalid.
+// InvalidDownloadToken tests if the token is invalid.
 func (c *Config) InvalidDownloadToken(t string) bool {
 	return c.DownloadToken() != t
 }
 
 // DownloadToken returns the DOWNLOAD api token (you can optionally use a static value for permanent caching).
 func (c *Config) DownloadToken() string {
-	if c.params.DownloadToken == "" {
-		c.params.DownloadToken = rnd.Token(8)
+	if c.options.DownloadToken == "" {
+		c.options.DownloadToken = rnd.Token(8)
 	}
 
-	return c.params.DownloadToken
+	return c.options.DownloadToken
 }
 
-// InvalidPreviewToken returns true if the preview token is invalid.
+// InvalidPreviewToken tests if the preview token is invalid.
 func (c *Config) InvalidPreviewToken(t string) bool {
 	return c.PreviewToken() != t && c.DownloadToken() != t
 }
 
 // PreviewToken returns the THUMBNAILS api token (you can optionally use a static value for permanent caching).
 func (c *Config) PreviewToken() string {
-	if c.params.PreviewToken == "" {
-		c.params.PreviewToken = rnd.Token(8)
+	if c.options.PreviewToken == "" {
+		c.options.PreviewToken = rnd.Token(8)
 	}
 
-	return c.params.PreviewToken
+	return c.options.PreviewToken
 }

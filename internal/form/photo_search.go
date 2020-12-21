@@ -6,60 +6,61 @@ import (
 
 // PhotoSearch represents search form fields for "/api/v1/photos".
 type PhotoSearch struct {
-	Query    string    `form:"q"`
-	Filter   string    `form:"filter"`
-	ID       string    `form:"id"`
-	Type     string    `form:"type"`
-	Path     string    `form:"path"`
-	Folder   string    `form:"folder"` // Alias for Path
-	Name     string    `form:"name"`
-	Filename string    `form:"filename"`
-	Original string    `form:"original"`
-	Title    string    `form:"title"`
-	Hash     string    `form:"hash"`
-	Primary  bool      `form:"primary"`
-	Single   bool      `form:"single"`
-	Video    bool      `form:"video"`
-	Photo    bool      `form:"photo"`
-	Scan     bool      `form:"scan"`
-	Panorama bool      `form:"panorama"`
-	Error    bool      `form:"error"`
-	Hidden   bool      `form:"hidden"`
-	Archived bool      `form:"archived"`
-	Public   bool      `form:"public"`
-	Private  bool      `form:"private"`
-	Favorite bool      `form:"favorite"`
-	Unsorted bool      `form:"unsorted"`
-	Stack    bool      `form:"stack"`
-	Lat      float32   `form:"lat"`
-	Lng      float32   `form:"lng"`
-	Dist     uint      `form:"dist"`
-	Fmin     float32   `form:"fmin"`
-	Fmax     float32   `form:"fmax"`
-	Chroma   uint8     `form:"chroma"`
-	Diff     uint32    `form:"diff"`
-	Mono     bool      `form:"mono"`
-	Portrait bool      `form:"portrait"`
-	Geo      bool      `form:"geo"`
-	Album    string    `form:"album"`
-	Label    string    `form:"label"`
-	Category string    `form:"category"` // Moments
-	Country  string    `form:"country"`  // Moments
-	State    string    `form:"state"`    // Moments
-	Year     int       `form:"year"`     // Moments
-	Month    int       `form:"month"`    // Moments
-	Day      int       `form:"day"`      // Moments
-	Color    string    `form:"color"`
-	Quality  int       `form:"quality"`
-	Review   bool      `form:"review"`
-	Camera   int       `form:"camera"`
-	Lens     int       `form:"lens"`
-	Before   time.Time `form:"before" time_format:"2006-01-02"`
-	After    time.Time `form:"after" time_format:"2006-01-02"`
-	Count    int       `form:"count" binding:"required" serialize:"-"`
-	Offset   int       `form:"offset" serialize:"-"`
-	Order    string    `form:"order" serialize:"-"`
-	Merged   bool      `form:"merged" serialize:"-"`
+	Query     string    `form:"q"`
+	Filter    string    `form:"filter"`
+	ID        string    `form:"id"`
+	Type      string    `form:"type"`
+	Path      string    `form:"path"`
+	Folder    string    `form:"folder"` // Alias for Path
+	Name      string    `form:"name"`
+	Filename  string    `form:"filename"`
+	Original  string    `form:"original"`
+	Title     string    `form:"title"`
+	Hash      string    `form:"hash"`
+	Primary   bool      `form:"primary"`
+	Stack     bool      `form:"stack"`
+	Unstacked bool      `form:"unstacked"`
+	Stackable bool      `form:"stackable"`
+	Video     bool      `form:"video"`
+	Photo     bool      `form:"photo"`
+	Scan      bool      `form:"scan"`
+	Panorama  bool      `form:"panorama"`
+	Error     bool      `form:"error"`
+	Hidden    bool      `form:"hidden"`
+	Archived  bool      `form:"archived"`
+	Public    bool      `form:"public"`
+	Private   bool      `form:"private"`
+	Favorite  bool      `form:"favorite"`
+	Unsorted  bool      `form:"unsorted"`
+	Lat       float32   `form:"lat"`
+	Lng       float32   `form:"lng"`
+	Dist      uint      `form:"dist"`
+	Fmin      float32   `form:"fmin"`
+	Fmax      float32   `form:"fmax"`
+	Chroma    uint8     `form:"chroma"`
+	Diff      uint32    `form:"diff"`
+	Mono      bool      `form:"mono"`
+	Portrait  bool      `form:"portrait"`
+	Geo       bool      `form:"geo"`
+	Album     string    `form:"album"`
+	Label     string    `form:"label"`
+	Category  string    `form:"category"` // Moments
+	Country   string    `form:"country"`  // Moments
+	State     string    `form:"state"`    // Moments
+	Year      int       `form:"year"`     // Moments
+	Month     int       `form:"month"`    // Moments
+	Day       int       `form:"day"`      // Moments
+	Color     string    `form:"color"`
+	Quality   int       `form:"quality"`
+	Review    bool      `form:"review"`
+	Camera    int       `form:"camera"`
+	Lens      int       `form:"lens"`
+	Before    time.Time `form:"before" time_format:"2006-01-02"`
+	After     time.Time `form:"after" time_format:"2006-01-02"`
+	Count     int       `form:"count" binding:"required" serialize:"-"`
+	Offset    int       `form:"offset" serialize:"-"`
+	Order     string    `form:"order" serialize:"-"`
+	Merged    bool      `form:"merged" serialize:"-"`
 }
 
 func (f *PhotoSearch) GetQuery() string {

@@ -26,7 +26,7 @@ func NewRuntimeInfo() (r RuntimeInfo) {
 	return r
 }
 
-// Refresh updates runtime info values like number of goroutines and memory usage.
+// Refresh updates runtime info options like number of goroutines and memory usage.
 func (r *RuntimeInfo) Refresh() {
 	r.Cores = runtime.NumCPU()
 	r.Routines = runtime.NumGoroutine()

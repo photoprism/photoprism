@@ -201,8 +201,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
-	if f.Single {
-		s = s.Where("photos.photo_single = 1")
+	if f.Stackable {
+		s = s.Where("photos.photo_stack > -1")
+	} else if f.Unstacked {
+		s = s.Where("photos.photo_stack = -1")
 	}
 
 	if f.Country != "" {
@@ -280,7 +282,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Mono {
-		s = s.Where("files.file_chroma < 2 OR file_colors = '111111111'")
+		s = s.Where("files.file_chroma = 0 OR file_colors = '111111111'")
 	} else if f.Chroma > 9 {
 		s = s.Where("files.file_chroma > ?", f.Chroma)
 	} else if f.Chroma > 0 {

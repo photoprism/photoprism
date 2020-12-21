@@ -31,6 +31,13 @@ func GetAccounts(router *gin.RouterGroup) {
 			return
 		}
 
+		conf := service.Config()
+
+		if conf.Demo() || conf.DisableSettings() {
+			c.JSON(http.StatusOK, entity.Accounts{})
+			return
+		}
+
 		var f form.AccountSearch
 
 		err := c.MustBindWith(&f, binding.Form)
@@ -68,6 +75,13 @@ func GetAccount(router *gin.RouterGroup) {
 			return
 		}
 
+		conf := service.Config()
+
+		if conf.Demo() || conf.DisableSettings() {
+			AbortUnauthorized(c)
+			return
+		}
+
 		id := ParseUint(c.Param("id"))
 
 		if m, err := query.AccountByID(id); err == nil {
@@ -87,6 +101,13 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionRead)
 
 		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		conf := service.Config()
+
+		if conf.Demo() || conf.DisableSettings() {
 			AbortUnauthorized(c)
 			return
 		}
@@ -191,6 +212,13 @@ func CreateAccount(router *gin.RouterGroup) {
 			return
 		}
 
+		conf := service.Config()
+
+		if conf.Demo() || conf.DisableSettings() {
+			AbortUnauthorized(c)
+			return
+		}
+
 		var f form.Account
 
 		if err := c.BindJSON(&f); err != nil {
@@ -205,8 +233,6 @@ func CreateAccount(router *gin.RouterGroup) {
 		}
 
 		m, err := entity.CreateAccount(f)
-
-		log.Debugf("account: creating %+v %+v", f, m)
 
 		if err != nil {
 			log.Error(err)
@@ -229,6 +255,13 @@ func UpdateAccount(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionUpdate)
 
 		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		conf := service.Config()
+
+		if conf.Demo() || conf.DisableSettings() {
 			AbortUnauthorized(c)
 			return
 		}
@@ -291,6 +324,13 @@ func DeleteAccount(router *gin.RouterGroup) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionDelete)
 
 		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		conf := service.Config()
+
+		if conf.Demo() || conf.DisableSettings() {
 			AbortUnauthorized(c)
 			return
 		}

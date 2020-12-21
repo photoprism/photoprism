@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// ClientConfig represents HTTP client / Web UI config values.
+// ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
 	Name            string              `json:"name"`
 	Version         string              `json:"version"`
@@ -23,11 +23,11 @@ type ClientConfig struct {
 	SiteDescription string              `json:"siteDescription"`
 	SiteAuthor      string              `json:"siteAuthor"`
 	Debug           bool                `json:"debug"`
+	Demo            bool                `json:"demo"`
 	ReadOnly        bool                `json:"readonly"`
 	UploadNSFW      bool                `json:"uploadNSFW"`
 	Public          bool                `json:"public"`
 	Experimental    bool                `json:"experimental"`
-	DisableSettings bool                `json:"disableSettings"`
 	AlbumCategories []string            `json:"albumCategories"`
 	Albums          []entity.Album      `json:"albums"`
 	Cameras         []entity.Camera     `json:"cameras"`
@@ -41,6 +41,7 @@ type ClientConfig struct {
 	JSHash          string              `json:"jsHash"`
 	CSSHash         string              `json:"cssHash"`
 	Settings        Settings            `json:"settings"`
+	Disable         ClientDisable       `json:"disable"`
 	Count           ClientCounts        `json:"count"`
 	Pos             ClientPosition      `json:"pos"`
 	Years           []int               `json:"years"`
@@ -50,6 +51,17 @@ type ClientConfig struct {
 	Server          RuntimeInfo         `json:"server"`
 }
 
+// ClientDisable represents disabled client features a user can't turn back on.
+type ClientDisable struct {
+	Backups    bool `json:"backups"`
+	WebDAV     bool `json:"webdav"`
+	Settings   bool `json:"settings"`
+	Places     bool `json:"places"`
+	ExifTool   bool `json:"exiftool"`
+	TensorFlow bool `json:"tensorflow"`
+}
+
+// ClientCounts represents photo, video and album counts for the client UI.
 type ClientCounts struct {
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`
@@ -104,7 +116,7 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "readonly")
 	}
 
-	if !c.SettingsHidden() {
+	if !c.DisableSettings() {
 		flags = append(flags, "settings")
 	}
 
@@ -115,7 +127,7 @@ func (c *Config) Flags() (flags []string) {
 	return flags
 }
 
-// PublicConfig returns public client config values with as little information as possible.
+// PublicConfig returns public client config options with as little information as possible.
 func (c *Config) PublicConfig() ClientConfig {
 	if c.Public() {
 		return c.UserConfig()
@@ -130,6 +142,14 @@ func (c *Config) PublicConfig() ClientConfig {
 			Features: settings.Features,
 			Share:    settings.Share,
 		},
+		Disable: ClientDisable{
+			Backups:    true,
+			WebDAV:     true,
+			Settings:   c.DisableSettings(),
+			Places:     c.DisablePlaces(),
+			ExifTool:   true,
+			TensorFlow: true,
+		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -141,8 +161,8 @@ func (c *Config) PublicConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        c.ReadOnly(),
-		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Status:          "",
@@ -159,7 +179,7 @@ func (c *Config) PublicConfig() ClientConfig {
 	return result
 }
 
-// GuestConfig returns client config values for the sharing with guests.
+// GuestConfig returns client config options for the sharing with guests.
 func (c *Config) GuestConfig() ClientConfig {
 	settings := c.Settings()
 
@@ -169,6 +189,14 @@ func (c *Config) GuestConfig() ClientConfig {
 			Maps:     settings.Maps,
 			Features: settings.Features,
 			Share:    settings.Share,
+		},
+		Disable: ClientDisable{
+			Backups:    true,
+			WebDAV:     c.DisableWebDAV(),
+			Settings:   c.DisableSettings(),
+			Places:     c.DisablePlaces(),
+			ExifTool:   true,
+			TensorFlow: true,
 		},
 		Flags:           "readonly public shared",
 		Name:            c.Name(),
@@ -181,9 +209,9 @@ func (c *Config) GuestConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        true,
 		UploadNSFW:      c.UploadNSFW(),
-		DisableSettings: true,
 		Public:          true,
 		Experimental:    false,
 		Colors:          colors.All.List(),
@@ -200,10 +228,18 @@ func (c *Config) GuestConfig() ClientConfig {
 	return result
 }
 
-// UserConfig returns client configuration values for registered users.
+// UserConfig returns client configuration options for registered users.
 func (c *Config) UserConfig() ClientConfig {
 	result := ClientConfig{
-		Settings:        *c.Settings(),
+		Settings: *c.Settings(),
+		Disable: ClientDisable{
+			Backups:    c.DisableBackups(),
+			WebDAV:     c.DisableWebDAV(),
+			Settings:   c.DisableSettings(),
+			Places:     c.DisablePlaces(),
+			ExifTool:   c.DisableExifTool(),
+			TensorFlow: c.DisableTensorFlow(),
+		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
@@ -215,9 +251,9 @@ func (c *Config) UserConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Demo:            c.Demo(),
 		ReadOnly:        c.ReadOnly(),
 		UploadNSFW:      c.UploadNSFW(),
-		DisableSettings: c.SettingsHidden(),
 		Public:          c.Public(),
 		Experimental:    c.Experimental(),
 		Colors:          colors.All.List(),

@@ -13,7 +13,7 @@ import (
 func BackupAlbums(force bool) (count int, result error) {
 	c := Config()
 
-	if !c.SidecarYaml() && !force {
+	if !c.BackupYaml() && !force {
 		log.Debugf("backup: album yaml files disabled")
 		return count, nil
 	}
@@ -43,7 +43,7 @@ func BackupAlbums(force bool) (count int, result error) {
 func RestoreAlbums(force bool) (count int, result error) {
 	c := Config()
 
-	if !c.SidecarYaml() && !force {
+	if !c.BackupYaml() && !force {
 		log.Debugf("restore: album yaml files disabled")
 		return count, nil
 	}

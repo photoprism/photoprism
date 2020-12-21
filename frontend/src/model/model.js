@@ -29,87 +29,86 @@ https://docs.photoprism.org/developer-guide/
 */
 
 export class Model {
-    constructor(values) {
-        this.__originalValues = {};
+  constructor(values) {
+    this.__originalValues = {};
 
-        if (values) {
-            this.setValues(values);
+    if (values) {
+      this.setValues(values);
+    } else {
+      this.setValues(this.getDefaults());
+    }
+  }
+
+  setValues(values, scalarOnly) {
+    if (!values) return;
+
+    for (let key in values) {
+      if (values.hasOwnProperty(key) && key !== "__originalValues") {
+        this[key] = values[key];
+
+        if (typeof values[key] !== "object") {
+          this.__originalValues[key] = values[key];
+        } else if (!scalarOnly) {
+          this.__originalValues[key] = JSON.parse(JSON.stringify(values[key]));
+        }
+      }
+    }
+
+    return this;
+  }
+
+  getValues(changed) {
+    const result = {};
+    const defaults = this.getDefaults();
+
+    for (let key in this.__originalValues) {
+      if (this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
+        let val;
+        if (defaults.hasOwnProperty(key)) {
+          switch (typeof defaults[key]) {
+            case "string":
+              if (this[key] === null || this[key] === undefined) {
+                val = "";
+              } else {
+                val = this[key];
+              }
+              break;
+            case "bigint":
+            case "number":
+              val = parseFloat(this[key]);
+              break;
+            case "boolean":
+              val = !!this[key];
+              break;
+            default:
+              val = this[key];
+          }
         } else {
-            this.setValues(this.getDefaults());
-        }
-    }
-
-    setValues(values, scalarOnly) {
-        if (!values) return;
-
-        for (let key in values) {
-            if (values.hasOwnProperty(key) && key !== "__originalValues") {
-                this[key] = values[key];
-
-                if (typeof values[key] !== "object") {
-                    this.__originalValues[key] = values[key];
-                } else if (!scalarOnly) {
-                    this.__originalValues[key] = JSON.parse(JSON.stringify(values[key]));
-                }
-
-            }
+          val = this[key];
         }
 
-        return this;
-    }
-
-    getValues(changed) {
-        const result = {};
-        const defaults = this.getDefaults();
-
-        for (let key in this.__originalValues) {
-            if (this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
-                let val;
-                if (defaults.hasOwnProperty(key)) {
-                    switch (typeof defaults[key]) {
-                        case "string":
-                            if(this[key] === null || this[key] === undefined) {
-                                val = "";
-                            }  else {
-                                val = this[key];
-                            }
-                            break;
-                        case "bigint":
-                        case "number":
-                            val = parseFloat(this[key]);
-                            break;
-                        case "boolean":
-                            val = !!this[key];
-                            break;
-                        default:
-                            val = this[key];
-                    }
-                } else {
-                    val = this[key];
-                }
-
-                if (!changed || JSON.stringify(val) !== JSON.stringify(this.__originalValues[key])) {
-                    result[key] = val;
-                }
-            }
+        if (!changed || JSON.stringify(val) !== JSON.stringify(this.__originalValues[key])) {
+          result[key] = val;
         }
-
-        return result;
+      }
     }
 
-    wasChanged() {
-        const changed = this.getValues(true);
+    return result;
+  }
 
-        if(!changed) {
-            return false;
-        }
+  wasChanged() {
+    const changed = this.getValues(true);
 
-        return !(changed.constructor === Object && Object.keys(changed).length === 0);
+    if (!changed) {
+      return false;
     }
 
-    getDefaults() {
-        return {};
-    }
+    return !(changed.constructor === Object && Object.keys(changed).length === 0);
+  }
+
+  getDefaults() {
+    return {};
+  }
 }
 
 export default Model;

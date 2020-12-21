@@ -1,14 +1,14 @@
 <template>
-  <div class="p-page p-page-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+  <div v-infinite-scroll="loadMore" class="p-page p-page-photos" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <p-photo-toolbar :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
                      :refresh="refresh"></p-photo-toolbar>
 
-    <v-container fluid class="pa-4" v-if="loading">
+    <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-container fluid class="pa-0" v-else>
+    <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
       <p-photo-clipboard :refresh="refresh" :selection="selection" :context="context"></p-photo-clipboard>
@@ -46,28 +46,9 @@ import Thumb from "model/thumb";
 import Event from "pubsub-js";
 
 export default {
-  name: 'p-page-photos',
+  name: 'PPagePhotos',
   props: {
     staticFilter: Object
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
-      this.filter.country = query['country'] ? query['country'] : '';
-      this.filter.lens = query['lens'] ? parseInt(query['lens']) : 0;
-      this.filter.year = query['year'] ? parseInt(query['year']) : 0;
-      this.filter.month = query['month'] ? parseInt(query['month']) : 0;
-      this.filter.color = query['color'] ? query['color'] : '';
-      this.filter.label = query['label'] ? query['label'] : '';
-      this.filter.order = this.sortOrder();
-      this.settings.view = this.viewType();
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.search();
-    }
   },
   data() {
     const query = this.$route.query;
@@ -143,6 +124,39 @@ export default {
       return "";
     }
   },
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+
+      this.filter.q = query['q'] ? query['q'] : '';
+      this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
+      this.filter.country = query['country'] ? query['country'] : '';
+      this.filter.lens = query['lens'] ? parseInt(query['lens']) : 0;
+      this.filter.year = query['year'] ? parseInt(query['year']) : 0;
+      this.filter.month = query['month'] ? parseInt(query['month']) : 0;
+      this.filter.color = query['color'] ? query['color'] : '';
+      this.filter.label = query['label'] ? query['label'] : '';
+      this.filter.order = this.sortOrder();
+      this.settings.view = this.viewType();
+      this.lastFilter = {};
+      this.routeName = this.$route.name;
+      this.search();
+    }
+  },
+  created() {
+    this.search();
+
+    this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
+    this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
+
+    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+  },
+  destroyed() {
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
+  },
   methods: {
     viewType() {
       let queryParam = this.$route.query['view'];
@@ -187,7 +201,7 @@ export default {
     },
     editPhoto(index) {
       let selection = this.results.map((p) => {
-        return p.getId()
+        return p.getId();
       });
 
       // Open Edit Dialog
@@ -207,7 +221,7 @@ export default {
           this.$viewer.show(Thumb.fromPhotos(this.results), index);
         }
       } else if (showMerged) {
-        this.$viewer.show(Thumb.fromFiles([selected]), 0)
+        this.$viewer.show(Thumb.fromFiles([selected]), 0);
       } else {
         this.viewerResults().then((results) => {
           const thumbsIndex = results.findIndex(result => result.UID === selected.UID);
@@ -247,15 +261,15 @@ export default {
       }
 
       return Photo.search(params).then((resp) => {
-            // Success.
-            this.viewer.loading = false;
-            this.viewer.results = resp.models;
-            return Promise.resolve(this.viewer.results);
-          }, () => {
-            // Error.
-            this.viewer.loading = false;
-            return Promise.resolve(this.results);
-          }
+        // Success.
+        this.viewer.loading = false;
+        this.viewer.results = resp.models;
+        return Promise.resolve(this.viewer.results);
+      }, () => {
+        // Error.
+        this.viewer.loading = false;
+        return Promise.resolve(this.results);
+      }
       );
     },
     loadMore() {
@@ -339,7 +353,7 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return
+        return;
       }
 
       this.$router.replace({query});
@@ -449,7 +463,7 @@ export default {
       if (!this.listen) return;
 
       if (!data || !data.entities) {
-        return
+        return;
       }
 
       const type = ev.split('.')[1];
@@ -521,20 +535,6 @@ export default {
           console.warn("unexpected event type", ev);
       }
     },
-  },
-  created() {
-    this.search();
-
-    this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
-    this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
-
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
-  },
-  destroyed() {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
-    }
   },
 };
 </script>

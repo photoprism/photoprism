@@ -6,32 +6,32 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// DetachServer returns true if server should detach from console (daemon mode).
+// DetachServer tests if server should detach from console (daemon mode).
 func (c *Config) DetachServer() bool {
-	return c.params.DetachServer
+	return c.options.DetachServer
 }
 
-// HttpServerHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
-func (c *Config) HttpServerHost() string {
-	if c.params.HttpServerHost == "" {
+// HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
+func (c *Config) HttpHost() string {
+	if c.options.HttpHost == "" {
 		return "0.0.0.0"
 	}
 
-	return c.params.HttpServerHost
+	return c.options.HttpHost
 }
 
-// HttpServerPort returns the built-in HTTP server port.
-func (c *Config) HttpServerPort() int {
-	if c.params.HttpServerPort == 0 {
+// HttpPort returns the built-in HTTP server port.
+func (c *Config) HttpPort() int {
+	if c.options.HttpPort == 0 {
 		return 2342
 	}
 
-	return c.params.HttpServerPort
+	return c.options.HttpPort
 }
 
-// HttpServerMode returns the server mode.
-func (c *Config) HttpServerMode() string {
-	if c.params.HttpServerMode == "" {
+// HttpMode returns the server mode.
+func (c *Config) HttpMode() string {
+	if c.options.HttpMode == "" {
 		if c.Debug() {
 			return "debug"
 		}
@@ -39,12 +39,7 @@ func (c *Config) HttpServerMode() string {
 		return "release"
 	}
 
-	return c.params.HttpServerMode
-}
-
-// HttpServerPassword returns the password for the user interface (optional).
-func (c *Config) HttpServerPassword() string {
-	return c.params.HttpServerPassword
+	return c.options.HttpMode
 }
 
 // TemplatesPath returns the server templates path.
@@ -52,7 +47,7 @@ func (c *Config) TemplatesPath() string {
 	return filepath.Join(c.AssetsPath(), "templates")
 }
 
-// TemplateExists returns true if a template with the given name exists (e.g. index.tmpl).
+// TemplateExists tests if a template with the given name exists (e.g. index.tmpl).
 func (c *Config) TemplateExists(name string) bool {
 	return fs.FileExists(filepath.Join(c.TemplatesPath(), name))
 }
