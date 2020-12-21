@@ -2213,26 +2213,3 @@ msgstr "Votre message a été envoyé"
 #: src/component/photo/viewer.vue:165
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
-
-#~ msgid "Unstacked"
-#~ msgstr "Dégroupée"
-
-#~ msgid "Backup"
-#~ msgstr "Sauvegarde"
-
-#~ msgid "Copy"
-#~ msgstr "Copier"
-
-#~ msgid "Move"
-#~ msgstr "Déplacer"
-
-#~ msgid "Chinese"
-#~ msgstr "Chinois"
-
-#~ msgid "msgid"
-#~ msgid_plural "plural"
-#~ msgstr[0] "msgid"
-#~ msgstr[1] "pluriel"
-
-#~ msgid "Stack files with matching..."
-#~ msgstr "Grouper les fichiers en cas de…"
