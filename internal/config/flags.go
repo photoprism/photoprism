@@ -8,7 +8,7 @@ import (
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",
-		Usage:  "run in debug mode (shows additional log messages)",
+		Usage:  "run in debug mode, shows additional log messages",
 		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
@@ -19,12 +19,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "public, p",
-		Usage:  "no authentication required (disables password protection)",
+		Usage:  "no authentication required, disables password protection",
 		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",
-		Usage:  "don't modify originals directory (import and upload disabled)",
+		Usage:  "don't modify originals folder; disables import, upload, and delete",
 		EnvVar: "PHOTOPRISM_READONLY",
 	},
 	cli.BoolFlag{
