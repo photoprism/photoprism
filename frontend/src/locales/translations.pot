@@ -652,7 +652,7 @@ msgstr ""
 msgid "Disables reverse geocoding and maps."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:464
+#: src/pages/settings/advanced.vue:463
 msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr ""
 
@@ -739,15 +739,15 @@ msgstr ""
 msgid "Dutch"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:331
+#: src/pages/settings/advanced.vue:304
 msgid "Dynamic Previews"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:332
+#: src/pages/settings/advanced.vue:305
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:300
+#: src/pages/settings/advanced.vue:347
 msgid "Dynamic Size Limit: %{n}px"
 msgstr ""
 
@@ -1067,11 +1067,11 @@ msgstr ""
 msgid "Item"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:376
+#: src/pages/settings/advanced.vue:322
 msgid "JPEG Quality: %{n}"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:429
+#: src/pages/settings/advanced.vue:428
 msgid "JPEG Size Limit: %{n}px"
 msgstr ""
 
@@ -1985,7 +1985,7 @@ msgstr ""
 msgid "States"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:349
+#: src/pages/settings/advanced.vue:373
 msgid "Static Size Limit: %{n}px"
 msgstr ""
 
@@ -2226,7 +2226,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:463
+#: src/pages/settings/advanced.vue:462
 msgid "Use Presets"
 msgstr ""
 
