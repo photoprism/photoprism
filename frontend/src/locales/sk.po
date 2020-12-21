@@ -1348,8 +1348,7 @@ msgstr "Najstaršie navrch"
 
 #: src/pages/settings/advanced.vue:332
 msgid ""
-"On-demand rendering requires a powerful CPU and is not recommended for "
-"smaller home servers, or NAS devices."
+"Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr ""
 "Vykresľovanie na požiadanie vyžaduje výkonný procesor a nedoporučuje sa pre "
 "menšie domáce servery alebo zariadenia NAS."
@@ -1505,7 +1504,7 @@ msgid "Portrait"
 msgstr "Portrét"
 
 #: src/pages/settings/advanced.vue:349
-msgid "Pre-Render Size Limit: %{n}px"
+msgid "Static Size Limit: %{n}px"
 msgstr "Limit veľkosti pred predbežným vykreslením: %{n} px"
 
 #: src/dialog/account/edit.vue:301
@@ -2006,11 +2005,11 @@ msgid "Type"
 msgstr "Typ"
 
 #: src/pages/settings/advanced.vue:331
-msgid "Uncached Previews"
+msgid "Dynamic Previews"
 msgstr "Neuložené ukážky"
 
 #: src/pages/settings/advanced.vue:300
-msgid "Uncached Size Limit: %{n}px"
+msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limit veľkosti bez medzipamäte: %{n} px"
 
 #: src/pages/settings/index.vue:194

@@ -739,6 +739,18 @@ msgstr ""
 msgid "Dutch"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:331
+msgid "Dynamic Previews"
+msgstr ""
+
+#: src/pages/settings/advanced.vue:332
+msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+msgstr ""
+
+#: src/pages/settings/advanced.vue:300
+msgid "Dynamic Size Limit: %{n}px"
+msgstr ""
+
 #: src/pages/about/feedback.vue:167
 msgid "E-Mail"
 msgstr ""
@@ -1425,10 +1437,6 @@ msgstr ""
 msgid "Oldest first"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:332
-msgid "On-demand rendering requires a powerful CPU and is not recommended for smaller home servers, or NAS devices."
-msgstr ""
-
 #: src/options/options.js:239
 msgid "Once a week"
 msgstr ""
@@ -1585,10 +1593,6 @@ msgstr ""
 
 #: src/dialog/photo/files.vue:110
 msgid "Portrait"
-msgstr ""
-
-#: src/pages/settings/advanced.vue:349
-msgid "Pre-Render Size Limit: %{n}px"
 msgstr ""
 
 #: src/dialog/account/edit.vue:301
@@ -1981,6 +1985,10 @@ msgstr ""
 msgid "States"
 msgstr ""
 
+#: src/pages/settings/advanced.vue:349
+msgid "Static Size Limit: %{n}px"
+msgstr ""
+
 #: src/dialog/photo/files.vue:33
 msgid "Status"
 msgstr ""
@@ -2115,14 +2123,6 @@ msgstr ""
 #: src/dialog/photo/files.vue:32
 #: src/dialog/photo/info.vue:15
 msgid "Type"
-msgstr ""
-
-#: src/pages/settings/advanced.vue:331
-msgid "Uncached Previews"
-msgstr ""
-
-#: src/pages/settings/advanced.vue:300
-msgid "Uncached Size Limit: %{n}px"
 msgstr ""
 
 #: src/pages/settings/index.vue:194

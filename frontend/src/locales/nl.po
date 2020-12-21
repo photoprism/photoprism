@@ -1356,8 +1356,7 @@ msgstr "Oudste eerst"
 
 #: src/pages/settings/advanced.vue:332
 msgid ""
-"On-demand rendering requires a powerful CPU and is not recommended for "
-"smaller home servers, or NAS devices."
+"Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr ""
 "On-demand rendering vereist een krachtige CPU en wordt niet aanbevolen voor "
 "kleinere homeservers of NAS-apparaten."
@@ -1513,7 +1512,7 @@ msgid "Portrait"
 msgstr "Staand"
 
 #: src/pages/settings/advanced.vue:349
-msgid "Pre-Render Size Limit: %{n}px"
+msgid "Static Size Limit: %{n}px"
 msgstr "Pre-Render Grootte Limiet: %{n}px"
 
 #: src/dialog/account/edit.vue:301
@@ -2013,11 +2012,11 @@ msgid "Type"
 msgstr "Type"
 
 #: src/pages/settings/advanced.vue:331
-msgid "Uncached Previews"
+msgid "Dynamic Previews"
 msgstr "Onbekijkbare voorvertoningen"
 
 #: src/pages/settings/advanced.vue:300
-msgid "Uncached Size Limit: %{n}px"
+msgid "Dynamic Size Limit: %{n}px"
 msgstr "Onbereikbare Groottegrens: %{n}px"
 
 #: src/pages/settings/index.vue:194
