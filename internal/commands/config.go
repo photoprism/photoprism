@@ -33,8 +33,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "experimental", conf.Experimental())
 
 	// Config path and main file.
-	fmt.Printf("%-25s %s\n", "config-path", conf.ConfigPath())
 	fmt.Printf("%-25s %s\n", "config-file", conf.ConfigFile())
+	fmt.Printf("%-25s %s\n", "config-path", conf.ConfigPath())
 	fmt.Printf("%-25s %s\n", "settings-file", conf.SettingsFile())
 
 	// Main directories.

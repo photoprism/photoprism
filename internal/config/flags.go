@@ -33,24 +33,29 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_EXPERIMENTAL",
 	},
 	cli.StringFlag{
-		Name:   "config-path",
-		Usage:  "config `PATH`",
-		EnvVar: "PHOTOPRISM_CONFIG_PATH",
+		Name:   "admin-password",
+		Usage:  "initial admin `PASSWORD`, please use a secure default",
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.StringFlag{
 		Name:   "config-file, c",
-		Usage:  "main config `FILENAME`",
+		Usage:  "load initial config options from `FILENAME`",
 		EnvVar: "PHOTOPRISM_CONFIG_FILE",
 	},
 	cli.StringFlag{
+		Name:   "config-path",
+		Usage:  "config `PATH` containing application settings",
+		EnvVar: "PHOTOPRISM_CONFIG_PATH",
+	},
+	cli.StringFlag{
 		Name:   "originals-path",
-		Usage:  "originals `PATH` for your photo and video collection",
+		Usage:  "originals `PATH` containing your photo and video collection",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.IntFlag{
 		Name:   "originals-limit",
 		Value:  1000,
-		Usage:  "file size limit for originals in `MEGABYTE`",
+		Usage:  "file size limit for originals in `MB`",
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
 	},
 	cli.StringFlag{
@@ -75,7 +80,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "temp-path",
-		Usage:  "temporary `PATH` for uploads and downloads",
+		Usage:  "temporary `PATH` for storing uploads and downloads",
 		EnvVar: "PHOTOPRISM_TEMP_PATH",
 	},
 	cli.StringFlag{
@@ -120,7 +125,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-exiftool",
-		Usage:  "don't create ExifTool JSON files for improved metadata extraction",
+		Usage:  "don't create ExifTool JSON files for enhanced metadata extraction",
 		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
 	},
 	cli.BoolFlag{
@@ -191,7 +196,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "http-port",
 		Value:  2342,
-		Usage:  "http server port `NUMBER``",
+		Usage:  "http server port `NUMBER`",
 		EnvVar: "PHOTOPRISM_HTTP_PORT",
 	},
 	cli.StringFlag{
@@ -205,11 +210,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
 	cli.StringFlag{
-		Name:   "admin-password",
-		Usage:  "initial admin `PASSWORD`",
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
-	},
-	cli.StringFlag{
 		Name:   "database-driver",
 		Usage:  "database driver `NAME` (sqlite or mysql)",
 		Value:  "sqlite",
@@ -217,18 +217,18 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-dsn",
-		Usage:  "sqlite file name, `DSN` is optional for mysql",
+		Usage:  "sqlite file name, specifying a `DSN` is optional for mariadb and mysql",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.StringFlag{
 		Name:   "database-server",
-		Usage:  "database server `HOST`, port is optional",
+		Usage:  "database server `HOST`, specifying a :port is optional",
 		EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 	},
 	cli.StringFlag{
 		Name:   "database-name",
 		Value:  "photoprism",
-		Usage:  "database `NAME`",
+		Usage:  "database schema `NAME`",
 		EnvVar: "PHOTOPRISM_DATABASE_NAME",
 	},
 	cli.StringFlag{
@@ -239,7 +239,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-password",
-		Usage:  "database user `PASSWORD``",
+		Usage:  "database user `PASSWORD`",
 		EnvVar: "PHOTOPRISM_DATABASE_PASSWORD",
 	},
 	cli.IntFlag{
@@ -266,7 +266,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "darktable-presets",
-		Usage:  "use Darktable presets (disables concurrent raw image conversion)",
+		Usage:  "disables simultaneous conversion of raw files to apply Darktable presets",
 		EnvVar: "PHOTOPRISM_DARKTABLE_PRESETS",
 	},
 	cli.StringFlag{
@@ -289,7 +289,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "exiftool-bin",
-		Usage:  "ExifTool `COMMAND` for metadata extraction",
+		Usage:  "ExifTool `COMMAND` for enhanced metadata extraction",
 		Value:  "exiftool",
 		EnvVar: "PHOTOPRISM_EXIFTOOL_BIN",
 	},
@@ -306,24 +306,24 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "thumb-filter, f",
-		Usage:  "resample filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
+		Usage:  "downscaling filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
-	cli.BoolFlag{
-		Name:   "thumb-uncached, u",
-		Usage:  "enable on-demand thumbnail rendering (high memory and cpu usage)",
-		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
-	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "pre-rendered thumbnail size limit in `PIXELS` (720-7680)",
+		Usage:  "static thumbnail size limit in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
+	cli.BoolFlag{
+		Name:   "thumb-uncached, u",
+		Usage:  "enable dynamic thumbnail rendering (high memory and cpu usage)",
+		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
+	},
 	cli.IntFlag{
 		Name:   "thumb-size-uncached, x",
-		Usage:  "on-demand rendering size limit in `PIXELS` (720-7680)",
+		Usage:  "dynamic rendering size limit in `PIXELS` (720-7680)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
