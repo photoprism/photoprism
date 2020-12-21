@@ -63,12 +63,12 @@ func resetAction(ctx *cli.Context) error {
 
 	log.Infof("database reset completed in %s", time.Since(start))
 
-	removeYaml := promptui.Prompt{
-		Label:     "Remove backup by permanently deleting all *.yml sidecar files?",
+	removeSidecarYaml := promptui.Prompt{
+		Label:     "Permanently delete all *.yml photo metadata backups?",
 		IsConfirm: true,
 	}
 
-	if _, err := removeYaml.Run(); err == nil {
+	if _, err := removeSidecarYaml.Run(); err == nil {
 		start := time.Now()
 
 		matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.yml")
@@ -78,7 +78,7 @@ func resetAction(ctx *cli.Context) error {
 		}
 
 		if len(matches) > 0 {
-			log.Infof("%d backup files will be removed", len(matches))
+			log.Infof("%d photo metadata backups will be removed", len(matches))
 
 			for _, name := range matches {
 				if err := os.Remove(name); err != nil {
@@ -90,7 +90,42 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed backup files in %s", time.Since(start))
+			log.Infof("removed files in %s", time.Since(start))
+		} else {
+			log.Infof("no backup files found")
+		}
+	} else {
+		log.Infof("keeping backup files")
+	}
+
+	removeAlbumYaml := promptui.Prompt{
+		Label:     "Permanently delete all *.yml album backups?",
+		IsConfirm: true,
+	}
+
+	if _, err := removeAlbumYaml.Run(); err == nil {
+		start := time.Now()
+
+		matches, err := filepath.Glob(regexp.QuoteMeta(conf.AlbumsPath()) + "/**/*.yml")
+
+		if err != nil {
+			return err
+		}
+
+		if len(matches) > 0 {
+			log.Infof("%d album backups will be removed", len(matches))
+
+			for _, name := range matches {
+				if err := os.Remove(name); err != nil {
+					fmt.Print("E")
+				} else {
+					fmt.Print(".")
+				}
+			}
+
+			fmt.Println("")
+
+			log.Infof("removed files in %s", time.Since(start))
 		} else {
 			log.Infof("no backup files found")
 		}

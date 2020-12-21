@@ -82,7 +82,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		if err := c.options.Load(configFile); err != nil {
 			log.Warnf("config: %s", err)
 		} else {
-			log.Infof("config: loaded options from %s", txt.Quote(configFile))
+			log.Debugf("config: loaded options from %s", txt.Quote(configFile))
 		}
 	}
 
