@@ -40,10 +40,6 @@ Step-by-step installation instructions for our self-hosted [community edition](h
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
-We do our best to provide a complete, stable version very soon. Check the 
-[roadmap](https://github.com/photoprism/photoprism/projects/5) for open issues.
-Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
-
 ## Roadmap ##
 
 Our vision is to provide the most user-friendly solution for browsing, organizing and sharing your personal photo collection.
