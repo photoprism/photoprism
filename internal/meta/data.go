@@ -13,8 +13,8 @@ import (
 type Data struct {
 	DocumentID   string        `meta:"ImageUniqueID,OriginalDocumentID,DocumentID"`
 	InstanceID   string        `meta:"InstanceID,DocumentID"`
-	TakenAt      time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTimeDigitized,DateTime"`
-	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,DateTimeDigitized,DateTime"`
+	TakenAt      time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
+	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
 	TimeZone     string        `meta:"-"`
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	Codec        string        `meta:"CompressorID,Compression,FileType"`
