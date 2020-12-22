@@ -131,6 +131,12 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
 			}
 		}
+	} else if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
+		if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+			data.TakenAtLocal = localUtc
+		}
+
+		data.TakenAt = data.TakenAt.Round(time.Second).UTC()
 	}
 
 	if orientation, ok := jsonStrings["Orientation"]; ok && orientation != "" {

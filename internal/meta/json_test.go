@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"github.com/photoprism/photoprism/pkg/fs"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,8 +19,8 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, CodecAvc1, data.Codec)
 		assert.Equal(t, "3s", data.Duration.String())
-		assert.Equal(t, "2018-09-08 17:20:14 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, "2018-09-08 15:20:14 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2018-09-08 19:20:14 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2018-09-08 17:20:14 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, 1080, data.Height)
@@ -573,6 +574,54 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, float32(37.9824), data.Lng)
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 6 Plus", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("date-creation.mov.json", func(t *testing.T) {
+		data, err := JSON("testdata/date-creation.mov.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, string(fs.CodecAvc), data.Codec)
+		assert.Equal(t, "10s", data.Duration.String())
+		assert.Equal(t, "2015-12-06 18:22:29 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2015-12-06 15:22:29 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "Europe/Moscow", data.TimeZone)
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, 1080, data.Height)
+		assert.Equal(t, 1920, data.ActualWidth())
+		assert.Equal(t, 1080, data.ActualHeight())
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(55.7579), data.Lat)
+		assert.Equal(t, float32(37.6197), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 6 Plus", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
+	t.Run("date-iphone8.mov.json", func(t *testing.T) {
+		data, err := JSON("testdata/date-iphone8.mov.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, string(fs.CodecHvc), data.Codec)
+		assert.Equal(t, "6s", data.Duration.String())
+		assert.Equal(t, "2020-12-22 02:45:43 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2020-12-22 01:45:43 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, 1080, data.Height)
+		assert.Equal(t, 1080, data.ActualWidth())
+		assert.Equal(t, 1920, data.ActualHeight())
+		assert.Equal(t, 6, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 8", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
 }
