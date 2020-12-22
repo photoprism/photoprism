@@ -34,6 +34,15 @@
     right: 4px;
 }
 
+/* #photoprism .p-photo-mosaic .active {
+    border: 1px solid blue;
+} */
+
+#photoprism .p-photo.active {
+    border: 1px solid blue;
+}
+
+
 #photoprism .p-photo-mosaic .p-photo-merged,
 #photoprism .p-photo-cards .p-photo-merged,
 #photoprism .p-photo-mosaic .p-photo-live,

@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
+  <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic" @keydown='onKeyDown' tabindex="-1">
     <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
       <v-card-title primary-title>
         <div>
@@ -20,7 +20,7 @@
           v-for="(photo, index) in photos"
           :key="index"
           :data-uid="photo.UID"
-          v-bind:class="{ selected: $clipboard.has(photo) }"
+          v-bind:class="{ selected: $clipboard.has(photo), focussed: focusIndex == index }"
           class="p-photo"
           xs4 sm3 md2 lg1 d-flex
       >
@@ -131,6 +131,7 @@ export default {
   },
   data() {
     return {
+      focusIndex: -1,
       hidePrivate: this.$config.settings().features.private,
       mouseDown: {
         index: -1,
@@ -139,18 +140,24 @@ export default {
     };
   },
   methods: {
+    onKeyDown(ev, index) {
+      console.log('event', ev, "key", ev.key, "index", index);
+    },
+
     onSelect(ev, index) {
       if (ev.shiftKey) {
         this.selectRange(index);
       } else {
         this.$clipboard.toggle(this.photos[index]);
       }
+      console.log("focusIndex(share)", this.focusIndex);
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
+      console.log("click", index);
       let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
 
       if (longClick || this.selection.length > 0) {
@@ -173,6 +180,7 @@ export default {
     selectRange(index) {
       this.$clipboard.addRange(index, this.photos);
     }
+
   },
 };
 </script>

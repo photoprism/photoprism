@@ -130,6 +130,10 @@ main {
     outline: none;
 }
 
+#photoprism *:focus {
+    border: 2px solid red;
+}
+
 #photoprism .p-scroll-top {
     top: 64px;
     right: 8px;

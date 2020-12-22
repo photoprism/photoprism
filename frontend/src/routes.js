@@ -55,6 +55,26 @@ export default [
         redirect: "/photos",
     },
     {
+        name: "monochromes",
+        path: "/photos/monochrome",
+        redirect: {name: 'photos', query: { q: 'mono:true quality:3 photo:true'}}
+    },
+    {
+        name: "panoramas",
+        path: "/photos/panorama",
+        redirect: {name: 'photos', query: { q: 'panorama:true'}}
+    },
+    {
+        name: "stacks",
+        path: "/photos/stack",
+        redirect: {name: 'photos', query: { q: 'stack:true'}}
+    },
+    {
+        name: "scans",
+        path: "/photos/scan",
+        redirect: {name: 'photos', query: { q: 'scan:true'}}
+    },
+    {
         name: "about",
         path: "/about",
         component: About,

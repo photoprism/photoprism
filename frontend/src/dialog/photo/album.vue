@@ -1,5 +1,5 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
+  <v-dialog lazy v-model="show" persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel" v-on:keydown.enter.ctrl="confirm" >
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>

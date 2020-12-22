@@ -1,5 +1,5 @@
 <template>
-  <div id="photoprism">
+  <div id="photoprism" tabindex="-1" @keydown='onKeyDown'>
     <p-loading-bar height="4"></p-loading-bar>
 
     <p-notify></p-notify>
@@ -30,6 +30,10 @@ export default {
   },
   computed: {},
   methods: {
+    onKeyDown(ev) {
+      console.log("KeyDown", ev);
+      return this.$shortcuts.handleKey(ev);
+    },
     onTouchStart(e) {
       this.touchStart = e.touches[0].pageY;
     },
@@ -53,6 +57,16 @@ export default {
     window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
     window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});
     this.$config.setVuetify(this.$vuetify);
+    this.$shortcuts.setApp(this);
+  },
+  mounted() {
+    this.$nextTick(() => {
+      console.log("this el: ", this.$el);
+      this.$el.focus();
+      this.$nextTick(() => {
+        console.log("mounted focussed: ", document.activeElement);
+      });
+    });
   },
   destroyed() {
     window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);

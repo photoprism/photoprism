@@ -41,7 +41,7 @@
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down">
-              <v-btn icon @click.stop="mini = !mini" class="nav-minimize">
+              <v-btn icon @click.stop="toggleSidebar" class="nav-minimize">
                 <v-icon>chevron_left</v-icon>
               </v-btn>
             </v-list-tile-action>
@@ -50,7 +50,7 @@
       </v-toolbar>
 
       <v-list class="pt-3">
-        <v-list-tile v-if="mini" @click.stop="mini = !mini" class="nav-expand">
+        <v-list-tile v-if="mini" @click.stop="toggleSidebar" class="nav-expand">
           <v-list-tile-action>
             <v-icon>chevron_right</v-icon>
           </v-list-tile-action>
@@ -469,6 +469,9 @@
             },
         },
         methods: {
+            toggleSidebar() {
+              mini = !mini;
+            },
             openUpload() {
                 if (this.auth && !this.readonly && this.$config.feature('upload')) {
                     this.upload.dialog = true;
@@ -511,6 +514,12 @@
                     this.edit.dialog = true;
                 }
             });
+        },
+        mounted() {
+            this.$shortcuts.activate(this, 'navigation')
+        },
+        unmounted() {
+            this.$shortcuts.activate(this, 'navigation')
         },
         destroyed() {
             Event.unsubscribe(this.reload.subscription);

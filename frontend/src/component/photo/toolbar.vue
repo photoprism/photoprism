@@ -1,7 +1,8 @@
 <template>
   <v-form lazy-validation dense
-          ref="form" autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
-          @submit.prevent="filterChange">
+          ref="photoToolbar" autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
+          @submit.prevent="filterChange"
+          >
     <v-toolbar :dense="$vuetify.breakpoint.smAndDown" flat color="secondary">
       <v-text-field class="pt-3 pr-3 input-search"
                     browser-autocomplete="off"
@@ -13,6 +14,7 @@
                     @click:clear="clearQuery"
                     v-model="filter.q"
                     @keyup.enter.native="filterChange"
+                    ref = "search"
       ></v-text-field>
 
       <v-spacer></v-spacer>
@@ -211,7 +213,16 @@ export default {
       return this.all.categories.concat(this.config.categories);
     },
   },
+  mounted() {
+    this.$shortcuts.activate(this, 'toolbar');
+  },
+  unmounted() {
+    this.$shortcuts.deactivate('toolbar');
+  },
   methods: {
+    setViewList() { 
+      this.setView('list') 
+    },
     colorOptions() {
       return this.all.colors.concat(options.Colors());
     },

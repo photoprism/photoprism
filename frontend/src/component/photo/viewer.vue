@@ -15,7 +15,7 @@
 
           <div class="pswp__counter"></div>
 
-          <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')"></button>
+          <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')" ref="close"></button>
 
           <button class="pswp__button action-download" style="background: none;" @click.exact="onDownload"
                   :title="$gettext('Download')" v-if="config.settings.features.download">
@@ -28,14 +28,14 @@
           </button>
 
           <button class="pswp__button action-like hidden-shared-only" style="background: none;"
-                  @click.exact="onLike" :title="$gettext('Like')">
+                  @click.exact="onLike" :title="$gettext('Like')" ref="like">
             <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
-          <button class="pswp__button pswp__button--fs action-toggle-fullscreen" :title="$gettext('Fullscreen')"></button>
+          <button class="pswp__button pswp__button--fs action-toggle-fullscreen" :title="$gettext('Fullscreen')" ref="fullscreen"></button>
 
-          <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
+          <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')" ref="zoom"></button>
 
           <button class="pswp__button" style="background: none;" @click.exact="onSlideshow" :title="$gettext('Start/Stop Slideshow')">
             <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
@@ -55,10 +55,10 @@
           <div class="pswp__share-tooltip"></div>
         </div>
 
-        <button class="pswp__button pswp__button--arrow--left action-previous" title="Previous (arrow left)">
+        <button class="pswp__button pswp__button--arrow--left action-previous" title="Previous (arrow left)" ref="prev">
         </button>
 
-        <button class="pswp__button pswp__button--arrow--right action-next" title="Next (arrow right)">
+        <button class="pswp__button pswp__button--arrow--right action-next" title="Next (arrow right)" ref="next">
         </button>
 
         <div class="pswp__caption" @click="onPlay">
@@ -92,6 +92,12 @@
                 },
             };
         },
+        mounted() {
+            this.$shortcuts.activate(this, 'viewer')
+        },
+        unmounted() {
+            this.$shortcuts.deactivate('viewer')
+        },
         created() {
             this.subscriptions['viewer.change'] = Event.subscribe('viewer.change', this.onChange);
             this.subscriptions['viewer.pause'] = Event.subscribe('viewer.pause', this.onPause);
@@ -104,6 +110,11 @@
             }
         },
         methods: {
+            // close() {
+            //     const g = this.$viewer.gallery; // Gallery
+            //     g.close()
+
+            // }
             onChange(ev, data) {
                 const psp = this.$viewer.gallery;
 

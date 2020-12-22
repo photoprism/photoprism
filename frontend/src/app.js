@@ -33,6 +33,7 @@ import "regenerator-runtime/runtime";
 import Api from "common/api";
 import Notify from "common/notify";
 import Clipboard from "common/clipboard";
+import Shortcuts from "common/shortcuts";
 import Components from "component/components";
 import Dialogs from "dialog/dialogs";
 import Event from "pubsub-js";
@@ -60,6 +61,7 @@ const viewer = new Viewer();
 const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.get("public");
 const isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+const shortcuts = new Shortcuts();
 
 // HTTP Live Streaming (video support)
 window.Hls = Hls;
@@ -75,6 +77,7 @@ Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
 Vue.prototype.$clipboard = clipboard;
 Vue.prototype.$isMobile = isMobile;
+Vue.prototype.$shortcuts = new Shortcuts();
 
 // Register Vuetify
 Vue.use(Vuetify, {"theme": config.theme});

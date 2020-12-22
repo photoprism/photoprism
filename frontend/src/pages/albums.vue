@@ -208,31 +208,18 @@ import Event from "pubsub-js";
 import RestModel from "model/rest";
 import {MaxItems} from "common/clipboard";
 import Notify from "common/notify";
+import CardsUtils from "common/mixins/cardsutils";
+import AlbumsUtils from "common/mixins/albumsutils";
 
 export default {
   name: 'p-page-albums',
-  props: {
-    staticFilter: Object,
-    view: String,
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-
-      this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.category = query["category"] ? query["category"] : "";
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.search();
-    }
-  },
+  mixins: [CardsUtils, AlbumsUtils],
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
     const q = query["q"] ? query["q"] : "";
     const category = query["category"] ? query["category"] : "";
     const filter = {q, category};
-    const settings = {};
 
     let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
@@ -245,26 +232,8 @@ export default {
     return {
       featureShare: this.$config.feature('share'),
       categories: categories,
-      subscriptions: [],
-      listen: false,
-      dirty: false,
-      results: [],
-      loading: true,
-      scrollDisabled: true,
-      pageSize: 24,
-      offset: 0,
-      page: 0,
-      selection: [],
-      settings: settings,
       filter: filter,
-      lastFilter: {},
-      routeName: routeName,
-      titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
-      mouseDown: {
-        index: -1,
-        timeStamp: -1,
-      },
-      lastId: "",
+
       dialog: {
         share: false,
         upload: false,
@@ -289,7 +258,10 @@ export default {
     showUpload() {
       Event.publish("dialog.upload");
     },
-    selectRange(rangeEnd, models) {
+    selectRange(index) {
+      this.selectRangeWithModel(index, this.results)
+    },
+    selectRangeWithModel(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
         console.warn("selectRange() - invalid arguments:", rangeEnd, models);
         return;
@@ -316,7 +288,7 @@ export default {
     },
     onSelect(ev, index) {
       if (ev.shiftKey) {
-        this.selectRange(index, this.results);
+        this.selectRange(index);
       } else {
         this.toggleSelection(this.results[index].getId());
       }
@@ -344,9 +316,7 @@ export default {
         ev.preventDefault();
         ev.stopPropagation();
 
-        if (this.results[index]) {
-          this.selectRange(index, this.results);
-        }
+        this.selectRange(index, this.results);
       }
     },
     clearQuery() {

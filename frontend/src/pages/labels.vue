@@ -153,53 +153,22 @@ import Event from "pubsub-js";
 import RestModel from "model/rest";
 import {MaxItems} from "../common/clipboard";
 import Notify from "../common/notify";
+import CardsUtils from "common/mixins/cardsutils";
+import AlbumsUtils from "common/mixins/albumsutils";
 
 export default {
   name: 'p-page-labels',
-  props: {
-    staticFilter: Object
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
+  mixins: [CardsUtils, AlbumsUtils],
 
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.filter.all = query['all'] ? query['all'] : '';
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.search();
-    }
-  },
   data() {
-    const query = this.$route.query;
-    const routeName = this.$route.name;
-    const q = query['q'] ? query['q'] : '';
-    const all = query['all'] ? query['all'] : '';
-    const filter = {q: q, all: all};
-    const settings = {};
+      const query = this.$route.query;
+      const q = query['q'] ? query['q'] : '';
+      const all = query['all'] ? query['all'] : '';
+      const filter = {q: q, all: all};
 
     return {
       config: this.$config.values,
-      subscriptions: [],
-      listen: false,
-      dirty: false,
-      results: [],
-      scrollDisabled: true,
-      loading: true,
-      pageSize: 24,
-      offset: 0,
-      page: 0,
-      selection: [],
-      settings: settings,
       filter: filter,
-      lastFilter: {},
-      routeName: routeName,
-      titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-      mouseDown: {
-        index: -1,
-        timeStamp: -1,
-      },
-      lastId: "",
     };
   },
   methods: {

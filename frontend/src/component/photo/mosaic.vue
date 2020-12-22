@@ -24,7 +24,7 @@
           v-for="(photo, index) in photos"
           :key="index"
           :data-uid="photo.UID"
-          v-bind:class="{ selected: $clipboard.has(photo) }"
+          v-bind:class="{ selected: $clipboard.has(photo), active: activeIndex == index }"
           class="p-photo"
           xs4 sm3 md2 lg1 d-flex
       >
@@ -124,61 +124,12 @@
   </v-container>
 </template>
 <script>
+
+import PhotoShortcuts from 'common/mixins/photoshortcuts'
+import CardsUtils from 'common/mixins/cardsutils'
+
 export default {
   name: 'p-photo-mosaic',
-  props: {
-    photos: Array,
-    selection: Array,
-    openPhoto: Function,
-    editPhoto: Function,
-    album: Object,
-    filter: Object,
-    context: String,
-  },
-  data() {
-    return {
-      hidePrivate: this.$config.settings().features.private,
-      mouseDown: {
-        index: -1,
-        timeStamp: -1,
-      },
-    };
-  },
-  methods: {
-    onSelect(ev, index) {
-      if (ev.shiftKey) {
-        this.selectRange(index);
-      } else {
-        this.$clipboard.toggle(this.photos[index]);
-      }
-    },
-    onMouseDown(ev, index) {
-      this.mouseDown.index = index;
-      this.mouseDown.timeStamp = ev.timeStamp;
-    },
-    onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
-
-      if (longClick || this.selection.length > 0) {
-        if (longClick || ev.shiftKey) {
-          this.selectRange(index);
-        } else {
-          this.$clipboard.toggle(this.photos[index]);
-        }
-      } else {
-        this.openPhoto(index, false);
-      }
-    },
-    onContextMenu(ev, index) {
-      if (this.$isMobile) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        this.selectRange(index);
-      }
-    },
-    selectRange(index) {
-      this.$clipboard.addRange(index, this.photos);
-    }
-  },
+  mixins: [CardsUtils, PhotoShortcuts],
 };
 </script>

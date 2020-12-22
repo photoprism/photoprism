@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-form lazy-validation dense
               ref="form" class="p-form-photo-details-meta" accept-charset="UTF-8"
-              @submit.prevent="save">
+              @submit.prevent="save" @keyup.ctrl.enter="save(true)" @keyup.esc="close">
         <v-layout row wrap align-top fill-height>
           <v-flex
                   class="p-photo pa-2"

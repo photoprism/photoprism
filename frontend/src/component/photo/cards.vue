@@ -26,7 +26,7 @@
           :data-uid="photo.UID"
           class="p-photo"
           xs12 sm6 md4 lg3 xl2 d-flex
-          v-bind:class="{ 'is-selected': $clipboard.has(photo) }"
+          v-bind:class="{ 'is-selected': $clipboard.has(photo), active: activeIndex == index  }"
       >
         <v-hover>
           <v-card tile slot-scope="{ hover }"
@@ -196,33 +196,14 @@
   </v-container>
 </template>
 <script>
+
+import PhotoShortcuts from 'common/mixins/photoshortcuts.js';
+import CardsUtils from 'common/mixins/cardsutils';
+
 export default {
   name: 'p-photo-cards',
-  props: {
-    photos: Array,
-    selection: Array,
-    openPhoto: Function,
-    editPhoto: Function,
-    openLocation: Function,
-    album: Object,
-    filter: Object,
-    context: String,
-  },
-  data() {
-    return {
-      showLocation: this.$config.settings().features.places,
-      hidePrivate: this.$config.settings().features.private,
-      debug: this.$config.get('debug'),
-      labels: {
-        approve: this.$gettext("Approve"),
-        archive: this.$gettext("Archive"),
-      },
-      mouseDown: {
-        index: -1,
-        timeStamp: -1,
-      },
-    };
-  },
+  mixins: [CardsUtils, PhotoShortcuts],
+
   methods: {
     downloadFile(index) {
       const photo = this.photos[index];
@@ -231,40 +212,7 @@ export default {
       link.download = photo.FileName;
       link.click();
     },
-    onSelect(ev, index) {
-      if (ev.shiftKey) {
-        this.selectRange(index);
-      } else {
-        this.$clipboard.toggle(this.photos[index]);
-      }
-    },
-    onMouseDown(ev, index) {
-      this.mouseDown.index = index;
-      this.mouseDown.timeStamp = ev.timeStamp;
-    },
-    onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
 
-      if (longClick || this.selection.length > 0) {
-        if (longClick || ev.shiftKey) {
-          this.selectRange(index);
-        } else {
-          this.$clipboard.toggle(this.photos[index]);
-        }
-      } else {
-        this.openPhoto(index, false);
-      }
-    },
-    onContextMenu(ev, index) {
-      if (this.$isMobile) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        this.selectRange(index);
-      }
-    },
-    selectRange(index) {
-      this.$clipboard.addRange(index, this.photos);
-    },
   }
 };
 </script>

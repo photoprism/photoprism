@@ -30,7 +30,7 @@
                   :no-data-text="notFoundMessage"
     >
       <template slot="items" slot-scope="props">
-        <td style="user-select: none;" :data-uid="props.item.UID">
+        <td style="user-select: none;" :data-uid="props.item.UID" :class="{ active: activeIndex == index }">
           <v-img class="accent lighten-2 clickable" aspect-ratio="1"
                  :src="props.item.thumbnailUrl('tile_50')"
                  @mousedown="onMouseDown($event, props.index)"

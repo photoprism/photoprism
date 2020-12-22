@@ -4,7 +4,7 @@
 
     <v-form lazy-validation dense
             ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown" @keyup.l="setView('list')">
         <v-toolbar-title>
           {{ model.Title }}
         </v-toolbar-title>
