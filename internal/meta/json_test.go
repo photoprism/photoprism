@@ -624,4 +624,24 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 8", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
+
+	t.Run("date-iphonex.mov.json", func(t *testing.T) {
+		data, err := JSON("testdata/date-iphonex.mov.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, string(fs.CodecHvc), data.Codec)
+		assert.Equal(t, "2s", data.Duration.String())
+		assert.Equal(t, "2019-12-12 20:47:21 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2019-12-13 01:47:21 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "America/New_York", data.TimeZone)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(40.7696), data.Lat)
+		assert.Equal(t, float32(-73.9964), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone X", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
 }
