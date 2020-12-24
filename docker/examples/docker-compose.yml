@@ -13,7 +13,7 @@ version: '3.5'
 services:
   photoprism:
     image: photoprism/photoprism:latest
-    # Only enable this option once your installation is properly
+    # Only enable enable restart and healthcheck once your installation is properly
     # configured as it otherwise gets stuck in a restart loop:
     # restart: unless-stopped
     security_opt:
@@ -21,12 +21,6 @@ services:
       - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-    # Uncomment the following lines to enable regular health checks (causes automatic restarts, be careful):
-    # healthcheck:
-    #   test: ["CMD", "photoprism", "status"]
-    #   interval: 60s
-    #   timeout: 15s
-    #   retries: 5
     # Run "photoprism help" and "photoprism config" in a terminal too see all config options and current values:
     environment:
       PHOTOPRISM_HTTP_PORT: 2342
@@ -34,10 +28,18 @@ services:
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
+      PHOTOPRISM_EXPERIMENTAL: "false"               # Enable experimental features
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disable built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Users can not view or change settings
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Don't use TensorFlow for image classification
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
-      PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # SQLite is an embedded database that doesn't require a server
+      # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB database user password
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public PhotoPrism URL
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
@@ -56,10 +58,23 @@ services:
       # Multiple folders can be indexed by mounting them as sub-folders of /photoprism/originals:
       # - "/mnt/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
       # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
-      # Mounting the import folder is optional (see docs):
+      # Mounting an import folder is optional (see docs):
       # - "~/Import:/photoprism/import"
       # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
-      - "~/.photoprism:/photoprism/storage"
+      - "./storage:/photoprism/storage"
+
+  mariadb:
+    image: mariadb:10.5
+    restart: unless-stopped
+    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+    volumes:
+      # Permanent storage for index database files (DON'T REMOVE):
+      - "./storage/mariadb:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: insecure
+      MYSQL_DATABASE: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: insecure
 
 # Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
 #

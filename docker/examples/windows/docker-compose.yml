@@ -16,7 +16,7 @@ version: '3.5'
 services:
   photoprism:
     image: photoprism/photoprism:latest
-    # Only enable this option once your installation is properly
+    # Only enable restart and healthcheck once your installation is properly
     # configured as it otherwise gets stuck in a restart loop:
     # restart: unless-stopped
     ports:
@@ -27,7 +27,9 @@ services:
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode, shows additional log messages
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required, disables password protection
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals folder; disables import, upload, and delete
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disable built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Users can not view or change settings
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Don't use TensorFlow for image classification
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
       PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
@@ -48,7 +50,7 @@ services:
       # Mounting an import folder is optional (see docs):
       # - "E:/:/photoprism/import"
       # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
-      - "~/.photoprism:/photoprism/storage"
+      - "./storage:/photoprism/storage"
 
   mariadb:
     image: mariadb:10.5
