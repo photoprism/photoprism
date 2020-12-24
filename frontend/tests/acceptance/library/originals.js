@@ -17,7 +17,7 @@ test('#1 Index files from folder', async t => {
         .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
     await t
         .click(Selector('.nav-library'))
-        .click(Selector('#tab-index'))
+        .click(Selector('#tab-library-index'))
         .click(Selector('.input-index-folder input'))
         .click(Selector('div.v-list__tile__title').withText('/moment'))
         .click(Selector('.action-index'))
