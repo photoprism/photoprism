@@ -1,6 +1,6 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (Intel / AMD64)
+# Example Docker Compose config file for PhotoPrism (Linux / AMD64)
 #
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
@@ -38,7 +38,7 @@ services:
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Users can not view or change settings
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
-      # PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # SQLite is an embedded database that doesn't require a server
+      # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
       PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
       PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
       PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name

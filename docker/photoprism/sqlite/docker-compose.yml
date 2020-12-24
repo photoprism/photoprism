@@ -1,6 +1,6 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (Intel / AMD64)
+# Example Docker Compose config file for PhotoPrism (Linux / AMD64)
 #
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
