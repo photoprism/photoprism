@@ -289,7 +289,7 @@ export default {
       config: this.$config.values,
       settings: new Settings(this.$config.settings()),
       options: options,
-      busy: this.$config.ready(),
+      busy: this.$config.loading(),
       subscriptions: [],
     };
   },
@@ -304,7 +304,7 @@ export default {
   },
   methods: {
     load() {
-      this.$config.wait().then(() => {
+      this.$config.load().then(() => {
         this.settings.setValues(this.$config.settings());
         this.busy = false;
       })

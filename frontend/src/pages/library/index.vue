@@ -101,7 +101,7 @@ export default {
     const root = {"path": "/", "name": this.$gettext("All originals")}
 
     return {
-      ready: this.$config.ready(),
+      ready: !this.$config.loading(),
       settings: new Settings(this.$config.settings()),
       readonly: this.$config.get("readonly"),
       config: this.$config.values,
@@ -119,7 +119,7 @@ export default {
   },
   methods: {
     load() {
-      this.$config.wait().then(() => {
+      this.$config.load().then(() => {
         this.settings.setValues(this.$config.settings());
         this.dirs = [this.root];
 

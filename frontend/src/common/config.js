@@ -77,12 +77,12 @@ export default class Config {
     }
   }
 
-  ready() {
-    return this.values.mode && this.values.mode !== "public";
+  loading() {
+    return !this.values.mode || this.values.mode === "public";
   }
 
-  wait() {
-    if (!this.ready()) {
+  load() {
+    if (this.loading()) {
       return this.update();
     }
 
