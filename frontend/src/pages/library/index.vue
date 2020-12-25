@@ -20,7 +20,7 @@
             browser-autocomplete="off"
             :items="dirs"
             :loading="loading"
-            :disabled="busy"
+            :disabled="busy || !ready"
             item-text="name"
             item-value="path"
         >
@@ -35,7 +35,7 @@
           <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
             <v-checkbox
                 @change="onChange"
-                :disabled="busy"
+                :disabled="busy || !ready"
                 class="ma-0 pa-0"
                 v-model="settings.index.rescan"
                 color="secondary-dark"
@@ -49,7 +49,7 @@
         </v-layout>
 
         <v-btn
-            :disabled="!busy"
+            :disabled="!busy || !ready"
             color="secondary-dark"
             class="white--text ml-0 mt-2 action-cancel"
             depressed
@@ -59,7 +59,7 @@
         </v-btn>
 
         <v-btn
-            :disabled="busy"
+            :disabled="busy || !ready"
             color="secondary-dark"
             class="white--text ml-0 mt-2 action-index"
             depressed
@@ -99,10 +99,10 @@ export default {
   name: 'p-tab-index',
   data() {
     const root = {"path": "/", "name": this.$gettext("All originals")}
-    const settings = new Settings(this.$config.settings());
 
     return {
-      settings: settings,
+      ready: this.$config.ready(),
+      settings: new Settings(this.$config.settings()),
       readonly: this.$config.get("readonly"),
       config: this.$config.values,
       started: false,
@@ -114,10 +114,25 @@ export default {
       fileName: "",
       source: null,
       root: root,
-      dirs: [root, {path: settings.index.path, name: "/" + Util.truncate(settings.index.path, 100, "…")}],
+      dirs: [root],
     }
   },
   methods: {
+    load() {
+      this.$config.wait().then(() => {
+        this.settings.setValues(this.$config.settings());
+        this.dirs = [this.root];
+
+        if (this.settings.index.path !== this.root.path) {
+          this.dirs.push({
+            path: this.settings.index.path,
+            name: "/" + Util.truncate(this.settings.index.path, 100, "…")
+          });
+        }
+
+        this.ready = true;
+      })
+    },
     onChange() {
       this.settings.save();
     },
@@ -250,6 +265,7 @@ export default {
   },
   created() {
     this.subscriptionId = Event.subscribe('index', this.handleEvent);
+    this.load();
   },
   destroyed() {
     Event.unsubscribe(this.subscriptionId);

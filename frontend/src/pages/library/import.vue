@@ -17,7 +17,7 @@
             hide-no-data flat solo browser-autocomplete="off"
             :items="dirs"
             :loading="loading"
-            :disabled="busy"
+            :disabled="busy || !ready"
             item-text="name"
             item-value="path"
             @change="onChange"
@@ -34,7 +34,7 @@
           <v-flex xs12 class="px-2 pb-2 pt-2">
             <v-checkbox
                 v-model="settings.import.move"
-                :disabled="busy"
+                :disabled="busy || !ready"
                 class="ma-0 pa-0"
                 color="secondary-dark"
                 :label="$gettext('Move Files')"
@@ -56,7 +56,7 @@
         </v-layout>
 
         <v-btn
-            :disabled="!busy"
+            :disabled="!busy || !ready"
             color="secondary-dark"
             class="white--text ml-0 action-cancel"
             depressed
@@ -66,7 +66,7 @@
         </v-btn>
 
         <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
-               :disabled="busy"
+               :disabled="busy || !ready"
                color="secondary-dark"
                class="white--text ml-0 hidden-xs-only action-upload"
                depressed
@@ -77,7 +77,7 @@
         </v-btn>
 
         <v-btn
-            :disabled="busy"
+            :disabled="busy || !ready"
             color="secondary-dark"
             class="white--text ml-0 mt-2 action-import"
             depressed
@@ -104,10 +104,10 @@ export default {
   name: 'PTabImport',
   data() {
     const root = {"path": "/", "name": this.$gettext("All files from import folder")};
-    const settings = new Settings(this.$config.settings());
 
     return {
-      settings: settings,
+      ready: this.$config.ready(),
+      settings: new Settings(this.$config.settings()),
       started: false,
       busy: false,
       loading: false,
@@ -116,16 +116,32 @@ export default {
       fileName: '',
       source: null,
       root: root,
-      dirs: [root, {path: settings.import.path, name: "/" + Util.truncate(settings.import.path, 100, "…")}],
+      dirs: [root],
     };
   },
   created() {
     this.subscriptionId = Event.subscribe('import', this.handleEvent);
+    this.load();
   },
   destroyed() {
     Event.unsubscribe(this.subscriptionId);
   },
   methods: {
+    load() {
+      this.$config.wait().then(() => {
+        this.settings.setValues(this.$config.settings());
+        this.dirs = [this.root];
+
+        if (this.settings.import.path !== this.root.path) {
+          this.dirs.push({
+            path: this.settings.import.path,
+            name: "/" + Util.truncate(this.settings.import.path, 100, "…")
+          });
+        }
+
+        this.ready = true;
+      })
+    },
     onChange() {
       this.settings.save();
     },

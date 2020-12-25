@@ -12,6 +12,7 @@ import (
 
 // ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
+	Mode            string              `json:"mode"`
 	Name            string              `json:"name"`
 	Version         string              `json:"version"`
 	Copyright       string              `json:"copyright"`
@@ -151,6 +152,7 @@ func (c *Config) PublicConfig() ClientConfig {
 			TensorFlow: true,
 		},
 		Flags:           strings.Join(c.Flags(), " "),
+		Mode:            "public",
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
@@ -199,6 +201,7 @@ func (c *Config) GuestConfig() ClientConfig {
 			TensorFlow: true,
 		},
 		Flags:           "readonly public shared",
+		Mode:            "guest",
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
@@ -241,6 +244,7 @@ func (c *Config) UserConfig() ClientConfig {
 			TensorFlow: c.DisableTensorFlow(),
 		},
 		Flags:           strings.Join(c.Flags(), " "),
+		Mode:            "user",
 		Name:            c.Name(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),

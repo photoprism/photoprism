@@ -151,3 +151,8 @@ main {
 #photoprism .v-card .caption {
     overflow-wrap: anywhere;
 }
+
+#photoprism .body-1,
+#photoprism .body-2 {
+    word-wrap: break-word;
+}

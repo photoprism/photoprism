@@ -289,7 +289,7 @@ export default {
       config: this.$config.values,
       settings: new Settings(this.$config.settings()),
       options: options,
-      busy: false,
+      busy: this.$config.ready(),
       subscriptions: [],
     };
   },
@@ -304,7 +304,10 @@ export default {
   },
   methods: {
     load() {
-      this.settings.load();
+      this.$config.wait().then(() => {
+        this.settings.setValues(this.$config.settings());
+        this.busy = false;
+      })
     },
     onChange() {
       const reload = this.settings.changed("ui", "language");
