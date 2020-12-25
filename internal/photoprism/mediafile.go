@@ -804,6 +804,11 @@ func (m *MediaFile) HasJson() bool {
 	return fs.FormatJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
 }
 
+// NeedsJson tests if the media file needs a JSON sidecar file to be created.
+func (m *MediaFile) NeedsJson() bool {
+	return Config().ExifToolJson() && m.Root() != entity.RootSidecar && m.IsMedia() && !m.HasJson()
+}
+
 func (m *MediaFile) decodeDimensions() error {
 	if !m.IsMedia() {
 		return fmt.Errorf("failed decoding dimensions for %s", txt.Quote(m.BaseName()))
@@ -1026,7 +1031,7 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 	}
 
 	for _, srcName := range matches {
-		destName := filepath.Join(sidecarPath, newName+filepath.Ext(srcName))
+		destName := filepath.Join(sidecarPath, newName+fs.Ext(srcName))
 
 		if fs.FileExists(destName) {
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
