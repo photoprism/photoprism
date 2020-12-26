@@ -155,12 +155,22 @@ func (m FileExtensions) Known(name string) bool {
 func (m FileExtensions) TypeExt() TypeExtensions {
 	result := make(TypeExtensions)
 
-	for ext, t := range m {
-		extUpper := strings.ToUpper(ext)
-		if _, ok := result[t]; ok {
-			result[t] = append(result[t], ext, extUpper)
-		} else {
-			result[t] = []string{ext, extUpper}
+	if ignoreCase {
+		for ext, t := range m {
+			if _, ok := result[t]; ok {
+				result[t] = append(result[t], ext)
+			} else {
+				result[t] = []string{ext}
+			}
+		}
+	} else {
+		for ext, t := range m {
+			extUpper := strings.ToUpper(ext)
+			if _, ok := result[t]; ok {
+				result[t] = append(result[t], ext, extUpper)
+			} else {
+				result[t] = []string{ext, extUpper}
+			}
 		}
 	}
 
@@ -181,6 +191,10 @@ func (t FileFormat) Find(fileName string, stripSequence bool) string {
 	for _, ext := range TypeExt[t] {
 		if info, err := os.Stat(prefix + ext); err == nil && info.Mode().IsRegular() {
 			return filepath.Join(dir, info.Name())
+		}
+
+		if ignoreCase {
+			continue
 		}
 
 		if info, err := os.Stat(prefixLower + ext); err == nil && info.Mode().IsRegular() {
@@ -236,13 +250,19 @@ func (t FileFormat) FindFirst(fileName string, dirs []string, baseDir string, st
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, fileBase) + ext
+				return filepath.Join(dir, info.Name())
 			} else if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, fileBasePrefix) + ext
-			} else if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, fileBaseLower) + ext
+				return filepath.Join(dir, info.Name())
+			}
+
+			if ignoreCase {
+				continue
+			}
+
+			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
+				return filepath.Join(dir, info.Name())
 			} else if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, fileBaseUpper) + ext
+				return filepath.Join(dir, info.Name())
 			}
 		}
 	}
@@ -279,19 +299,23 @@ func (t FileFormat) FindAll(fileName string, dirs []string, baseDir string, stri
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, fileBase)+ext)
+				results = append(results, filepath.Join(dir, info.Name()))
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, fileBasePrefix)+ext)
+				results = append(results, filepath.Join(dir, info.Name()))
+			}
+
+			if ignoreCase {
+				continue
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, fileBaseLower)+ext)
+				results = append(results, filepath.Join(dir, info.Name()))
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, fileBaseUpper)+ext)
+				results = append(results, filepath.Join(dir, info.Name()))
 			}
 		}
 	}

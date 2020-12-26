@@ -124,6 +124,12 @@ func (c *Config) Init() error {
 		return err
 	}
 
+	if insensitive, err := c.CaseInsensitive(); err != nil {
+		return err
+	} else if insensitive {
+		fs.IgnoreCase()
+	}
+
 	c.initSettings()
 	c.initHub()
 
