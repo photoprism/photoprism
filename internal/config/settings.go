@@ -211,7 +211,7 @@ func (c *Config) initSettings() {
 	fileName := c.SettingsFile()
 
 	if err := c.settings.Load(fileName); err == nil {
-		log.Debugf("config: loaded settings from %s ", fileName)
+		log.Debugf("config: settings loaded from %s ", fileName)
 	} else if err := c.settings.Save(fileName); err != nil {
 		log.Errorf("failed creating %s: %s", fileName, err)
 	} else {
