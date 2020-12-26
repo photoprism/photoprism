@@ -134,6 +134,22 @@ main {
     border: 2px solid red;
 }
 
+#photoprism .keyboard-shortcuts-key {
+	border: 1px solid #ccc;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+    color: #333;
+	padding: 0.1em 0.6em;
+	border-radius: 2px;
+	background: rgba(0,0,0,0.02);
+	display: inline-block;
+    margin: 3px;
+    min-width: 2em;
+}
+
+#photoprism .p-shortcut-help-section {
+    padding: 0.5em;
+}
+
 #photoprism .p-scroll-top {
     top: 64px;
     right: 8px;

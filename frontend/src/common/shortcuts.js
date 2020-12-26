@@ -28,101 +28,350 @@ https://docs.photoprism.org/developer-guide/
 Author: Kay-Uwe (Kiwi) Lorenz <tabkiwi@gmail.com>
 */
 
-// keymap is a mapping of "context" => "keys"
+// keymap is a mapping of "context" => ""
 //
 // key action can be:
 // string:
 //    <handler>.path.to.function
 // 
-const keymap = {
-    'any': {
-        'Escape': 'app.$el.focus'
-    },
-    'app': {},
-    'navigation': {
-        'ctrl+\\': 'navigation.toggleSidebar',
-        'g b': {route: '/photos', continue: true},
-        'g b m': '/photos/monochrome',
-        'g b p': '/photos/panoramas',
-        'g b t': '/photos/stacks',
-        'g b s': '/photos/scans',
-        //'g,b,s': 'review',
-        //'g,b,s': 'review',
-        'g b a': '/archive',
-        'g f': '/favorites',
-        'g v': '/videos',
-        'g a': {route: '/albums', continue: true},
-        'g a u': '/unsorted',
-        'g F': '/folders',
-        'g P': '/private',
-        'g c': '/calendar',
-        'g m': '/moments',
-        'g p': '/places',
-        'g p s': {route: '/states', continue: true},
-        'g l': '/labels',
-        'g L': {route: '/library', continue: true},
-        'g L o': '/library/files',
-        'g L h': '/library/hidden',
-        'g L e': '/library/errors',
-        'g h': 'navigation.goHome',
-        'g S': {route: '/settings', continue: true},
-        'g S a': '/about',
-        'g S f': '/feedback',
-        'g S l': '/about/license',
-    },
-    'toolbar': {
-        '/': 'toolbar.$refs.search.focus',
-        'v l': {name: 'toolbar.setView', args: 'list'},
-        'v m': {name: 'toolbar.setView', args: 'mosaic'},
-        'v c': {name: 'toolbar.setView', args: 'cards'},
-    },
-    'photo': {
-        'e': 'photo.edit',
-        'f': 'photo.activePhoto.toggleLike',
-        'p': 'photo.activePhoto.togglePrivate',
-        'h': 'photo.prev',
-        'j': 'photo.down',
-        'k': 'photo.up',
-        'l': 'photo.next',
-        'o': 'photo.open',
-        'Enter': 'photo.open',
-        'e': 'photo.edit',
-        'ArrowRight': 'photo.next',
-        'ArrowUp': 'photo.up',
-        'ArrowDown': 'photo.down',
-        'ArrowLeft': 'photo.prev',
-        'Space': 'photo.toggleSelection',
-        //'ArrowDown': 
-    },
 
-    'viewer': {
-        'Escape': {name: 'viewer.$refs.close.click', resetFocus: true},
+const keymap = [
+    {
+      section: "Navigation",
+      context: 'navigation',
+      actions: [
+        {
+            name: "Display shortcuts help",
+            context: 'any',
+            keys: '?',
+            action: 'navigation.showShortcutshelp'
+        },
+        {
+            name: 'Toggle sidebar', 
+            keys: 'ctrl+\\', 
+            action: 'navigation.toggleSidebar', 
+        },
+        {
+            name: 'Go to browse photos', 
+            keys: 'g b', 
+            action: {route: '/photos', continue: true}, 
+        },
+        { 
+            name: 'Go to browse monochromes', 
+            keys: 'g b m', 
+            action: '/photos/monochrome', 
+        },
+        {
+            name: 'Go to browse panoramas', 
+            keys: 'g b p', 
+            action: '/photos/panoramas', 
+        },
+        {
+            name: 'Go to browse stacks', 
+            keys: 'g b t', 
+            action: '/photos/stacks', 
+        },
+        {
+            name: 'Go to browse scans', 
+            keys: 'g b s', 
+            action: '/photos/scans', 
+        },
+    //    { name: '', 
+    //      keys: //'g,b,s', 
+    //      action: 'review', },
+    //    { name: '', 
+    //      keys: //'g,b,s', 
+    //      action: 'review', },
+        {
+            name: 'Go to browse archive', 
+            keys: 'g b a', action: '/archive',
+        },
+        {
+            name: 'Go to favorites', 
+            keys: 'g f', 
+            action: '/favorites', 
+        },
+        {
+            name: 'Go to videos', 
+            keys: 'g v', 
+            action: '/videos', 
+        },
+        {
+            name: 'Go to albums', 
+            keys: 'g a', 
+            action: {route: '/albums', continue: true}, 
+        },
+        {
+            name: 'Go to unsorted photos (not in album)', 
+            keys: 'g a u', 
+            action: '/unsorted', 
+        },
+        {
+            name: 'Go to folders', 
+            keys: 'g F', 
+            action: '/folders', 
+        },
+        {
+            name: 'Go to private', 
+            keys: 'g P', 
+            action: '/private', 
+        },
+        {
+            name: 'Go to calendar', 
+            keys: 'g c', 
+            action: '/calendar', 
+        },
+        {
+            name: 'Go to moments', 
+            keys: 'g m', 
+            action: '/moments', 
+        },
+        {
+            name: 'Go to places', 
+            keys: 'g p', 
+            action: '/places', 
+        },
+        {
+            name: 'Go to states', 
+            keys: 'g p s', 
+            action: {route: '/states', continue: true}, 
+        },
+        {
+            name: 'Go to label management', 
+            keys: 'g l', 
+            action: '/labels', 
+        },
+        {
+            name: 'Go to library', 
+            keys: 'g L', 
+            action: {route: '/library', continue: true}, 
+        },
+        {
+            name: 'Go to library/files', 
+            keys: 'g L o', 
+            action: '/library/files', 
+        },
+        {
+            name: 'Go to hidden photos', 
+            keys: 'g L h', 
+            action: '/library/hidden', 
+        },
+        {
+            name: 'Go to import/index error view', 
+            keys: 'g L e', 
+            action: '/library/errors', 
+        },
+        {
+            name: 'Go home', 
+            keys: 'g h', 
+            action: 'navigation.goHome', 
+        },
+        {
+            name: 'Go to settings', 
+            keys: 'g S', 
+            action: {route: '/settings', continue: true}, 
+        },
+        {
+            name: 'Go to about page', 
+            keys: 'g S a', 
+            action: '/about', 
+        },
+        {
+            name: 'Go to feedback page', 
+            keys: 'g S f', 
+            action: '/feedback', 
+        },
+        {
+            name: 'Go to license page', 
+            keys: 'g S l', 
+            action: '/about/license', 
+        },
+        ]
+    },
+    {
+        section: "Photo browser",
+        context: 'photo',
+        actions: [
+            {
+                name: 'Edit current photo',
+                keys: 'e',
+                action: 'photo.edit',
+            },
+            {
+                name: 'Toggle favorite (like)',
+                keys: 'f',
+                action: 'photo.activePhoto.toggleLike',
+            },
+            {
+                name: 'Toggle private',
+                keys: 'p',
+                action: 'photo.activePhoto.togglePrivate',
+            },
+            {
+                name: 'Navigate to previous (left) photo',
+                action: 'photo.prev',
+                keys: ['ArrowLeft', 'h' ],
+            },
+            {
+                name: 'Navigate a photo down',
+                action: 'photo.down',
+                keys: ['ArrowDown', 'j' ],
+            },
+            {
+                name: 'Navigate a photo up',
+                action: 'photo.up',
+                keys: ['ArrowUp', 'k'],
+            },
+            {
+                action: 'photo.next',
+                name: 'Naviate to next (right) photo',
+                keys: ['ArrowRight', 'l'],
+            },
+            {
+                name: 'Open the current photo',
+                action: 'photo.open',
+                keys: ['Enter', 'o'],
+            },
+            {
+                name: 'Toggle selection of current photo',
+                keys: 'Space',
+                action: 'photo.toggleSelection',
+            },
+        ],
+    },
+    {
+        section: "Photo viewer",
+        context: 'viewer',
+        actions: [
+            {
+                name: 'Close photo viewer',
+                keys: 'Escape',
+                action: {name: 'viewer.$refs.close.click', resetFocus: true},
+            },
+            {
+                name: 'Download current photo',
+                keys: 'd',
+                action: 'viewer.onDownload',
+            },
+            {
+                name: 'Edit current photo',
+                keys: 'e',
+                action: 'viewer.onEdit',
+            },
+            {
+                name: 'Toggle favorite (like)',
+                keys: 'f',
+                action: 'viewer.$refs.like.click',
+            },
+            {
+                name: 'Toggle fullscreen view',
+                keys: 'F',
+                action: 'viewer.$refs.fullscreen.click',
+            },
+            {
+                name: 'Toggle zoom view',
+                keys: 'z',
+                action: 'viewer.$refs.zoom.click',
+            },
+            {
+                name: 'Start (play) slideshow',
+                keys: 'p',
+                action: 'viewer.onSlideshow',
+            },
+            {
+                name: 'Previous photo',
+                keys: ['ArrowLeft', 'h', 'ArrowUp', 'k'],
+                action: 'viewer.$refs.prev.click',
+            },
+            {
+                name: 'Next photo',
+                keys: ['ArrowLeft', 'l', 'ArrowDown', 'j'],
+                action: 'viewer.$refs.next.click',
+            },
+            {
+                name: 'Toggle play video',
+                keys: 'Space',
+                action: 'viewer.onPlay',
+            },
+        ]
+    },
+    {
+        section: "Toolbar actions",
+        context: 'toolbar',
+        actions: [
+            { 
+                name: 'Search a photo',
+                keys: '/',
+                action: 'toolbar.$refs.search.focus',
+            },
+            { 
+                name: 'Set list view mode',
+                keys: 'v l',
+                action: {name: 'toolbar.setView', args: 'list'},
+            },
+            { 
+                name: 'Set mosaic view mode',
+                keys: 'v m',
+                action: {name: 'toolbar.setView', args: 'mosaic'},
+            },
+            { 
+                name: 'Set card view mode',
+                keys: 'v c',
+                action: {name: 'toolbar.setView', args: 'cards'},
+            },
 
+        ]
+    },
+    {
+        section: "Form elements",
+        context: 'any',
+        actions: [
+            {
+                name: 'Escape current focussed element',
+                context: 'any',
+                keys: 'Escape',
+                action: 'app.$el.focus'
+            },
+        ]
+    },
+    {
+        section: "Dialog",
+        context: 'dialog',
+        actions: [
+            {
+                name: "Cancel dialog",
+                keys: 'Escape',
+                action: function() {
+                    if (this.contexts['dialog'].close) {
+                        this.contexts['dialog'].close()
+                    } else if (this.contexts['dialog'].cancel) {
+                        this.contexts['dialog'].cancel()
+                    }
+                }
+            },
+            {
+                name: "Confirm dialog",
+                keys: 'ctrl+Enter',
+                action: 'dialog.confirm'
+            },
+        ]
+    },
+    
+]
         // ondownload only if viewer.config.settings.features.download
-        'd': 'viewer.onDownload',
-        'e': 'viewer.onEdit',
-        'f': 'viewer.$refs.like.click',
 
-        'F': 'viewer.$refs.fullscreen.click',
-        'z': 'viewer.$refs.zoom.click',
-        'p': 'viewer.onSlideshow',
-
-        'h': 'viewer.$refs.prev.click',
-        'ArrowLeft': 'viewer.$refs.prev.click',
-        'j': 'viewer.$refs.next.click',
-
-        'k': 'viewer.$refs.prev.click',
-        'l': 'viewer.$refs.next.click',
-        'ArrowRight': 'viewer.$refs.next.click',
-
-        'Space': 'viewer.onPlay',
-    }
+const displayKeyMap = {
+    'ArrowLeft': '←',
+    'ArrowUp': "↑",
+    'ArrowRight': '→',
+    'ArrowDown': '↓',
 }
 
 export default class {
     constructor() {
         this.currentKey = '';
         this.app = null;
+        this.actions = keymap;
         console.log("keymap", keymap);
         this.setKeymap(keymap);
         this.contexts = {};
@@ -153,44 +402,90 @@ export default class {
         // normalize keymap
         this.keymap = {};
 
+        let shortcuts = this
+
+        keymap.forEach( (spec) => {
+            let defaultContext = spec.context
+            spec.actions.forEach( (keySpec) => {
+                let ctx = keySpec.context || defaultContext
+                let keys = keySpec.keys
+                if (!(keys instanceof Array)) {
+                    keys = [ keys ]
+                }
+                keySpec.displayKeys = []
+
+                let action = keySpec.action
+
+                if (!shortcuts.keymap[ctx]) {
+                    shortcuts.keymap[ctx] = {}
+                }
+
+                keys.forEach( (key) => {
+                    let displayKey = []
+                    key.split(/\s+/).forEach( (k) => {
+                        let _modifiers = k.split(/\+/)
+                        let _key = _modifiers[_modifiers.length-1]
+                        _modifiers = _modifiers.slice(0, -1)
+                        if (_key.match(/^\w+$/)) {
+                            if (_key == _key.toUpperCase()) {
+                                _modifiers.push('Shift')
+                                _key = _key.toLowerCase()
+                            }
+                        }
+
+                        displayKey.push({
+                            key: displayKeyMap[_key] || _key,
+                            modifiers: _modifiers.map((m) => m.charAt(0).toUpperCase() + m.slice(1).toLowerCase())
+                        })
+                    })
+                    console.log("displayKey", displayKey)
+
+                    keySpec.displayKeys.push(displayKey)
+
+                    if (typeof action === 'function') {
+                        shortcuts.keymap[ctx][key] = action;
+                        return
+                    } else {
+                        // clone object (incl. strings, etc.)
+                        action = JSON.parse(JSON.stringify(action));
+
+                        if (typeof action === 'string') {
+                            if (action.match(/^\//)) {
+                                action = { route: action };
+                            } else {
+                                let path = action.split(".");
+                                action = {};
+                                action.command = path[0];
+                                action.name = path.splice(1);
+                            }
+                        }
+
+                        if (typeof action.name === 'string') {
+                            action.name = action.name.split(".")
+                            if (!action.command) {
+                                action.command = action.name[0];
+                                action.name = action.name.splice(1);
+                            }
+                        }
+
+                        if (typeof action.object === 'string') {
+                            action.object = action.object.split(".");
+                        }
+                    }
+                    shortcuts.keymap[ctx][key] = action;
+                })
+            })
+        })
+/*
         for (var ctx in keymap) {
             this.keymap[ctx] = {};
 
             for (var key in keymap[ctx]) {
                 let action = keymap[ctx][key];
 
-                if (typeof action === 'function') {
-                    this.keymap[ctx][key] = action;
-                } else {
-                    // clone object (incl. strings, etc.)
-                    action = JSON.parse(JSON.stringify(action));
-
-                    if (typeof action === 'string') {
-                        if (action.match(/^\//)) {
-                            action = { route: action };
-                        } else {
-                            let path = action.split(".");
-                            action = {};
-                            action.command = path[0];
-                            action.name = path.splice(1);
-                        }
-                    }
-
-                    if (typeof action.name === 'string') {
-                        action.name = action.name.split(".")
-                        if (!action.command) {
-                            action.command = action.name[0];
-                            action.name = action.name.splice(1);
-                        }
-                    }
-
-                    if (typeof action.object === 'string') {
-                        action.object = action.object.split(".");
-                    }
-                }
-                this.keymap[ctx][key] = action;
             }
         }
+   */ 
     }
 
     setApp(app) {

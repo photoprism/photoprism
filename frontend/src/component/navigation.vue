@@ -428,6 +428,7 @@
                      @confirm="upload.dialog = false"></p-upload-dialog>
     <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection" :index="edit.index" :album="edit.album"
                          @close="edit.dialog = false"></p-photo-edit-dialog>
+    <p-shortcuts-help-dialog :show="shortcutshelp.dialog" @close="shortcutshelp.dialog = false"></p-shortcuts-help-dialog>
   </div>
 </template>
 
@@ -461,6 +462,10 @@
                     selection: [],
                     index: 0,
                 },
+                shortcutshelp: {
+                    subscription: null,
+                    dialog: false,
+                },
             };
         },
         computed: {
@@ -487,6 +492,11 @@
                     this.$router.push({name: "home"});
                 }
             },
+            showShortcutshelp() {
+              if (this.auth) {
+                this.shortcutshelp.dialog = true
+              }
+            },
             showNavigation() {
                 if (this.auth) {
                     this.drawer = true;
@@ -505,6 +515,7 @@
         created() {
             this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);
             this.upload.subscription = Event.subscribe("dialog.upload", () => this.upload.dialog = true);
+            this.shortcutshelp.subscription = Event.subscribe("dialog.shortcutshelp", () => this.shortcutshelp.dialog = true);
 
             this.edit.subscription = Event.subscribe("dialog.edit", (ev, data) => {
                 if (!this.edit.dialog) {
@@ -525,6 +536,7 @@
             Event.unsubscribe(this.reload.subscription);
             Event.unsubscribe(this.upload.subscription);
             Event.unsubscribe(this.edit.subscription);
+            Event.unsubscribe(this.shortcutshelp.subscription);
         }
     };
 </script>

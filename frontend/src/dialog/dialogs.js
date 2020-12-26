@@ -44,6 +44,7 @@ import PShareDialog from "./share.vue";
 import PShareUploadDialog from "./share/upload.vue";
 import PWebdavDialog from "./webdav.vue";
 import PReloadDialog from "./reload.vue";
+import PShortcutsHelpDialog from "./shortcutshelp.vue";
 
 const dialogs = {};
 
@@ -64,6 +65,7 @@ dialogs.install = (Vue) => {
     Vue.component("p-share-upload-dialog", PShareUploadDialog);
     Vue.component("p-webdav-dialog", PWebdavDialog);
     Vue.component("p-reload-dialog", PReloadDialog);
+    Vue.component("p-shortcuts-help-dialog", PShortcutsHelpDialog);
 };
 
 export default dialogs;
