@@ -110,5 +110,11 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 		m.PhotoQuality = -1
 	}
 
+	original.PhotoQuality = original.QualityScore()
+
+	if err := original.Save(); err != nil {
+		log.Errorf("photo: %s in %s (merge)", err, original.PhotoName)
+	}
+
 	return original, merged, err
 }
