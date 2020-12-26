@@ -51,7 +51,7 @@ steps:
         - failure
         - success
 
-  - name: deploy
+  - name: deploy-preview
     environment:
       DOCKER_USERNAME:
         from_secret: docker_username
@@ -59,12 +59,27 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism docker-photoprism-pull docker-demo
+      - make docker-photoprism-preview docker-demo
     when:
       status:
         - success
       branch:
         - master
+
+  - name: deploy-release
+      environment:
+        DOCKER_USERNAME:
+          from_secret: docker_username
+        DOCKER_PASSWORD:
+          from_secret: docker_password
+      commands:
+        - scripts/docker-login.sh
+        - make docker-photoprism
+      when:
+        status:
+          - success
+        branch:
+          - release
 
 ---
 kind: pipeline
@@ -104,7 +119,7 @@ name: linux-arm64
 
 trigger:
   branch:
-    - master
+    - release
 
 platform:
   arch: arm64

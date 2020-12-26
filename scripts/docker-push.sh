@@ -8,8 +8,8 @@ if [[ -z $1 ]] && [[ -z $2 ]]; then
     echo "Please provide a container image name and version" 1>&2
     exit 1
 elif [[ $1 ]] && [[ -z $2 ]]; then
-    echo "Pushing 'photoprism/$1:latest' to Docker hub...";
-    docker push photoprism/$1:latest
+    echo "Pushing 'photoprism/$1:preview' to Docker hub...";
+    docker push photoprism/$1:preview
     echo "Done"
 else
     echo "Pushing 'photoprism/$1:$2' to Docker hub...";
