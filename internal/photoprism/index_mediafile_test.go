@@ -19,7 +19,7 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		conf.InitializeTestData(t)
 
-		tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
+		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
 		convert := NewConvert(conf)
 
@@ -40,7 +40,7 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		conf.InitializeTestData(t)
 
-		tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
+		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
 		convert := NewConvert(conf)
 

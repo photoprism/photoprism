@@ -48,22 +48,22 @@ import PAboutFooter from "./footer.vue";
 const components = {};
 
 components.install = (Vue) => {
-    Vue.component("p-notify", PNotify);
-    Vue.component("p-navigation", PNavigation);
-    Vue.component("p-scroll-top", PScrollTop);
-    Vue.component("p-loading-bar", PLoadingBar);
-    Vue.component("p-video-player", PVideoPlayer);
-    Vue.component("p-photo-viewer", PPhotoViewer);
-    Vue.component("p-photo-toolbar", PPhotoToolbar);
-    Vue.component("p-photo-cards", PPhotoCards);
-    Vue.component("p-photo-mosaic", PPhotoMosaic);
-    Vue.component("p-photo-list", PPhotoList);
-    Vue.component("p-photo-clipboard", PPhotoClipboard);
-    Vue.component("p-album-clipboard", PAlbumClipboard);
-    Vue.component("p-album-toolbar", PAlbumToolbar);
-    Vue.component("p-label-clipboard", PLabelClipboard);
-    Vue.component("p-file-clipboard", PFileClipboard);
-    Vue.component("p-about-footer", PAboutFooter);
+  Vue.component("PNotify", PNotify);
+  Vue.component("PNavigation", PNavigation);
+  Vue.component("PScrollTop", PScrollTop);
+  Vue.component("PLoadingBar", PLoadingBar);
+  Vue.component("PVideoPlayer", PVideoPlayer);
+  Vue.component("PPhotoViewer", PPhotoViewer);
+  Vue.component("PPhotoToolbar", PPhotoToolbar);
+  Vue.component("PPhotoCards", PPhotoCards);
+  Vue.component("PPhotoMosaic", PPhotoMosaic);
+  Vue.component("PPhotoList", PPhotoList);
+  Vue.component("PPhotoClipboard", PPhotoClipboard);
+  Vue.component("PAlbumClipboard", PAlbumClipboard);
+  Vue.component("PAlbumToolbar", PAlbumToolbar);
+  Vue.component("PLabelClipboard", PLabelClipboard);
+  Vue.component("PFileClipboard", PFileClipboard);
+  Vue.component("PAboutFooter", PAboutFooter);
 };
 
 export default components;

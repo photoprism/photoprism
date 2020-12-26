@@ -30,7 +30,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		Select(`photos.*,
 		files.id AS file_id, files.file_uid, files.instance_id, files.file_primary, files.file_missing, files.file_name,
 		files.file_root, files.file_hash, files.file_codec, files.file_type, files.file_mime, files.file_width, 
-		files.file_height, files.file_aspect_ratio, files.file_orientation, files.file_main_color, 
+		files.file_height, files.file_portrait, files.file_aspect_ratio, files.file_orientation, files.file_main_color, 
 		files.file_colors, files.file_luminance, files.file_chroma, files.file_projection,
 		files.file_diff, files.file_video, files.file_duration, files.file_size,
 		cameras.camera_make, cameras.camera_model,
@@ -201,8 +201,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
-	if f.Single {
-		s = s.Where("photos.photo_single = 1")
+	if f.Stackable {
+		s = s.Where("photos.photo_stack > -1")
+	} else if f.Unstacked {
+		s = s.Where("photos.photo_stack = -1")
 	}
 
 	if f.Country != "" {
@@ -280,7 +282,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Mono {
-		s = s.Where("files.file_chroma = 0")
+		s = s.Where("files.file_chroma = 0 OR file_colors = '111111111'")
 	} else if f.Chroma > 9 {
 		s = s.Where("files.file_chroma > ?", f.Chroma)
 	} else if f.Chroma > 0 {
@@ -358,7 +360,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Order("photos.id DESC, files.file_primary DESC")
 	case entity.SortOrderSimilar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("files.file_main_color, photos.cell_id, files.file_diff, taken_at DESC, files.file_primary DESC")
+		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, taken_at DESC, files.file_primary DESC")
 	case entity.SortOrderName:
 		s = s.Order("photos.photo_path, photos.photo_name, files.file_primary DESC")
 	default:

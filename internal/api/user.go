@@ -16,7 +16,7 @@ func ChangePassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
 		conf := service.Config()
 
-		if conf.Public() {
+		if conf.Public() || conf.DisableSettings() {
 			Abort(c, http.StatusForbidden, i18n.ErrPublic)
 			return
 		}

@@ -86,13 +86,15 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 		log.Debugf("metadata: %s in %s (exif collect)", err.Error(), logName)
 	} else {
 		if ifd, err := index.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity); err == nil {
-			if gi, err := ifd.GpsInfo(); err == nil {
+			if gi, err := ifd.GpsInfo(); err != nil {
+				log.Debugf("exif: %s in %s (gps info)", err, logName)
+				log.Infof("metadata: failed parsing gps coordinates in %s (exif)", logName)
+			} else if math.IsNaN(gi.Latitude.Decimal()) || math.IsNaN(gi.Longitude.Decimal()) {
+				log.Warnf("metadata: invalid gps coordinates in %s (exif)", logName)
+			} else {
 				data.Lat = float32(gi.Latitude.Decimal())
 				data.Lng = float32(gi.Longitude.Decimal())
 				data.Altitude = gi.Altitude
-			} else {
-				log.Debugf("exif: %s in %s (gps info)", err, logName)
-				log.Infof("metadata: failed parsing gps coordinates in %s (exif)", logName)
 			}
 		}
 	}

@@ -130,11 +130,7 @@ func (m *Folder) SetValuesFromPath() {
 	}
 
 	if m.FolderTitle == "" {
-		s = strings.ReplaceAll(s, "_", " ")
-		s = strings.ReplaceAll(s, "-", " ")
-		s = strings.Title(s)
-
-		m.FolderTitle = txt.Clip(s, txt.ClipDefault)
+		m.FolderTitle = txt.Title(s)
 	}
 }
 

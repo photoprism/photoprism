@@ -72,10 +72,11 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			case time.Time:
 				s := strings.TrimSpace(jsonValue.String())
 				s = strings.ReplaceAll(s, "/", ":")
-				s = strings.ReplaceAll(s, "-", ":")
 
-				if tv, err := time.Parse("2006:01:02 15:04:05", s); err == nil {
+				if tv, err := time.Parse("2006:01:02 15:04:05", strings.ReplaceAll(s, "-", ":")); err == nil {
 					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second).UTC()))
+				} else if tv, err := time.Parse("2006:01:02 15:04:05-07:00", s); err == nil {
+					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second)))
 				}
 			case time.Duration:
 				fieldValue.Set(reflect.ValueOf(StringToDuration(jsonValue.String())))
@@ -120,11 +121,21 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
 				log.Warnf("metadata: unknown time zone %s (exiftool)", data.TimeZone)
 			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
+				if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+					data.TakenAtLocal = localUtc
+				}
+
 				data.TakenAt = tl.Round(time.Second).UTC()
 			} else {
 				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
 			}
 		}
+	} else if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
+		if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+			data.TakenAtLocal = localUtc
+		}
+
+		data.TakenAt = data.TakenAt.Round(time.Second).UTC()
 	}
 
 	if orientation, ok := jsonStrings["Orientation"]; ok && orientation != "" {

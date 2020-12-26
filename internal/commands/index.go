@@ -63,7 +63,7 @@ func indexAction(ctx *cli.Context) error {
 		Path:    subPath,
 		Rescan:  ctx.Bool("all"),
 		Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
-		Single:  false,
+		Stack:   true,
 	}
 
 	indexed := ind.Start(indOpt)

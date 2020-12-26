@@ -22,7 +22,7 @@
           :data-uid="photo.UID"
           class="p-photo"
           xs12 sm6 md4 lg3 d-flex
-          v-bind:class="{ 'is-selected': $clipboard.has(photo) }"
+          v-bind:class="{ 'is-selected': $clipboard.has(photo), portrait: photo.Portrait }"
       >
         <v-hover>
           <v-card tile slot-scope="{ hover }"
@@ -52,7 +52,7 @@
                   align-center
                   justify-center
                   ma-0
-                  class="p-photo-live"
+                  class="live-player"
                   style="overflow: hidden;"
                   v-if="photo.Type === 'live'"
                   v-show="hover"

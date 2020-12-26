@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {Photo, TypeVideo, TypeLive} from "model/photo";
+import {Photo, TypeLive, TypeVideo} from "model/photo";
 import mapboxgl from "mapbox-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";

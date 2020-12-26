@@ -32,23 +32,25 @@ import Api from "common/api";
 import Model from "./model";
 
 export class Settings extends Model {
-    changed(area, key) {
-        if (typeof this.__originalValues[area] === "undefined") {
-            return false;
-        }
-
-        return (this[area][key] !== this.__originalValues[area][key]);
+  changed(area, key) {
+    if (typeof this.__originalValues[area] === "undefined") {
+      return false;
     }
 
-    load() {
-        return Api.get("settings").then((response) => {
-            return Promise.resolve(this.setValues(response.data));
-        });
-    }
+    return this[area][key] !== this.__originalValues[area][key];
+  }
 
-    save() {
-        return Api.post("settings", this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
-    }
+  load() {
+    return Api.get("settings").then((response) => {
+      return Promise.resolve(this.setValues(response.data));
+    });
+  }
+
+  save() {
+    return Api.post("settings", this.getValues(true)).then((response) =>
+      Promise.resolve(this.setValues(response.data))
+    );
+  }
 }
 
 export default Settings;

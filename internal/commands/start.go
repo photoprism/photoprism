@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/photoprism"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/service"
@@ -49,14 +51,14 @@ func startAction(ctx *cli.Context) error {
 		fmt.Printf("NAME                  VALUE\n")
 		fmt.Printf("detach-server         %t\n", conf.DetachServer())
 
-		fmt.Printf("http-host             %s\n", conf.HttpServerHost())
-		fmt.Printf("http-port             %d\n", conf.HttpServerPort())
-		fmt.Printf("http-mode             %s\n", conf.HttpServerMode())
+		fmt.Printf("http-host             %s\n", conf.HttpHost())
+		fmt.Printf("http-port             %d\n", conf.HttpPort())
+		fmt.Printf("http-mode             %s\n", conf.HttpMode())
 
 		return nil
 	}
 
-	if conf.HttpServerPort() < 1 || conf.HttpServerPort() > 65535 {
+	if conf.HttpPort() < 1 || conf.HttpPort() > 65535 {
 		log.Fatal("server port must be a number between 1 and 65535")
 	}
 
@@ -106,6 +108,12 @@ func startAction(ctx *cli.Context) error {
 
 	// start web server
 	go server.Start(cctx, conf)
+
+	if count, err := photoprism.RestoreAlbums(false); err != nil {
+		log.Errorf("restore: %s", err)
+	} else if count > 0 {
+		log.Infof("%d albums restored", count)
+	}
 
 	// start share & sync workers
 	workers.Start(conf)

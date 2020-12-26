@@ -40,6 +40,28 @@ func TestStripKnownExt(t *testing.T) {
 	})
 }
 
+func TestExt(t *testing.T) {
+	t.Run("Test.jpg", func(t *testing.T) {
+		result := Ext("/testdata/Test.jpg")
+		assert.Equal(t, ".jpg", result)
+	})
+
+	t.Run("Test.jpg.json", func(t *testing.T) {
+		result := Ext("/testdata/Test.jpg.json")
+		assert.Equal(t, ".jpg.json", result)
+	})
+
+	t.Run("Test copy 3.foo", func(t *testing.T) {
+		result := Ext("/testdata/Test copy 3.foo")
+		assert.Equal(t, ".foo", result)
+	})
+
+	t.Run("Test", func(t *testing.T) {
+		result := Ext("/testdata/Test")
+		assert.Equal(t, "", result)
+	})
+}
+
 func TestBase(t *testing.T) {
 	t.Run("Screenshot 2019-05-21 at 10.45.52.png", func(t *testing.T) {
 		regular := BasePrefix("Screenshot 2019-05-21 at 10.45.52.png", false)

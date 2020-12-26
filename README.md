@@ -26,7 +26,7 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
   and for rediscovering long-forgotten shots.
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may 
-  [connect](https://docs.photoprism.org/user-guide/backup/webdav/) directly to PhotoPrism so that you to can open, 
+  [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open, 
   edit, and delete files from your computer or phone as if they were local. 
   You may easily sync your pictures with [Nextcloud](https://nextcloud.com/) as well.  
 * PhotoPrism feels [like a native app](https://en.wikipedia.org/wiki/Progressive_web_application) and, 
@@ -39,10 +39,6 @@ You're welcome to play with our public demo at [demo.photoprism.org](https://dem
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
-
-We do our best to provide a complete, stable version very soon. Check the 
-[roadmap](https://github.com/photoprism/photoprism/projects/5) for open issues.
-Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
 
 ## Roadmap ##
 

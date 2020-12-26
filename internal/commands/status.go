@@ -23,7 +23,7 @@ func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	client := &http.Client{Timeout: 10 * time.Second}
 
-	url := fmt.Sprintf("http://%s:%d/api/v1/status", conf.HttpServerHost(), conf.HttpServerPort())
+	url := fmt.Sprintf("http://%s:%d/api/v1/status", conf.HttpHost(), conf.HttpPort())
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
@@ -34,9 +34,9 @@ func statusAction(ctx *cli.Context) error {
 	var status string
 
 	if resp, err := client.Do(req); err != nil {
-		return fmt.Errorf("can't connect to %s:%d", conf.HttpServerHost(), conf.HttpServerPort())
+		return fmt.Errorf("can't connect to %s:%d", conf.HttpHost(), conf.HttpPort())
 	} else if resp.StatusCode != 200 {
-		return fmt.Errorf("server running at %s:%d, bad status %d\n", conf.HttpServerHost(), conf.HttpServerPort(), resp.StatusCode)
+		return fmt.Errorf("server running at %s:%d, bad status %d\n", conf.HttpHost(), conf.HttpPort(), resp.StatusCode)
 	} else if body, err := ioutil.ReadAll(resp.Body); err != nil {
 		return err
 	} else {

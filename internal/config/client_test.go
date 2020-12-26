@@ -28,12 +28,12 @@ func TestConfig_GuestConfig(t *testing.T) {
 
 func TestConfig_Flags(t *testing.T) {
 	config := TestConfig()
-	config.params.Experimental = true
-	config.params.ReadOnly = true
+	config.options.Experimental = true
+	config.options.ReadOnly = true
 
 	result := config.Flags()
 	assert.Equal(t, []string{"public", "debug", "experimental", "readonly", "settings"}, result)
 
-	config.params.Experimental = false
-	config.params.ReadOnly = false
+	config.options.Experimental = false
+	config.options.ReadOnly = false
 }

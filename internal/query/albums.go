@@ -194,3 +194,9 @@ func UpdateAlbumDates() error {
 		return nil
 	}
 }
+
+// GetAlbums returns a slice of albums.
+func GetAlbums(offset, limit int) (results entity.Albums, err error) {
+	err = UnscopedDb().Table("albums").Select("*").Offset(offset).Limit(limit).Find(&results).Error
+	return results, err
+}

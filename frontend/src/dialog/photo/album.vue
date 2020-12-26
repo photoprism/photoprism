@@ -9,20 +9,20 @@
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
             <v-autocomplete
-                    v-model="album"
-                    browser-autocomplete="off"
-                    hint="Album Name"
-                    :items="items"
-                    :search-input.sync="search"
-                    :loading="loading"
-                    hide-details
-                    hide-no-data
-                    item-text="Title"
-                    item-value="UID"
-                    :label="$gettext('Album Name')"
-                    color="secondary-dark"
-                    flat solo
-                    class="input-album"
+                v-model="album"
+                browser-autocomplete="off"
+                hint="Album Name"
+                :items="items"
+                :search-input.sync="search"
+                :loading="loading"
+                hide-details
+                hide-no-data
+                item-text="Title"
+                item-value="UID"
+                :label="$gettext('Album Name')"
+                color="secondary-dark"
+                flat solo
+                class="input-album"
             >
             </v-autocomplete>
           </v-flex>
@@ -42,86 +42,86 @@
   </v-dialog>
 </template>
 <script>
-    import Album from "model/album";
+import Album from "model/album";
 
-    export default {
-        name: 'p-photo-album-dialog',
-        props: {
-            show: Boolean,
-        },
-        data() {
-            return {
-                loading: false,
-                search: null,
-                newAlbum: null,
-                album: "",
-                albums: [],
-                items: [],
-                labels: {
-                    addToAlbum: this.$gettext("Add to album"),
-                    createAlbum: this.$gettext("Create album"),
-                }
-            }
-        },
-        methods: {
-            cancel() {
-                this.$emit('cancel');
-            },
-            confirm() {
-                if (this.album === "" && this.newAlbum) {
-                    this.loading = true;
-
-                    this.newAlbum.save().then((a) => {
-                        this.loading = false;
-                        this.$emit('confirm', a.UID);
-                    });
-                } else if (this.album) {
-                    this.$emit('confirm', this.album);
-                }
-            },
-            queryServer(q) {
-                if (this.loading) {
-                    return;
-                }
-
-                this.loading = true;
-
-                const params = {
-                    q: q,
-                    count: 1000,
-                    offset: 0,
-                    type: "album"
-                };
-
-                Album.search(params).then(response => {
-                    this.loading = false;
-
-                    if (response.models.length > 0 && !this.album) {
-                        this.album = response.models[0].UID;
-                    }
-
-                    this.albums = response.models;
-                    this.items = [...this.albums];
-                }).catch(() => this.loading = false);
-            },
-        },
-        watch: {
-            search(q) {
-                const exists = this.albums.findIndex((album) => album.Title === q);
-
-                if (exists !== -1 || !q) {
-                    this.items = this.albums;
-                    this.newAlbum = null;
-                } else {
-                    this.newAlbum = new Album({Title: q, UID: "", Favorite: true});
-                    this.items = this.albums.concat([this.newAlbum]);
-                }
-            },
-            show: function (show) {
-                if (show) {
-                    this.queryServer("");
-                }
-            }
-        },
+export default {
+  name: 'p-photo-album-dialog',
+  props: {
+    show: Boolean,
+  },
+  data() {
+    return {
+      loading: false,
+      search: null,
+      newAlbum: null,
+      album: "",
+      albums: [],
+      items: [],
+      labels: {
+        addToAlbum: this.$gettext("Add to album"),
+        createAlbum: this.$gettext("Create album"),
+      }
     }
+  },
+  methods: {
+    cancel() {
+      this.$emit('cancel');
+    },
+    confirm() {
+      if (this.album === "" && this.newAlbum) {
+        this.loading = true;
+
+        this.newAlbum.save().then((a) => {
+          this.loading = false;
+          this.$emit('confirm', a.UID);
+        });
+      } else if (this.album) {
+        this.$emit('confirm', this.album);
+      }
+    },
+    queryServer(q) {
+      if (this.loading) {
+        return;
+      }
+
+      this.loading = true;
+
+      const params = {
+        q: q,
+        count: 1000,
+        offset: 0,
+        type: "album"
+      };
+
+      Album.search(params).then(response => {
+        this.loading = false;
+
+        if (response.models.length > 0 && !this.album) {
+          this.album = response.models[0].UID;
+        }
+
+        this.albums = response.models;
+        this.items = [...this.albums];
+      }).catch(() => this.loading = false);
+    },
+  },
+  watch: {
+    search(q) {
+      const exists = this.albums.findIndex((album) => album.Title === q);
+
+      if (exists !== -1 || !q) {
+        this.items = this.albums;
+        this.newAlbum = null;
+      } else {
+        this.newAlbum = new Album({Title: q, UID: "", Favorite: true});
+        this.items = this.albums.concat([this.newAlbum]);
+      }
+    },
+    show: function (show) {
+      if (show) {
+        this.queryServer("");
+      }
+    }
+  },
+}
 </script>

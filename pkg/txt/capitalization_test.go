@@ -73,13 +73,16 @@ func TestTitle(t *testing.T) {
 	t.Run("youtube", func(t *testing.T) {
 		assert.Equal(t, "YouTube", Title("youtube"))
 	})
-	t.Run("interpunctio-1", func(t *testing.T) {
+	t.Run("interpunction-1", func(t *testing.T) {
 		assert.Equal(t, "This,,, Is !a ! a Very Strange Title....", Title("this,,, is !a ! a very strange title...."))
 	})
-	t.Run("interpunctio-2", func(t *testing.T) {
+	t.Run("interpunction-2", func(t *testing.T) {
 		assert.Equal(t, "This Is a Not So Strange Title!", Title("This is a not so strange title!"))
 	})
 	t.Run("horse", func(t *testing.T) {
 		assert.Equal(t, "A Horse Is Not a Cow :-)", Title("a horse is not a cow :-)"))
+	})
+	t.Run("NewYears", func(t *testing.T) {
+		assert.Equal(t, "Boston New Year's", Title("boston new year's"))
 	})
 }

@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import {Photo,TypeLive,TypeVideo} from "model/photo";
+import {Photo, TypeLive, TypeVideo} from "model/photo";
 import Album from "model/album";
 import Event from "pubsub-js";
 import Thumb from "model/thumb";

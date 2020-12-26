@@ -30,9 +30,9 @@
     </v-container>
     <v-list dense two-line v-else-if="errors.length > 0">
       <v-list-tile
-              v-for="(err, index) in errors" :key="index"
-              avatar
-              @click="showDetails(err)"
+          v-for="(err, index) in errors" :key="index"
+          avatar
+          @click="showDetails(err)"
       >
         <v-list-tile-avatar>
           <v-icon :color="err.Level">{{ err.Level }}</v-icon>
@@ -54,8 +54,8 @@
     </v-card>
 
     <v-dialog
-            v-model="details.show"
-            max-width="500"
+        v-model="details.show"
+        max-width="500"
     >
       <v-card class="pa-2">
         <v-card-title class="headline pa-2">
@@ -83,139 +83,139 @@
 </template>
 
 <script>
-    import {DateTime} from "luxon";
-    import Api from "common/api";
+import {DateTime} from "luxon";
+import Api from "common/api";
 
-    export default {
-        name: 'p-page-errors',
-        watch: {
-            '$route'() {
-                const query = this.$route.query;
-                this.filter.q = query['q'] ? query['q'] : '';
-                this.reload();
-            }
-        },
-        data() {
-            const query = this.$route.query;
-            const q = query["q"] ? query["q"] : "";
+export default {
+  name: 'p-page-errors',
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+      this.filter.q = query['q'] ? query['q'] : '';
+      this.reload();
+    }
+  },
+  data() {
+    const query = this.$route.query;
+    const q = query["q"] ? query["q"] : "";
 
-            return {
-                dirty: false,
-                loading: false,
-                scrollDisabled: false,
-                filter: {q},
-                pageSize: 100,
-                offset: 0,
-                page: 0,
-                errors: [],
-                results: [],
-                details: {
-                    show: false,
-                    err: {"Level": "", "Message": "", "Time": ""},
-                },
-            };
-        },
-        methods: {
-            updateQuery() {
-                this.filter.q = this.filter.q.trim();
-                const len = this.filter.q.length;
-
-                if (len > 1 && len < 3) {
-                    this.$notify.error(this.$gettext("Search term too short"));
-                    return;
-                }
-
-                const query = {};
-
-                Object.assign(query, this.filter);
-
-                for (let key in query) {
-                    if (query[key] === undefined || !query[key]) {
-                        delete query[key];
-                    }
-                }
-
-                if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-                    return
-                }
-
-                this.$router.replace({query});
-            },
-            clearQuery() {
-                this.filter.q = "";
-                this.updateQuery();
-            },
-            showDetails(err) {
-                this.details.err = err;
-                this.details.show = true;
-            },
-            reload() {
-                if (this.loading) {
-                    return;
-                }
-
-                this.page = 0;
-                this.offset = 0;
-                this.scrollDisabled = false;
-                this.loadMore();
-            },
-            loadMore() {
-                if (this.scrollDisabled) return;
-
-                if (this.offset === 0) {
-                    this.loading = true;
-                }
-
-                this.scrollDisabled = true;
-
-                const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
-                const offset = this.dirty ? 0 : this.offset;
-                const q = this.filter.q;
-
-                const params = {count, offset, q};
-
-                Api.get("errors", {params}).then((resp) => {
-                    if (!resp.data) {
-                        resp.data = [];
-                    }
-
-                    if (offset === 0) {
-                        this.errors = resp.data;
-                    } else {
-                        this.errors = this.errors.concat(resp.data);
-                    }
-
-                    this.scrollDisabled = (resp.data.length < count);
-
-                    if (!this.scrollDisabled) {
-                        this.offset = offset + count;
-                        this.page++;
-                    }
-                }).finally(() => {
-                    this.loading = false;
-                    this.dirty = false;
-                });
-            },
-            level(s) {
-                return s.substr(0, 4).toUpperCase();
-            },
-            localTime(s) {
-                if (!s) {
-                    return this.$gettext("Unknown");
-                }
-
-                return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
-            },
-            formatTime(s) {
-                if (!s) {
-                    return this.$gettext("Unknown");
-                }
-
-                return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
-            },
-        },
-        created() {
-            this.loadMore();
-        },
+    return {
+      dirty: false,
+      loading: false,
+      scrollDisabled: false,
+      filter: {q},
+      pageSize: 100,
+      offset: 0,
+      page: 0,
+      errors: [],
+      results: [],
+      details: {
+        show: false,
+        err: {"Level": "", "Message": "", "Time": ""},
+      },
     };
+  },
+  methods: {
+    updateQuery() {
+      this.filter.q = this.filter.q.trim();
+      const len = this.filter.q.length;
+
+      if (len > 1 && len < 3) {
+        this.$notify.error(this.$gettext("Search term too short"));
+        return;
+      }
+
+      const query = {};
+
+      Object.assign(query, this.filter);
+
+      for (let key in query) {
+        if (query[key] === undefined || !query[key]) {
+          delete query[key];
+        }
+      }
+
+      if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
+        return
+      }
+
+      this.$router.replace({query});
+    },
+    clearQuery() {
+      this.filter.q = "";
+      this.updateQuery();
+    },
+    showDetails(err) {
+      this.details.err = err;
+      this.details.show = true;
+    },
+    reload() {
+      if (this.loading) {
+        return;
+      }
+
+      this.page = 0;
+      this.offset = 0;
+      this.scrollDisabled = false;
+      this.loadMore();
+    },
+    loadMore() {
+      if (this.scrollDisabled) return;
+
+      if (this.offset === 0) {
+        this.loading = true;
+      }
+
+      this.scrollDisabled = true;
+
+      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const offset = this.dirty ? 0 : this.offset;
+      const q = this.filter.q;
+
+      const params = {count, offset, q};
+
+      Api.get("errors", {params}).then((resp) => {
+        if (!resp.data) {
+          resp.data = [];
+        }
+
+        if (offset === 0) {
+          this.errors = resp.data;
+        } else {
+          this.errors = this.errors.concat(resp.data);
+        }
+
+        this.scrollDisabled = (resp.data.length < count);
+
+        if (!this.scrollDisabled) {
+          this.offset = offset + count;
+          this.page++;
+        }
+      }).finally(() => {
+        this.loading = false;
+        this.dirty = false;
+      });
+    },
+    level(s) {
+      return s.substr(0, 4).toUpperCase();
+    },
+    localTime(s) {
+      if (!s) {
+        return this.$gettext("Unknown");
+      }
+
+      return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
+    },
+    formatTime(s) {
+      if (!s) {
+        return this.$gettext("Unknown");
+      }
+
+      return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
+    },
+  },
+  created() {
+    this.loadMore();
+  },
+};
 </script>

@@ -10,19 +10,17 @@
 </template>
 
 <script>
-
-    export default {
-        name: 'p-tab-discover-todo',
-        data() {
-            return {
-                readonly: this.$config.get("readonly"),
-                config: this.$config.values,
-                labels: {},
-            };
-        },
-        methods: {
-        },
-        created() {
-        },
+export default {
+  name: 'p-tab-discover-todo',
+  data() {
+    return {
+      readonly: this.$config.get("readonly"),
+      config: this.$config.values,
+      labels: {},
     };
+  },
+  methods: {},
+  created() {
+  },
+};
 </script>

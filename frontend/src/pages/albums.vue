@@ -52,7 +52,7 @@
       <p-scroll-top></p-scroll-top>
 
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit"
-                         :clear-selection="clearSelection"></p-album-clipboard>
+                         :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
         <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
@@ -214,6 +214,21 @@ import AlbumsUtils from "common/mixins/albumsutils";
 export default {
   name: 'p-page-albums',
   mixins: [CardsUtils, AlbumsUtils],
+
+  computed: {
+    context: function () {
+      if (!this.staticFilter) {
+        return "album";
+      }
+
+      if (this.staticFilter.type) {
+        return this.staticFilter.type;
+      }
+
+      return "";
+    }
+  },
+
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;

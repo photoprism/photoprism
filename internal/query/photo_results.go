@@ -31,8 +31,8 @@ type PhotoResult struct {
 	PhotoMonth       int           `json:"Month"`
 	PhotoDay         int           `json:"Day"`
 	PhotoCountry     string        `json:"Country"`
+	PhotoStack       int8          `json:"Stack"`
 	PhotoFavorite    bool          `json:"Favorite"`
-	PhotoSingle      bool          `json:"Single"`
 	PhotoPrivate     bool          `json:"Private"`
 	PhotoIso         int           `json:"Iso"`
 	PhotoFocalLength int           `json:"FocalLength"`
@@ -40,6 +40,7 @@ type PhotoResult struct {
 	PhotoExposure    string        `json:"Exposure"`
 	PhotoQuality     int           `json:"Quality"`
 	PhotoResolution  int           `json:"Resolution"`
+	PhotoColor       uint8         `json:"Color"`
 	PhotoScan        bool          `json:"Scan"`
 	PhotoPanorama    bool          `json:"Panorama"`
 	CameraID         uint          `json:"CameraID"` // Camera
@@ -69,6 +70,7 @@ type PhotoResult struct {
 	FileHash         string        `json:"Hash"`
 	FileWidth        int           `json:"Width"`
 	FileHeight       int           `json:"Height"`
+	FilePortrait     bool          `json:"Portrait"`
 	FilePrimary      bool          `json:"-"`
 	FileMissing      bool          `json:"-"`
 	FileVideo        bool          `json:"-"`

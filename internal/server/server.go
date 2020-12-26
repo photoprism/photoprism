@@ -20,8 +20,8 @@ func Start(ctx context.Context, conf *config.Config) {
 		}
 	}()
 
-	if conf.HttpServerMode() != "" {
-		gin.SetMode(conf.HttpServerMode())
+	if conf.HttpMode() != "" {
+		gin.SetMode(conf.HttpMode())
 	} else if conf.Debug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -35,7 +35,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	registerRoutes(router, conf)
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", conf.HttpServerHost(), conf.HttpServerPort()),
+		Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 		Handler: router,
 	}
 

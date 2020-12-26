@@ -62,6 +62,7 @@ export default {
     player: null,
   }),
   mounted() {
+    document.body.classList.add("player");
     this.render();
   },
   methods: {
@@ -126,6 +127,7 @@ export default {
     },
   },
   beforeDestroy() {
+    document.body.classList.remove("player");
     this.remove();
   },
   watch: {

@@ -8,31 +8,31 @@ import (
 
 // JpegSize returns the size limit for automatically converted files in `PIXELS` (720-30000).
 func (c *Config) JpegSize() int {
-	if c.params.JpegSize < 720 {
+	if c.options.JpegSize < 720 {
 		return 720
-	} else if c.params.JpegSize > 30000 {
+	} else if c.options.JpegSize > 30000 {
 		return 30000
 	}
 
-	return c.params.JpegSize
+	return c.options.JpegSize
 }
 
 // JpegQuality returns the jpeg quality for resampling, use 95 for high-quality thumbs (25-100).
 func (c *Config) JpegQuality() int {
-	if c.params.JpegQuality > 100 {
+	if c.options.JpegQuality > 100 {
 		return 100
 	}
 
-	if c.params.JpegQuality < 25 {
+	if c.options.JpegQuality < 25 {
 		return 25
 	}
 
-	return c.params.JpegQuality
+	return c.options.JpegQuality
 }
 
 // ThumbFilter returns the thumbnail resample filter (best to worst: blackman, lanczos, cubic or linear).
 func (c *Config) ThumbFilter() thumb.ResampleFilter {
-	switch strings.ToLower(c.params.ThumbFilter) {
+	switch strings.ToLower(c.options.ThumbFilter) {
 	case "blackman":
 		return thumb.ResampleBlackman
 	case "lanczos":
@@ -53,12 +53,12 @@ func (c *Config) ThumbPath() string {
 
 // ThumbUncached checks if on-demand thumbnail rendering is enabled (high memory and cpu usage).
 func (c *Config) ThumbUncached() bool {
-	return c.params.ThumbUncached
+	return c.options.ThumbUncached
 }
 
 // ThumbSize returns the pre-rendered thumbnail size limit in pixels (720-7680).
 func (c *Config) ThumbSize() int {
-	size := c.params.ThumbSize
+	size := c.options.ThumbSize
 
 	if size < 720 {
 		size = 720 // Mobile, TV
@@ -71,7 +71,7 @@ func (c *Config) ThumbSize() int {
 
 // ThumbSizeUncached returns the on-demand rendering size limit in pixels (720-7680).
 func (c *Config) ThumbSizeUncached() int {
-	limit := c.params.ThumbSizeUncached
+	limit := c.options.ThumbSizeUncached
 
 	if limit < 720 {
 		limit = 720 // Mobile, TV

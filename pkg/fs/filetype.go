@@ -236,19 +236,13 @@ func (t FileFormat) FindFirst(fileName string, dirs []string, baseDir string, st
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
+				return filepath.Join(dir, fileBase) + ext
+			} else if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
+				return filepath.Join(dir, fileBasePrefix) + ext
+			} else if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
+				return filepath.Join(dir, fileBaseLower) + ext
+			} else if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
+				return filepath.Join(dir, fileBaseUpper) + ext
 			}
 		}
 	}
@@ -285,19 +279,19 @@ func (t FileFormat) FindAll(fileName string, dirs []string, baseDir string, stri
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
+				results = append(results, filepath.Join(dir, fileBase)+ext)
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
+				results = append(results, filepath.Join(dir, fileBasePrefix)+ext)
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
+				results = append(results, filepath.Join(dir, fileBaseLower)+ext)
 			}
 
 			if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
+				results = append(results, filepath.Join(dir, fileBaseUpper)+ext)
 			}
 		}
 	}

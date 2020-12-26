@@ -26,27 +26,27 @@ var dsnPattern = regexp.MustCompile(
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
-	switch strings.ToLower(c.params.DatabaseDriver) {
+	switch strings.ToLower(c.options.DatabaseDriver) {
 	case MySQL, MariaDB:
-		c.params.DatabaseDriver = MySQL
+		c.options.DatabaseDriver = MySQL
 	case SQLite, "sqlite", "sqllite", "test", "file", "":
-		c.params.DatabaseDriver = SQLite
+		c.options.DatabaseDriver = SQLite
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
-		c.params.DatabaseDriver = SQLite
-		c.params.DatabaseDsn = ""
+		c.options.DatabaseDriver = SQLite
+		c.options.DatabaseDsn = ""
 	default:
-		log.Warnf("config: unsupported database driver %s, using sqlite", c.params.DatabaseDriver)
-		c.params.DatabaseDriver = SQLite
-		c.params.DatabaseDsn = ""
+		log.Warnf("config: unsupported database driver %s, using sqlite", c.options.DatabaseDriver)
+		c.options.DatabaseDriver = SQLite
+		c.options.DatabaseDsn = ""
 	}
 
-	return c.params.DatabaseDriver
+	return c.options.DatabaseDriver
 }
 
 // DatabaseDsn returns the database data source name (DSN).
 func (c *Config) DatabaseDsn() string {
-	if c.params.DatabaseDsn == "" {
+	if c.options.DatabaseDsn == "" {
 		switch c.DatabaseDriver() {
 		case MySQL, MariaDB:
 			return fmt.Sprintf(
@@ -73,28 +73,28 @@ func (c *Config) DatabaseDsn() string {
 		}
 	}
 
-	return c.params.DatabaseDsn
+	return c.options.DatabaseDsn
 }
 
 // ParseDatabaseDsn parses the database dsn and extracts user, password, database server, and name.
 func (c *Config) ParseDatabaseDsn() {
-	if c.params.DatabaseDsn == "" || c.params.DatabaseServer != "" {
+	if c.options.DatabaseDsn == "" || c.options.DatabaseServer != "" {
 		return
 	}
 
-	matches := dsnPattern.FindStringSubmatch(c.params.DatabaseDsn)
+	matches := dsnPattern.FindStringSubmatch(c.options.DatabaseDsn)
 	names := dsnPattern.SubexpNames()
 
 	for i, match := range matches {
 		switch names[i] {
 		case "user":
-			c.params.DatabaseUser = match
+			c.options.DatabaseUser = match
 		case "password":
-			c.params.DatabasePassword = match
+			c.options.DatabasePassword = match
 		case "server":
-			c.params.DatabaseServer = match
+			c.options.DatabaseServer = match
 		case "name":
-			c.params.DatabaseName = match
+			c.options.DatabaseName = match
 		}
 	}
 }
@@ -103,11 +103,11 @@ func (c *Config) ParseDatabaseDsn() {
 func (c *Config) DatabaseServer() string {
 	c.ParseDatabaseDsn()
 
-	if c.params.DatabaseServer == "" {
+	if c.options.DatabaseServer == "" {
 		return "localhost"
 	}
 
-	return c.params.DatabaseServer
+	return c.options.DatabaseServer
 }
 
 // DatabaseHost the database server host.
@@ -116,7 +116,7 @@ func (c *Config) DatabaseHost() string {
 		return s[0]
 	}
 
-	return c.params.DatabaseServer
+	return c.options.DatabaseServer
 }
 
 // DatabasePort the database server port.
@@ -143,34 +143,34 @@ func (c *Config) DatabasePortString() string {
 func (c *Config) DatabaseName() string {
 	c.ParseDatabaseDsn()
 
-	if c.params.DatabaseName == "" {
+	if c.options.DatabaseName == "" {
 		return "photoprism"
 	}
 
-	return c.params.DatabaseName
+	return c.options.DatabaseName
 }
 
 // DatabaseUser returns the database user name.
 func (c *Config) DatabaseUser() string {
 	c.ParseDatabaseDsn()
 
-	if c.params.DatabaseUser == "" {
+	if c.options.DatabaseUser == "" {
 		return "photoprism"
 	}
 
-	return c.params.DatabaseUser
+	return c.options.DatabaseUser
 }
 
 // DatabasePassword returns the database user password.
 func (c *Config) DatabasePassword() string {
 	c.ParseDatabaseDsn()
 
-	return c.params.DatabasePassword
+	return c.options.DatabasePassword
 }
 
 // DatabaseConns returns the maximum number of open connections to the database.
 func (c *Config) DatabaseConns() int {
-	limit := c.params.DatabaseConns
+	limit := c.options.DatabaseConns
 
 	if limit <= 0 {
 		limit = (runtime.NumCPU() * 2) + 16
@@ -185,7 +185,7 @@ func (c *Config) DatabaseConns() int {
 
 // DatabaseConnsIdle returns the maximum number of idle connections to the database (equal or less than open).
 func (c *Config) DatabaseConnsIdle() int {
-	limit := c.params.DatabaseConnsIdle
+	limit := c.options.DatabaseConnsIdle
 
 	if limit <= 0 {
 		limit = runtime.NumCPU() + 8

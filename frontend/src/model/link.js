@@ -29,79 +29,81 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Model from "./model";
-import {DateTime} from "luxon";
-import {$gettext} from "common/vm";
+import { DateTime } from "luxon";
+import { $gettext } from "common/vm";
 
 export default class Link extends Model {
-    getDefaults() {
-        return {
-            UID: "",
-            Share: "",
-            Slug: "",
-            Token: "",
-            Expires: 0,
-            Views: 0,
-            MaxViews: 0,
-            Password: "",
-            HasPassword: false,
-            CanComment: false,
-            CanEdit: false,
-            CreatedAt: "",
-            ModifiedAt: "",
-        };
+  getDefaults() {
+    return {
+      UID: "",
+      Share: "",
+      Slug: "",
+      Token: "",
+      Expires: 0,
+      Views: 0,
+      MaxViews: 0,
+      Password: "",
+      HasPassword: false,
+      CanComment: false,
+      CanEdit: false,
+      CreatedAt: "",
+      ModifiedAt: "",
+    };
+  }
+
+  getToken() {
+    return this.Token.toLowerCase().trim();
+  }
+
+  url() {
+    let token = this.getToken();
+
+    if (!token) {
+      token = "…";
     }
 
-    getToken() {
-        return this.Token.toLowerCase().trim();
+    if (this.hasSlug()) {
+      return `${window.location.origin}/s/${token}/${this.Slug}`;
     }
 
-    url() {
-        let token = this.getToken();
+    return `${window.location.origin}/s/${token}/${this.Share}`;
+  }
 
-        if(!token) {
-            token = "…";
-        }
+  caption() {
+    return `/s/${this.getToken()}`;
+  }
 
-        if(this.hasSlug()) {
-            return `${window.location.origin}/s/${token}/${this.Slug}`;
-        }
+  getId() {
+    return this.UID;
+  }
 
-        return `${window.location.origin}/s/${token}/${this.Share}`;
-    }
+  hasId() {
+    return !!this.getId();
+  }
 
-    caption() {
-        return `/s/${this.getToken()}`;
-    }
+  getSlug() {
+    return this.Slug ? this.Slug : "";
+  }
 
-    getId() {
-        return this.UID;
-    }
+  hasSlug() {
+    return !!this.getSlug();
+  }
 
-    hasId() {
-        return !!this.getId();
-    }
+  clone() {
+    return new this.constructor(this.getValues());
+  }
 
-    getSlug() {
-        return this.Slug ? this.Slug : "";
-    }
+  expires() {
+    return DateTime.fromISO(this.UpdatedAt)
+      .plus({ seconds: this.Expires })
+      .toLocaleString(DateTime.DATE_SHORT);
+  }
 
-    hasSlug() {
-        return !!this.getSlug();
-    }
+  static getCollectionResource() {
+    return "links";
+  }
 
-    clone() {
-        return new this.constructor(this.getValues());
-    }
-
-    expires() {
-        return DateTime.fromISO(this.UpdatedAt).plus({ seconds: this.Expires }).toLocaleString(DateTime.DATE_SHORT);
-    }
-
-    static getCollectionResource() {
-        return "links";
-    }
-
-    static getModelName() {
-        return $gettext("Link");
-    }
+  static getModelName() {
+    return $gettext("Link");
+  }
 }

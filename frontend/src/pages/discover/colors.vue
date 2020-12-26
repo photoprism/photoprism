@@ -8,11 +8,11 @@
 
       <v-layout row wrap class="p-colors">
         <v-flex
-                v-for="(color, index) in colors"
-                :key="index"
-                class="p-color pa-2"
+            v-for="(color, index) in colors"
+            :key="index"
+            class="p-color pa-2"
 
-                xs3 d-flex grow
+            xs3 d-flex grow
         >
           <v-hover>
             <v-card :to="{name: 'photos', query: { color: color.name }}" :dark="useDark(color)"
@@ -29,26 +29,26 @@
 
 <script>
 
-    export default {
-        name: 'p-tab-discover-colors',
-        data() {
-            return {
-                readonly: this.$config.get("readonly"),
-                colors: this.$config.values.colors,
-                labels: {},
-            };
-        },
-        methods: {
-            useDark(color) {
-                switch (color.name) {
-                    case "white":
-                        return false;
-                    default:
-                        return true;
-                }
-            }
-        },
-        created() {
-        },
+export default {
+  name: 'p-tab-discover-colors',
+  data() {
+    return {
+      readonly: this.$config.get("readonly"),
+      colors: this.$config.values.colors,
+      labels: {},
     };
+  },
+  methods: {
+    useDark(color) {
+      switch (color.name) {
+        case "white":
+          return false;
+        default:
+          return true;
+      }
+    }
+  },
+  created() {
+  },
+};
 </script>

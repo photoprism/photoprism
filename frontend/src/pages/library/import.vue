@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-import">
-    <v-form ref="form" class="p-photo-import" lazy-validation @submit.prevent="submit" dense>
+    <v-form ref="form" class="p-photo-import" lazy-validation dense @submit.prevent="submit">
       <v-container fluid>
         <p class="subheading">
           <span v-if="fileName"><translate :translate-params="{name: fileName}">Importing %{name}…</translate></span>
@@ -10,17 +10,18 @@
         </p>
 
         <v-autocomplete
-                @change="onChange"
-                color="secondary-dark"
-                class="my-3 input-import-folder"
-                hide-details hide-no-data flat solo
-                v-model="settings.import.path"
-                browser-autocomplete="off"
-                :items="dirs"
-                :loading="loading"
-                :disabled="busy || loading"
-                item-text="name"
-                item-value="path"
+            v-model="settings.import.path"
+            color="secondary-dark"
+            class="my-3 input-import-folder"
+            hide-details
+            hide-no-data flat solo browser-autocomplete="off"
+            :items="dirs"
+            :loading="loading"
+            :disabled="busy || !ready"
+            item-text="name"
+            item-value="path"
+            @change="onChange"
+            @focus="onFocus"
         >
         </v-autocomplete>
 
@@ -32,15 +33,15 @@
         <v-layout wrap align-top class="pb-2">
           <v-flex xs12 class="px-2 pb-2 pt-2">
             <v-checkbox
-                    @change="onChange"
-                    :disabled="busy"
-                    class="ma-0 pa-0"
-                    v-model="settings.import.move"
-                    color="secondary-dark"
-                    :label="$gettext('Move Files')"
-                    :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
-                    prepend-icon="delete"
-                    persistent-hint
+                v-model="settings.import.move"
+                :disabled="busy || !ready"
+                class="ma-0 pa-0"
+                color="secondary-dark"
+                :label="$gettext('Move Files')"
+                :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
+                prepend-icon="delete"
+                persistent-hint
+                @change="onChange"
             >
             </v-checkbox>
           </v-flex>
@@ -55,17 +56,17 @@
         </v-layout>
 
         <v-btn
-                :disabled="!busy"
-                color="secondary-dark"
-                class="white--text ml-0 action-cancel"
-                depressed
-                @click.stop="cancelImport()"
+            :disabled="!busy || !ready"
+            color="secondary-dark"
+            class="white--text ml-0 action-cancel"
+            depressed
+            @click.stop="cancelImport()"
         >
           <translate>Cancel</translate>
         </v-btn>
 
         <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
-               :disabled="busy"
+               :disabled="busy || !ready"
                color="secondary-dark"
                class="white--text ml-0 hidden-xs-only action-upload"
                depressed
@@ -76,14 +77,14 @@
         </v-btn>
 
         <v-btn
-                :disabled="busy"
-                color="secondary-dark"
-                class="white--text ml-0 mt-2 action-import"
-                depressed
-                @click.stop="startImport()"
+            :disabled="busy || !ready"
+            color="secondary-dark"
+            class="white--text ml-0 mt-2 action-import"
+            depressed
+            @click.stop="startImport()"
         >
           <translate>Import</translate>
-          <v-icon right dark>create_new_folder</v-icon>
+          <v-icon right dark>sync</v-icon>
         </v-btn>
       </v-container>
     </v-form>
@@ -91,126 +92,149 @@
 </template>
 
 <script>
-    import Api from "common/api";
-    import Axios from "axios";
-    import Notify from "common/notify";
-    import Event from "pubsub-js";
-    import Settings from "model/settings";
-    import Util from "common/util";
-    import {Folder, RootImport} from "model/folder";
+import Api from "common/api";
+import Axios from "axios";
+import Notify from "common/notify";
+import Event from "pubsub-js";
+import Settings from "model/settings";
+import Util from "common/util";
+import {Folder, RootImport} from "model/folder";
 
-    export default {
-        name: 'p-tab-import',
-        data() {
-            const root = {"path": "/", "name": this.$gettext("All files from import folder")}
+export default {
+  name: 'PTabImport',
+  data() {
+    const root = {"path": "/", "name": this.$gettext("All files from import folder")};
 
-            return {
-                settings: new Settings(this.$config.settings()),
-                started: false,
-                busy: false,
-                loading: false,
-                completed: 0,
-                subscriptionId: '',
-                fileName: '',
-                source: null,
-                root: root,
-                dirs: [root],
-            }
-        },
-        methods: {
-            onChange() {
-                this.settings.save();
-            },
-            showUpload() {
-                Event.publish("dialog.upload");
-            },
-            submit() {
-                // DO NOTHING
-            },
-            cancelImport() {
-                Api.delete('import');
-            },
-            startImport() {
-                this.source = Axios.CancelToken.source();
-                this.started = Date.now();
-                this.busy = true;
-                this.completed = 0;
-                this.fileName = '';
-
-                const ctx = this;
-                Notify.blockUI();
-
-                Api.post('import', this.settings.import, {cancelToken: this.source.token}).then(function () {
-                    Notify.unblockUI();
-                    ctx.busy = false;
-                    ctx.completed = 100;
-                    ctx.fileName = '';
-                }).catch(function (e) {
-                    Notify.unblockUI();
-
-                    if (Axios.isCancel(e)) {
-                        // run in background
-                        return
-                    }
-
-                    Notify.error(this.$gettext("Import failed"));
-
-                    ctx.busy = false;
-                    ctx.completed = 0;
-                    ctx.fileName = '';
-                });
-            },
-            handleEvent(ev, data) {
-                if (this.source) {
-                    this.source.cancel('run in background');
-                    this.source = null;
-                    Notify.unblockUI();
-                }
-
-                const type = ev.split('.')[1];
-
-                switch (type) {
-                    case 'file':
-                        this.busy = true;
-                        this.completed = 0;
-                        this.fileName = data.baseName;
-                        break;
-                    case 'completed':
-                        this.busy = false;
-                        this.completed = 100;
-                        this.fileName = '';
-                        break;
-                    default:
-                        console.log(data)
-                }
-            },
-        },
-        created() {
-            this.subscriptionId = Event.subscribe('import', this.handleEvent);
-            this.loading = true;
-
-            Folder.findAllUncached(RootImport).then((r) => {
-                const folders = r.models ? r.models : [];
-                const currentPath = this.settings.import.path;
-                let found = currentPath === this.root.path;
-
-                this.dirs = [this.root];
-
-                for (let i = 0; i < folders.length; i++) {
-                    if (currentPath === folders[i].Path) {
-                        found = true;
-                    }
-
-                    this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
-                }
-
-                if (!found) {
-                    this.settings.import.path = this.root.path;
-                }
-            }).finally(() => this.loading = false);
-        },
-        destroyed() {
-            Event.unsubscribe(this.subscriptionId);
-        },
+    return {
+      ready: !this.$config.loading(),
+      settings: new Settings(this.$config.settings()),
+      started: false,
+      busy: false,
+      loading: false,
+      completed: 0,
+      subscriptionId: '',
+      fileName: '',
+      source: null,
+      root: root,
+      dirs: [root],
     };
+  },
+  created() {
+    this.subscriptionId = Event.subscribe('import', this.handleEvent);
+    this.load();
+  },
+  destroyed() {
+    Event.unsubscribe(this.subscriptionId);
+  },
+  methods: {
+    load() {
+      this.$config.load().then(() => {
+        this.settings.setValues(this.$config.settings());
+        this.dirs = [this.root];
+
+        if (this.settings.import.path !== this.root.path) {
+          this.dirs.push({
+            path: this.settings.import.path,
+            name: "/" + Util.truncate(this.settings.import.path, 100, "…")
+          });
+        }
+
+        this.ready = true;
+      })
+    },
+    onChange() {
+      this.settings.save();
+    },
+    onFocus() {
+      if (this.dirs.length > 2 || this.loading) {
+        return;
+      }
+
+      this.loading = true;
+
+      Folder.findAllUncached(RootImport).then((r) => {
+        const folders = r.models ? r.models : [];
+        const currentPath = this.settings.import.path;
+        let found = currentPath === this.root.path;
+
+        this.dirs = [this.root];
+
+        for (let i = 0; i < folders.length; i++) {
+          if (currentPath === folders[i].Path) {
+            found = true;
+          }
+
+          this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
+        }
+
+        if (!found) {
+          this.settings.import.path = this.root.path;
+        }
+      }).finally(() => this.loading = false);
+    },
+    showUpload() {
+      Event.publish("dialog.upload");
+    },
+    submit() {
+      // DO NOTHING
+    },
+    cancelImport() {
+      Api.delete('import');
+    },
+    startImport() {
+      this.source = Axios.CancelToken.source();
+      this.started = Date.now();
+      this.busy = true;
+      this.completed = 0;
+      this.fileName = '';
+
+      const ctx = this;
+      Notify.blockUI();
+
+      Api.post('import', this.settings.import, {cancelToken: this.source.token}).then(function () {
+        Notify.unblockUI();
+        ctx.busy = false;
+        ctx.completed = 100;
+        ctx.fileName = '';
+      }).catch(function (e) {
+        Notify.unblockUI();
+
+        if (Axios.isCancel(e)) {
+          // run in background
+          return;
+        }
+
+        Notify.error(this.$gettext("Import failed"));
+
+        ctx.busy = false;
+        ctx.completed = 0;
+        ctx.fileName = '';
+      });
+    },
+    handleEvent(ev, data) {
+      if (this.source) {
+        this.source.cancel('run in background');
+        this.source = null;
+        Notify.unblockUI();
+      }
+
+      const type = ev.split('.')[1];
+
+      switch (type) {
+        case 'file':
+          this.busy = true;
+          this.completed = 0;
+          this.fileName = data.baseName;
+          break;
+        case 'completed':
+          this.busy = false;
+          this.completed = 100;
+          this.fileName = '';
+          break;
+        default:
+          console.log(data);
+      }
+    },
+  },
+};
 </script>

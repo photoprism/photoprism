@@ -50,7 +50,7 @@ func TestIndexRelated(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	tf := classify.New(conf.AssetsPath(), conf.TensorFlowOff())
+	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
 	convert := NewConvert(conf)
 
