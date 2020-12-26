@@ -36,12 +36,13 @@ steps:
       branch:
         - develop
 
-  - name: test-master
+  - name: test
     commands:
       - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
     when:
       branch:
         - master
+        - release
 
   - name: down
     commands:
@@ -119,6 +120,7 @@ name: linux-arm64
 
 trigger:
   branch:
+    - master
     - release
 
 platform:
@@ -126,7 +128,20 @@ platform:
   os: linux
 
 steps:
-  - name: deploy
+  - name: deploy-preview
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
+      - make docker-photoprism-arm64-preview
+    when:
+      branch:
+        - master
+
+  - name: deploy-release
     environment:
       DOCKER_USERNAME:
         from_secret: docker_username
@@ -135,6 +150,9 @@ steps:
     commands:
       - scripts/docker-login.sh
       - make docker-photoprism-arm64
+    when:
+      branch:
+        - release
 
   - name: clean
     commands:

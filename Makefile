@@ -174,8 +174,11 @@ docker-photoprism-local:
 	scripts/docker-build.sh photoprism
 docker-photoprism-pull:
 	docker pull photoprism/photoprism:latest
-docker-photoprism-arm64:
+docker-photoprism-arm64-preview:
 	docker pull ubuntu:20.04
+	scripts/docker-build.sh photoprism-arm64
+	scripts/docker-push.sh photoprism-arm64
+docker-photoprism-arm64:
 	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
 docker-demo:
