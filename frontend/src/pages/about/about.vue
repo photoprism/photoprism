@@ -12,7 +12,7 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="pa-4">
-      <h2 class="py-2 subheading">Funding</h2>
+      <h2 class="pb-2 subheading">Funding</h2>
       <p class="body-1">This <a href="https://photoprism.app/" target="_blank" class="primary--text text--darken-4">software</a> is about freedom and privacy but not necessarily about free beer. We feel like it
         would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
         will have a price tag, and then maybe you'd like to have some extra features that need to be developed.</p>
