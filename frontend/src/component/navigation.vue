@@ -442,6 +442,9 @@ import Event from "pubsub-js";
 export default {
   name: "p-navigation",
   data() {
+    if (!this.$config.values.disable) {
+      this.$config.values.disable = {}
+    }
     return {
       drawer: null,
       mini: true,
@@ -475,6 +478,12 @@ export default {
     auth() {
       return this.session.auth || this.public
     },
+  },
+  mounted() {
+    this.$shortcuts.activate(this, 'navigation')
+  },
+  unmounted() {
+    this.$shortcuts.deactivate('navigation')
   },
   methods: {
     openUpload() {
