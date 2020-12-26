@@ -184,7 +184,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.import"
-                  :disabled="busy || config.readonly"
+                  :disabled="busy || config.readonly || demo"
                   class="ma-0 pa-0 input-import"
                   color="secondary-dark"
                   :label="$gettext('Import')"
