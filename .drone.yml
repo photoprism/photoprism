@@ -67,19 +67,19 @@ steps:
         - master
 
   - name: deploy-release
-      environment:
-        DOCKER_USERNAME:
-          from_secret: docker_username
-        DOCKER_PASSWORD:
-          from_secret: docker_password
-      commands:
-        - scripts/docker-login.sh
-        - make docker-photoprism
-      when:
-        status:
-          - success
-        branch:
-          - release
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
+      - make docker-photoprism
+    when:
+      status:
+        - success
+      branch:
+        - release
 
 ---
 kind: pipeline
