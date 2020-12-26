@@ -13,7 +13,7 @@ Ideas backed by one or more eligible sponsors will be prioritized as well. Let u
 *Note that we've recently moved GitHub Sponsors from [sponsors/lastzero](https://github.com/sponsors/lastzero) to an 
 [organization account](https://github.com/sponsors/photoprism) so that donations can be shared more easily.
 Tiers are more affordable now while benefits stay mostly the same.
-You can also find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/browseyourlife).*
+You can also find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/photoprism).*
 
 ---
 
@@ -52,6 +52,6 @@ Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau
 
 [patreon]: https://www.patreon.com/photoprism
-[paypal]: https://www.paypal.me/browseyourlife
+[paypal]: https://www.paypal.me/photoprism
 [issues:sponsor]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor
 [issues:unfunded]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded

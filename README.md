@@ -15,6 +15,8 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ![](https://dl.photoprism.org/assets/img/preview-moonlight.jpg)
 
+To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
+
 ## Key Features ##
 
 * Our clearly structured [user interface](https://demo.photoprism.org/) makes browsing and organizing your personal photo collection as easy as 
@@ -34,11 +36,13 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ## Getting Started ##
 
-You're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
-
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
+
+We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
+Indexing large photo and video collections significantly benefits from fast, 
+local SSD storage and enough memory for caching.
 
 ## Roadmap ##
 
@@ -69,7 +73,7 @@ will have a price tag, and then maybe you'd like to have some extra features tha
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
 especially if you have feature requests, or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
-and [PayPal](https://www.paypal.me/browseyourlife). 
+and [PayPal](https://www.paypal.me/photoprism). 
 
 Your continuous support helps...
 
@@ -100,7 +104,7 @@ goods, products, or services without prior written permission. In other words, p
 [wiki:raw]: https://github.com/photoprism/photoprism/wiki/Converting-RAW-to-JPEG
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [patreon]: https://www.patreon.com/photoprism
-[paypal]: https://www.paypal.me/browseyourlife
+[paypal]: https://www.paypal.me/photoprism
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://drone.photoprism.app/photoprism/photoprism
