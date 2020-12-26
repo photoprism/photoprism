@@ -8,6 +8,7 @@ export default {
   },
   data() {
     return {
+      clipboard: this.$clipboard,
       showLocation: this.$config.settings().features.places,
       hidePrivate: this.$config.settings().features.private,
       debug: this.$config.get('debug'),

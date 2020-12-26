@@ -26,11 +26,7 @@
           :data-uid="photo.UID"
           class="p-photo"
           xs12 sm6 md4 lg3 xl2 d-flex
-<<<<<<< HEAD
-          v-bind:class="{ 'is-selected': $clipboard.has(photo), active: activeIndex == index  }"
-=======
-          :class="{ 'is-selected': clipboard.has(photo), portrait: photo.Portrait }"
->>>>>>> upstream/develop
+          :class="{ 'is-selected': clipboard.has(photo), portrait: photo.Portrait, active: activeIndex == index  }"
       >
         <v-hover>
           <v-card slot-scope="{ hover }" tile

@@ -28,7 +28,7 @@
           </button>
 
           <button class="pswp__button action-select" style="background: none;"
-                  :title="$gettext('Select')" @click.exact="onSelect">
+                  :title="$gettext('Select')" @click.exact="onSelect" ref="select">
             <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">check_circle</v-icon>
             <v-icon v-else size="16" color="white">radio_button_off</v-icon>
           </button>

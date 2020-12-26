@@ -264,6 +264,11 @@ const keymap = [
                 action: 'viewer.$refs.like.click',
             },
             {
+                name: 'Toggle selection',
+                keys: 'Space',
+                action: 'viewer.$refs.select.click',
+            },
+            {
                 name: 'Toggle fullscreen view',
                 keys: 'F',
                 action: 'viewer.$refs.fullscreen.click',
