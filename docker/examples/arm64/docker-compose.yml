@@ -69,7 +69,7 @@ services:
       - "./storage:/photoprism/storage"
 
   mariadb:
-    image: mariadb:10.5
+    image: arm64v8/mariadb:10.5
     restart: unless-stopped
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
     volumes:
