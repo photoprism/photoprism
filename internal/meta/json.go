@@ -33,7 +33,6 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 	jsonData, err := ioutil.ReadFile(jsonName)
 
 	if err != nil {
-		log.Warnf("metadata: %s (json)", err.Error())
 		return fmt.Errorf("can't read json file %s", quotedName)
 	}
 
@@ -45,6 +44,7 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 		return data.GPhoto(jsonData)
 	}
 
-	log.Warnf("metadata: unknown format in %s (json)", quotedName)
-	return fmt.Errorf("unknown json format in %s", quotedName)
+	log.Warnf("metadata: unknown json in %s", quotedName)
+
+	return fmt.Errorf("unknown json in %s", quotedName)
 }

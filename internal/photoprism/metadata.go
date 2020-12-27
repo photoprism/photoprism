@@ -20,17 +20,19 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 			err = fmt.Errorf("exif not supported: %s", txt.Quote(m.BaseName()))
 		}
 
-		// Parse regular JSON sidecar files ("img_1234.json").
-		if jsonFiles := fs.FormatJson.FindAll(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); len(jsonFiles) == 0 {
-			log.Debugf("media: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
-		} else {
-			for _, jsonFile := range jsonFiles {
-				jsonErr := m.metaData.JSON(jsonFile, m.BaseName())
+		// Parse regular JSON sidecar files ("img_1234.json")
+		if !m.IsSidecar() {
+			if jsonFiles := fs.FormatJson.FindAll(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); len(jsonFiles) == 0 {
+				log.Debugf("media: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
+			} else {
+				for _, jsonFile := range jsonFiles {
+					jsonErr := m.metaData.JSON(jsonFile, m.BaseName())
 
-				if jsonErr != nil {
-					log.Debug(jsonErr)
-				} else {
-					err = nil
+					if jsonErr != nil {
+						log.Debug(jsonErr)
+					} else {
+						err = nil
+					}
 				}
 			}
 		}

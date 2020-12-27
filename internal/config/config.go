@@ -82,7 +82,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		if err := c.options.Load(configFile); err != nil {
 			log.Warnf("config: %s", err)
 		} else {
-			log.Debugf("config: loaded options from %s", txt.Quote(configFile))
+			log.Debugf("config: options loaded from %s", txt.Quote(configFile))
 		}
 	}
 
@@ -122,6 +122,13 @@ func (c *Config) Init() error {
 
 	if err := c.initStorage(); err != nil {
 		return err
+	}
+
+	if insensitive, err := c.CaseInsensitive(); err != nil {
+		return err
+	} else if insensitive {
+		log.Infof("config: case-insensitive file system detected")
+		fs.IgnoreCase()
 	}
 
 	c.initSettings()

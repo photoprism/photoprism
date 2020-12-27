@@ -28,7 +28,7 @@
 
 <script>
 import General from "pages/settings/general.vue";
-import Index from "pages/settings/index.vue";
+import Library from "pages/settings/library.vue";
 import Advanced from "pages/settings/advanced.vue";
 import Sync from "pages/settings/sync.vue";
 import Account from "pages/settings/account.vue";
@@ -65,11 +65,11 @@ export default {
         'demo': true,
       },
       {
-        'name': 'settings-index',
-        'component': Index,
-        'label': this.$gettext('Index'),
+        'name': 'settings-library',
+        'component': Library,
+        'label': this.$gettext('Library'),
         'class': '',
-        'path': '/settings/index',
+        'path': '/settings/library',
         'icon': 'camera_roll',
         'public': true,
         'admin': true,

@@ -24,6 +24,18 @@ func StripKnownExt(name string) string {
 	return name
 }
 
+// Ext returns all extension of a file name including the dots.
+func Ext(name string) string {
+	ext := filepath.Ext(name)
+	name = StripExt(name)
+
+	if FileExt.Known(name) {
+		ext = filepath.Ext(name) + ext
+	}
+
+	return ext
+}
+
 // StripSequence removes common sequence patterns at the end of file names.
 func StripSequence(name string) string {
 	// Strip numeric extensions like .00000, .00001, .4542353245,.... (at least 5 digits).

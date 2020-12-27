@@ -15,6 +15,8 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ![](https://dl.photoprism.org/assets/img/preview-moonlight.jpg)
 
+To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
+
 ## Key Features ##
 
 * Our clearly structured [user interface](https://demo.photoprism.org/) makes browsing and organizing your personal photo collection as easy as 
@@ -26,7 +28,7 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
   and for rediscovering long-forgotten shots.
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may 
-  [connect](https://docs.photoprism.org/user-guide/backup/webdav/) directly to PhotoPrism so that you to can open, 
+  [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open, 
   edit, and delete files from your computer or phone as if they were local. 
   You may easily sync your pictures with [Nextcloud](https://nextcloud.com/) as well.  
 * PhotoPrism feels [like a native app](https://en.wikipedia.org/wiki/Progressive_web_application) and, 
@@ -34,15 +36,13 @@ Say goodbye to solutions that force you to upload your visual memories to the cl
 
 ## Getting Started ##
 
-You're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
-
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
-We do our best to provide a complete, stable version very soon. Check the 
-[roadmap](https://github.com/photoprism/photoprism/projects/5) for open issues.
-Leave your email to get a [release notification](https://goo.gl/forms/KBPVGl9PCsOKrAv33).
+We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
+Indexing large photo and video collections significantly benefits from fast, 
+local SSD storage and enough memory for caching.
 
 ## Roadmap ##
 
@@ -66,14 +66,14 @@ related topics. Don't be afraid to ask stupid questions.
 
 ## Funding ##
 
-This project is about freedom and privacy but not necessarily about free beer. We feel like it
+This software is about freedom and privacy but not necessarily about free beer. We feel like it
 would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
 will have a price tag, and then maybe you'd like to have some extra features that need to be developed.
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
 especially if you have feature requests, or need help with using our software.
-In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) 
-and [PayPal](https://www.paypal.me/browseyourlife). 
+In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
+and [PayPal](https://www.paypal.me/photoprism). 
 
 Your continuous support helps...
 
@@ -104,7 +104,7 @@ goods, products, or services without prior written permission. In other words, p
 [wiki:raw]: https://github.com/photoprism/photoprism/wiki/Converting-RAW-to-JPEG
 [license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
 [patreon]: https://www.patreon.com/photoprism
-[paypal]: https://www.paypal.me/browseyourlife
+[paypal]: https://www.paypal.me/photoprism
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://drone.photoprism.app/photoprism/photoprism

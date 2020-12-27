@@ -62,6 +62,7 @@
           <v-icon>folder_special</v-icon>
         </v-btn>
         <v-btn
+            v-if="context === 'album'"
             fab dark small
             color="remove"
             :title="$gettext('Delete')"
@@ -100,6 +101,7 @@ export default {
     clearSelection: Function,
     share: Function,
     edit: Function,
+    context: String,
   },
   data() {
     return {

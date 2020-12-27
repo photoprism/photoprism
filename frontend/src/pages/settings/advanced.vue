@@ -155,30 +155,14 @@
               ></v-select>
             </v-flex>
 
-            <v-flex xs12 sm6 lg8 class="px-2 pb-2">
-              <v-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext('Uncached Size Limit: %{n}px'), {n: settings.ThumbSizeUncached}) }}
-              </v-subheader>
-              <v-slider
-                  v-model="settings.ThumbSizeUncached"
-                  :min="720"
-                  :max="7680"
-                  :step="4"
-                  hide-details
-                  :disabled="busy"
-                  class="mt-0"
-                  @change="onChange"
-              ></v-slider>
-            </v-flex>
-
             <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.ThumbUncached"
                   :disabled="busy"
                   class="ma-0 pa-0"
                   color="secondary-dark"
-                  :label="$gettext('Uncached Previews')"
-                  :hint="$gettext('On-demand rendering requires a powerful CPU and is not recommended for smaller home servers, or NAS devices.')"
+                  :label="$gettext('Dynamic Previews')"
+                  :hint="$gettext('Dynamic rendering requires a powerful server. It is not recommended for NAS devices.')"
                   prepend-icon="memory"
                   persistent-hint
                   @change="onChange"
@@ -188,22 +172,6 @@
 
             <v-flex xs12 sm6 lg8 class="px-2 pb-2">
               <v-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext('Pre-Render Size Limit: %{n}px'), {n: settings.ThumbSize}) }}
-              </v-subheader>
-              <v-slider
-                  v-model="settings.ThumbSize"
-                  :min="720"
-                  :max="7680"
-                  :step="4"
-                  hide-details
-                  :disabled="busy"
-                  class="mt-0"
-                  @change="onChange"
-              ></v-slider>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
-              <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext('JPEG Quality: %{n}'), {n: settings.JpegQuality}) }}
               </v-subheader>
               <v-slider
@@ -211,6 +179,39 @@
                   :min="25"
                   :max="100"
                   :disabled="busy"
+                  hide-details
+                  class="mt-0"
+                  @change="onChange"
+              ></v-slider>
+            </v-flex>
+
+            <v-flex xs12 sm6 class="px-2 pb-2">
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext('Dynamic Size Limit: %{n}px'), {n: settings.ThumbSizeUncached}) }}
+              </v-subheader>
+              <v-slider
+                  v-model="settings.ThumbSizeUncached"
+                  :min="720"
+                  :max="7680"
+                  :step="4"
+                  :disabled="busy"
+                  hide-details
+                  class="mt-0"
+                  @change="onChange"
+              ></v-slider>
+            </v-flex>
+
+            <v-flex xs12 sm6 class="px-2 pb-2">
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext('Static Size Limit: %{n}px'), {n: settings.ThumbSize}) }}
+              </v-subheader>
+              <v-slider
+                  v-model="settings.ThumbSize"
+                  :min="720"
+                  :max="7680"
+                  :step="4"
+                  :disabled="busy"
+                  hide-details
                   class="mt-0"
                   @change="onChange"
               ></v-slider>

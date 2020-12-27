@@ -190,6 +190,12 @@ func (c *Config) LogFilename() string {
 	return fs.Abs(c.options.LogFilename)
 }
 
+// CaseInsensitive tests if the storage path is case-insensitive.
+func (c *Config) CaseInsensitive() (result bool, err error) {
+	storagePath := c.StoragePath()
+	return fs.CaseInsensitive(storagePath)
+}
+
 // OriginalsPath returns the originals.
 func (c *Config) OriginalsPath() string {
 	if c.options.OriginalsPath == "" {

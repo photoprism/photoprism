@@ -545,8 +545,8 @@ test('#7 Edit photo/video', async t => {
         .pressKey('enter')
         .typeText(Selector('.input-month input'), '07', { replace: true })
         .pressKey('enter')
-        .typeText(Selector('.input-year input'), 'Unknown', { replace: true })
-        .pressKey('enter')
+        .typeText(Selector('.input-year input'), '2019', { replace: true })
+        .click(Selector('div').withText('2019').parent('div[role="listitem"]'))
         .click(Selector('.input-local-time input'))
         .pressKey('ctrl+a delete')
         .typeText(Selector('.input-local-time input'), '04:30:30', { replace: true })
@@ -591,7 +591,7 @@ test('#7 Edit photo/video', async t => {
         .expect(Selector('.input-utc-time input').value).eql('01:30:30')
         .expect(Selector('.input-day input').value).eql('15')
         .expect(Selector('.input-month input').value).eql('07')
-        .expect(Selector('.input-year input').value).eql('Unknown')
+        .expect(Selector('.input-year input').value).eql('2019')
         .expect(Selector('.input-altitude input').value).eql('-1')
         .expect(Selector('div').withText('Albania').visible).ok()
         //.expect(Selector('div').withText('Apple iPhone 6').visible).ok()
@@ -631,7 +631,7 @@ test('#7 Edit photo/video', async t => {
         .typeText(Selector('.input-month input'), FirstPhotoMonth, { replace: true })
         .pressKey('enter')
         .typeText(Selector('.input-year input'), FirstPhotoYear, { replace: true })
-        .pressKey('enter');
+        .click(Selector('div').withText(FirstPhotoYear).parent('div[role="listitem"]', {timeout: 5000}));
     if (FirstPhotoLocalTime.empty || FirstPhotoLocalTime === "")
     { await t
         .click(Selector('.input-local-time input'))
@@ -847,7 +847,7 @@ test('#11 Delete non primary file', async t => {
     await t
         .click(Selector('.nav-library'))
         //TODO Connecting... error must be moved somewhere else
-        .click(Selector('#tab-import'))
+        .click(Selector('#tab-library-import'))
         .click(Selector('.input-import-folder input'), {timeout: 5000})
         .click(Selector('div.v-list__tile__title').withText('/pizza'))
         .click(Selector('.action-import'))

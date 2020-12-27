@@ -77,11 +77,25 @@ export default class Config {
     }
   }
 
+  loading() {
+    return !this.values.mode || this.values.mode === "public";
+  }
+
+  load() {
+    if (this.loading()) {
+      return this.update();
+    }
+
+    return Promise.resolve();
+  }
+
   update() {
-    Api.get("config").then(
-      (response) => this.setValues(response.data),
-      () => console.warn("failed pulling updated client config")
-    );
+    return Api.get("config")
+      .then(
+        (response) => this.setValues(response.data),
+        () => console.warn("failed pulling updated client config")
+      )
+      .finally(() => Promise.resolve());
   }
 
   setValues(values) {

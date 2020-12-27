@@ -44,6 +44,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+var ignoreCase bool
+
 const IgnoreFile = ".ppignore"
 const HiddenPath = ".photoprism"
 const PathSeparator = string(filepath.Separator)

@@ -184,7 +184,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.import"
-                  :disabled="busy || config.readonly"
+                  :disabled="busy || config.readonly || demo"
                   class="ma-0 pa-0 input-import"
                   color="secondary-dark"
                   :label="$gettext('Import')"
@@ -289,7 +289,7 @@ export default {
       config: this.$config.values,
       settings: new Settings(this.$config.settings()),
       options: options,
-      busy: false,
+      busy: this.$config.loading(),
       subscriptions: [],
     };
   },
@@ -304,7 +304,10 @@ export default {
   },
   methods: {
     load() {
-      this.settings.load();
+      this.$config.load().then(() => {
+        this.settings.setValues(this.$config.settings());
+        this.busy = false;
+      })
     },
     onChange() {
       const reload = this.settings.changed("ui", "language");

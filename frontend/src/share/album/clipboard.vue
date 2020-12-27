@@ -52,6 +52,7 @@ export default {
     selection: Array,
     refresh: Function,
     clearSelection: Function,
+    context: String,
   },
   data() {
     return {

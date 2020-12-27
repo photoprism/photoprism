@@ -1323,8 +1323,7 @@ msgstr "最舊排前"
 
 #: src/pages/settings/advanced.vue:332
 msgid ""
-"On-demand rendering requires a powerful CPU and is not recommended for "
-"smaller home servers, or NAS devices."
+"Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "按需渲染需要強大的CPU，不建議用於小型家用服務器或NAS設備。"
 
 #: src/options/options.js:239
@@ -1476,7 +1475,7 @@ msgid "Portrait"
 msgstr "人像"
 
 #: src/pages/settings/advanced.vue:349
-msgid "Pre-Render Size Limit: %{n}px"
+msgid "Static Size Limit: %{n}px"
 msgstr "渲染前大小限制：%{n} px"
 
 #: src/dialog/account/edit.vue:301
@@ -1964,11 +1963,11 @@ msgid "Type"
 msgstr "格式"
 
 #: src/pages/settings/advanced.vue:331
-msgid "Uncached Previews"
+msgid "Dynamic Previews"
 msgstr "未緩存的預覽"
 
 #: src/pages/settings/advanced.vue:300
-msgid "Uncached Size Limit: %{n}px"
+msgid "Dynamic Size Limit: %{n}px"
 msgstr "未緩存的大小限制：%{n} px"
 
 #: src/pages/settings/index.vue:194

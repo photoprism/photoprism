@@ -6,7 +6,7 @@
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
-            <translate>Library</translate>
+            <translate>Index</translate>
           </h3>
         </v-card-title>
 
@@ -141,7 +141,7 @@ export default {
       config: this.$config.values,
       settings: new Settings(this.$config.settings()),
       options: options,
-      busy: false,
+      busy: this.$config.loading(),
       subscriptions: [],
     };
   },
@@ -156,7 +156,10 @@ export default {
   },
   methods: {
     load() {
-      this.settings.load();
+      this.$config.load().then(() => {
+        this.settings.setValues(this.$config.settings());
+        this.busy = false;
+      })
     },
     onChange() {
       const reload = this.settings.changed("ui", "language");

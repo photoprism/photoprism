@@ -134,6 +134,15 @@ func TestFileType_FindFirst(t *testing.T) {
 	})
 }
 
+func TestFileType_FindAll(t *testing.T) {
+	dirs := []string{HiddenPath}
+
+	t.Run("CATYELLOW.jpg", func(t *testing.T) {
+		result := FormatJpeg.FindAll("testdata/CATYELLOW.JSON", dirs, "", false)
+		assert.Contains(t, result, "testdata/CATYELLOW.jpg")
+	})
+}
+
 func TestNormalizedExt(t *testing.T) {
 	t.Run("none", func(t *testing.T) {
 		result := NormalizedExt("testdata/test")

@@ -1,12 +1,25 @@
 package fs
 
 import (
+	"fmt"
 	"os"
 	"os/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	if insensitive, err := CaseInsensitive(os.TempDir()); err != nil {
+		fmt.Println(err)
+	} else if insensitive {
+		IgnoreCase()
+	}
+
+	code := m.Run()
+
+	os.Exit(code)
+}
 
 func TestFileExists(t *testing.T) {
 	assert.True(t, FileExists("./testdata/test.jpg"))

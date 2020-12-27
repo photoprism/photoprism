@@ -2097,6 +2097,42 @@ func TestMediaFile_HasJson(t *testing.T) {
 	})
 }
 
+func TestMediaFile_NeedsJson(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.NeedsJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.NeedsJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.NeedsJson())
+	})
+}
+
 func TestMediaFile_RenameSidecars(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -2119,8 +2155,8 @@ func TestMediaFile_RenameSidecars(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		srcName := filepath.Join(conf.SidecarPath(), "foo/bar.json")
-		dstName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.json")
+		srcName := filepath.Join(conf.SidecarPath(), "foo/bar.jpg.json")
+		dstName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.jpg.json")
 
 		if err := ioutil.WriteFile(srcName, []byte("{}"), 0666); err != nil {
 			t.Fatal(err)

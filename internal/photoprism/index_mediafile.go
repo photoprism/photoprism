@@ -749,7 +749,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		photo.PhotoQuality = photo.QualityScore()
 
 		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s in %s (update photo metadata)", err, logName)
+			log.Errorf("index: %s in %s (update metadata)", err, logName)
 			result.Status = IndexFailed
 			result.Err = err
 			return result
@@ -762,17 +762,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.IndexKeywords(); err != nil {
 			log.Errorf("index: %s in %s (save keywords)", err, logName)
 		}
-	} else if photo.DeletedAt == nil {
-		if photo.PhotoQuality >= 0 {
-			photo.PhotoQuality = photo.QualityScore()
-		}
-
-		if err := photo.Save(); err != nil {
-			log.Errorf("index: %s in %s (update photo quality)", err, logName)
-			result.Status = IndexFailed
-			result.Err = err
-			return result
-		}
+	} else if err := photo.UpdateQuality(); err != nil {
+		log.Errorf("index: %s in %s (update quality)", err, logName)
+		result.Status = IndexFailed
+		result.Err = err
+		return result
 	}
 
 	result.Status = IndexUpdated

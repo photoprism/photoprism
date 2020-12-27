@@ -1,4 +1,4 @@
-FROM photoprism/photoprism:latest as build
+FROM photoprism/photoprism:preview as build
 
 # Hide TensorFlow warnings
 ENV TF_CPP_MIN_LOG_LEVEL 2
