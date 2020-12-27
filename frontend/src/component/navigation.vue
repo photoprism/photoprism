@@ -486,6 +486,10 @@ export default {
     this.$shortcuts.deactivate('navigation')
   },
   methods: {
+    toggleSidebar() {
+      this.mini = !this.mini
+
+    },
     openUpload() {
       if (this.auth && !this.readonly && this.$config.feature('upload')) {
         this.upload.dialog = true;

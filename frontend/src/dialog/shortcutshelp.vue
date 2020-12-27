@@ -24,8 +24,8 @@
                     <table class="v-table v-data-table theme--light">
                         <thead>
                             <tr>
-                                <th class="text-xs-left">Keyboard Shortcut</th>
-                                <th class="text-xs-left">Action</th>
+                                <th class="text-xs-left" width="40%">Action</th>
+                                <th class="text-xs-left" width="60%">Keyboard Shortcut</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,12 +33,13 @@
                                 <td class="text-xs-left">{{ action.name }}</td>
                                 <td class="text-xs-left">
                                     <span v-for="(displayKey, key_index) in action.displayKeys" :key="'key-'+key_index">
-                                        <span v-if="key_index > 0">or</span>
-                                            <span v-for="(keystroke, keystroke_index) in displayKey" :key="'keystroke-'+keystroke_index">
-                                                <span v-if="keystroke_index > 0">then</span>
-                                                <span v-for="modifier in keystroke.modifiers" :key="modifier"><span class="keyboard-shortcuts-key">{{ modifier }}</span>+</span>
-                                                <span class="keyboard-shortcuts-key">{{ keystroke.key }}</span>
-                                            </span>
+                                        <span v-if="key_index > 0">
+                                            or
+                                        </span>
+                                        <span v-for="(keystroke, keystroke_index) in displayKey" :key="'keystroke-'+keystroke_index">
+                                            <span v-if="keystroke_index > 0">then</span>
+                                            <span v-for="modifier in keystroke.modifiers" :key="modifier"><span class="keyboard-shortcuts-key">{{ modifier }}</span>+</span><span class="keyboard-shortcuts-key">{{ keystroke.key }}</span>
+                                        </span>
                                     </span>
                                 </td>
                             </tr>
