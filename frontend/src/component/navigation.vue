@@ -2,7 +2,7 @@
   <div id="p-navigation">
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
       <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" fixed flat color="navigation darken-1" class="nav-small"
-                 @click.stop="showNavigation()" scroll-toolbar-off-screen>
+                 @click.stop="showNavigation()" scroll-off-screen>
 
         <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
 
