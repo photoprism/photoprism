@@ -125,6 +125,57 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 	offset = 0
 
 	for {
+		files, err := query.Duplicates(limit, offset, opt.Path)
+
+		if err != nil {
+			return purgedFiles, purgedPhotos, err
+		}
+
+		if len(files) == 0 {
+			break
+		}
+
+		for _, file := range files {
+			if mutex.MainWorker.Canceled() {
+				return purgedFiles, purgedPhotos, errors.New("purge canceled")
+			}
+
+			fileName := FileName(file.FileRoot, file.FileName)
+
+			if ignore[fileName].Exists() || purgedFiles[fileName] {
+				continue
+			}
+
+			if !fs.FileExists(fileName) {
+				if opt.Dry {
+					purgedFiles[fileName] = true
+					log.Infof("purge: duplicate %s would be removed", txt.Quote(file.FileName))
+					continue
+				}
+
+				if err := file.Purge(); err != nil {
+					log.Errorf("purge: %s", err)
+				} else {
+					prg.files.Remove(file.FileName, file.FileRoot)
+					purgedFiles[fileName] = true
+					log.Infof("purge: removed duplicate %s", txt.Quote(file.FileName))
+				}
+			}
+		}
+
+		if mutex.MainWorker.Canceled() {
+			return purgedFiles, purgedPhotos, errors.New("purge canceled")
+		}
+
+		offset += limit
+
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	limit = 500
+	offset = 0
+
+	for {
 		photos, err := query.PhotosMissing(limit, offset)
 
 		if err != nil {
@@ -181,6 +232,10 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 	if err := query.ResetPhotoQuality(); err != nil {
 		return purgedFiles, purgedPhotos, err
+	}
+
+	if err := query.UpdateMissingAlbumEntries(); err != nil {
+		log.Errorf("purge: %s (update albums)", err.Error())
 	}
 
 	if err := entity.UpdatePhotoCounts(); err != nil {

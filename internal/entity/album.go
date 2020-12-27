@@ -307,6 +307,10 @@ func (m *Album) SetTitle(title string) {
 			m.AlbumSlug = slug.Make(txt.Clip(m.AlbumTitle, txt.ClipSlug)) + "-" + m.AlbumUID
 		}
 	}
+
+	if m.AlbumSlug == "" {
+		m.AlbumSlug = "-"
+	}
 }
 
 // Saves the entity using form data and stores it in the database.

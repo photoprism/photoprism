@@ -220,7 +220,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	// Remove file from duplicates table if exists.
-	if err := entity.RemoveDuplicate(m.RootRelName(), m.Root()); err != nil {
+	if err := entity.PurgeDuplicate(m.RootRelName(), m.Root()); err != nil {
 		log.Error(err)
 	}
 
@@ -761,6 +761,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if err := photo.IndexKeywords(); err != nil {
 			log.Errorf("index: %s in %s (save keywords)", err, logName)
+		}
+
+		if err := query.AlbumEntryFound(photo.PhotoUID); err != nil {
+			log.Errorf("index: %s in %s (remove missing flag from album entry)", err, logName)
 		}
 	} else if err := photo.UpdateQuality(); err != nil {
 		log.Errorf("index: %s in %s (update quality)", err, logName)

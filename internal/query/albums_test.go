@@ -203,3 +203,19 @@ func TestUpdateAlbumDates(t *testing.T) {
 		}
 	})
 }
+
+func TestUpdateMissingAlbumEntries(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		if err := UpdateMissingAlbumEntries(); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestAlbumEntryFound(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		if err := AlbumEntryFound("pt9jtxrexxvl0yh0"); err != nil {
+			t.Fatal(err)
+		}
+	})
+}

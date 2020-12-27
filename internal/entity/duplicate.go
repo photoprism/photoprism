@@ -18,15 +18,16 @@ type Duplicate struct {
 	ModTime  int64  `json:"ModTime" yaml:"-"`
 }
 
+// AddDuplicate adds a duplicate.
 func AddDuplicate(fileName, fileRoot, fileHash string, fileSize, modTime int64) error {
 	if fileName == "" {
-		return fmt.Errorf("duplicate: file name must not be empty (add)")
+		return fmt.Errorf("duplicate name must not be empty (add)")
 	} else if fileHash == "" {
-		return fmt.Errorf("duplicate: file hash must not be empty (add)")
+		return fmt.Errorf("duplicate hash must not be empty (add)")
 	} else if modTime == 0 {
-		return fmt.Errorf("duplicate: mod time must not be empty (add)")
+		return fmt.Errorf("duplicate mod time must not be empty (add)")
 	} else if fileRoot == "" {
-		return fmt.Errorf("duplicate: file root must not be empty (add)")
+		return fmt.Errorf("duplicate root must not be empty (add)")
 	}
 
 	duplicate := &Duplicate{
@@ -46,19 +47,25 @@ func AddDuplicate(fileName, fileRoot, fileHash string, fileSize, modTime int64) 
 	return nil
 }
 
-func RemoveDuplicate(fileName, fileRoot string) error {
+// PurgeDuplicate deletes a duplicate.
+func PurgeDuplicate(fileName, fileRoot string) error {
 	if fileName == "" {
-		return fmt.Errorf("duplicate: file name must not be empty (remove)")
+		return fmt.Errorf("duplicate name must not be empty (purge)")
 	} else if fileRoot == "" {
-		return fmt.Errorf("duplicate: file root must not be empty (remove)")
+		return fmt.Errorf("duplicate root must not be empty (purge)")
 	}
 
 	if err := UnscopedDb().Delete(Duplicate{}, "file_name = ? AND file_root = ?", fileName, fileRoot).Error; err != nil {
-		log.Errorf("duplicate: %s (remove %s)", err, txt.Quote(fileName))
+		log.Errorf("duplicate: %s in %s (purge)", err, txt.Quote(fileName))
 		return err
 	}
 
 	return nil
+}
+
+// Purge deletes a duplicate.
+func (m *Duplicate) Purge() error {
+	return PurgeDuplicate(m.FileName, m.FileRoot)
 }
 
 // Find returns a duplicate from the database.
@@ -69,13 +76,13 @@ func (m *Duplicate) Find() error {
 // Create inserts a new row to the database.
 func (m *Duplicate) Create() error {
 	if m.FileName == "" {
-		return fmt.Errorf("duplicate: file name must not be empty (create)")
+		return fmt.Errorf("duplicate name must not be empty (create)")
 	} else if m.FileHash == "" {
-		return fmt.Errorf("duplicate: file hash must not be empty (create)")
+		return fmt.Errorf("duplicate hash must not be empty (create)")
 	} else if m.ModTime == 0 {
-		return fmt.Errorf("duplicate: mod time must not be empty (create)")
+		return fmt.Errorf("duplicate mod time must not be empty (create)")
 	} else if m.FileRoot == "" {
-		return fmt.Errorf("duplicate: file root must not be empty (create)")
+		return fmt.Errorf("duplicate root must not be empty (create)")
 	}
 
 	return UnscopedDb().Create(m).Error
@@ -84,17 +91,17 @@ func (m *Duplicate) Create() error {
 // Saves the duplicates in the database.
 func (m *Duplicate) Save() error {
 	if m.FileName == "" {
-		return fmt.Errorf("duplicate: file name must not be empty (save)")
+		return fmt.Errorf("duplicate name must not be empty (save)")
 	} else if m.FileHash == "" {
-		return fmt.Errorf("duplicate: file hash must not be empty (save)")
+		return fmt.Errorf("duplicate hash must not be empty (save)")
 	} else if m.ModTime == 0 {
-		return fmt.Errorf("duplicate: mod time must not be empty (save)")
+		return fmt.Errorf("duplicate mod time must not be empty (save)")
 	} else if m.FileRoot == "" {
-		return fmt.Errorf("duplicate: file root must not be empty (save)")
+		return fmt.Errorf("duplicate root must not be empty (save)")
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("duplicate: %s (save %s)", err, txt.Quote(m.FileName))
+		log.Errorf("duplicate: %s in %s (save)", err, txt.Quote(m.FileName))
 		return err
 	}
 

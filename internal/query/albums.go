@@ -111,7 +111,7 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 
 	s := UnscopedDb().Table("albums").
 		Select("albums.*, cp.photo_count,	cl.link_count").
-		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
+		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL)").
 		Where("albums.deleted_at IS NULL")
@@ -192,6 +192,23 @@ func UpdateAlbumDates() error {
 		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
 	default:
 		return nil
+	}
+}
+
+// UpdateMissingAlbumEntries sets a flag for missing photo album entries.
+func UpdateMissingAlbumEntries() error {
+	switch DbDialect() {
+	default:
+		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 1 WHERE photo_uid IN 
+		(SELECT photo_uid FROM photos WHERE deleted_at IS NOT NULL OR photo_quality < 0)`).Error
+	}
+}
+
+// AlbumEntryFound removes the missing flag from album entries.
+func AlbumEntryFound(uid string) error {
+	switch DbDialect() {
+	default:
+		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 0 WHERE photo_uid = ?`, uid).Error
 	}
 }
 
