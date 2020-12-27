@@ -109,7 +109,7 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  if (document.documentElement.className) {
+  if (document.querySelector(".v-dialog--active.v-dialog--fullscreen")) {
     // Disable back button in full-screen viewers and editors.
     next(false);
   } else if (to.matched.some((record) => record.meta.settings) && config.values.disable.settings) {
