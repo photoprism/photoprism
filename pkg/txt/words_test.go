@@ -7,6 +7,10 @@ import (
 )
 
 func TestWords(t *testing.T) {
+	t.Run("桥", func(t *testing.T) {
+		result := Words("桥")
+		assert.Equal(t, []string{"桥"}, result)
+	})
 	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
 		result := Words("I'm a lazy-BRoWN fox!")
 		assert.Equal(t, []string{"lazy-BRoWN", "fox"}, result)
@@ -60,6 +64,10 @@ func TestFilenameWords(t *testing.T) {
 }
 
 func TestFilenameKeywords(t *testing.T) {
+	t.Run("桥.jpg", func(t *testing.T) {
+		result := FilenameKeywords("桥.jpg")
+		assert.Equal(t, []string{"桥"}, result)
+	})
 	t.Run("I'm a lazy-brown var fox.jpg!", func(t *testing.T) {
 		result := FilenameKeywords("I'm a lazy-brown var fox.jpg!")
 		assert.Equal(t, []string{"lazy", "brown", "fox"}, result)

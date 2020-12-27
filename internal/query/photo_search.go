@@ -109,10 +109,6 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
 		}
 	} else if f.Query != "" {
-		if len(f.Query) < 2 {
-			return results, 0, fmt.Errorf("query too short")
-		}
-
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 

@@ -137,18 +137,6 @@ func TestPhotoSearch(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("query too short", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "a"
-		f.Count = 5000
-		f.Offset = 0
-		f.Geo = false
-
-		photos, _, err := PhotoSearch(f)
-
-		assert.Equal(t, "query too short", err.Error())
-		assert.Empty(t, photos)
-	})
 	t.Run("search for keyword", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Query = "bridge"
@@ -156,9 +144,11 @@ func TestPhotoSearch(t *testing.T) {
 		f.Offset = 0
 
 		photos, _, err := PhotoSearch(f)
+
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.LessOrEqual(t, 2, len(photos))
 	})
 	t.Run("search for label in query", func(t *testing.T) {
@@ -168,9 +158,11 @@ func TestPhotoSearch(t *testing.T) {
 		f.Offset = 0
 
 		photos, _, err := PhotoSearch(f)
+
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("search for archived", func(t *testing.T) {

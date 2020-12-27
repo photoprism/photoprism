@@ -7,13 +7,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-,':&+]{2,}|( [&+] )?")
+var FileTitleRegexp = regexp.MustCompile("[\\p{L}\\-,':&+!?]{1,}|( [&+] )?")
 
 // FileTitle returns the string with the first characters of each word converted to uppercase.
 func FileTitle(s string) string {
 	s = fs.BasePrefix(s, true)
 
-	if len(s) < 3 {
+	if len(s) < 3 && IsASCII(s) {
 		return ""
 	}
 
@@ -25,7 +25,7 @@ func FileTitle(s string) string {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 && found == 0 {
+		if IsASCII(w) && (len(w) < 3 && found == 0 || len(w) == 1) {
 			continue
 		}
 
@@ -56,7 +56,7 @@ func FileTitle(s string) string {
 	title = strings.ReplaceAll(title, "-", " ")
 	title = strings.ReplaceAll(title, "  ", " ")
 
-	if len(title) <= 4 {
+	if len(title) <= 4 && IsASCII(title) {
 		return ""
 	}
 

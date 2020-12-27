@@ -7,6 +7,12 @@ import (
 )
 
 func TestFileTitle(t *testing.T) {
+	t.Run("桥", func(t *testing.T) {
+		assert.Equal(t, "桥", FileTitle("桥"))
+	})
+	t.Run("i_love_you!", func(t *testing.T) {
+		assert.Equal(t, "Love You!", FileTitle("i_love_you!"))
+	})
 	t.Run("photoprism", func(t *testing.T) {
 		assert.Equal(t, "PhotoPrism: Browse Your Life in Pictures", FileTitle("photoprism: Browse your life in pictures"))
 	})

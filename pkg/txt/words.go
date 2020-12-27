@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\-]{3,}")
+var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\-]{1,}")
 
 // UnknownWord returns true if the string does not seem to be a real word.
 func UnknownWord(s string) bool {
-	if len(s) > 3 || !ASCII(s) {
+	if len(s) > 3 || !ContainsASCIILetters(s) {
 		return false
 	}
 
@@ -29,7 +29,15 @@ func UnknownWord(s string) bool {
 
 // Words returns a slice of words with at least 3 characters from a string, dashes count as character ("ile-de-france").
 func Words(s string) (results []string) {
-	return KeywordsRegexp.FindAllString(s, -1)
+	for _, s := range KeywordsRegexp.FindAllString(s, -1) {
+		if len(s) < 3 && IsLatin(s) {
+			continue
+		}
+
+		results = append(results, s)
+	}
+
+	return results
 }
 
 // ReplaceSpaces replaces all spaces with another string.
@@ -37,11 +45,19 @@ func ReplaceSpaces(s string, char string) string {
 	return strings.Replace(s, " ", char, -1)
 }
 
-var FilenameKeywordsRegexp = regexp.MustCompile("[\\p{L}]{3,}")
+var FilenameKeywordsRegexp = regexp.MustCompile("[\\p{L}]{1,}")
 
 // FilenameWords returns a slice of words with at least 3 characters from a string ("ile", "france").
 func FilenameWords(s string) (results []string) {
-	return FilenameKeywordsRegexp.FindAllString(s, -1)
+	for _, s := range FilenameKeywordsRegexp.FindAllString(s, -1) {
+		if len(s) < 3 && IsLatin(s) {
+			continue
+		}
+
+		results = append(results, s)
+	}
+
+	return results
 }
 
 // FilenameKeywords returns a slice of keywords without stopwords.
@@ -87,7 +103,7 @@ func UniqueWords(words []string) (results []string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 || w == last {
+		if len(w) < 3 && IsLatin(w) || w == last {
 			continue
 		}
 
@@ -109,7 +125,7 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 || w == last || strings.Contains(remove, w) {
+		if len(w) < 3 && IsLatin(w) || w == last || strings.Contains(remove, w) {
 			continue
 		}
 
@@ -132,7 +148,7 @@ func UniqueKeywords(s string) (results []string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 || w == last {
+		if len(w) < 3 && IsLatin(w) || w == last {
 			continue
 		}
 

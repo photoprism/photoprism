@@ -324,6 +324,11 @@ func TestPhoto_GetDetails(t *testing.T) {
 }
 
 func TestPhoto_FileTitle(t *testing.T) {
+	t.Run("non-latin", func(t *testing.T) {
+		photo := Photo{PhotoName: "桥", PhotoPath: "", OriginalName: ""}
+		result := photo.FileTitle()
+		assert.Equal(t, "桥", result)
+	})
 	t.Run("changing-of-the-guard--buckingham-palace_7925318070_o.jpg", func(t *testing.T) {
 		photo := Photo{PhotoName: "20200102_194030_9EFA9E5E", PhotoPath: "2000/05", OriginalName: "flickr import/changing-of-the-guard--buckingham-palace_7925318070_o.jpg"}
 		result := photo.FileTitle()
