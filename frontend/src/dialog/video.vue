@@ -27,10 +27,13 @@ export default {
       this.video = ev.params.video;
       this.album = ev.params.album;
       this.play();
+      //this.$shortcuts.activate('player')
     },
     onClose() {
       this.$refs.player.pause();
       this.show = false;
+      this.$shortcuts.resetFocus();
+      //this.$shortcuts.deactivate('player')
     },
     play() {
       if (!this.video) {

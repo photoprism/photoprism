@@ -79,6 +79,7 @@ export default {
         loop: this.loop,
         stretching: true,
         autoplay: true,
+        // enableKeyboard: false, -- somehow still captures all keys
         preload: "auto",
         setDimensions: true,
         success: (mediaElement, originalNode, instance) => {
@@ -119,6 +120,15 @@ export default {
       this.player.setSrc(src);
       this.player.setPoster("");
       this.player.load();
+    },
+    togglePlay() {
+      if (this.player) {
+        if (this.player.paused || this.player.ended) {
+          this.player.play()
+        } else {
+          this.player.pause()
+        }
+      }
     },
     pause() {
       if (this.player) {

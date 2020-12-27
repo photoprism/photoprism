@@ -290,16 +290,33 @@ const keymap = [
             },
             {
                 name: 'Next photo',
-                keys: ['ArrowLeft', 'l', 'ArrowDown', 'j'],
+                keys: ['ArrowRight', 'l', 'ArrowDown', 'j'],
                 action: 'viewer.$refs.next.click',
             },
             {
-                name: 'Toggle play video',
-                keys: 'Space',
+                name: 'Play video',
+                keys: 'Enter',
                 action: 'viewer.onPlay',
             },
         ]
     },
+    // does not work :(
+    // {
+    //     section: "Video player",
+    //     context: 'player',
+    //     actions: [
+    //         { 
+    //             name: 'Toggle play',
+    //             keys: 'Space',
+    //             action: 'player.$refs.player.togglePlay'
+    //         },
+    //         {
+    //             name: "Close Player",
+    //             keys: "Escape",
+    //             action: "player.onClose"
+    //         }
+    //     ]
+    // },
     {
         section: "Toolbar actions",
         context: 'toolbar',
@@ -373,11 +390,11 @@ const displayKeyMap = {
 }
 
 export default class {
+
     constructor() {
         this.currentKey = '';
         this.app = null;
         this.actions = keymap;
-        console.log("keymap", keymap);
         this.setKeymap(keymap);
         this.contexts = {};
         this.contextStack = [];
@@ -385,17 +402,45 @@ export default class {
         this.activeIndex = -1;
     }
 
+    get debug() {
+        if (this.app) {
+            return this.app.$config.debug
+        } else {
+            return true
+        }
+    }
+
+    log_debug() {
+        if (this.debug) {
+            const args = [].concat([ "Shortcuts -" ], Array.from(arguments))
+            console.debug.apply(console, args)
+        }
+    }
+
+    log_info() {
+        if (this.debug) {
+            const args = [].concat([ "Shortcuts -" ], Array.from(arguments))
+            console.info.apply(console, args)
+        }
+    }
+
     activate(object, name) {
+        this.log_debug("Activate", name)
+
         this.contexts[name] = object;
         this.contextStack.push(name)
+        this.resetFocus();
     }
 
     deactivate(name) {
+        this.log_debug("Deactivate", name)
+
         delete this.contexts[name];
         const index = this.contextStack.indexOf(name);
         if (index > -1) {
             this.contextStack.splice(index, 1)
         }
+        this.resetFocus();
     }
 
     isHidden(el) {
@@ -443,7 +488,8 @@ export default class {
                             modifiers: _modifiers.map((m) => m.charAt(0).toUpperCase() + m.slice(1).toLowerCase())
                         })
                     })
-                    console.log("displayKey", displayKey)
+
+                    this.log_debug("displayKey", displayKey)
 
                     keySpec.displayKeys.push(displayKey)
 
@@ -512,14 +558,16 @@ export default class {
             });
         } else {
             var context = this.contexts[action.command]
-            console.log("command", action.command, "context", context, "name", action.name);
+
+            this.log_debug("command", action.command, "context", context, "name", action.name);
+
             var obj;
 
             for (var i=0; i<action.name.length; i++) {
                 obj = context;
 
                 if (!(action.name[i] in context)) {
-                    console.log("context", context, "has no attribute", action.name[i]);
+                    this.log_debug("context", context, "has no attribute", action.name[i]);
                     return;
                 }
 
@@ -536,7 +584,7 @@ export default class {
                 args = [ args ]
             }
 
-            console.log("apply", obj, context, args);
+            this.log_debug("apply", obj, context, args);
 
             if (action.argEvent === true) {
                 args = [ event ] + args
@@ -552,13 +600,19 @@ export default class {
         }
     }
 
-    handleKey(event, context) {
-        console.log("handleKey", event, "context", context);
+    resetFocus() {
+        if (this.app && this.app.$el) {
+            this.app.$el.focus()
+        }
+    }
 
+    handleKey(event, context) {
         if (!event.key) return;
 
+        this.log_debug("Handle Key --->", event.key, "event", event, "context", context);
+
         setTimeout(() => {
-            console.log("stop key collecting, dispose:", this.currentKey)
+            this.log_debug("stop key collecting, dispose:", this.currentKey)
             this.currentKey = ''
         }, this.keySequenceTimeout);
 
@@ -593,32 +647,36 @@ export default class {
 
         let action = null;
 
-        console.log("lookup", this.currentKey)
-        console.log("contexts", this.contexts)
+        this.log_debug("lookup", this.currentKey)
+        this.log_debug("contexts", this.contexts)
 
         for (var i=this.contextStack.length-1; i >= 0; i--)
         {
             let ctx = this.contextStack[i]
-            console.log("check ctx", ctx)
+            this.log_debug("check ctx", ctx)
+
             if (!(ctx in this.keymap)) {
-                console.log("ctx not in keymap:", ctx);
+                this.log_debug("ctx not in keymap:", ctx);
                 continue;
             }
             if (this.isHidden(this.contexts[ctx].$el)) {
-                console.log("ctx element hidden:", ctx);
+                this.log_debug("ctx element hidden:", ctx);
                 continue;
             }
-            console.log("check if", this.currentKey, "is in", this.keymap)
+            this.log_debug("check if", this.currentKey, "is in", this.keymap[ctx])
+
             if (this.currentKey in this.keymap[ctx]) {
                 action = this.keymap[ctx][this.currentKey]
+                break;
             }
         }
-        console.log("action", action)
+        this.log_debug("action so far", action)
 
         if (action === null && this.currentKey in this.keymap.any) {
             action = this.keymap.any[this.currentKey];
         }
-        console.log("action", action)
+
+        this.log_debug("found action", action)
 
         if (action !== null) {
             this.keyAction(action, event);
@@ -628,5 +686,6 @@ export default class {
             event.stopPropagation();
             event.preventDefault();
         }
+        this.log_debug("Done Key --->", event.key)
     }
 }
