@@ -118,12 +118,10 @@ export default {
     onShow() {
       document.body.classList.add("viewer");
       this.$shortcuts.activate(this, 'viewer')
-      this.$shortcuts.app.$el.focus();
     },
     onHide() {
       document.body.classList.remove("viewer");
       this.$shortcuts.deactivate('viewer')
-      this.$shortcuts.app.$el.focus();
     },
     onChange(ev, data) {
       const psp = this.$viewer.gallery;
