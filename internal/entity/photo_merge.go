@@ -1,9 +1,13 @@
 package entity
 
 import (
+	"sync"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+var photoMergeMutex = sync.Mutex{}
 
 // ResolvePrimary ensures there is only one primary file for a photo.
 func (m *Photo) ResolvePrimary() error {
@@ -29,7 +33,7 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 				"OR (uuid = ? AND photo_stack > -1)"+
 				"OR (photo_path = ? AND photo_name = ?)",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID, m.PhotoPath, m.PhotoName).
-			Order("id ASC").Find(&identical).Error; err != nil {
+			Order("photo_quality DESC, id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
 	case includeMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
@@ -37,20 +41,20 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 			Where("(taken_at = ? AND taken_src = 'meta' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
 				"OR (photo_path = ? AND photo_name = ?)",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.PhotoPath, m.PhotoName).
-			Order("id ASC").Find(&identical).Error; err != nil {
+			Order("photo_quality DESC, id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
 	case includeUuid && rnd.IsUUID(m.UUID):
 		if err := Db().
 			Where("(uuid = ? AND photo_stack > -1) OR (photo_path = ? AND photo_name = ?)",
 				m.UUID, m.PhotoPath, m.PhotoName).
-			Order("id ASC").Find(&identical).Error; err != nil {
+			Order("photo_quality DESC, id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
 	default:
 		if err := Db().
 			Where("photo_path = ? AND photo_name = ?", m.PhotoPath, m.PhotoName).
-			Order("id ASC").Find(&identical).Error; err != nil {
+			Order("photo_quality DESC, id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
 	}
@@ -60,6 +64,9 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 
 // Merge photo with identical ones.
 func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos, err error) {
+	photoMergeMutex.Lock()
+	defer photoMergeMutex.Unlock()
+
 	identical, err := m.Identical(mergeMeta, mergeUuid)
 
 	if len(identical) < 2 || err != nil {
@@ -108,12 +115,6 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 		deleted := Timestamp()
 		m.DeletedAt = &deleted
 		m.PhotoQuality = -1
-	}
-
-	original.PhotoQuality = original.QualityScore()
-
-	if err := original.Save(); err != nil {
-		log.Errorf("photo: %s in %s (merge)", err, original.PhotoName)
 	}
 
 	return original, merged, err

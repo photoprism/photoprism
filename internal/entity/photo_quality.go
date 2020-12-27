@@ -67,3 +67,14 @@ func (m *Photo) QualityScore() (score int) {
 
 	return score
 }
+
+// UpdateQuality updates the photo quality attribute.
+func (m *Photo) UpdateQuality() error {
+	if m.DeletedAt != nil || m.PhotoQuality < 0 {
+		return nil
+	}
+
+	m.PhotoQuality = m.QualityScore()
+
+	return m.Update("PhotoQuality", m.PhotoQuality)
+}
