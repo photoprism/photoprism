@@ -387,6 +387,9 @@ const displayKeyMap = {
     'ArrowUp': "↑",
     'ArrowRight': '→',
     'ArrowDown': '↓',
+    'Escape': 'Esc',
+    'Enter': '⏎',
+    'Shift': '⇧',
 }
 
 export default class {
@@ -485,7 +488,10 @@ export default class {
 
                         displayKey.push({
                             key: displayKeyMap[_key] || _key,
-                            modifiers: _modifiers.map((m) => m.charAt(0).toUpperCase() + m.slice(1).toLowerCase())
+                            modifiers: _modifiers.map((m) => {
+                                let modifier = m.charAt(0).toUpperCase() + m.slice(1).toLowerCase()
+                                return displayKeyMap[modifier] || modifier
+                            })
                         })
                     })
 
