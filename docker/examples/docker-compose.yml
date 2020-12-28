@@ -79,7 +79,7 @@ services:
       - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
     volumes: # Don't remove permanent storage for index database files!
-      - "./storage/mariadb:/var/lib/mysql"
+      - "./database:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: please_change
       MYSQL_DATABASE: photoprism
