@@ -72,7 +72,7 @@ services:
       - "./storage:/photoprism/storage"
 
   mariadb:
-    image: arm64v8/mariadb:10.5
+    image: linuxserver/mariadb:latest
     restart: unless-stopped
     security_opt:
       - seccomp:unconfined
