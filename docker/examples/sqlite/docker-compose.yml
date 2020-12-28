@@ -8,26 +8,28 @@ version: '3.5'
 # Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
 # e.g. when running PhotoPrism on a public server outside your home network.
 #
-# Usage: docker-compose up
+# DOCKER COMPOSE COMMAND REFERENCE
+# ----------------------------------------------------------
+# Update:   docker-compose pull photoprism
+# Stop:     docker-compose stop photoprism
+# Start:    docker-compose up -d photoprism
+# Logs:     docker-compose logs --tail=20
+# Terminal: docker-compose exec photoprism bash
+# Help:     docker-compose exec photoprism photoprism help
+# Config:   docker-compose exec photoprism photoprism config
 
 services:
   photoprism:
     image: photoprism/photoprism:latest
-    # Only enable restart and healthcheck once your installation is properly
-    # configured as it otherwise gets stuck in a restart loop:
+    # Only enable automatic restarts once your installation is properly
+    # configured as it otherwise may get stuck in a restart loop:
+    # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-    # Uncomment the following lines to enable regular health checks (causes automatic restarts, be careful):
-    # healthcheck:
-    #   test: ["CMD", "photoprism", "status"]
-    #   interval: 60s
-    #   timeout: 15s
-    #   retries: 5
-    # Run "photoprism help" and "photoprism config" in a terminal too see all config options and current values:
     environment:
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: This is your initial admin password

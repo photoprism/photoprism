@@ -11,14 +11,26 @@ version: '3.5'
 # Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
 # e.g. when running PhotoPrism on a public server outside your home network.
 #
-# Usage: docker-compose up
+# DOCKER COMPOSE COMMAND REFERENCE
+# ----------------------------------------------------------
+# Update:   docker-compose pull photoprism
+# Stop:     docker-compose stop photoprism
+# Start:    docker-compose up -d photoprism
+# Logs:     docker-compose logs --tail=20
+# Terminal: docker-compose exec photoprism bash
+# Help:     docker-compose exec photoprism photoprism help
+# Config:   docker-compose exec photoprism photoprism config
 
 services:
   photoprism:
     image: photoprism/photoprism:latest
-    # Only enable restart and healthcheck once your installation is properly
-    # configured as it otherwise gets stuck in a restart loop:
+    # Only enable automatic restarts once your installation is properly
+    # configured as it otherwise may get stuck in a restart loop:
+    # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
     environment:
@@ -55,12 +67,14 @@ services:
   mariadb:
     image: mariadb:10.5
     restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
-    volumes:
-      # Permanent storage for index database files (DON'T REMOVE):
+    volumes: # Don't remove permanent storage for index database files!
       - "mariadb_data:/var/lib/mysql"
     environment:
-      MYSQL_ROOT_PASSWORD: insecure
+      MYSQL_ROOT_PASSWORD: please_change
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
