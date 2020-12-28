@@ -4,15 +4,24 @@ PhotoPrism for Raspberry Pi (64bit)
 Big thank you to [Guy Sheffer](https://github.com/guysoft) for 
 [building](https://github.com/photoprism/photoprism/issues/109) this!
 
-Simply download our [`docker-compose.yml`](https://dl.photoprism.org/docker/arm64/docker-compose.yml) (edit to 
-change config) and run `docker-compose up` to start PhotoPrism:
+Download our docker-compose.yml file (right click and Save Link As... or use wget) to a folder of your choice,
+and change the configuration as needed:
 
 ```
 wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
-sudo docker-compose up
 ```
 
-Image name on Docker Hub: [`photoprism/photoprism-arm64`](https://hub.docker.com/r/photoprism/photoprism-arm64)
+Our image repository on Docker Hub: https://hub.docker.com/r/photoprism/photoprism-arm64
+
+## Docker Compose Command Reference ##
+
+Update:   sudo docker-compose pull photoprism
+Stop:     sudo docker-compose stop photoprism
+Start:    sudo docker-compose up -d photoprism
+Logs:     sudo docker-compose logs --tail=20
+Terminal: sudo docker-compose exec photoprism bash
+Help:     sudo docker-compose exec photoprism photoprism help
+Config:   sudo docker-compose exec photoprism photoprism config
 
 ## System Requirements ##
 
@@ -27,7 +36,7 @@ value less than the number of logical CPU cores. Also make sure your server has 
 doesn't cause restarts when there are memory usage spikes. As a measure of last resort, you may additionally disable
 image classification using TensorFlow.
 
-To prevent permission issues, your docker-compose.yaml config must include the following security options:
+To prevent permission issues, your Docker Compose config must include the following security options:
 
 ```
   photoprism:

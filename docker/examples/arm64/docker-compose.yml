@@ -9,14 +9,14 @@ version: '3.5'
 # e.g. when running PhotoPrism on a public server outside your home network.
 #
 # DOCKER COMPOSE COMMAND REFERENCE
-# ----------------------------------------------------------
-# Update:   docker-compose pull photoprism
-# Stop:     docker-compose stop photoprism
-# Start:    docker-compose up -d photoprism
-# Logs:     docker-compose logs --tail=20
-# Terminal: docker-compose exec photoprism bash
-# Help:     docker-compose exec photoprism photoprism help
-# Config:   docker-compose exec photoprism photoprism config
+# ---------------------------------------------------------------
+# Update:   sudo docker-compose pull photoprism
+# Stop:     sudo docker-compose stop photoprism
+# Start:    sudo docker-compose up -d photoprism
+# Logs:     sudo docker-compose logs --tail=20
+# Terminal: sudo docker-compose exec photoprism bash
+# Help:     sudo docker-compose exec photoprism photoprism help
+# Config:   sudo docker-compose exec photoprism photoprism config
 
 services:
   photoprism:
@@ -33,6 +33,7 @@ services:
     environment:
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: This is your initial admin password
+      PHOTOPRISM_WORKERS: 2                          # Limit the number of indexing workers to reduce system load
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
