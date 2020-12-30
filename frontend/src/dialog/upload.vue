@@ -44,7 +44,7 @@
                       class="v-chip--select-multi"
                       @input="data.parent.selectItem(data.item)"
                   >
-                    <v-icon class="pr-1">folder_special</v-icon>
+                    <v-icon class="pr-1">bookmark</v-icon>
                     {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
                   </v-chip>
                 </template>

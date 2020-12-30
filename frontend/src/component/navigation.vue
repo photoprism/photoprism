@@ -2,16 +2,16 @@
   <div id="p-navigation">
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
       <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" fixed flat color="navigation darken-1" class="nav-small"
-                 @click.stop="showNavigation()" scroll-off-screen>
+                 scroll-off-screen @click.stop="showNavigation()">
 
-        <v-toolbar-side-icon class="nav-show" v-if="auth"></v-toolbar-side-icon>
+        <v-toolbar-side-icon v-if="auth" class="nav-show"></v-toolbar-side-icon>
 
         <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="openUpload()" v-if="auth && !config.readonly && $config.feature('upload')"
-               class="action-upload" :title="$gettext('Upload')">
+        <v-btn v-if="auth && !config.readonly && $config.feature('upload')" icon class="action-upload"
+               :title="$gettext('Upload')" @click.stop="openUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
 
@@ -22,7 +22,7 @@
     <v-navigation-drawer
         v-if="auth"
         v-model="drawer"
-        :mini-variant="mini"
+        :mini-variant="isMini"
         :width="270"
         :mobile-break-point="960"
         :mini-variant-width="80"
@@ -41,7 +41,7 @@
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down">
-              <v-btn icon @click.stop="mini = !mini" class="nav-minimize">
+              <v-btn icon class="nav-minimize" @click.stop="isMini = !isMini">
                 <v-icon>chevron_left</v-icon>
               </v-btn>
             </v-list-tile-action>
@@ -50,13 +50,13 @@
       </v-toolbar>
 
       <v-list class="pt-3">
-        <v-list-tile v-if="mini" @click.stop="mini = !mini" class="nav-expand">
+        <v-list-tile v-if="isMini" class="nav-expand" @click.stop="isMini = !isMini">
           <v-list-tile-action>
             <v-icon>chevron_right</v-icon>
           </v-list-tile-action>
         </v-list-tile>
 
-        <v-list-tile v-if="mini" to="/photos" @click="" class="nav-photos">
+        <v-list-tile v-if="isMini" to="/photos" class="nav-photos" @click.stop="">
           <v-list-tile-action :title="$gettext('Photos')">
             <v-icon>photo</v-icon>
           </v-list-tile-action>
@@ -68,8 +68,8 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!mini" prepend-icon="photo" no-action>
-          <v-list-tile slot="activator" to="/photos" @click.stop="" class="nav-photos">
+        <v-list-group v-if="!isMini" prepend-icon="photo" no-action>
+          <v-list-tile slot="activator" to="/photos" class="nav-photos" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Photos">Photos</translate>
@@ -78,7 +78,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click="">
+          <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Monochrome</translate>
@@ -86,8 +86,8 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" @click=""
-                       class="nav-panoramas">
+          <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" class="nav-panoramas"
+                       @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Panoramas</translate>
@@ -95,7 +95,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" @click="" class="nav-stacks">
+          <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" class="nav-stacks" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Stacks</translate>
@@ -103,7 +103,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" @click="" class="nav-scans">
+          <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" class="nav-scans" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Scans</translate>
@@ -111,8 +111,8 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/review" @click="" v-if="$config.feature('review')"
-                       class="nav-review">
+          <v-list-tile v-if="$config.feature('review')" to="/review" class="nav-review"
+                       @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Review</translate>
@@ -121,7 +121,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/archive" @click="" class="nav-archive" v-show="$config.feature('archive')">
+          <v-list-tile v-show="$config.feature('archive')" to="/archive" class="nav-archive" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Archive</translate>
@@ -130,48 +130,9 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile to="/favorites" @click="" class="nav-favorites">
-          <v-list-tile-action :title="$gettext('Favorites')">
-            <v-icon>favorite</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Favorites">Favorites</translate>
-              <span v-show="config.count.favorites > 0" class="nav-count">{{ config.count.favorites }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile to="/private" @click="" class="nav-private" v-show="$config.feature('private')">
-          <v-list-tile-action :title="$gettext('Private')">
-            <v-icon>lock</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Private">Private</translate>
-              <span v-show="config.count.private > 0" class="nav-count">{{ config.count.private }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile to="/videos" @click="" class="nav-video">
-          <v-list-tile-action :title="$gettext('Videos')">
-            <v-icon>movie_creation</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Videos">Videos</translate>
-              <span v-show="config.count.videos > 0" class="nav-count">{{ config.count.videos }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile v-if="mini" to="/albums" @click="" class="nav-albums">
+        <v-list-tile v-if="isMini" to="/albums" class="nav-albums" @click.stop="">
           <v-list-tile-action :title="$gettext('Albums')">
-            <v-icon>folder_special</v-icon>
+            <v-icon>bookmarks</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
@@ -181,8 +142,8 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!mini" prepend-icon="folder_special" no-action>
-          <v-list-tile slot="activator" to="/albums" @click.stop="" class="nav-albums">
+        <v-list-group v-if="!isMini" prepend-icon="bookmarks" no-action>
+          <v-list-tile slot="activator" to="/albums" class="nav-albums" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Albums">Albums</translate>
@@ -200,9 +161,48 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile :to="{ name: 'folders' }" @click="" class="nav-folders">
+        <v-list-tile to="/favorites" class="nav-favorites" @click.stop="">
+          <v-list-tile-action :title="$gettext('Favorites')">
+            <v-icon>favorite</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Favorites">Favorites</translate>
+              <span v-show="config.count.favorites > 0" class="nav-count">{{ config.count.favorites }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile v-show="$config.feature('private')" to="/private" class="nav-private" @click.stop="">
+          <v-list-tile-action :title="$gettext('Private')">
+            <v-icon>lock</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Private">Private</translate>
+              <span v-show="config.count.private > 0" class="nav-count">{{ config.count.private }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile to="/videos" class="nav-video" @click.stop="">
+          <v-list-tile-action :title="$gettext('Videos')">
+            <v-icon>movie_creation</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Videos">Videos</translate>
+              <span v-show="config.count.videos > 0" class="nav-count">{{ config.count.videos }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
           <v-list-tile-action :title="$gettext('Folders')">
-            <v-icon>inbox</v-icon>
+            <v-icon>folder</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
@@ -214,7 +214,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile :to="{ name: 'calendar' }" @click="" class="nav-calendar">
+        <v-list-tile :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
           <v-list-tile-action :title="$gettext('Calendar')">
             <v-icon>date_range</v-icon>
           </v-list-tile-action>
@@ -228,10 +228,10 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile :to="{ name: 'moments' }" @click="" class="nav-moments"
-                     v-show="$config.feature('moments')">
+        <v-list-tile v-show="$config.feature('moments')" :to="{ name: 'moments' }" class="nav-moments"
+                     @click.stop="">
           <v-list-tile-action :title="$gettext('Moments')">
-            <v-icon>star</v-icon>
+            <v-icon>explore</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
@@ -243,8 +243,8 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="mini" :to="{ name: 'places' }" @click="" class="nav-places"
-                     v-show="$config.feature('places')">
+        <v-list-tile v-if="isMini" v-show="$config.feature('places')" :to="{ name: 'places' }" class="nav-places"
+                     @click.stop="">
           <v-list-tile-action :title="$gettext('Places')">
             <v-icon>place</v-icon>
           </v-list-tile-action>
@@ -256,8 +256,8 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!mini" prepend-icon="place" no-action v-show="$config.feature('places')">
-          <v-list-tile slot="activator" to="/places" @click.stop="" class="nav-places">
+        <v-list-group v-if="!isMini" v-show="$config.feature('places')" prepend-icon="place" no-action>
+          <v-list-tile slot="activator" to="/places" class="nav-places" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Places">Places</translate>
@@ -267,7 +267,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/states" @click="" class="nav-states">
+          <v-list-tile to="/states" class="nav-states" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="States">States</translate>
@@ -277,7 +277,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile to="/labels" @click="" class="nav-labels" v-show="$config.feature('labels')">
+        <v-list-tile v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
           <v-list-tile-action :title="$gettext('Labels')">
             <v-icon>label</v-icon>
           </v-list-tile-action>
@@ -291,7 +291,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="mini && $config.feature('library')" to="/library" @click="" class="nav-library">
+        <v-list-tile v-if="isMini && $config.feature('library')" to="/library" class="nav-library" @click.stop="">
           <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
           </v-list-tile-action>
@@ -303,8 +303,8 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!mini && $config.feature('library')" prepend-icon="camera_roll" no-action>
-          <v-list-tile slot="activator" to="/library" @click.stop="" class="nav-library">
+        <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
+          <v-list-tile slot="activator" to="/library" class="nav-library" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Library">Library</translate>
@@ -312,7 +312,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/library/files" @click="" class="nav-originals" v-show="$config.feature('files')">
+          <v-list-tile v-show="$config.feature('files')" to="/library/files" class="nav-originals" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Originals">Originals</translate>
@@ -321,7 +321,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/library/hidden" @click="" class="nav-hidden">
+          <v-list-tile to="/library/hidden" class="nav-hidden" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Hidden">Hidden</translate>
@@ -330,7 +330,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile to="/library/errors" @click="" class="nav-errors">
+          <v-list-tile to="/library/errors" class="nav-errors" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Errors">Errors</translate>
@@ -340,7 +340,7 @@
         </v-list-group>
 
         <template v-if="!config.disable.settings">
-          <v-list-tile v-if="mini" to="/settings" @click="" class="nav-settings">
+          <v-list-tile v-if="isMini" to="/settings" class="nav-settings" @click.stop="">
             <v-list-tile-action :title="$gettext('Settings')">
               <v-icon>settings</v-icon>
             </v-list-tile-action>
@@ -353,7 +353,7 @@
           </v-list-tile>
 
           <v-list-group v-else prepend-icon="settings" no-action>
-            <v-list-tile slot="activator" to="/settings" @click.stop="" class="nav-settings">
+            <v-list-tile slot="activator" to="/settings" class="nav-settings" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate key="Settings">Settings</translate>
@@ -361,7 +361,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile :to="{ name: 'about' }" :exact="true" @click="" class="nav-about">
+            <v-list-tile :to="{ name: 'about' }" :exact="true" class="nav-about" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate>About</translate>
@@ -369,8 +369,8 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile :to="{ name: 'feedback' }" :exact="true" @click="" v-show="!public && auth"
-                         class="nav-feedback">
+            <v-list-tile v-show="!isPublic && auth" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
+                         @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate>Feedback</translate>
@@ -378,7 +378,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile :to="{ name: 'license' }" :exact="true" @click="" class="nav-license">
+            <v-list-tile :to="{ name: 'license' }" :exact="true" class="nav-license" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
                   <translate key="License">License</translate>
@@ -388,7 +388,7 @@
           </v-list-group>
         </template>
 
-        <v-list-tile @click="logout" class="nav-logout" v-show="!public && auth">
+        <v-list-tile v-show="!isPublic && auth" class="nav-logout" @click="logout">
           <v-list-tile-action :title="$gettext('Logout')">
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>
@@ -400,7 +400,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/login" @click="" class="nav-login" v-show="!auth">
+        <v-list-tile v-show="!auth" to="/login" class="nav-login" @click.stop="">
           <v-list-tile-action :title="$gettext('Login')">
             <v-icon>lock</v-icon>
           </v-list-tile-action>
@@ -412,8 +412,8 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/help/websockets" @click="" class="nav-connecting navigation" v-show="$config.disconnected"
-                     style="position:fixed; bottom: 0; left:0; right: 0;">
+        <v-list-tile v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" style="position:fixed; bottom: 0; left:0; right: 0;"
+                     @click.stop="">
           <v-list-tile-action :title="$gettext('Offline')">
             <v-icon color="warning">wifi_off</v-icon>
           </v-list-tile-action>
@@ -439,14 +439,14 @@ import Album from "model/album";
 import Event from "pubsub-js";
 
 export default {
-  name: "p-navigation",
+  name: "PNavigation",
   data() {
     return {
       drawer: null,
-      mini: true,
+      isMini: true,
+      isPublic: this.$config.get("public"),
+      isReadOnly: this.$config.get("readonly"),
       session: this.$session,
-      public: this.$config.get("public"),
-      readonly: this.$config.get("readonly"),
       config: this.$config.values,
       page: this.$config.page,
       reload: {
@@ -468,38 +468,7 @@ export default {
   },
   computed: {
     auth() {
-      return this.session.auth || this.public
-    },
-  },
-  methods: {
-    openUpload() {
-      if (this.auth && !this.readonly && this.$config.feature('upload')) {
-        this.upload.dialog = true;
-      } else {
-        this.goHome();
-      }
-    },
-    feature(name) {
-      return this.$config.values.settings.features[name];
-    },
-    goHome() {
-      if (this.$route.name !== "home") {
-        this.$router.push({name: "home"});
-      }
-    },
-    showNavigation() {
-      if (this.auth) {
-        this.drawer = true;
-        this.mini = false;
-      }
-    },
-    createAlbum() {
-      let name = "New Album";
-      const album = new Album({Title: name, Favorite: false});
-      album.save();
-    },
-    logout() {
-      this.$session.logout();
+      return this.session.auth || this.isPublic;
     },
   },
   created() {
@@ -519,6 +488,37 @@ export default {
     Event.unsubscribe(this.reload.subscription);
     Event.unsubscribe(this.upload.subscription);
     Event.unsubscribe(this.edit.subscription);
+  },
+  methods: {
+    openUpload() {
+      if (this.auth && !this.isReadOnly && this.$config.feature('upload')) {
+        this.upload.dialog = true;
+      } else {
+        this.goHome();
+      }
+    },
+    feature(name) {
+      return this.$config.values.settings.features[name];
+    },
+    goHome() {
+      if (this.$route.name !== "home") {
+        this.$router.push({name: "home"});
+      }
+    },
+    showNavigation() {
+      if (this.auth) {
+        this.drawer = true;
+        this.isMini = false;
+      }
+    },
+    createAlbum() {
+      let name = "New Album";
+      const album = new Album({Title: name, Favorite: false});
+      album.save();
+    },
+    logout() {
+      this.$session.logout();
+    },
   }
 };
 </script>
