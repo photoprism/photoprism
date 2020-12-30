@@ -33,21 +33,22 @@ type MapsSettings struct {
 
 // FeatureSettings represents feature flags, mainly for the Web UI.
 type FeatureSettings struct {
-	Upload   bool `json:"upload" yaml:"Upload"`
-	Download bool `json:"download" yaml:"Download"`
-	Private  bool `json:"private" yaml:"Private"`
-	Review   bool `json:"review" yaml:"Review"`
-	Files    bool `json:"files" yaml:"Files"`
-	Moments  bool `json:"moments" yaml:"Moments"`
-	Labels   bool `json:"labels" yaml:"Labels"`
-	Places   bool `json:"places" yaml:"Places"`
-	Edit     bool `json:"edit" yaml:"Edit"`
-	Archive  bool `json:"archive" yaml:"Archive"`
-	Delete   bool `json:"delete" yaml:"Delete"`
-	Share    bool `json:"share" yaml:"Share"`
-	Library  bool `json:"library" yaml:"Library"`
-	Import   bool `json:"import" yaml:"Import"`
-	Logs     bool `json:"logs" yaml:"Logs"`
+	Upload    bool `json:"upload" yaml:"Upload"`
+	Download  bool `json:"download" yaml:"Download"`
+	Private   bool `json:"private" yaml:"Private"`
+	Review    bool `json:"review" yaml:"Review"`
+	Files     bool `json:"files" yaml:"Files"`
+	Moments   bool `json:"moments" yaml:"Moments"`
+	Estimates bool `json:"estimates" yaml:"Estimates"`
+	Labels    bool `json:"labels" yaml:"Labels"`
+	Places    bool `json:"places" yaml:"Places"`
+	Edit      bool `json:"edit" yaml:"Edit"`
+	Archive   bool `json:"archive" yaml:"Archive"`
+	Delete    bool `json:"delete" yaml:"Delete"`
+	Share     bool `json:"share" yaml:"Share"`
+	Library   bool `json:"library" yaml:"Library"`
+	Import    bool `json:"import" yaml:"Import"`
+	Logs      bool `json:"logs" yaml:"Logs"`
 }
 
 // ImportSettings represents import settings.
@@ -109,20 +110,21 @@ func NewSettings() *Settings {
 			Style:   "streets",
 		},
 		Features: FeatureSettings{
-			Upload:   true,
-			Download: true,
-			Archive:  true,
-			Review:   true,
-			Private:  true,
-			Files:    true,
-			Moments:  true,
-			Labels:   true,
-			Places:   true,
-			Edit:     true,
-			Share:    true,
-			Library:  true,
-			Import:   true,
-			Logs:     true,
+			Upload:    true,
+			Download:  true,
+			Archive:   true,
+			Review:    true,
+			Private:   true,
+			Files:     true,
+			Moments:   true,
+			Estimates: true,
+			Labels:    true,
+			Places:    true,
+			Edit:      true,
+			Share:     true,
+			Library:   true,
+			Import:    true,
+			Logs:      true,
 		},
 		Import: ImportSettings{
 			Path: entity.RootPath,

@@ -14,6 +14,7 @@ Features:
   Review: true
   Files: true
   Moments: true
+  Estimates: true
   Labels: true
   Places: true
   Edit: true

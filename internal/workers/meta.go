@@ -46,6 +46,7 @@ func (worker *Meta) Start(delay time.Duration) (err error) {
 
 	log.Debugf("metadata: starting routine check")
 
+	settings := worker.conf.Settings()
 	done := make(map[string]bool)
 
 	limit := 50
@@ -76,7 +77,7 @@ func (worker *Meta) Start(delay time.Duration) (err error) {
 
 			done[photo.PhotoUID] = true
 
-			updated, merged, err := photo.Optimize(worker.conf.Settings().StackMeta(), worker.conf.Settings().StackUUID())
+			updated, merged, err := photo.Optimize(settings.StackMeta(), settings.StackUUID(), settings.Features.Estimates)
 
 			if err != nil {
 				log.Errorf("metadata: %s (optimize photo)", err)
