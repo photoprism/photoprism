@@ -80,7 +80,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 		// Parse regular JSON sidecar files ("img_1234.json")
 		if !m.IsSidecar() {
 			if jsonFiles := fs.FormatJson.FindAll(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); len(jsonFiles) == 0 {
-				log.Debugf("media: no json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
+				log.Debugf("media: no original json sidecar file found for %s", txt.Quote(filepath.Base(m.FileName())))
 			} else {
 				for _, jsonFile := range jsonFiles {
 					jsonErr := m.metaData.JSON(jsonFile, m.BaseName())
@@ -93,8 +93,10 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 				}
 			}
 
-			if err := m.ReadExifToolJson(); err != nil {
+			if jsonErr := m.ReadExifToolJson(); jsonErr != nil {
 				log.Debug(err)
+			} else {
+				err = nil
 			}
 		}
 
