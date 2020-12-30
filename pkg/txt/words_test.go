@@ -11,6 +11,18 @@ func TestWords(t *testing.T) {
 		result := Words("桥")
 		assert.Equal(t, []string{"桥"}, result)
 	})
+	t.Run("桥船", func(t *testing.T) {
+		result := Words("桥船")
+		assert.Equal(t, []string{"桥船"}, result)
+	})
+	t.Run("桥船猫", func(t *testing.T) {
+		result := Words("桥船猫")
+		assert.Equal(t, []string{"桥船猫"}, result)
+	})
+	t.Run("谢谢！", func(t *testing.T) {
+		result := Words("谢谢！")
+		assert.Equal(t, []string{"谢谢"}, result)
+	})
 	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
 		result := Words("I'm a lazy-BRoWN fox!")
 		assert.Equal(t, []string{"lazy-BRoWN", "fox"}, result)
@@ -91,6 +103,22 @@ func TestFilenameKeywords(t *testing.T) {
 }
 
 func TestKeywords(t *testing.T) {
+	t.Run("桥", func(t *testing.T) {
+		result := Keywords("桥")
+		assert.Equal(t, []string{"桥"}, result)
+	})
+	t.Run("桥船", func(t *testing.T) {
+		result := Keywords("桥船")
+		assert.Equal(t, []string{"桥船"}, result)
+	})
+	t.Run("桥船猫", func(t *testing.T) {
+		result := Keywords("桥船猫")
+		assert.Equal(t, []string{"桥船猫"}, result)
+	})
+	t.Run("谢谢！", func(t *testing.T) {
+		result := Keywords("谢谢！")
+		assert.Equal(t, []string{"谢谢"}, result)
+	})
 	t.Run("I'm a lazy brown fox!", func(t *testing.T) {
 		result := Keywords("I'm a lazy BRoWN img!")
 		assert.Equal(t, []string{"lazy", "brown"}, result)

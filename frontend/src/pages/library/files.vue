@@ -332,12 +332,6 @@ export default {
     },
     updateQuery() {
       this.filter.q = this.filter.q.trim();
-      const len = this.filter.q.length;
-
-      if (len > 1 && len < 3) {
-        this.$notify.error(this.$gettext("Search term too short"));
-        return;
-      }
 
       const query = {
         view: this.settings.view
@@ -352,7 +346,7 @@ export default {
       }
 
       if (JSON.stringify(this.$route.query) === JSON.stringify(query)) {
-        return
+        return;
       }
 
       this.$router.replace({query: query});

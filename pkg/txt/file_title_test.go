@@ -10,6 +10,18 @@ func TestFileTitle(t *testing.T) {
 	t.Run("桥", func(t *testing.T) {
 		assert.Equal(t, "桥", FileTitle("桥"))
 	})
+	t.Run("桥船", func(t *testing.T) {
+		result := FileTitle("桥船")
+		assert.Equal(t, "桥船", result)
+	})
+	t.Run("桥船猫", func(t *testing.T) {
+		result := FileTitle("桥船猫")
+		assert.Equal(t, "桥船猫", result)
+	})
+	t.Run("谢谢！", func(t *testing.T) {
+		result := FileTitle("谢谢！")
+		assert.Equal(t, "谢谢！", result)
+	})
 	t.Run("i_love_you!", func(t *testing.T) {
 		assert.Equal(t, "Love You!", FileTitle("i_love_you!"))
 	})
