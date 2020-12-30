@@ -20,6 +20,7 @@ version: '3.5'
 
 services:
   photoprism:
+    # Use photoprism/photoprism:preview instead for testing preview builds:
     image: photoprism/photoprism:latest
     # Only enable automatic restarts once your installation is properly
     # configured as it otherwise may get stuck in a restart loop:

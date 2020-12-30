@@ -20,7 +20,8 @@ version: '3.5'
 
 services:
   photoprism:
-    # Use photoprism/photoprism-arm64:latest instead if you own a new ARM-based Mac:
+    # Use photoprism/photoprism-arm64:latest instead if you own an ARM-based Mac,
+    # or photoprism/photoprism(-arm64):preview for testing preview builds:
     image: photoprism/photoprism:latest
     # Only enable automatic restarts once your installation is properly
     # configured as it otherwise may get stuck in a restart loop:
