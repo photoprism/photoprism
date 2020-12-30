@@ -56,7 +56,7 @@ export class Album extends RestModel {
       Day: -1,
       Year: -1,
       Month: -1,
-      Favorite: true,
+      Favorite: false,
       Private: false,
       PhotoCount: 0,
       LinkCount: 0,

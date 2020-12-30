@@ -527,7 +527,7 @@ export default {
         title = `${title} (${existing.length + 1})`;
       }
 
-      const album = new Album({"Title": title, "Favorite": true});
+      const album = new Album({"Title": title, "Favorite": false});
 
       album.save();
     },

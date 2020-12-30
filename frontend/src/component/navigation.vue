@@ -495,7 +495,7 @@ export default {
     },
     createAlbum() {
       let name = "New Album";
-      const album = new Album({Title: name, Favorite: true});
+      const album = new Album({Title: name, Favorite: false});
       album.save();
     },
     logout() {

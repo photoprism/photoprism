@@ -1,11 +1,11 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" lazy persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
           <v-flex xs3 text-xs-center>
-            <v-icon size="54" color="secondary-dark lighten-1" v-if="!album">create_new_folder</v-icon>
-            <v-icon size="54" color="secondary-dark lighten-1" v-else>folder_special</v-icon>
+            <v-icon v-if="!album" size="54" color="secondary-dark lighten-1">create_new_folder</v-icon>
+            <v-icon v-else size="54" color="secondary-dark lighten-1">folder_special</v-icon>
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
             <v-autocomplete
@@ -27,11 +27,11 @@
             </v-autocomplete>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
-            <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
+            <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
-                   class="action-confirm">
+            <v-btn color="secondary-dark" depressed dark class="action-confirm"
+                   @click.stop="confirm">
               <span v-if="!album">{{ labels.createAlbum }}</span>
               <span v-else>{{ labels.addToAlbum }}</span>
             </v-btn>
@@ -45,7 +45,7 @@
 import Album from "model/album";
 
 export default {
-  name: 'p-photo-album-dialog',
+  name: 'PPhotoAlbumDialog',
   props: {
     show: Boolean,
   },
@@ -60,6 +60,24 @@ export default {
       labels: {
         addToAlbum: this.$gettext("Add to album"),
         createAlbum: this.$gettext("Create album"),
+      }
+    };
+  },
+  watch: {
+    search(q) {
+      const exists = this.albums.findIndex((album) => album.Title === q);
+
+      if (exists !== -1 || !q) {
+        this.items = this.albums;
+        this.newAlbum = null;
+      } else {
+        this.newAlbum = new Album({Title: q, UID: "", Favorite: false});
+        this.items = this.albums.concat([this.newAlbum]);
+      }
+    },
+    show: function (show) {
+      if (show) {
+        this.queryServer("");
       }
     }
   },
@@ -105,23 +123,5 @@ export default {
       }).catch(() => this.loading = false);
     },
   },
-  watch: {
-    search(q) {
-      const exists = this.albums.findIndex((album) => album.Title === q);
-
-      if (exists !== -1 || !q) {
-        this.items = this.albums;
-        this.newAlbum = null;
-      } else {
-        this.newAlbum = new Album({Title: q, UID: "", Favorite: true});
-        this.items = this.albums.concat([this.newAlbum]);
-      }
-    },
-    show: function (show) {
-      if (show) {
-        this.queryServer("");
-      }
-    }
-  },
-}
+};
 </script>
