@@ -1,54 +1,54 @@
 <template>
-  <div class="p-page p-page-albums" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+  <div v-infinite-scroll="loadMore" class="p-page p-page-albums" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery" dense>
+    <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-        <v-text-field @keyup.enter.native="updateQuery"
-                      single-line
+        <v-text-field single-line
                       class="hidden-xs-only mr-3"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"
-                      clearable
-                      color="secondary-dark"
-                      @click:clear="clearQuery"
                       v-model="filter.q"
+                      clearable
                       id="search"
+                      color="secondary-dark"
+                      @keyup.enter.native="updateQuery"
+                      @click:clear="clearQuery"
         ></v-text-field>
 
-        <v-select @change="updateQuery"
+        <v-select v-model="filter.category"
                   single-line
                   :label="$gettext('Category')"
                   color="secondary-dark"
-                  v-model="filter.category"
                   :items="categories"
                   class="input-category"
+                  @change="updateQuery"
         >
         </v-select>
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" class="action-reload" :title="$gettext('Reload')">
+        <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-               class="hidden-sm-and-down" :title="$gettext('Upload')">
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down"
+               :title="$gettext('Upload')" @click.stop="showUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
 
-        <v-btn icon @click.prevent="create" class="action-add" v-if="staticFilter.type === 'album'"
-               :title="$gettext('Add Album')">
+        <v-btn v-if="staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')"
+               @click.prevent="create">
           <v-icon>add</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
 
-    <v-container fluid class="pa-4" v-if="loading">
+    <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-container fluid class="pa-0" v-else>
+    <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit"
@@ -86,19 +86,19 @@
               xs6 sm4 lg3 xl2 d-flex
           >
             <v-hover>
-              <v-card tile class="accent lighten-3"
-                      slot-scope="{ hover }"
-                      @contextmenu="onContextMenu($event, index)"
+              <v-card slot-scope="{ hover }" tile
+                      class="accent lighten-3"
                       :dark="selection.includes(album.UID)"
                       :class="selection.includes(album.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
                       :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
+                      @contextmenu="onContextMenu($event, index)"
               >
                 <v-img
                     :src="album.thumbnailUrl('tile_500')"
-                    @mousedown="onMouseDown($event, index)"
-                    @click="onClick($event, index)"
                     aspect-ratio="1"
                     class="accent lighten-2"
+                    @mousedown="onMouseDown($event, index)"
+                    @click="onClick($event, index)"
                 >
                   <v-layout
                       slot="placeholder"
@@ -133,16 +133,16 @@
 
                 <v-card-actions primary-title class="pl-3 pr-2 pb-0 mb-0" style="user-select: none;">
                   <h3 v-if="album.Type !== 'month'"
-                      @click.stop.prevent="edit(album)"
                       class="body-2 ma-0 action-title-edit"
-                      :data-uid="album.UID">
+                      :data-uid="album.UID"
+                      @click.stop.prevent="edit(album)">
                     {{ album.Title }}
                   </h3>
 
                   <h3 v-else
-                      @click.stop.prevent="edit(album)"
                       class="body-2 ma-0 action-title-edit"
-                      :data-uid="album.UID">
+                      :data-uid="album.UID"
+                      @click.stop.prevent="edit(album)">
                     {{ album.getDateString() | capitalize }}
                   </h3>
 
@@ -157,14 +157,14 @@
 
                 <v-card-text primary-title class="pb-2 pt-0 p-photo-desc" style="user-select: none;"
                              @click.stop.prevent="">
-                  <div class="caption mb-2" v-if="album.Description">
+                  <div v-if="album.Description" class="caption mb-2">
                     <button @click.exact="edit(album)">
                       {{ album.Description | truncate(100) }}
                     </button>
                   </div>
 
-                  <div class="caption mb-2" v-else-if="album.Type === 'album'">
-                    <button @click.exact="edit(album)" v-if="album.PhotoCount === 1">
+                  <div v-else-if="album.Type === 'album'" class="caption mb-2">
+                    <button v-if="album.PhotoCount === 1" @click.exact="edit(album)">
                       <translate>Contains one entry.</translate>
                     </button>
                     <button v-else-if="album.PhotoCount > 0">
@@ -174,13 +174,13 @@
                       <translate>Add photos or videos from search results by selecting them.</translate>
                     </button>
                   </div>
-                  <div class="caption mb-2" v-else-if="album.Type === 'folder'">
+                  <div v-else-if="album.Type === 'folder'" class="caption mb-2">
                     <button @click.exact="edit(album)">
                       /{{ album.Path | truncate(100) }}
                     </button>
                   </div>
 
-                  <div class="caption mb-2 d-block" v-if="album.Location">
+                  <div v-if="album.Location" class="caption mb-2 d-block">
                     <button @click.exact="edit(album)">
                       <v-icon size="14">location_on</v-icon>
                       {{ album.Location }}
@@ -210,34 +210,10 @@ import {MaxItems} from "common/clipboard";
 import Notify from "common/notify";
 
 export default {
-  name: 'p-page-albums',
+  name: 'PPageAlbums',
   props: {
     staticFilter: Object,
     view: String,
-  },
-  computed: {
-    context: function () {
-      if (!this.staticFilter) {
-        return "album";
-      }
-
-      if (this.staticFilter.type) {
-        return this.staticFilter.type;
-      }
-
-      return "";
-    }
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-
-      this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.category = query["category"] ? query["category"] : "";
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.search();
-    }
   },
   data() {
     const query = this.$route.query;
@@ -285,6 +261,43 @@ export default {
       },
       album: new Album(),
     };
+  },
+  computed: {
+    context: function () {
+      if (!this.staticFilter) {
+        return "album";
+      }
+
+      if (this.staticFilter.type) {
+        return this.staticFilter.type;
+      }
+
+      return "";
+    }
+  },
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+
+      this.filter.q = query["q"] ? query["q"] : "";
+      this.filter.category = query["category"] ? query["category"] : "";
+      this.lastFilter = {};
+      this.routeName = this.$route.name;
+      this.search();
+    }
+  },
+  created() {
+    this.search();
+
+    this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
+
+    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+  },
+  destroyed() {
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
   },
   methods: {
     share(album) {
@@ -511,7 +524,7 @@ export default {
 
       if (this.results.findIndex(a => a.Title.startsWith(title)) !== -1) {
         const existing = this.results.filter(a => a.Title.startsWith(title));
-        title = `${title} (${existing.length + 1})`
+        title = `${title} (${existing.length + 1})`;
       }
 
       const album = new Album({"Title": title, "Favorite": true});
@@ -530,7 +543,7 @@ export default {
           return;
         }
 
-        this.selection.push(uid)
+        this.selection.push(uid);
         this.lastId = uid;
       }
     },
@@ -566,7 +579,7 @@ export default {
       if (!this.listen) return;
 
       if (!data || !data.entities) {
-        return
+        return;
       }
 
       const type = ev.split('.')[1];
@@ -608,7 +621,7 @@ export default {
               this.results.splice(index, 1);
             }
 
-            this.removeSelection(uid)
+            this.removeSelection(uid);
           }
 
           break;
@@ -627,19 +640,6 @@ export default {
         default:
           console.warn("unexpected event type", ev);
       }
-    }
-  },
-  created() {
-    this.search();
-
-    this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
-
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
-  },
-  destroyed() {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
     }
   },
 };

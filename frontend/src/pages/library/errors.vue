@@ -1,8 +1,9 @@
 <template>
-  <div class="p-page p-page-errors" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+  <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-      <v-text-field class="pt-3 pr-3 input-search"
+      <v-text-field v-model="filter.q"
+                    class="pt-3 pr-3 input-search"
                     browser-autocomplete="off"
                     single-line
                     :label="$gettext('Search')"
@@ -10,13 +11,12 @@
                     clearable
                     color="secondary-dark"
                     @click:clear="clearQuery"
-                    v-model="filter.q"
                     @keyup.enter.native="updateQuery"
       ></v-text-field>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="reload" class="action-reload" :title="$gettext('Reload')">
+      <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="reload">
         <v-icon>refresh</v-icon>
       </v-btn>
 
@@ -25,10 +25,10 @@
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-container fluid class="pa-4" v-if="loading">
+    <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-list dense two-line v-else-if="errors.length > 0">
+    <v-list v-else-if="errors.length > 0" dense two-line>
       <v-list-tile
           v-for="(err, index) in errors" :key="index"
           avatar
@@ -45,10 +45,10 @@
       </v-list-tile>
     </v-list>
     <v-card v-else class="errors-empty secondary-light lighten-1 ma-0 pa-2" flat>
-      <v-card-title primary-title v-if="filter.q !== ''">
+      <v-card-title v-if="filter.q !== ''" primary-title>
         <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
       </v-card-title>
-      <v-card-title primary-title v-else>
+      <v-card-title v-else primary-title>
         <translate>Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues.</translate>
       </v-card-title>
     </v-card>
@@ -72,8 +72,8 @@
 
         <v-card-actions class="pa-2">
           <v-spacer></v-spacer>
-          <v-btn color="secondary-light" depressed @click="details.show = false"
-                 class="action-close">
+          <v-btn color="secondary-light" depressed class="action-close"
+                 @click="details.show = false">
             <translate>Close</translate>
           </v-btn>
         </v-card-actions>
@@ -87,14 +87,7 @@ import {DateTime} from "luxon";
 import Api from "common/api";
 
 export default {
-  name: 'p-page-errors',
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.reload();
-    }
-  },
+  name: 'PPageErrors',
   data() {
     const query = this.$route.query;
     const q = query["q"] ? query["q"] : "";
@@ -114,6 +107,16 @@ export default {
         err: {"Level": "", "Message": "", "Time": ""},
       },
     };
+  },
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+      this.filter.q = query['q'] ? query['q'] : '';
+      this.reload();
+    }
+  },
+  created() {
+    this.loadMore();
   },
   methods: {
     updateQuery() {
@@ -207,9 +210,6 @@ export default {
 
       return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
     },
-  },
-  created() {
-    this.loadMore();
   },
 };
 </script>

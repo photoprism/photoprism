@@ -1,15 +1,15 @@
 <template>
-  <div class="p-page p-page-albums" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+  <div v-infinite-scroll="loadMore" class="p-page p-page-albums" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
         <translate>Albums</translate>
       </v-toolbar-title>
     </v-toolbar>
-    <v-container fluid class="pa-4" v-if="loading">
+    <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-container fluid class="pa-0" v-else>
+    <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
       <p-album-clipboard :refresh="refresh" :selection="selection"
@@ -37,19 +37,19 @@
               xs6 sm4 lg3 xl2 d-flex
           >
             <v-hover>
-              <v-card tile class="accent lighten-3"
-                      slot-scope="{ hover }"
-                      @contextmenu="onContextMenu($event, index)"
+              <v-card slot-scope="{ hover }" tile
+                      class="accent lighten-3"
                       :dark="selection.includes(album.UID)"
                       :class="selection.includes(album.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
                       :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
+                      @contextmenu="onContextMenu($event, index)"
               >
                 <v-img
                     :src="album.thumbnailUrl('tile_500')"
-                    @mousedown="onMouseDown($event, index)"
-                    @click="onClick($event, index)"
                     aspect-ratio="1"
                     class="accent lighten-2"
+                    @mousedown="onMouseDown($event, index)"
+                    @click="onClick($event, index)"
                 >
                   <v-layout
                       slot="placeholder"
@@ -81,10 +81,10 @@
                   </h3>
                 </v-card-title>
                 <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
-                  <div class="caption" title="Description" v-if="album.Description">
+                  <div v-if="album.Description" class="caption" title="Description">
                     {{ album.Description | truncate(100) }}
                   </div>
-                  <div class="caption" title="Description" v-else>
+                  <div v-else class="caption" title="Description">
                     <translate>Shared with you.</translate>
                   </div>
                 </v-card-text>
@@ -106,34 +106,10 @@ import {MaxItems} from "../common/clipboard";
 import Notify from "../common/notify";
 
 export default {
-  name: 'p-page-albums',
+  name: 'PPageAlbums',
   props: {
     staticFilter: Object,
     view: String,
-  },
-  computed: {
-    context: function () {
-      if (!this.staticFilter) {
-        return "album";
-      }
-
-      if (this.staticFilter.type) {
-        return this.staticFilter.type;
-      }
-
-      return "";
-    }
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-
-      this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.category = query["category"] ? query["category"] : "";
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.search();
-    }
   },
   data() {
     const query = this.$route.query;
@@ -175,6 +151,51 @@ export default {
       },
       lastId: "",
     };
+  },
+  computed: {
+    context: function () {
+      if (!this.staticFilter) {
+        return "album";
+      }
+
+      if (this.staticFilter.type) {
+        return this.staticFilter.type;
+      }
+
+      return "";
+    }
+  },
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+
+      this.filter.q = query["q"] ? query["q"] : "";
+      this.filter.category = query["category"] ? query["category"] : "";
+      this.lastFilter = {};
+      this.routeName = this.$route.name;
+      this.search();
+    }
+  },
+  created() {
+    const token = this.$route.params.token;
+
+    if (this.$session.hasToken(token)) {
+      this.search();
+    } else {
+      this.$session.redeemToken(token).then(() => {
+        this.search();
+      });
+    }
+
+    this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
+
+    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+  },
+  destroyed() {
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
   },
   methods: {
     showUpload() {
@@ -379,7 +400,7 @@ export default {
 
       if (this.results.findIndex(a => a.Title.startsWith(title)) !== -1) {
         const existing = this.results.filter(a => a.Title.startsWith(title));
-        title = `${title} (${existing.length + 1})`
+        title = `${title} (${existing.length + 1})`;
       }
 
       const album = new Album({"Title": title, "Favorite": true});
@@ -398,7 +419,7 @@ export default {
           return;
         }
 
-        this.selection.push(uid)
+        this.selection.push(uid);
         this.lastId = uid;
       }
     },
@@ -434,7 +455,7 @@ export default {
       if (!this.listen) return;
 
       if (!data || !data.entities) {
-        return
+        return;
       }
 
       const type = ev.split('.')[1];
@@ -465,7 +486,7 @@ export default {
               this.results.splice(index, 1);
             }
 
-            this.removeSelection(uid)
+            this.removeSelection(uid);
           }
 
           break;
@@ -484,27 +505,6 @@ export default {
         default:
           console.warn("unexpected event type", ev);
       }
-    }
-  },
-  created() {
-    const token = this.$route.params.token;
-
-    if (this.$session.hasToken(token)) {
-      this.search();
-    } else {
-      this.$session.redeemToken(token).then(() => {
-        this.search();
-      });
-    }
-
-    this.subscriptions.push(Event.subscribe("albums", (ev, data) => this.onUpdate(ev, data)));
-
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
-  },
-  destroyed() {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
     }
   },
 };

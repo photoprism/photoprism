@@ -1,10 +1,12 @@
 <template>
-  <div class="p-page p-page-labels" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+  <div v-infinite-scroll="loadMore" class="p-page p-page-labels" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <v-form ref="form" class="p-labels-search" lazy-validation @submit.prevent="updateQuery" dense>
+    <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-        <v-text-field class="pt-3 pr-3 input-search"
+        <v-text-field id="search"
+                      v-model="filter.q"
+                      class="pt-3 pr-3 input-search"
                       single-line
                       :label="$gettext('Search')"
                       prepend-inner-icon="search"
@@ -12,30 +14,28 @@
                       clearable
                       color="secondary-dark"
                       @click:clear="clearQuery"
-                      v-model="filter.q"
                       @keyup.enter.native="updateQuery"
-                      id="search"
         ></v-text-field>
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" class="action-reload" :title="$gettext('Reload')">
+        <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.all" icon @click.stop="showAll" class="action-show-all" :title="$gettext('Show more')">
+        <v-btn v-if="!filter.all" icon class="action-show-all" :title="$gettext('Show more')" @click.stop="showAll">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon @click.stop="showImportant" class="action-show-important" :title="$gettext('Show less')">
+        <v-btn v-else icon class="action-show-important" :title="$gettext('Show less')" @click.stop="showImportant">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
 
-    <v-container fluid class="pa-4" v-if="loading">
+    <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-container fluid class="pa-0" v-else>
+    <v-container v-else fluid class="pa-0">
       <p-label-clipboard :refresh="refresh" :selection="selection"
                          :clear-selection="clearSelection"></p-label-clipboard>
 
@@ -63,18 +63,18 @@
               xs6 sm4 md3 lg2 d-flex
           >
             <v-hover>
-              <v-card tile class="accent lighten-3"
-                      slot-scope="{ hover }"
-                      @contextmenu="onContextMenu($event, index)"
+              <v-card slot-scope="{ hover }" tile
+                      class="accent lighten-3"
                       :dark="selection.includes(label.UID)"
                       :class="selection.includes(label.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                      :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}">
+                      :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}"
+                      @contextmenu="onContextMenu($event, index)">
                 <v-img
                     :src="label.thumbnailUrl('tile_500')"
-                    @mousedown="onMouseDown($event, index)"
-                    @click="onClick($event, index)"
                     aspect-ratio="1"
                     class="accent lighten-2"
+                    @mousedown="onMouseDown($event, index)"
+                    @click="onClick($event, index)"
                 >
                   <v-layout
                       slot="placeholder"
@@ -111,8 +111,8 @@
                   <v-edit-dialog
                       :return-value.sync="label.Name"
                       lazy
-                      @save="onSave(label)"
                       class="p-inline-edit"
+                      @save="onSave(label)"
                   >
                                         <span v-if="label.Name" class="body-2 ma-0">
                                             {{ label.Name | capitalize }}
@@ -120,7 +120,7 @@
                     <span v-else>
                                             <v-icon>edit</v-icon>
                                         </span>
-                    <template v-slot:input>
+                    <template #input>
                       <v-text-field
                           v-model="label.Name"
                           :rules="[titleRule]"
@@ -155,20 +155,9 @@ import {MaxItems} from "../common/clipboard";
 import Notify from "../common/notify";
 
 export default {
-  name: 'p-page-labels',
+  name: 'PPageLabels',
   props: {
     staticFilter: Object
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.filter.all = query['all'] ? query['all'] : '';
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.search();
-    }
   },
   data() {
     const query = this.$route.query;
@@ -201,6 +190,30 @@ export default {
       },
       lastId: "",
     };
+  },
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+
+      this.filter.q = query['q'] ? query['q'] : '';
+      this.filter.all = query['all'] ? query['all'] : '';
+      this.lastFilter = {};
+      this.routeName = this.$route.name;
+      this.search();
+    }
+  },
+  created() {
+    this.search();
+
+    this.subscriptions.push(Event.subscribe("labels", (ev, data) => this.onUpdate(ev, data)));
+
+    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+  },
+  destroyed() {
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
   },
   methods: {
     selectRange(rangeEnd, models) {
@@ -287,7 +300,7 @@ export default {
           return;
         }
 
-        this.selection.push(uid)
+        this.selection.push(uid);
         this.lastId = uid;
       }
     },
@@ -456,7 +469,7 @@ export default {
       if (!this.listen) return;
 
       if (!data || !data.entities) {
-        return
+        return;
       }
 
       const type = ev.split('.')[1];
@@ -485,7 +498,7 @@ export default {
               this.results.splice(index, 1);
             }
 
-            this.removeSelection(uid)
+            this.removeSelection(uid);
           }
 
           break;
@@ -495,19 +508,6 @@ export default {
         default:
           console.warn("unexpected event type", ev);
       }
-    }
-  },
-  created() {
-    this.search();
-
-    this.subscriptions.push(Event.subscribe("labels", (ev, data) => this.onUpdate(ev, data)));
-
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
-  },
-  destroyed() {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
     }
   },
 };

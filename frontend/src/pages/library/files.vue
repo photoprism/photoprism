@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-files">
-    <v-form ref="form" class="p-files-search" lazy-validation @submit.prevent="updateQuery" dense>
+    <v-form ref="form" class="p-files-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
         <v-toolbar-title>
           <router-link to="/library/files">
@@ -15,16 +15,16 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" :title="$gettext('Reload')">
+        <v-btn icon :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
 
-    <v-container fluid class="pa-4" v-if="loading">
+    <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-container fluid class="pa-0" v-else>
+    <v-container v-else fluid class="pa-0">
       <p-file-clipboard :refresh="refresh" :selection="selection"
                         :clear-selection="clearSelection"></p-file-clipboard>
 
@@ -53,17 +53,17 @@
               xs6 sm4 md3 lg2 d-flex
           >
             <v-hover>
-              <v-card tile class="accent lighten-3 clickable"
-                      slot-scope="{ hover }"
-                      @contextmenu="onContextMenu($event, index)"
+              <v-card slot-scope="{ hover }" tile
+                      class="accent lighten-3 clickable"
                       :dark="selection.includes(model.UID)"
-                      :class="selection.includes(model.UID) ? 'elevation-10 ma-0 darken-1 white--text' : 'elevation-0 ma-1 lighten-3'">
+                      :class="selection.includes(model.UID) ? 'elevation-10 ma-0 darken-1 white--text' : 'elevation-0 ma-1 lighten-3'"
+                      @contextmenu="onContextMenu($event, index)">
                 <v-img
                     :src="model.thumbnailUrl('tile_500')"
-                    @mousedown="onMouseDown($event, index)"
-                    @click="onClick($event, index)"
                     aspect-ratio="1"
                     class="accent lighten-2"
+                    @mousedown="onMouseDown($event, index)"
+                    @click="onClick($event, index)"
                 >
                   <v-layout
                       slot="placeholder"
@@ -86,8 +86,8 @@
                   </v-btn>
                 </v-img>
 
-                <v-card-title primary-title class="pa-3 p-photo-desc" style="user-select: none;"
-                              v-if="model.isFile()">
+                <v-card-title v-if="model.isFile()" primary-title class="pa-3 p-photo-desc"
+                              style="user-select: none;">
                   <div>
                     <h3 class="body-2 mb-2" :title="model.Name">
                       <button @click.exact="openFile(index)">
@@ -99,7 +99,7 @@
                     </div>
                   </div>
                 </v-card-title>
-                <v-card-title primary-title class="pa-3 p-photo-desc" v-else>
+                <v-card-title v-else primary-title class="pa-3 p-photo-desc">
                   <div>
                     <h3 class="body-2 mb-2" :title="model.Title">
                       <button @click.exact="openFile(index)">
@@ -128,21 +128,9 @@ import Notify from "common/notify";
 import {MaxItems} from "common/clipboard";
 
 export default {
-  name: 'p-page-files',
+  name: 'PPageFiles',
   props: {
     staticFilter: Object
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.filter.all = query['all'] ? query['all'] : '';
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-      this.path = this.$route.params.pathMatch;
-      this.search();
-    }
   },
   data() {
     const query = this.$route.query;
@@ -179,6 +167,32 @@ export default {
       breadcrumbs: [],
     };
   },
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+
+      this.filter.q = query['q'] ? query['q'] : '';
+      this.filter.all = query['all'] ? query['all'] : '';
+      this.lastFilter = {};
+      this.routeName = this.$route.name;
+      this.path = this.$route.params.pathMatch;
+      this.search();
+    }
+  },
+  created() {
+    this.path = this.$route.params.pathMatch;
+
+    this.search();
+
+    this.subscriptions.push(Event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
+
+    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+  },
+  destroyed() {
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
+  },
   methods: {
     getBreadcrumbs() {
       let result = [];
@@ -188,10 +202,10 @@ export default {
 
       crumbs.forEach(dir => {
         if (dir) {
-          path += "/" + dir
-          result.push({path: path, name: dir})
+          path += "/" + dir;
+          result.push({path: path, name: dir});
         }
-      })
+      });
 
       return result;
     },
@@ -207,10 +221,10 @@ export default {
     },
     downloadFile(index) {
       const model = this.results[index];
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = `/api/v1/dl/${model.Hash}?t=${this.$config.downloadToken()}`;
       link.download = model.Name;
-      link.click()
+      link.click();
     },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
@@ -298,7 +312,7 @@ export default {
           return;
         }
 
-        this.selection.push(uid)
+        this.selection.push(uid);
         this.lastId = uid;
       }
     },
@@ -420,7 +434,7 @@ export default {
       if (!this.listen) return;
 
       if (!data || !data.entities) {
-        return
+        return;
       }
 
       const type = ev.split('.')[1];
@@ -449,7 +463,7 @@ export default {
               this.results.splice(index, 1);
             }
 
-            this.removeSelection(ppid)
+            this.removeSelection(ppid);
           }
 
           break;
@@ -459,20 +473,6 @@ export default {
         default:
           console.warn("unexpected event type", ev);
       }
-    }
-  },
-  created() {
-    this.path = this.$route.params.pathMatch;
-
-    this.search();
-
-    this.subscriptions.push(Event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
-
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-  },
-  destroyed() {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
     }
   },
 };

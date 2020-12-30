@@ -1,9 +1,9 @@
 <template>
-  <div class="p-page p-page-album-photos" v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled"
+  <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <v-form lazy-validation dense
-            ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
+    <v-form ref="form" lazy-validation
+            dense autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
         <v-toolbar-title>
           {{ model.Title }}
@@ -11,22 +11,22 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload">
+        <v-btn icon class="hidden-xs-only action-reload" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn icon @click.stop="download" v-if="$config.feature('download')" class="hidden-xs-only action-download"
-               :title="$gettext('Download')">
+        <v-btn v-if="$config.feature('download')" icon class="hidden-xs-only action-download" :title="$gettext('Download')"
+               @click.stop="download">
           <v-icon>get_app</v-icon>
         </v-btn>
 
-        <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')">
+        <v-btn v-if="settings.view === 'cards'" icon @click.stop="setView('list')">
           <v-icon>view_list</v-icon>
         </v-btn>
-        <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')">
+        <v-btn v-else-if="settings.view === 'list'" icon @click.stop="setView('mosaic')">
           <v-icon>view_comfy</v-icon>
         </v-btn>
-        <v-btn icon v-else @click.stop="setView('cards')">
+        <v-btn v-else icon @click.stop="setView('cards')">
           <v-icon>view_column</v-icon>
         </v-btn>
       </v-toolbar>
@@ -48,10 +48,10 @@
       </template>
     </v-form>
 
-    <v-container fluid class="pa-4" v-if="loading">
+    <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-container fluid class="pa-0" v-else>
+    <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
       <p-photo-clipboard :refresh="refresh"
@@ -93,28 +93,9 @@ import Thumb from "model/thumb";
 import Notify from "common/notify";
 
 export default {
-  name: 'p-page-album-photos',
+  name: 'PPageAlbumPhotos',
   props: {
     staticFilter: Object
-  },
-  watch: {
-    '$route'() {
-      const query = this.$route.query;
-
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
-      this.filter.country = query['country'] ? query['country'] : '';
-      this.settings.view = this.viewType();
-      this.lastFilter = {};
-      this.routeName = this.$route.name;
-
-      if (this.uid !== this.$route.params.uid) {
-        this.uid = this.$route.params.uid;
-        this.findAlbum().then(() => this.search());
-      } else {
-        this.search();
-      }
-    }
   },
   data() {
     const uid = this.$route.params.uid;
@@ -152,6 +133,47 @@ export default {
         loading: false,
       },
     };
+  },
+  watch: {
+    '$route'() {
+      const query = this.$route.query;
+
+      this.filter.q = query['q'] ? query['q'] : '';
+      this.filter.camera = query['camera'] ? parseInt(query['camera']) : 0;
+      this.filter.country = query['country'] ? query['country'] : '';
+      this.settings.view = this.viewType();
+      this.lastFilter = {};
+      this.routeName = this.$route.name;
+
+      if (this.uid !== this.$route.params.uid) {
+        this.uid = this.$route.params.uid;
+        this.findAlbum().then(() => this.search());
+      } else {
+        this.search();
+      }
+    }
+  },
+  created() {
+    const token = this.$route.params.token;
+
+    if (this.$session.hasToken(token)) {
+      this.findAlbum().then(() => this.search());
+    } else {
+      this.$session.redeemToken(token).then(() => {
+        this.findAlbum().then(() => this.search());
+      });
+    }
+
+    this.subscriptions.push(Event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
+    this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
+
+    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+  },
+  destroyed() {
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
   },
   methods: {
     setView(name) {
@@ -191,7 +213,7 @@ export default {
     },
     editPhoto(index) {
       let selection = this.results.map((p) => {
-        return p.getId()
+        return p.getId();
       });
 
       // Open Edit Dialog
@@ -211,7 +233,7 @@ export default {
           this.$viewer.show(Thumb.fromPhotos(this.results), index);
         }
       } else if (showMerged) {
-        this.$viewer.show(Thumb.fromFiles([selected]), 0)
+        this.$viewer.show(Thumb.fromFiles([selected]), 0);
       } else {
         this.viewerResults().then((results) => {
           const thumbsIndex = results.findIndex(result => result.UID === selected.UID);
@@ -424,14 +446,14 @@ export default {
         this.filter.order = m.Order;
         window.document.title = this.model.Title;
 
-        return Promise.resolve(this.model)
+        return Promise.resolve(this.model);
       });
     },
     onAlbumsUpdated(ev, data) {
       if (!this.listen) return;
 
       if (!data || !data.entities) {
-        return
+        return;
       }
 
       for (let i = 0; i < data.entities.length; i++) {
@@ -444,7 +466,7 @@ export default {
             }
           }
 
-          window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`
+          window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`;
 
           this.dirty = true;
           this.complete = false;
@@ -483,7 +505,7 @@ export default {
       if (!this.listen) return;
 
       if (!data || !data.entities) {
-        return
+        return;
       }
 
       const type = ev.split('.')[1];
@@ -525,33 +547,11 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = path;
       link.download = "album.zip";
       link.click();
     },
-  },
-  created() {
-    const token = this.$route.params.token;
-
-    if (this.$session.hasToken(token)) {
-      this.findAlbum().then(() => this.search());
-    } else {
-      this.$session.redeemToken(token).then(() => {
-        this.findAlbum().then(() => this.search());
-      });
-    }
-
-    this.subscriptions.push(Event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
-    this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
-
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
-  },
-  destroyed() {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
-    }
   },
 };
 </script>
