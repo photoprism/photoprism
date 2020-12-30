@@ -10,6 +10,78 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMediaFile_HasSidecarJson(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.HasSidecarJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.HasSidecarJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.HasSidecarJson())
+	})
+}
+
+func TestMediaFile_NeedsExifToolJson(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.NeedsExifToolJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mediaFile.NeedsExifToolJson())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, mediaFile.NeedsExifToolJson())
+	})
+}
+
 func TestMediaFile_Exif_JPEG(t *testing.T) {
 	conf := config.TestConfig()
 

@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"runtime/debug"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -30,6 +32,11 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 	}
 
 	quotedName := txt.Quote(filepath.Base(jsonName))
+
+	if !fs.FileExists(jsonName) {
+		return fmt.Errorf("json file %s not found", quotedName)
+	}
+
 	jsonData, err := ioutil.ReadFile(jsonName)
 
 	if err != nil {

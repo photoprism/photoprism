@@ -270,17 +270,6 @@ func (m *MediaFile) EditedName() string {
 	return ""
 }
 
-// JsonName returns the corresponding JSON sidecar file name as used by Google Photos (and potentially other apps).
-func (m *MediaFile) JsonName() string {
-	jsonName := m.fileName + ".json"
-
-	if fs.FileExists(jsonName) {
-		return jsonName
-	}
-
-	return ""
-}
-
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
 	var prefix string
@@ -793,20 +782,6 @@ func (m *MediaFile) HasJpeg() bool {
 	}
 
 	return m.hasJpeg
-}
-
-// HasJson returns true if this file has or is a json sidecar file.
-func (m *MediaFile) HasJson() bool {
-	if m.IsJson() {
-		return true
-	}
-
-	return fs.FormatJson.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
-}
-
-// NeedsJson tests if the media file needs a JSON sidecar file to be created.
-func (m *MediaFile) NeedsJson() bool {
-	return Config().ExifToolJson() && m.Root() != entity.RootSidecar && m.IsMedia() && !m.HasJson()
 }
 
 func (m *MediaFile) decodeDimensions() error {

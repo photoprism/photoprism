@@ -14,29 +14,21 @@ import (
 	"github.com/urfave/cli"
 )
 
-// ResetCommand resets the index and optionally removes YAML sidecar backup files.
+// ResetCommand resets the index and removes sidecar files after confirmation.
 var ResetCommand = cli.Command{
 	Name:   "reset",
-	Usage:  "Resets the index and optionally removes YAML sidecar backup files",
+	Usage:  "Resets the index and removes sidecar files after confirmation",
 	Action: resetAction,
 }
 
-// resetAction removes the index and sidecar files after asking for confirmation.
+// resetAction resets the index and removes sidecar files after confirmation.
 func resetAction(ctx *cli.Context) error {
-	log.Warnf("'photoprism reset' removes ALL data incl albums from the existing database")
+	log.Warnf("'photoprism reset' resets the index and removes sidecar files after confirmation")
 
 	removeIndex := promptui.Prompt{
-		Label:     "Reset index database?",
+		Label:     "Reset index database incl albums, labels, users and metadata?",
 		IsConfirm: true,
 	}
-
-	_, err := removeIndex.Run()
-
-	if err != nil {
-		return fmt.Errorf("abort")
-	}
-
-	start := time.Now()
 
 	conf := config.NewConfig(ctx)
 	_, cancel := context.WithCancel(context.Background())
@@ -48,20 +40,61 @@ func resetAction(ctx *cli.Context) error {
 
 	entity.SetDbProvider(conf)
 
-	tables := entity.Entities
+	if _, err := removeIndex.Run(); err == nil {
+		start := time.Now()
 
-	log.Infoln("dropping existing tables")
-	tables.Drop()
+		tables := entity.Entities
 
-	log.Infoln("restoring default schema")
-	entity.MigrateDb()
+		log.Infoln("dropping existing tables")
+		tables.Drop()
 
-	if conf.AdminPassword() != "" {
-		log.Infoln("restoring initial admin password")
-		entity.Admin.InitPassword(conf.AdminPassword())
+		log.Infoln("restoring default schema")
+		entity.MigrateDb()
+
+		if conf.AdminPassword() != "" {
+			log.Infoln("restoring initial admin password")
+			entity.Admin.InitPassword(conf.AdminPassword())
+		}
+
+		log.Infof("database reset completed in %s", time.Since(start))
+	} else {
+		log.Infof("keeping index database")
 	}
 
-	log.Infof("database reset completed in %s", time.Since(start))
+	removeSidecarJson := promptui.Prompt{
+		Label:     "Permanently delete all *.json photo sidecar files?",
+		IsConfirm: true,
+	}
+
+	if _, err := removeSidecarJson.Run(); err == nil {
+		start := time.Now()
+
+		matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.json")
+
+		if err != nil {
+			return err
+		}
+
+		if len(matches) > 0 {
+			log.Infof("%d json photo sidecar files will be removed", len(matches))
+
+			for _, name := range matches {
+				if err := os.Remove(name); err != nil {
+					fmt.Print("E")
+				} else {
+					fmt.Print(".")
+				}
+			}
+
+			fmt.Println("")
+
+			log.Infof("removed json files in %s", time.Since(start))
+		} else {
+			log.Infof("no json files found")
+		}
+	} else {
+		log.Infof("keeping json sidecar files")
+	}
 
 	removeSidecarYaml := promptui.Prompt{
 		Label:     "Permanently delete all *.yml photo metadata backups?",

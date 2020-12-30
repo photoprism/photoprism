@@ -88,16 +88,16 @@ func (c *Convert) Start(path string) error {
 				return result
 			}
 
-			mf, err := NewMediaFile(fileName)
+			f, err := NewMediaFile(fileName)
 
-			if err != nil || !(mf.IsRaw() || mf.IsHEIF() || mf.IsImageOther()) {
+			if err != nil || !(f.IsRaw() || f.IsHEIF() || f.IsImageOther()) {
 				return nil
 			}
 
 			done[fileName] = fs.Processed
 
 			jobs <- ConvertJob{
-				image:   mf,
+				image:   f,
 				convert: c,
 			}
 
@@ -114,26 +114,26 @@ func (c *Convert) Start(path string) error {
 }
 
 // ToJson uses exiftool to export metadata to a json file.
-func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
-	jsonName := fs.FormatJson.FindFirst(mf.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
-
-	result, err := NewMediaFile(jsonName)
-
-	if err == nil {
-		return result, nil
+func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
+	if f == nil {
+		return "", fmt.Errorf("exiftool: file is nil (found a bug?)")
 	}
 
-	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: can't create json sidecar file for %s in read only mode", txt.Quote(mf.BaseName()))
+	jsonName, err = f.ExifToolJsonName()
+
+	if err != nil {
+		return "", nil
 	}
 
-	jsonName = fs.FileName(mf.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), ".json")
+	if fs.FileExists(jsonName) {
+		return jsonName, nil
+	}
 
-	fileName := mf.RelName(c.conf.OriginalsPath())
+	relName := f.RelName(c.conf.OriginalsPath())
 
-	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jsonName))
+	log.Infof("exiftool: extracting metadata from %s", relName)
 
-	cmd := exec.Command(c.conf.ExifToolBin(), "-j", mf.FileName())
+	cmd := exec.Command(c.conf.ExifToolBin(), "-j", f.FileName())
 
 	// Fetch command output.
 	var out bytes.Buffer
@@ -144,42 +144,42 @@ func (c *Convert) ToJson(mf *MediaFile) (*MediaFile, error) {
 	// Run convert command.
 	if err := cmd.Run(); err != nil {
 		if stderr.String() != "" {
-			return nil, errors.New(stderr.String())
+			return "", errors.New(stderr.String())
 		} else {
-			return nil, err
+			return "", err
 		}
 	}
 
 	// Write output to file.
 	if err := ioutil.WriteFile(jsonName, []byte(out.String()), os.ModePerm); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// Check if file exists.
 	if !fs.FileExists(jsonName) {
-		return nil, fmt.Errorf("convert: %s could not be created, check configuration", jsonName)
+		return "", fmt.Errorf("exiftool: failed creating %s", filepath.Base(jsonName))
 	}
 
-	return NewMediaFile(jsonName)
+	return jsonName, err
 }
 
 // JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
-func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
+func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
 	size := strconv.Itoa(c.conf.JpegSize())
 
-	if mf.IsRaw() {
+	if f.IsRaw() {
 		if c.conf.SipsBin() != "" {
-			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, mf.FileName())
-		} else if c.conf.DarktableBin() != "" && mf.Extension() != ".cr3" {
+			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
+		} else if c.conf.DarktableBin() != "" && f.Extension() != ".cr3" {
 			var args []string
 
 			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
 			if c.conf.DarktablePresets() {
 				useMutex = true
-				args = []string{"--width", size, "--height", size, mf.FileName()}
+				args = []string{"--width", size, "--height", size, f.FileName()}
 			} else {
 				useMutex = false
-				args = []string{"--apply-custom-presets", "false", "--width", size, "--height", size, mf.FileName()}
+				args = []string{"--apply-custom-presets", "false", "--width", size, "--height", size, f.FileName()}
 			}
 
 			if xmpName != "" {
@@ -193,34 +193,38 @@ func (c *Convert) JpegConvertCommand(mf *MediaFile, jpegName string, xmpName str
 			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
-			args := []string{"-o", jpegName, "-p", profile, "-d", jpegQuality, "-js3", "-b8", "-c", mf.FileName()}
+			args := []string{"-o", jpegName, "-p", profile, "-d", jpegQuality, "-js3", "-b8", "-c", f.FileName()}
 
 			result = exec.Command(c.conf.RawtherapeeBin(), args...)
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(mf.BaseName()))
+			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(f.BaseName()))
 		}
-	} else if mf.IsVideo() {
-		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", mf.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
-	} else if mf.IsHEIF() {
-		result = exec.Command(c.conf.HeifConvertBin(), mf.FileName(), jpegName)
+	} else if f.IsVideo() {
+		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
+	} else if f.IsHEIF() {
+		result = exec.Command(c.conf.HeifConvertBin(), f.FileName(), jpegName)
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", mf.FileType(), txt.Quote(mf.BaseName()))
+		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
 	}
 
 	return result, useMutex, nil
 }
 
 // ToJpeg converts a single image file to JPEG if possible.
-func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
-	if !image.Exists() {
-		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", image.RelName(c.conf.OriginalsPath()))
+func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
+	if f == nil {
+		return nil, fmt.Errorf("convert: file is nil (found a bug?)")
 	}
 
-	if image.IsJpeg() {
-		return image, nil
+	if !f.Exists() {
+		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", f.RelName(c.conf.OriginalsPath()))
 	}
 
-	jpegName := fs.FormatJpeg.FindFirst(image.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+	if f.IsJpeg() {
+		return f, nil
+	}
+
+	jpegName := fs.FormatJpeg.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(jpegName)
 
@@ -229,25 +233,25 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", image.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", f.RelName(c.conf.OriginalsPath()))
 	}
 
-	jpegName = fs.FileName(image.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
-	fileName := image.RelName(c.conf.OriginalsPath())
+	jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
+	fileName := f.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jpegName))
 
-	xmpName := fs.FormatXMP.Find(image.FileName(), false)
+	xmpName := fs.FormatXMP.Find(f.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
-		"fileType": image.FileType(),
+		"fileType": f.FileType(),
 		"fileName": fileName,
 		"baseName": filepath.Base(fileName),
 		"xmpName":  filepath.Base(xmpName),
 	})
 
-	if image.IsImageOther() {
-		_, err = thumb.Jpeg(image.FileName(), jpegName)
+	if f.IsImageOther() {
+		_, err = thumb.Jpeg(f.FileName(), jpegName)
 
 		if err != nil {
 			return nil, err
@@ -256,7 +260,7 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 		return NewMediaFile(jpegName)
 	}
 
-	cmd, useMutex, err := c.JpegConvertCommand(image, jpegName, xmpName)
+	cmd, useMutex, err := c.JpegConvertCommand(f, jpegName, xmpName)
 
 	if err != nil {
 		return nil, err
@@ -292,31 +296,35 @@ func (c *Convert) ToJpeg(image *MediaFile) (*MediaFile, error) {
 }
 
 // AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
-func (c *Convert) AvcConvertCommand(mf *MediaFile, avcName string) (result *exec.Cmd, useMutex bool, err error) {
-	if mf.IsVideo() {
+func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.Cmd, useMutex bool, err error) {
+	if f.IsVideo() {
 		// Don't transcode more than one video at the same time.
 		useMutex = true
 		result = exec.Command(
 			c.conf.FFmpegBin(),
-			"-i", mf.FileName(),
+			"-i", f.FileName(),
 			"-c:v", "libx264",
 			"-f", "mp4",
 			avcName,
 		)
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", mf.FileType(), txt.Quote(mf.BaseName()))
+		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
 	}
 
 	return result, useMutex, nil
 }
 
 // ToAvc converts a single video file to MPEG-4 AVC.
-func (c *Convert) ToAvc(video *MediaFile) (*MediaFile, error) {
-	if !video.Exists() {
-		return nil, fmt.Errorf("convert: can not convert to avc1, file does not exist (%s)", video.RelName(c.conf.OriginalsPath()))
+func (c *Convert) ToAvc(f *MediaFile) (*MediaFile, error) {
+	if f == nil {
+		return nil, fmt.Errorf("convert: file is nil (found a bug?)")
 	}
 
-	avcName := fs.FormatAvc.FindFirst(video.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+	if !f.Exists() {
+		return nil, fmt.Errorf("convert: can not convert to avc1, file does not exist (%s)", f.RelName(c.conf.OriginalsPath()))
+	}
+
+	avcName := fs.FormatAvc.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
 
 	mediaFile, err := NewMediaFile(avcName)
 
@@ -325,22 +333,22 @@ func (c *Convert) ToAvc(video *MediaFile) (*MediaFile, error) {
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", video.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", f.RelName(c.conf.OriginalsPath()))
 	}
 
-	avcName = fs.FileName(video.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
-	fileName := video.RelName(c.conf.OriginalsPath())
+	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
+	fileName := f.RelName(c.conf.OriginalsPath())
 
 	log.Debugf("convert: %s -> %s", fileName, filepath.Base(avcName))
 
 	event.Publish("index.converting", event.Data{
-		"fileType": video.FileType(),
+		"fileType": f.FileType(),
 		"fileName": fileName,
 		"baseName": filepath.Base(fileName),
 		"xmpName":  "",
 	})
 
-	cmd, useMutex, err := c.AvcConvertCommand(video, avcName)
+	cmd, useMutex, err := c.AvcConvertCommand(f, avcName)
 
 	if err != nil {
 		log.Error(err)
