@@ -70,7 +70,7 @@ export default {
         'label': this.$gettext('Import'),
         'class': '',
         'path': '/library/import',
-        'icon': 'perm_media',
+        'icon': 'create_new_folder',
         'readonly': false,
         'demo': true,
       },

@@ -129,7 +129,7 @@
                   color="secondary-dark"
                   :label="$gettext('Originals')"
                   :hint="$gettext('Browse indexed files and folders in Library.')"
-                  prepend-icon="insert_drive_file"
+                  prepend-icon="snippet_folder"
                   persistent-hint
                   @change="onChange"
               >
@@ -144,7 +144,7 @@
                   color="secondary-dark"
                   :label="$gettext('Moments')"
                   :hint="$gettext('Let PhotoPrism create albums from past events.')"
-                  prepend-icon="star"
+                  prepend-icon="explore"
                   persistent-hint
                   @change="onChange"
               >
@@ -189,7 +189,7 @@
                   color="secondary-dark"
                   :label="$gettext('Import')"
                   :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
-                  prepend-icon="perm_media"
+                  prepend-icon="create_new_folder"
                   persistent-hint
                   @change="onChange"
               >
