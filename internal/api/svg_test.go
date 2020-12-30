@@ -61,7 +61,7 @@ func TestGetSvg(t *testing.T) {
 		t.Log(conf)
 		GetSvg(router)
 		r := PerformRequest(app, "GET", "/api/v1/svg/folder")
-		assert.Equal(t, albumIconSvg, r.Body.Bytes())
+		assert.Equal(t, folderIconSvg, r.Body.Bytes())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("broken", func(t *testing.T) {

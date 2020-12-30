@@ -13,6 +13,7 @@ Features:
   Private: true
   Review: true
   Files: true
+  Folders: true
   Moments: true
   Estimates: true
   Labels: true
