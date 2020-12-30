@@ -38,6 +38,7 @@ type FeatureSettings struct {
 	Private   bool `json:"private" yaml:"Private"`
 	Review    bool `json:"review" yaml:"Review"`
 	Files     bool `json:"files" yaml:"Files"`
+	Folders   bool `json:"folders" yaml:"Folders"`
 	Moments   bool `json:"moments" yaml:"Moments"`
 	Estimates bool `json:"estimates" yaml:"Estimates"`
 	Labels    bool `json:"labels" yaml:"Labels"`
@@ -116,6 +117,7 @@ func NewSettings() *Settings {
 			Review:    true,
 			Private:   true,
 			Files:     true,
+			Folders:   true,
 			Moments:   true,
 			Estimates: true,
 			Labels:    true,

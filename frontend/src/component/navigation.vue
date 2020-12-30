@@ -200,20 +200,6 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
-          <v-list-tile-action :title="$gettext('Folders')">
-            <v-icon>folder</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Folders">Folders</translate>
-              <span v-show="config.count.folders > 0"
-                    class="nav-count">{{ config.count.folders }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
         <v-list-tile :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
           <v-list-tile-action :title="$gettext('Calendar')">
             <v-icon>date_range</v-icon>
@@ -287,6 +273,20 @@
               <translate key="Labels">Labels</translate>
               <span v-show="config.count.labels > 0"
                     class="nav-count">{{ config.count.labels }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile v-show="$config.feature('folders')" :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
+          <v-list-tile-action :title="$gettext('Folders')">
+            <v-icon>folder</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Folders">Folders</translate>
+              <span v-show="config.count.folders > 0"
+                    class="nav-count">{{ config.count.folders }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
