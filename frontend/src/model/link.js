@@ -32,6 +32,8 @@ import Model from "./model";
 import { DateTime } from "luxon";
 import { $gettext } from "common/vm";
 
+const c = window.__CONFIG__;
+
 export default class Link extends Model {
   getDefaults() {
     return {
@@ -55,7 +57,18 @@ export default class Link extends Model {
     return this.Token.toLowerCase().trim();
   }
 
+  siteUrl() {
+    let siteUrl = c.siteUrl ? c.siteUrl : window.location.origin;
+
+    if (siteUrl.slice(-1) !== "/") {
+      siteUrl = siteUrl + "/";
+    }
+
+    return siteUrl;
+  }
+
   url() {
+    const siteUrl = this.siteUrl();
     let token = this.getToken();
 
     if (!token) {
@@ -63,10 +76,10 @@ export default class Link extends Model {
     }
 
     if (this.hasSlug()) {
-      return `${window.location.origin}/s/${token}/${this.Slug}`;
+      return `${siteUrl}s/${token}/${this.Slug}`;
     }
 
-    return `${window.location.origin}/s/${token}/${this.Share}`;
+    return `${siteUrl}s/${token}/${this.Share}`;
   }
 
   caption() {

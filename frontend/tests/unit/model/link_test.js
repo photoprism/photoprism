@@ -27,11 +27,11 @@ describe("model/link", () => {
         const values = {UID: 5, Token: "1234hhtbbt", Slug: "friends", Share: "family"};
         const link = new Link(values);
         const result = link.url();
-        assert.equal(result, "http://localhost:9876/s/1234hhtbbt/friends");
+        assert.equal(result, "http://localhost:2342/s/1234hhtbbt/friends");
         const values2 = {UID: 5, Token: "", Share: "family"};
         const link2 = new Link(values2);
         const result2 = link2.url();
-        assert.equal(result2, "http://localhost:9876/s/…/family");
+        assert.equal(result2, "http://localhost:2342/s/…/family");
     });
 
     it("should get link caption",  () => {
