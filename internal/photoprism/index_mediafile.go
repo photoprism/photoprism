@@ -338,55 +338,36 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 	case m.IsXMP():
-		// TODO: Proof-of-concept for indexing XMP sidecar files
-		if data, err := meta.XMP(m.FileName()); err == nil {
-			photo.SetTitle(data.Title, entity.SrcXmp)
-			photo.SetDescription(data.Description, entity.SrcXmp)
+		if metaData, err := meta.XMP(m.FileName()); err == nil {
+			// Update basic metadata.
+			photo.SetTitle(metaData.Title, entity.SrcXmp)
+			photo.SetDescription(metaData.Description, entity.SrcXmp)
+			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcXmp)
+			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcXmp)
 
-			if details.NoNotes() && data.Comment != "" {
-				details.Notes = data.Comment
-			}
-
-			if details.NoArtist() && data.Artist != "" {
-				details.Artist = data.Artist
-			}
-
-			if details.NoCopyright() && data.Copyright != "" {
-				details.Copyright = data.Copyright
-			}
+			// Update metadata details.
+			details.SetKeywords(metaData.Keywords, entity.SrcXmp)
+			details.SetNotes(metaData.Notes, entity.SrcXmp)
+			details.SetSubject(metaData.Subject, entity.SrcXmp)
+			details.SetArtist(metaData.Artist, entity.SrcXmp)
+			details.SetCopyright(metaData.Copyright, entity.SrcXmp)
 		} else {
 			file.FileError = err.Error()
 		}
 	case m.IsRaw(), m.IsHEIF(), m.IsImageOther():
 		if metaData := m.MetaData(); metaData.Error == nil {
+			// Update basic metadata.
 			photo.SetTitle(metaData.Title, entity.SrcMeta)
 			photo.SetDescription(metaData.Description, entity.SrcMeta)
 			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
+			photo.SetCameraSerial(metaData.CameraSerial)
 
-			if details.NoNotes() {
-				details.Notes = metaData.Comment
-			}
-
-			if details.NoSubject() {
-				details.Subject = metaData.Subject
-			}
-
-			if details.NoKeywords() {
-				details.Keywords = metaData.Keywords
-			}
-
-			if details.NoArtist() && metaData.Artist != "" {
-				details.Artist = metaData.Artist
-			}
-
-			if details.NoArtist() && metaData.CameraOwner != "" {
-				details.Artist = metaData.CameraOwner
-			}
-
-			if photo.NoCameraSerial() {
-				photo.CameraSerial = metaData.CameraSerial
-			}
+			// Update metadata details.
+			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetNotes(metaData.Notes, entity.SrcMeta)
+			details.SetSubject(metaData.Subject, entity.SrcMeta)
+			details.SetArtist(metaData.Artist, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -452,30 +433,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetDescription(metaData.Description, entity.SrcMeta)
 			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
+			photo.SetCameraSerial(metaData.CameraSerial)
 
-			if details.NoNotes() {
-				details.Notes = metaData.Comment
-			}
-
-			if details.NoSubject() {
-				details.Subject = metaData.Subject
-			}
-
-			if details.NoKeywords() {
-				details.Keywords = metaData.Keywords
-			}
-
-			if details.NoArtist() && metaData.Artist != "" {
-				details.Artist = metaData.Artist
-			}
-
-			if details.NoArtist() && metaData.CameraOwner != "" {
-				details.Artist = metaData.CameraOwner
-			}
-
-			if photo.NoCameraSerial() {
-				photo.CameraSerial = metaData.CameraSerial
-			}
+			// Update metadata details.
+			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetNotes(metaData.Notes, entity.SrcMeta)
+			details.SetSubject(metaData.Subject, entity.SrcMeta)
+			details.SetArtist(metaData.Artist, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -574,34 +538,18 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		// read metadata from embedded Exif and JSON sidecar file (if exists)
 		if metaData := m.MetaData(); metaData.Error == nil {
+			// Update basic metadata.
 			photo.SetTitle(metaData.Title, entity.SrcMeta)
 			photo.SetDescription(metaData.Description, entity.SrcMeta)
 			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
+			photo.SetCameraSerial(metaData.CameraSerial)
 
-			if details.NoNotes() {
-				details.Notes = metaData.Comment
-			}
-
-			if details.NoSubject() {
-				details.Subject = metaData.Subject
-			}
-
-			if details.NoKeywords() {
-				details.Keywords = metaData.Keywords
-			}
-
-			if details.NoArtist() && metaData.Artist != "" {
-				details.Artist = metaData.Artist
-			}
-
-			if details.NoArtist() && metaData.CameraOwner != "" {
-				details.Artist = metaData.CameraOwner
-			}
-
-			if photo.NoCameraSerial() {
-				photo.CameraSerial = metaData.CameraSerial
-			}
+			// Update metadata details.
+			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetNotes(metaData.Notes, entity.SrcMeta)
+			details.SetSubject(metaData.Subject, entity.SrcMeta)
+			details.SetArtist(metaData.Artist, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))

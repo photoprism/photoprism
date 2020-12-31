@@ -1032,3 +1032,10 @@ func (m *Photo) PrimaryFile() (File, error) {
 func (m *Photo) MapKey() string {
 	return MapKey(m.TakenAt, m.CellID)
 }
+
+// SetCameraSerial updates the camera serial number.
+func (m *Photo) SetCameraSerial(s string) {
+	if val := txt.Clip(s, txt.ClipVarchar); m.NoCameraSerial() && val != "" {
+		m.CameraSerial = val
+	}
+}

@@ -97,11 +97,17 @@ export class Photo extends RestModel {
       Day: DayUnknown,
       Details: {
         Keywords: "",
+        KeywordsSrc: "",
         Notes: "",
+        NotesSrc: "",
         Subject: "",
+        SubjectSrc: "",
         Artist: "",
+        ArtistSrc: "",
         Copyright: "",
+        CopyrightSrc: "",
         License: "",
+        LicenseSrc: "",
       },
       Files: [],
       Labels: [],
@@ -656,6 +662,33 @@ export class Photo extends RestModel {
       values.Exposure
     ) {
       values.CameraSrc = SrcManual;
+    }
+
+    // Update details source if needed.
+    if (values.Details) {
+      if (values.Details.Keywords) {
+        values.Details.KeywordsSrc = SrcManual;
+      }
+
+      if (values.Details.Notes) {
+        values.Details.NotesSrc = SrcManual;
+      }
+
+      if (values.Details.Subject) {
+        values.Details.SubjectSrc = SrcManual;
+      }
+
+      if (values.Details.Artist) {
+        values.Details.ArtistSrc = SrcManual;
+      }
+
+      if (values.Details.Copyright) {
+        values.Details.CopyrightSrc = SrcManual;
+      }
+
+      if (values.Details.License) {
+        values.Details.LicenseSrc = SrcManual;
+      }
     }
 
     return Api.put(this.getEntityResource(), values).then((resp) => {
