@@ -1,6 +1,6 @@
 <template>
-  <v-dialog fullscreen hide-overlay scrollable lazy
-            v-model="show" persistent class="p-upload-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" fullscreen hide-overlay scrollable
+            lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark @click.stop="cancel">
@@ -11,14 +11,14 @@
         </v-toolbar-title>
       </v-toolbar>
       <v-container grid-list-xs text-xs-left fluid>
-        <v-form ref="form" class="p-photo-upload" lazy-validation @submit.prevent="submit" dense>
-          <input type="file" ref="upload" multiple @change.stop="upload()" class="d-none">
+        <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
+          <input ref="upload" type="file" multiple class="d-none" @change.stop="upload()">
 
           <v-container fluid>
             <p class="subheading">
-              <v-combobox v-if="total === 0" flat solo hide-details chips deletable-chips
-                          multiple color="secondary-dark" class="my-0"
-                          v-model="selectedAlbums"
+              <v-combobox v-if="total === 0" v-model="selectedAlbums" flat solo hide-details chips
+                          deletable-chips multiple color="secondary-dark"
+                          class="my-0"
                           :items="albums"
                           item-text="Title"
                           item-value="UID"
@@ -26,7 +26,7 @@
                           :label="$gettext('Select albums or create a new one')"
                           return-object
               >
-                <template v-slot:no-data>
+                <template #no-data>
                   <v-list-tile>
                     <v-list-tile-content>
                       <v-list-tile-title>
@@ -36,7 +36,7 @@
                     </v-list-tile-content>
                   </v-list-tile>
                 </template>
-                <template v-slot:selection="data">
+                <template #selection="data">
                   <v-chip
                       :key="JSON.stringify(data.item)"
                       :selected="data.selected"
@@ -57,15 +57,15 @@
               <span v-else-if="completed === 100"><translate key="Done">Done.</translate></span>
             </p>
 
-            <v-progress-linear color="secondary-dark" v-model="completed"
+            <v-progress-linear v-model="completed" color="secondary-dark"
                                :indeterminate="indexing"></v-progress-linear>
 
-            <p class="body-1" v-if="safe">
+            <p v-if="safe" class="body-1">
               <translate>Please don't upload photos containing offensive content.</translate>
               <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
-            <p class="body-1" v-if="review">
+            <p v-if="review" class="body-1">
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
@@ -92,7 +92,7 @@ import Notify from "common/notify";
 import Album from "model/album";
 
 export default {
-  name: 'p-tab-upload',
+  name: 'PTabUpload',
   props: {
     show: Boolean,
   },
@@ -112,6 +112,14 @@ export default {
       started: 0,
       review: this.$config.feature("review"),
       safe: !this.$config.get("uploadNSFW"),
+    };
+  },
+  watch: {
+    show: function () {
+      this.reset();
+      this.review = this.$config.feature("review");
+      this.safe = !this.$config.get("uploadNSFW");
+      this.findAlbums("");
     }
   },
   methods: {
@@ -192,9 +200,9 @@ export default {
       if (this.selectedAlbums && this.selectedAlbums.length > 0) {
         this.selectedAlbums.forEach((a) => {
           if (typeof a === "string") {
-            addToAlbums.push(a)
+            addToAlbums.push(a);
           } else if (a instanceof Album && a.UID) {
-            addToAlbums.push(a.UID)
+            addToAlbums.push(a.UID);
           }
         });
       }
@@ -209,17 +217,17 @@ export default {
           formData.append('files', file);
 
           await Api.post('upload/' + ctx.started,
-              formData,
-              {
-                headers: {
-                  'Content-Type': 'multipart/form-data'
-                }
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
               }
+            }
           ).then(() => {
             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
           }).catch(() => {
             ctx.completed = Math.round((ctx.current / ctx.total) * 100);
-          })
+          });
         }
       }
 
@@ -240,14 +248,6 @@ export default {
         });
       });
     },
-  },
-  watch: {
-    show: function () {
-      this.reset();
-      this.review = this.$config.feature("review");
-      this.safe = !this.$config.get("uploadNSFW");
-      this.findAlbums("");
-    }
   },
 };
 </script>
