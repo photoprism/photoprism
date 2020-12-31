@@ -15,7 +15,11 @@ type Saved struct {
 type UIDs []string
 
 func (list UIDs) String() string {
-	return strings.Join(list, ",")
+	return list.Join(",")
+}
+
+func (list UIDs) Join(s string) string {
+	return strings.Join(list, s)
 }
 
 type Data struct {

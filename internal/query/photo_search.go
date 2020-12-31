@@ -58,7 +58,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {
-		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, OrSep))
+		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, Or))
 		s = s.Order("files.file_primary DESC")
 
 		if result := s.Scan(&results); result.Error != nil {
@@ -80,7 +80,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	var labelIds []uint
 
 	if f.Label != "" {
-		if err := Db().Where(AnySlug("label_slug", f.Label, OrSep)).Or(AnySlug("custom_slug", f.Label, OrSep)).Find(&labels).Error; len(labels) == 0 || err != nil {
+		if err := Db().Where(AnySlug("label_slug", f.Label, Or)).Or(AnySlug("custom_slug", f.Label, Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Errorf("search: labels %s not found", txt.Quote(f.Label))
 			return results, 0, fmt.Errorf("%s not found", txt.Quote(f.Label))
 		} else {
@@ -182,7 +182,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), OrSep))
+		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), Or))
 	}
 
 	if f.Favorite {
@@ -204,21 +204,21 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Country != "" {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), OrSep))
+		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), Or))
 	}
 
 	if f.State != "" {
-		s = s.Where("places.place_state IN (?)", strings.Split(f.State, OrSep))
+		s = s.Where("places.place_state IN (?)", strings.Split(f.State, Or))
 	}
 
 	if f.Category != "" {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
-			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), OrSep))
+			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), Or))
 	}
 
 	// Filter by media type.
 	if f.Type != "" {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), OrSep))
+		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), Or))
 	}
 
 	if f.Video {
@@ -236,41 +236,41 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
-		} else if strings.Contains(p, OrSep) {
-			s = s.Where("photos.photo_path IN (?)", strings.Split(p, OrSep))
+		} else if strings.Contains(p, Or) {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, Or))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}
 	}
 
-	if strings.Contains(f.Name, OrSep) {
-		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, OrSep))
+	if strings.Contains(f.Name, Or) {
+		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, Or))
 	} else if f.Name != "" {
 		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
 	}
 
-	if strings.Contains(f.Filename, OrSep) {
-		s = s.Where("files.file_name IN (?)", strings.Split(f.Filename, OrSep))
+	if strings.Contains(f.Filename, Or) {
+		s = s.Where("files.file_name IN (?)", strings.Split(f.Filename, Or))
 	} else if f.Filename != "" {
 		s = s.Where("files.file_name LIKE ?", strings.ReplaceAll(f.Filename, "*", "%"))
 	}
 
-	if strings.Contains(f.Original, OrSep) {
-		s = s.Where("photos.original_name IN (?)", strings.Split(f.Original, OrSep))
+	if strings.Contains(f.Original, Or) {
+		s = s.Where("photos.original_name IN (?)", strings.Split(f.Original, Or))
 	} else if f.Original != "" {
 		s = s.Where("photos.original_name LIKE ?", strings.ReplaceAll(f.Original, "*", "%"))
 	}
 
-	if strings.Contains(f.Title, OrSep) {
-		s = s.Where("photos.photo_title IN (?)", strings.Split(strings.ToLower(f.Title), OrSep))
+	if strings.Contains(f.Title, Or) {
+		s = s.Where("photos.photo_title IN (?)", strings.Split(strings.ToLower(f.Title), Or))
 	} else if f.Title != "" {
 		s = s.Where("photos.photo_title LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
 	}
 
-	if strings.Contains(f.Hash, OrSep) {
-		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), OrSep))
+	if strings.Contains(f.Hash, Or) {
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), Or))
 	} else if f.Hash != "" {
-		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), OrSep))
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), Or))
 	}
 
 	if f.Portrait {
