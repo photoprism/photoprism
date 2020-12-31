@@ -132,7 +132,7 @@
 
         <v-list-tile v-if="isMini" to="/albums" class="nav-albums" @click.stop="">
           <v-list-tile-action :title="$gettext('Albums')">
-            <v-icon>bookmarks</v-icon>
+            <v-icon>bookmark</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
@@ -142,7 +142,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini" prepend-icon="bookmarks" no-action>
+        <v-list-group v-if="!isMini" prepend-icon="bookmark" no-action>
           <v-list-tile slot="activator" to="/albums" class="nav-albums" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
