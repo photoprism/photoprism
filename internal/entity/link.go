@@ -168,7 +168,7 @@ func FindLinks(token, share string) (result Links) {
 		}
 	}
 
-	if err := q.Find(&result).Error; err != nil {
+	if err := q.Order("modified_at DESC").Find(&result).Error; err != nil {
 		log.Errorf("link: %s (not found)", err)
 	}
 
