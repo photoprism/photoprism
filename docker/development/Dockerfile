@@ -80,7 +80,7 @@ RUN sh -c "echo 'deb http://download.opensuse.org/repositories/home:/pmdpalma:/U
 ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
 ENV TF_CPP_MIN_LOG_LEVEL 0
 RUN curl -L \
-   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-cpu-1.15.2.tar.gz" | \
+   "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-2.3.1.tar.gz" | \
    tar -C "/usr" -xz
 RUN ldconfig
 

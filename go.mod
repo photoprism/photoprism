@@ -50,7 +50,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1
 	github.com/studio-b12/gowebdav v0.0.0-20200929080739-bdacfab94796
-	github.com/tensorflow/tensorflow v1.15.2
+	github.com/tensorflow/tensorflow v2.1.0+incompatible
 	github.com/tidwall/gjson v1.6.4
 	github.com/tidwall/match v1.0.2 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6

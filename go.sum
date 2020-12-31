@@ -279,6 +279,12 @@ github.com/studio-b12/gowebdav v0.0.0-20200929080739-bdacfab94796 h1:vkok9HUaplV
 github.com/studio-b12/gowebdav v0.0.0-20200929080739-bdacfab94796/go.mod h1:gCcfDlA1Y7GqOaeEKw5l9dOGx1VLdc/HuQSlQAaZ30s=
 github.com/tensorflow/tensorflow v1.15.2 h1:7/f/A664Tml/nRJg04+p3StcrsT53mkcvmxYHXI21Qo=
 github.com/tensorflow/tensorflow v1.15.2/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
+github.com/tensorflow/tensorflow v2.1.0+incompatible h1:piL4AzfPuv67+gbsKo2IhIecCe4ILpN0294O8ZrxneI=
+github.com/tensorflow/tensorflow v2.1.0+incompatible/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
+github.com/tensorflow/tensorflow v2.3.1+incompatible h1:44Q8jLdwktDbzAaP6QuRWFl8oAk3a6DE15CJ7t5eGD4=
+github.com/tensorflow/tensorflow v2.3.1+incompatible/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
+github.com/tensorflow/tensorflow v2.4.0+incompatible h1:ctP9NUX0hXaNw0TMsCfgLguNoy9wIaKkw02LJFtqnQc=
+github.com/tensorflow/tensorflow v2.4.0+incompatible/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
 github.com/tidwall/gjson v1.6.3 h1:aHoiiem0dr7GHkW001T1SMTJ7X5PvyekH5WX0whWGnI=
 github.com/tidwall/gjson v1.6.3/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
 github.com/tidwall/gjson v1.6.4 h1:JKsCsJqRVFz8eYCsQ5E/ANRbK6CanAtA9IUvGsXklyo=
