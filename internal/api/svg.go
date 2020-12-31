@@ -21,22 +21,9 @@ var fileIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" vi
 var videoIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 <path d="M0 0h24v24H0z" fill="none"/><path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg>`)
 
-var albumIconSvg = []byte(`<svg id="f394fb39-4024-46e8-9a68-3f5e53f52bfd" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 0 276.76 276.76">
-    <defs>
-        <style>
-            .a8bd947d-a1f8-4a14-8069-c9663505e4b1{fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b);}.a4ee1f07-8fee-4200-835a-e030a32bca90{fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:5px;}
-        </style>
-        <linearGradient id="b905e2c4-4772-4914-b70f-44b4d19aca4b" x1="45.04" y1="231.72" x2="231.72" y2="45.04"
-                        gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#fff"/>
-            <stop offset="0" stop-color="#c2fde4"/>
-            <stop offset="1" stop-color="#cdc6e9"/>
-        </linearGradient>
-    </defs>
-    <circle class="a8bd947d-a1f8-4a14-8069-c9663505e4b1" cx="138.38" cy="138.38" r="132"/>
-    <path id="bfa29dbe-bd65-4058-95bb-bdb844b1d3b1" data-name="Logo Pfad" class="a4ee1f07-8fee-4200-835a-e030a32bca90"
-          d="M229.57,181.89l-4,24.19M47.29,182.88l14.81,14M157.86,59.23,62,196.69a.09.09,0,0,0,.07.15l163.41,9.37a.09.09,0,0,0,.09-.13L158,59.25A.1.1,0,0,0,157.86,59.23ZM138.12,45.94,47.18,182.69a.13.13,0,0,0,.11.19l182.18-.8a.12.12,0,0,0,.1-.19L138.33,45.94A.12.12,0,0,0,138.12,45.94Zm.11-.16L158,59.1"/>
+var albumIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 28 20" width="24">
+    <path d="M0 0h28v20H0z" fill="none"/>
+    <path d="M2 6H0v5h.01L0 2V6zm20-2h-8l-2-2H6c-1.1 0-1.99.9-1.99 2L4 16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM7 15l4.5-6 3.5 4.51 2.5-3.01L21 15H7z"/>
 </svg>`)
 
 var folderIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`)
