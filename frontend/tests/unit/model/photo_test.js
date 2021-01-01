@@ -147,7 +147,7 @@ describe("model/photo", () => {
         const values = {ID: 5, Title: "Crazy Cat", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC"};
         const photo = new Photo(values);
         const result = photo.localYearString();
-        assert.equal(result, "2020");
+        assert.equal(result, new Date().getFullYear().toString().padStart(4, "0"));
         const values2 = {ID: 5, Title: "Crazy Cat", TakenAtLocal: "2012-07-08T14:45:39Z", TakenAt: "2012-07-08T14:45:39Z", TimeZone: "UTC", Year: 2010};
         const photo2 = new Photo(values2);
         const result2 = photo2.localYearString();

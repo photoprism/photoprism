@@ -83,7 +83,7 @@ describe("model/album", () => {
         const values = {ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", CreatedAt: "2012-07-08T14:45:39Z", Day: 8, Month: -5, Year: 800};
         const album = new Album(values);
         const result = album.yearString();
-        assert.equal(result, "2020");
+        assert.equal(result, new Date().getFullYear().toString().padStart(4, "0"));
     });
 
     it("should get model name",  () => {
