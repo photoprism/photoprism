@@ -53,7 +53,7 @@ func NewTestOptions() *Options {
 	c := &Options{
 		Name:           "PhotoPrism",
 		Version:        "0.0.0",
-		Copyright:      "(c) 2018-2020 Michael Mayer",
+		Copyright:      "(c) 2018-2021 Michael Mayer",
 		Debug:          true,
 		Public:         true,
 		ReadOnly:       false,

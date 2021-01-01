@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
@@ -46,7 +46,7 @@ func main() {
 	app.Name = "PhotoPrism"
 	app.Usage = "Browse Your Life in Pictures"
 	app.Version = version
-	app.Copyright = "(c) 2018-2020 Michael Mayer <hello@photoprism.org>"
+	app.Copyright = "(c) 2018-2021 Michael Mayer <hello@photoprism.org>"
 	app.EnableBashCompletion = true
 	app.Flags = config.GlobalFlags
 
