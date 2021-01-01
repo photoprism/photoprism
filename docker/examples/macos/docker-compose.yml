@@ -8,15 +8,23 @@ version: '3.5'
 # Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
 # e.g. when running PhotoPrism on a public server outside your home network.
 #
+# ------------------------------------------------------------------
 # DOCKER COMPOSE COMMAND REFERENCE
-# ----------------------------------------------------------
-# Update:   docker-compose pull photoprism
-# Stop:     docker-compose stop photoprism
-# Start:    docker-compose up -d photoprism
-# Logs:     docker-compose logs --tail=20
-# Terminal: docker-compose exec photoprism bash
-# Help:     docker-compose exec photoprism photoprism help
-# Config:   docker-compose exec photoprism photoprism config
+# ------------------------------------------------------------------
+# Update   | docker-compose pull photoprism
+# Stop     | docker-compose stop photoprism
+# Start    | docker-compose up -d photoprism
+# Logs     | docker-compose logs --tail=25 -f
+# Terminal | docker-compose exec photoprism bash
+# Help     | docker-compose exec photoprism photoprism help
+# Config   | docker-compose exec photoprism photoprism config
+# Reset    | docker-compose exec photoprism photoprism reset
+# Backup   | docker-compose exec photoprism photoprism backup -a -i
+# Restore  | docker-compose exec photoprism photoprism restore -a -i
+# Index    | docker-compose exec photoprism photoprism index
+# Reindex  | docker-compose exec photoprism photoprism index -a
+# Import   | docker-compose exec photoprism photoprism import
+# -------------------------------------------------------------------
 
 services:
   photoprism:

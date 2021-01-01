@@ -25,13 +25,24 @@ Our repository on Docker Hub: https://hub.docker.com/r/photoprism/photoprism-arm
 
 ## Docker Compose Command Reference ##
 
-Update:   sudo docker-compose pull photoprism
-Stop:     sudo docker-compose stop photoprism
-Start:    sudo docker-compose up -d photoprism
-Logs:     sudo docker-compose logs --tail=20
-Terminal: sudo docker-compose exec photoprism bash
-Help:     sudo docker-compose exec photoprism photoprism help
-Config:   sudo docker-compose exec photoprism photoprism config
+Please prefix with `sudo` if your current user doesn't have permission
+to run Docker commands:
+
+| Action   | Command                                                   |
+|----------|-----------------------------------------------------------|
+| Update   | `docker-compose pull photoprism`                          |
+| Stop     | `docker-compose stop photoprism`                          |
+| Start    | `docker-compose up -d photoprism`                         |
+| Logs     | `docker-compose logs --tail=25 -f`                        |
+| Terminal | `docker-compose exec photoprism bash`                     |
+| Help     | `docker-compose exec photoprism photoprism help`          |
+| Config   | `docker-compose exec photoprism photoprism config`        |
+| Reset    | `docker-compose exec photoprism photoprism reset`         |
+| Backup   | `docker-compose exec photoprism photoprism backup -a -i`  |
+| Restore  | `docker-compose exec photoprism photoprism restore -a -i` |
+| Import   | `docker-compose exec photoprism photoprism import`        |
+| Index    | `docker-compose exec photoprism photoprism index`         |
+| Reindex  | `docker-compose exec photoprism photoprism index -a`      |
 
 ## System Requirements ##
 
