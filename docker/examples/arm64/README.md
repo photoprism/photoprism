@@ -6,33 +6,31 @@ Big thank you to [Guy Sheffer](https://github.com/guysoft) for
 
 Download our [docker-compose.yml](https://dl.photoprism.org/docker/arm64/docker-compose.yml) file
 (right click and *Save Link As...* or use `wget`) to a folder of your choice,
-change the configuration as needed, and run `sudo docker-compose up` to start PhotoPrism:
+change the configuration as needed, and run `docker-compose up` to start PhotoPrism:
 
 ```
 wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
-sudo docker-compose up
+sudo docker-compose up -d
 ```
 
-The default port 2342 and other configuration values may be changed as needed,
-see [Setup Using Docker Compose](https://docs.photoprism.org/getting-started/docker-compose/)
+Please always change PHOTOPRISM_ADMIN_PASSWORD so that PhotoPrism starts with a secure initial password.
+Never use "photoprism", or other easy-to-guess passwords, on a public server.
+
+See [Setup Using Docker Compose](https://docs.photoprism.org/getting-started/docker-compose/)
 and [Config Options](https://docs.photoprism.org/getting-started/config-options/) for details.
-
-Our repository on Docker Hub: https://hub.docker.com/r/photoprism/photoprism-arm64
-
-!!! attention
-    Please change PHOTOPRISM_ADMIN_PASSWORD so that PhotoPrism starts with a secure initial password. 
-    Never use "photoprism", or other easy-to-guess passwords, on a public server.
-
-## Docker Compose Command Reference ##
 
 All commands may have to be prefixed with `sudo` when not running as root.
 Note that this will change the home directory `~` to `/root` in your configuration.
 
+Our repository on Docker Hub: https://hub.docker.com/r/photoprism/photoprism-arm64
+
+## Docker Compose Command Reference ##
+
 | Action           | Command                                                   |
 |------------------|-----------------------------------------------------------|
-| Start            | `docker-compose up -d photoprism`                         |
-| Stop             | `docker-compose stop photoprism`                          |
-| Update           | `docker-compose pull photoprism`                          |
+| Start            | `docker-compose up -d`                                    |
+| Stop             | `docker-compose stop`                                     |
+| Update           | `docker-compose pull`                                     |
 | View Logs        | `docker-compose logs --tail=25 -f`                        |
 | Open Terminal    | `docker-compose exec photoprism bash`                     |
 | Show Help        | `docker-compose exec photoprism photoprism help`          |
