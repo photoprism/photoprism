@@ -295,13 +295,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "`SECRET` url token for file downloads",
+		Usage:  "optional static `SECRET` url token for file downloads",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "`SECRET` url token for preview images and video streaming",
-		Value:  "public",
+		Usage:  "optional static `SECRET` url token for preview images and video streaming",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{

@@ -304,3 +304,23 @@ func TestConfig_SiteTitle(t *testing.T) {
 	c.options.SiteTitle = "Cats"
 	assert.Equal(t, "Cats", c.SiteTitle())
 }
+
+func TestConfig_Serial(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result := c.Serial()
+
+	t.Logf("Serial: %s", result)
+
+	assert.NotEmpty(t, result)
+}
+
+func TestConfig_SerialChecksum(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result := c.SerialChecksum()
+
+	t.Logf("SerialChecksum: %s", result)
+
+	assert.NotEmpty(t, result)
+}

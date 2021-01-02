@@ -1,7 +1,9 @@
 package config
 
 import (
+	"encoding/hex"
 	"fmt"
+	"hash/crc32"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -141,6 +143,10 @@ func (c *Config) Init() error {
 
 // initStorage initializes storage directories with a random serial.
 func (c *Config) initStorage() error {
+	if c.serial != "" {
+		return nil
+	}
+
 	const serialName = "serial"
 
 	c.serial = rnd.PPID('z')
@@ -159,6 +165,28 @@ func (c *Config) initStorage() error {
 	}
 
 	return nil
+}
+
+// Serial returns the random storage serial.
+func (c *Config) Serial() string {
+	if err := c.initStorage(); err != nil {
+		log.Errorf("config: %s", err)
+	}
+
+	return c.serial
+}
+
+// SerialChecksum returns the CRC32 checksum of the storage serial.
+func (c *Config) SerialChecksum() string {
+	var result []byte
+
+	hash := crc32.New(crc32.MakeTable(crc32.Castagnoli))
+
+	if _, err := hash.Write([]byte(c.Serial())); err != nil {
+		log.Warnf("config: %s", err)
+	}
+
+	return hex.EncodeToString(hash.Sum(result))
 }
 
 // Name returns the application name ("PhotoPrism").
