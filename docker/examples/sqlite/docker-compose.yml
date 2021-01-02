@@ -11,9 +11,9 @@ version: '3.5'
 # ------------------------------------------------------------------
 # DOCKER COMPOSE COMMAND REFERENCE
 # ------------------------------------------------------------------
-# Update   | docker-compose pull photoprism
-# Stop     | docker-compose stop photoprism
 # Start    | docker-compose up -d photoprism
+# Stop     | docker-compose stop photoprism
+# Update   | docker-compose pull photoprism
 # Logs     | docker-compose logs --tail=25 -f
 # Terminal | docker-compose exec photoprism bash
 # Help     | docker-compose exec photoprism photoprism help
@@ -25,8 +25,8 @@ version: '3.5'
 # Reindex  | docker-compose exec photoprism photoprism index -a
 # Import   | docker-compose exec photoprism photoprism import
 # -------------------------------------------------------------------
-# Note: Prefix with "sudo" if the current user doesn't have
-#       permission to run Docker commands.
+# Note: All commands may have to be prefixed with "sudo" when not running as root.
+#       This will change the home directory "~" to "/root" in your configuration.
 
 services:
   photoprism:

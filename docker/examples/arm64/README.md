@@ -20,34 +20,38 @@ and [Config Options](https://docs.photoprism.org/getting-started/config-options/
 Our repository on Docker Hub: https://hub.docker.com/r/photoprism/photoprism-arm64
 
 !!! attention
-    Please change `PHOTOPRISM_ADMIN_PASSWORD` so that PhotoPrism starts with a secure **initial password**.
-    Never use `photoprism` or `insecure` as password if you're running it on a public server.
+    Please change PHOTOPRISM_ADMIN_PASSWORD so that PhotoPrism starts with a secure initial password. 
+    Never use "photoprism", or other easy-to-guess passwords, on a public server.
 
 ## Docker Compose Command Reference ##
 
-Please prefix with `sudo` if your current user doesn't have permission
-to run Docker commands:
+All commands may have to be prefixed with `sudo` when not running as root.
+Note that this will change the home directory `~` to `/root` in your configuration.
 
-| Action   | Command                                                   |
-|----------|-----------------------------------------------------------|
-| Update   | `docker-compose pull photoprism`                          |
-| Stop     | `docker-compose stop photoprism`                          |
-| Start    | `docker-compose up -d photoprism`                         |
-| Logs     | `docker-compose logs --tail=25 -f`                        |
-| Terminal | `docker-compose exec photoprism bash`                     |
-| Help     | `docker-compose exec photoprism photoprism help`          |
-| Config   | `docker-compose exec photoprism photoprism config`        |
-| Reset    | `docker-compose exec photoprism photoprism reset`         |
-| Backup   | `docker-compose exec photoprism photoprism backup -a -i`  |
-| Restore  | `docker-compose exec photoprism photoprism restore -a -i` |
-| Import   | `docker-compose exec photoprism photoprism import`        |
-| Index    | `docker-compose exec photoprism photoprism index`         |
-| Reindex  | `docker-compose exec photoprism photoprism index -a`      |
+| Action           | Command                                                   |
+|------------------|-----------------------------------------------------------|
+| Start            | `docker-compose up -d photoprism`                         |
+| Stop             | `docker-compose stop photoprism`                          |
+| Update           | `docker-compose pull photoprism`                          |
+| View Logs        | `docker-compose logs --tail=25 -f`                        |
+| Open Terminal    | `docker-compose exec photoprism bash`                     |
+| Show Help        | `docker-compose exec photoprism photoprism help`          |
+| Show Config      | `docker-compose exec photoprism photoprism config`        |
+| Reset Database   | `docker-compose exec photoprism photoprism reset`         |
+| Backup Database  | `docker-compose exec photoprism photoprism backup -a -i`  |
+| Restore Database | `docker-compose exec photoprism photoprism restore -a -i` |
+| Index Library    | `docker-compose exec photoprism photoprism index`         |
+| Complete Rescan  | `docker-compose exec photoprism photoprism index --all`   |
+| Import Files     | `docker-compose exec photoprism photoprism import`        |
+
+!!! info "Complete Rescan"
+    `photoprism index --all` will re-index all originals, including already indexed and unchanged files. This may be
+    necessary after upgrading, especially to new major versions.
 
 ## System Requirements ##
 
-You need to boot your Raspberry Pi 3/4 with the parameter `arm_64bit=1` in `config.txt` in order to use this image.
-Alternatively, you can run the image on [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi).
+You need to boot your Raspberry Pi 3 / 4 with the parameter `arm_64bit=1` in `config.txt` in order to use this image.
+Alternatively, you may run the image on [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi).
 It's a 64bit Ubuntu Server with Docker pre-installed.
 
 Indexing large photo and video collections significantly benefits from fast, local SSD storage and enough memory for caching.

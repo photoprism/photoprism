@@ -14,9 +14,9 @@ version: '3.5'
 # ------------------------------------------------------------------
 # DOCKER COMPOSE COMMAND REFERENCE
 # ------------------------------------------------------------------
-# Update   | docker-compose pull photoprism
-# Stop     | docker-compose stop photoprism
 # Start    | docker-compose up -d photoprism
+# Stop     | docker-compose stop photoprism
+# Update   | docker-compose pull photoprism
 # Logs     | docker-compose logs --tail=25 -f
 # Terminal | docker-compose exec photoprism bash
 # Help     | docker-compose exec photoprism photoprism help
