@@ -264,6 +264,16 @@ func TestConfig_WakeupInterval(t *testing.T) {
 	assert.Equal(t, time.Duration(900000000000), c.WakeupInterval())
 }
 
+func TestConfig_AutoIndex(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, time.Duration(0), c.AutoIndex())
+}
+
+func TestConfig_AutoImport(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, 2*time.Hour, c.AutoImport())
+}
+
 func TestConfig_GeoApi(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

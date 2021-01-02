@@ -103,6 +103,16 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "background worker wakeup interval in `SECONDS`",
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
 	},
+	cli.IntFlag{
+		Name:   "auto-index",
+		Usage:  "auto indexing safety delay in `SECONDS` (WebDAV)",
+		EnvVar: "PHOTOPRISM_AUTO_INDEX",
+	},
+	cli.IntFlag{
+		Name:   "auto-import",
+		Usage:  "auto importing safety delay in `SECONDS` (WebDAV)",
+		EnvVar: "PHOTOPRISM_AUTO_IMPORT",
+	},
 	cli.BoolFlag{
 		Name:   "disable-backups",
 		Usage:  "don't backup photo and album metadata to YAML files",

@@ -94,7 +94,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 			}
 
 			if jsonErr := m.ReadExifToolJson(); jsonErr != nil {
-				log.Debug(err)
+				log.Debug(jsonErr)
 			} else {
 				err = nil
 			}

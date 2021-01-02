@@ -52,6 +52,8 @@ type Options struct {
 	CachePath         string `yaml:"CachePath" json:"-" flag:"cache-path"`
 	Workers           int    `yaml:"Workers" json:"Workers" flag:"workers"`
 	WakeupInterval    int    `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
+	AutoIndex         int    `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
+	AutoImport        int    `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
 	DisableBackups    bool   `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
 	DisableWebDAV     bool   `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
 	DisableSettings   bool   `yaml:"DisableSettings" json:"-" flag:"disable-settings"`

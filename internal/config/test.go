@@ -4,6 +4,7 @@ import (
 	"flag"
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -60,6 +61,8 @@ func NewTestOptions() *Options {
 		DetectNSFW:     true,
 		UploadNSFW:     false,
 		AssetsPath:     assetsPath,
+		AutoIndex:      -1,
+		AutoImport:     7200,
 		StoragePath:    testDataPath,
 		CachePath:      testDataPath + "/cache",
 		OriginalsPath:  testDataPath + "/originals",
@@ -167,6 +170,8 @@ func CliTestContext() *cli.Context {
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
+	globalSet.Int("auto-index", config.AutoIndex, "doc")
+	globalSet.Int("auto-import", config.AutoImport, "doc")
 
 	app := cli.NewApp()
 	app.Version = "0.0.0"
@@ -185,6 +190,8 @@ func CliTestContext() *cli.Context {
 	LogError(c.Set("darktable-cli", config.DarktableBin))
 	LogError(c.Set("admin-password", config.AdminPassword))
 	LogError(c.Set("detect-nsfw", "true"))
+	LogError(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
+	LogError(c.Set("auto-import", strconv.Itoa(config.AutoImport)))
 
 	return c
 }

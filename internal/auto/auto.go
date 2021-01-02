@@ -1,6 +1,6 @@
 /*
 
-Package workers contains background workers for file sync & metadata optimization.
+Package workers contains auto indexing & importing workers.
 
 Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
@@ -29,79 +29,55 @@ Additional information can be found in our Developer Guide:
 https://docs.photoprism.org/developer-guide/
 
 */
-package workers
+package auto
 
 import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 var log = event.Log
+
 var stop = make(chan bool, 1)
 
-// Start runs PhotoPrism background workers every wakeup interval.
+// Wait starts waiting for indexing & importing opportunities.
 func Start(conf *config.Config) {
-	ticker := time.NewTicker(conf.WakeupInterval())
+	// Don't start ticker if both are disabled.
+	if conf.AutoIndex().Seconds() <= 0 && conf.AutoImport().Seconds() <= 0 {
+		return
+	}
+
+	ticker := time.NewTicker(time.Minute)
 
 	go func() {
 		for {
 			select {
 			case <-stop:
-				log.Info("shutting down workers")
 				ticker.Stop()
-				mutex.MetaWorker.Cancel()
-				mutex.ShareWorker.Cancel()
-				mutex.SyncWorker.Cancel()
 				return
 			case <-ticker.C:
-				StartMeta(conf)
-				StartShare(conf)
-				StartSync(conf)
+				if mustIndex(conf.AutoIndex()) {
+					log.Debugf("auto-index: starting")
+					ResetIndex()
+					if err := Index(); err != nil {
+						log.Errorf("auto-index: %s", err)
+					}
+				} else if mustImport(conf.AutoImport()) {
+					log.Debugf("auto-import: starting")
+					ResetImport()
+					if err := Import(); err != nil {
+						log.Errorf("auto-import: %s", err)
+					}
+				}
 			}
 		}
 	}()
 }
 
-// Stop shuts down all service workers.
+// Stop stops waiting for indexing & importing opportunities.
 func Stop() {
 	stop <- true
-}
-
-// StartMeta runs the metadata worker once.
-func StartMeta(conf *config.Config) {
-	if !mutex.WorkersBusy() {
-		go func() {
-			worker := NewMeta(conf)
-			if err := worker.Start(time.Minute); err != nil {
-				log.Warnf("metadata: %s", err)
-			}
-		}()
-	}
-}
-
-// StartShare runs the share worker once.
-func StartShare(conf *config.Config) {
-	if !mutex.ShareWorker.Busy() {
-		go func() {
-			worker := NewShare(conf)
-			if err := worker.Start(); err != nil {
-				log.Warnf("share: %s", err)
-			}
-		}()
-	}
-}
-
-// StartShare runs the sync worker once.
-func StartSync(conf *config.Config) {
-	if !mutex.SyncWorker.Busy() {
-		go func() {
-			worker := NewSync(conf)
-			if err := worker.Start(); err != nil {
-				log.Warnf("sync: %s", err)
-			}
-		}()
-	}
 }

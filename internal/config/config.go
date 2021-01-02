@@ -346,13 +346,35 @@ func (c *Config) Workers() int {
 	return 1
 }
 
-// WakeupInterval returns the background worker wakeup interval.
+// WakeupInterval returns the background worker wakeup interval duration.
 func (c *Config) WakeupInterval() time.Duration {
-	if c.options.WakeupInterval <= 0 {
+	if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 86400 {
 		return 15 * time.Minute
 	}
 
 	return time.Duration(c.options.WakeupInterval) * time.Second
+}
+
+// AutoIndex returns the auto indexing delay duration.
+func (c *Config) AutoIndex() time.Duration {
+	if c.options.AutoIndex < 0 {
+		return time.Duration(0)
+	} else if c.options.AutoIndex == 0 || c.options.AutoIndex > 86400 {
+		return c.WakeupInterval()
+	}
+
+	return time.Duration(c.options.AutoIndex) * time.Second
+}
+
+// AutoImport returns the auto importing delay duration.
+func (c *Config) AutoImport() time.Duration {
+	if c.options.AutoImport < 0 || c.ReadOnly() {
+		return time.Duration(0)
+	} else if c.options.AutoImport == 0 || c.options.AutoImport > 86400 {
+		return c.AutoIndex()
+	}
+
+	return time.Duration(c.options.AutoImport) * time.Second
 }
 
 // GeoApi returns the preferred geo coding api (none or places).
