@@ -1,9 +1,11 @@
 PhotoPrism for Raspberry Pi (64bit)
 ===================================
 
-Download https://dl.photoprism.org/docker/arm64/docker-compose.yml example config
-(right click and *Save Link As...* or use `wget`) to a folder of your choice,
-change the configuration as needed, and run `docker-compose up` to start PhotoPrism:
+To get started, simply download our example config
+
+  https://dl.photoprism.org/docker/arm64/docker-compose.yml
+
+to a folder of your choice, change it as needed, and run "docker-compose up":
 
   wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
   sudo docker-compose up -d
@@ -12,7 +14,7 @@ Please always change PHOTOPRISM_ADMIN_PASSWORD so that PhotoPrism starts with a 
 Never use "photoprism", or other easy-to-guess passwords, on a public server.
 A minimum length of 4 characters is required.
 
-For details, see:
+For more details, see:
   - https://docs.photoprism.org/getting-started/docker-compose/
   - https://docs.photoprism.org/getting-started/config-options/
 
