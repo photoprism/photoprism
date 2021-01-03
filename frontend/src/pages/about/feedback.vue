@@ -100,7 +100,7 @@ export default {
         UserName: "",
         UserEmail: "",
         UserAgent: navigator.userAgent,
-        User 
+        UserLocales: navigator.language,
       },
       rtl: this.$rtl,
     };
