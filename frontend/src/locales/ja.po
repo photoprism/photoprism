@@ -760,8 +760,8 @@ msgid ""
 "Exclude content marked as private from search results, shared albums, labels "
 "and places."
 msgstr ""
-"検索結果や共有されたアルバム、ラベル、場所からプライベートなコンテンツを除外"
-"します。"
+"検索結果や共有されたアルバム、ラベル、場所からプライベートな内容を除外しま"
+"す。"
 
 #: src/component/photo/toolbar.vue:140
 msgid "Expand Search"
@@ -1448,7 +1448,7 @@ msgstr "人"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr "あなたがリンクを共有した人だけが公開コンテンツを閲覧できます。"
+msgstr "あなたがリンクを共有した人だけが公開された内容を閲覧できます。"
 
 #: src/model/photo.js:708
 msgid "Photo"
@@ -1500,7 +1500,7 @@ msgstr "あなたの新しいパスワードを確認してください。"
 
 #: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
-msgstr "過激なコンテンツを含む写真をアップロードしないでください。"
+msgstr "過激な内容を含む写真をアップロードしないでください。"
 
 #: src/pages/login.vue:8
 msgid "Please enter your name and password:"
