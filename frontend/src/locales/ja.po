@@ -408,11 +408,11 @@ msgstr "選択済み"
 
 #: src/options/options.js:131
 msgid "Chinese Simplified"
-msgstr "中国語（簡体字）"
+msgstr "簡体中国語"
 
 #: src/options/options.js:136
 msgid "Chinese Traditional"
-msgstr "中国語（繁体字）"
+msgstr "繁体中国語"
 
 #: src/dialog/photo/files.vue:136
 msgid "Chroma"
