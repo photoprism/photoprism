@@ -575,31 +575,31 @@ msgstr "מידות"
 
 #: src/pages/settings/advanced.vue:142
 msgid "Disable Backups"
-msgstr "נטרל גיבויים"
+msgstr "השבת גיבויים"
 
 #: src/pages/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "נטרל את שרת WebDAV המובנה, אתחול נדרש."
+msgstr "השבת את שרת WebDAV המובנה, אתחול נדרש."
 
 #: src/pages/settings/advanced.vue:208
 msgid "Disable ExifTool"
-msgstr "נטרל ExifTool"
+msgstr "השבת את ExifTool"
 
 #: src/pages/settings/advanced.vue:186
 msgid "Disable Places"
-msgstr "נטרל מיקומים"
+msgstr "השבת מיקומים"
 
 #: src/pages/settings/advanced.vue:230
 msgid "Disable TensorFlow"
-msgstr "נטרל TensorFlow"
+msgstr "השבת את TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
 msgid "Disable WebDAV"
-msgstr "נטרל WebDAV"
+msgstr "השבת את WebDAV"
 
 #: src/dialog/account/edit.vue:71 src/dialog/account/edit.vue:116
 msgid "Disabled"
-msgstr "מנוטרל"
+msgstr "מושבת"
 
 #: src/pages/settings/advanced.vue:187
 msgid "Disables reverse geocoding and maps."
