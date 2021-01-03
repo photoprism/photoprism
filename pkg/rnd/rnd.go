@@ -2,7 +2,7 @@
 
 Package rnd provides random token generation and validation.
 
-Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published

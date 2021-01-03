@@ -230,8 +230,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len(password) < 6 {
-		return fmt.Errorf("new password for %s must be at least 6 characters", txt.Quote(m.UserName))
+	if len(password) < 4 {
+		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(m.UserName))
 	}
 
 	pw := NewPassword(m.UserUID, password)

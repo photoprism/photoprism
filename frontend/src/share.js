@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
@@ -109,7 +109,10 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.settings) && config.values.disable.settings) {
+  if (document.querySelector(".v-dialog--active.v-dialog--fullscreen")) {
+    // Disable back button in full-screen viewers and editors.
+    next(false);
+  } else if (to.matched.some((record) => record.meta.settings) && config.values.disable.settings) {
     next({ name: "home" });
   } else if (to.matched.some((record) => record.meta.admin)) {
     if (isPublic || session.isAdmin()) {

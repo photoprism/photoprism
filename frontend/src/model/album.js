@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
@@ -56,7 +56,7 @@ export class Album extends RestModel {
       Day: -1,
       Year: -1,
       Month: -1,
-      Favorite: true,
+      Favorite: false,
       Private: false,
       PhotoCount: 0,
       LinkCount: 0,

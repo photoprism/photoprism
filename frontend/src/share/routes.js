@@ -16,7 +16,7 @@ export default [
     path: "/s/:token",
     component: Albums,
     meta: { title: shareTitle, auth: true },
-    props: { view: "album", staticFilter: { type: "album" } },
+    props: { view: "album", staticFilter: { type: "" } },
   },
   {
     name: "album",

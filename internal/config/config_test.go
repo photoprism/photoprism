@@ -264,6 +264,16 @@ func TestConfig_WakeupInterval(t *testing.T) {
 	assert.Equal(t, time.Duration(900000000000), c.WakeupInterval())
 }
 
+func TestConfig_AutoIndex(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, time.Duration(0), c.AutoIndex())
+}
+
+func TestConfig_AutoImport(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, 2*time.Hour, c.AutoImport())
+}
+
 func TestConfig_GeoApi(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -303,4 +313,24 @@ func TestConfig_SiteTitle(t *testing.T) {
 	assert.Equal(t, "config.test", c.SiteTitle())
 	c.options.SiteTitle = "Cats"
 	assert.Equal(t, "Cats", c.SiteTitle())
+}
+
+func TestConfig_Serial(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result := c.Serial()
+
+	t.Logf("Serial: %s", result)
+
+	assert.NotEmpty(t, result)
+}
+
+func TestConfig_SerialChecksum(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	result := c.SerialChecksum()
+
+	t.Logf("SerialChecksum: %s", result)
+
+	assert.NotEmpty(t, result)
 }

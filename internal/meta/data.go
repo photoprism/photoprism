@@ -19,10 +19,10 @@ type Data struct {
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
 	Codec        string        `meta:"CompressorID,Compression,FileType"`
 	Title        string        `meta:"Title"`
-	Subject      string        `meta:"Subject,PersonInImage,ObjectName"`
+	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets"`
 	Keywords     string        `meta:"Keywords"`
-	Comment      string        `meta:"-"`
-	Artist       string        `meta:"Artist,Creator"`
+	Notes        string        `meta:"-"`
+	Artist       string        `meta:"Artist,Creator,OwnerName"`
 	Description  string        `meta:"Description"`
 	Copyright    string        `meta:"Rights,Copyright"`
 	Projection   string        `meta:"ProjectionType"`

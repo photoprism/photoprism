@@ -39,7 +39,7 @@ func Shares(router *gin.RouterGroup) {
 
 		links := entity.FindValidLinks(token, share)
 
-		if len(links) != 1 {
+		if len(links) < 1 {
 			log.Warn("share: invalid token or share")
 			c.Redirect(http.StatusTemporaryRedirect, "/")
 			return

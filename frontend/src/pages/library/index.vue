@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-index">
-    <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit" dense>
+    <v-form ref="form" class="p-photo-index" lazy-validation dense @submit.prevent="submit">
       <v-container fluid>
         <p class="subheading">
           <span v-if="fileName">{{ action }} {{ fileName }}…</span>
@@ -11,18 +11,18 @@
         </p>
 
         <v-autocomplete
-            @change="onChange"
-            @focus="onFocus"
+            v-model="settings.index.path"
             color="secondary-dark"
             class="my-3 input-index-folder"
-            hide-details hide-no-data flat solo
-            v-model="settings.index.path"
-            browser-autocomplete="off"
+            hide-details
+            hide-no-data flat solo browser-autocomplete="off"
             :items="dirs"
             :loading="loading"
             :disabled="busy || !ready"
             item-text="name"
             item-value="path"
+            @change="onChange"
+            @focus="onFocus"
         >
         </v-autocomplete>
 
@@ -34,15 +34,15 @@
         <v-layout wrap align-top class="pb-3">
           <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
             <v-checkbox
-                @change="onChange"
+                v-model="settings.index.rescan"
                 :disabled="busy || !ready"
                 class="ma-0 pa-0"
-                v-model="settings.index.rescan"
                 color="secondary-dark"
                 :label="$gettext('Complete Rescan')"
                 :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
                 prepend-icon="cached"
                 persistent-hint
+                @change="onChange"
             >
             </v-checkbox>
           </v-flex>
@@ -70,12 +70,12 @@
         </v-btn>
 
         <v-alert
+            v-if="config.count.hidden > 1"
             :value="true"
             color="error"
             icon="priority_high"
             class="mt-3"
             outline
-            v-if="config.count.hidden > 1"
         >
           <translate
               :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>
@@ -96,9 +96,9 @@ import Util from "common/util";
 import {Folder, RootOriginals} from "model/folder";
 
 export default {
-  name: 'p-tab-index',
+  name: 'PTabIndex',
   data() {
-    const root = {"path": "/", "name": this.$gettext("All originals")}
+    const root = {"path": "/", "name": this.$gettext("All originals")};
 
     return {
       ready: !this.$config.loading(),
@@ -115,7 +115,14 @@ export default {
       source: null,
       root: root,
       dirs: [root],
-    }
+    };
+  },
+  created() {
+    this.subscriptionId = Event.subscribe('index', this.handleEvent);
+    this.load();
+  },
+  destroyed() {
+    Event.unsubscribe(this.subscriptionId);
   },
   methods: {
     load() {
@@ -131,7 +138,7 @@ export default {
         }
 
         this.ready = true;
-      })
+      });
     },
     onChange() {
       this.settings.save();
@@ -189,7 +196,7 @@ export default {
 
         if (Axios.isCancel(e)) {
           // run in background
-          return
+          return;
         }
 
         Notify.error(ctx.$gettext("Indexing failed"));
@@ -259,16 +266,9 @@ export default {
 
           break;
         default:
-          console.log(data)
+          console.log(data);
       }
     },
-  },
-  created() {
-    this.subscriptionId = Event.subscribe('index', this.handleEvent);
-    this.load();
-  },
-  destroyed() {
-    Event.unsubscribe(this.subscriptionId);
   },
 };
 </script>

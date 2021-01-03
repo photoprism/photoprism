@@ -105,11 +105,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 			}
 
-			if f.NeedsJson() {
-				if jsonFile, err := imp.convert.ToJson(f); err != nil {
-					log.Errorf("import: %s in %s (create json sidecar)", err.Error(), txt.Quote(f.BaseName()))
+			if f.NeedsExifToolJson() {
+				if jsonName, err := imp.convert.ToJson(f); err != nil {
+					log.Errorf("import: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
 				} else {
-					log.Debugf("import: %s created", txt.Quote(jsonFile.BaseName()))
+					log.Debugf("import: %s created", filepath.Base(jsonName))
 				}
 			}
 
@@ -167,11 +167,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				if f.NeedsJson() {
-					if jsonFile, err := ind.convert.ToJson(f); err != nil {
-						log.Errorf("import: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+				if f.NeedsExifToolJson() {
+					if jsonName, err := imp.convert.ToJson(f); err != nil {
+						log.Errorf("import: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
 					} else {
-						log.Debugf("import: %s created", txt.Quote(jsonFile.BaseName()))
+						log.Debugf("import: %s created", filepath.Base(jsonName))
 					}
 				}
 

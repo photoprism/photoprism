@@ -7,7 +7,7 @@ ENV TF_CPP_MIN_LOG_LEVEL 2
 COPY /docker/demo/index.tmpl /photoprism/assets/templates
 
 # Download example photos
-RUN wget -qO- https://dl.photoprism.org/fixtures/demo.tar.gz | tar xvz -C /photoprism/originals
+RUN wget -qO- https://dl.photoprism.org/qa/demo.tar.gz | tar xvz -C /photoprism/originals
 
 # Configure PhotoPrism
 ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage

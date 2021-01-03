@@ -1887,7 +1887,7 @@ func TestMediaFile_JsonName(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		name := mediaFile.JsonName()
+		name := mediaFile.SidecarJsonName()
 		assert.True(t, strings.HasSuffix(name, "/assets/examples/blue-go-video.mp4.json"))
 	})
 }
@@ -2058,78 +2058,6 @@ func TestMediaFile_IsPlayableVideo(t *testing.T) {
 		}
 
 		assert.True(t, mediaFile.IsPlayableVideo())
-	})
-}
-
-func TestMediaFile_HasJson(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.False(t, mediaFile.HasJson())
-	})
-	t.Run("true", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.True(t, mediaFile.HasJson())
-	})
-	t.Run("true", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4.json")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.True(t, mediaFile.HasJson())
-	})
-}
-
-func TestMediaFile_NeedsJson(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.True(t, mediaFile.NeedsJson())
-	})
-	t.Run("true", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.False(t, mediaFile.NeedsJson())
-	})
-	t.Run("true", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4.json")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.False(t, mediaFile.NeedsJson())
 	})
 }
 

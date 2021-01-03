@@ -41,8 +41,8 @@ on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
 
 We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
-Indexing large photo and video collections significantly benefits from fast, 
-local SSD storage and enough memory for caching.
+Beyond these minimum requirements, the amount of RAM should match the number of cores.
+Indexing large photo and video collections significantly benefits from fast, local SSD storage.
 
 ## Roadmap ##
 

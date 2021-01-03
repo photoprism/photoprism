@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -46,11 +47,11 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		}
 	}
 
-	if f.NeedsJson() {
-		if jsonFile, err := ind.convert.ToJson(f); err != nil {
-			log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+	if f.NeedsExifToolJson() {
+		if jsonName, err := ind.convert.ToJson(f); err != nil {
+			log.Errorf("index: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
 		} else {
-			log.Debugf("index: %s created", txt.Quote(jsonFile.BaseName()))
+			log.Debugf("index: %s created", filepath.Base(jsonName))
 		}
 	}
 
@@ -102,11 +103,11 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			continue
 		}
 
-		if f.NeedsJson() {
-			if jsonFile, err := ind.convert.ToJson(f); err != nil {
-				log.Errorf("index: failed creating json sidecar for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+		if f.NeedsExifToolJson() {
+			if jsonName, err := ind.convert.ToJson(f); err != nil {
+				log.Errorf("index: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
 			} else {
-				log.Debugf("index: %s created", txt.Quote(jsonFile.BaseName()))
+				log.Debugf("index: %s created", filepath.Base(jsonName))
 			}
 		}
 

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
+  <v-dialog v-model="show" lazy persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -9,8 +9,8 @@
             </h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
-            <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" @click.stop="add"
-                   :title="$gettext('Add Link')">
+            <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')"
+                   @click.stop="add">
               <v-icon>add_link</v-icon>
             </v-btn>
           </v-flex>
@@ -20,11 +20,11 @@
         <v-expansion-panel class="pa-0 elevation-0">
           <v-expansion-panel-content v-for="(link, index) in links" :key="index"
                                      class="pa-0 elevation-0 secondary-light mb-1">
-            <template v-slot:header>
-              <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" @click.stop="copyUrl(link)"
-                      style="user-select: none;">
+            <template #header>
+              <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" style="user-select: none;"
+                      @click.stop="copyUrl(link)">
                 <v-icon size="16" class="pr-1">link</v-icon>
-                /s/<strong style="font-weight: 500;" v-if="link.Token">{{ link.getToken() }}</strong><span
+                /s/<strong v-if="link.Token" style="font-weight: 500;">{{ link.getToken() }}</strong><span
                   v-else>…</span>
               </button>
             </template>
@@ -34,24 +34,24 @@
                   <v-layout row wrap>
                     <v-flex xs12 class="pa-2">
                       <v-text-field
+                          :value="link.url()"
                           :label="$gettext('URL')"
-                          browser-autocomplete="off"
-                          hide-details readonly
+                          browser-autocomplete="off" hide-details
+                          readonly
                           color="secondary-dark"
-                          @click.stop="selectText($event)"
-                          v-model="link.url()"
-                          class="input-url">
+                          class="input-url"
+                          @click.stop="selectText($event)">
                       </v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                       <v-select
+                          v-model="link.Expires"
                           :label="expires(link)"
                           browser-autocomplete="off"
                           hide-details
                           color="secondary-dark"
                           item-text="text"
                           item-value="value"
-                          v-model="link.Expires"
                           :items="options.Expires()"
                           class="input-expires"
                       >
@@ -59,12 +59,12 @@
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
                       <v-text-field
-                          hide-details required
+                          v-model="link.Token" hide-details
+                          required
                           browser-autocomplete="off"
                           :label="$gettext('Secret')"
                           :placeholder="$gettext('Token')"
                           color="secondary-dark"
-                          v-model="link.Token"
                           class="input-secret"
                       ></v-text-field>
                     </v-flex>
@@ -83,7 +83,7 @@
                     </v-flex -->
                     <v-flex xs6 text-xs-left class="pa-2">
                       <v-btn small icon flat color="remove" class="ma-0 action-delete"
-                             @click.stop.exact="remove(index)" :title="$gettext('Delete')">
+                             :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                         <v-icon>delete</v-icon>
                       </v-btn>
                     </v-flex>
@@ -110,14 +110,14 @@
       <v-card-actions class="pt-0">
         <v-layout row wrap class="pa-2">
           <v-flex xs6>
-            <v-btn @click.stop="upload" depressed color="secondary-light"
-                   class="action-webdav">
+            <v-btn depressed color="secondary-light" class="action-webdav"
+                   @click.stop="upload">
               <translate>WebDAV Upload</translate>
             </v-btn>
           </v-flex>
           <v-flex xs6 text-xs-right>
-            <v-btn depressed color="secondary-light" @click.stop="confirm"
-                   class="action-close">
+            <v-btn depressed color="secondary-light" class="action-close"
+                   @click.stop="confirm">
               <translate>Close</translate>
             </v-btn>
           </v-flex>
@@ -130,7 +130,7 @@
 import * as options from "options/options";
 
 export default {
-  name: 'p-share-dialog',
+  name: 'PShareDialog',
   props: {
     show: Boolean,
     model: Object,
@@ -150,69 +150,7 @@ export default {
         cancel: this.$gettext("Cancel"),
         confirm: this.$gettext("Done"),
       }
-    }
-  },
-  methods: {
-    selectText(ev) {
-      if (!ev || !ev.target) {
-        return;
-      }
-
-      ev.target.select();
-    },
-    copyUrl(link) {
-      window.navigator.clipboard.writeText(link.url())
-          .then(() => this.$notify.success(this.$gettext("Copied to clipboard")), () => this.$notify.error(this.$gettext("Failed copying to clipboard")));
-    },
-    expires(link) {
-      let result = this.$gettext('Expires');
-
-      if (link.Expires <= 0) {
-        return result
-      }
-
-      return `${result}: ${link.expires()}`;
-    },
-    add() {
-      this.loading = true;
-
-      this.model.createLink().then((r) => {
-        this.links.push(r);
-      }).finally(() => this.loading = false)
-    },
-    update(link) {
-      if (!link) {
-        this.$notify.error(this.$gettext("Failed updating link"))
-        return;
-      }
-
-      this.loading = true;
-
-      this.model.updateLink(link).finally(() => this.loading = false);
-    },
-    remove(index) {
-      const link = this.links[index];
-
-      if (!link) {
-        this.$notify.error(this.$gettext("Failed removing link"))
-        return;
-      }
-
-      this.loading = true;
-
-      this.model.removeLink(link).then(() => {
-        this.links.splice(index, 1);
-      }).finally(() => this.loading = false)
-    },
-    upload() {
-      this.$emit('upload');
-    },
-    close() {
-      this.$emit('close');
-    },
-    confirm() {
-      this.$emit('close');
-    },
+    };
   },
   watch: {
     show: function (show) {
@@ -229,5 +167,67 @@ export default {
       }
     }
   },
-}
+  methods: {
+    selectText(ev) {
+      if (!ev || !ev.target) {
+        return;
+      }
+
+      ev.target.select();
+    },
+    copyUrl(link) {
+      window.navigator.clipboard.writeText(link.url())
+        .then(() => this.$notify.success(this.$gettext("Copied to clipboard")), () => this.$notify.error(this.$gettext("Failed copying to clipboard")));
+    },
+    expires(link) {
+      let result = this.$gettext('Expires');
+
+      if (link.Expires <= 0) {
+        return result;
+      }
+
+      return `${result}: ${link.expires()}`;
+    },
+    add() {
+      this.loading = true;
+
+      this.model.createLink().then((r) => {
+        this.links.push(r);
+      }).finally(() => this.loading = false);
+    },
+    update(link) {
+      if (!link) {
+        this.$notify.error(this.$gettext("Failed updating link"));
+        return;
+      }
+
+      this.loading = true;
+
+      this.model.updateLink(link).finally(() => this.loading = false);
+    },
+    remove(index) {
+      const link = this.links[index];
+
+      if (!link) {
+        this.$notify.error(this.$gettext("Failed removing link"));
+        return;
+      }
+
+      this.loading = true;
+
+      this.model.removeLink(link).then(() => {
+        this.links.splice(index, 1);
+      }).finally(() => this.loading = false);
+    },
+    upload() {
+      this.$emit('upload');
+    },
+    close() {
+      this.$emit('close');
+    },
+    confirm() {
+      this.$emit('close');
+    },
+  },
+};
 </script>

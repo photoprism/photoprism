@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-      lazy
       v-model="visible"
+      lazy
       max-width="500"
   >
     <v-card class="pa-2">
@@ -20,9 +20,9 @@
             single-line
             outline
             color="secondary-dark"
-            @click.stop="selectText($event)"
             :value="webdavUrl()"
-            class="input-url">
+            class="input-url"
+            @click.stop="selectText($event)">
         </v-text-field>
       </v-card-text>
 
@@ -50,7 +50,7 @@
 
 <script>
 export default {
-  name: 'p-dialog-webdav',
+  name: 'PDialogWebdav',
   props: {
     show: Boolean,
   },
@@ -81,7 +81,7 @@ export default {
     },
     copyUrl() {
       window.navigator.clipboard.writeText(this.webdavUrl())
-          .then(() => this.$notify.success(this.$gettext("Copied to clipboard")), () => this.$notify.error(this.$gettext("Failed copying to clipboard")));
+        .then(() => this.$notify.success(this.$gettext("Copied to clipboard")), () => this.$notify.error(this.$gettext("Failed copying to clipboard")));
     },
     webdavUrl() {
       return `${window.location.protocol}//admin@${window.location.host}/originals/`;

@@ -1,24 +1,26 @@
 <template>
   <div>
-    <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
-      <v-card-title primary-title>
-        <div>
-          <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
-            <translate>Couldn't find recently edited</translate>
-          </h3>
-          <h3 v-else class="title ma-0 pa-0">
-            <translate>Couldn't find anything</translate>
-          </h3>
-          <p class="mt-4 mb-0 pa-0">
-            <translate>Try again using other filters or keywords.</translate>
-            <translate>If a file you expect is missing, please re-index your library and wait until indexing has been completed.</translate>
-            <template v-if="config.settings.features.review" class="mt-2 mb-0 pa-0">
-              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
-            </template>
-          </p>
-        </div>
-      </v-card-title>
-    </v-card>
+    <div v-if="photos.length === 0" class="pa-2">
+      <v-card class="p-photos-empty secondary-light lighten-1 ma-1" flat>
+        <v-card-title primary-title>
+          <div>
+            <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
+              <translate>Couldn't find recently edited</translate>
+            </h3>
+            <h3 v-else class="title ma-0 pa-0">
+              <translate>Couldn't find anything</translate>
+            </h3>
+            <p class="mt-4 mb-0 pa-0">
+              <translate>Try again using other filters or keywords.</translate>
+              <translate>If a file you expect is missing, please re-index your library and wait until indexing has been completed.</translate>
+              <template v-if="config.settings.features.review" class="mt-2 mb-0 pa-0">
+                <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+              </template>
+            </p>
+          </div>
+        </v-card-title>
+      </v-card>
+    </div>
     <v-data-table v-else
                   v-model="selected"
                   :headers="listColumns"

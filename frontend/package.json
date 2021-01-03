@@ -61,14 +61,14 @@
     "eslint-plugin-prettier-vue": "^2.1.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.1.0",
-    "eslint-plugin-vue": "^7.3.0",
+    "eslint-plugin-vue": "^7.4.0",
     "eventsource-polyfill": "^0.9.6",
     "file-loader": "^3.0.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "hls.js": "^0.14.17",
     "html-webpack-plugin": "^4.5.0",
     "http-proxy-middleware": "^1.0.6",
-    "i18n-iso-countries": "^6.3.0",
+    "i18n-iso-countries": "^6.4.0",
     "inject-loader": "^4.0.1",
     "karma": "^5.2.3",
     "karma-chrome-launcher": "^3.1.0",
@@ -130,7 +130,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-md5-hash": "0.0.6",
-    "webpack-merge": "^5.7.2"
+    "webpack-merge": "^5.7.3"
   },
   "engines": {
     "node": ">= 8.0.0",

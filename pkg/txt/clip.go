@@ -6,6 +6,7 @@ const (
 	ClipDefault     = 160
 	ClipSlug        = 80
 	ClipKeyword     = 40
+	ClipVarchar     = 255
 	ClipDescription = 16000
 )
 

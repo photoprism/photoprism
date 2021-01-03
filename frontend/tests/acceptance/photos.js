@@ -220,7 +220,7 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
         .expect(Selector('div').withAttribute('data-uid', SecondVideo).exists, {timeout: 5000}).notOk()
         .click(Selector('.nav-photos'));
     await page.selectFromUID(FirstPhoto);
-    await page.selectFromUID(SecondPhoto);
+    await page.selectFromUIDInFullscreen(SecondPhoto);
     const clipboardCount = await Selector('span.count-clipboard', {timeout: 5000});
     await t
         .expect(clipboardCount.textContent).eql("2")

@@ -8,13 +8,19 @@ import (
 
 // Details contains detailed photo information
 type Details struct {
-	PhotoID   uint   `json:"PhotoID" deepcopier:"skip"`
-	Keywords  string `json:"Keywords"`
-	Notes     string `json:"Notes"`
-	Subject   string `json:"Subject"`
-	Artist    string `json:"Artist"`
-	Copyright string `json:"Copyright"`
-	License   string `json:"License"`
+	PhotoID      uint   `json:"PhotoID" deepcopier:"skip"`
+	Keywords     string `json:"Keywords"`
+	KeywordsSrc  string `json:"KeywordsSrc"`
+	Notes        string `json:"Notes"`
+	NotesSrc     string `json:"NotesSrc"`
+	Subject      string `json:"Subject"`
+	SubjectSrc   string `json:"SubjectSrc"`
+	Artist       string `json:"Artist"`
+	ArtistSrc    string `json:"ArtistSrc"`
+	Copyright    string `json:"Copyright"`
+	CopyrightSrc string `json:"CopyrightSrc"`
+	License      string `json:"License"`
+	LicenseSrc   string `json:"LicenseSrc"`
 }
 
 // Photo represents a photo edit form.

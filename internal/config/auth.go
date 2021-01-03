@@ -46,10 +46,10 @@ func (c *Config) InvalidPreviewToken(t string) bool {
 	return c.PreviewToken() != t && c.DownloadToken() != t
 }
 
-// PreviewToken returns the THUMBNAILS api token (you can optionally use a static value for permanent caching).
+// PreviewToken returns the preview image api token (based on the unique storage serial by default).
 func (c *Config) PreviewToken() string {
 	if c.options.PreviewToken == "" {
-		c.options.PreviewToken = rnd.Token(8)
+		c.options.PreviewToken = c.SerialChecksum()
 	}
 
 	return c.options.PreviewToken

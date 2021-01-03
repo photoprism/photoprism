@@ -4,21 +4,29 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var photoDetailsMutex = sync.Mutex{}
 
 // Details stores additional metadata fields for each photo to improve search performance.
 type Details struct {
-	PhotoID   uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
-	Keywords  string    `gorm:"type:TEXT;" json:"Keywords" yaml:"Keywords"`
-	Notes     string    `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
-	Subject   string    `gorm:"type:VARCHAR(255);" json:"Subject" yaml:"Subject,omitempty"`
-	Artist    string    `gorm:"type:VARCHAR(255);" json:"Artist" yaml:"Artist,omitempty"`
-	Copyright string    `gorm:"type:VARCHAR(255);" json:"Copyright" yaml:"Copyright,omitempty"`
-	License   string    `gorm:"type:VARCHAR(255);" json:"License" yaml:"License,omitempty"`
-	CreatedAt time.Time `yaml:"-"`
-	UpdatedAt time.Time `yaml:"-"`
+	PhotoID      uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
+	Keywords     string    `gorm:"type:TEXT;" json:"Keywords" yaml:"Keywords"`
+	KeywordsSrc  string    `gorm:"type:VARBINARY(8);" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
+	Notes        string    `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
+	NotesSrc     string    `gorm:"type:VARBINARY(8);" json:"NotesSrc" yaml:"NotesSrc,omitempty"`
+	Subject      string    `gorm:"type:VARCHAR(255);" json:"Subject" yaml:"Subject,omitempty"`
+	SubjectSrc   string    `gorm:"type:VARBINARY(8);" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
+	Artist       string    `gorm:"type:VARCHAR(255);" json:"Artist" yaml:"Artist,omitempty"`
+	ArtistSrc    string    `gorm:"type:VARBINARY(8);" json:"ArtistSrc" yaml:"ArtistSrc,omitempty"`
+	Copyright    string    `gorm:"type:VARCHAR(255);" json:"Copyright" yaml:"Copyright,omitempty"`
+	CopyrightSrc string    `gorm:"type:VARBINARY(8);" json:"CopyrightSrc" yaml:"CopyrightSrc,omitempty"`
+	License      string    `gorm:"type:VARCHAR(255);" json:"License" yaml:"License,omitempty"`
+	LicenseSrc   string    `gorm:"type:VARBINARY(8);" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
+	CreatedAt    time.Time `yaml:"-"`
+	UpdatedAt    time.Time `yaml:"-"`
 }
 
 // NewDetails creates new photo details.
@@ -66,27 +74,158 @@ func FirstOrCreateDetails(m *Details) *Details {
 	return nil
 }
 
-// NoKeywords checks if the photo has no Keywords
+// NoKeywords tests if the photo has no Keywords.
 func (m *Details) NoKeywords() bool {
 	return m.Keywords == ""
 }
 
-// NoSubject checks if the photo has no Subject
+// NoSubject tests if the photo has no Subject.
 func (m *Details) NoSubject() bool {
 	return m.Subject == ""
 }
 
-// NoNotes checks if the photo has no Notes
+// NoNotes tests if the photo has no Notes.
 func (m *Details) NoNotes() bool {
 	return m.Notes == ""
 }
 
-// NoArtist checks if the photo has no Artist
+// NoArtist tests if the photo has no Artist.
 func (m *Details) NoArtist() bool {
 	return m.Artist == ""
 }
 
-// NoCopyright checks if the photo has no Copyright
+// NoCopyright tests if the photo has no Copyright.
 func (m *Details) NoCopyright() bool {
 	return m.Copyright == ""
+}
+
+// NoLicense tests if the photo has no License.
+func (m *Details) NoLicense() bool {
+	return m.License == ""
+}
+
+// HasKeywords tests if the photo has a Keywords.
+func (m *Details) HasKeywords() bool {
+	return !m.NoKeywords()
+}
+
+// HasSubject tests if the photo has a Subject.
+func (m *Details) HasSubject() bool {
+	return !m.NoSubject()
+}
+
+// HasNotes tests if the photo has a Notes.
+func (m *Details) HasNotes() bool {
+	return !m.NoNotes()
+}
+
+// HasArtist tests if the photo has an Artist.
+func (m *Details) HasArtist() bool {
+	return !m.NoArtist()
+}
+
+// HasCopyright tests if the photo has a Copyright
+func (m *Details) HasCopyright() bool {
+	return !m.NoCopyright()
+}
+
+// HasLicense tests if the photo has a License.
+func (m *Details) HasLicense() bool {
+	return !m.NoLicense()
+}
+
+// SetKeywords updates the photo details field.
+func (m *Details) SetKeywords(data, src string) {
+	val := txt.Clip(data, txt.ClipDescription)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.KeywordsSrc]) && m.HasKeywords() {
+		return
+	}
+
+	m.Keywords = val
+	m.KeywordsSrc = src
+}
+
+// SetSubject updates the photo details field.
+func (m *Details) SetSubject(data, src string) {
+	val := txt.Clip(data, txt.ClipVarchar)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.SubjectSrc]) && m.HasSubject() {
+		return
+	}
+
+	m.Subject = val
+	m.SubjectSrc = src
+}
+
+// SetNotes updates the photo details field.
+func (m *Details) SetNotes(data, src string) {
+	val := txt.Clip(data, txt.ClipDescription)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.NotesSrc]) && m.HasNotes() {
+		return
+	}
+
+	m.Notes = val
+	m.NotesSrc = src
+}
+
+// SetArtist updates the photo details field.
+func (m *Details) SetArtist(data, src string) {
+	val := txt.Clip(data, txt.ClipVarchar)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.ArtistSrc]) && m.HasArtist() {
+		return
+	}
+
+	m.Artist = val
+	m.ArtistSrc = src
+}
+
+// SetCopyright updates the photo details field.
+func (m *Details) SetCopyright(data, src string) {
+	val := txt.Clip(data, txt.ClipVarchar)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.CopyrightSrc]) && m.HasCopyright() {
+		return
+	}
+
+	m.Copyright = val
+	m.CopyrightSrc = src
+}
+
+// SetLicense updates the photo details field.
+func (m *Details) SetLicense(data, src string) {
+	val := txt.Clip(data, txt.ClipVarchar)
+
+	if val == "" {
+		return
+	}
+
+	if (SrcPriority[src] < SrcPriority[m.LicenseSrc]) && m.HasLicense() {
+		return
+	}
+
+	m.License = val
+	m.LicenseSrc = src
 }

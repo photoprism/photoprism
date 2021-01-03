@@ -669,4 +669,56 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "TG-830", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
+
+	t.Run("subject-1.json", func(t *testing.T) {
+		data, err := JSON("testdata/subject-1.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, string(fs.CodecJpeg), data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 4032, data.Width)
+		assert.Equal(t, 3024, data.Height)
+		assert.Equal(t, 4032, data.ActualWidth())
+		assert.Equal(t, 3024, data.ActualHeight())
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 6s", data.CameraModel)
+		assert.Equal(t, "iPhone 6s back camera 4.15mm f/2.2", data.LensModel)
+		assert.Equal(t, "holiday", data.Subject)
+		assert.Equal(t, "holiday", data.Keywords)
+	})
+
+	t.Run("subject-2.json", func(t *testing.T) {
+		data, err := JSON("testdata/subject-2.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, string(fs.CodecJpeg), data.Codec)
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2016-09-07 12:49:23 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 4032, data.Width)
+		assert.Equal(t, 3024, data.Height)
+		assert.Equal(t, 4032, data.ActualWidth())
+		assert.Equal(t, 3024, data.ActualHeight())
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 6s", data.CameraModel)
+		assert.Equal(t, "iPhone 6s back camera 4.15mm f/2.2", data.LensModel)
+		assert.Equal(t, "holiday, greetings", data.Subject)
+		assert.Equal(t, "holiday, greetings", data.Keywords)
+	})
 }

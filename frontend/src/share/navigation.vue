@@ -1,7 +1,7 @@
 <template>
   <div id="p-navigation">
     <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small"
-               :dense="$vuetify.breakpoint.smAndDown" scroll-toolbar-off-screen>
+               :dense="$vuetify.breakpoint.smAndDown" scroll-off-screen>
       <v-toolbar-title>
         <button @click.stop.prevent="goHome">
           {{ page.title }}

@@ -10,6 +10,10 @@ import (
 )
 
 func registerRoutes(router *gin.Engine, conf *config.Config) {
+	// Enables automatic redirection if the current route can't be matched but a
+	// handler for the path with (without) the trailing slash exists.
+	router.RedirectTrailingSlash = true
+
 	// Static assets like js, css and font files.
 	router.Static("/static", conf.StaticPath())
 	router.StaticFile("/favicon.ico", filepath.Join(conf.ImgPath(), "favicon.ico"))
@@ -134,12 +138,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	if conf.DisableWebDAV() {
 		log.Info("webdav: server disabled")
 	} else {
-		WebDAV(conf.OriginalsPath(), router.Group("/originals", BasicAuth()), conf)
-		log.Info("webdav: /originals/ enabled, waiting for requests")
+		WebDAV(conf.OriginalsPath(), router.Group(WebDAVOriginals, BasicAuth()), conf)
+		log.Infof("webdav: %s/ enabled, waiting for requests", WebDAVOriginals)
 
 		if conf.ImportPath() != "" {
-			WebDAV(conf.ImportPath(), router.Group("/import", BasicAuth()), conf)
-			log.Info("webdav: /import/ enabled, waiting for requests")
+			WebDAV(conf.ImportPath(), router.Group(WebDAVImport, BasicAuth()), conf)
+			log.Infof("webdav: %s/ enabled, waiting for requests", WebDAVImport)
 		}
 	}
 

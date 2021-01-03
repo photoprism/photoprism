@@ -84,7 +84,7 @@
             @click.stop="startImport()"
         >
           <translate>Import</translate>
-          <v-icon right dark>sync</v-icon>
+          <v-icon right dark>update</v-icon>
         </v-btn>
       </v-container>
     </v-form>

@@ -34,7 +34,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "admin-password",
-		Usage:  "initial admin `PASSWORD`, please use a secure default",
+		Usage:  "initial admin `PASSWORD`, min 4 characters",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.StringFlag{
@@ -102,6 +102,16 @@ var GlobalFlags = []cli.Flag{
 		Name:   "wakeup-interval",
 		Usage:  "background worker wakeup interval in `SECONDS`",
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
+	},
+	cli.IntFlag{
+		Name:   "auto-index",
+		Usage:  "auto indexing safety delay in `SECONDS` (WebDAV)",
+		EnvVar: "PHOTOPRISM_AUTO_INDEX",
+	},
+	cli.IntFlag{
+		Name:   "auto-import",
+		Usage:  "auto importing safety delay in `SECONDS` (WebDAV)",
+		EnvVar: "PHOTOPRISM_AUTO_IMPORT",
 	},
 	cli.BoolFlag{
 		Name:   "disable-backups",
@@ -295,13 +305,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "`SECRET` url token for file downloads",
+		Usage:  "optional static `SECRET` url token for file downloads",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "`SECRET` url token for preview images and video streaming",
-		Value:  "public",
+		Usage:  "optional static `SECRET` url token for preview images and video streaming",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{

@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/auto"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -117,6 +119,7 @@ func startAction(ctx *cli.Context) error {
 
 	// start share & sync workers
 	workers.Start(conf)
+	auto.Start(conf)
 
 	// set up proper shutdown of daemon and web server
 	quit := make(chan os.Signal)
@@ -126,6 +129,7 @@ func startAction(ctx *cli.Context) error {
 
 	// stop share & sync workers
 	workers.Stop()
+	auto.Stop()
 
 	log.Info("shutting down...")
 	conf.Shutdown()

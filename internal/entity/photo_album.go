@@ -12,6 +12,7 @@ type PhotoAlbum struct {
 	AlbumUID  string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;index" json:"AlbumUID" yaml:"-"`
 	Order     int       `json:"Order" yaml:"Order,omitempty"`
 	Hidden    bool      `json:"Hidden" yaml:"Hidden,omitempty"`
+	Missing   bool      `json:"Missing" yaml:"Missing,omitempty"`
 	CreatedAt time.Time `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt time.Time `json:"UpdatedAt" yaml:"-"`
 	Photo     *Photo    `gorm:"PRELOAD:false" yaml:"-"`

@@ -83,7 +83,7 @@
             class="action-album"
             @click.stop="dialog.album = true"
         >
-          <v-icon>folder_special</v-icon>
+          <v-icon>bookmark</v-icon>
         </v-btn>
         <v-btn
             v-if="!isAlbum && context !== 'archive' && config.settings.features.archive" fab dark
@@ -116,7 +116,7 @@
             class="action-delete"
             @click.stop="removeFromAlbum"
         >
-          <v-icon>remove</v-icon>
+          <v-icon>eject</v-icon>
         </v-btn>
         <v-btn
             fab dark small

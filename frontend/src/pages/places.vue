@@ -4,6 +4,7 @@
       <div class="p-map-control">
         <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
           <v-text-field class="pa-0 ma-0 input-search"
+                        v-model="filter.q"
                         single-line
                         solo
                         flat
@@ -14,7 +15,6 @@
                         browser-autocomplete="off"
                         color="secondary-dark"
                         @click:clear="clearQuery"
-                        v-model="filter.q"
                         @keyup.enter.native="formChange"
           ></v-text-field>
         </div>
@@ -30,14 +30,7 @@ import Api from "common/api";
 import Thumb from "model/thumb";
 
 export default {
-  name: 'p-page-places',
-  watch: {
-    '$route'() {
-      this.filter.q = this.query();
-      this.lastFilter = {};
-      this.search();
-    }
-  },
+  name: 'PPagePlaces',
   data() {
     const s = this.$config.values.settings.maps;
     const filter = {
@@ -178,7 +171,17 @@ export default {
       lastFilter: {},
       config: this.$config.values,
       settings: s,
+    };
+  },
+  watch: {
+    '$route'() {
+      this.filter.q = this.query();
+      this.lastFilter = {};
+      this.search();
     }
+  },
+  mounted() {
+    this.renderMap();
   },
   methods: {
     query: function () {
@@ -196,7 +199,7 @@ export default {
         if (selected.Type === TypeVideo || selected.Type === TypeLive) {
           this.$modal.show('video', {video: selected, album: null});
         } else {
-          this.$viewer.show(Thumb.fromPhotos(this.photos), index)
+          this.$viewer.show(Thumb.fromPhotos(this.photos), index);
         }
       } else {
         this.$notify.warn(this.$gettext("No photos found"));
@@ -211,12 +214,6 @@ export default {
     },
     updateQuery() {
       this.filter.q = this.filter.q.trim();
-      const len = this.filter.q.length;
-
-      if (len > 1 && len < 3) {
-        this.$notify.error(this.$gettext("Search term too short"));
-        return;
-      }
 
       if (this.query() !== this.filter.q) {
         if (this.filter.q) {
@@ -382,15 +379,15 @@ export default {
         });
         const clusterId = features[0].properties.cluster_id;
         this.map.getSource('photos').getClusterExpansionZoom(
-            clusterId,
-            (err, zoom) => {
-              if (err) return;
+          clusterId,
+          (err, zoom) => {
+            if (err) return;
 
-              this.map.easeTo({
-                center: features[0].geometry.coordinates,
-                zoom: zoom
-              });
-            }
+            this.map.easeTo({
+              center: features[0].geometry.coordinates,
+              zoom: zoom
+            });
+          }
         );
       });
 
@@ -403,9 +400,6 @@ export default {
 
       this.search();
     },
-  },
-  mounted() {
-    this.renderMap();
   },
 };
 </script>

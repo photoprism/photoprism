@@ -1,28 +1,30 @@
 <template>
   <div>
-    <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
-      <v-card-title primary-title>
-        <div>
-          <h3 class="title ma-0 pa-0" v-if="filter.order === 'edited'">
-            <translate>Couldn't find recently edited</translate>
-          </h3>
-          <h3 class="title ma-0 pa-0" v-else>
-            <translate>Couldn't find anything</translate>
-          </h3>
-          <p class="mt-4 mb-0 pa-0">
-            <translate>Try again using other filters or keywords.</translate>
-          </p>
-        </div>
-      </v-card-title>
-    </v-card>
+    <div v-if="photos.length === 0" class="pa-2">
+      <v-card class="p-photos-empty secondary-light lighten-1 ma-1" flat>
+        <v-card-title primary-title>
+          <div>
+            <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
+              <translate>Couldn't find recently edited</translate>
+            </h3>
+            <h3 v-else class="title ma-0 pa-0">
+              <translate>Couldn't find anything</translate>
+            </h3>
+            <p class="mt-4 mb-0 pa-0">
+              <translate>Try again using other filters or keywords.</translate>
+            </p>
+          </div>
+        </v-card-title>
+      </v-card>
+    </div>
     <v-data-table v-else
+                  v-model="selected"
                   :headers="listColumns"
                   :items="photos"
                   hide-actions
                   class="elevation-0 p-photos p-photo-list p-results"
                   disable-initial-sort
                   item-key="ID"
-                  v-model="selected"
                   :no-data-text="notFoundMessage"
     >
       <template slot="items" slot-scope="props">
@@ -58,24 +60,24 @@
         </td>
 
         <td class="p-photo-desc clickable" :data-uid="props.item.UID"
-            @click.stop.prevent="openPhoto(props.index, false)" style="user-select: none;">
+            style="user-select: none;" @click.stop.prevent="openPhoto(props.index, false)">
           {{ props.item.Title }}
         </td>
         <td class="p-photo-desc hidden-xs-only" :title="props.item.getDateString()"
-            @click.stop.prevent="openPhoto(props.index, false)" style="user-select: none;">
+            style="user-select: none;" @click.stop.prevent="openPhoto(props.index, false)">
           {{ props.item.shortDateString() }}
         </td>
         <td class="p-photo-desc hidden-sm-and-down" style="user-select: none;">
           {{ props.item.CameraMake }} {{ props.item.CameraModel }}
         </td>
         <td class="p-photo-desc hidden-xs-only">
-          <button @click.exact="downloadFile(props.index)"
-                  title="Name" v-if="filter.order === 'name'">
+          <button v-if="filter.order === 'name'"
+                  title="Name" @click.exact="downloadFile(props.index)">
             {{ props.item.FileName }}
           </button>
           <button v-else-if="props.item.Country !== 'zz' && showLocation"
-                  @click.stop.prevent="openPhoto(props.index, false)"
-                  style="user-select: none;">
+                  style="user-select: none;"
+                  @click.stop.prevent="openPhoto(props.index, false)">
             {{ props.item.locationInfo() }}
           </button>
           <span v-else>
@@ -88,7 +90,7 @@
 </template>
 <script>
 export default {
-  name: 'p-photo-list',
+  name: 'PPhotoList',
   props: {
     photos: Array,
     selection: Array,
@@ -103,7 +105,7 @@ export default {
 
     m += " " + this.$gettext("Try again using other filters or keywords.");
 
-    let showName = this.filter.order === 'name'
+    let showName = this.filter.order === 'name';
 
     return {
       notFoundMessage: m,
@@ -143,13 +145,18 @@ export default {
       this.refreshSelection();
     },
   },
+  mounted: function () {
+    this.$nextTick(function () {
+      this.refreshSelection();
+    });
+  },
   methods: {
     downloadFile(index) {
       const photo = this.photos[index];
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
       link.download = photo.FileName;
-      link.click()
+      link.click();
     },
     onSelect(ev, index) {
       if (ev.shiftKey) {
@@ -200,11 +207,6 @@ export default {
         }
       }
     },
-  },
-  mounted: function () {
-    this.$nextTick(function () {
-      this.refreshSelection();
-    })
   }
 };
 </script>

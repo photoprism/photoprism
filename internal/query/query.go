@@ -2,7 +2,7 @@
 
 Package query contains frequently used database queries for use in commands and API.
 
-Copyright (c) 2018 - 2020 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
@@ -49,7 +49,7 @@ var log = event.Log
 const (
 	MySQL  = "mysql"
 	SQLite = "sqlite3"
-	OrSep  = "|"
+	Or     = "|"
 )
 
 // Max result limit for queries.
@@ -109,6 +109,10 @@ func LikeAny(col, search string) (where string) {
 			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
 		}
 
+		if !txt.ContainsASCIILetters(w) {
+			continue
+		}
+
 		singular := inflection.Singular(w)
 
 		if singular != w {
@@ -136,6 +140,10 @@ func AnySlug(col, search, sep string) (where string) {
 		w = strings.TrimSpace(w)
 
 		words = append(words, slug.Make(w))
+
+		if !txt.ContainsASCIILetters(w) {
+			continue
+		}
 
 		singular := inflection.Singular(w)
 

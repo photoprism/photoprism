@@ -89,7 +89,7 @@ func TestAnySlug(t *testing.T) {
 	})
 
 	t.Run("comma separated", func(t *testing.T) {
-		where := AnySlug("custom_slug", "botanical-garden|landscape|bay", OrSep)
+		where := AnySlug("custom_slug", "botanical-garden|landscape|bay", Or)
 		assert.Equal(t, "custom_slug = 'botanical-garden' OR custom_slug = 'landscape' OR custom_slug = 'bay'", where)
 	})
 

@@ -8,23 +8,42 @@ version: '3.5'
 # Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
 # e.g. when running PhotoPrism on a public server outside your home network.
 #
-# Usage: docker-compose up
+# ------------------------------------------------------------------
+# DOCKER COMPOSE COMMAND REFERENCE
+# ------------------------------------------------------------------
+# Start    | docker-compose up -d
+# Stop     | docker-compose stop
+# Update   | docker-compose pull
+# Logs     | docker-compose logs --tail=25 -f
+# Terminal | docker-compose exec photoprism bash
+# Help     | docker-compose exec photoprism photoprism help
+# Config   | docker-compose exec photoprism photoprism config
+# Reset    | docker-compose exec photoprism photoprism reset
+# Backup   | docker-compose exec photoprism photoprism backup -a -i
+# Restore  | docker-compose exec photoprism photoprism restore -a -i
+# Index    | docker-compose exec photoprism photoprism index
+# Reindex  | docker-compose exec photoprism photoprism index -a
+# Import   | docker-compose exec photoprism photoprism import
+# -------------------------------------------------------------------
+# Note: All commands may have to be prefixed with "sudo" when not running as root.
+#       This will change the home directory "~" to "/root" in your configuration.
 
 services:
   photoprism:
+    # Use photoprism/photoprism:preview instead for testing preview builds:
     image: photoprism/photoprism:latest
-    # Only enable enable restart and healthcheck once your installation is properly
-    # configured as it otherwise gets stuck in a restart loop:
+    # Only enable automatic restarts once your installation is properly
+    # configured as it otherwise may get stuck in a restart loop:
+    # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
       - 2342:2342 # [local port]:[container port]
-    # Run "photoprism help" and "photoprism config" in a terminal too see all config options and current values:
     environment:
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: This is your initial admin password
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
@@ -66,12 +85,14 @@ services:
   mariadb:
     image: mariadb:10.5
     restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
-    volumes:
-      # Permanent storage for index database files (DON'T REMOVE):
-      - "./storage/mariadb:/var/lib/mysql"
+    volumes: # Don't remove permanent storage for index database files!
+      - "./database:/var/lib/mysql"
     environment:
-      MYSQL_ROOT_PASSWORD: insecure
+      MYSQL_ROOT_PASSWORD: please_change
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure

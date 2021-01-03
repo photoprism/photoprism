@@ -61,6 +61,20 @@ export default class Page {
         .click(Selector('.t-select.t-off'));
     }
 
+    async selectFromUIDInFullscreen(uid) {
+        await t
+            .hover(Selector('div').withAttribute('data-uid', uid));
+        if (await Selector('button.p-photo-fullscreen').exists) {
+            await t.click(Selector('button.p-photo-fullscreen'));
+        } else {
+            await t.click(Selector('div').withAttribute('data-uid', uid));
+        }
+        await t
+            .expect(Selector('#p-photo-viewer').visible).ok()
+            .click(Selector('button[title="Select"]'))
+            .click(Selector('.action-close'));
+    }
+
     async unselectFromUID(uid) {
         await t
             .hover(Selector('div').withAttribute('data-uid', uid))
