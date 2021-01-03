@@ -100,6 +100,7 @@ export const Languages = () => [
     text: "עברית",
     translated: $gettext("Hebrew"),
     value: "he",
+    rtl: true
   },
   {
     text: "हिन्दी",

@@ -4,10 +4,11 @@
       <v-speed-dial
           id="t-clipboard" v-model="expanded" fixed
           bottom
-          right
           direction="top"
           transition="slide-y-reverse-transition"
-          class="p-clipboard p-photo-clipboard"
+          :right="!rtl"
+          :left="rtl"
+          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-photo-clipboard`"
       >
         <v-btn
             slot="activator" fab
@@ -159,6 +160,7 @@ export default {
         album: false,
         share: false,
       },
+      rtl: this.$rtl,
     };
   },
   methods: {

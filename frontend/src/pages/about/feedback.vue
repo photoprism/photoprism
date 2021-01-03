@@ -70,7 +70,7 @@
                  :disabled="!form.Category || !form.Message || !form.UserEmail"
                  @click.stop="send">
             <translate>Send</translate>
-            <v-icon right dark>send</v-icon>
+            <v-icon :right="!rtl" :left="rtl" dark>send</v-icon>
           </v-btn>
         </v-flex>
 
@@ -100,8 +100,9 @@ export default {
         UserName: "",
         UserEmail: "",
         UserAgent: navigator.userAgent,
-        UserLocales: navigator.language,
-      }
+        User 
+      },
+      rtl: this.$rtl,
     };
   },
   methods: {
