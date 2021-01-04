@@ -145,7 +145,7 @@ export const Languages = () => [
   {
     text: "日本語",
     translated: $gettext("Japanese"),
-    value: "ja",
+    value: "ja_JP",
   },
 ];
 
