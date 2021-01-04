@@ -28,6 +28,7 @@
         :mini-variant-width="80"
         class="nav-sidebar navigation"
         fixed dark app
+        :right="rtl"
     >
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown">
         <v-list class="navigation-home">
@@ -42,7 +43,8 @@
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down">
               <v-btn icon class="nav-minimize" @click.stop="isMini = !isMini">
-                <v-icon>chevron_left</v-icon>
+                <v-icon v-if="!rtl">chevron_left</v-icon>
+                <v-icon v-else>chevron_right</v-icon>
               </v-btn>
             </v-list-tile-action>
           </v-list-tile>
@@ -52,7 +54,8 @@
       <v-list class="pt-3">
         <v-list-tile v-if="isMini" class="nav-expand" @click.stop="isMini = !isMini">
           <v-list-tile-action>
-            <v-icon>chevron_right</v-icon>
+            <v-icon v-if="!rtl">chevron_right</v-icon>
+            <v-icon v-else>chevron_left</v-icon>
           </v-list-tile-action>
         </v-list-tile>
 
@@ -73,7 +76,7 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Photos">Photos</translate>
-                <span v-if="config.count.photos > 0" class="nav-count">{{ config.count.photos }}</span>
+                <span v-if="config.count.photos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.photos }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -116,7 +119,7 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Review</translate>
-                <span v-show="config.count.review > 0" class="nav-count">{{ config.count.review }}</span>
+                <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -147,7 +150,7 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Albums">Albums</translate>
-                <span v-if="config.count.albums > 0" class="nav-count">{{ config.count.albums }}</span>
+                <span v-if="config.count.albums > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -169,7 +172,7 @@
           <v-list-tile-content>
             <v-list-tile-title>
               <translate key="Favorites">Favorites</translate>
-              <span v-show="config.count.favorites > 0" class="nav-count">{{ config.count.favorites }}</span>
+              <span v-show="config.count.favorites > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.favorites }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -182,7 +185,7 @@
           <v-list-tile-content>
             <v-list-tile-title>
               <translate key="Private">Private</translate>
-              <span v-show="config.count.private > 0" class="nav-count">{{ config.count.private }}</span>
+              <span v-show="config.count.private > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.private }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -195,7 +198,7 @@
           <v-list-tile-content>
             <v-list-tile-title>
               <translate key="Videos">Videos</translate>
-              <span v-show="config.count.videos > 0" class="nav-count">{{ config.count.videos }}</span>
+              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -209,7 +212,7 @@
             <v-list-tile-title>
               <translate key="Calendar">Calendar</translate>
               <span v-show="config.count.months > 0"
-                    class="nav-count">{{ config.count.months }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.months }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -224,7 +227,7 @@
             <v-list-tile-title>
               <translate key="Moments">Moments</translate>
               <span v-show="config.count.moments > 0"
-                    class="nav-count">{{ config.count.moments }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -248,7 +251,7 @@
               <v-list-tile-title>
                 <translate key="Places">Places</translate>
                 <span v-show="config.count.places > 0"
-                      class="nav-count">{{ config.count.places }}</span>
+                      :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.places }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -257,7 +260,7 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="States">States</translate>
-                <span v-show="config.count.states > 0" class="nav-count">{{ config.count.states }}</span>
+                <span v-show="config.count.states > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -272,7 +275,7 @@
             <v-list-tile-title>
               <translate key="Labels">Labels</translate>
               <span v-show="config.count.labels > 0"
-                    class="nav-count">{{ config.count.labels }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.labels }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -286,7 +289,7 @@
             <v-list-tile-title>
               <translate key="Folders">Folders</translate>
               <span v-show="config.count.folders > 0"
-                    class="nav-count">{{ config.count.folders }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.folders }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -316,7 +319,7 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Originals">Originals</translate>
-                <span v-show="config.count.files > 0" class="nav-count">{{ config.count.files }}</span>
+                <span v-show="config.count.files > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -325,7 +328,7 @@
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Hidden">Hidden</translate>
-                <span v-show="config.count.hidden > 0" class="nav-count">{{ config.count.hidden }}</span>
+                <span v-show="config.count.hidden > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.hidden }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -464,6 +467,7 @@ export default {
         selection: [],
         index: 0,
       },
+      rtl: this.$rtl,
     };
   },
   computed: {

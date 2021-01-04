@@ -77,7 +77,7 @@
                 @click.stop="uploadDialog()"
             >
               <translate key="Upload">Upload</translate>
-              <v-icon right dark>cloud_upload</v-icon>
+              <v-icon :right="!rtl" :left="rtl"  dark>cloud_upload</v-icon>
             </v-btn>
           </v-container>
         </v-form>
@@ -112,6 +112,7 @@ export default {
       started: 0,
       review: this.$config.feature("review"),
       safe: !this.$config.get("uploadNSFW"),
+      rtl: this.$rtl,
     };
   },
   watch: {

@@ -69,7 +69,7 @@
                depressed
                @click.stop="add">
           <translate>Add Server</translate>
-          <v-icon right dark>add</v-icon>
+          <v-icon :right="!rtl" :left="rtl" dark>add</v-icon>
         </v-btn>
       </v-form>
     </v-container>
@@ -122,6 +122,7 @@ export default {
         },
         {text: '', value: '', sortable: false, class: 'hidden-xs-only', align: 'right'},
       ],
+      rtl: this.$rtl,
     };
   },
   created() {

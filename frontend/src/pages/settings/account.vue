@@ -58,7 +58,7 @@
                      class="action-confirm white--text ma-0"
                      @click.stop="confirm">
                 <translate>Change</translate>
-                <v-icon right dark>keyboard_return</v-icon>
+                <v-icon :right="!rtl" :left="rtl" dark>keyboard_return</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
@@ -83,6 +83,7 @@ export default {
       newPassword: "",
       confirmPassword: "",
       busy: false,
+      rtl: this.$rtl,
     };
   },
   methods: {
