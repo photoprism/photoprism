@@ -1,19 +1,19 @@
 <template>
   <div>
-    <v-container fluid class="pa-0" v-if="selection.length > 0">
+    <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial
-          fixed bottom
+          id="t-clipboard" v-model="expanded"
+          fixed
+          bottom
           direction="top"
-          v-model="expanded"
           transition="slide-y-reverse-transition"
           :right="!rtl"
           :left="rtl"
           :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`"
-          id="t-clipboard"
       >
         <v-btn
-            fab dark
-            slot="activator"
+            slot="activator" fab
+            dark
             color="accent darken-2"
             class="action-menu"
         >
@@ -22,24 +22,25 @@
         </v-btn>
 
         <v-btn
-            fab dark small
+            v-if="$config.feature('download')" fab dark
+            small
             :title="$gettext('Download')"
             color="download"
-            @click.stop="download()"
             class="action-download"
-            v-if="$config.feature('download')"
             :disabled="selection.length === 0"
+            @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
         </v-btn>
 
         <v-btn
+            v-if="$config.feature('albums')"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
             :disabled="selection.length === 0"
-            @click.stop="dialog.album = true"
             class="action-album"
+            @click.stop="dialog.album = true"
         >
           <v-icon>bookmark</v-icon>
         </v-btn>
@@ -47,8 +48,8 @@
         <v-btn
             fab dark small
             color="accent"
-            @click.stop="clearClipboard()"
             class="action-clear"
+            @click.stop="clearClipboard()"
         >
           <v-icon>clear</v-icon>
         </v-btn>
@@ -63,7 +64,7 @@ import Api from "common/api";
 import Notify from "common/notify";
 
 export default {
-  name: 'p-file-clipboard',
+  name: 'PFileClipboard',
   props: {
     selection: Array,
     refresh: Function,
@@ -101,7 +102,7 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = path;
       link.download = "photos.zip";
       link.click();

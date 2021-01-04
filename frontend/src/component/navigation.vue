@@ -133,7 +133,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-if="isMini" to="/albums" class="nav-albums" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('albums')" to="/albums" class="nav-albums" @click.stop="">
           <v-list-tile-action :title="$gettext('Albums')">
             <v-icon>photo_album</v-icon>
           </v-list-tile-action>
@@ -145,7 +145,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini" prepend-icon="photo_album" no-action>
+        <v-list-group v-if="!isMini && $config.feature('albums')" prepend-icon="photo_album" no-action>
           <v-list-tile slot="activator" to="/albums" class="nav-albums" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>

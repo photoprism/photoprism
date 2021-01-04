@@ -1,19 +1,19 @@
 <template>
   <div>
-    <v-container fluid class="pa-0" v-if="selection.length > 0">
+    <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial
-          fixed bottom
+          id="t-clipboard" v-model="expanded"
+          fixed
+          bottom
           direction="top"
-          v-model="expanded"
           transition="slide-y-reverse-transition"
           :right="!rtl"
           :left="rtl"
           :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`"
-          id="t-clipboard"
       >
         <v-btn
-            fab dark
-            slot="activator"
+            slot="activator" fab
+            dark
             color="accent darken-2"
             class="action-menu"
         >
@@ -34,12 +34,13 @@
             <v-icon>cloud_download</v-icon>
         </v-btn -->
         <v-btn
+            v-if="$config.feature('albums')"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
             :disabled="selection.length === 0"
-            @click.stop="dialog.album = true"
             class="action-album"
+            @click.stop="dialog.album = true"
         >
           <v-icon>bookmark</v-icon>
         </v-btn>
@@ -47,9 +48,9 @@
             fab dark small
             color="remove"
             :title="$gettext('Delete')"
-            @click.stop="dialog.delete = true"
             :disabled="selection.length === 0"
             class="action-delete"
+            @click.stop="dialog.delete = true"
         >
           <v-icon>delete</v-icon>
         </v-btn>
@@ -57,8 +58,8 @@
         <v-btn
             fab dark small
             color="accent"
-            @click.stop="clearClipboard()"
             class="action-clear"
+            @click.stop="clearClipboard()"
         >
           <v-icon>clear</v-icon>
         </v-btn>
@@ -75,7 +76,7 @@ import Api from "common/api";
 import Notify from "common/notify";
 
 export default {
-  name: 'p-label-clipboard',
+  name: 'PLabelClipboard',
   props: {
     selection: Array,
     refresh: Function,
@@ -126,7 +127,7 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = path;
       link.download = "label.zip";
       link.click();

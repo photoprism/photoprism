@@ -76,7 +76,7 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive'" fab dark
+            v-if="context !== 'archive' && config.settings.features.albums" fab dark
             small
             :title="$gettext('Add to album')"
             color="album"
@@ -109,7 +109,7 @@
           <v-icon>unarchive</v-icon>
         </v-btn>
         <v-btn
-            v-if="isAlbum" fab dark
+            v-if="isAlbum && config.settings.features.albums" fab dark
             small
             :title="$gettext('Remove')"
             color="remove"
