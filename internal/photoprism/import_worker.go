@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"os"
-	"path"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/query"
@@ -23,7 +22,7 @@ type ImportJob struct {
 
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
-		var destinationMainFilename string
+		var destMainFileName string
 		related := job.Related
 		imp := job.Imp
 		opt := job.ImportOpt
@@ -43,27 +42,39 @@ func ImportWorker(jobs <-chan ImportJob) {
 		})
 
 		for _, f := range related.Files {
-			relativeFilename := f.RelName(importPath)
+			relFileName := f.RelName(importPath)
 
-			if destinationFilename, err := imp.DestinationFilename(related.Main, f); err == nil {
-				if err := os.MkdirAll(path.Dir(destinationFilename), os.ModePerm); err != nil {
-					log.Errorf("import: failed creating folders for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+			if destFileName, err := imp.DestinationFilename(related.Main, f); err == nil {
+				destDir := filepath.Dir(destFileName)
+
+				if fs.PathExists(destDir) {
+					// Do nothing.
+				} else if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
+					log.Errorf("import: failed creating folder for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+				} else {
+					destDirRel := fs.RelName(destDir, imp.originalsPath())
+
+					folder := entity.NewFolder(entity.RootOriginals, destDirRel, fs.BirthTime(destDir))
+
+					if err := folder.Create(); err == nil {
+						log.Infof("import: created folder /%s", folder.Path)
+					}
 				}
 
 				if related.Main.HasSameName(f) {
-					destinationMainFilename = destinationFilename
-					log.Infof("import: moving main %s file %s to %s", f.FileType(), txt.Quote(relativeFilename), txt.Quote(fs.RelName(destinationFilename, imp.originalsPath())))
+					destMainFileName = destFileName
+					log.Infof("import: moving main %s file %s to %s", f.FileType(), txt.Quote(relFileName), txt.Quote(fs.RelName(destFileName, imp.originalsPath())))
 				} else {
-					log.Infof("import: moving related %s file %s to %s", f.FileType(), txt.Quote(relativeFilename), txt.Quote(fs.RelName(destinationFilename, imp.originalsPath())))
+					log.Infof("import: moving related %s file %s to %s", f.FileType(), txt.Quote(relFileName), txt.Quote(fs.RelName(destFileName, imp.originalsPath())))
 				}
 
 				if opt.Move {
-					if err := f.Move(destinationFilename); err != nil {
-						log.Errorf("import: failed moving file to %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
+					if err := f.Move(destFileName); err != nil {
+						log.Errorf("import: failed moving file to %s (%s)", txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())), err.Error())
 					}
 				} else {
-					if err := f.Copy(destinationFilename); err != nil {
-						log.Errorf("import: failed copying file to %s (%s)", txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())), err.Error())
+					if err := f.Copy(destFileName); err != nil {
+						log.Errorf("import: failed copying file to %s (%s)", txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())), err.Error())
 					}
 				}
 			} else {
@@ -73,23 +84,23 @@ func ImportWorker(jobs <-chan ImportJob) {
 					if err := f.Remove(); err != nil {
 						log.Errorf("import: failed deleting %s (%s)", txt.Quote(f.BaseName()), err.Error())
 					} else {
-						log.Infof("import: deleted %s (already exists)", txt.Quote(relativeFilename))
+						log.Infof("import: deleted %s (already exists)", txt.Quote(relFileName))
 					}
 				}
 			}
 		}
 
-		if destinationMainFilename != "" {
-			f, err := NewMediaFile(destinationMainFilename)
+		if destMainFileName != "" {
+			f, err := NewMediaFile(destMainFileName)
 
 			if err != nil {
-				log.Errorf("import: %s in %s", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
+				log.Errorf("import: %s in %s", err.Error(), txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())))
 				continue
 			}
 
 			if f.IsMedia() && !f.HasJpeg() {
 				if jpegFile, err := imp.convert.ToJpeg(f); err != nil {
-					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
+					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())))
 					continue
 				} else {
 					log.Debugf("import: %s created", txt.Quote(jpegFile.BaseName()))
@@ -116,7 +127,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			related, err := f.RelatedFiles(imp.conf.Settings().StackSequences())
 
 			if err != nil {
-				log.Errorf("import: %s in %s (find related files)", err.Error(), txt.Quote(fs.RelName(destinationMainFilename, imp.originalsPath())))
+				log.Errorf("import: %s in %s (find related files)", err.Error(), txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())))
 
 				continue
 			}
@@ -147,7 +158,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 			} else {
-				log.Warnf("import: no main file for %s, conversion to jpeg failed?", fs.RelName(destinationMainFilename, imp.originalsPath()))
+				log.Warnf("import: no main file for %s, conversion to jpeg failed?", fs.RelName(destMainFileName, imp.originalsPath()))
 			}
 
 			for _, f := range related.Files {
