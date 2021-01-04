@@ -142,6 +142,11 @@ export const Languages = () => [
     translated: $gettext("Chinese Traditional"),
     value: "zh_TW",
   },
+  {
+    text: "日本語",
+    translated: $gettext("Japanese"),
+    value: "ja",
+  },
 ];
 
 export const Themes = () => [
