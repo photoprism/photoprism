@@ -166,5 +166,29 @@
     "terminal": "#333333",
     "navigation": "#353839",
     "navigation-home": "#212121"
+  },
+  "sunrise": {
+    "application": "#F5F5F5",
+    "form": "#eeeeee",
+    "primary": "#FFCA28",
+    "secondary-dark": "#212121",
+    "secondary": "#bdbdbd",
+    "secondary-light": "#e0e0e0",
+    "accent": "#757575",
+    "error": "#e57373",
+    "info": "#00acc1",
+    "success": "#4db6ac",
+    "warning": "#ffd740",
+    "remove": "#e57373",
+    "restore": "#64b5f6",
+    "album": "#ffab00",
+    "download": "#00bfa5",
+    "private": "#00b8d4",
+    "edit": "#00b8d4",
+    "share": "#9575cd",
+    "love": "#ef5350",
+    "terminal": "#333333",
+    "navigation": "#212121",
+    "navigation-home": "#000000"
   }
 }

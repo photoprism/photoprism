@@ -100,7 +100,7 @@ export const Languages = () => [
     text: "עברית",
     translated: $gettext("Hebrew"),
     value: "he",
-    rtl: true
+    rtl: true,
   },
   {
     text: "हिन्दी",
@@ -172,6 +172,10 @@ export const Themes = () => [
   {
     text: $gettext("Seaweed"),
     value: "seaweed",
+  },
+  {
+    text: $gettext("Sunrise"),
+    value: "sunrise",
   },
 ];
 export const MapsAnimate = () => [
