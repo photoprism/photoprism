@@ -13,7 +13,7 @@
              @click="changePath(item.path)">
         <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" left>{{ item.icon }}</v-icon> {{ item.label }}
+          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
         </template>
       </v-tab>
 
@@ -128,6 +128,7 @@ export default {
       public: isPublic,
       readonly: this.$config.get("readonly"),
       active: active,
+      rtl: this.$rtl,
     };
   },
   methods: {

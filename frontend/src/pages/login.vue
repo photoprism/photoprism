@@ -40,7 +40,7 @@
                      :disabled="loading || !this.password || !this.username"
                      @click.stop="login">
                 <translate>Sign in</translate>
-                <v-icon right dark>login</v-icon>
+                <v-icon :right="!rtl" :left="rtl" dark>login</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
@@ -62,6 +62,7 @@ export default {
       username: "admin",
       password: "",
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
+      rtl: this.$rtl,
     };
   },
   methods: {

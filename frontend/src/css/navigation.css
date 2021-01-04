@@ -17,6 +17,11 @@
     text-align: right;
 }
 
+#p-navigation .nav-count.--rtl {
+    right: 80px;
+    text-align: left;
+}
+
 .v-list__group__header .v-list__group__header__append-icon {
     padding-left: 8px !important;
 }

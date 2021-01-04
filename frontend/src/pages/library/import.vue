@@ -73,7 +73,7 @@
                @click.stop="showUpload()"
         >
           <translate>Upload</translate>
-          <v-icon right dark>cloud_upload</v-icon>
+          <v-icon :right="!rtl" :left="rtl" dark>cloud_upload</v-icon>
         </v-btn>
 
         <v-btn
@@ -84,7 +84,7 @@
             @click.stop="startImport()"
         >
           <translate>Import</translate>
-          <v-icon right dark>update</v-icon>
+          <v-icon :right="!rtl" :left="rtl" dark>sync</v-icon>
         </v-btn>
       </v-container>
     </v-form>
@@ -117,6 +117,7 @@ export default {
       source: null,
       root: root,
       dirs: [root],
+      rtl: this.$rtl,
     };
   },
   created() {

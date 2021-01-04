@@ -2,11 +2,13 @@
   <div>
     <v-container fluid class="pa-0" v-if="selection.length > 0">
       <v-speed-dial
-          fixed bottom right
+          fixed bottom
           direction="top"
           v-model="expanded"
           transition="slide-y-reverse-transition"
-          class="p-clipboard p-file-clipboard"
+          :right="!rtl"
+          :left="rtl"
+          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`"
           id="t-clipboard"
       >
         <v-btn
@@ -74,6 +76,7 @@ export default {
         album: false,
         edit: false,
       },
+      rtl: this.$rtl,
     };
   },
   methods: {
