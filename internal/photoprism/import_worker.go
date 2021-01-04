@@ -34,6 +34,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 			continue
 		}
 
+		if related.Main.NeedsExifToolJson() {
+			if jsonName, err := imp.convert.ToJson(related.Main); err != nil {
+				log.Errorf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
+			} else if err := related.Main.ReadExifToolJson(); err != nil {
+				log.Errorf("import: %s in %s (read metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
+			} else {
+				log.Debugf("import: %s created", filepath.Base(jsonName))
+			}
+		}
+
 		originalName := related.Main.RelName(importPath)
 
 		event.Publish("import.file", event.Data{
