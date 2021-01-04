@@ -4,14 +4,14 @@
 
     <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-        <v-text-field single-line
+        <v-text-field id="search"
+                      v-model="filter.q"
+                      single-line
                       class="hidden-xs-only mr-3"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"
-                      v-model="filter.q"
                       clearable
-                      id="search"
                       color="secondary-dark"
                       @keyup.enter.native="updateQuery"
                       @click:clear="clearQuery"
@@ -83,7 +83,7 @@
               :key="index"
               :data-uid="album.UID"
               class="p-album"
-              xs6 sm4 lg3 xl2 d-flex
+              xs6 sm4 md3 lg2 xl1 d-flex
           >
             <v-hover>
               <v-card slot-scope="{ hover }" tile
@@ -193,11 +193,11 @@
         </v-layout>
       </v-container>
     </v-container>
-    <p-share-dialog :show="dialog.share" :model="album" @upload="webdavUpload"
+    <p-share-dialog :show="dialog.share" :model="model" @upload="webdavUpload"
                     @close="dialog.share = false"></p-share-dialog>
     <p-share-upload-dialog :show="dialog.upload" :selection="selection" @cancel="dialog.upload = false"
                            @confirm="dialog.upload = false"></p-share-upload-dialog>
-    <p-album-edit-dialog :show="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
+    <p-album-edit-dialog :show="dialog.edit" :album="model" @close="dialog.edit = false"></p-album-edit-dialog>
   </div>
 </template>
 
@@ -259,7 +259,7 @@ export default {
         upload: false,
         edit: false,
       },
-      album: new Album(),
+      model: new Album(),
     };
   },
   computed: {
@@ -301,11 +301,11 @@ export default {
   },
   methods: {
     share(album) {
-      this.album = album;
+      this.model = album;
       this.dialog.share = true;
     },
     edit(album) {
-      this.album = album;
+      this.model = album;
       this.dialog.edit = true;
     },
     webdavUpload() {
