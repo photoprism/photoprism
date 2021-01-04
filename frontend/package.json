@@ -30,7 +30,7 @@
     "acorn": "^6.4.2",
     "ajv": "^6.12.6",
     "autoprefixer": "^9.8.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "axios-mock-adapter": "^1.19.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
