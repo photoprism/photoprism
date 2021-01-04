@@ -178,10 +178,6 @@ export const Themes = () => [
     text: $gettext("Seaweed"),
     value: "seaweed",
   },
-  {
-    text: $gettext("Sunrise"),
-    value: "sunrise",
-  },
 ];
 export const MapsAnimate = () => [
   {
