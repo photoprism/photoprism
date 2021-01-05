@@ -61,7 +61,7 @@
     "eslint-plugin-prettier-vue": "^2.1.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.1.0",
-    "eslint-plugin-vue": "^7.4.0",
+    "eslint-plugin-vue": "^7.4.1",
     "eventsource-polyfill": "^0.9.6",
     "file-loader": "^3.0.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
