@@ -41,7 +41,7 @@
                 PhotoPrism
               </v-list-tile-title>
             </v-list-tile-content>
-            <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Toggle Navigation')">
+            <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
               <v-btn icon class="nav-minimize" @click.stop="isMini = !isMini">
                 <v-icon v-if="!rtl">chevron_left</v-icon>
                 <v-icon v-else>chevron_right</v-icon>
@@ -53,7 +53,7 @@
 
       <v-list class="pt-3">
         <v-list-tile v-if="isMini" class="nav-expand" @click.stop="isMini = !isMini">
-          <v-list-tile-action :title="$gettext('Toggle Navigation')">
+          <v-list-tile-action :title="$gettext('Expand')">
             <v-icon v-if="!rtl">chevron_right</v-icon>
             <v-icon v-else>chevron_left</v-icon>
           </v-list-tile-action>
