@@ -31,8 +31,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
   [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open, 
   edit, and delete files from your computer or phone as if they were local. 
   You may easily sync your pictures with [Nextcloud](https://nextcloud.com/) as well.  
-* PhotoPrism feels [like a native app](https://en.wikipedia.org/wiki/Progressive_web_application) and, 
-  of course, you can also add it to your home screen.
+* The PhotoPrism web app feels [like a native app](https://en.wikipedia.org/wiki/Progressive_web_application) that you can add to your home screen. There's also a [community-maintained native app in development](https://github.com/photoprism/photoprism-mobile).
 
 ## Getting Started ##
 
