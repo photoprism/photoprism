@@ -30,8 +30,10 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may 
   [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open, 
   edit, and delete files from your computer or phone as if they were local. 
-  You may easily sync your pictures with [Nextcloud](https://nextcloud.com/) as well.  
-* The PhotoPrism web app feels [like a native app](https://en.wikipedia.org/wiki/Progressive_web_application) that you can add to your home screen. There's also a [community-maintained native app in development](https://github.com/photoprism/photoprism-mobile).
+  You may easily sync your pictures with [PhotoSync](https://www.photosync-app.com/) as well.  
+* PhotoPrism is built as a progressive web app, so it feels like [native](https://en.wikipedia.org/wiki/Progressive_web_application),
+  and you may add it to your home screen.
+  There's also a [community-maintained native app in development](https://github.com/photoprism/photoprism-mobile).
 
 ## Getting Started ##
 
