@@ -15,7 +15,7 @@ msgstr ""
 
 #: src/pages/albums.vue:273 src/share/albums.vue:249
 msgid "%{n} albums found"
-msgstr "%{n} найденные альбомы"
+msgstr "%{n} альбомов найдено"
 
 #: src/pages/album/photos.vue:323 src/share/photos.vue:323
 msgid "%{n} entries found"
@@ -23,7 +23,7 @@ msgstr "%{n} совпадений найдено"
 
 #: src/dialog/share/upload.vue:45
 msgid "%{n} files uploaded"
-msgstr "%{n} метки загружены"
+msgstr "%{n} файлов загружено"
 
 #: src/pages/library/files.vue:290
 msgid "%{n} folders found"
@@ -51,7 +51,7 @@ msgstr "4 часа"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr "Нажмите, что бы скопировать"
+msgstr "Нажмите, чтобы скопировать"
 
 #: src/component/navigation.vue:346 src/component/navigation.vue:25
 msgid "About"
@@ -98,7 +98,7 @@ msgstr "Добавить сервер"
 #: src/component/label/clipboard.vue:64 src/component/photo/clipboard.vue:187
 #: src/dialog/photo/album.vue:17
 msgid "Add to album"
-msgstr "Добавить сервер"
+msgstr "Добавить в альбом"
 
 #: src/dialog/photo/files.vue:156
 msgid "Added"
@@ -146,11 +146,11 @@ msgstr "Спустя 2 недели"
 
 #: src/model/album.js:161
 msgid "Album"
-msgstr "Альбомы"
+msgstr "Альбом"
 
 #: src/dialog/photo/album.vue:92
 msgid "Album Name"
-msgstr "Названия альбома"
+msgstr "Название альбома"
 
 #: src/component/navigation.vue:165 src/component/navigation.vue:174
 #: src/component/navigation.vue:620 src/routes.js:111 src/share/albums.vue:4
@@ -159,7 +159,7 @@ msgstr "Альбомы"
 
 #: src/component/album/clipboard.vue:69
 msgid "Albums deleted"
-msgstr "Альбом удален"
+msgstr "Альбомы удалены"
 
 #: src/pages/albums.vue:181 src/share/albums.vue:163
 msgid "All %{n} albums loaded"
@@ -204,7 +204,7 @@ msgstr "Все Объективы"
 
 #: src/component/photo/toolbar.vue:25
 msgid "All Months"
-msgstr "Все Месяца"
+msgstr "Все Месяцы"
 
 #: src/pages/library/index.vue:12
 msgid "All originals"
@@ -219,7 +219,7 @@ msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
 "Nextcloud."
 msgstr ""
-"Так же, вы можете загрузить файлы прямо на WebDAV сервер, например Nextcloud"
+"Также вы можете загрузить файлы прямо на WebDAV сервер, например Nextcloud"
 
 #: src/dialog/photo/info.vue:145
 msgid "Altitude"
@@ -227,7 +227,7 @@ msgstr "Высота"
 
 #: src/dialog/photo/details.vue:306
 msgid "Altitude (m)"
-msgstr "Высота"
+msgstr "Высота (м)"
 
 #: src/common/api.js:83
 msgid "An error occurred - are you offline?"
@@ -254,7 +254,7 @@ msgstr "Принять"
 #: src/component/photo/cards.vue:20 src/component/photo/clipboard.vue:96
 #: src/dialog/photo/details.vue:123
 msgid "Approve"
-msgstr "Поддтвердить"
+msgstr "Подтвердить"
 
 #: src/component/navigation.vue:113 src/component/photo/cards.vue:21
 #: src/component/photo/clipboard.vue:211 src/pages/settings/general.vue:205
@@ -268,7 +268,7 @@ msgstr "В архиве"
 
 #: src/dialog/photo/archive.vue:10
 msgid "Are you sure you want to archive the selection?"
-msgstr "Вы действительно хотите архивировать эти фотографии?"
+msgstr "Вы действительно хотите переместить эти фотографии в архив?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -276,11 +276,11 @@ msgstr "Вы действительно хотите удалить эти ал�
 
 #: src/dialog/label/delete.vue:10
 msgid "Are you sure you want to delete these labels?"
-msgstr "Вы действительно хотите удалить эти альбомы?"
+msgstr "Вы действительно хотите удалить эти метки?"
 
 #: src/dialog/account/remove.vue:10
 msgid "Are you sure you want to delete this account?"
-msgstr "Вы действительно хотите удалить эти альбомы?"
+msgstr "Вы действительно хотите удалить этот аккаунт?"
 
 #: src/dialog/file/delete.vue:10
 msgid "Are you sure you want to permanently delete this file?"
@@ -288,7 +288,7 @@ msgstr "Вы уверены, что хотите удалить этот фай�
 
 #: src/dialog/photo/details.vue:522
 msgid "Artist"
-msgstr "Артист"
+msgstr "Автор"
 
 #: src/dialog/photo/files.vue:124
 msgid "Aspect Ratio"
@@ -308,7 +308,7 @@ msgstr ""
 
 #: src/options/options.js:269
 msgid "Black"
-msgstr "Назад"
+msgstr "Черный"
 
 #: src/options/options.js:282
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
@@ -340,7 +340,7 @@ msgstr "Отчет об ошибке"
 
 #: src/common/notify.js:72
 msgid "Busy, please wait…"
-msgstr "В работе, пожалуйста ждите..."
+msgstr "В работе, пожалуйста, ждите..."
 
 #: src/component/navigation.vue:209 src/component/navigation.vue:764
 #: src/routes.js:124 src/routes.js:131
@@ -492,7 +492,7 @@ msgstr "Ничего не найдено"
 
 #: src/component/photo/list.vue:14 src/share/photo/list.vue:13
 msgid "Couldn't find anything."
-msgstr "Ничего не найден"
+msgstr "Ничего не найдено"
 
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:6
 #: src/component/photo/mosaic.vue:6 src/share/photo/cards.vue:6
@@ -581,7 +581,7 @@ msgstr "Размеры"
 
 #: src/pages/settings/advanced.vue:142
 msgid "Disable Backups"
-msgstr "Последняя резервная копия"
+msgstr "Отключить резервное копирование"
 
 #: src/pages/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
@@ -593,7 +593,7 @@ msgstr "Отключить ExifTool"
 
 #: src/pages/settings/advanced.vue:186
 msgid "Disable Places"
-msgstr "Места"
+msgstr "Отключить Места"
 
 #: src/pages/settings/advanced.vue:230
 msgid "Disable TensorFlow"
@@ -624,21 +624,21 @@ msgstr "Исследование"
 
 #: src/pages/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Не создавайте резервные копии метаданных фото и альбомов в YAML-файлы."
+msgstr "Не создавать резервные копии метаданных фото и альбомов в YAML-файлы."
 
 #: src/pages/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
-"Не создавайте JSON-файлы ExifTool для улучшенного извлечения метаданных."
+"Не создавать JSON-файлы ExifTool для улучшенного извлечения метаданных."
 
 #: src/pages/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
-"Не изменяйте папку с оригиналами. Отключает импорт, загрузку и удаление."
+"Не изменять папку с оригиналами. Отключает импорт, загрузку и удаление."
 
 #: src/pages/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
-msgstr "Не используйте TensorFlow для классификации изображений."
+msgstr "Не использовать TensorFlow для классификации изображений."
 
 #: src/options/options.js:277
 msgid "Donations"
@@ -832,7 +832,7 @@ msgstr "Фокусное расстояние"
 #: src/dialog/photo/info.vue:25 src/dialog/share/upload.vue:145
 #: src/model/folder.js:187 src/pages/library/files.vue:81
 msgid "Folder"
-msgstr "Папки"
+msgstr "Папка"
 
 #: src/pages/library/files.vue:292
 msgid "Folder contains %{n} files"
@@ -898,7 +898,7 @@ msgstr "Скрытые файлы"
 
 #: src/pages/settings/general.vue:206
 msgid "Hide photos that have been moved to archive."
-msgstr "Спрячьте фотографии, которые были перенесены в архив."
+msgstr "Скрыть фотографии, которые были перенесены в архив."
 
 #: src/pages/settings/index.vue:71
 msgid "Hide Private"
@@ -922,8 +922,8 @@ msgid ""
 "If a file you expect is missing, please re-index your library and wait until "
 "indexing has been completed."
 msgstr ""
-"Если вы не нашли нудный вам файл, пожалуйста переиндексируйте свою "
-"библиотеку и ждите пока процесс будет полностью завершен."
+"Если вы не нашли нужный вам файл, пожалуйста переиндексируйте свою "
+"библиотеку и дождитесь полного завершения процесса индексации."
 
 #: src/dialog/photo/labels.vue:34
 msgid "image"
@@ -1066,7 +1066,7 @@ msgstr "Объектив"
 
 #: src/pages/settings/general.vue:272
 msgid "Let PhotoPrism create albums from past events."
-msgstr "Позвольте PhotoPrism создавать альбомы из прошлых событий."
+msgstr "Разрешить PhotoPrism создавать альбомы из прошлых событий."
 
 #: src/component/navigation.vue:280 src/component/navigation.vue:289
 #: src/component/navigation.vue:1006 src/pages/settings/general.vue:315
@@ -1171,7 +1171,7 @@ msgstr "Сообщение отправлено"
 
 #: src/dialog/photo/files.vue:148
 msgid "Missing"
-msgstr "Пропущенно"
+msgstr "Пропущено"
 
 #: src/component/navigation.vue:222 src/component/navigation.vue:805
 #: src/pages/settings/general.vue:271 src/routes.js:98 src/routes.js:105
@@ -1255,15 +1255,15 @@ msgstr "Нет"
 
 #: src/pages/albums.vue:269 src/share/albums.vue:245
 msgid "No albums found"
-msgstr "Альбомов не найдено"
+msgstr "Альбомы не найдены"
 
 #: src/pages/album/photos.vue:319 src/share/photos.vue:319
 msgid "No entries found"
-msgstr "Файлов не найдены"
+msgstr "Файлы не найдены"
 
 #: src/dialog/photo/labels.vue:33
 msgid "No labels found"
-msgstr "%{n} меток найдено"
+msgstr "Метки не найдены"
 
 #: src/pages/places.vue:176 src/pages/places.vue:221
 msgid "No photos found"
@@ -1294,8 +1294,8 @@ msgid ""
 "Non-photographic and low-quality images require a review before they appear "
 "in search results."
 msgstr ""
-"Не фотографичные или изображения низкого качества сначала нужно одобрить, "
-"прежде чем они отразятся в результатах поиска."
+"Файлы, не являющиеся фотографиями, или изображения низкого качества нужно одобрить, "
+"чтобы они появились в результатах поиска."
 
 #: src/options/options.js:173
 msgid "None"
@@ -1368,7 +1368,7 @@ msgstr "Один альбом найден"
 
 #: src/pages/album/photos.vue:321 src/share/photos.vue:321
 msgid "One entry found"
-msgstr "Одна файл найдена"
+msgstr "Один файл найден"
 
 #: src/pages/library/files.vue:286
 msgid "One file found"
@@ -1388,7 +1388,7 @@ msgstr "Оникс"
 
 #: src/pages/settings/advanced.vue:6
 msgid "Options"
-msgstr "Опции"
+msgstr "Настройки"
 
 #: src/options/options.js:258
 msgid "Orange"
@@ -1396,7 +1396,7 @@ msgstr "Оранжевый"
 
 #: src/dialog/account/edit.vue:80
 msgid "Original"
-msgstr "Оригиналы"
+msgstr "Оригинал"
 
 #: src/pages/library/import.vue:27
 msgid "Original file names will be stored and indexed."
@@ -1448,14 +1448,14 @@ msgstr ""
 
 #: src/model/photo.js:674
 msgid "Photo"
-msgstr "Фотографии"
+msgstr "Фотография"
 
 #: src/pages/albums.vue:52
 msgid ""
 "PhotoPrism continuously analyzes your library to find special moments, "
 "journeys and places."
 msgstr ""
-"PhotoPrism непрерывно анализирует вашу библиотеку что бы найти особенные "
+"PhotoPrism непрерывно анализирует вашу библиотеку, чтобы найти особенные "
 "события, путешествия и места."
 
 #: src/dialog/reload.vue:4
@@ -1494,15 +1494,15 @@ msgstr "Места"
 
 #: src/pages/settings/account.vue:101
 msgid "Please confirm your new password."
-msgstr "Пожалуйста, введите ваше имя и пароль что бы продолжить:"
+msgstr "Пожалуйста, подтвердите ваш новый пароль."
 
 #: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
-msgstr "Пожалуйста не загружайте фотографии содержащие недопустимый контент."
+msgstr "Пожалуйста, не загружайте фотографии, содержащие недопустимый контент."
 
 #: src/pages/login.vue:8
 msgid "Please enter your name and password:"
-msgstr "Пожалуйста, введите ваше имя и пароль что бы продолжить:"
+msgstr "Пожалуйста, введите ваше имя и пароль:"
 
 #: src/options/options.js:111
 msgid "Polish"
@@ -1518,19 +1518,19 @@ msgstr "Предельный размер: %{n}px"
 
 #: src/dialog/account/edit.vue:301
 msgid "Preserve filenames"
-msgstr "Сохранять имена и фамилии"
+msgstr "Сохранять имена файлов"
 
 #: src/pages/library/import.vue:8
 msgid "Press button to start importing…"
-msgstr "Нажмите кнопку что бы начать импортирование..."
+msgstr "Нажмите кнопку, чтобы начать импортирование..."
 
 #: src/pages/library/index.vue:9
 msgid "Press button to start indexing…"
-msgstr "Нажмите кнопку что бы начать индексирование..."
+msgstr "Нажмите кнопку, чтобы начать индексирование..."
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
-msgstr "Нажмите enter что бы создать новый альбом."
+msgstr "Нажмите enter, чтобы создать новый альбом."
 
 #: src/dialog/photo/files.vue:17
 msgid "Preview"
@@ -1560,7 +1560,7 @@ msgstr "Фиолетовый"
 
 #: src/pages/settings/index.vue:92
 msgid "Quality Filter"
-msgstr "Показатель Качества"
+msgstr "Фильтр Качества"
 
 #: src/dialog/photo/info.vue:59
 msgid "Quality Score"
@@ -1600,7 +1600,7 @@ msgstr "Недавно добавленные"
 #: src/component/album/toolbar.vue:38 src/component/photo/toolbar.vue:36
 #: src/dialog/album/edit.vue:16
 msgid "Recently edited"
-msgstr "Недавно добавленные"
+msgstr "Недавно отредактированные"
 
 #: src/options/options.js:257
 msgid "Red"
@@ -2014,7 +2014,7 @@ msgstr "Тип"
 
 #: src/pages/settings/advanced.vue:331
 msgid "Dynamic Previews"
-msgstr "Незарегистрированные превью"
+msgstr "Динамические превью"
 
 #: src/pages/settings/advanced.vue:300
 msgid "Dynamic Size Limit: %{n}px"
@@ -2044,7 +2044,7 @@ msgstr "Убрать из очереди"
 
 #: src/dialog/photo/info.vue:96
 msgid "Unstacked"
-msgstr "Убрать из очереди"
+msgstr "Убрано из очереди"
 
 #: src/dialog/photo/files.vue:165 src/dialog/photo/info.vue:169
 msgid "Updated"
@@ -2052,15 +2052,15 @@ msgstr "Обновлено"
 
 #: src/pages/library/index.vue:128
 msgid "Updating index"
-msgstr "Индекс обновления"
+msgstr "Обновление индекса"
 
 #: src/pages/library/index.vue:126
 msgid "Updating moments"
-msgstr "Моменты обновления"
+msgstr "Обновление моментов"
 
 #: src/pages/library/index.vue:124
 msgid "Updating stacks"
-msgstr "Убрать из очереди"
+msgstr "Обновление очередей"
 
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:123
 #: src/component/photo/toolbar.vue:123 src/dialog/share/upload.vue:35
@@ -2256,7 +2256,7 @@ msgstr "Увеличение /уменьшение масштаба"
 #~ msgstr "Следующее"
 
 #~ msgid "No albums matched your search"
-#~ msgstr "Нет совпадений среди альбовом по Вашему запросу"
+#~ msgstr "Нет совпадений среди альбомов по Вашему запросу"
 
 #~ msgid "No labels matched your search"
 #~ msgstr "Нет совпадений меток по Вашему запросу"
@@ -2286,7 +2286,7 @@ msgstr "Увеличение /уменьшение масштаба"
 #~ msgstr "Снято до"
 
 #~ msgid "Toggled story flag"
-#~ msgstr "Фключен флаг История"
+#~ msgstr "Включен флаг История"
 
 #~ msgid ""
 #~ "Try using other terms and search options such as category, country and "
@@ -2326,7 +2326,7 @@ msgstr "Увеличение /уменьшение масштаба"
 #~ msgstr "из"
 
 #~ msgid "Press button to import photos from directory..."
-#~ msgstr "Нажмите кнопку что бы импортировать фотографии из папки..."
+#~ msgstr "Нажмите кнопку, чтобы импортировать фотографии из папки..."
 
 #~ msgid "Remove from album"
 #~ msgstr "Удалить из альбома"
