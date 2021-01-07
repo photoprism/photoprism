@@ -86,7 +86,12 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 	done[related.Main.FileName()] = true
 
-	for _, f := range related.Files {
+	i := 0
+
+	for i < len(related.Files) {
+		f := related.Files[i]
+		i++
+
 		if f == nil {
 			continue
 		}
@@ -101,6 +106,26 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 		if sizeLimit > 0 && f.FileSize() > sizeLimit {
 			log.Warnf("index: %s exceeds file size limit (%d / %d MB)", txt.Quote(f.BaseName()), f.FileSize()/(1024*1024), sizeLimit/(1024*1024))
 			continue
+		}
+
+		if opt.Convert && f.IsMedia() && !f.HasJpeg() {
+			if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
+				result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", txt.Quote(f.BaseName()), err.Error())
+				result.Status = IndexFailed
+
+				return result
+			} else {
+				log.Debugf("index: %s created", txt.Quote(jpegFile.BaseName()))
+
+				if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
+					result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+					result.Status = IndexFailed
+
+					return result
+				}
+
+				related.Files = append(related.Files, jpegFile)
+			}
 		}
 
 		if f.NeedsExifToolJson() {

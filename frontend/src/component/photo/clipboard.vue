@@ -4,10 +4,11 @@
       <v-speed-dial
           id="t-clipboard" v-model="expanded" fixed
           bottom
-          right
           direction="top"
           transition="slide-y-reverse-transition"
-          class="p-clipboard p-photo-clipboard"
+          :right="!rtl"
+          :left="rtl"
+          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-photo-clipboard`"
       >
         <v-btn
             slot="activator" fab
@@ -75,7 +76,7 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive'" fab dark
+            v-if="context !== 'archive' && config.settings.features.albums" fab dark
             small
             :title="$gettext('Add to album')"
             color="album"
@@ -108,7 +109,7 @@
           <v-icon>unarchive</v-icon>
         </v-btn>
         <v-btn
-            v-if="isAlbum" fab dark
+            v-if="isAlbum && config.settings.features.albums" fab dark
             small
             :title="$gettext('Remove')"
             color="remove"
@@ -159,6 +160,7 @@ export default {
         album: false,
         share: false,
       },
+      rtl: this.$rtl,
     };
   },
   methods: {

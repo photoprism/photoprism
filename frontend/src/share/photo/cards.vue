@@ -3,10 +3,10 @@
     <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
       <v-card-title primary-title>
         <div>
-          <h3 class="title ma-0 pa-0" v-if="filter.order === 'edited'">
+          <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
             <translate>Couldn't find recently edited</translate>
           </h3>
-          <h3 class="title ma-0 pa-0" v-else>
+          <h3 v-else class="title ma-0 pa-0">
             <translate>Couldn't find anything</translate>
           </h3>
           <p class="mt-4 mb-0 pa-0">
@@ -21,17 +21,17 @@
           :key="index"
           :data-uid="photo.UID"
           class="p-photo"
-          xs12 sm6 md4 lg3 d-flex
-          v-bind:class="{ 'is-selected': $clipboard.has(photo), portrait: photo.Portrait }"
+          xs12 sm6 md4 lg2 d-flex
+          :class="{ 'is-selected': $clipboard.has(photo), portrait: photo.Portrait }"
       >
         <v-hover>
-          <v-card tile slot-scope="{ hover }"
-                  @contextmenu="onContextMenu($event, index)"
+          <v-card slot-scope="{ hover }" tile
                   :dark="$clipboard.has(photo)"
-                  :class="$clipboard.has(photo) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'">
+                  :class="$clipboard.has(photo) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
+                  @contextmenu="onContextMenu($event, index)">
             <v-img :src="photo.thumbnailUrl('tile_500')"
                    aspect-ratio="1"
-                   v-bind:class="{ selected: $clipboard.has(photo) }"
+                   :class="{ selected: $clipboard.has(photo) }"
                    class="accent lighten-2 clickable"
                    @mousedown="onMouseDown($event, index)"
                    @click.stop.prevent="onClick($event, index)"
@@ -48,16 +48,16 @@
               </v-layout>
 
               <v-layout
+                  v-if="photo.Type === 'live'"
+                  v-show="hover"
                   fill-height
                   align-center
                   justify-center
                   ma-0
                   class="live-player"
                   style="overflow: hidden;"
-                  v-if="photo.Type === 'live'"
-                  v-show="hover"
               >
-                <video width="500" height="500" autoplay loop muted playsinline :key="photo.videoUrl()">
+                <video :key="photo.videoUrl()" width="500" height="500" autoplay loop muted playsinline>
                   <source :src="photo.videoUrl()" type="video/mp4">
                 </video>
               </v-layout>
@@ -92,12 +92,12 @@
               <template v-if="photo.isPlayable()">
                 <v-btn v-if="photo.Type === 'live'" :ripple="false"
                        icon flat large absolute class="p-photo-live opacity-75"
-                       @click.stop.prevent="openPhoto(index, true)" title="Live Photo">
+                       title="Live Photo" @click.stop.prevent="openPhoto(index, true)">
                   <v-icon color="white" class="action-play">adjust</v-icon>
                 </v-btn>
                 <v-btn v-else color="white" :ripple="false"
                        outline large fab absolute class="p-photo-play opacity-75" :depressed="false"
-                       @click.stop.prevent="openPhoto(index, true)" title="Play">
+                       title="Play" @click.stop.prevent="openPhoto(index, true)">
                   <v-icon color="white" class="action-play">play_arrow</v-icon>
                 </v-btn>
               </template>
@@ -113,7 +113,7 @@
               </v-btn>
               <v-btn v-else-if="photo.Type === 'raw'" :ripple="false"
                      icon flat large absolute class="p-photo-merged opacity-75"
-                     @click.stop.prevent="openPhoto(index, true)" title="RAW">
+                     title="RAW" @click.stop.prevent="openPhoto(index, true)">
                 <v-icon color="white" class="action-burst">photo_camera</v-icon>
               </v-btn>
             </v-img>
@@ -124,7 +124,7 @@
                 <h3 class="body-2 mb-2" :title="photo.Title">
                   {{ photo.Title | truncate(80) }}
                 </h3>
-                <div class="caption mb-2" v-if="photo.Description" title="Description">
+                <div v-if="photo.Description" class="caption mb-2" title="Description">
                   {{ photo.Description }}
                 </div>
                 <div class="caption">
@@ -132,8 +132,8 @@
                   {{ photo.getDateString() }}
                   <template v-if="!photo.Description">
                     <br/>
-                    <div v-if="photo.Type === 'video'" @click.exact="openPhoto(index, true)"
-                         title="Video">
+                    <div v-if="photo.Type === 'video'" title="Video"
+                         @click.exact="openPhoto(index, true)">
                       <v-icon size="14">movie</v-icon>
                       {{ photo.getVideoInfo() }}
                     </div>
@@ -159,7 +159,7 @@
 </template>
 <script>
 export default {
-  name: 'p-photo-cards',
+  name: 'PPhotoCards',
   props: {
     photos: Array,
     selection: Array,
@@ -183,7 +183,7 @@ export default {
   methods: {
     downloadFile(index) {
       const photo = this.photos[index];
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
       link.download = photo.FileName;
       link.click();

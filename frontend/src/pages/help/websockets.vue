@@ -7,41 +7,16 @@
       configuration of any Web server that is in front of PhotoPrism:</p>
     <v-expansion-panel class="elevation-0">
       <v-expansion-panel-content class="secondary-light mb-1">
-        <template v-slot:header>
-          <div>How to reverse proxy WebSockets with Apache 2.4</div>
-        </template>
-        <v-card class="white">
-          <v-card-text>
-            <p>
-              In this <a target="_blank" href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html">document</a>, you will learn how to configure Apache Web Server 2.4 to reverse proxy WebSockets.
-            </p>
-            <p>
-              Example configuration (where "photoprism" is the name or IP of your server):
-            </p>
-            <pre>
-RewriteEngine on
-RewriteCond %{HTTP:Upgrade} websocket [NC]
-RewriteCond %{HTTP:Connection} upgrade [NC]
-RewriteRule ^/?(.*) "ws://photoprism:2342/$1" [P,L]
-
-ProxyPass / http://photoprism:2342/
-ProxyPassReverse / http://photoprism:2342/
-ProxyRequests off
-            </pre>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
-      <v-expansion-panel-content class="secondary-light mb-1">
-        <template v-slot:header>
+        <template #header>
           <div>How to configure NGINX to proxy WebSockets</div>
         </template>
         <v-card class="white">
           <v-card-text>
             <p>
-              In this <a target="_blank" href="https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-configure-nginx-for-websockets/">tutorial</a>, you will learn how to configure NGINX WebSocket connections between your client and backend services.
+              This <a target="_blank" href="https://www.serverlab.ca/tutorials/linux/web-servers-linux/how-to-configure-nginx-for-websockets/">tutorial</a> explains, how to configure NGINX WebSocket connections between your client and backend services.
             </p>
             <p>
-              Example configuration:
+              You may enable WebSockets and transparent proxying as show in this example:
             </p>
             <pre>
 http {
@@ -63,17 +38,20 @@ http {
   }
 }
             </pre>
+            <p>
+              Please refer to the <a target="_blank" href="https://caddyserver.com/v1/docs/websocket">official documentation</a> for more details.
+            </p>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
       <v-expansion-panel-content class="secondary-light mb-1">
-        <template v-slot:header>
+        <template #header>
           <div>How to configure Caddy 1 to proxy WebSockets</div>
         </template>
         <v-card class="white">
           <v-card-text>
             <p>
-              Example configuration:
+              You may enable WebSockets and transparent proxying as show in this example:
             </p>
             <pre>
 example.com {
@@ -84,19 +62,19 @@ example.com {
 }
             </pre>
             <p>
-              See <a target="_blank" href="https://caddyserver.com/v1/docs/websocket">documentation</a> for details.
+              Please refer to the <a target="_blank" href="https://nginx.org/en/docs/">official documentation</a> for more details.
             </p>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
       <v-expansion-panel-content class="secondary-light mb-1">
-        <template v-slot:header>
+        <template #header>
           <div>How to configure Caddy 2 to proxy WebSockets</div>
         </template>
         <v-card class="white">
           <v-card-text>
             <p>
-              WebSocket proxying &quot;just works&quot; in Caddy 2; there is no need to &quot;enable&quot; websockets like for Caddy 1.
+              WebSocket proxying automatically works in Caddy 2. There is no need to enable this, as necessary for Caddy 1, Apache, and NGINX.
             </p>
             <p>
               Example configuration:
@@ -107,7 +85,33 @@ example.com {
 }
             </pre>
             <p>
-              See <a target="_blank" href="https://caddyserver.com/docs/v2-upgrade#proxy">documentation</a> for details.
+              In addition, Caddy 2 may automatically create and update Let's Encrypt HTTPS certificates.
+              Please refer to the <a target="_blank" href="https://caddyserver.com/docs/v2-upgrade#proxy">official documentation</a> for more details.
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-expansion-panel-content>
+      <v-expansion-panel-content class="secondary-light mb-1">
+        <template #header>
+          <div>How to reverse proxy WebSockets with Apache 2.4</div>
+        </template>
+        <v-card class="white">
+          <v-card-text>
+            <p>
+              You may enable WebSockets and transparent proxying as show in this example:
+            </p>
+            <pre>
+RewriteEngine on
+RewriteCond %{HTTP:Upgrade} websocket [NC]
+RewriteCond %{HTTP:Connection} upgrade [NC]
+RewriteRule ^/?(.*) "ws://photoprism:2342/$1" [P,L]
+
+ProxyPass / http://photoprism:2342/
+ProxyPassReverse / http://photoprism:2342/
+ProxyRequests off
+            </pre>
+            <p>
+              The <a target="_blank" href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html">official documentation</a> explains in detail, how to configure Apache Web Server 2.4 to reverse proxy WebSockets.
             </p>
           </v-card-text>
         </v-card>
@@ -117,13 +121,13 @@ example.com {
 </template>
 
 <script>
-    export default {
-        name: 'p-help-websockets',
-        data() {
-            return {
-            };
-        },
-        methods: {
-        },
+export default {
+  name: 'PHelpWebsockets',
+  data() {
+    return {
     };
+  },
+  methods: {
+  },
+};
 </script>

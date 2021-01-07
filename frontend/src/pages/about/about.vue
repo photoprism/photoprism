@@ -7,7 +7,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon href="https://photoprism.app/" target="_blank" class="action-info" title="Info">
+      <v-btn icon href="https://photoprism.app/" target="_blank" class="action-info" :title="$gettext('About')">
         <v-icon size="26">info</v-icon>
       </v-btn>
     </v-toolbar>
@@ -69,7 +69,7 @@
 
 <script>
 export default {
-  name: 'p-page-about',
+  name: 'PPageAbout',
   data() {
     return {};
   },

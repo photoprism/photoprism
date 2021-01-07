@@ -1,5 +1,6 @@
 UI:
   Scrollbar: true
+  Zoom: false
   Theme: onyx
   Language: de
 Templates:
@@ -14,8 +15,10 @@ Features:
   Review: true
   Files: true
   Folders: true
+  Albums: true
   Moments: true
   Estimates: true
+  People: true
   Labels: true
   Places: true
   Edit: true

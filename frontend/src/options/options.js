@@ -97,6 +97,12 @@ export const Languages = () => [
     value: "fr",
   },
   {
+    text: "עברית",
+    translated: $gettext("Hebrew"),
+    value: "he",
+    rtl: true,
+  },
+  {
     text: "हिन्दी",
     translated: $gettext("Hindi"),
     value: "hi",
@@ -135,6 +141,11 @@ export const Languages = () => [
     text: "繁体中文",
     translated: $gettext("Chinese Traditional"),
     value: "zh_TW",
+  },
+  {
+    text: "日本語",
+    translated: $gettext("Japanese"),
+    value: "ja_JP",
   },
 ];
 

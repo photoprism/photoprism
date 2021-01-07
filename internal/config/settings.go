@@ -16,6 +16,7 @@ import (
 // UISettings represents user interface settings.
 type UISettings struct {
 	Scrollbar bool   `json:"scrollbar" yaml:"Scrollbar"`
+	Zoom      bool   `json:"zoom" yaml:"Zoom"`
 	Theme     string `json:"theme" yaml:"Theme"`
 	Language  string `json:"language" yaml:"Language"`
 }
@@ -39,8 +40,10 @@ type FeatureSettings struct {
 	Review    bool `json:"review" yaml:"Review"`
 	Files     bool `json:"files" yaml:"Files"`
 	Folders   bool `json:"folders" yaml:"Folders"`
+	Albums    bool `json:"albums" yaml:"Albums"`
 	Moments   bool `json:"moments" yaml:"Moments"`
 	Estimates bool `json:"estimates" yaml:"Estimates"`
+	People    bool `json:"people" yaml:"People"`
 	Labels    bool `json:"labels" yaml:"Labels"`
 	Places    bool `json:"places" yaml:"Places"`
 	Edit      bool `json:"edit" yaml:"Edit"`
@@ -100,6 +103,7 @@ func NewSettings() *Settings {
 	return &Settings{
 		UI: UISettings{
 			Scrollbar: true,
+			Zoom:      false,
 			Theme:     "default",
 			Language:  i18n.Default.Locale(),
 		},
@@ -118,8 +122,10 @@ func NewSettings() *Settings {
 			Private:   true,
 			Files:     true,
 			Folders:   true,
+			Albums:    true,
 			Moments:   true,
 			Estimates: true,
+			People:    true,
 			Labels:    true,
 			Places:    true,
 			Edit:      true,

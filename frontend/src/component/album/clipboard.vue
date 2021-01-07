@@ -4,10 +4,11 @@
       <v-speed-dial
           id="t-clipboard" v-model="expanded" fixed
           bottom
-          right
           direction="top"
           transition="slide-y-reverse-transition"
-          class="p-clipboard p-album-clipboard"
+          :right="!rtl"
+          :left="rtl"
+          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`"
       >
         <v-btn
             slot="activator" fab
@@ -41,8 +42,8 @@
           <v-icon>edit</v-icon>
         </v-btn>
         <v-btn
-            v-if="$config.feature('download')" fab dark
-            small
+            v-if="$config.feature('download')"
+            fab dark small
             :title="$gettext('Download')"
             color="download"
             class="action-download"
@@ -52,6 +53,7 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
+            v-if="$config.feature('albums')"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
@@ -111,6 +113,7 @@ export default {
         album: false,
         edit: false,
       },
+      rtl: this.$rtl,
     };
   },
   methods: {

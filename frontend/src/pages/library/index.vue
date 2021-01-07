@@ -66,7 +66,7 @@
             @click.stop="startIndexing()"
         >
           <translate>Start</translate>
-          <v-icon right dark>update</v-icon>
+          <v-icon :right="!rtl" :left="rtl" dark>update</v-icon>
         </v-btn>
 
         <v-alert
@@ -115,6 +115,7 @@ export default {
       source: null,
       root: root,
       dirs: [root],
+      rtl: this.$rtl,
     };
   },
   created() {

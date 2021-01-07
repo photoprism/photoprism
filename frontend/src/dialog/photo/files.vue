@@ -3,7 +3,7 @@
     <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
       <v-expansion-panel-content v-for="(file, index) in model.fileModels()" :key="index"
                                  class="pa-0 elevation-0 grey lighten-4" style="margin-top: 1px;">
-        <template v-slot:header>
+        <template #header>
           <div class="caption">{{ file.baseName(70) }}</div>
         </template>
         <v-card>
@@ -50,19 +50,19 @@
                                  @click.stop.prevent="downloadFile(file)">
                             <translate>Download</translate>
                           </v-btn>
-                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-primary"
-                                 @click.stop.prevent="primaryFile(file)"
-                                 v-if="features.edit && file.Type === 'jpg' && !file.Primary && file.Root === '/'">
+                          <v-btn v-if="features.edit && file.Type === 'jpg' && !file.Primary" small depressed dark color="secondary-dark"
+                                 class="ma-0 action-primary"
+                                 @click.stop.prevent="primaryFile(file)">
                             <translate>Primary</translate>
                           </v-btn>
-                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-unstack"
-                                 @click.stop.prevent="unstackFile(file)"
-                                 v-if="features.edit && !file.Sidecar && !file.Primary && file.Root === '/'">
+                          <v-btn v-if="features.edit && !file.Sidecar && !file.Primary && file.Root === '/'" small depressed dark color="secondary-dark"
+                                 class="ma-0 action-unstack"
+                                 @click.stop.prevent="unstackFile(file)">
                             <translate>Unstack</translate>
                           </v-btn>
-                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-delete"
-                                 @click.stop.prevent="showDeleteDialog(file)"
-                                 v-if="features.edit && !file.Primary">
+                          <v-btn v-if="features.edit && !file.Primary" small depressed dark color="secondary-dark"
+                                 class="ma-0 action-delete"
+                                 @click.stop.prevent="showDeleteDialog(file)">
                             <translate>Delete</translate>
                           </v-btn>
                         </td>
@@ -213,7 +213,7 @@ import Thumb from "model/thumb";
 import {DateTime} from "luxon";
 
 export default {
-  name: 'p-tab-photo-files',
+  name: 'PTabPhotoFiles',
   props: {
     model: Object,
     uid: String,
