@@ -29,7 +29,7 @@ acceptance-all: acceptance-start acceptance acceptance-restart acceptance-firefo
 test-all: test acceptance-all
 fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
-clean-local: clean-local-config clean-local-share clean-local-cache
+clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
 acceptance-start:
 	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --disable-exiftool --disable-backups start -d
