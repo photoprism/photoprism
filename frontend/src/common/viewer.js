@@ -31,7 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import PhotoSwipe from "photoswipe";
 import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 import Event from "pubsub-js";
-import stripHtml from "string-strip-html";
+import Util from "./util"
 
 const thumbs = window.__CONFIG__.thumbs;
 
@@ -125,7 +125,7 @@ class Viewer {
           return false;
         }
 
-        captionEl.children[0].innerHTML = stripHtml(item.title);
+        captionEl.children[0].innerHTML = Util.encodeHTML(item.title);
 
         if (item.playable) {
           captionEl.children[0].innerHTML +=
@@ -134,7 +134,7 @@ class Viewer {
 
         if (item.description) {
           captionEl.children[0].innerHTML +=
-            '<br><span class="description">' + stripHtml(item.description) + "</span>";
+            '<br><span class="description">' + Util.encodeHTML(item.description) + "</span>";
         }
 
         if (item.playable) {

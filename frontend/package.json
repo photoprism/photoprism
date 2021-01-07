@@ -104,7 +104,6 @@
     "sass-loader": "^7.3.1",
     "sinon": "^9.2.2",
     "sockette": "^2.0.6",
-    "string-strip-html": "^4.5.1",
     "style-loader": "^0.23.1",
     "sugarss": "^2.0.0",
     "svg-url-loader": "^5.0.1",
