@@ -28,22 +28,23 @@ https://docs.photoprism.org/developer-guide/
 
 */
 
+// Include Photos and Login in main bundle and lazy load the others
 import Photos from "pages/photos.vue";
-import Albums from "pages/albums.vue";
-import AlbumPhotos from "pages/album/photos.vue";
-import Places from "pages/places.vue";
-import Files from "pages/library/files.vue";
-import Errors from "pages/library/errors.vue";
-import Labels from "pages/labels.vue";
-import People from "pages/people.vue";
-import Library from "pages/library.vue";
-import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
-import Discover from "pages/discover.vue";
-import About from "pages/about/about.vue";
-import Feedback from "pages/about/feedback.vue";
-import License from "pages/about/license.vue";
-import Help from "pages/help.vue";
+const Albums = () => import("pages/albums.vue");
+const AlbumPhotos = () => import("pages/album/photos.vue");
+const Places = () => import("pages/places.vue");
+const Files = () => import("pages/library/files.vue");
+const Errors = () => import("pages/library/errors.vue");
+const Labels = () => import("pages/labels.vue");
+const People = () => import("pages/people.vue");
+const Library = () => import("pages/library.vue");
+const Settings = () => import("pages/settings.vue");
+const Discover = () => import("pages/discover.vue");
+const About = () => import("pages/about/about.vue");
+const Feedback = () => import("pages/about/feedback.vue");
+const License = () => import("pages/about/license.vue");
+const Help = () => import("pages/help.vue");
 import { $gettext } from "common/vm";
 
 const c = window.__CONFIG__;

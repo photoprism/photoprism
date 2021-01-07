@@ -59,6 +59,7 @@ const config = {
   },
   output: {
     path: PATHS.build,
+    publicPath: "/static/build/",
     filename: "[name].js",
   },
   resolve: {
