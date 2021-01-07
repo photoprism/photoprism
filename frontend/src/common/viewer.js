@@ -31,7 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import PhotoSwipe from "photoswipe";
 import PhotoSwipeUI_Default from "photoswipe/dist/photoswipe-ui-default.js";
 import Event from "pubsub-js";
-import Util from "./util"
+import Util from "./util";
 
 const thumbs = window.__CONFIG__.thumbs;
 

@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -44,6 +45,7 @@ func GetLabels(router *gin.RouterGroup) {
 		// TODO c.Header("X-Count", strconv.Itoa(count))
 		c.Header("X-Limit", strconv.Itoa(f.Count))
 		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		c.Header("X-Preview-Token", service.Config().PreviewToken())
 
 		c.JSON(http.StatusOK, result)
 	})

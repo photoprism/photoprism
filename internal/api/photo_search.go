@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // GET /api/v1/photos
@@ -68,6 +69,7 @@ func GetPhotos(router *gin.RouterGroup) {
 		c.Header("X-Count", strconv.Itoa(count))
 		c.Header("X-Limit", strconv.Itoa(f.Count))
 		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		c.Header("X-Preview-Token", service.Config().PreviewToken())
 
 		c.JSON(http.StatusOK, result)
 	})

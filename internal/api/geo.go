@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -98,6 +99,8 @@ func GetGeo(router *gin.RouterGroup) {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
+
+		c.Header("X-Preview-Token", service.Config().PreviewToken())
 
 		c.Data(http.StatusOK, "application/json", resp)
 	})

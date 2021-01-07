@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -29,6 +30,7 @@ func GetErrors(router *gin.RouterGroup) {
 			c.Header("X-Count", strconv.Itoa(len(resp)))
 			c.Header("X-Limit", strconv.Itoa(limit))
 			c.Header("X-Offset", strconv.Itoa(offset))
+			c.Header("X-Preview-Token", service.Config().PreviewToken())
 
 			c.JSON(http.StatusOK, resp)
 		}

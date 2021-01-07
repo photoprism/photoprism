@@ -107,6 +107,7 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 		c.Header("X-Count", strconv.Itoa(len(resp.Files)+len(resp.Folders)))
 		c.Header("X-Limit", strconv.Itoa(f.Count))
 		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		c.Header("X-Preview-Token", service.Config().PreviewToken())
 
 		c.JSON(http.StatusOK, resp)
 	}

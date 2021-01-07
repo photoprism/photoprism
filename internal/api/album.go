@@ -91,6 +91,7 @@ func GetAlbums(router *gin.RouterGroup) {
 		c.Header("X-Count", strconv.Itoa(len(result)))
 		c.Header("X-Limit", strconv.Itoa(f.Count))
 		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		c.Header("X-Preview-Token", service.Config().PreviewToken())
 
 		c.JSON(http.StatusOK, result)
 	})
