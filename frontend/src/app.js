@@ -55,6 +55,7 @@ import VueModal from "vue-js-modal";
 import Hls from "hls.js";
 import { $gettext, Mount } from "common/vm";
 import * as options from "options/options";
+import offline from "offline-plugin/runtime";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -161,3 +162,5 @@ if (isMobile) {
 
 // Start application.
 Mount(Vue, PhotoPrism, router);
+
+offline.install();

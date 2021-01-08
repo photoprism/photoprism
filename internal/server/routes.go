@@ -18,6 +18,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	router.Static("/static", conf.StaticPath())
 	router.StaticFile("/favicon.ico", filepath.Join(conf.ImgPath(), "favicon.ico"))
 
+	// PWA service worker.
+	router.GET("/sw.js", func(c *gin.Context) {
+		c.Header("Cache-Control", "no-store")
+		c.File(filepath.Join(conf.BuildPath(), "sw.js"))
+	})
+
 	// Rainbow page.
 	router.GET("/rainbow", func(c *gin.Context) {
 		clientConfig := conf.PublicConfig()

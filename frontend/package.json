@@ -85,6 +85,7 @@
     "minimist": ">=1.2.5",
     "mocha": "^8.2.1",
     "node-storage-shim": "^2.0.1",
+    "offline-plugin": "^5.0.7",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "ora": "^4.1.1",
     "photoswipe": "^4.1.3",
