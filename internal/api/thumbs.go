@@ -257,7 +257,7 @@ func AlbumThumb(router *gin.RouterGroup) {
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
 		if thumbType.ExceedsSizeUncached() && c.Query("download") == "" {
 			log.Debugf("album-thumbs: using original, size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
-			AddThumbCacheHeader(c)
+			AddCoverCacheHeader(c)
 			c.File(fileName)
 			return
 		}
@@ -285,7 +285,7 @@ func AlbumThumb(router *gin.RouterGroup) {
 			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
-		AddThumbCacheHeader(c)
+		AddCoverCacheHeader(c)
 
 		if c.Query("download") != "" {
 			c.FileAttachment(thumbnail, f.ShareBase())
@@ -341,7 +341,7 @@ func LabelThumb(router *gin.RouterGroup) {
 				return
 			}
 
-			AddThumbCacheHeader(c)
+			AddCoverCacheHeader(c)
 
 			if c.Query("download") != "" {
 				c.FileAttachment(cached.FileName, cached.ShareName)
@@ -376,7 +376,7 @@ func LabelThumb(router *gin.RouterGroup) {
 		if thumbType.ExceedsSizeUncached() {
 			log.Debugf("label-thumbs: using original, size exceeds limit (width %d, height %d)", thumbType.Width, thumbType.Height)
 
-			AddThumbCacheHeader(c)
+			AddCoverCacheHeader(c)
 			c.File(fileName)
 
 			return
@@ -405,7 +405,7 @@ func LabelThumb(router *gin.RouterGroup) {
 			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
-		AddThumbCacheHeader(c)
+		AddCoverCacheHeader(c)
 
 		if c.Query("download") != "" {
 			c.FileAttachment(thumbnail, f.ShareBase())
