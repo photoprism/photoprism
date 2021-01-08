@@ -19,6 +19,7 @@ var conf *config.Config
 var services struct {
 	BigCache   *bigcache.BigCache
 	CoverCache *gc.Cache
+	ThumbCache *gc.Cache
 	Classify   *classify.TensorFlow
 	Convert    *photoprism.Convert
 	Files      *photoprism.Files

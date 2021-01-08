@@ -41,6 +41,10 @@ func TestCoverCache(t *testing.T) {
 	assert.IsType(t, &gc.Cache{}, CoverCache())
 }
 
+func TestThumbCache(t *testing.T) {
+	assert.IsType(t, &gc.Cache{}, ThumbCache())
+}
+
 func TestClassify(t *testing.T) {
 	assert.IsType(t, &classify.TensorFlow{}, Classify())
 }

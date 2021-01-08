@@ -1,8 +1,6 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -19,9 +17,9 @@ import (
 // GET /api/v1/t/:hash/:token/:type
 //
 // Parameters:
-//   hash: string file hash as returned by the search API
-//   token: string security token (see config)
-//   type: string thumb type, see photoprism.ThumbnailTypes
+//   hash: string sha1 file hash
+//   token: string url security token, see config
+//   type: string thumb type, see thumb.Types
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:hash/:token/:type", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -33,6 +31,7 @@ func GetThumb(router *gin.RouterGroup) {
 		conf := service.Config()
 		fileHash := c.Param("hash")
 		typeName := c.Param("type")
+		download := c.Query("download") != ""
 
 		thumbType, ok := thumb.Types[typeName]
 
@@ -52,19 +51,13 @@ func GetThumb(router *gin.RouterGroup) {
 			}
 		}
 
-		cache := service.BigCache()
-		cacheKey := fmt.Sprintf("thumbs:%s:%s", fileHash, typeName)
+		cache := service.ThumbCache()
+		cacheKey := CacheKey("thumbs", fileHash, typeName)
 
-		if cacheData, err := cache.Get(cacheKey); err == nil {
+		if cacheData, ok := cache.Get(cacheKey); ok {
 			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
 
-			var cached ThumbCache
-
-			if err := json.Unmarshal(cacheData, &cached); err != nil {
-				log.Errorf("thumbs: %s not found", fileHash)
-				c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
-				return
-			}
+			cached := cacheData.(ThumbCache)
 
 			if !fs.FileExists(cached.FileName) {
 				log.Errorf("thumbs: %s not found", fileHash)
@@ -83,6 +76,15 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
+		// Return existing thumbs straight away.
+		if !download {
+			if fileName, err := thumb.Filename(fileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil && fs.FileExists(fileName) {
+				c.File(fileName)
+				return
+			}
+		}
+
+		// Query index for file infos.
 		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
@@ -113,12 +115,12 @@ func GetThumb(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError("thumbnail", f.Update("FileMissing", true))
+			logError("thumbs", f.Update("FileMissing", true))
 
 			if f.AllFilesMissing() {
 				log.Infof("thumbs: deleting photo, all files missing for %s", txt.Quote(f.FileName))
 
-				logError("thumbnail", f.RelatedPhoto().Delete(false))
+				logError("thumbs", f.RelatedPhoto().Delete(false))
 			}
 
 			return
@@ -152,15 +154,12 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		// BigCache thumbnail filename.
-		if cached, err := json.Marshal(ThumbCache{thumbnail, f.ShareBase()}); err == nil {
-			logError("thumbnail", cache.Set(cacheKey, cached))
-			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
-		}
+		cache.Set(cacheKey, ThumbCache{thumbnail, f.ShareBase()}, time.Hour * 24)
+		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddThumbCacheHeader(c)
 
-		if c.Query("download") != "" {
+		if download {
 			c.FileAttachment(thumbnail, f.ShareBase())
 		} else {
 			c.File(thumbnail)
