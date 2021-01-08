@@ -47,6 +47,32 @@
             flat
             color="secondary-light">
       <v-card-text>
+        <v-subheader><translate key="Layout">Layout</translate></v-subheader>
+        <v-layout row wrap>
+          <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
+            <v-select id="viewSelect"
+                      v-model="settings.view"
+                      :label="$gettext('View')" flat solo
+                      hide-details
+                      color="secondary-dark"
+                      :items="options.views"
+                      @change="dropdownChange">
+            </v-select>
+          </v-flex>
+        </v-layout>
+        <v-subheader><translate key="Sort">Sort</translate></v-subheader>
+        <v-layout row wrap>
+          <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
+            <v-select v-model="filter.order"
+                      :label="$gettext('Sort Order')"
+                      flat solo hide-details
+                      color="secondary-dark"
+                      :items="options.sorting"
+                      @change="dropdownChange">
+            </v-select>
+          </v-flex>
+        </v-layout>
+        <v-subheader><translate key="Filters">Filters</translate></v-subheader>
         <v-layout row wrap>
           <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
             <v-select v-model="filter.country"
@@ -69,25 +95,6 @@
                       item-value="ID"
                       item-text="Name"
                       :items="cameraOptions"
-                      @change="dropdownChange">
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
-            <v-select id="viewSelect"
-                      v-model="settings.view"
-                      :label="$gettext('View')" flat solo
-                      hide-details
-                      color="secondary-dark"
-                      :items="options.views"
-                      @change="dropdownChange">
-            </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
-            <v-select v-model="filter.order"
-                      :label="$gettext('Sort Order')"
-                      flat solo hide-details
-                      color="secondary-dark"
-                      :items="options.sorting"
                       @change="dropdownChange">
             </v-select>
           </v-flex>
