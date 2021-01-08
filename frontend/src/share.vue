@@ -22,13 +22,22 @@ import "./css/app.css";
 import Event from "pubsub-js";
 
 export default {
-  name: 'photoprism',
+  name: 'Photoprism',
   data() {
     return {
       touchStart: 0,
     };
   },
   computed: {},
+  created() {
+    window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
+    window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});
+    this.$config.setVuetify(this.$vuetify);
+  },
+  destroyed() {
+    window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);
+    window.removeEventListener('touchmove', (e) => this.onTouchMove(e), false);
+  },
   methods: {
     onTouchStart(e) {
       this.touchStart = e.touches[0].pageY;
@@ -48,15 +57,6 @@ export default {
         this.touchStart = 0;
       }
     },
-  },
-  created() {
-    window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
-    window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});
-    this.$config.setVuetify(this.$vuetify);
-  },
-  destroyed() {
-    window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);
-    window.removeEventListener('touchmove', (e) => this.onTouchMove(e), false);
   },
 };
 </script>
