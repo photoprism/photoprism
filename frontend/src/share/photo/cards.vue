@@ -21,7 +21,7 @@
           :key="index"
           :data-uid="photo.UID"
           class="p-photo"
-          xs12 sm6 md4 lg2 d-flex
+          xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
           :class="{ 'is-selected': $clipboard.has(photo), portrait: photo.Portrait }"
       >
         <v-hover>

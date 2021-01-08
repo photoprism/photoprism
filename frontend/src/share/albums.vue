@@ -34,7 +34,7 @@
               :key="index"
               :data-uid="album.UID"
               class="p-album"
-              xs6 sm4 md3 lg2 d-flex
+              xs6 sm4 md3 lg2 xxl1 d-flex
           >
             <v-hover>
               <v-card slot-scope="{ hover }" tile

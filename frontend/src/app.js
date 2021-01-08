@@ -64,10 +64,9 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
   navigator.userAgent
 );
 
+// Initialize language and detect alignment
 Vue.config.language = config.values.settings.ui.language;
 Settings.defaultLocale = Vue.config.language.substring(0, 2);
-
-// Detect if current language required RTL alignment
 const languages = options.Languages();
 const rtl = languages.some((lang) => lang.value === Vue.config.language && lang.rtl);
 
