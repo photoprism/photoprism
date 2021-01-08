@@ -41,6 +41,7 @@ type ClientConfig struct {
 	PreviewToken    string              `json:"previewToken"`
 	JSHash          string              `json:"jsHash"`
 	CSSHash         string              `json:"cssHash"`
+	ManifestHash    string              `json:"manifestHash"`
 	Settings        Settings            `json:"settings"`
 	Disable         ClientDisable       `json:"disable"`
 	Count           ClientCounts        `json:"count"`
@@ -173,6 +174,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Colors:          colors.All.List(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
+		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
@@ -225,6 +227,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/share.css"),
+		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 	}
 
@@ -268,6 +271,7 @@ func (c *Config) UserConfig() ClientConfig {
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
+		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
 	}

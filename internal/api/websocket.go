@@ -26,6 +26,7 @@ type clientInfo struct {
 	SessionToken string `json:"session"`
 	JsHash       string `json:"js"`
 	CssHash      string `json:"css"`
+	ManifestHash string `json:"manifest"`
 	Version      string `json:"version"`
 }
 

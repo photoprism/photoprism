@@ -27,7 +27,7 @@
 {{template "favicons.tmpl" .}}
 
   <link rel="stylesheet" href="/static/build/app.css?{{ .config.CSSHash }}">
-  <link rel="manifest" href="/static/manifest.json">
+  <link rel="manifest" href="/static/manifest.json?{{ .config.ManifestHash }}">
 
   <script>
       window.__CONFIG__ = {{ .config }};
