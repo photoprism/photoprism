@@ -9,25 +9,28 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"
+
+	gc "github.com/patrickmn/go-cache"
 )
 
 var log = event.Log
 var conf *config.Config
 
 var services struct {
-	Cache    *bigcache.BigCache
-	Classify *classify.TensorFlow
-	Convert  *photoprism.Convert
-	Files    *photoprism.Files
-	Photos   *photoprism.Photos
-	Import   *photoprism.Import
-	Index    *photoprism.Index
-	Moments  *photoprism.Moments
-	Purge    *photoprism.Purge
-	Nsfw     *nsfw.Detector
-	Query    *query.Query
-	Resample *photoprism.Resample
-	Session  *session.Session
+	BigCache   *bigcache.BigCache
+	CoverCache *gc.Cache
+	Classify   *classify.TensorFlow
+	Convert    *photoprism.Convert
+	Files      *photoprism.Files
+	Photos     *photoprism.Photos
+	Import     *photoprism.Import
+	Index      *photoprism.Index
+	Moments    *photoprism.Moments
+	Purge      *photoprism.Purge
+	Nsfw       *nsfw.Detector
+	Query      *query.Query
+	Resample   *photoprism.Resample
+	Session    *session.Session
 }
 
 func SetConfig(c *config.Config) {

@@ -113,7 +113,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 
 		start := time.Now()
 		id := ParseUint(c.Param("id"))
-		cache := service.Cache()
+		cache := service.BigCache()
 		cacheKey := fmt.Sprintf("account-folders:%d", id)
 
 		if cacheData, err := cache.Get(cacheKey); err == nil {

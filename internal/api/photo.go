@@ -90,6 +90,8 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		if err := c.BindJSON(&f); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
+		} else if f.PhotoPrivate {
+			FlushCoverCache()
 		}
 
 		// 3) Save model with values from form

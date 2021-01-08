@@ -4,6 +4,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/allegro/bigcache"
+	gc "github.com/patrickmn/go-cache"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -28,6 +31,14 @@ func TestMain(m *testing.M) {
 
 func TestConfig(t *testing.T) {
 	assert.Equal(t, conf, Config())
+}
+
+func TestBigCache(t *testing.T) {
+	assert.IsType(t, &bigcache.BigCache{}, BigCache())
+}
+
+func TestCoverCache(t *testing.T) {
+	assert.IsType(t, &gc.Cache{}, CoverCache())
 }
 
 func TestClassify(t *testing.T) {

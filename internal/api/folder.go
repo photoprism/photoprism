@@ -26,7 +26,7 @@ type FoldersResponse struct {
 
 // ClearFoldersCache removes folder lists from cache e.g. after indexing.
 func ClearFoldersCache(rootName string) {
-	cache := service.Cache()
+	cache := service.BigCache()
 
 	cacheKey := fmt.Sprintf("folders:%s:%t:%t", rootName, true, false)
 
@@ -55,7 +55,7 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 			return
 		}
 
-		cache := service.Cache()
+		cache := service.BigCache()
 		recursive := f.Recursive
 		listFiles := f.Files
 		uncached := listFiles || f.Uncached

@@ -9,20 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type MaxAge string
-
-var (
-	CoverCacheTTL MaxAge = "3600"    // 1 hour
-	ThumbCacheTTL MaxAge = "7776000" // ~ 3 months
-)
-
 const (
 	ContentTypeAvc = `video/mp4; codecs="avc1`
 )
 
 // AddCacheHeader adds a cache control header to the response.
 func AddCacheHeader(c *gin.Context, maxAge MaxAge) {
-	c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform", maxAge))
+	c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform", maxAge.String()))
 }
 
 // AddCoverCacheHeader adds cover image cache control headers to the response.
@@ -32,7 +25,7 @@ func AddCoverCacheHeader(c *gin.Context) {
 
 // AddCacheHeader adds thumbnail cache control headers to the response.
 func AddThumbCacheHeader(c *gin.Context) {
-	c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform, immutable", ThumbCacheTTL))
+	c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform, immutable", ThumbCacheTTL.String()))
 }
 
 // AddCountHeader adds the actual result count to the response.

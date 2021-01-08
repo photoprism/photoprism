@@ -231,6 +231,8 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
+		FlushCoverCache()
+
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionProtected))
 	})
 }
