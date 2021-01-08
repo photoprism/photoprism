@@ -71,8 +71,10 @@ Api.interceptors.response.use(
     // Update preview token.
     if (resp.headers && resp.headers["x-preview-token"]) {
       const previewToken = resp.headers["x-preview-token"];
-      config.previewToken = previewToken;
-      Event.publish("config.updated", { config: { previewToken } });
+      if (config.previewToken !== previewToken) {
+        config.previewToken = previewToken;
+        Event.publish("config.updated", { config: { previewToken } });
+      }
     }
 
     return resp;

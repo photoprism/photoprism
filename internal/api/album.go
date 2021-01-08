@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -88,10 +87,10 @@ func GetAlbums(router *gin.RouterGroup) {
 			return
 		}
 
-		c.Header("X-Count", strconv.Itoa(len(result)))
-		c.Header("X-Limit", strconv.Itoa(f.Count))
-		c.Header("X-Offset", strconv.Itoa(f.Offset))
-		c.Header("X-Preview-Token", service.Config().PreviewToken())
+		AddCountHeader(c, len(result))
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
+		AddTokenHeaders(c)
 
 		c.JSON(http.StatusOK, result)
 	})
@@ -498,7 +497,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		zipToken := rnd.Token(3)
 		zipFileName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
 
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipFileName))
+		AddDownloadHeader(c, zipFileName)
 
 		zipWriter := zip.NewWriter(c.Writer)
 		defer func() { _ = zipWriter.Close() }()

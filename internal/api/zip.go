@@ -123,15 +123,13 @@ func DownloadZip(router *gin.RouterGroup) {
 		zipPath := path.Join(conf.TempPath(), "zip")
 		zipFileName := path.Join(zipPath, zipBaseName)
 
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipBaseName))
-
 		if !fs.FileExists(zipFileName) {
 			log.Errorf("could not find zip file: %s", zipFileName)
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return
 		}
 
-		c.File(zipFileName)
+		c.FileAttachment(zipFileName, zipBaseName)
 
 		if err := os.Remove(zipFileName); err != nil {
 			log.Errorf("zip: failed removing %s (%s)", txt.Quote(zipFileName), err.Error())

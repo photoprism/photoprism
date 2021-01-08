@@ -2,14 +2,12 @@ package api
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/service"
 )
 
 // GET /api/v1/photos
@@ -66,10 +64,10 @@ func GetPhotos(router *gin.RouterGroup) {
 			return
 		}
 
-		c.Header("X-Count", strconv.Itoa(count))
-		c.Header("X-Limit", strconv.Itoa(f.Count))
-		c.Header("X-Offset", strconv.Itoa(f.Offset))
-		c.Header("X-Preview-Token", service.Config().PreviewToken())
+		AddCountHeader(c, count)
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
+		AddTokenHeaders(c)
 
 		c.JSON(http.StatusOK, result)
 	})

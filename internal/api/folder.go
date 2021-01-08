@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -102,12 +101,11 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 			}
 		}
 
-		c.Header("X-Files", strconv.Itoa(len(resp.Files)))
-		c.Header("X-Folders", strconv.Itoa(len(resp.Folders)))
-		c.Header("X-Count", strconv.Itoa(len(resp.Files)+len(resp.Folders)))
-		c.Header("X-Limit", strconv.Itoa(f.Count))
-		c.Header("X-Offset", strconv.Itoa(f.Offset))
-		c.Header("X-Preview-Token", service.Config().PreviewToken())
+		AddFileCountHeaders(c, len(resp.Files), len(resp.Folders))
+		AddCountHeader(c, len(resp.Files)+len(resp.Folders))
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
+		AddTokenHeaders(c)
 
 		c.JSON(http.StatusOK, resp)
 	}

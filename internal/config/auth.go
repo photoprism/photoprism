@@ -49,7 +49,11 @@ func (c *Config) InvalidPreviewToken(t string) bool {
 // PreviewToken returns the preview image api token (based on the unique storage serial by default).
 func (c *Config) PreviewToken() string {
 	if c.options.PreviewToken == "" {
-		c.options.PreviewToken = c.SerialChecksum()
+		if c.Public() {
+			c.options.PreviewToken = "public"
+		} else {
+			c.options.PreviewToken = c.SerialChecksum()
+		}
 	}
 
 	return c.options.PreviewToken

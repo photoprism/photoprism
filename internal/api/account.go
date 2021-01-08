@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"path"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -55,8 +54,8 @@ func GetAccounts(router *gin.RouterGroup) {
 		}
 
 		// TODO c.Header("X-Count", strconv.Itoa(count))
-		c.Header("X-Limit", strconv.Itoa(f.Count))
-		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
 
 		c.JSON(http.StatusOK, result)
 	})

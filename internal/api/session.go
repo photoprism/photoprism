@@ -76,7 +76,7 @@ func CreateSession(router *gin.RouterGroup) {
 			id = service.Session().Create(data)
 		}
 
-		c.Header("X-Session-ID", id)
+		AddSessionHeader(c, id)
 
 		if data.User.Anonymous() {
 			c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id, "data": data, "config": conf.GuestConfig()})
