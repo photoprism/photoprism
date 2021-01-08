@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -24,17 +23,6 @@ type FoldersResponse struct {
 	Cached    bool            `json:"cached,omitempty"`
 }
 
-// ClearFoldersCache removes folder lists from cache e.g. after indexing.
-func ClearFoldersCache(rootName string) {
-	cache := service.BigCache()
-
-	cacheKey := fmt.Sprintf("folders:%s:%t:%t", rootName, true, false)
-
-	if err := cache.Delete(cacheKey); err == nil {
-		log.Debugf("removed %s from cache", cacheKey)
-	}
-}
-
 // GetFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
 func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
@@ -55,31 +43,28 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 			return
 		}
 
-		cache := service.BigCache()
+		cache := service.FolderCache()
 		recursive := f.Recursive
 		listFiles := f.Files
 		uncached := listFiles || f.Uncached
 		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
 		path := c.Param("path")
 
-		cacheKey := fmt.Sprintf("folders:%s:%t:%t", filepath.Join(rootName, path), recursive, listFiles)
+		cacheKey := fmt.Sprintf("folder:%s:%t:%t", filepath.Join(rootName, path), recursive, listFiles)
 
 		if !uncached {
-			if cacheData, err := cache.Get(cacheKey); err == nil {
-				var cached FoldersResponse
+			if cacheData, ok := cache.Get(cacheKey); ok {
+				cached := cacheData.(FoldersResponse)
 
-				if err := json.Unmarshal(cacheData, &cached); err != nil {
-					log.Errorf("folders: %s", err)
-				} else {
-					log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-					c.JSON(http.StatusOK, cached)
-					return
-				}
+				log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+
+				c.JSON(http.StatusOK, cached)
+				return
 			}
 		}
 
 		if folders, err := query.FoldersByPath(rootName, rootPath, path, recursive); err != nil {
-			log.Errorf("folders: %s", err)
+			log.Errorf("folder: %s", err)
 			c.JSON(http.StatusOK, resp)
 			return
 		} else {
@@ -88,17 +73,15 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 
 		if listFiles {
 			if files, err := query.FilesByPath(f.Count, f.Offset, rootName, path); err != nil {
-				log.Errorf("folders: %s", err)
+				log.Errorf("folder: %s", err)
 			} else {
 				resp.Files = files
 			}
 		}
 
 		if !uncached {
-			if c, err := json.Marshal(resp); err == nil {
-				logError("folders", cache.Set(cacheKey, c))
-				log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
-			}
+			cache.SetDefault(cacheKey, resp)
+			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 		}
 
 		AddFileCountHeaders(c, len(resp.Files), len(resp.Folders))

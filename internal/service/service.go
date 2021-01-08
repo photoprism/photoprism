@@ -1,10 +1,8 @@
 package service
 
 import (
-	"github.com/allegro/bigcache"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
@@ -13,25 +11,24 @@ import (
 	gc "github.com/patrickmn/go-cache"
 )
 
-var log = event.Log
 var conf *config.Config
 
 var services struct {
-	BigCache   *bigcache.BigCache
-	CoverCache *gc.Cache
-	ThumbCache *gc.Cache
-	Classify   *classify.TensorFlow
-	Convert    *photoprism.Convert
-	Files      *photoprism.Files
-	Photos     *photoprism.Photos
-	Import     *photoprism.Import
-	Index      *photoprism.Index
-	Moments    *photoprism.Moments
-	Purge      *photoprism.Purge
-	Nsfw       *nsfw.Detector
-	Query      *query.Query
-	Resample   *photoprism.Resample
-	Session    *session.Session
+	FolderCache *gc.Cache
+	CoverCache  *gc.Cache
+	ThumbCache  *gc.Cache
+	Classify    *classify.TensorFlow
+	Convert     *photoprism.Convert
+	Files       *photoprism.Files
+	Photos      *photoprism.Photos
+	Import      *photoprism.Import
+	Index       *photoprism.Index
+	Moments     *photoprism.Moments
+	Purge       *photoprism.Purge
+	Nsfw        *nsfw.Detector
+	Query       *query.Query
+	Resample    *photoprism.Resample
+	Session     *session.Session
 }
 
 func SetConfig(c *config.Config) {

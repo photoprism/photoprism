@@ -154,7 +154,7 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.Set(cacheKey, ThumbCache{thumbnail, f.ShareBase()}, time.Hour * 24)
+		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase()})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddThumbCacheHeader(c)

@@ -513,9 +513,6 @@ Revision ID: 4dceb74574f814ada169d193dc24e657d99b7a66
  better-assert       1.0.2               - MIT
  bfj                 6.1.2               - MIT
  big.js              5.2.2               - MIT
- bigcache            21e5ca5c3d539f9     - Apache-2.0
-                     4e8dc563350acd9
-                     7c5400154f
  binary-             2.0.0               - MIT
  extensions
  bindings            1.5.0               - MIT
@@ -21531,7 +21528,7 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Apache-2.0
-Found in bigcache (bbb395e1b5a40435c5b93bf7efbc9c8841a01020), detect-libc (1.0.3), yaml.v2 (0b1645d91e851e735d3e23330303ce81f70adbe3)
+Found in detect-libc (1.0.3), yaml.v2 (0b1645d91e851e735d3e23330303ce81f70adbe3)
 
 
                                  Apache License

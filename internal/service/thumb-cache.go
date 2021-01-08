@@ -10,7 +10,7 @@ import (
 var onceThumbCache sync.Once
 
 func initThumbCache() {
-	services.ThumbCache = gc.New(time.Hour, 10*time.Minute)
+	services.ThumbCache = gc.New(time.Hour*24, 10*time.Minute)
 }
 
 func ThumbCache() *gc.Cache {

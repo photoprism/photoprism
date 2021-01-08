@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"path"
@@ -18,6 +17,11 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+// Namespaces for caching and logs.
+const (
+	accountFolder = "account-folder"
 )
 
 // GET /api/v1/accounts
@@ -113,19 +117,16 @@ func GetAccountFolders(router *gin.RouterGroup) {
 
 		start := time.Now()
 		id := ParseUint(c.Param("id"))
-		cache := service.BigCache()
-		cacheKey := fmt.Sprintf("account-folders:%d", id)
+		cache := service.FolderCache()
+		cacheKey := fmt.Sprintf("%s:%d", accountFolder, id)
 
-		if cacheData, err := cache.Get(cacheKey); err == nil {
-			var cached fs.FileInfos
+		if cacheData, ok := cache.Get(cacheKey); ok {
+			cached := cacheData.(fs.FileInfos)
 
-			if err := json.Unmarshal(cacheData, &cached); err != nil {
-				log.Errorf("account-folders: %s", err)
-			} else {
-				log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
-				c.JSON(http.StatusOK, cached)
-				return
-			}
+			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+
+			c.JSON(http.StatusOK, cached)
+			return
 		}
 
 		m, err := query.AccountByID(id)
@@ -138,15 +139,13 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		list, err := m.Directories()
 
 		if err != nil {
-			log.Errorf("account-folders: %s", err.Error())
+			log.Errorf("%s: %s", accountFolder, err.Error())
 			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
 		}
 
-		if c, err := json.Marshal(list); err == nil {
-			logError("account-folders", cache.Set(cacheKey, c))
-			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
-		}
+		cache.SetDefault(cacheKey, list)
+		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		c.JSON(http.StatusOK, list)
 	})

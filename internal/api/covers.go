@@ -117,7 +117,7 @@ func AlbumCover(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.Set(cacheKey, ThumbCache{thumbnail, f.ShareBase()}, time.Hour)
+		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase()})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddCoverCacheHeader(c)
@@ -229,7 +229,7 @@ func LabelCover(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.Set(cacheKey, ThumbCache{thumbnail, f.ShareBase()}, time.Hour)
+		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase()})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddCoverCacheHeader(c)

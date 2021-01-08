@@ -64,7 +64,7 @@ func Import() error {
 
 	imp := service.Import()
 
-	api.ClearFoldersCache(entity.RootImport)
+	api.RemoveFromFolderCache(entity.RootImport)
 
 	event.InfoMsg(i18n.MsgCopyingFilesFrom, txt.Quote(filepath.Base(path)))
 	opt := photoprism.ImportOptionsCopy(path)

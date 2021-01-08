@@ -36,6 +36,17 @@ func CacheKey(ns, uid, name string) string {
 	return fmt.Sprintf("%s:%s:%s", ns, uid, name)
 }
 
+// RemoveFromFolderCache removes an item from the folder cache e.g. after indexing.
+func RemoveFromFolderCache(rootName string) {
+	cache := service.FolderCache()
+
+	cacheKey := fmt.Sprintf("folder:%s:%t:%t", rootName, true, false)
+
+	cache.Delete(cacheKey)
+
+	log.Debugf("removed %s from cache", cacheKey)
+}
+
 // RemoveFromAlbumCoverCache removes covers by album UID e.g. after adding or removing photos.
 func RemoveFromAlbumCoverCache(uid string) {
 	cache := service.CoverCache()

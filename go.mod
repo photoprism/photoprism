@@ -1,7 +1,6 @@
 module github.com/photoprism/photoprism
 
 require (
-	github.com/allegro/bigcache v1.2.1
 	github.com/araddon/dateparse v0.0.0-20201001162425-8aadafed4dc4
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
@@ -19,7 +18,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
-	github.com/golang/geo v0.0.0-20200730024412-e86565bf3f35
+	github.com/golang/geo v0.0.0-20210108004804-a63082ebfb66
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/open-location-code/go v0.0.0-20201229230907-d47d9f9b95e9
 	github.com/gorilla/websocket v1.4.2
