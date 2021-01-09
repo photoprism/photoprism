@@ -9,15 +9,16 @@
           class="p-clipboard p-album-clipboard"
           id="t-clipboard"
       >
-        <v-btn
-            fab dark
-            slot="activator"
-            color="accent darken-2"
-            class="action-menu"
-        >
-          <v-icon v-if="selection.length === 0">menu</v-icon>
-          <span v-else class="count-clipboard">{{ selection.length }}</span>
-        </v-btn>
+        <template v-slot:activator>
+          <v-btn
+              fab dark
+              color="accent darken-2"
+              class="action-menu"
+          >
+            <v-icon v-if="selection.length === 0">menu</v-icon>
+            <span v-else class="count-clipboard">{{ selection.length }}</span>
+          </v-btn>
+        </template>
 
         <v-btn
             fab dark small

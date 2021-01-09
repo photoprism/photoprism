@@ -10,15 +10,17 @@
           :left="rtl"
           :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`"
       >
-        <v-btn
-            slot="activator" fab
-            dark
-            color="accent darken-2"
-            class="action-menu"
-        >
-          <v-icon v-if="selection.length === 0">menu</v-icon>
-          <span v-else class="count-clipboard">{{ selection.length }}</span>
-        </v-btn>
+        <template v-slot:activator>
+          <v-btn
+              fab
+              dark
+              color="accent darken-2"
+              class="action-menu"
+          >
+            <v-icon v-if="selection.length === 0">menu</v-icon>
+            <span v-else class="count-clipboard">{{ selection.length }}</span>
+          </v-btn>
+        </template>
 
         <v-btn
             v-if="$config.feature('share')" fab dark

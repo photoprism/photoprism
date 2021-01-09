@@ -72,14 +72,16 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini" prepend-icon="image_search" no-action>
-          <v-list-tile slot="activator" to="/browse" class="nav-browse" @click.stop="">
-            <v-list-tile-content>
-              <v-list-tile-title>
-                <translate key="Search">Search</translate>
-                <span v-if="config.count.all > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.all }}</span>
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
+          <template v-slot:activator>
+            <v-list-tile to="/browse" class="nav-browse" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate key="Search">Search</translate>
+                  <span v-if="config.count.all > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.all }}</span>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
 
           <v-list-tile :to="{name: 'browse', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click.stop="">
             <v-list-tile-content>
@@ -146,14 +148,16 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini && $config.feature('albums')" prepend-icon="photo_album" no-action>
-          <v-list-tile slot="activator" to="/albums" class="nav-albums" @click.stop="">
-            <v-list-tile-content>
-              <v-list-tile-title>
-                <translate key="Albums">Albums</translate>
-                <span v-if="config.count.albums > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums }}</span>
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
+          <template v-slot:activator>
+            <v-list-tile to="/albums" class="nav-albums" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate key="Albums">Albums</translate>
+                  <span v-if="config.count.albums > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums }}</span>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
 
           <v-list-tile to="/unsorted" class="nav-unsorted">
             <v-list-tile-content>
@@ -246,15 +250,17 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini" v-show="$config.feature('places')" prepend-icon="place" no-action>
-          <v-list-tile slot="activator" to="/places" class="nav-places" @click.stop="">
-            <v-list-tile-content>
-              <v-list-tile-title>
-                <translate key="Places">Places</translate>
-                <span v-show="config.count.places > 0"
-                      :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.places }}</span>
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
+          <template v-slot:activator>
+            <v-list-tile to="/places" class="nav-places" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate key="Places">Places</translate>
+                  <span v-show="config.count.places > 0"
+                        :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.places }}</span>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
 
           <v-list-tile to="/states" class="nav-states" @click.stop="">
             <v-list-tile-content>
@@ -307,13 +313,15 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
-          <v-list-tile slot="activator" to="/library" class="nav-library" @click.stop="">
-            <v-list-tile-content>
-              <v-list-tile-title>
-                <translate key="Library">Library</translate>
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
+          <template v-slot:activator>
+            <v-list-tile to="/library" class="nav-library" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  <translate key="Library">Library</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
 
           <v-list-tile v-show="$config.feature('files')" to="/library/files" class="nav-originals" @click.stop="">
             <v-list-tile-content>
@@ -356,13 +364,15 @@
           </v-list-tile>
 
           <v-list-group v-else prepend-icon="settings" no-action>
-            <v-list-tile slot="activator" to="/settings" class="nav-settings" @click.stop="">
-              <v-list-tile-content>
-                <v-list-tile-title>
-                  <translate key="Settings">Settings</translate>
-                </v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
+            <template v-slot:activator>
+              <v-list-tile to="/settings" class="nav-settings" @click.stop="">
+                <v-list-tile-content>
+                  <v-list-tile-title>
+                    <translate key="Settings">Settings</translate>
+                  </v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </template>
 
             <v-list-tile :to="{ name: 'about' }" :exact="true" class="nav-about" @click.stop="">
               <v-list-tile-content>
