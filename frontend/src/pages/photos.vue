@@ -317,7 +317,7 @@ export default {
           this.page++;
 
           this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
           });
@@ -420,7 +420,7 @@ export default {
           this.$notify.info(this.$gettext('More than 50 results'));
 
           this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
           });

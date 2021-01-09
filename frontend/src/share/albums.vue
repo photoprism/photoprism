@@ -288,6 +288,12 @@ export default {
         } else {
           this.offset = offset + count;
           this.page++;
+
+          this.$nextTick(() => {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
+              this.$emit("scrollRefresh");
+            }
+          });
         }
       }).catch(() => {
         this.scrollDisabled = false;
@@ -368,7 +374,11 @@ export default {
         } else {
           this.$notify.info(this.$gettext('More than 20 albums found'));
 
-          this.$nextTick(() => this.$emit("scrollRefresh"));
+          this.$nextTick(() => {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
+              this.$emit("scrollRefresh");
+            }
+          });
         }
       }).finally(() => {
         this.dirty = false;
