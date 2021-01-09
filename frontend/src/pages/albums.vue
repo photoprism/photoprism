@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-albums" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">

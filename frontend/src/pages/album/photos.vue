@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
                      :refresh="refresh"></p-album-toolbar>
@@ -18,7 +18,7 @@
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
                       context="album"
                       :photos="results"
-                      :selection="selection"
+                      :select-mode="selectMode"
                       :filter="filter"
                       :album="model"
                       :edit-photo="editPhoto"
@@ -26,7 +26,7 @@
       <p-photo-list v-else-if="settings.view === 'list'"
                     context="album"
                     :photos="results"
-                    :selection="selection"
+                    :select-mode="selectMode"
                     :filter="filter"
                     :album="model"
                     :open-photo="openPhoto"
@@ -35,7 +35,7 @@
       <p-photo-cards v-else
                      context="album"
                      :photos="results"
-                     :selection="selection"
+                     :select-mode="selectMode"
                      :filter="filter"
                      :album="model"
                      :open-photo="openPhoto"
@@ -91,6 +91,11 @@ export default {
         loading: false,
       },
     };
+  },
+  computed: {
+    selectMode: function() {
+      return this.selection.length > 0;
+    },
   },
   watch: {
     '$route'() {

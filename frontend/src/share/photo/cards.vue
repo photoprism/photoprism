@@ -27,26 +27,14 @@
         <v-hover>
           <v-card slot-scope="{ hover }" tile
                   :dark="photo.Selected"
-                  :class="photo.Selected ? 'elevation-10 ma-0 accent darken-1 white--text select-transition' : 'elevation-0 ma-1 accent lighten-3 select-transition'"
+                  :class="photo.Selected ? 'selected elevation-10 ma-0 accent darken-1 white--text select-transition' : 'elevation-0 ma-1 accent lighten-3 select-transition'"
                   @contextmenu="onContextMenu($event, index)">
             <v-img :src="photo.thumbnailUrl('tile_500')"
                    aspect-ratio="1"
-                   :class="{ selected: photo.Selected }"
                    class="accent lighten-2 clickable"
                    @mousedown="onMouseDown($event, index)"
                    @click.stop.prevent="onClick($event, index)"
             >
-              <v-layout
-                  slot="placeholder"
-                  fill-height
-                  align-center
-                  justify-center
-                  ma-0
-
-              >
-                <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
-              </v-layout>
-
               <v-layout
                   v-if="photo.Type === 'live'"
                   v-show="hover"

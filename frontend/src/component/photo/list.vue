@@ -39,18 +39,6 @@
                  @contextmenu="onContextMenu($event, props.index)"
                  @click.stop.prevent="onClick($event, props.index)"
           >
-            <!-- v-layout
-                v-if="spinners"
-                slot="placeholder"
-                fill-height
-                align-center
-                justify-center
-                ma-0
-            >
-              <v-progress-circular indeterminate
-                                   color="accent lighten-5"></v-progress-circular>
-            </v-layout -->
-
             <v-btn v-if="props.item.Selected" :ripple="false"
                    flat icon large absolute class="p-photo-select">
               <v-icon color="white" class="t-select t-on">check_circle</v-icon>
@@ -133,7 +121,6 @@ export default {
     let showName = this.filter.order === 'name';
 
     return {
-      spinners: false,
       config: this.$config.values,
       notFoundMessage: m,
       'selected': [],

@@ -122,3 +122,21 @@
     width: 30%;
     padding: 0 16px 0 24px;
 }
+
+#photoprism .img-placeholder { opacity: 0.3; }
+#photoprism .img-color-0 { background-color: #696969 !important; } /* Black */
+#photoprism .img-color-1 { background-color: #DCDCDC !important; } /* Grey */
+#photoprism .img-color-2 { background-color: #98817B !important; } /* Brown */
+#photoprism .img-color-3 { background-color: #E5E4E2 !important; } /* Gold */
+#photoprism .img-color-4 { background-color: #fdfdfd !important; } /* White */
+#photoprism .img-color-5 { background-color: #AB47BC !important; } /* Purple */
+#photoprism .img-color-6 { background-color: #8A7F8D !important; } /* Blue */
+#photoprism .img-color-7 { background-color: #91A3B0 !important; } /* Cyan */
+#photoprism .img-color-8 { background-color: #B2BEB5 !important; } /* Teal */
+#photoprism .img-color-9 { background-color: #738678 !important; } /* Green */
+#photoprism .img-color-10 { background-color: #5E716A !important; } /* Lime */
+#photoprism .img-color-11 { background-color: #928E85 !important; } /* Yellow */
+#photoprism .img-color-12 { background-color: #CC8899 !important; } /* Magenta */
+#photoprism .img-color-13 { background-color: #98817B !important; } /* Orange */
+#photoprism .img-color-14 { background-color: #CC8899 !important; } /* Red */
+#photoprism .img-color-15 { background-color: #AA98A9 !important; } /* Pink */

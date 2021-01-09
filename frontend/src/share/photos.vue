@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" lazy-validation
             dense autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">
@@ -136,7 +136,7 @@ export default {
   },
   computed: {
     selectMode: function() {
-      return this.$clipboard.selection.length > 0;
+      return this.selection.length > 0;
     },
   },
   watch: {

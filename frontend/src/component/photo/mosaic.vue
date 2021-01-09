@@ -30,7 +30,7 @@
       >
         <v-hover>
           <v-card slot-scope="{ hover }" tile
-                  :class="photo.Selected ? 'elevation-10 ma-0 select-transition' : 'elevation-0 ma-1 select-transition'"
+                  :class="photo.Selected ? 'selected elevation-10 ma-0 select-transition' : 'elevation-0 ma-1 select-transition'"
                   :title="photo.Title"
                   @contextmenu="onContextMenu($event, index)">
             <v-img :src="photo.thumbnailUrl('tile_224')"
@@ -39,19 +39,7 @@
                    @mousedown="onMouseDown($event, index)"
                    @click.stop.prevent="onClick($event, index)"
             >
-              <!-- v-layout
-                  v-if="spinners"
-                  slot="placeholder"
-                  fill-height
-                  align-center
-                  justify-center
-                  ma-0
-              >
-                <v-progress-circular indeterminate
-                                     color="accent lighten-5"></v-progress-circular>
-              </v-layout -->
-
-              <v-layout
+             <v-layout
                   v-if="photo.Type === 'live'"
                   v-show="hover"
                   fill-height
@@ -138,7 +126,6 @@ export default {
   },
   data() {
     return {
-      spinners: false,
       hidePrivate: this.$config.settings().features.private,
       mouseDown: {
         index: -1,

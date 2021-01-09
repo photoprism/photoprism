@@ -84,7 +84,8 @@ export class Clipboard {
     }
 
     const id = model.getId();
-    model.Selected = this.toggleId(id);
+
+    this.toggleId(id);
   }
 
   toggleId(id) {
@@ -117,18 +118,20 @@ export class Clipboard {
     return result;
   }
 
-  add(model) {
+  add(model, publish) {
     if (!this.isModel(model)) {
       return;
     }
 
     const id = model.getId();
 
-    model.Selected = this.addId(id);
+    this.addId(id, publish);
   }
 
-  addId(id) {
-    Event.publish("photos.updated", { entities: [{ UID: id, Selected: true }] });
+  addId(id, publish) {
+    if (publish) {
+      Event.publish("photos.updated", { entities: [{ UID: id, Selected: true }] });
+    }
 
     if (this.hasId(id)) {
       return true;
@@ -167,9 +170,14 @@ export class Clipboard {
       rangeEnd = newEnd;
     }
 
+    let entities = [];
+
     for (let i = rangeStart; i <= rangeEnd; i++) {
-      this.add(models[i]);
+      this.add(models[i], false);
+      entities.push({ UID: models[i].getId(), Selected: true });
     }
+
+    Event.publish("photos.updated", { entities });
 
     return rangeEnd - rangeStart + 1;
   }
@@ -186,16 +194,18 @@ export class Clipboard {
     return typeof this.selectionMap["id:" + id] !== "undefined";
   }
 
-  remove(model) {
+  remove(model, publish) {
     if (!this.isModel(model)) {
       return;
     }
 
-    model.Selected = this.removeId(model.getId());
+    this.removeId(model.getId(), publish);
   }
 
-  removeId(id) {
-    Event.publish("photos.updated", { entities: [{ UID: id, Selected: false }] });
+  removeId(id, publish) {
+    if (publish) {
+      Event.publish("photos.updated", { entities: [{ UID: id, Selected: false }] });
+    }
 
     if (!this.hasId(id)) {
       return false;
