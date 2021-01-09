@@ -50,6 +50,12 @@ func (imp *Import) thumbPath() string {
 
 // Start imports media files from a directory and converts/indexes them as needed.
 func (imp *Import) Start(opt ImportOptions) fs.Done {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("import: %s (panic)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
 	var directories []string
 	done := make(fs.Done)
 	ind := imp.index

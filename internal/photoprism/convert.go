@@ -34,7 +34,14 @@ func NewConvert(conf *config.Config) *Convert {
 }
 
 // Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(path string) error {
+func (c *Convert) Start(path string) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
 	if err := mutex.MainWorker.Start(); err != nil {
 		return err
 	}
@@ -65,7 +72,7 @@ func (c *Convert) Start(path string) error {
 		log.Infof("convert: ignoring %s", txt.Quote(filepath.Base(fileName)))
 	}
 
-	err := godirwalk.Walk(path, &godirwalk.Options{
+	err = godirwalk.Walk(path, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
 			log.Errorf("convert: %s", strings.Replace(err.Error(), path, "", 1))
 			return godirwalk.SkipNode
