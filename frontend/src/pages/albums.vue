@@ -100,17 +100,6 @@
                     @mousedown="onMouseDown($event, index)"
                     @click="onClick($event, index)"
                 >
-                  <v-layout
-                      slot="placeholder"
-                      fill-height
-                      align-center
-                      justify-center
-                      ma-0
-                  >
-                    <v-progress-circular indeterminate
-                                         color="accent lighten-5"></v-progress-circular>
-                  </v-layout>
-
                   <v-btn v-if="featureShare && album.LinkCount > 0" :ripple="false"
                          icon large absolute
                          class="action-share"

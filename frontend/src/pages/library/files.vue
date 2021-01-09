@@ -65,17 +65,6 @@
                     @mousedown="onMouseDown($event, index)"
                     @click="onClick($event, index)"
                 >
-                  <v-layout
-                      slot="placeholder"
-                      fill-height
-                      align-center
-                      justify-center
-                      ma-0
-                  >
-                    <v-progress-circular indeterminate
-                                         color="accent lighten-5"></v-progress-circular>
-                  </v-layout>
-
                   <v-btn v-if="hover || selection.includes(model.UID)" :flat="!hover" :ripple="false"
                          icon large absolute
                          :class="selection.includes(model.UID) ? 'p-file-select' : 'p-file-select opacity-50'"
