@@ -331,7 +331,7 @@ func (c *Config) Workers() int {
 	numCPU := runtime.NumCPU()
 
 	// Limit number of workers when using SQLite to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite && numCPU > 4 && c.options.Workers <= 0 {
+	if c.DatabaseDriver() == SQLite && numCPU >= 8 && c.options.Workers <= 0 {
 		return 4
 	}
 
@@ -340,7 +340,7 @@ func (c *Config) Workers() int {
 	}
 
 	if numCPU > 1 {
-		return numCPU - 1
+		return numCPU / 2
 	}
 
 	return 1
