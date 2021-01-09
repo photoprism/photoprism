@@ -165,22 +165,22 @@ func (c Chroma) Int() int {
 }
 
 var ColorExamples = map[Color]string{
-	Purple:  "#AB47BC",
-	Magenta: "#FF00FF",
-	Pink:    "#EC407A",
-	Red:     "#EF5350",
-	Orange:  "#FFA726",
+	Black:   "#212121",
+	Grey:    "#9E9E9E",
 	Brown:   "#A1887F",
 	Gold:    "#D4AF37",
-	Yellow:  "#FDD835",
-	Lime:    "#CDDC39",
-	Green:   "#66BB6A",
-	Teal:    "#009688",
-	Cyan:    "#00BCD4",
-	Blue:    "#2196F3",
 	White:   "#F5F5F5",
-	Grey:    "#9E9E9E",
-	Black:   "#212121",
+	Purple:  "#AB47BC",
+	Blue:    "#2196F3",
+	Cyan:    "#00BCD4",
+	Teal:    "#009688",
+	Green:   "#66BB6A",
+	Lime:    "#CDDC39",
+	Yellow:  "#FDD835",
+	Magenta: "#FF00FF",
+	Orange:  "#FFA726",
+	Red:     "#EF5350",
+	Pink:    "#EC407A",
 }
 
 var ColorMap = map[color.RGBA]Color{
