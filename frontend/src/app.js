@@ -59,7 +59,6 @@ import offline from "offline-plugin/runtime";
 
 // Initialize helpers
 const viewer = new Viewer();
-const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.get("public");
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
   navigator.userAgent
@@ -83,7 +82,7 @@ Vue.prototype.$api = Api;
 Vue.prototype.$log = Log;
 Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
-Vue.prototype.$clipboard = clipboard;
+Vue.prototype.$clipboard = Clipboard;
 Vue.prototype.$isMobile = isMobile;
 Vue.prototype.$rtl = rtl;
 

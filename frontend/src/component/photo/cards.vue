@@ -26,30 +26,30 @@
           :data-uid="photo.UID"
           class="p-photo"
           xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
-          :class="{ 'is-selected': clipboard.has(photo), portrait: photo.Portrait }"
+          :class="{ 'is-selected': photo.Selected, portrait: photo.Portrait }"
       >
         <v-hover>
           <v-card slot-scope="{ hover }" tile
-                  :dark="clipboard.has(photo)"
-                  :class="clipboard.has(photo) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
+                  :dark="photo.Selected"
+                  :class="photo.Selected ? 'elevation-10 ma-0 accent darken-1 white--text select-transition' : 'elevation-0 ma-1 accent lighten-3 select-transition'"
                   @contextmenu="onContextMenu($event, index)">
             <v-img :src="photo.thumbnailUrl('tile_500')"
                    aspect-ratio="1"
-                   :class="{ selected: clipboard.has(photo) }"
+                   :class="{ selected: photo.Selected }"
                    class="accent lighten-2 clickable"
                    @mousedown="onMouseDown($event, index)"
                    @click.stop.prevent="onClick($event, index)"
             >
-              <v-layout
+              <!-- v-layout
+                  v-if="spinners"
                   slot="placeholder"
                   fill-height
                   align-center
                   justify-center
                   ma-0
-
               >
                 <v-progress-circular indeterminate color="accent lighten-5"></v-progress-circular>
-              </v-layout>
+              </v-layout -->
 
               <v-layout
                   v-if="photo.Type === 'live'"
@@ -72,11 +72,11 @@
                 <v-icon color="white">lock</v-icon>
               </v-btn>
 
-              <v-btn v-if="hover || selection.length && clipboard.has(photo)" :ripple="false"
+              <v-btn v-if="hover || photo.Selected" :ripple="false"
                      icon flat large absolute
-                     :class="selection.length && clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
+                     :class="photo.Selected ? 'p-photo-select' : 'p-photo-select opacity-50'"
                      @click.stop.prevent="onSelect($event, index)">
-                <v-icon v-if="selection.length && clipboard.has(photo)" color="white"
+                <v-icon v-if="photo.Selected" color="white"
                         class="t-select t-on">check_circle
                 </v-icon>
                 <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
@@ -110,7 +110,7 @@
                      @click.stop.prevent="openPhoto(index, true)">
                 <v-icon color="white" class="action-burst">burst_mode</v-icon>
               </v-btn>
-              <v-btn v-else-if="photo.Type === 'image' && selection.length && hover" :ripple="false"
+              <v-btn v-else-if="photo.Type === 'image' && selectMode && hover" :ripple="false"
                      icon flat large absolute class="p-photo-fullscreen opacity-75"
                      @click.stop.prevent="openPhoto(index, false)">
                 <v-icon color="white" class="action-open">zoom_in</v-icon>
@@ -207,10 +207,11 @@ export default {
     album: Object,
     filter: Object,
     context: String,
+    selectMode: Boolean,
   },
   data() {
     return {
-      clipboard: this.$clipboard,
+      spinners: false,
       showLocation: this.$config.settings().features.places,
       hidePrivate: this.$config.settings().features.private,
       debug: this.$config.get('debug'),
@@ -246,7 +247,7 @@ export default {
     onClick(ev, index) {
       let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
 
-      if (longClick || this.selection.length > 0) {
+      if (longClick || this.selectMode) {
         if (longClick || ev.shiftKey) {
           this.selectRange(index);
         } else {

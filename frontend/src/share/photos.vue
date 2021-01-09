@@ -60,14 +60,14 @@
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
                       :photos="results"
-                      :selection="selection"
+                      :select-mode="selectMode"
                       :filter="filter"
                       :album="model"
                       :edit-photo="editPhoto"
                       :open-photo="openPhoto"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
                     :photos="results"
-                    :selection="selection"
+                    :select-mode="selectMode"
                     :filter="filter"
                     :album="model"
                     :open-photo="openPhoto"
@@ -75,7 +75,7 @@
                     :open-location="openLocation"></p-photo-list>
       <p-photo-cards v-else
                      :photos="results"
-                     :selection="selection"
+                     :select-mode="selectMode"
                      :filter="filter"
                      :album="model"
                      :open-photo="openPhoto"
@@ -133,6 +133,11 @@ export default {
         loading: false,
       },
     };
+  },
+  computed: {
+    selectMode: function() {
+      return this.$clipboard.selection.length > 0;
+    },
   },
   watch: {
     '$route'() {

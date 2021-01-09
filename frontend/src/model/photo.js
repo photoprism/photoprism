@@ -36,6 +36,7 @@ import Util from "common/util";
 import { config } from "../session";
 import countries from "options/countries.json";
 import { $gettext } from "common/vm";
+import Clipboard from "common/clipboard";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
@@ -51,8 +52,14 @@ export const MonthUnknown = -1;
 export const DayUnknown = -1;
 
 export class Photo extends RestModel {
+  constructor(values) {
+    super(values);
+    this.Selected = Clipboard.has(this);
+  }
+
   getDefaults() {
     return {
+      Selected: false,
       UID: "",
       DocumentID: "",
       Type: TypeImage,

@@ -46,11 +46,11 @@
                                    color="accent lighten-5"></v-progress-circular>
             </v-layout>
 
-            <v-btn v-if="selection.length && $clipboard.has(props.item)" :ripple="false"
+            <v-btn v-if="props.item.Selected" :ripple="false"
                    flat icon large absolute class="p-photo-select">
               <v-icon color="white" class="t-select t-on">check_circle</v-icon>
             </v-btn>
-            <v-btn v-else-if="!selection.length && (props.item.Type === 'video' || props.item.Type === 'live')"
+            <v-btn v-else-if="!selectMode && (props.item.Type === 'video' || props.item.Type === 'live')"
                    :ripple="false"
                    flat icon large absolute class="p-photo-play opacity-75"
                    @click.stop.prevent="openPhoto(props.index, true)">
@@ -93,12 +93,12 @@ export default {
   name: 'PPhotoList',
   props: {
     photos: Array,
-    selection: Array,
     openPhoto: Function,
     editPhoto: Function,
     openLocation: Function,
     album: Object,
     filter: Object,
+    selectMode: Boolean,
   },
   data() {
     let m = this.$gettext("Couldn't find anything.");
@@ -172,7 +172,7 @@ export default {
     onClick(ev, index) {
       let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
 
-      if (longClick || this.selection.length > 0) {
+      if (longClick || this.selectMode) {
         if (longClick || ev.shiftKey) {
           this.selectRange(index);
         } else {

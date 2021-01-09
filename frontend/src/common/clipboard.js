@@ -31,10 +31,11 @@ https://docs.photoprism.org/developer-guide/
 import RestModel from "model/rest";
 import Notify from "common/notify";
 import { $gettext } from "./vm";
+import Event from "pubsub-js";
 
 export const MaxItems = 999;
 
-export default class Clipboard {
+export class Clipboard {
   /**
    * @param {Storage} storage
    * @param {string} key
@@ -83,11 +84,13 @@ export default class Clipboard {
     }
 
     const id = model.getId();
-    this.toggleId(id);
+    model.Selected = this.toggleId(id);
   }
 
   toggleId(id) {
     const index = this.selection.indexOf(id);
+
+    let result = false;
 
     if (index === -1) {
       if (this.selection.length >= this.maxItems) {
@@ -95,16 +98,23 @@ export default class Clipboard {
         return;
       }
 
+      Event.publish("photos.updated", { entities: [{ UID: id, Selected: true }] });
+
       this.selection.push(id);
       this.selectionMap["id:" + id] = true;
       this.lastId = id;
+      result = true;
     } else {
+      Event.publish("photos.updated", { entities: [{ UID: id, Selected: false }] });
+
       this.selection.splice(index, 1);
       delete this.selectionMap["id:" + id];
       this.lastId = "";
     }
 
     this.saveToStorage();
+
+    return result;
   }
 
   add(model) {
@@ -114,17 +124,19 @@ export default class Clipboard {
 
     const id = model.getId();
 
-    this.addId(id);
+    model.Selected = this.addId(id);
   }
 
   addId(id) {
+    Event.publish("photos.updated", { entities: [{ UID: id, Selected: true }] });
+
     if (this.hasId(id)) {
-      return;
+      return true;
     }
 
     if (this.selection.length >= this.maxItems) {
       Notify.warn($gettext("Can't select more items"));
-      return;
+      return false;
     }
 
     this.selection.push(id);
@@ -132,6 +144,8 @@ export default class Clipboard {
     this.lastId = id;
 
     this.saveToStorage();
+
+    return true;
   }
 
   addRange(rangeEnd, models) {
@@ -177,11 +191,15 @@ export default class Clipboard {
       return;
     }
 
-    this.removeId(model.getId());
+    model.Selected = this.removeId(model.getId());
   }
 
   removeId(id) {
-    if (!this.hasId(id)) return;
+    Event.publish("photos.updated", { entities: [{ UID: id, Selected: false }] });
+
+    if (!this.hasId(id)) {
+      return false;
+    }
 
     const index = this.selection.indexOf(id);
 
@@ -190,6 +208,8 @@ export default class Clipboard {
     delete this.selectionMap["id:" + id];
 
     this.saveToStorage();
+
+    return false;
   }
 
   getIds() {
@@ -209,9 +229,19 @@ export default class Clipboard {
   }
 
   clear() {
+    Event.publish("photos.updated", {
+      entities: this.selection.map((uid) => {
+        return { UID: uid, Selected: false };
+      }),
+    });
+
     this.lastId = "";
     this.selectionMap = {};
     this.selection.splice(0, this.selection.length);
     this.storage.removeItem(this.storageKey);
   }
 }
+
+const PhotoClipboard = new Clipboard(window.localStorage, "photo_clipboard");
+
+export default PhotoClipboard;

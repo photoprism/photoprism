@@ -16,14 +16,14 @@
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
                       :context="context"
                       :photos="results"
-                      :selection="selection"
+                      :select-mode="selectMode"
                       :filter="filter"
                       :edit-photo="editPhoto"
                       :open-photo="openPhoto"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
                     :context="context"
                     :photos="results"
-                    :selection="selection"
+                    :select-mode="selectMode"
                     :filter="filter"
                     :open-photo="openPhoto"
                     :edit-photo="editPhoto"
@@ -31,7 +31,7 @@
       <p-photo-cards v-else
                      :context="context"
                      :photos="results"
-                     :selection="selection"
+                     :select-mode="selectMode"
                      :filter="filter"
                      :open-photo="openPhoto"
                      :edit-photo="editPhoto"
@@ -108,6 +108,9 @@ export default {
     };
   },
   computed: {
+    selectMode: function() {
+      return this.selection.length > 0;
+    },
     context: function () {
       if (!this.staticFilter) {
         return "photos";
