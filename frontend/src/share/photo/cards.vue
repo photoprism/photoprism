@@ -24,8 +24,8 @@
           xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
           :class="{ 'is-selected': photo.Selected, portrait: photo.Portrait }"
       >
-        <v-hover>
-          <v-card slot-scope="{ hover }" tile
+        <v-hover v-slot="{ hover }">
+          <v-card tile
                   :dark="photo.Selected"
                   :class="photo.Selected ? 'selected elevation-10 ma-0 accent darken-1 white--text select-transition' : 'elevation-0 ma-1 accent lighten-3 select-transition'"
                   @contextmenu="onContextMenu($event, index)">

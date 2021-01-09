@@ -62,8 +62,8 @@
               :data-uid="label.UID"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
-            <v-hover>
-              <v-card slot-scope="{ hover }" tile
+            <v-hover v-slot="{ hover }">
+              <v-card tile
                       class="accent lighten-3"
                       :dark="selection.includes(label.UID)"
                       :class="selection.includes(label.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"

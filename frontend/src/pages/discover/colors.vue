@@ -14,9 +14,9 @@
 
             xs3 d-flex grow
         >
-          <v-hover>
+          <v-hover v-slot="{ hover }">
             <v-card :to="{name: 'photos', query: { color: color.name }}" :dark="useDark(color)"
-                    :color="color.example" slot-scope="{ hover }" :flat="!hover"
+                    :color="color.example" :flat="!hover"
                     class="clickable py-1">
               <v-card-text class="px-0 py-5 body-2">{{ color.label }}</v-card-text>
             </v-card>

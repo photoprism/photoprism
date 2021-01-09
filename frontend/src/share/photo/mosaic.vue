@@ -24,8 +24,8 @@
           class="p-photo"
           xs4 sm3 md2 lg1 d-flex
       >
-        <v-hover>
-          <v-card slot-scope="{ hover }" tile
+        <v-hover v-slot="{ hover }">
+          <v-card tile
                   :class="photo.Selected ? 'selected elevation-10 ma-0 select-transition' : 'elevation-0 ma-1 select-transition'"
                   :title="photo.Title"
                   @contextmenu="onContextMenu($event, index)">
