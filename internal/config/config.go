@@ -20,6 +20,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/klauspost/cpuid/v2"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/hub"
 	"github.com/photoprism/photoprism/internal/hub/places"
@@ -131,6 +132,10 @@ func (c *Config) Init() error {
 	} else if insensitive {
 		log.Infof("config: case-insensitive file system detected")
 		fs.IgnoreCase()
+	}
+
+	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
+		log.Debugf("config: running on %s", txt.Quote(cpuid.CPU.BrandName))
 	}
 
 	c.initSettings()
@@ -328,19 +333,19 @@ func (c *Config) Shutdown() {
 
 // Workers returns the number of workers e.g. for indexing files.
 func (c *Config) Workers() int {
-	numCPU := runtime.NumCPU()
+	cores := cpuid.CPU.PhysicalCores
 
 	// Limit number of workers when using SQLite to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite && numCPU >= 8 && c.options.Workers <= 0 {
+	if c.DatabaseDriver() == SQLite && cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4 {
 		return 4
 	}
 
-	if c.options.Workers > 0 && c.options.Workers <= numCPU {
+	if c.options.Workers > 0 && c.options.Workers <= runtime.NumCPU() {
 		return c.options.Workers
 	}
 
-	if numCPU > 1 {
-		return numCPU / 2
+	if cores > 1 {
+		return cores / 2
 	}
 
 	return 1

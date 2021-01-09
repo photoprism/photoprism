@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 )
 
@@ -95,8 +96,9 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "workers, w",
-		Usage:  "`LIMIT` the number of indexing workers to reduce system load",
+		Usage:  "adjusts `MAX` number of indexing workers",
 		EnvVar: "PHOTOPRISM_WORKERS",
+		Value:  cpuid.CPU.PhysicalCores / 2,
 	},
 	cli.IntFlag{
 		Name:   "wakeup-interval",
