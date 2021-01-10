@@ -27,7 +27,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Main search query, avoids (slow) left joins.
 	s = s.Table("photos").
-		Select(`photos.*,
+		Select(`photos.*, photos.id AS composite_id,
 		files.id AS file_id, files.file_uid, files.instance_id, files.file_primary, files.file_missing, files.file_name,
 		files.file_root, files.file_hash, files.file_codec, files.file_type, files.file_mime, files.file_width, 
 		files.file_height, files.file_portrait, files.file_aspect_ratio, files.file_orientation, files.file_main_color, 
