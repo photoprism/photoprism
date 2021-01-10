@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
@@ -20,14 +21,25 @@ func Start(ctx context.Context, conf *config.Config) {
 		}
 	}()
 
+	// Set http server mode.
 	if conf.HttpMode() != "" {
 		gin.SetMode(conf.HttpMode())
 	} else if conf.Debug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	// Create router and add routing middleware.
 	router := gin.New()
 	router.Use(Logger(), Recovery())
+
+	// Enable http compression (if any).
+	switch conf.HttpCompression() {
+	case "gzip":
+		log.Infof("http: enabling gzip compression")
+		router.Use(gzip.Gzip(
+			gzip.DefaultCompression,
+			gzip.WithExcludedPaths([]string{"/api/v1/t", "/api/v1/zip", "/api/v1/albums", "/api/v1/labels"})))
+	}
 
 	// Set template directory
 	router.LoadHTMLGlob(conf.TemplatesPath() + "/*")
@@ -40,21 +52,21 @@ func Start(ctx context.Context, conf *config.Config) {
 	}
 
 	go func() {
-		log.Infof("starting web server at %s", server.Addr)
+		log.Infof("http: starting web server at %s", server.Addr)
 
 		if err := server.ListenAndServe(); err != nil {
 			if err == http.ErrServerClosed {
-				log.Info("web server shutdown complete")
+				log.Info("http: web server shutdown complete")
 			} else {
-				log.Errorf("web server closed unexpect: %s", err)
+				log.Errorf("http: web server closed unexpect: %s", err)
 			}
 		}
 	}()
 
 	<-ctx.Done()
-	log.Info("shutting down web server")
+	log.Info("http: shutting down web server")
 	err := server.Close()
 	if err != nil {
-		log.Errorf("web server shutdown failed: %v", err)
+		log.Errorf("http: web server shutdown failed: %v", err)
 	}
 }

@@ -222,6 +222,11 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_HTTP_MODE",
 	},
 	cli.StringFlag{
+		Name:   "http-compression, z",
+		Usage:  "improves transfer speed and bandwidth utilization (none or gzip)",
+		EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
+	},
+	cli.StringFlag{
 		Name:   "database-driver",
 		Usage:  "database driver `NAME` (sqlite or mysql)",
 		Value:  "sqlite",

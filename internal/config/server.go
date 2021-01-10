@@ -2,6 +2,7 @@ package config
 
 import (
 	"path/filepath"
+	"strings"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -40,6 +41,11 @@ func (c *Config) HttpMode() string {
 	}
 
 	return c.options.HttpMode
+}
+
+// HttpCompression returns the http compression method (none or gzip).
+func (c *Config) HttpCompression() string {
+	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
 // TemplatesPath returns the server templates path.

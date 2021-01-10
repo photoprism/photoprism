@@ -82,6 +82,7 @@ type Options struct {
 	HttpHost          string `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort          int    `yaml:"HttpPort" json:"-" flag:"http-port"`
 	HttpMode          string `yaml:"HttpMode" json:"-" flag:"http-mode"`
+	HttpCompression   string `yaml:"HttpCompression" json:"-" flag:"http-compression"`
 	SipsBin           string `yaml:"SipsBin" json:"-" flag:"sips-bin"`
 	RawtherapeeBin    string `yaml:"RawtherapeeBin" json:"-" flag:"rawtherapee-bin"`
 	DarktableBin      string `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
