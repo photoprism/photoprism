@@ -33,7 +33,6 @@ import Api from "common/api";
 import { DateTime } from "luxon";
 import { config } from "../session";
 import { $gettext } from "common/vm";
-import Clipboard from "../common/clipboard";
 
 export class Album extends RestModel {
   getDefaults() {
