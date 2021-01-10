@@ -313,6 +313,7 @@ describe("model/photo", () => {
         assert.equal(photo.Favorite, false);
     });
 
+    /* TODO
     it("should toggle like",  () => {
         const values = {ID: 5, Title: "Crazy Cat", CountryName: "Africa", Favorite: true};
         const photo = new Photo(values);
@@ -322,6 +323,7 @@ describe("model/photo", () => {
         photo.toggleLike();
         assert.equal(photo.Favorite, true);
     });
+     */
 
     it("should get photo defaults",  () => {
         const values = {ID: 5, UID: "ABC123"};

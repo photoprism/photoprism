@@ -1,10 +1,5 @@
-#photoprism .p-labels-cards .p-label-like {
-    left: 4px;
-    bottom: 4px;
-}
-
-#photoprism main .p-inline-edit a,
-#photoprism main .p-inline-edit a span {
+#photoprism .search-results .inline-edit a,
+#photoprism .search-results .inline-edit a span {
     cursor: text;
     color: inherit;
 }

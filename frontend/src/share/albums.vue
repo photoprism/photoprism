@@ -15,10 +15,10 @@
       <p-album-clipboard :refresh="refresh" :selection="selection"
                          :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
-      <v-container grid-list-xs fluid class="pa-2 p-albums p-albums-cards">
-        <v-card v-if="results.length === 0" class="p-albums-empty secondary-light lighten-1 ma-1" flat>
+      <v-container grid-list-xs fluid class="pa-2">
+        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
-            <div>
+            <div v-if="staticFilter.type === 'album'">
               <h3 class="title ma-0 pa-0">
                 <translate>Couldn't find anything</translate>
               </h3>
@@ -28,57 +28,64 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="p-album-results">
+        <v-layout row wrap class="search-results album-results cards-view">
           <v-flex
               v-for="(album, index) in results"
               :key="index"
-              :data-uid="album.UID"
-              class="p-album"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
-            <v-hover>
-              <v-card slot-scope="{ hover }" tile
-                      class="accent lighten-3"
-                      :dark="selection.includes(album.UID)"
-                      :class="selection.includes(album.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                      :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
-                      @contextmenu="onContextMenu($event, index)"
+            <v-card tile
+                    :data-uid="album.UID"
+                    class="result accent lighten-2"
+                    :class="album.classes(selection.includes(album.UID))"
+                    :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
+                    @contextmenu="onContextMenu($event, index)"
+            >
+              <div class="card-background accent lighten-2"></div>
+              <v-img
+                  :src="album.thumbnailUrl('tile_500')"
+                  :alt="album.Title"
+                  :transition="false"
+                  aspect-ratio="1"
+                  class="accent lighten-3 clickable"
+                  @mousedown="onMouseDown($event, index)"
+                  @click="onClick($event, index)"
               >
-                <v-img
-                    :src="album.thumbnailUrl('tile_500')"
-                    aspect-ratio="1"
-                    class="accent lighten-2"
-                    @mousedown="onMouseDown($event, index)"
-                    @click="onClick($event, index)"
-                >
-                  <v-btn v-if="hover || selection.includes(album.UID)" :flat="!hover" :ripple="false"
-                         icon large absolute
-                         :class="selection.includes(album.UID) ? 'action-select' : 'action-select opacity-50'"
-                         @click.stop.prevent="onSelect($event, index)">
-                    <v-icon v-if="selection.includes(album.UID)" color="white"
-                            class="t-select t-on">check_circle
-                    </v-icon>
-                    <v-icon v-else color="accent lighten-3" class="t-select t-off">
-                      radio_button_off
-                    </v-icon>
-                  </v-btn>
-                </v-img>
+                <v-btn :ripple="false"
+                       icon flat absolute
+                       class="input-select"
+                       @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">check_circle</v-icon>
+                  <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+                </v-btn>
+              </v-img>
 
-                <v-card-title primary-title class="pa-3 p-album-desc" style="user-select: none;">
-                  <h3 class="body-2 ma-0">
-                    {{ album.Title }}
+              <v-card-title primary-title class="pl-3 pt-3 pr-3 pb-2 card-details" style="user-select: none;">
+                <div>
+                  <h3 v-if="album.Type !== 'month'" class="body-2 mb-0" :title="album.Title">
+                    {{ album.Title | truncate(80) }}
                   </h3>
-                </v-card-title>
-                <v-card-text class="pl-3 pr-3 pt-0 pb-3 p-album-desc">
-                  <div v-if="album.Description" class="caption" title="Description">
-                    {{ album.Description | truncate(100) }}
-                  </div>
-                  <div v-else class="caption" title="Description">
-                    <translate>Shared with you.</translate>
-                  </div>
-                </v-card-text>
-              </v-card>
-            </v-hover>
+                  <h3 v-else class="body-2 mb-0">
+                    {{ album.getDateString() | capitalize }}
+                  </h3>
+                </div>
+              </v-card-title>
+
+              <v-card-text class="pb-2 pt-0  card-details">
+                <div v-if="album.Description" class="caption mb-2" :title="$gettext('Description')">
+                  {{ album.Description }}
+                </div>
+                <div v-else class="caption mb-2">
+                  <translate>Shared with you.</translate>
+                </div>
+                <div v-if="album.Location" class="caption mb-2 d-block">
+                  <button @click.stop="">
+                    <v-icon size="14">location_on</v-icon>
+                    {{ album.Location }}
+                  </button>
+                </div>
+              </v-card-text>
+            </v-card>
           </v-flex>
         </v-layout>
       </v-container>
@@ -110,8 +117,8 @@ export default {
 
     let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
-    if (this.$config.values.albumCategories) {
-      categories = categories.concat(this.$config.values.albumCategories.map(cat => {
+    if (this.$config.albumCategories().length > 0) {
+      categories = categories.concat(this.$config.albumCategories().map(cat => {
         return {"value": cat, "text": cat};
       }));
     }
@@ -125,7 +132,7 @@ export default {
       results: [],
       loading: true,
       scrollDisabled: true,
-      pageSize: 24,
+      pageSize: Album.pageSize(),
       offset: 0,
       page: 0,
       selection: [],
@@ -139,6 +146,7 @@ export default {
         timeStamp: -1,
       },
       lastId: "",
+      model: new Album(),
     };
   },
   computed: {
@@ -402,7 +410,7 @@ export default {
         title = `${title} (${existing.length + 1})`;
       }
 
-      const album = new Album({"Title": title, "Favorite": true});
+      const album = new Album({"Title": title, "Favorite": false});
 
       album.save();
     },
@@ -473,6 +481,17 @@ export default {
               }
             }
           }
+
+          let categories = [{"value": "", "text": this.$gettext("All Categories")}];
+
+          if (this.$config.albumCategories().length > 0) {
+            categories = categories.concat(this.$config.albumCategories().map(cat => {
+              return {"value": cat, "text": cat};
+            }));
+          }
+
+          this.categories = categories;
+
           break;
         case 'deleted':
           this.dirty = true;

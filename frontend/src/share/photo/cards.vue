@@ -1,6 +1,6 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-cards">
-    <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
+    <v-card v-if="photos.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
       <v-card-title primary-title>
         <div>
           <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
@@ -15,132 +15,110 @@
         </div>
       </v-card-title>
     </v-card>
-    <v-layout row wrap class="p-results">
+    <v-layout row wrap class="search-results photo-results cards-view">
       <v-flex
           v-for="(photo, index) in photos"
           :key="index"
-          :data-uid="photo.UID"
-          class="p-photo"
           xs12 sm6 md4 lg3 xlg2 xxxl1 d-flex
-          :class="{ 'is-selected': photo.Selected, portrait: photo.Portrait }"
       >
-        <v-hover>
-          <v-card slot-scope="{ hover }" tile
-                  :dark="photo.Selected"
-                  :class="photo.Selected ? 'selected elevation-10 ma-0 accent darken-1 white--text select-transition' : 'elevation-0 ma-1 accent lighten-3 select-transition'"
-                  @contextmenu="onContextMenu($event, index)">
-            <v-img :src="photo.thumbnailUrl('tile_500')"
-                   aspect-ratio="1"
-                   class="accent lighten-2 clickable"
-                   @mousedown="onMouseDown($event, index)"
-                   @click.stop.prevent="onClick($event, index)"
-            >
-              <v-layout
-                  v-if="photo.Type === 'live'"
-                  v-show="hover"
-                  fill-height
-                  align-center
-                  justify-center
-                  ma-0
-                  class="live-player"
-                  style="overflow: hidden;"
-              >
-                <video :key="photo.videoUrl()" width="500" height="500" autoplay loop muted playsinline>
-                  <source :src="photo.videoUrl()" type="video/mp4">
-                </video>
-              </v-layout>
+        <v-card tile
+                :data-id="photo.ID"
+                :data-uid="photo.UID"
+                class="result accent lighten-2"
+                :class="photo.classes()"
+                @contextmenu="onContextMenu($event, index)">
+          <div class="card-background accent lighten-2"></div>
+          <v-img :key="photo.Hash"
+                 :src="photo.thumbnailUrl('tile_500')"
+                 :alt="photo.Title"
+                 :title="photo.Title"
+                 :transition="false"
+                 aspect-ratio="1"
+                 class="accent lighten-3 clickable"
+                 @mousedown="onMouseDown($event, index)"
+                 @click.stop.prevent="onClick($event, index)"
+          >
+            <v-layout v-if="photo.Type === 'video' || photo.Type === 'live'" class="live-player">
+              <video :key="photo.ID" width="500" height="500" autoplay loop muted playsinline>
+                <source :src="photo.videoUrl()" type="video/mp4">
+              </video>
+            </v-layout>
 
-              <v-btn v-if="hidePrivate && photo.Private" :ripple="false"
-                     icon flat large absolute
-                     class="p-photo-private opacity-75">
-                <v-icon color="white">lock</v-icon>
-              </v-btn>
+            <v-btn :ripple="false" :depressed="false" class="input-open"
+                   icon flat absolute
+                   @click.stop.prevent="openPhoto(index, true)">
+              <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">adjust</v-icon>
+              <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
+            </v-btn>
 
-              <v-btn v-if="hover || photo.Selected" :ripple="false"
-                     icon flat large absolute
-                     :class="photo.Selected ? 'p-photo-select' : 'p-photo-select opacity-50'"
-                     @click.stop.prevent="onSelect($event, index)">
-                <v-icon v-if="photo.Selected" color="white"
-                        class="t-select t-on">check_circle
-                </v-icon>
-                <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
-              </v-btn>
+            <v-btn :ripple="false" :depressed="false" class="input-view"
+                   icon flat absolute :title="$gettext('View')"
+                   @click.stop.prevent="openPhoto(index, false)">
+              <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
+            </v-btn>
 
-              <!-- v-btn icon flat large absolute :ripple="false"
-                     :class="photo.Favorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
-                     @click.stop.prevent="photo.toggleLike()">
-                  <v-icon v-if="photo.Favorite" color="white" class="t-like t-on" :data-uid="photo.UID">
-                      favorite
-                  </v-icon>
-                  <v-icon v-else color="accent lighten-3" class="t-like t-off" :data-uid="photo.UID">
-                      favorite_border
-                  </v-icon>
-              </v-btn -->
+            <v-btn :ripple="false" :depressed="false" color="white" class="input-play"
+                   outline fab absolute :title="$gettext('Play')"
+                   @click.stop.prevent="openPhoto(index, true)">
+              <v-icon color="white" class="action-play">play_arrow</v-icon>
+            </v-btn>
 
-              <template v-if="photo.isPlayable()">
-                <v-btn v-if="photo.Type === 'live'" :ripple="false"
-                       icon flat large absolute class="p-photo-live opacity-75"
-                       title="Live Photo" @click.stop.prevent="openPhoto(index, true)">
-                  <v-icon color="white" class="action-play">adjust</v-icon>
-                </v-btn>
-                <v-btn v-else color="white" :ripple="false"
-                       outline large fab absolute class="p-photo-play opacity-75" :depressed="false"
-                       title="Play" @click.stop.prevent="openPhoto(index, true)">
-                  <v-icon color="white" class="action-play">play_arrow</v-icon>
-                </v-btn>
-              </template>
-              <v-btn v-else-if="photo.Type === 'image' && photo.Files.length > 1" :ripple="false"
-                     icon flat large absolute class="p-photo-merged opacity-75"
-                     @click.stop.prevent="openPhoto(index, true)">
-                <v-icon color="white" class="action-burst">burst_mode</v-icon>
-              </v-btn>
-              <v-btn v-else-if="photo.Type === 'image' && selectMode && hover" :ripple="false"
-                     icon flat large absolute class="p-photo-merged opacity-75"
-                     @click.stop.prevent="openPhoto(index, false)">
-                <v-icon color="white" class="action-open">zoom_in</v-icon>
-              </v-btn>
-              <v-btn v-else-if="photo.Type === 'raw'" :ripple="false"
-                     icon flat large absolute class="p-photo-merged opacity-75"
-                     title="RAW" @click.stop.prevent="openPhoto(index, true)">
-                <v-icon color="white" class="action-burst">photo_camera</v-icon>
-              </v-btn>
-            </v-img>
+            <v-btn :ripple="false"
+                   icon flat absolute
+                   class="input-select"
+                   @click.stop.prevent="onSelect($event, index)">
+              <v-icon color="white" class="select-on">check_circle</v-icon>
+              <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+            </v-btn>
+          </v-img>
 
-            <v-card-title primary-title class="pa-3 p-photo-desc" style="user-select: none;"
-                          @click.stop.prevent="openPhoto(index, false)">
-              <div>
-                <h3 class="body-2 mb-2" :title="photo.Title">
+          <v-card-title primary-title class="pa-3 card-details" style="user-select: none;">
+            <div>
+              <h3 class="body-2 mb-2" :title="photo.Title">
+                <div @click.stop.prevent="openPhoto(index, false)">
                   {{ photo.Title | truncate(80) }}
-                </h3>
-                <div v-if="photo.Description" class="caption mb-2" title="Description">
+                </div>
+              </h3>
+              <div v-if="photo.Description" class="caption mb-2" :title="labels.description">
+                <div>
                   {{ photo.Description }}
                 </div>
-                <div class="caption">
-                  <v-icon size="14" title="Taken">date_range</v-icon>
-                  {{ photo.getDateString() }}
-                  <template v-if="!photo.Description">
-                    <br/>
-                    <div v-if="photo.Type === 'video'" title="Video"
-                         @click.exact="openPhoto(index, true)">
-                      <v-icon size="14">movie</v-icon>
-                      {{ photo.getVideoInfo() }}
-                    </div>
-                    <div v-else title="Camera">
-                      <v-icon size="14">photo_camera</v-icon>
-                      {{ photo.getPhotoInfo() }}
-                    </div>
-                  </template>
-                  <template v-if="showLocation && photo.Country !== 'zz'">
-                    <div title="Location">
-                      <v-icon size="14">location_on</v-icon>
-                      {{ photo.locationInfo() }}
-                    </div>
-                  </template>
-                </div>
               </div>
-            </v-card-title>
-          </v-card>
-        </v-hover>
+              <div class="caption">
+                <div>
+                  <v-icon size="14" :title="labels.taken">date_range</v-icon>
+                  {{ photo.getDateString() }}
+                </div>
+                <template v-if="!photo.Description">
+                  <br/>
+                  <div v-if="photo.Type === 'video'" :title="labels.video">
+                    <v-icon size="14">movie</v-icon>
+                    {{ photo.getVideoInfo() }}
+                  </div>
+                  <div v-else :title="labels.camera">
+                    <v-icon size="14">photo_camera</v-icon>
+                    {{ photo.getPhotoInfo() }}
+                  </div>
+                </template>
+                <template v-if="filter.order === 'name' && $config.feature('download')">
+                  <br/>
+                  <div :title="labels.name">
+                    <v-icon size="14">insert_drive_file</v-icon>
+                    {{ photo.baseName() }}
+                  </div>
+                </template>
+                <template v-if="showLocation && photo.Country !== 'zz'">
+                  <br/>
+                  <div :title="labels.location">
+                    <v-icon size="14">location_on</v-icon>
+                    {{ photo.locationInfo() }}
+                  </div>
+                </template>
+              </div>
+            </div>
+          </v-card-title>
+        </v-card>
       </v-flex>
     </v-layout>
   </v-container>
@@ -155,6 +133,7 @@ export default {
     openLocation: Function,
     album: Object,
     filter: Object,
+    context: String,
     selectMode: Boolean,
   },
   data() {
@@ -162,6 +141,16 @@ export default {
       showLocation: this.$config.settings().features.places,
       hidePrivate: this.$config.settings().features.private,
       debug: this.$config.get('debug'),
+      labels: {
+        location: this.$gettext("Location"),
+        description: this.$gettext("Description"),
+        taken: this.$gettext("Taken"),
+        approve: this.$gettext("Approve"),
+        archive: this.$gettext("Archive"),
+        camera: this.$gettext("Camera"),
+        video: this.$gettext("Video"),
+        name: this.$gettext("Name"),
+      },
       mouseDown: {
         index: -1,
         timeStamp: -1,

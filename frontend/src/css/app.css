@@ -39,7 +39,7 @@ https://docs.photoprism.org/developer-guide/
 @import url("video.css");
 @import url("maps.css");
 @import url("viewer.css");
-@import url("photos.css");
+@import url("search.css");
 @import url("labels.css");
 @import url("files.css");
 @import url("help.css");
@@ -132,10 +132,6 @@ main {
     bottom: 15%;
     right: 10%;
     left: 10%;
-}
-
-#photoprism main .p-results a {
-    color: #333333;
 }
 
 #photoprism .v-badge__badge {

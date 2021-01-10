@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="photos.length === 0" class="pa-2">
-      <v-card class="p-photos-empty secondary-light lighten-1 ma-1" flat>
+      <v-card class="no-results secondary-light lighten-1 ma-1" flat>
         <v-card-title primary-title>
           <div>
             <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
@@ -26,26 +26,28 @@
                   :headers="listColumns"
                   :items="photos"
                   hide-actions
-                  class="elevation-0 p-photos p-photo-list p-results"
+                  class="search-results photo-results list-view"
                   disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
     >
       <template slot="items" slot-scope="props">
-        <td style="user-select: none;" :data-uid="props.item.UID">
+        <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
           <v-img class="accent lighten-2 clickable" aspect-ratio="1"
                  :src="props.item.thumbnailUrl('tile_50')"
                  @mousedown="onMouseDown($event, props.index)"
                  @contextmenu="onContextMenu($event, props.index)"
                  @click.stop.prevent="onClick($event, props.index)"
           >
-            <v-btn v-if="props.item.Selected" :ripple="false"
-                   flat icon large absolute class="p-photo-select">
-              <v-icon color="white" class="t-select t-on">check_circle</v-icon>
+            <v-btn v-if="selectMode" :ripple="false"
+                   flat icon large absolute
+                   class="input-select">
+              <v-icon color="white" class="select-on">check_circle</v-icon>
+              <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
             </v-btn>
-            <v-btn v-else-if="!selectMode && (props.item.Type === 'video' || props.item.Type === 'live')"
+            <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live'"
                    :ripple="false"
-                   flat icon large absolute class="p-photo-play opacity-75"
+                   flat icon large absolute class="input-play opacity-75"
                    @click.stop.prevent="openPhoto(props.index, true)">
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
@@ -68,7 +70,7 @@
         </td>
         <td class="p-photo-desc hidden-xs-only">
           <button v-if="filter.order === 'name'"
-                  title="Name" @click.exact="downloadFile(props.index)">
+                  :title="$gettext('Name')" @click.exact="downloadFile(props.index)">
             {{ props.item.FileName }}
           </button>
           <button v-else-if="props.item.Country !== 'zz' && showLocation"
@@ -146,25 +148,6 @@ export default {
       },
     };
   },
-  watch: {
-    photos: function (photos) {
-      this.selected.splice(0);
-
-      for (let i = 0; i < photos.length; i++) {
-        if (this.$clipboard.has(photos[i])) {
-          this.selected.push(photos[i]);
-        }
-      }
-    },
-    selection: function () {
-      this.refreshSelection();
-    },
-  },
-  mounted: function () {
-    this.$nextTick(function () {
-      this.refreshSelection();
-    });
-  },
   methods: {
     downloadFile(index) {
       const photo = this.photos[index];
@@ -177,7 +160,7 @@ export default {
       if (ev.shiftKey) {
         this.selectRange(index);
       } else {
-        this.$clipboard.toggle(this.photos[index]);
+        this.toggle(this.photos[index]);
       }
     },
     onMouseDown(ev, index) {
@@ -191,7 +174,7 @@ export default {
         if (longClick || ev.shiftKey) {
           this.selectRange(index);
         } else {
-          this.$clipboard.toggle(this.photos[index]);
+          this.toggle(this.photos[index]);
         }
       } else if (this.photos[index]) {
         let photo = this.photos[index];
@@ -210,17 +193,11 @@ export default {
         this.selectRange(index);
       }
     },
+    toggle(photo) {
+      this.$clipboard.toggle(photo);
+    },
     selectRange(index) {
       this.$clipboard.addRange(index, this.photos);
-    },
-    refreshSelection() {
-      this.selected.splice(0);
-
-      for (let i = 0; i < this.photos.length; i++) {
-        if (this.$clipboard.has(this.photos[i])) {
-          this.selected.push(this.photos[i]);
-        }
-      }
     },
   }
 };

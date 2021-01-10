@@ -63,6 +63,16 @@ export class Folder extends RestModel {
     };
   }
 
+  classes(selected) {
+    let classes = ["is-folder", "uid-" + this.UID];
+
+    if (this.Favorite) classes.push("is-favorite");
+    if (this.Private) classes.push("is-private");
+    if (selected) classes.push("is-selected");
+
+    return classes;
+  }
+
   baseName(truncate) {
     let result = this.Path;
     const slash = result.lastIndexOf("/");

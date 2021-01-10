@@ -31,7 +31,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
-        <v-card v-if="results.length === 0" class="p-files-empty secondary-light lighten-1 ma-1" flat>
+        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
             <div>
               <h3 class="title ma-0 pa-0">
@@ -44,64 +44,63 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="p-files-results">
+        <v-layout row wrap class="search-results file-results cards-view">
           <v-flex
               v-for="(model, index) in results"
               :key="index"
-              :data-uid="model.UID"
-              class="p-file"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
-            <v-hover>
-              <v-card slot-scope="{ hover }" tile
-                      class="accent lighten-3 clickable"
-                      :dark="selection.includes(model.UID)"
-                      :class="selection.includes(model.UID) ? 'elevation-10 ma-0 darken-1 white--text' : 'elevation-0 ma-1 lighten-3'"
-                      @contextmenu="onContextMenu($event, index)">
-                <v-img
-                    :src="model.thumbnailUrl('tile_500')"
-                    aspect-ratio="1"
-                    class="accent lighten-2"
-                    @mousedown="onMouseDown($event, index)"
-                    @click="onClick($event, index)"
-                >
-                  <v-btn v-if="hover || selection.includes(model.UID)" :flat="!hover" :ripple="false"
-                         icon large absolute
-                         :class="selection.includes(model.UID) ? 'p-file-select' : 'p-file-select opacity-50'"
-                         @click.stop.prevent="onSelect($event, index)">
-                    <v-icon v-if="selection.includes(model.UID)" color="white" class="t-select t-on">check_circle
-                    </v-icon>
-                    <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
-                  </v-btn>
-                </v-img>
+            <v-card tile
+                    :data-uid="model.UID"
+                    class="result accent lighten-2"
+                    :class="model.classes(selection.includes(model.UID))"
+                    @contextmenu="onContextMenu($event, index)"
+            >
+              <div class="card-background accent lighten-2"></div>
+              <v-img
+                  :src="model.thumbnailUrl('tile_500')"
+                  :alt="model.Name"
+                  :transition="false"
+                  aspect-ratio="1"
+                  class="accent lighten-3 clickable"
+                  @mousedown="onMouseDown($event, index)"
+                  @click="onClick($event, index)"
+              >
+                <v-btn :ripple="false"
+                       icon flat absolute
+                       class="input-select"
+                       @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">check_circle</v-icon>
+                  <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+                </v-btn>
+              </v-img>
 
-                <v-card-title v-if="model.isFile()" primary-title class="pa-3 p-photo-desc"
-                              style="user-select: none;">
-                  <div>
-                    <h3 class="body-2 mb-2" :title="model.Name">
-                      <button @click.exact="openFile(index)">
-                        {{ model.baseName() }}
-                      </button>
-                    </h3>
-                    <div class="caption" title="Info">
-                      {{ model.getInfo() }}
-                    </div>
+              <v-card-title v-if="model.isFile()" primary-title class="pa-3 card-details"
+                            style="user-select: none;">
+                <div>
+                  <h3 class="body-2 mb-2" :title="model.Name">
+                    <button @click.exact="openFile(index)">
+                      {{ model.baseName() }}
+                    </button>
+                  </h3>
+                  <div class="caption" title="Info">
+                    {{ model.getInfo() }}
                   </div>
-                </v-card-title>
-                <v-card-title v-else primary-title class="pa-3 p-photo-desc">
-                  <div>
-                    <h3 class="body-2 mb-2" :title="model.Title">
-                      <button @click.exact="openFile(index)">
-                        {{ model.baseName() }}
-                      </button>
-                    </h3>
-                    <div class="caption" title="Path">
-                      <translate key="Folder">Folder</translate>
-                    </div>
+                </div>
+              </v-card-title>
+              <v-card-title v-else primary-title class="pa-3 card-details">
+                <div>
+                  <h3 class="body-2 mb-2" :title="model.Title">
+                    <button @click.exact="openFile(index)">
+                      {{ model.baseName() }}
+                    </button>
+                  </h3>
+                  <div class="caption" title="Path">
+                    <translate key="Folder">Folder</translate>
                   </div>
-                </v-card-title>
-              </v-card>
-            </v-hover>
+                </div>
+              </v-card-title>
+            </v-card>
           </v-flex>
         </v-layout>
       </v-container>

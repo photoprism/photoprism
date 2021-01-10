@@ -41,8 +41,8 @@
 
       <p-scroll-top></p-scroll-top>
 
-      <v-container grid-list-xs fluid class="pa-2 p-labels p-labels-cards">
-        <v-card v-if="results.length === 0" class="p-labels-empty secondary-light lighten-1 ma-1" flat>
+      <v-container grid-list-xs fluid class="pa-2">
+        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
           <v-card-title primary-title>
             <div>
               <h3 class="title ma-0 pa-0">
@@ -54,71 +54,72 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="p-label-results">
+        <v-layout row wrap class="search-results label-results cards-view">
           <v-flex
               v-for="(label, index) in results"
               :key="index"
-              class="p-label"
-              :data-uid="label.UID"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
-            <v-hover>
-              <v-card slot-scope="{ hover }" tile
-                      class="accent lighten-3"
-                      :dark="selection.includes(label.UID)"
-                      :class="selection.includes(label.UID) ? 'elevation-10 ma-0 accent darken-1 white--text' : 'elevation-0 ma-1 accent lighten-3'"
-                      :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}"
-                      @contextmenu="onContextMenu($event, index)">
-                <v-img
-                    :src="label.thumbnailUrl('tile_500')"
-                    aspect-ratio="1"
-                    class="accent lighten-2"
-                    @mousedown="onMouseDown($event, index)"
-                    @click="onClick($event, index)"
-                >
-                  <v-btn v-if="hover || selection.includes(label.UID)" :flat="!hover" :ripple="false"
-                         icon large absolute
-                         :class="selection.includes(label.UID) ? 'p-label-select' : 'p-label-select opacity-50'"
-                         @click.stop.prevent="onSelect($event, index)">
-                    <v-icon v-if="selection.includes(label.UID)" color="white" class="t-select t-on">check_circle
-                    </v-icon>
-                    <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
-                  </v-btn>
-                </v-img>
+            <v-card tile
+                    :data-uid="label.UID"
+                    class="result accent lighten-2"
+                    :class="label.classes(selection.includes(label.UID))"
+                    :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}"
+                    @contextmenu="onContextMenu($event, index)"
+            >
+              <div class="card-background accent lighten-2"></div>
+              <v-img
+                  :src="label.thumbnailUrl('tile_500')"
+                  :alt="label.Name"
+                  :transition="false"
+                  aspect-ratio="1"
+                  class="accent lighten-3 clickable"
+                  @mousedown="onMouseDown($event, index)"
+                  @click="onClick($event, index)"
+              >
+                <v-btn :ripple="false"
+                       icon flat absolute
+                       class="input-select"
+                       @click.stop.prevent="onSelect($event, index)">
+                  <v-icon color="white" class="select-on">check_circle</v-icon>
+                  <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+                </v-btn>
 
-                <v-card-actions @click.stop.prevent="">
-                  <v-edit-dialog
-                      :return-value.sync="label.Name"
-                      lazy
-                      class="p-inline-edit"
-                      @save="onSave(label)"
-                  >
-                                        <span v-if="label.Name" class="body-2 ma-0">
-                                            {{ label.Name | capitalize }}
-                                        </span>
-                    <span v-else>
-                                            <v-icon>edit</v-icon>
-                                        </span>
-                    <template #input>
-                      <v-text-field
-                          v-model="label.Name"
-                          :rules="[titleRule]"
-                          :label="$gettext('Label Name')"
-                          color="secondary-dark"
-                          single-line
-                          autofocus
-                      ></v-text-field>
-                    </template>
-                  </v-edit-dialog>
-                  <v-spacer></v-spacer>
-                  <v-btn icon @click.stop.prevent="label.toggleLike()">
-                    <v-icon v-if="label.Favorite" color="#FFD600">star
-                    </v-icon>
-                    <v-icon v-else color="accent lighten-2">star</v-icon>
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-hover>
+                <v-btn :ripple="false"
+                       icon flat absolute
+                       class="input-favorite"
+                       @click.stop.prevent="label.toggleLike()">
+                  <v-icon color="#FFD600" class="select-on">star</v-icon>
+                  <v-icon color="white" class="select-off">star_border</v-icon>
+                </v-btn>
+              </v-img>
+
+              <v-card-title primary-title class="pa-3 card-details" style="user-select: none;" @click.stop.prevent="">
+                <v-edit-dialog
+                    :return-value.sync="label.Name"
+                    lazy
+                    class="inline-edit"
+                    @save="onSave(label)"
+                >
+                  <span v-if="label.Name" class="body-2 ma-0">
+                      {{ label.Name | capitalize }}
+                  </span>
+                  <span v-else>
+                      <v-icon>edit</v-icon>
+                  </span>
+                  <template #input>
+                    <v-text-field
+                        v-model="label.Name"
+                        :rules="[titleRule]"
+                        :label="$gettext('Label Name')"
+                        color="secondary-dark"
+                        single-line
+                        autofocus
+                    ></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </v-card-title>
+            </v-card>
           </v-flex>
         </v-layout>
       </v-container>
@@ -154,7 +155,7 @@ export default {
       results: [],
       scrollDisabled: true,
       loading: true,
-      pageSize: 24,
+      pageSize: Label.pageSize(),
       offset: 0,
       page: 0,
       selection: [],
@@ -459,9 +460,11 @@ export default {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
 
-            for (let key in values) {
-              if (values.hasOwnProperty(key)) {
-                model[key] = values[key];
+            if (model) {
+              for (let key in values) {
+                if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                  model[key] = values[key];
+                }
               }
             }
           }

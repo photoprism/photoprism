@@ -118,7 +118,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
-      pageSize: 60,
+      pageSize: Photo.pageSize(),
       offset: 0,
       page: 0,
       selection: this.$clipboard.selection,
@@ -498,16 +498,22 @@ export default {
         }
       }
     },
-    updateResult(results, values) {
-      const model = results.find((m) => m.UID === values.UID);
-
-      if (model) {
-        for (let key in values) {
-          if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-            model[key] = values[key];
+    updateResults(entity) {
+      this.results.filter((m) => m.UID === entity.UID).forEach((m) => {
+        for (let key in entity) {
+          if (key !== "UID" && entity.hasOwnProperty(key) && entity[key] != null && typeof entity[key] !== "object") {
+            m[key] = entity[key];
           }
         }
-      }
+      });
+
+      this.viewer.results.filter((m) => m.UID === entity.UID).forEach((m) => {
+        for (let key in entity) {
+          if (key !== "UID" && entity.hasOwnProperty(key) && entity[key] != null && typeof entity[key] !== "object") {
+            m[key] = entity[key];
+          }
+        }
+      });
     },
     removeResult(results, uid) {
       const index = results.findIndex((m) => m.UID === uid);
@@ -528,9 +534,7 @@ export default {
       switch (type) {
         case 'updated':
           for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            this.updateResult(this.results, values);
-            this.updateResult(this.viewer.results, values);
+            this.updateResults(data.entities[i]);
           }
           break;
         case 'restored':
@@ -556,6 +560,9 @@ export default {
 
           break;
       }
+
+      // TODO: Needed?
+      this.$forceUpdate();
     },
     download() {
       this.onDownload(`/api/v1/albums/${this.uid}/dl?t=${this.$config.downloadToken()}`);

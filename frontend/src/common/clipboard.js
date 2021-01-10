@@ -31,7 +31,6 @@ https://docs.photoprism.org/developer-guide/
 import RestModel from "model/rest";
 import Notify from "common/notify";
 import { $gettext } from "./vm";
-import Event from "pubsub-js";
 
 export const MaxItems = 999;
 
@@ -85,7 +84,11 @@ export class Clipboard {
 
     const id = model.getId();
 
-    this.toggleId(id);
+    const result = this.toggleId(id);
+
+    this.updateDom(id, result);
+
+    return result;
   }
 
   toggleId(id) {
@@ -99,15 +102,11 @@ export class Clipboard {
         return;
       }
 
-      Event.publish("photos.updated", { entities: [{ UID: id, Selected: true }] });
-
       this.selection.push(id);
       this.selectionMap["id:" + id] = true;
       this.lastId = id;
       result = true;
     } else {
-      Event.publish("photos.updated", { entities: [{ UID: id, Selected: false }] });
-
       this.selection.splice(index, 1);
       delete this.selectionMap["id:" + id];
       this.lastId = "";
@@ -118,20 +117,18 @@ export class Clipboard {
     return result;
   }
 
-  add(model, publish) {
+  add(model) {
     if (!this.isModel(model)) {
       return;
     }
 
     const id = model.getId();
 
-    this.addId(id, publish);
+    this.addId(id);
   }
 
-  addId(id, publish) {
-    if (publish) {
-      Event.publish("photos.updated", { entities: [{ UID: id, Selected: true }] });
-    }
+  addId(id) {
+    this.updateDom(id, true);
 
     if (this.hasId(id)) {
       return true;
@@ -170,14 +167,10 @@ export class Clipboard {
       rangeEnd = newEnd;
     }
 
-    let entities = [];
-
     for (let i = rangeStart; i <= rangeEnd; i++) {
       this.add(models[i], false);
-      entities.push({ UID: models[i].getId(), Selected: true });
+      this.updateDom(models[i].getId(), true);
     }
-
-    Event.publish("photos.updated", { entities });
 
     return rangeEnd - rangeStart + 1;
   }
@@ -202,10 +195,8 @@ export class Clipboard {
     this.removeId(model.getId(), publish);
   }
 
-  removeId(id, publish) {
-    if (publish) {
-      Event.publish("photos.updated", { entities: [{ UID: id, Selected: false }] });
-    }
+  removeId(id) {
+    this.updateDom(id, false);
 
     if (!this.hasId(id)) {
       return false;
@@ -239,16 +230,21 @@ export class Clipboard {
   }
 
   clear() {
-    Event.publish("photos.updated", {
-      entities: this.selection.map((uid) => {
-        return { UID: uid, Selected: false };
-      }),
-    });
-
+    this.selection.forEach((id) => this.updateDom(id, false));
     this.lastId = "";
     this.selectionMap = {};
     this.selection.splice(0, this.selection.length);
     this.storage.removeItem(this.storageKey);
+  }
+
+  updateDom(uid, selected) {
+    document.querySelectorAll(`.uid-${uid}`).forEach((el) => {
+      if (selected) {
+        el.classList.add("is-selected");
+      } else {
+        el.classList.remove("is-selected");
+      }
+    });
   }
 }
 

@@ -53,6 +53,15 @@ export class Label extends RestModel {
     };
   }
 
+  classes(selected) {
+    let classes = ["is-label", "uid-" + this.UID];
+
+    if (this.Favorite) classes.push("is-favorite");
+    if (selected) classes.push("is-selected");
+
+    return classes;
+  }
+
   getEntityName() {
     return this.Slug;
   }
@@ -87,6 +96,10 @@ export class Label extends RestModel {
   unlike() {
     this.Favorite = false;
     return Api.delete(this.getEntityResource() + "/like");
+  }
+
+  static pageSize() {
+    return 24;
   }
 
   static getCollectionResource() {
