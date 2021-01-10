@@ -37,9 +37,9 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		lenses.lens_make, lenses.lens_model,
 		places.place_label, places.place_city, places.place_state, places.place_country`).
 		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
-		Joins("JOIN cameras ON photos.camera_id = cameras.id").
-		Joins("JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("JOIN places ON photos.place_id = places.id")
+		Joins("LEFT JOIN cameras ON photos.camera_id = cameras.id").
+		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
+		Joins("LEFT JOIN places ON photos.place_id = places.id")
 
 	if !f.Hidden {
 		s = s.Where("files.file_type = 'jpg' OR files.file_video = 1")
