@@ -92,7 +92,7 @@ export default {
       complete: false,
       results: [],
       scrollDisabled: true,
-      pageSize: Photo.pageSize(),
+      batchSize: Photo.batchSize(),
       offset: 0,
       page: 0,
       selection: this.$clipboard.selection,
@@ -242,13 +242,13 @@ export default {
         return Promise.resolve(this.results);
       }
 
-      if (this.viewer.results.length > (this.results.length + this.pageSize)) {
+      if (this.viewer.results.length > (this.results.length + this.batchSize)) {
         return Promise.resolve(this.viewer.results);
       }
 
       this.viewer.loading = true;
 
-      const count = this.pageSize * (this.page + 6);
+      const count = this.batchSize * (this.page + 6);
       const offset = 0;
 
       const params = {
@@ -281,7 +281,7 @@ export default {
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
 
       const params = {
@@ -357,7 +357,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.pageSize,
+        count: this.batchSize,
         offset: this.offset,
         merged: true,
       };
@@ -403,9 +403,9 @@ export default {
       const params = this.searchParams();
 
       Photo.search(params).then(response => {
-        this.offset = this.pageSize;
+        this.offset = this.batchSize;
         this.results = response.models;
-        this.complete = (response.count < this.pageSize);
+        this.complete = (response.count < this.batchSize);
         this.scrollDisabled = this.complete;
 
         if (this.complete) {

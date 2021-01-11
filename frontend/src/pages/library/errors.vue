@@ -97,7 +97,7 @@ export default {
       loading: false,
       scrollDisabled: false,
       filter: {q},
-      pageSize: 100,
+      batchSize: 100,
       offset: 0,
       page: 0,
       errors: [],
@@ -165,7 +165,7 @@ export default {
 
       this.scrollDisabled = true;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
       const q = this.filter.q;
 

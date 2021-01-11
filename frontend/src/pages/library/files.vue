@@ -52,17 +52,17 @@
           >
             <v-card tile
                     :data-uid="model.UID"
-                    class="result accent lighten-2"
+                    class="result accent lighten-3"
                     :class="model.classes(selection.includes(model.UID))"
                     @contextmenu="onContextMenu($event, index)"
             >
-              <div class="card-background accent lighten-2"></div>
+              <div class="card-background accent lighten-3"></div>
               <v-img
                   :src="model.thumbnailUrl('tile_500')"
                   :alt="model.Name"
                   :transition="false"
                   aspect-ratio="1"
-                  class="accent lighten-3 clickable"
+                  class="accent lighten-2 clickable"
                   @mousedown="onMouseDown($event, index)"
                   @click="onClick($event, index)"
               >

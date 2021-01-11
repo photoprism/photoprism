@@ -24,17 +24,17 @@
         <v-card tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
-                class="result accent lighten-2"
+                class="result accent lighten-3"
                 :class="photo.classes()"
                 @contextmenu="onContextMenu($event, index)">
-          <div class="card-background accent lighten-2"></div>
+          <div class="card-background accent lighten-3"></div>
           <v-img :key="photo.Hash"
                  :src="photo.thumbnailUrl('tile_500')"
                  :alt="photo.Title"
                  :title="photo.Title"
                  :transition="false"
                  aspect-ratio="1"
-                 class="accent lighten-3 clickable"
+                 class="accent lighten-2 clickable"
                  @mousedown="onMouseDown($event, index)"
                  @click.stop.prevent="onClick($event, index)"
           >

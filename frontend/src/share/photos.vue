@@ -118,7 +118,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
-      pageSize: Photo.pageSize(),
+      batchSize: Photo.batchSize(),
       offset: 0,
       page: 0,
       selection: this.$clipboard.selection,
@@ -298,7 +298,7 @@ export default {
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
 
       const params = {
@@ -376,7 +376,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.pageSize,
+        count: this.batchSize,
         offset: this.offset,
         album: this.uid,
         filter: this.model.Filter ? this.model.Filter : "",
@@ -424,9 +424,9 @@ export default {
       const params = this.searchParams();
 
       Photo.search(params).then(response => {
-        this.offset = this.pageSize;
+        this.offset = this.batchSize;
         this.results = response.models;
-        this.complete = (response.count < this.pageSize);
+        this.complete = (response.count < this.batchSize);
         this.scrollDisabled = this.complete;
 
         if (this.complete) {

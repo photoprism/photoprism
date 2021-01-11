@@ -81,22 +81,22 @@
           <v-flex
               v-for="(album, index) in results"
               :key="index"
-              xs6 sm4 md3 lg2 xxl1 d-flex
+              xs6 sm4 md3 xlg2 xxl1 d-flex
           >
             <v-card tile
                     :data-uid="album.UID"
-                    class="result accent lighten-2"
+                    class="result accent lighten-3"
                     :class="album.classes(selection.includes(album.UID))"
                     :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
                     @contextmenu="onContextMenu($event, index)"
             >
-              <div class="card-background accent lighten-2"></div>
+              <div class="card-background accent lighten-3"></div>
               <v-img
                   :src="album.thumbnailUrl('tile_500')"
                   :alt="album.Title"
                   :transition="false"
                   aspect-ratio="1"
-                  class="accent lighten-3 clickable"
+                  class="accent lighten-2 clickable"
                   @mousedown="onMouseDown($event, index)"
                   @click="onClick($event, index)"
               >
@@ -223,7 +223,7 @@ export default {
       results: [],
       loading: true,
       scrollDisabled: true,
-      pageSize: Album.pageSize(),
+      batchSize: Album.batchSize(),
       offset: 0,
       page: 0,
       selection: [],
@@ -368,7 +368,7 @@ export default {
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
 
       const params = {
@@ -434,7 +434,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.pageSize,
+        count: this.batchSize,
         offset: this.offset,
       };
 
@@ -465,11 +465,11 @@ export default {
       const params = this.searchParams();
 
       Album.search(params).then(response => {
-        this.offset = this.pageSize;
+        this.offset = this.batchSize;
 
         this.results = response.models;
 
-        this.scrollDisabled = (response.models.length < this.pageSize);
+        this.scrollDisabled = (response.models.length < this.batchSize);
 
         if (this.scrollDisabled) {
           if (!this.results.length) {

@@ -163,7 +163,7 @@ export class Album extends RestModel {
     return Api.delete(this.getEntityResource() + "/like");
   }
 
-  static pageSize() {
+  static batchSize() {
     return 24;
   }
 

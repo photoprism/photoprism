@@ -29,8 +29,12 @@
     >
       <template slot="items" slot-scope="props">
         <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
-          <v-img class="accent lighten-2 clickable" aspect-ratio="1"
+          <v-img :key="props.item.Hash"
                  :src="props.item.thumbnailUrl('tile_50')"
+                 :alt="props.item.Title"
+                 :transition="false"
+                 aspect-ratio="1"
+                 class="accent lighten-2 clickable"
                  @mousedown="onMouseDown($event, props.index)"
                  @contextmenu="onContextMenu($event, props.index)"
                  @click.stop.prevent="onClick($event, props.index)"

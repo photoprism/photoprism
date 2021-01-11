@@ -155,7 +155,7 @@ export default {
       results: [],
       scrollDisabled: true,
       loading: true,
-      pageSize: Label.pageSize(),
+      batchSize: Label.batchSize(),
       offset: 0,
       page: 0,
       selection: [],
@@ -318,7 +318,7 @@ export default {
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
 
       const params = {
@@ -383,7 +383,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.pageSize,
+        count: this.batchSize,
         offset: this.offset,
       };
 
@@ -422,11 +422,11 @@ export default {
       const params = this.searchParams();
 
       Label.search(params).then(response => {
-        this.offset = this.pageSize;
+        this.offset = this.batchSize;
 
         this.results = response.models;
 
-        this.scrollDisabled = (response.models.length < this.pageSize);
+        this.scrollDisabled = (response.models.length < this.batchSize);
 
         if (this.scrollDisabled) {
           this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));

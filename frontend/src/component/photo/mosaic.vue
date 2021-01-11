@@ -37,7 +37,7 @@
                  :title="photo.Title"
                  :transition="false"
                  aspect-ratio="1"
-                 class="accent lighten-3 clickable"
+                 class="accent lighten-2 clickable"
                  @mousedown="onMouseDown($event, index)"
                  @click.stop.prevent="onClick($event, index)"
           >

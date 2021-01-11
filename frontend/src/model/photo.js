@@ -722,7 +722,7 @@ export class Photo extends RestModel {
     });
   }
 
-  static pageSize() {
+  static batchSize() {
     return 60;
   }
 
