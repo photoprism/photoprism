@@ -39,7 +39,7 @@
                  @click.stop.prevent="onClick($event, index)"
           >
             <v-layout v-if="photo.Type === 'live'" class="live-player">
-              <video :key="photo.ID" width="500" height="500" autoplay loop muted playsinline>
+              <video :key="photo.ID" width="500" height="500" preload="none" :poster="photo.thumbnailUrl('tile_500')" autoplay loop muted playsinline>
                 <source :src="photo.videoUrl()" type="video/mp4">
               </video>
             </v-layout>
