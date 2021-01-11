@@ -126,6 +126,14 @@ export default class Config {
     const type = ev.split(".")[1];
 
     switch (type) {
+      case "photos":
+        this.values.count.all += data.count;
+        this.values.count.photos += data.count;
+        break;
+      case "videos":
+        this.values.count.all += data.count;
+        this.values.count.videos += data.count;
+        break;
       case "cameras":
         this.values.count.cameras += data.count;
         this.update();
@@ -145,9 +153,6 @@ export default class Config {
         break;
       case "labels":
         this.values.count.labels += data.count;
-        break;
-      case "videos":
-        this.values.count.videos += data.count;
         break;
       case "albums":
         this.values.count.albums += data.count;
@@ -172,9 +177,6 @@ export default class Config {
         break;
       case "private":
         this.values.count.private += data.count;
-        break;
-      case "photos":
-        this.values.count.photos += data.count;
         break;
       default:
         console.warn("unknown count type", ev, data);

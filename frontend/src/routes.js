@@ -52,7 +52,7 @@ export default [
   {
     name: "home",
     path: "/",
-    redirect: "/photos",
+    redirect: "/browse",
   },
   {
     name: "about",
@@ -360,6 +360,6 @@ export default [
   },
   {
     path: "*",
-    redirect: "/photos",
+    redirect: "/browse",
   },
 ];

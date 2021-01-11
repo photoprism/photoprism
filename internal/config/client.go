@@ -65,11 +65,12 @@ type ClientDisable struct {
 
 // ClientCounts represents photo, video and album counts for the client UI.
 type ClientCounts struct {
+	All            int `json:"all"`
+	Photos         int `json:"photos"`
+	Videos         int `json:"videos"`
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`
 	Countries      int `json:"countries"`
-	Photos         int `json:"photos"`
-	Videos         int `json:"videos"`
 	Hidden         int `json:"hidden"`
 	Favorites      int `json:"favorites"`
 	Private        int `json:"private"`
@@ -302,6 +303,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
+
+	result.Count.All = result.Count.Photos + result.Count.Videos
 
 	c.Db().
 		Table("labels").
