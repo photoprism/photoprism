@@ -4386,6 +4386,7 @@ dizem
 dizer
 dois
 doze
+dscn
 duas
 dá
 dão
