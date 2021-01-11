@@ -37,9 +37,12 @@
                  class="accent lighten-2 clickable"
                  @mousedown="onMouseDown($event, index)"
                  @click.stop.prevent="onClick($event, index)"
+                 @mouseover="playLive(photo)"
+                 @mouseleave="pauseLive(photo)"
           >
             <v-layout v-if="photo.Type === 'live'" class="live-player">
-              <video :key="photo.ID" width="500" height="500" preload="none" :poster="photo.thumbnailUrl('tile_500')" autoplay loop muted playsinline>
+              <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
+                     loop muted playsinline>
                 <source :src="photo.videoUrl()" type="video/mp4">
               </video>
             </v-layout>
@@ -158,6 +161,17 @@ export default {
     };
   },
   methods: {
+    livePlayer(photo) {
+      return document.querySelector("#live-player-" + photo.ID);
+    },
+    playLive(photo) {
+      const player = this.livePlayer(photo);
+      if (player) player.play();
+    },
+    pauseLive(photo) {
+      const player = this.livePlayer(photo);
+      if (player) player.pause();
+    },
     downloadFile(index) {
       const photo = this.photos[index];
       const link = document.createElement('a');
