@@ -310,10 +310,13 @@
     position: relative;
 }
 
-#photoprism .cards-view .v-card.is-selected .card-details,
-#photoprism .cards-view .v-card.is-selected .card-details .v-icon {
+#photoprism .cards-view .v-card.is-selected .card-details {
     color: #fff;
     background-color: #333;
+}
+
+#photoprism .cards-view .v-card.is-selected .card-details .v-icon {
+    color: #fff;
 }
 
 #photoprism .cards-view .v-card.is-selected,
