@@ -1,5 +1,5 @@
 <template>
-  <modal name="video" ref="video" :height="height" :width="width" :reset="true" class="p-video-dialog"
+  <modal ref="video" name="video" :height="height" :width="width" :reset="true" class="p-video-dialog"
          @before-close="onClose"
          @before-open="onOpen">
     <p-video-player v-show="show" ref="player" :source="source" :height="height.toString()"
@@ -8,7 +8,7 @@
 </template>
 <script>
 export default {
-  name: 'p-video-dialog',
+  name: 'PVideoDialog',
   data() {
     return {
       show: false,
@@ -20,7 +20,7 @@ export default {
       video: null,
       album: null,
       loop: false,
-    }
+    };
   },
   methods: {
     onOpen(ev) {
@@ -88,7 +88,7 @@ export default {
 
       // Resize video overlay.
       this.$refs.video.setInitialSize();
-      let size = {width: this.width, height: this.height}
+      let size = {width: this.width, height: this.height};
       this.$refs.video.onModalResize({size});
 
       // Play by triggering source change event.
@@ -96,5 +96,5 @@ export default {
       this.show = true;
     },
   },
-}
+};
 </script>

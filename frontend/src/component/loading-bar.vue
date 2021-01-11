@@ -1,12 +1,12 @@
 <template>
   <transition
       id="p-loading-bar"
-      v-on:before-enter="beforeEnter"
-      v-on:enter="enter"
-      v-on:after-enter="afterEnter"
-      v-bind:css="false"
+      :css="false"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @after-enter="afterEnter"
   >
-    <div class="top-progress" :style="barStyle" v-if="show">
+    <div v-if="show" class="top-progress" :style="barStyle">
       <div class="peg" :style="pegStyle">
       </div>
     </div>
@@ -15,12 +15,12 @@
 <script>
 function clamp(n, min, max) {
   if (n < min) {
-    return min
+    return min;
   }
   if (n > max) {
-    return max
+    return max;
   }
-  return n
+  return n;
 }
 
 let queue = (() => {
@@ -30,7 +30,7 @@ let queue = (() => {
     let fn = pending.shift();
 
     if (fn) {
-      fn(next)
+      fn(next);
     }
   }
 
@@ -38,43 +38,13 @@ let queue = (() => {
     pending.push(fn);
 
     if (pending.length === 1) {
-      next()
+      next();
     }
-  }
+  };
 })();
 
 export default {
-  name: "p-loading-bar",
-  data() {
-    return {
-      error: false,
-      show: false,
-      progress: 0,
-      opacity: 1,
-      status: null,
-      isPaused: false
-    }
-  },
-
-  mounted() {
-    let stackSize = 0;
-
-    this.$event.subscribe('ajax.start', function () {
-      stackSize++;
-
-      if (stackSize === 1) {
-        this.start();
-      }
-    }.bind(this));
-
-    this.$event.subscribe('ajax.end', function () {
-      stackSize--;
-
-      if (stackSize === 0) {
-        this.done();
-      }
-    }.bind(this));
-  },
+  name: "PLoadingBar",
 
   props: {
     speed: {
@@ -127,14 +97,24 @@ export default {
       default: 9999
     }
   },
+  data() {
+    return {
+      error: false,
+      show: false,
+      progress: 0,
+      opacity: 1,
+      status: null,
+      isPaused: false
+    };
+  },
 
   computed: {
     progressColor() {
-      return this.error ? this.errorColor : this.color
+      return this.error ? this.errorColor : this.color;
     },
 
     isStarted() {
-      return typeof this.status === 'number'
+      return typeof this.status === 'number';
     },
 
     barStyle() {
@@ -149,7 +129,7 @@ export default {
         transition: `all ${this.speed}ms ${this.easing}`,
         opacity: `${this.opacity}`,
         zIndex: `${this.zIndex}`
-      }
+      };
     },
 
     pegStyle() {
@@ -162,127 +142,147 @@ export default {
         opacity: this.progress ? '1' : '0',
         boxShadow: `0 0 10px ${this.progressColor}, 0 0 5px ${this.progressColor}`,
         transform: 'rotate(3deg) translate(0px, -4px)'
-      }
+      };
     }
+  },
+
+  mounted() {
+    let stackSize = 0;
+
+    this.$event.subscribe('ajax.start', function () {
+      stackSize++;
+
+      if (stackSize === 1) {
+        this.start();
+      }
+    }.bind(this));
+
+    this.$event.subscribe('ajax.end', function () {
+      stackSize--;
+
+      if (stackSize === 0) {
+        this.done();
+      }
+    }.bind(this));
   },
 
   methods: {
     beforeEnter(el) {
-      this.opacity = 0
-      this.progress = 0
-      this.width = 0
+      this.opacity = 0;
+      this.progress = 0;
+      this.width = 0;
     },
 
     enter(el, done) {
-      this.opacity = 1
-      done()
+      this.opacity = 1;
+      done();
     },
 
     afterEnter(el) {
-      this._runStart()
+      this._runStart();
     },
 
     _work() {
       setTimeout(() => {
         if (!this.isStarted || this.isPaused) {
-          return
+          return;
         }
-        this.increase()
-        this._work()
-      }, this.trickleSpeed)
+        this.increase();
+        this._work();
+      }, this.trickleSpeed);
     },
 
     _runStart() {
-      this.status = (this.progress === 100 ? null : this.progress)
+      this.status = (this.progress === 100 ? null : this.progress);
 
       if (this.trickle) {
-        this._work()
+        this._work();
       }
     },
 
     start() {
-      this.isPaused = false
+      this.isPaused = false;
 
       if (this.show) {
-        this._runStart()
+        this._runStart();
       } else {
-        this.show = true
+        this.show = true;
       }
     },
 
     set(amount) {
-      this.isPaused = false
+      this.isPaused = false;
 
-      let o
+      let o;
       if (this.isStarted) {
         o = amount < this.progress
-            ? clamp(amount, 0, 100)
-            : clamp(amount, this.minimum, 100)
+          ? clamp(amount, 0, 100)
+          : clamp(amount, this.minimum, 100);
       } else {
-        o = 0
+        o = 0;
       }
 
-      this.status = (o === 100 ? null : o)
+      this.status = (o === 100 ? null : o);
 
       queue(next => {
-        this.progress = o
+        this.progress = o;
         if (o === 100) {
           setTimeout(() => {
-            this.opacity = 0
+            this.opacity = 0;
             setTimeout(() => {
-              this.show = false
-              this.error = false
-              next()
-            }, this.speed)
-          }, this.speed)
+              this.show = false;
+              this.error = false;
+              next();
+            }, this.speed);
+          }, this.speed);
         } else {
-          setTimeout(next, this.speed)
+          setTimeout(next, this.speed);
         }
-      })
+      });
     },
 
     increase(amount) {
-      let o = this.progress
+      let o = this.progress;
 
       if (o < 100 && typeof amount !== 'number') {
         if (o >= 0 && o < 25) {
-          amount = Math.random() * 3 + 3
+          amount = Math.random() * 3 + 3;
         } else if (o >= 25 && o < 50) {
-          amount = Math.random() * 3
+          amount = Math.random() * 3;
         } else if (o >= 50 && o < 85) {
-          amount = Math.random() * 2
+          amount = Math.random() * 2;
         } else if (o >= 85 && o < 99) {
-          amount = 0.5
+          amount = 0.5;
         } else {
-          amount = 0
+          amount = 0;
         }
       }
-      this.set(clamp(o + amount, 0, this.maximum))
+      this.set(clamp(o + amount, 0, this.maximum));
     },
 
     decrease(amount) {
       if (this.progress === 0) {
-        return
+        return;
       }
-      this.increase(-amount)
+      this.increase(-amount);
     },
 
     done() {
-      this.set(100)
+      this.set(100);
     },
 
     getProgress() {
-      return this.status ? this.progress : 0
+      return this.status ? this.progress : 0;
     },
 
     pause() {
-      this.isPaused = true
+      this.isPaused = true;
     },
 
     fail() {
-      this.error = true
-      this.done()
+      this.error = true;
+      this.done();
     },
   }
-}
+};
 </script>

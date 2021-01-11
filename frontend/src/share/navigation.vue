@@ -25,7 +25,7 @@
 
 <script>
 export default {
-  name: "p-navigation",
+  name: "PNavigation",
   data() {
     return {
       drawer: null,
@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     auth() {
-      return this.session.auth || this.public
+      return this.session.auth || this.public;
     },
   },
   methods: {

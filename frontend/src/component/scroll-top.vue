@@ -6,8 +6,8 @@
         dark
         fab
         fixed
-        @click.stop="scrollToTop"
         class="p-scroll-top"
+        @click.stop="scrollToTop"
     >
       <v-icon>arrow_upward</v-icon>
     </v-btn>
@@ -16,12 +16,18 @@
 
 <script>
 export default {
-  name: 'p-scroll-top',
+  name: 'PScrollTop',
   data() {
     return {
       show: false,
       maxY: 0,
     };
+  },
+  created() {
+    window.addEventListener('scroll', this.onScroll);
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.onScroll);
   },
   methods: {
     onScroll: function () {
@@ -38,12 +44,6 @@ export default {
     scrollToTop: function () {
       return this.$vuetify.goTo(0);
     },
-  },
-  created() {
-    window.addEventListener('scroll', this.onScroll);
-  },
-  destroyed() {
-    window.removeEventListener('scroll', this.onScroll);
   }
 };
 </script>
