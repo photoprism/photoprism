@@ -37,7 +37,7 @@
                  @mousedown="onMouseDown($event, index)"
                  @click.stop.prevent="onClick($event, index)"
           >
-            <v-layout v-if="photo.Type === 'video' || photo.Type === 'live'" class="live-player">
+            <v-layout v-if="photo.Type === 'live'" class="live-player">
               <video :key="photo.ID" width="224" height="224" autoplay loop muted playsinline>
                 <source :src="photo.videoUrl()" type="video/mp4">
               </video>
