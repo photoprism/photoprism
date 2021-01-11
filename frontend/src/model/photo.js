@@ -723,7 +723,7 @@ export class Photo extends RestModel {
   }
 
   static pageSize() {
-    return 120;
+    return 60;
   }
 
   static getCollectionResource() {
