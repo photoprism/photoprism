@@ -333,17 +333,27 @@ func (c *Config) Shutdown() {
 
 // Workers returns the number of workers e.g. for indexing files.
 func (c *Config) Workers() int {
-	cores := cpuid.CPU.PhysicalCores
+	// NumCPU returns the number of logical CPU cores.
+	cores := runtime.NumCPU()
+
+	// Limit to physical cores to avoid high load on HT capable CPUs.
+	if cores > cpuid.CPU.PhysicalCores {
+		cores = cpuid.CPU.PhysicalCores
+	}
 
 	// Limit number of workers when using SQLite to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite && cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4 {
+	if c.DatabaseDriver() == SQLite && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
 		return 4
 	}
 
-	if c.options.Workers > 0 && c.options.Workers <= runtime.NumCPU() {
+	// Return explicit value if set and not too large.
+	if c.options.Workers > runtime.NumCPU() {
+		return runtime.NumCPU()
+	} else if c.options.Workers > 0 {
 		return c.options.Workers
 	}
 
+	// Use half the available cores by default.
 	if cores > 1 {
 		return cores / 2
 	}
