@@ -154,7 +154,7 @@
                   <button v-else-if="album.PhotoCount > 0">
                     <translate :translate-params="{n: album.PhotoCount}">Contains %{n} entries.</translate>
                   </button>
-                  <button v-else @click.stop.prevent="$router.push({name: 'photos'})">
+                  <button v-else @click.stop.prevent="$router.push({name: 'browse'})">
                     <translate>Add photos or videos from search results by selecting them.</translate>
                   </button>
                 </div>

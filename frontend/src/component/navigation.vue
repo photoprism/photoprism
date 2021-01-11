@@ -81,7 +81,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click.stop="">
+          <v-list-tile :to="{name: 'browse', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Monochrome</translate>
@@ -89,7 +89,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" class="nav-panoramas"
+          <v-list-tile :to="{name: 'browse', query: { q: 'panorama:true' }}" :exact="true" class="nav-panoramas"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>

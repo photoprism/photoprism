@@ -143,7 +143,7 @@
               </div>
             </v-card-title>
 
-            <v-card-actions v-if="photo.Quality < 3 && context === 'review'">
+            <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details">
               <v-layout row wrap align-center>
                 <v-flex xs12>
                   <div class="text-xs-center">

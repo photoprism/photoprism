@@ -64,7 +64,7 @@
                     :data-uid="label.UID"
                     class="result accent lighten-3"
                     :class="label.classes(selection.includes(label.UID))"
-                    :to="{name: 'browse', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}"
+                    :to="{name: 'all', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}"
                     @contextmenu="onContextMenu($event, index)"
             >
               <div class="card-background accent lighten-3"></div>

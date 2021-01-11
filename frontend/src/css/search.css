@@ -305,17 +305,21 @@
     text-align: left;
 }
 
-
 #photoprism .cards-view .v-card .card-details {
     z-index: 1;
     position: relative;
 }
 
 #photoprism .cards-view .v-card.is-selected .card-details,
-#photoprism .cards-view .v-card.is-selected .card-background {
-    filter: invert(1);
+#photoprism .cards-view .v-card.is-selected .card-details .v-icon {
+    color: #fff;
+    background-color: #333;
 }
 
+#photoprism .cards-view .v-card.is-selected,
+#photoprism .cards-view .v-card.is-selected .card-background {
+    background-color: #333 !important;
+}
 
 #photoprism .search-results.list-view .input-select,
 #photoprism .search-results.list-view .input-play {
