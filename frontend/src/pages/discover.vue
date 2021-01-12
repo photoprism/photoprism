@@ -50,24 +50,24 @@ import tabColors from "pages/discover/colors.vue";
 import tabTodo from "pages/discover/todo.vue";
 
 export default {
-  name: 'p-page-settings',
-  props: {
-    tab: Number
-  },
+  name: 'PPageSettings',
   components: {
     'p-tab-discover-colors': tabColors,
     'p-tab-discover-todo': tabTodo,
+  },
+  props: {
+    tab: Number
   },
   data() {
     return {
       readonly: this.$config.get("readonly"),
       active: this.tab,
-    }
+    };
   },
   methods: {
     changePath: function (path) {
       if (this.$route.path !== path) {
-        this.$router.replace(path)
+        this.$router.replace(path);
       }
     }
   },

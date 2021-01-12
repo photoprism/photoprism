@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-login">
-    <v-form dense ref="form" autocomplete="off" class="p-form-login" @submit.prevent="login" accept-charset="UTF-8">
+    <v-form ref="form" dense autocomplete="off" class="p-form-login" accept-charset="UTF-8" @submit.prevent="login">
       <v-card flat tile class="ma-2 application">
         <v-card-actions>
           <v-layout wrap align-top>
@@ -12,20 +12,20 @@
             <v-flex xs12 class="pa-2">
 
               <v-text-field
+                  v-model="username"
                   :disabled="loading"
                   :label="$gettext('Name')"
                   color="accent"
-                  v-model="username"
                   flat solo required hide-details
                   type="text"
               ></v-text-field>
             </v-flex>
             <v-flex xs12 class="pa-2">
               <v-text-field
+                  v-model="password"
                   :disabled="loading"
                   :label="$gettext('Password')"
                   color="accent"
-                  v-model="password"
                   flat solo required hide-details
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                   :type="showPassword ? 'text' : 'password'"
@@ -54,7 +54,7 @@
 
 <script>
 export default {
-  name: 'login',
+  name: 'Login',
   data() {
     return {
       loading: false,
@@ -68,16 +68,16 @@ export default {
   methods: {
     login() {
       if (!this.username || !this.password) {
-        return
+        return;
       }
 
       this.loading = true;
       this.$session.login(this.username, this.password).then(
-          () => {
-            this.loading = false;
-            this.$router.push(this.nextUrl);
-          }
-      ).catch(() => this.loading = false)
+        () => {
+          this.loading = false;
+          this.$router.push(this.nextUrl);
+        }
+      ).catch(() => this.loading = false);
     },
   }
 };
