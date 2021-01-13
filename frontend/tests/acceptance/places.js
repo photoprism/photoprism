@@ -5,7 +5,7 @@ import testcafeconfig from "./testcafeconfig.json";
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture`Test places page`
-    .page`${testcafeconfig.url}`
+    .page`${testcafeconfig.url}`;
 
 test('#1 Test places', async t => {
     await t
