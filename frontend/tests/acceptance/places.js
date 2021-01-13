@@ -24,7 +24,7 @@ test('#2 Open photo from places', async t => {
    //TODO replace wait
     await t
         .click(Selector('.nav-places'))
-        .expect(Selector('#p-photo-viewer').visible).notOk()
+        .expect(Selector('#is-photo-viewer').visible).notOk()
         .expect(Selector('#map').exists, {timeout: 15000}).ok()
         .typeText(Selector('input[aria-label="Search"]'), 'Berlin')
         .pressKey('enter')
