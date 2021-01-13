@@ -6,7 +6,6 @@ fixture `Test index`
     .page`${testcafeconfig.url}`;
 
 const page = new Page();
-//TODO check metadata like camera, keywords, location etc are added
 test('#1 Index files from folder', async t => {
     await t
         .click(Selector('.nav-labels'));
@@ -14,8 +13,29 @@ test('#1 Index files from folder', async t => {
     await t
         .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok()
         .click(Selector('.nav-moments'))
-        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok()
+        .click(Selector('.nav-calendar'));
+    await page.search('December 2013');
     await t
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok()
+        .click(Selector('.nav-folders'));
+    await page.search('Moment');
+    await t
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
+    await page.openNav();
+    await t
+        .click(Selector('.nav-places + div > i'))
+        .click(Selector('.nav-states'));
+    await page.search('KwaZulu');
+    await t
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
+    await page.openNav();
+    await t
+        .click(Selector('.nav-library+div>i'))
+        .click(Selector('.nav-originals'))
+        .click(Selector('.is-folder').withText('moment'))
+        .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
+  await t
         .click(Selector('.nav-library'))
         .click(Selector('#tab-library-index'))
         .click(Selector('.input-index-folder input'))
@@ -28,8 +48,32 @@ test('#1 Index files from folder', async t => {
         .click(Selector('.action-reload'));
     await page.search('cheetah');
     await t
-        .expect(Selector('.p-label').visible).ok()
+        .expect(Selector('.is-label').visible).ok()
         .click(Selector('.nav-moments'))
         .click(Selector('a').withText('South Africa 2013'))
-        .expect(Selector('.p-photo').visible).ok();
+        .expect(Selector('.is-photo').visible).ok()
+        .click(Selector('.nav-calendar'))
+        .click(Selector('.action-reload'));
+    await page.search('December 2013');
+    await t
+        .expect(Selector('.is-album').visible).ok()
+        .click(Selector('.nav-folders'))
+        .click(Selector('.action-reload'));
+    await page.search('Moment');
+    await t
+        .expect(Selector('.is-album').visible).ok();
+    await page.openNav();
+    await t
+        .click(Selector('.nav-places+div>i'))
+        .click(Selector('.nav-states'))
+        .click(Selector('.action-reload'));
+    await page.search('KwaZulu');
+    await t
+        .expect(Selector('.is-album').visible).ok();
+    await page.openNav();
+    await t
+        .click(Selector('.nav-library+div>i'))
+        .click(Selector('.nav-originals'))
+        .click(Selector('.action-reload'))
+        .expect(Selector('.is-folder').withText('moment').visible, {timeout: 60000}).ok();
 });
