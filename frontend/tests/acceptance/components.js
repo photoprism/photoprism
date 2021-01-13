@@ -27,7 +27,7 @@ test('#3 Mosaic view', async t => {
     await t
         .expect(Selector('div.v-image__image').visible).ok()
         .expect(Selector('div.p-photo-mosaic').visible).ok()
-        .expect(Selector('div.p-photo div.caption').exists).notOk()
+        .expect(Selector('div.is-photo div.caption').exists).notOk()
         .expect(Selector('#p-photo-viewer').visible).notOk();
 });
 
@@ -37,7 +37,7 @@ test('#4 List view', async t => {
     await page.setFilter('view', 'List');
     await t
         .expect(Selector('table.v-datatable').visible).ok()
-        .expect(Selector('div.p-photo-list').visible).ok();
+        .expect(Selector('div.list-view').visible).ok();
 });
 
 test('#5 card view', async t => {
@@ -46,6 +46,6 @@ test('#5 card view', async t => {
     await page.setFilter('view', 'Cards');
     await t
         .expect(Selector('div.v-image__image').visible).ok()
-        .expect(Selector('div.p-photo div.caption').visible).ok()
+        .expect(Selector('div.is-photo div.caption').visible).ok()
         .expect(Selector('#p-photo-viewer').visible).notOk();
 });
