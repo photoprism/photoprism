@@ -60,6 +60,7 @@
 
             <v-btn :ripple="false" :depressed="false" class="input-view"
                    icon flat small absolute :title="$gettext('View')"
+                   :data-uid="photo.UID"
                    @click.stop.prevent="openPhoto(index, false)">
               <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
             </v-btn>
@@ -72,12 +73,14 @@
 
             <v-btn v-if="hidePrivate" :ripple="false"
                    icon flat small absolute
+                   :data-uid="photo.UID"
                    class="input-private">
               <v-icon color="white" class="select-on">lock</v-icon>
             </v-btn>
 
             <v-btn :ripple="false"
                    icon flat small absolute
+                   :data-uid="photo.UID"
                    class="input-select"
                    @click.stop.prevent="onSelect($event, index)">
               <v-icon color="white" class="select-on">check_circle</v-icon>
@@ -86,6 +89,7 @@
 
             <v-btn :ripple="false"
                    icon flat small absolute
+                   :data-uid="photo.UID"
                    class="input-favorite"
                    @click.stop.prevent="photo.toggleLike()">
               <v-icon color="white" class="select-on">favorite</v-icon>
