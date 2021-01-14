@@ -14,6 +14,9 @@ func TestNewAlbum(t *testing.T) {
 			AlbumNotes       string
 			AlbumOrder       string
 			AlbumTemplate    string
+			AlbumYear        int
+			AlbumMonth       int
+			AlbumDay         int
 			AlbumFavorite    bool
 		}{
 			AlbumTitle:       "Foo",
@@ -21,6 +24,9 @@ func TestNewAlbum(t *testing.T) {
 			AlbumNotes:       "test notes",
 			AlbumOrder:       "newest",
 			AlbumTemplate:    "default",
+			AlbumYear:        2050,
+			AlbumMonth:       20,
+			AlbumDay:         37,
 			AlbumFavorite:    true,
 		}
 
@@ -35,6 +41,9 @@ func TestNewAlbum(t *testing.T) {
 		assert.Equal(t, "test notes", r.AlbumNotes)
 		assert.Equal(t, "newest", r.AlbumOrder)
 		assert.Equal(t, "default", r.AlbumTemplate)
+		assert.Equal(t, 2050, r.AlbumYear)
+		assert.Equal(t, 20, r.AlbumMonth)
+		assert.Equal(t, 37, r.AlbumDay)
 		assert.Equal(t, true, r.AlbumFavorite)
 	})
 }
