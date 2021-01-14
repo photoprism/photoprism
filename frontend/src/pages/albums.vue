@@ -7,7 +7,7 @@
         <v-text-field id="search"
                       v-model="filter.q"
                       single-line
-                      class="hidden-xs-only mr-3"
+                      class="hidden-xs-only mr-3 input-search"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"

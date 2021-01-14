@@ -15,7 +15,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon :title="$gettext('Reload')" @click.stop="refresh">
+        <v-btn icon :title="$gettext('Reload')" class="action-reload" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
       </v-toolbar>

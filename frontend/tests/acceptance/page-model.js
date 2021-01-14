@@ -57,50 +57,39 @@ export default class Page {
 
     async selectFromUID(uid) {
         await t
-        .hover(Selector('div').withAttribute('data-uid', uid))
-        .click(Selector('.t-select.t-off'));
+        .hover(Selector('a').withAttribute('data-uid', uid))
+        .click(Selector(`.uid-${uid} .input-select`));
+    }
+
+    async selectPhotoFromUID(uid) {
+        await t
+            .hover(Selector('div').withAttribute('data-uid', uid))
+            .click(Selector(`.uid-${uid} .input-select`));
     }
 
     async selectFromUIDInFullscreen(uid) {
         await t
             .hover(Selector('div').withAttribute('data-uid', uid));
-        if (await Selector('button.p-photo-fullscreen').exists) {
-            await t.click(Selector('button.p-photo-fullscreen'));
+        if (await Selector(`.uid-${uid} .action-fullscreen`).exists) {
+            await t.click(Selector(`.uid-${uid} .action-fullscreen`));
         } else {
             await t.click(Selector('div').withAttribute('data-uid', uid));
         }
         await t
             .expect(Selector('#p-photo-viewer').visible).ok()
             .click(Selector('button[title="Select"]'))
-            .click(Selector('.action-close'));
+            .click(Selector('.action-close', {timeout:4000}));
     }
 
-    async unselectFromUID(uid) {
+    async toggleSelectNthPhoto(nPhoto) {
         await t
-            .hover(Selector('div').withAttribute('data-uid', uid))
-            .click(Selector('.t-select.t-on'));
+        .hover(Selector('.is-photo.type-image', {timeout:4000}).nth(nPhoto))
+        .click(Selector('.is-photo.type-image .input-select').nth(nPhoto));
     }
 
-    async selectNthPhoto(nPhoto) {
+    async toggleLike(uid) {
         await t
-        .hover(Selector('.p-photo', {timeout:4000}).nth(nPhoto))
-        .click(Selector('.t-select.t-off'));
-    }
-
-    async unselectPhoto(nPhoto) {
-        await t
-            .hover(Selector('.p-photo', {timeout:4000}).nth(nPhoto))
-            .click(Selector('.t-select.t-on'));
-    }
-
-    async likePhoto(uid) {
-        await t
-            .click(Selector('.t-like.t-off').withAttribute('data-uid', uid));
-    }
-
-    async dislikePhoto(uid) {
-        await t
-            .click(Selector('.t-like.t-on').withAttribute('data-uid', uid));
+            .click(Selector(`.uid-${uid} .input-favorite`));
     }
 
     async archiveSelected() {
