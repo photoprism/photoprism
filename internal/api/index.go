@@ -61,7 +61,7 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		indexed := ind.Start(indOpt)
 
-		ClearFoldersCache(entity.RootOriginals)
+		RemoveFromFolderCache(entity.RootOriginals)
 
 		prg := service.Purge()
 

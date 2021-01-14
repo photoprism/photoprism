@@ -1,25 +1,25 @@
 <template>
   <div class="p-tab p-tab-photo-labels">
     <v-data-table
+        v-model="selected"
         :headers="listColumns"
         :items="model.Labels"
         hide-actions
         class="elevation-0 p-files p-files-list p-results"
         disable-initial-sort
         item-key="ID"
-        v-model="selected"
         :no-data-text="$gettext('No labels found')"
     >
-      <template v-slot:items="props" class="p-file">
+      <template #items="props" class="p-file">
         <td>
           <v-edit-dialog
               :return-value.sync="props.item.Label.Name"
               lazy
-              @save="renameLabel(props.item.Label)"
               class="p-inline-edit"
+              @save="renameLabel(props.item.Label)"
           >
             {{ props.item.Label.Name | capitalize }}
-            <template v-slot:input>
+            <template #input>
               <v-text-field
                   v-model="props.item.Label.Name"
                   :rules="[nameRule]"
@@ -58,7 +58,7 @@
           </v-btn>
         </td>
       </template>
-      <template v-slot:footer v-if="!disabled">
+      <template v-if="!disabled" #footer>
         <td>
           <v-text-field
               v-model="newLabel"
@@ -69,8 +69,8 @@
               single-line
               flat solo hide-details
               autofocus
-              @keyup.enter.native="addLabel"
               class="input-label"
+              @keyup.enter.native="addLabel"
           ></v-text-field>
         </td>
         <td class="text-xs-left">{{ sourceName('manual') }}</td>
@@ -91,7 +91,7 @@
 import Label from "model/label";
 
 export default {
-  name: 'p-tab-photo-labels',
+  name: 'PTabPhotoLabels',
   props: {
     model: Object,
     uid: String,
@@ -130,7 +130,7 @@ export default {
     },
     removeLabel(label) {
       if (!label) {
-        return
+        return;
       }
 
       const name = label.Name;
@@ -141,7 +141,7 @@ export default {
     },
     addLabel() {
       if (!this.newLabel) {
-        return
+        return;
       }
 
       this.model.addLabel(this.newLabel).then((m) => {
@@ -152,21 +152,20 @@ export default {
     },
     activateLabel(label) {
       if (!label) {
-        return
+        return;
       }
 
       this.model.activateLabel(label.ID);
     },
     renameLabel(label) {
       if (!label) {
-        return
+        return;
       }
 
       this.model.renameLabel(label.ID, label.Name);
     },
     searchLabel(label) {
-      this.$router.push({name: 'photos', query: {q: 'label:' + label.Slug}}).catch(err => {
-      });
+      this.$router.push({name: 'all', query: {q: 'label:' + label.Slug}}).catch(() => {});
       this.$emit('close');
     },
   },

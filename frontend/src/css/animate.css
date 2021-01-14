@@ -92,3 +92,10 @@
 #photoprism .animate-stretch {
     animation: stretch 1.5s ease-out 0s alternate infinite none running;
 }
+
+#photoprism .select-transition {
+    -webkit-transition-duration: 15ms !important;
+    -moz-transition-duration: 15ms !important;
+    -o-transition-duration: 15ms !important;
+    transition-duration: 15ms !important;
+}

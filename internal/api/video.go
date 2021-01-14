@@ -87,7 +87,7 @@ func GetVideo(router *gin.RouterGroup) {
 			log.Debugf("video: transcoding completed in %s", time.Since(start))
 		}
 
-		c.Header("Content-Type", `video/mp4; codecs="avc1"`)
+		AddContentTypeHeader(c, ContentTypeAvc)
 
 		if c.Query("download") != "" {
 			c.FileAttachment(fileName, f.ShareBase())

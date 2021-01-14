@@ -57,15 +57,11 @@ func FindLocation(id string) (result Location, err error) {
 		return result, fmt.Errorf("skipping lat %f, lng %f (%s)", lat, lng, ApiName)
 	}
 
-	if hit, err := cache.Get(id); err == nil {
+	if hit, ok := cache.Get(id); ok {
 		log.Debugf("places: cache hit for lat %f, lng %f", lat, lng)
-		var cached Location
-		if err := json.Unmarshal(hit, &cached); err != nil {
-			log.Errorf("places: %s", err.Error())
-		} else {
-			cached.Cached = true
-			return cached, nil
-		}
+		cached := hit.(Location)
+		cached.Cached = true
+		return cached, nil
 	}
 
 	url := fmt.Sprintf(ReverseLookupURL, id)
@@ -115,13 +111,8 @@ func FindLocation(id string) (result Location, err error) {
 		return result, fmt.Errorf("no result for %s (%s)", id, ApiName)
 	}
 
-	if cached, err := json.Marshal(result); err == nil {
-		if err := cache.Set(id, cached); err != nil {
-			log.Errorf("places: %s (cache)", err)
-		} else {
-			log.Debugf("places: cached cell %s [%s]", id, time.Since(start))
-		}
-	}
+	cache.SetDefault(id, result)
+	log.Debugf("places: cached cell %s [%s]", id, time.Since(start))
 
 	result.Cached = false
 

@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <p-album-toolbar :album="model" :settings="settings" :filter="filter" :filter-change="updateQuery"
                      :refresh="refresh"></p-album-toolbar>
@@ -18,7 +18,7 @@
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
                       context="album"
                       :photos="results"
-                      :selection="selection"
+                      :select-mode="selectMode"
                       :filter="filter"
                       :album="model"
                       :edit-photo="editPhoto"
@@ -26,7 +26,7 @@
       <p-photo-list v-else-if="settings.view === 'list'"
                     context="album"
                     :photos="results"
-                    :selection="selection"
+                    :select-mode="selectMode"
                     :filter="filter"
                     :album="model"
                     :open-photo="openPhoto"
@@ -35,7 +35,7 @@
       <p-photo-cards v-else
                      context="album"
                      :photos="results"
-                     :selection="selection"
+                     :select-mode="selectMode"
                      :filter="filter"
                      :album="model"
                      :open-photo="openPhoto"
@@ -77,7 +77,7 @@ export default {
       uid: uid,
       results: [],
       scrollDisabled: true,
-      pageSize: 60,
+      batchSize: Photo.batchSize(),
       offset: 0,
       page: 0,
       selection: this.$clipboard.selection,
@@ -91,6 +91,11 @@ export default {
         loading: false,
       },
     };
+  },
+  computed: {
+    selectMode: function() {
+      return this.selection.length > 0;
+    },
   },
   watch: {
     '$route'() {
@@ -239,7 +244,7 @@ export default {
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
 
       const params = {
@@ -277,7 +282,7 @@ export default {
           this.page++;
 
           this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
           });
@@ -317,7 +322,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.pageSize,
+        count: this.batchSize,
         offset: this.offset,
         album: this.uid,
         filter: this.model.Filter ? this.model.Filter : "",
@@ -365,9 +370,9 @@ export default {
       const params = this.searchParams();
 
       Photo.search(params).then(response => {
-        this.offset = this.pageSize;
+        this.offset = this.batchSize;
         this.results = response.models;
-        this.complete = (response.count < this.pageSize);
+        this.complete = (response.count < this.batchSize);
         this.scrollDisabled = this.complete;
 
         if (this.complete) {
@@ -382,7 +387,7 @@ export default {
           this.$notify.info(this.$gettext('More than 50 entries found'));
 
           this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
           });
@@ -439,16 +444,22 @@ export default {
         }
       }
     },
-    updateResult(results, values) {
-      const model = results.find((m) => m.UID === values.UID);
-
-      if (model) {
-        for (let key in values) {
-          if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-            model[key] = values[key];
+    updateResults(entity) {
+      this.results.filter((m) => m.UID === entity.UID).forEach((m) => {
+        for (let key in entity) {
+          if (key !== "UID" && entity.hasOwnProperty(key) && entity[key] != null && typeof entity[key] !== "object") {
+            m[key] = entity[key];
           }
         }
-      }
+      });
+
+      this.viewer.results.filter((m) => m.UID === entity.UID).forEach((m) => {
+        for (let key in entity) {
+          if (key !== "UID" && entity.hasOwnProperty(key) && entity[key] != null && typeof entity[key] !== "object") {
+            m[key] = entity[key];
+          }
+        }
+      });
     },
     removeResult(results, uid) {
       const index = results.findIndex((m) => m.UID === uid);
@@ -469,9 +480,7 @@ export default {
       switch (type) {
         case 'updated':
           for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            this.updateResult(this.results, values);
-            this.updateResult(this.viewer.results, values);
+            this.updateResults(data.entities[i]);
           }
           break;
         case 'restored':
@@ -497,6 +506,9 @@ export default {
 
           break;
       }
+
+      // TODO: Needed?
+      this.$forceUpdate();
     },
   },
 };

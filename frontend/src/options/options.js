@@ -1,10 +1,10 @@
+import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/vm";
-import moment from "moment-timezone";
 import { Info } from "luxon";
 import { config } from "../session";
 import { TypeVideo, TypeImage, TypeLive, TypeRaw } from "../model/photo";
 
-export const TimeZones = () => moment.tz.names();
+export const TimeZones = () => timeZonesNames;
 
 export const Days = () => {
   let result = [];

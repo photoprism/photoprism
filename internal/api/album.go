@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -17,7 +16,6 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 
@@ -41,19 +39,6 @@ func SaveAlbumAsYaml(a entity.Album) {
 		log.Errorf("album: %s (update yaml)", err)
 	} else {
 		log.Debugf("album: updated yaml file %s", txt.Quote(filepath.Base(fileName)))
-	}
-}
-
-// ClearAlbumThumbCache removes all cached album covers e.g. after adding or removed photos.
-func ClearAlbumThumbCache(uid string) {
-	cache := service.Cache()
-
-	for typeName := range thumb.Types {
-		cacheKey := fmt.Sprintf("album-thumbs:%s:%s", uid, typeName)
-
-		if err := cache.Delete(cacheKey); err == nil {
-			log.Debugf("removed %s from cache", cacheKey)
-		}
 	}
 }
 
@@ -88,9 +73,10 @@ func GetAlbums(router *gin.RouterGroup) {
 			return
 		}
 
-		c.Header("X-Count", strconv.Itoa(len(result)))
-		c.Header("X-Limit", strconv.Itoa(f.Count))
-		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		AddCountHeader(c, len(result))
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
+		AddTokenHeaders(c)
 
 		c.JSON(http.StatusOK, result)
 	})
@@ -411,7 +397,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), txt.Quote(a.Title()))
 			}
 
-			ClearAlbumThumbCache(a.AlbumUID)
+			RemoveFromAlbumCoverCache(a.AlbumUID)
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
@@ -460,7 +446,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), txt.Quote(txt.Quote(a.Title())))
 			}
 
-			ClearAlbumThumbCache(a.AlbumUID)
+			RemoveFromAlbumCoverCache(a.AlbumUID)
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
@@ -497,7 +483,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		zipToken := rnd.Token(3)
 		zipFileName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
 
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", zipFileName))
+		AddDownloadHeader(c, zipFileName)
 
 		zipWriter := zip.NewWriter(c.Writer)
 		defer func() { _ = zipWriter.Close() }()

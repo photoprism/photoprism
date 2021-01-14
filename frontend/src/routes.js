@@ -52,7 +52,7 @@ export default [
   {
     name: "home",
     path: "/",
-    redirect: "/photos",
+    redirect: "/browse",
   },
   {
     name: "about",
@@ -85,10 +85,23 @@ export default [
     meta: { auth: false },
   },
   {
+    name: "browse",
+    path: "/browse",
+    component: Photos,
+    meta: { title: c.name, auth: true },
+  },
+  {
+    name: "all",
+    path: "/all",
+    component: Photos,
+    meta: { title: $gettext("Search"), auth: true },
+    props: { staticFilter: { quality: 0 } },
+  },
+  {
     name: "photos",
     path: "/photos",
     component: Photos,
-    meta: { title: c.name, auth: true },
+    meta: { title: $gettext("Photos"), auth: true },
     props: { staticFilter: { photo: "true" } },
   },
   {
@@ -236,13 +249,6 @@ export default [
     meta: { title: $gettext("Labels"), auth: true },
   },
   {
-    name: "browse",
-    path: "/browse",
-    component: Photos,
-    meta: { title: $gettext("Search"), auth: true },
-    props: { staticFilter: { quality: 0 } },
-  },
-  {
     name: "people",
     path: "/people",
     component: People,
@@ -360,6 +366,6 @@ export default [
   },
   {
     path: "*",
-    redirect: "/photos",
+    redirect: "/browse",
   },
 ];

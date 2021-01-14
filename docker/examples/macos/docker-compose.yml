@@ -41,8 +41,9 @@ services:
     ports:
       - 2342:2342 # [local port]:[container port]
     environment:
-      PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
+      PHOTOPRISM_HTTP_PORT: 2342                     # Built-in Web server port
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)

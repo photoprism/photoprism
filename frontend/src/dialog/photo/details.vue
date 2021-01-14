@@ -18,16 +18,6 @@
                      class="accent lighten-2 elevation-0 clickable"
                      @click.exact="openPhoto()"
               >
-                <v-layout
-                    slot="placeholder"
-                    fill-height
-                    align-center
-                    justify-center
-                    ma-0
-                >
-                  <v-progress-circular indeterminate
-                                       color="accent lighten-5"></v-progress-circular>
-                </v-layout>
               </v-img>
 
             </v-card>

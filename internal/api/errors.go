@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -26,9 +25,9 @@ func GetErrors(router *gin.RouterGroup) {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		} else {
-			c.Header("X-Count", strconv.Itoa(len(resp)))
-			c.Header("X-Limit", strconv.Itoa(limit))
-			c.Header("X-Offset", strconv.Itoa(offset))
+			AddCountHeader(c, len(resp))
+			AddLimitHeader(c, limit)
+			AddOffsetHeader(c, offset)
 
 			c.JSON(http.StatusOK, resp)
 		}

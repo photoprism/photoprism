@@ -27,7 +27,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Main search query, avoids (slow) left joins.
 	s = s.Table("photos").
-		Select(`photos.*,
+		Select(`photos.*, photos.id AS composite_id,
 		files.id AS file_id, files.file_uid, files.instance_id, files.file_primary, files.file_missing, files.file_name,
 		files.file_root, files.file_hash, files.file_codec, files.file_type, files.file_mime, files.file_width, 
 		files.file_height, files.file_portrait, files.file_aspect_ratio, files.file_orientation, files.file_main_color, 
@@ -37,9 +37,9 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		lenses.lens_make, lenses.lens_model,
 		places.place_label, places.place_city, places.place_state, places.place_country`).
 		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
-		Joins("JOIN cameras ON photos.camera_id = cameras.id").
-		Joins("JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("JOIN places ON photos.place_id = places.id")
+		Joins("LEFT JOIN cameras ON photos.camera_id = cameras.id").
+		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
+		Joins("LEFT JOIN places ON photos.place_id = places.id")
 
 	if !f.Hidden {
 		s = s.Where("files.file_type = 'jpg' OR files.file_video = 1")

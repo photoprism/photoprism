@@ -65,6 +65,16 @@ export class Album extends RestModel {
     };
   }
 
+  classes(selected) {
+    let classes = ["is-album", "uid-" + this.UID, "type-" + this.Type];
+
+    if (this.Favorite) classes.push("is-favorite");
+    if (this.Private) classes.push("is-private");
+    if (selected) classes.push("is-selected");
+
+    return classes;
+  }
+
   getEntityName() {
     return this.Slug;
   }
@@ -151,6 +161,10 @@ export class Album extends RestModel {
   unlike() {
     this.Favorite = false;
     return Api.delete(this.getEntityResource() + "/like");
+  }
+
+  static batchSize() {
+    return 24;
   }
 
   static getCollectionResource() {

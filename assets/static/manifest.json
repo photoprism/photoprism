@@ -81,7 +81,7 @@
   "scope": "/",
   "start_url": "/photos",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "theme_color": "#333333",
   "background_color": "#333333",
   "permissions": [

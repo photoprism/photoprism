@@ -60,7 +60,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		imp := service.Import()
 
-		ClearFoldersCache(entity.RootImport)
+		RemoveFromFolderCache(entity.RootImport)
 
 		var opt photoprism.ImportOptions
 

@@ -22,7 +22,7 @@
 import Event from 'pubsub-js';
 
 export default {
-  name: 'p-notify',
+  name: 'PNotify',
   data() {
     return {
       text: '',

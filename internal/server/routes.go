@@ -18,6 +18,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	router.Static("/static", conf.StaticPath())
 	router.StaticFile("/favicon.ico", filepath.Join(conf.ImgPath(), "favicon.ico"))
 
+	// PWA service worker.
+	router.GET("/sw.js", func(c *gin.Context) {
+		c.Header("Cache-Control", "no-store")
+		c.File(filepath.Join(conf.BuildPath(), "sw.js"))
+	})
+
 	// Rainbow page.
 	router.GET("/rainbow", func(c *gin.Context) {
 		clientConfig := conf.PublicConfig()
@@ -77,7 +83,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteLabelLink(v1)
 		api.LikeLabel(v1)
 		api.DislikeLabel(v1)
-		api.LabelThumb(v1)
+		api.LabelCover(v1)
 
 		api.GetFoldersOriginals(v1)
 		api.GetFoldersImport(v1)
@@ -107,7 +113,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteAlbumLink(v1)
 		api.LikeAlbum(v1)
 		api.DislikeAlbum(v1)
-		api.AlbumThumb(v1)
+		api.AlbumCover(v1)
 		api.CloneAlbums(v1)
 		api.AddPhotosToAlbum(v1)
 		api.RemovePhotosFromAlbum(v1)

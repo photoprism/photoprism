@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -76,8 +75,6 @@ func GetDownload(router *gin.RouterGroup) {
 			downloadName = f.ShareBase()
 		}
 
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadName))
-
-		c.File(fileName)
+		c.FileAttachment(fileName, downloadName)
 	})
 }

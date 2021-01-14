@@ -54,14 +54,20 @@ import VueInfiniteScroll from "vue-infinite-scroll";
 import VueModal from "vue-js-modal";
 import Hls from "hls.js";
 import { $gettext, Mount } from "common/vm";
+import * as options from "./options/options";
 
 // Initialize helpers
 const viewer = new Viewer();
-const clipboard = new Clipboard(window.localStorage, "photo_clipboard");
 const isPublic = config.get("public");
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
   navigator.userAgent
 );
+
+// Initialize language and detect alignment
+Vue.config.language = config.values.settings.ui.language;
+Settings.defaultLocale = Vue.config.language.substring(0, 2);
+const languages = options.Languages();
+const rtl = languages.some((lang) => lang.value === Vue.config.language && lang.rtl);
 
 // HTTP Live Streaming (video support)
 window.Hls = Hls;
@@ -75,14 +81,12 @@ Vue.prototype.$api = Api;
 Vue.prototype.$log = Log;
 Vue.prototype.$socket = Socket;
 Vue.prototype.$config = config;
-Vue.prototype.$clipboard = clipboard;
+Vue.prototype.$clipboard = Clipboard;
 Vue.prototype.$isMobile = isMobile;
+Vue.prototype.$rtl = rtl;
 
 // Register Vuetify
-Vue.use(Vuetify, { theme: config.theme });
-
-Vue.config.language = config.values.settings.ui.language;
-Settings.defaultLocale = Vue.config.language.substring(0, 2);
+Vue.use(Vuetify, { rtl, theme: config.theme });
 
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {

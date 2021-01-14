@@ -34,7 +34,7 @@ import { $gettext } from "./vm";
 
 export const MaxItems = 999;
 
-export default class Clipboard {
+export class Clipboard {
   /**
    * @param {Storage} storage
    * @param {string} key
@@ -83,11 +83,18 @@ export default class Clipboard {
     }
 
     const id = model.getId();
-    this.toggleId(id);
+
+    const result = this.toggleId(id);
+
+    this.updateDom(id, result);
+
+    return result;
   }
 
   toggleId(id) {
     const index = this.selection.indexOf(id);
+
+    let result = false;
 
     if (index === -1) {
       if (this.selection.length >= this.maxItems) {
@@ -98,6 +105,7 @@ export default class Clipboard {
       this.selection.push(id);
       this.selectionMap["id:" + id] = true;
       this.lastId = id;
+      result = true;
     } else {
       this.selection.splice(index, 1);
       delete this.selectionMap["id:" + id];
@@ -105,6 +113,8 @@ export default class Clipboard {
     }
 
     this.saveToStorage();
+
+    return result;
   }
 
   add(model) {
@@ -118,13 +128,15 @@ export default class Clipboard {
   }
 
   addId(id) {
+    this.updateDom(id, true);
+
     if (this.hasId(id)) {
-      return;
+      return true;
     }
 
     if (this.selection.length >= this.maxItems) {
       Notify.warn($gettext("Can't select more items"));
-      return;
+      return false;
     }
 
     this.selection.push(id);
@@ -132,6 +144,8 @@ export default class Clipboard {
     this.lastId = id;
 
     this.saveToStorage();
+
+    return true;
   }
 
   addRange(rangeEnd, models) {
@@ -154,7 +168,8 @@ export default class Clipboard {
     }
 
     for (let i = rangeStart; i <= rangeEnd; i++) {
-      this.add(models[i]);
+      this.add(models[i], false);
+      this.updateDom(models[i].getId(), true);
     }
 
     return rangeEnd - rangeStart + 1;
@@ -172,16 +187,20 @@ export default class Clipboard {
     return typeof this.selectionMap["id:" + id] !== "undefined";
   }
 
-  remove(model) {
+  remove(model, publish) {
     if (!this.isModel(model)) {
       return;
     }
 
-    this.removeId(model.getId());
+    this.removeId(model.getId(), publish);
   }
 
   removeId(id) {
-    if (!this.hasId(id)) return;
+    this.updateDom(id, false);
+
+    if (!this.hasId(id)) {
+      return false;
+    }
 
     const index = this.selection.indexOf(id);
 
@@ -190,6 +209,8 @@ export default class Clipboard {
     delete this.selectionMap["id:" + id];
 
     this.saveToStorage();
+
+    return false;
   }
 
   getIds() {
@@ -209,9 +230,24 @@ export default class Clipboard {
   }
 
   clear() {
+    this.selection.forEach((id) => this.updateDom(id, false));
     this.lastId = "";
     this.selectionMap = {};
     this.selection.splice(0, this.selection.length);
     this.storage.removeItem(this.storageKey);
   }
+
+  updateDom(uid, selected) {
+    document.querySelectorAll(`.uid-${uid}`).forEach((el) => {
+      if (selected) {
+        el.classList.add("is-selected");
+      } else {
+        el.classList.remove("is-selected");
+      }
+    });
+  }
 }
+
+const PhotoClipboard = new Clipboard(window.localStorage, "photo_clipboard");
+
+export default PhotoClipboard;

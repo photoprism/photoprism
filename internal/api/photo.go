@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"path/filepath"
 
@@ -91,6 +90,8 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		if err := c.BindJSON(&f); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
+		} else if f.PhotoPrivate {
+			FlushCoverCache()
 		}
 
 		// 3) Save model with values from form
@@ -148,9 +149,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 
 		downloadFileName := f.ShareBase()
 
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadFileName))
-
-		c.File(fileName)
+		c.FileAttachment(fileName, downloadFileName)
 	})
 }
 
@@ -182,7 +181,7 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 		}
 
 		if c.Query("download") != "" {
-			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", c.Param("uid")+fs.YamlExt))
+			AddDownloadHeader(c, c.Param("uid")+fs.YamlExt)
 		}
 
 		c.Data(http.StatusOK, "text/x-yaml; charset=utf-8", data)

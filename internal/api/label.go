@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -42,8 +41,9 @@ func GetLabels(router *gin.RouterGroup) {
 		}
 
 		// TODO c.Header("X-Count", strconv.Itoa(count))
-		c.Header("X-Limit", strconv.Itoa(f.Count))
-		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
+		AddTokenHeaders(c)
 
 		c.JSON(http.StatusOK, result)
 	})

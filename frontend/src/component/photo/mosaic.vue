@@ -1,6 +1,6 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
-    <v-card v-if="photos.length === 0" class="p-photos-empty secondary-light lighten-1 ma-1" flat>
+    <v-card v-if="photos.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
       <v-card-title primary-title>
         <div>
           <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
@@ -19,106 +19,80 @@
         </div>
       </v-card-title>
     </v-card>
-    <v-layout row wrap class="p-results">
+    <v-layout row wrap class="search-results photo-results mosaic-view">
       <v-flex
           v-for="(photo, index) in photos"
           :key="index"
-          :data-uid="photo.UID"
-          :class="{ selected: $clipboard.has(photo), portrait: photo.Portrait }"
-          class="p-photo"
           xs4 sm3 md2 lg1 d-flex
       >
-        <v-hover>
-          <v-card slot-scope="{ hover }" tile
-                  :class="$clipboard.has(photo) ? 'elevation-10 ma-0' : 'elevation-0 ma-1'"
-                  :title="photo.Title"
-                  @contextmenu="onContextMenu($event, index)">
-            <v-img :src="photo.thumbnailUrl('tile_224')"
-                   aspect-ratio="1"
-                   class="accent lighten-2 clickable"
-                   @mousedown="onMouseDown($event, index)"
-                   @click.stop.prevent="onClick($event, index)"
-            >
-              <v-layout
-                  slot="placeholder"
-                  fill-height
-                  align-center
-                  justify-center
-                  ma-0
-              >
-                <v-progress-circular indeterminate
-                                     color="accent lighten-5"></v-progress-circular>
-              </v-layout>
+        <v-card tile
+                :data-id="photo.ID"
+                :data-uid="photo.UID"
+                class="result"
+                :class="photo.classes()"
+                @contextmenu="onContextMenu($event, index)">
+          <v-img :key="photo.Hash"
+                 :src="photo.thumbnailUrl('tile_224')"
+                 :alt="photo.Title"
+                 :title="photo.Title"
+                 :transition="false"
+                 aspect-ratio="1"
+                 class="accent lighten-2 clickable"
+                 @mousedown="onMouseDown($event, index)"
+                 @click.stop.prevent="onClick($event, index)"
+                 @mouseover="playLive(photo)"
+                 @mouseleave="pauseLive(photo)"
+          >
+            <v-layout v-if="photo.Type === 'live'" class="live-player">
+              <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none"
+                     loop muted playsinline>
+                <source :src="photo.videoUrl()" type="video/mp4">
+              </video>
+            </v-layout>
 
-              <v-layout
-                  v-if="photo.Type === 'live'"
-                  v-show="hover"
-                  fill-height
-                  align-center
-                  justify-center
-                  ma-0
-                  class="live-player"
-                  style="overflow: hidden;"
-              >
-                <video :key="photo.videoUrl()" width="224" height="224" autoplay loop muted playsinline>
-                  <source :src="photo.videoUrl()" type="video/mp4">
-                </video>
-              </v-layout>
+            <v-btn :ripple="false" :depressed="false" class="input-open"
+                   icon flat small absolute
+                   @click.stop.prevent="openPhoto(index, true)">
+              <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">adjust</v-icon>
+              <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
+            </v-btn>
 
-              <v-btn v-if="hidePrivate && photo.Private" :ripple="false"
-                     icon flat small absolute
-                     class="p-photo-private opacity-75">
-                <v-icon color="white">lock</v-icon>
-              </v-btn>
+            <v-btn :ripple="false" :depressed="false" class="input-view"
+                   icon flat small absolute :title="$gettext('View')"
+                   @click.stop.prevent="openPhoto(index, false)">
+              <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
+            </v-btn>
 
-              <v-btn v-if="hover || selection.length && $clipboard.has(photo)" :ripple="false"
-                     icon flat small absolute
-                     :class="selection.length && $clipboard.has(photo) ? 'p-photo-select' : 'p-photo-select opacity-50'"
-                     @click.stop.prevent="onSelect($event, index)">
-                <v-icon v-if="selection.length && $clipboard.has(photo)" color="white"
-                        class="t-select t-on">check_circle
-                </v-icon>
-                <v-icon v-else color="accent lighten-3" class="t-select t-off">radio_button_off</v-icon>
-              </v-btn>
+            <v-btn :ripple="false" :depressed="false" color="white" class="input-play"
+                   outline fab absolute :title="$gettext('Play')"
+                   @click.stop.prevent="openPhoto(index, true)">
+              <v-icon color="white" class="action-play">play_arrow</v-icon>
+            </v-btn>
 
-              <v-btn icon flat small absolute :ripple="false"
-                     :class="photo.Favorite ? 'p-photo-like opacity-75' : 'p-photo-like opacity-50'"
-                     @click.stop.prevent="photo.toggleLike()">
-                <v-icon v-if="photo.Favorite" color="white" class="t-like t-on" :data-uid="photo.UID">favorite</v-icon>
-                <v-icon v-else color="accent lighten-3" class="t-like t-off" :data-uid="photo.UID">favorite_border
-                </v-icon>
-              </v-btn>
+            <v-btn v-if="hidePrivate" :ripple="false"
+                   icon flat small absolute
+                   class="input-private">
+              <v-icon color="white" class="select-on">lock</v-icon>
+            </v-btn>
 
-              <template v-if="photo.isPlayable()">
-                <v-btn v-if="photo.Type === 'live'" color="white"
-                       icon flat small absolute class="p-photo-live opacity-75" :depressed="false" :ripple="false"
-                       title="Live Photo" @click.stop.prevent="openPhoto(index, true)">
-                  <v-icon color="white" class="action-play">adjust</v-icon>
-                </v-btn>
-                <v-btn v-else color="white"
-                       outline fab absolute class="p-photo-play opacity-75" :depressed="false" :ripple="false"
-                       title="Play" @click.stop.prevent="openPhoto(index, true)">
-                  <v-icon color="white" class="action-play">play_arrow</v-icon>
-                </v-btn>
-              </template>
-              <v-btn v-else-if="photo.Type === 'image' && photo.Files.length > 1" :ripple="false"
-                     icon flat small absolute class="p-photo-merged opacity-75"
-                     @click.stop.prevent="openPhoto(index, true)">
-                <v-icon color="white" class="action-burst">burst_mode</v-icon>
-              </v-btn>
-              <v-btn v-else-if="photo.Type === 'image' && selection.length && hover" :ripple="false"
-                     icon flat small absolute class="p-photo-fullscreen opacity-75"
-                     @click.stop.prevent="openPhoto(index, false)">
-                <v-icon color="white" class="action-open">zoom_in</v-icon>
-              </v-btn>
-              <v-btn v-else-if="photo.Type === 'raw'" :ripple="false"
-                     icon flat small absolute class="p-photo-raw opacity-75"
-                     title="RAW" @click.stop.prevent="openPhoto(index, true)">
-                <v-icon color="white" class="action-burst">photo_camera</v-icon>
-              </v-btn>
-            </v-img>
-          </v-card>
-        </v-hover>
+            <v-btn :ripple="false"
+                   icon flat small absolute
+                   class="input-select"
+                   @click.stop.prevent="onSelect($event, index)">
+              <v-icon color="white" class="select-on">check_circle</v-icon>
+              <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+            </v-btn>
+
+            <v-btn :ripple="false"
+                   icon flat small absolute
+                   class="input-favorite"
+                   @click.stop.prevent="photo.toggleLike()">
+              <v-icon color="white" class="select-on">favorite</v-icon>
+              <v-icon color="accent lighten-3" class="select-off">favorite_border</v-icon>
+            </v-btn>
+          </v-img>
+        </v-card>
       </v-flex>
     </v-layout>
   </v-container>
@@ -128,12 +102,12 @@ export default {
   name: 'PPhotoMosaic',
   props: {
     photos: Array,
-    selection: Array,
     openPhoto: Function,
     editPhoto: Function,
     album: Object,
     filter: Object,
     context: String,
+    selectMode: Boolean,
   },
   data() {
     return {
@@ -145,25 +119,39 @@ export default {
     };
   },
   methods: {
+    livePlayer(photo) {
+      return document.querySelector("#live-player-" + photo.ID);
+    },
+    playLive(photo) {
+      const player = this.livePlayer(photo);
+      if (player) player.play();
+    },
+    pauseLive(photo) {
+      const player = this.livePlayer(photo);
+      if (player) player.pause();
+    },
     onSelect(ev, index) {
       if (ev.shiftKey) {
         this.selectRange(index);
       } else {
-        this.$clipboard.toggle(this.photos[index]);
+        this.toggle(this.photos[index]);
       }
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
+    toggle(photo) {
+      this.$clipboard.toggle(photo);
+    },
     onClick(ev, index) {
       let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
 
-      if (longClick || this.selection.length > 0) {
+      if (longClick || this.selectMode) {
         if (longClick || ev.shiftKey) {
           this.selectRange(index);
         } else {
-          this.$clipboard.toggle(this.photos[index]);
+          this.toggle(this.photos[index]);
         }
       } else {
         this.openPhoto(index, false);

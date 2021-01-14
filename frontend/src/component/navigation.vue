@@ -59,29 +59,29 @@
           </v-list-tile-action>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini" to="/photos" class="nav-photos" @click.stop="">
+        <v-list-tile v-if="isMini" to="/browse" class="nav-browse" @click.stop="">
           <v-list-tile-action :title="$gettext('Photos')">
-            <v-icon>photo</v-icon>
+            <v-icon>image_search</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
             <v-list-tile-title>
-              <translate>Photos</translate>
+              <translate>Search</translate>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini" prepend-icon="photo" no-action>
-          <v-list-tile slot="activator" to="/photos" class="nav-photos" @click.stop="">
+        <v-list-group v-if="!isMini" prepend-icon="image_search" no-action>
+          <v-list-tile slot="activator" to="/browse" class="nav-browse" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
-                <translate key="Photos">Photos</translate>
-                <span v-if="config.count.photos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.photos }}</span>
+                <translate key="Search">Search</translate>
+                <span v-if="config.count.all > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.all }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click.stop="">
+          <v-list-tile :to="{name: 'browse', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Monochrome</translate>
@@ -89,7 +89,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'photos', query: { q: 'panorama:true' }}" :exact="true" class="nav-panoramas"
+          <v-list-tile :to="{name: 'browse', query: { q: 'panorama:true' }}" :exact="true" class="nav-panoramas"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>

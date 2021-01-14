@@ -14,6 +14,7 @@ import (
 // PhotoResult contains found photos and their main file plus other meta data.
 type PhotoResult struct {
 	ID               uint          `json:"-"`
+	CompositeID      string        `json:"ID"`
 	UUID             string        `json:"DocumentID,omitempty"`
 	PhotoUID         string        `json:"UID"`
 	PhotoType        string        `json:"Type"`
@@ -124,6 +125,7 @@ func (m PhotoResults) Merged() (PhotoResults, int, error) {
 		}
 
 		file.ID = res.FileID
+		res.CompositeID = fmt.Sprintf("%d-%d", res.ID, res.FileID)
 
 		if lastId == res.ID && i > 0 {
 			merged[i-1].Files = append(merged[i-1].Files, file)

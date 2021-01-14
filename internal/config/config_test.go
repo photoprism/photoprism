@@ -248,6 +248,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.NotEmpty(t, cc.Thumbs)
 	assert.NotEmpty(t, cc.JSHash)
 	assert.NotEmpty(t, cc.CSSHash)
+	assert.NotEmpty(t, cc.ManifestHash)
 	assert.Equal(t, true, cc.Debug)
 	assert.Equal(t, false, cc.Demo)
 	assert.Equal(t, false, cc.ReadOnly)

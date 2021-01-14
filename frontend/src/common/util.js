@@ -34,6 +34,7 @@ const Millisecond = 1000 * Microsecond;
 const Second = 1000 * Millisecond;
 const Minute = 60 * Second;
 const Hour = 60 * Minute;
+let start = new Date();
 
 export default class Util {
   static duration(d) {
@@ -124,5 +125,24 @@ export default class Util {
     } else {
       return str;
     }
+  }
+
+  static encodeHTML(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;");
+  }
+
+  static resetTimer() {
+    start = new Date();
+  }
+
+  static logTime(label) {
+    const now = new Date();
+    console.log(`${label}: ${now.getTime() - start.getTime()}ms`);
+    start = now;
   }
 }

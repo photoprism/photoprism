@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	gc "github.com/patrickmn/go-cache"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -28,6 +30,18 @@ func TestMain(m *testing.M) {
 
 func TestConfig(t *testing.T) {
 	assert.Equal(t, conf, Config())
+}
+
+func TestFolderCache(t *testing.T) {
+	assert.IsType(t, &gc.Cache{}, FolderCache())
+}
+
+func TestCoverCache(t *testing.T) {
+	assert.IsType(t, &gc.Cache{}, CoverCache())
+}
+
+func TestThumbCache(t *testing.T) {
+	assert.IsType(t, &gc.Cache{}, ThumbCache())
 }
 
 func TestClassify(t *testing.T) {

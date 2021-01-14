@@ -19,8 +19,8 @@
         <v-btn
             color="secondary-dark"
             dark depressed small
-            @click="reload"
             class="action-update-reload"
+            @click="reload"
         >
           <translate>Reload</translate>
         </v-btn>
@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'p-dialog-webdav',
+  name: 'PDialogWebdav',
   props: {
     show: Boolean,
   },

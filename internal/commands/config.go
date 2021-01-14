@@ -55,7 +55,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "img-path", conf.ImgPath())
 	fmt.Printf("%-25s %s\n", "templates-path", conf.TemplatesPath())
 
-	// Workers.
+	// Background workers.
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())
 	fmt.Printf("%-25s %d\n", "wakeup-interval", conf.WakeupInterval()/time.Second)
 	fmt.Printf("%-25s %d\n", "auto-index", conf.AutoIndex()/time.Second)

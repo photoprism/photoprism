@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -65,9 +64,10 @@ func GetPhotos(router *gin.RouterGroup) {
 			return
 		}
 
-		c.Header("X-Count", strconv.Itoa(count))
-		c.Header("X-Limit", strconv.Itoa(f.Count))
-		c.Header("X-Offset", strconv.Itoa(f.Offset))
+		AddCountHeader(c, count)
+		AddLimitHeader(c, f.Count)
+		AddOffsetHeader(c, f.Offset)
+		AddTokenHeaders(c)
 
 		c.JSON(http.StatusOK, result)
 	})

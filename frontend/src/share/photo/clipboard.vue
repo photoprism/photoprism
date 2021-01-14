@@ -1,17 +1,17 @@
 <template>
   <div>
-    <v-container fluid class="pa-0" v-if="selection.length > 0">
+    <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial
-          fixed bottom right
+          id="t-clipboard" v-model="expanded" fixed
+          bottom
+          right
           direction="top"
-          v-model="expanded"
           transition="slide-y-reverse-transition"
           class="p-clipboard p-photo-clipboard"
-          id="t-clipboard"
       >
         <v-btn
-            fab dark
-            slot="activator"
+            slot="activator" fab
+            dark
             color="accent darken-2"
             class="action-menu"
         >
@@ -20,13 +20,13 @@
         </v-btn>
 
         <v-btn
-            fab dark small
+            v-if="context !== 'archive'" fab dark
+            small
             :title="$gettext('Download')"
             color="download"
-            @click.stop="download()"
             :disabled="!$config.feature('download')"
-            v-if="context !== 'archive'"
             class="action-download"
+            @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
         </v-btn>
@@ -34,8 +34,8 @@
         <v-btn
             fab dark small
             color="accent"
-            @click.stop="clearClipboard()"
             class="action-clear"
+            @click.stop="clearClipboard()"
         >
           <v-icon>clear</v-icon>
         </v-btn>
@@ -48,7 +48,7 @@ import Api from "common/api";
 import Notify from "common/notify";
 
 export default {
-  name: 'p-photo-clipboard',
+  name: 'PPhotoClipboard',
   props: {
     selection: Array,
     refresh: Function,
@@ -84,7 +84,7 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a')
+      const link = document.createElement('a');
       link.href = path;
       link.download = "photos.zip";
       link.click();

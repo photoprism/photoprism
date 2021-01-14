@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-text-field v-model="filter.q"
                     class="pt-3 pr-3 input-search"
@@ -97,7 +97,7 @@ export default {
       loading: false,
       scrollDisabled: false,
       filter: {q},
-      pageSize: 100,
+      batchSize: 100,
       offset: 0,
       page: 0,
       errors: [],
@@ -165,7 +165,7 @@ export default {
 
       this.scrollDisabled = true;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
       const q = this.filter.q;
 

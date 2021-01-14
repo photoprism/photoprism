@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-photos" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="10" :infinite-scroll-listen-for-event="'scrollRefresh'">
+       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <p-photo-toolbar :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
                      :refresh="refresh"></p-photo-toolbar>
@@ -16,14 +16,14 @@
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
                       :context="context"
                       :photos="results"
-                      :selection="selection"
+                      :select-mode="selectMode"
                       :filter="filter"
                       :edit-photo="editPhoto"
                       :open-photo="openPhoto"></p-photo-mosaic>
       <p-photo-list v-else-if="settings.view === 'list'"
                     :context="context"
                     :photos="results"
-                    :selection="selection"
+                    :select-mode="selectMode"
                     :filter="filter"
                     :open-photo="openPhoto"
                     :edit-photo="editPhoto"
@@ -31,7 +31,7 @@
       <p-photo-cards v-else
                      :context="context"
                      :photos="results"
-                     :selection="selection"
+                     :select-mode="selectMode"
                      :filter="filter"
                      :open-photo="openPhoto"
                      :edit-photo="editPhoto"
@@ -92,7 +92,7 @@ export default {
       complete: false,
       results: [],
       scrollDisabled: true,
-      pageSize: 60,
+      batchSize: Photo.batchSize(),
       offset: 0,
       page: 0,
       selection: this.$clipboard.selection,
@@ -108,6 +108,9 @@ export default {
     };
   },
   computed: {
+    selectMode: function() {
+      return this.selection.length > 0;
+    },
     context: function () {
       if (!this.staticFilter) {
         return "photos";
@@ -239,13 +242,13 @@ export default {
         return Promise.resolve(this.results);
       }
 
-      if (this.viewer.results.length > (this.results.length + this.pageSize)) {
+      if (this.viewer.results.length > (this.results.length + this.batchSize)) {
         return Promise.resolve(this.viewer.results);
       }
 
       this.viewer.loading = true;
 
-      const count = this.pageSize * (this.page + 6);
+      const count = this.batchSize * (this.page + 6);
       const offset = 0;
 
       const params = {
@@ -278,7 +281,7 @@ export default {
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.pageSize : this.pageSize;
+      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;
 
       const params = {
@@ -314,7 +317,7 @@ export default {
           this.page++;
 
           this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
           });
@@ -354,7 +357,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.pageSize,
+        count: this.batchSize,
         offset: this.offset,
         merged: true,
       };
@@ -400,9 +403,9 @@ export default {
       const params = this.searchParams();
 
       Photo.search(params).then(response => {
-        this.offset = this.pageSize;
+        this.offset = this.batchSize;
         this.results = response.models;
-        this.complete = (response.count < this.pageSize);
+        this.complete = (response.count < this.batchSize);
         this.scrollDisabled = this.complete;
 
         if (this.complete) {
@@ -417,7 +420,7 @@ export default {
           this.$notify.info(this.$gettext('More than 50 results'));
 
           this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight) {
+            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
             }
           });
@@ -435,16 +438,22 @@ export default {
 
       this.loadMore();
     },
-    updateResult(results, values) {
-      const model = results.find((m) => m.UID === values.UID);
-
-      if (model) {
-        for (let key in values) {
-          if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-            model[key] = values[key];
+    updateResults(entity) {
+      this.results.filter((m) => m.UID === entity.UID).forEach((m) => {
+        for (let key in entity) {
+          if (key !== "UID" && entity.hasOwnProperty(key) && entity[key] != null && typeof entity[key] !== "object") {
+            m[key] = entity[key];
           }
         }
-      }
+      });
+
+      this.viewer.results.filter((m) => m.UID === entity.UID).forEach((m) => {
+        for (let key in entity) {
+          if (key !== "UID" && entity.hasOwnProperty(key) && entity[key] != null && typeof entity[key] !== "object") {
+            m[key] = entity[key];
+          }
+        }
+      });
     },
     removeResult(results, uid) {
       const index = results.findIndex((m) => m.UID === uid);
@@ -472,8 +481,7 @@ export default {
               this.removeResult(this.viewer.results, values.UID);
               this.$clipboard.removeId(values.UID);
             } else {
-              this.updateResult(this.results, values);
-              this.updateResult(this.viewer.results, values);
+              this.updateResults(values);
             }
           }
           break;
@@ -528,6 +536,9 @@ export default {
         default:
           console.warn("unexpected event type", ev);
       }
+
+      // TODO: Needed?
+      this.$forceUpdate();
     },
   },
 };

@@ -64,10 +64,17 @@ func Import() error {
 
 	imp := service.Import()
 
-	api.ClearFoldersCache(entity.RootImport)
+	api.RemoveFromFolderCache(entity.RootImport)
 
 	event.InfoMsg(i18n.MsgCopyingFilesFrom, txt.Quote(filepath.Base(path)))
-	opt := photoprism.ImportOptionsCopy(path)
+
+	var opt photoprism.ImportOptions
+
+	if conf.Settings().Import.Move {
+		opt = photoprism.ImportOptionsMove(path)
+	} else {
+		opt = photoprism.ImportOptionsCopy(path)
+	}
 
 	imported := imp.Start(opt)
 

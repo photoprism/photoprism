@@ -639,10 +639,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			return result
 		}
 
-		event.Publish("count.photos", event.Data{
-			"count": 1,
-		})
-
 		if photo.PhotoPrivate {
 			event.Publish("count.private", event.Data{
 				"count": 1,
@@ -651,6 +647,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if photo.PhotoType == entity.TypeVideo {
 			event.Publish("count.videos", event.Data{
+				"count": 1,
+			})
+		} else {
+			event.Publish("count.photos", event.Data{
 				"count": 1,
 			})
 		}

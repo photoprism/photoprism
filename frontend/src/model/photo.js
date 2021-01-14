@@ -36,6 +36,7 @@ import Util from "common/util";
 import { config } from "../session";
 import countries from "options/countries.json";
 import { $gettext } from "common/vm";
+import Clipboard from "common/clipboard";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
@@ -51,8 +52,13 @@ export const MonthUnknown = -1;
 export const DayUnknown = -1;
 
 export class Photo extends RestModel {
+  constructor(values) {
+    super(values);
+  }
+
   getDefaults() {
     return {
+      ID: "",
       UID: "",
       DocumentID: "",
       Type: TypeImage,
@@ -137,6 +143,19 @@ export class Photo extends RestModel {
       CheckedAt: null,
       DeletedAt: null,
     };
+  }
+
+  classes() {
+    let classes = ["is-photo", "uid-" + this.UID, "type-" + this.Type];
+
+    if (this.isPlayable()) classes.push("is-playable");
+    if (Clipboard.has(this)) classes.push("is-selected");
+    if (this.Portrait) classes.push("is-portrait");
+    if (this.Favorite) classes.push("is-favorite");
+    if (this.Private) classes.push("is-private");
+    if (this.Files.length > 1) classes.push("is-stack");
+
+    return classes;
   }
 
   localDayString() {
@@ -563,11 +582,14 @@ export class Photo extends RestModel {
   }
 
   toggleLike() {
-    this.Favorite = !this.Favorite;
+    const favorite = !this.Favorite;
+    const elements = document.querySelectorAll(`.uid-${this.UID}`);
 
-    if (this.Favorite) {
+    if (favorite) {
+      elements.forEach((el) => el.classList.add("is-favorite"));
       return Api.post(this.getEntityResource() + "/like");
     } else {
+      elements.forEach((el) => el.classList.remove("is-favorite"));
       return Api.delete(this.getEntityResource() + "/like");
     }
   }
@@ -698,6 +720,10 @@ export class Photo extends RestModel {
 
       return Promise.resolve(this.setValues(resp.data));
     });
+  }
+
+  static batchSize() {
+    return 60;
   }
 
   static getCollectionResource() {

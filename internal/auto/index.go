@@ -72,7 +72,7 @@ func Index() error {
 		return nil
 	}
 
-	api.ClearFoldersCache(entity.RootOriginals)
+	api.RemoveFromFolderCache(entity.RootOriginals)
 
 	prg := service.Purge()
 

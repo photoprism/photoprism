@@ -29,11 +29,9 @@ https://docs.photoprism.org/developer-guide/
 */
 
 const path = require("path");
-
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
+const OfflinePlugin = require("offline-plugin");
 const webpack = require("webpack");
-
 const isDev = process.env.NODE_ENV !== "production";
 
 if (isDev) {
@@ -71,6 +69,7 @@ const config = {
     new MiniCssExtractPlugin({
       filename: "[name].css",
     }),
+    new OfflinePlugin(),
   ],
   node: {
     fs: "empty",

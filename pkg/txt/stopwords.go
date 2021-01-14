@@ -4391,6 +4391,7 @@ var StopWords = map[string]bool{
 	"dizer":            true,
 	"dois":             true,
 	"doze":             true,
+	"dscn":             true,
 	"duas":             true,
 	"dá":               true,
 	"dão":              true,

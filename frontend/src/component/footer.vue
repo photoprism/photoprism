@@ -25,7 +25,7 @@
 
 <script>
 export default {
-  name: 'p-about-footer',
+  name: 'PAboutFooter',
   data() {
     return {};
   },

@@ -1,5 +1,5 @@
 <template>
-  <video class="p-video-player" ref="player" :height="height" :width="width" :autoplay="autoplay"
+  <video ref="player" class="p-video-player" :height="height" :width="width" :autoplay="autoplay"
          :preload="preload"></video>
 </template>
 
@@ -7,7 +7,7 @@
 import "mediaelement";
 
 export default {
-  name: "p-photo-player",
+  name: "PPhotoPlayer",
   props: {
     show: {
       type: Boolean,
@@ -61,9 +61,20 @@ export default {
     refresh: false,
     player: null,
   }),
+  watch: {
+    source: function (source) {
+      if (source) {
+        this.setSource(source);
+      }
+    },
+  },
   mounted() {
     document.body.classList.add("player");
     this.render();
+  },
+  beforeDestroy() {
+    document.body.classList.remove("player");
+    this.remove();
   },
   methods: {
     render() {
@@ -114,7 +125,7 @@ export default {
       this.player.videoHeight = this.height;
       this.player.videoWidth = this.width;
       this.player.loop = this.loop;
-      this.$el.style.cssText = "width: " + this.width + "px; height: " + this.height + "px;"
+      this.$el.style.cssText = "width: " + this.width + "px; height: " + this.height + "px;";
 
       this.player.setSrc(src);
       this.player.setPoster("");
@@ -126,16 +137,5 @@ export default {
       }
     },
   },
-  beforeDestroy() {
-    document.body.classList.remove("player");
-    this.remove();
-  },
-  watch: {
-    source: function (source) {
-      if (source) {
-        this.setSource(source);
-      }
-    },
-  },
-}
+};
 </script>

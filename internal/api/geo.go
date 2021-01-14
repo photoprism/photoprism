@@ -99,6 +99,8 @@ func GetGeo(router *gin.RouterGroup) {
 			return
 		}
 
+		AddTokenHeaders(c)
+
 		c.Data(http.StatusOK, "application/json", resp)
 	})
 }
