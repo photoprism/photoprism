@@ -94,7 +94,6 @@
                   {{ photo.getDateString() }}
                 </div>
                 <template v-if="!photo.Description">
-                  <br/>
                   <div v-if="photo.Type === 'video'" :title="labels.video">
                     <v-icon size="14">movie</v-icon>
                     {{ photo.getVideoInfo() }}
@@ -105,14 +104,12 @@
                   </div>
                 </template>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
-                  <br/>
                   <div :title="labels.name">
                     <v-icon size="14">insert_drive_file</v-icon>
                     {{ photo.baseName() }}
                   </div>
                 </template>
                 <template v-if="showLocation && photo.Country !== 'zz'">
-                  <br/>
                   <div :title="labels.location">
                     <v-icon size="14">location_on</v-icon>
                     {{ photo.locationInfo() }}

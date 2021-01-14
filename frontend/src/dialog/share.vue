@@ -19,7 +19,7 @@
       <v-card-text>
         <v-expansion-panel class="pa-0 elevation-0">
           <v-expansion-panel-content v-for="(link, index) in links" :key="index"
-                                     class="pa-0 elevation-0 secondary-light mb-1">
+                                     class="pa-0 elevation-0 secondary mb-1">
             <template #header>
               <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" style="user-select: none;"
                       @click.stop="copyUrl(link)">
@@ -29,7 +29,7 @@
               </button>
             </template>
             <v-card>
-              <v-card-text class="grey lighten-4">
+              <v-card-text class="secondary-light">
                 <v-container fluid class="pa-0">
                   <v-layout row wrap>
                     <v-flex xs12 class="pa-2">
