@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-photo-files">
     <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
       <v-expansion-panel-content v-for="(file, index) in model.fileModels()" :key="index"
-                                 class="pa-0 elevation-0 grey lighten-4" style="margin-top: 1px;">
+                                 class="pa-0 elevation-0 secondary-light" style="margin-top: 1px;">
         <template #header>
           <div class="caption">{{ file.baseName(70) }}</div>
         </template>

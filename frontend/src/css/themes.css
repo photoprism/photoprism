@@ -1,0 +1,67 @@
+.theme-onyx .v-content__wrap,
+.theme-onyx .p-page,
+.theme-onyx .form,
+.theme-onyx .v-content {
+    background: #525252 !important;
+}
+
+
+#photoprism.theme-onyx .theme--light.v-small-dialog__content,
+#photoprism.theme-onyx .theme--light.v-sheet,
+#photoprism.theme-onyx .theme--light.v-card {
+    background: #525252;
+}
+
+#photoprism.theme-onyx .theme--light .v-table,
+.theme-onyx .application.theme--light {
+    background: #525252;
+}
+
+#photoprism.theme-onyx .theme--light.v-table thead th,
+#photoprism.theme-onyx .theme--light.v-table tbody td {
+    color: #fff;
+}
+
+#photoprism.theme-onyx .theme--light.v-table tbody tr:hover {
+    background: #666;
+}
+
+#photoprism.theme-onyx .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: #525252;
+}
+
+#photoprism.theme-onyx,
+#photoprism.theme-onyx .p-page a,
+#photoprism.theme-onyx .v-datatable a,
+#photoprism.theme-onyx .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-onyx .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-onyx .theme--light {
+    color: #fff;
+}
+
+/* #photoprism.theme-onyx .v-dialog .theme--light {
+    color: #333;
+} */
+
+#photoprism.theme-onyx .theme--light.v-list {
+    background: #555;
+}
+
+#photoprism.theme-onyx .theme--light.v-select .v-select__selections {
+    color: #e3d5c3;
+}
+
+#photoprism.theme-onyx .p-page a.text-link {
+    color: #e3d5c3;
+}
+
+#photoprism.theme-onyx .theme--light.v-input:not(.v-input--is-disabled) input,
+#photoprism.theme-onyx .theme--light.v-input:not(.v-input--is-disabled) textarea {
+    color: #fff;
+}
+
+#photoprism.theme-onyx .theme--light.v-btn.v-btn--disabled,
+#photoprism.theme-onyx .theme--light.v-btn.v-btn--disabled .v-btn__loading,
+#photoprism.theme-onyx .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #999 !important;
+}

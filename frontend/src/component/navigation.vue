@@ -60,7 +60,7 @@
         </v-list-tile>
 
         <v-list-tile v-if="isMini" to="/browse" class="nav-browse" @click.stop="">
-          <v-list-tile-action :title="$gettext('Photos')">
+          <v-list-tile-action :title="$gettext('Search')">
             <v-icon>image_search</v-icon>
           </v-list-tile-action>
 

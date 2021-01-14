@@ -144,13 +144,13 @@
     "navigation-home": "#000000"
   },
   "onyx": {
-    "application": "#e5e4e2",
+    "application": "#525252",
     "form": "#e5e4e2",
     "primary": "#c8bdb1",
-    "secondary-dark": "#353839",
-    "secondary": "#a8a8a8",
-    "secondary-light": "#cdccca",
-    "accent": "#656565",
+    "secondary-dark": "#aba095",
+    "secondary": "#444",
+    "secondary-light": "#666",
+    "accent": "#333",
     "error": "#e57373",
     "info": "#5a94dd",
     "success": "#4db6ac",
