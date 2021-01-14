@@ -6,7 +6,9 @@ fixture`Test albums`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
-test("#1 Create/delete album", async (t) => {
+test
+    .meta('testID', 'albums-001')
+    ("Create/delete album", async (t) => {
   await t.click(Selector(".nav-albums"));
   const countAlbums = await Selector("a.is-album").count;
   await t.click(Selector("button.action-add"));
@@ -19,7 +21,9 @@ test("#1 Create/delete album", async (t) => {
   await t.expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
 });
 
-test("#2 Update album", async (t) => {
+test
+    .meta('testID', 'albums-002')
+    ("Update album", async (t) => {
   await t
     .click(Selector(".nav-albums"))
     .typeText(Selector(".p-albums-search input"), "Holiday")
@@ -95,8 +99,9 @@ test("#2 Update album", async (t) => {
     .notOk();
 });
 
-//TODO test download itself + clipboard count after download
-test("#3 Download album", async (t) => {
+test
+    .meta('testID', 'albums-003')
+    ("Download album", async (t) => {
   await t.click(Selector(".nav-albums"));
   const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await page.selectFromUID(FirstAlbum);
@@ -109,7 +114,9 @@ test("#3 Download album", async (t) => {
     .ok();
 });
 
-test("#4 View folders", async (t) => {
+test
+    .meta('testID', 'albums-004')
+    ("View folders", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-folders"))
@@ -121,7 +128,9 @@ test("#4 View folders", async (t) => {
     .ok();
 });
 
-test("#5 View calendar", async (t) => {
+test
+    .meta('testID', 'albums-005')
+    ("View calendar", async (t) => {
   await t
     .click(Selector(".nav-calendar"))
     .expect(Selector("a").withText("May 2019").visible)
@@ -131,7 +140,9 @@ test("#5 View calendar", async (t) => {
 });
 
 //TODO test that sharing link works as expected
-test("#6 Create, Edit, delete sharing link", async (t) => {
+test
+    .meta('testID', 'albums-006')
+    ("Create, Edit, delete sharing link", async (t) => {
   await t.click(Selector(".nav-albums"));
   const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await page.selectFromUID(FirstAlbum);

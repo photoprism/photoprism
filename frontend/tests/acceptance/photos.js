@@ -11,7 +11,9 @@ fixture `Test photos`
 
 const page = new Page();
 
-test('#1 Scroll to top', async t => {
+test
+    .meta('testID', 'photos-001')
+    ('Scroll to top', async t => {
     await t
         .click(Selector('.nav-browse'))
         .click(Selector('.p-expand-search'));
@@ -27,7 +29,9 @@ test('#1 Scroll to top', async t => {
         .expect(getcurrentPosition()).eql(0);
 });
 
-test('#2 Download single photo/video using clipboard and fullscreen mode', async t => {
+test
+    .meta('testID', 'photos-002')
+    ('Download single photo/video using clipboard and fullscreen mode', async t => {
     await page.search('photo:true');
     const FirstPhoto = await Selector('div.is-photo').nth(0).getAttribute('data-uid');
     const SecondPhoto = await Selector('div.is-photo').nth(1).getAttribute('data-uid');
@@ -50,7 +54,9 @@ test('#2 Download single photo/video using clipboard and fullscreen mode', async
         .expect(Selector('button.action-download').visible).ok();
 });
 
-test('#3 Approve photo using approve and by adding location', async t => {
+test
+    .meta('testID', 'photos-003')
+    ('Approve photo using approve and by adding location', async t => {
     await page.openNav();
     await t
         .click(Selector('div.nav-browse + div'))
@@ -104,7 +110,9 @@ test('#3 Approve photo using approve and by adding location', async t => {
 
 });
 
-test('#4 Like/dislike photo/video', async t => {
+test
+    .meta('testID', 'photos-004')
+    ('Like/dislike photo/video', async t => {
     const FirstPhoto = await Selector('div.is-photo').nth(0).getAttribute('data-uid');
 
     await t.click(Selector('.nav-video'));
@@ -141,7 +149,9 @@ test('#4 Like/dislike photo/video', async t => {
         .expect(Selector('div').withAttribute('data-uid', FirstVideo).exists, {timeout: 5000}).notOk();
 });
 
-test('#5 Private/unprivate photo/video using clipboard and list', async t => {
+test
+    .meta('testID', 'photos-005')
+    ('Private/unprivate photo/video using clipboard and list', async t => {
     await t
         .click(Selector('.nav-browse'));
     await page.search('photo:true');
@@ -240,7 +250,9 @@ test('#5 Private/unprivate photo/video using clipboard and list', async t => {
         .expect(Selector('div').withAttribute('data-uid', SecondVideo).exists, {timeout: 5000}).ok();
 });
 
-test('#6 Archive/restore video, photos, private photos and review photos using clipboard', async t => {
+test
+    .meta('testID', 'photos-006')
+    ('Archive/restore video, photos, private photos and review photos using clipboard', async t => {
     await page.openNav();
     await t
         .click(Selector('.nav-browse'));
@@ -361,7 +373,9 @@ test('#6 Archive/restore video, photos, private photos and review photos using c
         .expect(Selector('div').withAttribute('data-uid', FirstReviewPhoto).exists, {timeout: 5000}).ok();
 });
 
-test('#7 Edit photo/video', async t => {
+test
+    .meta('testID', 'photos-007')
+    ('Edit photo/video', async t => {
     await page.openNav();
     await t
         .click(Selector('.nav-browse'))
@@ -632,7 +646,9 @@ if (FirstPhotoTitle.empty || FirstPhotoTitle === "")
         .expect(Selector('button.action-menu').exists, {timeout: 5000}).notOk();
 });
 
-test('#8 Change primary file', async t => {
+test
+    .meta('testID', 'photos-008')
+    ('Change primary file', async t => {
     await page.openNav();
     await t
         .click(Selector('.nav-browse'))
@@ -662,7 +678,9 @@ test('#8 Change primary file', async t => {
         .expect(FirstFileAfterChange).contains('photos8_2_ski.jpg');
 });
 
-test('#9 Navigate from card view to place', async t => {
+test
+    .meta('testID', 'photos-009')
+    ('Navigate from card view to place', async t => {
     await t.click(Selector('.p-expand-search'));
     await page.setFilter('view', 'Cards');
     await t
@@ -672,7 +690,9 @@ test('#9 Navigate from card view to place', async t => {
         .expect(Selector('.input-search input').value).notEql('');
 });
 
-test('#10 Ungroup files', async t => {
+test
+    .meta('testID', 'photos-010')
+    ('Ungroup files', async t => {
     await page.openNav();
     await t
         .click(Selector('.nav-browse'))
@@ -701,7 +721,9 @@ test('#10 Ungroup files', async t => {
         .expect(PhotoCountAfterUngroup).eql(2);
 });
 
-test('#11 Delete non primary file', async t => {
+test
+    .meta('testID', 'photos-011')
+    ('Delete non primary file', async t => {
     await page.openNav();
     await t
         .click(Selector('.nav-library'))
@@ -709,7 +731,6 @@ test('#11 Delete non primary file', async t => {
         .click(Selector('.input-import-folder input'), {timeout: 5000})
         .click(Selector('div.v-list__tile__title').withText('/pizza'))
         .click(Selector('.action-import'))
-        //TODO replace wait
         .wait(10000)
         .click(Selector('.nav-browse'))
         .click(Selector('.p-expand-search'));

@@ -7,7 +7,9 @@ fixture `Test labels`
 
 const page = new Page();
 
-test('#1 Remove/Activate Add/Delete Label from photo', async t => {
+test
+    .meta('testID', 'labels-001')
+    ('Remove/Activate Add/Delete Label from photo', async t => {
     await t.click(Selector('.nav-labels'));
     const countImportantLabels = await Selector('a.is-label').count;
     await t
@@ -63,7 +65,9 @@ test('#1 Remove/Activate Add/Delete Label from photo', async t => {
         .expect(Selector('a').withAttribute('data-uid', LabelBeacon).visible).ok();
 });
 
-test('#2 Rename Label', async t => {
+test
+    .meta('testID', 'labels-002')
+    ('Rename Label', async t => {
     await t.click(Selector('.nav-labels'));
     await page.search('zebra');
     const LabelZebra = await Selector('a.is-label').nth(0).getAttribute('data-uid');
@@ -108,7 +112,9 @@ test('#2 Rename Label', async t => {
         .expect(Selector('h3').withText('Couldn\'t find anything').visible).ok();
 });
 
-test('#3 Add label to album', async t => {
+test
+    .meta('testID', 'labels-003')
+    ('Add label to album', async t => {
     await t
         .click(Selector('.nav-albums'))
         .typeText(Selector('.p-albums-search input'), 'Christmas')
@@ -125,6 +131,7 @@ test('#3 Add label to album', async t => {
         .click(Selector('a.is-label').withAttribute('data-uid', LabelLandscape));
     const FirstPhotoLandscape = await Selector('div.is-photo').nth(0).getAttribute('data-uid');
     const SecondPhotoLandscape = await Selector('div.is-photo').nth(1).getAttribute('data-uid');
+    const ThirdPhotoLandscape = await Selector('div.is-photo').nth(2).getAttribute('data-uid');
     await t
         .click('.nav-labels');
     await page.selectFromUID(LabelLandscape);
@@ -141,15 +148,18 @@ test('#3 Add label to album', async t => {
         .expect(PhotoCountAfterAdd).eql(PhotoCount + 3);
     await page.selectPhotoFromUID(FirstPhotoLandscape);
     await page.selectPhotoFromUID(SecondPhotoLandscape);
+    await page.selectPhotoFromUID(ThirdPhotoLandscape);
     await page.removeSelected();
     await t
         .click('.action-reload');
     const PhotoCountAfterDelete = await Selector('div.is-photo', {timeout: 5000}).count;
     await t
-        .expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 2);
+        .expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 3);
 });
 
-test('#4 Delete label', async t => {
+test
+    .meta('testID', 'labels-004')
+    ('Delete label', async t => {
     await t
         .click(Selector('.nav-labels'));
     await page.search('dome');
@@ -174,4 +184,3 @@ test('#4 Delete label', async t => {
         .typeText(Selector('.input-label input'), 'Dome')
         .click(Selector('button.p-photo-label-add'));
 });
-

@@ -6,7 +6,9 @@ fixture `Import file from folder`
     .page`${testcafeconfig.url}`;
 
 const page = new Page();
-test("#1 Import files from folder using copy", async t => {
+test
+    .meta('testID', 'library-import-001')
+    ("Import files from folder using copy", async t => {
     await t
         .click(Selector('.nav-labels'));
     await page.search('bakery');

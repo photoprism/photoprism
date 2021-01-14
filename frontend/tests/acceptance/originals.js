@@ -7,7 +7,9 @@ fixture `Test files`
 
 const page = new Page();
 
-test('#1 Add originals files to album', async t => {
+test
+    .meta('testID', 'originals-001')
+    ('Add original files to album', async t => {
     await page.openNav();
     await t.click(Selector('.nav-albums'));
     await t
@@ -31,7 +33,7 @@ test('#1 Add originals files to album', async t => {
     const SecondItemInKanada = await Selector('div.result').nth(1).innerText;
     await t
         .expect(FirstItemInKanada).contains('BotanicalGarden')
-        .expect(SecondItemInKanada).contains('IMG')
+        .expect(SecondItemInKanada).contains('originals-001_2.jpg')
         .click(Selector('button').withText('BotanicalGarden'))
         .click(Selector('a[href="/library/files/Vacation"]'));
     await page.selectPhotoFromUID(KanadaUid);
@@ -54,7 +56,9 @@ test('#1 Add originals files to album', async t => {
     await page.deleteSelected();
 });
 
-test('#2 Download original files', async t => {
+test
+    .meta('testID', 'originals-002')
+    ('Download original files', async t => {
     await page.openNav();
     await t
         .click(Selector('div.nav-library + div'))

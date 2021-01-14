@@ -7,7 +7,9 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture`Test places page`
     .page`${testcafeconfig.url}`;
 
-test('#1 Test places', async t => {
+test
+    .meta('testID', 'places-001')
+    ('Test places', async t => {
     await t
         .click(Selector('.nav-places'))
         .expect(Selector('#map').exists, {timeout: 15000}).ok()
@@ -20,7 +22,9 @@ test('#1 Test places', async t => {
         .expect(getLocation()).contains('Berlin');
 });
 
-test('#2 Open photo from places', async t => {
+test
+    .meta('testID', 'places-002')
+    ('Open photo from places', async t => {
    //TODO replace wait
     if (t.browser.name === 'Firefox') {
         console.log("Test skipped in firefox");

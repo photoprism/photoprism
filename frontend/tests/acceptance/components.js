@@ -7,20 +7,26 @@ fixture`Test components`
 
 const page = new Page();
 
-test('#1 Test filter options', async t => {
+test
+    .meta('testID', 'components-001')
+    ('Test filter options', async t => {
     await t
         .click('button.p-expand-search')
         .expect(Selector('body').withText('object Object').exists).notOk();
 });
 
-test('#2 Fullscreen mode', async t => {
+test
+    .meta('testID', 'components-002')
+    ('Fullscreen mode', async t => {
     await t
         .click(Selector('div.v-image__image').nth(0))
         .expect(Selector('#p-photo-viewer').visible).ok()
         .expect(Selector('img.pswp__img').visible).ok();
 });
 
-test('#3 Mosaic view', async t => {
+test
+    .meta('testID', 'components-003')
+    ('Mosaic view', async t => {
     await t
         .click('button.p-expand-search');
     await page.setFilter('view', 'Mosaic');
@@ -31,7 +37,9 @@ test('#3 Mosaic view', async t => {
         .expect(Selector('#p-photo-viewer').visible).notOk();
 });
 
-test('#4 List view', async t => {
+test
+    .meta('testID', 'components-004')
+    ('List view', async t => {
     await t
         .click('button.p-expand-search');
     await page.setFilter('view', 'List');
@@ -40,7 +48,9 @@ test('#4 List view', async t => {
         .expect(Selector('div.list-view').visible).ok();
 });
 
-test('#5 card view', async t => {
+test
+    .meta('testID', 'components-005')
+    ('#Card view', async t => {
     await t
         .click('button.p-expand-search');
     await page.setFilter('view', 'Cards');

@@ -7,7 +7,9 @@ fixture `Test settings`
 
 const page = new Page();
 
-test('#1 Settings', async t => {
+test
+    .meta('testID', 'settings-general-001')
+    ('General Settings', async t => {
     await page.openNav();
     await t
         .expect(Selector('.action-upload').exists, {timeout: 5000}).ok()
@@ -28,7 +30,7 @@ test('#1 Settings', async t => {
         .click(Selector('.action-close'))
         .expect(Selector('button.action-location').visible).ok()
         .click(Selector('button.action-title-edit').nth(0))
-        .expect(Selector('.input-title input').hasAttribute('disabled')).notOk()
+        .expect(Selector('.input-title input', {timeout: 5000}).hasAttribute('disabled')).notOk()
         .click(Selector('#tab-labels'))
         .expect(Selector('button.p-photo-label-add').visible).ok()
         .click(Selector('#tab-details'))

@@ -6,7 +6,9 @@ fixture `Test index`
     .page`${testcafeconfig.url}`;
 
 const page = new Page();
-test('#1 Index files from folder', async t => {
+test
+    .meta('testID', 'library-index-001')
+    ('Index files from folder', async t => {
     await t
         .click(Selector('.nav-labels'));
     await page.search('cheetah');
