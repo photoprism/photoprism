@@ -138,7 +138,7 @@ test('#3 Add label to album', async t => {
         .click(Selector('a.is-album').withAttribute('data-uid', AlbumUid));
     const PhotoCountAfterAdd = await Selector('div.is-photo', {timeout: 5000}).count;
     await t
-        .expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
+        .expect(PhotoCountAfterAdd).eql(PhotoCount + 3);
     await page.selectPhotoFromUID(FirstPhotoLandscape);
     await page.selectPhotoFromUID(SecondPhotoLandscape);
     await page.removeSelected();

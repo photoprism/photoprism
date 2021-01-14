@@ -1,27 +1,15 @@
 import { Selector } from 'testcafe';
 import testcafeconfig from './testcafeconfig';
 import Page from "./page-model";
-import { RequestLogger } from 'testcafe';
 import { ClientFunction } from 'testcafe';
-
-const logger = RequestLogger( /http:\/\/localhost\/api\/v1\/photos*/ , {
-    logResponseHeaders: true,
-    logResponseBody:    true
-});
 
 const scroll = ClientFunction((x, y) => window.scrollTo(x, y));
 const getcurrentPosition = ClientFunction(() => window.pageYOffset);
 
 fixture `Test photos`
-    .page`${testcafeconfig.url}`
-    .requestHooks(logger);
+    .page`${testcafeconfig.url}`;
 
 const page = new Page();
-
-//TODO raw file icon? live photo icon? - search for type look for icon --> do it in search test
-//TODO Share photo
-//TODO Check count in navi gets updated --> gt/lt or matches count of images
-//TODO videos - play video
 
 test('#1 Scroll to top', async t => {
     await t
@@ -67,7 +55,6 @@ test('#3 Approve photo using approve and by adding location', async t => {
     await t
         .click(Selector('div.nav-browse + div'))
         .click(Selector('.nav-review'));
-    logger.clear();
     await page.search('type:image');
     const FirstPhoto = await Selector('div.is-photo').nth(0).getAttribute('data-uid');
     const SecondPhoto = await Selector('div.is-photo').nth(1).getAttribute('data-uid');

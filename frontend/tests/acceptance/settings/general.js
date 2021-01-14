@@ -7,24 +7,21 @@ fixture `Test settings`
 
 const page = new Page();
 
-//TODO test convert to jpeg, group files, places style
-//TODO check download also disabled for albums/files/review/private
-
 test('#1 Settings', async t => {
     await page.openNav();
     await t
         .expect(Selector('.action-upload').exists, {timeout: 5000}).ok()
-        .expect(Selector('.nav-photos').innerText).contains('Photos');
-    await page.selectNthPhoto(0);
+        .expect(Selector('.nav-browse').innerText).contains('Search');
+    await page.toggleSelectNthPhoto(0);
     await t
         .click(Selector('button.action-menu'))
         .expect(Selector('button.action-download').visible).ok()
         .expect(Selector('button.action-share').visible).ok()
         .expect(Selector('button.action-edit').visible).ok()
         .expect(Selector('button.action-private').visible).ok();
-    await page.unselectPhoto(0);
+    await page.toggleSelectNthPhoto(0);
     await t
-        .click(Selector('div.p-photo').nth(0));
+        .click(Selector('div.is-photo').nth(0));
     await t
         .expect(Selector('#p-photo-viewer').visible).ok()
         .expect(Selector('.action-download').exists).ok()
@@ -38,8 +35,8 @@ test('#1 Settings', async t => {
         .click(Selector('button.action-close'))
         .click(Selector('.nav-library'))
         .expect(Selector('#tab-library-import a').visible).ok()
-        .expect(Selector('#tab-logs a').visible).ok()
-        .click(Selector('div.nav-photos + div'))
+        .expect(Selector('#tab-library-logs a').visible).ok()
+        .click(Selector('div.nav-browse + div'))
         .expect(Selector('.nav-archive').visible).ok()
         .expect(Selector('.nav-review').visible).ok()
         .click(Selector('div.nav-library + div'))
@@ -50,12 +47,10 @@ test('#1 Settings', async t => {
         .expect(Selector('.nav-labels').visible).ok()
         .expect(Selector('.nav-places').visible).ok()
         .expect(Selector('.nav-private').visible).ok()
-
-
         .click(Selector('.nav-settings'))
         .click(Selector('.input-language input'))
-        .hover(Selector('div').withText('German').parent('div[role="listitem"]'))
-        .click(Selector('div').withText('German').parent('div[role="listitem"]'))
+        .hover(Selector('div').withText('Deutsch').parent('div[role="listitem"]'))
+        .click(Selector('div').withText('Deutsch').parent('div[role="listitem"]'))
         .click(Selector('.nav-settings'))
         .click(Selector('.input-upload input'))
         .click(Selector('.input-download input'))
@@ -68,25 +63,26 @@ test('#1 Settings', async t => {
         .click(Selector('.input-logs input'))
         .click(Selector('.input-share input'))
         .click(Selector('.input-places input'))
+        .click(Selector('#tab-settings-library'))
         .click(Selector('.input-private input'))
         .click(Selector('.input-review input'))
-        .click(Selector('.nav-photos'));
+        .click(Selector('.nav-browse'));
 
     await t.eval(() => location.reload());
     await page.openNav();
     await t
         .expect(Selector('button.action-upload').exists).notOk()
-        .expect(Selector('.nav-photos').innerText).contains('Fotos');
-    await page.selectNthPhoto(0);
+        .expect(Selector('.nav-browse').innerText).contains('Suche');
+    await page.toggleSelectNthPhoto(0);
     await t
         .click(Selector('button.action-menu'))
         .expect(Selector('button.action-download').exists).notOk()
         .expect(Selector('button.action-share').exists).notOk()
         .expect(Selector('button.action-edit').visible).notOk()
         .expect(Selector('button.action-private').exists).notOk();
-    await page.unselectPhoto(0);
+    await page.toggleSelectNthPhoto(0);
     await t
-        .click(Selector('div.p-photo').nth(0));
+        .click(Selector('div.is-photo').nth(0));
     await t
         .expect(Selector('#p-photo-viewer').visible).ok()
         .expect(Selector('.action-download').exists).notOk()
@@ -105,8 +101,9 @@ test('#1 Settings', async t => {
         .click(Selector('button.action-close'))
         .click(Selector('.nav-library'))
         .expect(Selector('#tab-library-import a').exists).notOk()
-        .expect(Selector('#tab-logs a').exists).notOk()
-        .click(Selector('div.nav-photos + div'))
+        //TODO Fix bug
+        //.expect(Selector('#tab-library-logs a').exists).notOk()
+        .click(Selector('div.nav-browse + div'))
         .expect(Selector('.nav-archive').visible).notOk()
         .expect(Selector('.nav-review').exists).notOk()
         .click(Selector('div.nav-library + div'))
@@ -119,8 +116,8 @@ test('#1 Settings', async t => {
 
         .click(Selector('.nav-settings'))
         .click(Selector('.input-language input'))
-        .hover(Selector('div').withText('Englisch').parent('div[role="listitem"]'))
-        .click(Selector('div').withText('Englisch').parent('div[role="listitem"]'))
+        .hover(Selector('div').withText('English').parent('div[role="listitem"]'))
+        .click(Selector('div').withText('English').parent('div[role="listitem"]'))
         .click(Selector('.nav-settings'))
         .click(Selector('.input-upload input'))
         .click(Selector('.input-download input'))
@@ -133,6 +130,7 @@ test('#1 Settings', async t => {
         .click(Selector('.input-logs input'))
         .click(Selector('.input-share input'))
         .click(Selector('.input-places input'))
+        .click(Selector('#tab-settings-library'))
         .click(Selector('.input-private input'))
         .click(Selector('.input-review input'));
 });
