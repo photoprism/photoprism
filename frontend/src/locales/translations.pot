@@ -1200,7 +1200,7 @@ msgstr ""
 #: src/component/photo/cards.vue:205
 #: src/component/photo/mosaic.vue:189
 #: src/options/options.js:234
-#: src/share/photo/cards.vue:182
+#: src/share/photo/cards.vue:179
 #: src/share/photo/mosaic.vue:170
 msgid "Live"
 msgstr ""
@@ -1609,7 +1609,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:256
 #: src/component/photo/mosaic.vue:241
-#: src/share/photo/cards.vue:233
+#: src/share/photo/cards.vue:230
 #: src/share/photo/mosaic.vue:222
 msgid "Play"
 msgstr ""
@@ -1702,7 +1702,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:195
 #: src/component/photo/mosaic.vue:179
-#: src/share/photo/cards.vue:172
+#: src/share/photo/cards.vue:169
 #: src/share/photo/mosaic.vue:160
 msgid "RAW"
 msgstr ""
@@ -1991,7 +1991,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:215
 #: src/component/photo/mosaic.vue:199
-#: src/share/photo/cards.vue:192
+#: src/share/photo/cards.vue:189
 #: src/share/photo/mosaic.vue:180
 msgid "Stack"
 msgstr ""
@@ -2308,7 +2308,7 @@ msgstr ""
 #: src/component/photo/cards.vue:232
 #: src/component/photo/mosaic.vue:217
 #: src/component/photo/toolbar.vue:230
-#: src/share/photo/cards.vue:209
+#: src/share/photo/cards.vue:206
 #: src/share/photo/mosaic.vue:198
 msgid "View"
 msgstr ""
