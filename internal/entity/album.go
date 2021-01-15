@@ -285,9 +285,14 @@ func (m *Album) String() string {
 	return "[unknown album]"
 }
 
-// Checks if the album is of type moment.
+// IsMoment checks if the album is of type moment.
 func (m *Album) IsMoment() bool {
 	return m.AlbumType == AlbumMoment
+}
+
+// UnknownCountry checks if the album has an unknown country.
+func (m *Album) UnknownCountry() bool {
+	return m.AlbumCountry == UnknownCountry.ID
 }
 
 // SetTitle changes the album name.
@@ -313,7 +318,7 @@ func (m *Album) SetTitle(title string) {
 	}
 }
 
-// Saves the entity using form data and stores it in the database.
+// SaveForm saves the entity using form data and stores it in the database.
 func (m *Album) SaveForm(f form.Album) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err
@@ -357,6 +362,17 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 	return nil
 }
 
+// UpdateCountry updates the country associated with the album, if one has not been yet set.
+// TODO: When and how to invoke this?
+func (m *Album) UpdateCountry() {
+	if m.UnknownCountry() {
+		m.EstimateCountry()
+	}
+
+	// TODO: So far the country has only been updated in the model class, but this has to be saved in the database and the sidecars, is this the correct way? 🤔
+	m.Save()
+}
+
 // Save updates the existing or inserts a new row.
 func (m *Album) Save() error {
 	return Db().Save(m).Error
@@ -381,7 +397,7 @@ func (m *Album) Create() error {
 	return nil
 }
 
-// Returns the album title.
+// Title returns the album title.
 func (m *Album) Title() string {
 	return m.AlbumTitle
 }
