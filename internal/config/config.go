@@ -270,6 +270,11 @@ func (c *Config) Demo() bool {
 	return c.options.Demo
 }
 
+// Your continuous support helps to pay for development, hosting, and external services like satellite maps.
+func (c *Config) Sponsor() bool {
+	return c.options.Sponsor
+}
+
 // Public tests if app runs in public mode and requires no authentication.
 func (c *Config) Public() bool {
 	if c.Demo() {

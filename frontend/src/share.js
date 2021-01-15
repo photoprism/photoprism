@@ -86,7 +86,7 @@ Vue.prototype.$isMobile = isMobile;
 Vue.prototype.$rtl = rtl;
 
 // Register Vuetify
-Vue.use(Vuetify, { rtl, theme: config.theme });
+Vue.use(Vuetify, { rtl, theme: config.theme.colors });
 
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {

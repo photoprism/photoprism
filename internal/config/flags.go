@@ -19,6 +19,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DEMO",
 	},
 	cli.BoolFlag{
+		Name:   "sponsor",
+		Hidden: true,
+		Usage:  "your continuous support helps to pay for development, hosting, and external services like satellite maps",
+		EnvVar: "PHOTOPRISM_SPONSOR",
+	},
+	cli.BoolFlag{
 		Name:   "public, p",
 		Usage:  "no authentication required, disables password protection",
 		EnvVar: "PHOTOPRISM_PUBLIC",

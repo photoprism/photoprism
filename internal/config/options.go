@@ -35,6 +35,7 @@ type Options struct {
 	Copyright         string `json:"-"`
 	Debug             bool   `yaml:"Debug" json:"Debug" flag:"debug"`
 	Demo              bool   `yaml:"Demo" json:"-" flag:"demo"`
+	Sponsor           bool   `yaml:"-" json:"-" flag:"sponsor"`
 	Public            bool   `yaml:"Public" json:"-" flag:"public"`
 	ReadOnly          bool   `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental      bool   `yaml:"Experimental" json:"Experimental" flag:"experimental"`

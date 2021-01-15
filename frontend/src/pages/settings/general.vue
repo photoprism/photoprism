@@ -14,8 +14,8 @@
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="px-2 pb-2">
               <v-select
-                  :disabled="busy"
                   v-model="settings.ui.theme"
+                  :disabled="busy"
                   :items="options.Themes()"
                   :label="$gettext('Theme')"
                   color="secondary-dark"
@@ -28,8 +28,8 @@
 
             <v-flex xs12 sm6 class="px-2 pb-2">
               <v-select
-                  :disabled="busy"
                   v-model="settings.ui.language"
+                  :disabled="busy"
                   :items="options.Languages()"
                   :label="$gettext('Language')"
                   color="secondary-dark"
@@ -240,8 +240,8 @@
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="px-2 pb-2">
               <v-select
-                  :disabled="busy"
                   v-model="settings.maps.style"
+                  :disabled="busy"
                   :items="options.MapsStyle()"
                   :label="$gettext('Style')"
                   color="secondary-dark"
@@ -254,8 +254,8 @@
 
             <v-flex xs12 sm6 class="px-2 pb-2">
               <v-select
-                  :disabled="busy"
                   v-model="settings.maps.animate"
+                  :disabled="busy"
                   :items="options.MapsAnimate()"
                   :label="$gettext('Animation')"
                   color="secondary-dark"
@@ -307,7 +307,7 @@ export default {
       this.$config.load().then(() => {
         this.settings.setValues(this.$config.settings());
         this.busy = false;
-      })
+      });
     },
     onChange() {
       const reload = this.settings.changed("ui", "language");
