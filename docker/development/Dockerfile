@@ -154,5 +154,9 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 EXPOSE 2342 2343 9515
 VOLUME /var/lib/photoprism
 
-# Keep container running (services can be started manually using a terminal)
-CMD tail -f /dev/null
+# Configure entrypoint
+COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Run server
+CMD ["tail", "-f", "/dev/null"]

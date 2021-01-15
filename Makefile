@@ -9,6 +9,7 @@ export GO111MODULE=on
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
+UID=`(id -u)`
 
 HASRICHGO := $(shell which richgo)
 
@@ -51,7 +52,7 @@ start:
 stop:
 	go run cmd/photoprism/photoprism.go stop
 terminal:
-	docker-compose exec photoprism bash
+	docker-compose exec -u $(UID) photoprism bash
 root-terminal:
 	docker-compose exec -u root photoprism bash
 migrate:
