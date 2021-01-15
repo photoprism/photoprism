@@ -27,7 +27,7 @@
                   item-key="ID"
                   :no-data-text="notFoundMessage"
     >
-      <template slot="items" slot-scope="props">
+      <template slot:items="props">
         <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
           <v-img :key="props.item.Hash"
                  :src="props.item.thumbnailUrl('tile_50')"
