@@ -74,7 +74,10 @@ export default {
         'readonly': false,
         'demo': true,
       },
-      {
+    ];
+    
+    if(this.$config.feature('logs')) {
+      tabs.push({
         'name': 'library-logs',
         'component': Logs,
         'label': this.$gettext('Logs'),
@@ -83,8 +86,8 @@ export default {
         'icon': 'notes',
         'readonly': true,
         'demo': true,
-      },
-    ];
+      });
+    }
 
     if (isDemo) {
       initTabs("demo", tabs);
