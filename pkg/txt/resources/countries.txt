@@ -1,12 +1,16 @@
 AD:Andorra
 FR:France
 FR:Frankreich
+SK:Bratislava
 SK:Slovakia
 AT:Austria
+AT:Hallstatt
 AT:Wörthersee
 AT:Österreich
 AT:Vienna
+AT:Wien
 AT:Salzburg
+AT:Sölden
 AT:Klagenfurt
 AT:Innsbruck
 HU:Hungary
@@ -23,10 +27,14 @@ DK:Denmark
 MM:Myanmar
 CZ:Czechia
 CZ:Czech
+CZ:Karlovy Vary
 CH:Zurich
 CH:Zürich
 CH:St Gallen
 CH:Basel
+CH:Interlaken
+CH:Lauterbrunnen
+CH:Grindelwald
 CH:Lucerne
 CH:Luzern
 CH:Switzerland
@@ -73,6 +81,7 @@ DE:Wilmersdorf
 DE:Tempelhof
 DE:Schönefeld
 DE:Reichstag
+DE:Kassel
 DE:Kreuzberg
 DE:Ostsee
 DE:Nordsee
@@ -86,6 +95,7 @@ DE:Bisingen
 DE:Balingen
 DE:Hechingen
 DE:Swabian
+DE:Schwarzwald
 DE:Schwäbische
 DE:Albtrauf
 DE:München
@@ -96,15 +106,19 @@ DE:Leipzig
 DE:Schwerin
 DE:Greifswald
 DE:Dresden
+DE:Nebelhorn
+DE:Neuschwanstein
 DE:Nürnberg
 DE:Würzburg
 DE:Munich
 DE:Frankfurt
+DE:Freiburg
 DE:Brandenburg
 DE:Hamburg
 DE:Tübingen
 DE:Tubingen
 DE:Köln
+DE:Königsee
 DE:Dortmund
 DE:Düsseldorf
 DE:Cologne
@@ -121,6 +135,8 @@ DE:Speyer
 DE:Marburg
 DE:Mechtersheim
 DE:Dürkheim
+DE:Ulm
+DE:Zugspitze
 LV:Latvia
 LV:Lettland
 LT:Lithuania
@@ -179,15 +195,22 @@ US:United States
 MN:Mongolia
 CL:Chile
 RW:Rwanda
+TR:Istanbul
 TR:Turkey
+TR:Türkei
 KG:Kyrgyzstan
 BT:Bhutan
+NP:Everest
+NP:Kathmandu
 NP:Nepal
 BD:Bangladesh
 JO:Jordan
 SY:Syria
 LB:Lebanon
 BG:Bulgaria
+BG:Koprivshtitsa
+BG:Melnik
+BG:Sofia
 GR:Greece
 GR:Hellas
 KP:North Korea
@@ -236,6 +259,7 @@ UZ:Uzbekistan
 TJ:Tajikistan
 KZ:Kazakhstan
 HR:Croatia
+SI:Ljubljana
 SI:Slovenia
 TM:Turkmenistan
 BO:Bolivia
@@ -291,8 +315,11 @@ PG:New Guinea
 AM:Armenia
 AZ:Azerbaijan
 MT:Malta
+IT:Como
+IT:Cortina d'Ampezzo
 IT:Italy
 IT:Milan
+IT:Milano
 IT:Mailand
 IT:Neapel
 IT:Palermo
@@ -301,7 +328,10 @@ IT:Florenz
 IT:Bologna
 IT:Venezia
 IT:Venedig
+IT:Venice
 IT:Italien
+IT:Sicily
+IT:Trieste
 JE:Jersey Island
 BH:Bahrain
 JP:Japan
@@ -413,11 +443,15 @@ FK:Falkland Island
 PN:Pitcairn Island
 TK:Tokelau
 TO:Tonga
+FR:Chamonix
 FR:Réunion
 FR:Strassburg
 FR:Strasbourg
 FR:Straßburg
 FR:Paris
+NL:Amsterdam
+NL:Beekse Bergen
+NL:Eindhoven
 NL:Netherlands
 NL:Holland
 TD:Chad
