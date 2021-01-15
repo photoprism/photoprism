@@ -26,8 +26,9 @@ install: install-bin install-assets
 test: test-js test-go
 test-go: reset-test-db run-test-go
 test-short: reset-test-db run-test-short
-acceptance-all: acceptance-start acceptance acceptance-restart acceptance-firefox stop
-test-all: test acceptance-all
+acceptance-run-chromium: acceptance-restart acceptance stop
+acceptance-run-firefox: acceptance-restart acceptance-firefox stop
+test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
@@ -35,7 +36,6 @@ clean-install: clean-local dep build-js install-bin install-assets
 acceptance-start:
 	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --disable-exiftool --disable-backups start -d
 acceptance-restart:
-	go run cmd/photoprism/photoprism.go stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
 	rm -rf storage/acceptance/originals/2010
