@@ -143,6 +143,10 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 		s = s.Where("albums.album_location IN (?)", strings.Split(f.Location, Or))
 	}
 
+	if f.Country != "" {
+		s = s.Where("albums.album_country IN (?)", strings.Split(f.Country, Or))
+	}
+
 	if f.Favorite {
 		s = s.Where("albums.album_favorite = 1")
 	}
@@ -199,7 +203,7 @@ func UpdateAlbumDates() error {
 func UpdateMissingAlbumEntries() error {
 	switch DbDialect() {
 	default:
-		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 1 WHERE photo_uid IN 
+		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 1 WHERE photo_uid IN
 		(SELECT photo_uid FROM photos WHERE deleted_at IS NOT NULL OR photo_quality < 0)`).Error
 	}
 }
