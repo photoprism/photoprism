@@ -27,14 +27,17 @@
                   item-key="ID"
                   :no-data-text="notFoundMessage"
     >
-      <template slot:items="props">
+      <template #items="props">
         <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
           <v-img :key="props.item.Hash"
                  :src="props.item.thumbnailUrl('tile_50')"
                  :alt="props.item.Title"
                  :transition="false"
                  aspect-ratio="1"
+                 style="user-select: none"
                  class="accent lighten-2 clickable"
+                 @touchstart="onMouseDown($event, props.index)"
+                 @touchend.stop.prevent="onClick($event, props.index)"
                  @mousedown="onMouseDown($event, props.index)"
                  @contextmenu="onContextMenu($event, props.index)"
                  @click.stop.prevent="onClick($event, props.index)"
@@ -127,6 +130,7 @@ export default {
       hidePrivate: this.$config.values.settings.features.private,
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
     };
@@ -148,10 +152,16 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selectMode) {
         if (longClick || ev.shiftKey) {

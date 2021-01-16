@@ -149,6 +149,7 @@ export default {
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
       lastId: "",
@@ -248,10 +249,16 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selection.length > 0) {
         ev.preventDefault();

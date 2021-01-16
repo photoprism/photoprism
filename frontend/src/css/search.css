@@ -1,3 +1,10 @@
+#photoprism .cards-view,
+#photoprism .mosaic-view,
+#photoprism .cards-view .v-card,
+#photoprism .mosaic-view .v-card {
+    user-select: none !important;
+}
+
 #photoprism .p-col-select {
     width: 66px;
 }

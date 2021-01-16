@@ -24,6 +24,7 @@
         <v-card tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
+                style="user-select: none"
                 class="result accent lighten-3"
                 :class="photo.classes()"
                 @contextmenu="onContextMenu($event, index)">
@@ -35,6 +36,8 @@
                  :transition="false"
                  aspect-ratio="1"
                  class="accent lighten-2 clickable"
+                 @touchstart="onMouseDown($event, index)"
+                 @touchend.stop.prevent="onClick($event, index)"
                  @mousedown="onMouseDown($event, index)"
                  @click.stop.prevent="onClick($event, index)"
                  @mouseover="playLive(photo)"
@@ -49,6 +52,8 @@
 
             <v-btn :ripple="false" :depressed="false" class="input-open"
                    icon flat absolute
+                   @touchstart.stop.prevent="openPhoto(index, true)"
+                   @touchend.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">adjust</v-icon>
@@ -57,12 +62,16 @@
 
             <v-btn :ripple="false" :depressed="false" class="input-view"
                    icon flat absolute :title="$gettext('View')"
+                   @touchstart.stop.prevent="openPhoto(index, false)"
+                   @touchend.stop.prevent
                    @click.stop.prevent="openPhoto(index, false)">
               <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
             </v-btn>
 
             <v-btn :ripple="false" :depressed="false" color="white" class="input-play"
                    outline fab absolute :title="$gettext('Play')"
+                   @touchstart.stop.prevent="openPhoto(index, true)"
+                   @touchend.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
@@ -70,6 +79,8 @@
             <v-btn :ripple="false"
                    icon flat absolute
                    class="input-select"
+                   @touchstart.stop.prevent="onSelect($event, index)"
+                   @touchend.stop.prevent
                    @click.stop.prevent="onSelect($event, index)">
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
@@ -91,7 +102,7 @@
               <div class="caption">
                 <div>
                   <v-icon size="14" :title="labels.taken">date_range</v-icon>
-                  {{ photo.getDateString() }}
+                  {{ photo.getDateString(true) }}
                 </div>
                 <template v-if="!photo.Description">
                   <div v-if="photo.Type === 'video'" :title="labels.video">
@@ -153,6 +164,7 @@ export default {
       },
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
     };
@@ -185,10 +197,16 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selectMode) {
         if (longClick || ev.shiftKey) {

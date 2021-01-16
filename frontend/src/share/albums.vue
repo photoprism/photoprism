@@ -36,9 +36,10 @@
           >
             <v-card tile
                     :data-uid="album.UID"
+                    style="user-select: none"
                     class="result accent lighten-3"
                     :class="album.classes(selection.includes(album.UID))"
-                    :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
+                    :to="album.route(view)"
                     @contextmenu="onContextMenu($event, index)"
             >
               <div class="card-background accent lighten-3"></div>
@@ -48,12 +49,16 @@
                   :transition="false"
                   aspect-ratio="1"
                   class="accent lighten-2 clickable"
+                  @touchstart="onMouseDown($event, index)"
+                  @touchend.stop.prevent="onClick($event, index)"
                   @mousedown="onMouseDown($event, index)"
-                  @click="onClick($event, index)"
+                  @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
+                       @touchstart.stop.prevent="onSelect($event, index)"
+                       @touchend.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
@@ -143,6 +148,7 @@ export default {
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
       lastId: "",
@@ -245,20 +251,25 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selection.length > 0) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
         if (longClick || ev.shiftKey) {
           this.selectRange(index, this.results);
         } else {
           this.toggleSelection(this.results[index].getId());
         }
+      } else {
+        this.$router.push(this.results[index].route(this.view));
       }
     },
     onContextMenu(ev, index) {
