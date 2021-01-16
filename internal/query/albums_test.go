@@ -98,6 +98,17 @@ func TestAlbumSearch(t *testing.T) {
 		assert.Equal(t, "Holiday2030", result[0].AlbumTitle)
 	})
 
+	t.Run("search with country", func(t *testing.T) {
+		query := form.NewAlbumSearch("country:de")
+		result, err := AlbumSearch(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Berlin 2019", result[0].AlbumTitle)
+	})
+
 	t.Run("favorites true", func(t *testing.T) {
 		query := form.NewAlbumSearch("favorite:true count:10000")
 
