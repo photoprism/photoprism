@@ -82,6 +82,11 @@ export const Languages = () => [
     value: "en",
   },
   {
+    text: "Čeština",
+    translated: $gettext("Czech"),
+    value: "cs",
+  },
+  {
     text: "Deutsch",
     translated: $gettext("German"),
     value: "de",
@@ -146,11 +151,6 @@ export const Languages = () => [
     text: "日本語",
     translated: $gettext("Japanese"),
     value: "ja_JP",
-  },
-  {
-    text: "Čeština",
-    translated: $gettext("Czech"),
-    value: "cs",
   },
 ];
 
