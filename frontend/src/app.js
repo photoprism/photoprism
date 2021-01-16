@@ -111,6 +111,19 @@ const router = new Router({
   routes: Routes,
   mode: "history",
   saveScrollPosition: true,
+  scrollBehavior: (to, from, savedPosition) => {
+    if (savedPosition) {
+      return new Promise((resolve) => {
+        Notify.ajaxWait().then(() => {
+          setTimeout(() => {
+            resolve(savedPosition);
+          }, 200);
+        });
+      });
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
 });
 
 router.beforeEach((to, from, next) => {

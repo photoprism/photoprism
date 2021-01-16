@@ -283,6 +283,19 @@ export default {
     }
   },
   methods: {
+    searchCount() {
+      const offset = parseInt(window.localStorage.getItem("albums_offset"));
+
+      if(this.offset > 0 || !offset) {
+        return this.batchSize;
+      }
+
+      return offset + this.batchSize;
+    },
+    setOffset(offset) {
+      this.offset = offset;
+      window.localStorage.setItem("albums_offset", offset);
+    },
     share(album) {
       this.model = album;
       this.dialog.share = true;
@@ -382,19 +395,19 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      Album.search(params).then(response => {
-        this.results = this.dirty ? response.models : this.results.concat(response.models);
+      Album.search(params).then(resp => {
+        this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (response.models.length < count);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.offset = offset;
+          this.setOffset(resp.offset);
 
           if (this.results.length > 1) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), {n: this.results.length}));
           }
         } else {
-          this.offset = offset + count;
+          this.setOffset(resp.offset + resp.limit);
           this.page++;
 
           this.$nextTick(() => {
@@ -434,7 +447,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.batchSize,
+        count: this.searchCount(),
         offset: this.offset,
       };
 
@@ -464,12 +477,11 @@ export default {
 
       const params = this.searchParams();
 
-      Album.search(params).then(response => {
-        this.offset = this.batchSize;
+      Album.search(params).then(resp => {
+        this.offset = resp.limit;
+        this.results = resp.models;
 
-        this.results = response.models;
-
-        this.scrollDisabled = (response.models.length < this.batchSize);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
           if (!this.results.length) {

@@ -196,6 +196,19 @@ export default {
     }
   },
   methods: {
+    searchCount() {
+      const offset = parseInt(window.localStorage.getItem("labels_offset"));
+
+      if(this.offset > 0 || !offset) {
+        return this.batchSize;
+      }
+
+      return offset + this.batchSize;
+    },
+    setOffset(offset) {
+      this.offset = offset;
+      window.localStorage.setItem("labels_offset", offset);
+    },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
         console.warn("selectRange() - invalid arguments:", rangeEnd, models);
@@ -332,18 +345,18 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      Label.search(params).then(response => {
-        this.results = this.dirty ? response.models : this.results.concat(response.models);
+      Label.search(params).then(resp => {
+        this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (response.models.length < count);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.offset = offset;
+          this.setOffset(resp.offset);
           if (this.results.length > 1) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), {n: this.results.length}));
           }
         } else {
-          this.offset = offset + count;
+          this.setOffset(resp.offset + resp.limit);
           this.page++;
 
           this.$nextTick(() => {
@@ -383,7 +396,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.batchSize,
+        count: this.searchCount(),
         offset: this.offset,
       };
 
@@ -421,12 +434,11 @@ export default {
 
       const params = this.searchParams();
 
-      Label.search(params).then(response => {
-        this.offset = this.batchSize;
+      Label.search(params).then(resp => {
+        this.offset = resp.limit;
+        this.results = resp.models;
 
-        this.results = response.models;
-
-        this.scrollDisabled = (response.models.length < this.batchSize);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
           this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
