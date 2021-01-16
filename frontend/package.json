@@ -40,7 +40,7 @@
     "css-loader": "^2.1.1",
     "cssnano": "^4.1.10",
     "easygettext": "^2.16.1",
-    "eslint": "^7.17.0",
+    "eslint": "^7.18.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-formatter-pretty": "^4.0.0",
