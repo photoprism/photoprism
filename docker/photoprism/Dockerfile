@@ -1,4 +1,4 @@
-FROM photoprism/development:20210115 as build
+FROM photoprism/development:20210117 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -115,12 +115,13 @@ COPY --from=build /root/.photoprism/assets /photoprism/assets
 # Create directories
 RUN mkdir -p \
     /var/lib/photoprism \
+    /tmp/photoprism \
     /photoprism/originals \
     /photoprism/import \
     /photoprism/storage/config \
     /photoprism/storage/cache && \
-    chown -R photoprism:photoprism /photoprism /var/lib/photoprism && \
-    chmod -R a+rw /photoprism /var/lib/photoprism
+    chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
+    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism
 
 # Show photoprism version
 RUN photoprism -v

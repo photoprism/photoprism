@@ -7,11 +7,11 @@ ARG BUILD_TAG
 ENV DEBIAN_FRONTEND noninteractive
 
 # Configure apt-get
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
-RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends
-RUN echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests
-RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes
-RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
+    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
+    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install dev / build dependencies
 RUN apt-get update && apt-get upgrade && \
@@ -201,12 +201,13 @@ COPY --from=build /root/.photoprism/assets /photoprism/assets
 # Create directories
 RUN mkdir -p \
     /var/lib/photoprism \
+    /tmp/photoprism \
     /photoprism/originals \
     /photoprism/import \
     /photoprism/storage/config \
     /photoprism/storage/cache && \
-    chown -R photoprism:photoprism /photoprism /var/lib/photoprism && \
-    chmod -R a+rw /photoprism /var/lib/photoprism
+    chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
+    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism
 
 # Show photoprism version
 RUN photoprism -v
