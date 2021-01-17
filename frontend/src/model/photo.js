@@ -38,7 +38,6 @@ import countries from "options/countries.json";
 import { $gettext } from "common/vm";
 import Clipboard from "common/clipboard";
 import download from "common/download";
-import Notify from "../common/notify";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
@@ -409,8 +408,6 @@ export class Photo extends RestModel {
   }
 
   downloadAll() {
-    Notify.success(this.$gettext("Downloading…"));
-
     if (!this.Files) {
       download(
         `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`,
