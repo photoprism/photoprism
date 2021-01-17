@@ -1,15 +1,15 @@
 <template>
   <div>
-    <v-container fluid class="pa-0" v-if="selection.length > 0">
+    <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial
-          fixed bottom right
+          id="t-clipboard" v-model="expanded" fixed
+          bottom
+          right
           direction="top"
-          v-model="expanded"
           transition="slide-y-reverse-transition"
           class="p-clipboard p-album-clipboard"
-          id="t-clipboard"
       >
-        <template v-slot:activator>
+        <template #activator>
           <v-btn
               fab dark
               color="accent darken-2"
@@ -24,9 +24,9 @@
             fab dark small
             :title="$gettext('Download')"
             color="download"
-            @click.stop="download()"
             class="action-download"
             :disabled="selection.length !== 1 || !$config.feature('download')"
+            @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
         </v-btn>
@@ -34,8 +34,8 @@
         <v-btn
             fab dark small
             color="accent"
-            @click.stop="clearClipboard()"
             class="action-clear"
+            @click.stop="clearClipboard()"
         >
           <v-icon>clear</v-icon>
         </v-btn>
@@ -46,9 +46,10 @@
 <script>
 import Notify from "common/notify";
 import Album from "model/album";
+import download from "common/download";
 
 export default {
-  name: 'p-album-clipboard',
+  name: 'PAlbumClipboard',
   props: {
     selection: Array,
     refresh: Function,
@@ -85,10 +86,8 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a')
-      link.href = path;
-      link.download = "album.zip";
-      link.click();
+
+      download(path, "album.zip");
     },
   }
 };

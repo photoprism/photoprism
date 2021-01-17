@@ -34,6 +34,7 @@ import { DateTime } from "luxon";
 import Util from "common/util";
 import { config } from "../session";
 import { $gettext } from "common/vm";
+import download from "common/download";
 
 export class File extends RestModel {
   getDefaults() {
@@ -130,10 +131,7 @@ export class File extends RestModel {
       return;
     }
 
-    let link = document.createElement("a");
-    link.href = this.getDownloadUrl();
-    link.download = this.baseName(this.Name);
-    link.click();
+    download(this.getDownloadUrl(), this.baseName(this.Name));
   }
 
   calculateSize(width, height) {

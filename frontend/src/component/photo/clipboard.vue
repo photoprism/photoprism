@@ -143,6 +143,7 @@
 import Api from "common/api";
 import Notify from "common/notify";
 import Event from "pubsub-js";
+import download from "common/download";
 
 export default {
   name: 'PPhotoClipboard',
@@ -235,10 +236,8 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a');
-      link.href = path;
-      link.download = "photos.zip";
-      link.click();
+
+      download(path, "photos.zip");
     },
     edit() {
       // Open Edit Dialog

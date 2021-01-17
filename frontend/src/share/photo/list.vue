@@ -90,6 +90,9 @@
   </div>
 </template>
 <script>
+import download from "common/download";
+import Notify from "../../common/notify";
+
 export default {
   name: 'PPhotoList',
   props: {
@@ -137,11 +140,10 @@ export default {
   },
   methods: {
     downloadFile(index) {
+      Notify.success(this.$gettext("Downloading…"));
+
       const photo = this.photos[index];
-      const link = document.createElement('a');
-      link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
-      link.download = photo.FileName;
-      link.click();
+      download(`/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`, photo.FileName);
     },
     onSelect(ev, index) {
       if (ev.shiftKey) {

@@ -114,6 +114,7 @@ import RestModel from "model/rest";
 import {Folder} from "model/folder";
 import Notify from "common/notify";
 import {MaxItems} from "common/clipboard";
+import download from "common/download";
 
 export default {
   name: 'PPageFiles',
@@ -209,11 +210,10 @@ export default {
       }
     },
     downloadFile(index) {
+      Notify.success(this.$gettext("Downloading…"));
+
       const model = this.results[index];
-      const link = document.createElement('a');
-      link.href = `/api/v1/dl/${model.Hash}?t=${this.$config.downloadToken()}`;
-      link.download = model.Name;
-      link.click();
+      download(`/api/v1/dl/${model.Hash}?t=${this.$config.downloadToken()}`, model.Name);
     },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {

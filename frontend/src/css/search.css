@@ -255,8 +255,8 @@
 
 #photoprism .search-results .type-image:hover .input-view,
 #photoprism .search-results .type-raw .input-open,
-#photoprism .search-results .type-live.is-playable  .input-open,
-#photoprism .search-results .type-image.is-stack  .input-open {
+#photoprism .search-results .type-live.is-playable .input-open,
+#photoprism .search-results .type-image.is-stack .input-open {
     display: inline-flex;
 }
 

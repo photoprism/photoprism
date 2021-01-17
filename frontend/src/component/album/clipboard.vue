@@ -96,6 +96,7 @@
 import Api from "common/api";
 import Notify from "common/notify";
 import Album from "model/album";
+import download from "common/download";
 
 export default {
   name: 'PAlbumClipboard',
@@ -178,10 +179,8 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a');
-      link.href = path;
-      link.download = "album.zip";
-      link.click();
+
+      download(path, "album.zip");
     },
   }
 };

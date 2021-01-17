@@ -201,6 +201,7 @@
 <script>
 import Thumb from "model/thumb";
 import {DateTime} from "luxon";
+import Notify from "../../common/notify";
 
 export default {
   name: 'PTabPhotoFiles',
@@ -241,6 +242,8 @@ export default {
       this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
     },
     downloadFile(file) {
+      Notify.success(this.$gettext("Downloading…"));
+
       file.download();
     },
     showDeleteDialog(file) {
