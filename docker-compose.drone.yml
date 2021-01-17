@@ -10,7 +10,6 @@ services:
     depends_on:
       - photoprism-db
     volumes:
-      - "~/.cache/npm:/root/.cache/npm"
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"

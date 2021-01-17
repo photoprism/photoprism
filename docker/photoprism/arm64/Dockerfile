@@ -65,9 +65,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install and configure NodeJS Package Manager (npm)
-ENV NODE_ENV production
 RUN npm install --unsafe-perm=true --allow-root -g npm
 RUN npm config set cache ~/.cache/npm
+ENV NODE_ENV production
 
 # Install Go
 ENV GOLANG_VERSION 1.15.6
