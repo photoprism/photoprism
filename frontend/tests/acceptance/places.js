@@ -1,12 +1,15 @@
 import { Selector } from "testcafe";
 import { ClientFunction } from "testcafe";
 import testcafeconfig from "./testcafeconfig.json";
+import Page from "./page-model";
 
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture`Test places page`.page`${testcafeconfig.url}`;
+const page = new Page();
 
 test.meta("testID", "places-001")("Test places", async (t) => {
+  await page.openNav();
   await t
     .click(Selector(".nav-places"))
     .expect(Selector("#map").exists, { timeout: 15000 })
@@ -26,6 +29,7 @@ test.meta("testID", "places-002")("Open photo from places", async (t) => {
   if (t.browser.name === "Firefox") {
     console.log("Test skipped in firefox");
   } else {
+    await page.openNav();
     await t
       .click(Selector(".nav-places"))
       .expect(Selector("#is-photo-viewer").visible)

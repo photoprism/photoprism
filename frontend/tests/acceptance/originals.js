@@ -11,6 +11,7 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
   await t.click(Selector(".nav-albums"));
   await t.typeText(Selector(".p-albums-search input"), "KanadaVacation").pressKey("enter");
   await t.expect(Selector("h3").innerText).eql("Couldn't find anything");
+  await page.openNav();
   await t
     .click(Selector("div.nav-library + div"))
     .click(Selector(".nav-originals"))
@@ -38,6 +39,7 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
   const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
   await t.expect(clipboardCount.textContent).eql("1");
   await page.addSelectedToAlbum("KanadaVacation");
+  await page.openNav();
   await t
     .click(Selector(".nav-albums"))
     .typeText(Selector(".p-albums-search input"), "KanadaVacation")
@@ -45,7 +47,9 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-album").nth(0));
   const PhotoCountAfterAdd = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await t.expect(PhotoCountAfterAdd).eql(2).click(Selector(".nav-albums"));
+  await t.expect(PhotoCountAfterAdd).eql(2);
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
   await page.selectFromUID(AlbumUid);
   await page.deleteSelected();
 });
