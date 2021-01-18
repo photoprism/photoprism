@@ -1,3 +1,8 @@
+#photoprism table.v-table,
+#photoprism .v-sheet {
+    border-radius: 0;
+}
+
 div.v-dialog table.v-table thead th,
 div.v-dialog table.v-table tbody td,
 div.v-dialog table.v-table tfoot td {

@@ -193,7 +193,12 @@ export const Themes = () => [
   {
     text: $gettext("Seaweed"),
     value: "seaweed",
-    sdisabled: false,
+    disabled: false,
+  },
+  {
+    text: $gettext("Shadow"),
+    value: "shadow",
+    disabled: !config.values.sponsor,
   },
 ];
 export const MapsAnimate = () => [
