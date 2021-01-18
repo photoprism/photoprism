@@ -95,8 +95,9 @@ RUN apt-get update && \
 RUN umask 0000
 
 # Install and configure NodeJS Package Manager (npm)
-RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
 ENV NODE_ENV production
+RUN npm install --production=false --unsafe-perm=true --allow-root -g npm testcafe chromedriver && \
+    npm config set cache ~/.cache/npm
 
 # Install Go
 ENV GOLANG_VERSION 1.15.6
