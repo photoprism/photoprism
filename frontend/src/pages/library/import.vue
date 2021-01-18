@@ -144,7 +144,9 @@ export default {
       })
     },
     onChange() {
-      this.settings.save();
+      if (!this.$config.values.disable.settings) {
+        this.settings.save();
+      }
     },
     onFocus() {
       if (this.dirs.length > 2 || this.loading) {
