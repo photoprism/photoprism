@@ -10,7 +10,7 @@
                   hide-details required
                   type="password"
                   :disabled="busy"
-                  browser-autocomplete="off"
+                  autocomplete="off"
                   :label="$gettext('Current Password')"
                   color="secondary-dark"
                   placeholder="••••••••"
@@ -23,7 +23,7 @@
                   required counter persistent-hint
                   type="password"
                   :disabled="busy"
-                  browser-autocomplete="off"
+                  autocomplete="off"
                   :label="$gettext('New Password')"
                   color="secondary-dark"
                   placeholder="••••••••"
@@ -37,7 +37,7 @@
                   required counter persistent-hint
                   type="password"
                   :disabled="busy"
-                  browser-autocomplete="off"
+                  autocomplete="off"
                   :label="$gettext('Retype Password')"
                   color="secondary-dark"
                   placeholder="••••••••"

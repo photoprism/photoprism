@@ -8,6 +8,28 @@
     background: transparent;
 }
 
+#p-navigation .navigation-home {
+    margin: 0 auto;
+}
+
+#p-navigation .v-toolbar__content {
+    padding: 4px 0 !important;
+}
+
+#p-navigation .v-list-item__title {
+    position: relative;
+}
+
+#p-navigation .v-list-item--active {
+    color: #fff !important;
+    caret-color: #fff !important;
+}
+
+#p-navigation .v-list-item--active .v-list-item__title {
+    color: #ffca28 !important;
+    caret-color: #ffca28 !important;
+}
+
 #p-navigation .nav-count {
     opacity: 0.5;
     position: absolute;
@@ -22,7 +44,7 @@
     text-align: left;
 }
 
-.v-list__group__header .v-list__group__header__append-icon {
+.v-list-item__icon .v-list-group__header__append-icon {
     padding-left: 8px !important;
 }
 

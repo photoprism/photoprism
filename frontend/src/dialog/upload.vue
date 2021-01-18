@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" fullscreen hide-overlay scrollable
-            lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
+            persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark @click.stop="cancel">
@@ -27,14 +27,14 @@
                           return-object
               >
                 <template #no-data>
-                  <v-list-tile>
-                    <v-list-tile-content>
-                      <v-list-tile-title>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title>
                         <translate
                             key="Press enter to create a new album.">Press enter to create a new album.</translate>
-                      </v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
                 </template>
                 <template #selection="data">
                   <v-chip

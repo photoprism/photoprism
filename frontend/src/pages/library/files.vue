@@ -1,7 +1,7 @@
 <template>
   <div class="p-page p-page-files">
     <v-form ref="form" class="p-files-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat color="secondary lighten-5" :dense="$vuetify.breakpoint.smAndDown">
         <v-toolbar-title>
           <router-link to="/library/files">
             <translate key="Originals">Originals</translate>
@@ -52,7 +52,7 @@
           >
             <v-card tile
                     :data-uid="model.UID"
-                    class="result accent lighten-3"
+                    class="result accent lighten-3 flex-grow-1"
                     :class="model.classes(selection.includes(model.UID))"
                     @contextmenu="onContextMenu($event, index)"
             >
@@ -67,7 +67,7 @@
                   @click="onClick($event, index)"
               >
                 <v-btn :ripple="false"
-                       icon flat absolute
+                       icon text absolute
                        class="input-select"
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>

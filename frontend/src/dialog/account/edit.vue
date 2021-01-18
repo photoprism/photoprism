@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title>
         <v-layout v-if="scope === 'sharing'" row wrap>
@@ -59,7 +59,7 @@
             <h3 class="headline mx-2 my-0">{{ $gettext('Edit Account') }}</h3>
           </v-flex>
           <v-flex xs2 text-xs-right>
-            <v-btn icon flat :ripple="false"
+            <v-btn icon text :ripple="false"
                    class="action-remove mt-0"
                    @click.stop.prevent="remove()">
               <v-icon color="secondary-dark">delete</v-icon>
@@ -74,7 +74,7 @@
                 v-model="model.SharePath"
                 color="secondary-dark" hide-details hide-no-data
                 flat
-                browser-autocomplete="off"
+                autocomplete="off"
                 hint="Folder"
                 :search-input.sync="search"
                 :items="pathItems"
@@ -91,7 +91,7 @@
                 v-model="model.ShareSize"
                 :disabled="!model.AccShare"
                 :label="$gettext('Size')"
-                browser-autocomplete="off"
+                autocomplete="off"
                 hide-details
                 color="secondary-dark"
                 item-text="text"
@@ -104,7 +104,7 @@
                 v-model="model.ShareExpires"
                 :disabled="!model.AccShare"
                 :label="$gettext('Expires')"
-                browser-autocomplete="off"
+                autocomplete="off"
                 hide-details
                 color="secondary-dark"
                 item-text="text"
@@ -136,7 +136,7 @@
                 v-model="model.SyncInterval"
                 :disabled="!model.AccSync"
                 :label="$gettext('Interval')"
-                browser-autocomplete="off"
+                autocomplete="off"
                 hide-details
                 color="secondary-dark"
                 item-text="text"
@@ -186,7 +186,7 @@
             <v-text-field
                 v-model="model.AccName"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('Name')"
                 placeholder=""
                 color="secondary-dark"
@@ -197,7 +197,7 @@
             <v-text-field
                 v-model="model.AccURL"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('Service URL')"
                 placeholder="https://www.example.com/"
                 color="secondary-dark"
@@ -207,7 +207,7 @@
             <v-text-field
                 v-model="model.AccUser"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('Username')"
                 placeholder="optional"
                 color="secondary-dark"
@@ -217,7 +217,7 @@
             <v-text-field
                 v-model="model.AccPass"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('Password')"
                 placeholder="optional"
                 color="secondary-dark"
@@ -230,7 +230,7 @@
             <v-text-field
                 v-model="model.AccKey"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('API Key')"
                 placeholder="optional"
                 color="secondary-dark"
@@ -241,7 +241,7 @@
             <v-select
                 v-model="model.AccType"
                 :label="$gettext('Type')"
-                browser-autocomplete="off"
+                autocomplete="off"
                 hide-details
                 color="secondary-dark"
                 item-text="text"

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -9,7 +9,7 @@
           <v-flex xs9 text-xs-left align-self-center>
             <v-autocomplete
                 v-model="album"
-                browser-autocomplete="off"
+                autocomplete="off"
                 hint="Album Name"
                 :items="items"
                 :search-input.sync="search"

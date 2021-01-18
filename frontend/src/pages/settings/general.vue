@@ -21,7 +21,7 @@
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
-                  box class="input-theme"
+                  filled class="input-theme"
                   @change="onChangeTheme"
               ></v-select>
             </v-flex>
@@ -35,7 +35,7 @@
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
-                  box class="input-language"
+                  filled class="input-language"
                   @change="onChange"
               ></v-select>
             </v-flex>
@@ -277,7 +277,7 @@
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
-                  box class="input-style"
+                  filled class="input-style"
                   @change="onChange"
               ></v-select>
             </v-flex>
@@ -291,7 +291,7 @@
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
-                  box class="input-animate"
+                  filled class="input-animate"
                   @change="onChange"
               ></v-select>
             </v-flex>

@@ -4,9 +4,8 @@
         v-model="selected"
         :headers="listColumns"
         :items="model.Labels"
-        hide-actions
+        hide-default-footer
         class="elevation-0 p-files p-files-list p-results"
-        disable-initial-sort
         item-key="ID"
         :no-data-text="$gettext('No labels found')"
     >
@@ -14,7 +13,6 @@
         <td>
           <v-edit-dialog
               :return-value.sync="props.item.Label.Name"
-              lazy
               class="p-inline-edit"
               @save="renameLabel(props.item.Label)"
           >
@@ -35,23 +33,23 @@
         <td class="text-xs-left">{{ sourceName(props.item.LabelSrc) }}</td>
         <td class="text-xs-center">{{ 100 - props.item.Uncertainty }}%</td>
         <td class="text-xs-center">
-          <v-btn v-if="disabled" icon small flat :ripple="false"
+          <v-btn v-if="disabled" icon small text :ripple="false"
                  class="action-view" title="Search"
                  @click.stop.prevent="searchLabel(props.item.Label)">
             <v-icon color="secondary-dark">search</v-icon>
           </v-btn>
           <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon
-                 small flat :ripple="false"
+                 small text :ripple="false"
                  class="action-delete" title="Delete"
                  @click.stop.prevent="removeLabel(props.item.Label)">
             <v-icon color="secondary-dark">delete</v-icon>
           </v-btn>
-          <v-btn v-else-if="props.item.Uncertainty < 100" icon small flat :ripple="false"
+          <v-btn v-else-if="props.item.Uncertainty < 100" icon small text :ripple="false"
                  class="action-remove" title="Remove"
                  @click.stop.prevent="removeLabel(props.item.Label)">
             <v-icon color="secondary-dark">remove</v-icon>
           </v-btn>
-          <v-btn v-else icon small flat :ripple="false"
+          <v-btn v-else icon small text :ripple="false"
                  class="action-on" title="Activate"
                  @click.stop.prevent="activateLabel(props.item.Label)">
             <v-icon color="secondary-dark">add</v-icon>
@@ -64,7 +62,7 @@
               v-model="newLabel"
               :rules="[nameRule]"
               color="secondary-dark"
-              browser-autocomplete="off"
+              autocomplete="off"
               :label="$gettext('')"
               single-line
               flat solo hide-details
@@ -76,7 +74,7 @@
         <td class="text-xs-left">{{ sourceName('manual') }}</td>
         <td class="text-xs-center">100%</td>
         <td class="text-xs-center">
-          <v-btn icon small flat :ripple="false" title="Add"
+          <v-btn icon small text :ripple="false" title="Add"
                  class="p-photo-label-add"
                  @click.stop.prevent="addLabel">
             <v-icon color="secondary-dark">add</v-icon>

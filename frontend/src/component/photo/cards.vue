@@ -29,7 +29,7 @@
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
                 style="user-select: none"
-                class="result accent lighten-3"
+                class="result accent lighten-3 flex-grow-1"
                 :class="photo.classes()"
                 @contextmenu="onContextMenu($event, index)">
           <div class="card-background accent lighten-3"></div>
@@ -55,7 +55,7 @@
             </v-layout>
 
             <v-btn :ripple="false" :depressed="false" class="input-open"
-                   icon flat absolute
+                   icon text absolute
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
                    @touchmove.stop.prevent
@@ -67,7 +67,7 @@
             </v-btn>
 
             <v-btn :ripple="false" :depressed="false" class="input-view"
-                   icon flat absolute :title="$gettext('View')"
+                   icon text absolute :title="$gettext('View')"
                    @touchstart.stop.prevent="openPhoto(index, false)"
                    @touchend.stop.prevent
                    @touchmove.stop.prevent
@@ -76,7 +76,7 @@
             </v-btn>
 
             <v-btn :ripple="false" :depressed="false" color="white" class="input-play"
-                   outline fab large absolute :title="$gettext('Play')"
+                   outlined fab large absolute :title="$gettext('Play')"
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
                    @touchmove.stop.prevent
@@ -85,13 +85,13 @@
             </v-btn>
 
             <v-btn v-if="hidePrivate" :ripple="false"
-                   icon flat absolute
+                   icon text absolute
                    class="input-private">
               <v-icon color="white" class="select-on">lock</v-icon>
             </v-btn>
 
             <v-btn :ripple="false"
-                   icon flat absolute
+                   icon text absolute
                    class="input-select"
                    @touchstart.stop.prevent="onSelect($event, index)"
                    @touchend.stop.prevent
@@ -102,7 +102,7 @@
             </v-btn>
 
             <v-btn :ripple="false"
-                   icon flat absolute
+                   icon text absolute
                    class="input-favorite"
                    @touchstart.stop.prevent="onTouchStart($event, index)"
                    @touchend.stop.prevent="toggleLike($event, index)"

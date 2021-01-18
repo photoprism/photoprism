@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="500" class="dialog-album-edit" color="application"
+  <v-dialog v-model="show" persistent max-width="500" class="dialog-album-edit" color="application"
             @keydown.esc="close">
     <v-form ref="form" lazy-validation
             dense class="form-album-edit" accept-charset="UTF-8"
@@ -39,7 +39,7 @@
                 <v-textarea :key="growDesc" v-model="model.Description"
                             auto-grow
                             hide-details
-                            browser-autocomplete="off"
+                            autocomplete="off"
                             :label="$gettext('Description')"
                             :rows="1"
                             class="input-description"

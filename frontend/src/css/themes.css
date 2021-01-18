@@ -1,9 +1,9 @@
 /* Grayscale Theme */
 
-.theme-grayscale .v-content__wrap,
+.theme-grayscale .v-main__wrap,
 .theme-grayscale .p-page,
 .theme-grayscale .form,
-.theme-grayscale .v-content {
+.theme-grayscale .v-main {
     background: #525252 !important;
 }
 

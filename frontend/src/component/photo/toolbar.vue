@@ -2,10 +2,10 @@
   <v-form ref="form" lazy-validation
           dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
-    <v-toolbar :dense="$vuetify.breakpoint.smAndDown" flat color="secondary">
+    <v-toolbar :dense="$vuetify.breakpoint.smAndDown" flat color="secondary lighten-5">
       <v-text-field v-model="filter.q"
-                    class="pt-3 pr-3 input-search"
-                    browser-autocomplete="off"
+                    class="pt-4 pr-3 input-search"
+                    autocomplete="off"
                     single-line
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"

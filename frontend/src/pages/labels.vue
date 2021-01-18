@@ -3,14 +3,14 @@
        :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat color="secondary lighten-5" :dense="$vuetify.breakpoint.smAndDown">
         <v-text-field id="search"
                       v-model="filter.q"
-                      class="pt-3 pr-3 input-search"
+                      class="pt-4 pr-3 input-search"
                       single-line
                       :label="$gettext('Search')"
                       prepend-inner-icon="search"
-                      browser-autocomplete="off"
+                      autocomplete="off"
                       clearable
                       color="secondary-dark"
                       @click:clear="clearQuery"
@@ -63,7 +63,7 @@
             <v-card tile
                     :data-uid="label.UID"
                     style="user-select: none"
-                    class="result accent lighten-3"
+                    class="result accent lighten-3 flex-grow-1"
                     :class="label.classes(selection.includes(label.UID))"
                     :to="label.route(view)"
                     @contextmenu="onContextMenu($event, index)"
@@ -81,7 +81,7 @@
                   @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
-                       icon flat absolute
+                       icon text absolute
                        class="input-select"
                        @touchstart.stop.prevent="onSelect($event, index)"
                        @touchend.stop.prevent
@@ -92,7 +92,7 @@
                 </v-btn>
 
                 <v-btn :ripple="false"
-                       icon flat absolute
+                       icon text absolute
                        class="input-favorite"
                        @touchstart.stop.prevent="onTouchStart($event, index)"
                        @touchend.stop.prevent="toggleLike($event, index)"

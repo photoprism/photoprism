@@ -17,8 +17,8 @@
         </template>
       </v-tab>
 
-      <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
+      <v-tabs-items v-model="active" touchless>
+        <v-tab-item v-for="(item, index) in tabs" :key="index">
           <component :is="item.component"></component>
         </v-tab-item>
       </v-tabs-items>

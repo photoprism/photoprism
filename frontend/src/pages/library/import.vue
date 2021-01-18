@@ -14,7 +14,7 @@
             color="secondary-dark"
             class="my-3 input-import-folder"
             hide-details
-            hide-no-data flat solo browser-autocomplete="off"
+            hide-no-data flat solo autocomplete="off"
             :items="dirs"
             :loading="loading"
             :disabled="busy || !ready"

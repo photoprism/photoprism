@@ -1,7 +1,7 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-albums" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary lighten-5" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
         <translate>Albums</translate>
       </v-toolbar-title>
@@ -37,7 +37,7 @@
             <v-card tile
                     :data-uid="album.UID"
                     style="user-select: none"
-                    class="result accent lighten-3"
+                    class="result accent lighten-3 flex-grow-1"
                     :class="album.classes(selection.includes(album.UID))"
                     :to="album.route(view)"
                     @contextmenu="onContextMenu($event, index)"
@@ -55,7 +55,7 @@
                   @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
-                       icon flat absolute
+                       icon text absolute
                        class="input-select"
                        @touchstart.stop.prevent="onSelect($event, index)"
                        @touchend.stop.prevent

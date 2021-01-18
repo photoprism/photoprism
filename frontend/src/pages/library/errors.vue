@@ -1,10 +1,10 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary lighten-5" :dense="$vuetify.breakpoint.smAndDown">
       <v-text-field v-model="filter.q"
-                    class="pt-3 pr-3 input-search"
-                    browser-autocomplete="off"
+                    class="pt-4 pr-3 input-search"
+                    autocomplete="off"
                     single-line
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
@@ -29,20 +29,20 @@
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-list v-else-if="errors.length > 0" dense two-line class="transparent">
-      <v-list-tile
+      <v-list-item
           v-for="(err, index) in errors" :key="index"
           avatar
           @click="showDetails(err)"
       >
-        <v-list-tile-avatar>
+        <v-list-item-avatar>
           <v-icon :color="err.Level">{{ err.Level }}</v-icon>
-        </v-list-tile-avatar>
+        </v-list-item-avatar>
 
-        <v-list-tile-content>
-          <v-list-tile-title>{{ err.Message }}</v-list-tile-title>
-          <v-list-tile-sub-title>{{ formatTime(err.Time) }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
+        <v-list-item-content>
+          <v-list-item-title>{{ err.Message }}</v-list-item-title>
+          <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
     <v-card v-else class="errors-empty secondary-light lighten-1 ma-0 pa-2" flat>
       <v-card-title v-if="filter.q !== ''" primary-title>

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="pa-0 p-page p-page-places">
+  <v-container fluid class="pa-0 p-page p-page-places fill-height">
     <div id="map" style="width: 100%; height: 100%;">
       <div class="p-map-control">
         <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
@@ -12,7 +12,7 @@
                         prepend-inner-icon="search"
                         clearable
                         hide-details
-                        browser-autocomplete="off"
+                        autocomplete="off"
                         color="secondary-dark"
                         @click:clear="clearQuery"
                         @keyup.enter.native="formChange"

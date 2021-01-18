@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" fullscreen hide-overlay scrollable
-            lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
+            persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark class="action-close" @click.stop="close">

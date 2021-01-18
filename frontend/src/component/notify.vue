@@ -3,7 +3,7 @@
       id="p-notify"
       v-model="visible"
       :color="color"
-      :timeout="0"
+      :timeout="-1"
       :class="textColor"
       :bottom="true"
   >
@@ -11,7 +11,7 @@
     <v-btn
         :class="textColor + ' pr-0'"
         icon
-        flat
+        text
         @click="close"
     >
       <v-icon :class="textColor">close</v-icon>

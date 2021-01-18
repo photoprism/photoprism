@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-about">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary lighten-5" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
         <translate>About</translate>
       </v-toolbar-title>

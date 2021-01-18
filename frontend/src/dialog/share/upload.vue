@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -9,7 +9,7 @@
             </h3>
           </v-flex>
           <v-flex xs4 text-xs-right>
-            <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="setup">
+            <v-btn icon text dark color="secondary-dark" class="ma-0" @click.stop="setup">
               <v-icon>cloud</v-icon>
             </v-btn>
           </v-flex>
@@ -36,7 +36,7 @@
                 v-model="path"
                 color="secondary-dark" hide-details hide-no-data
                 flat
-                browser-autocomplete="off"
+                autocomplete="off"
                 hint="Folder"
                 :search-input.sync="search"
                 :items="pathItems"

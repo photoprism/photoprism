@@ -31,6 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import IconLivePhoto from "./icon/live_photo.vue";
 
 const icons = {
+  iconfont: "md", // to minimize migration from 1.5. Consider if we want to change to default mdi
   live_photo: {
     component: IconLivePhoto,
     props: {

@@ -34,7 +34,7 @@
                     :label="$gettext('Title')"
                     placeholder=""
                     color="secondary-dark"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     class="input-title"
                 ></v-text-field>
               </v-flex>
@@ -46,7 +46,7 @@
                     :disabled="disabled"
                     :error="invalidDate"
                     :label="$gettext('Day')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     hide-details hide-no-data
                     color="secondary-dark"
                     :items="options.Days()"
@@ -61,7 +61,7 @@
                     :disabled="disabled"
                     :error="invalidDate"
                     :label="$gettext('Month')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     hide-details hide-no-data
                     color="secondary-dark"
                     :items="options.MonthsShort()"
@@ -76,7 +76,7 @@
                     :disabled="disabled"
                     :error="invalidDate"
                     :label="$gettext('Year')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     hide-details hide-no-data
                     color="secondary-dark"
                     :items="options.Years()"
@@ -91,7 +91,7 @@
                     :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :label="$gettext('Local Time')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     hide-details
                     return-masked-value mask="##:##:##"
                     color="secondary-dark"
@@ -105,7 +105,7 @@
                     v-model="utcTime"
                     :disabled="disabled"
                     :label="$gettext('Time UTC')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     readonly
                     hide-details return-masked-value mask="##:##:##"
                     color="secondary-dark"
@@ -119,7 +119,7 @@
                     v-model="model.TimeZone"
                     :disabled="disabled"
                     :label="$gettext('Time Zone')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     hide-details hide-no-data
                     color="secondary-dark"
                     item-value="ID"
@@ -138,7 +138,7 @@
                     :readonly="!!(model.Lat || model.Lng)"
                     :label="$gettext('Country')" hide-details
                     hide-no-data
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     color="secondary-dark"
                     item-value="Code"
                     item-text="Name"
@@ -152,7 +152,7 @@
                     v-model="model.Altitude"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('Altitude (m)')"
                     placeholder=""
                     color="secondary-dark"
@@ -166,7 +166,7 @@
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('Latitude')"
                     placeholder=""
                     color="secondary-dark"
@@ -180,7 +180,7 @@
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('Longitude')"
                     placeholder=""
                     color="secondary-dark"
@@ -194,7 +194,7 @@
                     :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :label="$gettext('Camera')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     hide-details
                     color="secondary-dark"
                     item-value="ID"
@@ -209,7 +209,7 @@
                     v-model="model.Iso"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     label="ISO"
                     placeholder=""
                     color="secondary-dark"
@@ -222,7 +222,7 @@
                     v-model="model.Exposure"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('Exposure')"
                     placeholder=""
                     color="secondary-dark"
@@ -236,7 +236,7 @@
                     :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :label="$gettext('Lens')"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     hide-details
                     color="secondary-dark"
                     item-value="ID"
@@ -251,7 +251,7 @@
                     v-model="model.FNumber"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('F Number')"
                     placeholder=""
                     color="secondary-dark"
@@ -264,7 +264,7 @@
                     v-model="model.FocalLength"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('Focal Length')"
                     placeholder=""
                     color="secondary-dark"
@@ -279,7 +279,7 @@
                     :disabled="disabled"
                     :rules="[textRule]"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     auto-grow
                     :label="$gettext('Subject')"
                     placeholder=""
@@ -296,7 +296,7 @@
                     :disabled="disabled"
                     :rules="[textRule]"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('Artist')"
                     placeholder=""
                     color="secondary-dark"
@@ -311,7 +311,7 @@
                     :disabled="disabled"
                     :rules="[textRule]"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     :label="$gettext('Copyright')"
                     placeholder=""
                     color="secondary-dark"
@@ -326,7 +326,7 @@
                     :disabled="disabled"
                     :rules="[textRule]"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     auto-grow
                     :label="$gettext('License')"
                     placeholder=""
@@ -342,7 +342,7 @@
                     :append-icon="model.DescriptionSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     auto-grow
                     :label="$gettext('Description')"
                     placeholder=""
@@ -358,7 +358,7 @@
                     :append-icon="model.Details.KeywordsSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     auto-grow
                     :label="$gettext('Keywords')"
                     placeholder=""
@@ -374,7 +374,7 @@
                     :append-icon="model.Details.NotesSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     hide-details
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     auto-grow
                     :label="$gettext('Notes')"
                     placeholder=""

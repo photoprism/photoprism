@@ -20,7 +20,7 @@
             <v-select
                 v-model="model.Type"
                 flat solo
-                browser-autocomplete="off"
+                autocomplete="off"
                 hide-details
                 color="secondary-dark"
                 :items="options.PhotoTypes()"

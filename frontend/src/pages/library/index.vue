@@ -15,7 +15,7 @@
             color="secondary-dark"
             class="my-3 input-index-folder"
             hide-details
-            hide-no-data flat solo browser-autocomplete="off"
+            hide-no-data flat solo autocomplete="off"
             :items="dirs"
             :loading="loading"
             :disabled="busy || !ready"
@@ -75,7 +75,7 @@
             color="error"
             icon="priority_high"
             class="mt-3"
-            outline
+            outlined
         >
           <translate
               :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>

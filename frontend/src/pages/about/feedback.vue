@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-support">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat color="secondary lighten-5" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title v-if="sent">
         <translate>Your message has been sent</translate>
       </v-toolbar-title>
@@ -23,7 +23,7 @@
       <v-layout row wrap>
         <!-- v-flex xs12 sm6 lg4 xl2 grow class="pa-2">
           <v-text-field :required="true" hide-details
-                        v-model="form.Subject" browser-autocomplete="off"
+                        v-model="form.Subject" autocomplete="off"
                         :label="$gettext('Subject')"></v-text-field>
         </v-flex -->
         <v-flex xs12 class="pa-2">
@@ -35,20 +35,20 @@
               background-color="secondary-light"
               v-model="form.Category"
               flat solo hide-details required
-              browser-autocomplete="off"
+              autocomplete="off"
               class="input-category"
               :rules="[v => !!v || $gettext('Required')]"
           ></v-select>
         </v-flex>
 
         <v-flex xs12 class="pa-2">
-          <v-textarea required auto-grow flat solo hide-details browser-autocomplete="off"
+          <v-textarea required auto-grow flat solo hide-details autocomplete="off"
                       v-model="form.Message" rows="10" :rules="[v => !!v || $gettext('Required')]"
                       :label="$gettext('How can we help?')"></v-textarea>
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
-          <v-text-field flat solo hide-details browser-autocomplete="off"
+          <v-text-field flat solo hide-details autocomplete="off"
                         color="secondary-dark"
                         background-color="secondary-light"
                         :label="$gettext('Name')" type="text" v-model="form.UserName">
@@ -56,7 +56,7 @@
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
-          <v-text-field flat solo hide-details required browser-autocomplete="off"
+          <v-text-field flat solo hide-details required autocomplete="off"
                         color="secondary-dark" :rules="[v => !!v || $gettext('Required')]"
                         background-color="secondary-light"
                         :label="$gettext('E-Mail')" type="email" v-model="form.UserEmail">

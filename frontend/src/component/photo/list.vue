@@ -25,10 +25,9 @@
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"
-                  hide-actions
+                  hide-default-footer
                   class="search-results photo-results list-view"
                   :class="{'select-results': selectMode}"
-                  disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
     >
@@ -48,14 +47,14 @@
                  @click.stop.prevent="onClick($event, props.index)"
           >
             <v-btn v-if="selectMode" :ripple="false"
-                   flat icon large absolute
+                   text icon large absolute
                    class="input-select">
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
             <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live'"
                    :ripple="false"
-                   flat icon large absolute class="input-open"
+                   text icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
               <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
@@ -92,12 +91,12 @@
                 </span>
         </td>
         <td class="text-xs-center">
-          <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
+          <v-btn v-if="hidePrivate" class="input-private" icon small text :ripple="false"
                  :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
             <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
             <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
           </v-btn>
-          <v-btn class="input-like" icon small flat :ripple="false"
+          <v-btn class="input-like" icon small text :ripple="false"
                  :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
             <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">favorite</v-icon>
             <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>

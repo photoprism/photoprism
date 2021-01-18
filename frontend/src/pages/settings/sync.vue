@@ -4,8 +4,7 @@
         v-model="selected"
         :headers="listColumns"
         :items="results"
-        hide-actions
-        disable-initial-sort
+        hide-default-footer
         class="elevation-0 p-accounts p-accounts-list p-results"
         item-key="ID"
         :no-data-text="$gettext('No servers configured.')"
@@ -17,7 +16,7 @@
           </button>
         </td>
         <td class="text-xs-center">
-          <v-btn icon small flat :ripple="false"
+          <v-btn icon small text :ripple="false"
                  class="action-toggle-share"
                  @click.stop.prevent="editSharing(props.item)">
             <v-icon v-if="props.item.AccShare" color="secondary-dark">check</v-icon>
@@ -25,7 +24,7 @@
           </v-btn>
         </td>
         <td class="text-xs-center">
-          <v-btn icon small flat :ripple="false"
+          <v-btn icon small text :ripple="false"
                  class="action-toggle-sync"
                  @click.stop.prevent="editSync(props.item)">
             <v-icon v-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
@@ -34,12 +33,12 @@
         </td>
         <td class="hidden-sm-and-down">{{ formatDate(props.item.SyncDate) }}</td>
         <td class="hidden-xs-only text-xs-right" nowrap>
-          <v-btn icon small flat :ripple="false"
+          <v-btn icon small text :ripple="false"
                  class="p-account-remove"
                  @click.stop.prevent="remove(props.item)">
             <v-icon color="secondary-dark">delete</v-icon>
           </v-btn>
-          <v-btn icon small flat :ripple="false"
+          <v-btn icon small text :ripple="false"
                  class="p-account-remove"
                  @click.stop.prevent="edit(props.item)">
             <v-icon color="secondary-dark">edit</v-icon>

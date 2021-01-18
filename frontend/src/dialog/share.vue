@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
+  <v-dialog v-model="show" persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -9,7 +9,7 @@
             </h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
-            <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')"
+            <v-btn icon text dark color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')"
                    @click.stop="add">
               <v-icon>add_link</v-icon>
             </v-btn>
@@ -36,7 +36,7 @@
                       <v-text-field
                           :value="link.url()"
                           :label="$gettext('URL')"
-                          browser-autocomplete="off" hide-details
+                          autocomplete="off" hide-details
                           readonly
                           color="secondary-dark"
                           class="input-url"
@@ -47,7 +47,7 @@
                       <v-select
                           v-model="link.Expires"
                           :label="expires(link)"
-                          browser-autocomplete="off"
+                          autocomplete="off"
                           hide-details
                           color="secondary-dark"
                           item-text="text"
@@ -61,7 +61,7 @@
                       <v-text-field
                           v-model="link.Token" hide-details
                           required
-                          browser-autocomplete="off"
+                          autocomplete="off"
                           :label="$gettext('Secret')"
                           :placeholder="$gettext('Token')"
                           color="secondary-dark"
@@ -71,7 +71,7 @@
                     <!-- v-flex xs12 sm6 class="pa-2">
                         <v-text-field
                                 hide-details
-                                browser-autocomplete="off"
+                                autocomplete="off"
                                 :label="label.pass"
                                 :placeholder="link.HasPassword ? '••••••••' : 'optional'"
                                 color="secondary-dark"
@@ -82,7 +82,7 @@
                         ></v-text-field>
                     </v-flex -->
                     <v-flex xs6 text-xs-left class="pa-2">
-                      <v-btn small icon flat color="remove" class="ma-0 action-delete"
+                      <v-btn small icon text color="remove" class="ma-0 action-delete"
                              :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                         <v-icon>delete</v-icon>
                       </v-btn>

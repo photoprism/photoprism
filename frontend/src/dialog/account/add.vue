@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="500" class="p-account-create-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" persistent max-width="500" class="p-account-create-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title>
         <div>
@@ -14,7 +14,7 @@
             <v-text-field
                 v-model="model.AccURL"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('Service URL')"
                 placeholder="https://www.example.com/"
                 color="secondary-dark"
@@ -24,7 +24,7 @@
             <v-text-field
                 v-model="model.AccUser"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('Username')"
                 placeholder="optional"
                 color="secondary-dark"
@@ -34,7 +34,7 @@
             <v-text-field
                 v-model="model.AccPass"
                 hide-details
-                browser-autocomplete="off"
+                autocomplete="off"
                 :label="$gettext('Password')"
                 placeholder="optional"
                 color="secondary-dark"

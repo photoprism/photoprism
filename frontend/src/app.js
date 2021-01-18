@@ -91,7 +91,8 @@ Vue.prototype.$isMobile = isMobile;
 Vue.prototype.$rtl = rtl;
 
 // Register Vuetify
-Vue.use(Vuetify, { rtl, icons, theme });
+Vue.use(Vuetify);
+const vuetify = new Vuetify({ rtl, icons, theme });
 
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {
@@ -177,6 +178,6 @@ if (isMobile) {
 }
 
 // Start application.
-Mount(Vue, PhotoPrism, router);
+Mount(Vue, PhotoPrism, router, vuetify);
 
 offline.install();

@@ -7,9 +7,9 @@
     <v-app :class="$route.meta.background">
       <p-navigation></p-navigation>
 
-      <v-content>
+      <v-main>
         <router-view></router-view>
-      </v-content>
+      </v-main>
     </v-app>
 
     <p-photo-viewer></p-photo-viewer>

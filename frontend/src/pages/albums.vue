@@ -3,13 +3,13 @@
        :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat color="secondary lighten-5" :dense="$vuetify.breakpoint.smAndDown"><div class="mt-2">
         <v-text-field id="search"
                       v-model="filter.q"
                       single-line
                       class="input-search"
                       :label="$gettext('Search')"
-                      browser-autocomplete="off"
+                      autocomplete="off"
                       prepend-inner-icon="search"
                       clearable
                       color="secondary-dark"
@@ -42,7 +42,7 @@
                @click.prevent="create">
           <v-icon>add</v-icon>
         </v-btn>
-      </v-toolbar>
+      </div></v-toolbar>
     </v-form>
 
     <v-container v-if="loading" fluid class="pa-4">
@@ -86,7 +86,7 @@
             <v-card tile
                     :data-uid="album.UID"
                     style="user-select: none"
-                    class="result accent lighten-3"
+                    class="result accent lighten-3 flex-grow-1"
                     :class="album.classes(selection.includes(album.UID))"
                     :to="album.route(view)"
                     @contextmenu="onContextMenu($event, index)"
@@ -104,7 +104,7 @@
                   @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn v-if="featureShare && album.LinkCount > 0" :ripple="false"
-                       icon flat absolute
+                       icon text absolute
                        class="action-share"
                        @touchstart.stop.prevent="share(album)"
                        @touchend.stop.prevent
@@ -114,7 +114,7 @@
                 </v-btn>
 
                 <v-btn :ripple="false"
-                       icon flat absolute
+                       icon text absolute
                        class="input-select"
                        @touchstart.stop.prevent="onSelect($event, index)"
                        @touchend.stop.prevent
@@ -125,7 +125,7 @@
                 </v-btn>
 
                 <v-btn :ripple="false"
-                       icon flat absolute
+                       icon text absolute
                        class="input-favorite"
                        @touchstart.stop.prevent="onTouchStart($event, index)"
                        @touchend.stop.prevent="toggleLike($event, index)"

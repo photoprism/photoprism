@@ -1,7 +1,6 @@
 <template>
   <v-dialog
       v-model="visible"
-      lazy
       max-width="500"
   >
     <v-card class="pa-2">
@@ -15,10 +14,10 @@
 
       <v-card-text class="pa-2 body-1">
         <v-text-field
-            browser-autocomplete="off"
+            autocomplete="off"
             hide-details readonly
             single-line
-            outline
+            outlined
             color="secondary-dark"
             :value="webdavUrl()"
             class="input-url"
@@ -37,7 +36,7 @@
             icon="info"
             class="pa-2"
             type="info"
-            outline
+            outlined
         >
           <a style="color: inherit;" href="https://docs.photoprism.org/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
