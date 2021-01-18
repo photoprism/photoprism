@@ -6,9 +6,11 @@ fixture`Import file from folder`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 test.meta("testID", "library-import-001")("Import files from folder using copy", async (t) => {
+  await page.openNav();
   await t.click(Selector(".nav-labels"));
   await page.search("bakery");
   await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await page.openNav();
   await t
     .click(Selector(".nav-library"))
     .click(Selector("#tab-library-import"))
@@ -16,7 +18,9 @@ test.meta("testID", "library-import-001")("Import files from folder using copy",
     .click(Selector("div.v-list__tile__title").withText("/Bäckerei"))
     .click(Selector(".action-import"))
     //TODO replace wait
-    .wait(60000)
+    .wait(60000);
+  await page.openNav();
+  await t
     //.expect(Selector('span').withText('Done.').visible, {timeout: 60000}).ok()
     .click(Selector(".nav-labels"))
     .click(Selector(".action-reload"));
