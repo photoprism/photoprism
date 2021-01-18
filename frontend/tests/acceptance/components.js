@@ -8,7 +8,6 @@ const page = new Page();
 
 test.meta("testID", "components-001")("Test filter options", async (t) => {
   await t
-    .click("button.p-expand-search")
     .expect(Selector("body").withText("object Object").exists)
     .notOk();
 });
@@ -23,7 +22,6 @@ test.meta("testID", "components-002")("Fullscreen mode", async (t) => {
 });
 
 test.meta("testID", "components-003")("Mosaic view", async (t) => {
-  await t.click("button.p-expand-search");
   await page.setFilter("view", "Mosaic");
   await t
     .expect(Selector("div.v-image__image").visible)
@@ -37,7 +35,6 @@ test.meta("testID", "components-003")("Mosaic view", async (t) => {
 });
 
 test.meta("testID", "components-004")("List view", async (t) => {
-  await t.click("button.p-expand-search");
   await page.setFilter("view", "List");
   await t
     .expect(Selector("table.v-datatable").visible)
@@ -47,7 +44,6 @@ test.meta("testID", "components-004")("List view", async (t) => {
 });
 
 test.meta("testID", "components-005")("#Card view", async (t) => {
-  await t.click("button.p-expand-search");
   await page.setFilter("view", "Cards");
   await t
     .expect(Selector("div.v-image__image").visible)
