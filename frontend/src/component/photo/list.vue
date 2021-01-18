@@ -27,6 +27,7 @@
                   :items="photos"
                   hide-actions
                   class="search-results photo-results list-view"
+                  :class="{'select-results': selectMode}"
                   disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
@@ -50,13 +51,14 @@
                    flat icon large absolute
                    class="input-select">
               <v-icon color="white" class="select-on">check_circle</v-icon>
-              <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+              <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
             <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live'"
                    :ripple="false"
-                   flat icon large absolute class="input-play opacity-75"
+                   flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
-              <v-icon color="white" class="action-play">play_arrow</v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">movie</v-icon>
             </v-btn>
           </v-img>
         </td>

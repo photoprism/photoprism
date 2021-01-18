@@ -15,7 +15,7 @@
         </div>
       </v-card-title>
     </v-card>
-    <v-layout row wrap class="search-results photo-results cards-view">
+    <v-layout row wrap class="search-results photo-results cards-view" :class="{'select-results': selectMode}">
       <v-flex
           v-for="(photo, index) in photos"
           :key="index"
@@ -56,7 +56,8 @@
                    @touchend.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
-              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">adjust</v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">movie</v-icon>
               <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
             </v-btn>
 
@@ -69,7 +70,7 @@
             </v-btn>
 
             <v-btn :ripple="false" :depressed="false" color="white" class="input-play"
-                   outline fab absolute :title="$gettext('Play')"
+                   outline fab large absolute :title="$gettext('Play')"
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
@@ -83,7 +84,7 @@
                    @touchend.stop.prevent
                    @click.stop.prevent="onSelect($event, index)">
               <v-icon color="white" class="select-on">check_circle</v-icon>
-              <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+              <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
           </v-img>
 

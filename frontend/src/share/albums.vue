@@ -28,7 +28,7 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="search-results album-results cards-view">
+        <v-layout row wrap class="search-results album-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(album, index) in results"
               :key="index"
@@ -61,7 +61,7 @@
                        @touchend.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
               </v-img>
 
