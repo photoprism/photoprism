@@ -28,7 +28,9 @@ export default class Page {
       default:
         throw "unknown filter";
     }
-
+    if (!(await Selector(filterSelector).visible)) {
+      await t.click(Selector(".p-expand-search"));
+    }
     await t.click(filterSelector, { timeout: 15000 });
 
     if (option) {
