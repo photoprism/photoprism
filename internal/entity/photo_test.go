@@ -603,6 +603,16 @@ func TestPhoto_SetCoordinates(t *testing.T) {
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
 	})
+	t.Run("overwrite estimated source", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo21")
+		assert.Equal(t, float32(0), m.PhotoLat)
+		assert.Equal(t, float32(0), m.PhotoLng)
+		assert.Equal(t, 0, m.PhotoAltitude)
+		m.SetCoordinates(5.555, 5.555, 5, SrcMeta)
+		assert.Equal(t, float32(5.555), m.PhotoLat)
+		assert.Equal(t, float32(5.555), m.PhotoLng)
+		assert.Equal(t, 5, m.PhotoAltitude)
+	})
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, float32(1.234), m.PhotoLat)
