@@ -7,12 +7,14 @@ fixture`Test settings`.page`${testcafeconfig.url}`;
 const page = new Page();
 
 test.meta("testID", "settings-general-001")("General Settings", async (t) => {
+  await t.expect(Selector(".action-upload").exists, { timeout: 5000 }).ok();
   await page.openNav();
   await t
-    .expect(Selector(".action-upload").exists, { timeout: 5000 })
-    .ok()
     .expect(Selector(".nav-browse").innerText)
-    .contains("Search");
+    .contains("Search")
+    .click(Selector(".nav-browse"));
+  await page.setFilter("view", "Cards");
+  await page.search("photo:true");
   await page.toggleSelectNthPhoto(0);
   await t
     .click(Selector("button.action-menu"))
@@ -32,21 +34,27 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector(".action-download").exists)
     .ok()
     .click(Selector(".action-close"))
+    .click(Selector(".action-close"));
+  await t
     .expect(Selector("button.action-location").visible)
     .ok()
     .click(Selector("button.action-title-edit").nth(0))
-    .expect(Selector(".input-title input", { timeout: 5000 }).hasAttribute("disabled"))
+    .expect(Selector(".input-title input", { timeout: 8000 }).hasAttribute("disabled"))
     .notOk()
     .click(Selector("#tab-labels"))
     .expect(Selector("button.p-photo-label-add").visible)
     .ok()
     .click(Selector("#tab-details"))
-    .click(Selector("button.action-close"))
+    .click(Selector("button.action-close"));
+  await page.openNav();
+  await t
     .click(Selector(".nav-library"))
     .expect(Selector("#tab-library-import a").visible)
     .ok()
     .expect(Selector("#tab-library-logs a").visible)
-    .ok()
+    .ok();
+  await page.openNav();
+  await t
     .click(Selector("div.nav-browse + div"))
     .expect(Selector(".nav-archive").visible)
     .ok()
@@ -70,7 +78,6 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-language input"))
     .hover(Selector("div").withText("Deutsch").parent('div[role="listitem"]'))
     .click(Selector("div").withText("Deutsch").parent('div[role="listitem"]'))
-    .click(Selector(".nav-settings"))
     .click(Selector(".input-upload input"))
     .click(Selector(".input-download input"))
     .click(Selector(".input-import input"))
@@ -84,16 +91,17 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-places input"))
     .click(Selector("#tab-settings-library"))
     .click(Selector(".input-private input"))
-    .click(Selector(".input-review input"))
-    .click(Selector(".nav-browse"));
-
+    .click(Selector(".input-review input"));
+  await page.openNav();
   await t.eval(() => location.reload());
   await page.openNav();
   await t
     .expect(Selector("button.action-upload").exists)
     .notOk()
     .expect(Selector(".nav-browse").innerText)
-    .contains("Suche");
+    .contains("Suche")
+    .click(Selector(".nav-browse"));
+  await page.search("photo:true");
   await page.toggleSelectNthPhoto(0);
   await t
     .click(Selector("button.action-menu"))
@@ -112,6 +120,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .ok()
     .expect(Selector(".action-download").exists)
     .notOk()
+    .click(Selector(".action-close"))
     .click(Selector(".action-close"))
     .expect(Selector("button.action-location").exists)
     .notOk()
@@ -132,12 +141,16 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector("button.p-photo-label-add").exists)
     .notOk()
     .click(Selector("#tab-details"))
-    .click(Selector("button.action-close"))
+    .click(Selector("button.action-close"));
+  await page.openNav();
+  await t
     .click(Selector(".nav-library"))
     .expect(Selector("#tab-library-import a").exists)
     .notOk()
-    //TODO Fix bug
-    //.expect(Selector('#tab-library-logs a').exists).notOk()
+    .expect(Selector("#tab-library-logs a").exists)
+    .notOk();
+  await page.openNav();
+  await t
     .click(Selector("div.nav-browse + div"))
     .expect(Selector(".nav-archive").visible)
     .notOk()
@@ -160,7 +173,6 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-language input"))
     .hover(Selector("div").withText("English").parent('div[role="listitem"]'))
     .click(Selector("div").withText("English").parent('div[role="listitem"]'))
-    .click(Selector(".nav-settings"))
     .click(Selector(".input-upload input"))
     .click(Selector(".input-download input"))
     .click(Selector(".input-import input"))
