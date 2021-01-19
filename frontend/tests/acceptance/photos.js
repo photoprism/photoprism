@@ -78,22 +78,39 @@ test.meta("testID", "photos-003")(
     await page.selectPhotoFromUID(FirstPhoto);
     await page.editSelected();
     await t.click(Selector("button.action-close"));
-    await t.click(Selector("button.action-reload"));
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstPhoto).visible, { timeout: 5000 })
       .ok();
     await page.editSelected();
-    await t.click(Selector("button.action-approve")).click(Selector("button.action-done"));
-
+    await t.click(Selector("button.action-approve"));
+    if (t.browser.platform === "mobile") {
+      await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
+    } else {
+      await t.click(Selector("button.action-done", { timeout: 5000 }));
+    }
     await page.selectPhotoFromUID(SecondPhoto);
     await page.editSelected();
     await t
       .typeText(Selector('input[aria-label="Latitude"]'), "9.999")
-      .typeText(Selector('input[aria-label="Longitude"]'), "9.999")
-      .click(Selector("button.action-done"));
+      .typeText(Selector('input[aria-label="Longitude"]'), "9.999");
+    if (t.browser.platform === "mobile") {
+      await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
+    } else {
+      await t.click(Selector("button.action-done", { timeout: 5000 }));
+    }
     await page.setFilter("view", "Cards");
     const ButtonThirdPhoto = 'div.is-photo[data-uid="' + ThirdPhoto + '"] button.action-approve';
-    await t.click(Selector(ButtonThirdPhoto)).click(Selector("button.action-reload"));
+    await t.click(Selector(ButtonThirdPhoto));
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
       .notOk()
@@ -131,17 +148,25 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   await t.click(Selector(".nav-browse"));
 
   await page.toggleLike(FirstPhoto);
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await t.click(Selector("button.action-reload"));
+  }
   await t
-    .click(Selector(".action-reload"))
-    .expect(Selector("div.is-photo").withAttribute("data-uid", FirstPhoto).exists, {
+      .expect(Selector("div.is-photo").withAttribute("data-uid", FirstPhoto).exists, {
       timeout: 5000,
     })
     .ok();
   await page.openNav();
   await t.click(Selector(".nav-video"));
   await page.toggleLike(FirstVideo);
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await t.click(Selector("button.action-reload"));
+  }
   await t
-    .click(Selector(".action-reload"))
     .expect(Selector("div.is-photo").withAttribute("data-uid", FirstVideo).exists, {
       timeout: 5000,
     })
@@ -157,7 +182,11 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
     .ok();
   await page.toggleLike(FirstVideo);
   await page.toggleLike(FirstPhoto);
-  await t.click(Selector(".action-reload"));
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await t.click(Selector("button.action-reload"));
+  }
   await t
     .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
     .notOk()
@@ -206,7 +235,11 @@ test.meta("testID", "photos-005")(
       .notOk();
     await page.setFilter("view", "List");
     await t.click(Selector("button.p-photo-private").withAttribute("data-uid", ThirdPhoto));
-    await t.click(Selector(".action-reload"));
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("td").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
       .notOk()
@@ -229,7 +262,11 @@ test.meta("testID", "photos-005")(
       .click(Selector("button.action-private"))
       .expect(Selector("button.action-menu").exists, { timeout: 5000 })
       .notOk();
-    await t.click(Selector(".action-reload"));
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
       .notOk()
@@ -256,7 +293,11 @@ test.meta("testID", "photos-005")(
       .click(Selector("button.p-photo-private").withAttribute("data-uid", ThirdPhoto))
       .click(Selector("button.p-photo-private").withAttribute("data-uid", SecondVideo));
     await page.setFilter("view", "Mosaic");
-    await t.click(Selector(".action-reload"));
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
       .notOk()
@@ -333,10 +374,12 @@ test.meta("testID", "photos-006")(
     const clipboardCountVideo = await Selector("span.count-clipboard", { timeout: 5000 });
     await t.expect(clipboardCountVideo.textContent).eql("1");
     await page.archiveSelected();
-    await t
-      .expect(Selector("button.action-menu").exists, { timeout: 5000 })
-      .notOk()
-      .click(Selector(".action-reload"));
+    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
       .notOk();
@@ -347,10 +390,12 @@ test.meta("testID", "photos-006")(
     const clipboardCountPhotos = await Selector("span.count-clipboard", { timeout: 5000 });
     await t.expect(clipboardCountPhotos.textContent).eql("2");
     await page.archiveSelected();
-    await t
-      .expect(Selector("button.action-menu").exists, { timeout: 5000 })
-      .notOk()
-      .click(Selector(".action-reload"));
+    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
       .notOk()
@@ -362,20 +407,30 @@ test.meta("testID", "photos-006")(
     const clipboardCountPrivate = await Selector("span.count-clipboard", { timeout: 5000 });
     await t.expect(clipboardCountPrivate.textContent).eql("1");
     await page.openNav();
-    await t.click(Selector(".nav-review"));
+    if (t.browser.platform === "mobile") {
+      await t.click(Selector(".nav-browse + div")).click(Selector(".nav-review"));
+    } else {
+      await t.click(Selector(".nav-review"));
+    }
     await page.selectPhotoFromUID(FirstReviewPhoto);
     const clipboardCountReview = await Selector("span.count-clipboard", { timeout: 5000 });
     await t.expect(clipboardCountReview.textContent).eql("2");
     await page.archiveSelected();
-    await t
-      .expect(Selector("button.action-menu").exists, { timeout: 5000 })
-      .notOk()
-      .click(Selector(".action-reload"));
+    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 5000 })
       .notOk();
     await page.openNav();
-    await t.click(Selector(".nav-archive"));
+    if (t.browser.platform === "mobile") {
+      await t.click(Selector(".nav-browse + div")).click(Selector(".nav-archive"));
+    } else {
+      await t.click(Selector(".nav-archive"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
       .ok()
@@ -397,10 +452,12 @@ test.meta("testID", "photos-006")(
     const clipboardCountArchive = await Selector("span.count-clipboard", { timeout: 5000 });
     await t.expect(clipboardCountArchive.textContent).eql("5");
     await page.restoreSelected();
-    await t
-      .expect(Selector("button.action-menu").exists, { timeout: 5000 })
-      .notOk()
-      .click(Selector(".action-reload"));
+    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    if (t.browser.platform === "mobile") {
+      await t.eval(() => location.reload());
+    } else {
+      await t.click(Selector("button.action-reload"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
       .notOk()
@@ -434,7 +491,11 @@ test.meta("testID", "photos-006")(
       })
       .ok();
     await page.openNav();
-    await t.click(Selector(".nav-review"));
+    if (t.browser.platform === "mobile") {
+      await t.click(Selector(".nav-browse + div")).click(Selector(".nav-review"));
+    } else {
+      await t.click(Selector(".nav-review"));
+    }
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 5000 })
       .ok();
@@ -532,11 +593,17 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
     .typeText(Selector(".input-keywords textarea"), ", cat, love")
     .typeText(Selector(".input-notes textarea"), "Some notes", { replace: true })
     .click(Selector("button.action-approve"));
-  await t
-    .expect(Selector(".input-latitude input").visible, { timeout: 5000 })
-    .ok()
-    .click(Selector("button.action-done"));
-  await t.click(Selector("button.action-reload"));
+  await t.expect(Selector(".input-latitude input").visible, { timeout: 5000 }).ok();
+  if (t.browser.platform === "mobile") {
+    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
+  } else {
+    await t.click(Selector("button.action-done", { timeout: 5000 }));
+  }
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await t.click(Selector("button.action-reload"));
+  }
   await t
     .expect(Selector("button.action-title-edit").withAttribute("data-uid", FirstPhoto).innerText)
     .eql("New Photo Title");
@@ -719,7 +786,11 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
   } else {
     await t.typeText(Selector(".input-notes textarea"), FirstPhotoNotes, { replace: true });
   }
-  await t.click(Selector("button.action-done"));
+  if (t.browser.platform === "mobile") {
+    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
+  } else {
+    await t.click(Selector("button.action-done", { timeout: 5000 }));
+  }
   const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
   await t
     .expect(clipboardCount.textContent)
@@ -799,7 +870,11 @@ test.meta("testID", "photos-010")("Ungroup files", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-browse")).click(Selector(".p-expand-search"));
   await page.search("group");
-  await t.click(Selector(".action-reload"));
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await t.click(Selector("button.action-reload"));
+  }
   const PhotoCountAfterUngroup = await Selector("button.action-title-edit", { timeout: 5000 })
     .count;
   await t.expect(PhotoCountAfterUngroup).eql(2);
