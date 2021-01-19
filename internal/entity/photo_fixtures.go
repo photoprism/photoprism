@@ -793,7 +793,7 @@ var PhotoFixtures = PhotoMap{
 		Cell:             &UnknownLocation,
 		PlaceID:          UnknownPlace.ID,
 		CellID:           UnknownLocation.ID,
-		PlaceSrc:         "location",
+		PlaceSrc:         SrcLocation,
 		TimeZone:         "",
 		PhotoCountry:     UnknownCountry.ID,
 		PhotoYear:        0,

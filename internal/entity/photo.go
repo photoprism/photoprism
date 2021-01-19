@@ -897,7 +897,7 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 		return
 	}
 
-	if m.PlaceSrc != SrcAuto && m.PlaceSrc != source && source != SrcManual {
+	if SrcPriority[source] < SrcPriority[m.PlaceSrc] && m.HasLatLng() {
 		return
 	}
 
