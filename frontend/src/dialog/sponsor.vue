@@ -5,7 +5,7 @@
         <v-layout row wrap>
           <v-flex xs9>
             <h3 class="title mb-0">
-              <translate>Let's Join Forces </translate>
+              <translate>Let's Join Forces</translate>
             </h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
