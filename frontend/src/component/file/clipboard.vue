@@ -11,7 +11,7 @@
           :left="rtl"
           :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-file-clipboard`"
       >
-        <template v-slot:activator>
+        <template #activator>
           <v-btn
               fab
               dark

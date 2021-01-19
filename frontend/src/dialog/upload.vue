@@ -71,7 +71,7 @@
 
             <v-btn
                 :disabled="busy"
-                color="secondary-dark"
+                color="primary-button"
                 class="white--text ml-0 mt-2 action-upload"
                 depressed
                 @click.stop="uploadDialog()"

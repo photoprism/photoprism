@@ -1,5 +1,5 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -19,23 +19,23 @@
         <v-layout row wrap>
           <v-flex xs12 text-xs-left class="pt-2">
             <v-select
-                color="secondary-dark"
-                hide-details hide-no-data flat
+                v-model="account"
+                color="secondary-dark" hide-details hide-no-data
+                flat
                 :label="$gettext('Account')"
                 item-text="AccName"
                 item-value="ID"
-                @change="onChange"
                 return-object
                 :disabled="loading || noAccounts"
-                v-model="account"
-                :items="accounts">
+                :items="accounts"
+                @change="onChange">
             </v-select>
           </v-flex>
           <v-flex xs12 text-xs-left class="pt-2">
             <v-autocomplete
-                color="secondary-dark"
-                hide-details hide-no-data flat
                 v-model="path"
+                color="secondary-dark" hide-details hide-no-data
+                flat
                 browser-autocomplete="off"
                 hint="Folder"
                 :search-input.sync="search"
@@ -49,15 +49,15 @@
             </v-autocomplete>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-4">
-            <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2">
+            <v-btn depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn color="secondary-dark" depressed dark @click.stop="setup"
-                   class="action-setup ma-0" v-if="noAccounts">
+            <v-btn v-if="noAccounts" color="primary-button" depressed dark
+                   class="action-setup ma-0" @click.stop="setup">
               <translate>Setup</translate>
             </v-btn>
-            <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
-                   class="action-upload ma-0" v-else>
+            <v-btn v-else color="primary-button" depressed dark
+                   class="action-upload ma-0" @click.stop="confirm">
               <translate>Upload</translate>
             </v-btn>
           </v-flex>
@@ -70,7 +70,7 @@
 import Account from "model/account";
 
 export default {
-  name: 'p-share-upload-dialog',
+  name: 'PShareUploadDialog',
   props: {
     show: Boolean,
     selection: Array,
@@ -88,6 +88,26 @@ export default {
       ],
       pathItems: [],
       newPath: "",
+    };
+  },
+  watch: {
+    search(q) {
+      if (this.loading) return;
+
+      const exists = this.paths.findIndex((p) => p.value === q);
+
+      if (exists !== -1 || !q) {
+        this.pathItems = this.paths;
+        this.newPath = "";
+      } else {
+        this.newPath = q;
+        this.pathItems = this.paths.concat([{"abs": q}]);
+      }
+    },
+    show: function (show) {
+      if (show) {
+        this.load();
+      }
     }
   },
   methods: {
@@ -105,17 +125,17 @@ export default {
 
       this.loading = true;
       this.account.Share(this.selection, this.path).then(
-          (files) => {
-            this.loading = false;
+        (files) => {
+          this.loading = false;
 
-            if (files.length === 1) {
-              this.$notify.success("One file uploaded");
-            } else {
-              this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), {n: files.length}));
-            }
-
-            this.$emit('confirm', this.account);
+          if (files.length === 1) {
+            this.$notify.success("One file uploaded");
+          } else {
+            this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), {n: files.length}));
           }
+
+          this.$emit('confirm', this.account);
+        }
       ).catch(() => this.loading = false);
     },
     onChange() {
@@ -149,28 +169,8 @@ export default {
           this.accounts = response.models;
           this.onChange();
         }
-      }).catch(() => this.loading = false)
+      }).catch(() => this.loading = false);
     },
   },
-  watch: {
-    search(q) {
-      if (this.loading) return;
-
-      const exists = this.paths.findIndex((p) => p.value === q);
-
-      if (exists !== -1 || !q) {
-        this.pathItems = this.paths;
-        this.newPath = "";
-      } else {
-        this.newPath = q;
-        this.pathItems = this.paths.concat([{"abs": q}]);
-      }
-    },
-    show: function (show) {
-      if (show) {
-        this.load();
-      }
-    }
-  },
-}
+};
 </script>

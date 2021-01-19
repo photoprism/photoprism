@@ -58,6 +58,7 @@
                    icon flat absolute
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
@@ -69,6 +70,7 @@
                    icon flat absolute :title="$gettext('View')"
                    @touchstart.stop.prevent="openPhoto(index, false)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="openPhoto(index, false)">
               <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
             </v-btn>
@@ -77,6 +79,7 @@
                    outline fab large absolute :title="$gettext('Play')"
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
@@ -92,6 +95,7 @@
                    class="input-select"
                    @touchstart.stop.prevent="onSelect($event, index)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="onSelect($event, index)">
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
@@ -102,6 +106,7 @@
                    class="input-favorite"
                    @touchstart.stop.prevent="photo.toggleLike()"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="photo.toggleLike()">
               <v-icon color="white" class="select-on">favorite</v-icon>
               <v-icon color="white" class="select-off">favorite_border</v-icon>
@@ -164,11 +169,11 @@
             <v-layout row wrap align-center>
               <v-flex xs12>
                 <div class="text-xs-center">
-                  <v-btn color="secondary-dark" small depressed dark class="action-archive text-xs-center"
+                  <v-btn color="primary-button" small depressed dark class="action-archive text-xs-center"
                          :title="labels.archive" @click.stop="photo.archive()">
                     <v-icon dark>archive</v-icon>
                   </v-btn>
-                  <v-btn color="secondary-dark" small depressed dark class="action-approve text-xs-center"
+                  <v-btn color="primary-button" small depressed dark class="action-approve text-xs-center"
                          :title="labels.approve" @click.stop="photo.approve()">
                     <v-icon dark>check</v-icon>
                   </v-btn>

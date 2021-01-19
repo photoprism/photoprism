@@ -1,9 +1,9 @@
 <template>
-  <v-dialog fullscreen hide-overlay scrollable lazy
-            v-model="show" persistent class="p-photo-edit-dialog" @keydown.esc="close">
+  <v-dialog v-model="show" fullscreen hide-overlay scrollable
+            lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark @click.stop="close" class="action-close">
+        <v-btn icon dark class="action-close" @click.stop="close">
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>{{ title }}
@@ -11,11 +11,11 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="selection.length > 1">
-          <v-btn icon disabled @click.stop="prev" :disabled="selected < 1" class="action-previous">
+          <v-btn icon disabled :disabled="selected < 1" class="action-previous" @click.stop="prev">
             <v-icon>navigate_before</v-icon>
           </v-btn>
 
-          <v-btn icon @click.stop="next" :disabled="selected >= selection.length - 1" class="action-next">
+          <v-btn icon :disabled="selected >= selection.length - 1" class="action-next" @click.stop="next">
             <v-icon>navigate_next</v-icon>
           </v-btn>
         </v-toolbar-items>
@@ -41,26 +41,26 @@
           <translate key="Files">Files</translate>
         </v-tab>
 
-        <v-tab id="tab-info" ripple v-if="$config.feature('edit')">
+        <v-tab v-if="$config.feature('edit')" id="tab-info" ripple>
           <v-icon>settings</v-icon>
         </v-tab>
 
         <v-tabs-items touchless>
           <v-tab-item>
-            <p-tab-photo-details :model="model" :uid="uid" :key="uid" ref="details"
+            <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid"
                                  @close="close" @prev="prev" @next="next"></p-tab-photo-details>
           </v-tab-item>
 
           <v-tab-item lazy>
-            <p-tab-photo-labels :model="model" :uid="uid" :key="uid" @close="close"></p-tab-photo-labels>
+            <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
           </v-tab-item>
 
           <v-tab-item lazy>
-            <p-tab-photo-files :model="model" :uid="uid" :key="uid" @close="close"></p-tab-photo-files>
+            <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
           </v-tab-item>
 
-          <v-tab-item lazy v-if="$config.feature('edit')">
-            <p-tab-photo-info :model="model" :uid="uid" :key="uid" @close="close"></p-tab-photo-info>
+          <v-tab-item v-if="$config.feature('edit')" lazy>
+            <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
           </v-tab-item>
         </v-tabs-items>
       </v-tabs>
@@ -75,34 +75,18 @@ import PhotoFiles from "./files.vue";
 import PhotoInfo from "./info.vue";
 
 export default {
-  name: 'p-photo-edit-dialog',
-  props: {
-    index: Number,
-    show: Boolean,
-    selection: Array,
-    album: Object,
-  },
+  name: 'PPhotoEditDialog',
   components: {
     'p-tab-photo-details': PhotoDetails,
     'p-tab-photo-labels': PhotoLabels,
     'p-tab-photo-files': PhotoFiles,
     'p-tab-photo-info': PhotoInfo,
   },
-  computed: {
-    title: function () {
-      if (this.model && this.model.Title) {
-        return this.model.Title
-      }
-
-      this.$gettext("Edit Photo");
-    },
-    isPrivate: function () {
-      if (this.model && this.model.Private && this.$config.settings().features.private) {
-        return this.model.Private
-      }
-
-      return false;
-    },
+  props: {
+    index: Number,
+    show: Boolean,
+    selection: Array,
+    album: Object,
   },
   data() {
     return {
@@ -115,6 +99,29 @@ export default {
       items: [],
       readonly: this.$config.get("readonly"),
       active: this.tab,
+    };
+  },
+  computed: {
+    title: function () {
+      if (this.model && this.model.Title) {
+        return this.model.Title;
+      }
+
+      this.$gettext("Edit Photo");
+    },
+    isPrivate: function () {
+      if (this.model && this.model.Private && this.$config.settings().features.private) {
+        return this.model.Private;
+      }
+
+      return false;
+    },
+  },
+  watch: {
+    show: function (show) {
+      if (show) {
+        this.find(this.index);
+      }
     }
   },
   methods: {
@@ -145,7 +152,7 @@ export default {
 
       if (!this.selection || !this.selection[index]) {
         this.$notify.error("Invalid photo selected");
-        return
+        return;
       }
 
       this.loading = true;
@@ -160,12 +167,5 @@ export default {
       }).catch(() => this.loading = false);
     },
   },
-  watch: {
-    show: function (show) {
-      if (show) {
-        this.find(this.index);
-      }
-    }
-  },
-}
+};
 </script>

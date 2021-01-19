@@ -1,5 +1,5 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="350" class="p-label-delete-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" lazy persistent max-width="350" class="p-label-delete-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -12,11 +12,11 @@
             </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
-            <v-btn @click.stop="cancel" depressed color="secondary-light" class="action-cancel">
+            <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="secondary-dark" depressed dark @click.stop="confirm"
-                   class="action-confirm">
+            <v-btn color="primary-button" depressed dark class="action-confirm"
+                   @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>
           </v-flex>
@@ -27,12 +27,12 @@
 </template>
 <script>
 export default {
-  name: 'p-label-delete-dialog',
+  name: 'PLabelDeleteDialog',
   props: {
     show: Boolean,
   },
   data() {
-    return {}
+    return {};
   },
   methods: {
     cancel() {
@@ -42,5 +42,5 @@ export default {
       this.$emit('confirm');
     },
   }
-}
+};
 </script>

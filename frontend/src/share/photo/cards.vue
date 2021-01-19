@@ -54,6 +54,7 @@
                    icon flat absolute
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
@@ -65,6 +66,7 @@
                    icon flat absolute :title="$gettext('View')"
                    @touchstart.stop.prevent="openPhoto(index, false)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="openPhoto(index, false)">
               <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
             </v-btn>
@@ -73,6 +75,7 @@
                    outline fab large absolute :title="$gettext('Play')"
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
@@ -82,6 +85,7 @@
                    class="input-select"
                    @touchstart.stop.prevent="onSelect($event, index)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="onSelect($event, index)">
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
