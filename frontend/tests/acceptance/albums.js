@@ -23,9 +23,12 @@ test.meta("testID", "albums-001")("Create/delete album", async (t) => {
 test.meta("testID", "albums-002")("Update album", async (t) => {
   await page.openNav();
   await t
-    .click(Selector(".nav-albums"))
-    .typeText(Selector(".p-albums-search input"), "Holiday")
-    .pressKey("enter");
+    .click(Selector(".nav-albums"));
+  if (t.browser.platform === "mobile") {
+    await t.navigateTo("/albums?q=Holiday");
+  } else { await page.search("Holiday");}
+    //.typeText(Selector(".p-albums-search input"), "Holiday")
+    //.pressKey("enter");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
@@ -53,8 +56,8 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   await page.search("photo:true");
   const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
-  await page.selectFromUIDInFullscreen(FirstPhotoUid);
   await page.selectPhotoFromUID(SecondPhotoUid);
+  await page.selectFromUIDInFullscreen(FirstPhotoUid);
   await page.addSelectedToAlbum("Animals");
   await page.openNav();
   await t.click(Selector(".nav-albums"));
@@ -76,7 +79,6 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   await page.selectPhotoFromUID(FirstPhotoUid);
   await page.selectPhotoFromUID(SecondPhotoUid);
   await page.removeSelected();
-  await t.click(".action-reload");
   const PhotoCountAfterDelete = await Selector("div.is-photo").count;
   await t
     .expect(PhotoCountAfterDelete)
@@ -93,8 +95,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
     .click(Selector(".input-category input"))
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(".action-confirm")
-    .click(".action-reload");
+    .click(".action-confirm");
   await page.openNav();
   await t
     .click(Selector(".nav-albums"))
@@ -160,7 +161,7 @@ test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t)
     .expect(InitialUrl)
     .notContains("secretfortesting")
     .expect(InitialExpire)
-    .eql("Never")
+    .contains("Never")
     .typeText(Selector(".input-secret input"), "secretForTesting", { replace: true })
     .click(Selector(".input-expires input"))
     .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
@@ -174,7 +175,7 @@ test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t)
     .expect(UrlAfterChange)
     .contains("secretfortesting")
     .expect(ExpireAfterChange)
-    .eql("After 1 day")
+    .contains("After 1 day")
     .typeText(Selector(".input-secret input"), InitialSecret, { replace: true })
     .click(Selector(".input-expires input"))
     .click(Selector("div").withText("Never").parent('div[role="listitem"]'))

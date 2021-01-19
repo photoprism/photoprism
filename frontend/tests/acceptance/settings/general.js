@@ -113,15 +113,19 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .notOk()
     .expect(Selector("button.action-private").exists)
     .notOk();
-  await page.toggleSelectNthPhoto(0);
-  await t.click(Selector("div.is-photo").nth(0));
+ //
   await t
-    .expect(Selector("#p-photo-viewer").visible)
+      .hover(Selector(".is-photo.type-image").nth(0))
+      .click(Selector(".is-photo.type-image .action-fullscreen").nth(0));
+  await t
+    .expect(Selector("#p-photo-viewer", { timeout: 5000 }).visible)
     .ok()
     .expect(Selector(".action-download").exists)
     .notOk()
     .click(Selector(".action-close"))
     .click(Selector(".action-close"))
+  await page.toggleSelectNthPhoto(0);
+  await t
     .expect(Selector("button.action-location").exists)
     .notOk()
     .click(Selector("button.action-title-edit").nth(0))

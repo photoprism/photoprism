@@ -20,18 +20,27 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await page.openNav();
   await t
     .click(Selector(".nav-calendar"));
-  await page.search("December 2013");
+  if (t.browser.platform === "mobile") {
+    console.log(t.browser.platform);
+    await t.navigateTo("/calendar?q=December%202013");
+  } else { await page.search("December 2013");}
   await t
     .expect(Selector("h3").withText("Couldn't find anything").visible)
     .ok();
   await page.openNav();
   await t
     .click(Selector(".nav-folders"));
-  await page.search("Moment");
+  if (t.browser.platform === "mobile") {
+    console.log(t.browser.platform);
+    await t.navigateTo("/folders?q=moment");
+  } else { await page.search("Moment");}
   await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
   await page.openNav();
   await t.click(Selector(".nav-places + div > i")).click(Selector(".nav-states"));
-  await page.search("KwaZulu");
+  if (t.browser.platform === "mobile") {
+    console.log(t.browser.platform);
+    await t.navigateTo("/states?q=KwaZulu");
+  } else { await page.search("KwaZulu");}
   await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
   await page.openNav();
   await t
@@ -69,7 +78,10 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await t
     .click(Selector(".nav-calendar"))
     .click(Selector(".action-reload"));
-  await page.search("December 2013");
+  if (t.browser.platform === "mobile") {
+    console.log(t.browser.platform);
+    await t.navigateTo("/calendar?q=December%202013");
+  } else { await page.search("December 2013");}
   await t
     .expect(Selector(".is-album").visible)
     .ok();
@@ -77,14 +89,20 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await t
     .click(Selector(".nav-folders"))
     .click(Selector(".action-reload"));
-  await page.search("Moment");
+  if (t.browser.platform === "mobile") {
+    console.log(t.browser.platform);
+    await t.navigateTo("/folders?q=moment");
+  } else { await page.search("Moment");}
   await t.expect(Selector(".is-album").visible).ok();
   await page.openNav();
   await t
     .click(Selector(".nav-places+div>i"))
     .click(Selector(".nav-states"))
     .click(Selector(".action-reload"));
-  await page.search("KwaZulu");
+  if (t.browser.platform === "mobile") {
+    console.log(t.browser.platform);
+    await t.navigateTo("/states?q=KwaZulu");
+  } else { await page.search("KwaZulu");}
   await t.expect(Selector(".is-album").visible).ok();
   await page.openNav();
   await t
