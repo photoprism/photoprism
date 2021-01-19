@@ -23,7 +23,7 @@
         and <a href="https://www.paypal.me/photoprism" target="_blank" class="text-link">PayPal</a>.</p>
       <p class="body-1">Your continuous support helps...</p>
       <ul class="pb-3 body-1">
-        <li>to pay for hosting, hardware and external services like satellite maps</li>
+        <li>to pay for operating expenses and external services like satellite maps</li>
         <li>developing new features, and keeping them free for everyone 🌈</li>
       </ul>
       <p class="body-1">Also, please <a href="https://github.com/photoprism/photoprism/stargazers" target="_blank" class="text-link">leave a star</a> on

@@ -21,7 +21,7 @@ var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "sponsor",
 		Hidden: true,
-		Usage:  "your continuous support helps to pay for development, hosting, and external services like satellite maps",
+		Usage:  "your continuous support helps to pay for development and operating expenses",
 		EnvVar: "PHOTOPRISM_SPONSOR",
 	},
 	cli.BoolFlag{

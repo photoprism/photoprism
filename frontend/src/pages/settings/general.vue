@@ -16,13 +16,13 @@
               <v-select
                   v-model="settings.ui.theme"
                   :disabled="busy"
-                  :items="options.Themes()"
+                  :items="themes"
                   :label="$gettext('Theme')"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
                   box class="input-theme"
-                  @change="onChange"
+                  @change="onChangeTheme"
               ></v-select>
             </v-flex>
 
@@ -30,7 +30,7 @@
               <v-select
                   v-model="settings.ui.language"
                   :disabled="busy"
-                  :items="options.Languages()"
+                  :items="languages"
                   :label="$gettext('Language')"
                   color="secondary-dark"
                   background-color="secondary-light"
@@ -271,6 +271,8 @@
     </v-form>
 
     <p-about-footer></p-about-footer>
+
+    <p-sponsor-dialog :show="dialog.sponsor" @close="dialog.sponsor = false"></p-sponsor-dialog>
   </div>
 </template>
 
@@ -278,6 +280,7 @@
 import Settings from "model/settings";
 import * as options from "options/options";
 import Event from "pubsub-js";
+import themes from "options/themes.json";
 
 export default {
   name: 'PSettingsGeneral',
@@ -291,6 +294,12 @@ export default {
       options: options,
       busy: this.$config.loading(),
       subscriptions: [],
+      themes: options.Themes(),
+      currentTheme: this.$config.themeName,
+      languages: options.Languages(),
+      dialog: {
+        sponsor: false,
+      },
     };
   },
   created() {
@@ -308,6 +317,25 @@ export default {
         this.settings.setValues(this.$config.settings());
         this.busy = false;
       });
+    },
+    onChangeTheme(newTheme) {
+      if(!newTheme || !themes[newTheme]) {
+        return false;
+      }
+
+      if(!this.$config.values.sponsor && themes[newTheme].sponsor) {
+        this.dialog.sponsor = true;
+
+        this.$nextTick(() => {
+          this.settings.ui.theme = this.currentTheme;
+        });
+
+        return false;
+      }
+
+      this.currentTheme = newTheme;
+
+      this.onChange();
     },
     onChange() {
       const reload = this.settings.changed("ui", "language");

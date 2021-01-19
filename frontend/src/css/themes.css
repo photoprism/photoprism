@@ -52,7 +52,10 @@
     background: #555;
 }
 
-#photoprism.theme-grayscale .p-page a.text-link,
+#photoprism.theme-grayscale a.text-link {
+    color: #e3d5c3 !important;
+}
+
 #photoprism.theme-grayscale .theme--light.v-select .v-select__selections {
     color: #e3d5c3;
 }
@@ -127,8 +130,8 @@
     background: #555;
 }
 
-#photoprism.theme-shadow .p-page a.text-link {
-    color: #cbcee8;
+#photoprism.theme-shadow a.text-link {
+    color: #c8e3e7 !important;
 }
 
 #photoprism.theme-shadow .theme--light.v-select .v-select__selections {

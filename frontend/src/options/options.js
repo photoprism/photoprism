@@ -163,7 +163,7 @@ export const Themes = () => [
   {
     text: $gettext("Grayscale"),
     value: "grayscale",
-    disabled: !config.values.sponsor,
+    disabled: false,
   },
   {
     text: $gettext("Cyano"),
@@ -198,7 +198,7 @@ export const Themes = () => [
   {
     text: $gettext("Shadow"),
     value: "shadow",
-    disabled: !config.values.sponsor,
+    disabled: false,
   },
 ];
 export const MapsAnimate = () => [

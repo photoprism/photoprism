@@ -270,7 +270,7 @@ func (c *Config) Demo() bool {
 	return c.options.Demo
 }
 
-// Your continuous support helps to pay for development, hosting, and external services like satellite maps.
+// Sponsor reports if your continuous support helps to pay for development and operating expenses.
 func (c *Config) Sponsor() bool {
 	return c.options.Sponsor
 }
