@@ -85,6 +85,7 @@
                        class="input-select"
                        @touchstart.stop.prevent="onSelect($event, index)"
                        @touchend.stop.prevent
+                       @touchmove.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="white" class="select-off">radio_button_off</v-icon>
@@ -95,6 +96,7 @@
                        class="input-favorite"
                        @touchstart.stop.prevent="label.toggleLike()"
                        @touchend.stop.prevent
+                       @touchmove.stop.prevent
                        @click.stop.prevent="label.toggleLike()">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>

@@ -94,7 +94,7 @@
         <td class="text-xs-center">
           <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
                  :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
-            <v-icon v-if="props.item.Private" color="secondary-dark">lock</v-icon>
+            <v-icon v-if="props.item.Private" color="accent lighten-3">lock</v-icon>
             <v-icon v-else color="accent lighten-3">lock_open</v-icon>
           </v-btn>
           <v-btn class="p-photo-like" icon small flat :ripple="false"
