@@ -17,7 +17,7 @@
         </v-btn>
 
         <v-btn
-            color="secondary-dark"
+            color="primary-button"
             dark depressed small
             class="action-update-reload"
             @click="reload"

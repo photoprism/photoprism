@@ -57,7 +57,7 @@
 
         <v-btn
             :disabled="!busy || !ready"
-            color="secondary-dark"
+            color="primary-button"
             class="white--text ml-0 action-cancel"
             depressed
             @click.stop="cancelImport()"
@@ -67,7 +67,7 @@
 
         <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
                :disabled="busy || !ready"
-               color="secondary-dark"
+               color="primary-button"
                class="white--text ml-0 hidden-xs-only action-upload"
                depressed
                @click.stop="showUpload()"
@@ -78,7 +78,7 @@
 
         <v-btn
             :disabled="busy || !ready"
-            color="secondary-dark"
+            color="primary-button"
             class="white--text ml-0 mt-2 action-import"
             depressed
             @click.stop="startImport()"

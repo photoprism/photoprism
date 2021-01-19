@@ -1,5 +1,5 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="500" class="p-account-create-dialog" @keydown.esc="cancel">
+  <v-dialog v-model="show" lazy persistent max-width="500" class="p-account-create-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title>
         <div>
@@ -12,32 +12,32 @@
         <v-layout row wrap>
           <v-flex xs12 class="pa-2">
             <v-text-field
+                v-model="model.AccURL"
                 hide-details
                 browser-autocomplete="off"
                 :label="$gettext('Service URL')"
                 placeholder="https://www.example.com/"
                 color="secondary-dark"
-                v-model="model.AccURL"
             ></v-text-field>
           </v-flex>
           <v-flex xs12 sm6 class="pa-2">
             <v-text-field
+                v-model="model.AccUser"
                 hide-details
                 browser-autocomplete="off"
                 :label="$gettext('Username')"
                 placeholder="optional"
                 color="secondary-dark"
-                v-model="model.AccUser"
             ></v-text-field>
           </v-flex>
           <v-flex xs12 sm6 class="pa-2">
             <v-text-field
+                v-model="model.AccPass"
                 hide-details
                 browser-autocomplete="off"
                 :label="$gettext('Password')"
                 placeholder="optional"
                 color="secondary-dark"
-                v-model="model.AccPass"
                 :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                 :type="showPassword ? 'text' : 'password'"
                 @click:append="showPassword = !showPassword"
@@ -48,12 +48,12 @@
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-flex>
           <v-flex xs12 text-xs-right class="px-2 pt-2 pb-0">
-            <v-btn @click.stop="cancel" depressed color="secondary-light"
-                   class="action-cancel mr-2">
+            <v-btn depressed color="secondary-light" class="action-cancel mr-2"
+                   @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
-            <v-btn depressed dark color="secondary-dark" @click.stop="confirm"
-                   class="action-confirm ma-0">
+            <v-btn depressed dark color="secondary-dark" class="action-confirm ma-0"
+                   @click.stop="confirm">
               <span>{{ label.confirm }}</span>
             </v-btn>
           </v-flex>
@@ -66,7 +66,7 @@
 import Account from "model/account";
 
 export default {
-  name: 'p-account-create-dialog',
+  name: 'PAccountCreateDialog',
   props: {
     show: Boolean,
   },
@@ -80,6 +80,10 @@ export default {
         cancel: this.$gettext("Cancel"),
         confirm: this.$gettext("Connect"),
       }
+    };
+  },
+  watch: {
+    show: function (show) {
     }
   },
   methods: {
@@ -95,9 +99,5 @@ export default {
       });
     },
   },
-  watch: {
-    show: function (show) {
-    }
-  },
-}
+};
 </script>

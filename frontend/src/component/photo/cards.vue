@@ -169,11 +169,11 @@
             <v-layout row wrap align-center>
               <v-flex xs12>
                 <div class="text-xs-center">
-                  <v-btn color="secondary-dark" small depressed dark class="action-archive text-xs-center"
+                  <v-btn color="primary-button" small depressed dark class="action-archive text-xs-center"
                          :title="labels.archive" @click.stop="photo.archive()">
                     <v-icon dark>archive</v-icon>
                   </v-btn>
-                  <v-btn color="secondary-dark" small depressed dark class="action-approve text-xs-center"
+                  <v-btn color="primary-button" small depressed dark class="action-approve text-xs-center"
                          :title="labels.approve" @click.stop="photo.approve()">
                     <v-icon dark>check</v-icon>
                   </v-btn>

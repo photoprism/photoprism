@@ -53,7 +53,7 @@
             </v-flex>
 
             <v-flex xs12 class="pa-2">
-              <v-btn depressed color="secondary-dark"
+              <v-btn depressed color="primary-button"
                      :disabled="disabled()"
                      class="action-confirm white--text ma-0"
                      @click.stop="confirm">

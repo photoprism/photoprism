@@ -63,7 +63,7 @@
           <translate>Connect via WebDAV</translate>
         </v-btn>
 
-        <v-btn color="secondary-dark"
+        <v-btn color="primary-button"
                class="white--text ml-0"
                :disabled="demo"
                depressed

@@ -36,21 +36,21 @@
                           <translate>Actions</translate>
                         </td>
                         <td>
-                          <v-btn small depressed dark color="secondary-dark" class="ma-0 action-download"
+                          <v-btn small depressed dark color="primary-button" class="ma-0 action-download"
                                  @click.stop.prevent="downloadFile(file)">
                             <translate>Download</translate>
                           </v-btn>
-                          <v-btn v-if="features.edit && file.Type === 'jpg' && !file.Primary" small depressed dark color="secondary-dark"
+                          <v-btn v-if="features.edit && file.Type === 'jpg' && !file.Primary" small depressed dark color="primary-button"
                                  class="ma-0 action-primary"
                                  @click.stop.prevent="primaryFile(file)">
                             <translate>Primary</translate>
                           </v-btn>
-                          <v-btn v-if="features.edit && !file.Sidecar && !file.Primary && file.Root === '/'" small depressed dark color="secondary-dark"
+                          <v-btn v-if="features.edit && !file.Sidecar && !file.Primary && file.Root === '/'" small depressed dark color="primary-button"
                                  class="ma-0 action-unstack"
                                  @click.stop.prevent="unstackFile(file)">
                             <translate>Unstack</translate>
                           </v-btn>
-                          <v-btn v-if="features.edit && !file.Primary" small depressed dark color="secondary-dark"
+                          <v-btn v-if="features.edit && !file.Primary" small depressed dark color="primary-button"
                                  class="ma-0 action-delete"
                                  @click.stop.prevent="showDeleteDialog(file)">
                             <translate>Delete</translate>
