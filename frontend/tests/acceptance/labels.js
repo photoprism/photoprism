@@ -131,9 +131,10 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
 test.meta("testID", "labels-003")("Add label to album", async (t) => {
   await page.openNav();
   await t
-    .click(Selector(".nav-albums"))
-    .typeText(Selector(".p-albums-search input"), "Christmas")
-    .pressKey("enter");
+    .click(Selector(".nav-albums"));
+  if (t.browser.platform === "mobile") {
+    await t.navigateTo("/albums?q=Christmas");
+  } else { await page.search("Christmas");}
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
   const PhotoCount = await Selector("div.is-photo").count;
@@ -162,7 +163,6 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
   await page.selectPhotoFromUID(SecondPhotoLandscape);
   await page.selectPhotoFromUID(ThirdPhotoLandscape);
   await page.removeSelected();
-  await t.click(".action-reload");
   const PhotoCountAfterDelete = await Selector("div.is-photo", { timeout: 5000 }).count;
   await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 3);
 });

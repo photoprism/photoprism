@@ -27,8 +27,6 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   if (t.browser.platform === "mobile") {
     await t.navigateTo("/albums?q=Holiday");
   } else { await page.search("Holiday");}
-    //.typeText(Selector(".p-albums-search input"), "Holiday")
-    //.pressKey("enter");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
