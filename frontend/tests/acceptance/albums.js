@@ -6,7 +6,7 @@ fixture`Test albums`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
-test.meta("testID", "albums-001")("Create/delete album", async (t) => {
+test.meta("testID", "albums-001")("Create/delete album on /albums", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   const countAlbums = await Selector("a.is-album").count;
@@ -22,11 +22,12 @@ test.meta("testID", "albums-001")("Create/delete album", async (t) => {
 
 test.meta("testID", "albums-002")("Update album", async (t) => {
   await page.openNav();
-  await t
-    .click(Selector(".nav-albums"));
+  await t.click(Selector(".nav-albums"));
   if (t.browser.platform === "mobile") {
     await t.navigateTo("/albums?q=Holiday");
-  } else { await page.search("Holiday");}
+  } else {
+    await page.search("Holiday");
+  }
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
@@ -49,8 +50,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
     .expect(Selector("div").withText("Animals").exists)
     .ok();
   await page.openNav();
-  await t
-    .click(Selector(".nav-browse"));
+  await t.click(Selector(".nav-browse"));
   await page.search("photo:true");
   const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
@@ -62,9 +62,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   await t
     .click(Selector(".input-category i"))
     .click(Selector('div[role="listitem"]').withText("Family"));
-  await t
-    .expect(Selector("button.action-title-edit").nth(0).innerText)
-    .contains("Christmas");
+  await t.expect(Selector("button.action-title-edit").nth(0).innerText).contains("Christmas");
   await page.openNav();
   await t
     .click(Selector(".nav-albums"))
@@ -189,4 +187,34 @@ test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t)
     .click(Selector(".action-delete"));
   const LinkCountAfterDelete = await Selector(".action-url").count;
   await t.expect(LinkCountAfterDelete).eql(LinkCountAfterAdd - 1);
+});
+
+test.meta("testID", "albums-007")("Create/delete album during add to album", async (t) => {
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  const countAlbums = await Selector("a.is-album").count;
+  await page.openNav();
+  await t.click(Selector(".nav-browse"));
+  await page.search("photo:true");
+  const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
+  const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
+  await page.selectPhotoFromUID(SecondPhotoUid);
+  await page.selectFromUIDInFullscreen(FirstPhotoUid);
+  await page.addSelectedToAlbum("NotYetExistingAlbum");
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  const countAlbumsAfterCreation = await Selector("a.is-album").count;
+  await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
+  if (t.browser.platform === "mobile") {
+    await t.navigateTo("/albums?q=NotYetExistingAlbum");
+  } else {
+    await page.search("NotYetExistingAlbum");
+  }
+  const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+  await page.selectFromUID(AlbumUid);
+  await page.deleteSelected();
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  const countAlbumsAfterDelete = await Selector("a.is-album").count;
+  await t.expect(countAlbumsAfterDelete).eql(countAlbums);
 });
