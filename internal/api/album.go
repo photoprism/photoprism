@@ -185,6 +185,10 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 		event.SuccessMsg(i18n.MsgAlbumSaved)
 
+		if f.CoverUID != "" {
+			RemoveFromAlbumCoverCache(a.AlbumUID)
+		}
+
 		PublishAlbumEvent(EntityUpdated, uid, c)
 
 		SaveAlbumAsYaml(a)
