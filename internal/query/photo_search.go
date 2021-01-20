@@ -22,10 +22,9 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	s := UnscopedDb()
-
 	// s.LogMode(true)
 
-	// Main search query, avoids (slow) left joins.
+	// Base query.
 	s = s.Table("photos").
 		Select(`photos.*, photos.id AS composite_id,
 		files.id AS file_id, files.file_uid, files.instance_id, files.file_primary, files.file_missing, files.file_name,
@@ -40,6 +39,38 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		Joins("LEFT JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
 		Joins("LEFT JOIN places ON photos.place_id = places.id")
+
+	// Limit result count.
+	if f.Count > 0 && f.Count <= MaxResults {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	} else {
+		s = s.Limit(MaxResults).Offset(f.Offset)
+	}
+
+	// Set sort order.
+	switch f.Order {
+	case entity.SortOrderEdited:
+		s = s.Where("edited_at IS NOT NULL").Order("edited_at DESC, photos.photo_uid, files.file_primary DESC")
+	case entity.SortOrderRelevance:
+		if f.Label != "" {
+			s = s.Order("photo_quality DESC, photos_labels.uncertainty ASC, taken_at DESC, files.file_primary DESC")
+		} else {
+			s = s.Order("photo_quality DESC, taken_at DESC, files.file_primary DESC")
+		}
+	case entity.SortOrderNewest:
+		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
+	case entity.SortOrderOldest:
+		s = s.Order("taken_at, photos.photo_uid, files.file_primary DESC")
+	case entity.SortOrderAdded:
+		s = s.Order("photos.id DESC, files.file_primary DESC")
+	case entity.SortOrderSimilar:
+		s = s.Where("files.file_diff > 0")
+		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, taken_at DESC, files.file_primary DESC")
+	case entity.SortOrderName:
+		s = s.Order("photos.photo_path, photos.photo_name, files.file_primary DESC")
+	default:
+		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
+	}
 
 	if !f.Hidden {
 		s = s.Where("files.file_type = 'jpg' OR files.file_video = 1")
@@ -336,37 +367,6 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	} else if f.Unsorted && f.Filter == "" {
 		s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
-	}
-
-	// Set sort order for results.
-	switch f.Order {
-	case entity.SortOrderEdited:
-		s = s.Where("edited_at IS NOT NULL").Order("edited_at DESC, photos.photo_uid, files.file_primary DESC")
-	case entity.SortOrderRelevance:
-		if f.Label != "" {
-			s = s.Order("photo_quality DESC, photos_labels.uncertainty ASC, taken_at DESC, files.file_primary DESC")
-		} else {
-			s = s.Order("photo_quality DESC, taken_at DESC, files.file_primary DESC")
-		}
-	case entity.SortOrderNewest:
-		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
-	case entity.SortOrderOldest:
-		s = s.Order("taken_at, photos.photo_uid, files.file_primary DESC")
-	case entity.SortOrderAdded:
-		s = s.Order("photos.id DESC, files.file_primary DESC")
-	case entity.SortOrderSimilar:
-		s = s.Where("files.file_diff > 0")
-		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, taken_at DESC, files.file_primary DESC")
-	case entity.SortOrderName:
-		s = s.Order("photos.photo_path, photos.photo_name, files.file_primary DESC")
-	default:
-		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
-	}
-
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
-	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if err := s.Scan(&results).Error; err != nil {
