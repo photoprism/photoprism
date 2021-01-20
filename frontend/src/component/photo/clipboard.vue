@@ -130,7 +130,7 @@
             class="action-cover"
             @click.stop="setCover"
         >
-          <v-icon>file</v-icon>
+          <v-icon>insert_photo</v-icon>
         </v-btn>
         <v-btn
             fab dark small

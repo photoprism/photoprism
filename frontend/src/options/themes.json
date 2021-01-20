@@ -23,6 +23,7 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
+      "cover": "#e35333",
       "terminal": "#333333",
       "navigation": "#212121",
       "navigation-home": "#000000"
@@ -45,6 +46,7 @@
       "success": "#4db6ac",
       "warning": "#e3d181",
       "love": "#ef5350",
+      "cover": "#e35333",
       "remove": "#e35333",
       "restore": "#64b5f6",
       "album": "#ffab40",
@@ -81,6 +83,7 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
+      "cover": "#e35333",
       "terminal": "#333333",
       "navigation": "#006064",
       "navigation-home": "#37474f"
@@ -110,6 +113,7 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
+      "cover": "#e35333",
       "terminal": "#616161",
       "navigation": "#a40e52",
       "navigation-home": "#880e4f"
@@ -139,6 +143,7 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
+      "cover": "#e35333",
       "terminal": "#333333",
       "navigation": "#37474f",
       "navigation-home": "#263238"
@@ -168,6 +173,7 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
+      "cover": "#e35333",
       "terminal": "#333333",
       "navigation": "#37474f",
       "navigation-home": "#263238"
@@ -197,6 +203,7 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
+      "cover": "#e35333",
       "terminal": "#333333",
       "navigation": "#212121",
       "navigation-home": "#000000"
@@ -219,6 +226,7 @@
       "success": "#4db6ac",
       "warning": "#e3d181",
       "love": "#ef5350",
+      "cover": "#e35333",
       "remove": "#e35333",
       "restore": "#64b5f6",
       "album": "#ffab40",
@@ -255,6 +263,7 @@
       "edit": "#00b8d4",
       "share": "#9575cd",
       "love": "#ef5350",
+      "cover": "#e35333",
       "terminal": "#333333",
       "navigation": "#212121",
       "navigation-home": "#000000"
