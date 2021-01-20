@@ -130,6 +130,54 @@ export default class Page {
     await t.click(Selector("button.action-confirm"));
   }
 
+  async turnSwitchOff(type) {
+    await t
+      .click("#tab-info")
+      .expect(
+        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+          "aria-checked",
+          "true"
+        )
+      )
+      .ok()
+      .click(Selector(".input-" + type + " input"))
+      .expect(
+        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+          "aria-checked",
+          "false"
+        )
+      )
+      .ok();
+  }
+
+  async turnSwitchOn(type) {
+    await t
+      .click("#tab-info")
+      .expect(
+        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+          "aria-checked",
+          "false"
+        )
+      )
+      .ok()
+      .click(Selector(".input-" + type + " input"))
+      .expect(
+        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+          "aria-checked",
+          "true"
+        )
+      )
+      .ok();
+  }
+
+  async clearSelection() {
+    if (await Selector(".action-clear").visible) {
+      await t.click(Selector(".action-clear"));
+    } else {
+      await t.click(Selector(".action-menu")).click(Selector(".action-clear"));
+    }
+  }
+
   async login(password) {
     await t.typeText(Selector('input[type="password"]'), password).pressKey("enter");
   }
