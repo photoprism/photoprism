@@ -83,7 +83,7 @@
             </v-list-tile>
           </template>
 
-          <v-list-tile :to="{name: 'browse', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" @click.stop="">
+          <v-list-tile :to="{name: 'browse', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" class="nav-monochrome" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Monochrome</translate>

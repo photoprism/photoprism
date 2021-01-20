@@ -10,7 +10,7 @@ fixture`Test photos`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
-/*test.meta("testID", "photos-001")("Scroll to top", async (t) => {
+test.meta("testID", "photos-001")("Scroll to top", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await page.setFilter("view", "Cards");
@@ -129,7 +129,7 @@ test.meta("testID", "photos-003")(
       .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).visible)
       .ok();
   }
-);*/
+);
 
 test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
@@ -372,7 +372,7 @@ test.meta("testID", "photos-005")(
   }
 );
 
-/*test.meta("testID", "photos-006")(
+test.meta("testID", "photos-006")(
   "Archive/restore video, photos, private photos and review photos using clipboard",
   async (t) => {
     await page.openNav();
@@ -951,4 +951,87 @@ test.meta("testID", "photos-011")("Delete non primary file", async (t) => {
     timeout: 5000,
   }).count;
   await t.expect(FileCountAfterDeletion).eql(1);
-});*/
+});
+
+test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (t) => {
+    await page.openNav();
+    await page.search("photo:true");
+    const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
+    await page.search("video:true");
+    const FirstVideo = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
+    await page.openNav();
+    await t.click(Selector(".nav-browse + div"))
+        .click(Selector(".nav-scans"))
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .notOk()
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .notOk();
+    if (t.browser.platform === "mobile") {
+        await page.openNav();
+    }
+    await t
+        .click(Selector(".nav-panoramas"))
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .notOk()
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t.click(Selector(".nav-browse"));
+    await page.selectPhotoFromUID(FirstPhoto);
+    await page.editSelected();
+    await page.turnSwitchOn("scan");
+    await page.turnSwitchOn("panorama");
+    await t.click(Selector(".action-close"));
+    await page.clearSelection();
+    await page.selectPhotoFromUID(FirstVideo);
+    await page.editSelected();
+    await page.turnSwitchOn("panorama");
+    await t.click(Selector(".action-close"));
+    await page.clearSelection();
+    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .ok()
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .ok();
+    if (t.browser.platform === "mobile") {
+        await page.openNav();
+    }
+    await t
+        .click(Selector(".nav-scans"))
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .ok();
+    if (t.browser.platform === "mobile") {
+        await page.openNav();
+    }
+    await t
+        .click(Selector(".nav-panoramas"))
+    await page.selectPhotoFromUID(FirstPhoto);
+    await page.editSelected();
+    await page.turnSwitchOff("panorama");
+    await page.turnSwitchOff("scan");
+    await t.click(Selector(".action-close"));
+    await page.clearSelection();
+    await page.selectPhotoFromUID(FirstVideo);
+    await page.editSelected();
+    await page.turnSwitchOff("panorama");
+    await t.click(Selector(".action-close"));
+    await page.clearSelection();
+    if (t.browser.platform === "mobile") {
+        await t.eval(() => location.reload());
+    } else {
+        await t.click(Selector("button.action-reload"));
+    }
+    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .notOk()
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .notOk();
+    if (t.browser.platform === "mobile") {
+        await page.openNav();
+        await t.click(Selector(".nav-browse + div"));
+    }
+    await t
+        .click(Selector(".nav-scans"))
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .notOk()
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .notOk();
+});
