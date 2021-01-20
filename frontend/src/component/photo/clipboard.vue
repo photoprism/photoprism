@@ -122,6 +122,17 @@
           <v-icon>eject</v-icon>
         </v-btn>
         <v-btn
+            v-if="context !== 'archive'" fab dark
+            small
+            :title="$gettext('Set as cover')"
+            color="cover"
+            :disabled="selection.length != 1"
+            class="action-cover"
+            @click.stop="setCover"
+        >
+          <v-icon>file</v-icon>
+        </v-btn>
+        <v-btn
             fab dark small
             color="accent"
             class="action-clear"
@@ -245,6 +256,14 @@ export default {
     },
     onShared() {
       this.dialog.share = false;
+      this.clearClipboard();
+    },
+    setCover() {
+      const uid = this.album.UID;
+      Api.put(`albums/${uid}`, {CoverUID: this.selection[0]}).then(() => this.onSetCover());
+    },
+    onSetCover() {
+      Notify.success(this.$gettext("Cover has been updated"));
       this.clearClipboard();
     },
   }
