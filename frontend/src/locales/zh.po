@@ -124,7 +124,7 @@ msgstr "7 天后"
 
 #: src/options/options.js:259
 msgid "After one month"
-msgstr "1 個月后"
+msgstr "1 个月后"
 
 #: src/options/options.js:261
 msgid "After one year"
@@ -309,7 +309,7 @@ msgstr "黑色"
 
 #: src/options/options.js:293
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "布莱克曼：改进的Lanczos，更少的边缘震荡"
+msgstr "Blackman：改进的Lanczos，更少的边缘震荡"
 
 #: src/options/options.js:276
 msgid "Blue"
@@ -491,7 +491,7 @@ msgstr "找不到任何东西。"
 #: src/component/photo/mosaic.vue:6 src/share/photo/cards.vue:6
 #: src/share/photo/list.vue:7 src/share/photo/mosaic.vue:6
 msgid "Couldn't find recently edited"
-msgstr "找不到最近编辑的"
+msgstr "找不到编辑历史"
 
 #: src/component/photo/toolbar.vue:180 src/dialog/photo/details.vue:263
 msgid "Country"
@@ -1392,6 +1392,8 @@ msgstr "橘色"
 # Originals在本项目里有时代表服务器上的照
 # 片的储存文件夹，翻译为来源不妥，但我也
 # 没想好咋翻译。
+# cathaysia 注： 我觉得就别翻译了吧，
+# 直接按 originals 翻译。安装后应该能了解它的语意
 #: src/dialog/account/edit.vue:80
 msgid "Original"
 msgstr ""
@@ -1402,7 +1404,7 @@ msgstr "原始文件名将被存储并编制索引。"
 
 #: src/dialog/photo/files.vue:75 src/dialog/photo/info.vue:37
 msgid "Original Name"
-msgstr "原名"
+msgstr "原始文件名"
 
 # Originals在本项目里有时代表服务器上的照片的储存文件夹，翻译为来源不妥，但我也没想好咋翻译。
 #: src/component/navigation.vue:299 src/pages/library/files.vue:6
@@ -1416,7 +1418,7 @@ msgstr "其他"
 
 #: src/options/options.js:219
 msgid "Outdoor"
-msgstr "对外"
+msgstr "户外"
 
 #: src/dialog/photo/info.vue:112
 msgid "Panorama"
@@ -1451,15 +1453,15 @@ msgstr "相片"
 msgid ""
 "PhotoPrism continuously analyzes your library to find special moments, "
 "journeys and places."
-msgstr "PhotoPrism会持续分析您的图库，以查找特殊的时刻，旅程和地点。"
+msgstr "PhotoPrism 会持续分析您的图库，以查找特殊的时刻、旅程和地点。"
 
 #: src/dialog/reload.vue:4
 msgid "PhotoPrism has been updated…"
-msgstr "PhotoPrism更新啦…"
+msgstr "PhotoPrism 更新啦…"
 
 #: src/pages/about/about.vue:46
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
-msgstr "PhotoPrism®是Michael Mayer的注册商标。"
+msgstr "PhotoPrism® 是 Michael Mayer 的注册商标。"
 
 #: src/component/navigation.vue:56 src/component/navigation.vue:65
 #: src/component/navigation.vue:267
@@ -1476,7 +1478,7 @@ msgstr "地点"
 
 #: src/pages/settings/library.vue:173
 msgid "Place & Time"
-msgstr "地点和时间"
+msgstr "时间和地点"
 
 #: src/component/navigation.vue:224 src/component/navigation.vue:233
 #: src/component/navigation.vue:841 src/pages/settings/general.vue:92
@@ -1519,7 +1521,7 @@ msgstr "按下按钮开始索引…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
-msgstr "按Enter键创建一个新相册。"
+msgstr "按 Enter 键创建一个新相册。"
 
 #: src/dialog/photo/files.vue:17
 msgid "Preview"
@@ -1565,15 +1567,16 @@ msgstr "树莓"
 
 #: src/options/options.js:230
 msgid "Raw"
-msgstr "原始"
+msgstr "Raw"
 
 #: src/pages/settings/advanced.vue:96
 msgid "RAW Conversion"
 msgstr "转换中"
 
 #: src/pages/library/index.vue:121
+# cathaysia注：这里 originals 应该指的是挂载在 originals 下的所有文件夹。我认为可以直接省略
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "重新索引所有原始文件，包括已索引和未更改的文件。"
+msgstr "重新索引所有文件，包括已索引和未更改的文件。"
 
 #: src/pages/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -1626,7 +1629,7 @@ msgstr ""
 
 #: src/pages/library/errors.vue:78
 msgid "Report Bug"
-msgstr "反馈Bug"
+msgstr "反馈 Bug"
 
 #: src/common/api.js:67
 msgid "Request failed - invalid response"
@@ -1655,7 +1658,7 @@ msgstr "评论"
 
 #: src/options/options.js:127
 msgid "Russian"
-msgstr "俄语"
+msgstr "русский язык"
 
 #: src/dialog/account/edit.vue:98 src/dialog/album/edit.vue:45
 #: src/dialog/share.vue:61
@@ -1801,7 +1804,7 @@ msgstr "尺寸"
 
 #: src/options/options.js:132
 msgid "Slovak"
-msgstr "斯洛伐克文"
+msgstr "Slovenská"
 
 #: src/options/options.js:196
 msgid "Slow"
@@ -1822,7 +1825,7 @@ msgstr "来源"
 
 #: src/options/options.js:91
 msgid "Spanish"
-msgstr "西班牙文"
+msgstr "Español"
 
 #: src/pages/settings/library.vue:195
 #, fuzzy
@@ -1880,7 +1883,7 @@ msgstr "储存文件夹"
 #: src/options/options.js:207
 #, fuzzy
 msgid "Streets"
-msgstr "大街"
+msgstr "街道"
 
 #: src/pages/settings/general.vue:444
 msgid "Style"
@@ -1888,7 +1891,7 @@ msgstr "风格"
 
 #: src/dialog/photo/details.vue:482
 msgid "Subject"
-msgstr "题材"
+msgstr "主题"
 
 #: src/dialog/account/add.vue:23
 msgid ""
@@ -1901,7 +1904,7 @@ msgstr "同步"
 
 #: src/dialog/account/edit.vue:335
 msgid "Sync raw and video files"
-msgstr "同步原始文件和视频文件"
+msgstr "同步 Raw 文件和视频文件"
 
 #: src/component/photo/list.vue:31 src/dialog/photo/info.vue:52
 #: src/share/photo/list.vue:25
@@ -1937,12 +1940,12 @@ msgid ""
 "edit, and delete files from your computer or smartphone as if they were "
 "local."
 msgstr ""
-"这会将原始文件夹安装为网络驱动器，并允许您从计算机或智能手机中打开，编辑和删"
+"这会将 originals 挂载为网络驱动器，并允许您从计算机或智能手机中打开，编辑和删"
 "除文件，就像它们是本地文件一样。"
 
 #: src/pages/settings/advanced.vue:252
 msgid "Thumbnail Generation"
-msgstr "缩略图生成"
+msgstr "生成缩略图"
 
 #: src/dialog/photo/details.vue:212
 msgid "Time UTC"

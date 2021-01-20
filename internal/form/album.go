@@ -17,8 +17,6 @@ type Album struct {
 	AlbumOrder       string `json:"Order"`
 	AlbumTemplate    string `json:"Template"`
 	AlbumCountry     string `json:"Country"`
-	AlbumYear        int    `json:"Year"`
-	AlbumMonth       int    `json:"Month"`
 	AlbumFavorite    bool   `json:"Favorite"`
 	AlbumPrivate     bool   `json:"Private"`
 }

@@ -22,7 +22,6 @@ func configAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
 	dbDriver := conf.DatabaseDriver()
-	dbDsn := conf.DatabaseDsn()
 
 	fmt.Printf("%-25s VALUE\n", "NAME")
 
@@ -97,7 +96,6 @@ func configAction(ctx *cli.Context) error {
 
 	// Database configuration.
 	fmt.Printf("%-25s %s\n", "database-driver", dbDriver)
-	fmt.Printf("%-25s %s\n", "database-dsn", dbDsn)
 	fmt.Printf("%-25s %s\n", "database-server", conf.DatabaseServer())
 	fmt.Printf("%-25s %s\n", "database-host", conf.DatabaseHost())
 	fmt.Printf("%-25s %s\n", "database-port", conf.DatabasePortString())

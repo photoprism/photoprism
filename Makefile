@@ -9,6 +9,7 @@ export GO111MODULE=on
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 DOCKER_TAG=`date -u +%Y%m%d`
+UID=`(id -u)`
 
 HASRICHGO := $(shell which richgo)
 
@@ -25,8 +26,9 @@ install: install-bin install-assets
 test: test-js test-go
 test-go: reset-test-db run-test-go
 test-short: reset-test-db run-test-short
-acceptance-all: acceptance-start acceptance acceptance-restart acceptance-firefox stop
-test-all: test acceptance-all
+acceptance-run-chromium: acceptance-restart acceptance stop
+acceptance-run-firefox: acceptance-restart acceptance-firefox stop
+test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
@@ -34,7 +36,6 @@ clean-install: clean-local dep build-js install-bin install-assets
 acceptance-start:
 	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --disable-exiftool --disable-backups start -d
 acceptance-restart:
-	go run cmd/photoprism/photoprism.go stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
 	rm -rf storage/acceptance/originals/2010
@@ -51,7 +52,7 @@ start:
 stop:
 	go run cmd/photoprism/photoprism.go stop
 terminal:
-	docker-compose exec photoprism bash
+	docker-compose exec -u $(UID) photoprism bash
 root-terminal:
 	docker-compose exec -u root photoprism bash
 migrate:

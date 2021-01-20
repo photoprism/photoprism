@@ -19,6 +19,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DEMO",
 	},
 	cli.BoolFlag{
+		Name:   "sponsor",
+		Hidden: true,
+		Usage:  "your continuous support helps to pay for development and operating expenses",
+		EnvVar: "PHOTOPRISM_SPONSOR",
+	},
+	cli.BoolFlag{
 		Name:   "public, p",
 		Usage:  "no authentication required, disables password protection",
 		EnvVar: "PHOTOPRISM_PUBLIC",
@@ -283,7 +289,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "darktable-presets",
-		Usage:  "disables simultaneous conversion of raw files to apply Darktable presets",
+		Usage:  "enables Darktable presets and disables concurrent RAW conversion",
 		EnvVar: "PHOTOPRISM_DARKTABLE_PRESETS",
 	},
 	cli.StringFlag{

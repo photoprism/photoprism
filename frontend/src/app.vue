@@ -1,5 +1,5 @@
 <template>
-  <div id="photoprism">
+  <div id="photoprism" :class="'theme-' + $config.themeName">
     <p-loading-bar height="4"></p-loading-bar>
 
     <p-notify></p-notify>

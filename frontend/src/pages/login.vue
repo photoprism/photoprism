@@ -34,7 +34,7 @@
               ></v-text-field>
             </v-flex>
             <v-flex xs12 class="px-2 py-3">
-              <v-btn color="secondary-dark"
+              <v-btn color="primary-button"
                      class="white--text ml-0"
                      depressed
                      :disabled="loading || !this.password || !this.username"

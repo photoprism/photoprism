@@ -10,7 +10,7 @@
         item-key="ID"
         :no-data-text="$gettext('No servers configured.')"
     >
-      <template slot="items" slot-scope="props" class="p-account">
+      <template v-slot:items="props" class="p-account">
         <td>
           <button class="secondary-dark--text" @click.stop.prevent="edit(props.item)">
             {{ props.item.AccName }}
@@ -63,7 +63,7 @@
           <translate>Connect via WebDAV</translate>
         </v-btn>
 
-        <v-btn color="secondary-dark"
+        <v-btn color="primary-button"
                class="white--text ml-0"
                :disabled="demo"
                depressed

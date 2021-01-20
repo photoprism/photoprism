@@ -11,6 +11,7 @@
 /frontend/tests/screenshots
 /assets/nasnet
 /assets/nsfw
+/assets/static/build/
 /package-lock.json
 /frontend/tests_output
 *.log

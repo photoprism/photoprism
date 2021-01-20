@@ -28,7 +28,7 @@
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
-    <v-list v-else-if="errors.length > 0" dense two-line>
+    <v-list v-else-if="errors.length > 0" dense two-line class="transparent">
       <v-list-tile
           v-for="(err, index) in errors" :key="index"
           avatar

@@ -6,7 +6,8 @@ fixture`Test albums`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
-test("#1 Create/delete album", async (t) => {
+test.meta("testID", "albums-001")("Create/delete album", async (t) => {
+  await page.openNav();
   await t.click(Selector(".nav-albums"));
   const countAlbums = await Selector("a.is-album").count;
   await t.click(Selector("button.action-add"));
@@ -19,11 +20,13 @@ test("#1 Create/delete album", async (t) => {
   await t.expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
 });
 
-test("#2 Update album", async (t) => {
+test.meta("testID", "albums-002")("Update album", async (t) => {
+  await page.openNav();
   await t
-    .click(Selector(".nav-albums"))
-    .typeText(Selector(".p-albums-search input"), "Holiday")
-    .pressKey("enter");
+    .click(Selector(".nav-albums"));
+  if (t.browser.platform === "mobile") {
+    await t.navigateTo("/albums?q=Holiday");
+  } else { await page.search("Holiday");}
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
@@ -44,21 +47,26 @@ test("#2 Update album", async (t) => {
     .expect(Selector(".v-card__text").nth(0).innerText)
     .contains("All my animals")
     .expect(Selector("div").withText("Animals").exists)
-    .ok()
+    .ok();
+  await page.openNav();
+  await t
     .click(Selector(".nav-browse"));
   await page.search("photo:true");
   const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
-  await page.selectFromUIDInFullscreen(FirstPhotoUid);
   await page.selectPhotoFromUID(SecondPhotoUid);
+  await page.selectFromUIDInFullscreen(FirstPhotoUid);
   await page.addSelectedToAlbum("Animals");
+  await page.openNav();
   await t.click(Selector(".nav-albums"));
   await t
     .click(Selector(".input-category i"))
     .click(Selector('div[role="listitem"]').withText("Family"));
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
-    .contains("Christmas")
+    .contains("Christmas");
+  await page.openNav();
+  await t
     .click(Selector(".nav-albums"))
     .click(".action-reload")
     .click(Selector(".input-category i"))
@@ -69,7 +77,6 @@ test("#2 Update album", async (t) => {
   await page.selectPhotoFromUID(FirstPhotoUid);
   await page.selectPhotoFromUID(SecondPhotoUid);
   await page.removeSelected();
-  await t.click(".action-reload");
   const PhotoCountAfterDelete = await Selector("div.is-photo").count;
   await t
     .expect(PhotoCountAfterDelete)
@@ -86,8 +93,9 @@ test("#2 Update album", async (t) => {
     .click(Selector(".input-category input"))
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(".action-confirm")
-    .click(".action-reload")
+    .click(".action-confirm");
+  await page.openNav();
+  await t
     .click(Selector(".nav-albums"))
     .expect(Selector("div").withText("Holiday").visible)
     .ok()
@@ -95,8 +103,8 @@ test("#2 Update album", async (t) => {
     .notOk();
 });
 
-//TODO test download itself + clipboard count after download
-test("#3 Download album", async (t) => {
+test.meta("testID", "albums-003")("Download album", async (t) => {
+  await page.openNav();
   await t.click(Selector(".nav-albums"));
   const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await page.selectFromUID(FirstAlbum);
@@ -109,7 +117,7 @@ test("#3 Download album", async (t) => {
     .ok();
 });
 
-test("#4 View folders", async (t) => {
+test.meta("testID", "albums-004")("View folders", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-folders"))
@@ -121,7 +129,8 @@ test("#4 View folders", async (t) => {
     .ok();
 });
 
-test("#5 View calendar", async (t) => {
+test.meta("testID", "albums-005")("View calendar", async (t) => {
+  await page.openNav();
   await t
     .click(Selector(".nav-calendar"))
     .expect(Selector("a").withText("May 2019").visible)
@@ -131,7 +140,8 @@ test("#5 View calendar", async (t) => {
 });
 
 //TODO test that sharing link works as expected
-test("#6 Create, Edit, delete sharing link", async (t) => {
+test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t) => {
+  await page.openNav();
   await t.click(Selector(".nav-albums"));
   const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await page.selectFromUID(FirstAlbum);
@@ -149,7 +159,7 @@ test("#6 Create, Edit, delete sharing link", async (t) => {
     .expect(InitialUrl)
     .notContains("secretfortesting")
     .expect(InitialExpire)
-    .eql("Never")
+    .contains("Never")
     .typeText(Selector(".input-secret input"), "secretForTesting", { replace: true })
     .click(Selector(".input-expires input"))
     .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
@@ -163,7 +173,7 @@ test("#6 Create, Edit, delete sharing link", async (t) => {
     .expect(UrlAfterChange)
     .contains("secretfortesting")
     .expect(ExpireAfterChange)
-    .eql("After 1 day")
+    .contains("After 1 day")
     .typeText(Selector(".input-secret input"), InitialSecret, { replace: true })
     .click(Selector(".input-expires input"))
     .click(Selector("div").withText("Never").parent('div[role="listitem"]'))

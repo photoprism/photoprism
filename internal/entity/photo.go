@@ -870,6 +870,20 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 	m.UpdateDateFields()
 }
 
+// SetTimeZone updates the time zone.
+func (m *Photo) SetTimeZone(zone, source string) {
+	if zone == "" {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.TakenSrc] && m.TimeZone != "" {
+		return
+	}
+
+	m.TimeZone = zone
+	m.TakenAt = m.GetTakenAt()
+}
+
 // UpdateDateFields updates internal date fields.
 func (m *Photo) UpdateDateFields() {
 	if m.TakenAt.IsZero() || m.TakenAt.Year() < 1000 {
@@ -897,7 +911,7 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 		return
 	}
 
-	if m.PlaceSrc != SrcAuto && m.PlaceSrc != source && source != SrcManual {
+	if SrcPriority[source] < SrcPriority[m.PlaceSrc] && m.HasLatLng() {
 		return
 	}
 

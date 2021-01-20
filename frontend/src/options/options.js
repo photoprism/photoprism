@@ -82,6 +82,11 @@ export const Languages = () => [
     value: "en",
   },
   {
+    text: "Čeština",
+    translated: $gettext("Czech"),
+    value: "cs",
+  },
+  {
     text: "Deutsch",
     translated: $gettext("German"),
     value: "de",
@@ -153,30 +158,47 @@ export const Themes = () => [
   {
     text: $gettext("Default"),
     value: "default",
+    disabled: false,
+  },
+  {
+    text: $gettext("Grayscale"),
+    value: "grayscale",
+    disabled: false,
   },
   {
     text: $gettext("Cyano"),
     value: "cyano",
+    disabled: false,
   },
   {
     text: $gettext("Lavender"),
     value: "lavender",
+    disabled: false,
   },
   {
     text: $gettext("Moonlight"),
     value: "moonlight",
+    disabled: false,
   },
   {
     text: $gettext("Onyx"),
     value: "onyx",
+    disabled: false,
   },
   {
     text: $gettext("Raspberry"),
     value: "raspberry",
+    disabled: false,
   },
   {
     text: $gettext("Seaweed"),
     value: "seaweed",
+    disabled: false,
+  },
+  {
+    text: $gettext("Shadow"),
+    value: "shadow",
+    disabled: false,
   },
 ];
 export const MapsAnimate = () => [

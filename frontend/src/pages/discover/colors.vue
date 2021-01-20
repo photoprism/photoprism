@@ -15,8 +15,8 @@
             xs3 d-flex grow
         >
           <v-hover>
-            <v-card :to="{name: 'browse', query: { color: color.name }}" :dark="useDark(color)"
-                    :color="color.example" slot-scope="{ hover }" :flat="!hover"
+            <v-card slot-scope="{ hover }" :to="{name: 'browse', query: { color: color.name }}"
+                    :dark="useDark(color)" :color="color.example" :flat="!hover"
                     class="clickable py-1">
               <v-card-text class="px-0 py-5 body-2">{{ color.label }}</v-card-text>
             </v-card>
@@ -30,13 +30,15 @@
 <script>
 
 export default {
-  name: 'p-tab-discover-colors',
+  name: 'PTabDiscoverColors',
   data() {
     return {
       readonly: this.$config.get("readonly"),
       colors: this.$config.values.colors,
       labels: {},
     };
+  },
+  created() {
   },
   methods: {
     useDark(color) {
@@ -47,8 +49,6 @@ export default {
           return true;
       }
     }
-  },
-  created() {
   },
 };
 </script>

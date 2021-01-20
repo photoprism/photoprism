@@ -1,8 +1,8 @@
 <template>
-  <v-dialog lazy v-model="show" persistent max-width="500" class="dialog-album-edit" color="application"
+  <v-dialog v-model="show" lazy persistent max-width="500" class="dialog-album-edit" color="application"
             @keydown.esc="close">
-    <v-form lazy-validation dense
-            ref="form" class="form-album-edit" accept-charset="UTF-8"
+    <v-form ref="form" lazy-validation
+            dense class="form-album-edit" accept-charset="UTF-8"
             @submit.prevent="confirm">
       <v-card raised elevation="24">
         <v-card-title primary-title class="pb-0">
@@ -18,9 +18,9 @@
         <v-card-text>
           <v-container fluid class="pa-0">
             <v-layout row wrap>
-              <v-flex xs12 pa-2 v-if="album.Type !== 'month'">
-                <v-text-field hide-details
-                              v-model="model.Title"
+              <v-flex v-if="album.Type !== 'month'" xs12 pa-2>
+                <v-text-field v-model="model.Title"
+                              hide-details
                               :rules="[titleRule]"
                               :label="$gettext('Name')"
                               color="secondary-dark"
@@ -28,27 +28,27 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 pa-2>
-                <v-text-field hide-details
-                              v-model="model.Location"
+                <v-text-field v-model="model.Location"
+                              hide-details
                               :label="$gettext('Location')"
                               color="secondary-dark"
                               class="input-location"
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 pa-2>
-                <v-textarea auto-grow hide-details
+                <v-textarea :key="growDesc" v-model="model.Description"
+                            auto-grow
+                            hide-details
                             browser-autocomplete="off"
                             :label="$gettext('Description')"
                             :rows="1"
-                            :key="growDesc"
-                            v-model="model.Description"
                             class="input-description"
                             color="secondary-dark">
                 </v-textarea>
               </v-flex>
               <v-flex xs12 md6 pa-2>
-                <v-combobox hide-details :search-input.sync="model.Category"
-                            v-model="model.Category"
+                <v-combobox v-model="model.Category" hide-details
+                            :search-input.sync="model.Category"
                             :items="categories"
                             :label="$gettext('Category')"
                             :allow-overflow="false"
@@ -60,9 +60,9 @@
               </v-flex>
               <v-flex xs12 md6 pa-2>
                 <v-select
+                    v-model="model.Order"
                     :label="$gettext('Sort Order')"
                     hide-details
-                    v-model="model.Order"
                     :items="sorting"
                     item-value="value"
                     item-text="text"
@@ -75,14 +75,14 @@
         <v-card-actions class="pt-0">
           <v-layout row wrap class="pa-2">
             <v-flex xs12 text-xs-right>
-              <v-btn @click.stop="close" depressed
-                     color="secondary-light"
-                     class="action-cancel">
+              <v-btn depressed color="secondary-light"
+                     class="action-cancel"
+                     @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn @click.stop="confirm" depressed dark
-                     color="secondary-dark"
-                     class="action-confirm">
+              <v-btn depressed dark color="primary-button"
+                     class="action-confirm"
+                     @click.stop="confirm">
                 <translate>Save</translate>
               </v-btn>
             </v-flex>
@@ -96,7 +96,7 @@
 import Album from "model/album";
 
 export default {
-  name: 'p-album-edit-dialog',
+  name: 'PAlbumEditDialog',
   props: {
     show: Boolean,
     album: Object,
@@ -117,6 +117,13 @@ export default {
       ],
       categories: this.$config.albumCategories(),
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
+    };
+  },
+  watch: {
+    show: function (show) {
+      if (show) {
+        this.model = this.album.clone();
+      }
     }
   },
   methods: {
@@ -133,12 +140,5 @@ export default {
       });
     },
   },
-  watch: {
-    show: function (show) {
-      if (show) {
-        this.model = this.album.clone();
-      }
-    }
-  },
-}
+};
 </script>

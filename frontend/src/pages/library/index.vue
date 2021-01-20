@@ -50,7 +50,7 @@
 
         <v-btn
             :disabled="!busy || !ready"
-            color="secondary-dark"
+            color="primary-button"
             class="white--text ml-0 mt-2 action-cancel"
             depressed
             @click.stop="cancelIndexing()"
@@ -60,7 +60,7 @@
 
         <v-btn
             :disabled="busy || !ready"
-            color="secondary-dark"
+            color="primary-button"
             class="white--text ml-0 mt-2 action-index"
             depressed
             @click.stop="startIndexing()"
@@ -142,7 +142,9 @@ export default {
       });
     },
     onChange() {
-      this.settings.save();
+      if (!this.$config.values.disable.settings) {
+        this.settings.save();
+      }
     },
     onFocus() {
       if (this.dirs.length > 2 || this.loading) {

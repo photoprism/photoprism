@@ -10,15 +10,17 @@
           :left="rtl"
           :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-album-clipboard`"
       >
-        <v-btn
-            slot="activator" fab
-            dark
-            color="accent darken-2"
-            class="action-menu"
-        >
-          <v-icon v-if="selection.length === 0">menu</v-icon>
-          <span v-else class="count-clipboard">{{ selection.length }}</span>
-        </v-btn>
+        <template #activator>
+          <v-btn
+              fab
+              dark
+              color="accent darken-2"
+              class="action-menu"
+          >
+            <v-icon v-if="selection.length === 0">menu</v-icon>
+            <span v-else class="count-clipboard">{{ selection.length }}</span>
+          </v-btn>
+        </template>
 
         <v-btn
             v-if="$config.feature('share')" fab dark
@@ -94,6 +96,7 @@
 import Api from "common/api";
 import Notify from "common/notify";
 import Album from "model/album";
+import download from "common/download";
 
 export default {
   name: 'PAlbumClipboard',
@@ -176,10 +179,8 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a');
-      link.href = path;
-      link.download = "album.zip";
-      link.click();
+
+      download(path, "album.zip");
     },
   }
 };

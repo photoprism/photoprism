@@ -50,6 +50,7 @@ export default class Config {
       console.warn("config: values are empty");
       this.debug = true;
       this.demo = false;
+      this.themeName = "";
       this.values = {};
       this.page = {
         title: "PhotoPrism",
@@ -190,10 +191,18 @@ export default class Config {
   }
 
   setTheme(name) {
+    this.themeName = name;
+
+    const el = document.getElementById("photoprism");
+
+    if (el) {
+      el.className = "theme-" + name;
+    }
+
     this.theme = themes[name] ? themes[name] : themes["default"];
 
     if (this.$vuetify) {
-      this.$vuetify.theme = this.theme;
+      this.$vuetify.theme = this.theme.colors;
     }
 
     return this;

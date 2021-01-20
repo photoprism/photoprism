@@ -91,6 +91,7 @@ import Album from "model/album";
 import Event from "pubsub-js";
 import Thumb from "model/thumb";
 import Notify from "common/notify";
+import download from "common/download";
 
 export default {
   name: 'PPageAlbumPhotos',
@@ -569,10 +570,8 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a');
-      link.href = path;
-      link.download = "album.zip";
-      link.click();
+
+      download(path, "album.zip");
     },
   },
 };

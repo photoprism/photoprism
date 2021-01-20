@@ -28,7 +28,7 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="search-results album-results cards-view">
+        <v-layout row wrap class="search-results album-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(album, index) in results"
               :key="index"
@@ -36,9 +36,10 @@
           >
             <v-card tile
                     :data-uid="album.UID"
+                    style="user-select: none"
                     class="result accent lighten-3"
                     :class="album.classes(selection.includes(album.UID))"
-                    :to="{name: view, params: {uid: album.UID, slug: album.Slug, year: album.Year, month: album.Month}}"
+                    :to="album.route(view)"
                     @contextmenu="onContextMenu($event, index)"
             >
               <div class="card-background accent lighten-3"></div>
@@ -48,15 +49,20 @@
                   :transition="false"
                   aspect-ratio="1"
                   class="accent lighten-2 clickable"
+                  @touchstart="onMouseDown($event, index)"
+                  @touchend.stop.prevent="onClick($event, index)"
                   @mousedown="onMouseDown($event, index)"
-                  @click="onClick($event, index)"
+                  @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
+                       @touchstart.stop.prevent="onSelect($event, index)"
+                       @touchend.stop.prevent
+                       @touchmove.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
               </v-img>
 
@@ -143,6 +149,7 @@ export default {
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
       lastId: "",
@@ -195,6 +202,19 @@ export default {
     }
   },
   methods: {
+    searchCount() {
+      const offset = parseInt(window.localStorage.getItem("share_albums_offset"));
+
+      if(this.offset > 0 || !offset) {
+        return this.batchSize;
+      }
+
+      return offset + this.batchSize;
+    },
+    setOffset(offset) {
+      this.offset = offset;
+      window.localStorage.setItem("share_albums_offset", offset);
+    },
     showUpload() {
       Event.publish("dialog.upload");
     },
@@ -232,20 +252,25 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selection.length > 0) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
         if (longClick || ev.shiftKey) {
           this.selectRange(index, this.results);
         } else {
           this.toggleSelection(this.results[index].getId());
         }
+      } else {
+        this.$router.push(this.results[index].route(this.view));
       }
     },
     onContextMenu(ev, index) {
@@ -282,19 +307,19 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      Album.search(params).then(response => {
-        this.results = this.dirty ? response.models : this.results.concat(response.models);
+      Album.search(params).then(resp => {
+        this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (response.models.length < count);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.offset = offset;
+          this.setOffset(resp.offset);
 
           if (this.results.length > 1) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), {n: this.results.length}));
           }
         } else {
-          this.offset = offset + count;
+          this.setOffset(resp.offset + resp.limit);
           this.page++;
 
           this.$nextTick(() => {
@@ -334,7 +359,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.batchSize,
+        count: this.searchCount(),
         offset: this.offset,
       };
 
@@ -364,12 +389,11 @@ export default {
 
       const params = this.searchParams();
 
-      Album.search(params).then(response => {
-        this.offset = this.batchSize;
+      Album.search(params).then(resp => {
+        this.offset = resp.limit;
+        this.results = resp.models;
 
-        this.results = response.models;
-
-        this.scrollDisabled = (response.models.length < this.batchSize);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
           if (!this.results.length) {

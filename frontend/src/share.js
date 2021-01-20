@@ -34,6 +34,7 @@ import Api from "common/api";
 import Notify from "common/notify";
 import Clipboard from "common/clipboard";
 import Components from "share/components";
+import icons from "./component/icons";
 import Dialogs from "dialog/dialogs";
 import Event from "pubsub-js";
 import GetTextPlugin from "vue-gettext";
@@ -69,6 +70,9 @@ Settings.defaultLocale = Vue.config.language.substring(0, 2);
 const languages = options.Languages();
 const rtl = languages.some((lang) => lang.value === Vue.config.language && lang.rtl);
 
+// Get initial theme colors from config
+const theme = config.theme.colors;
+
 // HTTP Live Streaming (video support)
 window.Hls = Hls;
 
@@ -86,7 +90,7 @@ Vue.prototype.$isMobile = isMobile;
 Vue.prototype.$rtl = rtl;
 
 // Register Vuetify
-Vue.use(Vuetify, { rtl, theme: config.theme });
+Vue.use(Vuetify, { rtl, icons, theme });
 
 // Register other VueJS plugins
 Vue.use(GetTextPlugin, {
@@ -110,6 +114,19 @@ const router = new Router({
   routes: Routes,
   mode: "history",
   saveScrollPosition: true,
+  scrollBehavior: (to, from, savedPosition) => {
+    if (savedPosition) {
+      return new Promise((resolve) => {
+        Notify.ajaxWait().then(() => {
+          setTimeout(() => {
+            resolve(savedPosition);
+          }, 200);
+        });
+      });
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
 });
 
 router.beforeEach((to, from, next) => {

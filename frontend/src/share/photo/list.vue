@@ -23,18 +23,22 @@
                   :items="photos"
                   hide-actions
                   class="search-results photo-results list-view"
+                  :class="{'select-results': selectMode}"
                   disable-initial-sort
                   item-key="ID"
                   :no-data-text="notFoundMessage"
     >
-      <template slot="items" slot-scope="props">
+      <template #items="props">
         <td style="user-select: none;" :data-uid="props.item.UID" class="result" :class="props.item.classes()">
           <v-img :key="props.item.Hash"
                  :src="props.item.thumbnailUrl('tile_50')"
                  :alt="props.item.Title"
                  :transition="false"
                  aspect-ratio="1"
+                 style="user-select: none"
                  class="accent lighten-2 clickable"
+                 @touchstart="onMouseDown($event, props.index)"
+                 @touchend.stop.prevent="onClick($event, props.index)"
                  @mousedown="onMouseDown($event, props.index)"
                  @contextmenu="onContextMenu($event, props.index)"
                  @click.stop.prevent="onClick($event, props.index)"
@@ -43,13 +47,14 @@
                    flat icon large absolute
                    class="input-select">
               <v-icon color="white" class="select-on">check_circle</v-icon>
-              <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+              <v-icon color="white" class="select-off">radio_button_off</v-icon>
             </v-btn>
             <v-btn v-else-if="props.item.Type === 'video' || props.item.Type === 'live'"
                    :ripple="false"
-                   flat icon large absolute class="input-play opacity-75"
+                   flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
-              <v-icon color="white" class="action-play">play_arrow</v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">movie</v-icon>
             </v-btn>
           </v-img>
         </td>
@@ -87,6 +92,9 @@
   </div>
 </template>
 <script>
+import download from "common/download";
+import Notify from "../../common/notify";
+
 export default {
   name: 'PPhotoList',
   props: {
@@ -127,17 +135,17 @@ export default {
       hidePrivate: this.$config.values.settings.features.private,
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
     };
   },
   methods: {
     downloadFile(index) {
+      Notify.success(this.$gettext("Downloading…"));
+
       const photo = this.photos[index];
-      const link = document.createElement('a');
-      link.href = `/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`;
-      link.download = photo.FileName;
-      link.click();
+      download(`/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`, photo.FileName);
     },
     onSelect(ev, index) {
       if (ev.shiftKey) {
@@ -148,10 +156,16 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selectMode) {
         if (longClick || ev.shiftKey) {

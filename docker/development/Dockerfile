@@ -96,8 +96,8 @@ RUN umask 0000
 
 # Install and configure NodeJS Package Manager (npm)
 ENV NODE_ENV production
-RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver
-RUN npm config set cache ~/.cache/npm
+RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && \
+    npm config set cache ~/.cache/npm
 
 # Install Go
 ENV GOLANG_VERSION 1.15.6
@@ -135,11 +135,11 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-ou
 
 # Create photoprism user and directory for deployment
 RUN useradd photoprism -m -d /photoprism && \
-    mkdir -p /var/lib/photoprism && \
+    mkdir -p /var/lib/photoprism /tmp/photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    chown -R photoprism:photoprism /photoprism /var/lib/photoprism && \
-    chmod -R a+rw /photoprism /var/lib/photoprism /go && \
+    chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
+    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
     find /go -type d -print0 | xargs -0 chmod 777
 
 # Copy mysql client config for development
@@ -154,5 +154,9 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 EXPOSE 2342 2343 9515
 VOLUME /var/lib/photoprism
 
-# Keep container running (services can be started manually using a terminal)
-CMD tail -f /dev/null
+# Configure entrypoint
+COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Run server
+CMD ["tail", "-f", "/dev/null"]

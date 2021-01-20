@@ -3,7 +3,7 @@ Thank you very much to all of our sponsors!
 
 Your continuous support helps...
 
-* to pay for hosting, hardware and external services like satellite maps
+* to pay for operating expenses and external services like satellite maps
 * developing new features, and keeping them free for everyone 🌈
 
 Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, and which feature requests are going to be implemented next. Please give ideas you like a thumbs-up, so that we know what is most popular.

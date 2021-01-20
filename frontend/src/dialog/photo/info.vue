@@ -18,14 +18,14 @@
           </td>
           <td>
             <v-select
-                @change="save"
+                v-model="model.Type"
                 flat solo
                 browser-autocomplete="off"
                 hide-details
                 color="secondary-dark"
-                v-model="model.Type"
                 :items="options.PhotoTypes()"
-                class="input-type">
+                class="input-type"
+                @change="save">
             </v-select>
           </td>
         </tr>
@@ -47,9 +47,9 @@
           </td>
           <td>
             <v-text-field
+                v-model="model.OriginalName"
+                flat solo dense hide-details color="secondary-dark"
                 @change="save"
-                flat solo dense hide-details v-model="model.OriginalName"
-                color="secondary-dark"
             ></v-text-field>
           </td>
         </tr>
@@ -94,12 +94,12 @@
           </td>
           <td>
             <v-switch
-                @change="save"
+                v-model="model.Stack"
                 hide-details
                 :true-value="0"
                 :false-value="-1"
-                v-model="model.Stack"
                 :label="model.Stack > - 1 ? $gettext('Yes') : $gettext('No')"
+                @change="save"
             ></v-switch>
           </td>
         </tr>
@@ -109,10 +109,10 @@
           </td>
           <td>
             <v-switch
-                @change="save"
-                hide-details
                 v-model="model.Favorite"
+                hide-details
                 :label="model.Favorite ? $gettext('Yes') : $gettext('No')"
+                @change="save"
             ></v-switch>
           </td>
         </tr>
@@ -122,10 +122,10 @@
           </td>
           <td>
             <v-switch
-                @change="save"
-                hide-details
                 v-model="model.Private"
+                hide-details
                 :label="model.Private ? $gettext('Yes') : $gettext('No')"
+                @change="save"
             ></v-switch>
           </td>
         </tr>
@@ -135,10 +135,10 @@
           </td>
           <td>
             <v-switch
-                @change="save"
-                hide-details
                 v-model="model.Scan"
+                hide-details
                 :label="model.Scan ? $gettext('Yes') : $gettext('No')"
+                @change="save"
             ></v-switch>
           </td>
         </tr>
@@ -148,10 +148,10 @@
           </td>
           <td>
             <v-switch
-                @change="save"
-                hide-details
                 v-model="model.Panorama"
+                hide-details
                 :label="model.Panorama ? $gettext('Yes') : $gettext('No')"
+                @change="save"
             ></v-switch>
           </td>
         </tr>
@@ -194,12 +194,12 @@
           </td>
           <td>
             <v-text-field
-                @change="save"
-                flat solo dense hide-details v-model="model.CellAccuracy"
-                color="secondary-dark"
+                v-model="model.CellAccuracy"
+                flat solo dense hide-details color="secondary-dark"
                 type="number"
                 suffix="m"
                 style="width: 100px;"
+                @change="save"
             ></v-text-field>
           </td>
         </tr>
@@ -255,7 +255,7 @@ import {DateTime, Info} from "luxon";
 import * as options from "options/options";
 
 export default {
-  name: 'p-tab-photo-advanced',
+  name: 'PTabPhotoAdvanced',
   props: {
     model: Object,
     uid: String,
@@ -293,7 +293,7 @@ export default {
       this.$emit('close');
     },
     openPhoto() {
-      this.$viewer.show(Thumb.fromFiles([this.model]), 0)
+      this.$viewer.show(Thumb.fromFiles([this.model]), 0);
     },
   },
 };

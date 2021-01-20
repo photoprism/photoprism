@@ -49,10 +49,11 @@ services:
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode, shows additional log messages
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required, disables password protection
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals folder; disables import, upload, and delete
-      PHOTOPRISM_EXPERIMENTAL: "false"               # Enable experimental features
-      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disable built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"           # Users can not view or change settings
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Don't use TensorFlow for image classification
+      PHOTOPRISM_EXPERIMENTAL: "false"               # Enables experimental features
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables using TensorFlow for image classification
+      PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
       PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance

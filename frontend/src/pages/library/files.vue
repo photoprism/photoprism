@@ -44,7 +44,7 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="search-results file-results cards-view">
+        <v-layout row wrap class="search-results file-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
               :key="index"
@@ -71,7 +71,7 @@
                        class="input-select"
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
               </v-img>
 
@@ -114,6 +114,7 @@ import RestModel from "model/rest";
 import {Folder} from "model/folder";
 import Notify from "common/notify";
 import {MaxItems} from "common/clipboard";
+import download from "common/download";
 
 export default {
   name: 'PPageFiles',
@@ -149,6 +150,7 @@ export default {
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
       lastId: "",
@@ -208,11 +210,10 @@ export default {
       }
     },
     downloadFile(index) {
+      Notify.success(this.$gettext("Downloading…"));
+
       const model = this.results[index];
-      const link = document.createElement('a');
-      link.href = `/api/v1/dl/${model.Hash}?t=${this.$config.downloadToken()}`;
-      link.download = model.Name;
-      link.click();
+      download(`/api/v1/dl/${model.Hash}?t=${this.$config.downloadToken()}`, model.Name);
     },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
@@ -248,10 +249,16 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selection.length > 0) {
         ev.preventDefault();

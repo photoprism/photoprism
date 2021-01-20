@@ -1,3 +1,10 @@
+#photoprism .cards-view,
+#photoprism .mosaic-view,
+#photoprism .cards-view .v-card,
+#photoprism .mosaic-view .v-card {
+    user-select: none !important;
+}
+
 #photoprism .p-col-select {
     width: 66px;
 }
@@ -239,17 +246,23 @@
 #photoprism .cards-view .input-open,
 #photoprism .cards-view .input-view,
 #photoprism .mosaic-view .input-open,
-#photoprism .mosaic-view .input-view {
+#photoprism .mosaic-view .input-view,
+#photoprism .mosaic-view .input-play {
     display: none;
     opacity: 0.75;
     top: 4px;
     left: 4px;
 }
 
-#photoprism .search-results .type-image:hover .input-view,
+#photoprism .search-results .result .input-play {
+    display: none;
+}
+
+#photoprism .search-results.select-results .type-image .input-view,
 #photoprism .search-results .type-raw .input-open,
-#photoprism .search-results .type-live.is-playable  .input-open,
-#photoprism .search-results .type-image.is-stack  .input-open {
+#photoprism .search-results .type-video.is-playable .input-open,
+#photoprism .search-results .type-live.is-playable .input-open,
+#photoprism .search-results .type-image.is-stack .input-open {
     display: inline-flex;
 }
 
@@ -258,6 +271,7 @@
 }
 
 #photoprism .search-results .type-raw .input-open .action-raw,
+#photoprism .search-results .type-video.is-playable .input-open .action-play,
 #photoprism .search-results .type-live.is-playable .input-open .action-live,
 #photoprism .search-results .type-image.is-stack .input-open .action-stack {
     display: inline-flex;
@@ -276,11 +290,8 @@
     margin: 0 !important;
 }
 
-#photoprism .search-results .result .input-play {
-    display: none;
-}
-
-#photoprism .search-results .type-video.is-playable .input-play,
+#photoprism .search-results.cards-view .type-video.is-playable .input-play,
+#photoprism .search-results.list-view .type-video.is-playable .input-play,
 #photoprism .search-results.list-view .type-live.is-playable .input-play {
     display: inline-flex;
     opacity: 0.75;
@@ -326,7 +337,7 @@
 }
 
 #photoprism .search-results.list-view .input-select,
-#photoprism .search-results.list-view .input-play {
+#photoprism .search-results.list-view .input-open {
     margin-left: auto;
     margin-right: auto;
     left: 0;

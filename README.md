@@ -78,7 +78,7 @@ and [PayPal](https://www.paypal.me/photoprism).
 
 Your continuous support helps...
 
-* to pay for hosting, hardware and external services like satellite maps
+* to pay for operating expenses and external services like satellite maps
 * developing new features, and keeping them free for everyone 🌈
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 

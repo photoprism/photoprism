@@ -29,7 +29,7 @@
             <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn color="secondary-dark" depressed dark class="action-confirm"
+            <v-btn color="primary-button" depressed dark class="action-confirm"
                    @click.stop="confirm">
               <span v-if="!album">{{ labels.createAlbum }}</span>
               <span v-else>{{ labels.addToAlbum }}</span>

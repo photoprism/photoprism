@@ -54,7 +54,7 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="search-results label-results cards-view">
+        <v-layout row wrap class="search-results label-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(label, index) in results"
               :key="index"
@@ -62,9 +62,10 @@
           >
             <v-card tile
                     :data-uid="label.UID"
+                    style="user-select: none"
                     class="result accent lighten-3"
                     :class="label.classes(selection.includes(label.UID))"
-                    :to="{name: 'all', query: {q: 'label:' + (label.CustomSlug ? label.CustomSlug : label.Slug)}}"
+                    :to="label.route(view)"
                     @contextmenu="onContextMenu($event, index)"
             >
               <div class="card-background accent lighten-3"></div>
@@ -74,20 +75,28 @@
                   :transition="false"
                   aspect-ratio="1"
                   class="accent lighten-2 clickable"
+                  @touchstart="onMouseDown($event, index)"
+                  @touchend.stop.prevent="onClick($event, index)"
                   @mousedown="onMouseDown($event, index)"
-                  @click="onClick($event, index)"
+                  @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
+                       @touchstart.stop.prevent="onSelect($event, index)"
+                       @touchend.stop.prevent
+                       @touchmove.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="accent lighten-3" class="select-off">radio_button_off</v-icon>
+                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
 
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-favorite"
+                       @touchstart.stop.prevent="label.toggleLike()"
+                       @touchend.stop.prevent
+                       @touchmove.stop.prevent
                        @click.stop.prevent="label.toggleLike()">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
@@ -148,6 +157,7 @@ export default {
     const settings = {};
 
     return {
+      view: 'all',
       config: this.$config.values,
       subscriptions: [],
       listen: false,
@@ -166,6 +176,7 @@ export default {
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
       mouseDown: {
         index: -1,
+        scrollY: window.scrollY,
         timeStamp: -1,
       },
       lastId: "",
@@ -196,6 +207,19 @@ export default {
     }
   },
   methods: {
+    searchCount() {
+      const offset = parseInt(window.localStorage.getItem("labels_offset"));
+
+      if(this.offset > 0 || !offset) {
+        return this.batchSize;
+      }
+
+      return offset + this.batchSize;
+    },
+    setOffset(offset) {
+      this.offset = offset;
+      window.localStorage.setItem("labels_offset", offset);
+    },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
         console.warn("selectRange() - invalid arguments:", rangeEnd, models);
@@ -230,20 +254,25 @@ export default {
     },
     onMouseDown(ev, index) {
       this.mouseDown.index = index;
+      this.mouseDown.scrollY = window.scrollY;
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      let longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+
+      if (scrolled) {
+        return;
+      }
 
       if (longClick || this.selection.length > 0) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
         if (longClick || ev.shiftKey) {
           this.selectRange(index, this.results);
         } else {
           this.toggleSelection(this.results[index].getId());
         }
+      } else {
+        this.$router.push(this.results[index].route(this.view));
       }
     },
     onContextMenu(ev, index) {
@@ -332,18 +361,18 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      Label.search(params).then(response => {
-        this.results = this.dirty ? response.models : this.results.concat(response.models);
+      Label.search(params).then(resp => {
+        this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (response.models.length < count);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.offset = offset;
+          this.setOffset(resp.offset);
           if (this.results.length > 1) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), {n: this.results.length}));
           }
         } else {
-          this.offset = offset + count;
+          this.setOffset(resp.offset + resp.limit);
           this.page++;
 
           this.$nextTick(() => {
@@ -383,7 +412,7 @@ export default {
     },
     searchParams() {
       const params = {
-        count: this.batchSize,
+        count: this.searchCount(),
         offset: this.offset,
       };
 
@@ -421,12 +450,11 @@ export default {
 
       const params = this.searchParams();
 
-      Label.search(params).then(response => {
-        this.offset = this.batchSize;
+      Label.search(params).then(resp => {
+        this.offset = resp.limit;
+        this.results = resp.models;
 
-        this.results = response.models;
-
-        this.scrollDisabled = (response.models.length < this.batchSize);
+        this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
           this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));

@@ -64,7 +64,7 @@
         </v-flex>
 
         <v-flex xs12 grow class="px-2 py-1">
-          <v-btn color="secondary-dark"
+          <v-btn color="primary-button"
                  class="white--text ml-0"
                  depressed
                  :disabled="!form.Category || !form.Message || !form.UserEmail"

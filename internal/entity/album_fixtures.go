@@ -66,6 +66,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumNotes:       "",
 		AlbumOrder:       "oldest",
 		AlbumTemplate:    "",
+		AlbumCountry:     "de",
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),

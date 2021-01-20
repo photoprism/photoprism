@@ -1,6 +1,6 @@
 <template>
-  <v-form lazy-validation dense
-          ref="form" autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8"
+  <v-form ref="form" lazy-validation
+          dense autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" color="secondary">
       <v-toolbar-title :title="album.Title">
@@ -9,36 +9,36 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click.stop="refresh" class="hidden-xs-only action-reload" :title="$gettext('Reload')">
+      <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh">
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.edit = true" class="action-edit" :title="$gettext('Edit')">
+      <v-btn icon class="action-edit" :title="$gettext('Edit')" @click.stop="dialog.edit = true">
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="dialog.share = true" v-if="$config.feature('share')" class="action-share"
-             :title="$gettext('Share')">
+      <v-btn v-if="$config.feature('share')" icon class="action-share" :title="$gettext('Share')"
+             @click.stop="dialog.share = true">
         <v-icon>share</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="download" v-if="$config.feature('download')" class="hidden-xs-only action-download"
-             :title="$gettext('Download')">
+      <v-btn v-if="$config.feature('download')" icon class="hidden-xs-only action-download" :title="$gettext('Download')"
+             @click.stop="download">
         <v-icon>get_app</v-icon>
       </v-btn>
 
-      <v-btn icon v-if="settings.view === 'cards'" @click.stop="setView('list')" :title="$gettext('Toggle View')">
+      <v-btn v-if="settings.view === 'cards'" icon :title="$gettext('Toggle View')" @click.stop="setView('list')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn icon v-else-if="settings.view === 'list'" @click.stop="setView('mosaic')" :title="$gettext('Toggle View')">
+      <v-btn v-else-if="settings.view === 'list'" icon :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
-      <v-btn icon v-else @click.stop="setView('cards')" :title="$gettext('Toggle View')">
+      <v-btn v-else icon :title="$gettext('Toggle View')" @click.stop="setView('cards')">
         <v-icon>view_column</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="showUpload()" v-if="!$config.values.readonly && $config.feature('upload')"
-             class="hidden-sm-and-down action-upload" :title="$gettext('Upload')">
+      <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
+             :title="$gettext('Upload')" @click.stop="showUpload()">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
     </v-toolbar>
@@ -70,9 +70,10 @@
 <script>
 import Event from "pubsub-js";
 import Notify from "common/notify";
+import download from "common/download";
 
 export default {
-  name: 'p-album-toolbar',
+  name: 'PAlbumToolbar',
   props: {
     album: Object,
     filter: Object,
@@ -148,7 +149,7 @@ export default {
 
       if (this.filter.order !== this.album.Order) {
         this.album.Order = this.filter.order;
-        this.updateAlbum()
+        this.updateAlbum();
       }
     },
     setView(name) {
@@ -164,10 +165,8 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a')
-      link.href = path;
-      link.download = "album.zip";
-      link.click();
+
+      download(path, "album.zip");
     },
   }
 };

@@ -37,6 +37,7 @@ import { config } from "../session";
 import countries from "options/countries.json";
 import { $gettext } from "common/vm";
 import Clipboard from "common/clipboard";
+import download from "common/download";
 
 export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
@@ -50,6 +51,29 @@ export const TypeRaw = "raw";
 export const YearUnknown = -1;
 export const MonthUnknown = -1;
 export const DayUnknown = -1;
+
+const num = "numeric";
+const short = "short";
+const long = "long";
+
+const DATE_FULL = {
+  year: num,
+  month: long,
+  day: num,
+  weekday: long,
+  hour: num,
+  minute: num,
+};
+
+const DATE_FULL_TZ = {
+  year: num,
+  month: long,
+  day: num,
+  weekday: long,
+  hour: num,
+  minute: num,
+  timeZoneName: short,
+};
 
 export class Photo extends RestModel {
   constructor(values) {
@@ -385,10 +409,10 @@ export class Photo extends RestModel {
 
   downloadAll() {
     if (!this.Files) {
-      let link = document.createElement("a");
-      link.href = `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
-      link.download = this.baseName(false);
-      link.click();
+      download(
+        `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`,
+        this.baseName(false)
+      );
       return;
     }
 
@@ -398,10 +422,7 @@ export class Photo extends RestModel {
         return;
       }
 
-      let link = document.createElement("a");
-      link.href = `/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`;
-      link.download = this.fileBase(file.Name);
-      link.click();
+      download(`/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`, this.fileBase(file.Name));
     });
   }
 
@@ -427,15 +448,18 @@ export class Photo extends RestModel {
     return { width: newW, height: newH };
   }
 
-  getDateString() {
+  getDateString(showTimeZone) {
     if (!this.TakenAt || this.Year === YearUnknown) {
       return $gettext("Unknown");
     } else if (this.Month === MonthUnknown) {
       return this.localYearString();
     } else if (this.Day === DayUnknown) {
-      return this.localDate().toLocaleString({ month: "long", year: "numeric" });
+      return this.localDate().toLocaleString({
+        month: long,
+        year: num,
+      });
     } else if (this.TimeZone) {
-      return this.localDate().toLocaleString(DateTime.DATETIME_FULL);
+      return this.localDate().toLocaleString(showTimeZone ? DATE_FULL_TZ : DATE_FULL);
     }
 
     return this.localDate().toLocaleString(DateTime.DATE_HUGE);

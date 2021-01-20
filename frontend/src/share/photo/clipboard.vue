@@ -9,15 +9,17 @@
           transition="slide-y-reverse-transition"
           class="p-clipboard p-photo-clipboard"
       >
-        <v-btn
-            slot="activator" fab
-            dark
-            color="accent darken-2"
-            class="action-menu"
-        >
-          <v-icon v-if="selection.length === 0">menu</v-icon>
-          <span v-else class="count-clipboard">{{ selection.length }}</span>
-        </v-btn>
+        <template v-slot:activator>
+          <v-btn
+              fab
+              dark
+              color="accent darken-2"
+              class="action-menu"
+          >
+            <v-icon v-if="selection.length === 0">menu</v-icon>
+            <span v-else class="count-clipboard">{{ selection.length }}</span>
+          </v-btn>
+        </template>
 
         <v-btn
             v-if="context !== 'archive'" fab dark
@@ -46,6 +48,7 @@
 <script>
 import Api from "common/api";
 import Notify from "common/notify";
+import download from "common/download";
 
 export default {
   name: 'PPhotoClipboard',
@@ -84,10 +87,8 @@ export default {
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));
-      const link = document.createElement('a');
-      link.href = path;
-      link.download = "photos.zip";
-      link.click();
+
+      download(path, "photos.zip");
     },
   }
 };
