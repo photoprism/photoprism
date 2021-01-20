@@ -1,8 +1,8 @@
 <template>
   <div id="p-navigation">
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
-      <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" fixed flat color="navigation darken-1" class="nav-small"
-                 scroll-off-screen @click.stop="showNavigation()">
+      <v-toolbar dark fixed flat scroll-off-screen :dense="$vuetify.breakpoint.smAndDown"  color="navigation darken-1" class="nav-small"
+                  @click.stop="showNavigation()">
 
         <v-toolbar-side-icon v-if="auth" class="nav-show"></v-toolbar-side-icon>
 
@@ -16,7 +16,7 @@
         </v-btn>
 
       </v-toolbar>
-      <v-toolbar dark :dense="$vuetify.breakpoint.smAndDown" flat color="navigation darken-1">
+      <v-toolbar dark flat :dense="$vuetify.breakpoint.smAndDown" color="#fafafa">
       </v-toolbar>
     </template>
     <v-navigation-drawer
@@ -72,7 +72,7 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini" prepend-icon="image_search" no-action>
-          <template v-slot:activator>
+          <template #activator>
             <v-list-tile to="/browse" class="nav-browse" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
@@ -148,7 +148,7 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini && $config.feature('albums')" prepend-icon="photo_album" no-action>
-          <template v-slot:activator>
+          <template #activator>
             <v-list-tile to="/albums" class="nav-albums" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
@@ -250,7 +250,7 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini" v-show="$config.feature('places')" prepend-icon="place" no-action>
-          <template v-slot:activator>
+          <template #activator>
             <v-list-tile to="/places" class="nav-places" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
@@ -313,7 +313,7 @@
         </v-list-tile>
 
         <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
-          <template v-slot:activator>
+          <template #activator>
             <v-list-tile to="/library" class="nav-library" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title>
@@ -364,7 +364,7 @@
           </v-list-tile>
 
           <v-list-group v-else prepend-icon="settings" no-action>
-            <template v-slot:activator>
+            <template #activator>
               <v-list-tile to="/settings" class="nav-settings" @click.stop="">
                 <v-list-tile-content>
                   <v-list-tile-title>
