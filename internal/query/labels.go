@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -20,17 +21,32 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("labels: search %s", form.Serialize(f, true))))
 
 	s := UnscopedDb()
-
 	// s.LogMode(true)
 
+	// Base query.
 	s = s.Table("labels").
 		Select(`labels.*`).
 		Where("labels.deleted_at IS NULL").
 		Where("labels.photo_count > 0").
 		Group("labels.id")
 
+	// Limit result count.
+	if f.Count > 0 && f.Count <= MaxResults {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	} else {
+		s = s.Limit(MaxResults).Offset(f.Offset)
+	}
+
+	// Set sort order.
+	switch f.Order {
+	case "slug":
+		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
+	default:
+		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
+	}
+
 	if f.ID != "" {
-		s = s.Where("labels.label_uid = ?", f.ID)
+		s = s.Where("labels.label_uid IN (?)", strings.Split(f.ID, Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -72,19 +88,6 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 
 	if !f.All {
 		s = s.Where("labels.label_priority >= 0 OR labels.label_favorite = 1")
-	}
-
-	switch f.Order {
-	case "slug":
-		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
-	default:
-		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
-	}
-
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
-	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if result := s.Scan(&results); result.Error != nil {
