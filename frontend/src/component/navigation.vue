@@ -42,7 +42,7 @@
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">
-              <v-btn icon class="nav-minimize" @click.stop="isMini = !isMini">
+              <v-btn icon class="nav-minimize" @click.stop="toggleIsMini()">
                 <v-icon v-if="!rtl">chevron_left</v-icon>
                 <v-icon v-else>chevron_right</v-icon>
               </v-btn>
@@ -52,7 +52,7 @@
       </v-toolbar>
 
       <v-list class="pt-3">
-        <v-list-tile v-if="isMini" class="nav-expand" @click.stop="isMini = !isMini">
+        <v-list-tile v-if="isMini" class="nav-expand" @click.stop="toggleIsMini()">
           <v-list-tile-action :title="$gettext('Expand')">
             <v-icon v-if="!rtl">chevron_right</v-icon>
             <v-icon v-else>chevron_left</v-icon>
@@ -456,7 +456,7 @@ export default {
   data() {
     return {
       drawer: null,
-      isMini: true,
+      isMini: localStorage.getItem('last_navigation_mode') !== 'false',
       isPublic: this.$config.get("public"),
       isReadOnly: this.$config.get("readonly"),
       session: this.$session,
@@ -529,6 +529,10 @@ export default {
       let name = "New Album";
       const album = new Album({Title: name, Favorite: false});
       album.save();
+    },
+    toggleIsMini() {
+      this.isMini = !this.isMini;
+      localStorage.setItem('last_navigation_mode', `${this.isMini}`);
     },
     logout() {
       this.$session.logout();
