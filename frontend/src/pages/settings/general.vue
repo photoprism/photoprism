@@ -144,7 +144,7 @@
                   color="secondary-dark"
                   :label="$gettext('Moments')"
                   :hint="$gettext('Let PhotoPrism create albums from past events.')"
-                  prepend-icon="explore"
+                  prepend-icon="star"
                   persistent-hint
                   @change="onChange"
               >

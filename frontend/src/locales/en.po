@@ -1245,7 +1245,7 @@ msgstr ""
 #: src/component/navigation.vue:215 src/component/navigation.vue:797
 #: src/pages/settings/general.vue:272 src/routes.js:111 src/routes.js:118
 msgid "Moments"
-msgstr "Explore"
+msgstr ""
 
 #: src/component/navigation.vue:76
 msgid "Monochrome"
