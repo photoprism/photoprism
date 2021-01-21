@@ -290,7 +290,6 @@
     margin: 0 !important;
 }
 
-#photoprism .search-results.cards-view .type-video.is-playable .input-play,
 #photoprism .search-results.list-view .type-video.is-playable .input-play,
 #photoprism .search-results.list-view .type-live.is-playable .input-play {
     display: inline-flex;

@@ -74,6 +74,7 @@
                    icon flat small absolute :title="$gettext('Play')"
                    @touchstart.stop.prevent="openPhoto(index, true)"
                    @touchend.stop.prevent
+                   @touchmove.stop.prevent
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
