@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import Photo from "model/photo";
+import {Photo, TypeLive, TypeVideo} from "model/photo";
 import Thumb from "model/thumb";
 import Event from "pubsub-js";
 
@@ -217,9 +217,9 @@ export default {
 
       const selected = this.results[index];
 
-      if (showMerged && (selected.Type === 'video' || selected.Type === 'live')) {
+      if (showMerged && selected.Type === TypeLive || selected.Type === TypeVideo) {
         if (selected.isPlayable()) {
-          this.$modal.show('video', {video: selected, album: null});
+          this.$modal.show("video", {video: selected, album: null});
         } else {
           this.$viewer.show(Thumb.fromPhotos(this.results), index);
         }

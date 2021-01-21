@@ -11,7 +11,7 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="selection.length > 1">
-          <v-btn icon disabled :disabled="selected < 1" class="action-previous" @click.stop="prev">
+          <v-btn icon :disabled="selected < 1" class="action-previous" @click.stop="prev">
             <v-icon>navigate_before</v-icon>
           </v-btn>
 

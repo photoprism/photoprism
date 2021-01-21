@@ -7,7 +7,7 @@
         <v-text-field id="search"
                       v-model="filter.q"
                       single-line
-                      class="hidden-xs-only mr-3 input-search"
+                      class="input-search"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"
@@ -22,7 +22,7 @@
                   :label="$gettext('Category')"
                   color="secondary-dark"
                   :items="categories"
-                  class="input-category"
+                  class="ml-3 hidden-xs-only input-category"
                   @change="updateQuery"
         >
         </v-select>
