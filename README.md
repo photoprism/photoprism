@@ -9,8 +9,8 @@ PhotoPrism: Browse Your Life in Pictures
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@browseyourlife-00acee.svg)][twitter]
 
-PhotoPrism® is a privately hosted app for browsing, organizing and sharing your personal photo collection.
-It makes use of the latest technologies to automatically tag and find pictures without getting in your way.
+PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection.
+It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
 Say goodbye to solutions that force you to upload your visual memories to the cloud!
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
@@ -19,7 +19,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 ## Key Features ##
 
-* Our clearly structured [user interface](https://demo.photoprism.org/) makes browsing and organizing your personal photo collection as easy as 
+* Our structured [user interface](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
@@ -32,22 +32,22 @@ To get a first impression, you're welcome to play with our public demo at [demo.
   edit, and delete files from your computer or phone as if they were local. 
   You may easily sync your pictures with [PhotoSync](https://www.photosync-app.com/) as well.  
 * PhotoPrism is built as a [progressive web app](https://en.wikipedia.org/wiki/Progressive_web_application). 
-  It feels like native, and of course you may add it to your home screen.
+  It feels like native, and of course, you may add it to your home screen.
   There's also a [community-maintained native app in development](https://github.com/photoprism/photoprism-mobile).
 
 ## Getting Started ##
 
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
-all you need is a Web browser and Docker to run the server. It is available for Mac, Linux and Windows.
+all you need is a Web browser and Docker to run the server. It is available for Mac, Linux, and Windows.
 
 We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
 Beyond these minimum requirements, the amount of RAM should match the number of cores.
-Indexing large photo and video collections significantly benefits from fast, local SSD storage.
+Indexing large photo and video collections significantly benefit from fast, local SSD storage.
 
 ## Roadmap ##
 
-Our vision is to provide the most user-friendly solution for browsing, organizing and sharing your personal photo collection.
+Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which feature requests are going to be implemented next.
 
@@ -62,24 +62,23 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
 
-Follow us on [Twitter][twitter] to receive regular project updates and discuss development 
-related topics. Don't be afraid to ask stupid questions.
+Follow us on [Twitter][twitter] to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
 ## Funding ##
 
 This software is about freedom and privacy but not necessarily about free beer. We feel like it
-would be a mistake to state there will be no costs, because clearly we have huge expenses, your server hardware
+would be a mistake to state there will be no costs because clearly, we have huge expenses, your server hardware
 will have a price tag, and then maybe you'd like to have some extra features that need to be developed.
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
-especially if you have feature requests, or need help with using our software.
+especially if you have feature requests or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
 and [PayPal](https://www.paypal.me/photoprism). 
 
 Your continuous support helps...
 
-* to pay for operating expenses and external services like satellite maps
-* developing new features, and keeping them free for everyone 🌈
+* pay for operating expenses and external services like satellite maps
+* developing new features and keeping them free for everyone 🌈
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
@@ -91,12 +90,12 @@ Let us know if we mistakenly label an idea as [unfunded](https://github.com/phot
 
 *Note that we've recently moved GitHub Sponsors from [sponsors/lastzero](https://github.com/sponsors/lastzero) to an 
 [organization account](https://github.com/sponsors/photoprism) so that donations can be shared more easily.
-Tiers are more affordable now while benefits stay mostly the same.*
+Tiers are more affordable now, while benefits stay mostly the same.*
 
 ## Trademarks ##
 
 PhotoPrism® is a registered trademark of Michael Mayer. You may use it as required to describe 
-our software, run your own server, for educational purposes, but not for offering commercial 
+our software, run your server for educational purposes, but not for offering commercial 
 goods, products, or services without prior written permission. In other words, please ask.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
