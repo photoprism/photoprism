@@ -57,8 +57,8 @@
                    :ripple="false"
                    flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
-              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">play_arrow</v-icon>
-              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">play_circle_fill</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_circle_fill</v-icon>
             </v-btn>
           </v-img>
         </td>

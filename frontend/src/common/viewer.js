@@ -129,7 +129,7 @@ class Viewer {
 
         if (item.playable) {
           captionEl.children[0].innerHTML +=
-            ' <i aria-hidden="true" class="v-icon material-icons theme--dark" title="Play">play_arrow</i>';
+            ' <i aria-hidden="true" class="v-icon material-icons theme--dark" title="Play">play_circle_fill</i>';
         }
 
         if (item.description) {
