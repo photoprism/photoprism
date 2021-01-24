@@ -50,7 +50,7 @@
                                  @click.stop.prevent="unstackFile(file)">
                             <translate>Unstack</translate>
                           </v-btn>
-                          <v-btn v-if="features.edit && !file.Primary" small depressed dark color="primary-button"
+                          <v-btn v-if="features.delete && !file.Primary" small depressed dark color="primary-button"
                                  class="ma-0 action-delete"
                                  @click.stop.prevent="showDeleteDialog(file)">
                             <translate>Delete</translate>

@@ -238,6 +238,14 @@ export class Clipboard {
   }
 
   updateDom(uid, selected) {
+    if (typeof uid === "object") {
+      if (typeof uid.getId !== "function") {
+        return;
+      }
+
+      uid = uid.getId();
+    }
+
     document.querySelectorAll(`.uid-${uid}`).forEach((el) => {
       if (selected) {
         el.classList.add("is-selected");

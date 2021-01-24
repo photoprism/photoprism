@@ -48,7 +48,7 @@
             </v-btn>
             <v-btn small depressed color="primary-button" class="white--text action-close"
                    @click.stop="signUp">
-              <translate>Sign Up</translate>
+              Sign Up
             </v-btn>
           </v-flex>
         </v-layout>

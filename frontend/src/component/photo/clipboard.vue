@@ -23,7 +23,7 @@
         </template>
 
         <v-btn
-            v-if="context !== 'archive' && context !== 'review' && config.settings.features.share" fab dark
+            v-if="context !== 'archive' && context !== 'review' && features.share" fab dark
             small
             :title="$gettext('Share')"
             color="share"
@@ -46,7 +46,7 @@
           <v-icon>check</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive' && config.settings.features.edit" fab dark
+            v-if="context !== 'archive' && features.edit" fab dark
             small
             :title="$gettext('Edit')"
             color="edit"
@@ -57,7 +57,7 @@
           <v-icon>edit</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive' && config.settings.features.private" fab dark
+            v-if="context !== 'archive' && features.private" fab dark
             small
             :title="$gettext('Change private flag')"
             color="private"
@@ -68,7 +68,7 @@
           <v-icon>lock</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive' && config.settings.features.download" fab dark
+            v-if="context !== 'archive' && features.download" fab dark
             small
             :title="$gettext('Download')"
             color="download"
@@ -78,7 +78,7 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive' && config.settings.features.albums" fab dark
+            v-if="context !== 'archive' && features.albums" fab dark
             small
             :title="$gettext('Add to album')"
             color="album"
@@ -89,13 +89,13 @@
           <v-icon>bookmark</v-icon>
         </v-btn>
         <v-btn
-            v-if="!isAlbum && context !== 'archive' && config.settings.features.archive" fab dark
+            v-if="!isAlbum && context !== 'archive' && features.archive" fab dark
             small
             color="remove"
             :title="$gettext('Archive')"
             :disabled="selection.length === 0"
             class="action-archive"
-            @click.stop="dialog.archive = true"
+            @click.stop="archivePhotos"
         >
           <v-icon>archive</v-icon>
         </v-btn>
@@ -106,20 +106,31 @@
             :title="$gettext('Restore')"
             :disabled="selection.length === 0"
             class="action-restore"
-            @click.stop="batchRestorePhotos"
+            @click.stop="batchRestore"
         >
           <v-icon>unarchive</v-icon>
         </v-btn>
         <v-btn
-            v-if="isAlbum && config.settings.features.albums" fab dark
+            v-if="isAlbum && features.albums" fab dark
             small
             :title="$gettext('Remove')"
             color="remove"
             :disabled="selection.length === 0"
-            class="action-delete"
+            class="action-remove"
             @click.stop="removeFromAlbum"
         >
           <v-icon>eject</v-icon>
+        </v-btn>
+        <v-btn
+            v-if="!album && context === 'archive' && features.delete" fab dark
+            small
+            :title="$gettext('Delete')"
+            color="remove"
+            :disabled="selection.length === 0"
+            class="action-delete"
+            @click.stop="deletePhotos"
+        >
+          <v-icon>delete</v-icon>
         </v-btn>
         <v-btn
             fab dark small
@@ -131,10 +142,12 @@
         </v-btn>
       </v-speed-dial>
     </v-container>
+    <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
+                            @confirm="batchArchive"></p-photo-archive-dialog>
+    <p-photo-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
+                            @confirm="batchDelete"></p-photo-delete-dialog>
     <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
                           @confirm="addToAlbum"></p-photo-album-dialog>
-    <p-photo-archive-dialog :show="dialog.archive" @cancel="dialog.archive = false"
-                            @confirm="batchArchivePhotos"></p-photo-archive-dialog>
     <p-share-upload-dialog :show="dialog.share" :selection="selection" :album="album" @cancel="dialog.share = false"
                            @confirm="onShared"></p-share-upload-dialog>
   </div>
@@ -156,10 +169,12 @@ export default {
   data() {
     return {
       config: this.$config.values,
+      features: this.$config.settings().features,
       expanded: false,
       isAlbum: this.album && this.album.Type === 'album',
       dialog: {
         archive: false,
+        delete: false,
         album: false,
         share: false,
       },
@@ -178,7 +193,14 @@ export default {
       Notify.success(this.$gettext("Selection approved"));
       this.clearClipboard();
     },
-    batchArchivePhotos() {
+    archivePhotos() {
+      if (!this.features.delete) {
+        this.dialog.archive = true;
+      } else {
+        this.batchArchive();
+      }
+    },
+    batchArchive() {
       this.dialog.archive = false;
 
       Api.post("batch/photos/archive", {"photos": this.selection}).then(() => this.onArchived());
@@ -187,13 +209,25 @@ export default {
       Notify.success(this.$gettext("Selection archived"));
       this.clearClipboard();
     },
+    deletePhotos() {
+      this.dialog.delete = true;
+    },
+    batchDelete() {
+      this.dialog.delete = false;
+
+      Api.post("batch/photos/delete", {"photos": this.selection}).then(() => this.onDeleted());
+    },
+    onDeleted() {
+      Notify.success(this.$gettext("Permanently deleted"));
+      this.clearClipboard();
+    },
     batchPrivate() {
       Api.post("batch/photos/private", {"photos": this.selection}).then(() => this.onPrivateSaved());
     },
     onPrivateSaved() {
       this.clearClipboard();
     },
-    batchRestorePhotos() {
+    batchRestore() {
       Api.post("batch/photos/restore", {"photos": this.selection}).then(() => this.onRestored());
     },
     onRestored() {

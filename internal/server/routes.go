@@ -98,6 +98,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.BatchPhotosArchive(v1)
 		api.BatchPhotosRestore(v1)
 		api.BatchPhotosPrivate(v1)
+		api.BatchPhotosDelete(v1)
 		api.BatchAlbumsDelete(v1)
 		api.BatchLabelsDelete(v1)
 

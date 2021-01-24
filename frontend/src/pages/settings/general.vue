@@ -123,6 +123,21 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
+                  v-model="settings.features.delete"
+                  :disabled="busy || demo"
+                  class="ma-0 pa-0 input-delete"
+                  color="secondary-dark"
+                  :label="$gettext('Delete')"
+                  :hint="$gettext('Permanently remove files to free up storage.')"
+                  prepend-icon="delete"
+                  persistent-hint
+                  @change="onChangeDelete"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
                   v-model="settings.features.files"
                   :disabled="busy"
                   class="ma-0 pa-0 input-files"
@@ -334,6 +349,19 @@ export default {
       }
 
       this.currentTheme = newTheme;
+
+      this.onChange();
+    },
+    onChangeDelete() {
+      if(!this.$config.values.sponsor) {
+        this.dialog.sponsor = true;
+
+        this.$nextTick(() => {
+          this.settings.features.delete = false;
+        });
+
+        return false;
+      }
 
       this.onChange();
     },

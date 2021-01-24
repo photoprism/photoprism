@@ -3,6 +3,9 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -278,5 +281,69 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 		event.EntitiesDeleted("labels", f.Labels)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgLabelsDeleted))
+	})
+}
+
+// POST /api/v1/batch/photos/delete
+func BatchPhotosDelete(router *gin.RouterGroup) {
+	router.POST("/batch/photos/delete", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		conf := service.Config()
+
+		if conf.ReadOnly() || !conf.Settings().Features.Delete {
+			AbortFeatureDisabled(c)
+			return
+		}
+
+		var f form.Selection
+
+		if err := c.BindJSON(&f); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
+		if len(f.Photos) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		log.Infof("archive: permanently deleting %s", f.String())
+
+		photos, err := query.PhotoSelection(f)
+
+		if err != nil {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		var deleted entity.Photos
+
+		// Delete photos.
+		for _, p := range photos {
+			if err := photoprism.Delete(p); err != nil {
+				log.Errorf("photo: %s (delete)", err.Error())
+			} else {
+				deleted = append(deleted, p)
+			}
+		}
+
+		// Update counts and views if needed.
+		if len(deleted) > 0 {
+			if err := entity.UpdatePhotoCounts(); err != nil {
+				log.Errorf("photos: %s", err)
+			}
+
+			UpdateClientConfig()
+
+			event.EntitiesDeleted("photos", deleted.UIDs())
+		}
+
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPermanentlyDeleted))
 	})
 }
