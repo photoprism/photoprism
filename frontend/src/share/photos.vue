@@ -232,8 +232,8 @@ export default {
 
       const selected = this.results[index];
 
-      // Don't open RAWs as stack if there's only one JPEG.
-      if (selected.Type === TypeRaw && selected.jpegFiles().length < 2) {
+      // Don't open as stack when user is selecting pictures, or a RAW has only one JPEG.
+      if (this.selection.length > 0 || selected.Type === TypeRaw && selected.jpegFiles().length < 2) {
         showMerged = false;
       }
 
