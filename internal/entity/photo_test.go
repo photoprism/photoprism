@@ -910,3 +910,13 @@ func TestPhoto_Links(t *testing.T) {
 		assert.Equal(t, "7jxf3jfn2k", links[0].LinkToken)
 	})
 }
+
+func TestPhoto_SetPrimary(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+
+		if err := m.SetPrimary(""); err != nil {
+			t.Fatal(err)
+		}
+	})
+}

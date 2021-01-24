@@ -1042,6 +1042,43 @@ func (m *Photo) PrimaryFile() (File, error) {
 	return PrimaryFile(m.PhotoUID)
 }
 
+// SetPrimary sets a new primary file.
+func (m *Photo) SetPrimary(fileUID string) error {
+	if m.PhotoUID == "" {
+		return fmt.Errorf("photo uid is empty")
+	}
+
+	var files []string
+
+	if fileUID != "" {
+		// Do nothing.
+	} else if err := Db().Model(File{}).
+		Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", m.PhotoUID).
+		Order("file_width DESC").Limit(1).
+		Pluck("file_uid", &files).Error; err != nil {
+		return err
+	} else if len(files) == 0 {
+		return fmt.Errorf("photo %s has no jpegs", m.PhotoUID)
+	} else {
+		fileUID = files[0]
+	}
+
+	if fileUID == "" {
+		return fmt.Errorf("file uid is empty")
+	}
+
+	Db().Model(File{}).Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", false)
+
+	if err := Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", true).Error; err != nil {
+		return err
+	} else if m.PhotoQuality < 0 {
+		m.PhotoQuality = 0
+		return m.UpdateQuality()
+	}
+
+	return nil
+}
+
 // MapKey returns a key referencing time and location for indexing.
 func (m *Photo) MapKey() string {
 	return MapKey(m.TakenAt, m.CellID)
