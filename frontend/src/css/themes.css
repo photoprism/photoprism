@@ -39,6 +39,17 @@
     background: #4E4E4E;
 }
 
+#photoprism.theme-grayscale .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-grayscale .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-grayscale .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-grayscale .theme--light.v-input--is-disabled input,
+#photoprism.theme-grayscale .theme--light.v-input--is-disabled textarea {
+    color: #ccc;
+}
+
 #photoprism.theme-grayscale,
 #photoprism.theme-grayscale .p-page a,
 #photoprism.theme-grayscale .v-datatable a,
@@ -115,6 +126,17 @@
 
 #photoprism.theme-shadow .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
     background: #4E4E4E;
+}
+
+#photoprism.theme-shadow .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-shadow .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-shadow .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-shadow .theme--light.v-input--is-disabled input,
+#photoprism.theme-shadow .theme--light.v-input--is-disabled textarea {
+    color: #ccc;
 }
 
 #photoprism.theme-shadow,
