@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// PurgeCommand is used to register the index cli command
+// PurgeCommand registers the index cli command.
 var PurgeCommand = cli.Command{
 	Name:   "purge",
 	Usage:  "Removes missing files from search results",
@@ -53,13 +53,13 @@ func purgeAction(ctx *cli.Context) error {
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("removing missing files in %s", txt.Quote(filepath.Base(conf.OriginalsPath())))
+		log.Infof("purge: removing missing files in %s", txt.Quote(filepath.Base(conf.OriginalsPath())))
 	} else {
-		log.Infof("removing missing files in %s", txt.Quote(fs.RelName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
+		log.Infof("purge: removing missing files in %s", txt.Quote(fs.RelName(filepath.Join(conf.OriginalsPath(), subPath), filepath.Dir(conf.OriginalsPath()))))
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("read-only mode enabled")
+		log.Infof("purge: read-only mode enabled")
 	}
 
 	prg := service.Purge()
@@ -75,7 +75,7 @@ func purgeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("removed %d files and %d photos in %s", len(files), len(photos), elapsed)
+		log.Infof("purge: removed %d files and %d photos in %s", len(files), len(photos), elapsed)
 	}
 
 	conf.Shutdown()

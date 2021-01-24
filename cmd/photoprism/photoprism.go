@@ -58,6 +58,7 @@ func main() {
 		commands.MomentsCommand,
 		commands.OptimizeCommand,
 		commands.PurgeCommand,
+		commands.CleanUpCommand,
 		commands.CopyCommand,
 		commands.ConvertCommand,
 		commands.ResampleCommand,

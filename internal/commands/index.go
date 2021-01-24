@@ -13,7 +13,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// IndexCommand is used to register the index cli command
+// IndexCommand registers the index cli command.
 var IndexCommand = cli.Command{
 	Name:   "index",
 	Usage:  "Indexes media files in originals folder",
@@ -25,6 +25,10 @@ var indexFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "all, a",
 		Usage: "re-index all originals, including unchanged files",
+	},
+	cli.BoolFlag{
+		Name:  "cleanup",
+		Usage: "removes orphaned thumbnails and index entries",
 	},
 }
 
@@ -54,7 +58,7 @@ func indexAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("read-only mode enabled")
+		log.Infof("index: read-only mode enabled")
 	}
 
 	ind := service.Index()
@@ -78,7 +82,21 @@ func indexAction(ctx *cli.Context) error {
 	if files, photos, err := prg.Start(prgOpt); err != nil {
 		log.Error(err)
 	} else if len(files) > 0 || len(photos) > 0 {
-		log.Infof("removed %d files and %d photos", len(files), len(photos))
+		log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
+	}
+
+	if ctx.Bool("cleanup") {
+		cleanUp := service.CleanUp()
+
+		opt := photoprism.CleanUpOptions{
+			Dry: false,
+		}
+
+		if thumbs, orphans, err := cleanUp.Start(opt); err != nil {
+			return err
+		} else {
+			log.Infof("cleanup: removed %d orphaned thumbnails and %d photos", thumbs, orphans)
+		}
 	}
 
 	elapsed := time.Since(start)

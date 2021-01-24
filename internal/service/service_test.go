@@ -68,6 +68,10 @@ func TestPurge(t *testing.T) {
 	assert.IsType(t, &photoprism.Purge{}, Purge())
 }
 
+func TestCleanUp(t *testing.T) {
+	assert.IsType(t, &photoprism.CleanUp{}, CleanUp())
+}
+
 func TestNsfwDetector(t *testing.T) {
 	assert.IsType(t, &nsfw.Detector{}, NsfwDetector())
 }

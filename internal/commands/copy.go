@@ -13,7 +13,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// CopyCommand is used to register the copy cli command
+// CopyCommand registers the copy cli command.
 var CopyCommand = cli.Command{
 	Name:    "copy",
 	Aliases: []string{"cp"},

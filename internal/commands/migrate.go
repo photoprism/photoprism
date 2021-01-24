@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// MigrateCommand is used to register the migrate cli command
+// MigrateCommand registers the migrate cli command.
 var MigrateCommand = cli.Command{
 	Name:   "migrate",
 	Usage:  "Initializes the index database if needed",

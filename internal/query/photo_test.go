@@ -79,3 +79,15 @@ func TestPhotosCheck(t *testing.T) {
 	}
 	assert.IsType(t, entity.Photos{}, result)
 }
+
+func TestPhotosOrphaned(t *testing.T) {
+	result, err := PhotosOrphaned()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.IsType(t, entity.Photos{}, result)
+
+	t.Logf("ORPHANS: %#v", result)
+}

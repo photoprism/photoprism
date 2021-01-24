@@ -7,7 +7,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// VersionCommand is used to register the version cli command
+// VersionCommand registers the version cli command.
 var VersionCommand = cli.Command{
 	Name:   "version",
 	Usage:  "Shows version information",

@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// ConvertCommand is used to register the convert cli command
+// ConvertCommand registers the convert cli command.
 var ConvertCommand = cli.Command{
 	Name:   "convert",
 	Usage:  "Converts originals in other formats to JPEG",

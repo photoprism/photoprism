@@ -31,7 +31,7 @@ func NewPurge(conf *config.Config, files *Files) *Purge {
 }
 
 // Start removes missing files from search results.
-func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
+func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("purge: %s (panic)\nstack: %s", r, debug.Stack())
@@ -105,7 +105,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				if err := file.Purge(); err != nil {
 					log.Errorf("purge: %s", err)
 				} else {
-					prg.files.Remove(file.FileName, file.FileRoot)
+					w.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
 					log.Infof("purge: flagged file %s as missing", txt.Quote(file.FileName))
 				}
@@ -156,7 +156,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				if err := file.Purge(); err != nil {
 					log.Errorf("purge: %s", err)
 				} else {
-					prg.files.Remove(file.FileName, file.FileRoot)
+					w.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
 					log.Infof("purge: removed duplicate %s", txt.Quote(file.FileName))
 				}
@@ -214,7 +214,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 				// Remove files from lookup table.
 				for _, file := range photo.AllFiles() {
-					prg.files.Remove(file.FileName, file.FileRoot)
+					w.files.Remove(file.FileName, file.FileRoot)
 				}
 			}
 		}
@@ -250,6 +250,6 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 }
 
 // Cancel stops the current operation.
-func (prg *Purge) Cancel() {
+func (w *Purge) Cancel() {
 	mutex.MainWorker.Cancel()
 }

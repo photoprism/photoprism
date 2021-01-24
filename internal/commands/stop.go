@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// StopCommand is used to register the stop cli command
+// StopCommand registers the stop cli command.
 var StopCommand = cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},
