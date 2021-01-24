@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import {Photo, TypeLive, TypeVideo} from "model/photo";
+import {Photo, TypeLive, TypeRaw, TypeVideo} from "model/photo";
 import Album from "model/album";
 import Event from "pubsub-js";
 import Thumb from "model/thumb";
@@ -177,8 +177,13 @@ export default {
 
       const selected = this.results[index];
 
+      // Don't open RAWs as stack if there's only one JPEG.
+      if (selected.Type === TypeRaw && selected.jpegFiles().length < 2) {
+        showMerged = false;
+      }
+
       if (showMerged && selected.Type === TypeLive || selected.Type === TypeVideo) {
-        if (this.results[index].isPlayable()) {
+        if (selected.isPlayable()) {
           this.$modal.show("video", {video: selected, album: this.album});
         } else {
           this.$viewer.show(Thumb.fromPhotos(this.results), index);

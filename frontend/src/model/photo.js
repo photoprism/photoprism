@@ -349,6 +349,14 @@ export class Photo extends RestModel {
     return this.Files.find((f) => f.Type === FormatJpeg);
   }
 
+  jpegFiles() {
+    if (!this.Files) {
+      return [this];
+    }
+
+    return this.Files.filter((f) => f.Type === FormatJpeg);
+  }
+
   mainFileHash() {
     if (this.Files) {
       let file = this.mainFile();
