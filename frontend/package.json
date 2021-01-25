@@ -99,7 +99,7 @@
     "vue-js-modal": "^2.0.0-rc.6",
     "vue-loader": "^14.2.4",
     "vue-luxon": "^0.7.4",
-    "vue-router": "^3.4.9",
+    "vue-router": "^3.5.0",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.12",
     "vue2-filters": "^0.11.1",
