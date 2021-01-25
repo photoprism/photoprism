@@ -10,7 +10,7 @@ fixture`Test photos`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
-test.meta("testID", "photos-001")("Scroll to top", async (t) => {
+/*test.meta("testID", "photos-001")("Scroll to top", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await page.setFilter("view", "Cards");
@@ -544,13 +544,11 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await page.setFilter("view", "Cards");
-  const FirstPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+  const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   await t
     .click(Selector("button.action-title-edit").withAttribute("data-uid", FirstPhoto))
     .expect(Selector('input[aria-label="Latitude"]').visible)
-    .ok()
-    .expect(Selector("button.action-previous").getAttribute("disabled"))
-    .eql("disabled");
+    .ok();
   await t.click(Selector("button.action-next"));
   await t
     .expect(Selector("button.action-previous").getAttribute("disabled"))
@@ -918,7 +916,7 @@ test.meta("testID", "photos-010")("Ungroup files", async (t) => {
   await t.expect(PhotoCountAfterUngroup).eql(2);
 });
 
-test.meta("testID", "photos-011")("Delete non primary file", async (t) => {
+test.skip.meta("testID", "photos-011")("Delete non primary file", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-library"))
@@ -1034,4 +1032,498 @@ test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (
         .notOk()
         .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
         .notOk();
-});
+});*/
+
+test.meta("testID", "photos-013")("Check that archived files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/private/videos/calendar/moments/states/labels/folders/originals",
+    //TODO only select the not yet selected
+    async (t) => {
+        await page.openNav();
+        await t
+            .click(Selector(".nav-browse + div"))
+            .click(Selector(".nav-archive"));
+        const InitialPhotoCountInArchive = await Selector("div.is-photo").count;
+        await page.openNav();
+        await t
+            .click(Selector(".nav-monochrome"));
+        const MonochromePhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(MonochromePhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-panoramas"));
+        const PanoramaPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(PanoramaPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-stacks"));
+        const StackedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(StackedPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-scans"));
+        const ScannedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(ScannedPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-review"));
+        const ReviewPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(ReviewPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-favorites"));
+        const FavoritesPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(FavoritesPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-private"));
+        const PrivatePhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(PrivatePhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-video"));
+        const Video = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(Video);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-calendar"));
+        await page.search("January 2017")
+        await t
+            .click(Selector("a.is-album").nth(0));
+        const CalendarPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(CalendarPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-moments"))
+            .click(Selector("a.is-album").nth(0));
+        const MomentPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(MomentPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-places + div"))
+            .click(Selector(".nav-states"));
+        await page.search("Western Cape")
+        await t
+            .click(Selector("a.is-album").nth(0));
+        const StatesPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(StatesPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-labels"));
+        await page.search("Seashore")
+        await t
+            .click(Selector("a.is-label").nth(0));
+        const LabelPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(LabelPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-folders"));
+        await page.search("archive")
+        await t
+            .click(Selector("a.is-album").nth(0));
+        const FolderPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(FolderPhoto);
+        await page.archiveSelected();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-browse + div"))
+            .click(Selector(".nav-archive"));
+        const PhotoCountInArchiveAfterArchive = await Selector("div.is-photo").count;
+        await t.expect(PhotoCountInArchiveAfterArchive).eql(InitialPhotoCountInArchive + 13);
+        await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+
+    await page.openNav();
+    await t
+        .click(Selector(".nav-monochrome"))
+        .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-panoramas"))
+        .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-stacks"))
+        .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-scans"))
+        .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-review"))
+        .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+        .notOk();
+   await page.openNav();
+    await t
+        .click(Selector(".nav-favorites"))
+        .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-private"))
+        .expect(Selector("div").withAttribute("data-uid", PrivatePhoto).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-video"))
+        .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+        .notOk();
+    await t
+        .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
+        .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+        .notOk();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-moments"))
+        .click(Selector("a.is-album").nth(0))
+        .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+        .notOk();
+    await t
+        .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
+        .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+        .notOk()
+        .navigateTo("/all?q=label%3Aseashore")
+        .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+        .notOk()
+        .navigateTo("/folders/aqnah1321mgkt1w2/archive")
+        .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+        .notOk();
+
+    await page.openNav();
+    await t
+        .click(Selector(".nav-browse + div"))
+        .click(Selector(".nav-archive"));
+    await page.setFilter("view", "Cards");
+    await page.selectPhotoFromUID(MonochromePhoto);
+    await page.selectPhotoFromUID(PanoramaPhoto);
+    await page.selectPhotoFromUID(StackedPhoto);
+    await page.selectPhotoFromUID(ScannedPhoto);
+    await page.selectPhotoFromUID(ReviewPhoto);
+    await page.selectPhotoFromUID(FavoritesPhoto);
+    await page.selectPhotoFromUID(PrivatePhoto);
+    await page.selectPhotoFromUID(Video);
+    await page.selectPhotoFromUID(CalendarPhoto);
+    await page.selectPhotoFromUID(MomentPhoto);
+    await page.selectPhotoFromUID(StatesPhoto);
+    await page.selectPhotoFromUID(LabelPhoto);
+    await page.selectPhotoFromUID(FolderPhoto);
+    await page.restoreSelected()
+    const PhotoCountInArchiveAfterRestore = await Selector("div.is-photo").count;
+    await t.expect(PhotoCountInArchiveAfterRestore).eql(InitialPhotoCountInArchive);
+    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+
+    await page.openNav();
+    await t
+        .click(Selector(".nav-monochrome"))
+        .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-panoramas"))
+        .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-stacks"))
+        .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-scans"))
+        .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-review"))
+        .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-favorites"))
+        .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-private"))
+        .expect(Selector("div").withAttribute("data-uid", PrivatePhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-video"))
+        .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+        .ok();
+    await t
+        .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
+        .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+        .ok();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-moments"))
+        .click(Selector("a.is-album").nth(0))
+        .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+        .ok();
+    await t
+        .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
+        .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+        .ok()
+        .navigateTo("/all?q=label%3Aseashore")
+        .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+        .ok()
+        .navigateTo("/folders/aqnah1321mgkt1w2/archive")
+        .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+        .ok();
+    }
+);
+
+test.meta("testID", "photos-014")("Check that private files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/archive/videos/calendar/moments/states/labels/folders/originals",
+    //TODO only select the not yet selected
+    //TODO should not appear in shared albums
+    async (t) => {
+        await page.openNav();
+        await t
+            .click(Selector(".nav-private"));
+        const InitialPhotoCountInPrivate = await Selector("div.is-photo").count;
+        await page.openNav();
+        await t
+            .click(Selector(".nav-browse + div"))
+            .click(Selector(".nav-monochrome"));
+        const MonochromePhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(MonochromePhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-panoramas"));
+        const PanoramaPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(PanoramaPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-stacks"));
+        const StackedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(StackedPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-scans"));
+        const ScannedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(ScannedPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-review"));
+        const ReviewPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(ReviewPhoto);
+    await page.openNav();
+    await t
+        .click(Selector(".nav-albums"));
+    await page.search("Holiday");
+    await t
+        .click(Selector("a.is-album").nth(0));
+        const AlbumPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(AlbumPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-favorites"));
+        const FavoritesPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(FavoritesPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-video"));
+        const Video = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(Video);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-calendar"));
+        await page.search("January 2017")
+        await t
+            .click(Selector("a.is-album").nth(0));
+        const CalendarPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(CalendarPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-moments"))
+            .click(Selector("a.is-album").nth(0));
+        const MomentPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(MomentPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-places + div"))
+            .click(Selector(".nav-states"));
+        await page.search("Western Cape")
+        await t
+            .click(Selector("a.is-album").nth(0));
+        const StatesPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(StatesPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-labels"));
+        await page.search("Seashore")
+        await t
+            .click(Selector("a.is-label").nth(0));
+        const LabelPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(LabelPhoto);
+        await page.openNav();
+        await t
+            .click(Selector(".nav-folders"));
+        await page.search("archive")
+        await t
+            .click(Selector("a.is-album").nth(0));
+        const FolderPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+        await page.selectPhotoFromUID(FolderPhoto);
+        await page.privateSelected()
+        await page.openNav();
+        await t
+            .click(Selector(".nav-private"));
+        const PhotoCountInPrivateAfterPrivate = await Selector("div.is-photo").count;
+        await t.expect(PhotoCountInPrivateAfterPrivate).eql(InitialPhotoCountInPrivate + 13);
+        await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+
+        await page.openNav();
+        await t
+            .click(Selector(".nav-browse + div"))
+            .click(Selector(".nav-monochrome"))
+            .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+            .notOk();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-panoramas"))
+            .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+            .notOk();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-stacks"))
+            .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+            .notOk();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-scans"))
+            .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+            .notOk();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-review"))
+            .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+            .notOk()
+            .navigateTo("/albums?q=Holiday")
+            .click(Selector("a.is-album").nth(0))
+            .expect(Selector("div").withAttribute("data-uid", AlbumPhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-favorites"))
+            .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+            .notOk();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-video"))
+            .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+            .notOk();
+        await t
+            .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
+            .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+            .notOk();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-moments"))
+            .click(Selector("a.is-album").nth(0))
+            .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+            .notOk();
+        await t
+            .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
+            .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+            .notOk()
+            .navigateTo("/all?q=label%3Aseashore")
+            .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+            .notOk()
+            .navigateTo("/folders/aqnah1321mgkt1w2/archive")
+            .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+            .notOk();
+
+        await page.openNav();
+        await t
+            .click(Selector(".nav-private"));
+        await page.setFilter("view", "Cards");
+        await page.selectPhotoFromUID(MonochromePhoto);
+        await page.selectPhotoFromUID(PanoramaPhoto);
+        await page.selectPhotoFromUID(StackedPhoto);
+        await page.selectPhotoFromUID(ScannedPhoto);
+        await page.selectPhotoFromUID(ReviewPhoto);
+        await page.selectPhotoFromUID(AlbumPhoto);
+        await page.selectPhotoFromUID(FavoritesPhoto);
+        await page.selectPhotoFromUID(Video);
+        await page.selectPhotoFromUID(CalendarPhoto);
+        await page.selectPhotoFromUID(MomentPhoto);
+        await page.selectPhotoFromUID(StatesPhoto);
+        await page.selectPhotoFromUID(LabelPhoto);
+        await page.selectPhotoFromUID(FolderPhoto);
+        await page.privateSelected();
+    await page.openNav();
+    await t
+        .click(Selector(".nav-favorites"));
+    await page.openNav();
+    await t
+        .click(Selector(".nav-private"));
+        const PhotoCountInPrivateAfterUnprivate = await Selector("div.is-photo").count;
+        await t.expect(PhotoCountInPrivateAfterUnprivate).eql(InitialPhotoCountInPrivate);
+        await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+
+        await page.openNav();
+        await t
+            .click(Selector(".nav-browse + div"))
+            .click(Selector(".nav-monochrome"))
+            .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-panoramas"))
+            .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-stacks"))
+            .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-scans"))
+            .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-review"))
+            .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+            .ok()
+            .navigateTo("/albums?q=Holiday")
+            .click(Selector("a.is-album").nth(0))
+            .expect(Selector("div").withAttribute("data-uid", AlbumPhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-favorites"))
+            .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-video"))
+            .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+            .ok();
+        await t
+            .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
+            .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+            .ok();
+        await page.openNav();
+        await t
+            .click(Selector(".nav-moments"))
+            .click(Selector("a.is-album").nth(0))
+            .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+            .ok();
+        await t
+            .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
+            .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+            .ok()
+            .navigateTo("/all?q=label%3Aseashore")
+            .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+            .ok()
+            .navigateTo("/folders/aqnah1321mgkt1w2/archive")
+            .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+            .ok();
+    }
+);
