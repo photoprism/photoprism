@@ -12,9 +12,8 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
   await page.openNav();
   await t
-    .click(Selector(".nav-moments"))
-    .expect(Selector("h3").withText("Couldn't find anything").visible)
-    .ok();
+    .click(Selector(".nav-moments"));
+  const MomentCount = await Selector("a.is-album").count;
   await page.openNav();
   await t.click(Selector(".nav-calendar"));
   if (t.browser.platform === "mobile") {
@@ -52,9 +51,8 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await page.openNav();
   await t
     .click(Selector(".nav-browse + div"))
-    .click(Selector(".nav-monochrome"))
-    .expect(Selector("h3").withText("Couldn't find anything").visible)
-    .ok();
+    .click(Selector(".nav-monochrome"));
+  const MonochromeCount = await Selector("a.is-album").count;
   await page.openNav();
   await t
     .click(Selector(".nav-library"))
@@ -71,8 +69,10 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await page.search("cheetah");
   await t.expect(Selector(".is-label").visible).ok();
   await page.openNav();
+  await t.click(Selector(".nav-moments"));
+  const MomentCountAfterIndex = await Selector("a.is-album").count;
   await t
-    .click(Selector(".nav-moments"))
+    .expect(MomentCountAfterIndex).gt(MomentCount)
     .click(Selector("a").withText("South Africa 2013"))
     .expect(Selector(".is-photo").visible)
     .ok();
@@ -115,6 +115,6 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
     .ok();
   await page.openNav();
   await t.click(Selector(".nav-browse + div")).click(Selector(".nav-monochrome"));
-  const PhotoCount = await Selector(".is-photo.type-image", { timeout: 5000 }).count;
-  await t.expect(PhotoCount).gt(0);
+  const MonochromeCountAfterIndex = await Selector(".is-photo.type-image", { timeout: 5000 }).count;
+  await t.expect(MonochromeCountAfterIndex).gt(MonochromeCount);
 });

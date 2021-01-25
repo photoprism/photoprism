@@ -146,6 +146,8 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
   const FirstPhotoLandscape = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
   const SecondPhotoLandscape = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
   const ThirdPhotoLandscape = await Selector("div.is-photo").nth(2).getAttribute("data-uid");
+  const FourthPhotoLandscape = await Selector("div.is-photo").nth(3).getAttribute("data-uid");
+  const FifthPhotoLandscape = await Selector("div.is-photo").nth(4).getAttribute("data-uid");
   await page.openNav();
   await t.click(".nav-labels");
   await page.selectFromUID(LabelLandscape);
@@ -158,13 +160,15 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
     .click(Selector(".nav-albums"))
     .click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
   const PhotoCountAfterAdd = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 3);
+  await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 5);
   await page.selectPhotoFromUID(FirstPhotoLandscape);
   await page.selectPhotoFromUID(SecondPhotoLandscape);
   await page.selectPhotoFromUID(ThirdPhotoLandscape);
+  await page.selectPhotoFromUID(FourthPhotoLandscape);
+  await page.selectPhotoFromUID(FifthPhotoLandscape);
   await page.removeSelected();
   const PhotoCountAfterDelete = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 3);
+  await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 5);
 });
 
 test.meta("testID", "labels-004")("Delete label", async (t) => {
