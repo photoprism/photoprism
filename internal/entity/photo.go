@@ -668,21 +668,24 @@ func (m *Photo) SaveDetails() error {
 
 // FileTitle returns a photo title based on the file name and/or path.
 func (m *Photo) FileTitle() string {
+	// Generate title based on photo name, if not generated:
 	if !fs.IsGenerated(m.PhotoName) {
 		if title := txt.FileTitle(m.PhotoName); title != "" {
 			return title
 		}
 	}
 
-	if m.OriginalName != "" && !fs.IsGenerated(m.OriginalName) {
-		if title := txt.FileTitle(m.OriginalName); title != "" {
+	// Generate title based on original file name, if any:
+	if m.OriginalName != "" {
+		if title := txt.FileTitle(m.OriginalName); !fs.IsGenerated(m.OriginalName) && title != "" {
 			return title
-		} else if title := txt.FileTitle(path.Dir(m.OriginalName)); title != "" {
+		} else if title := txt.FileTitle(filepath.Dir(m.OriginalName)); title != "" {
 			return title
 		}
 	}
 
-	if m.PhotoPath != "" {
+	// Generate title based on photo path, if any:
+	if m.PhotoPath != "" && !fs.IsGenerated(m.PhotoPath) {
 		return txt.FileTitle(m.PhotoPath)
 	}
 

@@ -277,8 +277,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		file.OriginalName = originalName
 	}
 
-	// Set photo original name based on file original name if empty.
-	if photo.OriginalName == "" && file.OriginalName != "" {
+	// Set photo original name based on file original name.
+	if file.OriginalName != "" {
 		photo.OriginalName = fs.StripKnownExt(file.OriginalName)
 	}
 
@@ -682,9 +682,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
-		if file.OriginalName != "" && !fs.IsGenerated(file.OriginalName) {
-			w = append(w, txt.FilenameKeywords(file.OriginalName)...)
-		} else if photo.OriginalName != "" && !fs.IsGenerated(photo.OriginalName) {
+		if photo.OriginalName == "" {
+			// Do nothing.
+		} else if fs.IsGenerated(photo.OriginalName) {
+			w = append(w, txt.FilenameKeywords(filepath.Dir(photo.OriginalName))...)
+		} else {
 			w = append(w, txt.FilenameKeywords(photo.OriginalName)...)
 		}
 
