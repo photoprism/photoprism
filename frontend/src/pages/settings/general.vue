@@ -352,8 +352,8 @@ export default {
 
       this.onChange();
     },
-    onChangeDelete() {
-      if(!this.$config.values.sponsor) {
+    onChangeDelete(enabled) {
+      if(enabled && !this.$config.values.sponsor) {
         this.dialog.sponsor = true;
 
         this.$nextTick(() => {
