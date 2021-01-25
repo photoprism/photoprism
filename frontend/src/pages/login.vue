@@ -1,34 +1,37 @@
 <template>
   <div class="p-page p-page-login">
+    <v-toolbar flat color="secondary" dense class="mb-3" :height="42">
+      <v-toolbar-title class="subheading">
+        {{ description }}
+      </v-toolbar-title>
+    </v-toolbar>
     <v-form ref="form" dense autocomplete="off" class="p-form-login" accept-charset="UTF-8" @submit.prevent="login">
       <v-card flat tile class="ma-2 application">
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 class="pa-2">
-              <p class="subheading">
-                <translate>Please enter your name and password:</translate>
-              </p>
-            </v-flex>
-            <v-flex xs12 class="pa-2">
-
               <v-text-field
                   v-model="username"
+                  required hide-details
+                  type="text"
                   :disabled="loading"
                   :label="$gettext('Name')"
-                  color="accent"
-                  flat solo required hide-details
-                  type="text"
+                  browser-autocomplete="off"
+                  color="secondary-dark"
+                  placeholder="••••••••"
               ></v-text-field>
             </v-flex>
             <v-flex xs12 class="pa-2">
               <v-text-field
                   v-model="password"
+                  required hide-details
+                  :type="showPassword ? 'text' : 'password'"
                   :disabled="loading"
                   :label="$gettext('Password')"
-                  color="accent"
-                  flat solo required hide-details
+                  browser-autocomplete="off"
+                  color="secondary-dark"
+                  placeholder="••••••••"
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                  :type="showPassword ? 'text' : 'password'"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter.native="login"
               ></v-text-field>
@@ -37,7 +40,7 @@
               <v-btn color="primary-button"
                      class="white--text ml-0"
                      depressed
-                     :disabled="loading || !this.password || !this.username"
+                     :disabled="loading || !password || !username"
                      @click.stop="login">
                 <translate>Sign in</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>login</v-icon>
@@ -61,6 +64,8 @@ export default {
       showPassword: false,
       username: "admin",
       password: "",
+      caption: this.$config.values.siteCaption,
+      description: this.$config.values.siteDescription,
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
       rtl: this.$rtl,
     };

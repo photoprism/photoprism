@@ -6,26 +6,26 @@
           <v-layout wrap align-top>
             <v-flex xs12 class="pa-2">
               <v-text-field
-                  v-model="oldPassword" hide-details
-                  required
+                  v-model="oldPassword"
+                  hide-details required
+                  type="password"
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('Current Password')"
                   color="secondary-dark"
-                  type="password"
                   placeholder="••••••••"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                  v-model="newPassword" required counter
-                  persistent-hint
+                  v-model="newPassword"
+                  required counter persistent-hint
+                  type="password"
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('New Password')"
                   color="secondary-dark"
-                  type="password"
                   placeholder="••••••••"
                   :hint="$gettext('At least 6 characters.')"
               ></v-text-field>
@@ -33,13 +33,13 @@
 
             <v-flex xs12 class="pa-2">
               <v-text-field
-                  v-model="confirmPassword" required counter
-                  persistent-hint
+                  v-model="confirmPassword"
+                  required counter persistent-hint
+                  type="password"
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('Retype Password')"
                   color="secondary-dark"
-                  type="password"
                   placeholder="••••••••"
                   :hint="$gettext('Please confirm your new password.')"
                   @keyup.enter.native="confirm"
