@@ -14,7 +14,7 @@
         flat
         @click="close"
     >
-      <v-icon>close</v-icon>
+      <v-icon :class="textColor">close</v-icon>
     </v-btn>
   </v-snackbar>
 </template>
