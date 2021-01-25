@@ -2,8 +2,8 @@
   <div>
     <v-container v-if="selection.length > 0" fluid class="pa-0">
       <v-speed-dial
-          id="t-clipboard" v-model="expanded" fixed
-          bottom
+          id="t-clipboard" v-model="expanded"
+          fixed bottom
           direction="top"
           transition="slide-y-reverse-transition"
           :right="!rtl"
@@ -12,8 +12,7 @@
       >
         <template #activator>
           <v-btn
-              fab
-              dark
+              fab dark
               color="accent darken-2"
               class="action-menu"
           >
@@ -23,8 +22,8 @@
         </template>
 
         <v-btn
-            v-if="$config.feature('share')" fab dark
-            small
+            v-if="features.share"
+            fab dark small
             :title="$gettext('Share')"
             color="share"
             :disabled="selection.length !== 1"
@@ -44,7 +43,7 @@
           <v-icon>edit</v-icon>
         </v-btn>
         <v-btn
-            v-if="$config.feature('download')"
+            v-if="features.download"
             fab dark small
             :title="$gettext('Download')"
             color="download"
@@ -55,7 +54,7 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            v-if="$config.feature('albums')"
+            v-if="features.albums"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
@@ -110,6 +109,7 @@ export default {
   },
   data() {
     return {
+      features: this.$config.settings().features,
       expanded: false,
       dialog: {
         delete: false,
