@@ -19,7 +19,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 ## Key Features ##
 
-* Our structured [user interface](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as 
+* Our intuitive [user interface](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
@@ -31,8 +31,8 @@ To get a first impression, you're welcome to play with our public demo at [demo.
   [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open, 
   edit, and delete files from your computer or phone as if they were local. 
   You may easily sync your pictures with [PhotoSync](https://www.photosync-app.com/) as well.  
-* PhotoPrism is built as a [progressive web app](https://en.wikipedia.org/wiki/Progressive_web_application). 
-  It feels like native, and of course, you may add it to your home screen.
+* Because PhotoPrism is built as a [progressive web app](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
+  you may install it on your mobile phone and desktop computer.
   There's also a [community-maintained native app in development](https://github.com/photoprism/photoprism-mobile).
 
 ## Getting Started ##
@@ -43,7 +43,7 @@ all you need is a Web browser and Docker to run the server. It is available for 
 
 We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
 Beyond these minimum requirements, the amount of RAM should match the number of cores.
-Indexing large photo and video collections significantly benefit from fast, local SSD storage.
+Indexing large photo and video collections significantly benefits from fast, local SSD storage.
 
 ## Roadmap ##
 
@@ -66,7 +66,7 @@ Follow us on [Twitter][twitter] to receive regular project updates and discuss d
 
 ## Funding ##
 
-This software is about freedom and privacy but not necessarily about free beer. We feel like it
+This software is about freedom and privacy but not about free beer. We feel like it
 would be a mistake to state there will be no costs because clearly, we have huge expenses, your server hardware
 will have a price tag, and then maybe you'd like to have some extra features that need to be developed.
 
@@ -88,14 +88,10 @@ Thank you very much! <3
 Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
-*Note that we've recently moved GitHub Sponsors from [sponsors/lastzero](https://github.com/sponsors/lastzero) to an 
-[organization account](https://github.com/sponsors/photoprism) so that donations can be shared more easily.
-Tiers are more affordable now, while benefits stay mostly the same.*
-
 ## Trademarks ##
 
 PhotoPrism® is a registered trademark of Michael Mayer. You may use it as required to describe 
-our software, run your server for educational purposes, but not for offering commercial 
+our software, run your server, for educational purposes, but not for offering commercial 
 goods, products, or services without prior written permission. In other words, please ask.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
