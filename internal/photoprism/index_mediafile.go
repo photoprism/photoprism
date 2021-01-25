@@ -521,6 +521,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Try to set taken date based on file mod time or name if other metadata is missing:
+	if m.IsMedia() && (photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName) {
+		takenUtc, takenSrc := m.TakenAt()
+		photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
+	}
+
 	// file obviously exists: remove deleted and missing flags
 	file.DeletedAt = nil
 	file.FileMissing = false
@@ -586,11 +592,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoFNumber = m.FNumber()
 			photo.PhotoIso = m.Iso()
 			photo.PhotoExposure = m.Exposure()
-		}
-
-		if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName {
-			takenUtc, takenSrc := m.TakenAt()
-			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
 		}
 
 		var locLabels classify.Labels

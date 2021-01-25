@@ -557,10 +557,29 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
 			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcMeta)
+
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
+	})
+	t.Run("fallback and time zone", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+
+		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcName)
+
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+
+		m.SetTakenAt(time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), "Europe/Berlin", SrcName)
+
+		assert.Equal(t, time.Date(2013, 11, 11, 8, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 	})
 	t.Run("time > max year", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
