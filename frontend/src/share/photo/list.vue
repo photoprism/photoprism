@@ -54,7 +54,7 @@
                    flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_circle_outline</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
             </v-btn>
           </v-img>
         </td>
