@@ -12,20 +12,28 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="pa-4">
-      <p class="subheading">Our vision is to provide the most user-friendly solution for browsing, organizing,
-        and sharing your photo collection.
-        The <a href="https://github.com/photoprism/photoprism/projects/5" target="_blank" class="text-link">roadmap</a> shows what tasks are in progress,
-        what needs testing, and which feature requests are going to be implemented next.</p>
-      <p class="body-1">Please give ideas you like a thumbs-up, so that we know what is most popular.
-        Ideas backed by one or more eligible <a
-            href="https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md" target="_blank" class="text-link">sponsors</a> will be prioritized as
-        well.</p>
-
-      <p class="body-1">You're welcome to support us via <a href="https://github.com/sponsors/photoprism" target="_blank" class="text-link">GitHub
-        Sponsors</a>,
+      <p class="subheading">
+        <translate>Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.</translate>
+      </p>
+      <p class="body-1">
+        The
+        <a href="https://github.com/photoprism/photoprism/projects/5" target="_blank" class="text-link">roadmap</a>
+        shows what tasks are in progress,
+        what needs testing, and which feature requests are going to be implemented next.
+        Please give ideas you like a thumbs-up, so that we know what is most popular.
+        Ideas backed by one or more eligible
+        <a href="https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md" target="_blank" class="text-link">sponsors</a>
+        will be prioritized as well.
+      </p>
+      <p class="body-1">
+        You're welcome to support us via
+        <a href="https://github.com/sponsors/photoprism" target="_blank" class="text-link">GitHub Sponsors</a>,
         especially if you have feature requests, or need help with using our software.
-        In addition, you can find us on <a href="https://www.patreon.com/photoprism" target="_blank" class="text-link">Patreon</a>
-        and <a href="https://www.paypal.me/photoprism" target="_blank" class="text-link">PayPal</a>.</p>
+        In addition, you can find us on
+        <a href="https://www.patreon.com/photoprism" target="_blank" class="text-link">Patreon</a>
+        and
+        <a href="https://www.paypal.me/photoprism" target="_blank" class="text-link">PayPal</a>.
+      </p>
       <p class="body-1">Your continuous support helps...</p>
       <ul class="pb-3 body-1">
         <li>pay for operating expenses and external services like satellite maps</li>
