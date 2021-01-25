@@ -10,7 +10,7 @@ fixture`Test photos`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
-/*test.meta("testID", "photos-001")("Scroll to top", async (t) => {
+test.meta("testID", "photos-001")("Scroll to top", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await page.setFilter("view", "Cards");
@@ -250,7 +250,7 @@ test.meta("testID", "photos-005")(
       .expect(Selector("button.action-menu").exists, { timeout: 5000 })
       .notOk();
     await page.setFilter("view", "List");
-    await t.click(Selector("button.p-photo-private").withAttribute("data-uid", ThirdPhoto));
+    await t.click(Selector("button.input-private").withAttribute("data-uid", ThirdPhoto));
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
@@ -266,7 +266,7 @@ test.meta("testID", "photos-005")(
     await page.openNav();
     await t.click(Selector(".nav-video"));
 
-    await t.click(Selector("button.p-photo-private").withAttribute("data-uid", SecondVideo));
+    await t.click(Selector("button.input-private").withAttribute("data-uid", SecondVideo));
     await page.setFilter("view", "Card");
 
     await page.selectPhotoFromUID(FirstVideo);
@@ -322,8 +322,8 @@ test.meta("testID", "photos-005")(
     await page.clearSelection();
     await page.setFilter("view", "List");
     await t
-      .click(Selector("button.p-photo-private").withAttribute("data-uid", ThirdPhoto))
-      .click(Selector("button.p-photo-private").withAttribute("data-uid", SecondVideo));
+      .click(Selector("button.input-private").withAttribute("data-uid", ThirdPhoto))
+      .click(Selector("button.input-private").withAttribute("data-uid", SecondVideo));
     await page.setFilter("view", "Mosaic");
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
@@ -1032,7 +1032,7 @@ test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (
         .notOk()
         .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
         .notOk();
-});*/
+});
 
 test.meta("testID", "photos-013")("Check that archived files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/private/videos/calendar/moments/states/labels/folders/originals",
     //TODO only select the not yet selected
