@@ -24,12 +24,12 @@
           Your continuous support helps...
         </p>
         <ul>
-          <li>to pay for operating expenses and external services like satellite maps</li>
-          <li>developing new features, and keeping them <span title="At a later time. Fair is fair.">free for everyone</span></li>
+          <li>pay for operating expenses and external services like satellite maps</li>
+          <li>developing new features and keeping them <span title="At a later time. Fair is fair.">free for everyone</span></li>
         </ul>
         <p class="body-1 pt-3">
-          Feel free to send an e-mail to
-          <a href="mailto:hello@photoprism.app" class="text-link" target="_blank">hello@photoprism.app </a> if you have any questions.
+          Please contact us at <a href="mailto:hello@photoprism.app" class="text-link" target="_blank">hello@photoprism.app</a>
+          if you have questions or need help.
         </p>
       </v-card-text>
       <v-card-actions class="pt-0">
