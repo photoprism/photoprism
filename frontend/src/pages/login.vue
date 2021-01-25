@@ -2,7 +2,7 @@
   <div class="p-page p-page-login">
     <v-toolbar flat color="secondary" dense class="mb-3" :height="42">
       <v-toolbar-title class="subheading">
-        {{ description }}
+        {{ siteDescription }}
       </v-toolbar-title>
     </v-toolbar>
     <v-form ref="form" dense autocomplete="off" class="p-form-login" accept-charset="UTF-8" @submit.prevent="login">
@@ -59,13 +59,14 @@
 export default {
   name: 'Login',
   data() {
+    const c = this.$config.values;
+
     return {
       loading: false,
       showPassword: false,
       username: "admin",
       password: "",
-      caption: this.$config.values.siteCaption,
-      description: this.$config.values.siteDescription,
+      siteDescription: c.siteDescription ? c.siteDescription : c.siteCaption,
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
       rtl: this.$rtl,
     };
