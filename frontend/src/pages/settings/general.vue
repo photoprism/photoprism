@@ -226,6 +226,21 @@
               </v-checkbox>
             </v-flex>
 
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.estimates"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-estimates"
+                  color="secondary-dark"
+                  :label="$gettext('Estimates')"
+                  :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
+                  prepend-icon="timeline"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
             <v-flex v-if="!config.disable.places" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.places"
