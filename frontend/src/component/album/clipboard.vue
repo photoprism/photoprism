@@ -65,7 +65,7 @@
           <v-icon>bookmark</v-icon>
         </v-btn>
         <v-btn
-            v-if="context === 'album'"
+            v-if="deletable.includes(context)"
             fab dark small
             color="remove"
             :title="$gettext('Delete')"
@@ -109,6 +109,7 @@ export default {
   },
   data() {
     return {
+      deletable: ["album", "moment", "state"],
       features: this.$config.settings().features,
       expanded: false,
       dialog: {
