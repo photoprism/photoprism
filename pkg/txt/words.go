@@ -29,6 +29,10 @@ func UnknownWord(s string) bool {
 
 // Words returns a slice of words with at least 3 characters from a string, dashes count as character ("ile-de-france").
 func Words(s string) (results []string) {
+	if s == "" {
+		return results
+	}
+
 	for _, s := range KeywordsRegexp.FindAllString(s, -1) {
 		if len(s) < 3 && IsLatin(s) {
 			continue
@@ -49,6 +53,10 @@ var FilenameKeywordsRegexp = regexp.MustCompile("[\\p{L}]{1,}")
 
 // FilenameWords returns a slice of words with at least 3 characters from a string ("ile", "france").
 func FilenameWords(s string) (results []string) {
+	if s == "" {
+		return results
+	}
+
 	for _, s := range FilenameKeywordsRegexp.FindAllString(s, -1) {
 		if len(s) < 3 && IsLatin(s) {
 			continue
@@ -62,6 +70,10 @@ func FilenameWords(s string) (results []string) {
 
 // FilenameKeywords returns a slice of keywords without stopwords.
 func FilenameKeywords(s string) (results []string) {
+	if s == "" {
+		return results
+	}
+
 	for _, w := range FilenameWords(s) {
 		w = strings.ToLower(w)
 
@@ -79,6 +91,10 @@ func FilenameKeywords(s string) (results []string) {
 
 // Keywords returns a slice of keywords without stopwords but including dashes.
 func Keywords(s string) (results []string) {
+	if s == "" {
+		return results
+	}
+
 	for _, w := range Words(s) {
 		w = strings.ToLower(w)
 
@@ -139,6 +155,10 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 
 // UniqueKeywords returns a slice of unique and sorted keywords without stopwords.
 func UniqueKeywords(s string) (results []string) {
+	if s == "" {
+		return results
+	}
+
 	last := ""
 
 	words := Keywords(s)

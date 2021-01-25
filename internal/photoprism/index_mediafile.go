@@ -272,12 +272,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Set file original name if available.
 	if originalName != "" {
 		file.OriginalName = originalName
+	}
 
-		if file.FilePrimary && photo.OriginalName == "" {
-			photo.OriginalName = fs.BasePrefix(originalName, stripSequence)
-		}
+	// Set photo original name based on file original name if empty.
+	if photo.OriginalName == "" && file.OriginalName != "" {
+		photo.OriginalName = fs.StripKnownExt(file.OriginalName)
 	}
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
@@ -680,9 +682,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
-		w = append(w, locKeywords...)
+		if file.OriginalName != "" && !fs.IsGenerated(file.OriginalName) {
+			w = append(w, txt.FilenameKeywords(file.OriginalName)...)
+		} else if photo.OriginalName != "" && !fs.IsGenerated(photo.OriginalName) {
+			w = append(w, txt.FilenameKeywords(photo.OriginalName)...)
+		}
+
 		w = append(w, txt.FilenameKeywords(filePath)...)
-		w = append(w, txt.FilenameKeywords(file.OriginalName)...)
+		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
 		w = append(w, labels.Keywords()...)
 
