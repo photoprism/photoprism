@@ -9,7 +9,7 @@ msgstr ""
 msgid ""
 msgstr ""
 
-#: src/pages/albums.vue:311
+#: src/pages/albums.vue:347
 #: src/share/albums.vue:302
 msgid "%{n} albums found"
 msgstr ""
@@ -27,7 +27,7 @@ msgstr ""
 msgid "%{n} folders found"
 msgstr ""
 
-#: src/pages/labels.vue:321
+#: src/pages/labels.vue:357
 msgid "%{n} labels found"
 msgstr ""
 
@@ -54,7 +54,7 @@ msgstr ""
 #: src/component/navigation.vue:358
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:108
+#: src/pages/about/about.vue:107
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -165,11 +165,11 @@ msgstr ""
 msgid "Albums"
 msgstr ""
 
-#: src/component/album/clipboard.vue:72
+#: src/component/album/clipboard.vue:74
 msgid "Albums deleted"
 msgstr ""
 
-#: src/pages/albums.vue:226
+#: src/pages/albums.vue:262
 #: src/share/albums.vue:217
 msgid "All %{n} albums loaded"
 msgstr ""
@@ -179,7 +179,7 @@ msgstr ""
 msgid "All %{n} entries loaded"
 msgstr ""
 
-#: src/pages/labels.vue:233
+#: src/pages/labels.vue:269
 msgid "All %{n} labels loaded"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 
 #: src/component/photo/toolbar.vue:24
 #: src/pages/albums.vue:22
-#: src/pages/albums.vue:416
+#: src/pages/albums.vue:452
 #: src/share/albums.vue:22
 #: src/share/albums.vue:407
 msgid "All Categories"
@@ -245,7 +245,7 @@ msgstr ""
 msgid "An error occurred - are you offline?"
 msgstr ""
 
-#: src/pages/settings/general.vue:489
+#: src/pages/settings/general.vue:511
 msgid "Animation"
 msgstr ""
 
@@ -386,10 +386,10 @@ msgstr ""
 
 #: src/common/clipboard.js:101
 #: src/common/clipboard.js:138
-#: src/pages/albums.vue:356
-#: src/pages/albums.vue:372
-#: src/pages/labels.vue:169
-#: src/pages/labels.vue:185
+#: src/pages/albums.vue:392
+#: src/pages/albums.vue:408
+#: src/pages/labels.vue:205
+#: src/pages/labels.vue:221
 #: src/pages/library/files.vue:195
 #: src/pages/library/files.vue:211
 #: src/share/albums.vue:347
@@ -642,6 +642,10 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
+#: src/dialog/sponsor.vue:25
+msgid "developing new features and keeping them free for everyone"
+msgstr ""
+
 #: src/dialog/photo/files.vue:31
 msgid "Dimensions"
 msgstr ""
@@ -743,11 +747,11 @@ msgstr ""
 msgid "Download single files and zip archives."
 msgstr ""
 
-#: src/component/album/clipboard.vue:86
+#: src/component/album/clipboard.vue:88
 #: src/component/album/toolbar.vue:97
 #: src/component/file/clipboard.vue:43
 #: src/component/label/clipboard.vue:56
-#: src/component/photo/cards.vue:51
+#: src/component/photo/cards.vue:56
 #: src/component/photo/clipboard.vue:117
 #: src/component/photo/list.vue:56
 #: src/component/photo/viewer.vue:102
@@ -833,6 +837,14 @@ msgstr ""
 
 #: src/component/navigation.vue:325
 msgid "Errors"
+msgstr ""
+
+#: src/pages/settings/general.vue:405
+msgid "Estimate the approximate location of pictures without coordinates."
+msgstr ""
+
+#: src/pages/settings/general.vue:404
+msgid "Estimates"
 msgstr ""
 
 #: src/options/options.js:271
@@ -1031,7 +1043,7 @@ msgstr ""
 msgid "Hybrid"
 msgstr ""
 
-#: src/dialog/sponsor.vue:43
+#: src/dialog/sponsor.vue:40
 msgid "I'm a sponsor"
 msgstr ""
 
@@ -1241,7 +1253,7 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: src/component/photo/cards.vue:212
+#: src/component/photo/cards.vue:211
 #: src/component/photo/list.vue:184
 #: src/component/photo/mosaic.vue:196
 #: src/options/options.js:256
@@ -1346,12 +1358,12 @@ msgstr ""
 msgid "Moonlight"
 msgstr ""
 
-#: src/pages/albums.vue:314
+#: src/pages/albums.vue:350
 #: src/share/albums.vue:305
 msgid "More than 20 albums found"
 msgstr ""
 
-#: src/pages/labels.vue:323
+#: src/pages/labels.vue:359
 msgid "More than 20 labels found"
 msgstr ""
 
@@ -1429,7 +1441,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: src/pages/albums.vue:307
+#: src/pages/albums.vue:343
 #: src/share/albums.vue:298
 msgid "No albums found"
 msgstr ""
@@ -1456,7 +1468,7 @@ msgstr ""
 msgid "No servers configured."
 msgstr ""
 
-#: src/dialog/sponsor.vue:38
+#: src/dialog/sponsor.vue:35
 msgid "No thanks"
 msgstr ""
 
@@ -1528,7 +1540,7 @@ msgstr ""
 msgid "Once a week"
 msgstr ""
 
-#: src/pages/albums.vue:309
+#: src/pages/albums.vue:345
 #: src/share/albums.vue:300
 msgid "One album found"
 msgstr ""
@@ -1586,6 +1598,10 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
+#: src/pages/about/about.vue:15
+msgid "Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection."
+msgstr ""
+
 #: src/options/options.js:241
 msgid "Outdoor"
 msgstr ""
@@ -1607,6 +1623,10 @@ msgstr ""
 
 #: src/pages/settings/account.vue:22
 msgid "Password changed"
+msgstr ""
+
+#: src/dialog/sponsor.vue:24
+msgid "pay for operating expenses and external services like satellite maps"
 msgstr ""
 
 #: src/routes.js:257
@@ -1637,7 +1657,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/pages/about/about.vue:41
+#: src/pages/about/about.vue:50
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr ""
 
@@ -1661,8 +1681,8 @@ msgstr ""
 #: src/component/navigation.vue:225
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:799
-#: src/pages/settings/general.vue:97
-#: src/pages/settings/general.vue:406
+#: src/pages/settings/general.vue:102
+#: src/pages/settings/general.vue:428
 #: src/routes.js:207
 #: src/routes.js:213
 #: src/routes.js:219
@@ -1670,7 +1690,7 @@ msgstr ""
 msgid "Places"
 msgstr ""
 
-#: src/component/photo/cards.vue:277
+#: src/component/photo/cards.vue:276
 #: src/component/photo/mosaic.vue:262
 #: src/share/photo/cards.vue:251
 #: src/share/photo/mosaic.vue:243
@@ -1679,6 +1699,10 @@ msgstr ""
 
 #: src/pages/settings/account.vue:101
 msgid "Please confirm your new password."
+msgstr ""
+
+#: src/dialog/sponsor.vue:28
+msgid "Please contact us at hello@photoprism.app if you have questions or need help."
 msgstr ""
 
 #: src/dialog/upload.vue:45
@@ -1764,7 +1788,7 @@ msgstr ""
 msgid "Raw"
 msgstr ""
 
-#: src/component/photo/cards.vue:202
+#: src/component/photo/cards.vue:201
 #: src/component/photo/mosaic.vue:186
 #: src/share/photo/cards.vue:176
 #: src/share/photo/mosaic.vue:167
@@ -1893,7 +1917,7 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/pages/settings/general.vue:407
+#: src/pages/settings/general.vue:429
 msgid "Search and display photos on a map."
 msgstr ""
 
@@ -2022,6 +2046,10 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
+#: src/dialog/sponsor.vue:43
+msgid "Sign Up"
+msgstr ""
+
 #: src/pages/discover.vue:8
 msgid "Similar"
 msgstr ""
@@ -2060,7 +2088,7 @@ msgstr ""
 msgid "Spanish"
 msgstr ""
 
-#: src/component/photo/cards.vue:232
+#: src/component/photo/cards.vue:231
 #: src/component/photo/mosaic.vue:216
 #: src/share/photo/cards.vue:206
 #: src/share/photo/mosaic.vue:197
@@ -2117,7 +2145,7 @@ msgstr ""
 msgid "Streets"
 msgstr ""
 
-#: src/pages/settings/general.vue:467
+#: src/pages/settings/general.vue:489
 msgid "Style"
 msgstr ""
 
@@ -2164,6 +2192,10 @@ msgstr ""
 
 #: src/pages/settings/general.vue:72
 msgid "Theme"
+msgstr ""
+
+#: src/dialog/sponsor.vue:17
+msgid "This is an early-access feature to say thanks to our sponsors and contributors."
 msgstr ""
 
 #: src/dialog/webdav.vue:17
@@ -2217,7 +2249,7 @@ msgstr ""
 msgid "Topographic"
 msgstr ""
 
-#: src/pages/about/about.vue:38
+#: src/pages/about/about.vue:47
 msgid "Trademarks"
 msgstr ""
 
@@ -2366,7 +2398,7 @@ msgid "Username"
 msgstr ""
 
 #: src/component/photo/cards.vue:28
-#: src/component/photo/cards.vue:222
+#: src/component/photo/cards.vue:221
 #: src/component/photo/list.vue:194
 #: src/component/photo/mosaic.vue:206
 #: src/model/file.js:181
@@ -2386,12 +2418,16 @@ msgstr ""
 msgid "Videos"
 msgstr ""
 
-#: src/component/photo/cards.vue:249
+#: src/component/photo/cards.vue:248
 #: src/component/photo/mosaic.vue:234
 #: src/component/photo/toolbar.vue:230
 #: src/share/photo/cards.vue:223
 #: src/share/photo/mosaic.vue:215
 msgid "View"
+msgstr ""
+
+#: src/dialog/sponsor.vue:18
+msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr ""
 
 #: src/dialog/webdav.vue:8
@@ -2435,7 +2471,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: src/component/album/clipboard.vue:77
+#: src/component/album/clipboard.vue:79
 #: src/share/album/clipboard.vue:33
 msgid "You can only download one album"
 msgstr ""
@@ -2444,13 +2480,17 @@ msgstr ""
 msgid "You can only download one label"
 msgstr ""
 
-#: src/component/album/clipboard.vue:30
-#: src/component/album/clipboard.vue:43
+#: src/component/album/clipboard.vue:32
+#: src/component/album/clipboard.vue:45
 msgid "You may only select one item"
 msgstr ""
 
-#: src/pages/about/about.vue:42
+#: src/pages/about/about.vue:51
 msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
+msgstr ""
+
+#: src/dialog/sponsor.vue:21
+msgid "Your continuous support helps..."
 msgstr ""
 
 #: src/pages/about/feedback.vue:4

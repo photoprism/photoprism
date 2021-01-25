@@ -15,40 +15,37 @@
       </v-card-title>
       <v-card-text>
         <p class="body-1">
-          This is an early-access feature to say thanks to our sponsors and contributors.
-          We'll let you know how to enable it when you sign up on
-          <a href="https://www.patreon.com/photoprism" class="text-link" target="_blank">Patreon</a> or
-          <a href="https://github.com/sponsors/photoprism" class="text-link" target="_blank">GitHub Sponsors</a>.
+          <translate>This is an early-access feature to say thanks to our sponsors and contributors.</translate>
+          <translate>We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors.</translate>
         </p>
         <p class="body-1">
-          Your continuous support helps...
+          <translate>Your continuous support helps...</translate>
         </p>
         <ul>
-          <li>pay for operating expenses and external services like satellite maps</li>
-          <li>developing new features and keeping them <span title="At a later time. Fair is fair.">free for everyone</span></li>
+          <li><translate>pay for operating expenses and external services like satellite maps</translate></li>
+          <li><translate>developing new features and keeping them free for everyone</translate></li>
         </ul>
         <p class="body-1 pt-3">
-          Please contact us at <a href="mailto:hello@photoprism.app" class="text-link" target="_blank">hello@photoprism.app</a>
-          if you have questions or need help.
+          <translate>Please contact us at hello@photoprism.app if you have questions or need help.</translate>
         </p>
       </v-card-text>
       <v-card-actions class="pt-0">
         <v-layout row wrap class="px-2">
-          <v-flex xs12 sm6 text-xs-right class="py-2">
+          <v-flex xs12 sm4 text-xs-right text-sm-left class="py-2">
             <v-btn small depressed color="secondary-light"
                    class="action-close"
                    @click.stop="close">
               <translate>No thanks</translate>
             </v-btn>
           </v-flex>
-          <v-flex xs12 sm6 text-xs-right class="py-2">
+          <v-flex xs12 sm8 text-xs-right class="py-2">
             <v-btn small depressed color="primary-button" class="white--text action-close"
                    @click.stop="signIn">
               <translate>I'm a sponsor</translate>
             </v-btn>
             <v-btn small depressed color="primary-button" class="white--text action-close"
                    @click.stop="signUp">
-              Sign Up
+              <translate>Sign Up</translate>
             </v-btn>
           </v-flex>
         </v-layout>
