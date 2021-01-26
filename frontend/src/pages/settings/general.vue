@@ -142,7 +142,7 @@
                   :disabled="busy"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Hide Private')"
+                  :label="$gettext('Private')"
                   :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
                   prepend-icon="lock"
                   persistent-hint
