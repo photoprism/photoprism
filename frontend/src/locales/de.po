@@ -1509,7 +1509,7 @@ msgid ""
 "organizing, and sharing your photo collection."
 msgstr ""
 "Unsere Vision ist es, die benutzerfreundlichste Lösung zum Durchsuchen, "
-"Organisieren und Teilen Ihrer Fotosammlung anzubieten."
+"Organisieren und Teilen deiner Fotosammlung anzubieten."
 
 #: src/options/options.js:241
 msgid "Outdoor"
@@ -1608,8 +1608,8 @@ msgstr "Neues Passwort bitte bestätigen."
 msgid ""
 "Please contact us at hello@photoprism.app if you have questions or need help."
 msgstr ""
-"Bitte kontaktieren Sie uns unter hello@photoprism.app, wenn Sie Fragen haben "
-"oder Hilfe benötigen."
+"Bei Fragen, Wünschen oder Problemen helfen gerne per E-Mail an "
+"hello@photoprism.app."
 
 #: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
@@ -2340,7 +2340,7 @@ msgstr "Regelmäßige Spenden helfen uns..."
 
 #: src/pages/about/feedback.vue:4
 msgid "Your message has been sent"
-msgstr "Ihre Nachricht wurde gesendet"
+msgstr "Deine Nachricht wurde gesendet"
 
 #: src/component/photo/viewer.vue:165
 msgid "Zoom in/out"
