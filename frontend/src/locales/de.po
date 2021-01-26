@@ -2270,8 +2270,8 @@ msgid ""
 "We'll let you know how to enable it when you sign up on Patreon or GitHub "
 "Sponsors."
 msgstr ""
-"Wie Sie es aktivieren können, erfahren Sie, wenn Sie sich bei Patreon oder "
-"GitHub Sponsors anmelden."
+"Wie es aktiviert werden kann, erfährst du nach Anmeldung bei Patreon oder "
+"GitHub Sponsors."
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
