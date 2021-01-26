@@ -1608,7 +1608,7 @@ msgstr "Neues Passwort bitte bestätigen."
 msgid ""
 "Please contact us at hello@photoprism.app if you have questions or need help."
 msgstr ""
-"Bei Fragen, Wünschen oder Problemen helfen gerne per E-Mail an "
+"Bei Fragen, Wünschen oder Problemen helfen wir gerne per E-Mail an "
 "hello@photoprism.app."
 
 #: src/dialog/upload.vue:45
