@@ -524,7 +524,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Try to set taken date based on file mod time or name if other metadata is missing:
 	if m.IsMedia() && (photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName) {
 		takenUtc, takenSrc := m.TakenAt()
-		photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
+		photo.SetTakenAt(takenUtc, takenUtc, time.UTC.String(), takenSrc)
 	}
 
 	// file obviously exists: remove deleted and missing flags
