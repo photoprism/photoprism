@@ -575,11 +575,19 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 
-		m.SetTakenAt(time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), "Europe/Berlin", SrcName)
+		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC)
+		newLoc, _ := time.LoadLocation("Europe/Berlin")
 
-		assert.Equal(t, time.Date(2013, 11, 11, 8, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+		m.SetTakenAt(newTime, newTime, "Europe/Berlin", SrcName)
+
+		/*
+			t.Logf("TakenAt: %s\n", m.TakenAt)
+			t.Logf("TakenAtLocal: %s\n", m.TakenAtLocal)
+			t.Logf("Expected: %s\n", newTime.In(newLoc))
+		*/
+
+		assert.Equal(t, newTime, m.TakenAt)
+		assert.Equal(t, newTime.In(newLoc), m.TakenAtLocal)
 	})
 	t.Run("time > max year", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")

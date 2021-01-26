@@ -857,6 +857,11 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		return
 	}
 
+	// Default local time to taken if zero or invalid.
+	if local.IsZero() || local.Year() < 1000 {
+		local = taken
+	}
+
 	// Round times to avoid jitter.
 	taken = taken.Round(time.Second).UTC()
 	local = local.Round(time.Second)
@@ -866,23 +871,21 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		return
 	}
 
+	// Set UTC time and date source.
 	m.TakenAt = taken
 	m.TakenSrc = source
 
-	if local.IsZero() || local.Year() < 1000 {
-		m.TakenAtLocal = m.TakenAt
-	} else {
-		m.TakenAtLocal = local
-	}
-
-	// Set time zone.
-	if zone != "" {
+	// Convert time and set zone as needed.
+	if loc, err := time.LoadLocation(zone); err == nil && zone != "" {
+		// Apply new time zone.
 		m.TimeZone = zone
-	}
-
-	// Apply time zone.
-	if m.TimeZone != "" {
-		m.TakenAt = m.GetTakenAt()
+		m.TakenAtLocal = m.TakenAt.In(loc)
+	} else if m.TimeZone == "" {
+		// Ignore time zone.
+		m.TakenAtLocal = local
+	} else if loc, err := time.LoadLocation(m.TimeZone); err == nil {
+		// Apply existing time zone.
+		m.TakenAtLocal = m.TakenAt.In(loc)
 	}
 
 	m.UpdateDateFields()
