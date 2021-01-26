@@ -55,9 +55,7 @@
 
             <v-btn :ripple="false" :depressed="false" class="input-open"
                    icon flat small absolute
-                   @touchstart.stop.prevent="openPhoto(index, true)"
-                   @touchend.stop.prevent
-                   @touchmove.stop.prevent
+                   @touchend.stop
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
@@ -67,18 +65,14 @@
 
             <v-btn :ripple="false" :depressed="false" class="input-view"
                    icon flat small absolute :title="$gettext('View')"
-                   @touchstart.stop.prevent="openPhoto(index, false)"
-                   @touchend.stop.prevent
-                   @touchmove.stop.prevent
+                   @touchend.stop
                    @click.stop.prevent="openPhoto(index, false)">
               <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
             </v-btn>
 
             <v-btn :ripple="false" :depressed="false" color="white" class="input-play"
                    icon flat small absolute :title="$gettext('Play')"
-                   @touchstart.stop.prevent="openPhoto(index, true)"
-                   @touchend.stop.prevent
-                   @touchmove.stop.prevent
+                   @touchend.stop
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
@@ -92,9 +86,7 @@
             <v-btn :ripple="false"
                    icon flat small absolute
                    class="input-select"
-                   @touchstart.stop.prevent="onSelect($event, index)"
-                   @touchend.stop.prevent
-                   @touchmove.stop.prevent
+                   @touchend.stop
                    @click.stop.prevent="onSelect($event, index)">
               <v-icon color="white" class="select-on">check_circle</v-icon>
               <v-icon color="white" class="select-off">radio_button_off</v-icon>
@@ -103,9 +95,7 @@
             <v-btn :ripple="false"
                    icon flat small absolute
                    class="input-favorite"
-                   @touchstart.stop.prevent="onTouchStart($event, index)"
-                   @touchend.stop.prevent="toggleLike($event, index)"
-                   @touchmove.stop.prevent
+                   @touchend.stop
                    @click.stop.prevent="toggleLike($event, index)">
               <v-icon color="white" class="select-on">favorite</v-icon>
               <v-icon color="white" class="select-off">favorite_border</v-icon>
