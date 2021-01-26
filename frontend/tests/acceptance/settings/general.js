@@ -89,8 +89,8 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-logs input"))
     .click(Selector(".input-share input"))
     .click(Selector(".input-places input"))
-    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-private input"))
+    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-review input"));
   await page.openNav();
   await t.eval(() => location.reload());
@@ -188,7 +188,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-logs input"))
     .click(Selector(".input-share input"))
     .click(Selector(".input-places input"))
-    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-private input"))
+    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-review input"));
 });
