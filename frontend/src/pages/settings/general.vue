@@ -228,13 +228,13 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.estimates"
+                  v-model="settings.features.private"
                   :disabled="busy"
-                  class="ma-0 pa-0 input-estimates"
+                  class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Estimates')"
-                  :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
-                  prepend-icon="timeline"
+                  :label="$gettext('Hide Private')"
+                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
+                  prepend-icon="lock"
                   persistent-hint
                   @change="onChange"
               >
@@ -255,6 +255,7 @@
               >
               </v-checkbox>
             </v-flex>
+
           </v-layout>
         </v-card-actions>
       </v-card>
