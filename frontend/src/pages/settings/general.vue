@@ -123,6 +123,21 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
+                  v-model="settings.features.delete"
+                  :disabled="busy || demo"
+                  class="ma-0 pa-0 input-delete"
+                  color="secondary-dark"
+                  :label="$gettext('Delete')"
+                  :hint="$gettext('Permanently remove files to free up storage.')"
+                  prepend-icon="delete"
+                  persistent-hint
+                  @change="onChangeDelete"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
                   v-model="settings.features.files"
                   :disabled="busy"
                   class="ma-0 pa-0 input-files"
@@ -144,7 +159,7 @@
                   color="secondary-dark"
                   :label="$gettext('Moments')"
                   :hint="$gettext('Let PhotoPrism create albums from past events.')"
-                  prepend-icon="explore"
+                  prepend-icon="star"
                   persistent-hint
                   @change="onChange"
               >
@@ -205,6 +220,21 @@
                   :label="$gettext('Logs')"
                   :hint="$gettext('Show server logs in Library.')"
                   prepend-icon="notes"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.estimates"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-estimates"
+                  color="secondary-dark"
+                  :label="$gettext('Estimates')"
+                  :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
+                  prepend-icon="timeline"
                   persistent-hint
                   @change="onChange"
               >
@@ -334,6 +364,19 @@ export default {
       }
 
       this.currentTheme = newTheme;
+
+      this.onChange();
+    },
+    onChangeDelete(enabled) {
+      if(enabled && !this.$config.values.sponsor) {
+        this.dialog.sponsor = true;
+
+        this.$nextTick(() => {
+          this.settings.features.delete = false;
+        });
+
+        return false;
+      }
 
       this.onChange();
     },

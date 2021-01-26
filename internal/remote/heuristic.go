@@ -23,7 +23,7 @@ var Heuristics = []Heuristic{
 	{ServiceOneDrive, []string{"onedrive.live.com"}, []string{}, "GET"},
 	{ServiceGDrive, []string{"drive.google.com"}, []string{}, "GET"},
 	{ServiceGPhotos, []string{"photos.google.com"}, []string{}, "GET"},
-	{ServiceWebDAV, []string{}, []string{"/", "/webdav", "/remote.php/dav/files/{user}", "/remote.php/webdav", "/dav/files/{user}", "/servlet/webdav.infostore/"}, "PROPFIND"},
+	{ServiceWebDAV, []string{}, []string{"/", "/webdav/", "/remote.php/dav/files/{user}/", "/remote.php/webdav/", "/dav/files/{user}/", "/servlet/webdav.infostore/"}, "PROPFIND"},
 }
 
 func (h Heuristic) MatchDomain(match string) bool {
@@ -52,8 +52,7 @@ func (h Heuristic) Discover(rawUrl, user string) *url.URL {
 	}
 
 	for _, p := range h.Paths {
-		strings.Replace(p, "{user}", user, -1)
-		u.Path = p
+		u.Path = strings.Replace(p, "{user}", user, -1)
 
 		if HttpOk(h.Method, u.String()) {
 			return u

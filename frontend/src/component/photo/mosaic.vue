@@ -103,10 +103,10 @@
             <v-btn :ripple="false"
                    icon flat small absolute
                    class="input-favorite"
-                   @touchstart.stop.prevent="photo.toggleLike()"
-                   @touchend.stop.prevent
+                   @touchstart.stop.prevent="onTouchStart($event, index)"
+                   @touchend.stop.prevent="toggleLike($event, index)"
                    @touchmove.stop.prevent
-                   @click.stop.prevent="photo.toggleLike()">
+                   @click.stop.prevent="toggleLike($event, index)">
               <v-icon color="white" class="select-on">favorite</v-icon>
               <v-icon color="white" class="select-off">favorite_border</v-icon>
             </v-btn>
@@ -131,6 +131,11 @@ export default {
   data() {
     return {
       hidePrivate: this.$config.settings().features.private,
+      touchStart: {
+        index: -1,
+        scrollY: window.scrollY,
+        timeStamp: -1,
+      },
       mouseDown: {
         index: -1,
         scrollY: window.scrollY,
@@ -150,6 +155,37 @@ export default {
       const player = this.livePlayer(photo);
       if (player) player.pause();
     },
+    onTouchStart(ev, index) {
+      this.touchStart.index = index;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = ev.timeStamp;
+    },
+    resetTouchStart() {
+      this.touchStart.index = -1;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = -1;
+    },
+    isClick(ev, index) {
+      if (this.touchStart.timeStamp < 0) return true;
+
+      return this.touchStart.index === index
+        && (ev.timeStamp - this.touchStart.timeStamp) < 200
+        && (this.touchStart.scrollY - window.scrollY) === 0;
+    },
+    toggleLike(ev, index) {
+      if (!this.isClick(ev, index)) {
+        this.resetTouchStart();
+        return;
+      }
+
+      const photo = this.photos[index];
+
+      if (!photo) {
+        return;
+      }
+
+      photo.toggleLike();
+    },
     onSelect(ev, index) {
       if (ev.shiftKey) {
         this.selectRange(index);
@@ -166,7 +202,7 @@ export default {
       this.$clipboard.toggle(photo);
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
       const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
 
       if (scrolled) {

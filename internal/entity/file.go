@@ -188,9 +188,18 @@ func (m *File) Delete(permanently bool) error {
 
 // Purge removes a file from the index by marking it as missing.
 func (m *File) Purge() error {
+	deletedAt := Timestamp()
 	m.FileMissing = true
 	m.FilePrimary = false
-	return Db().Unscoped().Exec("UPDATE files SET file_missing = 1, file_primary = 0 WHERE id = ?", m.ID).Error
+	m.DeletedAt = &deletedAt
+	return UnscopedDb().Exec("UPDATE files SET file_missing = 1, file_primary = 0, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
+}
+
+// Found restores a previously purged file.
+func (m *File) Found() error {
+	m.FileMissing = false
+	m.DeletedAt = nil
+	return UnscopedDb().Exec("UPDATE files SET file_missing = 0, deleted_at = NULL WHERE id = ?", m.ID).Error
 }
 
 // AllFilesMissing returns true, if all files for the photo of this file are missing.

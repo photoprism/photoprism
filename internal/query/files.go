@@ -103,6 +103,26 @@ func RenameFile(srcRoot, srcName, destRoot, destName string) error {
 
 // SetPhotoPrimary sets a new primary image file for a photo.
 func SetPhotoPrimary(photoUID, fileUID string) error {
+	if photoUID == "" {
+		return fmt.Errorf("photo uid is missing")
+	}
+
+	var files []string
+
+	if fileUID != "" {
+		// Do nothing.
+	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", photoUID).Order("file_width DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
+		return err
+	} else if len(files) == 0 {
+		return fmt.Errorf("photo %s has no jpegs", photoUID)
+	} else {
+		fileUID = files[0]
+	}
+
+	if fileUID == "" {
+		return fmt.Errorf("file uid is missing")
+	}
+
 	Db().Model(entity.File{}).Where("photo_uid = ? AND file_uid <> ?", photoUID, fileUID).UpdateColumn("file_primary", false)
 	return Db().Model(entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).UpdateColumn("file_primary", true).Error
 }
@@ -146,6 +166,25 @@ func IndexedFiles() (result FileMap, err error) {
 
 	for _, row := range files {
 		result[path.Join(row.FileRoot, row.FileName)] = row.ModTime
+	}
+
+	return result, err
+}
+
+type HashMap map[string]bool
+
+// FileHashes returns a map of all known file hashes.
+func FileHashes() (result HashMap, err error) {
+	result = make(HashMap)
+
+	var hashes []string
+
+	if err := UnscopedDb().Raw("SELECT file_hash FROM files WHERE file_missing = 0 AND deleted_at IS NULL").Pluck("file_hash", &hashes).Error; err != nil {
+		return result, err
+	}
+
+	for _, hash := range hashes {
+		result[hash] = true
 	}
 
 	return result, err

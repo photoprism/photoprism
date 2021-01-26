@@ -96,8 +96,6 @@ func (m *Moments) Start() (err error) {
 		}
 	}
 
-	// PhotoPath
-
 	// All years and months.
 	if results, err := query.MomentsTime(1); err != nil {
 		log.Errorf("moments: %s", err.Error())

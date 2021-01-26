@@ -89,10 +89,37 @@ export default class Page {
   }
 
   async archiveSelected() {
+    await t.click(Selector("button.action-menu", { timeout: 5000 }));
+    if (t.browser.platform === "mobile") {
+      if (!(await Selector("button.action-private").visible)) {
+        await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        if (!(await Selector("button.action-private").visible)) {
+          await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        }
+        if (!(await Selector("button.action-private").visible)) {
+          await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        }
+      }
+    }
     await t
-      .click(Selector("button.action-menu"))
-      .click(Selector("button.action-archive"))
-      .click(Selector("button.action-confirm"));
+      .click(Selector("button.action-archive", { timeout: 5000 }))
+      .click(Selector("button.action-confirm", { timeout: 5000 }));
+  }
+
+  async privateSelected() {
+    await t.click(Selector("button.action-menu", { timeout: 5000 }));
+    if (t.browser.platform === "mobile") {
+      if (!(await Selector("button.action-private").visible)) {
+        await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        if (!(await Selector("button.action-private").visible)) {
+          await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        }
+        if (!(await Selector("button.action-private").visible)) {
+          await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        }
+      }
+    }
+    await t.click(Selector("button.action-private", { timeout: 5000 }));
   }
 
   async restoreSelected() {
@@ -115,7 +142,7 @@ export default class Page {
   }
 
   async removeSelected() {
-    await t.click(Selector("button.action-menu")).click(Selector("button.action-delete"));
+    await t.click(Selector("button.action-menu")).click(Selector("button.action-remove"));
   }
 
   async addSelectedToAlbum(name) {

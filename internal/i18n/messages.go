@@ -66,6 +66,7 @@ const (
 	MsgSelectionProtected
 	MsgAlbumsDeleted
 	MsgZipCreatedIn
+	MsgPermanentlyDeleted
 )
 
 var Messages = MessageMap{
@@ -136,4 +137,5 @@ var Messages = MessageMap{
 	MsgSelectionProtected:    gettext("Selection marked as private"),
 	MsgAlbumsDeleted:         gettext("Albums deleted"),
 	MsgZipCreatedIn:          gettext("Zip created in %d s"),
+	MsgPermanentlyDeleted:    gettext("Permanently deleted"),
 }

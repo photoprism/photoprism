@@ -52,7 +52,7 @@
                    @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
-            <v-btn depressed dark color="secondary-dark" class="action-confirm ma-0"
+            <v-btn depressed dark color="primary-button" class="action-confirm ma-0"
                    @click.stop="confirm">
               <span>{{ label.confirm }}</span>
             </v-btn>

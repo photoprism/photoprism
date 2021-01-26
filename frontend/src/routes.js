@@ -47,6 +47,8 @@ import Help from "pages/help.vue";
 import { $gettext } from "common/vm";
 
 const c = window.__CONFIG__;
+const appName = c.name;
+const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 
 export default [
   {
@@ -58,37 +60,37 @@ export default [
     name: "about",
     path: "/about",
     component: About,
-    meta: { title: c.name, auth: false },
+    meta: { title: appName, auth: false },
   },
   {
     name: "feedback",
     path: "/feedback",
     component: Feedback,
-    meta: { title: c.name, auth: true },
+    meta: { title: appName, auth: true },
   },
   {
     name: "license",
     path: "/about/license",
     component: License,
-    meta: { title: c.name, auth: false },
+    meta: { title: appName, auth: false },
   },
   {
     name: "help",
     path: "/help*",
     component: Help,
-    meta: { title: c.name, auth: false },
+    meta: { title: appName, auth: false },
   },
   {
     name: "login",
     path: "/login",
     component: Login,
-    meta: { auth: false },
+    meta: { title: siteTitle, auth: false },
   },
   {
     name: "browse",
     path: "/browse",
     component: Photos,
-    meta: { title: c.name, auth: true },
+    meta: { title: appName, auth: true },
   },
   {
     name: "all",
@@ -240,7 +242,7 @@ export default [
     name: "errors",
     path: "/library/errors",
     component: Errors,
-    meta: { title: c.name, auth: true },
+    meta: { title: appName, auth: true },
   },
   {
     name: "labels",

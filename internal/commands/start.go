@@ -23,7 +23,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// StartCommand is used to register the start cli command
+// StartCommand registers the start cli command.
 var StartCommand = cli.Command{
 	Name:    "start",
 	Aliases: []string{"up"},
@@ -105,7 +105,7 @@ func startAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("read-only mode enabled")
+		log.Infof("start: read-only mode enabled")
 	}
 
 	// start web server

@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: easygettext\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/pages/albums.vue:311 src/share/albums.vue:302
@@ -238,7 +238,7 @@ msgstr "Altitude (m)"
 
 #: src/common/api.js:93
 msgid "An error occurred - are you offline?"
-msgstr "Un problème est survenu - êtes-vous hors ligne?"
+msgstr "Un problème est survenu - êtes-vous hors ligne ?"
 
 #: src/pages/settings/general.vue:467
 msgid "Animation"
@@ -273,23 +273,23 @@ msgstr "Archivé"
 
 #: src/dialog/photo/archive.vue:10
 msgid "Are you sure you want to archive the selection?"
-msgstr "Êtes-vous sûr de vouloir archiver la sélection?"
+msgstr "Êtes-vous sûr de vouloir archiver la sélection ?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
-msgstr "Êtes-vous sûr de vouloir supprimer ces albums?"
+msgstr "Êtes-vous sûr de vouloir supprimer ces albums ?"
 
 #: src/dialog/label/delete.vue:10
 msgid "Are you sure you want to delete these labels?"
-msgstr "Êtes-vous sûr de vouloir supprimer ces étiquettes?"
+msgstr "Êtes-vous sûr de vouloir supprimer ces étiquettes ?"
 
 #: src/dialog/account/remove.vue:10
 msgid "Are you sure you want to delete this account?"
-msgstr "Êtes-vous sûr de vouloir supprimer ce compte?"
+msgstr "Êtes-vous sûr de vouloir supprimer ce compte ?"
 
 #: src/dialog/file/delete.vue:10
 msgid "Are you sure you want to permanently delete this file?"
-msgstr "Êtes-vous sûr de vouloir supprimer définitivement ce fichier?"
+msgstr "Êtes-vous sûr de vouloir supprimer définitivement ce fichier ?"
 
 #: src/dialog/photo/details.vue:506
 msgid "Artist"
@@ -590,7 +590,7 @@ msgstr "Dimensions"
 
 #: src/pages/settings/advanced.vue:142
 msgid "Disable Backups"
-msgstr "Dernière sauvegarde"
+msgstr "Désactiver les sauvegardes"
 
 #: src/pages/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
@@ -602,15 +602,15 @@ msgstr "Désactiver l'outil ExifTool"
 
 #: src/pages/settings/advanced.vue:186
 msgid "Disable Places"
-msgstr "Désactivé"
+msgstr "Désactiver les Lieux"
 
 #: src/pages/settings/advanced.vue:230
 msgid "Disable TensorFlow"
-msgstr "Désactiver le TensorFlow"
+msgstr "Désactiver TensorFlow"
 
 #: src/pages/settings/advanced.vue:164
 msgid "Disable WebDAV"
-msgstr "Désactivé"
+msgstr "Désactiver WebDAV"
 
 #: src/dialog/account/edit.vue:67 src/dialog/account/edit.vue:112
 msgid "Disabled"
@@ -618,7 +618,7 @@ msgstr "Désactivé"
 
 #: src/pages/settings/advanced.vue:187
 msgid "Disables reverse geocoding and maps."
-msgstr "Désactive le géocodage inverse et les cartes."
+msgstr "Désactiver le géocodage inverse et les cartes."
 
 #: src/pages/settings/advanced.vue:463
 msgid ""
@@ -634,19 +634,19 @@ msgstr "Découvrir"
 #: src/pages/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
-"Ne sauvegardez pas les métadonnées des photos et des albums dans des "
+"Ne pas sauvegarder les métadonnées des photos et des albums dans des "
 "fichiers YAML."
 
 #: src/pages/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
-"Ne créez pas de fichiers JSON ExifTool pour améliorer l'extraction des "
+"Ne pas créer de fichiers JSON ExifTool pour améliorer l'extraction des "
 "métadonnées."
 
 #: src/pages/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
-"Ne modifiez pas le dossier des originaux. Désactive l'importation, le "
+"Ne pas modifier le dossier des originaux. Désactive l'importation, le "
 "téléchargement et la suppression."
 
 #: src/pages/settings/advanced.vue:231
@@ -857,7 +857,8 @@ msgid ""
 "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
 "the same picture."
 msgstr ""
-"Fichiers ayant des noms séquentiels tel que 'IMG_1234 (2)' et 'IMG_1234 (3)'."
+"Des fichiers ayant des noms séquentiels tels que 'IMG_1234 (2)' et 'IMG_1234 "
+"(3)' appartiennent à la même image."
 
 #: src/dialog/photo/details.vue:458
 msgid "Focal Length"
@@ -953,7 +954,7 @@ msgstr "Hindi"
 
 #: src/pages/about/feedback.vue:126
 msgid "How can we help?"
-msgstr "Comment pouvons nous vous aider?"
+msgstr "Comment pouvons nous vous aider ?"
 
 #: src/options/options.js:233
 msgid "Hybrid"
@@ -1646,7 +1647,7 @@ msgstr "RAW"
 
 #: src/pages/settings/advanced.vue:96
 msgid "RAW Conversion"
-msgstr "Conversion en cours"
+msgstr "Conversion RAW"
 
 #: src/pages/library/index.vue:121
 msgid "Re-index all originals, including already indexed and unchanged files."

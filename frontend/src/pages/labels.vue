@@ -94,10 +94,10 @@
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-favorite"
-                       @touchstart.stop.prevent="label.toggleLike()"
-                       @touchend.stop.prevent
+                       @touchstart.stop.prevent="onTouchStart($event, index)"
+                       @touchend.stop.prevent="toggleLike($event, index)"
                        @touchmove.stop.prevent
-                       @click.stop.prevent="label.toggleLike()">
+                       @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
@@ -174,6 +174,11 @@ export default {
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
+      touchStart: {
+        index: -1,
+        scrollY: window.scrollY,
+        timeStamp: -1,
+      },
       mouseDown: {
         index: -1,
         scrollY: window.scrollY,
@@ -220,6 +225,37 @@ export default {
       this.offset = offset;
       window.localStorage.setItem("labels_offset", offset);
     },
+    onTouchStart(ev, index) {
+      this.touchStart.index = index;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = ev.timeStamp;
+    },
+    resetTouchStart() {
+      this.touchStart.index = -1;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = -1;
+    },
+    isClick(ev, index) {
+      if (this.touchStart.timeStamp < 0) return true;
+
+      return this.touchStart.index === index
+          && (ev.timeStamp - this.touchStart.timeStamp) < 200
+          && (this.touchStart.scrollY - window.scrollY) === 0;
+    },
+    toggleLike(ev, index) {
+      if (!this.isClick(ev, index)) {
+        this.resetTouchStart();
+        return;
+      }
+
+      const label = this.results[index];
+
+      if (!label) {
+        return;
+      }
+
+      label.toggleLike();
+    },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
         console.warn("selectRange() - invalid arguments:", rangeEnd, models);
@@ -258,7 +294,7 @@ export default {
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
       const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
 
       if (scrolled) {

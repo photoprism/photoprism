@@ -117,3 +117,38 @@ func PhotosCheck(limit, offset int, delay time.Duration) (entities entity.Photos
 
 	return entities, err
 }
+
+// PhotosOrphaned finds orphaned index entries that may be removed.
+func PhotosOrphaned() (photos entity.Photos, err error) {
+	err = UnscopedDb().
+		Raw(`SELECT * FROM photos WHERE 
+			deleted_at IS NOT NULL 
+			AND photo_quality = -1 
+			AND id NOT IN (SELECT photo_id FROM files WHERE files.deleted_at IS NULL)`).
+		Find(&photos).Error
+
+	return photos, err
+}
+
+// FixPrimaries tries to set a primary file for photos that have none.
+func FixPrimaries() error {
+	var photos entity.Photos
+
+	if err := UnscopedDb().
+		Raw(`SELECT * FROM photos WHERE 
+			deleted_at IS NULL 
+			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = true)`).
+		Find(&photos).Error; err != nil {
+		return err
+	}
+
+	for _, p := range photos {
+		log.Debugf("photo: finding new primary for %s", p.PhotoUID)
+
+		if err := p.SetPrimary(""); err != nil {
+			log.Warnf("photo: %s (set new primary)", err)
+		}
+	}
+
+	return nil
+}

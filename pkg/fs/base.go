@@ -15,9 +15,9 @@ func StripExt(name string) string {
 	return name
 }
 
-// StripKnownExt removes a known file type extension from a file name (if any).
+// StripKnownExt removes all known file type extension from a file name (if any).
 func StripKnownExt(name string) string {
-	if FileExt.Known(name) {
+	for FileExt.Known(name) {
 		name = StripExt(name)
 	}
 

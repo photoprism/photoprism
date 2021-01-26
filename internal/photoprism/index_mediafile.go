@@ -272,12 +272,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Set file original name if available.
 	if originalName != "" {
 		file.OriginalName = originalName
+	}
 
-		if file.FilePrimary && photo.OriginalName == "" {
-			photo.OriginalName = fs.BasePrefix(originalName, stripSequence)
-		}
+	// Set photo original name based on file original name.
+	if file.OriginalName != "" {
+		photo.OriginalName = fs.StripKnownExt(file.OriginalName)
 	}
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
@@ -519,6 +521,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Try to set taken date based on file mod time or name if other metadata is missing:
+	if m.IsMedia() && (photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName) {
+		takenUtc, takenSrc := m.TakenAt()
+		photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
+	}
+
 	// file obviously exists: remove deleted and missing flags
 	file.DeletedAt = nil
 	file.FileMissing = false
@@ -584,11 +592,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.PhotoFNumber = m.FNumber()
 			photo.PhotoIso = m.Iso()
 			photo.PhotoExposure = m.Exposure()
-		}
-
-		if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName {
-			takenUtc, takenSrc := m.TakenAt()
-			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
 		}
 
 		var locLabels classify.Labels
@@ -680,9 +683,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
-		w = append(w, locKeywords...)
+		if photo.OriginalName == "" {
+			// Do nothing.
+		} else if fs.IsGenerated(photo.OriginalName) {
+			w = append(w, txt.FilenameKeywords(filepath.Dir(photo.OriginalName))...)
+		} else {
+			w = append(w, txt.FilenameKeywords(photo.OriginalName)...)
+		}
+
 		w = append(w, txt.FilenameKeywords(filePath)...)
-		w = append(w, txt.FilenameKeywords(file.OriginalName)...)
+		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
 		w = append(w, labels.Keywords()...)
 
