@@ -46,16 +46,31 @@ func (m *Photo) CountryCode() string {
 
 // GetTakenAt returns UTC time for TakenAtLocal.
 func (m *Photo) GetTakenAt() time.Time {
-	loc, err := time.LoadLocation(m.TimeZone)
+	location, err := time.LoadLocation(m.TimeZone)
 
 	if err != nil {
 		return m.TakenAt
 	}
 
-	if takenAt, err := time.ParseInLocation("2006-01-02T15:04:05", m.TakenAtLocal.Format("2006-01-02T15:04:05"), loc); err != nil {
+	if takenAt, err := time.ParseInLocation("2006-01-02T15:04:05", m.TakenAtLocal.Format("2006-01-02T15:04:05"), location); err != nil {
 		return m.TakenAt
 	} else {
 		return takenAt.UTC()
+	}
+}
+
+// GetTakenAtLocal returns local time for TakenAt.
+func (m *Photo) GetTakenAtLocal() time.Time {
+	location, err := time.LoadLocation(m.TimeZone)
+
+	if err != nil {
+		return m.TakenAtLocal
+	}
+
+	if takenAtLocal, err := time.ParseInLocation("2006-01-02T15:04:05", m.TakenAt.In(location).Format("2006-01-02T15:04:05"), time.UTC); err != nil {
+		return m.TakenAtLocal
+	} else {
+		return takenAtLocal.UTC()
 	}
 }
 

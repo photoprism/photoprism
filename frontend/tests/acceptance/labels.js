@@ -132,9 +132,7 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-albums"));
-  if (t.browser.platform === "mobile") {
-    await t.navigateTo("/albums?q=Christmas");
-  } else { await page.search("Christmas");}
+  await page.search("Christmas");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
   const PhotoCount = await Selector("div.is-photo").count;

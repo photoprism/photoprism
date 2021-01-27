@@ -12,15 +12,16 @@
 
         <v-card-actions>
           <v-layout wrap align-top>
+
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.private"
+                  v-model="settings.features.estimates"
                   :disabled="busy"
-                  class="ma-0 pa-0 input-private"
+                  class="ma-0 pa-0 input-estimates"
                   color="secondary-dark"
-                  :label="$gettext('Hide Private')"
-                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
-                  prepend-icon="lock"
+                  :label="$gettext('Estimates')"
+                  :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
+                  prepend-icon="timeline"
                   persistent-hint
                   @change="onChange"
               >

@@ -26,7 +26,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .ok()
     .expect(Selector("button.action-private").visible)
     .ok();
-  await page.toggleSelectNthPhoto(0);
+  await page.clearSelection();
   await t.click(Selector("div.is-photo").nth(0));
   await t
     .expect(Selector("#p-photo-viewer").visible)
@@ -89,8 +89,8 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-logs input"))
     .click(Selector(".input-share input"))
     .click(Selector(".input-places input"))
-    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-private input"))
+    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-review input"));
   await page.openNav();
   await t.eval(() => location.reload());
@@ -113,17 +113,16 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .notOk()
     .expect(Selector("button.action-private").exists)
     .notOk();
- //
   await t
-      .hover(Selector(".is-photo.type-image").nth(0))
-      .click(Selector(".is-photo.type-image .action-fullscreen").nth(0));
+    .hover(Selector(".is-photo.type-image").nth(0))
+    .click(Selector(".is-photo.type-image .action-fullscreen").nth(0));
   await t
     .expect(Selector("#p-photo-viewer", { timeout: 5000 }).visible)
     .ok()
     .expect(Selector(".action-download").exists)
     .notOk()
     .click(Selector(".action-close"))
-    .click(Selector(".action-close"))
+    .click(Selector(".action-close"));
   await page.toggleSelectNthPhoto(0);
   await t
     .expect(Selector("button.action-location").exists)
@@ -188,7 +187,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-logs input"))
     .click(Selector(".input-share input"))
     .click(Selector(".input-places input"))
-    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-private input"))
+    .click(Selector("#tab-settings-library"))
     .click(Selector(".input-review input"));
 });

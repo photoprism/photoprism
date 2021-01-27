@@ -17,7 +17,6 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await page.openNav();
   await t.click(Selector(".nav-calendar"));
   if (t.browser.platform === "mobile") {
-    console.log(t.browser.platform);
     await t.navigateTo("/calendar?q=December%202013");
   } else {
     await page.search("December 2013");
@@ -26,7 +25,6 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await page.openNav();
   await t.click(Selector(".nav-folders"));
   if (t.browser.platform === "mobile") {
-    console.log(t.browser.platform);
     await t.navigateTo("/folders?q=moment");
   } else {
     await page.search("Moment");

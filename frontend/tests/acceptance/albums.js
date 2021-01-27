@@ -23,11 +23,7 @@ test.meta("testID", "albums-001")("Create/delete album on /albums", async (t) =>
 test.meta("testID", "albums-002")("Update album", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
-  if (t.browser.platform === "mobile") {
-    await t.navigateTo("/albums?q=Holiday");
-  } else {
-    await page.search("Holiday");
-  }
+  await page.search("Holiday");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
@@ -59,16 +55,24 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   await page.addSelectedToAlbum("Animals");
   await page.openNav();
   await t.click(Selector(".nav-albums"));
-  await t
-    .click(Selector(".input-category i"))
-    .click(Selector('div[role="listitem"]').withText("Family"));
+  if (t.browser.platform === "mobile") {
+    await page.search("category:Family");
+  } else {
+    await t
+      .click(Selector(".input-category i"))
+      .click(Selector('div[role="listitem"]').withText("Family"));
+  }
   await t.expect(Selector("button.action-title-edit").nth(0).innerText).contains("Christmas");
   await page.openNav();
   await t
     .click(Selector(".nav-albums"))
-    .click(".action-reload")
-    .click(Selector(".input-category i"))
-    .click(Selector('div[role="listitem"]').withText("All Categories"), { timeout: 55000 });
+    .click(".action-reload");
+  if (t.browser.platform === "mobile") {
+  } else {
+    await t
+      .click(Selector(".input-category i"))
+      .click(Selector('div[role="listitem"]').withText("All Categories"), {timeout: 55000});
+  }
   await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
   const PhotoCountAfterAdd = await Selector("div.is-photo").count;
   await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
@@ -205,11 +209,7 @@ test.meta("testID", "albums-007")("Create/delete album during add to album", asy
   await t.click(Selector(".nav-albums"));
   const countAlbumsAfterCreation = await Selector("a.is-album").count;
   await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
-  if (t.browser.platform === "mobile") {
-    await t.navigateTo("/albums?q=NotYetExistingAlbum");
-  } else {
-    await page.search("NotYetExistingAlbum");
-  }
+  await page.search("NotYetExistingAlbum");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await page.selectFromUID(AlbumUid);
   await page.deleteSelected();
