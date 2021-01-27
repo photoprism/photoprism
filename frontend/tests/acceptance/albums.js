@@ -52,7 +52,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
   await page.selectPhotoFromUID(SecondPhotoUid);
   await page.selectFromUIDInFullscreen(FirstPhotoUid);
-  await page.addSelectedToAlbum("Animals");
+  await page.addSelectedToAlbum("Animals", "album");
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   if (t.browser.platform === "mobile") {
@@ -204,7 +204,7 @@ test.meta("testID", "albums-007")("Create/delete album during add to album", asy
   const SecondPhotoUid = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
   await page.selectPhotoFromUID(SecondPhotoUid);
   await page.selectFromUIDInFullscreen(FirstPhotoUid);
-  await page.addSelectedToAlbum("NotYetExistingAlbum");
+  await page.addSelectedToAlbum("NotYetExistingAlbum", "album");
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   const countAlbumsAfterCreation = await Selector("a.is-album").count;

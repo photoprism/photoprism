@@ -38,7 +38,7 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
   await page.selectPhotoFromUID(KanadaUid);
   const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
   await t.expect(clipboardCount.textContent).eql("1");
-  await page.addSelectedToAlbum("KanadaVacation");
+  await page.addSelectedToAlbum("KanadaVacation", "album");
   await page.openNav();
   await t
     .click(Selector(".nav-albums"));

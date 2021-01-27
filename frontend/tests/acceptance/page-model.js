@@ -145,10 +145,10 @@ export default class Page {
     await t.click(Selector("button.action-menu")).click(Selector("button.action-remove"));
   }
 
-  async addSelectedToAlbum(name) {
+  async addSelectedToAlbum(name, type) {
     await t
       .click(Selector("button.action-menu"))
-      .click(Selector("button.action-album"))
+      .click(Selector("button.action-"+type))
       .typeText(Selector(".input-album input"), name, { replace: true })
       .pressKey("enter");
     if (await Selector('div[role="listitem"]').withText(name).visible) {
