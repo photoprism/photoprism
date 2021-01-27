@@ -901,8 +901,8 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 	m.UpdateDateFields()
 }
 
-// SetTimeZone updates the time zone.
-func (m *Photo) SetTimeZone(zone string) {
+// UpdateTimeZone updates the time zone.
+func (m *Photo) UpdateTimeZone(zone string) {
 	if zone == "" || zone == time.UTC.String() {
 		return
 	}
