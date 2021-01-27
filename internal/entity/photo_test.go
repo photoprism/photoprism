@@ -553,6 +553,25 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 			time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), "", SrcAuto)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 	})
+	t.Run("from name", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		m.TimeZone = ""
+		m.TakenSrc = SrcAuto
+
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+		assert.Equal(t, "", m.TimeZone)
+		assert.Equal(t, SrcAuto, m.TakenSrc)
+
+		m.SetTakenAt(time.Date(2011, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2019, 11, 11, 10, 7, 18, 0, time.UTC), "America/New_York", SrcName)
+
+		assert.Equal(t, "", m.TimeZone)
+		assert.Equal(t, SrcName, m.TakenSrc)
+
+		assert.Equal(t, time.Date(2011, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2019, 11, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
+	})
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)

@@ -857,6 +857,11 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		return
 	}
 
+	// Remove time zone if time was extracted from file name.
+	if source == SrcName {
+		zone = ""
+	}
+
 	// Round times to avoid jitter.
 	taken = taken.Round(time.Second).UTC()
 
