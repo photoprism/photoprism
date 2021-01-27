@@ -588,8 +588,12 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 
+		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
+
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcName)
+			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcAuto)
+
+		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
 
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)

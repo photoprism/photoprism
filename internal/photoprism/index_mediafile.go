@@ -521,17 +521,23 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	// Try to set taken date based on file mod time or name if other metadata is missing:
-	if m.IsMedia() && (photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName) {
-		takenUtc, takenSrc := m.TakenAt()
-		photo.SetTakenAt(takenUtc, takenUtc, time.UTC.String(), takenSrc)
+	// Set taken date based on file mod time or name if other metadata is missing.
+	if m.IsMedia() && entity.SrcPriority[photo.TakenSrc] <= entity.SrcPriority[entity.SrcName] {
+		// Try to extract time from original file name first.
+		if taken := txt.Time(photo.OriginalName); !taken.IsZero() {
+			photo.SetTakenAt(taken, taken, "", entity.SrcName)
+		} else if taken, takenSrc := m.TakenAt(); takenSrc == entity.SrcName {
+			photo.SetTakenAt(taken, taken, "", entity.SrcName)
+		} else if !taken.IsZero() {
+			photo.SetTakenAt(taken, taken, time.UTC.String(), takenSrc)
+		}
 	}
 
-	// file obviously exists: remove deleted and missing flags
+	// File obviously exists: remove deleted and missing flags.
 	file.DeletedAt = nil
 	file.FileMissing = false
 
-	// primary files are used for rendering thumbnails and image classification (plus sidecar files if they exist)
+	// Primary files are used for rendering thumbnails and image classification, plus sidecar files if they exist.
 	if file.FilePrimary {
 		primaryFile = file
 
@@ -544,7 +550,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		// read metadata from embedded Exif and JSON sidecar file (if exists)
+		// Read metadata from embedded Exif and JSON sidecar file, if exists.
 		if metaData := m.MetaData(); metaData.Error == nil {
 			// Update basic metadata.
 			photo.SetTitle(metaData.Title, entity.SrcMeta)

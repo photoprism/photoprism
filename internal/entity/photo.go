@@ -873,7 +873,7 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 	}
 
 	// Don't update older date.
-	if SrcPriority[source] <= SrcPriority[SrcName] && !m.TakenAt.IsZero() && taken.After(m.TakenAt) {
+	if SrcPriority[source] <= SrcPriority[SrcAuto] && !m.TakenAt.IsZero() && taken.After(m.TakenAt) {
 		return
 	}
 
@@ -930,7 +930,8 @@ func (m *Photo) UpdateDateFields() {
 		m.TakenAtLocal = m.TakenAt
 	}
 
-	if m.TakenSrc == SrcAuto {
+	// Set date to unknown if file system date is about the same as indexing time.
+	if m.TakenSrc == SrcAuto && m.TakenAt.After(m.CreatedAt.Add(-24*time.Hour)) {
 		m.PhotoYear = YearUnknown
 		m.PhotoMonth = MonthUnknown
 		m.PhotoDay = DayUnknown
