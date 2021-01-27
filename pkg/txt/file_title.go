@@ -56,6 +56,11 @@ func FileTitle(s string) string {
 	title = strings.ReplaceAll(title, "-", " ")
 	title = strings.ReplaceAll(title, "  ", " ")
 
+	// Remove small words from title ending.
+	for w, _ := range SmallWords {
+		title = strings.TrimSuffix(title, " "+w)
+	}
+
 	if len(title) <= 4 && IsASCII(title) {
 		return ""
 	}
