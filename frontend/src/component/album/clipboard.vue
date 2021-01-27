@@ -174,14 +174,14 @@ export default {
         return;
       }
 
+      Notify.success(this.$gettext("Downloading…"));
+
       this.onDownload(`/api/v1/albums/${this.selection[0]}/dl?t=${this.$config.downloadToken()}`);
 
       this.expanded = false;
     },
     onDownload(path) {
-      Notify.success(this.$gettext("Downloading…"));
-
-      download(path, "album.zip");
+      download(path, "photoprism-album.zip");
     },
   }
 };

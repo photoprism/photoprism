@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -17,10 +19,6 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/rnd"
-
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -473,37 +471,61 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.AlbumPhotos(a, 10000)
+		files, err := query.AlbumPhotos(a, 10000)
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
 
-		zipToken := rnd.Token(3)
-		zipFileName := fmt.Sprintf("%s-%s.zip", strings.Title(a.AlbumSlug), zipToken)
+		albumName := strings.Title(a.AlbumSlug)
+
+		if len(albumName) < 2 {
+			albumName = fmt.Sprintf("photoprism-album-%s", a.AlbumUID)
+		}
+
+		zipFileName := fmt.Sprintf("%s.zip", albumName)
 
 		AddDownloadHeader(c, zipFileName)
 
 		zipWriter := zip.NewWriter(c.Writer)
 		defer func() { _ = zipWriter.Close() }()
 
-		for _, f := range p {
-			fileName := photoprism.FileName(f.FileRoot, f.FileName)
-			fileAlias := f.ShareFileName()
+		var aliases = make(map[string]int)
+
+		for _, file := range files {
+			if file.FileHash == "" {
+				log.Warnf("download: empty file hash, skipped %s", txt.Quote(file.FileName))
+				continue
+			}
+
+			if file.FileSidecar {
+				log.Debugf("download: skipped sidecar %s", txt.Quote(file.FileName))
+				continue
+			}
+
+			fileName := photoprism.FileName(file.FileRoot, file.FileName)
+			alias := file.ShareBase(0)
+			key := strings.ToLower(alias)
+
+			if seq := aliases[key]; seq > 0 {
+				alias = file.ShareBase(seq)
+			}
+
+			aliases[key] += 1
 
 			if fs.FileExists(fileName) {
-				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
+				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
 					log.Error(err)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
-				log.Infof("album: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
+				log.Infof("download: added %s as %s", txt.Quote(file.FileName), txt.Quote(alias))
 			} else {
-				log.Errorf("album: file %s is missing", txt.Quote(f.FileName))
+				log.Errorf("download: file %s is missing", txt.Quote(file.FileName))
 			}
 		}
 
-		log.Infof("album: archive %s created in %s", txt.Quote(zipFileName), time.Since(start))
+		log.Infof("download: album zip %s created in %s", txt.Quote(zipFileName), time.Since(start))
 	})
 }

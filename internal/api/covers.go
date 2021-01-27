@@ -117,13 +117,13 @@ func AlbumCover(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase()})
+		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase(0)})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddCoverCacheHeader(c)
 
 		if c.Query("download") != "" {
-			c.FileAttachment(thumbnail, f.ShareBase())
+			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(thumbnail)
 		}
@@ -229,13 +229,13 @@ func LabelCover(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase()})
+		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase(0)})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddCoverCacheHeader(c)
 
 		if c.Query("download") != "" {
-			c.FileAttachment(thumbnail, f.ShareBase())
+			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(thumbnail)
 		}

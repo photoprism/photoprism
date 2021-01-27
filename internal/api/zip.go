@@ -8,7 +8,10 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -17,7 +20,6 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gin-gonic/gin"
@@ -64,9 +66,8 @@ func CreateZip(router *gin.RouterGroup) {
 		}
 
 		zipPath := path.Join(conf.TempPath(), "zip")
-		zipToken := rnd.Token(3)
-		zipYear := time.Now().Format("January-2006")
-		zipBaseName := fmt.Sprintf("Photos-%s-%s.zip", zipYear, zipToken)
+		zipToken := rnd.Token(8)
+		zipBaseName := fmt.Sprintf("photoprism-download-%s-%s.zip", time.Now().Format("20060102-150405"), zipToken)
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if err := os.MkdirAll(zipPath, 0700); err != nil {
@@ -86,25 +87,46 @@ func CreateZip(router *gin.RouterGroup) {
 		zipWriter := zip.NewWriter(newZipFile)
 		defer zipWriter.Close()
 
-		for _, f := range files {
-			fileName := photoprism.FileName(f.FileRoot, f.FileName)
-			fileAlias := f.ShareBase()
+		dlName := DownloadName(c)
+
+		var aliases = make(map[string]int)
+
+		for _, file := range files {
+			if file.FileHash == "" {
+				log.Warnf("download: empty file hash, skipped %s", txt.Quote(file.FileName))
+				continue
+			}
+
+			if file.FileSidecar {
+				log.Debugf("download: skipped sidecar %s", txt.Quote(file.FileName))
+				continue
+			}
+
+			fileName := photoprism.FileName(file.FileRoot, file.FileName)
+			alias := file.DownloadName(dlName, 0)
+			key := strings.ToLower(alias)
+
+			if seq := aliases[key]; seq > 0 {
+				alias = file.DownloadName(dlName, seq)
+			}
+
+			aliases[key] += 1
 
 			if fs.FileExists(fileName) {
-				if err := addFileToZip(zipWriter, fileName, fileAlias); err != nil {
+				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
 					Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 					return
 				}
-				log.Infof("zip: added %s as %s", txt.Quote(f.FileName), txt.Quote(fileAlias))
+				log.Infof("download: added %s as %s", txt.Quote(file.FileName), txt.Quote(alias))
 			} else {
-				log.Warnf("zip: file %s is missing", txt.Quote(f.FileName))
-				logError("zip", f.Update("FileMissing", true))
+				log.Warnf("download: file %s is missing", txt.Quote(file.FileName))
+				logError("download", file.Update("FileMissing", true))
 			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("zip: archive %s created in %s", txt.Quote(zipBaseName), time.Since(start))
+		log.Infof("download: zip %s created in %s", txt.Quote(zipBaseName), time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})
@@ -132,7 +154,7 @@ func DownloadZip(router *gin.RouterGroup) {
 		c.FileAttachment(zipFileName, zipBaseName)
 
 		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("zip: failed removing %s (%s)", txt.Quote(zipFileName), err.Error())
+			log.Errorf("download: failed removing %s (%s)", txt.Quote(zipFileName), err.Error())
 		}
 	})
 }

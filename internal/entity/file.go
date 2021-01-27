@@ -108,26 +108,50 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("FileUID", rnd.PPID('f'))
 }
 
+// DownloadName returns the download file name.
+func (m *File) DownloadName(n DownloadName, seq int) string {
+	switch n {
+	case DownloadNameFile:
+		return m.Base(seq)
+	case DownloadNameOriginal:
+		return m.OriginalBase(seq)
+	default:
+		return m.ShareBase(seq)
+	}
+}
+
 // Base returns the file name without path.
-func (m *File) Base() string {
+func (m *File) Base(seq int) string {
 	if m.FileName == "" {
-		return m.ShareBase()
+		return m.ShareBase(seq)
 	}
 
-	return filepath.Base(m.FileName)
+	base := filepath.Base(m.FileName)
+
+	if seq > 0 {
+		return fmt.Sprintf("%s (%d)%s", fs.StripExt(base), seq, filepath.Ext(base))
+	}
+
+	return base
 }
 
 // OriginalBase returns the original file name without path.
-func (m *File) OriginalBase() string {
+func (m *File) OriginalBase(seq int) string {
 	if m.OriginalName == "" {
-		return m.Base()
+		return m.Base(seq)
 	}
 
-	return filepath.Base(m.OriginalName)
+	base := filepath.Base(m.OriginalName)
+
+	if seq > 0 {
+		return fmt.Sprintf("%s (%d)%s", fs.StripExt(base), seq, filepath.Ext(base))
+	}
+
+	return base
 }
 
-// ShareBase returns a meaningful file name useful for sharing.
-func (m *File) ShareBase() string {
+// ShareBase returns a meaningful file name for sharing.
+func (m *File) ShareBase(seq int) string {
 	photo := m.RelatedPhoto()
 
 	if photo == nil {
@@ -140,11 +164,12 @@ func (m *File) ShareBase() string {
 
 	name := strings.Title(slug.MakeLang(photo.PhotoTitle, "en"))
 	taken := photo.TakenAtLocal.Format("20060102-150405")
-	token := rnd.Token(3)
 
-	result := fmt.Sprintf("%s-%s-%s.%s", taken, name, token, m.FileType)
+	if seq > 0 {
+		return fmt.Sprintf("%s-%s (%d).%s", taken, name, seq, m.FileType)
+	}
 
-	return result
+	return fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
 }
 
 // Changed returns true if new and old file size or modified time are different.

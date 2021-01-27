@@ -90,7 +90,7 @@ func GetVideo(router *gin.RouterGroup) {
 		AddContentTypeHeader(c, ContentTypeAvc)
 
 		if c.Query("download") != "" {
-			c.FileAttachment(fileName, f.ShareBase())
+			c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(fileName)
 		}

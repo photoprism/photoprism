@@ -154,13 +154,13 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase()})
+		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase(0)})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddThumbCacheHeader(c)
 
 		if download {
-			c.FileAttachment(thumbnail, f.ShareBase())
+			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(thumbnail)
 		}

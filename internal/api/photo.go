@@ -147,9 +147,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		downloadFileName := f.ShareBase()
-
-		c.FileAttachment(fileName, downloadFileName)
+		c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
 	})
 }
 
