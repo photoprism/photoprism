@@ -14,6 +14,8 @@ var UnwantedDescriptions = map[string]bool{
 	"SAMSUNG":                true, // Samsung
 	"rhdr":                   true, // Huawei
 	"hdrpl":                  true,
+	"oznorWO":                true,
+	"frontbhdp":              true,
 	"fbt":                    true,
 	"mon":                    true,
 	"nor":                    true,
