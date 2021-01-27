@@ -902,12 +902,12 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 }
 
 // SetTimeZone updates the time zone.
-func (m *Photo) SetTimeZone(zone, source string) {
+func (m *Photo) SetTimeZone(zone string) {
 	if zone == "" {
 		return
 	}
 
-	if SrcPriority[source] < SrcPriority[m.TakenSrc] && m.TimeZone != "" {
+	if SrcPriority[m.TakenSrc] >= SrcPriority[SrcManual] && m.TimeZone != "" {
 		return
 	}
 

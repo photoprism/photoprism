@@ -77,13 +77,13 @@ func (m *Photo) EstimatePlace() {
 			m.PlaceID = recentPhoto.PlaceID
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.PlaceSrc = SrcEstimate
-			m.SetTimeZone(recentPhoto.TimeZone, recentPhoto.TakenSrc)
+			m.SetTimeZone(recentPhoto.TimeZone)
 
 			log.Debugf("photo: approximate position of %s is %s (id %s)", m, txt.Quote(m.CountryName()), recentPhoto.PlaceID)
 		} else if recentPhoto.HasCountry() {
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.PlaceSrc = SrcEstimate
-			m.SetTimeZone(recentPhoto.TimeZone, recentPhoto.TakenSrc)
+			m.SetTimeZone(recentPhoto.TimeZone)
 
 			log.Debugf("photo: probable country for %s is %s", m, txt.Quote(m.CountryName()))
 		} else {
