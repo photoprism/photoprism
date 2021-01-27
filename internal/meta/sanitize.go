@@ -10,29 +10,30 @@ import (
 )
 
 var UnwantedDescriptions = map[string]bool{
-	"OLYMPUS DIGITAL CAMERA": true, // Olympus
-	"SAMSUNG":                true, // Samsung
-	"rhdr":                   true, // Huawei
-	"hdrpl":                  true,
-	"oznorWO":                true,
-	"frontbhdp":              true,
-	"fbt":                    true,
-	"mon":                    true,
-	"nor":                    true,
-	"dav":                    true,
-	"mde":                    true,
-	"mde_soft":               true,
-	"edf":                    true,
-	"btfmdn":                 true,
-	"btf":                    true,
-	"btfhdr":                 true,
-	"frem":                   true,
-	"oznor":                  true,
-	"rpt":                    true,
-	"burst":                  true,
-	"sdr_HDRB":               true,
-	"cof":                    true,
-	"qrf":                    true,
+	"OLYMPUS DIGITAL CAMERA":  true, // Olympus
+	"SAMSUNG":                 true, // Samsung
+	"SAMSUNG CAMERA PICTURES": true,
+	"rhdr":                    true, // Huawei
+	"hdrpl":                   true,
+	"oznorWO":                 true,
+	"frontbhdp":               true,
+	"fbt":                     true,
+	"mon":                     true,
+	"nor":                     true,
+	"dav":                     true,
+	"mde":                     true,
+	"mde_soft":                true,
+	"edf":                     true,
+	"btfmdn":                  true,
+	"btf":                     true,
+	"btfhdr":                  true,
+	"frem":                    true,
+	"oznor":                   true,
+	"rpt":                     true,
+	"burst":                   true,
+	"sdr_HDRB":                true,
+	"cof":                     true,
+	"qrf":                     true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
