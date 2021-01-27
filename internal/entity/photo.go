@@ -903,7 +903,7 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 
 // SetTimeZone updates the time zone.
 func (m *Photo) SetTimeZone(zone string) {
-	if zone == "" {
+	if zone == "" || zone == time.UTC.String() {
 		return
 	}
 
