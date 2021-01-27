@@ -747,19 +747,19 @@ msgstr ""
 msgid "Download single files and zip archives."
 msgstr ""
 
-#: src/component/album/clipboard.vue:88
+#: src/component/album/clipboard.vue:83
 #: src/component/album/toolbar.vue:97
 #: src/component/file/clipboard.vue:43
 #: src/component/label/clipboard.vue:56
 #: src/component/photo/cards.vue:56
-#: src/component/photo/clipboard.vue:117
+#: src/component/photo/clipboard.vue:115
 #: src/component/photo/list.vue:56
 #: src/component/photo/viewer.vue:102
 #: src/dialog/photo/files.vue:44
 #: src/pages/library/files.vue:102
-#: src/share/album/clipboard.vue:42
+#: src/share/album/clipboard.vue:37
 #: src/share/photo/cards.vue:51
-#: src/share/photo/clipboard.vue:41
+#: src/share/photo/clipboard.vue:39
 #: src/share/photo/list.vue:51
 #: src/share/photos.vue:489
 msgid "Downloading…"
@@ -1634,7 +1634,7 @@ msgstr ""
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 
-#: src/component/photo/clipboard.vue:66
+#: src/component/photo/clipboard.vue:67
 msgid "Permanently deleted"
 msgstr ""
 
@@ -1642,7 +1642,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:766
+#: src/model/photo.js:773
 msgid "Photo"
 msgstr ""
 
@@ -1845,7 +1845,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:92
+#: src/component/photo/clipboard.vue:93
 msgid "remove failed: unknown album"
 msgstr ""
 
@@ -1939,15 +1939,15 @@ msgstr ""
 msgid "Select albums or create a new one"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:38
+#: src/component/photo/clipboard.vue:39
 msgid "Selection approved"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:54
+#: src/component/photo/clipboard.vue:55
 msgid "Selection archived"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:79
+#: src/component/photo/clipboard.vue:80
 msgid "Selection restored"
 msgstr ""
 
@@ -2281,12 +2281,12 @@ msgstr ""
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:21
 #: src/model/album.js:139
-#: src/model/photo.js:461
-#: src/model/photo.js:478
-#: src/model/photo.js:501
-#: src/model/photo.js:515
-#: src/model/photo.js:592
-#: src/model/photo.js:605
+#: src/model/photo.js:468
+#: src/model/photo.js:485
+#: src/model/photo.js:508
+#: src/model/photo.js:522
+#: src/model/photo.js:599
+#: src/model/photo.js:612
 #: src/options/options.js:20
 #: src/options/options.js:34
 #: src/options/options.js:51
@@ -2400,8 +2400,8 @@ msgstr ""
 #: src/component/photo/list.vue:194
 #: src/component/photo/mosaic.vue:206
 #: src/model/file.js:181
-#: src/model/photo.js:552
-#: src/model/photo.js:566
+#: src/model/photo.js:559
+#: src/model/photo.js:573
 #: src/options/options.js:264
 #: src/share/photo/cards.vue:28
 #: src/share/photo/cards.vue:196
