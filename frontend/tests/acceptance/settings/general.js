@@ -54,6 +54,14 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector("#tab-library-logs a").visible)
     .ok();
   await page.openNav();
+  await t.click(Selector("div.nav-browse + div")).click(Selector(".nav-archive"));
+  await page.toggleSelectNthPhoto(0);
+  await t
+    .click(Selector("button.action-menu"))
+    .expect(Selector("button.action-delete").exists)
+    .ok();
+  await page.clearSelection();
+  await page.openNav();
   await t
     .click(Selector("div.nav-browse + div"))
     .expect(Selector(".nav-archive").visible)
@@ -89,13 +97,42 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-logs input"))
     .click(Selector(".input-share input"))
     .click(Selector(".input-places input"))
+    .click(Selector(".input-delete input"))
     .click(Selector(".input-private input"))
     .click(Selector("#tab-settings-library"))
     .click(Selector(".input-review input"));
   await page.openNav();
   await t.eval(() => location.reload());
   await page.openNav();
+  await t.click(Selector(".nav-calendar"));
+  await page.checkButtonVisibility("download", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-calendar"));
+  await page.checkButtonVisibility("share", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-calendar"));
+  await page.checkButtonVisibility("upload", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-folders"));
+  await page.checkButtonVisibility("download", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-folders"));
+  await page.checkButtonVisibility("share", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-folders"));
+  await page.checkButtonVisibility("upload", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  await page.checkButtonVisibility("download", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  await page.checkButtonVisibility("share", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  await page.checkButtonVisibility("upload", false, false);
+  await page.openNav();
   await t
+    .click(Selector(".nav-browse"))
     .expect(Selector("button.action-upload").exists)
     .notOk()
     .expect(Selector(".nav-browse").innerText)
@@ -190,4 +227,14 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-private input"))
     .click(Selector("#tab-settings-library"))
     .click(Selector(".input-review input"));
+  await page.openNav();
+  await t.click(Selector("div.nav-browse + div")).click(Selector(".nav-archive"));
+  await page.toggleSelectNthPhoto(0);
+  await t
+    .click(Selector("button.action-menu"))
+    .expect(Selector("button.action-delete").exists)
+    .notOk();
+  await page.clearSelection();
+  await page.openNav();
+  await t.click(Selector(".nav-settings")).click(Selector(".input-delete input"));
 });

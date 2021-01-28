@@ -102,8 +102,7 @@ export default class Page {
       }
     }
     await t
-      .click(Selector("button.action-archive", { timeout: 5000 }))
-      .click(Selector("button.action-confirm", { timeout: 5000 }));
+      .click(Selector("button.action-archive", { timeout: 5000 }));
   }
 
   async privateSelected() {
@@ -148,7 +147,7 @@ export default class Page {
   async addSelectedToAlbum(name, type) {
     await t
       .click(Selector("button.action-menu"))
-      .click(Selector("button.action-"+type))
+      .click(Selector("button.action-" + type))
       .typeText(Selector(".input-album input"), name, { replace: true })
       .pressKey("enter");
     if (await Selector('div[role="listitem"]').withText(name).visible) {
@@ -211,5 +210,91 @@ export default class Page {
 
   async logout() {
     await t.click(Selector("div.nav-logout"));
+  }
+
+  async testCreateEditDeleteSharingLink(type) {
+    await this.openNav();
+    if (type === "states") {
+      await t.click(Selector(".nav-places + div"));
+    }
+    await t.click(Selector(".nav-" + type));
+    const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+    await this.selectFromUID(FirstAlbum);
+    const clipboardCount = await Selector("span.count-clipboard");
+    await t
+      .expect(clipboardCount.textContent)
+      .eql("1")
+      .click(Selector("button.action-menu"))
+      .click(Selector("button.action-share"))
+      .click(Selector("div.v-expansion-panel__header__icon").nth(0));
+    const InitialUrl = await Selector(".action-url").innerText;
+    const InitialSecret = await Selector(".input-secret input").value;
+    const InitialExpire = await Selector("div.v-select__selections").innerText;
+    await t
+      .expect(InitialUrl)
+      .notContains("secretfortesting")
+      .expect(InitialExpire)
+      .contains("Never")
+      .typeText(Selector(".input-secret input"), "secretForTesting", { replace: true })
+      .click(Selector(".input-expires input"))
+      .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
+      .click(Selector("button.action-save"))
+      .click(Selector("button.action-close"));
+    await this.clearSelection();
+    await t
+      .click(Selector("a.is-album").withAttribute("data-uid", FirstAlbum))
+      .click(Selector("button.action-share"))
+      .click(Selector("div.v-expansion-panel__header__icon").nth(0));
+    const UrlAfterChange = await Selector(".action-url").innerText;
+    const ExpireAfterChange = await Selector("div.v-select__selections").innerText;
+    await t
+      .expect(UrlAfterChange)
+      .contains("secretfortesting")
+      .expect(ExpireAfterChange)
+      .contains("After 1 day")
+      .typeText(Selector(".input-secret input"), InitialSecret, { replace: true })
+      .click(Selector(".input-expires input"))
+      .click(Selector("div").withText("Never").parent('div[role="listitem"]'))
+      .click(Selector("button.action-save"))
+      .click(Selector("div.v-expansion-panel__header__icon"));
+    const LinkCount = await Selector(".action-url").count;
+    await t.click(".action-add-link");
+    const LinkCountAfterAdd = await Selector(".action-url").count;
+    await t
+      .expect(LinkCountAfterAdd)
+      .eql(LinkCount + 1)
+      .click(Selector("div.v-expansion-panel__header__icon"))
+      .click(Selector(".action-delete"));
+    const LinkCountAfterDelete = await Selector(".action-url").count;
+    await t
+      .expect(LinkCountAfterDelete)
+      .eql(LinkCountAfterAdd - 1)
+      .click(Selector("button.action-close"));
+    await this.openNav();
+    await t
+      .click(".nav-" + type)
+      .click("a.uid-" + FirstAlbum + " .action-share")
+      .click(Selector("div.v-expansion-panel__header__icon"))
+      .click(Selector(".action-delete"));
+  }
+
+  async checkButtonVisibility(button, inContextMenu, inAlbum) {
+    const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+    await this.selectFromUID(FirstAlbum);
+    await t.click(Selector("button.action-menu"));
+    if (inContextMenu) {
+      await t.expect(Selector("button.action-" + button).visible).ok();
+    } else {
+      await t.expect(Selector("button.action-" + button).visible).notOk();
+    }
+    await this.clearSelection();
+    if (t.browser.platform !== "mobile") {
+      await t.click(Selector("a.is-album").nth(0));
+      if (inAlbum) {
+        await t.expect(Selector("button.action-" + button).visible).ok();
+      } else {
+        await t.expect(Selector("button.action-" + button).visible).notOk();
+      }
+    }
   }
 }

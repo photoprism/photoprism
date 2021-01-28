@@ -90,27 +90,14 @@ test.meta("testID", "states-002")("Download states", async (t) => {
   await t
     .click(Selector(".nav-places + div"))
     .click(Selector(".nav-states"));
-  const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await page.selectFromUID(FirstAlbum);
-  const clipboardCount = await Selector("span.count-clipboard");
-  await t
-    .expect(clipboardCount.textContent)
-    .eql("1")
-    .click(Selector("button.action-menu"))
-    .expect(Selector("button.action-download").visible)
-    .ok();
-  if (t.browser.platform !== "mobile") {
-    await page.clearSelection();
-    await t
-      .click(Selector("a.is-album").nth(0))
-      .expect(Selector("button.action-download").visible)
-      .ok();
-  }
+  await page.checkButtonVisibility("download", true, true);
 });
 
 //TODO test that sharing link works as expected
 test.meta("testID", "states-003")("Create, Edit, delete sharing link", async (t) => {
-  await page.openNav();
+  await page.testCreateEditDeleteSharingLink("states");
+
+  /* await page.openNav();
   await t
     .click(Selector(".nav-places + div"))
     .click(Selector(".nav-states"));
@@ -171,7 +158,7 @@ test.meta("testID", "states-003")("Create, Edit, delete sharing link", async (t)
     .click(".nav-states")
     .click("a.uid-" + FirstAlbum + " .action-share")
     .click(Selector("div.v-expansion-panel__header__icon"))
-    .click(Selector(".action-delete"));
+    .click(Selector(".action-delete"));*/
 });
 
 test.meta("testID", "states-004")("Create/delete album during add to album", async (t) => {
@@ -228,20 +215,5 @@ test.meta("testID", "states-005")("Delete states button visible", async (t) => {
   await t
     .click(Selector(".nav-places + div"))
     .click(Selector(".nav-states"));
-  const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await page.selectFromUID(FirstAlbum);
-  const clipboardCount = await Selector("span.count-clipboard");
-  await t
-    .expect(clipboardCount.textContent)
-    .eql("1")
-    .click(Selector("button.action-menu"))
-    .expect(Selector("button.action-delete").visible)
-    .ok();
-  if (t.browser.platform !== "mobile") {
-    await page.clearSelection();
-    await t
-      .click(Selector("a.is-album").nth(0))
-      .expect(Selector("button.action-delete").exists)
-      .notOk();
-  }
+  await page.checkButtonVisibility("delete", true, false);
 });

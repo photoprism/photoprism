@@ -108,15 +108,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
 test.meta("testID", "albums-003")("Download album", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
-  const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await page.selectFromUID(FirstAlbum);
-  const clipboardCount = await Selector("span.count-clipboard");
-  await t
-    .expect(clipboardCount.textContent)
-    .eql("1")
-    .click(Selector("button.action-menu"))
-    .expect(Selector("button.action-download").visible)
-    .ok();
+  await page.checkButtonVisibility("download", true, true);
 });
 
 test.meta("testID", "albums-004")("View folders", async (t) => {
@@ -143,54 +135,7 @@ test.meta("testID", "albums-005")("View calendar", async (t) => {
 
 //TODO test that sharing link works as expected
 test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
-  const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-  await page.selectFromUID(FirstAlbum);
-  const clipboardCount = await Selector("span.count-clipboard");
-  await t
-    .expect(clipboardCount.textContent)
-    .eql("1")
-    .click(Selector("button.action-menu"))
-    .click(Selector("button.action-share"))
-    .click(Selector("div.v-expansion-panel__header__icon").nth(0));
-  const InitialUrl = await Selector(".action-url").innerText;
-  const InitialSecret = await Selector(".input-secret input").value;
-  const InitialExpire = await Selector("div.v-select__selections").innerText;
-  await t
-    .expect(InitialUrl)
-    .notContains("secretfortesting")
-    .expect(InitialExpire)
-    .contains("Never")
-    .typeText(Selector(".input-secret input"), "secretForTesting", { replace: true })
-    .click(Selector(".input-expires input"))
-    .click(Selector("div").withText("After 1 day").parent('div[role="listitem"]'))
-    .click(Selector("button.action-save"))
-    .click(Selector("button.action-close"))
-    .click(Selector("button.action-share"))
-    .click(Selector("div.v-expansion-panel__header__icon").nth(0));
-  const UrlAfterChange = await Selector(".action-url").innerText;
-  const ExpireAfterChange = await Selector("div.v-select__selections").innerText;
-  await t
-    .expect(UrlAfterChange)
-    .contains("secretfortesting")
-    .expect(ExpireAfterChange)
-    .contains("After 1 day")
-    .typeText(Selector(".input-secret input"), InitialSecret, { replace: true })
-    .click(Selector(".input-expires input"))
-    .click(Selector("div").withText("Never").parent('div[role="listitem"]'))
-    .click(Selector("button.action-save"))
-    .click(Selector("div.v-expansion-panel__header__icon"));
-  const LinkCount = await Selector(".action-url").count;
-  await t.click(".action-add-link");
-  const LinkCountAfterAdd = await Selector(".action-url").count;
-  await t
-    .expect(LinkCountAfterAdd)
-    .eql(LinkCount + 1)
-    .click(Selector("div.v-expansion-panel__header__icon"))
-    .click(Selector(".action-delete"));
-  const LinkCountAfterDelete = await Selector(".action-url").count;
-  await t.expect(LinkCountAfterDelete).eql(LinkCountAfterAdd - 1);
+  await page.testCreateEditDeleteSharingLink("albums");
 });
 
 test.meta("testID", "albums-007")("Create/delete album during add to album", async (t) => {
