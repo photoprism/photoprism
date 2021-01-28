@@ -13,3 +13,8 @@ func Timestamp() time.Time {
 func Seconds(s int) time.Duration {
 	return time.Duration(s) * time.Second
 }
+
+// Yesterday returns the time 24 hours ago.
+func Yesterday() time.Time {
+	return time.Now().Add(-24 * time.Hour)
+}

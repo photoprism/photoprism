@@ -160,7 +160,7 @@ msgstr ""
 #: src/component/navigation.vue:140
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:516
-#: src/routes.js:126
+#: src/routes.js:134
 #: src/share/albums.vue:4
 msgid "Albums"
 msgstr ""
@@ -272,7 +272,7 @@ msgstr ""
 #: src/component/photo/cards.vue:26
 #: src/component/photo/clipboard.vue:215
 #: src/pages/settings/general.vue:294
-#: src/routes.js:200
+#: src/routes.js:208
 #: src/share/photo/cards.vue:26
 msgid "Archive"
 msgstr ""
@@ -360,8 +360,8 @@ msgstr ""
 
 #: src/component/navigation.vue:202
 #: src/component/navigation.vue:754
-#: src/routes.js:139
-#: src/routes.js:146
+#: src/routes.js:147
+#: src/routes.js:154
 msgid "Calendar"
 msgstr ""
 
@@ -687,10 +687,10 @@ msgstr ""
 msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
 msgstr ""
 
-#: src/routes.js:345
-#: src/routes.js:352
-#: src/routes.js:359
-#: src/routes.js:366
+#: src/routes.js:353
+#: src/routes.js:360
+#: src/routes.js:367
+#: src/routes.js:374
 msgid "Discover"
 msgstr ""
 
@@ -747,19 +747,19 @@ msgstr ""
 msgid "Download single files and zip archives."
 msgstr ""
 
-#: src/component/album/clipboard.vue:88
+#: src/component/album/clipboard.vue:83
 #: src/component/album/toolbar.vue:97
 #: src/component/file/clipboard.vue:43
 #: src/component/label/clipboard.vue:56
 #: src/component/photo/cards.vue:56
-#: src/component/photo/clipboard.vue:117
+#: src/component/photo/clipboard.vue:115
 #: src/component/photo/list.vue:56
 #: src/component/photo/viewer.vue:102
 #: src/dialog/photo/files.vue:44
 #: src/pages/library/files.vue:102
-#: src/share/album/clipboard.vue:42
+#: src/share/album/clipboard.vue:37
 #: src/share/photo/cards.vue:51
-#: src/share/photo/clipboard.vue:41
+#: src/share/photo/clipboard.vue:39
 #: src/share/photo/list.vue:51
 #: src/share/photos.vue:489
 msgid "Downloading…"
@@ -907,7 +907,7 @@ msgstr ""
 
 #: src/component/navigation.vue:176
 #: src/component/navigation.vue:666
-#: src/routes.js:172
+#: src/routes.js:180
 msgid "Favorites"
 msgstr ""
 
@@ -924,7 +924,7 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: src/routes.js:232
+#: src/routes.js:240
 msgid "File Browser"
 msgstr ""
 
@@ -959,8 +959,8 @@ msgstr ""
 
 #: src/component/navigation.vue:262
 #: src/component/navigation.vue:960
-#: src/routes.js:152
-#: src/routes.js:159
+#: src/routes.js:160
+#: src/routes.js:167
 msgid "Folders"
 msgstr ""
 
@@ -1019,16 +1019,12 @@ msgstr ""
 msgid "Hidden"
 msgstr ""
 
-#: src/routes.js:238
+#: src/routes.js:246
 msgid "Hidden Files"
 msgstr ""
 
 #: src/pages/settings/general.vue:295
 msgid "Hide photos that have been moved to archive."
-msgstr ""
-
-#: src/pages/settings/general.vue:272
-msgid "Hide Private"
 msgstr ""
 
 #: src/options/options.js:116
@@ -1168,7 +1164,7 @@ msgstr ""
 #: src/component/navigation.vue:915
 #: src/dialog/photo/edit.vue:27
 #: src/pages/settings/general.vue:360
-#: src/routes.js:251
+#: src/routes.js:259
 msgid "Labels"
 msgstr ""
 
@@ -1215,9 +1211,9 @@ msgstr ""
 #: src/component/navigation.vue:1052
 #: src/pages/settings.vue:41
 #: src/pages/settings/general.vue:382
-#: src/routes.js:263
-#: src/routes.js:270
-#: src/routes.js:277
+#: src/routes.js:271
+#: src/routes.js:278
+#: src/routes.js:285
 msgid "Library"
 msgstr ""
 
@@ -1341,8 +1337,8 @@ msgstr ""
 #: src/component/navigation.vue:189
 #: src/component/navigation.vue:709
 #: src/pages/settings/general.vue:338
-#: src/routes.js:113
-#: src/routes.js:120
+#: src/routes.js:121
+#: src/routes.js:128
 msgid "Moments"
 msgstr ""
 
@@ -1630,7 +1626,7 @@ msgstr ""
 msgid "pay for operating expenses and external services like satellite maps"
 msgstr ""
 
-#: src/routes.js:257
+#: src/routes.js:265
 msgid "People"
 msgstr ""
 
@@ -1638,7 +1634,7 @@ msgstr ""
 msgid "People you share a link with will be able to view public contents."
 msgstr ""
 
-#: src/component/photo/clipboard.vue:66
+#: src/component/photo/clipboard.vue:67
 msgid "Permanently deleted"
 msgstr ""
 
@@ -1646,7 +1642,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:766
+#: src/model/photo.js:773
 msgid "Photo"
 msgstr ""
 
@@ -1662,7 +1658,7 @@ msgstr ""
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr ""
 
-#: src/routes.js:106
+#: src/routes.js:114
 msgid "Photos"
 msgstr ""
 
@@ -1684,10 +1680,10 @@ msgstr ""
 #: src/component/navigation.vue:799
 #: src/pages/settings/general.vue:103
 #: src/pages/settings/general.vue:428
-#: src/routes.js:207
-#: src/routes.js:213
-#: src/routes.js:219
-#: src/routes.js:226
+#: src/routes.js:215
+#: src/routes.js:221
+#: src/routes.js:227
+#: src/routes.js:234
 msgid "Places"
 msgstr ""
 
@@ -1752,7 +1748,8 @@ msgstr ""
 #: src/component/navigation.vue:275
 #: src/component/navigation.vue:1005
 #: src/dialog/photo/info.vue:96
-#: src/routes.js:193
+#: src/pages/settings/general.vue:272
+#: src/routes.js:201
 msgid "Private"
 msgstr ""
 
@@ -1848,7 +1845,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:92
+#: src/component/photo/clipboard.vue:93
 msgid "remove failed: unknown album"
 msgstr ""
 
@@ -1883,7 +1880,7 @@ msgid "Retype Password"
 msgstr ""
 
 #: src/component/navigation.vue:108
-#: src/routes.js:186
+#: src/routes.js:194
 msgid "Review"
 msgstr ""
 
@@ -1914,7 +1911,7 @@ msgstr ""
 #: src/pages/labels.vue:68
 #: src/pages/library/errors.vue:49
 #: src/pages/places.vue:30
-#: src/routes.js:99
+#: src/routes.js:107
 msgid "Search"
 msgstr ""
 
@@ -1942,15 +1939,15 @@ msgstr ""
 msgid "Select albums or create a new one"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:38
+#: src/component/photo/clipboard.vue:39
 msgid "Selection approved"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:54
+#: src/component/photo/clipboard.vue:55
 msgid "Selection archived"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:79
+#: src/component/photo/clipboard.vue:80
 msgid "Selection restored"
 msgstr ""
 
@@ -1978,11 +1975,11 @@ msgstr ""
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:1220
-#: src/routes.js:285
-#: src/routes.js:297
-#: src/routes.js:309
-#: src/routes.js:321
-#: src/routes.js:333
+#: src/routes.js:293
+#: src/routes.js:305
+#: src/routes.js:317
+#: src/routes.js:329
+#: src/routes.js:341
 msgid "Settings"
 msgstr ""
 
@@ -2284,12 +2281,12 @@ msgstr ""
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:21
 #: src/model/album.js:139
-#: src/model/photo.js:461
-#: src/model/photo.js:478
-#: src/model/photo.js:501
-#: src/model/photo.js:515
-#: src/model/photo.js:592
-#: src/model/photo.js:605
+#: src/model/photo.js:468
+#: src/model/photo.js:485
+#: src/model/photo.js:508
+#: src/model/photo.js:522
+#: src/model/photo.js:599
+#: src/model/photo.js:612
 #: src/options/options.js:20
 #: src/options/options.js:34
 #: src/options/options.js:51
@@ -2302,7 +2299,7 @@ msgid "Unknown"
 msgstr ""
 
 #: src/component/navigation.vue:150
-#: src/routes.js:165
+#: src/routes.js:173
 msgid "Unsorted"
 msgstr ""
 
@@ -2403,8 +2400,8 @@ msgstr ""
 #: src/component/photo/list.vue:194
 #: src/component/photo/mosaic.vue:206
 #: src/model/file.js:181
-#: src/model/photo.js:552
-#: src/model/photo.js:566
+#: src/model/photo.js:559
+#: src/model/photo.js:573
 #: src/options/options.js:264
 #: src/share/photo/cards.vue:28
 #: src/share/photo/cards.vue:196
@@ -2415,7 +2412,7 @@ msgstr ""
 
 #: src/component/navigation.vue:163
 #: src/component/navigation.vue:623
-#: src/routes.js:179
+#: src/routes.js:187
 msgid "Videos"
 msgstr ""
 

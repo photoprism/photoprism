@@ -181,10 +181,8 @@ export default {
       }
 
       Notify.success(this.$gettext("Downloading…"));
-      let photo = new Photo();
-      photo.find(this.item.uid).then((p) => {
-        p.downloadAll();
-      });
+
+      new Photo().find(this.item.uid).then(p => p.downloadAll());
     },
     onEdit() {
       this.onPause();

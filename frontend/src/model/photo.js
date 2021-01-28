@@ -416,21 +416,28 @@ export class Photo extends RestModel {
   }
 
   downloadAll() {
+    const token = config.downloadToken();
+
     if (!this.Files) {
-      download(
-        `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`,
-        this.baseName(false)
-      );
+      const hash = this.mainFileHash();
+
+      if (hash) {
+        download(`/api/v1/dl/${hash}?t=${token}`, this.baseName(false));
+      } else if (config.debug) {
+        console.log("download: failed, empty file hash", this);
+      }
+
       return;
     }
 
     this.Files.forEach((file) => {
-      if (!file || !file.Hash) {
-        console.warn("no file hash found for download", file);
+      if (!file || !file.Hash || file.Sidecar) {
+        // Don't download broken files and sidecars.
+        if (config.debug) console.log("download: skipped file", file);
         return;
       }
 
-      download(`/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`, this.fileBase(file.Name));
+      download(`/api/v1/dl/${file.Hash}?t=${token}`, this.fileBase(file.Name));
     });
   }
 

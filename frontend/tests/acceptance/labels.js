@@ -152,7 +152,7 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
 
   const clipboardCount = await Selector("span.count-clipboard");
   await t.expect(clipboardCount.textContent).eql("1");
-  await page.addSelectedToAlbum("Christmas");
+  await page.addSelectedToAlbum("Christmas", "album");
   await page.openNav();
   await t
     .click(Selector(".nav-albums"))

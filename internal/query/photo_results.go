@@ -7,7 +7,6 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/ulule/deepcopier"
 )
 
@@ -73,6 +72,7 @@ type PhotoResult struct {
 	FileHeight       int           `json:"Height"`
 	FilePortrait     bool          `json:"Portrait"`
 	FilePrimary      bool          `json:"-"`
+	FileSidecar      bool          `json:"-"`
 	FileMissing      bool          `json:"-"`
 	FileVideo        bool          `json:"-"`
 	FileDuration     time.Duration `json:"-"`
@@ -144,7 +144,8 @@ func (m PhotoResults) Merged() (PhotoResults, int, error) {
 	return merged, count, nil
 }
 
-func (m *PhotoResult) ShareFileName() string {
+// ShareBase returns a meaningful file name for sharing.
+func (m *PhotoResult) ShareBase(seq int) string {
 	var name string
 
 	if m.PhotoTitle != "" {
@@ -154,9 +155,10 @@ func (m *PhotoResult) ShareFileName() string {
 	}
 
 	taken := m.TakenAtLocal.Format("20060102-150405")
-	token := rnd.Token(3)
 
-	result := fmt.Sprintf("%s-%s-%s.%s", taken, name, token, m.FileType)
+	if seq > 0 {
+		return fmt.Sprintf("%s-%s (%d).%s", taken, name, seq, m.FileType)
+	}
 
-	return result
+	return fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
 }

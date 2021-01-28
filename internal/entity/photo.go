@@ -857,6 +857,11 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		return
 	}
 
+	// Remove time zone if time was extracted from file name.
+	if source == SrcName {
+		zone = ""
+	}
+
 	// Round times to avoid jitter.
 	taken = taken.Round(time.Second).UTC()
 
@@ -868,7 +873,7 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 	}
 
 	// Don't update older date.
-	if SrcPriority[source] <= SrcPriority[SrcName] && !m.TakenAt.IsZero() && taken.After(m.TakenAt) {
+	if SrcPriority[source] <= SrcPriority[SrcAuto] && !m.TakenAt.IsZero() && taken.After(m.TakenAt) {
 		return
 	}
 
@@ -896,13 +901,13 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 	m.UpdateDateFields()
 }
 
-// SetTimeZone updates the time zone.
-func (m *Photo) SetTimeZone(zone, source string) {
-	if zone == "" {
+// UpdateTimeZone updates the time zone.
+func (m *Photo) UpdateTimeZone(zone string) {
+	if zone == "" || zone == time.UTC.String() {
 		return
 	}
 
-	if SrcPriority[source] < SrcPriority[m.TakenSrc] && m.TimeZone != "" {
+	if SrcPriority[m.TakenSrc] >= SrcPriority[SrcManual] && m.TimeZone != "" {
 		return
 	}
 
@@ -925,7 +930,8 @@ func (m *Photo) UpdateDateFields() {
 		m.TakenAtLocal = m.TakenAt
 	}
 
-	if m.TakenSrc == SrcAuto {
+	// Set date to unknown if file system date is about the same as indexing time.
+	if m.TakenSrc == SrcAuto && m.TakenAt.After(m.CreatedAt.Add(-24*time.Hour)) {
 		m.PhotoYear = YearUnknown
 		m.PhotoMonth = MonthUnknown
 		m.PhotoDay = DayUnknown

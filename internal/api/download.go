@@ -19,6 +19,20 @@ import (
 // TODO: GET /api/v1/dl/photo/:uid
 // TODO: GET /api/v1/dl/album/:uid
 
+// DownloadName returns the download file name type.
+func DownloadName(c *gin.Context) entity.DownloadName {
+	switch c.Query("name") {
+	case "file":
+		return entity.DownloadNameFile
+	case "share":
+		return entity.DownloadNameShare
+	case "original":
+		return entity.DownloadNameOriginal
+	default:
+		return service.Config().Settings().Download.Name
+	}
+}
+
 // GET /api/v1/dl/:hash
 //
 // Parameters:
@@ -51,30 +65,6 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		name := entity.DownloadNameFile
-
-		switch c.Query("name") {
-		case "file":
-			name = entity.DownloadNameFile
-		case "share":
-			name = entity.DownloadNameShare
-		case "original":
-			name = entity.DownloadNameOriginal
-		default:
-			name = service.Config().Settings().Download.Name
-		}
-
-		var downloadName string
-
-		switch name {
-		case entity.DownloadNameFile:
-			downloadName = f.Base()
-		case entity.DownloadNameOriginal:
-			downloadName = f.OriginalBase()
-		default:
-			downloadName = f.ShareBase()
-		}
-
-		c.FileAttachment(fileName, downloadName)
+		c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
 	})
 }

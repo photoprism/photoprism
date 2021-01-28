@@ -1,3 +1,14 @@
+/* General Styles */
+
+:-webkit-autofill,
+:-webkit-autofill:hover,
+:-webkit-autofill:focus,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    transition: background-color 9999s !important;
+}
+
 /* Grayscale Theme */
 
 .theme-grayscale .v-content__wrap,
@@ -87,6 +98,11 @@
     color: #999 !important;
 }
 
+#photoprism.theme-grayscale .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
+}
+
 /* Shadow Theme */
 
 .theme-shadow .v-content__wrap,
@@ -174,4 +190,9 @@
 #photoprism.theme-shadow .theme--light.v-btn.v-btn--disabled .v-btn__loading,
 #photoprism.theme-shadow .theme--light.v-btn.v-btn--disabled .v-icon {
     color: #999 !important;
+}
+
+#photoprism.theme-shadow .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
 }

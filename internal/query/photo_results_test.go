@@ -322,7 +322,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			Files:            nil,
 		}
 
-		r := result1.ShareFileName()
+		r := result1.ShareBase(0)
 		assert.Contains(t, r, "20131111-090718-Phototitle123")
 	})
 	t.Run("without photo title", func(t *testing.T) {
@@ -385,7 +385,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 			Files:            nil,
 		}
 
-		r := result1.ShareFileName()
+		r := result1.ShareBase(0)
 		assert.Contains(t, r, "20151111-090718-uid123")
 	})
 }

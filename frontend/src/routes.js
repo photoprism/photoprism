@@ -45,6 +45,7 @@ import Feedback from "pages/about/feedback.vue";
 import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
 import { $gettext } from "common/vm";
+import { session } from "./session";
 
 const c = window.__CONFIG__;
 const appName = c.name;
@@ -85,6 +86,13 @@ export default [
     path: "/login",
     component: Login,
     meta: { title: siteTitle, auth: false },
+    beforeEnter: (to, from, next) => {
+      if (session.isUser()) {
+        next({ name: "home" });
+      } else {
+        next();
+      }
+    },
   },
   {
     name: "browse",
