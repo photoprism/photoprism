@@ -117,6 +117,11 @@ export const Languages = () => [
     value: "hi",
   },
   {
+    text: "한국어",
+    translated: $gettext("Korean"),
+    value: "ko",
+  },
+  {
     text: "Nederlands",
     translated: $gettext("Dutch"),
     value: "nl",
