@@ -160,5 +160,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.SendFeedback(v1)
 		api.Connect(v1)
 		api.WebSocket(v1)
+
+		api.GetTable(v1)
 	}
 }
