@@ -40,6 +40,24 @@ When reporting an issue, please provide the version in use and information about
 
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
+
 The Developer Guide contains all information necessary to get you started.
 
 Our [step-by-step guide](https://docs.photoprism.org/developer-guide/pull-requests/) explains how to submit new features, bugfixes and documentation.
+
+## Ways to help without coding ##
+If you enjoy using PhotoPrism you might as well support us by:
+
+* referring us to your friends
+* voting for us on pages like:
+   * https://alternativeto.net/software/photoprism/about/
+   * https://www.saashub.com/google-photos-alternatives
+* writing blog posts about PhotoPrism
+* contributing to issues labeled [research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) or [docs](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs), those normally do not require coding skills
+
+Thank you very much <3
+
+
+
+
+
