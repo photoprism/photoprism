@@ -81,7 +81,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 			Where("face_id = ?", f.ID).
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
-			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
+			Updates(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
@@ -299,7 +299,7 @@ func RemovePeopleAndFaces() (err error) {
 
 	// Reset face counters.
 	if err = UnscopedDb().Model(entity.Photo{}).
-		UpdateColumn("photo_faces", 0).Error; err != nil {
+		Update("photo_faces", 0).Error; err != nil {
 		return err
 	}
 

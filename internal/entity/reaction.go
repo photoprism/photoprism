@@ -93,7 +93,7 @@ func (m *Reaction) Save() (err error) {
 
 	if err = Db().Model(Reaction{}).
 		Where("uid = ? AND user_uid = ?", m.UID, m.UserUID).
-		UpdateColumns(values).Error; err == nil {
+		Updates(values).Error; err == nil {
 		m.Reacted += 1
 		m.ReactedAt = reactedAt
 	}

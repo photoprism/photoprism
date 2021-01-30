@@ -167,7 +167,7 @@ func (m *Subject) Restore() error {
 			})
 		}
 
-		return UnscopedDb().Model(m).UpdateColumn("DeletedAt", nil).Error
+		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
 	}
 
 	return nil
@@ -175,7 +175,7 @@ func (m *Subject) Restore() error {
 
 // Update updates an entity value in the database.
 func (m *Subject) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Updates multiple values in the database.
@@ -403,7 +403,7 @@ func (m *Subject) UpdateMarkerNames() error {
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ? AND subj_src <> ?", m.SubjUID, SrcAuto).
 		Where("marker_name <> ?", m.SubjName).
-		UpdateColumn("marker_name", m.SubjName).Error; err != nil {
+		Update("marker_name", m.SubjName).Error; err != nil {
 		return err
 	}
 
@@ -444,11 +444,11 @@ func (m *Subject) MergeWith(other *Subject) error {
 	// Update markers and faces with new SubjUID.
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ?", m.SubjUID).
-		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
+		Update("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := Db().Model(&Face{}).
 		Where("subj_uid = ?", m.SubjUID).
-		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
+		Update("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := other.UpdateMarkerNames(); err != nil {
 		return err

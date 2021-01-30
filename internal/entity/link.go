@@ -82,7 +82,7 @@ func NewUserLink(shareUid, userUid string) Link {
 func (m *Link) Redeem() *Link {
 	m.LinkViews += 1
 
-	if err := Db().Model(m).UpdateColumn("link_views", gorm.Expr("link_views + 1")).Error; err != nil {
+	if err := Db().Model(m).Update("link_views", gorm.Expr("link_views + 1")).Error; err != nil {
 		event.AuditWarn([]string{"link %s", "failed to update view counter"}, clean.Log(m.RefID), err)
 	}
 

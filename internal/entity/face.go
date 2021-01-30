@@ -109,7 +109,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
 	m.MatchedAt = TimePointer()
-	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).Updates(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -278,7 +278,7 @@ func (m *Face) SetSubjectUID(subjUid string) (err error) {
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
 		Where("marker_invalid = 0").
-		UpdateColumns(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
+		Updates(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
@@ -337,7 +337,7 @@ func (m *Face) Delete() error {
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		UpdateColumns(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
+		Updates(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
 		return err
 	}
 

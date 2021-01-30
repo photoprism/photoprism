@@ -89,7 +89,7 @@ func TestMatchFaceMarkers(t *testing.T) {
 	if err := Db().Model(&entity.Marker{}).
 		Where("subj_src = ?", entity.SrcAuto).
 		Where("subj_uid = ?", "jqu0xs11qekk9jx8").
-		UpdateColumn("subj_uid", "").Error; err != nil {
+		Update("subj_uid", "").Error; err != nil {
 		t.Fatal(err)
 	}
 

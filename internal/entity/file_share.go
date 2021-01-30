@@ -46,12 +46,12 @@ func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 
 // Updates multiple columns in the database.
 func (m *FileShare) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumns(values).Error
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update updates a column value in the database.
 func (m *FileShare) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.

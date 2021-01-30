@@ -487,7 +487,7 @@ func (m *Session) UpdateLastActive() *Session {
 
 	m.LastActive = UnixTime()
 
-	if err := Db().Model(m).UpdateColumn("LastActive", m.LastActive).Error; err != nil {
+	if err := Db().Model(m).Update("LastActive", m.LastActive).Error; err != nil {
 		event.AuditWarn([]string{m.IP(), "session %s", "failed to update last active time", "%s"}, m.RefID, err)
 	}
 
