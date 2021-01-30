@@ -1,8 +1,14 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
 import Page from "./page-model";
+import { RequestLogger } from "testcafe";
 
-fixture`Test calendar`.page`${testcafeconfig.url}`;
+const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
+  logResponseHeaders: true,
+  logResponseBody: true,
+});
+
+fixture`Test calendar`.page`${testcafeconfig.url}`.requestHooks(logger);
 
 const page = new Page();
 
@@ -92,14 +98,14 @@ test.meta("testID", "calendar-004")("Create/delete album during add to album", a
   const countAlbums = await Selector("a.is-album").count;
   await page.openNav();
   await t.click(Selector(".nav-calendar"));
-  const ThirdCalendar = await Selector("a.is-album").nth(2).getAttribute("data-uid");
-  await t.click(Selector("a.is-album").withAttribute("data-uid", ThirdCalendar));
+  const SecondCalendar = await Selector("a.is-album").nth(1).getAttribute("data-uid");
+  await t.click(Selector("a.is-album").withAttribute("data-uid", SecondCalendar));
   const PhotoCountInCalendar = await Selector("div.is-photo").count;
   const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   const SecondPhoto = await Selector("div.is-photo.type-image").nth(1).getAttribute("data-uid");
   await page.openNav();
   await t.click(Selector(".nav-calendar"));
-  await page.selectFromUID(ThirdCalendar);
+  await page.selectFromUID(SecondCalendar);
   await page.addSelectedToAlbum("NotYetExistingAlbumForCalendar", "clone");
   await page.openNav();
   await t.click(Selector(".nav-albums"));
@@ -126,7 +132,7 @@ test.meta("testID", "calendar-004")("Create/delete album during add to album", a
   await t.expect(countAlbumsAfterDelete).eql(countAlbums);
   await t
     .click(Selector(".nav-calendar"))
-    .click(Selector("a.is-album").withAttribute("data-uid", ThirdCalendar))
+    .click(Selector("a.is-album").withAttribute("data-uid", SecondCalendar))
     .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
     .ok()
     .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })

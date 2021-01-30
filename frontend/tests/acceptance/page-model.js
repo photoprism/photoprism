@@ -1,4 +1,10 @@
 import { Selector, t } from "testcafe";
+import { RequestLogger } from "testcafe";
+
+const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
+  logResponseHeaders: true,
+  logResponseBody: true,
+});
 
 export default class Page {
   constructor() {
@@ -311,5 +317,17 @@ export default class Page {
       .click(Selector(".action-confirm"))
       .expect(Selector("div").withAttribute("data-uid", uid).exists, { timeout: 5000 })
       .notOk();
+  }
+
+  async validateDownloadRequest(request, filename, extension) {
+    const downloadedFileName = request.headers["content-disposition"];
+    await t
+      .expect(request.statusCode === 200)
+      .ok()
+      .expect(downloadedFileName)
+      .contains(filename)
+      .expect(downloadedFileName)
+      .contains(extension);
+    await logger.clear();
   }
 }
