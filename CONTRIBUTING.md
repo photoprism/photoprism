@@ -8,7 +8,7 @@ We welcome contributions of any kind including pull requests, ideas, bug reports
 testing, writing documentation, tutorials and blog posts. If you help with development,
 you have the opportunity to learn Docker, Go, TensorFlow and much more.
 
-## Questions?
+## Questions? ##
 
 Follow us on [Twitter](https://twitter.com/browseyourlife) to receive regular project updates, 
 get in contact with other contributors and discuss your ideas. Don't be afraid to ask stupid questions.
@@ -36,7 +36,7 @@ Please use the [GitHub issue tracker](https://github.com/photoprism/photoprism/i
 If you're not sure, start by asking in our [community chat](https://gitter.im/browseyourlife/community) or [contact us via email](mailto:help@photoprism.app).
 When reporting an issue, please provide the version in use and information about your environment like browser, operating system, installed memory, and processor type.
 
-## Pull Requests
+## Pull Requests ##
 
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
@@ -45,14 +45,15 @@ The Developer Guide contains all information necessary to get you started.
 
 Our [step-by-step guide](https://docs.photoprism.org/developer-guide/pull-requests/) explains how to submit new features, bugfixes and documentation.
 
-## Ways to help without coding ##
-If you enjoy using PhotoPrism you might as well support us by:
+## Can't code? ##
 
-* referring us to your friends
+No worries, you may also contribute by...
+
+* recommending PhotoPrism to your friends
 * voting for us on pages like:
    * https://alternativeto.net/software/photoprism/about/
    * https://www.saashub.com/google-photos-alternatives
-* writing blog posts about PhotoPrism
+* publishing tutorials, blog posts, or podcasts
 * contributing to issues labeled [research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) or [docs](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs), those normally do not require coding skills
 
 Thank you very much <3
