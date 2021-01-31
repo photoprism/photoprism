@@ -49,12 +49,12 @@ Our [step-by-step guide](https://docs.photoprism.org/developer-guide/pull-reques
 
 No worries, you may also contribute by...
 
+* doing [research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) or improving our [docs](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
 * recommending PhotoPrism to your friends
 * voting for us on pages like:
    * https://alternativeto.net/software/photoprism/about/
    * https://www.saashub.com/google-photos-alternatives
 * publishing tutorials, blog posts, or podcasts
-* contributing to issues labeled [research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) or [docs](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs), those normally do not require coding skills
 
 Thank you very much! <3
 
