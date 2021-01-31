@@ -56,7 +56,7 @@ No worries, you may also contribute by...
 * publishing tutorials, blog posts, or podcasts
 * contributing to issues labeled [research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) or [docs](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs), those normally do not require coding skills
 
-Thank you very much <3
+Thank you very much! <3
 
 
 
