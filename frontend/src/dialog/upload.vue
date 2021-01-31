@@ -12,13 +12,13 @@
       </v-toolbar>
       <v-container grid-list-xs text-xs-left fluid>
         <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
-          <input ref="upload" type="file" multiple class="d-none" @change.stop="upload()">
+          <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="upload()">
 
           <v-container fluid>
             <p class="subheading">
               <v-combobox v-if="total === 0" v-model="selectedAlbums" flat solo hide-details chips
                           deletable-chips multiple color="secondary-dark"
-                          class="my-0"
+                          class="my-0 input-albums"
                           :items="albums"
                           item-text="Title"
                           item-value="UID"

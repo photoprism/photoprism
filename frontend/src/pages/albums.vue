@@ -33,7 +33,7 @@
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down"
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
                :title="$gettext('Upload')" @click.stop="showUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>

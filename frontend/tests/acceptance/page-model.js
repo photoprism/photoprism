@@ -1,4 +1,10 @@
 import { Selector, t } from "testcafe";
+import { RequestLogger } from "testcafe";
+
+const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
+  logResponseHeaders: true,
+  logResponseBody: true,
+});
 
 export default class Page {
   constructor() {
@@ -89,20 +95,21 @@ export default class Page {
   }
 
   async archiveSelected() {
-    await t.click(Selector("button.action-menu", { timeout: 5000 }));
+    if (!(await Selector("#t-clipboard button.action-archive").visible)) {
+      await t.click(Selector("button.action-menu", { timeout: 5000 }));
+    }
     if (t.browser.platform === "mobile") {
-      if (!(await Selector("button.action-private").visible)) {
+      if (!(await Selector("#t-clipboard button.action-archive").visible)) {
         await t.click(Selector("button.action-menu", { timeout: 5000 }));
-        if (!(await Selector("button.action-private").visible)) {
+        if (!(await Selector("#t-clipboard button.action-archive").visible)) {
           await t.click(Selector("button.action-menu", { timeout: 5000 }));
         }
-        if (!(await Selector("button.action-private").visible)) {
+        if (!(await Selector("#t-clipboard button.action-archive").visible)) {
           await t.click(Selector("button.action-menu", { timeout: 5000 }));
         }
       }
     }
-    await t
-      .click(Selector("button.action-archive", { timeout: 5000 }));
+    await t.click(Selector("#t-clipboard button.action-archive", { timeout: 5000 }));
   }
 
   async privateSelected() {
@@ -296,5 +303,31 @@ export default class Page {
         await t.expect(Selector("button.action-" + button).visible).notOk();
       }
     }
+  }
+
+  async deletePhotoFromUID(uid) {
+    await this.selectPhotoFromUID(uid);
+    await this.archiveSelected();
+    await this.openNav();
+    await t.click(Selector(".nav-browse + div")).click(Selector(".nav-archive"));
+    await this.selectPhotoFromUID(uid);
+    await t
+      .click(Selector("button.action-menu", { timeout: 5000 }))
+      .click(Selector(".remove"))
+      .click(Selector(".action-confirm"))
+      .expect(Selector("div").withAttribute("data-uid", uid).exists, { timeout: 5000 })
+      .notOk();
+  }
+
+  async validateDownloadRequest(request, filename, extension) {
+    const downloadedFileName = request.headers["content-disposition"];
+    await t
+      .expect(request.statusCode === 200)
+      .ok()
+      .expect(downloadedFileName)
+      .contains(filename)
+      .expect(downloadedFileName)
+      .contains(extension);
+    await logger.clear();
   }
 }

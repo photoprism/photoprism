@@ -44,7 +44,6 @@ export default function download(url, name) {
   }
 
   link.href = url;
-  link.target = "_blank";
   link.style.display = "none";
 
   document.body.appendChild(link);
