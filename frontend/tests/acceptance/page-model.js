@@ -114,15 +114,13 @@ export default class Page {
 
   async privateSelected() {
     await t.click(Selector("button.action-menu", { timeout: 5000 }));
-    if (t.browser.platform === "mobile") {
+    if (!(await Selector("button.action-private").visible)) {
+      await t.click(Selector("button.action-menu", { timeout: 5000 }));
       if (!(await Selector("button.action-private").visible)) {
         await t.click(Selector("button.action-menu", { timeout: 5000 }));
-        if (!(await Selector("button.action-private").visible)) {
-          await t.click(Selector("button.action-menu", { timeout: 5000 }));
-        }
-        if (!(await Selector("button.action-private").visible)) {
-          await t.click(Selector("button.action-menu", { timeout: 5000 }));
-        }
+      }
+      if (!(await Selector("button.action-private").visible)) {
+        await t.click(Selector("button.action-menu", { timeout: 5000 }));
       }
     }
     await t.click(Selector("button.action-private", { timeout: 5000 }));

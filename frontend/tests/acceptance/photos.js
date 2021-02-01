@@ -568,8 +568,8 @@ test.meta("testID", "photos-010")("Ungroup files", async (t) => {
     .ok()
     .click(Selector("button.action-title-edit").withAttribute("data-uid", SequentialPhoto))
     .click(Selector("#tab-files"))
-    .click(Selector("li.v-expansion-panel__container").nth(1))
-    .click(Selector("li.v-expansion-panel__container").nth(0))
+    .click(Selector("div.v-expansion-panel__header__icon").nth(0))
+      .click(Selector("div.v-expansion-panel__header__icon").nth(1))
     .click(Selector(".action-unstack"))
     .wait(12000)
     .click(Selector("button.action-close"));
