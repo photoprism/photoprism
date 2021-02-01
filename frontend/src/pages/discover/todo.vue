@@ -19,8 +19,8 @@ export default {
       labels: {},
     };
   },
-  methods: {},
   created() {
   },
+  methods: {},
 };
 </script>
