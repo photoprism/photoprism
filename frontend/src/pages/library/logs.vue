@@ -23,6 +23,8 @@ export default {
       logs: this.$log.logs,
     };
   },
+  created() {
+  },
   methods: {
     level(log) {
       return log.level.substr(0, 4).toUpperCase();
@@ -34,8 +36,6 @@ export default {
 
       return DateTime.fromISO(s).toFormat("yyyy-LL-dd HH:mm:ss");
     },
-  },
-  created() {
   },
 };
 </script>
