@@ -14,12 +14,12 @@
         <img src="/static/brands/github.svg" width="24" alt="GitHub">
       </v-btn -->
     </v-toolbar>
-    <v-container fluid class="pa-4" v-if="sent">
+    <v-container fluid v-if="sent" class="pa-4">
       <p class="body-1">We'll get back to you as soon as possible!</p>
     </v-container>
-    <v-form autocomplete="off" class="pa-3" ref="form"
+    <v-form autocomplete="off" ref="form" class="pa-3"
             v-model="valid"
-            lazy-validation v-else>
+            v-else lazy-validation>
       <v-layout row wrap>
         <!-- v-flex xs12 sm6 lg4 xl2 grow class="pa-2">
           <v-text-field :required="true" hide-details
@@ -32,8 +32,8 @@
               :items="options.FeedbackCategories()"
               :label="$gettext('Category')"
               color="secondary-dark"
-              background-color="secondary-light"
               v-model="form.Category"
+              background-color="secondary-light"
               flat solo hide-details required
               browser-autocomplete="off"
               class="input-category"
@@ -42,8 +42,8 @@
         </v-flex>
 
         <v-flex xs12 class="pa-2">
-          <v-textarea required auto-grow flat solo hide-details browser-autocomplete="off"
-                      v-model="form.Message" rows="10" :rules="[v => !!v || $gettext('Required')]"
+          <v-textarea required auto-grow flat solo hide-details v-model="form.Message"
+                      browser-autocomplete="off" rows="10" :rules="[v => !!v || $gettext('Required')]"
                       :label="$gettext('How can we help?')"></v-textarea>
         </v-flex>
 
@@ -51,7 +51,7 @@
           <v-text-field flat solo hide-details browser-autocomplete="off"
                         color="secondary-dark"
                         background-color="secondary-light"
-                        :label="$gettext('Name')" type="text" v-model="form.UserName">
+                        :label="$gettext('Name')" v-model="form.UserName" type="text">
           </v-text-field>
         </v-flex>
 
@@ -59,7 +59,7 @@
           <v-text-field flat solo hide-details required browser-autocomplete="off"
                         color="secondary-dark" :rules="[v => !!v || $gettext('Required')]"
                         background-color="secondary-light"
-                        :label="$gettext('E-Mail')" type="email" v-model="form.UserEmail">
+                        :label="$gettext('E-Mail')" v-model="form.UserEmail" type="email">
           </v-text-field>
         </v-flex>
 
