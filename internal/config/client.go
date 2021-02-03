@@ -62,6 +62,7 @@ type ClientDisable struct {
 	Places     bool `json:"places"`
 	ExifTool   bool `json:"exiftool"`
 	TensorFlow bool `json:"tensorflow"`
+	Videos     bool `json:"videos"`
 }
 
 // ClientCounts represents photo, video and album counts for the client UI.
@@ -153,6 +154,7 @@ func (c *Config) PublicConfig() ClientConfig {
 			Places:     c.DisablePlaces(),
 			ExifTool:   true,
 			TensorFlow: true,
+			Videos:     c.DisableVideos(),
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "public",
@@ -204,6 +206,7 @@ func (c *Config) GuestConfig() ClientConfig {
 			Places:     c.DisablePlaces(),
 			ExifTool:   true,
 			TensorFlow: true,
+			Videos:     c.DisableVideos(),
 		},
 		Flags:           "readonly public shared",
 		Mode:            "guest",
@@ -249,6 +252,7 @@ func (c *Config) UserConfig() ClientConfig {
 			Places:     c.DisablePlaces(),
 			ExifTool:   c.DisableExifTool(),
 			TensorFlow: c.DisableTensorFlow(),
+			Videos:     c.DisableVideos(),
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "user",

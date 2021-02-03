@@ -61,6 +61,7 @@ type Options struct {
 	DisablePlaces     bool   `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableExifTool   bool   `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
 	DisableTensorFlow bool   `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
+	DisableVideos     bool   `yaml:"DisableVideos" json:"DisableVideos" flag:"disable-videos"`
 	DetectNSFW        bool   `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	UploadNSFW        bool   `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
 	LogLevel          string `yaml:"LogLevel" json:"-" flag:"log-level"`

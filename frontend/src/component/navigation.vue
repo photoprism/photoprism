@@ -168,18 +168,20 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile to="/videos" class="nav-video" @click.stop="">
-          <v-list-tile-action :title="$gettext('Videos')">
-            <v-icon>play_circle_fill</v-icon>
-          </v-list-tile-action>
+        <template v-if="!config.disable.videos">
+          <v-list-tile to="/videos" class="nav-video" @click.stop="">
+            <v-list-tile-action :title="$gettext('Videos')">
+              <v-icon>play_circle_fill</v-icon>
+            </v-list-tile-action>
 
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Videos">Videos</translate>
-              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate key="Videos">Videos</translate>
+                <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos }}</span>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </template>
 
         <v-list-tile to="/favorites" class="nav-favorites" @click.stop="">
           <v-list-tile-action :title="$gettext('Favorites')">

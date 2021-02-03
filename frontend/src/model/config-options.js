@@ -47,6 +47,7 @@ export class ConfigOptions extends Model {
       DisablePlaces: config.values.disable.places,
       DisableExifTool: config.values.disable.exiftool,
       DisableTensorFlow: config.values.disable.tensorflow,
+      DisableVideos: config.values.disable.videos,
       DetectNSFW: false,
       UploadNSFW: config.values.uploadNSFW,
       DarktablePresets: false,

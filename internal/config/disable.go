@@ -41,3 +41,8 @@ func (c *Config) DisableExifTool() bool {
 func (c *Config) DisableTensorFlow() bool {
 	return c.options.DisableTensorFlow
 }
+
+// DisableVideos tests if users should not be allowed to view videos.
+func (c *Config) DisableVideos() bool {
+	return c.options.DisableVideos
+}

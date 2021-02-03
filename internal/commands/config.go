@@ -65,6 +65,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-settings", conf.DisableSettings())
 	fmt.Printf("%-25s %t\n", "disable-places", conf.DisablePlaces())
 	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
+	fmt.Printf("%-25s %t\n", "disable-videos", conf.DisableVideos())
 
 	// Everything related to TensorFlow.
 	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())

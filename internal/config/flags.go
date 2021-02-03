@@ -152,6 +152,11 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
 	},
 	cli.BoolFlag{
+		Name:   "disable-videos",
+		Usage:  "users can not see the videos option in the sidebar",
+		EnvVar: "PHOTOPRISM_DISABLE_VIDEOS",
+	},
+	cli.BoolFlag{
 		Name:   "detect-nsfw",
 		Usage:  "flag photos as private that may be offensive (requires TensorFlow)",
 		EnvVar: "PHOTOPRISM_DETECT_NSFW",
