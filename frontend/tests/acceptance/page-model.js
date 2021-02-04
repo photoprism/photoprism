@@ -328,4 +328,11 @@ export default class Page {
       .contains(extension);
     await logger.clear();
   }
+
+  async login(username, password) {
+    await t
+      .typeText(Selector(".input-name input"), username, { replace: true })
+      .typeText(Selector(".input-password input"), password, { replace: true })
+      .click(Selector(".action-confirm"));
+  }
 }
