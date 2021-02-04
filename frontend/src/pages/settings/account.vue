@@ -12,6 +12,7 @@
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('Current Password')"
+                  class="input-current-password"
                   color="secondary-dark"
                   placeholder="••••••••"
               ></v-text-field>
@@ -25,6 +26,7 @@
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('New Password')"
+                  class="input-new-password"
                   color="secondary-dark"
                   placeholder="••••••••"
                   :hint="$gettext('At least 6 characters.')"
@@ -39,6 +41,7 @@
                   :disabled="busy"
                   browser-autocomplete="off"
                   :label="$gettext('Retype Password')"
+                  class="input-retype-password"
                   color="secondary-dark"
                   placeholder="••••••••"
                   :hint="$gettext('Please confirm your new password.')"
