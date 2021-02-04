@@ -370,6 +370,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -442,6 +443,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -564,6 +566,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
