@@ -11,7 +11,7 @@ if [[ ${UID} ]] && [[ ${GID} ]] && [[ ${UID} != "0" ]] && [[ $(id -u) = "0" ]]; 
 
   if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]] ; then
     echo "entrypoint: updating storage permissions"
-    chown -Rf photoprism /photoprism/storage /photoprism/assets /var/lib/photoprism /tmp/photoprism
+    chown -Rf photoprism /photoprism/storage /photoprism/import /photoprism/assets /var/lib/photoprism /tmp/photoprism
   fi
 
   echo "entrypoint: uid ${UID}:${GID}"
@@ -23,7 +23,7 @@ elif [[ ${UID} ]] && [[ ${UID} != "0" ]] && [[ $(id -u) = "0" ]]; then
 
   if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]] ; then
     echo "entrypoint: updating storage permissions"
-    chown -Rf photoprism /photoprism/storage /photoprism/assets /var/lib/photoprism /tmp/photoprism
+    chown -Rf photoprism /photoprism/storage /photoprism/import /photoprism/assets /var/lib/photoprism /tmp/photoprism
   fi
 
   echo "entrypoint: uid ${UID}"
