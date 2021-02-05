@@ -77,7 +77,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 	result = IndexMain(&related, ind, opt)
 
 	if result.Failed() {
-		log.Error(result.Err)
+		log.Warn(result.Err)
 		return result
 	} else if !result.Success() || result.Stacked() {
 		// Skip related files if main file was stacked or indexing was not completely successful.
