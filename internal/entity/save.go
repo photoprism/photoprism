@@ -37,13 +37,15 @@ func Update(m interface{}, primaryKeys ...string) (err error) {
 
 	v := reflect.ValueOf(m).Elem()
 
+	// Abort if a primary key is zero.
 	for _, k := range primaryKeys {
 		if field := v.FieldByName(k); field.IsZero() {
 			return fmt.Errorf("key '%s' not found", k)
 		}
 	}
 
-	if res := UnscopedDb().Model(m).Omit(primaryKeys...).Updates(m); res.Error != nil {
+	// Update all values except primary keys.
+	if res := UnscopedDb().Model(m).Select("*").Omit(primaryKeys...).Updates(m); res.Error != nil {
 		return res.Error
 	} else if res.RowsAffected == 0 {
 		return fmt.Errorf("no entity found for updating")
