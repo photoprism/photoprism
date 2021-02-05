@@ -168,7 +168,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile to="/videos" class="nav-video" @click.stop="">
+        <v-list-tile v-show="config.count.videos > 0" to="/videos" class="nav-video" @click.stop="">
           <v-list-tile-action :title="$gettext('Videos')">
             <v-icon>play_circle_fill</v-icon>
           </v-list-tile-action>
@@ -176,7 +176,7 @@
           <v-list-tile-content>
             <v-list-tile-title>
               <translate key="Videos">Videos</translate>
-              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos }}</span>
+              <span :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
