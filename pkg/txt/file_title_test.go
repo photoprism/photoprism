@@ -110,4 +110,7 @@ func TestFileTitle(t *testing.T) {
 	t.Run("Screenshot", func(t *testing.T) {
 		assert.Equal(t, "Screenshot", FileTitle("Screenshot 2020-05-04 at 14:25:01.jpeg"))
 	})
+	t.Run("HD", func(t *testing.T) {
+		assert.Equal(t, "Desktop Nebula HD Wallpapers", FileTitle("Desktop-Nebula-hd-Wallpapers.jpeg"))
+	})
 }
