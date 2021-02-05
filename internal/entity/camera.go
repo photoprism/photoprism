@@ -35,7 +35,10 @@ var UnknownCamera = Camera{
 }
 
 var CameraMakes = map[string]string{
+	"OLYMPUS":                 "Olympus",
 	"OLYMPUS CORPORATION":     "Olympus",
+	"OLYMPUS DIGITAL CAMERA":  "Olympus",
+	"OLYMPUS IMAGING CORP.":   "Olympus",
 	"OLYMPUS OPTICAL CO.,LTD": "Olympus",
 	"samsung":                 "Samsung",
 }
