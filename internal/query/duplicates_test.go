@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCleanDuplicates(t *testing.T) {
+func TestPurgeDuplicates(t *testing.T) {
 	fileName := "hd89e5yhb8p9h.jpg"
 
 	if err := entity.AddDuplicate(
@@ -27,7 +27,7 @@ func TestCleanDuplicates(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := CleanDuplicates()
+	err := PurgeDuplicates()
 
 	assert.NoError(t, err)
 
