@@ -8,11 +8,11 @@ const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
   logResponseBody: true,
 });
 
-fixture`Test photos download`.page`${testcafeconfig.url}`.requestHooks(logger);
+fixture`Test photos download`.page`${testcafeconfig.url}`.requestHooks(logger).skip;
 
 const page = new Page();
 //TODO Make those run from within the container
-test.skip.meta("testID", "photos-download-001")(
+test.meta("testID", "photos-download-001")(
   "Test download jpg file from context menu and fullscreen",
   async (t) => {
     await page.search("name:monochrome-2.jpg");
@@ -41,7 +41,7 @@ test.skip.meta("testID", "photos-download-001")(
   }
 );
 
-test.skip.meta("testID", "photos-download-002")(
+test.meta("testID", "photos-download-002")(
   "Test download video from context menu",
   async (t) => {
     await page.openNav();
@@ -61,7 +61,7 @@ test.skip.meta("testID", "photos-download-002")(
   }
 );
 
-test.skip.meta("testID", "photos-download-003")(
+test.meta("testID", "photos-download-003")(
   "Test download multiple jpg files from context menu",
   async (t) => {
     await page.search("name:panorama_2.jpg");
@@ -82,7 +82,7 @@ test.skip.meta("testID", "photos-download-003")(
 );
 
 //TODO Check RAW files as well
-test.skip.meta("testID", "photos-download-004")(
+test.meta("testID", "photos-download-004")(
   "Test raw file from context menu and fullscreen mode",
   async (t) => {
     await page.openNav();

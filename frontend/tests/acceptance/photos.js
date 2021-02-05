@@ -314,51 +314,10 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
     .eql("New Photo Title");
   await page.selectPhotoFromUID(FirstPhoto);
   await page.editSelected();
-  await t
-    .expect(Selector(".input-title input").value)
-    .eql("New Photo Title")
-    .expect(Selector(".input-timezone input").value)
-    .eql("Europe/Moscow")
-    .expect(Selector(".input-local-time input").value)
-    .eql("04:30:30")
-    .expect(Selector(".input-utc-time input").value)
-    .eql("01:30:30")
-    .expect(Selector(".input-day input").value)
-    .eql("15")
-    .expect(Selector(".input-month input").value)
-    .eql("07")
-    .expect(Selector(".input-year input").value)
-    .eql("2019")
-    .expect(Selector(".input-altitude input").value)
-    .eql("-1")
-    .expect(Selector("div").withText("Albania").visible)
-    .ok()
-    //.expect(Selector('div').withText('Apple iPhone 6').visible).ok()
-    //.expect(Selector('div').withText('Apple iPhone 5s back camera 4.15mm f/2.2').visible).ok()
-    .expect(Selector(".input-iso input").value)
-    .eql("32")
-    .expect(Selector(".input-exposure input").value)
-    .eql("1/32")
-    .expect(Selector(".input-fnumber input").value)
-    .eql("29")
-    .expect(Selector(".input-focal-length input").value)
-    .eql("33")
-    .expect(Selector(".input-subject textarea").value)
-    .eql("Super nice edited photo")
-    .expect(Selector(".input-artist input").value)
-    .eql("Happy")
-    .expect(Selector(".input-copyright input").value)
-    .eql("Happy2020")
-    .expect(Selector(".input-license textarea").value)
-    .eql("Super nice cat license")
-    .expect(Selector(".input-description textarea").value)
-    .eql("Description of a nice image :)")
-    .expect(Selector(".input-description textarea").value)
-    .eql("Description of a nice image :)")
-    .expect(Selector(".input-notes textarea").value)
-    .contains("Some notes")
-    .expect(Selector(".input-keywords textarea").value)
-    .contains("cat");
+  await page.checkEditFormValues("New Photo Title", "15", "07", "2019", "04:30:30",
+      "01:30:30", "Europe/Moscow", "Albania", "-1", "", "", "",
+      "32", "1/32", "",  "29", "33", "Super nice edited photo", "Happy",
+      "Happy2020", "Super nice cat license", "Description of a nice image :)", "cat", "");
   if (FirstPhotoTitle.empty || FirstPhotoTitle === "") {
     await t.click(Selector(".input-title input")).pressKey("ctrl+a delete");
   } else {

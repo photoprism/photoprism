@@ -335,4 +335,104 @@ export default class Page {
       .typeText(Selector(".input-password input"), password, { replace: true })
       .click(Selector(".action-confirm"));
   }
+
+  async checkEditFormValues(
+    title,
+    day,
+    month,
+    year,
+    localTime,
+    utcTime,
+    timezone,
+    country,
+    altitude,
+    lat,
+    lng,
+    camera,
+    iso,
+    exposure,
+    lens,
+    fnumber,
+    flength,
+    subject,
+    artist,
+    copyright,
+    license,
+    description,
+    keywords,
+    notes
+  ) {
+    if (title !== "") {
+      await t.expect(Selector(".input-title input").value).eql(title);
+    }
+    if (day !== "") {
+      await t.expect(Selector(".input-day input").value).eql(day);
+    }
+    if (month !== "") {
+      await t.expect(Selector(".input-month input").value).eql(month);
+    }
+    if (year !== "") {
+      await t.expect(Selector(".input-year input").value).eql(year);
+    }
+    if (timezone !== "") {
+      await t.expect(Selector(".input-timezone input").value).eql(timezone);
+    }
+    if (localTime !== "") {
+      await t.expect(Selector(".input-local-time input").value).eql(localTime);
+    }
+    if (utcTime !== "") {
+      await t.expect(Selector(".input-utc-time input").value).eql(utcTime);
+    }
+    if (altitude !== "") {
+      await t.expect(Selector(".input-altitude input").value).eql(altitude);
+    }
+    if (country !== "") {
+      await t.expect(Selector("div").withText(country).visible).ok();
+    }
+    if (lat !== "") {
+      await t.expect(Selector(".input-latitude input").value).eql(lat);
+    }
+    if (lng !== "") {
+      await t.expect(Selector(".input-longitude input").value).eql(lng);
+    }
+    if (camera !== "") {
+      await t.expect(Selector("div").withText(camera).visible).ok();
+    }
+    if (lens !== "") {
+      await t.expect(Selector("div").withText(lens).visible).ok();
+    }
+    if (iso !== "") {
+      await t.expect(Selector(".input-iso input").value).eql(iso);
+    }
+    if (exposure !== "") {
+      await t.expect(Selector(".input-exposure input").value).eql(exposure);
+    }
+    if (fnumber !== "") {
+      await t.expect(Selector(".input-fnumber input").value).eql(fnumber);
+    }
+    if (flength !== "") {
+      await t.expect(Selector(".input-focal-length input").value).eql(flength);
+    }
+    if (subject !== "") {
+      await t.expect(Selector(".input-subject textarea").value).eql(subject);
+    }
+    if (artist !== "") {
+      await t.expect(Selector(".input-artist input").value).eql(artist);
+    }
+    if (copyright !== "") {
+      await t.expect(Selector(".input-copyright input").value).eql(copyright);
+    }
+    if (license !== "") {
+      await t.expect(Selector(".input-license textarea").value).eql(license);
+    }
+    if (description !== "") {
+      await t.expect(Selector(".input-description textarea").value).eql(description);
+    }
+    if (notes !== "") {
+      await t.expect(Selector(".input-notes textarea").value).contains(notes);
+    }
+    if (keywords !== "") {
+      await t.expect(Selector(".input-keywords textarea").value).contains(keywords);
+    }
+  }
 }
