@@ -88,6 +88,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 			} else {
+				log.Warnf("import: %s", err)
+
 				// Try to add duplicates to selected album(s) as well, see #991.
 				if fileHash := f.Hash(); fileHash == "" {
 					// Do nothing.
