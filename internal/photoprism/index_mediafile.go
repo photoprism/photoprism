@@ -285,16 +285,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore photos that have been purged automatically.
 		photo.DeletedAt = nil
-	} else if photo.DeletedAt != nil {
-		// Don't waste time indexing deleted / archived photos.
-		result.Status = IndexArchived
-
-		// Remove missing flag from file.
-		if err = file.Undelete(); err != nil {
-			log.Errorf("index: %s in %s (undelete)", err.Error(), logName)
-		}
-
-		return result
 	}
 
 	// Handle file types.
