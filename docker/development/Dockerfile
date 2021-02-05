@@ -131,7 +131,8 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-ou
     env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk && \
     env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo && \
     env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu && \
-    echo "alias go=richgo" > /root/.bash_aliases
+    echo "alias go=richgo" > /root/.bash_aliases && \
+    cp /go/bin/gosu /bin/gosu
 
 # Create photoprism user and directory for deployment
 RUN useradd photoprism -m -d /photoprism && \
