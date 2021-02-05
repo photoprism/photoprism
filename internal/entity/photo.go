@@ -238,7 +238,7 @@ func (m *Photo) Save() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
 
-	if err := Save(m, "ID"); err == nil {
+	if err := Save(m, "ID"); err != nil {
 		return err
 	}
 
