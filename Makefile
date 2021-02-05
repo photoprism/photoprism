@@ -182,6 +182,13 @@ docker-photoprism-arm64-preview:
 docker-photoprism-arm64:
 	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
+docker-photoprism-arm32-preview:
+	docker pull ubuntu:20.04
+	scripts/docker-build.sh photoprism-arm32
+	scripts/docker-push.sh photoprism-arm32
+docker-photoprism-arm32:
+	scripts/docker-build.sh photoprism-arm32 $(DOCKER_TAG)
+	scripts/docker-push.sh photoprism-arm32 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
