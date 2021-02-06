@@ -265,6 +265,11 @@ func (c *Config) Debug() bool {
 	return c.options.Debug
 }
 
+// Test tests if test mode is enabled.
+func (c *Config) Test() bool {
+	return c.options.Test
+}
+
 // Demo tests if demo mode is enabled.
 func (c *Config) Demo() bool {
 	return c.options.Demo
@@ -272,7 +277,7 @@ func (c *Config) Demo() bool {
 
 // Sponsor reports if your continuous support helps to pay for development and operating expenses.
 func (c *Config) Sponsor() bool {
-	return c.options.Sponsor
+	return c.options.Sponsor || c.Test()
 }
 
 // Public tests if app runs in public mode and requires no authentication.

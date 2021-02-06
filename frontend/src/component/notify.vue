@@ -45,15 +45,22 @@ export default {
     onNotify: function (ev, data) {
       const type = ev.split('.')[1];
 
-      // get message from data object
+      // Get the message.
       let m = data.message;
 
+      // Skip empty messages.
       if (!m || !m.length) {
         console.warn("notify: empty message");
         return;
       }
 
-      // first letter uppercase
+      // Log notifications in test mode.
+      if (this.$config.test) {
+        console.log(type + ": " + m.toLowerCase());
+        return;
+      }
+
+      // First letter of the message should be uppercase.
       m = m.replace(/^./, m[0].toUpperCase());
 
       switch (type) {

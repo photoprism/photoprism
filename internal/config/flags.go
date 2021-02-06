@@ -13,6 +13,11 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
+		Name:   "test",
+		Hidden: true,
+		Usage:  "run in test mode",
+	},
+	cli.BoolFlag{
 		Name:   "demo",
 		Hidden: true,
 		Usage:  "run in demo mode",

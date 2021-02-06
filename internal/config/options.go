@@ -34,6 +34,7 @@ type Options struct {
 	Version           string `json:"-"`
 	Copyright         string `json:"-"`
 	Debug             bool   `yaml:"Debug" json:"Debug" flag:"debug"`
+	Test              bool   `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Demo              bool   `yaml:"Demo" json:"-" flag:"demo"`
 	Sponsor           bool   `yaml:"-" json:"-" flag:"sponsor"`
 	Public            bool   `yaml:"Public" json:"-" flag:"public"`
