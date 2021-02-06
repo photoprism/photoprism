@@ -28,7 +28,7 @@ var indexFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "cleanup",
-		Usage: "removes orphaned thumbnails and index entries",
+		Usage: "removes orphan index entries and thumbnails",
 	},
 }
 
@@ -95,7 +95,7 @@ func indexAction(ctx *cli.Context) error {
 		if thumbs, orphans, err := cleanUp.Start(opt); err != nil {
 			return err
 		} else {
-			log.Infof("cleanup: removed %d orphaned thumbnails and %d photos", thumbs, orphans)
+			log.Infof("cleanup: removed %d index entries and %d orphan thumbnails", orphans, thumbs)
 		}
 	}
 

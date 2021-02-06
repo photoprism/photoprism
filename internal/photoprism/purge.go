@@ -251,12 +251,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		return purgedFiles, purgedPhotos, err
 	}
 
-	if err := query.PurgeDuplicates(); err != nil {
-		log.Errorf("purge: %s (duplicates)", err)
-	}
-
-	if err := query.PurgeUnusedCountries(); err != nil {
-		log.Errorf("purge: %s (countries)", err)
+	if err := query.PurgeOrphans(); err != nil {
+		log.Errorf("purge: %s (orphans)", err)
 	}
 
 	if err := query.UpdateMissingAlbumEntries(); err != nil {

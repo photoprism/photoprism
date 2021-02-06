@@ -50,7 +50,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(albumCover, uid, typeName)
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -160,7 +160,7 @@ func LabelCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(labelCover, uid, typeName)
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 

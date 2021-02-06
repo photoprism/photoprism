@@ -33,7 +33,7 @@ func NewCleanUp(conf *config.Config) *CleanUp {
 	return instance
 }
 
-// Start removes orphaned thumbnails and index entries.
+// Start removes orphan index entries and thumbnails.
 func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -53,7 +53,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		log.Infof("cleanup: dry run, nothing will actually be removed")
 	}
 
-	// Find and remove orphaned thumbnail thumbs.
+	// Find and remove orphan thumbnail files.
 	hashes, err := query.FileHashes()
 
 	if err != nil {
@@ -82,12 +82,12 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 			// Do nothing.
 		} else if opt.Dry {
 			thumbs++
-			log.Debugf("cleanup: orphaned thumbnail %s would be removed", logName)
+			log.Debugf("cleanup: orphan thumbnail %s would be removed", logName)
 		} else if err := os.Remove(fileName); err != nil {
 			log.Warnf("cleanup: %s in %s", err, logName)
 		} else {
 			thumbs++
-			log.Debugf("cleanup: removed orphaned thumbnail %s", logName)
+			log.Debugf("cleanup: removed orphan thumbnail %s", logName)
 		}
 
 		return nil
@@ -95,8 +95,8 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		return thumbs, orphans, err
 	}
 
-	// Find and remove orphaned photo index entries without thumbs.
-	photos, err := query.PhotosOrphaned()
+	// Find and remove orphan photo index entries.
+	photos, err := query.OrphanPhotos()
 
 	if err != nil {
 		return thumbs, orphans, err
@@ -111,17 +111,21 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 
 		if opt.Dry {
 			orphans++
-			log.Infof("cleanup: orphaned photo %s would be removed", txt.Quote(p.PhotoUID))
+			log.Infof("cleanup: orphan photo %s would be removed", txt.Quote(p.PhotoUID))
 			continue
 		}
 
 		if err := Delete(p); err != nil {
-			log.Errorf("cleanup: %s (remove orphan)", err.Error())
+			log.Errorf("cleanup: %s (remove orphan photo)", err.Error())
 		} else {
 			orphans++
 			deleted = append(deleted, p.PhotoUID)
-			log.Debugf("cleanup: removed orphaned photo %s", p.PhotoUID)
+			log.Debugf("cleanup: removed orphan photo %s", p.PhotoUID)
 		}
+	}
+
+	if err := query.PurgeOrphans(); err != nil {
+		log.Errorf("cleanup: %s (purge orphans)", err)
 	}
 
 	// Update counts and views if needed.

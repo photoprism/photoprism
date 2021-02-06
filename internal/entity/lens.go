@@ -96,9 +96,16 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		return &UnknownLens
 	}
 
+	if cacheData, ok := lensCache.Get(m.LensSlug); ok {
+		log.Debugf("lens: cache hit for %s", m.LensSlug)
+
+		return cacheData.(*Lens)
+	}
+
 	result := Lens{}
 
 	if res := Db().Where("lens_slug = ?", m.LensSlug).First(&result); res.Error == nil {
+		lensCache.SetDefault(m.LensSlug, &result)
 		return &result
 	} else if err := m.Create(); err == nil {
 		if !m.Unknown() {
@@ -109,8 +116,11 @@ func FirstOrCreateLens(m *Lens) *Lens {
 			})
 		}
 
+		lensCache.SetDefault(m.LensSlug, m)
+
 		return m
 	} else if res := Db().Where("lens_slug = ?", m.LensSlug).First(&result); res.Error == nil {
+		lensCache.SetDefault(m.LensSlug, &result)
 		return &result
 	} else {
 		log.Errorf("lens: %s (create %s)", err.Error(), txt.Quote(m.String()))

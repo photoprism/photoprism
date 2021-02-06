@@ -17,7 +17,7 @@ func TestSavePhotoForm(t *testing.T) {
 			TakenSrc:         "manual",
 			TimeZone:         "test",
 			PhotoTitle:       "Pink beach",
-			TitleSrc:         "manual",
+			TitleSrc:         SrcManual,
 			PhotoFavorite:    true,
 			PhotoPrivate:     true,
 			PhotoType:        "image",
@@ -29,10 +29,10 @@ func TestSavePhotoForm(t *testing.T) {
 			PhotoFNumber:     3.3,
 			PhotoExposure:    "exposure",
 			CameraID:         uint(3),
-			CameraSrc:        "meta",
+			CameraSrc:        SrcMeta,
 			LensID:           uint(6),
 			CellID:           "1234",
-			PlaceSrc:         "manual",
+			PlaceSrc:         SrcManual,
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Details: form.Details{
@@ -46,11 +46,9 @@ func TestSavePhotoForm(t *testing.T) {
 			},
 		}
 
-		m := PhotoFixtures["Photo08"]
+		m := PhotoFixtures.Get("Photo08")
 
-		err := SavePhotoForm(m, f)
-
-		if err != nil {
+		if err := SavePhotoForm(m, f); err != nil {
 			t.Fatal(err)
 		}
 
@@ -864,7 +862,7 @@ func TestPhoto_Save(t *testing.T) {
 
 func TestPhoto_Find(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		photo := Photo{PhotoUID: "567", ID: 55, PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
+		photo := Photo{PhotoUID: "pt9atdre2lvl0yhx", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)

@@ -66,9 +66,16 @@ func (m *Country) Create() error {
 
 // FirstOrCreateCountry returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateCountry(m *Country) *Country {
+	if cacheData, ok := countryCache.Get(m.ID); ok {
+		log.Debugf("country: cache hit for %s", m.ID)
+
+		return cacheData.(*Country)
+	}
+
 	result := Country{}
 
 	if findErr := Db().Where("id = ?", m.ID).First(&result).Error; findErr == nil {
+		countryCache.SetDefault(m.ID, &result)
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		if !m.Unknown() {
@@ -78,15 +85,16 @@ func FirstOrCreateCountry(m *Country) *Country {
 				"count": 1,
 			})
 		}
-
+		countryCache.SetDefault(m.ID, m)
 		return m
 	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		countryCache.SetDefault(m.ID, &result)
 		return &result
 	} else {
 		log.Errorf("country: %s (find or create %s)", createErr, m.ID)
 	}
 
-	return nil
+	return &UnknownCountry
 }
 
 // AfterCreate sets the New column used for database callback

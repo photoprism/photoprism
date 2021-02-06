@@ -238,7 +238,7 @@ func (m *Photo) Save() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
 
-	if err := Save(m, "ID"); err != nil {
+	if err := Save(m, "ID", "PhotoUID"); err != nil {
 		return err
 	}
 
@@ -606,6 +606,16 @@ func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
 }
 
+// UnknownCamera test if the camera is unknown.
+func (m *Photo) UnknownCamera() bool {
+	return m.CameraID == 0 || m.CameraID == UnknownCamera.ID
+}
+
+// UnknownLens test if the lens is unknown.
+func (m *Photo) UnknownLens() bool {
+	return m.LensID == 0 || m.LensID == UnknownLens.ID
+}
+
 // HasTitle checks if the photo has a title.
 func (m *Photo) HasTitle() bool {
 	return m.PhotoTitle != ""
@@ -938,6 +948,66 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 	m.PhotoLng = lng
 	m.PhotoAltitude = altitude
 	m.PlaceSrc = source
+}
+
+// SetCamera updates the camera.
+func (m *Photo) SetCamera(camera *Camera, source string) {
+	if camera == nil {
+		log.Warnf("photo: failed updating camera from source '%s'", source)
+		return
+	}
+
+	if camera.Unknown() {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.CameraSrc] && !m.UnknownCamera() {
+		return
+	}
+
+	m.CameraID = camera.ID
+	m.Camera = camera
+	m.CameraSrc = source
+}
+
+// SetLens updates the lens.
+func (m *Photo) SetLens(lens *Lens, source string) {
+	if lens == nil {
+		log.Warnf("photo: failed updating lens from source '%s'", source)
+		return
+	}
+
+	if lens.Unknown() {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.CameraSrc] && !m.UnknownLens() {
+		return
+	}
+
+	m.LensID = lens.ID
+	m.Lens = lens
+}
+
+// SetExposure updates the photo exposure details.
+func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure, source string) {
+	hasPriority := SrcPriority[source] >= SrcPriority[m.CameraSrc]
+
+	if focalLength > 0 && (hasPriority || m.PhotoFocalLength <= 0) {
+		m.PhotoFocalLength = focalLength
+	}
+
+	if fNumber > 0 && (hasPriority || m.PhotoFNumber <= 0) {
+		m.PhotoFNumber = fNumber
+	}
+
+	if iso > 0 && (hasPriority || m.PhotoIso <= 0) {
+		m.PhotoIso = iso
+	}
+
+	if exposure != "" && (hasPriority || m.PhotoExposure == "") {
+		m.PhotoExposure = exposure
+	}
 }
 
 // AllFilesMissing returns true, if all files for this photo are missing.

@@ -118,8 +118,8 @@ func PhotosCheck(limit, offset int, delay time.Duration) (entities entity.Photos
 	return entities, err
 }
 
-// PhotosOrphaned finds orphaned index entries that may be removed.
-func PhotosOrphaned() (photos entity.Photos, err error) {
+// OrphanPhotos finds orphan index entries that may be removed.
+func OrphanPhotos() (photos entity.Photos, err error) {
 	err = UnscopedDb().
 		Raw(`SELECT * FROM photos WHERE 
 			deleted_at IS NOT NULL 
