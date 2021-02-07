@@ -87,6 +87,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.GetFoldersOriginals(v1)
 		api.GetFoldersImport(v1)
+		api.GetFolderCover(v1)
 
 		api.Upload(v1)
 		api.StartImport(v1)

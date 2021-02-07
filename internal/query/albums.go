@@ -54,10 +54,10 @@ func AlbumByUID(albumUID string) (album entity.Album, err error) {
 }
 
 // AlbumCoverByUID returns a album preview file based on the uid.
-func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
+func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	a := entity.Album{}
 
-	if err := Db().Where("album_uid = ?", albumUID).First(&a).Error; err != nil {
+	if err := Db().Where("album_uid = ?", uid).First(&a).Error; err != nil {
 		return file, err
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
 		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
@@ -78,7 +78,7 @@ func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
 	}
 
 	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
-		Joins("JOIN albums ON albums.album_uid = ?", albumUID).
+		Joins("JOIN albums ON albums.album_uid = ?", uid).
 		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos.taken_at DESC").

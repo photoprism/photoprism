@@ -6,6 +6,7 @@ import (
 
 var FolderFixtures = map[string]Folder{
 	"1990": {
+		FolderUID:     "dqo63pn35k2d495z",
 		Path:          "1990",
 		FolderYear:    1990,
 		FolderMonth:   0,
@@ -15,6 +16,7 @@ var FolderFixtures = map[string]Folder{
 		DeletedAt:     nil,
 	},
 	"1990/04": {
+		FolderUID:     "dqo63pn2f87f02xj",
 		Path:          "1990/04",
 		FolderYear:    1990,
 		FolderMonth:   4,

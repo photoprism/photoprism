@@ -32,6 +32,21 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	return folders, nil
 }
 
+// FolderCoverByUID returns a folder preview file based on the uid.
+func FolderCoverByUID(uid string) (file entity.File, err error) {
+	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
+		Joins("JOIN folders ON photos.photo_path = folders.path AND folders.folder_uid = ?", uid).
+		Order("photos.photo_quality DESC").
+		Limit(1).
+		First(&file).Error; err != nil {
+		log.Error(err)
+		return file, err
+	}
+
+	return file, nil
+}
+
 // AlbumFolders returns folders that should be added as album.
 func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 	db := UnscopedDb().Table("folders").
