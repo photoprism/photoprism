@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+var UnknownCountry = "zz"
 var CountryWordsRegexp = regexp.MustCompile("[\\p{L}]{2,}")
 
 // Int returns a string as int or 0 if it can not be converted.
@@ -39,9 +40,11 @@ func IsUInt(s string) bool {
 }
 
 // CountryCode tries to find a matching country code for a given string e.g. from a file oder directory name.
-func CountryCode(s string) string {
-	if s == "zz" {
-		return "zz"
+func CountryCode(s string) (code string) {
+	code = UnknownCountry
+
+	if s == "" || s == UnknownCountry {
+		return code
 	}
 
 	words := CountryWordsRegexp.FindAllString(s, -1)
@@ -50,17 +53,17 @@ func CountryCode(s string) string {
 		if i < len(words)-1 {
 			search := strings.ToLower(w + " " + words[i+1])
 
-			if code, ok := Countries[search]; ok {
-				return code
+			if match, ok := Countries[search]; ok {
+				return match
 			}
 		}
 
 		search := strings.ToLower(w)
 
-		if code, ok := Countries[search]; ok {
-			return code
+		if match, ok := Countries[search]; ok {
+			code = match
 		}
 	}
 
-	return "zz"
+	return code
 }
