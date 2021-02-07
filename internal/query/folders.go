@@ -40,7 +40,6 @@ func FolderCoverByUID(uid string) (file entity.File, err error) {
 		Order("photos.photo_quality DESC").
 		Limit(1).
 		First(&file).Error; err != nil {
-		log.Error(err)
 		return file, err
 	}
 
