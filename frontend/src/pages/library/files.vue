@@ -144,7 +144,7 @@ export default {
       path: "",
       page: 0,
       files: {
-        limit: Folder.limit(),
+        limit: 999,
         offset: 0,
       },
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
