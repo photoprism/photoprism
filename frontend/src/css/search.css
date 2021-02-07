@@ -1,3 +1,16 @@
+/* PhotoPrism Search Result Styles */
+
+/*
+"content-visibility" enables the user agent to skip an element's
+rendering work, including layout and painting, until it is needed:
+- https://web.dev/content-visibility/
+- https://developers.google.com/web/updates/2016/06/css-containment
+*/
+#photoprism .search-results .result {
+    content-visibility: auto;
+    contain: layout style paint;
+}
+
 #photoprism .cards-view,
 #photoprism .mosaic-view,
 #photoprism .cards-view .v-card,
