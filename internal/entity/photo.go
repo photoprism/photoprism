@@ -1182,9 +1182,9 @@ func (m *Photo) SetPrimary(fileUID string) error {
 		return fmt.Errorf("file uid is empty")
 	}
 
-	Db().Model(File{}).Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", false)
+	Db().Model(File{}).Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", 0)
 
-	if err := Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", true).Error; err != nil {
+	if err := Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", 1).Error; err != nil {
 		return err
 	} else if m.PhotoQuality < 0 {
 		m.PhotoQuality = 0

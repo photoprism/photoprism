@@ -137,7 +137,7 @@ func FixPrimaries() error {
 	if err := UnscopedDb().
 		Raw(`SELECT * FROM photos WHERE 
 			deleted_at IS NULL 
-			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = true)`).
+			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1)`).
 		Find(&photos).Error; err != nil {
 		return err
 	}
