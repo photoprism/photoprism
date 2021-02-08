@@ -36,11 +36,10 @@ https://docs.photoprism.org/developer-guide/
 @import url("navigation.css");
 @import url("logs.css");
 @import url("visibility.css");
-@import url("tables.css");
-@import url("video.css");
-@import url("maps.css");
 @import url("viewer.css");
-@import url("search.css");
+@import url("tables.css");
+@import url("results.css");
+@import url("maps.css");
 @import url("labels.css");
 @import url("files.css");
 @import url("help.css");

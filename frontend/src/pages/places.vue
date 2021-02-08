@@ -197,7 +197,7 @@ export default {
         const selected = this.photos[index];
 
         if (selected.Type === TypeVideo || selected.Type === TypeLive) {
-          this.$modal.show('video', {video: selected, album: null});
+          this.$viewer.play({video: selected});
         } else {
           this.$viewer.show(Thumb.fromPhotos(this.photos), index);
         }

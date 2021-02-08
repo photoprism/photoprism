@@ -12,8 +12,8 @@
       </v-content>
     </v-app>
 
+    <p-video-viewer></p-video-viewer>
     <p-photo-viewer></p-photo-viewer>
-    <p-video-dialog></p-video-dialog>
   </div>
 </template>
 

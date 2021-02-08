@@ -1,11 +1,14 @@
 <template>
-  <video ref="player" class="p-video-player" :height="height" :width="width" :autoplay="autoplay"
-         :preload="preload"></video>
+  <div class="video-wrapper" :style="style">
+    <video :key="source" ref="video" class="video-player" :height="height" :width="width" :autoplay="autoplay"
+           :style="style" :poster="poster" :loop="loop" preload="auto" controls playsinline @click.stop
+           @keydown.esc.stop.prevent="$emit('close')">
+      <source :src="source">
+    </video>
+  </div>
 </template>
 
 <script>
-import "mediaelement";
-
 export default {
   name: "PPhotoPlayer",
   props: {
@@ -14,20 +17,25 @@ export default {
       required: false,
       default: false
     },
+    poster: {
+      type: String,
+      required: true,
+      default: ""
+    },
     source: {
       type: String,
       required: true,
       default: ""
     },
     width: {
-      type: String,
+      type: Number,
       required: false,
-      default: "auto"
+      default: 640
     },
     height: {
-      type: String,
+      type: Number,
       required: false,
-      default: "auto"
+      default: 480
     },
     preload: {
       type: String,
@@ -59,12 +67,12 @@ export default {
   },
   data: () => ({
     refresh: false,
-    player: null,
+    style: `width: 90vw; height: 90vh`,
   }),
   watch: {
-    source: function (source) {
-      if (source) {
-        this.setSource(source);
+    source: function (src) {
+      if (src) {
+        this.setSrc(src);
       }
     },
   },
@@ -77,64 +85,47 @@ export default {
     this.remove();
   },
   methods: {
+    videoEl() {
+      return this.$refs.video.$el;
+    },
+    updateStyle() {
+      this.style = `width: ${this.width.toString()}px; height: ${this.height.toString()}px`;
+      this.$el.style.cssText = this.style;
+    },
     render() {
-      const {MediaElementPlayer} = global;
-
-      const self = this;
-      this.player = new MediaElementPlayer(this.$el, {
-        videoWidth: this.width,
-        videoHeight: this.height,
-        pluginPath: "/static/build/",
-        shimScriptAccess: "always",
-        forceLive: false,
-        loop: this.loop,
-        stretching: true,
-        autoplay: true,
-        preload: "auto",
-        setDimensions: true,
-        success: (mediaElement, originalNode, instance) => {
-          instance.setSrc(self.source);
-          this.success(mediaElement, originalNode, instance);
-          mediaElement.addEventListener(Hls.Events.MEDIA_ATTACHED, function () {
-          });
-        },
-        error: (e) => {
-          // console.log(e);
-        }
-      });
+      this.updateStyle();
     },
     remove() {
-      if (this.player) {
-        this.player.pause();
-        this.player.remove();
-        this.player = null;
-      }
-    },
-    setSource(src) {
-      if (!this.player) {
-        console.log('source: player not initialized');
-        return;
-      }
+      const el = this.videoEl();
+      if (!el) return;
 
+      this.videoEl().pause();
+    },
+    fullscreen() {
+      const el = this.videoEl();
+      if (!el) return;
+
+      el.requestFullscreen();
+    },
+    setSrc(src) {
       if (!src) {
         return;
       }
 
-      this.player.height = this.height;
-      this.player.width = this.width;
-      this.player.videoHeight = this.height;
-      this.player.videoWidth = this.width;
-      this.player.loop = this.loop;
-      this.$el.style.cssText = "width: " + this.width + "px; height: " + this.height + "px;";
+      this.updateStyle();
 
-      this.player.setSrc(src);
-      this.player.setPoster("");
-      this.player.load();
+      const el = this.videoEl();
+      if (!el) return;
+
+      el.src = src;
+      el.poster = this.poster;
+      el.play();
     },
     pause() {
-      if (this.player) {
-        this.player.pause();
-      }
+      const el = this.videoEl();
+      if (!el) return;
+
+      el.pause();
     },
   },
 };

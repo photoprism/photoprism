@@ -43,7 +43,7 @@ class Viewer {
 
   getEl() {
     if (!this.el) {
-      this.el = document.getElementById("p-photo-viewer");
+      this.el = document.getElementById("photo-viewer");
 
       if (this.el === null) {
         let err = "no photo viewer element found";
@@ -53,6 +53,10 @@ class Viewer {
     }
 
     return this.el;
+  }
+
+  play(params) {
+    Event.publish("player.open", params);
   }
 
   show(items, index = 0) {
