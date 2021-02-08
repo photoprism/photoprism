@@ -73,9 +73,7 @@ func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Select("photos.*").
-		Joins("JOIN files a ON photos.id = a.photo_id ").
-		Joins("LEFT JOIN files b ON a.photo_id = b.photo_id AND a.id != b.id AND b.file_missing = 0 AND b.file_root = '/'").
-		Where("a.file_missing = 1 AND b.id IS NULL").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
 		Where("photos.photo_type <> ?", entity.TypeText).
 		Group("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
@@ -85,16 +83,8 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 
 // ResetPhotoQuality resets the quality of photos without primary file to -1.
 func ResetPhotoQuality() error {
-	if err := Db().Table("photos").
-		Where("id IN (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id)").
-		Where("id IN (SELECT id FROM (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id) AS tmp)").
-		Update("photo_quality", -1).Error; err == nil {
-		return nil
-	}
-
-	// MySQL fallback, see https://github.com/photoprism/photoprism/issues/599
 	return Db().Table("photos").
-		Where("id IN (SELECT id FROM (SELECT photos.id FROM photos LEFT JOIN files ON photos.id = files.photo_id AND files.file_primary = 1 WHERE files.id IS NULL GROUP BY photos.id) AS tmp)").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND deleted_at IS NULL)").
 		Update("photo_quality", -1).Error
 }
 
