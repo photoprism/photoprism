@@ -10,7 +10,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn v-if="auth && !config.readonly && features.upload" icon class="action-upload"
+        <v-btn v-if="auth && !config.readonly && $config.feature('upload')" icon class="action-upload"
                :title="$gettext('Upload')" @click.stop="openUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
@@ -116,7 +116,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile v-if="features.review" to="/review" class="nav-review"
+          <v-list-tile v-if="$config.feature('review')" to="/review" class="nav-review"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
@@ -126,7 +126,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile v-show="features.archive" to="/archive" class="nav-archive" @click.stop="">
+          <v-list-tile v-show="$config.feature('archive')" to="/archive" class="nav-archive" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate>Archive</translate>
@@ -135,7 +135,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-if="isMini && features.albums" to="/albums" class="nav-albums" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('albums')" to="/albums" class="nav-albums" @click.stop="">
           <v-list-tile-action :title="$gettext('Albums')">
             <v-icon>bookmark</v-icon>
           </v-list-tile-action>
@@ -147,7 +147,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini && features.albums" prepend-icon="bookmark" no-action>
+        <v-list-group v-if="!isMini && $config.feature('albums')" prepend-icon="bookmark" no-action>
           <template #activator>
             <v-list-tile to="/albums" class="nav-albums" @click.stop="">
               <v-list-tile-content>
@@ -168,7 +168,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-if="features.videos" to="/videos" class="nav-video" @click.stop="">
+        <v-list-tile v-if="$config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
           <v-list-tile-action :title="$gettext('Videos')">
             <v-icon>play_circle_fill</v-icon>
           </v-list-tile-action>
@@ -194,7 +194,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="features.moments" :to="{ name: 'moments' }" class="nav-moments"
+        <v-list-tile v-show="$config.feature('moments')" :to="{ name: 'moments' }" class="nav-moments"
                      @click.stop="">
           <v-list-tile-action :title="$gettext('Moments')">
             <v-icon>star</v-icon>
@@ -223,7 +223,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini" v-show="features.places" :to="{ name: 'places' }" class="nav-places"
+        <v-list-tile v-if="isMini" v-show="$config.feature('places')" :to="{ name: 'places' }" class="nav-places"
                      @click.stop="">
           <v-list-tile-action :title="$gettext('Places')">
             <v-icon>place</v-icon>
@@ -236,7 +236,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini" v-show="features.places" prepend-icon="place" no-action>
+        <v-list-group v-if="!isMini" v-show="$config.feature('places')" prepend-icon="place" no-action>
           <template #activator>
             <v-list-tile to="/places" class="nav-places" @click.stop="">
               <v-list-tile-content>
@@ -259,7 +259,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-show="features.labels" to="/labels" class="nav-labels" @click.stop="">
+        <v-list-tile v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
           <v-list-tile-action :title="$gettext('Labels')">
             <v-icon>label</v-icon>
           </v-list-tile-action>
@@ -273,7 +273,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="features.folders" :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
+        <v-list-tile v-show="$config.feature('folders')" :to="{ name: 'folders' }" class="nav-folders" @click.stop="">
           <v-list-tile-action :title="$gettext('Folders')">
             <v-icon>folder</v-icon>
           </v-list-tile-action>
@@ -287,7 +287,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="features.private" to="/private" class="nav-private" @click.stop="">
+        <v-list-tile v-show="$config.feature('private')" to="/private" class="nav-private" @click.stop="">
           <v-list-tile-action :title="$gettext('Private')">
             <v-icon>lock</v-icon>
           </v-list-tile-action>
@@ -300,7 +300,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini && features.library" to="/library" class="nav-library" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('library')" to="/library" class="nav-library" @click.stop="">
           <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
           </v-list-tile-action>
@@ -312,7 +312,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini && features.library" prepend-icon="camera_roll" no-action>
+        <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
           <template #activator>
             <v-list-tile to="/library" class="nav-library" @click.stop="">
               <v-list-tile-content>
@@ -323,7 +323,7 @@
             </v-list-tile>
           </template>
 
-          <v-list-tile v-show="features.files" to="/library/files" class="nav-originals" @click.stop="">
+          <v-list-tile v-show="$config.feature('files')" to="/library/files" class="nav-originals" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title>
                 <translate key="Originals">Originals</translate>
@@ -461,7 +461,6 @@ export default {
       isPublic: this.$config.get("public"),
       isTest: this.$config.test,
       isReadOnly: this.$config.get("readonly"),
-      features: this.$config.values.settings.features,
       session: this.$session,
       config: this.$config.values,
       page: this.$config.page,
@@ -508,7 +507,7 @@ export default {
   },
   methods: {
     openUpload() {
-      if (this.auth && !this.isReadOnly && this.features.upload) {
+      if (this.auth && !this.isReadOnly && this.$config.feature('upload')) {
         this.upload.dialog = true;
       } else {
         this.goHome();
