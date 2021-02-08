@@ -80,8 +80,8 @@ func TestPhotosCheck(t *testing.T) {
 	assert.IsType(t, entity.Photos{}, result)
 }
 
-func TestPhotosOrphaned(t *testing.T) {
-	result, err := PhotosOrphaned()
+func TestOrphanPhotos(t *testing.T) {
+	result, err := OrphanPhotos()
 
 	if err != nil {
 		t.Fatal(err)

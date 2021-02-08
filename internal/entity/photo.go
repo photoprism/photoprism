@@ -62,7 +62,7 @@ type Photo struct {
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool         `json:"Panorama" yaml:"Panorama,omitempty"`
-	TimeZone         string       `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"-"`
+	TimeZone         string       `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"TimeZone,omitempty"`
 	PlaceID          string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
 	PlaceSrc         string       `gorm:"type:VARBINARY(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
 	CellID           string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"-"`
@@ -78,7 +78,7 @@ type Photo struct {
 	PhotoExposure    string       `gorm:"type:VARBINARY(64);" json:"Exposure" yaml:"Exposure,omitempty"`
 	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
 	PhotoFocalLength int          `json:"FocalLength" yaml:"FocalLength,omitempty"`
-	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"-"`
+	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoColor       uint8        `json:"Color" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
@@ -238,13 +238,7 @@ func (m *Photo) Save() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
 
-	if err := UnscopedDb().Save(m).Error; err == nil {
-		// Nothing to do.
-	} else if !strings.Contains(strings.ToLower(err.Error()), "lock") {
-		log.Debugf("photo: %s (save %s)", err, m.PhotoUID)
-		return err
-	} else if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Debugf("photo: %s (save %s after deadlock)", err, m.PhotoUID)
+	if err := Save(m, "ID", "PhotoUID"); err != nil {
 		return err
 	}
 
@@ -454,17 +448,6 @@ func (m *Photo) PreloadFiles() {
 	logError(q.Scan(&m.Files))
 }
 
-/* func (m *Photo) PreloadLabels() {
-	q := Db().NewScope(nil).DB().
-		Table("labels").
-		Select(`labels.*`).
-		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = ?", m.ID).
-		Where("labels.deleted_at IS NULL").
-		Order("labels.label_name ASC")
-
-	logError(q.Scan(&m.Labels))
-} */
-
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
 func (m *Photo) PreloadKeywords() {
 	q := Db().NewScope(nil).DB().
@@ -491,7 +474,6 @@ func (m *Photo) PreloadAlbums() {
 // PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
 func (m *Photo) PreloadMany() {
 	m.PreloadFiles()
-	// m.PreloadLabels()
 	m.PreloadKeywords()
 	m.PreloadAlbums()
 }
@@ -622,6 +604,16 @@ func (m *Photo) NoTitle() bool {
 // NoCameraSerial checks if the photo has no CameraSerial
 func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
+}
+
+// UnknownCamera test if the camera is unknown.
+func (m *Photo) UnknownCamera() bool {
+	return m.CameraID == 0 || m.CameraID == UnknownCamera.ID
+}
+
+// UnknownLens test if the lens is unknown.
+func (m *Photo) UnknownLens() bool {
+	return m.LensID == 0 || m.LensID == UnknownLens.ID
 }
 
 // HasTitle checks if the photo has a title.
@@ -958,6 +950,66 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 	m.PlaceSrc = source
 }
 
+// SetCamera updates the camera.
+func (m *Photo) SetCamera(camera *Camera, source string) {
+	if camera == nil {
+		log.Warnf("photo: failed updating camera from source '%s'", source)
+		return
+	}
+
+	if camera.Unknown() {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.CameraSrc] && !m.UnknownCamera() {
+		return
+	}
+
+	m.CameraID = camera.ID
+	m.Camera = camera
+	m.CameraSrc = source
+}
+
+// SetLens updates the lens.
+func (m *Photo) SetLens(lens *Lens, source string) {
+	if lens == nil {
+		log.Warnf("photo: failed updating lens from source '%s'", source)
+		return
+	}
+
+	if lens.Unknown() {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.CameraSrc] && !m.UnknownLens() {
+		return
+	}
+
+	m.LensID = lens.ID
+	m.Lens = lens
+}
+
+// SetExposure updates the photo exposure details.
+func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure, source string) {
+	hasPriority := SrcPriority[source] >= SrcPriority[m.CameraSrc]
+
+	if focalLength > 0 && (hasPriority || m.PhotoFocalLength <= 0) {
+		m.PhotoFocalLength = focalLength
+	}
+
+	if fNumber > 0 && (hasPriority || m.PhotoFNumber <= 0) {
+		m.PhotoFNumber = fNumber
+	}
+
+	if iso > 0 && (hasPriority || m.PhotoIso <= 0) {
+		m.PhotoIso = iso
+	}
+
+	if exposure != "" && (hasPriority || m.PhotoExposure == "") {
+		m.PhotoExposure = exposure
+	}
+}
+
 // AllFilesMissing returns true, if all files for this photo are missing.
 func (m *Photo) AllFilesMissing() bool {
 	count := 0
@@ -978,6 +1030,32 @@ func (m *Photo) AllFiles() (files Files) {
 	}
 
 	return files
+}
+
+// Archive removes the photo from albums and flags it as archived (soft delete).
+func (m *Photo) Archive() error {
+	deletedAt := Timestamp()
+
+	if err := Db().Model(&PhotoAlbum{}).Where("photo_uid = ?", m.PhotoUID).UpdateColumn("hidden", true).Error; err != nil {
+		return err
+	} else if err := m.Update("deleted_at", deletedAt); err != nil {
+		return err
+	}
+
+	m.DeletedAt = &deletedAt
+
+	return nil
+}
+
+// Restore removes the archive flag (undo soft delete).
+func (m *Photo) Restore() error {
+	if err := m.Update("deleted_at", gorm.Expr("NULL")); err != nil {
+		return err
+	}
+
+	m.DeletedAt = nil
+
+	return nil
 }
 
 // Delete deletes the entity from the database.
@@ -1095,7 +1173,7 @@ func (m *Photo) SetPrimary(fileUID string) error {
 		Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
-		return fmt.Errorf("photo %s has no jpegs", m.PhotoUID)
+		return fmt.Errorf("%s has no jpeg", m.PhotoUID)
 	} else {
 		fileUID = files[0]
 	}
@@ -1104,9 +1182,9 @@ func (m *Photo) SetPrimary(fileUID string) error {
 		return fmt.Errorf("file uid is empty")
 	}
 
-	Db().Model(File{}).Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", false)
+	Db().Model(File{}).Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", 0)
 
-	if err := Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", true).Error; err != nil {
+	if err := Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", 1).Error; err != nil {
 		return err
 	} else if m.PhotoQuality < 0 {
 		m.PhotoQuality = 0

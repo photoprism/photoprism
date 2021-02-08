@@ -285,16 +285,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore photos that have been purged automatically.
 		photo.DeletedAt = nil
-	} else if photo.DeletedAt != nil {
-		// Don't waste time indexing deleted / archived photos.
-		result.Status = IndexArchived
-
-		// Remove missing flag from file.
-		if err = file.Undelete(); err != nil {
-			log.Errorf("index: %s in %s (undelete)", err.Error(), logName)
-		}
-
-		return result
 	}
 
 	// Handle file types.
@@ -370,6 +360,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -394,33 +385,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.PhotoResolution = res
 			}
 
-			if photo.CameraSrc == entity.SrcAuto {
-				// Set UpdateCamera, Lens, Focal Length and F Number.
-				photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
-
-				if photo.Camera != nil {
-					photo.CameraID = photo.Camera.ID
-				} else {
-					photo.CameraID = entity.UnknownCamera.ID
-				}
-
-				if photo.CameraID != entity.UnknownCamera.ID {
-					photo.CameraSrc = entity.SrcMeta
-				}
-
-				photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
-
-				if photo.Lens != nil {
-					photo.LensID = photo.Lens.ID
-				} else {
-					photo.LensID = entity.UnknownLens.ID
-				}
-
-				photo.PhotoFocalLength = m.FocalLength()
-				photo.PhotoFNumber = m.FNumber()
-				photo.PhotoIso = m.Iso()
-				photo.PhotoExposure = m.Exposure()
-			}
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
 		if photo.TypeSrc == entity.SrcAuto {
@@ -442,6 +409,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -467,33 +435,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.PhotoResolution = res
 			}
 
-			if photo.CameraSrc == entity.SrcAuto {
-				// Set UpdateCamera, Lens, Focal Length and F Number.
-				photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
-
-				if photo.Camera != nil {
-					photo.CameraID = photo.Camera.ID
-				} else {
-					photo.CameraID = entity.UnknownCamera.ID
-				}
-
-				if photo.CameraID != entity.UnknownCamera.ID {
-					photo.CameraSrc = entity.SrcMeta
-				}
-
-				photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
-
-				if photo.Lens != nil {
-					photo.LensID = photo.Lens.ID
-				} else {
-					photo.LensID = entity.UnknownLens.ID
-				}
-
-				photo.PhotoFocalLength = m.FocalLength()
-				photo.PhotoFNumber = m.FNumber()
-				photo.PhotoIso = m.Iso()
-				photo.PhotoExposure = m.Exposure()
-			}
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
 		if photo.TypeSrc == entity.SrcAuto {
@@ -564,6 +508,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -572,33 +517,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if photo.CameraSrc == entity.SrcAuto {
-			// Set UpdateCamera, Lens, Focal Length and F Number.
-			photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
-
-			if photo.Camera != nil {
-				photo.CameraID = photo.Camera.ID
-			} else {
-				photo.CameraID = entity.UnknownCamera.ID
-			}
-
-			if photo.CameraID != entity.UnknownCamera.ID {
-				photo.CameraSrc = entity.SrcMeta
-			}
-
-			photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
-
-			if photo.Lens != nil {
-				photo.LensID = photo.Lens.ID
-			} else {
-				photo.LensID = entity.UnknownLens.ID
-			}
-
-			photo.PhotoFocalLength = m.FocalLength()
-			photo.PhotoFNumber = m.FNumber()
-			photo.PhotoIso = m.Iso()
-			photo.PhotoExposure = m.Exposure()
-		}
+		photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
+		photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+		photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 
 		var locLabels classify.Labels
 

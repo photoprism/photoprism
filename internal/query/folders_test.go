@@ -7,6 +7,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFolderCoverByUID(t *testing.T) {
+	t.Run("1990/04", func(t *testing.T) {
+		if result, err := FolderCoverByUID("dqo63pn2f87f02xj"); err != nil {
+			t.Fatal(err)
+		} else if result.FileUID == "" {
+			t.Fatal("result must not be empty")
+		} else if result.FileUID != "ft2es49w15bnlqdw" {
+			t.Errorf("wrong result: %#v", result)
+		}
+	})
+}
+
 func TestFoldersByPath(t *testing.T) {
 	t.Run("root", func(t *testing.T) {
 		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false)

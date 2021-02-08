@@ -61,6 +61,7 @@
                   :src="model.thumbnailUrl('tile_500')"
                   :alt="model.Name"
                   :transition="false"
+                  loading="lazy"
                   aspect-ratio="1"
                   class="accent lighten-2 clickable"
                   @mousedown="onMouseDown($event, index)"
@@ -144,7 +145,7 @@ export default {
       path: "",
       page: 0,
       files: {
-        limit: Folder.limit(),
+        limit: 999,
         offset: 0,
       },
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),

@@ -113,6 +113,8 @@ func UpdatePhoto(router *gin.RouterGroup) {
 
 		SavePhotoAsYaml(p)
 
+		UpdateClientConfig()
+
 		c.JSON(http.StatusOK, p)
 	})
 }

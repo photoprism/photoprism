@@ -59,21 +59,21 @@ describe("model/file", () => {
             Type: "jpg",
             Name: "1/2/IMG123.jpg"};
         const file = new File(values);
-        assert.equal(file.thumbnailUrl("abc"), "/api/v1/t/54ghtfd/public/abc");
+        assert.equal(file.thumbnailUrl("tile_224"), "/api/v1/t/54ghtfd/public/tile_224");
         const values2 = {
             InstanceID: 5,
             UID: "ABC123",
             Name: "1/2/IMG123.jpg",
             Error: true};
         const file2 = new File(values2);
-        assert.equal(file2.thumbnailUrl("abc"), "/api/v1/svg/broken");
+        assert.equal(file2.thumbnailUrl("tile_224"), "/api/v1/svg/broken");
         const values3 = {
             InstanceID: 5,
             UID: "ABC123",
             Name: "1/2/IMG123.jpg",
             Type: "raw"};
         const file3 = new File(values3);
-        assert.equal(file3.thumbnailUrl("abc"), "/api/v1/svg/raw");
+        assert.equal(file3.thumbnailUrl("tile_224"), "/api/v1/svg/raw");
     });
 
     it("should return download url",  () => {

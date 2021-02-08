@@ -49,6 +49,7 @@ export default class Config {
     if (!values || !values.siteTitle) {
       console.warn("config: values are empty");
       this.debug = true;
+      this.test = true;
       this.demo = false;
       this.themeName = "";
       this.values = {};
@@ -66,6 +67,7 @@ export default class Config {
 
     this.values = values;
     this.debug = !!values.debug;
+    this.test = !!values.test;
     this.demo = !!values.demo;
 
     Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));

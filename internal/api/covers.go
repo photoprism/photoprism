@@ -50,7 +50,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(albumCover, uid, typeName)
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -108,8 +108,8 @@ func AlbumCover(router *gin.RouterGroup) {
 		}
 
 		if err != nil {
-			log.Errorf("album: %s", err)
-			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			log.Errorf("%s: %s", albumCover, err)
+			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		} else if thumbnail == "" {
 			log.Errorf("%s: %s has empty thumb name - bug?", albumCover, filepath.Base(fileName))
@@ -160,7 +160,7 @@ func LabelCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(labelCover, uid, typeName)
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 

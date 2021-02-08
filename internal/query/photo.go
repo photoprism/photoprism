@@ -118,8 +118,8 @@ func PhotosCheck(limit, offset int, delay time.Duration) (entities entity.Photos
 	return entities, err
 }
 
-// PhotosOrphaned finds orphaned index entries that may be removed.
-func PhotosOrphaned() (photos entity.Photos, err error) {
+// OrphanPhotos finds orphan index entries that may be removed.
+func OrphanPhotos() (photos entity.Photos, err error) {
 	err = UnscopedDb().
 		Raw(`SELECT * FROM photos WHERE 
 			deleted_at IS NOT NULL 
@@ -137,7 +137,7 @@ func FixPrimaries() error {
 	if err := UnscopedDb().
 		Raw(`SELECT * FROM photos WHERE 
 			deleted_at IS NULL 
-			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = true)`).
+			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1)`).
 		Find(&photos).Error; err != nil {
 		return err
 	}
@@ -146,7 +146,7 @@ func FixPrimaries() error {
 		log.Debugf("photo: finding new primary for %s", p.PhotoUID)
 
 		if err := p.SetPrimary(""); err != nil {
-			log.Warnf("photo: %s (set new primary)", err)
+			log.Infof("photo: %s", err)
 		}
 	}
 

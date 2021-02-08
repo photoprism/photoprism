@@ -2,6 +2,7 @@ package txt
 
 var SpecialWords = map[string]string{
 	"xd":                 "XD",
+	"hd":                 "HD",
 	"nyc":                "NYC",
 	"ny":                 "NY",
 	"uae":                "UAE",
@@ -36,6 +37,13 @@ var SpecialWords = map[string]string{
 	"srgb":               "SRGB",
 	"hdtv":               "HDTV",
 	"dci":                "DCI",
+	"xmp":                "XMP",
+	"xml":                "XML",
+	"pdf":                "PDF",
+	"mov":                "MOV",
+	"avc":                "AVC",
+	"wto":                "WTO",
+	"fifa":               "FIFA",
 	"yaml":               "YAML",
 	"json":               "JSON",
 	"uhd":                "UHD",

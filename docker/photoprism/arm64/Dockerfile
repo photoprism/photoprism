@@ -66,16 +66,16 @@ RUN apt-get update && \
 
 # Install and configure NodeJS Package Manager (npm)
 ENV NODE_ENV production
-RUN npm install --unsafe-perm=true --allow-root -g npm
-RUN npm config set cache ~/.cache/npm
+RUN npm install --unsafe-perm=true --allow-root -g npm && \
+    npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.15.6
+ENV GOLANG_VERSION 1.15.8
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "f87515b9744154ffe31182da9341d0a61eb0795551173d242c8cad209239e492 *go.tgz" | sha256sum -c -; \
+	echo "0e31ea4bf53496b0f0809730520dee98c0ae5c530f3701a19df0ba0a327bf3d2 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \

@@ -160,3 +160,8 @@ steps:
     when:
       status:
         - success
+---
+kind: signature
+hmac: b68f90a0580da0ea2ba31c90010633ca3216d6c540c7e30f1007ec0688c8fefe
+
+...

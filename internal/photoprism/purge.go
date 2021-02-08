@@ -118,7 +118,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				}
 
 				if err := query.SetPhotoPrimary(file.PhotoUID, ""); err != nil {
-					log.Warnf("purge: %s (set new primary)", err)
+					log.Infof("purge: %s", err)
 				}
 			}
 		}
@@ -242,7 +242,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	log.Info("purge: searching index for unassigned primary files")
 
 	if err := query.FixPrimaries(); err != nil {
-		log.Errorf("purge: %s (find unassigned primaries)", err.Error())
+		log.Errorf("purge: %s (fix primary files)", err.Error())
 	}
 
 	log.Info("purge: searching index for hidden media files")
@@ -251,16 +251,16 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		return purgedFiles, purgedPhotos, err
 	}
 
+	if err := query.PurgeOrphans(); err != nil {
+		log.Errorf("purge: %s (orphans)", err)
+	}
+
 	if err := query.UpdateMissingAlbumEntries(); err != nil {
-		log.Errorf("purge: %s (update albums)", err.Error())
+		log.Errorf("purge: %s (album entries)", err)
 	}
 
 	if err := entity.UpdatePhotoCounts(); err != nil {
-		log.Errorf("purge: %s (update photo counts)", err)
-	}
-
-	if err := query.CleanDuplicates(); err != nil {
-		log.Errorf("purge: %s (clean duplicates)", err)
+		log.Errorf("purge: %s (photo counts)", err)
 	}
 
 	return purgedFiles, purgedPhotos, nil

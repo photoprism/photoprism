@@ -55,7 +55,7 @@ func GetThumb(router *gin.RouterGroup) {
 		cacheKey := CacheKey("thumbs", fileHash, typeName)
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 

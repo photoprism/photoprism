@@ -168,7 +168,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile to="/videos" class="nav-video" @click.stop="">
+        <v-list-tile v-if="$config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
           <v-list-tile-action :title="$gettext('Videos')">
             <v-icon>play_circle_fill</v-icon>
           </v-list-tile-action>
@@ -439,6 +439,7 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <div v-if="isTest" id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Browse Your Life in Pictures</a></div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
     <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
                      @confirm="upload.dialog = false"></p-upload-dialog>
@@ -458,6 +459,7 @@ export default {
       drawer: null,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false',
       isPublic: this.$config.get("public"),
+      isTest: this.$config.test,
       isReadOnly: this.$config.get("readonly"),
       session: this.$session,
       config: this.$config.values,
@@ -510,9 +512,6 @@ export default {
       } else {
         this.goHome();
       }
-    },
-    feature(name) {
-      return this.$config.values.settings.features[name];
     },
     goHome() {
       if (this.$route.name !== "home") {

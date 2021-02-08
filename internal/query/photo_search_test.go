@@ -12,20 +12,20 @@ import (
 
 func TestPhotoSearch(t *testing.T) {
 	t.Run("search all", func(t *testing.T) {
-		//Db().LogMode(true)
-		var f form.PhotoSearch
-		f.Query = ""
-		f.Count = 10
-		f.Offset = 0
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := PhotoSearch(frm)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		// t.Logf("results: %+v", photos)
 		assert.LessOrEqual(t, 3, len(photos))
+
 		for _, r := range photos {
 			assert.IsType(t, PhotoResult{}, r)
 			assert.NotEmpty(t, r.ID)
@@ -38,14 +38,15 @@ func TestPhotoSearch(t *testing.T) {
 		}
 	})
 	t.Run("search for ID and merged", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = ""
-		f.Count = 5000
-		f.Offset = 0
-		f.ID = "pt9jtdre2lvl0yh7"
-		f.Merged = true
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = ""
+		frm.Count = 5000
+		frm.Offset = 0
+		frm.ID = "pt9jtdre2lvl0yh7"
+		frm.Merged = true
+
+		photos, _, err := PhotoSearch(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -53,14 +54,15 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("search for ID with merged false", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = ""
-		f.Count = 5000
-		f.Offset = 0
-		f.ID = "pt9jtdre2lvl0yh7"
-		f.Merged = false
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = ""
+		frm.Count = 5000
+		frm.Offset = 0
+		frm.ID = "pt9jtdre2lvl0yh7"
+		frm.Merged = false
+
+		photos, _, err := PhotoSearch(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -68,23 +70,25 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("label query dog", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "label:dog"
-		f.Count = 10
-		f.Offset = 0
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = "label:dog"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := PhotoSearch(frm)
 
 		assert.Equal(t, "dog not found", err.Error())
 		assert.Empty(t, photos)
 	})
 	t.Run("label query landscape", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "label:landscape Order:relevance"
-		f.Count = 10
-		f.Offset = 0
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = "label:landscape Order:relevance"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := PhotoSearch(frm)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -92,12 +96,13 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 	})
 	t.Run("invalid label query", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "label:xxx"
-		f.Count = 10
-		f.Offset = 0
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = "label:xxx"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := PhotoSearch(frm)
 
 		assert.Error(t, err)
 		assert.Empty(t, photos)
@@ -107,13 +112,14 @@ func TestPhotoSearch(t *testing.T) {
 		}
 	})
 	t.Run("form.location true", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = ""
-		f.Count = 10
-		f.Offset = 0
-		f.Geo = true
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Geo = true
+
+		photos, _, err := PhotoSearch(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -122,14 +128,15 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 	})
 	t.Run("form.location true and keyword", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "bridge"
-		f.Count = 10
-		f.Offset = 0
-		f.Geo = true
-		f.Error = false
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = "bridge"
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Geo = true
+		frm.Error = false
+
+		photos, _, err := PhotoSearch(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -138,12 +145,13 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("search for keyword", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "bridge"
-		f.Count = 5000
-		f.Offset = 0
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = "bridge"
+		frm.Count = 5000
+		frm.Offset = 0
+
+		photos, _, err := PhotoSearch(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -152,12 +160,13 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 	})
 	t.Run("search for label in query", func(t *testing.T) {
-		var f form.PhotoSearch
-		f.Query = "flower"
-		f.Count = 5000
-		f.Offset = 0
+		var frm form.PhotoSearch
 
-		photos, _, err := PhotoSearch(f)
+		frm.Query = "flower"
+		frm.Count = 5000
+		frm.Offset = 0
+
+		photos, _, err := PhotoSearch(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -166,8 +175,8 @@ func TestPhotoSearch(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("search for archived", func(t *testing.T) {
-
 		var f form.PhotoSearch
+
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
@@ -182,6 +191,7 @@ func TestPhotoSearch(t *testing.T) {
 	})
 	t.Run("search for private", func(t *testing.T) {
 		var f form.PhotoSearch
+
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
@@ -197,6 +207,7 @@ func TestPhotoSearch(t *testing.T) {
 	})
 	t.Run("search for public", func(t *testing.T) {
 		var f form.PhotoSearch
+
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
@@ -211,6 +222,7 @@ func TestPhotoSearch(t *testing.T) {
 	})
 	t.Run("search for review", func(t *testing.T) {
 		var f form.PhotoSearch
+
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
@@ -225,6 +237,7 @@ func TestPhotoSearch(t *testing.T) {
 	})
 	t.Run("search for quality", func(t *testing.T) {
 		var f form.PhotoSearch
+
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
@@ -240,6 +253,7 @@ func TestPhotoSearch(t *testing.T) {
 	})
 	t.Run("search for file error", func(t *testing.T) {
 		var f form.PhotoSearch
+
 		f.Query = ""
 		f.Count = 5000
 		f.Offset = 0
@@ -254,6 +268,7 @@ func TestPhotoSearch(t *testing.T) {
 	})
 	t.Run("form.camera", func(t *testing.T) {
 		var f form.PhotoSearch
+
 		f.Query = ""
 		f.Count = 10
 		f.Offset = 0

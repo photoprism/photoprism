@@ -38,28 +38,94 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("archive: adding %s", f.String())
+		log.Infof("photos: archiving %s", f.String())
 
-		// Soft delete by setting deleted_at to current date.
-		err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error
+		if service.Config().BackupYaml() {
+			photos, err := query.PhotoSelection(f)
 
-		if err != nil {
+			if err != nil {
+				AbortEntityNotFound(c)
+				return
+			}
+
+			for _, p := range photos {
+				if err := p.Archive(); err != nil {
+					log.Errorf("archive: %s", err)
+				} else {
+					SavePhotoAsYaml(p)
+				}
+			}
+		} else if err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error; err != nil {
+			log.Errorf("archive: %s", err)
 			AbortSaveFailed(c)
 			return
+		} else if err := entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("hidden", true).Error; err != nil {
+			log.Errorf("archive: %s", err)
 		}
 
-		// Remove archived photos from albums.
-		logError("archive", entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("hidden", true).Error)
-
-		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("photos: %s", err)
-		}
+		logError("photos", entity.UpdatePhotoCounts())
 
 		UpdateClientConfig()
 
 		event.EntitiesArchived("photos", f.Photos)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionArchived))
+	})
+}
+
+// POST /api/v1/batch/photos/restore
+func BatchPhotosRestore(router *gin.RouterGroup) {
+	router.POST("/batch/photos/restore", func(c *gin.Context) {
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+
+		if s.Invalid() {
+			AbortUnauthorized(c)
+			return
+		}
+
+		var f form.Selection
+
+		if err := c.BindJSON(&f); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
+		if len(f.Photos) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		log.Infof("photos: restoring %s", f.String())
+
+		if service.Config().BackupYaml() {
+			photos, err := query.PhotoSelection(f)
+
+			if err != nil {
+				AbortEntityNotFound(c)
+				return
+			}
+
+			for _, p := range photos {
+				if err := p.Restore(); err != nil {
+					log.Errorf("restore: %s", err)
+				} else {
+					SavePhotoAsYaml(p)
+				}
+			}
+		} else if err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", f.Photos).
+			UpdateColumn("deleted_at", gorm.Expr("NULL")).Error; err != nil {
+			log.Errorf("restore: %s", err)
+			AbortSaveFailed(c)
+			return
+		}
+
+		logError("photos", entity.UpdatePhotoCounts())
+
+		UpdateClientConfig()
+
+		event.EntitiesRestored("photos", f.Photos)
+
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionRestored))
 	})
 }
 
@@ -98,7 +164,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 
 		for _, p := range photos {
 			if err := p.Approve(); err != nil {
-				log.Errorf("photo: %s (approve)", err.Error())
+				log.Errorf("approve: %s", err)
 			} else {
 				approved = append(approved, p)
 				SavePhotoAsYaml(p)
@@ -110,50 +176,6 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 		event.EntitiesUpdated("photos", approved)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionApproved))
-	})
-}
-
-// POST /api/v1/batch/photos/restore
-func BatchPhotosRestore(router *gin.RouterGroup) {
-	router.POST("/batch/photos/restore", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
-
-		if s.Invalid() {
-			AbortUnauthorized(c)
-			return
-		}
-
-		var f form.Selection
-
-		if err := c.BindJSON(&f); err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		if len(f.Photos) == 0 {
-			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
-			return
-		}
-
-		log.Infof("archive: restoring %s", f.String())
-
-		err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", f.Photos).
-			UpdateColumn("deleted_at", gorm.Expr("NULL")).Error
-
-		if err != nil {
-			AbortSaveFailed(c)
-			return
-		}
-
-		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("photos: %s", err)
-		}
-
-		UpdateClientConfig()
-
-		event.EntitiesRestored("photos", f.Photos)
-
-		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionRestored))
 	})
 }
 
@@ -214,22 +236,23 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("photos: mark %s as private", f.String())
+		log.Infof("photos: updating private flag for %s", f.String())
 
-		err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private",
-			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error
-
-		if err != nil {
+		if err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private",
+			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error; err != nil {
+			log.Errorf("private: %s", err)
 			AbortSaveFailed(c)
 			return
 		}
 
-		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("photos: %s", err)
-		}
+		logError("photos", entity.UpdatePhotoCounts())
 
-		if entities, err := query.PhotoSelection(f); err == nil {
-			event.EntitiesUpdated("photos", entities)
+		if photos, err := query.PhotoSelection(f); err == nil {
+			for _, p := range photos {
+				SavePhotoAsYaml(p)
+			}
+
+			event.EntitiesUpdated("photos", photos)
 		}
 
 		UpdateClientConfig()
@@ -313,7 +336,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("archive: permanently deleting %s", f.String())
+		log.Infof("photos: deleting %s", f.String())
 
 		photos, err := query.PhotoSelection(f)
 
@@ -327,7 +350,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		// Delete photos.
 		for _, p := range photos {
 			if err := photoprism.Delete(p); err != nil {
-				log.Errorf("photo: %s (delete)", err.Error())
+				log.Errorf("delete: %s", err)
 			} else {
 				deleted = append(deleted, p)
 			}
@@ -335,9 +358,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		// Update counts and views if needed.
 		if len(deleted) > 0 {
-			if err := entity.UpdatePhotoCounts(); err != nil {
-				log.Errorf("photos: %s", err)
-			}
+			logError("photos", entity.UpdatePhotoCounts())
 
 			UpdateClientConfig()
 

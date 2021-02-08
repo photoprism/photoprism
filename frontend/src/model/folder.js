@@ -33,6 +33,7 @@ import Api from "common/api";
 import { DateTime } from "luxon";
 import File from "model/file";
 import Util from "common/util";
+import { config } from "../session";
 import { $gettext } from "common/vm";
 
 export const RootImport = "import";
@@ -96,8 +97,8 @@ export class Folder extends RestModel {
     return this.Root + "/" + this.Path;
   }
 
-  thumbnailUrl() {
-    return "/api/v1/svg/folder";
+  thumbnailUrl(size) {
+    return `/api/v1/folders/t/${this.UID}/${config.previewToken()}/${size}`;
   }
 
   getDateString() {

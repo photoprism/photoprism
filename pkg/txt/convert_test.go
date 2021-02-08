@@ -119,9 +119,19 @@ func TestCountryCode(t *testing.T) {
 		assert.Equal(t, "zz", result)
 	})
 
-	t.Run("2018/Oktober 2018/1.-7. Oktober 2018 Berlin/_MG_9831-112.jpg", func(t *testing.T) {
+	t.Run("full path", func(t *testing.T) {
 		result := CountryCode("2018/Oktober 2018/1.-7. Oktober 2018 Berlin/_MG_9831-112.jpg")
 		assert.Equal(t, "de", result)
+	})
+
+	t.Run("little italy montreal", func(t *testing.T) {
+		result := CountryCode("Little Italy Montreal")
+		assert.Equal(t, "ca", result)
+	})
+
+	t.Run("little montreal italy", func(t *testing.T) {
+		result := CountryCode("Little Montreal Italy")
+		assert.Equal(t, "it", result)
 	})
 }
 

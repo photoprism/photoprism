@@ -18,6 +18,7 @@
                   :label="$gettext('Name')"
                   browser-autocomplete="off"
                   color="secondary-dark"
+                  class="input-name"
                   placeholder="••••••••"
               ></v-text-field>
             </v-flex>
@@ -31,6 +32,7 @@
                   browser-autocomplete="off"
                   color="secondary-dark"
                   placeholder="••••••••"
+                  class="input-password"
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                   @click:append="showPassword = !showPassword"
                   @keyup.enter.native="login"
@@ -38,7 +40,7 @@
             </v-flex>
             <v-flex xs12 class="px-2 py-3">
               <v-btn color="primary-button"
-                     class="white--text ml-0"
+                     class="white--text ml-0 action-confirm"
                      depressed
                      :disabled="loading || !password || !username"
                      @click.stop="login">

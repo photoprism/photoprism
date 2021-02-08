@@ -41,13 +41,9 @@ test.meta("testID", "photos-005")(
     await page.selectPhotoFromUID(FirstPhoto);
     await page.selectFromUIDInFullscreen(SecondPhoto);
     const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
-    await t
-      .expect(clipboardCount.textContent)
-      .eql("2")
-      .click(Selector("button.action-menu"))
-      .click(Selector("button.action-private"))
-      .expect(Selector("button.action-menu").exists, { timeout: 5000 })
-      .notOk();
+    await t.expect(clipboardCount.textContent).eql("2");
+    await page.privateSelected();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
     await page.setFilter("view", "List");
     await t.click(Selector("button.input-private").withAttribute("data-uid", ThirdPhoto));
     if (t.browser.platform === "mobile") {
