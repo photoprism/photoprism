@@ -118,7 +118,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				}
 
 				if err := query.SetPhotoPrimary(file.PhotoUID, ""); err != nil {
-					log.Warnf("purge: %s (set new primary)", err)
+					log.Infof("purge: %s", err)
 				}
 			}
 		}

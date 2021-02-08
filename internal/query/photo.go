@@ -146,7 +146,7 @@ func FixPrimaries() error {
 		log.Debugf("photo: finding new primary for %s", p.PhotoUID)
 
 		if err := p.SetPrimary(""); err != nil {
-			log.Warnf("photo: %s (set new primary)", err)
+			log.Infof("photo: %s", err)
 		}
 	}
 
