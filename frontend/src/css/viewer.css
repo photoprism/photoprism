@@ -4,6 +4,8 @@
     z-index: 2147483647;
     position: fixed;
     box-sizing: border-box;
+    border: none;
+    outline: none;
     left: 0;
     top: 0;
     bottom: 0;
@@ -15,6 +17,7 @@
     overflow: hidden !important;
     position: relative;
     border: none;
+    outline: none;
     border-image-width: 0;
     border-radius: 0;
     box-sizing: border-box;
@@ -31,6 +34,7 @@
     overflow: hidden !important;
     position: absolute;
     border: none;
+    outline: none;
     border-image-width: 0;
     border-radius: 0;
     box-sizing: border-box;
