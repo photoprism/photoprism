@@ -317,7 +317,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "ffmpeg-codec",
-		Usage:  "FFmpeg AVC1 codec `NAME`",
+		Usage:  "FFmpeg AVC codec `NAME`",
 		Value:  "libx264",
 		EnvVar: "PHOTOPRISM_FFMPEG_CODEC",
 	},

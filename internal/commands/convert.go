@@ -12,11 +12,11 @@ import (
 // ConvertCommand registers the convert cli command.
 var ConvertCommand = cli.Command{
 	Name:   "convert",
-	Usage:  "Converts originals in other formats to JPEG",
+	Usage:  "Converts originals in other formats to JPEG and AVC sidecar files",
 	Action: convertAction,
 }
 
-// convertAction converts RAW files to JPEG images, if no JPEG already exists
+// convertAction converts originals in other formats to JPEG and AVC sidecar files.
 func convertAction(ctx *cli.Context) error {
 	start := time.Now()
 
@@ -34,7 +34,7 @@ func convertAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating JPEGs for other file types in %s", conf.OriginalsPath())
+	log.Infof("converting originals in %s", conf.OriginalsPath())
 
 	convert := service.Convert()
 
@@ -44,7 +44,7 @@ func convertAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("converting to JPEG completed in %s", elapsed)
+	log.Infof("converting completed in %s", elapsed)
 
 	return nil
 }

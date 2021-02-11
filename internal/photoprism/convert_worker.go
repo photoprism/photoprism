@@ -7,15 +7,36 @@ import (
 )
 
 type ConvertJob struct {
-	image   *MediaFile
+	file    *MediaFile
 	convert *Convert
 }
 
 func ConvertWorker(jobs <-chan ConvertJob) {
+	logError := func(err error, job ConvertJob) {
+		fileName := job.file.RelName(job.convert.conf.OriginalsPath())
+		log.Errorf("%s in %s", strings.TrimSpace(err.Error()), txt.Quote(fileName))
+	}
+
 	for job := range jobs {
-		if _, err := job.convert.ToJpeg(job.image); err != nil {
-			fileName := job.image.RelName(job.convert.conf.OriginalsPath())
-			log.Errorf("convert: %s in %s (jpeg)", strings.TrimSpace(err.Error()), txt.Quote(fileName))
+		switch {
+		case job.file == nil:
+			continue
+		case job.convert == nil:
+			continue
+		case job.file.IsVideo():
+			if _, err := job.convert.ToJson(job.file); err != nil {
+				logError(err, job)
+			} else if _, err := job.convert.ToJpeg(job.file); err != nil {
+				logError(err, job)
+			} else if metaData := job.file.MetaData(); metaData.CodecAvc() {
+				continue
+			} else if _, err := job.convert.ToAvc(job.file); err != nil {
+				logError(err, job)
+			}
+		default:
+			if _, err := job.convert.ToJpeg(job.file); err != nil {
+				logError(err, job)
+			}
 		}
 	}
 }

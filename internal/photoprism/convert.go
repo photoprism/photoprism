@@ -97,14 +97,14 @@ func (c *Convert) Start(path string) (err error) {
 
 			f, err := NewMediaFile(fileName)
 
-			if err != nil || !(f.IsRaw() || f.IsHEIF() || f.IsImageOther()) {
+			if err != nil || !(f.IsRaw() || f.IsHEIF() || f.IsImageOther() || f.IsVideo()) {
 				return nil
 			}
 
 			done[fileName] = fs.Processed
 
 			jobs <- ConvertJob{
-				image:   f,
+				file:    f,
 				convert: c,
 			}
 
@@ -123,7 +123,7 @@ func (c *Convert) Start(path string) (err error) {
 // ToJson uses exiftool to export metadata to a json file.
 func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 	if f == nil {
-		return "", fmt.Errorf("exiftool: file is nil (found a bug?)")
+		return "", fmt.Errorf("exiftool: file is nil - you might have found a bug")
 	}
 
 	jsonName, err = f.ExifToolJsonName()
@@ -220,11 +220,11 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 // ToJpeg converts a single image file to JPEG if possible.
 func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	if f == nil {
-		return nil, fmt.Errorf("convert: file is nil (found a bug?)")
+		return nil, fmt.Errorf("convert: file is nil - you might have found a bug")
 	}
 
 	if !f.Exists() {
-		return nil, fmt.Errorf("convert: can not convert to jpeg, file does not exist (%s)", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: %s not found", f.RelName(c.conf.OriginalsPath()))
 	}
 
 	if f.IsJpeg() {
@@ -246,7 +246,7 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Debugf("convert: %s -> %s", fileName, filepath.Base(jpegName))
+	log.Infof("converting %s to %s", fileName, fs.FormatJpeg)
 
 	xmpName := fs.FormatXMP.Find(f.FileName(), false)
 
@@ -324,11 +324,11 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.
 // ToAvc converts a single video file to MPEG-4 AVC.
 func (c *Convert) ToAvc(f *MediaFile) (*MediaFile, error) {
 	if f == nil {
-		return nil, fmt.Errorf("convert: file is nil (found a bug?)")
+		return nil, fmt.Errorf("convert: file is nil - you might have found a bug")
 	}
 
 	if !f.Exists() {
-		return nil, fmt.Errorf("convert: can not convert to avc1, file does not exist (%s)", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: %s not found", f.RelName(c.conf.OriginalsPath()))
 	}
 
 	avcName := fs.FormatAvc.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
@@ -346,7 +346,7 @@ func (c *Convert) ToAvc(f *MediaFile) (*MediaFile, error) {
 	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Debugf("convert: %s -> %s", fileName, filepath.Base(avcName))
+	log.Infof("converting %s to %s", fileName, fs.FormatAvc)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": f.FileType(),
