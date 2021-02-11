@@ -187,7 +187,7 @@ export default {
     },
     closePlayer() {
       if (this.$refs.player) {
-        this.$refs.player.pause();
+        this.$refs.player.stop();
       }
 
       this.player.show = false;

@@ -29,12 +29,12 @@ export default {
     this.subscriptions['player.pause'] = Event.subscribe('player.pause', this.onPause);
     this.subscriptions['player.close'] = Event.subscribe('player.close', this.onClose);
   },
-  destroyed() {
-    this.onPause();
-
+  beforeDestroy() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
+
+    this.onClose();
   },
   methods: {
     onOpen(ev, params) {
@@ -52,7 +52,7 @@ export default {
     },
     onClose() {
       if (this.$refs.player) {
-        this.$refs.player.pause();
+        this.$refs.player.stop();
       }
 
       this.show = false;

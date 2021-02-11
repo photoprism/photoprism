@@ -82,11 +82,11 @@ export default {
   },
   beforeDestroy() {
     document.body.classList.remove("player");
-    this.remove();
+    this.stop();
   },
   methods: {
     videoEl() {
-      return this.$refs.video.$el;
+      return this.$el.childNodes[0];
     },
     updateStyle() {
       this.style = `width: ${this.width.toString()}px; height: ${this.height.toString()}px`;
@@ -94,12 +94,6 @@ export default {
     },
     render() {
       this.updateStyle();
-    },
-    remove() {
-      const el = this.videoEl();
-      if (!el) return;
-
-      this.videoEl().pause();
     },
     fullscreen() {
       const el = this.videoEl();
@@ -126,6 +120,15 @@ export default {
       if (!el) return;
 
       el.pause();
+    },
+    stop() {
+      const el = this.videoEl();
+      if (!el) return;
+
+      el.pause();
+      el.src = "";
+      el.poster = "";
+      el.load();
     },
   },
 };
