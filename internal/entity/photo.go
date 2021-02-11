@@ -478,22 +478,22 @@ func (m *Photo) PreloadMany() {
 	m.PreloadAlbums()
 }
 
-// HasID checks if the photo has a database id and uid.
+// HasID tests if the photo has a database id and uid.
 func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
 }
 
-// UnknownLocation checks if the photo has an unknown location.
+// UnknownLocation tests if the photo has an unknown location.
 func (m *Photo) UnknownLocation() bool {
-	return m.CellID == "" || m.CellID == UnknownLocation.ID
+	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
 }
 
-// HasLocation checks if the photo has a known location.
+// HasLocation tests if the photo has a known location.
 func (m *Photo) HasLocation() bool {
 	return !m.UnknownLocation()
 }
 
-// LocationLoaded checks if the photo has a known location that is currently loaded.
+// LocationLoaded tests if the photo has a known location that is currently loaded.
 func (m *Photo) LocationLoaded() bool {
 	if m.Cell == nil {
 		return false

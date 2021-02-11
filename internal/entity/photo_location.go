@@ -115,11 +115,17 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	if m.UnknownLocation() {
 		m.Cell = &UnknownLocation
 		m.CellID = UnknownLocation.ID
+
+		// Remove place estimate if better data is available.
+		if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] {
+			m.Place = &UnknownPlace
+			m.PlaceID = UnknownPlace.ID
+		}
 	} else if err := m.LoadLocation(); err == nil {
 		m.Place = m.Cell.Place
 		m.PlaceID = m.Cell.PlaceID
 	} else {
-		log.Warn(err)
+		log.Warnf("photo: location %s not found in %s", m.CellID, m.PhotoName)
 	}
 
 	if m.UnknownPlace() {
@@ -128,7 +134,7 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	} else if err := m.LoadPlace(); err == nil {
 		m.PhotoCountry = m.Place.CountryCode()
 	} else {
-		log.Warn(err)
+		log.Warnf("photo: place %s not found in %s", m.PlaceID, m.PhotoName)
 	}
 
 	if m.UnknownCountry() {

@@ -43,7 +43,15 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, "Canada", m.CountryName())
 	})
 	t.Run("photo has latlng", func(t *testing.T) {
-		m := Photo{PhotoTitle: "Port Lands / Gardiner Expressway / Toronto", PhotoLat: 13.333, PhotoLng: 40.998, PhotoName: "20120910_231851_CA06E1AD", OriginalName: "demo/Toronto/port-lands--gardiner-expressway--toronto_7999515645_o.jpg"}
+		m := Photo{
+			PhotoTitle:   "Port Lands / Gardiner Expressway / Toronto",
+			PhotoLat:     13.333,
+			PhotoLng:     40.998,
+			PhotoCountry: "zz",
+			CellID:       "161437aab90c",
+			PhotoName:    "20120910_231851_CA06E1AD",
+			OriginalName: "demo/Toronto/port-lands--gardiner-expressway--toronto_7999515645_o.jpg",
+		}
 		m.EstimateCountry()
 		assert.Equal(t, "zz", m.CountryCode())
 		assert.Equal(t, "Unknown", m.CountryName())

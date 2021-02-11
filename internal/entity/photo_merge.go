@@ -27,7 +27,7 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 	}
 
 	switch {
-	case includeMeta && includeUuid && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
+	case includeMeta && includeUuid && m.HasLocation() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
 		if err := Db().
 			Where("(taken_at = ? AND taken_src = 'meta' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
 				"OR (uuid = ? AND photo_stack > -1)"+
@@ -36,7 +36,7 @@ func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err 
 			Order("photo_quality DESC, id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
-	case includeMeta && m.HasLocation() && m.HasLatLng() && m.TakenSrc == SrcMeta:
+	case includeMeta && m.HasLocation() && m.TakenSrc == SrcMeta:
 		if err := Db().
 			Where("(taken_at = ? AND taken_src = 'meta' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
 				"OR (photo_path = ? AND photo_name = ?)",
