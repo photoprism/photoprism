@@ -112,6 +112,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
 	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())
+	fmt.Printf("%-25s %s\n", "ffmpeg-codec", conf.FFmpegCodec())
 	fmt.Printf("%-25s %s\n", "exiftool-bin", conf.ExifToolBin())
 
 	// Thumbs, resampling and download security token.

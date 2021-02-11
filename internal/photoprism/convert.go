@@ -310,7 +310,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.
 		result = exec.Command(
 			c.conf.FFmpegBin(),
 			"-i", f.FileName(),
-			"-c:v", "libx264",
+			"-c:v", c.conf.FFmpegCodec(),
 			"-f", "mp4",
 			avcName,
 		)

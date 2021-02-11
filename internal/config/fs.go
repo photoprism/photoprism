@@ -255,6 +255,15 @@ func (c *Config) FFmpegBin() string {
 	return findExecutable(c.options.FFmpegBin, "ffmpeg")
 }
 
+// FFmpegCodec returns the ffmpeg codec name.
+func (c *Config) FFmpegCodec() string {
+	if c.options.FFmpegCodec == "" {
+		return "libx264"
+	}
+
+	return c.options.FFmpegCodec
+}
+
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
 	if c.options.TempPath == "" {
