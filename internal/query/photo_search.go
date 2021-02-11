@@ -334,14 +334,13 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		f.Dist = 5000
 	}
 
-	// Filter by distance (approximation).
-	if f.Lat > 0 {
+	// Filter by approx distance to coordinates:
+	if f.Lat != 0 {
 		latMin := f.Lat - SearchRadius*float32(f.Dist)
 		latMax := f.Lat + SearchRadius*float32(f.Dist)
 		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 	}
-
-	if f.Lng > 0 {
+	if f.Lng != 0 {
 		lngMin := f.Lng - SearchRadius*float32(f.Dist)
 		lngMax := f.Lng + SearchRadius*float32(f.Dist)
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)

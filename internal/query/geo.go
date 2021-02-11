@@ -175,14 +175,13 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), 7)
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else {
-		// Inaccurate distance search, but probably 'good enough' for now
-		if f.Lat > 0 {
+		// Filter by approx distance to coordinates:
+		if f.Lat != 0 {
 			latMin := f.Lat - SearchRadius*float32(f.Dist)
 			latMax := f.Lat + SearchRadius*float32(f.Dist)
 			s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 		}
-
-		if f.Lng > 0 {
+		if f.Lng != 0 {
 			lngMin := f.Lng - SearchRadius*float32(f.Dist)
 			lngMax := f.Lng + SearchRadius*float32(f.Dist)
 			s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
