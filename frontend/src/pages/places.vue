@@ -181,7 +181,11 @@ export default {
     }
   },
   mounted() {
+    this.$scrollbar.hide();
     this.renderMap();
+  },
+  destroyed() {
+    this.$scrollbar.show();
   },
   methods: {
     query: function () {

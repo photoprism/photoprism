@@ -9,6 +9,12 @@ input:-webkit-autofill:focus {
     transition: background-color 9999s !important;
 }
 
+/* Dark Scrollbar */
+
+body.dark-theme {
+    scrollbar-color: dark;
+}
+
 /* Grayscale Theme */
 
 .theme-grayscale .v-content__wrap,

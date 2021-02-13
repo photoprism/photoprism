@@ -130,13 +130,12 @@ export default {
   },
   methods: {
     onShow() {
-      document.body.classList.add("viewer");
+      this.$scrollbar.hide();
     },
     onHide() {
       this.closePlayer();
       this.onPause();
-
-      document.body.classList.remove("viewer");
+      this.$scrollbar.show();
     },
     onChange(ev, data) {
       const psp = this.$viewer.gallery;

@@ -32,6 +32,7 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import Api from "common/api";
 import Notify from "common/notify";
+import Scrollbar from "common/scrollbar";
 import Clipboard from "common/clipboard";
 import Components from "component/components";
 import icons from "component/icons";
@@ -79,6 +80,7 @@ window.Hls = Hls;
 // Assign helpers to VueJS prototype
 Vue.prototype.$event = Event;
 Vue.prototype.$notify = Notify;
+Vue.prototype.$scrollbar = Scrollbar;
 Vue.prototype.$viewer = viewer;
 Vue.prototype.$session = session;
 Vue.prototype.$api = Api;
