@@ -52,6 +52,11 @@ func (ind *Index) thumbPath() string {
 	return ind.conf.ThumbPath()
 }
 
+// IsRunning checks whether the indexer is currently running
+func (ind *Index) IsRunning() bool {
+	return mutex.MainWorker.Busy()
+}
+
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
 	mutex.MainWorker.Cancel()
