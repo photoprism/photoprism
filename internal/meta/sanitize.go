@@ -44,6 +44,10 @@ func SanitizeString(s string) string {
 		return ""
 	}
 
+	if strings.HasPrefix(s, "string with binary data") {
+		return ""
+	}
+
 	s = strings.TrimSpace(s)
 
 	return strings.Replace(s, "\"", "", -1)
