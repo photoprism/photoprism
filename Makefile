@@ -8,9 +8,9 @@ export GO111MODULE=on
 
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
-DOCKER_TAG=`date -u +%Y%m%d`
-UID=`(id -u)`
 
+DOCKER_TAG := $(shell date -u +%Y%m%d)
+UID := $(shell id -u)
 HASRICHGO := $(shell which richgo)
 
 ifdef HASRICHGO
