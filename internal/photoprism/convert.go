@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -302,15 +303,34 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	return NewMediaFile(jpegName)
 }
 
+// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
+func (c *Convert) AvcBitrate(f *MediaFile) string {
+	if f == nil {
+		return "8M"
+	}
+
+	bitrate := int(math.Round(float64(f.Width()*f.Height()*15) / 1000000))
+
+	if bitrate <= 0 {
+		return "8M"
+	}
+
+	return fmt.Sprintf("%dM", bitrate)
+}
+
 // AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
 func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.Cmd, useMutex bool, err error) {
 	if f.IsVideo() {
 		// Don't transcode more than one video at the same time.
 		useMutex = true
+
+		format := "format=yuv420p"
 		result = exec.Command(
 			c.conf.FFmpegBin(),
 			"-i", f.FileName(),
 			"-c:v", c.conf.FFmpegCodec(),
+			"-vf", format,
+			"-b:v", c.AvcBitrate(f),
 			"-f", "mp4",
 			avcName,
 		)

@@ -244,3 +244,73 @@ func TestConvert_Start(t *testing.T) {
 
 	assert.NotEqual(t, oldHash, newHash, "Fingerprint of old and new JPEG file must not be the same")
 }
+
+func TestConvert_AvcBitrate(t *testing.T) {
+	conf := config.TestConfig()
+	convert := NewConvert(conf)
+
+	t.Run("8M", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "8M", convert.AvcBitrate(mf))
+	})
+
+	t.Run("20M", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 1280
+		mf.height = 1024
+
+		assert.Equal(t, "20M", convert.AvcBitrate(mf))
+	})
+
+	t.Run("31M", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 1920
+		mf.height = 1080
+
+		assert.Equal(t, "31M", convert.AvcBitrate(mf))
+	})
+
+	t.Run("133M", func(t *testing.T) {
+		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+
+		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 4096
+		mf.height = 2160
+
+		assert.Equal(t, "133M", convert.AvcBitrate(mf))
+	})
+}

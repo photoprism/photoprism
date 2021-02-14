@@ -71,8 +71,6 @@ func GetVideo(router *gin.RouterGroup) {
 
 			return
 		} else if f.FileCodec != string(videoType.Codec) {
-			log.Debugf("video: transcoding %s from %s to avc", txt.Quote(f.FileName), txt.Quote(f.FileCodec))
-
 			start := time.Now()
 			conv := service.Convert()
 
