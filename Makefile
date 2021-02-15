@@ -44,23 +44,6 @@ acceptance-restart:
 	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-exiftool --disable-backups start -d
 acceptance-stop:
 	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-exiftool --disable-backups stop
-acceptance-long-restart:
-	cp -f storage/acceptance-long/backup.db storage/acceptance-long/index.db
-	cp -f storage/acceptance-long/config/settingsBackup.yml storage/acceptance-long/config/settings.yml
-	rm -rf storage/acceptance-long/cache/thumbnails
-	rm -rf storage/acceptance-long/cache/json
-	rm -rf storage/acceptance-long/albums/folder
-	rm -rf storage/acceptance-long/albums/month
-	rm -rf storage/acceptance-long/albums/state
-	rm -rf storage/acceptance-long/sidecar
-	go run cmd/photoprism/photoprism.go --public=false --thumb-uncached=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance-long/index.db --import-path ./storage/acceptance-long/import --http-port=2343 --config-path ./storage/acceptance-long/config --originals-path ./storage/acceptance-long/originals --storage-path ./storage/acceptance-long --test --backup-path ./storage/acceptance-long/backup start -d
-acceptance-long-stop:
-	go run cmd/photoprism/photoprism.go --public=false --thumb-uncached=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance-long/index.db --import-path ./storage/acceptance-long/import --http-port=2343 --config-path ./storage/acceptance-long/config --originals-path ./storage/acceptance-long/originals --storage-path ./storage/acceptance-long --test --backup-path ./storage/acceptance-long/backup stop
-acceptance-restore-db:
-	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
-	cp -f storage/acceptance/backup.db storage/acceptance/index.db
-	rm -rf storage/acceptance/originals/2010
-	rm -rf storage/acceptance/originals/2013
 start:
 	go run cmd/photoprism/photoprism.go start -d
 stop:
@@ -137,9 +120,6 @@ acceptance:
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox && cd ..)
-acceptance-long:
-	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance-long && cd ..)
 reset-photoprism-db:
 	$(info Purging photoprism database...)
 	mysql < scripts/reset-photoprism-db.sql
