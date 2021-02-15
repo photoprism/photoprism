@@ -162,9 +162,6 @@ ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
 ENV PHOTOPRISM_LOG_FILENAME /photoprism/photoprism.log
 ENV PHOTOPRISM_PID_FILENAME /photoprism/photoprism.pid
 
-# Use hardware codec for video transcoding
-ENV PHOTOPRISM_FFMPEG_CODEC h264_v4l2m2m
-
 # Defaults for common config values
 # See https://docs.photoprism.org/getting-started/config-options/
 ENV PHOTOPRISM_DEBUG "false"
