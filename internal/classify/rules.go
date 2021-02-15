@@ -479,7 +479,7 @@ var rules = LabelRules{
 	"basket": {
 		Label:      "basket",
 		Threshold:  0.300000,
-		Priority:   0,
+		Priority:   -1,
 		Categories: []string{},
 	},
 	"basketball": {
@@ -1625,7 +1625,7 @@ var rules = LabelRules{
 	"crate": {
 		Label:      "basket",
 		Threshold:  0.520000,
-		Priority:   0,
+		Priority:   -1,
 		Categories: []string{},
 	},
 	"crayfish": {
@@ -2627,7 +2627,7 @@ var rules = LabelRules{
 	"hamper": {
 		Label:      "basket",
 		Threshold:  0.610000,
-		Priority:   0,
+		Priority:   -1,
 		Categories: []string{},
 	},
 	"hamster": {
@@ -5055,10 +5055,10 @@ var rules = LabelRules{
 		Categories: []string{},
 	},
 	"shopping basket": {
-		Label:      "shopping basket",
-		Threshold:  0.570000,
-		Priority:   0,
-		Categories: []string{"basket"},
+		Label:      "basket",
+		Threshold:  0.600000,
+		Priority:   -1,
+		Categories: []string{},
 	},
 	"shopping cart": {
 		Label:      "shop",

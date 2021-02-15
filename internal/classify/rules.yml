@@ -3317,16 +3317,17 @@ shoe shop:
 basket:
   label: basket
   threshold: 0.3
+  priority: -1
 
 crate:
   label: basket
   threshold: 0.52
+  priority: -1
 
 shopping basket:
-  label: shopping basket
-  threshold: 0.57
-  categories:
-    - basket
+  label: basket
+  threshold: 0.6
+  priority: -1
 
 shopping cart:
   label: shop
@@ -4480,6 +4481,7 @@ gas pump:
 hamper:
   label: basket
   threshold: 0.61
+  priority: -1
 
 hay:
   label: farm
