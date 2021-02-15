@@ -1,4 +1,4 @@
-FROM photoprism/development:20210214 as build
+FROM photoprism/development:20210215 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -8,7 +8,7 @@ COPY . .
 RUN make dep build-js install
 
 # Same base image as photoprism/development
-FROM ubuntu:20.04
+FROM ubuntu:20.10
 
 # Set environment variables
 ENV DEBIAN_FRONTEND noninteractive
@@ -33,24 +33,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-utils \
         add-apt-key \
         exiftool \
+        darktable \
         rawtherapee \
-        ffmpeg
+        ffmpeg \
+        ffmpegthumbnailer \
+        libavcodec-extra && \
+        apt-get update && \
+        apt-get dist-upgrade && \
+        apt-get autoremove && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/*
 
 # Copy dependencies
 COPY --from=build /go/bin/gosu /bin/gosu
 COPY --from=build /usr/lib/libtensorflow.so /usr/lib/libtensorflow.so
 COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_framework.so
 RUN ldconfig
-
-# Install RAW to JPEG converter
-RUN sh -c "echo 'deb http://download.opensuse.org/repositories/home:/pmdpalma:/Ubuntu:/20.04:/bucket/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/home:pmdpalma:Ubuntu:20.04:bucket.list" && \
-    wget -qO - https://download.opensuse.org/repositories/home:pmdpalma:Ubuntu:20.04:bucket/xUbuntu_20.04/Release.key | apt-key add - && \
-    apt-get update && \
-    apt-get install darktable && \
-    apt-get upgrade && \
-    apt-get dist-upgrade && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # Set default umask and create photoprism user
 RUN umask 0000 && useradd photoprism -m -d /photoprism

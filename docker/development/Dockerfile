@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:20.10
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
@@ -6,7 +6,7 @@ ARG BUILD_TAG
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Configure apt-get
+# Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
@@ -52,24 +52,15 @@ RUN apt-get update && apt-get upgrade && \
     firefox \
     libheif-examples \
     exiftool \
+    darktable \
     rawtherapee \
     ffmpeg \
+    ffmpegthumbnailer \
+    libavcodec-extra \
     lsof \
     apache2-utils \
     fonts-roboto \
     sudo
-
-# Install Chromium Browser via .deb
-RUN add-apt-repository -y ppa:xalt7x/chromium-deb-vaapi
-COPY /docker/development/pin-xalt7x-chromium-deb-vaapi /etc/apt/preferences.d/pin-xalt7x-chromium-deb-vaapi
-
-# Install RAW to JPEG converter
-RUN sh -c "echo 'deb http://download.opensuse.org/repositories/home:/pmdpalma:/Ubuntu:/20.04:/bucket/xUbuntu_20.04/ /' > /etc/apt/sources.list.d/home:pmdpalma:Ubuntu:20.04:bucket.list" && \
-    wget -qO - https://download.opensuse.org/repositories/home:pmdpalma:Ubuntu:20.04:bucket/xUbuntu_20.04/Release.key | apt-key add - && \
-    apt-get update && \
-    apt-get install chromium-browser chromium-codecs-ffmpeg-extra darktable && \
-    apt-get upgrade && \
-    apt-get dist-upgrade
 
 # Install & configure TensorFlow for C,
 # see https://www.tensorflow.org/install/lang_c
@@ -86,8 +77,11 @@ RUN ldconfig
 
 # Install NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get update && \
-    apt-get install nodejs && \
+RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
+    apt-get update && \
+    apt-get dist-upgrade && \
+    apt-get install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
+    apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -117,6 +111,7 @@ ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:/usr/local/go/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV TMPDIR /tmp
 ENV GO111MODULE on
+ENV CGO_CFLAGS "-g -O2 -Wno-return-local-addr"
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Download TensorFlow model and test files

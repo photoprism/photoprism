@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as build
+FROM ubuntu:20.10 as build
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
@@ -6,7 +6,7 @@ ARG BUILD_TAG
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Configure apt-get
+# Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
@@ -61,6 +61,8 @@ RUN ldconfig
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update && \
     apt-get install nodejs && \
+    apt-get dist-upgrade && \
+    apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -86,6 +88,7 @@ ENV GOPATH /go
 ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:/usr/local/go/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV GO111MODULE on
+ENV CGO_CFLAGS "-g -O2 -Wno-return-local-addr"
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Download TensorFlow model and test files
@@ -104,12 +107,12 @@ RUN make dep build-js install
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu
 
 # Same base image as photoprism/development
-FROM ubuntu:20.04
+FROM ubuntu:20.10
 
 # Set environment variables
 ENV DEBIAN_FRONTEND noninteractive
 
-# Configure apt-get
+# Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
 RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends
 RUN echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests
@@ -126,8 +129,11 @@ RUN apt-get update && apt-get upgrade && apt-get install -y --no-install-recomme
         darktable \
         rawtherapee \
         exiftool \
-        ffmpeg && \
+        ffmpeg \
+        ffmpegthumbnailer \
+        libavcodec-extra && \
     apt-get dist-upgrade && \
+    apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
