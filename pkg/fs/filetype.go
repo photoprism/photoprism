@@ -71,6 +71,7 @@ var FileExt = FileExtensions{
 	".mov":  FormatMov,
 	".avi":  FormatAvi,
 	".mp4":  FormatMp4,
+	".m4v":  FormatMp4,
 	".avc":  FormatAvc,
 	".hevc": FormatHEVC,
 	".3gp":  Format3gp,
