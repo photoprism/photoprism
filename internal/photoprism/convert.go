@@ -338,6 +338,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.
 			"-vf", format,
 			"-num_output_buffers", "32",
 			"-num_capture_buffers", "16",
+			"-crf", "23",
 			"-b:v", c.AvcBitrate(f),
 			"-f", "mp4",
 			avcName,
