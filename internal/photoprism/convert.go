@@ -23,6 +23,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Default FFmpeg AVC software codec.
+const DefaultAvcCodec = "libx264"
+
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
 	conf     *config.Config
@@ -324,7 +327,7 @@ func (c *Convert) AvcBitrate(f *MediaFile) string {
 }
 
 // AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
-func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.Cmd, useMutex bool, err error) {
+func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (result *exec.Cmd, useMutex bool, err error) {
 	if f.IsVideo() {
 		// Don't transcode more than one video at the same time.
 		useMutex = true
@@ -333,7 +336,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.
 		result = exec.Command(
 			c.conf.FFmpegBin(),
 			"-i", f.FileName(),
-			"-c:v", c.conf.FFmpegCodec(),
+			"-c:v", codecName,
 			"-c:a", "copy",
 			"-vf", format,
 			"-num_output_buffers", "32",
@@ -351,7 +354,11 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string) (result *exec.
 }
 
 // ToAvc converts a single video file to MPEG-4 AVC.
-func (c *Convert) ToAvc(f *MediaFile) (*MediaFile, error) {
+func (c *Convert) ToAvc(f *MediaFile, codecName string) (file *MediaFile, err error) {
+	if codecName == "" {
+		codecName = DefaultAvcCodec
+	}
+
 	if f == nil {
 		return nil, fmt.Errorf("convert: file is nil - you might have found a bug")
 	}
@@ -384,7 +391,7 @@ func (c *Convert) ToAvc(f *MediaFile) (*MediaFile, error) {
 		"xmpName":  "",
 	})
 
-	cmd, useMutex, err := c.AvcConvertCommand(f, avcName)
+	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, codecName)
 
 	if err != nil {
 		log.Error(err)
@@ -409,9 +416,15 @@ func (c *Convert) ToAvc(f *MediaFile) (*MediaFile, error) {
 	cmd.Stderr = &stderr
 
 	// Run convert command.
-	if err := cmd.Run(); err != nil {
+	if err = cmd.Run(); err != nil {
+		_ = os.Remove(avcName)
+
 		if stderr.String() != "" {
-			return nil, errors.New(stderr.String())
+			err = errors.New(stderr.String())
+		}
+
+		if codecName != DefaultAvcCodec {
+			return c.ToAvc(f, DefaultAvcCodec)
 		} else {
 			return nil, err
 		}
