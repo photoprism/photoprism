@@ -108,7 +108,7 @@ RUN set -eux; \
 # Configure Go environment
 ENV GOPATH /go
 ENV GOBIN $GOPATH/bin
-ENV PATH $GOBIN:/usr/local/go/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH $GOBIN:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV TMPDIR /tmp
 ENV GO111MODULE on
 ENV CGO_CFLAGS "-g -O2 -Wno-return-local-addr"
