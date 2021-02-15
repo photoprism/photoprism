@@ -30,7 +30,8 @@ const (
 	FormatFlv      FileFormat = "flv"
 	FormatMkv      FileFormat = "mkv"
 	FormatMpg      FileFormat = "mpg"
-	FormatMts      FileFormat = "mts"
+	Format         FileFormat = "mts"
+	FormatM4v      FileFormat = "m4v"
 	FormatOgv      FileFormat = "ogv"
 	FormatWebm     FileFormat = "webm"
 	FormatWMV      FileFormat = "wmv"
@@ -81,6 +82,7 @@ var FileExt = FileExtensions{
 	".mpeg": FormatMpg,
 	".mpo":  FormatMpo,
 	".mts":  FormatMts,
+	".m4v":  FormatM4v,
 	".ogv":  FormatOgv,
 	".webm": FormatWebm,
 	".wmv":  FormatWMV,
