@@ -297,7 +297,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		assert.Equal(t, "32M", convert.AvcBitrate(mf))
 	})
 
-	t.Run("133M", func(t *testing.T) {
+	t.Run("50M", func(t *testing.T) {
 		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
@@ -311,6 +311,6 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		mf.width = 4096
 		mf.height = 2160
 
-		assert.Equal(t, "133M", convert.AvcBitrate(mf))
+		assert.Equal(t, "50M", convert.AvcBitrate(mf))
 	})
 }

@@ -313,6 +313,8 @@ func (c *Convert) AvcBitrate(f *MediaFile) string {
 
 	if bitrate <= 0 {
 		return "8M"
+	} else if bitrate >= 50 {
+		return "50M"
 	}
 
 	return fmt.Sprintf("%dM", bitrate)
