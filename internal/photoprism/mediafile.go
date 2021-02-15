@@ -540,7 +540,7 @@ func (m *MediaFile) Exists() bool {
 	return fs.FileExists(m.FileName())
 }
 
-// Remove a media file.
+// Remove permanently deletes a media file.
 func (m *MediaFile) Remove() error {
 	return os.Remove(m.FileName())
 }
@@ -1029,4 +1029,30 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 	}
 
 	return renamed, nil
+}
+
+// RemoveSidecars permanently deletes related sidecar files.
+func (m *MediaFile) RemoveSidecars() (err error) {
+	fileName := m.FileName()
+	sidecarPath := Config().SidecarPath()
+	originalsPath := Config().OriginalsPath()
+
+	prefix := fs.RelPrefix(fileName, originalsPath, false)
+	globPrefix := filepath.Join(sidecarPath, prefix) + "."
+
+	matches, err := filepath.Glob(regexp.QuoteMeta(globPrefix) + "*")
+
+	if err != nil {
+		return err
+	}
+
+	for _, sidecarName := range matches {
+		if err = os.Remove(sidecarName); err != nil {
+			log.Errorf("media: failed removing sidecar %s", txt.Quote(fs.RelName(sidecarName, sidecarPath)))
+		} else {
+			log.Infof("media: removed sidecar %s", txt.Quote(fs.RelName(sidecarName, sidecarPath)))
+		}
+	}
+
+	return nil
 }
