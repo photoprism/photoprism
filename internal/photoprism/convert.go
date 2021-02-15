@@ -382,7 +382,7 @@ func (c *Convert) ToAvc(f *MediaFile, codecName string) (file *MediaFile, err er
 	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Infof("converting %s to %s", fileName, fs.FormatAvc)
+	log.Infof("converting %s to %s (%s)", fileName, fs.FormatAvc, codecName)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": f.FileType(),
@@ -422,6 +422,8 @@ func (c *Convert) ToAvc(f *MediaFile, codecName string) (file *MediaFile, err er
 		if stderr.String() != "" {
 			err = errors.New(stderr.String())
 		}
+
+		log.Debugf("ffmpeg: %s", err.Error())
 
 		if codecName != DefaultAvcCodec {
 			return c.ToAvc(f, DefaultAvcCodec)
