@@ -309,7 +309,10 @@ func (c *Convert) AvcBitrate(f *MediaFile) string {
 		return "8M"
 	}
 
-	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*15) / 1000000))
+	// Baseline: 15
+	quality := 12
+
+	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*quality) / 1000000))
 
 	if bitrate <= 0 {
 		return "8M"
