@@ -31,7 +31,7 @@ test.meta("testID", "photos-download-001")(
     await page.search("name:IMG_20200711_174006.jpg");
     const SecondPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
     await t.click(Selector("div").withAttribute("data-uid", SecondPhoto));
-    await t.expect(Selector("#p-photo-viewer").visible).ok().hover(Selector(".action-download"));
+    await t.expect(Selector("#photo-viewer").visible).ok().hover(Selector(".action-download"));
     await logger.clear();
     await t.click(Selector(".action-download"));
     const requestInfo2 = await logger.requests[1].response;
@@ -100,7 +100,7 @@ test.meta("testID", "photos-download-004")(
     await logger.clear();
     await page.clearSelection();
     await t.click(Selector("div").withAttribute("data-uid", Photo));
-    await t.expect(Selector("#p-photo-viewer").visible).ok().hover(Selector(".action-download"));
+    await t.expect(Selector("#photo-viewer").visible).ok().hover(Selector(".action-download"));
     await logger.clear();
     await t.click(Selector(".action-download"));
     const requestInfo3 = await logger.requests[1].response;
