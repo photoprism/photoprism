@@ -30,6 +30,7 @@ var MediaTypes = map[FileFormat]MediaType{
 	FormatMkv:      MediaVideo,
 	FormatMpg:      MediaVideo,
 	FormatMts:      MediaVideo,
+	FormatM4v:      MediaVideo,
 	FormatOgv:      MediaVideo,
 	FormatWebm:     MediaVideo,
 	FormatWMV:      MediaVideo,
