@@ -54,7 +54,8 @@ services:
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables using TensorFlow for image classification
       PHOTOPRISM_DARKTABLE_PRESETS: "true"           # Enables Darktable presets and disables concurrent RAW conversion
-      # PHOTOPRISM_FFMPEG_CODEC: "h264_v4l2m2m"      # Set (hardware) avc codec for video transcoding
+      # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # FFmpeg AVC encoder for video transcoding (default: libx264)
+      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
       # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
@@ -75,6 +76,9 @@ services:
       # UMASK: 0000
     # Uncomment and edit the following line to set a specific user / group id (native):
     # user: "1000:1000"
+    # For hardware AVC transcoding using the h264_v4l2m2m encoder:
+    # devices:
+    #  - "/dev/video11:/dev/video11"
     volumes:
       # Your photo and video files ([local path]:[container path]):
       - "~/Pictures:/photoprism/originals"

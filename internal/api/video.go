@@ -72,7 +72,7 @@ func GetVideo(router *gin.RouterGroup) {
 		} else if f.FileCodec != string(videoType.Codec) {
 			conv := service.Convert()
 
-			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegCodec()); err != nil {
+			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder()); err != nil {
 				log.Errorf("video: transcoding %s failed", txt.Quote(f.FileName))
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 				return

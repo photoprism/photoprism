@@ -255,13 +255,13 @@ func (c *Config) FFmpegBin() string {
 	return findExecutable(c.options.FFmpegBin, "ffmpeg")
 }
 
-// FFmpegCodec returns the ffmpeg codec name.
-func (c *Config) FFmpegCodec() string {
-	if c.options.FFmpegCodec == "" {
+// FFmpegEncoder returns the ffmpeg AVC encoder name.
+func (c *Config) FFmpegEncoder() string {
+	if c.options.FFmpegEncoder == "" {
 		return "libx264"
 	}
 
-	return c.options.FFmpegCodec
+	return c.options.FFmpegEncoder
 }
 
 // FFmpegBuffers returns the number of ffmpeg capture buffers.

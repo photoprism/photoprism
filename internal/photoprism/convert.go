@@ -23,8 +23,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Default FFmpeg AVC software codec.
-const DefaultAvcCodec = "libx264"
+// Default FFmpeg AVC software encoder.
+const DefaultAvcEncoder = "libx264"
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
@@ -354,9 +354,9 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 }
 
 // ToAvc converts a single video file to MPEG-4 AVC.
-func (c *Convert) ToAvc(f *MediaFile, codecName string) (file *MediaFile, err error) {
-	if codecName == "" {
-		codecName = DefaultAvcCodec
+func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err error) {
+	if encoderName == "" {
+		encoderName = DefaultAvcEncoder
 	}
 
 	if f == nil {
@@ -382,7 +382,7 @@ func (c *Convert) ToAvc(f *MediaFile, codecName string) (file *MediaFile, err er
 	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Infof("converting %s to %s (%s)", fileName, fs.FormatAvc, codecName)
+	log.Infof("converting %s to %s (%s)", fileName, fs.FormatAvc, encoderName)
 
 	event.Publish("index.converting", event.Data{
 		"fileType": f.FileType(),
@@ -391,7 +391,7 @@ func (c *Convert) ToAvc(f *MediaFile, codecName string) (file *MediaFile, err er
 		"xmpName":  "",
 	})
 
-	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, codecName)
+	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoderName)
 
 	if err != nil {
 		log.Error(err)
@@ -423,10 +423,10 @@ func (c *Convert) ToAvc(f *MediaFile, codecName string) (file *MediaFile, err er
 			err = errors.New(stderr.String())
 		}
 
-		log.Debugf("ffmpeg: %s", err.Error())
+		log.Warnf("ffmpeg: %s", err.Error())
 
-		if codecName != DefaultAvcCodec {
-			return c.ToAvc(f, DefaultAvcCodec)
+		if encoderName != DefaultAvcEncoder {
+			return c.ToAvc(f, DefaultAvcEncoder)
 		} else {
 			return nil, err
 		}

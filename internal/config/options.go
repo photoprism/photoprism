@@ -91,7 +91,7 @@ type Options struct {
 	DarktablePresets  bool   `yaml:"DarktablePresets" json:"DarktablePresets" flag:"darktable-presets"`
 	HeifConvertBin    string `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	FFmpegBin         string `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
-	FFmpegCodec       string `yaml:"FFmpegCodec" json:"FFmpegCodec" flag:"ffmpeg-codec"`
+	FFmpegEncoder     string `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
 	FFmpegBuffers     int    `yaml:"FFmpegBuffers" json:"FFmpegBuffers" flag:"ffmpeg-buffers"`
 	ExifToolBin       string `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	DetachServer      bool   `yaml:"DetachServer" json:"-" flag:"detach-server"`

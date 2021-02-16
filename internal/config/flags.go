@@ -316,10 +316,10 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
 	},
 	cli.StringFlag{
-		Name:   "ffmpeg-codec",
-		Usage:  "FFmpeg AVC codec `NAME`",
+		Name:   "ffmpeg-encoder",
+		Usage:  "FFmpeg AVC encoder `NAME`",
 		Value:  "libx264",
-		EnvVar: "PHOTOPRISM_FFMPEG_CODEC",
+		EnvVar: "PHOTOPRISM_FFMPEG_ENCODER",
 	},
 	cli.IntFlag{
 		Name:   "ffmpeg-buffers",
