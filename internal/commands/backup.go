@@ -97,6 +97,7 @@ func backupAction(ctx *cli.Context) error {
 		case config.MySQL, config.MariaDB:
 			cmd = exec.Command(
 				conf.MysqldumpBin(),
+				"--protocol", "tcp",
 				"-h", conf.DatabaseHost(),
 				"-P", conf.DatabasePortString(),
 				"-u", conf.DatabaseUser(),
