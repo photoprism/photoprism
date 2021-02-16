@@ -321,6 +321,12 @@ var GlobalFlags = []cli.Flag{
 		Value:  "libx264",
 		EnvVar: "PHOTOPRISM_FFMPEG_CODEC",
 	},
+	cli.IntFlag{
+		Name:   "ffmpeg-buffers",
+		Usage:  "FFmpeg capture buffers",
+		Value:  32,
+		EnvVar: "PHOTOPRISM_FFMPEG_BUFFERS",
+	},
 	cli.StringFlag{
 		Name:   "exiftool-bin",
 		Usage:  "ExifTool `COMMAND` for enhanced metadata extraction",

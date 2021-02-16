@@ -264,6 +264,19 @@ func (c *Config) FFmpegCodec() string {
 	return c.options.FFmpegCodec
 }
 
+// FFmpegBuffers returns the number of ffmpeg capture buffers.
+func (c *Config) FFmpegBuffers() int {
+	if c.options.FFmpegBuffers <= 8 {
+		return 8
+	}
+
+	if c.options.FFmpegBuffers >= 2048 {
+		return 2048
+	}
+
+	return c.options.FFmpegBuffers
+}
+
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
 	if c.options.TempPath == "" {
