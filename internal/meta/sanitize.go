@@ -35,6 +35,7 @@ var UnwantedDescriptions = map[string]bool{
 	"cof":                     true,
 	"qrf":                     true,
 	"binary comment":          true,
+	"default":                 true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
