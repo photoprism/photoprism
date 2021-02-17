@@ -337,7 +337,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 			c.conf.FFmpegBin(),
 			"-i", f.FileName(),
 			"-c:v", codecName,
-			"-c:a", "libmp3lame",
+			"-c:a", "aac",
 			"-vf", format,
 			"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
 			"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
