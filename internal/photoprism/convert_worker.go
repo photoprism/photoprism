@@ -24,9 +24,9 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 		case job.convert == nil:
 			continue
 		case job.file.IsVideo():
-			if _, err := job.convert.ToJson(job.file); err != nil {
-				logError(err, job)
-			} else if _, err := job.convert.ToJpeg(job.file); err != nil {
+			_, _ = job.convert.ToJson(job.file)
+
+			if _, err := job.convert.ToJpeg(job.file); err != nil {
 				logError(err, job)
 			} else if metaData := job.file.MetaData(); metaData.CodecAvc() {
 				continue

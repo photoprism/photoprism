@@ -319,8 +319,8 @@ func (c *Convert) AvcBitrate(f *MediaFile) string {
 
 	if bitrate <= 0 {
 		return "8M"
-	} else if bitrate >= 50 {
-		return "50M"
+	} else if bitrate >= 100 {
+		return "100M"
 	}
 
 	return fmt.Sprintf("%dM", bitrate)
@@ -337,13 +337,17 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 			c.conf.FFmpegBin(),
 			"-i", f.FileName(),
 			"-c:v", codecName,
-			"-c:a", "copy",
+			"-c:a", "libmp3lame",
 			"-vf", format,
 			"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
 			"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
+			"-max_muxing_queue_size", "1024",
 			"-crf", "23",
+			"-vsync", "vfr",
+			"-r", "30",
 			"-b:v", c.AvcBitrate(f),
 			"-f", "mp4",
+			"-y",
 			avcName,
 		)
 	} else {
