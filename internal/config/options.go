@@ -92,6 +92,7 @@ type Options struct {
 	HeifConvertBin    string `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	FFmpegBin         string `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
 	FFmpegEncoder     string `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
+	FFmpegBitrate     int    `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
 	FFmpegBuffers     int    `yaml:"FFmpegBuffers" json:"FFmpegBuffers" flag:"ffmpeg-buffers"`
 	ExifToolBin       string `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	DetachServer      bool   `yaml:"DetachServer" json:"-" flag:"detach-server"`

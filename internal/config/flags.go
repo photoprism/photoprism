@@ -322,6 +322,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_FFMPEG_ENCODER",
 	},
 	cli.IntFlag{
+		Name:   "ffmpeg-bitrate",
+		Usage:  "FFmpeg encoding bitrate `LIMIT` in Mbit/s",
+		Value:  50,
+		EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
+	},
+	cli.IntFlag{
 		Name:   "ffmpeg-buffers",
 		Usage:  "FFmpeg capture buffers",
 		Value:  32,

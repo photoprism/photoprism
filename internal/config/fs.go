@@ -250,33 +250,6 @@ func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
-// FFmpegBin returns the ffmpeg executable file name.
-func (c *Config) FFmpegBin() string {
-	return findExecutable(c.options.FFmpegBin, "ffmpeg")
-}
-
-// FFmpegEncoder returns the ffmpeg AVC encoder name.
-func (c *Config) FFmpegEncoder() string {
-	if c.options.FFmpegEncoder == "" {
-		return "libx264"
-	}
-
-	return c.options.FFmpegEncoder
-}
-
-// FFmpegBuffers returns the number of ffmpeg capture buffers.
-func (c *Config) FFmpegBuffers() int {
-	if c.options.FFmpegBuffers <= 8 {
-		return 8
-	}
-
-	if c.options.FFmpegBuffers >= 2048 {
-		return 2048
-	}
-
-	return c.options.FFmpegBuffers
-}
-
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
 	if c.options.TempPath == "" {

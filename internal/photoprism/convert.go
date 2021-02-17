@@ -308,19 +308,21 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 
 // AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
 func (c *Convert) AvcBitrate(f *MediaFile) string {
+	const defaultBitrate = "8M"
+
 	if f == nil {
-		return "8M"
+		return defaultBitrate
 	}
 
-	// Baseline: 15
+	limit := c.conf.FFmpegBitrate()
 	quality := 12
 
 	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*quality) / 1000000))
 
 	if bitrate <= 0 {
-		return "8M"
-	} else if bitrate >= 100 {
-		return "100M"
+		return defaultBitrate
+	} else if bitrate > limit {
+		bitrate = limit
 	}
 
 	return fmt.Sprintf("%dM", bitrate)
