@@ -41,6 +41,8 @@ func TestConfig_SidecarPath(t *testing.T) {
 	assert.Contains(t, c.SidecarPath(), "testdata/sidecar")
 	c.options.SidecarPath = ".photoprism"
 	assert.Equal(t, ".photoprism", c.SidecarPath())
+	c.options.SidecarPath = ""
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/sidecar", c.SidecarPath())
 }
 
 func TestConfig_SidecarPathIsAbs(t *testing.T) {
@@ -136,4 +138,33 @@ func TestConfig_ImportPath2(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
 	c.options.ImportPath = ""
 	assert.Equal(t, "", c.ImportPath())
+}
+
+func TestConfig_ConfigPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config", c.ConfigPath())
+	c.options.ConfigPath = ""
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config", c.ConfigPath())
+}
+
+func TestConfig_AssetsPath2(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets", c.AssetsPath())
+	c.options.AssetsPath = ""
+	assert.Equal(t, "", c.AssetsPath())
+}
+
+func TestConfig_MysqlBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.MysqlBin(), "mysql")
+}
+
+func TestConfig_MysqldumpBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.MysqldumpBin(), "mysqldump")
+}
+
+func TestConfig_SqliteBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.SqliteBin(), "sqlite")
 }
