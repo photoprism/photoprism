@@ -75,7 +75,7 @@ export class Label extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return `/api/v1/labels/${this.getId()}/t/${config.previewToken()}/${size}`;
+    return `/api/v1/labels/${this.getId()}/t/${config.previewToken()}/${size}?${this.UpdatedAt}`;
   }
 
   getDateString() {
