@@ -250,11 +250,6 @@ func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
-// FFmpegBin returns the ffmpeg executable file name.
-func (c *Config) FFmpegBin() string {
-	return findExecutable(c.options.FFmpegBin, "ffmpeg")
-}
-
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
 	if c.options.TempPath == "" {

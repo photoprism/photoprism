@@ -10,14 +10,14 @@ import (
 	"github.com/urfave/cli"
 )
 
-// ConfigCommand is used to register the display config cli command
+// ConfigCommand registers the display config cli command.
 var ConfigCommand = cli.Command{
 	Name:   "config",
 	Usage:  "Displays global configuration values",
 	Action: configAction,
 }
 
-// configAction prints current configuration
+// configAction lists configuration options and their values.
 func configAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
@@ -112,6 +112,9 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
 	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())
+	fmt.Printf("%-25s %s\n", "ffmpeg-encoder", conf.FFmpegEncoder())
+	fmt.Printf("%-25s %d\n", "ffmpeg-bitrate", conf.FFmpegBitrate())
+	fmt.Printf("%-25s %d\n", "ffmpeg-buffers", conf.FFmpegBuffers())
 	fmt.Printf("%-25s %s\n", "exiftool-bin", conf.ExifToolBin())
 
 	// Thumbs, resampling and download security token.

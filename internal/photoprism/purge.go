@@ -31,7 +31,7 @@ func NewPurge(conf *config.Config, files *Files) *Purge {
 }
 
 // Start removes missing files from search results.
-func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
+func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhotos map[string]bool, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("purge: %s (panic)\nstack: %s", r, debug.Stack())
@@ -89,7 +89,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 						continue
 					}
 
-					if err := file.Update("FileMissing", false); err != nil {
+					if err := file.Found(); err != nil {
 						log.Errorf("purge: %s", err)
 					} else {
 						log.Infof("purge: found %s", txt.Quote(file.FileName))
@@ -102,12 +102,23 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 					continue
 				}
 
+				wasPrimary := file.FilePrimary
+
 				if err := file.Purge(); err != nil {
 					log.Errorf("purge: %s", err)
-				} else {
-					prg.files.Remove(file.FileName, file.FileRoot)
-					purgedFiles[fileName] = true
-					log.Infof("purge: flagged file %s as missing", txt.Quote(file.FileName))
+					continue
+				}
+
+				w.files.Remove(file.FileName, file.FileRoot)
+				purgedFiles[fileName] = true
+				log.Infof("purge: flagged file %s as missing", txt.Quote(file.FileName))
+
+				if !wasPrimary {
+					continue
+				}
+
+				if err := query.SetPhotoPrimary(file.PhotoUID, ""); err != nil {
+					log.Infof("purge: %s", err)
 				}
 			}
 		}
@@ -156,7 +167,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 				if err := file.Purge(); err != nil {
 					log.Errorf("purge: %s", err)
 				} else {
-					prg.files.Remove(file.FileName, file.FileRoot)
+					w.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
 					log.Infof("purge: removed duplicate %s", txt.Quote(file.FileName))
 				}
@@ -214,7 +225,7 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 
 				// Remove files from lookup table.
 				for _, file := range photo.AllFiles() {
-					prg.files.Remove(file.FileName, file.FileRoot)
+					w.files.Remove(file.FileName, file.FileRoot)
 				}
 			}
 		}
@@ -228,28 +239,34 @@ func (prg *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPh
 		time.Sleep(50 * time.Millisecond)
 	}
 
+	log.Info("purge: searching index for unassigned primary files")
+
+	if err := query.FixPrimaries(); err != nil {
+		log.Errorf("purge: %s (fix primary files)", err.Error())
+	}
+
 	log.Info("purge: searching index for hidden media files")
 
 	if err := query.ResetPhotoQuality(); err != nil {
 		return purgedFiles, purgedPhotos, err
 	}
 
+	if err := query.PurgeOrphans(); err != nil {
+		log.Errorf("purge: %s (orphans)", err)
+	}
+
 	if err := query.UpdateMissingAlbumEntries(); err != nil {
-		log.Errorf("purge: %s (update albums)", err.Error())
+		log.Errorf("purge: %s (album entries)", err)
 	}
 
 	if err := entity.UpdatePhotoCounts(); err != nil {
-		log.Errorf("purge: %s (update photo counts)", err)
-	}
-
-	if err := query.CleanDuplicates(); err != nil {
-		log.Errorf("purge: %s (clean duplicates)", err)
+		log.Errorf("purge: %s (photo counts)", err)
 	}
 
 	return purgedFiles, purgedPhotos, nil
 }
 
 // Cancel stops the current operation.
-func (prg *Purge) Cancel() {
+func (w *Purge) Cancel() {
 	mutex.MainWorker.Cancel()
 }

@@ -95,7 +95,7 @@ func (data Data) HasInstanceID() bool {
 	return rnd.IsUUID(data.InstanceID)
 }
 
-// HasTimeAndPlace if data contains a time and gps position.
+// HasTimeAndPlace if data contains a time and GPS position.
 func (data Data) HasTimeAndPlace() bool {
 	return !data.TakenAt.IsZero() && data.Lat != 0 && data.Lng != 0
 }

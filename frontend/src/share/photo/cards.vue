@@ -46,7 +46,7 @@
             <v-layout v-if="photo.Type === 'live'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
                      loop muted playsinline>
-                <source :src="photo.videoUrl()" type="video/mp4">
+                <source :src="photo.videoUrl()">
               </video>
             </v-layout>
 
@@ -58,7 +58,7 @@
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">movie</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
               <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
             </v-btn>
 
@@ -183,11 +183,17 @@ export default {
     },
     playLive(photo) {
       const player = this.livePlayer(photo);
-      if (player) player.play();
+      try { if (player) player.play(); }
+      catch (e) {
+        // Ignore.
+      }
     },
     pauseLive(photo) {
       const player = this.livePlayer(photo);
-      if (player) player.pause();
+      try { if (player) player.pause(); }
+      catch (e) {
+        // Ignore.
+      }
     },
     downloadFile(index) {
       Notify.success(this.$gettext("Downloading…"));
@@ -208,7 +214,7 @@ export default {
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
       const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
 
       if (scrolled) {

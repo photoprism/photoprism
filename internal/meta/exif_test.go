@@ -89,6 +89,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 180, data.Height)
 		assert.Equal(t, 240, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
 		assert.Equal(t, "1/2462", data.Exposure)

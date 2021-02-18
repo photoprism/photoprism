@@ -50,7 +50,7 @@
             <v-layout v-if="photo.Type === 'live'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
                      loop muted playsinline>
-                <source :src="photo.videoUrl()" type="video/mp4">
+                <source :src="photo.videoUrl()">
               </video>
             </v-layout>
 
@@ -62,7 +62,7 @@
                    @click.stop.prevent="openPhoto(index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">movie</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
               <v-icon color="white" class="default-hidden action-stack" :title="$gettext('Stack')">burst_mode</v-icon>
             </v-btn>
 
@@ -104,14 +104,35 @@
             <v-btn :ripple="false"
                    icon flat absolute
                    class="input-favorite"
-                   @touchstart.stop.prevent="photo.toggleLike()"
-                   @touchend.stop.prevent
+                   @touchstart.stop.prevent="onTouchStart($event, index)"
+                   @touchend.stop.prevent="toggleLike($event, index)"
                    @touchmove.stop.prevent
-                   @click.stop.prevent="photo.toggleLike()">
+                   @click.stop.prevent="toggleLike($event, index)">
               <v-icon color="white" class="select-on">favorite</v-icon>
               <v-icon color="white" class="select-off">favorite_border</v-icon>
             </v-btn>
           </v-img>
+
+          <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details pa-0">
+            <v-layout row wrap align-center>
+              <v-flex xs6 class="text-xs-center pa-1">
+                <v-btn color="accent lighten-2"
+                       small depressed dark block :round="false"
+                       class="action-archive text-xs-center"
+                       :title="labels.archive" @click.stop="photo.archive()">
+                  <v-icon dark>clear</v-icon>
+                </v-btn>
+              </v-flex>
+              <v-flex xs6 class="text-xs-center pa-1">
+                <v-btn color="accent lighten-2"
+                       small depressed dark block :round="false"
+                       class="action-approve text-xs-center"
+                       :title="labels.approve" @click.stop="photo.approve()">
+                  <v-icon dark>check</v-icon>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+          </v-card-actions>
 
           <v-card-title primary-title class="pa-3 card-details" style="user-select: none;">
             <div>
@@ -164,23 +185,6 @@
               </div>
             </div>
           </v-card-title>
-
-          <v-card-actions v-if="photo.Quality < 3 && context === 'review'" class="card-details">
-            <v-layout row wrap align-center>
-              <v-flex xs12>
-                <div class="text-xs-center">
-                  <v-btn color="primary-button" small depressed dark class="action-archive text-xs-center"
-                         :title="labels.archive" @click.stop="photo.archive()">
-                    <v-icon dark>archive</v-icon>
-                  </v-btn>
-                  <v-btn color="primary-button" small depressed dark class="action-approve text-xs-center"
-                         :title="labels.approve" @click.stop="photo.approve()">
-                    <v-icon dark>check</v-icon>
-                  </v-btn>
-                </div>
-              </v-flex>
-            </v-layout>
-          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -217,6 +221,11 @@ export default {
         video: this.$gettext("Video"),
         name: this.$gettext("Name"),
       },
+      touchStart: {
+        index: -1,
+        scrollY: window.scrollY,
+        timeStamp: -1,
+      },
       mouseDown: {
         index: -1,
         scrollY: window.scrollY,
@@ -230,17 +239,54 @@ export default {
     },
     playLive(photo) {
       const player = this.livePlayer(photo);
-      if (player) player.play();
+      try { if (player) player.play(); }
+      catch (e) {
+        // Ignore.
+      }
     },
     pauseLive(photo) {
       const player = this.livePlayer(photo);
-      if (player) player.pause();
+      try { if (player) player.pause(); }
+      catch (e) {
+        // Ignore.
+      }
     },
     downloadFile(index) {
       Notify.success(this.$gettext("Downloading…"));
 
       const photo = this.photos[index];
       download(`/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`, photo.FileName);
+    },
+    onTouchStart(ev, index) {
+      this.touchStart.index = index;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = ev.timeStamp;
+    },
+    resetTouchStart() {
+      this.touchStart.index = -1;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = -1;
+    },
+    isClick(ev, index) {
+      if (this.touchStart.timeStamp < 0) return true;
+
+      return this.touchStart.index === index
+          && (ev.timeStamp - this.touchStart.timeStamp) < 200
+          && (this.touchStart.scrollY - window.scrollY) === 0;
+    },
+    toggleLike(ev, index) {
+      if (!this.isClick(ev, index)) {
+        this.resetTouchStart();
+        return;
+      }
+
+      const photo = this.photos[index];
+
+      if (!photo) {
+        return;
+      }
+
+      photo.toggleLike();
     },
     onSelect(ev, index) {
       if (ev.shiftKey) {
@@ -255,7 +301,7 @@ export default {
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
       const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
 
       if (scrolled) {

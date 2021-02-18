@@ -8,9 +8,9 @@ export GO111MODULE=on
 
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
-DOCKER_TAG=`date -u +%Y%m%d`
-UID=`(id -u)`
 
+DOCKER_TAG := $(shell date -u +%Y%m%d)
+UID := $(shell id -u)
 HASRICHGO := $(shell which richgo)
 
 ifdef HASRICHGO
@@ -26,27 +26,26 @@ install: install-bin install-assets
 test: test-js test-go
 test-go: reset-test-db run-test-go
 test-short: reset-test-db run-test-short
-acceptance-run-chromium: acceptance-restart acceptance stop
-acceptance-run-firefox: acceptance-restart acceptance-firefox stop
+acceptance-run-chromium: acceptance-restart acceptance acceptance-stop
+acceptance-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
-acceptance-start:
-	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --disable-exiftool --disable-backups start -d
 acceptance-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
+	rm -rf storage/acceptance/sidecar/2020
+	rm -rf storage/acceptance/sidecar/2011
 	rm -rf storage/acceptance/originals/2010
+	rm -rf storage/acceptance/originals/2020
+	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
-	go run cmd/photoprism/photoprism.go --public --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --disable-exiftool --disable-backups start -d
-acceptance-restore-db:
-	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
-	cp -f storage/acceptance/backup.db storage/acceptance/index.db
-	rm -rf storage/acceptance/originals/2010
-	rm -rf storage/acceptance/originals/2013
+	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
+acceptance-stop:
+	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
 start:
 	go run cmd/photoprism/photoprism.go start -d
 stop:
@@ -162,7 +161,7 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
-	docker pull ubuntu:20.04
+	docker pull ubuntu:20.10
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
 docker-photoprism:
@@ -176,12 +175,19 @@ docker-photoprism-local:
 docker-photoprism-pull:
 	docker pull photoprism/photoprism:latest
 docker-photoprism-arm64-preview:
-	docker pull ubuntu:20.04
+	docker pull ubuntu:20.10
 	scripts/docker-build.sh photoprism-arm64
 	scripts/docker-push.sh photoprism-arm64
 docker-photoprism-arm64:
 	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
+docker-photoprism-arm32-preview:
+	docker pull ubuntu:20.10
+	scripts/docker-build.sh photoprism-arm32
+	scripts/docker-push.sh photoprism-arm32
+docker-photoprism-arm32:
+	scripts/docker-build.sh photoprism-arm32 $(DOCKER_TAG)
+	scripts/docker-push.sh photoprism-arm32 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)

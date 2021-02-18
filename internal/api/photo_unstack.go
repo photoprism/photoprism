@@ -69,7 +69,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		stackPrimary, err := stackPhoto.PrimaryFile()
 
 		if err != nil {
-			log.Errorf("photo: can't find primary file for existing photo (unstack %s)", txt.Quote(baseName))
+			log.Errorf("photo: can't find primary file for %s (unstack)", txt.Quote(baseName))
 			AbortUnexpected(c)
 			return
 		}
@@ -81,11 +81,11 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			AbortEntityNotFound(c)
 			return
 		} else if related.Len() == 0 {
-			log.Errorf("photo: no files found (unstack %s)", txt.Quote(baseName))
+			log.Errorf("photo: no files found for %s (unstack)", txt.Quote(baseName))
 			AbortEntityNotFound(c)
 			return
 		} else if related.Main == nil {
-			log.Errorf("photo: no main file found (unstack %s)", txt.Quote(baseName))
+			log.Errorf("photo: no main file found for %s (unstack)", txt.Quote(baseName))
 			AbortEntityNotFound(c)
 			return
 		}

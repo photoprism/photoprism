@@ -40,7 +40,7 @@ test.meta("testID", "places-002")("Open photo from places", async (t) => {
       .pressKey("enter")
       .wait(30000)
       .click(Selector("div.marker").nth(0), { timeout: 9000 })
-      .expect(Selector("#p-photo-viewer").visible)
+      .expect(Selector("#photo-viewer").visible)
       .ok();
   }
 });

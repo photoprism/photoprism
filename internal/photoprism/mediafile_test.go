@@ -2110,3 +2110,37 @@ func TestMediaFile_RenameSidecars(t *testing.T) {
 		_ = os.Remove(dstName)
 	})
 }
+
+func TestMediaFile_RemoveSidecars(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		jpegExample := filepath.Join(conf.ExamplesPath(), "/limes.jpg")
+		jpegPath := filepath.Join(conf.OriginalsPath(), "2020", "12")
+		jpegName := filepath.Join(jpegPath, "foobar.jpg")
+
+		if err := fs.Copy(jpegExample, jpegName); err != nil {
+			t.Fatal(err)
+		}
+
+		mf, err := NewMediaFile(jpegName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		sidecarName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.jpg.json")
+
+		if err := ioutil.WriteFile(sidecarName, []byte("{}"), 0666); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := mf.RemoveSidecars(); err != nil {
+			t.Fatal(err)
+		} else if fs.FileExists(sidecarName) {
+			t.Errorf("src file still exists: %s", sidecarName)
+		}
+
+		_ = os.Remove(sidecarName)
+	})
+}

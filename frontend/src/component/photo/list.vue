@@ -58,7 +58,7 @@
                    flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
-              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">movie</v-icon>
+              <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
             </v-btn>
           </v-img>
         </td>
@@ -92,15 +92,15 @@
                 </span>
         </td>
         <td class="text-xs-center">
-          <v-btn v-if="hidePrivate" class="p-photo-private" icon small flat :ripple="false"
+          <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
                  :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
-            <v-icon v-if="props.item.Private" color="accent lighten-3">lock</v-icon>
-            <v-icon v-else color="accent lighten-3">lock_open</v-icon>
+            <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
+            <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
           </v-btn>
-          <v-btn class="p-photo-like" icon small flat :ripple="false"
+          <v-btn class="input-like" icon small flat :ripple="false"
                  :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
-            <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID">favorite</v-icon>
-            <v-icon v-else color="accent lighten-3" :data-uid="props.item.UID">favorite_border</v-icon>
+            <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">favorite</v-icon>
+            <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>
           </v-btn>
         </td>
       </template>
@@ -181,7 +181,7 @@ export default {
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
       const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
 
       if (scrolled) {

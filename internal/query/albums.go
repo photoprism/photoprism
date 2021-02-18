@@ -53,16 +53,16 @@ func AlbumByUID(albumUID string) (album entity.Album, err error) {
 	return album, nil
 }
 
-// AlbumCoverByUID returns an album preview file based on the uid.
-func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
+// AlbumCoverByUID returns a album preview file based on the uid.
+func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	a := entity.Album{}
 
-	if err := Db().Where("album_uid = ?", albumUID).First(&a).Error; err != nil {
+	if err := Db().Where("album_uid = ?", uid).First(&a).Error; err != nil {
 		return file, err
 	} else if a.CoverUID != "" {
 		// TODO check that the photo is not hidden, archived or private
 		if err := Db().Where("photo_uid = ? AND file_primary = 1", a.CoverUID).First(&file).Error; err != nil {
-			log.Errorf("albums: error when loading configured cover for album %s", albumUID)
+			log.Errorf("albums: error when loading configured cover for album %s", uid)
 			return file, err
 		} else {
 			return file, nil
@@ -87,7 +87,7 @@ func AlbumCoverByUID(albumUID string) (file entity.File, err error) {
 	}
 
 	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
-		Joins("JOIN albums ON albums.album_uid = ?", albumUID).
+		Joins("JOIN albums ON albums.album_uid = ?", uid).
 		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos.taken_at DESC").
@@ -118,12 +118,28 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 
 	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("albums: search %s", form.Serialize(f, true))))
 
+	// Base query.
 	s := UnscopedDb().Table("albums").
 		Select("albums.*, cp.photo_count, cl.link_count").
 		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
-		Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL)").
+		Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL)").
 		Where("albums.deleted_at IS NULL")
+
+	// Limit result count.
+	if f.Count > 0 && f.Count <= MaxResults {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	} else {
+		s = s.Limit(MaxResults).Offset(f.Offset)
+	}
+
+	// Set sort order.
+	switch f.Order {
+	case "slug":
+		s = s.Order("albums.album_favorite DESC, album_slug ASC")
+	default:
+		s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.created_at DESC")
+	}
 
 	if f.ID != "" {
 		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, Or))
@@ -170,19 +186,6 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 
 	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.DayUnknown {
 		s = s.Where("albums.album_day = ?", f.Day)
-	}
-
-	switch f.Order {
-	case "slug":
-		s = s.Order("albums.album_favorite DESC, album_slug ASC")
-	default:
-		s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.created_at DESC")
-	}
-
-	if f.Count > 0 && f.Count <= MaxResults {
-		s = s.Limit(f.Count).Offset(f.Offset)
-	} else {
-		s = s.Limit(MaxResults).Offset(f.Offset)
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

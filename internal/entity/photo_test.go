@@ -17,7 +17,7 @@ func TestSavePhotoForm(t *testing.T) {
 			TakenSrc:         "manual",
 			TimeZone:         "test",
 			PhotoTitle:       "Pink beach",
-			TitleSrc:         "manual",
+			TitleSrc:         SrcManual,
 			PhotoFavorite:    true,
 			PhotoPrivate:     true,
 			PhotoType:        "image",
@@ -29,10 +29,10 @@ func TestSavePhotoForm(t *testing.T) {
 			PhotoFNumber:     3.3,
 			PhotoExposure:    "exposure",
 			CameraID:         uint(3),
-			CameraSrc:        "meta",
+			CameraSrc:        SrcMeta,
 			LensID:           uint(6),
 			CellID:           "1234",
-			PlaceSrc:         "manual",
+			PlaceSrc:         SrcManual,
 			PlaceID:          "765",
 			PhotoCountry:     "de",
 			Details: form.Details{
@@ -46,11 +46,9 @@ func TestSavePhotoForm(t *testing.T) {
 			},
 		}
 
-		m := PhotoFixtures["Photo08"]
+		m := PhotoFixtures.Get("Photo08")
 
-		err := SavePhotoForm(m, f)
-
-		if err != nil {
+		if err := SavePhotoForm(m, f); err != nil {
 			t.Fatal(err)
 		}
 
@@ -185,12 +183,22 @@ func TestPhoto_PreloadMany(t *testing.T) {
 	})
 }
 
-func TestPhoto_NoLocation(t *testing.T) {
-	t.Run("true", func(t *testing.T) {
+func TestPhoto_UnknownLocation(t *testing.T) {
+	t.Run("no_location", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.True(t, m.UnknownLocation())
 	})
-	t.Run("false", func(t *testing.T) {
+
+	t.Run("no_lat_lng", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		m.PhotoLat = 0.0
+		m.PhotoLng = 0.0
+		// t.Logf("MODEL: %+v", m)
+		assert.False(t, m.HasLocation())
+		assert.True(t, m.UnknownLocation())
+	})
+
+	t.Run("lat_lng_cell_id", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		// t.Logf("MODEL: %+v", m)
 		assert.True(t, m.HasLocation())
@@ -215,7 +223,7 @@ func TestPhoto_HasLatLng(t *testing.T) {
 		assert.True(t, m.HasLatLng())
 	})
 	t.Run("false", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo08")
+		m := PhotoFixtures.Get("Photo09")
 		assert.False(t, m.HasLatLng())
 	})
 }
@@ -226,7 +234,7 @@ func TestPhoto_NoLatLng(t *testing.T) {
 		assert.False(t, m.NoLatLng())
 	})
 	t.Run("true", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo08")
+		m := PhotoFixtures.Get("Photo09")
 		assert.True(t, m.NoLatLng())
 	})
 }
@@ -553,14 +561,72 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 			time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), "", SrcAuto)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 	})
+	t.Run("from name", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		m.TimeZone = ""
+		m.TakenSrc = SrcAuto
+
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+		assert.Equal(t, "", m.TimeZone)
+		assert.Equal(t, SrcAuto, m.TakenSrc)
+
+		m.SetTakenAt(time.Date(2011, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2019, 11, 11, 10, 7, 18, 0, time.UTC), "America/New_York", SrcName)
+
+		assert.Equal(t, "", m.TimeZone)
+		assert.Equal(t, SrcName, m.TakenSrc)
+
+		assert.Equal(t, time.Date(2011, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2019, 11, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
+	})
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
 			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcMeta)
+
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
+	})
+	t.Run("fallback", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+
+		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
+
+		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcAuto)
+
+		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
+
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+
+		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC)
+		m.TimeZone = "Europe/Berlin"
+
+		m.SetTakenAt(newTime, newTime, "", SrcName)
+
+		assert.Equal(t, newTime, m.TakenAt)
+		assert.Equal(t, m.GetTakenAtLocal(), m.TakenAtLocal)
+	})
+	t.Run("time zone", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+
+		zone := "Europe/Berlin"
+
+		loc, _ := time.LoadLocation(zone)
+
+		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, loc)
+
+		m.SetTakenAt(newTime, newTime, zone, SrcName)
+
+		assert.Equal(t, newTime.UTC(), m.TakenAt)
+		assert.Equal(t, newTime, m.TakenAtLocal)
 	})
 	t.Run("time > max year", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
@@ -582,33 +648,161 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 	})
 }
 
+func TestPhoto_UpdateTimeZone(t *testing.T) {
+	t.Run("UTC", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo12")
+		m.TimeZone = "UTC"
+
+		zone := "Europe/Berlin"
+
+		takenAt := m.TakenAt
+		takenAtLocal := m.TakenAtLocal
+
+		assert.Equal(t, takenAt, m.TakenAt)
+		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
+
+		m.UpdateTimeZone(zone)
+
+		assert.Equal(t, takenAt, m.TakenAt)
+		assert.Equal(t, m.GetTakenAtLocal(), m.TakenAtLocal)
+	})
+
+	t.Run("Europe/Berlin", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo12")
+
+		zone := "Europe/Berlin"
+
+		takenAt := m.TakenAt
+		takenAtLocal := m.TakenAtLocal
+
+		assert.Equal(t, takenAt, m.TakenAt)
+		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
+		assert.Equal(t, "", m.TimeZone)
+
+		m.UpdateTimeZone(zone)
+
+		assert.Equal(t, m.GetTakenAt(), m.TakenAt)
+		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
+	})
+
+	t.Run("America/New_York", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo12")
+		m.TimeZone = "Europe/Berlin"
+		m.TakenAt = m.GetTakenAt()
+
+		zone := "America/New_York"
+
+		takenAt := m.TakenAt
+		takenAtLocal := m.TakenAtLocal
+
+		assert.Equal(t, takenAt, m.TakenAt)
+		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
+		assert.Equal(t, "Europe/Berlin", m.TimeZone)
+
+		m.UpdateTimeZone(zone)
+
+		assert.Equal(t, m.GetTakenAt(), m.TakenAt)
+		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
+	})
+
+	t.Run("manual", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo12")
+		m.TimeZone = "Europe/Berlin"
+		m.TakenAt = m.GetTakenAt()
+		m.TakenSrc = SrcManual
+
+		zone := "America/New_York"
+
+		takenAt := m.TakenAt
+		takenAtLocal := m.TakenAtLocal
+
+		assert.Equal(t, takenAt, m.TakenAt)
+		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
+		assert.Equal(t, "Europe/Berlin", m.TimeZone)
+
+		m.UpdateTimeZone(zone)
+
+		assert.Equal(t, takenAt, m.TakenAt)
+		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
+		assert.Equal(t, "Europe/Berlin", m.TimeZone)
+	})
+}
+
 func TestPhoto_SetCoordinates(t *testing.T) {
 	t.Run("empty coordinates", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
+
 		m.SetCoordinates(0, 0, 5, SrcManual)
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
 	})
-	t.Run("different source", func(t *testing.T) {
+	t.Run("same source new values", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
-		m.SetCoordinates(5.555, 5.555, 5, SrcName)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-	})
-	t.Run("success", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
+
 		m.SetCoordinates(5.555, 5.555, 5, SrcLocation)
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, float32(5.555), m.PhotoLat)
+		assert.Equal(t, float32(5.555), m.PhotoLng)
+		assert.Equal(t, 5, m.PhotoAltitude)
+	})
+	t.Run("different source lower priority", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+
+		m.SetCoordinates(5.555, 5.555, 5, SrcName)
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+	})
+	t.Run("different source equal priority", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
+
+		m.SetCoordinates(5.555, 5.555, 5, SrcImage)
+		assert.Equal(t, float32(5.555), m.PhotoLat)
+		assert.Equal(t, float32(5.555), m.PhotoLng)
+		assert.Equal(t, 5, m.PhotoAltitude)
+	})
+	t.Run("different source higher priority", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo21")
+		assert.Equal(t, SrcEstimate, m.PlaceSrc)
+		assert.Equal(t, float32(0), m.PhotoLat)
+		assert.Equal(t, float32(0), m.PhotoLng)
+		assert.Equal(t, 0, m.PhotoAltitude)
+
+		m.SetCoordinates(5.555, 5.555, 5, SrcMeta)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
+		assert.Equal(t, float32(5.555), m.PhotoLat)
+		assert.Equal(t, float32(5.555), m.PhotoLng)
+		assert.Equal(t, 5, m.PhotoAltitude)
+	})
+	t.Run("different source highest priority (manual)", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo15")
+		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, float32(1.234), m.PhotoLat)
+		assert.Equal(t, float32(4.321), m.PhotoLng)
+		assert.Equal(t, 3, m.PhotoAltitude)
+
+		m.SetCoordinates(5.555, 5.555, 5, SrcManual)
+		assert.Equal(t, SrcManual, m.PlaceSrc)
 		assert.Equal(t, float32(5.555), m.PhotoLat)
 		assert.Equal(t, float32(5.555), m.PhotoLng)
 		assert.Equal(t, 5, m.PhotoAltitude)
@@ -678,7 +872,7 @@ func TestPhoto_Save(t *testing.T) {
 
 func TestPhoto_Find(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		photo := Photo{PhotoUID: "567", ID: 55, PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
+		photo := Photo{PhotoUID: "pt9atdre2lvl0yhx", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -908,5 +1102,15 @@ func TestPhoto_Links(t *testing.T) {
 		photo := Photo{PhotoUID: "pt9k3pw1wowuy3c3"}
 		links := photo.Links()
 		assert.Equal(t, "7jxf3jfn2k", links[0].LinkToken)
+	})
+}
+
+func TestPhoto_SetPrimary(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+
+		if err := m.SetPrimary(""); err != nil {
+			t.Fatal(err)
+		}
 	})
 }

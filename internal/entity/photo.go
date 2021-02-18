@@ -62,7 +62,7 @@ type Photo struct {
 	PhotoPrivate     bool         `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool         `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool         `json:"Panorama" yaml:"Panorama,omitempty"`
-	TimeZone         string       `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"-"`
+	TimeZone         string       `gorm:"type:VARBINARY(64);" json:"TimeZone" yaml:"TimeZone,omitempty"`
 	PlaceID          string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"PlaceID" yaml:"-"`
 	PlaceSrc         string       `gorm:"type:VARBINARY(8);" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
 	CellID           string       `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"-"`
@@ -78,7 +78,7 @@ type Photo struct {
 	PhotoExposure    string       `gorm:"type:VARBINARY(64);" json:"Exposure" yaml:"Exposure,omitempty"`
 	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
 	PhotoFocalLength int          `json:"FocalLength" yaml:"FocalLength,omitempty"`
-	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"-"`
+	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoColor       uint8        `json:"Color" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
@@ -238,13 +238,7 @@ func (m *Photo) Save() error {
 	photoMutex.Lock()
 	defer photoMutex.Unlock()
 
-	if err := UnscopedDb().Save(m).Error; err == nil {
-		// Nothing to do.
-	} else if !strings.Contains(strings.ToLower(err.Error()), "lock") {
-		log.Debugf("photo: %s (save %s)", err, m.PhotoUID)
-		return err
-	} else if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Debugf("photo: %s (save %s after deadlock)", err, m.PhotoUID)
+	if err := Save(m, "ID", "PhotoUID"); err != nil {
 		return err
 	}
 
@@ -454,17 +448,6 @@ func (m *Photo) PreloadFiles() {
 	logError(q.Scan(&m.Files))
 }
 
-/* func (m *Photo) PreloadLabels() {
-	q := Db().NewScope(nil).DB().
-		Table("labels").
-		Select(`labels.*`).
-		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = ?", m.ID).
-		Where("labels.deleted_at IS NULL").
-		Order("labels.label_name ASC")
-
-	logError(q.Scan(&m.Labels))
-} */
-
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
 func (m *Photo) PreloadKeywords() {
 	q := Db().NewScope(nil).DB().
@@ -491,27 +474,26 @@ func (m *Photo) PreloadAlbums() {
 // PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
 func (m *Photo) PreloadMany() {
 	m.PreloadFiles()
-	// m.PreloadLabels()
 	m.PreloadKeywords()
 	m.PreloadAlbums()
 }
 
-// HasID checks if the photo has a database id and uid.
+// HasID tests if the photo has a database id and uid.
 func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
 }
 
-// UnknownLocation checks if the photo has an unknown location.
+// UnknownLocation tests if the photo has an unknown location.
 func (m *Photo) UnknownLocation() bool {
-	return m.CellID == "" || m.CellID == UnknownLocation.ID
+	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
 }
 
-// HasLocation checks if the photo has a known location.
+// HasLocation tests if the photo has a known location.
 func (m *Photo) HasLocation() bool {
 	return !m.UnknownLocation()
 }
 
-// LocationLoaded checks if the photo has a known location that is currently loaded.
+// LocationLoaded tests if the photo has a known location that is currently loaded.
 func (m *Photo) LocationLoaded() bool {
 	if m.Cell == nil {
 		return false
@@ -624,6 +606,16 @@ func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
 }
 
+// UnknownCamera test if the camera is unknown.
+func (m *Photo) UnknownCamera() bool {
+	return m.CameraID == 0 || m.CameraID == UnknownCamera.ID
+}
+
+// UnknownLens test if the lens is unknown.
+func (m *Photo) UnknownLens() bool {
+	return m.LensID == 0 || m.LensID == UnknownLens.ID
+}
+
 // HasTitle checks if the photo has a title.
 func (m *Photo) HasTitle() bool {
 	return m.PhotoTitle != ""
@@ -668,21 +660,24 @@ func (m *Photo) SaveDetails() error {
 
 // FileTitle returns a photo title based on the file name and/or path.
 func (m *Photo) FileTitle() string {
+	// Generate title based on photo name, if not generated:
 	if !fs.IsGenerated(m.PhotoName) {
 		if title := txt.FileTitle(m.PhotoName); title != "" {
 			return title
 		}
 	}
 
-	if m.OriginalName != "" && !fs.IsGenerated(m.OriginalName) {
-		if title := txt.FileTitle(m.OriginalName); title != "" {
+	// Generate title based on original file name, if any:
+	if m.OriginalName != "" {
+		if title := txt.FileTitle(m.OriginalName); !fs.IsGenerated(m.OriginalName) && title != "" {
 			return title
-		} else if title := txt.FileTitle(path.Dir(m.OriginalName)); title != "" {
+		} else if title := txt.FileTitle(filepath.Dir(m.OriginalName)); title != "" {
 			return title
 		}
 	}
 
-	if m.PhotoPath != "" {
+	// Generate title based on photo path, if any:
+	if m.PhotoPath != "" && !fs.IsGenerated(m.PhotoPath) {
 		return txt.FileTitle(m.PhotoPath)
 	}
 
@@ -854,34 +849,67 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		return
 	}
 
-	m.TakenAt = taken.Round(time.Second).UTC()
-	m.TakenSrc = source
-
-	if local.IsZero() || local.Year() < 1000 {
-		m.TakenAtLocal = m.TakenAt
-	} else {
-		m.TakenAtLocal = local.Round(time.Second)
+	// Remove time zone if time was extracted from file name.
+	if source == SrcName {
+		zone = ""
 	}
 
-	if zone != "" {
+	// Round times to avoid jitter.
+	taken = taken.Round(time.Second).UTC()
+
+	// Default local time to taken if zero or invalid.
+	if local.IsZero() || local.Year() < 1000 {
+		local = taken
+	} else {
+		local = local.Round(time.Second)
+	}
+
+	// Don't update older date.
+	if SrcPriority[source] <= SrcPriority[SrcAuto] && !m.TakenAt.IsZero() && taken.After(m.TakenAt) {
+		return
+	}
+
+	// Set UTC time and date source.
+	m.TakenAt = taken
+	m.TakenAtLocal = local
+	m.TakenSrc = source
+
+	if zone == time.UTC.String() && m.TimeZone != "" {
+		// Location exists, set local time from UTC.
+		m.TakenAtLocal = m.GetTakenAtLocal()
+	} else if zone != "" {
+		// Apply new time zone.
 		m.TimeZone = zone
+		m.TakenAt = m.GetTakenAt()
+	} else if m.TimeZone == time.UTC.String() {
+		// Local is UTC.
+		m.TimeZone = zone
+		m.TakenAtLocal = taken
+	} else if m.TimeZone != "" {
+		// Apply existing time zone.
+		m.TakenAtLocal = m.GetTakenAtLocal()
 	}
 
 	m.UpdateDateFields()
 }
 
-// SetTimeZone updates the time zone.
-func (m *Photo) SetTimeZone(zone, source string) {
-	if zone == "" {
+// UpdateTimeZone updates the time zone.
+func (m *Photo) UpdateTimeZone(zone string) {
+	if zone == "" || zone == time.UTC.String() {
 		return
 	}
 
-	if SrcPriority[source] < SrcPriority[m.TakenSrc] && m.TimeZone != "" {
+	if SrcPriority[m.TakenSrc] >= SrcPriority[SrcManual] && m.TimeZone != "" {
 		return
 	}
 
-	m.TimeZone = zone
-	m.TakenAt = m.GetTakenAt()
+	if m.TimeZone == time.UTC.String() {
+		m.TimeZone = zone
+		m.TakenAtLocal = m.GetTakenAtLocal()
+	} else {
+		m.TimeZone = zone
+		m.TakenAt = m.GetTakenAt()
+	}
 }
 
 // UpdateDateFields updates internal date fields.
@@ -894,7 +922,8 @@ func (m *Photo) UpdateDateFields() {
 		m.TakenAtLocal = m.TakenAt
 	}
 
-	if m.TakenSrc == SrcAuto {
+	// Set date to unknown if file system date is about the same as indexing time.
+	if m.TakenSrc == SrcAuto && m.TakenAt.After(m.CreatedAt.Add(-24*time.Hour)) {
 		m.PhotoYear = YearUnknown
 		m.PhotoMonth = MonthUnknown
 		m.PhotoDay = DayUnknown
@@ -921,6 +950,66 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 	m.PlaceSrc = source
 }
 
+// SetCamera updates the camera.
+func (m *Photo) SetCamera(camera *Camera, source string) {
+	if camera == nil {
+		log.Warnf("photo: failed updating camera from source '%s'", source)
+		return
+	}
+
+	if camera.Unknown() {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.CameraSrc] && !m.UnknownCamera() {
+		return
+	}
+
+	m.CameraID = camera.ID
+	m.Camera = camera
+	m.CameraSrc = source
+}
+
+// SetLens updates the lens.
+func (m *Photo) SetLens(lens *Lens, source string) {
+	if lens == nil {
+		log.Warnf("photo: failed updating lens from source '%s'", source)
+		return
+	}
+
+	if lens.Unknown() {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.CameraSrc] && !m.UnknownLens() {
+		return
+	}
+
+	m.LensID = lens.ID
+	m.Lens = lens
+}
+
+// SetExposure updates the photo exposure details.
+func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure, source string) {
+	hasPriority := SrcPriority[source] >= SrcPriority[m.CameraSrc]
+
+	if focalLength > 0 && (hasPriority || m.PhotoFocalLength <= 0) {
+		m.PhotoFocalLength = focalLength
+	}
+
+	if fNumber > 0 && (hasPriority || m.PhotoFNumber <= 0) {
+		m.PhotoFNumber = fNumber
+	}
+
+	if iso > 0 && (hasPriority || m.PhotoIso <= 0) {
+		m.PhotoIso = iso
+	}
+
+	if exposure != "" && (hasPriority || m.PhotoExposure == "") {
+		m.PhotoExposure = exposure
+	}
+}
+
 // AllFilesMissing returns true, if all files for this photo are missing.
 func (m *Photo) AllFilesMissing() bool {
 	count := 0
@@ -941,6 +1030,32 @@ func (m *Photo) AllFiles() (files Files) {
 	}
 
 	return files
+}
+
+// Archive removes the photo from albums and flags it as archived (soft delete).
+func (m *Photo) Archive() error {
+	deletedAt := Timestamp()
+
+	if err := Db().Model(&PhotoAlbum{}).Where("photo_uid = ?", m.PhotoUID).UpdateColumn("hidden", true).Error; err != nil {
+		return err
+	} else if err := m.Update("deleted_at", deletedAt); err != nil {
+		return err
+	}
+
+	m.DeletedAt = &deletedAt
+
+	return nil
+}
+
+// Restore removes the archive flag (undo soft delete).
+func (m *Photo) Restore() error {
+	if err := m.Update("deleted_at", gorm.Expr("NULL")); err != nil {
+		return err
+	}
+
+	m.DeletedAt = nil
+
+	return nil
 }
 
 // Delete deletes the entity from the database.
@@ -1040,6 +1155,43 @@ func (m *Photo) Links() Links {
 // PrimaryFile returns the primary file for this photo.
 func (m *Photo) PrimaryFile() (File, error) {
 	return PrimaryFile(m.PhotoUID)
+}
+
+// SetPrimary sets a new primary file.
+func (m *Photo) SetPrimary(fileUID string) error {
+	if m.PhotoUID == "" {
+		return fmt.Errorf("photo uid is empty")
+	}
+
+	var files []string
+
+	if fileUID != "" {
+		// Do nothing.
+	} else if err := Db().Model(File{}).
+		Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", m.PhotoUID).
+		Order("file_width DESC").Limit(1).
+		Pluck("file_uid", &files).Error; err != nil {
+		return err
+	} else if len(files) == 0 {
+		return fmt.Errorf("%s has no jpeg", m.PhotoUID)
+	} else {
+		fileUID = files[0]
+	}
+
+	if fileUID == "" {
+		return fmt.Errorf("file uid is empty")
+	}
+
+	Db().Model(File{}).Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", 0)
+
+	if err := Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUID).UpdateColumn("file_primary", 1).Error; err != nil {
+		return err
+	} else if m.PhotoQuality < 0 {
+		m.PhotoQuality = 0
+		return m.UpdateQuality()
+	}
+
+	return nil
 }
 
 // MapKey returns a key referencing time and location for indexing.

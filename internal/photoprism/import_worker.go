@@ -36,7 +36,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 		if related.Main.NeedsExifToolJson() {
 			if jsonName, err := imp.convert.ToJson(related.Main); err != nil {
-				log.Errorf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
+				log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
 			} else if err := related.Main.ReadExifToolJson(); err != nil {
 				log.Errorf("import: %s in %s (read metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
 			} else {
@@ -88,8 +88,18 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 			} else {
-				log.Warnf("import: %s", err)
+				log.Infof("import: %s", err)
 
+				// Try to add duplicates to selected album(s) as well, see #991.
+				if fileHash := f.Hash(); fileHash == "" {
+					// Do nothing.
+				} else if file, err := entity.FirstFileByHash(fileHash); err != nil {
+					// Do nothing.
+				} else if err := entity.AddPhotoToAlbums(file.PhotoUID, opt.Albums); err != nil {
+					log.Warn(err)
+				}
+
+				// Remove duplicates to save storage.
 				if opt.RemoveExistingFiles {
 					if err := f.Remove(); err != nil {
 						log.Errorf("import: failed deleting %s (%s)", txt.Quote(f.BaseName()), err.Error())
@@ -128,7 +138,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if f.NeedsExifToolJson() {
 				if jsonName, err := imp.convert.ToJson(f); err != nil {
-					log.Errorf("import: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
+					log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 				} else {
 					log.Debugf("import: %s created", filepath.Base(jsonName))
 				}
@@ -190,7 +200,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if f.NeedsExifToolJson() {
 					if jsonName, err := imp.convert.ToJson(f); err != nil {
-						log.Errorf("import: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
+						log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 					} else {
 						log.Debugf("import: %s created", filepath.Base(jsonName))
 					}

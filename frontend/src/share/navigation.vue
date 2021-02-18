@@ -1,7 +1,6 @@
 <template>
   <div id="p-navigation">
-    <v-toolbar dark fixed flat color="navigation darken-1" class="nav-small"
-               :dense="$vuetify.breakpoint.smAndDown" scroll-off-screen>
+    <v-toolbar dark fixed flat scroll-off-screen :dense="$vuetify.breakpoint.smAndDown" color="navigation darken-1" class="nav-small">
       <v-toolbar-title>
         <button @click.stop.prevent="goHome">
           {{ page.title }}
@@ -17,7 +16,7 @@
         <img src="/static/img/logo-white.svg" alt="Logo">
       </v-avatar>
     </v-toolbar>
-    <v-toolbar dark flat :dense="$vuetify.breakpoint.smAndDown" color="navigation darken-1">
+    <v-toolbar dark flat :dense="$vuetify.breakpoint.smAndDown" color="#fafafa">
     </v-toolbar>
     <div id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Shared with PhotoPrism</a></div>
   </div>

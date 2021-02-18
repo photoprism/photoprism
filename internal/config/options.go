@@ -34,6 +34,7 @@ type Options struct {
 	Version           string `json:"-"`
 	Copyright         string `json:"-"`
 	Debug             bool   `yaml:"Debug" json:"Debug" flag:"debug"`
+	Test              bool   `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Demo              bool   `yaml:"Demo" json:"-" flag:"demo"`
 	Sponsor           bool   `yaml:"-" json:"-" flag:"sponsor"`
 	Public            bool   `yaml:"Public" json:"-" flag:"public"`
@@ -90,6 +91,9 @@ type Options struct {
 	DarktablePresets  bool   `yaml:"DarktablePresets" json:"DarktablePresets" flag:"darktable-presets"`
 	HeifConvertBin    string `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	FFmpegBin         string `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
+	FFmpegEncoder     string `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
+	FFmpegBitrate     int    `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
+	FFmpegBuffers     int    `yaml:"FFmpegBuffers" json:"FFmpegBuffers" flag:"ffmpeg-buffers"`
 	ExifToolBin       string `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	DetachServer      bool   `yaml:"DetachServer" json:"-" flag:"detach-server"`
 	DownloadToken     string `yaml:"DownloadToken" json:"-" flag:"download-token"`

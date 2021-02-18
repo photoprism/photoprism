@@ -29,7 +29,7 @@ func TestFile_ShareFileName(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
-		filename := file.ShareBase()
+		filename := file.ShareBase(0)
 
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
 		assert.Contains(t, filename, fs.JpegExt)
@@ -38,14 +38,14 @@ func TestFile_ShareFileName(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
 		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
-		filename := file.ShareBase()
+		filename := file.ShareBase(0)
 
 		assert.Equal(t, filename, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg")
 	})
 	t.Run("photo without photo", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
 
-		filename := file.ShareBase()
+		filename := file.ShareBase(0)
 
 		assert.Equal(t, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
@@ -54,14 +54,14 @@ func TestFile_ShareFileName(t *testing.T) {
 
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98"}
 
-		filename := file.ShareBase()
+		filename := file.ShareBase(0)
 
 		assert.NotContains(t, filename, "20190115-000000-Berlin-Morning-Mood")
 	})
 	t.Run("no file uid", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileHash: "e98ijhyt"}
 
-		filename := file.ShareBase()
+		filename := file.ShareBase(0)
 
 		assert.Equal(t, filename, "e98ijhyt.jpg")
 	})

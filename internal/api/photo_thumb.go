@@ -55,7 +55,7 @@ func GetThumb(router *gin.RouterGroup) {
 		cacheKey := CacheKey("thumbs", fileHash, typeName)
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -154,13 +154,13 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase()})
+		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase(0)})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddThumbCacheHeader(c)
 
 		if download {
-			c.FileAttachment(thumbnail, f.ShareBase())
+			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(thumbnail)
 		}

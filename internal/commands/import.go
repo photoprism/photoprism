@@ -13,7 +13,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// ImportCommand is used to register the import cli command
+// ImportCommand registers the import cli command.
 var ImportCommand = cli.Command{
 	Name:    "import",
 	Aliases: []string{"mv"},

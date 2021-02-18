@@ -112,10 +112,12 @@ export class File extends RestModel {
   }
 
   thumbnailUrl(size) {
-    if (this.Error) {
+    if (this.Error || this.Missing) {
       return "/api/v1/svg/broken";
     } else if (this.Type === "raw") {
       return "/api/v1/svg/raw";
+    } else if (this.Sidecar) {
+      return "/api/v1/svg/file";
     }
 
     return `/api/v1/t/${this.Hash}/${config.previewToken()}/${size}`;

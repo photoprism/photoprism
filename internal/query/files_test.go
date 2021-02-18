@@ -165,15 +165,29 @@ func TestFileByHash(t *testing.T) {
 }
 
 func TestSetPhotoPrimary(t *testing.T) {
-	assert.Equal(t, false, entity.FileFixturesExampleXMP.FilePrimary)
+	t.Run("success", func(t *testing.T) {
+		assert.Equal(t, false, entity.FileFixturesExampleXMP.FilePrimary)
 
-	err := SetPhotoPrimary("pt9jtdre2lvl0yh7", "ft2es49whhbnlqdn")
+		err := SetPhotoPrimary("pt9jtdre2lvl0yh7", "ft2es49whhbnlqdn")
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	//TODO How to assert
-	//assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("no_file_uid", func(t *testing.T) {
+		err := SetPhotoPrimary("pt9jtdre2lvl0yh7", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("no_uid", func(t *testing.T) {
+		err := SetPhotoPrimary("", "")
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+	})
 }
 
 func TestSetFileError(t *testing.T) {
@@ -203,4 +217,18 @@ func TestIndexedFiles(t *testing.T) {
 	}
 
 	t.Logf("INDEXED FILES: %#v", result)
+}
+
+func TestFileHashes(t *testing.T) {
+	result, err := FileHashes()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(result) < 3 {
+		t.Fatalf("at least 3 file hashes expected")
+	}
+
+	t.Logf("FILE HASHES: %#v", result)
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// MomentsCommand is used to register the index cli command
+// MomentsCommand registers the index cli command.
 var MomentsCommand = cli.Command{
 	Name:   "moments",
 	Usage:  "Creates albums based on popular locations, dates and labels",
@@ -33,7 +33,7 @@ func momentsAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if conf.ReadOnly() {
-		log.Infof("read-only mode enabled")
+		log.Infof("moments: read-only mode enabled")
 	}
 
 	moments := service.Moments()

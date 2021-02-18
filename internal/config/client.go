@@ -24,6 +24,7 @@ type ClientConfig struct {
 	SiteDescription string              `json:"siteDescription"`
 	SiteAuthor      string              `json:"siteAuthor"`
 	Debug           bool                `json:"debug"`
+	Test            bool                `json:"test"`
 	Demo            bool                `json:"demo"`
 	Sponsor         bool                `json:"sponsor"`
 	ReadOnly        bool                `json:"readonly"`
@@ -166,6 +167,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Test:            c.Test(),
 		Demo:            c.Demo(),
 		Sponsor:         c.Sponsor(),
 		ReadOnly:        c.ReadOnly(),
@@ -217,6 +219,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Test:            c.Test(),
 		Demo:            c.Demo(),
 		Sponsor:         c.Sponsor(),
 		ReadOnly:        true,
@@ -262,6 +265,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
+		Test:            c.Test(),
 		Demo:            c.Demo(),
 		Sponsor:         c.Sponsor(),
 		ReadOnly:        c.ReadOnly(),

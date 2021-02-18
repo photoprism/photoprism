@@ -1,5 +1,5 @@
 <template>
-  <div id="p-photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
+  <div id="photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="pswp__bg"></div>
     <div class="pswp__scroll-wrap">
       <div class="pswp__container" :class="{ 'slideshow': slideshow.active }">
@@ -75,6 +75,11 @@
 
       </div>
     </div>
+    <div v-if="player.show" class="video-viewer" @click.stop.prevent="closePlayer" @keydown.esc.stop.prevent="closePlayer">
+      <p-video-player ref="player" :source="player.source" :poster="player.poster"
+                      :height="player.height" :width="player.width" :autoplay="player.autoplay" :loop="player.loop" @close="closePlayer">
+      </p-video-player>
+    </div>
   </div>
 </template>
 
@@ -99,6 +104,15 @@ export default {
         active: false,
         next: 0,
       },
+      player: {
+        show: false,
+        loop: false,
+        autoplay: true,
+        source: "",
+        poster: "",
+        width: 640,
+        height: 480,
+      }
     };
   },
   created() {
@@ -116,16 +130,22 @@ export default {
   },
   methods: {
     onShow() {
-      document.body.classList.add("viewer");
+      this.$scrollbar.hide();
     },
     onHide() {
-      document.body.classList.remove("viewer");
+      this.closePlayer();
+      this.onPause();
+      this.$scrollbar.show();
     },
     onChange(ev, data) {
       const psp = this.$viewer.gallery;
 
       if (psp && this.slideshow.next !== psp.getCurrentIndex()) {
         this.onPause();
+      }
+
+      if (data.item && this.item && this.item.uid !== data.item.uid) {
+        this.closePlayer();
       }
 
       this.item = data.item;
@@ -138,11 +158,38 @@ export default {
     },
     onPlay() {
       if (this.item && this.item.playable) {
-        let photo = new Photo();
-        photo.find(this.item.uid).then((p) => {
-          this.$modal.show('video', {video: p, album: null});
-        });
+        new Photo().find(this.item.uid).then((video) => this.openPlayer(video));
       }
+    },
+    openPlayer(video) {
+      if (!video) {
+        this.$notify.error("no video selected");
+        return;
+      }
+
+      const params = video.videoParams();
+
+      if (params.error) {
+        this.$notify.error(params.error);
+        return;
+      }
+
+      // Set video parameters.
+      this.player.loop = params.loop;
+      this.player.width = params.width;
+      this.player.height = params.height;
+      this.player.poster = params.poster;
+      this.player.source = params.uri;
+
+      // Play video.
+      this.player.show = true;
+    },
+    closePlayer() {
+      if (this.$refs.player) {
+        this.$refs.player.stop();
+      }
+
+      this.player.show = false;
     },
     onPause() {
       this.slideshow.active = false;
@@ -181,10 +228,8 @@ export default {
       }
 
       Notify.success(this.$gettext("Downloading…"));
-      let photo = new Photo();
-      photo.find(this.item.uid).then((p) => {
-        p.downloadAll();
-      });
+
+      new Photo().find(this.item.uid).then(p => p.downloadAll());
     },
     onEdit() {
       this.onPause();

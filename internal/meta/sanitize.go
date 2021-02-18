@@ -10,27 +10,32 @@ import (
 )
 
 var UnwantedDescriptions = map[string]bool{
-	"OLYMPUS DIGITAL CAMERA": true, // Olympus
-	"SAMSUNG":                true, // Samsung
-	"rhdr":                   true, // Huawei
-	"hdrpl":                  true,
-	"fbt":                    true,
-	"mon":                    true,
-	"nor":                    true,
-	"dav":                    true,
-	"mde":                    true,
-	"mde_soft":               true,
-	"edf":                    true,
-	"btfmdn":                 true,
-	"btf":                    true,
-	"btfhdr":                 true,
-	"frem":                   true,
-	"oznor":                  true,
-	"rpt":                    true,
-	"burst":                  true,
-	"sdr_HDRB":               true,
-	"cof":                    true,
-	"qrf":                    true,
+	"OLYMPUS DIGITAL CAMERA":  true, // Olympus
+	"SAMSUNG":                 true, // Samsung
+	"SAMSUNG CAMERA PICTURES": true,
+	"rhdr":                    true, // Huawei
+	"hdrpl":                   true,
+	"oznorWO":                 true,
+	"frontbhdp":               true,
+	"fbt":                     true,
+	"mon":                     true,
+	"nor":                     true,
+	"dav":                     true,
+	"mde":                     true,
+	"mde_soft":                true,
+	"edf":                     true,
+	"btfmdn":                  true,
+	"btf":                     true,
+	"btfhdr":                  true,
+	"frem":                    true,
+	"oznor":                   true,
+	"rpt":                     true,
+	"burst":                   true,
+	"sdr_HDRB":                true,
+	"cof":                     true,
+	"qrf":                     true,
+	"binary comment":          true,
+	"default":                 true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
@@ -38,6 +43,10 @@ var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
 // SanitizeString removes unwanted character from an exif value string.
 func SanitizeString(s string) string {
 	if s == "" {
+		return ""
+	}
+
+	if strings.HasPrefix(s, "string with binary data") {
 		return ""
 	}
 

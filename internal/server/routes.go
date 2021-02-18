@@ -87,6 +87,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.GetFoldersOriginals(v1)
 		api.GetFoldersImport(v1)
+		api.GetFolderCover(v1)
 
 		api.Upload(v1)
 		api.StartImport(v1)
@@ -98,6 +99,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.BatchPhotosArchive(v1)
 		api.BatchPhotosRestore(v1)
 		api.BatchPhotosPrivate(v1)
+		api.BatchPhotosDelete(v1)
 		api.BatchAlbumsDelete(v1)
 		api.BatchLabelsDelete(v1)
 

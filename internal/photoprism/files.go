@@ -35,8 +35,8 @@ func (m *Files) Init() error {
 		return nil
 	}
 
-	if err := query.CleanDuplicates(); err != nil {
-		return fmt.Errorf("%s (clean duplicates)", err.Error())
+	if err := query.PurgeOrphanDuplicates(); err != nil {
+		return fmt.Errorf("%s (purge duplicates)", err.Error())
 	}
 
 	files, err := query.IndexedFiles()

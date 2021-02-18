@@ -13,6 +13,11 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
+		Name:   "test",
+		Hidden: true,
+		Usage:  "run in test mode",
+	},
+	cli.BoolFlag{
 		Name:   "demo",
 		Hidden: true,
 		Usage:  "run in demo mode",
@@ -309,6 +314,24 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "FFmpeg `COMMAND` for video transcoding and cover images",
 		Value:  "ffmpeg",
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
+	},
+	cli.StringFlag{
+		Name:   "ffmpeg-encoder",
+		Usage:  "FFmpeg AVC encoder `NAME`",
+		Value:  "libx264",
+		EnvVar: "PHOTOPRISM_FFMPEG_ENCODER",
+	},
+	cli.IntFlag{
+		Name:   "ffmpeg-bitrate",
+		Usage:  "FFmpeg encoding bitrate `LIMIT` in Mbit/s",
+		Value:  50,
+		EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
+	},
+	cli.IntFlag{
+		Name:   "ffmpeg-buffers",
+		Usage:  "FFmpeg capture buffers",
+		Value:  32,
+		EnvVar: "PHOTOPRISM_FFMPEG_BUFFERS",
 	},
 	cli.StringFlag{
 		Name:   "exiftool-bin",

@@ -96,6 +96,7 @@
             <v-switch
                 v-model="model.Stack"
                 hide-details
+                class="input-stackable"
                 :true-value="0"
                 :false-value="-1"
                 :label="model.Stack > - 1 ? $gettext('Yes') : $gettext('No')"
@@ -111,6 +112,7 @@
             <v-switch
                 v-model="model.Favorite"
                 hide-details
+                class="input-favorite"
                 :label="model.Favorite ? $gettext('Yes') : $gettext('No')"
                 @change="save"
             ></v-switch>
@@ -124,6 +126,7 @@
             <v-switch
                 v-model="model.Private"
                 hide-details
+                class="input-private"
                 :label="model.Private ? $gettext('Yes') : $gettext('No')"
                 @change="save"
             ></v-switch>
@@ -137,6 +140,7 @@
             <v-switch
                 v-model="model.Scan"
                 hide-details
+                class="input-scan"
                 :label="model.Scan ? $gettext('Yes') : $gettext('No')"
                 @change="save"
             ></v-switch>
@@ -150,6 +154,7 @@
             <v-switch
                 v-model="model.Panorama"
                 hide-details
+                class="input-panorama"
                 :label="model.Panorama ? $gettext('Yes') : $gettext('No')"
                 @change="save"
             ></v-switch>

@@ -7,7 +7,7 @@
         <v-text-field id="search"
                       v-model="filter.q"
                       single-line
-                      class="hidden-xs-only mr-3 input-search"
+                      class="input-search"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"
@@ -22,7 +22,7 @@
                   :label="$gettext('Category')"
                   color="secondary-dark"
                   :items="categories"
-                  class="input-category"
+                  class="ml-3 hidden-xs-only input-category"
                   @change="updateQuery"
         >
         </v-select>
@@ -33,7 +33,7 @@
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down"
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
                :title="$gettext('Upload')" @click.stop="showUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>
@@ -127,10 +127,10 @@
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-favorite"
-                       @touchstart.stop.prevent="album.toggleLike()"
-                       @touchend.stop.prevent
+                       @touchstart.stop.prevent="onTouchStart($event, index)"
+                       @touchend.stop.prevent="toggleLike($event, index)"
                        @touchmove.stop.prevent
-                       @click.stop.prevent="album.toggleLike()">
+                       @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
@@ -244,6 +244,11 @@ export default {
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
+      touchStart: {
+        index: -1,
+        scrollY: window.scrollY,
+        timeStamp: -1,
+      },
       mouseDown: {
         index: -1,
         scrollY: window.scrollY,
@@ -324,6 +329,37 @@ export default {
     showUpload() {
       Event.publish("dialog.upload");
     },
+    onTouchStart(ev, index) {
+      this.touchStart.index = index;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = ev.timeStamp;
+    },
+    resetTouchStart() {
+      this.touchStart.index = -1;
+      this.touchStart.scrollY = window.scrollY;
+      this.touchStart.timeStamp = -1;
+    },
+    isClick(ev, index) {
+      if (this.touchStart.timeStamp < 0) return true;
+
+      return this.touchStart.index === index
+          && (ev.timeStamp - this.touchStart.timeStamp) < 200
+          && (this.touchStart.scrollY - window.scrollY) === 0;
+    },
+    toggleLike(ev, index) {
+      if (!this.isClick(ev, index)) {
+        this.resetTouchStart();
+        return;
+      }
+
+      const album = this.results[index];
+
+      if (!album) {
+        return;
+      }
+
+      album.toggleLike();
+    },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
         console.warn("selectRange() - invalid arguments:", rangeEnd, models);
@@ -362,7 +398,7 @@ export default {
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400);
+      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
       const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
 
       if (scrolled) {

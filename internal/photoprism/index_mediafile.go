@@ -272,27 +272,19 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Set file original name if available.
 	if originalName != "" {
 		file.OriginalName = originalName
+	}
 
-		if file.FilePrimary && photo.OriginalName == "" {
-			photo.OriginalName = fs.BasePrefix(originalName, stripSequence)
-		}
+	// Set photo original name based on file original name.
+	if file.OriginalName != "" {
+		photo.OriginalName = fs.StripKnownExt(file.OriginalName)
 	}
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore photos that have been purged automatically.
 		photo.DeletedAt = nil
-	} else if photo.DeletedAt != nil {
-		// Don't waste time indexing deleted / archived photos.
-		result.Status = IndexArchived
-
-		// Remove missing flag from file.
-		if err = file.Undelete(); err != nil {
-			log.Errorf("index: %s in %s (undelete)", err.Error(), logName)
-		}
-
-		return result
 	}
 
 	// Handle file types.
@@ -368,6 +360,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -392,33 +385,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.PhotoResolution = res
 			}
 
-			if photo.CameraSrc == entity.SrcAuto {
-				// Set UpdateCamera, Lens, Focal Length and F Number.
-				photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
-
-				if photo.Camera != nil {
-					photo.CameraID = photo.Camera.ID
-				} else {
-					photo.CameraID = entity.UnknownCamera.ID
-				}
-
-				if photo.CameraID != entity.UnknownCamera.ID {
-					photo.CameraSrc = entity.SrcMeta
-				}
-
-				photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
-
-				if photo.Lens != nil {
-					photo.LensID = photo.Lens.ID
-				} else {
-					photo.LensID = entity.UnknownLens.ID
-				}
-
-				photo.PhotoFocalLength = m.FocalLength()
-				photo.PhotoFNumber = m.FNumber()
-				photo.PhotoIso = m.Iso()
-				photo.PhotoExposure = m.Exposure()
-			}
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
 		if photo.TypeSrc == entity.SrcAuto {
@@ -440,6 +409,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -465,33 +435,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 				photo.PhotoResolution = res
 			}
 
-			if photo.CameraSrc == entity.SrcAuto {
-				// Set UpdateCamera, Lens, Focal Length and F Number.
-				photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
-
-				if photo.Camera != nil {
-					photo.CameraID = photo.Camera.ID
-				} else {
-					photo.CameraID = entity.UnknownCamera.ID
-				}
-
-				if photo.CameraID != entity.UnknownCamera.ID {
-					photo.CameraSrc = entity.SrcMeta
-				}
-
-				photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
-
-				if photo.Lens != nil {
-					photo.LensID = photo.Lens.ID
-				} else {
-					photo.LensID = entity.UnknownLens.ID
-				}
-
-				photo.PhotoFocalLength = m.FocalLength()
-				photo.PhotoFNumber = m.FNumber()
-				photo.PhotoIso = m.Iso()
-				photo.PhotoExposure = m.Exposure()
-			}
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
 		if photo.TypeSrc == entity.SrcAuto {
@@ -519,11 +465,23 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
-	// file obviously exists: remove deleted and missing flags
+	// Set taken date based on file mod time or name if other metadata is missing.
+	if m.IsMedia() && entity.SrcPriority[photo.TakenSrc] <= entity.SrcPriority[entity.SrcName] {
+		// Try to extract time from original file name first.
+		if taken := txt.Time(photo.OriginalName); !taken.IsZero() {
+			photo.SetTakenAt(taken, taken, "", entity.SrcName)
+		} else if taken, takenSrc := m.TakenAt(); takenSrc == entity.SrcName {
+			photo.SetTakenAt(taken, taken, "", entity.SrcName)
+		} else if !taken.IsZero() {
+			photo.SetTakenAt(taken, taken, time.UTC.String(), takenSrc)
+		}
+	}
+
+	// File obviously exists: remove deleted and missing flags.
 	file.DeletedAt = nil
 	file.FileMissing = false
 
-	// primary files are used for rendering thumbnails and image classification (plus sidecar files if they exist)
+	// Primary files are used for rendering thumbnails and image classification, plus sidecar files if they exist.
 	if file.FilePrimary {
 		primaryFile = file
 
@@ -536,7 +494,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		// read metadata from embedded Exif and JSON sidecar file (if exists)
+		// Read metadata from embedded Exif and JSON sidecar file, if exists.
 		if metaData := m.MetaData(); metaData.Error == nil {
 			// Update basic metadata.
 			photo.SetTitle(metaData.Title, entity.SrcMeta)
@@ -550,6 +508,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
+			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, txt.Quote(metaData.DocumentID))
@@ -558,38 +517,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			}
 		}
 
-		if photo.CameraSrc == entity.SrcAuto {
-			// Set UpdateCamera, Lens, Focal Length and F Number.
-			photo.Camera = entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake()))
-
-			if photo.Camera != nil {
-				photo.CameraID = photo.Camera.ID
-			} else {
-				photo.CameraID = entity.UnknownCamera.ID
-			}
-
-			if photo.CameraID != entity.UnknownCamera.ID {
-				photo.CameraSrc = entity.SrcMeta
-			}
-
-			photo.Lens = entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake()))
-
-			if photo.Lens != nil {
-				photo.LensID = photo.Lens.ID
-			} else {
-				photo.LensID = entity.UnknownLens.ID
-			}
-
-			photo.PhotoFocalLength = m.FocalLength()
-			photo.PhotoFNumber = m.FNumber()
-			photo.PhotoIso = m.Iso()
-			photo.PhotoExposure = m.Exposure()
-		}
-
-		if photo.TakenSrc == entity.SrcAuto || photo.TakenSrc == entity.SrcName {
-			takenUtc, takenSrc := m.TakenAt()
-			photo.SetTakenAt(takenUtc, takenUtc, "", takenSrc)
-		}
+		photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
+		photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+		photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 
 		var locLabels classify.Labels
 
@@ -680,9 +610,16 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
-		w = append(w, locKeywords...)
+		if photo.OriginalName == "" {
+			// Do nothing.
+		} else if fs.IsGenerated(photo.OriginalName) {
+			w = append(w, txt.FilenameKeywords(filepath.Dir(photo.OriginalName))...)
+		} else {
+			w = append(w, txt.FilenameKeywords(photo.OriginalName)...)
+		}
+
 		w = append(w, txt.FilenameKeywords(filePath)...)
-		w = append(w, txt.FilenameKeywords(file.OriginalName)...)
+		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
 		w = append(w, labels.Keywords()...)
 

@@ -14,6 +14,9 @@ var photoYamlMutex = sync.Mutex{}
 
 // Yaml returns photo data as YAML string.
 func (m *Photo) Yaml() ([]byte, error) {
+	// Load details if not done yet.
+	m.GetDetails()
+
 	out, err := yaml.Marshal(m)
 
 	if err != nil {

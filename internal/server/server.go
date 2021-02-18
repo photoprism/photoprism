@@ -38,7 +38,13 @@ func Start(ctx context.Context, conf *config.Config) {
 		log.Infof("http: enabling gzip compression")
 		router.Use(gzip.Gzip(
 			gzip.DefaultCompression,
-			gzip.WithExcludedPaths([]string{"/api/v1/t", "/api/v1/zip", "/api/v1/albums", "/api/v1/labels"})))
+			gzip.WithExcludedPaths([]string{
+				"/api/v1/t",
+				"/api/v1/folders/t",
+				"/api/v1/zip",
+				"/api/v1/albums",
+				"/api/v1/labels",
+			})))
 	}
 
 	// Set template directory

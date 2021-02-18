@@ -54,3 +54,49 @@ func TestPhoto_CountryName(t *testing.T) {
 		assert.Equal(t, "Germany", m.CountryName())
 	})
 }
+
+func TestUpdateLocation(t *testing.T) {
+	t.Run("estimate", func(t *testing.T) {
+		m := Photo{
+			PhotoName:    "test_photo_2",
+			PhotoCountry: "zz",
+			PhotoLat:     0.0,
+			PhotoLng:     0.0,
+			PlaceID:      "s2:85d1ea7d3278",
+			PlaceSrc:     SrcEstimate,
+		}
+
+		assert.Equal(t, "Unknown", m.CountryName())
+
+		m.UpdateLocation()
+
+		assert.Equal(t, "Mexico", m.CountryName())
+		assert.Equal(t, "mx", m.PhotoCountry)
+		assert.Equal(t, float32(0.0), m.PhotoLat)
+		assert.Equal(t, float32(0.0), m.PhotoLng)
+		assert.Equal(t, "s2:85d1ea7d3278", m.PlaceID)
+		assert.Equal(t, SrcEstimate, m.PlaceSrc)
+	})
+
+	t.Run("change_estimate", func(t *testing.T) {
+		m := Photo{
+			PhotoName:    "test_photo_1",
+			PhotoCountry: "de",
+			PhotoLat:     0.0,
+			PhotoLng:     0.0,
+			PlaceID:      "s2:85d1ea7d3278",
+			PlaceSrc:     SrcManual,
+		}
+
+		assert.Equal(t, "Germany", m.CountryName())
+
+		m.UpdateLocation()
+
+		assert.Equal(t, "Germany", m.CountryName())
+		assert.Equal(t, "de", m.PhotoCountry)
+		assert.Equal(t, float32(0.0), m.PhotoLat)
+		assert.Equal(t, float32(0.0), m.PhotoLng)
+		assert.Equal(t, "zz", m.PlaceID)
+		assert.Equal(t, SrcManual, m.PlaceSrc)
+	})
+}

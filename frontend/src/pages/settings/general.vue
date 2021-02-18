@@ -78,6 +78,51 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
+                  v-model="settings.features.edit"
+                  :disabled="busy || demo"
+                  class="ma-0 pa-0 input-edit"
+                  color="secondary-dark"
+                  :label="$gettext('Edit')"
+                  :hint="$gettext('Change photo titles, locations and other metadata.')"
+                  prepend-icon="edit"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.delete"
+                  :disabled="busy || demo"
+                  class="ma-0 pa-0 input-delete"
+                  color="secondary-dark"
+                  :label="$gettext('Delete')"
+                  :hint="$gettext('Permanently remove files to free up storage.')"
+                  prepend-icon="delete"
+                  persistent-hint
+                  @change="onChangeDelete"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.import"
+                  :disabled="busy || config.readonly || demo"
+                  class="ma-0 pa-0 input-import"
+                  color="secondary-dark"
+                  :label="$gettext('Import')"
+                  :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
+                  prepend-icon="create_new_folder"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
                   v-model="settings.features.share"
                   :disabled="busy"
                   class="ma-0 pa-0 input-share"
@@ -93,13 +138,13 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.archive"
+                  v-model="settings.features.private"
                   :disabled="busy"
-                  class="ma-0 pa-0 input-archive"
+                  class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Archive')"
-                  :hint="$gettext('Hide photos that have been moved to archive.')"
-                  prepend-icon="archive"
+                  :label="$gettext('Private')"
+                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
+                  prepend-icon="lock"
                   persistent-hint
                   @change="onChange"
               >
@@ -108,13 +153,13 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.edit"
-                  :disabled="busy || demo"
-                  class="ma-0 pa-0 input-edit"
+                  v-model="settings.features.archive"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-archive"
                   color="secondary-dark"
-                  :label="$gettext('Edit')"
-                  :hint="$gettext('Change photo titles, locations and other metadata.')"
-                  prepend-icon="edit"
+                  :label="$gettext('Archive')"
+                  :hint="$gettext('Hide photos that have been moved to archive.')"
+                  prepend-icon="archive"
                   persistent-hint
                   @change="onChange"
               >
@@ -144,7 +189,7 @@
                   color="secondary-dark"
                   :label="$gettext('Moments')"
                   :hint="$gettext('Let PhotoPrism create albums from past events.')"
-                  prepend-icon="explore"
+                  prepend-icon="star"
                   persistent-hint
                   @change="onChange"
               >
@@ -183,21 +228,6 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.import"
-                  :disabled="busy || config.readonly || demo"
-                  class="ma-0 pa-0 input-import"
-                  color="secondary-dark"
-                  :label="$gettext('Import')"
-                  :hint="$gettext('Imported files will be sorted by date and given a unique name.')"
-                  prepend-icon="create_new_folder"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
                   v-model="settings.features.logs"
                   :disabled="busy"
                   class="ma-0 pa-0 input-logs"
@@ -225,6 +255,7 @@
               >
               </v-checkbox>
             </v-flex>
+
           </v-layout>
         </v-card-actions>
       </v-card>
@@ -334,6 +365,19 @@ export default {
       }
 
       this.currentTheme = newTheme;
+
+      this.onChange();
+    },
+    onChangeDelete(enabled) {
+      if(enabled && !this.$config.values.sponsor) {
+        this.dialog.sponsor = true;
+
+        this.$nextTick(() => {
+          this.settings.features.delete = false;
+        });
+
+        return false;
+      }
 
       this.onChange();
     },

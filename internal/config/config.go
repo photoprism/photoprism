@@ -265,6 +265,11 @@ func (c *Config) Debug() bool {
 	return c.options.Debug
 }
 
+// Test tests if test mode is enabled.
+func (c *Config) Test() bool {
+	return c.options.Test
+}
+
 // Demo tests if demo mode is enabled.
 func (c *Config) Demo() bool {
 	return c.options.Demo
@@ -272,7 +277,7 @@ func (c *Config) Demo() bool {
 
 // Sponsor reports if your continuous support helps to pay for development and operating expenses.
 func (c *Config) Sponsor() bool {
-	return c.options.Sponsor
+	return c.options.Sponsor || c.Test()
 }
 
 // Public tests if app runs in public mode and requires no authentication.
@@ -380,7 +385,7 @@ func (c *Config) AutoIndex() time.Duration {
 	if c.options.AutoIndex < 0 {
 		return time.Duration(0)
 	} else if c.options.AutoIndex == 0 || c.options.AutoIndex > 86400 {
-		return c.WakeupInterval()
+		return 5 * time.Minute
 	}
 
 	return time.Duration(c.options.AutoIndex) * time.Second
@@ -391,7 +396,7 @@ func (c *Config) AutoImport() time.Duration {
 	if c.options.AutoImport < 0 || c.ReadOnly() {
 		return time.Duration(0)
 	} else if c.options.AutoImport == 0 || c.options.AutoImport > 86400 {
-		return c.AutoIndex()
+		return 3 * time.Minute
 	}
 
 	return time.Duration(c.options.AutoImport) * time.Second

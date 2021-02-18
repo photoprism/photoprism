@@ -21,12 +21,9 @@ var fileIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" vi
 var videoIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 <path d="M0 0h24v24H0z" fill="none"/><path d="M10 8v8l5-4-5-4zm9-5H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg>`)
 
-var albumIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 28 20" width="24">
-    <path d="M0 0h28v20H0z" fill="none"/>
-    <path d="M2 6H0v5h.01L0 2V6zm20-2h-8l-2-2H6c-1.1 0-1.99.9-1.99 2L4 16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM7 15l4.5-6 3.5 4.51 2.5-3.01L21 15H7z"/>
-</svg>`)
-
 var folderIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`)
+
+var albumIconSvg = folderIconSvg
 
 var labelIconSvg = []byte(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 <path d="M0 0h24v24H0z" fill="none"/><path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/></svg>`)
@@ -63,12 +60,12 @@ func GetSvg(router *gin.RouterGroup) {
 		c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 	})
 
-	router.GET("/svg/album", func(c *gin.Context) {
-		c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
-	})
-
 	router.GET("/svg/folder", func(c *gin.Context) {
 		c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
+	})
+
+	router.GET("/svg/album", func(c *gin.Context) {
+		c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 	})
 
 	router.GET("/svg/broken", func(c *gin.Context) {

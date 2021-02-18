@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -123,7 +124,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			cached := cacheData.(fs.FileInfos)
 
-			log.Debugf("cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			c.JSON(http.StatusOK, cached)
 			return
@@ -188,10 +189,19 @@ func ShareWithAccount(router *gin.RouterGroup) {
 			return
 		}
 
+		var aliases = make(map[string]int)
+
 		for _, file := range files {
-			dstFileName := path.Join(dst, file.ShareBase())
-			fileShare := entity.NewFileShare(file.ID, m.ID, dstFileName)
-			entity.FirstOrCreateFileShare(fileShare)
+			alias := path.Join(dst, file.ShareBase(0))
+			key := strings.ToLower(alias)
+
+			if seq := aliases[key]; seq > 0 {
+				alias = file.ShareBase(seq)
+			}
+
+			aliases[key] += 1
+
+			entity.FirstOrCreateFileShare(entity.NewFileShare(file.ID, m.ID, alias))
 		}
 
 		workers.StartShare(service.Config())

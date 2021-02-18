@@ -46,16 +46,31 @@ func (m *Photo) CountryCode() string {
 
 // GetTakenAt returns UTC time for TakenAtLocal.
 func (m *Photo) GetTakenAt() time.Time {
-	loc, err := time.LoadLocation(m.TimeZone)
+	location, err := time.LoadLocation(m.TimeZone)
 
 	if err != nil {
 		return m.TakenAt
 	}
 
-	if takenAt, err := time.ParseInLocation("2006-01-02T15:04:05", m.TakenAtLocal.Format("2006-01-02T15:04:05"), loc); err != nil {
+	if takenAt, err := time.ParseInLocation("2006-01-02T15:04:05", m.TakenAtLocal.Format("2006-01-02T15:04:05"), location); err != nil {
 		return m.TakenAt
 	} else {
 		return takenAt.UTC()
+	}
+}
+
+// GetTakenAtLocal returns local time for TakenAt.
+func (m *Photo) GetTakenAtLocal() time.Time {
+	location, err := time.LoadLocation(m.TimeZone)
+
+	if err != nil {
+		return m.TakenAtLocal
+	}
+
+	if takenAtLocal, err := time.ParseInLocation("2006-01-02T15:04:05", m.TakenAt.In(location).Format("2006-01-02T15:04:05"), time.UTC); err != nil {
+		return m.TakenAtLocal
+	} else {
+		return takenAtLocal.UTC()
 	}
 }
 
@@ -100,11 +115,17 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	if m.UnknownLocation() {
 		m.Cell = &UnknownLocation
 		m.CellID = UnknownLocation.ID
+
+		// Remove place estimate if better data is available.
+		if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] {
+			m.Place = &UnknownPlace
+			m.PlaceID = UnknownPlace.ID
+		}
 	} else if err := m.LoadLocation(); err == nil {
 		m.Place = m.Cell.Place
 		m.PlaceID = m.Cell.PlaceID
 	} else {
-		log.Warn(err)
+		log.Warnf("photo: location %s not found in %s", m.CellID, m.PhotoName)
 	}
 
 	if m.UnknownPlace() {
@@ -113,7 +134,7 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	} else if err := m.LoadPlace(); err == nil {
 		m.PhotoCountry = m.Place.CountryCode()
 	} else {
-		log.Warn(err)
+		log.Warnf("photo: place %s not found in %s", m.PlaceID, m.PhotoName)
 	}
 
 	if m.UnknownCountry() {

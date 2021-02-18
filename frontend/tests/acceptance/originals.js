@@ -9,9 +9,7 @@ const page = new Page();
 test.meta("testID", "originals-001")("Add original files to album", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
-  if (t.browser.platform === "mobile") {
-    await t.navigateTo("/albums?q=KanadaVacation");
-  } else { await page.search("KanadaVacation");}
+  await page.search("KanadaVacation");
   await t.expect(Selector("h3").innerText).eql("Couldn't find anything");
   await page.openNav();
   await t
@@ -40,13 +38,11 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
   await page.selectPhotoFromUID(KanadaUid);
   const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
   await t.expect(clipboardCount.textContent).eql("1");
-  await page.addSelectedToAlbum("KanadaVacation");
+  await page.addSelectedToAlbum("KanadaVacation", "album");
   await page.openNav();
   await t
     .click(Selector(".nav-albums"));
-  if (t.browser.platform === "mobile") {
-    await t.navigateTo("/albums?q=KanadaVacation");
-  } else { await page.search("KanadaVacation");}
+  await page.search("KanadaVacation");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-album").nth(0));
   const PhotoCountAfterAdd = await Selector("div.is-photo", { timeout: 5000 }).count;

@@ -43,7 +43,7 @@ class Viewer {
 
   getEl() {
     if (!this.el) {
-      this.el = document.getElementById("p-photo-viewer");
+      this.el = document.getElementById("photo-viewer");
 
       if (this.el === null) {
         let err = "no photo viewer element found";
@@ -53,6 +53,10 @@ class Viewer {
     }
 
     return this.el;
+  }
+
+  play(params) {
+    Event.publish("player.open", params);
   }
 
   show(items, index = 0) {
@@ -129,7 +133,7 @@ class Viewer {
 
         if (item.playable) {
           captionEl.children[0].innerHTML +=
-            ' <i aria-hidden="true" class="v-icon material-icons theme--dark">movie_creation</i>';
+            ' <i aria-hidden="true" class="v-icon material-icons theme--dark" title="Play">play_circle_fill</i>';
         }
 
         if (item.description) {

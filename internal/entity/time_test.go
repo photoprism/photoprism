@@ -16,3 +16,26 @@ func TestTimestamp(t *testing.T) {
 		t.Fatal("timestamp should be in the past from now")
 	}
 }
+
+func TestSeconds(t *testing.T) {
+	result := Seconds(23)
+
+	if result != 23*time.Second {
+		t.Error("must be 23 seconds")
+	}
+}
+
+func TestYesterday(t *testing.T) {
+	now := time.Now()
+	result := Yesterday()
+
+	t.Logf("yesterday: %s", result)
+
+	if result.After(now) {
+		t.Error("yesterday is not before now")
+	}
+
+	if !result.Before(now) {
+		t.Error("yesterday is before now")
+	}
+}

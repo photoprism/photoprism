@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// ResampleCommand is used to register the thumbs cli command
+// ResampleCommand registers the thumbs cli command.
 var ResampleCommand = cli.Command{
 	Name:    "resample",
 	Aliases: []string{"thumbs"},

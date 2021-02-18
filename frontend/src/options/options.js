@@ -4,7 +4,11 @@ import { Info } from "luxon";
 import { config } from "../session";
 import { TypeVideo, TypeImage, TypeLive, TypeRaw } from "../model/photo";
 
-export const TimeZones = () => timeZonesNames;
+export const TimeZones = () =>
+  [
+    { ID: "UTC", Name: "UTC" },
+    { ID: "", Name: $gettext("Local Time") },
+  ].concat(timeZonesNames);
 
 export const Days = () => {
   let result = [];
@@ -111,6 +115,16 @@ export const Languages = () => [
     text: "हिन्दी",
     translated: $gettext("Hindi"),
     value: "hi",
+  },
+  {
+    text: "Italian",
+    translated: $gettext("Italian"),
+    value: "it",
+  },
+  {
+    text: "한국어",
+    translated: $gettext("Korean"),
+    value: "ko",
   },
   {
     text: "Nederlands",

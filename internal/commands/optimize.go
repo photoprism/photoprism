@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// OptimizeCommand is used to register the index cli command.
+// OptimizeCommand registers the index cli command.
 var OptimizeCommand = cli.Command{
 	Name:   "optimize",
 	Usage:  "Starts metadata check and optimization",
@@ -35,7 +35,7 @@ func optimizeAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if conf.ReadOnly() {
-		log.Infof("read-only mode enabled")
+		log.Infof("optimize: read-only mode enabled")
 	}
 
 	worker := workers.NewMeta(conf)
