@@ -336,3 +336,22 @@ func TestConfig_SerialChecksum(t *testing.T) {
 
 	assert.NotEmpty(t, result)
 }
+
+func TestConfigPublic(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.Demo = true
+	assert.True(t, c.Public())
+}
+
+func TestConfigOptions(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	r := c.Options()
+	assert.False(t, r.DisableExifTool)
+	assert.Equal(t, r.AutoImport, 7200)
+	assert.Equal(t, r.AutoIndex, -1)
+
+	c.options = nil
+	r2 := c.Options()
+	assert.Equal(t, r2.AutoImport, 0)
+	assert.Equal(t, r2.AutoIndex, 0)
+}

@@ -69,3 +69,17 @@ func TestSettings_Save(t *testing.T) {
 		}
 	})
 }
+
+func TestSettings_Stacks(t *testing.T) {
+	c := NewSettings()
+	assert.False(t, c.StackSequences())
+	assert.True(t, c.StackUUID())
+	assert.True(t, c.StackMeta())
+}
+
+func TestConfig_Settings(t *testing.T) {
+	c := TestConfig()
+	c.options.DisablePlaces = true
+	r := c.Settings()
+	assert.False(t, r.Features.Places)
+}

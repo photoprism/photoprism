@@ -29,6 +29,8 @@ func TestConfig_DatabaseServer(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "localhost", c.DatabaseServer())
+	c.options.DatabaseServer = "test"
+	assert.Equal(t, "test", c.DatabaseServer())
 }
 
 func TestConfig_DatabaseHost(t *testing.T) {
@@ -41,6 +43,12 @@ func TestConfig_DatabasePort(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, 3306, c.DatabasePort())
+}
+
+func TestConfig_DatabasePortString(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "3306", c.DatabasePortString())
 }
 
 func TestConfig_DatabaseName(t *testing.T) {
@@ -66,4 +74,34 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 
 	dsn := c.DatabaseDriver()
 	assert.Equal(t, SQLite, dsn)
+	c.options.DatabaseDsn = ""
+	c.options.DatabaseDriver = "MariaDB"
+	assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", c.DatabaseDsn())
+	c.options.DatabaseDriver = "tidb"
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+	c.options.DatabaseDriver = "Postgres"
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+	c.options.DatabaseDriver = "SQLite"
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+	c.options.DatabaseDriver = ""
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db", c.DatabaseDsn())
+}
+
+func TestConfig_DatabaseConns(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, 28, c.DatabaseConns())
+
+	c.options.DatabaseConns = 3000
+	assert.Equal(t, 1024, c.DatabaseConns())
+}
+
+func TestConfig_DatabaseConnsIdle(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, 14, c.DatabaseConnsIdle())
+
+	c.options.DatabaseConnsIdle = -55
+	assert.Greater(t, c.DatabaseConnsIdle(), 8)
+
+	c.options.DatabaseConnsIdle = 35
+	assert.Equal(t, 28, c.DatabaseConnsIdle())
 }
