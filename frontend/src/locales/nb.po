@@ -174,7 +174,7 @@ msgstr "Alle %{n} oppføringer lastet"
 
 #: src/pages/labels.vue:269
 msgid "All %{n} labels loaded"
-msgstr "Alle %{n} etiketter innlest"
+msgstr "Alle %{n} merkelapper innlest"
 
 #: src/component/album/toolbar.vue:17 src/component/photo/toolbar.vue:21
 msgid "All Cameras"
@@ -278,7 +278,7 @@ msgstr "Er du sikker på at du vil slette disse albumene?"
 
 #: src/dialog/label/delete.vue:10
 msgid "Are you sure you want to delete these labels?"
-msgstr "Er du sikker på at du vil slette disse etikettene?"
+msgstr "Er du sikker på at du vil slette disse merkelappene?"
 
 #: src/dialog/account/remove.vue:10
 msgid "Are you sure you want to delete this account?"
@@ -334,7 +334,7 @@ msgstr "Brun"
 
 #: src/pages/settings/general.vue:361
 msgid "Browse and edit image classification labels."
-msgstr "Bla gjennom og rediger etiketter for bildeklassifisering."
+msgstr "Bla gjennom og rediger merkelapper for bildeklassifisering."
 
 #: src/pages/settings/general.vue:317
 msgid "Browse indexed files and folders in Library."
@@ -787,7 +787,7 @@ msgid ""
 "and places."
 msgstr ""
 "Ekskluder innhold som er merket privat fra søkeresultater, delte album, "
-"etiketter og steder."
+"merkelapper og steder."
 
 #: src/component/navigation.vue:235
 msgid "Expand"
@@ -1079,21 +1079,21 @@ msgstr "Nøkkelord"
 
 #: src/dialog/photo/labels.vue:17 src/model/label.js:114
 msgid "Label"
-msgstr "Etikett"
+msgstr "Merkelapp"
 
 #: src/dialog/photo/labels.vue:48 src/pages/labels.vue:326
 msgid "Label Name"
-msgstr "Etikettnavn"
+msgstr "Merkelappnavn"
 
 #: src/component/navigation.vue:249 src/component/navigation.vue:915
 #: src/dialog/photo/edit.vue:27 src/pages/settings/general.vue:360
 #: src/routes.js:259
 msgid "Labels"
-msgstr "Etiketter"
+msgstr "Merkelapper"
 
 #: src/component/label/clipboard.vue:42
 msgid "Labels deleted"
-msgstr "Etiketter slettet"
+msgstr "Merkelapper slettet"
 
 #: src/options/options.js:320
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1263,7 +1263,7 @@ msgstr "Mer enn 20 album funnet"
 
 #: src/pages/labels.vue:359
 msgid "More than 20 labels found"
-msgstr "Mer enn 20 etiketter funnet"
+msgstr "Mer enn 20 merkelapper funnet"
 
 #: src/pages/album/photos.vue:344 src/share/photos.vue:359
 msgid "More than 50 entries found"
@@ -1332,7 +1332,7 @@ msgstr "Ingen oppføringer funnet"
 
 #: src/dialog/photo/labels.vue:33
 msgid "No labels found"
-msgstr "Ingen etiketter funnet"
+msgstr "Ingen merkelapper funnet"
 
 #: src/pages/places.vue:179 src/pages/places.vue:218
 msgid "No photos found"
@@ -2301,7 +2301,7 @@ msgstr "Du kan bare laste ned ett album"
 
 #: src/component/label/clipboard.vue:47
 msgid "You can only download one label"
-msgstr "Du kan bare laste ned én etikett"
+msgstr "Du kan bare laste ned én merkelapp"
 
 #: src/component/album/clipboard.vue:32 src/component/album/clipboard.vue:45
 msgid "You may only select one item"
