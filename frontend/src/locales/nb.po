@@ -317,9 +317,8 @@ msgid "Black"
 msgstr "Svart"
 
 #: src/options/options.js:319
-#, fuzzy
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos Modification, færre ringeartefakter"
+msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
 #: src/options/options.js:302
 msgid "Blue"
@@ -446,9 +445,8 @@ msgid "Complete Rescan"
 msgstr "Komplett Ny Skanning"
 
 #: src/dialog/photo/labels.vue:19
-#, fuzzy
 msgid "Confidence"
-msgstr "Tillit"
+msgstr "Konfidens"
 
 #: src/dialog/account/add.vue:16
 msgid "Connect"
@@ -523,7 +521,7 @@ msgstr "Oppretter miniatyrbilder for"
 
 #: src/options/options.js:321
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: Moderat Kvalitet, God Ytelse"
+msgstr "Cubic: Moderate Quality, Good Performance"
 
 #: src/pages/settings/account.vue:55
 msgid "Current Password"
@@ -1098,9 +1096,8 @@ msgid "Labels deleted"
 msgstr "Etiketter slettet"
 
 #: src/options/options.js:320
-#, fuzzy
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Bevaring av detaljer, minimalt med artefakter"
+msgstr "Lanczos: Detail Preservation, Minimal Artifacts"
 
 #: src/pages/settings/general.vue:94
 msgid "Language"
@@ -1156,7 +1153,7 @@ msgstr "Grensen nådd, viser de første €{n} filene"
 
 #: src/options/options.js:322
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineær: Veldig jevn, beste ytelse"
+msgstr "Linear: Very Smooth, Best Performance"
 
 #: src/model/link.js:120
 msgid "Link"
