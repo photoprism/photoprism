@@ -10,10 +10,23 @@ Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what ta
 
 Ideas backed by one or more eligible sponsors will be prioritized as well. Let us know if we mistakenly label an idea as unfunded.
 
-*Note that we've recently moved GitHub Sponsors from [sponsors/lastzero](https://github.com/sponsors/lastzero) to an 
-[organization account](https://github.com/sponsors/photoprism) so that donations can be shared more easily.
-Tiers are more affordable now while benefits stay mostly the same.
-You can also find us on [Patreon](https://www.patreon.com/photoprism) and [PayPal](https://www.paypal.me/photoprism).*
+You can find us on [GitHub Sponsors](https://github.com/sponsors/photoprism),
+[Patreon](https://www.patreon.com/photoprism), and [PayPal](https://www.paypal.me/photoprism).
+
+We are excited to now also accept donations via the following cryptocurrencies:
+
+##### Bitcoin #####
+
+[`bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z`](bitcoin:bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z)
+
+##### Monero #####
+
+[`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)
+
+##### Dogecoin #####
+
+[`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)
+
 
 ---
 
