@@ -71,12 +71,6 @@ especially if you have feature requests or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
 and [PayPal](https://www.paypal.me/photoprism). 
 
-We are excited to now accept donations via cryptocurrencies as well:
-
-* Bitcoin: `bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z`
-* Monero: `474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`
-* Dogecoin: `DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`
-
 Your continuous support helps...
 
 * pay for operating expenses and external services like satellite maps
@@ -89,6 +83,22 @@ Thank you very much! <3
 
 Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+
+## Crypto Donations ##
+
+We are excited to now accept donations via cryptocurrencies as well:
+
+##### Bitcoin #####
+
+[bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z](bitcoin:bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z)
+
+##### Monero #####
+
+[474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)
+
+##### Dogecoin #####
+
+[DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)
 
 ## Trademarks ##
 
