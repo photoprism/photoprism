@@ -94,7 +94,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.delete"
-                  :disabled="busy || demo"
+                  :disabled="busy"
                   class="ma-0 pa-0 input-delete"
                   color="secondary-dark"
                   :label="$gettext('Delete')"
