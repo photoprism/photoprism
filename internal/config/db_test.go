@@ -89,6 +89,7 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 
 func TestConfig_DatabaseConns(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	c.options.DatabaseConns = 28
 	assert.Equal(t, 28, c.DatabaseConns())
 
 	c.options.DatabaseConns = 3000
@@ -97,6 +98,8 @@ func TestConfig_DatabaseConns(t *testing.T) {
 
 func TestConfig_DatabaseConnsIdle(t *testing.T) {
 	c := NewConfig(CliTestContext())
+	c.options.DatabaseConnsIdle = 14
+	c.options.DatabaseConns = 28
 	assert.Equal(t, 14, c.DatabaseConnsIdle())
 
 	c.options.DatabaseConnsIdle = -55
