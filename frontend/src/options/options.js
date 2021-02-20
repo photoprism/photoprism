@@ -127,7 +127,7 @@ export const Languages = () => [
     value: "ko",
   },
   {
-    text: "Norsk",
+    text: "Norsk (Bokmål)",
     translated: $gettext("Norwegian"),
     value: "nb",
   },
