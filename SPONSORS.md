@@ -13,7 +13,10 @@ Ideas backed by one or more eligible sponsors will be prioritized as well. Let u
 You can find us on [GitHub Sponsors](https://github.com/sponsors/photoprism),
 [Patreon](https://www.patreon.com/photoprism), and [PayPal](https://www.paypal.me/photoprism).
 
-We are excited to now also accept donations via the following cryptocurrencies:
+### Cryptocurrencies ###
+
+We've listened to the crypto lovers in our community and are excited to now accept
+donations via the following addresses:
 
 ##### Bitcoin #####
 
@@ -26,7 +29,6 @@ We are excited to now also accept donations via the following cryptocurrencies:
 ##### Dogecoin #####
 
 [`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)
-
 
 ---
 

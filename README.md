@@ -84,9 +84,10 @@ Thank you very much! <3
 Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
-## Crypto Donations ##
+### Cryptocurrencies ###
 
-We are excited to now accept donations via the following cryptocurrencies as well:
+We've listened to the crypto lovers in our community and are excited to now accept
+donations via the following addresses:
 
 ##### Bitcoin #####
 
