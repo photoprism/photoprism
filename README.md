@@ -71,6 +71,12 @@ especially if you have feature requests or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
 and [PayPal](https://www.paypal.me/photoprism). 
 
+We are excited to now accept donations via cryptocurrencies as well:
+
+* Bitcoin: `bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z`
+* Monero: `474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`
+* Dogecoin: `DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`
+
 Your continuous support helps...
 
 * pay for operating expenses and external services like satellite maps
