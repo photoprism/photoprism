@@ -10,7 +10,7 @@
         item-key="ID"
         :no-data-text="$gettext('No servers configured.')"
     >
-      <template v-slot:items="props" class="p-account">
+      <template #items="props" class="p-account">
         <td>
           <button class="secondary-dark--text" @click.stop.prevent="edit(props.item)">
             {{ props.item.AccName }}

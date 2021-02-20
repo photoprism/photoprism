@@ -73,7 +73,7 @@
             <v-autocomplete
                 v-model="model.SharePath"
                 color="secondary-dark" hide-details hide-no-data
-                flat
+                flat autofocus
                 browser-autocomplete="off"
                 hint="Folder"
                 :search-input.sync="search"
@@ -185,7 +185,7 @@
           <v-flex xs12 class="pa-2">
             <v-text-field
                 v-model="model.AccName"
-                hide-details
+                hide-details autofocus
                 browser-autocomplete="off"
                 :label="$gettext('Name')"
                 placeholder=""

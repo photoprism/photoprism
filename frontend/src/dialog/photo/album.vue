@@ -16,12 +16,14 @@
                 :loading="loading"
                 hide-details
                 hide-no-data
+                autofocus
                 item-text="Title"
                 item-value="UID"
                 :label="$gettext('Album Name')"
                 color="secondary-dark"
                 flat solo
                 class="input-album"
+                @keyup.enter.native="confirm"
             >
             </v-autocomplete>
           </v-flex>

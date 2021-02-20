@@ -13,8 +13,7 @@
           <v-flex xs12 class="pa-2">
             <v-text-field
                 v-model="model.AccURL"
-                hide-details
-                browser-autocomplete="off"
+                hide-details autofocus
                 :label="$gettext('Service URL')"
                 placeholder="https://www.example.com/"
                 color="secondary-dark"
