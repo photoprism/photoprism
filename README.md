@@ -68,8 +68,9 @@ Follow us on [Twitter][twitter] to receive regular project updates and discuss d
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
 especially if you have feature requests or need help with using our software.
-In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
-and [PayPal](https://www.paypal.me/photoprism). 
+In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and 
+[PayPal](https://www.paypal.me/photoprism). We've also set up [crypto wallets](SPONSORS.md) for 
+Bitcoin, Monero, and Dogecoin.
 
 Your continuous support helps...
 
@@ -83,23 +84,6 @@ Thank you very much! <3
 
 Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
-
-### Cryptocurrencies ###
-
-We've listened to the crypto lovers in our community and are excited to now accept
-donations via the following addresses:
-
-##### Bitcoin #####
-
-[`bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z`](bitcoin:bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z)
-
-##### Monero #####
-
-[`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)
-
-##### Dogecoin #####
-
-[`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)
 
 ## Trademarks ##
 
