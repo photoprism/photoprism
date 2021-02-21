@@ -91,6 +91,18 @@ func TestConfig_TestdataPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/testdata", c.TestdataPath())
 }
 
+func TestConfig_AlbumsPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/albums", c.AlbumsPath())
+}
+
+func TestConfig_OriginalsAlbumsPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/originals/albums", c.OriginalsAlbumsPath())
+}
+
 func TestConfig_CreateDirectories(t *testing.T) {
 	testConfigMutex.Lock()
 	defer testConfigMutex.Unlock()

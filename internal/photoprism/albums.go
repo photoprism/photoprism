@@ -61,6 +61,11 @@ func RestoreAlbums(force bool) (count int, result error) {
 
 	albums, err := filepath.Glob(regexp.QuoteMeta(c.AlbumsPath()) + "/**/*.yml")
 
+	if oAlbums, oErr := filepath.Glob(regexp.QuoteMeta(c.OriginalsAlbumsPath()) + "/**/*.yml"); oErr == nil {
+		err = nil
+		albums = append(albums, oAlbums...)
+	}
+
 	if err != nil {
 		return count, err
 	}
@@ -73,8 +78,10 @@ func RestoreAlbums(force bool) (count int, result error) {
 		a := entity.Album{}
 
 		if err := a.LoadFromYaml(fileName); err != nil {
-			log.Errorf("album: %s (load yaml)", err)
+			log.Errorf("restore: %s in %s", err, txt.Quote(filepath.Base(fileName)))
 			result = err
+		} else if len(a.Photos) == 0 && a.AlbumFilter == "" {
+			log.Debugf("restore: skipping %s", txt.Quote(filepath.Base(fileName)))
 		} else if err := a.Create(); err != nil {
 			log.Warnf("%s: %s already exists", a.AlbumType, txt.Quote(a.AlbumTitle))
 		} else {

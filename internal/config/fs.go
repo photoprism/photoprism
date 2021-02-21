@@ -363,3 +363,8 @@ func (c *Config) SqliteBin() string {
 func (c *Config) AlbumsPath() string {
 	return filepath.Join(c.StoragePath(), "albums")
 }
+
+// OriginalsAlbumsPath returns the optional album YAML backup folder inside originals.
+func (c *Config) OriginalsAlbumsPath() string {
+	return filepath.Join(c.OriginalsPath(), "albums")
+}
