@@ -73,7 +73,7 @@
             <v-autocomplete
                 v-model="model.SharePath"
                 color="secondary-dark" hide-details hide-no-data
-                flat autofocus
+                flat
                 browser-autocomplete="off"
                 hint="Folder"
                 :search-input.sync="search"

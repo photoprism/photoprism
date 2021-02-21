@@ -8,6 +8,7 @@
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
             <v-autocomplete
+                ref="input"
                 v-model="album"
                 browser-autocomplete="off"
                 hint="Album Name"
@@ -16,7 +17,6 @@
                 :loading="loading"
                 hide-details
                 hide-no-data
-                autofocus
                 item-text="Title"
                 item-value="UID"
                 :label="$gettext('Album Name')"
@@ -114,14 +114,13 @@ export default {
 
       Album.search(params).then(response => {
         this.loading = false;
-
-        if (response.models.length > 0 && !this.album) {
-          this.album = response.models[0].UID;
-        }
-
         this.albums = response.models;
         this.items = [...this.albums];
-      }).catch(() => this.loading = false);
+        this.$nextTick(() => this.$refs.input.focus());
+      }).catch(() => {
+        this.loading = false;
+        this.$nextTick(() => this.$refs.input.focus());
+      });
     },
   },
 };
