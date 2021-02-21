@@ -98,7 +98,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
 
 			if err != nil {
 				log.Error(err)
@@ -128,7 +128,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
 
 			if err != nil {
 				log.Error(err)

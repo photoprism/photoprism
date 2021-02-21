@@ -113,23 +113,23 @@ func TestThumb_FromFile(t *testing.T) {
 	}
 
 	t.Run("valid parameter", func(t *testing.T) {
-		fileModel := &entity.File{
+		file := &entity.File{
 			FileName: conf.ExamplesPath() + "/elephants.jpg",
 			FileHash: "1234568889",
 		}
 
-		thumbnail, err := thumb.FromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
+		thumbnail, err := thumb.FromFile(file.FileName, file.FileHash, thumbsPath, 224, 224, file.FileOrientation)
 		assert.Nil(t, err)
 		assert.FileExists(t, thumbnail)
 	})
 
 	t.Run("hash too short", func(t *testing.T) {
-		fileModel := &entity.File{
+		file := &entity.File{
 			FileName: conf.ExamplesPath() + "/elephants.jpg",
 			FileHash: "123",
 		}
 
-		_, err := thumb.FromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
+		_, err := thumb.FromFile(file.FileName, file.FileHash, thumbsPath, 224, 224, file.FileOrientation)
 
 		if err == nil {
 			t.Fatal("err should NOT be nil")
@@ -138,12 +138,12 @@ func TestThumb_FromFile(t *testing.T) {
 		assert.Equal(t, "resample: file hash is empty or too short (123)", err.Error())
 	})
 	t.Run("filename too short", func(t *testing.T) {
-		fileModel := &entity.File{
+		file := &entity.File{
 			FileName: "xxx",
 			FileHash: "12367890",
 		}
 
-		_, err := thumb.FromFile(fileModel.FileName, fileModel.FileHash, thumbsPath, 224, 224)
+		_, err := thumb.FromFile(file.FileName, file.FileHash, thumbsPath, 224, 224, file.FileOrientation)
 		if err == nil {
 			t.FailNow()
 		}

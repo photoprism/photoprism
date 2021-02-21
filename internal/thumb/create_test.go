@@ -222,7 +222,7 @@ func TestFromFile(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		fileName, err := FromFile(src, "123456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, err := FromFile(src, "123456789098765432", "testdata", colorThumb.Width, colorThumb.Height, OrientationNormal, colorThumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -239,7 +239,7 @@ func TestFromFile(t *testing.T) {
 
 		assert.NoFileExists(t, src)
 
-		fileName, err := FromFile(src, "193456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, err := FromFile(src, "193456789098765432", "testdata", colorThumb.Width, colorThumb.Height, OrientationNormal, colorThumb.Options...)
 
 		assert.Equal(t, "", fileName)
 		assert.Error(t, err)
@@ -247,7 +247,7 @@ func TestFromFile(t *testing.T) {
 	t.Run("empty filename", func(t *testing.T) {
 		colorThumb := Types["colors"]
 
-		fileName, err := FromFile("", "193456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, err := FromFile("", "193456789098765432", "testdata", colorThumb.Width, colorThumb.Height, OrientationNormal, colorThumb.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")

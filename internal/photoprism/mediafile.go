@@ -877,7 +877,7 @@ func (m *MediaFile) Megapixels() int {
 	return int(math.Round(float64(m.Width()*m.Height()) / 1000000))
 }
 
-// Orientation returns the orientation of a MediaFile.
+// Orientation returns the Exif orientation of the media file.
 func (m *MediaFile) Orientation() int {
 	if data := m.MetaData(); data.Error == nil {
 		return data.Orientation
@@ -895,7 +895,7 @@ func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, er
 		return "", fmt.Errorf("media: invalid type %s", typeName)
 	}
 
-	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, thumbType.Width, thumbType.Height, thumbType.Options...)
+	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, thumbType.Width, thumbType.Height, m.Orientation(), thumbType.Options...)
 
 	if err != nil {
 		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", txt.Quote(m.BaseName()), err)
@@ -914,7 +914,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 		return nil, err
 	}
 
-	return imaging.Open(filename, imaging.AutoOrientation(true))
+	return imaging.Open(filename)
 }
 
 // ResampleDefault pre-renders default thumbnails.
@@ -957,12 +957,14 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if originalImg == nil {
-				img, err := imaging.Open(m.FileName(), imaging.AutoOrientation(true))
+				img, err := imaging.Open(m.FileName())
 
 				if err != nil {
 					log.Errorf("media: %s in %s", err.Error(), txt.Quote(m.BaseName()))
 					return err
 				}
+
+				img = thumb.Rotate(img, m.Orientation())
 
 				originalImg = img
 			}

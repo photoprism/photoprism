@@ -139,7 +139,7 @@ func GetThumb(router *gin.RouterGroup) {
 		var thumbnail string
 
 		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
 		} else {
 			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
 		}

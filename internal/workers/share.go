@@ -104,7 +104,7 @@ func (worker *Share) Start() (err error) {
 					continue
 				}
 
-				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), thumbType.Width, thumbType.Height, file.File.FileOrientation, thumbType.Options...)
 
 				if err != nil {
 					worker.logError(err)

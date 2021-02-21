@@ -27,6 +27,14 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		return result
 	}
 
+	if f.NeedsExifToolJson() {
+		if jsonName, err := ind.convert.ToJson(f); err != nil {
+			log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
+		} else {
+			log.Debugf("index: %s created", filepath.Base(jsonName))
+		}
+	}
+
 	if opt.Convert && f.IsMedia() && !f.HasJpeg() {
 		if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
 			result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", txt.Quote(f.BaseName()), err.Error())
@@ -44,14 +52,6 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 			}
 
 			related.Files = append(related.Files, jpegFile)
-		}
-	}
-
-	if f.NeedsExifToolJson() {
-		if jsonName, err := ind.convert.ToJson(f); err != nil {
-			log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
-		} else {
-			log.Debugf("index: %s created", filepath.Base(jsonName))
 		}
 	}
 
@@ -108,6 +108,14 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			continue
 		}
 
+		if f.NeedsExifToolJson() {
+			if jsonName, err := ind.convert.ToJson(f); err != nil {
+				log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
+			} else {
+				log.Debugf("index: %s created", filepath.Base(jsonName))
+			}
+		}
+
 		if opt.Convert && f.IsMedia() && !f.HasJpeg() {
 			if jpegFile, err := ind.convert.ToJpeg(f); err != nil {
 				result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", txt.Quote(f.BaseName()), err.Error())
@@ -125,14 +133,6 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 				}
 
 				related.Files = append(related.Files, jpegFile)
-			}
-		}
-
-		if f.NeedsExifToolJson() {
-			if jsonName, err := ind.convert.ToJson(f); err != nil {
-				log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
-			} else {
-				log.Debugf("index: %s created", filepath.Base(jsonName))
 			}
 		}
 

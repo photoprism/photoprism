@@ -49,13 +49,9 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200520183328-015129a9efd5/go.mod h1:9EXlP
 github.com/dsoprea/go-exif/v2 v2.0.0-20200604193436-ca8584a0e1c4/go.mod h1:9EXlPeHfblFFnwu5UOqmP2eoZfJyAZ2Ri/Vki33ajO0=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200807075213-089aa48c91e6 h1:jkmCBceHmez4ArDFqcIrjFhPTTIV2IlWiF/QTeubgOs=
 github.com/dsoprea/go-exif/v2 v2.0.0-20200807075213-089aa48c91e6/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
-github.com/dsoprea/go-exif/v2 v2.0.0-20210131231135-d154f10435cc h1:F8AmoUFkSqzbZoGrIGWpQqbh3qosJl3h8zdVusOOggQ=
-github.com/dsoprea/go-exif/v2 v2.0.0-20210131231135-d154f10435cc/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717053412-08f1b6708903/go.mod h1:0nsO1ce0mh5czxGeLo4+OCZ/C6Eo6ZlMWsz7rH/Gxv8=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200807075213-089aa48c91e6 h1:AWLaaemM6TvO4DVwMtXibJKpWWfyw+tiZwYUiueLPzE=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200807075213-089aa48c91e6/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
-github.com/dsoprea/go-exif/v3 v3.0.0-20210131231135-d154f10435cc h1:WlJC9DefVe1OZKM04jD7jInkZ9Oyou+K6cpYOVPXq0o=
-github.com/dsoprea/go-exif/v3 v3.0.0-20210131231135-d154f10435cc/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1 h1:R/EEzpxqQxeEcJ/z0EFTI1U6XsuOnepyp5o1uZg5c2E=
 github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1/go.mod h1:UwRKreeVikXn5OarSnt4OqovcEjsIgZVuc5svj7G5w4=
 github.com/dsoprea/go-iptc v0.0.0-20200609062250-162ae6b44feb h1:gwjJjUr6FY7zAWVEueFPrcRHhd9+IK81TcItbqw2du4=
@@ -126,8 +122,6 @@ github.com/golang/geo v0.0.0-20190916061304-5b978397cfec h1:lJwO/92dFXWeXOZdoGXg
 github.com/golang/geo v0.0.0-20190916061304-5b978397cfec/go.mod h1:QZ0nwyI2jOfgRAoBvP+ab5aRr7c9x7lhGEJrKvBwjWI=
 github.com/golang/geo v0.0.0-20200319012246-673a6f80352d h1:C/hKUcHT483btRbeGkrRjJz+Zbcj8audldIi9tRJDCc=
 github.com/golang/geo v0.0.0-20200319012246-673a6f80352d/go.mod h1:QZ0nwyI2jOfgRAoBvP+ab5aRr7c9x7lhGEJrKvBwjWI=
-github.com/golang/geo v0.0.0-20210108004804-a63082ebfb66 h1:wNA26/2ftrz6nI4dbIim6OSKtLlNdjpNiwFB+l/yqtQ=
-github.com/golang/geo v0.0.0-20210108004804-a63082ebfb66/go.mod h1:QZ0nwyI2jOfgRAoBvP+ab5aRr7c9x7lhGEJrKvBwjWI=
 github.com/golang/geo v0.0.0-20210211234256-740aa86cb551 h1:gtexQ/VGyN+VVFRXSFiguSNcXmS6rkKT+X7FdIrTtfo=
 github.com/golang/geo v0.0.0-20210211234256-740aa86cb551/go.mod h1:QZ0nwyI2jOfgRAoBvP+ab5aRr7c9x7lhGEJrKvBwjWI=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
