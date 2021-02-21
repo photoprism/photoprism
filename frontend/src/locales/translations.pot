@@ -152,7 +152,7 @@ msgstr ""
 msgid "Album"
 msgstr ""
 
-#: src/dialog/photo/album.vue:79
+#: src/dialog/photo/album.vue:80
 msgid "Album Name"
 msgstr ""
 
@@ -253,7 +253,7 @@ msgstr ""
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr ""
 
-#: src/dialog/account/edit.vue:471
+#: src/dialog/account/edit.vue:472
 msgid "API Key"
 msgstr ""
 
@@ -314,7 +314,7 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: src/pages/settings/account.vue:81
+#: src/pages/settings/account.vue:82
 msgid "At least 6 characters."
 msgstr ""
 
@@ -420,7 +420,7 @@ msgid "Cards"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:347
-#: src/dialog/album/edit.vue:161
+#: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:94
 #: src/pages/albums.vue:105
 msgid "Category"
@@ -570,7 +570,7 @@ msgstr ""
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr ""
 
-#: src/pages/settings/account.vue:55
+#: src/pages/settings/account.vue:56
 msgid "Current Password"
 msgstr ""
 
@@ -626,7 +626,7 @@ msgid "Delete"
 msgstr ""
 
 #: src/component/photo/cards.vue:23
-#: src/dialog/album/edit.vue:141
+#: src/dialog/album/edit.vue:143
 #: src/dialog/photo/details.vue:575
 #: src/pages/albums.vue:441
 #: src/share/albums.vue:239
@@ -1278,7 +1278,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:22
 #: src/component/photo/list.vue:37
-#: src/dialog/album/edit.vue:122
+#: src/dialog/album/edit.vue:124
 #: src/share/photo/cards.vue:22
 #: src/share/photo/list.vue:33
 msgid "Location"
@@ -1399,8 +1399,8 @@ msgstr ""
 #: src/component/photo/cards.vue:29
 #: src/component/photo/list.vue:37
 #: src/component/photo/list.vue:233
-#: src/dialog/account/edit.vue:396
-#: src/dialog/album/edit.vue:105
+#: src/dialog/account/edit.vue:397
+#: src/dialog/album/edit.vue:106
 #: src/dialog/photo/files.vue:70
 #: src/dialog/photo/files.vue:67
 #: src/dialog/photo/files.vue:30
@@ -1427,7 +1427,7 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: src/pages/settings/account.vue:77
+#: src/pages/settings/account.vue:78
 msgid "New Password"
 msgstr ""
 
@@ -1624,7 +1624,7 @@ msgid "Panoramas"
 msgstr ""
 
 #: src/dialog/account/add.vue:102
-#: src/dialog/account/edit.vue:450
+#: src/dialog/account/edit.vue:451
 #: src/dialog/share.vue:20
 #: src/pages/login.vue:94
 msgid "Password"
@@ -1706,7 +1706,7 @@ msgstr ""
 msgid "Play"
 msgstr ""
 
-#: src/pages/settings/account.vue:104
+#: src/pages/settings/account.vue:105
 msgid "Please confirm your new password."
 msgstr ""
 
@@ -1887,7 +1887,7 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
-#: src/pages/settings/account.vue:100
+#: src/pages/settings/account.vue:101
 msgid "Retype Password"
 msgstr ""
 
@@ -1976,7 +1976,7 @@ msgid "Server"
 msgstr ""
 
 #: src/dialog/account/add.vue:66
-#: src/dialog/account/edit.vue:414
+#: src/dialog/account/edit.vue:415
 #: src/dialog/share.vue:18
 msgid "Service URL"
 msgstr ""
@@ -2086,7 +2086,7 @@ msgid "Sort by file name"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:252
-#: src/dialog/album/edit.vue:179
+#: src/dialog/album/edit.vue:181
 msgid "Sort Order"
 msgstr ""
 
@@ -2278,7 +2278,7 @@ msgstr ""
 msgid "Try again using other filters or keywords."
 msgstr ""
 
-#: src/dialog/account/edit.vue:489
+#: src/dialog/account/edit.vue:490
 #: src/dialog/photo/files.vue:88
 #: src/dialog/photo/files.vue:85
 #: src/dialog/photo/files.vue:33
@@ -2402,7 +2402,7 @@ msgid "User Interface"
 msgstr ""
 
 #: src/dialog/account/add.vue:84
-#: src/dialog/account/edit.vue:432
+#: src/dialog/account/edit.vue:433
 #: src/dialog/share.vue:19
 msgid "Username"
 msgstr ""
