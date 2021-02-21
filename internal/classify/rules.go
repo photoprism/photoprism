@@ -144,7 +144,7 @@ var rules = LabelRules{
 		Label:      "alpine",
 		Threshold:  0.400000,
 		Priority:   0,
-		Categories: []string{"landscape", "mountains"},
+		Categories: []string{"landscape", "mountain"},
 	},
 	"altar": {
 		Label:      "",
@@ -523,6 +523,12 @@ var rules = LabelRules{
 		Threshold:  0.670000,
 		Priority:   0,
 		Categories: []string{},
+	},
+	"beach": {
+		Label:      "",
+		Threshold:  0.000000,
+		Priority:   1,
+		Categories: []string{"water"},
 	},
 	"beach wagon": {
 		Label:      "car",
@@ -2072,6 +2078,12 @@ var rules = LabelRules{
 		Priority:   -2,
 		Categories: []string{},
 	},
+	"fart machine": {
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
+	},
 	"fashion": {
 		Label:      "portrait",
 		Threshold:  0.500000,
@@ -2287,6 +2299,12 @@ var rules = LabelRules{
 		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"portrait"},
+	},
+	"gallery": {
+		Label:      "",
+		Threshold:  0.500000,
+		Priority:   0,
+		Categories: []string{},
 	},
 	"gar fish": {
 		Label:      "fish",
@@ -3608,6 +3626,12 @@ var rules = LabelRules{
 		Priority:   0,
 		Categories: []string{},
 	},
+	"memorial": {
+		Label:      "",
+		Threshold:  0.500000,
+		Priority:   0,
+		Categories: []string{},
+	},
 	"menu": {
 		Label:      "document",
 		Threshold:  0.500000,
@@ -3799,6 +3823,12 @@ var rules = LabelRules{
 		Threshold:  0.260000,
 		Priority:   0,
 		Categories: []string{"outdoor"},
+	},
+	"mountains": {
+		Label:      "mountain",
+		Threshold:  0.400000,
+		Priority:   0,
+		Categories: []string{},
 	},
 	"mouse": {
 		Label:      "computer",
@@ -4099,6 +4129,12 @@ var rules = LabelRules{
 		Threshold:  1.000000,
 		Priority:   -2,
 		Categories: []string{},
+	},
+	"park": {
+		Label:      "",
+		Threshold:  0.500000,
+		Priority:   0,
+		Categories: []string{"outdoor"},
 	},
 	"park bench": {
 		Label:      "bench",
@@ -4954,9 +4990,9 @@ var rules = LabelRules{
 	},
 	"sea cucumber": {
 		Label:      "",
-		Threshold:  0.800000,
-		Priority:   0,
-		Categories: []string{"water", "animal"},
+		Threshold:  1.000000,
+		Priority:   -2,
+		Categories: []string{},
 	},
 	"sea lion": {
 		Label:      "",
@@ -6031,6 +6067,12 @@ var rules = LabelRules{
 		Threshold:  0.500000,
 		Priority:   0,
 		Categories: []string{"architecture"},
+	},
+	"viewpoint": {
+		Label:      "",
+		Threshold:  0.500000,
+		Priority:   0,
+		Categories: []string{"outdoor"},
 	},
 	"vine snake": {
 		Label:      "animal",

@@ -1808,10 +1808,7 @@ sea urchin:
   see: ignore
 
 sea cucumber:
-  threshold: 0.8
-  categories:
-    - water
-    - animal
+  see: ignore
 
 rabbit:
   label: rabbit
@@ -3877,7 +3874,7 @@ alp:
   threshold: 0.4
   categories:
     - landscape
-    - mountains
+    - mountain
 
 cliff:
   label: landscape
@@ -4657,3 +4654,31 @@ scabbard:
 street sign:
   label: sign
   threshold: 0.12
+
+fart machine:
+  see: ignore
+
+gallery:
+  threshold: 0.5
+
+beach:
+  priority: 1
+  categories:
+    - water
+
+park:
+  threshold: 0.5
+  categories:
+    - outdoor
+
+viewpoint:
+  threshold: 0.5
+  categories:
+    - outdoor
+
+memorial:
+  threshold: 0.5
+
+mountains:
+  label: mountain
+  threshold: 0.4

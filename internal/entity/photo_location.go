@@ -102,7 +102,7 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 
 			// Append category from reverse location lookup
 			if locCategory != "" {
-				labels = append(labels, classify.LocationLabel(locCategory, 0, -1))
+				labels = append(labels, classify.LocationLabel(locCategory, 0))
 			}
 
 			return keywords, labels

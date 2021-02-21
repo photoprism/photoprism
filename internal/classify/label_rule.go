@@ -12,10 +12,10 @@ type LabelRule struct {
 type LabelRules map[string]LabelRule
 
 // Find is a getter for LabelRules that give a default rule with a non-zero threshold for missing keys
-func (rules LabelRules) Find(label string) LabelRule {
+func (rules LabelRules) Find(label string) (rule LabelRule, ok bool) {
 	if rule, ok := rules[label]; ok {
-		return rule
+		return rule, true
 	}
 
-	return LabelRule{Threshold: 0.1}
+	return LabelRule{Threshold: 0.1}, false
 }

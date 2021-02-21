@@ -16,7 +16,9 @@ type Label struct {
 }
 
 // LocationLabel returns a new location label.
-func LocationLabel(name string, uncertainty int, priority int) Label {
+func LocationLabel(name string, uncertainty int) Label {
+	priority := -1
+
 	if index := strings.Index(name, " / "); index > 1 {
 		name = name[:index]
 	}
@@ -25,9 +27,20 @@ func LocationLabel(name string, uncertainty int, priority int) Label {
 		name = name[:index]
 	}
 
-	label := Label{Name: name, Source: SrcLocation, Uncertainty: uncertainty, Priority: priority}
+	var categories []string
 
-	return label
+	if rule, ok := rules.Find(name); ok {
+		priority = rule.Priority
+		categories = rule.Categories
+	}
+
+	return Label{
+		Name:        name,
+		Source:      SrcLocation,
+		Uncertainty: uncertainty,
+		Priority:    priority,
+		Categories:  categories,
+	}
 }
 
 // Title returns a formatted label title as string.

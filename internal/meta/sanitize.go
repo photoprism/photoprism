@@ -36,6 +36,7 @@ var UnwantedDescriptions = map[string]bool{
 	"qrf":                     true,
 	"binary comment":          true,
 	"default":                 true,
+	"Exif_JPEG_PICTURE":       true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
