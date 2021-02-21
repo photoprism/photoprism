@@ -184,7 +184,7 @@ export default {
 
       if (showMerged && selected.Type === TypeLive || selected.Type === TypeVideo) {
         if (selected.isPlayable()) {
-          this.$modal.show("video", {video: selected, album: this.album});
+          this.$viewer.play({video: selected, album: this.album});
         } else {
           this.$viewer.show(Thumb.fromPhotos(this.results), index);
         }

@@ -29,7 +29,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await page.clearSelection();
   await t.click(Selector("div.is-photo").nth(0));
   await t
-    .expect(Selector("#p-photo-viewer").visible)
+    .expect(Selector("#photo-viewer").visible)
     .ok()
     .expect(Selector(".action-download").exists)
     .ok()
@@ -154,7 +154,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .hover(Selector(".is-photo.type-image").nth(0))
     .click(Selector(".is-photo.type-image .action-fullscreen").nth(0));
   await t
-    .expect(Selector("#p-photo-viewer", { timeout: 5000 }).visible)
+    .expect(Selector("#photo-viewer", { timeout: 5000 }).visible)
     .ok()
     .expect(Selector(".action-download").exists)
     .notOk()

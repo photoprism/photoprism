@@ -250,11 +250,6 @@ func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
-// FFmpegBin returns the ffmpeg executable file name.
-func (c *Config) FFmpegBin() string {
-	return findExecutable(c.options.FFmpegBin, "ffmpeg")
-}
-
 // TempPath returns a temporary directory name for uploads and downloads.
 func (c *Config) TempPath() string {
 	if c.options.TempPath == "" {
@@ -367,4 +362,9 @@ func (c *Config) SqliteBin() string {
 // AlbumsPath returns the storage path for album YAML files.
 func (c *Config) AlbumsPath() string {
 	return filepath.Join(c.StoragePath(), "albums")
+}
+
+// OriginalsAlbumsPath returns the optional album YAML backup folder inside originals.
+func (c *Config) OriginalsAlbumsPath() string {
+	return filepath.Join(c.OriginalsPath(), "albums")
 }

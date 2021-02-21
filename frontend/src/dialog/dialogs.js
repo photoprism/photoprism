@@ -40,7 +40,7 @@ import PAlbumEditDialog from "./album/edit.vue";
 import PAlbumDeleteDialog from "./album/delete.vue";
 import PLabelDeleteDialog from "./label/delete.vue";
 import PUploadDialog from "./upload.vue";
-import PVideoDialog from "./video.vue";
+import PVideoViewer from "./video/viewer.vue";
 import PShareDialog from "./share.vue";
 import PShareUploadDialog from "./share/upload.vue";
 import PWebdavDialog from "./webdav.vue";
@@ -62,7 +62,7 @@ dialogs.install = (Vue) => {
   Vue.component("PAlbumDeleteDialog", PAlbumDeleteDialog);
   Vue.component("PLabelDeleteDialog", PLabelDeleteDialog);
   Vue.component("PUploadDialog", PUploadDialog);
-  Vue.component("PVideoDialog", PVideoDialog);
+  Vue.component("PVideoViewer", PVideoViewer);
   Vue.component("PShareDialog", PShareDialog);
   Vue.component("PShareUploadDialog", PShareUploadDialog);
   Vue.component("PWebdavDialog", PWebdavDialog);

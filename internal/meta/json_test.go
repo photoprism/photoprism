@@ -721,4 +721,36 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "holiday, greetings", data.Subject)
 		assert.Equal(t, "holiday, greetings", data.Keywords)
 	})
+
+	t.Run("newline.json", func(t *testing.T) {
+		data, err := JSON("testdata/newline.json", "newline.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "Jens\r\tMander", data.Artist)
+		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "This is the title", data.Title)
+		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "This is a\n\ndescription!", data.Description)
+		assert.Equal(t, "This is the world.", data.Subject)
+		assert.Equal(t, "© 2011 PhotoPrism", data.Copyright)
+		assert.Equal(t, 567, data.Height)
+		assert.Equal(t, 850, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, "1/6", data.Exposure)
+		assert.Equal(t, "Canon", data.CameraMake)
+		assert.Equal(t, "Canon EOS-1DS", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "123456", data.CameraSerial)
+		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+	})
 }

@@ -22,6 +22,7 @@ const (
 	FormatHEVC     FileFormat = "hevc"
 	FormatMov      FileFormat = "mov" // Video files.
 	FormatMp4      FileFormat = "mp4"
+	FormatMpo      FileFormat = "mpo"
 	FormatAvc      FileFormat = "avc"
 	FormatAvi      FileFormat = "avi"
 	Format3gp      FileFormat = "3gp"
@@ -29,6 +30,7 @@ const (
 	FormatFlv      FileFormat = "flv"
 	FormatMkv      FileFormat = "mkv"
 	FormatMpg      FileFormat = "mpg"
+	FormatMts      FileFormat = "mts"
 	FormatOgv      FileFormat = "ogv"
 	FormatWebm     FileFormat = "webm"
 	FormatWMV      FileFormat = "wmv"
@@ -69,6 +71,7 @@ var FileExt = FileExtensions{
 	".mov":  FormatMov,
 	".avi":  FormatAvi,
 	".mp4":  FormatMp4,
+	".m4v":  FormatMp4,
 	".avc":  FormatAvc,
 	".hevc": FormatHEVC,
 	".3gp":  Format3gp,
@@ -77,6 +80,8 @@ var FileExt = FileExtensions{
 	".mkv":  FormatMkv,
 	".mpg":  FormatMpg,
 	".mpeg": FormatMpg,
+	".mpo":  FormatMpo,
+	".mts":  FormatMts,
 	".ogv":  FormatOgv,
 	".webm": FormatWebm,
 	".wmv":  FormatWMV,

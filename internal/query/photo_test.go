@@ -58,25 +58,28 @@ func TestPreloadPhotoByUID(t *testing.T) {
 }
 
 func TestMissingPhotos(t *testing.T) {
-	r, err := PhotosMissing(15, 0)
+	result, err := PhotosMissing(15, 0)
+
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.LessOrEqual(t, 1, len(r))
+
+	assert.LessOrEqual(t, 1, len(result))
 }
 
 func TestResetPhotosQuality(t *testing.T) {
-	err := ResetPhotoQuality()
-	if err != nil {
+	if err := ResetPhotoQuality(); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestPhotosCheck(t *testing.T) {
 	result, err := PhotosCheck(10, 0, time.Second)
+
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	assert.IsType(t, entity.Photos{}, result)
 }
 
@@ -88,6 +91,4 @@ func TestOrphanPhotos(t *testing.T) {
 	}
 
 	assert.IsType(t, entity.Photos{}, result)
-
-	t.Logf("ORPHANS: %#v", result)
 }

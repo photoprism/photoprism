@@ -316,6 +316,24 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
 	},
 	cli.StringFlag{
+		Name:   "ffmpeg-encoder",
+		Usage:  "FFmpeg AVC encoder `NAME`",
+		Value:  "libx264",
+		EnvVar: "PHOTOPRISM_FFMPEG_ENCODER",
+	},
+	cli.IntFlag{
+		Name:   "ffmpeg-bitrate",
+		Usage:  "FFmpeg encoding bitrate `LIMIT` in Mbit/s",
+		Value:  50,
+		EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
+	},
+	cli.IntFlag{
+		Name:   "ffmpeg-buffers",
+		Usage:  "FFmpeg capture buffers",
+		Value:  32,
+		EnvVar: "PHOTOPRISM_FFMPEG_BUFFERS",
+	},
+	cli.StringFlag{
 		Name:   "exiftool-bin",
 		Usage:  "ExifTool `COMMAND` for enhanced metadata extraction",
 		Value:  "exiftool",

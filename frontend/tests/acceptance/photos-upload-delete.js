@@ -2,12 +2,14 @@ import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
 import Page from "./page-model";
 import { ClientFunction } from "testcafe";
+import fs from "fs";
 
 fixture`Test photos upload and delete`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
 test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", async (t) => {
+  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).notOk();
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await page.search("digikam");
@@ -40,6 +42,9 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
     .ok()
     .click(Selector(".action-close"));
   await page.clearSelection();
+  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).ok();
+  const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/10").length;
+  await t.expect(originalsLength).eql(2);
   await page.deletePhotoFromUID(UploadedPhoto);
   await page.openNav();
   await t.click(Selector(".nav-browse"));
@@ -50,9 +55,67 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
     .navigateTo("/library/files/2020/10");
   const FileCountAfterDelete = await Selector("div.is-file").count;
   await t.expect(FileCountAfterDelete).eql(0);
+  const originalsLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/10")
+    .length;
+  await t.expect(originalsLengthAfterDelete).eql(0);
 });
 
-test.meta("testID", "photos-upload-delete-002")("Upload to existing Album + Delete", async (t) => {
+test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (t) => {
+  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).notOk();
+  await page.openNav();
+  await t.click(Selector(".nav-browse"));
+  await page.search("korn");
+  const PhotoCount = await Selector("div.is-photo").count;
+  await t
+    .expect(PhotoCount)
+    .eql(0)
+    .click(Selector(".action-upload"))
+    .setFilesToUpload(Selector(".input-upload"), [
+      "./upload-files/korn.mp4",
+    ])
+    .wait(15000);
+  const PhotoCountAfterUpload = await Selector("div.is-photo").count;
+  await t.expect(PhotoCountAfterUpload).eql(1);
+  const UploadedPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+  await t.navigateTo("/library/files/2020/06");
+  const FileCount = await Selector("div.is-file").count;
+  await t.expect(FileCount).eql(1);
+  await page.openNav();
+  await t.click(Selector(".nav-browse"));
+  await page.search("korn");
+  await page.selectPhotoFromUID(UploadedPhoto);
+  await page.editSelected();
+  await t
+    .click("#tab-files")
+    .expect(Selector("div.caption").withText(".mp4").visible)
+    .ok()
+    .expect(Selector("div.caption").withText(".jpg").visible)
+    .ok()
+    .click(Selector(".action-close"));
+  await page.clearSelection();
+  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).ok();
+  const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
+  await t.expect(originalsLength).eql(1);
+  const sidecarLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
+  await t.expect(sidecarLength).eql(1);
+  await page.deletePhotoFromUID(UploadedPhoto);
+  await page.openNav();
+  await t.click(Selector(".nav-browse"));
+  await page.search("korn");
+  await t
+    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
+    .notOk()
+    .navigateTo("/library/files/2020/06");
+  const FileCountAfterDelete = await Selector("div.is-file").count;
+  await t.expect(FileCountAfterDelete).eql(0);
+  const originalsLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/06")
+    .length;
+  await t.expect(originalsLengthAfterDelete).eql(0);
+  const sidecarLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
+  await t.expect(sidecarLengthAfterDelete).eql(0);
+});
+
+test.meta("testID", "photos-upload-delete-003")("Upload to existing Album + Delete", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   await page.search("Christmas");
@@ -88,7 +151,7 @@ test.meta("testID", "photos-upload-delete-002")("Upload to existing Album + Dele
   await t.expect(PhotoCountAfterDelete).eql(PhotoCount);
 });
 
-test.meta("testID", "photos-upload-delete-003")("Upload jpg to new Album + Delete", async (t) => {
+test.meta("testID", "photos-upload-delete-004")("Upload jpg to new Album + Delete", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   const AlbumCount = await Selector("a.is-album").count;
@@ -137,7 +200,7 @@ test.meta("testID", "photos-upload-delete-003")("Upload jpg to new Album + Delet
   await page.deleteSelected();
 });
 
-test.meta("testID", "photos-upload-delete-004")("Try uploading nsfw file", async (t) => {
+test.meta("testID", "photos-upload-delete-005")("Try uploading nsfw file", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await t
@@ -152,7 +215,7 @@ test.meta("testID", "photos-upload-delete-004")("Try uploading nsfw file", async
     .ok();
 });
 
-test.meta("testID", "photos-upload-delete-005")("Try uploading txt file", async (t) => {
+test.meta("testID", "photos-upload-delete-006")("Try uploading txt file", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await t

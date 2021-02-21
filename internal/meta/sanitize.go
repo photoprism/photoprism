@@ -34,6 +34,9 @@ var UnwantedDescriptions = map[string]bool{
 	"sdr_HDRB":                true,
 	"cof":                     true,
 	"qrf":                     true,
+	"binary comment":          true,
+	"default":                 true,
+	"Exif_JPEG_PICTURE":       true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
@@ -41,6 +44,10 @@ var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
 // SanitizeString removes unwanted character from an exif value string.
 func SanitizeString(s string) string {
 	if s == "" {
+		return ""
+	}
+
+	if strings.HasPrefix(s, "string with binary data") {
 		return ""
 	}
 

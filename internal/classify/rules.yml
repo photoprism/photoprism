@@ -1808,10 +1808,7 @@ sea urchin:
   see: ignore
 
 sea cucumber:
-  threshold: 0.8
-  categories:
-    - water
-    - animal
+  see: ignore
 
 rabbit:
   label: rabbit
@@ -3317,16 +3314,17 @@ shoe shop:
 basket:
   label: basket
   threshold: 0.3
+  priority: -1
 
 crate:
   label: basket
   threshold: 0.52
+  priority: -1
 
 shopping basket:
-  label: shopping basket
-  threshold: 0.57
-  categories:
-    - basket
+  label: basket
+  threshold: 0.6
+  priority: -1
 
 shopping cart:
   label: shop
@@ -3876,7 +3874,7 @@ alp:
   threshold: 0.4
   categories:
     - landscape
-    - mountains
+    - mountain
 
 cliff:
   label: landscape
@@ -4480,6 +4478,7 @@ gas pump:
 hamper:
   label: basket
   threshold: 0.61
+  priority: -1
 
 hay:
   label: farm
@@ -4655,3 +4654,31 @@ scabbard:
 street sign:
   label: sign
   threshold: 0.12
+
+fart machine:
+  see: ignore
+
+gallery:
+  threshold: 0.5
+
+beach:
+  priority: 1
+  categories:
+    - water
+
+park:
+  threshold: 0.5
+  categories:
+    - outdoor
+
+viewpoint:
+  threshold: 0.5
+  categories:
+    - outdoor
+
+memorial:
+  threshold: 0.5
+
+mountains:
+  label: mountain
+  threshold: 0.4

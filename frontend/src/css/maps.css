@@ -15,3 +15,7 @@
     border-radius: 50%;
     cursor: pointer;
 }
+
+#photoprism .mapboxgl-ctrl-attrib-inner a {
+    color: #333 !important;
+}

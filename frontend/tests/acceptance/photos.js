@@ -34,7 +34,7 @@ test.meta("testID", "photos-002")(
     const SecondPhoto = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
     await t.click(Selector("div").withAttribute("data-uid", SecondPhoto));
     await t
-      .expect(Selector("#p-photo-viewer").visible)
+      .expect(Selector("#photo-viewer").visible)
       .ok()
       .hover(Selector(".action-download"))
       .expect(Selector(".action-download").visible)
@@ -225,7 +225,7 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
     .click(Selector("button.action-previous"))
     .click(Selector("button.action-close"))
     .click(Selector("div.is-photo").withAttribute("data-uid", FirstPhoto))
-    .expect(Selector("#p-photo-viewer").visible)
+    .expect(Selector("#photo-viewer").visible)
     .ok()
     .hover(Selector(".action-edit"))
     .click(Selector(".action-edit"))
@@ -262,48 +262,29 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
     .click(Selector("button.action-close"))
     .click(Selector("button.action-date-edit").withAttribute("data-uid", FirstPhoto))
     .expect(Selector(".input-title input").value)
-    .eql(FirstPhotoTitle)
-    .typeText(Selector(".input-title input"), "New Photo Title", { replace: true })
-    .typeText(Selector(".input-timezone input"), "Europe/Mosc", { replace: true })
-    .click(Selector("div").withText("Europe/Moscow").parent('div[role="listitem"]'))
-    .typeText(Selector(".input-day input"), "15", { replace: true })
-    .pressKey("enter")
-    .typeText(Selector(".input-month input"), "07", { replace: true })
-    .pressKey("enter")
-    .typeText(Selector(".input-year input"), "2019", { replace: true })
-    .click(Selector("div").withText("2019").parent('div[role="listitem"]'))
-    .click(Selector(".input-local-time input"))
-    .pressKey("ctrl+a delete")
-    .typeText(Selector(".input-local-time input"), "04:30:30", { replace: true })
-    .pressKey("enter")
-    .typeText(Selector(".input-altitude input"), "-1", { replace: true })
-    .typeText(Selector(".input-latitude input"), "41.15333", { replace: true })
-    .typeText(Selector(".input-longitude input"), "20.168331", { replace: true })
-    //.click(Selector('.input-camera input'))
-    //.hover(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
-    //.click(Selector('div').withText('Apple iPhone 6').parent('div[role="listitem"]'))
-    //.click(Selector('.input-lens input'))
-    //.click(Selector('div').withText('Apple iPhone 5s back camera 4.15mm f/2.2').parent('div[role="listitem"]'))
-    .typeText(Selector(".input-iso input"), "32", { replace: true })
-    .typeText(Selector(".input-exposure input"), "1/32", { replace: true })
-    .typeText(Selector(".input-fnumber input"), "29", { replace: true })
-    .typeText(Selector(".input-focal-length input"), "33", { replace: true })
-    .typeText(Selector(".input-subject textarea"), "Super nice edited photo", { replace: true })
-    .typeText(Selector(".input-artist input"), "Happy", { replace: true })
-    .typeText(Selector(".input-copyright input"), "Happy2020", { replace: true })
-    .typeText(Selector(".input-license textarea"), "Super nice cat license", { replace: true })
-    .typeText(Selector(".input-description textarea"), "Description of a nice image :)", {
-      replace: true,
-    })
-    .typeText(Selector(".input-keywords textarea"), ", cat, love")
-    .typeText(Selector(".input-notes textarea"), "Some notes", { replace: true })
-    .click(Selector("button.action-approve"));
-  await t.expect(Selector(".input-latitude input").visible, { timeout: 5000 }).ok();
-  if (t.browser.platform === "mobile") {
-    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
-  } else {
-    await t.click(Selector("button.action-done", { timeout: 5000 }));
-  }
+    .eql(FirstPhotoTitle);
+  await page.editPhoto(
+      "New Photo Title",
+      "Europe/Moscow",
+      "15",
+      "07",
+      "2019",
+      "04:30:30",
+      "-1",
+      "41.15333",
+      "20.168331",
+      "32",
+      "1/32",
+      "29",
+      "33",
+      "Super nice edited photo",
+      "Happy",
+      "Happy2020",
+      "Super nice cat license",
+      "Description of a nice image :)",
+      ", cat, love",
+      "Some notes"
+  );
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
@@ -318,143 +299,29 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
       "01:30:30", "Europe/Moscow", "Albania", "-1", "", "", "",
       "32", "1/32", "",  "29", "33", "Super nice edited photo", "Happy",
       "Happy2020", "Super nice cat license", "Description of a nice image :)", "cat", "");
-  if (FirstPhotoTitle.empty || FirstPhotoTitle === "") {
-    await t.click(Selector(".input-title input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-title input"), FirstPhotoTitle, { replace: true });
-  }
-  await t
-    .typeText(Selector(".input-day input"), FirstPhotoDay, { replace: true })
-    .pressKey("enter")
-    .typeText(Selector(".input-month input"), FirstPhotoMonth, { replace: true })
-    .pressKey("enter")
-    .typeText(Selector(".input-year input"), FirstPhotoYear, { replace: true })
-    .pressKey("enter");
-  if (FirstPhotoLocalTime.empty || FirstPhotoLocalTime === "") {
-    await t.click(Selector(".input-local-time input")).pressKey("ctrl+a delete");
-  } else {
-    await t
-      .click(Selector(".input-local-time input"))
-      .pressKey("ctrl+a delete")
-      .typeText(Selector(".input-local-time input"), FirstPhotoLocalTime, { replace: true })
-      .pressKey("enter");
-  }
-  if (FirstPhotoTimezone.empty || FirstPhotoTimezone === "") {
-    await t
-      .click(Selector(".input-timezone input"))
-      .typeText(Selector(".input-timezone input"), "UTC", { replace: true })
-      .pressKey("enter");
-  } else {
-    await t
-      .typeText(Selector(".input-timezone input"), FirstPhotoTimezone, { replace: true })
-      .pressKey("enter");
-  }
-  if (FirstPhotoLatitude.empty || FirstPhotoLatitude === "") {
-    await t.click(Selector(".input-latitude input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-latitude input"), FirstPhotoLatitude, { replace: true });
-  }
-  if (FirstPhotoLongitude.empty || FirstPhotoLongitude === "") {
-    await t.click(Selector(".input-longitude input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-longitude input"), FirstPhotoLongitude, { replace: true });
-  }
-  if (FirstPhotoAltitude.empty || FirstPhotoAltitude === "") {
-    await t.click(Selector(".input-altitude input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-altitude input"), FirstPhotoAltitude, { replace: true });
-  }
-  if (FirstPhotoCountry.empty || FirstPhotoCountry === "") {
-    await t.click(Selector(".input-longitude input")).pressKey("ctrl+a delete");
-  } else {
-    await t
-      .click(Selector(".input-country input"))
-      .pressKey("ctrl+a delete")
-      .typeText(Selector(".input-country input"), FirstPhotoCountry, { replace: true })
-      .pressKey("enter");
-  }
-  // if (FirstPhotoCamera.empty || FirstPhotoCamera === "")
-  //{ await t
-  //.click(Selector('.input-camera input'))
-  // .hover(Selector('div').withText('Unknown').parent('div[role="listitem"]'))
-  //  .click(Selector('div').withText('Unknown').parent('div[role="listitem"]'))}
-  //else
-  //{await t
-  //  .click(Selector('.input-camera input'))
-  //   .hover(Selector('div').withText(FirstPhotoCamera).parent('div[role="listitem"]'))
-  //    .click(Selector('div').withText(FirstPhotoCamera).parent('div[role="listitem"]'))}
-  //if (FirstPhotoLens.empty || FirstPhotoLens === "")
-  //{ await t
-  //  .click(Selector('.input-lens input'))
-  //   .click(Selector('div').withText('Unknown').parent('div[role="listitem"]'))}
-  //else
-  //{await t
-  //   .click(Selector('.input-lens input'))
-  //    .click(Selector('div').withText(FirstPhotoLens).parent('div[role="listitem"]'))}
-  if (FirstPhotoIso.empty || FirstPhotoIso === "") {
-    await t.click(Selector(".input-iso input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-iso input"), FirstPhotoIso, { replace: true });
-  }
-  if (FirstPhotoExposure.empty || FirstPhotoExposure === "") {
-    await t.click(Selector(".input-exposure input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-exposure input"), FirstPhotoExposure, { replace: true });
-  }
-  if (FirstPhotoFnumber.empty || FirstPhotoFnumber === "") {
-    await t.click(Selector(".input-fnumber input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-fnumber input"), FirstPhotoFnumber, { replace: true });
-  }
-  if (FirstPhotoFocalLength.empty || FirstPhotoFocalLength === "") {
-    await t.click(Selector(".input-focal-length input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-focal-length input"), FirstPhotoFocalLength, {
-      replace: true,
-    });
-  }
-  if (FirstPhotoSubject.empty || FirstPhotoSubject === "") {
-    await t.click(Selector(".input-subject textarea")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-subject textarea"), FirstPhotoSubject, { replace: true });
-  }
-  if (FirstPhotoArtist.empty || FirstPhotoSubject === "") {
-    await t.click(Selector(".input-artist input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-artist input"), FirstPhotoArtist, { replace: true });
-  }
-  if (FirstPhotoCopyright.empty || FirstPhotoCopyright === "") {
-    await t.click(Selector(".input-copyright input")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-copyright input"), FirstPhotoCopyright, { replace: true });
-  }
-  if (FirstPhotoLicense.empty || FirstPhotoLicense === "") {
-    await t.click(Selector(".input-license textarea")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-license textarea"), FirstPhotoLicense, { replace: true });
-  }
-  if (FirstPhotoDescription.empty || FirstPhotoDescription === "") {
-    await t.click(Selector(".input-description textarea")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-description textarea"), FirstPhotoDescription, {
-      replace: true,
-    });
-  }
-  if (FirstPhotoKeywords.empty || FirstPhotoKeywords === "") {
-    await t.click(Selector(".input-keywords textarea")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-keywords textarea"), FirstPhotoKeywords, { replace: true });
-  }
-  if (FirstPhotoNotes.empty || FirstPhotoNotes === "") {
-    await t.click(Selector(".input-notes textarea")).pressKey("ctrl+a delete");
-  } else {
-    await t.typeText(Selector(".input-notes textarea"), FirstPhotoNotes, { replace: true });
-  }
-  if (t.browser.platform === "mobile") {
-    await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
-  } else {
-    await t.click(Selector("button.action-done", { timeout: 5000 }));
-  }
+  await page.undoPhotoEdit(
+      FirstPhotoTitle,
+      FirstPhotoTimezone,
+      FirstPhotoDay,
+      FirstPhotoMonth,
+      FirstPhotoYear,
+      FirstPhotoLocalTime,
+      FirstPhotoAltitude,
+      FirstPhotoLatitude,
+      FirstPhotoLongitude,
+      FirstPhotoCountry,
+      FirstPhotoIso,
+      FirstPhotoExposure,
+      FirstPhotoFnumber,
+      FirstPhotoFocalLength,
+      FirstPhotoSubject,
+      FirstPhotoArtist,
+      FirstPhotoCopyright,
+      FirstPhotoLicense,
+      FirstPhotoDescription,
+      FirstPhotoKeywords,
+      FirstPhotoNotes
+  )
   const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
   await t
     .expect(clipboardCount.textContent)

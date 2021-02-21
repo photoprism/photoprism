@@ -307,6 +307,56 @@ export class Photo extends RestModel {
     return this.Files.findIndex((f) => f.Video) !== -1;
   }
 
+  videoParams() {
+    const uri = this.videoUrl();
+
+    if (!uri) {
+      return { error: "no video selected" };
+    }
+
+    let main = this.mainFile();
+    let file = this.videoFile();
+
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+    let actualWidth = 640;
+    let actualHeight = 480;
+
+    if (file.Width > 0) {
+      actualWidth = file.Width;
+    } else if (main && main.Width > 0) {
+      actualWidth = main.Width;
+    }
+
+    if (file.Height > 0) {
+      actualHeight = file.Height;
+    } else if (main && main.Height > 0) {
+      actualHeight = main.Height;
+    }
+
+    let width = actualWidth;
+    let height = actualHeight;
+
+    if (vw < width + 80) {
+      let newWidth = vw - 90;
+      height = Math.round(newWidth * (actualHeight / actualWidth));
+      width = newWidth;
+    }
+
+    if (vh < height + 100) {
+      let newHeight = vh - 160;
+      width = Math.round(newHeight * (actualWidth / actualHeight));
+      height = newHeight;
+    }
+
+    const loop = file.Duration >= 0 && file.Duration <= 5000000000;
+    const poster = this.thumbnailUrl("fit_720");
+    const error = false;
+
+    return { width, height, loop, poster, uri, error };
+  }
+
   videoFile() {
     if (!this.Files) {
       return false;

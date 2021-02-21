@@ -68,8 +68,9 @@ Follow us on [Twitter][twitter] to receive regular project updates and discuss d
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
 especially if you have feature requests or need help with using our software.
-In addition, you can find us on [Patreon](https://www.patreon.com/photoprism)
-and [PayPal](https://www.paypal.me/photoprism). 
+In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and 
+[PayPal](https://www.paypal.me/photoprism). We've also set up [crypto wallets](SPONSORS.md) for 
+Bitcoin, Monero, and Dogecoin.
 
 Your continuous support helps...
 

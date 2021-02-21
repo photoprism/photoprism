@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/photoprism/photoprism/internal/service"
 
@@ -71,20 +70,15 @@ func GetVideo(router *gin.RouterGroup) {
 
 			return
 		} else if f.FileCodec != string(videoType.Codec) {
-			log.Debugf("video: transcoding %s from %s to avc", txt.Quote(f.FileName), txt.Quote(f.FileCodec))
-
-			start := time.Now()
 			conv := service.Convert()
 
-			if avcFile, err := conv.ToAvc(mf); err != nil {
-				log.Errorf("video: failed transcoding %s", txt.Quote(f.FileName))
+			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder()); err != nil {
+				log.Errorf("video: transcoding %s failed", txt.Quote(f.FileName))
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 				return
 			} else {
 				fileName = avcFile.FileName()
 			}
-
-			log.Debugf("video: transcoding completed in %s", time.Since(start))
 		}
 
 		AddContentTypeHeader(c, ContentTypeAvc)

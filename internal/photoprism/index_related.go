@@ -49,7 +49,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 	if f.NeedsExifToolJson() {
 		if jsonName, err := ind.convert.ToJson(f); err != nil {
-			log.Errorf("index: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
+			log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 		} else {
 			log.Debugf("index: %s created", filepath.Base(jsonName))
 		}
@@ -130,7 +130,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 		if f.NeedsExifToolJson() {
 			if jsonName, err := ind.convert.ToJson(f); err != nil {
-				log.Errorf("index: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
+				log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 			} else {
 				log.Debugf("index: %s created", filepath.Base(jsonName))
 			}

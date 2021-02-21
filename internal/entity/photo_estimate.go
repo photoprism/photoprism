@@ -10,7 +10,7 @@ import (
 
 // EstimateCountry updates the photo with an estimated country if possible.
 func (m *Photo) EstimateCountry() {
-	if m.HasLatLng() || m.HasLocation() || m.HasPlace() || m.HasCountry() && m.PlaceSrc != SrcAuto && m.PlaceSrc != SrcEstimate {
+	if m.HasLocation() || m.HasPlace() || m.HasCountry() && m.PlaceSrc != SrcAuto && m.PlaceSrc != SrcEstimate {
 		// Do nothing.
 		return
 	}
@@ -45,7 +45,7 @@ func (m *Photo) EstimateCountry() {
 
 // EstimatePlace updates the photo with an estimated place and country if possible.
 func (m *Photo) EstimatePlace() {
-	if m.HasLatLng() || m.HasLocation() || m.HasPlace() && m.PlaceSrc != SrcAuto && m.PlaceSrc != SrcEstimate {
+	if m.HasLocation() || m.HasPlace() && m.PlaceSrc != SrcAuto && m.PlaceSrc != SrcEstimate {
 		// Do nothing.
 		return
 	}

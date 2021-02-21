@@ -185,7 +185,7 @@
           <v-flex xs12 class="pa-2">
             <v-text-field
                 v-model="model.AccName"
-                hide-details
+                hide-details autofocus
                 browser-autocomplete="off"
                 :label="$gettext('Name')"
                 placeholder=""

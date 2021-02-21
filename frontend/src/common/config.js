@@ -203,6 +203,12 @@ export default class Config {
 
     this.theme = themes[name] ? themes[name] : themes["default"];
 
+    if (this.theme.dark) {
+      document.body.classList.add("dark-theme");
+    } else {
+      document.body.classList.remove("dark-theme");
+    }
+
     if (this.$vuetify) {
       this.$vuetify.theme = this.theme.colors;
     }

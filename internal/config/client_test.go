@@ -30,9 +30,10 @@ func TestConfig_Flags(t *testing.T) {
 	config := TestConfig()
 	config.options.Experimental = true
 	config.options.ReadOnly = true
+	config.settings.UI.Scrollbar = false
 
 	result := config.Flags()
-	assert.Equal(t, []string{"public", "debug", "experimental", "readonly", "settings"}, result)
+	assert.Equal(t, []string{"public", "debug", "experimental", "readonly", "settings", "hide-scrollbar"}, result)
 
 	config.options.Experimental = false
 	config.options.ReadOnly = false

@@ -50,7 +50,7 @@
             <v-layout v-if="photo.Type === 'live'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
                      loop muted playsinline>
-                <source :src="photo.videoUrl()" type="video/mp4">
+                <source :src="photo.videoUrl()">
               </video>
             </v-layout>
 
@@ -239,11 +239,17 @@ export default {
     },
     playLive(photo) {
       const player = this.livePlayer(photo);
-      if (player) player.play();
+      try { if (player) player.play(); }
+      catch (e) {
+        // Ignore.
+      }
     },
     pauseLive(photo) {
       const player = this.livePlayer(photo);
-      if (player) player.pause();
+      try { if (player) player.pause(); }
+      catch (e) {
+        // Ignore.
+      }
     },
     downloadFile(index) {
       Notify.success(this.$gettext("Downloading…"));

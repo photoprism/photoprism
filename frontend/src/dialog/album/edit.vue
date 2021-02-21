@@ -20,11 +20,12 @@
             <v-layout row wrap>
               <v-flex v-if="album.Type !== 'month'" xs12 pa-2>
                 <v-text-field v-model="model.Title"
-                              hide-details
+                              hide-details autofocus
                               :rules="[titleRule]"
                               :label="$gettext('Name')"
                               color="secondary-dark"
                               class="input-title"
+                              @keyup.enter.native="confirm"
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 pa-2>

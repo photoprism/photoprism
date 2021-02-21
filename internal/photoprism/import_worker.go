@@ -36,7 +36,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 		if related.Main.NeedsExifToolJson() {
 			if jsonName, err := imp.convert.ToJson(related.Main); err != nil {
-				log.Errorf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
+				log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
 			} else if err := related.Main.ReadExifToolJson(); err != nil {
 				log.Errorf("import: %s in %s (read metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
 			} else {
@@ -138,7 +138,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			if f.NeedsExifToolJson() {
 				if jsonName, err := imp.convert.ToJson(f); err != nil {
-					log.Errorf("import: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
+					log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 				} else {
 					log.Debugf("import: %s created", filepath.Base(jsonName))
 				}
@@ -200,7 +200,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if f.NeedsExifToolJson() {
 					if jsonName, err := imp.convert.ToJson(f); err != nil {
-						log.Errorf("import: %s in %s (extract json metadata)", err.Error(), txt.Quote(f.BaseName()))
+						log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 					} else {
 						log.Debugf("import: %s created", filepath.Base(jsonName))
 					}
