@@ -319,7 +319,7 @@ func TestMediaFile_Exif_HEIF(t *testing.T) {
 	assert.Equal(t, "", jpegInfo.DocumentID)
 	assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", jpegInfo.TakenAt.String())
 	assert.Equal(t, "2018-09-10 12:16:13 +0000 UTC", jpegInfo.TakenAtLocal.String())
-	assert.Equal(t, 6, jpegInfo.Orientation)
+	assert.Equal(t, 1, jpegInfo.Orientation)
 	assert.Equal(t, "iPhone 7", jpegInfo.CameraModel)
 	assert.Equal(t, "Apple", jpegInfo.CameraMake)
 	assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", jpegInfo.LensModel)

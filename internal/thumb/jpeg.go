@@ -8,12 +8,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-func Jpeg(srcFilename, jpgFilename string) (img image.Image, err error) {
-	img, err = imaging.Open(srcFilename, imaging.AutoOrientation(true))
+func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, err error) {
+	img, err = imaging.Open(srcFilename)
 
 	if err != nil {
 		log.Errorf("resample: can't open %s", txt.Quote(filepath.Base(srcFilename)))
 		return img, err
+	}
+
+	if orientation > 1 {
+		img = Rotate(img, orientation)
 	}
 
 	saveOption := imaging.JPEGQuality(JpegQuality)

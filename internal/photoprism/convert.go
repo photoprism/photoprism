@@ -262,7 +262,7 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	})
 
 	if f.IsImageOther() {
-		_, err = thumb.Jpeg(f.FileName(), jpegName)
+		_, err = thumb.Jpeg(f.FileName(), jpegName, f.Orientation())
 
 		if err != nil {
 			return nil, err

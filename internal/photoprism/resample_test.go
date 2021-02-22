@@ -143,11 +143,35 @@ func TestThumb_FromFile(t *testing.T) {
 			FileHash: "12367890",
 		}
 
-		_, err := thumb.FromFile(file.FileName, file.FileHash, thumbsPath, 224, 224, file.FileOrientation)
-		if err == nil {
-			t.FailNow()
+		if _, err := thumb.FromFile(file.FileName, file.FileHash, thumbsPath, 224, 224, file.FileOrientation); err != nil {
+			assert.Equal(t, "resample: image filename is empty or too short (xxx)", err.Error())
+		} else {
+			t.Error("error is nil")
 		}
-		assert.Equal(t, "resample: image filename is empty or too short (xxx)", err.Error())
+	})
+
+	t.Run("rotate-6.tiff", func(t *testing.T) {
+		fileName := "testdata/rotate/6.tiff"
+
+		file, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		thumbnail, err := thumb.FromFile(fileName, file.Hash(), thumbsPath, 224, 224, file.Orientation(), thumb.ResampleFit)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		tn, err := NewMediaFile(thumbnail)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotNil(t, tn)
 	})
 }
 

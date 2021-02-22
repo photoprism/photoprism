@@ -1,4 +1,4 @@
-FROM photoprism/development:20210215 as build
+FROM photoprism/development:20210222 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -109,6 +109,7 @@ ENV PHOTOPRISM_AUTO_IMPORT 300
 # Copy files to /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
 COPY --from=build /root/.photoprism/assets /photoprism/assets
+COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 
 # Create directories
 RUN mkdir -p \
@@ -128,7 +129,7 @@ RUN photoprism -v
 EXPOSE 2342
 
 # Configure entrypoint
-COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root /docker/scripts/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 VOLUME /var/lib/photoprism
 

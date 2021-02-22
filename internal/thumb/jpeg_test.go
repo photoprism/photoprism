@@ -18,7 +18,7 @@ func TestJpeg(t *testing.T) {
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst)
+			img, err := Jpeg(src, dst, OrientationRotate270)
 
 			if err != nil {
 				t.Fatal(err)
@@ -27,8 +27,8 @@ func TestJpeg(t *testing.T) {
 			assert.FileExists(t, dst)
 
 			bounds := img.Bounds()
-			assert.Equal(t, 100, bounds.Max.X)
-			assert.Equal(t, 67, bounds.Max.Y)
+			assert.Equal(t, 67, bounds.Max.X)
+			assert.Equal(t, 100, bounds.Max.Y)
 
 			if err := os.Remove(dst); err != nil {
 				t.Fatal(err)
@@ -43,7 +43,7 @@ func TestJpeg(t *testing.T) {
 
 		assert.NoFileExists(t, dst)
 
-		img, err := Jpeg(src, dst)
+		img, err := Jpeg(src, dst, OrientationFlipV)
 
 		assert.NoFileExists(t, dst)
 

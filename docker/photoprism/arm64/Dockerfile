@@ -72,12 +72,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm && \
     npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.15.8
+ENV GOLANG_VERSION 1.16
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "0e31ea4bf53496b0f0809730520dee98c0ae5c530f3701a19df0ba0a327bf3d2 *go.tgz" | sha256sum -c -; \
+	echo "3770f7eb22d05e25fbee8fb53c2a4e897da043eb83c69b9a14f8d98562cd8098 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -141,6 +141,7 @@ RUN apt-get update && apt-get upgrade && apt-get install -y --no-install-recomme
 COPY --from=build /go/bin/gosu /bin/gosu
 COPY --from=build /usr/lib/libtensorflow.so /usr/lib/libtensorflow.so
 COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_framework.so
+COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 
 RUN ldconfig
 
@@ -222,7 +223,7 @@ RUN photoprism -v
 EXPOSE 2342
 
 # Configure entrypoint
-COPY --chown=root:root /docker/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root /docker/scripts/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 VOLUME /var/lib/photoprism
 

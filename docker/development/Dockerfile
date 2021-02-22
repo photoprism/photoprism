@@ -94,12 +94,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && 
     npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.15.8
+ENV GOLANG_VERSION 1.16
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "d3379c32a90fdf9382166f8f48034c459a8cc433730bc9476d39d9082c94583b *go.tgz" | sha256sum -c -; \
+	echo "013a489ebb3e24ef3d915abe5b94c3286c070dfe0818d5bca8108f1d6e8440d2 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
@@ -120,12 +120,14 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.org/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Install additional tools for development
+# Install additional tools
+COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated && \
     env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports && \
     env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk && \
     env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo && \
     env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu && \
+    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/dsoprea/go-exif/v3/command/exif-read-tool && \
     echo "alias go=richgo" > /root/.bash_aliases && \
     cp /go/bin/gosu /bin/gosu
 
