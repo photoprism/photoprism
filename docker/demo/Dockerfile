@@ -27,6 +27,7 @@ ENV PHOTOPRISM_JPEG_QUALITY 95
 ENV PHOTOPRISM_SITE_CAPTION "Demo"
 
 # Import example photos
+RUN photoprism restore -a
 RUN photoprism index
 RUN photoprism moments
 

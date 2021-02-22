@@ -80,10 +80,12 @@ func RestoreAlbums(force bool) (count int, result error) {
 		if err := a.LoadFromYaml(fileName); err != nil {
 			log.Errorf("restore: %s in %s", err, txt.Quote(filepath.Base(fileName)))
 			result = err
-		} else if len(a.Photos) == 0 && a.AlbumFilter == "" {
+		} else if a.AlbumType == "" || len(a.Photos) == 0 && a.AlbumFilter == "" {
 			log.Debugf("restore: skipping %s", txt.Quote(filepath.Base(fileName)))
+		} else if err := a.Find(); err == nil {
+			log.Infof("%s: %s already exists", a.AlbumType, txt.Quote(a.AlbumTitle))
 		} else if err := a.Create(); err != nil {
-			log.Warnf("%s: %s already exists", a.AlbumType, txt.Quote(a.AlbumTitle))
+			log.Errorf("%s: %s in %s", a.AlbumType, err, txt.Quote(filepath.Base(fileName)))
 		} else {
 			count++
 		}
