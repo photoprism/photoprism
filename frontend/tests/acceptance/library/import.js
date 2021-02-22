@@ -14,14 +14,13 @@ test.meta("testID", "library-import-001")("Import files from folder using copy",
   await t
     .click(Selector(".nav-library"))
     .click(Selector("#tab-library-import"))
-    .click(Selector(".input-import-folder input"), { timeout: 5000 })
-    .click(Selector("div.v-list__tile__title").withText("/Bäckerei"))
+    .typeText(Selector(".input-import-folder input"), "/B", { replace: true })
+    .click(Selector("div.v-list__tile__title").nth(0))
     .click(Selector(".action-import"))
     //TODO replace wait
     .wait(60000);
   await page.openNav();
   await t
-    //.expect(Selector('span').withText('Done.').visible, {timeout: 60000}).ok()
     .click(Selector(".nav-labels"))
     .click(Selector(".action-reload"));
   await page.search("bakery");
