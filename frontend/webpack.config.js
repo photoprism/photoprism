@@ -46,6 +46,7 @@ const PATHS = {
   js: path.join(__dirname, "src"),
   css: path.join(__dirname, "src/css"),
   build: path.join(__dirname, "../assets/static/build"),
+  external: path.join(__dirname, "../assets/static/scripts"),
 };
 
 const config = {

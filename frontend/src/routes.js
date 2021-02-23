@@ -29,6 +29,7 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import Photos from "pages/photos.vue";
+import PhotosInstant from "pages/photos_instant.vue";
 import Albums from "pages/albums.vue";
 import AlbumPhotos from "pages/album/photos.vue";
 import Places from "pages/places.vue";
@@ -112,6 +113,13 @@ export default [
     path: "/photos",
     component: Photos,
     meta: { title: $gettext("Photos"), auth: true },
+    props: { staticFilter: { photo: "true" } },
+  },
+  {
+    name: "photos_instant",
+    path: "/instant",
+    component: PhotosInstant,
+    meta: { title: $gettext("Photos - Instant"), auth: true },
     props: { staticFilter: { photo: "true" } },
   },
   {
