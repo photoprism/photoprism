@@ -82,10 +82,10 @@ It provides additional motivation to keep going.
 
 Thank you very much! <3
 
-<sup>1</sup> Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
-Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+<sup>1</sup> Ideas backed by one or more [eligible sponsors](SPONSORS.md) are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
+Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
-<sup>2</sup> Our entire infrastructure runs on certified renewable energy. We don't mine or trade.
+<sup>2</sup> Our entire infrastructure runs on [certified renewable energy](https://www.polarstern-energie.de/). We don't engage in mining or trading.
 
 ## Trademarks ##
 
