@@ -67,10 +67,10 @@ Follow us on [Twitter][twitter] to receive regular project updates and discuss d
 ## Funding ##
 
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
-especially if you have feature requests or need help with using our software.
+especially if you have feature requests<sup>1</sup> or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and 
 [PayPal](https://www.paypal.me/photoprism). We've also set up [crypto wallets](SPONSORS.md) for 
-Bitcoin, Monero, and Dogecoin.
+Bitcoin, Monero, and Dogecoin.<sup>2</sup>
 
 Your continuous support helps...
 
@@ -82,8 +82,10 @@ It provides additional motivation to keep going.
 
 Thank you very much! <3
 
-Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
+<sup>1</sup> Ideas backed by one or more eligible [sponsors](SPONSORS.md) are marked with a golden [sponsor](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) label.
 Let us know if we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+
+<sup>2</sup> Our entire infrastructure runs on certified renewable energy. We don't mine or trade.
 
 ## Trademarks ##
 
