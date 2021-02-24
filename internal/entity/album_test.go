@@ -435,3 +435,74 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 		assert.Equal(t, 2, len(removed))
 	})
 }
+
+func TestAlbum_Find(t *testing.T) {
+	t.Run("existing album", func(t *testing.T) {
+		a := Album{AlbumUID: "at6axuzitogaaiax"}
+
+		if err := a.Find(); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("invalid id", func(t *testing.T) {
+		a := Album{AlbumUID: "xx"}
+
+		assert.Error(t, a.Find())
+	})
+	t.Run("album not existing", func(t *testing.T) {
+		a := Album{AlbumUID: "at6axuzitogaaxxx"}
+
+		assert.Error(t, a.Find())
+	})
+}
+
+func TestAlbum_UpdateFolder(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		a := Album{AlbumUID: "at6axuzitogaaxxx"}
+		assert.Empty(t, a.AlbumPath)
+		assert.Empty(t, a.AlbumFilter)
+		if err := a.UpdateFolder("2222/07", "month:07"); err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "2222/07", a.AlbumPath)
+		assert.Equal(t, "month:07", a.AlbumFilter)
+	})
+
+	t.Run("empty path", func(t *testing.T) {
+		a := Album{AlbumUID: "at6axuzitogaaxxy"}
+		assert.Empty(t, a.AlbumPath)
+		assert.Empty(t, a.AlbumFilter)
+		if err := a.UpdateFolder("", "month:07"); err != nil {
+			t.Fatal(err)
+		}
+		assert.Empty(t, a.AlbumPath)
+		assert.Empty(t, a.AlbumFilter)
+	})
+}
+
+/*func TestFindFolderAlbum(t *testing.T) {
+	t.Run("1 result", func(t *testing.T) {
+		album := FindFolderAlbum("2016/04")
+
+		if album == nil {
+			t.Fatal("expected to find an album")
+		}
+
+		assert.Equal(t, "April 2016", album.AlbumTitle)
+		assert.Equal(t, "2016-04", album.AlbumSlug)
+	})
+	t.Run("no result because slug empty", func(t *testing.T) {
+		album := FindFolderAlbum("")
+
+		if album != nil {
+			t.Fatal("album should be nil")
+		}
+	})
+	t.Run("no result because not found slug", func(t *testing.T) {
+		album := FindFolderAlbum("2000/04")
+
+		if album != nil {
+			t.Fatal("album should be nil")
+		}
+	})
+}*/
