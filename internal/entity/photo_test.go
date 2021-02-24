@@ -646,6 +646,26 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
 		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 	})
+	t.Run("don't update older date", func(t *testing.T) {
+		photo := &Photo{TakenAt: time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC)}
+		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2014, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcAuto)
+		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
+	})
+	t.Run("set local time from utc", func(t *testing.T) {
+		photo := &Photo{TakenAt: time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin"}
+		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2014, 12, 11, 10, 7, 18, 0, time.UTC), time.UTC.String(), SrcManual)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, time.Date(2014, 12, 11, 10, 07, 18, 0, time.UTC), photo.TakenAtLocal)
+	})
+	t.Run("local is UTC", func(t *testing.T) {
+		photo := &Photo{TakenAt: time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), TimeZone: time.UTC.String()}
+		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2014, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcManual)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, time.Date(2014, 12, 11, 9, 07, 18, 0, time.UTC), photo.TakenAtLocal)
+	})
 }
 
 func TestPhoto_UpdateTimeZone(t *testing.T) {
@@ -725,6 +745,12 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 		assert.Equal(t, takenAt, m.TakenAt)
 		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
 		assert.Equal(t, "Europe/Berlin", m.TimeZone)
+	})
+	t.Run("zone = UTC", func(t *testing.T) {
+		photo := &Photo{TakenAt: time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin"}
+		photo.UpdateTimeZone("")
+		assert.Equal(t, time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
 	})
 }
 
@@ -975,6 +1001,11 @@ func TestPhoto_LoadLocation(t *testing.T) {
 		photo := Photo{PhotoName: "Holiday", Cell: location}
 		assert.Error(t, photo.LoadLocation())
 	})
+	t.Run("known location", func(t *testing.T) {
+		location := CellFixtures.Pointer("mexico")
+		photo := Photo{PhotoName: "Holiday", Cell: location}
+		assert.Error(t, photo.LoadLocation())
+	})
 }
 
 func TestPhoto_PlaceLoaded(t *testing.T) {
@@ -1113,4 +1144,207 @@ func TestPhoto_SetPrimary(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+}
+
+func TestMapKey(t *testing.T) {
+	assert.Equal(t, "ogh006/abc236", MapKey(time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC), "abc236"))
+}
+
+func TestNewPhoto(t *testing.T) {
+	t.Run("stackable", func(t *testing.T) {
+		m := NewPhoto(true)
+		assert.Equal(t, IsStackable, m.PhotoStack)
+	})
+	t.Run("not stackable", func(t *testing.T) {
+		m := NewPhoto(false)
+		assert.Equal(t, IsUnstacked, m.PhotoStack)
+	})
+}
+
+func TestPhoto_FirstOrCreate(t *testing.T) {
+	t.Run("photo already existing", func(t *testing.T) {
+		photo := Photo{PhotoUID: "567454", PhotoName: "Light", OriginalName: "lightBlub.jpg"}
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		err2 := photo.Find()
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		err3 := photo.FirstOrCreate()
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+	})
+	t.Run("photo not yet existing", func(t *testing.T) {
+		photo := Photo{PhotoUID: "567459", PhotoName: "Light2", OriginalName: "lightBlub2.jpg"}
+		err3 := photo.FirstOrCreate()
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+		err2 := photo.Find()
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+	})
+}
+
+func TestPhoto_UnknownCamera(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		photo := Photo{}
+		assert.True(t, photo.UnknownCamera())
+	})
+	t.Run("false", func(t *testing.T) {
+		photo := Photo{CameraID: 100000}
+		assert.False(t, photo.UnknownCamera())
+	})
+}
+
+func TestPhoto_UnknownLens(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		photo := Photo{}
+		assert.True(t, photo.UnknownLens())
+	})
+	t.Run("false", func(t *testing.T) {
+		photo := Photo{LensID: 100000}
+		assert.False(t, photo.UnknownLens())
+	})
+}
+
+func TestPhoto_UpdateDateFields(t *testing.T) {
+	t.Run("year < 1000", func(t *testing.T) {
+		photo := &Photo{TakenAt: time.Date(900, 11, 11, 9, 7, 18, 0, time.UTC)}
+		photo.UpdateDateFields()
+		assert.Equal(t, time.Date(900, 11, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
+		assert.Empty(t, photo.TakenAtLocal)
+	})
+	t.Run("set to unknown", func(t *testing.T) {
+		photo := &Photo{TakenAt: time.Date(1900, 11, 11, 9, 7, 18, 0, time.UTC), TakenSrc: SrcAuto, CreatedAt: time.Date(1900, 11, 11, 5, 7, 18, 0, time.UTC)}
+		photo.UpdateDateFields()
+		assert.Equal(t, YearUnknown, photo.PhotoYear)
+	})
+}
+
+func TestPhoto_SetCamera(t *testing.T) {
+	t.Run("camera nil", func(t *testing.T) {
+		photo := &Photo{}
+		photo.SetCamera(nil, SrcAuto)
+		assert.Empty(t, photo.Camera)
+	})
+	t.Run("camera unknown", func(t *testing.T) {
+		photo := &Photo{}
+		camera := &Camera{CameraSlug: ""}
+		photo.SetCamera(camera, SrcAuto)
+		assert.Empty(t, photo.Camera)
+	})
+	t.Run("do not overwrite manual changes", func(t *testing.T) {
+		cameraOld := &Camera{CameraSlug: "OldCamera", ID: 10000000111}
+		photo := &Photo{CameraSrc: SrcManual, Camera: cameraOld, CameraID: 10000000111}
+		assert.Equal(t, "OldCamera", photo.Camera.CameraSlug)
+		assert.Equal(t, SrcManual, photo.CameraSrc)
+		assert.False(t, photo.UnknownCamera())
+		camera := &Camera{CameraSlug: "NewCamera"}
+		photo.SetCamera(camera, SrcAuto)
+		assert.Equal(t, "OldCamera", photo.Camera.CameraSlug)
+	})
+	t.Run("set new camera", func(t *testing.T) {
+		cameraOld := &Camera{CameraSlug: "OldCamera", ID: 10000000111}
+		photo := &Photo{CameraSrc: SrcAuto, Camera: cameraOld, CameraID: 10000000111}
+		assert.Equal(t, "OldCamera", photo.Camera.CameraSlug)
+		camera := &Camera{CameraSlug: "NewCamera"}
+		photo.SetCamera(camera, SrcMeta)
+		assert.Equal(t, "NewCamera", photo.Camera.CameraSlug)
+	})
+}
+
+func TestPhoto_SetLens(t *testing.T) {
+	t.Run("lens nil", func(t *testing.T) {
+		photo := &Photo{}
+		photo.SetLens(nil, SrcAuto)
+		assert.Empty(t, photo.Lens)
+	})
+	t.Run("lens unknown", func(t *testing.T) {
+		photo := &Photo{}
+		lens := &Lens{LensSlug: ""}
+		photo.SetLens(lens, SrcAuto)
+		assert.Empty(t, photo.Lens)
+	})
+	t.Run("do not overwrite manual changes", func(t *testing.T) {
+		lensOld := &Lens{LensSlug: "OldLens", ID: 10000000111}
+		photo := &Photo{CameraSrc: SrcManual, Lens: lensOld, LensID: 10000000111}
+		assert.Equal(t, "OldLens", photo.Lens.LensSlug)
+		lens := &Lens{LensSlug: "NewLens"}
+		photo.SetLens(lens, SrcAuto)
+		assert.Equal(t, "OldLens", photo.Lens.LensSlug)
+	})
+	t.Run("set new camera", func(t *testing.T) {
+		lensOld := &Lens{LensSlug: "OldLens", ID: 10000000111}
+		photo := &Photo{CameraSrc: SrcAuto, Lens: lensOld, LensID: 10000000111}
+		assert.Equal(t, "OldLens", photo.Lens.LensSlug)
+		lens := &Lens{LensSlug: "NewLens"}
+		photo.SetLens(lens, SrcMeta)
+		assert.Equal(t, "NewLens", photo.Lens.LensSlug)
+	})
+}
+
+func TestPhoto_SetExposure(t *testing.T) {
+	t.Run("changes have priority", func(t *testing.T) {
+		photo := &Photo{PhotoFocalLength: 5, PhotoFNumber: 3, PhotoIso: 300, PhotoExposure: "45", CameraSrc: SrcMeta}
+		photo.SetExposure(8, 9, 500, "66", SrcManual)
+		assert.Equal(t, 8, photo.PhotoFocalLength)
+		assert.Equal(t, float32(9), photo.PhotoFNumber)
+		assert.Equal(t, 500, photo.PhotoIso)
+		assert.Equal(t, "66", photo.PhotoExposure)
+	})
+	t.Run("changes have no priority", func(t *testing.T) {
+		photo := &Photo{PhotoFocalLength: 5, PhotoFNumber: 3, PhotoIso: 300, PhotoExposure: "45", CameraSrc: SrcManual}
+		photo.SetExposure(8, 9, 500, "66", SrcMeta)
+		assert.Equal(t, 5, photo.PhotoFocalLength)
+		assert.Equal(t, float32(3), photo.PhotoFNumber)
+		assert.Equal(t, 300, photo.PhotoIso)
+		assert.Equal(t, "45", photo.PhotoExposure)
+	})
+}
+
+func TestPhoto_AllFiles(t *testing.T) {
+	t.Run("photo with files", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		files := m.AllFiles()
+		assert.Equal(t, 2, len(files))
+	})
+	t.Run("photo without files", func(t *testing.T) {
+		m := &Photo{}
+		files := m.AllFiles()
+		assert.Equal(t, 0, len(files))
+	})
+}
+
+func TestPhoto_Archive(t *testing.T) {
+	t.Run("archive not yet archived photo", func(t *testing.T) {
+		m := &Photo{PhotoTitle: "HappyLilly"}
+		assert.Empty(t, m.DeletedAt)
+		err := m.Archive()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.NotEmpty(t, m.DeletedAt)
+		err = m.Restore()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Empty(t, m.DeletedAt)
+	})
+}
+
+func TestPhoto_SetCameraSerial(t *testing.T) {
+	m := &Photo{}
+	assert.Empty(t, m.CameraSerial)
+	m.SetCameraSerial("abcCamera")
+	assert.Equal(t, "abcCamera", m.CameraSerial)
+}
+
+func TestPhoto_MapKey(t *testing.T) {
+	m := &Photo{TakenAt: time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC), CellID: "abc236"}
+	assert.Equal(t, "ogh006/abc236", m.MapKey())
 }
