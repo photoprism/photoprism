@@ -46,4 +46,9 @@ func TestStringToDuration(t *testing.T) {
 		d := StringToDuration("0001:04:25")
 		assert.Equal(t, "1h4m25s", d.String())
 	})
+
+	t.Run("invalid", func(t *testing.T) {
+		d := StringToDuration("01:04:25:67")
+		assert.Equal(t, "0s", d.String())
+	})
 }

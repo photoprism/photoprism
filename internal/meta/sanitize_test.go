@@ -86,6 +86,12 @@ func TestSanitizeTitle(t *testing.T) {
 
 		assert.Equal(t, "Niklaus_Wirth", result)
 	})
+
+	t.Run("string with binary data", func(t *testing.T) {
+		result := SanitizeTitle("string with binary data blablabla")
+
+		assert.Equal(t, "", result)
+	})
 }
 
 func TestSanitizeDescription(t *testing.T) {
