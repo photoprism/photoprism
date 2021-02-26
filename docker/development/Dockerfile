@@ -17,7 +17,10 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 RUN apt-get update && apt-get upgrade && \
     apt-get install \
     build-essential \
+    ca-certificates \
+    wget \
     curl \
+    davfs2 \
     chrpath \
     libssl-dev \
     libxft-dev \
@@ -42,7 +45,6 @@ RUN apt-get update && apt-get upgrade && \
     apt-utils \
     make \
     nano \
-    wget \
     git \
     gettext \
     mariadb-client \

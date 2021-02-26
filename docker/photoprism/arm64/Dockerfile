@@ -121,6 +121,9 @@ RUN echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install additional distribution packages
 RUN apt-get update && apt-get upgrade && apt-get install -y --no-install-recommends \
+        wget \
+        curl \
+        davfs2 \
         ca-certificates \
         mariadb-client \
         sqlite3 \

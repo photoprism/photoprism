@@ -1,4 +1,4 @@
-FROM photoprism/development:20210222 as build
+FROM photoprism/development:20210226 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -23,6 +23,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 # Install additional distribution packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
         wget \
+        curl \
+        davfs2 \
         ca-certificates \
         mariadb-client \
         sqlite3 \
