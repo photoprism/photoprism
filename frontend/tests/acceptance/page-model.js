@@ -155,10 +155,6 @@ export default class Page {
       .click(Selector("button.action-" + type))
       .typeText(Selector(".input-album input"), name, { replace: true })
       .pressKey("enter");
-    /*if (await Selector('div[role="listitem"]').withText(name).visible) {
-      await t.click(Selector('div[role="listitem"]').withText(name));
-    }
-    await t.click(Selector("button.action-confirm"));*/
   }
 
   async turnSwitchOff(type) {
