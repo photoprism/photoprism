@@ -90,7 +90,7 @@
               <v-icon color="white" class="select-on">lock</v-icon>
             </v-btn>
 
-            <v-btn :ripple="false"
+            <v-btn v-if="selectMode" :ripple="false"
                    icon flat absolute
                    class="input-select"
                    @touchstart.stop.prevent="onSelect($event, index)"
