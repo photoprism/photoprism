@@ -19,14 +19,15 @@
                       :photos="photosByYear(year)"
                       :select-mode="false"
                       :filter="filter"
-                      :open-photo="openPhoto"></p-photo-cards>
+                      :open-photo="openPhotoByYear(year)"></p-photo-cards>
       </div>
     </v-container>
   </div>
 </template>
 
 <script>
-import {Photo} from "model/photo";
+import {Photo, TypeLive, TypeRaw, TypeVideo} from "model/photo";
+import Thumb from "model/thumb";
 
 export default {
   name: 'PTabDiscoverToday',
@@ -48,6 +49,10 @@ export default {
       batchSize: Photo.batchSize(),
       offset: 0,
       page: 0,
+      viewer: {
+        results: [],
+        loading: false,
+      },
     };
   },
   computed: {
@@ -63,6 +68,28 @@ export default {
     }
   },
   methods: {
+    photosByYear(year) {
+      const photos = [];
+
+      for (let item of this.results) {
+        if (item.Year == year) {
+          photos.push(item);
+        }
+      }
+
+      return photos;
+    },
+    photosOffsetByYear(selectedYear) {
+      let offset = 0;
+
+      for (let year of this.years) {
+        if (year > selectedYear) {
+          offset += this.photosByYear(year).length;
+        }
+      }
+
+      return offset;
+    },
     loadMore() {
       if (this.scrollDisabled) return;
 
@@ -114,21 +141,81 @@ export default {
         this.loading = false;
       });
     },
-    openPhoto() {
-      // TODO
-    },
-    photosByYear(year) {
-      const photos = [];
+    openPhotoByYear(year) {
+      const this_ = this;
 
-      for (let i = 0; i < this.results.length; i++) {
-        let item = this.results[i];
-        if (item.Year == year) {
-          photos.push(item);
+      function openPhoto(index, showMerged) {
+        const offset = this_.photosOffsetByYear(year);
+        index += offset;
+
+        if (this_.loading || !this_.results[index]) {
+          return false;
+        }
+
+        const selected = this_.results[index];
+
+        // Don't open as stack when a RAW has only one JPEG.
+        if (selected.Type === TypeRaw && selected.jpegFiles().length < 2) {
+          showMerged = false;
+        }
+
+        if (showMerged && selected.Type === TypeLive || selected.Type === TypeVideo) {
+          if (selected.isPlayable()) {
+            this_.$viewer.play({video: selected});
+          } else {
+            this_.$viewer.show(Thumb.fromPhotos(this_.results), index);
+          }
+        } else if (showMerged) {
+          this_.$viewer.show(Thumb.fromFiles([selected]), 0);
+        } else {
+          this_.viewerResults().then((results) => {
+            const thumbsIndex = results.findIndex(result => result.UID === selected.UID);
+
+            if (thumbsIndex < 0) {
+              this_.$viewer.show(Thumb.fromPhotos(this_.results), index);
+            } else {
+              this_.$viewer.show(Thumb.fromPhotos(results), thumbsIndex);
+            }
+          });
         }
       }
 
-      return photos;
+      return openPhoto;
+    },
+    viewerResults() {
+      if (this.loading || this.viewer.loading) {
+        return Promise.resolve(this.results);
+        }
+
+      if (this.viewer.results.length > (this.results.length + this.batchSize)) {
+        return Promise.resolve(this.viewer.results);
+      }
+
+      this.viewer.loading = true;
+
+      const count = this.batchSize * (this.page + 6);
+      const offset = 0;
+
+      const params = {
+        count: count,
+        offset: offset,
+        merged: true,
+      };
+
+      Object.assign(params, this.filter);
+
+      return Photo.search(params).then((resp) => {
+        // Success.
+        this.viewer.loading = false;
+        this.viewer.results = resp.models;
+        return Promise.resolve(this.viewer.results);
+      }, () => {
+        // Error.
+        this.viewer.loading = false;
+        return Promise.resolve(this.results);
     }
+      );
+    },
   }
 };
 </script>
