@@ -46,6 +46,31 @@ func TestMediaFile_HasSidecarJson(t *testing.T) {
 	})
 }
 
+func TestMediaFile_SidecarJsonName(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "", mediaFile.SidecarJsonName())
+	})
+	t.Run("true", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Contains(t, mediaFile.SidecarJsonName(), "blue-go-video.mp4.json")
+	})
+}
+
 func TestMediaFile_NeedsExifToolJson(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
 		conf := config.TestConfig()
