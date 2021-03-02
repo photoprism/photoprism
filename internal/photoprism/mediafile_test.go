@@ -417,7 +417,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, related.Files, 5)
+		assert.Len(t, related.Files, 6)
 		assert.True(t, related.ContainsJpeg())
 
 		for _, result := range related.Files {
@@ -644,6 +644,37 @@ func TestMediaFile_RootRelName(t *testing.T) {
 	t.Run("examples_path", func(t *testing.T) {
 		filename := mediaFile.RootRelName()
 		assert.Equal(t, "tree_white.jpg", filename)
+	})
+}
+
+func TestMediaFile_RootRelPath(t *testing.T) {
+	conf := config.TestConfig()
+
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
+	mediaFile.fileRoot = entity.RootImport
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("examples_path", func(t *testing.T) {
+		path := mediaFile.RootRelPath()
+		assert.Equal(t, conf.ExamplesPath(), path)
+	})
+}
+
+func TestMediaFile_RootPath(t *testing.T) {
+	conf := config.TestConfig()
+
+	mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/tree_white.jpg")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mediaFile.fileRoot = entity.RootImport
+	t.Run("examples_path", func(t *testing.T) {
+		path := mediaFile.RootPath()
+		assert.Contains(t, path, "import")
 	})
 }
 
@@ -1418,6 +1449,17 @@ func TestMediaFile_HasJpeg(t *testing.T) {
 
 		assert.True(t, f.HasJpeg())
 	})
+	t.Run("Random.docx with jpg", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		f, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		f.hasJpeg = true
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, f.HasJpeg())
+	})
 }
 
 func TestMediaFile_Jpeg(t *testing.T) {
@@ -1574,6 +1616,22 @@ func TestMediaFile_decodeDimension(t *testing.T) {
 
 		assert.Equal(t, 1920, mediaFile.Width())
 		assert.Equal(t, 1080, mediaFile.Height())
+	})
+	t.Run("blue-go-video.mp4 with orientation >4 and <8", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+		mediaFile.metaData.Orientation = 5
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := mediaFile.decodeDimensions(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1080, mediaFile.Width())
+		assert.Equal(t, 1920, mediaFile.Height())
 	})
 }
 

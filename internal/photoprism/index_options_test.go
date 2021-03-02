@@ -18,3 +18,10 @@ func TestIndexOptions_SkipUnchanged(t *testing.T) {
 	result.Rescan = true
 	assert.False(t, result.SkipUnchanged())
 }
+
+func TestIndexOptionsSingle(t *testing.T) {
+	r := IndexOptionsSingle()
+	assert.Equal(t, false, r.Stack)
+	assert.Equal(t, true, r.Convert)
+	assert.Equal(t, true, r.Rescan)
+}
