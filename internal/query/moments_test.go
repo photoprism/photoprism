@@ -32,9 +32,9 @@ func TestMomentsTime(t *testing.T) {
 	})
 }
 
-func TestMomentsCountries(t *testing.T) {
+func TestMomentsCountriesbyYear(t *testing.T) {
 	t.Run("result found", func(t *testing.T) {
-		results, err := MomentsCountries(1)
+		results, err := MomentsCountriesByYear(1)
 
 		if err != nil {
 			t.Fatal(err)
