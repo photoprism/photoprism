@@ -122,7 +122,7 @@ func TestMoment_Title(t *testing.T) {
 			PhotoCount: 0,
 		}
 
-		assert.Equal(t, "de", moment.Title())
+		assert.Equal(t, "Germany", moment.Title())
 	})
 	t.Run("country and year", func(t *testing.T) {
 		moment := Moment{

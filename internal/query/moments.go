@@ -89,7 +89,7 @@ func (m Moment) Title() string {
 		}
 
 		if m.State == "" {
-			return m.Country
+			return maps.CountryName(m.Country)
 		}
 
 		return fmt.Sprintf("%s / %s", m.State, country)
