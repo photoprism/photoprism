@@ -234,6 +234,19 @@ export default [
     meta: { title: $gettext("Places"), auth: true },
   },
   {
+    name: "countries",
+    path: "/countries",
+    component: Albums,
+    meta: { title: $gettext("Places"), auth: true },
+    props: { view: "country", staticFilter: { type: "country" } },
+  },
+  {
+    name: "country",
+    path: "/countries/:uid/:slug",
+    component: AlbumPhotos,
+    meta: { title: $gettext("Places"), auth: true },
+  },
+  {
     name: "files",
     path: "/library/files*",
     component: Files,
