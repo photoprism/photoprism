@@ -43,6 +43,10 @@ func TestWords(t *testing.T) {
 		result := Words("Île de la Réunion")
 		assert.Equal(t, []string{"Île", "Réunion"}, result)
 	})
+	t.Run("empty", func(t *testing.T) {
+		result := Words("")
+		assert.Empty(t, result)
+	})
 }
 
 func TestReplaceSpaces(t *testing.T) {
@@ -73,6 +77,10 @@ func TestFilenameWords(t *testing.T) {
 		result := FilenameWords("Île de la Réunion")
 		assert.Equal(t, []string{"Île", "Réunion"}, result)
 	})
+	t.Run("empty", func(t *testing.T) {
+		result := FilenameWords("")
+		assert.Empty(t, result)
+	})
 }
 
 func TestFilenameKeywords(t *testing.T) {
@@ -99,6 +107,10 @@ func TestFilenameKeywords(t *testing.T) {
 	t.Run("Île de la Réunion", func(t *testing.T) {
 		result := FilenameKeywords("Île de la Réunion")
 		assert.Equal(t, []string{"île", "réunion"}, result)
+	})
+	t.Run("empty", func(t *testing.T) {
+		result := FilenameKeywords("")
+		assert.Empty(t, result)
 	})
 }
 
@@ -138,6 +150,10 @@ func TestKeywords(t *testing.T) {
 	t.Run("Île de la Réunion", func(t *testing.T) {
 		result := Keywords("Île de la Réunion")
 		assert.Equal(t, []string{"île", "réunion"}, result)
+	})
+	t.Run("empty", func(t *testing.T) {
+		result := Keywords("")
+		assert.Empty(t, result)
 	})
 }
 

@@ -85,4 +85,7 @@ func TestTitle(t *testing.T) {
 	t.Run("NewYears", func(t *testing.T) {
 		assert.Equal(t, "Boston New Year's", Title("boston new year's"))
 	})
+	t.Run("empty", func(t *testing.T) {
+		assert.Empty(t, Title(""))
+	})
 }

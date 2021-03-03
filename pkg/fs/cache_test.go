@@ -9,11 +9,18 @@ import (
 )
 
 func TestCachePath(t *testing.T) {
-	t.Run("error", func(t *testing.T) {
+	t.Run("hash too short", func(t *testing.T) {
 		result, err := CachePath("/foo/bar", "123", "baz", false)
 
 		assert.Equal(t, "", result)
 		assert.EqualError(t, err, "cache: hash '123' is too short")
+	})
+
+	t.Run("namespace empty", func(t *testing.T) {
+		result, err := CachePath("/foo/bar", "123hjfju567695", "", false)
+
+		assert.Equal(t, "", result)
+		assert.EqualError(t, err, "cache: namespace for hash '123hjfju567695' is empty")
 	})
 
 	t.Run("1234567890abcdef", func(t *testing.T) {

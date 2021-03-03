@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
@@ -13,4 +14,12 @@ func TestCaseInsensitive(t *testing.T) {
 			t.Logf("tmp fs case-insensitive: %t", result)
 		}
 	})
+}
+
+func TestIgnoreCase(t *testing.T) {
+	assert.False(t, ignoreCase)
+	IgnoreCase()
+	assert.True(t, ignoreCase)
+	ignoreCase = false
+	assert.False(t, ignoreCase)
 }
