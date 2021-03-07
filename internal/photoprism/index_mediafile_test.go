@@ -50,5 +50,28 @@ func TestIndex_MediaFile(t *testing.T) {
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4")
 		assert.Equal(t, IndexStatus("failed"), result.Status)
 	})
+}
 
+func TestIndexResult_Archived(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		r := &IndexResult{IndexArchived, nil, 5, "", 5, ""}
+		assert.True(t, r.Archived())
+	})
+
+	t.Run("false", func(t *testing.T) {
+		r := &IndexResult{IndexAdded, nil, 5, "", 5, ""}
+		assert.False(t, r.Archived())
+	})
+}
+
+func TestIndexResult_Skipped(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		r := &IndexResult{IndexSkipped, nil, 5, "", 5, ""}
+		assert.True(t, r.Skipped())
+	})
+
+	t.Run("false", func(t *testing.T) {
+		r := &IndexResult{IndexAdded, nil, 5, "", 5, ""}
+		assert.False(t, r.Skipped())
+	})
 }

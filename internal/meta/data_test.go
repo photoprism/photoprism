@@ -163,3 +163,15 @@ func TestData_HasTimeAndPlace(t *testing.T) {
 		assert.Equal(t, false, data.HasTimeAndPlace())
 	})
 }
+
+func TestData_CellID(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		data := Data{
+			Lat:     1.334,
+			Lng:     4.567,
+			TakenAt: time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		assert.Equal(t, "s2:100c9acde614", data.CellID())
+	})
+}

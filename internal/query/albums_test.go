@@ -230,3 +230,14 @@ func TestAlbumEntryFound(t *testing.T) {
 		}
 	})
 }
+
+func TestGetAlbums(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		r, err := GetAlbums(0, 3)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, 3, len(r))
+	})
+}

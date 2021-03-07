@@ -141,6 +141,20 @@ func TestFile_Purge(t *testing.T) {
 	})
 }
 
+func TestFile_Found(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		assert.Equal(t, nil, file.Purge())
+		assert.Equal(t, true, file.FileMissing)
+		err := file.Found()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, false, file.FileMissing)
+	})
+}
+
 func TestFile_AllFilesMissing(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
@@ -308,5 +322,101 @@ func TestFile_Delete(t *testing.T) {
 		err2 := file.Delete(false)
 
 		assert.Nil(t, err2)
+	})
+}
+
+func TestPrimaryFile(t *testing.T) {
+	file, err := PrimaryFile("pt9jtdre2lvl0y17")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "Video.mp4", file.FileName)
+}
+
+func TestFile_OriginalBase(t *testing.T) {
+	t.Run("original name empty, filename empty", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "", FileName: ""}
+
+		filename := file.OriginalBase(0)
+
+		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
+		assert.Contains(t, filename, fs.JpegExt)
+
+		filename2 := file.OriginalBase(1)
+		assert.Contains(t, filename2, "20190115-000000-Berlin-Morning-Mood")
+		assert.Contains(t, filename2, "(1)")
+		assert.Contains(t, filename2, fs.JpegExt)
+	})
+	t.Run("original name empty", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "", FileName: "sonnenaufgang.jpg"}
+
+		filename := file.OriginalBase(0)
+
+		assert.Contains(t, filename, "sonnenaufgang")
+		assert.Contains(t, filename, fs.JpegExt)
+
+		filename2 := file.OriginalBase(1)
+		assert.Contains(t, filename2, "sonnenaufgang")
+		assert.Contains(t, filename2, "(1)")
+		assert.Contains(t, filename2, fs.JpegExt)
+	})
+	t.Run("original name not empty", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "Sonnenaufgang.jpg", FileName: "123.jpg"}
+
+		filename := file.OriginalBase(0)
+
+		assert.Contains(t, filename, "Sonnenaufgang")
+		assert.Contains(t, filename, fs.JpegExt)
+
+		filename2 := file.OriginalBase(1)
+		assert.Contains(t, filename2, "Sonnenaufgang")
+		assert.Contains(t, filename2, "(1)")
+		assert.Contains(t, filename2, fs.JpegExt)
+	})
+}
+
+func TestFile_DownloadName(t *testing.T) {
+	t.Run("DownloadNameFile", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "originalName.jpg", FileName: "filename.jpg"}
+
+		filename := file.DownloadName(DownloadNameFile, 0)
+		assert.Contains(t, filename, "filename")
+		assert.Contains(t, filename, fs.JpegExt)
+
+		filename2 := file.DownloadName(DownloadNameOriginal, 1)
+		assert.Contains(t, filename2, "originalName")
+		assert.Contains(t, filename2, "(1)")
+		assert.Contains(t, filename2, fs.JpegExt)
+
+		filename3 := file.DownloadName("xxx", 0)
+		assert.Contains(t, filename3, "20190115-000000-Berlin-Morning-Mood")
+	})
+}
+
+func TestFile_Undelete(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		assert.Equal(t, nil, file.Purge())
+		assert.Equal(t, true, file.FileMissing)
+		err := file.Undelete()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, false, file.FileMissing)
+	})
+	t.Run("file not missing", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		assert.Equal(t, false, file.FileMissing)
+		err := file.Undelete()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, false, file.FileMissing)
 	})
 }

@@ -124,7 +124,7 @@ func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ..
 	return "", ErrThumbNotCached
 }
 
-func FromFile(imageFilename, hash, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
+func FromFile(imageFilename, hash, thumbPath string, width, height, orientation int, opts ...ResampleOption) (fileName string, err error) {
 	if fileName, err := FromCache(imageFilename, hash, thumbPath, width, height, opts...); err == nil {
 		return fileName, err
 	} else if err != ErrThumbNotCached {
@@ -138,11 +138,15 @@ func FromFile(imageFilename, hash, thumbPath string, width, height int, opts ...
 		return "", err
 	}
 
-	img, err := imaging.Open(imageFilename, imaging.AutoOrientation(true))
+	img, err := imaging.Open(imageFilename)
 
 	if err != nil {
 		log.Errorf("resample: %s in %s", err, txt.Quote(filepath.Base(imageFilename)))
 		return "", err
+	}
+
+	if orientation > 1 {
+		img = Rotate(img, orientation)
 	}
 
 	if _, err := Create(img, fileName, width, height, opts...); err != nil {

@@ -85,6 +85,12 @@ func TestFilesByUID(t *testing.T) {
 		}
 		assert.Equal(t, 0, len(files))
 	})
+	t.Run("error", func(t *testing.T) {
+		files, err := FilesByUID([]string{"ft8es39w45bnlxxx"}, -100, 0)
+
+		assert.Error(t, err)
+		assert.Equal(t, 0, len(files))
+	})
 }
 
 func TestFileByPhotoUID(t *testing.T) {
@@ -231,4 +237,26 @@ func TestFileHashes(t *testing.T) {
 	}
 
 	t.Logf("FILE HASHES: %#v", result)
+}
+
+func TestRenameFile(t *testing.T) {
+	t.Run("empty name", func(t *testing.T) {
+		err := RenameFile("xxx", "", "yyy", "yyy")
+
+		if err == nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("success", func(t *testing.T) {
+		assert.Equal(t, "exampleXmpFile.xmp", entity.FileFixturesExampleXMP.FileName)
+		assert.Equal(t, "/", entity.FileFixturesExampleXMP.FileRoot)
+		err := RenameFile("/", "exampleXmpFile.xmp", "test-root", "yyy.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		//TODO how to assert?
+		//assert.Equal(t, "", entity.FileFixturesExampleXMP.FileName)
+	})
+
 }

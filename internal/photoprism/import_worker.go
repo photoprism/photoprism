@@ -118,6 +118,14 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
+			if f.NeedsExifToolJson() {
+				if jsonName, err := imp.convert.ToJson(f); err != nil {
+					log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
+				} else {
+					log.Debugf("import: %s created", filepath.Base(jsonName))
+				}
+			}
+
 			if f.IsMedia() && !f.HasJpeg() {
 				if jpegFile, err := imp.convert.ToJpeg(f); err != nil {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())))
@@ -133,14 +141,6 @@ func ImportWorker(jobs <-chan ImportJob) {
 				if err := jpg.ResampleDefault(imp.thumbPath(), false); err != nil {
 					log.Errorf("import: %s in %s (resample)", err.Error(), txt.Quote(jpg.BaseName()))
 					continue
-				}
-			}
-
-			if f.NeedsExifToolJson() {
-				if jsonName, err := imp.convert.ToJson(f); err != nil {
-					log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
-				} else {
-					log.Debugf("import: %s created", filepath.Base(jsonName))
 				}
 			}
 

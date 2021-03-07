@@ -20,3 +20,24 @@ func TestFileName(t *testing.T) {
 	})
 
 }
+
+func TestCacheName(t *testing.T) {
+	t.Run("cacheKey empty", func(t *testing.T) {
+		r, err := CacheName("abcdghoj", "test", "")
+		assert.Error(t, err)
+		assert.Empty(t, r)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		r, err := CacheName("abcdghoj", "test", "juh")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Contains(t, r, "test/a/b/c/abcdghoj_juh")
+	})
+	t.Run("filehash too short", func(t *testing.T) {
+		r, err := CacheName("ab", "test", "juh")
+		assert.Error(t, err)
+		assert.Empty(t, r)
+	})
+}

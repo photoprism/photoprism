@@ -18,7 +18,205 @@ func TestJpeg(t *testing.T) {
 
 			assert.NoFileExists(t, dst)
 
-			img, err := Jpeg(src, dst)
+			img, err := Jpeg(src, dst, OrientationRotate270)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 67, bounds.Max.X)
+			assert.Equal(t, 100, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationFlipH", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationFlipH)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 100, bounds.Max.X)
+			assert.Equal(t, 67, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationFlipV", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationFlipV)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 100, bounds.Max.X)
+			assert.Equal(t, 67, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationRotate90", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationRotate90)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 67, bounds.Max.X)
+			assert.Equal(t, 100, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationRotate180", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationRotate180)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 100, bounds.Max.X)
+			assert.Equal(t, 67, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationTranspose", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationTranspose)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 67, bounds.Max.X)
+			assert.Equal(t, 100, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationTransverse", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationTransverse)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 67, bounds.Max.X)
+			assert.Equal(t, 100, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationUnspecified", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationUnspecified)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 100, bounds.Max.X)
+			assert.Equal(t, 67, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("OrientationNormal", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, OrientationNormal)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.FileExists(t, dst)
+
+			bounds := img.Bounds()
+			assert.Equal(t, 100, bounds.Max.X)
+			assert.Equal(t, 67, bounds.Max.Y)
+
+			if err := os.Remove(dst); err != nil {
+				t.Fatal(err)
+			}
+		})
+		t.Run("invalid orientation", func(t *testing.T) {
+			src := "testdata/example." + ext
+			dst := "testdata/example." + ext + fs.JpegExt
+
+			assert.NoFileExists(t, dst)
+
+			img, err := Jpeg(src, dst, 500)
 
 			if err != nil {
 				t.Fatal(err)
@@ -43,7 +241,7 @@ func TestJpeg(t *testing.T) {
 
 		assert.NoFileExists(t, dst)
 
-		img, err := Jpeg(src, dst)
+		img, err := Jpeg(src, dst, OrientationFlipV)
 
 		assert.NoFileExists(t, dst)
 

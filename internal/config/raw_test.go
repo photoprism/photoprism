@@ -35,5 +35,5 @@ func TestConfig_HeifConvertBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	bin := c.HeifConvertBin()
-	assert.Equal(t, "/usr/bin/heif-convert", bin)
+	assert.Contains(t, bin, "/bin/heif-convert")
 }

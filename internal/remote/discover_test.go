@@ -36,7 +36,7 @@ func TestDiscover(t *testing.T) {
 	})
 
 	t.Run("facebook", func(t *testing.T) {
-		r, err := Discover("https://www.facebook.com/ob.boris.palmer", "test", "")
+		r, err := Discover("https://www.facebook.com/terms", "test", "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,7 +44,7 @@ func TestDiscover(t *testing.T) {
 
 		assert.Equal(t, "Facebook", r.AccName)
 		assert.Equal(t, "facebook", r.AccType)
-		assert.Equal(t, "https://www.facebook.com/ob.boris.palmer", r.AccURL)
+		assert.Equal(t, "https://www.facebook.com/terms", r.AccURL)
 		assert.Equal(t, "test", r.AccUser)
 		assert.Equal(t, "", r.AccPass)
 	})

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
@@ -150,5 +151,49 @@ func TestSaveDuplicate(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
+	})
+}
+
+func TestDuplicate_Purge(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		if err := AddDuplicate(
+			"forpurge.jpg",
+			RootOriginals,
+			"3cad9168fa6acc5c5c2965ddf6ec465ca42fd844",
+			661851,
+			time.Date(2019, 1, 6, 2, 6, 51, 0, time.UTC).Unix(),
+		); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := AddDuplicate(
+			"forpurge.jpg",
+			RootOriginals,
+			"3cad9168fa6acc5c5c2965ddf6ec465ca42fd855",
+			661858,
+			time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix(),
+		); err != nil {
+			t.Fatal(err)
+		}
+
+		duplicate := &Duplicate{FileName: "forpurge.jpg", FileRoot: RootOriginals}
+		if err := duplicate.Find(); err != nil {
+			t.Fatal(err)
+		}
+		if err := duplicate.Purge(); err != nil {
+			t.Fatal(err)
+		}
+		if err := duplicate.Find(); err == nil {
+			t.Log("Dulicate deleted")
+		}
+	})
+}
+
+func TestPurgeDuplicate(t *testing.T) {
+	t.Run("empty filename", func(t *testing.T) {
+		assert.Error(t, PurgeDuplicate("", RootOriginals))
+	})
+	t.Run("empty fileroot", func(t *testing.T) {
+		assert.Error(t, PurgeDuplicate("test.jpg", ""))
 	})
 }

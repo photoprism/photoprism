@@ -33,8 +33,10 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .ok()
     .expect(Selector(".action-download").exists)
     .ok()
-    .click(Selector(".action-close"))
     .click(Selector(".action-close"));
+  if (await Selector(".action-close").exists) {
+    await t.click(Selector(".action-close"));
+  }
   await t
     .expect(Selector("button.action-location").visible)
     .ok()
@@ -63,7 +65,6 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await page.clearSelection();
   await page.openNav();
   await t
-    .click(Selector("div.nav-browse + div"))
     .expect(Selector(".nav-archive").visible)
     .ok()
     .expect(Selector(".nav-review").visible)
@@ -158,8 +159,10 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .ok()
     .expect(Selector(".action-download").exists)
     .notOk()
-    .click(Selector(".action-close"))
     .click(Selector(".action-close"));
+  if (await Selector(".action-close").exists) {
+    await t.click(Selector(".action-close"));
+  }
   await page.toggleSelectNthPhoto(0);
   await t
     .expect(Selector("button.action-location").exists)

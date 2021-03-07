@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
+	"time"
 )
 
 func TestPhoto_EstimateCountry(t *testing.T) {
@@ -56,4 +56,40 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 		assert.Equal(t, "zz", m.CountryCode())
 		assert.Equal(t, "Unknown", m.CountryName())
 	})
+
+}
+
+func TestPhoto_EstimatePlace(t *testing.T) {
+	t.Run("photo already has location", func(t *testing.T) {
+		p := &Place{ID: "1000000001", PlaceCountry: "mx"}
+		m := Photo{PhotoName: "PhotoWithLocation", OriginalName: "demo/xyz.jpg", Place: p, PlaceID: "1000000001", PlaceSrc: SrcManual, PhotoCountry: "mx"}
+		assert.True(t, m.HasPlace())
+		assert.Equal(t, "mx", m.CountryCode())
+		assert.Equal(t, "Mexico", m.CountryName())
+		m.EstimatePlace()
+		assert.Equal(t, "mx", m.CountryCode())
+		assert.Equal(t, "Mexico", m.CountryName())
+	})
+	t.Run("recent photo has place", func(t *testing.T) {
+		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
+		assert.Equal(t, "zz", m2.CountryCode())
+		m2.EstimatePlace()
+		assert.Equal(t, "mx", m2.CountryCode())
+		assert.Equal(t, "Mexico", m2.CountryName())
+		assert.Equal(t, SrcEstimate, m2.PlaceSrc)
+	})
+	t.Run("cant estimate - out of scope", func(t *testing.T) {
+		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 13, 8, 7, 18, 0, time.UTC)}
+		assert.Equal(t, "zz", m2.CountryCode())
+		m2.EstimatePlace()
+		assert.Equal(t, "zz", m2.CountryCode())
+	})
+	/*t.Run("recent photo has country", func(t *testing.T) {
+		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/zzz.jpg", TakenAt:  time.Date(2001, 1, 1, 7, 20, 0, 0, time.UTC)}
+		assert.Equal(t, "zz", m2.CountryCode())
+		m2.EstimatePlace()
+		assert.Equal(t, "mx", m2.CountryCode())
+		assert.Equal(t, "Mexico", m2.CountryName())
+		assert.Equal(t, SrcEstimate, m2.PlaceSrc)
+	})*/
 }

@@ -37,6 +37,12 @@ func TestContainsSymbols(t *testing.T) {
 	t.Run("réseau", func(t *testing.T) {
 		assert.False(t, ContainsSymbols("réseau"))
 	})
+	t.Run("empty", func(t *testing.T) {
+		assert.False(t, ContainsSymbols(""))
+	})
+	t.Run("...", func(t *testing.T) {
+		assert.True(t, ContainsSymbols("😉"))
+	})
 }
 
 func TestContainsLetters(t *testing.T) {
@@ -60,6 +66,9 @@ func TestContainsLetters(t *testing.T) {
 	})
 	t.Run("réseau", func(t *testing.T) {
 		assert.True(t, ContainsLetters("réseau"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, false, ContainsLetters(""))
 	})
 }
 

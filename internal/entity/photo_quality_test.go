@@ -23,3 +23,22 @@ func TestPhoto_QualityScore(t *testing.T) {
 		assert.Equal(t, 2, PhotoFixtures.Pointer("Photo15").QualityScore())
 	})
 }
+
+func TestPhoto_UpdateQuality(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		p := &Photo{PhotoQuality: -1}
+		err := p.UpdateQuality()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, -1, p.PhotoQuality)
+	})
+	t.Run("low quality expected", func(t *testing.T) {
+		p := &Photo{PhotoQuality: 0, PhotoFavorite: true}
+		err := p.UpdateQuality()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, 5, p.PhotoQuality)
+	})
+}

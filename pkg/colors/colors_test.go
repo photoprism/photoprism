@@ -41,6 +41,9 @@ func TestChroma_Hex(t *testing.T) {
 		assert.Equal(t, "9B", perception.Chroma.Hex())
 	})
 }
+func TestColor_Uint8(t *testing.T) {
+	assert.Equal(t, uint8(7), Cyan.Uint8())
+}
 
 func TestChroma_Value(t *testing.T) {
 	lum := []Luminance{1, 16, 2, 4, 15, 16, 1, 0, 8}

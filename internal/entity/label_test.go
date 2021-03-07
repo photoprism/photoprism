@@ -71,7 +71,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 	}
 }
 
-func TestLabel_Update(t *testing.T) {
+func TestLabel_UpdateClassify(t *testing.T) {
 	t.Run("update priority and label slug", func(t *testing.T) {
 		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
 		Label := &Label{LabelName: "label", LabelSlug: "", CustomSlug: "customslug", LabelPriority: 4}
@@ -194,6 +194,14 @@ func TestLabel_Restore(t *testing.T) {
 		}
 		assert.False(t, label.Deleted())
 	})
+	t.Run("label not deleted", func(t *testing.T) {
+		label := &Label{DeletedAt: nil, LabelName: "NotDeleted1234"}
+		err := label.Restore()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, label.Deleted())
+	})
 }
 
 func TestFindLabel(t *testing.T) {
@@ -219,4 +227,21 @@ func TestLabel_Links(t *testing.T) {
 		links := label.Links()
 		assert.Equal(t, "6jxf3jfn2k", links[0].LinkToken)
 	})
+}
+
+func TestLabel_Update(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		label := &Label{LabelSlug: "to-be-updated", LabelName: "Update Me Please"}
+		err := label.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err2 := label.Update("LabelSlug", "my-unique-slug")
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		assert.Equal(t, "my-unique-slug", label.LabelSlug)
+	})
+
 }

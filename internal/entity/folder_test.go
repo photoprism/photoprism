@@ -82,7 +82,7 @@ func TestNewFolder(t *testing.T) {
 	})
 
 	t.Run("pathName equals root path", func(t *testing.T) {
-		folder := NewFolder("", "", time.Now().UTC())
+		folder := NewFolder("", RootPath, time.Now().UTC())
 		assert.Equal(t, "", folder.Path)
 	})
 }
@@ -140,9 +140,18 @@ func TestFolder_Title(t *testing.T) {
 	})
 }
 
+func TestFolder_RootPath(t *testing.T) {
+	t.Run("/rainbow", func(t *testing.T) {
+		folder := Folder{FolderTitle: "Beautiful beach", Root: "/", Path: "rainbow"}
+		assert.Equal(t, "/rainbow", folder.RootPath())
+	})
+}
 func TestFindFolder(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		assert.Nil(t, FindFolder("vvfgt", "jgfuyf"))
+	})
+	t.Run("pathName === rootPath", func(t *testing.T) {
+		assert.Nil(t, FindFolder("vvfgt", RootPath))
 	})
 }
 
@@ -183,5 +192,18 @@ func TestFolder_SetForm(t *testing.T) {
 		assert.Equal(t, "", folder.Root)
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Beautiful beach", folder.FolderTitle)
+	})
+}
+
+func TestFolder_Create(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		folder := Folder{FolderTitle: "Holiday 2020", Root: RootOriginals, Path: "2020/Greece"}
+		err := folder.Create()
+		if err != nil {
+			t.Fatal(err)
+		}
+		result := FindFolder(RootOriginals, "2020/Greece")
+		assert.Equal(t, "2020-greece", result.Slug())
+		assert.Equal(t, "Holiday 2020", result.Title())
 	})
 }

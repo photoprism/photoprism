@@ -43,3 +43,9 @@ func TestConfig_TemplateName(t *testing.T) {
 	assert.Equal(t, "index.tmpl", c.TemplateName())
 
 }
+
+func TestConfig_HttpCompression(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.HttpCompression())
+}
