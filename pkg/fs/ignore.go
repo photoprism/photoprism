@@ -133,7 +133,7 @@ func (l *IgnoreList) Ignore(fileName string) bool {
 	dir := filepath.Dir(fileName)
 	base := filepath.Base(fileName)
 
-	if l.caseSensitive == false {
+	if !l.caseSensitive {
 		dir = strings.ToLower(dir)
 		base = strings.ToLower(base)
 	}

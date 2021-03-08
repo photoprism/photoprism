@@ -81,7 +81,7 @@ func FilenameKeywords(s string) (results []string) {
 			continue
 		}
 
-		if _, ok := StopWords[w]; ok == false {
+		if _, ok := StopWords[w]; !ok {
 			results = append(results, w)
 		}
 	}
@@ -102,7 +102,7 @@ func Keywords(s string) (results []string) {
 			continue
 		}
 
-		if _, ok := StopWords[w]; ok == false {
+		if _, ok := StopWords[w]; !ok {
 			results = append(results, w)
 		}
 	}
