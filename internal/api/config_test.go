@@ -19,3 +19,21 @@ func TestGetConfig(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
+
+func TestGetConfigOptions(t *testing.T) {
+	t.Run("unauthorised", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetConfigOptions(router)
+		r := PerformRequest(app, "GET", "/api/v1/config/options")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
+}
+
+func TestSaveConfigOptions(t *testing.T) {
+	t.Run("unauthorised", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SaveConfigOptions(router)
+		r := PerformRequest(app, "POST", "/api/v1/config/options")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
+}
