@@ -408,7 +408,16 @@ func (c *Config) GeoApi() string {
 		return ""
 	}
 
-	return "places"
+	switch strings.ToLower(c.options.GeocodingApi) {
+	case "places":
+		return "places"
+	case "osm":
+		return "osm"
+	case "none":
+		return ""
+	default:
+		return "places"
+	}
 }
 
 // OriginalsLimit returns the file size limit for originals.

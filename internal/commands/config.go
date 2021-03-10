@@ -128,5 +128,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "jpeg-size", conf.JpegSize())
 	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
 
+	// Geocoding
+	fmt.Printf("%-25s %s\n", "geocoding-api", conf.GeoApi())
+
 	return nil
 }

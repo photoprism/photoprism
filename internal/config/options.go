@@ -104,6 +104,7 @@ type Options struct {
 	ThumbSizeUncached int    `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
 	JpegSize          int    `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
 	JpegQuality       int    `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
+	GeocodingApi      string `yaml:"GeocodingApi" json:"GeocodingApi" flag:"geocoding-api"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:
