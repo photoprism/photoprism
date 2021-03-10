@@ -1261,7 +1261,7 @@ var PhotoFixtures = PhotoMap{
 		TakenSrc:         SrcMeta,
 		PhotoTitle:       "photowitheditedatdate",
 		TitleSrc:         "",
-		PhotoPath:        "2007/christmas",
+		PhotoPath:        "2007/12",
 		PhotoName:        "PhotoWithEditedAt",
 		OriginalName:     "OriginalPhotoWithEditedAt",
 		PhotoQuality:     5,
