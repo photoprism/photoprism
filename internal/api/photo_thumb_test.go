@@ -25,7 +25,25 @@ func TestGetThumb(t *testing.T) {
 	t.Run("could not find original", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetThumb(router)
-		r := PerformRequest(app, "GET", "/api/v1/t/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818/"+conf.PreviewToken()+"/tile_500")
+		r := PerformRequest(app, "GET", "/api/v1/t/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818/"+conf.PreviewToken()+"/fit_7680")
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("invalid token", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetThumb(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818/xxx/tile_500")
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("no jpg", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		GetThumb(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/pcad9168fa6acc5c5ba965adf6ec465ca42fd819/"+conf.PreviewToken()+"/fit_7680")
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("file error", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		GetThumb(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/acad9168fa6acc5c5c2965ddf6ec465ca42fd832/"+conf.PreviewToken()+"/fit_7680")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
