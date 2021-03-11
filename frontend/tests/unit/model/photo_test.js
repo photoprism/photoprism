@@ -334,7 +334,6 @@ describe("model/photo", () => {
     const values2 = {ID: 10, UID: "ABC127", Type: "video", Portrait: true, Favorite: true, Private: true,  Files: [{UID: "123fgb", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Video: true, Width: 500, Height: 600, Hash: "1xxbgdt55"}, {UID: "123fde", Name: "1980/01/superCuteKitten.mp4", Primary: false, Type: "mp4", Width: 500, Height: 600, Hash: "1xxbgdkkk"}]};
     const photo2 = new Photo(values2);
     const result2 = photo2.classes();
-    console.log(result2);
     assert.include(result2, "is-photo");
     assert.include(result2, "uid-ABC127");
     assert.include(result2, "type-video");
@@ -545,6 +544,10 @@ describe("model/photo", () => {
   it("should get collection resource",  () => {
     const result = Photo.getCollectionResource();
     assert.equal(result, "photos");
+  });
+
+  it("should return batch size",  () => {
+    assert.equal(Photo.batchSize(), 60);
   });
 
   it("should get model name",  () => {
