@@ -10,6 +10,24 @@ let assert = chai.assert;
 
 describe("model/file", () => {
 
+    it("should return classes",  () => {
+        const values = {
+            InstanceID: 5,
+            UID: "ABC123",
+            Name: "1/2/IMG123.jpg",
+            Primary: true,
+            Sidecar: true,
+            Video: true};
+        const file = new File(values);
+        const result = file.classes(true);
+        assert.include(result, "is-file");
+        assert.include(result, "uid-ABC123");
+        assert.include(result, "is-primary");
+        assert.include(result, "is-sidecar");
+        assert.include(result, "is-video");
+        assert.include(result, "is-selected");
+    });
+
     it("should get file defaults",  () => {
         const values = {
             InstanceID: 5,

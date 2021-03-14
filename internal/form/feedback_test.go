@@ -15,4 +15,11 @@ func TestFeedback_Empty(t *testing.T) {
 		feedback := Feedback{Message: "I found a bug", Category: "Bug Report", UserEmail: "test@test.com"}
 		assert.False(t, feedback.Empty())
 	})
+	t.Run("false", func(t *testing.T) {
+		feedback, err := NewFeedback("")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, feedback.Empty())
+	})
 }

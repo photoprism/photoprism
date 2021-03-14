@@ -17,6 +17,15 @@ func TestFolderCoverByUID(t *testing.T) {
 			t.Errorf("wrong result: %#v", result)
 		}
 	})
+	t.Run("2007/12", func(t *testing.T) {
+		if result, err := FolderCoverByUID("dqo63pn2f87f02oi"); err != nil {
+			t.Fatal(err)
+		} else if result.FileUID == "" {
+			t.Fatal("result must not be empty")
+		} else if result.FileUID != "ft2es49qhhinlplk" {
+			t.Errorf("wrong result: %#v", result)
+		}
+	})
 }
 
 func TestFoldersByPath(t *testing.T) {
@@ -52,7 +61,7 @@ func TestAlbumFolders(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Len(t, folders, 1)
+		assert.GreaterOrEqual(t, len(folders), 1)
 
 		t.Logf("folders: %+v", folders)
 	})

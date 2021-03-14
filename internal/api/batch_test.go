@@ -210,3 +210,54 @@ func TestBatchLabelsDelete(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
+
+func TestBatchPhotosApprove(t *testing.T) {
+	t.Run("successful request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetPhoto(router)
+		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y50")
+		assert.Equal(t, http.StatusOK, r.Code)
+		val := gjson.Get(r.Body.String(), "Quality")
+		assert.Equal(t, "1", val.String())
+		val4 := gjson.Get(r.Body.String(), "EditedAt")
+		assert.Empty(t, val4.String())
+
+		BatchPhotosApprove(router)
+		r2 := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/approve", `{"photos": ["pt9jtdre2lvl0y50", "pt9jtdre2lvl0y90"]}`)
+		val2 := gjson.Get(r2.Body.String(), "message")
+		assert.Contains(t, val2.String(), "Selection approved")
+		assert.Equal(t, http.StatusOK, r2.Code)
+
+		r3 := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y50")
+		assert.Equal(t, http.StatusOK, r3.Code)
+		val5 := gjson.Get(r3.Body.String(), "Quality")
+		assert.Equal(t, "7", val5.String())
+		val6 := gjson.Get(r3.Body.String(), "EditedAt")
+		assert.NotEmpty(t, val6.String())
+	})
+	t.Run("no items selected", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosApprove(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/approve", `{"photos": []}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("invalid request", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosApprove(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/approve", `{"photos": 123}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+}
+
+func TestBatchPhotosDelete(t *testing.T) {
+	t.Run("feature disabled", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosDelete(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/delete", `{"photos": []}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, i18n.Msg(i18n.ErrFeatureDisabled), val.String())
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+}

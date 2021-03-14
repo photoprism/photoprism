@@ -233,6 +233,14 @@ func TestTime(t *testing.T) {
 		result := Time("2020-01-00.jpg")
 		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
 	})
+	t.Run("IMG-20191120-WA0001.jpg", func(t *testing.T) {
+		result := Time("IMG-20191120-WA0001.jpg")
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("VID-20191120-WA0001.jpg", func(t *testing.T) {
+		result := Time("VID-20191120-WA0001.jpg")
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
 }
 
 func TestIsTime(t *testing.T) {
