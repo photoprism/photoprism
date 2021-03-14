@@ -82,7 +82,6 @@
   "scope": "/",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "any",
   "theme_color": "#333333",
   "background_color": "#333333",
   "permissions": [
