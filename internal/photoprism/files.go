@@ -52,12 +52,11 @@ func (m *Files) Init() error {
 
 // Done should be called after all files have been processed.
 func (m *Files) Done() {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
 	if (len(m.files) - m.count) == 0 {
 		return
 	}
-
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
 
 	m.count = 0
 	m.files = make(query.FileMap)
