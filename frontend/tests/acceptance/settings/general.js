@@ -34,8 +34,10 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector(".action-download").exists)
     .ok()
     .click(Selector(".action-close"));
-  if (await Selector(".action-close").exists) {
-    await t.click(Selector(".action-close"));
+  if (t.browser.os.name !== "macOS") {
+    if (await Selector(".action-close").exists) {
+      await t.click(Selector(".action-close"));
+    }
   }
   await t
     .expect(Selector("button.action-location").visible)
@@ -160,7 +162,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector(".action-download").exists)
     .notOk()
     .click(Selector(".action-close"));
-  if (await Selector(".action-close").exists) {
+  if (await Selector(".action-close").visible) {
     await t.click(Selector(".action-close"));
   }
   await page.toggleSelectNthPhoto(0);

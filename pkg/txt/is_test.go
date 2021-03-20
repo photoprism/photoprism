@@ -39,6 +39,9 @@ func TestIs(t *testing.T) {
 		assert.True(t, Is(unicode.L, "réseau"))
 		assert.True(t, Is(unicode.Letter, "réseau"))
 	})
+	t.Run("empty", func(t *testing.T) {
+		assert.False(t, Is(unicode.Latin, ""))
+	})
 }
 
 func TestIsASCII(t *testing.T) {
@@ -83,5 +86,8 @@ func TestIsLatin(t *testing.T) {
 	})
 	t.Run("réseau", func(t *testing.T) {
 		assert.True(t, IsLatin("réseau"))
+	})
+	t.Run("empty", func(t *testing.T) {
+		assert.False(t, IsLatin(""))
 	})
 }

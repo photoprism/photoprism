@@ -18,6 +18,27 @@ mock
 
 describe("model/folder", () => {
 
+    it("should return classes",  () => {
+        const values = {
+            Folder: true,
+            Path: "2011/10-Halloween",
+            UID: "dqbevau2zlhxrxww",
+            Title: "Halloween Party",
+            Favorite: true,
+            Private: true,
+            Ignore: false,
+            Watch: false,
+            FileCount: 0,
+        };
+        const folder = new Folder(values);
+        const result = folder.classes(true);
+        assert.include(result, "is-folder");
+        assert.include(result, "uid-dqbevau2zlhxrxww");
+        assert.include(result, "is-favorite");
+        assert.include(result, "is-private");
+        assert.include(result, "is-selected");
+    });
+
     it("should get folder defaults",  () => {
         const values = {
             Folder: true,

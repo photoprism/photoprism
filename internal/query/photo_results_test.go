@@ -388,4 +388,68 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		r := result1.ShareBase(0)
 		assert.Contains(t, r, "20151111-090718-uid123")
 	})
+
+	t.Run("seq > 0", func(t *testing.T) {
+		result1 := PhotoResult{
+			ID:               111111,
+			CreatedAt:        time.Time{},
+			UpdatedAt:        time.Time{},
+			DeletedAt:        time.Time{},
+			TakenAt:          time.Date(2022, 11, 11, 9, 7, 18, 0, time.UTC),
+			TakenAtLocal:     time.Date(2022, 11, 11, 9, 7, 18, 0, time.UTC),
+			TakenSrc:         "",
+			TimeZone:         "",
+			PhotoUID:         "uid123",
+			PhotoPath:        "",
+			PhotoName:        "",
+			PhotoTitle:       "PhotoTitle123",
+			PhotoYear:        0,
+			PhotoMonth:       0,
+			PhotoCountry:     "",
+			PhotoFavorite:    false,
+			PhotoPrivate:     false,
+			PhotoLat:         0,
+			PhotoLng:         0,
+			PhotoAltitude:    0,
+			PhotoIso:         0,
+			PhotoFocalLength: 0,
+			PhotoFNumber:     0,
+			PhotoExposure:    "",
+			PhotoQuality:     0,
+			PhotoResolution:  0,
+			Merged:           false,
+			CameraID:         0,
+			CameraModel:      "",
+			CameraMake:       "",
+			LensID:           0,
+			LensModel:        "",
+			LensMake:         "",
+			CellID:           "",
+			PlaceID:          "",
+			PlaceLabel:       "",
+			PlaceCity:        "",
+			PlaceState:       "",
+			PlaceCountry:     "",
+			FileID:           0,
+			FileUID:          "",
+			FilePrimary:      false,
+			FileMissing:      false,
+			FileName:         "",
+			FileHash:         "",
+			FileType:         "",
+			FileMime:         "",
+			FileWidth:        0,
+			FileHeight:       0,
+			FileOrientation:  0,
+			FileAspectRatio:  0,
+			FileColors:       "",
+			FileChroma:       0,
+			FileLuminance:    "",
+			FileDiff:         0,
+			Files:            nil,
+		}
+
+		r := result1.ShareBase(3)
+		assert.Contains(t, r, "20221111-090718-Phototitle123 (3)")
+	})
 }

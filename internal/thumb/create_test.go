@@ -233,6 +233,24 @@ func TestFromFile(t *testing.T) {
 		assert.FileExists(t, dst)
 	})
 
+	t.Run("orientation >1 ", func(t *testing.T) {
+		colorThumb := Types["colors"]
+		src := "testdata/example.gif"
+		dst := "testdata/1/2/3/123456789098765432_3x3_resize.png"
+
+		assert.FileExists(t, src)
+
+		fileName, err := FromFile(src, "123456789098765432", "testdata", colorThumb.Width, colorThumb.Height, 3, colorThumb.Options...)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, dst, fileName)
+
+		assert.FileExists(t, dst)
+	})
+
 	t.Run("missing file", func(t *testing.T) {
 		colorThumb := Types["colors"]
 		src := "testdata/example.xxx"
@@ -348,6 +366,43 @@ func TestCreate(t *testing.T) {
 
 		assert.Equal(t, 500, boundsNew.Max.X)
 		assert.Equal(t, 500, boundsNew.Max.Y)
+	})
+	t.Run("width & height <= 150", func(t *testing.T) {
+		tile500 := Types["tile_500"]
+		src := "testdata/example.jpg"
+		dst := "testdata/example.tile_500.jpg"
+
+		assert.FileExists(t, src)
+		assert.NoFileExists(t, dst)
+
+		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		bounds := img.Bounds()
+
+		assert.Equal(t, 750, bounds.Max.X)
+		assert.Equal(t, 500, bounds.Max.Y)
+
+		resized, err := Create(img, dst, 150, 150, tile500.Options...)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.FileExists(t, dst)
+
+		if err := os.Remove(dst); err != nil {
+			t.Fatal(err)
+		}
+
+		imgNew := resized
+		boundsNew := imgNew.Bounds()
+
+		assert.Equal(t, 150, boundsNew.Max.X)
+		assert.Equal(t, 150, boundsNew.Max.Y)
 	})
 	t.Run("invalid width", func(t *testing.T) {
 		tile500 := Types["tile_500"]

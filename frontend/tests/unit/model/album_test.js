@@ -16,6 +16,26 @@ mock
     .onDelete().reply(200);
 
 describe("model/album", () => {
+    it("should get route view",  () => {
+        const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019"};
+        const album = new Album(values);
+        const result = album.route("test");
+        assert.equal(result.name, "test");
+        assert.equal(result.params.slug, "christmas-2019");
+    });
+
+    it("should return classes",  () => {
+        const values = {UID: 5, Title: "Christmas 2019", Slug: "christmas-2019", Type: "moment", Favorite: true, Private: true};
+        const album = new Album(values);
+        const result = album.classes(true);
+        assert.include(result, "is-album");
+        assert.include(result, "uid-5");
+        assert.include(result, "type-moment");
+        assert.include(result, "is-selected");
+        assert.include(result, "is-favorite");
+        assert.include(result, "is-private");
+    });
+
     it("should get album entity name",  () => {
         const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019"};
         const album = new Album(values);
@@ -94,6 +114,10 @@ describe("model/album", () => {
     it("should get collection resource",  () => {
         const result = Album.getCollectionResource();
         assert.equal(result, "albums");
+    });
+
+    it("should return batch size",  () => {
+        assert.equal(Album.batchSize(), 24);
     });
 
     it("should like album",  () => {

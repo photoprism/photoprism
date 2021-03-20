@@ -629,7 +629,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Original = "xxyy"
 		f.Path = "/xxx|xxx"
 		f.Type = "mp4"
-		f.Stack = true
+		f.Stackable = true
 		f.Unsorted = true
 		f.Filter = ""
 		f.Order = entity.SortOrderAdded
@@ -644,4 +644,92 @@ func TestPhotoSearch(t *testing.T) {
 
 		assert.IsType(t, PhotoResults{}, photos)
 	})
+	t.Run("search all recently edited", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Order = entity.SortOrderEdited
+
+		photos, _, err := PhotoSearch(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, PhotoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("search unstacked panoramas", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Panorama = true
+		frm.Stackable = false
+		frm.Unstacked = true
+
+		photos, _, err := PhotoSearch(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, PhotoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("Or search", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Name = "xxx|PhotoWithEditedAt"
+		frm.Filename = "xxx|Photo25.jpg"
+		frm.Original = "xxx|OriginalPhotoWithEditedAt"
+		frm.Title = "xxx|photowitheditedatdate"
+		frm.Hash = "xxx|pcad9a68fa6acc5c5ba965adf6ec465ca42fd887"
+
+		photos, _, err := PhotoSearch(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Log(photos[0].PhotoTitle)
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, PhotoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+
 }

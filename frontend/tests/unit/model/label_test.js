@@ -17,6 +17,29 @@ mock
     .onDelete().reply(200);
 
 describe("model/label", () => {
+    it("should get route view",  () => {
+        const values = {ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat"};
+        const label = new Label(values);
+        const result = label.route("test");
+        console.log(result)
+        assert.equal(result.name, "test");
+        assert.equal(result.query.q, "label:black-cat");
+    });
+
+    it("should return batch size",  () => {
+        assert.equal(Label.batchSize(), 24);
+    });
+
+    it("should return classes",  () => {
+        const values = {ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat", Favorite: true};
+        const label = new Label(values);
+        const result = label.classes(true);
+        assert.include(result, "is-label");
+        assert.include(result, "uid-ABC123");
+        assert.include(result, "is-selected");
+        assert.include(result, "is-favorite");
+    });
+
     it("should get label entity name",  () => {
         const values = {ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat"};
         const label = new Label(values);
