@@ -38,10 +38,10 @@ describe("model/album", () => {
     });
 
     it("should get thumbnail url",  () => {
-        const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66};
+        const values = {id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66, CoverUID: 123};
         const album = new Album(values);
         const result = album.thumbnailUrl("xyz");
-        assert.equal(result, "/api/v1/albums/66/t/public/xyz");
+        assert.equal(result, "/api/v1/albums/66/t/public/xyz?123");
     });
 
     it("should get created date string",  () => {
