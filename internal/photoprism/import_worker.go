@@ -152,7 +152,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
-			done := make(map[string]bool)
+			done := make(map[string]*struct{})
 			ind := imp.index
 			sizeLimit := ind.conf.OriginalsLimit()
 
@@ -168,7 +168,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				res := ind.MediaFile(f, indexOpt, originalName)
 
 				log.Infof("import: %s main %s file %s", res, f.FileType(), txt.Quote(f.RelName(ind.originalsPath())))
-				done[f.FileName()] = true
+				done[f.FileName()] = &struct{}{}
 
 				if res.Success() {
 					if err := entity.AddPhotoToAlbums(res.PhotoUID, opt.Albums); err != nil {
@@ -186,11 +186,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				if done[f.FileName()] {
+				if done[f.FileName()] != nil {
 					continue
 				}
 
-				done[f.FileName()] = true
+				done[f.FileName()] = &struct{}{}
 
 				// Enforce file size limit for originals.
 				if sizeLimit > 0 && f.FileSize() > sizeLimit {

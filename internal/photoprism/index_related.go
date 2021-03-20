@@ -71,7 +71,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 // IndexMain indexes a group of related files and returns the result.
 func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
-	done := make(map[string]bool)
+	done := make(map[string]*struct{})
 	sizeLimit := ind.conf.OriginalsLimit()
 
 	result = IndexMain(&related, ind, opt)
@@ -84,7 +84,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 		return result
 	}
 
-	done[related.Main.FileName()] = true
+	done[related.Main.FileName()] = &struct{}{}
 
 	i := 0
 
@@ -96,11 +96,11 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			continue
 		}
 
-		if done[f.FileName()] {
+		if done[f.FileName()] != nil {
 			continue
 		}
 
-		done[f.FileName()] = true
+		done[f.FileName()] = &struct{}{}
 
 		// Enforce file size limit for originals.
 		if sizeLimit > 0 && f.FileSize() > sizeLimit {
