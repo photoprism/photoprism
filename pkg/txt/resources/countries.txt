@@ -407,7 +407,6 @@ CA:Ottawa
 CA:Quebec
 CA:Ontario
 CA:Alberta
-CA:Niagara Falls
 IL:Israel
 IL:Holy Land
 EG:Egypt
