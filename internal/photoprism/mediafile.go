@@ -239,7 +239,7 @@ func (m *MediaFile) CanonicalNameFromFileWithDirectory() string {
 	return m.Dir() + string(os.PathSeparator) + m.CanonicalNameFromFile()
 }
 
-// Hash returns the SHA1 hash of a media file.
+// Hash returns the hash of a media file.
 func (m *MediaFile) Hash() string {
 	if len(m.hash) == 0 {
 		m.hash = fs.Hash(m.FileName())

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -67,7 +67,7 @@ func (c *Config) Sanitize() {
 	c.Key = strings.ToLower(c.Key)
 
 	if c.Secret != "" {
-		if c.Key != fmt.Sprintf("%x", sha1.Sum([]byte(c.Secret))) {
+		if c.Key != fmt.Sprintf("%x", sha512.New512_256().Sum([]byte(c.Secret))) {
 			c.Key = ""
 			c.Secret = ""
 			c.Session = ""

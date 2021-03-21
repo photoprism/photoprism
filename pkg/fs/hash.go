@@ -1,14 +1,14 @@
 package fs
 
 import (
-	"crypto/sha1"
+	"crypto/sha512"
 	"encoding/hex"
 	"hash/crc32"
 	"io"
 	"os"
 )
 
-// Hash returns the SHA1 hash of a file as string.
+// Hash returns the hash of a file as string.
 func Hash(fileName string) string {
 	var result []byte
 
@@ -20,7 +20,7 @@ func Hash(fileName string) string {
 
 	defer file.Close()
 
-	hash := sha1.New()
+	hash := sha512.New512_256()
 
 	if _, err := io.Copy(hash, file); err != nil {
 		return ""

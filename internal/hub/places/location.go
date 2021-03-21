@@ -1,7 +1,7 @@
 package places
 
 import (
-	"crypto/sha1"
+	"crypto/sha512"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -79,7 +79,7 @@ func FindLocation(id string) (result Location, err error) {
 
 	if Key != "" {
 		req.Header.Set("X-Key", Key)
-		req.Header.Set("X-Signature", fmt.Sprintf("%x", sha1.Sum([]byte(Key+url+Secret))))
+		req.Header.Set("X-Signature", fmt.Sprintf("%x", sha512.New512_256().Sum([]byte(Key+url+Secret))))
 	}
 
 	var r *http.Response
