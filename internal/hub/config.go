@@ -67,7 +67,6 @@ func (c *Config) Sanitize() {
 	c.Key = strings.ToLower(c.Key)
 
 	if c.Secret != "" {
-		fmt.Println(fmt.Sprintf("%x", sha512.New512_256().Sum([]byte(c.Secret))))
 		if c.Key != fmt.Sprintf("%x", sha512.New512_256().Sum([]byte(c.Secret))) {
 			c.Key = ""
 			c.Secret = ""
