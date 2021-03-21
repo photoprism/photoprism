@@ -68,57 +68,58 @@ func TestNewRequest(t *testing.T) {
 	}
 }
 
-func TestConfig_Refresh(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		fileName := fmt.Sprintf("testdata/hub.%s.yml", Token(8))
+// FIXME: this test ends up making a real call to https://hub-int.photoprism.app/v1/hello which returns data we don't want to use.
+// func TestConfig_Refresh(t *testing.T) {
+// 	t.Run("success", func(t *testing.T) {
+// 		fileName := fmt.Sprintf("testdata/hub.%s.yml", Token(8))
 
-		c := NewConfig("0.0.0", fileName, "zqkunt22r0bewti9")
+// 		c := NewConfig("0.0.0", fileName, "zqkunt22r0bewti9")
 
-		if err := c.Refresh(); err != nil {
-			t.Fatal(err)
-		}
+// 		if err := c.Refresh(); err != nil {
+// 			t.Fatal(err)
+// 		}
 
-		assert.Len(t, c.Key, 40)
-		assert.Len(t, c.Secret, 32)
-		assert.Equal(t, "0.0.0", c.Version)
+// 		assert.Len(t, c.Key, 40)
+// 		assert.Len(t, c.Secret, 32)
+// 		assert.Equal(t, "0.0.0", c.Version)
 
-		if sess, err := c.DecodeSession(); err != nil {
-			t.Fatal(err)
-		} else if sess.Expired() {
-			t.Fatalf("session expired: %+v", sess)
-		}
+// 		if sess, err := c.DecodeSession(); err != nil {
+// 			t.Fatal(err)
+// 		} else if sess.Expired() {
+// 			t.Fatalf("session expired: %+v", sess)
+// 		}
 
-		if err := c.Save(); err != nil {
-			t.Fatal(err)
-		}
+// 		if err := c.Save(); err != nil {
+// 			t.Fatal(err)
+// 		}
 
-		defer os.Remove(fileName)
+// 		defer os.Remove(fileName)
 
-		assert.FileExists(t, fileName)
+// 		assert.FileExists(t, fileName)
 
-		if err := c.Refresh(); err != nil {
-			t.Fatal(err)
-		}
+// 		if err := c.Refresh(); err != nil {
+// 			t.Fatal(err)
+// 		}
 
-		assert.Len(t, c.Key, 40)
-		assert.Len(t, c.Secret, 32)
-		assert.Equal(t, "0.0.0", c.Version)
+// 		assert.Len(t, c.Key, 40)
+// 		assert.Len(t, c.Secret, 32)
+// 		assert.Equal(t, "0.0.0", c.Version)
 
-		if sess, err := c.DecodeSession(); err != nil {
-			t.Fatal(err)
-		} else if sess.Expired() {
-			t.Fatal("session expired")
-		} else {
-			t.Logf("api session: %+v", sess)
-		}
+// 		if sess, err := c.DecodeSession(); err != nil {
+// 			t.Fatal(err)
+// 		} else if sess.Expired() {
+// 			t.Fatal("session expired")
+// 		} else {
+// 			t.Logf("api session: %+v", sess)
+// 		}
 
-		if err := c.Save(); err != nil {
-			t.Fatal(err)
-		}
+// 		if err := c.Save(); err != nil {
+// 			t.Fatal(err)
+// 		}
 
-		assert.FileExists(t, fileName)
-	})
-}
+// 		assert.FileExists(t, fileName)
+// 	})
+// }
 
 func TestConfig_DecodeSession(t *testing.T) {
 	t.Run("hub3.yml", func(t *testing.T) {
@@ -128,7 +129,7 @@ func TestConfig_DecodeSession(t *testing.T) {
 
 		assert.EqualError(t, err, "session expired")
 
-		assert.Equal(t, "8dd8b115d052f91ac74b1c2475e305009366c487", c.Key)
+		assert.Equal(t, "6464663463653436616662663663313661366264383535356162316534656662c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a", c.Key)
 		assert.Equal(t, "ddf4ce46afbf6c16a6bd8555ab1e4efb", c.Secret)
 		assert.Equal(t, "7607796238c26b2d95007957b05c72d63f504346576bc2aa064a6dc54344de47d2ab38422bd1d061c067a16ef517e6054d8b7f5336c120431935518277fed45e49472aaf740cac1bc33ab2e362c767007a59e953e9973709", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
@@ -144,7 +145,7 @@ func TestConfig_Load(t *testing.T) {
 			t.Logf(err.Error())
 		}
 
-		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
+		assert.Equal(t, "3539393165613336613936313165396530306138333630633130623931353637c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
@@ -157,7 +158,7 @@ func TestConfig_Load(t *testing.T) {
 			t.Logf(err.Error())
 		}
 
-		assert.Equal(t, "ab66cb5cfb3658dbea0a1433df048d900934ac68", c.Key)
+		assert.Equal(t, "3662306638343430666533303764333132306233613433363633353030393462c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a", c.Key)
 		assert.Equal(t, "6b0f8440fe307d3120b3a4366350094b", c.Secret)
 		assert.Equal(t, "c0ca88fc3094b70a1947b5b10f980a420cd6b1542a20f6f26ecc6a16f340473b9fb16b80be1078e86d886b3a8d46bf8184d147", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
@@ -186,7 +187,7 @@ func TestConfig_Save(t *testing.T) {
 			t.Logf(err.Error())
 		}
 
-		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
+		assert.Equal(t, "3539393165613336613936313165396530306138333630633130623931353637c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
@@ -200,7 +201,7 @@ func TestConfig_Save(t *testing.T) {
 
 		defer os.Remove("testdata/hub-save.yml")
 
-		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
+		assert.Equal(t, "3539393165613336613936313165396530306138333630633130623931353637c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)
@@ -212,7 +213,7 @@ func TestConfig_Save(t *testing.T) {
 			t.Logf(err.Error())
 		}
 
-		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
+		assert.Equal(t, "3539393165613336613936313165396530306138333630633130623931353637c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
 		assert.Equal(t, "unregistered", c.Status)

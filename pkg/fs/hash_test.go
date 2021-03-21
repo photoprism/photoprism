@@ -9,7 +9,7 @@ import (
 func TestHash(t *testing.T) {
 	t.Run("existing image", func(t *testing.T) {
 		hash := Hash("testdata/test.jpg")
-		assert.Equal(t, "516cb1fefbfd9fa66f1db50b94503a480cee30db", hash)
+		assert.Equal(t, "9e7c20fd7eec6dfb0a2f1e006113cdf8fc00d2c6790071ae0b13063d9ea9324b", hash)
 	})
 	t.Run("not existing image", func(t *testing.T) {
 		hash := Hash("testdata/xxx.jpg")
