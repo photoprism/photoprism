@@ -39,6 +39,7 @@ var UnwantedDescriptions = map[string]bool{
 	"Exif_JPEG_PICTURE":        true,
 	"<Digimax i5, Samsung #1>": true,
 	"DVC 10.1 HDMI":            true,
+	"charset=Ascii":            true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")
