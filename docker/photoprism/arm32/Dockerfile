@@ -76,7 +76,7 @@ ENV GOLANG_VERSION 1.16
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-armv6l.tar.gz"; \
-	wget -O go.tgz "$url"; \
+	curl -o go.tgz -L "$url"; \
 	echo "d1d9404b1dbd77afa2bdc70934e10fbfcf7d785c372efc29462bb7d83d0a32fd *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
@@ -93,8 +93,8 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
-RUN wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip
-RUN wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip
+RUN curl "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -o /tmp/photoprism/nsfw.zip
+RUN curl "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -o /tmp/photoprism/nasnet.zip
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
