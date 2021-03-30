@@ -3,6 +3,8 @@ package meta
 import (
 	"encoding/xml"
 	"io/ioutil"
+	"strings"
+	"time"
 )
 
 // XmpDocument represents an XMP sidecar file.
@@ -75,6 +77,10 @@ type XmpDocument struct {
 					Text string   `xml:",chardata" json:"text,omitempty"`
 					Li   []string `xml:"li"` // desk, coffee, computer
 				} `xml:"Bag" json:"bag,omitempty"`
+				Seq struct {
+					Text string   `xml:",chardata" json:"text,omitempty"`
+					Li   []string `xml:"li"` // desk, coffee, computer
+				} `xml:"Seq" json:"seq,omitempty"`
 			} `xml:"subject" json:"subject,omitempty"`
 			Rights struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
@@ -203,7 +209,14 @@ func (doc *XmpDocument) Load(filename string) error {
 }
 
 func (doc *XmpDocument) Title() string {
-	return SanitizeTitle(doc.RDF.Description.Title.Alt.Li.Text)
+	t := doc.RDF.Description.Title.Alt.Li.Text
+	t2 := doc.RDF.Description.Title.Text
+	if t != "" {
+		return SanitizeTitle(t)
+	} else if t2 != "" {
+		return SanitizeTitle(t2)
+	}
+	return ""
 }
 
 func (doc *XmpDocument) Artist() string {
@@ -211,7 +224,14 @@ func (doc *XmpDocument) Artist() string {
 }
 
 func (doc *XmpDocument) Description() string {
-	return SanitizeDescription(doc.RDF.Description.Description.Alt.Li.Text)
+	d := doc.RDF.Description.Description.Alt.Li.Text
+	d2 := doc.RDF.Description.Description.Text
+	if d != "" {
+		return SanitizeDescription(d)
+	} else if d2 != "" {
+		return SanitizeTitle(d2)
+	}
+	return ""
 }
 
 func (doc *XmpDocument) Copyright() string {
@@ -228,4 +248,22 @@ func (doc *XmpDocument) CameraModel() string {
 
 func (doc *XmpDocument) LensModel() string {
 	return SanitizeString(doc.RDF.Description.LensModel)
+}
+
+func (doc *XmpDocument) DateCreated() time.Time {
+	s := doc.RDF.Description.DateCreated
+
+	if tv, err := time.Parse(time.RFC3339, s); err == nil {
+		return tv
+	} else if tv2, err2 := time.Parse("2006-01-02T15:04:05.999999999", s); err2 == nil {
+		return tv2
+	}
+
+	return time.Time{}
+}
+
+func (doc *XmpDocument) Keywords() string {
+	s := doc.RDF.Description.Subject.Seq.Li
+
+	return strings.Join(s, ", ")
 }
