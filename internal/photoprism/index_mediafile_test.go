@@ -14,6 +14,35 @@ func TestIndex_MediaFile(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
+	//TODO This test MUST run if https://github.com/photoprism/photoprism/issues/1153 is fixed
+	/*t.Run("/exifWithFlashDescriptionProjectionKeywordsSmall", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		conf.InitializeTestData(t)
+
+		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
+		nd := nsfw.New(conf.NSFWModelPath())
+		convert := NewConvert(conf)
+
+		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		indexOpt := IndexOptionsAll()
+		mediaFile, err := NewMediaFile("../meta/testdata/exifWithFlashDescriptionProjectionKeywordsSmall.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "", mediaFile.metaData.Keywords)
+
+		result := ind.MediaFile(mediaFile, indexOpt, "exifWithFlashDescriptionProjectionKeywordsSmall.jpg")
+
+		assert.Contains(t, mediaFile.metaData.Keywords, "Marienkäfer")
+		assert.Contains(t, mediaFile.metaData.Keywords, "burst")
+		assert.Contains(t, mediaFile.metaData.Keywords, "flash")
+		assert.Contains(t, mediaFile.metaData.Keywords, "panorama")
+		assert.Equal(t, "Animal with green eyes on table burst", mediaFile.metaData.Description)
+		assert.Equal(t, IndexStatus("added"), result.Status)
+	})*/
+
 	t.Run("/blue-go-video.mp4", func(t *testing.T) {
 		conf := config.TestConfig()
 
