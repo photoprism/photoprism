@@ -19,23 +19,16 @@ import (
 // GET /api/v1/index
 func IndexingStatus(router *gin.RouterGroup) {
 	router.GET("/index", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionRead)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionUpdate)
 
 		if s.Invalid() {
 			AbortUnauthorized(c)
 			return
 		}
 
-		conf := service.Config()
-
-		if !conf.Settings().Features.Library {
-			AbortFeatureDisabled(c)
-			return
-		}
-
 		ind := service.Index()
 
-		c.JSON(http.StatusOK, gin.H{"running": ind.IsRunning()})
+		c.JSON(http.StatusOK, gin.H{"busy": ind.Busy()})
 	})
 }
 

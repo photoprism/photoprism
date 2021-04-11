@@ -52,8 +52,8 @@ func (ind *Index) thumbPath() string {
 	return ind.conf.ThumbPath()
 }
 
-// IsRunning checks whether the indexer is currently running
-func (ind *Index) IsRunning() bool {
+// Busy checks whether the indexer is currently busy
+func (ind *Index) Busy() bool {
 	return mutex.MainWorker.Busy()
 }
 
