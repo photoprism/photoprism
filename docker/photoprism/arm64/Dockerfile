@@ -72,12 +72,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm && \
     npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.16
+ENV GOLANG_VERSION 1.16.3
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "3770f7eb22d05e25fbee8fb53c2a4e897da043eb83c69b9a14f8d98562cd8098 *go.tgz" | sha256sum -c -; \
+	echo "566b1d6f17d2bc4ad5f81486f0df44f3088c3ed47a3bec4099d8ed9939e90d5d *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
 	export PATH="/usr/local/go/bin:$PATH"; \
