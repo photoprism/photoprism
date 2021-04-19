@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/internal/service"
 
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -23,13 +25,11 @@ import (
 
 // BackupCommand configures the backup cli command.
 var BackupCommand = cli.Command{
-	Name:  "backup",
-	Usage: "Creates album and index backups",
-	UsageText: `The first argument (if provided) is the path where the backup will be created.
-If not specified, a backup is created at PHOTOPRISM_BACKUP_PATH in a file named
-with today's date.`,
-	Flags:  backupFlags,
-	Action: backupAction,
+	Name:      "backup",
+	Usage:     "Creates album and index backups",
+	UsageText: `A specific index sql backup filename may be passed as first argument. Use - for stdout.`,
+	Flags:     backupFlags,
+	Action:    backupAction,
 }
 
 var backupFlags = []cli.Flag{
@@ -41,17 +41,37 @@ var backupFlags = []cli.Flag{
 		Name:  "albums, a",
 		Usage: "create album yaml file backups",
 	},
+	cli.StringFlag{
+		Name:  "albums-path",
+		Usage: "custom album yaml file backup `PATH`",
+	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "create index database backup",
+		Usage: "create index sql database backup",
+	},
+	cli.StringFlag{
+		Name:  "index-path",
+		Usage: "custom index sql database backup `PATH`",
 	},
 }
 
 // backupAction creates a database backup.
 func backupAction(ctx *cli.Context) error {
-	if !ctx.Bool("index") && !ctx.Bool("albums") {
+	// Use command argument as backup file name.
+	indexFileName := ctx.Args().First()
+	indexPath := ctx.String("index-path")
+
+	backupIndex := ctx.Bool("index") || indexFileName != "" || indexPath != ""
+
+	albumsPath := ctx.String("albums-path")
+
+	backupAlbums := ctx.Bool("albums") || albumsPath != ""
+
+	if !backupIndex && !backupAlbums {
+		fmt.Printf("OPTIONS:\n")
+
 		for _, flag := range backupFlags {
-			fmt.Println(flag.String())
+			fmt.Printf("   %s\n", flag.String())
 		}
 
 		return nil
@@ -68,31 +88,37 @@ func backupAction(ctx *cli.Context) error {
 		return err
 	}
 
-	if ctx.Bool("index") {
-		// Use command argument as backup file name.
-		fileName := ctx.Args().First()
-
+	if backupIndex {
 		// If empty, use default backup file name.
-		if fileName == "" {
-			backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
-			backupPath := filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
-			fileName = filepath.Join(backupPath, backupFile)
-		}
+		if indexFileName == "" {
+			if !fs.PathWritable(indexPath) {
+				if indexPath != "" {
+					log.Warnf("custom index backup path not writable, using default")
+				}
 
-		if _, err := os.Stat(fileName); err == nil && !ctx.Bool("force") {
-			return fmt.Errorf("backup file already exists: %s", fileName)
-		} else if err == nil {
-			log.Warnf("replacing existing backup file")
-		}
-
-		// Create backup directory if not exists.
-		if dir := filepath.Dir(fileName); dir != "." {
-			if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-				return err
+				indexPath = filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
 			}
+
+			backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
+			indexFileName = filepath.Join(indexPath, backupFile)
 		}
 
-		log.Infof("backing up database to %s", txt.Quote(fileName))
+		if indexFileName != "-" {
+			if _, err := os.Stat(indexFileName); err == nil && !ctx.Bool("force") {
+				return fmt.Errorf("backup file already exists: %s", indexFileName)
+			} else if err == nil {
+				log.Warnf("replacing existing backup file")
+			}
+
+			// Create backup directory if not exists.
+			if dir := filepath.Dir(indexFileName); dir != "." {
+				if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+					return err
+				}
+			}
+
+			log.Infof("backing up database to %s", txt.Quote(indexFileName))
+		}
 
 		var cmd *exec.Cmd
 
@@ -130,17 +156,30 @@ func backupAction(ctx *cli.Context) error {
 			}
 		}
 
-		// Write output to file.
-		if err := ioutil.WriteFile(fileName, []byte(out.String()), os.ModePerm); err != nil {
-			return err
+		if indexFileName == "-" {
+			// Return output via stdout.
+			fmt.Println(out.String())
+		} else {
+			// Write output to file.
+			if err := ioutil.WriteFile(indexFileName, []byte(out.String()), os.ModePerm); err != nil {
+				return err
+			}
 		}
 	}
 
-	if ctx.Bool("albums") {
+	if backupAlbums {
 		service.SetConfig(conf)
 		conf.InitDb()
 
-		if count, err := photoprism.BackupAlbums(true); err != nil {
+		if !fs.PathWritable(albumsPath) {
+			if albumsPath != "" {
+				log.Warnf("custom albums backup path not writable, using default")
+			}
+
+			albumsPath = conf.AlbumsPath()
+		}
+
+		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err
 		} else {
 			log.Infof("%d albums saved as yaml files", count)

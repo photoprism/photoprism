@@ -114,7 +114,6 @@ func TestDislikeLabel(t *testing.T) {
 		val := gjson.Get(r2.Body.String(), `#(Slug=="landscape").Favorite`)
 		assert.Equal(t, "true", val.String())
 
-
 		r := PerformRequest(app, "DELETE", "/api/v1/labels/lt9k3pw1wowuy3c2/like")
 		assert.Equal(t, http.StatusOK, r.Code)
 

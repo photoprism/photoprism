@@ -4,15 +4,17 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // BackupAlbums creates a YAML file backup of all albums.
-func BackupAlbums(force bool) (count int, result error) {
-	c := Config()
+func BackupAlbums(backupPath string, force bool) (count int, result error) {
 
+	c := Config()
 	if !c.BackupYaml() && !force {
 		log.Debugf("backup: album yaml files disabled")
 		return count, nil
@@ -24,8 +26,12 @@ func BackupAlbums(force bool) (count int, result error) {
 		return count, err
 	}
 
+	if !fs.PathExists(backupPath) {
+		backupPath = c.AlbumsPath()
+	}
+
 	for _, a := range albums {
-		fileName := a.YamlFileName(c.AlbumsPath())
+		fileName := a.YamlFileName(backupPath)
 
 		if err := a.SaveAsYaml(fileName); err != nil {
 			log.Errorf("album: %s (update yaml)", err)

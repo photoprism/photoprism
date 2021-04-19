@@ -1,10 +1,11 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/pkg/s2"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPhotos_Init(t *testing.T) {
