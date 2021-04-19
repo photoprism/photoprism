@@ -23,8 +23,11 @@ import (
 
 // BackupCommand configures the backup cli command.
 var BackupCommand = cli.Command{
-	Name:   "backup",
-	Usage:  "Creates album and index backups",
+	Name:  "backup",
+	Usage: "Creates album and index backups",
+	UsageText: `The first argument (if provided) is the path where the backup will be created.
+If not specified, a backup is created at PHOTOPRISM_BACKUP_PATH in a file named
+with today's date.`,
 	Flags:  backupFlags,
 	Action: backupAction,
 }
