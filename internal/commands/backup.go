@@ -27,7 +27,7 @@ import (
 var BackupCommand = cli.Command{
 	Name:      "backup",
 	Usage:     "Creates album and index backups",
-	UsageText: `A specific index sql backup filename may be passed as first argument. Use - for stdout.`,
+	UsageText: `A custom index sql backup FILENAME may be passed as first argument. Use - for stdout.`,
 	Flags:     backupFlags,
 	Action:    backupAction,
 }
