@@ -64,12 +64,16 @@ func TestLikeLabel(t *testing.T) {
 	})
 	t.Run("like existing label", func(t *testing.T) {
 		app, router, _ := NewApiTest()
+
+		// Register routes.
 		GetLabels(router)
+		LikeLabel(router)
+
 		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=likeLabel")
 		t.Log(r2.Body.String())
 		val := gjson.Get(r2.Body.String(), `#(Slug=="likeLabel").Favorite`)
 		assert.Equal(t, "false", val.String())
-		LikeLabel(router)
+
 		r := PerformRequest(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c9/like")
 		t.Log(r.Body.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -100,13 +104,16 @@ func TestDislikeLabel(t *testing.T) {
 	})
 	t.Run("dislike existing label", func(t *testing.T) {
 		app, router, _ := NewApiTest()
+
+		// Register routes.
 		GetLabels(router)
+		DislikeLabel(router)
+
 		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=landscape")
 		t.Logf("HTTP BODY: %s", r2.Body.String())
 		val := gjson.Get(r2.Body.String(), `#(Slug=="landscape").Favorite`)
 		assert.Equal(t, "true", val.String())
 
-		DislikeLabel(router)
 
 		r := PerformRequest(app, "DELETE", "/api/v1/labels/lt9k3pw1wowuy3c2/like")
 		assert.Equal(t, http.StatusOK, r.Code)
