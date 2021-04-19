@@ -36,9 +36,9 @@
                  :transition="false"
                  aspect-ratio="1"
                  class="accent lighten-2 clickable"
-                 @touchstart="onMouseDown($event, index)"
-                 @touchend.stop.prevent="onClick($event, index)"
-                 @mousedown="onMouseDown($event, index)"
+                 @touchstart="input.touchStart($event, index)"
+                 @touchend.prevent="onClick($event, index)"
+                 @mousedown="input.mouseDown($event, index)"
                  @click.stop.prevent="onClick($event, index)"
                  @mouseover="playLive(photo)"
                  @mouseleave="pauseLive(photo)"
@@ -52,10 +52,10 @@
 
             <v-btn :ripple="false" :depressed="false" class="input-open"
                    icon flat absolute
-                   @touchstart.stop.prevent="openPhoto(index, true)"
-                   @touchend.stop.prevent
+                   @touchstart.stop.prevent="input.touchStart($event, index)"
+                   @touchend.stop.prevent="onOpen($event, index, true)"
                    @touchmove.stop.prevent
-                   @click.stop.prevent="openPhoto(index, true)">
+                   @click.stop.prevent="onOpen($event, index, true)">
               <v-icon color="white" class="default-hidden action-raw" :title="$gettext('RAW')">photo_camera</v-icon>
               <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
               <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
@@ -64,27 +64,27 @@
 
             <v-btn :ripple="false" :depressed="false" class="input-view"
                    icon flat absolute :title="$gettext('View')"
-                   @touchstart.stop.prevent="openPhoto(index, false)"
-                   @touchend.stop.prevent
+                   @touchstart.stop.prevent="input.touchStart($event, index)"
+                   @touchend.stop.prevent="onOpen($event, index, false)"
                    @touchmove.stop.prevent
-                   @click.stop.prevent="openPhoto(index, false)">
+                   @click.stop.prevent="onOpen($event, index, true)">
               <v-icon color="white" class="action-fullscreen">zoom_in</v-icon>
             </v-btn>
 
             <v-btn :ripple="false" :depressed="false" color="white" class="input-play"
                    outline fab large absolute :title="$gettext('Play')"
-                   @touchstart.stop.prevent="openPhoto(index, true)"
-                   @touchend.stop.prevent
+                   @touchstart.stop.prevent="input.touchStart($event, index)"
+                   @touchend.stop.prevent="onOpen($event, index, true)"
                    @touchmove.stop.prevent
-                   @click.stop.prevent="openPhoto(index, true)">
+                   @click.stop.prevent="onOpen($event, index, true)">
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
 
             <v-btn :ripple="false"
                    icon flat absolute
                    class="input-select"
-                   @touchstart.stop.prevent="onSelect($event, index)"
-                   @touchend.stop.prevent
+                   @touchstart.stop.prevent="input.touchStart($event, index)"
+                   @touchend.stop.prevent="onSelect($event, index)"
                    @touchmove.stop.prevent
                    @click.stop.prevent="onSelect($event, index)">
               <v-icon color="white" class="select-on">check_circle</v-icon>
@@ -141,7 +141,8 @@
 </template>
 <script>
 import download from "common/download";
-import Notify from "../../common/notify";
+import Notify from "common/notify";
+import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 
 export default {
   name: 'PPhotoCards',
@@ -170,11 +171,7 @@ export default {
         video: this.$gettext("Video"),
         name: this.$gettext("Name"),
       },
-      mouseDown: {
-        index: -1,
-        scrollY: window.scrollY,
-        timeStamp: -1,
-      },
+      input: new Input(),
     };
   },
   methods: {
@@ -202,22 +199,32 @@ export default {
       download(`/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`, photo.FileName);
     },
     onSelect(ev, index) {
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
       if (ev.shiftKey) {
         this.selectRange(index);
       } else {
         this.$clipboard.toggle(this.photos[index]);
       }
     },
-    onMouseDown(ev, index) {
-      this.mouseDown.index = index;
-      this.mouseDown.scrollY = window.scrollY;
-      this.mouseDown.timeStamp = ev.timeStamp;
+    onOpen(ev, index, showMerged) {
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
+      this.openPhoto(index, showMerged);
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
-      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+      const inputType = this.input.eval(ev, index);
+      const longClick = inputType === ClickLong;
 
-      if (scrolled) {
+      if (inputType === InputInvalid) {
         return;
       }
 
