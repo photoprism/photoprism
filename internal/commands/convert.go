@@ -2,6 +2,9 @@ package commands
 
 import (
 	"context"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -11,9 +14,10 @@ import (
 
 // ConvertCommand registers the convert cli command.
 var ConvertCommand = cli.Command{
-	Name:   "convert",
-	Usage:  "Converts originals in other formats to JPEG and AVC sidecar files",
-	Action: convertAction,
+	Name:      "convert",
+	Usage:     "Converts originals in other formats to JPEG and AVC sidecar files",
+	UsageText: `To limit scope, a sub folder may be passed as first argument.`,
+	Action:    convertAction,
 }
 
 // convertAction converts originals in other formats to JPEG and AVC sidecar files.
@@ -34,11 +38,20 @@ func convertAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("converting originals in %s", conf.OriginalsPath())
+	convertPath := conf.OriginalsPath()
+
+	// Use first argument to limit scope if set.
+	subPath := strings.TrimSpace(ctx.Args().First())
+
+	if subPath != "" {
+		convertPath = filepath.Join(convertPath, subPath)
+	}
+
+	log.Infof("converting originals in %s", txt.Quote(convertPath))
 
 	convert := service.Convert()
 
-	if err := convert.Start(conf.OriginalsPath()); err != nil {
+	if err := convert.Start(convertPath); err != nil {
 		log.Error(err)
 	}
 
