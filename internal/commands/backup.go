@@ -27,7 +27,7 @@ import (
 var BackupCommand = cli.Command{
 	Name:      "backup",
 	Usage:     "Creates album and index backups",
-	UsageText: `A custom index sql backup FILENAME may be passed as first argument. Use - for stdout.`,
+	UsageText: `A custom index sql backup FILENAME may be passed as first argument. Use - for stdout. By default, the backup path is searched.`,
 	Flags:     backupFlags,
 	Action:    backupAction,
 }
@@ -60,7 +60,6 @@ func backupAction(ctx *cli.Context) error {
 	// Use command argument as backup file name.
 	indexFileName := ctx.Args().First()
 	indexPath := ctx.String("index-path")
-
 	backupIndex := ctx.Bool("index") || indexFileName != "" || indexPath != ""
 
 	albumsPath := ctx.String("albums-path")
@@ -178,6 +177,8 @@ func backupAction(ctx *cli.Context) error {
 
 			albumsPath = conf.AlbumsPath()
 		}
+
+		log.Infof("backing up albums to %s", txt.Quote(albumsPath))
 
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err

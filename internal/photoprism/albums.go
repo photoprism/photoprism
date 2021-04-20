@@ -46,7 +46,7 @@ func BackupAlbums(backupPath string, force bool) (count int, result error) {
 }
 
 // RestoreAlbums restores all album YAML file backups.
-func RestoreAlbums(force bool) (count int, result error) {
+func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 	c := Config()
 
 	if !c.BackupYaml() && !force {
@@ -65,7 +65,11 @@ func RestoreAlbums(force bool) (count int, result error) {
 		return count, nil
 	}
 
-	albums, err := filepath.Glob(regexp.QuoteMeta(c.AlbumsPath()) + "/**/*.yml")
+	if !fs.PathExists(backupPath) {
+		backupPath = c.AlbumsPath()
+	}
+
+	albums, err := filepath.Glob(regexp.QuoteMeta(backupPath) + "/**/*.yml")
 
 	if oAlbums, oErr := filepath.Glob(regexp.QuoteMeta(c.OriginalsAlbumsPath()) + "/**/*.yml"); oErr == nil {
 		err = nil
