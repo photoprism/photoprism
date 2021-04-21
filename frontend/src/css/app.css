@@ -171,12 +171,15 @@ main {
     overflow: auto;
 }
 
+#photoprism .body-1,
+#photoprism .body-2,
 #photoprism .v-card button,
 #photoprism .v-card .caption {
-    overflow-wrap: anywhere;
-}
-
-#photoprism .body-1,
-#photoprism .body-2 {
+    overflow-wrap: break-word;
     word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
 }
