@@ -31,7 +31,7 @@
                 style="user-select: none"
                 class="result accent lighten-3"
                 :class="photo.classes()"
-                @contextmenu="onContextMenu($event, index)">
+                @contextmenu.stop="onContextMenu($event, index)">
           <div class="card-background accent lighten-3"></div>
           <v-img :key="photo.Hash"
                  :src="photo.thumbnailUrl('tile_500')"

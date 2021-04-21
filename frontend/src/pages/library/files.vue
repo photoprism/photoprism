@@ -54,7 +54,7 @@
                     :data-uid="model.UID"
                     class="result accent lighten-3"
                     :class="model.classes(selection.includes(model.UID))"
-                    @contextmenu="onContextMenu($event, index)"
+                    @contextmenu.stop="onContextMenu($event, index)"
             >
               <div class="card-background accent lighten-3"></div>
               <v-img

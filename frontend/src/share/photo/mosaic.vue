@@ -27,7 +27,7 @@
                 style="user-select: none"
                 class="result"
                 :class="photo.classes()"
-                @contextmenu="onContextMenu($event, index)">
+                @contextmenu.stop="onContextMenu($event, index)">
           <v-img :key="photo.Hash"
                  :src="photo.thumbnailUrl('tile_224')"
                  :alt="photo.Title"

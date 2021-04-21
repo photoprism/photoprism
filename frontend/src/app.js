@@ -61,9 +61,9 @@ import offline from "offline-plugin/runtime";
 // Initialize helpers
 const viewer = new Viewer();
 const isPublic = config.get("public");
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-  navigator.userAgent
-);
+const isMobile =
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+  (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
 // Initialize language and detect alignment
 Vue.config.language = config.values.settings.ui.language;

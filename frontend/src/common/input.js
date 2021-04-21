@@ -71,8 +71,8 @@ export class Input {
       }
 
       if (
-        this.touches[0].screenX !== ev.changedTouches[0].screenX ||
-        this.touches[0].screenY !== ev.changedTouches[0].screenY
+        Math.abs(this.touches[0].screenX - ev.changedTouches[0].screenX) > 4 ||
+        Math.abs(this.touches[0].screenY - ev.changedTouches[0].screenY) > 4
       ) {
         return InputInvalid;
       }
@@ -84,9 +84,9 @@ export class Input {
 
     const clickDuration = ev.timeStamp - this.timeStamp;
 
-    if (clickDuration > 0 && clickDuration < 200) {
+    if (clickDuration > 0 && clickDuration < 333) {
       return ClickShort;
-    } else if (clickDuration > 400) {
+    } else if (clickDuration >= 333) {
       return ClickLong;
     }
 

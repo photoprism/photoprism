@@ -163,6 +163,10 @@ main {
     float: right;
 }
 
+#photoprism .p-page {
+    user-select: none !important;
+}
+
 #photoprism .p-page pre {
     overflow: auto;
 }

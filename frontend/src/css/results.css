@@ -8,8 +8,12 @@ For more information on the contain property, see https://developers.google.com/
 }
 
 #photoprism .cards-view,
-#photoprism .mosaic-view,
+#photoprism .cards-view a,
+#photoprism .cards-view div,
+#photoprism .cards-view img,
 #photoprism .cards-view .v-card,
+#photoprism .mosaic-view,
+#photoprism .mosaic-view a,
 #photoprism .mosaic-view .v-card {
     user-select: none !important;
 }
