@@ -64,14 +64,12 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   }
   await t.expect(Selector("button.action-title-edit").nth(0).innerText).contains("Christmas");
   await page.openNav();
-  await t
-    .click(Selector(".nav-albums"))
-    .click(".action-reload");
+  await t.click(Selector(".nav-albums")).click(".action-reload");
   if (t.browser.platform === "mobile") {
   } else {
     await t
       .click(Selector(".input-category i"))
-      .click(Selector('div[role="listitem"]').withText("All Categories"), {timeout: 55000});
+      .click(Selector('div[role="listitem"]').withText("All Categories"), { timeout: 55000 });
   }
   await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
   const PhotoCountAfterAdd = await Selector("div.is-photo").count;
@@ -162,4 +160,27 @@ test.meta("testID", "albums-007")("Create/delete album during add to album", asy
   await t.click(Selector(".nav-albums"));
   const countAlbumsAfterDelete = await Selector("a.is-album").count;
   await t.expect(countAlbumsAfterDelete).eql(countAlbums);
+});
+
+test.meta("testID", "albums-008")("Test album autocomplete", async (t) => {
+  await page.openNav();
+  await t.click(Selector(".nav-browse"));
+  await page.search("photo:true");
+  const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
+  await page.selectPhotoFromUID(FirstPhotoUid);
+  await t
+    .click(Selector("button.action-menu"))
+    .click(Selector("button.action-album"))
+    .click(Selector(".input-album input"))
+    .expect(Selector("div.v-list__tile__title").withText("Holiday").visible)
+    .ok()
+    .expect(Selector("div.v-list__tile__title").withText("Christmas").visible)
+    .ok()
+    .typeText(Selector(".input-album input"), "C", { replace: true })
+    .expect(Selector("div.v-list__tile__title").withText("Christmas").visible)
+    .ok()
+    .expect(Selector("div.v-list__tile__title").withText("C").visible)
+    .ok()
+    .expect(Selector("div.v-list__tile__title").withText("Holiday").visible)
+    .notOk();
 });
