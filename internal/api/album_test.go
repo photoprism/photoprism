@@ -210,11 +210,15 @@ func TestAddPhotosToAlbum(t *testing.T) {
 
 func TestRemovePhotosFromAlbum(t *testing.T) {
 	app, router, _ := NewApiTest()
+
+	// Register routes.
 	CreateAlbum(router)
+	AddPhotosToAlbum(router)
+
 	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Remove photos", "Description": "", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
-	AddPhotosToAlbum(router)
+
 	r2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
 	assert.Equal(t, http.StatusOK, r2.Code)
 

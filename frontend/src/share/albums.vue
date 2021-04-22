@@ -1,6 +1,7 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-albums" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div v-infinite-scroll="loadMore" class="p-page p-page-albums" style="user-select: none"
+       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
+       :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
         <translate>Albums</translate>
@@ -40,25 +41,26 @@
                     class="result accent lighten-3"
                     :class="album.classes(selection.includes(album.UID))"
                     :to="album.route(view)"
-                    @contextmenu="onContextMenu($event, index)"
+                    @contextmenu.stop="onContextMenu($event, index)"
             >
-              <div class="card-background accent lighten-3"></div>
+              <div class="card-background accent lighten-3" style="user-select: none"></div>
               <v-img
                   :src="album.thumbnailUrl('tile_500')"
                   :alt="album.Title"
                   :transition="false"
                   aspect-ratio="1"
+                  style="user-select: none"
                   class="accent lighten-2 clickable"
-                  @touchstart="onMouseDown($event, index)"
-                  @touchend.stop.prevent="onClick($event, index)"
-                  @mousedown="onMouseDown($event, index)"
+                  @touchstart="input.touchStart($event, index)"
+                  @touchend.prevent="onClick($event, index)"
+                  @mousedown="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
-                       @touchstart.stop.prevent="onSelect($event, index)"
-                       @touchend.stop.prevent
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
+                       @touchend.stop.prevent="onSelect($event, index)"
                        @touchmove.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
@@ -106,6 +108,7 @@ import Event from "pubsub-js";
 import RestModel from "model/rest";
 import {MaxItems} from "../common/clipboard";
 import Notify from "../common/notify";
+import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 
 export default {
   name: 'PPageAlbums',
@@ -147,11 +150,7 @@ export default {
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Title too long"),
-      mouseDown: {
-        index: -1,
-        scrollY: window.scrollY,
-        timeStamp: -1,
-      },
+      input: new Input(),
       lastId: "",
       model: new Album(),
     };
@@ -244,22 +243,23 @@ export default {
       return (rangeEnd - rangeStart) + 1;
     },
     onSelect(ev, index) {
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
       if (ev.shiftKey) {
         this.selectRange(index, this.results);
       } else {
         this.toggleSelection(this.results[index].getId());
       }
     },
-    onMouseDown(ev, index) {
-      this.mouseDown.index = index;
-      this.mouseDown.scrollY = window.scrollY;
-      this.mouseDown.timeStamp = ev.timeStamp;
-    },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
-      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+      const inputType = this.input.eval(ev, index);
+      const longClick = inputType === ClickLong;
 
-      if (scrolled) {
+      if (inputType === InputInvalid) {
         return;
       }
 

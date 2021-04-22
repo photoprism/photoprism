@@ -111,7 +111,7 @@ func startAction(ctx *cli.Context) error {
 	// start web server
 	go server.Start(cctx, conf)
 
-	if count, err := photoprism.RestoreAlbums(false); err != nil {
+	if count, err := photoprism.RestoreAlbums(conf.AlbumsPath(), false); err != nil {
 		log.Errorf("restore: %s", err)
 	} else if count > 0 {
 		log.Infof("%d albums restored", count)
