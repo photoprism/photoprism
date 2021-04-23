@@ -150,7 +150,7 @@ export default class Util {
     if(window.navigator.clipboard) {
       await window.navigator.clipboard.writeText(text);
     } else { 
-      // Clapboard is available only in HTTPS pages. see https://web.dev/async-clipboard/
+      // Clipboard is available only in HTTPS pages. see https://web.dev/async-clipboard/
       // So if the the official 'clipboard' doesn't supported, copy by a work-around 
       // - try to create a textarea in the DOM and execute copy command from him.
       
