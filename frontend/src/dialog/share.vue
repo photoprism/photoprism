@@ -128,6 +128,7 @@
 </template>
 <script>
 import * as options from "options/options";
+import Util from "../common/util";
 
 export default {
   name: 'PShareDialog',
@@ -175,9 +176,14 @@ export default {
 
       ev.target.select();
     },
-    copyUrl(link) {
-      window.navigator.clipboard.writeText(link.url())
-        .then(() => this.$notify.success(this.$gettext("Copied to clipboard")), () => this.$notify.error(this.$gettext("Failed copying to clipboard")));
+    async copyUrl(link) {
+      try {
+        const url = link.url();
+        await Util.copyToMachineClipboard(url);
+        this.$notify.success(this.$gettext("Copied to clipboard"))
+      } catch (error) {
+        this.$notify.error(this.$gettext("Failed copying to clipboard"))
+      }
     },
     expires(link) {
       let result = this.$gettext('Expires');
