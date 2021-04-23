@@ -12,11 +12,13 @@
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="selection.length > 1">
           <v-btn icon :disabled="selected < 1" class="action-previous" @click.stop="prev">
-            <v-icon>navigate_before</v-icon>
+            <v-icon v-if="!rtl">navigate_before</v-icon>
+            <v-icon v-else>navigate_next</v-icon>
           </v-btn>
 
           <v-btn icon :disabled="selected >= selection.length - 1" class="action-next" @click.stop="next">
-            <v-icon>navigate_next</v-icon>
+            <v-icon v-if="!rtl">navigate_next</v-icon>
+            <v-icon v-else>navigate_before</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
@@ -99,6 +101,7 @@ export default {
       items: [],
       readonly: this.$config.get("readonly"),
       active: this.tab,
+       rtl: this.$rtl,
     };
   },
   computed: {
