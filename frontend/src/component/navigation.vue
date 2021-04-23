@@ -265,7 +265,7 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title >
+            <v-list-tile-title>
               <translate key="Labels">Labels</translate>
               <span v-show="config.count.labels > 0"
                     :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.labels }}</span>
