@@ -64,12 +64,16 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			}
 
 			// Skip empty values.
-			if !jsonValue.Exists() || !fieldValue.IsZero() {
+			if !jsonValue.Exists() {
 				continue
 			}
 
 			switch t := fieldValue.Interface().(type) {
 			case time.Time:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				s := strings.TrimSpace(jsonValue.String())
 				s = strings.ReplaceAll(s, "/", ":")
 
@@ -79,16 +83,46 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second)))
 				}
 			case time.Duration:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.Set(reflect.ValueOf(StringToDuration(jsonValue.String())))
 			case int, int64:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetInt(jsonValue.Int())
 			case float32, float64:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetFloat(jsonValue.Float())
 			case uint, uint64:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetUint(jsonValue.Uint())
+			case []string:
+				existing := fieldValue.Interface().([]string)
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+			case Keywords:
+				existing := fieldValue.Interface().(Keywords)
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
 			case string:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetString(strings.TrimSpace(jsonValue.String()))
 			case bool:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetBool(jsonValue.Bool())
 			default:
 				log.Warnf("metadata: can't assign value of type %s to %s (exiftool)", t, tagValue)
@@ -190,12 +224,11 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	if data.Projection == "equirectangular" {
-		data.AddKeyword(KeywordPanorama)
+		data.AddKeywords(KeywordPanorama)
 	}
 
 	data.Title = SanitizeTitle(data.Title)
 	data.Description = SanitizeDescription(data.Description)
-	data.Keywords = SanitizeMeta(data.Keywords)
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 

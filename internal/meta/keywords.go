@@ -1,6 +1,9 @@
 package meta
 
-import "strings"
+import (
+	"github.com/photoprism/photoprism/pkg/txt"
+	"strings"
+)
 
 const (
 	KeywordFlash           = "flash"
@@ -10,36 +13,38 @@ const (
 	KeywordEquirectangular = "equirectangular"
 )
 
+// Keywords represents a list of metadata keywords.
+type Keywords []string
+
+// String returns a string containing all keywords.
+func (w Keywords) String() string {
+	return strings.Join(w, ", ")
+}
+
 var AutoKeywords = []string{KeywordHdr, KeywordBurst, KeywordPanorama, KeywordEquirectangular}
 
-// AddKeyword appends a keyword if not exists.
-func (data *Data) AddKeyword(w string) {
-	w = strings.ToLower(SanitizeString(w))
+// AddKeywords appends keywords.
+func (data *Data) AddKeywords(w string) {
+	w = strings.ToLower(SanitizeMeta(w))
 
-	if len(w) < 3 {
+	if len(w) < 1 {
 		return
 	}
 
-	if !strings.Contains(data.Keywords, w) {
-		if data.Keywords == "" {
-			data.Keywords = w
-		} else {
-			data.Keywords += ", " + w
-		}
-	}
+	data.Keywords = txt.AddToWords(data.Keywords, w)
 }
 
-// AutoAddKeywords automatically adds relevant keywords from a string (e.g. description).
+// AutoAddKeywords automatically appends relevant keywords from a string (e.g. description).
 func (data *Data) AutoAddKeywords(s string) {
-	s = strings.ToLower(SanitizeString(s))
+	s = strings.ToLower(SanitizeMeta(s))
 
-	if len(s) < 3 {
+	if len(s) < 1 {
 		return
 	}
 
 	for _, w := range AutoKeywords {
 		if strings.Contains(s, w) {
-			data.AddKeyword(w)
+			data.AddKeywords(w)
 		}
 	}
 }

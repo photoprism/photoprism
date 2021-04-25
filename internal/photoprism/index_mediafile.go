@@ -338,7 +338,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcXmp)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcXmp)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcXmp)
 			details.SetNotes(metaData.Notes, entity.SrcXmp)
 			details.SetSubject(metaData.Subject, entity.SrcXmp)
 			details.SetArtist(metaData.Artist, entity.SrcXmp)
@@ -356,7 +356,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCameraSerial(metaData.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
@@ -405,7 +405,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCameraSerial(metaData.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
@@ -504,7 +504,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCameraSerial(metaData.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
