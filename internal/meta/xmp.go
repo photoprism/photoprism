@@ -57,13 +57,12 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.LensModel = doc.LensModel()
 	}
 
-	if takenAt := doc.DateCreated(); !takenAt.IsZero() {
+	if takenAt := doc.TakenAt(); !takenAt.IsZero() {
 		data.TakenAt = takenAt
 	}
 
 	if len(doc.Keywords()) != 0 {
-		data.Keywords += doc.Keywords()
-		data.Keywords = SanitizeMeta(data.Keywords)
+		data.AddKeywords(doc.Keywords())
 	}
 
 	return nil

@@ -13,7 +13,7 @@ import (
 )
 
 func TestIndexRelated(t *testing.T) {
-	t.Run("/2018-04-12 19_24_49.gif", func(t *testing.T) {
+	t.Run("2018-04-12 19_24_49.gif", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		testFile, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
@@ -35,7 +35,7 @@ func TestIndexRelated(t *testing.T) {
 			dest := filepath.Join(testPath, f.BaseName())
 
 			if err := f.Copy(dest); err != nil {
-				t.Fatalf("COPY FAILED: %s", err)
+				t.Fatalf("copying test file failed: %s", err)
 			}
 		}
 
@@ -73,8 +73,7 @@ func TestIndexRelated(t *testing.T) {
 		}
 	})
 
-	//TODO this test MUST run before PR 1151 can  be merged
-	/*t.Run("/apple-test-2.jpg", func(t *testing.T) {
+	t.Run("apple-test-2.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		testFile, err := NewMediaFile("testdata/apple-test-2.jpg")
@@ -96,7 +95,7 @@ func TestIndexRelated(t *testing.T) {
 			dest := filepath.Join(testPath, f.BaseName())
 
 			if err := f.Copy(dest); err != nil {
-				t.Fatalf("COPY FAILED: %s", err)
+				t.Fatalf("copying test file failed: %s", err)
 			}
 		}
 
@@ -131,13 +130,12 @@ func TestIndexRelated(t *testing.T) {
 		} else {
 			assert.Equal(t, "Botanischer Garten", photo.PhotoTitle)
 			assert.Equal(t, "Tulpen am See", photo.PhotoDescription)
-			assert.Contains(t, photo.Details.Keywords, "apple")
-			assert.Contains(t, photo.Details.Keywords, "green")
 			assert.Contains(t, photo.Details.Keywords, "krokus")
 			assert.Contains(t, photo.Details.Keywords, "blume")
-			assert.Contains(t, photo.Details.Keywords, "schöne wiese")
+			assert.Contains(t, photo.Details.Keywords, "schöne")
+			assert.Contains(t, photo.Details.Keywords, "wiese")
 			assert.Equal(t, "2021-03-24 12:07:29 +0000 UTC", photo.TakenAt.String())
 			assert.Equal(t, "xmp", photo.TakenSrc)
 		}
-	})*/
+	})
 }

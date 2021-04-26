@@ -198,6 +198,7 @@ type XmpDocument struct {
 	} `xml:"RDF" json:"rdf,omitempty"`
 }
 
+// Load parses an XMP file and populates document values with its contents.
 func (doc *XmpDocument) Load(filename string) error {
 	data, err := ioutil.ReadFile(filename)
 
@@ -208,6 +209,7 @@ func (doc *XmpDocument) Load(filename string) error {
 	return xml.Unmarshal(data, doc)
 }
 
+// Title returns the XMP document title.
 func (doc *XmpDocument) Title() string {
 	t := doc.RDF.Description.Title.Alt.Li.Text
 	t2 := doc.RDF.Description.Title.Text
@@ -219,10 +221,12 @@ func (doc *XmpDocument) Title() string {
 	return ""
 }
 
+// Artist returns the XMP document artist.
 func (doc *XmpDocument) Artist() string {
 	return SanitizeString(doc.RDF.Description.Creator.Seq.Li)
 }
 
+// Description returns the XMP document description.
 func (doc *XmpDocument) Description() string {
 	d := doc.RDF.Description.Description.Alt.Li.Text
 	d2 := doc.RDF.Description.Description.Text
@@ -234,34 +238,50 @@ func (doc *XmpDocument) Description() string {
 	return ""
 }
 
+// Copyright returns the XMP document copyright info.
 func (doc *XmpDocument) Copyright() string {
 	return SanitizeString(doc.RDF.Description.Rights.Alt.Li.Text)
 }
 
+// CameraMake returns the XMP document camera make name.
 func (doc *XmpDocument) CameraMake() string {
 	return SanitizeString(doc.RDF.Description.Make)
 }
 
+// CameraModel returns the XMP document camera model name.
 func (doc *XmpDocument) CameraModel() string {
 	return SanitizeString(doc.RDF.Description.Model)
 }
 
+// LensModel returns the XMP document lens model name.
 func (doc *XmpDocument) LensModel() string {
 	return SanitizeString(doc.RDF.Description.LensModel)
 }
 
-func (doc *XmpDocument) DateCreated() time.Time {
-	s := doc.RDF.Description.DateCreated
+// TakenAt returns the XMP document taken date.
+func (doc *XmpDocument) TakenAt() time.Time {
+	taken := time.Time{} // Unknown
 
-	if tv, err := time.Parse(time.RFC3339, s); err == nil {
-		return tv
-	} else if tv2, err2 := time.Parse("2006-01-02T15:04:05.999999999", s); err2 == nil {
-		return tv2
+	s := SanitizeString(doc.RDF.Description.DateCreated)
+
+	if s == "" {
+		return taken
 	}
 
-	return time.Time{}
+	if t, err := time.Parse(time.RFC3339, s); err == nil {
+		taken = t
+	} else if t, err := time.Parse("2006-01-02T15:04:05.999999999", s); err == nil {
+		taken = t
+	} else if t, err := time.Parse("2006-01-02T15:04:05-07:00", s); err == nil {
+		taken = t
+	} else if t, err := time.Parse("2006-01-02T15:04:05", s[:19]); err == nil {
+		taken = t
+	}
+
+	return taken
 }
 
+// Keywords returns the XMP document keywords.
 func (doc *XmpDocument) Keywords() string {
 	s := doc.RDF.Description.Subject.Seq.Li
 
