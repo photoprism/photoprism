@@ -179,7 +179,7 @@ export default class Util {
       document.body.removeChild(clipboardElement);
 
       // Validate operation succeed
-      if(!succeed){
+      if (!succeed) {
         throw new Error('Failed copying to clipboard');
       }
     } else {
