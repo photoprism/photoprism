@@ -30,7 +30,7 @@
   },
   "grayscale": {
     "dark": true,
-    "sponsor": true,
+    "sponsor": false,
     "colors": {
       "application": "#525252",
       "form": "#e5e4e2",
@@ -257,6 +257,35 @@
       "love": "#ef5350",
       "terminal": "#333333",
       "navigation": "#212121",
+      "navigation-home": "#000000"
+    }
+  },
+  "yellowstone": {
+    "dark": true,
+    "sponsor": true,
+    "colors": {
+      "application": "#444",
+      "form": "#eeeeee",
+      "primary": "#ffb700",
+      "primary-button": "#918c7d",
+      "secondary-dark": "#ffb700",
+      "secondary": "#585858",
+      "secondary-light": "#666",
+      "accent": "#333",
+      "error": "#e57373",
+      "info": "#00acc1",
+      "success": "#4db6ac",
+      "warning": "#ffd740",
+      "remove": "#e57373",
+      "restore": "#64b5f6",
+      "album": "#ffab00",
+      "download": "#00bfa5",
+      "private": "#00b8d4",
+      "edit": "#00b8d4",
+      "share": "#9575cd",
+      "love": "#ef5350",
+      "terminal": "#333333",
+      "navigation": "#111",
       "navigation-home": "#000000"
     }
   }

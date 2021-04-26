@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# see https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds
+export DOCKER_BUILDKIT=1
+
 if [[ -z $1 ]] && [[ -z $2 ]]; then
     echo "Please provide a container image name and version" 1>&2
     exit 1

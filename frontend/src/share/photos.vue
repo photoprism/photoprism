@@ -1,6 +1,7 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div v-infinite-scroll="loadMore" class="p-page p-page-album-photos" style="user-select: none"
+       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
+       :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" lazy-validation
             dense autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8">

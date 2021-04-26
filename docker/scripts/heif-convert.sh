@@ -12,4 +12,4 @@ fi
 
 # Remove Exif orientation flag as JPEG is rotated already:
 
-/usr/bin/exiftool -n -Orientation=1 "$2"
+/usr/bin/exiftool -overwrite_original -P -n -Orientation=1 "$2"

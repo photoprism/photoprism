@@ -446,7 +446,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2020-05-24T08:55:21Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "panorama", data.Keywords)
+		assert.Equal(t, "panorama", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 3600, data.Height)
@@ -477,7 +477,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2018-07-25T11:18:42Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2018-07-25T11:18:42Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 1080, data.Height)
@@ -535,7 +535,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2020-10-17T17:48:24Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "Berlin, Shop", data.Keywords)
+		assert.Equal(t, "berlin, shop", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 375, data.Height)
@@ -693,7 +693,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 6s", data.CameraModel)
 		assert.Equal(t, "iPhone 6s back camera 4.15mm f/2.2", data.LensModel)
 		assert.Equal(t, "holiday", data.Subject)
-		assert.Equal(t, "holiday", data.Keywords)
+		assert.Equal(t, "holiday", data.Keywords.String())
 	})
 
 	t.Run("subject-2.json", func(t *testing.T) {
@@ -719,7 +719,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "iPhone 6s", data.CameraModel)
 		assert.Equal(t, "iPhone 6s back camera 4.15mm f/2.2", data.LensModel)
 		assert.Equal(t, "holiday, greetings", data.Subject)
-		assert.Equal(t, "holiday, greetings", data.Keywords)
+		assert.Equal(t, "greetings, holiday", data.Keywords.String())
 	})
 
 	t.Run("newline.json", func(t *testing.T) {
@@ -735,7 +735,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "This is the title", data.Title)
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "This is a\n\ndescription!", data.Description)
 		assert.Equal(t, "This is the world.", data.Subject)
 		assert.Equal(t, "© 2011 PhotoPrism", data.Copyright)

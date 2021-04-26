@@ -153,6 +153,17 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 	return results
 }
 
+// AddToWords add words to a string slice and returns the sorted result.
+func AddToWords(existing []string, words string) []string {
+	w := Keywords(words)
+
+	if len(w) < 1 {
+		return existing
+	}
+
+	return UniqueWords(append(existing, w...))
+}
+
 // UniqueKeywords returns a slice of unique and sorted keywords without stopwords.
 func UniqueKeywords(s string) (results []string) {
 	if s == "" {
@@ -180,7 +191,7 @@ func UniqueKeywords(s string) (results []string) {
 	return results
 }
 
-// Sorts string slice case insensitive.
+// SortCaseInsensitive performs a case-insensitive slice sort.
 func SortCaseInsensitive(words []string) {
 	sort.Slice(words, func(i, j int) bool { return strings.ToLower(words[i]) < strings.ToLower(words[j]) })
 }

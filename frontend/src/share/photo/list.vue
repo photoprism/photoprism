@@ -40,7 +40,7 @@
                  @touchstart="onMouseDown($event, props.index)"
                  @touchend.stop.prevent="onClick($event, props.index)"
                  @mousedown="onMouseDown($event, props.index)"
-                 @contextmenu="onContextMenu($event, props.index)"
+                 @contextmenu.stop="onContextMenu($event, props.index)"
                  @click.stop.prevent="onClick($event, props.index)"
           >
             <v-btn v-if="selectMode" :ripple="false"

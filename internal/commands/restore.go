@@ -25,10 +25,11 @@ import (
 
 // RestoreCommand configures the backup cli command.
 var RestoreCommand = cli.Command{
-	Name:   "restore",
-	Usage:  "Restores album and index backups",
-	Flags:  restoreFlags,
-	Action: restoreAction,
+	Name:      "restore",
+	Usage:     "Restores album and index backups",
+	UsageText: `A custom index sql backup FILENAME may be passed as first argument. By default, the backup path is searched.`,
+	Flags:     restoreFlags,
+	Action:    restoreAction,
 }
 
 var restoreFlags = []cli.Flag{
@@ -40,15 +41,31 @@ var restoreFlags = []cli.Flag{
 		Name:  "albums, a",
 		Usage: "restore album yaml file backups",
 	},
+	cli.StringFlag{
+		Name:  "albums-path",
+		Usage: "custom album yaml file backup `PATH`",
+	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "restore index database backup",
+		Usage: "restore index sql database backup",
+	},
+	cli.StringFlag{
+		Name:  "index-path",
+		Usage: "custom index sql database backup `PATH`",
 	},
 }
 
 // restoreAction restores a database backup.
 func restoreAction(ctx *cli.Context) error {
-	if !ctx.Bool("index") && !ctx.Bool("albums") {
+	// Use command argument as backup file name.
+	indexFileName := ctx.Args().First()
+	indexPath := ctx.String("index-path")
+	restoreIndex := ctx.Bool("index") || indexFileName != "" || indexPath != ""
+
+	albumsPath := ctx.String("albums-path")
+	restoreAlbums := ctx.Bool("albums") || albumsPath != ""
+
+	if !restoreIndex && !restoreAlbums {
 		for _, flag := range restoreFlags {
 			fmt.Println(flag.String())
 		}
@@ -67,30 +84,29 @@ func restoreAction(ctx *cli.Context) error {
 		return err
 	}
 
-	if ctx.Bool("index") {
-		// Use command argument as backup file name.
-		fileName := ctx.Args().First()
-
+	if restoreIndex {
 		// If empty, use default backup file name.
-		if fileName == "" {
-			backupPath := filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
+		if indexFileName == "" {
+			if indexPath == "" {
+				indexPath = filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
+			}
 
-			matches, err := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), "*.sql"))
+			matches, err := filepath.Glob(filepath.Join(regexp.QuoteMeta(indexPath), "*.sql"))
 
 			if err != nil {
 				return err
 			}
 
 			if len(matches) == 0 {
-				log.Errorf("no backup files found in %s", backupPath)
+				log.Errorf("no backup files found in %s", indexPath)
 				return nil
 			}
 
-			fileName = matches[len(matches)-1]
+			indexFileName = matches[len(matches)-1]
 		}
 
-		if !fs.FileExists(fileName) {
-			log.Errorf("backup file not found: %s", fileName)
+		if !fs.FileExists(indexFileName) {
+			log.Errorf("backup file not found: %s", indexFileName)
 			return nil
 		}
 
@@ -108,9 +124,9 @@ func restoreAction(ctx *cli.Context) error {
 			log.Warnf("replacing existing index with %d photos", counts.Photos)
 		}
 
-		log.Infof("restoring index from %s", txt.Quote(fileName))
+		log.Infof("restoring index from %s", txt.Quote(indexFileName))
 
-		sqlBackup, err := ioutil.ReadFile(fileName)
+		sqlBackup, err := ioutil.ReadFile(indexFileName)
 
 		if err != nil {
 			return err
@@ -176,13 +192,23 @@ func restoreAction(ctx *cli.Context) error {
 
 	conf.InitDb()
 
-	if ctx.Bool("albums") {
+	if restoreAlbums {
 		service.SetConfig(conf)
 
-		if count, err := photoprism.RestoreAlbums(true); err != nil {
-			return err
+		if albumsPath == "" {
+			albumsPath = conf.AlbumsPath()
+		}
+
+		if !fs.PathExists(albumsPath) {
+			log.Warnf("albums path %s not found", txt.Quote(albumsPath))
 		} else {
-			log.Infof("%d albums restored from yaml files", count)
+			log.Infof("restoring albums from %s", txt.Quote(albumsPath))
+
+			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
+				return err
+			} else {
+				log.Infof("%d albums restored from yaml files", count)
+			}
 		}
 	}
 

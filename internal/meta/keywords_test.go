@@ -6,29 +6,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestData_AddKeyword(t *testing.T) {
+func TestData_AddKeywords(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		data := NewData()
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 
-		data.AddKeyword("FooBar")
+		data.AddKeywords("FooBar")
 
-		assert.Equal(t, "foobar", data.Keywords)
+		assert.Equal(t, "foobar", data.Keywords.String())
 
-		data.AddKeyword("BAZ")
+		data.AddKeywords("BAZ; pro")
 
-		assert.Equal(t, "foobar, baz", data.Keywords)
+		assert.Equal(t, "foobar, pro", data.Keywords.String())
 	})
 
 	t.Run("ignore", func(t *testing.T) {
 		data := NewData()
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 
-		data.AddKeyword("Fo")
+		data.AddKeywords("Fo")
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 	})
 }
 
@@ -36,30 +36,30 @@ func TestData_AutoAddKeywords(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		data := NewData()
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 
 		data.AutoAddKeywords("FooBar burst baz flash")
 
-		assert.Equal(t, "burst", data.Keywords)
+		assert.Equal(t, "burst", data.Keywords.String())
 	})
 
 	t.Run("ignore", func(t *testing.T) {
 		data := NewData()
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 
 		data.AutoAddKeywords("FooBar go pro baz banana")
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 	})
 
 	t.Run("ignore because too short", func(t *testing.T) {
 		data := NewData()
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 
 		data.AutoAddKeywords("es")
 
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 	})
 }

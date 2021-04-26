@@ -1,6 +1,7 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-labels" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div v-infinite-scroll="loadMore" class="p-page p-page-labels" style="user-select: none"
+       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
+       :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
@@ -66,7 +67,7 @@
                     class="result accent lighten-3"
                     :class="label.classes(selection.includes(label.UID))"
                     :to="label.route(view)"
-                    @contextmenu="onContextMenu($event, index)"
+                    @contextmenu.stop="onContextMenu($event, index)"
             >
               <div class="card-background accent lighten-3"></div>
               <v-img
@@ -74,17 +75,18 @@
                   :alt="label.Name"
                   :transition="false"
                   aspect-ratio="1"
+                  style="user-select: none"
                   class="accent lighten-2 clickable"
-                  @touchstart="onMouseDown($event, index)"
-                  @touchend.stop.prevent="onClick($event, index)"
-                  @mousedown="onMouseDown($event, index)"
+                  @touchstart="input.touchStart($event, index)"
+                  @touchend.prevent="onClick($event, index)"
+                  @mousedown="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
-                       @touchstart.stop.prevent="onSelect($event, index)"
-                       @touchend.stop.prevent
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
+                       @touchend.stop.prevent="onSelect($event, index)"
                        @touchmove.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
@@ -94,7 +96,7 @@
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-favorite"
-                       @touchstart.stop.prevent="onTouchStart($event, index)"
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
                        @touchend.stop.prevent="toggleLike($event, index)"
                        @touchmove.stop.prevent
                        @click.stop.prevent="toggleLike($event, index)">
@@ -140,8 +142,9 @@
 import Label from "model/label";
 import Event from "pubsub-js";
 import RestModel from "model/rest";
-import {MaxItems} from "../common/clipboard";
-import Notify from "../common/notify";
+import {MaxItems} from "common/clipboard";
+import Notify from "common/notify";
+import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 
 export default {
   name: 'PPageLabels',
@@ -174,16 +177,7 @@ export default {
       lastFilter: {},
       routeName: routeName,
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-      touchStart: {
-        index: -1,
-        scrollY: window.scrollY,
-        timeStamp: -1,
-      },
-      mouseDown: {
-        index: -1,
-        scrollY: window.scrollY,
-        timeStamp: -1,
-      },
+      input: new Input(),
       lastId: "",
     };
   },
@@ -225,26 +219,10 @@ export default {
       this.offset = offset;
       window.localStorage.setItem("labels_offset", offset);
     },
-    onTouchStart(ev, index) {
-      this.touchStart.index = index;
-      this.touchStart.scrollY = window.scrollY;
-      this.touchStart.timeStamp = ev.timeStamp;
-    },
-    resetTouchStart() {
-      this.touchStart.index = -1;
-      this.touchStart.scrollY = window.scrollY;
-      this.touchStart.timeStamp = -1;
-    },
-    isClick(ev, index) {
-      if (this.touchStart.timeStamp < 0) return true;
-
-      return this.touchStart.index === index
-          && (ev.timeStamp - this.touchStart.timeStamp) < 200
-          && (this.touchStart.scrollY - window.scrollY) === 0;
-    },
     toggleLike(ev, index) {
-      if (!this.isClick(ev, index)) {
-        this.resetTouchStart();
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
         return;
       }
 
@@ -282,22 +260,23 @@ export default {
       return (rangeEnd - rangeStart) + 1;
     },
     onSelect(ev, index) {
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
       if (ev.shiftKey) {
         this.selectRange(index, this.results);
       } else {
         this.toggleSelection(this.results[index].getId());
       }
     },
-    onMouseDown(ev, index) {
-      this.mouseDown.index = index;
-      this.mouseDown.scrollY = window.scrollY;
-      this.mouseDown.timeStamp = ev.timeStamp;
-    },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
-      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+      const inputType = this.input.eval(ev, index);
+      const longClick = inputType === ClickLong;
 
-      if (scrolled) {
+      if (inputType === InputInvalid) {
         return;
       }
 
