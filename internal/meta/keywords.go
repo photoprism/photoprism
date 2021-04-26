@@ -1,8 +1,9 @@
 package meta
 
 import (
-	"github.com/photoprism/photoprism/pkg/txt"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (

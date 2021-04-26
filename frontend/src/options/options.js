@@ -230,6 +230,11 @@ export const Themes = () => [
     value: "shadow",
     disabled: false,
   },
+  {
+    text: $gettext("Yellowstone"),
+    value: "yellowstone",
+    disabled: false,
+  },
 ];
 export const MapsAnimate = () => [
   {
