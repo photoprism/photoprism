@@ -3,7 +3,7 @@
 /*
 For more information on the contain property, see https://developers.google.com/web/updates/2016/06/css-containment
 */
-#photoprism .search-results .result {
+body.chrome #photoprism .search-results .result {
     contain: layout style paint;
 }
 

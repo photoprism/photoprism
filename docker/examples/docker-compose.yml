@@ -32,6 +32,7 @@ services:
   photoprism:
     # Use photoprism/photoprism:preview instead for testing preview builds:
     image: photoprism/photoprism:latest
+    container_name: photoprism
     # Only enable automatic restarts once your installation is properly
     # configured as it otherwise may get stuck in a restart loop:
     # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
@@ -44,7 +45,6 @@ services:
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
       PHOTOPRISM_ORIGINALS_LIMIT: 1000               # File size limit for originals in MB (increase for high-res video)
-      PHOTOPRISM_HTTP_PORT: 2342                     # Built-in Web server port
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
@@ -87,6 +87,7 @@ services:
 
   mariadb:
     image: mariadb:10.5
+    container_name: mariadb
     restart: unless-stopped
     security_opt:
       - seccomp:unconfined
@@ -104,6 +105,11 @@ services:
 #
 #  watchtower:
 #    image: containrrr/watchtower
+#    container_name: watchtower
 #    restart: unless-stopped
+#    environment:
+#      WATCHTOWER_CLEANUP: "true"
+#      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
 #    volumes:
 #      - "/var/run/docker.sock:/var/run/docker.sock"
+#      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account

@@ -1,0 +1,25 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 6.0.0">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:exif="http://ns.adobe.com/exif/1.0/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">
+         <exif:GPSLongitude>13.369367199999999</exif:GPSLongitude>
+         <exif:GPSLongitudeRef>E</exif:GPSLongitudeRef>
+         <exif:GPSHPositioningError>1</exif:GPSHPositioningError>
+         <exif:GPSLatitude>52.5250816</exif:GPSLatitude>
+         <exif:GPSLatitudeRef>N</exif:GPSLatitudeRef>
+         <exif:GPSTimeStamp>2021-03-26T09:18:59Z</exif:GPSTimeStamp>
+         <dc:title>Botanischer Garten</dc:title>
+         <dc:description>Tulpen am See</dc:description>
+         <dc:subject>
+            <rdf:Seq>
+               <rdf:li>Krokus</rdf:li>
+               <rdf:li>Blume</rdf:li>
+               <rdf:li>Schöne Wiese</rdf:li>
+            </rdf:Seq>
+         </dc:subject>
+         <photoshop:DateCreated>2021-03-24T13:07:29+01:00</photoshop:DateCreated>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
