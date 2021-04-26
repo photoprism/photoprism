@@ -147,9 +147,9 @@ export default class Util {
   }
 
   static async copyToMachineClipboard(text) {
-    if(window.navigator.clipboard) {
+    if (window.navigator.clipboard) {
       await window.navigator.clipboard.writeText(text);
-    } else if(document.execCommand) { 
+    } else if (document.execCommand) { 
       // Clipboard is available only in HTTPS pages. see https://web.dev/async-clipboard/
       // So if the the official 'clipboard' doesn't supported and the 'document.execCommand' is supported.
       // copy by a work-around by creating a textarea in the DOM and execute copy command from him.
@@ -173,7 +173,7 @@ export default class Util {
       clipboardElement.select();
       
       // Copy the selected textarea content
-      const succeed = document.execCommand('copy')
+      const succeed = document.execCommand('copy');
 
       // Remove the textarea from DOM
       document.body.removeChild(clipboardElement);
