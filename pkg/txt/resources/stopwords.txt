@@ -286,7 +286,6 @@ daren't
 darent
 de
 dear
-definitely
 describe
 described
 despite
@@ -307,7 +306,6 @@ doesnt
 doing
 don
 don't
-done
 dont
 downed
 downing
@@ -325,8 +323,6 @@ eg
 eh
 either
 else
-elsewhere
-ended
 ending
 ends
 entirely
@@ -341,7 +337,6 @@ evenly
 ever
 every
 ex
-exactly
 except
 f
 fact
