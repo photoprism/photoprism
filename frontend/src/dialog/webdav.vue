@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import Util from "../common/util";
+
 export default {
   name: 'PDialogWebdav',
   props: {
@@ -79,9 +81,13 @@ export default {
 
       this.copyUrl();
     },
-    copyUrl() {
-      window.navigator.clipboard.writeText(this.webdavUrl())
-        .then(() => this.$notify.success(this.$gettext("Copied to clipboard")), () => this.$notify.error(this.$gettext("Failed copying to clipboard")));
+    async copyUrl() {
+      try {
+        await Util.copyToMachineClipboard(this.webdavUrl());
+        this.$notify.success(this.$gettext("Copied to clipboard"));
+      } catch (error) {
+        this.$notify.error(this.$gettext("Failed copying to clipboard"))
+      }
     },
     webdavUrl() {
       return `${window.location.protocol}//admin@${window.location.host}/originals/`;

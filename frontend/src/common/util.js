@@ -145,4 +145,45 @@ export default class Util {
     console.log(`${label}: ${now.getTime() - start.getTime()}ms`);
     start = now;
   }
+
+  static async copyToMachineClipboard(text) {
+    if (window.navigator.clipboard) {
+      await window.navigator.clipboard.writeText(text);
+    } else if (document.execCommand) { 
+      // Clipboard is available only in HTTPS pages. see https://web.dev/async-clipboard/
+      // So if the the official 'clipboard' doesn't supported and the 'document.execCommand' is supported.
+      // copy by a work-around by creating a textarea in the DOM and execute copy command from him.
+      
+      // Create the text area element (to copy from)
+      const clipboardElement = document.createElement("textarea");
+
+      // Set the text content to copy
+      clipboardElement.value = text;
+
+      // Avoid scrolling to bottom
+      clipboardElement.style.top = "0";
+      clipboardElement.style.left = "0";
+      clipboardElement.style.position = "fixed";
+
+      // Add element to DOM
+      document.body.appendChild(clipboardElement);
+
+      // "Select" the new textarea
+      clipboardElement.focus();
+      clipboardElement.select();
+      
+      // Copy the selected textarea content
+      const succeed = document.execCommand('copy');
+
+      // Remove the textarea from DOM
+      document.body.removeChild(clipboardElement);
+
+      // Validate operation succeed
+      if (!succeed) {
+        throw new Error('Failed copying to clipboard');
+      }
+    } else {
+      throw new Error('Copy to clipboard does not support in your browser');
+    }
+  }
 }
