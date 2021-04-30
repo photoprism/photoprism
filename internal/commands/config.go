@@ -65,9 +65,14 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-settings", conf.DisableSettings())
 	fmt.Printf("%-25s %t\n", "disable-places", conf.DisablePlaces())
 	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
+	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
+	fmt.Printf("%-25s %t\n", "disable-darktable", conf.DisableDarktable())
+	fmt.Printf("%-25s %t\n", "disable-rawtherapee", conf.DisableRawtherapee())
+	fmt.Printf("%-25s %t\n", "disable-sips", conf.DisableSips())
+	fmt.Printf("%-25s %t\n", "disable-heifconvert", conf.DisableHeifConvert())
+	fmt.Printf("%-25s %t\n", "disable-ffmpeg", conf.DisableFFmpeg())
 
 	// Everything related to TensorFlow.
-	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
 	fmt.Printf("%-25s %s\n", "tensorflow-version", conf.TensorFlowVersion())
 	fmt.Printf("%-25s %s\n", "tensorflow-model-path", conf.TensorFlowModelPath())
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())
