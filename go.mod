@@ -5,15 +5,15 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.4.0
-	github.com/dsoprea/go-exif/v2 v2.0.0-20200807075213-089aa48c91e6 // indirect
-	github.com/dsoprea/go-exif/v3 v3.0.0-20200807075213-089aa48c91e6
+	github.com/dsoprea/go-exif/v2 v2.0.0-20210428042052-dca55bf8ca15 // indirect
+	github.com/dsoprea/go-exif/v3 v3.0.0-20210428042052-dca55bf8ca15
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
-	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20210128210355-86b1014917f2
+	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20210428043308-91f50c82adff
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d // indirect
-	github.com/dsoprea/go-png-image-structure v0.0.0-20200807080309-a98d4e94ac82
-	github.com/dsoprea/go-tiff-image-structure v0.0.0-20200807080429-5631a803a91b
+	github.com/dsoprea/go-png-image-structure v0.0.0-20210428043356-45b892641b59
+	github.com/dsoprea/go-tiff-image-structure v0.0.0-20210428043455-dc547ba9cf59
 	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-contrib/gzip v0.0.3
