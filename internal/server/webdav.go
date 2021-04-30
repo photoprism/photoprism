@@ -1,7 +1,12 @@
 package server
 
 import (
+	"github.com/photoprism/photoprism/pkg/fs"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -13,6 +18,32 @@ import (
 
 const WebDAVOriginals = "/originals"
 const WebDAVImport = "/import"
+
+// MarkUploadAsFavorite sets the favorite flag for newly uploaded files.
+func MarkUploadAsFavorite(fileName string) {
+	yamlName := fs.AbsPrefix(fileName, false) + fs.YamlExt
+
+	// Abort if YAML file already exists to avoid overwriting metadata.
+	if fs.FileExists(yamlName) {
+		log.Warnf("webdav: %s already exists", txt.Quote(filepath.Base(yamlName)))
+		return
+	}
+
+	// Make sure directory exists.
+	if err := os.MkdirAll(filepath.Dir(yamlName), os.ModePerm); err != nil {
+		log.Errorf("webdav: %s", err.Error())
+		return
+	}
+
+	// Write YAML data to file.
+	if err := ioutil.WriteFile(yamlName, []byte("Favorite: true\n"), os.ModePerm); err != nil {
+		log.Errorf("webdav: %s", err.Error())
+		return
+	}
+
+	// Log success.
+	log.Infof("webdav: marked %s as favorite", txt.Quote(filepath.Base(fileName)))
+}
 
 // ANY /webdav/*
 func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
@@ -44,6 +75,15 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 				}
 
 			} else {
+				// Mark uploaded files as favorite if X-Favorite HTTP header is "1".
+				if r.Method == MethodPut && r.Header.Get("X-Favorite") == "1" {
+					if router.BasePath() == WebDAVOriginals {
+						MarkUploadAsFavorite(filepath.Join(conf.OriginalsPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
+					} else if router.BasePath() == WebDAVImport {
+						MarkUploadAsFavorite(filepath.Join(conf.ImportPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
+					}
+				}
+
 				switch r.Method {
 				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
 					log.Infof("webdav: %s %s", r.Method, r.URL)
