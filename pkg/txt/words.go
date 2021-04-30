@@ -44,6 +44,27 @@ func Words(s string) (results []string) {
 	return results
 }
 
+// Keywords returns a slice of keywords without stopwords but including dashes.
+func Keywords(s string) (results []string) {
+	if s == "" {
+		return results
+	}
+
+	for _, w := range Words(s) {
+		w = strings.ToLower(w)
+
+		if UnknownWord(w) {
+			continue
+		}
+
+		if _, ok := StopWords[w]; ok == false {
+			results = append(results, w)
+		}
+	}
+
+	return results
+}
+
 // ReplaceSpaces replaces all spaces with another string.
 func ReplaceSpaces(s string, char string) string {
 	return strings.Replace(s, " ", char, -1)
@@ -75,27 +96,6 @@ func FilenameKeywords(s string) (results []string) {
 	}
 
 	for _, w := range FilenameWords(s) {
-		w = strings.ToLower(w)
-
-		if UnknownWord(w) {
-			continue
-		}
-
-		if _, ok := StopWords[w]; ok == false {
-			results = append(results, w)
-		}
-	}
-
-	return results
-}
-
-// Keywords returns a slice of keywords without stopwords but including dashes.
-func Keywords(s string) (results []string) {
-	if s == "" {
-		return results
-	}
-
-	for _, w := range Words(s) {
 		w = strings.ToLower(w)
 
 		if UnknownWord(w) {
@@ -155,7 +155,7 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 
 // AddToWords add words to a string slice and returns the sorted result.
 func AddToWords(existing []string, words string) []string {
-	w := Keywords(words)
+	w := Words(words)
 
 	if len(w) < 1 {
 		return existing
