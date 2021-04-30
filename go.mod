@@ -1,7 +1,7 @@
 module github.com/photoprism/photoprism
 
 require (
-	github.com/araddon/dateparse v0.0.0-20210207001429-0eec95c9db7e
+	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.4.0
@@ -21,7 +21,7 @@ require (
 	github.com/go-playground/validator/v10 v10.5.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20210421170257-a9fdf9fced04
+	github.com/google/open-location-code/go v0.0.0-20210427002653-a323e80159d6
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.9.0
 	github.com/h2non/filetype v1.1.1
@@ -51,7 +51,7 @@ require (
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
-	github.com/studio-b12/gowebdav v0.0.0-20210203212356-8244b5a5f51a
+	github.com/studio-b12/gowebdav v0.0.0-20210427212133-86f8378cf140
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.7.5
 	github.com/ugorji/go v1.2.5 // indirect
@@ -59,7 +59,7 @@ require (
 	github.com/urfave/cli v1.22.5
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20210423184538-5f58ad60dda6
+	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781
 	gopkg.in/ugjka/go-tz.v2 v2.0.12
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect

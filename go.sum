@@ -21,6 +21,8 @@ github.com/PuerkitoBio/goquery v1.5.1/go.mod h1:GsLWisAFVj4WgDibEWF4pvYnkVQBpKBK
 github.com/andybalholm/cascadia v1.1.0/go.mod h1:GsXiBklL0woXo1j/WYWtSYYC4ouU9PqHO0sqidkEA4Y=
 github.com/araddon/dateparse v0.0.0-20210207001429-0eec95c9db7e h1:OjdSMCht0ZVX7IH0nTdf00xEustvbtUGRgMh3gbdmOg=
 github.com/araddon/dateparse v0.0.0-20210207001429-0eec95c9db7e/go.mod h1:DCaWoUhZrYW9p1lxo/cm8EmUOOzAPSEZNGF2DK1dJgw=
+github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de h1:FxWPpzIjnTlhPwqqXc4/vE0f7GvRjuAsbW+HOIe8KnA=
+github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de/go.mod h1:DCaWoUhZrYW9p1lxo/cm8EmUOOzAPSEZNGF2DK1dJgw=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/chzyer/logex v1.1.10 h1:Swpa1K6QvQznwJRcfTfQJmTE72DqScAa40E+fbHEXEE=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
@@ -139,6 +141,8 @@ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/
 github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXiIaQGbYVAs8BPL6v8lEs=
 github.com/google/open-location-code/go v0.0.0-20210421170257-a9fdf9fced04 h1:vSi4tnVMSPrjIS+5VgoWe1OSfeIZNG+p1AsysRZeNns=
 github.com/google/open-location-code/go v0.0.0-20210421170257-a9fdf9fced04/go.mod h1:eJfRN6aj+kR/rnua/rw9jAgYhqoMHldQkdTi+sePRKk=
+github.com/google/open-location-code/go v0.0.0-20210427002653-a323e80159d6 h1:7LoKD6Wm5xvsevXv4zHc9yFJ0d60T/7R+pDnluwIxqs=
+github.com/google/open-location-code/go v0.0.0-20210427002653-a323e80159d6/go.mod h1:eJfRN6aj+kR/rnua/rw9jAgYhqoMHldQkdTi+sePRKk=
 github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
 github.com/google/pprof v0.0.0-20190515194954-54271f7e092f/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=
 github.com/google/pprof v0.0.0-20200212024743-f11f1df84d12/go.mod h1:ZgVRPoUq/hfqzAqh7sHMqb3I9Rq5C59dIz2SbBwJ4eM=
@@ -252,6 +256,8 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/studio-b12/gowebdav v0.0.0-20210203212356-8244b5a5f51a h1:Zq18I/ONL/ynTg+mhn78lyh14vNjOqaWfLKVZDwFUk4=
 github.com/studio-b12/gowebdav v0.0.0-20210203212356-8244b5a5f51a/go.mod h1:gCcfDlA1Y7GqOaeEKw5l9dOGx1VLdc/HuQSlQAaZ30s=
+github.com/studio-b12/gowebdav v0.0.0-20210427212133-86f8378cf140 h1:JCSn/2k3AQ0aJGs5Yx2xv6qrW0CAULc1E+xtSxeeQ/E=
+github.com/studio-b12/gowebdav v0.0.0-20210427212133-86f8378cf140/go.mod h1:gCcfDlA1Y7GqOaeEKw5l9dOGx1VLdc/HuQSlQAaZ30s=
 github.com/tensorflow/tensorflow v1.15.2 h1:7/f/A664Tml/nRJg04+p3StcrsT53mkcvmxYHXI21Qo=
 github.com/tensorflow/tensorflow v1.15.2/go.mod h1:itOSERT4trABok4UOoG+X4BoKds9F3rIsySdn+Lvu90=
 github.com/tidwall/gjson v1.7.5 h1:zmAN/xmX7OtpAkv4Ovfso60r/BiCi5IErCDYGNJu+uc=
@@ -336,6 +342,8 @@ golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2/go.mod h1:qpuaurCH72eLCgpAm/
 golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
 golang.org/x/net v0.0.0-20210423184538-5f58ad60dda6 h1:0PC75Fz/kyMGhL0e1QnypqK2kQMqKt9csD1GnMJR+Zk=
 golang.org/x/net v0.0.0-20210423184538-5f58ad60dda6/go.mod h1:OJAsFXCWl8Ukc7SiCT/9KSuxbyM7479/AVlXFRxuMCk=
+golang.org/x/net v0.0.0-20210428140749-89ef3d95e781 h1:DzZ89McO9/gWPsQXS/FVKAlG02ZjaQ6AlZRBimEYOd0=
+golang.org/x/net v0.0.0-20210428140749-89ef3d95e781/go.mod h1:OJAsFXCWl8Ukc7SiCT/9KSuxbyM7479/AVlXFRxuMCk=
 golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
 golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
 golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
