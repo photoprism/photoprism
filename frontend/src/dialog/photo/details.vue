@@ -384,7 +384,7 @@
                 ></v-textarea>
               </v-flex>
 
-              <v-flex v-if="!disabled" xs12 text-xs-right class="pt-3">
+              <v-flex v-if="!disabled" xs12 :text-xs-right="!rtl" :text-xs-left="rtl" class="pt-3">
                 <v-btn depressed color="secondary-light" class="action-close"
                        @click.stop="close">
                   <translate>Close</translate>
@@ -436,6 +436,7 @@ export default {
       utcTime: "",
       localTime: "",
       textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
+      rtl: this.$rtl,
     };
   },
   computed: {

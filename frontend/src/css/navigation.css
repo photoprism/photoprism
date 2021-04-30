@@ -22,6 +22,11 @@
     text-align: left;
 }
 
+#p-navigation .menu-item.--rtl {
+    /* Margin title from right 72px, the calc is the 72px minus the original "v-list-tile" right margin 16px */
+    margin-right: calc(72px - 16px);
+}
+
 .v-list__group__header .v-list__group__header__append-icon {
     padding-left: 8px !important;
 }

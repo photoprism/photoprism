@@ -8,7 +8,7 @@
               <translate :translate-params="{name: model.modelName()}">Share %{name}</translate>
             </h3>
           </v-flex>
-          <v-flex xs3 text-xs-right>
+          <v-flex xs3 :text-xs-right="!rtl" :text-xs-left="rtl">
             <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')"
                    @click.stop="add">
               <v-icon>add_link</v-icon>
@@ -21,7 +21,7 @@
           <v-expansion-panel-content v-for="(link, index) in links" :key="index"
                                      class="pa-0 elevation-0 secondary mb-1">
             <template #header>
-              <button class="text-xs-left action-url ml-0 mt-0 mb-0 pa-0 mr-2" style="user-select: none;"
+              <button :class="`text-xs-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none;"
                       @click.stop="copyUrl(link)">
                 <v-icon size="16" class="pr-1">link</v-icon>
                 /s/<strong v-if="link.Token" style="font-weight: 500;">{{ link.getToken() }}</strong><span
@@ -81,13 +81,13 @@
                                 @click:append="showPassword = !showPassword"
                         ></v-text-field>
                     </v-flex -->
-                    <v-flex xs6 text-xs-left class="pa-2">
+                    <v-flex xs6 :text-xs-left="!rtl" :text-xs-right="rtl" class="pa-2">
                       <v-btn small icon flat color="remove" class="ma-0 action-delete"
                              :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                         <v-icon>delete</v-icon>
                       </v-btn>
                     </v-flex>
-                    <v-flex xs6 text-xs-right class="pa-2">
+                    <v-flex xs6 :text-xs-right="!rtl" :text-xs-left="rtl" class="pa-2">
                       <v-btn small depressed dark color="primary-button" class="ma-0 action-save"
                              @click.stop.exact="update(link)">
                         <translate>Save</translate>
@@ -100,7 +100,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-container fluid text-xs-left class="pb-0 pt-3 pr-0 pl-0 caption">
+        <v-container fluid :text-xs-left="!rtl" :text-xs-right="!rtl" class="pb-0 pt-3 pr-0 pl-0 caption">
           <translate :translate-params="{name: model.modelName()}">People you share a link with will be able to view public contents.</translate>
           <translate>A click will copy it to your clipboard.</translate>
           <translate>Any private photos and videos remain private and won't be shared.</translate>
@@ -115,7 +115,7 @@
               <translate>WebDAV Upload</translate>
             </v-btn>
           </v-flex>
-          <v-flex xs6 text-xs-right>
+          <v-flex xs6 :text-xs-right="!rtl" :text-xs-left="rtl">
             <v-btn depressed color="secondary-light" class="action-close"
                    @click.stop="confirm">
               <translate>Close</translate>
@@ -150,7 +150,8 @@ export default {
         pass: this.$gettext("Password"),
         cancel: this.$gettext("Cancel"),
         confirm: this.$gettext("Done"),
-      }
+      },
+      rtl: this.$rtl,
     };
   },
   watch: {

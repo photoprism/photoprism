@@ -85,7 +85,7 @@
 
           <v-list-tile :to="{name: 'browse', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" class="nav-monochrome" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Monochrome</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -94,7 +94,7 @@
           <v-list-tile :to="{name: 'browse', query: { q: 'panorama:true' }}" :exact="true" class="nav-panoramas"
                        @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Panoramas</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -102,7 +102,7 @@
 
           <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" class="nav-stacks" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Stacks</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -110,7 +110,7 @@
 
           <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" class="nav-scans" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Scans</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -119,7 +119,7 @@
           <v-list-tile v-if="$config.feature('review')" to="/review" class="nav-review"
                        @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Review</translate>
                 <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review }}</span>
               </v-list-tile-title>
@@ -128,7 +128,7 @@
 
           <v-list-tile v-show="$config.feature('archive')" to="/archive" class="nav-archive" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Archive</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -141,7 +141,7 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
               <translate key="Albums">Albums</translate>
             </v-list-tile-title>
           </v-list-tile-content>
@@ -161,7 +161,7 @@
 
           <v-list-tile to="/unsorted" class="nav-unsorted">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Unsorted">Unsorted</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -251,7 +251,7 @@
 
           <v-list-tile to="/states" class="nav-states" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="States">States</translate>
                 <span v-show="config.count.states > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states }}</span>
               </v-list-tile-title>
@@ -325,7 +325,7 @@
 
           <v-list-tile v-show="$config.feature('files')" to="/library/files" class="nav-originals" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Originals">Originals</translate>
                 <span v-show="config.count.files > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files }}</span>
               </v-list-tile-title>
@@ -334,7 +334,7 @@
 
           <v-list-tile to="/library/hidden" class="nav-hidden" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Hidden">Hidden</translate>
                 <span v-show="config.count.hidden > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.hidden }}</span>
               </v-list-tile-title>
@@ -343,7 +343,7 @@
 
           <v-list-tile to="/library/errors" class="nav-errors" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Errors">Errors</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -376,7 +376,7 @@
 
             <v-list-tile :to="{ name: 'about' }" :exact="true" class="nav-about" @click.stop="">
               <v-list-tile-content>
-                <v-list-tile-title>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate>About</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
@@ -385,7 +385,7 @@
             <v-list-tile v-show="!isPublic && auth" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
                          @click.stop="">
               <v-list-tile-content>
-                <v-list-tile-title>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate>Feedback</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
@@ -393,7 +393,7 @@
 
             <v-list-tile :to="{ name: 'license' }" :exact="true" class="nav-license" @click.stop="">
               <v-list-tile-content>
-                <v-list-tile-title>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="License">License</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
