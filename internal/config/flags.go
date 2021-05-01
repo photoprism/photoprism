@@ -405,7 +405,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",
-		Usage:  "> 90 for high-quality thumbnails (25-100)",
+		Usage:  "set to 90+ for high-quality thumbnails (25-100)",
 		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
