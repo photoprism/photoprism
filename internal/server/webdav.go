@@ -1,12 +1,13 @@
 package server
 
 import (
-	"github.com/photoprism/photoprism/pkg/fs"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 

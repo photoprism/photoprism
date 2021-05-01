@@ -663,7 +663,7 @@ msgstr ""
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:462
+#: src/pages/settings/advanced.vue:483
 msgid "Disable Darktable"
 msgstr ""
 
@@ -704,10 +704,6 @@ msgstr ""
 msgid "Disables reverse geocoding and maps."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:484
-msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
-msgstr ""
-
 #: src/routes.js:353
 #: src/routes.js:360
 #: src/routes.js:367
@@ -731,7 +727,7 @@ msgstr ""
 msgid "Don't transcode videos with FFmpeg."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:463
+#: src/pages/settings/advanced.vue:484
 msgid "Don't use Darktable to convert RAW files."
 msgstr ""
 
@@ -861,6 +857,10 @@ msgstr ""
 #: src/dialog/account/edit.vue:67
 #: src/dialog/account/edit.vue:112
 msgid "Enabled"
+msgstr ""
+
+#: src/pages/settings/advanced.vue:463
+msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
 
 #: src/options/options.js:85
@@ -2430,7 +2430,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:483
+#: src/pages/settings/advanced.vue:462
 msgid "Use Presets"
 msgstr ""
 

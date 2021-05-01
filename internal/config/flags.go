@@ -168,7 +168,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-sips",
-		Usage:  "don't use SIPS to convert RAW files on macOS",
+		Usage:  "don't use Sips to convert RAW files on macOS",
 		EnvVar: "PHOTOPRISM_DISABLE_SIPS",
 	},
 	cli.BoolFlag{
@@ -305,11 +305,10 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "`LIMIT` the number of idle database connections",
 		EnvVar: "PHOTOPRISM_DATABASE_CONNS_IDLE",
 	},
-	cli.StringFlag{
-		Name:   "rawtherapee-bin",
-		Usage:  "RawTherapee CLI `COMMAND` for RAW conversion",
-		Value:  "rawtherapee-cli",
-		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
+	cli.BoolFlag{
+		Name:   "raw-presets",
+		Usage:  "enables RAW converter presets (may reduce performance)",
+		EnvVar: "PHOTOPRISM_RAW_PRESETS",
 	},
 	cli.StringFlag{
 		Name:   "darktable-bin",
@@ -317,14 +316,15 @@ var GlobalFlags = []cli.Flag{
 		Value:  "darktable-cli",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
-	cli.BoolFlag{
-		Name:   "darktable-presets",
-		Usage:  "enables Darktable presets and disables concurrent RAW conversion",
-		EnvVar: "PHOTOPRISM_DARKTABLE_PRESETS",
+	cli.StringFlag{
+		Name:   "rawtherapee-bin",
+		Usage:  "RawTherapee CLI `COMMAND` for RAW conversion",
+		Value:  "rawtherapee-cli",
+		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
-		Usage:  "SIPS (Scriptable Image Processing System) `COMMAND` for RAW conversion",
+		Usage:  "Sips `COMMAND` for RAW conversion on macOS",
 		Value:  "sips",
 		EnvVar: "PHOTOPRISM_SIPS_BIN",
 	},

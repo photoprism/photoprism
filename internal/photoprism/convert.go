@@ -185,7 +185,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 			var args []string
 
 			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
-			if c.conf.DarktablePresets() {
+			if c.conf.RawPresets() {
 				useMutex = true
 				args = []string{"--width", size, "--height", size, f.FileName()}
 			} else {

@@ -90,10 +90,10 @@ type Options struct {
 	HttpPort           int    `yaml:"HttpPort" json:"-" flag:"http-port"`
 	HttpMode           string `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression    string `yaml:"HttpCompression" json:"-" flag:"http-compression"`
-	SipsBin            string `yaml:"SipsBin" json:"-" flag:"sips-bin"`
-	RawtherapeeBin     string `yaml:"RawtherapeeBin" json:"-" flag:"rawtherapee-bin"`
+	RawPresets         bool   `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
 	DarktableBin       string `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
-	DarktablePresets   bool   `yaml:"DarktablePresets" json:"DarktablePresets" flag:"darktable-presets"`
+	RawtherapeeBin     string `yaml:"RawtherapeeBin" json:"-" flag:"rawtherapee-bin"`
+	SipsBin            string `yaml:"SipsBin" json:"-" flag:"sips-bin"`
 	HeifConvertBin     string `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	FFmpegBin          string `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
 	FFmpegEncoder      string `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`

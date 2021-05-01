@@ -1,13 +1,8 @@
 package config
 
-// RawtherapeeBin returns the rawtherapee-cli executable file name.
-func (c *Config) RawtherapeeBin() string {
-	return findExecutable(c.options.RawtherapeeBin, "rawtherapee-cli")
-}
-
-// RawtherapeeEnabled tests if Rawtherapee is enabled for RAW conversion.
-func (c *Config) RawtherapeeEnabled() bool {
-	return !c.DisableRawtherapee()
+// RawPresets tests if RAW converter presents should be used (may reduce performance).
+func (c *Config) RawPresets() bool {
+	return c.options.RawPresets
 }
 
 // DarktableBin returns the darktable-cli executable file name.
@@ -20,9 +15,14 @@ func (c *Config) DarktableEnabled() bool {
 	return !c.DisableDarktable()
 }
 
-// DarktablePresets checks if Darktable presets are enabled (disables concurrent RAW conversion).
-func (c *Config) DarktablePresets() bool {
-	return c.options.DarktablePresets
+// RawtherapeeBin returns the rawtherapee-cli executable file name.
+func (c *Config) RawtherapeeBin() string {
+	return findExecutable(c.options.RawtherapeeBin, "rawtherapee-cli")
+}
+
+// RawtherapeeEnabled tests if Rawtherapee is enabled for RAW conversion.
+func (c *Config) RawtherapeeEnabled() bool {
+	return !c.DisableRawtherapee()
 }
 
 // SipsEnabled tests if SIPS is enabled for RAW conversion.

@@ -54,7 +54,7 @@ export class ConfigOptions extends Model {
       DisableTensorFlow: config.values.disable.tensorflow,
       DetectNSFW: false,
       UploadNSFW: config.values.uploadNSFW,
-      DarktablePresets: false,
+      RawPresets: false,
       ThumbUncached: true,
       ThumbFilter: "",
       ThumbSize: 0,

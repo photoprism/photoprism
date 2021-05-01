@@ -227,7 +227,7 @@
 
         <v-card-actions>
           <v-layout wrap align-top>
-            <v-flex xs12 sm4 class="px-2 pb-2">
+            <v-flex xs12 sm8 class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext('JPEG Size Limit: %{n}px'), {n: settings.JpegSize}) }}
               </v-subheader>
@@ -246,27 +246,12 @@
 
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.DisableDarktable"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-private"
-                  color="secondary-dark"
-                  :label="$gettext('Disable Darktable')"
-                  :hint="$gettext('Don\'t use Darktable to convert RAW files.')"
-                  prepend-icon="image_not_supported"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.DarktablePresets"
+                  v-model="settings.RawPresets"
                   :disabled="busy"
                   class="ma-0 pa-0"
                   color="secondary-dark"
                   :label="$gettext('Use Presets')"
-                  :hint="$gettext('Disables simultaneous conversion of RAW files to apply Darktable presets.')"
+                  :hint="$gettext('Enables RAW converter presets. May reduce performance.')"
                   prepend-icon="tonality"
                   persistent-hint
                   @change="onChange"
@@ -276,12 +261,12 @@
 
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.DisableSips"
+                  v-model="settings.DisableDarktable"
                   :disabled="busy"
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
-                  :label="$gettext('Disable SIPS')"
-                  :hint="$gettext('Don\'t use SIPS to convert RAW files on macOS.')"
+                  :label="$gettext('Disable Darktable')"
+                  :hint="$gettext('Don\'t use Darktable to convert RAW files.')"
                   prepend-icon="image_not_supported"
                   persistent-hint
                   @change="onChange"
@@ -303,7 +288,6 @@
               >
               </v-checkbox>
             </v-flex>
-
 
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
