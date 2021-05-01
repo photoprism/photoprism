@@ -604,7 +604,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			log.Debugf("%s in %s (update title)", err, logName)
 		}
 
-		w := txt.Keywords(details.Keywords)
+		w := txt.Words(details.Keywords)
 
 		if !fs.IsGenerated(fileBase) {
 			w = append(w, txt.FilenameKeywords(fileBase)...)
