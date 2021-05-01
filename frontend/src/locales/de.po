@@ -392,8 +392,8 @@ msgstr "Abbrechen"
 msgid "Cards"
 msgstr "Karteikarten"
 
-#: src/component/photo/toolbar.vue:346 src/dialog/album/edit.vue:163
-#: src/pages/about/feedback.vue:92 src/pages/albums.vue:109
+#: src/component/photo/toolbar.vue:347 src/dialog/album/edit.vue:163
+#: src/pages/about/feedback.vue:94 src/pages/albums.vue:109
 msgid "Category"
 msgstr "Kategorie"
 
@@ -434,7 +434,7 @@ msgstr "Schließen"
 msgid "Codec"
 msgstr "Codec"
 
-#: src/component/photo/toolbar.vue:322
+#: src/component/photo/toolbar.vue:323
 msgid "Color"
 msgstr "Farbe"
 
@@ -550,10 +550,8 @@ msgid "Daily"
 msgstr "Täglich"
 
 #: src/options/options.js:95
-#, fuzzy
-#| msgid "Spanish"
 msgid "Danish"
-msgstr "Spanisch"
+msgstr "Dänisch"
 
 #: src/dialog/photo/details.vue:118
 msgid "Day"
@@ -576,7 +574,7 @@ msgstr "Standard Ordner"
 #: src/dialog/album/delete.vue:18 src/dialog/file/delete.vue:18
 #: src/dialog/label/delete.vue:18 src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:40 src/dialog/photo/files.vue:37
-#: src/dialog/share.vue:230 src/pages/settings/general.vue:206
+#: src/dialog/share.vue:231 src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr "Löschen"
 
@@ -671,15 +669,15 @@ msgstr ""
 
 #: src/pages/settings/advanced.vue:526
 msgid "Don't transcode videos with FFmpeg."
-msgstr "FFmpeg nicht zur Video-Transkodierung verwenden."
+msgstr "FFmpeg nicht zum Konvertieren von Videos verwenden."
 
 #: src/pages/settings/advanced.vue:484
 msgid "Don't use Darktable to convert RAW files."
-msgstr "Darktable nicht zum Konvertieren von RAW Dateien verwenden."
+msgstr "Darktable nicht zum Konvertieren von Bildern verwenden."
 
 #: src/pages/settings/advanced.vue:505
 msgid "Don't use RawTherapee to convert RAW files."
-msgstr "RawTherapee nicht zum Konvertieren von RAW Dateien verwenden."
+msgstr "RawTherapee nicht zum Konvertieren von Bildern verwenden."
 
 #: src/pages/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
@@ -755,7 +753,7 @@ msgstr ""
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dynamische Maximalgröße: %{n}px"
 
-#: src/pages/about/feedback.vue:165
+#: src/pages/about/feedback.vue:167
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -792,8 +790,8 @@ msgstr "Aktiv"
 #: src/pages/settings/advanced.vue:463
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
-"RAW-Konverter Presets aktivieren. Reduziert möglicherweise die "
-"Geschwindigkeit."
+"Aktiviert benutzerdefinierte Voreinstellungen. Dateien werden möglicherweise "
+"langsamer konvertiert."
 
 #: src/options/options.js:85
 msgid "English"
@@ -996,7 +994,7 @@ msgstr "Archivierte Inhalte werden nicht in den Suchergebnissen angezeigt."
 msgid "Hindi"
 msgstr "Hindi"
 
-#: src/pages/about/feedback.vue:124
+#: src/pages/about/feedback.vue:126
 msgid "How can we help?"
 msgstr "Wie können wir helfen?"
 
@@ -1345,7 +1343,7 @@ msgstr "Dateien verschieben"
 #: src/component/photo/list.vue:233 src/dialog/account/edit.vue:397
 #: src/dialog/album/edit.vue:106 src/dialog/photo/files.vue:70
 #: src/dialog/photo/files.vue:67 src/dialog/photo/files.vue:30
-#: src/dialog/photo/info.vue:31 src/pages/about/feedback.vue:142
+#: src/dialog/photo/info.vue:31 src/pages/about/feedback.vue:144
 #: src/pages/login.vue:73 src/share/photo/cards.vue:30
 #: src/share/photo/list.vue:34 src/share/photo/list.vue:212
 msgid "Name"
@@ -1798,8 +1796,8 @@ msgstr "Fehler melden"
 msgid "Request failed - invalid response"
 msgstr "Anfrage fehlgeschlagen - ungültige Antwort"
 
-#: src/pages/about/feedback.vue:103 src/pages/about/feedback.vue:123
-#: src/pages/about/feedback.vue:163
+#: src/pages/about/feedback.vue:105 src/pages/about/feedback.vue:125
+#: src/pages/about/feedback.vue:165
 msgid "Required"
 msgstr "Erforderlich"
 
@@ -1954,8 +1952,8 @@ msgstr "Alle %{n} Ergebnisse werden angezeigt"
 #: src/pages/settings/advanced.vue:77
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr ""
-"Zeigt ausführlichere Protokollmeldungen an. Änderungen erfordern einen "
-"Neustart."
+"Zeigt ausführlichere Meldungen an, um Fehler zu finden. Änderungen erfordern "
+"einen Neustart."
 
 #: src/model/file.js:185
 msgid "Sidecar"
@@ -2274,7 +2272,7 @@ msgstr "URL"
 
 #: src/pages/settings/advanced.vue:462
 msgid "Use Presets"
-msgstr "Voreinstellungen verwenden"
+msgstr "Presets anwenden"
 
 #: src/model/user.js:122
 msgid "User"
@@ -2393,6 +2391,14 @@ msgstr "Deine Nachricht wurde gesendet"
 #: src/component/photo/viewer.vue:166
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#~ msgid "Disable SIPS"
+#~ msgstr "Sips deaktivieren"
+
+#, fuzzy
+#~| msgid "Don't use Darktable to convert RAW files."
+#~ msgid "Don't use SIPS to convert RAW files on macOS."
+#~ msgstr "Darktable nicht zum Konvertieren von RAW Dateien verwenden."
 
 #~ msgid ""
 #~ "Disables simultaneous conversion of RAW files to apply Darktable presets."

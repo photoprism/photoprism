@@ -371,7 +371,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:205
 #: src/dialog/photo/details.vue:350
 #: src/share/photo/cards.vue:28
-#: src/share/photo/list.vue:31
+#: src/share/photo/list.vue:32
 msgid "Camera"
 msgstr ""
 
@@ -671,7 +671,7 @@ msgstr ""
 msgid "Disable ExifTool"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:546
+#: src/pages/settings/advanced.vue:525
 msgid "Disable FFmpeg"
 msgstr ""
 
@@ -679,12 +679,8 @@ msgstr ""
 msgid "Disable Places"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:525
-msgid "Disable RawTherapee"
-msgstr ""
-
 #: src/pages/settings/advanced.vue:504
-msgid "Disable SIPS"
+msgid "Disable RawTherapee"
 msgstr ""
 
 #: src/pages/settings/advanced.vue:230
@@ -723,7 +719,7 @@ msgstr ""
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:547
+#: src/pages/settings/advanced.vue:526
 msgid "Don't transcode videos with FFmpeg."
 msgstr ""
 
@@ -731,12 +727,8 @@ msgstr ""
 msgid "Don't use Darktable to convert RAW files."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:526
-msgid "Don't use RawTherapee to convert RAW files."
-msgstr ""
-
 #: src/pages/settings/advanced.vue:505
-msgid "Don't use SIPS to convert RAW files on macOS."
+msgid "Don't use RawTherapee to convert RAW files."
 msgstr ""
 
 #: src/pages/settings/advanced.vue:231
@@ -793,7 +785,7 @@ msgstr ""
 #: src/share/album/clipboard.vue:37
 #: src/share/photo/cards.vue:54
 #: src/share/photo/clipboard.vue:39
-#: src/share/photo/list.vue:51
+#: src/share/photo/list.vue:53
 #: src/share/photos.vue:489
 msgid "Downloading…"
 msgstr ""
@@ -1321,7 +1313,7 @@ msgstr ""
 #: src/component/photo/list.vue:38
 #: src/dialog/album/edit.vue:124
 #: src/share/photo/cards.vue:23
-#: src/share/photo/list.vue:33
+#: src/share/photo/list.vue:34
 msgid "Location"
 msgstr ""
 
@@ -1449,7 +1441,7 @@ msgstr ""
 #: src/pages/about/feedback.vue:144
 #: src/pages/login.vue:73
 #: src/share/photo/cards.vue:30
-#: src/share/photo/list.vue:33
+#: src/share/photo/list.vue:34
 #: src/share/photo/list.vue:212
 msgid "Name"
 msgstr ""
@@ -2221,7 +2213,7 @@ msgstr ""
 #: src/component/photo/list.vue:35
 #: src/dialog/photo/info.vue:52
 #: src/share/photo/cards.vue:25
-#: src/share/photo/list.vue:30
+#: src/share/photo/list.vue:31
 msgid "Taken"
 msgstr ""
 
@@ -2269,7 +2261,7 @@ msgstr ""
 #: src/component/photo/list.vue:34
 #: src/dialog/photo/details.vue:97
 #: src/dialog/photo/info.vue:45
-#: src/share/photo/list.vue:29
+#: src/share/photo/list.vue:30
 msgid "Title"
 msgstr ""
 
