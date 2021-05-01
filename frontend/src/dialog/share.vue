@@ -100,7 +100,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-container fluid :text-xs-left="!rtl" :text-xs-right="!rtl" class="pb-0 pt-3 pr-0 pl-0 caption">
+        <v-container fluid :text-xs-left="!rtl" :text-xs-right="rtl" class="pb-0 pt-3 pr-0 pl-0 caption">
           <translate :translate-params="{name: model.modelName()}">People you share a link with will be able to view public contents.</translate>
           <translate>A click will copy it to your clipboard.</translate>
           <translate>Any private photos and videos remain private and won't be shared.</translate>
