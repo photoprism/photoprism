@@ -4,11 +4,11 @@ import "time"
 
 // DbSearch represents search form fields for "/api/v1/db".
 type DbSearch struct {
-	Query   string    `form:"q"`
-	Table   string    `form:"table" binding:"required"`
-	Deleted bool      `form:"deleted"`
-	Since   time.Time `form:"since"`
-	Count   uint16    `form:"count" binding:"required"`
+	Query  string    `form:"q"`
+	Table  string    `form:"table" binding:"required"`
+	Offset uint      `form:"offset"`
+	Since  time.Time `form:"since"`
+	Count  uint16    `form:"count" binding:"required"`
 }
 
 func (f *DbSearch) GetQuery() string {
