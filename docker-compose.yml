@@ -17,6 +17,7 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
+    container_name: photoprism
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
