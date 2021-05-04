@@ -34,7 +34,7 @@ func Words(s string) (results []string) {
 	}
 
 	for _, s := range KeywordsRegexp.FindAllString(s, -1) {
-		if len(s) < 3 && IsLatin(s) {
+		if len(s) < 2 && IsLatin(s) {
 			continue
 		}
 
@@ -119,7 +119,7 @@ func UniqueWords(words []string) (results []string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 && IsLatin(w) || w == last {
+		if len(w) < 2 && IsLatin(w) || w == last {
 			continue
 		}
 
@@ -141,7 +141,7 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 && IsLatin(w) || w == last || strings.Contains(remove, w) {
+		if len(w) < 2 && IsLatin(w) || w == last || strings.Contains(remove, w) {
 			continue
 		}
 
@@ -162,6 +162,11 @@ func AddToWords(existing []string, words string) []string {
 	}
 
 	return UniqueWords(append(existing, w...))
+}
+
+// MergeWords merges two keyword strings separated by ", ".
+func MergeWords(w1, w2 string) string {
+	return strings.Join(AddToWords(Words(w1), w2), ", ")
 }
 
 // UniqueKeywords returns a slice of unique and sorted keywords without stopwords.

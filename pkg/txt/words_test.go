@@ -41,7 +41,7 @@ func TestWords(t *testing.T) {
 	})
 	t.Run("Île de la Réunion", func(t *testing.T) {
 		result := Words("Île de la Réunion")
-		assert.Equal(t, []string{"Île", "Réunion"}, result)
+		assert.Equal(t, []string{"Île", "de", "la", "Réunion"}, result)
 	})
 	t.Run("empty", func(t *testing.T) {
 		result := Words("")
@@ -80,6 +80,20 @@ func TestFilenameWords(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		result := FilenameWords("")
 		assert.Empty(t, result)
+	})
+}
+
+func TestAddToWords(t *testing.T) {
+	t.Run("I'm a lazy-BRoWN fox!", func(t *testing.T) {
+		result := AddToWords([]string{"foo", "bar", "fox"}, "Yellow banana, apple; pan-pot")
+		assert.Equal(t, []string{"apple", "banana", "bar", "foo", "fox", "pan-pot", "yellow"}, result)
+	})
+}
+
+func TestMergeWords(t *testing.T) {
+	t.Run("I'm a lazy-BRoWN fox!", func(t *testing.T) {
+		result := MergeWords("I'm a lazy-BRoWN fox!", "Yellow banana, apple; pan-pot")
+		assert.Equal(t, "apple, banana, fox, lazy-brown, pan-pot, yellow", result)
 	})
 }
 

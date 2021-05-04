@@ -28,7 +28,7 @@ func TestData_AddKeywords(t *testing.T) {
 
 		data.AddKeywords("Fo")
 
-		assert.Equal(t, "", data.Keywords.String())
+		assert.Equal(t, "fo", data.Keywords.String())
 	})
 }
 
