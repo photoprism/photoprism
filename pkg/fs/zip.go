@@ -73,8 +73,8 @@ func Unzip(src, dest string) (fileNames []string, err error) {
 	defer r.Close()
 
 	for _, f := range r.File {
-		// Skip directories like __OSX
-		if strings.HasPrefix(f.Name, "__") {
+		// Skip directories like __OSX and potentially malicious file names containing "..".
+		if strings.HasPrefix(f.Name, "__") || strings.Contains(f.Name, "..") {
 			continue
 		}
 

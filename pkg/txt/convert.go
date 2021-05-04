@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+const MaxUint = ^uint(0)
+const MaxInt = int64(MaxUint >> 1)
+
 var UnknownCountryCode = "zz"
 var CountryWordsRegexp = regexp.MustCompile("[\\p{L}]{2,}")
 
@@ -18,6 +21,10 @@ func Int(s string) int {
 	result, err := strconv.ParseInt(s, 10, 64)
 
 	if err != nil {
+		return 0
+	}
+
+	if result > MaxInt {
 		return 0
 	}
 
