@@ -25,7 +25,7 @@ func TestWords(t *testing.T) {
 	})
 	t.Run("I'm a lazy-brown fox!", func(t *testing.T) {
 		result := Words("I'm a lazy-BRoWN fox!")
-		assert.Equal(t, []string{"lazy-BRoWN", "fox"}, result)
+		assert.Equal(t, []string{"I'm", "lazy-BRoWN", "fox"}, result)
 	})
 	t.Run("no result", func(t *testing.T) {
 		result := Words("x")
@@ -51,6 +51,11 @@ func TestWords(t *testing.T) {
 		result := Words(" -foo- -")
 		assert.Equal(t, []string{"foo"}, result)
 	})
+	t.Run("McDonalds", func(t *testing.T) {
+		result := Words(" McDonald's FOO'bar-'")
+		assert.Equal(t, []string{"McDonald's", "FOO'bar"}, result)
+	})
+	// McDonald's
 }
 
 func TestReplaceSpaces(t *testing.T) {
@@ -97,7 +102,7 @@ func TestAddToWords(t *testing.T) {
 func TestMergeWords(t *testing.T) {
 	t.Run("I'm a lazy-BRoWN fox!", func(t *testing.T) {
 		result := MergeWords("I'm a lazy-BRoWN fox!", "Yellow banana, apple; pan-pot")
-		assert.Equal(t, "apple, banana, fox, lazy-brown, pan-pot, yellow", result)
+		assert.Equal(t, "apple, banana, fox, i'm, lazy-brown, pan-pot, yellow", result)
 	})
 }
 
