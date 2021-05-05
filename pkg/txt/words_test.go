@@ -47,6 +47,10 @@ func TestWords(t *testing.T) {
 		result := Words("")
 		assert.Empty(t, result)
 	})
+	t.Run("trim", func(t *testing.T) {
+		result := Words(" -foo- -")
+		assert.Equal(t, []string{"foo"}, result)
+	})
 }
 
 func TestReplaceSpaces(t *testing.T) {

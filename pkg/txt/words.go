@@ -33,12 +33,14 @@ func Words(s string) (results []string) {
 		return results
 	}
 
-	for _, s := range KeywordsRegexp.FindAllString(s, -1) {
-		if len(s) < 2 && IsLatin(s) {
+	for _, w := range KeywordsRegexp.FindAllString(s, -1) {
+		w = strings.Trim(w, "- ")
+
+		if w == "" || len(w) < 2 && IsLatin(w) {
 			continue
 		}
 
-		results = append(results, s)
+		results = append(results, w)
 	}
 
 	return results
@@ -117,9 +119,9 @@ func UniqueWords(words []string) (results []string) {
 	SortCaseInsensitive(words)
 
 	for _, w := range words {
-		w = strings.ToLower(w)
+		w = strings.Trim(strings.ToLower(w), "- ")
 
-		if len(w) < 2 && IsLatin(w) || w == last {
+		if w == "" || len(w) < 2 && IsLatin(w) || w == last {
 			continue
 		}
 
