@@ -21,7 +21,7 @@ require (
 	github.com/go-playground/validator/v10 v10.5.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20210427002653-a323e80159d6
+	github.com/google/open-location-code/go v0.0.0-20210504205230-1796878d947c
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.9.0
 	github.com/h2non/filetype v1.1.1
@@ -59,7 +59,7 @@ require (
 	github.com/urfave/cli v1.22.5
 	golang.org/x/crypto v0.0.0-20210503195802-e9a32991a82e
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20210504132125-bbd867fde50d
+	golang.org/x/net v0.0.0-20210505024714-0287a6fb4125
 	gopkg.in/ugjka/go-tz.v2 v2.0.12
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
