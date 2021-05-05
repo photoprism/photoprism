@@ -56,7 +56,7 @@
     "eventsource-polyfill": "^0.9.6",
     "file-loader": "^3.0.1",
     "hls.js": "^0.14.17",
-    "karma": "^5.2.3",
+    "karma": "^6.3.2",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage-istanbul-reporter": "^3.0.3",
     "karma-htmlfile-reporter": "^0.3.8",
