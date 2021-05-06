@@ -62,7 +62,7 @@ func (t *TensorFlow) File(filename string) (result Labels, err error) {
 func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("classify: %s (panic)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("classify: %s (inference panic)\nstack: %s", r, debug.Stack())
 		}
 	}()
 
@@ -78,7 +78,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	tensor, err := t.createTensor(img, "jpeg")
 
 	if err != nil {
-		return nil, fmt.Errorf("classify: %s", err)
+		return nil, err
 	}
 
 	// Run inference.
