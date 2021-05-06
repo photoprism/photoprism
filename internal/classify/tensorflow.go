@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime/debug"
 	"sort"
 	"strings"
 
@@ -59,6 +60,12 @@ func (t *TensorFlow) File(filename string) (result Labels, err error) {
 
 // Labels returns matching labels for a jpeg media string.
 func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("classify: %s (panic)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
 	if t.disabled {
 		return result, nil
 	}
@@ -130,6 +137,7 @@ func (t *TensorFlow) loadLabels(path string) error {
 	return nil
 }
 
+// ModelLoaded tests if the TensorFlow model is loaded.
 func (t *TensorFlow) ModelLoaded() bool {
 	return t.model != nil
 }
@@ -194,7 +202,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 	// Sort by probability
 	sort.Sort(result)
 
-	// return only the 5 best labels
+	// Return the best labels only.
 	if l := len(result); l < 5 {
 		return result[:l]
 	} else {
@@ -214,10 +222,20 @@ func (t *TensorFlow) createTensor(image []byte, imageFormat string) (*tf.Tensor,
 
 	img = imaging.Fill(img, width, height, imaging.Center, imaging.Lanczos)
 
-	return imageToTensorTF(img, width, height)
+	return imageToTensor(img, width, height)
 }
 
-func imageToTensorTF(img image.Image, imageHeight, imageWidth int) (*tf.Tensor, error) {
+func imageToTensor(img image.Image, imageHeight, imageWidth int) (tfTensor *tf.Tensor, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("classify: %s (panic)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
+	if imageHeight <= 0 || imageWidth <= 0 {
+		return tfTensor, fmt.Errorf("classify: image width and height must be > 0")
+	}
+
 	var tfImage [1][][][3]float32
 
 	for j := 0; j < imageHeight; j++ {
@@ -227,15 +245,15 @@ func imageToTensorTF(img image.Image, imageHeight, imageWidth int) (*tf.Tensor, 
 	for i := 0; i < imageWidth; i++ {
 		for j := 0; j < imageHeight; j++ {
 			r, g, b, _ := img.At(i, j).RGBA()
-			tfImage[0][j][i][0] = convertTF(r)
-			tfImage[0][j][i][1] = convertTF(g)
-			tfImage[0][j][i][2] = convertTF(b)
+			tfImage[0][j][i][0] = convertValue(r)
+			tfImage[0][j][i][1] = convertValue(g)
+			tfImage[0][j][i][2] = convertValue(b)
 		}
 	}
 
 	return tf.NewTensor(tfImage)
 }
 
-func convertTF(value uint32) float32 {
+func convertValue(value uint32) float32 {
 	return (float32(value>>8) - float32(127.5)) / float32(127.5)
 }
