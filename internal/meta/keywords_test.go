@@ -18,7 +18,7 @@ func TestData_AddKeywords(t *testing.T) {
 
 		data.AddKeywords("BAZ; pro")
 
-		assert.Equal(t, "foobar, pro", data.Keywords.String())
+		assert.Equal(t, "baz, foobar, pro", data.Keywords.String())
 	})
 
 	t.Run("ignore", func(t *testing.T) {
@@ -28,7 +28,7 @@ func TestData_AddKeywords(t *testing.T) {
 
 		data.AddKeywords("Fo")
 
-		assert.Equal(t, "", data.Keywords.String())
+		assert.Equal(t, "fo", data.Keywords.String())
 	})
 }
 

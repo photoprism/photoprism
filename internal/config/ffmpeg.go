@@ -5,6 +5,11 @@ func (c *Config) FFmpegBin() string {
 	return findExecutable(c.options.FFmpegBin, "ffmpeg")
 }
 
+// FFmpegEnabled tests if FFmpeg is enabled for video transcoding.
+func (c *Config) FFmpegEnabled() bool {
+	return !c.DisableFFmpeg()
+}
+
 // FFmpegEncoder returns the ffmpeg AVC encoder name.
 func (c *Config) FFmpegEncoder() string {
 	if c.options.FFmpegEncoder == "" {

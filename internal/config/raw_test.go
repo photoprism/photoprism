@@ -21,7 +21,7 @@ func TestConfig_DarktableBin(t *testing.T) {
 func TestConfig_DarktablePresets(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.False(t, c.DarktablePresets())
+	assert.False(t, c.RawPresets())
 }
 
 func TestConfig_SipsBin(t *testing.T) {

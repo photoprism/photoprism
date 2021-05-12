@@ -247,7 +247,7 @@ func TestTensorFlow_MakeTensor(t *testing.T) {
 	})
 }
 
-func Test_ConvertTF(t *testing.T) {
-	result := convertTF(uint32(98765432))
+func Test_convertValue(t *testing.T) {
+	result := convertValue(uint32(98765432))
 	assert.Equal(t, float32(3024.898), result)
 }

@@ -41,3 +41,28 @@ func (c *Config) DisableExifTool() bool {
 func (c *Config) DisableTensorFlow() bool {
 	return c.options.DisableTensorFlow
 }
+
+// DisableDarktable tests if Darktable is disabled for RAW conversion.
+func (c *Config) DisableDarktable() bool {
+	return c.options.DisableDarktable || c.DarktableBin() == ""
+}
+
+// DisableRawtherapee tests if Rawtherapee is disabled for RAW conversion.
+func (c *Config) DisableRawtherapee() bool {
+	return c.options.DisableRawtherapee || c.RawtherapeeBin() == ""
+}
+
+// DisableSips tests if SIPS is disabled for RAW conversion.
+func (c *Config) DisableSips() bool {
+	return c.options.DisableSips || c.SipsBin() == ""
+}
+
+// DisableHeifConvert tests if heif-convert is disabled for HEIF conversion.
+func (c *Config) DisableHeifConvert() bool {
+	return c.options.DisableHeifConvert || c.HeifConvertBin() == ""
+}
+
+// DisableFFmpeg tests if FFmpeg is disabled for video transcoding.
+func (c *Config) DisableFFmpeg() bool {
+	return c.options.DisableFFmpeg || c.FFmpegBin() == ""
+}

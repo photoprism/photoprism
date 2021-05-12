@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// NewID returns a random session id.
 func NewID() string {
 	b := make([]byte, 24)
 

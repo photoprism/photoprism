@@ -143,10 +143,18 @@ func (m *Details) SetKeywords(data, src string) {
 	}
 
 	if (SrcPriority[src] < SrcPriority[m.KeywordsSrc]) && m.HasKeywords() {
+		// Ignore if priority is lower and keywords already exist.
 		return
 	}
 
-	m.Keywords = val
+	if SrcPriority[src] > SrcPriority[m.KeywordsSrc] {
+		// Overwrite existing keywords if priority is higher.
+		m.Keywords = val
+	} else {
+		// Merge keywords if priority is the same.
+		m.Keywords = txt.MergeWords(m.Keywords, val)
+	}
+
 	m.KeywordsSrc = src
 }
 

@@ -15,7 +15,7 @@ func Int(s string) int {
 		return 0
 	}
 
-	result, err := strconv.ParseInt(s, 10, 64)
+	result, err := strconv.ParseInt(s, 10, 32)
 
 	if err != nil {
 		return 0

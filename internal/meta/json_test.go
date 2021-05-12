@@ -753,4 +753,24 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
+
+	t.Run("keywords.json", func(t *testing.T) {
+		data, err := JSON("testdata/keywords.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, CodecJpeg, data.Codec)
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, Keywords{"alo", "cactus", "ever", "lang", "sonne"}, data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, "Canon", data.CameraMake)
+		assert.Equal(t, "Canon EOS 7D", data.CameraModel)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "EF70-200mm f/4L IS USM", data.LensModel)
+		assert.Equal(t, 1, data.Orientation)
+	})
 }

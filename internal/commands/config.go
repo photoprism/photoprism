@@ -65,9 +65,14 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-settings", conf.DisableSettings())
 	fmt.Printf("%-25s %t\n", "disable-places", conf.DisablePlaces())
 	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
+	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
+	fmt.Printf("%-25s %t\n", "disable-darktable", conf.DisableDarktable())
+	fmt.Printf("%-25s %t\n", "disable-rawtherapee", conf.DisableRawtherapee())
+	fmt.Printf("%-25s %t\n", "disable-sips", conf.DisableSips())
+	fmt.Printf("%-25s %t\n", "disable-heifconvert", conf.DisableHeifConvert())
+	fmt.Printf("%-25s %t\n", "disable-ffmpeg", conf.DisableFFmpeg())
 
 	// Everything related to TensorFlow.
-	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
 	fmt.Printf("%-25s %s\n", "tensorflow-version", conf.TensorFlowVersion())
 	fmt.Printf("%-25s %s\n", "tensorflow-model-path", conf.TensorFlowModelPath())
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())
@@ -106,9 +111,9 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "database-conns-idle", conf.DatabaseConnsIdle())
 
 	// External binaries and sidecar configuration.
-	fmt.Printf("%-25s %s\n", "rawtherapee-bin", conf.RawtherapeeBin())
+	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
-	fmt.Printf("%-25s %t\n", "darktable-presets", conf.DarktablePresets())
+	fmt.Printf("%-25s %s\n", "rawtherapee-bin", conf.RawtherapeeBin())
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
 	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())

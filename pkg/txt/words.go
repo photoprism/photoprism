@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\-]{1,}")
+var KeywordsRegexp = regexp.MustCompile("[\\p{L}\\-']{1,}")
 
 // UnknownWord returns true if the string does not seem to be a real word.
 func UnknownWord(s string) bool {
@@ -33,12 +33,35 @@ func Words(s string) (results []string) {
 		return results
 	}
 
-	for _, s := range KeywordsRegexp.FindAllString(s, -1) {
-		if len(s) < 3 && IsLatin(s) {
+	for _, w := range KeywordsRegexp.FindAllString(s, -1) {
+		w = strings.Trim(w, "- '")
+
+		if w == "" || len(w) < 2 && IsLatin(w) {
 			continue
 		}
 
-		results = append(results, s)
+		results = append(results, w)
+	}
+
+	return results
+}
+
+// Keywords returns a slice of keywords without stopwords but including dashes.
+func Keywords(s string) (results []string) {
+	if s == "" {
+		return results
+	}
+
+	for _, w := range Words(s) {
+		w = strings.ToLower(w)
+
+		if UnknownWord(w) {
+			continue
+		}
+
+		if _, ok := StopWords[w]; ok == false {
+			results = append(results, w)
+		}
 	}
 
 	return results
@@ -89,27 +112,6 @@ func FilenameKeywords(s string) (results []string) {
 	return results
 }
 
-// Keywords returns a slice of keywords without stopwords but including dashes.
-func Keywords(s string) (results []string) {
-	if s == "" {
-		return results
-	}
-
-	for _, w := range Words(s) {
-		w = strings.ToLower(w)
-
-		if UnknownWord(w) {
-			continue
-		}
-
-		if _, ok := StopWords[w]; ok == false {
-			results = append(results, w)
-		}
-	}
-
-	return results
-}
-
 // UniqueWords sorts and filters a string slice for unique words.
 func UniqueWords(words []string) (results []string) {
 	last := ""
@@ -117,9 +119,9 @@ func UniqueWords(words []string) (results []string) {
 	SortCaseInsensitive(words)
 
 	for _, w := range words {
-		w = strings.ToLower(w)
+		w = strings.Trim(strings.ToLower(w), "- '")
 
-		if len(w) < 3 && IsLatin(w) || w == last {
+		if w == "" || len(w) < 2 && IsLatin(w) || w == last {
 			continue
 		}
 
@@ -141,7 +143,7 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
-		if len(w) < 3 && IsLatin(w) || w == last || strings.Contains(remove, w) {
+		if len(w) < 2 && IsLatin(w) || w == last || strings.Contains(remove, w) {
 			continue
 		}
 
@@ -155,13 +157,18 @@ func RemoveFromWords(words []string, remove string) (results []string) {
 
 // AddToWords add words to a string slice and returns the sorted result.
 func AddToWords(existing []string, words string) []string {
-	w := Keywords(words)
+	w := Words(words)
 
 	if len(w) < 1 {
 		return existing
 	}
 
 	return UniqueWords(append(existing, w...))
+}
+
+// MergeWords merges two keyword strings separated by ", ".
+func MergeWords(w1, w2 string) string {
+	return strings.Join(AddToWords(Words(w1), w2), ", ")
 }
 
 // UniqueKeywords returns a slice of unique and sorted keywords without stopwords.

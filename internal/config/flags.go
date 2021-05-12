@@ -133,7 +133,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-webdav",
-		Usage:  "disable built-in WebDAV server",
+		Usage:  "disables built-in WebDAV server",
 		EnvVar: "PHOTOPRISM_DISABLE_WEBDAV",
 	},
 	cli.BoolFlag{
@@ -148,13 +148,38 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-exiftool",
-		Usage:  "don't create ExifTool JSON files for enhanced metadata extraction",
+		Usage:  "don't use ExifTool to extract metadata from image and video files",
 		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
 	},
 	cli.BoolFlag{
 		Name:   "disable-tensorflow",
 		Usage:  "don't use TensorFlow for image classification",
 		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
+	},
+	cli.BoolFlag{
+		Name:   "disable-darktable",
+		Usage:  "don't use Darktable to convert RAW files",
+		EnvVar: "PHOTOPRISM_DISABLE_DARKTABLE",
+	},
+	cli.BoolFlag{
+		Name:   "disable-rawtherapee",
+		Usage:  "don't use RawTherapee to convert RAW files",
+		EnvVar: "PHOTOPRISM_DISABLE_RAWTHERAPEE",
+	},
+	cli.BoolFlag{
+		Name:   "disable-sips",
+		Usage:  "don't use Sips to convert RAW files on macOS",
+		EnvVar: "PHOTOPRISM_DISABLE_SIPS",
+	},
+	cli.BoolFlag{
+		Name:   "disable-heifconvert",
+		Usage:  "don't convert HEIC/HEIF files",
+		EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
+	},
+	cli.BoolFlag{
+		Name:   "disable-ffmpeg",
+		Usage:  "don't transcode videos with FFmpeg",
+		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
@@ -280,26 +305,26 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "`LIMIT` the number of idle database connections",
 		EnvVar: "PHOTOPRISM_DATABASE_CONNS_IDLE",
 	},
+	cli.BoolFlag{
+		Name:   "raw-presets",
+		Usage:  "enables RAW converter presets (may reduce performance)",
+		EnvVar: "PHOTOPRISM_RAW_PRESETS",
+	},
+	cli.StringFlag{
+		Name:   "darktable-bin",
+		Usage:  "Darktable CLI `COMMAND` for RAW conversion",
+		Value:  "darktable-cli",
+		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
+	},
 	cli.StringFlag{
 		Name:   "rawtherapee-bin",
-		Usage:  "RawTherapee CLI `COMMAND` for raw image conversion",
+		Usage:  "RawTherapee CLI `COMMAND` for RAW conversion",
 		Value:  "rawtherapee-cli",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
 	},
 	cli.StringFlag{
-		Name:   "darktable-bin",
-		Usage:  "Darktable CLI `COMMAND` for raw image conversion",
-		Value:  "darktable-cli",
-		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
-	},
-	cli.BoolFlag{
-		Name:   "darktable-presets",
-		Usage:  "enables Darktable presets and disables concurrent RAW conversion",
-		EnvVar: "PHOTOPRISM_DARKTABLE_PRESETS",
-	},
-	cli.StringFlag{
 		Name:   "sips-bin",
-		Usage:  "Scriptable Image Processing System `COMMAND`",
+		Usage:  "Sips `COMMAND` for RAW conversion on macOS",
 		Value:  "sips",
 		EnvVar: "PHOTOPRISM_SIPS_BIN",
 	},
@@ -380,7 +405,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",
-		Usage:  "> 90 for high-quality thumbnails (25-100)",
+		Usage:  "set to 90+ for high-quality thumbnails (25-100)",
 		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},

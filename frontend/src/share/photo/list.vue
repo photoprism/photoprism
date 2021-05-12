@@ -114,17 +114,19 @@ export default {
 
     let showName = this.filter.order === 'name';
 
+    const align = !this.$rtl ? 'left' : 'right';
     return {
       config: this.$config.values,
       notFoundMessage: m,
       'selected': [],
       'listColumns': [
         {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
-        {text: this.$gettext('Title'), value: 'Title', sortable: false},
-        {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
-        {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
+        {text: this.$gettext('Title'), align, value: 'Title', sortable: false},
+        {text: this.$gettext('Taken'), align, class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
+        {text: this.$gettext('Camera'), align, class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
         {
           text: showName ? this.$gettext('Name') : this.$gettext('Location'),
+          align,
           class: 'hidden-xs-only',
           value: showName ? 'FileName' : 'PlaceLabel',
           sortable: false

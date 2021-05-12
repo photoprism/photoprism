@@ -411,7 +411,7 @@ func (m *Photo) IndexKeywords() error {
 	// Add title, description and other keywords
 	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)
 	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
-	keywords = append(keywords, txt.Keywords(details.Keywords)...)
+	keywords = append(keywords, txt.Words(details.Keywords)...)
 	keywords = append(keywords, txt.Keywords(details.Subject)...)
 	keywords = append(keywords, txt.Keywords(details.Artist)...)
 
