@@ -790,7 +790,9 @@ msgstr "Activé"
 
 #: src/pages/settings/advanced.vue:463
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "c"
+msgstr ""
+"Active les préréglages du convertisseur RAW. Cela peut réduire les "
+"performances. "
 
 #: src/options/options.js:85
 msgid "English"
