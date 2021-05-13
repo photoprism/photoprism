@@ -4,7 +4,7 @@ require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
-	github.com/djherbis/times v1.4.0
+	github.com/djherbis/times v1.5.0
 	github.com/dsoprea/go-exif/v2 v2.0.0-20210428042052-dca55bf8ca15 // indirect
 	github.com/dsoprea/go-exif/v3 v3.0.0-20210428042052-dca55bf8ca15
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20200717090456-b3d9dcddffd1
@@ -34,7 +34,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.0.6
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/leonelquinteros/gotext v1.4.0
+	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
@@ -58,9 +58,9 @@ require (
 	github.com/ugorji/go v1.2.5 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
-	golang.org/x/crypto v0.0.0-20210505212654-3497b51f5e64
+	golang.org/x/crypto v0.0.0-20210513122933-cd7d49e622d5
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20210505214959-0714010a04ed
+	golang.org/x/net v0.0.0-20210510120150-4163338589ed
 	gopkg.in/ugjka/go-tz.v2 v2.0.12
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
