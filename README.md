@@ -106,6 +106,6 @@ goods, products, or services without prior written permission. In other words, p
 [docs]: https://docs.photoprism.org/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
-[twitter]: https://twitter.com/browseyourlife
+[twitter]: https://twitter.com/photoprism_app
 [unfunded issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded
 [sponsored issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor
