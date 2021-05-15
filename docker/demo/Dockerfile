@@ -1,30 +1,28 @@
 FROM photoprism/photoprism:preview as build
 
-# Hide TensorFlow warnings
-ENV TF_CPP_MIN_LOG_LEVEL 2
+# Set environment variables
+ENV TF_CPP_MIN_LOG_LEVEL=2 \
+    PHOTOPRISM_STORAGE_PATH="/photoprism/storage" \
+    PHOTOPRISM_DEBUG="false" \
+    PHOTOPRISM_READONLY="false" \
+    PHOTOPRISM_PUBLIC="true" \
+    HOTOPRISM_DEMO="true" \
+    PHOTOPRISM_EXPERIMENTAL="true" \
+    PHOTOPRISM_UPLOAD_NSFW="false" \
+    PHOTOPRISM_DETECT_NSFW="false" \
+    PHOTOPRISM_THUMB_FILTER="lanczos" \
+    PHOTOPRISM_THUMB_UNCACHED="true" \
+    PHOTOPRISM_THUMB_SIZE=4096 \
+    PHOTOPRISM_THUMB_SIZE_UNCACHED=4096 \
+    PHOTOPRISM_JPEG_SIZE=4096 \
+    PHOTOPRISM_JPEG_QUALITY=95 \
+    PHOTOPRISM_SITE_CAPTION="Demo"
 
 # Copy assets
 COPY /docker/demo/index.tmpl /photoprism/assets/templates
 
 # Download example photos
 RUN wget -qO- https://dl.photoprism.org/qa/demo.tar.gz | tar xvz -C /photoprism/originals
-
-# Configure PhotoPrism
-ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage
-ENV PHOTOPRISM_DEBUG false
-ENV PHOTOPRISM_READONLY false
-ENV PHOTOPRISM_PUBLIC true
-ENV PHOTOPRISM_DEMO true
-ENV PHOTOPRISM_EXPERIMENTAL true
-ENV PHOTOPRISM_UPLOAD_NSFW false
-ENV PHOTOPRISM_DETECT_NSFW false
-ENV PHOTOPRISM_THUMB_FILTER lanczos
-ENV PHOTOPRISM_THUMB_UNCACHED true
-ENV PHOTOPRISM_THUMB_SIZE 4096
-ENV PHOTOPRISM_THUMB_SIZE_UNCACHED 4096
-ENV PHOTOPRISM_JPEG_SIZE 4096
-ENV PHOTOPRISM_JPEG_QUALITY 95
-ENV PHOTOPRISM_SITE_CAPTION "Demo"
 
 # Import example photos
 RUN photoprism restore -a

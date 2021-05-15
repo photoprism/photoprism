@@ -165,7 +165,7 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
-	docker pull ubuntu:20.10
+	docker pull ubuntu:21.04
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
 docker-photoprism:
@@ -179,14 +179,14 @@ docker-photoprism-local:
 docker-photoprism-pull:
 	docker pull photoprism/photoprism:latest
 docker-photoprism-arm64-preview:
-	docker pull ubuntu:20.10
+	docker pull ubuntu:21.04
 	scripts/docker-build.sh photoprism-arm64
 	scripts/docker-push.sh photoprism-arm64
 docker-photoprism-arm64:
 	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
 docker-photoprism-arm32-preview:
-	docker pull ubuntu:20.10
+	docker pull ubuntu:21.04
 	scripts/docker-build.sh photoprism-arm32
 	scripts/docker-push.sh photoprism-arm32
 docker-photoprism-arm32:

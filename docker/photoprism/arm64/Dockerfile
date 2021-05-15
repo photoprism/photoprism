@@ -1,4 +1,4 @@
-FROM ubuntu:20.10 as build
+FROM ubuntu:21.04 as build
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
@@ -50,8 +50,8 @@ RUN apt-get update && apt-get upgrade && \
 # Big thank you to Guy Sheffer for building this!
 # https://github.com/guysoft
 #
-ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
-ENV TF_CPP_MIN_LOG_LEVEL 0
+ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
+    TF_CPP_MIN_LOG_LEVEL="0"
 RUN curl -L \
    "https://dl.photoprism.org/tensorflow/arm64/libtensorflow-arm64-1.15.2.tar.gz" | \
    tar -C "/usr" -xz
@@ -72,24 +72,21 @@ RUN npm install --unsafe-perm=true --allow-root -g npm && \
     npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.16.3
+ENV GOPATH="/go" \
+    GOBIN="/go/bin" \
+    PATH="/go/bin:/usr/local/go/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    GO111MODULE="on" \
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
+    GOLANG_VERSION=1.16.4
 RUN set -eux; \
 	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-arm64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "566b1d6f17d2bc4ad5f81486f0df44f3088c3ed47a3bec4099d8ed9939e90d5d *go.tgz" | sha256sum -c -; \
+	echo "8b18eb05ddda2652d69ab1b1dd1f40dd731799f43c6a58b512ad01ae5b5bba21 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
-	export PATH="/usr/local/go/bin:$PATH"; \
 	go version
-
-# Configure Go environment
-ENV GOPATH /go
-ENV GOBIN $GOPATH/bin
-ENV PATH $GOBIN:/usr/local/go/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV GO111MODULE on
-ENV CGO_CFLAGS "-g -O2 -Wno-return-local-addr"
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN mkdir -p "/go/src" "/go/bin" && chmod -R 777 "/go"
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism
@@ -107,10 +104,56 @@ RUN make dep build-js install
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu
 
 # Same base image as photoprism/development
-FROM ubuntu:20.10
+FROM ubuntu:21.04
 
 # Set environment variables
-ENV DEBIAN_FRONTEND noninteractive
+# see https://docs.photoprism.org/getting-started/config-options/
+ENV DEBIAN_FRONTEND="noninteractive" \
+    TF_CPP_MIN_LOG_LEVEL="2" \
+    PATH="/photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    TMPDIR="/tmp" \
+    PHOTOPRISM_ASSETS_PATH="/photoprism/assets" \
+    PHOTOPRISM_STORAGE_PATH="/photoprism/storage" \
+    PHOTOPRISM_BACKUP_PATH="/var/lib/photoprism" \
+    PHOTOPRISM_ORIGINALS_PATH="/photoprism/originals" \
+    PHOTOPRISM_IMPORT_PATH="/photoprism/import" \
+    PHOTOPRISM_LOG_FILENAME="/photoprism/photoprism.log" \
+    PHOTOPRISM_PID_FILENAME="/photoprism/photoprism.pid" \
+    PHOTOPRISM_DEBUG="false" \
+    PHOTOPRISM_PUBLIC="false" \
+    PHOTOPRISM_READONLY="false" \
+    PHOTOPRISM_UPLOAD_NSFW="true" \
+    PHOTOPRISM_DETECT_NSFW="false" \
+    PHOTOPRISM_EXPERIMENTAL="false" \
+    PHOTOPRISM_SITE_URL="http://localhost:2342/" \
+    PHOTOPRISM_SITE_TITLE="PhotoPrism" \
+    PHOTOPRISM_SITE_CAPTION="Browse Your Life" \
+    PHOTOPRISM_SITE_DESCRIPTION="" \
+    PHOTOPRISM_SITE_AUTHOR="" \
+    PHOTOPRISM_HTTP_HOST="0.0.0.0" \
+    PHOTOPRISM_HTTP_PORT="2342" \
+    PHOTOPRISM_DATABASE_DRIVER="sqlite" \
+    PHOTOPRISM_DATABASE_SERVER="" \
+    PHOTOPRISM_DATABASE_NAME="photoprism" \
+    PHOTOPRISM_DATABASE_USER="photoprism" \
+    PHOTOPRISM_DATABASE_PASSWORD="" \
+    PHOTOPRISM_DISABLE_WEBDAV="false" \
+    PHOTOPRISM_DISABLE_SETTINGS="false" \
+    PHOTOPRISM_DISABLE_BACKUPS="false" \
+    PHOTOPRISM_DISABLE_EXIFTOOL="false" \
+    PHOTOPRISM_DISABLE_PLACES="false" \
+    PHOTOPRISM_DISABLE_TENSORFLOW="false" \
+    PHOTOPRISM_DARKTABLE_PRESETS="false" \
+    PHOTOPRISM_THUMB_FILTER="lanczos" \
+    PHOTOPRISM_THUMB_UNCACHED="false" \
+    PHOTOPRISM_THUMB_SIZE="2048" \
+    PHOTOPRISM_THUMB_SIZE_UNCACHED="7680" \
+    PHOTOPRISM_JPEG_SIZE="7680" \
+    PHOTOPRISM_JPEG_QUALITY="92" \
+    PHOTOPRISM_WORKERS="0" \
+    PHOTOPRISM_WAKEUP_INTERVAL="900" \
+    PHOTOPRISM_AUTO_INDEX="300" \
+    PHOTOPRISM_AUTO_IMPORT="300"
 
 # Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry
@@ -151,58 +194,6 @@ RUN ldconfig
 # Set default umask and create photoprism user
 RUN umask 0000 && useradd photoprism -m -d /photoprism
 WORKDIR /photoprism
-
-ENV TF_CPP_MIN_LOG_LEVEL 2
-
-ENV PATH /photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV TMPDIR /tmp
-
-# Storage path names
-ENV PHOTOPRISM_ASSETS_PATH /photoprism/assets
-ENV PHOTOPRISM_STORAGE_PATH /photoprism/storage
-ENV PHOTOPRISM_BACKUP_PATH /var/lib/photoprism
-ENV PHOTOPRISM_ORIGINALS_PATH /photoprism/originals
-ENV PHOTOPRISM_IMPORT_PATH /photoprism/import
-ENV PHOTOPRISM_LOG_FILENAME /photoprism/photoprism.log
-ENV PHOTOPRISM_PID_FILENAME /photoprism/photoprism.pid
-
-# Defaults for common config values
-# See https://docs.photoprism.org/getting-started/config-options/
-ENV PHOTOPRISM_DEBUG "false"
-ENV PHOTOPRISM_PUBLIC "false"
-ENV PHOTOPRISM_READONLY "false"
-ENV PHOTOPRISM_UPLOAD_NSFW "true"
-ENV PHOTOPRISM_DETECT_NSFW "false"
-ENV PHOTOPRISM_EXPERIMENTAL "false"
-ENV PHOTOPRISM_SITE_URL "http://localhost:2342/"
-ENV PHOTOPRISM_SITE_TITLE "PhotoPrism"
-ENV PHOTOPRISM_SITE_CAPTION "Browse Your Life"
-ENV PHOTOPRISM_SITE_DESCRIPTION ""
-ENV PHOTOPRISM_SITE_AUTHOR ""
-ENV PHOTOPRISM_HTTP_HOST "0.0.0.0"
-ENV PHOTOPRISM_HTTP_PORT 2342
-ENV PHOTOPRISM_DATABASE_DRIVER "sqlite"
-ENV PHOTOPRISM_DATABASE_SERVER ""
-ENV PHOTOPRISM_DATABASE_NAME "photoprism"
-ENV PHOTOPRISM_DATABASE_USER "photoprism"
-ENV PHOTOPRISM_DATABASE_PASSWORD ""
-ENV PHOTOPRISM_DISABLE_WEBDAV "false"
-ENV PHOTOPRISM_DISABLE_SETTINGS "false"
-ENV PHOTOPRISM_DISABLE_BACKUPS "false"
-ENV PHOTOPRISM_DISABLE_EXIFTOOL "false"
-ENV PHOTOPRISM_DISABLE_PLACES "false"
-ENV PHOTOPRISM_DISABLE_TENSORFLOW "false"
-ENV PHOTOPRISM_DARKTABLE_PRESETS "false"
-ENV PHOTOPRISM_THUMB_FILTER "lanczos"
-ENV PHOTOPRISM_THUMB_UNCACHED "false"
-ENV PHOTOPRISM_THUMB_SIZE 2048
-ENV PHOTOPRISM_THUMB_SIZE_UNCACHED 7680
-ENV PHOTOPRISM_JPEG_SIZE 7680
-ENV PHOTOPRISM_JPEG_QUALITY 92
-ENV PHOTOPRISM_WORKERS 0
-ENV PHOTOPRISM_WAKEUP_INTERVAL 900
-ENV PHOTOPRISM_AUTO_INDEX 300
-ENV PHOTOPRISM_AUTO_IMPORT 300
 
 # Copy files to /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism

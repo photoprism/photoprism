@@ -1,10 +1,20 @@
-FROM ubuntu:20.10
+FROM ubuntu:21.04
 
 LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
 
 ARG BUILD_TAG
 
-ENV DEBIAN_FRONTEND noninteractive
+# Set environment variables
+ENV DEBIAN_FRONTEND="noninteractive" \
+    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
+    TF_CPP_MIN_LOG_LEVEL="0" \
+    NODE_ENV="production" \
+    GOPATH="/go" \
+    GOBIN="/go/bin" \
+    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    TMPDIR="/tmp" \
+    GO111MODULE="on" \
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
 # Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
@@ -70,12 +80,10 @@ RUN apt-get update && apt-get upgrade && \
 # We also have custom builds available:
 # https://dl.photoprism.org/tensorflow/linux/
 #
-ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
-ENV TF_CPP_MIN_LOG_LEVEL 0
 RUN curl -L \
    "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-cpu-1.15.2.tar.gz" | \
-   tar -C "/usr" -xz
-RUN ldconfig
+   tar -C "/usr" -xz && \
+   ldconfig
 
 # Install NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
@@ -85,36 +93,23 @@ RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
     apt-get install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
     apt-get autoremove && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    umask 0000
 
-# Set default https://en.wikipedia.org/wiki/Umask
-RUN umask 0000
-
-# Install and configure NodeJS Package Manager (npm)
-ENV NODE_ENV production
+# Install NodeJS & NPM
 RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && \
     npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.16.3
+ENV GOLANG_VERSION 1.16.4
 RUN set -eux; \
-	\
 	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
 	wget -O go.tgz "$url"; \
-	echo "951a3c7c6ce4e56ad883f97d9db74d3d6d80d5fec77455c6ada6c1f7ac4776d2 *go.tgz" | sha256sum -c -; \
+	echo "7154e88f5a8047aad4b80ebace58a059e36e7e2e4eb3b383127a28c711b4ff59 *go.tgz" | sha256sum -c -; \
 	tar -C /usr/local -xzf go.tgz; \
 	rm go.tgz; \
-	export PATH="/usr/local/go/bin:$PATH"; \
 	go version
-
-# Configure Go environment
-ENV GOPATH /go
-ENV GOBIN $GOPATH/bin
-ENV PATH $GOBIN:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV TMPDIR /tmp
-ENV GO111MODULE on
-ENV CGO_CFLAGS "-g -O2 -Wno-return-local-addr"
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN mkdir -p "/go/src" "/go/bin" && chmod -R 777 "/go"
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
