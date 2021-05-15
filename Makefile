@@ -193,7 +193,6 @@ docker-photoprism-arm32:
 	scripts/docker-build.sh photoprism-arm32 $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism-arm32 $(DOCKER_TAG)
 docker-demo:
-	docker pull photoprism/photoprism:preview
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
 docker-demo-local:
