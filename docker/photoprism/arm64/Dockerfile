@@ -16,6 +16,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 # Install dev / build dependencies
 RUN apt-get update && apt-get upgrade && \
     apt-get install \
+    gpgv \
     build-essential \
     curl \
     chrpath \

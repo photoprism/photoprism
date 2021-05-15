@@ -68,6 +68,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 
 # Install additional distribution packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        gpgv \
         wget \
         curl \
         davfs2 \
