@@ -62,7 +62,7 @@ steps:
       - scripts/docker-login.sh
       - make docker-photoprism-preview
       - docker pull photoprism/photoprism:preview
-      - make docker-docker-demo
+      - make docker-demo
     when:
       status:
         - success
@@ -164,6 +164,6 @@ steps:
         - success
 ---
 kind: signature
-hmac: 4348a3416fe1ae3bd56f07e92266ef87c865bd8a3438c3a6d7f2cc6fcd8baf63
+hmac: 33d0b3aa9a16fee20e8216696e1ca817a5a99635dc482ddcc445e2f99d8a6e64
 
 ...
