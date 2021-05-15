@@ -9,7 +9,7 @@ window.__CONFIG__ = {
   siteTitle: "PhotoPrism",
   siteCaption: "Browse Your Life",
   siteDescription: "Open-Source Personal Photo Management",
-  siteAuthor: "@browseyourlife",
+  siteAuthor: "@photoprism_app",
   debug: true,
   readonly: false,
   uploadNSFW: false,

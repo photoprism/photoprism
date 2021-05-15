@@ -7,7 +7,7 @@ PhotoPrism: Browse Your Life in Pictures
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
-[![Twitter](https://img.shields.io/badge/follow-@browseyourlife-00acee.svg)][twitter]
+[![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
 PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection.
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
