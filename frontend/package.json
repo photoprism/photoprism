@@ -55,6 +55,7 @@
     "eslint-plugin-vue": "^7.9.0",
     "eventsource-polyfill": "^0.9.6",
     "file-loader": "^3.0.1",
+    "file-saver": "^2.0.5",
     "hls.js": "^0.14.17",
     "karma": "^6.3.2",
     "karma-chrome-launcher": "^3.1.0",
