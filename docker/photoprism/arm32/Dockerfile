@@ -1,6 +1,6 @@
 FROM ubuntu:21.04 as build
 
-LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
+LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
 ARG BUILD_TAG
 

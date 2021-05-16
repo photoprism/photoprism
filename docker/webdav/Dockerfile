@@ -1,6 +1,6 @@
 FROM golang:1
 
-LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
+LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
 # Set up project directory
 WORKDIR "/webdav"
