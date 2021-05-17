@@ -82,7 +82,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	// Start a fixed number of goroutines to import files.
 	var wg sync.WaitGroup
-	var numWorkers = ind.conf.Workers()
+	var numWorkers = imp.conf.Workers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
@@ -92,7 +92,14 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	filesImported := 0
-	indexOpt := IndexOptionsAll()
+
+	indexOpt := IndexOptions{
+		Path:    "/",
+		Rescan:  true,
+		Stack:   true,
+		Convert: imp.conf.Settings().Index.Convert && imp.conf.SidecarWritable(),
+	}
+
 	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
 
 	if err := ignore.Dir(importPath); err != nil {
