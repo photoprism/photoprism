@@ -167,6 +167,11 @@ main {
     user-select: none !important;
 }
 
+#photoprism .text-selectable,
+#photoprism .p-page .text-selectable {
+    user-select: text;
+}
+
 #photoprism .p-page pre {
     overflow: auto;
 }
