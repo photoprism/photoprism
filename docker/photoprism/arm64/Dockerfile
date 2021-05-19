@@ -14,7 +14,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install dev / build dependencies
-RUN apt-get update && apt-get upgrade && \
+RUN apt-get update && apt-get dist-upgrade && \
     apt-get install \
     gpgv \
     build-essential \
@@ -45,6 +45,11 @@ RUN apt-get update && apt-get upgrade && \
     gettext \
     tzdata \
     gconf-service
+
+# Update Exiftool, see https://ubuntu.com/security/CVE-2021-22204
+RUN wget "http://launchpadlibrarian.net/536122424/libimage-exiftool-perl_12.16+dfsg-2_all.deb" -O /tmp/libimage-exiftool-perl.deb && \
+    dpkg -i /tmp/libimage-exiftool-perl.deb && \
+    rm /tmp/libimage-exiftool-perl.deb
 
 # Install & configure TensorFlow for C
 #

@@ -1,4 +1,4 @@
-FROM photoprism/development:20210515 as build
+FROM photoprism/development:20210519 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -92,6 +92,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-get autoremove && \
         apt-get clean && \
         rm -rf /var/lib/apt/lists/*
+
+# Update Exiftool, see https://ubuntu.com/security/CVE-2021-22204
+RUN wget "http://launchpadlibrarian.net/536122424/libimage-exiftool-perl_12.16+dfsg-2_all.deb" -O /tmp/libimage-exiftool-perl.deb && \
+    dpkg -i /tmp/libimage-exiftool-perl.deb && \
+    rm /tmp/libimage-exiftool-perl.deb
 
 # Copy dependencies
 COPY --from=build /go/bin/gosu /bin/gosu

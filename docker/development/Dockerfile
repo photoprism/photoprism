@@ -85,6 +85,11 @@ RUN curl -L \
    tar -C "/usr" -xz && \
    ldconfig
 
+# Update Exiftool, see https://ubuntu.com/security/CVE-2021-22204
+RUN wget "http://launchpadlibrarian.net/536122424/libimage-exiftool-perl_12.16+dfsg-2_all.deb" -O /tmp/libimage-exiftool-perl.deb && \
+    dpkg -i /tmp/libimage-exiftool-perl.deb && \
+    rm /tmp/libimage-exiftool-perl.deb
+
 # Install NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
