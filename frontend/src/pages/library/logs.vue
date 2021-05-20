@@ -5,7 +5,7 @@
         <p v-if="logs.length === 0" class="p-log-empty">
           <translate>Nothing to see here yet. Be patient.</translate>
         </p>
-        <p v-for="(log, index) in logs" :key="index.id" class="p-log-message" :class="'p-log-' + log.level">
+        <p v-for="(log, index) in logs" :key="index.id" class="p-log-message text-selectable" :class="'p-log-' + log.level">
           {{ formatTime(log.time) }} {{ level(log) }} <span>{{ log.message }}</span>
         </p>
       </v-flex>

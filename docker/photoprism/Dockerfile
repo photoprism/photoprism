@@ -1,4 +1,4 @@
-FROM photoprism/development:20210422 as build
+FROM photoprism/development:20210520 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -8,71 +8,22 @@ COPY . .
 RUN make dep build-js install
 
 # Same base image as photoprism/development
-FROM ubuntu:20.10
+FROM ubuntu:21.04
 
 # Set environment variables
-ENV DEBIAN_FRONTEND noninteractive
-
-# Configure apt-get
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
-    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
-    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
-    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
-
-# Install additional distribution packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        wget \
-        curl \
-        davfs2 \
-        ca-certificates \
-        mariadb-client \
-        sqlite3 \
-        tzdata \
-        libheif-examples \
-        gnupg \
-        gpg-agent \
-        apt-utils \
-        add-apt-key \
-        exiftool \
-        darktable \
-        rawtherapee \
-        ffmpeg \
-        ffmpegthumbnailer \
-        libavcodec-extra && \
-        apt-get update && \
-        apt-get dist-upgrade && \
-        apt-get autoremove && \
-        apt-get clean && \
-        rm -rf /var/lib/apt/lists/*
-
-# Copy dependencies
-COPY --from=build /go/bin/gosu /bin/gosu
-COPY --from=build /usr/lib/libtensorflow.so /usr/lib/libtensorflow.so
-COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_framework.so
-RUN ldconfig
-
-# Set default umask and create photoprism user
-RUN umask 0000 && useradd photoprism -m -d /photoprism
-WORKDIR /photoprism
-
-ENV TF_CPP_MIN_LOG_LEVEL 2
-
-ENV PATH /photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV TMPDIR /tmp
-
-# Storage path names
-ENV PHOTOPRISM_ASSETS_PATH="/photoprism/assets" \
+# see https://docs.photoprism.org/getting-started/config-options/
+ENV DEBIAN_FRONTEND="noninteractive" \
+    TF_CPP_MIN_LOG_LEVEL="2" \
+    PATH="/photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    TMPDIR="/tmp" \
+    PHOTOPRISM_ASSETS_PATH="/photoprism/assets" \
     PHOTOPRISM_STORAGE_PATH="/photoprism/storage" \
     PHOTOPRISM_BACKUP_PATH="/var/lib/photoprism" \
     PHOTOPRISM_ORIGINALS_PATH="/photoprism/originals" \
     PHOTOPRISM_IMPORT_PATH="/photoprism/import" \
     PHOTOPRISM_LOG_FILENAME="/photoprism/photoprism.log" \
-    PHOTOPRISM_PID_FILENAME="/photoprism/photoprism.pid"
-
-# Defaults for common config values
-# See https://docs.photoprism.org/getting-started/config-options/
-ENV PHOTOPRISM_DEBUG="false" \
+    PHOTOPRISM_PID_FILENAME="/photoprism/photoprism.pid" \
+    PHOTOPRISM_DEBUG="false" \
     PHOTOPRISM_PUBLIC="false" \
     PHOTOPRISM_READONLY="false" \
     PHOTOPRISM_UPLOAD_NSFW="true" \
@@ -108,13 +59,62 @@ ENV PHOTOPRISM_DEBUG="false" \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
+# Configure apt-get
+RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
+    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
+    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+
+# Install additional distribution packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gpgv \
+        wget \
+        curl \
+        davfs2 \
+        ca-certificates \
+        mariadb-client \
+        sqlite3 \
+        tzdata \
+        libheif-examples \
+        gnupg \
+        gpg-agent \
+        apt-utils \
+        add-apt-key \
+        exiftool \
+        darktable \
+        rawtherapee \
+        ffmpeg \
+        ffmpegthumbnailer \
+        libavcodec-extra && \
+        apt-get update && \
+        apt-get dist-upgrade && \
+        apt-get autoremove && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/*
+
+# Update Exiftool, see https://ubuntu.com/security/CVE-2021-22204
+RUN wget "http://launchpadlibrarian.net/536122424/libimage-exiftool-perl_12.16+dfsg-2_all.deb" -O /tmp/libimage-exiftool-perl.deb && \
+    dpkg -i /tmp/libimage-exiftool-perl.deb && \
+    rm /tmp/libimage-exiftool-perl.deb
+
+# Copy dependencies
+COPY --from=build /go/bin/gosu /bin/gosu
+COPY --from=build /usr/lib/libtensorflow.so /usr/lib/libtensorflow.so
+COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_framework.so
+RUN ldconfig
+
+# Set default umask and create photoprism user
+RUN umask 0000 && useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism
+WORKDIR /photoprism
+
 # Copy files to /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
 COPY --from=build /root/.photoprism/assets /photoprism/assets
 COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 
 # Create directories
-RUN mkdir -p \
+RUN mkdir -m 777 -p \
     /var/lib/photoprism \
     /tmp/photoprism \
     /photoprism/originals \
@@ -122,7 +122,8 @@ RUN mkdir -p \
     /photoprism/storage/config \
     /photoprism/storage/cache && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism
+    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism && \
+    find /photoprism -type d -print0 | xargs -0 chmod 777
 
 # Show photoprism version
 RUN photoprism -v

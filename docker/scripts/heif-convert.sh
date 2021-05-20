@@ -10,6 +10,8 @@ fi
 
 /usr/bin/heif-convert -q 92 "$1" "$2"
 
-# Remove Exif orientation flag as JPEG is rotated already:
+# Reset Exif orientation flag if output image was rotated based on "QuickTime:Rotation"
 
-/usr/bin/exiftool -overwrite_original -P -n -Orientation=1 "$2"
+if [[ $(exiftool -n -QuickTime:Rotation "$1") ]]; then
+    /usr/bin/exiftool -overwrite_original -P -n -Orientation=1 "$2"
+fi

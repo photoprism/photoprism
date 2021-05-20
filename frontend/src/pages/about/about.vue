@@ -61,7 +61,7 @@
                                                                                    style="max-width:100%;"></a>
         <a target="_blank" href="https://gitter.im/browseyourlife/community" rel="nofollow"><img
             src="/static/img/badge-chat.svg" alt="Community Chat" style="max-width:100%;"></a>
-        <a target="_blank" href="https://twitter.com/browseyourlife" rel="nofollow"><img
+        <a target="_blank" href="https://twitter.com/photoprism_app" rel="nofollow"><img
             src="/static/img/badge-twitter.svg" alt="Twitter" style="max-width:100%;"></a>
       </p>
     </v-container>
