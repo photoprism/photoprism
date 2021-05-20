@@ -200,7 +200,7 @@ COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bi
 RUN ldconfig
 
 # Set default umask and create photoprism user
-RUN umask 0000 && useradd photoprism -m -d /photoprism
+RUN umask 0000 && useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism
 WORKDIR /photoprism
 
 # Copy files to /photoprism
@@ -208,7 +208,7 @@ COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
 COPY --from=build /root/.photoprism/assets /photoprism/assets
 
 # Create directories
-RUN mkdir -p \
+RUN mkdir -m 777 -p \
     /var/lib/photoprism \
     /tmp/photoprism \
     /photoprism/originals \
@@ -216,7 +216,8 @@ RUN mkdir -p \
     /photoprism/storage/config \
     /photoprism/storage/cache && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism
+    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism && \
+    find /photoprism -type d -print0 | xargs -0 chmod 777
 
 # Show photoprism version
 RUN photoprism -v

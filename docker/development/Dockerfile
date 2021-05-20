@@ -134,8 +134,8 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-ou
     cp /go/bin/gosu /bin/gosu
 
 # Create photoprism user and directory for deployment
-RUN useradd photoprism -m -d /photoprism && \
-    mkdir -p /var/lib/photoprism /tmp/photoprism && \
+RUN useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism && \
+    mkdir -m 777 -p /var/lib/photoprism /tmp/photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
