@@ -9,7 +9,3 @@ fi
 # USAGE: heif-convert [-q quality 0..100] <filename> <output>
 
 /usr/bin/heif-convert -q 92 "$1" "$2"
-
-# Remove Exif orientation flag as JPEG is rotated already:
-
-/usr/bin/exiftool -overwrite_original -P -n -Orientation=1 "$2"
