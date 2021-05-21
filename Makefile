@@ -168,6 +168,14 @@ docker-development:
 	docker pull ubuntu:21.04
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
+docker-development-arm64:
+	docker pull ubuntu:21.04
+	scripts/docker-build.sh development-arm64 $(DOCKER_TAG)
+	scripts/docker-push.sh development-arm64 $(DOCKER_TAG)
+docker-development-arm64-local:
+	docker pull ubuntu:21.04
+	scripts/docker-build.sh development-arm64
+	docker-compose build --build-arg ARCH=arm64 --build-arg BUILD_TAG=preview
 docker-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
