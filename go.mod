@@ -17,9 +17,9 @@ require (
 	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gin-contrib/gzip v0.0.3
-	github.com/gin-gonic/gin v1.7.1
+	github.com/gin-gonic/gin v1.7.2
 	github.com/go-errors/errors v1.2.0 // indirect
-	github.com/go-playground/validator/v10 v10.5.0 // indirect
+	github.com/go-playground/validator/v10 v10.6.1 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/open-location-code/go v0.0.0-20210504205230-1796878d947c
@@ -28,7 +28,7 @@ require (
 	github.com/h2non/filetype v1.1.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
-	github.com/json-iterator/go v1.1.10 // indirect
+	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.16.1
 	github.com/klauspost/cpuid/v2 v2.0.6
@@ -55,12 +55,13 @@ require (
 	github.com/studio-b12/gowebdav v0.0.0-20210427212133-86f8378cf140
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.8.0
-	github.com/ugorji/go v1.2.5 // indirect
+	github.com/ugorji/go v1.2.6 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20210510120150-4163338589ed
+	golang.org/x/net v0.0.0-20210521195947-fe42d452be8f
+	golang.org/x/sys v0.0.0-20210521203332-0cec03c779c1 // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.12
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
