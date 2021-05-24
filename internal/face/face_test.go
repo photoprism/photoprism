@@ -49,7 +49,11 @@ func TestDetect(t *testing.T) {
 			t.Logf("Found %d faces in '%s'", len(res), baseName)
 
 			if len(res) > 0 {
-				t.Logf("%#v", res)
+				t.Logf("results: %#v", res)
+				for i, r := range res {
+					t.Logf("landmarks[%d]: %d", i, len(r.Landmarks))
+				}
+				t.Logf("regions: %#v", res.Regions())
 			}
 
 			if i, ok := expected[baseName]; ok {
