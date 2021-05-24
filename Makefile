@@ -168,10 +168,8 @@ docker-development:
 	docker pull ubuntu:21.04
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
-docker-development-arm64:
-	docker pull ubuntu:21.04
-	scripts/docker-build.sh development-arm64 $(DOCKER_TAG)
-	scripts/docker-push.sh development-arm64 $(DOCKER_TAG)
+docker-development-multiarch:
+	scripts/docker-buildx.sh development $(DOCKER_TAG) linux/amd64,linux/arm64
 docker-development-arm64-local:
 	docker pull ubuntu:21.04
 	scripts/docker-build.sh development-arm64
