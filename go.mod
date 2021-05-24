@@ -16,6 +16,7 @@ require (
 	github.com/dsoprea/go-tiff-image-structure v0.0.0-20210512044046-dc78da6a809b
 	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
+	github.com/esimov/pigo v1.4.3
 	github.com/gin-contrib/gzip v0.0.3
 	github.com/gin-gonic/gin v1.7.2
 	github.com/go-errors/errors v1.2.0 // indirect
@@ -67,4 +68,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
-go 1.13
+go 1.16
