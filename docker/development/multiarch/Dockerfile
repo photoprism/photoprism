@@ -3,6 +3,7 @@ FROM ubuntu:21.04
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
 ARG TARGETARCH
+ARG TARGETPLATFORM
 ARG BUILD_TAG
 
 # Set environment variables
@@ -65,7 +66,6 @@ RUN apt-get update && apt-get upgrade && \
     firefox \
     libheif-examples \
     exiftool \
-    darktable \
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
@@ -73,7 +73,8 @@ RUN apt-get update && apt-get upgrade && \
     lsof \
     apache2-utils \
     fonts-roboto \
-    sudo
+    sudo ; \
+    [ "$TARGETARCH" = "arm" ] || apt-get install darktable
 
 # Install & configure TensorFlow for C,
 # see https://www.tensorflow.org/install/lang_c
@@ -108,12 +109,12 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && 
 COPY ./scripts/go-bin-checksum.sh /tmp/
 ENV GOLANG_VERSION 1.16.4
 RUN set -eux; \
-	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz"; \
-	wget -O go.tgz "$url"; \
-	./tmp/go-bin-checksum.sh ${TARGETARCH} | sha256sum -c -; \
-	tar -C /usr/local -xzf go.tgz; \
-	rm go.tgz; \
-	go version
+    url=$(echo https://golang.org/dl/go${GOLANG_VERSION}.${TARGETPLATFORM}.tar.gz | sed -e 's@/v7@v6l@g' -e 's@linux/@linux-@g'); \
+    wget -O go.tgz "$url"; \
+    ./tmp/go-bin-checksum.sh ${TARGETARCH} | sha256sum -c -; \
+    tar -C /usr/local -xzf go.tgz; \
+    rm go.tgz; \
+    go version
 RUN mkdir -p "/go/src" "/go/bin" && chmod -R 777 "/go"
 
 # Download TensorFlow model and test files
