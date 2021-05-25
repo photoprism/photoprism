@@ -215,9 +215,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	// Number of faces if detected.
 	if f.People < 0 {
 		s = s.Where("photos.photo_people = 0")
-	} else if f.People == 1 {
-		s = s.Where("photos.photo_people = 1")
-	} else if f.People > 1 {
+	} else if f.People > 0 {
 		s = s.Where("photos.photo_people >= ?", f.People)
 	}
 
