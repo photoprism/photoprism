@@ -241,6 +241,21 @@
               </v-checkbox>
             </v-flex>
 
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.people"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-people"
+                  color="secondary-dark"
+                  :label="$gettext('People')"
+                  :hint="$gettext('Detect faces and search for people in your pictures.')"
+                  prepend-icon="person"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
             <v-flex v-if="!config.disable.places" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.places"

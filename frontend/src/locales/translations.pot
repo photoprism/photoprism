@@ -246,7 +246,7 @@ msgstr ""
 msgid "An error occurred - are you offline?"
 msgstr ""
 
-#: src/pages/settings/general.vue:511
+#: src/pages/settings/general.vue:533
 msgid "Animation"
 msgstr ""
 
@@ -645,6 +645,10 @@ msgstr ""
 
 #: src/dialog/photo/edit.vue:25
 msgid "Details"
+msgstr ""
+
+#: src/pages/settings/general.vue:427
+msgid "Detect faces and search for people in your pictures."
 msgstr ""
 
 #: src/dialog/sponsor.vue:25
@@ -1671,6 +1675,7 @@ msgstr ""
 msgid "pay for operating expenses and external services like satellite maps"
 msgstr ""
 
+#: src/pages/settings/general.vue:426
 #: src/routes.js:265
 msgid "People"
 msgstr ""
@@ -1723,8 +1728,8 @@ msgstr ""
 #: src/component/navigation.vue:225
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:826
-#: src/pages/settings/general.vue:103
-#: src/pages/settings/general.vue:428
+#: src/pages/settings/general.vue:108
+#: src/pages/settings/general.vue:450
 #: src/routes.js:215
 #: src/routes.js:221
 #: src/routes.js:227
@@ -1960,7 +1965,7 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/pages/settings/general.vue:429
+#: src/pages/settings/general.vue:451
 msgid "Search and display photos on a map."
 msgstr ""
 
@@ -2188,7 +2193,7 @@ msgstr ""
 msgid "Streets"
 msgstr ""
 
-#: src/pages/settings/general.vue:489
+#: src/pages/settings/general.vue:511
 msgid "Style"
 msgstr ""
 
