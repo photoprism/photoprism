@@ -40,24 +40,25 @@ func TestDetect(t *testing.T) {
 		t.Run(fileName, func(t *testing.T) {
 			baseName := filepath.Base(fileName)
 
-			res, err := Detect(fileName, DefaultDetector())
+			faces, err := Detect(fileName, DefaultDetector())
 
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			t.Logf("Found %d faces in '%s'", len(res), baseName)
+			t.Logf("Found %d faces in '%s'", len(faces), baseName)
 
-			if len(res) > 0 {
-				t.Logf("results: %#v", res)
-				for i, r := range res {
-					t.Logf("landmarks[%d]: %d", i, len(r.Landmarks))
+			if len(faces) > 0 {
+				t.Logf("results: %#v", faces)
+
+				for i, f := range faces {
+					t.Logf("marker[%d]: %#v", i, f.Marker())
+					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 				}
-				t.Logf("regions: %#v", res.Regions())
 			}
 
 			if i, ok := expected[baseName]; ok {
-				assert.Equal(t, len(res), i)
+				assert.Equal(t, len(faces), i)
 			} else {
 				t.Errorf("unknown test result for %s", baseName)
 			}
