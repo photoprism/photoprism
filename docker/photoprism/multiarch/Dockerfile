@@ -1,4 +1,4 @@
-FROM moximoti/development:20210525 as build
+FROM photoprism/development:20210525 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
