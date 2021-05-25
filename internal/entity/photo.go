@@ -74,6 +74,7 @@ type Photo struct {
 	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
 	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
 	PhotoDay         int          `json:"Day" yaml:"Day"`
+	PhotoPeople      int          `json:"People,omitempty" yaml:"People,omitempty"`
 	PhotoIso         int          `json:"Iso" yaml:"ISO,omitempty"`
 	PhotoExposure    string       `gorm:"type:VARBINARY(64);" json:"Exposure" yaml:"Exposure,omitempty"`
 	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
