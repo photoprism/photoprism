@@ -16,7 +16,7 @@ func TestDetect(t *testing.T) {
 		"2.jpg":  1,
 		"3.jpg":  1,
 		"4.jpg":  1,
-		"5.jpg":  2,
+		"5.jpg":  1,
 		"6.jpg":  1,
 		"7.jpg":  0,
 		"8.jpg":  0,
@@ -30,6 +30,7 @@ func TestDetect(t *testing.T) {
 		"16.jpg": 1,
 		"17.jpg": 1,
 		"18.jpg": 2,
+		"19.jpg": 0,
 	}
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
@@ -40,7 +41,7 @@ func TestDetect(t *testing.T) {
 		t.Run(fileName, func(t *testing.T) {
 			baseName := filepath.Base(fileName)
 
-			faces, err := Detect(fileName, DefaultDetector())
+			faces, err := Detect(fileName)
 
 			if err != nil {
 				t.Fatal(err)
@@ -58,7 +59,7 @@ func TestDetect(t *testing.T) {
 			}
 
 			if i, ok := expected[baseName]; ok {
-				assert.Equal(t, len(faces), i)
+				assert.Equal(t, i, len(faces))
 			} else {
 				t.Errorf("unknown test result for %s", baseName)
 			}

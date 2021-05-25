@@ -17,9 +17,9 @@ type Marker struct {
 	RefUID      string  `gorm:"type:VARBINARY(42);index;" json:"UID" yaml:"UID,omitempty"`
 	MarkerSrc   string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerType  string  `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
+	MarkerScore int     `gorm:"type:SMALLINT"`
 	MarkerLabel string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
 	MarkerMeta  string  `gorm:"type:TEXT;" json:"Meta" yaml:"Meta,omitempty"`
-	Uncertainty int     `gorm:"type:SMALLINT"`
 	X           float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
 	Y           float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W           float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`

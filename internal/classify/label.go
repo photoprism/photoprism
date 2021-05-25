@@ -47,3 +47,24 @@ func LocationLabel(name string, uncertainty int) Label {
 func (l Label) Title() string {
 	return txt.Title(txt.Clip(l.Name, txt.ClipDefault))
 }
+
+// FaceLabels returns matching labels if there are people in the image.
+func FaceLabels(count int, src string, uncertainty int) Labels {
+	var r LabelRule
+
+	if count < 1 {
+		return Labels{}
+	} else if count == 1 {
+		r = rules["portrait"]
+	} else {
+		r = rules["people"]
+	}
+
+	return Labels{Label{
+		Name:        r.Label,
+		Source:      src,
+		Uncertainty: uncertainty,
+		Priority:    r.Priority,
+		Categories:  r.Categories,
+	}}
+}

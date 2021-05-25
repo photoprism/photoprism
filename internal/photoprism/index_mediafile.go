@@ -9,9 +9,11 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
@@ -600,6 +602,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if file.FilePrimary {
 		labels := photo.ClassifyLabels()
 
+		if Config().Experimental() && Config().Settings().Features.People {
+			faces := ind.detectFaces(m)
+
+			photo.AddLabels(classify.FaceLabels(len(faces), entity.SrcImage, 10))
+			photo.PhotoPeople = len(faces)
+		}
+
 		if err := photo.UpdateTitle(labels); err != nil {
 			log.Debugf("%s in %s (update title)", err, logName)
 		}
@@ -759,7 +768,7 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 	return false
 }
 
-// classifyImage returns all matching labels for a media file.
+// classifyImage classifies a JPEG image and returns matching labels.
 func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	start := time.Now()
 
@@ -811,4 +820,32 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	log.Debugf("index: image classification took %s", elapsed)
 
 	return results
+}
+
+// detectFaces detects faces in a JPEG image and returns them.
+func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
+	if jpeg == nil {
+		return face.Faces{}
+	}
+
+	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), "fit_720")
+
+	if err != nil {
+		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
+		return face.Faces{}
+	}
+
+	start := time.Now()
+
+	faces, err := face.Detect(thumbName)
+
+	if err != nil {
+		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
+	}
+
+	elapsed := time.Since(start)
+
+	log.Debugf("index: face detection took %s", elapsed)
+
+	return faces
 }

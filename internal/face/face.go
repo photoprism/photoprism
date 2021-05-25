@@ -47,6 +47,7 @@ type Faces []Face
 type Face struct {
 	Rows      int    `json:"rows,omitempty"`
 	Cols      int    `json:"cols,omitempty"`
+	Score     int    `json:"score,omitempty"`
 	Face      Point  `json:"face,omitempty"`
 	Eyes      Points `json:"eyes,omitempty"`
 	Landmarks Points `json:"landmarks,omitempty"`

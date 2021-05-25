@@ -241,7 +241,7 @@
               </v-checkbox>
             </v-flex>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-flex v-if="config.experimental" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.people"
                   :disabled="busy"
