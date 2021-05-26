@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"fmt"
+	"github.com/photoprism/photoprism/internal/face"
 	"time"
 )
 
@@ -35,15 +37,30 @@ func (Marker) TableName() string {
 }
 
 // NewMarker creates a new entity.
-func NewMarker(fileUID, refUID, markerSrc, markerType string) *Marker {
-	result := &Marker{
+func NewMarker(fileUID, refUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
+	m := &Marker{
 		FileUID:    fileUID,
 		RefUID:     refUID,
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
+		X:          x,
+		Y:          y,
+		W:          w,
+		H:          h,
 	}
 
-	return result
+	return m
+}
+
+// NewFaceMarker creates a new entity.
+func NewFaceMarker(f face.Face, fileUID, refUID string) *Marker {
+	fm := f.Marker()
+	m := NewMarker(fileUID, refUID, SrcImage, MarkerFace, fm.X, fm.Y, fm.W, fm.H)
+
+	m.MarkerScore = f.Score
+	m.MarkerMeta = string(f.RelativeLandmarksJSON())
+
+	return m
 }
 
 // Updates multiple columns in the database.
@@ -58,24 +75,55 @@ func (m *Marker) Update(attr string, value interface{}) error {
 
 // Save updates the existing or inserts a new row.
 func (m *Marker) Save() error {
+	if m.X == 0 || m.Y == 0 || m.X > 1 || m.Y > 1 || m.X < -1 || m.Y < -1 {
+		return fmt.Errorf("marker: invalid position")
+	}
+
 	return Db().Save(m).Error
 }
 
 // Create inserts a new row to the database.
 func (m *Marker) Create() error {
+	if m.X == 0 || m.Y == 0 || m.X > 1 || m.Y > 1 || m.X < -1 || m.Y < -1 {
+		return fmt.Errorf("marker: invalid position")
+	}
+
 	return Db().Create(m).Error
 }
 
-// FirstOrCreateMarker returns the existing row, inserts a new row or nil in case of errors.
-func FirstOrCreateMarker(m *Marker) *Marker {
+// UpdateOrCreateMarker updates a marker in the database or creates a new one if needed.
+func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 	result := Marker{}
 
-	if err := Db().Where("file_uid = ? AND ref_uid = ?", m.FileUID, m.RefUID).First(&result).Error; err == nil {
-		return &result
+	if m.ID > 0 {
+		err := m.Save()
+		log.Debugf("faces: saved marker %d for file %s", m.ID, m.FileUID)
+		return m, err
+	} else if err := Db().Where(`file_uid = ? AND x > ? AND x < ? AND y > ? AND y < ?`,
+		m.FileUID, m.X-m.W, m.X+m.W, m.Y-m.H, m.Y+m.H).First(&result).Error; err == nil {
+
+		if SrcPriority[m.MarkerSrc] < SrcPriority[result.MarkerSrc] {
+			// Ignore.
+			return &result, nil
+		}
+
+		err := result.Updates(map[string]interface{}{
+			"X":           m.X,
+			"Y":           m.Y,
+			"W":           m.W,
+			"H":           m.H,
+			"MarkerScore": m.MarkerScore,
+			"MarkerMeta":  m.MarkerMeta,
+			"RefUID":      m.RefUID,
+		})
+
+		log.Debugf("faces: updated existing marker %d for file %s", result.ID, result.FileUID)
+
+		return &result, err
 	} else if err := m.Create(); err != nil {
-		log.Errorf("marker: %s", err)
-		return nil
+		log.Debugf("faces: added marker %d for file %s", m.ID, m.FileUID)
+		return m, err
 	}
 
-	return m
+	return m, nil
 }

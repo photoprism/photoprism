@@ -12,7 +12,7 @@ func TestMarker_TableName(t *testing.T) {
 }
 
 func TestNewMarker(t *testing.T) {
-	m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel)
+	m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 	assert.IsType(t, &Marker{}, m)
 	assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
 	assert.Equal(t, "lt9k3pw1wowuy3c3", m.RefUID)
@@ -20,16 +20,20 @@ func TestNewMarker(t *testing.T) {
 	assert.Equal(t, MarkerLabel, m.MarkerType)
 }
 
-func TestFirstOrCreateMarker(t *testing.T) {
+func TestUpdateOrCreateMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel)
+		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 		assert.IsType(t, &Marker{}, m)
 		assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
 		assert.Equal(t, "lt9k3pw1wowuy3c3", m.RefUID)
 		assert.Equal(t, SrcImage, m.MarkerSrc)
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
-		m = FirstOrCreateMarker(m)
+		m, err := UpdateOrCreateMarker(m)
+
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -43,15 +47,17 @@ func TestFirstOrCreateMarker(t *testing.T) {
 
 func TestMarker_Updates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
-		m = FirstOrCreateMarker(m)
+		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m, err := UpdateOrCreateMarker(m)
+
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, SrcImage, m.MarkerSrc)
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
-		err := m.Updates(Marker{MarkerSrc: SrcMeta})
-
-		if err != nil {
+		if err := m.Updates(Marker{MarkerSrc: SrcMeta}); err != nil {
 			t.Fatal(err)
 		}
 
@@ -66,14 +72,16 @@ func TestMarker_Updates(t *testing.T) {
 
 func TestMarker_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
-		m = FirstOrCreateMarker(m)
+		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m, err := UpdateOrCreateMarker(m)
+
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
-		err := m.Update("MarkerSrc", SrcMeta)
-
-		if err != nil {
+		if err := m.Update("MarkerSrc", SrcMeta); err != nil {
 			t.Fatal(err)
 		}
 
@@ -88,8 +96,12 @@ func TestMarker_Update(t *testing.T) {
 
 func TestMarker_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
-		m = FirstOrCreateMarker(m)
+		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m, err := UpdateOrCreateMarker(m)
+
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
@@ -99,9 +111,7 @@ func TestMarker_Save(t *testing.T) {
 
 		initialDate := m.UpdatedAt
 
-		err := m.Save()
-
-		if err != nil {
+		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
 

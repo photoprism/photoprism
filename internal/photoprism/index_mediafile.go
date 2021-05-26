@@ -607,6 +607,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 			photo.AddLabels(classify.FaceLabels(len(faces), entity.SrcImage, 10))
 			photo.PhotoFaces = len(faces)
+
+			if len(faces) > 0 {
+				file.AddFaces(faces)
+			}
 		}
 
 		if err := photo.UpdateTitle(labels); err != nil {

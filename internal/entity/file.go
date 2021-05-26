@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"github.com/photoprism/photoprism/internal/face"
 	"path/filepath"
 	"strings"
 	"time"
@@ -67,6 +68,7 @@ type File struct {
 	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
+	Markers         Markers       `json:"-" yaml:"-"`
 }
 
 type FileInfos struct {
@@ -251,6 +253,11 @@ func (m *File) Create() error {
 		return err
 	}
 
+	if err := m.Markers.Save(m.FileUID); err != nil {
+		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
+		return err
+	}
+
 	return nil
 }
 
@@ -263,7 +270,7 @@ func (m *File) ResolvePrimary() error {
 	return nil
 }
 
-// Saves the file in the database.
+// Save stores the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("file: photo id must not be empty (save %s)", m.FileUID)
@@ -271,6 +278,11 @@ func (m *File) Save() error {
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
 		log.Errorf("file: %s (save %s)", err, m.FileUID)
+		return err
+	}
+
+	if err := m.Markers.Save(m.FileUID); err != nil {
+		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
 		return err
 	}
 
@@ -288,7 +300,7 @@ func (m *File) UpdateVideoInfos() error {
 	return Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(values).Error
 }
 
-// Updates a column in the database.
+// Update updates a column in the database.
 func (m *File) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
@@ -382,4 +394,16 @@ func (m *File) Panorama() bool {
 	}
 
 	return m.FileProjection != ProjectionDefault || (m.FileWidth/m.FileHeight) >= 2
+}
+
+// AddFaces adds face markers to the file.
+func (m *File) AddFaces(faces face.Faces) {
+	for _, f := range faces {
+		m.AddFace(f, "")
+	}
+}
+
+// AddFace adds a face marker to the file.
+func (m *File) AddFace(f face.Face, refUID string) {
+	m.Markers = append(m.Markers, *NewFaceMarker(f, m.FileUID, refUID))
 }

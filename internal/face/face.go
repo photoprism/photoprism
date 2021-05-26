@@ -105,7 +105,7 @@ func (f *Face) RelativeLandmarksJSON() (b []byte) {
 	b, err := json.Marshal(f.RelativeLandmarks())
 
 	if err != nil {
-		log.Errorf("face: %s", err)
+		log.Errorf("faces: %s", err)
 		return []byte("{}")
 	}
 

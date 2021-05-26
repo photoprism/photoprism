@@ -34,20 +34,20 @@ func init() {
 	classifier, err = p.Unpack(cascadeFile)
 
 	if err != nil {
-		log.Errorf("face: %s", err)
+		log.Errorf("faces: %s", err)
 	}
 
 	pl := pigo.NewPuplocCascade()
 	plc, err = pl.UnpackCascade(puplocFile)
 
 	if err != nil {
-		log.Errorf("face: %s", err)
+		log.Errorf("faces: %s", err)
 	}
 
 	flpcs, err = ReadCascadeDir(pl, "cascade/lps")
 
 	if err != nil {
-		log.Errorf("face: %s", err)
+		log.Errorf("faces: %s", err)
 	}
 }
 
@@ -72,7 +72,7 @@ type Detector struct {
 func Detect(fileName string) (faces Faces, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Errorf("face: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Errorf("faces: %s (panic)\nstack: %s", r, debug.Stack())
 		}
 	}()
 
@@ -88,25 +88,25 @@ func Detect(fileName string) (faces Faces, err error) {
 	}
 
 	if !fs.FileExists(fileName) {
-		return faces, fmt.Errorf("face: file '%s' not found", txt.Quote(filepath.Base(fileName)))
+		return faces, fmt.Errorf("faces: file '%s' not found", txt.Quote(filepath.Base(fileName)))
 	}
 
-	log.Debugf("face: detecting faces in %s", txt.Quote(filepath.Base(fileName)))
+	log.Infof("faces: analyzing %s", txt.Quote(filepath.Base(fileName)))
 
 	det, params, err := fd.Detect(fileName)
 
 	if err != nil {
-		return faces, fmt.Errorf("face: %v (detect faces)", err)
+		return faces, fmt.Errorf("faces: %v (detect faces)", err)
 	}
 
 	if det == nil {
-		return faces, fmt.Errorf("face: no result")
+		return faces, fmt.Errorf("faces: no result")
 	}
 
 	faces, err = fd.Faces(det, params)
 
 	if err != nil {
-		return faces, fmt.Errorf("face: %s (faces)", err)
+		return faces, fmt.Errorf("faces: %s", err)
 	}
 
 	return faces, nil

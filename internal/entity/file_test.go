@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/face"
 	"testing"
 	"time"
 
@@ -418,5 +419,30 @@ func TestFile_Undelete(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, file.FileMissing)
+	})
+}
+
+func TestFile_AddFaces(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		file := &File{FileType: "jpg", FileWidth: 720, FileName: "FacesTest", PhotoID: 1000003}
+
+		faces := face.Faces{face.Face{
+			Rows:      480,
+			Cols:      720,
+			Score:     45,
+			Face:      face.NewPoint("face", 250, 200, 10),
+			Eyes:      face.Points{face.NewPoint("eye_l", 240, 195, 1), face.NewPoint("eye_r", 240, 205, 1)},
+			Landmarks: face.Points{face.NewPoint("a", 250, 185, 2), face.NewPoint("b", 250, 215, 2)},
+		}}
+
+		file.AddFaces(faces)
+
+		if err := file.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, false, file.FileMissing)
+		assert.NotEmpty(t, file.FileUID)
+		assert.NotEmpty(t, file.Markers)
 	})
 }
