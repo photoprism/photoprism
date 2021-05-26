@@ -19,8 +19,7 @@ type GeoSearch struct {
 	Private  bool      `form:"private"`
 	Review   bool      `form:"review"`
 	Quality  int       `form:"quality"`
-	Faces    int       `form:"faces"`  // Number of faces if detected
-	People   string    `form:"people"` // Find or exclude people if detected
+	Faces    string    `form:"faces"` // Find or exclude faces if detected.
 	Lat      float32   `form:"lat"`
 	Lng      float32   `form:"lng"`
 	S2       string    `form:"s2"`

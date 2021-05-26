@@ -51,8 +51,7 @@ type PhotoSearch struct {
 	Month     int       `form:"month"`    // Moments
 	Day       int       `form:"day"`      // Moments
 	Color     string    `form:"color"`
-	Faces     int       `form:"faces"`  // Number of faces if detected
-	People    string    `form:"people"` // Find or exclude people if detected
+	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Quality   int       `form:"quality"`
 	Review    bool      `form:"review"`
 	Camera    int       `form:"camera"`
