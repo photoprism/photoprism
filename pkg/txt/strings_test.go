@@ -61,6 +61,12 @@ func TestYes(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
 		assert.Equal(t, false, Yes("false"))
 	})
+	t.Run("exclude", func(t *testing.T) {
+		assert.Equal(t, false, Yes("exclude"))
+	})
+	t.Run("include", func(t *testing.T) {
+		assert.Equal(t, true, Yes("include"))
+	})
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, false, Yes(""))
 	})
@@ -90,6 +96,12 @@ func TestNo(t *testing.T) {
 	})
 	t.Run("false", func(t *testing.T) {
 		assert.Equal(t, true, No("false"))
+	})
+	t.Run("exclude", func(t *testing.T) {
+		assert.Equal(t, true, No("exclude"))
+	})
+	t.Run("include", func(t *testing.T) {
+		assert.Equal(t, false, No("include"))
 	})
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, false, No(""))
