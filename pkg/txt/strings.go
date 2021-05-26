@@ -8,9 +8,23 @@ import (
 func Bool(s string) bool {
 	s = strings.TrimSpace(s)
 
-	if s == "" || s == "0" || s == "false" || s == "no" {
+	if s == "" || No(s) {
 		return false
 	}
 
 	return true
+}
+
+// Yes returns true if a string represents "yes".
+func Yes(s string) bool {
+	s = strings.ToLower(strings.TrimSpace(s))
+
+	return strings.IndexAny(s, "ytjoseд") == 0
+}
+
+// No returns true if a string represents "no".
+func No(s string) bool {
+	s = strings.ToLower(strings.TrimSpace(s))
+
+	return strings.IndexAny(s, "0nhfн") == 0
 }

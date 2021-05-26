@@ -19,6 +19,8 @@ type GeoSearch struct {
 	Private  bool      `form:"private"`
 	Review   bool      `form:"review"`
 	Quality  int       `form:"quality"`
+	Faces    int       `form:"faces"`  // Number of faces if detected
+	People   string    `form:"people"` // Find or exclude people if detected
 	Lat      float32   `form:"lat"`
 	Lng      float32   `form:"lng"`
 	S2       string    `form:"s2"`
@@ -26,8 +28,9 @@ type GeoSearch struct {
 	Dist     uint      `form:"dist"`
 	Album    string    `form:"album"`
 	Country  string    `form:"country"`
-	Year     int       `form:"year"`
-	Month    int       `form:"month"`
+	Year     int       `form:"year"`  // Moments
+	Month    int       `form:"month"` // Moments
+	Day      int       `form:"day"`   // Moments
 	Color    string    `form:"color"`
 	Camera   int       `form:"camera"`
 	Lens     int       `form:"lens"`

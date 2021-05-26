@@ -213,10 +213,15 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	// Number of faces if detected.
-	if f.People < 0 {
-		s = s.Where("photos.photo_people = 0")
-	} else if f.People > 0 {
-		s = s.Where("photos.photo_people >= ?", f.People)
+	if f.Faces > 0 {
+		s = s.Where("photos.photo_faces >= ?", f.Faces)
+	}
+
+	// Find or exclude people if detected.
+	if txt.Yes(f.People) {
+		s = s.Where("photos.photo_faces > 0")
+	} else if txt.No(f.People) {
+		s = s.Where("photos.photo_faces = 0")
 	}
 
 	if f.Color != "" {

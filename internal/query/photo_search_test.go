@@ -719,7 +719,7 @@ func TestPhotoSearch(t *testing.T) {
 	})
 	t.Run("people", func(t *testing.T) {
 		var f form.PhotoSearch
-		f.Query = "people:2"
+		f.Query = "people:true"
 		f.Count = 10
 		f.Offset = 0
 

@@ -142,6 +142,14 @@
                           </td>
                           <td>{{ file.AspectRatio }}</td>
                         </tr>
+                        <tr v-if="file.Orientation">
+                          <td>
+                            <translate>Orientation</translate>
+                          </td>
+                          <td>
+                            <translate>{{ file.Orientation }}</translate>
+                          </td>
+                        </tr>
                         <tr v-if="file.MainColor">
                           <td>
                             <translate>Main Color</translate>

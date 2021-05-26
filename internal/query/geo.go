@@ -99,6 +99,22 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		s = s.Where("photos.photo_month = ?", f.Month)
 	}
 
+	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.DayUnknown {
+		s = s.Where("photos.photo_day = ?", f.Day)
+	}
+
+	// Number of faces if detected.
+	if f.Faces > 0 {
+		s = s.Where("photos.photo_faces >= ?", f.Faces)
+	}
+
+	// Find or exclude people if detected.
+	if txt.Yes(f.People) {
+		s = s.Where("photos.photo_faces > 0")
+	} else if txt.No(f.People) {
+		s = s.Where("photos.photo_faces = 0")
+	}
+
 	if f.Color != "" {
 		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), Or))
 	}

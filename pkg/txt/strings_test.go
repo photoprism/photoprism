@@ -10,6 +10,21 @@ func TestBool(t *testing.T) {
 	t.Run("not empty", func(t *testing.T) {
 		assert.Equal(t, true, Bool("Browse your life in pictures"))
 	})
+	t.Run("oui", func(t *testing.T) {
+		assert.Equal(t, true, Bool("oui"))
+	})
+	t.Run("non", func(t *testing.T) {
+		assert.Equal(t, false, Bool("non"))
+	})
+	t.Run("ja", func(t *testing.T) {
+		assert.Equal(t, true, Bool("ja"))
+	})
+	t.Run("true", func(t *testing.T) {
+		assert.Equal(t, true, Bool("true"))
+	})
+	t.Run("yes", func(t *testing.T) {
+		assert.Equal(t, true, Bool("yes"))
+	})
 	t.Run("no", func(t *testing.T) {
 		assert.Equal(t, false, Bool("no"))
 	})
@@ -18,5 +33,65 @@ func TestBool(t *testing.T) {
 	})
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, false, Bool(""))
+	})
+}
+
+func TestYes(t *testing.T) {
+	t.Run("not empty", func(t *testing.T) {
+		assert.Equal(t, false, Yes("Browse your life in pictures"))
+	})
+	t.Run("oui", func(t *testing.T) {
+		assert.Equal(t, true, Yes("oui"))
+	})
+	t.Run("non", func(t *testing.T) {
+		assert.Equal(t, false, Yes("non"))
+	})
+	t.Run("ja", func(t *testing.T) {
+		assert.Equal(t, true, Yes("ja"))
+	})
+	t.Run("true", func(t *testing.T) {
+		assert.Equal(t, true, Yes("true"))
+	})
+	t.Run("yes", func(t *testing.T) {
+		assert.Equal(t, true, Yes("yes"))
+	})
+	t.Run("no", func(t *testing.T) {
+		assert.Equal(t, false, Yes("no"))
+	})
+	t.Run("false", func(t *testing.T) {
+		assert.Equal(t, false, Yes("false"))
+	})
+	t.Run("empty", func(t *testing.T) {
+		assert.Equal(t, false, Yes(""))
+	})
+}
+
+func TestNo(t *testing.T) {
+	t.Run("not empty", func(t *testing.T) {
+		assert.Equal(t, false, No("Browse your life in pictures"))
+	})
+	t.Run("oui", func(t *testing.T) {
+		assert.Equal(t, false, No("oui"))
+	})
+	t.Run("non", func(t *testing.T) {
+		assert.Equal(t, true, No("non"))
+	})
+	t.Run("ja", func(t *testing.T) {
+		assert.Equal(t, false, No("ja"))
+	})
+	t.Run("true", func(t *testing.T) {
+		assert.Equal(t, false, No("true"))
+	})
+	t.Run("yes", func(t *testing.T) {
+		assert.Equal(t, false, No("yes"))
+	})
+	t.Run("no", func(t *testing.T) {
+		assert.Equal(t, true, No("no"))
+	})
+	t.Run("false", func(t *testing.T) {
+		assert.Equal(t, true, No("false"))
+	})
+	t.Run("empty", func(t *testing.T) {
+		assert.Equal(t, false, No(""))
 	})
 }

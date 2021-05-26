@@ -107,6 +107,7 @@ export class Photo extends RestModel {
       DescriptionSrc: "",
       Resolution: 0,
       Quality: 0,
+      Faces: 0,
       Lat: 0.0,
       Lng: 0.0,
       Altitude: 0,

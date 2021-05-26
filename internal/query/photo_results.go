@@ -38,7 +38,7 @@ type PhotoResult struct {
 	PhotoFocalLength int           `json:"FocalLength"`
 	PhotoFNumber     float32       `json:"FNumber"`
 	PhotoExposure    string        `json:"Exposure"`
-	PhotoPeople      int           `json:"People,omitempty"`
+	PhotoFaces       int           `json:"Faces,omitempty"`
 	PhotoQuality     int           `json:"Quality"`
 	PhotoResolution  int           `json:"Resolution"`
 	PhotoColor       uint8         `json:"Color"`

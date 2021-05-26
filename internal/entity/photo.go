@@ -79,7 +79,7 @@ type Photo struct {
 	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
 	PhotoFocalLength int          `json:"FocalLength" yaml:"FocalLength,omitempty"`
 	PhotoQuality     int          `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
-	PhotoPeople      int          `json:"People,omitempty" yaml:"People,omitempty"`
+	PhotoFaces       int          `json:"Faces,omitempty" yaml:"Faces,omitempty"`
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoColor       uint8        `json:"Color" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
