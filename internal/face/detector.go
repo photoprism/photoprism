@@ -83,7 +83,7 @@ func Detect(fileName string) (faces Faces, err error) {
 		shiftFactor:    0.1,
 		scaleFactor:    1.1,
 		iouThreshold:   0.2,
-		scoreThreshold: 10.0,
+		scoreThreshold: 9.0,
 		perturb:        63,
 	}
 
