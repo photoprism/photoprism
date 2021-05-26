@@ -212,6 +212,13 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.photo_day = ?", f.Day)
 	}
 
+	// Number of faces if detected.
+	if f.People < 0 {
+		s = s.Where("photos.photo_people = 0")
+	} else if f.People > 0 {
+		s = s.Where("photos.photo_people >= ?", f.People)
+	}
+
 	if f.Color != "" {
 		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), Or))
 	}

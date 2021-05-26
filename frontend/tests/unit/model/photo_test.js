@@ -12,7 +12,7 @@ window.__CONFIG__ = {
   sitePreview: "http://localhost:2342/static/img/preview.jpg",
   siteTitle: "PhotoPrism",
   siteCaption: "Browse Your Life",
-  siteDescription: "Open-Source Personal Photo Management",
+  siteDescription: "Open-Source Photo Management",
   siteAuthor: "@photoprism_app",
   debug: true,
   readonly: false,

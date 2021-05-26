@@ -129,14 +129,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			isDir := info.IsDir()
 			isSymlink := info.IsSymlink()
 
-			if isDir {
-				if fileName != importPath {
-					directories = append(directories, fileName)
-				}
-			}
-
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
 				if isDir && result != filepath.SkipDir {
+					if fileName != importPath {
+						directories = append(directories, fileName)
+					}
+
 					folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.BirthTime(fileName))
 
 					if err := folder.Create(); err == nil {
@@ -210,7 +208,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	})
 
 	if opt.RemoveEmptyDirectories {
-		// Remove empty directories from import path
+		// Remove empty directories from import path.
 		for _, directory := range directories {
 			if fs.IsEmpty(directory) {
 				if err := os.Remove(directory); err != nil {
@@ -223,7 +221,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	if opt.RemoveDotFiles {
-		// Remove hidden .files if option is enabled
+		// Remove hidden .files if option is enabled.
 		for _, file := range ignore.Hidden() {
 			if !fs.FileExists(file) {
 				continue

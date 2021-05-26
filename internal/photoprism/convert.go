@@ -204,7 +204,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
-			args := []string{"-o", jpegName, "-p", profile, "-d", jpegQuality, "-js3", "-b8", "-c", f.FileName()}
+			args := []string{"-o", jpegName, "-p", profile, "-s", "-d", jpegQuality, "-js3", "-b8", "-c", f.FileName()}
 
 			result = exec.Command(c.conf.RawtherapeeBin(), args...)
 		} else {
