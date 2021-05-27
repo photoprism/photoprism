@@ -102,7 +102,8 @@ RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
     umask 0000
 
 # Install NodeJS & NPM
-RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && \
+RUN npm install --unsafe-perm=true --allow-root -g npm testcafe && \
+    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g chromedriver && \
     npm config set cache ~/.cache/npm
 
 # Install Go
