@@ -106,16 +106,8 @@ RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && 
     npm config set cache ~/.cache/npm
 
 # Install Go
-COPY ./scripts/go-bin-checksum.sh /tmp/
-ENV GOLANG_VERSION 1.16.4
-RUN set -eux; \
-    url=$(echo https://golang.org/dl/go${GOLANG_VERSION}.${TARGETPLATFORM}.tar.gz | sed -e 's@/v7@v6l@g' -e 's@linux/@linux-@g'); \
-    wget -O go.tgz "$url"; \
-    ./tmp/go-bin-checksum.sh ${TARGETARCH} | sha256sum -c -; \
-    tar -C /usr/local -xzf go.tgz; \
-    rm go.tgz; \
-    go version
-RUN mkdir -p "/go/src" "/go/bin" && chmod -R 777 "/go"
+COPY ./scripts/install-go.sh /tmp/
+RUN ./tmp/install-go.sh ${TARGETARCH}
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
