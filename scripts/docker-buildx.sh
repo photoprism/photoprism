@@ -15,8 +15,8 @@ elif [[ $1 ]] && [[ -z $2 ]] && [[ $3 ]]; then
       --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
       -f docker/$1/multiarch/Dockerfile \
-      -t photoprism/$1:$preview . \
-      #--push .
+      -t photoprism/$1:$preview \
+      --load .
     docker buildx rm multibuilder
     echo "Done"
 else
