@@ -12,9 +12,9 @@ func TestMarker_TableName(t *testing.T) {
 }
 
 func TestNewMarker(t *testing.T) {
-	m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+	m := NewMarker(1000000, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 	assert.IsType(t, &Marker{}, m)
-	assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
+	assert.Equal(t, uint(1000000), m.FileID)
 	assert.Equal(t, "lt9k3pw1wowuy3c3", m.RefUID)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)
@@ -22,9 +22,9 @@ func TestNewMarker(t *testing.T) {
 
 func TestUpdateOrCreateMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(1000000, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 		assert.IsType(t, &Marker{}, m)
-		assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
+		assert.Equal(t, uint(1000000), m.FileID)
 		assert.Equal(t, "lt9k3pw1wowuy3c3", m.RefUID)
 		assert.Equal(t, SrcImage, m.MarkerSrc)
 		assert.Equal(t, MarkerLabel, m.MarkerType)
@@ -47,7 +47,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 
 func TestMarker_Updates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(1000000, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {
@@ -72,7 +72,7 @@ func TestMarker_Updates(t *testing.T) {
 
 func TestMarker_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(1000000, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {
@@ -96,7 +96,7 @@ func TestMarker_Update(t *testing.T) {
 
 func TestMarker_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(1000000, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {
@@ -123,5 +123,12 @@ func TestMarker_Save(t *testing.T) {
 		if m.ID <= 0 {
 			t.Errorf("ID should be > 0")
 		}
+
+		p := PhotoFixtures.Get("19800101_000002_D640C559")
+		assert.Empty(t, p.Files)
+		p.PreloadFiles(true)
+		assert.NotEmpty(t, p.Files)
+
+		t.Logf("FILES: %#v", p.Files)
 	})
 }

@@ -439,14 +439,20 @@ func (m *Photo) IndexKeywords() error {
 }
 
 // PreloadFiles prepares gorm scope to retrieve photo file
-func (m *Photo) PreloadFiles() {
+func (m *Photo) PreloadFiles(markers bool) {
 	q := Db().
 		Table("files").
 		Select(`files.*`).
-		Where("files.deleted_at IS NULL AND files.photo_id = ?", m.ID).
+		Where("files.photo_id = ? AND files.deleted_at IS NULL", m.ID).
 		Order("files.file_name DESC")
 
 	logError(q.Scan(&m.Files))
+
+	if markers {
+		for i := range m.Files {
+			m.Files[i].PreloadMarkers()
+		}
+	}
 }
 
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
@@ -474,7 +480,7 @@ func (m *Photo) PreloadAlbums() {
 
 // PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
 func (m *Photo) PreloadMany() {
-	m.PreloadFiles()
+	m.PreloadFiles(true)
 	m.PreloadKeywords()
 	m.PreloadAlbums()
 }

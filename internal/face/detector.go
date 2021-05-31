@@ -3,14 +3,15 @@ package face
 import (
 	_ "embed"
 	"fmt"
-	pigo "github.com/esimov/pigo/core"
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 	_ "image/jpeg"
 	"io"
 	"os"
 	"path/filepath"
 	"runtime/debug"
+
+	pigo "github.com/esimov/pigo/core"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 //go:embed cascade/facefinder

@@ -2,8 +2,9 @@ package entity
 
 import (
 	"fmt"
-	"github.com/photoprism/photoprism/internal/face"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/face"
 )
 
 const (
@@ -14,21 +15,21 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	ID          uint    `gorm:"primary_key" json:"ID" yaml:"-"`
-	FileUID     string  `gorm:"type:VARBINARY(42);index;" json:"FileUID" yaml:"FileUID"`
-	RefUID      string  `gorm:"type:VARBINARY(42);index;" json:"UID" yaml:"UID,omitempty"`
-	MarkerSrc   string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerType  string  `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
-	MarkerScore int     `gorm:"type:SMALLINT"`
-	MarkerLabel string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
-	MarkerMeta  string  `gorm:"type:TEXT;" json:"Meta" yaml:"Meta,omitempty"`
-	X           float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
-	Y           float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
-	W           float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
-	H           float32 `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
-	File        *File
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID            uint    `gorm:"primary_key" json:"ID" yaml:"-"`
+	FileID        uint    `gorm:"index;" json:"-" yaml:"-"`
+	RefUID        string  `gorm:"type:VARBINARY(42);index;" json:"RefUID" yaml:"RefUID,omitempty"`
+	MarkerSrc     string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
+	MarkerType    string  `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
+	MarkerScore   int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score"`
+	MarkerInvalid bool    `json:"Invalid" yaml:"Invalid,omitempty"`
+	MarkerLabel   string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
+	MarkerMeta    string  `gorm:"type:TEXT;" json:"Meta" yaml:"Meta,omitempty"`
+	X             float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
+	Y             float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
+	W             float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
+	H             float32 `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 // TableName returns the entity database table name.
@@ -37,9 +38,9 @@ func (Marker) TableName() string {
 }
 
 // NewMarker creates a new entity.
-func NewMarker(fileUID, refUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
+func NewMarker(fileUID uint, refUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
 	m := &Marker{
-		FileUID:    fileUID,
+		FileID:     fileUID,
 		RefUID:     refUID,
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
@@ -53,9 +54,9 @@ func NewMarker(fileUID, refUID, markerSrc, markerType string, x, y, w, h float32
 }
 
 // NewFaceMarker creates a new entity.
-func NewFaceMarker(f face.Face, fileUID, refUID string) *Marker {
+func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
 	fm := f.Marker()
-	m := NewMarker(fileUID, refUID, SrcImage, MarkerFace, fm.X, fm.Y, fm.W, fm.H)
+	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, fm.X, fm.Y, fm.W, fm.H)
 
 	m.MarkerScore = f.Score
 	m.MarkerMeta = string(f.RelativeLandmarksJSON())
@@ -97,10 +98,10 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 
 	if m.ID > 0 {
 		err := m.Save()
-		log.Debugf("faces: saved marker %d for file %s", m.ID, m.FileUID)
+		log.Debugf("faces: saved marker %d for file %d", m.ID, m.FileID)
 		return m, err
-	} else if err := Db().Where(`file_uid = ? AND x > ? AND x < ? AND y > ? AND y < ?`,
-		m.FileUID, m.X-m.W, m.X+m.W, m.Y-m.H, m.Y+m.H).First(&result).Error; err == nil {
+	} else if err := Db().Where(`file_id = ? AND x > ? AND x < ? AND y > ? AND y < ?`,
+		m.FileID, m.X-m.W, m.X+m.W, m.Y-m.H, m.Y+m.H).First(&result).Error; err == nil {
 
 		if SrcPriority[m.MarkerSrc] < SrcPriority[result.MarkerSrc] {
 			// Ignore.
@@ -117,11 +118,11 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 			"RefUID":      m.RefUID,
 		})
 
-		log.Debugf("faces: updated existing marker %d for file %s", result.ID, result.FileUID)
+		log.Debugf("faces: updated existing marker %d for file %d", result.ID, result.FileID)
 
 		return &result, err
 	} else if err := m.Create(); err != nil {
-		log.Debugf("faces: added marker %d for file %s", m.ID, m.FileUID)
+		log.Debugf("faces: added marker %d for file %d", m.ID, m.FileID)
 		return m, err
 	}
 

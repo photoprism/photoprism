@@ -1,6 +1,7 @@
 package classify
 
 import (
+	"github.com/photoprism/photoprism/internal/face"
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -49,8 +50,10 @@ func (l Label) Title() string {
 }
 
 // FaceLabels returns matching labels if there are people in the image.
-func FaceLabels(count int, src string, uncertainty int) Labels {
+func FaceLabels(faces face.Faces, src string) Labels {
 	var r LabelRule
+
+	count := faces.Count()
 
 	if count < 1 {
 		return Labels{}
@@ -63,7 +66,7 @@ func FaceLabels(count int, src string, uncertainty int) Labels {
 	return Labels{Label{
 		Name:        r.Label,
 		Source:      src,
-		Uncertainty: uncertainty,
+		Uncertainty: faces.Uncertainty(),
 		Priority:    r.Priority,
 		Categories:  r.Categories,
 	}}

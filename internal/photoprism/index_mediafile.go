@@ -600,18 +600,21 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Main JPEG file.
 	if file.FilePrimary {
-		labels := photo.ClassifyLabels()
-
 		if Config().Experimental() && Config().Settings().Features.People {
 			faces := ind.detectFaces(m)
 
-			photo.AddLabels(classify.FaceLabels(len(faces), entity.SrcImage, 10))
-			photo.PhotoFaces = len(faces)
+			photo.AddLabels(classify.FaceLabels(faces, entity.SrcImage))
+
+			file.PreloadMarkers()
 
 			if len(faces) > 0 {
 				file.AddFaces(faces)
 			}
+
+			photo.PhotoFaces = file.Markers.FaceCount()
 		}
+
+		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
 			log.Debugf("%s in %s (update title)", err, logName)

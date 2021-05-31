@@ -11,7 +11,7 @@ import (
 func TestPhoto_Yaml(t *testing.T) {
 	t.Run("create from fixture", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
-		m.PreloadFiles()
+		m.PreloadFiles(true)
 		result, err := m.Yaml()
 
 		if err != nil {
@@ -25,7 +25,7 @@ func TestPhoto_Yaml(t *testing.T) {
 func TestPhoto_SaveAsYaml(t *testing.T) {
 	t.Run("create from fixture", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
-		m.PreloadFiles()
+		m.PreloadFiles(true)
 
 		fileName := filepath.Join(os.TempDir(), ".photoprism_test.yml")
 
@@ -46,7 +46,7 @@ func TestPhoto_SaveAsYaml(t *testing.T) {
 func TestPhoto_YamlFileName(t *testing.T) {
 	t.Run("create from fixture", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
-		m.PreloadFiles()
+		m.PreloadFiles(false)
 		assert.Equal(t, "xxx/2790/02/yyy/Photo01.yml", m.YamlFileName("xxx", "yyy"))
 
 		if err := os.RemoveAll("xxx"); err != nil {

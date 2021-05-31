@@ -2,10 +2,11 @@ package entity
 
 import (
 	"fmt"
-	"github.com/photoprism/photoprism/internal/face"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -68,7 +69,7 @@ type File struct {
 	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
-	Markers         Markers       `json:"-" yaml:"-"`
+	Markers         Markers       `json:"Markers,omitempty" yaml:"-"`
 }
 
 type FileInfos struct {
@@ -253,7 +254,7 @@ func (m *File) Create() error {
 		return err
 	}
 
-	if err := m.Markers.Save(m.FileUID); err != nil {
+	if err := m.Markers.Save(m.ID); err != nil {
 		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -281,7 +282,7 @@ func (m *File) Save() error {
 		return err
 	}
 
-	if err := m.Markers.Save(m.FileUID); err != nil {
+	if err := m.Markers.Save(m.ID); err != nil {
 		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -405,5 +406,17 @@ func (m *File) AddFaces(faces face.Faces) {
 
 // AddFace adds a face marker to the file.
 func (m *File) AddFace(f face.Face, refUID string) {
-	m.Markers = append(m.Markers, *NewFaceMarker(f, m.FileUID, refUID))
+	marker := NewFaceMarker(f, m.ID, refUID)
+	if !m.Markers.Contains(*marker) {
+		m.Markers = append(m.Markers, *marker)
+	}
+}
+
+// PreloadMarkers loads existing file markers.
+func (m *File) PreloadMarkers() {
+	if res, err := FindMarkers(m.ID); err != nil {
+		log.Warnf("file: %s (load markers)", err)
+	} else {
+		m.Markers = res
+	}
 }
