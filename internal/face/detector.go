@@ -143,6 +143,10 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 		Dim:    cols,
 	}
 
+	if rows > 800 || cols > 800 {
+		fd.scoreThreshold += 9.0
+	}
+
 	params = pigo.CascadeParams{
 		MinSize:     fd.minSize,
 		MaxSize:     fd.maxSize,
