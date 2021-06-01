@@ -15,6 +15,10 @@ body.dark-theme {
     scrollbar-color: dark;
 }
 
+body.dark-theme #photoprism .v-tabs .v-badge__badge {
+    color: #000000;
+}
+
 /* Grayscale Theme */
 
 .theme-grayscale .v-content__wrap,
