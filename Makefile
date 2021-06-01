@@ -169,9 +169,9 @@ docker-development:
 	scripts/docker-build.sh development $(DOCKER_TAG)
 	scripts/docker-push.sh development $(DOCKER_TAG)
 docker-development-multiarch:
-	scripts/docker-buildx.sh development $(DOCKER_TAG) linux/amd64,linux/arm64
+	scripts/docker-buildx.sh development linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-photoprism-multiarch:
-	scripts/docker-buildx.sh photoprism $(DOCKER_TAG) linux/amd64,linux/arm64
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-photoprism:
 	scripts/docker-build.sh photoprism $(DOCKER_TAG)
 	scripts/docker-push.sh photoprism $(DOCKER_TAG)
