@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime/debug"
+	"sort"
 
 	pigo "github.com/esimov/pigo/core"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -161,23 +162,33 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 }
 
 // Faces adds landmark coordinates to detected faces and returns the results.
-func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (Faces, error) {
-	var (
-		results        Faces
-		eyesCoords     []Point
-		landmarkCoords []Point
-		puploc         *pigo.Puploc
-	)
+func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (results Faces, err error) {
+	var maxQ float32
+
+	// Sort by quality.
+	sort.Slice(det, func(i, j int) bool {
+		return det[i].Q > det[j].Q
+	})
 
 	for _, face := range det {
+		var eyesCoords []Point
+		var landmarkCoords []Point
+		var puploc *pigo.Puploc
+
 		if face.Q < fd.scoreThreshold {
+			continue
+		}
+
+		if maxQ < face.Q {
+			maxQ = face.Q
+		} else if maxQ >= 20 && face.Q < 15 {
 			continue
 		}
 
 		faceCoord := NewPoint(
 			"face",
-			face.Row-face.Scale/2,
-			face.Col-face.Scale/2,
+			face.Row,
+			face.Col,
 			face.Scale,
 		)
 
@@ -292,7 +303,6 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (Face
 			Eyes:      eyesCoords,
 			Landmarks: landmarkCoords,
 		})
-
 	}
 
 	return results, nil

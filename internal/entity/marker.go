@@ -55,8 +55,9 @@ func NewMarker(fileUID uint, refUID, markerSrc, markerType string, x, y, w, h fl
 
 // NewFaceMarker creates a new entity.
 func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
-	fm := f.Marker()
-	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, fm.X, fm.Y, fm.W, fm.H)
+	pos := f.Marker()
+
+	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
 
 	m.MarkerScore = f.Score
 	m.MarkerMeta = string(f.RelativeLandmarksJSON())
@@ -94,6 +95,8 @@ func (m *Marker) Create() error {
 
 // UpdateOrCreateMarker updates a marker in the database or creates a new one if needed.
 func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
+	const d = 0.07
+
 	result := Marker{}
 
 	if m.ID > 0 {
@@ -101,7 +104,7 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 		log.Debugf("faces: saved marker %d for file %d", m.ID, m.FileID)
 		return m, err
 	} else if err := Db().Where(`file_id = ? AND x > ? AND x < ? AND y > ? AND y < ?`,
-		m.FileID, m.X-m.W, m.X+m.W, m.Y-m.H, m.Y+m.H).First(&result).Error; err == nil {
+		m.FileID, m.X-d, m.X+d, m.Y-d, m.Y+d).First(&result).Error; err == nil {
 
 		if SrcPriority[m.MarkerSrc] < SrcPriority[result.MarkerSrc] {
 			// Ignore.

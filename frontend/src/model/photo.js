@@ -742,6 +742,22 @@ export class Photo extends RestModel {
     );
   }
 
+  getMarkers() {
+    let result = [];
+
+    let file = this.Files.find((f) => !!f.Primary);
+
+    if (!file || !file.Markers) {
+      return result;
+    }
+
+    file.Markers.forEach((m) => {
+      result.push(m);
+    });
+
+    return result;
+  }
+
   update() {
     const values = this.getValues(true);
 

@@ -19,8 +19,10 @@ func (m Markers) Save(fileID uint) error {
 
 // Contains returns true if a marker at the same position already exists.
 func (m Markers) Contains(m2 Marker) bool {
+	const d = 0.07
+
 	for _, m1 := range m {
-		if m2.X > (m1.X-m1.W) && m2.X < (m1.X+m1.W) && m2.Y > (m1.Y-m1.H) && m2.Y < (m1.Y+m1.H) {
+		if m2.X > (m1.X-d) && m2.X < (m1.X+d) && m2.Y > (m1.Y-d) && m2.Y < (m1.Y+d) {
 			return true
 		}
 	}

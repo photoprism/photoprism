@@ -100,10 +100,6 @@ type Face struct {
 
 // Dim returns the max number of rows and cols as float32 to calculate relative coordinates.
 func (f *Face) Dim() float32 {
-	if f.Rows > f.Cols {
-		return float32(f.Rows)
-	}
-
 	if f.Cols > 0 {
 		return float32(f.Cols)
 	}
@@ -113,7 +109,12 @@ func (f *Face) Dim() float32 {
 
 // Marker returns the relative position on the image.
 func (f *Face) Marker() Marker {
-	return f.Face.Marker(Point{}, f.Dim())
+	marker := f.Face.Marker(Point{}, float32(f.Rows), float32(f.Cols))
+	midpoint := f.EyesMidpoint().Marker(Point{}, float32(f.Rows), float32(f.Cols))
+	marker.X = midpoint.X
+	marker.Y = midpoint.Y
+
+	return marker
 }
 
 // EyesMidpoint returns the point in between the eyes.
@@ -123,7 +124,7 @@ func (f *Face) EyesMidpoint() Point {
 			Name:  "midpoint",
 			Row:   f.Face.Row,
 			Col:   f.Face.Col,
-			Scale: 0,
+			Scale: f.Face.Scale,
 		}
 	}
 
@@ -131,7 +132,7 @@ func (f *Face) EyesMidpoint() Point {
 		Name:  "midpoint",
 		Row:   (f.Eyes[0].Row + f.Eyes[1].Row) / 2,
 		Col:   (f.Eyes[0].Col + f.Eyes[1].Col) / 2,
-		Scale: 0,
+		Scale: (f.Eyes[0].Scale + f.Eyes[1].Scale) / 2,
 	}
 }
 
@@ -139,20 +140,26 @@ func (f *Face) EyesMidpoint() Point {
 func (f *Face) RelativeLandmarks() Markers {
 	p := f.EyesMidpoint()
 
-	m := f.Landmarks.Markers(p, f.Dim())
-	m = append(m, f.Eyes.Markers(p, f.Dim())...)
+	m := f.Landmarks.Markers(p, float32(f.Rows), float32(f.Cols))
+	m = append(m, f.Eyes.Markers(p, float32(f.Rows), float32(f.Cols))...)
 
 	return m
 }
 
 // RelativeLandmarksJSON returns detected relative marker positions as JSON.
 func (f *Face) RelativeLandmarksJSON() (b []byte) {
-	b, err := json.Marshal(f.RelativeLandmarks())
+	var noResult = []byte("")
 
-	if err != nil {
-		log.Errorf("faces: %s", err)
-		return []byte("{}")
+	l := f.RelativeLandmarks()
+
+	if len(l) < 1 {
+		return noResult
 	}
 
-	return b
+	if result, err := json.Marshal(l); err != nil {
+		log.Errorf("faces: %s", err)
+		return noResult
+	} else {
+		return result
+	}
 }

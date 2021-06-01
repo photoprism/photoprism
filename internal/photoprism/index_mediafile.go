@@ -835,7 +835,8 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 		return face.Faces{}
 	}
 
-	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), "fit_720")
+	// TODO: Not all users have thumbs with this resolution.
+	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), "fit_1280")
 
 	if err != nil {
 		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))

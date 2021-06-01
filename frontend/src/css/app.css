@@ -188,3 +188,10 @@ main {
     -webkit-hyphens: auto;
     hyphens: auto;
 }
+
+#photoprism .v-tabs .v-badge__badge {
+    right: -22px;
+    font-size: 9px;
+    width: 1.1rem;
+    height: 1.1rem;
+}
