@@ -3,7 +3,7 @@ version: '3.5'
 # Example Docker Compose config file for PhotoPrism (Raspberry Pi / ARM64)
 #
 # Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
-# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism-arm64/
+# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
 # Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
 # e.g. when running PhotoPrism on a public server outside your home network.
@@ -30,8 +30,8 @@ version: '3.5'
 
 services:
   photoprism:
-    # Use photoprism/photoprism-arm64:preview instead for testing preview builds:
-    image: photoprism/photoprism-arm64:latest
+    # Use photoprism/photoprism:preview instead for testing preview builds:
+    image: photoprism/photoprism:latest
     container_name: photoprism
     # Only enable automatic restarts once your installation is properly
     # configured as it otherwise may get stuck in a restart loop:
