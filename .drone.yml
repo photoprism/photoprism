@@ -78,6 +78,7 @@ steps:
       - scripts/docker-login.sh
       - docker pull photoprism/photoprism:preview
       - make docker-demo
+      - docker system prune -f
     when:
       status:
         - success
@@ -166,7 +167,7 @@ steps:
   - name: down
     commands:
       - docker-compose -f docker-compose.drone.yml down
-      - docker system prune
+      - docker system prune -f
     when:
       status:
         - failure
@@ -174,6 +175,6 @@ steps:
 
 ---
 kind: signature
-hmac: 0db094663b546b8d4f40a04c38ba209054f6603e982f4d8c56d3715cea729662
+hmac: 547daa345cfdc4fb73547df7d39231c958b99f507c03b529f4ba1974688b47f8
 
 ...
