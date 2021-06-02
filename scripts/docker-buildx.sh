@@ -4,7 +4,7 @@
 export DOCKER_BUILDKIT=1
 
 if [[ -z $1 ]] || [[ -z $2 ]]; then
-    echo "Please provide a container image name and architecture string (eg. linux/amd64,linux/arm64,linux/arm/v7)" 1>&2
+    echo "Please provide a container image name and architecture string (eg. linux/amd64,linux/arm64,linux/arm)" 1>&2
     exit 1
 elif [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
     DOCKER_TAG=$(date -u +%Y%m%d)
@@ -14,9 +14,9 @@ elif [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
       --platform $2 \
       --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
-      -f docker/$1/multiarch/Dockerfile \
+      -f docker/$1/Dockerfile \
       -t photoprism/$1:preview \
-      --load .
+      --push .
     docker buildx rm multibuilder
     echo "Done"
 else
@@ -26,7 +26,7 @@ else
       --platform $2 \
       --no-cache \
       --build-arg BUILD_TAG=$3 \
-      -f docker/$1/multiarch/Dockerfile \
+      -f docker/$1/Dockerfile \
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 \
       --push .

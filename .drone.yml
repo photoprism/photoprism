@@ -60,7 +60,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism-preview
+      - make docker-preview
       - docker pull photoprism/photoprism:preview
       - make docker-demo
     when:
@@ -77,7 +77,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism
+      - make docker-release
     when:
       status:
         - success
@@ -123,14 +123,13 @@ name: linux-arm64
 trigger:
   branch:
     - master
-    - release
 
 platform:
   arch: arm64
   os: linux
 
 steps:
-  - name: deploy-preview
+  - name: up
     environment:
       DOCKER_USERNAME:
         from_secret: docker_username
@@ -138,32 +137,23 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism-arm64-preview
-    when:
-      branch:
-        - master
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
-  - name: deploy-release
-    environment:
-      DOCKER_USERNAME:
-        from_secret: docker_username
-      DOCKER_PASSWORD:
-        from_secret: docker_password
+  - name: test
     commands:
-      - scripts/docker-login.sh
-      - make docker-photoprism-arm64
-    when:
-      branch:
-        - release
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
 
-  - name: clean
+  - name: down
     commands:
-      - docker system prune -f
+      - docker-compose -f docker-compose.drone.yml down
+      - docker system prune
     when:
       status:
+        - failure
         - success
+
 ---
 kind: signature
-hmac: 33d0b3aa9a16fee20e8216696e1ca817a5a99635dc482ddcc445e2f99d8a6e64
+hmac: 2571ca8a76f4ebb5b682b1ed22c739b73f3769ad0e3f41af8ce5b6f91224a7ee
 
 ...

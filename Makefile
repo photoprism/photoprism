@@ -1,4 +1,4 @@
-.PHONY: ;
+.PHONY: build dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test install fmt upgrade start stop;
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
 .NOTPARALLEL: ;          # wait for target to finish
@@ -81,7 +81,7 @@ clean-local-config:
 dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-js:
-	(cd frontend &&	npm install --silent --legacy-peer-deps && npm audit fix --silent)
+	(cd frontend &&	npm install --silent --legacy-peer-deps)
 dep-go:
 	go build -v ./...
 dep-upgrade:
@@ -165,37 +165,21 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
-	docker pull ubuntu:21.04
-	scripts/docker-build.sh development $(DOCKER_TAG)
-	scripts/docker-push.sh development $(DOCKER_TAG)
-docker-development-multiarch:
-	scripts/docker-buildx.sh development linux/amd64,linux/arm64 $(DOCKER_TAG)
-docker-photoprism-multiarch:
-	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
-docker-photoprism:
-	scripts/docker-build.sh photoprism $(DOCKER_TAG)
-	scripts/docker-push.sh photoprism $(DOCKER_TAG)
-docker-photoprism-preview:
+	docker pull --platform=amd64 ubuntu:21.04
+	docker pull --platform=arm64 ubuntu:21.04
+	docker pull --platform=arm ubuntu:21.04
+	scripts/install-qemu.sh
+	scripts/docker-buildx.sh development linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+docker-preview:
+	scripts/install-qemu.sh
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64
+docker-release:
+	scripts/install-qemu.sh
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+docker-local:
 	scripts/docker-build.sh photoprism
-	scripts/docker-push.sh photoprism
-docker-photoprism-local:
-	scripts/docker-build.sh photoprism
-docker-photoprism-pull:
+docker-pull:
 	docker pull photoprism/photoprism:latest
-docker-photoprism-arm64-preview:
-	docker pull ubuntu:21.04
-	scripts/docker-build.sh photoprism-arm64
-	scripts/docker-push.sh photoprism-arm64
-docker-photoprism-arm64:
-	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
-	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
-docker-photoprism-arm32-preview:
-	docker pull ubuntu:21.04
-	scripts/docker-build.sh photoprism-arm32
-	scripts/docker-push.sh photoprism-arm32
-docker-photoprism-arm32:
-	scripts/docker-build.sh photoprism-arm32 $(DOCKER_TAG)
-	scripts/docker-push.sh photoprism-arm32 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
