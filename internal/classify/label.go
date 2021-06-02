@@ -1,8 +1,9 @@
 package classify
 
 import (
-	"github.com/photoprism/photoprism/internal/face"
 	"strings"
+
+	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )
