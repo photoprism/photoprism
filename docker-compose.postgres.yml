@@ -70,7 +70,7 @@ services:
       POSTGRES_PASSWORD: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20200825
+    image: photoprism/webdav:20210602
 
 volumes:
   go-mod:

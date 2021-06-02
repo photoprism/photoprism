@@ -188,9 +188,10 @@ docker-demo-local:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
 docker-webdav:
-	docker pull golang:1
-	scripts/docker-build.sh webdav $(DOCKER_TAG)
-	scripts/docker-push.sh webdav $(DOCKER_TAG)
+	docker pull --platform=amd64 golang:1
+	docker pull --platform=arm64 golang:1
+	docker pull --platform=arm golang:1
+	scripts/docker-buildx.sh webdav linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
 lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:
