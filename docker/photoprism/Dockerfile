@@ -85,11 +85,11 @@ RUN apt-get update && apt-get dist-upgrade && apt-get install -y --no-install-re
         rawtherapee \
         ffmpeg \
         ffmpegthumbnailer \
-        libavcodec-extra && \
-        [ "$TARGETARCH" = "arm" ] || apt-get install darktable && \
-        apt-get autoremove && \
-        apt-get clean && \
-        rm -rf /var/lib/apt/lists/*
+        libavcodec-extra  && \
+        [ "$TARGETARCH" = "arm" ] || apt-get install darktable
+
+# Remove files to reduce image size
+RUN apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Update Exiftool, see https://ubuntu.com/security/CVE-2021-22204
 RUN wget "http://launchpadlibrarian.net/536122424/libimage-exiftool-perl_12.16+dfsg-2_all.deb" -O /tmp/libimage-exiftool-perl.deb && \
