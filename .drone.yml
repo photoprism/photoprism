@@ -11,6 +11,7 @@ trigger:
   event:
     exclude:
       - pull_request
+      - tag
 
 steps:
   - name: up
@@ -137,6 +138,10 @@ name: linux-arm64
 trigger:
   branch:
     - master
+  event:
+    exclude:
+      - pull_request
+      - tag
 
 platform:
   arch: arm64
@@ -151,6 +156,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
+      - docker-compose -f docker-compose.drone.yml stop
       - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
   - name: test
@@ -168,6 +174,6 @@ steps:
 
 ---
 kind: signature
-hmac: 89db5e943f49dbf20482e7d7f189e109b1a38a9be6b89c997a4f83713d2f6d3b
+hmac: 0db094663b546b8d4f40a04c38ba209054f6603e982f4d8c56d3715cea729662
 
 ...
