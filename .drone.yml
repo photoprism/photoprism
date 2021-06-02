@@ -61,6 +61,20 @@ steps:
     commands:
       - scripts/docker-login.sh
       - make docker-preview
+    when:
+      status:
+        - success
+      branch:
+        - master
+
+  - name: deploy-demo
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
       - docker pull photoprism/photoprism:preview
       - make docker-demo
     when:
@@ -154,6 +168,6 @@ steps:
 
 ---
 kind: signature
-hmac: 2571ca8a76f4ebb5b682b1ed22c739b73f3769ad0e3f41af8ce5b6f91224a7ee
+hmac: 89db5e943f49dbf20482e7d7f189e109b1a38a9be6b89c997a4f83713d2f6d3b
 
 ...
