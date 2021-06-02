@@ -447,3 +447,13 @@ func TestFile_AddFaces(t *testing.T) {
 		assert.NotEmpty(t, file.Markers)
 	})
 }
+
+func TestFile_FaceCount(t *testing.T) {
+	t.Run("FileFixturesExampleBridge", func(t *testing.T) {
+		file := FileFixturesExampleBridge
+
+		result := file.FaceCount()
+
+		assert.GreaterOrEqual(t, result, 3)
+	})
+}

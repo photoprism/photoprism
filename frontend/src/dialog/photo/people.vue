@@ -13,7 +13,7 @@
           </div>
         </v-card-title>
       </v-card>
-      <v-layout row wrap class="search-results photo-results cards-view">
+      <v-layout row wrap class="search-results face-results cards-view">
         <v-flex
             v-for="(marker, index) in markers"
             :key="index"
@@ -22,12 +22,13 @@
           <v-card tile
                   :data-id="marker.ID"
                   style="user-select: none"
+                  :class="{invalid: marker.Invalid}"
                   class="result accent lighten-3">
             <div class="card-background accent lighten-3"></div>
             <canvas :id="'face-' + marker.ID" :key="marker.ID" width="300" height="300" style="width: 100%" class="v-responsive v-image accent lighten-2"></canvas>
 
-            <v-card-actions v-if="marker.Score < 30" class="card-details pa-0">
-              <v-layout row wrap align-center>
+            <v-card-actions class="card-details pa-0">
+              <v-layout v-if="marker.Score < 30" row wrap align-center>
                 <v-flex xs6 class="text-xs-center pa-1">
                   <v-btn color="accent lighten-2"
                          small depressed dark block :round="false"
@@ -45,18 +46,24 @@
                   </v-btn>
                 </v-flex>
               </v-layout>
+              <v-layout v-else row wrap align-center>
+                <v-flex xs12 class="text-xs-left pa-1">
+                  <v-text-field
+                      v-model="marker.Label"
+                      :rules="[textRule]"
+                      color="secondary-dark"
+                      browser-autocomplete="off"
+                      class="input-name pa-0 ma-1"
+                      hide-details
+                      single-line
+                      clearable
+                      @click:clear="clearName(marker)"
+                      @change="updateName(marker)"
+                      @keyup.enter.native="updateName(marker)"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
             </v-card-actions>
-
-            <!-- v-card-title primary-title class="pa-3 card-details" style="user-select: none;">
-              <div>
-                <h3 class="body-2 mb-2">
-                  <button class="action-title-edit" :data-uid="marker.ID"
-                          @click.exact="alert('Name')">
-                    Jens Mander
-                  </button>
-                </h3>
-              </div>
-            </v-card-title -->
           </v-card>
         </v-flex>
       </v-layout>
@@ -73,11 +80,12 @@ export default {
   },
   data() {
     return {
-      markers: this.model.getMarkers(),
+      markers: this.model.getMarkers(true),
       imageUrl: this.model.thumbnailUrl("fit_720"),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
     };
   },
   mounted () {
@@ -115,10 +123,21 @@ export default {
     refresh() {
     },
     reject(marker) {
-      this.$notify.warn("Work in progress");
+      marker.Invalid = true;
+      this.model.updateMarker(marker);
     },
     confirm(marker) {
-      this.$notify.warn("Work in progress");
+      marker.Score = 100;
+      marker.Invalid = false;
+      this.model.updateMarker(marker);
+    },
+    clearName(marker) {
+      marker.Label = "";
+      marker.RefUID = "";
+      this.model.updateMarker(marker);
+    },
+    updateName(marker) {
+      this.model.updateMarker(marker);
     },
   },
 };

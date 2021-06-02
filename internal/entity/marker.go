@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/ulule/deepcopier"
+
 	"github.com/photoprism/photoprism/internal/face"
 )
 
@@ -18,6 +22,7 @@ type Marker struct {
 	ID            uint    `gorm:"primary_key" json:"ID" yaml:"-"`
 	FileID        uint    `gorm:"index;" json:"-" yaml:"-"`
 	RefUID        string  `gorm:"type:VARBINARY(42);index;" json:"RefUID" yaml:"RefUID,omitempty"`
+	RefSrc        string  `gorm:"type:VARBINARY(8);default:'';" json:"RefSrc" yaml:"RefSrc,omitempty"`
 	MarkerSrc     string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerType    string  `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerScore   int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score"`
@@ -31,6 +36,9 @@ type Marker struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
+
+// UnknownMarker can be used as a default for unknown markers.
+var UnknownMarker = NewMarker(0, "", SrcAuto, MarkerUnknown, 0, 0, 0, 0)
 
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
@@ -73,6 +81,23 @@ func (m *Marker) Updates(values interface{}) error {
 // Update updates a column in the database.
 func (m *Marker) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// SaveForm updates the entity using form data and stores it in the database.
+func (m *Marker) SaveForm(f form.Marker) error {
+	if err := deepcopier.Copy(m).From(f); err != nil {
+		return err
+	}
+
+	if f.MarkerLabel != "" {
+		m.MarkerLabel = txt.Title(txt.Clip(f.MarkerLabel, txt.ClipKeyword))
+	}
+
+	if err := m.Save(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Save updates the existing or inserts a new row.

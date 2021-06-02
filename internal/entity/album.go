@@ -313,7 +313,7 @@ func (m *Album) SetTitle(title string) {
 	}
 }
 
-// Saves the entity using form data and stores it in the database.
+// SaveForm updates the entity using form data and stores it in the database.
 func (m *Album) SaveForm(f form.Album) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err

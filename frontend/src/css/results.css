@@ -359,3 +359,7 @@ body.chrome #photoprism .search-results .result {
     transform: translateY(-50%);
     text-align: center;
 }
+
+#photoprism .face-results .invalid {
+    opacity: 0.5;
+}

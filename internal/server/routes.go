@@ -72,6 +72,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetMomentsTime(v1)
 		api.GetFile(v1)
 		api.DeleteFile(v1)
+		api.UpdateFileMarker(v1)
 		api.PhotoPrimary(v1)
 		api.PhotoUnstack(v1)
 
