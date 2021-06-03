@@ -93,7 +93,9 @@ func (c *Config) DecodeSession() (Session, error) {
 	}
 
 	hash := sha256.New()
-	hash.Write([]byte(c.Secret))
+	if _, err := hash.Write([]byte(c.Secret)); err != nil {
+		return result, err
+	}
 
 	var b []byte
 
