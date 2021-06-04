@@ -43,8 +43,7 @@ require (
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/melihmucuk/geocache v0.0.0-20160621165317-521b336a001c
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/p768lwy3/gin-server-timing v0.0.0-20200316080543-ab69795cf847
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect

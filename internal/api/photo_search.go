@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	servertiming "github.com/p768lwy3/gin-server-timing"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -26,6 +27,9 @@ import (
 //   favorite:  bool   Find favorites only
 func GetPhotos(router *gin.RouterGroup) {
 	router.GET("/photos", func(c *gin.Context) {
+		timing := servertiming.FromContext(c)
+		metricTotal := timing.NewMetric("total").Start()
+
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionSearch)
 
 		if s.Invalid() {
@@ -56,7 +60,9 @@ func GetPhotos(router *gin.RouterGroup) {
 			f.Review = false
 		}
 
+		metricDB := timing.NewMetric("db").Start()
 		result, count, err := query.PhotoSearch(f)
+		metricDB.Stop()
 
 		if err != nil {
 			log.Error(err)
@@ -64,6 +70,8 @@ func GetPhotos(router *gin.RouterGroup) {
 			return
 		}
 
+		metricTotal.Stop()
+		servertiming.WriteHeader(c)
 		AddCountHeader(c, count)
 		AddLimitHeader(c, f.Count)
 		AddOffsetHeader(c, f.Offset)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	servertiming "github.com/p768lwy3/gin-server-timing"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 )
@@ -30,7 +31,7 @@ func Start(ctx context.Context, conf *config.Config) {
 
 	// Create router and add routing middleware.
 	router := gin.New()
-	router.Use(Logger(), Recovery())
+	router.Use(servertiming.Middleware(), Logger(), Recovery())
 
 	// Enable http compression (if any).
 	switch conf.HttpCompression() {

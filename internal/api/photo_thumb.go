@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	servertiming "github.com/p768lwy3/gin-server-timing"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
@@ -22,6 +23,9 @@ import (
 //   type: string thumb type, see thumb.Types
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:hash/:token/:type", func(c *gin.Context) {
+		timing := servertiming.FromContext(c)
+		metricTotal := timing.NewMetric("total").Start()
+
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
@@ -79,6 +83,8 @@ func GetThumb(router *gin.RouterGroup) {
 		// Return existing thumbs straight away.
 		if !download {
 			if fileName, err := thumb.Filename(fileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil && fs.FileExists(fileName) {
+				metricTotal.Stop()
+				servertiming.WriteHeader(c)
 				c.File(fileName)
 				return
 			}
