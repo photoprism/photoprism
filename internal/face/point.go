@@ -4,9 +4,9 @@ package face
 type Points []Point
 
 // Markers returns relative marker positions for all face landmark coordinates.
-func (pts Points) Markers(r Point, dim float32) (m Markers) {
+func (pts Points) Markers(r Point, rows, cols float32) (m Markers) {
 	for _, p := range pts {
-		m = append(m, p.Marker(r, dim))
+		m = append(m, p.Marker(r, rows, cols))
 	}
 
 	return m
@@ -31,16 +31,20 @@ func NewPoint(name string, row, col, scale int) Point {
 }
 
 // Marker returns a relative marker position for the face landmark coordinates.
-func (p Point) Marker(r Point, dim float32) Marker {
-	if dim < 1 {
-		dim = 1
+func (p Point) Marker(r Point, rows, cols float32) Marker {
+	if rows < 1 {
+		rows = 1
+	}
+
+	if cols < 1 {
+		cols = 1
 	}
 
 	return NewMarker(
 		p.Name,
-		float32(p.Col-r.Col)/dim,
-		float32(p.Row-r.Row)/dim,
-		float32(p.Scale)/dim,
-		float32(p.Scale)/dim,
+		float32(p.Col-r.Col)/cols,
+		float32(p.Row-r.Row)/rows,
+		float32(p.Scale)/rows,
+		float32(p.Scale)/cols,
 	)
 }

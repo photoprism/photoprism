@@ -34,6 +34,7 @@ var UnwantedDescriptions = map[string]bool{
 	"sdr_HDRB":                 true,
 	"cof":                      true,
 	"qrf":                      true,
+	"fshbty":                   true,
 	"binary comment":           true,
 	"default":                  true,
 	"Exif_JPEG_PICTURE":        true,

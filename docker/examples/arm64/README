@@ -22,7 +22,7 @@ All commands may have to be prefixed with "sudo" when not running as root.
 Note that this will change the home directory "~" to "/root" in your configuration.
 
 Our repository on Docker Hub:
-  - https://hub.docker.com/r/photoprism/photoprism-arm64
+  - https://hub.docker.com/r/photoprism/photoprism
 
 ## Docker Compose Command Reference ##
 

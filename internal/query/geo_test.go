@@ -219,4 +219,16 @@ func TestGeo(t *testing.T) {
 
 		assert.IsType(t, GeoResults{}, result)
 	})
+	t.Run("faces", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Query = "faces:true"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, 3, len(photos))
+	})
 }

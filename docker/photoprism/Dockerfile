@@ -1,4 +1,4 @@
-FROM photoprism/development:20210520 as build
+FROM photoprism/development:20210602 as build
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -67,7 +67,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install additional distribution packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get dist-upgrade && apt-get install -y --no-install-recommends \
         gpgv \
         wget \
         curl \
@@ -82,16 +82,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-utils \
         add-apt-key \
         exiftool \
-        darktable \
         rawtherapee \
         ffmpeg \
         ffmpegthumbnailer \
-        libavcodec-extra && \
-        apt-get update && \
-        apt-get dist-upgrade && \
-        apt-get autoremove && \
-        apt-get clean && \
-        rm -rf /var/lib/apt/lists/*
+        libavcodec-extra  && \
+        [ "$TARGETARCH" = "arm" ] || apt-get install darktable
+
+# Remove files to reduce image size
+RUN apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Update Exiftool, see https://ubuntu.com/security/CVE-2021-22204
 RUN wget "http://launchpadlibrarian.net/536122424/libimage-exiftool-perl_12.16+dfsg-2_all.deb" -O /tmp/libimage-exiftool-perl.deb && \
@@ -132,7 +130,7 @@ RUN photoprism -v
 EXPOSE 2342
 
 # Configure entrypoint
-COPY --chown=root:root /docker/scripts/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 /docker/scripts/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 VOLUME /var/lib/photoprism
 

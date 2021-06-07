@@ -80,7 +80,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 			t.Fatal("err should be nil")
 		}
 
-		assert.True(t, form.Favorite)
+		assert.False(t, form.Favorite)
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
 		form := &LabelSearch{Query: "count:2019-01-15"}

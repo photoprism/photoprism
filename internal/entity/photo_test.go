@@ -145,7 +145,7 @@ func TestPhoto_PreloadFiles(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Files)
-		m.PreloadFiles()
+		m.PreloadFiles(false)
 		assert.NotEmpty(t, m.Files)
 	})
 }

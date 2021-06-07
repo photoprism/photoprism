@@ -249,7 +249,7 @@
                   color="secondary-dark"
                   :label="$gettext('People')"
                   :hint="$gettext('Detect faces and search for people in your pictures.')"
-                  prepend-icon="person"
+                  prepend-icon="people"
                   persistent-hint
                   @change="onChange"
               >

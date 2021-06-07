@@ -600,14 +600,21 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Main JPEG file.
 	if file.FilePrimary {
-		labels := photo.ClassifyLabels()
-
 		if Config().Experimental() && Config().Settings().Features.People {
 			faces := ind.detectFaces(m)
 
-			photo.AddLabels(classify.FaceLabels(len(faces), entity.SrcImage, 10))
-			photo.PhotoPeople = len(faces)
+			photo.AddLabels(classify.FaceLabels(faces, entity.SrcImage))
+
+			file.PreloadMarkers()
+
+			if len(faces) > 0 {
+				file.AddFaces(faces)
+			}
+
+			photo.PhotoFaces = file.Markers.FaceCount()
 		}
+
+		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
 			log.Debugf("%s in %s (update title)", err, logName)
@@ -828,10 +835,24 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 		return face.Faces{}
 	}
 
-	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), "fit_720")
+	var thumbSize string
+
+	// Select best thumbnail depending on configured size.
+	if Config().ThumbSize() < 1280 {
+		thumbSize = "fit_720"
+	} else {
+		thumbSize = "fit_1280"
+	}
+
+	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), thumbSize)
 
 	if err != nil {
-		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
+		log.Debugf("index: %s in %s (faces)", err, txt.Quote(jpeg.BaseName()))
+		return face.Faces{}
+	}
+
+	if thumbName == "" {
+		log.Debugf("index: thumb %s not found in %s (faces)", thumbSize, txt.Quote(jpeg.BaseName()))
 		return face.Faces{}
 	}
 

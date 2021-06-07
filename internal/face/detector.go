@@ -3,14 +3,16 @@ package face
 import (
 	_ "embed"
 	"fmt"
-	pigo "github.com/esimov/pigo/core"
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 	_ "image/jpeg"
 	"io"
 	"os"
 	"path/filepath"
 	"runtime/debug"
+	"sort"
+
+	pigo "github.com/esimov/pigo/core"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 //go:embed cascade/facefinder
@@ -34,20 +36,20 @@ func init() {
 	classifier, err = p.Unpack(cascadeFile)
 
 	if err != nil {
-		log.Errorf("face: %s", err)
+		log.Errorf("faces: %s", err)
 	}
 
 	pl := pigo.NewPuplocCascade()
 	plc, err = pl.UnpackCascade(puplocFile)
 
 	if err != nil {
-		log.Errorf("face: %s", err)
+		log.Errorf("faces: %s", err)
 	}
 
 	flpcs, err = ReadCascadeDir(pl, "cascade/lps")
 
 	if err != nil {
-		log.Errorf("face: %s", err)
+		log.Errorf("faces: %s", err)
 	}
 }
 
@@ -72,7 +74,7 @@ type Detector struct {
 func Detect(fileName string) (faces Faces, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Errorf("face: %s (panic)\nstack: %s", r, debug.Stack())
+			log.Errorf("faces: %s (panic)\nstack: %s", r, debug.Stack())
 		}
 	}()
 
@@ -83,30 +85,30 @@ func Detect(fileName string) (faces Faces, err error) {
 		shiftFactor:    0.1,
 		scaleFactor:    1.1,
 		iouThreshold:   0.2,
-		scoreThreshold: 10.0,
+		scoreThreshold: 9.0,
 		perturb:        63,
 	}
 
 	if !fs.FileExists(fileName) {
-		return faces, fmt.Errorf("face: file '%s' not found", txt.Quote(filepath.Base(fileName)))
+		return faces, fmt.Errorf("faces: file '%s' not found", txt.Quote(filepath.Base(fileName)))
 	}
 
-	log.Debugf("face: detecting faces in %s", txt.Quote(filepath.Base(fileName)))
+	log.Infof("faces: analyzing %s", txt.Quote(filepath.Base(fileName)))
 
 	det, params, err := fd.Detect(fileName)
 
 	if err != nil {
-		return faces, fmt.Errorf("face: %v (detect faces)", err)
+		return faces, fmt.Errorf("faces: %v (detect faces)", err)
 	}
 
 	if det == nil {
-		return faces, fmt.Errorf("face: no result")
+		return faces, fmt.Errorf("faces: no result")
 	}
 
 	faces, err = fd.Faces(det, params)
 
 	if err != nil {
-		return faces, fmt.Errorf("face: %s (faces)", err)
+		return faces, fmt.Errorf("faces: %s", err)
 	}
 
 	return faces, nil
@@ -141,6 +143,10 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 		Dim:    cols,
 	}
 
+	if rows > 800 || cols > 800 {
+		fd.scoreThreshold += 9.0
+	}
+
 	params = pigo.CascadeParams{
 		MinSize:     fd.minSize,
 		MaxSize:     fd.maxSize,
@@ -160,23 +166,33 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 }
 
 // Faces adds landmark coordinates to detected faces and returns the results.
-func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (Faces, error) {
-	var (
-		results        Faces
-		eyesCoords     []Point
-		landmarkCoords []Point
-		puploc         *pigo.Puploc
-	)
+func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (results Faces, err error) {
+	var maxQ float32
+
+	// Sort by quality.
+	sort.Slice(det, func(i, j int) bool {
+		return det[i].Q > det[j].Q
+	})
 
 	for _, face := range det {
+		var eyesCoords []Point
+		var landmarkCoords []Point
+		var puploc *pigo.Puploc
+
 		if face.Q < fd.scoreThreshold {
+			continue
+		}
+
+		if maxQ < face.Q {
+			maxQ = face.Q
+		} else if maxQ >= 20 && face.Q < 15 {
 			continue
 		}
 
 		faceCoord := NewPoint(
 			"face",
-			face.Row-face.Scale/2,
-			face.Col-face.Scale/2,
+			face.Row,
+			face.Col,
 			face.Scale,
 		)
 
@@ -291,7 +307,6 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (Face
 			Eyes:      eyesCoords,
 			Landmarks: landmarkCoords,
 		})
-
 	}
 
 	return results, nil

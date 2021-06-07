@@ -11,6 +11,7 @@ trigger:
   event:
     exclude:
       - pull_request
+      - tag
 
 steps:
   - name: up
@@ -60,9 +61,24 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism-preview
+      - make docker-preview
+    when:
+      status:
+        - success
+      branch:
+        - master
+
+  - name: deploy-demo
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
       - docker pull photoprism/photoprism:preview
       - make docker-demo
+      - docker system prune -f
     when:
       status:
         - success
@@ -77,7 +93,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism
+      - make docker-release
     when:
       status:
         - success
@@ -123,14 +139,17 @@ name: linux-arm64
 trigger:
   branch:
     - master
-    - release
+  event:
+    exclude:
+      - pull_request
+      - tag
 
 platform:
   arch: arm64
   os: linux
 
 steps:
-  - name: deploy-preview
+  - name: up
     environment:
       DOCKER_USERNAME:
         from_secret: docker_username
@@ -138,32 +157,24 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism-arm64-preview
-    when:
-      branch:
-        - master
+      - docker-compose -f docker-compose.drone.yml stop
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
-  - name: deploy-release
-    environment:
-      DOCKER_USERNAME:
-        from_secret: docker_username
-      DOCKER_PASSWORD:
-        from_secret: docker_password
+  - name: test
     commands:
-      - scripts/docker-login.sh
-      - make docker-photoprism-arm64
-    when:
-      branch:
-        - release
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
 
-  - name: clean
+  - name: down
     commands:
+      - docker-compose -f docker-compose.drone.yml down
       - docker system prune -f
     when:
       status:
+        - failure
         - success
+
 ---
 kind: signature
-hmac: 33d0b3aa9a16fee20e8216696e1ca817a5a99635dc482ddcc445e2f99d8a6e64
+hmac: 547daa345cfdc4fb73547df7d39231c958b99f507c03b529f4ba1974688b47f8
 
 ...

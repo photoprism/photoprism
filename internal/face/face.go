@@ -43,6 +43,51 @@ var log = event.Log
 // Faces is a list of face detection results.
 type Faces []Face
 
+// Count returns the number of faces detected.
+func (faces Faces) Count() int {
+	return len(faces)
+}
+
+// Uncertainty return the max face detection uncertainty in percent.
+func (faces Faces) Uncertainty() int {
+	if len(faces) < 1 {
+		return 100
+	}
+
+	maxScore := 0
+
+	for _, f := range faces {
+		if f.Score > maxScore {
+			maxScore = f.Score
+		}
+	}
+
+	switch {
+	case maxScore > 300:
+		return 1
+	case maxScore > 200:
+		return 5
+	case maxScore > 100:
+		return 10
+	case maxScore > 80:
+		return 15
+	case maxScore > 65:
+		return 20
+	case maxScore > 50:
+		return 25
+	case maxScore > 40:
+		return 30
+	case maxScore > 30:
+		return 35
+	case maxScore > 20:
+		return 40
+	case maxScore > 10:
+		return 45
+	}
+
+	return 50
+}
+
 // Face represents a face detection result.
 type Face struct {
 	Rows      int    `json:"rows,omitempty"`
@@ -55,10 +100,6 @@ type Face struct {
 
 // Dim returns the max number of rows and cols as float32 to calculate relative coordinates.
 func (f *Face) Dim() float32 {
-	if f.Rows > f.Cols {
-		return float32(f.Rows)
-	}
-
 	if f.Cols > 0 {
 		return float32(f.Cols)
 	}
@@ -68,7 +109,12 @@ func (f *Face) Dim() float32 {
 
 // Marker returns the relative position on the image.
 func (f *Face) Marker() Marker {
-	return f.Face.Marker(Point{}, f.Dim())
+	marker := f.Face.Marker(Point{}, float32(f.Rows), float32(f.Cols))
+	midpoint := f.EyesMidpoint().Marker(Point{}, float32(f.Rows), float32(f.Cols))
+	marker.X = midpoint.X
+	marker.Y = midpoint.Y
+
+	return marker
 }
 
 // EyesMidpoint returns the point in between the eyes.
@@ -78,7 +124,7 @@ func (f *Face) EyesMidpoint() Point {
 			Name:  "midpoint",
 			Row:   f.Face.Row,
 			Col:   f.Face.Col,
-			Scale: 0,
+			Scale: f.Face.Scale,
 		}
 	}
 
@@ -86,7 +132,7 @@ func (f *Face) EyesMidpoint() Point {
 		Name:  "midpoint",
 		Row:   (f.Eyes[0].Row + f.Eyes[1].Row) / 2,
 		Col:   (f.Eyes[0].Col + f.Eyes[1].Col) / 2,
-		Scale: 0,
+		Scale: (f.Eyes[0].Scale + f.Eyes[1].Scale) / 2,
 	}
 }
 
@@ -94,20 +140,26 @@ func (f *Face) EyesMidpoint() Point {
 func (f *Face) RelativeLandmarks() Markers {
 	p := f.EyesMidpoint()
 
-	m := f.Landmarks.Markers(p, f.Dim())
-	m = append(m, f.Eyes.Markers(p, f.Dim())...)
+	m := f.Landmarks.Markers(p, float32(f.Rows), float32(f.Cols))
+	m = append(m, f.Eyes.Markers(p, float32(f.Rows), float32(f.Cols))...)
 
 	return m
 }
 
 // RelativeLandmarksJSON returns detected relative marker positions as JSON.
 func (f *Face) RelativeLandmarksJSON() (b []byte) {
-	b, err := json.Marshal(f.RelativeLandmarks())
+	var noResult = []byte("")
 
-	if err != nil {
-		log.Errorf("face: %s", err)
-		return []byte("{}")
+	l := f.RelativeLandmarks()
+
+	if len(l) < 1 {
+		return noResult
 	}
 
-	return b
+	if result, err := json.Marshal(l); err != nil {
+		log.Errorf("faces: %s", err)
+		return noResult
+	} else {
+		return result
+	}
 }

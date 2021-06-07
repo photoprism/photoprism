@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/gosimple/slug"
@@ -67,6 +69,7 @@ type File struct {
 	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
+	Markers         Markers       `json:"Markers,omitempty" yaml:"-"`
 }
 
 type FileInfos struct {
@@ -251,6 +254,11 @@ func (m *File) Create() error {
 		return err
 	}
 
+	if err := m.Markers.Save(m.ID); err != nil {
+		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
+		return err
+	}
+
 	return nil
 }
 
@@ -263,7 +271,7 @@ func (m *File) ResolvePrimary() error {
 	return nil
 }
 
-// Saves the file in the database.
+// Save stores the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("file: photo id must not be empty (save %s)", m.FileUID)
@@ -271,6 +279,11 @@ func (m *File) Save() error {
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
 		log.Errorf("file: %s (save %s)", err, m.FileUID)
+		return err
+	}
+
+	if err := m.Markers.Save(m.ID); err != nil {
+		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
 		return err
 	}
 
@@ -288,7 +301,7 @@ func (m *File) UpdateVideoInfos() error {
 	return Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(values).Error
 }
 
-// Updates a column in the database.
+// Update updates a column in the database.
 func (m *File) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
@@ -382,4 +395,39 @@ func (m *File) Panorama() bool {
 	}
 
 	return m.FileProjection != ProjectionDefault || (m.FileWidth/m.FileHeight) >= 2
+}
+
+// AddFaces adds face markers to the file.
+func (m *File) AddFaces(faces face.Faces) {
+	for _, f := range faces {
+		m.AddFace(f, "")
+	}
+}
+
+// AddFace adds a face marker to the file.
+func (m *File) AddFace(f face.Face, refUID string) {
+	marker := NewFaceMarker(f, m.ID, refUID)
+	if !m.Markers.Contains(*marker) {
+		m.Markers = append(m.Markers, *marker)
+	}
+}
+
+// FaceCount returns the current number of valid faces detected.
+func (m *File) FaceCount() (c int) {
+	if err := Db().Model(Marker{}).Where("marker_invalid = 0 AND file_id = ?", m.ID).
+		Count(&c).Error; err != nil {
+		log.Errorf("file: %s (count faces)", err)
+		return 0
+	} else {
+		return c
+	}
+}
+
+// PreloadMarkers loads existing file markers.
+func (m *File) PreloadMarkers() {
+	if res, err := FindMarkers(m.ID); err != nil {
+		log.Warnf("file: %s (load markers)", err)
+	} else {
+		m.Markers = res
+	}
 }

@@ -60,8 +60,15 @@ func TestDetect(t *testing.T) {
 
 			if i, ok := expected[baseName]; ok {
 				assert.Equal(t, i, len(faces))
+				assert.Equal(t, i, faces.Count())
+				if faces.Count() == 0 {
+					assert.Equal(t, 100, faces.Uncertainty())
+				} else {
+					assert.Truef(t, faces.Uncertainty() >= 0 && faces.Uncertainty() <= 50, "uncertainty should be between 0 and 50")
+				}
+				t.Logf("uncertainty: %d", faces.Uncertainty())
 			} else {
-				t.Errorf("unknown test result for %s", baseName)
+				t.Logf("unknown test result for %s", baseName)
 			}
 		})
 

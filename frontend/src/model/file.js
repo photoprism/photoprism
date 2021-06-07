@@ -69,6 +69,7 @@ export class File extends RestModel {
       Chroma: 0,
       Notes: "",
       Error: "",
+      Markers: [],
       CreatedAt: "",
       CreatedIn: 0,
       UpdatedAt: "",

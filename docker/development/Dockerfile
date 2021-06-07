@@ -2,19 +2,13 @@ FROM ubuntu:21.04
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
+ARG TARGETARCH
+ARG TARGETPLATFORM
 ARG BUILD_TAG
 
 # Set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
-    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
-    TF_CPP_MIN_LOG_LEVEL="0" \
-    NODE_ENV="production" \
-    GOPATH="/go" \
-    GOBIN="/go/bin" \
-    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-    TMPDIR="/tmp" \
-    GO111MODULE="on" \
-    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
+    TMPDIR="/tmp"
 
 # Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
@@ -23,8 +17,11 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
+# Copy scripts to /root/.local/bin
+COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
+
 # Install dev / build dependencies
-RUN apt-get update && apt-get upgrade && \
+RUN apt-get update && apt-get dist-upgrade && \
     apt-get install \
     build-essential \
     ca-certificates \
@@ -64,7 +61,6 @@ RUN apt-get update && apt-get upgrade && \
     firefox \
     libheif-examples \
     exiftool \
-    darktable \
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
@@ -72,7 +68,18 @@ RUN apt-get update && apt-get upgrade && \
     lsof \
     apache2-utils \
     fonts-roboto \
-    sudo
+    sudo && \
+    [ "$TARGETARCH" = "arm" ] || apt-get install darktable
+
+# Set environment variables
+ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
+    TF_CPP_MIN_LOG_LEVEL="0" \
+    NODE_ENV="production" \
+    GOPATH="/go" \
+    GOBIN="/go/bin" \
+    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    GO111MODULE="on" \
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
 # Install & configure TensorFlow for C,
 # see https://www.tensorflow.org/install/lang_c
@@ -80,10 +87,7 @@ RUN apt-get update && apt-get upgrade && \
 # We also have custom builds available:
 # https://dl.photoprism.org/tensorflow/linux/
 #
-RUN curl -L \
-   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-cpu-1.15.2.tar.gz" | \
-   tar -C "/usr" -xz && \
-   ldconfig
+RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH
 
 # Update Exiftool, see https://ubuntu.com/security/CVE-2021-22204
 RUN wget "http://launchpadlibrarian.net/536122424/libimage-exiftool-perl_12.16+dfsg-2_all.deb" -O /tmp/libimage-exiftool-perl.deb && \
@@ -102,19 +106,12 @@ RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
     umask 0000
 
 # Install NodeJS & NPM
-RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && \
+RUN npm install --unsafe-perm=true --allow-root -g npm && \
+    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g testcafe chromedriver && \
     npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.16.4
-RUN set -eux; \
-	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
-	wget -O go.tgz "$url"; \
-	echo "7154e88f5a8047aad4b80ebace58a059e36e7e2e4eb3b383127a28c711b4ff59 *go.tgz" | sha256sum -c -; \
-	tar -C /usr/local -xzf go.tgz; \
-	rm go.tgz; \
-	go version
-RUN mkdir -p "/go/src" "/go/bin" && chmod -R 777 "/go"
+RUN /root/.local/bin/install-go.sh ${TARGETARCH}
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
@@ -155,7 +152,7 @@ EXPOSE 2342 2343 9515
 VOLUME /var/lib/photoprism
 
 # Configure entrypoint
-COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 /docker/development/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Run server

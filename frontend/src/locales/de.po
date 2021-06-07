@@ -13,6 +13,10 @@ msgstr ""
 "X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: src/dialog/photo/files.vue:131 src/dialog/photo/files.vue:128
+msgid "{{ file.Orientation }}"
+msgstr ""
+
 #: src/pages/albums.vue:341 src/share/albums.vue:300
 msgid "%{n} albums found"
 msgstr "%{n} Alben gefunden"
@@ -64,7 +68,7 @@ msgstr "Info"
 msgid "Account"
 msgstr "Zugang"
 
-#: src/dialog/photo/info.vue:153
+#: src/dialog/photo/info.vue:159
 msgid "Accuracy"
 msgstr "Genauigkeit"
 
@@ -102,7 +106,7 @@ msgstr "Server hinzufügen"
 msgid "Add to album"
 msgstr "Hinzufügen"
 
-#: src/dialog/photo/files.vue:154 src/dialog/photo/files.vue:151
+#: src/dialog/photo/files.vue:162 src/dialog/photo/files.vue:159
 msgid "Added"
 msgstr "Hinzugefügt"
 
@@ -225,7 +229,7 @@ msgstr ""
 "Alternativ können Dateien auch direkt auf kompatible WebDAV-Server "
 "hochgeladen z.B. Nextcloud."
 
-#: src/dialog/photo/info.vue:145
+#: src/dialog/photo/info.vue:151
 msgid "Altitude"
 msgstr "Höhe"
 
@@ -237,7 +241,7 @@ msgstr "Höhe (m)"
 msgid "An error occurred - are you offline?"
 msgstr "Server nicht erreichbar - offline?"
 
-#: src/pages/settings/general.vue:533
+#: src/pages/settings/general.vue:536
 msgid "Animation"
 msgstr "Animation"
 
@@ -266,7 +270,7 @@ msgstr "Übernehmen"
 msgid "Archive"
 msgstr "Archiv"
 
-#: src/dialog/photo/info.vue:193
+#: src/dialog/photo/info.vue:199
 msgid "Archived"
 msgstr "Archiviert"
 
@@ -361,7 +365,7 @@ msgstr "Kalender"
 msgid "Camera"
 msgstr "Kamera"
 
-#: src/dialog/photo/info.vue:73
+#: src/dialog/photo/info.vue:79
 msgid "Camera Serial"
 msgstr "Kamera-Seriennummer"
 
@@ -409,7 +413,7 @@ msgstr "Titel, Datum, Ort und andere Metadaten können geändert werden."
 msgid "Change private flag"
 msgstr "Als privat markieren"
 
-#: src/dialog/photo/info.vue:185
+#: src/dialog/photo/info.vue:191
 msgid "Checked"
 msgstr "Geprüft"
 
@@ -421,7 +425,7 @@ msgstr "Vereinfachtes Chinesisch"
 msgid "Chinese Traditional"
 msgstr "Traditionelles Chinesisch"
 
-#: src/dialog/photo/files.vue:134 src/dialog/photo/files.vue:131
+#: src/dialog/photo/files.vue:142 src/dialog/photo/files.vue:139
 msgid "Chroma"
 msgstr "Farbsättigung"
 
@@ -513,7 +517,7 @@ msgstr "Land"
 msgid "Create album"
 msgstr "Erstellen"
 
-#: src/dialog/photo/info.vue:161
+#: src/dialog/photo/info.vue:167
 msgid "Created"
 msgstr "Hinzugefügt"
 
@@ -592,7 +596,7 @@ msgstr "Unser englischer User Guide enthält eine detaillierte Anleitung."
 msgid "Details"
 msgstr "Details"
 
-#: src/pages/settings/general.vue:427
+#: src/pages/settings/general.vue:429
 msgid "Detect faces and search for people in your pictures."
 msgstr "Findet Gesichter und aktiviert die Suche nach Personen."
 
@@ -779,7 +783,7 @@ msgstr "Account bearbeiten"
 msgid "Edit Photo"
 msgstr "Foto bearbeiten"
 
-#: src/dialog/photo/info.vue:177
+#: src/dialog/photo/info.vue:183
 msgid "Edited"
 msgstr "Bearbeitet"
 
@@ -801,7 +805,7 @@ msgstr ""
 msgid "English"
 msgstr "Englisch"
 
-#: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
+#: src/dialog/photo/files.vue:148 src/dialog/photo/files.vue:145
 msgid "Error"
 msgstr "Fehler"
 
@@ -853,6 +857,10 @@ msgstr "Belichtungszeit"
 msgid "F Number"
 msgstr "F Nummer"
 
+#: src/dialog/photo/info.vue:73
+msgid "Faces"
+msgstr "Gesichter"
+
 #: src/dialog/share.vue:57 src/dialog/webdav.vue:38
 msgid "Failed copying to clipboard"
 msgstr "Konnte nicht in die Zwischenablage kopiert werden"
@@ -873,7 +881,7 @@ msgstr "Fehler beim Importieren der hochgeladenen Dateien"
 msgid "Fast"
 msgstr "Schnell"
 
-#: src/dialog/photo/info.vue:88
+#: src/dialog/photo/info.vue:94
 msgid "Favorite"
 msgstr "Favorit"
 
@@ -1063,8 +1071,8 @@ msgstr "Importiere %{name}…"
 msgid "Importing files to originals…"
 msgstr "Importiere Dateien nach Originals…"
 
-#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:166
-#: src/dialog/photo/files.vue:154 src/dialog/photo/files.vue:163
+#: src/dialog/photo/files.vue:165 src/dialog/photo/files.vue:174
+#: src/dialog/photo/files.vue:162 src/dialog/photo/files.vue:171
 msgid "in"
 msgstr "in"
 
@@ -1162,7 +1170,7 @@ msgstr "Sprache"
 msgid "Last Backup"
 msgstr "Letztes Backup"
 
-#: src/dialog/photo/details.vue:309 src/dialog/photo/info.vue:129
+#: src/dialog/photo/details.vue:309 src/dialog/photo/info.vue:135
 msgid "Latitude"
 msgstr "Breitengrad"
 
@@ -1261,7 +1269,7 @@ msgstr "Abmelden"
 msgid "Logs"
 msgstr "Logs"
 
-#: src/dialog/photo/details.vue:330 src/dialog/photo/info.vue:137
+#: src/dialog/photo/details.vue:330 src/dialog/photo/info.vue:143
 msgid "Longitude"
 msgstr "Längengrad"
 
@@ -1269,7 +1277,7 @@ msgstr "Längengrad"
 msgid "Magenta"
 msgstr "Magenta"
 
-#: src/dialog/photo/files.vue:128 src/dialog/photo/files.vue:125
+#: src/dialog/photo/files.vue:136 src/dialog/photo/files.vue:133
 msgid "Main Color"
 msgstr "Hauptfarbe"
 
@@ -1293,7 +1301,7 @@ msgstr "Nachricht versendet"
 msgid "Minimize"
 msgstr "Minimieren"
 
-#: src/dialog/photo/files.vue:146 src/dialog/photo/files.vue:143
+#: src/dialog/photo/files.vue:154 src/dialog/photo/files.vue:151
 msgid "Missing"
 msgstr "Fehlend"
 
@@ -1373,9 +1381,9 @@ msgstr "Neues Passwort"
 msgid "Newest first"
 msgstr "Neueste zuerst"
 
-#: src/dialog/photo/archive.vue:15 src/dialog/photo/info.vue:265
-#: src/dialog/photo/info.vue:286 src/dialog/photo/info.vue:306
-#: src/dialog/photo/info.vue:326 src/dialog/photo/info.vue:346
+#: src/dialog/photo/archive.vue:15 src/dialog/photo/info.vue:280
+#: src/dialog/photo/info.vue:301 src/dialog/photo/info.vue:321
+#: src/dialog/photo/info.vue:341 src/dialog/photo/info.vue:361
 msgid "No"
 msgstr "Nein"
 
@@ -1433,7 +1441,7 @@ msgstr "Keine"
 
 #: src/options/options.js:136
 msgid "Norwegian"
-msgstr ""
+msgstr "Norwegisch"
 
 #: src/model/thumb.js:74
 msgid "Not Found"
@@ -1524,6 +1532,10 @@ msgstr "Optionen"
 msgid "Orange"
 msgstr "Orange"
 
+#: src/dialog/photo/files.vue:128 src/dialog/photo/files.vue:125
+msgid "Orientation"
+msgstr "Ausrichtung"
+
 #: src/dialog/account/edit.vue:100
 msgid "Original"
 msgstr "Original"
@@ -1558,7 +1570,7 @@ msgstr ""
 msgid "Outdoor"
 msgstr "Outdoor"
 
-#: src/dialog/photo/info.vue:112
+#: src/dialog/photo/info.vue:118
 msgid "Panorama"
 msgstr "Panorama"
 
@@ -1579,7 +1591,7 @@ msgstr "Passwort geändert"
 msgid "pay for operating expenses and external services like satellite maps"
 msgstr "Betriebskosten und externe Dienste wie Satellitenkarten zu bezahlen"
 
-#: src/pages/settings/general.vue:426 src/routes.js:265
+#: src/pages/settings/general.vue:428 src/routes.js:265
 msgid "People"
 msgstr "Personen"
 
@@ -1595,7 +1607,7 @@ msgstr "Dauerhaft gelöscht"
 msgid "Permanently remove files to free up storage."
 msgstr "Dauerhaftes Entfernen von Dateien, um Speicherplatz freizugeben."
 
-#: src/model/photo.js:823
+#: src/model/photo.js:824
 msgid "Photo"
 msgstr "Foto"
 
@@ -1623,7 +1635,7 @@ msgstr "Fotos"
 msgid "Pink"
 msgstr "Pink"
 
-#: src/dialog/photo/info.vue:120
+#: src/dialog/photo/info.vue:126
 msgid "Place"
 msgstr "Ort"
 
@@ -1633,7 +1645,7 @@ msgstr "Gleicher Ort & Zeit"
 
 #: src/component/navigation.vue:215 src/component/navigation.vue:225
 #: src/component/navigation.vue:4 src/component/navigation.vue:826
-#: src/pages/settings/general.vue:108 src/pages/settings/general.vue:450
+#: src/pages/settings/general.vue:108 src/pages/settings/general.vue:453
 #: src/routes.js:215 src/routes.js:221 src/routes.js:227 src/routes.js:234
 msgid "Places"
 msgstr "Karten"
@@ -1693,7 +1705,7 @@ msgid "Primary"
 msgstr "Primärdatei"
 
 #: src/component/navigation.vue:275 src/component/navigation.vue:1034
-#: src/dialog/photo/info.vue:96 src/pages/settings/general.vue:272
+#: src/dialog/photo/info.vue:102 src/pages/settings/general.vue:272
 #: src/routes.js:201
 msgid "Private"
 msgstr "Privat"
@@ -1830,7 +1842,7 @@ msgstr "Russisch"
 msgid "Save"
 msgstr "Speichern"
 
-#: src/dialog/photo/info.vue:104
+#: src/dialog/photo/info.vue:110
 msgid "Scan"
 msgstr "Scan"
 
@@ -1846,7 +1858,7 @@ msgstr "Scans"
 msgid "Search"
 msgstr "Suche"
 
-#: src/pages/settings/general.vue:451
+#: src/pages/settings/general.vue:454
 msgid "Search and display photos on a map."
 msgstr "Fotos und Videos auf verschiedenen Weltkarten anzeigen und filtern."
 
@@ -2020,7 +2032,7 @@ msgid ""
 "metadata."
 msgstr "Aufnahmen mit übereinstimmenden Metadaten gruppieren."
 
-#: src/dialog/photo/info.vue:80
+#: src/dialog/photo/info.vue:86
 msgid "Stackable"
 msgstr "Stapelbar"
 
@@ -2064,7 +2076,7 @@ msgstr "Ablageverzeichnis"
 msgid "Streets"
 msgstr "Straßen"
 
-#: src/pages/settings/general.vue:511
+#: src/pages/settings/general.vue:514
 msgid "Style"
 msgstr "Style"
 
@@ -2196,9 +2208,9 @@ msgid "Unique ID"
 msgstr "Eindeutige Bild-ID"
 
 #: src/dialog/photo/details.vue:16 src/dialog/photo/info.vue:21
-#: src/model/album.js:139 src/model/photo.js:518 src/model/photo.js:535
-#: src/model/photo.js:558 src/model/photo.js:572 src/model/photo.js:649
-#: src/model/photo.js:662 src/options/options.js:20 src/options/options.js:34
+#: src/model/album.js:139 src/model/photo.js:519 src/model/photo.js:536
+#: src/model/photo.js:559 src/model/photo.js:573 src/model/photo.js:650
+#: src/model/photo.js:663 src/options/options.js:20 src/options/options.js:34
 #: src/options/options.js:51 src/options/options.js:65
 #: src/options/options.js:77 src/pages/library/errors.vue:116
 #: src/pages/library/errors.vue:123 src/pages/library/logs.vue:16
@@ -2213,8 +2225,8 @@ msgstr "Unsortiert"
 msgid "Unstack"
 msgstr "Einzelaufnahme"
 
-#: src/dialog/photo/files.vue:163 src/dialog/photo/files.vue:160
-#: src/dialog/photo/info.vue:169
+#: src/dialog/photo/files.vue:171 src/dialog/photo/files.vue:168
+#: src/dialog/photo/info.vue:175
 msgid "Updated"
 msgstr "Geändert"
 
@@ -2293,7 +2305,7 @@ msgstr "Nutzername"
 
 #: src/component/photo/cards.vue:29 src/component/photo/cards.vue:220
 #: src/component/photo/list.vue:194 src/component/photo/mosaic.vue:205
-#: src/model/file.js:183 src/model/photo.js:609 src/model/photo.js:623
+#: src/model/file.js:183 src/model/photo.js:610 src/model/photo.js:624
 #: src/options/options.js:295 src/share/photo/cards.vue:29
 #: src/share/photo/cards.vue:195 src/share/photo/list.vue:173
 #: src/share/photo/mosaic.vue:186
@@ -2353,11 +2365,11 @@ msgid "Yellowstone"
 msgstr "Yellowstone"
 
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/files.vue:103
-#: src/dialog/photo/files.vue:111 src/dialog/photo/files.vue:149
+#: src/dialog/photo/files.vue:111 src/dialog/photo/files.vue:157
 #: src/dialog/photo/files.vue:100 src/dialog/photo/files.vue:108
-#: src/dialog/photo/files.vue:146 src/dialog/photo/info.vue:265
-#: src/dialog/photo/info.vue:286 src/dialog/photo/info.vue:306
-#: src/dialog/photo/info.vue:326 src/dialog/photo/info.vue:346
+#: src/dialog/photo/files.vue:154 src/dialog/photo/info.vue:280
+#: src/dialog/photo/info.vue:301 src/dialog/photo/info.vue:321
+#: src/dialog/photo/info.vue:341 src/dialog/photo/info.vue:361
 msgid "Yes"
 msgstr "Ja"
 

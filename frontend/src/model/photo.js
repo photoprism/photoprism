@@ -107,6 +107,7 @@ export class Photo extends RestModel {
       DescriptionSrc: "",
       Resolution: 0,
       Quality: 0,
+      Faces: 0,
       Lat: 0.0,
       Lng: 0.0,
       Altitude: 0,
@@ -741,6 +742,24 @@ export class Photo extends RestModel {
     );
   }
 
+  getMarkers(valid) {
+    let result = [];
+
+    let file = this.Files.find((f) => !!f.Primary);
+
+    if (!file || !file.Markers) {
+      return result;
+    }
+
+    file.Markers.forEach((m) => {
+      if (!valid || !m.Invalid) {
+        result.push(m);
+      }
+    });
+
+    return result;
+  }
+
   update() {
     const values = this.getValues(true);
 
@@ -807,6 +826,26 @@ export class Photo extends RestModel {
         config.update();
       }
 
+      return Promise.resolve(this.setValues(resp.data));
+    });
+  }
+
+  updateMarker(marker) {
+    if (!marker || !marker.ID) {
+      return Promise.reject("invalid marker id");
+    }
+
+    marker.MarkerSrc = SrcManual;
+
+    const file = this.mainFile();
+
+    if (!file || !file.UID) {
+      return Promise.reject("invalid file uid");
+    }
+
+    const url = `${this.getEntityResource()}/files/${file.UID}/markers/${marker.ID}`;
+
+    return Api.put(url, marker).then((resp) => {
       return Promise.resolve(this.setValues(resp.data));
     });
   }
