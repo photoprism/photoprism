@@ -357,6 +357,7 @@ export default {
       themes: options.Themes(),
       currentTheme: this.$config.themeName,
       languages: options.Languages(),
+      homepages: options.HomePages(),
       dialog: {
         sponsor: false,
       },
