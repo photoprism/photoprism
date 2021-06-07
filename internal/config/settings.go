@@ -19,6 +19,7 @@ type UISettings struct {
 	Zoom      bool   `json:"zoom" yaml:"Zoom"`
 	Theme     string `json:"theme" yaml:"Theme"`
 	Language  string `json:"language" yaml:"Language"`
+	HomePage  string `json:"homepage" yaml:"HomePage"`
 }
 
 // TemplateSettings represents template settings for the UI and messaging.
@@ -107,6 +108,7 @@ func NewSettings() *Settings {
 			Zoom:      false,
 			Theme:     "default",
 			Language:  i18n.Default.Locale(),
+			HomePage:  "browse",
 		},
 		Templates: TemplateSettings{
 			Default: "index.tmpl",
