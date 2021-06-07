@@ -240,7 +240,7 @@ export const Themes = () => [
 export const HomePages = () => [
   {
     text: $gettext("Search"),
-    value: "home",
+    value: "browse",
     disabled: false,
   },
   {
