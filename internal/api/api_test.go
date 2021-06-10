@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	servertiming "github.com/p768lwy3/gin-server-timing"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ import (
 func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config) {
 	gin.SetMode(gin.TestMode)
 	app = gin.New()
+	app.Use(servertiming.Middleware())
 	router = app.Group("/api/v1")
 	return app, router, service.Config()
 }
