@@ -1,8 +1,8 @@
 package entity
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestMarkerMap_Get(t *testing.T) {
