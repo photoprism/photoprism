@@ -275,7 +275,7 @@ export default {
       // In case of facing RTL language on the map, this plugin will be fetched (only by lazy!) and will set RTL properly support.
       // See mapbox documentation here https://docs.mapbox.com/mapbox-gl-js/example/mapbox-gl-rtl-text/
       mapboxgl.setRTLTextPlugin(
-        'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
+        '/static/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
         null,
         true // Lazy load the plugin
       );
