@@ -60,9 +60,7 @@ func GetPhotos(router *gin.RouterGroup) {
 			f.Review = false
 		}
 
-		metricDB := timing.NewMetric("db").Start()
 		result, count, err := query.PhotoSearch(f)
-		metricDB.Stop()
 
 		if err != nil {
 			log.Error(err)
