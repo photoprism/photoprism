@@ -48,3 +48,9 @@ func (p Point) Marker(r Point, rows, cols float32) Marker {
 		float32(p.Scale)/cols,
 	)
 }
+
+func (p Point) TopLeft() (int, int) {
+	return p.Row - (p.Scale/2), p.Col - (p.Scale/2)
+}
+
+
