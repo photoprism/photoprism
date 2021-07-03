@@ -71,7 +71,7 @@ func (t *TensorFlow) getFaceEmbedding(fileName string, f Point) ([][]float32) {
 	// if err != nil {
 		// log.Fatalf("failed to save image: %v", err)
 	// }
-	
+
 	tensor, err := imageToTensor(img, 160, 160)
 
 	if err != nil {

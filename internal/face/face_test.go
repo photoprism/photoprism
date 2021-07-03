@@ -38,13 +38,23 @@ func TestDetect(t *testing.T) {
 		"19.jpg": 0,
 	}
 
-	// 0 ,1 ,2,3,4,5,6,7 ,8 ,9 ,10
-	// 18,18,1,4,5,6,2,12,16,17,3
+    faceindices := map[string][] int{
+		"18.jpg": {0, 1},
+		"1.jpg": {2},
+		"4.jpg": {3},
+		"5.jpg": {4},
+		"6.jpg": {5},
+		"2.jpg": {6},
+		"12.jpg": {7},
+		"16.jpg": {8},
+		"17.jpg": {9},
+		"3.jpg": {10},
+    }
+	faceindex_to_personid := [11]int {
+		0, 1, 1, 1, 2, 0, 1, 0, 0, 1, 0,
+    }
+    var embeddings [11][]float32
 
-	// 0,10 pair
-	face_index_to_person_id := [11]int{0, 1, 1, 1, 2, 0, 1, 0, 0, 1, 0}
-
-	var embeddings [][]float32
 	tfInstance := New(assetsPath, false)
 	tfInstance.loadModel()
 
@@ -71,7 +81,8 @@ func TestDetect(t *testing.T) {
 					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
 					embedding := tfInstance.getFaceEmbedding(fileName, f.Face)
-					embeddings = append(embeddings, embedding[0])
+					t.Logf("face: %d %v", i, faceindices[baseName])
+					embeddings[faceindices[baseName][i]] = embedding[0]
 					// t.Logf("face: created embedding of face %v", embeddings[len(embeddings)-1])
 				}
 			}
@@ -97,35 +108,40 @@ func TestDetect(t *testing.T) {
 
 	// Distance Matrix
 	correct := 0
+
+
 	for i:=0; i<len(embeddings); i++ {
 		for j:=0; j<len(embeddings); j++ {
 			if i >= j {
 				continue
 			}
-			var dist float64
-			// TODO use more efficient implementation
-			// either with TF or some go library, and batch processing
-			for k:=0; k<512; k++ {
-				dist += math.Pow(float64(embeddings[i][k] - embeddings[j][k]), 2)
-			}
-
-			math.Sqrt(dist)
-			t.Logf("Dist for %d %d is %f", i, j, dist)
-
-			if face_index_to_person_id[i] == face_index_to_person_id[j] {
-				if dist < 1.5 {
+			dist := EuclidianDistance(embeddings[i], embeddings[j])
+			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceindex_to_personid[i], faceindex_to_personid[j], dist)
+			if faceindex_to_personid[i] == faceindex_to_personid[j] {
+				if dist < 1.21 {
 					correct += 1
 				}
 			} else {
-				if dist >= 1.5 {
+				if dist >= 1.21 {
 					correct += 1
 				}
 			}
 		}
 	}
-
+	t.Logf("Correct for %d", correct)
 	// there are a few incorrect results
-	// 4 out of 55 with the 1.5 threshold
+	// 4 out of 55 with the 1.21 threshold
 	assert.True(t, correct == 51)
 
+}
+
+
+func EuclidianDistance(face1 []float32, face2 []float32) float64 {
+	var dist float64
+	// TODO use more efficient implementation
+	// either with TF or some go library, and batch processing
+	for k:=0; k<512; k++ {
+		dist += math.Pow(float64(face1[k] - face2[k]), 2)
+	}
+	return math.Sqrt(dist)
 }
