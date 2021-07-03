@@ -38,17 +38,20 @@ func TestDetect(t *testing.T) {
 		"19.jpg": 0,
 	}
 
+	// 0 ,1 ,2,3,4,5,6,7 ,8 ,9 ,10
+	// 18,18,1,4,5,6,2,12,16,17,3
+
+	// 0,10 pair
+	face_index_to_person_id := [11]int{0, 1, 1, 1, 2, 0, 1, 0, 0, 1, 0}
 
 	var embeddings [][]float32
-	// filecount := 0
+	tfInstance := New(assetsPath, false)
+	tfInstance.loadModel()
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
 		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") {
 			return nil
 		}
-
-		tfInstance := New(assetsPath, false)
-		tfInstance.loadModel()
 
 		t.Run(fileName, func(t *testing.T) {
 			baseName := filepath.Base(fileName)
@@ -93,8 +96,12 @@ func TestDetect(t *testing.T) {
 	}
 
 	// Distance Matrix
+	correct := 0
 	for i:=0; i<len(embeddings); i++ {
-		for j:=0; j<len(embeddings)/2; j++ {
+		for j:=0; j<len(embeddings); j++ {
+			if i >= j {
+				continue
+			}
 			var dist float64
 			// TODO use more efficient implementation
 			// either with TF or some go library, and batch processing
@@ -104,7 +111,19 @@ func TestDetect(t *testing.T) {
 
 			math.Sqrt(dist)
 			t.Logf("Dist for %d %d is %f", i, j, dist)
+
+			if face_index_to_person_id[i] == face_index_to_person_id[j] {
+				if dist < 1.5 {
+					correct += 1
+				}
+			} else {
+				if dist >= 1.5 {
+					correct += 1
+				}
+			}
 		}
 	}
+
+	assert.True(t, correct == 51)
 
 }

@@ -67,11 +67,10 @@ func (t *TensorFlow) getFaceEmbedding(fileName string, f Point) ([][]float32) {
 
 	img = imaging.Crop(img, image.Rect(y, x, y+f.Scale, x+f.Scale))
 	img = imaging.Fill(img, 160, 160, imaging.Center, imaging.Lanczos)
-	// err = imaging.Save(img, "testdata_out/face" + strconv.Itoa(filecount) + ".jpg")
+	// err = imaging.Save(img, "testdata_out/face" + strconv.Itoa(t.count) + ".jpg")
 	// if err != nil {
 		// log.Fatalf("failed to save image: %v", err)
 	// }
-	// filecount += 1
 	
 	tensor, err := imageToTensor(img, 160, 160)
 
