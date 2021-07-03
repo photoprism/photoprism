@@ -1,4 +1,4 @@
-package classify
+package face
 
 import (
 	"bufio"
@@ -30,8 +30,8 @@ type TensorFlow struct {
 }
 
 // New returns new TensorFlow instance with Nasnet model.
-func New(modelsPath string, disabled bool) *TensorFlow {
-	return &TensorFlow{modelsPath: modelsPath, disabled: disabled, modelName: "nasnet", modelTags: []string{"photoprism"}}
+func New(modelName string, modelsPath string, disabled bool) *TensorFlow {
+	return &TensorFlow{modelsPath: modelsPath, disabled: disabled, modelName: modelName, modelTags: []string{"photoprism"}}
 }
 
 // Init initialises tensorflow models if not disabled
@@ -75,7 +75,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	}
 
 	// Create tensor from image.
-	tensor, err := t.createTensor(img, "jpeg")
+	tensor, err := t.createTensor(img, "jpeg", 224, 224)
 
 	if err != nil {
 		return nil, err
@@ -160,7 +160,10 @@ func (t *TensorFlow) loadModel() error {
 
 	t.model = model
 
-	return t.loadLabels(modelPath)
+	if (t.modelName == "nasnet") {
+		return t.loadLabels(modelPath)	
+	}
+	return nil
 }
 
 // bestLabels returns the best 5 labels (if enough high probability labels) from the prediction of the model
@@ -211,14 +214,12 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 }
 
 // createTensor converts bytes jpeg image in a tensor object required as tensorflow model input
-func (t *TensorFlow) createTensor(image []byte, imageFormat string) (*tf.Tensor, error) {
+func (t *TensorFlow) createTensor(image []byte, imageFormat string, width int, height int) (*tf.Tensor, error) {
 	img, err := imaging.Decode(bytes.NewReader(image), imaging.AutoOrientation(true))
 
 	if err != nil {
 		return nil, err
 	}
-
-	width, height := 224, 224
 
 	img = imaging.Fill(img, width, height, imaging.Center, imaging.Lanczos)
 
