@@ -64,11 +64,11 @@ func TestDetect(t *testing.T) {
 			t.Logf("Found %d faces in '%s'", len(faces), baseName)
 
 			if len(faces) > 0 {
-				// t.Logf("results: %#v", faces)
+				t.Logf("results: %#v", faces)
 
 				for i, f := range faces {
 					t.Logf("marker[%d]: %#v %#v", i, f.Marker(), f.Face)
-					// t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
+					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
 					embedding := tfInstance.getFaceEmbedding(fileName, f.Face)
 					embeddings = append(embeddings, embedding[0])
@@ -124,6 +124,8 @@ func TestDetect(t *testing.T) {
 		}
 	}
 
+	// there are a few incorrect results
+	// 4 out of 55 with the 1.5 threshold
 	assert.True(t, correct == 51)
 
 }
