@@ -293,6 +293,11 @@ export const HomePages = () => [
     value: "library",
     disabled: false,
   },
+  {
+    text: $gettext("Library - Originals"),
+    value: "library/files",
+    disabled: false,
+  },
 ];
 
 export const MapsAnimate = () => [
