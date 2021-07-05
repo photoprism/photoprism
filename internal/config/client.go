@@ -17,6 +17,10 @@ type ClientConfig struct {
 	Version         string              `json:"version"`
 	Copyright       string              `json:"copyright"`
 	Flags           string              `json:"flags"`
+	BaseUri         string              `json:"baseUri"`
+	StaticUri       string              `json:"staticUri"`
+	ApiUri          string              `json:"apiUri"`
+	ContentUri      string              `json:"contentUri"`
 	SiteUrl         string              `json:"siteUrl"`
 	SitePreview     string              `json:"sitePreview"`
 	SiteTitle       string              `json:"siteTitle"`
@@ -168,6 +172,10 @@ func (c *Config) PublicConfig() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "public",
 		Name:            c.Name(),
+		BaseUri:         c.BaseUri(""),
+		StaticUri:       c.StaticUri(),
+		ApiUri:          c.ApiUri(),
+		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
@@ -225,6 +233,10 @@ func (c *Config) GuestConfig() ClientConfig {
 		Flags:           "readonly public shared",
 		Mode:            "guest",
 		Name:            c.Name(),
+		BaseUri:         c.BaseUri(""),
+		StaticUri:       c.StaticUri(),
+		ApiUri:          c.ApiUri(),
+		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
@@ -276,6 +288,10 @@ func (c *Config) UserConfig() ClientConfig {
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "user",
 		Name:            c.Name(),
+		BaseUri:         c.BaseUri(""),
+		StaticUri:       c.StaticUri(),
+		ApiUri:          c.ApiUri(),
+		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),

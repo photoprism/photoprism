@@ -114,18 +114,18 @@ export class File extends RestModel {
 
   thumbnailUrl(size) {
     if (this.Error || this.Missing) {
-      return "/api/v1/svg/broken";
+      return `${config.contentUri}/svg/broken`;
     } else if (this.Type === "raw") {
-      return "/api/v1/svg/raw";
+      return `${config.contentUri}/svg/raw`;
     } else if (this.Sidecar) {
-      return "/api/v1/svg/file";
+      return `${config.contentUri}/svg/file`;
     }
 
-    return `/api/v1/t/${this.Hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${this.Hash}/${config.previewToken()}/${size}`;
   }
 
   getDownloadUrl() {
-    return "/api/v1/dl/" + this.Hash + "?t=" + config.downloadToken();
+    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken()}`;
   }
 
   download() {

@@ -85,7 +85,7 @@ export class Thumb extends Model {
       let t = thumbs[i];
 
       result[t.size] = {
-        src: "/api/v1/svg/photo",
+        src: `${config.contentUri}/svg/photo`,
         w: t.w,
         h: t.h,
       };
@@ -229,10 +229,10 @@ export class Thumb extends Model {
 
   static thumbnailUrl(file, size) {
     if (!file.Hash) {
-      return "/api/v1/svg/photo";
+      return `${config.contentUri}/svg/photo`;
     }
 
-    return `/api/v1/t/${file.Hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${file.Hash}/${config.previewToken()}/${size}`;
   }
 
   static downloadUrl(file) {
@@ -240,7 +240,7 @@ export class Thumb extends Model {
       return "";
     }
 
-    return `/api/v1/dl/${file.Hash}?t=${config.downloadToken()}`;
+    return `${config.apiUri}/dl/${file.Hash}?t=${config.downloadToken()}`;
   }
 }
 

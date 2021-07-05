@@ -15,23 +15,32 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	router.RedirectTrailingSlash = true
 
 	// Static assets like js, css and font files.
-	router.Static("/static", conf.StaticPath())
-	router.StaticFile("/favicon.ico", filepath.Join(conf.ImgPath(), "favicon.ico"))
+	router.Static(conf.BaseUri(config.StaticUri), conf.StaticPath())
+	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))
 
-	// PWA service worker.
-	router.GET("/sw.js", func(c *gin.Context) {
+	// PWA Manifest.
+	router.GET(conf.BaseUri("/manifest.json"), func(c *gin.Context) {
+		c.Header("Cache-Control", "no-store")
+		c.Header("Content-Type", "application/json")
+
+		clientConfig := conf.PublicConfig()
+		c.HTML(http.StatusOK, "manifest.json", gin.H{"config": clientConfig})
+	})
+
+	// PWA Service Worker.
+	router.GET(conf.BaseUri("/sw.js"), func(c *gin.Context) {
 		c.Header("Cache-Control", "no-store")
 		c.File(filepath.Join(conf.BuildPath(), "sw.js"))
 	})
 
-	// Rainbow page.
-	router.GET("/rainbow", func(c *gin.Context) {
+	// Rainbow Page.
+	router.GET(conf.BaseUri("/rainbow"), func(c *gin.Context) {
 		clientConfig := conf.PublicConfig()
 		c.HTML(http.StatusOK, "rainbow.tmpl", gin.H{"config": clientConfig})
 	})
 
 	// JSON-REST API Version 1
-	v1 := router.Group("/api/v1")
+	v1 := router.Group(conf.BaseUri(config.ApiUri))
 	{
 		api.GetStatus(v1)
 		api.GetErrors(v1)
@@ -137,7 +146,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	}
 
 	// Configure link sharing.
-	s := router.Group("/s")
+	s := router.Group(conf.BaseUri("/s"))
 	{
 		api.Shares(s)
 		api.SharePreview(s)
@@ -147,12 +156,12 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	if conf.DisableWebDAV() {
 		log.Info("webdav: server disabled")
 	} else {
-		WebDAV(conf.OriginalsPath(), router.Group(WebDAVOriginals, BasicAuth()), conf)
-		log.Infof("webdav: %s/ enabled, waiting for requests", WebDAVOriginals)
+		WebDAV(conf.OriginalsPath(), router.Group(conf.BaseUri(WebDAVOriginals), BasicAuth()), conf)
+		log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVOriginals))
 
 		if conf.ImportPath() != "" {
-			WebDAV(conf.ImportPath(), router.Group(WebDAVImport, BasicAuth()), conf)
-			log.Infof("webdav: %s/ enabled, waiting for requests", WebDAVImport)
+			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth()), conf)
+			log.Infof("webdav: %s/ enabled, waiting for requests", conf.BaseUri(WebDAVImport))
 		}
 	}
 

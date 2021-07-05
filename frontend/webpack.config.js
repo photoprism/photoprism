@@ -197,7 +197,7 @@ const config = {
         loader: "file-loader",
         options: {
           name: "[hash].[ext]",
-          publicPath: "/static/build/img",
+          publicPath: "./static/build/img",
           outputPath: "img",
         },
       },
@@ -206,7 +206,7 @@ const config = {
         loader: "file-loader",
         options: {
           name: "[hash].[ext]",
-          publicPath: "/static/build/fonts",
+          publicPath: "./fonts",
           outputPath: "fonts",
         },
       },

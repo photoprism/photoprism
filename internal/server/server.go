@@ -39,11 +39,11 @@ func Start(ctx context.Context, conf *config.Config) {
 		router.Use(gzip.Gzip(
 			gzip.DefaultCompression,
 			gzip.WithExcludedPaths([]string{
-				"/api/v1/t",
-				"/api/v1/folders/t",
-				"/api/v1/zip",
-				"/api/v1/albums",
-				"/api/v1/labels",
+				conf.BaseUri(config.ApiUri + "/t"),
+				conf.BaseUri(config.ApiUri + "/folders/t"),
+				conf.BaseUri(config.ApiUri + "/zip"),
+				conf.BaseUri(config.ApiUri + "/albums"),
+				conf.BaseUri(config.ApiUri + "/labels"),
 			})))
 	}
 

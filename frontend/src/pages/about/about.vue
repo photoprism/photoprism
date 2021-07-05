@@ -54,15 +54,15 @@
 
       <p class="text-xs-center pt-3 mb-2">
         <router-link to="/about/license">
-          <img src="/static/img/badge-agpl.svg" alt="License AGPL v3" style="max-width:100%;"/>
+          <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width:100%;"/>
         </router-link>
-        <a target="_blank" href="https://docs.photoprism.org/" rel="nofollow"><img src="/static/img/badge-docs.svg"
+        <a target="_blank" href="https://docs.photoprism.org/" rel="nofollow"><img :src="$config.staticUri + '/img/badge-docs.svg'"
                                                                                    alt="Documentation"
                                                                                    style="max-width:100%;"></a>
         <a target="_blank" href="https://gitter.im/browseyourlife/community" rel="nofollow"><img
-            src="/static/img/badge-chat.svg" alt="Community Chat" style="max-width:100%;"></a>
+            :src="$config.staticUri + '/img/badge-chat.svg'" alt="Community Chat" style="max-width:100%;"></a>
         <a target="_blank" href="https://twitter.com/photoprism_app" rel="nofollow"><img
-            src="/static/img/badge-twitter.svg" alt="Twitter" style="max-width:100%;"></a>
+            :src="$config.staticUri + '/img/badge-twitter.svg'" alt="Twitter" style="max-width:100%;"></a>
       </p>
     </v-container>
 

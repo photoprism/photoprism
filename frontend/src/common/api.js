@@ -37,7 +37,7 @@ const testConfig = { jsHash: "48019917", cssHash: "2b327230", version: "test" };
 const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
 const Api = Axios.create({
-  baseURL: "/api/v1",
+  baseURL: config.apiUri,
   headers: {
     common: {
       "X-Session-ID": window.localStorage.getItem("session_id"),

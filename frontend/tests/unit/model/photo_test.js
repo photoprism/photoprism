@@ -1,13 +1,15 @@
-import Photo from "model/photo";
+import { Photo, FormatJpeg } from "model/photo";
 import MockAdapter from "axios-mock-adapter";
 import Api from "common/api";
-import {FormatJpeg} from "../../../src/model/photo";
 
 window.__CONFIG__ = {
   name: "PhotoPrism",
   version: "201213-283748ca-Linux-x86_64-DEBUG",
   copyright: "(c) 2018-2021 Michael Mayer \u003chello@photoprism.org\u003e",
   flags: "public debug experimental settings",
+  apiUri: "/api/v1",
+  staticUri: "/static",
+  contentUri: "/api/v1",
   siteUrl: "http://localhost:2342/",
   sitePreview: "http://localhost:2342/static/img/preview.jpg",
   siteTitle: "PhotoPrism",
