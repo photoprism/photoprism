@@ -172,7 +172,7 @@ docker-development:
 	scripts/docker-buildx.sh development linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
 docker-preview:
 	scripts/install-qemu.sh
-	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm
 docker-release:
 	scripts/install-qemu.sh
 	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
