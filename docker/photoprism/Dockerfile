@@ -37,6 +37,8 @@ RUN apt-get update && apt-get dist-upgrade && \
     mariadb-client \
     sqlite3 \
     tzdata \
+    libc6 \
+    libatomic1 \
     libheif-examples \
     gnupg \
     gpg-agent \
@@ -46,7 +48,6 @@ RUN apt-get update && apt-get dist-upgrade && \
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
-    libatomic1 \
     libavcodec-extra  && \
     [ "$TARGETARCH" = "arm" ] || apt-get install darktable
 
