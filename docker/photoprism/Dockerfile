@@ -46,6 +46,7 @@ RUN apt-get update && apt-get dist-upgrade && \
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
+    libatomic1 \
     libavcodec-extra  && \
     [ "$TARGETARCH" = "arm" ] || apt-get install darktable
 
