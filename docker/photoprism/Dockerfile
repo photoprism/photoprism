@@ -1,5 +1,9 @@
 FROM photoprism/development:20210628 as build
 
+ARG TARGETARCH
+ARG TARGETPLATFORM
+ARG BUILD_TAG
+
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
@@ -24,11 +28,11 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # Install additional distribution packages
-RUN apt-get update && apt-get dist-upgrade && \
-    apt-get install \
+RUN apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install -y --no-install-recommends \
     gpgv \
     wget \
     curl \

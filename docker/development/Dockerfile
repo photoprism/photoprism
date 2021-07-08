@@ -15,14 +15,14 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # Copy scripts to /root/.local/bin
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
 # Install dev / build dependencies
-RUN apt-get update && apt-get dist-upgrade && \
-    apt-get install \
+RUN apt-get update && -qq apt-get dist-upgrade && \
+    apt-get -qq install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     wget \
