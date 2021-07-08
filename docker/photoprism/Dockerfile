@@ -59,7 +59,7 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# Configure apt-get
+# Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
@@ -67,26 +67,27 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
 
 # Install additional distribution packages
-RUN apt-get update && apt-get dist-upgrade && apt-get install -y --no-install-recommends \
-        gpgv \
-        wget \
-        curl \
-        davfs2 \
-        ca-certificates \
-        mariadb-client \
-        sqlite3 \
-        tzdata \
-        libheif-examples \
-        gnupg \
-        gpg-agent \
-        apt-utils \
-        add-apt-key \
-        exiftool \
-        rawtherapee \
-        ffmpeg \
-        ffmpegthumbnailer \
-        libavcodec-extra  && \
-        [ "$TARGETARCH" = "arm" ] || apt-get install darktable
+RUN apt-get update && apt-get dist-upgrade && \
+    apt-get install \
+    gpgv \
+    wget \
+    curl \
+    davfs2 \
+    ca-certificates \
+    mariadb-client \
+    sqlite3 \
+    tzdata \
+    libheif-examples \
+    gnupg \
+    gpg-agent \
+    apt-utils \
+    add-apt-key \
+    exiftool \
+    rawtherapee \
+    ffmpeg \
+    ffmpegthumbnailer \
+    libavcodec-extra  && \
+    [ "$TARGETARCH" = "arm" ] || apt-get install darktable
 
 # Remove files to reduce image size
 RUN apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
