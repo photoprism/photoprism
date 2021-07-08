@@ -197,7 +197,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Colors:          colors.All.List(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
-		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
+		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
@@ -261,7 +261,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/share.css"),
-		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
+		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 	}
 
@@ -316,7 +316,7 @@ func (c *Config) UserConfig() ClientConfig {
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
-		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
+		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
 	}
