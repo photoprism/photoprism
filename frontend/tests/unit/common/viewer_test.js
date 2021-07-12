@@ -1,3 +1,4 @@
+import "../fixtures";
 import Viewer from "common/viewer";
 
 let chai = require("chai/chai");

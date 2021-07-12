@@ -30,13 +30,12 @@ https://docs.photoprism.org/developer-guide/
 
 const path = require("path");
 const findChrome = require("chrome-finder");
-
-process.env.CHROME_BIN = findChrome();
+const chromeBin = findChrome();
+process.env.CHROME_BIN = chromeBin;
 
 module.exports = (config) => {
   config.set({
     logLevel: config.LOG_ERROR,
-
     webpackMiddleware: {
       stats: "errors-only",
     },
@@ -69,7 +68,7 @@ module.exports = (config) => {
       "tests/unit/**/*_test.js": ["webpack"],
     },
 
-    reporters: ["progress", "html", "coverage-istanbul"],
+    reporters: ["progress", "coverage-istanbul", "html"],
 
     htmlReporter: {
       outputFile: "tests/unit.html",
@@ -77,7 +76,7 @@ module.exports = (config) => {
 
     coverageIstanbulReporter: {
       // reports can be any that are listed here: https://github.com/istanbuljs/istanbuljs/tree/aae256fb8b9a3d19414dcf069c592e88712c32c6/packages/istanbul-reports/lib
-      reports: ["html", "lcovonly", "text-summary"],
+      reports: ["lcovonly", "text-summary"],
 
       // base output directory. If you include %browser% in the path it will be replaced with the karma browser name
       dir: path.join(__dirname, "coverage"),
@@ -127,13 +126,16 @@ module.exports = (config) => {
         },
       },
 
-      verbose: false, // output config used by istanbul for debugging
+      verbose: true, // output config used by istanbul for debugging
     },
 
     webpack: {
       mode: "development",
 
       resolve: {
+        fallback: {
+          util: require.resolve("util"),
+        },
         modules: [
           path.join(__dirname, "src"),
           path.join(__dirname, "node_modules"),
@@ -147,12 +149,22 @@ module.exports = (config) => {
         rules: [
           {
             test: /\.js$/,
-            loader: "babel-loader",
             exclude: (file) => /node_modules/.test(file),
-            query: {
-              presets: ["@babel/preset-env"],
-              compact: false,
-            },
+            use: [
+              {
+                loader: "babel-loader",
+                options: {
+                  compact: false,
+                  presets: ["@babel/preset-env"],
+                  plugins: [
+                    "@babel/plugin-proposal-object-rest-spread",
+                    "@babel/plugin-proposal-class-properties",
+                    "@babel/plugin-transform-runtime",
+                    ["istanbul", { exclude: ["**/*_test.js"] }],
+                  ],
+                },
+              },
+            ],
           },
         ],
       },

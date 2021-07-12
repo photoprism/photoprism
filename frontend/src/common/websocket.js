@@ -34,7 +34,8 @@ import { config } from "../session";
 
 const host = window.location.host;
 const prot = "https:" === document.location.protocol ? "wss://" : "ws://";
-const url = prot + host + window.__CONFIG__.apiUri + "/ws";
+const apiUri = window.__CONFIG__ ? window.__CONFIG__.apiUri : "/api/v1";
+const url = prot + host + apiUri + "/ws";
 
 const Socket = new Sockette(url, {
   timeout: 5e3,
