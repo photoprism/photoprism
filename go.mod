@@ -32,7 +32,7 @@ require (
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.16.1
-	github.com/klauspost/cpuid/v2 v2.0.7
+	github.com/klauspost/cpuid/v2 v2.0.8
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/leonelquinteros/gotext v1.5.0
@@ -60,7 +60,7 @@ require (
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
-	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
+	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
