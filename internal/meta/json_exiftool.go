@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,7 +15,7 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-// Parses JSON sidecar data as created by Exiftool.
+// Exiftool parses JSON sidecar data as created by Exiftool.
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
@@ -137,6 +138,15 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		} else if data.GPSLatitude != "" && data.GPSLongitude != "" {
 			data.Lat = GpsToDecimal(data.GPSLatitude)
 			data.Lng = GpsToDecimal(data.GPSLongitude)
+		}
+	}
+
+	if data.Altitude == 0 {
+		// Parseable floating point number?
+		if fl := GpsFloatRegexp.FindAllString(jsonStrings["GPSAltitude"], -1); len(fl) != 1 {
+			// Ignore.
+		} else if alt, err := strconv.ParseFloat(fl[0], 64); err == nil && alt != 0 {
+			data.Altitude = int(alt)
 		}
 	}
 

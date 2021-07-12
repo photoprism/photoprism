@@ -67,7 +67,7 @@ func (m GTime) Time() time.Time {
 	return time.Unix(m.Unix, 0).UTC()
 }
 
-// Parses JSON sidecar data as created by Google Photos.
+// GMeta parses JSON sidecar data as created by Google Photos.
 func (data *Data) GMeta(jsonData []byte) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
@@ -88,7 +88,7 @@ func (data *Data) GMeta(jsonData []byte) (err error) {
 	return nil
 }
 
-// Parses JSON photo sidecar data as created by Google Photos.
+// GPhoto parses JSON photo sidecar data as created by Google Photos.
 func (data *Data) GPhoto(jsonData []byte) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
