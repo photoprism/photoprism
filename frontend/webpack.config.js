@@ -79,7 +79,7 @@ const config = {
     new OfflinePlugin({
       relativePaths: false,
       publicPath: "/",
-      excludes: ["**/*.txt", "**/share.*"],
+      excludes: ["**/*.txt", "**/*.css", "**/*.js", "**/*.*"],
       rewrites: function (asset) {
         return "/static/build/" + asset;
       },
