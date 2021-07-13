@@ -16,6 +16,7 @@ import (
 )
 
 const MimeVideoMP4 = "video/mp4"
+const MimeQuicktime = "video/quicktime"
 
 // Exiftool parses JSON sidecar data as created by Exiftool.
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
@@ -156,8 +157,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
 		hasTimeOffset = true
-	} else if mt, ok := jsonStrings["MIMEType"]; ok && mt == MimeVideoMP4 {
-		// Assume default time zone for MP4 videos is UTC.
+	} else if mt, ok := jsonStrings["MIMEType"]; ok && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
+		// Assume default time zone for MP4 & Quicktime videos is UTC.
 		// see https://exiftool.org/TagNames/QuickTime.html
 		data.TimeZone = time.UTC.String()
 		data.TakenAt = data.TakenAt.UTC()
