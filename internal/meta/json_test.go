@@ -2,6 +2,7 @@ package meta
 
 import (
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 
@@ -48,7 +49,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2s", data.Duration.String())
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAt.String())
-		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, time.UTC.String(), data.TimeZone)
 		assert.Equal(t, 270, data.Width)
 		assert.Equal(t, 480, data.Height)
 		assert.Equal(t, 270, data.ActualWidth())
@@ -72,8 +73,8 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, CodecAvc1, data.Codec)
 		assert.Equal(t, "2s", data.Duration.String())
-		assert.Equal(t, "2020-05-11 14:16:48 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, "2020-05-11 12:16:48 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2020-05-11 16:16:48 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2020-05-11 14:16:48 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, 1080, data.Height)
@@ -99,8 +100,8 @@ func TestJSON(t *testing.T) {
 
 		assert.Equal(t, CodecAvc1, data.Codec)
 		assert.Equal(t, "4s", data.Duration.String())
-		assert.Equal(t, "2020-05-14 11:34:41 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, "2020-05-14 09:34:41 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2020-05-14 13:34:41 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2020-05-14 11:34:41 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, 1080, data.Height)
@@ -869,5 +870,23 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0, data.FocalLength)
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
+	})
+
+	t.Run("pxl-mp4.json", func(t *testing.T) {
+		data, err := JSON("testdata/pxl-mp4.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2021-07-12T22:56:37Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2021-07-12T22:56:37Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, time.UTC.String(), data.TimeZone)
+		assert.Equal(t, 1080, data.Height)
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, 1, data.Orientation)
 	})
 }

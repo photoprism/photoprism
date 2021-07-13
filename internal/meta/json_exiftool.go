@@ -15,6 +15,8 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
+const MimeVideoMP4 = "video/mp4"
+
 // Exiftool parses JSON sidecar data as created by Exiftool.
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	defer func() {
@@ -150,6 +152,18 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
+	hasTimeOffset := false
+
+	if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
+		hasTimeOffset = true
+	} else if mt, ok := jsonStrings["MIMEType"]; ok && mt == MimeVideoMP4 {
+		// Assume default time zone for MP4 videos is UTC.
+		// see https://exiftool.org/TagNames/QuickTime.html
+		data.TimeZone = time.UTC.String()
+		data.TakenAt = data.TakenAt.UTC()
+		data.TakenAtLocal = time.Time{}
+	}
+
 	// Set time zone and calculate UTC time.
 	if data.Lat != 0 && data.Lng != 0 {
 		zones, err := tz.GetZone(tz.Point{
@@ -161,10 +175,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			data.TimeZone = zones[0]
 		}
 
-		if !data.TakenAtLocal.IsZero() {
-			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-				log.Warnf("metadata: unknown time zone %s (exiftool)", data.TimeZone)
-			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
+		if loc, err := time.LoadLocation(data.TimeZone); err != nil {
+			log.Warnf("metadata: unknown time zone %s (exiftool)", data.TimeZone)
+		} else if !data.TakenAtLocal.IsZero() {
+			if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
 				if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
 					data.TakenAtLocal = localUtc
 				}
@@ -173,13 +187,32 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			} else {
 				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
 			}
+		} else if !data.TakenAt.IsZero() {
+			if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAt.In(loc).Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+				data.TakenAtLocal = localUtc
+				data.TakenAt = data.TakenAt.UTC()
+			} else {
+				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+			}
 		}
-	} else if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
+	} else if hasTimeOffset {
 		if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
 			data.TakenAtLocal = localUtc
 		}
 
 		data.TakenAt = data.TakenAt.Round(time.Second).UTC()
+	}
+
+	// Set local time if still empty.
+	if data.TakenAtLocal.IsZero() && !data.TakenAt.IsZero() {
+		if loc, err := time.LoadLocation(data.TimeZone); data.TimeZone == "" || err != nil {
+			data.TakenAtLocal = data.TakenAt
+		} else if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAt.In(loc).Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+			data.TakenAtLocal = localUtc
+			data.TakenAt = data.TakenAt.UTC()
+		} else {
+			log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+		}
 	}
 
 	if orientation, ok := jsonStrings["Orientation"]; ok && orientation != "" {
