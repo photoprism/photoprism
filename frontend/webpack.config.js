@@ -76,7 +76,14 @@ const config = {
     }),
     new webpack.ProgressPlugin(),
     new VueLoaderPlugin(),
-    new OfflinePlugin(),
+    new OfflinePlugin({
+      relativePaths: false,
+      publicPath: "/",
+      excludes: ["**/*.txt", "**/share.*"],
+      rewrites: function (asset) {
+        return "/static/build/" + asset;
+      },
+    }),
   ],
   performance: {
     hints: isDev ? false : "error",

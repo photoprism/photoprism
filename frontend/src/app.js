@@ -56,7 +56,7 @@ import VueInfiniteScroll from "vue-infinite-scroll";
 import Hls from "hls.js";
 import { $gettext, Mount } from "common/vm";
 import * as options from "options/options";
-import offline from "@lcdp/offline-plugin/runtime";
+import * as offline from "@lcdp/offline-plugin/runtime";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -185,4 +185,6 @@ if (navigator.appVersion.indexOf("Chrome/") !== -1) {
 // Start application.
 Mount(Vue, PhotoPrism, router);
 
-offline.install();
+if (config.baseUri === "") {
+  offline.install();
+}
