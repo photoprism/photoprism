@@ -20,47 +20,10 @@ ARG TARGETARCH
 ARG TARGETPLATFORM
 
 # Set environment variables
-ENV DEBIAN_FRONTEND="noninteractive" \
-    TMPDIR="/tmp"
-
-# Configure apt
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
-    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
-    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
-    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
-
-# Install additional distribution packages
-RUN apt-get update && apt-get -qq dist-upgrade && \
-    apt-get -qq install -y --no-install-recommends \
-    gpgv \
-    wget \
-    curl \
-    davfs2 \
-    ca-certificates \
-    mariadb-client \
-    sqlite3 \
-    tzdata \
-    libc6 \
-    libatomic1 \
-    libheif-examples \
-    gnupg \
-    gpg-agent \
-    apt-utils \
-    add-apt-key \
-    exiftool \
-    rawtherapee \
-    ffmpeg \
-    ffmpegthumbnailer \
-    libavcodec-extra  && \
-    [ "$TARGETARCH" = "arm" ] || apt-get install darktable
-
-# Remove files to reduce image size
-RUN apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Set environment variables
 # see https://docs.photoprism.org/getting-started/config-options/
-ENV TF_CPP_MIN_LOG_LEVEL="2" \
+ENV DEBIAN_FRONTEND="noninteractive" \
+    TMPDIR="/tmp" \
+    TF_CPP_MIN_LOG_LEVEL="2" \
     PATH="/photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     PHOTOPRISM_ASSETS_PATH="/photoprism/assets" \
     PHOTOPRISM_STORAGE_PATH="/photoprism/storage" \
@@ -105,43 +68,66 @@ ENV TF_CPP_MIN_LOG_LEVEL="2" \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
+# Configure apt & Install additional distribution packages
+RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
+    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
+    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get install -y --no-install-recommends \
+    gpgv \
+    wget \
+    curl \
+    davfs2 \
+    ca-certificates \
+    mariadb-client \
+    sqlite3 \
+    tzdata \
+    libc6 \
+    libatomic1 \
+    libheif-examples \
+    gnupg \
+    gpg-agent \
+    apt-utils \
+    add-apt-key \
+    exiftool \
+    rawtherapee \
+    ffmpeg \
+    ffmpegthumbnailer \
+    libavcodec-extra  && \
+    [ "$TARGETARCH" = "arm" ] || apt-get install darktable; \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create photoprism user
+RUN useradd photoprism -m -d /photoprism && chmod 755 /photoprism
+
 # Copy dependencies
 COPY --from=build /go/bin/gosu /bin/gosu
 COPY --from=build /usr/lib/libtensorflow.so /usr/lib/libtensorflow.so
 COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_framework.so
 RUN ldconfig
 
-# Set default umask and create photoprism user
-RUN umask 0000 && useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism
-WORKDIR /photoprism
-
-# Copy files to /photoprism
+# Copy photoprism files
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
 COPY --from=build /root/.photoprism/assets /photoprism/assets
-COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
+COPY /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
+COPY /docker/scripts/entrypoint.sh /entrypoint.sh
 
-# Create directories
-RUN mkdir -m 777 -p \
+#Create needed directories
+RUN mkdir -m 777 \
     /var/lib/photoprism \
     /tmp/photoprism \
     /photoprism/originals \
     /photoprism/import \
+    /photoprism/storage \
     /photoprism/storage/config \
-    /photoprism/storage/cache && \
-    chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism && \
-    find /photoprism -type d -print0 | xargs -0 chmod 777
+    /photoprism/storage/cache
 
-# Show photoprism version
-RUN photoprism -v
-
-# Expose http port
-EXPOSE 2342
-
-# Configure entrypoint
-COPY --chown=root:root --chmod=755 /docker/scripts/entrypoint.sh /entrypoint.sh
+# Configure container
 ENTRYPOINT ["/entrypoint.sh"]
-VOLUME /var/lib/photoprism
+EXPOSE 2342
+WORKDIR /photoprism
 
 # Run server
 CMD ["photoprism", "start"]
