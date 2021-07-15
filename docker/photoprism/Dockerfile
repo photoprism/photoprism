@@ -1,4 +1,4 @@
-FROM photoprism/development:20210628 as build
+FROM photoprism/development:20210715 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -53,10 +53,8 @@ RUN apt-get update && apt-get -qq dist-upgrade && \
     ffmpeg \
     ffmpegthumbnailer \
     libavcodec-extra  && \
-    [ "$TARGETARCH" = "arm" ] || apt-get install darktable
-
-# Remove files to reduce image size
-RUN apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
+    [ "$TARGETARCH" = "arm" ] || apt-get install darktable; \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables
 # see https://docs.photoprism.org/getting-started/config-options/
@@ -129,8 +127,7 @@ RUN mkdir -m 777 -p \
     /photoprism/storage/config \
     /photoprism/storage/cache && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism && \
-    find /photoprism -type d -print0 | xargs -0 chmod 777
+    chmod -Rf a+rwx /photoprism /var/lib/photoprism /tmp/photoprism
 
 # Show photoprism version
 RUN photoprism -v

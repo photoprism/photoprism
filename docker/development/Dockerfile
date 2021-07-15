@@ -21,7 +21,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
 # Install dev / build dependencies
-RUN apt-get update && -qq apt-get dist-upgrade && \
+RUN apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install -y --no-install-recommends \
     build-essential \
     ca-certificates \
@@ -69,7 +69,8 @@ RUN apt-get update && -qq apt-get dist-upgrade && \
     apache2-utils \
     fonts-roboto \
     sudo && \
-    [ "$TARGETARCH" = "arm" ] || apt-get install darktable
+    [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get clean
 
 # Set environment variables
 ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
@@ -93,17 +94,17 @@ RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
     apt-get update && \
-    apt-get dist-upgrade && \
-    apt-get install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
-    apt-get autoremove && \
+    apt-get -qq dist-upgrade && \
+    apt-get -qq install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
+    apt-get -y autoremove && \
+    apt-get -y autoclean && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    umask 0000
+    rm -rf /var/lib/apt/lists/*
 
 # Install NodeJS & NPM
-RUN npm install --unsafe-perm=true --allow-root -g npm && \
-    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g testcafe chromedriver && \
-    npm config set cache ~/.cache/npm
+RUN umask 0000 && npm install --unsafe-perm=true --allow-root -g npm && npm config set cache ~/.cache/npm && \
+    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g testcafe chromedriver;
+
 
 # Install Go
 RUN /root/.local/bin/install-go.sh ${TARGETARCH}
