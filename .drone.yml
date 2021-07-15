@@ -79,7 +79,6 @@ steps:
       - scripts/docker-login.sh
       - docker pull photoprism/photoprism:preview
       - make docker-demo
-      - docker system prune -f
     when:
       status:
         - success
@@ -177,6 +176,6 @@ steps:
 
 ---
 kind: signature
-hmac: 8ecc944cb21da49afb764eef74a4cd1a385e36ca43b7b0710773b42534d3f83f
+hmac: 7276095f851d0595a0471e4ec4249e14e7e809f0655883483bfafab2febaef6e
 
 ...
