@@ -165,16 +165,14 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
+	scripts/install-qemu.sh
 	docker pull --platform=amd64 ubuntu:21.04
 	docker pull --platform=arm64 ubuntu:21.04
 	docker pull --platform=arm ubuntu:21.04
-	scripts/install-qemu.sh
 	scripts/docker-buildx.sh development linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
 docker-preview:
-	scripts/install-qemu.sh
 	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm
 docker-release:
-	scripts/install-qemu.sh
 	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
 docker-local:
 	scripts/docker-build.sh photoprism

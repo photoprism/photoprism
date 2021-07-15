@@ -61,6 +61,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
+      - scripts/install-qemu.sh
       - make docker-preview
     when:
       status:
@@ -93,6 +94,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
+      - scripts/install-qemu.sh
       - make docker-release
     when:
       status:
@@ -175,6 +177,6 @@ steps:
 
 ---
 kind: signature
-hmac: 547daa345cfdc4fb73547df7d39231c958b99f507c03b529f4ba1974688b47f8
+hmac: 8ecc944cb21da49afb764eef74a4cd1a385e36ca43b7b0710773b42534d3f83f
 
 ...
