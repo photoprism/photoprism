@@ -1,7 +1,6 @@
 package face
 
 import (
-	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,9 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var modelPath, _ = filepath.Abs("../../assets/facenet")
-
-func TestDetect(t *testing.T) {
+func TestNet(t *testing.T) {
 	expected := map[string]int{
 		"1.jpg":  1,
 		"2.jpg":  1,
@@ -55,11 +52,7 @@ func TestDetect(t *testing.T) {
 
 	var embeddings [11][]float32
 
-	tfInstance := NewNet(modelPath, false)
-
-	if err := tfInstance.loadModel(); err != nil {
-		t.Fatal(err)
-	}
+	faceNet := NewNet(modelPath, false)
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
 		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") {
@@ -69,7 +62,8 @@ func TestDetect(t *testing.T) {
 		t.Run(fileName, func(t *testing.T) {
 			baseName := filepath.Base(fileName)
 
-			faces, err := Detect(fileName)
+			faces, err := faceNet.Detect(fileName)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -80,21 +74,7 @@ func TestDetect(t *testing.T) {
 				t.Logf("results: %#v", faces)
 
 				for i, f := range faces {
-					t.Logf("marker[%d]: %#v %#v", i, f.Marker(), f.Face)
-					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
-
-					embedding := tfInstance.getFaceEmbedding(fileName, f.Face)
-
-					if b, err := json.Marshal(embedding[0]); err != nil {
-						t.Fatal(err)
-					} else {
-						t.Logf("embedding: %#v", string(b))
-					}
-
-					t.Logf("face: %d %v", i, faceindices[baseName])
-
-					embeddings[faceindices[baseName][i]] = embedding[0]
-					// t.Logf("face: created embedding of face %v", embeddings[len(embeddings)-1])
+					embeddings[faceindices[baseName][i]] = f.Embedding
 				}
 			}
 

@@ -194,6 +194,12 @@ func TestConfig_NSFWModelPath(t *testing.T) {
 	assert.Contains(t, c.NSFWModelPath(), "/assets/nsfw")
 }
 
+func TestConfig_FaceNetModelPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Contains(t, c.FaceNetModelPath(), "/assets/facenet")
+}
+
 func TestConfig_ExamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
