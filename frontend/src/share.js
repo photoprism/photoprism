@@ -113,6 +113,7 @@ Vue.use(Router);
 const router = new Router({
   routes: Routes,
   mode: "history",
+  base: config.baseUri + "/",
   saveScrollPosition: true,
   scrollBehavior: (to, from, savedPosition) => {
     if (savedPosition) {

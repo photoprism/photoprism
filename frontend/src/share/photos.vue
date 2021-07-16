@@ -572,7 +572,7 @@ export default {
       this.$forceUpdate();
     },
     download() {
-      this.onDownload(`/api/v1/albums/${this.uid}/dl?t=${this.$config.downloadToken()}`);
+      this.onDownload(`${this.$config.apiUri}/albums/${this.uid}/dl?t=${this.$config.downloadToken()}`);
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));

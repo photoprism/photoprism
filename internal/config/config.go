@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -33,6 +34,9 @@ import (
 
 var log = event.Log
 var once sync.Once
+
+const ApiUri = "/api/v1"
+const StaticUri = "/static"
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -214,13 +218,48 @@ func (c *Config) Copyright() string {
 	return c.options.Copyright
 }
 
+// BaseUri returns the site base URI for a given resource.
+func (c *Config) BaseUri(res string) string {
+	if c.SiteUrl() == "" {
+		return res
+	}
+
+	u, err := url.Parse(c.SiteUrl())
+
+	if err != nil {
+		return res
+	}
+
+	return strings.TrimRight(u.Path, "/") + res
+}
+
+// ApiUri returns the api URI.
+func (c *Config) ApiUri() string {
+	return c.BaseUri(ApiUri)
+}
+
+// CdnUrl returns the optional content delivery network URI without trailing slash.
+func (c *Config) CdnUrl(res string) string {
+	return strings.TrimRight(c.options.CdnUrl, "/") + res
+}
+
+// ContentUri returns the content delivery URI.
+func (c *Config) ContentUri() string {
+	return c.CdnUrl(c.ApiUri())
+}
+
+// StaticUri returns the static content URI.
+func (c *Config) StaticUri() string {
+	return c.CdnUrl(c.BaseUri(StaticUri))
+}
+
 // SiteUrl returns the public server URL (default is "http://localhost:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
 		return "http://localhost:2342/"
 	}
 
-	return c.options.SiteUrl
+	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
 }
 
 // SitePreview returns the site preview image URL for sharing.

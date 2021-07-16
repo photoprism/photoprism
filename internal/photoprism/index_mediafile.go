@@ -858,7 +858,7 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 
 	start := time.Now()
 
-	faces, err := face.Detect(thumbName)
+	faces, err := ind.faceNet.Detect(thumbName)
 
 	if err != nil {
 		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))

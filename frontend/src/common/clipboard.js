@@ -31,7 +31,7 @@ https://docs.photoprism.org/developer-guide/
 import RestModel from "model/rest";
 import Notify from "common/notify";
 import { $gettext } from "./vm";
-
+import { config } from "../session";
 export const MaxItems = 999;
 
 export class Clipboard {
@@ -53,12 +53,16 @@ export class Clipboard {
 
   isModel(model) {
     if (!model) {
-      console.warn("Clipboard::isModel() - empty model", model);
+      if (config.debug) {
+        console.warn("Clipboard::isModel() - empty model", model);
+      }
       return false;
     }
 
     if (typeof model.getId !== "function") {
-      console.warn("Clipboard::isModel() - model.getId() is not a function", model);
+      if (config.debug) {
+        console.warn("Clipboard::isModel() - model.getId() is not a function", model);
+      }
       return false;
     }
 
@@ -150,7 +154,9 @@ export class Clipboard {
 
   addRange(rangeEnd, models) {
     if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
-      console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
+      if (config.debug) {
+        console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
+      }
       return;
     }
 

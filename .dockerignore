@@ -2,6 +2,7 @@
 /frontend/node_modules/*
 /node_modules
 /assets/static/build/*
+/assets/facenet
 /assets/nasnet
 /assets/nsfw
 /storage

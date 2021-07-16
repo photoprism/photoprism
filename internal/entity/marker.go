@@ -29,6 +29,7 @@ type Marker struct {
 	MarkerInvalid bool    `json:"Invalid" yaml:"Invalid,omitempty"`
 	MarkerLabel   string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
 	MarkerMeta    string  `gorm:"type:TEXT;" json:"Meta" yaml:"Meta,omitempty"`
+	Embedding     string  `gorm:"type:TEXT;" json:"Embedding" yaml:"Embedding,omitempty"`
 	X             float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
 	Y             float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W             float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
@@ -69,6 +70,7 @@ func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
 
 	m.MarkerScore = f.Score
 	m.MarkerMeta = string(f.RelativeLandmarksJSON())
+	m.Embedding = string(f.EmbeddingJSON())
 
 	return m
 }
@@ -143,6 +145,7 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 			"H":           m.H,
 			"MarkerScore": m.MarkerScore,
 			"MarkerMeta":  m.MarkerMeta,
+			"Embedding":   m.Embedding,
 			"RefUID":      m.RefUID,
 		})
 

@@ -80,7 +80,7 @@ export default {
         case 0: return;
         case 1: new Photo().find(this.selection[0]).then(p => p.downloadAll()); break;
         default: Api.post("zip", {"photos": this.selection}).then(r => {
-          this.onDownload(`/api/v1/zip/${r.data.filename}?t=${this.$config.downloadToken()}`);
+          this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken()}`);
         });
       }
 

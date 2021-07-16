@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
@@ -27,6 +28,7 @@ var services struct {
 	Purge       *photoprism.Purge
 	CleanUp     *photoprism.CleanUp
 	Nsfw        *nsfw.Detector
+	FaceNet     *face.Net
 	Query       *query.Query
 	Resample    *photoprism.Resample
 	Session     *session.Session

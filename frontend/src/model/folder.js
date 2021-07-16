@@ -98,7 +98,7 @@ export class Folder extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return `/api/v1/folders/t/${this.UID}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/folders/t/${this.UID}/${config.previewToken()}/${size}`;
   }
 
   getDateString() {

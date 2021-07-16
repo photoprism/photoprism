@@ -30,11 +30,12 @@ https://docs.photoprism.org/developer-guide/
 
 import Sockette from "sockette";
 import Event from "pubsub-js";
-import { config } from "session";
+import { config } from "../session";
 
 const host = window.location.host;
 const prot = "https:" === document.location.protocol ? "wss://" : "ws://";
-const url = prot + host + "/api/v1/ws";
+const apiUri = window.__CONFIG__ ? window.__CONFIG__.apiUri : "/api/v1";
+const url = prot + host + apiUri + "/ws";
 
 const Socket = new Sockette(url, {
   timeout: 5e3,

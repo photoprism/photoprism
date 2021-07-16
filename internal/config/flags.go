@@ -209,6 +209,11 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_PID_FILENAME",
 	},
 	cli.StringFlag{
+		Name:   "cdn-url",
+		Usage:  "content delivery network `URL` (optional)",
+		EnvVar: "PHOTOPRISM_CDN_URL",
+	},
+	cli.StringFlag{
 		Name:   "site-url",
 		Usage:  "public site `URL`",
 		Value:  "http://localhost:2342/",

@@ -33,11 +33,22 @@ import Notify from "common/notify";
 import { $gettext } from "./vm";
 import Event from "pubsub-js";
 
-const testConfig = { jsHash: "48019917", cssHash: "2b327230", version: "test" };
+const testConfig = {
+  baseUri: "",
+  staticUri: "/static",
+  apiUri: "/api/v1",
+  contentUri: "/api/v1",
+  debug: false,
+  previewToken: "public",
+  downloadToken: "public",
+  jsHash: "00000000",
+  cssHash: "00000000",
+};
+
 const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
 const Api = Axios.create({
-  baseURL: "/api/v1",
+  baseURL: config.apiUri,
   headers: {
     common: {
       "X-Session-ID": window.localStorage.getItem("session_id"),
@@ -48,10 +59,10 @@ const Api = Axios.create({
 });
 
 Api.interceptors.request.use(
-  function (config) {
+  function (req) {
     // Do something before request is sent
     Notify.ajaxStart();
-    return config;
+    return req;
   },
   function (error) {
     // Do something with request error

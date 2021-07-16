@@ -186,11 +186,12 @@ export default class Session {
   }
 
   sendClientInfo() {
+    const hasConfig = !!window.__CONFIG__;
     const clientInfo = {
       session: this.getId(),
-      js: window.__CONFIG__.jsHash,
-      css: window.__CONFIG__.cssHash,
-      version: window.__CONFIG__.version,
+      js: hasConfig ? window.__CONFIG__.jsHash : "",
+      css: hasConfig ? window.__CONFIG__.cssHash : "",
+      version: hasConfig ? window.__CONFIG__.version : "",
     };
 
     try {

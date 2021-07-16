@@ -30,9 +30,10 @@ https://docs.photoprism.org/developer-guide/
 
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OfflinePlugin = require("offline-plugin");
+const OfflinePlugin = require("@lcdp/offline-plugin");
 const webpack = require("webpack");
 const isDev = process.env.NODE_ENV !== "production";
+const { VueLoaderPlugin } = require("vue-loader");
 
 if (isDev) {
   console.log("Building frontend in DEVELOPMENT mode. Please wait.");
@@ -51,6 +52,9 @@ const PATHS = {
 const config = {
   mode: isDev ? "development" : "production",
   devtool: isDev ? "inline-source-map" : false,
+  optimization: {
+    minimize: !isDev,
+  },
   entry: {
     app: PATHS.app,
     share: PATHS.share,
@@ -68,12 +72,19 @@ const config = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css",
+      experimentalUseImportModule: false,
     }),
-    new OfflinePlugin(),
+    new webpack.ProgressPlugin(),
+    new VueLoaderPlugin(),
+    new OfflinePlugin({
+      relativePaths: false,
+      publicPath: "/",
+      excludes: ["**/*.txt", "**/*.css", "**/*.js", "**/*.*"],
+      rewrites: function (asset) {
+        return "/static/build/" + asset;
+      },
+    }),
   ],
-  node: {
-    fs: "empty",
-  },
   performance: {
     hints: isDev ? false : "error",
     maxEntrypointSize: 4000000,
@@ -86,31 +97,48 @@ const config = {
         include: PATHS.app,
         exclude: /node_modules/,
         enforce: "pre",
-        loader: "eslint-loader",
-        options: {
-          formatter: require("eslint-formatter-pretty"),
-        },
+        use: [
+          {
+            loader: "eslint-loader",
+            options: {
+              formatter: require("eslint-formatter-pretty"),
+            },
+          },
+        ],
       },
       {
         test: /\.vue$/,
-        loader: "vue-loader",
         include: PATHS.js,
-        options: {
-          loaders: {
-            js: "babel-loader",
-            css: "css-loader",
+        use: [
+          {
+            loader: "vue-loader",
+            options: {
+              loaders: {
+                js: "babel-loader",
+                css: "css-loader",
+              },
+            },
           },
-        },
+        ],
       },
       {
         test: /\.js$/,
-        loader: "babel-loader",
         include: PATHS.js,
         exclude: (file) => /node_modules/.test(file),
-        query: {
-          presets: ["@babel/preset-env"],
-          compact: false,
-        },
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              sourceMap: isDev,
+              compact: false,
+              presets: ["@babel/preset-env"],
+              plugins: [
+                "@babel/plugin-proposal-object-rest-spread",
+                "@babel/plugin-proposal-class-properties",
+              ],
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
@@ -120,75 +148,83 @@ const config = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              hmr: false,
-              fallback: "vue-style-loader",
-              use: [
-                "style-loader",
-                {
-                  loader: "css-loader",
-                  options: {
-                    importLoaders: 1,
-                    sourceMap: isDev,
-                  },
-                },
-                {
-                  loader: "postcss-loader",
-                  options: {
-                    sourceMap: isDev,
-                    config: {
-                      path: path.resolve(__dirname, "./postcss.config.js"),
-                    },
-                  },
-                },
-                "resolve-url-loader",
-              ],
               publicPath: PATHS.build,
             },
           },
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+              importLoaders: 1,
+            },
+          },
+          "resolve-url-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              sourceMap: true,
+              postcssOptions: {
+                config: path.resolve(__dirname, "./postcss.config.js"),
+              },
+            },
+          },
         ],
       },
       {
         test: /\.css$/,
         include: /node_modules/,
-        loaders: [
-          "vue-style-loader",
-          "style-loader",
+        use: [
           {
-            loader: "css-loader",
-            options: { importLoaders: 1, sourceMap: isDev },
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: PATHS.build,
+            },
           },
           {
-            loader: "postcss-loader",
+            loader: "css-loader",
             options: {
-              sourceMap: isDev,
-              config: {
-                path: path.resolve(__dirname, "./postcss.config.js"),
-              },
+              sourceMap: true,
+              importLoaders: 1,
             },
           },
           "resolve-url-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              sourceMap: true,
+              postcssOptions: {
+                config: path.resolve(__dirname, "./postcss.config.js"),
+              },
+            },
+          },
         ],
       },
       {
         test: /\.s[c|a]ss$/,
         use: [
-          "vue-style-loader",
-          "style-loader",
           {
-            loader: "css-loader",
-            options: { importLoaders: 2, sourceMap: isDev },
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: PATHS.build,
+            },
           },
           {
-            loader: "postcss-loader",
+            loader: "css-loader",
             options: {
-              sourceMap: isDev,
-              config: {
-                path: path.resolve(__dirname, "./postcss.config.js"),
-              },
+              sourceMap: true,
+              importLoaders: 1,
             },
           },
           "resolve-url-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              sourceMap: true,
+              postcssOptions: {
+                config: path.resolve(__dirname, "./postcss.config.js"),
+              },
+            },
+          },
           "sass-loader",
         ],
       },
@@ -197,7 +233,7 @@ const config = {
         loader: "file-loader",
         options: {
           name: "[hash].[ext]",
-          publicPath: "/static/build/img",
+          publicPath: "./img",
           outputPath: "img",
         },
       },
@@ -206,7 +242,7 @@ const config = {
         loader: "file-loader",
         options: {
           name: "[hash].[ext]",
-          publicPath: "/static/build/fonts",
+          publicPath: "./fonts",
           outputPath: "fonts",
         },
       },

@@ -61,6 +61,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
+      - scripts/install-qemu.sh
       - make docker-preview
     when:
       status:
@@ -78,7 +79,6 @@ steps:
       - scripts/docker-login.sh
       - docker pull photoprism/photoprism:preview
       - make docker-demo
-      - docker system prune -f
     when:
       status:
         - success
@@ -93,6 +93,7 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
+      - scripts/install-qemu.sh
       - make docker-release
     when:
       status:
@@ -175,6 +176,6 @@ steps:
 
 ---
 kind: signature
-hmac: 547daa345cfdc4fb73547df7d39231c958b99f507c03b529f4ba1974688b47f8
+hmac: 7276095f851d0595a0471e4ec4249e14e7e809f0655883483bfafab2febaef6e
 
 ...

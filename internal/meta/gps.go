@@ -7,9 +7,9 @@ import (
 	"github.com/dsoprea/go-exif/v3"
 )
 
-// var GpsCoordsRegexp = regexp.MustCompile("(-?\\d+(\\.\\d+)?),\\s*(-?\\d+(\\.\\d+)?)")
 var GpsCoordsRegexp = regexp.MustCompile("[0-9\\.]+")
 var GpsRefRegexp = regexp.MustCompile("[NSEW]+")
+var GpsFloatRegexp = regexp.MustCompile("[+\\-]?(?:(?:0|[1-9]\\d*)(?:\\.\\d*)?|\\.\\d+)")
 
 // GpsToLatLng returns the GPS latitude and longitude as float point number.
 func GpsToLatLng(s string) (lat, lng float32) {
@@ -17,6 +17,14 @@ func GpsToLatLng(s string) (lat, lng float32) {
 		return 0, 0
 	}
 
+	// Floating point numbers?
+	if fl := GpsFloatRegexp.FindAllString(s, -1); len(fl) == 2 {
+		lat, _ := strconv.ParseFloat(fl[0], 64)
+		lng, _ := strconv.ParseFloat(fl[1], 64)
+		return float32(lat), float32(lng)
+	}
+
+	// Parse human readable strings.
 	co := GpsCoordsRegexp.FindAllString(s, -1)
 	re := GpsRefRegexp.FindAllString(s, -1)
 
@@ -64,7 +72,7 @@ func GpsToDecimal(s string) float32 {
 	return float32(latDeg.Decimal())
 }
 
-// GpsToLng returns a single GPS coordinate value as floating point number (degree, minute or second).
+// GpsCoord returns a single GPS coordinate value as floating point number (degree, minute or second).
 func GpsCoord(s string) float64 {
 	if s == "" {
 		return 0

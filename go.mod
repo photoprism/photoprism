@@ -6,7 +6,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.5.0
 	github.com/dsoprea/go-exif/v2 v2.0.0-20210428042052-dca55bf8ca15 // indirect
-	github.com/dsoprea/go-exif/v3 v3.0.0-20210512055020-8213cfabc61b
+	github.com/dsoprea/go-exif/v3 v3.0.0-20210625224831-a6301f85c82b
 	github.com/dsoprea/go-heic-exif-extractor v0.0.0-20210512044107-62067e44c235
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
 	github.com/dsoprea/go-jpeg-image-structure v0.0.0-20210512043942-b434301c6836
@@ -16,10 +16,10 @@ require (
 	github.com/dsoprea/go-tiff-image-structure v0.0.0-20210512044046-dc78da6a809b
 	github.com/dsoprea/go-utility v0.0.0-20200717064901-2fccff4aa15e // indirect
 	github.com/dustin/go-humanize v1.0.0
-	github.com/esimov/pigo v1.4.3
+	github.com/esimov/pigo v1.4.4
 	github.com/gin-contrib/gzip v0.0.3
 	github.com/gin-gonic/gin v1.7.2
-	github.com/go-errors/errors v1.2.0 // indirect
+	github.com/go-errors/errors v1.4.0 // indirect
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -32,7 +32,7 @@ require (
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.16.1
-	github.com/klauspost/cpuid/v2 v2.0.6
+	github.com/klauspost/cpuid/v2 v2.0.8
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/leonelquinteros/gotext v1.5.0
@@ -53,16 +53,17 @@ require (
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
-	github.com/studio-b12/gowebdav v0.0.0-20210427212133-86f8378cf140
+	github.com/studio-b12/gowebdav v0.0.0-20210630100626-7ff61aa87be8
 	github.com/tensorflow/tensorflow v1.15.2
-	github.com/tidwall/gjson v1.8.0
+	github.com/tidwall/gjson v1.8.1
+	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
-	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
-	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/net v0.0.0-20210525063256-abc453219eb5
-	golang.org/x/sys v0.0.0-20210521203332-0cec03c779c1 // indirect
+	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
+	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
+	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
+	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.12
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect

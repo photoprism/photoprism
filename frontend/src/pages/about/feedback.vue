@@ -7,33 +7,22 @@
       <v-toolbar-title v-else>
         <translate>Contact Us</translate>
       </v-toolbar-title>
-
-      <!-- v-spacer></v-spacer>
-
-      <v-btn icon href="https://github.com/photoprism/photoprism" target="_blank" class="action-github" title="GitHub">
-        <img src="/static/brands/github.svg" width="24" alt="GitHub">
-      </v-btn -->
     </v-toolbar>
-    <v-container fluid class="pa-4" v-if="sent">
+    <v-container v-if="sent" fluid class="pa-4">
       <p class="body-1">We'll get back to you as soon as possible!</p>
     </v-container>
-    <v-form autocomplete="off" class="pa-3" ref="form"
-            v-model="valid"
-            lazy-validation v-else>
+    <v-form v-else ref="form" v-model="valid"
+            autocomplete="off"
+            class="pa-3" lazy-validation>
       <v-layout row wrap>
-        <!-- v-flex xs12 sm6 lg4 xl2 grow class="pa-2">
-          <v-text-field :required="true" hide-details
-                        v-model="form.Subject" browser-autocomplete="off"
-                        :label="$gettext('Subject')"></v-text-field>
-        </v-flex -->
         <v-flex xs12 class="pa-2">
           <v-select
+              v-model="form.Category"
               :disabled="busy"
               :items="options.FeedbackCategories()"
               :label="$gettext('Category')"
               color="secondary-dark"
               background-color="secondary-light"
-              v-model="form.Category"
               flat solo hide-details required
               browser-autocomplete="off"
               class="input-category"
@@ -42,24 +31,24 @@
         </v-flex>
 
         <v-flex xs12 class="pa-2">
-          <v-textarea required auto-grow flat solo hide-details browser-autocomplete="off"
-                      v-model="form.Message" rows="10" :rules="[v => !!v || $gettext('Required')]"
+          <v-textarea v-model="form.Message" required auto-grow flat solo hide-details
+                      browser-autocomplete="off" rows="10" :rules="[v => !!v || $gettext('Required')]"
                       :label="$gettext('How can we help?')"></v-textarea>
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
-          <v-text-field flat solo hide-details browser-autocomplete="off"
+          <v-text-field v-model="form.UserName" flat solo hide-details
+                        browser-autocomplete="off"
                         color="secondary-dark"
-                        background-color="secondary-light"
-                        :label="$gettext('Name')" type="text" v-model="form.UserName">
+                        background-color="secondary-light" :label="$gettext('Name')" type="text">
           </v-text-field>
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
-          <v-text-field flat solo hide-details required browser-autocomplete="off"
-                        color="secondary-dark" :rules="[v => !!v || $gettext('Required')]"
-                        background-color="secondary-light"
-                        :label="$gettext('E-Mail')" type="email" v-model="form.UserEmail">
+          <v-text-field v-model="form.UserEmail" flat solo hide-details required
+                        browser-autocomplete="off" color="secondary-dark"
+                        :rules="[v => !!v || $gettext('Required')]"
+                        background-color="secondary-light" :label="$gettext('E-Mail')" type="email">
           </v-text-field>
         </v-flex>
 
@@ -87,7 +76,7 @@ import * as options from "options/options";
 import Api from "../../common/api";
 
 export default {
-  name: 'p-page-support',
+  name: 'PPageSupport',
   data() {
     return {
       sent: false,

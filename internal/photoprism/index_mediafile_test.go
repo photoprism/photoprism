@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"github.com/photoprism/photoprism/internal/face"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/classify"
@@ -21,9 +22,10 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 		mediaFile, err := NewMediaFile("testdata/flash.jpg")
 
@@ -52,9 +54,10 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
@@ -73,9 +76,10 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4")
