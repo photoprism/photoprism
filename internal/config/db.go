@@ -220,8 +220,21 @@ func (c *Config) CloseDb() error {
 	return nil
 }
 
+// SetDbOptions sets the database collation to unicode if supported.
+func (c *Config) SetDbOptions() {
+	switch c.DatabaseDriver() {
+	case MySQL, MariaDB:
+		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
+	case Postgres:
+		// Ignore for now.
+	case SQLite:
+		// Not required as unicode is default.
+	}
+}
+
 // InitDb will initialize the database connection and schema.
 func (c *Config) InitDb() {
+	c.SetDbOptions()
 	entity.SetDbProvider(c)
 	entity.MigrateDb()
 
@@ -232,6 +245,7 @@ func (c *Config) InitDb() {
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
+	c.SetDbOptions()
 	entity.SetDbProvider(c)
 	entity.ResetTestFixtures()
 
