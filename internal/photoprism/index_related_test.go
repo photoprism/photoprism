@@ -1,9 +1,10 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/face"
 	"path/filepath"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
