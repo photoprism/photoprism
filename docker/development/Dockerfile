@@ -118,13 +118,11 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
 
 # Install additional tools
 COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports && \
+RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu \
+    golang.org/x/tools/cmd/goimports github.com/kyoh86/richgo && \
     [ "$TARGETARCH" = "arm" ] || \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/dsoprea/go-exif/v3/command/exif-read-tool; \
+    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated \
+    github.com/tsliwowicz/go-wrk github.com/dsoprea/go-exif/v3/command/exif-read-tool; \
     echo "alias go=richgo" > /root/.bash_aliases && \
     cp /go/bin/gosu /bin/gosu
 
