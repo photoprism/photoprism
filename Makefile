@@ -70,7 +70,7 @@ install-assets:
 	mkdir -p ~/.photoprism/assets
 	mkdir -p ~/Pictures/Originals
 	mkdir -p ~/Pictures/Import
-	cp -r assets/locales assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
+	cp -r assets/locales assets/facenet assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
 	find ~/.photoprism/assets -name '.*' -type f -delete
 clean-local-assets:
 	rm -rf ~/.photoprism/assets/*
@@ -89,6 +89,7 @@ dep-upgrade:
 dep-upgrade-js:
 	(cd frontend &&	npm --depth 3 update --legacy-peer-deps)
 dep-tensorflow:
+	scripts/download-facenet.sh
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
 zip-nasnet:
