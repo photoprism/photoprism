@@ -113,6 +113,7 @@ RUN /root/.local/bin/install-go.sh ${TARGETARCH}
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
+    wget "https://dl.photoprism.org/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.org/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # Install additional tools

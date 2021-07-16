@@ -92,6 +92,8 @@ dep-tensorflow:
 	scripts/download-facenet.sh
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
+zip-facenet:
+	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
 zip-nasnet:
 	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
 zip-nsfw:
