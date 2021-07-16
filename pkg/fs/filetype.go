@@ -49,9 +49,11 @@ type FileExtensions map[string]FileFormat
 type TypeExtensions map[FileFormat][]string
 
 const (
-	YamlExt = ".yml"
-	JpegExt = ".jpg"
-	AvcExt  = ".avc"
+	YamlExt     = ".yml"
+	JpegExt     = ".jpg"
+	AvcExt      = ".avc"
+	FujiRawExt  = ".raf"
+	CanonCr3Ext = ".cr3"
 )
 
 // FileExt contains the filename extensions of file formats known to PhotoPrism.
