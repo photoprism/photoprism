@@ -488,6 +488,13 @@ export class Photo extends RestModel {
         return;
       }
 
+      // Skip related images if video.
+      // see https://github.com/photoprism/photoprism/issues/1436
+      if (this.Type === TypeVideo && !file.Video) {
+        if (config.debug) console.log("download: skipped image", file);
+        return;
+      }
+
       download(`${config.apiUri}/dl/${file.Hash}?t=${token}`, this.fileBase(file.Name));
     });
   }
