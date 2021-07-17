@@ -109,7 +109,7 @@
     "vue-template-compiler": "^2.6.14",
     "vue2-filters": "^0.13.0",
     "vuetify": "^1.5.24",
-    "webpack": "^5.44.0",
+    "webpack": "^5.45.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.7.2",
     "webpack-hot-middleware": "^2.25.0",
