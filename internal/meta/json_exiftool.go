@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
 const MimeVideoMP4 = "video/mp4"

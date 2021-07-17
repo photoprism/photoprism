@@ -5,7 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/maps"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
 // GetTimeZone uses PhotoLat and PhotoLng to guess the time zone of the photo.

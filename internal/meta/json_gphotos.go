@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 	"time"
 
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
 type GPhoto struct {
