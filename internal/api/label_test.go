@@ -69,18 +69,18 @@ func TestLikeLabel(t *testing.T) {
 		GetLabels(router)
 		LikeLabel(router)
 
-		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=likeLabel")
+		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=like-label")
 		t.Log(r2.Body.String())
-		val := gjson.Get(r2.Body.String(), `#(Slug=="likeLabel").Favorite`)
+		val := gjson.Get(r2.Body.String(), `#(Slug=="like-label").Favorite`)
 		assert.Equal(t, "false", val.String())
 
 		r := PerformRequest(app, "POST", "/api/v1/labels/lt9k3pw1wowuy3c9/like")
 		t.Log(r.Body.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 
-		r3 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=likeLabel")
+		r3 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=like-label")
 		t.Log(r3.Body.String())
-		val2 := gjson.Get(r3.Body.String(), `#(Slug=="likeLabel").Favorite`)
+		val2 := gjson.Get(r3.Body.String(), `#(Slug=="like-label").Favorite`)
 		assert.Equal(t, "true", val2.String())
 	})
 	t.Run("like existing label with prio < 0", func(t *testing.T) {
