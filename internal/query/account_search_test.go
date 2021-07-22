@@ -39,7 +39,7 @@ func TestAccounts(t *testing.T) {
 			Query:  "",
 			Share:  false,
 			Sync:   false,
-			Status: "test",
+			Status: "refresh",
 			Count:  1001,
 			Offset: 0,
 			Order:  "",
@@ -61,7 +61,7 @@ func TestAccounts(t *testing.T) {
 	t.Run("find accounts count > max results", func(t *testing.T) {
 		f := form.AccountSearch{
 			Query:  "",
-			Status: "test",
+			Status: "refresh",
 			Count:  100000,
 			Offset: 0,
 			Order:  "",

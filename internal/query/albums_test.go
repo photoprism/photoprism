@@ -16,7 +16,7 @@ func TestAlbumByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Christmas2030", album.AlbumTitle)
+		assert.Equal(t, "Christmas 2030", album.AlbumTitle)
 	})
 
 	t.Run("not existing uid", func(t *testing.T) {
@@ -84,7 +84,7 @@ func TestAlbumSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Christmas2030", result[0].AlbumTitle)
+		assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
 	})
 
 	t.Run("search with slug", func(t *testing.T) {
@@ -95,18 +95,18 @@ func TestAlbumSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Holiday2030", result[0].AlbumTitle)
+		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 
 	t.Run("search with country", func(t *testing.T) {
-		query := form.NewAlbumSearch("country:de")
+		query := form.NewAlbumSearch("country:ca")
 		result, err := AlbumSearch(query)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Berlin 2019", result[0].AlbumTitle)
+		assert.Equal(t, "April 1990", result[0].AlbumTitle)
 	})
 
 	t.Run("favorites true", func(t *testing.T) {
@@ -118,7 +118,7 @@ func TestAlbumSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Holiday2030", result[0].AlbumTitle)
+		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 	t.Run("empty query", func(t *testing.T) {
 		query := form.NewAlbumSearch("order:slug")
@@ -164,7 +164,7 @@ func TestAlbumSearch(t *testing.T) {
 		}
 
 		assert.Equal(t, 1, len(result))
-		assert.Equal(t, "christmas2030", result[0].AlbumSlug)
+		assert.Equal(t, "christmas-2030", result[0].AlbumSlug)
 	})
 	t.Run("search with multiple filters", func(t *testing.T) {
 		f := form.AlbumSearch{
