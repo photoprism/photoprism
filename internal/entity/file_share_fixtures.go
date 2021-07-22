@@ -26,7 +26,7 @@ var FileShareFixtures = FileShareMap{
 	"FileShare1": {
 		FileID:     1000000,
 		AccountID:  1000000,
-		RemoteName: "name for remote",
+		RemoteName: "/20100729-015747-Urlaub-2010.jpg",
 		Status:     FileShareShared,
 		Error:      "",
 		Errors:     0,
@@ -38,7 +38,7 @@ var FileShareFixtures = FileShareMap{
 	"FileShare2": {
 		FileID:     1000000,
 		AccountID:  1000001,
-		RemoteName: "name for remote",
+		RemoteName: "/20200729-015747-Dog-2020.jpg",
 		Status:     FileShareNew,
 		Error:      "",
 		Errors:     0,
