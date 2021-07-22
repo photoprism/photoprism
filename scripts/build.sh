@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 PHOTOPRISM_DATE=`date -u +%y%m%d`
 PHOTOPRISM_VERSION=`git describe --always`
 
