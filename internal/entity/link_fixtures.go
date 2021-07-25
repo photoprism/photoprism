@@ -19,7 +19,7 @@ var LinkFixtures = LinkMap{
 		CanComment:  true,
 		CanEdit:     false,
 		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
-		ModifiedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+		ModifiedAt:  time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 	},
 	"4jxf3jfn2k": {
 		LinkUID:     "sqn2xpryd1ob8gtf",
@@ -33,7 +33,7 @@ var LinkFixtures = LinkMap{
 		CanComment:  true,
 		CanEdit:     false,
 		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
-		ModifiedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+		ModifiedAt:  time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 	},
 	"5jxf3jfn2k": {
 		LinkUID:     "sqn9xpryd1ob9gtf",
@@ -47,7 +47,7 @@ var LinkFixtures = LinkMap{
 		CanComment:  true,
 		CanEdit:     false,
 		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
-		ModifiedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+		ModifiedAt:  time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 	},
 	"6jxf3jfn2k": {
 		LinkUID:     "sqn1xpryd1ob1gtf",
@@ -61,7 +61,7 @@ var LinkFixtures = LinkMap{
 		CanComment:  true,
 		CanEdit:     false,
 		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
-		ModifiedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+		ModifiedAt:  time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 	},
 	"7jxf3jfn2k": {
 		LinkUID:     "sqn2xpryd1ob2gtf",
@@ -75,7 +75,7 @@ var LinkFixtures = LinkMap{
 		CanComment:  true,
 		CanEdit:     false,
 		CreatedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
-		ModifiedAt:   time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
+		ModifiedAt:  time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 	},
 }
 
