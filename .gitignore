@@ -52,6 +52,7 @@ Thumbs.db
 .settings
 .swp
 .tmp
+.env
 
 #Karma Coverage Report
 frontend/coverage/
