@@ -144,7 +144,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 
 	log.Debugf("exiftool: extracting metadata from %s", relName)
 
-	cmd := exec.Command(c.conf.ExifToolBin(), "-j", f.FileName())
+	cmd := exec.Command(c.conf.ExifToolBin(), "-m", "-api", "LargeFileSupport", "-j", f.FileName())
 
 	// Fetch command output.
 	var out bytes.Buffer
@@ -176,12 +176,17 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 
 // JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
 func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
+	if f == nil {
+		return result, useMutex, fmt.Errorf("convert: file is nil - you might have found a bug")
+	}
+
 	size := strconv.Itoa(c.conf.JpegSize())
+	fileExt := f.Extension()
 
 	if f.IsRaw() {
 		if c.conf.SipsEnabled() {
 			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
-		} else if c.conf.DarktableEnabled() && f.Extension() != ".cr3" {
+		} else if c.conf.DarktableEnabled() && fileExt != fs.CanonCr3Ext && fileExt != fs.FujiRawExt {
 			var args []string
 
 			// Only one instance of darktable-cli allowed due to locking if presets are loaded.

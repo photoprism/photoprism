@@ -31,7 +31,6 @@ services:
     shm_size: "2gb"
     environment:
       UID: ${UID:-1000}
-      GID: ${GID:-1000}
       TF_CPP_MIN_LOG_LEVEL: 0 # Show TensorFlow log messages for development
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"

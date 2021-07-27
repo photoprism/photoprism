@@ -13,7 +13,7 @@
           class="clickable"
           @click.stop.prevent="openSite"
       >
-        <img src="/static/img/logo-white.svg" alt="Logo">
+        <img :src="$config.staticUri + '/img/logo-white.svg'" alt="Logo">
       </v-avatar>
     </v-toolbar>
     <v-toolbar dark flat :dense="$vuetify.breakpoint.smAndDown" color="#fafafa">

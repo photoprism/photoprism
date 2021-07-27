@@ -271,12 +271,9 @@ export default {
 
       this.viewer.loading = true;
 
-      const count = Photo.limit();
-      const offset = 0;
-
       const params = {
-        count: count,
-        offset: offset,
+        count: Photo.limit(),
+        offset: 0,
         album: this.uid,
         filter: this.model.Filter ? this.model.Filter : "",
         merged: true,
@@ -296,6 +293,7 @@ export default {
       }, () => {
         // Error.
         this.viewer.loading = false;
+        this.viewer.results = [];
         return Promise.resolve(this.results);
       });
     },
@@ -433,6 +431,7 @@ export default {
       Photo.search(params).then(response => {
         this.offset = this.batchSize;
         this.results = response.models;
+        this.viewer.results = [];
         this.complete = (response.count < this.batchSize);
         this.scrollDisabled = this.complete;
 
@@ -572,7 +571,7 @@ export default {
       this.$forceUpdate();
     },
     download() {
-      this.onDownload(`/api/v1/albums/${this.uid}/dl?t=${this.$config.downloadToken()}`);
+      this.onDownload(`${this.$config.apiUri}/albums/${this.uid}/dl?t=${this.$config.downloadToken()}`);
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));

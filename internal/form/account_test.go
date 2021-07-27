@@ -43,7 +43,7 @@ func TestNewAccount(t *testing.T) {
 
 func TestAccount_ServiceDiscovery(t *testing.T) {
 	t.Run("error = nil", func(t *testing.T) {
-		account := Account{AccName: "Foo", AccOwner: "bar", AccURL: "test.com", AccType: "test", SyncDownload: false, AccShare: true}
+		account := Account{AccName: "Foo", AccOwner: "bar", AccURL: "photoprism.app", AccType: "test", SyncDownload: false, AccShare: true}
 
 		err := account.ServiceDiscovery()
 		assert.Equal(t, nil, err)

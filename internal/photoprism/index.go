@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
@@ -25,17 +27,19 @@ type Index struct {
 	conf         *config.Config
 	tensorFlow   *classify.TensorFlow
 	nsfwDetector *nsfw.Detector
+	faceNet      *face.Net
 	convert      *Convert
 	files        *Files
 	photos       *Photos
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, convert *Convert, files *Files, photos *Photos) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
 		nsfwDetector: nsfwDetector,
+		faceNet:      faceNet,
 		convert:      convert,
 		files:        files,
 		photos:       photos,

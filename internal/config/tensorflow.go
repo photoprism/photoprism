@@ -20,3 +20,8 @@ func (c *Config) TensorFlowModelPath() string {
 func (c *Config) NSFWModelPath() string {
 	return filepath.Join(c.AssetsPath(), "nsfw")
 }
+
+// FaceNetModelPath returns the FaceNet model path.
+func (c *Config) FaceNetModelPath() string {
+	return filepath.Join(c.AssetsPath(), "facenet")
+}

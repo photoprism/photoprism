@@ -9,9 +9,8 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:vue/recommended",
+    "prettier",
     "plugin:prettier-vue/recommended",
-    // Do not add `'prettier/vue'` if you don't want to use prettier for `<template>` blocks
-    "prettier/vue",
   ],
 
   settings: {

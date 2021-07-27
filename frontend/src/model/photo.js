@@ -380,10 +380,10 @@ export class Photo extends RestModel {
     const file = this.videoFile();
 
     if (file) {
-      return `/api/v1/videos/${file.Hash}/${config.previewToken()}/${FormatAvc}`;
+      return `${config.contentUri}/videos/${file.Hash}/${config.previewToken()}/${FormatAvc}`;
     }
 
-    return `/api/v1/videos/${this.Hash}/${config.previewToken()}/${FormatAvc}`;
+    return `${config.contentUri}/videos/${this.Hash}/${config.previewToken()}/${FormatAvc}`;
   }
 
   mainFile() {
@@ -453,17 +453,17 @@ export class Photo extends RestModel {
       let video = this.videoFile();
 
       if (video && video.Hash) {
-        return `/api/v1/t/${video.Hash}/${config.previewToken()}/${size}`;
+        return `${config.contentUri}/t/${video.Hash}/${config.previewToken()}/${size}`;
       }
 
-      return "/api/v1/svg/photo";
+      return `${config.contentUri}/svg/photo`;
     }
 
-    return `/api/v1/t/${hash}/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/t/${hash}/${config.previewToken()}/${size}`;
   }
 
   getDownloadUrl() {
-    return `/api/v1/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
+    return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken()}`;
   }
 
   downloadAll() {
@@ -473,7 +473,7 @@ export class Photo extends RestModel {
       const hash = this.mainFileHash();
 
       if (hash) {
-        download(`/api/v1/dl/${hash}?t=${token}`, this.baseName(false));
+        download(`/${config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));
       } else if (config.debug) {
         console.log("download: failed, empty file hash", this);
       }
@@ -488,7 +488,14 @@ export class Photo extends RestModel {
         return;
       }
 
-      download(`/api/v1/dl/${file.Hash}?t=${token}`, this.fileBase(file.Name));
+      // Skip related images if video.
+      // see https://github.com/photoprism/photoprism/issues/1436
+      if (this.Type === TypeVideo && !file.Video) {
+        if (config.debug) console.log("download: skipped image", file);
+        return;
+      }
+
+      download(`${config.apiUri}/dl/${file.Hash}?t=${token}`, this.fileBase(file.Name));
     });
   }
 

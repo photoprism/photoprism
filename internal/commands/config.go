@@ -85,6 +85,11 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "site-caption", conf.SiteCaption())
 	fmt.Printf("%-25s %s\n", "site-description", conf.SiteDescription())
 	fmt.Printf("%-25s %s\n", "site-author", conf.SiteAuthor())
+	fmt.Printf("%-25s %s\n", "cdn-url", conf.CdnUrl("/"))
+	fmt.Printf("%-25s %s\n", "content-uri", conf.ContentUri())
+	fmt.Printf("%-25s %s\n", "static-uri", conf.StaticUri())
+	fmt.Printf("%-25s %s\n", "api-uri", conf.ApiUri())
+	fmt.Printf("%-25s %s\n", "base-uri", conf.BaseUri("/"))
 
 	// Logging.
 	fmt.Printf("%-25s %s\n", "log-level", conf.LogLevel())

@@ -1,3 +1,4 @@
+import "../fixtures";
 import Form, { FormPropertyType } from "common/form";
 
 let chai = require("chai/chai");

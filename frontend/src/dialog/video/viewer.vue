@@ -13,7 +13,7 @@ export default {
     return {
       show: false,
       source: "",
-      poster: "/api/v1/svg/video",
+      poster: `${this.$config.contentUri}/svg/video`,
       defaultWidth: 640,
       defaultHeight: 480,
       width: 640,

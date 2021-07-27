@@ -70,7 +70,7 @@ install-assets:
 	mkdir -p ~/.photoprism/assets
 	mkdir -p ~/Pictures/Originals
 	mkdir -p ~/Pictures/Import
-	cp -r assets/locales assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
+	cp -r assets/locales assets/facenet assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
 	find ~/.photoprism/assets -name '.*' -type f -delete
 clean-local-assets:
 	rm -rf ~/.photoprism/assets/*
@@ -89,8 +89,11 @@ dep-upgrade:
 dep-upgrade-js:
 	(cd frontend &&	npm --depth 3 update --legacy-peer-deps)
 dep-tensorflow:
+	scripts/download-facenet.sh
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
+zip-facenet:
+	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
 zip-nasnet:
 	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
 zip-nsfw:
@@ -165,16 +168,14 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
+	scripts/install-qemu.sh
 	docker pull --platform=amd64 ubuntu:21.04
 	docker pull --platform=arm64 ubuntu:21.04
 	docker pull --platform=arm ubuntu:21.04
-	scripts/install-qemu.sh
 	scripts/docker-buildx.sh development linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
 docker-preview:
-	scripts/install-qemu.sh
-	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm
 docker-release:
-	scripts/install-qemu.sh
 	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
 docker-local:
 	scripts/docker-build.sh photoprism

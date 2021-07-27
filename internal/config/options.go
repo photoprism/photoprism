@@ -72,6 +72,7 @@ type Options struct {
 	LogLevel           string `yaml:"LogLevel" json:"-" flag:"log-level"`
 	LogFilename        string `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	PIDFilename        string `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
+	CdnUrl             string `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
 	SiteUrl            string `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SitePreview        string `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
 	SiteTitle          string `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`

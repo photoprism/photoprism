@@ -4,6 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/nsfw"
@@ -53,9 +55,10 @@ func TestIndexRelated(t *testing.T) {
 
 		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		opt := IndexOptionsAll()
 
 		result := IndexRelated(related, ind, opt)
@@ -113,9 +116,10 @@ func TestIndexRelated(t *testing.T) {
 
 		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		opt := IndexOptionsAll()
 
 		result := IndexRelated(related, ind, opt)
