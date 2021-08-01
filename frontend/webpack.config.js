@@ -30,6 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
 const OfflinePlugin = require("@lcdp/offline-plugin");
 const webpack = require("webpack");
 const isDev = process.env.NODE_ENV !== "production";
@@ -92,20 +93,6 @@ const config = {
   },
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        include: PATHS.app,
-        exclude: /node_modules/,
-        enforce: "pre",
-        use: [
-          {
-            loader: "eslint-loader",
-            options: {
-              formatter: require("eslint-formatter-pretty"),
-            },
-          },
-        ],
-      },
       {
         test: /\.vue$/,
         include: PATHS.js,
@@ -264,6 +251,13 @@ if (isDev) {
   });
 
   config.plugins.push(devToolPlugin);
+
+  const esLintPlugin = new ESLintPlugin({
+    formatter: require("eslint-formatter-pretty"),
+    extensions: ["js"],
+  });
+
+  config.plugins.push(esLintPlugin);
 }
 
 module.exports = config;

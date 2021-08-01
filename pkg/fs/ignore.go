@@ -45,7 +45,7 @@ func (i IgnoreItem) Ignore(dir, base string) bool {
 	return false
 }
 
-// IgnoreItem represents a list of name patterns to be ignored.
+// IgnoreList represents a list of name patterns to be ignored.
 type IgnoreList struct {
 	Log           IgnoreLogFunc
 	items         []IgnoreItem
@@ -144,11 +144,6 @@ func (l *IgnoreList) Ignore(fileName string) bool {
 		return true
 	}
 
-	if l.ignoreHidden && strings.HasPrefix(filepath.Base(fileName), ".") {
-		l.hiddenFiles = append(l.hiddenFiles, fileName)
-		return true
-	}
-
 	for _, item := range l.items {
 		if item.Ignore(dir, base) {
 			l.ignoredFiles = append(l.ignoredFiles, fileName)
@@ -159,6 +154,11 @@ func (l *IgnoreList) Ignore(fileName string) bool {
 
 			return true
 		}
+	}
+
+	if l.ignoreHidden && strings.HasPrefix(filepath.Base(fileName), ".") {
+		l.hiddenFiles = append(l.hiddenFiles, fileName)
+		return true
 	}
 
 	return false

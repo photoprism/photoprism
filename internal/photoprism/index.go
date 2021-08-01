@@ -3,12 +3,13 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"github.com/photoprism/photoprism/internal/face"
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
+
+	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/karrick/godirwalk"
 	"github.com/photoprism/photoprism/internal/classify"

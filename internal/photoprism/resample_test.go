@@ -1,10 +1,11 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/face"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/classify"

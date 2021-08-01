@@ -1,8 +1,9 @@
 package service
 
 import (
-	"github.com/photoprism/photoprism/internal/face"
 	"sync"
+
+	"github.com/photoprism/photoprism/internal/face"
 )
 
 var onceFaceNet sync.Once

@@ -12,6 +12,7 @@
 .dockerignore
 .idea
 .DS_Store
+.env
 *.db
 *.db-journal
 Dockerfile
