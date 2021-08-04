@@ -332,6 +332,15 @@
             </v-list-tile-content>
           </v-list-tile>
 
+           <v-list-tile to="/library/duplicates" class="nav-hidden" @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                <translate key="Duplicates">Duplicates</translate>
+                <span v-show="config.count.duplicates > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.duplicates }}</span>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
           <v-list-tile to="/library/hidden" class="nav-hidden" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">

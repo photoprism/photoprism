@@ -51,7 +51,7 @@ func (r IndexResult) Failed() bool {
 }
 
 func (r IndexResult) Success() bool {
-	return r.Err == nil && (r.FileID > 0 || r.Stacked() || r.Skipped() || r.Archived())
+	return r.Err == nil && (r.FileID > 0 || r.Stacked() || r.Skipped() || r.Duplicate() || r.Archived())
 }
 
 func (r IndexResult) Indexed() bool {
@@ -64,6 +64,10 @@ func (r IndexResult) Stacked() bool {
 
 func (r IndexResult) Skipped() bool {
 	return r.Status == IndexSkipped
+}
+
+func (r IndexResult) Duplicate() bool {
+	return r.Status == IndexDuplicate
 }
 
 func (r IndexResult) Archived() bool {

@@ -79,6 +79,7 @@ type ClientCounts struct {
 	Lenses         int `json:"lenses"`
 	Countries      int `json:"countries"`
 	Hidden         int `json:"hidden"`
+	Duplicates     int `json:"duplicates"`
 	Favorites      int `json:"favorites"`
 	Private        int `json:"private"`
 	Review         int `json:"review"`
