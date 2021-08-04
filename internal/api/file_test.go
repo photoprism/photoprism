@@ -17,7 +17,7 @@ func TestGetFile(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 
 		val := gjson.Get(r.Body.String(), "Name")
-		assert.Equal(t, "exampleFileName.jpg", val.String())
+		assert.Equal(t, "2020/07/exampleFileName.jpg", val.String())
 	})
 	t.Run("search for not existing file", func(t *testing.T) {
 		app, router, _ := NewApiTest()
