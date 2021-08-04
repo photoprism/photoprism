@@ -78,6 +78,7 @@ const DATE_FULL_TZ = {
 export class Photo extends RestModel {
   constructor(values) {
     super(values);
+    this.getDuplicates();
   }
 
   getDefaults() {
@@ -140,6 +141,7 @@ export class Photo extends RestModel {
         License: "",
         LicenseSrc: "",
       },
+      Duplicates: [],
       Files: [],
       Labels: [],
       Keywords: [],
@@ -765,6 +767,16 @@ export class Photo extends RestModel {
     });
 
     return result;
+  }
+  
+  deleteDuplicate(fileName) {
+    return Api.delete("/duplicates/" + fileName).then((r) =>
+      Promise.resolve(this.setValues(r.data))
+    );
+  }
+
+  async getDuplicates() {
+    this.Duplicates = await Promise.resolve(Api.get("/duplicates/" + this.mainFileHash()));
   }
 
   update() {

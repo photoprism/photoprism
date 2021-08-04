@@ -37,6 +37,7 @@ import Errors from "pages/library/errors.vue";
 import Labels from "pages/labels.vue";
 import People from "pages/people.vue";
 import Library from "pages/library.vue";
+import Duplicates from "pages/duplicates.vue";
 import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
 import Discover from "pages/discover.vue";
@@ -245,6 +246,13 @@ export default [
     component: Photos,
     meta: { title: $gettext("Hidden Files"), auth: true },
     props: { staticFilter: { hidden: true } },
+  },
+  {
+    name: "duplicates",
+    path: "/library/duplicates",
+    component: Duplicates,
+    meta: { title: $gettext("Duplicate Files"), auth: true },
+    props: { staticFilter: { duplicates: true } },
   },
   {
     name: "errors",

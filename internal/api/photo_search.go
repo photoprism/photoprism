@@ -52,6 +52,7 @@ func GetPhotos(router *gin.RouterGroup) {
 			f.Public = true
 			f.Private = false
 			f.Hidden = false
+			f.Duplicates = false
 			f.Archived = false
 			f.Review = false
 		}

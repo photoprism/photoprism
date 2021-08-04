@@ -38,7 +38,8 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		Joins("JOIN files ON photos.id = files.photo_id AND files.file_missing = 0 AND files.deleted_at IS NULL").
 		Joins("LEFT JOIN cameras ON photos.camera_id = cameras.id").
 		Joins("LEFT JOIN lenses ON photos.lens_id = lenses.id").
-		Joins("LEFT JOIN places ON photos.place_id = places.id")
+		Joins("LEFT JOIN places ON photos.place_id = places.id").
+		Joins("LEFT JOIN duplicates ON files.file_hash = duplicates.file_hash")
 
 	// Limit result count.
 	if f.Count > 0 && f.Count <= MaxResults {
@@ -172,6 +173,8 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	if f.Hidden {
 		s = s.Where("photos.photo_quality = -1")
 		s = s.Where("photos.deleted_at IS NULL")
+	} else if f.Duplicates {
+		s = s.Where("duplicates.file_hash = files.file_hash")
 	} else if f.Archived {
 		s = s.Where("photos.photo_quality > -1")
 		s = s.Where("photos.deleted_at IS NOT NULL")
