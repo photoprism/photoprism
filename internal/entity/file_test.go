@@ -205,7 +205,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileWidth: 600, FileName: "VideoUpdate", PhotoID: 1000003}
 
-		assert.Equal(t, "bridge.mp4", FileFixturesExampleBridgeVideo.FileName)
+		assert.Equal(t, "London/bridge2.mp4", FileFixturesExampleBridgeVideo.FileName)
 		assert.Equal(t, int(1200), FileFixturesExampleBridgeVideo.FileWidth)
 
 		err := file.UpdateVideoInfos()
@@ -223,7 +223,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 		assert.Len(t, files, 1)
 
 		for _, f := range files {
-			assert.Equal(t, "bridge.mp4", f.FileName)
+			assert.Equal(t, "London/bridge2.mp4", f.FileName)
 			assert.Equal(t, int(600), f.FileWidth)
 		}
 	})
@@ -332,7 +332,7 @@ func TestPrimaryFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, "Video.mp4", file.FileName)
+	assert.Equal(t, "Holiday/Video.mp4", file.FileName)
 }
 
 func TestFile_OriginalBase(t *testing.T) {
