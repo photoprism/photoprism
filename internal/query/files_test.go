@@ -75,7 +75,7 @@ func TestFilesByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 1, len(files))
-		assert.Equal(t, "exampleFileName.jpg", files[0].FileName)
+		assert.Equal(t, "2020/07/exampleFileName.jpg", files[0].FileName)
 	})
 	t.Run("no files found", func(t *testing.T) {
 		files, err := FilesByUID([]string{"ft8es39w45bnlxxx"}, 100, 0)
@@ -100,7 +100,7 @@ func TestFileByPhotoUID(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "bridge.jpg", file.FileName)
+		assert.Equal(t, "London/bridge.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -118,7 +118,7 @@ func TestVideoByPhotoUID(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "bridge.mp4", file.FileName)
+		assert.Equal(t, "London/bridge2.mp4", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -137,7 +137,7 @@ func TestFileByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "2020/07/exampleFileName.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -159,7 +159,7 @@ func TestFileByHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "2020/07/exampleFileName.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -248,7 +248,7 @@ func TestRenameFile(t *testing.T) {
 		}
 	})
 	t.Run("success", func(t *testing.T) {
-		assert.Equal(t, "exampleXmpFile.xmp", entity.FileFixturesExampleXMP.FileName)
+		assert.Equal(t, "2020/07/exampleXmpFile.xmp", entity.FileFixturesExampleXMP.FileName)
 		assert.Equal(t, "/", entity.FileFixturesExampleXMP.FileRoot)
 		err := RenameFile("/", "exampleXmpFile.xmp", "test-root", "yyy.jpg")
 
