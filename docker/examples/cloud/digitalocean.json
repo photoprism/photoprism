@@ -64,7 +64,6 @@
       ],
       "scripts": [
         "digitalocean/firewall.sh",
-        "digitalocean/logout.sh",
         "digitalocean/cleanup.sh",
         "digitalocean/check.sh"
       ]
