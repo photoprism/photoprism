@@ -53,29 +53,29 @@ services:
       # - "traefik.http.routers.photoprism.rule=Host(`photos.example.com`)"
       # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
-      PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
-      PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
-      PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
-      PHOTOPRISM_EXPERIMENTAL: "false"               # Enables experimental features
-      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables using TensorFlow for image classification
-      PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
-      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name
-      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database user name
-      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"     # MariaDB database user password
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public PhotoPrism URL
+      PHOTOPRISM_SITE_URL: "https://_public_ip_/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
+      PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # PLEASE CHANGE: Your initial admin password (min 4 characters)
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000                 # File size limit for originals in MB (increase for high-res video)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # Improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_DEBUG: "false"                        # Run in debug mode (shows additional log messages)
+      PHOTOPRISM_PUBLIC: "false"                       # No authentication required (disables password protection)
+      PHOTOPRISM_READONLY: "false"                     # Don't modify originals directory (reduced functionality)
+      PHOTOPRISM_EXPERIMENTAL: "false"                 # Enables experimental features
+      PHOTOPRISM_DISABLE_WEBDAV: "false"               # Disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"             # Disables Settings in Web UI
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"           # Disables using TensorFlow for image classification
+      PHOTOPRISM_DARKTABLE_PRESETS: "false"            # Enables Darktable presets and disables concurrent RAW conversion
+      PHOTOPRISM_DETECT_NSFW: "false"                  # Flag photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "true"                   # Allow uploads that MAY be offensive
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"              # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"       # MariaDB database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB database user password
     user: "1000"
     volumes:
       # Your photo and video files ([local path]:[container path]):
@@ -111,10 +111,10 @@ services:
     volumes: # Don't remove permanent storage for index database files!
       - "./database:/var/lib/mysql"
     environment:
-      MYSQL_ROOT_PASSWORD: photoprism
-      MYSQL_DATABASE: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: photoprism
+      MYSQL_ROOT_PASSWORD: "_admin_password_"
+      MYSQL_DATABASE: "photoprism"
+      MYSQL_USER: "photoprism"
+      MYSQL_PASSWORD: "_admin_password_"
 
   ofelia:
     image: mcuadros/ofelia:latest

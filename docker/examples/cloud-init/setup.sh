@@ -85,10 +85,24 @@ openssl x509 -req -in /photoprism/certs/cert.csr -CA /photoprism/certs/ca.pem \
 openssl pkcs12 -export -in /photoprism/certs/cert.crt -inkey /photoprism/certs/cert.key \
         -out /photoprism/certs/cert.pfx -passout pass:
 
+# generate random password
+PASSWORD_PLACEHOLDER="_admin_password_"
+ADMIN_PASSWORD=$(gpg --gen-random --armor 2 6)
+echo "${ADMIN_PASSWORD}" > /root/.photoprism-password.txt
+echo "Initial admin password: ${ADMIN_PASSWORD}"
+
+# detect public server ip address
+PUBLIC_IP=$(curl -sfSL ifconfig.me)
+
 # download service config
-curl -fsSL https://dl.photoprism.org/docker/cloud-init/docker-compose.yml > /photoprism/docker-compose.yml
+COMPOSE_CONFIG=$(curl -fsSL https://dl.photoprism.org/docker/cloud-init/docker-compose.yml)
+COMPOSE_CONFIG=${COMPOSE_CONFIG//_public_ip_/$PUBLIC_IP}
+COMPOSE_CONFIG=${COMPOSE_CONFIG//$PASSWORD_PLACEHOLDER/$ADMIN_PASSWORD}
+echo "${COMPOSE_CONFIG}" > /photoprism/docker-compose.yml
 curl -fsSL https://dl.photoprism.org/docker/cloud-init/jobs.ini > /photoprism/jobs.ini
 curl -fsSL https://dl.photoprism.org/docker/cloud-init/traefik.yaml > /photoprism/traefik.yaml
+
+# change permissions
 chown -Rf photoprism:photoprism /photoprism
 
 # start services using docker-compose
