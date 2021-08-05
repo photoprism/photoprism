@@ -15,7 +15,7 @@ func TestFiles_Ignore(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.True(t, files.Ignore("2020/07/exampleFileName.jpg", entity.RootOriginals, time.Unix(1583460411, 0), false))
+	assert.True(t, files.Ignore("2790/07/27900704_070228_D6D51B6C.jpg", entity.RootOriginals, time.Unix(1583460411, 0), false))
 	assert.False(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals, time.Unix(1583460412, 0), false))
 	assert.True(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals, time.Unix(1583460412, 0), false))
 	assert.False(t, files.Ignore("exampleFileName.jpg", entity.RootOriginals, time.Unix(1583460412, 0), true))

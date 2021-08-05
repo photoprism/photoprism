@@ -15,8 +15,8 @@ func TestGetPhoto(t *testing.T) {
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0yh7")
 		assert.Equal(t, http.StatusOK, r.Code)
-		val := gjson.Get(r.Body.String(), "Lat")
-		assert.Equal(t, "48.519234", val.String())
+		val := gjson.Get(r.Body.String(), "Iso")
+		assert.Equal(t, "200", val.String())
 	})
 
 	t.Run("search for not existing photo", func(t *testing.T) {

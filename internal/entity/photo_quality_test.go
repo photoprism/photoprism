@@ -8,7 +8,7 @@ import (
 
 func TestPhoto_QualityScore(t *testing.T) {
 	t.Run("PhotoFixture19800101_000002_D640C559", func(t *testing.T) {
-		assert.Equal(t, 4, PhotoFixtures.Pointer("19800101_000002_D640C559").QualityScore())
+		assert.Equal(t, 3, PhotoFixtures.Pointer("19800101_000002_D640C559").QualityScore())
 	})
 	t.Run("PhotoFixturePhoto01 - favorite true - taken at before 2008", func(t *testing.T) {
 		assert.Equal(t, 7, PhotoFixtures.Pointer("Photo01").QualityScore())

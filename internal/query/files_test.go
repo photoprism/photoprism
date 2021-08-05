@@ -75,7 +75,7 @@ func TestFilesByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 1, len(files))
-		assert.Equal(t, "2020/07/exampleFileName.jpg", files[0].FileName)
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", files[0].FileName)
 	})
 	t.Run("no files found", func(t *testing.T) {
 		files, err := FilesByUID([]string{"ft8es39w45bnlxxx"}, 100, 0)
@@ -137,7 +137,7 @@ func TestFileByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "2020/07/exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -159,7 +159,7 @@ func TestFileByHash(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "2020/07/exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {

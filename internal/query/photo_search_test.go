@@ -511,7 +511,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 		f.Lens = 1000000
-		f.Month = 2
+		f.Month = 7
 		f.Year = 2790
 		f.Album = "at9lxuqxpogaaba8"
 

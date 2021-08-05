@@ -34,7 +34,7 @@ func TestAlbumCoverByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "2020/07/exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
 
 	t.Run("existing uid folder album", func(t *testing.T) {

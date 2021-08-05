@@ -452,15 +452,25 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "shortcity / Germany / 2016", m.PhotoTitle)
 	})
-	t.Run("no location", func(t *testing.T) {
+	t.Run("no location original name", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
+		assert.Equal(t, "Lake / 2790", m.PhotoTitle)
+		err := m.UpdateTitle(*classifyLabels)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "Examplefilenameoriginal", m.PhotoTitle)
+	})
+	t.Run("no location", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
 		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
 		assert.Equal(t, "", m.PhotoTitle)
 		err := m.UpdateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Classify / 2008", m.PhotoTitle)
+		assert.Equal(t, "Classify / 2006", m.PhotoTitle)
 	})
 	t.Run("no location no labels", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo02")
