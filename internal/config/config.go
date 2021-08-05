@@ -167,7 +167,7 @@ func (c *Config) Init() error {
 	if TotalMem < 128*Megabyte {
 		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
 	} else if LowMem {
-		log.Warnf(`config: less than %d GB of memory detected, server may become unstable or unresponsive,`, MinMem/Gigabyte)
+		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/Gigabyte)
 	}
 
 	// Show swap info.
