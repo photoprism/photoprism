@@ -32,8 +32,7 @@ echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
 echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # update operating system
-apt-get update
-apt-get -qq dist-upgrade
+apt-get update && apt-get autoclean && apt-get upgrade
 
 # install dependencies
 apt-get -qq install -y --no-install-recommends apt-transport-https ca-certificates \
@@ -105,8 +104,11 @@ curl -fsSL https://dl.photoprism.org/docker/cloud-init/traefik.yaml > /photopris
 # change permissions
 chown -Rf photoprism:photoprism /photoprism
 
+# remove old packages
+apt-get autoclean && apt-get autoremove
+
 # start services using docker-compose
-(cd /photoprism && docker-compose up -d)
+(cd /photoprism && docker-compose pull && docker-compose stop && docker-compose up --remove-orphans -d)
 
 # show public server URL and initial admin password
 printf "\nServer URL:\n\n  https://%s/\n\nInitial admin password:\n\n  %s\n\n" "${PUBLIC_IP}" "${ADMIN_PASSWORD}"
