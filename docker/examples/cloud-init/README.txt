@@ -12,16 +12,27 @@ server and its internet connection.
 
 When done - and you see no errors - please open
 
-  http://<YOUR SERVER IP>:2342/
+  https://<YOUR SERVER IP>/
 
-in a Web browser and log in using the initial admin password "insecure".
+in a Web browser and log in using the initial admin password shown
+by the script. You may also see it by running
 
-Now change the default password in Settings to protect your server.
+  cat /root/.initial-password.txt
 
-All files related to PhotoPrism can be found in /photoprism. The server
-will be running as "photoprism" (UID 1000). There should be no need to
-change defaults unless other services are running on the same server
-and there are conflicts.
+in a terminal.
+
+Data and all config files related to PhotoPrism can be found in /photoprism.
+The main docker-compose config file for changing config options is
+
+  /photoprism/docker-compose.yml
+
+The server is running as "photoprism" (UID 1000) by default. There's no need
+to change defaults unless you experience conflicts with other services running
+on the same server. For example, you may need to disable the Traefik reverse
+proxy as the ports 80 and 443 can only be used by a single web server / proxy.
+
+Configuring multiple apps on the same server is beyond the scope of this and for
+advanced users only.
 
 ## System Requirements ##
 
