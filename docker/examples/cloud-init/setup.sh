@@ -88,8 +88,7 @@ openssl pkcs12 -export -in /photoprism/certs/cert.crt -inkey /photoprism/certs/c
 # generate random password
 PASSWORD_PLACEHOLDER="_admin_password_"
 ADMIN_PASSWORD=$(gpg --gen-random --armor 2 6)
-echo "${ADMIN_PASSWORD}" > /root/.photoprism-password.txt
-echo "Initial admin password: ${ADMIN_PASSWORD}"
+echo "${ADMIN_PASSWORD}" > /root/.initial-password.txt
 
 # detect public server ip address
 PUBLIC_IP=$(curl -sfSL ifconfig.me)
@@ -107,3 +106,6 @@ chown -Rf photoprism:photoprism /photoprism
 
 # start services using docker-compose
 (cd /photoprism && docker-compose up -d)
+
+# show public server URL and initial admin password
+printf "\nServer URL:\n\n  https://%s/\n\nInitial admin password:\n\n  %s\n\n" "${PUBLIC_IP}" "${ADMIN_PASSWORD}"
