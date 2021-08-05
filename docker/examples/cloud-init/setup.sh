@@ -58,7 +58,7 @@ then
 fi
 
 # create user
-useradd photoprism -u 1000 -G docker -o -m -d /photoprism
+useradd photoprism -u 1000 -G docker -o -m -d /photoprism || echo "User 'photoprism' already exists. Proceeding."
 mkdir -p /photoprism/originals /photoprism/import /photoprism/storage /photoprism/backup /photoprism/database
 
 # download service config
