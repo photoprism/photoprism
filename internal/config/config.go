@@ -172,7 +172,7 @@ func (c *Config) Init() error {
 
 	// Show swap info.
 	if TotalMem < RecommendedMem {
-		log.Infof("config: make sure your server has swap configured to prevent restarts when there are memory usage spikes")
+		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
 	c.initSettings()
