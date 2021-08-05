@@ -39,8 +39,19 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ports:
-      - "2342:2342" # [local port]:[container port]
+    # ports:
+    #  - "2342:2342" # [local port]:[container port]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
+      - "traefik.http.routers.photoprism.entrypoints=websecure"
+      - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.photoprism.tls=true"
+      - "traefik.http.routers.photoprism.tls.domains[0].main=example.com"
+      - "traefik.http.routers.photoprism.tls.domains[0].sans=*.example.com"
+      # Uncomment if your server has a public host name for HTTPS:
+      # - "traefik.http.routers.photoprism.rule=Host(`photos.example.com`)"
+      # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
@@ -72,6 +83,22 @@ services:
       - "./import:/photoprism/import"
       - "./storage:/photoprism/storage"
       - "./backup:/var/lib/photoprism"
+
+  traefik:
+    image: traefik:v2.4
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - "80"
+      - "443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik/:/data/"
+      - "./traefik.yaml:/etc/traefik/traefik.yaml"
+      - "./certs/:/certs/"
 
   mariadb:
     image: mariadb:10.5

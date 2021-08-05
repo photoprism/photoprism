@@ -1,0 +1,39 @@
+# Uncomment to enable debug mode:
+# log:
+#  level: DEBUG
+
+serversTransport:
+  insecureSkipVerify: true
+  rootCAs:
+    - "/certs/ca.crt"
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: info@example.com
+      storage: /data/letsencrypt.json
+      httpChallenge:
+        entryPoint: web
+
+providers:
+  file:
+    filename: "/certs/config.yml"
+    watch: true
+  docker:
+    exposedByDefault: false
+    watch: true
+
+api:
+  insecure: false
+  dashboard: false
