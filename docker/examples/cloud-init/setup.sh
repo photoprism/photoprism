@@ -89,6 +89,7 @@ openssl pkcs12 -export -in /photoprism/certs/cert.crt -inkey /photoprism/certs/c
 PASSWORD_PLACEHOLDER="_admin_password_"
 ADMIN_PASSWORD=$(gpg --gen-random --armor 2 6)
 echo "${ADMIN_PASSWORD}" > /root/.initial-password.txt
+chmod 600 /root/.initial-password.txt
 
 # detect public server ip address
 PUBLIC_IP=$(curl -sfSL ifconfig.me)
