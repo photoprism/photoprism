@@ -1,4 +1,4 @@
-.PHONY: build dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test install fmt upgrade start stop;
+.PHONY: build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test install fmt upgrade start stop;
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
 .NOTPARALLEL: ;          # wait for target to finish
@@ -34,6 +34,14 @@ fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
+dev: dev-npm dev-go-amd64
+dev-npm:
+	$(info Upgrading NPM in local dev environment...)
+	sudo npm update -g npm
+dev-go-amd64:
+	$(info Installing Go in local AMD64 dev environment...)
+	sudo docker/scripts/install-go.sh amd64
+	go build -v ./...
 acceptance-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
