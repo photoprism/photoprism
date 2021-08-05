@@ -774,7 +774,7 @@ export class Photo extends RestModel {
       Promise.resolve(this.setValues(r.data))
     );
   }
-
+  
   async getDuplicates() {
     this.Duplicates = await Promise.resolve(Api.get("/duplicates/" + this.mainFileHash()));
   }
