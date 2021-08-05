@@ -41,10 +41,10 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - 2342:2342 # [local port]:[container port]
+      - "2342:2342" # [local port]:[container port]
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_ORIGINALS_LIMIT: 1000               # File size limit for originals in MB (increase for high-res video)
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "none"            # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_WORKERS: 2                          # Limits the number of indexing workers to reduce system load
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)

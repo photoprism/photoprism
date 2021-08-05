@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eu
+
 if [[ -z $DOCKER_PASSWORD ]] || [[ -z $DOCKER_USERNAME ]]; then
     docker login
 fi

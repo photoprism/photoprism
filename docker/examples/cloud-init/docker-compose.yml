@@ -1,6 +1,8 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (Linux / AMD64)
+# Docker Compose config file for running PhotoPrism on cloud servers (Linux / AMD64)
+#
+# Includes Ophelia, a docker job scheduler: https://github.com/mcuadros/ofelia
 #
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
@@ -30,13 +32,10 @@ version: '3.5'
 
 services:
   photoprism:
-    # Use photoprism/photoprism:preview instead for testing preview builds:
-    image: photoprism/photoprism:latest
+    # Use photoprism/photoprism:latest instead for stable builds:
+    image: photoprism/photoprism:preview
     container_name: photoprism
-    # Only enable automatic restarts once your installation is properly
-    # configured as it otherwise may get stuck in a restart loop:
-    # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
-    # restart: unless-stopped
+    restart: always
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -53,42 +52,57 @@ services:
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables using TensorFlow for image classification
-      PHOTOPRISM_DARKTABLE_PRESETS: "true"           # Enables Darktable presets and disables concurrent RAW conversion
+      PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
-      PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # SQLite is an embedded database that doesn't require a server
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"     # MariaDB database user password
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public PhotoPrism URL
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      # You may optionally set a user / group id using environment variables if your Docker version or NAS does not
-      # support this natively (see next example):
-      # UID: 1000
-      # GID: 1000
-      # UMASK: 0000
-    # Uncomment and edit the following line to set a specific user / group id (native):
-    # user: "1000:1000"
+    user: "1000"
     volumes:
       # Your photo and video files ([local path]:[container path]):
-      - "~/Pictures:/photoprism/originals"
-      # Multiple folders can be indexed by mounting them as sub-folders of /photoprism/originals:
-      # - "/mnt/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
-      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
-      # Mounting the import folder is optional (see docs):
-      # - "~/Import:/photoprism/import"
-      # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
+      - "./originals:/photoprism/originals"
+      - "./import:/photoprism/import"
       - "./storage:/photoprism/storage"
+      - "./backup:/var/lib/photoprism"
 
-# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
-#
-#  watchtower:
-#    image: containrrr/watchtower
-#    container_name: watchtower
-#    restart: unless-stopped
-#    environment:
-#      WATCHTOWER_CLEANUP: "true"
-#      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
-#    volumes:
-#      - "/var/run/docker.sock:/var/run/docker.sock"
-#      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
+  mariadb:
+    image: mariadb:10.5
+    container_name: mariadb
+    restart: always
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+    volumes: # Don't remove permanent storage for index database files!
+      - "./database:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: photoprism
+      MYSQL_DATABASE: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: photoprism
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    restart: always
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./jobs.ini:/etc/ofelia/config.ini"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_POLL_INTERVAL: 86400 # Checks for updates every day
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
