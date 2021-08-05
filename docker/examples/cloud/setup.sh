@@ -35,10 +35,11 @@ echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
 echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # update operating system
-apt-get update && apt-get autoclean && apt-get dist-upgrade && apt-get autoremove
+apt-get update
+apt-get dist-upgrade
 
 # install dependencies
-apt-get -qq install -y --no-install-recommends apt-transport-https ca-certificates \
+apt-get -qq install --no-install-recommends apt-transport-https ca-certificates \
         curl software-properties-common openssl
 
 # install docker if needed
@@ -46,13 +47,13 @@ if ! command -v docker &> /dev/null; then
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
   apt-get update
-  apt-get -qq install -y docker-ce
+  apt-get -qq install docker-ce
 fi
 
 # install docker-compose if needed
 if ! command -v docker-compose &> /dev/null; then
   apt-get update
-  apt-get -qq install -y docker-compose
+  apt-get -qq install docker-compose
 fi
 
 # create user
@@ -102,8 +103,9 @@ curl -fsSL https://dl.photoprism.org/docker/cloud/traefik.yaml > /opt/photoprism
 # change permissions
 chown -Rf photoprism:photoprism /opt/photoprism
 
-# remove old packages
-apt-get autoclean && apt-get autoremove
+# clear package cache
+apt-get autoclean
+apt-get autoremove
 
 # start services using docker-compose
 (cd /opt/photoprism && docker-compose pull && docker-compose stop && docker-compose up --remove-orphans -d)
