@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# PhotoPrism Cloud Setup Script
+# =============================
+
 # check if user is root
 if [[ $(id -u) != "0" ]]; then
   echo "You need to be root to run this script." 1>&2
