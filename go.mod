@@ -18,36 +18,36 @@ require (
 	github.com/dustin/go-humanize v1.0.0
 	github.com/esimov/pigo v1.4.4
 	github.com/gin-contrib/gzip v0.0.3
-	github.com/gin-gonic/gin v1.7.2
+	github.com/gin-gonic/gin v1.7.3
 	github.com/go-errors/errors v1.4.0 // indirect
-	github.com/go-playground/validator/v10 v10.6.1 // indirect
+	github.com/go-playground/validator/v10 v10.8.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/open-location-code/go v0.0.0-20210504205230-1796878d947c
 	github.com/gorilla/websocket v1.4.2
-	github.com/gosimple/slug v1.9.0
+	github.com/gosimple/slug v1.10.0
 	github.com/h2non/filetype v1.1.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.16.1
-	github.com/klauspost/cpuid/v2 v2.0.8
+	github.com/klauspost/cpuid/v2 v2.0.9
 	github.com/leandro-lugaresi/hub v1.1.1
-	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/melihmucuk/geocache v0.0.0-20160621165317-521b336a001c
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.4.0
-	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
+	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
@@ -63,8 +63,8 @@ require (
 	github.com/urfave/cli v1.22.5
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
-	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
+	golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985
+	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
