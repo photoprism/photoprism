@@ -7,10 +7,10 @@ Run this script as root to install PhotoPrism on a cloud server e.g. at DigitalO
 
   bash <(curl -s https://dl.photoprism.org/docker/cloud-init/setup.sh)
 
-This may take a while to complete, depending on the performance of your server
-and its connection speed.
+This may take a while to complete, depending on the performance of your
+server and its internet connection.
 
-When done and you see no errors, please open
+When done - and you see no errors - please open
 
   http://<YOUR SERVER IP>:2342/
 
