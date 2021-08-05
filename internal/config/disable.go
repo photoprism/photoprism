@@ -49,11 +49,6 @@ func (c *Config) DisableTensorFlow() bool {
 
 // DisableFFmpeg tests if FFmpeg is disabled for video transcoding.
 func (c *Config) DisableFFmpeg() bool {
-	if LowMem && !c.options.DisableFFmpeg {
-		c.options.DisableFFmpeg = true
-		log.Warnf("config: disabled video transcoding due to memory constraints")
-	}
-
 	return c.options.DisableFFmpeg || c.FFmpegBin() == ""
 }
 
