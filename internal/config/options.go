@@ -62,11 +62,11 @@ type Options struct {
 	DisablePlaces      bool   `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableExifTool    bool   `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
 	DisableTensorFlow  bool   `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
+	DisableFFmpeg      bool   `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
 	DisableDarktable   bool   `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
 	DisableRawtherapee bool   `yaml:"DisableRawtherapee" json:"DisableRawtherapee" flag:"disable-rawtherapee"`
 	DisableSips        bool   `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
 	DisableHeifConvert bool   `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
-	DisableFFmpeg      bool   `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
 	DetectNSFW         bool   `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	UploadNSFW         bool   `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
 	LogLevel           string `yaml:"LogLevel" json:"-" flag:"log-level"`

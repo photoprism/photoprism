@@ -39,16 +39,41 @@ func (c *Config) DisableExifTool() bool {
 
 // DisableTensorFlow tests if TensorFlow should not be used for image classification (or anything else).
 func (c *Config) DisableTensorFlow() bool {
+	if LowMem && !c.options.DisableTensorFlow {
+		c.options.DisableTensorFlow = true
+		log.Warnf("config: disabled image classification due to memory constraints")
+	}
+
 	return c.options.DisableTensorFlow
+}
+
+// DisableFFmpeg tests if FFmpeg is disabled for video transcoding.
+func (c *Config) DisableFFmpeg() bool {
+	if LowMem && !c.options.DisableFFmpeg {
+		c.options.DisableFFmpeg = true
+		log.Warnf("config: disabled video transcoding due to memory constraints")
+	}
+
+	return c.options.DisableFFmpeg || c.FFmpegBin() == ""
 }
 
 // DisableDarktable tests if Darktable is disabled for RAW conversion.
 func (c *Config) DisableDarktable() bool {
+	if LowMem && !c.options.DisableDarktable {
+		c.options.DisableDarktable = true
+		log.Warnf("config: disabled file conversion with Darktable due to memory constraints")
+	}
+
 	return c.options.DisableDarktable || c.DarktableBin() == ""
 }
 
 // DisableRawtherapee tests if Rawtherapee is disabled for RAW conversion.
 func (c *Config) DisableRawtherapee() bool {
+	if LowMem && !c.options.DisableRawtherapee {
+		c.options.DisableRawtherapee = true
+		log.Warnf("config: disabled file conversion with RawTherapee due to memory constraints")
+	}
+
 	return c.options.DisableRawtherapee || c.RawtherapeeBin() == ""
 }
 
@@ -60,9 +85,4 @@ func (c *Config) DisableSips() bool {
 // DisableHeifConvert tests if heif-convert is disabled for HEIF conversion.
 func (c *Config) DisableHeifConvert() bool {
 	return c.options.DisableHeifConvert || c.HeifConvertBin() == ""
-}
-
-// DisableFFmpeg tests if FFmpeg is disabled for video transcoding.
-func (c *Config) DisableFFmpeg() bool {
-	return c.options.DisableFFmpeg || c.FFmpegBin() == ""
 }

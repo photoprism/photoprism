@@ -13,6 +13,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize"
+
+	"github.com/pbnjay/memory"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -34,9 +38,23 @@ import (
 
 var log = event.Log
 var once sync.Once
+var LowMem = false
+var TotalMem uint64
 
 const ApiUri = "/api/v1"
 const StaticUri = "/static"
+
+// Megabyte in bytes.
+const Megabyte = 1024 * 1024
+
+// Gigabyte in bytes.
+const Gigabyte = Megabyte * 1024
+
+// MinMem is the minimum amount of system memory required.
+const MinMem = 3 * Gigabyte
+
+// RecommendedMem is the recommended amount of system memory.
+const RecommendedMem = 5 * Gigabyte
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -50,6 +68,9 @@ type Config struct {
 }
 
 func init() {
+	TotalMem = memory.TotalMemory()
+	LowMem = TotalMem < MinMem
+
 	// Init public thumb sizes for use in client apps.
 	for i := len(thumb.DefaultTypes) - 1; i >= 0; i-- {
 		size := thumb.DefaultTypes[i]
@@ -139,7 +160,19 @@ func (c *Config) Init() error {
 	}
 
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
-		log.Debugf("config: running on %s", txt.Quote(cpuid.CPU.BrandName))
+		log.Debugf("config: running on %s, %s memory detected", txt.Quote(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+	}
+
+	// Check memory requirements.
+	if TotalMem < 128*Megabyte {
+		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
+	} else if LowMem {
+		log.Warnf(`config: less than %d GB of memory detected, server may become unstable or unresponsive,`, MinMem/Gigabyte)
+	}
+
+	// Show swap info.
+	if TotalMem < RecommendedMem {
+		log.Infof("config: make sure your server has swap configured to prevent restarts when there are memory usage spikes")
 	}
 
 	c.initSettings()
@@ -382,6 +415,11 @@ func (c *Config) Shutdown() {
 
 // Workers returns the number of workers e.g. for indexing files.
 func (c *Config) Workers() int {
+	// Use one worker on systems with less than the recommended amount of memory.
+	if TotalMem < RecommendedMem {
+		return 1
+	}
+
 	// NumCPU returns the number of logical CPU cores.
 	cores := runtime.NumCPU()
 
