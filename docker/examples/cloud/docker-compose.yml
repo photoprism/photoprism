@@ -1,34 +1,72 @@
 version: '3.5'
 
-# Docker Compose config file for running PhotoPrism on cloud servers (Linux / AMD64)
+#  PhotoPrism for Cloud Servers running Ubuntu 20.04 LTS (Focal Fossa)
+#  ===================================================================
 #
-# Includes Ophelia, a docker job scheduler: https://github.com/mcuadros/ofelia
+#  Run this script as root to install PhotoPrism on a cloud server e.g. at DigitalOcean:
 #
-# Documentation : https://docs.photoprism.org/getting-started/docker-compose/
-# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
+#    bash <(curl -s https://dl.photoprism.org/docker/cloud/setup.sh)
 #
-# Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
-# e.g. when running PhotoPrism on a public server outside your home network.
+#  This may take a while to complete, depending on the performance of your
+#  server and its internet connection.
 #
-# ------------------------------------------------------------------
-# DOCKER COMPOSE COMMAND REFERENCE
-# ------------------------------------------------------------------
-# Start    | docker-compose up -d
-# Stop     | docker-compose stop
-# Update   | docker-compose pull
-# Logs     | docker-compose logs --tail=25 -f
-# Terminal | docker-compose exec photoprism bash
-# Help     | docker-compose exec photoprism photoprism help
-# Config   | docker-compose exec photoprism photoprism config
-# Reset    | docker-compose exec photoprism photoprism reset
-# Backup   | docker-compose exec photoprism photoprism backup -a -i
-# Restore  | docker-compose exec photoprism photoprism restore -a -i
-# Index    | docker-compose exec photoprism photoprism index
-# Reindex  | docker-compose exec photoprism photoprism index -a
-# Import   | docker-compose exec photoprism photoprism import
-# -------------------------------------------------------------------
-# Note: All commands may have to be prefixed with "sudo" when not running as root.
-#       This will change the home directory "~" to "/root" in your configuration.
+#  When done - and you see no errors - please open
+#
+#    https://<YOUR SERVER IP>/
+#
+#  in a Web browser and log in using the initial admin password shown
+#  by the script. You may also see it by running
+#
+#    cat /root/.initial-password.txt
+#
+#  in a terminal.
+#
+#  Data and all config files related to PhotoPrism can be found in
+#
+#    /opt/photoprism
+#
+#  The main docker-compose config file for changing config options is
+#
+#    /opt/photoprism/docker-compose.yml
+#
+#  The server is running as "photoprism" (UID 1000) by default. There's no need
+#  to change defaults unless you experience conflicts with other services running
+#  on the same server. For example, you may need to disable the Traefik reverse
+#  proxy as the ports 80 and 443 can only be used by a single web server / proxy.
+#
+#  Configuring multiple apps on the same server is beyond the scope of this base
+#  config and for advanced users only.
+#
+#  This config includes Ophelia, a docker job scheduler:
+#
+#    https://github.com/mcuadros/ofelia
+#
+#  See jobs.ini for details.
+#
+#  SYSTEM REQUIREMENTS
+#  ------------------------------------------------------------------
+#
+#  We recommend hosting PhotoPrism on a server with at least 2 cores and
+#  4 GB of memory. Beyond these minimum requirements, the amount of RAM
+#  should match the number of cores. Indexing large photo and video
+#  collections significantly benefits from fast, local SSD storage.
+#
+#  DOCKER COMPOSE COMMAND REFERENCE
+#  ------------------------------------------------------------------
+#  Start    | docker-compose up -d
+#  Stop     | docker-compose stop
+#  Update   | docker-compose pull
+#  Logs     | docker-compose logs --tail=25 -f
+#  Terminal | docker-compose exec photoprism bash
+#  Help     | docker-compose exec photoprism photoprism help
+#  Config   | docker-compose exec photoprism photoprism config
+#  Reset    | docker-compose exec photoprism photoprism reset
+#  Backup   | docker-compose exec photoprism photoprism backup -a -i
+#  Restore  | docker-compose exec photoprism photoprism restore -a -i
+#  Index    | docker-compose exec photoprism photoprism index
+#  Reindex  | docker-compose exec photoprism photoprism index -a
+#  Import   | docker-compose exec photoprism photoprism import
+#  -------------------------------------------------------------------
 
 services:
   photoprism:
@@ -39,6 +77,7 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    # Don't expose port when running behind Traefik reverse proxy!
     # ports:
     #  - "2342:2342" # [local port]:[container port]
     labels:
