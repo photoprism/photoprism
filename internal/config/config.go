@@ -45,13 +45,13 @@ const ApiUri = "/api/v1"
 const StaticUri = "/static"
 
 // Megabyte in bytes.
-const Megabyte = 1024 * 1024
+const Megabyte = 1000 * 1000
 
 // Gigabyte in bytes.
-const Gigabyte = Megabyte * 1024
+const Gigabyte = Megabyte * 1000
 
 // MinMem is the minimum amount of system memory required.
-const MinMem = 3 * Gigabyte
+const MinMem = 2 * Gigabyte
 
 // RecommendedMem is the recommended amount of system memory.
 const RecommendedMem = 5 * Gigabyte
