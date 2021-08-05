@@ -3,17 +3,20 @@ PhotoPrism for Cloud Servers running Ubuntu 20.04 LTS (Focal Fossa)
 
 Attention: This config example is under development, and not stable yet!
 
-Run this script to install PhotoPrism on a cloud server e.g. at DigitalOcean:
+Run this script as root to install PhotoPrism on a cloud server e.g. at DigitalOcean:
 
   bash <(curl -s https://dl.photoprism.org/docker/cloud-init/setup.sh)
 
-This may take a while to complete. Then open
+This may take a while to complete, depending on the performance of your server
+and its connection speed.
+
+When done and you see no errors, please open
 
   http://<YOUR SERVER IP>:2342/
 
-in a Web browser to log in using the initial admin password "insecure".
-Please immediately change it in Settings to protect your new PhotoPrism
-installation.
+in a Web browser and log in using the initial admin password "insecure".
+
+Now change the default password in Settings to protect your server.
 
 All files related to PhotoPrism can be found in /photoprism. The server
 will be running as "photoprism" (UID 1000). There should be no need to
