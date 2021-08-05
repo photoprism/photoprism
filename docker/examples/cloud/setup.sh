@@ -32,28 +32,23 @@ echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
 echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # update operating system
-apt-get update && apt-get autoclean && apt-get upgrade
+apt-get update && apt-get autoclean && apt-get dist-upgrade && apt-get autoremove
 
 # install dependencies
 apt-get -qq install -y --no-install-recommends apt-transport-https ca-certificates \
         curl software-properties-common openssl
 
 # install docker if needed
-if ! command -v docker &> /dev/null
-then
+if ! command -v docker &> /dev/null; then
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
   apt-get update
-  apt-cache policy docker-ce
   apt-get -qq install -y docker-ce
-  systemctl status docker
 fi
 
 # install docker-compose if needed
-if ! command -v docker-compose &> /dev/null
-then
+if ! command -v docker-compose &> /dev/null; then
   apt-get update
-  apt-cache policy docker-ce
   apt-get -qq install -y docker-compose
 fi
 
