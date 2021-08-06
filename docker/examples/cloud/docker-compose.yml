@@ -53,6 +53,9 @@ version: '3.5'
 #  should match the number of cores. Indexing large photo and video
 #  collections significantly benefits from fast, local SSD storage.
 #
+#  RAW file conversion and automatic image classification using TensorFlow
+#  will be disabled on servers with less than 2 GB of physical memory.
+#
 #  DOCKER COMPOSE COMMAND REFERENCE
 #  ------------------------------------------------------------------
 #  Start    | docker-compose up -d
