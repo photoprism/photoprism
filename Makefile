@@ -1,4 +1,6 @@
-.PHONY: build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test install fmt upgrade start stop;
+.PHONY: all build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js \
+		test test-js test-go install generate fmt fmt-go fmt-imports fmt-js upgrade start stop \
+		terminal root-terminal packer-digitalocean acceptance clean tidy;
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
 .NOTPARALLEL: ;          # wait for target to finish
@@ -201,6 +203,9 @@ docker-webdav:
 	docker pull --platform=arm64 golang:1
 	docker pull --platform=arm golang:1
 	scripts/docker-buildx.sh webdav linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+packer-digitalocean:
+	$(info Buildinng DigitalOcean marketplace image...)
+	(cd ./docker/examples/cloud && packer build digitalocean.json)
 lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:

@@ -1,10 +1,10 @@
 {
   "variables": {
     "do_token": "{{env `DIGITALOCEAN_TOKEN`}}",
-    "image_name": "photoprism-{{timestamp}}",
+    "image_name": "photoprism-ce-marketplace-{{timestamp}}",
     "apt_packages": "software-properties-common apt-transport-https ca-certificates openssl ufw curl",
     "application_name": "PhotoPrism",
-    "application_version": "{{timestamp}}"
+    "application_version": "latest"
   },
   "sensitive-variables": ["do_token"],
   "builders": [
@@ -55,8 +55,6 @@
     {
       "type": "shell",
       "environment_vars": [
-        "application_name={{user `application_name`}}",
-        "application_version={{user `application_version`}}",
         "DEBIAN_FRONTEND=noninteractive",
         "LC_ALL=C",
         "LANG=en_US.UTF-8",
