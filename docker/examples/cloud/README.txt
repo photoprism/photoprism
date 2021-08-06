@@ -13,11 +13,13 @@ When done - and you see no errors - please open
   https://<YOUR SERVER IP>/
 
 in a Web browser and log in using the initial admin password shown
-by the script. You may also see it by running
+by the script. You may also see the initial password by running
 
   cat /root/.initial-password.txt
 
-in a terminal.
+as root on your server. To open a terminal:
+
+  ssh root@<YOUR SERVER IP>
 
 Data and all config files related to PhotoPrism can be found in
 
