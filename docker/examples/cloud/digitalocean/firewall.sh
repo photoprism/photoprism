@@ -9,4 +9,6 @@ ufw default allow outgoing
 ufw allow ssh
 ufw allow http
 ufw allow https
+ufw logging off
+rm -f /var/log/ufw.log
 ufw --force enable
