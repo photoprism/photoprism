@@ -75,8 +75,8 @@ version: '3.5'
 
 services:
   photoprism:
-    # Use photoprism/photoprism:latest instead for stable builds:
-    image: photoprism/photoprism:preview
+    # Use photoprism/photoprism:preview instead for testing preview builds:
+    image: photoprism/photoprism:latest
     container_name: photoprism
     restart: always
     security_opt:
@@ -88,15 +88,18 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
-      - "traefik.http.routers.photoprism.entrypoints=websecure"
-      - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
       - "traefik.http.routers.photoprism.tls=true"
+      - "traefik.http.routers.photoprism.entrypoints=websecure"
+      # !! UNCOMMENT when using Let's Encrypt with a public host name !!
+      # - "traefik.http.routers.photoprism.rule=Host(`custom.domain.com`)"
+      # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
+      # !! REMOVE default route when using Let's Encrypt / domain based routing !!
+      - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
+      # !! REMOVE both for Let's Encrypt with HTTP challenge (DNS challenge supports wildcards) !!
       - "traefik.http.routers.photoprism.tls.domains[0].main=example.com"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.example.com"
-      # Uncomment if your server has a public host name for HTTPS:
-      # - "traefik.http.routers.photoprism.rule=Host(`photos.example.com`)"
-      # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
     environment:
+      # !! UPDATE site URL when server has a public domain name !!
       PHOTOPRISM_SITE_URL: "https://_public_ip_/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
