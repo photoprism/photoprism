@@ -22,7 +22,7 @@
 serversTransport:
   # Don't verify internal HTTPS certs:
   insecureSkipVerify: true
-  # !! REMOVE when using Let's Encrypt as HTTPS cert resolver !!
+  # !! REMOVE when using Let's Encrypt HTTPS !!
   rootCAs:
     - "/certs/ca.crt"
 
@@ -42,14 +42,14 @@ certificatesResolvers:
   myresolver:
     # See https://doc.traefik.io/traefik/https/acme/
     acme:
-      # !! REPLACE example email with your actual email address !!
+      # !! REPLACE "info@example.com" with your actual email address for Let's Encrypt HTTPS !!
       email: info@example.com
       storage: /data/letsencrypt.json
       httpChallenge:
         entryPoint: web
 
 providers:
-  # !! REMOVE file provider when using Let's Encrypt as HTTPS cert resolver !!
+  # !! REMOVE file provider when using Let's Encrypt HTTPS !!
   file:
     filename: "/certs/config.yml"
     watch: true
