@@ -47,24 +47,26 @@ collections significantly benefits from fast, local SSD storage.
 RAW file conversion and automatic image classification using TensorFlow
 will be disabled on servers with less than 2 GB of physical memory.
 
-## Using Let's Encrypt as HTTPS certificate resolver ##
+## Using Let's Encrypt HTTPS certificates ##
 
 By default, a self-signed certificate will be used for HTTPS connections.
 Browsers are going to show a security warning because of that. Depending
 on your settings, they may also refuse connecting at all.
 
 To get an official, free HTTPS certificate from Let's Encrypt, your server
-needs a fully  qualified public domain name first, e.g. "photos.yourdomain.com".
-You may add a static DNS entry (on DigitalOcean go to Networking > Domains),
-or use a Dynamic DNS service of your choice.
+needs a fully qualified public domain name, e.g. "photos.yourdomain.com".
+
+You may add a static DNS entry (on DigitalOcean go to Networking > Domains)
+for this, or use a Dynamic DNS service of your choice.
 
 Once your server has a public domain name, please disable the self-signed
 certificate and enable domain based routing in docker-compose.yml and
 traefik.yaml (see inline instructions in !! UPPERCASE !!):
 
   ssh root@<YOUR SERVER IP>
-  nano /opt/photoprism/docker-compose.yml
-  nano /opt/photoprism/traefik.yaml
+  cd /opt/photoprism
+  nano docker-compose.yml
+  nano traefik.yaml
 
 Then restart services in a terminal for the changes to take effect:
 
@@ -74,3 +76,9 @@ Then restart services in a terminal for the changes to take effect:
 To check logs for errors:
 
   docker-compose logs -f
+
+If you see a "letsencrypt.json" file permission error:
+
+  chmod 600 /opt/photoprism/traefik/letsencrypt.json
+  docker-compose stop
+  docker-compose up -d
