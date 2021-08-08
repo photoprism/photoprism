@@ -1,12 +1,12 @@
 # Getting Started
 
-It may take a few minutes until your Droplet is provisioned and all services have been initialized. You may then access your instance by opening the following URL in a Web browser (it will show a warning while the self-signed HTTPS certificate is used - see below for how to use Let's Encrypt):
+It may take a few minutes until your Droplet is provisioned and all services have been initialized. You may then access your instance by opening the following URL in a Web browser (see "Using Let's Encrypt HTTPS" for how to get a valid certificate):
 
 ```
 https://YOUR-SERVER-IP/
 ```
 
-You will see the initial admin password when running
+You'll see the initial admin password when running
 
 ```
 cat /root/.initial-password.txt
@@ -34,7 +34,7 @@ The server is running as "photoprism" (UID 1000) by default.
 
 ## System Requirements
 
-We recommend running PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending an how many and what types of files you upload.
+We recommend running PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending on how many and what types of files you upload.
 
 ## Using Let's Encrypt HTTPS
 
@@ -76,10 +76,6 @@ Note the first request may still fail while Traefik gets and installs the new ce
 - MariaDB 10.5, GPL 2
 - Ofelia 0.3.4, MIT
 - Watchtower 1.3, Apache 2
-
-## Summary
-
-Open-Source Photo Management
 
 ## Description
 
