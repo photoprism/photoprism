@@ -82,3 +82,10 @@ If you see a "letsencrypt.json" file permission error:
   chmod 600 /opt/photoprism/traefik/letsencrypt.json
   docker-compose stop
   docker-compose up -d
+
+You should now be able to access your instance without security warnings:
+
+  https://photos.yourdomain.com/
+
+Note the first request may still fail while Traefik gets and installs the
+new certificate. Try again after 30 seconds.

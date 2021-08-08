@@ -46,7 +46,7 @@ version: '3.5'
 #  See jobs.ini for details.
 #
 #  SYSTEM REQUIREMENTS
-#  ------------------------------------------------------------------
+#  -------------------------------------------------------------------------
 #
 #  We recommend hosting PhotoPrism on a server with at least 2 cores and
 #  4 GB of memory. Beyond these minimum requirements, the amount of RAM
@@ -57,7 +57,7 @@ version: '3.5'
 #  will be disabled on servers with less than 2 GB of physical memory.
 #
 #  DOCKER COMPOSE COMMAND REFERENCE
-#  ------------------------------------------------------------------
+#  -------------------------------------------------------------------------
 #  Start    | docker-compose up -d
 #  Stop     | docker-compose stop
 #  Update   | docker-compose pull
@@ -71,7 +71,23 @@ version: '3.5'
 #  Index    | docker-compose exec photoprism photoprism index
 #  Reindex  | docker-compose exec photoprism photoprism index -a
 #  Import   | docker-compose exec photoprism photoprism import
-#  -------------------------------------------------------------------
+#
+#  USING LET'S ENCRYPT HTTPS CERTIFICATES
+#  -------------------------------------------------------------------------
+#
+#  If your server has a public domain name, please disable the self-signed
+#  certificate and enable domain based routing in docker-compose.yml and
+#  traefik.yaml (see inline instructions in !! UPPERCASE !!):
+#
+#    ssh root@<YOUR SERVER IP>
+#    cd /opt/photoprism
+#    nano docker-compose.yml
+#    nano traefik.yaml
+#    docker-compose stop
+#    docker-compose up -d
+#
+#  You should now be able to access your instance without security warnings.
+#  -------------------------------------------------------------------------
 
 services:
   photoprism:
@@ -90,16 +106,17 @@ services:
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.routers.photoprism.tls=true"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
-      # !! UNCOMMENT when using Let's Encrypt with a public host name !!
-      # - "traefik.http.routers.photoprism.rule=Host(`custom.domain.com`)"
-      # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
-      # !! REMOVE default route when using Let's Encrypt / domain based routing !!
+      # !! REMOVE default route if your server has a public domain name !!
       - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
-      # !! REMOVE both for Let's Encrypt with HTTP challenge (DNS challenge supports wildcards) !!
+      # !! UNCOMMENT and CHANGE to set the public domain name !!
+      # - "traefik.http.routers.photoprism.rule=Host(`custom.domain.com`)"
+      # !! UNCOMMENT to enable Let's Encrypt HTTPS certificates !!
+      # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
+      # !! REMOVE both for Let's Encrypt with default HTTP challenge (DNS challenge supports wildcards) !!
       - "traefik.http.routers.photoprism.tls.domains[0].main=example.com"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.example.com"
     environment:
-      # !! UPDATE site URL when server has a public domain name !!
+      # !! UPDATE site url if your server has a public domain name !!
       PHOTOPRISM_SITE_URL: "https://_public_ip_/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
