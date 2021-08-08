@@ -1,4 +1,4 @@
-#  USING LET'S ENCRYPT HTTPS CERTIFICATES
+#  USING LET'S ENCRYPT HTTPS
 #  -------------------------------------------------------------------------
 #
 #  If your server has a public domain name, please disable the self-signed
@@ -20,7 +20,7 @@
 #  level: DEBUG
 
 serversTransport:
-  # Don't verify internal HTTPS certs:
+  # Required to proxy services with self-signed HTTPS certificates:
   insecureSkipVerify: true
   # !! REMOVE when using Let's Encrypt HTTPS !!
   rootCAs:

@@ -47,7 +47,7 @@ collections significantly benefits from fast, local SSD storage.
 RAW file conversion and automatic image classification using TensorFlow
 will be disabled on servers with less than 2 GB of physical memory.
 
-## Using Let's Encrypt HTTPS certificates ##
+## Using Let's Encrypt HTTPS ##
 
 By default, a self-signed certificate will be used for HTTPS connections.
 Browsers are going to show a security warning because of that. Depending

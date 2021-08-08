@@ -72,7 +72,7 @@ version: '3.5'
 #  Reindex  | docker-compose exec photoprism photoprism index -a
 #  Import   | docker-compose exec photoprism photoprism import
 #
-#  USING LET'S ENCRYPT HTTPS CERTIFICATES
+#  USING LET'S ENCRYPT HTTPS
 #  -------------------------------------------------------------------------
 #
 #  If your server has a public domain name, please disable the self-signed
@@ -110,9 +110,9 @@ services:
       - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
       # !! UNCOMMENT and CHANGE to set the public domain name !!
       # - "traefik.http.routers.photoprism.rule=Host(`custom.domain.com`)"
-      # !! UNCOMMENT to enable Let's Encrypt HTTPS certificates !!
+      # !! UNCOMMENT to enable Let's Encrypt HTTPS !!
       # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
-      # !! REMOVE both for Let's Encrypt with default HTTP challenge (DNS challenge supports wildcards) !!
+      # !! REMOVE both for Let's Encrypt HTTPS with default HTTP challenge (DNS challenge supports wildcards) !!
       - "traefik.http.routers.photoprism.tls.domains[0].main=example.com"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.example.com"
     environment:
