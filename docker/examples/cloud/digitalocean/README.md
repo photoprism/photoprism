@@ -1,20 +1,23 @@
 PhotoPrism: Open-Source Photo Management 1-Click App
 ====================================================
 
-## Description ##
+DESCRIPTION
+----------------------------------------------------
 
 PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to solutions that force you to upload your visual memories to the cloud!
 
-## Software Included ##
+SOFTWARE INCLUDED
+----------------------------------------------------
 
-- PhotoPrism latest, AGPL 3
-- Docker CE 20.10, Apache 2
-- Traefik 2.4, MIT
-- MariaDB 10.5, GPL 2
-- Ofelia 0.3.4, MIT
-- Watchtower 1.3, Apache 2
+- [PhotoPrism latest](https://docs.photoprism.org/release-notes/), AGPL 3
+- [Docker CE 20.10](https://docs.docker.com/engine/release-notes/), Apache 2
+- [Traefik 2.4](https://github.com/traefik/traefik/releases), MIT
+- [MariaDB 10.5](https://mariadb.com/kb/en/release-notes/), GPL 2
+- [Ofelia 0.3.4](https://github.com/mcuadros/ofelia/releases), MIT
+- [Watchtower 1.3](https://github.com/containrrr/watchtower/releases), Apache 2
 
-# Getting Started
+GETTING STARTED
+----------------------------------------------------
 
 It may take a few minutes until your Droplet is provisioned and all services have been initialized. You may then access your instance by opening the following URL in a Web browser (see "Using Let's Encrypt HTTPS" for how to get a valid certificate):
 
@@ -48,11 +51,11 @@ The main docker-compose config file for changing config options is
 
 The server is running as "photoprism" (UID 1000) by default.
 
-## System Requirements
+## System Requirements ##
 
 We recommend running PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending on how many and what types of files you upload.
 
-## Using Let's Encrypt HTTPS
+## Using Let's Encrypt HTTPS ##
 
 By default, a self-signed certificate will be used for HTTPS connections. Browsers are going to show a security warning because of that. Depending on your settings, they may also refuse connecting at all.
 
