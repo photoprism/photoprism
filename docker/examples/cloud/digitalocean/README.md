@@ -1,3 +1,19 @@
+PhotoPrism: Open-Source Photo Management 1-Click App
+====================================================
+
+## Description ##
+
+PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to solutions that force you to upload your visual memories to the cloud!
+
+## Software Included ##
+
+- PhotoPrism latest, AGPL 3
+- Docker CE 20.10, Apache 2
+- Traefik 2.4, MIT
+- MariaDB 10.5, GPL 2
+- Ofelia 0.3.4, MIT
+- Watchtower 1.3, Apache 2
+
 # Getting Started
 
 It may take a few minutes until your Droplet is provisioned and all services have been initialized. You may then access your instance by opening the following URL in a Web browser (see "Using Let's Encrypt HTTPS" for how to get a valid certificate):
@@ -67,17 +83,3 @@ https://photos.yourdomain.com/
 ```
 
 Note the first request may still fail while Traefik gets and installs the new certificate. Try again after 30 seconds.
-
-## Software Included
-
-- PhotoPrism latest, AGPL 3
-- Docker CE 20.10, Apache 2
-- Traefik 2.4, MIT
-- MariaDB 10.5, GPL 2
-- Ofelia 0.3.4, MIT
-- Watchtower 1.3, Apache 2
-
-## Description
-
-PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to solutions that force you to upload your visual memories to the cloud!
-
