@@ -58,7 +58,7 @@ providers:
     exposedByDefault: false
     watch: true
 
-# Traefik API & dashboard are disabled by default for security reasons:
+# Disable API & Dashboard by default, please read Traefik docs before enabling this:
 api:
   insecure: false
   dashboard: false
