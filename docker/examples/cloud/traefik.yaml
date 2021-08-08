@@ -42,8 +42,8 @@ certificatesResolvers:
   myresolver:
     # See https://doc.traefik.io/traefik/https/acme/
     acme:
-      # !! REPLACE "info@example.com" with your actual email address for Let's Encrypt HTTPS !!
-      email: info@example.com
+      # !! REPLACE "info@yourdomain.com" with your actual email address for Let's Encrypt HTTPS !!
+      email: info@yourdomain.com
       storage: /data/letsencrypt.json
       httpChallenge:
         entryPoint: web

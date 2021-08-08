@@ -109,14 +109,14 @@ services:
       # !! REMOVE default route if your server has a public domain name !!
       - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
       # !! UNCOMMENT and CHANGE to set the public domain name !!
-      # - "traefik.http.routers.photoprism.rule=Host(`custom.domain.com`)"
+      # - "traefik.http.routers.photoprism.rule=Host(`photos.yourdomain.com`)"
       # !! UNCOMMENT to enable Let's Encrypt HTTPS !!
       # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
       # !! REMOVE both for Let's Encrypt HTTPS with default HTTP challenge (DNS challenge supports wildcards) !!
       - "traefik.http.routers.photoprism.tls.domains[0].main=example.com"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.example.com"
     environment:
-      # !! CHANGE site url if your server has a public domain name !!
+      # !! CHANGE site url if your server has a public domain name e.g. "https://photos.yourdomain.com/" !!
       PHOTOPRISM_SITE_URL: "https://_public_ip_/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
