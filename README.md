@@ -45,6 +45,8 @@ We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB
 Beyond these minimum requirements, the amount of RAM should match the number of cores.
 Indexing large photo and video collections significantly benefits from fast, local SSD storage.
 
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/photoprism/photoprism/tree/develop&refcode=f9725a28bb6b)
+
 ## Roadmap ##
 
 Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.

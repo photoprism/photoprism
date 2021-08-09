@@ -1,0 +1,55 @@
+spec:
+  name: "photoprism"
+  services:
+    - name: "photoprism-ce"
+      image:
+        registry_type: "DOCKER_HUB"
+        registry: "photoprism"
+        repository: "photoprism"
+        tag: "preview" # Change to "stable" for older, well tested builds
+      http_port: 2342
+      routes:
+        - path: "/"
+      instance_size_slug: "basic-xs"
+      envs:
+        - key: "PHOTOPRISM_SITE_URL"
+          value: ${APP_URL}
+        - key: "PHOTOPRISM_ADMIN_PASSWORD"
+          value: "insecure" # PLEASE CHANGE: Your initial admin password (min 4 characters)
+          type: SECRET
+        - key: "PHOTOPRISM_ORIGINALS_LIMIT"
+          value: "5000" # File size limit for originals in MB (increase for high-res video)
+        - key: "PHOTOPRISM_HTTP_COMPRESSION"
+          value: "gzip" # Improves transfer speed and bandwidth utilization (none or gzip)
+        - key: "PHOTOPRISM_DEBUG"
+          value: "false" # Run in debug mode (shows additional log messages)
+        - key: "PHOTOPRISM_PUBLIC"
+          value: "false" # No authentication required (disables password protection)
+        - key: "PHOTOPRISM_READONLY"
+          value: "false" # Don't modify originals directory (reduced functionality)
+        - key: "PHOTOPRISM_EXPERIMENTAL"
+          value: "false" # Enables experimental features
+        - key: "PHOTOPRISM_DISABLE_WEBDAV"
+          value: "false" # Disables built-in WebDAV server
+        - key: "PHOTOPRISM_DISABLE_SETTINGS"
+          value: "false" # Disables Settings in Web UI
+        - key: "PHOTOPRISM_DISABLE_TENSORFLOW"
+          value: "false" # Disables using TensorFlow for image classification
+        - key: "PHOTOPRISM_DETECT_NSFW"
+          value: "false" # Flag photos as private that MAY be offensive (requires TensorFlow)
+        - key: "PHOTOPRISM_UPLOAD_NSFW"
+          value: "true" # Allow uploads that MAY be offensive
+        - key: "PHOTOPRISM_DATABASE_DRIVER"
+          value: "mysql"
+        - key: "PHOTOPRISM_DATABASE_SERVER"
+          value: ${photoprism-db.HOSTNAME}
+        - key: "PHOTOPRISM_DATABASE_NAME"
+          value: ${photoprism-db.DATABASE}
+        - key: "PHOTOPRISM_DATABASE_USER"
+          value: ${photoprism-db.USERNAME}
+        - key: "PHOTOPRISM_DATABASE_PASSWORD"
+          value: ${photoprism-db.PASSWORD}"
+          type: SECRET
+    databases:
+      - name: "photoprism-db"
+        engine: "MySQL"
