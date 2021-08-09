@@ -1,7 +1,10 @@
 spec:
-  name: "photoprism"
+  name: "photoprism-ce"
+  databases:
+    - name: db
+      engine: "MySQL"
   services:
-    - name: "photoprism-ce"
+    - name: photoprism
       image:
         registry_type: "DOCKER_HUB"
         registry: "photoprism"
@@ -42,14 +45,10 @@ spec:
         - key: "PHOTOPRISM_DATABASE_DRIVER"
           value: "mysql"
         - key: "PHOTOPRISM_DATABASE_SERVER"
-          value: ${photoprism-db.HOSTNAME}
+          value: ${db.HOSTNAME}
         - key: "PHOTOPRISM_DATABASE_NAME"
-          value: ${photoprism-db.DATABASE}
+          value: ${db.DATABASE}
         - key: "PHOTOPRISM_DATABASE_USER"
-          value: ${photoprism-db.USERNAME}
+          value: ${db.USERNAME}
         - key: "PHOTOPRISM_DATABASE_PASSWORD"
-          value: ${photoprism-db.PASSWORD}"
-          type: SECRET
-    databases:
-      - name: "photoprism-db"
-        engine: "MySQL"
+          value: ${db.PASSWORD}"
