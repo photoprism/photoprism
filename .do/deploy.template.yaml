@@ -2,7 +2,6 @@ spec:
   name: "photoprism-ce"
   databases:
     - name: db
-      engine: "MYSQL"
   services:
     - name: photoprism
       image:
