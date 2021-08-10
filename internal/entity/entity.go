@@ -55,6 +55,7 @@ var Entities = Types{
 	"photos_keywords": &PhotoKeyword{},
 	"passwords":       &Password{},
 	"links":           &Link{},
+	"markers_dev":     &Marker{},
 }
 
 type RowCount struct {

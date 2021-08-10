@@ -143,8 +143,6 @@ rapeseed:
 fashion:
   label: portrait
   threshold: 0.5
-  categories:
-    - portrait
 
 vestment:
   see: fashion
@@ -4098,6 +4096,10 @@ portrait:
   threshold: 0.3
   categories:
     - people
+
+people:
+  label: people
+  threshold: 0.3
 
 shower cap:
   label: portrait

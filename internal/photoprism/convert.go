@@ -144,7 +144,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 
 	log.Debugf("exiftool: extracting metadata from %s", relName)
 
-	cmd := exec.Command(c.conf.ExifToolBin(), "-j", f.FileName())
+	cmd := exec.Command(c.conf.ExifToolBin(), "-m", "-api", "LargeFileSupport", "-j", f.FileName())
 
 	// Fetch command output.
 	var out bytes.Buffer
@@ -176,16 +176,21 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 
 // JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
 func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
+	if f == nil {
+		return result, useMutex, fmt.Errorf("convert: file is nil - you might have found a bug")
+	}
+
 	size := strconv.Itoa(c.conf.JpegSize())
+	fileExt := f.Extension()
 
 	if f.IsRaw() {
-		if c.conf.SipsBin() != "" {
+		if c.conf.SipsEnabled() {
 			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
-		} else if c.conf.DarktableBin() != "" && f.Extension() != ".cr3" {
+		} else if c.conf.DarktableEnabled() && fileExt != fs.CanonCr3Ext && fileExt != fs.FujiRawExt {
 			var args []string
 
 			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
-			if c.conf.DarktablePresets() {
+			if c.conf.RawPresets() {
 				useMutex = true
 				args = []string{"--width", size, "--height", size, f.FileName()}
 			} else {
@@ -200,19 +205,19 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 			}
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
-		} else if c.conf.RawtherapeeBin() != "" {
+		} else if c.conf.RawtherapeeEnabled() {
 			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
-			args := []string{"-o", jpegName, "-p", profile, "-d", jpegQuality, "-js3", "-b8", "-c", f.FileName()}
+			args := []string{"-o", jpegName, "-p", profile, "-s", "-d", jpegQuality, "-js3", "-b8", "-c", f.FileName()}
 
 			result = exec.Command(c.conf.RawtherapeeBin(), args...)
 		} else {
 			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(f.BaseName()))
 		}
-	} else if f.IsVideo() {
+	} else if f.IsVideo() && c.conf.FFmpegEnabled() {
 		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
-	} else if f.IsHEIF() {
+	} else if f.IsHEIF() && c.conf.HeifConvertEnabled() {
 		result = exec.Command(c.conf.HeifConvertBin(), f.FileName(), jpegName)
 	} else {
 		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
@@ -382,7 +387,11 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	}
 
 	if !c.conf.SidecarWritable() {
-		return nil, fmt.Errorf("convert: disabled in read only mode (%s)", f.RelName(c.conf.OriginalsPath()))
+		return nil, fmt.Errorf("convert: transcoding disabled in read only mode (%s)", f.RelName(c.conf.OriginalsPath()))
+	}
+
+	if c.conf.DisableFFmpeg() {
+		return nil, fmt.Errorf("convert: ffmpeg is disabled for transcoding %s", f.RelName(c.conf.OriginalsPath()))
 	}
 
 	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)

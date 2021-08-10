@@ -13,7 +13,7 @@
   <meta property="og:image" content="{{ .config.SitePreview }}"/>
   <meta property="og:description" content="{{ .config.SiteDescription }}">
 
-  <meta name="twitter:site" content="@browseyourlife">
+  <meta name="twitter:site" content="@photoprism_app">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ .config.SiteTitle }}{{if .config.SiteCaption}}: {{ .config.SiteCaption }}{{end}}">
   <meta name="twitter:image" content="{{ .config.SitePreview }}">
@@ -28,12 +28,14 @@
 
 {{template "favicons.tmpl" .}}
 
-  <link rel="stylesheet" href="/static/build/app.css?{{ .config.CSSHash }}">
-  <link rel="manifest" href="/static/manifest.json?{{ .config.ManifestHash }}">
+  <link rel="stylesheet" href="{{ .config.StaticUri }}/build/app.css?{{ .config.CSSHash }}">
+  <link rel="manifest" href="{{ .config.BaseUri }}/manifest.json?{{ .config.ManifestHash }}" crossorigin="use-credentials">
 
   <script>
       window.__CONFIG__ = {{ .config }};
   </script>
+
+  <script async defer data-domain="demo.photoprism.org" src="https://a.photoprism.app/js/plausible.js"></script>
 </head>
 <body class="{{ .config.Flags }}">
 <!--[if lt IE 8]>
@@ -43,6 +45,6 @@
 
 {{template "app.tmpl" .}}
 
-<script src="/static/build/app.js?{{ .config.JSHash }}"></script>
+<script src="{{ .config.StaticUri }}/build/app.js?{{ .config.JSHash }}"></script>
 </body>
 </html>

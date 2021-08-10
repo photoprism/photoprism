@@ -47,17 +47,26 @@ export default class Config {
     this.translations = translations;
 
     if (!values || !values.siteTitle) {
-      console.warn("config: values are empty");
+      console.warn("config: values missing");
       this.debug = true;
       this.test = true;
       this.demo = false;
       this.themeName = "";
+      this.baseUri = "";
+      this.staticUri = "/static";
+      this.apiUri = "/api/v1";
+      this.contentUri = this.apiUri;
       this.values = {};
       this.page = {
         title: "PhotoPrism",
         caption: "Browse Your Life",
       };
       return;
+    } else {
+      this.baseUri = values.baseUri ? values.baseUri : "";
+      this.staticUri = values.staticUri ? values.staticUri : this.baseUri + "/static";
+      this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
+      this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
     }
 
     this.page = {

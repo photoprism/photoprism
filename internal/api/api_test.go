@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -23,10 +24,15 @@ func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config
 
 // NewApiTest returns new API test helper with authenticated admin session.
 func NewAdminApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config, sessId string) {
+	return NewAuthenticatedApiTest("admin", "photoprism")
+}
+
+// NewApiTest returns new API test helper with authenticated admin session.
+func NewAuthenticatedApiTest(username string, password string) (app *gin.Engine, router *gin.RouterGroup, conf *config.Config, sessId string) {
 	app = gin.New()
 	router = app.Group("/api/v1")
 	CreateSession(router)
-	reader := strings.NewReader(`{"username": "admin", "password": "photoprism"}`)
+	reader := strings.NewReader(fmt.Sprintf(`{"username": %s, "password": "%s"}`, username, password))
 	req, _ := http.NewRequest("POST", "/api/v1/session", reader)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)

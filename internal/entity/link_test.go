@@ -169,7 +169,7 @@ func TestFindLink(t *testing.T) {
 func TestFindLinks(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		r := FindLinks("1jxf3jfn2k", "")
-		assert.Equal(t, "st9lxuqxpogaaba7", r[0].ShareUID)
+		assert.Equal(t, "at9lxuqxpogaaba8", r[0].ShareUID)
 	})
 	t.Run("not found", func(t *testing.T) {
 		r := FindLinks("", "")
@@ -184,7 +184,7 @@ func TestFindLinks(t *testing.T) {
 func TestFindValidLinksLinks(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		r := FindValidLinks("1jxf3jfn2k", "")
-		assert.Equal(t, "st9lxuqxpogaaba7", r[0].ShareUID)
+		assert.Equal(t, "at9lxuqxpogaaba8", r[0].ShareUID)
 	})
 }
 

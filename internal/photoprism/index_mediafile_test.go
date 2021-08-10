@@ -3,6 +3,8 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/nsfw"
@@ -14,16 +16,49 @@ func TestIndex_MediaFile(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	t.Run("/blue-go-video.mp4", func(t *testing.T) {
+	t.Run("flash.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
 		conf.InitializeTestData(t)
 
 		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
+		indexOpt := IndexOptionsAll()
+		mediaFile, err := NewMediaFile("testdata/flash.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "", mediaFile.metaData.Keywords.String())
+
+		result := ind.MediaFile(mediaFile, indexOpt, "flash.jpg")
+
+		words := mediaFile.metaData.Keywords.String()
+
+		assert.Contains(t, words, "marienkäfer")
+		assert.Contains(t, words, "burst")
+		assert.Contains(t, words, "flash")
+		assert.Contains(t, words, "panorama")
+		assert.Equal(t, "Animal with green eyes on table burst", mediaFile.metaData.Description)
+		assert.Equal(t, IndexStatus("added"), result.Status)
+	})
+
+	t.Run("blue-go-video.mp4", func(t *testing.T) {
+		conf := config.TestConfig()
+
+		conf.InitializeTestData(t)
+
+		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
+		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
+		convert := NewConvert(conf)
+
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
@@ -42,9 +77,10 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 		nd := nsfw.New(conf.NSFWModelPath())
+		fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 		convert := NewConvert(conf)
 
-		ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 
 		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4")

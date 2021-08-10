@@ -15,10 +15,11 @@ import (
 
 // IndexCommand registers the index cli command.
 var IndexCommand = cli.Command{
-	Name:   "index",
-	Usage:  "Indexes media files in originals folder",
-	Flags:  indexFlags,
-	Action: indexAction,
+	Name:      "index",
+	Usage:     "Indexes media files in originals folder",
+	UsageText: `To limit scope, a sub folder may be passed as first argument.`,
+	Flags:     indexFlags,
+	Action:    indexAction,
 }
 
 var indexFlags = []cli.Flag{
@@ -48,13 +49,13 @@ func indexAction(ctx *cli.Context) error {
 
 	conf.InitDb()
 
-	// get cli first argument
+	// Use first argument to limit scope if set.
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("indexing photos in %s", txt.Quote(conf.OriginalsPath()))
+		log.Infof("indexing originals in %s", txt.Quote(conf.OriginalsPath()))
 	} else {
-		log.Infof("indexing originals folder %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("indexing originals in %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {

@@ -61,8 +61,8 @@ func (m *Photos) Remove(takenAt time.Time, cellId string) {
 func (m *Photos) Find(takenAt time.Time, cellId string) uint {
 	key := entity.MapKey(takenAt, cellId)
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
 
 	return m.photos[key]
 }

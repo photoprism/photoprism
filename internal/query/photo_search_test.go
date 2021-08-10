@@ -511,7 +511,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 		f.Lens = 1000000
-		f.Month = 2
+		f.Month = 7
 		f.Year = 2790
 		f.Album = "at9lxuqxpogaaba8"
 
@@ -532,8 +532,6 @@ func TestPhotoSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Logf("STATE SEARCH: %+v", photos)
-
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("search for category", func(t *testing.T) {
@@ -545,8 +543,6 @@ func TestPhotoSearch(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		t.Logf("CATEGORY SEARCH: %+v", photos)
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
@@ -561,8 +557,6 @@ func TestPhotoSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Logf("CATEGORY SEARCH: %+v", photos)
-
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 
@@ -576,8 +570,6 @@ func TestPhotoSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Logf("CATEGORY SEARCH: %+v", photos)
-
 		assert.LessOrEqual(t, 1, len(photos))
 	})
 
@@ -590,8 +582,6 @@ func TestPhotoSearch(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		t.Logf("CATEGORY SEARCH: %+v", photos)
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
@@ -613,8 +603,6 @@ func TestPhotoSearch(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		t.Logf("CATEGORY SEARCH: %+v", photos)
 
 		assert.IsType(t, PhotoResults{}, photos)
 	})
@@ -639,8 +627,6 @@ func TestPhotoSearch(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		t.Logf("CATEGORY SEARCH: %+v", photos)
 
 		assert.IsType(t, PhotoResults{}, photos)
 	})
@@ -707,7 +693,7 @@ func TestPhotoSearch(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 		frm.Name = "xxx|PhotoWithEditedAt"
-		frm.Filename = "xxx|Photo25.jpg"
+		frm.Filename = "xxx|test/Photo25.jpg"
 		frm.Original = "xxx|OriginalPhotoWithEditedAt"
 		frm.Title = "xxx|photowitheditedatdate"
 		frm.Hash = "xxx|pcad9a68fa6acc5c5ba965adf6ec465ca42fd887"
@@ -717,7 +703,7 @@ func TestPhotoSearch(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		t.Log(photos[0].PhotoTitle)
+
 		assert.GreaterOrEqual(t, len(photos), 1)
 
 		for _, r := range photos {
@@ -731,5 +717,18 @@ func TestPhotoSearch(t *testing.T) {
 			}
 		}
 	})
+	t.Run("faces", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "faces:true"
+		f.Count = 10
+		f.Offset = 0
 
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, 3, len(photos))
+	})
 }

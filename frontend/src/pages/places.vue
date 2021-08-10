@@ -71,11 +71,11 @@ export default {
           "sources": {
             "world": {
               "type": "geojson",
-              "data": "/static/geo/world.json",
+              "data": `${this.$config.staticUri}/geo/world.json`,
               "maxzoom": 6
             }
           },
-          "glyphs": "/static/font/{fontstack}/{range}.pbf",
+          "glyphs": `${this.$config.staticUri}/font/{fontstack}/{range}.pbf`,
           "layers": [
             {
               "id": "background",
@@ -272,6 +272,14 @@ export default {
       }).catch(() => this.loading = false);
     },
     renderMap() {
+      // In case of facing RTL language on the map, this plugin will be fetched (only by lazy!) and will set RTL properly support.
+      // See mapbox documentation here https://docs.mapbox.com/mapbox-gl-js/example/mapbox-gl-rtl-text/
+      mapboxgl.setRTLTextPlugin(
+        `${this.$config.staticUri}/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js`,
+        null,
+        true // Lazy load the plugin
+      );
+      
       this.map = new mapboxgl.Map(this.options);
 
       this.map.addControl(new mapboxgl.NavigationControl({showCompass: true}, 'top-right'));
@@ -302,7 +310,7 @@ export default {
           let el = document.createElement('div');
           el.className = 'marker';
           el.title = props.Title;
-          el.style.backgroundImage = `url(/api/v1/t/${props.Hash}/${token}/tile_50)`;
+          el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
           el.style.width = '50px';
           el.style.height = '50px';
 

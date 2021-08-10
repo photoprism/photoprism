@@ -51,8 +51,8 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "Photographer: TMB", data.Artist)
 		assert.Equal(t, "2011-07-10T17:34:28Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2011-07-10T19:34:28Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
-		assert.Equal(t, "", data.Title)    // Should be "Ladybug"
-		assert.Equal(t, "", data.Keywords) // Should be "Ladybug"
+		assert.Equal(t, "", data.Title)             // Should be "Ladybug"
+		assert.Equal(t, "", data.Keywords.String()) // Should be "Ladybug"
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 540, data.Height)
@@ -84,7 +84,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "2017-12-21T05:17:28Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2017-12-21T05:17:28Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 180, data.Height)
@@ -305,7 +305,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "2020-05-24T08:55:21Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2020-05-24T11:55:21Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 3600, data.Height)
@@ -336,7 +336,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "0001-01-01T00:00:00Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 43, data.Height)
@@ -367,7 +367,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "2017-04-09T18:33:44Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "2017-04-09T18:33:44Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 2448, data.Height)
@@ -400,7 +400,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "2020-10-17T17:48:24Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, "", data.Title)
-		assert.Equal(t, "", data.Keywords)
+		assert.Equal(t, "", data.Keywords.String())
 		assert.Equal(t, "", data.Description)
 		assert.Equal(t, "", data.Copyright)
 		assert.Equal(t, 2736, data.Height)
@@ -459,5 +459,25 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "TG-830", data.CameraModel)
 		assert.Equal(t, 28, data.FocalLength)
 		assert.Equal(t, 1, int(data.Orientation))
+	})
+
+	t.Run("keywords.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/keywords.jpg", fs.FormatJpeg)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, CodecUnknown, data.Codec)
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Artist)
+		assert.Equal(t, Keywords{"flash"}, data.Keywords)
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "", data.Copyright)
+		assert.Equal(t, "Canon", data.CameraMake)
+		assert.Equal(t, "Canon EOS 7D", data.CameraModel)
+		assert.Equal(t, "", data.LensMake)
+		assert.Equal(t, "EF70-200mm f/4L IS USM", data.LensModel)
+		assert.Equal(t, 1, data.Orientation)
 	})
 }

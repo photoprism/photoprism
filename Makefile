@@ -1,4 +1,6 @@
-.PHONY: ;
+.PHONY: all build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js \
+		test test-js test-go install generate fmt fmt-go fmt-imports fmt-js upgrade start stop \
+		terminal root-terminal packer-digitalocean acceptance clean tidy;
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
 .NOTPARALLEL: ;          # wait for target to finish
@@ -25,6 +27,7 @@ build: generate build-js build-go
 install: install-bin install-assets
 test: test-js test-go
 test-go: reset-test-db run-test-go
+test-api: reset-test-db run-test-api
 test-short: reset-test-db run-test-short
 acceptance-run-chromium: acceptance-restart acceptance acceptance-stop
 acceptance-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
@@ -33,6 +36,14 @@ fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
+dev: dev-npm dev-go-amd64
+dev-npm:
+	$(info Upgrading NPM in local dev environment...)
+	sudo npm update -g npm
+dev-go-amd64:
+	$(info Installing Go in local AMD64 dev environment...)
+	sudo docker/scripts/install-go.sh amd64
+	go build -v ./...
 acceptance-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
@@ -69,7 +80,7 @@ install-assets:
 	mkdir -p ~/.photoprism/assets
 	mkdir -p ~/Pictures/Originals
 	mkdir -p ~/Pictures/Import
-	cp -r assets/locales assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
+	cp -r assets/locales assets/facenet assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
 	find ~/.photoprism/assets -name '.*' -type f -delete
 clean-local-assets:
 	rm -rf ~/.photoprism/assets/*
@@ -80,7 +91,7 @@ clean-local-config:
 dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-js:
-	(cd frontend &&	npm install --silent --legacy-peer-deps && npm audit fix)
+	(cd frontend &&	npm install --silent --legacy-peer-deps)
 dep-go:
 	go build -v ./...
 dep-upgrade:
@@ -88,8 +99,11 @@ dep-upgrade:
 dep-upgrade-js:
 	(cd frontend &&	npm --depth 3 update --legacy-peer-deps)
 dep-tensorflow:
+	scripts/download-facenet.sh
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
+zip-facenet:
+	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
 zip-nasnet:
 	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
 zip-nsfw:
@@ -135,6 +149,9 @@ run-test-short:
 run-test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
+run-test-api:
+	$(info Running all API unit tests...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/api/...
 test-parallel:
 	$(info Running all Go unit tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/... ./internal/...
@@ -161,33 +178,19 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
-	docker pull ubuntu:20.10
-	scripts/docker-build.sh development $(DOCKER_TAG)
-	scripts/docker-push.sh development $(DOCKER_TAG)
-docker-photoprism:
-	scripts/docker-build.sh photoprism $(DOCKER_TAG)
-	scripts/docker-push.sh photoprism $(DOCKER_TAG)
-docker-photoprism-preview:
+	scripts/install-qemu.sh
+	docker pull --platform=amd64 ubuntu:21.04
+	docker pull --platform=arm64 ubuntu:21.04
+	docker pull --platform=arm ubuntu:21.04
+	scripts/docker-buildx.sh development linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+docker-preview:
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm
+docker-release:
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+docker-local:
 	scripts/docker-build.sh photoprism
-	scripts/docker-push.sh photoprism
-docker-photoprism-local:
-	scripts/docker-build.sh photoprism
-docker-photoprism-pull:
+docker-pull:
 	docker pull photoprism/photoprism:latest
-docker-photoprism-arm64-preview:
-	docker pull ubuntu:20.10
-	scripts/docker-build.sh photoprism-arm64
-	scripts/docker-push.sh photoprism-arm64
-docker-photoprism-arm64:
-	scripts/docker-build.sh photoprism-arm64 $(DOCKER_TAG)
-	scripts/docker-push.sh photoprism-arm64 $(DOCKER_TAG)
-docker-photoprism-arm32-preview:
-	docker pull ubuntu:20.10
-	scripts/docker-build.sh photoprism-arm32
-	scripts/docker-push.sh photoprism-arm32
-docker-photoprism-arm32:
-	scripts/docker-build.sh photoprism-arm32 $(DOCKER_TAG)
-	scripts/docker-push.sh photoprism-arm32 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
@@ -196,9 +199,13 @@ docker-demo-local:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
 docker-webdav:
-	docker pull golang:1
-	scripts/docker-build.sh webdav $(DOCKER_TAG)
-	scripts/docker-push.sh webdav $(DOCKER_TAG)
+	docker pull --platform=amd64 golang:1
+	docker pull --platform=arm64 golang:1
+	docker pull --platform=arm golang:1
+	scripts/docker-buildx.sh webdav linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+packer-digitalocean:
+	$(info Buildinng DigitalOcean marketplace image...)
+	(cd ./docker/examples/cloud && packer build digitalocean.json)
 lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:

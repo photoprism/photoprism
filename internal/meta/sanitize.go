@@ -34,11 +34,13 @@ var UnwantedDescriptions = map[string]bool{
 	"sdr_HDRB":                 true,
 	"cof":                      true,
 	"qrf":                      true,
+	"fshbty":                   true,
 	"binary comment":           true,
 	"default":                  true,
 	"Exif_JPEG_PICTURE":        true,
 	"<Digimax i5, Samsung #1>": true,
 	"DVC 10.1 HDMI":            true,
+	"charset=Ascii":            true,
 }
 
 var LowerCaseRegexp = regexp.MustCompile("[a-z0-9_\\-]+")

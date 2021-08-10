@@ -1,9 +1,10 @@
 package entity
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAddDuplicate(t *testing.T) {

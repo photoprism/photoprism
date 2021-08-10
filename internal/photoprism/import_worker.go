@@ -126,7 +126,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 			}
 
-			if f.IsMedia() && !f.HasJpeg() {
+			if indexOpt.Convert && f.IsMedia() && !f.HasJpeg() {
 				if jpegFile, err := imp.convert.ToJpeg(f); err != nil {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())))
 					continue

@@ -156,7 +156,7 @@ func (l Location) Longitude() (result float64) {
 }
 
 func (l Location) Keywords() (result []string) {
-	return txt.UniqueKeywords(l.Place.LocKeywords)
+	return txt.UniqueWords(txt.Words(l.Place.LocKeywords))
 }
 
 func (l Location) Source() string {

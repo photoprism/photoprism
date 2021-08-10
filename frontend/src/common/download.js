@@ -28,11 +28,34 @@ https://docs.photoprism.org/developer-guide/
 
 */
 
+import saveAs from "file-saver";
+
+// Detect Safari browser.
+const isSafari =
+  navigator.appVersion.indexOf("Safari/") !== -1 && navigator.appVersion.indexOf("Chrome") === -1;
+
 // Downloads a file from the server.
 export default function download(url, name) {
   // Abort if download url is empty.
   if (!url) {
     console.warn("can't download: empty url");
+    return;
+  }
+
+  if (isSafari) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "blob";
+
+    xhr.onload = function () {
+      saveAs(xhr.response, name);
+    };
+
+    xhr.onerror = function () {
+      console.error("download failed", url);
+    };
+
+    xhr.send();
     return;
   }
 

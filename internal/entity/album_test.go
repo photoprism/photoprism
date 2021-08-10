@@ -233,7 +233,7 @@ func TestFindAlbumBySlug(t *testing.T) {
 			t.Fatal("expected to find an album")
 		}
 
-		assert.Equal(t, "Holiday2030", album.AlbumTitle)
+		assert.Equal(t, "Holiday 2030", album.AlbumTitle)
 		assert.Equal(t, "holiday-2030", album.AlbumSlug)
 	})
 	t.Run("no result", func(t *testing.T) {

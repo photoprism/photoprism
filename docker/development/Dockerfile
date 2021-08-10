@@ -1,21 +1,28 @@
-FROM ubuntu:20.10
+FROM ubuntu:21.04
 
-LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
+LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
+ARG TARGETARCH
+ARG TARGETPLATFORM
 ARG BUILD_TAG
 
-ENV DEBIAN_FRONTEND noninteractive
+# Set environment variables
+ENV DEBIAN_FRONTEND="noninteractive" \
+    TMPDIR="/tmp"
 
 # Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
+
+# Copy scripts to /root/.local/bin
+COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
 # Install dev / build dependencies
-RUN apt-get update && apt-get upgrade && \
-    apt-get install \
+RUN apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     wget \
@@ -54,7 +61,6 @@ RUN apt-get update && apt-get upgrade && \
     firefox \
     libheif-examples \
     exiftool \
-    darktable \
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
@@ -62,7 +68,19 @@ RUN apt-get update && apt-get upgrade && \
     lsof \
     apache2-utils \
     fonts-roboto \
-    sudo
+    sudo && \
+    [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get clean
+
+# Set environment variables
+ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
+    TF_CPP_MIN_LOG_LEVEL="0" \
+    NODE_ENV="production" \
+    GOPATH="/go" \
+    GOBIN="/go/bin" \
+    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    GO111MODULE="on" \
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
 # Install & configure TensorFlow for C,
 # see https://www.tensorflow.org/install/lang_c
@@ -70,72 +88,49 @@ RUN apt-get update && apt-get upgrade && \
 # We also have custom builds available:
 # https://dl.photoprism.org/tensorflow/linux/
 #
-ENV LD_LIBRARY_PATH /root/.local/lib:/usr/local/lib:/usr/lib:/lib
-ENV TF_CPP_MIN_LOG_LEVEL 0
-RUN curl -L \
-   "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-cpu-1.15.2.tar.gz" | \
-   tar -C "/usr" -xz
-RUN ldconfig
+RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH
 
 # Install NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
     apt-get update && \
-    apt-get dist-upgrade && \
-    apt-get install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
-    apt-get autoremove && \
+    apt-get -qq dist-upgrade && \
+    apt-get -qq install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
+    apt-get -y autoremove && \
+    apt-get -y autoclean && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set default https://en.wikipedia.org/wiki/Umask
-RUN umask 0000
+# Install NodeJS & NPM
+RUN umask 0000 && npm install --unsafe-perm=true --allow-root -g npm && npm config set cache ~/.cache/npm && \
+    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g testcafe chromedriver;
 
-# Install and configure NodeJS Package Manager (npm)
-ENV NODE_ENV production
-RUN npm install --unsafe-perm=true --allow-root -g npm testcafe chromedriver && \
-    npm config set cache ~/.cache/npm
 
 # Install Go
-ENV GOLANG_VERSION 1.16
-RUN set -eux; \
-	\
-	url="https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz"; \
-	wget -O go.tgz "$url"; \
-	echo "013a489ebb3e24ef3d915abe5b94c3286c070dfe0818d5bca8108f1d6e8440d2 *go.tgz" | sha256sum -c -; \
-	tar -C /usr/local -xzf go.tgz; \
-	rm go.tgz; \
-	export PATH="/usr/local/go/bin:$PATH"; \
-	go version
-
-# Configure Go environment
-ENV GOPATH /go
-ENV GOBIN $GOPATH/bin
-ENV PATH $GOBIN:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV TMPDIR /tmp
-ENV GO111MODULE on
-ENV CGO_CFLAGS "-g -O2 -Wno-return-local-addr"
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+RUN /root/.local/bin/install-go.sh ${TARGETARCH} && \
+    mkdir -p "/go/src" "/go/bin" && \
+    chmod -R 777 "/go"
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
+    wget "https://dl.photoprism.org/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.org/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # Install additional tools
 COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u golang.org/x/tools/cmd/goimports && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tsliwowicz/go-wrk && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/kyoh86/richgo && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu && \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/dsoprea/go-exif/v3/command/exif-read-tool && \
+RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu \
+    golang.org/x/tools/cmd/goimports github.com/kyoh86/richgo && \
+    [ "$TARGETARCH" = "arm" ] || \
+    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated \
+    github.com/tsliwowicz/go-wrk github.com/dsoprea/go-exif/v3/command/exif-read-tool; \
     echo "alias go=richgo" > /root/.bash_aliases && \
     cp /go/bin/gosu /bin/gosu
 
 # Create photoprism user and directory for deployment
-RUN useradd photoprism -m -d /photoprism && \
-    mkdir -p /var/lib/photoprism /tmp/photoprism && \
+RUN useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism && \
+    mkdir -m 777 -p /var/lib/photoprism /tmp/photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
@@ -155,7 +150,7 @@ EXPOSE 2342 2343 9515
 VOLUME /var/lib/photoprism
 
 # Configure entrypoint
-COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 /docker/development/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Run server

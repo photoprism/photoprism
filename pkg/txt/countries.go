@@ -411,7 +411,6 @@ var Countries = map[string]string{
 	"quebec":            "ca",
 	"ontario":           "ca",
 	"alberta":           "ca",
-	"niagara falls":     "ca",
 	"israel":            "il",
 	"holy land":         "il",
 	"egypt":             "eg",

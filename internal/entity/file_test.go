@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 )
@@ -203,7 +205,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileWidth: 600, FileName: "VideoUpdate", PhotoID: 1000003}
 
-		assert.Equal(t, "bridge.mp4", FileFixturesExampleBridgeVideo.FileName)
+		assert.Equal(t, "London/bridge2.mp4", FileFixturesExampleBridgeVideo.FileName)
 		assert.Equal(t, int(1200), FileFixturesExampleBridgeVideo.FileWidth)
 
 		err := file.UpdateVideoInfos()
@@ -221,7 +223,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 		assert.Len(t, files, 1)
 
 		for _, f := range files {
-			assert.Equal(t, "bridge.mp4", f.FileName)
+			assert.Equal(t, "London/bridge2.mp4", f.FileName)
 			assert.Equal(t, int(600), f.FileWidth)
 		}
 	})
@@ -330,7 +332,7 @@ func TestPrimaryFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, "Video.mp4", file.FileName)
+	assert.Equal(t, "Holiday/Video.mp4", file.FileName)
 }
 
 func TestFile_OriginalBase(t *testing.T) {
@@ -418,5 +420,40 @@ func TestFile_Undelete(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, file.FileMissing)
+	})
+}
+
+func TestFile_AddFaces(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		file := &File{FileType: "jpg", FileWidth: 720, FileName: "FacesTest", PhotoID: 1000003}
+
+		faces := face.Faces{face.Face{
+			Rows:      480,
+			Cols:      720,
+			Score:     45,
+			Face:      face.NewPoint("face", 250, 200, 10),
+			Eyes:      face.Points{face.NewPoint("eye_l", 240, 195, 1), face.NewPoint("eye_r", 240, 205, 1)},
+			Landmarks: face.Points{face.NewPoint("a", 250, 185, 2), face.NewPoint("b", 250, 215, 2)},
+		}}
+
+		file.AddFaces(faces)
+
+		if err := file.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, false, file.FileMissing)
+		assert.NotEmpty(t, file.FileUID)
+		assert.NotEmpty(t, file.Markers)
+	})
+}
+
+func TestFile_FaceCount(t *testing.T) {
+	t.Run("FileFixturesExampleBridge", func(t *testing.T) {
+		file := FileFixturesExampleBridge
+
+		result := file.FaceCount()
+
+		assert.GreaterOrEqual(t, result, 3)
 	})
 }

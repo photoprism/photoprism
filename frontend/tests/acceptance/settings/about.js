@@ -35,7 +35,7 @@ test.meta("testID", "about-001")("About page is displayed with all links", async
     .ok()
     .expect(Selector('a[href="https://gitter.im/browseyourlife/community"]').visible)
     .ok()
-    .expect(Selector('a[href="https://twitter.com/browseyourlife"]').visible)
+    .expect(Selector('a[href="https://twitter.com/photoprism_app"]').visible)
     .ok();
 });
 

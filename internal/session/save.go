@@ -11,6 +11,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+const cacheFileName = "sessions.json"
+
 var fileMutex sync.RWMutex
 
 // New returns a new session store with an optional cachePath.
@@ -26,10 +28,10 @@ func New(expiration time.Duration, cachePath string) *Session {
 		var savedItems map[string]Saved
 
 		items := make(map[string]gc.Item)
-		s.cacheFile = path.Join(cachePath, "sessions.json")
+		s.cacheFile = path.Join(cachePath, cacheFileName)
 
 		if cached, err := ioutil.ReadFile(s.cacheFile); err != nil {
-			log.Infof("session: %s", err)
+			log.Debugf("session: %s", err)
 		} else if err := json.Unmarshal(cached, &savedItems); err != nil {
 			log.Errorf("session: %s", err)
 		} else {
@@ -70,7 +72,7 @@ func New(expiration time.Duration, cachePath string) *Session {
 	return s
 }
 
-// Stores all sessions in a JSON file.
+// Save stores all sessions in a JSON file.
 func (s *Session) Save() error {
 	if s.cacheFile == "" {
 		return nil

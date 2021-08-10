@@ -9,9 +9,11 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
@@ -238,7 +240,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else if err := photo.Find(); err != nil {
-				log.Infof("index: restored from %s", txt.Quote(filepath.Base(yamlName)))
+				log.Infof("index: %s restored from %s", txt.Quote(m.BaseName()), txt.Quote(filepath.Base(yamlName)))
 			} else {
 				photoExists = true
 				log.Infof("index: uid %s restored from %s", photo.PhotoUID, txt.Quote(filepath.Base(yamlName)))
@@ -338,7 +340,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcXmp)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcXmp)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcXmp)
 			details.SetNotes(metaData.Notes, entity.SrcXmp)
 			details.SetSubject(metaData.Subject, entity.SrcXmp)
 			details.SetArtist(metaData.Artist, entity.SrcXmp)
@@ -356,7 +358,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCameraSerial(metaData.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
@@ -405,7 +407,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCameraSerial(metaData.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
@@ -504,7 +506,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetCameraSerial(metaData.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords, entity.SrcMeta)
+			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
 			details.SetNotes(metaData.Notes, entity.SrcMeta)
 			details.SetSubject(metaData.Subject, entity.SrcMeta)
 			details.SetArtist(metaData.Artist, entity.SrcMeta)
@@ -598,13 +600,27 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Main JPEG file.
 	if file.FilePrimary {
+		if Config().Experimental() && Config().Settings().Features.People {
+			faces := ind.detectFaces(m)
+
+			photo.AddLabels(classify.FaceLabels(faces, entity.SrcImage))
+
+			file.PreloadMarkers()
+
+			if len(faces) > 0 {
+				file.AddFaces(faces)
+			}
+
+			photo.PhotoFaces = file.Markers.FaceCount()
+		}
+
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
 			log.Debugf("%s in %s (update title)", err, logName)
 		}
 
-		w := txt.Keywords(details.Keywords)
+		w := txt.Words(details.Keywords)
 
 		if !fs.IsGenerated(fileBase) {
 			w = append(w, txt.FilenameKeywords(fileBase)...)
@@ -759,7 +775,7 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 	return false
 }
 
-// classifyImage returns all matching labels for a media file.
+// classifyImage classifies a JPEG image and returns matching labels.
 func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	start := time.Now()
 
@@ -811,4 +827,46 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	log.Debugf("index: image classification took %s", elapsed)
 
 	return results
+}
+
+// detectFaces detects faces in a JPEG image and returns them.
+func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
+	if jpeg == nil {
+		return face.Faces{}
+	}
+
+	var thumbSize string
+
+	// Select best thumbnail depending on configured size.
+	if Config().ThumbSize() < 1280 {
+		thumbSize = "fit_720"
+	} else {
+		thumbSize = "fit_1280"
+	}
+
+	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), thumbSize)
+
+	if err != nil {
+		log.Debugf("index: %s in %s (faces)", err, txt.Quote(jpeg.BaseName()))
+		return face.Faces{}
+	}
+
+	if thumbName == "" {
+		log.Debugf("index: thumb %s not found in %s (faces)", thumbSize, txt.Quote(jpeg.BaseName()))
+		return face.Faces{}
+	}
+
+	start := time.Now()
+
+	faces, err := ind.faceNet.Detect(thumbName)
+
+	if err != nil {
+		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
+	}
+
+	elapsed := time.Since(start)
+
+	log.Debugf("index: face detection took %s", elapsed)
+
+	return faces
 }

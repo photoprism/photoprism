@@ -5,9 +5,9 @@
       :color="color"
       :timeout="0"
       :class="textColor"
-      :bottom="true"
+      :bottom="true" 
   >
-    {{ text }}
+    <span :dir="!rtl ? 'let' : 'rtl'">{{ text }}</span>
     <v-btn
         :class="textColor + ' pr-0'"
         icon
@@ -33,6 +33,7 @@ export default {
       lastMessageId: 1,
       lastMessage: '',
       subscriptionId: '',
+      rtl: this.$rtl,
     };
   },
   created() {

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" lazy persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="350" class="p-photo-album-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -11,7 +11,7 @@
                 ref="input"
                 v-model="album"
                 browser-autocomplete="off"
-                hint="Album Name"
+                :hint="$gettext('Album Name')"
                 :items="items"
                 :search-input.sync="search"
                 :loading="loading"
@@ -53,9 +53,9 @@ export default {
   data() {
     return {
       loading: false,
-      search: null,
+      search: "",
       newAlbum: null,
-      album: "",
+      album: false,
       albums: [],
       items: [],
       labels: {
@@ -87,15 +87,15 @@ export default {
       this.$emit('cancel');
     },
     confirm() {
-      if (this.album === "" && this.newAlbum) {
+      if (this.album) {
+        this.$emit('confirm', this.album);
+      } else if (this.newAlbum) {
         this.loading = true;
 
         this.newAlbum.save().then((a) => {
           this.loading = false;
           this.$emit('confirm', a.UID);
         });
-      } else if (this.album) {
-        this.$emit('confirm', this.album);
       }
     },
     queryServer(q) {

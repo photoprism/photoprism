@@ -1,9 +1,10 @@
 package fs
 
 import (
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCaseInsensitive(t *testing.T) {

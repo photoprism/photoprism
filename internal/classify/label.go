@@ -3,6 +3,8 @@ package classify
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -46,4 +48,27 @@ func LocationLabel(name string, uncertainty int) Label {
 // Title returns a formatted label title as string.
 func (l Label) Title() string {
 	return txt.Title(txt.Clip(l.Name, txt.ClipDefault))
+}
+
+// FaceLabels returns matching labels if there are people in the image.
+func FaceLabels(faces face.Faces, src string) Labels {
+	var r LabelRule
+
+	count := faces.Count()
+
+	if count < 1 {
+		return Labels{}
+	} else if count == 1 {
+		r = rules["portrait"]
+	} else {
+		r = rules["people"]
+	}
+
+	return Labels{Label{
+		Name:        r.Label,
+		Source:      src,
+		Uncertainty: faces.Uncertainty(),
+		Priority:    r.Priority,
+		Categories:  r.Categories,
+	}}
 }

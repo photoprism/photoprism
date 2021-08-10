@@ -2,11 +2,25 @@ package meta
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestXMP(t *testing.T) {
+	t.Run("apple xmp 2", func(t *testing.T) {
+		data, err := XMP("testdata/apple-test-2.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Botanischer Garten", data.Title)
+		assert.Equal(t, time.Date(2021, 3, 24, 13, 07, 29, 0, time.FixedZone("", +3600)), data.TakenAt)
+		assert.Equal(t, "Tulpen am See", data.Description)
+		assert.Equal(t, Keywords{"blume", "krokus", "schöne", "wiese"}, data.Keywords)
+	})
+
 	t.Run("photoshop", func(t *testing.T) {
 		data, err := XMP("testdata/photoshop.xmp")
 
@@ -15,6 +29,8 @@ func TestXMP(t *testing.T) {
 		}
 
 		assert.Equal(t, "Night Shift / Berlin / 2020", data.Title)
+		t.Log(data.TakenAt)
+		assert.Equal(t, time.Date(2020, 1, 1, 17, 28, 25, 729626112, time.UTC), data.TakenAt)
 		assert.Equal(t, "Michael Mayer", data.Artist)
 		assert.Equal(t, "Example file for development", data.Description)
 		assert.Equal(t, "This is an (edited) legal notice", data.Copyright)

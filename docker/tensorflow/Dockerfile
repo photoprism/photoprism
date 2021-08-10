@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-LABEL maintainer="Michael Mayer <michael@liquidbytes.net>"
+LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TMP /tmp

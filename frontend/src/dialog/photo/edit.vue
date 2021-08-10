@@ -12,11 +12,13 @@
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="selection.length > 1">
           <v-btn icon :disabled="selected < 1" class="action-previous" @click.stop="prev">
-            <v-icon>navigate_before</v-icon>
+            <v-icon v-if="!rtl">navigate_before</v-icon>
+            <v-icon v-else>navigate_next</v-icon>
           </v-btn>
 
           <v-btn icon :disabled="selected >= selection.length - 1" class="action-next" @click.stop="next">
-            <v-icon>navigate_next</v-icon>
+            <v-icon v-if="!rtl">navigate_next</v-icon>
+            <v-icon v-else>navigate_before</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
@@ -30,15 +32,49 @@
           class="form"
       >
         <v-tab id="tab-details" ripple>
-          <translate key="Details">Details</translate>
+          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">edit</v-icon>
+          <template v-else>
+            <v-icon :size="18" :left="!rtl" :right="rtl">edit</v-icon> <translate key="Details">Details</translate>
+          </template>
         </v-tab>
 
         <v-tab id="tab-labels" ripple :disabled="!$config.feature('labels')">
-          <translate key="Labels">Labels</translate>
+          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Labels')">label</v-icon>
+          <template v-else>
+            <v-icon :size="18" :left="!rtl" :right="rtl">label</v-icon>
+            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
+              <template #badge>
+                <span v-if="model.Labels.length">{{ model.Labels.length }}</span>
+              </template>
+              <translate key="Labels">Labels</translate>
+            </v-badge>
+          </template>
+        </v-tab>
+
+        <v-tab id="tab-people" :disabled="!$config.feature('people')" ripple>
+          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Labels')">people</v-icon>
+          <template v-else>
+            <v-icon :size="18" :left="!rtl" :right="rtl">people</v-icon>
+            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
+              <template #badge>
+                <span v-if="model.Faces">{{ model.Faces }}</span>
+              </template>
+              <translate key="People">People</translate>
+            </v-badge>
+          </template>
         </v-tab>
 
         <v-tab id="tab-files" ripple>
-          <translate key="Files">Files</translate>
+          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Files')">camera_roll</v-icon>
+          <template v-else>
+            <v-icon :size="18" :left="!rtl" :right="rtl">camera_roll</v-icon>
+            <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
+              <template #badge>
+                <span v-if="model.Files.length">{{ model.Files.length }}</span>
+              </template>
+              <translate key="Files">Files</translate>
+            </v-badge>
+          </template>
         </v-tab>
 
         <v-tab v-if="$config.feature('edit')" id="tab-info" ripple>
@@ -53,6 +89,10 @@
 
           <v-tab-item lazy>
             <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
+          </v-tab-item>
+
+          <v-tab-item lazy>
+            <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
           </v-tab-item>
 
           <v-tab-item lazy>
@@ -71,6 +111,7 @@
 import Photo from "model/photo";
 import PhotoDetails from "./details.vue";
 import PhotoLabels from "./labels.vue";
+import PhotoPeople from "./people.vue";
 import PhotoFiles from "./files.vue";
 import PhotoInfo from "./info.vue";
 
@@ -79,6 +120,7 @@ export default {
   components: {
     'p-tab-photo-details': PhotoDetails,
     'p-tab-photo-labels': PhotoLabels,
+    'p-tab-photo-people': PhotoPeople,
     'p-tab-photo-files': PhotoFiles,
     'p-tab-photo-info': PhotoInfo,
   },
@@ -99,17 +141,18 @@ export default {
       items: [],
       readonly: this.$config.get("readonly"),
       active: this.tab,
+      rtl: this.$rtl,
     };
   },
   computed: {
-    title: function () {
+    title () {
       if (this.model && this.model.Title) {
         return this.model.Title;
       }
 
-      this.$gettext("Edit Photo");
+      return this.$gettext("Edit Photo");
     },
-    isPrivate: function () {
+    isPrivate () {
       if (this.model && this.model.Private && this.$config.settings().features.private) {
         return this.model.Private;
       }
@@ -125,11 +168,6 @@ export default {
     }
   },
   methods: {
-    changePath: function (path) {
-      /* if (this.$route.path !== path) {
-          this.$router.replace(path)
-      } */
-    },
     close() {
       this.$emit('close');
     },

@@ -81,6 +81,12 @@
           </td>
           <td>{{ model.Resolution }} MP</td>
         </tr>
+        <tr v-if="model.Faces > 0">
+          <td>
+            <translate>Faces</translate>
+          </td>
+          <td>{{ model.Faces }}</td>
+        </tr>
         <tr v-if="model.CameraSerial">
           <td>
             <translate>Camera Serial</translate>

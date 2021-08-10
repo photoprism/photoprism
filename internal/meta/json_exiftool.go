@@ -5,16 +5,20 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
-// Parses JSON sidecar data as created by Exiftool.
+const MimeVideoMP4 = "video/mp4"
+const MimeQuicktime = "video/quicktime"
+
+// Exiftool parses JSON sidecar data as created by Exiftool.
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
@@ -64,12 +68,16 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			}
 
 			// Skip empty values.
-			if !jsonValue.Exists() || !fieldValue.IsZero() {
+			if !jsonValue.Exists() {
 				continue
 			}
 
 			switch t := fieldValue.Interface().(type) {
 			case time.Time:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				s := strings.TrimSpace(jsonValue.String())
 				s = strings.ReplaceAll(s, "/", ":")
 
@@ -79,16 +87,46 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					fieldValue.Set(reflect.ValueOf(tv.Round(time.Second)))
 				}
 			case time.Duration:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.Set(reflect.ValueOf(StringToDuration(jsonValue.String())))
 			case int, int64:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetInt(jsonValue.Int())
 			case float32, float64:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetFloat(jsonValue.Float())
 			case uint, uint64:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetUint(jsonValue.Uint())
+			case []string:
+				existing := fieldValue.Interface().([]string)
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
+			case Keywords:
+				existing := fieldValue.Interface().(Keywords)
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, strings.TrimSpace(jsonValue.String()))))
 			case string:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetString(strings.TrimSpace(jsonValue.String()))
 			case bool:
+				if !fieldValue.IsZero() {
+					continue
+				}
+
 				fieldValue.SetBool(jsonValue.Bool())
 			default:
 				log.Warnf("metadata: can't assign value of type %s to %s (exiftool)", t, tagValue)
@@ -106,6 +144,27 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
+	if data.Altitude == 0 {
+		// Parseable floating point number?
+		if fl := GpsFloatRegexp.FindAllString(jsonStrings["GPSAltitude"], -1); len(fl) != 1 {
+			// Ignore.
+		} else if alt, err := strconv.ParseFloat(fl[0], 64); err == nil && alt != 0 {
+			data.Altitude = int(alt)
+		}
+	}
+
+	hasTimeOffset := false
+
+	if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
+		hasTimeOffset = true
+	} else if mt, ok := jsonStrings["MIMEType"]; ok && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
+		// Assume default time zone for MP4 & Quicktime videos is UTC.
+		// see https://exiftool.org/TagNames/QuickTime.html
+		data.TimeZone = time.UTC.String()
+		data.TakenAt = data.TakenAt.UTC()
+		data.TakenAtLocal = time.Time{}
+	}
+
 	// Set time zone and calculate UTC time.
 	if data.Lat != 0 && data.Lng != 0 {
 		zones, err := tz.GetZone(tz.Point{
@@ -117,10 +176,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			data.TimeZone = zones[0]
 		}
 
-		if !data.TakenAtLocal.IsZero() {
-			if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-				log.Warnf("metadata: unknown time zone %s (exiftool)", data.TimeZone)
-			} else if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
+		if loc, err := time.LoadLocation(data.TimeZone); err != nil {
+			log.Warnf("metadata: unknown time zone %s (exiftool)", data.TimeZone)
+		} else if !data.TakenAtLocal.IsZero() {
+			if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
 				if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
 					data.TakenAtLocal = localUtc
 				}
@@ -129,13 +188,32 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 			} else {
 				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
 			}
+		} else if !data.TakenAt.IsZero() {
+			if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAt.In(loc).Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+				data.TakenAtLocal = localUtc
+				data.TakenAt = data.TakenAt.UTC()
+			} else {
+				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+			}
 		}
-	} else if _, offset := data.TakenAtLocal.Zone(); offset != 0 && !data.TakenAtLocal.IsZero() {
+	} else if hasTimeOffset {
 		if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
 			data.TakenAtLocal = localUtc
 		}
 
 		data.TakenAt = data.TakenAt.Round(time.Second).UTC()
+	}
+
+	// Set local time if still empty.
+	if data.TakenAtLocal.IsZero() && !data.TakenAt.IsZero() {
+		if loc, err := time.LoadLocation(data.TimeZone); data.TimeZone == "" || err != nil {
+			data.TakenAtLocal = data.TakenAt
+		} else if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAt.In(loc).Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+			data.TakenAtLocal = localUtc
+			data.TakenAt = data.TakenAt.UTC()
+		} else {
+			log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+		}
 	}
 
 	if orientation, ok := jsonStrings["Orientation"]; ok && orientation != "" {
@@ -190,12 +268,11 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	if data.Projection == "equirectangular" {
-		data.AddKeyword(KeywordPanorama)
+		data.AddKeywords(KeywordPanorama)
 	}
 
 	data.Title = SanitizeTitle(data.Title)
 	data.Description = SanitizeDescription(data.Description)
-	data.Keywords = SanitizeMeta(data.Keywords)
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 

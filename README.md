@@ -7,7 +7,7 @@ PhotoPrism: Browse Your Life in Pictures
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
-[![Twitter](https://img.shields.io/badge/follow-@browseyourlife-00acee.svg)][twitter]
+[![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
 PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection.
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
@@ -69,8 +69,7 @@ Follow us on [Twitter][twitter] to receive regular project updates and discuss d
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
 especially if you have feature requests<sup>1</sup> or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and 
-[PayPal](https://www.paypal.me/photoprism). We've also set up [crypto wallets](SPONSORS.md) for 
-Bitcoin, Monero, and Dogecoin.<sup>2</sup>
+[PayPal](https://www.paypal.me/photoprism). We've also set up [crypto wallets](SPONSORS.md).
 
 Your continuous support helps...
 
@@ -84,8 +83,6 @@ Thank you very much! <3
 
 <sup>1</sup> Ideas backed by one or more [eligible sponsors](SPONSORS.md) are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
 Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
-
-<sup>2</sup> Our entire infrastructure runs on [certified renewable energy](https://www.polarstern-energie.de/). We don't engage in mining or trading.
 
 ## Trademarks ##
 
@@ -106,6 +103,6 @@ goods, products, or services without prior written permission. In other words, p
 [docs]: https://docs.photoprism.org/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
-[twitter]: https://twitter.com/browseyourlife
+[twitter]: https://twitter.com/photoprism_app
 [unfunded issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded
 [sponsored issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor

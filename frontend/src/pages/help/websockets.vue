@@ -111,6 +111,15 @@ ProxyPassReverse / http://photoprism:2342/
 ProxyRequests off
             </pre>
             <p>
+              You will have to enable the <code>proxy_wstunnel</code> module:
+            </p>
+            <pre>
+              a2enmod proxy_wstunnel
+            </pre>
+            <p>
+              Then you will have to reload Apache.
+            </p>
+            <p>
               The <a target="_blank" href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html" class="text-link">official documentation</a> explains in detail, how to configure Apache Web Server 2.4 to reverse proxy WebSockets.
             </p>
           </v-card-text>

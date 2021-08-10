@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
 
       <a target="_blank" href="https://www.gnu.org/licenses/agpl-3.0.en.html">
-        <img src="/static/img/agplv3-small.png" alt="AGPLv3 Logo">
+        <img :src="$config.staticUri + '/img/agplv3-small.png'" alt="AGPLv3 Logo">
       </a>
     </v-toolbar>
     <v-container fluid class="pa-4">

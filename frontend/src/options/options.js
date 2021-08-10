@@ -176,6 +176,12 @@ export const Languages = () => [
     translated: $gettext("Japanese"),
     value: "ja_JP",
   },
+  {
+    text: "کوردی",
+    translated: $gettext("Kurdish"),
+    value: "ku",
+    rtl: true,
+  },
 ];
 
 export const Themes = () => [
@@ -222,6 +228,11 @@ export const Themes = () => [
   {
     text: $gettext("Shadow"),
     value: "shadow",
+    disabled: false,
+  },
+  {
+    text: $gettext("Yellowstone"),
+    value: "yellowstone",
     disabled: false,
   },
 ];

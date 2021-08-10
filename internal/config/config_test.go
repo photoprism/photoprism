@@ -194,6 +194,12 @@ func TestConfig_NSFWModelPath(t *testing.T) {
 	assert.Contains(t, c.NSFWModelPath(), "/assets/nsfw")
 }
 
+func TestConfig_FaceNetModelPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Contains(t, c.FaceNetModelPath(), "/assets/facenet")
+}
+
 func TestConfig_ExamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -292,12 +298,68 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 	assert.Equal(t, int64(838860800), c.OriginalsLimit())
 }
 
+func TestConfig_BaseUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.BaseUri(""))
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, "", c.BaseUri(""))
+	c.options.SiteUrl = "http://foo:2342/foo/"
+	assert.Equal(t, "/foo", c.BaseUri(""))
+	assert.Equal(t, "/foo/bar", c.BaseUri("/bar"))
+}
+
+func TestConfig_StaticUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "/static", c.StaticUri())
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, "/static", c.StaticUri())
+	c.options.SiteUrl = "http://foo:2342/foo/"
+	assert.Equal(t, "/foo/static", c.StaticUri())
+	c.options.CdnUrl = "http://foo:2342/bar"
+	assert.Equal(t, "http://foo:2342/bar/foo"+StaticUri, c.StaticUri())
+}
+
+func TestConfig_ApiUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, ApiUri, c.ApiUri())
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, ApiUri, c.ApiUri())
+	c.options.SiteUrl = "http://foo:2342/foo/"
+	assert.Equal(t, "/foo"+ApiUri, c.ApiUri())
+}
+
+func TestConfig_CdnUrl(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.CdnUrl(""))
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, "/", c.CdnUrl("/"))
+	c.options.CdnUrl = "http://foo:2342/foo/"
+	assert.Equal(t, "http://foo:2342/foo", c.CdnUrl(""))
+	assert.Equal(t, "http://foo:2342/foo/", c.CdnUrl("/"))
+}
+
+func TestConfig_ContentUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, ApiUri, c.ContentUri())
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, ApiUri, c.ContentUri())
+	c.options.CdnUrl = "http://foo:2342//"
+	assert.Equal(t, "http://foo:2342"+ApiUri, c.ContentUri())
+}
+
 func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
 	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
+	c.options.SiteUrl = "http://superhost"
+	assert.Equal(t, "http://superhost/", c.SiteUrl())
 }
 
 func TestConfig_SitePreview(t *testing.T) {

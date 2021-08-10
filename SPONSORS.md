@@ -1,30 +1,27 @@
 Thank you very much to all of our sponsors!
 ===========================================
 
-Your continuous support helps...
-
-* to pay for operating expenses and external services like satellite maps
-* developing new features, and keeping them free for everyone 🌈
-
-Our [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, and which feature requests are going to be implemented next. Please give ideas you like a thumbs-up, so that we know what is most popular.
-
-Ideas backed by one or more eligible sponsors will be prioritized as well. Let us know if we mistakenly label an idea as unfunded.
-
 You can find us on [GitHub Sponsors](https://github.com/sponsors/photoprism),
 [Patreon](https://www.patreon.com/photoprism), and [PayPal](https://www.paypal.me/photoprism).
 
-In addition, we've listened to the [crypto lovers](https://github.com/photoprism/photoprism/issues/570) 
-and are excited to now accept donations to the following addresses:
+Your continuous support helps...
 
-##### Bitcoin #####
+* pay for operating expenses and external services like satellite maps
+* developing new features and keeping them free for everyone 🌈
+  
+The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress,
+what needs testing, and which feature requests are going to be implemented next.
 
-[`bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z`](bitcoin:bc1qnj5c8wpsc34qe92uql75y6w6y702sfrxva0k4z)
+Ideas backed by one or more eligible sponsors are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
+Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
-##### Monero #####
+##### Crypto Donations #####
+
+Monero
 
 [`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)
 
-##### Dogecoin #####
+Dogecoin
 
 [`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)
 
@@ -56,13 +53,20 @@ Garn Penrod (Patreon, November 2020)
 
 [Kevin Anderson](https://github.com/kevinanderson1) (GitHub Sponsors, November 2020)
 
+[Joseph Jacks](https://github.com/josephjacks) (GitHub Sponsors, June 2021)
+
+[denNorske](https://github.com/dennorske) (GitHub Sponsors, June 2021)
+
+[Daniel Hähnke](https://github.com/DanBenHa) (GitHub Sponsors, July 2021)
+
 For a full list of GitHub sponsors, see https://github.com/sponsors/photoprism.
 
 ## Donations ##
 
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, 
 Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
-[INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau
+[INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
+The Gordon Project
 
 [patreon]: https://www.patreon.com/photoprism
 [paypal]: https://www.paypal.me/photoprism

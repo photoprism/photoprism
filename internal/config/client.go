@@ -17,6 +17,10 @@ type ClientConfig struct {
 	Version         string              `json:"version"`
 	Copyright       string              `json:"copyright"`
 	Flags           string              `json:"flags"`
+	BaseUri         string              `json:"baseUri"`
+	StaticUri       string              `json:"staticUri"`
+	ApiUri          string              `json:"apiUri"`
+	ContentUri      string              `json:"contentUri"`
 	SiteUrl         string              `json:"siteUrl"`
 	SitePreview     string              `json:"sitePreview"`
 	SiteTitle       string              `json:"siteTitle"`
@@ -57,12 +61,17 @@ type ClientConfig struct {
 
 // ClientDisable represents disabled client features a user can't turn back on.
 type ClientDisable struct {
-	Backups    bool `json:"backups"`
-	WebDAV     bool `json:"webdav"`
-	Settings   bool `json:"settings"`
-	Places     bool `json:"places"`
-	ExifTool   bool `json:"exiftool"`
-	TensorFlow bool `json:"tensorflow"`
+	Backups     bool `json:"backups"`
+	WebDAV      bool `json:"webdav"`
+	Settings    bool `json:"settings"`
+	Places      bool `json:"places"`
+	ExifTool    bool `json:"exiftool"`
+	Darktable   bool `json:"darktable"`
+	Rawtherapee bool `json:"rawtherapee"`
+	Sips        bool `json:"sips"`
+	HeifConvert bool `json:"heifconvert"`
+	FFmpeg      bool `json:"ffmpeg"`
+	TensorFlow  bool `json:"tensorflow"`
 }
 
 // ClientCounts represents photo, video and album counts for the client UI.
@@ -148,16 +157,25 @@ func (c *Config) PublicConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:    true,
-			WebDAV:     true,
-			Settings:   c.DisableSettings(),
-			Places:     c.DisablePlaces(),
-			ExifTool:   true,
-			TensorFlow: true,
+			Backups:     true,
+			WebDAV:      true,
+			Settings:    c.DisableSettings(),
+			Places:      c.DisablePlaces(),
+			ExifTool:    true,
+			TensorFlow:  true,
+			Darktable:   true,
+			Rawtherapee: true,
+			Sips:        true,
+			HeifConvert: true,
+			FFmpeg:      true,
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "public",
 		Name:            c.Name(),
+		BaseUri:         c.BaseUri(""),
+		StaticUri:       c.StaticUri(),
+		ApiUri:          c.ApiUri(),
+		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
@@ -179,7 +197,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Colors:          colors.All.List(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
-		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
+		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
@@ -200,16 +218,25 @@ func (c *Config) GuestConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:    true,
-			WebDAV:     c.DisableWebDAV(),
-			Settings:   c.DisableSettings(),
-			Places:     c.DisablePlaces(),
-			ExifTool:   true,
-			TensorFlow: true,
+			Backups:     true,
+			WebDAV:      c.DisableWebDAV(),
+			Settings:    c.DisableSettings(),
+			Places:      c.DisablePlaces(),
+			ExifTool:    true,
+			TensorFlow:  true,
+			Darktable:   true,
+			Rawtherapee: true,
+			Sips:        true,
+			HeifConvert: true,
+			FFmpeg:      true,
 		},
 		Flags:           "readonly public shared",
 		Mode:            "guest",
 		Name:            c.Name(),
+		BaseUri:         c.BaseUri(""),
+		StaticUri:       c.StaticUri(),
+		ApiUri:          c.ApiUri(),
+		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
@@ -234,7 +261,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/share.css"),
-		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
+		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 	}
 
@@ -246,16 +273,25 @@ func (c *Config) UserConfig() ClientConfig {
 	result := ClientConfig{
 		Settings: *c.Settings(),
 		Disable: ClientDisable{
-			Backups:    c.DisableBackups(),
-			WebDAV:     c.DisableWebDAV(),
-			Settings:   c.DisableSettings(),
-			Places:     c.DisablePlaces(),
-			ExifTool:   c.DisableExifTool(),
-			TensorFlow: c.DisableTensorFlow(),
+			Backups:     c.DisableBackups(),
+			WebDAV:      c.DisableWebDAV(),
+			Settings:    c.DisableSettings(),
+			Places:      c.DisablePlaces(),
+			ExifTool:    c.DisableExifTool(),
+			TensorFlow:  c.DisableTensorFlow(),
+			Darktable:   c.DisableDarktable(),
+			Rawtherapee: c.DisableRawtherapee(),
+			Sips:        c.DisableSips(),
+			HeifConvert: c.DisableHeifConvert(),
+			FFmpeg:      c.DisableFFmpeg(),
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "user",
 		Name:            c.Name(),
+		BaseUri:         c.BaseUri(""),
+		StaticUri:       c.StaticUri(),
+		ApiUri:          c.ApiUri(),
+		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
 		SitePreview:     c.SitePreview(),
 		SiteTitle:       c.SiteTitle(),
@@ -280,7 +316,7 @@ func (c *Config) UserConfig() ClientConfig {
 		PreviewToken:    c.PreviewToken(),
 		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
 		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
-		ManifestHash:    fs.Checksum(c.StaticPath() + "/manifest.json"),
+		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
 	}

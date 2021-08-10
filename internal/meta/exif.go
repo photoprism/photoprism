@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
 var exifIfdMapping *exifcommon.IfdMapping
@@ -270,7 +270,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 
 	if value, ok := tags["Flash"]; ok {
 		if i, err := strconv.Atoi(value); err == nil && i&1 == 1 {
-			data.AddKeyword(KeywordFlash)
+			data.AddKeywords(KeywordFlash)
 			data.Flash = true
 		}
 	}
@@ -281,11 +281,10 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 	}
 
 	if value, ok := tags["ProjectionType"]; ok {
-		data.AddKeyword(KeywordPanorama)
+		data.AddKeywords(KeywordPanorama)
 		data.Projection = SanitizeString(value)
 	}
 
-	data.Keywords = SanitizeMeta(data.Keywords)
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 

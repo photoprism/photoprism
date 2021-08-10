@@ -3,13 +3,18 @@
 /*
 For more information on the contain property, see https://developers.google.com/web/updates/2016/06/css-containment
 */
-#photoprism .search-results .result {
+body.chrome #photoprism .search-results .result {
     contain: layout style paint;
 }
 
 #photoprism .cards-view,
-#photoprism .mosaic-view,
+#photoprism .cards-view a,
+#photoprism .cards-view div,
+#photoprism .cards-view img,
+#photoprism .cards-view button,
 #photoprism .cards-view .v-card,
+#photoprism .mosaic-view,
+#photoprism .mosaic-view a,
 #photoprism .mosaic-view .v-card {
     user-select: none !important;
 }
@@ -353,4 +358,8 @@ For more information on the contain property, see https://developers.google.com/
     top: 50%;
     transform: translateY(-50%);
     text-align: center;
+}
+
+#photoprism .face-results .invalid {
+    opacity: 0.5;
 }

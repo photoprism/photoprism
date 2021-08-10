@@ -138,7 +138,7 @@ export default [
     name: "album",
     path: "/albums/:uid/:slug",
     component: AlbumPhotos,
-    meta: { auth: true },
+    meta: { title: $gettext("Albums"), auth: true },
   },
   {
     name: "calendar",

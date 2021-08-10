@@ -90,7 +90,7 @@ export class Album extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return `/api/v1/albums/${this.getId()}/t/${config.previewToken()}/${size}?${this.CoverUID}`;
+    return `${config.contentUri}/albums/${this.getId()}/t/${config.previewToken()}/${size}?${this.CoverUID}`;
   }
 
   dayString() {

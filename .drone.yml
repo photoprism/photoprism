@@ -11,6 +11,7 @@ trigger:
   event:
     exclude:
       - pull_request
+      - tag
 
 steps:
   - name: up
@@ -60,7 +61,24 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism-preview docker-demo
+      - scripts/install-qemu.sh
+      - make docker-preview
+    when:
+      status:
+        - success
+      branch:
+        - master
+
+  - name: deploy-demo
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - scripts/docker-login.sh
+      - docker pull photoprism/photoprism:preview
+      - make docker-demo
     when:
       status:
         - success
@@ -75,7 +93,8 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism
+      - scripts/install-qemu.sh
+      - make docker-release
     when:
       status:
         - success
@@ -121,14 +140,17 @@ name: linux-arm64
 trigger:
   branch:
     - master
-    - release
+  event:
+    exclude:
+      - pull_request
+      - tag
 
 platform:
   arch: arm64
   os: linux
 
 steps:
-  - name: deploy-preview
+  - name: up
     environment:
       DOCKER_USERNAME:
         from_secret: docker_username
@@ -136,32 +158,24 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/docker-login.sh
-      - make docker-photoprism-arm64-preview
-    when:
-      branch:
-        - master
+      - docker-compose -f docker-compose.drone.yml stop
+      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
-  - name: deploy-release
-    environment:
-      DOCKER_USERNAME:
-        from_secret: docker_username
-      DOCKER_PASSWORD:
-        from_secret: docker_password
+  - name: test
     commands:
-      - scripts/docker-login.sh
-      - make docker-photoprism-arm64
-    when:
-      branch:
-        - release
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
 
-  - name: clean
+  - name: down
     commands:
+      - docker-compose -f docker-compose.drone.yml down
       - docker system prune -f
     when:
       status:
+        - failure
         - success
+
 ---
 kind: signature
-hmac: b68f90a0580da0ea2ba31c90010633ca3216d6c540c7e30f1007ec0688c8fefe
+hmac: 7276095f851d0595a0471e4ec4249e14e7e809f0655883483bfafab2febaef6e
 
 ...

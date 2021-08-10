@@ -38,7 +38,7 @@
           <v-icon :color="err.Level">{{ err.Level }}</v-icon>
         </v-list-tile-avatar>
 
-        <v-list-tile-content>
+        <v-list-tile-content class="text-selectable">
           <v-list-tile-title>{{ err.Message }}</v-list-tile-title>
           <v-list-tile-sub-title>{{ formatTime(err.Time) }}</v-list-tile-sub-title>
         </v-list-tile-content>

@@ -21,8 +21,8 @@ services:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Personal Photo Management"
-      PHOTOPRISM_SITE_AUTHOR: "@browseyourlife"
+      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
+      PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "true"
@@ -70,7 +70,7 @@ services:
       POSTGRES_PASSWORD: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20200825
+    image: photoprism/webdav:20210602
 
 volumes:
   go-mod:

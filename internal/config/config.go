@@ -5,12 +5,17 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/dustin/go-humanize"
+
+	"github.com/pbnjay/memory"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -33,6 +38,23 @@ import (
 
 var log = event.Log
 var once sync.Once
+var LowMem = false
+var TotalMem uint64
+
+const ApiUri = "/api/v1"
+const StaticUri = "/static"
+
+// Megabyte in bytes.
+const Megabyte = 1000 * 1000
+
+// Gigabyte in bytes.
+const Gigabyte = Megabyte * 1000
+
+// MinMem is the minimum amount of system memory required.
+const MinMem = 2 * Gigabyte
+
+// RecommendedMem is the recommended amount of system memory.
+const RecommendedMem = 5 * Gigabyte
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -46,6 +68,9 @@ type Config struct {
 }
 
 func init() {
+	TotalMem = memory.TotalMemory()
+	LowMem = TotalMem < MinMem
+
 	// Init public thumb sizes for use in client apps.
 	for i := len(thumb.DefaultTypes) - 1; i >= 0; i-- {
 		size := thumb.DefaultTypes[i]
@@ -135,7 +160,19 @@ func (c *Config) Init() error {
 	}
 
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
-		log.Debugf("config: running on %s", txt.Quote(cpuid.CPU.BrandName))
+		log.Debugf("config: running on %s, %s memory detected", txt.Quote(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+	}
+
+	// Check memory requirements.
+	if TotalMem < 128*Megabyte {
+		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
+	} else if LowMem {
+		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/Gigabyte)
+	}
+
+	// Show swap info.
+	if TotalMem < RecommendedMem {
+		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
 	c.initSettings()
@@ -214,13 +251,48 @@ func (c *Config) Copyright() string {
 	return c.options.Copyright
 }
 
+// BaseUri returns the site base URI for a given resource.
+func (c *Config) BaseUri(res string) string {
+	if c.SiteUrl() == "" {
+		return res
+	}
+
+	u, err := url.Parse(c.SiteUrl())
+
+	if err != nil {
+		return res
+	}
+
+	return strings.TrimRight(u.Path, "/") + res
+}
+
+// ApiUri returns the api URI.
+func (c *Config) ApiUri() string {
+	return c.BaseUri(ApiUri)
+}
+
+// CdnUrl returns the optional content delivery network URI without trailing slash.
+func (c *Config) CdnUrl(res string) string {
+	return strings.TrimRight(c.options.CdnUrl, "/") + res
+}
+
+// ContentUri returns the content delivery URI.
+func (c *Config) ContentUri() string {
+	return c.CdnUrl(c.ApiUri())
+}
+
+// StaticUri returns the static content URI.
+func (c *Config) StaticUri() string {
+	return c.CdnUrl(c.BaseUri(StaticUri))
+}
+
 // SiteUrl returns the public server URL (default is "http://localhost:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
 		return "http://localhost:2342/"
 	}
 
-	return c.options.SiteUrl
+	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
 }
 
 // SitePreview returns the site preview image URL for sharing.
@@ -343,6 +415,11 @@ func (c *Config) Shutdown() {
 
 // Workers returns the number of workers e.g. for indexing files.
 func (c *Config) Workers() int {
+	// Use one worker on systems with less than the recommended amount of memory.
+	if TotalMem < RecommendedMem {
+		return 1
+	}
+
 	// NumCPU returns the number of logical CPU cores.
 	cores := runtime.NumCPU()
 

@@ -54,7 +54,7 @@
                     :data-uid="model.UID"
                     class="result accent lighten-3"
                     :class="model.classes(selection.includes(model.UID))"
-                    @contextmenu="onContextMenu($event, index)"
+                    @contextmenu.stop="onContextMenu($event, index)"
             >
               <div class="card-background accent lighten-3"></div>
               <v-img
@@ -64,12 +64,17 @@
                   loading="lazy"
                   aspect-ratio="1"
                   class="accent lighten-2 clickable"
-                  @mousedown="onMouseDown($event, index)"
-                  @click="onClick($event, index)"
+                  @touchstart="input.touchStart($event, index)"
+                  @touchend.prevent="onClick($event, index)"
+                  @mousedown="input.mouseDown($event, index)"
+                  @click.stop.prevent="onClick($event, index)"
               >
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
+                       @touchend.stop.prevent="onSelect($event, index)"
+                       @touchmove.stop.prevent
                        @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="white" class="select-off">radio_button_off</v-icon>
@@ -116,6 +121,7 @@ import {Folder} from "model/folder";
 import Notify from "common/notify";
 import {MaxItems} from "common/clipboard";
 import download from "common/download";
+import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 
 export default {
   name: 'PPageFiles',
@@ -149,11 +155,7 @@ export default {
         offset: 0,
       },
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
-      mouseDown: {
-        index: -1,
-        scrollY: window.scrollY,
-        timeStamp: -1,
-      },
+      input: new Input(),
       lastId: "",
       breadcrumbs: [],
     };
@@ -214,7 +216,7 @@ export default {
       Notify.success(this.$gettext("Downloading…"));
 
       const model = this.results[index];
-      download(`/api/v1/dl/${model.Hash}?t=${this.$config.downloadToken()}`, model.Name);
+      download(`${this.$config.apiUri}/dl/${model.Hash}?t=${this.$config.downloadToken()}`, model.Name);
     },
     selectRange(rangeEnd, models) {
       if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
@@ -242,22 +244,23 @@ export default {
       return (rangeEnd - rangeStart) + 1;
     },
     onSelect(ev, index) {
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
       if (ev.shiftKey) {
         this.selectRange(index, this.results);
       } else {
         this.toggleSelection(this.results[index].getId());
       }
     },
-    onMouseDown(ev, index) {
-      this.mouseDown.index = index;
-      this.mouseDown.scrollY = window.scrollY;
-      this.mouseDown.timeStamp = ev.timeStamp;
-    },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
-      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+      const inputType = this.input.eval(ev, index);
+      const longClick = inputType === ClickLong;
 
-      if (scrolled) {
+      if (inputType === InputInvalid) {
         return;
       }
 

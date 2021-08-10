@@ -161,7 +161,7 @@ export default {
       this.filterChange();
     },
     download() {
-      this.onDownload(`/api/v1/albums/${this.album.UID}/dl?t=${this.$config.downloadToken()}`);
+      this.onDownload(`${this.$config.apiUri}/albums/${this.album.UID}/dl?t=${this.$config.downloadToken()}`);
     },
     onDownload(path) {
       Notify.success(this.$gettext("Downloading…"));

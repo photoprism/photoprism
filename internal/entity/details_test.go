@@ -202,7 +202,7 @@ func TestDetails_SetKeywords(t *testing.T) {
 		assert.Equal(t, "cat, brown", description.Keywords)
 
 		description.SetKeywords("dog", SrcMeta)
-		assert.Equal(t, "dog", description.Keywords)
+		assert.Equal(t, "brown, cat, dog", description.Keywords)
 	})
 }
 

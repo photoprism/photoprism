@@ -56,14 +56,14 @@ import VueInfiniteScroll from "vue-infinite-scroll";
 import Hls from "hls.js";
 import { $gettext, Mount } from "common/vm";
 import * as options from "options/options";
-import offline from "offline-plugin/runtime";
+import * as offline from "@lcdp/offline-plugin/runtime";
 
 // Initialize helpers
 const viewer = new Viewer();
 const isPublic = config.get("public");
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-  navigator.userAgent
-);
+const isMobile =
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+  (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
 // Initialize language and detect alignment
 Vue.config.language = config.values.settings.ui.language;
@@ -114,6 +114,7 @@ Vue.use(Router);
 const router = new Router({
   routes: Routes,
   mode: "history",
+  base: config.baseUri + "/",
   saveScrollPosition: true,
   scrollBehavior: (to, from, savedPosition) => {
     if (savedPosition) {
@@ -169,14 +170,21 @@ router.afterEach((to) => {
   }
 });
 
-// Pull client config every 10 minutes in case push fails (except on mobile to save battery).
 if (isMobile) {
   document.body.classList.add("mobile");
 } else {
+  // Pull client config every 10 minutes in case push fails (except on mobile to save battery).
   setInterval(() => config.update(), 600000);
+}
+
+// Set body class for chrome-only optimizations.
+if (navigator.appVersion.indexOf("Chrome/") !== -1) {
+  document.body.classList.add("chrome");
 }
 
 // Start application.
 Mount(Vue, PhotoPrism, router);
 
-offline.install();
+if (config.baseUri === "") {
+  offline.install();
+}

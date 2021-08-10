@@ -159,7 +159,7 @@ func (m *Cell) Keywords() (result []string) {
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.CountryName(), "-"))...)
 	result = append(result, txt.Keywords(m.Category())...)
 	result = append(result, txt.Keywords(m.Name())...)
-	result = append(result, txt.Keywords(m.Place.PlaceKeywords)...)
+	result = append(result, txt.Words(m.Place.PlaceKeywords)...)
 
 	result = txt.UniqueWords(result)
 

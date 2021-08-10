@@ -1,6 +1,7 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-photos" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div v-infinite-scroll="loadMore" class="p-page p-page-photos" style="user-select: none"
+       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
+       :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <p-photo-toolbar :settings="settings" :filter="filter" :filter-change="updateQuery" :dirty="dirty"
                      :refresh="refresh"></p-photo-toolbar>
@@ -253,12 +254,9 @@ export default {
 
       this.viewer.loading = true;
 
-      const count = this.batchSize * (this.page + 6);
-      const offset = 0;
-
       const params = {
-        count: count,
-        offset: offset,
+        count: this.batchSize * (this.page + 6),
+        offset: 0,
         merged: true,
       };
 
@@ -276,6 +274,7 @@ export default {
       }, () => {
         // Error.
         this.viewer.loading = false;
+        this.viewer.results = [];
         return Promise.resolve(this.results);
       }
       );
@@ -410,6 +409,7 @@ export default {
       Photo.search(params).then(response => {
         this.offset = this.batchSize;
         this.results = response.models;
+        this.viewer.results = [];
         this.complete = (response.count < this.batchSize);
         this.scrollDisabled = this.complete;
 

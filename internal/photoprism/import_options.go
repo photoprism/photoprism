@@ -22,7 +22,7 @@ func ImportOptionsCopy(path string) ImportOptions {
 	return result
 }
 
-// IndexOptionsMove returns import options for moving files to originals (modifies import directory).
+// ImportOptionsMove returns import options for moving files to originals (modifies import directory).
 func ImportOptionsMove(path string) ImportOptions {
 	result := ImportOptions{
 		Path:                   path,

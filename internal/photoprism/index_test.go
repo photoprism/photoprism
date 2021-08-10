@@ -3,6 +3,8 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/classify"
@@ -21,9 +23,10 @@ func TestIndex_Start(t *testing.T) {
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
+	fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 	imp := NewImport(conf, ind, convert)
 	opt := ImportOptionsMove(conf.ImportPath())
 
@@ -46,9 +49,10 @@ func TestIndex_File(t *testing.T) {
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
+	fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
 	convert := NewConvert(conf)
 
-	ind := NewIndex(conf, tf, nd, convert, NewFiles(), NewPhotos())
+	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 
 	err := ind.FileName("xxx", IndexOptionsAll())
 

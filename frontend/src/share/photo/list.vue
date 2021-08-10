@@ -40,7 +40,7 @@
                  @touchstart="onMouseDown($event, props.index)"
                  @touchend.stop.prevent="onClick($event, props.index)"
                  @mousedown="onMouseDown($event, props.index)"
-                 @contextmenu="onContextMenu($event, props.index)"
+                 @contextmenu.stop="onContextMenu($event, props.index)"
                  @click.stop.prevent="onClick($event, props.index)"
           >
             <v-btn v-if="selectMode" :ripple="false"
@@ -114,17 +114,19 @@ export default {
 
     let showName = this.filter.order === 'name';
 
+    const align = !this.$rtl ? 'left' : 'right';
     return {
       config: this.$config.values,
       notFoundMessage: m,
       'selected': [],
       'listColumns': [
         {text: '', value: '', align: 'center', class: 'p-col-select', sortable: false},
-        {text: this.$gettext('Title'), value: 'Title', sortable: false},
-        {text: this.$gettext('Taken'), class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
-        {text: this.$gettext('Camera'), class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
+        {text: this.$gettext('Title'), align, value: 'Title', sortable: false},
+        {text: this.$gettext('Taken'), align, class: 'hidden-xs-only', value: 'TakenAt', sortable: false},
+        {text: this.$gettext('Camera'), align, class: 'hidden-sm-and-down', value: 'CameraModel', sortable: false},
         {
           text: showName ? this.$gettext('Name') : this.$gettext('Location'),
+          align,
           class: 'hidden-xs-only',
           value: showName ? 'FileName' : 'PlaceLabel',
           sortable: false
@@ -145,7 +147,7 @@ export default {
       Notify.success(this.$gettext("Downloading…"));
 
       const photo = this.photos[index];
-      download(`/api/v1/dl/${photo.Hash}?t=${this.$config.downloadToken()}`, photo.FileName);
+      download(`${this.$config.apiUri}/dl/${photo.Hash}?t=${this.$config.downloadToken()}`, photo.FileName);
     },
     onSelect(ev, index) {
       if (ev.shiftKey) {

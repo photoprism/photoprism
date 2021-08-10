@@ -20,7 +20,7 @@ type Data struct {
 	Codec        string        `meta:"CompressorID,Compression,FileType"`
 	Title        string        `meta:"Title"`
 	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets"`
-	Keywords     string        `meta:"Keywords"`
+	Keywords     Keywords      `meta:"Keywords"`
 	Notes        string        `meta:"-"`
 	Artist       string        `meta:"Artist,Creator,OwnerName"`
 	Description  string        `meta:"Description"`
@@ -43,7 +43,7 @@ type Data struct {
 	GPSLongitude string        `meta:"GPSLongitude"`
 	Lat          float32       `meta:"-"`
 	Lng          float32       `meta:"-"`
-	Altitude     int           `meta:"GlobalAltitude"`
+	Altitude     int           `meta:"GlobalAltitude,GPSAltitude"`
 	Width        int           `meta:"PixelXDimension,ImageWidth,ExifImageWidth,SourceImageWidth"`
 	Height       int           `meta:"PixelYDimension,ImageHeight,ImageLength,ExifImageHeight,SourceImageHeight"`
 	Orientation  int           `meta:"-"`
