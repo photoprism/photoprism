@@ -8,7 +8,11 @@
         slider-color="secondary-dark"
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
-      <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
+      <v-tab id="tab-discover-today" ripple @click="changePath('/discover')">
+        <translate>On this day</translate>
+      </v-tab>
+
+      <v-tab id="tab-discover-colors" ripple @click="changePath('/discover/colors')">
         <translate>Colors</translate>
       </v-tab>
 
@@ -25,6 +29,10 @@
       </v-tab>
 
       <v-tabs-items touchless>
+        <v-tab-item>
+          <p-tab-discover-today></p-tab-discover-today>
+        </v-tab-item>
+
         <v-tab-item>
           <p-tab-discover-colors></p-tab-discover-colors>
         </v-tab-item>
@@ -47,12 +55,14 @@
 
 <script>
 import tabColors from "pages/discover/colors.vue";
+import tabToday from "pages/discover/today.vue";
 import tabTodo from "pages/discover/todo.vue";
 
 export default {
-  name: 'PPageSettings',
+  name: 'PPageDiscover',
   components: {
     'p-tab-discover-colors': tabColors,
+    'p-tab-discover-today': tabToday,
     'p-tab-discover-todo': tabTodo,
   },
   props: {

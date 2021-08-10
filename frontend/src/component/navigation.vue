@@ -257,6 +257,15 @@
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
+
+          <v-list-tile to="/countries" class="nav-countries" @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <translate key="Countries">Countries</translate>
+                <span v-show="config.count.countries > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.countries }}</span>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
         </v-list-group>
 
         <v-list-tile v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">

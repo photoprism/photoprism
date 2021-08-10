@@ -1,0 +1,39 @@
+name: Deploy image
+
+on:
+  release:
+    types:
+      - published
+
+env:
+  TAG: ${{ github.event.release.tag_name }}
+  DOCKER_REPO: kvalev/photoprism
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/bake-action@master
+        with:
+          files: ./docker/docker-bake.hcl
+          push: true
+
+      - name: Create a push a multi-architecture manifest file
+        run: docker buildx imagetools create --tag ${DOCKER_REPO}:${TAG} ${DOCKER_REPO}:${TAG}-amd64 ${DOCKER_REPO}:${TAG}-arm64 ${DOCKER_REPO}:${TAG}-armv7

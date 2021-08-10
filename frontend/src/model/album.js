@@ -38,9 +38,8 @@ export class Album extends RestModel {
   getDefaults() {
     return {
       UID: "",
-      Cover: "",
-      Parent: "",
-      Folder: "",
+      CoverUID: "",
+      FolderUID: "",
       Slug: "",
       Type: "",
       Title: "",
@@ -91,7 +90,7 @@ export class Album extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return `${config.contentUri}/albums/${this.getId()}/t/${config.previewToken()}/${size}`;
+    return `${config.contentUri}/albums/${this.getId()}/t/${config.previewToken()}/${size}?${this.CoverUID}`;
   }
 
   dayString() {

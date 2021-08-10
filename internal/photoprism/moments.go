@@ -119,7 +119,7 @@ func (m *Moments) Start() (err error) {
 	}
 
 	// Countries by year.
-	if results, err := query.MomentsCountries(threshold); err != nil {
+	if results, err := query.MomentsCountriesByYear(threshold); err != nil {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
@@ -138,6 +138,35 @@ func (m *Moments) Start() (err error) {
 				}
 			} else if a := entity.NewMomentsAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumYear = mom.Year
+				a.AlbumCountry = mom.Country
+
+				if err := a.Create(); err != nil {
+					log.Errorf("moments: %s", err)
+				} else {
+					log.Infof("moments: added %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				}
+			}
+		}
+	}
+
+	// Countries totals.
+	if results, err := query.MomentsCountries(threshold); err != nil {
+		log.Errorf("moments: %s", err.Error())
+	} else {
+		for _, mom := range results {
+			f := form.PhotoSearch{
+				Country: mom.Country,
+				Public:  true,
+			}
+
+			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumCountry); a != nil {
+				if a.DeletedAt != nil {
+					// Nothing to do.
+					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				} else {
+					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				}
+			} else if a := entity.NewCountryAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
 				a.AlbumCountry = mom.Country
 
 				if err := a.Create(); err != nil {

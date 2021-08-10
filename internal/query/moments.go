@@ -89,7 +89,7 @@ func (m Moment) Title() string {
 		}
 
 		if m.State == "" {
-			return m.Country
+			return maps.CountryName(m.Country)
 		}
 
 		return fmt.Sprintf("%s / %s", m.State, country)
@@ -139,12 +139,27 @@ func MomentsTime(threshold int) (results Moments, err error) {
 	return results, nil
 }
 
-// MomentsCountries returns the most popular countries by year.
-func MomentsCountries(threshold int) (results Moments, err error) {
+// MomentsCountriesByYear returns the countries grouped by year.
+func MomentsCountriesByYear(threshold int) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
 		Select("photo_country AS country, photo_year AS year, COUNT(*) AS photo_count ").
 		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_private = 0 AND photo_country <> 'zz' AND photo_year > 0").
 		Group("photo_country, photo_year").
+		Having("photo_count >= ?", threshold)
+
+	if err := db.Scan(&results).Error; err != nil {
+		return results, err
+	}
+
+	return results, nil
+}
+
+// MomentsCountries returns the most popular countries.
+func MomentsCountries(threshold int) (results Moments, err error) {
+	db := UnscopedDb().Table("photos").
+		Select("photo_country AS country, COUNT(*) AS photo_count ").
+		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_private = 0 AND photo_country <> 'zz'").
+		Group("photo_country").
 		Having("photo_count >= ?", threshold)
 
 	if err := db.Scan(&results).Error; err != nil {

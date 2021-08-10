@@ -17,6 +17,7 @@ import (
 
 const (
 	AlbumDefault = "album"
+	AlbumCountry = "country"
 	AlbumFolder  = "folder"
 	AlbumMoment  = "moment"
 	AlbumMonth   = "month"
@@ -176,6 +177,27 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 	result := &Album{
 		AlbumOrder:  SortOrderNewest,
 		AlbumType:   AlbumState,
+		AlbumTitle:  albumTitle,
+		AlbumSlug:   albumSlug,
+		AlbumFilter: albumFilter,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+
+	return result
+}
+
+// NewCountryAlbum creates a new moment.
+func NewCountryAlbum(albumTitle, albumSlug, albumFilter string) *Album {
+	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
+		return nil
+	}
+
+	now := Timestamp()
+
+	result := &Album{
+		AlbumOrder:  SortOrderNewest,
+		AlbumType:   AlbumCountry,
 		AlbumTitle:  albumTitle,
 		AlbumSlug:   albumSlug,
 		AlbumFilter: albumFilter,
