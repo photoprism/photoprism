@@ -68,6 +68,20 @@ func TestFindPassword(t *testing.T) {
 		r := FindPassword("abc567")
 		assert.NotEmpty(t, r)
 	})
+	t.Run("alice", func(t *testing.T) {
+		if p := FindPassword("uqxetse3cy5eo9z2"); p == nil {
+			t.Fatal("password not found")
+		} else {
+			assert.False(t, p.InvalidPassword("Alice123!"))
+		}
+	})
+	t.Run("bob", func(t *testing.T) {
+		if p := FindPassword("uqxc08w3d0ej2283"); p == nil {
+			t.Fatal("password not found")
+		} else {
+			assert.False(t, p.InvalidPassword("Bobbob123!"))
+		}
+	})
 }
 
 func TestPassword_String(t *testing.T) {

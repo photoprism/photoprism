@@ -20,6 +20,47 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "admin", m.UserName)
 		assert.Equal(t, "Admin", m.FullName)
+		assert.True(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("alice", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 5, m.ID)
+		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
+		assert.Equal(t, "alice", m.UserName)
+		assert.Equal(t, "Alice", m.FullName)
+		assert.Equal(t, "alice@example.com", m.PrimaryEmail)
+		assert.True(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("bob", func(t *testing.T) {
+		m := FindUserByName("bob")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 7, m.ID)
+		assert.Equal(t, "uqxc08w3d0ej2283", m.UserUID)
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Bob", m.FullName)
+		assert.Equal(t, "bob@example.com", m.PrimaryEmail)
+		assert.False(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
@@ -53,7 +94,10 @@ func TestUser_InvalidPassword(t *testing.T) {
 	})
 	t.Run("no password existing", func(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
-		p.Save()
+		err := p.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
 		assert.True(t, p.InvalidPassword("abcdef"))
 
 	})
@@ -220,8 +264,12 @@ func TestUser_InitPassword(t *testing.T) {
 	})
 	t.Run("already existing", func(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
-		p.Save()
-		p.SetPassword("hutfdt")
+		if err := p.Save(); err != nil {
+			t.Fatal(err)
+		}
+		if err := p.SetPassword("hutfdt"); err != nil {
+			t.Fatal(err)
+		}
 		assert.NotNil(t, FindPassword("u000000000000010"))
 		p.InitPassword("hutfdt")
 		m := FindPassword("u000000000000010")
