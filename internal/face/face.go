@@ -90,13 +90,13 @@ func (faces Faces) Uncertainty() int {
 
 // Face represents a face detection result.
 type Face struct {
-	Rows      int       `json:"rows,omitempty"`
-	Cols      int       `json:"cols,omitempty"`
-	Score     int       `json:"score,omitempty"`
-	Face      Point     `json:"face,omitempty"`
-	Eyes      Points    `json:"eyes,omitempty"`
-	Landmarks Points    `json:"landmarks,omitempty"`
-	Embedding []float32 `json:"embedding,omitempty"`
+	Rows       int         `json:"rows,omitempty"`
+	Cols       int         `json:"cols,omitempty"`
+	Score      int         `json:"score,omitempty"`
+	Face       Point       `json:"face,omitempty"`
+	Eyes       Points      `json:"eyes,omitempty"`
+	Landmarks  Points      `json:"landmarks,omitempty"`
+	Embeddings [][]float32 `json:"embeddings,omitempty"`
 }
 
 // Dim returns the max number of rows and cols as float32 to calculate relative coordinates.
@@ -165,11 +165,11 @@ func (f *Face) RelativeLandmarksJSON() (b []byte) {
 	}
 }
 
-// EmbeddingJSON returns detected face embedding as JSON.
-func (f *Face) EmbeddingJSON() (b []byte) {
+// EmbeddingsJSON returns detected face embeddings as JSON array.
+func (f *Face) EmbeddingsJSON() (b []byte) {
 	var noResult = []byte("")
 
-	if result, err := json.Marshal(f.Embedding); err != nil {
+	if result, err := json.Marshal(f.Embeddings); err != nil {
 		return noResult
 	} else {
 		return result
