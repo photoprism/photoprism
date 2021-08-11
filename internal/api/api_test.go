@@ -1,7 +1,6 @@
 package api
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -25,15 +24,15 @@ func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config
 	return app, router, service.Config()
 }
 
-// NewAdminApiTest returns new API test helper with authenticated admin session.
-func NewAdminApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config, sessId string) {
-	return NewAuthApiTest("admin", "photoprism")
+// AuthenticateAdmin Register session routes and returns valid SessionId.
+// Call this func after registering other routes and before performing other requests.
+func AuthenticateAdmin(app *gin.Engine, router *gin.RouterGroup) (sessId string) {
+	return AuthenticateUser(app, router, "admin", "photoprism")
 }
 
-// NewAuthApiTest returns new API test helper with authenticated admin session.
-func NewAuthApiTest(username string, password string) (app *gin.Engine, router *gin.RouterGroup, conf *config.Config, sessId string) {
-	app = gin.New()
-	router = app.Group("/api/v1")
+// AuthenticateUser Register session routes and returns valid SessionId.
+// Call this func after registering other routes and before performing other requests.
+func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, username string, password string) (sessId string) {
 	CreateSession(router)
 	f := form.Login{
 		UserName: username,
@@ -43,13 +42,9 @@ func NewAuthApiTest(username string, password string) (app *gin.Engine, router *
 	if err != nil {
 		log.Fatal(err)
 	}
-	reader := bytes.NewReader(loginStr)
-	req, _ := http.NewRequest("POST", "/api/v1/session", reader)
-	w := httptest.NewRecorder()
-	app.ServeHTTP(w, req)
-	sessId = w.Header().Get("X-Session-ID")
-	gin.SetMode(gin.TestMode)
-	return app, router, service.Config(), sessId
+	r0 := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", string(loginStr))
+	sessId = r0.Header().Get("X-Session-ID")
+	return
 }
 
 // Performs API request with empty request body.
@@ -74,6 +69,16 @@ func AuthenticatedRequest(r http.Handler, method, path, sess string) *httptest.R
 func PerformRequestWithBody(r http.Handler, method, path, body string) *httptest.ResponseRecorder {
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest(method, path, reader)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	return w
+}
+
+// Performs authenticated API request including request body as string.
+func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, sessionId string) *httptest.ResponseRecorder {
+	reader := strings.NewReader(body)
+	req, _ := http.NewRequest(method, path, reader)
+	req.Header.Add("X-Session-ID", sessionId)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	return w
