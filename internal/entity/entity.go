@@ -28,7 +28,7 @@ func logError(result *gorm.DB) {
 
 type Types map[string]interface{}
 
-// List of database entities and their table names.
+// Entities contains database entities and their table names.
 var Entities = Types{
 	"errors":          &Error{},
 	"addresses":       &Address{},
@@ -56,6 +56,7 @@ var Entities = Types{
 	"passwords":       &Password{},
 	"links":           &Link{},
 	"markers_dev":     &Marker{},
+	"people_dev":      &Person{},
 }
 
 type RowCount struct {
@@ -96,7 +97,7 @@ func (list Types) Truncate() {
 	}
 }
 
-// Drop migrates all database tables of registered entities.
+// Migrate migrates all database tables of registered entities.
 func (list Types) Migrate() {
 	for _, entity := range list {
 		if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
@@ -120,7 +121,7 @@ func (list Types) Drop() {
 	}
 }
 
-// Creates default database entries for test and production.
+// CreateDefaultFixtures creates default database entries for test and production.
 func CreateDefaultFixtures() {
 	CreateUnknownAddress()
 	CreateDefaultUsers()
@@ -129,6 +130,7 @@ func CreateDefaultFixtures() {
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
+	CreateUnknownPerson()
 }
 
 // MigrateDb creates all tables and inserts default entities as needed.

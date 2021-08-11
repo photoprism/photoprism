@@ -92,6 +92,7 @@ type ClientCounts struct {
 	Months         int `json:"months"`
 	Folders        int `json:"folders"`
 	Files          int `json:"files"`
+	People         int `json:"people"`
 	Places         int `json:"places"`
 	States         int `json:"states"`
 	Labels         int `json:"labels"`
@@ -324,7 +325,7 @@ func (c *Config) UserConfig() ClientConfig {
 	c.Db().
 		Table("photos").
 		Select("photo_uid, cell_id, photo_lat, photo_lng, taken_at").
-		Where("deleted_at IS NULL AND photo_lat != 0 AND photo_lng != 0").
+		Where("deleted_at IS NULL AND photo_lat <> 0 AND photo_lng <> 0").
 		Order("taken_at DESC").
 		Limit(1).Offset(0).
 		Take(&result.Pos)
@@ -377,9 +378,15 @@ func (c *Config) UserConfig() ClientConfig {
 		Take(&result.Count)
 
 	c.Db().
+		Table(entity.Person{}.TableName()).
+		Select("SUM(deleted_at IS NULL) AS people").
+		Where("id <> ?", entity.UnknownPerson.ID).
+		Take(&result.Count)
+
+	c.Db().
 		Table("places").
 		Select("SUM(photo_count > 0) AS places").
-		Where("id != 'zz'").
+		Where("id <> 'zz'").
 		Take(&result.Count)
 
 	c.Db().
