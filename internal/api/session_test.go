@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/json"
+	"github.com/photoprism/photoprism/internal/form"
 	"net/http"
 	"testing"
 
@@ -76,14 +78,38 @@ func TestCreateSession(t *testing.T) {
 
 func TestDeleteSession(t *testing.T) {
 	t.Run("delete admin session", func(t *testing.T) {
-		app, router, _, sessId := NewAdminApiTest()
+		app, router, _ := NewApiTest()
+		CreateSession(router)
 		DeleteSession(router)
+		f := form.Login{
+			UserName: "admin",
+			Password: "photoprism",
+		}
+		loginStr, err := json.Marshal(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+		r0 := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", string(loginStr))
+		sessId := r0.Header().Get("X-Session-ID")
+
 		r := PerformRequest(app, http.MethodDelete, "/api/v1/session/"+sessId)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("delete user session", func(t *testing.T) {
-		app, router, _, sessId := NewAuthenticatedApiTest("alice", "Alice123!")
+		app, router, _ := NewApiTest()
+		CreateSession(router)
 		DeleteSession(router)
+		f := form.Login{
+			UserName: "alice",
+			Password: "Alice123!",
+		}
+		loginStr, err := json.Marshal(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+		r0 := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", string(loginStr))
+		sessId := r0.Header().Get("X-Session-ID")
+
 		r := PerformRequest(app, http.MethodDelete, "/api/v1/session/"+sessId)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

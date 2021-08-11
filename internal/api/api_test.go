@@ -1,7 +1,9 @@
 package api
 
 import (
-	"fmt"
+	"bytes"
+	"encoding/json"
+	"github.com/photoprism/photoprism/internal/form"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -22,17 +24,25 @@ func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config
 	return app, router, service.Config()
 }
 
-// NewApiTest returns new API test helper with authenticated admin session.
+// NewAdminApiTest returns new API test helper with authenticated admin session.
 func NewAdminApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config, sessId string) {
-	return NewAuthenticatedApiTest("admin", "photoprism")
+	return NewAuthApiTest("admin", "photoprism")
 }
 
-// NewApiTest returns new API test helper with authenticated admin session.
-func NewAuthenticatedApiTest(username string, password string) (app *gin.Engine, router *gin.RouterGroup, conf *config.Config, sessId string) {
+// NewAuthApiTest returns new API test helper with authenticated admin session.
+func NewAuthApiTest(username string, password string) (app *gin.Engine, router *gin.RouterGroup, conf *config.Config, sessId string) {
 	app = gin.New()
 	router = app.Group("/api/v1")
 	CreateSession(router)
-	reader := strings.NewReader(fmt.Sprintf(`{"username": %s, "password": "%s"}`, username, password))
+	f := form.Login{
+		UserName: username,
+		Password: password,
+	}
+	loginStr, err := json.Marshal(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	reader := bytes.NewReader(loginStr)
 	req, _ := http.NewRequest("POST", "/api/v1/session", reader)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)
