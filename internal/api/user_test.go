@@ -2,9 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/photoprism/photoprism/internal/form"
 	"net/http"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/stretchr/testify/assert"
 )
