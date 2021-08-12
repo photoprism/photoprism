@@ -9,15 +9,15 @@ import (
 	"github.com/urfave/cli"
 )
 
-// MomentsCommand registers the moments cli command.
-var MomentsCommand = cli.Command{
-	Name:   "moments",
-	Usage:  "Creates albums based on popular locations, dates and labels",
-	Action: momentsAction,
+// PeopleCommand registers the people cli command.
+var PeopleCommand = cli.Command{
+	Name:   "people",
+	Usage:  "Performs face clustering and recognition",
+	Action: peopleAction,
 }
 
-// momentsAction creates albums based on popular locations, dates and labels.
-func momentsAction(ctx *cli.Context) error {
+// peopleAction performs face clustering and recognition.
+func peopleAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
@@ -32,13 +32,9 @@ func momentsAction(ctx *cli.Context) error {
 
 	conf.InitDb()
 
-	if conf.ReadOnly() {
-		log.Infof("moments: read-only mode enabled")
-	}
+	people := service.People()
 
-	moments := service.Moments()
-
-	if err := moments.Start(); err != nil {
+	if err := people.Start(); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

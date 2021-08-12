@@ -21,15 +21,15 @@ const (
 type Marker struct {
 	ID            uint    `gorm:"primary_key" json:"ID" yaml:"-"`
 	FileID        uint    `gorm:"index;" json:"-" yaml:"-"`
-	RefUID        string  `gorm:"type:VARBINARY(42);index;" json:"RefUID" yaml:"RefUID,omitempty"`
+	Ref           string  `gorm:"type:VARBINARY(42);index;" json:"Ref" yaml:"Ref,omitempty"`
 	RefSrc        string  `gorm:"type:VARBINARY(8);default:'';" json:"RefSrc" yaml:"RefSrc,omitempty"`
 	MarkerSrc     string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerType    string  `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerScore   int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score"`
 	MarkerInvalid bool    `json:"Invalid" yaml:"Invalid,omitempty"`
 	MarkerLabel   string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
-	MarkerMeta    string  `gorm:"type:TEXT;" json:"Meta" yaml:"Meta,omitempty"`
-	Embeddings    string  `gorm:"type:TEXT;" json:"Embeddings" yaml:"Embeddings,omitempty"`
+	MarkerMeta    string  `gorm:"type:LONGTEXT;" json:"Meta" yaml:"Meta,omitempty"`
+	Embeddings    string  `gorm:"type:LONGTEXT;" json:"Embeddings" yaml:"Embeddings,omitempty"`
 	X             float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
 	Y             float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W             float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
@@ -50,7 +50,7 @@ func (Marker) TableName() string {
 func NewMarker(fileUID uint, refUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
 	m := &Marker{
 		FileID:     fileUID,
-		RefUID:     refUID,
+		Ref:        refUID,
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
 		X:          x,
@@ -120,6 +120,22 @@ func (m *Marker) Create() error {
 	return Db().Create(m).Error
 }
 
+// UnmarshalEmbeddings parses face embedding JSON strings.
+func (m *Marker) UnmarshalEmbeddings() (result Embeddings) {
+	return UnmarshalEmbeddings(m.Embeddings)
+}
+
+// FindMarker returns an existing row if exists.
+func FindMarker(id uint) *Marker {
+	result := Marker{}
+
+	if err := Db().Where("id = ?", id).First(&result).Error; err == nil {
+		return &result
+	}
+
+	return nil
+}
+
 // UpdateOrCreateMarker updates a marker in the database or creates a new one if needed.
 func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 	const d = 0.07
@@ -146,7 +162,7 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 			"MarkerScore": m.MarkerScore,
 			"MarkerMeta":  m.MarkerMeta,
 			"Embeddings":  m.Embeddings,
-			"RefUID":      m.RefUID,
+			"Ref":         m.Ref,
 		})
 
 		log.Debugf("faces: updated existing marker %d for file %d", result.ID, result.FileID)

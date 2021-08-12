@@ -9,7 +9,7 @@ import (
 func TestNewMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var m = struct {
-			RefUID        string
+			Ref           string
 			RefSrc        string
 			MarkerSrc     string
 			MarkerType    string
@@ -17,7 +17,7 @@ func TestNewMarker(t *testing.T) {
 			MarkerInvalid bool
 			MarkerLabel   string
 		}{
-			RefUID:        "3h59wvth837b5vyiub35",
+			Ref:           "3h59wvth837b5vyiub35",
 			RefSrc:        "meta",
 			MarkerSrc:     "image",
 			MarkerType:    "Face",
@@ -32,7 +32,7 @@ func TestNewMarker(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "3h59wvth837b5vyiub35", f.RefUID)
+		assert.Equal(t, "3h59wvth837b5vyiub35", f.Ref)
 		assert.Equal(t, "meta", f.RefSrc)
 		assert.Equal(t, "image", f.MarkerSrc)
 		assert.Equal(t, "Face", f.MarkerType)

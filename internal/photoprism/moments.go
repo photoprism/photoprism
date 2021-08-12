@@ -19,7 +19,7 @@ type Moments struct {
 	conf *config.Config
 }
 
-// NewMoments returns a new purge worker.
+// NewMoments returns a new Moments worker.
 func NewMoments(conf *config.Config) *Moments {
 	instance := &Moments{
 		conf: conf,

@@ -46,14 +46,14 @@ type Person struct {
 	PersonUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	PersonSlug        string     `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"-"`
 	PersonName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
+	PersonSrc         string     `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src"`
 	PersonFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
 	PersonPrivate     bool       `json:"Private" yaml:"Private,omitempty"`
 	PersonHidden      bool       `json:"Hidden" yaml:"Hidden,omitempty"`
 	PersonDescription string     `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	PersonNotes       string     `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
-	PersonMeta        string     `gorm:"type:TEXT;" json:"Meta" yaml:"Meta,omitempty"`
-	Embeddings        string     `gorm:"type:TEXT;" json:"Embeddings" yaml:"Embeddings,omitempty"`
-	PhotoCount        int        `gorm:"default:1" json:"PhotoCount" yaml:"-"`
+	PersonMeta        string     `gorm:"type:LONGTEXT;" json:"Meta" yaml:"Meta,omitempty"`
+	PhotoCount        int        `gorm:"default:0" json:"PhotoCount" yaml:"-"`
 	BirthYear         int        `json:"BirthYear" yaml:"BirthYear,omitempty"`
 	BirthMonth        int        `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
 	BirthDay          int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
@@ -95,20 +95,15 @@ func (m *Person) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // NewPerson returns a new person.
-func NewPerson(name string) *Person {
-	personName := txt.Clip(name, txt.ClipDefault)
-
-	if personName == "" {
-		personName = "Unknown"
-	}
-
-	personName = txt.Title(personName)
+func NewPerson(personName, personSrc string, photoCount int) *Person {
+	personName = txt.Title(txt.Clip(personName, txt.ClipDefault))
 	personSlug := slug.Make(txt.Clip(personName, txt.ClipSlug))
 
 	result := &Person{
 		PersonSlug: personSlug,
 		PersonName: personName,
-		PhotoCount: 1,
+		PersonSrc:  personSrc,
+		PhotoCount: photoCount,
 	}
 
 	return result
@@ -135,7 +130,7 @@ func (m *Person) Delete() error {
 	return Db().Delete(m).Error
 }
 
-// Deleted returns true if the label is deleted.
+// Deleted returns true if the person is deleted.
 func (m *Person) Deleted() bool {
 	return m.DeletedAt != nil
 }

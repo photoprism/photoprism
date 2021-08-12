@@ -9,7 +9,7 @@ import (
 
 func TestNewPerson(t *testing.T) {
 	t.Run("Jens_Mander", func(t *testing.T) {
-		m := NewPerson("Jens Mander")
+		m := NewPerson("Jens Mander", SrcAuto, 0)
 		assert.Equal(t, "Jens Mander", m.PersonName)
 		assert.Equal(t, "jens-mander", m.PersonSlug)
 	})
@@ -17,7 +17,7 @@ func TestNewPerson(t *testing.T) {
 
 func TestPerson_SetName(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewPerson("Jens Mander")
+		m := NewPerson("Jens Mander", SrcAuto, 0)
 
 		assert.Equal(t, "Jens Mander", m.PersonName)
 		assert.Equal(t, "jens-mander", m.PersonSlug)
@@ -30,7 +30,7 @@ func TestPerson_SetName(t *testing.T) {
 }
 
 func TestFirstOrCreatePerson(t *testing.T) {
-	m := NewPerson("Create Me")
+	m := NewPerson("Create Me", SrcAuto, 0)
 	result := FirstOrCreatePerson(m)
 
 	if result == nil {
@@ -43,7 +43,7 @@ func TestFirstOrCreatePerson(t *testing.T) {
 
 func TestPerson_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewPerson("Save Me")
+		m := NewPerson("Save Me", SrcAuto, 0)
 		initialDate := m.UpdatedAt
 		err := m.Save()
 
@@ -60,7 +60,7 @@ func TestPerson_Save(t *testing.T) {
 
 func TestPerson_Delete(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewPerson("Jens Mander")
+		m := NewPerson("Jens Mander", SrcAuto, 0)
 		err := m.Save()
 		assert.False(t, m.Deleted())
 
@@ -114,7 +114,7 @@ func TestPerson_Restore(t *testing.T) {
 
 func TestFindPerson(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewPerson("Find Me")
+		m := NewPerson("Find Me", SrcAuto, 0)
 		err := m.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -139,7 +139,7 @@ func TestPerson_Links(t *testing.T) {
 
 func TestPerson_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewPerson("Update Me")
+		m := NewPerson("Update Me", SrcAuto, 0)
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
