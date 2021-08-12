@@ -15,7 +15,7 @@ func MarkerByID(id uint) (marker entity.Marker, err error) {
 }
 
 // Markers finds a list of file markers filtered by type, embeddings, and sorted by id.
-func Markers(limit, offset int, markerType string, embeddings, noRef bool) (result entity.Markers, err error) {
+func Markers(limit, offset int, markerType string, embeddings, unmatched bool) (result entity.Markers, err error) {
 	stmt := Db()
 
 	if markerType != "" {
@@ -26,8 +26,8 @@ func Markers(limit, offset int, markerType string, embeddings, noRef bool) (resu
 		stmt = stmt.Where("embeddings <> ''")
 	}
 
-	if noRef {
-		stmt = stmt.Where("ref = ''")
+	if unmatched {
+		stmt = stmt.Where("ref_uid = ''")
 	}
 
 	stmt = stmt.Order("id").Limit(limit).Offset(offset)

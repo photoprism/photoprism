@@ -2,7 +2,7 @@ package entity
 
 import (
 	"crypto/sha1"
-	"fmt"
+	"encoding/base32"
 	"time"
 )
 
@@ -10,14 +10,12 @@ type PeopleFaces []PersonFace
 
 // PersonFace represents the face of a Person.
 type PersonFace struct {
-	ID         string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	PersonUID  string     `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID"`
-	FaceSrc    string     `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src"`
-	Embedding  string     `gorm:"type:LONGTEXT;" json:"Embedding" yaml:"Embedding,omitempty"`
-	PhotoCount int        `gorm:"default:0" json:"PhotoCount" yaml:"-"`
-	CreatedAt  time.Time  `json:"CreatedAt" yaml:"-"`
-	UpdatedAt  time.Time  `json:"UpdatedAt" yaml:"-"`
-	DeletedAt  *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	ID        string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	PersonUID string     `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID"`
+	Embedding string     `gorm:"type:LONGTEXT;" json:"Embedding" yaml:"Embedding,omitempty"`
+	CreatedAt time.Time  `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt time.Time  `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
+	DeletedAt *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity database table name.
@@ -25,20 +23,17 @@ func (PersonFace) TableName() string {
 	return "people_faces_dev"
 }
 
-/*
-// BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *PersonFace) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("ID")
-}*/
-
 // NewPersonFace returns a new face.
-func NewPersonFace(personUID, faceSrc, embedding string, photoCount int) *PersonFace {
+func NewPersonFace(personUID, embedding string) *PersonFace {
+	timeStamp := Timestamp()
+	s := sha1.Sum([]byte(embedding))
+
 	result := &PersonFace{
-		ID:         fmt.Sprintf("%x", sha1.Sum([]byte(embedding))),
-		PersonUID:  personUID,
-		FaceSrc:    faceSrc,
-		Embedding:  embedding,
-		PhotoCount: photoCount,
+		ID:        base32.StdEncoding.EncodeToString(s[:]),
+		PersonUID: personUID,
+		Embedding: embedding,
+		CreatedAt: timeStamp,
+		UpdatedAt: timeStamp,
 	}
 
 	return result
@@ -54,7 +49,7 @@ func (m *PersonFace) Save() error {
 	peopleMutex.Lock()
 	defer peopleMutex.Unlock()
 
-	return Db().Save(m).Error
+	return Save(m, "ID")
 }
 
 // Create inserts the face to the database.
@@ -86,5 +81,10 @@ func (m *PersonFace) Restore() error {
 
 // Update a face property in the database.
 func (m *PersonFace) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	return UnscopedDb().Model(m).Update(attr, value).Error
+}
+
+// Updates face properties in the database.
+func (m *PersonFace) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).Updates(values).Error
 }

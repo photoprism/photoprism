@@ -57,6 +57,7 @@ func NewTestOptions() *Options {
 		Copyright:      "(c) 2018-2021 Michael Mayer",
 		Debug:          true,
 		Public:         true,
+		Experimental:   true,
 		ReadOnly:       false,
 		DetectNSFW:     true,
 		UploadNSFW:     false,

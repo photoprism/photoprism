@@ -21,7 +21,7 @@ func (m MarkerMap) Pointer(name string) *Marker {
 var MarkerFixtures = MarkerMap{
 	"1000003-1": Marker{
 		FileID:     1000003,
-		Ref:        "lt9k3pw1wowuy3c3",
+		RefUID:     "lt9k3pw1wowuy3c3",
 		MarkerSrc:  SrcImage,
 		MarkerType: MarkerLabel,
 		X:          0.308333,
@@ -31,7 +31,7 @@ var MarkerFixtures = MarkerMap{
 	},
 	"1000003-2": Marker{
 		FileID:      1000003,
-		Ref:         "",
+		RefUID:      "",
 		MarkerLabel: "Unknown",
 		MarkerSrc:   SrcImage,
 		MarkerType:  MarkerLabel,
@@ -42,7 +42,7 @@ var MarkerFixtures = MarkerMap{
 	},
 	"1000003-3": Marker{
 		FileID:      1000003,
-		Ref:         "",
+		RefUID:      "",
 		MarkerSrc:   SrcImage,
 		MarkerType:  MarkerLabel,
 		MarkerLabel: "Center",
@@ -53,7 +53,7 @@ var MarkerFixtures = MarkerMap{
 	},
 	"1000003-4": Marker{
 		FileID:      1000003,
-		Ref:         "",
+		RefUID:      "",
 		MarkerSrc:   SrcImage,
 		MarkerType:  MarkerFace,
 		MarkerLabel: "Jens Mander",
@@ -66,7 +66,7 @@ var MarkerFixtures = MarkerMap{
 	},
 	"1000003-5": Marker{
 		FileID:      1000003,
-		Ref:         "",
+		RefUID:      "",
 		MarkerSrc:   SrcImage,
 		MarkerType:  MarkerFace,
 		MarkerLabel: "Corn McCornface",

@@ -14,7 +14,7 @@ import (
 	"github.com/mpraski/clusters"
 )
 
-// People represents a worker that clusters face embeddings to search for individual people.
+// People represents a worker for face clustering and recognition.
 type People struct {
 	conf *config.Config
 }
@@ -28,7 +28,7 @@ func NewPeople(conf *config.Config) *People {
 	return instance
 }
 
-// Start clusters face embeddings to search for individual people.
+// Start face clustering and recognition.
 func (m *People) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -36,6 +36,12 @@ func (m *People) Start() (err error) {
 			log.Error(err)
 		}
 	}()
+
+	if !m.conf.Experimental() {
+		return fmt.Errorf("people: experimental features disabled")
+	} else if !m.conf.Settings().Features.People {
+		return fmt.Errorf("people: disabled in settings")
+	}
 
 	if err := mutex.MainWorker.Start(); err != nil {
 		return err
@@ -56,7 +62,7 @@ func (m *People) Start() (err error) {
 
 	// see https://fse.studenttheses.ub.rug.nl/18064/1/Report_research_internship.pdf
 
-	c, e := clusters.DBSCAN(1, 0.42, 1, clusters.EuclideanDistance)
+	c, e := clusters.DBSCAN(1, 0.42, m.conf.Workers(), clusters.EuclideanDistance)
 
 	if e != nil {
 		return e
@@ -68,7 +74,7 @@ func (m *People) Start() (err error) {
 
 	sizes := c.Sizes()
 
-	log.Infof("people: found %d faces from %d people", len(embeddings), len(sizes))
+	log.Infof("people: found %d embeddings, %d clusters", len(embeddings), len(sizes))
 
 	faceClusters := make([]entity.Embeddings, len(sizes))
 
@@ -86,17 +92,29 @@ func (m *People) Start() (err error) {
 		faceClusters[number-1] = append(faceClusters[number-1], embeddings[index])
 	}
 
+	addedFaces := 0
+	recognized := 0
+	markersUpdated := 0
+	updateErrors := 0
+
 	for _, clusterEmb := range faceClusters {
 		if emb, err := json.Marshal(entity.EmbeddingsMidpoint(clusterEmb)); err != nil {
+			updateErrors++
 			log.Errorf("people: %s", err)
-		} else if f := entity.NewPersonFace("", entity.SrcImage, string(emb), len(clusterEmb)); f == nil {
+		} else if f := entity.NewPersonFace("", string(emb)); f == nil {
+			updateErrors++
 			log.Errorf("people: face should not be nil - bug?")
-		} else if err := f.Save(); err != nil {
-			log.Errorf("people: %s while saving face", err)
+		} else if err := f.Create(); err == nil {
+			addedFaces++
+			log.Tracef("people: added face %s", f.ID)
+		} else if err := f.Updates(entity.Val{"UpdatedAt": entity.Timestamp()}); err != nil {
+			updateErrors++
+			log.Errorf("people: %s", err)
 		}
 	}
 
 	if err := query.PurgeUnknownFaces(); err != nil {
+		updateErrors++
 		log.Errorf("people: %s", err)
 	}
 
@@ -106,25 +124,22 @@ func (m *People) Start() (err error) {
 		return err
 	}
 
-	faceMap := make(map[string]entity.Embedding)
+	uidMap := make(map[string]string, len(peopleFaces))
+	faceMap := make(map[string]entity.Embedding, len(peopleFaces))
 
 	for _, f := range peopleFaces {
-		var id string
+		faceMap[f.ID] = f.UnmarshalEmbedding()
 
 		if f.PersonUID != "" {
-			id = f.PersonUID
-		} else {
-			id = f.ID
+			uidMap[f.ID] = f.PersonUID
 		}
-
-		faceMap[id] = f.UnmarshalEmbedding()
 	}
 
 	limit := 500
 	offset := 0
 
 	for {
-		markers, err := query.Markers(limit, offset, entity.MarkerFace, true, false)
+		markers, err := query.Markers(limit, offset, entity.MarkerFace, true, true)
 
 		if err != nil {
 			return err
@@ -139,30 +154,32 @@ func (m *People) Start() (err error) {
 				return fmt.Errorf("people: worker canceled")
 			}
 
-			if _, ok := faceMap[marker.Ref]; ok {
-				continue
-			}
-
-			var ref string
-			var dist float64
+			var faceId string
+			var faceDist float64
 
 			for _, e1 := range marker.UnmarshalEmbeddings() {
 				for id, e2 := range faceMap {
-					if d := clusters.EuclideanDistance(e1, e2); ref == "" || d < dist {
-						ref = id
-						dist = d
+					if d := clusters.EuclideanDistance(e1, e2); faceId == "" || d < faceDist {
+						faceId = id
+						faceDist = d
 					}
 				}
 			}
 
-			if marker.Ref == ref {
+			if marker.RefUID != "" && marker.RefUID == uidMap[faceId] {
 				continue
 			}
 
-			if err := marker.Update("Ref", ref); err != nil {
-				log.Errorf("people: %s while saving marker", err)
+			if refUID := uidMap[faceId]; refUID != "" {
+				if err := marker.Updates(entity.Val{"RefUID": refUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
+					log.Errorf("people: %s while updating person uid", err)
+				} else {
+					recognized++
+				}
+			} else if err := marker.Updates(entity.Val{"FaceID": faceId}); err != nil {
+				log.Errorf("people: %s while updating marker face id", err)
 			} else {
-				log.Debugf("people: marker %d ref %s", marker.ID, ref)
+				markersUpdated++
 			}
 		}
 
@@ -170,6 +187,8 @@ func (m *People) Start() (err error) {
 
 		time.Sleep(50 * time.Millisecond)
 	}
+
+	log.Infof("people: %d faces added, %d recognized, %d markers updated, %d errors", addedFaces, recognized, markersUpdated, updateErrors)
 
 	return nil
 }

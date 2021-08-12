@@ -9,6 +9,7 @@ const (
 	SrcAuto     = ""
 	SrcManual   = "manual"
 	SrcEstimate = "estimate"
+	SrcPeople   = "people"
 	SrcName     = "name"
 	SrcMeta     = "meta"
 	SrcXmp      = "xmp"
@@ -18,10 +19,11 @@ const (
 	SrcLocation = classify.SrcLocation
 )
 
-// Data source priorities.
+// SrcPriority maps source priorities.
 var SrcPriority = Priorities{
 	SrcAuto:     1,
 	SrcEstimate: 2,
+	SrcPeople:   2,
 	SrcName:     4,
 	SrcYaml:     8,
 	SrcLocation: 8,

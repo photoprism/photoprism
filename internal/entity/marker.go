@@ -21,11 +21,12 @@ const (
 type Marker struct {
 	ID            uint    `gorm:"primary_key" json:"ID" yaml:"-"`
 	FileID        uint    `gorm:"index;" json:"-" yaml:"-"`
-	Ref           string  `gorm:"type:VARBINARY(42);index;" json:"Ref" yaml:"Ref,omitempty"`
+	FaceID        string  `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	RefUID        string  `gorm:"type:VARBINARY(42);index:idx_markers_uid_type;" json:"RefUID" yaml:"RefUID,omitempty"`
 	RefSrc        string  `gorm:"type:VARBINARY(8);default:'';" json:"RefSrc" yaml:"RefSrc,omitempty"`
+	MarkerType    string  `gorm:"type:VARBINARY(8);index:idx_markers_uid_type;default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc     string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerType    string  `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
-	MarkerScore   int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score"`
+	MarkerScore   int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
 	MarkerInvalid bool    `json:"Invalid" yaml:"Invalid,omitempty"`
 	MarkerLabel   string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
 	MarkerMeta    string  `gorm:"type:LONGTEXT;" json:"Meta" yaml:"Meta,omitempty"`
@@ -50,7 +51,7 @@ func (Marker) TableName() string {
 func NewMarker(fileUID uint, refUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
 	m := &Marker{
 		FileID:     fileUID,
-		Ref:        refUID,
+		RefUID:     refUID,
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
 		X:          x,
@@ -77,12 +78,12 @@ func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
 
 // Updates multiple columns in the database.
 func (m *Marker) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumns(values).Error
+	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update updates a column in the database.
 func (m *Marker) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
@@ -162,7 +163,7 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 			"MarkerScore": m.MarkerScore,
 			"MarkerMeta":  m.MarkerMeta,
 			"Embeddings":  m.Embeddings,
-			"Ref":         m.Ref,
+			"RefUID":      m.RefUID,
 		})
 
 		log.Debugf("faces: updated existing marker %d for file %d", result.ID, result.FileID)

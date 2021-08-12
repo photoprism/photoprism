@@ -32,5 +32,5 @@ func PeopleFaces() (result entity.PeopleFaces, err error) {
 func PurgeUnknownFaces() error {
 	return UnscopedDb().Delete(
 		entity.PersonFace{},
-		"face_src = ? AND person_uid = '' AND updated_at < ?", entity.SrcImage, entity.Yesterday()).Error
+		"person_uid = '' AND updated_at < ?", entity.Yesterday()).Error
 }

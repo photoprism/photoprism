@@ -114,9 +114,9 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, 
 	if !fs.FileExists(cacheFile) {
 		// Do nothing.
 	} else if img, err := imaging.Open(cacheFile); err != nil {
-		log.Errorf("faces: failed loading cached face crop %s", filepath.Base(cacheFile))
+		log.Errorf("faces: failed loading cached crop %s", filepath.Base(cacheFile))
 	} else {
-		log.Debugf("faces: found cached face crop %s", filepath.Base(cacheFile))
+		log.Debugf("faces: found cached crop %s", filepath.Base(cacheFile))
 		return img, nil
 	}
 
@@ -133,9 +133,9 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, 
 	img = imaging.Fill(img, 160, 160, imaging.Center, imaging.Lanczos)
 
 	if err := imaging.Save(img, cacheFile); err != nil {
-		log.Errorf("faces: failed caching face crop %s", filepath.Base(cacheFile))
+		log.Errorf("faces: failed caching crop %s", filepath.Base(cacheFile))
 	} else {
-		log.Debugf("faces: saved face crop %s", filepath.Base(cacheFile))
+		log.Debugf("faces: saved crop %s", filepath.Base(cacheFile))
 	}
 
 	return img, nil
@@ -147,9 +147,11 @@ func (t *Net) getEmbeddings(img image.Image) [][]float32 {
 	if err != nil {
 		log.Errorf("faces: failed to convert image to tensor: %v", err)
 	}
+
 	// TODO: prewhiten image as in facenet
 
 	trainPhaseBoolTensor, err := tf.NewTensor(false)
+
 	output, err := t.model.Session.Run(
 		map[tf.Output]*tf.Tensor{
 			t.model.Graph.Operation("input").Output(0):       tensor,
@@ -168,8 +170,8 @@ func (t *Net) getEmbeddings(img image.Image) [][]float32 {
 		log.Errorf("faces: inference failed, no output")
 	} else {
 		return output[0].Value().([][]float32)
-		// embeddings = append(embeddings, output[0].Value().([][]float32)[0])
 	}
+
 	return nil
 }
 
