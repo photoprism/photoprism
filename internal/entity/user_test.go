@@ -183,6 +183,45 @@ func TestFindUserByUID(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
+
+	t.Run("alice", func(t *testing.T) {
+		m := FindUserByUID("uqxetse3cy5eo9z2")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 5, m.ID)
+		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
+		assert.Equal(t, "alice", m.UserName)
+		assert.Equal(t, "Alice", m.FullName)
+		assert.Equal(t, "alice@example.com", m.PrimaryEmail)
+		assert.True(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("bob", func(t *testing.T) {
+		m := FindUserByUID("uqxc08w3d0ej2283")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 7, m.ID)
+		assert.Equal(t, "uqxc08w3d0ej2283", m.UserUID)
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Bob", m.FullName)
+		assert.Equal(t, "bob@example.com", m.PrimaryEmail)
+		assert.False(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
 }
 
 func TestUser_String(t *testing.T) {
