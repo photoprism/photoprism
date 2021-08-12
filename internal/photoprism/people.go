@@ -6,6 +6,8 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -124,15 +126,15 @@ func (m *People) Start() (err error) {
 		return err
 	}
 
-	uidMap := make(map[string]string, len(peopleFaces))
-	faceMap := make(map[string]entity.Embedding, len(peopleFaces))
+	type Face = struct {
+		Embedding entity.Embedding
+		PersonUID string
+	}
+
+	faceMap := make(map[string]Face, len(peopleFaces))
 
 	for _, f := range peopleFaces {
-		faceMap[f.ID] = f.UnmarshalEmbedding()
-
-		if f.PersonUID != "" {
-			uidMap[f.ID] = f.PersonUID
-		}
+		faceMap[f.ID] = Face{f.UnmarshalEmbedding(), f.PersonUID}
 	}
 
 	limit := 500
@@ -157,20 +159,38 @@ func (m *People) Start() (err error) {
 			var faceId string
 			var faceDist float64
 
-			for _, e1 := range marker.UnmarshalEmbeddings() {
-				for id, e2 := range faceMap {
-					if d := clusters.EuclideanDistance(e1, e2); faceId == "" || d < faceDist {
+			for _, e := range marker.UnmarshalEmbeddings() {
+				for id, f := range faceMap {
+					if d := clusters.EuclideanDistance(e, f.Embedding); faceId == "" || d < faceDist {
 						faceId = id
 						faceDist = d
 					}
 				}
 			}
 
-			if marker.RefUID != "" && marker.RefUID == uidMap[faceId] {
+			if faceId == "" {
 				continue
 			}
 
-			if refUID := uidMap[faceId]; refUID != "" {
+			if marker.RefUID != "" && marker.RefUID == faceMap[faceId].PersonUID {
+				continue
+			}
+
+			// Create person from marker label?
+			if marker.MarkerLabel == "" {
+				// Do nothing.
+			} else if person := entity.NewPerson(marker.MarkerLabel, entity.SrcMarker, 1); person == nil {
+				log.Errorf("people: person should not be nil - bug?")
+			} else if person = entity.FirstOrCreatePerson(person); person == nil {
+				log.Errorf("people: failed adding %s", txt.Quote(marker.MarkerLabel))
+			} else if f, ok := faceMap[faceId]; ok {
+				faceMap[faceId] = Face{Embedding: f.Embedding, PersonUID: person.PersonUID}
+				entity.Db().Model(&entity.PersonFace{}).Where("id = ?", faceId).Update("PersonUID", person.PersonUID)
+				log.Infof("people: added %s", txt.Quote(person.PersonName))
+			}
+
+			// Existing person?
+			if refUID := faceMap[faceId].PersonUID; refUID != "" {
 				if err := marker.Updates(entity.Val{"RefUID": refUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
 					log.Errorf("people: %s while updating person uid", err)
 				} else {
@@ -188,7 +208,7 @@ func (m *People) Start() (err error) {
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	log.Infof("people: %d faces added, %d recognized, %d markers updated, %d errors", addedFaces, recognized, markersUpdated, updateErrors)
+	log.Infof("people: %d faces added, %d recognized, %d unknown, %d errors", addedFaces, recognized, markersUpdated, updateErrors)
 
 	return nil
 }

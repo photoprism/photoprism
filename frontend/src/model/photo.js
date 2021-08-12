@@ -759,9 +759,15 @@ export class Photo extends RestModel {
     }
 
     file.Markers.forEach((m) => {
-      if (!valid || !m.Invalid) {
-        result.push(m);
+      if (valid && m.Invalid) {
+        return;
       }
+
+      if (m.hasOwnProperty("Person") && !!m.Person && !!m.Person.Name) {
+        m.Label = m.Person.Name;
+      }
+
+      result.push(m);
     });
 
     return result;

@@ -11,7 +11,7 @@ type PeopleFaces []PersonFace
 // PersonFace represents the face of a Person.
 type PersonFace struct {
 	ID        string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	PersonUID string     `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID"`
+	PersonUID string     `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID,omitempty"`
 	Embedding string     `gorm:"type:LONGTEXT;" json:"Embedding" yaml:"Embedding,omitempty"`
 	CreatedAt time.Time  `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt time.Time  `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`

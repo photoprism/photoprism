@@ -45,7 +45,12 @@ func (m Markers) FaceCount() int {
 // FindMarkers returns all markers for a given file id.
 func FindMarkers(fileID uint) (Markers, error) {
 	m := Markers{}
-	err := Db().Where(`file_id = ?`, fileID).Order("id").Offset(0).Limit(1000).Find(&m).Error
+	err := Db().
+		Where(`file_id = ?`, fileID).
+		Preload("Person").
+		Order("id").
+		Offset(0).Limit(1000).
+		Find(&m).Error
 
 	return m, err
 }

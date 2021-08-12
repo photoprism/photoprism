@@ -57,9 +57,7 @@ type Person struct {
 	BirthYear         int        `json:"BirthYear" yaml:"BirthYear,omitempty"`
 	BirthMonth        int        `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
 	BirthDay          int        `json:"BirthDay" yaml:"BirthDay,omitempty"`
-	DeathYear         int        `json:"DeathYear" yaml:"DeathYear,omitempty"`
-	DeathMonth        int        `json:"DeathMonth" yaml:"DeathMonth,omitempty"`
-	DeathDay          int        `json:"DeathDay" yaml:"DeathDay,omitempty"`
+	PassedAway        *time.Time `json:"PassedAway" yaml:"PassedAway,omitempty"`
 	CreatedAt         time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt         time.Time  `json:"UpdatedAt" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`

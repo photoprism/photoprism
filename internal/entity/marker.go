@@ -37,6 +37,7 @@ type Marker struct {
 	H             float32 `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
+	Person        *Person `gorm:"foreignkey:RefUID;association_foreignkey:PersonUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Person" yaml:"-"`
 }
 
 // UnknownMarker can be used as a default for unknown markers.

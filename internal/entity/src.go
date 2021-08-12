@@ -9,11 +9,12 @@ const (
 	SrcAuto     = ""
 	SrcManual   = "manual"
 	SrcEstimate = "estimate"
-	SrcPeople   = "people"
 	SrcName     = "name"
 	SrcMeta     = "meta"
 	SrcXmp      = "xmp"
 	SrcYaml     = "yaml"
+	SrcPeople   = "people"
+	SrcMarker   = "marker"
 	SrcImage    = classify.SrcImage
 	SrcKeyword  = classify.SrcKeyword
 	SrcLocation = classify.SrcLocation
@@ -23,10 +24,11 @@ const (
 var SrcPriority = Priorities{
 	SrcAuto:     1,
 	SrcEstimate: 2,
-	SrcPeople:   2,
 	SrcName:     4,
 	SrcYaml:     8,
 	SrcLocation: 8,
+	SrcPeople:   8,
+	SrcMarker:   8,
 	SrcImage:    8,
 	SrcKeyword:  16,
 	SrcMeta:     16,
