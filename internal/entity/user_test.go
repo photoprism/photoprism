@@ -221,6 +221,22 @@ func TestFindUserByUID(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
+	t.Run("friend", func(t *testing.T) {
+		m := FindUserByUID("uqxqg7i1kperxvu7")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 8, m.ID)
+		assert.Equal(t, "uqxqg7i1kperxvu7", m.UserUID)
+		assert.False(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.True(t, m.RoleFriend)
+		assert.True(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
 
 }
 

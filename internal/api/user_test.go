@@ -74,15 +74,15 @@ func TestChangeUserPasswords(t *testing.T) {
 		} else {
 			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxc08w3d0ej2283/password",
 				string(pwStr), sessId)
-			assert.Equal(t, http.StatusOK, r.Code)
+			assert.Equal(t, http.StatusUnauthorized, r.Code)
 		}
 	})
-	t.Run("bob: change password", func(t *testing.T) {
+	t.Run("bob: change wrong password", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetPublic(false)
 		defer conf.SetPublic(true)
 		ChangePassword(router)
-		sessId := AuthenticateUser(app, router, "bob", "helloworld")
+		sessId := AuthenticateUser(app, router, "bob", "Bobbob123!")
 
 		f := form.ChangePassword{
 			OldPassword: "helloworld",
@@ -93,9 +93,27 @@ func TestChangeUserPasswords(t *testing.T) {
 		} else {
 			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxc08w3d0ej2283/password",
 				string(pwStr), sessId)
-			// TODO bob should be able to change his own password
-			log.Error(r)
-			//assert.Equal(t, http.StatusOK, r.Code)
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+		}
+	})
+
+	t.Run("friend: change password to same", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetPublic(false)
+		defer conf.SetPublic(true)
+		ChangePassword(router)
+		sessId := AuthenticateUser(app, router, "friend", "!Friend321")
+
+		f := form.ChangePassword{
+			OldPassword: "!Friend321",
+			NewPassword: "!Friend321",
+		}
+		if pwStr, err := json.Marshal(f); err != nil {
+			log.Fatal(err)
+		} else {
+			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxqg7i1kperxvu7/password",
+				string(pwStr), sessId)
+			assert.Equal(t, http.StatusOK, r.Code)
 		}
 	})
 
