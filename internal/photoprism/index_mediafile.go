@@ -823,7 +823,7 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	}
 
 	if len(labels) > 0 {
-		log.Infof("index: found %d labels for %s [%s]", len(labels), txt.Quote(jpeg.BaseName()), time.Since(start))
+		log.Infof("index: %d matching labels for %s [%s]", len(labels), txt.Quote(jpeg.BaseName()), time.Since(start))
 	}
 
 	return results
