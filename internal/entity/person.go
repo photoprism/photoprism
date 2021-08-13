@@ -15,31 +15,6 @@ var peopleMutex = sync.Mutex{}
 
 type People []Person
 
-// Relationships.
-/*
-const (
-	RelUnknown     = ""
-	RelBaby        = "baby"
-	RelWife        = "wife"
-	RelHusband     = "husband"
-	RelDad         = "dad"
-	RelMom         = "mom"
-	RelWorkmate    = "workmate"
-	RelBestFriend  = "best-friend"
-	RelFriend      = "friend"
-	RelClassmate   = "classmate"
-	RelBoyfriend   = "boyfriend"
-	RelGirlfriend  = "girlfriend"
-	RelFamily      = "family"
-	RelGrandfather = "grandfather"
-	RelGrandmother = "grandmother"
-	RelBrother     = "brother"
-	RelSister      = "sister"
-	RelRelative    = "relative"
-	RelOther       = "other"
-)
-*/
-
 // Person represents a person on one or more photos.
 type Person struct {
 	ID                uint       `gorm:"primary_key" json:"ID" yaml:"-"`
@@ -80,7 +55,7 @@ func CreateUnknownPerson() {
 
 // TableName returns the entity database table name.
 func (Person) TableName() string {
-	return "people_dev"
+	return "people_dev2"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.

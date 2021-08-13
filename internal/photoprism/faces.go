@@ -82,7 +82,7 @@ func (w *Faces) Analyze() (err error) {
 		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
 	}
 
-	if known, err := query.PeopleFaces(); err != nil {
+	if known, err := query.Faces(); err != nil {
 		log.Errorf("faces: %s", err)
 	} else if len(known) == 0 {
 		log.Infof("faces: no faces found")
@@ -233,7 +233,7 @@ func (w *Faces) Start() (err error) {
 		log.Errorf("faces: %s", err)
 	}
 
-	peopleFaces, err := query.PeopleFaces()
+	peopleFaces, err := query.Faces()
 
 	if err != nil {
 		return err
@@ -298,7 +298,7 @@ func (w *Faces) Start() (err error) {
 				log.Errorf("faces: failed adding %s", txt.Quote(marker.MarkerLabel))
 			} else if f, ok := faceMap[faceId]; ok {
 				faceMap[faceId] = Face{Embedding: f.Embedding, PersonUID: person.PersonUID}
-				entity.Db().Model(&entity.PersonFace{}).Where("id = ?", faceId).Update("PersonUID", person.PersonUID)
+				entity.Db().Model(&entity.Face{}).Where("id = ?", faceId).Update("PersonUID", person.PersonUID)
 			}
 
 			// Existing person?

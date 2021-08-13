@@ -7,8 +7,8 @@ import (
 )
 
 func TestMarker_TableName(t *testing.T) {
-	fileSync := &Marker{}
-	assert.Equal(t, "markers_dev", fileSync.TableName())
+	m := &Marker{}
+	assert.Contains(t, m.TableName(), "markers")
 }
 
 func TestNewMarker(t *testing.T) {

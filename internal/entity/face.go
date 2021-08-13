@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-type PeopleFaces []PersonFace
+type Faces []Face
 
-// PersonFace represents the face of a Person.
-type PersonFace struct {
+// Face represents the face of a Person.
+type Face struct {
 	ID        string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	PersonUID string     `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID,omitempty"`
 	Embedding string     `gorm:"type:LONGTEXT;" json:"Embedding" yaml:"Embedding,omitempty"`
@@ -19,16 +19,16 @@ type PersonFace struct {
 }
 
 // TableName returns the entity database table name.
-func (PersonFace) TableName() string {
-	return "people_faces_dev"
+func (Face) TableName() string {
+	return "faces_dev2"
 }
 
 // NewPersonFace returns a new face.
-func NewPersonFace(personUID, embedding string) *PersonFace {
+func NewPersonFace(personUID, embedding string) *Face {
 	timeStamp := Timestamp()
 	s := sha1.Sum([]byte(embedding))
 
-	result := &PersonFace{
+	result := &Face{
 		ID:        base32.StdEncoding.EncodeToString(s[:]),
 		PersonUID: personUID,
 		Embedding: embedding,
@@ -40,12 +40,12 @@ func NewPersonFace(personUID, embedding string) *PersonFace {
 }
 
 // UnmarshalEmbedding parses the face embedding JSON string.
-func (m *PersonFace) UnmarshalEmbedding() (result Embedding) {
+func (m *Face) UnmarshalEmbedding() (result Embedding) {
 	return UnmarshalEmbedding(m.Embedding)
 }
 
 // Save updates the existing or inserts a new face.
-func (m *PersonFace) Save() error {
+func (m *Face) Save() error {
 	peopleMutex.Lock()
 	defer peopleMutex.Unlock()
 
@@ -53,7 +53,7 @@ func (m *PersonFace) Save() error {
 }
 
 // Create inserts the face to the database.
-func (m *PersonFace) Create() error {
+func (m *Face) Create() error {
 	peopleMutex.Lock()
 	defer peopleMutex.Unlock()
 
@@ -61,17 +61,17 @@ func (m *PersonFace) Create() error {
 }
 
 // Delete removes the face from the database.
-func (m *PersonFace) Delete() error {
+func (m *Face) Delete() error {
 	return Db().Delete(m).Error
 }
 
 // Deleted returns true if the face is deleted.
-func (m *PersonFace) Deleted() bool {
+func (m *Face) Deleted() bool {
 	return m.DeletedAt != nil
 }
 
 // Restore restores the face in the database.
-func (m *PersonFace) Restore() error {
+func (m *Face) Restore() error {
 	if m.Deleted() {
 		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
 	}
@@ -80,11 +80,11 @@ func (m *PersonFace) Restore() error {
 }
 
 // Update a face property in the database.
-func (m *PersonFace) Update(attr string, value interface{}) error {
+func (m *Face) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Updates face properties in the database.
-func (m *PersonFace) Updates(values interface{}) error {
+func (m *Face) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }

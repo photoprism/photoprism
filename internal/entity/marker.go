@@ -45,7 +45,7 @@ var UnknownMarker = NewMarker(0, "", SrcAuto, MarkerUnknown, 0, 0, 0, 0)
 
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
-	return "markers_dev"
+	return "markers_dev2"
 }
 
 // NewMarker creates a new entity.

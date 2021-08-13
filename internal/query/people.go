@@ -18,8 +18,8 @@ func People(limit, offset int, embeddings bool) (result entity.People, err error
 	return result, err
 }
 
-// PeopleFaces finds a list of faces.
-func PeopleFaces() (result entity.PeopleFaces, err error) {
+// Faces finds a list of faces.
+func Faces() (result entity.Faces, err error) {
 	stmt := Db().
 		Order("id")
 
@@ -31,6 +31,6 @@ func PeopleFaces() (result entity.PeopleFaces, err error) {
 // PurgeUnknownFaces removes unknown faces from the index.
 func PurgeUnknownFaces() error {
 	return UnscopedDb().Delete(
-		entity.PersonFace{},
+		entity.Face{},
 		"person_uid = '' AND updated_at < ?", entity.Yesterday()).Error
 }

@@ -7,6 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPerson_TableName(t *testing.T) {
+	m := &Person{}
+	assert.Contains(t, m.TableName(), "people")
+}
+
 func TestNewPerson(t *testing.T) {
 	t.Run("Jens_Mander", func(t *testing.T) {
 		m := NewPerson("Jens Mander", SrcAuto, 0)
