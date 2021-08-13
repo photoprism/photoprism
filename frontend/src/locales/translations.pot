@@ -19,8 +19,8 @@ msgstr ""
 msgid "%{n} albums found"
 msgstr ""
 
-#: src/pages/album/photos.vue:341
-#: src/share/photos.vue:356
+#: src/pages/album/photos.vue:340
+#: src/share/photos.vue:355
 msgid "%{n} entries found"
 msgstr ""
 
@@ -36,19 +36,19 @@ msgstr ""
 msgid "%{n} labels found"
 msgstr ""
 
-#: src/pages/photos.vue:379
+#: src/pages/photos.vue:378
 msgid "%{n} results"
 msgstr ""
 
-#: src/options/options.js:302
+#: src/options/options.js:307
 msgid "1 hour"
 msgstr ""
 
-#: src/options/options.js:304
+#: src/options/options.js:309
 msgid "12 hours"
 msgstr ""
 
-#: src/options/options.js:303
+#: src/options/options.js:308
 msgid "4 hours"
 msgstr ""
 
@@ -59,7 +59,7 @@ msgstr ""
 #: src/component/navigation.vue:358
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:139
+#: src/pages/about/about.vue:120
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/pages/albums.vue:156
+#: src/pages/albums.vue:164
 msgid "Add Album"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgstr ""
 msgid "Add files to your library via Web Upload."
 msgstr ""
 
-#: src/dialog/share.vue:91
+#: src/dialog/share.vue:92
 msgid "Add Link"
 msgstr ""
 
@@ -121,23 +121,23 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: src/options/options.js:312
+#: src/options/options.js:317
 msgid "After 1 day"
 msgstr ""
 
-#: src/options/options.js:313
+#: src/options/options.js:318
 msgid "After 3 days"
 msgstr ""
 
-#: src/options/options.js:314
+#: src/options/options.js:319
 msgid "After 7 days"
 msgstr ""
 
-#: src/options/options.js:316
+#: src/options/options.js:321
 msgid "After one month"
 msgstr ""
 
-#: src/options/options.js:318
+#: src/options/options.js:323
 msgid "After one year"
 msgstr ""
 
@@ -145,11 +145,11 @@ msgstr ""
 msgid "After selecting photos or videos from search results, you can add them to existing or new albums using the context menu."
 msgstr ""
 
-#: src/options/options.js:317
+#: src/options/options.js:322
 msgid "After two months"
 msgstr ""
 
-#: src/options/options.js:315
+#: src/options/options.js:320
 msgid "After two weeks"
 msgstr ""
 
@@ -165,8 +165,9 @@ msgstr ""
 #: src/component/navigation.vue:130
 #: src/component/navigation.vue:140
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:536
+#: src/component/navigation.vue:539
 #: src/routes.js:134
+#: src/routes.js:141
 #: src/share/albums.vue:4
 msgid "Albums"
 msgstr ""
@@ -180,8 +181,8 @@ msgstr ""
 msgid "All %{n} albums loaded"
 msgstr ""
 
-#: src/pages/album/photos.vue:230
-#: src/share/photos.vue:245
+#: src/pages/album/photos.vue:228
+#: src/share/photos.vue:243
 msgid "All %{n} entries loaded"
 msgstr ""
 
@@ -247,7 +248,7 @@ msgstr ""
 msgid "Altitude (m)"
 msgstr ""
 
-#: src/common/api.js:93
+#: src/common/api.js:104
 msgid "An error occurred - are you offline?"
 msgstr ""
 
@@ -270,6 +271,7 @@ msgstr ""
 #: src/component/photo/cards.vue:26
 #: src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:120
+#: src/dialog/photo/people.vue:149
 #: src/share/photo/cards.vue:26
 msgid "Approve"
 msgstr ""
@@ -328,15 +330,15 @@ msgstr ""
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr ""
 
-#: src/options/options.js:337
+#: src/options/options.js:342
 msgid "Black"
 msgstr ""
 
-#: src/options/options.js:350
+#: src/options/options.js:355
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr ""
 
-#: src/options/options.js:333
+#: src/options/options.js:338
 msgid "Blue"
 msgstr ""
 
@@ -344,7 +346,7 @@ msgstr ""
 msgid "Brazilian Portuguese"
 msgstr ""
 
-#: src/options/options.js:334
+#: src/options/options.js:339
 msgid "Brown"
 msgstr ""
 
@@ -356,7 +358,7 @@ msgstr ""
 msgid "Browse indexed files and folders in Library."
 msgstr ""
 
-#: src/options/options.js:344
+#: src/options/options.js:349
 msgid "Bug Report"
 msgstr ""
 
@@ -365,7 +367,7 @@ msgid "Busy, please wait…"
 msgstr ""
 
 #: src/component/navigation.vue:202
-#: src/component/navigation.vue:781
+#: src/component/navigation.vue:784
 #: src/routes.js:147
 #: src/routes.js:154
 msgid "Calendar"
@@ -384,14 +386,14 @@ msgstr ""
 msgid "Camera Serial"
 msgstr ""
 
-#: src/pages/album/photos.vue:236
-#: src/pages/photos.vue:276
-#: src/share/photos.vue:251
+#: src/pages/album/photos.vue:234
+#: src/pages/photos.vue:274
+#: src/share/photos.vue:249
 msgid "Can't load more, limit reached"
 msgstr ""
 
-#: src/common/clipboard.js:101
-#: src/common/clipboard.js:138
+#: src/common/clipboard.js:105
+#: src/common/clipboard.js:142
 #: src/pages/albums.vue:386
 #: src/pages/albums.vue:402
 #: src/pages/labels.vue:182
@@ -428,7 +430,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:347
 #: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:94
-#: src/pages/albums.vue:109
+#: src/pages/albums.vue:117
 msgid "Category"
 msgstr ""
 
@@ -448,11 +450,11 @@ msgstr ""
 msgid "Checked"
 msgstr ""
 
-#: src/options/options.js:166
+#: src/options/options.js:171
 msgid "Chinese Simplified"
 msgstr ""
 
-#: src/options/options.js:171
+#: src/options/options.js:176
 msgid "Chinese Traditional"
 msgstr ""
 
@@ -461,7 +463,7 @@ msgstr ""
 msgid "Chroma"
 msgstr ""
 
-#: src/component/photo/viewer.vue:67
+#: src/component/photo/viewer.vue:79
 #: src/dialog/photo/details.vue:117
 #: src/dialog/share.vue:87
 #: src/pages/library/errors.vue:56
@@ -527,6 +529,10 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
+#: src/dialog/photo/people.vue:7
+msgid "Couldn't find any people"
+msgstr ""
+
 #: src/component/photo/cards.vue:9
 #: src/component/photo/list.vue:10
 #: src/component/photo/mosaic.vue:9
@@ -572,7 +578,7 @@ msgstr ""
 msgid "Creating thumbnails for"
 msgstr ""
 
-#: src/options/options.js:352
+#: src/options/options.js:357
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr ""
 
@@ -580,15 +586,15 @@ msgstr ""
 msgid "Current Password"
 msgstr ""
 
-#: src/options/options.js:341
+#: src/options/options.js:346
 msgid "Customer Support"
 msgstr ""
 
-#: src/options/options.js:332
+#: src/options/options.js:337
 msgid "Cyan"
 msgstr ""
 
-#: src/options/options.js:199
+#: src/options/options.js:204
 msgid "Cyano"
 msgstr ""
 
@@ -596,7 +602,7 @@ msgstr ""
 msgid "Czech"
 msgstr ""
 
-#: src/options/options.js:305
+#: src/options/options.js:310
 msgid "Daily"
 msgstr ""
 
@@ -608,11 +614,11 @@ msgstr ""
 msgid "Day"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:76
+#: src/pages/settings/advanced.vue:77
 msgid "Debug Logs"
 msgstr ""
 
-#: src/options/options.js:189
+#: src/options/options.js:194
 msgid "Default"
 msgstr ""
 
@@ -630,7 +636,7 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:40
 #: src/dialog/photo/files.vue:37
-#: src/dialog/share.vue:231
+#: src/dialog/share.vue:232
 #: src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr ""
@@ -638,8 +644,8 @@ msgstr ""
 #: src/component/photo/cards.vue:24
 #: src/dialog/album/edit.vue:143
 #: src/dialog/photo/details.vue:575
-#: src/pages/albums.vue:446
-#: src/share/albums.vue:244
+#: src/pages/albums.vue:454
+#: src/share/albums.vue:247
 #: src/share/photo/cards.vue:24
 msgid "Description"
 msgstr ""
@@ -648,7 +654,9 @@ msgstr ""
 msgid "Detailed instructions can be found in our User Guide."
 msgstr ""
 
-#: src/dialog/photo/edit.vue:25
+#: src/dialog/photo/edit.vue:27
+#: src/dialog/photo/edit.vue:1
+#: src/dialog/photo/edit.vue:178
 msgid "Details"
 msgstr ""
 
@@ -664,39 +672,39 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:142
+#: src/pages/settings/advanced.vue:143
 msgid "Disable Backups"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:165
+#: src/pages/settings/advanced.vue:166
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:483
+#: src/pages/settings/advanced.vue:484
 msgid "Disable Darktable"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:208
+#: src/pages/settings/advanced.vue:209
 msgid "Disable ExifTool"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:525
+#: src/pages/settings/advanced.vue:526
 msgid "Disable FFmpeg"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:186
+#: src/pages/settings/advanced.vue:187
 msgid "Disable Places"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:504
+#: src/pages/settings/advanced.vue:505
 msgid "Disable RawTherapee"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:230
+#: src/pages/settings/advanced.vue:231
 msgid "Disable TensorFlow"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:164
+#: src/pages/settings/advanced.vue:165
 msgid "Disable WebDAV"
 msgstr ""
 
@@ -705,7 +713,7 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:187
+#: src/pages/settings/advanced.vue:188
 msgid "Disables reverse geocoding and maps."
 msgstr ""
 
@@ -716,35 +724,35 @@ msgstr ""
 msgid "Discover"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:143
+#: src/pages/settings/advanced.vue:144
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:209
+#: src/pages/settings/advanced.vue:210
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:99
+#: src/pages/settings/advanced.vue:100
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:526
+#: src/pages/settings/advanced.vue:527
 msgid "Don't transcode videos with FFmpeg."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:484
+#: src/pages/settings/advanced.vue:485
 msgid "Don't use Darktable to convert RAW files."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:505
+#: src/pages/settings/advanced.vue:506
 msgid "Don't use RawTherapee to convert RAW files."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:231
+#: src/pages/settings/advanced.vue:232
 msgid "Don't use TensorFlow for image classification."
 msgstr ""
 
-#: src/options/options.js:345
+#: src/options/options.js:350
 msgid "Donations"
 msgstr ""
 
@@ -763,13 +771,13 @@ msgstr ""
 #: src/component/album/toolbar.vue:106
 #: src/component/file/clipboard.vue:66
 #: src/component/photo/clipboard.vue:169
-#: src/component/photo/viewer.vue:74
+#: src/component/photo/viewer.vue:86
 #: src/dialog/photo/files.vue:31
 #: src/dialog/photo/files.vue:28
 #: src/pages/settings/general.vue:162
 #: src/share/album/clipboard.vue:61
 #: src/share/photo/clipboard.vue:63
-#: src/share/photos.vue:76
+#: src/share/photos.vue:77
 msgid "Download"
 msgstr ""
 
@@ -795,11 +803,11 @@ msgstr ""
 #: src/share/photo/cards.vue:54
 #: src/share/photo/clipboard.vue:39
 #: src/share/photo/list.vue:53
-#: src/share/photos.vue:489
+#: src/share/photos.vue:488
 msgid "Downloading…"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:281
+#: src/pages/settings/advanced.vue:282
 msgid "Downscaling Filter"
 msgstr ""
 
@@ -811,15 +819,15 @@ msgstr ""
 msgid "Dutch"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:304
+#: src/pages/settings/advanced.vue:305
 msgid "Dynamic Previews"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:305
+#: src/pages/settings/advanced.vue:306
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:347
+#: src/pages/settings/advanced.vue:348
 msgid "Dynamic Size Limit: %{n}px"
 msgstr ""
 
@@ -830,7 +838,7 @@ msgstr ""
 #: src/component/album/clipboard.vue:91
 #: src/component/album/toolbar.vue:69
 #: src/component/photo/clipboard.vue:123
-#: src/component/photo/viewer.vue:91
+#: src/component/photo/viewer.vue:103
 #: src/pages/settings/general.vue:184
 msgid "Edit"
 msgstr ""
@@ -843,7 +851,7 @@ msgstr ""
 msgid "Edit Account"
 msgstr ""
 
-#: src/dialog/photo/edit.vue:41
+#: src/dialog/photo/edit.vue:43
 msgid "Edit Photo"
 msgstr ""
 
@@ -851,7 +859,7 @@ msgstr ""
 msgid "Edited"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:121
+#: src/pages/settings/advanced.vue:122
 msgid "Enable new features currently under development."
 msgstr ""
 
@@ -860,7 +868,7 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:463
+#: src/pages/settings/advanced.vue:464
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr ""
 
@@ -885,7 +893,7 @@ msgstr ""
 msgid "Estimates"
 msgstr ""
 
-#: src/options/options.js:306
+#: src/options/options.js:311
 msgid "Every two days"
 msgstr ""
 
@@ -893,7 +901,7 @@ msgstr ""
 msgid "Exclude content marked as private from search results, shared albums, labels and places."
 msgstr ""
 
-#: src/component/navigation.vue:243
+#: src/component/navigation.vue:246
 msgid "Expand"
 msgstr ""
 
@@ -901,7 +909,7 @@ msgstr ""
 msgid "Expand Search"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:120
+#: src/pages/settings/advanced.vue:121
 msgid "Experimental Features"
 msgstr ""
 
@@ -939,7 +947,7 @@ msgstr ""
 msgid "Failure while importing uploaded files"
 msgstr ""
 
-#: src/options/options.js:245
+#: src/options/options.js:250
 msgid "Fast"
 msgstr ""
 
@@ -948,12 +956,12 @@ msgid "Favorite"
 msgstr ""
 
 #: src/component/navigation.vue:176
-#: src/component/navigation.vue:693
+#: src/component/navigation.vue:696
 #: src/routes.js:180
 msgid "Favorites"
 msgstr ""
 
-#: src/options/options.js:343
+#: src/options/options.js:348
 msgid "Feature Request"
 msgstr ""
 
@@ -962,7 +970,7 @@ msgstr ""
 msgid "Feedback"
 msgstr ""
 
-#: src/model/file.js:244
+#: src/model/file.js:245
 msgid "File"
 msgstr ""
 
@@ -970,7 +978,9 @@ msgstr ""
 msgid "File Browser"
 msgstr ""
 
-#: src/dialog/photo/edit.vue:33
+#: src/dialog/photo/edit.vue:65
+#: src/dialog/photo/edit.vue:6
+#: src/dialog/photo/edit.vue:317
 msgid "Files"
 msgstr ""
 
@@ -1000,7 +1010,7 @@ msgid "Folder is empty"
 msgstr ""
 
 #: src/component/navigation.vue:262
-#: src/component/navigation.vue:989
+#: src/component/navigation.vue:992
 #: src/routes.js:160
 #: src/routes.js:167
 msgid "Folders"
@@ -1010,7 +1020,7 @@ msgstr ""
 msgid "French"
 msgstr ""
 
-#: src/component/photo/viewer.vue:162
+#: src/component/photo/viewer.vue:174
 msgid "Fullscreen"
 msgstr ""
 
@@ -1022,19 +1032,19 @@ msgstr ""
 msgid "German"
 msgstr ""
 
-#: src/options/options.js:327
+#: src/options/options.js:332
 msgid "Gold"
 msgstr ""
 
-#: src/options/options.js:194
+#: src/options/options.js:199
 msgid "Grayscale"
 msgstr ""
 
-#: src/options/options.js:330
+#: src/options/options.js:335
 msgid "Green"
 msgstr ""
 
-#: src/options/options.js:336
+#: src/options/options.js:341
 msgid "Grey"
 msgstr ""
 
@@ -1073,11 +1083,11 @@ msgstr ""
 msgid "Hindi"
 msgstr ""
 
-#: src/pages/about/feedback.vue:126
+#: src/pages/about/feedback.vue:124
 msgid "How can we help?"
 msgstr ""
 
-#: src/options/options.js:268
+#: src/options/options.js:273
 msgid "Hybrid"
 msgstr ""
 
@@ -1096,7 +1106,7 @@ msgstr ""
 msgid "image"
 msgstr ""
 
-#: src/options/options.js:283
+#: src/options/options.js:288
 msgid "Image"
 msgstr ""
 
@@ -1176,15 +1186,15 @@ msgstr ""
 msgid "Item"
 msgstr ""
 
-#: src/options/options.js:176
+#: src/options/options.js:181
 msgid "Japanese"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:322
+#: src/pages/settings/advanced.vue:323
 msgid "JPEG Quality: %{n}"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:428
+#: src/pages/settings/advanced.vue:429
 msgid "JPEG Size Limit: %{n}px"
 msgstr ""
 
@@ -1200,7 +1210,7 @@ msgstr ""
 msgid "Korean"
 msgstr ""
 
-#: src/options/options.js:181
+#: src/options/options.js:186
 msgid "Kurdish"
 msgstr ""
 
@@ -1210,13 +1220,16 @@ msgid "Label"
 msgstr ""
 
 #: src/dialog/photo/labels.vue:48
-#: src/pages/labels.vue:328
+#: src/pages/labels.vue:329
 msgid "Label Name"
 msgstr ""
 
 #: src/component/navigation.vue:249
-#: src/component/navigation.vue:944
-#: src/dialog/photo/edit.vue:29
+#: src/component/navigation.vue:947
+#: src/dialog/photo/edit.vue:39
+#: src/dialog/photo/edit.vue:6
+#: src/dialog/photo/edit.vue:216
+#: src/dialog/photo/edit.vue:267
 #: src/pages/settings/general.vue:360
 #: src/routes.js:259
 msgid "Labels"
@@ -1226,7 +1239,7 @@ msgstr ""
 msgid "Labels deleted"
 msgstr ""
 
-#: src/options/options.js:351
+#: src/options/options.js:356
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr ""
 
@@ -1243,7 +1256,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/options/options.js:204
+#: src/options/options.js:209
 msgid "Lavender"
 msgstr ""
 
@@ -1262,7 +1275,7 @@ msgstr ""
 #: src/component/navigation.vue:288
 #: src/component/navigation.vue:298
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1081
+#: src/component/navigation.vue:1084
 #: src/pages/settings.vue:41
 #: src/pages/settings/general.vue:382
 #: src/routes.js:271
@@ -1278,11 +1291,11 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: src/component/photo/viewer.vue:135
+#: src/component/photo/viewer.vue:147
 msgid "Like"
 msgstr ""
 
-#: src/options/options.js:329
+#: src/options/options.js:334
 msgid "Lime"
 msgstr ""
 
@@ -1290,7 +1303,7 @@ msgstr ""
 msgid "Limit reached, showing first %{n} files"
 msgstr ""
 
-#: src/options/options.js:353
+#: src/options/options.js:358
 msgid "Linear: Very Smooth, Best Performance"
 msgstr ""
 
@@ -1303,13 +1316,13 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: src/component/photo/cards.vue:210
-#: src/component/photo/list.vue:184
-#: src/component/photo/mosaic.vue:195
-#: src/options/options.js:291
-#: src/share/photo/cards.vue:185
-#: src/share/photo/list.vue:163
-#: src/share/photo/mosaic.vue:176
+#: src/component/photo/cards.vue:221
+#: src/component/photo/list.vue:191
+#: src/component/photo/mosaic.vue:197
+#: src/options/options.js:296
+#: src/share/photo/cards.vue:194
+#: src/share/photo/list.vue:170
+#: src/share/photo/mosaic.vue:178
 msgid "Live"
 msgstr ""
 
@@ -1335,12 +1348,12 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr ""
 
 #: src/component/navigation.vue:400
-#: src/component/navigation.vue:1456
+#: src/component/navigation.vue:1459
 msgid "Login"
 msgstr ""
 
 #: src/component/navigation.vue:388
-#: src/component/navigation.vue:1416
+#: src/component/navigation.vue:1419
 msgid "Logout"
 msgstr ""
 
@@ -1354,7 +1367,7 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
-#: src/options/options.js:323
+#: src/options/options.js:328
 msgid "Magenta"
 msgstr ""
 
@@ -1371,7 +1384,7 @@ msgstr ""
 msgid "Manual Upload"
 msgstr ""
 
-#: src/options/options.js:249
+#: src/options/options.js:254
 msgid "Medium"
 msgstr ""
 
@@ -1379,7 +1392,7 @@ msgstr ""
 msgid "Message sent"
 msgstr ""
 
-#: src/component/navigation.vue:196
+#: src/component/navigation.vue:199
 msgid "Minimize"
 msgstr ""
 
@@ -1389,7 +1402,7 @@ msgid "Missing"
 msgstr ""
 
 #: src/component/navigation.vue:189
-#: src/component/navigation.vue:736
+#: src/component/navigation.vue:739
 #: src/pages/settings/general.vue:338
 #: src/routes.js:121
 #: src/routes.js:128
@@ -1405,7 +1418,7 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: src/options/options.js:209
+#: src/options/options.js:214
 msgid "Moonlight"
 msgstr ""
 
@@ -1418,12 +1431,12 @@ msgstr ""
 msgid "More than 20 labels found"
 msgstr ""
 
-#: src/pages/album/photos.vue:344
-#: src/share/photos.vue:359
+#: src/pages/album/photos.vue:343
+#: src/share/photos.vue:358
 msgid "More than 50 entries found"
 msgstr ""
 
-#: src/pages/photos.vue:382
+#: src/pages/photos.vue:381
 msgid "More than 50 results"
 msgstr ""
 
@@ -1444,7 +1457,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:30
 #: src/component/photo/list.vue:38
-#: src/component/photo/list.vue:233
+#: src/component/photo/list.vue:240
 #: src/dialog/account/edit.vue:397
 #: src/dialog/album/edit.vue:106
 #: src/dialog/photo/files.vue:70
@@ -1455,7 +1468,7 @@ msgstr ""
 #: src/pages/login.vue:73
 #: src/share/photo/cards.vue:30
 #: src/share/photo/list.vue:34
-#: src/share/photo/list.vue:212
+#: src/share/photo/list.vue:219
 msgid "Name"
 msgstr ""
 
@@ -1467,8 +1480,8 @@ msgstr ""
 msgid "Name too long"
 msgstr ""
 
-#: src/options/options.js:301
-#: src/options/options.js:311
+#: src/options/options.js:306
+#: src/options/options.js:316
 #: src/pages/settings/sync.vue:50
 msgid "Never"
 msgstr ""
@@ -1484,11 +1497,11 @@ msgid "Newest first"
 msgstr ""
 
 #: src/dialog/photo/archive.vue:15
-#: src/dialog/photo/info.vue:280
-#: src/dialog/photo/info.vue:301
-#: src/dialog/photo/info.vue:321
-#: src/dialog/photo/info.vue:341
-#: src/dialog/photo/info.vue:361
+#: src/dialog/photo/info.vue:284
+#: src/dialog/photo/info.vue:305
+#: src/dialog/photo/info.vue:325
+#: src/dialog/photo/info.vue:345
+#: src/dialog/photo/info.vue:365
 msgid "No"
 msgstr ""
 
@@ -1497,8 +1510,8 @@ msgstr ""
 msgid "No albums found"
 msgstr ""
 
-#: src/pages/album/photos.vue:337
-#: src/share/photos.vue:352
+#: src/pages/album/photos.vue:336
+#: src/share/photos.vue:351
 msgid "No entries found"
 msgstr ""
 
@@ -1511,11 +1524,11 @@ msgstr ""
 msgid "No photos found"
 msgstr ""
 
-#: src/pages/photos.vue:375
+#: src/pages/photos.vue:374
 msgid "No results"
 msgstr ""
 
-#: src/pages/settings/sync.vue:46
+#: src/pages/settings/sync.vue:47
 msgid "No servers configured."
 msgstr ""
 
@@ -1539,7 +1552,7 @@ msgstr ""
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
-#: src/options/options.js:241
+#: src/options/options.js:246
 msgid "None"
 msgstr ""
 
@@ -1580,8 +1593,8 @@ msgid "Nothing to see here yet. Be patient."
 msgstr ""
 
 #: src/component/navigation.vue:412
-#: src/component/navigation.vue:1497
-#: src/options/options.js:260
+#: src/component/navigation.vue:1500
+#: src/options/options.js:265
 msgid "Offline"
 msgstr ""
 
@@ -1591,7 +1604,7 @@ msgstr ""
 msgid "Oldest first"
 msgstr ""
 
-#: src/options/options.js:307
+#: src/options/options.js:312
 msgid "Once a week"
 msgstr ""
 
@@ -1600,8 +1613,8 @@ msgstr ""
 msgid "One album found"
 msgstr ""
 
-#: src/pages/album/photos.vue:339
-#: src/share/photos.vue:354
+#: src/pages/album/photos.vue:338
+#: src/share/photos.vue:353
 msgid "One entry found"
 msgstr ""
 
@@ -1613,11 +1626,11 @@ msgstr ""
 msgid "One folder found"
 msgstr ""
 
-#: src/pages/photos.vue:377
+#: src/pages/photos.vue:376
 msgid "One result"
 msgstr ""
 
-#: src/options/options.js:214
+#: src/options/options.js:219
 msgid "Onyx"
 msgstr ""
 
@@ -1625,7 +1638,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: src/options/options.js:326
+#: src/options/options.js:331
 msgid "Orange"
 msgstr ""
 
@@ -1654,7 +1667,7 @@ msgstr ""
 msgid "Originals"
 msgstr ""
 
-#: src/options/options.js:346
+#: src/options/options.js:351
 msgid "Other"
 msgstr ""
 
@@ -1662,7 +1675,7 @@ msgstr ""
 msgid "Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection."
 msgstr ""
 
-#: src/options/options.js:276
+#: src/options/options.js:281
 msgid "Outdoor"
 msgstr ""
 
@@ -1689,6 +1702,8 @@ msgstr ""
 msgid "pay for operating expenses and external services like satellite maps"
 msgstr ""
 
+#: src/dialog/photo/edit.vue:52
+#: src/dialog/photo/edit.vue:6
 #: src/pages/settings/general.vue:428
 #: src/routes.js:265
 msgid "People"
@@ -1706,7 +1721,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:824
+#: src/model/photo.js:875
 msgid "Photo"
 msgstr ""
 
@@ -1726,7 +1741,7 @@ msgstr ""
 msgid "Photos"
 msgstr ""
 
-#: src/options/options.js:324
+#: src/options/options.js:329
 msgid "Pink"
 msgstr ""
 
@@ -1741,7 +1756,7 @@ msgstr ""
 #: src/component/navigation.vue:215
 #: src/component/navigation.vue:225
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:826
+#: src/component/navigation.vue:829
 #: src/pages/settings/general.vue:108
 #: src/pages/settings/general.vue:453
 #: src/routes.js:215
@@ -1751,10 +1766,10 @@ msgstr ""
 msgid "Places"
 msgstr ""
 
-#: src/component/photo/cards.vue:275
-#: src/component/photo/mosaic.vue:261
-#: src/share/photo/cards.vue:250
-#: src/share/photo/mosaic.vue:242
+#: src/component/photo/cards.vue:286
+#: src/component/photo/mosaic.vue:263
+#: src/share/photo/cards.vue:259
+#: src/share/photo/mosaic.vue:244
 msgid "Play"
 msgstr ""
 
@@ -1777,6 +1792,10 @@ msgstr ""
 #: src/dialog/photo/files.vue:108
 #: src/dialog/photo/files.vue:105
 msgid "Portrait"
+msgstr ""
+
+#: src/options/options.js:156
+msgid "Português de Portugal"
 msgstr ""
 
 #: src/dialog/account/edit.vue:338
@@ -1810,14 +1829,14 @@ msgid "Primary"
 msgstr ""
 
 #: src/component/navigation.vue:275
-#: src/component/navigation.vue:1034
+#: src/component/navigation.vue:1037
 #: src/dialog/photo/info.vue:102
 #: src/pages/settings/general.vue:272
 #: src/routes.js:201
 msgid "Private"
 msgstr ""
 
-#: src/options/options.js:342
+#: src/options/options.js:347
 msgid "Product Feedback"
 msgstr ""
 
@@ -1826,7 +1845,7 @@ msgstr ""
 msgid "Projection"
 msgstr ""
 
-#: src/options/options.js:322
+#: src/options/options.js:327
 msgid "Purple"
 msgstr ""
 
@@ -1842,18 +1861,18 @@ msgstr ""
 msgid "Random"
 msgstr ""
 
-#: src/options/options.js:219
+#: src/options/options.js:224
 msgid "Raspberry"
 msgstr ""
 
-#: src/options/options.js:287
+#: src/options/options.js:292
 msgid "Raw"
 msgstr ""
 
-#: src/component/photo/cards.vue:200
-#: src/component/photo/mosaic.vue:185
-#: src/share/photo/cards.vue:175
-#: src/share/photo/mosaic.vue:166
+#: src/component/photo/cards.vue:211
+#: src/component/photo/mosaic.vue:187
+#: src/share/photo/cards.vue:184
+#: src/share/photo/mosaic.vue:168
 msgid "RAW"
 msgstr ""
 
@@ -1865,7 +1884,7 @@ msgstr ""
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:98
+#: src/pages/settings/advanced.vue:99
 msgid "Read-Only Mode"
 msgstr ""
 
@@ -1881,17 +1900,21 @@ msgstr ""
 msgid "Recently edited"
 msgstr ""
 
-#: src/options/options.js:325
+#: src/options/options.js:330
 msgid "Red"
+msgstr ""
+
+#: src/dialog/photo/people.vue:121
+msgid "Reject"
 msgstr ""
 
 #: src/component/album/toolbar.vue:53
 #: src/component/photo/toolbar.vue:55
 #: src/dialog/reload.vue:15
-#: src/pages/albums.vue:119
-#: src/pages/labels.vue:81
-#: src/pages/library/errors.vue:60
-#: src/pages/library/files.vue:95
+#: src/pages/albums.vue:127
+#: src/pages/labels.vue:82
+#: src/pages/library/errors.vue:61
+#: src/pages/library/files.vue:99
 msgid "Reload"
 msgstr ""
 
@@ -1917,16 +1940,16 @@ msgstr ""
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr ""
 
-#: src/pages/library/errors.vue:78
+#: src/pages/library/errors.vue:79
 msgid "Report Bug"
 msgstr ""
 
-#: src/common/api.js:67
+#: src/common/api.js:78
 msgid "Request failed - invalid response"
 msgstr ""
 
-#: src/pages/about/feedback.vue:105
-#: src/pages/about/feedback.vue:125
+#: src/pages/about/feedback.vue:103
+#: src/pages/about/feedback.vue:123
 #: src/pages/about/feedback.vue:165
 msgid "Required"
 msgstr ""
@@ -1948,7 +1971,7 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
-#: src/options/options.js:156
+#: src/options/options.js:161
 msgid "Russian"
 msgstr ""
 
@@ -1969,11 +1992,11 @@ msgstr ""
 #: src/component/navigation.vue:56
 #: src/component/navigation.vue:66
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:275
+#: src/component/navigation.vue:278
 #: src/component/photo/toolbar.vue:44
-#: src/pages/albums.vue:97
-#: src/pages/labels.vue:69
-#: src/pages/library/errors.vue:49
+#: src/pages/albums.vue:105
+#: src/pages/labels.vue:70
+#: src/pages/library/errors.vue:50
 #: src/pages/places.vue:30
 #: src/routes.js:107
 msgid "Search"
@@ -1987,15 +2010,15 @@ msgstr ""
 msgid "Season"
 msgstr ""
 
-#: src/options/options.js:224
+#: src/options/options.js:229
 msgid "Seaweed"
 msgstr ""
 
-#: src/dialog/share.vue:209
+#: src/dialog/share.vue:210
 msgid "Secret"
 msgstr ""
 
-#: src/component/photo/viewer.vue:107
+#: src/component/photo/viewer.vue:119
 msgid "Select"
 msgstr ""
 
@@ -2015,7 +2038,7 @@ msgstr ""
 msgid "Selection restored"
 msgstr ""
 
-#: src/pages/about/feedback.vue:46
+#: src/pages/about/feedback.vue:35
 msgid "Send"
 msgstr ""
 
@@ -2038,7 +2061,7 @@ msgstr ""
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
-#: src/component/navigation.vue:1255
+#: src/component/navigation.vue:1258
 #: src/routes.js:293
 #: src/routes.js:305
 #: src/routes.js:317
@@ -2057,7 +2080,7 @@ msgstr ""
 msgid "Setup"
 msgstr ""
 
-#: src/options/options.js:229
+#: src/options/options.js:234
 msgid "Shadow"
 msgstr ""
 
@@ -2076,7 +2099,7 @@ msgstr ""
 msgid "Shared with you."
 msgstr ""
 
-#: src/pages/labels.vue:116
+#: src/pages/labels.vue:117
 msgid "Show less"
 msgstr ""
 
@@ -2084,7 +2107,7 @@ msgstr ""
 msgid "Show Library in navigation menu."
 msgstr ""
 
-#: src/pages/labels.vue:99
+#: src/pages/labels.vue:100
 msgid "Show more"
 msgstr ""
 
@@ -2092,15 +2115,15 @@ msgstr ""
 msgid "Show server logs in Library."
 msgstr ""
 
-#: src/pages/photos.vue:270
+#: src/pages/photos.vue:268
 msgid "Showing all %{n} results"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:77
+#: src/pages/settings/advanced.vue:78
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr ""
 
-#: src/model/file.js:185
+#: src/model/file.js:186
 msgid "Sidecar"
 msgstr ""
 
@@ -2123,11 +2146,11 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: src/options/options.js:161
+#: src/options/options.js:166
 msgid "Slovak"
 msgstr ""
 
-#: src/options/options.js:253
+#: src/options/options.js:258
 msgid "Slow"
 msgstr ""
 
@@ -2150,10 +2173,10 @@ msgstr ""
 msgid "Spanish"
 msgstr ""
 
-#: src/component/photo/cards.vue:230
-#: src/component/photo/mosaic.vue:215
-#: src/share/photo/cards.vue:205
-#: src/share/photo/mosaic.vue:196
+#: src/component/photo/cards.vue:241
+#: src/component/photo/mosaic.vue:217
+#: src/share/photo/cards.vue:214
+#: src/share/photo/mosaic.vue:198
 msgid "Stack"
 msgstr ""
 
@@ -2182,7 +2205,7 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: src/component/photo/viewer.vue:171
+#: src/component/photo/viewer.vue:183
 msgid "Start/Stop Slideshow"
 msgstr ""
 
@@ -2190,7 +2213,7 @@ msgstr ""
 msgid "States"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:373
+#: src/pages/settings/advanced.vue:374
 msgid "Static Size Limit: %{n}px"
 msgstr ""
 
@@ -2203,7 +2226,7 @@ msgstr ""
 msgid "Storage Folder"
 msgstr ""
 
-#: src/options/options.js:264
+#: src/options/options.js:269
 msgid "Streets"
 msgstr ""
 
@@ -2236,11 +2259,12 @@ msgstr ""
 msgid "Taken"
 msgstr ""
 
-#: src/options/options.js:331
+#: src/options/options.js:336
 msgid "Teal"
 msgstr ""
 
 #: src/dialog/photo/details.vue:26
+#: src/dialog/photo/people.vue:14
 msgid "Text too long"
 msgstr ""
 
@@ -2265,7 +2289,7 @@ msgstr ""
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr ""
 
-#: src/pages/settings/advanced.vue:252
+#: src/pages/settings/advanced.vue:253
 msgid "Thumbnail Generation"
 msgstr ""
 
@@ -2289,9 +2313,13 @@ msgstr ""
 msgid "Title too long"
 msgstr ""
 
-#: src/app.js:164
-#: src/share.js:163
+#: src/app.js:165
+#: src/share.js:164
 msgid "to"
+msgstr ""
+
+#: src/dialog/photo/people.vue:10
+msgid "To automatically detect faces, please re-index your library and wait until indexing has been completed."
 msgstr ""
 
 #: src/component/album/toolbar.vue:124
@@ -2303,11 +2331,11 @@ msgstr ""
 msgid "Toggle View"
 msgstr ""
 
-#: src/dialog/share.vue:210
+#: src/dialog/share.vue:211
 msgid "Token"
 msgstr ""
 
-#: src/options/options.js:272
+#: src/options/options.js:277
 msgid "Topographic"
 msgstr ""
 
@@ -2345,12 +2373,12 @@ msgstr ""
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:21
 #: src/model/album.js:139
-#: src/model/photo.js:519
-#: src/model/photo.js:536
-#: src/model/photo.js:559
-#: src/model/photo.js:573
-#: src/model/photo.js:650
-#: src/model/photo.js:663
+#: src/model/photo.js:526
+#: src/model/photo.js:543
+#: src/model/photo.js:566
+#: src/model/photo.js:580
+#: src/model/photo.js:657
+#: src/model/photo.js:670
 #: src/options/options.js:20
 #: src/options/options.js:34
 #: src/options/options.js:51
@@ -2396,7 +2424,7 @@ msgstr ""
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
 #: src/dialog/upload.vue:54
-#: src/pages/albums.vue:137
+#: src/pages/albums.vue:145
 #: src/pages/library/import.vue:38
 #: src/pages/settings/general.vue:140
 #: src/pages/settings/sync.vue:27
@@ -2437,11 +2465,11 @@ msgstr ""
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 
-#: src/dialog/share.vue:165
+#: src/dialog/share.vue:166
 msgid "URL"
 msgstr ""
 
-#: src/pages/settings/advanced.vue:462
+#: src/pages/settings/advanced.vue:463
 msgid "Use Presets"
 msgstr ""
 
@@ -2460,31 +2488,31 @@ msgid "Username"
 msgstr ""
 
 #: src/component/photo/cards.vue:29
-#: src/component/photo/cards.vue:220
-#: src/component/photo/list.vue:194
-#: src/component/photo/mosaic.vue:205
-#: src/model/file.js:183
-#: src/model/photo.js:610
-#: src/model/photo.js:624
-#: src/options/options.js:295
+#: src/component/photo/cards.vue:231
+#: src/component/photo/list.vue:201
+#: src/component/photo/mosaic.vue:207
+#: src/model/file.js:184
+#: src/model/photo.js:617
+#: src/model/photo.js:631
+#: src/options/options.js:300
 #: src/share/photo/cards.vue:29
-#: src/share/photo/cards.vue:195
-#: src/share/photo/list.vue:173
-#: src/share/photo/mosaic.vue:186
+#: src/share/photo/cards.vue:204
+#: src/share/photo/list.vue:180
+#: src/share/photo/mosaic.vue:188
 msgid "Video"
 msgstr ""
 
 #: src/component/navigation.vue:163
-#: src/component/navigation.vue:649
+#: src/component/navigation.vue:652
 #: src/routes.js:187
 msgid "Videos"
 msgstr ""
 
-#: src/component/photo/cards.vue:247
-#: src/component/photo/mosaic.vue:233
+#: src/component/photo/cards.vue:258
+#: src/component/photo/mosaic.vue:235
 #: src/component/photo/toolbar.vue:230
-#: src/share/photo/cards.vue:222
-#: src/share/photo/mosaic.vue:214
+#: src/share/photo/cards.vue:231
+#: src/share/photo/mosaic.vue:216
 msgid "View"
 msgstr ""
 
@@ -2505,7 +2533,7 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr ""
 
-#: src/options/options.js:335
+#: src/options/options.js:340
 msgid "White"
 msgstr ""
 
@@ -2514,11 +2542,11 @@ msgstr ""
 msgid "Year"
 msgstr ""
 
-#: src/options/options.js:328
+#: src/options/options.js:333
 msgid "Yellow"
 msgstr ""
 
-#: src/options/options.js:234
+#: src/options/options.js:239
 msgid "Yellowstone"
 msgstr ""
 
@@ -2529,11 +2557,11 @@ msgstr ""
 #: src/dialog/photo/files.vue:100
 #: src/dialog/photo/files.vue:108
 #: src/dialog/photo/files.vue:154
-#: src/dialog/photo/info.vue:280
-#: src/dialog/photo/info.vue:301
-#: src/dialog/photo/info.vue:321
-#: src/dialog/photo/info.vue:341
-#: src/dialog/photo/info.vue:361
+#: src/dialog/photo/info.vue:284
+#: src/dialog/photo/info.vue:305
+#: src/dialog/photo/info.vue:325
+#: src/dialog/photo/info.vue:345
+#: src/dialog/photo/info.vue:365
 msgid "Yes"
 msgstr ""
 
@@ -2563,6 +2591,6 @@ msgstr ""
 msgid "Your message has been sent"
 msgstr ""
 
-#: src/component/photo/viewer.vue:166
+#: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr ""
