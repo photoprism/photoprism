@@ -1,8 +1,9 @@
 package query
 
 import (
-	"github.com/photoprism/photoprism/internal/entity"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/stretchr/testify/assert"
 )
