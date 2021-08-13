@@ -19,7 +19,7 @@ var Permissions = ACL{
 		RoleAdmin: Actions{ActionDefault: true},
 		RoleGuest: Actions{ActionSearch: true, ActionRead: true, ActionDownload: true},
 	},
-	ResourcePeople: Roles{
+	ResourceUsers: Roles{
 		RoleDefault: Actions{ActionUpdateSelf: true},
 	},
 }

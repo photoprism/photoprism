@@ -21,7 +21,7 @@ func ChangePassword(router *gin.RouterGroup) {
 			return
 		}
 
-		s := Auth(SessionID(c), acl.ResourcePeople, acl.ActionUpdateSelf)
+		s := Auth(SessionID(c), acl.ResourceUsers, acl.ActionUpdateSelf)
 
 		if s.Invalid() {
 			AbortUnauthorized(c)
