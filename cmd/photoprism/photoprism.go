@@ -31,6 +31,7 @@ package main
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/commands"
 	"github.com/photoprism/photoprism/internal/config"
@@ -44,6 +45,7 @@ var log = event.Log
 func main() {
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
+	app.HelpName = filepath.Base(os.Args[0])
 	app.Usage = "Browse Your Life in Pictures"
 	app.Version = version
 	app.Copyright = "(c) 2018-2021 Michael Mayer <hello@photoprism.org>"
@@ -56,7 +58,7 @@ func main() {
 		commands.IndexCommand,
 		commands.ImportCommand,
 		commands.MomentsCommand,
-		commands.PeopleCommand,
+		commands.FacesCommand,
 		commands.OptimizeCommand,
 		commands.PurgeCommand,
 		commands.CleanUpCommand,

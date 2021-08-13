@@ -45,6 +45,7 @@ require (
 	github.com/melihmucuk/geocache v0.0.0-20160621165317-521b336a001c
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/montanaflynn/stats v0.6.6 // indirect
 	github.com/mpraski/clusters v0.0.0-20171016094157-18104487c312
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.4.0

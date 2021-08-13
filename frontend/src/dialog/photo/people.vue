@@ -29,17 +29,17 @@
 
             <v-card-actions class="card-details pa-0">
               <v-layout v-if="marker.Score < 30" row wrap align-center>
-                <v-flex xs6 class="text-xs-center pa-1">
-                  <v-btn color="accent lighten-2"
-                         small depressed dark block :round="false"
+                <v-flex xs6 class="text-xs-center pa-0">
+                  <v-btn color="transparent"
+                         large depressed block :round="false"
                          class="action-archive text-xs-center"
                          :title="$gettext('Reject')" @click.stop="reject(marker)">
                     <v-icon dark>clear</v-icon>
                   </v-btn>
                 </v-flex>
-                <v-flex xs6 class="text-xs-center pa-1">
-                  <v-btn color="accent lighten-2"
-                         small depressed dark block :round="false"
+                <v-flex xs6 class="text-xs-center pa-0">
+                  <v-btn color="transparent"
+                         large depressed block :round="false"
                          class="action-approve text-xs-center"
                          :title="$gettext('Approve')" @click.stop="confirm(marker)">
                     <v-icon dark>check</v-icon>
@@ -47,15 +47,15 @@
                 </v-flex>
               </v-layout>
               <v-layout v-else row wrap align-center>
-                <v-flex xs12 class="text-xs-left pa-1">
+                <v-flex xs12 class="text-xs-left pa-0">
                   <v-text-field
                       v-model="marker.Label"
                       :rules="[textRule]"
-                      color="secondary-dark"
                       browser-autocomplete="off"
-                      class="input-name pa-0 ma-1"
+                      class="input-name pa-0 ma-0"
                       hide-details
                       single-line
+                      solo-inverted
                       clearable
                       @click:clear="clearName(marker)"
                       @change="updateName(marker)"

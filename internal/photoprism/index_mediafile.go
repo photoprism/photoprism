@@ -822,9 +822,9 @@ func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 		}
 	}
 
-	elapsed := time.Since(start)
-
-	log.Debugf("index: image classification took %s", elapsed)
+	if len(labels) > 0 {
+		log.Infof("index: found %d labels for %s [%s]", len(labels), txt.Quote(jpeg.BaseName()), time.Since(start))
+	}
 
 	return results
 }
@@ -864,9 +864,9 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
 	}
 
-	elapsed := time.Since(start)
-
-	log.Debugf("index: face detection took %s", elapsed)
+	if len(faces) > 0 {
+		log.Infof("index: detected %d faces in %s [%s]", len(faces), txt.Quote(jpeg.BaseName()), time.Since(start))
+	}
 
 	return faces
 }

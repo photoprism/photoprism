@@ -36,8 +36,8 @@ func Markers(limit, offset int, markerType string, embeddings, unmatched bool) (
 	return result, err
 }
 
-// Embeddings finds all face embeddings.
-func Embeddings() (result entity.Embeddings, err error) {
+// Embeddings returns existing face embeddings.
+func Embeddings(single bool) (result entity.Embeddings, err error) {
 	var col []string
 
 	stmt := Db().
@@ -52,7 +52,13 @@ func Embeddings() (result entity.Embeddings, err error) {
 
 	for _, embeddingsJson := range col {
 		if embeddings := entity.UnmarshalEmbeddings(embeddingsJson); len(embeddings) > 0 {
-			result = append(result, embeddings...)
+			if single {
+				// Single embedding per face detected.
+				result = append(result, embeddings[0])
+			} else {
+				// Return all embedding otherwise.
+				result = append(result, embeddings...)
+			}
 		}
 	}
 

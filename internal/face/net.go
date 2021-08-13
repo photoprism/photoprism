@@ -116,7 +116,7 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, 
 	} else if img, err := imaging.Open(cacheFile); err != nil {
 		log.Errorf("faces: failed loading cached crop %s", filepath.Base(cacheFile))
 	} else {
-		log.Debugf("faces: found cached crop %s", filepath.Base(cacheFile))
+		log.Debugf("faces: using cached crop %s", filepath.Base(cacheFile))
 		return img, nil
 	}
 

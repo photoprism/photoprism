@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
@@ -62,38 +64,40 @@ func indexAction(ctx *cli.Context) error {
 		log.Infof("index: read-only mode enabled")
 	}
 
-	ind := service.Index()
+	var indexed fs.Done
 
-	indOpt := photoprism.IndexOptions{
-		Path:    subPath,
-		Rescan:  ctx.Bool("all"),
-		Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
-		Stack:   true,
+	if w := service.Index(); w != nil {
+		opt := photoprism.IndexOptions{
+			Path:    subPath,
+			Rescan:  ctx.Bool("all"),
+			Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
+			Stack:   true,
+		}
+
+		indexed = w.Start(opt)
 	}
 
-	indexed := ind.Start(indOpt)
+	if w := service.Purge(); w != nil {
+		opt := photoprism.PurgeOptions{
+			Path:   subPath,
+			Ignore: indexed,
+		}
 
-	prg := service.Purge()
-
-	prgOpt := photoprism.PurgeOptions{
-		Path:   subPath,
-		Ignore: indexed,
-	}
-
-	if files, photos, err := prg.Start(prgOpt); err != nil {
-		log.Error(err)
-	} else if len(files) > 0 || len(photos) > 0 {
-		log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
+		if files, photos, err := w.Start(opt); err != nil {
+			log.Error(err)
+		} else if len(files) > 0 || len(photos) > 0 {
+			log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
+		}
 	}
 
 	if ctx.Bool("cleanup") {
-		cleanUp := service.CleanUp()
+		w := service.CleanUp()
 
 		opt := photoprism.CleanUpOptions{
 			Dry: false,
 		}
 
-		if thumbs, orphans, err := cleanUp.Start(opt); err != nil {
+		if thumbs, orphans, err := w.Start(opt); err != nil {
 			return err
 		} else {
 			log.Infof("cleanup: removed %d index entries and %d orphan thumbnails", orphans, thumbs)

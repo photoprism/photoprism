@@ -63,10 +63,10 @@ func importAction(ctx *cli.Context) error {
 
 	log.Infof("moving media files from %s to %s", sourcePath, conf.OriginalsPath())
 
-	imp := service.Import()
+	w := service.Import()
 	opt := photoprism.ImportOptionsMove(sourcePath)
 
-	imp.Start(opt)
+	w.Start(opt)
 
 	elapsed := time.Since(start)
 

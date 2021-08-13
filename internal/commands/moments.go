@@ -36,9 +36,9 @@ func momentsAction(ctx *cli.Context) error {
 		log.Infof("moments: read-only mode enabled")
 	}
 
-	moments := service.Moments()
+	w := service.Moments()
 
-	if err := moments.Start(); err != nil {
+	if err := w.Start(); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

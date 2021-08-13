@@ -9,7 +9,7 @@ import (
 func TestPeople_Start(t *testing.T) {
 	conf := config.TestConfig()
 
-	m := NewPeople(conf)
+	m := NewFaces(conf)
 	err := m.Start()
 
 	if err != nil {

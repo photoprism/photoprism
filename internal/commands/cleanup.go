@@ -45,13 +45,13 @@ func cleanUpAction(ctx *cli.Context) error {
 		log.Infof("cleanup: read-only mode enabled")
 	}
 
-	cleanUp := service.CleanUp()
+	w := service.CleanUp()
 
 	opt := photoprism.CleanUpOptions{
 		Dry: ctx.Bool("dry"),
 	}
 
-	if thumbs, orphans, err := cleanUp.Start(opt); err != nil {
+	if thumbs, orphans, err := w.Start(opt); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

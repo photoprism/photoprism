@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Resample represents a thumbnail generator.
+// Resample represents a thumbnail generator worker.
 type Resample struct {
 	conf *config.Config
 }
@@ -26,7 +26,7 @@ func NewResample(conf *config.Config) *Resample {
 }
 
 // Start creates default thumbnails for all files in originalsPath.
-func (rs *Resample) Start(force bool) (err error) {
+func (w *Resample) Start(force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("resample: %s (panic)\nstack: %s", r, debug.Stack())
@@ -40,14 +40,14 @@ func (rs *Resample) Start(force bool) (err error) {
 
 	defer mutex.MainWorker.Stop()
 
-	originalsPath := rs.conf.OriginalsPath()
-	thumbnailsPath := rs.conf.ThumbPath()
+	originalsPath := w.conf.OriginalsPath()
+	thumbnailsPath := w.conf.ThumbPath()
 
 	jobs := make(chan ResampleJob)
 
 	// Start a fixed number of goroutines to read and digest files.
 	var wg sync.WaitGroup
-	var numWorkers = rs.conf.Workers()
+	var numWorkers = w.conf.Workers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
