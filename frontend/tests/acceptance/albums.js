@@ -6,6 +6,10 @@ fixture`Test albums`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
+test.meta("testID", "authentication-000")("Time to start instance (will be marked as unstable)", async (t) => {
+  await t.wait(5000);
+});
+
 test.meta("testID", "albums-001")("Create/delete album on /albums", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
