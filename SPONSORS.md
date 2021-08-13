@@ -53,9 +53,13 @@ Garn Penrod (Patreon, November 2020)
 
 [Kevin Anderson](https://github.com/kevinanderson1) (GitHub Sponsors, November 2020)
 
-[Joseph Jacks](https://github.com/josephjacks) (GitHub Sponsors, June 2021)
+[@reyman](https://github.com/reyman) (GitHub Sponsors, April 2021)
 
-[denNorske](https://github.com/dennorske) (GitHub Sponsors, June 2021)
+[Ben McCann](https://github.com/benmccann) (GitHub Sponsors, January 2021)
+
+[Steven Chan](https://github.com/nioq) (GitHub Sponsors, 2021)
+
+[Joseph Jacks](https://github.com/josephjacks) (GitHub Sponsors, June 2021)
 
 [Daniel Hähnke](https://github.com/DanBenHa) (GitHub Sponsors, July 2021)
 
