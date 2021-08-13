@@ -29,8 +29,12 @@ test: test-js test-go
 test-go: reset-test-db run-test-go
 test-api: reset-test-db run-test-api
 test-short: reset-test-db run-test-short
-acceptance-run-chromium: acceptance-restart acceptance acceptance-stop
-acceptance-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
+acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
+acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
+acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
+acceptance-public-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
+acceptance-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop acceptance-restart acceptance acceptance-stop
+acceptance-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-imports
 upgrade: dep-upgrade-js dep-upgrade
@@ -57,6 +61,12 @@ acceptance-restart:
 	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
 acceptance-stop:
 	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
+acceptance-private-restart:
+	cp -f storage/acceptance/backup.db storage/acceptance/index.db
+	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
+	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
+acceptance-private-stop:
+	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
 start:
 	go run cmd/photoprism/photoprism.go start -d
 stop:
@@ -136,6 +146,12 @@ acceptance:
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox && cd ..)
+acceptance-private:
+	$(info Running JS acceptance-private tests in Chrome...)
+	(cd frontend &&	npm run acceptance-private && cd ..)
+acceptance-private-firefox:
+	$(info Running JS acceptance-private tests in Firefox...)
+	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
 reset-photoprism-db:
 	$(info Purging photoprism database...)
 	mysql < scripts/reset-photoprism-db.sql
