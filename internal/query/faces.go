@@ -7,6 +7,7 @@ import (
 // Faces returns (known) faces from the index.
 func Faces(knownOnly bool) (result entity.Faces, err error) {
 	stmt := Db().
+		Where("id <> ?", entity.UnknownFace.ID).
 		Order("id")
 
 	if knownOnly {
@@ -39,9 +40,30 @@ func MatchKnownFaces() (affected int64, err error) {
 	return affected, nil
 }
 
-// PurgeUnknownFaces removes unknown faces from the index.
-func PurgeUnknownFaces() error {
+// PurgeAnonymousFaces removes anonymous faces from the index.
+func PurgeAnonymousFaces() error {
 	return UnscopedDb().Delete(
 		entity.Face{},
-		"person_uid = '' AND updated_at < ?", entity.Yesterday()).Error
+		"id <> ? AND person_uid = '' AND updated_at < ?", entity.UnknownFace.ID, entity.Yesterday()).Error
+}
+
+// CountNewFaceMarkers returns the number of new face markers in the index.
+func CountNewFaceMarkers() (n int) {
+	var f entity.Face
+
+	if err := Db().Where("id <> ?", entity.UnknownFace.ID).Order("created_at DESC").Take(&f).Error; err != nil {
+		log.Debugf("faces: index contains new clusters")
+	}
+
+	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND embeddings <> ''", entity.MarkerFace)
+
+	if !f.CreatedAt.IsZero() {
+		q = q.Where("created_at > ?", f.CreatedAt)
+	}
+
+	if err := q.Order("created_at DESC").Count(&n).Error; err != nil {
+		log.Errorf("faces: %s (count new markers)", err)
+	}
+
+	return n
 }

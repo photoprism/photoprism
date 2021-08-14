@@ -34,7 +34,7 @@ func NewFaces(conf *config.Config) *Faces {
 
 // Analyze face embeddings.
 func (w *Faces) Analyze() (err error) {
-	log.Infof("faces: comparing distance of face embeddings")
+	log.Infof("faces: computing distance of face embeddings")
 
 	if embeddings, err := query.Embeddings(true); err != nil {
 		return err
@@ -83,15 +83,13 @@ func (w *Faces) Analyze() (err error) {
 		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
 	}
 
-	log.Infof("faces: comparing distance of clusters matching to the same person")
+	log.Infof("faces: computing distance of known faces matching to the same person")
 
 	if faces, err := query.Faces(true); err != nil {
 		log.Errorf("faces: %s", err)
 	} else if samples := len(faces); samples == 0 {
-		log.Infof("faces: no clusters found")
+		log.Infof("faces: no known faces")
 	} else {
-		log.Infof("faces: analyzing %d clusters", samples)
-
 		dist := make(map[string][]float64)
 
 		for i := 0; i < samples; i++ {
@@ -136,7 +134,9 @@ func (w *Faces) Analyze() (err error) {
 		}
 
 		if len(dist) == 0 {
-			log.Infof("faces: no clusters matching to the same person")
+			log.Infof("faces: analyzed %d clusters, no matches", samples)
+		} else {
+			log.Infof("faces: %d faces match to the same person", samples)
 		}
 
 		for personUID, d := range dist {
@@ -171,8 +171,25 @@ func (w *Faces) Start() (err error) {
 
 	defer mutex.MainWorker.Stop()
 
+	// Skip clustering if index contains no new face markers.
+	if n := query.CountNewFaceMarkers(); n < 1 {
+		log.Debugf("faces: no new markers, matching known faces")
+
+		if m, err := query.MatchKnownFaces(); err != nil {
+			return err
+		} else if m > 0 {
+			log.Infof("faces: matched %d markers", m)
+		}
+
+		return nil
+	} else {
+		log.Infof("faces: found %d new markers", n)
+	}
+
+	// Fetch and cluster all face embeddings.
 	embeddings, err := query.Embeddings(false)
 
+	// Anything that keeps us from doing this?
 	if err != nil {
 		return err
 	} else if samples := len(embeddings); samples < FaceSampleThreshold {
@@ -227,7 +244,7 @@ func (w *Faces) Start() (err error) {
 		}
 	}
 
-	if err := query.PurgeUnknownFaces(); err != nil {
+	if err := query.PurgeAnonymousFaces(); err != nil {
 		dbErrors++
 		log.Errorf("faces: %s", err)
 	}
@@ -270,7 +287,9 @@ func (w *Faces) Start() (err error) {
 
 				for _, e := range marker.UnmarshalEmbeddings() {
 					for id, f := range faceMap {
-						if d := clusters.EuclideanDistance(e, f.Embedding); faceId == "" || d < faceDist {
+						if id == "" {
+							continue
+						} else if d := clusters.EuclideanDistance(e, f.Embedding); faceId == "" || d < faceDist {
 							faceId = id
 							faceDist = d
 						}
@@ -326,7 +345,7 @@ func (w *Faces) Start() (err error) {
 	if added > 0 || matched > 0 || dbErrors > 0 {
 		log.Infof("faces: %d added, %d matched, %d unknown, %d errors", added, matched, unknown, dbErrors)
 	} else {
-
+		log.Debugf("faces: %d added, %d matched, %d unknown, %d errors", added, matched, unknown, dbErrors)
 	}
 
 	return nil

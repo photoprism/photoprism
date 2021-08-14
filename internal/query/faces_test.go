@@ -45,3 +45,12 @@ func TestMatchKnownFaces(t *testing.T) {
 		assert.Equal(t, "rqu0xs11qekk9jx8", m.RefUID)
 	}
 }
+
+func TestPurgeAnonymousFaces(t *testing.T) {
+	assert.NoError(t, PurgeAnonymousFaces())
+}
+
+func TestCountNewFaceMarkers(t *testing.T) {
+	n := CountNewFaceMarkers()
+	assert.GreaterOrEqual(t, n, 1)
+}
