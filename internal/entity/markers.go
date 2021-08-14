@@ -31,15 +31,14 @@ func (m Markers) Contains(m2 Marker) bool {
 }
 
 // FaceCount returns the number of valid face markers.
-func (m Markers) FaceCount() int {
-	result := 0
+func (m Markers) FaceCount() (faces int) {
 	for _, marker := range m {
 		if !marker.MarkerInvalid && marker.MarkerType == MarkerFace {
-			result++
+			faces++
 		}
 	}
 
-	return result
+	return faces
 }
 
 // FindMarkers returns all markers for a given file id.
