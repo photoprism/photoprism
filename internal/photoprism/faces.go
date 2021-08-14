@@ -34,6 +34,8 @@ func NewFaces(conf *config.Config) *Faces {
 
 // Analyze face embeddings.
 func (w *Faces) Analyze() (err error) {
+	log.Infof("faces: comparing distance of face embeddings")
+
 	if embeddings, err := query.Embeddings(true); err != nil {
 		return err
 	} else if samples := len(embeddings); samples == 0 {
@@ -81,7 +83,9 @@ func (w *Faces) Analyze() (err error) {
 		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
 	}
 
-	if faces, err := query.Faces(); err != nil {
+	log.Infof("faces: comparing distance of clusters matching to the same person")
+
+	if faces, err := query.Faces(true); err != nil {
 		log.Errorf("faces: %s", err)
 	} else if samples := len(faces); samples == 0 {
 		log.Infof("faces: no clusters found")
@@ -92,10 +96,6 @@ func (w *Faces) Analyze() (err error) {
 
 		for i := 0; i < samples; i++ {
 			f1 := faces[i]
-
-			if f1.PersonUID == "" {
-				continue
-			}
 
 			e1 := f1.UnmarshalEmbedding()
 			min := -1.0
@@ -113,7 +113,7 @@ func (w *Faces) Analyze() (err error) {
 
 				f2 := faces[j]
 
-				if f1.PersonUID != f2.PersonUID || f2.PersonUID == "" {
+				if f1.PersonUID != f2.PersonUID {
 					continue
 				}
 
@@ -191,7 +191,7 @@ func (w *Faces) Start() (err error) {
 
 	sizes := c.Sizes()
 
-	log.Infof("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
+	log.Debugf("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
 
 	faceClusters := make([]entity.Embeddings, len(sizes))
 
@@ -209,120 +209,125 @@ func (w *Faces) Start() (err error) {
 		faceClusters[number-1] = append(faceClusters[number-1], embeddings[index])
 	}
 
-	addedFaces := 0
-	recognized := 0
-	markersUpdated := 0
-	updateErrors := 0
+	var added, matched, unknown, dbErrors int64
 
 	for _, clusterEmb := range faceClusters {
 		if emb, err := json.Marshal(entity.EmbeddingsMidpoint(clusterEmb)); err != nil {
-			updateErrors++
+			dbErrors++
 			log.Errorf("faces: %s", err)
 		} else if f := entity.NewFace("", string(emb)); f == nil {
-			updateErrors++
+			dbErrors++
 			log.Errorf("faces: face should not be nil - bug?")
 		} else if err := f.Create(); err == nil {
-			addedFaces++
+			added++
 			log.Tracef("faces: added face %s", f.ID)
 		} else if err := f.Updates(entity.Val{"UpdatedAt": entity.Timestamp()}); err != nil {
-			updateErrors++
+			dbErrors++
 			log.Errorf("faces: %s", err)
 		}
 	}
 
 	if err := query.PurgeUnknownFaces(); err != nil {
-		updateErrors++
+		dbErrors++
 		log.Errorf("faces: %s", err)
 	}
 
-	peopleFaces, err := query.Faces()
-
-	if err != nil {
+	if faces, err := query.Faces(false); err != nil {
 		return err
-	}
-
-	type Face = struct {
-		Embedding entity.Embedding
-		PersonUID string
-	}
-
-	faceMap := make(map[string]Face, len(peopleFaces))
-
-	for _, f := range peopleFaces {
-		faceMap[f.ID] = Face{f.UnmarshalEmbedding(), f.PersonUID}
-	}
-
-	limit := 500
-	offset := 0
-
-	for {
-		markers, err := query.Markers(limit, offset, entity.MarkerFace, true, true)
-
-		if err != nil {
-			return err
+	} else {
+		type faceMatch = struct {
+			Embedding entity.Embedding
+			PersonUID string
 		}
 
-		if len(markers) == 0 {
-			break
+		faceMap := make(map[string]faceMatch, len(faces))
+
+		for _, f := range faces {
+			faceMap[f.ID] = faceMatch{f.UnmarshalEmbedding(), f.PersonUID}
 		}
 
-		for _, marker := range markers {
-			if mutex.MainWorker.Canceled() {
-				return fmt.Errorf("worker canceled")
+		limit := 500
+		offset := 0
+
+		for {
+			markers, err := query.Markers(limit, offset, entity.MarkerFace, true, true)
+
+			if err != nil {
+				return err
 			}
 
-			var faceId string
-			var faceDist float64
+			if len(markers) == 0 {
+				break
+			}
 
-			for _, e := range marker.UnmarshalEmbeddings() {
-				for id, f := range faceMap {
-					if d := clusters.EuclideanDistance(e, f.Embedding); faceId == "" || d < faceDist {
-						faceId = id
-						faceDist = d
+			for _, marker := range markers {
+				if mutex.MainWorker.Canceled() {
+					return fmt.Errorf("worker canceled")
+				}
+
+				var faceId string
+				var faceDist float64
+
+				for _, e := range marker.UnmarshalEmbeddings() {
+					for id, f := range faceMap {
+						if d := clusters.EuclideanDistance(e, f.Embedding); faceId == "" || d < faceDist {
+							faceId = id
+							faceDist = d
+						}
 					}
 				}
-			}
 
-			if faceId == "" {
-				continue
-			}
-
-			if marker.RefUID != "" && marker.RefUID == faceMap[faceId].PersonUID {
-				continue
-			}
-
-			// Create person from marker label?
-			if marker.MarkerLabel == "" {
-				// Do nothing.
-			} else if person := entity.NewPerson(marker.MarkerLabel, entity.SrcMarker, 1); person == nil {
-				log.Errorf("faces: person should not be nil - bug?")
-			} else if person = entity.FirstOrCreatePerson(person); person == nil {
-				log.Errorf("faces: failed adding %s", txt.Quote(marker.MarkerLabel))
-			} else if f, ok := faceMap[faceId]; ok {
-				faceMap[faceId] = Face{Embedding: f.Embedding, PersonUID: person.PersonUID}
-				entity.Db().Model(&entity.Face{}).Where("id = ?", faceId).Update("PersonUID", person.PersonUID)
-			}
-
-			// Existing person?
-			if refUID := faceMap[faceId].PersonUID; refUID != "" {
-				if err := marker.Updates(entity.Val{"RefUID": refUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
-					log.Errorf("faces: %s while updating person uid", err)
-				} else {
-					recognized++
+				if faceId == "" {
+					continue
 				}
-			} else if err := marker.Updates(entity.Val{"FaceID": faceId}); err != nil {
-				log.Errorf("faces: %s while updating marker face id", err)
-			} else {
-				markersUpdated++
+
+				if marker.RefUID != "" && marker.RefUID == faceMap[faceId].PersonUID {
+					continue
+				}
+
+				// Create person from marker label?
+				if marker.MarkerLabel == "" {
+					// Do nothing.
+				} else if person := entity.NewPerson(marker.MarkerLabel, entity.SrcMarker, 1); person == nil {
+					log.Errorf("faces: person should not be nil - bug?")
+				} else if person = entity.FirstOrCreatePerson(person); person == nil {
+					log.Errorf("faces: failed adding %s", txt.Quote(marker.MarkerLabel))
+				} else if f, ok := faceMap[faceId]; ok {
+					faceMap[faceId] = faceMatch{Embedding: f.Embedding, PersonUID: person.PersonUID}
+					entity.Db().Model(&entity.Face{}).Where("id = ?", faceId).Update("PersonUID", person.PersonUID)
+				}
+
+				// Existing person?
+				if refUID := faceMap[faceId].PersonUID; refUID != "" {
+					if err := marker.Updates(entity.Val{"RefUID": refUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
+						log.Errorf("faces: %s while updating person uid", err)
+					} else {
+						matched++
+					}
+				} else if err := marker.Updates(entity.Val{"FaceID": faceId}); err != nil {
+					log.Errorf("faces: %s while updating marker face id", err)
+				} else {
+					unknown++
+				}
 			}
+
+			offset += limit
+
+			time.Sleep(50 * time.Millisecond)
 		}
-
-		offset += limit
-
-		time.Sleep(50 * time.Millisecond)
 	}
 
-	log.Infof("faces: %d added, %d recognized, %d unknown, %d errors", addedFaces, recognized, markersUpdated, updateErrors)
+	if m, err := query.MatchKnownFaces(); err != nil {
+		return err
+	} else {
+		matched += m
+	}
+
+	if added > 0 || matched > 0 || dbErrors > 0 {
+		log.Infof("faces: %d added, %d matched, %d unknown, %d errors", added, matched, unknown, dbErrors)
+	} else {
+
+	}
 
 	return nil
 }

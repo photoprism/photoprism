@@ -4,11 +4,11 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// People finds a list of people.
-func People(limit, offset int, embeddings bool) (result entity.People, err error) {
+// People returns people (with face embeddings) from the index.
+func People(limit, offset int, withEmbeddings bool) (result entity.People, err error) {
 	stmt := Db()
 
-	if embeddings {
+	if withEmbeddings {
 		stmt = stmt.Where("embeddings <> ''")
 	}
 
@@ -16,21 +16,4 @@ func People(limit, offset int, embeddings bool) (result entity.People, err error
 	err = stmt.Find(&result).Error
 
 	return result, err
-}
-
-// Faces finds a list of faces.
-func Faces() (result entity.Faces, err error) {
-	stmt := Db().
-		Order("id")
-
-	err = stmt.Find(&result).Error
-
-	return result, err
-}
-
-// PurgeUnknownFaces removes unknown faces from the index.
-func PurgeUnknownFaces() error {
-	return UnscopedDb().Delete(
-		entity.Face{},
-		"person_uid = '' AND updated_at < ?", entity.Yesterday()).Error
 }

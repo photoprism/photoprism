@@ -18,6 +18,18 @@ type Face struct {
 	DeletedAt *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
+// UnknownFace can be used as a placeholder for unknown faces.
+var UnknownFace = Face{
+	ID:        "zz",
+	PersonUID: UnknownPerson.PersonUID,
+	Embedding: "",
+}
+
+// CreateUnknownFace initializes the database with a placeholder for unknown faces.
+func CreateUnknownFace() {
+	_ = UnknownFace.Create()
+}
+
 // TableName returns the entity database table name.
 func (Face) TableName() string {
 	return "faces_dev2"

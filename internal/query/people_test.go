@@ -15,23 +15,9 @@ func TestPeople(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.GreaterOrEqual(t, 1, len(results))
+	assert.GreaterOrEqual(t, len(results), 1)
 
 	for _, val := range results {
 		assert.IsType(t, entity.Person{}, val)
-	}
-}
-
-func TestFaces(t *testing.T) {
-	results, err := Faces()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.GreaterOrEqual(t, 1, len(results))
-
-	for _, val := range results {
-		assert.IsType(t, entity.Face{}, val)
 	}
 }
