@@ -71,6 +71,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-5": Marker{
 		ID:          5,
 		FileID:      1000003,
+		FaceID:      FaceFixtures.Get("unknown").ID,
 		RefUID:      "",
 		MarkerSrc:   SrcImage,
 		MarkerType:  MarkerFace,

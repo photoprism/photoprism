@@ -173,12 +173,18 @@ func (w *Faces) Start() (err error) {
 
 	// Skip clustering if index contains no new face markers.
 	if n := query.CountNewFaceMarkers(); n < 1 {
-		log.Debugf("faces: no new markers, matching known faces")
+		log.Debugf("faces: no new markers, matching people and faces")
 
-		if m, err := query.MatchKnownFaces(); err != nil {
+		if affected, err := query.MatchMarkersWithPeople(); err != nil {
+			log.Errorf("faces: %s (create people from markers)", err)
+		} else if affected > 0 {
+			log.Infof("faces: matched %d markers with people", affected)
+		}
+
+		if matched, err := query.MatchKnownFaces(); err != nil {
 			return err
-		} else if m > 0 {
-			log.Infof("faces: matched %d markers", m)
+		} else if matched > 0 {
+			log.Infof("faces: matched %d markers to known faces", matched)
 		}
 
 		return nil
@@ -313,7 +319,7 @@ func (w *Faces) Start() (err error) {
 					log.Errorf("faces: failed adding %s", txt.Quote(marker.MarkerLabel))
 				} else if f, ok := faceMap[faceId]; ok {
 					faceMap[faceId] = faceMatch{Embedding: f.Embedding, PersonUID: person.PersonUID}
-					entity.Db().Model(&entity.Face{}).Where("id = ?", faceId).Update("PersonUID", person.PersonUID)
+					entity.Db().Model(&entity.Face{}).Where("id = ? AND person_uid = ''", faceId).Update("PersonUID", person.PersonUID)
 				}
 
 				// Existing person?
