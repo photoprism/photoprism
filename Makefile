@@ -1,5 +1,5 @@
 .PHONY: all build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js \
-		test test-js test-go install generate fmt fmt-go fmt-imports fmt-js upgrade start stop \
+		test test-js test-go install generate fmt fmt-go fmt-js upgrade start stop \
 		terminal root-terminal packer-digitalocean acceptance clean tidy;
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
@@ -36,7 +36,7 @@ acceptance-public-run-firefox: acceptance-restart acceptance-firefox acceptance-
 acceptance-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop acceptance-restart acceptance acceptance-stop
 acceptance-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
-fmt: fmt-js fmt-go fmt-imports
+fmt: fmt-js fmt-go
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
@@ -226,9 +226,8 @@ lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:
 	(cd frontend &&	npm run fmt)
-fmt-imports:
-	goimports -w pkg internal cmd
 fmt-go:
 	go fmt ./pkg/... ./internal/... ./cmd/...
+	goimports -w pkg internal cmd
 tidy:
 	go mod tidy
