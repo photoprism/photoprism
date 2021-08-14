@@ -149,15 +149,25 @@ func FirstOrCreatePerson(m *Person) *Person {
 
 // FindPerson returns an existing row if exists.
 func FindPerson(s string) *Person {
-	personSlug := slug.Make(txt.Clip(s, txt.ClipSlug))
+	if s == "" {
+		return nil
+	}
 
 	result := Person{}
 
-	if err := Db().Where("person_slug = ?", personSlug).First(&result).Error; err == nil {
-		return &result
+	db := Db()
+
+	if rnd.IsPPID(s, 'r') {
+		db = db.Where("person_uid = ?", s)
+	} else {
+		db = db.Where("person_slug = ?", slug.Make(txt.Clip(s, txt.ClipSlug)))
 	}
 
-	return nil
+	if err := db.First(&result).Error; err != nil {
+		return nil
+	}
+
+	return &result
 }
 
 // SetName changes the person's name.

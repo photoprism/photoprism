@@ -82,13 +82,15 @@ func MatchMarkersWithPeople() (affected int, err error) {
 	}
 
 	for _, m := range markers {
+		faceId := m.FaceID
+
 		if p := entity.NewPerson(m.MarkerLabel, entity.SrcMarker, 1); p == nil {
 			log.Errorf("faces: person should not be nil - bug?")
 		} else if p = entity.FirstOrCreatePerson(p); p == nil {
 			log.Errorf("faces: failed adding person %s for marker %d", txt.Quote(m.MarkerLabel), m.ID)
 		} else if err := m.Updates(entity.Val{"RefUID": p.PersonUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
 			return affected, err
-		} else if err := Db().Model(&entity.Face{}).Where("id = ? AND person_uid = ''", m.FaceID).Update("PersonUID", p.PersonUID).Error; err != nil {
+		} else if err := Db().Model(&entity.Face{}).Where("id = ? AND person_uid = ''", faceId).Update("PersonUID", p.PersonUID).Error; err != nil {
 			return affected, err
 		} else {
 			affected++

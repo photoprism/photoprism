@@ -101,6 +101,34 @@ func (m *Marker) SaveForm(f form.Marker) error {
 		return err
 	}
 
+	faceId := m.FaceID
+
+	if faceId != "" && m.MarkerLabel != "" && m.RefUID == "" && m.MarkerType == MarkerFace {
+		if p := NewPerson(m.MarkerLabel, SrcMarker, 1); p == nil {
+			return fmt.Errorf("marker: person should not be nil (save form)")
+		} else if p = FirstOrCreatePerson(p); p == nil {
+			return fmt.Errorf("marker: failed adding person %s for marker %d (save form)", txt.Quote(m.MarkerLabel), m.ID)
+		} else if err := m.Updates(Val{"RefUID": p.PersonUID, "RefSrc": SrcManual, "FaceID": ""}); err != nil {
+			return fmt.Errorf("marker: %s (save form)", err)
+		} else if err := Db().Model(&Face{}).Where("id = ? AND person_uid = ''", faceId).Update("PersonUID", p.PersonUID).Error; err != nil {
+			return fmt.Errorf("marker: %s (update face)", err)
+		} else if err := Db().Model(&Marker{}).
+			Where("face_id = ?", faceId).
+			Updates(Val{"RefUID": p.PersonUID, "RefSrc": SrcManual, "FaceID": ""}).Error; err != nil {
+			return fmt.Errorf("marker: %s (update related markers)", err)
+		} else {
+			log.Infof("marker: matched person %s with label %s", p.PersonUID, txt.Quote(m.MarkerLabel))
+		}
+	} else if m.MarkerLabel != "" && m.RefUID != "" && m.MarkerType == MarkerFace {
+		if p := FindPerson(m.RefUID); p != nil {
+			p.SetName(m.MarkerLabel)
+
+			if err := p.Save(); err != nil {
+				return fmt.Errorf("marker: %s (update person)", err)
+			}
+		}
+	}
+
 	return nil
 }
 
