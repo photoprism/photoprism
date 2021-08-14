@@ -14,23 +14,23 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
-// Meta represents a background metadata maintenance worker.
+// Meta represents a background metadata optimization worker.
 type Meta struct {
 	conf *config.Config
 }
 
-// NewMeta returns a new background metadata maintenance worker.
+// NewMeta returns a new Meta worker.
 func NewMeta(conf *config.Config) *Meta {
 	return &Meta{conf: conf}
 }
 
 // originalsPath returns the original media files path as string.
-func (worker *Meta) originalsPath() string {
-	return worker.conf.OriginalsPath()
+func (m *Meta) originalsPath() string {
+	return m.conf.OriginalsPath()
 }
 
-// Start starts the metadata worker.
-func (worker *Meta) Start(delay time.Duration) (err error) {
+// Start metadata optimization routine.
+func (m *Meta) Start(delay time.Duration) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("metadata: %s (panic)\nstack: %s", r, debug.Stack())
@@ -46,13 +46,14 @@ func (worker *Meta) Start(delay time.Duration) (err error) {
 
 	log.Debugf("metadata: starting routine check")
 
-	settings := worker.conf.Settings()
+	settings := m.conf.Settings()
 	done := make(map[string]bool)
 
 	limit := 50
 	offset := 0
 	optimized := 0
 
+	// Run index optimization.
 	for {
 		photos, err := query.PhotosCheck(limit, offset, delay)
 
@@ -86,9 +87,9 @@ func (worker *Meta) Start(delay time.Duration) (err error) {
 				log.Debugf("metadata: optimized photo %s", photo.String())
 			}
 
-			for _, m := range merged {
-				log.Infof("metadata: merged %s", m.PhotoUID)
-				done[m.PhotoUID] = true
+			for _, p := range merged {
+				log.Infof("metadata: merged %s", p.PhotoUID)
+				done[p.PhotoUID] = true
 			}
 		}
 
@@ -105,20 +106,33 @@ func (worker *Meta) Start(delay time.Duration) (err error) {
 		log.Infof("metadata: optimized %d photos", optimized)
 	}
 
+	// Explicitly set quality of photos without primary file to -1.
 	if err := query.ResetPhotoQuality(); err != nil {
 		log.Warnf("metadata: %s (reset photo quality)", err.Error())
 	}
 
+	// Update photo counts for labels and places.
 	if err := entity.UpdatePhotoCounts(); err != nil {
 		log.Warnf("metadata: %s (update photo counts)", err.Error())
 	}
 
-	moments := photoprism.NewMoments(worker.conf)
-
-	if err := moments.Start(); err != nil {
+	// Run moments worker.
+	if w := photoprism.NewMoments(m.conf); w == nil {
+		log.Errorf("moments: failed creating worker")
+	} else if err := w.Start(); err != nil {
 		log.Warnf("moments: %s", err)
 	}
 
+	// Run faces worker.
+	if w := photoprism.NewFaces(m.conf); w == nil {
+		log.Errorf("faces: failed creating worker")
+	} else if w.Disabled() {
+		// Do nothing.
+	} else if err := w.Start(); err != nil {
+		log.Warnf("faces: %s", err)
+	}
+
+	// Run garbage collection.
 	runtime.GC()
 
 	return nil

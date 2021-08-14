@@ -16,7 +16,7 @@ import (
 	"github.com/mpraski/clusters"
 )
 
-// Faces represents a worker for face clustering and recognition.
+// Faces represents a worker for face clustering and matching.
 type Faces struct {
 	conf *config.Config
 }
@@ -143,19 +143,22 @@ func (w *Faces) Analyze() (err error) {
 	return nil
 }
 
-// Start face clustering and recognition.
+// Disabled tests if facial recognition is disabled.
+func (w *Faces) Disabled() bool {
+	return !(w.conf.Experimental() && w.conf.Settings().Features.People)
+}
+
+// Start face clustering and matching.
 func (w *Faces) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("faces: %s (panic)\nstack: %s", r, debug.Stack())
-			log.Error(err)
+			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
+			log.Errorf("faces: %s", err)
 		}
 	}()
 
-	if !w.conf.Experimental() {
-		return fmt.Errorf("faces: experimental features disabled")
-	} else if !w.conf.Settings().Features.People {
-		return fmt.Errorf("faces: disabled in settings")
+	if w.Disabled() {
+		return fmt.Errorf("facial recognition is disabled")
 	}
 
 	if err := mutex.MainWorker.Start(); err != nil {
@@ -266,7 +269,7 @@ func (w *Faces) Start() (err error) {
 
 		for _, marker := range markers {
 			if mutex.MainWorker.Canceled() {
-				return fmt.Errorf("faces: worker canceled")
+				return fmt.Errorf("worker canceled")
 			}
 
 			var faceId string

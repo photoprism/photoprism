@@ -21,7 +21,7 @@ var FacesCommand = cli.Command{
 		},
 		{
 			Name:   "index",
-			Usage:  "Performs face clustering and recognition",
+			Usage:  "Performs face clustering and matching",
 			Action: facesIndexAction,
 		},
 	},
@@ -58,7 +58,7 @@ func facesStatsAction(ctx *cli.Context) error {
 	return nil
 }
 
-// facesIndexAction performs face clustering and recognition.
+// facesIndexAction performs face clustering and matching.
 func facesIndexAction(ctx *cli.Context) error {
 	start := time.Now()
 

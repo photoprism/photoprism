@@ -32,8 +32,8 @@ func NewMoments(conf *config.Config) *Moments {
 func (w *Moments) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("moments: %s (panic)\nstack: %s", r, debug.Stack())
-			log.Error(err)
+			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
+			log.Errorf("moments: %s", err)
 		}
 	}()
 
