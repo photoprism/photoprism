@@ -23,8 +23,8 @@ func (Face) TableName() string {
 	return "faces_dev2"
 }
 
-// NewPersonFace returns a new face.
-func NewPersonFace(personUID, embedding string) *Face {
+// NewFace returns a new face.
+func NewFace(personUID, embedding string) *Face {
 	timeStamp := Timestamp()
 	s := sha1.Sum([]byte(embedding))
 

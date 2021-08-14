@@ -16,6 +16,8 @@ import (
 	"github.com/mpraski/clusters"
 )
 
+const FaceSampleThreshold = 25
+
 // Faces represents a worker for face clustering and matching.
 type Faces struct {
 	conf *config.Config
@@ -34,22 +36,19 @@ func NewFaces(conf *config.Config) *Faces {
 func (w *Faces) Analyze() (err error) {
 	if embeddings, err := query.Embeddings(true); err != nil {
 		return err
-	} else if len(embeddings) == 0 {
-		log.Infof("faces: no embeddings found")
+	} else if samples := len(embeddings); samples == 0 {
+		log.Infof("faces: no samples found")
 	} else {
+		log.Infof("faces: analyzing %d samples", samples)
 
-		c := len(embeddings)
+		distMin := make([]float64, samples)
+		distMax := make([]float64, samples)
 
-		log.Debugf("faces: found %d embeddings to analyze", c)
-
-		distMin := make([]float64, c)
-		distMax := make([]float64, c)
-
-		for i := 0; i < c; i++ {
+		for i := 0; i < samples; i++ {
 			min := -1.0
 			max := -1.0
 
-			for j := 0; j < c; j++ {
+			for j := 0; j < samples; j++ {
 				if i == j {
 					continue
 				}
@@ -82,16 +81,17 @@ func (w *Faces) Analyze() (err error) {
 		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
 	}
 
-	if known, err := query.Faces(); err != nil {
+	if faces, err := query.Faces(); err != nil {
 		log.Errorf("faces: %s", err)
-	} else if len(known) == 0 {
-		log.Infof("faces: no faces found")
+	} else if samples := len(faces); samples == 0 {
+		log.Infof("faces: no clusters found")
 	} else {
-		c := len(known)
+		log.Infof("faces: analyzing %d clusters", samples)
+
 		dist := make(map[string][]float64)
 
-		for i := 0; i < c; i++ {
-			f1 := known[i]
+		for i := 0; i < samples; i++ {
+			f1 := faces[i]
 
 			if f1.PersonUID == "" {
 				continue
@@ -106,12 +106,12 @@ func (w *Faces) Analyze() (err error) {
 				max = k[1]
 			}
 
-			for j := 0; j < c; j++ {
+			for j := 0; j < samples; j++ {
 				if i == j {
 					continue
 				}
 
-				f2 := known[j]
+				f2 := faces[j]
 
 				if f1.PersonUID != f2.PersonUID || f2.PersonUID == "" {
 					continue
@@ -133,6 +133,10 @@ func (w *Faces) Analyze() (err error) {
 			if max > 0 {
 				dist[f1.PersonUID] = []float64{min, max}
 			}
+		}
+
+		if len(dist) == 0 {
+			log.Infof("faces: no clusters matching to the same person")
 		}
 
 		for personUID, d := range dist {
@@ -171,28 +175,23 @@ func (w *Faces) Start() (err error) {
 
 	if err != nil {
 		return err
-	}
-
-	if len(embeddings) == 0 {
-		log.Infof("faces: no faces detected")
+	} else if samples := len(embeddings); samples < FaceSampleThreshold {
+		log.Warnf("faces: at least %d samples needed for matching similar faces", FaceSampleThreshold)
 		return nil
 	}
 
-	// see https://fse.studenttheses.ub.rug.nl/18064/1/Report_research_internship.pdf
+	var c clusters.HardClusterer
 
-	c, e := clusters.DBSCAN(1, 1.0, w.conf.Workers(), clusters.EuclideanDistance)
-
-	if e != nil {
-		return e
-	}
-
-	if err := c.Learn(embeddings); err != nil {
-		log.Errorf("faces: %s", err)
+	// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
+	if c, err = clusters.DBSCAN(1, 1.0, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
+		return err
+	} else if err = c.Learn(embeddings); err != nil {
+		return err
 	}
 
 	sizes := c.Sizes()
 
-	log.Infof("faces: found %d embeddings, %d clusters", len(embeddings), len(sizes))
+	log.Infof("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
 
 	faceClusters := make([]entity.Embeddings, len(sizes))
 
@@ -219,7 +218,7 @@ func (w *Faces) Start() (err error) {
 		if emb, err := json.Marshal(entity.EmbeddingsMidpoint(clusterEmb)); err != nil {
 			updateErrors++
 			log.Errorf("faces: %s", err)
-		} else if f := entity.NewPersonFace("", string(emb)); f == nil {
+		} else if f := entity.NewFace("", string(emb)); f == nil {
 			updateErrors++
 			log.Errorf("faces: face should not be nil - bug?")
 		} else if err := f.Create(); err == nil {

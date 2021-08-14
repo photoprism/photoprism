@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestPeople_Start(t *testing.T) {
+func TestFaces_Start(t *testing.T) {
 	conf := config.TestConfig()
 
 	m := NewFaces(conf)
