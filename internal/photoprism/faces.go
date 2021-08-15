@@ -17,6 +17,8 @@ import (
 )
 
 const FaceSampleThreshold = 25
+const FaceClusterDistance = 0.66
+const FaceClusterSamples = 3
 
 // Faces represents a worker for face clustering and matching.
 type Faces struct {
@@ -133,10 +135,10 @@ func (w *Faces) Analyze() (err error) {
 			}
 		}
 
-		if len(dist) == 0 {
+		if l := len(dist); l == 0 {
 			log.Infof("faces: analyzed %d clusters, no matches", samples)
 		} else {
-			log.Infof("faces: %d faces match to the same person", samples)
+			log.Infof("faces: %d faces match to the same person", l)
 		}
 
 		for personUID, d := range dist {
@@ -206,7 +208,7 @@ func (w *Faces) Start() (err error) {
 	var c clusters.HardClusterer
 
 	// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
-	if c, err = clusters.DBSCAN(1, 1.0, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
+	if c, err = clusters.DBSCAN(FaceClusterSamples, FaceClusterDistance, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
 		return err
 	} else if err = c.Learn(embeddings); err != nil {
 		return err
@@ -302,7 +304,7 @@ func (w *Faces) Start() (err error) {
 					}
 				}
 
-				if faceId == "" {
+				if faceId == "" || faceDist > FaceClusterDistance {
 					continue
 				}
 
