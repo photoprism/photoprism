@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPeople(t *testing.T) {
-	results, err := People(3, 0)
+func TestSubjects(t *testing.T) {
+	results, err := Subjects(3, 0)
 
 	if err != nil {
 		t.Fatal(err)
@@ -18,6 +18,6 @@ func TestPeople(t *testing.T) {
 	assert.GreaterOrEqual(t, len(results), 1)
 
 	for _, val := range results {
-		assert.IsType(t, entity.Person{}, val)
+		assert.IsType(t, entity.Subject{}, val)
 	}
 }

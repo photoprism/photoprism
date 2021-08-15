@@ -49,7 +49,7 @@
               <v-layout v-else row wrap align-center>
                 <v-flex xs12 class="text-xs-left pa-0">
                   <v-text-field
-                      v-model="marker.Label"
+                      v-model="marker.Name"
                       :rules="[textRule]"
                       browser-autocomplete="off"
                       class="input-name pa-0 ma-0"
@@ -132,8 +132,9 @@ export default {
       this.model.updateMarker(marker);
     },
     clearName(marker) {
-      marker.Label = "";
-      marker.RefUID = "";
+      marker.Name = "";
+      marker.SubjectUID = "";
+      marker.SubjectSrc = "";
       this.model.updateMarker(marker);
     },
     updateName(marker) {

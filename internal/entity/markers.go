@@ -46,7 +46,7 @@ func FindMarkers(fileID uint) (Markers, error) {
 	m := Markers{}
 	err := Db().
 		Where(`file_id = ?`, fileID).
-		Preload("Person").
+		Preload("Subject").
 		Order("id").
 		Offset(0).Limit(1000).
 		Find(&m).Error

@@ -167,15 +167,15 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 		s = s.Where("albums.album_favorite = 1")
 	}
 
-	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.YearUnknown {
+	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.UnknownYear {
 		s = s.Where("albums.album_year = ?", f.Year)
 	}
 
-	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.MonthUnknown {
+	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.UnknownMonth {
 		s = s.Where("albums.album_month = ?", f.Month)
 	}
 
-	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.DayUnknown {
+	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.UnknownDay {
 		s = s.Where("albums.album_day = ?", f.Day)
 	}
 

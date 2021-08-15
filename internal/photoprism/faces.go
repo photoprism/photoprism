@@ -17,10 +17,6 @@ import (
 	"github.com/mpraski/clusters"
 )
 
-const FaceSampleThreshold = 25
-const FaceClusterDistance = 0.66
-const FaceClusterSamples = 3
-
 // Faces represents a worker for face clustering and matching.
 type Faces struct {
 	conf *config.Config
@@ -98,7 +94,7 @@ func (w *Faces) Analyze() (err error) {
 			min := -1.0
 			max := -1.0
 
-			if k, ok := dist[f1.PersonUID]; ok {
+			if k, ok := dist[f1.SubjectUID]; ok {
 				min = k[0]
 				max = k[1]
 			}
@@ -110,7 +106,7 @@ func (w *Faces) Analyze() (err error) {
 
 				f2 := faces[j]
 
-				if f1.PersonUID != f2.PersonUID {
+				if f1.SubjectUID != f2.SubjectUID {
 					continue
 				}
 
@@ -128,7 +124,7 @@ func (w *Faces) Analyze() (err error) {
 			}
 
 			if max > 0 {
-				dist[f1.PersonUID] = []float64{min, max}
+				dist[f1.SubjectUID] = []float64{min, max}
 			}
 		}
 
@@ -138,8 +134,8 @@ func (w *Faces) Analyze() (err error) {
 			log.Infof("faces: %d faces match to the same person", l)
 		}
 
-		for personUID, d := range dist {
-			log.Infof("faces: %s Ø min %f, max %f", personUID, d[0], d[1])
+		for subj, d := range dist {
+			log.Infof("faces: %s Ø min %f, max %f", subj, d[0], d[1])
 		}
 	}
 
@@ -169,7 +165,7 @@ func (w *Faces) Disabled() bool {
 }
 
 // Start face clustering and matching.
-func (w *Faces) Start() (err error) {
+func (w *Faces) Start(opt FacesOptions) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
@@ -188,13 +184,15 @@ func (w *Faces) Start() (err error) {
 	defer mutex.MainWorker.Stop()
 
 	// Skip clustering if index contains no new face markers.
-	if n := query.CountNewFaceMarkers(); n < 1 {
+	if opt.Force {
+		log.Infof("faces: reindexing")
+	} else if n := query.CountNewFaceMarkers(); n < 1 {
 		log.Debugf("faces: no new samples")
 
-		if affected, err := query.MatchMarkersWithPeople(); err != nil {
-			log.Errorf("faces: %s (create people from markers)", err)
+		if affected, err := query.MatchMarkersWithSubjects(); err != nil {
+			log.Errorf("faces: %s (match markers with subjects)", err)
 		} else if affected > 0 {
-			log.Infof("faces: matched %d markers with people", affected)
+			log.Infof("faces: matched %d markers with subjects", affected)
 		}
 
 		if matched, err := query.MatchKnownFaces(); err != nil {
@@ -257,7 +255,7 @@ func (w *Faces) Start() (err error) {
 		} else if err := f.Create(); err == nil {
 			added++
 			log.Tracef("faces: added face %s", f.ID)
-		} else if err := f.Updates(entity.Val{"UpdatedAt": entity.Timestamp()}); err != nil {
+		} else if err := f.Updates(entity.Values{"UpdatedAt": entity.Timestamp()}); err != nil {
 			dbErrors++
 			log.Errorf("faces: %s", err)
 		}
@@ -317,31 +315,31 @@ func (w *Faces) Start() (err error) {
 				}
 
 				// Already matched?
-				if marker.RefUID != "" && marker.RefUID == f.PersonUID {
+				if marker.SubjectUID != "" && marker.SubjectUID == f.SubjectUID {
 					continue
 				}
 
-				// Create person from marker label?
-				if marker.MarkerLabel == "" {
+				// Create subject from marker label?
+				if marker.MarkerName == "" {
 					// Do nothing.
-				} else if p := entity.NewPerson(marker.MarkerLabel, entity.SrcMarker, 1); p == nil {
-					log.Errorf("faces: person should not be nil - bug?")
-				} else if p = entity.FirstOrCreatePerson(p); p == nil {
-					log.Errorf("faces: failed adding %s", txt.Quote(marker.MarkerLabel))
+				} else if subj := entity.NewSubject(marker.MarkerName, entity.SubjectPerson, entity.SrcMarker); subj == nil {
+					log.Errorf("faces: subject should not be nil - bug?")
+				} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
+					log.Errorf("faces: failed adding subject %s", txt.Quote(marker.MarkerName))
 				} else {
-					f.PersonUID = p.PersonUID
-					entity.Db().Model(&entity.Face{}).Where("id = ? AND person_uid = ''", f.ID).Update("PersonUID", p.PersonUID)
+					f.SubjectUID = subj.SubjectUID
+					entity.Db().Model(&entity.Face{}).Where("id = ? AND subject_uid = ''", f.ID).Update("SubjectUID", subj.SubjectUID)
 				}
 
-				// Existing person?
-				if f.PersonUID != "" {
-					if err := marker.Updates(entity.Val{"RefUID": f.PersonUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
-						log.Errorf("faces: %s while updating person uid", err)
+				// Existing subject?
+				if f.SubjectUID != "" {
+					if err := marker.Updates(entity.Values{"SubjectUID": f.SubjectUID, "SubjectSrc": entity.SrcAuto, "FaceID": ""}); err != nil {
+						log.Errorf("faces: %s while updating subject uid of marker %d", err, marker.ID)
 					} else {
 						matched++
 					}
-				} else if err := marker.Updates(entity.Val{"FaceID": f.ID}); err != nil {
-					log.Errorf("faces: %s while updating marker face id", err)
+				} else if err := marker.Updates(entity.Values{"FaceID": f.ID}); err != nil {
+					log.Errorf("faces: %s while updating face id of marker %d", err, marker.ID)
 				} else {
 					unknown++
 				}

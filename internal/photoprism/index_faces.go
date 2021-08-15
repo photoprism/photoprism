@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// detectFaces detects faces in a JPEG image and returns them.
+// detectFaces extracts faces from a JPEG image and returns them.
 func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 	if jpeg == nil {
 		return face.Faces{}
@@ -43,7 +43,7 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 	}
 
 	if len(faces) > 0 {
-		log.Infof("index: %d faces in %s [%s]", len(faces), txt.Quote(jpeg.BaseName()), time.Since(start))
+		log.Infof("index: extracted %d faces from %s [%s]", len(faces), txt.Quote(jpeg.BaseName()), time.Since(start))
 	}
 
 	return faces

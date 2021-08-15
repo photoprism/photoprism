@@ -128,7 +128,7 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Errorf("faces: failed creating worker")
 	} else if w.Disabled() {
 		// Do nothing.
-	} else if err := w.Start(); err != nil {
+	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
 		log.Warnf("faces: %s", err)
 	}
 

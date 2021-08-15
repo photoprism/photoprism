@@ -35,8 +35,8 @@ func TestEmbeddings(t *testing.T) {
 	}
 }
 
-func TestMatchMarkersWithPeople(t *testing.T) {
-	affected, err := MatchMarkersWithPeople()
+func TestMatchMarkersWithSubjects(t *testing.T) {
+	affected, err := MatchMarkersWithSubjects()
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, 1)

@@ -15,7 +15,7 @@ func TestNewMarker(t *testing.T) {
 	m := NewMarker(1000000, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 	assert.IsType(t, &Marker{}, m)
 	assert.Equal(t, uint(1000000), m.FileID)
-	assert.Equal(t, "lt9k3pw1wowuy3c3", m.RefUID)
+	assert.Equal(t, "lt9k3pw1wowuy3c3", m.SubjectUID)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)
 }
@@ -25,7 +25,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 		m := NewMarker(1000000, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 		assert.IsType(t, &Marker{}, m)
 		assert.Equal(t, uint(1000000), m.FileID)
-		assert.Equal(t, "lt9k3pw1wowuy3c3", m.RefUID)
+		assert.Equal(t, "lt9k3pw1wowuy3c3", m.SubjectUID)
 		assert.Equal(t, SrcImage, m.MarkerSrc)
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 

@@ -11,7 +11,7 @@ func Faces(knownOnly bool) (result entity.Faces, err error) {
 		Order("id")
 
 	if knownOnly {
-		stmt = stmt.Where("person_uid <> ''")
+		stmt = stmt.Where("subject_uid <> ''")
 	}
 
 	err = stmt.Find(&result).Error
@@ -30,7 +30,7 @@ func MatchKnownFaces() (affected int64, err error) {
 	for _, match := range faces {
 		if res := Db().Model(&entity.Marker{}).
 			Where("face_id = ?", match.ID).
-			Updates(entity.Val{"RefUID": match.PersonUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); res.Error != nil {
+			Updates(entity.Values{"SubjectUID": match.SubjectUID, "SubjectSrc": entity.SrcAuto, "FaceID": ""}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
@@ -44,7 +44,7 @@ func MatchKnownFaces() (affected int64, err error) {
 func PurgeAnonymousFaces() error {
 	return UnscopedDb().Delete(
 		entity.Face{},
-		"id <> ? AND person_uid = '' AND updated_at < ?", entity.UnknownFace.ID, entity.Yesterday()).Error
+		"id <> ? AND subject_uid = '' AND updated_at < ?", entity.UnknownFace.ID, entity.Yesterday()).Error
 }
 
 // ResetFaces removes all face clusters from the index.

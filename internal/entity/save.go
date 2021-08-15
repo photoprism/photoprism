@@ -6,36 +6,6 @@ import (
 	"strings"
 )
 
-// Values returns entity values as string map.
-func Values(m interface{}, omit ...string) (result map[string]interface{}) {
-	skip := func(name string) bool {
-		for _, s := range omit {
-			if name == s {
-				return true
-			}
-		}
-
-		return false
-	}
-
-	result = make(map[string]interface{})
-
-	elem := reflect.ValueOf(m).Elem()
-	relType := elem.Type()
-
-	for i := 0; i < relType.NumField(); i++ {
-		name := relType.Field(i).Name
-
-		if skip(name) {
-			continue
-		}
-
-		result[name] = elem.Field(i).Interface()
-	}
-
-	return result
-}
-
 // Save updates an entity in the database, or inserts if it doesn't exist.
 func Save(m interface{}, primaryKeys ...string) (err error) {
 	defer func() {
@@ -77,7 +47,7 @@ func Update(m interface{}, primaryKeys ...string) (err error) {
 	}
 
 	// Update all values except primary keys.
-	if res := UnscopedDb().Model(m).Updates(Values(m, primaryKeys...)); res.Error != nil {
+	if res := UnscopedDb().Model(m).Updates(GetValues(m, primaryKeys...)); res.Error != nil {
 		return res.Error
 	} else if res.RowsAffected > 1 {
 		log.Warnf("update: more than one row affected")

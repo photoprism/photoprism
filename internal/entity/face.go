@@ -4,17 +4,20 @@ import (
 	"crypto/sha1"
 	"encoding/base32"
 	"encoding/json"
+	"sync"
 	"time"
 )
+
+var faceMutex = sync.Mutex{}
 
 // Faces represents a Face slice.
 type Faces []Face
 
-// Face represents the face of a Person.
+// Face represents the face of a Subject.
 type Face struct {
 	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc       string    `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
-	PersonUID     string    `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID,omitempty"`
+	SubjectUID    string    `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
 	Collisions    int       `json:"Collisions" yaml:"Collisions,omitempty"`
 	Samples       int       `json:"Samples" yaml:"Samples,omitempty"`
 	Radius        float64   `json:"Radius" yaml:"Radius,omitempty"`
@@ -28,7 +31,7 @@ type Face struct {
 var UnknownFace = Face{
 	ID:            "zz",
 	FaceSrc:       SrcDefault,
-	PersonUID:     UnknownPerson.PersonUID,
+	SubjectUID:    UnknownPerson.SubjectUID,
 	EmbeddingJSON: []byte{},
 }
 
@@ -39,13 +42,13 @@ func CreateUnknownFace() {
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev2"
+	return "faces_dev3"
 }
 
 // NewFace returns a new face.
-func NewFace(personUID string, embeddings Embeddings) *Face {
+func NewFace(subjectUID string, embeddings Embeddings) *Face {
 	result := &Face{
-		PersonUID: personUID,
+		SubjectUID: subjectUID,
 	}
 
 	if err := result.SetEmbeddings(embeddings); err != nil {
@@ -90,16 +93,16 @@ func (m *Face) Embedding() Embedding {
 
 // Save updates the existing or inserts a new face.
 func (m *Face) Save() error {
-	peopleMutex.Lock()
-	defer peopleMutex.Unlock()
+	faceMutex.Lock()
+	defer faceMutex.Unlock()
 
 	return Save(m, "ID")
 }
 
 // Create inserts the face to the database.
 func (m *Face) Create() error {
-	peopleMutex.Lock()
-	defer peopleMutex.Unlock()
+	faceMutex.Lock()
+	defer faceMutex.Unlock()
 
 	return Db().Create(m).Error
 }

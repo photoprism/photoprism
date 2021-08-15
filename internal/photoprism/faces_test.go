@@ -10,7 +10,12 @@ func TestFaces_Start(t *testing.T) {
 	conf := config.TestConfig()
 
 	m := NewFaces(conf)
-	err := m.Start()
+
+	opt := FacesOptions{
+		Force: true,
+	}
+
+	err := m.Start(opt)
 
 	if err != nil {
 		t.Fatal(err)

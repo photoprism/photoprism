@@ -61,7 +61,7 @@ func (ind *Index) Cancel() {
 	mutex.MainWorker.Cancel()
 }
 
-// Start indexes media files in the originals directory.
+// Start indexes media files in the "originals" folder.
 func (ind *Index) Start(opt IndexOptions) fs.Done {
 	defer func() {
 		if r := recover(); r != nil {

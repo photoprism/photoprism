@@ -28,7 +28,7 @@ func Markers(limit, offset int, markerType string, embeddings, unmatched bool) (
 	}
 
 	if unmatched {
-		db = db.Where("ref_uid = ''")
+		db = db.Where("subject_uid = ''")
 	}
 
 	db = db.Order("id").Limit(limit).Offset(offset)
@@ -67,15 +67,15 @@ func Embeddings(single bool) (result entity.Embeddings, err error) {
 	return result, nil
 }
 
-// MatchMarkersWithPeople creates and assigns a person to labeled face markers as needed.
-func MatchMarkersWithPeople() (affected int, err error) {
+// MatchMarkersWithSubjects automatically creates and assigns subjects to markers.
+func MatchMarkersWithSubjects() (affected int, err error) {
 	var markers entity.Markers
 
 	if err := Db().
-		Where("face_id <> '' AND ref_uid = '' AND ref_src = ''").
+		Where("face_id <> '' AND subject_uid = '' AND subject_src = ''").
 		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
-		Where("marker_label <> ''").
-		Order("marker_label").
+		Where("marker_name <> ''").
+		Order("marker_name").
 		Find(&markers).Error; err != nil {
 		return affected, err
 	} else if len(markers) == 0 {
@@ -85,13 +85,13 @@ func MatchMarkersWithPeople() (affected int, err error) {
 	for _, m := range markers {
 		faceId := m.FaceID
 
-		if p := entity.NewPerson(m.MarkerLabel, entity.SrcMarker, 1); p == nil {
-			log.Errorf("faces: person should not be nil - bug?")
-		} else if p = entity.FirstOrCreatePerson(p); p == nil {
-			log.Errorf("faces: failed adding person %s for marker %d", txt.Quote(m.MarkerLabel), m.ID)
-		} else if err := m.Updates(entity.Val{"RefUID": p.PersonUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
+		if subj := entity.NewSubject(m.MarkerName, entity.SubjectPerson, entity.SrcMarker); subj == nil {
+			log.Errorf("faces: subject should not be nil - bug?")
+		} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
+			log.Errorf("faces: failed adding subject %s for marker %d", txt.Quote(m.MarkerName), m.ID)
+		} else if err := m.Updates(entity.Values{"SubjectUID": subj.SubjectUID, "SubjectSrc": entity.SrcAuto, "FaceID": ""}); err != nil {
 			return affected, err
-		} else if err := Db().Model(&entity.Face{}).Where("id = ? AND person_uid = ''", faceId).Update("PersonUID", p.PersonUID).Error; err != nil {
+		} else if err := Db().Model(&entity.Face{}).Where("id = ? AND subject_uid = ''", faceId).Update("SubjectUID", subj.SubjectUID).Error; err != nil {
 			return affected, err
 		} else {
 			affected++
@@ -103,7 +103,7 @@ func MatchMarkersWithPeople() (affected int, err error) {
 
 // ResetFaceMarkerMatches removes people and face matches from face markers.
 func ResetFaceMarkerMatches() error {
-	v := entity.Val{"face_id": "", "ref_uid": "", "ref_src": ""}
+	v := entity.Values{"subject_uid": "", "subject_src": "", "face_id": ""}
 
 	return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace).UpdateColumns(v).Error
 }

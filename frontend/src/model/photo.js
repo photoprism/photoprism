@@ -763,8 +763,8 @@ export class Photo extends RestModel {
         return;
       }
 
-      if (m.hasOwnProperty("Person") && !!m.Person && !!m.Person.Name) {
-        m.Label = m.Person.Name;
+      if (m.hasOwnProperty("Subject") && !!m.Subject && !!m.Subject.Name) {
+        m.Name = m.Subject.Name;
       }
 
       result.push(m);

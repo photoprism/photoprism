@@ -28,7 +28,7 @@ func TestMatchKnownFaces(t *testing.T) {
 	if m, err := MarkerByID(faceFixtureId); err != nil {
 		t.Fatal(err)
 	} else {
-		assert.Empty(t, m.RefUID)
+		assert.Empty(t, m.SubjectUID)
 	}
 
 	affected, err := MatchKnownFaces()
@@ -42,7 +42,7 @@ func TestMatchKnownFaces(t *testing.T) {
 	if m, err := MarkerByID(faceFixtureId); err != nil {
 		t.Fatal(err)
 	} else {
-		assert.Equal(t, "rqu0xs11qekk9jx8", m.RefUID)
+		assert.Equal(t, "rqu0xs11qekk9jx8", m.SubjectUID)
 	}
 }
 

@@ -4,8 +4,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// People returns people from the index.
-func People(limit, offset int) (result entity.People, err error) {
+// Subjects returns subjects from the index.
+func Subjects(limit, offset int) (result entity.Subjects, err error) {
 	stmt := Db()
 
 	stmt = stmt.Order("id").Limit(limit).Offset(offset)

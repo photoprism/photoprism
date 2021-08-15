@@ -1232,7 +1232,7 @@ func TestPhoto_UpdateDateFields(t *testing.T) {
 	t.Run("set to unknown", func(t *testing.T) {
 		photo := &Photo{TakenAt: time.Date(1900, 11, 11, 9, 7, 18, 0, time.UTC), TakenSrc: SrcAuto, CreatedAt: time.Date(1900, 11, 11, 5, 7, 18, 0, time.UTC)}
 		photo.UpdateDateFields()
-		assert.Equal(t, YearUnknown, photo.PhotoYear)
+		assert.Equal(t, UnknownYear, photo.PhotoYear)
 	})
 }
 

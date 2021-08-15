@@ -14,31 +14,31 @@ import (
 
 const (
 	MarkerUnknown = ""
-	MarkerFace    = "Face"
-	MarkerLabel   = "Label"
+	MarkerFace    = "face"
+	MarkerLabel   = "label"
 )
 
 // Marker represents an image marker point.
 type Marker struct {
 	ID             uint    `gorm:"primary_key" json:"ID" yaml:"-"`
 	FileID         uint    `gorm:"index;" json:"-" yaml:"-"`
-	FaceID         string  `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
-	RefUID         string  `gorm:"type:VARBINARY(42);index:idx_markers_uid_type;" json:"RefUID" yaml:"RefUID,omitempty"`
-	RefSrc         string  `gorm:"type:VARBINARY(8);default:'';" json:"RefSrc" yaml:"RefSrc,omitempty"`
-	MarkerType     string  `gorm:"type:VARBINARY(8);index:idx_markers_uid_type;default:'';" json:"Type" yaml:"Type"`
+	MarkerType     string  `gorm:"type:VARBINARY(8);index:idx_markers_subject;default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
+	MarkerName     string  `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
+	SubjectUID     string  `gorm:"type:VARBINARY(42);index:idx_markers_subject;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	SubjectSrc     string  `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
+	FaceID         string  `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	EmbeddingsJSON []byte  `gorm:"type:MEDIUMBLOB;" json:"EmbeddingsJSON" yaml:"EmbeddingsJSON,omitempty"`
 	MarkerScore    int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
 	MarkerInvalid  bool    `json:"Invalid" yaml:"Invalid,omitempty"`
-	MarkerLabel    string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
-	MetaJSON       []byte  `gorm:"type:MEDIUMBLOB;" json:"MetaJSON" yaml:"MetaJSON,omitempty"`
-	EmbeddingsJSON []byte  `gorm:"type:MEDIUMBLOB;" json:"EmbeddingsJSON" yaml:"EmbeddingsJSON,omitempty"`
+	MarkerJSON     []byte  `gorm:"type:MEDIUMBLOB;" json:"MarkerJSON" yaml:"MarkerJSON,omitempty"`
 	X              float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
 	Y              float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W              float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
 	H              float32 `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
-	Person         *Person    `gorm:"foreignkey:RefUID;association_foreignkey:PersonUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Person" yaml:"-"`
+	Subject        *Subject   `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Subject,omitempty" yaml:"-"`
 	embeddings     Embeddings `gorm:"-"`
 }
 
@@ -47,14 +47,14 @@ var UnknownMarker = NewMarker(0, "", SrcDefault, MarkerUnknown, 0, 0, 0, 0)
 
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
-	return "markers_dev2"
+	return "markers_dev3"
 }
 
 // NewMarker creates a new entity.
 func NewMarker(fileUID uint, refUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
 	m := &Marker{
 		FileID:     fileUID,
-		RefUID:     refUID,
+		SubjectUID: refUID,
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
 		X:          x,
@@ -73,7 +73,7 @@ func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
 	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
 
 	m.MarkerScore = f.Score
-	m.MetaJSON = f.RelativeLandmarksJSON()
+	m.MarkerJSON = f.RelativeLandmarksJSON()
 	m.EmbeddingsJSON = f.EmbeddingsJSON()
 
 	return m
@@ -95,8 +95,8 @@ func (m *Marker) SaveForm(f form.Marker) error {
 		return err
 	}
 
-	if f.MarkerLabel != "" {
-		m.MarkerLabel = txt.Title(txt.Clip(f.MarkerLabel, txt.ClipKeyword))
+	if f.MarkerName != "" {
+		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipKeyword))
 	}
 
 	if err := m.Save(); err != nil {
@@ -105,33 +105,42 @@ func (m *Marker) SaveForm(f form.Marker) error {
 
 	faceId := m.FaceID
 
-	if faceId != "" && m.MarkerLabel != "" && m.RefUID == "" && m.MarkerType == MarkerFace {
-		if p := NewPerson(m.MarkerLabel, SrcMarker, 1); p == nil {
-			return fmt.Errorf("marker: person should not be nil (save form)")
-		} else if p = FirstOrCreatePerson(p); p == nil {
-			return fmt.Errorf("marker: failed adding person %s for marker %d (save form)", txt.Quote(m.MarkerLabel), m.ID)
-		} else if err := m.Updates(Val{"RefUID": p.PersonUID, "RefSrc": SrcManual, "FaceID": ""}); err != nil {
+	if faceId != "" && m.MarkerName != "" && m.SubjectUID == "" && m.MarkerType == MarkerFace {
+		if subj := NewSubject(m.MarkerName, SubjectPerson, SrcMarker); subj == nil {
+			return fmt.Errorf("marker: subject should not be nil (save form)")
+		} else if subj = FirstOrCreateSubject(subj); subj == nil {
+			return fmt.Errorf("marker: failed adding subject %s for marker %d (save form)", txt.Quote(m.MarkerName), m.ID)
+		} else if err := m.Updates(Values{"SubjectUID": subj.SubjectUID, "SubjectSrc": SrcManual, "FaceID": ""}); err != nil {
 			return fmt.Errorf("marker: %s (save form)", err)
-		} else if err := Db().Model(&Face{}).Where("id = ? AND person_uid = ''", faceId).Update("PersonUID", p.PersonUID).Error; err != nil {
+		} else if err := Db().Model(&Face{}).Where("id = ? AND subject_uid = ''", faceId).Update("SubjectUID", subj.SubjectUID).Error; err != nil {
 			return fmt.Errorf("marker: %s (update face)", err)
 		} else if err := Db().Model(&Marker{}).
 			Where("face_id = ?", faceId).
-			Updates(Val{"RefUID": p.PersonUID, "RefSrc": SrcManual, "FaceID": ""}).Error; err != nil {
+			Updates(Values{"SubjectUID": subj.SubjectUID, "SubjectSrc": SrcManual, "FaceID": ""}).Error; err != nil {
 			return fmt.Errorf("marker: %s (update related markers)", err)
 		} else {
-			log.Infof("marker: matched person %s with label %s", p.PersonUID, txt.Quote(m.MarkerLabel))
+			log.Infof("marker: matched subject %s with %s", subj.SubjectUID, txt.Quote(m.MarkerName))
 		}
-	} else if m.MarkerLabel != "" && m.RefUID != "" && m.MarkerType == MarkerFace {
-		if p := FindPerson(m.RefUID); p != nil {
-			p.SetName(m.MarkerLabel)
-
-			if err := p.Save(); err != nil {
-				return fmt.Errorf("marker: %s (update person)", err)
-			}
-		}
+	} else if err := m.UpdateSubject(); err != nil {
+		log.Error(err)
 	}
 
 	return nil
+}
+
+// UpdateSubject changes and saves the related subject's name in the index.
+func (m *Marker) UpdateSubject() error {
+	if m.MarkerName == "" || m.SubjectUID == "" || m.MarkerType == MarkerFace {
+		return nil
+	}
+
+	subj := FindSubject(m.SubjectUID)
+
+	if subj == nil {
+		return fmt.Errorf("marker: subject %s not found", m.SubjectUID)
+	}
+
+	return subj.UpdateName(m.MarkerName)
 }
 
 // Save updates the existing or inserts a new row.
@@ -200,9 +209,9 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 			"W":              m.W,
 			"H":              m.H,
 			"MarkerScore":    m.MarkerScore,
-			"MetaJSON":       m.MetaJSON,
+			"MarkerJSON":     m.MarkerJSON,
 			"EmbeddingsJSON": m.EmbeddingsJSON,
-			"RefUID":         m.RefUID,
+			"SubjectUID":     m.SubjectUID,
 		})
 
 		log.Debugf("faces: updated existing marker %d for file %d", result.ID, result.FileID)

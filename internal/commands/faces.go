@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/photoprism"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/urfave/cli"
@@ -25,8 +27,14 @@ var FacesCommand = cli.Command{
 			Action: facesResetAction,
 		},
 		{
-			Name:   "index",
-			Usage:  "Performs facial recognition",
+			Name:  "index",
+			Usage: "Performs facial recognition",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "force, f",
+					Usage: "reindex existing faces",
+				},
+			},
 			Action: facesIndexAction,
 		},
 	},
@@ -110,9 +118,13 @@ func facesIndexAction(ctx *cli.Context) error {
 
 	conf.InitDb()
 
+	opt := photoprism.FacesOptions{
+		Force: ctx.Bool("force"),
+	}
+
 	w := service.Faces()
 
-	if err := w.Start(); err != nil {
+	if err := w.Start(opt); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

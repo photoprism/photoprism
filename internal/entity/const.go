@@ -11,10 +11,10 @@ const (
 	SortOrderEdited    = "edited"
 
 	// Unknown values:
-	YearUnknown  = -1
-	MonthUnknown = -1
-	DayUnknown   = -1
-	TitleUnknown = "Unknown"
+	UnknownYear  = -1
+	UnknownMonth = -1
+	UnknownDay   = -1
+	UnknownName  = "Unknown"
 
 	// Content types:
 	TypeDefault = ""
