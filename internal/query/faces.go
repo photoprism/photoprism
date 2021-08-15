@@ -50,7 +50,7 @@ func PurgeAnonymousFaces() error {
 // ResetFaces removes all face clusters from the index.
 func ResetFaces() error {
 	return UnscopedDb().
-		Delete(entity.Face{}, "id <> ?", entity.UnknownFace.ID).
+		Delete(entity.Face{}, "id <> ? AND face_src = ''", entity.UnknownFace.ID).
 		Error
 }
 
@@ -62,7 +62,7 @@ func CountNewFaceMarkers() (n int) {
 		log.Debugf("faces: no existing clusters")
 	}
 
-	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND embeddings <> ''", entity.MarkerFace)
+	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND embeddings_json <> ''", entity.MarkerFace)
 
 	if !f.CreatedAt.IsZero() {
 		q = q.Where("created_at > ?", f.CreatedAt)

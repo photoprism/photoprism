@@ -24,7 +24,7 @@ func Markers(limit, offset int, markerType string, embeddings, unmatched bool) (
 	}
 
 	if embeddings {
-		db = db.Where("embeddings <> ''")
+		db = db.Where("embeddings_json <> ''")
 	}
 
 	if unmatched {
@@ -45,10 +45,10 @@ func Embeddings(single bool) (result entity.Embeddings, err error) {
 	stmt := Db().
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("embeddings <> ''").
+		Where("embeddings_json <> ''").
 		Order("id")
 
-	if err := stmt.Pluck("embeddings", &col).Error; err != nil {
+	if err := stmt.Pluck("embeddings_json", &col).Error; err != nil {
 		return result, err
 	}
 

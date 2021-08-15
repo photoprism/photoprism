@@ -7,6 +7,7 @@ type Priorities map[string]int
 // Data source names.
 const (
 	SrcAuto     = ""
+	SrcDefault  = "default"
 	SrcManual   = "manual"
 	SrcEstimate = "estimate"
 	SrcName     = "name"
@@ -23,6 +24,7 @@ const (
 // SrcPriority maps source priorities.
 var SrcPriority = Priorities{
 	SrcAuto:     1,
+	SrcDefault:  1,
 	SrcEstimate: 2,
 	SrcName:     4,
 	SrcYaml:     8,

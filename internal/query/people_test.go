@@ -9,7 +9,7 @@ import (
 )
 
 func TestPeople(t *testing.T) {
-	results, err := People(3, 0, false)
+	results, err := People(3, 0)
 
 	if err != nil {
 		t.Fatal(err)

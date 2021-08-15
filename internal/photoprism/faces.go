@@ -1,10 +1,11 @@
 package photoprism
 
 import (
-	"encoding/json"
 	"fmt"
 	"runtime/debug"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/montanaflynn/stats"
 	"github.com/photoprism/photoprism/internal/config"
@@ -93,7 +94,7 @@ func (w *Faces) Analyze() (err error) {
 		for i := 0; i < samples; i++ {
 			f1 := faces[i]
 
-			e1 := f1.UnmarshalEmbedding()
+			e1 := f1.Embedding()
 			min := -1.0
 			max := -1.0
 
@@ -113,7 +114,7 @@ func (w *Faces) Analyze() (err error) {
 					continue
 				}
 
-				e2 := f2.UnmarshalEmbedding()
+				e2 := f2.Embedding()
 
 				d := clusters.EuclideanDistance(e1, e2)
 
@@ -213,15 +214,15 @@ func (w *Faces) Start() (err error) {
 	// Anything that keeps us from doing this?
 	if err != nil {
 		return err
-	} else if samples := len(embeddings); samples < FaceSampleThreshold {
-		log.Warnf("faces: at least %d samples needed for matching similar faces", FaceSampleThreshold)
+	} else if samples := len(embeddings); samples < face.SampleThreshold {
+		log.Warnf("faces: at least %d samples needed for matching similar faces", face.SampleThreshold)
 		return nil
 	}
 
 	var c clusters.HardClusterer
 
 	// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
-	if c, err = clusters.DBSCAN(FaceClusterSamples, FaceClusterDistance, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
+	if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterRadius, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
 		return err
 	} else if err = c.Learn(embeddings); err != nil {
 		return err
@@ -231,29 +232,26 @@ func (w *Faces) Start() (err error) {
 
 	log.Debugf("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
 
-	faceClusters := make([]entity.Embeddings, len(sizes))
+	results := make([]entity.Embeddings, len(sizes))
 
 	for i, _ := range sizes {
-		faceClusters[i] = entity.Embeddings{}
+		results[i] = entity.Embeddings{}
 	}
 
 	guesses := c.Guesses()
 
-	for index, number := range guesses {
-		if number < 1 {
+	for i, n := range guesses {
+		if n < 1 {
 			continue
 		}
 
-		faceClusters[number-1] = append(faceClusters[number-1], embeddings[index])
+		results[n-1] = append(results[n-1], embeddings[i])
 	}
 
 	var added, matched, unknown, dbErrors int64
 
-	for _, clusterEmb := range faceClusters {
-		if emb, err := json.Marshal(entity.EmbeddingsMidpoint(clusterEmb)); err != nil {
-			dbErrors++
-			log.Errorf("faces: %s", err)
-		} else if f := entity.NewFace("", string(emb)); f == nil {
+	for _, e := range results {
+		if f := entity.NewFace("", e); f == nil {
 			dbErrors++
 			log.Errorf("faces: face should not be nil - bug?")
 		} else if err := f.Create(); err == nil {
@@ -273,17 +271,6 @@ func (w *Faces) Start() (err error) {
 	if faces, err := query.Faces(false); err != nil {
 		return err
 	} else {
-		type faceMatch = struct {
-			Embedding entity.Embedding
-			PersonUID string
-		}
-
-		faceMap := make(map[string]faceMatch, len(faces))
-
-		for _, f := range faces {
-			faceMap[f.ID] = faceMatch{f.UnmarshalEmbedding(), f.PersonUID}
-		}
-
 		limit := 500
 		offset := 0
 
@@ -303,48 +290,57 @@ func (w *Faces) Start() (err error) {
 					return fmt.Errorf("worker canceled")
 				}
 
-				var faceId string
-				var faceDist float64
+				// Pointer to the matching face.
+				var f *entity.Face
 
-				for _, e := range marker.UnmarshalEmbeddings() {
-					for id, f := range faceMap {
-						if id == "" {
-							continue
-						} else if d := clusters.EuclideanDistance(e, f.Embedding); faceId == "" || d < faceDist {
-							faceId = id
-							faceDist = d
+				// Distance to the matching face.
+				var d float64
+
+				// Find the closest face match for marker.
+				for _, e := range marker.Embeddings() {
+					for i, match := range faces {
+						if dist := clusters.EuclideanDistance(e, match.Embedding()); f == nil || dist < d {
+							f = &faces[i]
+							d = dist
 						}
 					}
 				}
 
-				if faceId == "" || faceDist > FaceClusterDistance {
+				// No match?
+				if f == nil {
 					continue
 				}
 
-				if marker.RefUID != "" && marker.RefUID == faceMap[faceId].PersonUID {
+				// Too distant?
+				if d > (f.Radius + face.ClusterRadius) {
+					continue
+				}
+
+				// Already matched?
+				if marker.RefUID != "" && marker.RefUID == f.PersonUID {
 					continue
 				}
 
 				// Create person from marker label?
 				if marker.MarkerLabel == "" {
 					// Do nothing.
-				} else if person := entity.NewPerson(marker.MarkerLabel, entity.SrcMarker, 1); person == nil {
+				} else if p := entity.NewPerson(marker.MarkerLabel, entity.SrcMarker, 1); p == nil {
 					log.Errorf("faces: person should not be nil - bug?")
-				} else if person = entity.FirstOrCreatePerson(person); person == nil {
+				} else if p = entity.FirstOrCreatePerson(p); p == nil {
 					log.Errorf("faces: failed adding %s", txt.Quote(marker.MarkerLabel))
-				} else if f, ok := faceMap[faceId]; ok {
-					faceMap[faceId] = faceMatch{Embedding: f.Embedding, PersonUID: person.PersonUID}
-					entity.Db().Model(&entity.Face{}).Where("id = ? AND person_uid = ''", faceId).Update("PersonUID", person.PersonUID)
+				} else {
+					f.PersonUID = p.PersonUID
+					entity.Db().Model(&entity.Face{}).Where("id = ? AND person_uid = ''", f.ID).Update("PersonUID", p.PersonUID)
 				}
 
 				// Existing person?
-				if refUID := faceMap[faceId].PersonUID; refUID != "" {
-					if err := marker.Updates(entity.Val{"RefUID": refUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
+				if f.PersonUID != "" {
+					if err := marker.Updates(entity.Val{"RefUID": f.PersonUID, "RefSrc": entity.SrcPeople, "FaceID": ""}); err != nil {
 						log.Errorf("faces: %s while updating person uid", err)
 					} else {
 						matched++
 					}
-				} else if err := marker.Updates(entity.Val{"FaceID": faceId}); err != nil {
+				} else if err := marker.Updates(entity.Val{"FaceID": f.ID}); err != nil {
 					log.Errorf("faces: %s while updating marker face id", err)
 				} else {
 					unknown++

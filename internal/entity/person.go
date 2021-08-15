@@ -44,7 +44,11 @@ var UnknownPerson = Person{
 	PersonUID:      "r000000000000001",
 	PersonSlug:     "zz",
 	PersonName:     "Unknown",
+	PersonSrc:      SrcDefault,
 	PersonFavorite: false,
+	BirthYear:      YearUnknown,
+	BirthMonth:     MonthUnknown,
+	BirthDay:       DayUnknown,
 	PhotoCount:     0,
 }
 
@@ -76,6 +80,9 @@ func NewPerson(personName, personSrc string, photoCount int) *Person {
 		PersonSlug: personSlug,
 		PersonName: personName,
 		PersonSrc:  personSrc,
+		BirthYear:  YearUnknown,
+		BirthMonth: MonthUnknown,
+		BirthDay:   DayUnknown,
 		PhotoCount: photoCount,
 	}
 

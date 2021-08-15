@@ -3,15 +3,19 @@ package entity
 import (
 	"encoding/json"
 	"strings"
+
+	"github.com/mpraski/clusters"
 )
 
 type Embedding = []float64
 
-// Embeddings represents marker face embeddings.
+// Embeddings represents an embedding cluster.
 type Embeddings = []Embedding
 
 // EmbeddingsMidpoint returns the embeddings vector midpoint.
-func EmbeddingsMidpoint(m Embeddings) (result Embedding) {
+func EmbeddingsMidpoint(m Embeddings) (result Embedding, radius float64, count int) {
+	count = len(m)
+
 	for i, emb := range m {
 		if i == 0 {
 			result = emb
@@ -21,9 +25,13 @@ func EmbeddingsMidpoint(m Embeddings) (result Embedding) {
 		for j, val := range result {
 			result[j] = (val + emb[j]) / 2
 		}
+
+		if d := clusters.EuclideanDistance(result, emb); d > radius {
+			radius = d
+		}
 	}
 
-	return result
+	return result, radius, count
 }
 
 // UnmarshalEmbeddings parses face embedding JSON.

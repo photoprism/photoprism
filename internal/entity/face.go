@@ -3,26 +3,33 @@ package entity
 import (
 	"crypto/sha1"
 	"encoding/base32"
+	"encoding/json"
 	"time"
 )
 
+// Faces represents a Face slice.
 type Faces []Face
 
 // Face represents the face of a Person.
 type Face struct {
-	ID        string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	PersonUID string     `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID,omitempty"`
-	Embedding string     `gorm:"type:LONGTEXT;" json:"Embedding" yaml:"Embedding,omitempty"`
-	CreatedAt time.Time  `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
-	UpdatedAt time.Time  `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
-	DeletedAt *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	FaceSrc       string    `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
+	PersonUID     string    `gorm:"type:VARBINARY(42);index;" json:"PersonUID" yaml:"PersonUID,omitempty"`
+	Collisions    int       `json:"Collisions" yaml:"Collisions,omitempty"`
+	Samples       int       `json:"Samples" yaml:"Samples,omitempty"`
+	Radius        float64   `json:"Radius" yaml:"Radius,omitempty"`
+	EmbeddingJSON []byte    `gorm:"type:MEDIUMBLOB;" json:"EmbeddingJSON" yaml:"EmbeddingJSON,omitempty"`
+	CreatedAt     time.Time `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt     time.Time `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
+	embedding     Embedding `gorm:"-"`
 }
 
 // UnknownFace can be used as a placeholder for unknown faces.
 var UnknownFace = Face{
-	ID:        "zz",
-	PersonUID: UnknownPerson.PersonUID,
-	Embedding: "",
+	ID:            "zz",
+	FaceSrc:       SrcDefault,
+	PersonUID:     UnknownPerson.PersonUID,
+	EmbeddingJSON: []byte{},
 }
 
 // CreateUnknownFace initializes the database with a placeholder for unknown faces.
@@ -36,24 +43,49 @@ func (Face) TableName() string {
 }
 
 // NewFace returns a new face.
-func NewFace(personUID, embedding string) *Face {
-	timeStamp := Timestamp()
-	s := sha1.Sum([]byte(embedding))
-
+func NewFace(personUID string, embeddings Embeddings) *Face {
 	result := &Face{
-		ID:        base32.StdEncoding.EncodeToString(s[:]),
 		PersonUID: personUID,
-		Embedding: embedding,
-		CreatedAt: timeStamp,
-		UpdatedAt: timeStamp,
+	}
+
+	if err := result.SetEmbeddings(embeddings); err != nil {
+		log.Errorf("face: failed setting embeddings (%s)", err)
 	}
 
 	return result
 }
 
-// UnmarshalEmbedding parses the face embedding JSON string.
-func (m *Face) UnmarshalEmbedding() (result Embedding) {
-	return UnmarshalEmbedding(m.Embedding)
+// SetEmbeddings assigns face embeddings.
+func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
+	m.embedding, m.Radius, m.Samples = EmbeddingsMidpoint(embeddings)
+	m.EmbeddingJSON, err = json.Marshal(m.embedding)
+
+	if err != nil {
+		return err
+	}
+
+	s := sha1.Sum(m.EmbeddingJSON)
+	m.ID = base32.StdEncoding.EncodeToString(s[:])
+	m.UpdatedAt = Timestamp()
+
+	if m.CreatedAt.IsZero() {
+		m.CreatedAt = m.UpdatedAt
+	}
+
+	return nil
+}
+
+// Embedding returns parsed face embedding.
+func (m *Face) Embedding() Embedding {
+	if len(m.EmbeddingJSON) == 0 {
+		return Embedding{}
+	} else if len(m.embedding) > 0 {
+		return m.embedding
+	} else if err := json.Unmarshal(m.EmbeddingJSON, &m.embedding); err != nil {
+		log.Errorf("failed parsing face embedding json: %s", err)
+	}
+
+	return m.embedding
 }
 
 // Save updates the existing or inserts a new face.
@@ -75,20 +107,6 @@ func (m *Face) Create() error {
 // Delete removes the face from the database.
 func (m *Face) Delete() error {
 	return Db().Delete(m).Error
-}
-
-// Deleted returns true if the face is deleted.
-func (m *Face) Deleted() bool {
-	return m.DeletedAt != nil
-}
-
-// Restore restores the face in the database.
-func (m *Face) Restore() error {
-	if m.Deleted() {
-		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
-	}
-
-	return nil
 }
 
 // Update a face property in the database.

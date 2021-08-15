@@ -19,7 +19,7 @@ type PhotoAlbum struct {
 	Album     *Album    `gorm:"PRELOAD:true" yaml:"-"`
 }
 
-// TableName returns PhotoAlbum table identifier "photos_albums"
+// TableName returns the entity database table name.
 func (PhotoAlbum) TableName() string {
 	return "photos_albums"
 }

@@ -38,6 +38,10 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+var ClusterCore = 3
+var ClusterRadius = 0.66
+var SampleThreshold = 25
+
 var log = event.Log
 
 // Faces is a list of face detection results.

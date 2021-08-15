@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -19,29 +20,30 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	ID            uint    `gorm:"primary_key" json:"ID" yaml:"-"`
-	FileID        uint    `gorm:"index;" json:"-" yaml:"-"`
-	FaceID        string  `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
-	RefUID        string  `gorm:"type:VARBINARY(42);index:idx_markers_uid_type;" json:"RefUID" yaml:"RefUID,omitempty"`
-	RefSrc        string  `gorm:"type:VARBINARY(8);default:'';" json:"RefSrc" yaml:"RefSrc,omitempty"`
-	MarkerType    string  `gorm:"type:VARBINARY(8);index:idx_markers_uid_type;default:'';" json:"Type" yaml:"Type"`
-	MarkerSrc     string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerScore   int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
-	MarkerInvalid bool    `json:"Invalid" yaml:"Invalid,omitempty"`
-	MarkerLabel   string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
-	MarkerMeta    string  `gorm:"type:LONGTEXT;" json:"Meta" yaml:"Meta,omitempty"`
-	Embeddings    string  `gorm:"type:LONGTEXT;" json:"Embeddings" yaml:"Embeddings,omitempty"`
-	X             float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
-	Y             float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
-	W             float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
-	H             float32 `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	Person        *Person `gorm:"foreignkey:RefUID;association_foreignkey:PersonUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Person" yaml:"-"`
+	ID             uint    `gorm:"primary_key" json:"ID" yaml:"-"`
+	FileID         uint    `gorm:"index;" json:"-" yaml:"-"`
+	FaceID         string  `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	RefUID         string  `gorm:"type:VARBINARY(42);index:idx_markers_uid_type;" json:"RefUID" yaml:"RefUID,omitempty"`
+	RefSrc         string  `gorm:"type:VARBINARY(8);default:'';" json:"RefSrc" yaml:"RefSrc,omitempty"`
+	MarkerType     string  `gorm:"type:VARBINARY(8);index:idx_markers_uid_type;default:'';" json:"Type" yaml:"Type"`
+	MarkerSrc      string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
+	MarkerScore    int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
+	MarkerInvalid  bool    `json:"Invalid" yaml:"Invalid,omitempty"`
+	MarkerLabel    string  `gorm:"type:VARCHAR(255);" json:"Label" yaml:"Label,omitempty"`
+	MetaJSON       []byte  `gorm:"type:MEDIUMBLOB;" json:"MetaJSON" yaml:"MetaJSON,omitempty"`
+	EmbeddingsJSON []byte  `gorm:"type:MEDIUMBLOB;" json:"EmbeddingsJSON" yaml:"EmbeddingsJSON,omitempty"`
+	X              float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
+	Y              float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
+	W              float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
+	H              float32 `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	Person         *Person    `gorm:"foreignkey:RefUID;association_foreignkey:PersonUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Person" yaml:"-"`
+	embeddings     Embeddings `gorm:"-"`
 }
 
 // UnknownMarker can be used as a default for unknown markers.
-var UnknownMarker = NewMarker(0, "", SrcAuto, MarkerUnknown, 0, 0, 0, 0)
+var UnknownMarker = NewMarker(0, "", SrcDefault, MarkerUnknown, 0, 0, 0, 0)
 
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
@@ -71,8 +73,8 @@ func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
 	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
 
 	m.MarkerScore = f.Score
-	m.MarkerMeta = string(f.RelativeLandmarksJSON())
-	m.Embeddings = string(f.EmbeddingsJSON())
+	m.MetaJSON = f.RelativeLandmarksJSON()
+	m.EmbeddingsJSON = f.EmbeddingsJSON()
 
 	return m
 }
@@ -150,9 +152,17 @@ func (m *Marker) Create() error {
 	return Db().Create(m).Error
 }
 
-// UnmarshalEmbeddings parses face embedding JSON strings.
-func (m *Marker) UnmarshalEmbeddings() (result Embeddings) {
-	return UnmarshalEmbeddings(m.Embeddings)
+// Embeddings returns parsed marker embeddings.
+func (m *Marker) Embeddings() Embeddings {
+	if len(m.EmbeddingsJSON) == 0 {
+		return Embeddings{}
+	} else if len(m.embeddings) > 0 {
+		return m.embeddings
+	} else if err := json.Unmarshal(m.EmbeddingsJSON, &m.embeddings); err != nil {
+		log.Errorf("failed parsing marker embeddings json: %s", err)
+	}
+
+	return m.embeddings
 }
 
 // FindMarker returns an existing row if exists.
@@ -185,14 +195,14 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 		}
 
 		err := result.Updates(map[string]interface{}{
-			"X":           m.X,
-			"Y":           m.Y,
-			"W":           m.W,
-			"H":           m.H,
-			"MarkerScore": m.MarkerScore,
-			"MarkerMeta":  m.MarkerMeta,
-			"Embeddings":  m.Embeddings,
-			"RefUID":      m.RefUID,
+			"X":              m.X,
+			"Y":              m.Y,
+			"W":              m.W,
+			"H":              m.H,
+			"MarkerScore":    m.MarkerScore,
+			"MetaJSON":       m.MetaJSON,
+			"EmbeddingsJSON": m.EmbeddingsJSON,
+			"RefUID":         m.RefUID,
 		})
 
 		log.Debugf("faces: updated existing marker %d for file %d", result.ID, result.FileID)
