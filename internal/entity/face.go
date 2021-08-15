@@ -15,16 +15,16 @@ type Faces []Face
 
 // Face represents the face of a Subject.
 type Face struct {
-	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	FaceSrc       string    `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
-	SubjectUID    string    `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
-	Collisions    int       `json:"Collisions" yaml:"Collisions,omitempty"`
-	Samples       int       `json:"Samples" yaml:"Samples,omitempty"`
-	Radius        float64   `json:"Radius" yaml:"Radius,omitempty"`
-	EmbeddingJSON []byte    `gorm:"type:MEDIUMBLOB;" json:"EmbeddingJSON" yaml:"EmbeddingJSON,omitempty"`
-	CreatedAt     time.Time `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
-	UpdatedAt     time.Time `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
-	embedding     Embedding `gorm:"-"`
+	ID            string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	FaceSrc       string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
+	SubjectUID    string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	Collisions    int             `json:"Collisions" yaml:"Collisions,omitempty"`
+	Samples       int             `json:"Samples" yaml:"Samples,omitempty"`
+	Radius        float64         `json:"Radius" yaml:"Radius,omitempty"`
+	EmbeddingJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
+	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
+	embedding     Embedding       `gorm:"-"`
 }
 
 // UnknownFace can be used as a placeholder for unknown faces.

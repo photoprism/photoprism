@@ -30,7 +30,7 @@ var SubjectFixtures = SubjectMap{
 		Hidden:             false,
 		SubjectDescription: "Subject Description",
 		SubjectNotes:       "Short Note",
-		SubjectJSON:        []byte(""),
+		MetadataJSON:       []byte(""),
 		PhotoCount:         1,
 		BirthYear:          2000,
 		BirthMonth:         5,

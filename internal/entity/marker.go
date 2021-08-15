@@ -20,26 +20,26 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	ID             uint    `gorm:"primary_key" json:"ID" yaml:"-"`
-	FileID         uint    `gorm:"index;" json:"-" yaml:"-"`
-	MarkerType     string  `gorm:"type:VARBINARY(8);index:idx_markers_subject;default:'';" json:"Type" yaml:"Type"`
-	MarkerSrc      string  `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerName     string  `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
-	SubjectUID     string  `gorm:"type:VARBINARY(42);index:idx_markers_subject;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
-	SubjectSrc     string  `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
-	FaceID         string  `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
-	EmbeddingsJSON []byte  `gorm:"type:MEDIUMBLOB;" json:"EmbeddingsJSON" yaml:"EmbeddingsJSON,omitempty"`
-	MarkerScore    int     `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
-	MarkerInvalid  bool    `json:"Invalid" yaml:"Invalid,omitempty"`
-	MarkerJSON     []byte  `gorm:"type:MEDIUMBLOB;" json:"MarkerJSON" yaml:"MarkerJSON,omitempty"`
-	X              float32 `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
-	Y              float32 `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
-	W              float32 `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
-	H              float32 `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	ID             uint            `gorm:"primary_key" json:"ID" yaml:"-"`
+	FileID         uint            `gorm:"index;" json:"-" yaml:"-"`
+	MarkerType     string          `gorm:"type:VARBINARY(8);index:idx_markers_subject;default:'';" json:"Type" yaml:"Type"`
+	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
+	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
+	SubjectUID     string          `gorm:"type:VARBINARY(42);index:idx_markers_subject;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	SubjectSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
+	Subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Subject,omitempty" yaml:"-"`
+	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
+	embeddings     Embeddings      `gorm:"-"`
+	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
+	X              float32         `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
+	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
+	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
+	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	Score          int             `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
+	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
-	Subject        *Subject   `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Subject,omitempty" yaml:"-"`
-	embeddings     Embeddings `gorm:"-"`
 }
 
 // UnknownMarker can be used as a default for unknown markers.
@@ -51,10 +51,10 @@ func (Marker) TableName() string {
 }
 
 // NewMarker creates a new entity.
-func NewMarker(fileUID uint, refUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
+func NewMarker(fileID uint, subjectUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
 	m := &Marker{
-		FileID:     fileUID,
-		SubjectUID: refUID,
+		FileID:     fileID,
+		SubjectUID: subjectUID,
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
 		X:          x,
@@ -72,9 +72,9 @@ func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
 
 	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
 
-	m.MarkerScore = f.Score
-	m.MarkerJSON = f.RelativeLandmarksJSON()
 	m.EmbeddingsJSON = f.EmbeddingsJSON()
+	m.LandmarksJSON = f.RelativeLandmarksJSON()
+	m.Score = f.Score
 
 	return m
 }
@@ -208,8 +208,8 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 			"Y":              m.Y,
 			"W":              m.W,
 			"H":              m.H,
-			"MarkerScore":    m.MarkerScore,
-			"MarkerJSON":     m.MarkerJSON,
+			"Score":          m.Score,
+			"LandmarksJSON":  m.LandmarksJSON,
 			"EmbeddingsJSON": m.EmbeddingsJSON,
 			"SubjectUID":     m.SubjectUID,
 		})
