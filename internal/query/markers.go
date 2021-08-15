@@ -67,6 +67,7 @@ func Embeddings(single bool) (result entity.Embeddings, err error) {
 	return result, nil
 }
 
+// MatchMarkersWithPeople creates and assigns a person to labeled face markers as needed.
 func MatchMarkersWithPeople() (affected int, err error) {
 	var markers entity.Markers
 
@@ -98,4 +99,11 @@ func MatchMarkersWithPeople() (affected int, err error) {
 	}
 
 	return affected, nil
+}
+
+// ResetFaceMarkerMatches removes people and face matches from face markers.
+func ResetFaceMarkerMatches() error {
+	v := entity.Val{"face_id": "", "ref_uid": "", "ref_src": ""}
+
+	return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace).UpdateColumns(v).Error
 }

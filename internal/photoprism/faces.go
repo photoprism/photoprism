@@ -36,14 +36,12 @@ func NewFaces(conf *config.Config) *Faces {
 
 // Analyze face embeddings.
 func (w *Faces) Analyze() (err error) {
-	log.Infof("faces: computing distance of face embeddings")
-
 	if embeddings, err := query.Embeddings(true); err != nil {
 		return err
 	} else if samples := len(embeddings); samples == 0 {
 		log.Infof("faces: no samples found")
 	} else {
-		log.Infof("faces: analyzing %d samples", samples)
+		log.Infof("faces: computing distance of %d samples", samples)
 
 		distMin := make([]float64, samples)
 		distMax := make([]float64, samples)
@@ -85,13 +83,11 @@ func (w *Faces) Analyze() (err error) {
 		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
 	}
 
-	log.Infof("faces: computing distance of known faces matching to the same person")
-
 	if faces, err := query.Faces(true); err != nil {
 		log.Errorf("faces: %s", err)
-	} else if samples := len(faces); samples == 0 {
-		log.Infof("faces: no known faces")
-	} else {
+	} else if samples := len(faces); samples > 0 {
+		log.Infof("faces: computing distance of faces matching to the same person")
+
 		dist := make(map[string][]float64)
 
 		for i := 0; i < samples; i++ {
@@ -149,6 +145,23 @@ func (w *Faces) Analyze() (err error) {
 	return nil
 }
 
+// Reset face clusters and matches.
+func (w *Faces) Reset() (err error) {
+	if err := query.ResetFaces(); err != nil {
+		log.Errorf("faces: %s (reset clusters)", err)
+	} else {
+		log.Infof("faces: removed clusters")
+	}
+
+	if err := query.ResetFaceMarkerMatches(); err != nil {
+		log.Errorf("faces: %s (reset markers)", err)
+	} else {
+		log.Infof("faces: removed matches")
+	}
+
+	return nil
+}
+
 // Disabled tests if facial recognition is disabled.
 func (w *Faces) Disabled() bool {
 	return !(w.conf.Experimental() && w.conf.Settings().Features.People)
@@ -175,7 +188,7 @@ func (w *Faces) Start() (err error) {
 
 	// Skip clustering if index contains no new face markers.
 	if n := query.CountNewFaceMarkers(); n < 1 {
-		log.Debugf("faces: no new markers, matching people and faces")
+		log.Debugf("faces: no new samples")
 
 		if affected, err := query.MatchMarkersWithPeople(); err != nil {
 			log.Errorf("faces: %s (create people from markers)", err)
@@ -186,7 +199,7 @@ func (w *Faces) Start() (err error) {
 		if matched, err := query.MatchKnownFaces(); err != nil {
 			return err
 		} else if matched > 0 {
-			log.Infof("faces: matched %d markers to known faces", matched)
+			log.Infof("faces: matched %d markers to faces", matched)
 		}
 
 		return nil
@@ -351,9 +364,9 @@ func (w *Faces) Start() (err error) {
 	}
 
 	if added > 0 || matched > 0 || dbErrors > 0 {
-		log.Infof("faces: %d added, %d matched, %d unknown, %d errors", added, matched, unknown, dbErrors)
+		log.Infof("faces: %d added, %d matches, %d unknown, %d errors", added, matched, unknown, dbErrors)
 	} else {
-		log.Debugf("faces: %d added, %d matched, %d unknown, %d errors", added, matched, unknown, dbErrors)
+		log.Debugf("faces: %d added, %d matches, %d unknown, %d errors", added, matched, unknown, dbErrors)
 	}
 
 	return nil

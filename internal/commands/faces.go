@@ -16,12 +16,17 @@ var FacesCommand = cli.Command{
 	Subcommands: []cli.Command{
 		{
 			Name:   "stats",
-			Usage:  "Shows stats on face embeddings",
+			Usage:  "Shows stats on face samples",
 			Action: facesStatsAction,
 		},
 		{
+			Name:   "reset",
+			Usage:  "Resets recognized faces",
+			Action: facesResetAction,
+		},
+		{
 			Name:   "index",
-			Usage:  "Performs face clustering and matching",
+			Usage:  "Performs facial recognition",
 			Action: facesIndexAction,
 		},
 	},
@@ -46,6 +51,37 @@ func facesStatsAction(ctx *cli.Context) error {
 	w := service.Faces()
 
 	if err := w.Analyze(); err != nil {
+		return err
+	} else {
+		elapsed := time.Since(start)
+
+		log.Infof("completed in %s", elapsed)
+	}
+
+	conf.Shutdown()
+
+	return nil
+}
+
+// facesResetAction resets face clusters and matches.
+func facesResetAction(ctx *cli.Context) error {
+	start := time.Now()
+
+	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
+
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := conf.Init(); err != nil {
+		return err
+	}
+
+	conf.InitDb()
+
+	w := service.Faces()
+
+	if err := w.Reset(); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

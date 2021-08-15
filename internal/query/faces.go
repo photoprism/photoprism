@@ -47,12 +47,19 @@ func PurgeAnonymousFaces() error {
 		"id <> ? AND person_uid = '' AND updated_at < ?", entity.UnknownFace.ID, entity.Yesterday()).Error
 }
 
+// ResetFaces removes all face clusters from the index.
+func ResetFaces() error {
+	return UnscopedDb().
+		Delete(entity.Face{}, "id <> ?", entity.UnknownFace.ID).
+		Error
+}
+
 // CountNewFaceMarkers returns the number of new face markers in the index.
 func CountNewFaceMarkers() (n int) {
 	var f entity.Face
 
 	if err := Db().Where("id <> ?", entity.UnknownFace.ID).Order("created_at DESC").Take(&f).Error; err != nil {
-		log.Debugf("faces: index contains new clusters")
+		log.Debugf("faces: no existing clusters")
 	}
 
 	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND embeddings <> ''", entity.MarkerFace)
