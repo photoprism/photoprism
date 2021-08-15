@@ -9,21 +9,21 @@ import (
 func TestNewMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var m = struct {
-			MarkerType string
-			MarkerSrc  string
-			MarkerName string
-			SubjectUID string
-			SubjectSrc string
-			Score      int
-			Invalid    bool
+			MarkerType    string
+			MarkerSrc     string
+			MarkerName    string
+			SubjectUID    string
+			SubjectSrc    string
+			Score         int
+			MarkerInvalid bool
 		}{
-			MarkerType: "face",
-			MarkerSrc:  "image",
-			MarkerName: "Foo",
-			SubjectUID: "3h59wvth837b5vyiub35",
-			SubjectSrc: "meta",
-			Score:      100,
-			Invalid:    true,
+			MarkerType:    "face",
+			MarkerSrc:     "image",
+			MarkerName:    "Foo",
+			SubjectUID:    "3h59wvth837b5vyiub35",
+			SubjectSrc:    "meta",
+			Score:         100,
+			MarkerInvalid: true,
 		}
 
 		f, err := NewMarker(m)
@@ -38,6 +38,6 @@ func TestNewMarker(t *testing.T) {
 		assert.Equal(t, "3h59wvth837b5vyiub35", f.SubjectUID)
 		assert.Equal(t, "meta", f.SubjectSrc)
 		assert.Equal(t, 100, f.Score)
-		assert.Equal(t, true, f.Invalid)
+		assert.Equal(t, true, f.MarkerInvalid)
 	})
 }
