@@ -103,6 +103,15 @@ var CellFixtures = CellMap{
 		CreatedAt:    Timestamp(),
 		UpdatedAt:    Timestamp(),
 	},
+	"Neckarbrücke": {
+		ID:           s2.TokenPrefix + "1ef744d1e284",
+		PlaceID:      PlaceFixtures.Get("Germany").ID,
+		Place:        PlaceFixtures.Pointer("Germany"),
+		CellName:     "Neckarbrücke",
+		CellCategory: "",
+		CreatedAt:    Timestamp(),
+		UpdatedAt:    Timestamp(),
+	},
 }
 
 // CreateCellFixtures inserts known entities into the database for testing.
