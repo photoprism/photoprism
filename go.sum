@@ -50,6 +50,8 @@ github.com/dsoprea/go-exif/v2 v2.0.0-20200520183328-015129a9efd5/go.mod h1:9EXlP
 github.com/dsoprea/go-exif/v2 v2.0.0-20200604193436-ca8584a0e1c4/go.mod h1:9EXlPeHfblFFnwu5UOqmP2eoZfJyAZ2Ri/Vki33ajO0=
 github.com/dsoprea/go-exif/v2 v2.0.0-20210428042052-dca55bf8ca15 h1:a73ubT6QCaR0G6ZfkA0i3ecR+bB3OFCa9VoKjZT8H24=
 github.com/dsoprea/go-exif/v2 v2.0.0-20210428042052-dca55bf8ca15/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
+github.com/dsoprea/go-exif/v2 v2.0.0-20210625224831-a6301f85c82b h1:8lVRnnni9zebcpjkrEXrEyxFpRWG/oTpWc2Y3giKomE=
+github.com/dsoprea/go-exif/v2 v2.0.0-20210625224831-a6301f85c82b/go.mod h1:oKrjk2kb3rAR5NbtSTLUMvMSbc+k8ZosI3MaVH47noc=
 github.com/dsoprea/go-exif/v3 v3.0.0-20200717053412-08f1b6708903/go.mod h1:0nsO1ce0mh5czxGeLo4+OCZ/C6Eo6ZlMWsz7rH/Gxv8=
 github.com/dsoprea/go-exif/v3 v3.0.0-20210512043655-120bcdb2a55e/go.mod h1:cg5SNYKHMmzxsr9X6ZeLh/nfBRHHp5PngtEPcujONtk=
 github.com/dsoprea/go-exif/v3 v3.0.0-20210625224831-a6301f85c82b h1:NgNuLvW/gAFKU30ULWW0gtkCt56JfB7FrZ2zyo0wT8I=
