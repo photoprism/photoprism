@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -137,12 +138,12 @@ func (m *User) Save() error {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *User) BeforeCreate(scope *gorm.Scope) error {
+func (m *User) BeforeCreate(tx *gorm.DB) error {
 	if rnd.IsUID(m.UserUID, 'u') {
 		return nil
 	}
-
-	return scope.SetColumn("UserUID", rnd.PPID('u'))
+	m.UserUID = rnd.PPID('u')
+	return nil
 }
 
 // FirstOrCreateUser returns an existing row, inserts a new row or nil in case of errors.
@@ -189,6 +190,21 @@ func FindUserByUID(uid string) *User {
 		log.Debugf("user %s not found", txt.Quote(uid))
 		return nil
 	}
+}
+
+// DeleteUserByName deletes an existing user or returns error if not found.
+func DeleteUserByName(userName string) error {
+	if userName == "" {
+		return fmt.Errorf("can not delete user from db: empty username")
+	}
+	user := FindUserByName(userName)
+	if err := Db().Where("user_name = ?", userName).Delete(&User{}).Error; user == nil || err != nil {
+		return fmt.Errorf("user %s not found", txt.Quote(userName))
+	}
+	if err := Db().Where("uid = ?", user.UserUID).Delete(&Password{}).Error; err != nil {
+		log.Debug(err)
+	}
+	return nil
 }
 
 // String returns an identifier that can be used in logs.
@@ -320,4 +336,59 @@ func (m *User) Role() acl.Role {
 	}
 
 	return acl.RoleDefault
+}
+
+// Validate Makes sure username and email are unique and meet requirements. Returns error if any property is invalid
+func (m *User) Validate() error {
+	if m.UserName == "" {
+		return errors.New("username must not be empty")
+	}
+	if len(m.UserName) < 4 {
+		return errors.New("username must be at least 4 characters")
+	}
+	var result = &User{}
+	var err error
+	if err = Db().Unscoped().Where("user_name = ?", m.UserName).First(result).Error; err == nil {
+		return errors.New("username already exists")
+	} else if err != gorm.ErrRecordNotFound {
+		return err
+	}
+	// stop here if no email is provided
+	if m.PrimaryEmail == "" {
+		return nil
+	}
+	if err = Db().Unscoped().Where("primary_email = ?", m.PrimaryEmail).First(result).Error; err == nil {
+		return errors.New("email already exists")
+	} else if err != gorm.ErrRecordNotFound {
+		return err
+	}
+	return nil
+}
+
+// CreateWithPassword Creates User with Password in db transaction.
+func (m *User) CreateWithPassword(password string) error {
+	if len(password) < 4 {
+		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(m.UserName))
+	}
+	return Db().Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(m).Error; err != nil {
+			return err
+		}
+		pw := NewPassword(m.UserUID, password)
+		if err := tx.Create(&pw).Error; err != nil {
+			return err
+		}
+		log.Infof("created user %v with uid %v", txt.Quote(m.UserName), txt.Quote(m.UserUID))
+		return nil
+	})
+}
+
+// AllUsers Returns a list of all registered Users.
+func AllUsers() []User {
+	var users []User
+	if err := Db().Find(&users).Error; err != nil {
+		log.Error(err)
+		return []User{}
+	}
+	return users
 }

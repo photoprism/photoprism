@@ -1,9 +1,8 @@
 package entity
 
 import (
-	"testing"
-
 	"github.com/photoprism/photoprism/internal/acl"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -374,5 +373,120 @@ func TestUser_Role(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
 		assert.Equal(t, acl.Role("*"), p.Role())
+	})
+}
+
+func TestDeleteUserByName(t *testing.T) {
+	u := FirstOrCreateUser(&User{
+		ID:           877,
+		AddressID:    1,
+		UserName:     "delete",
+		FullName:     "Delete",
+		PrimaryEmail: "delete@example.com",
+	})
+
+	t.Run("delete empty username", func(t *testing.T) {
+		err := DeleteUserByName("")
+		assert.Error(t, err)
+	})
+	t.Run("delete fail", func(t *testing.T) {
+		err := DeleteUserByName("notmatching")
+		assert.Error(t, err)
+	})
+	t.Run("delete success", func(t *testing.T) {
+		err := DeleteUserByName(u.UserName)
+		assert.Nil(t, err)
+	})
+}
+
+func TestUser_Validate(t *testing.T) {
+	t.Run("valid", func(t *testing.T) {
+		u := &User{
+			ID:           878,
+			AddressID:    1,
+			UserName:     "validate",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Nil(t, err)
+	})
+	t.Run("username empty", func(t *testing.T) {
+		u := &User{
+			ID:           878,
+			AddressID:    1,
+			UserName:     "",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+	t.Run("username too short", func(t *testing.T) {
+		u := &User{
+			ID:           878,
+			AddressID:    1,
+			UserName:     "val",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+
+	t.Run("username not unique", func(t *testing.T) {
+		u := FirstOrCreateUser(&User{
+			ID:        879,
+			AddressID: 1,
+			UserName:  "notunique",
+		})
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+	t.Run("email not unique", func(t *testing.T) {
+		u := FirstOrCreateUser(&User{
+			ID:           880,
+			AddressID:    1,
+			PrimaryEmail: "notunique@example.com",
+		})
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+
+}
+
+func TestCreateWithPassword(t *testing.T) {
+	t.Run("valid", func(t *testing.T) {
+		u := &User{
+			ID:           881,
+			AddressID:    1,
+			UserName:     "thomas",
+			FullName:     "Thomas",
+			PrimaryEmail: "thomas@example.com",
+		}
+		err := u.CreateWithPassword("helloworld")
+		assert.Nil(t, err)
+	})
+	t.Run("password too short", func(t *testing.T) {
+		u := &User{
+			ID:           882,
+			AddressID:    1,
+			UserName:     "thomas",
+			FullName:     "Thomas",
+			PrimaryEmail: "thomas@example.com",
+		}
+		err := u.CreateWithPassword("hel")
+		assert.Error(t, err)
+	})
+}
+
+func TestAllUsers(t *testing.T) {
+	t.Run("list all", func(t *testing.T) {
+		users := AllUsers()
+		for _, user := range users {
+			log.Infof("user: %v, %s, %s, %s", user.ID, user.UserUID, user.UserName, user.FullName)
+		}
+		log.Infof("user count: %v", len(users))
+		assert.Greater(t, len(users), 3)
 	})
 }
