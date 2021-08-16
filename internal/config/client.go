@@ -361,7 +361,7 @@ func (c *Config) UserConfig() ClientConfig {
 
 	c.Db().
 		Table("albums").
-		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS countries, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumCountry, entity.AlbumFolder).
 		Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
 		Take(&result.Count)
 
@@ -370,11 +370,6 @@ func (c *Config) UserConfig() ClientConfig {
 		Select("COUNT(*) AS files").
 		Where("file_missing = 0").
 		Where("deleted_at IS NULL").
-		Take(&result.Count)
-
-	c.Db().
-		Table("countries").
-		Select("(COUNT(*) - 1) AS countries").
 		Take(&result.Count)
 
 	c.Db().

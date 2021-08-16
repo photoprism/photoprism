@@ -93,7 +93,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 		assert.False(t, m.InvalidPassword("photoprism"))
 	})
 	t.Run("no password existing", func(t *testing.T) {
-		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
+		p := User{UserUID: "u0000000000000010", UserName: "Hans", FullName: ""}
 		err := p.Save()
 		if err != nil {
 			t.Fatal(err)
