@@ -185,7 +185,7 @@ func TestPhoto_PreloadMany(t *testing.T) {
 
 func TestPhoto_UnknownLocation(t *testing.T) {
 	t.Run("no_location", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.UnknownLocation())
 	})
 
@@ -208,7 +208,7 @@ func TestPhoto_UnknownLocation(t *testing.T) {
 
 func TestPhoto_HasLocation(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.False(t, m.HasLocation())
 	})
 	t.Run("true", func(t *testing.T) {
@@ -241,7 +241,7 @@ func TestPhoto_NoLatLng(t *testing.T) {
 
 func TestPhoto_NoPlace(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.UnknownPlace())
 	})
 	t.Run("false", func(t *testing.T) {
@@ -252,7 +252,7 @@ func TestPhoto_NoPlace(t *testing.T) {
 
 func TestPhoto_HasPlace(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.False(t, m.HasPlace())
 	})
 	t.Run("true", func(t *testing.T) {
@@ -470,8 +470,9 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Classify / 2006", m.PhotoTitle)
+		assert.Equal(t, "Classify / Germany / 2006", m.PhotoTitle)
 	})
+
 	t.Run("no location no labels", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo02")
 		classifyLabels := &classify.Labels{}
@@ -480,7 +481,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Unknown / 2008", m.PhotoTitle)
+		assert.Equal(t, "Bridge / 1990", m.PhotoTitle)
 	})
 	t.Run("no location no labels no takenAt", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo20")
