@@ -9,6 +9,7 @@ const (
 	SortOrderSimilar   = "similar"
 	SortOrderRelevance = "relevance"
 	SortOrderEdited    = "edited"
+	SortOrderRandom    = "random"
 
 	// Unknown values:
 	UnknownYear  = -1
