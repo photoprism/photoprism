@@ -76,14 +76,20 @@ func TestCreateSession(t *testing.T) {
 
 func TestDeleteSession(t *testing.T) {
 	t.Run("delete admin session", func(t *testing.T) {
-		app, router, _, sessId := NewAdminApiTest()
+		app, router, _ := NewApiTest()
 		DeleteSession(router)
+
+		sessId := AuthenticateAdmin(app, router)
+
 		r := PerformRequest(app, http.MethodDelete, "/api/v1/session/"+sessId)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("delete user session", func(t *testing.T) {
-		app, router, _, sessId := NewAuthenticatedApiTest("alice", "Alice123!")
+		app, router, _ := NewApiTest()
 		DeleteSession(router)
+
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
 		r := PerformRequest(app, http.MethodDelete, "/api/v1/session/"+sessId)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

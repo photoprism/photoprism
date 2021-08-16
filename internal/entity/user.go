@@ -72,12 +72,12 @@ type User struct {
 	DeletedAt      *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
-// TableName the database table name.
+// TableName returns the entity database table name.
 func (User) TableName() string {
 	return "users"
 }
 
-// Default admin user.
+// Admin is the default admin user.
 var Admin = User{
 	ID:           1,
 	AddressID:    1,
@@ -87,7 +87,7 @@ var Admin = User{
 	UserDisabled: false,
 }
 
-// Anonymous, public user without own account.
+// UnknownUser is an anonymous, public user without own account.
 var UnknownUser = User{
 	ID:           -1,
 	AddressID:    1,
@@ -99,7 +99,7 @@ var UnknownUser = User{
 	UserDisabled: true,
 }
 
-// Guest user without own account for link sharing.
+// Guest is a user without own account e.g. for link sharing.
 var Guest = User{
 	ID:           -2,
 	AddressID:    1,
@@ -126,12 +126,12 @@ func CreateDefaultUsers() {
 	}
 }
 
-// Create inserts a new row to the database.
+// Create new entity in the database.
 func (m *User) Create() error {
 	return Db().Create(m).Error
 }
 
-// Saves the new row to the database.
+// Save entity properties.
 func (m *User) Save() error {
 	return Db().Save(m).Error
 }
@@ -204,7 +204,7 @@ func (m *User) String() string {
 	return m.UserUID
 }
 
-// User returns true if the user has a user name.
+// Registered tests if the user is registered e.g. has a username.
 func (m *User) Registered() bool {
 	return m.UserName != "" && rnd.IsPPID(m.UserUID, 'u')
 }

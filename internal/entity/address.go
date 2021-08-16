@@ -11,6 +11,7 @@ type Addresses []Address
 type Address struct {
 	ID             int        `gorm:"primary_key" json:"ID" yaml:"ID"`
 	CellID         string     `gorm:"type:VARBINARY(42);index;default:'zz'" json:"CellID" yaml:"CellID"`
+	AddressSrc     string     `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src"`
 	AddressLat     float32    `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	AddressLng     float32    `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	AddressLine1   string     `gorm:"size:255;" json:"Line1" yaml:"Line1,omitempty"`
@@ -25,15 +26,16 @@ type Address struct {
 	DeletedAt      *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
-// TableName the database table name.
+// TableName returns the entity database table name.
 func (Address) TableName() string {
 	return "addresses"
 }
 
-// Unknown postal address.
+// UnknownAddress may be used as placeholder for an unknown address.
 var UnknownAddress = Address{
 	ID:             1,
 	CellID:         UnknownLocation.ID,
+	AddressSrc:     SrcDefault,
 	AddressCountry: UnknownCountry.ID,
 }
 

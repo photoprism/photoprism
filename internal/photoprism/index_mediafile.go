@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
@@ -773,100 +771,4 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 	}
 
 	return false
-}
-
-// classifyImage classifies a JPEG image and returns matching labels.
-func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
-	start := time.Now()
-
-	var thumbs []string
-
-	if jpeg.AspectRatio() == 1 {
-		thumbs = []string{"tile_224"}
-	} else {
-		thumbs = []string{"tile_224", "left_224", "right_224"}
-	}
-
-	var labels classify.Labels
-
-	for _, thumb := range thumbs {
-		filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb)
-
-		if err != nil {
-			log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
-			continue
-		}
-
-		imageLabels, err := ind.tensorFlow.File(filename)
-
-		if err != nil {
-			log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
-			continue
-		}
-
-		labels = append(labels, imageLabels...)
-	}
-
-	// Sort by priority and uncertainty
-	sort.Sort(labels)
-
-	var confidence int
-
-	for _, label := range labels {
-		if confidence == 0 {
-			confidence = 100 - label.Uncertainty
-		}
-
-		if (100 - label.Uncertainty) > (confidence / 3) {
-			results = append(results, label)
-		}
-	}
-
-	elapsed := time.Since(start)
-
-	log.Debugf("index: image classification took %s", elapsed)
-
-	return results
-}
-
-// detectFaces detects faces in a JPEG image and returns them.
-func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
-	if jpeg == nil {
-		return face.Faces{}
-	}
-
-	var thumbSize string
-
-	// Select best thumbnail depending on configured size.
-	if Config().ThumbSize() < 1280 {
-		thumbSize = "fit_720"
-	} else {
-		thumbSize = "fit_1280"
-	}
-
-	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), thumbSize)
-
-	if err != nil {
-		log.Debugf("index: %s in %s (faces)", err, txt.Quote(jpeg.BaseName()))
-		return face.Faces{}
-	}
-
-	if thumbName == "" {
-		log.Debugf("index: thumb %s not found in %s (faces)", thumbSize, txt.Quote(jpeg.BaseName()))
-		return face.Faces{}
-	}
-
-	start := time.Now()
-
-	faces, err := ind.faceNet.Detect(thumbName)
-
-	if err != nil {
-		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
-	}
-
-	elapsed := time.Since(start)
-
-	log.Debugf("index: face detection took %s", elapsed)
-
-	return faces
 }

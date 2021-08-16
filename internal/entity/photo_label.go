@@ -17,7 +17,7 @@ type PhotoLabel struct {
 	Label       *Label `gorm:"PRELOAD:true"`
 }
 
-// TableName returns PhotoLabel table identifier "photos_labels"
+// TableName returns the entity database table name.
 func (PhotoLabel) TableName() string {
 	return "photos_labels"
 }

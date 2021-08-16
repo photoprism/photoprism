@@ -28,34 +28,36 @@ func logError(result *gorm.DB) {
 
 type Types map[string]interface{}
 
-// List of database entities and their table names.
+// Entities contains database entities and their table names.
 var Entities = Types{
-	"errors":          &Error{},
-	"addresses":       &Address{},
-	"users":           &User{},
-	"accounts":        &Account{},
-	"folders":         &Folder{},
-	"duplicates":      &Duplicate{},
-	"files":           &File{},
-	"files_share":     &FileShare{},
-	"files_sync":      &FileSync{},
-	"photos":          &Photo{},
-	"details":         &Details{},
-	"places":          &Place{},
-	"cells":           &Cell{},
-	"cameras":         &Camera{},
-	"lenses":          &Lens{},
-	"countries":       &Country{},
-	"albums":          &Album{},
-	"photos_albums":   &PhotoAlbum{},
-	"labels":          &Label{},
-	"categories":      &Category{},
-	"photos_labels":   &PhotoLabel{},
-	"keywords":        &Keyword{},
-	"photos_keywords": &PhotoKeyword{},
-	"passwords":       &Password{},
-	"links":           &Link{},
-	"markers_dev":     &Marker{},
+	"errors":              &Error{},
+	"addresses":           &Address{},
+	"users":               &User{},
+	"accounts":            &Account{},
+	"folders":             &Folder{},
+	"duplicates":          &Duplicate{},
+	"files":               &File{},
+	"files_share":         &FileShare{},
+	"files_sync":          &FileSync{},
+	"photos":              &Photo{},
+	"details":             &Details{},
+	"places":              &Place{},
+	"cells":               &Cell{},
+	"cameras":             &Camera{},
+	"lenses":              &Lens{},
+	"countries":           &Country{},
+	"albums":              &Album{},
+	"photos_albums":       &PhotoAlbum{},
+	"labels":              &Label{},
+	"categories":          &Category{},
+	"photos_labels":       &PhotoLabel{},
+	"keywords":            &Keyword{},
+	"photos_keywords":     &PhotoKeyword{},
+	"passwords":           &Password{},
+	"links":               &Link{},
+	Subject{}.TableName(): &Subject{},
+	Face{}.TableName():    &Face{},
+	Marker{}.TableName():  &Marker{},
 }
 
 type RowCount struct {
@@ -96,7 +98,7 @@ func (list Types) Truncate() {
 	}
 }
 
-// Drop migrates all database tables of registered entities.
+// Migrate migrates all database tables of registered entities.
 func (list Types) Migrate() {
 	for _, entity := range list {
 		if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
@@ -120,7 +122,7 @@ func (list Types) Drop() {
 	}
 }
 
-// Creates default database entries for test and production.
+// CreateDefaultFixtures creates default database entries for test and production.
 func CreateDefaultFixtures() {
 	CreateUnknownAddress()
 	CreateDefaultUsers()
@@ -129,6 +131,8 @@ func CreateDefaultFixtures() {
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
+	CreateUnknownPerson()
+	CreateUnknownFace()
 }
 
 // MigrateDb creates all tables and inserts default entities as needed.

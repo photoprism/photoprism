@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
 )
@@ -55,18 +57,19 @@ func TestDetect(t *testing.T) {
 
 	var embeddings [11][]float32
 
-	tfInstance := NewNet(modelPath, false)
+	tfInstance := NewNet(modelPath, "testdata/cache", false)
 
 	if err := tfInstance.loadModel(); err != nil {
 		t.Fatal(err)
 	}
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
-		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") {
+		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") || strings.Contains(fileName, "cache") {
 			return nil
 		}
 
 		t.Run(fileName, func(t *testing.T) {
+			fileHash := fs.Hash(fileName)
 			baseName := filepath.Base(fileName)
 
 			faces, err := Detect(fileName)
@@ -83,7 +86,13 @@ func TestDetect(t *testing.T) {
 					t.Logf("marker[%d]: %#v %#v", i, f.Marker(), f.Face)
 					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
-					embedding := tfInstance.getFaceEmbedding(fileName, f.Face)
+					img, err := tfInstance.getFaceCrop(fileName, fileHash, f.Face)
+
+					if err != nil {
+						t.Fatal(err)
+					}
+
+					embedding := tfInstance.getEmbeddings(img)
 
 					if b, err := json.Marshal(embedding[0]); err != nil {
 						t.Fatal(err)
@@ -91,10 +100,8 @@ func TestDetect(t *testing.T) {
 						t.Logf("embedding: %#v", string(b))
 					}
 
-					t.Logf("face: %d %v", i, faceindices[baseName])
-
+					t.Logf("faces: %d %v", i, faceindices[baseName])
 					embeddings[faceindices[baseName][i]] = embedding[0]
-					// t.Logf("face: created embedding of face %v", embeddings[len(embeddings)-1])
 				}
 			}
 

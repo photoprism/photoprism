@@ -107,6 +107,18 @@ var PlaceFixtures = PlacesMap{
 		CreatedAt:     Timestamp(),
 		UpdatedAt:     Timestamp(),
 	},
+	"Germany": {
+		ID:            s2.TokenPrefix + "1ef744d1e285",
+		PlaceLabel:    "Germany",
+		PlaceCity:     "",
+		PlaceState:    "",
+		PlaceCountry:  "de",
+		PlaceKeywords: "",
+		PlaceFavorite: false,
+		PhotoCount:    1,
+		CreatedAt:     Timestamp(),
+		UpdatedAt:     Timestamp(),
+	},
 }
 
 // CreatePlaceFixtures inserts known entities into the database for testing.

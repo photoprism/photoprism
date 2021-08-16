@@ -19,7 +19,7 @@ type Moments struct {
 	conf *config.Config
 }
 
-// NewMoments returns a new purge worker.
+// NewMoments returns a new Moments worker.
 func NewMoments(conf *config.Config) *Moments {
 	instance := &Moments{
 		conf: conf,
@@ -29,11 +29,11 @@ func NewMoments(conf *config.Config) *Moments {
 }
 
 // Start creates albums based on popular locations, dates and categories.
-func (m *Moments) Start() (err error) {
+func (w *Moments) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("moments: %s (panic)\nstack: %s", r, debug.Stack())
-			log.Error(err)
+			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
+			log.Errorf("moments: %s", err)
 		}
 	}()
 
@@ -259,7 +259,7 @@ func (m *Moments) Start() (err error) {
 		log.Errorf("moments: %s (update album dates)", err.Error())
 	}
 
-	if count, err := BackupAlbums(m.conf.AlbumsPath(), false); err != nil {
+	if count, err := BackupAlbums(w.conf.AlbumsPath(), false); err != nil {
 		log.Errorf("moments: %s (backup albums)", err.Error())
 	} else if count > 0 {
 		log.Debugf("moments: %d albums saved as yaml files", count)
@@ -269,6 +269,6 @@ func (m *Moments) Start() (err error) {
 }
 
 // Cancel stops the current operation.
-func (m *Moments) Cancel() {
+func (w *Moments) Cancel() {
 	mutex.MainWorker.Cancel()
 }

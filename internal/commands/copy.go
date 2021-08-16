@@ -63,10 +63,10 @@ func copyAction(ctx *cli.Context) error {
 
 	log.Infof("copying media files from %s to %s", sourcePath, conf.OriginalsPath())
 
-	imp := service.Import()
+	w := service.Import()
 	opt := photoprism.ImportOptionsCopy(sourcePath)
 
-	imp.Start(opt)
+	w.Start(opt)
 
 	elapsed := time.Since(start)
 

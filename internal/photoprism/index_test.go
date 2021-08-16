@@ -23,7 +23,7 @@ func TestIndex_Start(t *testing.T) {
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
-	fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
+	fn := face.NewNet(conf.FaceNetModelPath(), conf.CachePath(), conf.DisableTensorFlow())
 	convert := NewConvert(conf)
 
 	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
@@ -49,7 +49,7 @@ func TestIndex_File(t *testing.T) {
 
 	tf := classify.New(conf.AssetsPath(), conf.DisableTensorFlow())
 	nd := nsfw.New(conf.NSFWModelPath())
-	fn := face.NewNet(conf.FaceNetModelPath(), conf.DisableTensorFlow())
+	fn := face.NewNet(conf.FaceNetModelPath(), conf.CachePath(), conf.DisableTensorFlow())
 	convert := NewConvert(conf)
 
 	ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())

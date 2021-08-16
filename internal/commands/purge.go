@@ -62,7 +62,7 @@ func purgeAction(ctx *cli.Context) error {
 		log.Infof("purge: read-only mode enabled")
 	}
 
-	prg := service.Purge()
+	w := service.Purge()
 
 	opt := photoprism.PurgeOptions{
 		Path: subPath,
@@ -70,7 +70,7 @@ func purgeAction(ctx *cli.Context) error {
 		Hard: ctx.Bool("hard"),
 	}
 
-	if files, photos, err := prg.Start(opt); err != nil {
+	if files, photos, err := w.Start(opt); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

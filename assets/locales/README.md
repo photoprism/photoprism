@@ -3,7 +3,7 @@
 PhotoPrism uses [gettext](https://en.wikipedia.org/wiki/Gettext) for localizing frontend and backend.
 It's one of the most widely adopted standards for translating user interfaces.
  
-Human readable messages like `File not found` are used as ids for finding matching translations, 
+Human-readable messages like `File not found` are used as ids for finding matching translations, 
 and used as defaults whenever there is no translation available.
 
 Messages may optionally contain placeholders, like `Found %d files`, for numbers and 
@@ -17,7 +17,7 @@ Only asynchronous notifications and certain API responses need translation to pr
 consistent user experience.
 Technical log messages should be in English to avoid ambiguities and (even slightly) wrong translations. 
 
-`default.po` files in sub directories contain localized messages for each 
+`default.po` files in subdirectories contain localized messages for each 
 [language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html#Usual-Language-Codes),
 identified by their [two-letter locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html), 
 like `de/default.po` for German. You can open, edit and save them with Poedit. Please

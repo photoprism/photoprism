@@ -50,9 +50,9 @@ func convertAction(ctx *cli.Context) error {
 
 	log.Infof("converting originals in %s", txt.Quote(convertPath))
 
-	convert := service.Convert()
+	w := service.Convert()
 
-	if err := convert.Start(convertPath); err != nil {
+	if err := w.Start(convertPath); err != nil {
 		log.Error(err)
 	}
 

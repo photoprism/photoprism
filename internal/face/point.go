@@ -1,5 +1,9 @@
 package face
 
+import (
+	"fmt"
+)
+
 // Points is a list of face landmark coordinates.
 type Points []Point
 
@@ -12,12 +16,17 @@ func (pts Points) Markers(r Point, rows, cols float32) (m Markers) {
 	return m
 }
 
-// Point represents face landmark coordinates.
+// Point represents a face landmark position.
 type Point struct {
 	Name  string `json:"name,omitempty"`
 	Row   int    `json:"x,omitempty"`
 	Col   int    `json:"y,omitempty"`
 	Scale int    `json:"size,omitempty"`
+}
+
+// String returns the face landmark position as string.
+func (p Point) String() string {
+	return fmt.Sprintf("%d-%d-%d", p.Row, p.Col, p.Scale)
 }
 
 // NewPoint returns new face landmark coordinates.

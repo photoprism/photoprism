@@ -414,7 +414,7 @@ func (m *File) AddFace(f face.Face, refUID string) {
 
 // FaceCount returns the current number of valid faces detected.
 func (m *File) FaceCount() (c int) {
-	if err := Db().Model(Marker{}).Where("marker_invalid = 0 AND file_id = ?", m.ID).
+	if err := Db().Model(Marker{}).Where("file_id = ? AND marker_invalid = 0", m.ID).
 		Count(&c).Error; err != nil {
 		log.Errorf("file: %s (count faces)", err)
 		return 0

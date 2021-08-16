@@ -147,6 +147,11 @@ export const Languages = () => [
     value: "pl",
   },
   {
+    text: "Português de Portugal",
+    translated: $gettext("Português de Portugal"),
+    value: "pt",
+  },
+  {
     text: "Português do Brasil",
     translated: $gettext("Brazilian Portuguese"),
     value: "pt_BR",

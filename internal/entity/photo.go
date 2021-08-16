@@ -105,7 +105,7 @@ type Photo struct {
 // NewPhoto creates a photo entity.
 func NewPhoto(stackable bool) Photo {
 	m := Photo{
-		PhotoTitle:   TitleUnknown,
+		PhotoTitle:   UnknownName,
 		PhotoType:    TypeImage,
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
@@ -761,9 +761,9 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 			m.SetTitle(fileTitle, SrcAuto)
 		} else {
 			if m.TakenSrc != SrcAuto {
-				m.SetTitle(fmt.Sprintf("%s / %s", TitleUnknown, m.TakenAt.Format("2006")), SrcAuto)
+				m.SetTitle(fmt.Sprintf("%s / %s", UnknownName, m.TakenAt.Format("2006")), SrcAuto)
 			} else {
-				m.SetTitle(TitleUnknown, SrcAuto)
+				m.SetTitle(UnknownName, SrcAuto)
 			}
 		}
 	}
@@ -931,9 +931,9 @@ func (m *Photo) UpdateDateFields() {
 
 	// Set date to unknown if file system date is about the same as indexing time.
 	if m.TakenSrc == SrcAuto && m.TakenAt.After(m.CreatedAt.Add(-24*time.Hour)) {
-		m.PhotoYear = YearUnknown
-		m.PhotoMonth = MonthUnknown
-		m.PhotoDay = DayUnknown
+		m.PhotoYear = UnknownYear
+		m.PhotoMonth = UnknownMonth
+		m.PhotoDay = UnknownDay
 	} else if m.TakenSrc != SrcManual {
 		m.PhotoYear = m.TakenAtLocal.Year()
 		m.PhotoMonth = int(m.TakenAtLocal.Month())

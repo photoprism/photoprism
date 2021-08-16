@@ -361,6 +361,13 @@ func (c *Config) Public() bool {
 	return c.options.Public
 }
 
+// Modify Public state while running. For testing purposes only.
+func (c *Config) SetPublic(p bool) {
+	if c.Debug() {
+		c.options.Public = p
+	}
+}
+
 // Experimental tests if experimental features should be enabled.
 func (c *Config) Experimental() bool {
 	return c.options.Experimental

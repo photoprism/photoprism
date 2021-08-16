@@ -205,8 +205,11 @@ export default class Page {
     }
   }
 
-  async login(password) {
-    await t.typeText(Selector('input[type="password"]'), password).pressKey("enter");
+  async login(username, password) {
+    await t
+      .typeText(Selector(".input-name input"), username, { replace: true, timeout: 5000 })
+      .typeText(Selector(".input-password input"), password, { replace: true })
+      .click(Selector(".action-confirm"));
   }
 
   async logout() {
