@@ -309,6 +309,19 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <v-list-tile to="/discover" class="nav-discover" @click.stop="">
+          <v-list-tile-action :title="$gettext('Discover')">
+            <!-- travel_explore seems to be a better icon, but it's not available -->
+            <v-icon>explore</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Discover">Discover</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <v-list-tile v-if="isMini && $config.feature('library')" to="/library" class="nav-library" @click.stop="">
           <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
