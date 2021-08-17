@@ -19,37 +19,37 @@ SOFTWARE INCLUDED
 GETTING STARTED
 ----------------------------------------------------
 
-It may take a few minutes until your Droplet is provisioned and all services have been initialized. You may then access your instance by opening the following URL in a Web browser (see "Using Let's Encrypt HTTPS" for how to get a valid certificate):
+It may take a few minutes until your Droplet is provisioned, and all services have been initialized.
+
+The initial admin password is stored on your Droplet, you'll see it when running these commands:
+
+```
+ssh root@YOUR-SERVER-IP
+cat /root/.initial-password.txt
+```
+
+You can then access your instance by opening the following URL in a Web browser (see "Using Let's Encrypt HTTPS" for how to get a valid certificate):
 
 ```
 https://YOUR-SERVER-IP/
 ```
 
-You'll see the initial admin password when running
+All files related to PhotoPrism can be found in `/opt/photoprism`.
+It is running as "photoprism" (UID 1000) by default.
+
+To edit the main config file containing services, storage paths, and basic settings (save changes by pressing *Ctrl+O*, then *Ctrl+X* to exit):
 
 ```
-cat /root/.initial-password.txt
+cd /opt/photoprism
+nano docker-compose.yml
 ```
 
-as root on your server. To open a terminal:
+Remember to restart services for changes to take effect:
 
 ```
-ssh root@YOUR-SERVER-IP
+docker-compose stop
+docker-compose up -d
 ```
-
-Data and all config files related to PhotoPrism can be found in
-
-```
-/opt/photoprism
-```
-
-The main docker-compose config file for changing config options is
-
-```
-/opt/photoprism/docker-compose.yml
-```
-
-The server is running as "photoprism" (UID 1000) by default.
 
 ## System Requirements ##
 
@@ -72,7 +72,7 @@ nano docker-compose.yml
 nano traefik.yaml
 ```
 
-Then restart services in a terminal for the changes to take effect:
+Then restart services in a terminal for changes to take effect:
 
 ```
 docker-compose stop
