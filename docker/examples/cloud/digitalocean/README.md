@@ -8,6 +8,8 @@ DESCRIPTION
 
 PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to solutions that force you to upload your visual memories to the cloud!
 
+To learn more, visit https://photoprism.app/ or try our [demo](https://demo.photoprism.org/).
+
 SOFTWARE INCLUDED
 ---------------------------------------
 
@@ -55,7 +57,7 @@ docker-compose up -d
 
 ## System Requirements ##
 
-We recommend running PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending on how many and what types of files you upload.
+We recommend hosting PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending on how many and what types of files you upload.
 
 ## Using Let's Encrypt HTTPS ##
 
@@ -74,7 +76,7 @@ nano docker-compose.yml
 nano traefik.yaml
 ```
 
-Then restart services in a terminal for changes to take effect:
+Then restart services for the changes to take effect:
 
 ```
 docker-compose stop
