@@ -1,13 +1,15 @@
-PhotoPrism: Open-Source Photo Management 1-Click App
-====================================================
+PhotoPrism 1-Click App for DigitalOcean
+=======================================
+
+Privately browse, organize, and share your photo collection.
 
 DESCRIPTION
-----------------------------------------------------
+---------------------------------------
 
 PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to solutions that force you to upload your visual memories to the cloud!
 
 SOFTWARE INCLUDED
-----------------------------------------------------
+---------------------------------------
 
 - [PhotoPrism latest](https://docs.photoprism.org/release-notes/), AGPL 3
 - [Docker CE 20.10](https://docs.docker.com/engine/release-notes/), Apache 2
@@ -17,7 +19,7 @@ SOFTWARE INCLUDED
 - [Watchtower 1.3](https://github.com/containrrr/watchtower/releases), Apache 2
 
 GETTING STARTED
-----------------------------------------------------
+---------------------------------------
 
 It may take a few minutes until your Droplet is provisioned, and all services have been initialized.
 
