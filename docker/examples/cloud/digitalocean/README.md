@@ -38,8 +38,7 @@ You can then access your instance by opening the following URL in a Web browser 
 https://YOUR-SERVER-IP/
 ```
 
-All files related to PhotoPrism can be found in `/opt/photoprism`.
-It is running as "photoprism" (UID 1000) by default.
+All files related to PhotoPrism can be found in `/opt/photoprism`. It is running as "photoprism" (UID 1000) by default.
 
 To edit the main config file containing services, storage paths, and basic settings (save changes by pressing *Ctrl+O*, then *Ctrl+X* to exit):
 
