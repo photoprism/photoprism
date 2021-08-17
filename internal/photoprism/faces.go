@@ -206,58 +206,58 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		log.Infof("faces: found %d new markers", n)
 	}
 
+	var added, matched, unknown, dbErrors int64
+
 	// Fetch and cluster all face embeddings.
 	embeddings, err := query.Embeddings(false)
 
 	// Anything that keeps us from doing this?
 	if err != nil {
 		return err
-	} else if samples := len(embeddings); samples < face.SampleThreshold {
+	} else if samples := len(embeddings); samples < opt.SampleThreshold() {
 		log.Warnf("faces: at least %d samples needed for matching similar faces", face.SampleThreshold)
 		return nil
-	}
+	} else {
+		var c clusters.HardClusterer
 
-	var c clusters.HardClusterer
-
-	// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
-	if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterRadius, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
-		return err
-	} else if err = c.Learn(embeddings); err != nil {
-		return err
-	}
-
-	sizes := c.Sizes()
-
-	log.Debugf("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
-
-	results := make([]entity.Embeddings, len(sizes))
-
-	for i, _ := range sizes {
-		results[i] = entity.Embeddings{}
-	}
-
-	guesses := c.Guesses()
-
-	for i, n := range guesses {
-		if n < 1 {
-			continue
+		// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
+		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterRadius, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
+			return err
+		} else if err = c.Learn(embeddings); err != nil {
+			return err
 		}
 
-		results[n-1] = append(results[n-1], embeddings[i])
-	}
+		sizes := c.Sizes()
 
-	var added, matched, unknown, dbErrors int64
+		log.Debugf("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
 
-	for _, e := range results {
-		if f := entity.NewFace("", e); f == nil {
-			dbErrors++
-			log.Errorf("faces: face should not be nil - bug?")
-		} else if err := f.Create(); err == nil {
-			added++
-			log.Tracef("faces: added face %s", f.ID)
-		} else if err := f.Updates(entity.Values{"UpdatedAt": entity.Timestamp()}); err != nil {
-			dbErrors++
-			log.Errorf("faces: %s", err)
+		results := make([]entity.Embeddings, len(sizes))
+
+		for i := range sizes {
+			results[i] = entity.Embeddings{}
+		}
+
+		guesses := c.Guesses()
+
+		for i, n := range guesses {
+			if n < 1 {
+				continue
+			}
+
+			results[n-1] = append(results[n-1], embeddings[i])
+		}
+
+		for _, e := range results {
+			if f := entity.NewFace("", e); f == nil {
+				dbErrors++
+				log.Errorf("faces: face should not be nil - bug?")
+			} else if err := f.Create(); err == nil {
+				added++
+				log.Tracef("faces: added face %s", f.ID)
+			} else if err := f.Updates(entity.Values{"UpdatedAt": entity.Timestamp()}); err != nil {
+				dbErrors++
+				log.Errorf("faces: %s", err)
+			}
 		}
 	}
 

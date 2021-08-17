@@ -1,8 +1,9 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/internal/acl"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/acl"
 
 	"github.com/stretchr/testify/assert"
 )

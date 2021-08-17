@@ -378,7 +378,7 @@ var FileFixtures = map[string]File{
 		DeletedAt:       nil,
 	},
 	"Video.jpg": {
-		ID:              1000022,
+		ID:              1000014,
 		Photo:           PhotoFixtures.Pointer("Photo10"),
 		PhotoID:         PhotoFixtures.Pointer("Photo10").ID,
 		PhotoUID:        PhotoFixtures.Pointer("Photo10").PhotoUID,
