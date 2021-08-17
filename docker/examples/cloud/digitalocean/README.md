@@ -55,10 +55,6 @@ docker-compose stop
 docker-compose up -d
 ```
 
-## System Requirements ##
-
-We recommend hosting PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending on how many and what types of files you upload.
-
 ## Using Let's Encrypt HTTPS ##
 
 By default, a self-signed certificate will be used for HTTPS connections. Browsers are going to show a security warning because of that. Depending on your settings, they may also refuse connecting at all.
@@ -90,3 +86,7 @@ https://photos.yourdomain.com/
 ```
 
 Note the first request may still fail while Traefik gets and installs the new certificate. Try again after 30 seconds.
+
+## System Requirements ##
+
+We recommend hosting PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending on how many and what types of files you upload.
