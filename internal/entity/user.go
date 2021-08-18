@@ -3,7 +3,10 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"net/mail"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -192,21 +195,6 @@ func FindUserByUID(uid string) *User {
 	}
 }
 
-// DeleteUserByName deletes an existing user or returns error if not found.
-func DeleteUserByName(userName string) error {
-	if userName == "" {
-		return fmt.Errorf("can not delete user from db: empty username")
-	}
-	user := FindUserByName(userName)
-	if err := Db().Where("user_name = ?", userName).Delete(&User{}).Error; user == nil || err != nil {
-		return fmt.Errorf("user %s not found", txt.Quote(userName))
-	}
-	if err := Db().Where("uid = ?", user.UserUID).Delete(&Password{}).Error; err != nil {
-		log.Debug(err)
-	}
-	return nil
-}
-
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
 	if m.UserName != "" {
@@ -346,9 +334,9 @@ func (m *User) Validate() error {
 	if len(m.UserName) < 4 {
 		return errors.New("username must be at least 4 characters")
 	}
-	var result = &User{}
 	var err error
-	if err = Db().Unscoped().Where("user_name = ?", m.UserName).First(result).Error; err == nil {
+	var resultName = User{}
+	if err = Db().Where("user_name = ? AND id <> ?", m.UserName, m.ID).First(&resultName).Error; err == nil {
 		return errors.New("username already exists")
 	} else if err != gorm.ErrRecordNotFound {
 		return err
@@ -357,38 +345,45 @@ func (m *User) Validate() error {
 	if m.PrimaryEmail == "" {
 		return nil
 	}
-	if err = Db().Unscoped().Where("primary_email = ?", m.PrimaryEmail).First(result).Error; err == nil {
+	// validate email address
+	if a, err := mail.ParseAddress(m.PrimaryEmail); err != nil {
+		return err
+	} else {
+		m.PrimaryEmail = a.Address // make sure email address will be used without name
+	}
+	var resultMail = User{}
+	if err = Db().Where("primary_email = ? AND id <> ?", m.PrimaryEmail, m.ID).First(&resultMail).Error; err == nil {
 		return errors.New("email already exists")
 	} else if err != gorm.ErrRecordNotFound {
 		return err
 	}
+
 	return nil
 }
 
 // CreateWithPassword Creates User with Password in db transaction.
-func (m *User) CreateWithPassword(password string) error {
-	if len(password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(m.UserName))
+func CreateWithPassword(uc form.UserCreate) error {
+	u := &User{
+		FullName:     uc.FullName,
+		UserName:     uc.UserName,
+		PrimaryEmail: uc.Email,
+	}
+	if len(uc.Password) < 4 {
+		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(u.UserName))
+	}
+	err := u.Validate()
+	if err != nil {
+		return err
 	}
 	return Db().Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(m).Error; err != nil {
+		if err := tx.Create(u).Error; err != nil {
 			return err
 		}
-		pw := NewPassword(m.UserUID, password)
+		pw := NewPassword(u.UserUID, uc.Password)
 		if err := tx.Create(&pw).Error; err != nil {
 			return err
 		}
-		log.Infof("created user %v with uid %v", txt.Quote(m.UserName), txt.Quote(m.UserUID))
+		log.Infof("created user %v with uid %v", txt.Quote(u.UserName), txt.Quote(u.UserUID))
 		return nil
 	})
-}
-
-// AllUsers Returns a list of all registered Users.
-func AllUsers() []User {
-	var users []User
-	if err := Db().Find(&users).Error; err != nil {
-		log.Error(err)
-		return []User{}
-	}
-	return users
 }

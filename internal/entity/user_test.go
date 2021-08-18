@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -377,33 +378,9 @@ func TestUser_Role(t *testing.T) {
 	})
 }
 
-func TestDeleteUserByName(t *testing.T) {
-	u := FirstOrCreateUser(&User{
-		ID:           877,
-		AddressID:    1,
-		UserName:     "delete",
-		FullName:     "Delete",
-		PrimaryEmail: "delete@example.com",
-	})
-
-	t.Run("delete empty username", func(t *testing.T) {
-		err := DeleteUserByName("")
-		assert.Error(t, err)
-	})
-	t.Run("delete fail", func(t *testing.T) {
-		err := DeleteUserByName("notmatching")
-		assert.Error(t, err)
-	})
-	t.Run("delete success", func(t *testing.T) {
-		err := DeleteUserByName(u.UserName)
-		assert.Nil(t, err)
-	})
-}
-
 func TestUser_Validate(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		u := &User{
-			ID:           878,
 			AddressID:    1,
 			UserName:     "validate",
 			FullName:     "Validate",
@@ -414,7 +391,6 @@ func TestUser_Validate(t *testing.T) {
 	})
 	t.Run("username empty", func(t *testing.T) {
 		u := &User{
-			ID:           878,
 			AddressID:    1,
 			UserName:     "",
 			FullName:     "Validate",
@@ -425,7 +401,6 @@ func TestUser_Validate(t *testing.T) {
 	})
 	t.Run("username too short", func(t *testing.T) {
 		u := &User{
-			ID:           878,
 			AddressID:    1,
 			UserName:     "val",
 			FullName:     "Validate",
@@ -434,60 +409,69 @@ func TestUser_Validate(t *testing.T) {
 		err := u.Validate()
 		assert.Error(t, err)
 	})
-
 	t.Run("username not unique", func(t *testing.T) {
-		u := FirstOrCreateUser(&User{
-			ID:        879,
+		FirstOrCreateUser(&User{
 			AddressID: 1,
-			UserName:  "notunique",
+			UserName:  "notunique1",
 		})
-		err := u.Validate()
-		assert.Error(t, err)
+		ures := &User{
+			AddressID:    1,
+			UserName:     "notunique1",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique1@example.com",
+		}
+		assert.Error(t, ures.Validate())
 	})
 	t.Run("email not unique", func(t *testing.T) {
-		u := FirstOrCreateUser(&User{
-			ID:           880,
+		FirstOrCreateUser(&User{
 			AddressID:    1,
-			PrimaryEmail: "notunique@example.com",
+			PrimaryEmail: "notunique2@example.com",
 		})
-		err := u.Validate()
-		assert.Error(t, err)
+		ures := &User{
+			AddressID:    1,
+			UserName:     "notunique2",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique2@example.com",
+		}
+		assert.Error(t, ures.Validate())
 	})
-
+	t.Run("update user - email not unique", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID:    1,
+			UserName:     "notunique3",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique3@example.com",
+		})
+		u := FirstOrCreateUser(&User{
+			AddressID:    1,
+			UserName:     "notunique30",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique3@example.com",
+		})
+		u.UserName = "notunique3"
+		assert.Error(t, u.Validate())
+	})
 }
 
 func TestCreateWithPassword(t *testing.T) {
-	t.Run("valid", func(t *testing.T) {
-		u := &User{
-			ID:           881,
-			AddressID:    1,
-			UserName:     "thomas",
-			FullName:     "Thomas",
-			PrimaryEmail: "thomas@example.com",
-		}
-		err := u.CreateWithPassword("helloworld")
-		assert.Nil(t, err)
-	})
 	t.Run("password too short", func(t *testing.T) {
-		u := &User{
-			ID:           882,
-			AddressID:    1,
-			UserName:     "thomas",
-			FullName:     "Thomas",
-			PrimaryEmail: "thomas@example.com",
+		u := form.UserCreate{
+			UserName: "thomas1",
+			FullName: "Thomas One",
+			Email:    "thomas1@example.com",
+			Password: "hel",
 		}
-		err := u.CreateWithPassword("hel")
+		err := CreateWithPassword(u)
 		assert.Error(t, err)
 	})
-}
-
-func TestAllUsers(t *testing.T) {
-	t.Run("list all", func(t *testing.T) {
-		users := AllUsers()
-		for _, user := range users {
-			log.Infof("user: %v, %s, %s, %s", user.ID, user.UserUID, user.UserName, user.FullName)
+	t.Run("valid", func(t *testing.T) {
+		u := form.UserCreate{
+			UserName: "thomas2",
+			FullName: "Thomas Two",
+			Email:    "thomas2@example.com",
+			Password: "helloworld",
 		}
-		log.Infof("user count: %v", len(users))
-		assert.Greater(t, len(users), 3)
+		err := CreateWithPassword(u)
+		assert.Nil(t, err)
 	})
 }
