@@ -73,6 +73,7 @@ func main() {
 		commands.PasswdCommand,
 		commands.VersionCommand,
 		commands.StatusCommand,
+		commands.UserCommand,
 	}
 
 	if err := app.Run(os.Args); err != nil {
