@@ -23,23 +23,19 @@ type Subjects []Subject
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	ID                 uint            `gorm:"primary_key" json:"ID" yaml:"-"`
-	SubjectUID         string          `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	SubjectUID         string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
 	SubjectType        string          `gorm:"type:VARBINARY(8);" json:"Type" yaml:"Type"`
 	SubjectSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src"`
 	SubjectSlug        string          `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"-"`
 	SubjectName        string          `gorm:"type:VARCHAR(255);index;" json:"Name" yaml:"Name"`
 	SubjectDescription string          `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	SubjectNotes       string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	MetadataJSON       json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
 	Favorite           bool            `json:"Favorite" yaml:"Favorite,omitempty"`
 	Hidden             bool            `json:"Hidden" yaml:"Hidden,omitempty"`
 	Private            bool            `json:"Private" yaml:"Private,omitempty"`
+	PhotoUID           string          `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
 	PhotoCount         int             `gorm:"default:0" json:"PhotoCount" yaml:"-"`
-	BirthYear          int             `json:"BirthYear" yaml:"BirthYear,omitempty"`
-	BirthMonth         int             `json:"BirthMonth" yaml:"BirthMonth,omitempty"`
-	BirthDay           int             `json:"BirthDay" yaml:"BirthDay,omitempty"`
-	PassedAway         *time.Time      `json:"PassedAway,omitempty" yaml:"PassedAway,omitempty"`
+	MetadataJSON       json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
 	CreatedAt          time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt          time.Time       `json:"UpdatedAt" yaml:"-"`
 	DeletedAt          *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
@@ -47,16 +43,12 @@ type Subject struct {
 
 // UnknownPerson can be used as a placeholder for unknown people.
 var UnknownPerson = Subject{
-	ID:          1,
-	SubjectUID:  "j000000000000001",
+	SubjectUID:  "j000000000000000",
 	SubjectSlug: "unknown",
 	SubjectName: "Unknown",
 	SubjectType: SubjectPerson,
 	SubjectSrc:  SrcDefault,
 	Favorite:    false,
-	BirthYear:   UnknownYear,
-	BirthMonth:  UnknownMonth,
-	BirthDay:    UnknownDay,
 	PhotoCount:  0,
 }
 
@@ -97,9 +89,6 @@ func NewSubject(name, subjectType, subjectSrc string) *Subject {
 		SubjectName: subjectName,
 		SubjectType: subjectType,
 		SubjectSrc:  subjectSrc,
-		BirthYear:   UnknownYear,
-		BirthMonth:  UnknownMonth,
-		BirthDay:    UnknownDay,
 		PhotoCount:  1,
 	}
 

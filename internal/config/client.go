@@ -380,7 +380,7 @@ func (c *Config) UserConfig() ClientConfig {
 	c.Db().
 		Table(entity.Subject{}.TableName()).
 		Select("SUM(deleted_at IS NULL) AS people").
-		Where("id <> ? AND subject_type = ?", entity.UnknownPerson.ID, entity.SubjectPerson).
+		Where("subject_src <> ? AND subject_type = ?", entity.SrcDefault, entity.SubjectPerson).
 		Take(&result.Count)
 
 	c.Db().

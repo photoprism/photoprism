@@ -8,7 +8,7 @@ import (
 func Subjects(limit, offset int) (result entity.Subjects, err error) {
 	stmt := Db()
 
-	stmt = stmt.Order("id").Limit(limit).Offset(offset)
+	stmt = stmt.Order("subject_slug").Limit(limit).Offset(offset)
 	err = stmt.Find(&result).Error
 
 	return result, err

@@ -20,7 +20,6 @@ func (m SubjectMap) Pointer(name string) *Subject {
 
 var SubjectFixtures = SubjectMap{
 	"known_face": Subject{
-		ID:                 2,
 		SubjectUID:         "jqu0xs11qekk9jx8",
 		SubjectSlug:        "john-doe",
 		SubjectName:        "John Doe",
@@ -32,10 +31,6 @@ var SubjectFixtures = SubjectMap{
 		SubjectNotes:       "Short Note",
 		MetadataJSON:       []byte(""),
 		PhotoCount:         1,
-		BirthYear:          2000,
-		BirthMonth:         5,
-		BirthDay:           22,
-		PassedAway:         nil,
 		CreatedAt:          Timestamp(),
 		UpdatedAt:          Timestamp(),
 		DeletedAt:          nil,
