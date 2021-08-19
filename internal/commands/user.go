@@ -202,9 +202,9 @@ func userModify(ctx *cli.Context) error {
 		}
 
 		uc := form.UserCreate{
-			UserName: strings.TrimSpace(ctx.String("username")),
+			//UserName: strings.TrimSpace(ctx.String("username")),
 			FullName: strings.TrimSpace(ctx.String("fullname")),
-			//Email:    strings.TrimSpace(ctx.String("email")),
+			Email:    strings.TrimSpace(ctx.String("email")),
 			Password: strings.TrimSpace(ctx.String("password")),
 		}
 
@@ -224,7 +224,7 @@ func userModify(ctx *cli.Context) error {
 			u.FullName = uc.FullName
 		}
 
-		if ctx.IsSet("email") {
+		if ctx.IsSet("email") && len(uc.Email) > 0 {
 			u.PrimaryEmail = uc.Email
 		}
 
