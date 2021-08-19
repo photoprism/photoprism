@@ -38,6 +38,7 @@ func Upload(router *gin.RouterGroup) {
 		f, err := c.MultipartForm()
 
 		if err != nil {
+			log.Errorf("upload: %s", err)
 			AbortBadRequest(c)
 			return
 		}
@@ -51,6 +52,7 @@ func Upload(router *gin.RouterGroup) {
 		p := path.Join(conf.ImportPath(), "upload", subPath)
 
 		if err := os.MkdirAll(p, os.ModePerm); err != nil {
+			log.Errorf("upload: failed creating folder %s", txt.Quote(subPath))
 			AbortBadRequest(c)
 			return
 		}
@@ -61,6 +63,7 @@ func Upload(router *gin.RouterGroup) {
 			log.Debugf("upload: saving file %s", txt.Quote(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
+				log.Errorf("upload: failed saving file %s", filepath.Base(file.Filename))
 				AbortBadRequest(c)
 				return
 			}
