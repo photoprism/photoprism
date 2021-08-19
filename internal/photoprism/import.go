@@ -238,6 +238,15 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	if filesImported > 0 {
+		// Match existing faces if facial recognition is enabled.
+		if w := NewFaces(imp.conf); w.Disabled() {
+			log.Debugf("import: skipping facial recognition")
+		} else if recognized, unknown, err := w.Match(); err != nil {
+			log.Errorf("import: %s", err)
+		} else if recognized > 0 || unknown > 0 {
+			log.Infof("faces: %d recognized, %d unknown", recognized, unknown)
+		}
+
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("import: %s", err)
 		}

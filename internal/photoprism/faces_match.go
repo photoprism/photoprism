@@ -11,8 +11,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/clusters"
 )
 
-// MatchMarkers matches existing markers and faces.
-func (w *Faces) MatchMarkers() (recognized, unknown int64, err error) {
+// Match matches markers with faces and subjects.
+func (w *Faces) Match() (recognized, unknown int64, err error) {
 	if w.Disabled() {
 		return 0, 0, nil
 	}

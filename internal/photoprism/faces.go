@@ -283,8 +283,8 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		}
 	}
 
-	// Match existing markers and faces.
-	if recognized, unknown, err = w.MatchMarkers(); err != nil {
+	// Match markers with faces and subjects.
+	if recognized, unknown, err = w.Match(); err != nil {
 		return err
 	}
 
