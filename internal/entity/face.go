@@ -122,3 +122,38 @@ func (m *Face) Update(attr string, value interface{}) error {
 func (m *Face) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
+
+// FirstOrCreateFace returns the existing entity, inserts a new entity or nil in case of errors.
+func FirstOrCreateFace(m *Face) *Face {
+	result := Face{}
+
+	if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		return &result
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		return &result
+	} else {
+		log.Errorf("face: %s (find or create %s)", createErr, m.ID)
+	}
+
+	return nil
+}
+
+// FindFace returns an existing entity if exists.
+func FindFace(id string) *Face {
+	if id == "" {
+		return nil
+	}
+
+	result := Face{}
+
+	db := Db()
+	db = db.Where("id = ?", id)
+
+	if err := db.First(&result).Error; err != nil {
+		return nil
+	}
+
+	return &result
+}

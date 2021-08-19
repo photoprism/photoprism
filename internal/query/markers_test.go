@@ -59,11 +59,11 @@ func TestEmbeddings(t *testing.T) {
 	}
 }
 
-func TestMatchMarkersWithSubjects(t *testing.T) {
-	affected, err := MatchMarkersWithSubjects()
+func TestAddMarkerSubjects(t *testing.T) {
+	affected, err := AddMarkerSubjects()
 
 	assert.NoError(t, err)
-	assert.GreaterOrEqual(t, affected, 1)
+	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
 func TestTidyMarkers(t *testing.T) {

@@ -230,6 +230,15 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}
 
 	if filesIndexed > 0 {
+		// Match existing faces if facial recognition is enabled.
+		if w := NewFaces(ind.conf); w.Disabled() {
+			log.Debugf("index: skipping facial recognition")
+		} else if recognized, unknown, err := w.MatchMarkers(); err != nil {
+			log.Errorf("index: %s", err)
+		} else if recognized > 0 || unknown > 0 {
+			log.Infof("faces: %d recognized, %d unknown", recognized, unknown)
+		}
+
 		event.Publish("index.updating", event.Data{
 			"step": "counts",
 		})
@@ -246,7 +255,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	return done
 }
 
-// File indexes a single file and returns the result.
+// FileName indexes a single file and returns the result.
 func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult) {
 	file, err := NewMediaFile(fileName)
 

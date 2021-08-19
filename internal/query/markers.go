@@ -70,8 +70,8 @@ func Embeddings(single bool) (result entity.Embeddings, err error) {
 	return result, nil
 }
 
-// MatchMarkersWithSubjects matches (add and assign) subjects with markers, if possible.
-func MatchMarkersWithSubjects() (affected int, err error) {
+// AddMarkerSubjects adds and references known marker subjects.
+func AddMarkerSubjects() (affected int64, err error) {
 	var markers entity.Markers
 
 	if err := Db().

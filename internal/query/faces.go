@@ -4,7 +4,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// Faces returns (known) faces from the index.
+// Faces returns all (known) faces from the index.
 func Faces(knownOnly bool) (result entity.Faces, err error) {
 	stmt := Db().
 		Where("face_src <> ?", entity.SrcDefault).
@@ -19,8 +19,8 @@ func Faces(knownOnly bool) (result entity.Faces, err error) {
 	return result, err
 }
 
-// MatchKnownFaces matches known faces with markers, if possible.
-func MatchKnownFaces() (affected int64, err error) {
+// MatchFaceMarkers matches markers with known faces.
+func MatchFaceMarkers() (affected int64, err error) {
 	faces, err := Faces(true)
 
 	if err != nil {
@@ -46,7 +46,7 @@ func MatchKnownFaces() (affected int64, err error) {
 func PurgeAnonymousFaces() error {
 	return UnscopedDb().Delete(
 		entity.Face{},
-		"id <> ? AND subject_uid = '' AND updated_at < ?", entity.UnknownFace.ID, entity.Yesterday()).Error
+		"face_src = ? AND subject_uid = ''", entity.SrcAuto).Error
 }
 
 // ResetFaces removes all face clusters from the index.
@@ -60,11 +60,11 @@ func ResetFaces() error {
 func CountNewFaceMarkers() (n int) {
 	var f entity.Face
 
-	if err := Db().Where("id <> ?", entity.UnknownFace.ID).Order("created_at DESC").Take(&f).Error; err != nil {
+	if err := Db().Where("face_src = ?", entity.SrcAuto).Order("created_at DESC").Take(&f).Error; err != nil {
 		log.Debugf("faces: no existing clusters")
 	}
 
-	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND embeddings_json <> ''", entity.MarkerFace)
+	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND marker_invalid = 0 AND embeddings_json <> ''", entity.MarkerFace)
 
 	if !f.CreatedAt.IsZero() {
 		q = q.Where("created_at > ?", f.CreatedAt)

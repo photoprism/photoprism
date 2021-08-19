@@ -140,7 +140,7 @@ func (m *Subject) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
-// FirstOrCreateSubject returns the existing subject, inserts a new subject or nil in case of errors.
+// FirstOrCreateSubject returns the existing entity, inserts a new entity or nil in case of errors.
 func FirstOrCreateSubject(m *Subject) *Subject {
 	result := Subject{}
 
@@ -165,7 +165,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	return nil
 }
 
-// FindSubject returns an existing row if exists.
+// FindSubject returns an existing entity if exists.
 func FindSubject(s string) *Subject {
 	if s == "" {
 		return nil

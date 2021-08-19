@@ -21,3 +21,7 @@ func TestSubjects(t *testing.T) {
 		assert.IsType(t, entity.Subject{}, val)
 	}
 }
+
+func TestResetSubjects(t *testing.T) {
+	assert.NoError(t, ResetSubjects())
+}

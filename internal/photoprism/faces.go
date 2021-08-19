@@ -3,7 +3,6 @@ package photoprism
 import (
 	"fmt"
 	"runtime/debug"
-	"time"
 
 	"github.com/photoprism/photoprism/internal/face"
 
@@ -151,7 +150,13 @@ func (w *Faces) Reset() (err error) {
 	if err := query.ResetFaces(); err != nil {
 		log.Errorf("faces: %s (reset)", err)
 	} else {
-		log.Infof("faces: reset known faces")
+		log.Infof("faces: reset faces")
+	}
+
+	if err := query.ResetSubjects(); err != nil {
+		log.Errorf("faces: %s (reset)", err)
+	} else {
+		log.Infof("faces: reset subjects")
 	}
 
 	return nil
@@ -182,21 +187,30 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	defer mutex.MainWorker.Stop()
 
 	// Skip clustering if index contains no new face markers and force option isn't set.
-	if n := query.CountNewFaceMarkers(); n < 1 && !opt.Force{
+	if n := query.CountNewFaceMarkers(); n < 1 && !opt.Force {
 		log.Debugf("faces: no new samples")
 
-		// Match (add and assign) subjects with markers, if possible.
-		if affected, err := query.MatchMarkersWithSubjects(); err != nil {
+		var updated int64
+
+		// Adds and reference known marker subjects.
+		if affected, err := query.AddMarkerSubjects(); err != nil {
 			log.Errorf("faces: %s (match markers with subjects)", err)
-		} else if affected > 0 {
-			log.Infof("faces: matched %d markers with subjects", affected)
+		} else {
+			updated += affected
 		}
 
-		// Match known faces with markers, if possible.
-		if matched, err := query.MatchKnownFaces(); err != nil {
+		// Match markers with known faces.
+		if affected, err := query.MatchFaceMarkers(); err != nil {
 			return err
-		} else if matched > 0 {
-			log.Infof("faces: matched %d markers to faces", matched)
+		} else {
+			updated += affected
+		}
+
+		// Log result.
+		if updated > 0 {
+			log.Infof("faces: %d markers updated", updated)
+		} else {
+			log.Debug("faces: no changes")
 		}
 
 		// Clean-up invalid marker data.
@@ -250,6 +264,11 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 			results[n-1] = append(results[n-1], embeddings[i])
 		}
 
+		if err := query.PurgeAnonymousFaces(); err != nil {
+			dbErrors++
+			log.Errorf("faces: %s", err)
+		}
+
 		for _, embedding := range results {
 			if f := entity.NewFace("", entity.SrcAuto, embedding); f == nil {
 				dbErrors++
@@ -264,87 +283,9 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		}
 	}
 
-	if err := query.PurgeAnonymousFaces(); err != nil {
-		dbErrors++
-		log.Errorf("faces: %s", err)
-	}
-
-	if faces, err := query.Faces(false); err != nil {
+	// Match existing markers and faces.
+	if recognized, unknown, err = w.MatchMarkers(); err != nil {
 		return err
-	} else {
-		limit := 500
-		offset := 0
-
-		for {
-			markers, err := query.Markers(limit, offset, entity.MarkerFace, true, false)
-
-			if err != nil {
-				return err
-			}
-
-			if len(markers) == 0 {
-				break
-			}
-
-			for _, marker := range markers {
-				if mutex.MainWorker.Canceled() {
-					return fmt.Errorf("worker canceled")
-				}
-
-				// Pointer to the matching face.
-				var f *entity.Face
-
-				// Distance to the matching face.
-				var d float64
-
-				// Find the closest face match for marker.
-				for _, e := range marker.Embeddings() {
-					for i, match := range faces {
-						if dist := clusters.EuclideanDistance(e, match.Embedding()); f == nil || dist < d {
-							f = &faces[i]
-							d = dist
-						}
-					}
-				}
-
-				// No match?
-				if f == nil {
-					continue
-				}
-
-				// Too distant?
-				if d > (f.Radius + face.ClusterRadius) {
-					continue
-				}
-
-				if updated, err := marker.SetFace(f); err != nil {
-					dbErrors++
-					log.Errorf("faces: %s", err)
-				} else if updated {
-					recognized++
-				}
-
-				if marker.SubjectUID == "" {
-					unknown++
-				}
-			}
-
-			offset += limit
-
-			time.Sleep(50 * time.Millisecond)
-		}
-	}
-
-	// Match known faces with markers, if possible.
-	if m, err := query.MatchKnownFaces(); err != nil {
-		return err
-	} else {
-		recognized += m
-	}
-
-	// Clean-up invalid marker data.
-	if err := query.TidyMarkers(); err != nil {
-		log.Errorf("faces: %s (tidy)", err)
 	}
 
 	// Log results.

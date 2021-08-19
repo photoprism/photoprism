@@ -31,6 +31,7 @@ type Marker struct {
 	SubjectSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
 	Subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Subject,omitempty" yaml:"-"`
 	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	Face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"-" yaml:"-"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     Embeddings      `gorm:"-"`
 	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
@@ -198,11 +199,7 @@ func (m *Marker) SyncSubject(updateRelated bool) error {
 	// Create known face for subject?
 	if m.FaceID != "" || m.SubjectSrc != SrcManual {
 		// Do nothing.
-	} else if f := NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
-		return fmt.Errorf("failed adding known face for subject %s", m.SubjectUID)
-	} else if err := f.Create(); err != nil {
-		log.Debugf("marker: %s (add known face)", err)
-	} else {
+	} else if f := m.GetFace(); f != nil {
 		m.FaceID = f.ID
 	}
 
@@ -221,7 +218,7 @@ func (m *Marker) SyncSubject(updateRelated bool) error {
 		Updates(Values{"SubjectUID": m.SubjectUID, "SubjectSrc": SrcAuto}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else {
-		log.Infof("marker: matched %s", subj.SubjectName)
+		log.Debugf("marker: matched subject %s with face %s", subj.SubjectName, m.FaceID)
 	}
 
 	return nil
@@ -258,7 +255,7 @@ func (m *Marker) Embeddings() Embeddings {
 	return m.embeddings
 }
 
-// GetSubject returns the matching subject entity, if possible.
+// GetSubject returns a subject entity if possible.
 func (m *Marker) GetSubject() (subj *Subject) {
 	if m.Subject != nil {
 		return m.Subject
@@ -281,6 +278,30 @@ func (m *Marker) GetSubject() (subj *Subject) {
 	m.Subject = FindSubject(m.SubjectUID)
 
 	return m.Subject
+}
+
+// GetFace returns a matching face entity if possible.
+func (m *Marker) GetFace() (f *Face) {
+	if m.Face != nil {
+		return m.Face
+	}
+
+	if m.FaceID == "" && m.SubjectSrc == SrcManual {
+		if f = NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
+			return nil
+		} else if f = FirstOrCreateFace(f); f == nil {
+			log.Debugf("marker: invalid face")
+			return nil
+		}
+
+		m.FaceID = f.ID
+
+		return f
+	}
+
+	m.Face = FindFace(m.FaceID)
+
+	return m.Face
 }
 
 // FindMarker returns an existing row if exists.

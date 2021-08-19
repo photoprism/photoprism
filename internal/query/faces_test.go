@@ -22,7 +22,7 @@ func TestFaces(t *testing.T) {
 	}
 }
 
-func TestMatchKnownFaces(t *testing.T) {
+func TestMatchFaceMarkers(t *testing.T) {
 	const faceFixtureId = uint(6)
 
 	if m, err := MarkerByID(faceFixtureId); err != nil {
@@ -39,7 +39,7 @@ func TestMatchKnownFaces(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	affected, err := MatchKnownFaces()
+	affected, err := MatchFaceMarkers()
 
 	if err != nil {
 		t.Fatal(err)
