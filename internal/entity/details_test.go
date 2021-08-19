@@ -125,7 +125,7 @@ func TestNewDetails(t *testing.T) {
 	t.Run("add to photo", func(t *testing.T) {
 		p := NewPhoto(true)
 
-		assert.Equal(t, UnknownName, p.PhotoTitle)
+		assert.Equal(t, UnknownTitle, p.PhotoTitle)
 
 		d := NewDetails(p)
 		p.Details = &d

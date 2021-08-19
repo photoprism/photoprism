@@ -29,7 +29,7 @@ type Face struct {
 
 // UnknownFace can be used as a placeholder for unknown faces.
 var UnknownFace = Face{
-	ID:            "00000000000000000000000000000000",
+	ID:            UnknownID,
 	FaceSrc:       SrcDefault,
 	SubjectUID:    UnknownPerson.SubjectUID,
 	EmbeddingJSON: []byte{},
@@ -46,9 +46,10 @@ func (Face) TableName() string {
 }
 
 // NewFace returns a new face.
-func NewFace(subjectUID string, embeddings Embeddings) *Face {
+func NewFace(subjectUID, faceSrc string, embeddings Embeddings) *Face {
 	result := &Face{
 		SubjectUID: subjectUID,
+		FaceSrc:    faceSrc,
 	}
 
 	if err := result.SetEmbeddings(embeddings); err != nil {

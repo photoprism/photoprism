@@ -15,7 +15,7 @@ func TestLocationMap_Get(t *testing.T) {
 	})
 	t.Run("get not existing location", func(t *testing.T) {
 		r := CellFixtures.Get("Fusion 3333")
-		assert.Equal(t, "zz", r.ID)
+		assert.Equal(t, UnknownID, r.ID)
 		assert.IsType(t, Cell{}, r)
 	})
 }
@@ -29,7 +29,7 @@ func TestLocationMap_Pointer(t *testing.T) {
 	})
 	t.Run("get not existing location pointer", func(t *testing.T) {
 		r := CellFixtures.Pointer("Fusion 444")
-		assert.Equal(t, "zz", r.ID)
+		assert.Equal(t, UnknownID, r.ID)
 		assert.IsType(t, &Cell{}, r)
 	})
 }

@@ -14,6 +14,7 @@ func TestNewMarker(t *testing.T) {
 			MarkerName    string
 			SubjectUID    string
 			SubjectSrc    string
+			FaceID        string
 			Score         int
 			MarkerInvalid bool
 		}{
@@ -22,6 +23,7 @@ func TestNewMarker(t *testing.T) {
 			MarkerName:    "Foo",
 			SubjectUID:    "3h59wvth837b5vyiub35",
 			SubjectSrc:    "meta",
+			FaceID:        "zz",
 			Score:         100,
 			MarkerInvalid: true,
 		}
@@ -36,6 +38,7 @@ func TestNewMarker(t *testing.T) {
 		assert.Equal(t, "image", f.MarkerSrc)
 		assert.Equal(t, "Foo", f.MarkerName)
 		assert.Equal(t, "3h59wvth837b5vyiub35", f.SubjectUID)
+		assert.Equal(t, "zz", f.FaceID)
 		assert.Equal(t, "meta", f.SubjectSrc)
 		assert.Equal(t, 100, f.Score)
 		assert.Equal(t, true, f.MarkerInvalid)

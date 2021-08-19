@@ -13,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clusters"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Faces represents a worker for face clustering and matching.
@@ -143,16 +142,16 @@ func (w *Faces) Analyze() (err error) {
 
 // Reset face clusters and matches.
 func (w *Faces) Reset() (err error) {
-	if err := query.ResetFaces(); err != nil {
-		log.Errorf("faces: %s (reset clusters)", err)
+	if err := query.ResetFaceMarkerMatches(); err != nil {
+		log.Errorf("faces: %s (reset)", err)
 	} else {
-		log.Infof("faces: removed clusters")
+		log.Infof("faces: reset markers")
 	}
 
-	if err := query.ResetFaceMarkerMatches(); err != nil {
-		log.Errorf("faces: %s (reset markers)", err)
+	if err := query.ResetFaces(); err != nil {
+		log.Errorf("faces: %s (reset)", err)
 	} else {
-		log.Infof("faces: removed matches")
+		log.Infof("faces: reset known faces")
 	}
 
 	return nil
@@ -182,22 +181,27 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	defer mutex.MainWorker.Stop()
 
-	// Skip clustering if index contains no new face markers.
-	if opt.Force {
-		log.Infof("faces: reindexing")
-	} else if n := query.CountNewFaceMarkers(); n < 1 {
+	// Skip clustering if index contains no new face markers and force option isn't set.
+	if n := query.CountNewFaceMarkers(); n < 1 && !opt.Force{
 		log.Debugf("faces: no new samples")
 
+		// Match (add and assign) subjects with markers, if possible.
 		if affected, err := query.MatchMarkersWithSubjects(); err != nil {
 			log.Errorf("faces: %s (match markers with subjects)", err)
 		} else if affected > 0 {
 			log.Infof("faces: matched %d markers with subjects", affected)
 		}
 
+		// Match known faces with markers, if possible.
 		if matched, err := query.MatchKnownFaces(); err != nil {
 			return err
 		} else if matched > 0 {
 			log.Infof("faces: matched %d markers to faces", matched)
+		}
+
+		// Clean-up invalid marker data.
+		if err := query.TidyMarkers(); err != nil {
+			log.Errorf("faces: %s (tidy)", err)
 		}
 
 		return nil
@@ -205,7 +209,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		log.Infof("faces: found %d new markers", n)
 	}
 
-	var added, matched, unknown, dbErrors int64
+	var added, recognized, unknown, dbErrors int64
 
 	// Fetch and cluster all face embeddings.
 	embeddings, err := query.Embeddings(false)
@@ -228,7 +232,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 		sizes := c.Sizes()
 
-		log.Debugf("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
+		log.Debugf("faces: indexing %d samples, %d clusters", len(embeddings), len(sizes))
 
 		results := make([]entity.Embeddings, len(sizes))
 
@@ -246,8 +250,8 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 			results[n-1] = append(results[n-1], embeddings[i])
 		}
 
-		for _, e := range results {
-			if f := entity.NewFace("", e); f == nil {
+		for _, embedding := range results {
+			if f := entity.NewFace("", entity.SrcAuto, embedding); f == nil {
 				dbErrors++
 				log.Errorf("faces: face should not be nil - bug?")
 			} else if err := f.Create(); err == nil {
@@ -272,7 +276,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		offset := 0
 
 		for {
-			markers, err := query.Markers(limit, offset, entity.MarkerFace, true, true)
+			markers, err := query.Markers(limit, offset, entity.MarkerFace, true, false)
 
 			if err != nil {
 				return err
@@ -313,33 +317,14 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 					continue
 				}
 
-				// Already matched?
-				if marker.SubjectUID != "" && marker.SubjectUID == f.SubjectUID {
-					continue
+				if updated, err := marker.SetFace(f); err != nil {
+					dbErrors++
+					log.Errorf("faces: %s", err)
+				} else if updated {
+					recognized++
 				}
 
-				// Create subject from marker label?
-				if marker.MarkerName == "" {
-					// Do nothing.
-				} else if subj := entity.NewSubject(marker.MarkerName, entity.SubjectPerson, entity.SrcMarker); subj == nil {
-					log.Errorf("faces: subject should not be nil - bug?")
-				} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
-					log.Errorf("faces: failed adding subject %s", txt.Quote(marker.MarkerName))
-				} else {
-					f.SubjectUID = subj.SubjectUID
-					entity.Db().Model(&entity.Face{}).Where("id = ? AND subject_uid = ''", f.ID).Update("SubjectUID", subj.SubjectUID)
-				}
-
-				// Existing subject?
-				if f.SubjectUID != "" {
-					if err := marker.Updates(entity.Values{"SubjectUID": f.SubjectUID, "SubjectSrc": entity.SrcAuto, "FaceID": ""}); err != nil {
-						log.Errorf("faces: %s while updating subject uid of marker %d", err, marker.ID)
-					} else {
-						matched++
-					}
-				} else if err := marker.Updates(entity.Values{"FaceID": f.ID}); err != nil {
-					log.Errorf("faces: %s while updating face id of marker %d", err, marker.ID)
-				} else {
+				if marker.SubjectUID == "" {
 					unknown++
 				}
 			}
@@ -350,16 +335,23 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		}
 	}
 
+	// Match known faces with markers, if possible.
 	if m, err := query.MatchKnownFaces(); err != nil {
 		return err
 	} else {
-		matched += m
+		recognized += m
 	}
 
-	if added > 0 || matched > 0 || dbErrors > 0 {
-		log.Infof("faces: %d added, %d matches, %d unknown, %d errors", added, matched, unknown, dbErrors)
+	// Clean-up invalid marker data.
+	if err := query.TidyMarkers(); err != nil {
+		log.Errorf("faces: %s (tidy)", err)
+	}
+
+	// Log results.
+	if added > 0 || recognized > 0 || dbErrors > 0 {
+		log.Infof("faces: %d added, %d recognized, %d unknown, %d errors", added, recognized, unknown, dbErrors)
 	} else {
-		log.Debugf("faces: %d added, %d matches, %d unknown, %d errors", added, matched, unknown, dbErrors)
+		log.Debugf("faces: %d added, %d recognized, %d unknown, %d errors", added, recognized, unknown, dbErrors)
 	}
 
 	return nil

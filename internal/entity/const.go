@@ -15,6 +15,8 @@ const (
 	UnknownMonth = -1
 	UnknownDay   = -1
 	UnknownName  = "Unknown"
+	UnknownTitle = UnknownName
+	UnknownID    = "zz"
 
 	// Content types:
 	TypeDefault = ""

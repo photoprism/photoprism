@@ -105,7 +105,7 @@ type Photo struct {
 // NewPhoto creates a photo entity.
 func NewPhoto(stackable bool) Photo {
 	m := Photo{
-		PhotoTitle:   UnknownName,
+		PhotoTitle:   UnknownTitle,
 		PhotoType:    TypeImage,
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
@@ -761,9 +761,9 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 			m.SetTitle(fileTitle, SrcAuto)
 		} else {
 			if m.TakenSrc != SrcAuto {
-				m.SetTitle(fmt.Sprintf("%s / %s", UnknownName, m.TakenAt.Format("2006")), SrcAuto)
+				m.SetTitle(fmt.Sprintf("%s / %s", UnknownTitle, m.TakenAt.Format("2006")), SrcAuto)
 			} else {
-				m.SetTitle(UnknownName, SrcAuto)
+				m.SetTitle(UnknownTitle, SrcAuto)
 			}
 		}
 	}

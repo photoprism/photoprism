@@ -9,6 +9,7 @@ type Marker struct {
 	MarkerName    string `json:"Name"`
 	SubjectUID    string `json:"SubjectUID"`
 	SubjectSrc    string `json:"SubjectSrc"`
+	FaceID        string `json:"FaceID"`
 	Score         int    `json:"Score"`
 	MarkerInvalid bool   `json:"Invalid"`
 }

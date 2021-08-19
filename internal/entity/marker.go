@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/clusters"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
@@ -99,48 +101,130 @@ func (m *Marker) SaveForm(f form.Marker) error {
 		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipKeyword))
 	}
 
-	if err := m.Save(); err != nil {
+	if err := m.SyncSubject(true); err != nil {
 		return err
 	}
 
-	faceId := m.FaceID
-
-	if faceId != "" && m.MarkerName != "" && m.SubjectUID == "" && m.MarkerType == MarkerFace {
-		if subj := NewSubject(m.MarkerName, SubjectPerson, SrcMarker); subj == nil {
-			return fmt.Errorf("marker: subject should not be nil (save form)")
-		} else if subj = FirstOrCreateSubject(subj); subj == nil {
-			return fmt.Errorf("marker: failed adding subject %s for marker %d (save form)", txt.Quote(m.MarkerName), m.ID)
-		} else if err := m.Updates(Values{"SubjectUID": subj.SubjectUID, "SubjectSrc": SrcManual, "FaceID": ""}); err != nil {
-			return fmt.Errorf("marker: %s (save form)", err)
-		} else if err := Db().Model(&Face{}).Where("id = ? AND subject_uid = ''", faceId).Update("SubjectUID", subj.SubjectUID).Error; err != nil {
-			return fmt.Errorf("marker: %s (update face)", err)
-		} else if err := Db().Model(&Marker{}).
-			Where("face_id = ?", faceId).
-			Updates(Values{"SubjectUID": subj.SubjectUID, "SubjectSrc": SrcManual, "FaceID": ""}).Error; err != nil {
-			return fmt.Errorf("marker: %s (update related markers)", err)
-		} else {
-			log.Infof("marker: matched subject %s with %s", subj.SubjectUID, txt.Quote(m.MarkerName))
-		}
-	} else if err := m.UpdateSubject(); err != nil {
-		log.Error(err)
-	}
-
-	return nil
+	return m.Save()
 }
 
-// UpdateSubject changes and saves the related subject's name in the index.
-func (m *Marker) UpdateSubject() error {
-	if m.MarkerName == "" || m.SubjectUID == "" || m.MarkerType == MarkerFace {
+// SetFace sets a new face for this marker.
+func (m *Marker) SetFace(f *Face) (updated bool, err error) {
+	if f == nil {
+		return false, fmt.Errorf("face is nil")
+	}
+
+	if m.MarkerType != MarkerFace {
+		return false, fmt.Errorf("not a face marker")
+	}
+
+	var d float64 = -1
+
+	for _, e := range m.Embeddings() {
+		if dist := clusters.EuclideanDistance(e, f.Embedding()); dist < d {
+			d = dist
+		}
+	}
+
+	// Too distant?
+	if d > (f.Radius + face.ClusterRadius) {
+		return false, fmt.Errorf("face doesn't match")
+	}
+
+	if f.SubjectUID != "" || m.SubjectUID == "" {
+		// Do nothing.
+	} else if err := f.Update("SubjectUID", m.SubjectUID); err != nil {
+		return false, err
+	}
+
+	// Skip update?
+	if m.SubjectSrc == SrcManual {
+		return false, nil
+	} else if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
+		return false, nil
+	}
+
+	// Remember current values.
+	faceID := m.FaceID
+	subjectUID := m.SubjectUID
+	SubjectSrc := m.SubjectSrc
+
+	m.FaceID = f.ID
+
+	if f.SubjectUID != "" {
+		m.SubjectUID = f.SubjectUID
+		m.SubjectSrc = SrcAuto
+	}
+
+	if err := m.SyncSubject(false); err != nil {
+		return false, err
+	}
+
+	// Update face subject?
+	if m.SubjectUID == "" || f.SubjectUID != m.SubjectUID {
+		// Not needed.
+	} else if err := f.Update("SubjectUID", m.SubjectUID); err != nil {
+		return false, err
+	}
+
+	// Update database only if anything has changed.
+	if m.FaceID != faceID || m.SubjectUID != subjectUID || m.SubjectSrc != SubjectSrc {
+		return true, m.Updates(Values{"FaceID": m.FaceID, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc})
+	}
+
+	return false, nil
+}
+
+// SyncSubject maintains the marker subject relationship.
+func (m *Marker) SyncSubject(updateRelated bool) error {
+	// Face marker? If not, return.
+	if m.MarkerType != MarkerFace {
 		return nil
 	}
 
-	subj := FindSubject(m.SubjectUID)
+	subj := m.GetSubject()
 
 	if subj == nil {
-		return fmt.Errorf("marker: subject %s not found", m.SubjectUID)
+		return nil
 	}
 
-	return subj.UpdateName(m.MarkerName)
+	// Update subject with marker name?
+	if m.MarkerName == "" || subj.SubjectName == m.MarkerName {
+		// Do nothing.
+	} else if err := subj.UpdateName(m.MarkerName); err != nil {
+		return err
+	}
+
+	// Create known face for subject?
+	if m.FaceID != "" || m.SubjectSrc != SrcManual {
+		// Do nothing.
+	} else if f := NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
+		return fmt.Errorf("failed adding known face for subject %s", m.SubjectUID)
+	} else if err := f.Create(); err != nil {
+		log.Debugf("marker: %s (add known face)", err)
+	} else {
+		m.FaceID = f.ID
+	}
+
+	// Update related markers?
+	if m.FaceID == "" || m.SubjectUID == "" {
+		// Do nothing.
+	} else if err := Db().Model(&Face{}).Where("id = ? AND subject_uid = ''", m.FaceID).Update("SubjectUID", m.SubjectUID).Error; err != nil {
+		return fmt.Errorf("%s (update known face)", err)
+	} else if !updateRelated {
+		return nil
+	} else if err := Db().Model(&Marker{}).
+		Where("id <> ?", m.ID).
+		Where("face_id = ?", m.FaceID).
+		Where("subject_src = ?", SrcAuto).
+		Where("subject_uid <> ?", m.SubjectUID).
+		Updates(Values{"SubjectUID": m.SubjectUID, "SubjectSrc": SrcAuto}).Error; err != nil {
+		return fmt.Errorf("%s (update related markers)", err)
+	} else {
+		log.Infof("marker: matched %s", subj.SubjectName)
+	}
+
+	return nil
 }
 
 // Save updates the existing or inserts a new row.
@@ -172,6 +256,31 @@ func (m *Marker) Embeddings() Embeddings {
 	}
 
 	return m.embeddings
+}
+
+// GetSubject returns the matching subject entity, if possible.
+func (m *Marker) GetSubject() (subj *Subject) {
+	if m.Subject != nil {
+		return m.Subject
+	}
+
+	if m.SubjectUID == "" && m.MarkerName != "" {
+		if subj = NewSubject(m.MarkerName, SubjectPerson, SrcMarker); subj == nil {
+			return nil
+		} else if subj = FirstOrCreateSubject(subj); subj == nil {
+			log.Debugf("marker: invalid subject %s", txt.Quote(m.MarkerName))
+			return nil
+		}
+
+		m.SubjectUID = subj.SubjectUID
+		m.SubjectSrc = SrcManual
+
+		return subj
+	}
+
+	m.Subject = FindSubject(m.SubjectUID)
+
+	return m.Subject
 }
 
 // FindMarker returns an existing row if exists.

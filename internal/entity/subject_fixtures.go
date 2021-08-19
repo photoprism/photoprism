@@ -23,7 +23,7 @@ var SubjectFixtures = SubjectMap{
 		SubjectUID:         "jqu0xs11qekk9jx8",
 		SubjectSlug:        "john-doe",
 		SubjectName:        "John Doe",
-		SubjectSrc:         "xmp",
+		SubjectSrc:         SrcManual,
 		Favorite:           true,
 		Private:            false,
 		Hidden:             false,

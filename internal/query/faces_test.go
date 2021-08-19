@@ -31,6 +31,14 @@ func TestMatchKnownFaces(t *testing.T) {
 		assert.Empty(t, m.SubjectUID)
 	}
 
+	// Reset subject_uid.
+	if err := Db().Model(&entity.Marker{}).
+		Where("subject_src = ?", entity.SrcAuto).
+		Where("subject_uid = ?", "jqu0xs11qekk9jx8").
+		Updates(entity.Values{"SubjectUID": ""}).Error; err != nil {
+		t.Fatal(err)
+	}
+
 	affected, err := MatchKnownFaces()
 
 	if err != nil {
@@ -42,7 +50,7 @@ func TestMatchKnownFaces(t *testing.T) {
 	if m, err := MarkerByID(faceFixtureId); err != nil {
 		t.Fatal(err)
 	} else {
-		assert.Equal(t, "rqu0xs11qekk9jx8", m.SubjectUID)
+		assert.Equal(t, "jqu0xs11qekk9jx8", m.SubjectUID)
 	}
 }
 

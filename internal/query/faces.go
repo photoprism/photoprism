@@ -7,7 +7,7 @@ import (
 // Faces returns (known) faces from the index.
 func Faces(knownOnly bool) (result entity.Faces, err error) {
 	stmt := Db().
-		Where("id <> ?", entity.UnknownFace.ID).
+		Where("face_src <> ?", entity.SrcDefault).
 		Order("id")
 
 	if knownOnly {
@@ -19,7 +19,7 @@ func Faces(knownOnly bool) (result entity.Faces, err error) {
 	return result, err
 }
 
-// MatchKnownFaces matches known faces with file markers.
+// MatchKnownFaces matches known faces with markers, if possible.
 func MatchKnownFaces() (affected int64, err error) {
 	faces, err := Faces(true)
 
@@ -30,7 +30,9 @@ func MatchKnownFaces() (affected int64, err error) {
 	for _, match := range faces {
 		if res := Db().Model(&entity.Marker{}).
 			Where("face_id = ?", match.ID).
-			Updates(entity.Values{"SubjectUID": match.SubjectUID, "SubjectSrc": entity.SrcAuto, "FaceID": ""}); res.Error != nil {
+			Where("subject_src = ?", entity.SrcAuto).
+			Where("subject_uid <> ?", match.SubjectUID).
+			Updates(entity.Values{"SubjectUID": match.SubjectUID}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected

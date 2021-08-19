@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 )
@@ -169,7 +171,7 @@ func TestGeo(t *testing.T) {
 			Year:     2010,
 			Month:    12,
 			Color:    "red",
-			Country:  "zz",
+			Country:  entity.UnknownID,
 			Type:     "jpg",
 			Video:    true,
 			Path:     "/xxx/xxx/",

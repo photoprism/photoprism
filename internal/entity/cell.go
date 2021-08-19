@@ -26,9 +26,9 @@ type Cell struct {
 
 // UnknownLocation is PhotoPrism's default location.
 var UnknownLocation = Cell{
-	ID:           "zz",
+	ID:           UnknownID,
 	Place:        &UnknownPlace,
-	PlaceID:      "zz",
+	PlaceID:      UnknownID,
 	CellName:     "",
 	CellCategory: "",
 }

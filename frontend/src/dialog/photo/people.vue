@@ -72,6 +72,8 @@
 </template>
 
 <script>
+import * as src from "common/src";
+
 export default {
   name: 'PTabPhotoPeople',
   props: {
@@ -134,10 +136,17 @@ export default {
     clearName(marker) {
       marker.Name = "";
       marker.SubjectUID = "";
-      marker.SubjectSrc = "";
+      marker.SubjectSrc = src.Manual;
+      marker.FaceID = "";
       this.model.updateMarker(marker);
     },
     updateName(marker) {
+      if (marker.Name === "") {
+        marker.SubjectSrc = src.Auto;
+      } else {
+        marker.SubjectSrc = src.Manual;
+      }
+
       this.model.updateMarker(marker);
     },
   },
