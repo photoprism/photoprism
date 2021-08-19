@@ -29,7 +29,7 @@ type Face struct {
 
 // UnknownFace can be used as a placeholder for unknown faces.
 var UnknownFace = Face{
-	ID:            "zz",
+	ID:            "00000000000000000000000000000000",
 	FaceSrc:       SrcDefault,
 	SubjectUID:    UnknownPerson.SubjectUID,
 	EmbeddingJSON: []byte{},
@@ -42,7 +42,7 @@ func CreateUnknownFace() {
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev3"
+	return "faces_dev4"
 }
 
 // NewFace returns a new face.
