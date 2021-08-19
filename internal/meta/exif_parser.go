@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/dsoprea/go-exif/v3"
-	heicexif "github.com/dsoprea/go-heic-exif-extractor"
-	jpegstructure "github.com/dsoprea/go-jpeg-image-structure"
-	pngstructure "github.com/dsoprea/go-png-image-structure"
-	tiffstructure "github.com/dsoprea/go-tiff-image-structure"
+	heicexif "github.com/dsoprea/go-heic-exif-extractor/v2"
+	jpegstructure "github.com/dsoprea/go-jpeg-image-structure/v2"
+	pngstructure "github.com/dsoprea/go-png-image-structure/v2"
+	tiffstructure "github.com/dsoprea/go-tiff-image-structure/v2"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
