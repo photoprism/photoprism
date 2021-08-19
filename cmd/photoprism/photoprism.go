@@ -70,10 +70,10 @@ func main() {
 		commands.RestoreCommand,
 		commands.ResetCommand,
 		commands.ConfigCommand,
+		commands.UsersCommand,
 		commands.PasswdCommand,
 		commands.VersionCommand,
 		commands.StatusCommand,
-		commands.UserCommand,
 	}
 
 	if err := app.Run(os.Args); err != nil {

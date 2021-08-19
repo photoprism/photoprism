@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/manifoldco/promptui"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,15 +17,20 @@ import (
 	"github.com/urfave/cli"
 )
 
-// UserCommand Create, List, Update and Delete Users.
-var UserCommand = cli.Command{
+// UsersCommand registers user management commands.
+var UsersCommand = cli.Command{
 	Name:  "users",
-	Usage: "Manage Users from CLI",
+	Usage: "User management sub-commands",
 	Subcommands: []cli.Command{
 		{
+			Name:   "list",
+			Usage:  "lists registered users",
+			Action: usersListAction,
+		},
+		{
 			Name:   "add",
-			Usage:  "creates a new user. Provide at least username and password",
-			Action: userAdd,
+			Usage:  "adds a new user",
+			Action: usersAddAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "fullname, n",
@@ -45,9 +51,9 @@ var UserCommand = cli.Command{
 			},
 		},
 		{
-			Name:   "modify",
-			Usage:  "modify a users information.",
-			Action: userModify,
+			Name:   "update",
+			Usage:  "updates user information",
+			Action: usersModifyAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "fullname, n",
@@ -69,26 +75,15 @@ var UserCommand = cli.Command{
 		},
 		{
 			Name:      "delete",
-			Usage:     "deletes user by username",
-			Action:    userDelete,
-			ArgsUsage: "takes username as argument",
-			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "force, f",
-					Usage: "execute deletion",
-				},
-			},
-		},
-		{
-			Name:   "list",
-			Usage:  "prints a list of all users",
-			Action: userList,
+			Usage:     "deletes an existing user",
+			Action:    usersDeleteAction,
+			ArgsUsage: "[username]",
 		},
 	},
 }
 
-func userAdd(ctx *cli.Context) error {
-	return withDependencies(ctx, func(conf *config.Config) error {
+func usersAddAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
 
 		uc := form.UserCreate{
 			UserName: strings.TrimSpace(ctx.String("username")),
@@ -150,47 +145,58 @@ func userAdd(ctx *cli.Context) error {
 		if err := entity.CreateWithPassword(uc); err != nil {
 			return err
 		}
+
 		return nil
 	})
 }
 
-func userDelete(ctx *cli.Context) error {
-	return withDependencies(ctx, func(conf *config.Config) error {
-		username := ctx.Args()[0]
-		if !ctx.Bool("force") {
-			user := entity.FindUserByName(username)
-			if user != nil {
-				log.Infof("found user %s with uid: %s. Use -f to perform actual deletion\n", user.UserName, user.UserUID)
-				return nil
+func usersDeleteAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
+		userName := strings.TrimSpace(ctx.Args().First())
+
+		if userName == "" {
+			return errors.New("please provide a username")
+		}
+
+		actionPrompt := promptui.Prompt{
+			Label:     fmt.Sprintf("Delete %s?", txt.Quote(userName)),
+			IsConfirm: true,
+		}
+
+		if _, err := actionPrompt.Run(); err == nil {
+			if m := entity.FindUserByName(userName); m == nil {
+				return errors.New("user not found")
+			} else if err := m.Delete(); err != nil {
+				return err
+			} else {
+				log.Infof("%s deleted", txt.Quote(userName))
 			}
-			return errors.New("user not found")
+		} else {
+			log.Infof("keeping user")
 		}
-		err := query.DeleteUserByName(username)
-		if err != nil {
-			log.Errorf("%s\n", err)
-			return nil
-		}
-		log.Infof("sucessfully deleted %s\n", username)
+
 		return nil
 	})
 }
 
-func userList(ctx *cli.Context) error {
-	return withDependencies(ctx, func(conf *config.Config) error {
-		users := query.AllUsers()
-		fmt.Printf("%-16s %-16s %-16s\n", "Username", "Full Name", "Email")
-		fmt.Printf("%-16s %-16s %-16s\n", "--------", "---------", "-----")
+func usersListAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
+		users := query.RegisteredUsers()
+		log.Infof("found %d users", len(users))
+
+		fmt.Printf("%-4s %-16s %-16s %-16s\n", "ID", "LOGIN", "NAME", "EMAIL")
+
 		for _, user := range users {
-			fmt.Printf("%-16s %-16s %-16s", user.UserName, user.FullName, user.PrimaryEmail)
+			fmt.Printf("%-4d %-16s %-16s %-16s", user.ID, user.UserName, user.FullName, user.PrimaryEmail)
 			fmt.Printf("\n")
 		}
-		fmt.Printf("total users found: %v\n", len(users))
+
 		return nil
 	})
 }
 
-func userModify(ctx *cli.Context) error {
-	return withDependencies(ctx, func(conf *config.Config) error {
+func usersModifyAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
 		username := ctx.Args().First()
 		if username == "" {
 			return errors.New("pass username as argument")
@@ -231,16 +237,18 @@ func userModify(ctx *cli.Context) error {
 		if err := u.Validate(); err != nil {
 			return err
 		}
+
 		if err := u.Save(); err != nil {
 			return err
 		}
+
 		fmt.Printf("user successfully updated: %v\n", u.UserName)
 
 		return nil
 	})
 }
 
-func withDependencies(ctx *cli.Context, f func(conf *config.Config) error) error {
+func callWithDependencies(ctx *cli.Context, f func(conf *config.Config) error) error {
 	conf := config.NewConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
@@ -253,9 +261,10 @@ func withDependencies(ctx *cli.Context, f func(conf *config.Config) error) error
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	// command is executed here
+	// Run command.
 	if err := f(conf); err != nil {
 		return err
 	}
+
 	return nil
 }

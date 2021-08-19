@@ -30,13 +30,16 @@ func TestDeleteUserByName(t *testing.T) {
 	})
 }
 
-func TestAllUsers(t *testing.T) {
-	t.Run("list all", func(t *testing.T) {
-		users := AllUsers()
+func TestRegisteredUsers(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		users := RegisteredUsers()
+
 		for _, user := range users {
-			log.Infof("user: %v, %s, %s, %s", user.ID, user.UserUID, user.UserName, user.FullName)
+			t.Logf("user: %v, %s, %s, %s", user.ID, user.UserUID, user.UserName, user.FullName)
 		}
-		log.Infof("user count: %v", len(users))
-		assert.Greater(t, len(users), 3)
+
+		t.Logf("user count: %v", len(users))
+
+		assert.GreaterOrEqual(t, len(users), 3)
 	})
 }

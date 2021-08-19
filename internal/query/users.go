@@ -22,12 +22,11 @@ func DeleteUserByName(userName string) error {
 	return nil
 }
 
-// AllUsers Returns a list of all registered Users.
-func AllUsers() []entity.User {
-	var users []entity.User
-	if err := Db().Find(&users).Error; err != nil {
-		log.Error(err)
-		return []entity.User{}
+// RegisteredUsers finds all registered users.
+func RegisteredUsers() (result entity.Users) {
+	if err := Db().Where("id > 0").Find(&result).Error; err != nil {
+		log.Errorf("users: %s", err)
 	}
-	return users
+
+	return result
 }

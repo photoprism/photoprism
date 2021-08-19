@@ -195,6 +195,20 @@ func FindUserByUID(uid string) *User {
 	}
 }
 
+// Delete marks the entity as deleted.
+func (m *User) Delete() error {
+	if m.ID <= 1 {
+		return fmt.Errorf("can't delete system user")
+	}
+
+	return Db().Delete(m).Error
+}
+
+// Deleted tests if the entity is marked as deleted.
+func (m *User) Deleted() bool {
+	return m.DeletedAt != nil
+}
+
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
 	if m.UserName != "" {
