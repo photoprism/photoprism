@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/mpraski/clusters"
+	"github.com/photoprism/photoprism/pkg/clusters"
 )
 
 type Embedding = []float64

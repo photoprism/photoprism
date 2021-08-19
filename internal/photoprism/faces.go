@@ -12,9 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clusters"
 	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/mpraski/clusters"
 )
 
 // Faces represents a worker for face clustering and matching.
