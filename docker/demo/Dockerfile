@@ -18,7 +18,7 @@ ENV TF_CPP_MIN_LOG_LEVEL=2 \
     PHOTOPRISM_JPEG_QUALITY=95 \
     PHOTOPRISM_SITE_TITLE="Demo" \
     PHOTOPRISM_SITE_CAPTION="PhotoPrism" \
-    PHOTOPRISM_SITE_DESCRIPTION="Open-Source Photo Management. Say goodbye to uploading your visual memories to the cloud!"
+    PHOTOPRISM_SITE_DESCRIPTION="Open-Source Photo Management. Say goodbye to uploading your memories to the cloud!"
 
 # Copy assets
 COPY /docker/demo/index.tmpl /photoprism/assets/templates
