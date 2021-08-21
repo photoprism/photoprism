@@ -277,7 +277,11 @@ func (m *Marker) ClearSubject(src string) (err error) {
 		return err
 	}
 
+	m.MarkerName = ""
+	m.FaceID = ""
 	m.Face = nil
+	m.SubjectUID = ""
+	m.SubjectSrc = ""
 
 	return nil
 }

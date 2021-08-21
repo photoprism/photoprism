@@ -132,3 +132,19 @@ func TestMarker_Save(t *testing.T) {
 		t.Logf("FILES: %#v", p.Files)
 	})
 }
+
+func TestMarker_ClearSubject(t *testing.T) {
+	t.Run("1000003-2", func(t *testing.T) {
+		m := MarkerFixtures.Get("1000003-2")
+
+		assert.NotEmpty(t, m.MarkerName)
+
+		err := m.ClearSubject(SrcAuto)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Empty(t, m.MarkerName)
+	})
+}
