@@ -4,8 +4,13 @@ import (
 	"crypto/sha1"
 	"encoding/base32"
 	"encoding/json"
+	"fmt"
 	"sync"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/face"
+
+	"github.com/photoprism/photoprism/pkg/clusters"
 )
 
 var faceMutex = sync.Mutex{}
@@ -15,16 +20,17 @@ type Faces []Face
 
 // Face represents the face of a Subject.
 type Face struct {
-	ID            string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	FaceSrc       string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
-	SubjectUID    string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
-	Collisions    int             `json:"Collisions" yaml:"Collisions,omitempty"`
-	Samples       int             `json:"Samples" yaml:"Samples,omitempty"`
-	Radius        float64         `json:"Radius" yaml:"Radius,omitempty"`
-	EmbeddingJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
-	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
-	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
-	embedding     Embedding       `gorm:"-"`
+	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
+	SubjectUID      string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
+	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
+	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
+	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
+	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
+	embedding       Embedding       `gorm:"-"`
+	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 }
 
 // UnknownFace can be used as a placeholder for unknown faces.
@@ -61,7 +67,7 @@ func NewFace(subjectUID, faceSrc string, embeddings Embeddings) *Face {
 
 // SetEmbeddings assigns face embeddings.
 func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
-	m.embedding, m.Radius, m.Samples = EmbeddingsMidpoint(embeddings)
+	m.embedding, m.SampleRadius, m.Samples = EmbeddingsMidpoint(embeddings)
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
 
 	if err != nil {
@@ -90,6 +96,74 @@ func (m *Face) Embedding() Embedding {
 	}
 
 	return m.embedding
+}
+
+// Match tests if embeddings match this face.
+func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
+	dist = -1
+
+	if len(embeddings) == 0 {
+		// Np embeddings, no match.
+		return false, dist
+	}
+
+	faceEmbedding := m.Embedding()
+
+	if len(faceEmbedding) == 0 {
+		// Should never happen.
+		return false, dist
+	}
+
+	// Calculate smallest distance to embeddings.
+	for _, e := range embeddings {
+		if d := clusters.EuclideanDistance(e, faceEmbedding); d < dist || dist < 0 {
+			dist = d
+		}
+	}
+
+	// Any reasons embeddings do not match this face?
+	switch {
+	case dist < 0:
+		// Should never happen.
+		return false, dist
+	case dist > (m.SampleRadius + face.ClusterRadius):
+		// Too far.
+		return false, dist
+	case m.CollisionRadius > 0 && dist > m.CollisionRadius:
+		// Within radius of reported collisions.
+		return false, dist
+	}
+
+	// If not, at least one of the embeddings match!
+	return true, dist
+}
+
+// ReportCollision reports a collision with a different subject's face.
+func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error) {
+	if m.SubjectUID == "" {
+		// Ignore reports for anonymous faces.
+		return false, nil
+	} else if m.ID == "" || len(m.EmbeddingJSON) == 0 {
+		return false, fmt.Errorf("invalid face id")
+	} else if len(m.EmbeddingJSON) == 0 {
+		return false, fmt.Errorf("face embedding must not be empty")
+	}
+
+	if match, dist := m.Match(embeddings); !match {
+		// Embeddings don't match this face. Ignore.
+		return false, nil
+	} else if dist < 0 {
+		// Should never happen.
+		return false, fmt.Errorf("collision distance must be positive")
+	} else if dist > 0.5 {
+		m.Collisions++
+		m.CollisionRadius = dist - 0.1
+	} else {
+		// Don't set a radius yet if distance is very small.
+		m.Collisions++
+	}
+
+	return true, m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius})
 }
 
 // Save updates the existing or inserts a new face.

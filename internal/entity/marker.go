@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/clusters"
-
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
@@ -117,19 +115,6 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 
 	if m.MarkerType != MarkerFace {
 		return false, fmt.Errorf("not a face marker")
-	}
-
-	var d float64 = -1
-
-	for _, e := range m.Embeddings() {
-		if dist := clusters.EuclideanDistance(e, f.Embedding()); dist < d {
-			d = dist
-		}
-	}
-
-	// Too distant?
-	if d > (f.Radius + face.ClusterRadius) {
-		return false, fmt.Errorf("face doesn't match")
 	}
 
 	if f.SubjectUID != "" || m.SubjectUID == "" {
@@ -278,6 +263,23 @@ func (m *Marker) GetSubject() (subj *Subject) {
 	m.Subject = FindSubject(m.SubjectUID)
 
 	return m.Subject
+}
+
+// ClearSubject removes an existing subject association, and reports a collision.
+func (m *Marker) ClearSubject(src string) (err error) {
+	if m.Face == nil {
+		m.Face = FindFace(m.FaceID)
+	} else if m.Face == nil {
+		// Do nothing
+	} else if _, err = m.Face.ReportCollision(m.Embeddings()); err != nil {
+		return err
+	} else if err = m.Updates(Values{"MarkerName": "", "FaceID": "", "SubjectUID": "", "SubjectSrc": src}); err != nil {
+		return err
+	}
+
+	m.Face = nil
+
+	return nil
 }
 
 // GetFace returns a matching face entity if possible.

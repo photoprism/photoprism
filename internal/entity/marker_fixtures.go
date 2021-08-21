@@ -87,7 +87,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-6": Marker{
 		ID:             6,
 		FileID:         1000003,
-		FaceID:         FaceFixtures.Get("known").ID,
+		FaceID:         FaceFixtures.Get("john-doe").ID,
 		SubjectSrc:     SrcAuto,
 		SubjectUID:     "",
 		MarkerSrc:      SrcImage,

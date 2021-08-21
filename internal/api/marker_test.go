@@ -11,12 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUpdateFileMarker(t *testing.T) {
+func TestUpdateMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		GetPhoto(router)
-		UpdateFileMarker(router)
+		UpdateMarker(router)
 
 		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
 
@@ -58,5 +58,34 @@ func TestUpdateFileMarker(t *testing.T) {
 		}
 
 		assert.Equal(t, http.StatusOK, r.Code)
+	})
+}
+
+func TestClearMarkerSubject(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		GetPhoto(router)
+		ClearMarkerSubject(router)
+
+		photoResp := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+
+		assert.Equal(t, http.StatusOK, photoResp.Code)
+
+		photoUID := gjson.Get(photoResp.Body.String(), "UID").String()
+		fileUID := gjson.Get(photoResp.Body.String(), "Files.0.UID").String()
+		markerID := gjson.Get(photoResp.Body.String(), "Files.0.Markers.0.ID").String()
+
+		assert.NotEmpty(t, photoUID)
+		assert.NotEmpty(t, fileUID)
+		assert.NotEmpty(t, markerID)
+
+		u := fmt.Sprintf("/api/v1/photos/%s/files/%s/markers/%s/subject", photoUID, fileUID, markerID)
+
+		t.Logf("DELETE %s", u)
+
+		resp := PerformRequestWithBody(app, "DELETE", u, "")
+
+		assert.Equal(t, http.StatusOK, resp.Code)
 	})
 }

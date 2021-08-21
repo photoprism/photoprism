@@ -61,7 +61,7 @@ func (w *Faces) Match() (recognized, unknown int64, err error) {
 				}
 
 				// Too distant?
-				if d > (f.Radius + face.ClusterRadius) {
+				if d > (f.SampleRadius + face.ClusterRadius) {
 					continue
 				}
 
