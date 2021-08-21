@@ -22,8 +22,8 @@ else
     fi
     wget -O go.tgz $URL
     echo $CHECKSUM | sha256sum -c -
+    rm -rf /usr/local/go
     tar -C /usr/local -xzf go.tgz
     rm go.tgz
-    go version
-    mkdir -p "/go/src" "/go/bin" && chmod -R 777 "/go"
+    /usr/local/go/bin/go version
 fi

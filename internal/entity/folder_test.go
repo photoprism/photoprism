@@ -24,7 +24,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, false, folder.FolderWatch)
 		assert.Equal(t, 2020, folder.FolderYear)
 		assert.Equal(t, 5, folder.FolderMonth)
-		assert.Equal(t, "zz", folder.FolderCountry)
+		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 
 	t.Run("/2020/05/01/", func(t *testing.T) {
@@ -33,7 +33,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, "May 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
 		assert.Equal(t, 5, folder.FolderMonth)
-		assert.Equal(t, "zz", folder.FolderCountry)
+		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 
 	t.Run("/2020/05/23/", func(t *testing.T) {
@@ -42,7 +42,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, "May 23, 2020", folder.FolderTitle)
 		assert.Equal(t, 2020, folder.FolderYear)
 		assert.Equal(t, 5, folder.FolderMonth)
-		assert.Equal(t, "zz", folder.FolderCountry)
+		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 
 	t.Run("/2020/05/23/Iceland 2020", func(t *testing.T) {
@@ -69,7 +69,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, "Originals", folder.FolderTitle)
 		assert.Equal(t, 0, folder.FolderYear)
 		assert.Equal(t, 0, folder.FolderMonth)
-		assert.Equal(t, "zz", folder.FolderCountry)
+		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 
 	t.Run("root", func(t *testing.T) {
@@ -78,7 +78,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, "Originals", folder.FolderTitle)
 		assert.Equal(t, 0, folder.FolderYear)
 		assert.Equal(t, 0, folder.FolderMonth)
-		assert.Equal(t, "zz", folder.FolderCountry)
+		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 
 	t.Run("pathName equals root path", func(t *testing.T) {
@@ -99,7 +99,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 		t.Errorf("FolderTitle should be 'Originals'")
 	}
 
-	if folder.FolderCountry != "zz" {
+	if folder.FolderCountry != UnknownID {
 		t.Errorf("FolderCountry should be 'zz'")
 	}
 
@@ -113,7 +113,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 		t.Errorf("FolderTitle should be 'Originals'")
 	}
 
-	if found.FolderCountry != "zz" {
+	if found.FolderCountry != UnknownID {
 		t.Errorf("FolderCountry should be 'zz'")
 	}
 }

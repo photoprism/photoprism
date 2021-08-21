@@ -52,10 +52,10 @@ func TestNet(t *testing.T) {
 
 	var embeddings [11][]float32
 
-	faceNet := NewNet(modelPath, false)
+	faceNet := NewNet(modelPath, "testdata/cache", false)
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
-		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") {
+		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") || strings.Contains(fileName, "cache") {
 			return nil
 		}
 
@@ -74,7 +74,11 @@ func TestNet(t *testing.T) {
 				t.Logf("results: %#v", faces)
 
 				for i, f := range faces {
-					embeddings[faceindices[baseName][i]] = f.Embedding
+					if len(f.Embeddings) > 0 {
+						embeddings[faceindices[baseName][i]] = f.Embeddings[0]
+					} else {
+						embeddings[faceindices[baseName][i]] = nil
+					}
 				}
 			}
 

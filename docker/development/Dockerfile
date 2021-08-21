@@ -107,7 +107,9 @@ RUN umask 0000 && npm install --unsafe-perm=true --allow-root -g npm && npm conf
 
 
 # Install Go
-RUN /root/.local/bin/install-go.sh ${TARGETARCH}
+RUN /root/.local/bin/install-go.sh ${TARGETARCH} && \
+    mkdir -p "/go/src" "/go/bin" && \
+    chmod -R 777 "/go"
 
 # Download TensorFlow model and test files
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \

@@ -9,21 +9,23 @@ import (
 func TestNewMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var m = struct {
-			RefUID        string
-			RefSrc        string
-			MarkerSrc     string
 			MarkerType    string
-			MarkerScore   int
+			MarkerSrc     string
+			MarkerName    string
+			SubjectUID    string
+			SubjectSrc    string
+			FaceID        string
+			Score         int
 			MarkerInvalid bool
-			MarkerLabel   string
 		}{
-			RefUID:        "3h59wvth837b5vyiub35",
-			RefSrc:        "meta",
+			MarkerType:    "face",
 			MarkerSrc:     "image",
-			MarkerType:    "Face",
-			MarkerScore:   100,
+			MarkerName:    "Foo",
+			SubjectUID:    "3h59wvth837b5vyiub35",
+			SubjectSrc:    "meta",
+			FaceID:        "zz",
+			Score:         100,
 			MarkerInvalid: true,
-			MarkerLabel:   "Foo",
 		}
 
 		f, err := NewMarker(m)
@@ -32,12 +34,13 @@ func TestNewMarker(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "3h59wvth837b5vyiub35", f.RefUID)
-		assert.Equal(t, "meta", f.RefSrc)
+		assert.Equal(t, "face", f.MarkerType)
 		assert.Equal(t, "image", f.MarkerSrc)
-		assert.Equal(t, "Face", f.MarkerType)
-		assert.Equal(t, 100, f.MarkerScore)
+		assert.Equal(t, "Foo", f.MarkerName)
+		assert.Equal(t, "3h59wvth837b5vyiub35", f.SubjectUID)
+		assert.Equal(t, "zz", f.FaceID)
+		assert.Equal(t, "meta", f.SubjectSrc)
+		assert.Equal(t, 100, f.Score)
 		assert.Equal(t, true, f.MarkerInvalid)
-		assert.Equal(t, "Foo", f.MarkerLabel)
 	})
 }

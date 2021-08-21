@@ -28,9 +28,9 @@ type Country struct {
 
 // UnknownCountry is defined here to use it as a default
 var UnknownCountry = Country{
-	ID:          "zz",
-	CountryName: maps.CountryNames["zz"],
-	CountrySlug: "zz",
+	ID:          UnknownID,
+	CountryName: maps.CountryNames[UnknownID],
+	CountrySlug: UnknownID,
 }
 
 // CreateUnknownCountry is used to initialize the database with the default country

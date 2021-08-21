@@ -93,8 +93,6 @@ func Detect(fileName string) (faces Faces, err error) {
 		return faces, fmt.Errorf("faces: file '%s' not found", txt.Quote(filepath.Base(fileName)))
 	}
 
-	log.Infof("faces: analyzing %s", txt.Quote(filepath.Base(fileName)))
-
 	det, params, err := fd.Detect(fileName)
 
 	if err != nil {

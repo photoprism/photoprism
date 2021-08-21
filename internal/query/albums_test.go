@@ -34,7 +34,7 @@ func TestAlbumCoverByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "exampleFileName.jpg", file.FileName)
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", file.FileName)
 	})
 
 	t.Run("existing uid folder album", func(t *testing.T) {
@@ -44,7 +44,7 @@ func TestAlbumCoverByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "bridge2.jpg", file.FileName)
+		assert.Equal(t, "1990/04/bridge2.jpg", file.FileName)
 	})
 
 	t.Run("existing uid empty moment album", func(t *testing.T) {

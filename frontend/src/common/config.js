@@ -160,6 +160,9 @@ export default class Config {
       case "states":
         this.values.count.states += data.count;
         break;
+      case "people":
+        this.values.count.people += data.count;
+        break;
       case "places":
         this.values.count.places += data.count;
         break;

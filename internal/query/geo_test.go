@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,7 +18,7 @@ func TestGeo(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.LessOrEqual(t, 5, len(result))
+		assert.LessOrEqual(t, 4, len(result))
 	})
 
 	t.Run("search for bridge", func(t *testing.T) {
@@ -28,7 +30,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.LessOrEqual(t, 2, len(result))
+		assert.LessOrEqual(t, 1, len(result))
 
 	})
 
@@ -90,7 +92,7 @@ func TestGeo(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.LessOrEqual(t, 4, len(result))
+		assert.LessOrEqual(t, 3, len(result))
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("search for s2", func(t *testing.T) {
@@ -169,7 +171,7 @@ func TestGeo(t *testing.T) {
 			Year:     2010,
 			Month:    12,
 			Color:    "red",
-			Country:  "zz",
+			Country:  entity.UnknownID,
 			Type:     "jpg",
 			Video:    true,
 			Path:     "/xxx/xxx/",

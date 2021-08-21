@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -20,6 +21,47 @@ func TestFindUserByName(t *testing.T) {
 		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "admin", m.UserName)
 		assert.Equal(t, "Admin", m.FullName)
+		assert.True(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("alice", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 5, m.ID)
+		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
+		assert.Equal(t, "alice", m.UserName)
+		assert.Equal(t, "Alice", m.FullName)
+		assert.Equal(t, "alice@example.com", m.PrimaryEmail)
+		assert.True(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("bob", func(t *testing.T) {
+		m := FindUserByName("bob")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 7, m.ID)
+		assert.Equal(t, "uqxc08w3d0ej2283", m.UserUID)
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Bob", m.FullName)
+		assert.Equal(t, "bob@example.com", m.PrimaryEmail)
+		assert.False(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
@@ -53,7 +95,10 @@ func TestUser_InvalidPassword(t *testing.T) {
 	})
 	t.Run("no password existing", func(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
-		p.Save()
+		err := p.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
 		assert.True(t, p.InvalidPassword("abcdef"))
 
 	})
@@ -139,6 +184,61 @@ func TestFindUserByUID(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
+
+	t.Run("alice", func(t *testing.T) {
+		m := FindUserByUID("uqxetse3cy5eo9z2")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 5, m.ID)
+		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
+		assert.Equal(t, "alice", m.UserName)
+		assert.Equal(t, "Alice", m.FullName)
+		assert.Equal(t, "alice@example.com", m.PrimaryEmail)
+		assert.True(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
+	t.Run("bob", func(t *testing.T) {
+		m := FindUserByUID("uqxc08w3d0ej2283")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 7, m.ID)
+		assert.Equal(t, "uqxc08w3d0ej2283", m.UserUID)
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Bob", m.FullName)
+		assert.Equal(t, "bob@example.com", m.PrimaryEmail)
+		assert.False(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.False(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+	t.Run("friend", func(t *testing.T) {
+		m := FindUserByUID("uqxqg7i1kperxvu7")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 8, m.ID)
+		assert.Equal(t, "uqxqg7i1kperxvu7", m.UserUID)
+		assert.False(t, m.RoleAdmin)
+		assert.False(t, m.RoleGuest)
+		assert.True(t, m.RoleFriend)
+		assert.True(t, m.UserDisabled)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+
 }
 
 func TestUser_String(t *testing.T) {
@@ -220,8 +320,15 @@ func TestUser_InitPassword(t *testing.T) {
 	})
 	t.Run("already existing", func(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
-		p.Save()
-		p.SetPassword("hutfdt")
+
+		if err := p.Save(); err != nil {
+			t.Logf("can't user %s: ", err)
+		}
+
+		if err := p.SetPassword("hutfdt"); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.NotNil(t, FindPassword("u000000000000010"))
 		p.InitPassword("hutfdt")
 		m := FindPassword("u000000000000010")
@@ -268,5 +375,103 @@ func TestUser_Role(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
 		assert.Equal(t, acl.Role("*"), p.Role())
+	})
+}
+
+func TestUser_Validate(t *testing.T) {
+	t.Run("valid", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "validate",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Nil(t, err)
+	})
+	t.Run("username empty", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+	t.Run("username too short", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "val",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+	t.Run("username not unique", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID: 1,
+			UserName:  "notunique1",
+		})
+		ures := &User{
+			AddressID:    1,
+			UserName:     "notunique1",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique1@example.com",
+		}
+		assert.Error(t, ures.Validate())
+	})
+	t.Run("email not unique", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID:    1,
+			PrimaryEmail: "notunique2@example.com",
+		})
+		ures := &User{
+			AddressID:    1,
+			UserName:     "notunique2",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique2@example.com",
+		}
+		assert.Error(t, ures.Validate())
+	})
+	t.Run("update user - email not unique", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID:    1,
+			UserName:     "notunique3",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique3@example.com",
+		})
+		u := FirstOrCreateUser(&User{
+			AddressID:    1,
+			UserName:     "notunique30",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique3@example.com",
+		})
+		u.UserName = "notunique3"
+		assert.Error(t, u.Validate())
+	})
+}
+
+func TestCreateWithPassword(t *testing.T) {
+	t.Run("password too short", func(t *testing.T) {
+		u := form.UserCreate{
+			UserName: "thomas1",
+			FullName: "Thomas One",
+			Email:    "thomas1@example.com",
+			Password: "hel",
+		}
+		err := CreateWithPassword(u)
+		assert.Error(t, err)
+	})
+	t.Run("valid", func(t *testing.T) {
+		u := form.UserCreate{
+			UserName: "thomas2",
+			FullName: "Thomas Two",
+			Email:    "thomas2@example.com",
+			Password: "helloworld",
+		}
+		err := CreateWithPassword(u)
+		assert.Nil(t, err)
 	})
 }

@@ -1,0 +1,199 @@
+version: '3.5'
+
+#  PhotoPrism for Cloud Servers running Ubuntu 20.04 LTS (Focal Fossa)
+#  ===================================================================
+#
+#  Run this script as root to install PhotoPrism on a cloud server e.g. at DigitalOcean:
+#
+#    bash <(curl -s https://dl.photoprism.org/docker/cloud/setup.sh)
+#
+#  This may take a while to complete, depending on the performance of your
+#  server and its internet connection.
+#
+#  When done - and you see no errors - please open
+#
+#    https://<YOUR SERVER IP>/
+#
+#  in a Web browser and log in using the initial admin password shown
+#  by the script. You may also see the initial password by running
+#
+#    cat /root/.initial-password.txt
+#
+#  as root on your server. To open a terminal:
+#
+#    ssh root@<YOUR SERVER IP>
+#
+#  Data and all config files related to PhotoPrism can be found in
+#
+#    /opt/photoprism
+#
+#  The main docker-compose config file for changing config options is
+#
+#    /opt/photoprism/docker-compose.yml
+#
+#  The server is running as "photoprism" (UID 1000) by default. There's no need
+#  to change defaults unless you experience conflicts with other services running
+#  on the same server. For example, you may need to disable the Traefik reverse
+#  proxy as the ports 80 and 443 can only be used by a single web server / proxy.
+#
+#  Configuring multiple apps on the same server is beyond the scope of this base
+#  config and for advanced users only.
+#
+#  This config includes Ophelia, a docker job scheduler:
+#
+#    https://github.com/mcuadros/ofelia
+#
+#  See jobs.ini for details.
+#
+#  SYSTEM REQUIREMENTS
+#  -------------------------------------------------------------------------
+#
+#  We recommend hosting PhotoPrism on a server with at least 2 cores and
+#  4 GB of memory. Beyond these minimum requirements, the amount of RAM
+#  should match the number of cores. Indexing large photo and video
+#  collections significantly benefits from fast, local SSD storage.
+#
+#  RAW file conversion and automatic image classification using TensorFlow
+#  will be disabled on servers with less than 2 GB of physical memory.
+#
+#  DOCKER COMPOSE COMMAND REFERENCE
+#  -------------------------------------------------------------------------
+#  Start    | docker-compose up -d
+#  Stop     | docker-compose stop
+#  Update   | docker-compose pull
+#  Logs     | docker-compose logs --tail=25 -f
+#  Terminal | docker-compose exec photoprism bash
+#  Help     | docker-compose exec photoprism photoprism help
+#  Config   | docker-compose exec photoprism photoprism config
+#  Reset    | docker-compose exec photoprism photoprism reset
+#  Backup   | docker-compose exec photoprism photoprism backup -a -i
+#  Restore  | docker-compose exec photoprism photoprism restore -a -i
+#  Index    | docker-compose exec photoprism photoprism index
+#  Reindex  | docker-compose exec photoprism photoprism index -a
+#  Import   | docker-compose exec photoprism photoprism import
+#
+#  USING LET'S ENCRYPT HTTPS
+#  -------------------------------------------------------------------------
+#
+#  If your server has a public domain name, please disable the self-signed
+#  certificate and enable domain based routing in docker-compose.yml and
+#  traefik.yaml (see inline instructions in !! UPPERCASE !!):
+#
+#    ssh root@<YOUR SERVER IP>
+#    cd /opt/photoprism
+#    nano docker-compose.yml
+#    nano traefik.yaml
+#    docker-compose stop
+#    docker-compose up -d
+#
+#  You should now be able to access your instance without security warnings.
+#  -------------------------------------------------------------------------
+
+services:
+  photoprism:
+    # Use photoprism/photoprism:preview instead for testing preview builds:
+    image: photoprism/photoprism:latest
+    container_name: photoprism
+    restart: always
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    # Don't expose port when running behind Traefik reverse proxy!
+    # ports:
+    #  - "2342:2342" # [local port]:[container port]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
+      - "traefik.http.routers.photoprism.tls=true"
+      - "traefik.http.routers.photoprism.entrypoints=websecure"
+      # !! REMOVE default route if your server has a public domain name !!
+      - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
+      # !! UNCOMMENT and CHANGE to set the public domain name !!
+      # - "traefik.http.routers.photoprism.rule=Host(`photos.yourdomain.com`)"
+      # !! UNCOMMENT to enable Let's Encrypt HTTPS !!
+      # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
+      # !! REMOVE both for Let's Encrypt HTTPS with default HTTP challenge (DNS challenge supports wildcards) !!
+      - "traefik.http.routers.photoprism.tls.domains[0].main=example.com"
+      - "traefik.http.routers.photoprism.tls.domains[0].sans=*.example.com"
+    environment:
+      # !! CHANGE site url if your server has a public domain name e.g. "https://photos.yourdomain.com/" !!
+      PHOTOPRISM_SITE_URL: "https://_public_ip_/"
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
+      PHOTOPRISM_SITE_DESCRIPTION: ""
+      PHOTOPRISM_SITE_AUTHOR: ""
+      PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # PLEASE CHANGE: Your initial admin password (min 4 characters)
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000                 # File size limit for originals in MB (increase for high-res video)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # Improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_DEBUG: "false"                        # Run in debug mode (shows additional log messages)
+      PHOTOPRISM_PUBLIC: "false"                       # No authentication required (disables password protection)
+      PHOTOPRISM_READONLY: "false"                     # Don't modify originals directory (reduced functionality)
+      PHOTOPRISM_EXPERIMENTAL: "false"                 # Enables experimental features
+      PHOTOPRISM_DISABLE_WEBDAV: "false"               # Disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"             # Disables Settings in Web UI
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"           # Disables using TensorFlow for image classification
+      PHOTOPRISM_DARKTABLE_PRESETS: "false"            # Enables Darktable presets and disables concurrent RAW conversion
+      PHOTOPRISM_DETECT_NSFW: "false"                  # Flag photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "true"                   # Allow uploads that MAY be offensive
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"              # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"       # MariaDB database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB database user password
+    user: "1000"
+    volumes:
+      # Your photo and video files ([local path]:[container path]):
+      - "./originals:/photoprism/originals"
+      - "./import:/photoprism/import"
+      - "./storage:/photoprism/storage"
+      - "./backup:/var/lib/photoprism"
+
+  traefik:
+    image: traefik:v2.4
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - "80"
+      - "443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik/:/data/"
+      - "./traefik.yaml:/etc/traefik/traefik.yaml"
+      - "./certs/:/certs/"
+
+  mariadb:
+    image: mariadb:10.5
+    container_name: mariadb
+    restart: always
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+    volumes: # Don't remove permanent storage for index database files!
+      - "./database:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "_admin_password_"
+      MYSQL_DATABASE: "photoprism"
+      MYSQL_USER: "photoprism"
+      MYSQL_PASSWORD: "_admin_password_"
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    restart: always
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./jobs.ini:/etc/ofelia/config.ini"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_POLL_INTERVAL: 86400 # Checks for updates every day
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"

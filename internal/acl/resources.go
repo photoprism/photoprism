@@ -20,7 +20,7 @@ const (
 	ResourceLinks         Resource = "links"
 	ResourceGeo           Resource = "geo"
 	ResourcePasswords     Resource = "passwords"
-	ResourcePeople        Resource = "people"
+	ResourceUsers         Resource = "users"
 	ResourcePhotos        Resource = "photos"
 	ResourcePlaces        Resource = "places"
 	ResourceFeedback      Resource = "feedback"

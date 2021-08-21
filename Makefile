@@ -1,4 +1,6 @@
-.PHONY: build dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test install fmt upgrade start stop;
+.PHONY: all build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js \
+		test test-js test-go install generate fmt fmt-go fmt-js upgrade start stop \
+		terminal root-terminal packer-digitalocean acceptance clean tidy;
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
 .NOTPARALLEL: ;          # wait for target to finish
@@ -27,13 +29,25 @@ test: test-js test-go
 test-go: reset-test-db run-test-go
 test-api: reset-test-db run-test-api
 test-short: reset-test-db run-test-short
-acceptance-run-chromium: acceptance-restart acceptance acceptance-stop
-acceptance-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
+acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
+acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
+acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
+acceptance-public-run-firefox: acceptance-restart acceptance-firefox acceptance-stop
+acceptance-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop acceptance-restart acceptance acceptance-stop
+acceptance-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
-fmt: fmt-js fmt-go fmt-imports
+fmt: fmt-js fmt-go
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
+dev: dev-npm dev-go-amd64
+dev-npm:
+	$(info Upgrading NPM in local dev environment...)
+	sudo npm update -g npm
+dev-go-amd64:
+	$(info Installing Go in local AMD64 dev environment...)
+	sudo docker/scripts/install-go.sh amd64
+	go build -v ./...
 acceptance-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
@@ -47,6 +61,12 @@ acceptance-restart:
 	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
 acceptance-stop:
 	go run cmd/photoprism/photoprism.go --public --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
+acceptance-private-restart:
+	cp -f storage/acceptance/backup.db storage/acceptance/index.db
+	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
+	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups start -d
+acceptance-private-stop:
+	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver sqlite --database-dsn ./storage/acceptance/index.db --import-path ./storage/acceptance/import --http-port=2343 --config-path ./storage/acceptance/config --originals-path ./storage/acceptance/originals --storage-path ./storage/acceptance --test --backup-path ./storage/acceptance/backup --disable-backups stop
 start:
 	go run cmd/photoprism/photoprism.go start -d
 stop:
@@ -126,6 +146,12 @@ acceptance:
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run acceptance-firefox && cd ..)
+acceptance-private:
+	$(info Running JS acceptance-private tests in Chrome...)
+	(cd frontend &&	npm run acceptance-private && cd ..)
+acceptance-private-firefox:
+	$(info Running JS acceptance-private tests in Firefox...)
+	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
 reset-photoprism-db:
 	$(info Purging photoprism database...)
 	mysql < scripts/reset-photoprism-db.sql
@@ -193,13 +219,15 @@ docker-webdav:
 	docker pull --platform=arm64 golang:1
 	docker pull --platform=arm golang:1
 	scripts/docker-buildx.sh webdav linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+packer-digitalocean:
+	$(info Buildinng DigitalOcean marketplace image...)
+	(cd ./docker/examples/cloud && packer build digitalocean.json)
 lint-js:
 	(cd frontend &&	npm run lint)
 fmt-js:
 	(cd frontend &&	npm run fmt)
-fmt-imports:
-	goimports -w pkg internal cmd
 fmt-go:
 	go fmt ./pkg/... ./internal/... ./cmd/...
+	goimports -w pkg internal cmd
 tidy:
 	go mod tidy

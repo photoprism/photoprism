@@ -9,10 +9,10 @@ import (
 	"github.com/urfave/cli"
 )
 
-// MomentsCommand registers the index cli command.
+// MomentsCommand registers the moments cli command.
 var MomentsCommand = cli.Command{
 	Name:   "moments",
-	Usage:  "Creates albums based on popular locations, dates and labels",
+	Usage:  "Creates albums based on popular locations, dates, and labels",
 	Action: momentsAction,
 }
 
@@ -36,9 +36,9 @@ func momentsAction(ctx *cli.Context) error {
 		log.Infof("moments: read-only mode enabled")
 	}
 
-	moments := service.Moments()
+	w := service.Moments()
 
-	if err := moments.Start(); err != nil {
+	if err := w.Start(); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

@@ -94,7 +94,7 @@ func (m *Label) Deleted() bool {
 	return m.DeletedAt != nil
 }
 
-// Delete removes the label from the database.
+// Restore restores the label in the database.
 func (m *Label) Restore() error {
 	if m.Deleted() {
 		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
@@ -103,7 +103,7 @@ func (m *Label) Restore() error {
 	return nil
 }
 
-// Updates a label property in the database.
+// Update a label property in the database.
 func (m *Label) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
@@ -164,7 +164,7 @@ func (m *Label) SetName(name string) {
 	m.CustomSlug = slug.Make(txt.Clip(name, txt.ClipSlug))
 }
 
-// Updates a label if necessary
+// UpdateClassify updates a label if necessary
 func (m *Label) UpdateClassify(label classify.Label) error {
 	save := false
 	db := Db()

@@ -125,7 +125,7 @@ func resetAction(ctx *cli.Context) error {
 
 			log.Infof("removed files in %s", time.Since(start))
 		} else {
-			log.Infof("no backup files found")
+			log.Infof("no metadata backups found for removal")
 		}
 	} else {
 		log.Infof("keeping backup files")
@@ -160,7 +160,7 @@ func resetAction(ctx *cli.Context) error {
 
 			log.Infof("removed files in %s", time.Since(start))
 		} else {
-			log.Infof("no backup files found")
+			log.Infof("no album backups found for removal")
 		}
 	} else {
 		log.Infof("keeping backup files")

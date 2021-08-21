@@ -12,8 +12,9 @@ import (
 
 func TestGetAccounts(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
-		app, router, _, sess := NewAdminApiTest()
+		app, router, _ := NewApiTest()
 		GetAccounts(router)
+		sess := AuthenticateAdmin(app, router)
 		r := AuthenticatedRequest(app, "GET", "/api/v1/accounts?count=10", sess)
 		val := gjson.Get(r.Body.String(), "#(AccName=\"Test Account\").AccURL")
 		count := gjson.Get(r.Body.String(), "#")

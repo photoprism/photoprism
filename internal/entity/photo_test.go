@@ -185,7 +185,7 @@ func TestPhoto_PreloadMany(t *testing.T) {
 
 func TestPhoto_UnknownLocation(t *testing.T) {
 	t.Run("no_location", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.UnknownLocation())
 	})
 
@@ -208,7 +208,7 @@ func TestPhoto_UnknownLocation(t *testing.T) {
 
 func TestPhoto_HasLocation(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.False(t, m.HasLocation())
 	})
 	t.Run("true", func(t *testing.T) {
@@ -241,7 +241,7 @@ func TestPhoto_NoLatLng(t *testing.T) {
 
 func TestPhoto_NoPlace(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.UnknownPlace())
 	})
 	t.Run("false", func(t *testing.T) {
@@ -252,7 +252,7 @@ func TestPhoto_NoPlace(t *testing.T) {
 
 func TestPhoto_HasPlace(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo01")
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.False(t, m.HasPlace())
 	})
 	t.Run("true", func(t *testing.T) {
@@ -452,16 +452,27 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		}
 		assert.Equal(t, "shortcity / Germany / 2016", m.PhotoTitle)
 	})
-	t.Run("no location", func(t *testing.T) {
+	t.Run("no location original name", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
+		assert.Equal(t, "Lake / 2790", m.PhotoTitle)
+		err := m.UpdateTitle(*classifyLabels)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "Examplefilenameoriginal", m.PhotoTitle)
+	})
+	t.Run("no location", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
 		classifyLabels := &classify.Labels{{Name: "classify", Uncertainty: 30, Source: SrcManual, Priority: 5, Categories: []string{"flower", "plant"}}}
 		assert.Equal(t, "", m.PhotoTitle)
 		err := m.UpdateTitle(*classifyLabels)
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Classify / 2008", m.PhotoTitle)
+		assert.Equal(t, "Classify / Germany / 2006", m.PhotoTitle)
 	})
+
 	t.Run("no location no labels", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo02")
 		classifyLabels := &classify.Labels{}
@@ -470,7 +481,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Unknown / 2008", m.PhotoTitle)
+		assert.Equal(t, "Bridge / 1990", m.PhotoTitle)
 	})
 	t.Run("no location no labels no takenAt", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo20")
@@ -521,7 +532,7 @@ func TestPhoto_SetTitle(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "TitleToBeSet", m.PhotoTitle)
-		m.SetTitle("NewTitleSet", SrcLocation)
+		m.SetTitle("NewTitleSet", SrcName)
 		assert.Equal(t, "NewTitleSet", m.PhotoTitle)
 	})
 }
@@ -542,7 +553,7 @@ func TestPhoto_SetDescription(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
-		m.SetDescription("new photo description", SrcManual)
+		m.SetDescription("new photo description", SrcMeta)
 		assert.Equal(t, "new photo description", m.PhotoDescription)
 	})
 }
@@ -757,52 +768,51 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 func TestPhoto_SetCoordinates(t *testing.T) {
 	t.Run("empty coordinates", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
 
 		m.SetCoordinates(0, 0, 5, SrcManual)
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
 	})
 	t.Run("same source new values", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
 
-		m.SetCoordinates(5.555, 5.555, 5, SrcLocation)
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		m.SetCoordinates(5.555, 5.555, 5, SrcMeta)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(5.555), m.PhotoLat)
 		assert.Equal(t, float32(5.555), m.PhotoLng)
 		assert.Equal(t, 5, m.PhotoAltitude)
 	})
 	t.Run("different source lower priority", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
 
 		m.SetCoordinates(5.555, 5.555, 5, SrcName)
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
 	})
 	t.Run("different source equal priority", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
 
-		m.SetCoordinates(5.555, 5.555, 5, SrcImage)
+		m.SetCoordinates(5.555, 5.555, 5, SrcKeyword)
 		assert.Equal(t, float32(5.555), m.PhotoLat)
 		assert.Equal(t, float32(5.555), m.PhotoLng)
 		assert.Equal(t, 5, m.PhotoAltitude)
@@ -822,7 +832,7 @@ func TestPhoto_SetCoordinates(t *testing.T) {
 	})
 	t.Run("different source highest priority (manual)", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcLocation, m.PlaceSrc)
+		assert.Equal(t, SrcMeta, m.PlaceSrc)
 		assert.Equal(t, float32(1.234), m.PhotoLat)
 		assert.Equal(t, float32(4.321), m.PhotoLng)
 		assert.Equal(t, 3, m.PhotoAltitude)
@@ -1222,7 +1232,7 @@ func TestPhoto_UpdateDateFields(t *testing.T) {
 	t.Run("set to unknown", func(t *testing.T) {
 		photo := &Photo{TakenAt: time.Date(1900, 11, 11, 9, 7, 18, 0, time.UTC), TakenSrc: SrcAuto, CreatedAt: time.Date(1900, 11, 11, 5, 7, 18, 0, time.UTC)}
 		photo.UpdateDateFields()
-		assert.Equal(t, YearUnknown, photo.PhotoYear)
+		assert.Equal(t, UnknownYear, photo.PhotoYear)
 	})
 }
 

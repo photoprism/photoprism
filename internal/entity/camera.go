@@ -28,7 +28,7 @@ type Camera struct {
 }
 
 var UnknownCamera = Camera{
-	CameraSlug:  "zz",
+	CameraSlug:  UnknownID,
 	CameraName:  "Unknown",
 	CameraMake:  "",
 	CameraModel: "Unknown",

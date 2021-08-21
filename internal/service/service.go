@@ -25,6 +25,7 @@ var services struct {
 	Import      *photoprism.Import
 	Index       *photoprism.Index
 	Moments     *photoprism.Moments
+	Faces       *photoprism.Faces
 	Purge       *photoprism.Purge
 	CleanUp     *photoprism.CleanUp
 	Nsfw        *nsfw.Detector

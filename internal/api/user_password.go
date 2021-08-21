@@ -21,7 +21,7 @@ func ChangePassword(router *gin.RouterGroup) {
 			return
 		}
 
-		s := Auth(SessionID(c), acl.ResourcePeople, acl.ActionUpdateSelf)
+		s := Auth(SessionID(c), acl.ResourceUsers, acl.ActionUpdateSelf)
 
 		if s.Invalid() {
 			AbortUnauthorized(c)
@@ -30,6 +30,11 @@ func ChangePassword(router *gin.RouterGroup) {
 
 		uid := c.Param("uid")
 		m := entity.FindUserByUID(uid)
+
+		if s.User.UserUID != m.UserUID {
+			AbortUnauthorized(c)
+			return
+		}
 
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)

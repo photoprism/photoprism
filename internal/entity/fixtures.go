@@ -24,5 +24,9 @@ func CreateTestFixtures() {
 	CreateFileShareFixtures()
 	CreateFileSyncFixtures()
 	CreateLensFixtures()
+	CreateSubjectFixtures()
 	CreateMarkerFixtures()
+	CreateFaceFixtures()
+	CreateUserFixtures()
+	CreatePasswordFixtures()
 }

@@ -59,7 +59,7 @@ func TestUpdateLocation(t *testing.T) {
 	t.Run("estimate", func(t *testing.T) {
 		m := Photo{
 			PhotoName:    "test_photo_2",
-			PhotoCountry: "zz",
+			PhotoCountry: UnknownID,
 			PhotoLat:     0.0,
 			PhotoLng:     0.0,
 			PlaceID:      "s2:85d1ea7d3278",
@@ -96,7 +96,7 @@ func TestUpdateLocation(t *testing.T) {
 		assert.Equal(t, "de", m.PhotoCountry)
 		assert.Equal(t, float32(0.0), m.PhotoLat)
 		assert.Equal(t, float32(0.0), m.PhotoLng)
-		assert.Equal(t, "zz", m.PlaceID)
+		assert.Equal(t, UnknownID, m.PlaceID)
 		assert.Equal(t, SrcManual, m.PlaceSrc)
 	})
 }

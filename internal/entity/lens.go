@@ -28,7 +28,7 @@ type Lens struct {
 }
 
 var UnknownLens = Lens{
-	LensSlug:  "zz",
+	LensSlug:  UnknownID,
 	LensName:  "Unknown",
 	LensMake:  "",
 	LensModel: "Unknown",
@@ -39,7 +39,7 @@ func CreateUnknownLens() {
 	FirstOrCreateLens(&UnknownLens)
 }
 
-// TableName returns Lens table identifier "lens"
+// TableName returns the entity database table name.
 func (Lens) TableName() string {
 	return "lenses"
 }

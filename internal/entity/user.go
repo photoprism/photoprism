@@ -1,8 +1,12 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
+	"net/mail"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/acl"
@@ -72,12 +76,12 @@ type User struct {
 	DeletedAt      *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
-// TableName the database table name.
+// TableName returns the entity database table name.
 func (User) TableName() string {
 	return "users"
 }
 
-// Default admin user.
+// Admin is the default admin user.
 var Admin = User{
 	ID:           1,
 	AddressID:    1,
@@ -87,7 +91,7 @@ var Admin = User{
 	UserDisabled: false,
 }
 
-// Anonymous, public user without own account.
+// UnknownUser is an anonymous, public user without own account.
 var UnknownUser = User{
 	ID:           -1,
 	AddressID:    1,
@@ -99,7 +103,7 @@ var UnknownUser = User{
 	UserDisabled: true,
 }
 
-// Guest user without own account for link sharing.
+// Guest is a user without own account e.g. for link sharing.
 var Guest = User{
 	ID:           -2,
 	AddressID:    1,
@@ -126,23 +130,23 @@ func CreateDefaultUsers() {
 	}
 }
 
-// Create inserts a new row to the database.
+// Create new entity in the database.
 func (m *User) Create() error {
 	return Db().Create(m).Error
 }
 
-// Saves the new row to the database.
+// Save entity properties.
 func (m *User) Save() error {
 	return Db().Save(m).Error
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *User) BeforeCreate(scope *gorm.Scope) error {
+func (m *User) BeforeCreate(tx *gorm.DB) error {
 	if rnd.IsUID(m.UserUID, 'u') {
 		return nil
 	}
-
-	return scope.SetColumn("UserUID", rnd.PPID('u'))
+	m.UserUID = rnd.PPID('u')
+	return nil
 }
 
 // FirstOrCreateUser returns an existing row, inserts a new row or nil in case of errors.
@@ -191,6 +195,20 @@ func FindUserByUID(uid string) *User {
 	}
 }
 
+// Delete marks the entity as deleted.
+func (m *User) Delete() error {
+	if m.ID <= 1 {
+		return fmt.Errorf("can't delete system user")
+	}
+
+	return Db().Delete(m).Error
+}
+
+// Deleted tests if the entity is marked as deleted.
+func (m *User) Deleted() bool {
+	return m.DeletedAt != nil
+}
+
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
 	if m.UserName != "" {
@@ -204,7 +222,7 @@ func (m *User) String() string {
 	return m.UserUID
 }
 
-// User returns true if the user has a user name.
+// Registered tests if the user is registered e.g. has a username.
 func (m *User) Registered() bool {
 	return m.UserName != "" && rnd.IsPPID(m.UserUID, 'u')
 }
@@ -320,4 +338,66 @@ func (m *User) Role() acl.Role {
 	}
 
 	return acl.RoleDefault
+}
+
+// Validate Makes sure username and email are unique and meet requirements. Returns error if any property is invalid
+func (m *User) Validate() error {
+	if m.UserName == "" {
+		return errors.New("username must not be empty")
+	}
+	if len(m.UserName) < 4 {
+		return errors.New("username must be at least 4 characters")
+	}
+	var err error
+	var resultName = User{}
+	if err = Db().Where("user_name = ? AND id <> ?", m.UserName, m.ID).First(&resultName).Error; err == nil {
+		return errors.New("username already exists")
+	} else if err != gorm.ErrRecordNotFound {
+		return err
+	}
+	// stop here if no email is provided
+	if m.PrimaryEmail == "" {
+		return nil
+	}
+	// validate email address
+	if a, err := mail.ParseAddress(m.PrimaryEmail); err != nil {
+		return err
+	} else {
+		m.PrimaryEmail = a.Address // make sure email address will be used without name
+	}
+	var resultMail = User{}
+	if err = Db().Where("primary_email = ? AND id <> ?", m.PrimaryEmail, m.ID).First(&resultMail).Error; err == nil {
+		return errors.New("email already exists")
+	} else if err != gorm.ErrRecordNotFound {
+		return err
+	}
+
+	return nil
+}
+
+// CreateWithPassword Creates User with Password in db transaction.
+func CreateWithPassword(uc form.UserCreate) error {
+	u := &User{
+		FullName:     uc.FullName,
+		UserName:     uc.UserName,
+		PrimaryEmail: uc.Email,
+	}
+	if len(uc.Password) < 4 {
+		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(u.UserName))
+	}
+	err := u.Validate()
+	if err != nil {
+		return err
+	}
+	return Db().Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(u).Error; err != nil {
+			return err
+		}
+		pw := NewPassword(u.UserUID, uc.Password)
+		if err := tx.Create(&pw).Error; err != nil {
+			return err
+		}
+		log.Infof("created user %v with uid %v", txt.Quote(u.UserName), txt.Quote(u.UserUID))
+		return nil
+	})
 }

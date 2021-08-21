@@ -1,0 +1,270 @@
+package commands
+
+import (
+	"bufio"
+	"context"
+	"errors"
+	"fmt"
+	"os"
+	"strings"
+
+	"github.com/manifoldco/promptui"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/urfave/cli"
+)
+
+// UsersCommand registers user management commands.
+var UsersCommand = cli.Command{
+	Name:  "users",
+	Usage: "User management sub-commands",
+	Subcommands: []cli.Command{
+		{
+			Name:   "list",
+			Usage:  "lists registered users",
+			Action: usersListAction,
+		},
+		{
+			Name:   "add",
+			Usage:  "adds a new user",
+			Action: usersAddAction,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "fullname, n",
+					Usage: "full name of the new user",
+				},
+				cli.StringFlag{
+					Name:  "username, u",
+					Usage: "unique username",
+				},
+				cli.StringFlag{
+					Name:  "password, p",
+					Usage: "sets the users password",
+				},
+				cli.StringFlag{
+					Name:  "email, m",
+					Usage: "sets the users email",
+				},
+			},
+		},
+		{
+			Name:   "update",
+			Usage:  "updates user information",
+			Action: usersModifyAction,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "fullname, n",
+					Usage: "full name of the new user",
+				},
+				//cli.StringFlag{
+				//	Name:  "username, u",
+				//	Usage: "unique username",
+				//},
+				cli.StringFlag{
+					Name:  "password, p",
+					Usage: "sets the users password",
+				},
+				cli.StringFlag{
+					Name:  "email, m",
+					Usage: "sets the users email",
+				},
+			},
+		},
+		{
+			Name:      "delete",
+			Usage:     "deletes an existing user",
+			Action:    usersDeleteAction,
+			ArgsUsage: "[username]",
+		},
+	},
+}
+
+func usersAddAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
+
+		uc := form.UserCreate{
+			UserName: strings.TrimSpace(ctx.String("username")),
+			FullName: strings.TrimSpace(ctx.String("fullname")),
+			Email:    strings.TrimSpace(ctx.String("email")),
+			Password: strings.TrimSpace(ctx.String("password")),
+		}
+
+		interactive := true
+
+		if uc.UserName != "" && uc.Password != "" {
+			log.Debugf("creating user in non-interactive mode")
+			interactive = false
+		}
+
+		if interactive && uc.FullName == "" {
+			fmt.Printf("please enter full name: ")
+			reader := bufio.NewReader(os.Stdin)
+			text, err := reader.ReadString('\n')
+			if err != nil {
+				return err
+			}
+			uc.FullName = strings.TrimSpace(text)
+		}
+
+		if interactive && uc.UserName == "" {
+			fmt.Printf("please enter a username: ")
+			reader := bufio.NewReader(os.Stdin)
+			text, err := reader.ReadString('\n')
+			if err != nil {
+				return err
+			}
+			uc.UserName = strings.TrimSpace(text)
+		}
+
+		if interactive && uc.Email == "" {
+			fmt.Printf("please enter email: ")
+			reader := bufio.NewReader(os.Stdin)
+			text, err := reader.ReadString('\n')
+			if err != nil {
+				return err
+			}
+			uc.Email = strings.TrimSpace(text)
+		}
+
+		if interactive && len(ctx.String("password")) < 4 {
+			for {
+				fmt.Printf("please enter a new password for %s (at least 4 characters)\n", txt.Quote(uc.UserName))
+				pw := getPassword("New password: ")
+				if confirm := getPassword("Confirm password: "); confirm == pw {
+					uc.Password = pw
+					break
+				} else {
+					log.Infof("passwords did not match or too short. please try again\n")
+				}
+			}
+		}
+
+		if err := entity.CreateWithPassword(uc); err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func usersDeleteAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
+		userName := strings.TrimSpace(ctx.Args().First())
+
+		if userName == "" {
+			return errors.New("please provide a username")
+		}
+
+		actionPrompt := promptui.Prompt{
+			Label:     fmt.Sprintf("Delete %s?", txt.Quote(userName)),
+			IsConfirm: true,
+		}
+
+		if _, err := actionPrompt.Run(); err == nil {
+			if m := entity.FindUserByName(userName); m == nil {
+				return errors.New("user not found")
+			} else if err := m.Delete(); err != nil {
+				return err
+			} else {
+				log.Infof("%s deleted", txt.Quote(userName))
+			}
+		} else {
+			log.Infof("keeping user")
+		}
+
+		return nil
+	})
+}
+
+func usersListAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
+		users := query.RegisteredUsers()
+		log.Infof("found %d users", len(users))
+
+		fmt.Printf("%-4s %-16s %-16s %-16s\n", "ID", "LOGIN", "NAME", "EMAIL")
+
+		for _, user := range users {
+			fmt.Printf("%-4d %-16s %-16s %-16s", user.ID, user.UserName, user.FullName, user.PrimaryEmail)
+			fmt.Printf("\n")
+		}
+
+		return nil
+	})
+}
+
+func usersModifyAction(ctx *cli.Context) error {
+	return callWithDependencies(ctx, func(conf *config.Config) error {
+		username := ctx.Args().First()
+		if username == "" {
+			return errors.New("pass username as argument")
+		}
+
+		u := entity.FindUserByName(username)
+		if u == nil {
+			return errors.New("user not found")
+		}
+
+		uc := form.UserCreate{
+			//UserName: strings.TrimSpace(ctx.String("username")),
+			FullName: strings.TrimSpace(ctx.String("fullname")),
+			Email:    strings.TrimSpace(ctx.String("email")),
+			Password: strings.TrimSpace(ctx.String("password")),
+		}
+
+		if ctx.IsSet("password") {
+			err := u.SetPassword(uc.Password)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("password successfully changed: %v\n", u.UserName)
+		}
+
+		//if ctx.IsSet("username") {
+		//	u.UserName = uc.UserName
+		//}
+
+		if ctx.IsSet("fullname") {
+			u.FullName = uc.FullName
+		}
+
+		if ctx.IsSet("email") && len(uc.Email) > 0 {
+			u.PrimaryEmail = uc.Email
+		}
+
+		if err := u.Validate(); err != nil {
+			return err
+		}
+
+		if err := u.Save(); err != nil {
+			return err
+		}
+
+		fmt.Printf("user successfully updated: %v\n", u.UserName)
+
+		return nil
+	})
+}
+
+func callWithDependencies(ctx *cli.Context, f func(conf *config.Config) error) error {
+	conf := config.NewConfig(ctx)
+
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := conf.Init(); err != nil {
+		return err
+	}
+
+	conf.InitDb()
+	defer conf.Shutdown()
+
+	// Run command.
+	if err := f(conf); err != nil {
+		return err
+	}
+
+	return nil
+}

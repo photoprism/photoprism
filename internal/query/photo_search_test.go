@@ -511,7 +511,7 @@ func TestPhotoSearch(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 		f.Lens = 1000000
-		f.Month = 2
+		f.Month = 7
 		f.Year = 2790
 		f.Album = "at9lxuqxpogaaba8"
 
@@ -693,8 +693,7 @@ func TestPhotoSearch(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 		frm.Name = "xxx|PhotoWithEditedAt"
-		frm.Filename = "xxx|Photo25.jpg"
-		frm.Original = "xxx|OriginalPhotoWithEditedAt"
+		frm.Filename = "xxx|2007/12/PhotoWithEditedAt.jpg"
 		frm.Title = "xxx|photowitheditedatdate"
 		frm.Hash = "xxx|pcad9a68fa6acc5c5ba965adf6ec465ca42fd887"
 
