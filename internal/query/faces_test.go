@@ -54,8 +54,14 @@ func TestMatchFaceMarkers(t *testing.T) {
 	}
 }
 
-func TestPurgeAnonymousFaces(t *testing.T) {
-	assert.NoError(t, PurgeAnonymousFaces())
+func TestRemoveAnonymousFaceClusters(t *testing.T) {
+	removed, err := RemoveAnonymousFaceClusters()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, int64(1), removed)
 }
 
 func TestCountNewFaceMarkers(t *testing.T) {

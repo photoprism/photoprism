@@ -66,6 +66,6 @@ func TestAddMarkerSubjects(t *testing.T) {
 	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
-func TestTidyMarkers(t *testing.T) {
-	assert.NoError(t, TidyMarkers())
+func TestCleanInvalidMarkerReferences(t *testing.T) {
+	assert.NoError(t, CleanInvalidMarkerReferences())
 }

@@ -129,7 +129,7 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 	case dist > (m.SampleRadius + face.ClusterRadius):
 		// Too far.
 		return false, dist
-	case m.CollisionRadius > 0 && dist > m.CollisionRadius:
+	case m.CollisionRadius > 0.1 && dist > m.CollisionRadius:
 		// Within radius of reported collisions.
 		return false, dist
 	}
@@ -146,7 +146,7 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 	} else if m.ID == "" || len(m.EmbeddingJSON) == 0 {
 		return false, fmt.Errorf("invalid face id")
 	} else if len(m.EmbeddingJSON) == 0 {
-		return false, fmt.Errorf("face embedding must not be empty")
+		return false, fmt.Errorf("embedding must not be empty")
 	}
 
 	if match, dist := m.Match(embeddings); !match {
@@ -155,7 +155,7 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 	} else if dist < 0 {
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
-	} else if dist > 0.5 {
+	} else if dist > 0.2 {
 		m.Collisions++
 		m.CollisionRadius = dist - 0.1
 	} else {

@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/manifoldco/promptui"
+
 	"github.com/photoprism/photoprism/internal/photoprism"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -73,6 +75,15 @@ func facesStatsAction(ctx *cli.Context) error {
 
 // facesResetAction resets face clusters and matches.
 func facesResetAction(ctx *cli.Context) error {
+	actionPrompt := promptui.Prompt{
+		Label:     "Remove automatically recognized faces, matches, and dangling subjects?",
+		IsConfirm: true,
+	}
+
+	if _, err := actionPrompt.Run(); err != nil {
+		return nil
+	}
+
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)

@@ -5,20 +5,24 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/clusters"
 )
 
+type FacesMatchResult struct {
+	Updated    int64
+	Recognized int64
+	Unknown    int64
+}
+
 // Match matches markers with faces and subjects.
-func (w *Faces) Match() (recognized, unknown int64, err error) {
+func (w *Faces) Match() (result FacesMatchResult, err error) {
 	if w.Disabled() {
-		return 0, 0, nil
+		return result, nil
 	}
 
 	if faces, err := query.Faces(false); err != nil {
-		return recognized, unknown, err
+		return result, err
 	} else {
 		limit := 500
 		offset := 0
@@ -27,7 +31,7 @@ func (w *Faces) Match() (recognized, unknown int64, err error) {
 			markers, err := query.Markers(limit, offset, entity.MarkerFace, true, false)
 
 			if err != nil {
-				return recognized, unknown, err
+				return result, err
 			}
 
 			if len(markers) == 0 {
@@ -36,7 +40,7 @@ func (w *Faces) Match() (recognized, unknown int64, err error) {
 
 			for _, marker := range markers {
 				if mutex.MainWorker.Canceled() {
-					return recognized, unknown, fmt.Errorf("worker canceled")
+					return result, fmt.Errorf("worker canceled")
 				}
 
 				// Pointer to the matching face.
@@ -46,12 +50,10 @@ func (w *Faces) Match() (recognized, unknown int64, err error) {
 				var d float64
 
 				// Find the closest face match for marker.
-				for _, e := range marker.Embeddings() {
-					for i, match := range faces {
-						if dist := clusters.EuclideanDistance(e, match.Embedding()); f == nil || dist < d {
-							f = &faces[i]
-							d = dist
-						}
+				for i, m := range faces {
+					if ok, dist := m.Match(marker.Embeddings()); ok && (f == nil || dist < d) {
+						f = &faces[i]
+						d = dist
 					}
 				}
 
@@ -60,19 +62,22 @@ func (w *Faces) Match() (recognized, unknown int64, err error) {
 					continue
 				}
 
-				// Too distant?
-				if d > (f.SampleRadius + face.ClusterRadius) {
+				// Assign matching face to marker.
+				markerUpdated, err := marker.SetFace(f)
+
+				if err != nil {
+					log.Warnf("faces: %s", err)
 					continue
 				}
 
-				if updated, err := marker.SetFace(f); err != nil {
-					log.Errorf("faces: %s", err)
-				} else if updated {
-					recognized++
+				if markerUpdated {
+					result.Updated++
 				}
 
-				if marker.SubjectUID == "" {
-					unknown++
+				if marker.SubjectUID != "" {
+					result.Recognized++
+				} else {
+					result.Unknown++
 				}
 			}
 
@@ -84,15 +89,15 @@ func (w *Faces) Match() (recognized, unknown int64, err error) {
 
 	// Update remaining markers based on current matches.
 	if m, err := query.MatchFaceMarkers(); err != nil {
-		return recognized, unknown, err
+		return result, err
 	} else {
-		recognized += m
+		result.Recognized += m
 	}
 
 	// Reset invalid marker data.
-	if err := query.TidyMarkers(); err != nil {
-		return recognized, unknown, err
+	if err := query.CleanInvalidMarkerReferences(); err != nil {
+		return result, err
 	}
 
-	return recognized, unknown, nil
+	return result, nil
 }

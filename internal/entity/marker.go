@@ -22,10 +22,10 @@ const (
 type Marker struct {
 	ID             uint            `gorm:"primary_key" json:"ID" yaml:"-"`
 	FileID         uint            `gorm:"index;" json:"-" yaml:"-"`
-	MarkerType     string          `gorm:"type:VARBINARY(8);index:idx_markers_subject;default:'';" json:"Type" yaml:"Type"`
+	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
-	SubjectUID     string          `gorm:"type:VARBINARY(42);index:idx_markers_subject;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	SubjectUID     string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
 	SubjectSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
 	Subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Subject,omitempty" yaml:"-"`
 	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
@@ -117,20 +117,27 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 		return false, fmt.Errorf("not a face marker")
 	}
 
+	// Any reason we don't want to set a new face for this marker?
+	if m.SubjectSrc != SrcManual || f.SubjectUID == m.SubjectUID {
+		// Don't skip if subject wasn't set manually, or subjects match.
+	} else if f.SubjectUID != "" {
+		log.Debugf("faces: ambiguous subjects %s / %s for marker %d", txt.Quote(f.SubjectUID), txt.Quote(m.SubjectUID), m.ID)
+		return false, nil
+	}
+
+	// Update face with known subject from marker?
 	if f.SubjectUID != "" || m.SubjectUID == "" {
-		// Do nothing.
+		// Don't update if face has a known subject, or marker subject is unknown.
 	} else if err := f.Update("SubjectUID", m.SubjectUID); err != nil {
 		return false, err
 	}
 
-	// Skip update?
-	if m.SubjectSrc == SrcManual {
-		return false, nil
-	} else if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
+	// Skip update if the same face is already set.
+	if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
 		return false, nil
 	}
 
-	// Remember current values.
+	// Remember current values for comparison.
 	faceID := m.FaceID
 	subjectUID := m.SubjectUID
 	SubjectSrc := m.SubjectSrc
@@ -266,22 +273,27 @@ func (m *Marker) GetSubject() (subj *Subject) {
 }
 
 // ClearSubject removes an existing subject association, and reports a collision.
-func (m *Marker) ClearSubject(src string) (err error) {
+func (m *Marker) ClearSubject(src string) error {
 	if m.Face == nil {
 		m.Face = FindFace(m.FaceID)
-	} else if m.Face == nil {
-		// Do nothing
-	} else if _, err = m.Face.ReportCollision(m.Embeddings()); err != nil {
-		return err
-	} else if err = m.Updates(Values{"MarkerName": "", "FaceID": "", "SubjectUID": "", "SubjectSrc": src}); err != nil {
-		return err
 	}
+
+	if m.Face == nil {
+		// Do nothing
+	} else if reported, err := m.Face.ReportCollision(m.Embeddings()); err != nil {
+		return err
+	} else if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "SubjectUID": "", "SubjectSrc": src}); err != nil {
+		return err
+	} else if reported {
+		log.Debugf("faces: collision with %s", m.Face.ID)
+	}
+
+	m.Face = nil
 
 	m.MarkerName = ""
 	m.FaceID = ""
-	m.Face = nil
 	m.SubjectUID = ""
-	m.SubjectSrc = ""
+	m.SubjectSrc = src
 
 	return nil
 }

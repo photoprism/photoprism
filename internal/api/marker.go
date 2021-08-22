@@ -144,7 +144,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 		}
 
 		if err := marker.ClearSubject(entity.SrcManual); err != nil {
-			log.Errorf("face: %s (clear subject)", err)
+			log.Errorf("faces: %s (clear subject)", err)
 			AbortSaveFailed(c)
 			return
 		}

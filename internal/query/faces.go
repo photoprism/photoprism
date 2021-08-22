@@ -42,18 +42,21 @@ func MatchFaceMarkers() (affected int64, err error) {
 	return affected, nil
 }
 
-// PurgeAnonymousFaces removes anonymous faces from the index.
-func PurgeAnonymousFaces() error {
-	return UnscopedDb().Delete(
+// RemoveAnonymousFaceClusters removes anonymous faces from the index.
+func RemoveAnonymousFaceClusters() (removed int64, err error) {
+	res := UnscopedDb().Delete(
 		entity.Face{},
-		"face_src = ? AND subject_uid = ''", entity.SrcAuto).Error
+		"face_src = ? AND subject_uid = ''", entity.SrcAuto)
+
+	return res.RowsAffected, res.Error
 }
 
-// ResetFaces removes all face clusters from the index.
-func ResetFaces() error {
-	return UnscopedDb().
-		Delete(entity.Face{}, "id <> ? AND face_src = ''", entity.UnknownFace.ID).
-		Error
+// RemoveAutoFaceClusters removes automatically added face clusters from the index.
+func RemoveAutoFaceClusters() (removed int64, err error) {
+	res := UnscopedDb().
+		Delete(entity.Face{}, "id <> ? AND face_src = ?", entity.UnknownFace.ID, entity.SrcAuto)
+
+	return res.RowsAffected, res.Error
 }
 
 // CountNewFaceMarkers returns the number of new face markers in the index.

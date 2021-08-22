@@ -233,10 +233,12 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 		// Match existing faces if facial recognition is enabled.
 		if w := NewFaces(ind.conf); w.Disabled() {
 			log.Debugf("index: skipping facial recognition")
-		} else if recognized, unknown, err := w.Match(); err != nil {
+		} else if matches, err := w.Match(); err != nil {
 			log.Errorf("index: %s", err)
-		} else if recognized > 0 || unknown > 0 {
-			log.Infof("faces: %d recognized, %d unknown", recognized, unknown)
+		} else if matches.Updated > 0 {
+			log.Infof("index: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
+		} else {
+			log.Debugf("index: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
 		}
 
 		event.Publish("index.updating", event.Data{

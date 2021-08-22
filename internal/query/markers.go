@@ -104,8 +104,8 @@ func AddMarkerSubjects() (affected int64, err error) {
 	return affected, err
 }
 
-// TidyMarkers resets invalid marker data as needed.
-func TidyMarkers() (err error) {
+// CleanInvalidMarkerReferences deletes invalid reference IDs from the markers table.
+func CleanInvalidMarkerReferences() (err error) {
 	// Reset subject and face relationships for invalid markers.
 	err = Db().
 		Model(&entity.Marker{}).
@@ -120,14 +120,16 @@ func TidyMarkers() (err error) {
 	// Reset invalid face IDs.
 	return Db().
 		Model(&entity.Marker{}).
-		Where(fmt.Sprintf("face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
+		Where(fmt.Sprintf("face_id <> '' AND face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
 		UpdateColumns(entity.Values{"face_id": ""}).
 		Error
 }
 
-// ResetFaceMarkerMatches removes people and face matches from face markers.
-func ResetFaceMarkerMatches() error {
-	v := entity.Values{"subject_uid": "", "subject_src": "", "face_id": ""}
+// ResetFaceMarkerMatches removes automatically added subject and face references from the markers table.
+func ResetFaceMarkerMatches() (removed int64, err error) {
+	res := Db().Model(&entity.Marker{}).
+		Where("subject_src <> ? AND marker_type = ?", entity.SrcManual, entity.MarkerFace).
+		UpdateColumns(entity.Values{"subject_uid": "", "subject_src": "", "face_id": ""})
 
-	return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace).UpdateColumns(v).Error
+	return res.RowsAffected, res.Error
 }

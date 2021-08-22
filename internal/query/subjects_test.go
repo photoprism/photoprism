@@ -22,6 +22,12 @@ func TestSubjects(t *testing.T) {
 	}
 }
 
-func TestResetSubjects(t *testing.T) {
-	assert.NoError(t, ResetSubjects())
+func TestRemoveDanglingMarkerSubjects(t *testing.T) {
+	affected, err := RemoveDanglingMarkerSubjects()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, int64(1), affected)
 }

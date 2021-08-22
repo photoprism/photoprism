@@ -1,0 +1,118 @@
+package photoprism
+
+import (
+	"github.com/montanaflynn/stats"
+	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clusters"
+)
+
+// Analyze face embeddings.
+func (w *Faces) Analyze() (err error) {
+	if embeddings, err := query.Embeddings(true); err != nil {
+		return err
+	} else if samples := len(embeddings); samples == 0 {
+		log.Infof("faces: no samples found")
+	} else {
+		log.Infof("faces: computing distance of %d samples", samples)
+
+		distMin := make([]float64, samples)
+		distMax := make([]float64, samples)
+
+		for i := 0; i < samples; i++ {
+			min := -1.0
+			max := -1.0
+
+			for j := 0; j < samples; j++ {
+				if i == j {
+					continue
+				}
+
+				d := clusters.EuclideanDistance(embeddings[i], embeddings[j])
+
+				if min < 0 || d < min {
+					min = d
+				}
+
+				if max < 0 || d > max {
+					max = d
+				}
+			}
+
+			distMin[i] = min
+			distMax[i] = max
+		}
+
+		minMedian, _ := stats.Median(distMin)
+		minMin, _ := stats.Min(distMin)
+		minMax, _ := stats.Max(distMin)
+
+		log.Infof("faces: min Ø %f < median %f < %f", minMin, minMedian, minMax)
+
+		maxMedian, _ := stats.Median(distMax)
+		maxMin, _ := stats.Min(distMax)
+		maxMax, _ := stats.Max(distMax)
+
+		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
+	}
+
+	if faces, err := query.Faces(true); err != nil {
+		log.Errorf("faces: %s", err)
+	} else if samples := len(faces); samples > 0 {
+		log.Infof("faces: computing distance of faces matching to the same person")
+
+		dist := make(map[string][]float64)
+
+		for i := 0; i < samples; i++ {
+			f1 := faces[i]
+
+			e1 := f1.Embedding()
+			min := -1.0
+			max := -1.0
+
+			if k, ok := dist[f1.SubjectUID]; ok {
+				min = k[0]
+				max = k[1]
+			}
+
+			for j := 0; j < samples; j++ {
+				if i == j {
+					continue
+				}
+
+				f2 := faces[j]
+
+				if f1.SubjectUID != f2.SubjectUID {
+					continue
+				}
+
+				e2 := f2.Embedding()
+
+				d := clusters.EuclideanDistance(e1, e2)
+
+				if min < 0 || d < min {
+					min = d
+				}
+
+				if max < 0 || d > max {
+					max = d
+				}
+			}
+
+			if max > 0 {
+				dist[f1.SubjectUID] = []float64{min, max}
+			}
+		}
+
+		if l := len(dist); l == 0 {
+			log.Infof("faces: analyzed %d clusters, no matches", samples)
+		} else {
+			log.Infof("faces: %d faces match to the same person", l)
+		}
+
+		for subj, d := range dist {
+			log.Infof("faces: %s Ø min %f, max %f", subj, d[0], d[1])
+		}
+	}
+
+	return nil
+}
