@@ -1,6 +1,6 @@
 /*
 
-Package face provides face landmark detection.
+Package face provides facial recognition.
 
 Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 

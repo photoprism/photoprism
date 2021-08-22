@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
+// FacesMatchResult represents the outcome of Faces.Match().
 type FacesMatchResult struct {
 	Updated    int64
 	Recognized int64
