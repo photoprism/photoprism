@@ -74,6 +74,13 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 			log.Errorf("faces: %s (clean)", err)
 		}
 
+		// Optimize existing face clusters.
+		if res, err := w.Optimize(); err != nil {
+			return err
+		} else if res.Merged > 0 {
+			log.Infof("faces: %d clusters merged", res.Merged)
+		}
+
 		return nil
 	} else {
 		log.Infof("faces: %d new samples", n)
@@ -96,6 +103,13 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	// Remove invalid marker references.
 	if err = query.CleanInvalidMarkerReferences(); err != nil {
 		log.Errorf("faces: %s (clean)", err)
+	}
+
+	// Optimize existing face clusters.
+	if res, err := w.Optimize(); err != nil {
+		return err
+	} else if res.Merged > 0 {
+		log.Infof("faces: %d clusters merged", res.Merged)
 	}
 
 	// Match markers with faces and subjects.

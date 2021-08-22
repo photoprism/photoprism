@@ -38,8 +38,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
-var ClusterCore = 3
-var ClusterRadius = 0.66
+var ClusterCore = 4
+var ClusterRadius = 0.6
 var SampleThreshold = 25
 
 var log = event.Log

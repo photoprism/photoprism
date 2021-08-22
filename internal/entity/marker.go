@@ -322,6 +322,29 @@ func (m *Marker) GetFace() (f *Face) {
 	return m.Face
 }
 
+// ClearFace removes an existing face association.
+func (m *Marker) ClearFace() (updated bool, err error) {
+	if m.FaceID == "" {
+		return false, nil
+	}
+
+	updated = true
+
+	// Remove face references.
+	m.Face = nil
+	m.FaceID = ""
+
+	// Remove subject if set automatically.
+	if m.SubjectSrc == SrcAuto {
+		m.SubjectUID = ""
+		err = m.Updates(Values{"FaceID": "", "SubjectUID": ""})
+	} else {
+		err = m.Updates(Values{"FaceID": ""})
+	}
+
+	return updated, err
+}
+
 // FindMarker returns an existing row if exists.
 func FindMarker(id uint) *Marker {
 	result := Marker{}

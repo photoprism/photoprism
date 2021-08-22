@@ -34,6 +34,7 @@ var MarkerFixtures = MarkerMap{
 		ID:         2,
 		FileID:     1000003,
 		SubjectUID: "",
+		FaceID:     "LRG2HJBDZE66LYG7Q5SRFXO2MDTOES52",
 		MarkerName: "Unknown",
 		MarkerSrc:  SrcImage,
 		MarkerType: MarkerLabel,

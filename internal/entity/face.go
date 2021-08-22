@@ -15,9 +15,6 @@ import (
 
 var faceMutex = sync.Mutex{}
 
-// Faces represents a Face slice.
-type Faces []Face
-
 // Face represents the face of a Subject.
 type Face struct {
 	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
@@ -48,7 +45,7 @@ func CreateUnknownFace() {
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev4"
+	return "faces_dev5"
 }
 
 // NewFace returns a new face.
@@ -149,6 +146,8 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 		return false, fmt.Errorf("embedding must not be empty")
 	}
 
+	revise := false
+
 	if match, dist := m.Match(embeddings); !match {
 		// Embeddings don't match this face. Ignore.
 		return false, nil
@@ -158,12 +157,45 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 	} else if dist > 0.2 {
 		m.Collisions++
 		m.CollisionRadius = dist - 0.1
+		revise = true
 	} else {
 		// Don't set a radius yet if distance is very small.
 		m.Collisions++
 	}
 
-	return true, m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius})
+	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius})
+
+	if err == nil && revise {
+		var revised Markers
+		revised, err = m.ReviseMatches()
+		log.Infof("faces: revised %d matches after collision", len(revised))
+	}
+
+	return true, err
+}
+
+// ReviseMatches updates marker matches after face parameters have been changed.
+func (m *Face) ReviseMatches() (revised Markers, err error) {
+	var matches Markers
+
+	if err := Db().Where("face_id = ?", m.ID).Where("marker_type = ?", MarkerFace).
+		Find(&matches).Error; err != nil {
+		log.Debugf("faces: %s (find matching markers)", err)
+		return revised, err
+	} else {
+		for _, marker := range matches {
+			if ok, _ := m.Match(marker.Embeddings()); !ok {
+				if updated, err := marker.ClearFace(); err != nil {
+					log.Debugf("faces: %s (revise match)", err)
+					return revised, err
+				} else if updated {
+					revised = append(revised, marker)
+				}
+			}
+		}
+	}
+
+	return revised, nil
 }
 
 // Save updates the existing or inserts a new face.

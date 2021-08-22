@@ -148,3 +148,20 @@ func TestMarker_ClearSubject(t *testing.T) {
 		assert.Empty(t, m.MarkerName)
 	})
 }
+
+func TestMarker_ClearFace(t *testing.T) {
+	t.Run("1000003-2", func(t *testing.T) {
+		m := MarkerFixtures.Get("1000003-2")
+
+		assert.NotEmpty(t, m.FaceID)
+
+		updated, err := m.ClearFace()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, updated)
+		assert.Empty(t, m.FaceID)
+	})
+}

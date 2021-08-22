@@ -9,7 +9,7 @@ import (
 )
 
 func TestFaces(t *testing.T) {
-	results, err := Faces(true)
+	results, err := Faces(true, "")
 
 	if err != nil {
 		t.Fatal(err)

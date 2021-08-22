@@ -103,6 +103,12 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Errorf("photo: %s (save marker form)", err)
 			AbortSaveFailed(c)
 			return
+		} else if marker.SubjectUID != "" && marker.SubjectSrc == entity.SrcManual && marker.FaceID != "" {
+			if res, err := service.Faces().Optimize(); err != nil {
+				log.Errorf("faces: %s (optimize)", err)
+			} else if res.Merged > 0 {
+				log.Infof("faces: %d clusters merged", res.Merged)
+			}
 		}
 
 		event.SuccessMsg(i18n.MsgChangesSaved)

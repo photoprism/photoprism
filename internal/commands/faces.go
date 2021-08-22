@@ -29,6 +29,11 @@ var FacesCommand = cli.Command{
 			Action: facesResetAction,
 		},
 		{
+			Name:   "optimize",
+			Usage:  "Optimizes face clusters",
+			Action: facesOptimizeAction,
+		},
+		{
 			Name:  "index",
 			Usage: "Performs facial recognition",
 			Flags: []cli.Flag{
@@ -106,6 +111,37 @@ func facesResetAction(ctx *cli.Context) error {
 		elapsed := time.Since(start)
 
 		log.Infof("completed in %s", elapsed)
+	}
+
+	conf.Shutdown()
+
+	return nil
+}
+
+// facesOptimizeAction optimizes existing face clusters.
+func facesOptimizeAction(ctx *cli.Context) error {
+	start := time.Now()
+
+	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
+
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := conf.Init(); err != nil {
+		return err
+	}
+
+	conf.InitDb()
+
+	w := service.Faces()
+
+	if res, err := w.Optimize(); err != nil {
+		return err
+	} else {
+		elapsed := time.Since(start)
+
+		log.Infof("%d face clusters merged in %s", res.Merged, elapsed)
 	}
 
 	conf.Shutdown()

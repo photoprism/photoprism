@@ -25,7 +25,8 @@
                   :class="{invalid: marker.Invalid}"
                   class="result accent lighten-3">
             <div class="card-background accent lighten-3"></div>
-            <canvas :id="'face-' + marker.ID" :key="marker.ID" width="300" height="300" style="width: 100%" class="v-responsive v-image accent lighten-2"></canvas>
+            <canvas :id="'face-' + marker.ID" :key="marker.ID" width="300" height="300" style="width: 100%"
+                    class="v-responsive v-image accent lighten-2"></canvas>
 
             <v-card-actions class="card-details pa-0">
               <v-layout v-if="marker.Score < 30" row wrap align-center>
@@ -57,7 +58,7 @@
                       single-line
                       solo-inverted
                       clearable
-                      @click:clear="clearName(marker)"
+                      @click:clear="clearSubject(marker)"
                       @change="updateName(marker)"
                       @keyup.enter.native="updateName(marker)"
                   ></v-text-field>
@@ -87,17 +88,23 @@ export default {
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
-      textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
+      textRule: (v) => {
+        if (!v || !v.length) {
+          return this.$gettext("Name");
+        }
+
+        return v.length <= this.$config.get('clip') || this.$gettext("Text too long");
+      },
     };
   },
-  mounted () {
+  mounted() {
     this.markers.forEach((m) => {
       const canvas = document.getElementById('face-' + m.ID);
 
       let ctx = canvas.getContext('2d');
       let img = new Image();
 
-      img.onload = function() {
+      img.onload = function () {
         const w = Math.round(m.W * img.width);
         const h = Math.round(m.H * img.height);
         const s = w > h ? w : h;
@@ -133,19 +140,16 @@ export default {
       marker.Invalid = false;
       this.model.updateMarker(marker);
     },
-    clearName(marker) {
-      marker.Name = "";
-      marker.SubjectUID = "";
-      marker.SubjectSrc = src.Manual;
-      marker.FaceID = "";
-      this.model.updateMarker(marker);
+    clearSubject(marker) {
+      this.model.clearMarkerSubject(marker);
     },
     updateName(marker) {
-      if (marker.Name === "") {
-        marker.SubjectSrc = src.Auto;
-      } else {
-        marker.SubjectSrc = src.Manual;
+      // Don't save empty name.
+      if (!marker || !marker.Name || marker.Name.trim() === "") {
+        return false;
       }
+
+      marker.SubjectSrc = src.Manual;
 
       this.model.updateMarker(marker);
     },

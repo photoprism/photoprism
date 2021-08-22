@@ -63,3 +63,14 @@ func TestFace_ReportCollision(t *testing.T) {
 	assert.Greater(t, m.CollisionRadius, 1.1)
 	assert.Less(t, m.CollisionRadius, 1.272)
 }
+
+func TestFace_ReviseMatches(t *testing.T) {
+	m := FaceFixtures.Get("joe-biden")
+	removed, err := m.ReviseMatches()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Empty(t, removed)
+}

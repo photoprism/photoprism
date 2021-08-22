@@ -863,6 +863,33 @@ export class Photo extends RestModel {
     });
   }
 
+  // TODO: Refactor by using a separate model.
+  clearMarkerSubject(marker) {
+    if (!marker || !marker.ID) {
+      return Promise.reject("invalid marker id");
+    }
+
+    const file = this.mainFile();
+
+    if (!file || !file.UID) {
+      return Promise.reject("invalid file uid");
+    }
+
+    const url = `${this.getEntityResource()}/files/${file.UID}/markers/${marker.ID}/subject`;
+
+    return Api.delete(url).then((resp) => {
+      if (resp.data) {
+        for (let key in resp.data) {
+          if (marker.hasOwnProperty(key) && key !== "__originalValues") {
+            marker[key] = resp.data[key];
+          }
+        }
+      }
+
+      return Promise.resolve(marker);
+    });
+  }
+
   static batchSize() {
     return 60;
   }
