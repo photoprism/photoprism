@@ -19,7 +19,7 @@ func Faces(knownOnly bool, src string) (result entity.Faces, err error) {
 	if knownOnly {
 		stmt = stmt.Where("subject_uid <> ''").Order("subject_uid, samples DESC")
 	} else {
-		stmt = stmt.Order("id")
+		stmt = stmt.Order("samples DESC")
 	}
 
 	err = stmt.Find(&result).Error
@@ -35,15 +35,19 @@ func MatchFaceMarkers() (affected int64, err error) {
 		return affected, err
 	}
 
-	for _, match := range faces {
+	for _, f := range faces {
 		if res := Db().Model(&entity.Marker{}).
-			Where("face_id = ?", match.ID).
+			Where("face_id = ?", f.ID).
 			Where("subject_src = ?", entity.SrcAuto).
-			Where("subject_uid <> ?", match.SubjectUID).
-			Updates(entity.Values{"SubjectUID": match.SubjectUID}); res.Error != nil {
+			Where("subject_uid <> ?", f.SubjectUID).
+			Updates(entity.Values{"SubjectUID": f.SubjectUID}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
+		}
+
+		if err := f.UpdateMatchTime(); err != nil {
+			return affected, err
 		}
 	}
 
@@ -67,22 +71,45 @@ func RemoveAutoFaceClusters() (removed int64, err error) {
 	return res.RowsAffected, res.Error
 }
 
-// CountNewFaceMarkers returns the number of new face markers in the index.
+// CountNewFaceMarkers counts the number of new face markers in the index.
 func CountNewFaceMarkers() (n int) {
 	var f entity.Face
 
-	if err := Db().Where("face_src = ?", entity.SrcAuto).Order("created_at DESC").Take(&f).Error; err != nil {
+	if err := Db().Where("face_src = ?", entity.SrcAuto).Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
 		log.Debugf("faces: no existing clusters")
 	}
 
-	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND marker_invalid = 0 AND embeddings_json <> ''", entity.MarkerFace)
+	q := Db().Model(&entity.Markers{}).
+		Where("marker_type = ?", entity.MarkerFace).
+		Where("face_id = '' AND marker_invalid = 0 AND embeddings_json <> ''")
 
 	if !f.CreatedAt.IsZero() {
 		q = q.Where("created_at > ?", f.CreatedAt)
 	}
 
-	if err := q.Order("created_at DESC").Count(&n).Error; err != nil {
+	if err := q.Count(&n).Error; err != nil {
 		log.Errorf("faces: %s (count new markers)", err)
+	}
+
+	return n
+}
+
+// CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
+func CountUnmatchedFaceMarkers() (n int) {
+	var f entity.Face
+
+	if err := Db().Where("face_src <> ?", entity.SrcDefault).Order("matched_at ASC").Limit(1).Take(&f).Error; err != nil {
+		log.Debugf("faces: no unmatched clusters")
+	}
+
+	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND marker_invalid = 0 AND embeddings_json <> ''", entity.MarkerFace)
+
+	if f.MatchedAt != nil {
+		q = q.Where("updated_at > ?", f.MatchedAt)
+	}
+
+	if err := q.Count(&n).Error; err != nil {
+		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
 	return n
@@ -113,21 +140,9 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 		return merged, err
 	}
 
-	// Find matching markers.
-	var markers entity.Markers
-
-	if err := Db().Where("face_id = '' AND marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
-		Find(&markers).Error; err != nil {
-		log.Debugf("faces: %s (find matching markers)", err)
+	// Find and reference additional matching markers.
+	if err := merged.MatchMarkers(); err != nil {
 		return merged, err
-	} else {
-		for _, marker := range markers {
-			if ok, _ := merged.Match(marker.Embeddings()); !ok {
-				// Ignore.
-			} else if _, err := marker.SetFace(merged); err != nil {
-				return merged, err
-			}
-		}
 	}
 
 	return merged, err

@@ -17,9 +17,19 @@ type FacesMatchResult struct {
 }
 
 // Match matches markers with faces and subjects.
-func (w *Faces) Match() (result FacesMatchResult, err error) {
+func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if w.Disabled() {
 		return result, nil
+	}
+
+	// Skip matching if index contains no new face markers, and force option isn't set.
+	if opt.Force {
+		log.Infof("faces: forced matching")
+	} else if n := query.CountUnmatchedFaceMarkers(); n > 0 {
+		log.Infof("faces: %d unmatched markers", n)
+	} else {
+		result.Recognized, err = query.MatchFaceMarkers()
+		return result, err
 	}
 
 	faces, err := query.Faces(false, "")
@@ -96,16 +106,18 @@ func (w *Faces) Match() (result FacesMatchResult, err error) {
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	// Update remaining markers based on current matches.
+	// Update face match timestamps.
+	for _, m := range faces {
+		if err := m.UpdateMatchTime(); err != nil {
+			log.Warnf("faces: %s (update match time)", err)
+		}
+	}
+
+	// Update remaining markers based on previous matches.
 	if m, err := query.MatchFaceMarkers(); err != nil {
 		return result, err
 	} else {
 		result.Recognized += m
-	}
-
-	// Reset invalid marker data.
-	if err := query.CleanInvalidMarkerReferences(); err != nil {
-		return result, err
 	}
 
 	return result, nil

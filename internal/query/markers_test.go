@@ -46,7 +46,7 @@ func TestMarkers(t *testing.T) {
 }
 
 func TestEmbeddings(t *testing.T) {
-	results, err := Embeddings(false)
+	results, err := Embeddings(false, false)
 
 	if err != nil {
 		t.Fatal(err)
@@ -66,6 +66,9 @@ func TestAddMarkerSubjects(t *testing.T) {
 	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
-func TestCleanInvalidMarkerReferences(t *testing.T) {
-	assert.NoError(t, CleanInvalidMarkerReferences())
+func TestRemoveInvalidMarkerReferences(t *testing.T) {
+	affected, err := RemoveInvalidMarkerReferences()
+
+	assert.NoError(t, err)
+	assert.GreaterOrEqual(t, affected, int64(1))
 }

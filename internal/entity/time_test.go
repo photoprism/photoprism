@@ -17,6 +17,22 @@ func TestTimestamp(t *testing.T) {
 	}
 }
 
+func TestTimestampPointer(t *testing.T) {
+	result := TimestampPointer()
+
+	if result == nil {
+		t.Fatal("result must not be nil")
+	}
+
+	if result.Location() != time.UTC {
+		t.Fatal("timestamp zone must be utc")
+	}
+
+	if result.After(time.Now().Add(time.Second)) {
+		t.Fatal("timestamp should be in the past from now")
+	}
+}
+
 func TestSeconds(t *testing.T) {
 	result := Seconds(23)
 

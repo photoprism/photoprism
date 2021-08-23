@@ -68,3 +68,8 @@ func TestCountNewFaceMarkers(t *testing.T) {
 	n := CountNewFaceMarkers()
 	assert.GreaterOrEqual(t, n, 1)
 }
+
+func TestCountUnmatchedFaceMarkers(t *testing.T) {
+	n := CountUnmatchedFaceMarkers()
+	assert.GreaterOrEqual(t, n, 0)
+}

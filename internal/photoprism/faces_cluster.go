@@ -8,29 +8,47 @@ import (
 )
 
 // Cluster clusters indexed face embeddings.
-func (w *Faces) Cluster(opt FacesOptions) (added int64, removed int64, err error) {
-	// Fetch and cluster all face embeddings.
-	embeddings, err := query.Embeddings(false)
+func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
+	if w.Disabled() {
+		return added, nil
+	}
+
+	// Skip clustering if index contains no new face markers, and force option isn't set.
+	if opt.Force {
+		log.Infof("faces: forced clustering")
+	} else if n := query.CountNewFaceMarkers(); n < 1 {
+		log.Debugf("faces: skipping clustering")
+		return added, nil
+	}
+
+	// Fetch unclustered face embeddings.
+	embeddings, err := query.Embeddings(false, true)
+
+	log.Debugf("faces: %d unclustered samples found", len(embeddings))
 
 	// Anything that keeps us from doing this?
 	if err != nil {
-		return added, removed, err
+		return added, err
 	} else if samples := len(embeddings); samples < opt.SampleThreshold() {
-		log.Warnf("faces: at least %d samples needed for matching similar faces", face.SampleThreshold)
-		return added, removed, nil
+		log.Debugf("faces: at least %d samples needed for clustering", face.SampleThreshold)
+		return added, nil
 	} else {
 		var c clusters.HardClusterer
 
 		// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
 		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterRadius, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
-			return added, removed, err
+			return added, err
 		} else if err = c.Learn(embeddings); err != nil {
-			return added, removed, err
+			return added, err
 		}
 
 		sizes := c.Sizes()
 
-		log.Debugf("faces: %d samples in %d clusters", len(embeddings), len(sizes))
+		if len(sizes) > 1 {
+			log.Infof("faces: found %d new clusters", len(sizes))
+		} else {
+			log.Debugf("faces: found no new clusters")
+		}
 
 		results := make([]entity.Embeddings, len(sizes))
 
@@ -48,23 +66,19 @@ func (w *Faces) Cluster(opt FacesOptions) (added int64, removed int64, err error
 			results[n-1] = append(results[n-1], embeddings[i])
 		}
 
-		if removed, err = query.RemoveAnonymousFaceClusters(); err != nil {
-			log.Errorf("faces: %s", err)
-		} else if removed > 0 {
-			log.Debugf("faces: removed %d anonymous clusters", removed)
-		}
-
 		for _, cluster := range results {
 			if f := entity.NewFace("", entity.SrcAuto, cluster); f == nil {
 				log.Errorf("faces: face should not be nil - bug?")
 			} else if err := f.Create(); err == nil {
-				added++
-				log.Tracef("faces: added face %s", f.ID)
+				added = append(added, *f)
+				log.Debugf("faces: added cluster %s based on %d samples, radius %f", f.ID, f.Samples, f.SampleRadius)
 			} else if err := f.Updates(entity.Values{"UpdatedAt": entity.Timestamp()}); err != nil {
 				log.Errorf("faces: %s", err)
+			} else {
+				log.Debugf("faces: updated cluster %s", f.ID)
 			}
 		}
 	}
 
-	return added, removed, nil
+	return added, nil
 }

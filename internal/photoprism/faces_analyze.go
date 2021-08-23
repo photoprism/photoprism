@@ -8,7 +8,7 @@ import (
 
 // Analyze face embeddings.
 func (w *Faces) Analyze() (err error) {
-	if embeddings, err := query.Embeddings(true); err != nil {
+	if embeddings, err := query.Embeddings(true, false); err != nil {
 		return err
 	} else if samples := len(embeddings); samples == 0 {
 		log.Infof("faces: no samples found")

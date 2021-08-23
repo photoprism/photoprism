@@ -41,7 +41,7 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool) (r
 }
 
 // Embeddings returns existing face embeddings.
-func Embeddings(single bool) (result entity.Embeddings, err error) {
+func Embeddings(single, unclustered bool) (result entity.Embeddings, err error) {
 	var col []string
 
 	stmt := Db().
@@ -50,6 +50,10 @@ func Embeddings(single bool) (result entity.Embeddings, err error) {
 		Where("marker_invalid = 0").
 		Where("embeddings_json <> ''").
 		Order("id")
+
+	if unclustered {
+		stmt = stmt.Where("face_id = ''")
+	}
 
 	if err := stmt.Pluck("embeddings_json", &col).Error; err != nil {
 		return result, err
@@ -104,25 +108,40 @@ func AddMarkerSubjects() (affected int64, err error) {
 	return affected, err
 }
 
-// CleanInvalidMarkerReferences deletes invalid reference IDs from the markers table.
-func CleanInvalidMarkerReferences() (err error) {
-	// Reset subject and face relationships for invalid markers.
-	err = Db().
+// RemoveInvalidMarkerReferences deletes invalid reference IDs from the markers table.
+func RemoveInvalidMarkerReferences() (removed int64, err error) {
+	// Remove subject and face relationships for invalid markers.
+	if res := Db().
 		Model(&entity.Marker{}).
-		Where("marker_invalid = 1").
-		UpdateColumns(entity.Values{"subject_uid": "", "subject_src": "", "face_id": ""}).
-		Error
-
-	if err != nil {
-		return err
+		Where("marker_invalid = 1 AND (subject_uid <> '' OR face_id <> '')").
+		UpdateColumns(entity.Values{"subject_uid": "", "face_id": ""}); res.Error != nil {
+		return removed, res.Error
+	} else {
+		removed += res.RowsAffected
 	}
 
-	// Reset invalid face IDs.
-	return Db().
+	// Remove invalid face IDs.
+	if res := Db().
 		Model(&entity.Marker{}).
+		Where("marker_type = ?", entity.MarkerFace).
 		Where(fmt.Sprintf("face_id <> '' AND face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
-		UpdateColumns(entity.Values{"face_id": ""}).
-		Error
+		UpdateColumns(entity.Values{"face_id": ""}); res.Error != nil {
+		return removed, res.Error
+	} else {
+		removed += res.RowsAffected
+	}
+
+	// Remove invalid subject UIDs.
+	if res := Db().
+		Model(&entity.Marker{}).
+		Where(fmt.Sprintf("subject_uid <> '' AND subject_uid NOT IN (SELECT subject_uid FROM %s)", entity.Subject{}.TableName())).
+		UpdateColumns(entity.Values{"subject_uid": ""}); res.Error != nil {
+		return removed, res.Error
+	} else {
+		removed += res.RowsAffected
+	}
+
+	return removed, nil
 }
 
 // ResetFaceMarkerMatches removes automatically added subject and face references from the markers table.

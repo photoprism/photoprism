@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"runtime/debug"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
@@ -21,6 +23,13 @@ func NewFaces(conf *config.Config) *Faces {
 	}
 
 	return instance
+}
+
+// StartDefault starts face clustering and matching with default options.
+func (w *Faces) StartDefault() (err error) {
+	return w.Start(FacesOptions{
+		Force: false,
+	})
 }
 
 // Start face clustering and matching.
@@ -42,78 +51,46 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	defer mutex.MainWorker.Stop()
 
-	// Skip clustering if index contains no new face markers and force option isn't set.
-	if n := query.CountNewFaceMarkers(); n < 1 && !opt.Force {
-		log.Debugf("faces: no new samples")
-
-		var updated int64
-
-		// Adds and reference known marker subjects.
-		if affected, err := query.AddMarkerSubjects(); err != nil {
-			log.Errorf("faces: %s (match markers with subjects)", err)
-		} else {
-			updated += affected
-		}
-
-		// Match markers with known faces.
-		if affected, err := query.MatchFaceMarkers(); err != nil {
-			return err
-		} else {
-			updated += affected
-		}
-
-		// Log result.
-		if updated > 0 {
-			log.Infof("faces: %d markers updated", updated)
-		} else {
-			log.Debug("faces: no changes")
-		}
-
-		// Remove invalid ids from marker table.
-		if err := query.CleanInvalidMarkerReferences(); err != nil {
-			log.Errorf("faces: %s (clean)", err)
-		}
-
-		// Optimize existing face clusters.
-		if res, err := w.Optimize(); err != nil {
-			return err
-		} else if res.Merged > 0 {
-			log.Infof("faces: %d clusters merged", res.Merged)
-		}
-
-		return nil
+	// Remove invalid reference IDs from markers table.
+	if removed, err := query.RemoveInvalidMarkerReferences(); err != nil {
+		log.Errorf("faces: %s (remove invalid references)", err)
+	} else if removed > 0 {
+		log.Infof("faces: removed %d invalid references", removed)
 	} else {
-		log.Infof("faces: %d new samples", n)
-	}
-
-	var clustersAdded, clustersRemoved int64
-
-	// Cluster existing face embeddings.
-	if clustersAdded, clustersRemoved, err = w.Cluster(opt); err != nil {
-		log.Errorf("faces: %s (cluster)", err)
-	}
-
-	// Log face clustering results.
-	if (clustersAdded - clustersRemoved) != 0 {
-		log.Infof("faces: %d clusters added, %d removed", clustersAdded, clustersRemoved)
-	} else {
-		log.Debugf("faces: %d clusters added, %d removed", clustersAdded, clustersRemoved)
-	}
-
-	// Remove invalid marker references.
-	if err = query.CleanInvalidMarkerReferences(); err != nil {
-		log.Errorf("faces: %s (clean)", err)
+		log.Debugf("faces: no invalid references")
 	}
 
 	// Optimize existing face clusters.
 	if res, err := w.Optimize(); err != nil {
 		return err
 	} else if res.Merged > 0 {
-		log.Infof("faces: %d clusters merged", res.Merged)
+		log.Infof("faces: merged %d clusters", res.Merged)
+	} else {
+		log.Debugf("faces: no clusters could be merged")
+	}
+
+	// Add known marker subjects.
+	if affected, err := query.AddMarkerSubjects(); err != nil {
+		log.Errorf("faces: %s (match markers with subjects)", err)
+	} else if affected > 0 {
+		log.Infof("faces: added %d known marker subjects", affected)
+	} else {
+		log.Debugf("faces: no subjects were missing")
+	}
+
+	var added entity.Faces
+
+	// Cluster existing face embeddings.
+	if added, err = w.Cluster(opt); err != nil {
+		log.Errorf("faces: %s (cluster)", err)
+	} else if n := len(added); n > 0 {
+		log.Infof("faces: added %d new faces", n)
+	} else {
+		log.Debugf("faces: found no new faces")
 	}
 
 	// Match markers with faces and subjects.
-	matches, err := w.Match()
+	matches, err := w.Match(opt)
 
 	if err != nil {
 		log.Errorf("faces: %s (match)", err)

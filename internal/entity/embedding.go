@@ -27,7 +27,7 @@ func EmbeddingsMidpoint(m Embeddings) (result Embedding, radius float64, count i
 		}
 
 		if d := clusters.EuclideanDistance(result, emb); d > radius {
-			radius = d
+			radius = d + 0.01
 		}
 	}
 

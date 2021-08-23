@@ -9,6 +9,12 @@ func Timestamp() time.Time {
 	return time.Now().UTC().Round(time.Second)
 }
 
+// TimestampPointer returns a current timestamp pointer.
+func TimestampPointer() *time.Time {
+	t := Timestamp()
+	return &t
+}
+
 // Seconds converts an int to a duration in seconds.
 func Seconds(s int) time.Duration {
 	return time.Duration(s) * time.Second

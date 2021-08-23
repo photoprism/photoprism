@@ -26,6 +26,7 @@ type Face struct {
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
 	embedding       Embedding       `gorm:"-"`
+	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 }
@@ -80,6 +81,13 @@ func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
 	}
 
 	return nil
+}
+
+// UpdateMatchTime updates the match timestamp.
+func (m *Face) UpdateMatchTime() error {
+	matched := Timestamp()
+	m.MatchedAt = &matched
+	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -168,7 +176,10 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 	if err == nil && revise {
 		var revised Markers
 		revised, err = m.ReviseMatches()
-		log.Infof("faces: revised %d matches after collision", len(revised))
+
+		if n := len(revised); n > 0 {
+			log.Infof("faces: revised %d matches after collision", n)
+		}
 	}
 
 	return true, err
@@ -196,6 +207,30 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 	}
 
 	return revised, nil
+}
+
+// MatchMarkers finds and references matching markers.
+func (m *Face) MatchMarkers() error {
+	var markers Markers
+
+	err := Db().
+		Where("face_id = '' AND marker_invalid = 0 AND marker_type = ?", MarkerFace).
+		Find(&markers).Error
+
+	if err != nil {
+		log.Debugf("faces: %s (match markers)", err)
+		return err
+	}
+
+	for _, marker := range markers {
+		if ok, _ := m.Match(marker.Embeddings()); !ok {
+			// Ignore.
+		} else if _, err = marker.SetFace(m); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Save updates the existing or inserts a new face.

@@ -40,7 +40,7 @@ import (
 
 var ClusterCore = 4
 var ClusterRadius = 0.6
-var SampleThreshold = 25
+var SampleThreshold = 2 * ClusterCore
 
 var log = event.Log
 

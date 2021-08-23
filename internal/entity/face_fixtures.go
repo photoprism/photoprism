@@ -38,6 +38,7 @@ var FaceFixtures = FaceMap{
 		SampleRadius:  0,
 		Samples:       1,
 		Collisions:    0,
+		MatchedAt:     &editTime,
 		CreatedAt:     Timestamp(),
 		UpdatedAt:     Timestamp(),
 	},

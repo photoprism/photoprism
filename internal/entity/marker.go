@@ -120,8 +120,15 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 	// Any reason we don't want to set a new face for this marker?
 	if m.SubjectSrc != SrcManual || f.SubjectUID == m.SubjectUID {
 		// Don't skip if subject wasn't set manually, or subjects match.
-	} else if f.SubjectUID != "" {
-		log.Debugf("faces: ambiguous subjects %s / %s for marker %d", txt.Quote(f.SubjectUID), txt.Quote(m.SubjectUID), m.ID)
+	} else if f.SubjectUID != "" && m.SubjectUID == "" {
+		log.Debugf("faces: rejected subject %s for marker %d with unknown subject, source %s", txt.Quote(f.SubjectUID), m.ID, m.SubjectSrc)
+		return false, nil
+	} else if reported, err := f.ReportCollision(m.Embeddings()); err != nil {
+		return false, err
+	} else if reported {
+		log.Infof("faces: marker %d (subject %s) collision with %s (subject %s), source %s", m.ID, m.SubjectUID, f.ID, f.SubjectUID, m.SubjectSrc)
+		return false, nil
+	} else {
 		return false, nil
 	}
 
@@ -307,17 +314,17 @@ func (m *Marker) GetFace() (f *Face) {
 	if m.FaceID == "" && m.SubjectSrc == SrcManual {
 		if f = NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
 			return nil
-		} else if f = FirstOrCreateFace(f); f == nil {
-			log.Debugf("marker: invalid face")
+		} else if err := f.Create(); err != nil {
 			return nil
+		} else if err := f.MatchMarkers(); err != nil {
+			log.Errorf("faces: %s (match markers)", err)
 		}
 
+		m.Face = f
 		m.FaceID = f.ID
-
-		return f
+	} else {
+		m.Face = FindFace(m.FaceID)
 	}
-
-	m.Face = FindFace(m.FaceID)
 
 	return m.Face
 }
