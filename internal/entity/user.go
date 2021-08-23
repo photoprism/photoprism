@@ -381,6 +381,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		FullName:     uc.FullName,
 		UserName:     uc.UserName,
 		PrimaryEmail: uc.Email,
+		RoleAdmin:    true,
 	}
 	if len(uc.Password) < 4 {
 		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(u.UserName))
