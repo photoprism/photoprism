@@ -475,3 +475,27 @@ func TestCreateWithPassword(t *testing.T) {
 		assert.Nil(t, err)
 	})
 }
+
+func TestDeleteUser(t *testing.T) {
+	t.Run("delete user - success", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "thomasdel",
+			FullName:     "Thomas Delete",
+			PrimaryEmail: "thomasdel@example.com",
+		}
+		u = FirstOrCreateUser(u)
+		err := u.Delete()
+		assert.NoError(t, err)
+	})
+	t.Run("delete user - not in db", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "thomasdel2",
+			FullName:     "Thomas Delete 2",
+			PrimaryEmail: "thomasdel2@example.com",
+		}
+		err := u.Delete()
+		assert.Error(t, err)
+	})
+}
