@@ -50,8 +50,8 @@ var UsersCommand = cli.Command{
 		},
 		{
 			Name:   "update",
-			Usage:  "updates user information",
-			Action: usersModifyAction,
+			Usage:  "select user by username and update it's information",
+			Action: usersUpdateAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "fullname, n",
@@ -217,7 +217,7 @@ func usersListAction(ctx *cli.Context) error {
 	})
 }
 
-func usersModifyAction(ctx *cli.Context) error {
+func usersUpdateAction(ctx *cli.Context) error {
 	return callWithDependencies(ctx, func(conf *config.Config) error {
 		username := ctx.Args().First()
 		if username == "" {
