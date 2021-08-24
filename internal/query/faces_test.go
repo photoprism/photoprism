@@ -65,11 +65,6 @@ func TestRemoveAnonymousFaceClusters(t *testing.T) {
 }
 
 func TestCountNewFaceMarkers(t *testing.T) {
-	n := CountNewFaceMarkers()
+	n := CountNewFaceMarkers(1)
 	assert.GreaterOrEqual(t, n, 1)
-}
-
-func TestCountUnmatchedFaceMarkers(t *testing.T) {
-	n := CountUnmatchedFaceMarkers()
-	assert.GreaterOrEqual(t, n, 0)
 }

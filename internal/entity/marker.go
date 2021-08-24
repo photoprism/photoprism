@@ -38,6 +38,7 @@ type Marker struct {
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
 	Score          int             `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
+	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
@@ -152,7 +153,9 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 
 	// Skip update if the same face is already set.
 	if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
-		return false, nil
+		// Update matching timestamp.
+		m.MatchedAt = TimestampPointer()
+		return false, m.Updates(Values{"MatchedAt": m.MatchedAt})
 	}
 
 	// Remember current values for comparison.
@@ -178,12 +181,12 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 		return false, err
 	}
 
-	// Update database only if anything has changed.
-	if m.FaceID != faceID || m.SubjectUID != subjectUID || m.SubjectSrc != SubjectSrc {
-		return true, m.Updates(Values{"FaceID": m.FaceID, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc})
-	}
+	updated = m.FaceID != faceID || m.SubjectUID != subjectUID || m.SubjectSrc != SubjectSrc
 
-	return false, nil
+	// Update matching timestamp.
+	m.MatchedAt = TimestampPointer()
+
+	return updated, m.Updates(Values{"FaceID": m.FaceID, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "MatchedAt": m.MatchedAt})
 }
 
 // SyncSubject maintains the marker subject relationship.
@@ -342,8 +345,10 @@ func (m *Marker) GetFace() (f *Face) {
 
 // ClearFace removes an existing face association.
 func (m *Marker) ClearFace() (updated bool, err error) {
+	m.MatchedAt = TimestampPointer()
+
 	if m.FaceID == "" {
-		return false, nil
+		return false, m.Updates(Values{"MatchedAt": m.MatchedAt})
 	}
 
 	updated = true
@@ -355,9 +360,9 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 	// Remove subject if set automatically.
 	if m.SubjectSrc == SrcAuto {
 		m.SubjectUID = ""
-		err = m.Updates(Values{"FaceID": "", "SubjectUID": ""})
+		err = m.Updates(Values{"FaceID": "", "SubjectUID": "", "MatchedAt": m.MatchedAt})
 	} else {
-		err = m.Updates(Values{"FaceID": ""})
+		err = m.Updates(Values{"FaceID": "", "MatchedAt": m.MatchedAt})
 	}
 
 	return updated, err

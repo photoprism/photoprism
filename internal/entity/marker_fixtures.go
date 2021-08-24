@@ -29,6 +29,7 @@ var MarkerFixtures = MarkerMap{
 		Y:          0.206944,
 		W:          0.355556,
 		H:          .355556,
+		Score:      100,
 	},
 	"1000003-2": Marker{
 		ID:         2,
@@ -42,6 +43,7 @@ var MarkerFixtures = MarkerMap{
 		Y:          0.106944,
 		W:          0.05,
 		H:          0.05,
+		Score:      100,
 	},
 	"1000003-3": Marker{
 		ID:         3,
@@ -54,6 +56,7 @@ var MarkerFixtures = MarkerMap{
 		Y:          0.5,
 		W:          0,
 		H:          0,
+		Score:      100,
 	},
 	"1000003-4": Marker{
 		ID:             4,
@@ -68,6 +71,7 @@ var MarkerFixtures = MarkerMap{
 		Y:              0.7,
 		W:              0.2,
 		H:              0.05,
+		Score:          50,
 	},
 	"1000003-5": Marker{
 		ID:             5,
@@ -84,6 +88,7 @@ var MarkerFixtures = MarkerMap{
 		Y:              0.3,
 		W:              0.1,
 		H:              0.1,
+		Score:          50,
 	},
 	"1000003-6": Marker{
 		ID:             6,
@@ -100,6 +105,7 @@ var MarkerFixtures = MarkerMap{
 		Y:              0.282292,
 		W:              0.285937,
 		H:              0.38125,
+		Score:          100,
 	},
 }
 

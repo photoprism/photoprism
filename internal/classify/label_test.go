@@ -1,8 +1,9 @@
 package classify
 
 import (
-	"github.com/photoprism/photoprism/internal/face"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/stretchr/testify/assert"
 )

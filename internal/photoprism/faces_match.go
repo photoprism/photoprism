@@ -21,10 +21,14 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		return result, fmt.Errorf("facial recognition is disabled")
 	}
 
+	var n int
+
+	matchedBefore := entity.Timestamp()
+
 	// Skip matching if index contains no new face markers, and force option isn't set.
 	if opt.Force {
 		log.Infof("faces: forced matching")
-	} else if n := query.CountUnmatchedFaceMarkers(); n > 0 {
+	} else if n, matchedBefore = query.CountUnmatchedFaceMarkers(); n > 0 {
 		log.Infof("faces: %d unmatched markers", n)
 	} else {
 		result.Recognized, err = query.MatchFaceMarkers()
@@ -37,11 +41,11 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		return result, err
 	}
 
+	matched := 0
 	limit := 100
-	offset := 0
 
 	for {
-		markers, err := query.Markers(limit, offset, entity.MarkerFace, true, false)
+		markers, err := query.Markers(limit, 0, entity.MarkerFace, true, false, matchedBefore)
 
 		if err != nil {
 			return result, err
@@ -52,6 +56,8 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		}
 
 		for _, marker := range markers {
+			matched++
+
 			if w.Canceled() {
 				return result, fmt.Errorf("worker canceled")
 			}
@@ -100,7 +106,11 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 			}
 		}
 
-		offset += limit
+		log.Debugf("faces: matched %d markers", matched)
+
+		if matched > query.CountMarkers(entity.MarkerFace) {
+			break
+		}
 
 		time.Sleep(50 * time.Millisecond)
 	}

@@ -15,16 +15,18 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		return added, fmt.Errorf("facial recognition is disabled")
 	}
 
+	minScore := 30
+
 	// Skip clustering if index contains no new face markers, and force option isn't set.
 	if opt.Force {
 		log.Infof("faces: forced clustering")
-	} else if n := query.CountNewFaceMarkers(); n < opt.SampleThreshold() {
+	} else if n := query.CountNewFaceMarkers(minScore); n < opt.SampleThreshold() {
 		log.Debugf("faces: skipping clustering")
 		return added, nil
 	}
 
 	// Fetch unclustered face embeddings.
-	embeddings, err := query.Embeddings(false, true)
+	embeddings, err := query.Embeddings(false, true, minScore)
 
 	log.Debugf("faces: %d unclustered samples found", len(embeddings))
 
