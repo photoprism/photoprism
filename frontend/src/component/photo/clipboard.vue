@@ -113,7 +113,7 @@
         <v-btn
             v-if="isAlbum && features.albums" fab dark
             small
-            :title="$gettext('Remove')"
+            :title="$gettext('Remove from album')"
             color="remove"
             :disabled="selection.length === 0"
             class="action-remove"
