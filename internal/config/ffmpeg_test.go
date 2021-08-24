@@ -14,6 +14,14 @@ func TestConfig_FFmpegEncoder(t *testing.T) {
 	assert.Equal(t, "testEncoder", c.FFmpegEncoder())
 }
 
+func TestConfig_FFmpegEnabled(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, true, c.FFmpegEnabled())
+
+	c.options.DisableFFmpeg = true
+	assert.Equal(t, false, c.FFmpegEnabled())
+}
+
 func TestConfig_FFmpegBuffers(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 8, c.FFmpegBuffers())

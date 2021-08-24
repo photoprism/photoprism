@@ -104,17 +104,49 @@ func TestConfig_OriginalsAlbumsPath(t *testing.T) {
 }
 
 func TestConfig_CreateDirectories(t *testing.T) {
-	testConfigMutex.Lock()
-	defer testConfigMutex.Unlock()
+	t.Run("no error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
 
-	c := &Config{
-		options: NewTestOptions(),
-		token:   rnd.Token(8),
-	}
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
 
-	if err := c.CreateDirectories(); err != nil {
-		t.Fatal(err)
-	}
+		if err := c.CreateDirectories(); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestConfig_CreateDirectories2(t *testing.T) {
+	t.Run("asset path not found", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+		c.options.AssetsPath = ""
+
+		err := c.CreateDirectories()
+		assert.Contains(t, err.Error(), "assets path not found")
+	})
+	t.Run("asset path not found", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+		t.Log(c.options.OriginalsPath)
+		c.options.OriginalsPath = ""
+		t.Log(c.options.OriginalsPath)
+
+		err := c.CreateDirectories()
+		t.Log(err)
+		assert.Contains(t, err.Error(), "originals path not found")
+	})
 }
 
 func TestConfig_ConfigFile2(t *testing.T) {
