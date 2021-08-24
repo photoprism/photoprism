@@ -238,6 +238,8 @@ export default {
             this.action = this.$gettext("Updating stacks");
           } else if (data.step === "moments") {
             this.action = this.$gettext("Updating moments");
+          } else if (data.step === "faces") {
+            this.action = this.$gettext("Updating faces");
           } else {
             this.action = this.$gettext("Updating index");
           }

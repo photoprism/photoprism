@@ -75,7 +75,8 @@ func RemoveAutoFaceClusters() (removed int64, err error) {
 func CountNewFaceMarkers() (n int) {
 	var f entity.Face
 
-	if err := Db().Where("face_src = ?", entity.SrcAuto).Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
+	if err := Db().Where("face_src = ?", entity.SrcAuto).
+		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
 		log.Debugf("faces: no existing clusters")
 	}
 
@@ -98,11 +99,13 @@ func CountNewFaceMarkers() (n int) {
 func CountUnmatchedFaceMarkers() (n int) {
 	var f entity.Face
 
-	if err := Db().Where("face_src <> ?", entity.SrcDefault).Order("matched_at ASC").Limit(1).Take(&f).Error; err != nil {
+	if err := Db().Where("face_src = ?", entity.SrcAuto).Order("matched_at ASC").Limit(1).Take(&f).Error; err != nil {
 		log.Debugf("faces: no unmatched clusters")
 	}
 
-	q := Db().Model(&entity.Markers{}).Where("marker_type = ? AND marker_invalid = 0 AND embeddings_json <> ''", entity.MarkerFace)
+	q := Db().Model(&entity.Markers{}).
+		Where("marker_type = ?", entity.MarkerFace).
+		Where("face_id = '' AND subject_src = '' AND marker_invalid = 0 AND embeddings_json <> ''")
 
 	if f.MatchedAt != nil {
 		q = q.Where("updated_at > ?", f.MatchedAt)

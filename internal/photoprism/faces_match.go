@@ -18,7 +18,7 @@ type FacesMatchResult struct {
 // Match matches markers with faces and subjects.
 func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if w.Disabled() {
-		return result, nil
+		return result, fmt.Errorf("facial recognition is disabled")
 	}
 
 	// Skip matching if index contains no new face markers, and force option isn't set.
@@ -105,18 +105,18 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	// Update face match timestamps.
-	for _, m := range faces {
-		if err := m.UpdateMatchTime(); err != nil {
-			log.Warnf("faces: %s (update match time)", err)
-		}
-	}
-
 	// Update remaining markers based on previous matches.
 	if m, err := query.MatchFaceMarkers(); err != nil {
 		return result, err
 	} else {
 		result.Recognized += m
+	}
+
+	// Update face match timestamps.
+	for _, m := range faces {
+		if err := m.UpdateMatchTime(); err != nil {
+			log.Warnf("faces: %s (update match time)", err)
+		}
 	}
 
 	return result, nil

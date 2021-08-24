@@ -200,7 +200,7 @@ func (m *Marker) SyncSubject(updateRelated bool) error {
 	}
 
 	// Update subject with marker name?
-	if m.MarkerName == "" || subj.SubjectName == m.MarkerName {
+	if m.MarkerName == "" || subj.SubjectName == m.MarkerName || (subj.SubjectName != "" && m.SubjectSrc != SrcManual) {
 		// Do nothing.
 	} else if err := subj.UpdateName(m.MarkerName); err != nil {
 		return err

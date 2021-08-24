@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"fmt"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 )
@@ -13,7 +15,7 @@ type FacesOptimizeResult struct {
 // Optimize optimizes the face lookup table.
 func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 	if w.Disabled() {
-		return result, nil
+		return result, fmt.Errorf("facial recognition is disabled")
 	}
 
 	faces, err := query.Faces(true, entity.SrcManual)

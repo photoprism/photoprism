@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"fmt"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
@@ -10,13 +12,13 @@ import (
 // Cluster clusters indexed face embeddings.
 func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	if w.Disabled() {
-		return added, nil
+		return added, fmt.Errorf("facial recognition is disabled")
 	}
 
 	// Skip clustering if index contains no new face markers, and force option isn't set.
 	if opt.Force {
 		log.Infof("faces: forced clustering")
-	} else if n := query.CountNewFaceMarkers(); n < 1 {
+	} else if n := query.CountNewFaceMarkers(); n < opt.SampleThreshold() {
 		log.Debugf("faces: skipping clustering")
 		return added, nil
 	}
@@ -30,7 +32,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	if err != nil {
 		return added, err
 	} else if samples := len(embeddings); samples < opt.SampleThreshold() {
-		log.Debugf("faces: at least %d samples needed for clustering", face.SampleThreshold)
+		log.Debugf("faces: at least %d samples needed for clustering", opt.SampleThreshold())
 		return added, nil
 	} else {
 		var c clusters.HardClusterer

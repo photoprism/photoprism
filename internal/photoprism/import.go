@@ -238,15 +238,11 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	if filesImported > 0 {
-		// Match existing faces if facial recognition is enabled.
+		// Run facial recognition if enabled.
 		if w := NewFaces(imp.conf); w.Disabled() {
 			log.Debugf("import: skipping facial recognition")
-		} else if matches, err := w.Match(FacesOptionsDefault()); err != nil {
+		} else if err := w.Start(FacesOptionsDefault()); err != nil {
 			log.Errorf("import: %s", err)
-		} else if matches.Updated > 0 {
-			log.Infof("import: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
-		} else {
-			log.Debugf("import: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
 		}
 
 		if err := entity.UpdatePhotoCounts(); err != nil {
