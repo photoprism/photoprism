@@ -122,18 +122,32 @@ func TestSubject_Restore(t *testing.T) {
 func TestFindSubject(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := NewSubject("Find Me", SubjectPerson, SrcAuto)
-		err := m.Save()
-		if err != nil {
+
+		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
-		found := FindSubject("find me")
-		assert.Equal(t, "Find Me", found.SubjectName)
+
+		if s := FindSubject(m.SubjectName); s != nil {
+			t.Fatal("result must be nil")
+		}
+
+		if s := FindSubject(m.SubjectUID); s != nil {
+			assert.Equal(t, "Find Me", s.SubjectName)
+		} else {
+			t.Fatal("result must not be nil")
+		}
+	})
+	t.Run("unknown person", func(t *testing.T) {
+		if s := FindSubject(UnknownPerson.SubjectUID); s != nil {
+			assert.Equal(t, "", s.SubjectName)
+		} else {
+			t.Fatal("result must not be nil")
+		}
 	})
 	t.Run("nil", func(t *testing.T) {
 		r := FindSubject("XXX")
 		assert.Nil(t, r)
 	})
-
 }
 
 func TestSubject_Links(t *testing.T) {

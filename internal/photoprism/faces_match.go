@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 )
 
@@ -38,7 +37,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		return result, err
 	}
 
-	limit := 500
+	limit := 100
 	offset := 0
 
 	for {
@@ -53,7 +52,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		}
 
 		for _, marker := range markers {
-			if mutex.MainWorker.Canceled() {
+			if w.Canceled() {
 				return result, fmt.Errorf("worker canceled")
 			}
 

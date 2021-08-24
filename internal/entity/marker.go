@@ -3,13 +3,12 @@ package entity
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/ulule/deepcopier"
-
-	"github.com/photoprism/photoprism/internal/face"
 )
 
 const (
@@ -92,19 +91,34 @@ func (m *Marker) Update(attr string, value interface{}) error {
 
 // SaveForm updates the entity using form data and stores it in the database.
 func (m *Marker) SaveForm(f form.Marker) error {
-	if err := deepcopier.Copy(m).From(f); err != nil {
-		return err
+	changed := false
+
+	if m.MarkerInvalid != f.MarkerInvalid {
+		m.MarkerInvalid = f.MarkerInvalid
+		changed = true
 	}
 
-	if f.MarkerName != "" {
-		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipKeyword))
+	if !m.MarkerInvalid && m.Score < 100 {
+		m.Score = 100
+		changed = true
 	}
 
-	if err := m.SyncSubject(true); err != nil {
-		return err
+	if f.SubjectSrc == SrcManual && strings.TrimSpace(f.MarkerName) != "" {
+		m.SubjectSrc = SrcManual
+		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipDefault))
+
+		if err := m.SyncSubject(true); err != nil {
+			return err
+		}
+
+		changed = true
 	}
 
-	return m.Save()
+	if changed {
+		return m.Save()
+	}
+
+	return nil
 }
 
 // SetFace sets a new face for this marker.
@@ -118,11 +132,8 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 	}
 
 	// Any reason we don't want to set a new face for this marker?
-	if m.SubjectSrc != SrcManual || f.SubjectUID == m.SubjectUID {
+	if m.SubjectSrc != SrcManual || f.SubjectUID == "" || m.SubjectUID == "" || f.SubjectUID == m.SubjectUID {
 		// Don't skip if subject wasn't set manually, or subjects match.
-	} else if f.SubjectUID != "" && m.SubjectUID == "" {
-		log.Debugf("faces: rejected subject %s for marker %d with unknown subject, source %s", txt.Quote(f.SubjectUID), m.ID, m.SubjectSrc)
-		return false, nil
 	} else if reported, err := f.ReportCollision(m.Embeddings()); err != nil {
 		return false, err
 	} else if reported {
@@ -217,7 +228,7 @@ func (m *Marker) SyncSubject(updateRelated bool) error {
 		Updates(Values{"SubjectUID": m.SubjectUID, "SubjectSrc": SrcAuto}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else {
-		log.Debugf("marker: matched subject %s with face %s", subj.SubjectName, m.FaceID)
+		log.Debugf("marker: matched %s with %s", subj.SubjectName, m.FaceID)
 	}
 
 	return nil

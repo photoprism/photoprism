@@ -848,8 +848,6 @@ export class Photo extends RestModel {
       return Promise.reject("invalid marker id");
     }
 
-    marker.MarkerSrc = src.Manual;
-
     const file = this.mainFile();
 
     if (!file || !file.UID) {

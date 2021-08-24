@@ -10,9 +10,10 @@ var (
 	SyncWorker  = Busy{}
 	ShareWorker = Busy{}
 	MetaWorker  = Busy{}
+	FacesWorker = Busy{}
 )
 
 // WorkersBusy returns true if any worker is busy.
 func WorkersBusy() bool {
-	return MainWorker.Busy() || SyncWorker.Busy() || ShareWorker.Busy() || MetaWorker.Busy()
+	return MainWorker.Busy() || SyncWorker.Busy() || ShareWorker.Busy() || MetaWorker.Busy() || FacesWorker.Busy()
 }

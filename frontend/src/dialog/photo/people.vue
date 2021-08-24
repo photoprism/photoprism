@@ -31,7 +31,7 @@
             <v-card-actions class="card-details pa-0">
               <v-layout v-if="marker.Score < 30" row wrap align-center>
                 <v-flex xs6 class="text-xs-center pa-0">
-                  <v-btn color="transparent"
+                  <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
                          class="action-archive text-xs-center"
                          :title="$gettext('Reject')" @click.stop="reject(marker)">
@@ -39,7 +39,7 @@
                   </v-btn>
                 </v-flex>
                 <v-flex xs6 class="text-xs-center pa-0">
-                  <v-btn color="transparent"
+                  <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
                          class="action-approve text-xs-center"
                          :title="$gettext('Approve')" @click.stop="confirm(marker)">
@@ -52,6 +52,7 @@
                   <v-text-field
                       v-model="marker.Name"
                       :rules="[textRule]"
+                      :disabled="busy"
                       browser-autocomplete="off"
                       class="input-name pa-0 ma-0"
                       hide-details
@@ -83,6 +84,7 @@ export default {
   },
   data() {
     return {
+      busy: false,
       markers: this.model.getMarkers(true),
       imageUrl: this.model.thumbnailUrl("fit_720"),
       disabled: !this.$config.feature("edit"),
@@ -133,15 +135,18 @@ export default {
     },
     reject(marker) {
       marker.Invalid = true;
-      this.model.updateMarker(marker);
+      this.busy = true;
+      this.model.updateMarker(marker).finally(() => this.busy = false);
     },
     confirm(marker) {
       marker.Score = 100;
       marker.Invalid = false;
-      this.model.updateMarker(marker);
+      this.busy = true;
+      this.model.updateMarker(marker).finally(() => this.busy = false);
     },
     clearSubject(marker) {
-      this.model.clearMarkerSubject(marker);
+      this.busy = true;
+      this.model.clearMarkerSubject(marker).finally(() => this.busy = false);
     },
     updateName(marker) {
       // Don't save empty name.
@@ -150,8 +155,8 @@ export default {
       }
 
       marker.SubjectSrc = src.Manual;
-
-      this.model.updateMarker(marker);
+      this.busy = true;
+      this.model.updateMarker(marker).finally(() => this.busy = false);
     },
   },
 };

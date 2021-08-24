@@ -59,13 +59,6 @@ func TestEmbeddings(t *testing.T) {
 	}
 }
 
-func TestAddMarkerSubjects(t *testing.T) {
-	affected, err := AddMarkerSubjects()
-
-	assert.NoError(t, err)
-	assert.GreaterOrEqual(t, affected, int64(1))
-}
-
 func TestRemoveInvalidMarkerReferences(t *testing.T) {
 	affected, err := RemoveInvalidMarkerReferences()
 

@@ -45,11 +45,11 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		return fmt.Errorf("facial recognition is disabled")
 	}
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err := mutex.FacesWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.FacesWorker.Stop()
 
 	// Remove invalid reference IDs from markers table.
 	if removed, err := query.RemoveInvalidMarkerReferences(); err != nil {
@@ -60,6 +60,15 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		log.Debugf("faces: no invalid references")
 	}
 
+	// Add known marker subjects.
+	if affected, err := query.AddFaceMarkerSubjects(); err != nil {
+		log.Errorf("faces: %s (match markers with subjects)", err)
+	} else if affected > 0 {
+		log.Infof("faces: added %d known marker subjects", affected)
+	} else {
+		log.Debugf("faces: no subjects were missing")
+	}
+
 	// Optimize existing face clusters.
 	if res, err := w.Optimize(); err != nil {
 		return err
@@ -67,15 +76,6 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		log.Infof("faces: merged %d clusters", res.Merged)
 	} else {
 		log.Debugf("faces: no clusters could be merged")
-	}
-
-	// Add known marker subjects.
-	if affected, err := query.AddMarkerSubjects(); err != nil {
-		log.Errorf("faces: %s (match markers with subjects)", err)
-	} else if affected > 0 {
-		log.Infof("faces: added %d known marker subjects", affected)
-	} else {
-		log.Debugf("faces: no subjects were missing")
 	}
 
 	var added entity.Faces
@@ -108,7 +108,12 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 // Cancel stops the current operation.
 func (w *Faces) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.FacesWorker.Cancel()
+}
+
+// Canceled tests if face clustering and matching should be stopped.
+func (w *Faces) Canceled() bool {
+	return mutex.FacesWorker.Canceled() || mutex.MainWorker.Canceled() || mutex.MetaWorker.Canceled()
 }
 
 // Disabled tests if facial recognition is disabled.

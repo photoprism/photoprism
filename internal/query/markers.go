@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // MarkerByID returns a Marker based on the ID.
@@ -72,40 +71,6 @@ func Embeddings(single, unclustered bool) (result entity.Embeddings, err error) 
 	}
 
 	return result, nil
-}
-
-// AddMarkerSubjects adds and references known marker subjects.
-func AddMarkerSubjects() (affected int64, err error) {
-	var markers entity.Markers
-
-	if err := Db().
-		Where("face_id <> '' AND subject_uid = '' AND subject_src = ?", entity.SrcAuto).
-		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
-		Where("marker_name <> ''").
-		Order("marker_name").
-		Find(&markers).Error; err != nil {
-		return affected, err
-	} else if len(markers) == 0 {
-		return affected, nil
-	}
-
-	for _, m := range markers {
-		if faceId := m.FaceID; faceId == "" {
-			// Do nothing.
-		} else if subj := entity.NewSubject(m.MarkerName, entity.SubjectPerson, entity.SrcMarker); subj == nil {
-			log.Errorf("faces: subject should not be nil - bug?")
-		} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
-			log.Errorf("faces: failed adding subject %s for marker %d", txt.Quote(m.MarkerName), m.ID)
-		} else if err := m.Updates(entity.Values{"SubjectUID": subj.SubjectUID, "SubjectSrc": entity.SrcAuto}); err != nil {
-			return affected, err
-		} else if err := Db().Model(&entity.Face{}).Where("id = ? AND subject_uid = ''", faceId).Update("SubjectUID", subj.SubjectUID).Error; err != nil {
-			return affected, err
-		} else {
-			affected++
-		}
-	}
-
-	return affected, err
 }
 
 // RemoveInvalidMarkerReferences deletes invalid reference IDs from the markers table.

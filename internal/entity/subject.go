@@ -27,7 +27,7 @@ type Subject struct {
 	SubjectType        string          `gorm:"type:VARBINARY(8);" json:"Type" yaml:"Type"`
 	SubjectSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src"`
 	SubjectSlug        string          `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"-"`
-	SubjectName        string          `gorm:"type:VARCHAR(255);index;" json:"Name" yaml:"Name"`
+	SubjectName        string          `gorm:"type:VARCHAR(255);unique_index;" json:"Name" yaml:"Name"`
 	SubjectDescription string          `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	SubjectNotes       string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	Favorite           bool            `json:"Favorite" yaml:"Favorite,omitempty"`
@@ -44,8 +44,8 @@ type Subject struct {
 // UnknownPerson can be used as a placeholder for unknown people.
 var UnknownPerson = Subject{
 	SubjectUID:  "j000000000000000",
-	SubjectSlug: "unknown",
-	SubjectName: "Unknown",
+	SubjectSlug: "",
+	SubjectName: "",
 	SubjectType: SubjectPerson,
 	SubjectSrc:  SrcDefault,
 	Favorite:    false,
@@ -59,7 +59,7 @@ func CreateUnknownPerson() {
 
 // TableName returns the entity database table name.
 func (Subject) TableName() string {
-	return "subjects_dev4"
+	return "subjects_dev5"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -77,12 +77,13 @@ func NewSubject(name, subjectType, subjectSrc string) *Subject {
 		subjectType = SubjectPerson
 	}
 
-	if name == "" {
-		name = UnknownName
-	}
-
 	subjectName := txt.Title(txt.Clip(name, txt.ClipDefault))
 	subjectSlug := slug.Make(txt.Clip(name, txt.ClipSlug))
+
+	// Name is required.
+	if subjectName == "" || subjectSlug == "" {
+		return nil
+	}
 
 	result := &Subject{
 		SubjectSlug: subjectSlug,
@@ -144,7 +145,7 @@ func (m *Subject) Updates(values interface{}) error {
 func FirstOrCreateSubject(m *Subject) *Subject {
 	result := Subject{}
 
-	if err := UnscopedDb().Where("subject_type = ? AND subject_slug = ?", m.SubjectType, m.SubjectSlug).First(&result).Error; err == nil {
+	if err := UnscopedDb().Where("subject_name LIKE ?", m.SubjectName).First(&result).Error; err == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		if !m.Hidden && m.SubjectType == SubjectPerson {
@@ -156,10 +157,10 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 		}
 
 		return m
-	} else if err := UnscopedDb().Where("subject_type = ? AND subject_slug = ?", m.SubjectType, m.SubjectSlug).First(&result).Error; err == nil {
+	} else if err := UnscopedDb().Where("subject_name LIKE ?", m.SubjectName).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("subject: %s (find or create %s)", createErr, m.SubjectSlug)
+		log.Errorf("subject: %s while creating %s", createErr, txt.Quote(m.SubjectName))
 	}
 
 	return nil
@@ -173,13 +174,7 @@ func FindSubject(s string) *Subject {
 
 	result := Subject{}
 
-	db := Db()
-
-	if rnd.IsPPID(s, 'j') {
-		db = db.Where("subject_uid = ?", s)
-	} else {
-		db = db.Where("subject_slug = ?", slug.Make(txt.Clip(s, txt.ClipSlug)))
-	}
+	db := Db().Where("subject_uid = ?", s)
 
 	if err := db.First(&result).Error; err != nil {
 		return nil
