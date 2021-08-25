@@ -130,22 +130,146 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		c.options.AssetsPath = ""
 
 		err := c.CreateDirectories()
+		if err == nil {
+			t.Fatal("error expected")
+		}
 		assert.Contains(t, err.Error(), "assets path not found")
+
+		c.options.AssetsPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
-	t.Run("asset path not found", func(t *testing.T) {
+	t.Run("storage path error", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
 			token:   rnd.Token(8),
 		}
-		t.Log(c.options.OriginalsPath)
+
+		c.options.StoragePath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+	t.Run("originals path not found", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
 		c.options.OriginalsPath = ""
-		t.Log(c.options.OriginalsPath)
 
 		err := c.CreateDirectories()
-		t.Log(err)
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
 		assert.Contains(t, err.Error(), "originals path not found")
+
+		c.options.OriginalsPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+	t.Run("import path not found", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+		c.options.ImportPath = ""
+
+		err := c.CreateDirectories()
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Contains(t, err.Error(), "import path not found")
+
+		c.options.ImportPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+	t.Run("sidecar path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.SidecarPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+	t.Run("cache path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.CachePath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+	t.Run("config path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.ConfigPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+	t.Run("temp path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.TempPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
 }
 
