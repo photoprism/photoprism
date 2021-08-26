@@ -1324,7 +1324,7 @@ func TestPhoto_AllFiles(t *testing.T) {
 		assert.Equal(t, 2, len(files))
 	})
 	t.Run("photo without files", func(t *testing.T) {
-		m := &Photo{}
+		m := &Photo{ID: 100000023456}
 		files := m.AllFiles()
 		assert.Equal(t, 0, len(files))
 	})

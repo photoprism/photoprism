@@ -51,6 +51,13 @@ func TestFile_ShareFileName(t *testing.T) {
 
 		assert.Equal(t, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
+	t.Run("file without photo", func(t *testing.T) {
+		file := FileFixtures.Get("FileWithoutPhoto.mp4")
+
+		filename := file.ShareBase(0)
+
+		assert.Equal(t, "pcad9a68fa6acc5c5ba965adf6ec465ca42fd916.mp4", filename)
+	})
 	t.Run("file hash < 8", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 
@@ -159,18 +166,13 @@ func TestFile_Found(t *testing.T) {
 
 func TestFile_AllFilesMissing(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
-		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "123", FileMissing: true}
-		file2 := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "456", FileMissing: true}
+		file := FileFixtures.Get("missing.jpg")
 		assert.True(t, file.AllFilesMissing())
-		assert.NotEmpty(t, file2)
 	})
-	//TODO test false
-	/*t.Run("false", func(t *testing.T) {
-		file := FileFixturesExampleJPG
+	t.Run("false", func(t *testing.T) {
+		file := FileFixtures.Get("Quality1FavoriteTrue.jpg")
 		assert.False(t, file.AllFilesMissing())
-		assert.NotEmpty(t, file)
-	})*/
+	})
 }
 
 func TestFile_Save(t *testing.T) {
@@ -455,5 +457,35 @@ func TestFile_FaceCount(t *testing.T) {
 		result := file.FaceCount()
 
 		assert.GreaterOrEqual(t, result, 3)
+	})
+}
+
+func TestFile_Rename(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		m := FileFixtures.Get("exampleFileName.jpg")
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
+		assert.Equal(t, RootOriginals, m.FileRoot)
+		assert.Equal(t, false, m.FileMissing)
+		assert.Nil(t, m.DeletedAt)
+
+		p := m.RelatedPhoto()
+		assert.Equal(t, "2790/07", p.PhotoPath)
+		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
+
+		m.Rename("x/y/newName.jpg", "newRoot", "x/y", "newBase")
+		assert.Equal(t, "x/y/newName.jpg", m.FileName)
+		assert.Equal(t, "newRoot", m.FileRoot)
+		assert.Equal(t, false, m.FileMissing)
+		assert.Nil(t, m.DeletedAt)
+		assert.Equal(t, "x/y", p.PhotoPath)
+		assert.Equal(t, "newBase", p.PhotoName)
+
+		m.Rename("2790/07/27900704_070228_D6D51B6C.jpg", RootOriginals, "2790/07", "27900704_070228_D6D51B6C")
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
+		assert.Equal(t, RootOriginals, m.FileRoot)
+		assert.Equal(t, false, m.FileMissing)
+		assert.Nil(t, m.DeletedAt)
+		assert.Equal(t, "2790/07", p.PhotoPath)
+		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
 	})
 }
