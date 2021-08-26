@@ -58,6 +58,10 @@ func TestUnmarshalEmbedding(t *testing.T) {
 		r := UnmarshalEmbedding("-0.013,-0.031]")
 		assert.Nil(t, r)
 	})
+	t.Run("invalid json", func(t *testing.T) {
+		r := UnmarshalEmbedding("[true, false]")
+		assert.Equal(t, []float64{0, 0}, r)
+	})
 }
 
 func TestUnmarshalEmbeddings(t *testing.T) {
@@ -68,5 +72,9 @@ func TestUnmarshalEmbeddings(t *testing.T) {
 	t.Run("no prefix", func(t *testing.T) {
 		r := UnmarshalEmbeddings("-0.013,-0.031]")
 		assert.Nil(t, r)
+	})
+	t.Run("invalid json", func(t *testing.T) {
+		r := UnmarshalEmbeddings("[[true, false]]")
+		assert.Equal(t, [][]float64{{0, 0}}, r)
 	})
 }
