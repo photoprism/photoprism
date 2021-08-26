@@ -4,7 +4,25 @@ import (
 	"time"
 )
 
-var FileFixtures = map[string]File{
+type FileMap map[string]File
+
+func (m FileMap) Get(name string) File {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return File{FileName: name}
+}
+
+func (m FileMap) Pointer(name string) *File {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return &File{FileName: name}
+}
+
+var FileFixtures = FileMap{
 	"exampleFileName.jpg": {
 		ID:              1000000,
 		Photo:           PhotoFixtures.Pointer("19800101_000002_D640C559"),
@@ -1085,6 +1103,45 @@ var FileFixtures = map[string]File{
 		FileRoot:        RootOriginals,
 		OriginalName:    "my-videos/IMG_88888.MP4",
 		FileHash:        "pcad9a68fa6acc5c5ba965adf6ec465ca42fd915",
+		FileSize:        900,
+		FileCodec:       "avc1",
+		FileType:        "mp4",
+		FileMime:        "video/mp4",
+		FilePrimary:     false,
+		FileSidecar:     false,
+		FileVideo:       true,
+		FileMissing:     false,
+		FilePortrait:    false,
+		FileDuration:    115000000000,
+		FileWidth:       200,
+		FileHeight:      1100,
+		FileOrientation: 6,
+		FileProjection:  "",
+		FileAspectRatio: 2,
+		FileMainColor:   "red",
+		FileColors:      "225221C1E",
+		FileLuminance:   "DC42844C8",
+		FileDiff:        986,
+		FileChroma:      32,
+		FileError:       "",
+		Share:           []FileShare{},
+		Sync:            []FileSync{},
+		ModTime:         time.Date(2020, 12, 6, 2, 6, 51, 0, time.UTC).Unix(),
+		CreatedAt:       time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		CreatedIn:       935962,
+		UpdatedAt:       time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedIn:       935962,
+		DeletedAt:       nil,
+	},
+	"FileWithoutPhoto.mp4": {
+		ID:              1000031,
+		PhotoUID:        "",
+		InstanceID:      "",
+		FileUID:         "ft2es49qhhinlpln",
+		FileName:        "FileWithoutPhoto.mp4",
+		FileRoot:        RootOriginals,
+		OriginalName:    "",
+		FileHash:        "pcad9a68fa6acc5c5ba965adf6ec465ca42fd916",
 		FileSize:        900,
 		FileCodec:       "avc1",
 		FileType:        "mp4",
