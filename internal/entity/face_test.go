@@ -102,6 +102,16 @@ func TestFace_ReportCollision(t *testing.T) {
 			assert.Equal(t, "invalid face id", err.Error())
 		}
 	})
+	t.Run("embedding empty", func(t *testing.T) {
+		m := NewFace("123", SrcAuto, Embeddings{})
+		m.EmbeddingJSON = []byte("")
+		if reported, err := m.ReportCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
+			t.Fatal(err)
+		} else {
+			assert.False(t, reported)
+			assert.Equal(t, "embedding must not be empty", err.Error())
+		}
+	})
 }
 
 func TestFace_ReviseMatches(t *testing.T) {

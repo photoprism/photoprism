@@ -148,7 +148,7 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 	if m.SubjectUID == "" {
 		// Ignore reports for anonymous faces.
 		return false, nil
-	} else if m.ID == "" || len(m.EmbeddingJSON) == 0 {
+	} else if m.ID == "" {
 		return false, fmt.Errorf("invalid face id")
 	} else if len(m.EmbeddingJSON) == 0 {
 		return false, fmt.Errorf("embedding must not be empty")
