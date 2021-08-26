@@ -143,6 +143,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
+
 	t.Run("storage path error", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
@@ -159,6 +160,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
+
 	t.Run("originals path not found", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
@@ -183,6 +185,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
+
 	t.Run("import path not found", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
@@ -207,6 +210,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
+
 	t.Run("sidecar path error", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
@@ -223,6 +227,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
+
 	t.Run("cache path error", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
@@ -239,6 +244,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
+
 	t.Run("config path error", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
@@ -255,6 +261,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		}
 		assert.Contains(t, err2.Error(), "please check configuration and permissions")
 	})
+
 	t.Run("temp path error", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
@@ -307,13 +314,6 @@ func TestConfig_ImportPath2(t *testing.T) {
 	c.options.ImportPath = ""
 	assert.Equal(t, "", c.ImportPath())
 }
-
-/*func TestConfig_ConfigPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config", c.ConfigPath())
-	c.options.ConfigPath = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config", c.ConfigPath())
-}*/
 
 func TestConfig_AssetsPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
