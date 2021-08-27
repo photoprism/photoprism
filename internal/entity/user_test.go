@@ -93,6 +93,15 @@ func TestUser_InvalidPassword(t *testing.T) {
 
 		assert.False(t, m.InvalidPassword("photoprism"))
 	})
+	t.Run("admin invalid password", func(t *testing.T) {
+		m := FindUserByName("admin")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.True(t, m.InvalidPassword("wrong-password"))
+	})
 	t.Run("no password existing", func(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
 		err := p.Save()
@@ -414,26 +423,26 @@ func TestUser_Validate(t *testing.T) {
 			AddressID: 1,
 			UserName:  "notunique1",
 		})
-		ures := &User{
+		u := &User{
 			AddressID:    1,
 			UserName:     "notunique1",
 			FullName:     "Not Unique",
 			PrimaryEmail: "notunique1@example.com",
 		}
-		assert.Error(t, ures.Validate())
+		assert.Error(t, u.Validate())
 	})
 	t.Run("email not unique", func(t *testing.T) {
 		FirstOrCreateUser(&User{
 			AddressID:    1,
 			PrimaryEmail: "notunique2@example.com",
 		})
-		ures := &User{
+		u := &User{
 			AddressID:    1,
 			UserName:     "notunique2",
 			FullName:     "Not Unique",
 			PrimaryEmail: "notunique2@example.com",
 		}
-		assert.Error(t, ures.Validate())
+		assert.Error(t, u.Validate())
 	})
 	t.Run("update user - email not unique", func(t *testing.T) {
 		FirstOrCreateUser(&User{
@@ -450,6 +459,19 @@ func TestUser_Validate(t *testing.T) {
 		})
 		u.UserName = "notunique3"
 		assert.Error(t, u.Validate())
+	})
+	t.Run("primary email empty", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID: 1,
+			UserName:  "nnomail",
+		})
+		u := &User{
+			AddressID:    1,
+			UserName:     "nomail",
+			FullName:     "No Mail",
+			PrimaryEmail: "",
+		}
+		assert.Nil(t, u.Validate())
 	})
 }
 
@@ -498,4 +520,9 @@ func TestDeleteUser(t *testing.T) {
 		err := u.Delete()
 		assert.Error(t, err)
 	})
+}
+
+func TestUser_Deleted(t *testing.T) {
+	assert.False(t, UserFixtures.Pointer("alice").Deleted())
+	assert.True(t, UserFixtures.Pointer("deleted").Deleted())
 }
