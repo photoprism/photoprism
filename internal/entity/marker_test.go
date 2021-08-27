@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/form"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -163,5 +164,31 @@ func TestMarker_ClearFace(t *testing.T) {
 
 		assert.True(t, updated)
 		assert.Empty(t, m.FaceID)
+	})
+}
+
+func TestMarker_SaveForm(t *testing.T) {
+	t.Run("fa-ge add name of not yet existing subject", func(t *testing.T) {
+		m := MarkerFixtures.Get("fa-gr-1")
+		m2 := MarkerFixtures.Get("fa-gr-2")
+		m3 := MarkerFixtures.Get("fa-gr-3")
+
+		assert.Empty(t, m.SubjectUID)
+		assert.Empty(t, m2.SubjectUID)
+		assert.Empty(t, m3.SubjectUID)
+
+		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franzi", MarkerInvalid: false}
+
+		err := m.SaveForm(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotEmpty(t, m.SubjectUID)
+		assert.Equal(t, "Franzi", m.GetSubject().SubjectName)
+		assert.Equal(t, "Franzi", FindMarker(9).GetSubject().SubjectName)
+		assert.Equal(t, "Franzi", FindMarker(10).GetSubject().SubjectName)
+
 	})
 }
