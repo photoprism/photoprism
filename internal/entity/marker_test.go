@@ -2,9 +2,8 @@ package entity
 
 import (
 	"github.com/photoprism/photoprism/internal/form"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestMarker_TableName(t *testing.T) {
@@ -132,6 +131,11 @@ func TestMarker_Save(t *testing.T) {
 
 		t.Logf("FILES: %#v", p.Files)
 	})
+	t.Run("invalid position", func(t *testing.T) {
+		m := Marker{X: 0, Y: 0}
+		err := m.Save()
+		assert.Equal(t, "marker: invalid position", err.Error())
+	})
 }
 
 func TestMarker_ClearSubject(t *testing.T) {
@@ -168,7 +172,7 @@ func TestMarker_ClearFace(t *testing.T) {
 }
 
 func TestMarker_SaveForm(t *testing.T) {
-	t.Run("fa-ge add name of not yet existing subject", func(t *testing.T) {
+	t.Run("fa-ge add name of not yet existing subject to marker without subject", func(t *testing.T) {
 		m := MarkerFixtures.Get("fa-gr-1")
 		m2 := MarkerFixtures.Get("fa-gr-2")
 		m3 := MarkerFixtures.Get("fa-gr-3")
@@ -177,7 +181,12 @@ func TestMarker_SaveForm(t *testing.T) {
 		assert.Empty(t, m2.SubjectUID)
 		assert.Empty(t, m3.SubjectUID)
 
-		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franzi", MarkerInvalid: false}
+		m.MarkerInvalid = true
+		m.Score = 50
+
+		//set new name
+
+		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franki", MarkerInvalid: false}
 
 		err := m.SaveForm(f)
 
@@ -186,9 +195,60 @@ func TestMarker_SaveForm(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, m.SubjectUID)
-		assert.Equal(t, "Franzi", m.GetSubject().SubjectName)
-		assert.Equal(t, "Franzi", FindMarker(9).GetSubject().SubjectName)
-		assert.Equal(t, "Franzi", FindMarker(10).GetSubject().SubjectName)
+		assert.Equal(t, "Franki", m.GetSubject().SubjectName)
+		assert.Equal(t, "Franki", FindMarker(9).GetSubject().SubjectName)
+		assert.Equal(t, "Franki", FindMarker(10).GetSubject().SubjectName)
 
+		//rename
+		f3 := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franzilein", MarkerInvalid: false}
+
+		err3 := FindMarker(9).SaveForm(f3)
+
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+
+		assert.Equal(t, "Franzilein", FindMarker(8).GetSubject().SubjectName)
+		assert.Equal(t, "Franzilein", FindMarker(9).GetSubject().SubjectName)
+		assert.Equal(t, "Franzilein", FindMarker(10).GetSubject().SubjectName)
+	})
+}
+
+func TestMarker_SyncSubject(t *testing.T) {
+	t.Run("no face marker", func(t *testing.T) {
+		m := Marker{MarkerType: "test", Subject: nil}
+		assert.Nil(t, m.SyncSubject(false))
+	})
+	t.Run("subject is nil", func(t *testing.T) {
+		m := Marker{MarkerType: MarkerFace, Subject: nil}
+		assert.Nil(t, m.SyncSubject(false))
+	})
+}
+
+func TestMarker_Create(t *testing.T) {
+	t.Run("invalid position", func(t *testing.T) {
+		m := Marker{X: 0, Y: 0}
+		err := m.Create()
+		assert.Equal(t, "marker: invalid position", err.Error())
+	})
+}
+
+func TestMarker_Embeddings(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		m := MarkerFixtures.Get("1000003-4")
+
+		assert.Equal(t, 0.013083286379677253, m.Embeddings()[0][0])
+	})
+	t.Run("empty embedding", func(t *testing.T) {
+		m := Marker{}
+		m.EmbeddingsJSON = []byte("")
+
+		assert.Empty(t, m.Embeddings())
+	})
+	t.Run("invalid embedding json", func(t *testing.T) {
+		m := Marker{}
+		m.EmbeddingsJSON = []byte("[false]")
+
+		assert.Empty(t, m.Embeddings()[0])
 	})
 }
