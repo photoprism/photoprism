@@ -89,6 +89,14 @@ func TestMarkersWithInvalidReferences(t *testing.T) {
 	assert.GreaterOrEqual(t, len(s), 0)
 }
 
+func TestMarkersWithSubjectConflict(t *testing.T) {
+	m, err := MarkersWithSubjectConflict()
+
+	assert.NoError(t, err)
+
+	assert.GreaterOrEqual(t, len(m), 0)
+}
+
 func TestCountUnmatchedFaceMarkers(t *testing.T) {
 	n, threshold := CountUnmatchedFaceMarkers()
 

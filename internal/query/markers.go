@@ -138,6 +138,16 @@ func MarkersWithInvalidReferences() (faces entity.Markers, subjects entity.Marke
 	return faces, subjects, err
 }
 
+// MarkersWithSubjectConflict finds markers with conflicting subjects.
+func MarkersWithSubjectConflict() (results entity.Markers, err error) {
+	err = Db().
+		Joins(fmt.Sprintf("JOIN %s f ON f.id = face_id AND f.subject_uid <> %s.subject_uid", entity.Face{}.TableName(), entity.Marker{}.TableName())).
+		Order("face_id").
+		Find(&results).Error
+
+	return results, err
+}
+
 // ResetFaceMarkerMatches removes automatically added subject and face references from the markers table.
 func ResetFaceMarkerMatches() (removed int64, err error) {
 	res := Db().Model(&entity.Marker{}).
