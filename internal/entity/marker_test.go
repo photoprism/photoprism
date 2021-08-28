@@ -1,9 +1,10 @@
 package entity
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestMarker_TableName(t *testing.T) {

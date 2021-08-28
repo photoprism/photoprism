@@ -1,8 +1,9 @@
 package entity
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFileMap_Get(t *testing.T) {
