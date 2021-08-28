@@ -45,15 +45,15 @@ var FacesCommand = cli.Command{
 			Action: facesOptimizeAction,
 		},
 		{
-			Name:  "index",
+			Name:  "update",
 			Usage: "Performs facial recognition",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
-					Usage: "reindex existing faces",
+					Usage: "update existing faces",
 				},
 			},
-			Action: facesIndexAction,
+			Action: facesUpdateAction,
 		},
 	},
 }
@@ -191,8 +191,8 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	return nil
 }
 
-// facesIndexAction performs face clustering and matching.
-func facesIndexAction(ctx *cli.Context) error {
+// facesUpdateAction performs face clustering and matching.
+func facesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
