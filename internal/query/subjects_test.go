@@ -22,6 +22,20 @@ func TestSubjects(t *testing.T) {
 	}
 }
 
+func TestSubjectMap(t *testing.T) {
+	results, err := SubjectMap()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.GreaterOrEqual(t, len(results), 1)
+
+	for _, val := range results {
+		assert.IsType(t, entity.Subject{}, val)
+	}
+}
+
 func TestRemoveDanglingMarkerSubjects(t *testing.T) {
 	affected, err := RemoveDanglingMarkerSubjects()
 

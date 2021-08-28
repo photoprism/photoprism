@@ -80,6 +80,15 @@ func TestRemoveInvalidMarkerReferences(t *testing.T) {
 	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
+func TestMarkersWithInvalidReferences(t *testing.T) {
+	f, s, err := MarkersWithInvalidReferences()
+
+	assert.NoError(t, err)
+
+	assert.GreaterOrEqual(t, len(f), 0)
+	assert.GreaterOrEqual(t, len(s), 0)
+}
+
 func TestCountUnmatchedFaceMarkers(t *testing.T) {
 	n, threshold := CountUnmatchedFaceMarkers()
 

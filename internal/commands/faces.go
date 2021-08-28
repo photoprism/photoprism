@@ -24,6 +24,17 @@ var FacesCommand = cli.Command{
 			Action: facesStatsAction,
 		},
 		{
+			Name:  "audit",
+			Usage: "Conducts a data integrity audit",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "fix, f",
+					Usage: "issues will be fixed automatically",
+				},
+			},
+			Action: facesAuditAction,
+		},
+		{
 			Name:   "reset",
 			Usage:  "Resets recognized faces",
 			Action: facesResetAction,
@@ -65,7 +76,38 @@ func facesStatsAction(ctx *cli.Context) error {
 
 	w := service.Faces()
 
-	if err := w.Analyze(); err != nil {
+	if err := w.Stats(); err != nil {
+		return err
+	} else {
+		elapsed := time.Since(start)
+
+		log.Infof("completed in %s", elapsed)
+	}
+
+	conf.Shutdown()
+
+	return nil
+}
+
+// facesAuditAction shows stats on face embeddings.
+func facesAuditAction(ctx *cli.Context) error {
+	start := time.Now()
+
+	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
+
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := conf.Init(); err != nil {
+		return err
+	}
+
+	conf.InitDb()
+
+	w := service.Faces()
+
+	if err := w.Audit(ctx.Bool("fix")); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

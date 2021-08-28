@@ -18,6 +18,25 @@ func Subjects(limit, offset int) (result entity.Subjects, err error) {
 	return result, err
 }
 
+// SubjectMap returns a map of subjects indexed by UID.
+func SubjectMap() (result map[string]entity.Subject, err error) {
+	result = make(map[string]entity.Subject)
+
+	var subj entity.Subjects
+
+	stmt := Db().Where("subject_src <> ?", entity.SrcDefault)
+
+	if err = stmt.Find(&subj).Error; err != nil {
+		return result, err
+	}
+
+	for _, s := range subj {
+		result[s.SubjectUID] = s
+	}
+
+	return result, err
+}
+
 // RemoveDanglingMarkerSubjects permanently deletes dangling marker subjects from the index.
 func RemoveDanglingMarkerSubjects() (removed int64, err error) {
 	res := UnscopedDb().

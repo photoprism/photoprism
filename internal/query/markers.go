@@ -118,6 +118,26 @@ func RemoveInvalidMarkerReferences() (removed int64, err error) {
 	return removed, nil
 }
 
+// MarkersWithInvalidReferences finds markers with invalid references.
+func MarkersWithInvalidReferences() (faces entity.Markers, subjects entity.Markers, err error) {
+	// Find markers with invalid face IDs.
+	if res := Db().
+		Where("marker_type = ?", entity.MarkerFace).
+		Where(fmt.Sprintf("face_id <> '' AND face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
+		Find(&faces); res.Error != nil {
+		err = res.Error
+	}
+
+	// Find markers with invalid subject UIDs.
+	if res := Db().
+		Where(fmt.Sprintf("subject_uid <> '' AND subject_uid NOT IN (SELECT subject_uid FROM %s)", entity.Subject{}.TableName())).
+		Find(&subjects); res.Error != nil {
+		err = res.Error
+	}
+
+	return faces, subjects, err
+}
+
 // ResetFaceMarkerMatches removes automatically added subject and face references from the markers table.
 func ResetFaceMarkerMatches() (removed int64, err error) {
 	res := Db().Model(&entity.Marker{}).

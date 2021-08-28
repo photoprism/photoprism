@@ -6,8 +6,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/clusters"
 )
 
-// Analyze face embeddings.
-func (w *Faces) Analyze() (err error) {
+// Stats shows statistics on face embeddings.
+func (w *Faces) Stats() (err error) {
 	if embeddings, err := query.Embeddings(true, false, 0); err != nil {
 		return err
 	} else if samples := len(embeddings); samples == 0 {
