@@ -176,7 +176,7 @@ func TestFace_UpdateMatchTime(t *testing.T) {
 	m := NewFace("12345", SrcAuto, Embeddings{})
 	initialMatchTime := m.MatchedAt
 	assert.Equal(t, initialMatchTime, m.MatchedAt)
-	m.UpdateMatchTime()
+	m.Matched()
 	assert.NotEqual(t, initialMatchTime, m.MatchedAt)
 }
 

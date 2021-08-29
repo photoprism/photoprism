@@ -174,7 +174,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		log.Errorf("photo: %s", err.Error())
 	}
 
-	edited := Timestamp()
+	edited := TimeStamp()
 	model.EditedAt = &edited
 	model.PhotoQuality = model.QualityScore()
 
@@ -335,7 +335,7 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
-		now := Timestamp()
+		now := TimeStamp()
 
 		if err := scope.SetColumn("TakenAt", now); err != nil {
 			return err
@@ -356,7 +356,7 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
 func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
-		now := Timestamp()
+		now := TimeStamp()
 
 		if err := scope.SetColumn("TakenAt", now); err != nil {
 			return err
@@ -1041,7 +1041,7 @@ func (m *Photo) AllFiles() (files Files) {
 
 // Archive removes the photo from albums and flags it as archived (soft delete).
 func (m *Photo) Archive() error {
-	deletedAt := Timestamp()
+	deletedAt := TimeStamp()
 
 	if err := Db().Model(&PhotoAlbum{}).Where("photo_uid = ?", m.PhotoUID).UpdateColumn("hidden", true).Error; err != nil {
 		return err
@@ -1073,7 +1073,7 @@ func (m *Photo) Delete(permanently bool) error {
 
 	Db().Delete(File{}, "photo_id = ?", m.ID)
 
-	return m.Updates(map[string]interface{}{"DeletedAt": Timestamp(), "PhotoQuality": -1})
+	return m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
 }
 
 // Delete permanently deletes the entity from the database.
@@ -1135,7 +1135,7 @@ func (m *Photo) Approve() error {
 		return nil
 	}
 
-	edited := Timestamp()
+	edited := TimeStamp()
 	m.EditedAt = &edited
 	m.PhotoQuality = m.QualityScore()
 

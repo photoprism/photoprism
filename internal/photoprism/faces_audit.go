@@ -9,7 +9,7 @@ import (
 
 // Audit face clusters and subjects.
 func (w *Faces) Audit(fix bool) (err error) {
-	invalidFaces, invalidSubj, err := query.MarkersWithInvalidReferences()
+	invalidFaces, invalidSubj, err := query.MarkersWithNonExistentReferences()
 
 	if err != nil {
 		return err
@@ -21,15 +21,37 @@ func (w *Faces) Audit(fix bool) (err error) {
 		log.Error(err)
 	}
 
-	log.Infof("%d subjects indexed", len(subj))
+	if n := len(subj); n == 0 {
+		log.Infof("found no subjects")
+	} else {
+		log.Infof("%d known subjects", n)
+	}
 
-	log.Infof("%d markers with non-existent subjects", len(invalidSubj))
+	// Fix non-existent marker subjects references?
+	if n := len(invalidSubj); n == 0 {
+		log.Infof("found no invalid marker subjects")
+	} else if !fix {
+		log.Infof("%d markers with non-existent subjects", n)
+	} else if removed, err := query.RemoveNonExistentMarkerSubjects(); err != nil {
+		log.Infof("removed %d / %d markers with non-existent subjects", removed, n)
+	} else {
+		log.Error(err)
+	}
 
-	log.Infof("%d markers with non-existent faces", len(invalidFaces))
+	// Fix non-existent marker face references?
+	if n := len(invalidFaces); n == 0 {
+		log.Infof("found no invalid marker faces")
+	} else if !fix {
+		log.Infof("%d markers with non-existent faces", n)
+	} else if removed, err := query.RemoveNonExistentMarkerFaces(); err != nil {
+		log.Infof("removed %d / %d markers with non-existent faces", removed, n)
+	} else {
+		log.Error(err)
+	}
 
 	conflicts := 0
 
-	faces, err := query.Faces(true, "")
+	faces, err := query.Faces(true, false)
 
 	if err != nil {
 		return err
@@ -77,7 +99,11 @@ func (w *Faces) Audit(fix bool) (err error) {
 		}
 	}
 
-	log.Infof("%d ambiguous faces clusters", conflicts)
+	if conflicts == 0 {
+		log.Infof("found no ambiguous faces clusters")
+	} else {
+		log.Infof("%d ambiguous faces clusters", conflicts)
+	}
 
 	if markers, err := query.MarkersWithSubjectConflict(); err != nil {
 		log.Error(err)

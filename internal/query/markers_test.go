@@ -10,7 +10,7 @@ import (
 
 func TestMarkers(t *testing.T) {
 	t.Run("find umatched", func(t *testing.T) {
-		results, err := Markers(3, 0, entity.MarkerFace, false, false, entity.Timestamp())
+		results, err := Markers(3, 0, entity.MarkerFace, false, false, entity.TimeStamp())
 
 		if err != nil {
 			t.Fatal(err)
@@ -59,29 +59,111 @@ func TestMarkers(t *testing.T) {
 	})
 }
 
+func TestUnmatchedFaceMarkers(t *testing.T) {
+	t.Run("all", func(t *testing.T) {
+		results, err := UnmatchedFaceMarkers(3, 0, nil)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 3, len(results))
+	})
+	t.Run("before", func(t *testing.T) {
+		results, err := UnmatchedFaceMarkers(3, 0, entity.TimePointer())
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 3, len(results))
+	})
+}
+
+func TestFaceMarkers(t *testing.T) {
+	t.Run("all", func(t *testing.T) {
+		results, err := FaceMarkers(3, 0)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 3, len(results))
+	})
+}
+
 func TestEmbeddings(t *testing.T) {
-	results, err := Embeddings(false, false, 0)
+	t.Run("all", func(t *testing.T) {
+		results, err := Embeddings(false, false, 0, 0)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	assert.GreaterOrEqual(t, len(results), 1)
+		assert.GreaterOrEqual(t, len(results), 1)
 
-	for _, val := range results {
-		assert.IsType(t, entity.Embedding{}, val)
-	}
+		for _, val := range results {
+			assert.IsType(t, entity.Embedding{}, val)
+		}
+	})
+	t.Run("size", func(t *testing.T) {
+		results, err := Embeddings(false, false, 230, 0)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, len(results), 1)
+
+		for _, val := range results {
+			assert.IsType(t, entity.Embedding{}, val)
+		}
+	})
+	t.Run("score", func(t *testing.T) {
+		results, err := Embeddings(false, false, 0, 50)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(results), 1)
+
+		for _, val := range results {
+			assert.IsType(t, entity.Embedding{}, val)
+		}
+	})
 }
 
 func TestRemoveInvalidMarkerReferences(t *testing.T) {
 	affected, err := RemoveInvalidMarkerReferences()
 
 	assert.NoError(t, err)
+	assert.GreaterOrEqual(t, affected, int64(0))
+}
+
+func TestRemoveNonExistentMarkerFaces(t *testing.T) {
+	affected, err := RemoveNonExistentMarkerFaces()
+
+	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
-func TestMarkersWithInvalidReferences(t *testing.T) {
-	f, s, err := MarkersWithInvalidReferences()
+func TestRemoveNonExistentMarkerSubjects(t *testing.T) {
+	affected, err := RemoveNonExistentMarkerSubjects()
+
+	assert.NoError(t, err)
+	assert.GreaterOrEqual(t, affected, int64(1))
+}
+
+func TestFixMarkerReferences(t *testing.T) {
+	affected, err := FixMarkerReferences()
+
+	assert.NoError(t, err)
+	assert.GreaterOrEqual(t, affected, int64(0))
+}
+
+func TestMarkersWithNonExistentReferences(t *testing.T) {
+	f, s, err := MarkersWithNonExistentReferences()
 
 	assert.NoError(t, err)
 
@@ -98,10 +180,9 @@ func TestMarkersWithSubjectConflict(t *testing.T) {
 }
 
 func TestCountUnmatchedFaceMarkers(t *testing.T) {
-	n, threshold := CountUnmatchedFaceMarkers()
+	n := CountUnmatchedFaceMarkers()
 
-	assert.False(t, threshold.IsZero())
-	assert.GreaterOrEqual(t, n, 0)
+	assert.GreaterOrEqual(t, n, 1)
 }
 
 func TestCountMarkers(t *testing.T) {

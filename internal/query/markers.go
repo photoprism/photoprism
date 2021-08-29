@@ -44,8 +44,38 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 	return result, err
 }
 
+// UnmatchedFaceMarkers finds all currently unmatched face markers.
+func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result entity.Markers, err error) {
+	db := Db().
+		Where("marker_type = ?", entity.MarkerFace).
+		Where("marker_invalid = 0").
+		Where("embeddings_json <> ''")
+
+	if matchedBefore == nil {
+		db = db.Where("matched_at IS NULL")
+	} else if !matchedBefore.IsZero() {
+		db = db.Where("matched_at IS NULL OR matched_at < ?", matchedBefore)
+	}
+
+	db = db.Order("matched_at, id").Limit(limit).Offset(offset)
+
+	err = db.Find(&result).Error
+
+	return result, err
+}
+
+// FaceMarkers returns all face markers sorted by id.
+func FaceMarkers(limit, offset int) (result entity.Markers, err error) {
+	err = Db().
+		Where("marker_type = ?", entity.MarkerFace).
+		Order("id").Limit(limit).Offset(offset).
+		Find(&result).Error
+
+	return result, err
+}
+
 // Embeddings returns existing face embeddings.
-func Embeddings(single, unclustered bool, score int) (result entity.Embeddings, err error) {
+func Embeddings(single, unclustered bool, size, score int) (result entity.Embeddings, err error) {
 	var col []string
 
 	stmt := Db().
@@ -54,6 +84,10 @@ func Embeddings(single, unclustered bool, score int) (result entity.Embeddings, 
 		Where("marker_invalid = 0").
 		Where("embeddings_json <> ''").
 		Order("id")
+
+	if size > 0 {
+		stmt = stmt.Where("size >= ?", size)
+	}
 
 	if score > 0 {
 		stmt = stmt.Where("score >= ?", score)
@@ -82,44 +116,63 @@ func Embeddings(single, unclustered bool, score int) (result entity.Embeddings, 
 	return result, nil
 }
 
-// RemoveInvalidMarkerReferences deletes invalid reference IDs from the markers table.
+// RemoveInvalidMarkerReferences removes face and subject references from invalid markers.
 func RemoveInvalidMarkerReferences() (removed int64, err error) {
-	// Remove subject and face relationships for invalid markers.
-	if res := Db().
+	res := Db().
 		Model(&entity.Marker{}).
 		Where("marker_invalid = 1 AND (subject_uid <> '' OR face_id <> '')").
-		UpdateColumns(entity.Values{"subject_uid": "", "face_id": ""}); res.Error != nil {
-		return removed, res.Error
-	} else {
-		removed += res.RowsAffected
-	}
+		UpdateColumns(entity.Values{"subject_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
-	// Remove invalid face IDs.
-	if res := Db().
+	return res.RowsAffected, res.Error
+}
+
+// RemoveNonExistentMarkerFaces removes non-existent face IDs from the markers table.
+func RemoveNonExistentMarkerFaces() (removed int64, err error) {
+
+	res := Db().
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
 		Where(fmt.Sprintf("face_id <> '' AND face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
-		UpdateColumns(entity.Values{"face_id": ""}); res.Error != nil {
-		return removed, res.Error
-	} else {
-		removed += res.RowsAffected
-	}
+		UpdateColumns(entity.Values{"face_id": "", "face_dist": -1.0, "matched_at": nil})
 
-	// Remove invalid subject UIDs.
-	if res := Db().
+	return res.RowsAffected, res.Error
+}
+
+// RemoveNonExistentMarkerSubjects removes non-existent subject UIDs from the markers table.
+func RemoveNonExistentMarkerSubjects() (removed int64, err error) {
+	res := Db().
 		Model(&entity.Marker{}).
 		Where(fmt.Sprintf("subject_uid <> '' AND subject_uid NOT IN (SELECT subject_uid FROM %s)", entity.Subject{}.TableName())).
-		UpdateColumns(entity.Values{"subject_uid": ""}); res.Error != nil {
-		return removed, res.Error
+		UpdateColumns(entity.Values{"subject_uid": "", "matched_at": nil})
+
+	return res.RowsAffected, res.Error
+}
+
+// FixMarkerReferences repairs invalid or non-existent references in the markers table.
+func FixMarkerReferences() (removed int64, err error) {
+	if r, err := RemoveInvalidMarkerReferences(); err != nil {
+		return removed, err
 	} else {
-		removed += res.RowsAffected
+		removed += r
+	}
+
+	if r, err := RemoveNonExistentMarkerFaces(); err != nil {
+		return removed, err
+	} else {
+		removed += r
+	}
+
+	if r, err := RemoveNonExistentMarkerSubjects(); err != nil {
+		return removed, err
+	} else {
+		removed += r
 	}
 
 	return removed, nil
 }
 
-// MarkersWithInvalidReferences finds markers with invalid references.
-func MarkersWithInvalidReferences() (faces entity.Markers, subjects entity.Markers, err error) {
+// MarkersWithNonExistentReferences finds markers with non-existent face or subject references.
+func MarkersWithNonExistentReferences() (faces entity.Markers, subjects entity.Markers, err error) {
 	// Find markers with invalid face IDs.
 	if res := Db().
 		Where("marker_type = ?", entity.MarkerFace).
@@ -152,36 +205,22 @@ func MarkersWithSubjectConflict() (results entity.Markers, err error) {
 func ResetFaceMarkerMatches() (removed int64, err error) {
 	res := Db().Model(&entity.Marker{}).
 		Where("subject_src <> ? AND marker_type = ?", entity.SrcManual, entity.MarkerFace).
-		UpdateColumns(entity.Values{"subject_uid": "", "subject_src": "", "face_id": "", "matched_at": nil})
+		UpdateColumns(entity.Values{"subject_uid": "", "subject_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return res.RowsAffected, res.Error
 }
 
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
-func CountUnmatchedFaceMarkers() (n int, matchedBefore time.Time) {
-	var f entity.Face
-
-	if err := Db().Where("face_src <> ?", entity.SrcDefault).
-		Order("updated_at DESC").Limit(1).Take(&f).Error; err != nil || f.UpdatedAt.IsZero() {
-		return 0, matchedBefore
-	}
-
-	matchedBefore = time.Now().UTC().Round(time.Second).Add(-2 * time.Hour)
-
-	if f.UpdatedAt.Before(matchedBefore) {
-		matchedBefore = f.UpdatedAt.Add(time.Second)
-	}
-
+func CountUnmatchedFaceMarkers() (n int) {
 	q := Db().Model(&entity.Markers{}).
-		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND subject_src = '' AND marker_invalid = 0 AND embeddings_json <> ''").
-		Where("matched_at IS NULL OR matched_at < ?", matchedBefore)
+		Where("matched_at IS NULL AND marker_invalid = 0 AND embeddings_json <> ''").
+		Where("marker_type = ?", entity.MarkerFace)
 
 	if err := q.Count(&n).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
-	return n, matchedBefore
+	return n
 }
 
 // CountMarkers counts the number of face markers in the index.

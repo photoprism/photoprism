@@ -48,8 +48,8 @@ func RemoveDanglingMarkerSubjects() (removed int64, err error) {
 	return res.RowsAffected, res.Error
 }
 
-// AddFaceMarkerSubjects adds and references known marker subjects.
-func AddFaceMarkerSubjects() (affected int64, err error) {
+// CreateMarkerSubjects adds and references known marker subjects.
+func CreateMarkerSubjects() (affected int64, err error) {
 	var markers entity.Markers
 
 	if err := Db().

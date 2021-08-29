@@ -6,30 +6,36 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// Faces returns all (known) faces from the index.
-func Faces(knownOnly bool, src string) (result entity.Faces, err error) {
-	stmt := Db()
+// Faces returns all (known / unmatched) faces from the index.
+func Faces(knownOnly, unmatched bool) (result entity.Faces, err error) {
+	stmt := Db().Where("face_src <> ?", entity.SrcDefault)
 
-	if src == "" {
-		stmt = stmt.Where("face_src <> ?", entity.SrcDefault)
-	} else {
-		stmt = stmt.Where("face_src = ?", src)
+	if unmatched {
+		stmt = stmt.Where("matched_at IS NULL")
 	}
 
 	if knownOnly {
-		stmt = stmt.Where("subject_uid <> ''").Order("subject_uid, samples DESC")
-	} else {
-		stmt = stmt.Order("samples DESC")
+		stmt = stmt.Where("subject_uid <> ''")
 	}
 
-	err = stmt.Find(&result).Error
+	err = stmt.Order("subject_uid, samples DESC").Find(&result).Error
+
+	return result, err
+}
+
+// ManuallyAddedFaces returns all manually added face clusters.
+func ManuallyAddedFaces() (result entity.Faces, err error) {
+	err = Db().
+		Where("face_src = ?", entity.SrcManual).
+		Where("subject_uid <> ''").Order("subject_uid, samples DESC").
+		Find(&result).Error
 
 	return result, err
 }
 
 // MatchFaceMarkers matches markers with known faces.
 func MatchFaceMarkers() (affected int64, err error) {
-	faces, err := Faces(true, "")
+	faces, err := Faces(true, false)
 
 	if err != nil {
 		return affected, err
@@ -44,10 +50,6 @@ func MatchFaceMarkers() (affected int64, err error) {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
-		}
-
-		if err := f.UpdateMatchTime(); err != nil {
-			return affected, err
 		}
 	}
 
@@ -72,7 +74,7 @@ func RemoveAutoFaceClusters() (removed int64, err error) {
 }
 
 // CountNewFaceMarkers counts the number of new face markers in the index.
-func CountNewFaceMarkers(score int) (n int) {
+func CountNewFaceMarkers(size, score int) (n int) {
 	var f entity.Face
 
 	if err := Db().Where("face_src = ?", entity.SrcAuto).
@@ -83,6 +85,10 @@ func CountNewFaceMarkers(score int) (n int) {
 	q := Db().Model(&entity.Markers{}).
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("face_id = '' AND marker_invalid = 0 AND embeddings_json <> ''")
+
+	if size > 0 {
+		q = q.Where("size >= ?", size)
+	}
 
 	if score > 0 {
 		q = q.Where("score >= ?", score)
@@ -99,6 +105,21 @@ func CountNewFaceMarkers(score int) (n int) {
 	return n
 }
 
+// RemoveUnusedFaces removes unused faces from the index.
+func RemoveUnusedFaces(faceIds []string) (removed int64, err error) {
+	// Remove invalid face IDs.
+	if res := Db().
+		Where("id IN (?)", faceIds).
+		Where(fmt.Sprintf("id NOT IN (SELECT face_id FROM %s)", entity.Marker{}.TableName())).
+		Delete(&entity.Face{}); res.Error != nil {
+		return removed, res.Error
+	} else {
+		removed += res.RowsAffected
+	}
+
+	return removed, nil
+}
+
 // MergeFaces returns a new face that replaces multiple others.
 func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	if len(merge) < 2 {
@@ -111,22 +132,15 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 		return merged, fmt.Errorf("merged face must not be nil")
 	} else if err := merged.Create(); err != nil {
 		return merged, err
-	}
-
-	// Update marker matches.
-	if err := Db().Model(&entity.Marker{}).Where("face_id IN (?)", merge.IDs()).
-		Updates(entity.Values{"face_id": merged.ID, "subject_uid": merged.SubjectUID}).Error; err != nil {
+	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
 		return merged, err
 	}
 
-	// Delete merged faces.
-	if err := Db().Where("id IN (?) AND id <> ?", merge.IDs(), merged.ID).Delete(&entity.Face{}).Error; err != nil {
-		return merged, err
-	}
-
-	// Find and reference additional matching markers.
-	if err := merged.MatchMarkers(); err != nil {
-		return merged, err
+	// RemoveUnusedFaces removes unused faces from the index.
+	if removed, err := RemoveUnusedFaces(merge.IDs()); err != nil {
+		log.Errorf("faces: %s", err)
+	} else {
+		log.Debugf("faces: removed %d unused faces", removed)
 	}
 
 	return merged, err

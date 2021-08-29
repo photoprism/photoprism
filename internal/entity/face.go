@@ -35,9 +35,13 @@ type Face struct {
 var UnknownFace = Face{
 	ID:            UnknownID,
 	FaceSrc:       SrcDefault,
+	MatchedAt:     TimePointer(),
 	SubjectUID:    UnknownPerson.SubjectUID,
 	EmbeddingJSON: []byte{},
 }
+
+// Faceless can be used as argument to match unmatched face markers.
+var Faceless = []string{""}
 
 // CreateUnknownFace initializes the database with a placeholder for unknown faces.
 func CreateUnknownFace() {
@@ -74,7 +78,10 @@ func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
 
 	s := sha1.Sum(m.EmbeddingJSON)
 	m.ID = base32.StdEncoding.EncodeToString(s[:])
-	m.UpdatedAt = Timestamp()
+	m.UpdatedAt = TimeStamp()
+
+	// Reset match timestamp.
+	m.MatchedAt = nil
 
 	if m.CreatedAt.IsZero() {
 		m.CreatedAt = m.UpdatedAt
@@ -83,10 +90,9 @@ func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
 	return nil
 }
 
-// UpdateMatchTime updates the match timestamp.
-func (m *Face) UpdateMatchTime() error {
-	matched := Timestamp()
-	m.MatchedAt = &matched
+// Matched updates the match timestamp.
+func (m *Face) Matched() error {
+	m.MatchedAt = TimePointer()
 	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
@@ -163,6 +169,7 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
 	} else if dist > 0.2 {
+		m.MatchedAt = nil
 		m.Collisions++
 		m.CollisionRadius = dist - 0.1
 		revise = true
@@ -171,7 +178,7 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 		m.Collisions++
 	}
 
-	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius})
+	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
 
 	if err == nil && revise {
 		var revised Markers
@@ -210,11 +217,11 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 }
 
 // MatchMarkers finds and references matching markers.
-func (m *Face) MatchMarkers() error {
+func (m *Face) MatchMarkers(faceIds []string) error {
 	var markers Markers
 
 	err := Db().
-		Where("face_id = '' AND marker_invalid = 0 AND marker_type = ?", MarkerFace).
+		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
 		Find(&markers).Error
 
 	if err != nil {
@@ -223,9 +230,9 @@ func (m *Face) MatchMarkers() error {
 	}
 
 	for _, marker := range markers {
-		if ok, _ := m.Match(marker.Embeddings()); !ok {
+		if ok, dist := m.Match(marker.Embeddings()); !ok {
 			// Ignore.
-		} else if _, err = marker.SetFace(m); err != nil {
+		} else if _, err = marker.SetFace(m, dist); err != nil {
 			return err
 		}
 	}

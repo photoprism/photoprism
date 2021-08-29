@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/clusters"
+
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -28,6 +30,7 @@ type Marker struct {
 	SubjectSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
 	Subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Subject,omitempty" yaml:"-"`
 	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	FaceDist       float64         `gorm:"default:-1" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	Face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"-" yaml:"-"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     Embeddings      `gorm:"-"`
@@ -36,6 +39,7 @@ type Marker struct {
 	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	Size           int             `gorm:"default:-1" json:"Size" yaml:"Size,omitempty"`
 	Score          int             `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
@@ -48,7 +52,7 @@ var UnknownMarker = NewMarker(0, "", SrcDefault, MarkerUnknown, 0, 0, 0, 0)
 
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
-	return "markers_dev3"
+	return "markers_dev5"
 }
 
 // NewMarker creates a new entity.
@@ -73,8 +77,11 @@ func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
 
 	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
 
+	m.MatchedAt = nil
+	m.FaceDist = -1
 	m.EmbeddingsJSON = f.EmbeddingsJSON()
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
+	m.Size = f.Size()
 	m.Score = f.Score
 
 	return m
@@ -122,8 +129,25 @@ func (m *Marker) SaveForm(f form.Marker) error {
 	return nil
 }
 
+// HasFace tests if the marker already has the best matching face.
+func (m *Marker) HasFace(f *Face, dist float64) bool {
+	if m.FaceID == "" {
+		return false
+	} else if f == nil {
+		return m.FaceID != ""
+	} else if m.FaceID == f.ID {
+		return m.FaceID != ""
+	} else if m.FaceDist < 0 {
+		return false
+	} else if dist < 0 {
+		return true
+	}
+
+	return m.FaceDist <= dist
+}
+
 // SetFace sets a new face for this marker.
-func (m *Marker) SetFace(f *Face) (updated bool, err error) {
+func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	if f == nil {
 		return false, fmt.Errorf("face is nil")
 	}
@@ -154,7 +178,7 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 	// Skip update if the same face is already set.
 	if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
 		// Update matching timestamp.
-		m.MatchedAt = TimestampPointer()
+		m.MatchedAt = TimePointer()
 		return false, m.Updates(Values{"MatchedAt": m.MatchedAt})
 	}
 
@@ -164,10 +188,25 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 	SubjectSrc := m.SubjectSrc
 
 	m.FaceID = f.ID
+	m.FaceDist = dist
+
+	if m.FaceDist < 0 {
+		faceEmbedding := f.Embedding()
+
+		// Calculate smallest distance to embeddings.
+		for _, e := range m.Embeddings() {
+			if len(e) != len(faceEmbedding) {
+				continue
+			}
+
+			if d := clusters.EuclideanDistance(e, faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
+				m.FaceDist = d
+			}
+		}
+	}
 
 	if f.SubjectUID != "" {
 		m.SubjectUID = f.SubjectUID
-		m.SubjectSrc = SrcAuto
 	}
 
 	if err := m.SyncSubject(false); err != nil {
@@ -184,9 +223,9 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 	updated = m.FaceID != faceID || m.SubjectUID != subjectUID || m.SubjectSrc != SubjectSrc
 
 	// Update matching timestamp.
-	m.MatchedAt = TimestampPointer()
+	m.MatchedAt = TimePointer()
 
-	return updated, m.Updates(Values{"FaceID": m.FaceID, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "MatchedAt": m.MatchedAt})
+	return updated, m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "MatchedAt": m.MatchedAt})
 }
 
 // SyncSubject maintains the marker subject relationship.
@@ -303,7 +342,7 @@ func (m *Marker) ClearSubject(src string) error {
 		// Do nothing
 	} else if reported, err := m.Face.ReportCollision(m.Embeddings()); err != nil {
 		return err
-	} else if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "SubjectUID": "", "SubjectSrc": src}); err != nil {
+	} else if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "SubjectSrc": src}); err != nil {
 		return err
 	} else if reported {
 		log.Debugf("faces: collision with %s", m.Face.ID)
@@ -313,6 +352,7 @@ func (m *Marker) ClearSubject(src string) error {
 
 	m.MarkerName = ""
 	m.FaceID = ""
+	m.FaceDist = -1.0
 	m.SubjectUID = ""
 	m.SubjectSrc = src
 
@@ -325,12 +365,16 @@ func (m *Marker) GetFace() (f *Face) {
 		return m.Face
 	}
 
+	// Add face if size
 	if m.FaceID == "" && m.SubjectSrc == SrcManual {
-		if f = NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
+		if m.Size < face.ClusterMinSize || m.Score < face.ClusterMinScore {
+			log.Debugf("faces: skipped adding face for low-quality marker %d, size %d, score %d", m.ID, m.Size, m.Score)
+			return nil
+		} else if f = NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
 			return nil
 		} else if err := f.Create(); err != nil {
 			return nil
-		} else if err := f.MatchMarkers(); err != nil {
+		} else if err := f.MatchMarkers(Faceless); err != nil {
 			log.Errorf("faces: %s (match markers)", err)
 		}
 
@@ -345,10 +389,8 @@ func (m *Marker) GetFace() (f *Face) {
 
 // ClearFace removes an existing face association.
 func (m *Marker) ClearFace() (updated bool, err error) {
-	m.MatchedAt = TimestampPointer()
-
 	if m.FaceID == "" {
-		return false, m.Updates(Values{"MatchedAt": m.MatchedAt})
+		return false, m.Matched()
 	}
 
 	updated = true
@@ -356,16 +398,23 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 	// Remove face references.
 	m.Face = nil
 	m.FaceID = ""
+	m.MatchedAt = TimePointer()
 
 	// Remove subject if set automatically.
 	if m.SubjectSrc == SrcAuto {
 		m.SubjectUID = ""
-		err = m.Updates(Values{"FaceID": "", "SubjectUID": "", "MatchedAt": m.MatchedAt})
+		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "MatchedAt": m.MatchedAt})
 	} else {
-		err = m.Updates(Values{"FaceID": "", "MatchedAt": m.MatchedAt})
+		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
 	}
 
 	return updated, err
+}
+
+// Matched updates the match timestamp.
+func (m *Marker) Matched() error {
+	m.MatchedAt = TimePointer()
+	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
 // FindMarker returns an existing row if exists.

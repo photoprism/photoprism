@@ -32,8 +32,8 @@ var SubjectFixtures = SubjectMap{
 		SubjectNotes:       "Short Note",
 		MetadataJSON:       []byte(""),
 		PhotoCount:         1,
-		CreatedAt:          Timestamp(),
-		UpdatedAt:          Timestamp(),
+		CreatedAt:          TimeStamp(),
+		UpdatedAt:          TimeStamp(),
 		DeletedAt:          nil,
 	},
 	"joe-biden": Subject{
@@ -49,8 +49,8 @@ var SubjectFixtures = SubjectMap{
 		SubjectNotes:       "",
 		MetadataJSON:       []byte(""),
 		PhotoCount:         1,
-		CreatedAt:          Timestamp(),
-		UpdatedAt:          Timestamp(),
+		CreatedAt:          TimeStamp(),
+		UpdatedAt:          TimeStamp(),
 		DeletedAt:          nil,
 	},
 	"dangling": Subject{
@@ -66,8 +66,8 @@ var SubjectFixtures = SubjectMap{
 		SubjectNotes:       "",
 		MetadataJSON:       []byte(""),
 		PhotoCount:         0,
-		CreatedAt:          Timestamp(),
-		UpdatedAt:          Timestamp(),
+		CreatedAt:          TimeStamp(),
+		UpdatedAt:          TimeStamp(),
 		DeletedAt:          nil,
 	},
 	"jane-doe": Subject{
@@ -83,8 +83,8 @@ var SubjectFixtures = SubjectMap{
 		SubjectNotes:       "",
 		MetadataJSON:       []byte(""),
 		PhotoCount:         3,
-		CreatedAt:          Timestamp(),
-		UpdatedAt:          Timestamp(),
+		CreatedAt:          TimeStamp(),
+		UpdatedAt:          TimeStamp(),
 		DeletedAt:          nil,
 	},
 }

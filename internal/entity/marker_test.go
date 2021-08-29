@@ -253,3 +253,17 @@ func TestMarker_Embeddings(t *testing.T) {
 		assert.Empty(t, m.Embeddings()[0])
 	})
 }
+
+func TestMarker_HasFace(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		m := MarkerFixtures.Get("1000003-6")
+
+		assert.True(t, m.HasFace(nil, -1))
+		assert.True(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), -1))
+	})
+	t.Run("false", func(t *testing.T) {
+		m := MarkerFixtures.Get("1000003-6")
+
+		assert.False(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
+	})
+}

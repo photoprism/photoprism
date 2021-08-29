@@ -9,17 +9,49 @@ import (
 )
 
 func TestFaces(t *testing.T) {
-	results, err := Faces(true, "")
+	t.Run("known", func(t *testing.T) {
+		results, err := Faces(true, false)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	assert.GreaterOrEqual(t, len(results), 1)
+		assert.GreaterOrEqual(t, len(results), 1)
 
-	for _, val := range results {
-		assert.IsType(t, entity.Face{}, val)
-	}
+		for _, val := range results {
+			assert.IsType(t, entity.Face{}, val)
+		}
+	})
+
+	t.Run("unmatched", func(t *testing.T) {
+		results, err := Faces(false, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(results), 1)
+
+		for _, val := range results {
+			assert.IsType(t, entity.Face{}, val)
+		}
+	})
+}
+
+func TestManuallyAddedFaces(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		results, err := ManuallyAddedFaces()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(results), 1)
+
+		for _, val := range results {
+			assert.IsType(t, entity.Face{}, val)
+		}
+	})
 }
 
 func TestMatchFaceMarkers(t *testing.T) {
@@ -65,6 +97,16 @@ func TestRemoveAnonymousFaceClusters(t *testing.T) {
 }
 
 func TestCountNewFaceMarkers(t *testing.T) {
-	n := CountNewFaceMarkers(1)
-	assert.GreaterOrEqual(t, n, 1)
+	t.Run("all", func(t *testing.T) {
+		assert.GreaterOrEqual(t, CountNewFaceMarkers(0, 0), 1)
+	})
+	t.Run("score 10", func(t *testing.T) {
+		assert.GreaterOrEqual(t, CountNewFaceMarkers(0, 10), 1)
+	})
+	t.Run("size 160", func(t *testing.T) {
+		assert.GreaterOrEqual(t, CountNewFaceMarkers(160, 0), 1)
+	})
+	t.Run("score 50 and size 160", func(t *testing.T) {
+		assert.GreaterOrEqual(t, CountNewFaceMarkers(160, 50), 1)
+	})
 }

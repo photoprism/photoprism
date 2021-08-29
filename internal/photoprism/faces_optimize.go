@@ -18,7 +18,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 		return result, fmt.Errorf("facial recognition is disabled")
 	}
 
-	faces, err := query.Faces(true, entity.SrcManual)
+	faces, err := query.ManuallyAddedFaces()
 
 	if err != nil {
 		return result, err

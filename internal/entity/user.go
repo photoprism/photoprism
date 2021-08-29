@@ -308,7 +308,7 @@ func (m *User) InvalidPassword(password string) bool {
 		return true
 	}
 
-	if err := Db().Model(m).Updates(map[string]interface{}{"login_attempts": 0, "login_at": Timestamp()}).Error; err != nil {
+	if err := Db().Model(m).Updates(map[string]interface{}{"login_attempts": 0, "login_at": TimeStamp()}).Error; err != nil {
 		log.Errorf("user: %s (update last login)", err)
 	}
 

@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-func TestTimestamp(t *testing.T) {
-	result := Timestamp()
+func TestTimeStamp(t *testing.T) {
+	result := TimeStamp()
 
 	if result.Location() != time.UTC {
 		t.Fatal("timestamp zone must be utc")
@@ -17,8 +17,8 @@ func TestTimestamp(t *testing.T) {
 	}
 }
 
-func TestTimestampPointer(t *testing.T) {
-	result := TimestampPointer()
+func TestTimePointer(t *testing.T) {
+	result := TimePointer()
 
 	if result == nil {
 		t.Fatal("result must not be nil")

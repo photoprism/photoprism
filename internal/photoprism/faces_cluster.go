@@ -15,18 +15,16 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		return added, fmt.Errorf("facial recognition is disabled")
 	}
 
-	minScore := 30
-
 	// Skip clustering if index contains no new face markers, and force option isn't set.
 	if opt.Force {
 		log.Infof("faces: forced clustering")
-	} else if n := query.CountNewFaceMarkers(minScore); n < opt.SampleThreshold() {
+	} else if n := query.CountNewFaceMarkers(face.ClusterMinSize, face.ClusterMinScore); n < opt.SampleThreshold() {
 		log.Debugf("faces: skipping clustering")
 		return added, nil
 	}
 
 	// Fetch unclustered face embeddings.
-	embeddings, err := query.Embeddings(false, true, minScore)
+	embeddings, err := query.Embeddings(false, true, face.ClusterMinSize, face.ClusterMinScore)
 
 	log.Debugf("faces: %d unclustered samples found", len(embeddings))
 
@@ -76,7 +74,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 			} else if err := f.Create(); err == nil {
 				added = append(added, *f)
 				log.Debugf("faces: added cluster %s based on %d samples, radius %f", f.ID, f.Samples, f.SampleRadius)
-			} else if err := f.Updates(entity.Values{"UpdatedAt": entity.Timestamp()}); err != nil {
+			} else if err := f.Updates(entity.Values{"UpdatedAt": entity.TimeStamp()}); err != nil {
 				log.Errorf("faces: %s", err)
 			} else {
 				log.Debugf("faces: updated cluster %s", f.ID)

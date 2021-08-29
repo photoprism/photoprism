@@ -46,8 +46,8 @@ func TestRemoveDanglingMarkerSubjects(t *testing.T) {
 	assert.Equal(t, int64(1), affected)
 }
 
-func TestAddFaceMarkerSubjects(t *testing.T) {
-	affected, err := AddFaceMarkerSubjects()
+func TestCreateMarkerSubjects(t *testing.T) {
+	affected, err := CreateMarkerSubjects()
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(2))

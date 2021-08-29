@@ -216,7 +216,7 @@ func (m *File) Delete(permanently bool) error {
 
 // Purge removes a file from the index by marking it as missing.
 func (m *File) Purge() error {
-	deletedAt := Timestamp()
+	deletedAt := TimeStamp()
 	m.FileMissing = true
 	m.FilePrimary = false
 	m.DeletedAt = &deletedAt

@@ -130,7 +130,7 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, 
 	}
 
 	img = imaging.Crop(img, image.Rect(y, x, y+f.Scale, x+f.Scale))
-	img = imaging.Fill(img, 160, 160, imaging.Center, imaging.Lanczos)
+	img = imaging.Fill(img, CropSize, CropSize, imaging.Center, imaging.Lanczos)
 
 	if err := imaging.Save(img, cacheFile); err != nil {
 		log.Errorf("faces: failed caching crop %s", filepath.Base(cacheFile))
@@ -142,13 +142,13 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, 
 }
 
 func (t *Net) getEmbeddings(img image.Image) [][]float32 {
-	tensor, err := imageToTensor(img, 160, 160)
+	tensor, err := imageToTensor(img, CropSize, CropSize)
 
 	if err != nil {
 		log.Errorf("faces: failed to convert image to tensor: %v", err)
 	}
 
-	// TODO: prewhiten image as in facenet
+	// TODO: pre-whiten image as in facenet
 
 	trainPhaseBoolTensor, err := tf.NewTensor(false)
 

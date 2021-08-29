@@ -51,22 +51,22 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	defer mutex.FacesWorker.Stop()
 
-	// Remove invalid reference IDs from markers table.
-	if removed, err := query.RemoveInvalidMarkerReferences(); err != nil {
-		log.Errorf("faces: %s (remove invalid references)", err)
+	// Repair invalid marker face and subject references.
+	if removed, err := query.FixMarkerReferences(); err != nil {
+		log.Errorf("faces: %s (fix references)", err)
 	} else if removed > 0 {
-		log.Infof("faces: removed %d invalid references", removed)
+		log.Infof("faces: fixed %d marker references", removed)
 	} else {
-		log.Debugf("faces: no invalid references")
+		log.Debugf("faces: no invalid marker references")
 	}
 
-	// Add known marker subjects.
-	if affected, err := query.AddFaceMarkerSubjects(); err != nil {
-		log.Errorf("faces: %s (match markers with subjects)", err)
+	// Create known marker subjects if needed.
+	if affected, err := query.CreateMarkerSubjects(); err != nil {
+		log.Errorf("faces: %s (create subjects)", err)
 	} else if affected > 0 {
 		log.Infof("faces: added %d known marker subjects", affected)
 	} else {
-		log.Debugf("faces: no subjects were missing")
+		log.Debugf("faces: marker subjects already exist")
 	}
 
 	// Optimize existing face clusters.
