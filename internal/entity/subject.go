@@ -201,9 +201,16 @@ func (m *Subject) SetName(name string) error {
 func (m *Subject) UpdateName(name string) error {
 	if err := m.SetName(name); err != nil {
 		return err
+	} else if err := m.Updates(Values{"SubjectName": m.SubjectName, "SubjectSlug": m.SubjectSlug}); err != nil {
+		return err
+	} else if err := Db().Model(&Marker{}).
+		Where("subject_uid = ? AND subject_src = ?", m.SubjectUID, SrcManual).
+		Where("marker_name <> '' AND marker_name <> ?", m.SubjectName).
+		Update(Values{"MarkerName": m.SubjectName}).Error; err != nil {
+		return err
 	}
 
-	return m.Updates(Values{"SubjectName": m.SubjectName, "SubjectSlug": m.SubjectSlug})
+	return nil
 }
 
 // Links returns all share links for this entity.
