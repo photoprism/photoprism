@@ -10,36 +10,53 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-// LikeAny returns a single where condition matching the search keywords.
-func LikeAny(col, keywords string) (wheres []string) {
-	keywords = strings.ReplaceAll(keywords, Or, " ")
-	keywords = strings.ReplaceAll(keywords, OrEn, " ")
-	keywords = strings.ReplaceAll(keywords, AndEn, And)
+// LikeAny returns a single where condition matching the search words.
+func LikeAny(col, s string, keywords bool) (wheres []string) {
+	if s == "" {
+		return wheres
+	}
 
-	for _, k := range strings.Split(keywords, And) {
+	s = strings.ReplaceAll(s, Or, " ")
+	s = strings.ReplaceAll(s, OrEn, " ")
+	s = strings.ReplaceAll(s, AndEn, And)
+
+	var wildcardThreshold int
+
+	if keywords {
+		wildcardThreshold = 4
+	} else {
+		wildcardThreshold = 2
+	}
+
+	for _, k := range strings.Split(s, And) {
 		var orWheres []string
+		var words []string
 
-		words := txt.UniqueKeywords(k)
+		if keywords {
+			words = txt.UniqueKeywords(k)
+		} else {
+			words = txt.UniqueWords(txt.Words(k))
+		}
 
 		if len(words) == 0 {
 			continue
 		}
 
 		for _, w := range words {
-			if len(w) > 3 {
+			if len(w) >= wildcardThreshold {
 				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
 			} else {
-				orWheres = append(orWheres, fmt.Sprintf("%s = '%s'", col, w))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, w))
 			}
 
-			if !txt.ContainsASCIILetters(w) {
+			if !keywords || !txt.ContainsASCIILetters(w) {
 				continue
 			}
 
 			singular := inflection.Singular(w)
 
 			if singular != w {
-				orWheres = append(orWheres, fmt.Sprintf("%s = '%s'", col, singular))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, singular))
 			}
 		}
 
@@ -51,23 +68,56 @@ func LikeAny(col, keywords string) (wheres []string) {
 	return wheres
 }
 
-// LikeAll returns a list of where conditions matching all search keywords.
-func LikeAll(col, keywords string) (wheres []string) {
-	words := txt.UniqueKeywords(keywords)
+// LikeAnyKeyword returns a single where condition matching the search keywords.
+func LikeAnyKeyword(col, s string) (wheres []string) {
+	return LikeAny(col, s, true)
+}
+
+// LikeAnyWord returns a single where condition matching the search word.
+func LikeAnyWord(col, s string) (wheres []string) {
+	return LikeAny(col, s, false)
+}
+
+// LikeAll returns a list of where conditions matching all search words.
+func LikeAll(col, s string, keywords bool) (wheres []string) {
+	if s == "" {
+		return wheres
+	}
+
+	var words []string
+	var wildcardThreshold int
+
+	if keywords {
+		words = txt.UniqueKeywords(s)
+		wildcardThreshold = 4
+	} else {
+		words = txt.UniqueWords(txt.Words(s))
+		wildcardThreshold = 2
+	}
 
 	if len(words) == 0 {
 		return wheres
 	}
 
 	for _, w := range words {
-		if len(w) > 3 {
+		if len(w) >= wildcardThreshold {
 			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
 		} else {
-			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, w))
 		}
 	}
 
 	return wheres
+}
+
+// LikeAllKeywords returns a list of where conditions matching all search keywords.
+func LikeAllKeywords(col, s string) (wheres []string) {
+	return LikeAll(col, s, true)
+}
+
+// LikeAllWords returns a list of where conditions matching all search words.
+func LikeAllWords(col, s string) (wheres []string) {
+	return LikeAll(col, s, false)
 }
 
 // AnySlug returns a where condition that matches any slug in search.
