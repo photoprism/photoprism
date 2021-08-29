@@ -186,6 +186,26 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 	return results, nil
 }
 
+// ToggleMonthAlbums toggles the visibility of calendar albums.
+func ToggleMonthAlbums() (err error) {
+	switch DbDialect() {
+	default:
+		if err = UnscopedDb().Exec(`UPDATE albums SET deleted_at = ? WHERE album_type=? AND id NOT IN (
+		SELECT a.id FROM albums a JOIN photos p ON a.album_month = p.photo_month AND a.album_year = p.photo_year 
+		AND p.deleted_at IS NULL AND p.photo_quality > -1 AND p.photo_private = 0 WHERE album_type=?)`,
+			entity.TimeStamp(), entity.AlbumMonth, entity.AlbumMonth).Error; err != nil {
+			return err
+		}
+		if err = UnscopedDb().Exec(`UPDATE albums SET deleted_at = NULL WHERE album_type=? AND id IN (
+		SELECT a.id FROM albums a JOIN photos p ON a.album_month = p.photo_month AND a.album_year = p.photo_year 
+		AND p.deleted_at IS NULL AND p.photo_quality > -1 AND p.photo_private = 0 WHERE album_type=?)`, entity.AlbumMonth, entity.AlbumMonth).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
 func UpdateAlbumDates() error {
 	switch DbDialect() {

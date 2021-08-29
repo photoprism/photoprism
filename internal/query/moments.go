@@ -120,7 +120,7 @@ func (m Moment) Title() string {
 	return maps.CountryName(m.Country)
 }
 
-// A list of moments.
+// Moments represents a list of moments.
 type Moments []Moment
 
 // MomentsTime counts photos by month and year.

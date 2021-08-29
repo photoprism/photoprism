@@ -230,6 +230,10 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s (update album dates)", err.Error())
 	}
 
+	if err := query.ToggleMonthAlbums(); err != nil {
+		log.Errorf("moments: %s (toggle month albums)", err.Error())
+	}
+
 	if count, err := BackupAlbums(w.conf.AlbumsPath(), false); err != nil {
 		log.Errorf("moments: %s (backup albums)", err.Error())
 	} else if count > 0 {
