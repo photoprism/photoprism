@@ -22,7 +22,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-1": Marker{
 		ID:         1,
 		FileID:     1000003,
-		SubjectUID: "lt9k3pw1wowuy3c3",
+		SubjectUID: "jqu0xs11qekk9jx8",
 		MarkerSrc:  SrcImage,
 		MarkerType: MarkerLabel,
 		X:          0.308333,
@@ -35,7 +35,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-2": Marker{
 		ID:         2,
 		FileID:     1000003,
-		SubjectUID: "",
+		SubjectUID: "lt9k3pw1wowuy3c3",
 		FaceID:     "LRG2HJBDZE66LYG7Q5SRFXO2MDTOES52",
 		MarkerName: "Unknown",
 		MarkerSrc:  SrcImage,

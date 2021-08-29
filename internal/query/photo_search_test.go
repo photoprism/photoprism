@@ -339,8 +339,68 @@ func TestPhotoSearch(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.GreaterOrEqual(t, len(photos), 1)
 
+	})
+	t.Run("form.keywords", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "keywords:bridge"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.GreaterOrEqual(t, len(photos), 4)
+	})
+	t.Run("form.subject", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "subject:jqu0xs11qekk9jx8"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.Equal(t, 1, len(photos))
+	})
+	t.Run("form.subjects", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "subjects:John"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.Equal(t, 1, len(photos))
+	})
+	t.Run("form.people", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "people:John"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("form.hash", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -514,6 +574,18 @@ func TestPhotoSearch(t *testing.T) {
 		f.Month = 7
 		f.Year = 2790
 		f.Album = "at9lxuqxpogaaba8"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
+	t.Run("albums", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Albums = "Berlin"
 
 		photos, _, err := PhotoSearch(f)
 
@@ -728,6 +800,6 @@ func TestPhotoSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, 3, len(photos))
+		assert.GreaterOrEqual(t, len(photos), 3)
 	})
 }

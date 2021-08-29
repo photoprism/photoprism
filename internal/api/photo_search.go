@@ -10,6 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
+// GetPhotos searches the pictures index and returns the result as JSON.
+//
 // GET /api/v1/photos
 //
 // Query:

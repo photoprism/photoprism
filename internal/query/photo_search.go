@@ -136,15 +136,15 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	if f.Geo == true {
 		s = s.Where("photos.cell_id <> 'zz'")
 
-		if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
-			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
+		for _, where := range LikeAny("k.keyword", f.Query) {
+			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
 	} else if f.Query != "" {
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
-			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
-				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
+			for _, where := range LikeAny("k.keyword", f.Query) {
+				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 			}
 		} else {
 			for _, l := range labels {
@@ -159,16 +159,36 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 				}
 			}
 
-			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
-				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
-					"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(likeAny), labelIds)
+			if wheres := LikeAny("k.keyword", f.Query); len(wheres) > 0 {
+				for _, where := range wheres {
+					s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
+						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where), labelIds)
+				}
 			} else {
 				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIds)
 			}
 		}
 	}
 
-	// Filter by status.
+	// Search for one or more keywords?
+	if f.Keywords != "" {
+		for _, where := range LikeAll("k.keyword", f.Keywords) {
+			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
+		}
+	}
+
+	// Filter for one or more subjects?
+	if f.Subject != "" {
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.id = m.file_id AND m.marker_invalid = 0 WHERE subject_uid IN (?))",
+			entity.Marker{}.TableName()), strings.Split(strings.ToLower(f.Subject), Or))
+	} else if f.Subjects != "" {
+		for _, where := range LikeAny("s.subject_name", f.Subjects) {
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.id = m.file_id AND m.marker_invalid = 0 JOIN %s s ON s.subject_uid = m.subject_uid WHERE (?))",
+				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where))
+		}
+	}
+
+	// Filter by status?
 	if f.Hidden {
 		s = s.Where("photos.photo_quality = -1")
 		s = s.Where("photos.deleted_at IS NULL")
@@ -191,23 +211,27 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	}
 
-	// Filter by additional flags and metadata.
+	// Filter by camera?
 	if f.Camera > 0 {
 		s = s.Where("photos.camera_id = ?", f.Camera)
 	}
 
+	// Filter by camera lens?
 	if f.Lens > 0 {
 		s = s.Where("photos.lens_id = ?", f.Lens)
 	}
 
+	// Filter by year?
 	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.UnknownYear {
 		s = s.Where("photos.photo_year = ?", f.Year)
 	}
 
+	// Filter by month?
 	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.UnknownMonth {
 		s = s.Where("photos.photo_month = ?", f.Month)
 	}
 
+	// Filter by day?
 	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.UnknownDay {
 		s = s.Where("photos.photo_day = ?", f.Day)
 	}
@@ -363,10 +387,12 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}
 
+	// Find stacks only?
 	if f.Stack {
 		s = s.Where("photos.id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
 	}
 
+	// Filter by album?
 	if f.Album != "" {
 		if f.Filter != "" {
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", f.Album)
@@ -375,6 +401,10 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	} else if f.Unsorted && f.Filter == "" {
 		s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 0)")
+	} else if f.Albums != "" {
+		for _, where := range LikeAny("a.album_title", f.Albums) {
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE (?))", gorm.Expr(where))
+		}
 	}
 
 	if err := s.Scan(&results).Error; err != nil {

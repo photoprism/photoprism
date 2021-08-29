@@ -32,16 +32,9 @@ https://docs.photoprism.org/developer-guide/
 package query
 
 import (
-	"fmt"
-	"strings"
-
-	"github.com/gosimple/slug"
+	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/jinzhu/gorm"
-	"github.com/jinzhu/inflection"
 )
 
 var log = event.Log
@@ -50,12 +43,15 @@ const (
 	MySQL  = "mysql"
 	SQLite = "sqlite3"
 	Or     = "|"
+	And    = "&"
+	OrEn   = " or "
+	AndEn  = " and "
 )
 
-// Max result limit for queries.
+// MaxResults is max result limit for queries.
 const MaxResults = 10000
 
-// About 1km ('good enough' for now)
+// SearchRadius is about 1 km.
 const SearchRadius = 0.009
 
 // Query searches given an originals path and a db instance.
@@ -90,75 +86,4 @@ func UnscopedDb() *gorm.DB {
 // DbDialect returns the sql dialect name.
 func DbDialect() string {
 	return Db().Dialect().GetName()
-}
-
-// LikeAny returns a where condition that matches any keyword in search.
-func LikeAny(col, search string) (where string) {
-	var wheres []string
-
-	words := txt.UniqueKeywords(search)
-
-	if len(words) == 0 {
-		return ""
-	}
-
-	for _, w := range words {
-		if len(w) > 3 {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
-		} else {
-			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
-		}
-
-		if !txt.ContainsASCIILetters(w) {
-			continue
-		}
-
-		singular := inflection.Singular(w)
-
-		if singular != w {
-			wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, singular))
-		}
-	}
-
-	return strings.Join(wheres, " OR ")
-}
-
-// AnySlug returns a where condition that matches any slug in search.
-func AnySlug(col, search, sep string) (where string) {
-	if search == "" {
-		return ""
-	}
-
-	if sep == "" {
-		sep = " "
-	}
-
-	var wheres []string
-	var words []string
-
-	for _, w := range strings.Split(search, sep) {
-		w = strings.TrimSpace(w)
-
-		words = append(words, slug.Make(w))
-
-		if !txt.ContainsASCIILetters(w) {
-			continue
-		}
-
-		singular := inflection.Singular(w)
-
-		if singular != w {
-			words = append(words, slug.Make(singular))
-		}
-	}
-
-	if len(words) == 0 {
-		return ""
-	}
-
-	for _, w := range words {
-		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, w))
-	}
-
-	return strings.Join(wheres, " OR ")
 }

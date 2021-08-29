@@ -37,7 +37,7 @@ func TestAccountSearch_ParseQueryString(t *testing.T) {
 			t.FailNow()
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "webdäv", form.Query)
 		assert.Equal(t, true, form.Share)
@@ -54,7 +54,7 @@ func TestAccountSearch_ParseQueryString(t *testing.T) {
 			t.FailNow()
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
@@ -78,7 +78,7 @@ func TestAccountSearch_ParseQueryString(t *testing.T) {
 			t.FailNow()
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
 	})

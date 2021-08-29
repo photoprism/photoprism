@@ -11,14 +11,32 @@ import (
 )
 
 func TestGeo(t *testing.T) {
-	t.Run("search all photos", func(t *testing.T) {
-		query := form.NewGeoSearch("")
-		result, err := Geo(query)
+	t.Run("form.keywords", func(t *testing.T) {
+		query := form.NewGeoSearch("keywords:bridge")
 
-		if err != nil {
+		if result, err := Geo(query); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.GreaterOrEqual(t, len(result), 1)
 		}
-		assert.LessOrEqual(t, 4, len(result))
+	})
+	t.Run("form.subjects", func(t *testing.T) {
+		query := form.NewGeoSearch("subjects:John")
+
+		if result, err := Geo(query); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.GreaterOrEqual(t, len(result), 0)
+		}
+	})
+	t.Run("find_all", func(t *testing.T) {
+		query := form.NewGeoSearch("")
+
+		if result, err := Geo(query); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 4, len(result))
+		}
 	})
 
 	t.Run("search for bridge", func(t *testing.T) {

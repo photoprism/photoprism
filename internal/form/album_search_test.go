@@ -13,13 +13,12 @@ func TestAlbumSearchForm(t *testing.T) {
 }
 
 func TestParseQueryStringAlbum(t *testing.T) {
-
 	t.Run("valid query", func(t *testing.T) {
 		form := &AlbumSearch{Query: "slug:album1 favorite:true count:10"}
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -34,7 +33,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -51,7 +50,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -68,7 +67,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 			t.FailNow()
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
@@ -92,7 +91,7 @@ func TestParseQueryStringAlbum(t *testing.T) {
 			t.FailNow()
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
 	})
