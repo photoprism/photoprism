@@ -400,3 +400,32 @@ func TestFindMarker(t *testing.T) {
 		assert.Nil(t, FindMarker(0000))
 	})
 }
+
+func TestMarker_SetFace(t *testing.T) {
+	t.Run("face == nil", func(t *testing.T) {
+		m := MarkerFixtures.Pointer("1000003-6")
+		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
+		updated, _ := m.SetFace(nil, -1)
+		assert.False(t, updated)
+		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
+	})
+	t.Run("wrong marker type", func(t *testing.T) {
+		m := Marker{MarkerType: "xxx"}
+		updated, _ := m.SetFace(&Face{ID: "99876"}, -1)
+		assert.False(t, updated)
+		assert.Equal(t, "", m.FaceID)
+	})
+	t.Run("skip same face", func(t *testing.T) {
+		m := Marker{MarkerType: MarkerFace, SubjectUID: "jqu0xs11qekk9jx8", FaceID: "99876uyt"}
+		updated, _ := m.SetFace(&Face{ID: "99876uyt", SubjectUID: "jqu0xs11qekk9jx8"}, -1)
+		assert.False(t, updated)
+		assert.Equal(t, "99876uyt", m.FaceID)
+	})
+	t.Run("set new face", func(t *testing.T) {
+		m := Marker{MarkerType: MarkerFace, SubjectUID: "", FaceID: ""}
+		updated, _ := m.SetFace(FaceFixtures.Pointer("john-doe"), -1)
+		assert.True(t, updated)
+		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
+	})
+
+}
