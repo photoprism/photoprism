@@ -21,6 +21,49 @@ func TestNewMarker(t *testing.T) {
 	assert.Equal(t, MarkerLabel, m.MarkerType)
 }
 
+func TestMarker_SaveForm(t *testing.T) {
+	t.Run("fa-ge add new name to marker then rename marker", func(t *testing.T) {
+		m := MarkerFixtures.Get("fa-gr-1")
+		m2 := MarkerFixtures.Get("fa-gr-2")
+		m3 := MarkerFixtures.Get("fa-gr-3")
+
+		assert.Empty(t, m.SubjectUID)
+		assert.Empty(t, m2.SubjectUID)
+		assert.Empty(t, m3.SubjectUID)
+
+		m.MarkerInvalid = true
+		m.Score = 50
+
+		//set new name
+
+		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Jane Doe", MarkerInvalid: false}
+
+		err := m.SaveForm(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotEmpty(t, m.SubjectUID)
+		assert.Equal(t, "Jane Doe", m.GetSubject().SubjectName)
+		assert.Equal(t, "Jane Doe", FindMarker(9).GetSubject().SubjectName)
+		assert.Equal(t, "Jane Doe", FindMarker(10).GetSubject().SubjectName)
+
+		//rename
+		f3 := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franzilein", MarkerInvalid: false}
+
+		err3 := FindMarker(9).SaveForm(f3)
+
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+
+		assert.Equal(t, "Franzilein", FindMarker(8).GetSubject().SubjectName)
+		assert.Equal(t, "Franzilein", FindMarker(9).GetSubject().SubjectName)
+		assert.Equal(t, "Franzilein", FindMarker(10).GetSubject().SubjectName)
+	})
+}
+
 func TestUpdateOrCreateMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := NewMarker(1000000, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
@@ -223,48 +266,32 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.True(t, updated)
 		assert.Empty(t, m.FaceID)
 	})
-}
+	t.Run("empty face id", func(t *testing.T) {
+		m := Marker{FaceID: ""}
 
-func TestMarker_SaveForm(t *testing.T) {
-	t.Run("fa-ge add new name to marker then rename marker", func(t *testing.T) {
-		m := MarkerFixtures.Get("fa-gr-1")
-		m2 := MarkerFixtures.Get("fa-gr-2")
-		m3 := MarkerFixtures.Get("fa-gr-3")
-
-		assert.Empty(t, m.SubjectUID)
-		assert.Empty(t, m2.SubjectUID)
-		assert.Empty(t, m3.SubjectUID)
-
-		m.MarkerInvalid = true
-		m.Score = 50
-
-		//set new name
-
-		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Jane Doe", MarkerInvalid: false}
-
-		err := m.SaveForm(f)
+		updated, err := m.ClearFace()
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.NotEmpty(t, m.SubjectUID)
-		assert.Equal(t, "Jane Doe", m.GetSubject().SubjectName)
-		assert.Equal(t, "Jane Doe", FindMarker(9).GetSubject().SubjectName)
-		assert.Equal(t, "Jane Doe", FindMarker(10).GetSubject().SubjectName)
+		assert.False(t, updated)
+		assert.Empty(t, m.FaceID)
+	})
+	t.Run("subject src manual", func(t *testing.T) {
+		m := Marker{FaceID: "123ab"}
 
-		//rename
-		f3 := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franzilein", MarkerInvalid: false}
+		assert.NotEmpty(t, m.FaceID)
+		assert.Empty(t, m.MatchedAt)
+		updated, err := m.ClearFace()
 
-		err3 := FindMarker(9).SaveForm(f3)
-
-		if err3 != nil {
-			t.Fatal(err3)
+		if err != nil {
+			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Franzilein", FindMarker(8).GetSubject().SubjectName)
-		assert.Equal(t, "Franzilein", FindMarker(9).GetSubject().SubjectName)
-		assert.Equal(t, "Franzilein", FindMarker(10).GetSubject().SubjectName)
+		assert.True(t, updated)
+		assert.Empty(t, m.FaceID)
+		assert.NotEmpty(t, m.MatchedAt)
 	})
 }
 
@@ -318,5 +345,58 @@ func TestMarker_HasFace(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-6")
 
 		assert.False(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
+	})
+	t.Run("face id empty", func(t *testing.T) {
+		m := Marker{FaceID: ""}
+
+		assert.False(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
+	})
+	t.Run("face dist < 0", func(t *testing.T) {
+		m := Marker{FaceID: "123", FaceDist: -1}
+
+		assert.False(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
+	})
+	t.Run("face id = f.ID", func(t *testing.T) {
+		m := Marker{FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
+
+		assert.True(t, m.HasFace(FaceFixtures.Pointer("joe-biden"), 0.1))
+	})
+}
+
+func TestMarker_GetSubject(t *testing.T) {
+	t.Run("return subject", func(t *testing.T) {
+		m := Marker{Subject: &Subject{SubjectName: "Test Subject"}}
+
+		assert.Equal(t, "Test Subject", m.GetSubject().SubjectName)
+	})
+	t.Run("uid empty, marker name not empty", func(t *testing.T) {
+		m := Marker{SubjectUID: "", MarkerName: "Hans Mayer"}
+		assert.Equal(t, "Hans Mayer", m.GetSubject().SubjectName)
+	})
+}
+
+func TestMarker_GetFace(t *testing.T) {
+	t.Run("return face", func(t *testing.T) {
+		m := Marker{Face: &Face{ID: "1234"}}
+
+		assert.Equal(t, "1234", m.GetFace().ID)
+	})
+	t.Run("find face with ID", func(t *testing.T) {
+		m := Marker{FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
+		assert.Equal(t, "jqy3y652h8njw0sx", m.GetFace().SubjectUID)
+	})
+	t.Run("low quality marker", func(t *testing.T) {
+		m := Marker{FaceID: "", SubjectSrc: SrcManual, Size: 130}
+		assert.Nil(t, m.GetFace())
+	})
+	t.Run("create face", func(t *testing.T) {
+		m := Marker{FaceID: "", SubjectSrc: SrcManual, Size: 160, Score: 40}
+		assert.NotEmpty(t, m.GetFace().ID)
+	})
+}
+
+func TestFindMarker(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		assert.Nil(t, FindMarker(0000))
 	})
 }
