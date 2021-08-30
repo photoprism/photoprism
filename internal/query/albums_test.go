@@ -207,14 +207,6 @@ func TestAlbumSearch(t *testing.T) {
 	})
 }
 
-func TestToggleMonthAlbums(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		if err := ToggleMonthAlbums(); err != nil {
-			t.Fatal(err)
-		}
-	})
-}
-
 func TestUpdateAlbumDates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		if err := UpdateAlbumDates(); err != nil {

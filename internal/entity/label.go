@@ -20,6 +20,8 @@ type Labels []Label
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
 	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	Thumb            string     `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb,omitempty" yaml:"Thumb,omitempty"`
+	ThumbSrc         string     `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	LabelSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
 	CustomSlug       string     `gorm:"type:VARBINARY(255);index;" json:"CustomSlug" yaml:"-"`
 	LabelName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
@@ -33,6 +35,11 @@ type Label struct {
 	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
 	DeletedAt        *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	New              bool       `gorm:"-" json:"-" yaml:"-"`
+}
+
+// TableName returns the entity database table name.
+func (Label) TableName() string {
+	return "labels"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.

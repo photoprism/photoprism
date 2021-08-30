@@ -102,6 +102,11 @@ type Photo struct {
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
+// TableName returns the entity database table name.
+func (Photo) TableName() string {
+	return "photos"
+}
+
 // NewPhoto creates a photo entity.
 func NewPhoto(stackable bool) Photo {
 	m := Photo{

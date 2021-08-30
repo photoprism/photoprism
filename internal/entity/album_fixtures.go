@@ -25,9 +25,7 @@ func (m AlbumMap) Pointer(name string) *Album {
 var AlbumFixtures = AlbumMap{
 	"christmas2030": {
 		ID:               1000000,
-		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba7",
-		FolderUID:        "",
 		AlbumSlug:        "christmas-2030",
 		AlbumPath:        "",
 		AlbumType:        AlbumDefault,
@@ -52,9 +50,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"holiday-2030": {
 		ID:               1000001,
-		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba8",
-		FolderUID:        "",
 		AlbumSlug:        "holiday-2030",
 		AlbumPath:        "",
 		AlbumType:        AlbumDefault,
@@ -79,9 +75,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"berlin-2019": {
 		ID:               1000002,
-		CoverUID:         "",
 		AlbumUID:         "at9lxuqxpogaaba9",
-		FolderUID:        "",
 		AlbumSlug:        "berlin-2019",
 		AlbumPath:        "",
 		AlbumType:        AlbumDefault,
@@ -106,9 +100,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"april-1990": {
 		ID:               1000003,
-		CoverUID:         "",
 		AlbumUID:         "at1lxuqipogaaba1",
-		FolderUID:        "",
 		AlbumSlug:        "april-1990",
 		AlbumPath:        "1990/04",
 		AlbumType:        AlbumFolder,
@@ -133,9 +125,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"import": {
 		ID:               1000004,
-		CoverUID:         "",
 		AlbumUID:         "at6axuzitogaaiax",
-		FolderUID:        "",
 		AlbumSlug:        "import",
 		AlbumPath:        "",
 		AlbumType:        AlbumDefault,
@@ -160,9 +150,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"emptyMoment": {
 		ID:               1000005,
-		CoverUID:         "",
 		AlbumUID:         "at7axuzitogaaiax",
-		FolderUID:        "",
 		AlbumSlug:        "empty-moment",
 		AlbumPath:        "",
 		AlbumType:        AlbumMoment,
@@ -187,9 +175,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"2016-04": {
 		ID:               1000006,
-		CoverUID:         "",
 		AlbumUID:         "at1lxuqipogaabj8",
-		FolderUID:        "",
 		AlbumSlug:        "2016-04",
 		AlbumPath:        "2016/04",
 		AlbumType:        AlbumFolder,

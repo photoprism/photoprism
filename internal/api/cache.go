@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
@@ -44,6 +46,10 @@ func RemoveFromFolderCache(rootName string) {
 
 	cache.Delete(cacheKey)
 
+	if err := query.UpdateAlbumFolderPreviews(); err != nil {
+		log.Errorf("failed updating folder previews: %s", err)
+	}
+
 	log.Debugf("removed %s from cache", cacheKey)
 }
 
@@ -58,11 +64,19 @@ func RemoveFromAlbumCoverCache(uid string) {
 
 		log.Debugf("removed %s from cache", cacheKey)
 	}
+
+	if err := query.UpdateAlbumPreviews(); err != nil {
+		log.Errorf("failed updating album previews: %s", err)
+	}
 }
 
 // FlushCoverCache clears the complete cover cache.
 func FlushCoverCache() {
 	service.CoverCache().Flush()
+
+	if err := query.UpdatePreviews(); err != nil {
+		log.Errorf("failed updating preview images: %s", err)
+	}
 
 	log.Debugf("albums: flushed cover cache")
 }

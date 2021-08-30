@@ -23,22 +23,23 @@ type Subjects []Subject
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjectUID         string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	SubjectType        string          `gorm:"type:VARBINARY(8);" json:"Type" yaml:"Type"`
-	SubjectSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src"`
-	SubjectSlug        string          `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"-"`
-	SubjectName        string          `gorm:"type:VARCHAR(255);unique_index;" json:"Name" yaml:"Name"`
-	SubjectDescription string          `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
-	SubjectNotes       string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	Favorite           bool            `json:"Favorite" yaml:"Favorite,omitempty"`
-	Hidden             bool            `json:"Hidden" yaml:"Hidden,omitempty"`
-	Private            bool            `json:"Private" yaml:"Private,omitempty"`
-	PhotoUID           string          `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
-	PhotoCount         int             `gorm:"default:0" json:"PhotoCount" yaml:"-"`
-	MetadataJSON       json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
-	CreatedAt          time.Time       `json:"CreatedAt" yaml:"-"`
-	UpdatedAt          time.Time       `json:"UpdatedAt" yaml:"-"`
-	DeletedAt          *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	SubjectUID   string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	Thumb        string          `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb,omitempty" yaml:"Thumb,omitempty"`
+	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	SubjectType  string          `gorm:"type:VARBINARY(8);default:''" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjectSrc   string          `gorm:"type:VARBINARY(8);default:''" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjectSlug  string          `gorm:"type:VARBINARY(255);index;default:''" json:"Slug" yaml:"-"`
+	SubjectName  string          `gorm:"type:VARCHAR(255);unique_index" json:"Name" yaml:"Name"`
+	SubjectBio   string          `gorm:"type:TEXT;default:''" json:"Bio" yaml:"Bio,omitempty"`
+	SubjectNotes string          `gorm:"type:TEXT;default:''" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	Favorite     bool            `json:"Favorite" yaml:"Favorite,omitempty"`
+	Private      bool            `json:"Private" yaml:"Private,omitempty"`
+	Excluded     bool            `json:"Excluded" yaml:"Excluded,omitempty"`
+	FileCount    int             `gorm:"default:0" json:"FileCount" yaml:"-"`
+	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
+	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
+	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // UnknownPerson can be used as a placeholder for unknown people.
@@ -49,7 +50,9 @@ var UnknownPerson = Subject{
 	SubjectType: SubjectPerson,
 	SubjectSrc:  SrcDefault,
 	Favorite:    false,
-	PhotoCount:  0,
+	Private:     false,
+	Excluded:    false,
+	FileCount:   0,
 }
 
 // CreateUnknownPerson initializes the database with a placeholder for unknown people if not exists.
@@ -90,7 +93,7 @@ func NewSubject(name, subjectType, subjectSrc string) *Subject {
 		SubjectName: subjectName,
 		SubjectType: subjectType,
 		SubjectSrc:  subjectSrc,
-		PhotoCount:  1,
+		FileCount:   1,
 	}
 
 	return result
@@ -148,7 +151,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	if err := UnscopedDb().Where("subject_name LIKE ?", m.SubjectName).First(&result).Error; err == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
-		if !m.Hidden && m.SubjectType == SubjectPerson {
+		if !m.Excluded && m.SubjectType == SubjectPerson {
 			event.EntitiesCreated("people", []*Subject{m})
 
 			event.Publish("count.people", event.Data{

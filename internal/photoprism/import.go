@@ -245,8 +245,9 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			log.Errorf("import: %s", err)
 		}
 
+		// Update photo counts and visibilities.
 		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("import: %s", err)
+			log.Errorf("import: %s (update counts)", err)
 		}
 	}
 

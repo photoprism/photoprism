@@ -16,6 +16,8 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
+// BatchPhotosArchive moves multiple photos to the archive.
+//
 // POST /api/v1/batch/photos/archive
 func BatchPhotosArchive(router *gin.RouterGroup) {
 	router.POST("/batch/photos/archive", func(c *gin.Context) {
@@ -64,7 +66,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		}
 
 		logError("photos", entity.UpdatePhotoCounts())
-		logError("photos", query.ToggleMonthAlbums())
+		logError("photos", query.UpdatePreviews())
 
 		UpdateClientConfig()
 
@@ -74,6 +76,8 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 	})
 }
 
+// BatchPhotosRestore restores multiple photos from the archive.
+//
 // POST /api/v1/batch/photos/restore
 func BatchPhotosRestore(router *gin.RouterGroup) {
 	router.POST("/batch/photos/restore", func(c *gin.Context) {
@@ -121,7 +125,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 		}
 
 		logError("photos", entity.UpdatePhotoCounts())
-		logError("photos", query.ToggleMonthAlbums())
+		logError("photos", query.UpdatePreviews())
 
 		UpdateClientConfig()
 
@@ -131,6 +135,8 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 	})
 }
 
+// BatchPhotosApprove approves multiple photos that are currently under review.
+//
 // POST /api/v1/batch/photos/approve
 func BatchPhotosApprove(router *gin.RouterGroup) {
 	router.POST("batch/photos/approve", func(c *gin.Context) {
@@ -181,6 +187,8 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 	})
 }
 
+// BatchAlbumsDelete permanently deletes multiple albums.
+//
 // POST /api/v1/batch/albums/delete
 func BatchAlbumsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/albums/delete", func(c *gin.Context) {
@@ -216,6 +224,8 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 	})
 }
 
+// BatchPhotosPrivate flags multiple photos as private.
+//
 // POST /api/v1/batch/photos/private
 func BatchPhotosPrivate(router *gin.RouterGroup) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
@@ -248,7 +258,6 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		}
 
 		logError("photos", entity.UpdatePhotoCounts())
-		logError("photos", query.ToggleMonthAlbums())
 
 		if photos, err := query.PhotoSelection(f); err == nil {
 			for _, p := range photos {
@@ -266,6 +275,8 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 	})
 }
 
+// BatchLabelsDelete deletes multiple labels.
+//
 // POST /api/v1/batch/labels/delete
 func BatchLabelsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {
@@ -310,6 +321,8 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 	})
 }
 
+// BatchPhotosDelete permanently deletes multiple photos from the archive.
+//
 // POST /api/v1/batch/photos/delete
 func BatchPhotosDelete(router *gin.RouterGroup) {
 	router.POST("/batch/photos/delete", func(c *gin.Context) {

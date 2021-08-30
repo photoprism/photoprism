@@ -34,19 +34,23 @@ import { DateTime } from "luxon";
 import { config } from "../session";
 import { $gettext } from "common/vm";
 
-export class Label extends RestModel {
+export class Subject extends RestModel {
   getDefaults() {
     return {
-      ID: 0,
       UID: "",
+      Thumb: "",
+      PreviewSrc: "",
+      Type: "",
+      Src: "",
       Slug: "",
-      CustomSlug: "",
       Name: "",
-      Priority: 0,
-      Favorite: false,
-      Description: "",
+      Bio: "",
       Notes: "",
-      PhotoCount: 0,
+      Favorite: false,
+      Private: false,
+      Excluded: false,
+      FileCount: 0,
+      Metadata: {},
       CreatedAt: "",
       UpdatedAt: "",
       DeletedAt: "",
@@ -54,13 +58,15 @@ export class Label extends RestModel {
   }
 
   route(view) {
-    return { name: view, query: { q: "label:" + (this.CustomSlug ? this.CustomSlug : this.Slug) } };
+    return { name: view, query: { q: "subject:" + this.UID } };
   }
 
   classes(selected) {
-    let classes = ["is-label", "uid-" + this.UID];
+    let classes = ["is-subject", "uid-" + this.UID];
 
     if (this.Favorite) classes.push("is-favorite");
+    if (this.Private) classes.push("is-private");
+    if (this.Excluded) classes.push("is-excluded");
     if (selected) classes.push("is-selected");
 
     return classes;
@@ -77,10 +83,8 @@ export class Label extends RestModel {
   thumbnailUrl(size) {
     if (this.Thumb) {
       return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
-    } else if (this.UID) {
-      return `${config.contentUri}/labels/${this.UID}/t/${config.previewToken()}/${size}`;
     } else {
-      return `${config.contentUri}/svg/label`;
+      return `${config.contentUri}/svg/portrait`;
     }
   }
 
@@ -113,12 +117,12 @@ export class Label extends RestModel {
   }
 
   static getCollectionResource() {
-    return "labels";
+    return "subjects";
   }
 
   static getModelName() {
-    return $gettext("Label");
+    return $gettext("Subject");
   }
 }
 
-export default Label;
+export default Subject;

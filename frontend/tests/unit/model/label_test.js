@@ -49,10 +49,16 @@ describe("model/label", () => {
   });
 
   it("should get thumbnail url", () => {
-    const values = { ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat" };
+    const values = {
+      ID: 5,
+      UID: "ABC123",
+      Thumb: "c6b24d688564f7ddc7b245a414f003a8d8ff5a67",
+      Name: "Black Cat",
+      Slug: "black-cat",
+    };
     const label = new Label(values);
     const result = label.thumbnailUrl("xyz");
-    assert.equal(result, "/api/v1/labels/ABC123/t/public/xyz");
+    assert.equal(result, "/api/v1/t/c6b24d688564f7ddc7b245a414f003a8d8ff5a67/public/xyz");
   });
 
   it("should get date string", () => {

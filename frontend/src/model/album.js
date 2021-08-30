@@ -38,9 +38,10 @@ export class Album extends RestModel {
   getDefaults() {
     return {
       UID: "",
-      Cover: "",
-      Parent: "",
-      Folder: "",
+      ParentUID: "",
+      Thumb: "",
+      ThumbSrc: "",
+      Path: "",
       Slug: "",
       Type: "",
       Title: "",
@@ -91,7 +92,13 @@ export class Album extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return `${config.contentUri}/albums/${this.getId()}/t/${config.previewToken()}/${size}`;
+    if (this.Thumb) {
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+    } else if (this.UID) {
+      return `${config.contentUri}/albums/${this.UID}/t/${config.previewToken()}/${size}`;
+    } else {
+      return `${config.contentUri}/svg/album`;
+    }
   }
 
   dayString() {

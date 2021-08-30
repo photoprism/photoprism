@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -106,6 +108,11 @@ func StartImport(router *gin.RouterGroup) {
 		}
 
 		UpdateClientConfig()
+
+		// Update album, label, and subject preview images.
+		if err := query.UpdatePreviews(); err != nil {
+			log.Errorf("import: %s (update previews)", err)
+		}
 
 		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
 	})

@@ -33,31 +33,37 @@ describe("model/album", () => {
   });
 
   it("should get album entity name", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
+    const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);
     const result = album.getEntityName();
     assert.equal(result, "christmas-2019");
   });
 
   it("should get album id", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.getId();
     assert.equal(result, "66");
   });
 
   it("should get album title", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
+    const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);
     const result = album.getTitle();
     assert.equal(result, "Christmas 2019");
   });
 
   it("should get thumbnail url", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = {
+      ID: 5,
+      Thumb: "d6b24d688564f7ddc7b245a414f003a8d8ff5a67",
+      Title: "Christmas 2019",
+      Slug: "christmas-2019",
+      UID: 66,
+    };
     const album = new Album(values);
     const result = album.thumbnailUrl("xyz");
-    assert.equal(result, "/api/v1/albums/66/t/public/xyz");
+    assert.equal(result, "/api/v1/t/d6b24d688564f7ddc7b245a414f003a8d8ff5a67/public/xyz");
   });
 
   it("should get created date string", () => {
