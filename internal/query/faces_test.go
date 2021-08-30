@@ -93,7 +93,7 @@ func TestRemoveAnonymousFaceClusters(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, int64(2), removed)
+	assert.Equal(t, int64(3), removed)
 }
 
 func TestCountNewFaceMarkers(t *testing.T) {

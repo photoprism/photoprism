@@ -153,6 +153,59 @@ func TestMarker_ClearSubject(t *testing.T) {
 
 		assert.Empty(t, m.MarkerName)
 	})
+	t.Run("actress-a-1", func(t *testing.T) {
+		m := MarkerFixtures.Get("actress-a-2")  // id 12
+		m2 := MarkerFixtures.Get("actress-a-1") // id 11
+		m3 := MarkerFixtures.Get("actress-a-3") // id 13
+		m4 := MarkerFixtures.Get("actress-a-4") // id 14
+
+		assert.Equal(t, "jqy1y111h1njaaac", m.SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaac", m2.SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaac", m3.SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaac", m4.SubjectUID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m.GetFace().ID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m2.GetFace().ID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m3.GetFace().ID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m4.GetFace().ID)
+		assert.Equal(t, int(0), FindMarker(12).GetFace().Collisions)
+
+		//remove similar face
+		err := m.ClearSubject(SrcAuto)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Log(FindMarker(11).FaceID)
+		t.Log(FindMarker(12).FaceID)
+		t.Log(FindMarker(13).FaceID)
+		t.Log(FindMarker(14).FaceID)
+
+		assert.Empty(t, m.SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(11).SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(13).SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(14).SubjectUID)
+		assert.Empty(t, m.FaceID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(11).GetFace().ID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(13).GetFace().ID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(14).GetFace().ID)
+		assert.Equal(t, int(0), FindMarker(11).GetFace().Collisions)
+
+		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Actress B", MarkerInvalid: false}
+
+		err2 := m.SaveForm(f)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+
+		assert.Equal(t, "Actress B", m.GetSubject().SubjectName)
+		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(11).SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(13).SubjectUID)
+		assert.NotEmpty(t, m.FaceID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(11).GetFace().ID)
+		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(13).GetFace().ID)
+	})
 }
 
 func TestMarker_ClearFace(t *testing.T) {
@@ -173,7 +226,7 @@ func TestMarker_ClearFace(t *testing.T) {
 }
 
 func TestMarker_SaveForm(t *testing.T) {
-	t.Run("fa-ge add name of not yet existing subject to marker without subject", func(t *testing.T) {
+	t.Run("fa-ge add new name to marker then rename marker", func(t *testing.T) {
 		m := MarkerFixtures.Get("fa-gr-1")
 		m2 := MarkerFixtures.Get("fa-gr-2")
 		m3 := MarkerFixtures.Get("fa-gr-3")
@@ -187,7 +240,7 @@ func TestMarker_SaveForm(t *testing.T) {
 
 		//set new name
 
-		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franki", MarkerInvalid: false}
+		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Jane Doe", MarkerInvalid: false}
 
 		err := m.SaveForm(f)
 
@@ -196,9 +249,9 @@ func TestMarker_SaveForm(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, m.SubjectUID)
-		assert.Equal(t, "Franki", m.GetSubject().SubjectName)
-		assert.Equal(t, "Franki", FindMarker(9).GetSubject().SubjectName)
-		assert.Equal(t, "Franki", FindMarker(10).GetSubject().SubjectName)
+		assert.Equal(t, "Jane Doe", m.GetSubject().SubjectName)
+		assert.Equal(t, "Jane Doe", FindMarker(9).GetSubject().SubjectName)
+		assert.Equal(t, "Jane Doe", FindMarker(10).GetSubject().SubjectName)
 
 		//rename
 		f3 := form.Marker{SubjectSrc: SrcManual, MarkerName: "Franzilein", MarkerInvalid: false}

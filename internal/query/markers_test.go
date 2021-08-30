@@ -55,7 +55,7 @@ func TestMarkers(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, len(results))
+		assert.Equal(t, 3, len(results))
 	})
 }
 
@@ -113,7 +113,7 @@ func TestEmbeddings(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(results), 1)
+		assert.Equal(t, len(results), 5)
 
 		for _, val := range results {
 			assert.IsType(t, entity.Embedding{}, val)
