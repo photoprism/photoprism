@@ -96,10 +96,10 @@ func CreateMarkerSubjects() (affected int64, err error) {
 	return affected, err
 }
 
-// SubjectUIDs finds subject UIDs matching the search string.
-func SubjectUIDs(s string) (result []string, remaining string) {
+// SearchSubjectUIDs finds subject UIDs matching the search string, and removes names from the remaining query.
+func SearchSubjectUIDs(s string) (result []string, names []string, remaining string) {
 	if s == "" {
-		return result, s
+		return result, names, s
 	}
 
 	type Matches struct {
@@ -113,7 +113,7 @@ func SubjectUIDs(s string) (result []string, remaining string) {
 	stmt = stmt.Where("subject_src <> ?", entity.SrcDefault)
 
 	if where := LikeAllNames("subject_name", s); len(where) == 0 {
-		return result, s
+		return result, names, s
 	} else {
 		stmt = stmt.Where("?", gorm.Expr(strings.Join(where, " OR ")))
 	}
@@ -121,11 +121,12 @@ func SubjectUIDs(s string) (result []string, remaining string) {
 	if err := stmt.Scan(&matches).Error; err != nil {
 		log.Errorf("search: %s while finding subjects", err)
 	} else if len(matches) == 0 {
-		return result, s
+		return result, names, s
 	}
 
 	for _, m := range matches {
 		result = append(result, m.SubjectUID)
+		names = append(names, m.SubjectName)
 
 		for _, n := range strings.Split(strings.ToLower(m.SubjectName), " ") {
 			s = strings.ReplaceAll(s, n, "")
@@ -134,5 +135,5 @@ func SubjectUIDs(s string) (result []string, remaining string) {
 
 	s = strings.Trim(s, "&| ")
 
-	return result, s
+	return result, names, s
 }

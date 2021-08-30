@@ -44,9 +44,9 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 	// Modify query if it contains subject names.
 	if f.Query != "" && f.Subject == "" {
-		if subj, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
-			log.Debugf("search: subjects %#v", subj)
-			f.Subject = strings.Join(subj, Or)
+		if subj, names, remaining := SearchSubjectUIDs(f.Query); len(subj) > 0 {
+			f.Subject = strings.Join(subj, And)
+			log.Debugf("search: subject %s", txt.Quote(strings.Join(names, ", ")))
 			f.Query = remaining
 		}
 	}
@@ -96,8 +96,10 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 	// Filter for one or more subjects?
 	if f.Subject != "" {
-		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.id = m.file_id AND m.marker_invalid = 0 WHERE subject_uid IN (?))",
-			entity.Marker{}.TableName()), strings.Split(strings.ToLower(f.Subject), Or))
+		for _, subj := range strings.Split(strings.ToLower(f.Subject), And) {
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.id = m.file_id AND m.marker_invalid = 0 WHERE subject_uid IN (?))",
+				entity.Marker{}.TableName()), strings.Split(subj, Or))
+		}
 	} else if f.Subjects != "" {
 		for _, where := range LikeAnyWord("s.subject_name", f.Subjects) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.id = m.file_id AND m.marker_invalid = 0 JOIN %s s ON s.subject_uid = m.subject_uid WHERE (?))",
