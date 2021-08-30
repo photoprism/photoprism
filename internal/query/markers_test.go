@@ -113,7 +113,7 @@ func TestEmbeddings(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(results), 5)
+		assert.Equal(t, len(results), 8)
 
 		for _, val := range results {
 			assert.IsType(t, entity.Embedding{}, val)

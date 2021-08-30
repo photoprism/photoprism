@@ -104,6 +104,23 @@ var SubjectFixtures = SubjectMap{
 		UpdatedAt:          TimeStamp(),
 		DeletedAt:          nil,
 	},
+	"actor-1": Subject{
+		SubjectUID:         "jqy1y111h1njaaad",
+		SubjectSlug:        "actor-a",
+		SubjectName:        "Actor A",
+		SubjectType:        SubjectPerson,
+		SubjectSrc:         SrcMarker,
+		Favorite:           false,
+		Private:            false,
+		Hidden:             false,
+		SubjectDescription: "",
+		SubjectNotes:       "",
+		MetadataJSON:       []byte(""),
+		PhotoCount:         4,
+		CreatedAt:          TimeStamp(),
+		UpdatedAt:          TimeStamp(),
+		DeletedAt:          nil,
+	},
 }
 
 // CreateSubjectFixtures inserts known entities into the database for testing.

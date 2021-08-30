@@ -196,58 +196,43 @@ func TestMarker_ClearSubject(t *testing.T) {
 
 		assert.Empty(t, m.MarkerName)
 	})
-	t.Run("actress-a-1", func(t *testing.T) {
-		m := MarkerFixtures.Get("actress-a-2")  // id 12
-		m2 := MarkerFixtures.Get("actress-a-1") // id 11
-		m3 := MarkerFixtures.Get("actress-a-3") // id 13
-		m4 := MarkerFixtures.Get("actress-a-4") // id 14
+	t.Run("actor-1", func(t *testing.T) {
+		m := MarkerFixtures.Get("actor-a-4")  // id 18
+		m2 := MarkerFixtures.Get("actor-a-3") // id 17
+		m3 := MarkerFixtures.Get("actor-a-2") // id 16
+		m4 := MarkerFixtures.Get("actor-a-1") // id 15
 
-		assert.Equal(t, "jqy1y111h1njaaac", m.SubjectUID)
-		assert.Equal(t, "jqy1y111h1njaaac", m2.SubjectUID)
-		assert.Equal(t, "jqy1y111h1njaaac", m3.SubjectUID)
-		assert.Equal(t, "jqy1y111h1njaaac", m4.SubjectUID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m.GetFace().ID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m2.GetFace().ID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m3.GetFace().ID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", m4.GetFace().ID)
-		assert.Equal(t, int(0), FindMarker(12).GetFace().Collisions)
+		assert.Equal(t, "jqy1y111h1njaaad", m.SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaad", m2.SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaad", m3.SubjectUID)
+		assert.Equal(t, "jqy1y111h1njaaad", m4.SubjectUID)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m.GetFace().ID)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m2.GetFace().ID)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m3.GetFace().ID)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m4.GetFace().ID)
+		assert.Equal(t, int(0), FindMarker(15).GetFace().Collisions)
 
-		//remove similar face
+		//remove face
 		err := m.ClearSubject(SrcAuto)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		t.Log(FindMarker(11).FaceID)
-		t.Log(FindMarker(12).FaceID)
-		t.Log(FindMarker(13).FaceID)
-		t.Log(FindMarker(14).FaceID)
+		t.Log(FindMarker(18).FaceID)
+		t.Log(FindMarker(17).FaceID)
+		t.Log(FindMarker(16).FaceID)
+		t.Log(FindMarker(15).FaceID)
 
 		assert.Empty(t, m.SubjectUID)
-		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(11).SubjectUID)
-		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(13).SubjectUID)
-		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(14).SubjectUID)
+		assert.Equal(t, "", FindMarker(17).SubjectUID)
+		assert.Equal(t, "", FindMarker(16).SubjectUID)
+		assert.Equal(t, "", FindMarker(15).SubjectUID)
 		assert.Empty(t, m.FaceID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(11).GetFace().ID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(13).GetFace().ID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(14).GetFace().ID)
-		assert.Equal(t, int(0), FindMarker(11).GetFace().Collisions)
-
-		f := form.Marker{SubjectSrc: SrcManual, MarkerName: "Actress B", MarkerInvalid: false}
-
-		err2 := m.SaveForm(f)
-
-		if err2 != nil {
-			t.Fatal(err2)
-		}
-
-		assert.Equal(t, "Actress B", m.GetSubject().SubjectName)
-		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(11).SubjectUID)
-		assert.Equal(t, "jqy1y111h1njaaac", FindMarker(13).SubjectUID)
-		assert.NotEmpty(t, m.FaceID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(11).GetFace().ID)
-		assert.Equal(t, "GMH5NISEEULNJL6RATITOA3TMZXMTMCI", FindMarker(13).GetFace().ID)
+		assert.Equal(t, "", FindMarker(17).FaceID)
+		assert.Equal(t, "", FindMarker(16).FaceID)
+		assert.Equal(t, "", FindMarker(15).FaceID)
+		assert.Equal(t, int(1), FindFace("PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS").Collisions)
 	})
 }
 
@@ -423,9 +408,18 @@ func TestMarker_SetFace(t *testing.T) {
 	})
 	t.Run("set new face", func(t *testing.T) {
 		m := Marker{MarkerType: MarkerFace, SubjectUID: "", FaceID: ""}
+
 		updated, _ := m.SetFace(FaceFixtures.Pointer("john-doe"), -1)
 		assert.True(t, updated)
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
+		updated2, err := m.ClearFace()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, updated2)
+		assert.Empty(t, m.FaceID)
 	})
 
 }
