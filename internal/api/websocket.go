@@ -35,12 +35,17 @@ var wsAuth = struct {
 	mutex sync.RWMutex
 }{user: make(map[string]entity.User)}
 
+// wsReader initializes a websocket reader for receiving messages.
 func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config) {
 	defer ws.Close()
 
 	ws.SetReadLimit(512)
-	ws.SetReadDeadline(time.Now().Add(wsTimeout))
-	ws.SetPongHandler(func(string) error { ws.SetReadDeadline(time.Now().Add(wsTimeout)); return nil })
+
+	if err := ws.SetReadDeadline(time.Now().Add(wsTimeout)); err != nil {
+		return
+	}
+
+	ws.SetPongHandler(func(string) error { _ = ws.SetReadDeadline(time.Now().Add(wsTimeout)); return nil })
 
 	for {
 		_, m, err := ws.ReadMessage()
@@ -70,10 +75,13 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 				}
 
 				writeMutex.Lock()
-				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
-				if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data{"config": clientConfig}}); err != nil {
-					// Do nothing.
+				if err := ws.SetWriteDeadline(time.Now().Add(30 * time.Second)); err != nil {
+					writeMutex.Unlock()
+					break
+				} else if err := ws.WriteJSON(gin.H{"event": "config.updated", "data": event.Data{"config": clientConfig}}); err != nil {
+					writeMutex.Unlock()
+					break
 				}
 
 				writeMutex.Unlock()
@@ -82,6 +90,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 	}
 }
 
+// wsWriter initializes a websocket writer for sending messages.
 func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	pingTicker := time.NewTicker(15 * time.Second)
 	s := event.Subscribe(
@@ -98,13 +107,14 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 		"countries.*",
 		"albums.*",
 		"labels.*",
+		"subjects.*",
 		"sync.*",
 	)
 
 	defer func() {
 		pingTicker.Stop()
 		event.Unsubscribe(s)
-		ws.Close()
+		_ = ws.Close()
 
 		wsAuth.mutex.Lock()
 		wsAuth.user[connId] = entity.UnknownUser
@@ -115,9 +125,11 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 		select {
 		case <-pingTicker.C:
 			writeMutex.Lock()
-			ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
-			if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+			if err := ws.SetWriteDeadline(time.Now().Add(30 * time.Second)); err != nil {
+				writeMutex.Unlock()
+				return
+			} else if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				writeMutex.Unlock()
 				return
 			}
@@ -136,9 +148,11 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 
 			if user.Registered() {
 				writeMutex.Lock()
-				ws.SetWriteDeadline(time.Now().Add(30 * time.Second))
 
-				if err := ws.WriteJSON(gin.H{"event": msg.Name, "data": msg.Fields}); err != nil {
+				if err := ws.SetWriteDeadline(time.Now().Add(30 * time.Second)); err != nil {
+					writeMutex.Unlock()
+					return
+				} else if err := ws.WriteJSON(gin.H{"event": msg.Name, "data": msg.Fields}); err != nil {
 					writeMutex.Unlock()
 					return
 				}
@@ -149,6 +163,8 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	}
 }
 
+// Websocket registers websocket request handler.
+//
 // GET /api/v1/ws
 func Websocket(router *gin.RouterGroup) {
 	if router == nil {
@@ -179,15 +195,19 @@ func Websocket(router *gin.RouterGroup) {
 
 		// Init connection.
 		wsAuth.mutex.Lock()
+
 		if conf.Public() {
 			wsAuth.user[connId] = entity.Admin
 		} else {
 			wsAuth.user[connId] = entity.UnknownUser
 		}
+
 		wsAuth.mutex.Unlock()
 
+		// Init writer.
 		go wsWriter(ws, &writeMutex, connId)
 
+		// Init reader.
 		wsReader(ws, &writeMutex, connId, conf)
 	})
 }
