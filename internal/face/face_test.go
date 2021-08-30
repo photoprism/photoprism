@@ -152,3 +152,99 @@ func TestDetect(t *testing.T) {
 	// 4 out of 55 with the 1.21 threshold
 	assert.True(t, correct == 51)
 }
+
+func TestFaces_Uncertainty(t *testing.T) {
+	t.Run("maxScore = 310", func(t *testing.T) {
+		f := Faces{Face{Score: 310}, Face{Score: 210}}
+		assert.Equal(t, 1, f.Uncertainty())
+	})
+	t.Run("maxScore = 210", func(t *testing.T) {
+		f := Faces{Face{Score: 210}, Face{Score: 210}}
+		assert.Equal(t, 5, f.Uncertainty())
+	})
+	t.Run("maxScore = 66", func(t *testing.T) {
+		f := Faces{Face{Score: 66}, Face{Score: 66}}
+		assert.Equal(t, 20, f.Uncertainty())
+	})
+	t.Run("maxScore = 10", func(t *testing.T) {
+		f := Faces{Face{Score: 10}, Face{Score: 10}}
+		assert.Equal(t, 50, f.Uncertainty())
+	})
+}
+
+func TestFace_Size(t *testing.T) {
+	t.Run("8", func(t *testing.T) {
+		f := Face{
+			Rows:  8,
+			Cols:  1,
+			Score: 200,
+			Face: Point{
+				Name:  "",
+				Row:   0,
+				Col:   0,
+				Scale: 8,
+			},
+			Eyes:       nil,
+			Landmarks:  nil,
+			Embeddings: nil,
+		}
+		assert.Equal(t, 8, f.Size())
+	})
+}
+
+func TestFace_Dim(t *testing.T) {
+	t.Run("3", func(t *testing.T) {
+		f := Face{
+			Rows:  8,
+			Cols:  3,
+			Score: 200,
+			Face: Point{
+				Name:  "",
+				Row:   0,
+				Col:   0,
+				Scale: 8,
+			},
+			Eyes:       nil,
+			Landmarks:  nil,
+			Embeddings: nil,
+		}
+		assert.Equal(t, float32(3), f.Dim())
+	})
+	t.Run("1", func(t *testing.T) {
+		f := Face{
+			Rows:  8,
+			Cols:  0,
+			Score: 200,
+			Face: Point{
+				Name:  "",
+				Row:   0,
+				Col:   0,
+				Scale: 8,
+			},
+			Eyes:       nil,
+			Landmarks:  nil,
+			Embeddings: nil,
+		}
+		assert.Equal(t, float32(1), f.Dim())
+	})
+}
+
+func TestFace_EmbeddingsJSON(t *testing.T) {
+	t.Run("no result", func(t *testing.T) {
+		f := Face{
+			Rows:  8,
+			Cols:  1,
+			Score: 200,
+			Face: Point{
+				Name:  "",
+				Row:   0,
+				Col:   0,
+				Scale: 8,
+			},
+			Eyes:       nil,
+			Landmarks:  nil,
+			Embeddings: nil,
+		}
+		assert.Equal(t, []byte{0x6e, 0x75, 0x6c, 0x6c}, f.EmbeddingsJSON())
+	})
+}
