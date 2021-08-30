@@ -52,3 +52,14 @@ func TestCreateMarkerSubjects(t *testing.T) {
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(2))
 }
+
+func TestSubjectUIDs(t *testing.T) {
+	result, remaining := SubjectUIDs("john & his | cats")
+
+	if len(result) != 1 {
+		t.Fatal("expected one result")
+	} else {
+		assert.Equal(t, "jqu0xs11qekk9jx8", result[0])
+		assert.Equal(t, "his | cats", remaining)
+	}
+}

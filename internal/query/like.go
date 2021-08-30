@@ -11,7 +11,7 @@ import (
 )
 
 // LikeAny returns a single where condition matching the search words.
-func LikeAny(col, s string, keywords bool) (wheres []string) {
+func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {
 		return wheres
 	}
@@ -22,7 +22,9 @@ func LikeAny(col, s string, keywords bool) (wheres []string) {
 
 	var wildcardThreshold int
 
-	if keywords {
+	if exact {
+		wildcardThreshold = -1
+	} else if keywords {
 		wildcardThreshold = 4
 	} else {
 		wildcardThreshold = 2
@@ -43,7 +45,7 @@ func LikeAny(col, s string, keywords bool) (wheres []string) {
 		}
 
 		for _, w := range words {
-			if len(w) >= wildcardThreshold {
+			if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
 				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
 			} else {
 				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, w))
@@ -70,16 +72,16 @@ func LikeAny(col, s string, keywords bool) (wheres []string) {
 
 // LikeAnyKeyword returns a single where condition matching the search keywords.
 func LikeAnyKeyword(col, s string) (wheres []string) {
-	return LikeAny(col, s, true)
+	return LikeAny(col, s, true, false)
 }
 
 // LikeAnyWord returns a single where condition matching the search word.
 func LikeAnyWord(col, s string) (wheres []string) {
-	return LikeAny(col, s, false)
+	return LikeAny(col, s, false, false)
 }
 
 // LikeAll returns a list of where conditions matching all search words.
-func LikeAll(col, s string, keywords bool) (wheres []string) {
+func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {
 		return wheres
 	}
@@ -97,10 +99,12 @@ func LikeAll(col, s string, keywords bool) (wheres []string) {
 
 	if len(words) == 0 {
 		return wheres
+	} else if exact {
+		wildcardThreshold = -1
 	}
 
 	for _, w := range words {
-		if len(w) >= wildcardThreshold {
+		if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
 			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, w))
 		} else {
 			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, w))
@@ -112,12 +116,35 @@ func LikeAll(col, s string, keywords bool) (wheres []string) {
 
 // LikeAllKeywords returns a list of where conditions matching all search keywords.
 func LikeAllKeywords(col, s string) (wheres []string) {
-	return LikeAll(col, s, true)
+	return LikeAll(col, s, true, false)
 }
 
 // LikeAllWords returns a list of where conditions matching all search words.
 func LikeAllWords(col, s string) (wheres []string) {
-	return LikeAll(col, s, false)
+	return LikeAll(col, s, false, false)
+}
+
+// LikeAllNames returns a list of where conditions matching all names.
+func LikeAllNames(col, s string) (wheres []string) {
+	if s == "" {
+		return wheres
+	}
+
+	words := txt.UniqueWords(txt.Words(s))
+
+	if len(words) == 0 {
+		return wheres
+	}
+
+	for _, w := range words {
+		wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, w))
+
+		if len(w) >= 2 {
+			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s %%'", col, w))
+		}
+	}
+
+	return wheres
 }
 
 // AnySlug returns a where condition that matches any slug in search.

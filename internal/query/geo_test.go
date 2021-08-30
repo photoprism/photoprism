@@ -158,16 +158,6 @@ func TestGeo(t *testing.T) {
 		}
 		assert.IsType(t, GeoResults{}, result)
 	})
-	t.Run("query too short", func(t *testing.T) {
-		f := form.GeoSearch{
-			Query: "a",
-		}
-
-		result, err := Geo(f)
-
-		assert.Error(t, err)
-		assert.IsType(t, GeoResults{}, result)
-	})
 	t.Run("query for label flower", func(t *testing.T) {
 		f := form.GeoSearch{
 			Query: "flower",

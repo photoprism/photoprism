@@ -2,7 +2,9 @@ package query
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -92,4 +94,45 @@ func CreateMarkerSubjects() (affected int64, err error) {
 	}
 
 	return affected, err
+}
+
+// SubjectUIDs finds subject UIDs matching the search string.
+func SubjectUIDs(s string) (result []string, remaining string) {
+	if s == "" {
+		return result, s
+	}
+
+	type Matches struct {
+		SubjectUID  string
+		SubjectName string
+	}
+
+	var matches []Matches
+
+	stmt := Db().Model(entity.Subject{})
+	stmt = stmt.Where("subject_src <> ?", entity.SrcDefault)
+
+	if where := LikeAllNames("subject_name", s); len(where) == 0 {
+		return result, s
+	} else {
+		stmt = stmt.Where("?", gorm.Expr(strings.Join(where, " OR ")))
+	}
+
+	if err := stmt.Scan(&matches).Error; err != nil {
+		log.Errorf("search: %s while finding subjects", err)
+	} else if len(matches) == 0 {
+		return result, s
+	}
+
+	for _, m := range matches {
+		result = append(result, m.SubjectUID)
+
+		for _, n := range strings.Split(strings.ToLower(m.SubjectName), " ") {
+			s = strings.ReplaceAll(s, n, "")
+		}
+	}
+
+	s = strings.Trim(s, "&| ")
+
+	return result, s
 }

@@ -132,7 +132,19 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	}
 
-	// Filter by location.
+	// Clip query to reasonable size if needed.
+	f.Query = txt.Clip(f.Query, txt.ClipQuery)
+
+	// Modify query if it contains subject names.
+	if f.Query != "" && f.Subject == "" {
+		if subj, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
+			log.Debugf("search: subjects %#v", subj)
+			f.Subject = strings.Join(subj, Or)
+			f.Query = remaining
+		}
+	}
+
+	// Filter by location?
 	if f.Geo == true {
 		s = s.Where("photos.cell_id <> 'zz'")
 
@@ -141,7 +153,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	} else if f.Query != "" {
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
+			log.Debugf("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
 			for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
 				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
@@ -152,7 +164,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Infof("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
+				log.Debugf("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)

@@ -39,7 +39,17 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
 
-	f.Query = txt.Clip(f.Query, txt.ClipKeyword)
+	// Clip query to reasonable size if needed.
+	f.Query = txt.Clip(f.Query, txt.ClipQuery)
+
+	// Modify query if it contains subject names.
+	if f.Query != "" && f.Subject == "" {
+		if subj, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
+			log.Debugf("search: subjects %#v", subj)
+			f.Subject = strings.Join(subj, Or)
+			f.Query = remaining
+		}
+	}
 
 	if f.Query != "" {
 		// Filter by label, label category and keywords.
@@ -47,12 +57,8 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		var labels []entity.Label
 		var labelIds []uint
 
-		if len(f.Query) < 2 {
-			return results, fmt.Errorf("query too short")
-		}
-
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
+			log.Debugf("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
 			for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
 				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
@@ -63,7 +69,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Infof("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
+				log.Debugf("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)

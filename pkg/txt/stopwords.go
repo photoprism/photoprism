@@ -18,7 +18,6 @@ var StopWords = map[string]bool{
 	"tumblr":           true,
 	"bilder":           true,
 	"bild":             true,
-	"film":             true,
 	"films":            true,
 	"filme":            true,
 	"foto":             true,
