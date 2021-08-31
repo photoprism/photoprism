@@ -15,6 +15,14 @@ func TestLikeAny(t *testing.T) {
 			assert.Equal(t, "k.keyword LIKE 'json%' OR k.keyword LIKE 'usa'", w[1])
 		}
 	})
+	t.Run(" exact and_or_search", func(t *testing.T) {
+		if w := LikeAny("k.keyword", "table spoon & usa | img json", true, true); len(w) != 2 {
+			t.Fatal("two where conditions expected")
+		} else {
+			assert.Equal(t, "k.keyword LIKE 'spoon' OR k.keyword LIKE 'table'", w[0])
+			assert.Equal(t, "k.keyword LIKE 'json' OR k.keyword LIKE 'usa'", w[1])
+		}
+	})
 	t.Run("and_or_search_en", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "table spoon and usa or img json", true, false); len(w) != 2 {
 			t.Fatal("two where conditions expected")
@@ -125,6 +133,14 @@ func TestLikeAll(t *testing.T) {
 			t.Fatal("two where conditions expected")
 		}
 	})
+	t.Run("string empty", func(t *testing.T) {
+		w := LikeAll("k.keyword", "", true, true)
+		assert.Empty(t, w)
+	})
+	t.Run("0 words", func(t *testing.T) {
+		w := LikeAll("k.keyword", "ab", true, true)
+		assert.Empty(t, w)
+	})
 }
 
 func TestLikeAllKeywords(t *testing.T) {
@@ -163,6 +179,14 @@ func TestLikeAllNames(t *testing.T) {
 			t.Logf("wheres: %#v", w)
 			t.Fatal("4 where conditions expected")
 		}
+	})
+	t.Run("string empty", func(t *testing.T) {
+		w := LikeAllNames("k.name", "")
+		assert.Empty(t, w)
+	})
+	t.Run("0 words", func(t *testing.T) {
+		w := LikeAllNames("k.name", "a")
+		assert.Empty(t, w)
 	})
 }
 

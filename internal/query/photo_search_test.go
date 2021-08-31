@@ -802,4 +802,76 @@ func TestPhotoSearch(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 3)
 	})
+	t.Run("faces:yes", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Faces = "Yes"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 3)
+	})
+	t.Run("faces:no", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Faces = "No"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 9)
+	})
+	t.Run("faces:2", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Faces = "2"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("filename", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Filename = "1990/04/Quality1FavoriteTrue.jpg"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("original name or original name", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Original = "my-videos/IMG_88888" + "|" + "Vacation/exampleFileNameOriginal"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 2)
+	})
+	t.Run("Stack", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Stack = true
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 2)
+	})
 }
