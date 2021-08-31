@@ -370,9 +370,14 @@ func (m *Marker) GetFace() (f *Face) {
 		if m.Size < face.ClusterMinSize || m.Score < face.ClusterMinScore {
 			log.Debugf("faces: skipped adding face for low-quality marker %d, size %d, score %d", m.ID, m.Size, m.Score)
 			return nil
-		} else if f = NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
+		} else if emb := m.Embeddings(); len(emb) == 0 {
+			log.Warnf("marker: id %d has no embeddings", m.ID)
 			return nil
-		} else if err := f.Create(); err != nil {
+		} else if f = NewFace(m.SubjectUID, SrcManual, emb); f == nil {
+			log.Warnf("marker: failed adding face for id %d", m.ID)
+			return nil
+		} else if f = FirstOrCreateFace(f); f == nil {
+			log.Warnf("marker: failed adding face for id %d", m.ID)
 			return nil
 		} else if err := f.MatchMarkers(Faceless); err != nil {
 			log.Errorf("faces: %s (match markers)", err)

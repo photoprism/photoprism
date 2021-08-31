@@ -114,7 +114,7 @@ func PurgeOrphanFaces(faceIds []string) (removed int64, err error) {
 		Where("id IN (?)", faceIds).
 		Where(fmt.Sprintf("id NOT IN (SELECT face_id FROM %s)", entity.Marker{}.TableName())).
 		Delete(&entity.Face{}); res.Error != nil {
-		return removed, fmt.Errorf("faces: %s while purging orphan clusters", res.Error)
+		return removed, fmt.Errorf("faces: %s while purging orphans", res.Error)
 	} else {
 		removed += res.RowsAffected
 	}
@@ -151,7 +151,7 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	if removed, err := PurgeOrphanFaces(merge.IDs()); err != nil {
 		return merged, err
 	} else if removed > 0 {
-		log.Debugf("faces: removed %d orphan clusters for subject %s", removed, txt.Quote(subjectUID))
+		log.Debugf("faces: removed %d orphans for subject %s", removed, txt.Quote(subjectUID))
 	} else {
 		log.Warnf("faces: failed removing merged clusters for subject %s", txt.Quote(subjectUID))
 	}

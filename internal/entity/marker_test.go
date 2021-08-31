@@ -375,8 +375,19 @@ func TestMarker_GetFace(t *testing.T) {
 		assert.Nil(t, m.GetFace())
 	})
 	t.Run("create face", func(t *testing.T) {
-		m := Marker{FaceID: "", SubjectSrc: SrcManual, Size: 160, Score: 40}
-		assert.NotEmpty(t, m.GetFace().ID)
+		m := Marker{
+			FaceID:         "",
+			EmbeddingsJSON: MarkerFixtures.Get("actress-a-1").EmbeddingsJSON,
+			SubjectSrc:     SrcManual,
+			Size:           160,
+			Score:          40,
+		}
+
+		if m.GetFace() == nil {
+			t.Fatal("face must not be nil")
+		} else {
+			assert.NotEmpty(t, m.GetFace().ID)
+		}
 	})
 }
 
