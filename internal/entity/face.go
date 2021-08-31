@@ -276,13 +276,15 @@ func FirstOrCreateFace(m *Face) *Face {
 	result := Face{}
 
 	if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		log.Warnf("faces: found %s with conflicting subject %s", m.ID, m.SubjectUID)
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
 	} else if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
+		log.Warnf("faces: found %s with conflicting subject %s", m.ID, m.SubjectUID)
 		return &result
 	} else {
-		log.Errorf("face: %s (find or create %s)", createErr, m.ID)
+		log.Errorf("faces: %s when trying to create %s", createErr, m.ID)
 	}
 
 	return nil

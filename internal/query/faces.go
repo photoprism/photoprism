@@ -3,6 +3,8 @@ package query
 import (
 	"fmt"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -105,14 +107,14 @@ func CountNewFaceMarkers(size, score int) (n int) {
 	return n
 }
 
-// RemoveUnusedFaces removes unused faces from the index.
-func RemoveUnusedFaces(faceIds []string) (removed int64, err error) {
+// PurgeOrphanFaces removes unused faces from the index.
+func PurgeOrphanFaces(faceIds []string) (removed int64, err error) {
 	// Remove invalid face IDs.
 	if res := Db().
 		Where("id IN (?)", faceIds).
 		Where(fmt.Sprintf("id NOT IN (SELECT face_id FROM %s)", entity.Marker{}.TableName())).
 		Delete(&entity.Face{}); res.Error != nil {
-		return removed, res.Error
+		return removed, fmt.Errorf("faces: %s while purging orphan clusters", res.Error)
 	} else {
 		removed += res.RowsAffected
 	}
@@ -124,23 +126,34 @@ func RemoveUnusedFaces(faceIds []string) (removed int64, err error) {
 func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	if len(merge) < 2 {
 		// Nothing to merge.
-		return merged, fmt.Errorf("at least two faces required for merging")
+		return merged, fmt.Errorf("faces: two or more clusters required for merging")
 	}
 
-	// Create merged face cluster.
+	subjectUID := merge[0].SubjectUID
+
+	for i := 1; i < len(merge); i++ {
+		if merge[i].SubjectUID != subjectUID {
+			return merged, fmt.Errorf("faces: can't merge clusters with conflicting subjects %s <> %s",
+				txt.Quote(subjectUID), txt.Quote(merge[i].SubjectUID))
+		}
+	}
+
+	// Find or create merged face cluster.
 	if merged = entity.NewFace(merge[0].SubjectUID, merge[0].FaceSrc, merge.Embeddings()); merged == nil {
-		return merged, fmt.Errorf("merged face must not be nil")
-	} else if err := merged.Create(); err != nil {
-		return merged, err
+		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", txt.Quote(subjectUID))
+	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
+		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", txt.Quote(subjectUID))
 	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
 		return merged, err
 	}
 
-	// RemoveUnusedFaces removes unused faces from the index.
-	if removed, err := RemoveUnusedFaces(merge.IDs()); err != nil {
-		log.Errorf("faces: %s", err)
+	// PurgeOrphanFaces removes unused faces from the index.
+	if removed, err := PurgeOrphanFaces(merge.IDs()); err != nil {
+		return merged, err
+	} else if removed > 0 {
+		log.Debugf("faces: removed %d orphan clusters for subject %s", removed, txt.Quote(subjectUID))
 	} else {
-		log.Debugf("faces: removed %d unused faces", removed)
+		log.Warnf("faces: failed removing merged clusters for subject %s", txt.Quote(subjectUID))
 	}
 
 	return merged, err

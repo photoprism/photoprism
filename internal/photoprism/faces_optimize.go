@@ -64,7 +64,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 			if len(merge) < 2 {
 				// Nothing to merge.
 			} else if _, err := query.MergeFaces(merge); err != nil {
-				log.Errorf("faces: %s (merge)", err)
+				log.Errorf("%s (merge)", err)
 			} else {
 				result.Merged += len(merge)
 			}
