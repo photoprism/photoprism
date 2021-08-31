@@ -21,6 +21,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// StartImport imports media files from a directory and converts/indexes them as needed.
+//
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {
@@ -118,6 +120,8 @@ func StartImport(router *gin.RouterGroup) {
 	})
 }
 
+// CancelImport stops the current import operation.
+//
 // DELETE /api/v1/import
 func CancelImport(router *gin.RouterGroup) {
 	router.DELETE("/import", func(c *gin.Context) {
