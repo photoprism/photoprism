@@ -135,7 +135,7 @@ var MarkerFixtures = MarkerMap{
 	},
 	"fa-gr-1": Marker{ // file id 6
 		ID:             8,
-		FileID:         1000005,
+		FileID:         1000004,
 		FaceID:         FaceFixtures.Get("fa-gr").ID,
 		FaceDist:       0.6,
 		SubjectSrc:     SrcAuto,
