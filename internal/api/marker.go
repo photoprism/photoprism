@@ -26,7 +26,7 @@ func findFileMarker(c *gin.Context) (file entity.File, marker entity.Marker, err
 
 	conf := service.Config()
 
-	if !conf.Settings().Features.Edit {
+	if !conf.Settings().Features.People || !conf.Settings().Features.Edit {
 		AbortFeatureDisabled(c)
 		return file, marker, err
 	}
