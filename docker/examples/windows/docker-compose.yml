@@ -67,6 +67,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
+    working_dir: "/photoprism"
     volumes:
       # Your photo and video files (multiple directories or drives can be indexed by mounting them as sub-folders):
       - "~/Pictures:/photoprism/originals/Pictures"

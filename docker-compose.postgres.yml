@@ -12,6 +12,7 @@ services:
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
       - "2343:2343" # Acceptance Tests
+    working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"

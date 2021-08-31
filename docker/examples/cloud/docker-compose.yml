@@ -98,6 +98,8 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    # Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
+    user: "1000"
     # Don't expose port when running behind Traefik reverse proxy!
     # ports:
     #  - "2342:2342" # [local port]:[container port]
@@ -140,7 +142,7 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB database user name
       PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB database user password
-    user: "1000"
+    working_dir: "/photoprism"
     volumes:
       # Your photo and video files ([local path]:[container path]):
       - "./originals:/photoprism/originals"
