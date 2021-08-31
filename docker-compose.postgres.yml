@@ -4,11 +4,12 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
+    depends_on:
+      - postgres
+      - webdav-dummy
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    depends_on:
-      - postgres
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
       - "2343:2343" # Acceptance Tests
@@ -64,7 +65,7 @@ services:
   postgres:
     image: postgres:12-alpine
     ports:
-      - "5432:5432"
+      - "5432:5432" # Exposes port 5432 on host
     environment:
       POSTGRES_DB: photoprism
       POSTGRES_USER: photoprism

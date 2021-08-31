@@ -17,11 +17,12 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
+    depends_on:
+      - mariadb
+      - webdav-dummy
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    depends_on:
-      - photoprism-db
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
       - "2343:2343" # Acceptance Tests
@@ -47,7 +48,7 @@ services:
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "photoprism-db:4001"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
@@ -74,15 +75,16 @@ services:
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # On-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680              # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
-  photoprism-db:
+
+  mariadb:
     image: mariadb:10.5
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
     expose:
       - "4001"
     ports:
-      - "4001:4001" # MySQL (for tests)
+      - "4001:4001" # Exposes port 4001 on host
     volumes:
-      - "./scripts/reset-test-db.sql:/docker-entrypoint-initdb.d/reset-test-db.sql"
+      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism

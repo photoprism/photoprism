@@ -91,10 +91,12 @@ version: '3.5'
 
 services:
   photoprism:
+    restart: always
     # Use photoprism/photoprism:preview instead for testing preview builds:
     image: photoprism/photoprism:latest
     container_name: photoprism
-    restart: always
+    depends_on:
+      - mariadb
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -151,9 +153,9 @@ services:
       - "./backup:/var/lib/photoprism"
 
   traefik:
+    restart: always
     image: traefik:v2.4
     container_name: traefik
-    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -167,9 +169,9 @@ services:
       - "./certs/:/certs/"
 
   mariadb:
+    restart: always
     image: mariadb:10.5
     container_name: mariadb
-    restart: always
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -183,17 +185,17 @@ services:
       MYSQL_PASSWORD: "_admin_password_"
 
   ofelia:
+    restart: always
     image: mcuadros/ofelia:latest
     container_name: ofelia
-    restart: always
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./jobs.ini:/etc/ofelia/config.ini"
 
   watchtower:
+    restart: always
     image: containrrr/watchtower
     container_name: watchtower
-    restart: always
     environment:
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_POLL_INTERVAL: 86400 # Checks for updates every day

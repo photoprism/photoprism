@@ -83,9 +83,9 @@ services:
 # Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
 #
 #  watchtower:
+#    restart: unless-stopped
 #    image: containrrr/watchtower
 #    container_name: watchtower
-#    restart: unless-stopped
 #    environment:
 #      WATCHTOWER_CLEANUP: "true"
 #      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours

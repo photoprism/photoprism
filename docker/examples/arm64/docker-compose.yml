@@ -33,6 +33,8 @@ services:
     # Use photoprism/photoprism:preview instead for testing preview builds:
     image: photoprism/photoprism:latest
     container_name: photoprism
+    depends_on:
+      - mariadb
     # Only enable automatic restarts once your installation is properly
     # configured as it otherwise may get stuck in a restart loop:
     # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
@@ -92,9 +94,9 @@ services:
       - "./storage:/photoprism/storage"
 
   mariadb:
+    restart: unless-stopped
     image: arm64v8/mariadb:10.5
     container_name: mariadb
-    restart: unless-stopped
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -110,9 +112,9 @@ services:
 # Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
 #
 #  watchtower:
+#    restart: unless-stopped
 #    image: containrrr/watchtower
 #    container_name: watchtower
-#    restart: unless-stopped
 #    environment:
 #      WATCHTOWER_CLEANUP: "true"
 #      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours

@@ -21,8 +21,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
 # Install dev / build dependencies
-RUN apt-get update && apt-get -qq dist-upgrade && \
-    apt-get -qq install -y --no-install-recommends \
+RUN apt-get update && apt dist-upgrade 2>/dev/null && apt-get -qq install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     wget \
@@ -94,7 +93,6 @@ RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
     apt-get update && \
-    apt-get -qq dist-upgrade && \
     apt-get -qq install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
     apt-get -y autoremove && \
     apt-get -y autoclean && \
