@@ -229,7 +229,7 @@ func TestGeo(t *testing.T) {
 
 		assert.IsType(t, GeoResults{}, result)
 	})
-	t.Run("faces", func(t *testing.T) {
+	t.Run("faces:true", func(t *testing.T) {
 		var f form.GeoSearch
 		f.Query = "faces:true"
 
@@ -240,5 +240,102 @@ func TestGeo(t *testing.T) {
 		}
 
 		assert.GreaterOrEqual(t, 3, len(photos))
+	})
+	t.Run("faces:yes", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Faces = "Yes"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, 3, len(photos))
+	})
+	t.Run("faces:no", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Faces = "No"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 9)
+	})
+	t.Run("faces:2", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Faces = "2"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("day", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Day = 18
+		f.Month = 4
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("subject uid in query", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Query = "Actress"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("albums", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Albums = "2030"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 10)
+	})
+	t.Run("path or path", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Path = "1990/04" + "|" + "2015/11"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 3)
+	})
+	t.Run("name or name", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Name = "20151101_000000_51C501B5" + "|" + "Video"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 2)
 	})
 }

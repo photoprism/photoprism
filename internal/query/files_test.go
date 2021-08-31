@@ -194,6 +194,14 @@ func TestSetPhotoPrimary(t *testing.T) {
 			t.Fatal("error expected")
 		}
 	})
+	t.Run("file missing", func(t *testing.T) {
+		err := SetPhotoPrimary("pt9jtdre2lvl0y22", "")
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err.Error(), "can't find primary file")
+	})
 }
 
 func TestSetFileError(t *testing.T) {
