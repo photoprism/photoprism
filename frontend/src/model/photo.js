@@ -30,6 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 import RestModel from "model/rest";
 import File from "model/file";
+import Marker from "model/marker";
 import Api from "common/api";
 import { DateTime } from "luxon";
 import Util from "common/util";
@@ -763,11 +764,7 @@ export class Photo extends RestModel {
         return;
       }
 
-      if (m.hasOwnProperty("Subject") && !!m.Subject && !!m.Subject.Name) {
-        m.Name = m.Subject.Name;
-      }
-
-      result.push(m);
+      result.push(new Marker(m));
     });
 
     return result;
@@ -840,51 +837,6 @@ export class Photo extends RestModel {
       }
 
       return Promise.resolve(this.setValues(resp.data));
-    });
-  }
-
-  updateMarker(marker) {
-    if (!marker || !marker.ID) {
-      return Promise.reject("invalid marker id");
-    }
-
-    const file = this.mainFile();
-
-    if (!file || !file.UID) {
-      return Promise.reject("invalid file uid");
-    }
-
-    const url = `${this.getEntityResource()}/files/${file.UID}/markers/${marker.ID}`;
-
-    return Api.put(url, marker).then((resp) => {
-      return Promise.resolve(this.setValues(resp.data));
-    });
-  }
-
-  // TODO: Refactor by using a separate model.
-  clearMarkerSubject(marker) {
-    if (!marker || !marker.ID) {
-      return Promise.reject("invalid marker id");
-    }
-
-    const file = this.mainFile();
-
-    if (!file || !file.UID) {
-      return Promise.reject("invalid file uid");
-    }
-
-    const url = `${this.getEntityResource()}/files/${file.UID}/markers/${marker.ID}/subject`;
-
-    return Api.delete(url).then((resp) => {
-      if (resp.data) {
-        for (let key in resp.data) {
-          if (marker.hasOwnProperty(key) && key !== "__originalValues") {
-            marker[key] = resp.data[key];
-          }
-        }
-      }
-
-      return Promise.resolve(marker);
     });
   }
 

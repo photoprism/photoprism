@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/form"
+
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
@@ -24,30 +26,18 @@ func TestUpdateMarker(t *testing.T) {
 
 		photoUID := gjson.Get(r.Body.String(), "UID").String()
 		fileUID := gjson.Get(r.Body.String(), "Files.0.UID").String()
-		markerID := gjson.Get(r.Body.String(), "Files.0.Markers.0.ID").String()
+		markerUID := gjson.Get(r.Body.String(), "Files.0.Markers.0.UID").String()
 
 		assert.NotEmpty(t, photoUID)
 		assert.NotEmpty(t, fileUID)
-		assert.NotEmpty(t, markerID)
+		assert.NotEmpty(t, markerUID)
 
-		u := fmt.Sprintf("/api/v1/photos/%s/files/%s/markers/%s", photoUID, fileUID, markerID)
+		u := fmt.Sprintf("/api/v1/markers/%s", markerUID)
 
-		var m = struct {
-			RefUID        string
-			RefSrc        string
-			MarkerSrc     string
-			MarkerType    string
-			MarkerScore   int
-			MarkerInvalid bool
-			MarkerLabel   string
-		}{
-			RefUID:        "3h59wvth837b5vyiub35",
-			RefSrc:        "meta",
-			MarkerSrc:     "image",
-			MarkerType:    "Face",
-			MarkerScore:   100,
+		var m = form.Marker{
+			SubjectSrc:    "manual",
 			MarkerInvalid: true,
-			MarkerLabel:   "Foo",
+			MarkerName:    "Foo",
 		}
 
 		if b, err := json.Marshal(m); err != nil {
@@ -64,7 +54,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y17/files/ft72s39w45bnlqdw/markers/12", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowu1000", "test")
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -73,7 +63,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y16/files/fikjs39w45bnlqdw/markers/12", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowu1000", "test")
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -82,7 +72,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y17/files/fxxxx39w45bnlqdw/markers/1112", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/1112", "test")
 
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
@@ -91,7 +81,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y17/files/fikjs39w45bnlqdw/markers/1112", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/1112", "test")
 
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
@@ -100,7 +90,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos//files/fikjs39w45bnlqdw/markers/1112", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowu1000", "test")
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -109,65 +99,47 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		var m = struct {
-			ID         int
-			Type       string
-			Src        string
-			Name       string
-			SubjectUID string
-			SubjectSrc string
-			FaceID     string
-		}{ID: 8,
-			Type:       "face",
-			Src:        "image",
-			Name:       "Actress A",
-			SubjectUID: "jqy1y111h1njaaac",
-			SubjectSrc: "manual",
-			FaceID:     "GMH5NISEEULNJL6RATITOA3TMZXMTMCI"}
+		var m = form.Marker{
+			SubjectSrc:    "manual",
+			MarkerInvalid: false,
+			MarkerName:    "Actress A",
+		}
+
 		if b, err := json.Marshal(m); err != nil {
 			t.Fatal(err)
 		} else {
-			r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y12/files/ft3es39w45bnlqdw/markers/8", string(b))
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowuy666", string(b))
 
 			assert.Equal(t, http.StatusOK, r.Code)
 
 			ClearMarkerSubject(router)
 
-			r = PerformRequestWithBody(app, "DELETE", "/api/v1/photos/pt9jtdre2lvl0y12/files/ft3es39w45bnlqdw/markers/8/subject", "")
+			r = PerformRequestWithBody(app, "DELETE", "/api/v1/markers/mt9k3pw1wowuy666/subject", "")
 
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
 	})
-	t.Run("update cluster with existing subject", func(t *testing.T) {
+	t.Run("update cluster with existing subject 2", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
 
-		var m = struct {
-			ID         int
-			Type       string
-			Src        string
-			Name       string
-			SubjectUID string
-			SubjectSrc string
-			FaceID     string
-		}{ID: 8,
-			Type:       "face",
-			Src:        "image",
-			Name:       "Actress A",
-			SubjectUID: "jqy1y111h1njaaac",
-			SubjectSrc: "manual",
-			FaceID:     "GMH5NISEEULNJL6RATITOA3TMZXMTMCI"}
+		var m = form.Marker{
+			SubjectSrc:    "manual",
+			MarkerInvalid: false,
+			MarkerName:    "Actress A",
+		}
+
 		if b, err := json.Marshal(m); err != nil {
 			t.Fatal(err)
 		} else {
-			r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y12/files/ft3es39w45bnlqdw/markers/8", string(b))
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowuy666", string(b))
 
 			assert.Equal(t, http.StatusOK, r.Code)
 
 			ClearMarkerSubject(router)
 
-			r = PerformRequestWithBody(app, "DELETE", "/api/v1/photos/pt9jtdre2lvl0y12/files/ft3es39w45bnlqdw/markers/8/subject", "")
+			r = PerformRequestWithBody(app, "DELETE", "/api/v1/markers/mt9k3pw1wowuy666/subject", "")
 
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
@@ -195,7 +167,7 @@ func TestUpdateMarker(t *testing.T) {
 		if b, err := json.Marshal(m); err != nil {
 			t.Fatal(err)
 		} else {
-			r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/pt9jtdre2lvl0y12/files/ft3es39w45bnlqdw/markers/8", string(b))
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowuy666", string(b))
 
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		}
@@ -211,19 +183,27 @@ func TestClearMarkerSubject(t *testing.T) {
 
 		photoResp := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
 
+		if photoResp == nil {
+			t.Fatal("response is nil")
+		}
+
 		assert.Equal(t, http.StatusOK, photoResp.Code)
+
+		if photoResp.Body.String() == "" {
+			t.Fatal("body is empty")
+		}
 
 		photoUID := gjson.Get(photoResp.Body.String(), "UID").String()
 		fileUID := gjson.Get(photoResp.Body.String(), "Files.0.UID").String()
-		markerID := gjson.Get(photoResp.Body.String(), "Files.0.Markers.0.ID").String()
+		markerUID := gjson.Get(photoResp.Body.String(), "Files.0.Markers.0.UID").String()
 
 		assert.NotEmpty(t, photoUID)
 		assert.NotEmpty(t, fileUID)
-		assert.NotEmpty(t, markerID)
+		assert.NotEmpty(t, markerUID)
 
-		u := fmt.Sprintf("/api/v1/photos/%s/files/%s/markers/%s/subject", photoUID, fileUID, markerID)
+		u := fmt.Sprintf("/api/v1/markers/%s/subject", markerUID)
 
-		t.Logf("DELETE %s", u)
+		// t.Logf("DELETE %s", u)
 
 		resp := PerformRequestWithBody(app, "DELETE", u, "")
 
@@ -234,7 +214,7 @@ func TestClearMarkerSubject(t *testing.T) {
 
 		ClearMarkerSubject(router)
 
-		r := PerformRequestWithBody(app, "DELETE", "/api/v1/photos/pt9jtdre2lvl0y17/files/ft72s39w45bnlqdw/markers/12/subject", "")
+		r := PerformRequestWithBody(app, "DELETE", "/api/v1/markers/mt9k3pw1wowu1000/subject", "")
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})

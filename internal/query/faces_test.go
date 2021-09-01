@@ -55,10 +55,12 @@ func TestManuallyAddedFaces(t *testing.T) {
 }
 
 func TestMatchFaceMarkers(t *testing.T) {
-	const faceFixtureId = uint(6)
+	const faceFixtureId = "mt9k3pw1wowuy444"
 
-	if m, err := MarkerByID(faceFixtureId); err != nil {
+	if m, err := MarkerByUID(faceFixtureId); err != nil {
 		t.Fatal(err)
+	} else if m == nil {
+		t.Fatal("marker is nil")
 	} else {
 		assert.Empty(t, m.SubjectUID)
 	}
@@ -79,8 +81,10 @@ func TestMatchFaceMarkers(t *testing.T) {
 
 	assert.Equal(t, int64(1), affected)
 
-	if m, err := MarkerByID(faceFixtureId); err != nil {
+	if m, err := MarkerByUID(faceFixtureId); err != nil {
 		t.Fatal(err)
+	} else if m == nil {
+		t.Fatal("marker is nil")
 	} else {
 		assert.Equal(t, "jqu0xs11qekk9jx8", m.SubjectUID)
 	}

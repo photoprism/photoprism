@@ -63,7 +63,7 @@ func (t *Net) Detect(fileName string) (faces Faces, err error) {
 			continue
 		}
 
-		if img, err := t.getFaceCrop(fileName, fileHash, f.Face); err != nil {
+		if img, err := t.getFaceCrop(fileName, fileHash, &faces[i]); err != nil {
 			log.Errorf("faces: failed to decode image: %v", err)
 		} else if embeddings := t.getEmbeddings(img); len(embeddings) > 0 {
 			faces[i].Embeddings = embeddings
@@ -102,14 +102,21 @@ func (t *Net) loadModel() error {
 	return nil
 }
 
-func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, err error) {
+func (t *Net) getFaceCrop(fileName, fileHash string, f *Face) (img image.Image, err error) {
+	if f == nil {
+		return img, fmt.Errorf("face is nil")
+	}
+
+	area := f.Face
+
 	cacheFolder := filepath.Join(t.cachePath, "faces", string(fileHash[0]), string(fileHash[1]), string(fileHash[2]))
 
 	if err := os.MkdirAll(cacheFolder, os.ModePerm); err != nil {
 		log.Errorf("faces: failed creating cache folder")
 	}
 
-	cacheFile := filepath.Join(cacheFolder, fmt.Sprintf("%s-%s%s", fileHash, f.String(), fs.JpegExt))
+	f.Thumb = fmt.Sprintf("%s-%s", fileHash, area.String())
+	cacheFile := filepath.Join(cacheFolder, f.Thumb+fs.JpegExt)
 
 	if !fs.FileExists(cacheFile) {
 		// Do nothing.
@@ -120,7 +127,7 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, 
 		return img, nil
 	}
 
-	x, y := f.TopLeft()
+	x, y := area.TopLeft()
 
 	imageBuffer, err := ioutil.ReadFile(fileName)
 	img, err = imaging.Decode(bytes.NewReader(imageBuffer), imaging.AutoOrientation(true))
@@ -129,7 +136,7 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, 
 		return img, err
 	}
 
-	img = imaging.Crop(img, image.Rect(y, x, y+f.Scale, x+f.Scale))
+	img = imaging.Crop(img, image.Rect(y, x, y+area.Scale, x+area.Scale))
 	img = imaging.Fill(img, CropSize, CropSize, imaging.Center, imaging.Lanczos)
 
 	if err := imaging.Save(img, cacheFile); err != nil {

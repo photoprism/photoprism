@@ -101,7 +101,7 @@ func UpdateSubjectPreviews() error {
 	return Db().Table(entity.Subject{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr("(SELECT file_hash FROM files f "+
 			fmt.Sprintf(
-				"JOIN %s m ON f.id = m.file_id AND m.subject_uid = %s.subject_uid",
+				"JOIN %s m ON f.file_uid = m.file_uid AND m.subject_uid = %s.subject_uid",
 				entity.Marker{}.TableName(),
 				entity.Subject{}.TableName())+
 			` JOIN photos p ON f.photo_id = p.id 

@@ -20,16 +20,16 @@
             xs6 sm4 md3 lg2 xl1 d-flex
         >
           <v-card tile
-                  :data-id="marker.ID"
+                  :data-id="marker.UID"
                   style="user-select: none"
                   :class="{invalid: marker.Invalid}"
                   class="result accent lighten-3">
             <div class="card-background accent lighten-3"></div>
-            <canvas :id="'face-' + marker.ID" :key="marker.ID" width="300" height="300" style="width: 100%"
+            <canvas :id="'face-' + marker.UID" :key="marker.UID" width="300" height="300" style="width: 100%"
                     class="v-responsive v-image accent lighten-2"></canvas>
 
             <v-card-actions class="card-details pa-0">
-              <v-layout v-if="marker.Score < 30" row wrap align-center>
+              <v-layout v-if="marker.Review || marker.Invalid" row wrap align-center>
                 <v-flex xs6 class="text-xs-center pa-0">
                   <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
@@ -42,7 +42,7 @@
                   <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
                          class="action-approve text-xs-center"
-                         :title="$gettext('Approve')" @click.stop="confirm(marker)">
+                         :title="$gettext('Approve')" @click.stop="approve(marker)">
                     <v-icon dark>check</v-icon>
                   </v-btn>
                 </v-flex>
@@ -60,8 +60,8 @@
                       solo-inverted
                       clearable
                       @click:clear="clearSubject(marker)"
-                      @change="updateName(marker)"
-                      @keyup.enter.native="updateName(marker)"
+                      @change="rename(marker)"
+                      @keyup.enter.native="rename(marker)"
                   ></v-text-field>
                 </v-flex>
               </v-layout>
@@ -101,7 +101,7 @@ export default {
   },
   mounted() {
     this.markers.forEach((m) => {
-      const canvas = document.getElementById('face-' + m.ID);
+      const canvas = document.getElementById('face-' + m.UID);
 
       let ctx = canvas.getContext('2d');
       let img = new Image();
@@ -134,29 +134,20 @@ export default {
     refresh() {
     },
     reject(marker) {
-      marker.Invalid = true;
       this.busy = true;
-      this.model.updateMarker(marker).finally(() => this.busy = false);
+      marker.reject().finally(() => this.busy = false);
     },
-    confirm(marker) {
-      marker.Score = 100;
-      marker.Invalid = false;
+    approve(marker) {
       this.busy = true;
-      this.model.updateMarker(marker).finally(() => this.busy = false);
+      marker.approve().finally(() => this.busy = false);
     },
     clearSubject(marker) {
       this.busy = true;
-      this.model.clearMarkerSubject(marker).finally(() => this.busy = false);
+      marker.clearSubject(marker).finally(() => this.busy = false);
     },
-    updateName(marker) {
-      // Don't save empty name.
-      if (!marker || !marker.Name || marker.Name.trim() === "") {
-        return false;
-      }
-
-      marker.SubjectSrc = src.Manual;
+    rename(marker) {
       this.busy = true;
-      this.model.updateMarker(marker).finally(() => this.busy = false);
+      marker.rename().finally(() => this.busy = false);
     },
   },
 };

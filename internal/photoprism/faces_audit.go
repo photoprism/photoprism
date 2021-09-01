@@ -113,7 +113,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 		log.Error(err)
 	} else {
 		for _, m := range markers {
-			log.Infof("marker %d: %s subject %s conflicts with face %s subject %s", m.ID, entity.SrcString(m.SubjectSrc), txt.Quote(subj[m.SubjectUID].SubjectName), m.FaceID, txt.Quote(subj[faceMap[m.FaceID].SubjectUID].SubjectName))
+			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjectSrc), txt.Quote(subj[m.SubjectUID].SubjectName), m.FaceID, txt.Quote(subj[faceMap[m.FaceID].SubjectUID].SubjectName))
 		}
 	}
 

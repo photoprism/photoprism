@@ -86,7 +86,7 @@ func TestDetect(t *testing.T) {
 					t.Logf("marker[%d]: %#v %#v", i, f.Marker(), f.Face)
 					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
-					img, err := tfInstance.getFaceCrop(fileName, fileHash, f.Face)
+					img, err := tfInstance.getFaceCrop(fileName, fileHash, &faces[i])
 
 					if err != nil {
 						t.Fatal(err)
@@ -178,7 +178,7 @@ func TestFace_Size(t *testing.T) {
 			Rows:  8,
 			Cols:  1,
 			Score: 200,
-			Face: Point{
+			Face: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,
@@ -198,7 +198,7 @@ func TestFace_Dim(t *testing.T) {
 			Rows:  8,
 			Cols:  3,
 			Score: 200,
-			Face: Point{
+			Face: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,
@@ -215,7 +215,7 @@ func TestFace_Dim(t *testing.T) {
 			Rows:  8,
 			Cols:  0,
 			Score: 200,
-			Face: Point{
+			Face: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,
@@ -235,7 +235,7 @@ func TestFace_EmbeddingsJSON(t *testing.T) {
 			Rows:  8,
 			Cols:  1,
 			Score: 200,
-			Face: Point{
+			Face: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,

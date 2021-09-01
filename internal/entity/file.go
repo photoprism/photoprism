@@ -254,7 +254,7 @@ func (m *File) Create() error {
 		return err
 	}
 
-	if err := m.Markers.Save(m.ID); err != nil {
+	if err := m.Markers.Save(m.FileUID); err != nil {
 		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -282,7 +282,7 @@ func (m *File) Save() error {
 		return err
 	}
 
-	if err := m.Markers.Save(m.ID); err != nil {
+	if err := m.Markers.Save(m.FileUID); err != nil {
 		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -405,8 +405,8 @@ func (m *File) AddFaces(faces face.Faces) {
 }
 
 // AddFace adds a face marker to the file.
-func (m *File) AddFace(f face.Face, refUID string) {
-	marker := NewFaceMarker(f, m.ID, refUID)
+func (m *File) AddFace(f face.Face, subjectUID string) {
+	marker := NewFaceMarker(f, m.FileUID, subjectUID)
 	if !m.Markers.Contains(*marker) {
 		m.Markers = append(m.Markers, *marker)
 	}
@@ -414,7 +414,7 @@ func (m *File) AddFace(f face.Face, refUID string) {
 
 // FaceCount returns the current number of valid faces detected.
 func (m *File) FaceCount() (c int) {
-	if err := Db().Model(Marker{}).Where("file_id = ? AND marker_invalid = 0", m.ID).
+	if err := Db().Model(Marker{}).Where("file_uid = ? AND marker_invalid = 0", m.FileUID).
 		Count(&c).Error; err != nil {
 		log.Errorf("file: %s (count faces)", err)
 		return 0
@@ -425,7 +425,7 @@ func (m *File) FaceCount() (c int) {
 
 // PreloadMarkers loads existing file markers.
 func (m *File) PreloadMarkers() {
-	if res, err := FindMarkers(m.ID); err != nil {
+	if res, err := FindMarkers(m.FileUID); err != nil {
 		log.Warnf("file: %s (load markers)", err)
 	} else {
 		m.Markers = res

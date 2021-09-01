@@ -97,12 +97,12 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	// Filter for one or more subjects?
 	if f.Subject != "" {
 		for _, subj := range strings.Split(strings.ToLower(f.Subject), And) {
-			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.id = m.file_id AND m.marker_invalid = 0 WHERE subject_uid IN (?))",
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subject_uid IN (?))",
 				entity.Marker{}.TableName()), strings.Split(subj, Or))
 		}
 	} else if f.Subjects != "" {
 		for _, where := range LikeAnyWord("s.subject_name", f.Subjects) {
-			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.id = m.file_id AND m.marker_invalid = 0 JOIN %s s ON s.subject_uid = m.subject_uid WHERE (?))",
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 JOIN %s s ON s.subject_uid = m.subject_uid WHERE (?))",
 				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where))
 		}
 	}

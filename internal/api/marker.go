@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -12,58 +13,45 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // findFileMarker returns a file and marker entity matching the api request.
-func findFileMarker(c *gin.Context) (file entity.File, marker entity.Marker, err error) {
+func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, err error) {
+	// Check authorization.
 	s := Auth(SessionID(c), acl.ResourceFiles, acl.ActionUpdate)
-
 	if s.Invalid() {
 		AbortUnauthorized(c)
-		return file, marker, err
+		return nil, nil, fmt.Errorf("unauthorized")
 	}
 
+	// Check feature flags.
 	conf := service.Config()
-
 	if !conf.Settings().Features.People || !conf.Settings().Features.Edit {
 		AbortFeatureDisabled(c)
-		return file, marker, err
+		return nil, nil, fmt.Errorf("feature disabled")
 	}
 
-	photoUID := c.Param("uid")
-	fileUID := c.Param("file_uid")
-	markerID := txt.UInt(c.Param("id"))
-
-	if photoUID == "" || fileUID == "" || markerID < 1 {
+	// Find marker.
+	if uid := c.Param("marker_uid"); uid == "" {
 		AbortBadRequest(c)
-		return file, marker, err
-	}
-
-	file, err = query.FileByUID(fileUID)
-
-	if err != nil {
-		log.Errorf("photo: %s (update marker)", err)
+		return nil, nil, fmt.Errorf("bad request")
+	} else if marker, err = query.MarkerByUID(uid); err != nil {
 		AbortEntityNotFound(c)
-		return file, marker, err
-	}
-
-	if !file.FilePrimary {
-		log.Errorf("photo: can't update markers for non-primary files")
-		AbortBadRequest(c)
-		return file, marker, err
-	} else if file.PhotoUID != photoUID {
-		log.Errorf("photo: file uid doesn't match")
-		AbortBadRequest(c)
-		return file, marker, err
-	}
-
-	marker, err = query.MarkerByID(markerID)
-
-	if err != nil {
-		log.Errorf("photo: %s (update marker)", err)
+		return nil, nil, err
+	} else if marker.FileUID == "" {
 		AbortEntityNotFound(c)
-		return file, marker, err
+		return nil, marker, fmt.Errorf("marker file missing")
+	}
+
+	// Find file.
+	if f, err := query.FileByUID(marker.FileUID); err != nil {
+		AbortEntityNotFound(c)
+		return nil, marker, err
+	} else if !f.FilePrimary {
+		AbortBadRequest(c)
+		return nil, marker, fmt.Errorf("can't update markers for non-primary files")
+	} else {
+		file = &f
 	}
 
 	return file, marker, nil
@@ -71,21 +59,22 @@ func findFileMarker(c *gin.Context) (file entity.File, marker entity.Marker, err
 
 // UpdateMarker updates an existing file marker e.g. representing a face.
 //
-// PUT /api/v1/photos/:uid/files/:file_uid/markers/:id
+// PUT /api/v1/markers/:marker_uid
 //
 // Parameters:
 //   uid: string Photo UID as returned by the API
 //   file_uid: string File UID as returned by the API
 //   id: int Marker ID as returned by the API
 func UpdateMarker(router *gin.RouterGroup) {
-	router.PUT("/photos/:uid/files/:file_uid/markers/:id", func(c *gin.Context) {
+	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
 		file, marker, err := findFileMarker(c)
 
 		if err != nil {
+			log.Debugf("api: %s (update marker)", err)
 			return
 		}
 
-		markerForm, err := form.NewMarker(marker)
+		markerForm, err := form.NewMarker(*marker)
 
 		if err != nil {
 			log.Errorf("photo: %s (new marker form)", err)
@@ -99,6 +88,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			return
 		}
 
+		// Save marker.
 		if err := marker.SaveForm(markerForm); err != nil {
 			log.Errorf("photo: %s (save marker form)", err)
 			AbortSaveFailed(c)
@@ -111,9 +101,8 @@ func UpdateMarker(router *gin.RouterGroup) {
 			}
 		}
 
-		event.SuccessMsg(i18n.MsgChangesSaved)
-
-		if p, err := query.PhotoPreloadByUID(file.PhotoUID); err != nil {
+		// Update photo metadata.
+		if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			AbortEntityNotFound(c)
 			return
 		} else {
@@ -122,30 +111,31 @@ func UpdateMarker(router *gin.RouterGroup) {
 			} else if err := p.Update("PhotoFaces", faceCount); err != nil {
 				log.Errorf("photo: %s (update face count)", err)
 			} else {
-				// Notify clients by publishing events.
+				// Notify clients.
 				PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
-
-				p.PhotoFaces = faceCount
 			}
-
-			c.JSON(http.StatusOK, p)
 		}
+
+		event.SuccessMsg(i18n.MsgChangesSaved)
+
+		c.JSON(http.StatusOK, marker)
 	})
 }
 
 // ClearMarkerSubject removes an existing marker subject association.
 //
-// DELETE /api/v1/photos/:uid/files/:file_uid/markers/:id/subject
+// DELETE /api/v1/markers/:marker_uid/subject
 //
 // Parameters:
 //   uid: string Photo UID as returned by the API
 //   file_uid: string File UID as returned by the API
 //   id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
-	router.DELETE("/photos/:uid/files/:file_uid/markers/:id/subject", func(c *gin.Context) {
+	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
 		_, marker, err := findFileMarker(c)
 
 		if err != nil {
+			log.Debugf("api: %s (clear marker subject)", err)
 			return
 		}
 

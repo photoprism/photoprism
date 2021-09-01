@@ -43,28 +43,9 @@ type Subject struct {
 	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
-// UnknownPerson can be used as a placeholder for unknown people.
-var UnknownPerson = Subject{
-	SubjectUID:   "j000000000000000",
-	SubjectSlug:  "",
-	SubjectName:  "",
-	SubjectAlias: "",
-	SubjectType:  SubjectPerson,
-	SubjectSrc:   SrcDefault,
-	Favorite:     false,
-	Private:      false,
-	Excluded:     false,
-	FileCount:    0,
-}
-
-// CreateUnknownPerson initializes the database with a placeholder for unknown people if not exists.
-func CreateUnknownPerson() {
-	FirstOrCreateSubject(&UnknownPerson)
-}
-
 // TableName returns the entity database table name.
 func (Subject) TableName() string {
-	return "subjects_dev5"
+	return "subjects_dev6"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -148,10 +129,14 @@ func (m *Subject) Updates(values interface{}) error {
 
 // FirstOrCreateSubject returns the existing entity, inserts a new entity or nil in case of errors.
 func FirstOrCreateSubject(m *Subject) *Subject {
-	result := Subject{}
+	if m == nil {
+		return nil
+	} else if m.SubjectName == "" {
+		return nil
+	}
 
-	if err := UnscopedDb().Where("subject_name LIKE ?", m.SubjectName).First(&result).Error; err == nil {
-		return &result
+	if found := FindSubjectByName(m.SubjectName); found != nil {
+		return found
 	} else if createErr := m.Create(); createErr == nil {
 		if !m.Excluded && m.SubjectType == SubjectPerson {
 			event.EntitiesCreated("people", []*Subject{m})
@@ -162,8 +147,8 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 		}
 
 		return m
-	} else if err := UnscopedDb().Where("subject_name LIKE ?", m.SubjectName).First(&result).Error; err == nil {
-		return &result
+	} else if found = FindSubjectByName(m.SubjectName); found != nil {
+		return found
 	} else {
 		log.Errorf("subject: %s while creating %s", createErr, txt.Quote(m.SubjectName))
 	}
@@ -188,6 +173,23 @@ func FindSubject(s string) *Subject {
 	return &result
 }
 
+// FindSubjectByName find an existing subject by name.
+func FindSubjectByName(s string) *Subject {
+	if s == "" {
+		return nil
+	}
+
+	result := Subject{}
+
+	db := UnscopedDb().Where("subject_name LIKE ?", s).First(&result)
+
+	if err := db.First(&result).Error; err != nil {
+		return nil
+	}
+
+	return &result
+}
+
 // SetName changes the subject's name.
 func (m *Subject) SetName(name string) error {
 	newName := txt.Clip(name, txt.ClipDefault)
@@ -203,19 +205,50 @@ func (m *Subject) SetName(name string) error {
 }
 
 // UpdateName changes and saves the subject's name in the index.
-func (m *Subject) UpdateName(name string) error {
+func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
-		return err
-	} else if err := m.Updates(Values{"SubjectName": m.SubjectName, "SubjectSlug": m.SubjectSlug}); err != nil {
-		return err
-	} else if err := Db().Model(&Marker{}).
-		Where("subject_uid = ? AND subject_src = ?", m.SubjectUID, SrcManual).
+		return m, err
+	} else if err := m.Updates(Values{"SubjectName": m.SubjectName, "SubjectSlug": m.SubjectSlug}); err == nil {
+		return m, m.UpdateMarkerNames()
+	} else if existing := FindSubjectByName(m.SubjectName); existing == nil {
+		return m, err
+	} else {
+		return existing, m.MergeWith(existing)
+	}
+}
+
+// UpdateMarkerNames updates related marker names.
+func (m *Subject) UpdateMarkerNames() error {
+	return Db().Model(&Marker{}).
+		Where("subject_uid = ? AND subject_src <> ?", m.SubjectUID, SrcAuto).
 		Where("marker_name <> '' AND marker_name <> ?", m.SubjectName).
-		Update(Values{"MarkerName": m.SubjectName}).Error; err != nil {
+		Update(Values{"MarkerName": m.SubjectName}).Error
+}
+
+// MergeWith merges this subject with another subject and then deletes it.
+func (m *Subject) MergeWith(other *Subject) error {
+	if other == nil {
+		return fmt.Errorf("other subject is nil")
+	} else if other.SubjectUID == "" {
+		return fmt.Errorf("other subject's uid is empty")
+	} else if m.SubjectUID == "" {
+		return fmt.Errorf("subject uid is empty")
+	}
+
+	// Update markers and faces with new SubjectUID.
+	if err := Db().Model(&Marker{}).
+		Where("subject_uid = ?", m.SubjectUID).
+		Update(Values{"SubjectUID": other.SubjectUID}).Error; err != nil {
+		return err
+	} else if err := Db().Model(&Face{}).
+		Where("subject_uid = ?", m.SubjectUID).
+		Update(Values{"SubjectUID": other.SubjectUID}).Error; err != nil {
+		return err
+	} else if err := other.UpdateMarkerNames(); err != nil {
 		return err
 	}
 
-	return nil
+	return m.Delete()
 }
 
 // Links returns all share links for this entity.

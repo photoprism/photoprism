@@ -175,13 +175,6 @@ func TestFindSubject(t *testing.T) {
 			t.Fatal("result must not be nil")
 		}
 	})
-	t.Run("unknown person", func(t *testing.T) {
-		if s := FindSubject(UnknownPerson.SubjectUID); s != nil {
-			assert.Equal(t, "", s.SubjectName)
-		} else {
-			t.Fatal("result must not be nil")
-		}
-	})
 	t.Run("nil", func(t *testing.T) {
 		r := FindSubject("XXX")
 		assert.Nil(t, r)
@@ -194,7 +187,7 @@ func TestFindSubject(t *testing.T) {
 
 func TestSubject_Links(t *testing.T) {
 	t.Run("no-result", func(t *testing.T) {
-		m := UnknownPerson
+		m := SubjectFixtures.Pointer("john-doe")
 		links := m.Links()
 		assert.Empty(t, links)
 	})
@@ -245,12 +238,16 @@ func TestSubject_UpdateName(t *testing.T) {
 		assert.Equal(t, "Test Person", m.SubjectName)
 		assert.Equal(t, "test-person", m.SubjectSlug)
 
-		if err := m.UpdateName("New New"); err != nil {
+		if s, err := m.UpdateName("New New"); err != nil {
 			t.Fatal(err)
+		} else if s == nil {
+			t.Fatal("subject is nil")
+		} else {
+			assert.Equal(t, "New New", m.SubjectName)
+			assert.Equal(t, "new-new", m.SubjectSlug)
+			assert.Equal(t, "New New", s.SubjectName)
+			assert.Equal(t, "new-new", s.SubjectSlug)
 		}
-
-		assert.Equal(t, "New New", m.SubjectName)
-		assert.Equal(t, "new-new", m.SubjectSlug)
 	})
 	t.Run("empty name", func(t *testing.T) {
 		m := NewSubject("Test Person2", SubjectPerson, SrcAuto)
@@ -262,12 +259,15 @@ func TestSubject_UpdateName(t *testing.T) {
 		assert.Equal(t, "Test Person2", m.SubjectName)
 		assert.Equal(t, "test-person2", m.SubjectSlug)
 
-		err := m.UpdateName("")
-		if err == nil {
-			t.Fatal(err)
+		if s, err := m.UpdateName(""); err == nil {
+			t.Error("error expected")
+		} else if s == nil {
+			t.Fatal("subject is nil")
+		} else {
+			assert.Equal(t, "Test Person2", m.SubjectName)
+			assert.Equal(t, "test-person2", m.SubjectSlug)
+			assert.Equal(t, "Test Person2", s.SubjectName)
+			assert.Equal(t, "test-person2", s.SubjectSlug)
 		}
-
-		assert.Equal(t, "Test Person2", m.SubjectName)
-		assert.Equal(t, "test-person2", m.SubjectSlug)
 	})
 }

@@ -135,10 +135,10 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			if !marker.HasFace(f, d) {
 				// Marker needs a (new) face.
 			} else {
-				log.Debugf("faces: marker %d already has the best matching face %s with dist %f", marker.ID, marker.FaceID, marker.FaceDist)
+				log.Debugf("faces: marker %s already has the best matching face %s with dist %f", marker.MarkerUID, marker.FaceID, marker.FaceDist)
 
 				if err := marker.Matched(); err != nil {
-					log.Warnf("faces: %s while updating marker %d match timestamp", err, marker.ID)
+					log.Warnf("faces: %s while updating marker %s match timestamp", err, marker.MarkerUID)
 				}
 
 				continue
@@ -159,7 +159,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			updated, err := marker.SetFace(f, d)
 
 			if err != nil {
-				log.Warnf("faces: %s while setting a face for marker %d", err, marker.ID)
+				log.Warnf("faces: %s while setting a face for marker %s", err, marker.MarkerUID)
 				continue
 			}
 

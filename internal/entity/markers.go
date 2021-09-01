@@ -3,10 +3,10 @@ package entity
 type Markers []Marker
 
 // Save stores the markers in the database.
-func (m Markers) Save(fileID uint) error {
+func (m Markers) Save(fileUID string) error {
 	for _, marker := range m {
-		if fileID > 0 {
-			marker.FileID = fileID
+		if fileUID != "" {
+			marker.FileUID = fileUID
 		}
 
 		if _, err := UpdateOrCreateMarker(&marker); err != nil {
@@ -41,13 +41,13 @@ func (m Markers) FaceCount() (faces int) {
 	return faces
 }
 
-// FindMarkers returns all markers for a given file id.
-func FindMarkers(fileID uint) (Markers, error) {
+// FindMarkers returns up to 1000 markers for a given file uid.
+func FindMarkers(fileUID string) (Markers, error) {
 	m := Markers{}
+
 	err := Db().
-		Where(`file_id = ?`, fileID).
-		Preload("Subject").
-		Order("id").
+		Where(`file_uid = ?`, fileUID).
+		Order("marker_uid").
 		Offset(0).Limit(1000).
 		Find(&m).Error
 

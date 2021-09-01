@@ -6,6 +6,7 @@ import "github.com/ulule/deepcopier"
 type Marker struct {
 	SubjectSrc    string `json:"SubjectSrc"`
 	MarkerName    string `json:"Name"`
+	Review        bool   `json:"Review"`
 	MarkerInvalid bool   `json:"Invalid"`
 }
 

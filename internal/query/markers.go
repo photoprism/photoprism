@@ -7,14 +7,13 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// MarkerByID returns a Marker based on the ID.
-func MarkerByID(id uint) (marker entity.Marker, err error) {
-	if err := UnscopedDb().Where("id = ?", id).
-		First(&marker).Error; err != nil {
-		return marker, err
-	}
+// MarkerByUID returns a Marker based on the UID.
+func MarkerByUID(uid string) (*entity.Marker, error) {
+	result := entity.Marker{}
 
-	return marker, nil
+	err := UnscopedDb().Where("marker_uid = ?", uid).First(&result).Error
+
+	return &result, err
 }
 
 // Markers finds a list of file markers filtered by type, embeddings, and sorted by id.
@@ -37,7 +36,7 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 		db = db.Where("matched_at IS NULL OR matched_at < ?", matchedBefore)
 	}
 
-	db = db.Order("matched_at, id").Limit(limit).Offset(offset)
+	db = db.Order("matched_at, marker_uid").Limit(limit).Offset(offset)
 
 	err = db.Find(&result).Error
 
@@ -57,7 +56,7 @@ func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result e
 		db = db.Where("matched_at IS NULL OR matched_at < ?", matchedBefore)
 	}
 
-	db = db.Order("matched_at, id").Limit(limit).Offset(offset)
+	db = db.Order("matched_at, marker_uid").Limit(limit).Offset(offset)
 
 	err = db.Find(&result).Error
 
@@ -68,7 +67,7 @@ func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result e
 func FaceMarkers(limit, offset int) (result entity.Markers, err error) {
 	err = Db().
 		Where("marker_type = ?", entity.MarkerFace).
-		Order("id").Limit(limit).Offset(offset).
+		Order("marker_uid").Limit(limit).Offset(offset).
 		Find(&result).Error
 
 	return result, err
@@ -83,7 +82,7 @@ func Embeddings(single, unclustered bool, size, score int) (result entity.Embedd
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("marker_invalid = 0").
 		Where("embeddings_json <> ''").
-		Order("id")
+		Order("marker_uid")
 
 	if size > 0 {
 		stmt = stmt.Where("size >= ?", size)

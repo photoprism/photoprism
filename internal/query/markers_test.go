@@ -8,6 +8,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMarkerByUID(t *testing.T) {
+	t.Run("Found", func(t *testing.T) {
+		if m, err := MarkerByUID("mt9k3pw1wowuy888"); err != nil {
+			t.Fatal(err)
+		} else if m == nil {
+			t.Fatal("result is nil")
+		}
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		if _, err := MarkerByUID("mt9k3aa1wowuy888"); err == nil {
+			t.Fatal("error expected")
+		}
+	})
+}
+
 func TestMarkers(t *testing.T) {
 	t.Run("find umatched", func(t *testing.T) {
 		results, err := Markers(3, 0, entity.MarkerFace, false, false, entity.TimeStamp())

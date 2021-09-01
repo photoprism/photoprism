@@ -11,10 +11,12 @@ func TestNewMarker(t *testing.T) {
 		var m = struct {
 			SubjectSrc    string
 			MarkerName    string
+			Review        bool
 			MarkerInvalid bool
 		}{
 			SubjectSrc:    "manual",
 			MarkerName:    "Foo",
+			Review:        true,
 			MarkerInvalid: true,
 		}
 
@@ -26,6 +28,7 @@ func TestNewMarker(t *testing.T) {
 
 		assert.Equal(t, "manual", f.SubjectSrc)
 		assert.Equal(t, "Foo", f.MarkerName)
+		assert.Equal(t, true, f.Review)
 		assert.Equal(t, true, f.MarkerInvalid)
 	})
 }

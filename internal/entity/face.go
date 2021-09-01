@@ -36,7 +36,7 @@ var UnknownFace = Face{
 	ID:            UnknownID,
 	FaceSrc:       SrcDefault,
 	MatchedAt:     TimePointer(),
-	SubjectUID:    UnknownPerson.SubjectUID,
+	SubjectUID:    "",
 	EmbeddingJSON: []byte{},
 }
 
@@ -50,7 +50,7 @@ func CreateUnknownFace() {
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev5"
+	return "faces_dev6"
 }
 
 // NewFace returns a new face.
