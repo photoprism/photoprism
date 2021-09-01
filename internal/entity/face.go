@@ -160,36 +160,39 @@ func (m *Face) ResolveCollision(embeddings Embeddings) (resolved bool, err error
 		return false, fmt.Errorf("embedding must not be empty")
 	}
 
-	revise := false
-
 	if match, dist := m.Match(embeddings); !match {
 		// Embeddings don't match this face. Ignore.
 		return false, nil
 	} else if dist < 0 {
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
-	} else if dist >= 0.02 {
+	} else if dist < 0.02 {
+		// Ignore if distance is very small as faces may belong to the same person.
+		log.Infof("faces: %s collision at dist %f reported, same person?", m.ID, dist)
+
+		// Reset subject UID just in case.
+		m.SubjectUID = ""
+
+		return false, m.Updates(Values{"SubjectUID": m.SubjectUID})
+	} else {
 		m.MatchedAt = nil
 		m.Collisions++
 		m.CollisionRadius = dist - 0.01
-		revise = true
-	} else {
-		// Ignore if distance is very small as faces may belong to the same person.
-		log.Warnf("faces: ignoring %s collision at dist %f, same person?", m.ID, dist)
 	}
 
 	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
 
-	if err == nil && revise {
-		var revised Markers
-		revised, err = m.ReviseMatches()
-
-		if n := len(revised); n > 0 {
-			log.Infof("faces: revised %d matches after collision", n)
-		}
+	if err != nil {
+		return true, err
 	}
 
-	return true, err
+	if revised, err := m.ReviseMatches(); err != nil {
+		return true, err
+	} else if r := len(revised); r > 0 {
+		log.Infof("faces: revised %d matches after collision", r)
+	}
+
+	return true, nil
 }
 
 // ReviseMatches updates marker matches after face parameters have been changed.

@@ -367,12 +367,12 @@ func (m *Marker) ClearSubject(src string) error {
 
 	if m.face == nil {
 		// Do nothing
-	} else if reported, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
+	} else if resolved, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
 		return err
 	} else if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "SubjectSrc": src}); err != nil {
 		return err
-	} else if reported {
-		log.Debugf("faces: collision with %s", m.face.ID)
+	} else if resolved {
+		log.Debugf("faces: resolved collision with %s", m.face.ID)
 	}
 
 	m.face = nil

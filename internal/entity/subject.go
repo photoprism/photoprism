@@ -111,6 +111,7 @@ func (m *Subject) Deleted() bool {
 // Restore restores the entity in the database.
 func (m *Subject) Restore() error {
 	if m.Deleted() {
+		m.DeletedAt = nil
 		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
 	}
 
@@ -181,10 +182,18 @@ func FindSubjectByName(s string) *Subject {
 
 	result := Subject{}
 
+	// Search database.
 	db := UnscopedDb().Where("subject_name LIKE ?", s).First(&result)
 
 	if err := db.First(&result).Error; err != nil {
 		return nil
+	}
+
+	// Restore if currently deleted.
+	if err := result.Restore(); err != nil {
+		log.Errorf("subject: %s could not be restored", result.SubjectUID)
+	} else {
+		log.Debugf("subject: %s restored", result.SubjectUID)
 	}
 
 	return &result
