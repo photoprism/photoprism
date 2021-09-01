@@ -55,7 +55,7 @@ func CreateMarkerSubjects() (affected int64, err error) {
 	var markers entity.Markers
 
 	if err := Db().
-		Where("subject_uid = '' AND marker_name <> ''").
+		Where("subject_uid = '' AND marker_name <> '' AND subject_src <> ?", entity.SrcAuto).
 		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
 		Order("marker_name").
 		Find(&markers).Error; err != nil {
@@ -103,8 +103,9 @@ func SearchSubjectUIDs(s string) (result []string, names []string, remaining str
 	}
 
 	type Matches struct {
-		SubjectUID  string
-		SubjectName string
+		SubjectUID   string
+		SubjectName  string
+		SubjectAlias string
 	}
 
 	var matches []Matches
@@ -112,7 +113,7 @@ func SearchSubjectUIDs(s string) (result []string, names []string, remaining str
 	stmt := Db().Model(entity.Subject{})
 	stmt = stmt.Where("subject_src <> ?", entity.SrcDefault)
 
-	if where := LikeAllNames("subject_name", s); len(where) == 0 {
+	if where := LikeAllNames(Cols{"subject_name", "subject_alias"}, s); len(where) == 0 {
 		return result, names, s
 	} else {
 		stmt = stmt.Where("?", gorm.Expr(strings.Join(where, " OR ")))
@@ -128,8 +129,16 @@ func SearchSubjectUIDs(s string) (result []string, names []string, remaining str
 		result = append(result, m.SubjectUID)
 		names = append(names, m.SubjectName)
 
-		for _, n := range strings.Split(strings.ToLower(m.SubjectName), " ") {
-			s = strings.ReplaceAll(s, n, "")
+		for _, r := range txt.Words(strings.ToLower(m.SubjectName)) {
+			if len(r) > 1 {
+				s = strings.ReplaceAll(s, r, "")
+			}
+		}
+
+		for _, r := range txt.Words(strings.ToLower(m.SubjectAlias)) {
+			if len(r) > 1 {
+				s = strings.ReplaceAll(s, r, "")
+			}
 		}
 	}
 

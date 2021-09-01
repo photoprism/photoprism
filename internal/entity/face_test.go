@@ -52,14 +52,14 @@ func TestFace_Match(t *testing.T) {
 	})
 }
 
-func TestFace_ReportCollision(t *testing.T) {
+func TestFace_ResolveCollision(t *testing.T) {
 	t.Run("collision", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 
 		assert.Zero(t, m.Collisions)
 		assert.Zero(t, m.CollisionRadius)
 
-		if reported, err := m.ReportCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.True(t, reported)
@@ -72,14 +72,14 @@ func TestFace_ReportCollision(t *testing.T) {
 		assert.Greater(t, m.CollisionRadius, 1.2)
 		assert.Less(t, m.CollisionRadius, 1.314)
 
-		if reported, err := m.ReportCollision(MarkerFixtures.Pointer("1000003-6").Embeddings()); err != nil {
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-6").Embeddings()); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, reported)
+			assert.True(t, reported)
 		}
 
 		// Number of collisions must not have increased.
-		assert.Equal(t, 1, m.Collisions)
+		assert.Equal(t, 2, m.Collisions)
 
 		// Actual distance is ~1.272604
 		assert.Greater(t, m.CollisionRadius, 1.1)
@@ -87,7 +87,7 @@ func TestFace_ReportCollision(t *testing.T) {
 	})
 	t.Run("subject id empty", func(t *testing.T) {
 		m := NewFace("", SrcAuto, Embeddings{})
-		if reported, err := m.ReportCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.False(t, reported)
@@ -96,7 +96,7 @@ func TestFace_ReportCollision(t *testing.T) {
 	t.Run("invalid face id", func(t *testing.T) {
 		m := NewFace("123", SrcAuto, Embeddings{})
 		m.ID = ""
-		if reported, err := m.ReportCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
 			t.Fatal(err)
 		} else {
 			assert.False(t, reported)
@@ -106,7 +106,7 @@ func TestFace_ReportCollision(t *testing.T) {
 	t.Run("embedding empty", func(t *testing.T) {
 		m := NewFace("123", SrcAuto, Embeddings{})
 		m.EmbeddingJSON = []byte("")
-		if reported, err := m.ReportCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
 			t.Fatal(err)
 		} else {
 			assert.False(t, reported)

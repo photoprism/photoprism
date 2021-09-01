@@ -169,23 +169,32 @@ func TestLikeAllWords(t *testing.T) {
 }
 
 func TestLikeAllNames(t *testing.T) {
-	t.Run("keywords", func(t *testing.T) {
-		if w := LikeAllNames("k.name", "j Mander 王"); len(w) == 4 {
-			assert.Equal(t, "k.name LIKE 'mander'", w[0])
-			assert.Equal(t, "k.name LIKE 'mander %'", w[1])
-			assert.Equal(t, "k.name LIKE '王'", w[2])
-			assert.Equal(t, "k.name LIKE '王 %'", w[3])
+	t.Run("MultipleNames", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"k.name"}, "j Mander 王"); len(w) == 2 {
+			assert.Equal(t, "k.name LIKE 'mander%' OR k.name LIKE '% mander'", w[0])
+			assert.Equal(t, "k.name LIKE '王' OR k.name LIKE '王 %' OR k.name LIKE '% 王'", w[1])
+		} else {
+			t.Logf("wheres: %#v", w)
+			t.Fatal("2 where conditions expected")
+		}
+	})
+	t.Run("MultipleColumns", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"a.col1", "b.col2"}, "Mo Mander"); len(w) == 4 {
+			assert.Equal(t, "a.col1 LIKE 'mander%' OR a.col1 LIKE '% mander'", w[0])
+			assert.Equal(t, "b.col2 LIKE 'mander%' OR b.col2 LIKE '% mander'", w[1])
+			assert.Equal(t, "a.col1 LIKE 'mo' OR a.col1 LIKE 'mo %' OR a.col1 LIKE '% mo'", w[2])
+			assert.Equal(t, "b.col2 LIKE 'mo' OR b.col2 LIKE 'mo %' OR b.col2 LIKE '% mo'", w[3])
 		} else {
 			t.Logf("wheres: %#v", w)
 			t.Fatal("4 where conditions expected")
 		}
 	})
-	t.Run("string empty", func(t *testing.T) {
-		w := LikeAllNames("k.name", "")
+	t.Run("EmptyName", func(t *testing.T) {
+		w := LikeAllNames(Cols{"k.name"}, "")
 		assert.Empty(t, w)
 	})
-	t.Run("0 words", func(t *testing.T) {
-		w := LikeAllNames("k.name", "a")
+	t.Run("NoWords", func(t *testing.T) {
+		w := LikeAllNames(Cols{"k.name"}, "a")
 		assert.Empty(t, w)
 	})
 }

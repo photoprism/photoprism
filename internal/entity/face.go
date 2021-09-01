@@ -149,8 +149,8 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 	return true, dist
 }
 
-// ReportCollision reports a collision with a different subject's face.
-func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error) {
+// ResolveCollision resolves a collision with a different subject's face.
+func (m *Face) ResolveCollision(embeddings Embeddings) (resolved bool, err error) {
 	if m.SubjectUID == "" {
 		// Ignore reports for anonymous faces.
 		return false, nil
@@ -168,14 +168,14 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 	} else if dist < 0 {
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
-	} else if dist > 0.2 {
+	} else if dist >= 0.02 {
 		m.MatchedAt = nil
 		m.Collisions++
-		m.CollisionRadius = dist - 0.1
+		m.CollisionRadius = dist - 0.01
 		revise = true
 	} else {
-		// Don't set a radius yet if distance is very small.
-		m.Collisions++
+		// Ignore if distance is very small as faces may belong to the same person.
+		log.Warnf("faces: ignoring %s collision at dist %f, same person?", m.ID, dist)
 	}
 
 	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
@@ -194,17 +194,21 @@ func (m *Face) ReportCollision(embeddings Embeddings) (reported bool, err error)
 
 // ReviseMatches updates marker matches after face parameters have been changed.
 func (m *Face) ReviseMatches() (revised Markers, err error) {
+	if m.ID == "" {
+		return revised, fmt.Errorf("empty face id")
+	}
+
 	var matches Markers
 
 	if err := Db().Where("face_id = ?", m.ID).Where("marker_type = ?", MarkerFace).
 		Find(&matches).Error; err != nil {
-		log.Debugf("faces: %s (find matching markers)", err)
+		log.Debugf("faces: %s (revise matches)", err)
 		return revised, err
 	} else {
 		for _, marker := range matches {
 			if ok, _ := m.Match(marker.Embeddings()); !ok {
 				if updated, err := marker.ClearFace(); err != nil {
-					log.Debugf("faces: %s (revise match)", err)
+					log.Debugf("faces: %s (revise matches)", err)
 					return revised, err
 				} else if updated {
 					revised = append(revised, marker)
@@ -235,6 +239,27 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 		} else if _, err = marker.SetFace(m, dist); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// SetSubjectUID updates the face's subject uid and related markers.
+func (m *Face) SetSubjectUID(uid string) (err error) {
+	// Update face.
+	if err = m.Update("SubjectUID", uid); err != nil {
+		return err
+	} else {
+		m.SubjectUID = uid
+	}
+
+	// Update related markers.
+	if err = Db().Model(&Marker{}).
+		Where("face_id = ?", m.ID).
+		Where("subject_src = ?", SrcAuto).
+		Where("subject_uid <> ?", m.SubjectUID).
+		Updates(Values{"SubjectUID": m.SubjectUID}).Error; err != nil {
+		return err
 	}
 
 	return nil

@@ -50,6 +50,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	}
 
 	conflicts := 0
+	resolved := 0
 
 	faces, err := query.Faces(true, false)
 
@@ -63,7 +64,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 		faceMap[f1.ID] = f1
 
 		for _, f2 := range faces {
-			if ok, dist := f1.Match(entity.Embeddings{f2.Embedding()}); ok {
+			if matched, dist := f1.Match(entity.Embeddings{f2.Embedding()}); matched {
 				if f1.SubjectUID == f2.SubjectUID {
 					continue
 				}
@@ -72,7 +73,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 				r := f1.SampleRadius + face.ClusterRadius
 
-				log.Infof("face %s: ambiguous at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
+				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjectUID != "" {
 					log.Infof("face %s: subject %s (%s %s)", f1.ID, txt.Quote(subj[f1.SubjectUID].SubjectName), f1.SubjectUID, entity.SrcString(f1.FaceSrc))
@@ -88,21 +89,24 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 				if !fix {
 					// Do nothing.
-				} else if reported, err := f1.ReportCollision(entity.Embeddings{f2.Embedding()}); err != nil {
+				} else if ok, err := f1.ResolveCollision(entity.Embeddings{f2.Embedding()}); err != nil {
 					log.Errorf("face %s: %s", f1.ID, err)
-				} else if reported {
-					log.Infof("face %s: collision has been reported", f1.ID)
+				} else if ok {
+					log.Infof("face %s: collision has been resolved", f1.ID)
+					resolved++
 				} else {
-					log.Infof("face %s: collision has not been reported", f1.ID)
+					log.Infof("face %s: collision could not be resolved", f1.ID)
 				}
 			}
 		}
 	}
 
 	if conflicts == 0 {
-		log.Infof("found no ambiguous faces clusters")
+		log.Infof("found no conflicting face clusters")
+	} else if !fix {
+		log.Infof("%d conflicting face clusters", conflicts)
 	} else {
-		log.Infof("%d ambiguous faces clusters", conflicts)
+		log.Infof("%d conflicting face clusters, %d resolved", conflicts, resolved)
 	}
 
 	if markers, err := query.MarkersWithSubjectConflict(); err != nil {

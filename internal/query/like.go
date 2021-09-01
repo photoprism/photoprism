@@ -125,8 +125,8 @@ func LikeAllWords(col, s string) (wheres []string) {
 }
 
 // LikeAllNames returns a list of where conditions matching all names.
-func LikeAllNames(col, s string) (wheres []string) {
-	if s == "" {
+func LikeAllNames(cols Cols, s string) (wheres []string) {
+	if len(cols) == 0 || len(s) < 2 {
 		return wheres
 	}
 
@@ -137,10 +137,12 @@ func LikeAllNames(col, s string) (wheres []string) {
 	}
 
 	for _, w := range words {
-		wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, w))
-
-		if len(w) >= 2 {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s %%'", col, w))
+		for _, c := range cols {
+			if len(w) >= 5 {
+				wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%' OR %s LIKE '%% %s'", c, w, c, w))
+			} else {
+				wheres = append(wheres, fmt.Sprintf("%s LIKE '%s' OR %s LIKE '%s %%' OR %s LIKE '%% %s'", c, w, c, w, c, w))
+			}
 		}
 	}
 

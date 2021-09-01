@@ -157,9 +157,9 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	}
 
 	// Any reason we don't want to set a new face for this marker?
-	if m.SubjectSrc != SrcManual || f.SubjectUID == "" || m.SubjectUID == "" || f.SubjectUID == m.SubjectUID {
+	if m.SubjectSrc == SrcAuto || f.SubjectUID == "" || m.SubjectUID == "" || f.SubjectUID == m.SubjectUID {
 		// Don't skip if subject wasn't set manually, or subjects match.
-	} else if reported, err := f.ReportCollision(m.Embeddings()); err != nil {
+	} else if reported, err := f.ResolveCollision(m.Embeddings()); err != nil {
 		return false, err
 	} else if reported {
 		log.Infof("faces: marker %d (subject %s) collision with %s (subject %s), source %s", m.ID, m.SubjectUID, f.ID, f.SubjectUID, m.SubjectSrc)
@@ -169,11 +169,14 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	}
 
 	// Update face with known subject from marker?
-	if f.SubjectUID != "" || m.SubjectUID == "" {
+	if m.SubjectSrc == SrcAuto || m.SubjectUID == "" || f.SubjectUID != "" {
 		// Don't update if face has a known subject, or marker subject is unknown.
-	} else if err := f.Update("SubjectUID", m.SubjectUID); err != nil {
+	} else if err = f.SetSubjectUID(m.SubjectUID); err != nil {
 		return false, err
 	}
+
+	// Set face.
+	m.Face = f
 
 	// Skip update if the same face is already set.
 	if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
@@ -209,14 +212,14 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 		m.SubjectUID = f.SubjectUID
 	}
 
-	if err := m.SyncSubject(false); err != nil {
+	if err = m.SyncSubject(false); err != nil {
 		return false, err
 	}
 
 	// Update face subject?
-	if m.SubjectUID == "" || f.SubjectUID != m.SubjectUID {
+	if m.SubjectSrc == SrcAuto || m.SubjectUID == "" || f.SubjectUID == m.SubjectUID {
 		// Not needed.
-	} else if err := f.Update("SubjectUID", m.SubjectUID); err != nil {
+	} else if err = f.SetSubjectUID(m.SubjectUID); err != nil {
 		return false, err
 	}
 
@@ -237,19 +240,19 @@ func (m *Marker) SyncSubject(updateRelated bool) error {
 
 	subj := m.GetSubject()
 
-	if subj == nil {
+	if subj == nil || m.SubjectSrc == SrcAuto {
 		return nil
 	}
 
 	// Update subject with marker name?
-	if m.MarkerName == "" || subj.SubjectName == m.MarkerName || (subj.SubjectName != "" && m.SubjectSrc != SrcManual) {
+	if m.MarkerName == "" || subj.SubjectName == m.MarkerName {
 		// Do nothing.
 	} else if err := subj.UpdateName(m.MarkerName); err != nil {
 		return err
 	}
 
 	// Create known face for subject?
-	if m.FaceID != "" || m.SubjectSrc != SrcManual {
+	if m.FaceID != "" {
 		// Do nothing.
 	} else if f := m.GetFace(); f != nil {
 		m.FaceID = f.ID
@@ -310,21 +313,24 @@ func (m *Marker) Embeddings() Embeddings {
 // GetSubject returns a subject entity if possible.
 func (m *Marker) GetSubject() (subj *Subject) {
 	if m.Subject != nil {
-		return m.Subject
+		if m.SubjectUID == m.Subject.SubjectUID {
+			return m.Subject
+		}
 	}
 
-	if m.SubjectUID == "" && m.MarkerName != "" {
-		if subj = NewSubject(m.MarkerName, SubjectPerson, SrcMarker); subj == nil {
+	// Create subject?
+	if m.SubjectSrc != SrcAuto && m.MarkerName != "" && m.SubjectUID == "" {
+		if subj = NewSubject(m.MarkerName, SubjectPerson, m.SubjectSrc); subj == nil {
 			return nil
 		} else if subj = FirstOrCreateSubject(subj); subj == nil {
 			log.Debugf("marker: invalid subject %s", txt.Quote(m.MarkerName))
 			return nil
+		} else {
+			m.Subject = subj
+			m.SubjectUID = subj.SubjectUID
 		}
 
-		m.SubjectUID = subj.SubjectUID
-		m.SubjectSrc = SrcManual
-
-		return subj
+		return m.Subject
 	}
 
 	m.Subject = FindSubject(m.SubjectUID)
@@ -340,7 +346,7 @@ func (m *Marker) ClearSubject(src string) error {
 
 	if m.Face == nil {
 		// Do nothing
-	} else if reported, err := m.Face.ReportCollision(m.Embeddings()); err != nil {
+	} else if reported, err := m.Face.ResolveCollision(m.Embeddings()); err != nil {
 		return err
 	} else if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "SubjectSrc": src}); err != nil {
 		return err
@@ -362,18 +368,20 @@ func (m *Marker) ClearSubject(src string) error {
 // GetFace returns a matching face entity if possible.
 func (m *Marker) GetFace() (f *Face) {
 	if m.Face != nil {
-		return m.Face
+		if m.FaceID == m.Face.ID {
+			return m.Face
+		}
 	}
 
 	// Add face if size
-	if m.FaceID == "" && m.SubjectSrc == SrcManual {
+	if m.SubjectSrc != SrcAuto && m.FaceID == "" {
 		if m.Size < face.ClusterMinSize || m.Score < face.ClusterMinScore {
 			log.Debugf("faces: skipped adding face for low-quality marker %d, size %d, score %d", m.ID, m.Size, m.Score)
 			return nil
 		} else if emb := m.Embeddings(); len(emb) == 0 {
 			log.Warnf("marker: id %d has no embeddings", m.ID)
 			return nil
-		} else if f = NewFace(m.SubjectUID, SrcManual, emb); f == nil {
+		} else if f = NewFace(m.SubjectUID, m.SubjectSrc, emb); f == nil {
 			log.Warnf("marker: failed adding face for id %d", m.ID)
 			return nil
 		} else if f = FirstOrCreateFace(f); f == nil {
@@ -385,6 +393,7 @@ func (m *Marker) GetFace() (f *Face) {
 
 		m.Face = f
 		m.FaceID = f.ID
+		m.FaceDist = 0
 	} else {
 		m.Face = FindFace(m.FaceID)
 	}
@@ -452,14 +461,16 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 		}
 
 		err := result.Updates(map[string]interface{}{
+			"MarkerType":     m.MarkerType,
+			"MarkerSrc":      m.MarkerSrc,
 			"X":              m.X,
 			"Y":              m.Y,
 			"W":              m.W,
 			"H":              m.H,
 			"Score":          m.Score,
+			"Size":           m.Size,
 			"LandmarksJSON":  m.LandmarksJSON,
 			"EmbeddingsJSON": m.EmbeddingsJSON,
-			"SubjectUID":     m.SubjectUID,
 		})
 
 		log.Debugf("faces: updated existing marker %d for file %d", result.ID, result.FileID)

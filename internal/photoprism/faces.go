@@ -69,6 +69,15 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		log.Debugf("faces: marker subjects already exist")
 	}
 
+	// Resolve collisions of different subject's faces.
+	if c, r, err := query.ResolveFaceCollisions(); err != nil {
+		log.Errorf("faces: %s (resolve collisions)", err)
+	} else if c > 0 {
+		log.Infof("faces: resolved %d / %d collisions", r, c)
+	} else {
+		log.Debugf("faces: no collisions detected")
+	}
+
 	// Optimize existing face clusters.
 	if res, err := w.Optimize(); err != nil {
 		return err

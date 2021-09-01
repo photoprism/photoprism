@@ -349,29 +349,80 @@ func TestMarker_HasFace(t *testing.T) {
 }
 
 func TestMarker_GetSubject(t *testing.T) {
-	t.Run("return subject", func(t *testing.T) {
-		m := Marker{Subject: &Subject{SubjectName: "Test Subject"}}
+	t.Run("EmptySubjectUID", func(t *testing.T) {
+		m := Marker{SubjectUID: "", Subject: &Subject{SubjectUID: "", SubjectName: "Test Subject"}}
 
-		assert.Equal(t, "Test Subject", m.GetSubject().SubjectName)
+		if s := m.GetSubject(); s == nil {
+			t.Fatal("return value must not be nil")
+		} else {
+			assert.Equal(t, "Test Subject", s.SubjectName)
+			assert.Equal(t, "", m.SubjectUID)
+			assert.Equal(t, "", s.SubjectUID)
+		}
 	})
-	t.Run("uid empty, marker name not empty", func(t *testing.T) {
-		m := Marker{SubjectUID: "", MarkerName: "Hans Mayer"}
-		assert.Equal(t, "Hans Mayer", m.GetSubject().SubjectName)
+	t.Run("ConflictingSubjectUID", func(t *testing.T) {
+		m := Marker{SubjectUID: "", Subject: &Subject{SubjectUID: "xyz", SubjectName: "Test Subject"}}
+
+		if s := m.GetSubject(); s != nil {
+			t.Fatal("return value must be nil")
+		}
+	})
+	t.Run("SubjectSrcAuto", func(t *testing.T) {
+		m := Marker{SubjectSrc: SrcAuto, SubjectUID: "", MarkerName: "Hans Mayer"}
+
+		if s := m.GetSubject(); s != nil {
+			t.Fatal("return value must be nil")
+		} else {
+			assert.Equal(t, "Hans Mayer", m.MarkerName)
+			assert.Empty(t, m.SubjectUID)
+			assert.Equal(t, SrcAuto, m.SubjectSrc)
+		}
+	})
+	t.Run("SubjectSrcManual", func(t *testing.T) {
+		m := Marker{SubjectSrc: SrcManual, SubjectUID: "", MarkerName: "Hans Mayer"}
+
+		if s := m.GetSubject(); s == nil {
+			t.Fatal("return value must not be nil")
+		} else {
+			assert.Equal(t, "Hans Mayer", s.SubjectName)
+			assert.NotEmpty(t, s.SubjectUID)
+		}
 	})
 }
 
 func TestMarker_GetFace(t *testing.T) {
-	t.Run("return face", func(t *testing.T) {
-		m := Marker{Face: &Face{ID: "1234"}}
+	t.Run("ExistingFaceID", func(t *testing.T) {
+		m := Marker{Face: &Face{ID: "1234"}, FaceID: "1234"}
 
-		assert.Equal(t, "1234", m.GetFace().ID)
+		if f := m.GetFace(); f == nil {
+			t.Fatal("return value must not be nil")
+		} else {
+			assert.Equal(t, "1234", f.ID)
+			assert.Equal(t, "1234", m.FaceID)
+		}
+	})
+	t.Run("ConflictingFaceID", func(t *testing.T) {
+		m := Marker{Face: &Face{ID: "1234"}, FaceID: "8888"}
+
+		if f := m.GetFace(); f != nil {
+			t.Fatal("return value must be nil")
+		} else {
+			assert.Equal(t, "8888", m.FaceID)
+			assert.Nil(t, m.Face)
+		}
 	})
 	t.Run("find face with ID", func(t *testing.T) {
 		m := Marker{FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
-		assert.Equal(t, "jqy3y652h8njw0sx", m.GetFace().SubjectUID)
+
+		if f := m.GetFace(); f == nil {
+			t.Fatal("return value must not be nil")
+		} else {
+			assert.Equal(t, "jqy3y652h8njw0sx", f.SubjectUID)
+		}
 	})
 	t.Run("low quality marker", func(t *testing.T) {
 		m := Marker{FaceID: "", SubjectSrc: SrcManual, Size: 130}
+
 		assert.Nil(t, m.GetFace())
 	})
 	t.Run("create face", func(t *testing.T) {
@@ -384,7 +435,7 @@ func TestMarker_GetFace(t *testing.T) {
 		}
 
 		if m.GetFace() == nil {
-			t.Fatal("face must not be nil")
+			t.Fatal("return value must not be nil")
 		} else {
 			assert.NotEmpty(t, m.GetFace().ID)
 		}

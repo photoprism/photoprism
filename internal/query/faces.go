@@ -3,6 +3,8 @@ package query
 import (
 	"fmt"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -157,4 +159,52 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	}
 
 	return merged, err
+}
+
+// ResolveFaceCollisions resolves collisions of different subject's faces.
+func ResolveFaceCollisions() (conflicts, resolved int, err error) {
+	faces, err := Faces(true, false)
+
+	if err != nil {
+		return conflicts, resolved, err
+	}
+
+	for _, f1 := range faces {
+		for _, f2 := range faces {
+			if matched, dist := f1.Match(entity.Embeddings{f2.Embedding()}); matched {
+				if f1.SubjectUID == f2.SubjectUID {
+					continue
+				}
+
+				conflicts++
+
+				r := f1.SampleRadius + face.ClusterRadius
+
+				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
+
+				if f1.SubjectUID != "" {
+					log.Debugf("face %s: subject %s (%s %s)", f1.ID, txt.Quote(f1.SubjectUID), f1.SubjectUID, entity.SrcString(f1.FaceSrc))
+				} else {
+					log.Debugf("face %s: no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
+				}
+
+				if f2.SubjectUID != "" {
+					log.Debugf("face %s: subject %s (%s %s)", f2.ID, txt.Quote(f2.SubjectUID), f2.SubjectUID, entity.SrcString(f2.FaceSrc))
+				} else {
+					log.Debugf("face %s: no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
+				}
+
+				if ok, err := f1.ResolveCollision(entity.Embeddings{f2.Embedding()}); err != nil {
+					log.Errorf("face %s: %s", f1.ID, err)
+				} else if ok {
+					log.Infof("face %s: collision has been resolved", f1.ID)
+					resolved++
+				} else {
+					log.Debugf("face %s: collision could not be resolved", f1.ID)
+				}
+			}
+		}
+	}
+
+	return conflicts, resolved, nil
 }

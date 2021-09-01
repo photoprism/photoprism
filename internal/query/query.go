@@ -54,6 +54,9 @@ const MaxResults = 10000
 // SearchRadius is about 1 km.
 const SearchRadius = 0.009
 
+// Cols represents a list of database columns.
+type Cols []string
+
 // Query searches given an originals path and a db instance.
 type Query struct {
 	db *gorm.DB

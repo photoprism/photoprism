@@ -29,12 +29,13 @@ type Subject struct {
 	SubjectType  string          `gorm:"type:VARBINARY(8);default:''" json:"Type,omitempty" yaml:"Type,omitempty"`
 	SubjectSrc   string          `gorm:"type:VARBINARY(8);default:''" json:"Src,omitempty" yaml:"Src,omitempty"`
 	SubjectSlug  string          `gorm:"type:VARBINARY(255);index;default:''" json:"Slug" yaml:"-"`
-	SubjectName  string          `gorm:"type:VARCHAR(255);unique_index" json:"Name" yaml:"Name"`
+	SubjectName  string          `gorm:"type:VARCHAR(255);unique_index;default:''" json:"Name" yaml:"Name"`
+	SubjectAlias string          `gorm:"type:VARCHAR(255);default:''" json:"Alias" yaml:"Alias"`
 	SubjectBio   string          `gorm:"type:TEXT;default:''" json:"Bio" yaml:"Bio,omitempty"`
 	SubjectNotes string          `gorm:"type:TEXT;default:''" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	Favorite     bool            `json:"Favorite" yaml:"Favorite,omitempty"`
-	Private      bool            `json:"Private" yaml:"Private,omitempty"`
-	Excluded     bool            `json:"Excluded" yaml:"Excluded,omitempty"`
+	Favorite     bool            `gorm:"default:false" json:"Favorite" yaml:"Favorite,omitempty"`
+	Private      bool            `gorm:"default:false" json:"Private" yaml:"Private,omitempty"`
+	Excluded     bool            `gorm:"default:false" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int             `gorm:"default:0" json:"FileCount" yaml:"-"`
 	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
@@ -44,15 +45,16 @@ type Subject struct {
 
 // UnknownPerson can be used as a placeholder for unknown people.
 var UnknownPerson = Subject{
-	SubjectUID:  "j000000000000000",
-	SubjectSlug: "",
-	SubjectName: "",
-	SubjectType: SubjectPerson,
-	SubjectSrc:  SrcDefault,
-	Favorite:    false,
-	Private:     false,
-	Excluded:    false,
-	FileCount:   0,
+	SubjectUID:   "j000000000000000",
+	SubjectSlug:  "",
+	SubjectName:  "",
+	SubjectAlias: "",
+	SubjectType:  SubjectPerson,
+	SubjectSrc:   SrcDefault,
+	Favorite:     false,
+	Private:      false,
+	Excluded:     false,
+	FileCount:    0,
 }
 
 // CreateUnknownPerson initializes the database with a placeholder for unknown people if not exists.

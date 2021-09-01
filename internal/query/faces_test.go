@@ -188,3 +188,14 @@ func TestMergeFaces(t *testing.T) {
 		assert.Nil(t, result)
 	})
 }
+
+func TestResolveFaceCollisions(t *testing.T) {
+	c, r, err := ResolveFaceCollisions()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.LessOrEqual(t, 3, c)
+	assert.LessOrEqual(t, 3, r)
+}

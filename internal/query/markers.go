@@ -204,8 +204,8 @@ func MarkersWithSubjectConflict() (results entity.Markers, err error) {
 // ResetFaceMarkerMatches removes automatically added subject and face references from the markers table.
 func ResetFaceMarkerMatches() (removed int64, err error) {
 	res := Db().Model(&entity.Marker{}).
-		Where("subject_src <> ? AND marker_type = ?", entity.SrcManual, entity.MarkerFace).
-		UpdateColumns(entity.Values{"subject_uid": "", "subject_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
+		Where("subject_src = ? AND marker_type = ?", entity.SrcAuto, entity.MarkerFace).
+		UpdateColumns(entity.Values{"marker_name": "", "subject_uid": "", "subject_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return res.RowsAffected, res.Error
 }
