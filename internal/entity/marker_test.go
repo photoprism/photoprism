@@ -45,6 +45,9 @@ func TestMarker_SaveForm(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, m.SubjectUID)
+		assert.NotNil(t, m.GetSubject())
+		assert.NotNil(t, FindMarker(9).GetSubject())
+		assert.NotNil(t, FindMarker(10).GetSubject())
 		assert.Equal(t, "Jane Doe", m.GetSubject().SubjectName)
 		assert.Equal(t, "Jane Doe", FindMarker(9).GetSubject().SubjectName)
 		assert.Equal(t, "Jane Doe", FindMarker(10).GetSubject().SubjectName)
@@ -58,6 +61,9 @@ func TestMarker_SaveForm(t *testing.T) {
 			t.Fatal(err3)
 		}
 
+		assert.NotNil(t, FindMarker(8).GetSubject())
+		assert.NotNil(t, FindMarker(9).GetSubject())
+		assert.NotNil(t, FindMarker(10).GetSubject())
 		assert.Equal(t, "Franzilein", FindMarker(8).GetSubject().SubjectName)
 		assert.Equal(t, "Franzilein", FindMarker(9).GetSubject().SubjectName)
 		assert.Equal(t, "Franzilein", FindMarker(10).GetSubject().SubjectName)
@@ -206,6 +212,11 @@ func TestMarker_ClearSubject(t *testing.T) {
 		assert.Equal(t, "jqy1y111h1njaaad", m2.SubjectUID)
 		assert.Equal(t, "jqy1y111h1njaaad", m3.SubjectUID)
 		assert.Equal(t, "jqy1y111h1njaaad", m4.SubjectUID)
+		assert.NotNil(t, m.GetFace())
+		assert.NotNil(t, m2.GetFace())
+		assert.NotNil(t, m3.GetFace())
+		assert.NotNil(t, m4.GetFace())
+		assert.NotNil(t, FindMarker(15).GetFace())
 		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m.GetFace().ID)
 		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m2.GetFace().ID)
 		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m3.GetFace().ID)
@@ -219,10 +230,10 @@ func TestMarker_ClearSubject(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Log(FindMarker(18).FaceID)
-		t.Log(FindMarker(17).FaceID)
-		t.Log(FindMarker(16).FaceID)
-		t.Log(FindMarker(15).FaceID)
+		assert.NotNil(t, FindMarker(17))
+		assert.NotNil(t, FindMarker(16))
+		assert.NotNil(t, FindMarker(15))
+		assert.NotNil(t, FindFace("PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS"))
 
 		assert.Empty(t, m.SubjectUID)
 		assert.Equal(t, "", FindMarker(17).SubjectUID)

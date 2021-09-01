@@ -216,6 +216,7 @@ func TestFirstOrCreateFace(t *testing.T) {
 
 func TestFindFace(t *testing.T) {
 	t.Run("existing face", func(t *testing.T) {
+		assert.NotNil(t, FindFace("VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG7"))
 		assert.Equal(t, 3, FindFace("VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG7").Samples)
 	})
 	t.Run("empty id", func(t *testing.T) {
