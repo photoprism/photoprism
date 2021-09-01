@@ -84,7 +84,7 @@ services:
       PHOTOPRISM_OIDC_ISSUER: "http://oidc-test.timovolkmann.de:9009"
       PHOTOPRISM_OIDC_CLIENT_ID: "foo"
       PHOTOPRISM_OIDC_CLIENT_SECRET: "bar"
-      
+
   mariadb:
     image: mariadb:10.5
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
