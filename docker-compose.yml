@@ -75,15 +75,15 @@ services:
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # On-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680              # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
-#      PHOTOPRISM_OIDC_ISSUER: "https://keycloak.timovolkmann.de/auth/realms/master"
-#      PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-dev"
-#      PHOTOPRISM_OIDC_CLIENT_SECRET: "341e8af4-4ed7-40cc-bd2c-b29a5e0cd40c"
-#      PHOTOPRISM_OIDC_ISSUER: "http://host.docker.internal:9998"
-#      PHOTOPRISM_OIDC_CLIENT_ID: "native"
-#      PHOTOPRISM_OIDC_CLIENT_SECRET: "password"
-      PHOTOPRISM_OIDC_ISSUER: "http://oidc-test.timovolkmann.de:9009"
-      PHOTOPRISM_OIDC_CLIENT_ID: "foo"
-      PHOTOPRISM_OIDC_CLIENT_SECRET: "bar"
+      # PHOTOPRISM_OIDC_ISSUER: "https://keycloak.timovolkmann.de/auth/realms/master"
+      # PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-dev"
+      # PHOTOPRISM_OIDC_CLIENT_SECRET: "341e8af4-4ed7-40cc-bd2c-b29a5e0cd40c"
+      PHOTOPRISM_OIDC_ISSUER: "http://host.docker.internal:9998"
+      PHOTOPRISM_OIDC_CLIENT_ID: "native"
+      PHOTOPRISM_OIDC_CLIENT_SECRET: "password"
+      # PHOTOPRISM_OIDC_ISSUER: "http://oidc-test.timovolkmann.de:9009"
+      # PHOTOPRISM_OIDC_CLIENT_ID: "foo"
+      # PHOTOPRISM_OIDC_CLIENT_SECRET: "bar"
 
   mariadb:
     image: mariadb:10.5
