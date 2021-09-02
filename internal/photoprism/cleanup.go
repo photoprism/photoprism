@@ -69,6 +69,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 			return nil
 		}
 
+		// Example: 01244519acf35c62a5fea7a5a7dcefdbec4fb2f5_3x3_resize.png
 		i := strings.Index(base, "_")
 
 		if i < 39 {

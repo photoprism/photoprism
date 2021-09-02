@@ -51,6 +51,7 @@ const (
 	ResampleFillTopLeft
 	ResampleFillBottomRight
 	ResampleFit
+	ResampleCrop
 	ResampleResize
 	ResampleNearestNeighbor
 	ResampleDefault
@@ -64,6 +65,7 @@ var ResampleMethods = map[ResampleOption]string{
 	ResampleFillTopLeft:     "left",
 	ResampleFillBottomRight: "right",
 	ResampleFit:             "fit",
+	ResampleCrop:            "crop",
 	ResampleResize:          "resize",
 }
 
@@ -81,6 +83,7 @@ type TypeMap map[string]Type
 var Types = TypeMap{
 	"tile_50":   {"Lists", "tile_500", 50, 50, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
 	"tile_100":  {"Maps", "tile_500", 100, 100, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
+	"crop_160":  {"FaceNet", "", 160, 160, false, []ResampleOption{ResampleCrop, ResampleDefault}},
 	"tile_224":  {"TensorFlow, Mosaic", "tile_500", 224, 224, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
 	"tile_500":  {"Tiles", "", 500, 500, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
 	"colors":    {"Color Detection", "fit_720", 3, 3, false, []ResampleOption{ResampleResize, ResampleNearestNeighbor, ResamplePng}},
@@ -126,17 +129,17 @@ func Find(limit int) (name string, result Type) {
 	return "", Type{}
 }
 
-// Returns true if thumbnail type exceeds the cached thumbnails size.
+// ExceedsSize tests if thumbnail type exceeds the cached thumbnails size.
 func (t Type) ExceedsSize() bool {
 	return t.Width > Size || t.Height > Size
 }
 
-// Returns true if thumbnail type is too large and can not be rendered at all.
+// ExceedsSizeUncached tests if thumbnail type is too large and can not be rendered at all.
 func (t Type) ExceedsSizeUncached() bool {
 	return t.Width > MaxSize() || t.Height > MaxSize()
 }
 
-// Returns true if thumbnail type should not be pre-rendered.
+// OnDemand tests if thumbnail type should not be pre-rendered.
 func (t Type) OnDemand() bool {
 	return t.Width > Size || t.Height > Size
 }

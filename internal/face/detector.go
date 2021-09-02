@@ -71,7 +71,7 @@ type Detector struct {
 }
 
 // Detect runs the detection algorithm over the provided source image.
-func Detect(fileName string) (faces Faces, err error) {
+func Detect(fileName string, findLandmarks bool) (faces Faces, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("faces: %s (panic)\nstack: %s", r, debug.Stack())
@@ -103,7 +103,7 @@ func Detect(fileName string) (faces Faces, err error) {
 		return faces, fmt.Errorf("faces: no result")
 	}
 
-	faces, err = fd.Faces(det, params)
+	faces, err = fd.Faces(det, params, findLandmarks)
 
 	if err != nil {
 		return faces, fmt.Errorf("faces: %s", err)
@@ -164,7 +164,7 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 }
 
 // Faces adds landmark coordinates to detected faces and returns the results.
-func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (results Faces, err error) {
+func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLandmarks bool) (results Faces, err error) {
 	var maxQ float32
 
 	// Sort by quality.
@@ -194,7 +194,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			face.Scale,
 		)
 
-		if face.Scale > 50 {
+		if face.Scale > 50 && findLandmarks {
 			// Find left eye.
 			puploc = &pigo.Puploc{
 				Row:      face.Row - int(0.075*float32(face.Scale)),
@@ -301,7 +301,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			Rows:      params.ImageParams.Rows,
 			Cols:      params.ImageParams.Cols,
 			Score:     int(face.Q),
-			Face:      faceCoord,
+			Area:      faceCoord,
 			Eyes:      eyesCoords,
 			Landmarks: landmarkCoords,
 		})

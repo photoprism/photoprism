@@ -14,6 +14,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// GetThumb returns a thumbnail image matching the hash and type.
+//
 // GET /api/v1/t/:hash/:token/:type
 //
 // Parameters:

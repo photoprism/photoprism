@@ -29,12 +29,13 @@ type Marker struct {
 	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
+	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	SubjectUID     string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
 	SubjectSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
 	subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
+	CropID         string          `gorm:"type:VARBINARY(16);default:''" json:"CropID,omitempty" yaml:"CropID,omitempty"`
 	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1" json:"FaceDist" yaml:"FaceDist,omitempty"`
-	FaceThumb      string          `gorm:"type:VARBINARY(128);default:''" json:"FaceThumb,omitempty" yaml:"FaceThumb,omitempty"`
 	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     Embeddings      `gorm:"-"`
@@ -46,7 +47,6 @@ type Marker struct {
 	Size           int             `gorm:"default:-1" json:"Size" yaml:"Size,omitempty"`
 	Score          int             `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
 	Review         bool            `json:"Review" yaml:"Review,omitempty"`
-	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
@@ -87,13 +87,13 @@ func NewMarker(fileUID, subjectUID, markerSrc, markerType string, x, y, w, h flo
 
 // NewFaceMarker creates a new entity.
 func NewFaceMarker(f face.Face, fileUID, subjectUID string) *Marker {
-	pos := f.Marker()
+	pos := f.Crop()
 
 	m := NewMarker(fileUID, subjectUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
 
 	m.MatchedAt = nil
 	m.FaceDist = -1
-	m.FaceThumb = f.Thumb
+	m.CropID = f.Crop().ID()
 	m.EmbeddingsJSON = f.EmbeddingsJSON()
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
 	m.Size = f.Size()
@@ -495,7 +495,7 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 		err := result.Updates(map[string]interface{}{
 			"MarkerType":     m.MarkerType,
 			"MarkerSrc":      m.MarkerSrc,
-			"FaceThumb":      m.FaceThumb,
+			"CropID":         m.CropID,
 			"X":              m.X,
 			"Y":              m.Y,
 			"W":              m.W,

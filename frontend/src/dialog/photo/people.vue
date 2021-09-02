@@ -74,7 +74,6 @@
 </template>
 
 <script>
-import * as src from "common/src";
 
 export default {
   name: 'PTabPhotoPeople',
@@ -110,8 +109,16 @@ export default {
         const w = Math.round(m.W * img.width);
         const h = Math.round(m.H * img.height);
         const s = w > h ? w : h;
-        const x = Math.round((m.X - (m.W / 2)) * img.width);
-        const y = Math.round((m.Y - (m.H / 2)) * img.height);
+        const x = Math.round(m.X * img.width);
+        const y = Math.round(m.Y * img.height);
+
+        /*
+        console.log("Crop X", m.X, x);
+        console.log("Crop Y", m.Y, y);
+        console.log("Crop W", m.W, w);
+        console.log("Crop H", m.H, h);
+        console.log("Image WxH", img.width, img.height);
+        */
 
         ctx.drawImage(img, x, y, s, s, 0, 0, 300, 300);
       };

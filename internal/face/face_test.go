@@ -72,7 +72,7 @@ func TestDetect(t *testing.T) {
 			fileHash := fs.Hash(fileName)
 			baseName := filepath.Base(fileName)
 
-			faces, err := Detect(fileName)
+			faces, err := Detect(fileName, true)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -83,7 +83,7 @@ func TestDetect(t *testing.T) {
 				t.Logf("results: %#v", faces)
 
 				for i, f := range faces {
-					t.Logf("marker[%d]: %#v %#v", i, f.Marker(), f.Face)
+					t.Logf("marker[%d]: %#v %#v", i, f.Crop(), f.Area)
 					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
 					img, err := tfInstance.getFaceCrop(fileName, fileHash, &faces[i])
@@ -178,7 +178,7 @@ func TestFace_Size(t *testing.T) {
 			Rows:  8,
 			Cols:  1,
 			Score: 200,
-			Face: Area{
+			Area: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,
@@ -198,7 +198,7 @@ func TestFace_Dim(t *testing.T) {
 			Rows:  8,
 			Cols:  3,
 			Score: 200,
-			Face: Area{
+			Area: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,
@@ -215,7 +215,7 @@ func TestFace_Dim(t *testing.T) {
 			Rows:  8,
 			Cols:  0,
 			Score: 200,
-			Face: Area{
+			Area: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,
@@ -235,7 +235,7 @@ func TestFace_EmbeddingsJSON(t *testing.T) {
 			Rows:  8,
 			Cols:  1,
 			Score: 200,
-			Face: Area{
+			Area: Area{
 				Name:  "",
 				Row:   0,
 				Col:   0,
@@ -246,5 +246,25 @@ func TestFace_EmbeddingsJSON(t *testing.T) {
 			Embeddings: nil,
 		}
 		assert.Equal(t, []byte{0x6e, 0x75, 0x6c, 0x6c}, f.EmbeddingsJSON())
+	})
+}
+
+func TestFace_Crop(t *testing.T) {
+	t.Run("Position", func(t *testing.T) {
+		f := Face{
+			Cols:  1000,
+			Rows:  600,
+			Score: 125,
+			Area: Area{
+				Name:  "face",
+				Col:   400,
+				Row:   250,
+				Scale: 200,
+			},
+			Eyes:       nil,
+			Landmarks:  nil,
+			Embeddings: nil,
+		}
+		t.Logf("marker: %#v", f.Crop())
 	})
 }

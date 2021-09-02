@@ -35,6 +35,8 @@ package face
 import (
 	"encoding/json"
 
+	"github.com/photoprism/photoprism/pkg/crop"
+
 	"github.com/photoprism/photoprism/internal/event"
 )
 
@@ -100,7 +102,7 @@ type Face struct {
 	Rows       int         `json:"rows,omitempty"`
 	Cols       int         `json:"cols,omitempty"`
 	Score      int         `json:"score,omitempty"`
-	Face       Area        `json:"face,omitempty"`
+	Area       Area        `json:"face,omitempty"`
 	Eyes       Areas       `json:"eyes,omitempty"`
 	Landmarks  Areas       `json:"landmarks,omitempty"`
 	Embeddings [][]float32 `json:"embeddings,omitempty"`
@@ -109,7 +111,7 @@ type Face struct {
 
 // Size returns the absolute face size in pixels.
 func (f *Face) Size() int {
-	return f.Face.Scale
+	return f.Area.Scale
 }
 
 // Dim returns the max number of rows and cols as float32 to calculate relative coordinates.
@@ -121,14 +123,26 @@ func (f *Face) Dim() float32 {
 	return float32(1)
 }
 
-// Marker returns the relative position on the image.
-func (f *Face) Marker() Marker {
-	marker := f.Face.Marker(Area{}, float32(f.Rows), float32(f.Cols))
-	midpoint := f.EyesMidpoint().Marker(Area{}, float32(f.Rows), float32(f.Cols))
-	marker.X = midpoint.X
-	marker.Y = midpoint.Y
+// Crop returns the relative image area for cropping.
+func (f *Face) Crop() crop.Area {
+	if f.Rows < 1 {
+		f.Cols = 1
+	}
 
-	return marker
+	if f.Cols < 1 {
+		f.Cols = 1
+	}
+
+	x := float32(f.Area.Col-f.Area.Scale/2) / float32(f.Cols)
+	y := float32(f.Area.Row-f.Area.Scale/2) / float32(f.Rows)
+
+	return crop.NewArea(
+		f.Area.Name,
+		x,
+		y,
+		float32(f.Area.Scale)/float32(f.Cols),
+		float32(f.Area.Scale)/float32(f.Rows),
+	)
 }
 
 // EyesMidpoint returns the point in between the eyes.
@@ -136,9 +150,9 @@ func (f *Face) EyesMidpoint() Area {
 	if len(f.Eyes) != 2 {
 		return Area{
 			Name:  "midpoint",
-			Row:   f.Face.Row,
-			Col:   f.Face.Col,
-			Scale: f.Face.Scale,
+			Row:   f.Area.Row,
+			Col:   f.Area.Col,
+			Scale: f.Area.Scale,
 		}
 	}
 
@@ -150,17 +164,17 @@ func (f *Face) EyesMidpoint() Area {
 	}
 }
 
-// RelativeLandmarks returns detected relative marker positions.
-func (f *Face) RelativeLandmarks() Markers {
+// RelativeLandmarks returns relative face areas.
+func (f *Face) RelativeLandmarks() crop.Areas {
 	p := f.EyesMidpoint()
 
-	m := f.Landmarks.Markers(p, float32(f.Rows), float32(f.Cols))
-	m = append(m, f.Eyes.Markers(p, float32(f.Rows), float32(f.Cols))...)
+	m := f.Landmarks.Relative(p, float32(f.Rows), float32(f.Cols))
+	m = append(m, f.Eyes.Relative(p, float32(f.Rows), float32(f.Cols))...)
 
 	return m
 }
 
-// RelativeLandmarksJSON returns detected relative marker positions as JSON.
+// RelativeLandmarksJSON returns relative face areas as JSON.
 func (f *Face) RelativeLandmarksJSON() (b []byte) {
 	var noResult = []byte("")
 

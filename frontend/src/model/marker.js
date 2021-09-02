@@ -40,21 +40,21 @@ export class Marker extends RestModel {
     return {
       UID: "",
       FileUID: "",
-      Invalid: false,
-      Review: false,
       Type: "",
       Src: "",
       Name: "",
-      FaceID: "",
-      FaceThumb: "",
-      SubjectSrc: "",
-      SubjectUID: "",
+      Invalid: false,
       X: 0.0,
       Y: 0.0,
       W: 0.0,
       H: 0.0,
+      CropID: "",
+      FaceID: "",
+      SubjectSrc: "",
+      SubjectUID: "",
       Score: 0,
       Size: 0,
+      Review: false,
     };
   }
 
@@ -80,9 +80,9 @@ export class Marker extends RestModel {
     return this.Name;
   }
 
-  thumbnailUrl(size) {
-    if (this.FaceThumb) {
-      return `${config.contentUri}/ft/${this.FaceThumb}/${config.previewToken()}/${size}`;
+  thumbnailUrl(fileHash, size) {
+    if (fileHash && this.CropID) {
+      return `${config.contentUri}/t/${fileHash}/${config.previewToken()}/${size}_${this.CropID}`;
     } else {
       return `${config.contentUri}/svg/portrait`;
     }

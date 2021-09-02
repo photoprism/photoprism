@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime/debug"
+	"strings"
 	"sync"
 
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -31,16 +32,12 @@ type Net struct {
 
 // NewNet returns a new TensorFlow Facenet instance.
 func NewNet(modelPath, cachePath string, disabled bool) *Net {
-	if err := os.MkdirAll(filepath.Join(cachePath, "faces"), os.ModePerm); err != nil {
-		log.Errorf("faces: failed creating cache folder")
-	}
-
 	return &Net{modelPath: modelPath, cachePath: cachePath, disabled: disabled, modelTags: []string{"serve"}}
 }
 
 // Detect runs the detection and facenet algorithms over the provided source image.
 func (t *Net) Detect(fileName string) (faces Faces, err error) {
-	faces, err = Detect(fileName)
+	faces, err = Detect(fileName, false)
 
 	if err != nil {
 		return faces, err
@@ -56,14 +53,18 @@ func (t *Net) Detect(fileName string) (faces Faces, err error) {
 		return faces, err
 	}
 
-	fileHash := fs.Hash(fileName)
+	var cacheHash string
+
+	if t.cachePath != "" {
+		cacheHash = fs.Hash(fileName)
+	}
 
 	for i, f := range faces {
-		if f.Face.Col == 0 && f.Face.Row == 0 {
+		if f.Area.Col == 0 && f.Area.Row == 0 {
 			continue
 		}
 
-		if img, err := t.getFaceCrop(fileName, fileHash, &faces[i]); err != nil {
+		if img, err := t.getFaceCrop(fileName, cacheHash, &faces[i]); err != nil {
 			log.Errorf("faces: failed to decode image: %v", err)
 		} else if embeddings := t.getEmbeddings(img); len(embeddings) > 0 {
 			faces[i].Embeddings = embeddings
@@ -102,28 +103,54 @@ func (t *Net) loadModel() error {
 	return nil
 }
 
-func (t *Net) getFaceCrop(fileName, fileHash string, f *Face) (img image.Image, err error) {
+func (t *Net) getCacheFolder(fileName, cacheHash string) string {
+	if t.cachePath == "" || cacheHash == "" {
+		return filepath.Dir(fileName)
+	}
+
+	if cacheHash == "" {
+		log.Debugf("faces: no hash provided for caching %s crops", filepath.Base(fileName))
+		cacheHash = fs.Hash(fileName)
+	}
+
+	result := filepath.Join(t.cachePath, "faces", string(cacheHash[0]), string(cacheHash[1]), string(cacheHash[2]))
+
+	if err := os.MkdirAll(result, os.ModePerm); err != nil {
+		log.Errorf("faces: failed creating cache folder")
+	}
+
+	return result
+}
+
+func (t *Net) getFaceCrop(fileName, cacheHash string, f *Face) (img image.Image, err error) {
 	if f == nil {
 		return img, fmt.Errorf("face is nil")
 	}
 
-	area := f.Face
+	area := f.Area
+	cacheFolder := t.getCacheFolder(fileName, cacheHash)
 
-	cacheFolder := filepath.Join(t.cachePath, "faces", string(fileHash[0]), string(fileHash[1]), string(fileHash[2]))
+	if cacheHash != "" {
+		f.Thumb = fmt.Sprintf("%s_%dx%d_crop_%s", cacheHash, CropSize, CropSize, f.Crop().ID())
+	} else {
+		base := filepath.Base(fileName)
+		i := strings.Index(base, "_")
 
-	if err := os.MkdirAll(cacheFolder, os.ModePerm); err != nil {
-		log.Errorf("faces: failed creating cache folder")
+		if i > 32 {
+			base = base[:i]
+		}
+
+		f.Thumb = fmt.Sprintf("%s_%dx%d_crop_%s", base, CropSize, CropSize, f.Crop().ID())
 	}
 
-	f.Thumb = fmt.Sprintf("%s-%s", fileHash, area.String())
 	cacheFile := filepath.Join(cacheFolder, f.Thumb+fs.JpegExt)
 
 	if !fs.FileExists(cacheFile) {
 		// Do nothing.
 	} else if img, err := imaging.Open(cacheFile); err != nil {
-		log.Errorf("faces: failed loading cached crop %s", filepath.Base(cacheFile))
+		log.Errorf("faces: failed loading %s", filepath.Base(cacheFile))
 	} else {
-		log.Debugf("faces: using cached crop %s", filepath.Base(cacheFile))
+		log.Debugf("faces: using %s", filepath.Base(cacheFile))
 		return img, nil
 	}
 
@@ -140,9 +167,9 @@ func (t *Net) getFaceCrop(fileName, fileHash string, f *Face) (img image.Image, 
 	img = imaging.Fill(img, CropSize, CropSize, imaging.Center, imaging.Lanczos)
 
 	if err := imaging.Save(img, cacheFile); err != nil {
-		log.Errorf("faces: failed caching crop %s", filepath.Base(cacheFile))
+		log.Errorf("faces: failed caching %s", filepath.Base(cacheFile))
 	} else {
-		log.Debugf("faces: saved crop %s", filepath.Base(cacheFile))
+		log.Debugf("faces: saved %s", filepath.Base(cacheFile))
 	}
 
 	return img, nil

@@ -433,7 +433,7 @@ func TestFile_AddFaces(t *testing.T) {
 			Rows:      480,
 			Cols:      720,
 			Score:     45,
-			Face:      face.NewArea("face", 250, 200, 10),
+			Area:      face.NewArea("face", 250, 200, 10),
 			Eyes:      face.Areas{face.NewArea("eye_l", 240, 195, 1), face.NewArea("eye_r", 240, 205, 1)},
 			Landmarks: face.Areas{face.NewArea("a", 250, 185, 2), face.NewArea("b", 250, 215, 2)},
 		}}
