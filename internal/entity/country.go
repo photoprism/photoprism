@@ -14,6 +14,9 @@ var altCountryNames = map[string]string{
 	"":                         "Unknown",
 }
 
+// Countries represents a list of countries.
+type Countries []Country
+
 // Country represents a country location, used for labeling photos.
 type Country struct {
 	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`

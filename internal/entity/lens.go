@@ -12,6 +12,9 @@ import (
 
 var lensMutex = sync.Mutex{}
 
+// Lenses represents a list of lenses.
+type Lenses []Lens
+
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
 	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`

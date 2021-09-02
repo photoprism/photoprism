@@ -19,6 +19,7 @@ const (
 
 var subjectMutex = sync.Mutex{}
 
+// Subjects represents a list of subjects.
 type Subjects []Subject
 
 // Subject represents a named photo subject, typically a person.
