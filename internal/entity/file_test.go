@@ -446,7 +446,7 @@ func TestFile_AddFaces(t *testing.T) {
 
 		assert.Equal(t, false, file.FileMissing)
 		assert.NotEmpty(t, file.FileUID)
-		assert.NotEmpty(t, file.Markers)
+		assert.NotEmpty(t, file.Markers())
 	})
 }
 
@@ -488,4 +488,16 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "2790/07", p.PhotoPath)
 		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
 	})
+}
+
+func TestFile_SubjectNames(t *testing.T) {
+	f := FileFixtures.Get("Video.mp4")
+	names := f.SubjectNames()
+
+	assert.Len(t, names, 1)
+	if len(names) != 1 {
+		t.Fatal("there should be one name")
+	} else {
+		assert.Equal(t, "Actress A", names[0])
+	}
 }

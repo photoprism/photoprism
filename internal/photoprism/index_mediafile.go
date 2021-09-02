@@ -603,13 +603,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 			photo.AddLabels(classify.FaceLabels(faces, entity.SrcImage))
 
-			file.PreloadMarkers()
-
 			if len(faces) > 0 {
 				file.AddFaces(faces)
 			}
 
-			photo.PhotoFaces = file.Markers.FaceCount()
+			photo.PhotoFaces = file.Markers().FaceCount()
 		}
 
 		labels := photo.ClassifyLabels()

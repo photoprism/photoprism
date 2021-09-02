@@ -331,6 +331,17 @@ func (m *Marker) Embeddings() Embeddings {
 	return m.embeddings
 }
 
+// SubjectName returns the matching subject's name.
+func (m *Marker) SubjectName() string {
+	if m.MarkerName != "" {
+		return m.MarkerName
+	} else if s := m.Subject(); s != nil {
+		return s.SubjectName
+	}
+
+	return ""
+}
+
 // Subject returns the matching subject or nil.
 func (m *Marker) Subject() (subj *Subject) {
 	if m.subject != nil {

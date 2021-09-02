@@ -12,16 +12,6 @@ func TestMarker_TableName(t *testing.T) {
 	assert.Contains(t, m.TableName(), "markers")
 }
 
-func TestMarker_MarshalJSON(t *testing.T) {
-	if m := MarkerFixtures.Pointer("actor-a-2"); m == nil {
-		t.Fatal("must not be nil")
-	} else if j, err := m.MarshalJSON(); err != nil {
-		t.Fatal(err)
-	} else {
-		t.Logf("json: %s", j)
-	}
-}
-
 func TestNewMarker(t *testing.T) {
 	m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
 	assert.IsType(t, &Marker{}, m)
@@ -193,7 +183,7 @@ func TestMarker_Save(t *testing.T) {
 
 		p := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.Empty(t, p.Files)
-		p.PreloadFiles(true)
+		p.PreloadFiles()
 		assert.NotEmpty(t, p.Files)
 
 		// t.Logf("FILES: %#v", p.Files)

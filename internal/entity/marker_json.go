@@ -22,18 +22,18 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Type       string
 		Src        string
 		Name       string
-		SubjectUID string
-		SubjectSrc string `json:",omitempty"`
-		FaceID     string `json:",omitempty"`
-		FaceThumb  string
 		X          float32
 		Y          float32
 		W          float32
 		H          float32
-		Size       int
-		Score      int
-		Review     bool
-		Invalid    bool
+		SubjectUID string `json:",omitempty"`
+		SubjectSrc string `json:",omitempty"`
+		FaceID     string `json:",omitempty"`
+		FaceThumb  string `json:",omitempty"`
+		Size       int    `json:",omitempty"`
+		Score      int    `json:",omitempty"`
+		Review     bool   `json:",omitempty"`
+		Invalid    bool   `json:",omitempty"`
 		CreatedAt  time.Time
 	}{
 		UID:        m.MarkerUID,
@@ -41,14 +41,14 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Type:       m.MarkerType,
 		Src:        m.MarkerSrc,
 		Name:       name,
-		SubjectUID: m.SubjectUID,
-		SubjectSrc: m.SubjectSrc,
-		FaceID:     m.FaceID,
-		FaceThumb:  m.FaceThumb,
 		X:          m.X,
 		Y:          m.Y,
 		W:          m.W,
 		H:          m.H,
+		SubjectUID: m.SubjectUID,
+		SubjectSrc: m.SubjectSrc,
+		FaceID:     m.FaceID,
+		FaceThumb:  m.FaceThumb,
 		Size:       m.Size,
 		Score:      m.Score,
 		Review:     m.Review,
