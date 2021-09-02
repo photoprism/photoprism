@@ -62,7 +62,7 @@ func TestNet(t *testing.T) {
 		t.Run(fileName, func(t *testing.T) {
 			baseName := filepath.Base(fileName)
 
-			faces, err := faceNet.Detect(fileName)
+			faces, err := faceNet.Detect(fileName, 20)
 
 			if err != nil {
 				t.Fatal(err)

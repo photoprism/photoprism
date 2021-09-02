@@ -61,7 +61,6 @@ var (
 // Detector struct contains Pigo face detector general settings.
 type Detector struct {
 	minSize        int
-	maxSize        int
 	angle          float64
 	shiftFactor    float64
 	scaleFactor    float64
@@ -71,16 +70,19 @@ type Detector struct {
 }
 
 // Detect runs the detection algorithm over the provided source image.
-func Detect(fileName string, findLandmarks bool) (faces Faces, err error) {
+func Detect(fileName string, findLandmarks bool, minSize int) (faces Faces, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("faces: %s (panic)\nstack: %s", r, debug.Stack())
 		}
 	}()
 
+	if minSize < 20 {
+		minSize = 20
+	}
+
 	fd := &Detector{
-		minSize:        20,
-		maxSize:        1000,
+		minSize:        minSize,
 		angle:          0.0,
 		shiftFactor:    0.1,
 		scaleFactor:    1.1,
@@ -127,12 +129,23 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 	srcFile = file
 
 	src, err := pigo.DecodeImage(srcFile)
+
 	if err != nil {
 		return faces, params, err
 	}
 
 	pixels := pigo.RgbToGrayscale(src)
 	cols, rows := src.Bounds().Max.X, src.Bounds().Max.Y
+
+	var maxSize int
+
+	if cols < 20 || rows < 20 || cols < fd.minSize || rows < fd.minSize {
+		return faces, params, fmt.Errorf("image too small (%dx%d)", cols, rows)
+	} else if cols < rows {
+		maxSize = cols - 10
+	} else {
+		maxSize = rows - 10
+	}
 
 	imageParams := &pigo.ImageParams{
 		Pixels: pixels,
@@ -147,7 +160,7 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 
 	params = pigo.CascadeParams{
 		MinSize:     fd.minSize,
-		MaxSize:     fd.maxSize,
+		MaxSize:     maxSize,
 		ShiftFactor: fd.shiftFactor,
 		ScaleFactor: fd.scaleFactor,
 		ImageParams: *imageParams,

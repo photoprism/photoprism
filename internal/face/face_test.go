@@ -72,7 +72,7 @@ func TestDetect(t *testing.T) {
 			fileHash := fs.Hash(fileName)
 			baseName := filepath.Base(fileName)
 
-			faces, err := Detect(fileName, true)
+			faces, err := Detect(fileName, true, 20)
 			if err != nil {
 				t.Fatal(err)
 			}

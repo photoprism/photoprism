@@ -36,8 +36,8 @@ func NewNet(modelPath, cachePath string, disabled bool) *Net {
 }
 
 // Detect runs the detection and facenet algorithms over the provided source image.
-func (t *Net) Detect(fileName string) (faces Faces, err error) {
-	faces, err = Detect(fileName, false)
+func (t *Net) Detect(fileName string, minSize int) (faces Faces, err error) {
+	faces, err = Detect(fileName, false, minSize)
 
 	if err != nil {
 		return faces, err

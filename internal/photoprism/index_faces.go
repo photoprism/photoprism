@@ -13,12 +13,15 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 		return face.Faces{}
 	}
 
+	var minSize int
 	var thumbSize string
 
 	// Select best thumbnail depending on configured size.
 	if Config().ThumbSize() < 1280 {
+		minSize = 30
 		thumbSize = "fit_720"
 	} else {
+		minSize = 40
 		thumbSize = "fit_1280"
 	}
 
@@ -36,7 +39,7 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 
 	start := time.Now()
 
-	faces, err := ind.faceNet.Detect(thumbName)
+	faces, err := ind.faceNet.Detect(thumbName, minSize)
 
 	if err != nil {
 		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
