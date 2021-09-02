@@ -499,26 +499,26 @@ func TestFile_Rename(t *testing.T) {
 }
 
 func TestFile_SubjectNames(t *testing.T) {
-	t.Run("Video.jpg", func(t *testing.T) {
-		m := FileFixtures.Get("Video.jpg")
+	t.Run("Photo27.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("Photo27.jpg")
 
 		names := m.SubjectNames()
-
-		if len(names) != 1 {
-			t.Errorf("there should be one name: %#v", names)
-		} else {
-			assert.Equal(t, "Actor A", names[0])
-		}
-	})
-	t.Run("Video.mp4", func(t *testing.T) {
-		m := FileFixtures.Get("Video.mp4")
-
-		names := m.SubjectNames()
-
+		t.Log(len(names))
 		if len(names) != 1 {
 			t.Errorf("there should be one name: %#v", names)
 		} else {
 			assert.Equal(t, "Actress A", names[0])
+		}
+	})
+	t.Run("Video.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("Video.jpg")
+
+		names := m.SubjectNames()
+		t.Log(len(names))
+		if len(names) != 1 {
+			t.Errorf("there should be one name: %#v", names)
+		} else {
+			assert.Equal(t, "Actor A", names[0])
 		}
 	})
 	t.Run("bridge.jpg", func(t *testing.T) {

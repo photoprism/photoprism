@@ -104,7 +104,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "longlonglonglonglonglongName / 2016", m.PhotoTitle)
+		assert.Equal(t, "longlonglonglonglonglongName / 2018", m.PhotoTitle)
 	})
 
 	t.Run("photo with location and short city", func(t *testing.T) {

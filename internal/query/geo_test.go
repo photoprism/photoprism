@@ -239,7 +239,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, 3, len(photos))
+		assert.GreaterOrEqual(t, len(photos), 4)
 	})
 	t.Run("faces:yes", func(t *testing.T) {
 		var f form.GeoSearch
@@ -251,7 +251,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, 3, len(photos))
+		assert.GreaterOrEqual(t, len(photos), 4)
 	})
 	t.Run("faces:no", func(t *testing.T) {
 		var f form.GeoSearch
@@ -263,7 +263,7 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, len(photos), 9)
+		assert.GreaterOrEqual(t, len(photos), 8)
 	})
 	t.Run("faces:2", func(t *testing.T) {
 		var f form.GeoSearch
