@@ -150,7 +150,7 @@ func (t *Net) getFaceCrop(fileName, cacheHash string, f *Face) (img image.Image,
 	} else if img, err := imaging.Open(cacheFile); err != nil {
 		log.Errorf("faces: failed loading %s", filepath.Base(cacheFile))
 	} else {
-		log.Debugf("faces: using %s", filepath.Base(cacheFile))
+		log.Debugf("faces: extracting from %s", filepath.Base(cacheFile))
 		return img, nil
 	}
 

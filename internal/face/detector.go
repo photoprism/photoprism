@@ -140,11 +140,11 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 	var maxSize int
 
 	if cols < 20 || rows < 20 || cols < fd.minSize || rows < fd.minSize {
-		return faces, params, fmt.Errorf("image too small (%dx%d)", cols, rows)
+		return faces, params, fmt.Errorf("image size %dx%d is too small", cols, rows)
 	} else if cols < rows {
-		maxSize = cols - 10
+		maxSize = cols - 8
 	} else {
-		maxSize = rows - 10
+		maxSize = rows - 8
 	}
 
 	imageParams := &pigo.ImageParams{
@@ -165,6 +165,8 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 		ScaleFactor: fd.scaleFactor,
 		ImageParams: *imageParams,
 	}
+
+	log.Debugf("faces: image size %dx%d, face size min %d, max %d", cols, rows, params.MinSize, params.MaxSize)
 
 	// Run the classifier over the obtained leaf nodes and return the Face results.
 	// The result contains quadruplets representing the row, column, scale and Face score.
