@@ -9,6 +9,7 @@ const (
 	ResourceSettings      Resource = "settings"
 	ResourceLogs          Resource = "logs"
 	ResourceAccounts      Resource = "accounts"
+	ResourceSubjects      Resource = "subjects"
 	ResourceAlbums        Resource = "albums"
 	ResourceCameras       Resource = "cameras"
 	ResourceCategories    Resource = "categories"

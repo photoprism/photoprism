@@ -57,6 +57,7 @@ var SubjectFixtures = SubjectMap{
 		SubjectUID:   "jqy1y111h1njaaaa",
 		SubjectSlug:  "dangling-subject",
 		SubjectName:  "Dangling Subject",
+		SubjectAlias: "Powell",
 		SubjectType:  SubjectPerson,
 		SubjectSrc:   SrcMarker,
 		Favorite:     false,

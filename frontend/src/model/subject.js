@@ -39,17 +39,18 @@ export class Subject extends RestModel {
     return {
       UID: "",
       Thumb: "",
-      PreviewSrc: "",
+      ThumbSrc: "",
       Type: "",
       Src: "",
       Slug: "",
       Name: "",
+      Alias: "",
       Bio: "",
       Notes: "",
       Favorite: false,
       Private: false,
       Excluded: false,
-      FileCount: 0,
+      Files: 0,
       Metadata: {},
       CreatedAt: "",
       UpdatedAt: "",
@@ -113,7 +114,7 @@ export class Subject extends RestModel {
   }
 
   static batchSize() {
-    return 24;
+    return 60;
   }
 
   static getCollectionResource() {

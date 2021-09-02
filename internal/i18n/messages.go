@@ -14,6 +14,7 @@ const (
 	ErrUserNotFound
 	ErrLabelNotFound
 	ErrAlbumNotFound
+	ErrSubjectNotFound
 	ErrPublic
 	ErrReadOnly
 	ErrUnauthorized
@@ -84,6 +85,7 @@ var Messages = MessageMap{
 	ErrUserNotFound:       gettext("User not found"),
 	ErrLabelNotFound:      gettext("Label not found"),
 	ErrAlbumNotFound:      gettext("Album not found"),
+	ErrSubjectNotFound:    gettext("Subject not found"),
 	ErrPublic:             gettext("Not available in public mode"),
 	ErrReadOnly:           gettext("not available in read-only mode"),
 	ErrUnauthorized:       gettext("Please log in and try again"),

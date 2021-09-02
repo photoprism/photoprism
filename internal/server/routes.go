@@ -86,6 +86,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.PhotoPrimary(v1)
 		api.PhotoUnstack(v1)
 
+		api.GetSubjects(v1)
+		api.GetSubject(v1)
+
 		api.GetLabels(v1)
 		api.UpdateLabel(v1)
 		api.GetLabelLinks(v1)
