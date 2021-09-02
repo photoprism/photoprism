@@ -27,3 +27,15 @@ func TestMarkers_FaceCount(t *testing.T) {
 
 	assert.Equal(t, 2, m.FaceCount())
 }
+
+func TestMarkers_SubjectNames(t *testing.T) {
+	m1 := MarkerFixtures.Get("1000003-3")
+	m2 := MarkerFixtures.Get("1000003-4")
+	m3 := MarkerFixtures.Get("1000003-5")
+
+	m1.MarkerInvalid = true
+
+	m := Markers{m1, m2, m3}
+
+	assert.Equal(t, []string{"Jens Mander", "Corn McCornface"}, m.SubjectNames())
+}

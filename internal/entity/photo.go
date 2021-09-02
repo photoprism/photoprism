@@ -14,7 +14,6 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
@@ -284,7 +283,7 @@ func (m *Photo) Find() error {
 	return nil
 }
 
-// Save the photo to the database.
+// SaveLabels updates the photo after labels have changed.
 func (m *Photo) SaveLabels() error {
 	if !m.HasID() {
 		return errors.New("photo: can't save to database, id is empty")
@@ -602,11 +601,6 @@ func (m *Photo) UnknownCountry() bool {
 	return m.CountryCode() == UnknownCountry.ID
 }
 
-// NoTitle checks if the photo has no Title
-func (m *Photo) NoTitle() bool {
-	return m.PhotoTitle == ""
-}
-
 // NoCameraSerial checks if the photo has no CameraSerial
 func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
@@ -620,11 +614,6 @@ func (m *Photo) UnknownCamera() bool {
 // UnknownLens test if the lens is unknown.
 func (m *Photo) UnknownLens() bool {
 	return m.LensID == 0 || m.LensID == UnknownLens.ID
-}
-
-// HasTitle checks if the photo has a title.
-func (m *Photo) HasTitle() bool {
-	return m.PhotoTitle != ""
 }
 
 // HasDescription checks if the photo has a description.
@@ -664,116 +653,6 @@ func (m *Photo) SaveDetails() error {
 	}
 }
 
-// FileTitle returns a photo title based on the file name and/or path.
-func (m *Photo) FileTitle() string {
-	// Generate title based on photo name, if not generated:
-	if !fs.IsGenerated(m.PhotoName) {
-		if title := txt.FileTitle(m.PhotoName); title != "" {
-			return title
-		}
-	}
-
-	// Generate title based on original file name, if any:
-	if m.OriginalName != "" {
-		if title := txt.FileTitle(m.OriginalName); !fs.IsGenerated(m.OriginalName) && title != "" {
-			return title
-		} else if title := txt.FileTitle(filepath.Dir(m.OriginalName)); title != "" {
-			return title
-		}
-	}
-
-	// Generate title based on photo path, if any:
-	if m.PhotoPath != "" && !fs.IsGenerated(m.PhotoPath) {
-		return txt.FileTitle(m.PhotoPath)
-	}
-
-	return ""
-}
-
-// UpdateTitle updated the photo title based on location and labels.
-func (m *Photo) UpdateTitle(labels classify.Labels) error {
-	if m.TitleSrc != SrcAuto && m.HasTitle() {
-		return fmt.Errorf("photo: won't update title, %s was modified", m.PhotoUID)
-	}
-
-	var knownLocation bool
-
-	oldTitle := m.PhotoTitle
-	fileTitle := m.FileTitle()
-
-	if m.LocationLoaded() {
-		knownLocation = true
-		loc := m.Cell
-
-		// TODO: User defined title format
-		if title := labels.Title(loc.Name()); title != "" {
-			log.Debugf("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
-			if loc.NoCity() || loc.LongCity() || loc.CityContains(title) {
-				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.City(), m.TakenAt.Format("2006")), SrcAuto)
-			}
-		} else if loc.Name() != "" && loc.City() != "" {
-			if len(loc.Name()) > 45 {
-				m.SetTitle(txt.Title(loc.Name()), SrcAuto)
-			} else if len(loc.Name()) > 20 || len(loc.City()) > 16 || strings.Contains(loc.Name(), loc.City()) {
-				m.SetTitle(fmt.Sprintf("%s / %s", loc.Name(), m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(fmt.Sprintf("%s / %s / %s", loc.Name(), loc.City(), m.TakenAt.Format("2006")), SrcAuto)
-			}
-		} else if loc.City() != "" && loc.CountryName() != "" {
-			if len(loc.City()) > 20 {
-				m.SetTitle(fmt.Sprintf("%s / %s", loc.City(), m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(fmt.Sprintf("%s / %s / %s", loc.City(), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
-			}
-		}
-	} else if m.PlaceLoaded() {
-		knownLocation = true
-
-		if title := labels.Title(fileTitle); title != "" {
-			log.Debugf("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
-			if m.Place.NoCity() || m.Place.LongCity() || m.Place.CityContains(title) {
-				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.City(), m.TakenAt.Format("2006")), SrcAuto)
-			}
-		} else if m.Place.City() != "" && m.Place.CountryName() != "" {
-			if len(m.Place.City()) > 20 {
-				m.SetTitle(fmt.Sprintf("%s / %s", m.Place.City(), m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(fmt.Sprintf("%s / %s / %s", m.Place.City(), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
-			}
-		}
-	}
-
-	if !knownLocation || m.NoTitle() {
-		if fileTitle == "" && len(labels) > 0 && labels[0].Priority >= -1 && labels[0].Uncertainty <= 85 && labels[0].Name != "" {
-			if m.TakenSrc != SrcAuto {
-				m.SetTitle(fmt.Sprintf("%s / %s", txt.Title(labels[0].Name), m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(txt.Title(labels[0].Name), SrcAuto)
-			}
-		} else if fileTitle != "" && len(fileTitle) <= 20 && !m.TakenAtLocal.IsZero() && m.TakenSrc != SrcAuto {
-			m.SetTitle(fmt.Sprintf("%s / %s", fileTitle, m.TakenAtLocal.Format("2006")), SrcAuto)
-		} else if fileTitle != "" {
-			m.SetTitle(fileTitle, SrcAuto)
-		} else {
-			if m.TakenSrc != SrcAuto {
-				m.SetTitle(fmt.Sprintf("%s / %s", UnknownTitle, m.TakenAt.Format("2006")), SrcAuto)
-			} else {
-				m.SetTitle(UnknownTitle, SrcAuto)
-			}
-		}
-	}
-
-	if m.PhotoTitle != oldTitle {
-		log.Debugf("photo: changed title of %s to %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
-	}
-
-	return nil
-}
-
 // AddLabels updates the entity with additional or updated label information.
 func (m *Photo) AddLabels(labels classify.Labels) {
 	for _, classifyLabel := range labels {
@@ -811,22 +690,6 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 	}
 
 	Db().Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
-}
-
-// SetTitle changes the photo title and clips it to 300 characters.
-func (m *Photo) SetTitle(title, source string) {
-	newTitle := txt.Clip(title, txt.ClipDefault)
-
-	if newTitle == "" {
-		return
-	}
-
-	if (SrcPriority[source] < SrcPriority[m.TitleSrc]) && m.HasTitle() {
-		return
-	}
-
-	m.PhotoTitle = newTitle
-	m.TitleSrc = source
 }
 
 // SetDescription changes the photo description if not empty and from the same source.
@@ -1159,7 +1022,7 @@ func (m *Photo) Links() Links {
 }
 
 // PrimaryFile returns the primary file for this photo.
-func (m *Photo) PrimaryFile() (File, error) {
+func (m *Photo) PrimaryFile() (*File, error) {
 	return PrimaryFile(m.PhotoUID)
 }
 
@@ -1209,5 +1072,14 @@ func (m *Photo) MapKey() string {
 func (m *Photo) SetCameraSerial(s string) {
 	if val := txt.Clip(s, txt.ClipVarchar); m.NoCameraSerial() && val != "" {
 		m.CameraSerial = val
+	}
+}
+
+// FaceCount returns the current number of faces on the primary picture.
+func (m *Photo) FaceCount() int {
+	if f, err := m.PrimaryFile(); err != nil {
+		return 0
+	} else {
+		return f.FaceCount()
 	}
 }

@@ -463,16 +463,21 @@ func TestFile_FaceCount(t *testing.T) {
 func TestFile_Rename(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
+
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
 		assert.Nil(t, m.DeletedAt)
 
 		p := m.RelatedPhoto()
+
 		assert.Equal(t, "2790/07", p.PhotoPath)
 		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
 
-		m.Rename("x/y/newName.jpg", "newRoot", "x/y", "newBase")
+		if err := m.Rename("x/y/newName.jpg", "newRoot", "x/y", "newBase"); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "x/y/newName.jpg", m.FileName)
 		assert.Equal(t, "newRoot", m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
@@ -480,7 +485,10 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "x/y", p.PhotoPath)
 		assert.Equal(t, "newBase", p.PhotoName)
 
-		m.Rename("2790/07/27900704_070228_D6D51B6C.jpg", RootOriginals, "2790/07", "27900704_070228_D6D51B6C")
+		if err := m.Rename("2790/07/27900704_070228_D6D51B6C.jpg", RootOriginals, "2790/07", "27900704_070228_D6D51B6C"); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
@@ -491,13 +499,37 @@ func TestFile_Rename(t *testing.T) {
 }
 
 func TestFile_SubjectNames(t *testing.T) {
-	f := FileFixtures.Get("Video.mp4")
-	names := f.SubjectNames()
+	t.Run("Video.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("Video.jpg")
 
-	assert.Len(t, names, 1)
-	if len(names) != 1 {
-		t.Fatal("there should be one name")
-	} else {
-		assert.Equal(t, "Actress A", names[0])
-	}
+		names := m.SubjectNames()
+
+		if len(names) != 1 {
+			t.Errorf("there should be one name: %#v", names)
+		} else {
+			assert.Equal(t, "Actor A", names[0])
+		}
+	})
+	t.Run("Video.mp4", func(t *testing.T) {
+		m := FileFixtures.Get("Video.mp4")
+
+		names := m.SubjectNames()
+
+		if len(names) != 1 {
+			t.Errorf("there should be one name: %#v", names)
+		} else {
+			assert.Equal(t, "Actress A", names[0])
+		}
+	})
+	t.Run("bridge.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("bridge.jpg")
+
+		names := m.SubjectNames()
+
+		if len(names) != 2 {
+			t.Errorf("two names expected: %#v", names)
+		} else {
+			assert.Equal(t, []string{"Corn McCornface", "Jens Mander"}, names)
+		}
+	})
 }

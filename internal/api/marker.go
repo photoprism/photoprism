@@ -103,17 +103,12 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 		// Update photo metadata.
 		if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
-			AbortEntityNotFound(c)
-			return
+			log.Errorf("faces: %s (find photo))", err)
+		} else if err := p.UpdateAndSaveTitle(); err != nil {
+			log.Errorf("faces: %s (update photo title)", err)
 		} else {
-			if faceCount := file.FaceCount(); p.PhotoFaces == faceCount {
-				// Do nothing.
-			} else if err := p.Update("PhotoFaces", faceCount); err != nil {
-				log.Errorf("photo: %s (update face count)", err)
-			} else {
-				// Notify clients.
-				PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
-			}
+			// Notify clients.
+			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
 		}
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
@@ -132,7 +127,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 //   id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
-		_, marker, err := findFileMarker(c)
+		file, marker, err := findFileMarker(c)
 
 		if err != nil {
 			log.Debugf("api: %s (clear marker subject)", err)
@@ -143,6 +138,16 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (clear subject)", err)
 			AbortSaveFailed(c)
 			return
+		}
+
+		// Update photo metadata.
+		if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
+			log.Errorf("faces: %s (find photo))", err)
+		} else if err := p.UpdateAndSaveTitle(); err != nil {
+			log.Errorf("faces: %s (update photo title)", err)
+		} else {
+			// Notify clients.
+			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
 		}
 
 		event.SuccessMsg(i18n.MsgChangesSaved)

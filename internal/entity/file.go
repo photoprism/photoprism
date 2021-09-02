@@ -94,12 +94,12 @@ func FirstFileByHash(fileHash string) (File, error) {
 }
 
 // PrimaryFile returns the primary file for a photo uid.
-func PrimaryFile(photoUID string) (File, error) {
-	var file File
+func PrimaryFile(photoUID string) (*File, error) {
+	file := File{}
 
 	res := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUID)
 
-	return file, res.Error
+	return &file, res.Error
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.

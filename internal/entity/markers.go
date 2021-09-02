@@ -1,5 +1,7 @@
 package entity
 
+import "github.com/photoprism/photoprism/pkg/txt"
+
 type Markers []Marker
 
 // Save stores the markers in the database.
@@ -51,7 +53,7 @@ func (m Markers) SubjectNames() (names []string) {
 		}
 	}
 
-	return names
+	return txt.UniqueNames(names)
 }
 
 // Append adds a marker.
