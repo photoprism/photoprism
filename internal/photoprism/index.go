@@ -230,21 +230,24 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}
 
 	if filesIndexed > 0 {
-		// Match existing faces if facial recognition is enabled.
+		event.Publish("index.updating", event.Data{
+			"step": "faces",
+		})
+
+		// Run facial recognition if enabled.
 		if w := NewFaces(ind.conf); w.Disabled() {
 			log.Debugf("index: skipping facial recognition")
-		} else if recognized, unknown, err := w.Match(); err != nil {
+		} else if err := w.Start(FacesOptionsDefault()); err != nil {
 			log.Errorf("index: %s", err)
-		} else if recognized > 0 || unknown > 0 {
-			log.Infof("faces: %d recognized, %d unknown", recognized, unknown)
 		}
 
 		event.Publish("index.updating", event.Data{
 			"step": "counts",
 		})
 
+		// Update photo counts and visibilities.
 		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("index: %s", err)
+			log.Errorf("index: %s (update counts)", err)
 		}
 	} else {
 		log.Infof("index: no new or modified files")

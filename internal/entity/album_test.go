@@ -480,17 +480,17 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 	})
 }
 
-/*func TestFindFolderAlbum(t *testing.T) {
-	t.Run("1 result", func(t *testing.T) {
-		album := FindFolderAlbum("2016/04")
+func TestFindFolderAlbum(t *testing.T) {
+	/*t.Run("1 result", func(t *testing.T) {
+		album := FindFolderAlbum("2023/04")
 
 		if album == nil {
 			t.Fatal("expected to find an album")
 		}
 
-		assert.Equal(t, "April 2016", album.AlbumTitle)
-		assert.Equal(t, "2016-04", album.AlbumSlug)
-	})
+		assert.Equal(t, "April 2023", album.AlbumTitle)
+		assert.Equal(t, "2023-04", album.AlbumSlug)
+	})*/
 	t.Run("no result because slug empty", func(t *testing.T) {
 		album := FindFolderAlbum("")
 
@@ -499,10 +499,10 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		}
 	})
 	t.Run("no result because not found slug", func(t *testing.T) {
-		album := FindFolderAlbum("2000/04")
+		album := FindFolderAlbum("3000/04")
 
 		if album != nil {
 			t.Fatal("album should be nil")
 		}
 	})
-}*/
+}

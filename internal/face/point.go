@@ -4,11 +4,11 @@ import (
 	"fmt"
 )
 
-// Points is a list of face landmark coordinates.
-type Points []Point
+// Areas is a list of face landmark areas.
+type Areas []Area
 
 // Markers returns relative marker positions for all face landmark coordinates.
-func (pts Points) Markers(r Point, rows, cols float32) (m Markers) {
+func (pts Areas) Markers(r Area, rows, cols float32) (m Markers) {
 	for _, p := range pts {
 		m = append(m, p.Marker(r, rows, cols))
 	}
@@ -16,8 +16,8 @@ func (pts Points) Markers(r Point, rows, cols float32) (m Markers) {
 	return m
 }
 
-// Point represents a face landmark position.
-type Point struct {
+// Area represents a face landmark position.
+type Area struct {
 	Name  string `json:"name,omitempty"`
 	Row   int    `json:"x,omitempty"`
 	Col   int    `json:"y,omitempty"`
@@ -25,13 +25,13 @@ type Point struct {
 }
 
 // String returns the face landmark position as string.
-func (p Point) String() string {
-	return fmt.Sprintf("%d-%d-%d", p.Row, p.Col, p.Scale)
+func (a Area) String() string {
+	return fmt.Sprintf("%d-%d-%d", a.Row, a.Col, a.Scale)
 }
 
-// NewPoint returns new face landmark coordinates.
-func NewPoint(name string, row, col, scale int) Point {
-	return Point{
+// NewArea returns new face landmark coordinates.
+func NewArea(name string, row, col, scale int) Area {
+	return Area{
 		Name:  name,
 		Row:   row,
 		Col:   col,
@@ -39,8 +39,8 @@ func NewPoint(name string, row, col, scale int) Point {
 	}
 }
 
-// Marker returns a relative marker position for the face landmark coordinates.
-func (p Point) Marker(r Point, rows, cols float32) Marker {
+// Marker returns a relative marker area for the face landmark coordinates.
+func (a Area) Marker(r Area, rows, cols float32) Marker {
 	if rows < 1 {
 		rows = 1
 	}
@@ -50,15 +50,15 @@ func (p Point) Marker(r Point, rows, cols float32) Marker {
 	}
 
 	return NewMarker(
-		p.Name,
-		float32(p.Col-r.Col)/cols,
-		float32(p.Row-r.Row)/rows,
-		float32(p.Scale)/rows,
-		float32(p.Scale)/cols,
+		a.Name,
+		float32(a.Col-r.Col)/cols,
+		float32(a.Row-r.Row)/rows,
+		float32(a.Scale)/rows,
+		float32(a.Scale)/cols,
 	)
 }
 
 // TopLeft returns the top left position of the face.
-func (p Point) TopLeft() (int, int) {
-	return p.Row - (p.Scale / 2), p.Col - (p.Scale / 2)
+func (a Area) TopLeft() (int, int) {
+	return a.Row - (a.Scale / 2), a.Col - (a.Scale / 2)
 }

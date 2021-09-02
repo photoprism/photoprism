@@ -108,28 +108,37 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 
 	// Explicitly set quality of photos without primary file to -1.
 	if err := query.ResetPhotoQuality(); err != nil {
-		log.Warnf("metadata: %s (reset photo quality)", err.Error())
+		log.Warnf("metadata: %s (reset quality)", err.Error())
 	}
 
-	// Update photo counts for labels and places.
+	log.Debugf("metadata: updating photo counts")
+
+	// Update photo counts and visibilities.
 	if err := entity.UpdatePhotoCounts(); err != nil {
-		log.Warnf("metadata: %s (update photo counts)", err.Error())
+		log.Warnf("metadata: %s (update counts)", err.Error())
 	}
 
 	// Run moments worker.
 	if w := photoprism.NewMoments(m.conf); w == nil {
-		log.Errorf("moments: failed creating worker")
+		log.Errorf("metadata: failed updating moments")
 	} else if err := w.Start(); err != nil {
-		log.Warnf("moments: %s", err)
+		log.Warn(err)
 	}
 
+	log.Debugf("metadata: running facial recognition")
+
 	// Run faces worker.
-	if w := photoprism.NewFaces(m.conf); w == nil {
-		log.Errorf("faces: failed creating worker")
-	} else if w.Disabled() {
-		// Do nothing.
+	if w := photoprism.NewFaces(m.conf); w.Disabled() {
+		log.Debugf("metadata: skipping facial recognition")
 	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
-		log.Warnf("faces: %s", err)
+		log.Warn(err)
+	}
+
+	log.Debugf("metadata: updating preview images")
+
+	// Update album, label, and subject preview image hashes.
+	if err := query.UpdatePreviews(); err != nil {
+		log.Errorf("metadata: %s (update previews)", err)
 	}
 
 	// Run garbage collection.

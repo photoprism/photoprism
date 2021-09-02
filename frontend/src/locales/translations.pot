@@ -153,7 +153,7 @@ msgstr ""
 msgid "After two weeks"
 msgstr ""
 
-#: src/model/album.js:182
+#: src/model/album.js:189
 msgid "Album"
 msgstr ""
 
@@ -271,7 +271,7 @@ msgstr ""
 #: src/component/photo/cards.vue:26
 #: src/component/photo/clipboard.vue:100
 #: src/dialog/photo/details.vue:120
-#: src/dialog/photo/people.vue:149
+#: src/dialog/photo/people.vue:151
 #: src/share/photo/cards.vue:26
 msgid "Approve"
 msgstr ""
@@ -342,7 +342,7 @@ msgstr ""
 msgid "Blue"
 msgstr ""
 
-#: src/options/options.js:151
+#: src/options/options.js:156
 msgid "Brazilian Portuguese"
 msgstr ""
 
@@ -516,7 +516,7 @@ msgstr ""
 msgid "Convert to JPEG"
 msgstr ""
 
-#: src/pages/library/index.vue:162
+#: src/pages/library/index.vue:166
 msgid "Converting"
 msgstr ""
 
@@ -574,7 +574,7 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
-#: src/pages/library/index.vue:169
+#: src/pages/library/index.vue:173
 msgid "Creating thumbnails for"
 msgstr ""
 
@@ -1215,7 +1215,7 @@ msgid "Kurdish"
 msgstr ""
 
 #: src/dialog/photo/labels.vue:17
-#: src/model/label.js:114
+#: src/model/label.js:120
 msgid "Label"
 msgstr ""
 
@@ -1464,6 +1464,7 @@ msgstr ""
 #: src/dialog/photo/files.vue:67
 #: src/dialog/photo/files.vue:30
 #: src/dialog/photo/info.vue:31
+#: src/dialog/photo/people.vue:19
 #: src/pages/about/feedback.vue:144
 #: src/pages/login.vue:73
 #: src/share/photo/cards.vue:30
@@ -1721,7 +1722,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:875
+#: src/model/photo.js:900
 msgid "Photo"
 msgstr ""
 
@@ -1794,7 +1795,7 @@ msgstr ""
 msgid "Portrait"
 msgstr ""
 
-#: src/options/options.js:156
+#: src/options/options.js:151
 msgid "Português de Portugal"
 msgstr ""
 
@@ -1904,7 +1905,7 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: src/dialog/photo/people.vue:121
+#: src/dialog/photo/people.vue:122
 msgid "Reject"
 msgstr ""
 
@@ -1928,12 +1929,12 @@ msgstr ""
 msgid "Remote Sync"
 msgstr ""
 
-#: src/component/photo/clipboard.vue:260
-msgid "Remove"
-msgstr ""
-
 #: src/component/photo/clipboard.vue:93
 msgid "remove failed: unknown album"
+msgstr ""
+
+#: src/component/photo/clipboard.vue:260
+msgid "Remove from album"
 msgstr ""
 
 #: src/pages/library/import.vue:130
@@ -2235,6 +2236,7 @@ msgid "Style"
 msgstr ""
 
 #: src/dialog/photo/details.vue:482
+#: src/model/subject.js:124
 msgid "Subject"
 msgstr ""
 
@@ -2264,7 +2266,7 @@ msgid "Teal"
 msgstr ""
 
 #: src/dialog/photo/details.vue:26
-#: src/dialog/photo/people.vue:14
+#: src/dialog/photo/people.vue:22
 msgid "Text too long"
 msgstr ""
 
@@ -2372,7 +2374,7 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:16
 #: src/dialog/photo/info.vue:21
-#: src/model/album.js:139
+#: src/model/album.js:146
 #: src/model/photo.js:526
 #: src/model/photo.js:543
 #: src/model/photo.js:566
@@ -2407,11 +2409,19 @@ msgid "Updated"
 msgstr ""
 
 #: src/pages/library/index.vue:153
+msgid "Updating faces"
+msgstr ""
+
+#: src/pages/library/index.vue:157
 msgid "Updating index"
 msgstr ""
 
 #: src/pages/library/index.vue:151
 msgid "Updating moments"
+msgstr ""
+
+#: src/pages/library/index.vue:155
+msgid "Updating previews"
 msgstr ""
 
 #: src/pages/library/index.vue:149

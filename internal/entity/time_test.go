@@ -5,8 +5,24 @@ import (
 	"time"
 )
 
-func TestTimestamp(t *testing.T) {
-	result := Timestamp()
+func TestTimeStamp(t *testing.T) {
+	result := TimeStamp()
+
+	if result.Location() != time.UTC {
+		t.Fatal("timestamp zone must be utc")
+	}
+
+	if result.After(time.Now().Add(time.Second)) {
+		t.Fatal("timestamp should be in the past from now")
+	}
+}
+
+func TestTimePointer(t *testing.T) {
+	result := TimePointer()
+
+	if result == nil {
+		t.Fatal("result must not be nil")
+	}
 
 	if result.Location() != time.UTC {
 		t.Fatal("timestamp zone must be utc")

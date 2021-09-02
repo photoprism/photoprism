@@ -1,4 +1,4 @@
-FROM photoprism/development:20210716 as build
+FROM photoprism/development:20210831 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -8,10 +8,10 @@ ARG BUILD_TAG
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
-# Build PhotoPrism
+# Build frontend and backend
 RUN make dep build-js install
 
-# Same base image as photoprism/development
+# Should be the same as used for photoprism/development!
 FROM ubuntu:21.04
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
@@ -31,8 +31,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # Install additional distribution packages
-RUN apt-get update && apt-get -qq dist-upgrade && \
-    apt-get -qq install -y --no-install-recommends \
+RUN apt-get update && apt dist-upgrade 2>/dev/null && apt-get -qq install -y --no-install-recommends \
     gpgv \
     wget \
     curl \
@@ -56,8 +55,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && \
     [ "$TARGETARCH" = "arm" ] || apt-get install darktable; \
     apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
-# see https://docs.photoprism.org/getting-started/config-options/
+# Set environment variables, see https://docs.photoprism.org/getting-started/config-options/
 ENV TF_CPP_MIN_LOG_LEVEL="2" \
     PATH="/photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     PHOTOPRISM_ASSETS_PATH="/photoprism/assets" \

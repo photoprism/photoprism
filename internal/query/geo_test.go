@@ -11,14 +11,32 @@ import (
 )
 
 func TestGeo(t *testing.T) {
-	t.Run("search all photos", func(t *testing.T) {
-		query := form.NewGeoSearch("")
-		result, err := Geo(query)
+	t.Run("form.keywords", func(t *testing.T) {
+		query := form.NewGeoSearch("keywords:bridge")
 
-		if err != nil {
+		if result, err := Geo(query); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.GreaterOrEqual(t, len(result), 1)
 		}
-		assert.LessOrEqual(t, 4, len(result))
+	})
+	t.Run("form.subjects", func(t *testing.T) {
+		query := form.NewGeoSearch("subjects:John")
+
+		if result, err := Geo(query); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.GreaterOrEqual(t, len(result), 0)
+		}
+	})
+	t.Run("find_all", func(t *testing.T) {
+		query := form.NewGeoSearch("")
+
+		if result, err := Geo(query); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 4, len(result))
+		}
 	})
 
 	t.Run("search for bridge", func(t *testing.T) {
@@ -140,16 +158,6 @@ func TestGeo(t *testing.T) {
 		}
 		assert.IsType(t, GeoResults{}, result)
 	})
-	t.Run("query too short", func(t *testing.T) {
-		f := form.GeoSearch{
-			Query: "a",
-		}
-
-		result, err := Geo(f)
-
-		assert.Error(t, err)
-		assert.IsType(t, GeoResults{}, result)
-	})
 	t.Run("query for label flower", func(t *testing.T) {
 		f := form.GeoSearch{
 			Query: "flower",
@@ -221,7 +229,7 @@ func TestGeo(t *testing.T) {
 
 		assert.IsType(t, GeoResults{}, result)
 	})
-	t.Run("faces", func(t *testing.T) {
+	t.Run("faces:true", func(t *testing.T) {
 		var f form.GeoSearch
 		f.Query = "faces:true"
 
@@ -232,5 +240,102 @@ func TestGeo(t *testing.T) {
 		}
 
 		assert.GreaterOrEqual(t, 3, len(photos))
+	})
+	t.Run("faces:yes", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Faces = "Yes"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, 3, len(photos))
+	})
+	t.Run("faces:no", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Faces = "No"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 9)
+	})
+	t.Run("faces:2", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Faces = "2"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("day", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Day = 18
+		f.Month = 4
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("subject uid in query", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Query = "Actress"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("albums", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Albums = "2030"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 10)
+	})
+	t.Run("path or path", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Path = "1990/04" + "|" + "2015/11"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 3)
+	})
+	t.Run("name or name", func(t *testing.T) {
+		var f form.GeoSearch
+		f.Name = "20151101_000000_51C501B5" + "|" + "Video"
+
+		photos, err := Geo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 2)
 	})
 }

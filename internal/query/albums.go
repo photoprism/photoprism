@@ -15,8 +15,9 @@ import (
 type AlbumResult struct {
 	ID               uint      `json:"-"`
 	AlbumUID         string    `json:"UID"`
-	CoverUID         string    `json:"CoverUID"`
-	FolderUID        string    `json:"FolderUID"`
+	ParentUID        string    `json:"ParentUID"`
+	Thumb            string    `json:"Thumb"`
+	ThumbSrc         string    `json:"ThumbSrc"`
 	AlbumSlug        string    `json:"Slug"`
 	AlbumType        string    `json:"Type"`
 	AlbumTitle       string    `json:"Title"`

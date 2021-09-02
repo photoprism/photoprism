@@ -8,10 +8,10 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fastwalk"
@@ -128,12 +128,22 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		log.Errorf("cleanup: %s (purge orphans)", err)
 	}
 
-	// Update counts and views if needed.
 	if len(deleted) > 0 {
+		log.Info("cleanup: updating photo counts")
+
+		// Update photo counts and visibilities.
 		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("cleanup: %s", err)
+			log.Errorf("cleanup: %s (update counts)", err)
 		}
 
+		log.Info("cleanup: updating preview images")
+
+		// Update album, label, and subject preview images.
+		if err := query.UpdatePreviews(); err != nil {
+			log.Errorf("cleanup: %s (update previews)", err)
+		}
+
+		// Show success notification.
 		event.EntitiesDeleted("photos", deleted)
 	}
 

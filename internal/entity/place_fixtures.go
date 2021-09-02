@@ -32,8 +32,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "ancient, pyramid",
 		PlaceFavorite: false,
 		PhotoCount:    1,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 	"zinkwazi": {
 		ID:            s2.TokenPrefix + "1ef744d1e279",
@@ -44,8 +44,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 	"holidaypark": {
 		ID:            s2.TokenPrefix + "1ef744d1e280",
@@ -56,8 +56,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 	"emptyNameLongCity": {
 		ID:            s2.TokenPrefix + "1ef744d1e281",
@@ -68,8 +68,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 	"emptyNameShortCity": {
 		ID:            s2.TokenPrefix + "1ef744d1e282",
@@ -80,8 +80,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 	"veryLongLocName": {
 		ID:            s2.TokenPrefix + "1ef744d1e283",
@@ -92,8 +92,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 	"mediumLongLocName": {
 		ID:            s2.TokenPrefix + "1ef744d1e284",
@@ -104,8 +104,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 	"Germany": {
 		ID:            s2.TokenPrefix + "1ef744d1e285",
@@ -116,8 +116,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: false,
 		PhotoCount:    1,
-		CreatedAt:     Timestamp(),
-		UpdatedAt:     Timestamp(),
+		CreatedAt:     TimeStamp(),
+		UpdatedAt:     TimeStamp(),
 	},
 }
 

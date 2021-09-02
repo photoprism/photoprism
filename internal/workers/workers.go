@@ -94,7 +94,7 @@ func StartShare(conf *config.Config) {
 	}
 }
 
-// StartShare runs the sync worker once.
+// StartSync runs the sync worker once.
 func StartSync(conf *config.Config) {
 	if !mutex.SyncWorker.Busy() {
 		go func() {

@@ -40,7 +40,7 @@ func (m *Link) BeforeCreate(scope *gorm.Scope) error {
 
 // NewLink creates a sharing link.
 func NewLink(shareUID string, canComment, canEdit bool) Link {
-	now := Timestamp()
+	now := TimeStamp()
 
 	result := Link{
 		LinkUID:    rnd.PPID('s'),
@@ -74,7 +74,7 @@ func (m *Link) Expired() bool {
 		return false
 	}
 
-	now := Timestamp()
+	now := TimeStamp()
 	expires := m.ModifiedAt.Add(Seconds(m.LinkExpires))
 
 	return now.After(expires)
@@ -120,7 +120,7 @@ func (m *Link) Save() error {
 		return fmt.Errorf("link: empty share token")
 	}
 
-	m.ModifiedAt = Timestamp()
+	m.ModifiedAt = TimeStamp()
 
 	return Db().Save(m).Error
 }

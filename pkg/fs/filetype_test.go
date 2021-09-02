@@ -178,4 +178,21 @@ func TestNormalizedExt(t *testing.T) {
 		result := NormalizedExt("testdata/test.xMp")
 		assert.Equal(t, "xmp", result)
 	})
+
+	t.Run("test.MP", func(t *testing.T) {
+		result := NormalizedExt("testdata/test.mp")
+		assert.Equal(t, "mp", result)
+	})
+}
+
+func TestFileExt(t *testing.T) {
+	t.Run("mp", func(t *testing.T) {
+		assert.True(t, FileExt.Known("file.mp"))
+	})
+}
+
+func TestGetFileFormat(t *testing.T) {
+	t.Run("mp", func(t *testing.T) {
+		assert.Equal(t, FileFormat("mp4"), GetFileFormat("file.mp"))
+	})
 }

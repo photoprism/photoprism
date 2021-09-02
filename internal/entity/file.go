@@ -69,7 +69,7 @@ type File struct {
 	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
-	Markers         Markers       `json:"Markers,omitempty" yaml:"-"`
+	markers         *Markers
 }
 
 type FileInfos struct {
@@ -94,12 +94,12 @@ func FirstFileByHash(fileHash string) (File, error) {
 }
 
 // PrimaryFile returns the primary file for a photo uid.
-func PrimaryFile(photoUID string) (File, error) {
-	var file File
+func PrimaryFile(photoUID string) (*File, error) {
+	file := File{}
 
 	res := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUID)
 
-	return file, res.Error
+	return &file, res.Error
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -216,7 +216,7 @@ func (m *File) Delete(permanently bool) error {
 
 // Purge removes a file from the index by marking it as missing.
 func (m *File) Purge() error {
-	deletedAt := Timestamp()
+	deletedAt := TimeStamp()
 	m.FileMissing = true
 	m.FilePrimary = false
 	m.DeletedAt = &deletedAt
@@ -254,7 +254,7 @@ func (m *File) Create() error {
 		return err
 	}
 
-	if err := m.Markers.Save(m.ID); err != nil {
+	if err := m.Markers().Save(m.FileUID); err != nil {
 		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -282,7 +282,7 @@ func (m *File) Save() error {
 		return err
 	}
 
-	if err := m.Markers.Save(m.ID); err != nil {
+	if err := m.Markers().Save(m.FileUID); err != nil {
 		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -405,16 +405,19 @@ func (m *File) AddFaces(faces face.Faces) {
 }
 
 // AddFace adds a face marker to the file.
-func (m *File) AddFace(f face.Face, refUID string) {
-	marker := NewFaceMarker(f, m.ID, refUID)
-	if !m.Markers.Contains(*marker) {
-		m.Markers = append(m.Markers, *marker)
+func (m *File) AddFace(f face.Face, subjectUID string) {
+	marker := *NewFaceMarker(f, m.FileUID, subjectUID)
+
+	if markers := m.Markers(); !markers.Contains(marker) {
+		markers.Append(marker)
 	}
 }
 
 // FaceCount returns the current number of valid faces detected.
 func (m *File) FaceCount() (c int) {
-	if err := Db().Model(Marker{}).Where("file_id = ? AND marker_invalid = 0", m.ID).
+	if err := Db().Model(Marker{}).
+		Where("file_uid = ? AND marker_type = ?", m.FileUID, MarkerFace).
+		Where("marker_invalid = 0").
 		Count(&c).Error; err != nil {
 		log.Errorf("file: %s (count faces)", err)
 		return 0
@@ -423,11 +426,23 @@ func (m *File) FaceCount() (c int) {
 	}
 }
 
-// PreloadMarkers loads existing file markers.
-func (m *File) PreloadMarkers() {
-	if res, err := FindMarkers(m.ID); err != nil {
-		log.Warnf("file: %s (load markers)", err)
-	} else {
-		m.Markers = res
+// Markers finds and returns existing file markers.
+func (m *File) Markers() *Markers {
+	if m.markers != nil {
+		return m.markers
 	}
+
+	if res, err := FindMarkers(m.FileUID); err != nil {
+		log.Warnf("file: %s (load markers)", err)
+		m.markers = &Markers{}
+	} else {
+		m.markers = &res
+	}
+
+	return m.markers
+}
+
+// SubjectNames returns all known subject names.
+func (m *File) SubjectNames() []string {
+	return m.Markers().SubjectNames()
 }

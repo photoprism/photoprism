@@ -20,17 +20,18 @@
             xs6 sm4 md3 lg2 xl1 d-flex
         >
           <v-card tile
-                  :data-id="marker.ID"
+                  :data-id="marker.UID"
                   style="user-select: none"
                   :class="{invalid: marker.Invalid}"
                   class="result accent lighten-3">
             <div class="card-background accent lighten-3"></div>
-            <canvas :id="'face-' + marker.ID" :key="marker.ID" width="300" height="300" style="width: 100%" class="v-responsive v-image accent lighten-2"></canvas>
+            <canvas :id="'face-' + marker.UID" :key="marker.UID" width="300" height="300" style="width: 100%"
+                    class="v-responsive v-image accent lighten-2"></canvas>
 
             <v-card-actions class="card-details pa-0">
-              <v-layout v-if="marker.Score < 30" row wrap align-center>
+              <v-layout v-if="marker.Review || marker.Invalid" row wrap align-center>
                 <v-flex xs6 class="text-xs-center pa-0">
-                  <v-btn color="transparent"
+                  <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
                          class="action-archive text-xs-center"
                          :title="$gettext('Reject')" @click.stop="reject(marker)">
@@ -38,10 +39,10 @@
                   </v-btn>
                 </v-flex>
                 <v-flex xs6 class="text-xs-center pa-0">
-                  <v-btn color="transparent"
+                  <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
                          class="action-approve text-xs-center"
-                         :title="$gettext('Approve')" @click.stop="confirm(marker)">
+                         :title="$gettext('Approve')" @click.stop="approve(marker)">
                     <v-icon dark>check</v-icon>
                   </v-btn>
                 </v-flex>
@@ -51,15 +52,16 @@
                   <v-text-field
                       v-model="marker.Name"
                       :rules="[textRule]"
+                      :disabled="busy"
                       browser-autocomplete="off"
                       class="input-name pa-0 ma-0"
                       hide-details
                       single-line
                       solo-inverted
                       clearable
-                      @click:clear="clearName(marker)"
-                      @change="updateName(marker)"
-                      @keyup.enter.native="updateName(marker)"
+                      @click:clear="clearSubject(marker)"
+                      @change="rename(marker)"
+                      @keyup.enter.native="rename(marker)"
                   ></v-text-field>
                 </v-flex>
               </v-layout>
@@ -82,22 +84,29 @@ export default {
   },
   data() {
     return {
+      busy: false,
       markers: this.model.getMarkers(true),
       imageUrl: this.model.thumbnailUrl("fit_720"),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
-      textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
+      textRule: (v) => {
+        if (!v || !v.length) {
+          return this.$gettext("Name");
+        }
+
+        return v.length <= this.$config.get('clip') || this.$gettext("Text too long");
+      },
     };
   },
-  mounted () {
+  mounted() {
     this.markers.forEach((m) => {
-      const canvas = document.getElementById('face-' + m.ID);
+      const canvas = document.getElementById('face-' + m.UID);
 
       let ctx = canvas.getContext('2d');
       let img = new Image();
 
-      img.onload = function() {
+      img.onload = function () {
         const w = Math.round(m.W * img.width);
         const h = Math.round(m.H * img.height);
         const s = w > h ? w : h;
@@ -125,29 +134,20 @@ export default {
     refresh() {
     },
     reject(marker) {
-      marker.Invalid = true;
-      this.model.updateMarker(marker);
+      this.busy = true;
+      marker.reject().finally(() => this.busy = false);
     },
-    confirm(marker) {
-      marker.Score = 100;
-      marker.Invalid = false;
-      this.model.updateMarker(marker);
+    approve(marker) {
+      this.busy = true;
+      marker.approve().finally(() => this.busy = false);
     },
-    clearName(marker) {
-      marker.Name = "";
-      marker.SubjectUID = "";
-      marker.SubjectSrc = src.Manual;
-      marker.FaceID = "";
-      this.model.updateMarker(marker);
+    clearSubject(marker) {
+      this.busy = true;
+      marker.clearSubject(marker).finally(() => this.busy = false);
     },
-    updateName(marker) {
-      if (marker.Name === "") {
-        marker.SubjectSrc = src.Auto;
-      } else {
-        marker.SubjectSrc = src.Manual;
-      }
-
-      this.model.updateMarker(marker);
+    rename(marker) {
+      this.busy = true;
+      marker.rename().finally(() => this.busy = false);
     },
   },
 };

@@ -19,47 +19,34 @@ const (
 
 var subjectMutex = sync.Mutex{}
 
+// Subjects represents a list of subjects.
 type Subjects []Subject
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjectUID         string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	SubjectType        string          `gorm:"type:VARBINARY(8);" json:"Type" yaml:"Type"`
-	SubjectSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src"`
-	SubjectSlug        string          `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"-"`
-	SubjectName        string          `gorm:"type:VARCHAR(255);index;" json:"Name" yaml:"Name"`
-	SubjectDescription string          `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
-	SubjectNotes       string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	Favorite           bool            `json:"Favorite" yaml:"Favorite,omitempty"`
-	Hidden             bool            `json:"Hidden" yaml:"Hidden,omitempty"`
-	Private            bool            `json:"Private" yaml:"Private,omitempty"`
-	PhotoUID           string          `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
-	PhotoCount         int             `gorm:"default:0" json:"PhotoCount" yaml:"-"`
-	MetadataJSON       json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
-	CreatedAt          time.Time       `json:"CreatedAt" yaml:"-"`
-	UpdatedAt          time.Time       `json:"UpdatedAt" yaml:"-"`
-	DeletedAt          *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-}
-
-// UnknownPerson can be used as a placeholder for unknown people.
-var UnknownPerson = Subject{
-	SubjectUID:  "j000000000000000",
-	SubjectSlug: "unknown",
-	SubjectName: "Unknown",
-	SubjectType: SubjectPerson,
-	SubjectSrc:  SrcDefault,
-	Favorite:    false,
-	PhotoCount:  0,
-}
-
-// CreateUnknownPerson initializes the database with a placeholder for unknown people if not exists.
-func CreateUnknownPerson() {
-	FirstOrCreateSubject(&UnknownPerson)
+	SubjectUID   string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	Thumb        string          `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb,omitempty" yaml:"Thumb,omitempty"`
+	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	SubjectType  string          `gorm:"type:VARBINARY(8);default:''" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjectSrc   string          `gorm:"type:VARBINARY(8);default:''" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjectSlug  string          `gorm:"type:VARBINARY(255);index;default:''" json:"Slug" yaml:"-"`
+	SubjectName  string          `gorm:"type:VARCHAR(255);unique_index;default:''" json:"Name" yaml:"Name"`
+	SubjectAlias string          `gorm:"type:VARCHAR(255);default:''" json:"Alias" yaml:"Alias"`
+	SubjectBio   string          `gorm:"type:TEXT;default:''" json:"Bio" yaml:"Bio,omitempty"`
+	SubjectNotes string          `gorm:"type:TEXT;default:''" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	Favorite     bool            `gorm:"default:false" json:"Favorite" yaml:"Favorite,omitempty"`
+	Private      bool            `gorm:"default:false" json:"Private" yaml:"Private,omitempty"`
+	Excluded     bool            `gorm:"default:false" json:"Excluded" yaml:"Excluded,omitempty"`
+	FileCount    int             `gorm:"default:0" json:"FileCount" yaml:"-"`
+	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
+	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
+	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity database table name.
 func (Subject) TableName() string {
-	return "subjects_dev4"
+	return "subjects_dev6"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -77,19 +64,20 @@ func NewSubject(name, subjectType, subjectSrc string) *Subject {
 		subjectType = SubjectPerson
 	}
 
-	if name == "" {
-		name = UnknownName
-	}
-
 	subjectName := txt.Title(txt.Clip(name, txt.ClipDefault))
 	subjectSlug := slug.Make(txt.Clip(name, txt.ClipSlug))
+
+	// Name is required.
+	if subjectName == "" || subjectSlug == "" {
+		return nil
+	}
 
 	result := &Subject{
 		SubjectSlug: subjectSlug,
 		SubjectName: subjectName,
 		SubjectType: subjectType,
 		SubjectSrc:  subjectSrc,
-		PhotoCount:  1,
+		FileCount:   1,
 	}
 
 	return result
@@ -124,6 +112,7 @@ func (m *Subject) Deleted() bool {
 // Restore restores the entity in the database.
 func (m *Subject) Restore() error {
 	if m.Deleted() {
+		m.DeletedAt = nil
 		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
 	}
 
@@ -142,12 +131,16 @@ func (m *Subject) Updates(values interface{}) error {
 
 // FirstOrCreateSubject returns the existing entity, inserts a new entity or nil in case of errors.
 func FirstOrCreateSubject(m *Subject) *Subject {
-	result := Subject{}
+	if m == nil {
+		return nil
+	} else if m.SubjectName == "" {
+		return nil
+	}
 
-	if err := UnscopedDb().Where("subject_type = ? AND subject_slug = ?", m.SubjectType, m.SubjectSlug).First(&result).Error; err == nil {
-		return &result
+	if found := FindSubjectByName(m.SubjectName); found != nil {
+		return found
 	} else if createErr := m.Create(); createErr == nil {
-		if !m.Hidden && m.SubjectType == SubjectPerson {
+		if !m.Excluded && m.SubjectType == SubjectPerson {
 			event.EntitiesCreated("people", []*Subject{m})
 
 			event.Publish("count.people", event.Data{
@@ -156,10 +149,10 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 		}
 
 		return m
-	} else if err := UnscopedDb().Where("subject_type = ? AND subject_slug = ?", m.SubjectType, m.SubjectSlug).First(&result).Error; err == nil {
-		return &result
+	} else if found = FindSubjectByName(m.SubjectName); found != nil {
+		return found
 	} else {
-		log.Errorf("subject: %s (find or create %s)", createErr, m.SubjectSlug)
+		log.Errorf("subject: %s while creating %s", createErr, txt.Quote(m.SubjectName))
 	}
 
 	return nil
@@ -173,16 +166,35 @@ func FindSubject(s string) *Subject {
 
 	result := Subject{}
 
-	db := Db()
-
-	if rnd.IsPPID(s, 'j') {
-		db = db.Where("subject_uid = ?", s)
-	} else {
-		db = db.Where("subject_slug = ?", slug.Make(txt.Clip(s, txt.ClipSlug)))
-	}
+	db := Db().Where("subject_uid = ?", s)
 
 	if err := db.First(&result).Error; err != nil {
 		return nil
+	}
+
+	return &result
+}
+
+// FindSubjectByName find an existing subject by name.
+func FindSubjectByName(s string) *Subject {
+	if s == "" {
+		return nil
+	}
+
+	result := Subject{}
+
+	// Search database.
+	db := UnscopedDb().Where("subject_name LIKE ?", s).First(&result)
+
+	if err := db.First(&result).Error; err != nil {
+		return nil
+	}
+
+	// Restore if currently deleted.
+	if err := result.Restore(); err != nil {
+		log.Errorf("subject: %s could not be restored", result.SubjectUID)
+	} else {
+		log.Debugf("subject: %s restored", result.SubjectUID)
 	}
 
 	return &result
@@ -203,12 +215,50 @@ func (m *Subject) SetName(name string) error {
 }
 
 // UpdateName changes and saves the subject's name in the index.
-func (m *Subject) UpdateName(name string) error {
+func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
+		return m, err
+	} else if err := m.Updates(Values{"SubjectName": m.SubjectName, "SubjectSlug": m.SubjectSlug}); err == nil {
+		return m, m.UpdateMarkerNames()
+	} else if existing := FindSubjectByName(m.SubjectName); existing == nil {
+		return m, err
+	} else {
+		return existing, m.MergeWith(existing)
+	}
+}
+
+// UpdateMarkerNames updates related marker names.
+func (m *Subject) UpdateMarkerNames() error {
+	return Db().Model(&Marker{}).
+		Where("subject_uid = ? AND subject_src <> ?", m.SubjectUID, SrcAuto).
+		Where("marker_name <> '' AND marker_name <> ?", m.SubjectName).
+		Update(Values{"MarkerName": m.SubjectName}).Error
+}
+
+// MergeWith merges this subject with another subject and then deletes it.
+func (m *Subject) MergeWith(other *Subject) error {
+	if other == nil {
+		return fmt.Errorf("other subject is nil")
+	} else if other.SubjectUID == "" {
+		return fmt.Errorf("other subject's uid is empty")
+	} else if m.SubjectUID == "" {
+		return fmt.Errorf("subject uid is empty")
+	}
+
+	// Update markers and faces with new SubjectUID.
+	if err := Db().Model(&Marker{}).
+		Where("subject_uid = ?", m.SubjectUID).
+		Update(Values{"SubjectUID": other.SubjectUID}).Error; err != nil {
+		return err
+	} else if err := Db().Model(&Face{}).
+		Where("subject_uid = ?", m.SubjectUID).
+		Update(Values{"SubjectUID": other.SubjectUID}).Error; err != nil {
+		return err
+	} else if err := other.UpdateMarkerNames(); err != nil {
 		return err
 	}
 
-	return m.Updates(Values{"SubjectName": m.SubjectName, "SubjectSlug": m.SubjectSlug})
+	return m.Delete()
 }
 
 // Links returns all share links for this entity.

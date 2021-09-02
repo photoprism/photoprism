@@ -9,6 +9,8 @@ type LabelResult struct {
 	// Label
 	ID               uint      `json:"ID"`
 	LabelUID         string    `json:"UID"`
+	Thumb            string    `json:"Thumb"`
+	ThumbSrc         string    `json:"ThumbSrc"`
 	LabelSlug        string    `json:"Slug"`
 	CustomSlug       string    `json:"CustomSlug"`
 	LabelName        string    `json:"Name"`

@@ -12,6 +12,9 @@ import (
 
 var cameraMutex = sync.Mutex{}
 
+// Cameras represents a list of cameras.
+type Cameras []Camera
+
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
 	ID                uint       `gorm:"primary_key" json:"ID" yaml:"ID"`

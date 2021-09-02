@@ -72,6 +72,7 @@ var FileExt = FileExtensions{
 	".dng":  FormatRaw,
 	".mov":  FormatMov,
 	".avi":  FormatAvi,
+	".mp":   FormatMp4,
 	".mp4":  FormatMp4,
 	".m4v":  FormatMp4,
 	".avc":  FormatAvc,

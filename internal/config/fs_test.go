@@ -104,18 +104,187 @@ func TestConfig_OriginalsAlbumsPath(t *testing.T) {
 }
 
 func TestConfig_CreateDirectories(t *testing.T) {
-	testConfigMutex.Lock()
-	defer testConfigMutex.Unlock()
+	t.Run("no error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
 
-	c := &Config{
-		options: NewTestOptions(),
-		token:   rnd.Token(8),
-	}
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
 
-	if err := c.CreateDirectories(); err != nil {
-		t.Fatal(err)
-	}
+		if err := c.CreateDirectories(); err != nil {
+			t.Fatal(err)
+		}
+	})
 }
+
+/* TODO Doesn't fail on https://drone.photoprism.app/!
+	--- FAIL: TestConfig_CreateDirectories2 (0.00s)
+    --- FAIL: TestConfig_CreateDirectories2/asset_path_not_found (0.00s)
+        fs_test.go:142: error expected
+
+func TestConfig_CreateDirectories2(t *testing.T) {
+	t.Run("asset path not found", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+		c.options.AssetsPath = ""
+
+		err := c.CreateDirectories()
+		if err == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err.Error(), "assets path not found")
+
+		c.options.AssetsPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+
+	t.Run("storage path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.StoragePath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+
+	t.Run("originals path not found", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+		c.options.OriginalsPath = ""
+
+		err := c.CreateDirectories()
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Contains(t, err.Error(), "originals path not found")
+
+		c.options.OriginalsPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+
+	t.Run("import path not found", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+		c.options.ImportPath = ""
+
+		err := c.CreateDirectories()
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Contains(t, err.Error(), "import path not found")
+
+		c.options.ImportPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+
+	t.Run("sidecar path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.SidecarPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+
+	t.Run("cache path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.CachePath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+
+	t.Run("config path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.ConfigPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+
+	t.Run("temp path error", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+		c := &Config{
+			options: NewTestOptions(),
+			token:   rnd.Token(8),
+		}
+
+		c.options.TempPath = "/-*&^%$#@!`~"
+		err2 := c.CreateDirectories()
+
+		if err2 == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err2.Error(), "please check configuration and permissions")
+	})
+}
+*/
 
 func TestConfig_ConfigFile2(t *testing.T) {
 	c := NewConfig(CliTestContext())
@@ -151,13 +320,6 @@ func TestConfig_ImportPath2(t *testing.T) {
 	c.options.ImportPath = ""
 	assert.Equal(t, "", c.ImportPath())
 }
-
-/*func TestConfig_ConfigPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config", c.ConfigPath())
-	c.options.ConfigPath = ""
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/config", c.ConfigPath())
-}*/
 
 func TestConfig_AssetsPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())

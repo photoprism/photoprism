@@ -72,8 +72,8 @@ func TestPlace_Find(t *testing.T) {
 			PlaceKeywords: "",
 			PlaceFavorite: false,
 			PhotoCount:    0,
-			CreatedAt:     Timestamp(),
-			UpdatedAt:     Timestamp(),
+			CreatedAt:     TimeStamp(),
+			UpdatedAt:     TimeStamp(),
 		}
 		err := place.Find()
 		assert.EqualError(t, err, "record not found")

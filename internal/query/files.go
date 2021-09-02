@@ -47,7 +47,7 @@ func Files(limit, offset int, pathName string, includeMissing bool) (files entit
 	return files, err
 }
 
-// FilesByUID
+// FilesByUID finds files for the given UIDs.
 func FilesByUID(u []string, limit int, offset int) (files entity.Files, err error) {
 	if err := Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
@@ -56,7 +56,7 @@ func FilesByUID(u []string, limit int, offset int) (files entity.Files, err erro
 	return files, nil
 }
 
-// FileByPhotoUID
+// FileByPhotoUID finds a file for the given photo UID.
 func FileByPhotoUID(u string) (file entity.File, err error) {
 	if err := Db().Where("photo_uid = ? AND file_primary = 1", u).Preload("Photo").First(&file).Error; err != nil {
 		return file, err
@@ -65,7 +65,7 @@ func FileByPhotoUID(u string) (file entity.File, err error) {
 	return file, nil
 }
 
-// VideoByPhotoUID
+// VideoByPhotoUID finds a video for the given photo UID.
 func VideoByPhotoUID(u string) (file entity.File, err error) {
 	if err := Db().Where("photo_uid = ? AND file_video = 1", u).Preload("Photo").First(&file).Error; err != nil {
 		return file, err
@@ -74,7 +74,7 @@ func VideoByPhotoUID(u string) (file entity.File, err error) {
 	return file, nil
 }
 
-// FileByUID returns the file entity for a given UID.
+// FileByUID finds a file entity for the given UID.
 func FileByUID(uid string) (file entity.File, err error) {
 	if err := Db().Where("file_uid = ?", uid).Preload("Photo").First(&file).Error; err != nil {
 		return file, err

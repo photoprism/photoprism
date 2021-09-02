@@ -16,6 +16,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// StartIndexing indexes media files in the "originals" folder.
+//
 // POST /api/v1/index
 func StartIndexing(router *gin.RouterGroup) {
 	router.POST("/index", func(c *gin.Context) {
@@ -100,6 +102,8 @@ func StartIndexing(router *gin.RouterGroup) {
 	})
 }
 
+// CancelIndexing stops indexing media files in the "originals" folder.
+//
 // DELETE /api/v1/index
 func CancelIndexing(router *gin.RouterGroup) {
 	router.DELETE("/index", func(c *gin.Context) {

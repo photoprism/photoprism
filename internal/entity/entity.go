@@ -131,7 +131,6 @@ func CreateDefaultFixtures() {
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
-	CreateUnknownPerson()
 	CreateUnknownFace()
 }
 

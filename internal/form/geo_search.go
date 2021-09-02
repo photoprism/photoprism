@@ -25,7 +25,12 @@ type GeoSearch struct {
 	S2       string    `form:"s2"`
 	Olc      string    `form:"olc"`
 	Dist     uint      `form:"dist"`
+	Subject  string    `form:"subject"`  // UIDs
+	Subjects string    `form:"subjects"` // Text
+	People   string    `form:"people"`   // Alias for Subjects
+	Keywords string    `form:"keywords"`
 	Album    string    `form:"album"`
+	Albums   string    `form:"albums"`
 	Country  string    `form:"country"`
 	Year     int       `form:"year"`  // Moments
 	Month    int       `form:"month"` // Moments
@@ -51,6 +56,10 @@ func (f *GeoSearch) ParseQueryString() error {
 
 	if f.Path == "" && f.Folder != "" {
 		f.Path = f.Folder
+	}
+
+	if f.Subjects == "" {
+		f.Subjects = f.People
 	}
 
 	return err

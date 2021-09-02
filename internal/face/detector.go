@@ -173,8 +173,8 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 	})
 
 	for _, face := range det {
-		var eyesCoords []Point
-		var landmarkCoords []Point
+		var eyesCoords []Area
+		var landmarkCoords []Area
 		var puploc *pigo.Puploc
 
 		if face.Q < fd.scoreThreshold {
@@ -187,7 +187,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			continue
 		}
 
-		faceCoord := NewPoint(
+		faceCoord := NewArea(
 			"face",
 			face.Row,
 			face.Col,
@@ -206,7 +206,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			leftEye := plc.RunDetector(*puploc, params.ImageParams, fd.angle, false)
 
 			if leftEye.Row > 0 && leftEye.Col > 0 {
-				eyesCoords = append(eyesCoords, NewPoint(
+				eyesCoords = append(eyesCoords, NewArea(
 					"eye_l",
 					leftEye.Row,
 					leftEye.Col,
@@ -225,7 +225,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			rightEye := plc.RunDetector(*puploc, params.ImageParams, fd.angle, false)
 
 			if rightEye.Row > 0 && rightEye.Col > 0 {
-				eyesCoords = append(eyesCoords, NewPoint(
+				eyesCoords = append(eyesCoords, NewArea(
 					"eye_r",
 					rightEye.Row,
 					rightEye.Col,
@@ -242,7 +242,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 
 						flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, false)
 						if flp.Row > 0 && flp.Col > 0 {
-							landmarkCoords = append(landmarkCoords, NewPoint(
+							landmarkCoords = append(landmarkCoords, NewArea(
 								eye,
 								flp.Row,
 								flp.Col,
@@ -252,7 +252,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 
 						flp = flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, true)
 						if flp.Row > 0 && flp.Col > 0 {
-							landmarkCoords = append(landmarkCoords, NewPoint(
+							landmarkCoords = append(landmarkCoords, NewArea(
 								eye+"_v",
 								flp.Row,
 								flp.Col,
@@ -272,7 +272,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 
 					flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, false)
 					if flp.Row > 0 && flp.Col > 0 {
-						landmarkCoords = append(landmarkCoords, NewPoint(
+						landmarkCoords = append(landmarkCoords, NewArea(
 							"mouth_"+mouth,
 							flp.Row,
 							flp.Col,
@@ -287,7 +287,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			if flpc != nil {
 				flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, true)
 				if flp.Row > 0 && flp.Col > 0 {
-					landmarkCoords = append(landmarkCoords, NewPoint(
+					landmarkCoords = append(landmarkCoords, NewArea(
 						"lp84",
 						flp.Row,
 						flp.Col,

@@ -39,7 +39,17 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
 
-	f.Query = txt.Clip(f.Query, txt.ClipKeyword)
+	// Clip query to reasonable size if needed.
+	f.Query = txt.Clip(f.Query, txt.ClipQuery)
+
+	// Modify query if it contains subject names.
+	if f.Query != "" && f.Subject == "" {
+		if subj, names, remaining := SearchSubjectUIDs(f.Query); len(subj) > 0 {
+			f.Subject = strings.Join(subj, And)
+			log.Debugf("search: subject %s", txt.Quote(strings.Join(names, ", ")))
+			f.Query = remaining
+		}
+	}
 
 	if f.Query != "" {
 		// Filter by label, label category and keywords.
@@ -47,15 +57,11 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		var labels []entity.Label
 		var labelIds []uint
 
-		if len(f.Query) < 2 {
-			return results, fmt.Errorf("query too short")
-		}
-
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Infof("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
+			log.Debugf("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
 
-			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
-				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(likeAny))
+			for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
+				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 			}
 		} else {
 			for _, l := range labels {
@@ -63,42 +69,75 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Infof("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
+				log.Debugf("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)
 				}
 			}
 
-			if likeAny := LikeAny("k.keyword", f.Query); likeAny != "" {
-				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
-					"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(likeAny), labelIds)
+			if wheres := LikeAnyKeyword("k.keyword", f.Query); len(wheres) > 0 {
+				for _, where := range wheres {
+					s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
+						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where), labelIds)
+				}
 			} else {
 				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIds)
 			}
 		}
 	}
 
-	if f.Album != "" {
-		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
+	// Search for one or more keywords?
+	if f.Keywords != "" {
+		for _, where := range LikeAllKeywords("k.keyword", f.Keywords) {
+			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
+		}
 	}
 
+	// Filter for one or more subjects?
+	if f.Subject != "" {
+		for _, subj := range strings.Split(strings.ToLower(f.Subject), And) {
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subject_uid IN (?))",
+				entity.Marker{}.TableName()), strings.Split(subj, Or))
+		}
+	} else if f.Subjects != "" {
+		for _, where := range LikeAnyWord("s.subject_name", f.Subjects) {
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 JOIN %s s ON s.subject_uid = m.subject_uid WHERE (?))",
+				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where))
+		}
+	}
+
+	// Filter by album?
+	if f.Album != "" {
+		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").
+			Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
+	} else if f.Albums != "" {
+		for _, where := range LikeAnyWord("a.album_title", f.Albums) {
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE (?))", gorm.Expr(where))
+		}
+	}
+
+	// Filter by camera?
 	if f.Camera > 0 {
 		s = s.Where("photos.camera_id = ?", f.Camera)
 	}
 
+	// Filter by camera lens?
 	if f.Lens > 0 {
 		s = s.Where("photos.lens_id = ?", f.Lens)
 	}
 
+	// Filter by year?
 	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.UnknownYear {
 		s = s.Where("photos.photo_year = ?", f.Year)
 	}
 
+	// Filter by month?
 	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.UnknownMonth {
 		s = s.Where("photos.photo_month = ?", f.Month)
 	}
 
+	// Filter by day?
 	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.UnknownDay {
 		s = s.Where("photos.photo_day = ?", f.Day)
 	}

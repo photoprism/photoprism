@@ -138,7 +138,7 @@ func TestThumb_FromFile(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		assert.Equal(t, "resample: file hash is empty or too short (123)", err.Error())
+		assert.Equal(t, "resample: invalid file hash 123", err.Error())
 	})
 	t.Run("filename too short", func(t *testing.T) {
 		file := &entity.File{
@@ -147,7 +147,7 @@ func TestThumb_FromFile(t *testing.T) {
 		}
 
 		if _, err := thumb.FromFile(file.FileName, file.FileHash, thumbsPath, 224, 224, file.FileOrientation); err != nil {
-			assert.Equal(t, "resample: image filename is empty or too short (xxx)", err.Error())
+			assert.Equal(t, "resample: invalid file name xxx", err.Error())
 		} else {
 			t.Error("error is nil")
 		}

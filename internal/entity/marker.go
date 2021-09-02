@@ -3,15 +3,17 @@ package entity
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/photoprism/photoprism/pkg/clusters"
 
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/ulule/deepcopier"
-
-	"github.com/photoprism/photoprism/internal/face"
 )
 
 const (
@@ -22,16 +24,18 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	ID             uint            `gorm:"primary_key" json:"ID" yaml:"-"`
-	FileID         uint            `gorm:"index;" json:"-" yaml:"-"`
-	MarkerType     string          `gorm:"type:VARBINARY(8);index:idx_markers_subject;default:'';" json:"Type" yaml:"Type"`
+	MarkerUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	FileUID        string          `gorm:"type:VARBINARY(42);index;" json:"FileUID" yaml:"FileUID"`
+	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
-	SubjectUID     string          `gorm:"type:VARBINARY(42);index:idx_markers_subject;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	SubjectUID     string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
 	SubjectSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
-	Subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Subject,omitempty" yaml:"-"`
+	subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
-	Face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"-" yaml:"-"`
+	FaceDist       float64         `gorm:"default:-1" json:"FaceDist" yaml:"FaceDist,omitempty"`
+	FaceThumb      string          `gorm:"type:VARBINARY(128);default:''" json:"FaceThumb,omitempty" yaml:"FaceThumb,omitempty"`
+	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     Embeddings      `gorm:"-"`
 	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
@@ -39,24 +43,36 @@ type Marker struct {
 	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	Size           int             `gorm:"default:-1" json:"Size" yaml:"Size,omitempty"`
 	Score          int             `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
+	Review         bool            `json:"Review" yaml:"Review,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
+	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
 
 // UnknownMarker can be used as a default for unknown markers.
-var UnknownMarker = NewMarker(0, "", SrcDefault, MarkerUnknown, 0, 0, 0, 0)
+var UnknownMarker = NewMarker("", "", SrcDefault, MarkerUnknown, 0, 0, 0, 0)
 
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
-	return "markers_dev3"
+	return "markers_dev6"
+}
+
+// BeforeCreate creates a random UID if needed before inserting a new row to the database.
+func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
+	if rnd.IsUID(m.MarkerUID, 'm') {
+		return nil
+	}
+
+	return scope.SetColumn("MarkerUID", rnd.PPID('m'))
 }
 
 // NewMarker creates a new entity.
-func NewMarker(fileID uint, subjectUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
+func NewMarker(fileUID, subjectUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
 	m := &Marker{
-		FileID:     fileID,
+		FileUID:    fileUID,
 		SubjectUID: subjectUID,
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
@@ -70,14 +86,19 @@ func NewMarker(fileID uint, subjectUID, markerSrc, markerType string, x, y, w, h
 }
 
 // NewFaceMarker creates a new entity.
-func NewFaceMarker(f face.Face, fileID uint, refUID string) *Marker {
+func NewFaceMarker(f face.Face, fileUID, subjectUID string) *Marker {
 	pos := f.Marker()
 
-	m := NewMarker(fileID, refUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
+	m := NewMarker(fileUID, subjectUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
 
+	m.MatchedAt = nil
+	m.FaceDist = -1
+	m.FaceThumb = f.Thumb
 	m.EmbeddingsJSON = f.EmbeddingsJSON()
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
+	m.Size = f.Size()
 	m.Score = f.Score
+	m.Review = f.Score < 30
 
 	return m
 }
@@ -94,23 +115,55 @@ func (m *Marker) Update(attr string, value interface{}) error {
 
 // SaveForm updates the entity using form data and stores it in the database.
 func (m *Marker) SaveForm(f form.Marker) error {
-	if err := deepcopier.Copy(m).From(f); err != nil {
-		return err
+	changed := false
+
+	if m.MarkerInvalid != f.MarkerInvalid {
+		m.MarkerInvalid = f.MarkerInvalid
+		changed = true
 	}
 
-	if f.MarkerName != "" {
-		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipKeyword))
+	if m.Review != f.Review {
+		m.Review = f.Review
+		changed = true
 	}
 
-	if err := m.SyncSubject(true); err != nil {
-		return err
+	if f.SubjectSrc == SrcManual && strings.TrimSpace(f.MarkerName) != "" {
+		m.SubjectSrc = SrcManual
+		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipDefault))
+
+		if err := m.SyncSubject(true); err != nil {
+			return err
+		}
+
+		changed = true
 	}
 
-	return m.Save()
+	if changed {
+		return m.Save()
+	}
+
+	return nil
+}
+
+// HasFace tests if the marker already has the best matching face.
+func (m *Marker) HasFace(f *Face, dist float64) bool {
+	if m.FaceID == "" {
+		return false
+	} else if f == nil {
+		return m.FaceID != ""
+	} else if m.FaceID == f.ID {
+		return m.FaceID != ""
+	} else if m.FaceDist < 0 {
+		return false
+	} else if dist < 0 {
+		return true
+	}
+
+	return m.FaceDist <= dist
 }
 
 // SetFace sets a new face for this marker.
-func (m *Marker) SetFace(f *Face) (updated bool, err error) {
+func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	if f == nil {
 		return false, fmt.Errorf("face is nil")
 	}
@@ -119,87 +172,110 @@ func (m *Marker) SetFace(f *Face) (updated bool, err error) {
 		return false, fmt.Errorf("not a face marker")
 	}
 
-	var d float64 = -1
-
-	for _, e := range m.Embeddings() {
-		if dist := clusters.EuclideanDistance(e, f.Embedding()); dist < d {
-			d = dist
-		}
+	// Any reason we don't want to set a new face for this marker?
+	if m.SubjectSrc == SrcAuto || f.SubjectUID == "" || m.SubjectUID == "" || f.SubjectUID == m.SubjectUID {
+		// Don't skip if subject wasn't set manually, or subjects match.
+	} else if reported, err := f.ResolveCollision(m.Embeddings()); err != nil {
+		return false, err
+	} else if reported {
+		log.Infof("faces: collision of marker %s, subject %s, face %s, subject %s, source %s", m.MarkerUID, m.SubjectUID, f.ID, f.SubjectUID, m.SubjectSrc)
+		return false, nil
+	} else {
+		return false, nil
 	}
 
-	// Too distant?
-	if d > (f.Radius + face.ClusterRadius) {
-		return false, fmt.Errorf("face doesn't match")
-	}
-
-	if f.SubjectUID != "" || m.SubjectUID == "" {
-		// Do nothing.
-	} else if err := f.Update("SubjectUID", m.SubjectUID); err != nil {
+	// Update face with known subject from marker?
+	if m.SubjectSrc == SrcAuto || m.SubjectUID == "" || f.SubjectUID != "" {
+		// Don't update if face has a known subject, or marker subject is unknown.
+	} else if err = f.SetSubjectUID(m.SubjectUID); err != nil {
 		return false, err
 	}
 
-	// Skip update?
-	if m.SubjectSrc == SrcManual {
-		return false, nil
-	} else if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
-		return false, nil
+	// Set face.
+	m.face = f
+
+	// Skip update if the same face is already set.
+	if m.SubjectUID == f.SubjectUID && m.FaceID == f.ID {
+		// Update matching timestamp.
+		m.MatchedAt = TimePointer()
+		return false, m.Updates(Values{"MatchedAt": m.MatchedAt})
 	}
 
-	// Remember current values.
+	// Remember current values for comparison.
 	faceID := m.FaceID
 	subjectUID := m.SubjectUID
 	SubjectSrc := m.SubjectSrc
 
 	m.FaceID = f.ID
+	m.FaceDist = dist
+
+	if m.FaceDist < 0 {
+		faceEmbedding := f.Embedding()
+
+		// Calculate smallest distance to embeddings.
+		for _, e := range m.Embeddings() {
+			if len(e) != len(faceEmbedding) {
+				continue
+			}
+
+			if d := clusters.EuclideanDistance(e, faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
+				m.FaceDist = d
+			}
+		}
+	}
 
 	if f.SubjectUID != "" {
 		m.SubjectUID = f.SubjectUID
-		m.SubjectSrc = SrcAuto
 	}
 
-	if err := m.SyncSubject(false); err != nil {
+	if err = m.SyncSubject(false); err != nil {
 		return false, err
 	}
 
 	// Update face subject?
-	if m.SubjectUID == "" || f.SubjectUID != m.SubjectUID {
+	if m.SubjectSrc == SrcAuto || m.SubjectUID == "" || f.SubjectUID == m.SubjectUID {
 		// Not needed.
-	} else if err := f.Update("SubjectUID", m.SubjectUID); err != nil {
+	} else if err = f.SetSubjectUID(m.SubjectUID); err != nil {
 		return false, err
 	}
 
-	// Update database only if anything has changed.
-	if m.FaceID != faceID || m.SubjectUID != subjectUID || m.SubjectSrc != SubjectSrc {
-		return true, m.Updates(Values{"FaceID": m.FaceID, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc})
-	}
+	updated = m.FaceID != faceID || m.SubjectUID != subjectUID || m.SubjectSrc != SubjectSrc
 
-	return false, nil
+	// Update matching timestamp.
+	m.MatchedAt = TimePointer()
+
+	return updated, m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "MatchedAt": m.MatchedAt})
 }
 
 // SyncSubject maintains the marker subject relationship.
-func (m *Marker) SyncSubject(updateRelated bool) error {
+func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 	// Face marker? If not, return.
 	if m.MarkerType != MarkerFace {
 		return nil
 	}
 
-	subj := m.GetSubject()
+	subj := m.Subject()
 
-	if subj == nil {
+	if subj == nil || m.SubjectSrc == SrcAuto {
 		return nil
 	}
 
 	// Update subject with marker name?
 	if m.MarkerName == "" || subj.SubjectName == m.MarkerName {
 		// Do nothing.
-	} else if err := subj.UpdateName(m.MarkerName); err != nil {
+	} else if subj, err = subj.UpdateName(m.MarkerName); err != nil {
 		return err
+	} else if subj != nil {
+		// Update subject fields in case it was merged.
+		m.subject = subj
+		m.SubjectUID = subj.SubjectUID
+		m.MarkerName = subj.SubjectName
 	}
 
 	// Create known face for subject?
-	if m.FaceID != "" || m.SubjectSrc != SrcManual {
+	if m.FaceID != "" {
 		// Do nothing.
-	} else if f := m.GetFace(); f != nil {
+	} else if f := m.Face(); f != nil {
 		m.FaceID = f.ID
 	}
 
@@ -211,14 +287,14 @@ func (m *Marker) SyncSubject(updateRelated bool) error {
 	} else if !updateRelated {
 		return nil
 	} else if err := Db().Model(&Marker{}).
-		Where("id <> ?", m.ID).
+		Where("marker_uid <> ?", m.MarkerUID).
 		Where("face_id = ?", m.FaceID).
 		Where("subject_src = ?", SrcAuto).
 		Where("subject_uid <> ?", m.SubjectUID).
 		Updates(Values{"SubjectUID": m.SubjectUID, "SubjectSrc": SrcAuto}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else {
-		log.Debugf("marker: matched subject %s with face %s", subj.SubjectName, m.FaceID)
+		log.Debugf("marker: matched %s with %s", subj.SubjectName, m.FaceID)
 	}
 
 	return nil
@@ -255,64 +331,147 @@ func (m *Marker) Embeddings() Embeddings {
 	return m.embeddings
 }
 
-// GetSubject returns a subject entity if possible.
-func (m *Marker) GetSubject() (subj *Subject) {
-	if m.Subject != nil {
-		return m.Subject
+// SubjectName returns the matching subject's name.
+func (m *Marker) SubjectName() string {
+	if m.MarkerName != "" {
+		return m.MarkerName
+	} else if s := m.Subject(); s != nil {
+		return s.SubjectName
 	}
 
-	if m.SubjectUID == "" && m.MarkerName != "" {
-		if subj = NewSubject(m.MarkerName, SubjectPerson, SrcMarker); subj == nil {
+	return ""
+}
+
+// Subject returns the matching subject or nil.
+func (m *Marker) Subject() (subj *Subject) {
+	if m.subject != nil {
+		if m.SubjectUID == m.subject.SubjectUID {
+			return m.subject
+		}
+	}
+
+	// Create subject?
+	if m.SubjectSrc != SrcAuto && m.MarkerName != "" && m.SubjectUID == "" {
+		if subj = NewSubject(m.MarkerName, SubjectPerson, m.SubjectSrc); subj == nil {
 			return nil
 		} else if subj = FirstOrCreateSubject(subj); subj == nil {
 			log.Debugf("marker: invalid subject %s", txt.Quote(m.MarkerName))
 			return nil
+		} else {
+			m.subject = subj
+			m.SubjectUID = subj.SubjectUID
 		}
 
-		m.SubjectUID = subj.SubjectUID
-		m.SubjectSrc = SrcManual
-
-		return subj
+		return m.subject
 	}
 
-	m.Subject = FindSubject(m.SubjectUID)
+	m.subject = FindSubject(m.SubjectUID)
 
-	return m.Subject
+	return m.subject
 }
 
-// GetFace returns a matching face entity if possible.
-func (m *Marker) GetFace() (f *Face) {
-	if m.Face != nil {
-		return m.Face
+// ClearSubject removes an existing subject association, and reports a collision.
+func (m *Marker) ClearSubject(src string) error {
+	if m.face == nil {
+		m.face = FindFace(m.FaceID)
 	}
 
-	if m.FaceID == "" && m.SubjectSrc == SrcManual {
-		if f = NewFace(m.SubjectUID, SrcManual, m.Embeddings()); f == nil {
+	if m.face == nil {
+		// Do nothing
+	} else if resolved, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
+		return err
+	} else if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "SubjectSrc": src}); err != nil {
+		return err
+	} else if resolved {
+		log.Debugf("faces: resolved collision with %s", m.face.ID)
+	}
+
+	m.face = nil
+
+	m.MarkerName = ""
+	m.FaceID = ""
+	m.FaceDist = -1.0
+	m.SubjectUID = ""
+	m.SubjectSrc = src
+
+	return nil
+}
+
+// Face returns a matching face entity if possible.
+func (m *Marker) Face() (f *Face) {
+	if m.face != nil {
+		if m.FaceID == m.face.ID {
+			return m.face
+		}
+	}
+
+	// Add face if size
+	if m.SubjectSrc != SrcAuto && m.FaceID == "" {
+		if m.Size < face.ClusterMinSize || m.Score < face.ClusterMinScore {
+			log.Debugf("faces: skipped adding face for low-quality marker %s, size %d, score %d", m.MarkerUID, m.Size, m.Score)
+			return nil
+		} else if emb := m.Embeddings(); len(emb) == 0 {
+			log.Warnf("marker: %s has no embeddings", m.MarkerUID)
+			return nil
+		} else if f = NewFace(m.SubjectUID, m.SubjectSrc, emb); f == nil {
+			log.Warnf("marker: failed adding face for id %s", m.MarkerUID)
 			return nil
 		} else if f = FirstOrCreateFace(f); f == nil {
-			log.Debugf("marker: invalid face")
+			log.Warnf("marker: failed adding face for id %s", m.MarkerUID)
 			return nil
+		} else if err := f.MatchMarkers(Faceless); err != nil {
+			log.Errorf("faces: %s (match markers)", err)
 		}
 
+		m.face = f
 		m.FaceID = f.ID
-
-		return f
+		m.FaceDist = 0
+	} else {
+		m.face = FindFace(m.FaceID)
 	}
 
-	m.Face = FindFace(m.FaceID)
+	return m.face
+}
 
-	return m.Face
+// ClearFace removes an existing face association.
+func (m *Marker) ClearFace() (updated bool, err error) {
+	if m.FaceID == "" {
+		return false, m.Matched()
+	}
+
+	updated = true
+
+	// Remove face references.
+	m.face = nil
+	m.FaceID = ""
+	m.MatchedAt = TimePointer()
+
+	// Remove subject if set automatically.
+	if m.SubjectSrc == SrcAuto {
+		m.SubjectUID = ""
+		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "MatchedAt": m.MatchedAt})
+	} else {
+		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
+	}
+
+	return updated, err
+}
+
+// Matched updates the match timestamp.
+func (m *Marker) Matched() error {
+	m.MatchedAt = TimePointer()
+	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
 // FindMarker returns an existing row if exists.
-func FindMarker(id uint) *Marker {
-	result := Marker{}
+func FindMarker(uid string) *Marker {
+	var result Marker
 
-	if err := Db().Where("id = ?", id).First(&result).Error; err == nil {
-		return &result
+	if err := Db().Where("marker_uid = ?", uid).First(&result).Error; err != nil {
+		return nil
 	}
 
-	return nil
+	return &result
 }
 
 // UpdateOrCreateMarker updates a marker in the database or creates a new one if needed.
@@ -321,12 +480,12 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 
 	result := Marker{}
 
-	if m.ID > 0 {
+	if m.MarkerUID != "" {
 		err := m.Save()
-		log.Debugf("faces: saved marker %d for file %d", m.ID, m.FileID)
+		log.Debugf("faces: saved marker %s for file %s", m.MarkerUID, m.FileUID)
 		return m, err
-	} else if err := Db().Where(`file_id = ? AND x > ? AND x < ? AND y > ? AND y < ?`,
-		m.FileID, m.X-d, m.X+d, m.Y-d, m.Y+d).First(&result).Error; err == nil {
+	} else if err := Db().Where(`file_uid = ? AND x > ? AND x < ? AND y > ? AND y < ?`,
+		m.FileUID, m.X-d, m.X+d, m.Y-d, m.Y+d).First(&result).Error; err == nil {
 
 		if SrcPriority[m.MarkerSrc] < SrcPriority[result.MarkerSrc] {
 			// Ignore.
@@ -334,21 +493,24 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 		}
 
 		err := result.Updates(map[string]interface{}{
+			"MarkerType":     m.MarkerType,
+			"MarkerSrc":      m.MarkerSrc,
+			"FaceThumb":      m.FaceThumb,
 			"X":              m.X,
 			"Y":              m.Y,
 			"W":              m.W,
 			"H":              m.H,
 			"Score":          m.Score,
+			"Size":           m.Size,
 			"LandmarksJSON":  m.LandmarksJSON,
 			"EmbeddingsJSON": m.EmbeddingsJSON,
-			"SubjectUID":     m.SubjectUID,
 		})
 
-		log.Debugf("faces: updated existing marker %d for file %d", result.ID, result.FileID)
+		log.Debugf("faces: updated existing marker %s for file %s", result.MarkerUID, result.FileUID)
 
 		return &result, err
 	} else if err := m.Create(); err != nil {
-		log.Debugf("faces: added marker %d for file %d", m.ID, m.FileID)
+		log.Debugf("faces: added marker %s for file %s", m.MarkerUID, m.FileUID)
 		return m, err
 	}
 

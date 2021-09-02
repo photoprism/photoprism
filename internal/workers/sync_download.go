@@ -181,6 +181,7 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 
 	if len(done) > 0 {
 		worker.logError(entity.UpdatePhotoCounts())
+		worker.logError(query.UpdatePreviews())
 	}
 
 	return false, nil

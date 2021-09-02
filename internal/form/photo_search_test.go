@@ -14,12 +14,47 @@ func TestPhotoSearchForm(t *testing.T) {
 }
 
 func TestParseQueryString(t *testing.T) {
+	t.Run("subjects", func(t *testing.T) {
+		form := &PhotoSearch{Query: "subjects:\"Jens & Mander\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Jens & Mander", form.Subjects)
+	})
+	t.Run("keywords", func(t *testing.T) {
+		form := &PhotoSearch{Query: "keywords:\"Foo Bar\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Foo Bar", form.Keywords)
+	})
+	t.Run("and query", func(t *testing.T) {
+		form := &PhotoSearch{Query: "\"Jens & Mander\" title:\"Tübingen\""}
+
+		err := form.ParseQueryString()
+
+		// log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "jens & mander", form.GetQuery())
+		assert.Equal(t, "Tübingen", form.Title)
+	})
 	t.Run("path", func(t *testing.T) {
 		form := &PhotoSearch{Query: "path:123abc/,EFG"}
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal(err)
@@ -33,7 +68,7 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal(err)
@@ -46,7 +81,7 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal(err)
@@ -65,7 +100,7 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -81,7 +116,7 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal(err)
@@ -96,7 +131,7 @@ func TestParseQueryString(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal(err)
@@ -113,7 +148,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
@@ -137,7 +172,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.ParseFloat: parsing \"cat\": invalid syntax", err.Error())
 	})
@@ -150,7 +185,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
 	})
@@ -163,7 +198,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
 	})
@@ -176,7 +211,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
 	})

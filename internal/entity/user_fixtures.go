@@ -53,6 +53,19 @@ var UserFixtures = UserMap{
 		UserDisabled: true,
 		PrimaryEmail: "friend@example.com",
 	},
+	"deleted": {
+		ID:           10000008,
+		AddressID:    1000000,
+		UserUID:      "uqxqg7i1kperxvu8",
+		UserName:     "deleted",
+		FullName:     "Deleted User",
+		RoleAdmin:    false,
+		RoleGuest:    true,
+		RoleFriend:   false,
+		UserDisabled: false,
+		PrimaryEmail: "",
+		DeletedAt:    &deleteTime,
+	},
 }
 
 // CreateUserFixtures inserts known entities into the database for testing.

@@ -13,4 +13,7 @@ func TestQuote(t *testing.T) {
 	t.Run("filename.txt", func(t *testing.T) {
 		assert.Equal(t, "filename.txt", Quote("filename.txt"))
 	})
+	t.Run("empty string", func(t *testing.T) {
+		assert.Equal(t, "“”", Quote(""))
+	})
 }

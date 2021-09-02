@@ -1,6 +1,6 @@
 /*
 
-Package face provides face landmark detection.
+Package face provides facial recognition.
 
 Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
@@ -38,9 +38,12 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
-var ClusterCore = 3
-var ClusterRadius = 0.66
-var SampleThreshold = 25
+var CropSize = 160
+var ClusterCore = 4
+var ClusterRadius = 0.6
+var ClusterMinScore = 30
+var ClusterMinSize = CropSize
+var SampleThreshold = 2 * ClusterCore
 
 var log = event.Log
 
@@ -97,10 +100,16 @@ type Face struct {
 	Rows       int         `json:"rows,omitempty"`
 	Cols       int         `json:"cols,omitempty"`
 	Score      int         `json:"score,omitempty"`
-	Face       Point       `json:"face,omitempty"`
-	Eyes       Points      `json:"eyes,omitempty"`
-	Landmarks  Points      `json:"landmarks,omitempty"`
+	Face       Area        `json:"face,omitempty"`
+	Eyes       Areas       `json:"eyes,omitempty"`
+	Landmarks  Areas       `json:"landmarks,omitempty"`
 	Embeddings [][]float32 `json:"embeddings,omitempty"`
+	Thumb      string      `json:"-"`
+}
+
+// Size returns the absolute face size in pixels.
+func (f *Face) Size() int {
+	return f.Face.Scale
 }
 
 // Dim returns the max number of rows and cols as float32 to calculate relative coordinates.
@@ -114,8 +123,8 @@ func (f *Face) Dim() float32 {
 
 // Marker returns the relative position on the image.
 func (f *Face) Marker() Marker {
-	marker := f.Face.Marker(Point{}, float32(f.Rows), float32(f.Cols))
-	midpoint := f.EyesMidpoint().Marker(Point{}, float32(f.Rows), float32(f.Cols))
+	marker := f.Face.Marker(Area{}, float32(f.Rows), float32(f.Cols))
+	midpoint := f.EyesMidpoint().Marker(Area{}, float32(f.Rows), float32(f.Cols))
 	marker.X = midpoint.X
 	marker.Y = midpoint.Y
 
@@ -123,9 +132,9 @@ func (f *Face) Marker() Marker {
 }
 
 // EyesMidpoint returns the point in between the eyes.
-func (f *Face) EyesMidpoint() Point {
+func (f *Face) EyesMidpoint() Area {
 	if len(f.Eyes) != 2 {
-		return Point{
+		return Area{
 			Name:  "midpoint",
 			Row:   f.Face.Row,
 			Col:   f.Face.Col,
@@ -133,7 +142,7 @@ func (f *Face) EyesMidpoint() Point {
 		}
 	}
 
-	return Point{
+	return Area{
 		Name:  "midpoint",
 		Row:   (f.Eyes[0].Row + f.Eyes[1].Row) / 2,
 		Col:   (f.Eyes[0].Col + f.Eyes[1].Col) / 2,

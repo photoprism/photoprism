@@ -75,7 +75,13 @@ export class Label extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return `${config.contentUri}/labels/${this.getId()}/t/${config.previewToken()}/${size}`;
+    if (this.Thumb) {
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+    } else if (this.UID) {
+      return `${config.contentUri}/labels/${this.UID}/t/${config.previewToken()}/${size}`;
+    } else {
+      return `${config.contentUri}/svg/label`;
+    }
   }
 
   getDateString() {

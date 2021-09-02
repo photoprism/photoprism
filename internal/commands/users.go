@@ -1,11 +1,9 @@
 package commands
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/manifoldco/promptui"
@@ -52,17 +50,13 @@ var UsersCommand = cli.Command{
 		},
 		{
 			Name:   "update",
-			Usage:  "updates user information",
-			Action: usersModifyAction,
+			Usage:  "select user by username and update it's information",
+			Action: usersUpdateAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "fullname, n",
 					Usage: "full name of the new user",
 				},
-				//cli.StringFlag{
-				//	Name:  "username, u",
-				//	Usage: "unique username",
-				//},
 				cli.StringFlag{
 					Name:  "password, p",
 					Usage: "sets the users password",
@@ -100,45 +94,73 @@ func usersAddAction(ctx *cli.Context) error {
 		}
 
 		if interactive && uc.FullName == "" {
-			fmt.Printf("please enter full name: ")
-			reader := bufio.NewReader(os.Stdin)
-			text, err := reader.ReadString('\n')
+			prompt := promptui.Prompt{
+				Label: "Full Name",
+			}
+			res, err := prompt.Run()
 			if err != nil {
 				return err
 			}
-			uc.FullName = strings.TrimSpace(text)
+			uc.FullName = strings.TrimSpace(res)
 		}
 
 		if interactive && uc.UserName == "" {
-			fmt.Printf("please enter a username: ")
-			reader := bufio.NewReader(os.Stdin)
-			text, err := reader.ReadString('\n')
+			prompt := promptui.Prompt{
+				Label: "Username",
+			}
+			res, err := prompt.Run()
 			if err != nil {
 				return err
 			}
-			uc.UserName = strings.TrimSpace(text)
+			uc.UserName = strings.TrimSpace(res)
 		}
 
 		if interactive && uc.Email == "" {
-			fmt.Printf("please enter email: ")
-			reader := bufio.NewReader(os.Stdin)
-			text, err := reader.ReadString('\n')
+			prompt := promptui.Prompt{
+				Label: "E-Mail",
+			}
+			res, err := prompt.Run()
 			if err != nil {
 				return err
 			}
-			uc.Email = strings.TrimSpace(text)
+			uc.Email = strings.TrimSpace(res)
 		}
 
 		if interactive && len(ctx.String("password")) < 4 {
-			for {
-				fmt.Printf("please enter a new password for %s (at least 4 characters)\n", txt.Quote(uc.UserName))
-				pw := getPassword("New password: ")
-				if confirm := getPassword("Confirm password: "); confirm == pw {
-					uc.Password = pw
-					break
-				} else {
-					log.Infof("passwords did not match or too short. please try again\n")
+			validate := func(input string) error {
+				if len(input) < 4 {
+					return errors.New("password must have min. 4 characters")
 				}
+				return nil
+			}
+			prompt := promptui.Prompt{
+				Label:    "Password",
+				Validate: validate,
+				Mask:     '*',
+			}
+			resPasswd, err := prompt.Run()
+			if err != nil {
+				return err
+			}
+			validateRetype := func(input string) error {
+				if input != resPasswd {
+					return errors.New("password does not match")
+				}
+				return nil
+			}
+			confirm := promptui.Prompt{
+				Label:    "Retype Password",
+				Validate: validateRetype,
+				Mask:     '*',
+			}
+			resConfirm, err := confirm.Run()
+			if err != nil {
+				return err
+			}
+			if resConfirm != resPasswd {
+				return errors.New("passwords did not match or too short. please try again")
+			} else {
+				uc.Password = resPasswd
 			}
 		}
 
@@ -195,7 +217,7 @@ func usersListAction(ctx *cli.Context) error {
 	})
 }
 
-func usersModifyAction(ctx *cli.Context) error {
+func usersUpdateAction(ctx *cli.Context) error {
 	return callWithDependencies(ctx, func(conf *config.Config) error {
 		username := ctx.Args().First()
 		if username == "" {
@@ -208,7 +230,6 @@ func usersModifyAction(ctx *cli.Context) error {
 		}
 
 		uc := form.UserCreate{
-			//UserName: strings.TrimSpace(ctx.String("username")),
 			FullName: strings.TrimSpace(ctx.String("fullname")),
 			Email:    strings.TrimSpace(ctx.String("email")),
 			Password: strings.TrimSpace(ctx.String("password")),
@@ -221,10 +242,6 @@ func usersModifyAction(ctx *cli.Context) error {
 			}
 			fmt.Printf("password successfully changed: %v\n", u.UserName)
 		}
-
-		//if ctx.IsSet("username") {
-		//	u.UserName = uc.UserName
-		//}
 
 		if ctx.IsSet("fullname") {
 			u.FullName = uc.FullName

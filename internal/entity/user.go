@@ -308,7 +308,7 @@ func (m *User) InvalidPassword(password string) bool {
 		return true
 	}
 
-	if err := Db().Model(m).Updates(map[string]interface{}{"login_attempts": 0, "login_at": Timestamp()}).Error; err != nil {
+	if err := Db().Model(m).Updates(map[string]interface{}{"login_attempts": 0, "login_at": TimeStamp()}).Error; err != nil {
 		log.Errorf("user: %s (update last login)", err)
 	}
 
@@ -381,6 +381,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		FullName:     uc.FullName,
 		UserName:     uc.UserName,
 		PrimaryEmail: uc.Email,
+		RoleAdmin:    true,
 	}
 	if len(uc.Password) < 4 {
 		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(u.UserName))

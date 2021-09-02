@@ -103,11 +103,11 @@ func Filename(hash string, thumbPath string, width, height int, opts ...Resample
 
 func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", txt.Quote(hash))
+		return "", fmt.Errorf("resample: invalid file hash %s", txt.Quote(hash))
 	}
 
 	if len(imageFilename) < 4 {
-		return "", fmt.Errorf("resample: image filename is empty or too short (%s)", txt.Quote(imageFilename))
+		return "", fmt.Errorf("resample: invalid file name %s", txt.Quote(imageFilename))
 	}
 
 	fileName, err = Filename(hash, thumbPath, width, height, opts...)

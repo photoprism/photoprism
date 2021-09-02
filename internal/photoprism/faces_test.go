@@ -22,3 +22,15 @@ func TestFaces_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestFaces_StartDefault(t *testing.T) {
+	c := config.TestConfig()
+
+	m := NewFaces(c)
+
+	err := m.StartDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}

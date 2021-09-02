@@ -1,6 +1,7 @@
 package query
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -22,6 +23,55 @@ func TestSubjects(t *testing.T) {
 	}
 }
 
-func TestResetSubjects(t *testing.T) {
-	assert.NoError(t, ResetSubjects())
+func TestSubjectMap(t *testing.T) {
+	results, err := SubjectMap()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.GreaterOrEqual(t, len(results), 1)
+
+	for _, val := range results {
+		assert.IsType(t, entity.Subject{}, val)
+	}
+}
+
+func TestRemoveDanglingMarkerSubjects(t *testing.T) {
+	affected, err := RemoveDanglingMarkerSubjects()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, int64(1), affected)
+}
+
+func TestCreateMarkerSubjects(t *testing.T) {
+	affected, err := CreateMarkerSubjects()
+
+	assert.NoError(t, err)
+	assert.LessOrEqual(t, int64(0), affected)
+}
+
+func TestSearchSubjectUIDs(t *testing.T) {
+	t.Run("john & his | cats", func(t *testing.T) {
+		result, names, remaining := SearchSubjectUIDs("john & his | cats")
+
+		if len(result) != 1 {
+			t.Fatal("expected one result")
+		} else {
+			assert.Equal(t, "jqu0xs11qekk9jx8", result[0])
+			assert.Equal(t, "his | cats", remaining)
+			assert.Equal(t, "John Doe", strings.Join(names, ", "))
+		}
+	})
+	t.Run("xxx", func(t *testing.T) {
+		result, _, _ := SearchSubjectUIDs("xxx")
+		assert.Empty(t, result)
+	})
+	t.Run("empty string", func(t *testing.T) {
+		result, _, _ := SearchSubjectUIDs("")
+		assert.Empty(t, result)
+	})
 }
