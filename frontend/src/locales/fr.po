@@ -153,7 +153,7 @@ msgstr "Après 2 mois"
 msgid "After two weeks"
 msgstr "Après 2 semaines"
 
-#: src/model/album.js:182
+#: src/model/album.js:189
 msgid "Album"
 msgstr "Album"
 
@@ -261,7 +261,7 @@ msgid "Apply"
 msgstr "Appliquer"
 
 #: src/component/photo/cards.vue:26 src/component/photo/clipboard.vue:100
-#: src/dialog/photo/details.vue:120 src/dialog/photo/people.vue:149
+#: src/dialog/photo/details.vue:120 src/dialog/photo/people.vue:151
 #: src/share/photo/cards.vue:26
 msgid "Approve"
 msgstr "Approuver"
@@ -332,7 +332,7 @@ msgstr "Blackman : modification de Lanczos, moins d'artefacts de sonnerie"
 msgid "Blue"
 msgstr "Bleu"
 
-#: src/options/options.js:151
+#: src/options/options.js:156
 msgid "Brazilian Portuguese"
 msgstr "Portugais brésilien"
 
@@ -480,7 +480,7 @@ msgstr "Contient un seul élément."
 msgid "Convert to JPEG"
 msgstr "Convertir en JPEG"
 
-#: src/pages/library/index.vue:162
+#: src/pages/library/index.vue:166
 msgid "Converting"
 msgstr "Conversion en cours"
 
@@ -527,7 +527,7 @@ msgstr "Créer un album"
 msgid "Created"
 msgstr "Créé"
 
-#: src/pages/library/index.vue:169
+#: src/pages/library/index.vue:173
 msgid "Creating thumbnails for"
 msgstr "Création des vignettes pour"
 
@@ -1148,7 +1148,7 @@ msgstr "Coréen"
 msgid "Kurdish"
 msgstr "Kurde"
 
-#: src/dialog/photo/labels.vue:17 src/model/label.js:114
+#: src/dialog/photo/labels.vue:17 src/model/label.js:120
 msgid "Label"
 msgstr "Etiquette"
 
@@ -1362,9 +1362,10 @@ msgstr "Déplacer les fichiers"
 #: src/component/photo/list.vue:240 src/dialog/account/edit.vue:397
 #: src/dialog/album/edit.vue:106 src/dialog/photo/files.vue:70
 #: src/dialog/photo/files.vue:67 src/dialog/photo/files.vue:30
-#: src/dialog/photo/info.vue:31 src/pages/about/feedback.vue:144
-#: src/pages/login.vue:73 src/share/photo/cards.vue:30
-#: src/share/photo/list.vue:34 src/share/photo/list.vue:219
+#: src/dialog/photo/info.vue:31 src/dialog/photo/people.vue:19
+#: src/pages/about/feedback.vue:144 src/pages/login.vue:73
+#: src/share/photo/cards.vue:30 src/share/photo/list.vue:34
+#: src/share/photo/list.vue:219
 msgid "Name"
 msgstr "Nom"
 
@@ -1620,7 +1621,7 @@ msgid "Permanently remove files to free up storage."
 msgstr ""
 "Supprimer définitivement les fichiers pour récupérer de la place de stockage."
 
-#: src/model/photo.js:875
+#: src/model/photo.js:900
 msgid "Photo"
 msgstr "Photo"
 
@@ -1691,7 +1692,7 @@ msgstr "Polonais"
 msgid "Portrait"
 msgstr "Portrait"
 
-#: src/options/options.js:156
+#: src/options/options.js:151
 msgid "Português de Portugal"
 msgstr "Portugais du Potugal"
 
@@ -1792,7 +1793,7 @@ msgstr "Modifiés récemment"
 msgid "Red"
 msgstr "Rouge"
 
-#: src/dialog/photo/people.vue:121
+#: src/dialog/photo/people.vue:122
 msgid "Reject"
 msgstr "Rejeter"
 
@@ -1811,13 +1812,13 @@ msgstr "Rechargement…"
 msgid "Remote Sync"
 msgstr "Synchronisation à distance"
 
-#: src/component/photo/clipboard.vue:260
-msgid "Remove"
-msgstr "Supprimer"
-
 #: src/component/photo/clipboard.vue:93
 msgid "remove failed: unknown album"
 msgstr "échec de la suppression: album inconnu"
+
+#: src/component/photo/clipboard.vue:260
+msgid "Remove from album"
+msgstr "Retirer de l'album"
 
 #: src/pages/library/import.vue:130
 msgid ""
@@ -2104,7 +2105,7 @@ msgstr "Rues"
 msgid "Style"
 msgstr "Style"
 
-#: src/dialog/photo/details.vue:482
+#: src/dialog/photo/details.vue:482 src/model/subject.js:124
 msgid "Subject"
 msgstr "Sujet"
 
@@ -2133,7 +2134,7 @@ msgstr "Prise"
 msgid "Teal"
 msgstr "Sarcelle"
 
-#: src/dialog/photo/details.vue:26 src/dialog/photo/people.vue:14
+#: src/dialog/photo/details.vue:26 src/dialog/photo/people.vue:22
 msgid "Text too long"
 msgstr "Texte trop long"
 
@@ -2242,7 +2243,7 @@ msgid "Unique ID"
 msgstr "Identifiant unique"
 
 #: src/dialog/photo/details.vue:16 src/dialog/photo/info.vue:21
-#: src/model/album.js:139 src/model/photo.js:526 src/model/photo.js:543
+#: src/model/album.js:146 src/model/photo.js:526 src/model/photo.js:543
 #: src/model/photo.js:566 src/model/photo.js:580 src/model/photo.js:657
 #: src/model/photo.js:670 src/options/options.js:20 src/options/options.js:34
 #: src/options/options.js:51 src/options/options.js:65
@@ -2265,12 +2266,20 @@ msgid "Updated"
 msgstr "Mis à jour"
 
 #: src/pages/library/index.vue:153
+msgid "Updating faces"
+msgstr "Mise à jour des visages"
+
+#: src/pages/library/index.vue:157
 msgid "Updating index"
 msgstr "Mise à jour de l'index"
 
 #: src/pages/library/index.vue:151
 msgid "Updating moments"
 msgstr "Mise à jour des moments"
+
+#: src/pages/library/index.vue:155
+msgid "Updating previews"
+msgstr "Mise à jour des aperçus"
 
 #: src/pages/library/index.vue:149
 msgid "Updating stacks"
@@ -2444,6 +2453,9 @@ msgstr "Votre message a été envoyé"
 #: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Remove"
+#~ msgstr "Supprimer"
 
 #~ msgid ""
 #~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
