@@ -123,8 +123,8 @@ func (f *Face) Dim() float32 {
 	return float32(1)
 }
 
-// Crop returns the relative image area for cropping.
-func (f *Face) Crop() crop.Area {
+// CropArea returns the relative image area for cropping.
+func (f *Face) CropArea() crop.Area {
 	if f.Rows < 1 {
 		f.Cols = 1
 	}

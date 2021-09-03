@@ -17,12 +17,12 @@
         <v-flex
             v-for="(marker, index) in markers"
             :key="index"
-            xs6 sm4 md3 lg2 xl1 d-flex
+            xs6 md3 xl2 d-flex
         >
           <v-card tile
                   :data-id="marker.UID"
-                  style="user-select: none"
-                  :class="{invalid: marker.Invalid}"
+                  style="user-select: none;"
+                  :class="marker.classes()"
                   class="result accent lighten-3">
             <div class="card-background accent lighten-3"></div>
             <canvas :id="'face-' + marker.UID" :key="marker.UID" width="300" height="300" style="width: 100%"
@@ -47,7 +47,7 @@
                   </v-btn>
                 </v-flex>
               </v-layout>
-              <v-layout v-else row wrap align-center>
+              <v-layout v-else-if="marker.SubjectUID" row wrap align-center>
                 <v-flex xs12 class="text-xs-left pa-0">
                   <v-text-field
                       v-model="marker.Name"
@@ -59,10 +59,39 @@
                       single-line
                       solo-inverted
                       clearable
+                      clear-icon="eject"
                       @click:clear="clearSubject(marker)"
                       @change="rename(marker)"
                       @keyup.enter.native="rename(marker)"
                   ></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-layout v-else row wrap align-center>
+                <v-flex xs12 class="text-xs-left pa-0">
+                  <v-combobox
+                      v-model="marker.Name"
+                      style="z-index: 250"
+                      :items="$config.values.people"
+                      item-value="Name"
+                      item-text="Name"
+                      :disabled="busy"
+                      :return-object="false"
+                      :menu-props="menuProps"
+                      :allow-overflow="false"
+                      :filter="filterSubjects"
+                      :hint="$gettext('Name')"
+                      hide-details
+                      single-line
+                      solo-inverted
+                      open-on-clear
+                      append-icon=""
+                      prepend-inner-icon="person_add"
+                      browser-autocomplete="off"
+                      class="input-name pa-0 ma-0"
+                      @change="rename(marker)"
+                      @keyup.enter.native="rename(marker)"
+                  >
+                  </v-combobox>
                 </v-flex>
               </v-layout>
             </v-card-actions>
@@ -89,6 +118,7 @@ export default {
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      menuProps:{"closeOnClick":false, "closeOnContentClick":true, "openOnClick":false, "maxHeight":300},
       textRule: (v) => {
         if (!v || !v.length) {
           return this.$gettext("Name");
@@ -147,6 +177,15 @@ export default {
     approve(marker) {
       this.busy = true;
       marker.approve().finally(() => this.busy = false);
+    },
+    filterSubjects(item, queryText) {
+      if (!item || !item.Keywords) {
+        return false;
+      }
+
+      const q = queryText.toLocaleLowerCase();
+
+      return item.Keywords.findIndex((w) => w.indexOf(q) > -1) > -1;
     },
     clearSubject(marker) {
       this.busy = true;

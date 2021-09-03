@@ -12,7 +12,7 @@ func TestSubject_TableName(t *testing.T) {
 	assert.Contains(t, m.TableName(), "subjects")
 }
 
-func TestNewPerson(t *testing.T) {
+func TestNewSubject(t *testing.T) {
 	t.Run("Jens_Mander", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjectPerson, SrcAuto)
 		assert.Equal(t, "Jens Mander", m.SubjectName)

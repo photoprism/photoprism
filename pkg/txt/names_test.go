@@ -43,3 +43,10 @@ func TestJoinNames(t *testing.T) {
 		assert.Equal(t, "Jens Mander, Name 2, Name 3 & Name 4", result)
 	})
 }
+
+func TestNameKeywords(t *testing.T) {
+	t.Run("BillGates", func(t *testing.T) {
+		result := NameKeywords("William Henry Gates III", "Windows Guru")
+		assert.Equal(t, []string{"william", "henry", "gates", "iii", "windows", "guru"}, result)
+	})
+}

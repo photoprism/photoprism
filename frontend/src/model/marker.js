@@ -40,10 +40,13 @@ export class Marker extends RestModel {
     return {
       UID: "",
       FileUID: "",
+      FileHash: "",
+      FileArea: "",
       Type: "",
       Src: "",
       Name: "",
       Invalid: false,
+      Review: false,
       X: 0.0,
       Y: 0.0,
       W: 0.0,
@@ -54,7 +57,6 @@ export class Marker extends RestModel {
       SubjectUID: "",
       Score: 0,
       Size: 0,
-      Review: false,
     };
   }
 
@@ -80,9 +82,15 @@ export class Marker extends RestModel {
     return this.Name;
   }
 
-  thumbnailUrl(fileHash, size) {
-    if (fileHash && this.CropID) {
-      return `${config.contentUri}/t/${fileHash}/${config.previewToken()}/${size}_${this.CropID}`;
+  thumbnailUrl(size) {
+    if (!size) {
+      size = "crop_160";
+    }
+
+    if (this.FileHash && this.FileArea) {
+      return `${config.contentUri}/t/${this.FileHash}/${config.previewToken()}/${size}/${
+        this.FileArea
+      }`;
     } else {
       return `${config.contentUri}/svg/portrait`;
     }
@@ -106,8 +114,8 @@ export class Marker extends RestModel {
 
   rename() {
     if (!this.Name || this.Name.trim() === "") {
-      // Don't update empty name.
-      return Promise.reject();
+      // Can't save an empty name.
+      return Promise.resolve(this);
     }
 
     this.SubjectSrc = src.Manual;

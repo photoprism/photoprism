@@ -20,8 +20,8 @@
                           deletable-chips multiple color="secondary-dark"
                           class="my-0 input-albums"
                           :items="albums"
-                          item-text="Title"
                           item-value="UID"
+                          item-text="Title"
                           :allow-overflow="false"
                           :label="$gettext('Select albums or create a new one')"
                           return-object

@@ -35,3 +35,15 @@ func JoinNames(names []string) string {
 		return fmt.Sprintf("%s & %s", strings.Join(names[:l-1], ", "), names[l-1])
 	}
 }
+
+// NameKeywords returns a list of unique, lowercase keywords based on a person's names and aliases.
+func NameKeywords(names, aliases string) (results []string) {
+	if names == "" && aliases == "" {
+		return []string{}
+	}
+
+	names = strings.ToLower(names)
+	aliases = strings.ToLower(aliases)
+
+	return UniqueNames(append(Words(names), Words(aliases)...))
+}

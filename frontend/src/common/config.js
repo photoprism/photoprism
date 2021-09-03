@@ -81,6 +81,7 @@ export default class Config {
 
     Event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
     Event.subscribe("count", (ev, data) => this.onCount(ev, data));
+    Event.subscribe("people", (ev, data) => this.onPeople(ev, data));
 
     if (this.has("settings")) {
       this.setTheme(this.get("settings").ui.theme);
@@ -132,6 +133,53 @@ export default class Config {
     }
 
     return this;
+  }
+
+  onPeople(ev, data) {
+    const type = ev.split(".")[1];
+
+    if (this.debug) {
+      console.log(ev, data);
+    }
+
+    if (!this.values.people) {
+      this.values.people = [];
+    }
+
+    switch (type) {
+      case "created":
+        this.values.people.push(...data.entities);
+        break;
+      case "updated":
+        for (let i = 0; i < data.entities.length; i++) {
+          const values = data.entities[i];
+
+          this.values.people
+            .filter((m) => m.UID === values.UID)
+            .forEach((m) => {
+              for (let key in values) {
+                if (
+                  key !== "UID" &&
+                  values.hasOwnProperty(key) &&
+                  values[key] != null &&
+                  typeof values[key] !== "object"
+                ) {
+                  m[key] = values[key];
+                }
+              }
+            });
+        }
+        break;
+      case "deleted":
+        for (let i = 0; i < data.entities.length; i++) {
+          const index = this.values.people.findIndex((m) => m.UID === data.entities[i]);
+
+          if (index >= 0) {
+            this.values.people.splice(index, 1);
+          }
+        }
+        break;
+    }
   }
 
   onCount(ev, data) {

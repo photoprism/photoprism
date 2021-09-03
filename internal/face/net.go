@@ -131,7 +131,7 @@ func (t *Net) getFaceCrop(fileName, cacheHash string, f *Face) (img image.Image,
 	cacheFolder := t.getCacheFolder(fileName, cacheHash)
 
 	if cacheHash != "" {
-		f.Thumb = fmt.Sprintf("%s_%dx%d_crop_%s", cacheHash, CropSize, CropSize, f.Crop().ID())
+		f.Thumb = fmt.Sprintf("%s_%dx%d_crop_%s", cacheHash, CropSize, CropSize, f.CropArea().String())
 	} else {
 		base := filepath.Base(fileName)
 		i := strings.Index(base, "_")
@@ -140,7 +140,7 @@ func (t *Net) getFaceCrop(fileName, cacheHash string, f *Face) (img image.Image,
 			base = base[:i]
 		}
 
-		f.Thumb = fmt.Sprintf("%s_%dx%d_crop_%s", base, CropSize, CropSize, f.Crop().ID())
+		f.Thumb = fmt.Sprintf("%s_%dx%d_crop_%s", base, CropSize, CropSize, f.CropArea().String())
 	}
 
 	cacheFile := filepath.Join(cacheFolder, f.Thumb+fs.JpegExt)

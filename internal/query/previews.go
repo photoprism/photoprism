@@ -11,7 +11,7 @@ import (
 func UpdateAlbumDefaultPreviews() error {
 	return Db().Table(entity.Album{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT file_hash FROM files f 
+			SELECT f.file_hash FROM files f 
 			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
 			WHERE f.deleted_at IS NULL AND f.file_missing = 0  AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_type = 'jpg' 
@@ -23,7 +23,7 @@ func UpdateAlbumDefaultPreviews() error {
 func UpdateAlbumFolderPreviews() error {
 	return Db().Table(entity.Album{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT file_hash FROM files f 
+			SELECT f.file_hash FROM files f 
 			JOIN photos p ON p.id = f.photo_id AND p.photo_path = albums.album_path AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.taken_at DESC LIMIT 1
@@ -35,7 +35,7 @@ func UpdateAlbumFolderPreviews() error {
 func UpdateAlbumMonthPreviews() error {
 	return Db().Table(entity.Album{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT file_hash FROM files f 
+			SELECT f.file_hash FROM files f 
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
 			AND p.photo_year = albums.album_year AND p.photo_month = albums.album_month AND p.photo_month = albums.album_month 	
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
@@ -69,7 +69,7 @@ func UpdateLabelPreviews() (err error) {
 	// Labels.
 	if err = Db().Table(entity.Label{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT file_hash FROM files f 
+			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
@@ -82,7 +82,7 @@ func UpdateLabelPreviews() (err error) {
 	// Categories.
 	if err = Db().Table(entity.Label{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT file_hash FROM files f 
+			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
@@ -98,17 +98,29 @@ func UpdateLabelPreviews() (err error) {
 
 // UpdateSubjectPreviews updates subject preview images.
 func UpdateSubjectPreviews() error {
+	/* Previous implementation for reference:
+
 	return Db().Table(entity.Subject{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr("(SELECT file_hash FROM files f "+
+	UpdateColumn("thumb", gorm.Expr("(SELECT f.file_hash FROM files f "+
+		fmt.Sprintf(
+			"JOIN %s m ON f.file_uid = m.file_uid AND m.subject_uid = %s.subject_uid",
+			entity.Marker{}.TableName(),
+			entity.Subject{}.TableName())+
+		` JOIN photos p ON f.photo_id = p.id
+		WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL AND f.file_hash <> '' AND p.deleted_at IS NULL
+		AND f.file_primary = 1 AND f.file_missing = 0 AND p.photo_private = 0 AND p.photo_quality > -1
+		ORDER BY p.taken_at DESC LIMIT 1)
+		WHERE thumb_src='' AND deleted_at IS NULL`)).
+	Error */
+
+	return Db().Table(entity.Subject{}.TableName()).
+		UpdateColumn("thumb", gorm.Expr("(SELECT m.file_hash FROM "+
 			fmt.Sprintf(
-				"JOIN %s m ON f.file_uid = m.file_uid AND m.subject_uid = %s.subject_uid",
+				"%s m WHERE m.subject_uid = %s.subject_uid AND m.subject_src = 'manual' ",
 				entity.Marker{}.TableName(),
 				entity.Subject{}.TableName())+
-			` JOIN photos p ON f.photo_id = p.id 
-			WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL AND f.file_hash <> '' AND p.deleted_at IS NULL 
-			AND f.file_primary = 1 AND f.file_missing = 0 AND p.photo_private = 0 AND p.photo_quality > -1 
-			ORDER BY p.taken_at DESC LIMIT 1) 
-			WHERE thumb_src='' AND deleted_at IS NULL AND subject_src <> 'default'`)).
+			` AND m.file_hash <> '' AND ORDER BY m.size DESC LIMIT 1) 
+			WHERE thumb_src='' AND deleted_at IS NULL`)).
 		Error
 }
 

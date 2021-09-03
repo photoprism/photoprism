@@ -55,7 +55,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/studio-b12/gowebdav v0.0.0-20210630100626-7ff61aa87be8
 	github.com/tensorflow/tensorflow v1.15.2
-	github.com/tidwall/gjson v1.8.1
+	github.com/tidwall/gjson v1.9.0
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
@@ -63,7 +63,7 @@ require (
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/net v0.0.0-20210825183410-e898025ed96a
+	golang.org/x/net v0.0.0-20210902165921-8d991716f632
 	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3

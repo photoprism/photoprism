@@ -16,8 +16,8 @@ type Area struct {
 	H    float32 `json:"h,omitempty"`
 }
 
-// ID returns a string identifying the approximate marker area.
-func (m Area) ID() string {
+// String returns a string identifying the approximate marker area.
+func (m Area) String() string {
 	return fmt.Sprintf("%03d%03d%03d%03d", int(m.X*100), int(m.Y*100), int(m.W*100), int(m.H*100))
 }
 

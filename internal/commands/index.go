@@ -18,20 +18,20 @@ import (
 // IndexCommand registers the index cli command.
 var IndexCommand = cli.Command{
 	Name:      "index",
-	Usage:     "Indexes media files in originals folder",
-	UsageText: `To limit scope, a sub folder may be passed as first argument.`,
+	Usage:     "indexes media files in the originals folder",
+	ArgsUsage: "[path]",
 	Flags:     indexFlags,
 	Action:    indexAction,
 }
 
 var indexFlags = []cli.Flag{
 	cli.BoolFlag{
-		Name:  "all, a",
+		Name:  "force, f",
 		Usage: "re-index all originals, including unchanged files",
 	},
 	cli.BoolFlag{
-		Name:  "cleanup",
-		Usage: "removes orphan index entries and thumbnails",
+		Name:  "cleanup, c",
+		Usage: "remove orphan index entries and thumbnails",
 	},
 }
 

@@ -13,10 +13,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-const (
-	SubjectPerson = "person"
-)
-
 var subjectMutex = sync.Mutex{}
 
 // Subjects represents a list of subjects.
@@ -99,8 +95,21 @@ func (m *Subject) Create() error {
 	return Db().Create(m).Error
 }
 
-// Delete removes the entity from the database.
+// Delete marks the entity as deleted in the database.
 func (m *Subject) Delete() error {
+	if m.Deleted() {
+		return nil
+	}
+
+	log.Infof("subject: deleting %s %s", m.SubjectType, txt.Quote(m.SubjectName))
+
+	if m.IsPerson() {
+		event.EntitiesDeleted("people", []string{m.SubjectUID})
+		event.Publish("count.people", event.Data{
+			"count": -1,
+		})
+	}
+
 	return Db().Delete(m).Error
 }
 
@@ -113,6 +122,17 @@ func (m *Subject) Deleted() bool {
 func (m *Subject) Restore() error {
 	if m.Deleted() {
 		m.DeletedAt = nil
+
+		log.Infof("subject: restoring %s %s", m.SubjectType, txt.Quote(m.SubjectName))
+
+		if m.IsPerson() {
+			event.EntitiesCreated("people", []*Person{m.Person()})
+
+			event.Publish("count.people", event.Data{
+				"count": 1,
+			})
+		}
+
 		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
 	}
 
@@ -140,9 +160,10 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	if found := FindSubjectByName(m.SubjectName); found != nil {
 		return found
 	} else if createErr := m.Create(); createErr == nil {
-		if !m.Excluded && m.SubjectType == SubjectPerson {
-			event.EntitiesCreated("people", []*Subject{m})
+		log.Infof("subject: added %s %s", m.SubjectType, txt.Quote(m.SubjectName))
 
+		if m.IsPerson() {
+			event.EntitiesCreated("people", []*Person{m.Person()})
 			event.Publish("count.people", event.Data{
 				"count": 1,
 			})
@@ -200,6 +221,16 @@ func FindSubjectByName(s string) *Subject {
 	return &result
 }
 
+// IsPerson tests if the subject is a person.
+func (m *Subject) IsPerson() bool {
+	return m.SubjectType == SubjectPerson
+}
+
+// Person creates and returns a Person based on this subject.
+func (m *Subject) Person() *Person {
+	return NewPerson(*m)
+}
+
 // SetName changes the subject's name.
 func (m *Subject) SetName(name string) error {
 	newName := txt.Clip(name, txt.ClipDefault)
@@ -219,6 +250,12 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
 		return m, err
 	} else if err := m.Updates(Values{"SubjectName": m.SubjectName, "SubjectSlug": m.SubjectSlug}); err == nil {
+		log.Infof("subject: renamed %s %s", m.SubjectType, txt.Quote(m.SubjectName))
+
+		if m.IsPerson() {
+			event.EntitiesUpdated("people", []*Person{m.Person()})
+		}
+
 		return m, m.UpdateMarkerNames()
 	} else if existing := FindSubjectByName(m.SubjectName); existing == nil {
 		return m, err

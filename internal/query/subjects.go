@@ -10,6 +10,30 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// People returns the sorted names of the first 2000 people.
+func People() (people entity.People, err error) {
+	err = UnscopedDb().
+		Table(entity.Subject{}.TableName()).
+		Select("subject_uid, subject_name, subject_alias, favorite").
+		Where("deleted_at IS NULL AND subject_type = ?", entity.SubjectPerson).
+		Order("subject_name").
+		Limit(2000).Offset(0).
+		Scan(&people).Error
+
+	return people, err
+}
+
+// PeopleCount returns the total number of people in the index.
+func PeopleCount() (count int, err error) {
+	err = Db().
+		Table(entity.Subject{}.TableName()).
+		Where("deleted_at IS NULL").
+		Where("subject_type = ?", entity.SubjectPerson).
+		Count(&count).Error
+
+	return count, err
+}
+
 // Subjects returns subjects from the index.
 func Subjects(limit, offset int) (result entity.Subjects, err error) {
 	stmt := Db()
@@ -26,7 +50,7 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 
 	var subj entity.Subjects
 
-	stmt := Db().Where("subject_src <> ?", entity.SrcDefault)
+	stmt := Db()
 
 	if err = stmt.Find(&subj).Error; err != nil {
 		return result, err
@@ -111,7 +135,6 @@ func SearchSubjectUIDs(s string) (result []string, names []string, remaining str
 	var matches []Matches
 
 	stmt := Db().Model(entity.Subject{})
-	stmt = stmt.Where("subject_src <> ?", entity.SrcDefault)
 
 	if where := LikeAllNames(Cols{"subject_name", "subject_alias"}, s); len(where) == 0 {
 		return result, names, s

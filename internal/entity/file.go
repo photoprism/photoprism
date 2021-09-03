@@ -406,7 +406,7 @@ func (m *File) AddFaces(faces face.Faces) {
 
 // AddFace adds a face marker to the file.
 func (m *File) AddFace(f face.Face, subjectUID string) {
-	marker := *NewFaceMarker(f, m.FileUID, subjectUID)
+	marker := *NewFaceMarker(f, *m, subjectUID)
 
 	if markers := m.Markers(); !markers.Contains(marker) {
 		markers.Append(marker)

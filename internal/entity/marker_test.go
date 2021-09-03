@@ -3,9 +3,19 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/crop"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 )
+
+var testArea = crop.Area{
+	Name: "face",
+	X:    0.308333,
+	Y:    0.206944,
+	W:    0.355556,
+	H:    0.355556,
+}
 
 func TestMarker_TableName(t *testing.T) {
 	m := &Marker{}
@@ -13,7 +23,7 @@ func TestMarker_TableName(t *testing.T) {
 }
 
 func TestNewMarker(t *testing.T) {
-	m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+	m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel)
 	assert.IsType(t, &Marker{}, m)
 	assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
 	assert.Equal(t, "lt9k3pw1wowuy3c3", m.SubjectUID)
@@ -79,7 +89,7 @@ func TestMarker_SaveForm(t *testing.T) {
 
 func TestUpdateOrCreateMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel)
 		assert.IsType(t, &Marker{}, m)
 		assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
 		assert.Equal(t, "lt9k3pw1wowuy3c3", m.SubjectUID)
@@ -104,7 +114,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 
 func TestMarker_Updates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {
@@ -129,7 +139,7 @@ func TestMarker_Updates(t *testing.T) {
 
 func TestMarker_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {
@@ -153,7 +163,8 @@ func TestMarker_Update(t *testing.T) {
 
 func TestMarker_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker("ft8es39w45bnlqdw", "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 0.308333, 0.206944, 0.355556, 0.355556)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
+
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {

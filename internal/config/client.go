@@ -4,7 +4,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -15,52 +14,52 @@ import (
 
 // ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
-	Mode            string               `json:"mode"`
-	Name            string               `json:"name"`
-	Version         string               `json:"version"`
-	Copyright       string               `json:"copyright"`
-	Flags           string               `json:"flags"`
-	BaseUri         string               `json:"baseUri"`
-	StaticUri       string               `json:"staticUri"`
-	ApiUri          string               `json:"apiUri"`
-	ContentUri      string               `json:"contentUri"`
-	SiteUrl         string               `json:"siteUrl"`
-	SitePreview     string               `json:"sitePreview"`
-	SiteTitle       string               `json:"siteTitle"`
-	SiteCaption     string               `json:"siteCaption"`
-	SiteDescription string               `json:"siteDescription"`
-	SiteAuthor      string               `json:"siteAuthor"`
-	Debug           bool                 `json:"debug"`
-	Test            bool                 `json:"test"`
-	Demo            bool                 `json:"demo"`
-	Sponsor         bool                 `json:"sponsor"`
-	ReadOnly        bool                 `json:"readonly"`
-	UploadNSFW      bool                 `json:"uploadNSFW"`
-	Public          bool                 `json:"public"`
-	Experimental    bool                 `json:"experimental"`
-	AlbumCategories []string             `json:"albumCategories"`
-	Albums          entity.Albums        `json:"albums"`
-	Cameras         entity.Cameras       `json:"cameras"`
-	Lenses          entity.Lenses        `json:"lenses"`
-	Countries       entity.Countries     `json:"countries"`
-	Subjects        query.SubjectResults `json:"subjects"`
-	Thumbs          ThumbTypes           `json:"thumbs"`
-	Status          string               `json:"status"`
-	MapKey          string               `json:"mapKey"`
-	DownloadToken   string               `json:"downloadToken"`
-	PreviewToken    string               `json:"previewToken"`
-	JSHash          string               `json:"jsHash"`
-	CSSHash         string               `json:"cssHash"`
-	ManifestHash    string               `json:"manifestHash"`
-	Settings        Settings             `json:"settings"`
-	Disable         ClientDisable        `json:"disable"`
-	Count           ClientCounts         `json:"count"`
-	Pos             ClientPosition       `json:"pos"`
-	Years           Years                `json:"years"`
-	Colors          []map[string]string  `json:"colors"`
-	Categories      CategoryLabels       `json:"categories"`
-	Clip            int                  `json:"clip"`
-	Server          RuntimeInfo          `json:"server"`
+	Mode            string              `json:"mode"`
+	Name            string              `json:"name"`
+	Version         string              `json:"version"`
+	Copyright       string              `json:"copyright"`
+	Flags           string              `json:"flags"`
+	BaseUri         string              `json:"baseUri"`
+	StaticUri       string              `json:"staticUri"`
+	ApiUri          string              `json:"apiUri"`
+	ContentUri      string              `json:"contentUri"`
+	SiteUrl         string              `json:"siteUrl"`
+	SitePreview     string              `json:"sitePreview"`
+	SiteTitle       string              `json:"siteTitle"`
+	SiteCaption     string              `json:"siteCaption"`
+	SiteDescription string              `json:"siteDescription"`
+	SiteAuthor      string              `json:"siteAuthor"`
+	Debug           bool                `json:"debug"`
+	Test            bool                `json:"test"`
+	Demo            bool                `json:"demo"`
+	Sponsor         bool                `json:"sponsor"`
+	ReadOnly        bool                `json:"readonly"`
+	UploadNSFW      bool                `json:"uploadNSFW"`
+	Public          bool                `json:"public"`
+	Experimental    bool                `json:"experimental"`
+	AlbumCategories []string            `json:"albumCategories"`
+	Albums          entity.Albums       `json:"albums"`
+	Cameras         entity.Cameras      `json:"cameras"`
+	Lenses          entity.Lenses       `json:"lenses"`
+	Countries       entity.Countries    `json:"countries"`
+	People          entity.People       `json:"people"`
+	Thumbs          ThumbTypes          `json:"thumbs"`
+	Status          string              `json:"status"`
+	MapKey          string              `json:"mapKey"`
+	DownloadToken   string              `json:"downloadToken"`
+	PreviewToken    string              `json:"previewToken"`
+	JSHash          string              `json:"jsHash"`
+	CSSHash         string              `json:"cssHash"`
+	ManifestHash    string              `json:"manifestHash"`
+	Settings        Settings            `json:"settings"`
+	Disable         ClientDisable       `json:"disable"`
+	Count           ClientCounts        `json:"count"`
+	Pos             ClientPosition      `json:"pos"`
+	Years           Years               `json:"years"`
+	Colors          []map[string]string `json:"colors"`
+	Categories      CategoryLabels      `json:"categories"`
+	Clip            int                 `json:"clip"`
+	Server          RuntimeInfo         `json:"server"`
 }
 
 // Years represents a list of years.
@@ -387,12 +386,6 @@ func (c *Config) UserConfig() ClientConfig {
 		Take(&result.Count)
 
 	c.Db().
-		Table(entity.Subject{}.TableName()).
-		Select("SUM(deleted_at IS NULL) AS people").
-		Where("subject_src <> ? AND subject_type = ?", entity.SrcDefault, entity.SubjectPerson).
-		Take(&result.Count)
-
-	c.Db().
 		Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id <> 'zz'").
@@ -402,7 +395,9 @@ func (c *Config) UserConfig() ClientConfig {
 		Order("country_slug").
 		Find(&result.Countries)
 
-	result.Subjects, _ = query.SubjectSearch(form.SubjectSearch{Type: entity.SubjectPerson})
+	// People are subjects with type person.
+	result.Count.People, _ = query.PeopleCount()
+	result.People, _ = query.People()
 
 	c.Db().
 		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality >= 0 OR photos.deleted_at IS NULL)").

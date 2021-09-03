@@ -1,5 +1,10 @@
 package entity
 
+import "github.com/photoprism/photoprism/pkg/crop"
+
+// UnknownMarker can be used as a default for unknown markers.
+var UnknownMarker = NewMarker(File{}, crop.Area{}, "", SrcDefault, MarkerUnknown)
+
 type MarkerMap map[string]Marker
 
 func (m MarkerMap) Get(name string) Marker {
@@ -194,7 +199,7 @@ var MarkerFixtures = MarkerMap{
 		MarkerUID:      "mt9k3pw1wowuy999",
 		FileUID:        "ft2es49qhhinlple",
 		FaceID:         FaceFixtures.Get("actress-1").ID,
-		CropID:         "045038063041",
+		FileArea:       "045038063041",
 		FaceDist:       0.26852392873736236,
 		SubjectSrc:     SrcManual,
 		SubjectUID:     SubjectFixtures.Get("actress-1").SubjectUID,
@@ -214,7 +219,7 @@ var MarkerFixtures = MarkerMap{
 		MarkerUID:      "mt9k3pw1wowu1000",
 		FileUID:        "ft2es49whhbnlqdn",
 		FaceID:         FaceFixtures.Get("actress-1").ID,
-		CropID:         "046045043065",
+		FileArea:       "046045043065",
 		FaceDist:       0.4507357278575355,
 		SubjectSrc:     "",
 		SubjectUID:     SubjectFixtures.Get("actress-1").SubjectUID,
@@ -234,7 +239,7 @@ var MarkerFixtures = MarkerMap{
 		MarkerUID:      "mt9k3pw1wowu1001",
 		FileUID:        "ft8es39w45bnlqdw",
 		FaceID:         FaceFixtures.Get("actress-1").ID,
-		CropID:         "05403304060446",
+		FileArea:       "05403304060446",
 		FaceDist:       0.5099754448545762,
 		SubjectSrc:     "",
 		SubjectUID:     SubjectFixtures.Get("actress-1").SubjectUID,

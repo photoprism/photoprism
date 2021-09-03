@@ -9,6 +9,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPeople(t *testing.T) {
+	if results, err := People(); err != nil {
+		t.Fatal(err)
+	} else {
+		assert.LessOrEqual(t, 3, len(results))
+		t.Logf("people: %#v", results)
+	}
+}
+
+func TestPeopleCount(t *testing.T) {
+	if result, err := PeopleCount(); err != nil {
+		t.Fatal(err)
+	} else {
+		assert.LessOrEqual(t, 3, result)
+		t.Logf("there are %d people", result)
+	}
+}
+
 func TestSubjects(t *testing.T) {
 	results, err := Subjects(3, 0)
 

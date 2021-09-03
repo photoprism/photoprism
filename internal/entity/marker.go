@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/crop"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/rnd"
 
@@ -26,14 +28,15 @@ const (
 type Marker struct {
 	MarkerUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
 	FileUID        string          `gorm:"type:VARBINARY(42);index;" json:"FileUID" yaml:"FileUID"`
+	FileHash       string          `gorm:"type:VARBINARY(128);index" json:"FileHash" yaml:"FileHash,omitempty"`
+	FileArea       string          `gorm:"type:VARBINARY(16);default:''" json:"FileArea" yaml:"FileArea,omitempty"`
 	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
-	SubjectUID     string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
-	SubjectSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
+	SubjectUID     string          `gorm:"type:VARBINARY(42);index:idx_markers_subject;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	SubjectSrc     string          `gorm:"type:VARBINARY(8);index:idx_markers_subject;default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
 	subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	CropID         string          `gorm:"type:VARBINARY(16);default:''" json:"CropID,omitempty" yaml:"CropID,omitempty"`
 	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
@@ -52,9 +55,6 @@ type Marker struct {
 	UpdatedAt      time.Time
 }
 
-// UnknownMarker can be used as a default for unknown markers.
-var UnknownMarker = NewMarker("", "", SrcDefault, MarkerUnknown, 0, 0, 0, 0)
-
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
 	return "markers_dev6"
@@ -70,35 +70,34 @@ func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // NewMarker creates a new entity.
-func NewMarker(fileUID, subjectUID, markerSrc, markerType string, x, y, w, h float32) *Marker {
+func NewMarker(file File, area crop.Area, subjectUID, markerSrc, markerType string) *Marker {
 	m := &Marker{
-		FileUID:    fileUID,
-		SubjectUID: subjectUID,
+		FileUID:    file.FileUID,
+		FileHash:   file.FileHash,
+		FileArea:   area.String(),
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
-		X:          x,
-		Y:          y,
-		W:          w,
-		H:          h,
+		SubjectUID: subjectUID,
+		X:          area.X,
+		Y:          area.Y,
+		W:          area.W,
+		H:          area.H,
+		MatchedAt:  nil,
 	}
 
 	return m
 }
 
 // NewFaceMarker creates a new entity.
-func NewFaceMarker(f face.Face, fileUID, subjectUID string) *Marker {
-	pos := f.Crop()
+func NewFaceMarker(f face.Face, file File, subjectUID string) *Marker {
+	m := NewMarker(file, f.CropArea(), subjectUID, SrcImage, MarkerFace)
 
-	m := NewMarker(fileUID, subjectUID, SrcImage, MarkerFace, pos.X, pos.Y, pos.W, pos.H)
-
-	m.MatchedAt = nil
-	m.FaceDist = -1
-	m.CropID = f.Crop().ID()
-	m.EmbeddingsJSON = f.EmbeddingsJSON()
-	m.LandmarksJSON = f.RelativeLandmarksJSON()
 	m.Size = f.Size()
 	m.Score = f.Score
 	m.Review = f.Score < 30
+	m.FaceDist = -1
+	m.EmbeddingsJSON = f.EmbeddingsJSON()
+	m.LandmarksJSON = f.RelativeLandmarksJSON()
 
 	return m
 }
@@ -372,27 +371,26 @@ func (m *Marker) Subject() (subj *Subject) {
 
 // ClearSubject removes an existing subject association, and reports a collision.
 func (m *Marker) ClearSubject(src string) error {
+	// Find the matching face.
 	if m.face == nil {
 		m.face = FindFace(m.FaceID)
 	}
 
-	if m.face == nil {
-		// Do nothing
-	} else if resolved, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
+	// Update index & resolve collisions.
+	if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "SubjectSrc": src}); err != nil {
 		return err
-	} else if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjectUID": "", "SubjectSrc": src}); err != nil {
+	} else if m.face == nil {
+		m.subject = nil
+		return nil
+	} else if resolved, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
 		return err
 	} else if resolved {
 		log.Debugf("faces: resolved collision with %s", m.face.ID)
 	}
 
+	// Clear references.
 	m.face = nil
-
-	m.MarkerName = ""
-	m.FaceID = ""
-	m.FaceDist = -1.0
-	m.SubjectUID = ""
-	m.SubjectSrc = src
+	m.subject = nil
 
 	return nil
 }
@@ -495,7 +493,7 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 		err := result.Updates(map[string]interface{}{
 			"MarkerType":     m.MarkerType,
 			"MarkerSrc":      m.MarkerSrc,
-			"CropID":         m.CropID,
+			"FileArea":       m.FileArea,
 			"X":              m.X,
 			"Y":              m.Y,
 			"W":              m.W,

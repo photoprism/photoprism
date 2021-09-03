@@ -83,7 +83,7 @@ func TestDetect(t *testing.T) {
 				t.Logf("results: %#v", faces)
 
 				for i, f := range faces {
-					t.Logf("marker[%d]: %#v %#v", i, f.Crop(), f.Area)
+					t.Logf("marker[%d]: %#v %#v", i, f.CropArea(), f.Area)
 					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
 					img, err := tfInstance.getFaceCrop(fileName, fileHash, &faces[i])
@@ -249,7 +249,7 @@ func TestFace_EmbeddingsJSON(t *testing.T) {
 	})
 }
 
-func TestFace_Crop(t *testing.T) {
+func TestFace_CropArea(t *testing.T) {
 	t.Run("Position", func(t *testing.T) {
 		f := Face{
 			Cols:  1000,
@@ -265,6 +265,6 @@ func TestFace_Crop(t *testing.T) {
 			Landmarks:  nil,
 			Embeddings: nil,
 		}
-		t.Logf("marker: %#v", f.Crop())
+		t.Logf("marker: %#v", f.CropArea())
 	})
 }

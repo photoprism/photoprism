@@ -12,7 +12,7 @@ import (
 
 // Faces returns all (known / unmatched) faces from the index.
 func Faces(knownOnly, unmatched bool) (result entity.Faces, err error) {
-	stmt := Db().Where("face_src <> ?", entity.SrcDefault)
+	stmt := Db()
 
 	if unmatched {
 		stmt = stmt.Where("matched_at IS NULL")
@@ -72,7 +72,7 @@ func RemoveAnonymousFaceClusters() (removed int64, err error) {
 // RemoveAutoFaceClusters removes automatically added face clusters from the index.
 func RemoveAutoFaceClusters() (removed int64, err error) {
 	res := UnscopedDb().
-		Delete(entity.Face{}, "id <> ? AND face_src = ?", entity.UnknownFace.ID, entity.SrcAuto)
+		Delete(entity.Face{}, "face_src = ?", entity.SrcAuto)
 
 	return res.RowsAffected, res.Error
 }

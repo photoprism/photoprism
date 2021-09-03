@@ -131,7 +131,6 @@ func CreateDefaultFixtures() {
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
-	CreateUnknownFace()
 }
 
 // MigrateDb creates all tables and inserts default entities as needed.

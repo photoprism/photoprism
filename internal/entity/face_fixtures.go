@@ -1,5 +1,14 @@
 package entity
 
+// UnknownFace can be used as a placeholder for unknown faces.
+var UnknownFace = Face{
+	ID:            UnknownID,
+	FaceSrc:       SrcDefault,
+	MatchedAt:     TimePointer(),
+	SubjectUID:    "",
+	EmbeddingJSON: []byte{},
+}
+
 type FaceMap map[string]Face
 
 func (m FaceMap) Get(name string) Face {

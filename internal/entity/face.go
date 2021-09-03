@@ -31,22 +31,8 @@ type Face struct {
 	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 }
 
-// UnknownFace can be used as a placeholder for unknown faces.
-var UnknownFace = Face{
-	ID:            UnknownID,
-	FaceSrc:       SrcDefault,
-	MatchedAt:     TimePointer(),
-	SubjectUID:    "",
-	EmbeddingJSON: []byte{},
-}
-
 // Faceless can be used as argument to match unmatched face markers.
 var Faceless = []string{""}
-
-// CreateUnknownFace initializes the database with a placeholder for unknown faces.
-func CreateUnknownFace() {
-	_ = UnknownFace.Create()
-}
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
