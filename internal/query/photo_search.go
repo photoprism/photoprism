@@ -144,6 +144,33 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	}
 
+	// Set search filters based on search terms.
+	if terms := txt.SearchTerms(f.Query); len(terms) > 0 {
+		switch {
+		case terms["faces"]:
+			f.Query = strings.ReplaceAll(f.Query, "faces", "")
+			f.Faces = "true"
+		case terms["videos"]:
+			f.Query = strings.ReplaceAll(f.Query, "videos", "")
+			f.Video = true
+		case terms["favorites"]:
+			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
+			f.Favorite = true
+		case terms["stacks"]:
+			f.Query = strings.ReplaceAll(f.Query, "stacks", "")
+			f.Stack = true
+		case terms["panoramas"]:
+			f.Query = strings.ReplaceAll(f.Query, "panoramas", "")
+			f.Panorama = true
+		case terms["scans"]:
+			f.Query = strings.ReplaceAll(f.Query, "scans", "")
+			f.Scan = true
+		case terms["monochrome"]:
+			f.Query = strings.ReplaceAll(f.Query, "monochrome", "")
+			f.Mono = true
+		}
+	}
+
 	// Filter by location?
 	if f.Geo == true {
 		s = s.Where("photos.cell_id <> 'zz'")

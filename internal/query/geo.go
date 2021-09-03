@@ -51,8 +51,23 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		}
 	}
 
+	// Set search filters based on search terms.
+	if terms := txt.SearchTerms(f.Query); len(terms) > 0 {
+		switch {
+		case terms["faces"]:
+			f.Query = strings.ReplaceAll(f.Query, "faces", "")
+			f.Faces = "true"
+		case terms["videos"]:
+			f.Query = strings.ReplaceAll(f.Query, "videos", "")
+			f.Video = true
+		case terms["favorites"]:
+			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
+			f.Favorite = true
+		}
+	}
+
+	// Filter by label, label category and keywords.
 	if f.Query != "" {
-		// Filter by label, label category and keywords.
 		var categories []entity.Category
 		var labels []entity.Label
 		var labelIds []uint

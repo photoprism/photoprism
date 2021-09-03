@@ -86,8 +86,11 @@ func TestGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.LessOrEqual(t, 1, len(result))
-		assert.Equal(t, "1000017", result[0].ID)
 		assert.IsType(t, GeoResults{}, result)
+
+		if len(result) > 0 {
+			assert.Equal(t, "1000017", result[0].ID)
+		}
 	})
 
 	t.Run("search for review false, quality > 0", func(t *testing.T) {
