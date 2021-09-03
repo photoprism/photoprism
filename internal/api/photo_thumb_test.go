@@ -47,3 +47,33 @@ func TestGetThumb(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
+
+func TestGetThumbCrop(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		GetThumbCrop(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/46f5b5c0c027f0c1b15136644f404c57210bf20c/"+conf.PreviewToken()+"/crop_160/016014058037")
+
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("InvalidType", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		GetThumbCrop(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/1/"+conf.PreviewToken()+"/xxx/016014058037")
+
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("InvalidHash", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		GetThumbCrop(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/1/"+conf.PreviewToken()+"/tile_500/016014058037")
+
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("invalid token", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetThumbCrop(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818/xxx/tile_500/016014058037")
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+}

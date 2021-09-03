@@ -34,8 +34,8 @@ type Marker struct {
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
-	SubjectUID     string          `gorm:"type:VARBINARY(42);index:idx_markers_subject;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
-	SubjectSrc     string          `gorm:"type:VARBINARY(8);index:idx_markers_subject;default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
+	SubjectUID     string          `gorm:"type:VARBINARY(42);index:idx_markers_subject_uid_src;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	SubjectSrc     string          `gorm:"type:VARBINARY(8);index:idx_markers_subject_uid_src;default:'';" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
 	subject        *Subject        `gorm:"foreignkey:SubjectUID;association_foreignkey:SubjectUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	FaceID         string          `gorm:"type:VARBINARY(42);index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1" json:"FaceDist" yaml:"FaceDist,omitempty"`

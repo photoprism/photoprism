@@ -57,6 +57,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteSession(v1)
 
 		api.GetThumb(v1)
+		api.GetThumbCrop(v1)
 		api.GetDownload(v1)
 		api.GetVideo(v1)
 		api.CreateZip(v1)

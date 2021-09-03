@@ -947,7 +947,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			continue
 		}
 
-		if fileName, err := thumb.Filename(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
+		if fileName, err := thumb.FileName(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
 			log.Errorf("media: failed creating %s (%s)", txt.Quote(name), err)
 
 			return err

@@ -63,7 +63,7 @@ func TestThumb_Filename(t *testing.T) {
 	}
 
 	t.Run("", func(t *testing.T) {
-		filename, err := thumb.Filename("99988", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		filename, err := thumb.FileName("99988", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
 			t.Fatal(err)
@@ -72,7 +72,7 @@ func TestThumb_Filename(t *testing.T) {
 		assert.True(t, strings.HasSuffix(filename, "/storage/testdata/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
 	})
 	t.Run("hash too short", func(t *testing.T) {
-		_, err := thumb.Filename("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		_, err := thumb.FileName("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err == nil {
 			t.FailNow()
@@ -81,14 +81,14 @@ func TestThumb_Filename(t *testing.T) {
 		assert.Equal(t, "resample: file hash is empty or too short (999)", err.Error())
 	})
 	t.Run("invalid width", func(t *testing.T) {
-		_, err := thumb.Filename("99988", thumbsPath, -4, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		_, err := thumb.FileName("99988", thumbsPath, -4, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
 			t.FailNow()
 		}
 		assert.Equal(t, "resample: width exceeds limit (-4)", err.Error())
 	})
 	t.Run("invalid height", func(t *testing.T) {
-		_, err := thumb.Filename("99988", thumbsPath, 200, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		_, err := thumb.FileName("99988", thumbsPath, 200, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
 			t.FailNow()
 		}
@@ -96,7 +96,7 @@ func TestThumb_Filename(t *testing.T) {
 	})
 	t.Run("empty thumbpath", func(t *testing.T) {
 		path := ""
-		_, err := thumb.Filename("99988", path, 200, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		_, err := thumb.FileName("99988", path, 200, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 		if err == nil {
 			t.FailNow()
 		}
@@ -194,7 +194,7 @@ func TestThumb_Create(t *testing.T) {
 	}
 
 	t.Run("valid parameter", func(t *testing.T) {
-		expectedFilename, err := thumb.Filename("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		expectedFilename, err := thumb.FileName("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
 			t.Error(err)
@@ -221,7 +221,7 @@ func TestThumb_Create(t *testing.T) {
 		assert.FileExists(t, expectedFilename)
 	})
 	t.Run("invalid width", func(t *testing.T) {
-		expectedFilename, err := thumb.Filename("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		expectedFilename, err := thumb.FileName("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
 			t.Error(err)
@@ -247,7 +247,7 @@ func TestThumb_Create(t *testing.T) {
 	})
 
 	t.Run("invalid height", func(t *testing.T) {
-		expectedFilename, err := thumb.Filename("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
+		expectedFilename, err := thumb.FileName("12345", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
 
 		if err != nil {
 			t.Error(err)

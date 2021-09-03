@@ -1873,7 +1873,7 @@ func TestMediaFile_RenderDefaultThumbs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	thumbFilename, err := thumb.Filename(m.Hash(), thumbsPath, thumb.Types["tile_50"].Width, thumb.Types["tile_50"].Height, thumb.Types["tile_50"].Options...)
+	thumbFilename, err := thumb.FileName(m.Hash(), thumbsPath, thumb.Types["tile_50"].Width, thumb.Types["tile_50"].Height, thumb.Types["tile_50"].Options...)
 
 	if err != nil {
 		t.Fatal(err)

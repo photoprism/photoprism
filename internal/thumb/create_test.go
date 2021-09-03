@@ -136,19 +136,19 @@ func TestResample(t *testing.T) {
 	})
 }
 
-func TestPostfix(t *testing.T) {
+func TestSuffix(t *testing.T) {
 	tile50 := Types["tile_50"]
 
-	result := Postfix(tile50.Width, tile50.Height, tile50.Options...)
+	result := Suffix(tile50.Width, tile50.Height, tile50.Options...)
 
 	assert.Equal(t, "50x50_center.jpg", result)
 }
 
-func TestFilename(t *testing.T) {
+func TestFileName(t *testing.T) {
 	t.Run("colors", func(t *testing.T) {
 		colorThumb := Types["colors"]
 
-		result, err := Filename("123456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		result, err := FileName("123456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -160,7 +160,7 @@ func TestFilename(t *testing.T) {
 	t.Run("fit_720", func(t *testing.T) {
 		fit720 := Types["fit_720"]
 
-		result, err := Filename("123456789098765432", "testdata", fit720.Width, fit720.Height, fit720.Options...)
+		result, err := FileName("123456789098765432", "testdata", fit720.Width, fit720.Height, fit720.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -171,7 +171,7 @@ func TestFilename(t *testing.T) {
 	t.Run("invalid width", func(t *testing.T) {
 		colorThumb := Types["colors"]
 
-		result, err := Filename("123456789098765432", "testdata", -2, colorThumb.Height, colorThumb.Options...)
+		result, err := FileName("123456789098765432", "testdata", -2, colorThumb.Height, colorThumb.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")
@@ -182,7 +182,7 @@ func TestFilename(t *testing.T) {
 	t.Run("invalid height", func(t *testing.T) {
 		colorThumb := Types["colors"]
 
-		result, err := Filename("123456789098765432", "testdata", colorThumb.Width, -3, colorThumb.Options...)
+		result, err := FileName("123456789098765432", "testdata", colorThumb.Width, -3, colorThumb.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")
@@ -193,7 +193,7 @@ func TestFilename(t *testing.T) {
 	t.Run("invalid hash", func(t *testing.T) {
 		colorThumb := Types["colors"]
 
-		result, err := Filename("12", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		result, err := FileName("12", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")
@@ -204,7 +204,7 @@ func TestFilename(t *testing.T) {
 	t.Run("invalid thumb path", func(t *testing.T) {
 		colorThumb := Types["colors"]
 
-		result, err := Filename("123456789098765432", "", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		result, err := FileName("123456789098765432", "", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")

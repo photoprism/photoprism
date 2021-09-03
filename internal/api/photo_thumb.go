@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/crop"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
@@ -80,7 +82,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Return existing thumbs straight away.
 		if !download {
-			if fileName, err := thumb.Filename(fileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil && fs.FileExists(fileName) {
+			if fileName, err := thumb.FileName(fileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...); err == nil && fs.FileExists(fileName) {
 				c.File(fileName)
 				return
 			}
@@ -165,6 +167,62 @@ func GetThumb(router *gin.RouterGroup) {
 			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
 		} else {
 			c.File(thumbnail)
+		}
+	})
+}
+
+// GetThumbCrop returns a cropped thumbnail image matching the hash and type.
+//
+// GET /api/v1/t/:hash/:token/:type/:area
+//
+// Parameters:
+//   hash: string sha1 file hash
+//   token: string url security token, see config
+//   type: string thumb type, see thumb.Types
+//   area: string image area identifier, e.g. 022004010015
+func GetThumbCrop(router *gin.RouterGroup) {
+	router.GET("/t/:hash/:token/:type/:area", func(c *gin.Context) {
+		if InvalidPreviewToken(c) {
+			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
+		conf := service.Config()
+		fileHash := c.Param("hash")
+		typeName := c.Param("type")
+		cropArea := c.Param("area")
+		download := c.Query("download") != ""
+
+		thumbType, ok := thumb.Types[typeName]
+
+		if !ok || len(thumbType.Options) < 1 {
+			log.Errorf("thumbs: invalid type %s", txt.Quote(typeName))
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			return
+		} else if thumbType.Options[0] != thumb.ResampleCrop {
+			log.Errorf("thumbs: invalid crop %s", txt.Quote(typeName))
+			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			return
+		}
+
+		fileName, err := crop.FromCache(fileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, cropArea)
+
+		if err != nil {
+			log.Errorf("thumbs: %s", err)
+			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+			return
+		} else if fileName == "" {
+			log.Errorf("thumbs: empty file name, potential bug")
+			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+			return
+		}
+
+		AddThumbCacheHeader(c)
+
+		if download {
+			c.FileAttachment(fileName, typeName+fs.JpegExt)
+		} else {
+			c.File(fileName)
 		}
 	})
 }
