@@ -119,7 +119,7 @@ func UpdateSubjectPreviews() error {
 				"%s m WHERE m.subject_uid = %s.subject_uid AND m.subject_src = 'manual' ",
 				entity.Marker{}.TableName(),
 				entity.Subject{}.TableName())+
-			` AND m.file_hash <> '' AND ORDER BY m.size DESC LIMIT 1) 
+			` AND m.file_hash <> '' ORDER BY m.size DESC LIMIT 1) 
 			WHERE thumb_src='' AND deleted_at IS NULL`)).
 		Error
 }
