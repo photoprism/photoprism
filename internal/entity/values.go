@@ -1,6 +1,13 @@
 package entity
 
-import "reflect"
+import (
+	"reflect"
+	"strings"
+)
+
+const (
+	TrimTypeString = 32
+)
 
 // Values is a shortcut for map[string]interface{}
 type Values map[string]interface{}
@@ -33,4 +40,34 @@ func GetValues(m interface{}, omit ...string) (result Values) {
 	}
 
 	return result
+}
+
+// ToASCII removes all non-ascii characters from a string and returns it.
+func ToASCII(s string) string {
+	result := make([]rune, 0, len(s))
+
+	for _, r := range s {
+		if r <= 127 {
+			result = append(result, r)
+		}
+	}
+
+	return string(result)
+}
+
+// Trim shortens a string to the given number of characters, and removes all leading and trailing white space.
+func Trim(s string, maxLen int) string {
+	s = strings.TrimSpace(s)
+	l := len(s)
+
+	if l <= maxLen {
+		return s
+	} else {
+		return s[:l-1]
+	}
+}
+
+// SanitizeTypeString converts a type string to lowercase, omits invalid runes, and shortens it if needed.
+func SanitizeTypeString(s string) string {
+	return Trim(ToASCII(strings.ToLower(s)), TrimTypeString)
 }

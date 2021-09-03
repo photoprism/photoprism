@@ -53,7 +53,7 @@ type File struct {
 	FileWidth       int           `json:"Width" yaml:"Width,omitempty"`
 	FileHeight      int           `json:"Height" yaml:"Height,omitempty"`
 	FileOrientation int           `json:"Orientation" yaml:"Orientation,omitempty"`
-	FileProjection  string        `gorm:"type:VARBINARY(16);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileProjection  string        `gorm:"type:VARBINARY(32);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
 	FileAspectRatio float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
 	FileMainColor   string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors      string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
@@ -394,7 +394,17 @@ func (m *File) Panorama() bool {
 		return false
 	}
 
-	return m.FileProjection != ProjectionDefault || (m.FileWidth/m.FileHeight) >= 2
+	return m.Projection() != ProjDefault || (m.FileWidth/m.FileHeight) >= 2
+}
+
+// Projection returns the panorama projection type string.
+func (m *File) Projection() string {
+	return SanitizeTypeString(m.FileProjection)
+}
+
+// SetProjection sets the panorama projection type string.
+func (m *File) SetProjection(projType string) {
+	m.FileProjection = SanitizeTypeString(projType)
 }
 
 // AddFaces adds face markers to the file.

@@ -4,13 +4,14 @@ import "strings"
 
 const (
 	ClipDefault     = 160
-	ClipSlug        = 80
 	ClipKeyword     = 40
+	ClipSlug        = 80
 	ClipVarchar     = 255
 	ClipQuery       = 1000
 	ClipDescription = 16000
 )
 
+// Clip shortens a string to the given number of runes, and removes all leading and trailing white space.
 func Clip(s string, size int) string {
 	s = strings.TrimSpace(s)
 

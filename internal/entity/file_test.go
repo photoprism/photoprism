@@ -289,12 +289,49 @@ func TestFile_Panorama(t *testing.T) {
 		assert.False(t, file.Panorama())
 	})
 	t.Run("equirectangular", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjectionEquirectangular}
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjEquirectangular}
+		assert.True(t, file.Panorama())
+	})
+	t.Run("transverse-cylindrical", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjTransverseCylindrical}
 		assert.True(t, file.Panorama())
 	})
 	t.Run("sidecar", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSidecar: true, FileWidth: 3000, FileHeight: 1000}
 		assert.False(t, file.Panorama())
+	})
+}
+
+func TestFile_SetProjection(t *testing.T) {
+	t.Run(ProjDefault, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjDefault)
+		assert.Equal(t, ProjDefault, m.FileProjection)
+	})
+	t.Run(ProjCubestrip, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjCubestrip)
+		assert.Equal(t, ProjCubestrip, m.FileProjection)
+	})
+	t.Run(ProjCylindrical, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjCylindrical)
+		assert.Equal(t, ProjCylindrical, m.FileProjection)
+	})
+	t.Run(ProjTransverseCylindrical, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjTransverseCylindrical)
+		assert.Equal(t, ProjTransverseCylindrical, m.FileProjection)
+	})
+	t.Run(ProjPseudocylindricalCompromise, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjPseudocylindricalCompromise)
+		assert.Equal(t, ProjPseudocylindricalCompromise, m.FileProjection)
+	})
+	t.Run("Sanitize", func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(" 幸福 Hanzi are logograms developed for the writing of Chinese! ")
+		assert.Equal(t, "hanzi are logograms developed for the writing of chinese", m.FileProjection)
 	})
 }
 
