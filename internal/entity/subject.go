@@ -42,7 +42,7 @@ type Subject struct {
 
 // TableName returns the entity database table name.
 func (Subject) TableName() string {
-	return "subjects_dev6"
+	return "subjects_dev7"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
