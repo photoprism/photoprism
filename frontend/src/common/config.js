@@ -148,7 +148,7 @@ export default class Config {
 
     switch (type) {
       case "created":
-        this.values.people.push(...data.entities);
+        this.values.people.unshift(...data.entities);
         break;
       case "updated":
         for (let i = 0; i < data.entities.length; i++) {

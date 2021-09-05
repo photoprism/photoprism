@@ -16,7 +16,7 @@ func People() (people entity.People, err error) {
 		Table(entity.Subject{}.TableName()).
 		Select("subject_uid, subject_name, subject_alias, favorite").
 		Where("deleted_at IS NULL AND subject_type = ?", entity.SubjectPerson).
-		Order("subject_name").
+		Order("file_count DESC").
 		Limit(2000).Offset(0).
 		Scan(&people).Error
 
