@@ -283,7 +283,7 @@ func (m *Subject) UpdateMarkerNames() error {
 }
 
 // RefreshPhotos flags related photos for metadata maintenance.
-func (m *Subject) RefreshPhotos() (err error) {
+func (m *Subject) RefreshPhotos() error {
 	if m.SubjectUID == "" {
 		return fmt.Errorf("empty subject uid")
 	}

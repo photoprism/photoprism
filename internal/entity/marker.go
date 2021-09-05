@@ -242,7 +242,13 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	// Update matching timestamp.
 	m.MatchedAt = TimePointer()
 
-	return updated, m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "Review": false, "MatchedAt": m.MatchedAt})
+	if err := m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "Review": false, "MatchedAt": m.MatchedAt}); err != nil {
+		return false, err
+	} else if !updated {
+		return false, nil
+	}
+
+	return true, m.RefreshPhotos()
 }
 
 // SyncSubject maintains the marker subject relationship.
@@ -280,7 +286,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 	// Update related markers?
 	if m.FaceID == "" || m.SubjectUID == "" {
 		// Do nothing.
-	} else if err := Db().Model(&Face{}).Where("id = ? AND subject_uid = ''", m.FaceID).Update("SubjectUID", m.SubjectUID).Error; err != nil {
+	} else if res := Db().Model(&Face{}).Where("id = ? AND subject_uid = ''", m.FaceID).Update("SubjectUID", m.SubjectUID); res.Error != nil {
 		return fmt.Errorf("%s (update known face)", err)
 	} else if !updateRelated {
 		return nil
@@ -291,8 +297,9 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		Where("subject_uid <> ?", m.SubjectUID).
 		Updates(Values{"SubjectUID": m.SubjectUID, "SubjectSrc": SrcAuto, "Review": false}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
-	} else {
+	} else if res.RowsAffected > 0 && m.face != nil {
 		log.Debugf("marker: matched %s with %s", subj.SubjectName, m.FaceID)
+		return m.face.RefreshPhotos()
 	}
 
 	return nil
@@ -455,7 +462,7 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 }
 
 // RefreshPhotos flags related photos for metadata maintenance.
-func (m *Marker) RefreshPhotos() (err error) {
+func (m *Marker) RefreshPhotos() error {
 	if m.MarkerUID == "" {
 		return fmt.Errorf("empty marker uid")
 	}

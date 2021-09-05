@@ -257,7 +257,7 @@ func (m *Face) SetSubjectUID(uid string) (err error) {
 }
 
 // RefreshPhotos flags related photos for metadata maintenance.
-func (m *Face) RefreshPhotos() (err error) {
+func (m *Face) RefreshPhotos() error {
 	if m.ID == "" {
 		return fmt.Errorf("empty face id")
 	}
