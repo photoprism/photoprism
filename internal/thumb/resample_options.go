@@ -12,7 +12,6 @@ const (
 	ResampleFillTopLeft
 	ResampleFillBottomRight
 	ResampleFit
-	ResampleCrop
 	ResampleResize
 	ResampleNearestNeighbor
 	ResampleDefault
@@ -24,7 +23,6 @@ var ResampleMethods = map[ResampleOption]string{
 	ResampleFillTopLeft:     "left",
 	ResampleFillBottomRight: "right",
 	ResampleFit:             "fit",
-	ResampleCrop:            "crop",
 	ResampleResize:          "resize",
 }
 

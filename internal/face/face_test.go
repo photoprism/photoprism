@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/internal/crop"
 
 	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
@@ -57,9 +57,9 @@ func TestDetect(t *testing.T) {
 
 	var embeddings [11][]float32
 
-	tfInstance := NewNet(modelPath, "testdata/cache", false)
+	faceNet := NewNet(modelPath, "testdata/cache", false)
 
-	if err := tfInstance.loadModel(); err != nil {
+	if err := faceNet.loadModel(); err != nil {
 		t.Fatal(err)
 	}
 
@@ -69,10 +69,10 @@ func TestDetect(t *testing.T) {
 		}
 
 		t.Run(fileName, func(t *testing.T) {
-			fileHash := fs.Hash(fileName)
 			baseName := filepath.Base(fileName)
 
 			faces, err := Detect(fileName, true, 20)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -80,24 +80,25 @@ func TestDetect(t *testing.T) {
 			t.Logf("found %d faces in '%s'", len(faces), baseName)
 
 			if len(faces) > 0 {
-				t.Logf("results: %#v", faces)
+				// t.Logf("results: %#v", faces)
 
 				for i, f := range faces {
 					t.Logf("marker[%d]: %#v %#v", i, f.CropArea(), f.Area)
 					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
-					img, err := tfInstance.getFaceCrop(fileName, fileHash, &faces[i])
+					img, err := crop.FromThumb(fileName, f.CropArea(), CropSize, false)
 
 					if err != nil {
 						t.Fatal(err)
 					}
 
-					embedding := tfInstance.getEmbeddings(img)
+					embedding := faceNet.getEmbeddings(img)
 
 					if b, err := json.Marshal(embedding[0]); err != nil {
 						t.Fatal(err)
 					} else {
-						t.Logf("embedding: %#v", string(b))
+						assert.NotEmpty(t, b)
+						// t.Logf("embedding: %#v", string(b))
 					}
 
 					t.Logf("faces: %d %v", i, faceindices[baseName])

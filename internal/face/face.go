@@ -39,11 +39,11 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
-var CropSize = 160
+var CropSize = crop.Sizes[crop.Tile160]
 var ClusterCore = 4
 var ClusterRadius = 0.6
 var ClusterMinScore = 30
-var ClusterMinSize = CropSize
+var ClusterMinSize = CropSize.Width
 var SampleThreshold = 2 * ClusterCore
 
 var log = event.Log
@@ -105,7 +105,6 @@ type Face struct {
 	Eyes       Areas       `json:"eyes,omitempty"`
 	Landmarks  Areas       `json:"landmarks,omitempty"`
 	Embeddings [][]float32 `json:"embeddings,omitempty"`
-	Thumb      string      `json:"-"`
 }
 
 // Size returns the absolute face size in pixels.

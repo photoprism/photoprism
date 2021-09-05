@@ -25,6 +25,8 @@ func TestNewMarker(t *testing.T) {
 	m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel)
 	assert.IsType(t, &Marker{}, m)
 	assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
+	assert.Equal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", m.FileHash)
+	assert.Equal(t, "1340ce163163", m.CropArea)
 	assert.Equal(t, "lt9k3pw1wowuy3c3", m.SubjectUID)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)

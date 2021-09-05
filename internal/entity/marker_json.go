@@ -20,7 +20,7 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		UID        string
 		FileUID    string
 		FileHash   string
-		FileArea   string
+		CropArea   string
 		Type       string
 		Src        string
 		Name       string
@@ -40,7 +40,7 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		UID:        m.MarkerUID,
 		FileUID:    m.FileUID,
 		FileHash:   m.FileHash,
-		FileArea:   m.FileArea,
+		CropArea:   m.CropArea,
 		Type:       m.MarkerType,
 		Src:        m.MarkerSrc,
 		Name:       name,

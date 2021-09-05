@@ -41,7 +41,7 @@ export class Marker extends RestModel {
       UID: "",
       FileUID: "",
       FileHash: "",
-      FileArea: "",
+      CropArea: "",
       Type: "",
       Src: "",
       Name: "",
@@ -84,12 +84,12 @@ export class Marker extends RestModel {
 
   thumbnailUrl(size) {
     if (!size) {
-      size = "crop_160";
+      size = "tile_160";
     }
 
-    if (this.FileHash && this.FileArea) {
+    if (this.FileHash && this.CropArea) {
       return `${config.contentUri}/t/${this.FileHash}/${config.previewToken()}/${size}/${
-        this.FileArea
+        this.CropArea
       }`;
     } else {
       return `${config.contentUri}/svg/portrait`;

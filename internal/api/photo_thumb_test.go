@@ -52,7 +52,7 @@ func TestGetThumbCrop(t *testing.T) {
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetThumbCrop(router)
-		r := PerformRequest(app, "GET", "/api/v1/t/46f5b5c0c027f0c1b15136644f404c57210bf20c/"+conf.PreviewToken()+"/crop_160/016014058037")
+		r := PerformRequest(app, "GET", "/api/v1/t/46f5b5c0c027f0c1b15136644f404c57210bf20c/"+conf.PreviewToken()+"/tile_160/016014058037")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

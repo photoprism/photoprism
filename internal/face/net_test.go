@@ -62,7 +62,7 @@ func TestNet(t *testing.T) {
 		t.Run(fileName, func(t *testing.T) {
 			baseName := filepath.Base(fileName)
 
-			faces, err := faceNet.Detect(fileName, 20)
+			faces, err := faceNet.Detect(fileName, 20, false)
 
 			if err != nil {
 				t.Fatal(err)
@@ -71,7 +71,7 @@ func TestNet(t *testing.T) {
 			t.Logf("found %d faces in '%s'", len(faces), baseName)
 
 			if len(faces) > 0 {
-				t.Logf("results: %#v", faces)
+				// t.Logf("results: %#v", faces)
 
 				for i, f := range faces {
 					if len(f.Embeddings) > 0 {

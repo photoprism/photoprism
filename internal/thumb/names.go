@@ -14,7 +14,6 @@ func (n Name) Jpeg() string {
 const (
 	Tile50   Name = "tile_50"
 	Tile100  Name = "tile_100"
-	Crop160  Name = "crop_160"
 	Tile224  Name = "tile_224"
 	Tile500  Name = "tile_500"
 	Colors   Name = "colors"

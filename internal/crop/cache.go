@@ -2,6 +2,7 @@ package crop
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"path"
 
@@ -10,8 +11,8 @@ import (
 )
 
 // FromCache returns the crop file name if cached.
-func FromCache(hash, thumbPath string, width, height int, area string) (fileName string, err error) {
-	fileName, err = FileName(hash, thumbPath, width, height, area)
+func FromCache(hash, area string, size Size, thumbPath string) (fileName string, err error) {
+	fileName, err = FileName(hash, area, size.Width, size.Height, thumbPath)
 
 	if err != nil {
 		return "", err
@@ -21,11 +22,11 @@ func FromCache(hash, thumbPath string, width, height int, area string) (fileName
 		return fileName, nil
 	}
 
-	return "", ErrNotFound
+	return "", fmt.Errorf("%s not found", filepath.Base(fileName))
 }
 
 // FileName returns the crop file name based on cache path, size, and area.
-func FileName(hash string, thumbPath string, width, height int, area string) (fileName string, err error) {
+func FileName(hash, area string, width, height int, thumbPath string) (fileName string, err error) {
 	if len(hash) < 4 {
 		return "", fmt.Errorf("crop: invalid file hash %s", txt.Quote(hash))
 	}

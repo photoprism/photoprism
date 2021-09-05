@@ -28,7 +28,7 @@ type Marker struct {
 	MarkerUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
 	FileUID        string          `gorm:"type:VARBINARY(42);index;" json:"FileUID" yaml:"FileUID"`
 	FileHash       string          `gorm:"type:VARBINARY(128);index" json:"FileHash" yaml:"FileHash,omitempty"`
-	FileArea       string          `gorm:"type:VARBINARY(16);default:''" json:"FileArea" yaml:"FileArea,omitempty"`
+	CropArea       string          `gorm:"type:VARBINARY(16);default:''" json:"CropArea" yaml:"CropArea,omitempty"`
 	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
@@ -73,7 +73,7 @@ func NewMarker(file File, area crop.Area, subjectUID, markerSrc, markerType stri
 	m := &Marker{
 		FileUID:    file.FileUID,
 		FileHash:   file.FileHash,
-		FileArea:   area.String(),
+		CropArea:   area.String(),
 		MarkerSrc:  markerSrc,
 		MarkerType: markerType,
 		SubjectUID: subjectUID,
@@ -492,7 +492,7 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 		err := result.Updates(map[string]interface{}{
 			"MarkerType":     m.MarkerType,
 			"MarkerSrc":      m.MarkerSrc,
-			"FileArea":       m.FileArea,
+			"CropArea":       m.CropArea,
 			"X":              m.X,
 			"Y":              m.Y,
 			"W":              m.W,

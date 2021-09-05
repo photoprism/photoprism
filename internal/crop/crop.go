@@ -30,3 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 */
 package crop
+
+import "github.com/photoprism/photoprism/internal/event"
+
+var log = event.Log

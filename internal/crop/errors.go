@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("crop not found")
+	ErrNotFound = errors.New("not found")
 )
