@@ -114,6 +114,7 @@ import PhotoLabels from "./labels.vue";
 import PhotoPeople from "./people.vue";
 import PhotoFiles from "./files.vue";
 import PhotoInfo from "./info.vue";
+import Event from "pubsub-js";
 
 export default {
   name: 'PPhotoEditDialog',
@@ -142,6 +143,7 @@ export default {
       readonly: this.$config.get("readonly"),
       active: this.tab,
       rtl: this.$rtl,
+      subscriptions: [],
     };
   },
   computed: {
@@ -167,7 +169,33 @@ export default {
       }
     }
   },
+  created() {
+    this.subscriptions.push(Event.subscribe("photos.updated", (ev, data) => this.onUpdate(ev, data)));
+  },
+  destroyed() {
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      Event.unsubscribe(this.subscriptions[i]);
+    }
+  },
   methods: {
+    onUpdate(ev, data) {
+      if (!data || !data.entities || this.loading || !this.model || !this.model.UID) {
+        return;
+      }
+
+      const type = ev.split('.')[1];
+
+      switch (type) {
+        case 'updated':
+          for (let i = 0; i < data.entities.length; i++) {
+            const values = data.entities[i];
+            if (values.UID && values.Title && this.model.UID === values.UID) {
+              this.model.setValues({Title: values.Title}, true);
+            }
+          }
+          break;
+      }
+    },
     close() {
       this.$emit('close');
     },

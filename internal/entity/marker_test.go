@@ -300,7 +300,7 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.Empty(t, m.FaceID)
 	})
 	t.Run("subject src manual", func(t *testing.T) {
-		m := Marker{FaceID: "123ab"}
+		m := Marker{MarkerUID: "mqyz9x61edicxf8j", FaceID: "123ab"}
 
 		assert.NotEmpty(t, m.FaceID)
 		assert.Empty(t, m.MatchedAt)
@@ -505,7 +505,7 @@ func TestMarker_SetFace(t *testing.T) {
 		assert.Equal(t, "99876uyt", m.FaceID)
 	})
 	t.Run("set new face", func(t *testing.T) {
-		m := Marker{MarkerType: MarkerFace, SubjectUID: "", FaceID: ""}
+		m := Marker{MarkerUID: "mqyz9x61edicxf8j", MarkerType: MarkerFace, SubjectUID: "", FaceID: ""}
 
 		updated, _ := m.SetFace(FaceFixtures.Pointer("john-doe"), -1)
 		assert.True(t, updated)
@@ -520,4 +520,12 @@ func TestMarker_SetFace(t *testing.T) {
 		assert.Empty(t, m.FaceID)
 	})
 
+}
+
+func TestMarker_RefreshPhotos(t *testing.T) {
+	m := MarkerFixtures.Get("1000003-6")
+
+	if err := m.RefreshPhotos(); err != nil {
+		t.Fatal(err)
+	}
 }

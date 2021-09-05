@@ -451,7 +451,18 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
 	}
 
-	return updated, err
+	return updated, m.RefreshPhotos()
+}
+
+// RefreshPhotos flags related photos for metadata maintenance.
+func (m *Marker) RefreshPhotos() (err error) {
+	if m.MarkerUID == "" {
+		return fmt.Errorf("empty marker uid")
+	}
+
+	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
+		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.marker_uid = ? GROUP BY f.photo_id)`,
+		gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
 }
 
 // Matched updates the match timestamp.

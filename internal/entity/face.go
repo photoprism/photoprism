@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/face"
 
 	"github.com/photoprism/photoprism/pkg/clusters"
@@ -251,7 +253,18 @@ func (m *Face) SetSubjectUID(uid string) (err error) {
 		return err
 	}
 
-	return nil
+	return m.RefreshPhotos()
+}
+
+// RefreshPhotos flags related photos for metadata maintenance.
+func (m *Face) RefreshPhotos() (err error) {
+	if m.ID == "" {
+		return fmt.Errorf("empty face id")
+	}
+
+	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
+		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.face_id = ? GROUP BY f.photo_id)`,
+		gorm.Expr(Marker{}.TableName()), m.ID).Error
 }
 
 // Save updates the existing or inserts a new face.

@@ -162,7 +162,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Examplefilenameoriginal", m.PhotoTitle)
+		assert.Equal(t, "Franzilein & Actress A / 2008", m.PhotoTitle)
 	})
 	t.Run("no location", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")

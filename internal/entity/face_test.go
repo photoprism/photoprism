@@ -200,6 +200,14 @@ func TestFace_Update(t *testing.T) {
 	assert.Equal(t, "new", FindFace(m.ID).SubjectUID)
 }
 
+func TestFace_RefreshPhotos(t *testing.T) {
+	f := FaceFixtures.Get("joe-biden")
+
+	if err := f.RefreshPhotos(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestFirstOrCreateFace(t *testing.T) {
 	t.Run("create new face", func(t *testing.T) {
 		m := NewFace("12345unique", SrcAuto, Embeddings{Embedding{99}, Embedding{2}})

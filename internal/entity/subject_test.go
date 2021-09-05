@@ -271,3 +271,11 @@ func TestSubject_UpdateName(t *testing.T) {
 		}
 	})
 }
+
+func TestSubject_RefreshPhotos(t *testing.T) {
+	subj := SubjectFixtures.Get("john-doe")
+
+	if err := subj.RefreshPhotos(); err != nil {
+		t.Fatal(err)
+	}
+}

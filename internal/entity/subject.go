@@ -272,10 +272,25 @@ func (m *Subject) UpdateMarkerNames() error {
 		return fmt.Errorf("subject uid is empty")
 	}
 
-	return Db().Model(&Marker{}).
+	if err := Db().Model(&Marker{}).
 		Where("subject_uid = ? AND subject_src <> ?", m.SubjectUID, SrcAuto).
 		Where("marker_name <> ?", m.SubjectName).
-		Update(Values{"MarkerName": m.SubjectName}).Error
+		Update(Values{"MarkerName": m.SubjectName}).Error; err != nil {
+		return err
+	}
+
+	return m.RefreshPhotos()
+}
+
+// RefreshPhotos flags related photos for metadata maintenance.
+func (m *Subject) RefreshPhotos() (err error) {
+	if m.SubjectUID == "" {
+		return fmt.Errorf("empty subject uid")
+	}
+
+	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
+		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.subject_uid = ? GROUP BY f.photo_id)`,
+		gorm.Expr(Marker{}.TableName()), m.SubjectUID).Error
 }
 
 // MergeWith merges this subject with another subject and then deletes it.
