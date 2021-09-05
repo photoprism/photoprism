@@ -69,7 +69,7 @@ func indexAction(ctx *cli.Context) error {
 	if w := service.Index(); w != nil {
 		opt := photoprism.IndexOptions{
 			Path:    subPath,
-			Rescan:  ctx.Bool("all"),
+			Rescan:  ctx.Bool("force"),
 			Convert: conf.Settings().Index.Convert && conf.SidecarWritable(),
 			Stack:   true,
 		}
