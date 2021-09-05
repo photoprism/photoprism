@@ -3,7 +3,7 @@ package face
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/pkg/crop"
+	"github.com/photoprism/photoprism/internal/crop"
 )
 
 // Areas is a list of face landmark areas.

@@ -6,13 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/crop"
-
 	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/rnd"
 
+	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"

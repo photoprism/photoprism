@@ -3,7 +3,7 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/crop"
+	"github.com/photoprism/photoprism/internal/crop"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/crop"
-
 	"github.com/gin-gonic/gin"
+
+	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"

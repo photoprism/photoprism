@@ -35,8 +35,7 @@ package face
 import (
 	"encoding/json"
 
-	"github.com/photoprism/photoprism/pkg/crop"
-
+	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/event"
 )
 
