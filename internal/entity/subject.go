@@ -266,9 +266,15 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 
 // UpdateMarkerNames updates related marker names.
 func (m *Subject) UpdateMarkerNames() error {
+	if m.SubjectName == "" {
+		return fmt.Errorf("subject name is empty")
+	} else if m.SubjectUID == "" {
+		return fmt.Errorf("subject uid is empty")
+	}
+
 	return Db().Model(&Marker{}).
 		Where("subject_uid = ? AND subject_src <> ?", m.SubjectUID, SrcAuto).
-		Where("marker_name <> '' AND marker_name <> ?", m.SubjectName).
+		Where("marker_name <> ?", m.SubjectName).
 		Update(Values{"MarkerName": m.SubjectName}).Error
 }
 

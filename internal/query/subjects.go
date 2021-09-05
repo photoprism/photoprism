@@ -106,7 +106,7 @@ func CreateMarkerSubjects() (affected int64, err error) {
 
 		name = m.MarkerName
 
-		if err := m.Updates(entity.Values{"SubjectUID": subj.SubjectUID}); err != nil {
+		if err := m.Updates(entity.Values{"SubjectUID": subj.SubjectUID, "Review": false}); err != nil {
 			return affected, err
 		}
 

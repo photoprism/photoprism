@@ -50,7 +50,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 			Where("face_id = ?", f.ID).
 			Where("subject_src = ?", entity.SrcAuto).
 			Where("subject_uid <> ?", f.SubjectUID).
-			Updates(entity.Values{"SubjectUID": f.SubjectUID}); res.Error != nil {
+			Updates(entity.Values{"SubjectUID": f.SubjectUID, "Review": false}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected

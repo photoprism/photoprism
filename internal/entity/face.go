@@ -247,7 +247,7 @@ func (m *Face) SetSubjectUID(uid string) (err error) {
 		Where("face_id = ?", m.ID).
 		Where("subject_src = ?", SrcAuto).
 		Where("subject_uid <> ?", m.SubjectUID).
-		Updates(Values{"SubjectUID": m.SubjectUID}).Error; err != nil {
+		Updates(Values{"SubjectUID": m.SubjectUID, "Review": false}).Error; err != nil {
 		return err
 	}
 

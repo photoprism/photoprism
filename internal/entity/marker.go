@@ -242,7 +242,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	// Update matching timestamp.
 	m.MatchedAt = TimePointer()
 
-	return updated, m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "MatchedAt": m.MatchedAt})
+	return updated, m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjectUID": m.SubjectUID, "SubjectSrc": m.SubjectSrc, "Review": false, "MatchedAt": m.MatchedAt})
 }
 
 // SyncSubject maintains the marker subject relationship.
@@ -289,7 +289,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		Where("face_id = ?", m.FaceID).
 		Where("subject_src = ?", SrcAuto).
 		Where("subject_uid <> ?", m.SubjectUID).
-		Updates(Values{"SubjectUID": m.SubjectUID, "SubjectSrc": SrcAuto}).Error; err != nil {
+		Updates(Values{"SubjectUID": m.SubjectUID, "SubjectSrc": SrcAuto, "Review": false}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else {
 		log.Debugf("marker: matched %s with %s", subj.SubjectName, m.FaceID)
