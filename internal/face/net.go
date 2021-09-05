@@ -54,7 +54,7 @@ func (t *Net) Detect(fileName string, minSize int, cacheCrop bool) (faces Faces,
 			continue
 		}
 
-		if img, err := crop.FromThumb(fileName, f.CropArea(), CropSize, cacheCrop); err != nil {
+		if img, err := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); err != nil {
 			log.Errorf("faces: failed to decode image: %v", err)
 		} else if embeddings := t.getEmbeddings(img); len(embeddings) > 0 {
 			faces[i].Embeddings = embeddings

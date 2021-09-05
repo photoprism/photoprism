@@ -3,6 +3,9 @@ package crop
 import (
 	"fmt"
 	"image"
+	"strconv"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Areas represents a list of relative crop areas.
@@ -33,6 +36,11 @@ func (a Area) Bounds(img image.Image) (min, max image.Point, dim int) {
 	return min, max, dim
 }
 
+// FileWidth returns the ideal file width based on the crop size.
+func (a Area) FileWidth(size Size) int {
+	return int(float32(size.Width) / a.W)
+}
+
 // clipVal ensures the relative size is within a valid range.
 func clipVal(f float32) float32 {
 	if f > 1 {
@@ -53,4 +61,18 @@ func NewArea(name string, x, y, w, h float32) Area {
 		W:    clipVal(w),
 		H:    clipVal(h),
 	}
+}
+
+// AreaFromString returns an image area.
+func AreaFromString(s string) Area {
+	if len(s) != 12 || !rnd.IsHex(s) {
+		return Area{}
+	}
+
+	x, _ := strconv.ParseInt(s[0:3], 16, 32)
+	y, _ := strconv.ParseInt(s[3:6], 16, 32)
+	w, _ := strconv.ParseInt(s[6:9], 16, 32)
+	h, _ := strconv.ParseInt(s[9:12], 16, 32)
+
+	return NewArea("crop", float32(x)/1000, float32(y)/1000, float32(w)/1000, float32(h)/1000)
 }

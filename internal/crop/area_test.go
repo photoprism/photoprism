@@ -8,7 +8,7 @@ import (
 )
 
 func TestArea_String(t *testing.T) {
-	t.Run("3e814d3e81f4", func(t *testing.T) {
+	t.Run("3e814d0011f4", func(t *testing.T) {
 		expected := fmt.Sprintf("%x%x00%x%x", 1000, 333, 1, 500)
 		m := NewArea("face", 1.000, 0.33333, 0.001, 0.5)
 		assert.Equal(t, expected, m.String())
@@ -32,5 +32,19 @@ func TestArea_String(t *testing.T) {
 	t.Run("00007b0003e8", func(t *testing.T) {
 		m := NewArea("", -2.0001, 0.123, -0.1, 4.00000001)
 		assert.Equal(t, "00007b0003e8", m.String())
+	})
+}
+
+func TestAreaFromString(t *testing.T) {
+	t.Run("3e814d0011f4", func(t *testing.T) {
+		a := AreaFromString("3e814d0011f4")
+		assert.Equal(t, float32(1), a.X)
+		assert.Equal(t, float32(0.333), a.Y)
+		assert.Equal(t, float32(0.001), a.W)
+		assert.Equal(t, float32(0.5), a.H)
+	})
+	t.Run("3360a7064042", func(t *testing.T) {
+		a := AreaFromString("3360a7064042")
+		assert.Equal(t, NewArea("crop", 0.822, 0.167, 0.1, 0.066), a)
 	})
 }

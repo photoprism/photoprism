@@ -86,7 +86,7 @@ func TestDetect(t *testing.T) {
 					t.Logf("marker[%d]: %#v %#v", i, f.CropArea(), f.Area)
 					t.Logf("landmarks[%d]: %s", i, f.RelativeLandmarksJSON())
 
-					img, err := crop.FromThumb(fileName, f.CropArea(), CropSize, false)
+					img, err := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, false)
 
 					if err != nil {
 						t.Fatal(err)

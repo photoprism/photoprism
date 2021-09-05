@@ -41,7 +41,7 @@ func GetThumbCrop(router *gin.RouterGroup) {
 			return
 		}
 
-		fileName, err := crop.FromCache(fileHash, cropArea, cropSize, conf.ThumbPath())
+		fileName, err := crop.FromRequest(fileHash, cropArea, cropSize, conf.ThumbPath())
 
 		if err != nil {
 			log.Warnf("%s: %s", logPrefix, err)

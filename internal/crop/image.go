@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"image"
 	"io/ioutil"
+	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -33,13 +36,13 @@ var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit7680],
 }
 
-// FromThumb returns a cropped area from an existing thumbnail image.
-func FromThumb(fileName string, area Area, size Size, cache bool) (img image.Image, err error) {
+// ImageFromThumb returns a cropped area from an existing thumbnail image.
+func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img image.Image, err error) {
 	// Use same folder for caching if "cache" is true.
-	filePath := filepath.Dir(fileName)
+	filePath := filepath.Dir(thumbName)
 
 	// Extract hash from file name.
-	hash := thumbHash(fileName)
+	hash := thumbHash(thumbName)
 
 	// Compose cached crop image file name.
 	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area.String(), fs.JpegExt)
@@ -55,7 +58,7 @@ func FromThumb(fileName string, area Area, size Size, cache bool) (img image.Ima
 	}
 
 	// Open thumb image file.
-	img, err = openIdealThumbFile(fileName, hash, area, size)
+	img, err = openIdealThumbFile(thumbName, hash, area, size)
 
 	if err != nil {
 		return img, err
@@ -65,7 +68,7 @@ func FromThumb(fileName string, area Area, size Size, cache bool) (img image.Ima
 	min, max, dim := area.Bounds(img)
 
 	if dim < size.Width {
-		log.Debugf("crop: %s too small, crop size %dpx, actual size %dpx", filepath.Base(fileName), size.Width, dim)
+		log.Debugf("crop: %s is too small, upscaling %dpx to %dpx", filepath.Base(thumbName), dim, size.Width)
 	}
 
 	// Crop area from image.
@@ -86,6 +89,39 @@ func FromThumb(fileName string, area Area, size Size, cache bool) (img image.Ima
 	return img, nil
 }
 
+// ThumbFileName returns the ideal thumb file name.
+func ThumbFileName(hash string, area Area, size Size, thumbPath string) (string, error) {
+	if len(hash) < 4 {
+		return "", fmt.Errorf("invalid file hash %s", txt.Quote(hash))
+	}
+
+	if len(thumbPath) < 1 {
+		return "", fmt.Errorf("cache path missing")
+	}
+
+	if area.W <= 0 {
+		return "", fmt.Errorf("invalid area width %f", area.W)
+	}
+
+	if size.Width <= 0 {
+		return "", fmt.Errorf("invalid crop size %d", size.Width)
+	}
+
+	filePath := path.Join(thumbPath, hash[0:1], hash[1:2], hash[2:3])
+	fileName := findIdealThumbFileName(hash, area.FileWidth(size), filePath)
+
+	if fileName == "" {
+		return "", fmt.Errorf("not found")
+	}
+
+	return fileName, nil
+}
+
+// FileWidth returns the minimal thumbnail width based on crop area and size.
+func FileWidth(area Area, size Size) int {
+	return int(float32(size.Width) / area.W)
+}
+
 // thumbHash returns the thumb filename base without extension and size.
 func thumbHash(fileName string) (base string) {
 	base = filepath.Base(fileName)
@@ -100,18 +136,21 @@ func thumbHash(fileName string) (base string) {
 	return base[:i]
 }
 
-// idealThumbFileName returns the filename of the ideal thumb size for the given width.
-func idealThumbFileName(fileName, hash string, width int) string {
-	filePath := filepath.Dir(fileName)
+// findIdealThumbFileName finds the filename of the ideal thumb size for the given width.
+func findIdealThumbFileName(hash string, width int, filePath string) (fileName string) {
+	if hash == "" || filePath == "" {
+		return ""
+	}
 
 	for i, s := range thumbFileSizes {
-		if s.Width < width {
-			continue
-		}
-
 		name := filepath.Join(filePath, fmt.Sprintf(thumbFileNames[i], hash))
 
-		if fs.FileExists(name) {
+		if !fs.FileExists(name) {
+			continue
+		} else if s.Width < width {
+			fileName = name
+			continue
+		} else {
 			return name
 		}
 	}
@@ -130,9 +169,11 @@ func openIdealThumbFile(fileName, hash string, area Area, size Size) (image.Imag
 		}
 	}
 
-	minWidth := int(float32(size.Width) / area.W)
+	if name := findIdealThumbFileName(hash, area.FileWidth(size), filepath.Dir(fileName)); name != "" {
+		fileName = name
+	}
 
-	if imageBuffer, err := ioutil.ReadFile(idealThumbFileName(fileName, hash, minWidth)); err != nil {
+	if imageBuffer, err := ioutil.ReadFile(fileName); err != nil {
 		return nil, err
 	} else {
 		return imaging.Decode(bytes.NewReader(imageBuffer))

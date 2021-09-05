@@ -15,14 +15,14 @@ func FromCache(hash, area string, size Size, thumbPath string) (fileName string,
 	fileName, err = FileName(hash, area, size.Width, size.Height, thumbPath)
 
 	if err != nil {
-		return "", err
+		return fileName, err
 	}
 
 	if fs.FileExists(fileName) {
 		return fileName, nil
 	}
 
-	return "", fmt.Errorf("%s not found", filepath.Base(fileName))
+	return fileName, fmt.Errorf("%s not found", filepath.Base(fileName))
 }
 
 // FileName returns the crop file name based on cache path, size, and area.
