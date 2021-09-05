@@ -42,6 +42,22 @@ func TestJoinNames(t *testing.T) {
 		result := JoinNames([]string{"Jens Mander", "Name 2", "Name 3", "Name 4"})
 		assert.Equal(t, "Jens Mander, Name 2, Name 3 & Name 4", result)
 	})
+	t.Run("Partners", func(t *testing.T) {
+		result := JoinNames([]string{"Jens Mander", "Jane Mander"})
+		assert.Equal(t, "Jens & Jane Mander", result)
+	})
+	t.Run("Family", func(t *testing.T) {
+		result := JoinNames([]string{"Anna Mander", "Jens Mander", "Jane Mander"})
+		assert.Equal(t, "Anna, Jens & Jane Mander", result)
+	})
+	t.Run("ShortFamilyName", func(t *testing.T) {
+		result := JoinNames([]string{"Anna M", "Jens M", "Jane M"})
+		assert.Equal(t, "Anna M, Jens M & Jane M", result)
+	})
+	t.Run("NoFamily", func(t *testing.T) {
+		result := JoinNames([]string{"Anna Mander", "Jane Mander", "Bill Gates"})
+		assert.Equal(t, "Anna Mander, Jane Mander & Bill Gates", result)
+	})
 }
 
 func TestNameKeywords(t *testing.T) {

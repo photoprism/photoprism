@@ -24,16 +24,39 @@ func UniqueNames(names []string) (result []string) {
 }
 
 // JoinNames joins a list of names to be used in titles and descriptions.
-func JoinNames(names []string) string {
-	if l := len(names); l == 0 {
+func JoinNames(names []string) (result string) {
+	l := len(names)
+
+	if l == 0 {
 		return ""
 	} else if l == 1 {
 		return names[0]
-	} else if l == 2 {
-		return strings.Join(names, " & ")
-	} else {
-		return fmt.Sprintf("%s & %s", strings.Join(names[:l-1], ", "), names[l-1])
 	}
+
+	var familySuffix string
+
+	if i := strings.LastIndex(names[0], " "); i > 1 && len(names[0][i:]) > 2 {
+		familySuffix = names[0][i:]
+
+		for i := 1; i < l; i++ {
+			if !strings.HasSuffix(names[i], familySuffix) {
+				familySuffix = ""
+				break
+			}
+		}
+	}
+
+	if l == 2 {
+		result = strings.Join(names, " & ")
+	} else {
+		result = fmt.Sprintf("%s & %s", strings.Join(names[:l-1], ", "), names[l-1])
+	}
+
+	if familySuffix != "" {
+		result = strings.Replace(result, familySuffix, "", l-1)
+	}
+
+	return result
 }
 
 // NameKeywords returns a list of unique, lowercase keywords based on a person's names and aliases.
