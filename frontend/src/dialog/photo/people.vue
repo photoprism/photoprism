@@ -17,7 +17,7 @@
         <v-flex
             v-for="(marker, index) in markers"
             :key="index"
-            xs6 md3 xl2 d-flex
+            xs12 sm6 md3 xl2 d-flex
         >
           <v-card tile
                   :data-id="marker.UID"
