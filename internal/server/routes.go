@@ -87,23 +87,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.PhotoPrimary(v1)
 		api.PhotoUnstack(v1)
 
-		api.GetSubjects(v1)
-		api.GetSubject(v1)
-
-		api.GetLabels(v1)
-		api.UpdateLabel(v1)
-		api.GetLabelLinks(v1)
-		api.CreateLabelLink(v1)
-		api.UpdateLabelLink(v1)
-		api.DeleteLabelLink(v1)
-		api.LikeLabel(v1)
-		api.DislikeLabel(v1)
-		api.LabelCover(v1)
-
-		api.GetFoldersOriginals(v1)
-		api.GetFoldersImport(v1)
-		api.GetFolderCover(v1)
-
 		api.Upload(v1)
 		api.StartImport(v1)
 		api.CancelImport(v1)
@@ -118,6 +101,24 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.BatchAlbumsDelete(v1)
 		api.BatchLabelsDelete(v1)
 
+		api.GetSubjects(v1)
+		api.GetSubject(v1)
+
+		api.LabelCover(v1)
+		api.GetLabels(v1)
+		api.UpdateLabel(v1)
+		api.GetLabelLinks(v1)
+		api.CreateLabelLink(v1)
+		api.UpdateLabelLink(v1)
+		api.DeleteLabelLink(v1)
+		api.LikeLabel(v1)
+		api.DislikeLabel(v1)
+
+		api.FolderCover(v1)
+		api.GetFoldersOriginals(v1)
+		api.GetFoldersImport(v1)
+
+		api.AlbumCover(v1)
 		api.GetAlbum(v1)
 		api.CreateAlbum(v1)
 		api.UpdateAlbum(v1)
@@ -130,7 +131,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteAlbumLink(v1)
 		api.LikeAlbum(v1)
 		api.DislikeAlbum(v1)
-		api.AlbumCover(v1)
 		api.CloneAlbums(v1)
 		api.AddPhotosToAlbum(v1)
 		api.RemovePhotosFromAlbum(v1)

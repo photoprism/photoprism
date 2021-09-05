@@ -6,6 +6,8 @@ import (
 	"math"
 
 	"github.com/lucasb-eyer/go-colorful"
+
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -16,7 +18,7 @@ func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception,
 		return perception, fmt.Errorf("%s is not a jpeg", txt.Quote(m.BaseName()))
 	}
 
-	img, err := m.Resample(thumbPath, "colors")
+	img, err := m.Resample(thumbPath, thumb.Colors)
 
 	if err != nil {
 		log.Debugf("colors: %s in %s (resample)", err, txt.Quote(m.BaseName()))

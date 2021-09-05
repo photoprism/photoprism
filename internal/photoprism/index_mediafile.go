@@ -15,6 +15,8 @@ import (
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/thumb"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -751,7 +753,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 // NSFW returns true if media file might be offensive and detection is enabled.
 func (ind *Index) NSFW(jpeg *MediaFile) bool {
-	filename, err := jpeg.Thumbnail(Config().ThumbPath(), "fit_720")
+	filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb.Fit720)
 
 	if err != nil {
 		log.Error(err)

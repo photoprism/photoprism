@@ -77,7 +77,7 @@ func init() {
 		t := thumb.Sizes[name]
 
 		if t.Public {
-			Thumbs = append(Thumbs, ThumbSize{Size: name, Use: t.Use, Width: t.Width, Height: t.Height})
+			Thumbs = append(Thumbs, ThumbSize{Size: string(name), Use: t.Use, Width: t.Width, Height: t.Height})
 		}
 	}
 }

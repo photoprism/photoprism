@@ -15,57 +15,6 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-// ResampleOptions extracts filter, format, and method from resample options.
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.FileFormat) {
-	method = ResampleFit
-	filter = imaging.Lanczos
-	format = fs.FormatJpeg
-
-	for _, option := range opts {
-		switch option {
-		case ResamplePng:
-			format = fs.FormatPng
-		case ResampleNearestNeighbor:
-			filter = imaging.NearestNeighbor
-		case ResampleDefault:
-			filter = Filter.Imaging()
-		case ResampleFillTopLeft:
-			method = ResampleFillTopLeft
-		case ResampleFillCenter:
-			method = ResampleFillCenter
-		case ResampleFillBottomRight:
-			method = ResampleFillBottomRight
-		case ResampleFit:
-			method = ResampleFit
-		case ResampleResize:
-			method = ResampleResize
-		}
-	}
-
-	return method, filter, format
-}
-
-// Resample downscales an image and returns it.
-func Resample(img image.Image, width, height int, opts ...ResampleOption) image.Image {
-	var resImg image.Image
-
-	method, filter, _ := ResampleOptions(opts...)
-
-	if method == ResampleFit {
-		resImg = imaging.Fit(img, width, height, filter)
-	} else if method == ResampleFillCenter {
-		resImg = imaging.Fill(img, width, height, imaging.Center, filter)
-	} else if method == ResampleFillTopLeft {
-		resImg = imaging.Fill(img, width, height, imaging.TopLeft, filter)
-	} else if method == ResampleFillBottomRight {
-		resImg = imaging.Fill(img, width, height, imaging.BottomRight, filter)
-	} else if method == ResampleResize {
-		resImg = imaging.Resize(img, width, height, filter)
-	}
-
-	return resImg
-}
-
 // Suffix returns the thumb cache file suffix.
 func Suffix(width, height int, opts ...ResampleOption) (result string) {
 	method, _, format := ResampleOptions(opts...)

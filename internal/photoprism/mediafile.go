@@ -16,6 +16,7 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/djherbis/times"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -887,12 +888,12 @@ func (m *MediaFile) Orientation() int {
 }
 
 // Thumbnail returns a thumbnail filename.
-func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, err error) {
-	size, ok := thumb.Sizes[typeName]
+func (m *MediaFile) Thumbnail(path string, sizeName thumb.Name) (filename string, err error) {
+	size, ok := thumb.Sizes[sizeName]
 
 	if !ok {
-		log.Errorf("media: invalid type %s", typeName)
-		return "", fmt.Errorf("media: invalid type %s", typeName)
+		log.Errorf("media: invalid type %s", sizeName)
+		return "", fmt.Errorf("media: invalid type %s", sizeName)
 	}
 
 	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, size.Width, size.Height, m.Orientation(), size.Options...)
@@ -907,8 +908,8 @@ func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, er
 }
 
 // Resample returns a resampled image of the file.
-func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err error) {
-	filename, err := m.Thumbnail(path, typeName)
+func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image, err error) {
+	filename, err := m.Thumbnail(path, sizeName)
 
 	if err != nil {
 		return nil, err
@@ -937,7 +938,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 
 	var originalImg image.Image
 	var sourceImg image.Image
-	var sourceImgType string
+	var sourceName thumb.Name
 
 	for _, name := range thumb.DefaultSizes {
 		size := thumb.Sizes[name]
@@ -948,7 +949,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 		}
 
 		if fileName, err := thumb.FileName(hash, thumbPath, size.Width, size.Height, size.Options...); err != nil {
-			log.Errorf("media: failed creating %s (%s)", txt.Quote(name), err)
+			log.Errorf("media: failed creating %s (%s)", txt.Quote(string(name)), err)
 
 			return err
 		} else {
@@ -970,18 +971,18 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if size.Source != "" {
-				if size.Source == sourceImgType && sourceImg != nil {
+				if size.Source == sourceName && sourceImg != nil {
 					_, err = thumb.Create(sourceImg, fileName, size.Width, size.Height, size.Options...)
 				} else {
 					_, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
 				}
 			} else {
 				sourceImg, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
-				sourceImgType = name
+				sourceName = name
 			}
 
 			if err != nil {
-				log.Errorf("media: failed creating %s (%s)", txt.Quote(name), err)
+				log.Errorf("media: failed creating %s (%s)", txt.Quote(string(name)), err)
 				return err
 			}
 

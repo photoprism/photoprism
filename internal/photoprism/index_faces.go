@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/thumb"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -14,15 +16,15 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 	}
 
 	var minSize int
-	var thumbSize string
+	var thumbSize thumb.Name
 
 	// Select best thumbnail depending on configured size.
 	if Config().ThumbSizePrecached() < 1280 {
 		minSize = 30
-		thumbSize = "fit_720"
+		thumbSize = thumb.Fit720
 	} else {
 		minSize = 40
-		thumbSize = "fit_1280"
+		thumbSize = thumb.Fit1280
 	}
 
 	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), thumbSize)

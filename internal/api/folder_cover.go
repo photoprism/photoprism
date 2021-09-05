@@ -18,14 +18,16 @@ const (
 	folderCover = "folder-cover"
 )
 
-// GET /api/v1/folders/t/:hash/:token/:type
+// FolderCover returns a folder cover image.
+//
+// GET /api/v1/folders/t/:hash/:token/:size
 //
 // Parameters:
 //   uid: string folder uid
 //   token: string url security token, see config
-//   type: string thumb type, see thumb.Sizes
-func GetFolderCover(router *gin.RouterGroup) {
-	router.GET("/folders/t/:uid/:token/:type", func(c *gin.Context) {
+//   size: string thumb type, see thumb.Sizes
+func FolderCover(router *gin.RouterGroup) {
+	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", folderIconSvg)
 			return
@@ -34,21 +36,21 @@ func GetFolderCover(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		uid := c.Param("uid")
-		typeName := c.Param("type")
+		thumbName := thumb.Name(c.Param("size"))
 		download := c.Query("download") != ""
 
-		size, ok := thumb.Sizes[typeName]
+		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("folder: invalid thumb type %s", txt.Quote(typeName))
+			log.Errorf("%s: invalid size %s", folderCover, thumbName)
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		}
 
 		if size.Uncached() && !conf.ThumbUncached() {
-			typeName, size = thumb.Find(conf.ThumbSizePrecached())
+			thumbName, size = thumb.Find(conf.ThumbSizePrecached())
 
-			if typeName == "" {
+			if thumbName == "" {
 				log.Errorf("folder: invalid thumb size %d", conf.ThumbSizePrecached())
 				c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 				return
@@ -56,7 +58,7 @@ func GetFolderCover(router *gin.RouterGroup) {
 		}
 
 		cache := service.CoverCache()
-		cacheKey := CacheKey(folderCover, uid, typeName)
+		cacheKey := CacheKey(folderCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))

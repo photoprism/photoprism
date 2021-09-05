@@ -18,14 +18,14 @@ import (
 
 // GetThumb returns a thumbnail image matching the hash and type.
 //
-// GET /api/v1/t/:hash/:token/:type
+// GET /api/v1/t/:hash/:token/:size
 //
 // Parameters:
 //   hash: string sha1 file hash
 //   token: string url security token, see config
-//   type: string thumb type, see thumb.Sizes
+//   size: string thumb type, see thumb.Sizes
 func GetThumb(router *gin.RouterGroup) {
-	router.GET("/t/:hash/:token/:type", func(c *gin.Context) {
+	router.GET("/t/:hash/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
@@ -34,21 +34,21 @@ func GetThumb(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		fileHash := c.Param("hash")
-		typeName := c.Param("type")
+		thumbName := thumb.Name(c.Param("size"))
 		download := c.Query("download") != ""
 
-		size, ok := thumb.Sizes[typeName]
+		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("thumbs: invalid type %s", txt.Quote(typeName))
+			log.Errorf("thumbs: invalid size %s", thumbName)
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
 
 		if size.Uncached() && !conf.ThumbUncached() {
-			typeName, size = thumb.Find(conf.ThumbSizePrecached())
+			thumbName, size = thumb.Find(conf.ThumbSizePrecached())
 
-			if typeName == "" {
+			if thumbName == "" {
 				log.Errorf("thumbs: invalid size %d", conf.ThumbSizePrecached())
 				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 				return
@@ -56,7 +56,7 @@ func GetThumb(router *gin.RouterGroup) {
 		}
 
 		cache := service.ThumbCache()
-		cacheKey := CacheKey("thumbs", fileHash, typeName)
+		cacheKey := CacheKey("thumbs", fileHash, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
@@ -173,15 +173,15 @@ func GetThumb(router *gin.RouterGroup) {
 
 // GetThumbCrop returns a cropped thumbnail image matching the hash and type.
 //
-// GET /api/v1/t/:hash/:token/:type/:area
+// GET /api/v1/t/:hash/:token/:size/:area
 //
 // Parameters:
 //   hash: string sha1 file hash
 //   token: string url security token, see config
-//   type: string thumb type, see thumb.Sizes
+//   size: string thumb type, see thumb.Sizes
 //   area: string image area identifier, e.g. 022004010015
 func GetThumbCrop(router *gin.RouterGroup) {
-	router.GET("/t/:hash/:token/:type/:area", func(c *gin.Context) {
+	router.GET("/t/:hash/:token/:size/:area", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
@@ -189,18 +189,18 @@ func GetThumbCrop(router *gin.RouterGroup) {
 
 		conf := service.Config()
 		fileHash := c.Param("hash")
-		typeName := c.Param("type")
+		thumbName := thumb.Name(c.Param("size"))
 		cropArea := c.Param("area")
 		download := c.Query("download") != ""
 
-		size, ok := thumb.Sizes[typeName]
+		size, ok := thumb.Sizes[thumbName]
 
 		if !ok || len(size.Options) < 1 {
-			log.Errorf("thumbs: invalid type %s", txt.Quote(typeName))
+			log.Errorf("thumbs: invalid size %s", thumbName)
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		} else if size.Options[0] != thumb.ResampleCrop {
-			log.Errorf("thumbs: invalid crop %s", txt.Quote(typeName))
+			log.Errorf("thumbs: invalid size %s", thumbName)
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -220,7 +220,7 @@ func GetThumbCrop(router *gin.RouterGroup) {
 		AddThumbCacheHeader(c)
 
 		if download {
-			c.FileAttachment(fileName, typeName+fs.JpegExt)
+			c.FileAttachment(fileName, thumbName.Jpeg())
 		} else {
 			c.File(fileName)
 		}

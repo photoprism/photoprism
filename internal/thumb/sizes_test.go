@@ -10,13 +10,13 @@ func TestSize_ExceedsLimit(t *testing.T) {
 	SizePrecached = 1024
 	SizeUncached = 2048
 
-	fit4096 := Sizes["fit_4096"]
+	fit4096 := Sizes[Fit4096]
 	assert.True(t, fit4096.ExceedsLimit())
 
-	fit2048 := Sizes["fit_2048"]
+	fit2048 := Sizes[Fit2048]
 	assert.False(t, fit2048.ExceedsLimit())
 
-	tile500 := Sizes["tile_500"]
+	tile500 := Sizes[Tile500]
 	assert.False(t, tile500.ExceedsLimit())
 
 	SizePrecached = 2048
@@ -27,13 +27,13 @@ func TestSize_Uncached(t *testing.T) {
 	SizePrecached = 1024
 	SizeUncached = 2048
 
-	fit4096 := Sizes["fit_4096"]
+	fit4096 := Sizes[Fit4096]
 	assert.True(t, fit4096.Uncached())
 
-	fit2048 := Sizes["fit_2048"]
+	fit2048 := Sizes[Fit2048]
 	assert.True(t, fit2048.Uncached())
 
-	tile500 := Sizes["tile_500"]
+	tile500 := Sizes[Tile500]
 	assert.False(t, tile500.Uncached())
 
 	SizePrecached = 2048
@@ -57,16 +57,16 @@ func TestResampleFilter_Imaging(t *testing.T) {
 
 func TestFind(t *testing.T) {
 	t.Run("2048", func(t *testing.T) {
-		tName, tType := Find(2048)
-		assert.Equal(t, "fit_2048", tName)
-		assert.Equal(t, 2048, tType.Width)
-		assert.Equal(t, 2048, tType.Height)
+		name, size := Find(2048)
+		assert.Equal(t, Fit2048, name)
+		assert.Equal(t, 2048, size.Width)
+		assert.Equal(t, 2048, size.Height)
 	})
 
 	t.Run("2000", func(t *testing.T) {
-		tName, tType := Find(2000)
-		assert.Equal(t, "fit_1920", tName)
-		assert.Equal(t, 1920, tType.Width)
-		assert.Equal(t, 1200, tType.Height)
+		name, size := Find(2000)
+		assert.Equal(t, Fit1920, name)
+		assert.Equal(t, 1920, size.Width)
+		assert.Equal(t, 1200, size.Height)
 	})
 }

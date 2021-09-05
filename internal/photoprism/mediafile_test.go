@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -1822,7 +1823,7 @@ func TestMediaFile_Resample(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		thumbnail, err := image.Resample(thumbsPath, "tile_500")
+		thumbnail, err := image.Resample(thumbsPath, thumb.Tile500)
 
 		if err != nil {
 			t.Fatal(err)
@@ -1873,7 +1874,7 @@ func TestMediaFile_RenderDefaultThumbs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	thumbFilename, err := thumb.FileName(m.Hash(), thumbsPath, thumb.Sizes["tile_50"].Width, thumb.Sizes["tile_50"].Height, thumb.Sizes["tile_50"].Options...)
+	thumbFilename, err := thumb.FileName(m.Hash(), thumbsPath, thumb.Sizes[thumb.Tile50].Width, thumb.Sizes[thumb.Tile50].Height, thumb.Sizes[thumb.Tile50].Options...)
 
 	if err != nil {
 		t.Fatal(err)

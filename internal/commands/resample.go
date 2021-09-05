@@ -13,7 +13,7 @@ import (
 var ResampleCommand = cli.Command{
 	Name:    "resample",
 	Aliases: []string{"thumbs"},
-	Usage:   "Pre-caches thumbnails to reduce memory and cpu usage",
+	Usage:   "Pre-caches thumbnail images for improved performance",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",

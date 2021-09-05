@@ -57,8 +57,8 @@ func RemoveFromFolderCache(rootName string) {
 func RemoveFromAlbumCoverCache(uid string) {
 	cache := service.CoverCache()
 
-	for typeName := range thumb.Sizes {
-		cacheKey := CacheKey(albumCover, uid, typeName)
+	for thumbName := range thumb.Sizes {
+		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
 		cache.Delete(cacheKey)
 

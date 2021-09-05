@@ -35,7 +35,7 @@ func TestResampleOptions(t *testing.T) {
 
 func TestResample(t *testing.T) {
 	t.Run("tile50 options", func(t *testing.T) {
-		tile50 := Sizes["tile_50"]
+		tile50 := Sizes[Tile50]
 
 		src := "testdata/example.jpg"
 
@@ -60,7 +60,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 50, boundsNew.Max.Y)
 	})
 	t.Run("left_224 options", func(t *testing.T) {
-		left224 := Sizes["left_224"]
+		left224 := Sizes[Left224]
 
 		src := "testdata/example.jpg"
 
@@ -85,7 +85,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 224, boundsNew.Max.Y)
 	})
 	t.Run("right_224 options", func(t *testing.T) {
-		right224 := Sizes["right_224"]
+		right224 := Sizes[Right224]
 
 		src := "testdata/example.jpg"
 
@@ -110,7 +110,7 @@ func TestResample(t *testing.T) {
 		assert.Equal(t, 224, boundsNew.Max.Y)
 	})
 	t.Run("fit_1280 options", func(t *testing.T) {
-		fit1280 := Sizes["fit_1280"]
+		fit1280 := Sizes[Fit1280]
 
 		src := "testdata/example.jpg"
 
@@ -137,7 +137,7 @@ func TestResample(t *testing.T) {
 }
 
 func TestSuffix(t *testing.T) {
-	tile50 := Sizes["tile_50"]
+	tile50 := Sizes[Tile50]
 
 	result := Suffix(tile50.Width, tile50.Height, tile50.Options...)
 
@@ -146,7 +146,7 @@ func TestSuffix(t *testing.T) {
 
 func TestFileName(t *testing.T) {
 	t.Run("colors", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 
 		result, err := FileName("123456789098765432", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
@@ -158,7 +158,7 @@ func TestFileName(t *testing.T) {
 	})
 
 	t.Run("fit_720", func(t *testing.T) {
-		fit720 := Sizes["fit_720"]
+		fit720 := Sizes[Fit720]
 
 		result, err := FileName("123456789098765432", "testdata", fit720.Width, fit720.Height, fit720.Options...)
 
@@ -169,7 +169,7 @@ func TestFileName(t *testing.T) {
 		assert.Equal(t, "testdata/1/2/3/123456789098765432_720x720_fit.jpg", result)
 	})
 	t.Run("invalid width", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 
 		result, err := FileName("123456789098765432", "testdata", -2, colorThumb.Height, colorThumb.Options...)
 
@@ -180,7 +180,7 @@ func TestFileName(t *testing.T) {
 		assert.Empty(t, result)
 	})
 	t.Run("invalid height", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 
 		result, err := FileName("123456789098765432", "testdata", colorThumb.Width, -3, colorThumb.Options...)
 
@@ -191,7 +191,7 @@ func TestFileName(t *testing.T) {
 		assert.Empty(t, result)
 	})
 	t.Run("invalid hash", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 
 		result, err := FileName("12", "testdata", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
@@ -202,7 +202,7 @@ func TestFileName(t *testing.T) {
 		assert.Empty(t, result)
 	})
 	t.Run("invalid thumb path", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 
 		result, err := FileName("123456789098765432", "", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
@@ -216,7 +216,7 @@ func TestFileName(t *testing.T) {
 
 func TestFromFile(t *testing.T) {
 	t.Run("colors", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 		src := "testdata/example.gif"
 		dst := "testdata/1/2/3/123456789098765432_3x3_resize.png"
 
@@ -234,7 +234,7 @@ func TestFromFile(t *testing.T) {
 	})
 
 	t.Run("orientation >1 ", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 		src := "testdata/example.gif"
 		dst := "testdata/1/2/3/123456789098765432_3x3_resize.png"
 
@@ -252,7 +252,7 @@ func TestFromFile(t *testing.T) {
 	})
 
 	t.Run("missing file", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 		src := "testdata/example.xxx"
 
 		assert.NoFileExists(t, src)
@@ -263,7 +263,7 @@ func TestFromFile(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("empty filename", func(t *testing.T) {
-		colorThumb := Sizes["colors"]
+		colorThumb := Sizes[Colors]
 
 		fileName, err := FromFile("", "193456789098765432", "testdata", colorThumb.Width, colorThumb.Height, OrientationNormal, colorThumb.Options...)
 
@@ -277,7 +277,7 @@ func TestFromFile(t *testing.T) {
 
 func TestFromCache(t *testing.T) {
 	t.Run("missing thumb", func(t *testing.T) {
-		tile50 := Sizes["tile_50"]
+		tile50 := Sizes[Tile50]
 		src := "testdata/example.jpg"
 
 		assert.FileExists(t, src)
@@ -292,7 +292,7 @@ func TestFromCache(t *testing.T) {
 	})
 
 	t.Run("missing file", func(t *testing.T) {
-		tile50 := Sizes["tile_50"]
+		tile50 := Sizes[Tile50]
 		src := "testdata/example.xxx"
 
 		assert.NoFileExists(t, src)
@@ -303,7 +303,7 @@ func TestFromCache(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("invalid hash", func(t *testing.T) {
-		tile50 := Sizes["tile_50"]
+		tile50 := Sizes[Tile50]
 		src := "testdata/example.jpg"
 
 		assert.FileExists(t, src)
@@ -317,7 +317,7 @@ func TestFromCache(t *testing.T) {
 		assert.Empty(t, fileName)
 	})
 	t.Run("empty filename", func(t *testing.T) {
-		tile50 := Sizes["tile_50"]
+		tile50 := Sizes[Tile50]
 
 		fileName, err := FromCache("", "193456789098765432", "testdata", tile50.Width, tile50.Height, tile50.Options...)
 
@@ -331,7 +331,7 @@ func TestFromCache(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	t.Run("tile_500", func(t *testing.T) {
-		tile500 := Sizes["tile_500"]
+		tile500 := Sizes[Tile500]
 		src := "testdata/example.jpg"
 		dst := "testdata/example.tile_500.jpg"
 
@@ -368,7 +368,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, 500, boundsNew.Max.Y)
 	})
 	t.Run("width & height <= 150", func(t *testing.T) {
-		tile500 := Sizes["tile_500"]
+		tile500 := Sizes[Tile500]
 		src := "testdata/example.jpg"
 		dst := "testdata/example.tile_500.jpg"
 
@@ -405,7 +405,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, 150, boundsNew.Max.Y)
 	})
 	t.Run("invalid width", func(t *testing.T) {
-		tile500 := Sizes["tile_500"]
+		tile500 := Sizes[Tile500]
 		src := "testdata/example.jpg"
 		dst := "testdata/example.tile_500.jpg"
 
@@ -433,7 +433,7 @@ func TestCreate(t *testing.T) {
 		t.Log(resized)
 	})
 	t.Run("invalid height", func(t *testing.T) {
-		tile500 := Sizes["tile_500"]
+		tile500 := Sizes[Tile500]
 		src := "testdata/example.jpg"
 		dst := "testdata/example.tile_500.jpg"
 
