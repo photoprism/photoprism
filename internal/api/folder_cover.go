@@ -23,7 +23,7 @@ const (
 // Parameters:
 //   uid: string folder uid
 //   token: string url security token, see config
-//   type: string thumb type, see thumb.Types
+//   type: string thumb type, see thumb.Sizes
 func GetFolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:type", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -37,7 +37,7 @@ func GetFolderCover(router *gin.RouterGroup) {
 		typeName := c.Param("type")
 		download := c.Query("download") != ""
 
-		thumbType, ok := thumb.Types[typeName]
+		size, ok := thumb.Sizes[typeName]
 
 		if !ok {
 			log.Errorf("folder: invalid thumb type %s", txt.Quote(typeName))
@@ -45,11 +45,11 @@ func GetFolderCover(router *gin.RouterGroup) {
 			return
 		}
 
-		if thumbType.ExceedsSize() && !conf.ThumbUncached() {
-			typeName, thumbType = thumb.Find(conf.ThumbSize())
+		if size.Uncached() && !conf.ThumbUncached() {
+			typeName, size = thumb.Find(conf.ThumbSizePrecached())
 
 			if typeName == "" {
-				log.Errorf("folder: invalid thumb size %d", conf.ThumbSize())
+				log.Errorf("folder: invalid thumb size %d", conf.ThumbSizePrecached())
 				c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 				return
 			}
@@ -101,8 +101,8 @@ func GetFolderCover(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsSizeUncached() && !download {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", folderCover, thumbType.Width, thumbType.Height)
+		if size.ExceedsLimit() && !download {
+			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", folderCover, size.Width, size.Height)
 			AddCoverCacheHeader(c)
 			c.File(fileName)
 			return
@@ -110,10 +110,10 @@ func GetFolderCover(router *gin.RouterGroup) {
 
 		var thumbnail string
 
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+		if conf.ThumbUncached() || size.Uncached() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {

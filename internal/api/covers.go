@@ -38,7 +38,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		typeName := c.Param("type")
 		uid := c.Param("uid")
 
-		thumbType, ok := thumb.Types[typeName]
+		size, ok := thumb.Sizes[typeName]
 
 		if !ok {
 			log.Errorf("%s: invalid type %s", albumCover, typeName)
@@ -92,8 +92,8 @@ func AlbumCover(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsSizeUncached() && c.Query("download") == "" {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", albumCover, thumbType.Width, thumbType.Height)
+		if size.ExceedsLimit() && c.Query("download") == "" {
+			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", albumCover, size.Width, size.Height)
 			AddCoverCacheHeader(c)
 			c.File(fileName)
 			return
@@ -101,10 +101,10 @@ func AlbumCover(router *gin.RouterGroup) {
 
 		var thumbnail string
 
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+		if conf.ThumbUncached() || size.Uncached() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {
@@ -148,7 +148,7 @@ func LabelCover(router *gin.RouterGroup) {
 		typeName := c.Param("type")
 		uid := c.Param("uid")
 
-		thumbType, ok := thumb.Types[typeName]
+		size, ok := thumb.Sizes[typeName]
 
 		if !ok {
 			log.Errorf("%s: invalid type %s", labelCover, txt.Quote(typeName))
@@ -202,8 +202,8 @@ func LabelCover(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsSizeUncached() {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", labelCover, thumbType.Width, thumbType.Height)
+		if size.ExceedsLimit() {
+			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", labelCover, size.Width, size.Height)
 
 			AddCoverCacheHeader(c)
 			c.File(fileName)
@@ -213,10 +213,10 @@ func LabelCover(router *gin.RouterGroup) {
 
 		var thumbnail string
 
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+		if conf.ThumbUncached() || size.Uncached() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {

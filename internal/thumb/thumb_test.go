@@ -18,7 +18,7 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	// remove temporary test files
-	os.RemoveAll("testdata/1")
+	_ = os.RemoveAll("testdata/1")
 
 	os.Exit(code)
 }

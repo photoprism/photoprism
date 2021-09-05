@@ -97,14 +97,14 @@ func (worker *Share) Start() (err error) {
 			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 
 			if a.ShareSize != "" {
-				thumbType, ok := thumb.Types[a.ShareSize]
+				size, ok := thumb.Sizes[a.ShareSize]
 
 				if !ok {
 					log.Errorf("share: invalid size %s", a.ShareSize)
 					continue
 				}
 
-				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), thumbType.Width, thumbType.Height, file.File.FileOrientation, thumbType.Options...)
+				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), size.Width, size.Height, file.File.FileOrientation, size.Options...)
 
 				if err != nil {
 					worker.logError(err)

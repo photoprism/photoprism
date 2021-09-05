@@ -17,7 +17,7 @@ func (ind *Index) detectFaces(jpeg *MediaFile) face.Faces {
 	var thumbSize string
 
 	// Select best thumbnail depending on configured size.
-	if Config().ThumbSize() < 1280 {
+	if Config().ThumbSizePrecached() < 1280 {
 		minSize = 30
 		thumbSize = "fit_720"
 	} else {

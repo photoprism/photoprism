@@ -3,16 +3,16 @@ package thumb
 import "github.com/disintegration/imaging"
 
 var (
-	Size             = 2048
+	SizePrecached    = 2048
 	SizeUncached     = 7680
-	Filter           = ResampleLanczos
 	JpegQuality      = 95
 	JpegQualitySmall = 80
+	Filter           = ResampleLanczos
 )
 
 func MaxSize() int {
-	if Size > SizeUncached {
-		return Size
+	if SizePrecached > SizeUncached {
+		return SizePrecached
 	}
 
 	return SizeUncached
@@ -69,7 +69,7 @@ var ResampleMethods = map[ResampleOption]string{
 	ResampleResize:          "resize",
 }
 
-type Type struct {
+type Size struct {
 	Use     string           `json:"use"`
 	Source  string           `json:"-"`
 	Width   int              `json:"w"`
@@ -78,9 +78,9 @@ type Type struct {
 	Options []ResampleOption `json:"-"`
 }
 
-type TypeMap map[string]Type
+type SizeMap map[string]Size
 
-var Types = TypeMap{
+var Sizes = SizeMap{
 	"tile_50":   {"Lists", "tile_500", 50, 50, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
 	"tile_100":  {"Maps", "tile_500", 100, 100, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
 	"crop_160":  {"FaceNet", "", 160, 160, false, []ResampleOption{ResampleCrop, ResampleDefault}},
@@ -99,7 +99,7 @@ var Types = TypeMap{
 	"fit_7680":  {"8K Ultra HD 2, Retina 6K", "", 7680, 4320, true, []ResampleOption{ResampleFit, ResampleDefault}},
 }
 
-var DefaultTypes = []string{
+var DefaultSizes = []string{
 	"fit_7680",
 	"fit_4096",
 	"fit_2560",
@@ -117,29 +117,24 @@ var DefaultTypes = []string{
 }
 
 // Find returns the largest default thumbnail type for the given size limit.
-func Find(limit int) (name string, result Type) {
-	for _, name = range DefaultTypes {
-		t := Types[name]
+func Find(limit int) (name string, result Size) {
+	for _, name = range DefaultSizes {
+		t := Sizes[name]
 
 		if t.Width <= limit && t.Height <= limit {
 			return name, t
 		}
 	}
 
-	return "", Type{}
+	return "", Size{}
 }
 
-// ExceedsSize tests if thumbnail type exceeds the cached thumbnails size.
-func (t Type) ExceedsSize() bool {
-	return t.Width > Size || t.Height > Size
+// Uncached tests if thumbnail type exceeds the cached thumbnails size limit.
+func (s Size) Uncached() bool {
+	return s.Width > SizePrecached || s.Height > SizePrecached
 }
 
-// ExceedsSizeUncached tests if thumbnail type is too large and can not be rendered at all.
-func (t Type) ExceedsSizeUncached() bool {
-	return t.Width > MaxSize() || t.Height > MaxSize()
-}
-
-// OnDemand tests if thumbnail type should not be pre-rendered.
-func (t Type) OnDemand() bool {
-	return t.Width > Size || t.Height > Size
+// ExceedsLimit tests if thumbnail type is too large, and can not be rendered at all.
+func (s Size) ExceedsLimit() bool {
+	return s.Width > MaxSize() || s.Height > MaxSize()
 }

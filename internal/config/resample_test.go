@@ -50,9 +50,9 @@ func TestConfig_ThumbSizeUncached(t *testing.T) {
 func TestConfig_ThumbSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int(720), c.ThumbSize())
+	assert.Equal(t, int(720), c.ThumbSizePrecached())
 	c.options.ThumbSize = 7681
-	assert.Equal(t, int(7680), c.ThumbSize())
+	assert.Equal(t, int(7680), c.ThumbSizePrecached())
 }
 
 func TestConfig_ThumbSizeUncached2(t *testing.T) {

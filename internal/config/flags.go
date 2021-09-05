@@ -5,7 +5,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// PhotoPrism command-line parameters and flags.
+// GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",
@@ -387,7 +387,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "static thumbnail size limit in `PIXELS` (720-7680)",
+		Usage:  "pre-cached thumbnail size in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},

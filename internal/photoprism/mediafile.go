@@ -888,14 +888,14 @@ func (m *MediaFile) Orientation() int {
 
 // Thumbnail returns a thumbnail filename.
 func (m *MediaFile) Thumbnail(path string, typeName string) (filename string, err error) {
-	thumbType, ok := thumb.Types[typeName]
+	size, ok := thumb.Sizes[typeName]
 
 	if !ok {
 		log.Errorf("media: invalid type %s", typeName)
 		return "", fmt.Errorf("media: invalid type %s", typeName)
 	}
 
-	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, thumbType.Width, thumbType.Height, m.Orientation(), thumbType.Options...)
+	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, size.Width, size.Height, m.Orientation(), size.Options...)
 
 	if err != nil {
 		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", txt.Quote(m.BaseName()), err)
@@ -917,7 +917,7 @@ func (m *MediaFile) Resample(path string, typeName string) (img image.Image, err
 	return imaging.Open(filename)
 }
 
-// ResampleDefault pre-renders default thumbnails.
+// ResampleDefault pre-caches default thumbnails.
 func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	count := 0
 	start := time.Now()
@@ -925,11 +925,11 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("media: no new thumbnails created for %s", m.BasePrefix(false))))
+			log.Debug(capture.Time(start, fmt.Sprintf("media: no new thumbs created for %s", m.BasePrefix(false))))
 		case 1:
 			log.Info(capture.Time(start, fmt.Sprintf("media: one thumbnail created for %s", m.BasePrefix(false))))
 		default:
-			log.Info(capture.Time(start, fmt.Sprintf("media: %d thumbnails created for %s", count, m.BasePrefix(false))))
+			log.Info(capture.Time(start, fmt.Sprintf("media: %d thumbs created for %s", count, m.BasePrefix(false))))
 		}
 	}()
 
@@ -939,15 +939,15 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	var sourceImg image.Image
 	var sourceImgType string
 
-	for _, name := range thumb.DefaultTypes {
-		thumbType := thumb.Types[name]
+	for _, name := range thumb.DefaultSizes {
+		size := thumb.Sizes[name]
 
-		if thumbType.OnDemand() {
-			// Skip, size exceeds limit
+		if size.Uncached() {
+			// Skip, exceeds pre-cached size limit.
 			continue
 		}
 
-		if fileName, err := thumb.FileName(hash, thumbPath, thumbType.Width, thumbType.Height, thumbType.Options...); err != nil {
+		if fileName, err := thumb.FileName(hash, thumbPath, size.Width, size.Height, size.Options...); err != nil {
 			log.Errorf("media: failed creating %s (%s)", txt.Quote(name), err)
 
 			return err
@@ -969,14 +969,14 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				originalImg = img
 			}
 
-			if thumbType.Source != "" {
-				if thumbType.Source == sourceImgType && sourceImg != nil {
-					_, err = thumb.Create(sourceImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+			if size.Source != "" {
+				if size.Source == sourceImgType && sourceImg != nil {
+					_, err = thumb.Create(sourceImg, fileName, size.Width, size.Height, size.Options...)
 				} else {
-					_, err = thumb.Create(originalImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+					_, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
 				}
 			} else {
-				sourceImg, err = thumb.Create(originalImg, fileName, thumbType.Width, thumbType.Height, thumbType.Options...)
+				sourceImg, err = thumb.Create(originalImg, fileName, size.Width, size.Height, size.Options...)
 				sourceImgType = name
 			}
 

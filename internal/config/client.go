@@ -43,7 +43,7 @@ type ClientConfig struct {
 	Lenses          entity.Lenses       `json:"lenses"`
 	Countries       entity.Countries    `json:"countries"`
 	People          entity.People       `json:"people"`
-	Thumbs          ThumbTypes          `json:"thumbs"`
+	Thumbs          ThumbSizes          `json:"thumbs"`
 	Status          string              `json:"status"`
 	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken"`

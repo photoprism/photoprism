@@ -6,54 +6,37 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestType_ExceedsLimit(t *testing.T) {
-	Size = 1024
+func TestSize_ExceedsLimit(t *testing.T) {
+	SizePrecached = 1024
 	SizeUncached = 2048
 
-	fit4096 := Types["fit_4096"]
-	assert.True(t, fit4096.ExceedsSizeUncached())
+	fit4096 := Sizes["fit_4096"]
+	assert.True(t, fit4096.ExceedsLimit())
 
-	fit2048 := Types["fit_2048"]
-	assert.False(t, fit2048.ExceedsSizeUncached())
+	fit2048 := Sizes["fit_2048"]
+	assert.False(t, fit2048.ExceedsLimit())
 
-	tile500 := Types["tile_500"]
-	assert.False(t, tile500.ExceedsSizeUncached())
+	tile500 := Sizes["tile_500"]
+	assert.False(t, tile500.ExceedsLimit())
 
-	Size = 2048
+	SizePrecached = 2048
 	SizeUncached = 7680
 }
 
-func TestType_ExceedsSize(t *testing.T) {
-	Size = 1024
+func TestSize_Uncached(t *testing.T) {
+	SizePrecached = 1024
 	SizeUncached = 2048
 
-	fit4096 := Types["fit_4096"]
-	assert.True(t, fit4096.ExceedsSize())
+	fit4096 := Sizes["fit_4096"]
+	assert.True(t, fit4096.Uncached())
 
-	fit2048 := Types["fit_2048"]
-	assert.True(t, fit2048.ExceedsSize())
+	fit2048 := Sizes["fit_2048"]
+	assert.True(t, fit2048.Uncached())
 
-	tile500 := Types["tile_500"]
-	assert.False(t, tile500.ExceedsSize())
+	tile500 := Sizes["tile_500"]
+	assert.False(t, tile500.Uncached())
 
-	Size = 2048
-	SizeUncached = 7680
-}
-
-func TestType_SkipPreRender(t *testing.T) {
-	Size = 1024
-	SizeUncached = 2048
-
-	fit4096 := Types["fit_4096"]
-	assert.True(t, fit4096.OnDemand())
-
-	fit2048 := Types["fit_2048"]
-	assert.True(t, fit2048.OnDemand())
-
-	tile500 := Types["tile_500"]
-	assert.False(t, tile500.OnDemand())
-
-	Size = 2048
+	SizePrecached = 2048
 	SizeUncached = 7680
 }
 
@@ -72,7 +55,7 @@ func TestResampleFilter_Imaging(t *testing.T) {
 	})
 }
 
-func TestFinde(t *testing.T) {
+func TestFind(t *testing.T) {
 	t.Run("2048", func(t *testing.T) {
 		tName, tType := Find(2048)
 		assert.Equal(t, "fit_2048", tName)

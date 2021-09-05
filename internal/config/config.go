@@ -72,12 +72,12 @@ func init() {
 	LowMem = TotalMem < MinMem
 
 	// Init public thumb sizes for use in client apps.
-	for i := len(thumb.DefaultTypes) - 1; i >= 0; i-- {
-		size := thumb.DefaultTypes[i]
-		t := thumb.Types[size]
+	for i := len(thumb.DefaultSizes) - 1; i >= 0; i-- {
+		name := thumb.DefaultSizes[i]
+		t := thumb.Sizes[name]
 
 		if t.Public {
-			Thumbs = append(Thumbs, ThumbType{Size: size, Use: t.Use, Width: t.Width, Height: t.Height})
+			Thumbs = append(Thumbs, ThumbSize{Size: name, Use: t.Use, Width: t.Width, Height: t.Height})
 		}
 	}
 }
@@ -131,7 +131,7 @@ func (c *Config) Options() *Options {
 func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
-	thumb.Size = c.ThumbSize()
+	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()

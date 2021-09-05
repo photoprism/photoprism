@@ -210,7 +210,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if res.Indexed() && f.IsJpeg() {
 					if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-						log.Errorf("import: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+						log.Errorf("import: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 						query.SetFileError(res.FileUID, err.Error())
 					}
 				}

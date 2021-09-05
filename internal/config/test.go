@@ -138,7 +138,7 @@ func NewTestConfig() *Config {
 
 	c.InitTestDb()
 
-	thumb.Size = c.ThumbSize()
+	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()

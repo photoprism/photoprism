@@ -235,7 +235,6 @@ func TestJpeg(t *testing.T) {
 	}
 
 	t.Run("foo", func(t *testing.T) {
-
 		src := "testdata/example.foo"
 		dst := "testdata/example.foo.jpg"
 
