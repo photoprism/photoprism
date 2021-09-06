@@ -47,6 +47,7 @@ const (
 	Plus   = " + "
 	OrEn   = " or "
 	AndEn  = " and "
+	WithEn = " with "
 	Space  = " "
 	Empty  = ""
 )

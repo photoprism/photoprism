@@ -15,6 +15,7 @@ func NormalizeSearchQuery(s string) string {
 	s = strings.ToLower(txt.Clip(s, txt.ClipQuery))
 	s = strings.ReplaceAll(s, OrEn, Or)
 	s = strings.ReplaceAll(s, AndEn, And)
+	s = strings.ReplaceAll(s, WithEn, And)
 	s = strings.ReplaceAll(s, Plus, And)
 	s = strings.ReplaceAll(s, "%", "*")
 	return strings.Trim(s, "+&|_-=!@$%^(){}\\<>,.;: ")
