@@ -113,7 +113,7 @@
                     @save="onSave(label)"
                 >
                   <span v-if="label.Name" class="body-2 ma-0">
-                      {{ label.Name | capitalize }}
+                      {{ label.Name }}
                   </span>
                   <span v-else>
                       <v-icon>edit</v-icon>

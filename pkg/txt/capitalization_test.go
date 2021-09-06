@@ -92,4 +92,7 @@ func TestTitle(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		assert.Empty(t, Title(""))
 	})
+	t.Run("NYC", func(t *testing.T) {
+		assert.Equal(t, "NYC, NY - LonDon, UK - NYC, NY and London, UK.", Title("NYC, NY - LonDon, UK - Nyc, Ny and London, Uk."))
+	})
 }
