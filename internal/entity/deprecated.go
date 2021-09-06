@@ -1,6 +1,6 @@
 package entity
 
-// Deprecated represents a list of deprecated database tables;
+// Deprecated represents a list of deprecated database tables.
 type Deprecated []string
 
 // Drop drops all deprecated tables.
