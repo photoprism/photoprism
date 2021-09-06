@@ -2,14 +2,17 @@ package query
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
 // UpdateAlbumDefaultPreviews updates default album preview images.
-func UpdateAlbumDefaultPreviews() error {
-	return Db().Table(entity.Album{}.TableName()).
+func UpdateAlbumDefaultPreviews() (err error) {
+	start := time.Now()
+
+	err = Db().Table(entity.Album{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0
@@ -17,11 +20,17 @@ func UpdateAlbumDefaultPreviews() error {
 			WHERE f.deleted_at IS NULL AND f.file_missing = 0  AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.taken_at DESC LIMIT 1
 		) WHERE thumb_src='' AND album_type = 'album' AND deleted_at IS NULL`)).Error
+
+	log.Debugf("albums: updating previews completed in %s", time.Since(start))
+
+	return err
 }
 
 // UpdateAlbumFolderPreviews updates folder album preview images.
-func UpdateAlbumFolderPreviews() error {
-	return Db().Table(entity.Album{}.TableName()).
+func UpdateAlbumFolderPreviews() (err error) {
+	start := time.Now()
+
+	err = Db().Table(entity.Album{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos p ON p.id = f.photo_id AND p.photo_path = albums.album_path AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
@@ -29,19 +38,51 @@ func UpdateAlbumFolderPreviews() error {
 			ORDER BY p.taken_at DESC LIMIT 1
 		) WHERE thumb_src = '' AND album_type = 'folder' AND deleted_at IS NULL`)).
 		Error
+
+	log.Debugf("folders: updating previews completed in %s", time.Since(start))
+
+	return err
 }
 
 // UpdateAlbumMonthPreviews updates month album preview images.
-func UpdateAlbumMonthPreviews() error {
-	return Db().Table(entity.Album{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT f.file_hash FROM files f 
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
-			AND p.photo_year = albums.album_year AND p.photo_month = albums.album_month AND p.photo_month = albums.album_month 	
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
+func UpdateAlbumMonthPreviews() (err error) {
+	start := time.Now()
+
+	err = Db().Table(entity.Album{}.TableName()).
+		Where("album_type = ?", entity.AlbumMonth).
+		Where("thumb IS NOT NULL AND thumb_src = ?", entity.SrcAuto).
+		UpdateColumns(entity.Values{"thumb": nil}).Error
+
+	/* TODO: Slow with many photos due to missing index.
+
+	switch DbDialect() {
+	case MySQL:
+		err = Db().Table(entity.Album{}.TableName()).
+			UpdateColumn("thumb", gorm.Expr(`(
+			SELECT f.file_hash FROM files f JOIN photos p ON p.id = f.photo_id
+			WHERE YEAR(p.taken_at) = albums.album_year AND MONTH(p.taken_at) = albums.album_month
+			AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1 AND f.deleted_at IS NULL
+			AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg'
 			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE thumb_src = '' AND album_type = 'month' AND deleted_at IS NULL`)).
-		Error
+		) WHERE thumb IS NULL AND thumb_src = '' AND album_type = 'month' AND deleted_at IS NULL`)).
+			Error
+	case SQLite:
+		err = Db().Table(entity.Album{}.TableName()).
+			UpdateColumn("thumb", gorm.Expr(`(
+			SELECT f.file_hash FROM files f JOIN photos p ON p.id = f.photo_id
+			WHERE strftime('%Y%m', p.taken_at) = (albums.album_year || printf('%02d', albums.album_month))
+			AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1 AND f.deleted_at IS NULL
+			AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg'
+			ORDER BY p.taken_at DESC LIMIT 1
+		) WHERE thumb IS NULL AND thumb_src = '' AND album_type = 'month' AND deleted_at IS NULL`)).
+			Error
+	default:
+		return nil
+	}
+	*/
+	log.Debugf("calendar: updating previews completed in %s", time.Since(start))
+
+	return err
 }
 
 // UpdateAlbumPreviews updates album preview images.
@@ -66,6 +107,8 @@ func UpdateAlbumPreviews() (err error) {
 
 // UpdateLabelPreviews updates label preview images.
 func UpdateLabelPreviews() (err error) {
+	start := time.Now()
+
 	// Labels.
 	if err = Db().Table(entity.Label{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
@@ -78,6 +121,15 @@ func UpdateLabelPreviews() (err error) {
 		Error; err != nil {
 		return err
 	}
+
+	log.Debugf("labels: updating previews completed in %s", time.Since(start))
+
+	return nil
+}
+
+// UpdateCategoryPreviews updates category preview images.
+func UpdateCategoryPreviews() (err error) {
+	start := time.Now()
 
 	// Categories.
 	if err = Db().Table(entity.Label{}.TableName()).
@@ -93,11 +145,15 @@ func UpdateLabelPreviews() (err error) {
 		return err
 	}
 
+	log.Debugf("categories: updating previews completed in %s", time.Since(start))
+
 	return nil
 }
 
 // UpdateSubjectPreviews updates subject preview images.
-func UpdateSubjectPreviews() error {
+func UpdateSubjectPreviews() (err error) {
+	start := time.Now()
+
 	/* Previous implementation for reference:
 
 	return Db().Table(entity.Subject{}.TableName()).
@@ -113,7 +169,7 @@ func UpdateSubjectPreviews() error {
 		WHERE thumb_src='' AND deleted_at IS NULL`)).
 	Error */
 
-	return Db().Table(entity.Subject{}.TableName()).
+	err = Db().Table(entity.Subject{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr("(SELECT m.file_hash FROM "+
 			fmt.Sprintf(
 				"%s m WHERE m.subject_uid = %s.subject_uid AND m.subject_src = 'manual' ",
@@ -122,6 +178,10 @@ func UpdateSubjectPreviews() error {
 			` AND m.file_hash <> '' ORDER BY m.size DESC LIMIT 1) 
 			WHERE thumb_src='' AND deleted_at IS NULL`)).
 		Error
+
+	log.Debugf("subjects: updating previews completed in %s", time.Since(start))
+
+	return err
 }
 
 // UpdatePreviews updates album, labels, and subject preview images.
@@ -131,8 +191,13 @@ func UpdatePreviews() (err error) {
 		return err
 	}
 
-	// Update Labels, and Categories.
+	// Update Labels.
 	if err = UpdateLabelPreviews(); err != nil {
+		return err
+	}
+
+	// Update Categories.
+	if err = UpdateCategoryPreviews(); err != nil {
 		return err
 	}
 

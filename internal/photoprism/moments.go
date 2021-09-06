@@ -102,11 +102,12 @@ func (w *Moments) Start() (err error) {
 	} else {
 		for _, mom := range results {
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMonth); a != nil {
-				if a.DeletedAt != nil {
-					// Nothing to do.
-					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-				} else {
+				if !a.Deleted() {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				} else if err := a.Restore(); err != nil {
+					log.Errorf("moments: %s (restore month)", err.Error())
+				} else {
+					log.Infof("moments: %s restored", txt.Quote(a.AlbumTitle))
 				}
 			} else if a := entity.NewMonthAlbum(mom.Title(), mom.Slug(), mom.Year, mom.Month); a != nil {
 				if err := a.Create(); err != nil {

@@ -387,7 +387,62 @@ func (m *Album) Create() error {
 	return nil
 }
 
-// Returns the album title.
+// Delete marks the entity as deleted in the database.
+func (m *Album) Delete() error {
+	if m.Deleted() {
+		return nil
+	}
+
+	if err := Db().Delete(m).Error; err != nil {
+		return err
+	}
+
+	switch m.AlbumType {
+	case AlbumDefault:
+		event.Publish("count.albums", event.Data{"count": -1})
+	case AlbumMoment:
+		event.Publish("count.moments", event.Data{"count": -1})
+	case AlbumMonth:
+		event.Publish("count.months", event.Data{"count": -1})
+	case AlbumFolder:
+		event.Publish("count.folders", event.Data{"count": -1})
+	}
+
+	return nil
+}
+
+// Deleted tests if the entity is deleted.
+func (m *Album) Deleted() bool {
+	return m.DeletedAt != nil
+}
+
+// Restore restores the entity in the database.
+func (m *Album) Restore() error {
+	if !m.Deleted() {
+		return nil
+	}
+
+	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
+		return err
+	}
+
+	m.DeletedAt = nil
+
+	switch m.AlbumType {
+	case AlbumDefault:
+		event.Publish("count.albums", event.Data{"count": 1})
+	case AlbumMoment:
+		event.Publish("count.moments", event.Data{"count": 1})
+	case AlbumMonth:
+		event.Publish("count.months", event.Data{"count": 1})
+	case AlbumFolder:
+		event.Publish("count.folders", event.Data{"count": 1})
+	}
+
+	return nil
+}
+
+// Title returns the album title.
 func (m *Album) Title() string {
 	return m.AlbumTitle
 }
