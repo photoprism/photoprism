@@ -49,6 +49,7 @@ const (
 	AndEn  = " and "
 	WithEn = " with "
 	InEn   = " in "
+	AtEn   = " at "
 	Space  = " "
 	Empty  = ""
 )
