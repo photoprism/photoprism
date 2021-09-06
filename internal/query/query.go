@@ -44,8 +44,11 @@ const (
 	SQLite = "sqlite3"
 	Or     = "|"
 	And    = "&"
+	Plus   = " + "
 	OrEn   = " or "
 	AndEn  = " and "
+	Space  = " "
+	Empty  = ""
 )
 
 // MaxResults is max result limit for queries.

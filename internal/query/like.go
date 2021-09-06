@@ -10,6 +10,16 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
+// NormalizeSearchQuery replaces search operator with default symbols.
+func NormalizeSearchQuery(s string) string {
+	s = strings.ToLower(txt.Clip(s, txt.ClipQuery))
+	s = strings.ReplaceAll(s, OrEn, Or)
+	s = strings.ReplaceAll(s, AndEn, And)
+	s = strings.ReplaceAll(s, Plus, And)
+	s = strings.ReplaceAll(s, "%", "*")
+	return strings.Trim(s, "+&|_-=!@$%^(){}\\<>,.;: ")
+}
+
 // LikeAny returns a single where condition matching the search words.
 func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {
@@ -19,6 +29,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	s = strings.ReplaceAll(s, Or, " ")
 	s = strings.ReplaceAll(s, OrEn, " ")
 	s = strings.ReplaceAll(s, AndEn, And)
+	s = strings.ReplaceAll(s, Plus, And)
 
 	var wildcardThreshold int
 
@@ -130,19 +141,31 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 		return wheres
 	}
 
-	words := txt.UniqueWords(txt.Words(s))
+	for _, k := range strings.Split(s, And) {
+		var orWheres []string
 
-	if len(words) == 0 {
-		return wheres
-	}
+		for _, w := range strings.Split(k, Or) {
+			w = strings.TrimSpace(w)
 
-	for _, w := range words {
-		for _, c := range cols {
-			if len(w) >= 5 {
-				wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%' OR %s LIKE '%% %s'", c, w, c, w))
-			} else {
-				wheres = append(wheres, fmt.Sprintf("%s LIKE '%s' OR %s LIKE '%s %%' OR %s LIKE '%% %s'", c, w, c, w, c, w))
+			if w == Empty || len(w) < 2 && txt.IsLatin(w) {
+				continue
 			}
+
+			for _, c := range cols {
+				if len(w) > 4 {
+					if strings.Contains(w, Space) {
+						orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, w))
+					} else {
+						orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, w))
+					}
+				} else {
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s' OR %s LIKE '%s %%'", c, w, c, w))
+				}
+			}
+		}
+
+		if len(orWheres) > 0 {
+			wheres = append(wheres, strings.Join(orWheres, " OR "))
 		}
 	}
 

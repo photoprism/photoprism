@@ -132,14 +132,14 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	}
 
-	// Clip query to reasonable size if needed.
-	f.Query = txt.Clip(f.Query, txt.ClipQuery)
+	// Clip to reasonable size and normalize operators.
+	f.Query = NormalizeSearchQuery(f.Query)
 
 	// Modify query if it contains subject names.
 	if f.Query != "" && f.Subject == "" {
 		if subj, names, remaining := SearchSubjectUIDs(f.Query); len(subj) > 0 {
 			f.Subject = strings.Join(subj, And)
-			log.Debugf("search: subject %s", txt.Quote(strings.Join(names, " & ")))
+			log.Debugf("people: searching for %s", txt.Quote(txt.JoinNames(names)))
 			f.Query = remaining
 		}
 	}

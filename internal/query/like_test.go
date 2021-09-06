@@ -6,6 +6,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNormalizeSearchQuery(t *testing.T) {
+	t.Run("Replace", func(t *testing.T) {
+		q := NormalizeSearchQuery("table spoon & usa | img% json OR BILL!")
+		assert.Equal(t, "table spoon & usa | img* json|bill", q)
+	})
+}
+
 func TestLikeAny(t *testing.T) {
 	t.Run("and_or_search", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "table spoon & usa | img json", true, false); len(w) != 2 {
@@ -170,23 +177,17 @@ func TestLikeAllWords(t *testing.T) {
 
 func TestLikeAllNames(t *testing.T) {
 	t.Run("MultipleNames", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"k.name"}, "j Mander 王"); len(w) == 2 {
-			assert.Equal(t, "k.name LIKE 'mander%' OR k.name LIKE '% mander'", w[0])
-			assert.Equal(t, "k.name LIKE '王' OR k.name LIKE '王 %' OR k.name LIKE '% 王'", w[1])
+		if w := LikeAllNames(Cols{"k.name"}, "j Mander 王"); len(w) == 1 {
+			assert.Equal(t, "k.name LIKE 'j Mander 王%'", w[0])
 		} else {
-			t.Logf("wheres: %#v", w)
-			t.Fatal("2 where conditions expected")
+			t.Fatalf("one where conditions expected:  %#v", w)
 		}
 	})
 	t.Run("MultipleColumns", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"a.col1", "b.col2"}, "Mo Mander"); len(w) == 4 {
-			assert.Equal(t, "a.col1 LIKE 'mander%' OR a.col1 LIKE '% mander'", w[0])
-			assert.Equal(t, "b.col2 LIKE 'mander%' OR b.col2 LIKE '% mander'", w[1])
-			assert.Equal(t, "a.col1 LIKE 'mo' OR a.col1 LIKE 'mo %' OR a.col1 LIKE '% mo'", w[2])
-			assert.Equal(t, "b.col2 LIKE 'mo' OR b.col2 LIKE 'mo %' OR b.col2 LIKE '% mo'", w[3])
+		if w := LikeAllNames(Cols{"a.col1", "b.col2"}, "Mo Mander"); len(w) == 1 {
+			assert.Equal(t, "a.col1 LIKE 'Mo Mander%' OR b.col2 LIKE 'Mo Mander%'", w[0])
 		} else {
-			t.Logf("wheres: %#v", w)
-			t.Fatal("4 where conditions expected")
+			t.Fatalf("one where conditions expected:  %#v", w)
 		}
 	})
 	t.Run("EmptyName", func(t *testing.T) {
@@ -196,6 +197,37 @@ func TestLikeAllNames(t *testing.T) {
 	t.Run("NoWords", func(t *testing.T) {
 		w := LikeAllNames(Cols{"k.name"}, "a")
 		assert.Empty(t, w)
+	})
+	t.Run("FullNames", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"j.name", "j.alias"}, "Bill & Melinda Gates"); len(w) == 2 {
+			assert.Equal(t, "j.name LIKE 'Bill' OR j.name LIKE 'Bill %' OR j.alias LIKE 'Bill' OR j.alias LIKE 'Bill %'", w[0])
+			assert.Equal(t, "j.name LIKE 'Melinda Gates%' OR j.alias LIKE 'Melinda Gates%'", w[1])
+		} else {
+			t.Fatalf("two where conditions expected: %#v", w)
+		}
+	})
+	t.Run("Plus", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"name"}, NormalizeSearchQuery("Paul + Paula")); len(w) == 2 {
+			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %'", w[0])
+			assert.Equal(t, "name LIKE '%paula%'", w[1])
+		} else {
+			t.Fatalf("two where conditions expected:  %#v", w)
+		}
+	})
+	t.Run("Ane", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"name"}, NormalizeSearchQuery("Paul and Paula")); len(w) == 2 {
+			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %'", w[0])
+			assert.Equal(t, "name LIKE '%paula%'", w[1])
+		} else {
+			t.Fatalf("two where conditions expected:  %#v", w)
+		}
+	})
+	t.Run("Or", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"name"}, NormalizeSearchQuery("Paul or Paula")); len(w) == 1 {
+			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %' OR name LIKE '%paula%'", w[0])
+		} else {
+			t.Fatalf("one where conditions expected:  %#v", w)
+		}
 	})
 }
 

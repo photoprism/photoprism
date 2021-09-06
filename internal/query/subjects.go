@@ -134,38 +134,45 @@ func SearchSubjectUIDs(s string) (result []string, names []string, remaining str
 
 	var matches []Matches
 
-	stmt := Db().Model(entity.Subject{})
+	wheres := LikeAllNames(Cols{"subject_name", "subject_alias"}, s)
 
-	if where := LikeAllNames(Cols{"subject_name", "subject_alias"}, s); len(where) == 0 {
-		return result, names, s
-	} else {
-		stmt = stmt.Where("?", gorm.Expr(strings.Join(where, " OR ")))
-	}
-
-	if err := stmt.Scan(&matches).Error; err != nil {
-		log.Errorf("search: %s while finding subjects", err)
-	} else if len(matches) == 0 {
+	if len(wheres) == 0 {
 		return result, names, s
 	}
 
-	for _, m := range matches {
-		result = append(result, m.SubjectUID)
-		names = append(names, m.SubjectName)
+	remaining = s
 
-		for _, r := range txt.Words(strings.ToLower(m.SubjectName)) {
-			if len(r) > 1 {
-				s = strings.ReplaceAll(s, r, "")
+	for _, where := range wheres {
+		var subj []string
+
+		stmt := Db().Model(entity.Subject{})
+		stmt = stmt.Where("?", gorm.Expr(where))
+
+		if err := stmt.Scan(&matches).Error; err != nil {
+			log.Errorf("search: %s while finding subjects", err)
+		} else if len(matches) == 0 {
+			continue
+		}
+
+		for _, m := range matches {
+			subj = append(subj, m.SubjectUID)
+			names = append(names, m.SubjectName)
+
+			for _, r := range txt.Words(strings.ToLower(m.SubjectName)) {
+				if len(r) > 1 {
+					remaining = strings.ReplaceAll(remaining, r, "")
+				}
+			}
+
+			for _, r := range txt.Words(strings.ToLower(m.SubjectAlias)) {
+				if len(r) > 1 {
+					remaining = strings.ReplaceAll(remaining, r, "")
+				}
 			}
 		}
 
-		for _, r := range txt.Words(strings.ToLower(m.SubjectAlias)) {
-			if len(r) > 1 {
-				s = strings.ReplaceAll(s, r, "")
-			}
-		}
+		result = append(result, strings.Join(subj, Or))
 	}
 
-	s = strings.Trim(s, "&| ")
-
-	return result, names, s
+	return result, names, NormalizeSearchQuery(remaining)
 }

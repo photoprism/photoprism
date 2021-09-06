@@ -39,8 +39,8 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
 
-	// Clip query to reasonable size if needed.
-	f.Query = txt.Clip(f.Query, txt.ClipQuery)
+	// Clip to reasonable size and normalize operators.
+	f.Query = NormalizeSearchQuery(f.Query)
 
 	// Modify query if it contains subject names.
 	if f.Query != "" && f.Subject == "" {
