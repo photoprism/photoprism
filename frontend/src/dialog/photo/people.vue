@@ -81,7 +81,6 @@
                       :return-object="false"
                       :menu-props="menuProps"
                       :allow-overflow="false"
-                      :filter="filterSubjects"
                       :hint="$gettext('Name')"
                       hide-details
                       single-line
@@ -141,15 +140,6 @@ export default {
     approve(marker) {
       this.busy = true;
       marker.approve().finally(() => this.busy = false);
-    },
-    filterSubjects(item, queryText) {
-      if (!item || !item.Keywords) {
-        return false;
-      }
-
-      const q = queryText.toLocaleLowerCase();
-
-      return item.Keywords.findIndex((w) => w.indexOf(q) > -1) > -1;
     },
     clearSubject(marker) {
       this.busy = true;

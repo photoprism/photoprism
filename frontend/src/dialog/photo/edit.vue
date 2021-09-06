@@ -190,7 +190,7 @@ export default {
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             if (values.UID && values.Title && this.model.UID === values.UID) {
-              this.model.setValues({Title: values.Title}, true);
+              this.model.setValues({Title: values.Title, Description: values.Description}, true);
             }
           }
           break;

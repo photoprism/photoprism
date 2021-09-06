@@ -43,7 +43,7 @@ var CropSize = crop.Sizes[crop.Tile160]
 var ClusterCore = 4
 var ClusterRadius = 0.6
 var ClusterMinScore = 30
-var ClusterMinSize = CropSize.Width
+var ClusterMinSize = 100
 var SampleThreshold = 2 * ClusterCore
 
 var log = event.Log

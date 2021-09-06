@@ -154,7 +154,7 @@ func TestMergeFaces(t *testing.T) {
 		assert.Equal(t, entity.SrcManual, result.FaceSrc)
 		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjectUID)
 		assert.Equal(t, 2, result.Samples)
-		assert.Equal(t, 0.03948165743305489, result.SampleRadius)
+		assert.Equal(t, 0.03948165743305488, result.SampleRadius)
 		assert.Equal(t, 0, result.Collisions)
 		assert.Equal(t, float64(0), result.CollisionRadius)
 

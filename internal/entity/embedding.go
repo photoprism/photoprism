@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/montanaflynn/stats"
 	"github.com/photoprism/photoprism/pkg/clusters"
 )
 
@@ -13,23 +14,42 @@ type Embedding = []float64
 type Embeddings = []Embedding
 
 // EmbeddingsMidpoint returns the embeddings vector midpoint.
-func EmbeddingsMidpoint(m Embeddings) (result Embedding, radius float64, count int) {
-	count = len(m)
+func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64, count int) {
+	count = len(embeddings)
 
-	for i, emb := range m {
-		if i == 0 {
-			result = emb
-			continue
+	// No embeddings?
+	if count == 0 {
+		return result, radius, count
+	} else if count == 1 {
+		return embeddings[0], 0.0, count
+	}
+
+	dim := len(embeddings[0])
+
+	// No embedding values?
+	if dim == 0 {
+		return Embedding{}, 0.0, count
+	}
+
+	result = make(Embedding, dim)
+
+	// The mean of a set of vectors is calculated component-wise.
+	for i := 0; i < dim; i++ {
+		values := make(stats.Float64Data, count)
+
+		for j := 0; j < count; j++ {
+			values[j] = embeddings[j][i]
 		}
 
-		if len(m[i]) != len(m[i-1]) {
-			continue
+		if m, err := stats.Mean(values); err != nil {
+			log.Warnf("embeddings: %s", err)
+		} else {
+			result[i] = m
 		}
+	}
 
-		for j, val := range result {
-			result[j] = (val + emb[j]) / 2
-		}
-
+	// Radius is the max embedding distance + 0.01 from result.
+	for _, emb := range embeddings {
 		if d := clusters.EuclideanDistance(result, emb); d > radius {
 			radius = d + 0.01
 		}
