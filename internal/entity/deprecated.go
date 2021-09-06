@@ -1,0 +1,38 @@
+package entity
+
+// Deprecated represents a list of deprecated database tables;
+type Deprecated []string
+
+// Drop drops all deprecated tables.
+func (list Deprecated) Drop() {
+	for _, tableName := range list {
+		if err := UnscopedDb().DropTableIfExists(tableName).Error; err != nil {
+			log.Debugf("drop %s: %s", tableName, err)
+		}
+	}
+}
+
+// DeprecatedTables lists deprecated development database tables, so that they can be removed.
+var DeprecatedTables = Deprecated{
+	"subjects_dev1",
+	"subjects_dev2",
+	"subjects_dev3",
+	"subjects_dev4",
+	"subjects_dev5",
+	"subjects_dev6",
+	"subjects_dev7",
+	"markers_dev1",
+	"markers_dev2",
+	"markers_dev3",
+	"markers_dev4",
+	"markers_dev5",
+	"markers_dev6",
+	"markers_dev7",
+	"faces_dev1",
+	"faces_dev2",
+	"faces_dev3",
+	"faces_dev4",
+	"faces_dev5",
+	"faces_dev6",
+	"faces_dev7",
+}

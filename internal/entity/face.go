@@ -38,7 +38,7 @@ var Faceless = []string{""}
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev7"
+	return "faces_dev8"
 }
 
 // NewFace returns a new face.

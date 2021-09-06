@@ -135,6 +135,7 @@ func CreateDefaultFixtures() {
 
 // MigrateDb creates all tables and inserts default entities as needed.
 func MigrateDb() {
+	DeprecatedTables.Drop()
 	Entities.Migrate()
 	Entities.WaitForMigration()
 

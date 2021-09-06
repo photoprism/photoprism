@@ -57,7 +57,7 @@ type Marker struct {
 
 // TableName returns the entity database table name.
 func (Marker) TableName() string {
-	return "markers_dev7"
+	return "markers_dev8"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
