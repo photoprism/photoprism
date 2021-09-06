@@ -150,6 +150,9 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		case terms["faces"]:
 			f.Query = strings.ReplaceAll(f.Query, "faces", "")
 			f.Faces = "true"
+		case terms["people"]:
+			f.Query = strings.ReplaceAll(f.Query, "people", "")
+			f.Faces = "true"
 		case terms["videos"]:
 			f.Query = strings.ReplaceAll(f.Query, "videos", "")
 			f.Video = true
