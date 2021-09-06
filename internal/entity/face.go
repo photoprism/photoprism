@@ -59,8 +59,8 @@ func NewFace(subjectUID, faceSrc string, embeddings Embeddings) *Face {
 func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
 	m.embedding, m.SampleRadius, m.Samples = EmbeddingsMidpoint(embeddings)
 
-	if m.SampleRadius > 0.3 {
-		m.SampleRadius = 0.3
+	if m.SampleRadius > 0.4 {
+		m.SampleRadius = 0.4
 	}
 
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)

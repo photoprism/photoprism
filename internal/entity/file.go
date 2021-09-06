@@ -3,6 +3,7 @@ package entity
 import (
 	"fmt"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -409,6 +410,10 @@ func (m *File) SetProjection(projType string) {
 
 // AddFaces adds face markers to the file.
 func (m *File) AddFaces(faces face.Faces) {
+	sort.Slice(faces, func(i, j int) bool {
+		return faces[i].Size() > faces[j].Size()
+	})
+
 	for _, f := range faces {
 		m.AddFace(f, "")
 	}

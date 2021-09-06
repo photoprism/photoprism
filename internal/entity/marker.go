@@ -3,6 +3,7 @@ package entity
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -476,6 +477,41 @@ func (m *Marker) RefreshPhotos() error {
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimePointer()
 	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+}
+
+// Left returns the left X coordinate as float64.
+func (m *Marker) Left() float64 {
+	return float64(m.X)
+}
+
+// Right returns the right X coordinate as float64.
+func (m *Marker) Right() float64 {
+	return float64(m.X + m.W)
+}
+
+// Top returns the top Y coordinate as float64.
+func (m *Marker) Top() float64 {
+	return float64(m.Y)
+}
+
+// Bottom returns the bottom Y coordinate as float64.
+func (m *Marker) Bottom() float64 {
+	return float64(m.Y + m.H)
+}
+
+// Overlap calculates the overlap of two markers.
+func (m *Marker) Overlap(marker Marker) (x, y float64) {
+	x = math.Max(0, math.Min(m.Right(), marker.Right())-math.Max(m.Left(), marker.Left()))
+	y = math.Max(0, math.Min(m.Bottom(), marker.Bottom())-math.Max(m.Top(), marker.Top()))
+
+	return x, y
+}
+
+// OverlapArea calculates the overlap area of two markers.
+func (m *Marker) OverlapArea(marker Marker) (area float64) {
+	x, y := m.Overlap(marker)
+
+	return x * y
 }
 
 // FindMarker returns an existing row if exists.

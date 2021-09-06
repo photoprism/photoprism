@@ -1,6 +1,8 @@
 package entity
 
-import "github.com/photoprism/photoprism/pkg/txt"
+import (
+	"github.com/photoprism/photoprism/pkg/txt"
+)
 
 type Markers []Marker
 
@@ -20,11 +22,9 @@ func (m Markers) Save(fileUID string) error {
 }
 
 // Contains returns true if a marker at the same position already exists.
-func (m Markers) Contains(m2 Marker) bool {
-	const d = 0.07
-
-	for _, m1 := range m {
-		if m2.X > (m1.X-d) && m2.X < (m1.X+d) && m2.Y > (m1.Y-d) && m2.Y < (m1.Y+d) {
+func (m Markers) Contains(other Marker) bool {
+	for _, marker := range m {
+		if marker.OverlapArea(other) > 0.02 {
 			return true
 		}
 	}
