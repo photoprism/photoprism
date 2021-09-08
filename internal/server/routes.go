@@ -148,6 +148,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.GetSvg(v1)
 
 		api.Websocket(v1)
+
+		api.AuthEndpoints(v1)
 	}
 
 	// Configure link sharing.

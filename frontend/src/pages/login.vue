@@ -19,7 +19,7 @@
                   browser-autocomplete="off"
                   color="secondary-dark"
                   class="input-name"
-                  placeholder="••••••••"
+                  placeholder="username"
               ></v-text-field>
             </v-flex>
             <v-flex xs12 class="pa-2">
@@ -47,6 +47,15 @@
                 <translate>Sign in</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>login</v-icon>
               </v-btn>
+              <v-btn color="primary-button"
+                     class="white--text ml-0 action-confirm"
+                     depressed
+                     :disabled="loading"
+                     @click.stop="loginExternal"
+                     v-if="!!authProvider" >
+                <translate>Sign in with {{ authProvider }}</translate>
+                <v-icon :right="!rtl" :left="rtl" dark>login</v-icon>
+              </v-btn>
             </v-flex>
           </v-layout>
         </v-card-actions>
@@ -62,13 +71,16 @@ export default {
   name: 'Login',
   data() {
     const c = this.$config.values;
-
+    console.log(c)
+    console.log(c.oidc)
+    console.log(!!(c.oidc ? "OpenID Connect" : null))
     return {
       loading: false,
       showPassword: false,
-      username: "admin",
+      username: "",
       password: "",
       siteDescription: c.siteDescription ? c.siteDescription : c.siteCaption,
+      authProvider: c.oidc ? "OpenID Connect" : null,
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
       rtl: this.$rtl,
     };
@@ -86,6 +98,57 @@ export default {
           this.$router.push(this.nextUrl);
         }
       ).catch(() => this.loading = false);
+    },
+    loginExternal() {
+      this.loading = true;
+      let popup = window.open('api/v1/auth/external', "test");
+      const onstorage = window.onstorage;
+      const cleanup = () => {
+        // popup.close();
+        window.localStorage.removeItem('config');
+        window.localStorage.removeItem('auth_error');
+        window.onstorage = onstorage;
+        this.loading = false;
+      };
+
+      window.onstorage = () => {
+        const sid = window.localStorage.getItem('session_id');
+        const data = window.localStorage.getItem('data');
+        const config = window.localStorage.getItem('config');
+        const error = window.localStorage.getItem('auth_error');
+        // const linkUser = window.localStorage.getItem('link_user');
+        if (error === "authentication failed") {
+          window.localStorage.removeItem('config');
+          window.localStorage.removeItem('auth_error');
+          window.onstorage = onstorage;
+          return;
+        }
+        // if (linkUser !== null) {
+        //   if (this.$session.isUser()) {
+        //     this.localStorage.removeItem('link_user');
+        //     this.$router.push(this.nextUrl);
+        //   } else {
+        //     this.$router.push('/link_user');
+        //   }
+        //   cleanup();
+        //   return;
+        // }
+        if (error !== null) {
+          // TODO: handle Error
+          cleanup();
+          return;
+        }
+        if (sid === null || data === null || config === null) {
+          return;
+        }
+        console.log("sid = ", sid);
+        this.$session.setId(sid);
+        this.$session.setData(JSON.parse(data));
+        this.$session.setConfig(JSON.parse(config));
+        //this.$session.sendClientInfo();
+        this.$router.push(this.nextUrl);
+        cleanup();
+      };
     },
   }
 };

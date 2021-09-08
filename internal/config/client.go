@@ -60,6 +60,7 @@ type ClientConfig struct {
 	Categories      CategoryLabels      `json:"categories"`
 	Clip            int                 `json:"clip"`
 	Server          RuntimeInfo         `json:"server"`
+	Oidc            bool                `json:"oidc"`
 }
 
 // Years represents a list of years.
@@ -210,6 +211,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
+		Oidc:            c.OidcIssuerUrl() != nil,
 	}
 
 	return result
@@ -272,6 +274,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		CSSHash:         fs.Checksum(c.BuildPath() + "/share.css"),
 		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
+		Oidc:            c.OidcIssuerUrl() != nil,
 	}
 
 	return result
@@ -328,6 +331,7 @@ func (c *Config) UserConfig() ClientConfig {
 		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
+		Oidc:            c.OidcIssuerUrl() != nil,
 	}
 
 	c.Db().

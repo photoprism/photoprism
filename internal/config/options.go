@@ -110,6 +110,9 @@ type Options struct {
 	ThumbSizeUncached  int    `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
 	JpegSize           int    `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
 	JpegQuality        int    `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
+	OidcClientID       string `yaml:"OidcClientID" json:"-" flag:"client-id"`
+	OidcClientSecret   string `yaml:"OidcClientSecret" json:"-" flag:"client-secret"`
+	OidcIssuer         string `yaml:"OidcIssuer" json:"-" flag:"oidc-issuer"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:

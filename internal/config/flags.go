@@ -414,4 +414,23 @@ var GlobalFlags = []cli.Flag{
 		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
+	cli.StringFlag{
+		Name:   "client-id",
+		Usage:  "OpenID Connect Client ID",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_OIDC_CLIENT_ID",
+	},
+	cli.StringFlag{
+		Name:   "client-secret",
+		Usage:  "OpenID Connect Client Secret",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_OIDC_CLIENT_SECRET",
+	},
+	cli.StringFlag{
+		Name:   "oidc-issuer",
+		Usage:  "OpenID Connect Provider/Issuer URL",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_OIDC_ISSUER",
+	},
+
 }

@@ -69,6 +69,7 @@ type User struct {
 	ResetToken     string     `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
 	ApiToken       string     `gorm:"column:api_token;type:VARBINARY(128);" json:"-" yaml:"-"`
 	ApiSecret      string     `gorm:"column:api_secret;type:VARBINARY(128);" json:"-" yaml:"-"`
+	ExternalID     string     `gorm:"size:255;column:external_id;" json:"-" yaml:"-"`
 	LoginAttempts  int        `json:"-" yaml:"-"`
 	LoginAt        *time.Time `json:"-" yaml:"-"`
 	CreatedAt      time.Time  `json:"CreatedAt" yaml:"-"`
@@ -158,6 +159,50 @@ func FirstOrCreateUser(m *User) *User {
 	} else if err := m.Create(); err != nil {
 		log.Debugf("user: %s", err)
 		return nil
+	}
+
+	return m
+}
+
+// CreateOrUpdateExternalUser Retrieves User by its ExternalID and updates relevant properties. If no User exists, a new one will be inserted into database.
+func CreateOrUpdateExternalUser(m *User) *User {
+	result := User{}
+
+	if err := Db().Preload("Address").Where("external_id = ?", m.ExternalID).First(&result).Error; err == nil {
+		mustUpdate := false
+		if m.PrimaryEmail != result.PrimaryEmail {
+			result.PrimaryEmail = m.PrimaryEmail
+			mustUpdate = true
+		}
+		if m.FullName != result.FullName {
+			result.FullName = m.FullName
+			mustUpdate = true
+		}
+		if mustUpdate {
+			err := result.Validate()
+			if err != nil {
+				log.Errorf("user: %s", err)
+				return nil
+			}
+			err = result.Save()
+			if err != nil {
+				log.Errorf("user: %s", err)
+				return nil
+			}
+		}
+		log.Debugf("user: retrieved %q from db", result.UserName)
+		return &result
+	} else {
+		err := m.Validate()
+		if err != nil {
+			log.Errorf("user: %s", err)
+			return nil
+		}
+		if err := m.Create(); err != nil {
+			log.Debugf("user: %s", err)
+			return nil
+		}
+		log.Debugf("user: created %q", result.UserName)
 	}
 
 	return m
