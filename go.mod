@@ -18,7 +18,6 @@ require (
 	github.com/esimov/pigo v1.4.4
 	github.com/gin-contrib/gzip v0.0.3
 	github.com/gin-gonic/gin v1.7.4
-	github.com/go-delve/delve v1.7.1 // indirect
 	github.com/go-errors/errors v1.4.0 // indirect
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
