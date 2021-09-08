@@ -41,6 +41,7 @@ upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
 dev: dev-npm dev-go-amd64
+debug-go: build-go-remote start-debug
 dev-npm:
 	$(info Upgrading NPM in local dev environment...)
 	sudo npm update -g npm
@@ -123,6 +124,8 @@ build-js:
 build-go:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh debug $(BINARY_NAME)
+build-go-remote:
+	docker-compose exec -u root photoprism make build-go
 build-race:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh race $(BINARY_NAME)
@@ -135,6 +138,8 @@ build-tensorflow:
 build-tensorflow-arm64:
 	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
 	docker run -ti photoprism/tensorflow:arm64 bash
+start-debug:
+	docker-compose exec -u root photoprism dlv --listen=:40000 --headless=true --api-version=2 --accept-multiclient exec ./photoprism start
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)
 test-js:

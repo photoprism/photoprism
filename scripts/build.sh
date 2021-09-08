@@ -29,7 +29,7 @@ fi
 
 if [[ $1 == "debug" ]]; then
   echo "Building development binary..."
-	go build -ldflags "-X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}-DEBUG" -o $2 cmd/photoprism/photoprism.go
+	go build -gcflags="all=-N -l" -ldflags "-X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}-DEBUG" -o $2 cmd/photoprism/photoprism.go
 	du -h $2
 	echo "Done."
 elif [[ $1 == "race" ]]; then
