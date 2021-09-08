@@ -10,20 +10,13 @@ import (
 
 var log = event.Log
 
-var httpclient *http.Client
-
 func Client(debug bool) *http.Client {
-	if httpclient != nil {
-		return httpclient
-	}
 	if debug {
-		httpclient = &http.Client{
+		return &http.Client{
 			Transport: LoggingRoundTripper{http.DefaultTransport},
 		}
-	} else {
-		httpclient = http.DefaultClient
 	}
-	return httpclient
+	return http.DefaultClient
 }
 
 // This type implements the http.RoundTripper interface
@@ -44,21 +37,7 @@ func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response,
 	} else {
 		log.Debugf("Received %v response\n", res.Status)
 
-		//buf := bytes.NewBuffer(make([]byte, 0, 1024))
-		//r := io.TeeReader(res.Body, buf)
-		//all, err := io.ReadAll(r)
-		//log.Debugf("Body: %s\nError: %s\n", all, err)
-		//res.Body = io.NopCloser(buf)
-
-		//pipeReader, pipeWriter := io.Pipe()
-		//r := io.TeeReader(res.Body, pipeWriter)
-		//go func() {
-		//	all, err := io.ReadAll(r)
-		//	pipeWriter.CloseWithError(err)
-		//	log.Debugf("Body\n%s\n%s", all, err)
-		//}()
-		//res.Body = pipeReader
-
+		// Copy body into buffer for logging
 		buf := new(bytes.Buffer)
 		_, err := io.Copy(buf, res.Body)
 		if err != nil {
@@ -66,16 +45,6 @@ func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response,
 		}
 		log.Debugf("Reponse Body: %s\n", buf.String())
 		res.Body = io.NopCloser(buf)
-
-		//all, err := io.ReadAll(io.NopCloser(res.Body))
-		//
-		//if err != nil {
-		//	log.Errorf("Error: %v", err)
-		//}
-		////io.Teereader, io.MultiReader()
-		//log.Debugf("Body\n%s\n", all)
-		//
-		//res.Body = io.NopCloser(bytes.NewReader(all))
 	}
 	return
 }
