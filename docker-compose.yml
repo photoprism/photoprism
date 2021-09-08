@@ -104,6 +104,12 @@ services:
   webdav-dummy:
     image: photoprism/webdav:20210602
 
+  oidc-test-op:
+    build: docker/oidc/.
+    image: test-op:latest
+    ports:
+      - "9998:9998"
+
 volumes:
   go-mod:
     driver: local
