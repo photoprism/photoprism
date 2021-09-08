@@ -46,9 +46,8 @@ func AuthEndpoints(router *gin.RouterGroup) {
 		//	CallbackError(c, err.Error(), http.StatusInternalServerError)
 		//	return
 		//}
-		user := entity.CreateOrUpdateExternalUser(u)
-		if user == nil {
-			e := errors.New("api: server error. Check backend logs")
+		user, e := entity.CreateOrUpdateExternalUser(u)
+		if e != nil {
 			c.Error(e)
 			CallbackError(c, e.Error(), http.StatusInternalServerError)
 			return
