@@ -8,7 +8,8 @@ func (c *Config) OidcIssuerUrl() *url.URL {
 	}
 	res, err := url.Parse(c.Options().OidcIssuer)
 	if err != nil {
-		panic("oidc: malformed issuer url")
+		log.Debugf("error parsing oidc issuer url: %q", err)
+		return nil
 	}
 	return res
 }

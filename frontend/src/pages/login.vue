@@ -104,7 +104,7 @@ export default {
       let popup = window.open('api/v1/auth/external', "test");
       const onstorage = window.onstorage;
       const cleanup = () => {
-        // popup.close();
+        popup.close();
         window.localStorage.removeItem('config');
         window.localStorage.removeItem('auth_error');
         window.onstorage = onstorage;

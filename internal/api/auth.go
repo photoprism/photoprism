@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +13,10 @@ import (
 // GET /api/v1/auth/
 func AuthEndpoints(router *gin.RouterGroup) {
 	conf := service.Config()
+	if conf.OidcIssuerUrl() == nil || conf.OidcClientId() == "" || conf.OidcClientSecret() == "" {
+		log.Debugf("no oidc provider configured. skip mounting endpoints")
+		return
+	}
 	openIdConnect := service.Oidc()
 
 	router.GET("/auth/external", func(c *gin.Context) {

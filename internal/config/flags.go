@@ -432,5 +432,4 @@ var GlobalFlags = []cli.Flag{
 		Value:  "",
 		EnvVar: "PHOTOPRISM_OIDC_ISSUER",
 	},
-
 }
