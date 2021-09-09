@@ -15,8 +15,9 @@ import (
 type AlbumResult struct {
 	ID               uint      `json:"-"`
 	AlbumUID         string    `json:"UID"`
-	CoverUID         string    `json:"CoverUID"`
-	FolderUID        string    `json:"FolderUID"`
+	ParentUID        string    `json:"ParentUID"`
+	Thumb            string    `json:"Thumb"`
+	ThumbSrc         string    `json:"ThumbSrc"`
 	AlbumSlug        string    `json:"Slug"`
 	AlbumType        string    `json:"Type"`
 	AlbumTitle       string    `json:"Title"`
@@ -57,18 +58,9 @@ func AlbumByUID(albumUID string) (album entity.Album, err error) {
 func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	a := entity.Album{}
 
-	if err := Db().Where("album_uid = ?", uid).First(&a).Error; err != nil {
+	if err := UnscopedDb().Where("album_uid = ?", uid).First(&a).Error; err != nil {
 		return file, err
-	} else if a.CoverUID != "" {
-		// TODO check that the photo is not hidden, archived or private
-		if err := Db().Where("photo_uid = ? AND file_primary = 1", a.CoverUID).First(&file).Error; err != nil {
-			log.Errorf("albums: error when loading configured cover for album %s", uid)
-			return file, err
-		} else {
-			return file, nil
-		}
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
-		// TODO check that the photo is not hidden, archived or private
 		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
 		if photos, _, err := PhotoSearch(f); err != nil {
@@ -83,7 +75,16 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 			}
 		}
 
-		return file, fmt.Errorf("found no cover for moment")
+		// Automatically hide empty months.
+		if a.AlbumType == entity.AlbumMonth {
+			if err := a.Delete(); err != nil {
+				log.Errorf("album: %s (hide %s)", err, a.AlbumType)
+			} else {
+				log.Infof("album: %s hidden", txt.Quote(a.AlbumTitle))
+			}
+		}
+
+		return file, fmt.Errorf("no cover found")
 	}
 
 	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").

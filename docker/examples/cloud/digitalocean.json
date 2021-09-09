@@ -45,7 +45,7 @@
         "echo 'APT::Get::Assume-Yes \"true\";' > /etc/apt/apt.conf.d/80forceyes",
         "echo 'APT::Get::Fix-Missing \"true\";' > /etc/apt/apt.conf.d/80fixmissing",
         "apt-get -qqy update",
-        "apt dist-upgrade",
+        "apt dist-upgrade 2>/dev/null",
         "apt-get -qqy install {{user `apt_packages`}}",
         "apt-get -qqy autoclean",
         "apt-get -qqy autoremove",

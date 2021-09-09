@@ -30,6 +30,7 @@ https://docs.photoprism.org/developer-guide/
 
 import RestModel from "model/rest";
 import File from "model/file";
+import Marker from "model/marker";
 import Api from "common/api";
 import { DateTime } from "luxon";
 import Util from "common/util";
@@ -38,8 +39,8 @@ import countries from "options/countries.json";
 import { $gettext } from "common/vm";
 import Clipboard from "common/clipboard";
 import download from "common/download";
+import * as src from "common/src";
 
-export const SrcManual = "manual";
 export const CodecAvc1 = "avc1";
 export const FormatMp4 = "mp4";
 export const FormatAvc = "avc";
@@ -763,11 +764,7 @@ export class Photo extends RestModel {
         return;
       }
 
-      if (m.hasOwnProperty("Subject") && !!m.Subject && !!m.Subject.Name) {
-        m.Name = m.Subject.Name;
-      }
-
-      result.push(m);
+      result.push(new Marker(m));
     });
 
     return result;
@@ -777,23 +774,23 @@ export class Photo extends RestModel {
     const values = this.getValues(true);
 
     if (values.Title) {
-      values.TitleSrc = SrcManual;
+      values.TitleSrc = src.Manual;
     }
 
     if (values.Type) {
-      values.TypeSrc = SrcManual;
+      values.TypeSrc = src.Manual;
     }
 
     if (values.Description) {
-      values.DescriptionSrc = SrcManual;
+      values.DescriptionSrc = src.Manual;
     }
 
     if (values.Lat || values.Lng || values.Country) {
-      values.PlaceSrc = SrcManual;
+      values.PlaceSrc = src.Manual;
     }
 
     if (values.TakenAt || values.TimeZone || values.Day || values.Month || values.Year) {
-      values.TakenSrc = SrcManual;
+      values.TakenSrc = src.Manual;
     }
 
     if (
@@ -804,33 +801,33 @@ export class Photo extends RestModel {
       values.Iso ||
       values.Exposure
     ) {
-      values.CameraSrc = SrcManual;
+      values.CameraSrc = src.Manual;
     }
 
     // Update details source if needed.
     if (values.Details) {
       if (values.Details.Keywords) {
-        values.Details.KeywordsSrc = SrcManual;
+        values.Details.KeywordsSrc = src.Manual;
       }
 
       if (values.Details.Notes) {
-        values.Details.NotesSrc = SrcManual;
+        values.Details.NotesSrc = src.Manual;
       }
 
       if (values.Details.Subject) {
-        values.Details.SubjectSrc = SrcManual;
+        values.Details.SubjectSrc = src.Manual;
       }
 
       if (values.Details.Artist) {
-        values.Details.ArtistSrc = SrcManual;
+        values.Details.ArtistSrc = src.Manual;
       }
 
       if (values.Details.Copyright) {
-        values.Details.CopyrightSrc = SrcManual;
+        values.Details.CopyrightSrc = src.Manual;
       }
 
       if (values.Details.License) {
-        values.Details.LicenseSrc = SrcManual;
+        values.Details.LicenseSrc = src.Manual;
       }
     }
 
@@ -839,26 +836,6 @@ export class Photo extends RestModel {
         config.update();
       }
 
-      return Promise.resolve(this.setValues(resp.data));
-    });
-  }
-
-  updateMarker(marker) {
-    if (!marker || !marker.ID) {
-      return Promise.reject("invalid marker id");
-    }
-
-    marker.MarkerSrc = SrcManual;
-
-    const file = this.mainFile();
-
-    if (!file || !file.UID) {
-      return Promise.reject("invalid file uid");
-    }
-
-    const url = `${this.getEntityResource()}/files/${file.UID}/markers/${marker.ID}`;
-
-    return Api.put(url, marker).then((resp) => {
       return Promise.resolve(this.setValues(resp.data));
     });
   }

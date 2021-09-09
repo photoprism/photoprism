@@ -183,10 +183,6 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 		event.SuccessMsg(i18n.MsgAlbumSaved)
 
-		if f.CoverUID != "" {
-			RemoveFromAlbumCoverCache(a.AlbumUID)
-		}
-
 		PublishAlbumEvent(EntityUpdated, uid, c)
 
 		SaveAlbumAsYaml(a)
@@ -205,7 +201,6 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
 		id := c.Param("uid")
 
 		a, err := query.AlbumByUID(id)
@@ -215,9 +210,13 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishAlbumEvent(EntityDeleted, id, c)
+		if err := a.Delete(); err != nil {
+			log.Errorf("album: %s (delete)", err)
+			AbortDeleteFailed(c)
+			return
+		}
 
-		conf.Db().Delete(&a)
+		PublishAlbumEvent(EntityDeleted, id, c)
 
 		UpdateClientConfig()
 

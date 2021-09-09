@@ -113,7 +113,7 @@
         <v-btn
             v-if="isAlbum && features.albums" fab dark
             small
-            :title="$gettext('Remove')"
+            :title="$gettext('Remove from album')"
             color="remove"
             :disabled="selection.length === 0"
             class="action-remove"
@@ -122,7 +122,7 @@
           <v-icon>eject</v-icon>
         </v-btn>
         <v-btn
-            v-if="album && context !== 'archive'" fab dark
+            v-if="album && context !== 'archive' && false" fab dark
             small
             :title="$gettext('Set as cover')"
             color="cover"

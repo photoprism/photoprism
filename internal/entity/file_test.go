@@ -51,6 +51,13 @@ func TestFile_ShareFileName(t *testing.T) {
 
 		assert.Equal(t, "e98eb86480a72bd585d228a709f0622f90e86cbc.jpg", filename)
 	})
+	t.Run("file without photo", func(t *testing.T) {
+		file := FileFixtures.Get("FileWithoutPhoto.mp4")
+
+		filename := file.ShareBase(0)
+
+		assert.Equal(t, "pcad9a68fa6acc5c5ba965adf6ec465ca42fd916.mp4", filename)
+	})
 	t.Run("file hash < 8", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 
@@ -159,18 +166,13 @@ func TestFile_Found(t *testing.T) {
 
 func TestFile_AllFilesMissing(t *testing.T) {
 	t.Run("true", func(t *testing.T) {
-		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
-		file := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "123", FileMissing: true}
-		file2 := &File{Photo: photo, FileType: "jpg", PhotoUID: "123", FileUID: "456", FileMissing: true}
+		file := FileFixtures.Get("missing.jpg")
 		assert.True(t, file.AllFilesMissing())
-		assert.NotEmpty(t, file2)
 	})
-	//TODO test false
-	/*t.Run("false", func(t *testing.T) {
-		file := FileFixturesExampleJPG
+	t.Run("false", func(t *testing.T) {
+		file := FileFixtures.Get("Quality1FavoriteTrue.jpg")
 		assert.False(t, file.AllFilesMissing())
-		assert.NotEmpty(t, file)
-	})*/
+	})
 }
 
 func TestFile_Save(t *testing.T) {
@@ -205,7 +207,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileWidth: 600, FileName: "VideoUpdate", PhotoID: 1000003}
 
-		assert.Equal(t, "London/bridge2.mp4", FileFixturesExampleBridgeVideo.FileName)
+		assert.Equal(t, "1990/04/bridge2.mp4", FileFixturesExampleBridgeVideo.FileName)
 		assert.Equal(t, int(1200), FileFixturesExampleBridgeVideo.FileWidth)
 
 		err := file.UpdateVideoInfos()
@@ -223,7 +225,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 		assert.Len(t, files, 1)
 
 		for _, f := range files {
-			assert.Equal(t, "London/bridge2.mp4", f.FileName)
+			assert.Equal(t, "1990/04/bridge2.mp4", f.FileName)
 			assert.Equal(t, int(600), f.FileWidth)
 		}
 	})
@@ -287,12 +289,49 @@ func TestFile_Panorama(t *testing.T) {
 		assert.False(t, file.Panorama())
 	})
 	t.Run("equirectangular", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjectionEquirectangular}
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjEquirectangular}
+		assert.True(t, file.Panorama())
+	})
+	t.Run("transverse-cylindrical", func(t *testing.T) {
+		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 1500, FileHeight: 1000, FileProjection: ProjTransverseCylindrical}
 		assert.True(t, file.Panorama())
 	})
 	t.Run("sidecar", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSidecar: true, FileWidth: 3000, FileHeight: 1000}
 		assert.False(t, file.Panorama())
+	})
+}
+
+func TestFile_SetProjection(t *testing.T) {
+	t.Run(ProjDefault, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjDefault)
+		assert.Equal(t, ProjDefault, m.FileProjection)
+	})
+	t.Run(ProjCubestrip, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjCubestrip)
+		assert.Equal(t, ProjCubestrip, m.FileProjection)
+	})
+	t.Run(ProjCylindrical, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjCylindrical)
+		assert.Equal(t, ProjCylindrical, m.FileProjection)
+	})
+	t.Run(ProjTransverseCylindrical, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjTransverseCylindrical)
+		assert.Equal(t, ProjTransverseCylindrical, m.FileProjection)
+	})
+	t.Run(ProjPseudocylindricalCompromise, func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(ProjPseudocylindricalCompromise)
+		assert.Equal(t, ProjPseudocylindricalCompromise, m.FileProjection)
+	})
+	t.Run("Sanitize", func(t *testing.T) {
+		m := &File{}
+		m.SetProjection(" 幸福 Hanzi are logograms developed for the writing of Chinese! ")
+		assert.Equal(t, "hanzi are logograms developed for the writing of chinese", m.FileProjection)
 	})
 }
 
@@ -332,7 +371,7 @@ func TestPrimaryFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, "Holiday/Video.mp4", file.FileName)
+	assert.Equal(t, "Holiday/Video.jpg", file.FileName)
 }
 
 func TestFile_OriginalBase(t *testing.T) {
@@ -431,9 +470,9 @@ func TestFile_AddFaces(t *testing.T) {
 			Rows:      480,
 			Cols:      720,
 			Score:     45,
-			Face:      face.NewPoint("face", 250, 200, 10),
-			Eyes:      face.Points{face.NewPoint("eye_l", 240, 195, 1), face.NewPoint("eye_r", 240, 205, 1)},
-			Landmarks: face.Points{face.NewPoint("a", 250, 185, 2), face.NewPoint("b", 250, 215, 2)},
+			Area:      face.NewArea("face", 250, 200, 10),
+			Eyes:      face.Areas{face.NewArea("eye_l", 240, 195, 1), face.NewArea("eye_r", 240, 205, 1)},
+			Landmarks: face.Areas{face.NewArea("a", 250, 185, 2), face.NewArea("b", 250, 215, 2)},
 		}}
 
 		file.AddFaces(faces)
@@ -444,7 +483,7 @@ func TestFile_AddFaces(t *testing.T) {
 
 		assert.Equal(t, false, file.FileMissing)
 		assert.NotEmpty(t, file.FileUID)
-		assert.NotEmpty(t, file.Markers)
+		assert.NotEmpty(t, file.Markers())
 	})
 }
 
@@ -455,5 +494,79 @@ func TestFile_FaceCount(t *testing.T) {
 		result := file.FaceCount()
 
 		assert.GreaterOrEqual(t, result, 3)
+	})
+}
+
+func TestFile_Rename(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		m := FileFixtures.Get("exampleFileName.jpg")
+
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
+		assert.Equal(t, RootOriginals, m.FileRoot)
+		assert.Equal(t, false, m.FileMissing)
+		assert.Nil(t, m.DeletedAt)
+
+		p := m.RelatedPhoto()
+
+		assert.Equal(t, "2790/07", p.PhotoPath)
+		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
+
+		if err := m.Rename("x/y/newName.jpg", "newRoot", "x/y", "newBase"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "x/y/newName.jpg", m.FileName)
+		assert.Equal(t, "newRoot", m.FileRoot)
+		assert.Equal(t, false, m.FileMissing)
+		assert.Nil(t, m.DeletedAt)
+		assert.Equal(t, "x/y", p.PhotoPath)
+		assert.Equal(t, "newBase", p.PhotoName)
+
+		if err := m.Rename("2790/07/27900704_070228_D6D51B6C.jpg", RootOriginals, "2790/07", "27900704_070228_D6D51B6C"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
+		assert.Equal(t, RootOriginals, m.FileRoot)
+		assert.Equal(t, false, m.FileMissing)
+		assert.Nil(t, m.DeletedAt)
+		assert.Equal(t, "2790/07", p.PhotoPath)
+		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
+	})
+}
+
+func TestFile_SubjectNames(t *testing.T) {
+	t.Run("Photo27.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("Photo27.jpg")
+
+		names := m.SubjectNames()
+		t.Log(len(names))
+		if len(names) != 1 {
+			t.Errorf("there should be one name: %#v", names)
+		} else {
+			assert.Equal(t, "Actress A", names[0])
+		}
+	})
+	t.Run("Video.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("Video.jpg")
+
+		names := m.SubjectNames()
+		t.Log(len(names))
+		if len(names) != 1 {
+			t.Errorf("there should be one name: %#v", names)
+		} else {
+			assert.Equal(t, "Actor A", names[0])
+		}
+	})
+	t.Run("bridge.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("bridge.jpg")
+
+		names := m.SubjectNames()
+
+		if len(names) != 2 {
+			t.Errorf("two names expected: %#v", names)
+		} else {
+			assert.Equal(t, []string{"Corn McCornface", "Jens Mander"}, names)
+		}
 	})
 }

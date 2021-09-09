@@ -13,7 +13,6 @@ handy
 tumblr
 bilder
 bild
-film
 films
 filme
 foto
@@ -1428,7 +1427,6 @@ manchem
 manchen
 mancher
 manches
-mann
 mehr
 mein
 meine
@@ -1436,9 +1434,6 @@ meinem
 meinen
 meiner
 meines
-mensch
-menschen
-mich
 mir
 mit
 mittel

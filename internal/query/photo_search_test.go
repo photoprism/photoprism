@@ -339,8 +339,68 @@ func TestPhotoSearch(t *testing.T) {
 		}
 
 		//t.Logf("results: %+v", photos)
-		assert.Equal(t, 1, len(photos))
+		assert.GreaterOrEqual(t, len(photos), 1)
 
+	})
+	t.Run("form.keywords", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "keywords:bridge"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.GreaterOrEqual(t, len(photos), 4)
+	})
+	t.Run("form.subject", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "subject:jqu0xs11qekk9jx8"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.Equal(t, 1, len(photos))
+	})
+	t.Run("form.subjects", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "subjects:John"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.Equal(t, 1, len(photos))
+	})
+	t.Run("form.people", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "people:John"
+		f.Count = 10
+		f.Offset = 0
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//t.Logf("results: %+v", photos)
+		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("form.hash", func(t *testing.T) {
 		var f form.PhotoSearch
@@ -522,6 +582,18 @@ func TestPhotoSearch(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, len(photos))
 	})
+	t.Run("albums", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = ""
+		f.Albums = "Berlin"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+	})
 	t.Run("search for state", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.State = "KwaZulu-Natal"
@@ -693,8 +765,7 @@ func TestPhotoSearch(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 		frm.Name = "xxx|PhotoWithEditedAt"
-		frm.Filename = "xxx|test/Photo25.jpg"
-		frm.Original = "xxx|OriginalPhotoWithEditedAt"
+		frm.Filename = "xxx|2007/12/PhotoWithEditedAt.jpg"
 		frm.Title = "xxx|photowitheditedatdate"
 		frm.Hash = "xxx|pcad9a68fa6acc5c5ba965adf6ec465ca42fd887"
 
@@ -729,6 +800,78 @@ func TestPhotoSearch(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, 3, len(photos))
+		assert.GreaterOrEqual(t, len(photos), 3)
+	})
+	t.Run("faces:yes", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Faces = "Yes"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 3)
+	})
+	t.Run("faces:no", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Faces = "No"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 9)
+	})
+	t.Run("faces:2", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Faces = "2"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("filename", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Filename = "1990/04/Quality1FavoriteTrue.jpg"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("original name or original name", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Original = "my-videos/IMG_88888" + "|" + "Vacation/exampleFileNameOriginal"
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 2)
+	})
+	t.Run("Stack", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Stack = true
+
+		photos, _, err := PhotoSearch(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 2)
 	})
 }

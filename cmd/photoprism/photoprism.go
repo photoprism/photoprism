@@ -70,6 +70,7 @@ func main() {
 		commands.RestoreCommand,
 		commands.ResetCommand,
 		commands.ConfigCommand,
+		commands.UsersCommand,
 		commands.PasswdCommand,
 		commands.VersionCommand,
 		commands.StatusCommand,

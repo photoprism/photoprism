@@ -1,12 +1,16 @@
 package entity
 
+import (
+	"github.com/photoprism/photoprism/pkg/txt"
+)
+
 type Markers []Marker
 
 // Save stores the markers in the database.
-func (m Markers) Save(fileID uint) error {
+func (m Markers) Save(fileUID string) error {
 	for _, marker := range m {
-		if fileID > 0 {
-			marker.FileID = fileID
+		if fileUID != "" {
+			marker.FileUID = fileUID
 		}
 
 		if _, err := UpdateOrCreateMarker(&marker); err != nil {
@@ -18,11 +22,9 @@ func (m Markers) Save(fileID uint) error {
 }
 
 // Contains returns true if a marker at the same position already exists.
-func (m Markers) Contains(m2 Marker) bool {
-	const d = 0.07
-
-	for _, m1 := range m {
-		if m2.X > (m1.X-d) && m2.X < (m1.X+d) && m2.Y > (m1.Y-d) && m2.Y < (m1.Y+d) {
+func (m Markers) Contains(other Marker) bool {
+	for _, marker := range m {
+		if marker.OverlapArea(other) > 0.02 {
 			return true
 		}
 	}
@@ -41,13 +43,31 @@ func (m Markers) FaceCount() (faces int) {
 	return faces
 }
 
-// FindMarkers returns all markers for a given file id.
-func FindMarkers(fileID uint) (Markers, error) {
+// SubjectNames returns known subject names.
+func (m Markers) SubjectNames() (names []string) {
+	for _, marker := range m {
+		if marker.MarkerInvalid || marker.MarkerType != MarkerFace {
+			continue
+		} else if n := marker.SubjectName(); n != "" {
+			names = append(names, n)
+		}
+	}
+
+	return txt.UniqueNames(names)
+}
+
+// Append adds a marker.
+func (m *Markers) Append(marker Marker) {
+	*m = append(*m, marker)
+}
+
+// FindMarkers returns up to 1000 markers for a given file uid.
+func FindMarkers(fileUID string) (Markers, error) {
 	m := Markers{}
+
 	err := Db().
-		Where(`file_id = ?`, fileID).
-		Preload("Subject").
-		Order("id").
+		Where(`file_uid = ?`, fileUID).
+		Order("x").
 		Offset(0).Limit(1000).
 		Find(&m).Error
 

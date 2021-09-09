@@ -44,13 +44,13 @@ func TestAlbumCoverByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "London/bridge2.jpg", file.FileName)
+		assert.Equal(t, "1990/04/bridge2.jpg", file.FileName)
 	})
 
 	t.Run("existing uid empty moment album", func(t *testing.T) {
 		file, err := AlbumCoverByUID("at7axuzitogaaiax")
 
-		assert.EqualError(t, err, "found no cover for moment", err)
+		assert.EqualError(t, err, "no cover found", err)
 		assert.Equal(t, "", file.FileName)
 	})
 

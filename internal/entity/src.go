@@ -20,6 +20,15 @@ const (
 	SrcLocation = classify.SrcLocation
 )
 
+// SrcString returns a source string for logging.
+func SrcString(src string) string {
+	if src == SrcAuto {
+		return "auto"
+	}
+
+	return src
+}
+
 // SrcPriority maps source priorities.
 var SrcPriority = Priorities{
 	SrcAuto:     1,

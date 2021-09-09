@@ -18,14 +18,16 @@ const (
 	folderCover = "folder-cover"
 )
 
-// GET /api/v1/folders/t/:hash/:token/:type
+// FolderCover returns a folder cover image.
+//
+// GET /api/v1/folders/t/:hash/:token/:size
 //
 // Parameters:
 //   uid: string folder uid
 //   token: string url security token, see config
-//   type: string thumb type, see thumb.Types
-func GetFolderCover(router *gin.RouterGroup) {
-	router.GET("/folders/t/:uid/:token/:type", func(c *gin.Context) {
+//   size: string thumb type, see thumb.Sizes
+func FolderCover(router *gin.RouterGroup) {
+	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", folderIconSvg)
 			return
@@ -34,29 +36,29 @@ func GetFolderCover(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		uid := c.Param("uid")
-		typeName := c.Param("type")
+		thumbName := thumb.Name(c.Param("size"))
 		download := c.Query("download") != ""
 
-		thumbType, ok := thumb.Types[typeName]
+		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("folder: invalid thumb type %s", txt.Quote(typeName))
+			log.Errorf("%s: invalid size %s", folderCover, thumbName)
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		}
 
-		if thumbType.ExceedsSize() && !conf.ThumbUncached() {
-			typeName, thumbType = thumb.Find(conf.ThumbSize())
+		if size.Uncached() && !conf.ThumbUncached() {
+			thumbName, size = thumb.Find(conf.ThumbSizePrecached())
 
-			if typeName == "" {
-				log.Errorf("folder: invalid thumb size %d", conf.ThumbSize())
+			if thumbName == "" {
+				log.Errorf("folder: invalid thumb size %d", conf.ThumbSizePrecached())
 				c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 				return
 			}
 		}
 
 		cache := service.CoverCache()
-		cacheKey := CacheKey(folderCover, uid, typeName)
+		cacheKey := CacheKey(folderCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
@@ -101,8 +103,8 @@ func GetFolderCover(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsSizeUncached() && !download {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", folderCover, thumbType.Width, thumbType.Height)
+		if size.ExceedsLimit() && !download {
+			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", folderCover, size.Width, size.Height)
 			AddCoverCacheHeader(c)
 			c.File(fileName)
 			return
@@ -110,10 +112,10 @@ func GetFolderCover(router *gin.RouterGroup) {
 
 		var thumbnail string
 
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+		if conf.ThumbUncached() || size.Uncached() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {

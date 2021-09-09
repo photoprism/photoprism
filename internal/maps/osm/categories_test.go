@@ -1,3 +1,4 @@
+//go:build osm
 // +build osm
 
 package osm

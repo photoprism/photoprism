@@ -8,6 +8,28 @@ import (
 )
 
 func TestGeoSearch(t *testing.T) {
+	t.Run("subjects", func(t *testing.T) {
+		form := &GeoSearch{Query: "subjects:\"Jens Mander\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Jens Mander", form.Subjects)
+	})
+	t.Run("keywords", func(t *testing.T) {
+		form := &GeoSearch{Query: "keywords:\"Foo Bar\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Foo Bar", form.Keywords)
+	})
 	t.Run("valid query", func(t *testing.T) {
 		form := &GeoSearch{Query: "query:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667"}
 
@@ -17,7 +39,7 @@ func TestGeoSearch(t *testing.T) {
 			t.Fatal("err should be nil")
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
@@ -33,7 +55,7 @@ func TestGeoSearch(t *testing.T) {
 			t.Fatal("err should be nil")
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, "test", form.Path)

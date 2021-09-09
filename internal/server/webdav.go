@@ -46,7 +46,7 @@ func MarkUploadAsFavorite(fileName string) {
 	log.Infof("webdav: marked %s as favorite", txt.Quote(filepath.Base(fileName)))
 }
 
-// ANY /webdav/*
+// WebDAV handles any requests to /originals|import/*
 func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 	if router == nil {
 		log.Error("webdav: router is nil")

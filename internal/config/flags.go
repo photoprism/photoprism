@@ -5,7 +5,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// PhotoPrism command-line parameters and flags.
+// GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",
@@ -371,34 +371,34 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "optional static `SECRET` url token for file downloads",
+		Usage:  "static url `TOKEN` for original file downloads",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "optional static `SECRET` url token for preview images and video streaming",
+		Usage:  "static url `TOKEN` for thumbnails and video streaming",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
-		Name:   "thumb-filter, f",
-		Usage:  "downscaling filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
+		Name:   "thumb-filter",
+		Usage:  "image downscaling `FILTER` (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "static thumbnail size limit in `PIXELS` (720-7680)",
+		Usage:  "max pre-cached thumbnail size in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
 	cli.BoolFlag{
 		Name:   "thumb-uncached, u",
-		Usage:  "enable dynamic thumbnail rendering (high memory and cpu usage)",
+		Usage:  "enable on-demand thumbnail generation (high memory and cpu usage)",
 		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
 	},
 	cli.IntFlag{
 		Name:   "thumb-size-uncached, x",
-		Usage:  "dynamic rendering size limit in `PIXELS` (720-7680)",
+		Usage:  "on-demand thumbnail generation size limit in `PIXELS` (720-7680)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},

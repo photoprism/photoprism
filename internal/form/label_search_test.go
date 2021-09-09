@@ -19,7 +19,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -35,7 +35,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -50,7 +50,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -67,7 +67,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
@@ -91,7 +91,7 @@ func TestParseQueryStringLabel(t *testing.T) {
 			t.Fatal("err should NOT be nil")
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"2019-01-15\": invalid syntax", err.Error())
 	})

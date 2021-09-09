@@ -3,18 +3,12 @@ package photoprism
 import (
 	"fmt"
 	"runtime/debug"
-	"time"
 
-	"github.com/photoprism/photoprism/internal/face"
-
-	"github.com/montanaflynn/stats"
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/mpraski/clusters"
 )
 
 // Faces represents a worker for face clustering and matching.
@@ -31,137 +25,11 @@ func NewFaces(conf *config.Config) *Faces {
 	return instance
 }
 
-// Analyze face embeddings.
-func (w *Faces) Analyze() (err error) {
-	if embeddings, err := query.Embeddings(true); err != nil {
-		return err
-	} else if samples := len(embeddings); samples == 0 {
-		log.Infof("faces: no samples found")
-	} else {
-		log.Infof("faces: computing distance of %d samples", samples)
-
-		distMin := make([]float64, samples)
-		distMax := make([]float64, samples)
-
-		for i := 0; i < samples; i++ {
-			min := -1.0
-			max := -1.0
-
-			for j := 0; j < samples; j++ {
-				if i == j {
-					continue
-				}
-
-				d := clusters.EuclideanDistance(embeddings[i], embeddings[j])
-
-				if min < 0 || d < min {
-					min = d
-				}
-
-				if max < 0 || d > max {
-					max = d
-				}
-			}
-
-			distMin[i] = min
-			distMax[i] = max
-		}
-
-		minMedian, _ := stats.Median(distMin)
-		minMin, _ := stats.Min(distMin)
-		minMax, _ := stats.Max(distMin)
-
-		log.Infof("faces: min Ø %f < median %f < %f", minMin, minMedian, minMax)
-
-		maxMedian, _ := stats.Median(distMax)
-		maxMin, _ := stats.Min(distMax)
-		maxMax, _ := stats.Max(distMax)
-
-		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
-	}
-
-	if faces, err := query.Faces(true); err != nil {
-		log.Errorf("faces: %s", err)
-	} else if samples := len(faces); samples > 0 {
-		log.Infof("faces: computing distance of faces matching to the same person")
-
-		dist := make(map[string][]float64)
-
-		for i := 0; i < samples; i++ {
-			f1 := faces[i]
-
-			e1 := f1.Embedding()
-			min := -1.0
-			max := -1.0
-
-			if k, ok := dist[f1.SubjectUID]; ok {
-				min = k[0]
-				max = k[1]
-			}
-
-			for j := 0; j < samples; j++ {
-				if i == j {
-					continue
-				}
-
-				f2 := faces[j]
-
-				if f1.SubjectUID != f2.SubjectUID {
-					continue
-				}
-
-				e2 := f2.Embedding()
-
-				d := clusters.EuclideanDistance(e1, e2)
-
-				if min < 0 || d < min {
-					min = d
-				}
-
-				if max < 0 || d > max {
-					max = d
-				}
-			}
-
-			if max > 0 {
-				dist[f1.SubjectUID] = []float64{min, max}
-			}
-		}
-
-		if l := len(dist); l == 0 {
-			log.Infof("faces: analyzed %d clusters, no matches", samples)
-		} else {
-			log.Infof("faces: %d faces match to the same person", l)
-		}
-
-		for subj, d := range dist {
-			log.Infof("faces: %s Ø min %f, max %f", subj, d[0], d[1])
-		}
-	}
-
-	return nil
-}
-
-// Reset face clusters and matches.
-func (w *Faces) Reset() (err error) {
-	if err := query.ResetFaces(); err != nil {
-		log.Errorf("faces: %s (reset clusters)", err)
-	} else {
-		log.Infof("faces: removed clusters")
-	}
-
-	if err := query.ResetFaceMarkerMatches(); err != nil {
-		log.Errorf("faces: %s (reset markers)", err)
-	} else {
-		log.Infof("faces: removed matches")
-	}
-
-	return nil
-}
-
-// Disabled tests if facial recognition is disabled.
-func (w *Faces) Disabled() bool {
-	return !(w.conf.Experimental() && w.conf.Settings().Features.People)
+// StartDefault starts face clustering and matching with default options.
+func (w *Faces) StartDefault() (err error) {
+	return w.Start(FacesOptions{
+		Force: false,
+	})
 }
 
 // Start face clustering and matching.
@@ -177,190 +45,71 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		return fmt.Errorf("facial recognition is disabled")
 	}
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err := mutex.FacesWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.FacesWorker.Stop()
 
-	// Skip clustering if index contains no new face markers.
-	if opt.Force {
-		log.Infof("faces: reindexing")
-	} else if n := query.CountNewFaceMarkers(); n < 1 {
-		log.Debugf("faces: no new samples")
-
-		if affected, err := query.MatchMarkersWithSubjects(); err != nil {
-			log.Errorf("faces: %s (match markers with subjects)", err)
-		} else if affected > 0 {
-			log.Infof("faces: matched %d markers with subjects", affected)
-		}
-
-		if matched, err := query.MatchKnownFaces(); err != nil {
-			return err
-		} else if matched > 0 {
-			log.Infof("faces: matched %d markers to faces", matched)
-		}
-
-		return nil
+	// Repair invalid marker face and subject references.
+	if removed, err := query.FixMarkerReferences(); err != nil {
+		log.Errorf("faces: %s (fix references)", err)
+	} else if removed > 0 {
+		log.Infof("faces: fixed %d marker references", removed)
 	} else {
-		log.Infof("faces: found %d new markers", n)
+		log.Debugf("faces: no invalid marker references")
 	}
 
-	// Fetch and cluster all face embeddings.
-	embeddings, err := query.Embeddings(false)
+	// Create known marker subjects if needed.
+	if affected, err := query.CreateMarkerSubjects(); err != nil {
+		log.Errorf("faces: %s (create subjects)", err)
+	} else if affected > 0 {
+		log.Infof("faces: added %d known marker subjects", affected)
+	} else {
+		log.Debugf("faces: marker subjects already exist")
+	}
 
-	// Anything that keeps us from doing this?
+	// Resolve collisions of different subject's faces.
+	if c, r, err := query.ResolveFaceCollisions(); err != nil {
+		log.Errorf("faces: %s (resolve collisions)", err)
+	} else if c > 0 {
+		log.Infof("faces: resolved %d / %d collisions", r, c)
+	} else {
+		log.Debugf("faces: no collisions detected")
+	}
+
+	// Optimize existing face clusters.
+	if res, err := w.Optimize(); err != nil {
+		return err
+	} else if res.Merged > 0 {
+		log.Infof("faces: merged %d clusters", res.Merged)
+	} else {
+		log.Debugf("faces: no clusters could be merged")
+	}
+
+	var added entity.Faces
+
+	// Cluster existing face embeddings.
+	if added, err = w.Cluster(opt); err != nil {
+		log.Errorf("faces: %s (cluster)", err)
+	} else if n := len(added); n > 0 {
+		log.Infof("faces: added %d new faces", n)
+	} else {
+		log.Debugf("faces: found no new faces")
+	}
+
+	// Match markers with faces and subjects.
+	matches, err := w.Match(opt)
+
 	if err != nil {
-		return err
-	} else if samples := len(embeddings); samples < face.SampleThreshold {
-		log.Warnf("faces: at least %d samples needed for matching similar faces", face.SampleThreshold)
-		return nil
+		log.Errorf("faces: %s (match)", err)
 	}
 
-	var c clusters.HardClusterer
-
-	// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
-	if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterRadius, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
-		return err
-	} else if err = c.Learn(embeddings); err != nil {
-		return err
-	}
-
-	sizes := c.Sizes()
-
-	log.Debugf("faces: processing %d samples, %d clusters", len(embeddings), len(sizes))
-
-	results := make([]entity.Embeddings, len(sizes))
-
-	for i, _ := range sizes {
-		results[i] = entity.Embeddings{}
-	}
-
-	guesses := c.Guesses()
-
-	for i, n := range guesses {
-		if n < 1 {
-			continue
-		}
-
-		results[n-1] = append(results[n-1], embeddings[i])
-	}
-
-	var added, matched, unknown, dbErrors int64
-
-	for _, e := range results {
-		if f := entity.NewFace("", e); f == nil {
-			dbErrors++
-			log.Errorf("faces: face should not be nil - bug?")
-		} else if err := f.Create(); err == nil {
-			added++
-			log.Tracef("faces: added face %s", f.ID)
-		} else if err := f.Updates(entity.Values{"UpdatedAt": entity.Timestamp()}); err != nil {
-			dbErrors++
-			log.Errorf("faces: %s", err)
-		}
-	}
-
-	if err := query.PurgeAnonymousFaces(); err != nil {
-		dbErrors++
-		log.Errorf("faces: %s", err)
-	}
-
-	if faces, err := query.Faces(false); err != nil {
-		return err
+	// Log face matching results.
+	if matches.Updated > 0 {
+		log.Infof("faces: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
 	} else {
-		limit := 500
-		offset := 0
-
-		for {
-			markers, err := query.Markers(limit, offset, entity.MarkerFace, true, true)
-
-			if err != nil {
-				return err
-			}
-
-			if len(markers) == 0 {
-				break
-			}
-
-			for _, marker := range markers {
-				if mutex.MainWorker.Canceled() {
-					return fmt.Errorf("worker canceled")
-				}
-
-				// Pointer to the matching face.
-				var f *entity.Face
-
-				// Distance to the matching face.
-				var d float64
-
-				// Find the closest face match for marker.
-				for _, e := range marker.Embeddings() {
-					for i, match := range faces {
-						if dist := clusters.EuclideanDistance(e, match.Embedding()); f == nil || dist < d {
-							f = &faces[i]
-							d = dist
-						}
-					}
-				}
-
-				// No match?
-				if f == nil {
-					continue
-				}
-
-				// Too distant?
-				if d > (f.Radius + face.ClusterRadius) {
-					continue
-				}
-
-				// Already matched?
-				if marker.SubjectUID != "" && marker.SubjectUID == f.SubjectUID {
-					continue
-				}
-
-				// Create subject from marker label?
-				if marker.MarkerName == "" {
-					// Do nothing.
-				} else if subj := entity.NewSubject(marker.MarkerName, entity.SubjectPerson, entity.SrcMarker); subj == nil {
-					log.Errorf("faces: subject should not be nil - bug?")
-				} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
-					log.Errorf("faces: failed adding subject %s", txt.Quote(marker.MarkerName))
-				} else {
-					f.SubjectUID = subj.SubjectUID
-					entity.Db().Model(&entity.Face{}).Where("id = ? AND subject_uid = ''", f.ID).Update("SubjectUID", subj.SubjectUID)
-				}
-
-				// Existing subject?
-				if f.SubjectUID != "" {
-					if err := marker.Updates(entity.Values{"SubjectUID": f.SubjectUID, "SubjectSrc": entity.SrcAuto, "FaceID": ""}); err != nil {
-						log.Errorf("faces: %s while updating subject uid of marker %d", err, marker.ID)
-					} else {
-						matched++
-					}
-				} else if err := marker.Updates(entity.Values{"FaceID": f.ID}); err != nil {
-					log.Errorf("faces: %s while updating face id of marker %d", err, marker.ID)
-				} else {
-					unknown++
-				}
-			}
-
-			offset += limit
-
-			time.Sleep(50 * time.Millisecond)
-		}
-	}
-
-	if m, err := query.MatchKnownFaces(); err != nil {
-		return err
-	} else {
-		matched += m
-	}
-
-	if added > 0 || matched > 0 || dbErrors > 0 {
-		log.Infof("faces: %d added, %d matches, %d unknown, %d errors", added, matched, unknown, dbErrors)
-	} else {
-		log.Debugf("faces: %d added, %d matches, %d unknown, %d errors", added, matched, unknown, dbErrors)
+		log.Debugf("faces: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
 	}
 
 	return nil
@@ -368,5 +117,15 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 // Cancel stops the current operation.
 func (w *Faces) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.FacesWorker.Cancel()
+}
+
+// Canceled tests if face clustering and matching should be stopped.
+func (w *Faces) Canceled() bool {
+	return mutex.FacesWorker.Canceled() || mutex.MainWorker.Canceled() || mutex.MetaWorker.Canceled()
+}
+
+// Disabled tests if facial recognition is disabled.
+func (w *Faces) Disabled() bool {
+	return !(w.conf.Experimental() && w.conf.Settings().Features.People)
 }

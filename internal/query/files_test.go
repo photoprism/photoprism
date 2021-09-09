@@ -10,7 +10,7 @@ import (
 
 func TestFilesByPath(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := FilesByPath(10, 0, entity.RootOriginals, "2016/11")
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "Holiday")
 
 		t.Logf("files: %+v", files)
 
@@ -21,7 +21,7 @@ func TestFilesByPath(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(files))
 	})
 	t.Run("files found - path starting with /", func(t *testing.T) {
-		files, err := FilesByPath(10, 0, entity.RootOriginals, "/2016/11")
+		files, err := FilesByPath(10, 0, entity.RootOriginals, "/Holiday")
 
 		t.Logf("files: %+v", files)
 
@@ -100,7 +100,7 @@ func TestFileByPhotoUID(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "London/bridge.jpg", file.FileName)
+		assert.Equal(t, "Germany/bridge.jpg", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -118,7 +118,7 @@ func TestVideoByPhotoUID(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "London/bridge2.mp4", file.FileName)
+		assert.Equal(t, "1990/04/bridge2.mp4", file.FileName)
 	})
 
 	t.Run("no files found", func(t *testing.T) {
@@ -193,6 +193,14 @@ func TestSetPhotoPrimary(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
+	})
+	t.Run("file missing", func(t *testing.T) {
+		err := SetPhotoPrimary("pt9jtdre2lvl0y22", "")
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+		assert.Contains(t, err.Error(), "can't find primary file")
 	})
 }
 

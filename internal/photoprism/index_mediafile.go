@@ -15,6 +15,8 @@ import (
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/thumb"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -321,7 +323,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if metaData := m.MetaData(); metaData.Error == nil {
 			file.FileCodec = metaData.Codec
-			file.FileProjection = metaData.Projection
+			file.SetProjection(metaData.Projection)
 
 			if metaData.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, txt.Quote(metaData.InstanceID))
@@ -379,7 +381,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.FileProjection = metaData.Projection
+			file.SetProjection(metaData.Projection)
 
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
@@ -429,7 +431,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
 			file.FileDuration = metaData.Duration
-			file.FileProjection = metaData.Projection
+			file.SetProjection(metaData.Projection)
 
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
@@ -603,13 +605,11 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 			photo.AddLabels(classify.FaceLabels(faces, entity.SrcImage))
 
-			file.PreloadMarkers()
-
 			if len(faces) > 0 {
 				file.AddFaces(faces)
 			}
 
-			photo.PhotoFaces = file.Markers.FaceCount()
+			photo.PhotoFaces = file.Markers().FaceCount()
 		}
 
 		labels := photo.ClassifyLabels()
@@ -753,7 +753,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 // NSFW returns true if media file might be offensive and detection is enabled.
 func (ind *Index) NSFW(jpeg *MediaFile) bool {
-	filename, err := jpeg.Thumbnail(Config().ThumbPath(), "fit_720")
+	filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb.Fit720)
 
 	if err != nil {
 		log.Error(err)

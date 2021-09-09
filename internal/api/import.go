@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -19,6 +21,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// StartImport imports media files from a directory and converts/indexes them as needed.
+//
 // POST /api/v1/import*
 func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {
@@ -107,10 +111,17 @@ func StartImport(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
+		// Update album, label, and subject preview images.
+		if err := query.UpdatePreviews(); err != nil {
+			log.Errorf("import: %s (update previews)", err)
+		}
+
 		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
 	})
 }
 
+// CancelImport stops the current import operation.
+//
 // DELETE /api/v1/import
 func CancelImport(router *gin.RouterGroup) {
 	router.DELETE("/import", func(c *gin.Context) {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -91,6 +92,15 @@ func TestUser_InvalidPassword(t *testing.T) {
 		}
 
 		assert.False(t, m.InvalidPassword("photoprism"))
+	})
+	t.Run("admin invalid password", func(t *testing.T) {
+		m := FindUserByName("admin")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.True(t, m.InvalidPassword("wrong-password"))
 	})
 	t.Run("no password existing", func(t *testing.T) {
 		p := User{UserUID: "u0000000000000010", UserName: "Hans", FullName: ""}
@@ -375,4 +385,144 @@ func TestUser_Role(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
 		assert.Equal(t, acl.Role("*"), p.Role())
 	})
+}
+
+func TestUser_Validate(t *testing.T) {
+	t.Run("valid", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "validate",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Nil(t, err)
+	})
+	t.Run("username empty", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+	t.Run("username too short", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "val",
+			FullName:     "Validate",
+			PrimaryEmail: "validate@example.com",
+		}
+		err := u.Validate()
+		assert.Error(t, err)
+	})
+	t.Run("username not unique", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID: 1,
+			UserName:  "notunique1",
+		})
+		u := &User{
+			AddressID:    1,
+			UserName:     "notunique1",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique1@example.com",
+		}
+		assert.Error(t, u.Validate())
+	})
+	t.Run("email not unique", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID:    1,
+			PrimaryEmail: "notunique2@example.com",
+		})
+		u := &User{
+			AddressID:    1,
+			UserName:     "notunique2",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique2@example.com",
+		}
+		assert.Error(t, u.Validate())
+	})
+	t.Run("update user - email not unique", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID:    1,
+			UserName:     "notunique3",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique3@example.com",
+		})
+		u := FirstOrCreateUser(&User{
+			AddressID:    1,
+			UserName:     "notunique30",
+			FullName:     "Not Unique",
+			PrimaryEmail: "notunique3@example.com",
+		})
+		u.UserName = "notunique3"
+		assert.Error(t, u.Validate())
+	})
+	t.Run("primary email empty", func(t *testing.T) {
+		FirstOrCreateUser(&User{
+			AddressID: 1,
+			UserName:  "nnomail",
+		})
+		u := &User{
+			AddressID:    1,
+			UserName:     "nomail",
+			FullName:     "No Mail",
+			PrimaryEmail: "",
+		}
+		assert.Nil(t, u.Validate())
+	})
+}
+
+func TestCreateWithPassword(t *testing.T) {
+	t.Run("password too short", func(t *testing.T) {
+		u := form.UserCreate{
+			UserName: "thomas1",
+			FullName: "Thomas One",
+			Email:    "thomas1@example.com",
+			Password: "hel",
+		}
+		err := CreateWithPassword(u)
+		assert.Error(t, err)
+	})
+	t.Run("valid", func(t *testing.T) {
+		u := form.UserCreate{
+			UserName: "thomas2",
+			FullName: "Thomas Two",
+			Email:    "thomas2@example.com",
+			Password: "helloworld",
+		}
+		err := CreateWithPassword(u)
+		assert.Nil(t, err)
+	})
+}
+
+func TestDeleteUser(t *testing.T) {
+	t.Run("delete user - success", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "thomasdel",
+			FullName:     "Thomas Delete",
+			PrimaryEmail: "thomasdel@example.com",
+		}
+		u = FirstOrCreateUser(u)
+		err := u.Delete()
+		assert.NoError(t, err)
+	})
+	t.Run("delete user - not in db", func(t *testing.T) {
+		u := &User{
+			AddressID:    1,
+			UserName:     "thomasdel2",
+			FullName:     "Thomas Delete 2",
+			PrimaryEmail: "thomasdel2@example.com",
+		}
+		err := u.Delete()
+		assert.Error(t, err)
+	})
+}
+
+func TestUser_Deleted(t *testing.T) {
+	assert.False(t, UserFixtures.Pointer("alice").Deleted())
+	assert.True(t, UserFixtures.Pointer("deleted").Deleted())
 }

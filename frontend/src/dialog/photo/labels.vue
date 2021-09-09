@@ -18,7 +18,7 @@
               class="p-inline-edit"
               @save="renameLabel(props.item.Label)"
           >
-            {{ props.item.Label.Name | capitalize }}
+            {{ props.item.Label.Name }}
             <template #input>
               <v-text-field
                   v-model="props.item.Label.Name"

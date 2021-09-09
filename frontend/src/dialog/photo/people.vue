@@ -17,20 +17,24 @@
         <v-flex
             v-for="(marker, index) in markers"
             :key="index"
-            xs6 sm4 md3 lg2 xl1 d-flex
+            xs12 sm6 md3 xl2 d-flex
         >
           <v-card tile
-                  :data-id="marker.ID"
-                  style="user-select: none"
-                  :class="{invalid: marker.Invalid}"
+                  :data-id="marker.UID"
+                  style="user-select: none;"
+                  :class="marker.classes()"
                   class="result accent lighten-3">
             <div class="card-background accent lighten-3"></div>
-            <canvas :id="'face-' + marker.ID" :key="marker.ID" width="300" height="300" style="width: 100%" class="v-responsive v-image accent lighten-2"></canvas>
+            <v-img :src="marker.thumbnailUrl('tile_320')"
+                   :transition="false"
+                   aspect-ratio="1"
+                   class="accent lighten-2">
+            </v-img>
 
             <v-card-actions class="card-details pa-0">
-              <v-layout v-if="marker.Score < 30" row wrap align-center>
+              <v-layout v-if="marker.Review || marker.Invalid" row wrap align-center>
                 <v-flex xs6 class="text-xs-center pa-0">
-                  <v-btn color="transparent"
+                  <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
                          class="action-archive text-xs-center"
                          :title="$gettext('Reject')" @click.stop="reject(marker)">
@@ -38,29 +42,58 @@
                   </v-btn>
                 </v-flex>
                 <v-flex xs6 class="text-xs-center pa-0">
-                  <v-btn color="transparent"
+                  <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
                          class="action-approve text-xs-center"
-                         :title="$gettext('Approve')" @click.stop="confirm(marker)">
+                         :title="$gettext('Approve')" @click.stop="approve(marker)">
                     <v-icon dark>check</v-icon>
                   </v-btn>
                 </v-flex>
               </v-layout>
-              <v-layout v-else row wrap align-center>
+              <v-layout v-else-if="marker.SubjectUID" row wrap align-center>
                 <v-flex xs12 class="text-xs-left pa-0">
                   <v-text-field
                       v-model="marker.Name"
                       :rules="[textRule]"
+                      :disabled="busy"
                       browser-autocomplete="off"
                       class="input-name pa-0 ma-0"
                       hide-details
                       single-line
                       solo-inverted
                       clearable
-                      @click:clear="clearName(marker)"
-                      @change="updateName(marker)"
-                      @keyup.enter.native="updateName(marker)"
+                      clear-icon="eject"
+                      @click:clear="clearSubject(marker)"
+                      @change="rename(marker)"
+                      @keyup.enter.native="rename(marker)"
                   ></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-layout v-else row wrap align-center>
+                <v-flex xs12 class="text-xs-left pa-0">
+                  <v-combobox
+                      v-model="marker.Name"
+                      style="z-index: 250"
+                      :items="$config.values.people"
+                      item-value="Name"
+                      item-text="Name"
+                      :disabled="busy"
+                      :return-object="false"
+                      :menu-props="menuProps"
+                      :allow-overflow="false"
+                      :hint="$gettext('Name')"
+                      hide-details
+                      single-line
+                      solo-inverted
+                      open-on-clear
+                      append-icon=""
+                      prepend-inner-icon="person_add"
+                      browser-autocomplete="off"
+                      class="input-name pa-0 ma-0"
+                      @change="rename(marker)"
+                      @keyup.enter.native="rename(marker)"
+                  >
+                  </v-combobox>
                 </v-flex>
               </v-layout>
             </v-card-actions>
@@ -72,6 +105,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'PTabPhotoPeople',
   props: {
@@ -80,65 +114,40 @@ export default {
   },
   data() {
     return {
+      busy: false,
       markers: this.model.getMarkers(true),
       imageUrl: this.model.thumbnailUrl("fit_720"),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
-      textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
+      menuProps:{"closeOnClick":false, "closeOnContentClick":true, "openOnClick":false, "maxHeight":300},
+      textRule: (v) => {
+        if (!v || !v.length) {
+          return this.$gettext("Name");
+        }
+
+        return v.length <= this.$config.get('clip') || this.$gettext("Text too long");
+      },
     };
-  },
-  mounted () {
-    this.markers.forEach((m) => {
-      const canvas = document.getElementById('face-' + m.ID);
-
-      let ctx = canvas.getContext('2d');
-      let img = new Image();
-
-      img.onload = function() {
-        const w = Math.round(m.W * img.width);
-        const h = Math.round(m.H * img.height);
-        const s = w > h ? w : h;
-        const x = Math.round((m.X - (m.W / 2)) * img.width);
-        const y = Math.round((m.Y - (m.H / 2)) * img.height);
-
-        ctx.drawImage(img, x, y, s, s, 0, 0, 300, 300);
-      };
-
-      if (m.W < 0.07) {
-        // TODO: Not all users have thumbs with this resolution.
-        img.src = this.model.thumbnailUrl("fit_7680");
-      } else if (m.W < 0.1) {
-        // TODO: Not all users have thumbs with this resolution.
-        img.src = this.model.thumbnailUrl("fit_2048");
-      } else if (m.W < 0.15) {
-        // TODO: Not all users have thumbs with this resolution.
-        img.src = this.model.thumbnailUrl("fit_1280");
-      } else {
-        img.src = this.imageUrl;
-      }
-    });
   },
   methods: {
     refresh() {
     },
     reject(marker) {
-      marker.Invalid = true;
-      this.model.updateMarker(marker);
+      this.busy = true;
+      marker.reject().finally(() => this.busy = false);
     },
-    confirm(marker) {
-      marker.Score = 100;
-      marker.Invalid = false;
-      this.model.updateMarker(marker);
+    approve(marker) {
+      this.busy = true;
+      marker.approve().finally(() => this.busy = false);
     },
-    clearName(marker) {
-      marker.Name = "";
-      marker.SubjectUID = "";
-      marker.SubjectSrc = "";
-      this.model.updateMarker(marker);
+    clearSubject(marker) {
+      this.busy = true;
+      marker.clearSubject(marker).finally(() => this.busy = false);
     },
-    updateName(marker) {
-      this.model.updateMarker(marker);
+    rename(marker) {
+      this.busy = true;
+      marker.rename().finally(() => this.busy = false);
     },
   },
 };

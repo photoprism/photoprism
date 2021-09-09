@@ -44,7 +44,7 @@ func NewTestOptions() *Options {
 
 	// Config example for MySQL / MariaDB:
 	//   dbDriver = MySQL,
-	//   dbDsn = "photoprism:photoprism@tcp(photoprism-db:4001)/photoprism?parseTime=true",
+	//   dbDsn = "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true",
 
 	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == "" {
 		dbDriver = SQLite
@@ -138,7 +138,7 @@ func NewTestConfig() *Config {
 
 	c.InitTestDb()
 
-	thumb.Size = c.ThumbSize()
+	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()

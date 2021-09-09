@@ -360,6 +360,6 @@ body.chrome #photoprism .search-results .result {
     text-align: center;
 }
 
-#photoprism .face-results .invalid {
+#photoprism .face-results .is-marker.is-invalid {
     opacity: 0.5;
 }

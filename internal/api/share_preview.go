@@ -21,6 +21,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// SharePreview returns a link share preview image.
+//
 // GET /s/:token/:uid/preview
 // TODO: Proof of concept, needs refactoring.
 func SharePreview(router *gin.RouterGroup) {
@@ -88,7 +90,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		} else if count < 12 {
 			f := p[0]
-			thumbType, _ := thumb.Types["fit_720"]
+			size, _ := thumb.Sizes[thumb.Fit720]
 
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
@@ -98,7 +100,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 
 			if err != nil {
 				log.Error(err)
@@ -117,7 +119,7 @@ func SharePreview(router *gin.RouterGroup) {
 		y := 0
 
 		preview := imaging.New(width, height, color.NRGBA{255, 255, 255, 255})
-		thumbType, _ := thumb.Types["tile_224"]
+		size, _ := thumb.Sizes[thumb.Tile224]
 
 		for _, f := range p {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
@@ -128,7 +130,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 
 			if err != nil {
 				log.Error(err)

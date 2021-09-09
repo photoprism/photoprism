@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -36,11 +38,12 @@ type ClientConfig struct {
 	Public          bool                `json:"public"`
 	Experimental    bool                `json:"experimental"`
 	AlbumCategories []string            `json:"albumCategories"`
-	Albums          []entity.Album      `json:"albums"`
-	Cameras         []entity.Camera     `json:"cameras"`
-	Lenses          []entity.Lens       `json:"lenses"`
-	Countries       []entity.Country    `json:"countries"`
-	Thumbs          []Thumb             `json:"thumbs"`
+	Albums          entity.Albums       `json:"albums"`
+	Cameras         entity.Cameras      `json:"cameras"`
+	Lenses          entity.Lenses       `json:"lenses"`
+	Countries       entity.Countries    `json:"countries"`
+	People          entity.People       `json:"people"`
+	Thumbs          ThumbSizes          `json:"thumbs"`
 	Status          string              `json:"status"`
 	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken"`
@@ -52,12 +55,15 @@ type ClientConfig struct {
 	Disable         ClientDisable       `json:"disable"`
 	Count           ClientCounts        `json:"count"`
 	Pos             ClientPosition      `json:"pos"`
-	Years           []int               `json:"years"`
+	Years           Years               `json:"years"`
 	Colors          []map[string]string `json:"colors"`
-	Categories      []CategoryLabel     `json:"categories"`
+	Categories      CategoryLabels      `json:"categories"`
 	Clip            int                 `json:"clip"`
 	Server          RuntimeInfo         `json:"server"`
 }
+
+// Years represents a list of years.
+type Years []int
 
 // ClientDisable represents disabled client features a user can't turn back on.
 type ClientDisable struct {
@@ -98,6 +104,8 @@ type ClientCounts struct {
 	Labels         int `json:"labels"`
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
+
+type CategoryLabels []CategoryLabel
 
 type CategoryLabel struct {
 	LabelUID   string `json:"UID"`
@@ -373,9 +381,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Take(&result.Count)
 
 	c.Db().
-		Table(entity.Subject{}.TableName()).
-		Select("SUM(deleted_at IS NULL) AS people").
-		Where("id <> ? AND subject_type = ?", entity.UnknownPerson.ID, entity.SubjectPerson).
+		Table("countries").
+		Select("(COUNT(*) - 1) AS countries").
 		Take(&result.Count)
 
 	c.Db().
@@ -387,6 +394,10 @@ func (c *Config) UserConfig() ClientConfig {
 	c.Db().
 		Order("country_slug").
 		Find(&result.Countries)
+
+	// People are subjects with type person.
+	result.Count.People, _ = query.PeopleCount()
+	result.People, _ = query.People()
 
 	c.Db().
 		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality >= 0 OR photos.deleted_at IS NULL)").

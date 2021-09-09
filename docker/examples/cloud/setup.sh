@@ -36,7 +36,7 @@ echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # update operating system
 apt-get update
-apt-get dist-upgrade
+apt dist-upgrade 2>/dev/null
 
 # install dependencies
 apt-get -qq install --no-install-recommends apt-transport-https ca-certificates \

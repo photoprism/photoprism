@@ -49,6 +49,10 @@ func TestTitle(t *testing.T) {
 	t.Run("BrowseYourLife", func(t *testing.T) {
 		assert.Equal(t, "Browse Your Life in Pictures", Title("Browse your life in pictures"))
 	})
+	t.Run("German", func(t *testing.T) {
+		assert.Equal(t, "Die Burg von oben gesehen.", Title("die burg von oben gesehen."))
+		assert.Equal(t, "Die Katze ist auf dem Dach für viele nicht sichtbar!", Title("die katze ist auf dem dach für viele nicht sichtbar!"))
+	})
 	t.Run("PhotoLover", func(t *testing.T) {
 		assert.Equal(t, "Photo-Lover", Title("photo-lover"))
 	})
@@ -87,5 +91,8 @@ func TestTitle(t *testing.T) {
 	})
 	t.Run("empty", func(t *testing.T) {
 		assert.Empty(t, Title(""))
+	})
+	t.Run("NYC", func(t *testing.T) {
+		assert.Equal(t, "NYC, NY - LonDon, UK - NYC, NY and London, UK.", Title("NYC, NY - LonDon, UK - Nyc, Ny and London, Uk."))
 	})
 }

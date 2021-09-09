@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/thumb"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -12,18 +14,18 @@ import (
 func (ind *Index) classifyImage(jpeg *MediaFile) (results classify.Labels) {
 	start := time.Now()
 
-	var thumbs []string
+	var sizes []thumb.Name
 
 	if jpeg.AspectRatio() == 1 {
-		thumbs = []string{"tile_224"}
+		sizes = []thumb.Name{thumb.Tile224}
 	} else {
-		thumbs = []string{"tile_224", "left_224", "right_224"}
+		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
 	}
 
 	var labels classify.Labels
 
-	for _, thumb := range thumbs {
-		filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb)
+	for _, size := range sizes {
+		filename, err := jpeg.Thumbnail(Config().ThumbPath(), size)
 
 		if err != nil {
 			log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))

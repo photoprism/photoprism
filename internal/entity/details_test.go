@@ -125,7 +125,7 @@ func TestNewDetails(t *testing.T) {
 	t.Run("add to photo", func(t *testing.T) {
 		p := NewPhoto(true)
 
-		assert.Equal(t, UnknownName, p.PhotoTitle)
+		assert.Equal(t, UnknownTitle, p.PhotoTitle)
 
 		d := NewDetails(p)
 		p.Details = &d
@@ -197,12 +197,19 @@ func TestDetails_SetKeywords(t *testing.T) {
 		description.SetKeywords("dog", SrcMeta)
 		assert.Equal(t, "cat, brown", description.Keywords)
 	})
-	t.Run("new keywords set", func(t *testing.T) {
+	t.Run("new keywords set - merge", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Keywords: "cat, brown", KeywordsSrc: SrcMeta}
 		assert.Equal(t, "cat, brown", description.Keywords)
 
 		description.SetKeywords("dog", SrcMeta)
 		assert.Equal(t, "brown, cat, dog", description.Keywords)
+	})
+	t.Run("new keywords overwrite", func(t *testing.T) {
+		description := &Details{PhotoID: 123, Keywords: "cat, brown", KeywordsSrc: SrcMeta}
+		assert.Equal(t, "cat, brown", description.Keywords)
+
+		description.SetKeywords("dog", SrcManual)
+		assert.Equal(t, "dog", description.Keywords)
 	})
 }
 

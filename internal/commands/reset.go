@@ -25,7 +25,7 @@ var ResetCommand = cli.Command{
 func resetAction(ctx *cli.Context) error {
 	log.Warnf("'photoprism reset' resets the index and removes sidecar files after confirmation")
 
-	removeIndex := promptui.Prompt{
+	removeIndexPrompt := promptui.Prompt{
 		Label:     "Reset index database incl albums, labels, users and metadata?",
 		IsConfirm: true,
 	}
@@ -40,7 +40,7 @@ func resetAction(ctx *cli.Context) error {
 
 	entity.SetDbProvider(conf)
 
-	if _, err := removeIndex.Run(); err == nil {
+	if _, err := removeIndexPrompt.Run(); err == nil {
 		start := time.Now()
 
 		tables := entity.Entities
@@ -61,12 +61,12 @@ func resetAction(ctx *cli.Context) error {
 		log.Infof("keeping index database")
 	}
 
-	removeSidecarJson := promptui.Prompt{
+	removeSidecarJsonPrompt := promptui.Prompt{
 		Label:     "Permanently delete all *.json photo sidecar files?",
 		IsConfirm: true,
 	}
 
-	if _, err := removeSidecarJson.Run(); err == nil {
+	if _, err := removeSidecarJsonPrompt.Run(); err == nil {
 		start := time.Now()
 
 		matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.json")
@@ -96,12 +96,12 @@ func resetAction(ctx *cli.Context) error {
 		log.Infof("keeping json sidecar files")
 	}
 
-	removeSidecarYaml := promptui.Prompt{
+	removeSidecarYamlPrompt := promptui.Prompt{
 		Label:     "Permanently delete all *.yml photo metadata backups?",
 		IsConfirm: true,
 	}
 
-	if _, err := removeSidecarYaml.Run(); err == nil {
+	if _, err := removeSidecarYamlPrompt.Run(); err == nil {
 		start := time.Now()
 
 		matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.yml")
@@ -131,12 +131,12 @@ func resetAction(ctx *cli.Context) error {
 		log.Infof("keeping backup files")
 	}
 
-	removeAlbumYaml := promptui.Prompt{
+	removeAlbumYamlPrompt := promptui.Prompt{
 		Label:     "Permanently delete all *.yml album backups?",
 		IsConfirm: true,
 	}
 
-	if _, err := removeAlbumYaml.Run(); err == nil {
+	if _, err := removeAlbumYamlPrompt.Run(); err == nil {
 		start := time.Now()
 
 		matches, err := filepath.Glob(regexp.QuoteMeta(conf.AlbumsPath()) + "/**/*.yml")

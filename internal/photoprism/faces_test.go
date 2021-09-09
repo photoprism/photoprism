@@ -7,15 +7,28 @@ import (
 )
 
 func TestFaces_Start(t *testing.T) {
-	conf := config.TestConfig()
+	c := config.TestConfig()
 
-	m := NewFaces(conf)
+	m := NewFaces(c)
 
 	opt := FacesOptions{
-		Force: true,
+		Force:     true,
+		Threshold: 1,
 	}
 
 	err := m.Start(opt)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestFaces_StartDefault(t *testing.T) {
+	c := config.TestConfig()
+
+	m := NewFaces(c)
+
+	err := m.StartDefault()
 
 	if err != nil {
 		t.Fatal(err)

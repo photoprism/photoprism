@@ -44,7 +44,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -62,7 +62,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 
 		err := form.ParseQueryString()
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		if err != nil {
 			t.Fatal("err should be nil")
@@ -79,7 +79,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 			t.FailNow()
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
@@ -103,7 +103,7 @@ func TestParseQueryStringFolder(t *testing.T) {
 			t.FailNow()
 		}
 
-		log.Debugf("%+v\n", form)
+		// log.Debugf("%+v\n", form)
 
 		assert.Equal(t, "strconv.Atoi: parsing \"cat\": invalid syntax", err.Error())
 	})

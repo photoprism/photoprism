@@ -26,11 +26,11 @@ type Place struct {
 
 // UnknownPlace is PhotoPrism's default place.
 var UnknownPlace = Place{
-	ID:            "zz",
+	ID:            UnknownID,
 	PlaceLabel:    "Unknown",
 	PlaceCity:     "Unknown",
 	PlaceState:    "Unknown",
-	PlaceCountry:  "zz",
+	PlaceCountry:  UnknownID,
 	PlaceKeywords: "",
 	PlaceFavorite: false,
 	PhotoCount:    -1,

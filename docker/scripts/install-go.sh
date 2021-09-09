@@ -1,23 +1,25 @@
 #!/usr/bin/env bash
 
-GOLANG_VERSION=1.16.6
+set -e
+
+GOLANG_VERSION=1.17
 
 if [[ -z $1 ]]; then
-    echo "Please define architecture and version" 1>&2
+    echo "architecture required: amd64, arm64, or arm" 1>&2
     exit 1
 else
     set -eux;
     if [[ $1 == "amd64" ]]; then
         URL="https://golang.org/dl/go${GOLANG_VERSION}.linux-$1.tar.gz"
-        CHECKSUM="be333ef18b3016e9d7cb7b1ff1fdb0cac800ca0be4cf2290fe613b3d069dfe0d *go.tgz"
+        CHECKSUM="6bf89fc4f5ad763871cf7eac80a2d594492de7a818303283f1366a7f6a30372d *go.tgz"
     elif [[ $1 == "arm64" ]]; then
         URL="https://golang.org/dl/go${GOLANG_VERSION}.linux-$1.tar.gz"
-        CHECKSUM="9e38047463da6daecab9017cd0599f33f84991e68263752cfab49253bbc98c30 *go.tgz"
+        CHECKSUM="01a9af009ada22122d3fcb9816049c1d21842524b38ef5d5a0e2ee4b26d7c3e7 *go.tgz"
     elif [[ $1 == "arm" ]]; then
         URL="https://golang.org/dl/go${GOLANG_VERSION}.linux-armv6l.tar.gz"
-        CHECKSUM="b1ca342e81897da3f25da4e75ae29b267db1674fe7222d9bfc4c666bcf6fce69 *go.tgz"
+        CHECKSUM="ae89d33f4e4acc222bdb04331933d5ece4ae71039812f6ccd7493cb3e8ddfb4e *go.tgz"
     else
-        echo "cpu architecture not supported by now" 1>&2
+        echo "unsupported architecture" 1>&2
         exit 1
     fi
     wget -O go.tgz $URL

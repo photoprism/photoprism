@@ -4,8 +4,8 @@ import "github.com/ulule/deepcopier"
 
 // Album represents an album edit form.
 type Album struct {
-	CoverUID         string `json:"CoverUID"`
-	FolderUID        string `json:"FolderUID"`
+	Thumb            string `json:"Thumb"`
+	ThumbSrc         string `json:"ThumbSrc"`
 	AlbumType        string `json:"Type"`
 	AlbumTitle       string `json:"Title"`
 	AlbumLocation    string `json:"Location"`

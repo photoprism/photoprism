@@ -4,9 +4,15 @@ import "time"
 
 const Day = time.Hour * 24
 
-// Timestamp returns the current time in UTC rounded to seconds.
-func Timestamp() time.Time {
+// TimeStamp returns the current timestamp in UTC rounded to seconds.
+func TimeStamp() time.Time {
 	return time.Now().UTC().Round(time.Second)
+}
+
+// TimePointer returns a pointer to the current timestamp.
+func TimePointer() *time.Time {
+	t := TimeStamp()
+	return &t
 }
 
 // Seconds converts an int to a duration in seconds.

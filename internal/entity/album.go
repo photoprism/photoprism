@@ -30,12 +30,13 @@ type Albums []Album
 type Album struct {
 	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
 	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	CoverUID         string      `gorm:"type:VARBINARY(42);" json:"CoverUID" yaml:"CoverUID,omitempty"`
-	FolderUID        string      `gorm:"type:VARBINARY(42);index;" json:"FolderUID" yaml:"FolderUID,omitempty"`
+	ParentUID        string      `gorm:"type:VARBINARY(42);default:''" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
+	Thumb            string      `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb,omitempty" yaml:"Thumb,omitempty"`
+	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	AlbumSlug        string      `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"Slug"`
-	AlbumPath        string      `gorm:"type:VARBINARY(500);index;" json:"Path" yaml:"-"`
+	AlbumPath        string      `gorm:"type:VARBINARY(500);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string      `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
-	AlbumTitle       string      `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title"`
+	AlbumTitle       string      `gorm:"type:VARCHAR(255);index;" json:"Title" yaml:"Title"`
 	AlbumLocation    string      `gorm:"type:VARCHAR(255);" json:"Location" yaml:"Location,omitempty"`
 	AlbumCategory    string      `gorm:"type:VARCHAR(255);index;" json:"Category" yaml:"Category,omitempty"`
 	AlbumCaption     string      `gorm:"type:TEXT;" json:"Caption" yaml:"Caption,omitempty"`
@@ -54,6 +55,11 @@ type Album struct {
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	DeletedAt        *time.Time  `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
 	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID" json:"-" yaml:"Photos,omitempty"`
+}
+
+// TableName returns the entity database table name.
+func (Album) TableName() string {
+	return "albums"
 }
 
 // AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them if needed.
@@ -103,7 +109,7 @@ func AddPhotoToAlbums(photo string, albums []string) (err error) {
 
 // NewAlbum creates a new album; default name is current month and year
 func NewAlbum(albumTitle, albumType string) *Album {
-	now := Timestamp()
+	now := TimeStamp()
 
 	if albumType == "" {
 		albumType = AlbumDefault
@@ -129,7 +135,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 		return nil
 	}
 
-	now := Timestamp()
+	now := TimeStamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderAdded,
@@ -151,7 +157,7 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := Timestamp()
+	now := TimeStamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
@@ -172,7 +178,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := Timestamp()
+	now := TimeStamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderNewest,
@@ -193,7 +199,7 @@ func NewCountryAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := Timestamp()
+	now := TimeStamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderNewest,
@@ -220,7 +226,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 		Public: true,
 	}
 
-	now := Timestamp()
+	now := TimeStamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderOldest,
@@ -403,7 +409,62 @@ func (m *Album) Create() error {
 	return nil
 }
 
-// Returns the album title.
+// Delete marks the entity as deleted in the database.
+func (m *Album) Delete() error {
+	if m.Deleted() {
+		return nil
+	}
+
+	if err := Db().Delete(m).Error; err != nil {
+		return err
+	}
+
+	switch m.AlbumType {
+	case AlbumDefault:
+		event.Publish("count.albums", event.Data{"count": -1})
+	case AlbumMoment:
+		event.Publish("count.moments", event.Data{"count": -1})
+	case AlbumMonth:
+		event.Publish("count.months", event.Data{"count": -1})
+	case AlbumFolder:
+		event.Publish("count.folders", event.Data{"count": -1})
+	}
+
+	return nil
+}
+
+// Deleted tests if the entity is deleted.
+func (m *Album) Deleted() bool {
+	return m.DeletedAt != nil
+}
+
+// Restore restores the entity in the database.
+func (m *Album) Restore() error {
+	if !m.Deleted() {
+		return nil
+	}
+
+	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
+		return err
+	}
+
+	m.DeletedAt = nil
+
+	switch m.AlbumType {
+	case AlbumDefault:
+		event.Publish("count.albums", event.Data{"count": 1})
+	case AlbumMoment:
+		event.Publish("count.moments", event.Data{"count": 1})
+	case AlbumMonth:
+		event.Publish("count.months", event.Data{"count": 1})
+	case AlbumFolder:
+		event.Publish("count.folders", event.Data{"count": 1})
+	}
+
+	return nil
+}
+
+// Title returns the album title.
 func (m *Album) Title() string {
 	return m.AlbumTitle
 }

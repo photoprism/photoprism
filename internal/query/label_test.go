@@ -52,7 +52,7 @@ func TestLabelThumbBySlug(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "London/bridge2.jpg", file.FileName)
+		assert.Equal(t, "1990/04/bridge2.jpg", file.FileName)
 	})
 
 	t.Run("no file found", func(t *testing.T) {
@@ -72,7 +72,7 @@ func TestLabelThumbByUID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "London/bridge2.jpg", file.FileName)
+		assert.Equal(t, "1990/04/bridge2.jpg", file.FileName)
 	})
 
 	t.Run("no file found", func(t *testing.T) {

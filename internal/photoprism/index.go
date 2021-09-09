@@ -231,11 +231,23 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 
 	if filesIndexed > 0 {
 		event.Publish("index.updating", event.Data{
+			"step": "faces",
+		})
+
+		// Run facial recognition if enabled.
+		if w := NewFaces(ind.conf); w.Disabled() {
+			log.Debugf("index: skipping facial recognition")
+		} else if err := w.Start(FacesOptionsDefault()); err != nil {
+			log.Errorf("index: %s", err)
+		}
+
+		event.Publish("index.updating", event.Data{
 			"step": "counts",
 		})
 
+		// Update photo counts and visibilities.
 		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("index: %s", err)
+			log.Errorf("index: %s (update counts)", err)
 		}
 	} else {
 		log.Infof("index: no new or modified files")
@@ -246,7 +258,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	return done
 }
 
-// File indexes a single file and returns the result.
+// FileName indexes a single file and returns the result.
 func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult) {
 	file, err := NewMediaFile(fileName)
 

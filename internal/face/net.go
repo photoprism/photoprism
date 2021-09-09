@@ -1,20 +1,17 @@
 package face
 
 import (
-	"bytes"
 	"fmt"
 	"image"
-	"io/ioutil"
-	"os"
 	"path"
 	"path/filepath"
 	"runtime/debug"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/internal/crop"
 
-	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/pkg/txt"
+
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
@@ -31,16 +28,12 @@ type Net struct {
 
 // NewNet returns a new TensorFlow Facenet instance.
 func NewNet(modelPath, cachePath string, disabled bool) *Net {
-	if err := os.MkdirAll(filepath.Join(cachePath, "faces"), os.ModePerm); err != nil {
-		log.Errorf("faces: failed creating cache folder")
-	}
-
 	return &Net{modelPath: modelPath, cachePath: cachePath, disabled: disabled, modelTags: []string{"serve"}}
 }
 
 // Detect runs the detection and facenet algorithms over the provided source image.
-func (t *Net) Detect(fileName string) (faces Faces, err error) {
-	faces, err = Detect(fileName)
+func (t *Net) Detect(fileName string, minSize int, cacheCrop bool) (faces Faces, err error) {
+	faces, err = Detect(fileName, false, minSize)
 
 	if err != nil {
 		return faces, err
@@ -56,14 +49,12 @@ func (t *Net) Detect(fileName string) (faces Faces, err error) {
 		return faces, err
 	}
 
-	fileHash := fs.Hash(fileName)
-
 	for i, f := range faces {
-		if f.Face.Col == 0 && f.Face.Row == 0 {
+		if f.Area.Col == 0 && f.Area.Row == 0 {
 			continue
 		}
 
-		if img, err := t.getFaceCrop(fileName, fileHash, f.Face); err != nil {
+		if img, err := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); err != nil {
 			log.Errorf("faces: failed to decode image: %v", err)
 		} else if embeddings := t.getEmbeddings(img); len(embeddings) > 0 {
 			faces[i].Embeddings = embeddings
@@ -102,53 +93,14 @@ func (t *Net) loadModel() error {
 	return nil
 }
 
-func (t *Net) getFaceCrop(fileName, fileHash string, f Point) (img image.Image, err error) {
-	cacheFolder := filepath.Join(t.cachePath, "faces", string(fileHash[0]), string(fileHash[1]), string(fileHash[2]))
-
-	if err := os.MkdirAll(cacheFolder, os.ModePerm); err != nil {
-		log.Errorf("faces: failed creating cache folder")
-	}
-
-	cacheFile := filepath.Join(cacheFolder, fmt.Sprintf("%s-%s%s", fileHash, f.String(), fs.JpegExt))
-
-	if !fs.FileExists(cacheFile) {
-		// Do nothing.
-	} else if img, err := imaging.Open(cacheFile); err != nil {
-		log.Errorf("faces: failed loading cached crop %s", filepath.Base(cacheFile))
-	} else {
-		log.Debugf("faces: using cached crop %s", filepath.Base(cacheFile))
-		return img, nil
-	}
-
-	x, y := f.TopLeft()
-
-	imageBuffer, err := ioutil.ReadFile(fileName)
-	img, err = imaging.Decode(bytes.NewReader(imageBuffer), imaging.AutoOrientation(true))
-
-	if err != nil {
-		return img, err
-	}
-
-	img = imaging.Crop(img, image.Rect(y, x, y+f.Scale, x+f.Scale))
-	img = imaging.Fill(img, 160, 160, imaging.Center, imaging.Lanczos)
-
-	if err := imaging.Save(img, cacheFile); err != nil {
-		log.Errorf("faces: failed caching crop %s", filepath.Base(cacheFile))
-	} else {
-		log.Debugf("faces: saved crop %s", filepath.Base(cacheFile))
-	}
-
-	return img, nil
-}
-
 func (t *Net) getEmbeddings(img image.Image) [][]float32 {
-	tensor, err := imageToTensor(img, 160, 160)
+	tensor, err := imageToTensor(img, CropSize.Width, CropSize.Height)
 
 	if err != nil {
 		log.Errorf("faces: failed to convert image to tensor: %v", err)
 	}
 
-	// TODO: prewhiten image as in facenet
+	// TODO: pre-whiten image as in facenet
 
 	trainPhaseBoolTensor, err := tf.NewTensor(false)
 
