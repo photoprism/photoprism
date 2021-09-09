@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -22,9 +23,6 @@ func AuthEndpoints(router *gin.RouterGroup) {
 	router.GET("/auth/external", func(c *gin.Context) {
 		handle := openIdConnect.AuthUrlHandler()
 		handle(c.Writer, c.Request)
-		//url := openIdConnect.AuthUrl()
-		//log.Debugf("Step1 - Get AuthCode: %q", url)
-		//c.Redirect(http.StatusFound, url)
 		return
 	})
 
@@ -34,25 +32,33 @@ func AuthEndpoints(router *gin.RouterGroup) {
 			log.Errorf("%s", err)
 			return
 		}
+		var uname string
+		if len(userInfo.GetPreferredUsername()) >= 4 {
+			uname = userInfo.GetPreferredUsername()
+		} else if len(userInfo.GetNickname()) >= 4 {
+			uname = userInfo.GetNickname()
+		} else if len(userInfo.GetName()) >= 4 {
+			uname = strings.ReplaceAll(strings.ToLower(userInfo.GetName())," ", "-")
+		} else if len(userInfo.GetEmail()) >= 4 {
+			uname = userInfo.GetEmail()
+		} else {
+			log.Error("auth: no username found")
+		}
 
 		u := &entity.User{
 			FullName:     userInfo.GetName(),
-			UserName:     userInfo.GetPreferredUsername(),
+			UserName:     uname,
 			PrimaryEmail: userInfo.GetEmail(),
 			ExternalID:   userInfo.GetSubject(),
 			RoleAdmin:    true,
 		}
 
-		log.Debugf("USER:\nfn: %s\nun: %s\npe: %s\nei: %s\n", u.FullName, u.UserName, u.PrimaryEmail, u.ExternalID)
-		//err = u.Validate()
-		//if err != nil {
-		//	CallbackError(c, err.Error(), http.StatusInternalServerError)
-		//	return
-		//}
+		log.Debugf("USER: %s %s %s %s\n", u.FullName, u.UserName, u.PrimaryEmail, u.ExternalID)
+
 		user, e := entity.CreateOrUpdateExternalUser(u)
 		if e != nil {
 			c.Error(e)
-			CallbackError(c, e.Error(), http.StatusInternalServerError)
+			callbackError(c, e.Error(), http.StatusInternalServerError)
 			return
 		}
 		log.Infof("user '%s' logged in", user.UserName)
@@ -70,7 +76,7 @@ func AuthEndpoints(router *gin.RouterGroup) {
 	})
 }
 
-func CallbackError(c *gin.Context, err string, status int) {
+func callbackError(c *gin.Context, err string, status int) {
 	c.Abort()
 	c.HTML(status, "callback.tmpl", gin.H{
 		"status": "error",

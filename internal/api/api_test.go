@@ -18,8 +18,10 @@ import (
 
 // NewApiTest returns new API test helper.
 func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config) {
+	conf = service.Config()
 	gin.SetMode(gin.TestMode)
 	app = gin.New()
+	app.LoadHTMLGlob(conf.TemplatesPath() + "/*")
 	router = app.Group("/api/v1")
 	return app, router, service.Config()
 }
@@ -51,6 +53,15 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, username string,
 // See https://medium.com/@craigchilds94/testing-gin-json-responses-1f258ce3b0b1
 func PerformRequest(r http.Handler, method, path string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(method, path, nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	return w
+}
+
+// Performs API request with empty request body and Cookie.
+func PerformRequestWithCookie(r http.Handler, method, path string, cookie string) *httptest.ResponseRecorder {
+	req := httptest.NewRequest(method, path, nil)
+	req.Header.Add("Cookie", cookie)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	return w

@@ -26,7 +26,18 @@ type LoggingRoundTripper struct {
 
 func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response, e error) {
 	// Do "before sending requests" actions here.
-	log.Debugf("Sending request to %v\n", req.URL)
+	log.Debugf("Sending request to %v\n", req.URL.String())
+
+	// Copy body into buffer for logging
+	//bu := new(bytes.Buffer)
+	//_, err := io.Copy(bu, req.Body)
+	//if err != nil {
+	//	log.Errorf("Error: %v", err)
+	//}
+	//log.Debugf("Request Header: %s\n", req.Header)
+	//log.Debugf("Request Body: %s\n", bu.String())
+	//req.Body = io.NopCloser(bu)
+
 
 	// Send the request, get the response (or the error)
 	res, e = lrt.proxy.RoundTrip(req)
