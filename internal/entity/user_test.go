@@ -526,3 +526,56 @@ func TestUser_Deleted(t *testing.T) {
 	assert.False(t, UserFixtures.Pointer("alice").Deleted())
 	assert.True(t, UserFixtures.Pointer("deleted").Deleted())
 }
+
+func TestCreateOrUpdateExternalUser(t *testing.T) {
+	u := &User{
+		AddressID:    1,
+		UserName:     "gopher",
+		FullName:     "Gopher Go",
+		PrimaryEmail: "gopher@example.com",
+		ExternalID:   "testid-0123455678",
+	}
+	u2 := &User{
+		AddressID:    1,
+		UserName:     "gop",
+		FullName:     "Gopher Go Invalid",
+		PrimaryEmail: "gopher@example.com",
+		ExternalID:   "testid-0123455678-2",
+	}
+	var uid string
+	t.Run("CreateOrUpdateExternalUser - new", func(t *testing.T) {
+		user, err := CreateOrUpdateExternalUser(u)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, "gopher", user.UserName)
+		assert.Equal(t, "testid-0123455678", user.ExternalID)
+		uid = user.UserUID
+		assert.NotEmpty(t, user.UserUID)
+
+	})
+	t.Run("CreateOrUpdateExternalUser - new invalid", func(t *testing.T) {
+		user, err := CreateOrUpdateExternalUser(u2)
+		assert.Error(t, err)
+		assert.Nil(t, user)
+	})
+	t.Run("CreateOrUpdateExternalUser - update", func(t *testing.T) {
+		u.PrimaryEmail = "gopher-new@example.com"
+		user, err := CreateOrUpdateExternalUser(u)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, "gopher", user.UserName)
+		assert.Equal(t, "testid-0123455678", user.ExternalID)
+		assert.Equal(t, "gopher-new@example.com", user.PrimaryEmail)
+		assert.Equal(t, uid, user.UserUID)
+
+	})
+	t.Run("CreateOrUpdateExternalUser - update invalid", func(t *testing.T) {
+		u.PrimaryEmail = "noemail"
+		user, err := CreateOrUpdateExternalUser(u)
+		assert.Error(t, err)
+		assert.Nil(t, user)
+	})
+
+}
