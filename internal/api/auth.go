@@ -38,7 +38,7 @@ func AuthEndpoints(router *gin.RouterGroup) {
 		} else if len(userInfo.GetNickname()) >= 4 {
 			uname = userInfo.GetNickname()
 		} else if len(userInfo.GetName()) >= 4 {
-			uname = strings.ReplaceAll(strings.ToLower(userInfo.GetName())," ", "-")
+			uname = strings.ReplaceAll(strings.ToLower(userInfo.GetName()), " ", "-")
 		} else if len(userInfo.GetEmail()) >= 4 {
 			uname = userInfo.GetEmail()
 		} else {

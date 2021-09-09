@@ -38,7 +38,6 @@ func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response,
 	//log.Debugf("Request Body: %s\n", bu.String())
 	//req.Body = io.NopCloser(bu)
 
-
 	// Send the request, get the response (or the error)
 	res, e = lrt.proxy.RoundTrip(req)
 
