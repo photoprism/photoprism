@@ -139,6 +139,7 @@ build-tensorflow-arm64:
 	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
 	docker run -ti photoprism/tensorflow:arm64 bash
 start-debug:
+	docker-compose exec -u root photoprism go install github.com/go-delve/delve/cmd/dlv@latest
 	docker-compose exec -u root photoprism dlv --listen=:40000 --headless=true --api-version=2 --accept-multiclient exec ./photoprism start
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)
