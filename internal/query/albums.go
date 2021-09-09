@@ -60,7 +60,16 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 
 	if err := UnscopedDb().Where("album_uid = ?", uid).First(&a).Error; err != nil {
 		return file, err
+	} else if a.CoverUID != "" {
+		// TODO check that the photo is not hidden, archived or private
+		if err := Db().Where("photo_uid = ? AND file_primary = 1", a.CoverUID).First(&file).Error; err != nil {
+			log.Errorf("albums: error when loading configured cover for album %s", uid)
+			return file, err
+		} else {
+			return file, nil
+		}
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
+		// TODO check that the photo is not hidden, archived or private
 		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
 		if photos, _, err := PhotoSearch(f); err != nil {
@@ -121,7 +130,7 @@ func AlbumSearch(f form.AlbumSearch) (results AlbumResults, err error) {
 
 	// Base query.
 	s := UnscopedDb().Table("albums").
-		Select("albums.*, cp.photo_count,	cl.link_count").
+		Select("albums.*, cp.photo_count, cl.link_count").
 		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL)").

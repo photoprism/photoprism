@@ -53,8 +53,8 @@ type PhotoSearch struct {
 	Country   string    `form:"country"`  // Moments
 	State     string    `form:"state"`    // Moments
 	Year      int       `form:"year"`     // Moments
-	Month     int       `form:"month"`    // Moments
-	Day       int       `form:"day"`      // Moments
+	Month     int       `form:"month"`    // Moments, Discover
+	Day       int       `form:"day"`      // Moments, Discover
 	Color     string    `form:"color"`
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Quality   int       `form:"quality"`

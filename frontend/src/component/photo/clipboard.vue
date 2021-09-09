@@ -122,6 +122,17 @@
           <v-icon>eject</v-icon>
         </v-btn>
         <v-btn
+            v-if="album && context !== 'archive'" fab dark
+            small
+            :title="$gettext('Set as cover')"
+            color="cover"
+            :disabled="selection.length != 1"
+            class="action-cover"
+            @click.stop="setCover"
+        >
+          <v-icon>insert_photo</v-icon>
+        </v-btn>
+        <v-btn
             v-if="!album && context === 'archive' && features.delete" fab dark
             small
             :title="$gettext('Delete')"
@@ -280,6 +291,14 @@ export default {
     },
     onShared() {
       this.dialog.share = false;
+      this.clearClipboard();
+    },
+    setCover() {
+      const uid = this.album.UID;
+      Api.put(`albums/${uid}`, {CoverUID: this.selection[0]}).then(() => this.onSetCover());
+    },
+    onSetCover() {
+      Notify.success(this.$gettext("Cover has been updated"));
       this.clearClipboard();
     },
   }
