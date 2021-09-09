@@ -119,7 +119,7 @@ describe("model/folder", () => {
     const folder = new Folder(values);
     assert.equal(
       folder.thumbnailUrl("tile_224"),
-      "/api/v1/folders/t/dqbevau2zlhxrxww/public/tile_224?2021-08-10"
+      "/api/v1/folders/t/dqbevau2zlhxrxww/public/tile_224"
     );
   });
 
