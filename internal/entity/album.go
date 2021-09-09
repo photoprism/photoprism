@@ -199,7 +199,7 @@ func NewCountryAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := Timestamp()
+	now := TimeStamp()
 
 	result := &Album{
 		AlbumOrder:  SortOrderNewest,
