@@ -60,16 +60,7 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 
 	if err := UnscopedDb().Where("album_uid = ?", uid).First(&a).Error; err != nil {
 		return file, err
-	} else if a.CoverUID != "" {
-		// TODO check that the photo is not hidden, archived or private
-		if err := Db().Where("photo_uid = ? AND file_primary = 1", a.CoverUID).First(&file).Error; err != nil {
-			log.Errorf("albums: error when loading configured cover for album %s", uid)
-			return file, err
-		} else {
-			return file, nil
-		}
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
-		// TODO check that the photo is not hidden, archived or private
 		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
 		if photos, _, err := PhotoSearch(f); err != nil {

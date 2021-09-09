@@ -122,7 +122,7 @@
           <v-icon>eject</v-icon>
         </v-btn>
         <v-btn
-            v-if="album && context !== 'archive'" fab dark
+            v-if="album && context !== 'archive' && false" fab dark
             small
             :title="$gettext('Set as cover')"
             color="cover"
