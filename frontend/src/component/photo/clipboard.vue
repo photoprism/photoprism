@@ -295,8 +295,7 @@ export default {
     },
     setCover() {
       new Photo().find(this.selection[0]).then(p => {
-        const uid = this.album.UID;
-        Api.put(`albums/${uid}`, {Thumb: p.mainFileHash(), ThumbSrc: "cover"}).then(() => this.onSetCover());
+        Api.put(this.album.getEntityResource(), {Thumb: p.mainFileHash(), ThumbSrc: "cover"}).then(() => this.onSetCover());
       });
     },
     onSetCover() {

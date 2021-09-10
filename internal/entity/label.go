@@ -8,8 +8,10 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/ulule/deepcopier"
 )
 
 var labelMutex = sync.Mutex{}
@@ -77,6 +79,19 @@ func NewLabel(name string, priority int) *Label {
 func (m *Label) Save() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()
+
+	return Db().Save(m).Error
+}
+
+// SaveForm updates the entity using form data and stores it in the database.
+func (m *Label) SaveForm(f form.Label) error {
+	if err := deepcopier.Copy(m).From(f); err != nil {
+		return err
+	}
+
+	if f.LabelName != "" {
+		m.SetName(f.LabelName)
+	}
 
 	return Db().Save(m).Error
 }

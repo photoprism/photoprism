@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -59,13 +58,6 @@ func UpdateLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Label
-
-		if err := c.BindJSON(&f); err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
 		id := c.Param("uid")
 		m, err := query.LabelByUID(id)
 
@@ -74,8 +66,25 @@ func UpdateLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		m.SetName(f.LabelName)
-		entity.Db().Save(&m)
+		f, err := form.NewLabel(m)
+
+		if err != nil {
+			log.Error(err)
+			AbortSaveFailed(c)
+			return
+		}
+
+		if err := c.BindJSON(&f); err != nil {
+			log.Error(err)
+			AbortBadRequest(c)
+			return
+		}
+
+		if err := m.SaveForm(f); err != nil {
+			log.Error(err)
+			AbortSaveFailed(c)
+			return
+		}
 
 		event.SuccessMsg(i18n.MsgLabelSaved)
 
