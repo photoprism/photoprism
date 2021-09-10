@@ -11,47 +11,58 @@ import (
 
 // Data represents image meta data.
 type Data struct {
-	DocumentID   string        `meta:"ImageUniqueID,OriginalDocumentID,DocumentID"`
-	InstanceID   string        `meta:"InstanceID,DocumentID"`
-	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
-	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
-	TimeZone     string        `meta:"-"`
-	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
-	Codec        string        `meta:"CompressorID,Compression,FileType"`
-	Title        string        `meta:"Title"`
-	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets"`
-	Keywords     Keywords      `meta:"Keywords"`
-	Notes        string        `meta:"-"`
-	Artist       string        `meta:"Artist,Creator,OwnerName"`
-	Description  string        `meta:"Description"`
-	Copyright    string        `meta:"Rights,Copyright"`
-	Projection   string        `meta:"ProjectionType"`
-	CameraMake   string        `meta:"CameraMake,Make"`
-	CameraModel  string        `meta:"CameraModel,Model"`
-	CameraOwner  string        `meta:"OwnerName"`
-	CameraSerial string        `meta:"SerialNumber"`
-	LensMake     string        `meta:"LensMake"`
-	LensModel    string        `meta:"Lens,LensModel"`
-	Flash        bool          `meta:"-"`
-	FocalLength  int           `meta:"-"`
-	Exposure     string        `meta:"ExposureTime"`
-	Aperture     float32       `meta:"ApertureValue"`
-	FNumber      float32       `meta:"FNumber"`
-	Iso          int           `meta:"ISO"`
-	GPSPosition  string        `meta:"GPSPosition"`
-	GPSLatitude  string        `meta:"GPSLatitude"`
-	GPSLongitude string        `meta:"GPSLongitude"`
-	Lat          float32       `meta:"-"`
-	Lng          float32       `meta:"-"`
-	Altitude     int           `meta:"GlobalAltitude,GPSAltitude"`
-	Width        int           `meta:"PixelXDimension,ImageWidth,ExifImageWidth,SourceImageWidth"`
-	Height       int           `meta:"PixelYDimension,ImageHeight,ImageLength,ExifImageHeight,SourceImageHeight"`
-	Orientation  int           `meta:"-"`
-	Rotation     int           `meta:"Rotation"`
-	Views        int           `meta:"-"`
-	Albums       []string      `meta:"-"`
-	Error        error         `meta:"-"`
-	All          map[string]string
+	DocumentID        string           `meta:"ImageUniqueID,OriginalDocumentID,DocumentID"`
+	InstanceID        string           `meta:"InstanceID,DocumentID"`
+	TakenAt           time.Time        `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
+	TakenAtLocal      time.Time        `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
+	TimeZone          string           `meta:"-"`
+	Duration          time.Duration    `meta:"Duration,MediaDuration,TrackDuration"`
+	Codec             string           `meta:"CompressorID,Compression,FileType"`
+	Title             string           `meta:"Title"`
+	Subject           string           `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets"`
+	Keywords          Keywords         `meta:"Keywords"`
+	Notes             string           `meta:"-"`
+	Artist            string           `meta:"Artist,Creator,OwnerName"`
+	Description       string           `meta:"Description"`
+	Copyright         string           `meta:"Rights,Copyright"`
+	Projection        string           `meta:"ProjectionType"`
+	CameraMake        string           `meta:"CameraMake,Make"`
+	CameraModel       string           `meta:"CameraModel,Model"`
+	CameraOwner       string           `meta:"OwnerName"`
+	CameraSerial      string           `meta:"SerialNumber"`
+	LensMake          string           `meta:"LensMake"`
+	LensModel         string           `meta:"Lens,LensModel"`
+	Flash             bool             `meta:"-"`
+	FocalLength       int              `meta:"-"`
+	Exposure          string           `meta:"ExposureTime"`
+	Aperture          float32          `meta:"ApertureValue"`
+	FNumber           float32          `meta:"FNumber"`
+	Iso               int              `meta:"ISO"`
+	GPSPosition       string           `meta:"GPSPosition"`
+	GPSLatitude       string           `meta:"GPSLatitude"`
+	GPSLongitude      string           `meta:"GPSLongitude"`
+	Lat               float32          `meta:"-"`
+	Lng               float32          `meta:"-"`
+	Altitude          int              `meta:"GlobalAltitude,GPSAltitude"`
+	Width             int              `meta:"PixelXDimension,ImageWidth,ExifImageWidth,SourceImageWidth"`
+	Height            int              `meta:"PixelYDimension,ImageHeight,ImageLength,ExifImageHeight,SourceImageHeight"`
+	Orientation       int              `meta:"-"`
+	Rotation          int              `meta:"Rotation"`
+	MotionPhoto       bool             `meta:"MotionPhoto"`
+	Directory         []DirectoryEntry `meta:"Directory"`
+	EmbeddedVideoType string           `metda:"EmbeddedVideoType"`
+	Views             int              `meta:"-"`
+	Albums            []string         `meta:"-"`
+	Error             error            `meta:"-"`
+	All               map[string]string
+}
+
+// DirectoryEntry represents the "Directory" exif metadata type.
+type DirectoryEntry struct {
+	Mime     string
+	Semantic string
+	Length   int
+	Padding  int
 }
 
 // NewData creates a new metadata struct.
