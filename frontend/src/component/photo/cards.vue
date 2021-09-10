@@ -90,7 +90,7 @@
               <v-icon color="white" class="select-on">lock</v-icon>
             </v-btn>
 
-            <v-btn v-if="selectMode" :ripple="false"
+            <v-btn v-if="!disableSelection" :ripple="false"
                    icon flat absolute
                    class="input-select"
                    @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -206,6 +206,7 @@ export default {
     filter: Object,
     context: String,
     selectMode: Boolean,
+    disableSelection: Boolean,
   },
   data() {
     return {

@@ -10,7 +10,8 @@ describe("model/label", () => {
     const label = new Label(values);
     const result = label.route("test");
     assert.equal(result.name, "test");
-    assert.equal(result.query.q, "label:black-cat");
+    assert.equal(result.query.q, undefined);
+    assert.equal(result.query.label, "black-cat");
   });
 
   it("should return batch size", () => {

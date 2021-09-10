@@ -122,7 +122,7 @@
           <v-icon>eject</v-icon>
         </v-btn>
         <v-btn
-            v-if="album && context !== 'archive' && false" fab dark
+            v-if="album && context !== 'archive'" fab dark
             small
             :title="$gettext('Set as cover')"
             color="cover"
@@ -294,8 +294,9 @@ export default {
       this.clearClipboard();
     },
     setCover() {
-      const uid = this.album.UID;
-      Api.put(`albums/${uid}`, {CoverUID: this.selection[0]}).then(() => this.onSetCover());
+      new Photo().find(this.selection[0]).then(p => {
+        Api.put(this.album.getEntityResource(), {Thumb: p.mainFileHash(), ThumbSrc: "cover"}).then(() => this.onSetCover());
+      });
     },
     onSetCover() {
       Notify.success(this.$gettext("Cover has been updated"));

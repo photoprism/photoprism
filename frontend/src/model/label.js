@@ -54,7 +54,7 @@ export class Label extends RestModel {
   }
 
   route(view) {
-    return { name: view, query: { q: "label:" + (this.CustomSlug ? this.CustomSlug : this.Slug) } };
+    return { name: view, query: { label: this.CustomSlug ? this.CustomSlug : this.Slug } };
   }
 
   classes(selected) {

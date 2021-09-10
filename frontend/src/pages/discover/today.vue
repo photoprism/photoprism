@@ -17,7 +17,7 @@
         <!-- No clipboard, no toolbar only a single, card-based view (no edit-photo, no open-location, no selection) -->
         <p-photo-cards context="photos"
                       :photos="photosByYear(year)"
-                      :select-mode="false"
+                      :disable-selection="true"
                       :filter="filter"
                       :open-photo="openPhotoByYear(year)"></p-photo-cards>
       </div>
