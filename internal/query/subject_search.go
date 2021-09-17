@@ -14,6 +14,8 @@ import (
 // SubjectResult represents a subject search result.
 type SubjectResult struct {
 	SubjUID      string `json:"UID"`
+	MarkerUID    string `json:"MarkerUID"`
+	MarkerSrc    string `json:"MarkerSrc,omitempty"`
 	SubjType     string `json:"Type"`
 	SubjSlug     string `json:"Slug"`
 	SubjName     string `json:"Name"`
@@ -22,7 +24,8 @@ type SubjectResult struct {
 	SubjPrivate  bool   `json:"Private"`
 	SubjExcluded bool   `json:"Excluded"`
 	FileCount    int    `json:"FileCount"`
-	Thumb        string `json:"Thumb"`
+	FileHash     string `json:"FileHash"`
+	CropArea     string `json:"CropArea"`
 }
 
 // SubjectResults represents subject search results.
@@ -38,7 +41,10 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 
 	// Base query.
 	s := UnscopedDb().Table(entity.Subject{}.TableName()).
-		Select("subj_uid, subj_slug, subj_name, subj_alias, subj_type, thumb, subj_favorite, subj_private, subj_excluded, file_count")
+		Select(fmt.Sprintf("%s.*, m.file_hash, m.crop_area", entity.Subject{}.TableName()))
+
+	// Join markers table for face thumbs.
+	s = s.Joins(fmt.Sprintf("LEFT JOIN %s m ON m.marker_uid = %s.marker_uid", entity.Marker{}.TableName(), entity.Subject{}.TableName()))
 
 	// Limit result count.
 	if f.Count > 0 && f.Count <= MaxResults {
@@ -54,7 +60,7 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 	case "count":
 		s = s.Order("file_count DESC")
 	case "added":
-		s = s.Order("created_at DESC")
+		s = s.Order(fmt.Sprintf("%s.created_at DESC", entity.Subject{}.TableName()))
 	case "relevance":
 		s = s.Order("subj_favorite DESC, subj_name")
 	default:
@@ -62,7 +68,7 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 	}
 
 	if f.ID != "" {
-		s = s.Where("subj_uid IN (?)", strings.Split(f.ID, Or))
+		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", entity.Subject{}.TableName()), strings.Split(f.ID, Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -75,6 +81,10 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 		for _, where := range LikeAnyWord("subj_name", f.Query) {
 			s = s.Where("(?)", gorm.Expr(where))
 		}
+	}
+
+	if f.Files > 0 {
+		s = s.Where("file_count >= ?", f.Files)
 	}
 
 	if f.Type != "" {
@@ -94,7 +104,7 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 	}
 
 	// Omit deleted rows.
-	s = s.Where("deleted_at IS NULL")
+	s = s.Where(fmt.Sprintf("%s.deleted_at IS NULL", entity.Subject{}.TableName()))
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

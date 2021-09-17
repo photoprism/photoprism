@@ -43,8 +43,8 @@ func LabelCounts() LabelPhotoCounts {
 	return result
 }
 
-// UpdatePhotoCounts updates static photos counts and visibilities.
-func UpdatePhotoCounts() (err error) {
+// UpdatePlacesPhotoCounts updates the places photo counts.
+func UpdatePlacesPhotoCounts() (err error) {
 	start := time.Now()
 
 	// Update places.
@@ -57,9 +57,14 @@ func UpdatePhotoCounts() (err error) {
 		return err
 	}
 
-	log.Debugf("places: updating photo counts completed in %s", time.Since(start))
+	log.Debugf("counts: updated places [%s]", time.Since(start))
 
-	start = time.Now()
+	return nil
+}
+
+// UpdateSubjectFileCounts updates the subject file counts.
+func UpdateSubjectFileCounts() (err error) {
+	start := time.Now()
 
 	// Update subjects.
 	if err = Db().Table(Subject{}.TableName()).
@@ -72,11 +77,15 @@ func UpdatePhotoCounts() (err error) {
 		return err
 	}
 
-	log.Debugf("subjects: updating file counts completed in %s", time.Since(start))
+	log.Debugf("counts: updated subjects [%s]", time.Since(start))
 
-	start = time.Now()
+	return nil
+}
 
-	// Update labels.
+// UpdateLabelPhotoCounts updates the label photo counts.
+func UpdateLabelPhotoCounts() (err error) {
+	start := time.Now()
+
 	if IsDialect(MySQL) {
 		if err = Db().
 			Table("labels").
@@ -129,7 +138,24 @@ func UpdatePhotoCounts() (err error) {
 		return fmt.Errorf("unknown sql dialect %s", DbDialect())
 	}
 
-	log.Debugf("labels: updating photo counts completed in %s", time.Since(start))
+	log.Debugf("counts: updated labels [%s]", time.Since(start))
+
+	return nil
+}
+
+// UpdatePhotoCounts updates static photos counts and visibilities.
+func UpdatePhotoCounts() (err error) {
+	if err = UpdatePlacesPhotoCounts(); err != nil {
+		return err
+	}
+
+	if err = UpdateSubjectFileCounts(); err != nil {
+		return err
+	}
+
+	if err = UpdateLabelPhotoCounts(); err != nil {
+		return err
+	}
 
 	/* TODO: Slow with many photos due to missing index.
 	start = time.Now()
@@ -151,7 +177,7 @@ func UpdatePhotoCounts() (err error) {
 		}
 	}
 
-	log.Debugf("calendar: updating visibility completed in %s", time.Since(start))
+	log.Debugf("calendar: updating visibility completed [%s]", time.Since(start))
 	*/
 
 	return nil

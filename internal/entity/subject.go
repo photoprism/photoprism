@@ -21,8 +21,8 @@ type Subjects []Subject
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
 	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	Thumb        string          `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb,omitempty" yaml:"Thumb,omitempty"`
-	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	MarkerUID    string          `gorm:"type:VARBINARY(42);index" json:"MarkerUID" yaml:"MarkerUID,omitempty"`
+	MarkerSrc    string          `gorm:"type:VARBINARY(8);default:''" json:"MarkerSrc,omitempty" yaml:"MarkerSrc,omitempty"`
 	SubjType     string          `gorm:"type:VARBINARY(8);default:''" json:"Type,omitempty" yaml:"Type,omitempty"`
 	SubjSrc      string          `gorm:"type:VARBINARY(8);default:''" json:"Src,omitempty" yaml:"Src,omitempty"`
 	SubjSlug     string          `gorm:"type:VARBINARY(255);index;default:''" json:"Slug" yaml:"-"`

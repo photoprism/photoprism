@@ -19,7 +19,6 @@ type Person struct {
 	SubjName     string `json:"Name"`
 	SubjAlias    string `json:"Alias"`
 	SubjFavorite bool   `json:"Favorite"`
-	Thumb        string `json:"Thumb"`
 }
 
 // NewPerson returns a new entity.
@@ -29,7 +28,6 @@ func NewPerson(subj Subject) *Person {
 		SubjName:     subj.SubjName,
 		SubjAlias:    subj.SubjAlias,
 		SubjFavorite: subj.SubjFavorite,
-		Thumb:        subj.Thumb,
 	}
 
 	return result
@@ -42,12 +40,10 @@ func (m *Person) MarshalJSON() ([]byte, error) {
 		Name     string
 		Keywords []string `json:",omitempty"`
 		Favorite bool     `json:",omitempty"`
-		Thumb    string   `json:",omitempty"`
 	}{
 		UID:      m.SubjUID,
 		Name:     m.SubjName,
 		Keywords: txt.NameKeywords(m.SubjName, m.SubjAlias),
 		Favorite: m.SubjFavorite,
-		Thumb:    m.Thumb,
 	})
 }

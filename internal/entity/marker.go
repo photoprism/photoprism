@@ -48,6 +48,7 @@ type Marker struct {
 	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	Q              int             `json:"Q" yaml:"Q,omitempty"`
 	Size           int             `gorm:"default:-1" json:"Size" yaml:"Size,omitempty"`
 	Score          int             `gorm:"type:SMALLINT" json:"Score" yaml:"Score,omitempty"`
 	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
@@ -93,6 +94,7 @@ func NewFaceMarker(f face.Face, file File, subjUID string) *Marker {
 	m := NewMarker(file, f.CropArea(), subjUID, SrcImage, MarkerFace)
 
 	m.Size = f.Size()
+	m.Q = int(float32(math.Log(float64(f.Score))) * float32(m.Size) * m.W)
 	m.Score = f.Score
 	m.MarkerReview = f.Score < 30
 	m.FaceDist = -1
@@ -113,9 +115,7 @@ func (m *Marker) Update(attr string, value interface{}) error {
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *Marker) SaveForm(f form.Marker) error {
-	changed := false
-
+func (m *Marker) SaveForm(f form.Marker) (changed bool, err error) {
 	if m.MarkerInvalid != f.MarkerInvalid {
 		m.MarkerInvalid = f.MarkerInvalid
 		changed = true
@@ -126,22 +126,22 @@ func (m *Marker) SaveForm(f form.Marker) error {
 		changed = true
 	}
 
-	if f.SubjSrc == SrcManual && strings.TrimSpace(f.MarkerName) != "" {
+	if f.SubjSrc == SrcManual && strings.TrimSpace(f.MarkerName) != "" && f.MarkerName != m.MarkerName {
 		m.SubjSrc = SrcManual
 		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipDefault))
 
 		if err := m.SyncSubject(true); err != nil {
-			return err
+			return changed, err
 		}
 
 		changed = true
 	}
 
 	if changed {
-		return m.Save()
+		return changed, m.Save()
 	}
 
-	return nil
+	return changed, nil
 }
 
 // HasFace tests if the marker already has the best matching face.
@@ -551,8 +551,9 @@ func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 			"Y":              m.Y,
 			"W":              m.W,
 			"H":              m.H,
-			"Score":          m.Score,
+			"Q":              m.Q,
 			"Size":           m.Size,
+			"Score":          m.Score,
 			"LandmarksJSON":  m.LandmarksJSON,
 			"EmbeddingsJSON": m.EmbeddingsJSON,
 		})

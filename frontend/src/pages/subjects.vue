@@ -64,7 +64,7 @@
             >
               <div class="card-background accent lighten-3"></div>
               <v-img
-                  :src="model.thumbnailUrl('tile_500')"
+                  :src="model.thumbnailUrl('tile_320')"
                   :alt="model.Name"
                   :transition="false"
                   aspect-ratio="1"
@@ -508,8 +508,6 @@ export default {
       if (!data || !data.entities) {
         return;
       }
-
-      console.log("onUpdate", ev, data);
 
       const type = ev.split('.')[1];
 

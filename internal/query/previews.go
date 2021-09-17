@@ -21,7 +21,7 @@ func UpdateAlbumDefaultPreviews() (err error) {
 			ORDER BY p.taken_at DESC LIMIT 1
 		) WHERE thumb_src='' AND album_type = 'album' AND deleted_at IS NULL`)).Error
 
-	log.Debugf("albums: updating previews completed in %s", time.Since(start))
+	log.Debugf("previews: updated albums [%s]", time.Since(start))
 
 	return err
 }
@@ -39,7 +39,7 @@ func UpdateAlbumFolderPreviews() (err error) {
 		) WHERE thumb_src = '' AND album_type = 'folder' AND deleted_at IS NULL`)).
 		Error
 
-	log.Debugf("folders: updating previews completed in %s", time.Since(start))
+	log.Debugf("previews: updated folders [%s]", time.Since(start))
 
 	return err
 }
@@ -80,7 +80,7 @@ func UpdateAlbumMonthPreviews() (err error) {
 		return nil
 	}
 	*/
-	log.Debugf("calendar: updating previews completed in %s", time.Since(start))
+	log.Debugf("previews: updated calendar [%s]", time.Since(start))
 
 	return err
 }
@@ -122,7 +122,7 @@ func UpdateLabelPreviews() (err error) {
 		return err
 	}
 
-	log.Debugf("labels: updating previews completed in %s", time.Since(start))
+	log.Debugf("previews: updated labels [%s]", time.Since(start))
 
 	return nil
 }
@@ -145,7 +145,7 @@ func UpdateCategoryPreviews() (err error) {
 		return err
 	}
 
-	log.Debugf("categories: updating previews completed in %s", time.Since(start))
+	log.Debugf("previews: updated categories [%s]", time.Since(start))
 
 	return nil
 }
@@ -170,16 +170,28 @@ func UpdateSubjectPreviews() (err error) {
 	Error */
 
 	err = Db().Table(entity.Subject{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr("(SELECT m.file_hash FROM "+
+		UpdateColumn("marker_uid", gorm.Expr("(SELECT m.marker_uid FROM "+
 			fmt.Sprintf(
 				"%s m WHERE m.subj_uid = %s.subj_uid AND m.subj_src = 'manual' ",
 				entity.Marker{}.TableName(),
 				entity.Subject{}.TableName())+
-			` AND m.file_hash <> '' ORDER BY m.size DESC LIMIT 1) 
-			WHERE thumb_src='' AND deleted_at IS NULL`)).
+			` AND m.file_hash <> '' ORDER BY m.q DESC LIMIT 1) 
+			WHERE marker_src = '' AND deleted_at IS NULL`)).
 		Error
 
-	log.Debugf("subjects: updating previews completed in %s", time.Since(start))
+	/** err = Db().Table(entity.Subject{}.TableName()).
+	UpdateColumn("thumb", gorm.Expr("(SELECT m.file_hash FROM "+
+		fmt.Sprintf(
+			"%s m WHERE m.subj_uid = %s.subj_uid AND m.subj_src = 'manual' ",
+			entity.Marker{}.TableName(),
+			entity.Subject{}.TableName())+
+		` AND m.file_hash <> '' ORDER BY m.w DESC LIMIT 1)
+		WHERE thumb_src = '' AND deleted_at IS NULL`)).
+	Error
+
+	*/
+
+	log.Debugf("previews: updated subjects [%s]", time.Since(start))
 
 	return err
 }

@@ -263,6 +263,7 @@ export default [
     path: "/people",
     component: Subjects,
     meta: { title: $gettext("People"), auth: true },
+    props: { staticFilter: { files: 1, type: "person" } },
   },
   {
     name: "library",

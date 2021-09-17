@@ -49,12 +49,13 @@ func TestMarker_SaveForm(t *testing.T) {
 
 		f := form.Marker{SubjSrc: SrcManual, MarkerName: "Jane Doe", MarkerInvalid: false}
 
-		err := m.SaveForm(f)
+		changed, err := m.SaveForm(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
+		assert.True(t, changed)
 		assert.NotEmpty(t, m.SubjUID)
 
 		if s := m.Subject(); s != nil {
@@ -72,8 +73,10 @@ func TestMarker_SaveForm(t *testing.T) {
 
 		if m := FindMarker("mt9k3pw1wowuy777"); m == nil {
 			t.Fatal("result is nil")
-		} else if err := m.SaveForm(f3); err != nil {
+		} else if changed, err := m.SaveForm(f3); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.True(t, changed)
 		}
 
 		if m := FindMarker("mt9k3pw1wowuy666"); m != nil {
