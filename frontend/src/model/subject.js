@@ -50,7 +50,7 @@ export class Subject extends RestModel {
       Favorite: false,
       Private: false,
       Excluded: false,
-      Files: 0,
+      FileCount: 0,
       Metadata: {},
       CreatedAt: "",
       UpdatedAt: "",

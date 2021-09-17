@@ -131,11 +131,11 @@
                 </div>
 
                 <div class="caption mb-2">
-                  <button v-if="model.Files === 1">
+                  <button v-if="model.FileCount === 1">
                     <translate>Contains one entry.</translate>
                   </button>
-                  <button v-else-if="model.Files > 0">
-                    <translate :translate-params="{n: model.Files}">Contains %{n} entries.</translate>
+                  <button v-else-if="model.FileCount > 0">
+                    <translate :translate-params="{n: model.FileCount}">Contains %{n} entries.</translate>
                   </button>
                 </div>
               </v-card-text>

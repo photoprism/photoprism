@@ -33,7 +33,7 @@ type Subject struct {
 	SubjFavorite bool            `gorm:"default:false" json:"Favorite" yaml:"Favorite,omitempty"`
 	SubjPrivate  bool            `gorm:"default:false" json:"Private" yaml:"Private,omitempty"`
 	SubjExcluded bool            `gorm:"default:false" json:"Excluded" yaml:"Excluded,omitempty"`
-	FileCount    int             `gorm:"default:0" json:"Files" yaml:"-"`
+	FileCount    int             `gorm:"default:0" json:"FileCount" yaml:"-"`
 	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`

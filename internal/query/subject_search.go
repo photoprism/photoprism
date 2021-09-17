@@ -21,7 +21,7 @@ type SubjectResult struct {
 	SubjFavorite bool   `json:"Favorite"`
 	SubjPrivate  bool   `json:"Private"`
 	SubjExcluded bool   `json:"Excluded"`
-	FileCount    int    `json:"Files"`
+	FileCount    int    `json:"FileCount"`
 	Thumb        string `json:"Thumb"`
 }
 

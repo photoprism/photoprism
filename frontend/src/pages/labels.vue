@@ -130,6 +130,18 @@
                   </template>
                 </v-edit-dialog>
               </v-card-title>
+
+              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none;"
+                           @click.stop.prevent="">
+                <div class="caption mb-2">
+                  <button v-if="label.PhotoCount === 1">
+                    <translate>Contains one entry.</translate>
+                  </button>
+                  <button v-else-if="label.PhotoCount > 0">
+                    <translate :translate-params="{n: label.PhotoCount}">Contains %{n} entries.</translate>
+                  </button>
+                </div>
+              </v-card-text>
             </v-card>
           </v-flex>
         </v-layout>
