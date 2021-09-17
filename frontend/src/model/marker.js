@@ -53,8 +53,8 @@ export class Marker extends RestModel {
       H: 0.0,
       CropID: "",
       FaceID: "",
-      SubjectSrc: "",
-      SubjectUID: "",
+      SubjSrc: "",
+      SubjUID: "",
       Score: 0,
       Size: 0,
     };
@@ -118,9 +118,9 @@ export class Marker extends RestModel {
       return Promise.resolve(this);
     }
 
-    this.SubjectSrc = src.Manual;
+    this.SubjSrc = src.Manual;
 
-    const payload = { SubjectSrc: this.SubjectSrc, Name: this.Name };
+    const payload = { SubjSrc: this.SubjSrc, Name: this.Name };
 
     return Api.put(this.getEntityResource(), payload).then((resp) =>
       Promise.resolve(this.setValues(resp.data))

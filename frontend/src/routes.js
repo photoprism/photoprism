@@ -35,7 +35,7 @@ import Places from "pages/places.vue";
 import Files from "pages/library/files.vue";
 import Errors from "pages/library/errors.vue";
 import Labels from "pages/labels.vue";
-import People from "pages/people.vue";
+import Subjects from "pages/subjects.vue";
 import Library from "pages/library.vue";
 import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
@@ -261,7 +261,7 @@ export default [
   {
     name: "people",
     path: "/people",
-    component: People,
+    component: Subjects,
     meta: { title: $gettext("People"), auth: true },
   },
   {

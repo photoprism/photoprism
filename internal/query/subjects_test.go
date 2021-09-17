@@ -72,9 +72,9 @@ func TestCreateMarkerSubjects(t *testing.T) {
 	assert.LessOrEqual(t, int64(0), affected)
 }
 
-func TestSearchSubjectUIDs(t *testing.T) {
+func TestSearchSubjUIDs(t *testing.T) {
 	t.Run("john & his | cats", func(t *testing.T) {
-		result, names, remaining := SearchSubjectUIDs("john & his | cats")
+		result, names, remaining := SearchSubjUIDs("john & his | cats")
 
 		if len(result) != 1 {
 			t.Fatal("expected one result")
@@ -85,11 +85,11 @@ func TestSearchSubjectUIDs(t *testing.T) {
 		}
 	})
 	t.Run("xxx", func(t *testing.T) {
-		result, _, _ := SearchSubjectUIDs("xxx")
+		result, _, _ := SearchSubjUIDs("xxx")
 		assert.Empty(t, result)
 	})
 	t.Run("empty string", func(t *testing.T) {
-		result, _, _ := SearchSubjectUIDs("")
+		result, _, _ := SearchSubjUIDs("")
 		assert.Empty(t, result)
 	})
 }

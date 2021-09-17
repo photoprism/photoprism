@@ -13,16 +13,16 @@ import (
 
 // SubjectResult represents a subject search result.
 type SubjectResult struct {
-	SubjectUID   string `json:"UID"`
-	SubjectType  string `json:"Type"`
-	SubjectSlug  string `json:"Slug"`
-	SubjectName  string `json:"Name"`
-	SubjectAlias string `json:"Alias,omitempty"`
-	Thumb        string `json:"Thumb,omitempty"`
-	Favorite     bool   `json:"Favorite,omitempty"`
-	Private      bool   `json:"Private,omitempty"`
-	Excluded     bool   `json:"Excluded,omitempty"`
-	FileCount    int    `json:"Files,omitempty"`
+	SubjUID      string `json:"UID"`
+	SubjType     string `json:"Type"`
+	SubjSlug     string `json:"Slug"`
+	SubjName     string `json:"Name"`
+	SubjAlias    string `json:"Alias"`
+	SubjFavorite bool   `json:"Favorite"`
+	SubjPrivate  bool   `json:"Private"`
+	SubjExcluded bool   `json:"Excluded"`
+	FileCount    int    `json:"Files"`
+	Thumb        string `json:"Thumb"`
 }
 
 // SubjectResults represents subject search results.
@@ -38,7 +38,7 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 
 	// Base query.
 	s := UnscopedDb().Table(entity.Subject{}.TableName()).
-		Select("subject_uid, subject_slug, subject_name, subject_alias, subject_type, thumb, favorite, private, excluded, file_count")
+		Select("subj_uid, subj_slug, subj_name, subj_alias, subj_type, thumb, subj_favorite, subj_private, subj_excluded, file_count")
 
 	// Limit result count.
 	if f.Count > 0 && f.Count <= MaxResults {
@@ -49,14 +49,20 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 
 	// Set sort order.
 	switch f.Order {
+	case "name":
+		s = s.Order("subj_name")
 	case "count":
 		s = s.Order("file_count DESC")
+	case "added":
+		s = s.Order("created_at DESC")
+	case "relevance":
+		s = s.Order("subj_favorite DESC, subj_name")
 	default:
-		s = s.Order("subject_name")
+		s = s.Order("subj_favorite DESC, subj_name")
 	}
 
 	if f.ID != "" {
-		s = s.Where("subject_uid IN (?)", strings.Split(f.ID, Or))
+		s = s.Where("subj_uid IN (?)", strings.Split(f.ID, Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -66,27 +72,28 @@ func SubjectSearch(f form.SubjectSearch) (results SubjectResults, err error) {
 	}
 
 	if f.Query != "" {
-		for _, where := range LikeAnyWord("subject_name", f.Query) {
+		for _, where := range LikeAnyWord("subj_name", f.Query) {
 			s = s.Where("(?)", gorm.Expr(where))
 		}
 	}
 
 	if f.Type != "" {
-		s = s.Where("subject_type IN (?)", strings.Split(f.Type, Or))
+		s = s.Where("subj_type IN (?)", strings.Split(f.Type, Or))
 	}
 
 	if f.Favorite {
-		s = s.Where("favorite = 1")
+		s = s.Where("subj_favorite = 1")
 	}
 
 	if f.Private {
-		s = s.Where("private = 1")
+		s = s.Where("subj_private = 1")
 	}
 
 	if f.Excluded {
-		s = s.Where("excluded = 1")
+		s = s.Where("subj_excluded = 1")
 	}
 
+	// Omit deleted rows.
 	s = s.Where("deleted_at IS NULL")
 
 	if result := s.Scan(&results); result.Error != nil {

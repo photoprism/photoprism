@@ -146,6 +146,11 @@ export default class Config {
       this.values.people = [];
     }
 
+    if (!data || !data.entities) {
+      console.warn("empty event data", ev, data);
+      return;
+    }
+
     switch (type) {
       case "created":
         this.values.people.unshift(...data.entities);

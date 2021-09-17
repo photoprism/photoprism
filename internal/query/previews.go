@@ -159,7 +159,7 @@ func UpdateSubjectPreviews() (err error) {
 	return Db().Table(entity.Subject{}.TableName()).
 	UpdateColumn("thumb", gorm.Expr("(SELECT f.file_hash FROM files f "+
 		fmt.Sprintf(
-			"JOIN %s m ON f.file_uid = m.file_uid AND m.subject_uid = %s.subject_uid",
+			"JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid = %s.subj_uid",
 			entity.Marker{}.TableName(),
 			entity.Subject{}.TableName())+
 		` JOIN photos p ON f.photo_id = p.id
@@ -172,7 +172,7 @@ func UpdateSubjectPreviews() (err error) {
 	err = Db().Table(entity.Subject{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr("(SELECT m.file_hash FROM "+
 			fmt.Sprintf(
-				"%s m WHERE m.subject_uid = %s.subject_uid AND m.subject_src = 'manual' ",
+				"%s m WHERE m.subj_uid = %s.subj_uid AND m.subj_src = 'manual' ",
 				entity.Marker{}.TableName(),
 				entity.Subject{}.TableName())+
 			` AND m.file_hash <> '' ORDER BY m.size DESC LIMIT 1) 

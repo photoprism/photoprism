@@ -65,7 +65,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 		for _, f2 := range faces {
 			if matched, dist := f1.Match(entity.Embeddings{f2.Embedding()}); matched {
-				if f1.SubjectUID == f2.SubjectUID {
+				if f1.SubjUID == f2.SubjUID {
 					continue
 				}
 
@@ -75,14 +75,14 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
-				if f1.SubjectUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f1.ID, txt.Quote(subj[f1.SubjectUID].SubjectName), f1.SubjectUID, entity.SrcString(f1.FaceSrc))
+				if f1.SubjUID != "" {
+					log.Infof("face %s: subject %s (%s %s)", f1.ID, txt.Quote(subj[f1.SubjUID].SubjName), f1.SubjUID, entity.SrcString(f1.FaceSrc))
 				} else {
 					log.Infof("face %s: no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
-				if f2.SubjectUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f2.ID, txt.Quote(subj[f2.SubjectUID].SubjectName), f2.SubjectUID, entity.SrcString(f2.FaceSrc))
+				if f2.SubjUID != "" {
+					log.Infof("face %s: subject %s (%s %s)", f2.ID, txt.Quote(subj[f2.SubjUID].SubjName), f2.SubjUID, entity.SrcString(f2.FaceSrc))
 				} else {
 					log.Infof("face %s: no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}
@@ -113,7 +113,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 		log.Error(err)
 	} else {
 		for _, m := range markers {
-			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjectSrc), txt.Quote(subj[m.SubjectUID].SubjectName), m.FaceID, txt.Quote(subj[faceMap[m.FaceID].SubjectUID].SubjectName))
+			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjSrc), txt.Quote(subj[m.SubjUID].SubjName), m.FaceID, txt.Quote(subj[faceMap[m.FaceID].SubjUID].SubjName))
 		}
 	}
 

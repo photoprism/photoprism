@@ -62,14 +62,14 @@ func TestMatchFaceMarkers(t *testing.T) {
 	} else if m == nil {
 		t.Fatal("marker is nil")
 	} else {
-		assert.Empty(t, m.SubjectUID)
+		assert.Empty(t, m.SubjUID)
 	}
 
-	// Reset subject_uid.
+	// Reset subj_uid.
 	if err := Db().Model(&entity.Marker{}).
-		Where("subject_src = ?", entity.SrcAuto).
-		Where("subject_uid = ?", "jqu0xs11qekk9jx8").
-		Updates(entity.Values{"SubjectUID": ""}).Error; err != nil {
+		Where("subj_src = ?", entity.SrcAuto).
+		Where("subj_uid = ?", "jqu0xs11qekk9jx8").
+		Updates(entity.Values{"SubjUID": ""}).Error; err != nil {
 		t.Fatal(err)
 	}
 
@@ -86,7 +86,7 @@ func TestMatchFaceMarkers(t *testing.T) {
 	} else if m == nil {
 		t.Fatal("marker is nil")
 	} else {
-		assert.Equal(t, "jqu0xs11qekk9jx8", m.SubjectUID)
+		assert.Equal(t, "jqu0xs11qekk9jx8", m.SubjUID)
 	}
 }
 
@@ -152,7 +152,7 @@ func TestMergeFaces(t *testing.T) {
 
 		assert.Equal(t, "5LH5E35ZGUMF5AYLM42BIZH4DGQHJDAV", result.ID)
 		assert.Equal(t, entity.SrcManual, result.FaceSrc)
-		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjectUID)
+		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjUID)
 		assert.Equal(t, 2, result.Samples)
 		assert.Equal(t, 0.03948165743305488, result.SampleRadius)
 		assert.Equal(t, 0, result.Collisions)

@@ -103,6 +103,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		api.GetSubjects(v1)
 		api.GetSubject(v1)
+		api.UpdateSubject(v1)
+		api.LikeSubject(v1)
+		api.DislikeSubject(v1)
 
 		api.LabelCover(v1)
 		api.GetLabels(v1)

@@ -29,7 +29,7 @@
                    :transition="false"
                    aspect-ratio="1"
                    class="accent lighten-2">
-              <v-btn v-if="!marker.SubjectUID && !marker.Invalid" :ripple="false" :depressed="false" class="input-reject"
+              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" :depressed="false" class="input-reject"
                      icon flat small absolute :title="$gettext('Remove')"
                      @click.stop.prevent="onReject(marker)">
                 <v-icon color="white" class="action-reject">clear</v-icon>
@@ -43,11 +43,11 @@
                          large depressed block :round="false"
                          class="action-approve text-xs-center"
                          :title="$gettext('Approve')" @click.stop="onApprove(marker)">
-                    <v-icon dark>check</v-icon>
+                    <v-icon dark>undo</v-icon>
                   </v-btn>
                 </v-flex>
               </v-layout>
-              <v-layout v-else-if="marker.SubjectUID" row wrap align-center>
+              <v-layout v-else-if="marker.SubjUID" row wrap align-center>
                 <v-flex xs12 class="text-xs-left pa-0">
                   <v-text-field
                       v-model="marker.Name"

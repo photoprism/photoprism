@@ -12,7 +12,7 @@ import (
 
 func TestSubjectSearch(t *testing.T) {
 	t.Run("FindAll", func(t *testing.T) {
-		results, err := SubjectSearch(form.SubjectSearch{Type: entity.SubjectPerson})
+		results, err := SubjectSearch(form.SubjectSearch{Type: entity.SubjPerson})
 		assert.NoError(t, err)
 		assert.LessOrEqual(t, 3, len(results))
 	})

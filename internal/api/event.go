@@ -53,3 +53,16 @@ func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
 
 	event.PublishEntities("labels", string(e), result)
 }
+
+func PublishSubjectEvent(e EntityEvent, uid string, c *gin.Context) {
+	f := form.SubjectSearch{ID: uid}
+	result, err := query.SubjectSearch(f)
+
+	if err != nil {
+		log.Error(err)
+		AbortUnexpected(c)
+		return
+	}
+
+	event.PublishEntities("subjects", string(e), result)
+}

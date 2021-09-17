@@ -60,6 +60,8 @@ const (
 	MsgCopyingFilesFrom
 	MsgLabelsDeleted
 	MsgLabelSaved
+	MsgSubjectSaved
+	MsgSubjectDeleted
 	MsgFilesUploadedIn
 	MsgSelectionApproved
 	MsgSelectionArchived
@@ -132,6 +134,8 @@ var Messages = MessageMap{
 	MsgCopyingFilesFrom:      gettext("Copying files from %s"),
 	MsgLabelsDeleted:         gettext("Labels deleted"),
 	MsgLabelSaved:            gettext("Label saved"),
+	MsgSubjectSaved:          gettext("Subject saved"),
+	MsgSubjectDeleted:        gettext("Subject deleted"),
 	MsgFilesUploadedIn:       gettext("%d files uploaded in %d s"),
 	MsgSelectionApproved:     gettext("Selection approved"),
 	MsgSelectionArchived:     gettext("Selection archived"),

@@ -3,11 +3,12 @@ package form
 import "strings"
 
 type Selection struct {
-	Files  []string `json:"files"`
-	Photos []string `json:"photos"`
-	Albums []string `json:"albums"`
-	Labels []string `json:"labels"`
-	Places []string `json:"places"`
+	Files    []string `json:"files"`
+	Photos   []string `json:"photos"`
+	Albums   []string `json:"albums"`
+	Labels   []string `json:"labels"`
+	Places   []string `json:"places"`
+	Subjects []string `json:"subjects"`
 }
 
 func (f Selection) Empty() bool {
@@ -21,6 +22,8 @@ func (f Selection) Empty() bool {
 	case len(f.Labels) > 0:
 		return false
 	case len(f.Places) > 0:
+		return false
+	case len(f.Subjects) > 0:
 		return false
 	}
 
@@ -36,6 +39,7 @@ func (f Selection) All() []string {
 	all = append(all, f.Albums...)
 	all = append(all, f.Labels...)
 	all = append(all, f.Places...)
+	all = append(all, f.Subjects...)
 
 	return all
 }

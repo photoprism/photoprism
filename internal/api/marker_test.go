@@ -35,7 +35,7 @@ func TestUpdateMarker(t *testing.T) {
 		u := fmt.Sprintf("/api/v1/markers/%s", markerUID)
 
 		var m = form.Marker{
-			SubjectSrc:    "manual",
+			SubjSrc:       "manual",
 			MarkerInvalid: true,
 			MarkerName:    "Foo",
 		}
@@ -100,7 +100,7 @@ func TestUpdateMarker(t *testing.T) {
 		UpdateMarker(router)
 
 		var m = form.Marker{
-			SubjectSrc:    "manual",
+			SubjSrc:       "manual",
 			MarkerInvalid: false,
 			MarkerName:    "Actress A",
 		}
@@ -125,7 +125,7 @@ func TestUpdateMarker(t *testing.T) {
 		UpdateMarker(router)
 
 		var m = form.Marker{
-			SubjectSrc:    "manual",
+			SubjSrc:       "manual",
 			MarkerInvalid: false,
 			MarkerName:    "Actress A",
 		}
@@ -150,20 +150,20 @@ func TestUpdateMarker(t *testing.T) {
 		UpdateMarker(router)
 
 		var m = struct {
-			ID         int
-			Type       string
-			Src        int
-			Name       int
-			SubjectUID string
-			SubjectSrc string
-			FaceID     string
+			ID      int
+			Type    string
+			Src     int
+			Name    int
+			SubjUID string
+			SubjSrc string
+			FaceID  string
 		}{ID: 8,
-			Type:       "face",
-			Src:        123,
-			Name:       456,
-			SubjectUID: "jqy1y111h1njaaac",
-			SubjectSrc: "manual",
-			FaceID:     "GMH5NISEEULNJL6RATITOA3TMZXMTMCI"}
+			Type:    "face",
+			Src:     123,
+			Name:    456,
+			SubjUID: "jqy1y111h1njaaac",
+			SubjSrc: "manual",
+			FaceID:  "GMH5NISEEULNJL6RATITOA3TMZXMTMCI"}
 		if b, err := json.Marshal(m); err != nil {
 			t.Fatal(err)
 		} else {

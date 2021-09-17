@@ -14,6 +14,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// GetLabels finds and returns labels as JSON.
+//
 // GET /api/v1/labels
 func GetLabels(router *gin.RouterGroup) {
 	router.GET("/labels", func(c *gin.Context) {
@@ -49,6 +51,8 @@ func GetLabels(router *gin.RouterGroup) {
 	})
 }
 
+// UpdateLabel updates label properties.
+//
 // PUT /api/v1/labels/:uid
 func UpdateLabel(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid", func(c *gin.Context) {
@@ -85,6 +89,8 @@ func UpdateLabel(router *gin.RouterGroup) {
 	})
 }
 
+// LikeLabel flags a label as favorite.
+//
 // POST /api/v1/labels/:uid/like
 //
 // Parameters:
@@ -123,6 +129,8 @@ func LikeLabel(router *gin.RouterGroup) {
 	})
 }
 
+// DislikeLabel removes the favorite flag from a label.
+//
 // DELETE /api/v1/labels/:uid/like
 //
 // Parameters:

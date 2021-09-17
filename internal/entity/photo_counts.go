@@ -65,7 +65,7 @@ func UpdatePhotoCounts() (err error) {
 	if err = Db().Table(Subject{}.TableName()).
 		UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(*) FROM files f "+
 			fmt.Sprintf(
-				"JOIN %s m ON f.file_uid = m.file_uid AND m.subject_uid = %s.subject_uid ",
+				"JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid = %s.subj_uid ",
 				Marker{}.TableName(),
 				Subject{}.TableName())+
 			" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL)")).Error; err != nil {

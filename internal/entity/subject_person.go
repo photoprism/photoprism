@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	SubjectPerson = "person"
+	SubjPerson = "person"
 )
 
 // People represents a list of people.
@@ -15,20 +15,20 @@ type People []Person
 
 // Person represents a subject with type person.
 type Person struct {
-	SubjectUID   string `json:"UID"`
-	SubjectName  string `json:"Name"`
-	SubjectAlias string `json:"Alias,omitempty"`
-	Favorite     bool   `json:"Favorite,omitempty"`
-	Thumb        string `json:",omitempty"`
+	SubjUID      string `json:"UID"`
+	SubjName     string `json:"Name"`
+	SubjAlias    string `json:"Alias"`
+	SubjFavorite bool   `json:"Favorite"`
+	Thumb        string `json:"Thumb"`
 }
 
 // NewPerson returns a new entity.
 func NewPerson(subj Subject) *Person {
 	result := &Person{
-		SubjectUID:   subj.SubjectUID,
-		SubjectName:  subj.SubjectName,
-		SubjectAlias: subj.SubjectAlias,
-		Favorite:     subj.Favorite,
+		SubjUID:      subj.SubjUID,
+		SubjName:     subj.SubjName,
+		SubjAlias:    subj.SubjAlias,
+		SubjFavorite: subj.SubjFavorite,
 		Thumb:        subj.Thumb,
 	}
 
@@ -44,10 +44,10 @@ func (m *Person) MarshalJSON() ([]byte, error) {
 		Favorite bool     `json:",omitempty"`
 		Thumb    string   `json:",omitempty"`
 	}{
-		UID:      m.SubjectUID,
-		Name:     m.SubjectName,
-		Keywords: txt.NameKeywords(m.SubjectName, m.SubjectAlias),
-		Favorite: m.Favorite,
+		UID:      m.SubjUID,
+		Name:     m.SubjName,
+		Keywords: txt.NameKeywords(m.SubjName, m.SubjAlias),
+		Favorite: m.SubjFavorite,
 		Thumb:    m.Thumb,
 	})
 }

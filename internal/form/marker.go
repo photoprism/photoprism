@@ -4,9 +4,9 @@ import "github.com/ulule/deepcopier"
 
 // Marker represents an image marker edit form.
 type Marker struct {
-	SubjectSrc    string `json:"SubjectSrc"`
+	SubjSrc       string `json:"SubjSrc"`
 	MarkerName    string `json:"Name"`
-	Review        bool   `json:"Review"`
+	MarkerReview  bool   `json:"MarkerReview"`
 	MarkerInvalid bool   `json:"Invalid"`
 }
 
