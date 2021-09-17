@@ -1,19 +1,6 @@
 version: '3.5'
 
 services:
-  # Uncomment the following lines to test with Caddy as reverse proxy:
-  #
-  # caddy:
-  #  image: caddy:2
-  #  depends_on:
-  #   - photoprism
-  #  ports:
-  #    - "80:80"
-  #    - "443:443"
-  #  volumes:
-  #    - ./docker/development/caddy:/data/caddy/pki/authorities/local
-  #    - ./docker/development/caddy/Caddyfile:/etc/caddy/Caddyfile
-
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -93,6 +80,34 @@ services:
 
   webdav-dummy:
     image: photoprism/webdav:20210602
+
+  # Uncomment to test with MySQL 8:
+  #
+  # mysql:
+  #  image: mysql:8
+  #  command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+  #  expose:
+  #    - "4001"
+  #  volumes:
+  #    - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: photoprism
+  #    MYSQL_USER: photoprism
+  #    MYSQL_PASSWORD: photoprism
+  #    MYSQL_DATABASE: photoprism
+
+  # Uncomment to test with Caddy as reverse proxy:
+  #
+  # caddy:
+  #  image: caddy:2
+  #  depends_on:
+  #   - photoprism
+  #  ports:
+  #    - "80:80"
+  #    - "443:443"
+  #  volumes:
+  #    - ./docker/development/caddy:/data/caddy/pki/authorities/local
+  #    - ./docker/development/caddy/Caddyfile:/etc/caddy/Caddyfile
 
 volumes:
   go-mod:
