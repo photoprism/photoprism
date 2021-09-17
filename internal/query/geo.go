@@ -52,7 +52,10 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	// Set search filters based on search terms.
-	if terms := txt.SearchTerms(f.Query); len(terms) > 0 {
+	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
+		f.Name = fs.StripKnownExt(f.Query) + "*"
+		f.Query = ""
+	} else if len(terms) > 0 {
 		switch {
 		case terms["faces"]:
 			f.Query = strings.ReplaceAll(f.Query, "faces", "")

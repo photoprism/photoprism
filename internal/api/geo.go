@@ -15,6 +15,8 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
+// GetGeo performs a geo search with reduced metadata details for improved performance.
+//
 // GET /api/v1/geo
 func GetGeo(router *gin.RouterGroup) {
 	router.GET("/geo", func(c *gin.Context) {
@@ -37,7 +39,8 @@ func GetGeo(router *gin.RouterGroup) {
 		photos, err := query.Geo(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Warnf("search: %s", err)
+			AbortBadRequest(c)
 			return
 		}
 

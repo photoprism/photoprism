@@ -11,6 +11,17 @@ import (
 )
 
 func TestPhotoSearch(t *testing.T) {
+	t.Run("Chinese", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "张"
+		frm.Count = 10
+		frm.Offset = 0
+
+		_, _, err := PhotoSearch(frm)
+
+		assert.NoError(t, err)
+	})
 	t.Run("search all", func(t *testing.T) {
 		var frm form.PhotoSearch
 

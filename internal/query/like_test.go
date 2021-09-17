@@ -13,6 +13,21 @@ func TestNormalizeSearchQuery(t *testing.T) {
 	})
 }
 
+func TestIsTooShort(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsTooShort(""))
+	})
+	t.Run("IsTooShort", func(t *testing.T) {
+		assert.True(t, IsTooShort("aa"))
+	})
+	t.Run("Chinese", func(t *testing.T) {
+		assert.False(t, IsTooShort("李"))
+	})
+	t.Run("OK", func(t *testing.T) {
+		assert.False(t, IsTooShort("foo"))
+	})
+}
+
 func TestLikeAny(t *testing.T) {
 	t.Run("and_or_search", func(t *testing.T) {
 		if w := LikeAny("k.keyword", "table spoon & usa | img json", true, false); len(w) != 2 {

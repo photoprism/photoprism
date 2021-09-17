@@ -23,6 +23,13 @@ func NormalizeSearchQuery(s string) string {
 	return strings.Trim(s, "+&|_-=!@$%^(){}\\<>,.;: ")
 }
 
+// IsTooShort tests if a search query is too short.
+func IsTooShort(q string) bool {
+	q = strings.Trim(q, "- '")
+
+	return q != "" && len(q) < 3 && txt.IsLatin(q)
+}
+
 // LikeAny returns a single where condition matching the search words.
 func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {

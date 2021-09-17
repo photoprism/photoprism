@@ -214,7 +214,7 @@ func SearchTerms(s string) map[string]bool {
 	for _, w := range KeywordsRegexp.FindAllString(s, -1) {
 		w = strings.Trim(w, "- '")
 
-		if w == "" || len(w) < 2 && IsLatin(w) {
+		if w == "" || len(w) < 3 && IsLatin(w) {
 			continue
 		}
 

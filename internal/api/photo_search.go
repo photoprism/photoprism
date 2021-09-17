@@ -61,7 +61,7 @@ func GetPhotos(router *gin.RouterGroup) {
 		result, count, err := query.PhotoSearch(f)
 
 		if err != nil {
-			log.Error(err)
+			log.Warnf("search: %s", err)
 			AbortBadRequest(c)
 			return
 		}
