@@ -53,7 +53,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	m.UpdateDescription(people)
 
 	if n := len(people); n > 0 && n < 4 {
-		names = txt.JoinNames(people)
+		names = txt.JoinNames(people, true)
 	}
 
 	if m.LocationLoaded() {
@@ -204,7 +204,7 @@ func (m *Photo) UpdateDescription(people []string) {
 
 	// Add subject names to description when there's more than one person.
 	if len(people) > 3 {
-		m.PhotoDescription = txt.JoinNames(people)
+		m.PhotoDescription = txt.JoinNames(people, false)
 	} else {
 		m.PhotoDescription = ""
 	}

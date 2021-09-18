@@ -139,7 +139,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 	if f.Query != "" && f.Subject == "" {
 		if subj, names, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
 			f.Subject = strings.Join(subj, txt.And)
-			log.Debugf("people: searching for %s", txt.Quote(txt.JoinNames(names)))
+			log.Debugf("people: searching for %s", txt.Quote(txt.JoinNames(names, false)))
 			f.Query = remaining
 		}
 	}
