@@ -38,10 +38,6 @@ export class Face extends RestModel {
   constructor(values) {
     if (values && values.Marker) {
       values.Marker = new Marker(values.Marker);
-
-      console.log("MARKER", values.Marker);
-    } else {
-      console.log("NO MARKER", values);
     }
 
     super(values);
@@ -56,7 +52,7 @@ export class Face extends RestModel {
       SampleRadius: 0.0,
       Collisions: 0,
       CollisionRadius: 0.0,
-      Marker: null,
+      Marker: new Marker(),
       Hidden: false,
       MatchedAt: "",
       CreatedAt: "",
