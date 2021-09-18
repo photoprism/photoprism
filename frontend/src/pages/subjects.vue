@@ -153,7 +153,7 @@ import Event from "pubsub-js";
 import RestModel from "model/rest";
 import {MaxItems} from "common/clipboard";
 import Notify from "common/notify";
-import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
+import {ClickLong, ClickShort, Input, InputInvalid} from "common/input";
 
 export default {
   name: 'PPageSubjects',

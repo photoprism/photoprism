@@ -1,4 +1,4 @@
-package query
+package search
 
 import (
 	"testing"
@@ -22,7 +22,7 @@ func TestLabels(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(result))
 
 		for _, r := range result {
-			assert.IsType(t, LabelResult{}, r)
+			assert.IsType(t, Label{}, r)
 			assert.NotEmpty(t, r.ID)
 			assert.NotEmpty(t, r.LabelName)
 			assert.NotEmpty(t, r.LabelSlug)
@@ -49,7 +49,7 @@ func TestLabels(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(result))
 
 		for _, r := range result {
-			assert.IsType(t, LabelResult{}, r)
+			assert.IsType(t, Label{}, r)
 			assert.NotEmpty(t, r.ID)
 			assert.NotEmpty(t, r.LabelName)
 			assert.NotEmpty(t, r.LabelSlug)
@@ -74,7 +74,7 @@ func TestLabels(t *testing.T) {
 
 		for _, r := range result {
 			assert.True(t, r.LabelFavorite)
-			assert.IsType(t, LabelResult{}, r)
+			assert.IsType(t, Label{}, r)
 			assert.NotEmpty(t, r.ID)
 			assert.NotEmpty(t, r.LabelName)
 			assert.NotEmpty(t, r.LabelSlug)

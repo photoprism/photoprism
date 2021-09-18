@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetAccounts(t *testing.T) {
+func TestSearchAccounts(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetAccounts(router)
+		SearchAccounts(router)
 		sess := AuthenticateAdmin(app, router)
 		r := AuthenticatedRequest(app, "GET", "/api/v1/accounts?count=10", sess)
 		val := gjson.Get(r.Body.String(), "#(AccName=\"Test Account\").AccURL")
@@ -24,7 +24,7 @@ func TestGetAccounts(t *testing.T) {
 	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetAccounts(router)
+		SearchAccounts(router)
 		r := PerformRequest(app, "GET", "/api/v1/accounts?xxx=10")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})

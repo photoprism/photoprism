@@ -5,6 +5,7 @@ import (
 	"encoding/base32"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -255,6 +256,7 @@ func (m *Face) SetSubjectUID(subjUID string) (err error) {
 		Where("face_id = ?", m.ID).
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
+		Where("marker_invalid = 0").
 		Updates(Values{"SubjUID": m.SubjUID, "MarkerReview": false}).Error; err != nil {
 		return err
 	}
@@ -329,14 +331,11 @@ func FindFace(id string) *Face {
 		return nil
 	}
 
-	result := Face{}
+	f := Face{}
 
-	db := Db()
-	db = db.Where("id = ?", id)
-
-	if err := db.First(&result).Error; err != nil {
+	if err := Db().Where("id = ?", strings.ToUpper(id)).First(&f).Error; err != nil {
 		return nil
 	}
 
-	return &result
+	return &f
 }

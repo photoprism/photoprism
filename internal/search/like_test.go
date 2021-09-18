@@ -1,32 +1,12 @@
-package query
+package search
 
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/stretchr/testify/assert"
 )
-
-func TestNormalizeSearchQuery(t *testing.T) {
-	t.Run("Replace", func(t *testing.T) {
-		q := NormalizeSearchQuery("table spoon & usa | img% json OR BILL!")
-		assert.Equal(t, "table spoon & usa | img* json|bill", q)
-	})
-}
-
-func TestIsTooShort(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
-		assert.False(t, IsTooShort(""))
-	})
-	t.Run("IsTooShort", func(t *testing.T) {
-		assert.True(t, IsTooShort("aa"))
-	})
-	t.Run("Chinese", func(t *testing.T) {
-		assert.False(t, IsTooShort("李"))
-	})
-	t.Run("OK", func(t *testing.T) {
-		assert.False(t, IsTooShort("foo"))
-	})
-}
 
 func TestLikeAny(t *testing.T) {
 	t.Run("and_or_search", func(t *testing.T) {
@@ -222,7 +202,7 @@ func TestLikeAllNames(t *testing.T) {
 		}
 	})
 	t.Run("Plus", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, NormalizeSearchQuery("Paul + Paula")); len(w) == 2 {
+		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul + Paula")); len(w) == 2 {
 			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %'", w[0])
 			assert.Equal(t, "name LIKE '%paula%'", w[1])
 		} else {
@@ -230,7 +210,7 @@ func TestLikeAllNames(t *testing.T) {
 		}
 	})
 	t.Run("Ane", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, NormalizeSearchQuery("Paul and Paula")); len(w) == 2 {
+		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul and Paula")); len(w) == 2 {
 			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %'", w[0])
 			assert.Equal(t, "name LIKE '%paula%'", w[1])
 		} else {
@@ -238,7 +218,7 @@ func TestLikeAllNames(t *testing.T) {
 		}
 	})
 	t.Run("Or", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, NormalizeSearchQuery("Paul or Paula")); len(w) == 1 {
+		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul or Paula")); len(w) == 1 {
 			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %' OR name LIKE '%paula%'", w[0])
 		} else {
 			t.Fatalf("one where conditions expected:  %#v", w)
@@ -278,7 +258,7 @@ func TestAnySlug(t *testing.T) {
 	})
 
 	t.Run("comma separated", func(t *testing.T) {
-		where := AnySlug("custom_slug", "botanical-garden|landscape|bay", Or)
+		where := AnySlug("custom_slug", "botanical-garden|landscape|bay", txt.Or)
 		assert.Equal(t, "custom_slug = 'botanical-garden' OR custom_slug = 'landscape' OR custom_slug = 'bay'", where)
 	})
 

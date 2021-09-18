@@ -1,4 +1,4 @@
-package query
+package search
 
 import (
 	"fmt"
@@ -10,21 +10,18 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Geo searches for photos based on Form values and returns GeoResults ([]GeoResult).
-func Geo(f form.GeoSearch) (results GeoResults, err error) {
+// PhotosGeo searches for photos based on Form values and returns GeoResults ([]GeoResult).
+func PhotosGeo(f form.GeoSearch) (results GeoResults, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
-
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("geo: search %s", form.Serialize(f, true))))
 
 	s := UnscopedDb()
 
@@ -40,12 +37,12 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		Where("photos.photo_lat <> 0")
 
 	// Clip to reasonable size and normalize operators.
-	f.Query = NormalizeSearchQuery(f.Query)
+	f.Query = txt.NormalizeQuery(f.Query)
 
 	// Modify query if it contains subject names.
 	if f.Query != "" && f.Subject == "" {
-		if subj, names, remaining := SearchSubjUIDs(f.Query); len(subj) > 0 {
-			f.Subject = strings.Join(subj, And)
+		if subj, names, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
+			f.Subject = strings.Join(subj, txt.And)
 			log.Debugf("search: subject %s", txt.Quote(strings.Join(names, ", ")))
 			f.Query = remaining
 		}
@@ -115,11 +112,19 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 		}
 	}
 
+	// Filter for one or more faces?
+	if f.Face != "" {
+		for _, f := range strings.Split(strings.ToUpper(f.Face), txt.And) {
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
+				entity.Marker{}.TableName()), strings.Split(f, txt.Or))
+		}
+	}
+
 	// Filter for one or more subjects?
 	if f.Subject != "" {
-		for _, subj := range strings.Split(strings.ToLower(f.Subject), And) {
+		for _, subj := range strings.Split(strings.ToLower(f.Subject), txt.And) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
-				entity.Marker{}.TableName()), strings.Split(subj, Or))
+				entity.Marker{}.TableName()), strings.Split(subj, txt.Or))
 		}
 	} else if f.Subjects != "" {
 		for _, where := range LikeAnyWord("s.subj_name", f.Subjects) {
@@ -173,7 +178,7 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), Or))
+		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), txt.Or))
 	}
 
 	if f.Favorite {
@@ -181,12 +186,12 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	}
 
 	if f.Country != "" {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), Or))
+		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), txt.Or))
 	}
 
 	// Filter by media type.
 	if f.Type != "" {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), Or))
+		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
 	}
 
 	if f.Video {
@@ -204,15 +209,15 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
-		} else if strings.Contains(p, Or) {
-			s = s.Where("photos.photo_path IN (?)", strings.Split(p, Or))
+		} else if strings.Contains(p, txt.Or) {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, txt.Or))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}
 	}
 
-	if strings.Contains(f.Name, Or) {
-		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, Or))
+	if strings.Contains(f.Name, txt.Or) {
+		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, txt.Or))
 	} else if f.Name != "" {
 		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
 	}
@@ -250,13 +255,13 @@ func Geo(f form.GeoSearch) (results GeoResults, err error) {
 	} else {
 		// Filter by approx distance to coordinates:
 		if f.Lat != 0 {
-			latMin := f.Lat - SearchRadius*float32(f.Dist)
-			latMax := f.Lat + SearchRadius*float32(f.Dist)
+			latMin := f.Lat - Radius*float32(f.Dist)
+			latMax := f.Lat + Radius*float32(f.Dist)
 			s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 		}
 		if f.Lng != 0 {
-			lngMin := f.Lng - SearchRadius*float32(f.Dist)
-			lngMax := f.Lng + SearchRadius*float32(f.Dist)
+			lngMin := f.Lng - Radius*float32(f.Dist)
+			lngMax := f.Lng + Radius*float32(f.Dist)
 			s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
 		}
 	}

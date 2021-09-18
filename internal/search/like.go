@@ -1,4 +1,4 @@
-package query
+package search
 
 import (
 	"fmt"
@@ -10,36 +10,16 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-// NormalizeSearchQuery replaces search operator with default symbols.
-func NormalizeSearchQuery(s string) string {
-	s = strings.ToLower(txt.Clip(s, txt.ClipQuery))
-	s = strings.ReplaceAll(s, OrEn, Or)
-	s = strings.ReplaceAll(s, AndEn, And)
-	s = strings.ReplaceAll(s, WithEn, And)
-	s = strings.ReplaceAll(s, InEn, And)
-	s = strings.ReplaceAll(s, AtEn, And)
-	s = strings.ReplaceAll(s, Plus, And)
-	s = strings.ReplaceAll(s, "%", "*")
-	return strings.Trim(s, "+&|_-=!@$%^(){}\\<>,.;: ")
-}
-
-// IsTooShort tests if a search query is too short.
-func IsTooShort(q string) bool {
-	q = strings.Trim(q, "- '")
-
-	return q != "" && len(q) < 3 && txt.IsLatin(q)
-}
-
 // LikeAny returns a single where condition matching the search words.
 func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 	if s == "" {
 		return wheres
 	}
 
-	s = strings.ReplaceAll(s, Or, " ")
-	s = strings.ReplaceAll(s, OrEn, " ")
-	s = strings.ReplaceAll(s, AndEn, And)
-	s = strings.ReplaceAll(s, Plus, And)
+	s = strings.ReplaceAll(s, txt.Or, " ")
+	s = strings.ReplaceAll(s, txt.OrEn, " ")
+	s = strings.ReplaceAll(s, txt.AndEn, txt.And)
+	s = strings.ReplaceAll(s, txt.Plus, txt.And)
 
 	var wildcardThreshold int
 
@@ -51,7 +31,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		wildcardThreshold = 2
 	}
 
-	for _, k := range strings.Split(s, And) {
+	for _, k := range strings.Split(s, txt.And) {
 		var orWheres []string
 		var words []string
 
@@ -151,19 +131,19 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 		return wheres
 	}
 
-	for _, k := range strings.Split(s, And) {
+	for _, k := range strings.Split(s, txt.And) {
 		var orWheres []string
 
-		for _, w := range strings.Split(k, Or) {
+		for _, w := range strings.Split(k, txt.Or) {
 			w = strings.TrimSpace(w)
 
-			if w == Empty || len(w) < 2 && txt.IsLatin(w) {
+			if w == txt.Empty || len(w) < 2 && txt.IsLatin(w) {
 				continue
 			}
 
 			for _, c := range cols {
 				if len(w) > 4 {
-					if strings.Contains(w, Space) {
+					if strings.Contains(w, txt.Space) {
 						orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, w))
 					} else {
 						orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, w))

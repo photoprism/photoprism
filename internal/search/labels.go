@@ -1,24 +1,19 @@
-package query
+package search
 
 import (
-	"fmt"
 	"strings"
-	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Labels searches labels based on their name.
-func Labels(f form.LabelSearch) (results []LabelResult, err error) {
+func Labels(f form.LabelSearch) (results []Label, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
-
-	defer log.Debug(capture.Time(time.Now(), fmt.Sprintf("labels: search %s", form.Serialize(f, true))))
 
 	s := UnscopedDb()
 	// s.LogMode(true)
@@ -46,7 +41,7 @@ func Labels(f form.LabelSearch) (results []LabelResult, err error) {
 	}
 
 	if f.ID != "" {
-		s = s.Where("labels.label_uid IN (?)", strings.Split(f.ID, Or))
+		s = s.Where("labels.label_uid IN (?)", strings.Split(f.ID, txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error

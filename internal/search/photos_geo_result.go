@@ -1,10 +1,10 @@
-package query
+package search
 
 import (
 	"time"
 )
 
-// GeoResult represents a photo for displaying it on a map.
+// GeoResult represents a photo geo json search result.
 type GeoResult struct {
 	ID               string    `json:"-"`
 	PhotoUID         string    `json:"UID"`

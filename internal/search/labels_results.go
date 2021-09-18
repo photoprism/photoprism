@@ -1,12 +1,11 @@
-package query
+package search
 
 import (
 	"time"
 )
 
-// LabelResult contains found labels
-type LabelResult struct {
-	// Label
+// Label represents a label search result.
+type Label struct {
 	ID               uint      `json:"ID"`
 	LabelUID         string    `json:"UID"`
 	Thumb            string    `json:"Thumb"`

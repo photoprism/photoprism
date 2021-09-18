@@ -25,6 +25,7 @@ type GeoSearch struct {
 	S2       string    `form:"s2"`
 	Olc      string    `form:"olc"`
 	Dist     uint      `form:"dist"`
+	Face     string    `form:"face"`     // UIDs
 	Subject  string    `form:"subject"`  // UIDs
 	Subjects string    `form:"subjects"` // Text
 	People   string    `form:"people"`   // Alias for Subjects

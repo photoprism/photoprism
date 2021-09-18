@@ -180,7 +180,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
-		GetLabels(router)
+		SearchLabels(router)
 		BatchLabelsDelete(router)
 
 		r := PerformRequest(app, "GET", "/api/v1/labels?count=15")

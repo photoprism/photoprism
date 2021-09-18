@@ -10,14 +10,14 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// GetSubjects finds and returns subjects as JSON.
+// SearchSubjects finds and returns subjects as JSON.
 //
 // GET /api/v1/subjects
-func GetSubjects(router *gin.RouterGroup) {
+func SearchSubjects(router *gin.RouterGroup) {
 	router.GET("/subjects", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceSubjects, acl.ActionSearch)
 
@@ -35,7 +35,7 @@ func GetSubjects(router *gin.RouterGroup) {
 			return
 		}
 
-		result, err := query.SubjectSearch(f)
+		result, err := search.Subjects(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
@@ -104,7 +104,11 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		event.SuccessMsg(i18n.MsgSubjectSaved)
+		if m.IsPerson() {
+			event.SuccessMsg(i18n.MsgPersonSaved)
+		} else {
+			event.SuccessMsg(i18n.MsgSubjectSaved)
+		}
 
 		c.JSON(http.StatusOK, m)
 	})

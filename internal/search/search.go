@@ -1,6 +1,6 @@
 /*
 
-Package query contains frequently used database queries for use in commands and API.
+Package search performs common index search queries.
 
 Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
@@ -29,7 +29,7 @@ Additional information can be found in our Developer Guide:
 https://docs.photoprism.org/developer-guide/
 
 */
-package query
+package search
 
 import (
 	"github.com/jinzhu/gorm"
@@ -39,10 +39,11 @@ import (
 
 var log = event.Log
 
-const (
-	MySQL  = "mysql"
-	SQLite = "sqlite3"
-)
+// MaxResults is max result limit for queries.
+const MaxResults = 10000
+
+// Radius is about 1 km.
+const Radius = 0.009
 
 // Cols represents a list of database columns.
 type Cols []string
@@ -52,18 +53,9 @@ type Query struct {
 	db *gorm.DB
 }
 
-// SearchCount is the total number of search hits.
-type SearchCount struct {
+// Count represents the total number of search results.
+type Count struct {
 	Total int
-}
-
-// New returns a new Query type with a given path and db instance.
-func New(db *gorm.DB) *Query {
-	q := &Query{
-		db: db,
-	}
-
-	return q
 }
 
 // Db returns a database connection instance.
@@ -74,9 +66,4 @@ func Db() *gorm.DB {
 // UnscopedDb returns an unscoped database connection instance.
 func UnscopedDb() *gorm.DB {
 	return entity.Db().Unscoped()
-}
-
-// DbDialect returns the sql dialect name.
-func DbDialect() string {
-	return Db().Dialect().GetName()
 }

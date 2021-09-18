@@ -42,12 +42,7 @@ type PhotoSearch struct {
 	Mono      bool      `form:"mono"`
 	Portrait  bool      `form:"portrait"`
 	Geo       bool      `form:"geo"`
-	Subject   string    `form:"subject"`  // UIDs
-	Subjects  string    `form:"subjects"` // Text
-	People    string    `form:"people"`   // Alias for Subjects
 	Keywords  string    `form:"keywords"`
-	Album     string    `form:"album"`  // UIDs
-	Albums    string    `form:"albums"` // Text
 	Label     string    `form:"label"`
 	Category  string    `form:"category"` // Moments
 	Country   string    `form:"country"`  // Moments
@@ -55,6 +50,12 @@ type PhotoSearch struct {
 	Year      int       `form:"year"`     // Moments
 	Month     int       `form:"month"`    // Moments
 	Day       int       `form:"day"`      // Moments
+	Face      string    `form:"face"`     // UIDs
+	Subject   string    `form:"subject"`  // UIDs
+	Subjects  string    `form:"subjects"` // Text
+	People    string    `form:"people"`   // Alias for Subjects
+	Album     string    `form:"album"`    // UIDs
+	Albums    string    `form:"albums"`   // Text
 	Color     string    `form:"color"`
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Quality   int       `form:"quality"`

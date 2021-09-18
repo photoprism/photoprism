@@ -7,11 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetGeo(t *testing.T) {
-	t.Run("get geo", func(t *testing.T) {
+func TestSearchPhotosGeo(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
-		GetGeo(router)
+		SearchPhotosGeo(router)
 
 		result := PerformRequest(app, "GET", "/api/v1/geo")
 		assert.Equal(t, http.StatusOK, result.Code)

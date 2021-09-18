@@ -2,9 +2,7 @@ package query
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -118,61 +116,4 @@ func CreateMarkerSubjects() (affected int64, err error) {
 	}
 
 	return affected, err
-}
-
-// SearchSubjUIDs finds subject UIDs matching the search string, and removes names from the remaining query.
-func SearchSubjUIDs(s string) (result []string, names []string, remaining string) {
-	if s == "" {
-		return result, names, s
-	}
-
-	type Matches struct {
-		SubjUID   string
-		SubjName  string
-		SubjAlias string
-	}
-
-	var matches []Matches
-
-	wheres := LikeAllNames(Cols{"subj_name", "subj_alias"}, s)
-
-	if len(wheres) == 0 {
-		return result, names, s
-	}
-
-	remaining = s
-
-	for _, where := range wheres {
-		var subj []string
-
-		stmt := Db().Model(entity.Subject{})
-		stmt = stmt.Where("?", gorm.Expr(where))
-
-		if err := stmt.Scan(&matches).Error; err != nil {
-			log.Errorf("search: %s while finding subjects", err)
-		} else if len(matches) == 0 {
-			continue
-		}
-
-		for _, m := range matches {
-			subj = append(subj, m.SubjUID)
-			names = append(names, m.SubjName)
-
-			for _, r := range txt.Words(strings.ToLower(m.SubjName)) {
-				if len(r) > 1 {
-					remaining = strings.ReplaceAll(remaining, r, "")
-				}
-			}
-
-			for _, r := range txt.Words(strings.ToLower(m.SubjAlias)) {
-				if len(r) > 1 {
-					remaining = strings.ReplaceAll(remaining, r, "")
-				}
-			}
-		}
-
-		result = append(result, strings.Join(subj, Or))
-	}
-
-	return result, names, NormalizeSearchQuery(remaining)
 }

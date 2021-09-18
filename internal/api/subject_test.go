@@ -9,25 +9,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetSubjects(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+func TestSearchSubjects(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetSubjects(router)
+		SearchSubjects(router)
 		r := PerformRequest(app, "GET", "/api/v1/subjects?count=10")
 		count := gjson.Get(r.Body.String(), "#")
 		assert.LessOrEqual(t, int64(3), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetSubjects(router)
+		SearchSubjects(router)
 		r := PerformRequest(app, "GET", "/api/v1/subjects?xxx=10")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }
 
 func TestGetSubject(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetSubject(router)
 		r := PerformRequest(app, "GET", "/api/v1/subjects/jqy1y111h1njaaaa")
@@ -35,7 +35,7 @@ func TestGetSubject(t *testing.T) {
 		assert.Equal(t, "dangling-subject", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("invalid request", func(t *testing.T) {
+	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetSubject(router)
 		r := PerformRequest(app, "GET", "/api/v1/subjects/xxx1y111h1njaaaa")
@@ -46,13 +46,13 @@ func TestGetSubject(t *testing.T) {
 }
 
 func TestLikeSubject(t *testing.T) {
-	t.Run("like not existing subject", func(t *testing.T) {
+	t.Run("InvalidSubject", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikeSubject(router)
 		r := PerformRequest(app, "POST", "/api/v1/subjects/8775789/like")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-	t.Run("like existing subject", func(t *testing.T) {
+	t.Run("ExistingSubject", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
@@ -79,13 +79,13 @@ func TestLikeSubject(t *testing.T) {
 	})
 }
 func TestDislikeSubject(t *testing.T) {
-	t.Run("dislike not existing subject", func(t *testing.T) {
+	t.Run("InvalidSubject", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikeSubject(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/subjects/8775789/like")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-	t.Run("dislike existing subject", func(t *testing.T) {
+	t.Run("ExistingSubject", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.

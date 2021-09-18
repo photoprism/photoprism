@@ -1,4 +1,4 @@
-package query
+package search
 
 import (
 	"fmt"
@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// PhotoSearch searches for photos based on a Form and returns PhotoResults ([]PhotoResult).
-func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error) {
+// Photos searches for photos based on a Form and returns PhotoResults ([]Photo).
+func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
@@ -89,7 +89,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Shortcut for known photo ids.
 	if f.ID != "" {
-		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, Or))
+		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, txt.Or))
 		s = s.Order("files.file_primary DESC")
 
 		if result := s.Scan(&results); result.Error != nil {
@@ -111,7 +111,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	var labelIds []uint
 
 	if f.Label != "" {
-		if err := Db().Where(AnySlug("label_slug", f.Label, Or)).Or(AnySlug("custom_slug", f.Label, Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
+		if err := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
 			log.Errorf("search: labels %s not found", txt.Quote(f.Label))
 			return results, 0, fmt.Errorf("%s not found", txt.Quote(f.Label))
 		} else {
@@ -133,12 +133,12 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	// Clip to reasonable size and normalize operators.
-	f.Query = NormalizeSearchQuery(f.Query)
+	f.Query = txt.NormalizeQuery(f.Query)
 
 	// Modify query if it contains subject names.
 	if f.Query != "" && f.Subject == "" {
-		if subj, names, remaining := SearchSubjUIDs(f.Query); len(subj) > 0 {
-			f.Subject = strings.Join(subj, And)
+		if subj, names, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
+			f.Subject = strings.Join(subj, txt.And)
 			log.Debugf("people: searching for %s", txt.Quote(txt.JoinNames(names)))
 			f.Query = remaining
 		}
@@ -222,11 +222,19 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 		}
 	}
 
+	// Filter for one or more faces?
+	if f.Face != "" {
+		for _, f := range strings.Split(strings.ToUpper(f.Face), txt.And) {
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
+				entity.Marker{}.TableName()), strings.Split(f, txt.Or))
+		}
+	}
+
 	// Filter for one or more subjects?
 	if f.Subject != "" {
-		for _, subj := range strings.Split(strings.ToLower(f.Subject), And) {
+		for _, subj := range strings.Split(strings.ToLower(f.Subject), txt.And) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
-				entity.Marker{}.TableName()), strings.Split(subj, Or))
+				entity.Marker{}.TableName()), strings.Split(subj, txt.Or))
 		}
 	} else if f.Subjects != "" {
 		for _, where := range LikeAnyWord("s.subj_name", f.Subjects) {
@@ -293,7 +301,7 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Color != "" {
-		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), Or))
+		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), txt.Or))
 	}
 
 	if f.Favorite {
@@ -315,21 +323,21 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 	}
 
 	if f.Country != "" {
-		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), Or))
+		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), txt.Or))
 	}
 
 	if f.State != "" {
-		s = s.Where("places.place_state IN (?)", strings.Split(f.State, Or))
+		s = s.Where("places.place_state IN (?)", strings.Split(f.State, txt.Or))
 	}
 
 	if f.Category != "" {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
-			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), Or))
+			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), txt.Or))
 	}
 
 	// Filter by media type.
 	if f.Type != "" {
-		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), Or))
+		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
 	}
 
 	if f.Video {
@@ -347,41 +355,41 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
-		} else if strings.Contains(p, Or) {
-			s = s.Where("photos.photo_path IN (?)", strings.Split(p, Or))
+		} else if strings.Contains(p, txt.Or) {
+			s = s.Where("photos.photo_path IN (?)", strings.Split(p, txt.Or))
 		} else {
 			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
 		}
 	}
 
-	if strings.Contains(f.Name, Or) {
-		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, Or))
+	if strings.Contains(f.Name, txt.Or) {
+		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, txt.Or))
 	} else if f.Name != "" {
 		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
 	}
 
-	if strings.Contains(f.Filename, Or) {
-		s = s.Where("files.file_name IN (?)", strings.Split(f.Filename, Or))
+	if strings.Contains(f.Filename, txt.Or) {
+		s = s.Where("files.file_name IN (?)", strings.Split(f.Filename, txt.Or))
 	} else if f.Filename != "" {
 		s = s.Where("files.file_name LIKE ?", strings.ReplaceAll(f.Filename, "*", "%"))
 	}
 
-	if strings.Contains(f.Original, Or) {
-		s = s.Where("photos.original_name IN (?)", strings.Split(f.Original, Or))
+	if strings.Contains(f.Original, txt.Or) {
+		s = s.Where("photos.original_name IN (?)", strings.Split(f.Original, txt.Or))
 	} else if f.Original != "" {
 		s = s.Where("photos.original_name LIKE ?", strings.ReplaceAll(f.Original, "*", "%"))
 	}
 
-	if strings.Contains(f.Title, Or) {
-		s = s.Where("photos.photo_title IN (?)", strings.Split(strings.ToLower(f.Title), Or))
+	if strings.Contains(f.Title, txt.Or) {
+		s = s.Where("photos.photo_title IN (?)", strings.Split(strings.ToLower(f.Title), txt.Or))
 	} else if f.Title != "" {
 		s = s.Where("photos.photo_title LIKE ?", strings.ReplaceAll(strings.ToLower(f.Title), "*", "%"))
 	}
 
-	if strings.Contains(f.Hash, Or) {
-		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), Or))
+	if strings.Contains(f.Hash, txt.Or) {
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), txt.Or))
 	} else if f.Hash != "" {
-		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), Or))
+		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), txt.Or))
 	}
 
 	if f.Portrait {
@@ -416,13 +424,13 @@ func PhotoSearch(f form.PhotoSearch) (results PhotoResults, count int, err error
 
 	// Filter by approx distance to coordinates:
 	if f.Lat != 0 {
-		latMin := f.Lat - SearchRadius*float32(f.Dist)
-		latMax := f.Lat + SearchRadius*float32(f.Dist)
+		latMin := f.Lat - Radius*float32(f.Dist)
+		latMax := f.Lat + Radius*float32(f.Dist)
 		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
 	}
 	if f.Lng != 0 {
-		lngMin := f.Lng - SearchRadius*float32(f.Dist)
-		lngMax := f.Lng + SearchRadius*float32(f.Dist)
+		lngMin := f.Lng - Radius*float32(f.Dist)
+		lngMax := f.Lng + Radius*float32(f.Dist)
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
 	}
 

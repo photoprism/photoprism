@@ -1,4 +1,4 @@
-package query
+package search
 
 import (
 	"testing"
@@ -19,7 +19,7 @@ func TestAccounts(t *testing.T) {
 			Offset: 0,
 			Order:  "",
 		}
-		r, err := AccountSearch(f)
+		r, err := Accounts(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,7 +44,7 @@ func TestAccounts(t *testing.T) {
 			Offset: 0,
 			Order:  "",
 		}
-		r, err := AccountSearch(f)
+		r, err := Accounts(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +66,7 @@ func TestAccounts(t *testing.T) {
 			Offset: 0,
 			Order:  "",
 		}
-		r, err := AccountSearch(f)
+		r, err := Accounts(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,27 +79,5 @@ func TestAccounts(t *testing.T) {
 		for _, r := range r {
 			assert.IsType(t, entity.Account{}, r)
 		}
-	})
-}
-
-func TestAccountByID(t *testing.T) {
-	t.Run("existing account", func(t *testing.T) {
-		r, err := AccountByID(uint(1000001))
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Equal(t, "Test Account2", r.AccName)
-
-	})
-	t.Run("record not found", func(t *testing.T) {
-		r, err := AccountByID(uint(123))
-
-		if err == nil {
-			t.Fatal()
-		}
-		assert.Equal(t, "record not found", err.Error())
-		assert.Empty(t, r)
 	})
 }

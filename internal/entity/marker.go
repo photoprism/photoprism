@@ -525,6 +525,20 @@ func FindMarker(uid string) *Marker {
 	return &result
 }
 
+// FindFaceMarker finds the best marker for a given face
+func FindFaceMarker(faceId string) *Marker {
+	var result Marker
+
+	if err := Db().Where("face_id = ?", faceId).
+		Where("file_hash <> '' AND marker_invalid = 0").
+		Order("q DESC").First(&result).Error; err != nil {
+		log.Warnf("face: no marker for %s", txt.Quote(faceId))
+		return nil
+	}
+
+	return &result
+}
+
 // UpdateOrCreateMarker updates a marker in the database or creates a new one if needed.
 func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
 	const d = 0.07

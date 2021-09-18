@@ -1,4 +1,4 @@
-package query
+package search
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestPhotosResults_Merged(t *testing.T) {
-	result1 := PhotoResult{
+	result1 := Photo{
 		ID:               111111,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
@@ -67,7 +67,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 		Files:            nil,
 	}
 
-	result2 := PhotoResult{
+	result2 := Photo{
 		ID:               22222,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
@@ -137,7 +137,7 @@ func TestPhotosResults_Merged(t *testing.T) {
 	t.Log(merged)
 }
 func TestPhotosResults_UIDs(t *testing.T) {
-	result1 := PhotoResult{
+	result1 := Photo{
 		ID:               111111,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
@@ -196,7 +196,7 @@ func TestPhotosResults_UIDs(t *testing.T) {
 		Files:            nil,
 	}
 
-	result2 := PhotoResult{
+	result2 := Photo{
 		ID:               22222,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
@@ -263,7 +263,7 @@ func TestPhotosResults_UIDs(t *testing.T) {
 
 func TestPhotosResult_ShareFileName(t *testing.T) {
 	t.Run("with photo title", func(t *testing.T) {
-		result1 := PhotoResult{
+		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},
@@ -326,7 +326,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		assert.Contains(t, r, "20131111-090718-Phototitle123")
 	})
 	t.Run("without photo title", func(t *testing.T) {
-		result1 := PhotoResult{
+		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},
@@ -390,7 +390,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 	})
 
 	t.Run("seq > 0", func(t *testing.T) {
-		result1 := PhotoResult{
+		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
 			UpdatedAt:        time.Time{},

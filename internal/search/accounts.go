@@ -1,12 +1,12 @@
-package query
+package search
 
 import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
-// AccountSearch returns a list of accounts.
-func AccountSearch(f form.AccountSearch) (result entity.Accounts, err error) {
+// Accounts returns a list of accounts.
+func Accounts(f form.AccountSearch) (result entity.Accounts, err error) {
 	s := Db().Where(&entity.Account{})
 
 	if f.Share {
@@ -30,15 +30,6 @@ func AccountSearch(f form.AccountSearch) (result entity.Accounts, err error) {
 	}
 
 	if err := s.Find(&result).Error; err != nil {
-		return result, err
-	}
-
-	return result, nil
-}
-
-// AccountByID finds an account by primary key.
-func AccountByID(id uint) (result entity.Account, err error) {
-	if err := Db().Where("id = ?", id).First(&result).Error; err != nil {
 		return result, err
 	}
 
