@@ -9,12 +9,11 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/photoprism/photoprism/pkg/clusters"
-	"github.com/photoprism/photoprism/pkg/rnd"
-
 	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -33,8 +32,8 @@ type Marker struct {
 	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
 	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
-	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	MarkerReview   bool            `json:"Review" yaml:"Review,omitempty"`
+	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	SubjUID        string          `gorm:"type:VARBINARY(42);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	SubjSrc        string          `gorm:"type:VARBINARY(8);index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
 	subject        *Subject        `gorm:"foreignkey:SubjUID;association_foreignkey:SubjUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`

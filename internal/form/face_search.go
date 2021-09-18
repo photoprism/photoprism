@@ -5,7 +5,8 @@ type FaceSearch struct {
 	Query   string `form:"q"`
 	ID      string `form:"id"`
 	Subject string `form:"subject"`
-	Unknown bool   `form:"unknown"`
+	Unknown string `form:"unknown"`
+	Hidden  string `form:"hidden"`
 	Markers bool   `form:"markers"`
 	Count   int    `form:"count" binding:"required" serialize:"-"`
 	Offset  int    `form:"offset" serialize:"-"`

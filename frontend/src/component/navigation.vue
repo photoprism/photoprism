@@ -209,6 +209,20 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <v-list-tile v-show="$config.feature('people')" :to="{ name: 'people' }" class="nav-people" @click.stop="">
+          <v-list-tile-action :title="$gettext('People')">
+            <v-icon>emoji_people</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="People">People</translate>
+              <span v-show="config.count.people > 0"
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <v-list-tile :to="{ name: 'calendar' }" class="nav-calendar" @click.stop="">
           <v-list-tile-action :title="$gettext('Calendar')">
             <v-icon>date_range</v-icon>
@@ -219,20 +233,6 @@
               <translate key="Calendar">Calendar</translate>
               <span v-show="config.count.months > 0"
                     :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.months }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile v-show="$config.feature('people')" :to="{ name: 'people' }" class="nav-people" @click.stop="">
-          <v-list-tile-action :title="$gettext('People')">
-            <v-icon>person</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="People">People</translate>
-              <span v-show="config.count.people > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>

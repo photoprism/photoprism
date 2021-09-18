@@ -51,9 +51,18 @@ func Faces(f form.FaceSearch) (results FaceResults, err error) {
 		return results, nil
 	}
 
-	// Find unknown faces only?
-	if f.Unknown {
+	// Exclude unknown faces?
+	if txt.Yes(f.Unknown) {
 		s = s.Where("subj_uid = '' OR subj_uid IS NULL")
+	} else if txt.No(f.Unknown) {
+		s = s.Where("subj_uid <> '' AND subj_uid IS NOT NULL")
+	}
+
+	// Exclude hidden faces?
+	if f.Hidden == "" || txt.No(f.Hidden) {
+		s = s.Where("face_hidden = 0 OR face_hidden IS NULL")
+	} else if txt.Yes(f.Hidden) {
+		s = s.Where("face_hidden = 1")
 	}
 
 	// Perform query.

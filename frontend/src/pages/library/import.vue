@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-photo-import" lazy-validation dense @submit.prevent="submit">
       <v-container fluid>
         <p class="subheading">
-          <span v-if="fileName"><translate :translate-params="{name: fileName}">Importing %{name}…</translate></span>
+          <span v-if="fileName" class="break-word"><translate :translate-params="{name: fileName}">Importing %{name}…</translate></span>
           <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>
           <span v-else><translate>Press button to start importing…</translate></span>

@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-photo-index" lazy-validation dense @submit.prevent="submit">
       <v-container fluid>
         <p class="subheading">
-          <span v-if="fileName">{{ action }} {{ fileName }}…</span>
+          <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>
           <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>

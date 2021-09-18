@@ -9,9 +9,11 @@ import (
 func TestNewFace(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var m = struct {
-			SubjUID string `json:"SubjUID"`
+			FaceHidden bool   `json:"Hidden"`
+			SubjUID    string `json:"SubjUID"`
 		}{
-			SubjUID: "jqzmd5q3b8o2yxu7",
+			FaceHidden: true,
+			SubjUID:    "jqzmd5q3b8o2yxu7",
 		}
 
 		f, err := NewFace(m)
@@ -20,6 +22,7 @@ func TestNewFace(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.True(t, f.FaceHidden)
 		assert.Equal(t, "jqzmd5q3b8o2yxu7", f.SubjUID)
 	})
 }

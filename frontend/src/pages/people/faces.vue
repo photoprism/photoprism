@@ -1,26 +1,26 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-subjects" style="user-select: none"
+  <div v-infinite-scroll="loadMore" class="p-page p-page-faces" style="user-select: none"
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-        <v-text-field id="search"
+    <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
+      <v-toolbar dense flat color="secondary-light pa-0">
+        <!-- v-text-field id="search"
                       v-model="filter.q"
-                      class="pt-3 pr-3 input-search"
-                      single-line
+                      class="input-search background-inherit elevation-0"
+                      solo hide-details
                       :label="$gettext('Search')"
                       prepend-inner-icon="search"
                       browser-autocomplete="off"
-                      clearable
+                      clearable overflow
                       color="secondary-dark"
                       @click:clear="clearQuery"
                       @keyup.enter.native="updateQuery"
-        ></v-text-field>
-
+        ></v-text-field -->
         <v-spacer></v-spacer>
+        <v-divider vertical></v-divider>
 
-        <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
+        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
       </v-toolbar>
@@ -30,9 +30,6 @@
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-subject-clipboard :refresh="refresh" :selection="selection"
-                         :clear-selection="clearSelection"></p-subject-clipboard>
-
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
@@ -48,97 +45,87 @@
             </div>
           </v-card-title>
         </v-card>
-        <v-layout row wrap class="search-results subject-results cards-view" :class="{'select-results': selection.length > 0}">
+        <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
               :key="index"
-              xs6 sm4 md3 lg2 xxl1 d-flex
+              xs12 sm6 md4 lg3 xl2 xxl1 d-flex
           >
-            <v-card tile
-                    :data-uid="model.UID"
-                    style="user-select: none"
-                    class="result accent lighten-3"
-                    :class="model.classes(selection.includes(model.UID))"
-                    :to="model.route(view)"
-                    @contextmenu.stop="onContextMenu($event, index)"
-            >
+            <v-card v-if="model.Marker"
+                    :data-id="model.Marker.UID"
+                    tile style="user-select: none;"
+                    :class="model.classes()"
+                    class="result accent lighten-3">
               <div class="card-background accent lighten-3"></div>
-              <v-img
-                  :src="model.thumbnailUrl('tile_320')"
-                  :alt="model.Name"
-                  :transition="false"
-                  aspect-ratio="1"
-                  style="user-select: none"
-                  class="accent lighten-2 clickable"
-                  @touchstart="input.touchStart($event, index)"
-                  @touchend.prevent="onClick($event, index)"
-                  @mousedown="input.mouseDown($event, index)"
-                  @click.stop.prevent="onClick($event, index)"
-              >
-                <v-btn :ripple="false"
-                       icon flat absolute
-                       class="input-select"
-                       @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="onSelect($event, index)"
-                       @touchmove.stop.prevent
-                       @click.stop.prevent="onSelect($event, index)">
-                  <v-icon color="white" class="select-on">check_circle</v-icon>
-                  <v-icon color="white" class="select-off">radio_button_off</v-icon>
-                </v-btn>
-
-                <v-btn :ripple="false"
-                       icon flat absolute
-                       class="input-favorite"
-                       @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="toggleLike($event, index)"
-                       @touchmove.stop.prevent
-                       @click.stop.prevent="toggleLike($event, index)">
-                  <v-icon color="#FFD600" class="select-on">star</v-icon>
-                  <v-icon color="white" class="select-off">star_border</v-icon>
+              <v-img :src="model.Marker.thumbnailUrl('tile_320')"
+                     :transition="false"
+                     aspect-ratio="1"
+                     class="accent lighten-2">
+                <v-btn v-if="!model.Marker.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
+                       icon flat small absolute :title="$gettext('Hide')"
+                       @click.stop.prevent="onHide(model)">
+                  <v-icon color="white" class="action-hide">clear</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none;" @click.stop.prevent="">
-                <v-edit-dialog
-                    :return-value.sync="model.Name"
-                    lazy
-                    class="inline-edit"
-                    @save="onSave(model)"
-                >
-                  <span v-if="model.Name" class="body-2 ma-0">
-                      {{ model.Name }}
-                  </span>
-                  <span v-else>
-                      <v-icon>edit</v-icon>
-                  </span>
-                  <template #input>
+              <v-card-actions class="card-details pa-0">
+                <v-layout v-if="model.Hidden" row wrap align-center>
+                  <v-flex xs12 class="text-xs-center pa-0">
+                    <v-btn color="transparent" :disabled="busy"
+                           large depressed block :round="false"
+                           class="action-undo text-xs-center"
+                           :title="$gettext('Undo')" @click.stop="onShow(model)">
+                      <v-icon dark>undo</v-icon>
+                    </v-btn>
+                  </v-flex>
+                </v-layout>
+                <v-layout v-else-if="model.Marker.SubjUID" row wrap align-center>
+                  <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
-                        v-model="model.Name"
-                        :rules="[titleRule]"
-                        :label="$gettext('Name')"
-                        color="secondary-dark"
+                        v-model="model.Marker.Name"
+                        :rules="[textRule]"
+                        :disabled="busy"
+                        browser-autocomplete="off"
+                        class="input-name pa-0 ma-0"
+                        hide-details
                         single-line
-                        autofocus
+                        solo-inverted
+                        clearable
+                        clear-icon="eject"
+                        @click:clear="onClearSubject(model.Marker)"
+                        @change="onRename(model.Marker)"
+                        @keyup.enter.native="onRename(model.Marker)"
                     ></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </v-card-title>
-
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none;"
-                           @click.stop.prevent="">
-                <div v-if="model.Bio" class="caption mb-2" :title="$gettext('Bio')">
-                  {{ model.Bio | truncate(100) }}
-                </div>
-
-                <div class="caption mb-2">
-                  <button v-if="model.FileCount === 1">
-                    <translate>Contains one entry.</translate>
-                  </button>
-                  <button v-else-if="model.FileCount > 0">
-                    <translate :translate-params="{n: model.FileCount}">Contains %{n} entries.</translate>
-                  </button>
-                </div>
-              </v-card-text>
+                  </v-flex>
+                </v-layout>
+                <v-layout v-else row wrap align-center>
+                  <v-flex xs12 class="text-xs-left pa-0">
+                    <v-combobox
+                        v-model="model.Marker.Name"
+                        style="z-index: 250"
+                        :items="$config.values.people"
+                        item-value="Name"
+                        item-text="Name"
+                        :disabled="busy"
+                        :return-object="false"
+                        :menu-props="menuProps"
+                        :allow-overflow="false"
+                        :hint="$gettext('Name')"
+                        hide-details
+                        single-line
+                        solo-inverted
+                        open-on-clear
+                        append-icon=""
+                        prepend-inner-icon="person_add"
+                        browser-autocomplete="off"
+                        class="input-name pa-0 ma-0"
+                        @change="onRename(model.Marker)"
+                        @keyup.enter.native="onRename(model.Marker)"
+                    >
+                    </v-combobox>
+                  </v-flex>
+                </v-layout>
+              </v-card-actions>
             </v-card>
           </v-flex>
         </v-layout>
@@ -148,7 +135,7 @@
 </template>
 
 <script>
-import Subject from "model/subject";
+import Face from "model/face";
 import Event from "pubsub-js";
 import RestModel from "model/rest";
 import {MaxItems} from "common/clipboard";
@@ -156,7 +143,7 @@ import Notify from "common/notify";
 import {ClickLong, ClickShort, Input, InputInvalid} from "common/input";
 
 export default {
-  name: 'PPageSubjects',
+  name: 'PPageFaces',
   props: {
     staticFilter: Object
   },
@@ -178,7 +165,8 @@ export default {
       results: [],
       scrollDisabled: true,
       loading: true,
-      batchSize: Subject.batchSize(),
+      busy: false,
+      batchSize: Face.batchSize(),
       offset: 0,
       page: 0,
       selection: [],
@@ -189,6 +177,14 @@ export default {
       titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      menuProps:{"closeOnClick":false, "closeOnContentClick":true, "openOnClick":false, "maxHeight":300},
+      textRule: (v) => {
+        if (!v || !v.length) {
+          return this.$gettext("Name");
+        }
+
+        return v.length <= this.$config.get('clip') || this.$gettext("Text too long");
+      },
     };
   },
   watch: {
@@ -206,7 +202,7 @@ export default {
   created() {
     this.search();
 
-    this.subscriptions.push(Event.subscribe("subjects", (ev, data) => this.onUpdate(ev, data)));
+    // this.subscriptions.push(Event.subscribe("subjects", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
@@ -218,7 +214,7 @@ export default {
   },
   methods: {
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("subjects_offset"));
+      const offset = parseInt(window.localStorage.getItem("faces_offset"));
 
       if(this.offset > 0 || !offset) {
         return this.batchSize;
@@ -231,7 +227,7 @@ export default {
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("subjects_offset", offset);
+      window.localStorage.setItem("faces_offset", offset);
     },
     toggleLike(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -390,7 +386,7 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      Subject.search(params).then(resp => {
+      Face.search(params).then(resp => {
         this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
         this.scrollDisabled = (resp.count < resp.limit);
@@ -398,7 +394,7 @@ export default {
         if (this.scrollDisabled) {
           this.setOffset(resp.offset);
           if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), {n: this.results.length}));
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} faces loaded"), {n: this.results.length}));
           }
         } else {
           this.setOffset(resp.offset + resp.limit);
@@ -479,16 +475,16 @@ export default {
 
       const params = this.searchParams();
 
-      Subject.search(params).then(resp => {
+      Face.search(params).then(resp => {
         this.offset = resp.limit;
         this.results = resp.models;
 
         this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} faces found"), {n: this.results.length}));
         } else {
-          this.$notify.info(this.$gettext('More than 20 people found'));
+          this.$notify.info(this.$gettext('More than 20 faces found'));
 
           this.$nextTick(() => {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
@@ -501,6 +497,22 @@ export default {
         this.loading = false;
         this.listen = true;
       });
+    },
+    onShow(face) {
+      this.busy = true;
+      face.show().finally(() => this.busy = false);
+    },
+    onHide(face) {
+      this.busy = true;
+      face.hide().finally(() => this.busy = false);
+    },
+    onClearSubject(marker) {
+      this.busy = true;
+      marker.clearSubject(marker).finally(() => this.busy = false);
+    },
+    onRename(marker) {
+      this.busy = true;
+      marker.rename().finally(() => this.busy = false);
     },
     onUpdate(ev, data) {
       if (!this.listen) return;

@@ -22,6 +22,7 @@ var faceMutex = sync.Mutex{}
 type Face struct {
 	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
+	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
 	SubjUID         string          `gorm:"type:VARBINARY(42);index;" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
@@ -273,6 +274,16 @@ func (m *Face) RefreshPhotos() error {
 	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
 		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.face_id = ? GROUP BY f.photo_id)`,
 		gorm.Expr(Marker{}.TableName()), m.ID).Error
+}
+
+// Hide hides the face by default.
+func (m *Face) Hide() (err error) {
+	return m.Update("FaceHidden", true)
+}
+
+// Show shows the face by default.
+func (m *Face) Show() (err error) {
+	return m.Update("FaceHidden", false)
 }
 
 // Save updates the existing or inserts a new face.

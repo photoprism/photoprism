@@ -41,8 +41,8 @@
                 <v-flex xs12 class="text-xs-center pa-0">
                   <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
-                         class="action-approve text-xs-center"
-                         :title="$gettext('Approve')" @click.stop="onApprove(marker)">
+                         class="action-undo text-xs-center"
+                         :title="$gettext('Undo')" @click.stop="onApprove(marker)">
                     <v-icon dark>undo</v-icon>
                   </v-btn>
                 </v-flex>

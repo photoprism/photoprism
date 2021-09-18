@@ -231,3 +231,13 @@ func TestFindFace(t *testing.T) {
 		assert.Nil(t, FindFace(""))
 	})
 }
+
+func TestFace_HideAndShow(t *testing.T) {
+	f := FaceFixtures.Get("joe-biden")
+
+	if err := f.Hide(); err != nil {
+		t.Fatal(err)
+	} else if err = f.Show(); err != nil {
+		t.Fatal(err)
+	}
+}

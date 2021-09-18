@@ -101,12 +101,23 @@ func UpdateFace(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := m.SetSubjectUID(f.SubjUID); err != nil {
+		// Change visibility?
+		if !f.FaceHidden && f.FaceHidden == m.FaceHidden {
+			// Do nothing.
+		} else if err := m.Update("FaceHidden", f.FaceHidden); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
-		event.SuccessMsg(i18n.MsgPersonSaved)
+		// Change subject?
+		if f.SubjUID == "" {
+			// Do nothing.
+		} else if err := m.SetSubjectUID(f.SubjUID); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			return
+		}
+
+		event.SuccessMsg(i18n.MsgChangesSaved)
 
 		c.JSON(http.StatusOK, m)
 	})

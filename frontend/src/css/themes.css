@@ -300,3 +300,10 @@ body.dark-theme #photoprism .v-tabs .v-badge__badge {
     color: #cccccc;
     background: transparent;
 }
+
+/* Exceptions */
+
+#photoprism .theme--light.v-text-field--solo.background-inherit>.v-input__control>.v-input__slot {
+    background: inherit;
+    box-shadow: none;
+}

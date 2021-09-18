@@ -189,6 +189,16 @@ main {
     hyphens: auto;
 }
 
+#photoprism .break-word {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
 #photoprism .v-tabs .v-badge__badge {
     right: -22px;
     font-size: 9px;

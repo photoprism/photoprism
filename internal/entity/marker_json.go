@@ -24,8 +24,8 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Type      string
 		Src       string
 		Name      string
-		Invalid   bool
 		Review    bool
+		Invalid   bool
 		FaceID    string
 		SubjUID   string
 		SubjSrc   string
@@ -45,8 +45,8 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Type:      m.MarkerType,
 		Src:       m.MarkerSrc,
 		Name:      name,
-		Invalid:   m.MarkerInvalid,
 		Review:    m.MarkerReview,
+		Invalid:   m.MarkerInvalid,
 		FaceID:    m.FaceID,
 		SubjUID:   m.SubjUID,
 		SubjSrc:   m.SubjSrc,

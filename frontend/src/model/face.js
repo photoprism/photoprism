@@ -28,12 +28,25 @@ https://docs.photoprism.org/developer-guide/
 
 */
 
+import Marker from "model/marker";
 import RestModel from "model/rest";
 import { DateTime } from "luxon";
 import { config } from "../session";
 import { $gettext } from "common/vm";
 
 export class Face extends RestModel {
+  constructor(values) {
+    if (values && values.Marker) {
+      values.Marker = new Marker(values.Marker);
+
+      console.log("MARKER", values.Marker);
+    } else {
+      console.log("NO MARKER", values);
+    }
+
+    super(values);
+  }
+
   getDefaults() {
     return {
       ID: "",
@@ -44,6 +57,7 @@ export class Face extends RestModel {
       Collisions: 0,
       CollisionRadius: 0.0,
       Marker: null,
+      Hidden: false,
       MatchedAt: "",
       CreatedAt: "",
       UpdatedAt: "",
@@ -57,6 +71,7 @@ export class Face extends RestModel {
   classes(selected) {
     let classes = ["is-face", "uid-" + this.UID];
 
+    if (this.Hidden) classes.push("is-hidden");
     if (selected) classes.push("is-selected");
 
     return classes;
@@ -90,6 +105,16 @@ export class Face extends RestModel {
 
   getDateString() {
     return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
+  }
+
+  show() {
+    this.Hidden = false;
+    return this.update();
+  }
+
+  hide() {
+    this.Hidden = true;
+    return this.update();
   }
 
   static batchSize() {

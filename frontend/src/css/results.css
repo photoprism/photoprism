@@ -245,6 +245,8 @@ body.chrome #photoprism .search-results .result {
     display: none;
 }
 
+#photoprism .cards-view .input-hide,
+#photoprism .mosaic-view .input-hide,
 #photoprism .cards-view .input-reject,
 #photoprism .mosaic-view .input-reject {
     opacity: 0.75;
@@ -367,6 +369,7 @@ body.chrome #photoprism .search-results .result {
     text-align: center;
 }
 
+#photoprism .face-results .is-face.is-hidden,
 #photoprism .face-results .is-marker.is-invalid {
     opacity: 0.5;
 }

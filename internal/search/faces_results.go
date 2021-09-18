@@ -10,6 +10,7 @@ import (
 type Face struct {
 	ID              string         `json:"ID"`
 	FaceSrc         string         `json:"Src"`
+	FaceHidden      bool           `json:"Hidden"`
 	SubjUID         string         `json:"SubjUID"`
 	Samples         int            `json:"Samples"`
 	SampleRadius    float64        `json:"SampleRadius"`

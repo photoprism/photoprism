@@ -126,6 +126,7 @@ func (m PhotoResults) Merged() (PhotoResults, int, error) {
 		}
 
 		file.ID = res.FileID
+		res.CompositeID = fmt.Sprintf("%d-%d", res.ID, res.FileID)
 
 		if lastId == res.ID && i > 0 {
 			merged[i-1].Files = append(merged[i-1].Files, file)
@@ -133,7 +134,6 @@ func (m PhotoResults) Merged() (PhotoResults, int, error) {
 			continue
 		}
 
-		res.CompositeID = fmt.Sprintf("%d-%d", res.ID, res.FileID)
 		res.Files = append(res.Files, file)
 
 		merged = append(merged, res)

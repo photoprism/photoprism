@@ -248,8 +248,8 @@
                   class="ma-0 pa-0 input-people"
                   color="secondary-dark"
                   :label="$gettext('People')"
-                  :hint="$gettext('Detect faces and search for people in your pictures.')"
-                  prepend-icon="person"
+                  :hint="$gettext('Automatically detects faces so that you can search your pictures for people.')"
+                  prepend-icon="emoji_people"
                   persistent-hint
                   @change="onChange"
               >

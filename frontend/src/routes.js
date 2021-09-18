@@ -35,7 +35,7 @@ import Places from "pages/places.vue";
 import Files from "pages/library/files.vue";
 import Errors from "pages/library/errors.vue";
 import Labels from "pages/labels.vue";
-import Subjects from "pages/subjects.vue";
+import People from "pages/people.vue";
 import Library from "pages/library.vue";
 import Settings from "pages/settings.vue";
 import Login from "pages/login.vue";
@@ -261,9 +261,16 @@ export default [
   {
     name: "people",
     path: "/people",
-    component: Subjects,
-    meta: { title: $gettext("People"), auth: true },
-    props: { staticFilter: { files: 1, type: "person" } },
+    component: People,
+    meta: { title: $gettext("People"), auth: true, background: "application-light" },
+    props: { tab: "people-subjects" },
+  },
+  {
+    name: "people_faces",
+    path: "/people/new",
+    component: People,
+    meta: { title: $gettext("People"), auth: true, background: "application-light" },
+    props: { tab: "people-faces" },
   },
   {
     name: "library",
