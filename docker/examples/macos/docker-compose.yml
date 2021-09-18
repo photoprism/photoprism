@@ -66,6 +66,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
+      HOME: "/photoprism"
     volumes:
       # Your photo and video files ([local path]:[container path]):
       - "~/Pictures:/photoprism/originals"
