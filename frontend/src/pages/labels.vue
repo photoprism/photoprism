@@ -4,21 +4,18 @@
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field id="search"
                       v-model="filter.q"
-                      class="pt-3 pr-3 input-search"
-                      single-line
+                      class="input-search  background-inherit elevation-0"
+                      solo hide-details clearable overflow
                       :label="$gettext('Search')"
                       prepend-inner-icon="search"
                       browser-autocomplete="off"
-                      clearable
                       color="secondary-dark"
                       @click:clear="clearQuery"
                       @keyup.enter.native="updateQuery"
         ></v-text-field>
-
-        <v-spacer></v-spacer>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
@@ -122,10 +119,10 @@
                     <v-text-field
                         v-model="label.Name"
                         :rules="[titleRule]"
-                        :label="$gettext('Label Name')"
+                        :label="$gettext('Name')"
                         color="secondary-dark"
-                        single-line
-                        autofocus
+                        class="input-rename background-inherit elevation-0"
+                        single-line autofocus solo hide-details
                     ></v-text-field>
                   </template>
                 </v-edit-dialog>

@@ -3,3 +3,7 @@
     cursor: text;
     color: inherit;
 }
+
+#photoprism .v-small-dialog__content {
+    padding: 0;
+}

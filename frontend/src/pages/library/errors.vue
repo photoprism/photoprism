@@ -1,20 +1,17 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
        :infinite-scroll-distance="1200" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field v-model="filter.q"
-                    class="pt-3 pr-3 input-search"
+                    class="input-search background-inherit elevation-0"
                     browser-autocomplete="off"
-                    single-line
+                    solo hide-details clearable overflow
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
-                    clearable
                     color="secondary-dark"
                     @click:clear="clearQuery"
                     @keyup.enter.native="updateQuery"
       ></v-text-field>
-
-      <v-spacer></v-spacer>
 
       <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="reload">
         <v-icon>refresh</v-icon>

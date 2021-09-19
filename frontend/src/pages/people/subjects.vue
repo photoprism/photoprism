@@ -4,7 +4,7 @@
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar dense flat color="secondary-light pa-0">
+      <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
         <v-text-field id="search"
                       v-model="filter.q"
                       class="input-search background-inherit elevation-0"
@@ -17,6 +17,7 @@
                       @click:clear="clearQuery"
                       @keyup.enter.native="updateQuery"
         ></v-text-field>
+
         <v-divider vertical></v-divider>
 
         <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
@@ -116,8 +117,8 @@
                         :rules="[titleRule]"
                         :label="$gettext('Name')"
                         color="secondary-dark"
-                        single-line
-                        autofocus
+                        class="input-rename background-inherit elevation-0"
+                        single-line autofocus solo hide-details
                     ></v-text-field>
                   </template>
                 </v-edit-dialog>

@@ -63,3 +63,26 @@
 #photoprism .v-tabs .v-toolbar__content {
     padding: 0 16px 0 0;
 }
+
+#photoprism .v-toolbar.page-toolbar {
+    box-shadow: none;
+}
+
+#photoprism .v-tabs .v-toolbar.page-toolbar .v-toolbar__content,
+#photoprism .v-toolbar.page-toolbar .v-toolbar__content {
+    padding: 0 16px 0 16px;
+}
+
+#photoprism .v-toolbar.page-toolbar .v-text-field .v-input__prepend-outer {
+    margin-right: 0;
+}
+
+#photoprism .v-toolbar.page-toolbar .v-text-field .v-input__slot {
+    padding-left: 0;
+}
+
+#photoprism .v-text-field--single-line .v-select__selections {
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 130px;
+}
