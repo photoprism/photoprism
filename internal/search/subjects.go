@@ -55,9 +55,12 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 		return results, nil
 	}
 
+	// Clip to reasonable size and normalize operators.
+	f.Query = txt.NormalizeQuery(f.Query)
+
 	if f.Query != "" {
-		for _, where := range LikeAnyWord("subj_name", f.Query) {
-			s = s.Where("(?)", gorm.Expr(where))
+		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, f.Query) {
+			s = s.Where("?", gorm.Expr(where))
 		}
 	}
 
