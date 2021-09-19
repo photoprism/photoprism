@@ -132,7 +132,7 @@ export class Subject extends RestModel {
   }
 
   static batchSize() {
-    return 60;
+    return 500;
   }
 
   static getCollectionResource() {

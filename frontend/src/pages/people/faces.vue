@@ -5,18 +5,6 @@
 
     <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar dense flat color="secondary-light pa-0">
-        <!-- v-text-field id="search"
-                      v-model="filter.q"
-                      class="input-search background-inherit elevation-0"
-                      solo hide-details
-                      :label="$gettext('Search')"
-                      prepend-inner-icon="search"
-                      browser-autocomplete="off"
-                      clearable overflow
-                      color="secondary-dark"
-                      @click:clear="clearQuery"
-                      @keyup.enter.native="updateQuery"
-        ></v-text-field -->
         <v-spacer></v-spacer>
         <v-divider vertical></v-divider>
 
