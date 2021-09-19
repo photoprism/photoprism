@@ -188,7 +188,7 @@
                   class="ma-0 pa-0 input-people"
                   color="secondary-dark"
                   :label="$gettext('People')"
-                  :hint="$gettext('Recognize faces so that specific people can be found and albums created.')"
+                  :hint="$gettext('Recognizes faces so that specific people can be found.')"
                   prepend-icon="person"
                   persistent-hint
                   @change="onChange"
@@ -203,7 +203,7 @@
                   class="ma-0 pa-0 input-moments"
                   color="secondary-dark"
                   :label="$gettext('Moments')"
-                  :hint="$gettext('Let PhotoPrism automatically create albums from past events.')"
+                  :hint="$gettext('Automatically creates albums of special moments, trips, and places.')"
                   prepend-icon="star"
                   persistent-hint
                   @change="onChange"
