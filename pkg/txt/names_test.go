@@ -105,3 +105,42 @@ func TestNameKeywords(t *testing.T) {
 		assert.Equal(t, []string{"william", "henry", "gates", "iii", "windows", "guru"}, result)
 	})
 }
+
+func TestNormalizeName(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", NormalizeName(""))
+	})
+	t.Run("BillGates", func(t *testing.T) {
+		assert.Equal(t, "William Henry Gates III", NormalizeName("William Henry Gates III"))
+	})
+	t.Run("Quotes", func(t *testing.T) {
+		assert.Equal(t, "William HenRy Gates'", NormalizeName("william \"HenRy\" gates' "))
+	})
+	t.Run("Slash", func(t *testing.T) {
+		assert.Equal(t, "William McCorn Gates'", NormalizeName("william\\ \"McCorn\" / gates' "))
+	})
+	t.Run("SpecialCharacters", func(t *testing.T) {
+		assert.Equal(t,
+			"'', '', '', '', '', '', '', '', '', '', '', '', Foo '', '', '', '', '', '', '', McBar '', ''",
+			NormalizeName("'\"', '`', '~', '\\\\', '/', '*', '%', '&', '|', '+', '=', '$', Foo '@', '!', '?', ':', ';', '<', '>', McBar '{', '}'"),
+		)
+	})
+	t.Run("Chinese", func(t *testing.T) {
+		assert.Equal(t, "陈 赵", NormalizeName(" 陈  赵"))
+	})
+}
+
+func TestNameSlug(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", NameSlug(""))
+	})
+	t.Run("BillGates", func(t *testing.T) {
+		assert.Equal(t, "william-henry-gates-iii", NameSlug("William  Henry Gates III"))
+	})
+	t.Run("Quotes", func(t *testing.T) {
+		assert.Equal(t, "william-henry-gates", NameSlug("william \"HenRy\" gates' "))
+	})
+	t.Run("Chinese", func(t *testing.T) {
+		assert.Equal(t, "chen-zhao", NameSlug(" 陈  赵"))
+	})
+}

@@ -27,7 +27,7 @@ func SearchPhotosGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.GeoSearch
+		var f form.PhotoSearchGeo
 
 		err := c.MustBindWith(&f, binding.Form)
 

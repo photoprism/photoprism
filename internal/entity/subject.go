@@ -202,15 +202,17 @@ func FindSubject(s string) *Subject {
 }
 
 // FindSubjectByName find an existing subject by name.
-func FindSubjectByName(s string) *Subject {
-	if s == "" {
+func FindSubjectByName(name string) *Subject {
+	name = txt.NormalizeName(name)
+
+	if name == "" {
 		return nil
 	}
 
 	result := Subject{}
 
 	// Search database.
-	db := UnscopedDb().Where("subj_name LIKE ?", s).First(&result)
+	db := UnscopedDb().Where("subj_name LIKE ?", name).First(&result)
 
 	if err := db.First(&result).Error; err != nil {
 		return nil
@@ -238,14 +240,14 @@ func (m *Subject) Person() *Person {
 
 // SetName changes the subject's name.
 func (m *Subject) SetName(name string) error {
-	newName := txt.Clip(name, txt.ClipDefault)
+	name = txt.NormalizeName(name)
 
-	if newName == "" {
+	if name == "" {
 		return fmt.Errorf("subject: name must not be empty")
 	}
 
-	m.SubjName = txt.Title(newName)
-	m.SubjSlug = slug.Make(txt.Clip(name, txt.ClipSlug))
+	m.SubjName = name
+	m.SubjSlug = txt.NameSlug(name)
 
 	return nil
 }

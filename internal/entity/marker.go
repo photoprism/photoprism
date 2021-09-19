@@ -127,7 +127,7 @@ func (m *Marker) SaveForm(f form.Marker) (changed bool, err error) {
 
 	if f.SubjSrc == SrcManual && strings.TrimSpace(f.MarkerName) != "" && f.MarkerName != m.MarkerName {
 		m.SubjSrc = SrcManual
-		m.MarkerName = txt.Title(txt.Clip(f.MarkerName, txt.ClipDefault))
+		m.MarkerName = txt.NormalizeName(f.MarkerName)
 
 		if err := m.SyncSubject(true); err != nil {
 			return changed, err

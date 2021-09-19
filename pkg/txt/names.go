@@ -3,6 +3,8 @@ package txt
 import (
 	"fmt"
 	"strings"
+
+	"github.com/gosimple/slug"
 )
 
 // UniqueNames removes exact duplicates from a list of strings without changing their order.
@@ -91,4 +93,39 @@ func NameKeywords(names, aliases string) (results []string) {
 	aliases = strings.ToLower(aliases)
 
 	return UniqueNames(append(Words(names), Words(aliases)...))
+}
+
+// NormalizeName sanitizes and capitalizes names.
+func NormalizeName(name string) string {
+	if name == "" {
+		return ""
+	}
+
+	// Remove double quotes and other special characters.
+	name = strings.Map(func(r rune) rune {
+		switch r {
+		case '"', '`', '~', '\\', '/', '*', '%', '&', '|', '+', '=', '$', '@', '!', '?', ':', ';', '<', '>', '{', '}':
+			return -1
+		}
+		return r
+	}, name)
+
+	// Shorten.
+	name = Clip(name, ClipDefault)
+
+	if name == "" {
+		return ""
+	}
+
+	// Capitalize.
+	return Title(name)
+}
+
+// NameSlug converts a name to a valid slug.
+func NameSlug(name string) string {
+	if name == "" {
+		return ""
+	}
+
+	return slug.Make(Clip(name, ClipSlug))
 }

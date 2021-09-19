@@ -16,7 +16,7 @@ import (
 )
 
 // PhotosGeo searches for photos based on Form values and returns GeoResults ([]GeoResult).
-func PhotosGeo(f form.GeoSearch) (results GeoResults, err error) {
+func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {

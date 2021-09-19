@@ -99,6 +99,12 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
+		if txt.NameSlug(f.SubjName) == "" {
+			// Return unchanged model data if (normalized) name is empty.
+			c.JSON(http.StatusOK, m)
+			return
+		}
+
 		if _, err := m.UpdateName(f.SubjName); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
 			return

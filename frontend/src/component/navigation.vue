@@ -181,6 +181,20 @@
           </v-list-tile-content>
         </v-list-tile>
 
+        <v-list-tile v-show="$config.feature('people')" :to="{ name: 'people' }" class="nav-people" @click.stop="">
+          <v-list-tile-action :title="$gettext('People')">
+            <v-icon>person</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="People">People</translate>
+              <span v-show="config.count.people > 0"
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people }}</span>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
         <v-list-tile to="/favorites" class="nav-favorites" @click.stop="">
           <v-list-tile-action :title="$gettext('Favorites')">
             <v-icon>favorite</v-icon>
@@ -205,20 +219,6 @@
               <translate key="Moments">Moments</translate>
               <span v-show="config.count.moments > 0"
                     :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile v-show="$config.feature('people')" :to="{ name: 'people' }" class="nav-people" @click.stop="">
-          <v-list-tile-action :title="$gettext('People')">
-            <v-icon>emoji_people</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="People">People</translate>
-              <span v-show="config.count.people > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>

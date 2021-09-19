@@ -46,6 +46,7 @@ export default {
     tab: String,
   },
   data() {
+    let tabName = this.tab;
     const config = this.$config.values;
     const isDemo = this.$config.get("demo");
     const isPublic = this.$config.get("public");
@@ -76,10 +77,14 @@ export default {
       },
     ];
 
+    if (config.count.people === 0) {
+      tabName = "people-faces";
+    }
+
     let active = 0;
 
-    if (typeof this.tab === 'string' && this.tab !== '') {
-      active = tabs.findIndex((t) => t.name === this.tab);
+    if (typeof tabName === 'string' && tabName !== '') {
+      active = tabs.findIndex((t) => t.name === tabName);
     }
 
     return {

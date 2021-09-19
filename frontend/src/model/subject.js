@@ -34,6 +34,8 @@ import { DateTime } from "luxon";
 import { config } from "../session";
 import { $gettext } from "common/vm";
 
+const SubjPerson = "person";
+
 export class Subject extends RestModel {
   getDefaults() {
     return {
@@ -61,6 +63,10 @@ export class Subject extends RestModel {
   }
 
   route(view) {
+    if (!this.Type || this.Type === SubjPerson) {
+      return { name: view, query: { q: `people:"${this.Name}"` } };
+    }
+
     return { name: view, query: { q: "subject:" + this.UID } };
   }
 

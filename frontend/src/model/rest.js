@@ -68,6 +68,15 @@ export class Rest extends Model {
   }
 
   update() {
+    // Get updated values.
+    const values = this.getValues(true);
+
+    // Return if no values were changed.
+    if (Object.keys(values).length === 0) {
+      return Promise.resolve(this);
+    }
+
+    // Send PUT request.
     return Api.put(this.getEntityResource(), this.getValues(true)).then((resp) =>
       Promise.resolve(this.setValues(resp.data))
     );

@@ -161,14 +161,14 @@ func (m *Label) AfterCreate(scope *gorm.Scope) error {
 
 // SetName changes the label name.
 func (m *Label) SetName(name string) {
-	newName := txt.Clip(name, txt.ClipDefault)
+	name = txt.NormalizeName(name)
 
-	if newName == "" {
+	if name == "" {
 		return
 	}
 
-	m.LabelName = txt.Title(newName)
-	m.CustomSlug = slug.Make(txt.Clip(name, txt.ClipSlug))
+	m.LabelName = name
+	m.CustomSlug = txt.NameSlug(name)
 }
 
 // UpdateClassify updates a label if necessary

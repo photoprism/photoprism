@@ -346,10 +346,6 @@ msgstr ""
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr ""
 
-#: src/pages/settings/general.vue:429
-msgid "Automatically detects faces so that you can search your pictures for people."
-msgstr ""
-
 #: src/pages/people/subjects.vue:339
 msgid "Bio"
 msgstr ""
@@ -374,7 +370,7 @@ msgstr ""
 msgid "Brown"
 msgstr ""
 
-#: src/pages/settings/general.vue:361
+#: src/pages/settings/general.vue:386
 msgid "Browse and edit image classification labels."
 msgstr ""
 
@@ -467,7 +463,7 @@ msgid "Change"
 msgstr ""
 
 #: src/pages/settings/general.vue:185
-msgid "Change photo titles, locations and other metadata."
+msgid "Change photo titles, locations, and other metadata."
 msgstr ""
 
 #: src/component/photo/clipboard.vue:146
@@ -930,7 +926,7 @@ msgid "Every two days"
 msgstr ""
 
 #: src/pages/settings/general.vue:273
-msgid "Exclude content marked as private from search results, shared albums, labels and places."
+msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr ""
 
 #: src/component/navigation.vue:248
@@ -958,7 +954,7 @@ msgstr ""
 msgid "F Number"
 msgstr ""
 
-#: src/model/face.js:129
+#: src/model/face.js:125
 msgid "Face"
 msgstr ""
 
@@ -991,8 +987,8 @@ msgstr ""
 msgid "Favorite"
 msgstr ""
 
-#: src/component/navigation.vue:176
-#: src/component/navigation.vue:698
+#: src/component/navigation.vue:189
+#: src/component/navigation.vue:743
 #: src/routes.js:180
 msgid "Favorites"
 msgstr ""
@@ -1269,7 +1265,7 @@ msgstr ""
 #: src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:216
-#: src/pages/settings/general.vue:360
+#: src/pages/settings/general.vue:385
 #: src/routes.js:259
 msgid "Labels"
 msgstr ""
@@ -1303,8 +1299,8 @@ msgstr ""
 msgid "Lens"
 msgstr ""
 
-#: src/pages/settings/general.vue:339
-msgid "Let PhotoPrism create albums from past events."
+#: src/pages/settings/general.vue:364
+msgid "Let PhotoPrism automatically create albums from past events."
 msgstr ""
 
 #: src/dialog/sponsor.vue:7
@@ -1316,7 +1312,7 @@ msgstr ""
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:1131
 #: src/pages/settings.vue:41
-#: src/pages/settings/general.vue:382
+#: src/pages/settings/general.vue:407
 #: src/routes.js:279
 #: src/routes.js:286
 #: src/routes.js:293
@@ -1397,7 +1393,7 @@ msgid "Logout"
 msgstr ""
 
 #: src/pages/library.vue:55
-#: src/pages/settings/general.vue:404
+#: src/pages/settings/general.vue:429
 msgid "Logs"
 msgstr ""
 
@@ -1444,9 +1440,9 @@ msgstr ""
 msgid "Missing"
 msgstr ""
 
-#: src/component/navigation.vue:189
-#: src/component/navigation.vue:741
-#: src/pages/settings/general.vue:338
+#: src/component/navigation.vue:202
+#: src/component/navigation.vue:786
+#: src/pages/settings/general.vue:363
 #: src/routes.js:121
 #: src/routes.js:128
 msgid "Moments"
@@ -1544,7 +1540,7 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: src/pages/people.vue:42
+#: src/pages/people.vue:43
 msgid "New"
 msgstr ""
 
@@ -1760,12 +1756,12 @@ msgstr ""
 msgid "pay for operating expenses and external services like satellite maps"
 msgstr ""
 
-#: src/component/navigation.vue:202
-#: src/component/navigation.vue:786
+#: src/component/navigation.vue:176
+#: src/component/navigation.vue:698
 #: src/dialog/photo/edit.vue:52
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:267
-#: src/pages/settings/general.vue:428
+#: src/pages/settings/general.vue:340
 #: src/routes.js:265
 #: src/routes.js:272
 msgid "People"
@@ -1962,7 +1958,11 @@ msgstr ""
 msgid "Recently edited"
 msgstr ""
 
-#: src/pages/people.vue:31
+#: src/pages/settings/general.vue:341
+msgid "Recognize faces so that specific people can be found and albums created."
+msgstr ""
+
+#: src/pages/people.vue:32
 msgid "Recognized"
 msgstr ""
 
@@ -2172,7 +2172,7 @@ msgstr ""
 msgid "Show less"
 msgstr ""
 
-#: src/pages/settings/general.vue:383
+#: src/pages/settings/general.vue:408
 msgid "Show Library in navigation menu."
 msgstr ""
 
@@ -2180,7 +2180,7 @@ msgstr ""
 msgid "Show more"
 msgstr ""
 
-#: src/pages/settings/general.vue:405
+#: src/pages/settings/general.vue:430
 msgid "Show server logs in Library."
 msgstr ""
 
@@ -2304,7 +2304,7 @@ msgid "Style"
 msgstr ""
 
 #: src/dialog/photo/details.vue:482
-#: src/model/subject.js:137
+#: src/model/subject.js:143
 msgid "Subject"
 msgstr ""
 

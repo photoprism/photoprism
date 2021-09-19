@@ -83,7 +83,7 @@
                   class="ma-0 pa-0 input-edit"
                   color="secondary-dark"
                   :label="$gettext('Edit')"
-                  :hint="$gettext('Change photo titles, locations and other metadata.')"
+                  :hint="$gettext('Change photo titles, locations, and other metadata.')"
                   prepend-icon="edit"
                   persistent-hint
                   @change="onChange"
@@ -143,7 +143,7 @@
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
                   :label="$gettext('Private')"
-                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
+                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels, and places.')"
                   prepend-icon="lock"
                   persistent-hint
                   @change="onChange"
@@ -181,6 +181,21 @@
               </v-checkbox>
             </v-flex>
 
+            <v-flex v-if="config.experimental" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.people"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-people"
+                  color="secondary-dark"
+                  :label="$gettext('People')"
+                  :hint="$gettext('Recognize faces so that specific people can be found and albums created.')"
+                  prepend-icon="person"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.moments"
@@ -188,7 +203,7 @@
                   class="ma-0 pa-0 input-moments"
                   color="secondary-dark"
                   :label="$gettext('Moments')"
-                  :hint="$gettext('Let PhotoPrism create albums from past events.')"
+                  :hint="$gettext('Let PhotoPrism automatically create albums from past events.')"
                   prepend-icon="star"
                   persistent-hint
                   @change="onChange"
@@ -235,21 +250,6 @@
                   :label="$gettext('Logs')"
                   :hint="$gettext('Show server logs in Library.')"
                   prepend-icon="notes"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex v-if="config.experimental" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.people"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-people"
-                  color="secondary-dark"
-                  :label="$gettext('People')"
-                  :hint="$gettext('Automatically detects faces so that you can search your pictures for people.')"
-                  prepend-icon="emoji_people"
                   persistent-hint
                   @change="onChange"
               >

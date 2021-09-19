@@ -2,8 +2,8 @@ package form
 
 import "time"
 
-// GeoSearch represents search form fields for "/api/v1/geo".
-type GeoSearch struct {
+// PhotoSearchGeo represents search form fields for "/api/v1/geo".
+type PhotoSearchGeo struct {
 	Query    string    `form:"q"`
 	Type     string    `form:"type"`
 	Path     string    `form:"path"`
@@ -42,17 +42,17 @@ type GeoSearch struct {
 }
 
 // GetQuery returns the query parameter as string.
-func (f *GeoSearch) GetQuery() string {
+func (f *PhotoSearchGeo) GetQuery() string {
 	return f.Query
 }
 
 // SetQuery sets the query parameter.
-func (f *GeoSearch) SetQuery(q string) {
+func (f *PhotoSearchGeo) SetQuery(q string) {
 	f.Query = q
 }
 
 // ParseQueryString parses the query parameter if possible.
-func (f *GeoSearch) ParseQueryString() error {
+func (f *PhotoSearchGeo) ParseQueryString() error {
 	err := ParseQueryString(f)
 
 	if f.Path == "" && f.Folder != "" {
@@ -67,15 +67,15 @@ func (f *GeoSearch) ParseQueryString() error {
 }
 
 // Serialize returns a string containing non-empty fields and values of a struct.
-func (f *GeoSearch) Serialize() string {
+func (f *PhotoSearchGeo) Serialize() string {
 	return Serialize(f, false)
 }
 
 // SerializeAll returns a string containing all non-empty fields and values of a struct.
-func (f *GeoSearch) SerializeAll() string {
+func (f *PhotoSearchGeo) SerializeAll() string {
 	return Serialize(f, true)
 }
 
-func NewGeoSearch(query string) GeoSearch {
-	return GeoSearch{Query: query}
+func NewGeoSearch(query string) PhotoSearchGeo {
+	return PhotoSearchGeo{Query: query}
 }
