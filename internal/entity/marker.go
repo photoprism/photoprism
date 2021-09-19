@@ -514,10 +514,14 @@ func (m *Marker) OverlapArea(marker Marker) (area float64) {
 }
 
 // FindMarker returns an existing row if exists.
-func FindMarker(uid string) *Marker {
+func FindMarker(markerUid string) *Marker {
+	if markerUid == "" {
+		return nil
+	}
+
 	var result Marker
 
-	if err := Db().Where("marker_uid = ?", uid).First(&result).Error; err != nil {
+	if err := Db().Where("marker_uid = ?", markerUid).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -526,11 +530,15 @@ func FindMarker(uid string) *Marker {
 
 // FindFaceMarker finds the best marker for a given face
 func FindFaceMarker(faceId string) *Marker {
+	if faceId == "" {
+		return nil
+	}
+
 	var result Marker
 
 	if err := Db().Where("face_id = ?", faceId).
 		Where("file_hash <> '' AND marker_invalid = 0").
-		Order("q DESC").First(&result).Error; err != nil {
+		Order("face_dist ASC, q DESC").First(&result).Error; err != nil {
 		log.Warnf("face: no marker for %s", txt.Quote(faceId))
 		return nil
 	}

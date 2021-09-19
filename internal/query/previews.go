@@ -172,10 +172,10 @@ func UpdateSubjectPreviews() (err error) {
 	err = Db().Table(entity.Subject{}.TableName()).
 		UpdateColumn("marker_uid", gorm.Expr("(SELECT m.marker_uid FROM "+
 			fmt.Sprintf(
-				"%s m WHERE m.subj_uid = %s.subj_uid AND m.subj_src = 'manual' ",
+				"%s m WHERE m.subj_uid = %s.subj_uid ",
 				entity.Marker{}.TableName(),
 				entity.Subject{}.TableName())+
-			` AND m.file_hash <> '' ORDER BY m.q DESC LIMIT 1) 
+			` AND m.file_hash <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1) 
 			WHERE marker_src = '' AND deleted_at IS NULL`)).
 		Error
 
