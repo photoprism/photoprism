@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/photoprism/photoprism/internal/httpclient"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/httpclient"
 
 	"github.com/stretchr/testify/assert"
 )

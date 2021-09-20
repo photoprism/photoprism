@@ -3,7 +3,7 @@ module caos-test-op
 go 1.17
 
 require (
-	github.com/caos/oidc v0.15.8
+	github.com/caos/oidc v0.15.10
 	github.com/gorilla/mux v1.8.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
@@ -20,7 +20,7 @@ require (
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
-	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 )

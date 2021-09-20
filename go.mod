@@ -2,7 +2,7 @@ module github.com/photoprism/photoprism
 
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
-	github.com/caos/oidc v0.15.8
+	github.com/caos/oidc v0.15.10
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.5.0
@@ -64,7 +64,6 @@ require (
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	golang.org/x/net v0.0.0-20210917221730-978cfadd31cf
 	golang.org/x/sys v0.0.0-20210915083310-ed5796bab164 // indirect
-	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
