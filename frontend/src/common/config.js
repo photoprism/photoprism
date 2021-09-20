@@ -32,6 +32,7 @@ import Event from "pubsub-js";
 import themes from "options/themes.json";
 import translations from "locales/translations.json";
 import Api from "./api";
+import { Languages } from "options/options";
 
 export default class Config {
   /**
@@ -309,6 +310,14 @@ export default class Config {
 
   settings() {
     return this.values.settings;
+  }
+
+  rtl() {
+    if (!this.values || !this.values.settings || !this.values.settings.ui.language) {
+      return false;
+    }
+
+    return Languages().some((lang) => lang.value === this.values.settings.ui.language && lang.rtl);
   }
 
   downloadToken() {

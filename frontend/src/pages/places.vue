@@ -272,15 +272,8 @@ export default {
       }).catch(() => this.loading = false);
     },
     renderMap() {
-      // In case of facing RTL language on the map, this plugin will be fetched (only by lazy!) and will set RTL properly support.
-      // See mapbox documentation here https://docs.mapbox.com/mapbox-gl-js/example/mapbox-gl-rtl-text/
-      mapboxgl.setRTLTextPlugin(
-        `${this.$config.staticUri}/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js`,
-        null,
-        true // Lazy load the plugin
-      );
-      
       this.map = new mapboxgl.Map(this.options);
+      this.map.setLanguage(this.$config.values.settings.ui.language.split("-")[0]);
 
       this.map.addControl(new mapboxgl.NavigationControl({showCompass: true}, 'top-right'));
       this.map.addControl(new mapboxgl.FullscreenControl({container: document.querySelector('body')}));
