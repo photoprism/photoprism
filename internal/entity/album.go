@@ -3,6 +3,7 @@ package entity
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -199,8 +200,8 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	}
 
 	f := form.PhotoSearch{
-		Year:   year,
-		Month:  month,
+		Year:   strconv.Itoa(year),
+		Month:  strconv.Itoa(month),
 		Public: true,
 	}
 

@@ -284,18 +284,18 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 	}
 
 	// Filter by year?
-	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.UnknownYear {
-		s = s.Where("photos.photo_year = ?", f.Year)
+	if f.Year != "" {
+		s = s.Where(AnyInt("photos.photo_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
 	}
 
 	// Filter by month?
-	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.UnknownMonth {
-		s = s.Where("photos.photo_month = ?", f.Month)
+	if f.Month != "" {
+		s = s.Where(AnyInt("photos.photo_month", f.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
 	}
 
 	// Filter by day?
-	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.UnknownDay {
-		s = s.Where("photos.photo_day = ?", f.Day)
+	if f.Day != "" {
+		s = s.Where(AnyInt("photos.photo_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
 	// Find or exclude people if detected.

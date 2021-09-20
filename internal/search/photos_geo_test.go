@@ -179,8 +179,8 @@ func TestGeo(t *testing.T) {
 			Album:    "test",
 			Camera:   123,
 			Lens:     123,
-			Year:     2010,
-			Month:    12,
+			Year:     "2010",
+			Month:    "12",
 			Color:    "red",
 			Country:  entity.UnknownID,
 			Type:     "jpg",
@@ -282,8 +282,8 @@ func TestGeo(t *testing.T) {
 	})
 	t.Run("day", func(t *testing.T) {
 		var f form.PhotoSearchGeo
-		f.Day = 18
-		f.Month = 4
+		f.Day = "18"
+		f.Month = "4"
 
 		photos, err := PhotosGeo(f)
 

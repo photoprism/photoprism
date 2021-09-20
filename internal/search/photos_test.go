@@ -1,6 +1,7 @@
 package search
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -597,8 +598,8 @@ func TestPhotos(t *testing.T) {
 		f.Count = 5000
 		f.Offset = 0
 		f.Lens = 1000000
-		f.Month = 7
-		f.Year = 2790
+		f.Month = strconv.Itoa(7)
+		f.Year = strconv.Itoa(2790)
 		f.Album = "at9lxuqxpogaaba8"
 
 		photos, _, err := Photos(f)
@@ -688,8 +689,8 @@ func TestPhotos(t *testing.T) {
 		var f form.PhotoSearch
 		f.Hidden = true
 		f.Scan = true
-		f.Year = 2010
-		f.Day = 1
+		f.Year = "2010"
+		f.Day = "1"
 		f.Photo = true
 		f.Name = "xxx"
 		f.Original = "xxyy"
@@ -708,8 +709,8 @@ func TestPhotos(t *testing.T) {
 		var f form.PhotoSearch
 		f.Hidden = true
 		f.Scan = true
-		f.Year = 2010
-		f.Day = 1
+		f.Year = strconv.Itoa(2010)
+		f.Day = strconv.Itoa(1)
 		f.Video = true
 		f.Name = "xxx"
 		f.Original = "xxyy"

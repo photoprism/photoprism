@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"runtime/debug"
+	"strconv"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -126,7 +127,7 @@ func (w *Moments) Start() (err error) {
 		for _, mom := range results {
 			f := form.PhotoSearch{
 				Country: mom.Country,
-				Year:    mom.Year,
+				Year:    strconv.Itoa(mom.Year),
 				Public:  true,
 			}
 
