@@ -49,7 +49,9 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 	options := []rp.Option{
 		rp.WithHTTPClient(httpClient),
 		rp.WithCookieHandler(cookieHandler),
-		rp.WithVerifierOpts(rp.WithIssuedAtOffset(5 * time.Second)),
+		rp.WithVerifierOpts(
+			rp.WithIssuedAtOffset(5 * time.Second),
+		),
 	}
 
 	discover, err := client.Discover(iss.String(), httpClient)
@@ -59,12 +61,11 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 	}
 	for _, v := range discover.CodeChallengeMethodsSupported {
 		if v == oidc.CodeChallengeMethodS256 {
-			//options = append(options, rp.WithPKCE(cookieHandler))
+			options = append(options, rp.WithPKCE(cookieHandler))
 		}
 	}
 
 	scopes := strings.Split("openid profile email", " ")
-	//scopes := strings.Split("openid profile email photoprism", " ")
 
 	provider, err := rp.NewRelyingPartyOIDC(iss.String(), clientId, clientSecret, u.String(), scopes, options...)
 	if err != nil {
@@ -122,6 +123,7 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	handle(ctx.Writer, ctx.Request)
 
 	log.Debugf("current request state: %v", ctx.Writer.Status())
+	//log.Debugf("RESPONSE BODY: %v", ctx.Wri)
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
 		return nil, errors.New("oidc: couldn't exchange auth code and thus not retrieve external user info")
 	}
