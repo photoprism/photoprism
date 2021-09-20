@@ -203,7 +203,7 @@ func (w *Moments) Start() (err error) {
 				} else {
 					w := txt.Words(f.Label)
 					w = append(w, mom.Label)
-					f.Label = strings.Join(txt.UniqueWords(w), query.Or)
+					f.Label = strings.Join(txt.UniqueWords(w), txt.Or)
 				}
 
 				if err := a.Update("AlbumFilter", f.Serialize()); err != nil {

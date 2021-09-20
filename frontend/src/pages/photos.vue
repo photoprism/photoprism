@@ -163,7 +163,7 @@ export default {
   },
   methods: {
     viewType() {
-      let queryParam = this.$route.query['view'];
+      let queryParam = this.$route.query["view"];
       let storedType = window.localStorage.getItem("photo_view");
 
       if (queryParam) {
@@ -178,7 +178,7 @@ export default {
       return 'cards';
     },
     sortOrder() {
-      let queryParam = this.$route.query['order'];
+      let queryParam = this.$route.query["order"];
       let storedType = window.localStorage.getItem("photo_order");
 
       if (queryParam) {
@@ -188,7 +188,7 @@ export default {
         return storedType;
       }
 
-      return 'newest';
+      return "newest";
     },
     openLocation(index) {
       const photo = this.results[index];

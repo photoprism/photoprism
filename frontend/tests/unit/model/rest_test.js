@@ -53,6 +53,7 @@ describe("model/abstract", () => {
     const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     assert.equal(album.Description, undefined);
+    album.Name = "Christmas 2020";
     await album.update();
     assert.equal(album.Description, "Test description");
   });
@@ -60,6 +61,7 @@ describe("model/abstract", () => {
   it("should save album", async () => {
     const values = { UID: "abc", Name: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);
+    album.Name = "Christmas 2020";
     assert.equal(album.Description, undefined);
     await album.save();
     assert.equal(album.Description, "Test description");

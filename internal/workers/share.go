@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
@@ -53,7 +54,7 @@ func (worker *Share) Start() (err error) {
 	}
 
 	// Find accounts for which sharing is enabled
-	accounts, err := query.AccountSearch(f)
+	accounts, err := search.Accounts(f)
 
 	// Upload newly shared files
 	for _, a := range accounts {

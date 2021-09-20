@@ -9,10 +9,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetLabels(t *testing.T) {
+func TestSearchLabels(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetLabels(router)
+		SearchLabels(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels?count=15")
 		count := gjson.Get(r.Body.String(), "#")
 		assert.LessOrEqual(t, int64(4), count.Int())
@@ -20,7 +20,7 @@ func TestGetLabels(t *testing.T) {
 	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetLabels(router)
+		SearchLabels(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels?xxx=15")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -66,7 +66,7 @@ func TestLikeLabel(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
-		GetLabels(router)
+		SearchLabels(router)
 		LikeLabel(router)
 
 		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=like-label")
@@ -106,7 +106,7 @@ func TestDislikeLabel(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
-		GetLabels(router)
+		SearchLabels(router)
 		DislikeLabel(router)
 
 		r2 := PerformRequest(app, "GET", "/api/v1/labels?count=3&q=landscape")

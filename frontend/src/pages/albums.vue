@@ -4,31 +4,31 @@
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field id="search"
                       v-model="filter.q"
-                      single-line
-                      class="input-search"
+                      solo hide-details clearable overflow single-line
+                      class="input-search background-inherit elevation-0"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"
-                      clearable
                       color="secondary-dark"
                       @keyup.enter.native="updateQuery"
                       @click:clear="clearQuery"
         ></v-text-field>
 
-        <v-select v-model="filter.category"
-                  single-line
+        <v-overflow-btn v-model="filter.category"
+                  solo hide-details single-line
                   :label="$gettext('Category')"
                   color="secondary-dark"
+                  background-color="secondary"
+                  prepend-icon="local_offer"
+                  append-icon=""
                   :items="categories"
-                  class="ml-3 hidden-xs-only input-category"
+                  class="hidden-xs-only input-category background-inherit elevation-0"
                   @change="updateQuery"
         >
-        </v-select>
-
-        <v-spacer></v-spacer>
+        </v-overflow-btn>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>

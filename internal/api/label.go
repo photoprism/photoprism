@@ -11,11 +11,14 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// SearchLabels finds and returns labels as JSON.
+//
 // GET /api/v1/labels
-func GetLabels(router *gin.RouterGroup) {
+func SearchLabels(router *gin.RouterGroup) {
 	router.GET("/labels", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionSearch)
 
@@ -33,7 +36,7 @@ func GetLabels(router *gin.RouterGroup) {
 			return
 		}
 
-		result, err := query.Labels(f)
+		result, err := search.Labels(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
@@ -49,6 +52,8 @@ func GetLabels(router *gin.RouterGroup) {
 	})
 }
 
+// UpdateLabel updates label properties.
+//
 // PUT /api/v1/labels/:uid
 func UpdateLabel(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid", func(c *gin.Context) {
@@ -85,6 +90,8 @@ func UpdateLabel(router *gin.RouterGroup) {
 	})
 }
 
+// LikeLabel flags a label as favorite.
+//
 // POST /api/v1/labels/:uid/like
 //
 // Parameters:
@@ -123,6 +130,8 @@ func LikeLabel(router *gin.RouterGroup) {
 	})
 }
 
+// DislikeLabel removes the favorite flag from a label.
+//
 // DELETE /api/v1/labels/:uid/like
 //
 // Parameters:

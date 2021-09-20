@@ -83,7 +83,7 @@
                   class="ma-0 pa-0 input-edit"
                   color="secondary-dark"
                   :label="$gettext('Edit')"
-                  :hint="$gettext('Change photo titles, locations and other metadata.')"
+                  :hint="$gettext('Change photo titles, locations, and other metadata.')"
                   prepend-icon="edit"
                   persistent-hint
                   @change="onChange"
@@ -101,7 +101,7 @@
                   :hint="$gettext('Permanently remove files to free up storage.')"
                   prepend-icon="delete"
                   persistent-hint
-                  @change="onChangeDelete"
+                  @change="onChange"
               >
               </v-checkbox>
             </v-flex>
@@ -143,7 +143,7 @@
                   class="ma-0 pa-0 input-private"
                   color="secondary-dark"
                   :label="$gettext('Private')"
-                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels and places.')"
+                  :hint="$gettext('Exclude content marked as private from search results, shared albums, labels, and places.')"
                   prepend-icon="lock"
                   persistent-hint
                   @change="onChange"
@@ -181,6 +181,21 @@
               </v-checkbox>
             </v-flex>
 
+            <v-flex v-if="config.experimental" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.features.people"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-people"
+                  color="secondary-dark"
+                  :label="$gettext('People')"
+                  :hint="$gettext('Recognizes faces so that specific people can be found.')"
+                  prepend-icon="person"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.features.moments"
@@ -188,7 +203,7 @@
                   class="ma-0 pa-0 input-moments"
                   color="secondary-dark"
                   :label="$gettext('Moments')"
-                  :hint="$gettext('Let PhotoPrism create albums from past events.')"
+                  :hint="$gettext('Automatically creates albums of special moments, trips, and places.')"
                   prepend-icon="star"
                   persistent-hint
                   @change="onChange"
@@ -235,21 +250,6 @@
                   :label="$gettext('Logs')"
                   :hint="$gettext('Show server logs in Library.')"
                   prepend-icon="notes"
-                  persistent-hint
-                  @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex v-if="config.experimental" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                  v-model="settings.features.people"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-people"
-                  color="secondary-dark"
-                  :label="$gettext('People')"
-                  :hint="$gettext('Detect faces and search for people in your pictures.')"
-                  prepend-icon="person"
                   persistent-hint
                   @change="onChange"
               >
@@ -380,19 +380,6 @@ export default {
       }
 
       this.currentTheme = newTheme;
-
-      this.onChange();
-    },
-    onChangeDelete(enabled) {
-      if(enabled && !this.$config.values.sponsor) {
-        this.dialog.sponsor = true;
-
-        this.$nextTick(() => {
-          this.settings.features.delete = false;
-        });
-
-        return false;
-      }
 
       this.onChange();
     },

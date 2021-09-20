@@ -22,41 +22,80 @@ func TestUniqueNames(t *testing.T) {
 }
 
 func TestJoinNames(t *testing.T) {
+	// Regular.
 	t.Run("NoName", func(t *testing.T) {
-		result := JoinNames([]string{})
+		result := JoinNames([]string{}, false)
 		assert.Equal(t, "", result)
 	})
 	t.Run("OneName", func(t *testing.T) {
-		result := JoinNames([]string{"Jens Mander"})
+		result := JoinNames([]string{"Jens Mander"}, false)
 		assert.Equal(t, "Jens Mander", result)
 	})
 	t.Run("TwoNames", func(t *testing.T) {
-		result := JoinNames([]string{"Jens Mander", "Name 2"})
+		result := JoinNames([]string{"Jens Mander", "Name 2"}, false)
 		assert.Equal(t, "Jens Mander & Name 2", result)
 	})
 	t.Run("ThreeNames", func(t *testing.T) {
-		result := JoinNames([]string{"Jens Mander", "Name 2", "Name 3"})
+		result := JoinNames([]string{"Jens Mander", "Name 2", "Name 3"}, false)
 		assert.Equal(t, "Jens Mander, Name 2 & Name 3", result)
 	})
 	t.Run("ManyNames", func(t *testing.T) {
-		result := JoinNames([]string{"Jens Mander", "Name 2", "Name 3", "Name 4"})
+		result := JoinNames([]string{"Jens Mander", "Name 2", "Name 3", "Name 4"}, false)
 		assert.Equal(t, "Jens Mander, Name 2, Name 3 & Name 4", result)
 	})
 	t.Run("Partners", func(t *testing.T) {
-		result := JoinNames([]string{"Jens Mander", "Jane Mander"})
+		result := JoinNames([]string{"Jens Mander", "Jane Mander"}, false)
 		assert.Equal(t, "Jens & Jane Mander", result)
 	})
 	t.Run("Family", func(t *testing.T) {
-		result := JoinNames([]string{"Anna Mander", "Jens Mander", "Jane Mander"})
+		result := JoinNames([]string{"Anna Mander", "Jens Mander", "Jane Mander"}, false)
 		assert.Equal(t, "Anna, Jens & Jane Mander", result)
 	})
 	t.Run("ShortFamilyName", func(t *testing.T) {
-		result := JoinNames([]string{"Anna M", "Jens M", "Jane M"})
+		result := JoinNames([]string{"Anna M", "Jens M", "Jane M"}, false)
 		assert.Equal(t, "Anna M, Jens M & Jane M", result)
 	})
 	t.Run("NoFamily", func(t *testing.T) {
-		result := JoinNames([]string{"Anna Mander", "Jane Mander", "Bill Gates"})
+		result := JoinNames([]string{"Anna Mander", "Jane Mander", "Bill Gates"}, false)
 		assert.Equal(t, "Anna Mander, Jane Mander & Bill Gates", result)
+	})
+
+	// Short.
+	t.Run("NoName", func(t *testing.T) {
+		result := JoinNames([]string{}, true)
+		assert.Equal(t, "", result)
+	})
+	t.Run("OneName", func(t *testing.T) {
+		result := JoinNames([]string{"Jens Mander"}, true)
+		assert.Equal(t, "Jens Mander", result)
+	})
+	t.Run("TwoNames", func(t *testing.T) {
+		result := JoinNames([]string{"Jens Mander", "Name 2"}, true)
+		assert.Equal(t, "Jens & Name", result)
+	})
+	t.Run("ThreeNames", func(t *testing.T) {
+		result := JoinNames([]string{"Jens Mander", "Name 2", "Name 3"}, true)
+		assert.Equal(t, "Jens, Name 2 & Name 3", result)
+	})
+	t.Run("ManyNames", func(t *testing.T) {
+		result := JoinNames([]string{"Jens Mander", "Name 2", "Name 3", "Name 4"}, true)
+		assert.Equal(t, "Jens, Name 2, Name 3 & Name 4", result)
+	})
+	t.Run("Partners", func(t *testing.T) {
+		result := JoinNames([]string{"Jens Mander", "Jane Mander"}, true)
+		assert.Equal(t, "Jens & Jane Mander", result)
+	})
+	t.Run("Family", func(t *testing.T) {
+		result := JoinNames([]string{"Anna Mander", "Jens Mander", "Jane Mander"}, true)
+		assert.Equal(t, "Anna, Jens & Jane Mander", result)
+	})
+	t.Run("ShortFamilyName", func(t *testing.T) {
+		result := JoinNames([]string{"Anna M", "Jens M", "Jane M"}, true)
+		assert.Equal(t, "Anna, Jens & Jane", result)
+	})
+	t.Run("NoFamily", func(t *testing.T) {
+		result := JoinNames([]string{"Anna Mander", "Jane Mander", "Bill Gates"}, true)
+		assert.Equal(t, "Anna, Jane & Bill", result)
 	})
 }
 
@@ -64,5 +103,44 @@ func TestNameKeywords(t *testing.T) {
 	t.Run("BillGates", func(t *testing.T) {
 		result := NameKeywords("William Henry Gates III", "Windows Guru")
 		assert.Equal(t, []string{"william", "henry", "gates", "iii", "windows", "guru"}, result)
+	})
+}
+
+func TestNormalizeName(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", NormalizeName(""))
+	})
+	t.Run("BillGates", func(t *testing.T) {
+		assert.Equal(t, "William Henry Gates III", NormalizeName("William Henry Gates III"))
+	})
+	t.Run("Quotes", func(t *testing.T) {
+		assert.Equal(t, "William HenRy Gates'", NormalizeName("william \"HenRy\" gates' "))
+	})
+	t.Run("Slash", func(t *testing.T) {
+		assert.Equal(t, "William McCorn Gates'", NormalizeName("william\\ \"McCorn\" / gates' "))
+	})
+	t.Run("SpecialCharacters", func(t *testing.T) {
+		assert.Equal(t,
+			"'', '', '', '', '', '', '', '', '', '', '', '', Foo '', '', '', '', '', '', '', McBar '', ''",
+			NormalizeName("'\"', '`', '~', '\\\\', '/', '*', '%', '&', '|', '+', '=', '$', Foo '@', '!', '?', ':', ';', '<', '>', McBar '{', '}'"),
+		)
+	})
+	t.Run("Chinese", func(t *testing.T) {
+		assert.Equal(t, "陈 赵", NormalizeName(" 陈  赵"))
+	})
+}
+
+func TestNameSlug(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", NameSlug(""))
+	})
+	t.Run("BillGates", func(t *testing.T) {
+		assert.Equal(t, "william-henry-gates-iii", NameSlug("William  Henry Gates III"))
+	})
+	t.Run("Quotes", func(t *testing.T) {
+		assert.Equal(t, "william-henry-gates", NameSlug("william \"HenRy\" gates' "))
+	})
+	t.Run("Chinese", func(t *testing.T) {
+		assert.Equal(t, "chen-zhao", NameSlug(" 陈  赵"))
 	})
 }

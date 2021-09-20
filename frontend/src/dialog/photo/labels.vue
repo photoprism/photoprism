@@ -23,11 +23,10 @@
               <v-text-field
                   v-model="props.item.Label.Name"
                   :rules="[nameRule]"
-                  :label="$gettext('Label Name')"
+                  :label="$gettext('Name')"
                   color="secondary-dark"
-                  single-line
-                  autofocus
-                  class="input-rename"
+                  class="input-rename background-inherit elevation-0"
+                  single-line autofocus solo hide-details
               ></v-text-field>
             </template>
           </v-edit-dialog>

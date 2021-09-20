@@ -600,7 +600,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Main JPEG file.
 	if file.FilePrimary {
-		if Config().Experimental() && Config().Settings().Features.People {
+		if Config().Settings().Features.People {
 			faces := ind.detectFaces(m)
 
 			photo.AddLabels(classify.FaceLabels(faces, entity.SrcImage))

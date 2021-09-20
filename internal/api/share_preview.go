@@ -14,7 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -77,7 +77,7 @@ func SharePreview(router *gin.RouterGroup) {
 		f.Count = 12
 		f.Order = "relevance"
 
-		p, count, err := query.PhotoSearch(f)
+		p, count, err := search.Photos(f)
 
 		if err != nil {
 			log.Error(err)

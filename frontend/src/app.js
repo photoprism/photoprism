@@ -54,8 +54,8 @@ import VueFilters from "vue2-filters";
 import VueFullscreen from "vue-fullscreen";
 import VueInfiniteScroll from "vue-infinite-scroll";
 import Hls from "hls.js";
+import "common/maptiler-lang";
 import { $gettext, Mount } from "common/vm";
-import * as options from "options/options";
 import * as offline from "@lcdp/offline-plugin/runtime";
 
 // Initialize helpers
@@ -68,8 +68,8 @@ const isMobile =
 // Initialize language and detect alignment
 Vue.config.language = config.values.settings.ui.language;
 Settings.defaultLocale = Vue.config.language.substring(0, 2);
-const languages = options.Languages();
-const rtl = languages.some((lang) => lang.value === Vue.config.language && lang.rtl);
+// Detect right-to-left languages such as Arabic and Hebrew
+const rtl = config.rtl();
 
 // Get initial theme colors from config
 const theme = config.theme.colors;

@@ -52,9 +52,9 @@
         </v-tab>
 
         <v-tab id="tab-people" :disabled="!$config.feature('people')" ripple>
-          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Labels')">people</v-icon>
+          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('People')">people_alt</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">people</v-icon>
+            <v-icon :size="18" :left="!rtl" :right="rtl">people_alt</v-icon>
             <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
               <template #badge>
                 <span v-if="model.Faces">{{ model.Faces }}</span>

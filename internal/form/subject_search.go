@@ -10,6 +10,7 @@ type SubjectSearch struct {
 	Favorite bool   `form:"favorite"`
 	Private  bool   `form:"private"`
 	Excluded bool   `form:"excluded"`
+	Files    int    `form:"files"`
 	Count    int    `form:"count" binding:"required" serialize:"-"`
 	Offset   int    `form:"offset" serialize:"-"`
 	Order    string `form:"order" serialize:"-"`

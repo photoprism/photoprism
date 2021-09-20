@@ -74,6 +74,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
+      HOME: "/photoprism"
       # Set a non-root user, group, or custom umask if your Docker environment doesn't support this natively:
       # UID: 1000
       # GID: 1000

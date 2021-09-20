@@ -127,5 +127,5 @@ func (w *Faces) Canceled() bool {
 
 // Disabled tests if facial recognition is disabled.
 func (w *Faces) Disabled() bool {
-	return !(w.conf.Experimental() && w.conf.Settings().Features.People)
+	return !w.conf.Settings().Features.People
 }

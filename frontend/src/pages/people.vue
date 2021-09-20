@@ -1,31 +1,108 @@
 <template>
-  <div>
-    <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
-      <v-toolbar-title>
-        <translate>Not implemented yet</translate>
-      </v-toolbar-title>
+  <div class="p-page p-page-people">
+    <v-tabs
+        v-model="active"
+        flat
+        grow
+        color="secondary"
+        slider-color="secondary-dark"
+        :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
+    >
+      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple
+             @click="changePath(item.path)">
+        <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
+        <template v-else>
+          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
+        </template>
+      </v-tab>
 
-      <v-spacer></v-spacer>
-    </v-toolbar>
-
-    <v-container>
-      <p>
-        Issues labeled <a href="https://github.com/photoprism/photoprism/labels/help%20wanted">help wanted</a> /
-        <a href="https://github.com/photoprism/photoprism/labels/easy">easy</a> can be good (first)
-        contributions.
-        Our <a href="https://github.com/photoprism/photoprism/wiki">Developer Guide</a> contains all information
-        necessary to get you started.
-      </p>
-    </v-container>
+      <v-tabs-items touchless>
+        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
+          <component :is="item.component" :static-filter="item.filter"></component>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-tabs>
   </div>
 </template>
 
 <script>
+import Subjects from "pages/people/subjects.vue";
+import Faces from "pages/people/faces.vue";
+
+function initTabs(flag, tabs) {
+  let i = 0;
+  while (i < tabs.length) {
+    if (!tabs[i][flag]) {
+      tabs.splice(i, 1);
+    } else {
+      i++;
+    }
+  }
+}
+
 export default {
-  name: 'People',
-  data() {
-    return {};
+  name: 'PPagePeople',
+  props: {
+    tab: String,
   },
-  methods: {}
+  data() {
+    let tabName = this.tab;
+    const config = this.$config.values;
+    const isDemo = this.$config.get("demo");
+    const isPublic = this.$config.get("public");
+    const isReadOnly = this.$config.get("readonly");
+
+    const tabs = [
+      {
+        'name': 'people-subjects',
+        'component': Subjects,
+        'filter': { files: 1, type: "person" },
+        'label': this.$gettext('Recognized'),
+        'class': '',
+        'path': '/people',
+        'icon': 'people_alt',
+        'readonly': true,
+        'demo': true,
+      },
+      {
+        'name': 'people-faces',
+        'component': Faces,
+        'filter': { markers: true, unknown: true },
+        'label': this.$gettext('New'),
+        'class': '',
+        'path': '/people/new',
+        'icon': 'person_add',
+        'readonly': true,
+        'demo': true,
+      },
+    ];
+
+    if (config.count.people === 0) {
+      tabName = "people-faces";
+    }
+
+    let active = 0;
+
+    if (typeof tabName === 'string' && tabName !== '') {
+      active = tabs.findIndex((t) => t.name === tabName);
+    }
+
+    return {
+      tabs: tabs,
+      demo: isDemo,
+      public: isPublic,
+      config: config,
+      readonly: isReadOnly,
+      active: active,
+      rtl: this.$rtl,
+    };
+  },
+  methods: {
+    changePath: function (path) {
+      if (this.$route.path !== path) {
+        this.$router.replace(path);
+      }
+    }
+  }
 };
 </script>

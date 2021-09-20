@@ -167,7 +167,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 				result.Updated++
 			}
 
-			if marker.SubjectUID != "" {
+			if marker.SubjUID != "" {
 				result.Recognized++
 			} else {
 				result.Unknown++

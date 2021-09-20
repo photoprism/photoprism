@@ -9,14 +9,14 @@ import (
 func TestNewMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var m = struct {
-			SubjectSrc    string
+			SubjSrc       string
 			MarkerName    string
-			Review        bool
+			MarkerReview  bool
 			MarkerInvalid bool
 		}{
-			SubjectSrc:    "manual",
+			SubjSrc:       "manual",
 			MarkerName:    "Foo",
-			Review:        true,
+			MarkerReview:  true,
 			MarkerInvalid: true,
 		}
 
@@ -26,9 +26,9 @@ func TestNewMarker(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "manual", f.SubjectSrc)
+		assert.Equal(t, "manual", f.SubjSrc)
 		assert.Equal(t, "Foo", f.MarkerName)
-		assert.Equal(t, true, f.Review)
+		assert.Equal(t, true, f.MarkerReview)
 		assert.Equal(t, true, f.MarkerInvalid)
 	})
 }

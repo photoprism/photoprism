@@ -69,7 +69,7 @@ func (w *Faces) Stats() (err error) {
 			min := -1.0
 			max := -1.0
 
-			if k, ok := dist[f1.SubjectUID]; ok {
+			if k, ok := dist[f1.SubjUID]; ok {
 				min = k[0]
 				max = k[1]
 			}
@@ -81,7 +81,7 @@ func (w *Faces) Stats() (err error) {
 
 				f2 := faces[j]
 
-				if f1.SubjectUID != f2.SubjectUID {
+				if f1.SubjUID != f2.SubjUID {
 					continue
 				}
 
@@ -99,7 +99,7 @@ func (w *Faces) Stats() (err error) {
 			}
 
 			if max > 0 {
-				dist[f1.SubjectUID] = []float64{min, max}
+				dist[f1.SubjUID] = []float64{min, max}
 			}
 		}
 

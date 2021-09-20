@@ -262,7 +262,15 @@ export default [
     name: "people",
     path: "/people",
     component: People,
-    meta: { title: $gettext("People"), auth: true },
+    meta: { title: $gettext("People"), auth: true, background: "application-light" },
+    props: { tab: "people-subjects" },
+  },
+  {
+    name: "people_faces",
+    path: "/people/new",
+    component: People,
+    meta: { title: $gettext("People"), auth: true, background: "application-light" },
+    props: { tab: "people-faces" },
   },
   {
     name: "library",

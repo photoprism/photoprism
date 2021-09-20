@@ -5,6 +5,7 @@ import (
 	"encoding/base32"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -21,7 +22,8 @@ var faceMutex = sync.Mutex{}
 type Face struct {
 	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
-	SubjectUID      string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
+	SubjUID         string          `gorm:"type:VARBINARY(42);index;" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
@@ -38,14 +40,14 @@ var Faceless = []string{""}
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev8"
+	return "faces_dev9"
 }
 
 // NewFace returns a new face.
-func NewFace(subjectUID, faceSrc string, embeddings Embeddings) *Face {
+func NewFace(subjUID, faceSrc string, embeddings Embeddings) *Face {
 	result := &Face{
-		SubjectUID: subjectUID,
-		FaceSrc:    faceSrc,
+		SubjUID: subjUID,
+		FaceSrc: faceSrc,
 	}
 
 	if err := result.SetEmbeddings(embeddings); err != nil {
@@ -145,7 +147,7 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 
 // ResolveCollision resolves a collision with a different subject's face.
 func (m *Face) ResolveCollision(embeddings Embeddings) (resolved bool, err error) {
-	if m.SubjectUID == "" {
+	if m.SubjUID == "" {
 		// Ignore reports for anonymous faces.
 		return false, nil
 	} else if m.ID == "" {
@@ -165,9 +167,9 @@ func (m *Face) ResolveCollision(embeddings Embeddings) (resolved bool, err error
 		log.Infof("faces: %s collision at dist %f reported, same person?", m.ID, dist)
 
 		// Reset subject UID just in case.
-		m.SubjectUID = ""
+		m.SubjUID = ""
 
-		return false, m.Updates(Values{"SubjectUID": m.SubjectUID})
+		return false, m.Updates(Values{"SubjUID": m.SubjUID})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
@@ -242,20 +244,21 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.
-func (m *Face) SetSubjectUID(uid string) (err error) {
+func (m *Face) SetSubjectUID(subjUID string) (err error) {
 	// Update face.
-	if err = m.Update("SubjectUID", uid); err != nil {
+	if err = m.Update("SubjUID", subjUID); err != nil {
 		return err
 	} else {
-		m.SubjectUID = uid
+		m.SubjUID = subjUID
 	}
 
 	// Update related markers.
 	if err = Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		Where("subject_src = ?", SrcAuto).
-		Where("subject_uid <> ?", m.SubjectUID).
-		Updates(Values{"SubjectUID": m.SubjectUID, "Review": false}).Error; err != nil {
+		Where("subj_src = ?", SrcAuto).
+		Where("subj_uid <> ?", m.SubjUID).
+		Where("marker_invalid = 0").
+		Updates(Values{"SubjUID": m.SubjUID, "MarkerReview": false}).Error; err != nil {
 		return err
 	}
 
@@ -271,6 +274,16 @@ func (m *Face) RefreshPhotos() error {
 	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
 		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.face_id = ? GROUP BY f.photo_id)`,
 		gorm.Expr(Marker{}.TableName()), m.ID).Error
+}
+
+// Hide hides the face by default.
+func (m *Face) Hide() (err error) {
+	return m.Update("FaceHidden", true)
+}
+
+// Show shows the face by default.
+func (m *Face) Show() (err error) {
+	return m.Update("FaceHidden", false)
 }
 
 // Save updates the existing or inserts a new face.
@@ -309,12 +322,12 @@ func FirstOrCreateFace(m *Face) *Face {
 	result := Face{}
 
 	if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjectUID)
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
 	} else if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjectUID)
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
 		return &result
 	} else {
 		log.Errorf("faces: %s when trying to create %s", createErr, m.ID)
@@ -329,14 +342,11 @@ func FindFace(id string) *Face {
 		return nil
 	}
 
-	result := Face{}
+	f := Face{}
 
-	db := Db()
-	db = db.Where("id = ?", id)
-
-	if err := db.First(&result).Error; err != nil {
+	if err := Db().Where("id = ?", strings.ToUpper(id)).First(&f).Error; err != nil {
 		return nil
 	}
 
-	return &result
+	return &f
 }

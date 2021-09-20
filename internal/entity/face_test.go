@@ -133,7 +133,7 @@ func TestNewFace(t *testing.T) {
 
 		r := NewFace("123", SrcAuto, e)
 		assert.Equal(t, "", r.FaceSrc)
-		assert.Equal(t, "123", r.SubjectUID)
+		assert.Equal(t, "123", r.SubjUID)
 	})
 }
 
@@ -185,7 +185,7 @@ func TestFace_Save(t *testing.T) {
 	assert.Nil(t, FindFace(m.ID))
 	m.Save()
 	assert.NotNil(t, FindFace(m.ID))
-	assert.Equal(t, "12345fde", FindFace(m.ID).SubjectUID)
+	assert.Equal(t, "12345fde", FindFace(m.ID).SubjUID)
 }
 
 func TestFace_Update(t *testing.T) {
@@ -193,11 +193,11 @@ func TestFace_Update(t *testing.T) {
 	assert.Nil(t, FindFace(m.ID))
 	m.Save()
 	assert.NotNil(t, FindFace(m.ID))
-	assert.Equal(t, "12345fdef", FindFace(m.ID).SubjectUID)
+	assert.Equal(t, "12345fdef", FindFace(m.ID).SubjUID)
 
 	m2 := FindFace(m.ID)
-	m2.Update("SubjectUID", "new")
-	assert.Equal(t, "new", FindFace(m.ID).SubjectUID)
+	m2.Update("SubjUID", "new")
+	assert.Equal(t, "new", FindFace(m.ID).SubjUID)
 }
 
 func TestFace_RefreshPhotos(t *testing.T) {
@@ -212,12 +212,12 @@ func TestFirstOrCreateFace(t *testing.T) {
 	t.Run("create new face", func(t *testing.T) {
 		m := NewFace("12345unique", SrcAuto, Embeddings{Embedding{99}, Embedding{2}})
 		r := FirstOrCreateFace(m)
-		assert.Equal(t, "12345unique", r.SubjectUID)
+		assert.Equal(t, "12345unique", r.SubjUID)
 	})
 	t.Run("return existing entity", func(t *testing.T) {
 		m := FaceFixtures.Pointer("joe-biden")
 		r := FirstOrCreateFace(m)
-		assert.Equal(t, "jqy3y652h8njw0sx", r.SubjectUID)
+		assert.Equal(t, "jqy3y652h8njw0sx", r.SubjUID)
 		assert.Equal(t, 33, r.Samples)
 	})
 }
@@ -230,4 +230,14 @@ func TestFindFace(t *testing.T) {
 	t.Run("empty id", func(t *testing.T) {
 		assert.Nil(t, FindFace(""))
 	})
+}
+
+func TestFace_HideAndShow(t *testing.T) {
+	f := FaceFixtures.Get("joe-biden")
+
+	if err := f.Hide(); err != nil {
+		t.Fatal(err)
+	} else if err = f.Show(); err != nil {
+		t.Fatal(err)
+	}
 }

@@ -1,7 +1,6 @@
 package query
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -70,26 +69,4 @@ func TestCreateMarkerSubjects(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.LessOrEqual(t, int64(0), affected)
-}
-
-func TestSearchSubjectUIDs(t *testing.T) {
-	t.Run("john & his | cats", func(t *testing.T) {
-		result, names, remaining := SearchSubjectUIDs("john & his | cats")
-
-		if len(result) != 1 {
-			t.Fatal("expected one result")
-		} else {
-			assert.Equal(t, "jqu0xs11qekk9jx8", result[0])
-			assert.Equal(t, "his | cats", remaining)
-			assert.Equal(t, "John Doe", strings.Join(names, ", "))
-		}
-	})
-	t.Run("xxx", func(t *testing.T) {
-		result, _, _ := SearchSubjectUIDs("xxx")
-		assert.Empty(t, result)
-	})
-	t.Run("empty string", func(t *testing.T) {
-		result, _, _ := SearchSubjectUIDs("")
-		assert.Empty(t, result)
-	})
 }

@@ -144,6 +144,7 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB database user name
       PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB database user password
+      HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
       # Your photo and video files ([local path]:[container path]):

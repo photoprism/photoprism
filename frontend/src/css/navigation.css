@@ -59,3 +59,37 @@
     font-size: 12px;
     color: #000;
 }
+
+#photoprism .v-tabs .v-toolbar__content {
+    padding: 0 16px 0 0;
+}
+
+#photoprism .v-toolbar.page-toolbar {
+    box-shadow: none;
+}
+
+#photoprism .v-tabs .v-toolbar.page-toolbar .v-toolbar__content,
+#photoprism .v-toolbar.page-toolbar .v-toolbar__content {
+    padding: 0 16px 0 16px;
+}
+
+#photoprism .v-toolbar.page-toolbar .v-text-field .v-input__prepend-outer {
+    margin-right: 0;
+}
+
+#photoprism .v-toolbar.page-toolbar .v-text-field .v-input__slot {
+    padding-left: 0;
+}
+
+#photoprism .page-toolbar .input-category .v-select__selections {
+    min-width: 130px;
+}
+
+#photoprism .page-toolbar .input-category .v-select__selections input {
+    position: absolute;
+}
+
+#photoprism .page-toolbar .input-category .v-select__selections .v-select__selection {
+    white-space: nowrap;
+    overflow: hidden;
+}

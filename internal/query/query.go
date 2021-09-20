@@ -42,23 +42,7 @@ var log = event.Log
 const (
 	MySQL  = "mysql"
 	SQLite = "sqlite3"
-	Or     = "|"
-	And    = "&"
-	Plus   = " + "
-	OrEn   = " or "
-	AndEn  = " and "
-	WithEn = " with "
-	InEn   = " in "
-	AtEn   = " at "
-	Space  = " "
-	Empty  = ""
 )
-
-// MaxResults is max result limit for queries.
-const MaxResults = 10000
-
-// SearchRadius is about 1 km.
-const SearchRadius = 0.009
 
 // Cols represents a list of database columns.
 type Cols []string

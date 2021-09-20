@@ -2,7 +2,7 @@
   <v-form ref="form" lazy-validation
           dense autocomplete="off" class="p-photo-toolbar p-album-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" color="secondary">
+    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-toolbar-title :title="album.Title">
         {{ album.Title }}
       </v-toolbar-title>

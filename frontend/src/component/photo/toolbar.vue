@@ -2,20 +2,17 @@
   <v-form ref="form" lazy-validation
           dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
           @submit.prevent="filterChange">
-    <v-toolbar :dense="$vuetify.breakpoint.smAndDown" flat color="secondary">
+    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field v-model="filter.q"
-                    class="pt-3 pr-3 input-search"
+                    class="input-search background-inherit elevation-0"
                     browser-autocomplete="off"
-                    single-line
+                    solo hide-details clearable overflow single-line
                     :label="$gettext('Search')"
                     prepend-inner-icon="search"
-                    clearable
                     color="secondary-dark"
                     @click:clear="clearQuery"
                     @keyup.enter.native="filterChange"
       ></v-text-field>
-
-      <v-spacer></v-spacer>
 
       <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh">
         <v-icon>refresh</v-icon>

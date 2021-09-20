@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 )
 
 type EntityEvent string
@@ -17,7 +17,7 @@ const (
 
 func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 	f := form.PhotoSearch{ID: uid, Merged: true}
-	result, _, err := query.PhotoSearch(f)
+	result, _, err := search.Photos(f)
 
 	if err != nil {
 		log.Error(err)
@@ -30,7 +30,7 @@ func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 
 func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
 	f := form.AlbumSearch{ID: uid}
-	result, err := query.AlbumSearch(f)
+	result, err := search.Albums(f)
 
 	if err != nil {
 		log.Error(err)
@@ -43,7 +43,7 @@ func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
 
 func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
 	f := form.LabelSearch{ID: uid}
-	result, err := query.Labels(f)
+	result, err := search.Labels(f)
 
 	if err != nil {
 		log.Error(err)
@@ -52,4 +52,17 @@ func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
 	}
 
 	event.PublishEntities("labels", string(e), result)
+}
+
+func PublishSubjectEvent(e EntityEvent, uid string, c *gin.Context) {
+	f := form.SubjectSearch{ID: uid}
+	result, err := search.Subjects(f)
+
+	if err != nil {
+		log.Error(err)
+		AbortUnexpected(c)
+		return
+	}
+
+	event.PublishEntities("subjects", string(e), result)
 }

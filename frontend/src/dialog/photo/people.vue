@@ -29,28 +29,25 @@
                    :transition="false"
                    aspect-ratio="1"
                    class="accent lighten-2">
+              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" :depressed="false" class="input-reject"
+                     icon flat small absolute :title="$gettext('Remove')"
+                     @click.stop.prevent="onReject(marker)">
+                <v-icon color="white" class="action-reject">clear</v-icon>
+              </v-btn>
             </v-img>
 
             <v-card-actions class="card-details pa-0">
-              <v-layout v-if="marker.Review || marker.Invalid" row wrap align-center>
-                <v-flex xs6 class="text-xs-center pa-0">
+              <v-layout v-if="marker.Invalid" row wrap align-center>
+                <v-flex xs12 class="text-xs-center pa-0">
                   <v-btn color="transparent" :disabled="busy"
                          large depressed block :round="false"
-                         class="action-archive text-xs-center"
-                         :title="$gettext('Reject')" @click.stop="reject(marker)">
-                    <v-icon dark>clear</v-icon>
-                  </v-btn>
-                </v-flex>
-                <v-flex xs6 class="text-xs-center pa-0">
-                  <v-btn color="transparent" :disabled="busy"
-                         large depressed block :round="false"
-                         class="action-approve text-xs-center"
-                         :title="$gettext('Approve')" @click.stop="approve(marker)">
-                    <v-icon dark>check</v-icon>
+                         class="action-undo text-xs-center"
+                         :title="$gettext('Undo')" @click.stop="onApprove(marker)">
+                    <v-icon dark>undo</v-icon>
                   </v-btn>
                 </v-flex>
               </v-layout>
-              <v-layout v-else-if="marker.SubjectUID" row wrap align-center>
+              <v-layout v-else-if="marker.SubjUID" row wrap align-center>
                 <v-flex xs12 class="text-xs-left pa-0">
                   <v-text-field
                       v-model="marker.Name"
@@ -63,9 +60,9 @@
                       solo-inverted
                       clearable
                       clear-icon="eject"
-                      @click:clear="clearSubject(marker)"
-                      @change="rename(marker)"
-                      @keyup.enter.native="rename(marker)"
+                      @click:clear="onClearSubject(marker)"
+                      @change="onRename(marker)"
+                      @keyup.enter.native="onRename(marker)"
                   ></v-text-field>
                 </v-flex>
               </v-layout>
@@ -90,8 +87,8 @@
                       prepend-inner-icon="person_add"
                       browser-autocomplete="off"
                       class="input-name pa-0 ma-0"
-                      @change="rename(marker)"
-                      @keyup.enter.native="rename(marker)"
+                      @change="onRename(marker)"
+                      @keyup.enter.native="onRename(marker)"
                   >
                   </v-combobox>
                 </v-flex>
@@ -133,19 +130,19 @@ export default {
   methods: {
     refresh() {
     },
-    reject(marker) {
+    onReject(marker) {
       this.busy = true;
       marker.reject().finally(() => this.busy = false);
     },
-    approve(marker) {
+    onApprove(marker) {
       this.busy = true;
       marker.approve().finally(() => this.busy = false);
     },
-    clearSubject(marker) {
+    onClearSubject(marker) {
       this.busy = true;
       marker.clearSubject(marker).finally(() => this.busy = false);
     },
-    rename(marker) {
+    onRename(marker) {
       this.busy = true;
       marker.rename().finally(() => this.busy = false);
     },
