@@ -341,4 +341,77 @@ func TestGeo(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 2)
 	})
+	t.Run("query: videos", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "videos"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, "video", r.PhotoType)
+		}
+	})
+	t.Run("query: faces", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "faces"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("query: people", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "people"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("query: favorites", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "favorites"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.True(t, r.PhotoFavorite)
+		}
+	})
 }

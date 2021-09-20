@@ -864,6 +864,238 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 1)
 	})
+	t.Run("Subject", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "John"
+		frm.Subject = ""
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: videos", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "videos"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, "video", r.PhotoType)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: faces", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "faces"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.LessOrEqual(t, 1, r.PhotoFaces)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: people", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "people"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.LessOrEqual(t, 1, r.PhotoFaces)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: favorites", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "favorites"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.True(t, r.PhotoFavorite)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: stacks", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "stacks"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: panoramas", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "panoramas"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, true, r.PhotoPanorama)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: scans", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "scans"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, true, r.PhotoScan)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("query: monochrome", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = "monochrome"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
 	t.Run("filename", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Filename = "1990/04/Quality1FavoriteTrue.jpg"
