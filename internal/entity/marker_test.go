@@ -532,3 +532,45 @@ func TestMarker_RefreshPhotos(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestMarker_SurfaceRatio(t *testing.T) {
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+	m4 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+
+	assert.Equal(t, 99, int(m1.SurfaceRatio(m1.OverlapArea(m1))*100))
+	assert.Equal(t, 99, int(m1.SurfaceRatio(m1.OverlapArea(m2))*100))
+	assert.Equal(t, 29, int(m2.SurfaceRatio(m2.OverlapArea(m1))*100))
+	assert.Equal(t, 0, int(m1.SurfaceRatio(m1.OverlapArea(m3))*100))
+	assert.Equal(t, 30, int(m1.SurfaceRatio(m1.OverlapArea(m4))*100))
+	assert.Equal(t, 0, int(m1.SurfaceRatio(m3.OverlapArea(m1))*100))
+	assert.Equal(t, 30, int(m1.SurfaceRatio(m4.OverlapArea(m1))*100))
+}
+
+func TestMarker_OverlapArea(t *testing.T) {
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+	m4 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+
+	assert.Equal(t, 0.1264200823986168, m1.OverlapArea(m1))
+	assert.Equal(t, int(m1.Surface()*10000), int(m1.OverlapArea(m1)*10000))
+	assert.Equal(t, 0.1264200823986168, m1.OverlapArea(m2))
+	assert.Equal(t, 0.1264200823986168, m2.OverlapArea(m1))
+	assert.Equal(t, 0.0, m1.OverlapArea(m3))
+	assert.Equal(t, 0.038166598943088825, m1.OverlapArea(m4))
+}
+
+func TestMarker_OverlapPercent(t *testing.T) {
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+	m4 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+
+	assert.Equal(t, 100, m1.OverlapPercent(m1))
+	assert.Equal(t, 29, m1.OverlapPercent(m2))
+	assert.Equal(t, 100, m2.OverlapPercent(m1))
+	assert.Equal(t, 0, m1.OverlapPercent(m3))
+	assert.Equal(t, 96, m1.OverlapPercent(m4))
+}

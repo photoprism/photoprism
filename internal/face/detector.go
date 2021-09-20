@@ -87,7 +87,7 @@ func Detect(fileName string, findLandmarks bool, minSize int) (faces Faces, err 
 		shiftFactor:    0.1,
 		scaleFactor:    1.1,
 		iouThreshold:   0.2,
-		scoreThreshold: 9.0,
+		scoreThreshold: ScoreThreshold,
 		perturb:        63,
 	}
 
@@ -154,10 +154,6 @@ func (d *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo.
 		Dim:    cols,
 	}
 
-	if rows > 800 || cols > 800 {
-		d.scoreThreshold += 9.0
-	}
-
 	params = pigo.CascadeParams{
 		MinSize:     d.minSize,
 		MaxSize:     maxSize,
@@ -180,27 +176,33 @@ func (d *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo.
 
 // Faces adds landmark coordinates to detected faces and returns the results.
 func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLandmarks bool) (results Faces, err error) {
-	var maxQ float32
-
-	// Sort by quality.
+	// Sort by size.
 	sort.Slice(det, func(i, j int) bool {
-		return det[i].Q > det[j].Q
+		return det[i].Scale > det[j].Scale
 	})
 
 	for _, face := range det {
+		// Small faces require higher quality.
+		threshold := d.scoreThreshold
+
+		if face.Scale < 30 {
+			threshold += 11.5
+		} else if face.Scale < 50 {
+			threshold += 9.0
+		} else if face.Scale < 80 {
+			threshold += 6.5
+		} else if face.Scale < 110 {
+			threshold += 2.5
+		}
+
+		// Skip face if quality is too low.
+		if face.Q < threshold {
+			continue
+		}
+
 		var eyesCoords []Area
 		var landmarkCoords []Area
 		var puploc *pigo.Puploc
-
-		if face.Q < d.scoreThreshold {
-			continue
-		}
-
-		if maxQ < face.Q {
-			maxQ = face.Q
-		} else if maxQ >= 20 && face.Q < 15 {
-			continue
-		}
 
 		faceCoord := NewArea(
 			"face",
@@ -312,14 +314,20 @@ func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLa
 			}
 		}
 
-		results = append(results, Face{
+		f := Face{
 			Rows:      params.ImageParams.Rows,
 			Cols:      params.ImageParams.Cols,
 			Score:     int(face.Q),
 			Area:      faceCoord,
 			Eyes:      eyesCoords,
 			Landmarks: landmarkCoords,
-		})
+		}
+
+		if results.Contains(f) {
+			// Ignore.
+		} else {
+			results.Append(f)
+		}
 	}
 
 	return results, nil

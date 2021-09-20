@@ -3,12 +3,13 @@ package face
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
 )
+
+var modelPath, _ = filepath.Abs("../../assets/facenet")
 
 func TestNet(t *testing.T) {
 	expected := map[string]int{
@@ -34,7 +35,7 @@ func TestNet(t *testing.T) {
 	}
 
 	faceindices := map[string][]int{
-		"18.jpg": {0, 1},
+		"18.jpg": {1, 0},
 		"1.jpg":  {2},
 		"4.jpg":  {3},
 		"5.jpg":  {4},
@@ -55,7 +56,7 @@ func TestNet(t *testing.T) {
 	faceNet := NewNet(modelPath, "testdata/cache", false)
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
-		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") || strings.Contains(fileName, "cache") {
+		if info.IsDir() || filepath.Base(filepath.Dir(fileName)) != "testdata" {
 			return nil
 		}
 
@@ -68,11 +69,11 @@ func TestNet(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			t.Logf("found %d faces in '%s'", len(faces), baseName)
+			// for i, f := range faces {
+			// 	t.Logf("FACE %d IN %s: %#v", i, fileName, f.Area)
+			// }
 
 			if len(faces) > 0 {
-				// t.Logf("results: %#v", faces)
-
 				for i, f := range faces {
 					if len(f.Embeddings) > 0 {
 						embeddings[faceindices[baseName][i]] = f.Embeddings[0]
@@ -83,8 +84,8 @@ func TestNet(t *testing.T) {
 			}
 
 			if i, ok := expected[baseName]; ok {
-				assert.Equal(t, i, len(faces))
 				assert.Equal(t, i, faces.Count())
+
 				if faces.Count() == 0 {
 					assert.Equal(t, 100, faces.Uncertainty())
 				} else {
@@ -127,5 +128,5 @@ func TestNet(t *testing.T) {
 
 	// there are a few incorrect results
 	// 4 out of 55 with the 1.21 threshold
-	assert.True(t, correct == 51)
+	assert.Equal(t, 51, correct)
 }

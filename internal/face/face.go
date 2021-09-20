@@ -39,17 +39,38 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+var log = event.Log
+
 var CropSize = crop.Sizes[crop.Tile160]
 var ClusterCore = 4
 var ClusterRadius = 0.6
-var ClusterMinScore = 30
+var ClusterMinScore = 15
 var ClusterMinSize = 100
 var SampleThreshold = 2 * ClusterCore
-
-var log = event.Log
+var OverlapThreshold = 40
+var OverlapThresholdFloor = OverlapThreshold - 1
+var ScoreThreshold = float32(8.5)
 
 // Faces is a list of face detection results.
 type Faces []Face
+
+// Contains returns true if the face conflicts with existing faces.
+func (faces Faces) Contains(other Face) bool {
+	cropArea := other.CropArea()
+
+	for _, f := range faces {
+		if f.CropArea().OverlapPercent(cropArea) > OverlapThresholdFloor {
+			return true
+		}
+	}
+
+	return false
+}
+
+// Append adds a face.
+func (faces *Faces) Append(f Face) {
+	*faces = append(*faces, f)
+}
 
 // Count returns the number of faces detected.
 func (faces Faces) Count() int {

@@ -60,7 +60,7 @@ func (a Area) Relative(r Area, rows, cols float32) crop.Area {
 	)
 }
 
-// TopLeft returns the top left position of the face.
+// TopLeft returns the top left position of the area.
 func (a Area) TopLeft() (int, int) {
 	return a.Row - (a.Scale / 2), a.Col - (a.Scale / 2)
 }

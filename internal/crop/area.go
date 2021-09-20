@@ -3,6 +3,7 @@ package crop
 import (
 	"fmt"
 	"image"
+	"math"
 	"strconv"
 	"strings"
 
@@ -58,6 +59,66 @@ func (a Area) Bounds(img image.Image) (min, max image.Point, dim int) {
 // FileWidth returns the ideal file width based on the crop size.
 func (a Area) FileWidth(size Size) int {
 	return int(float32(size.Width) / a.W)
+}
+
+// Top returns the top Y coordinate as float64.
+func (a Area) Top() float64 {
+	return float64(a.Y)
+}
+
+// Left returns the left X coordinate as float64.
+func (a Area) Left() float64 {
+	return float64(a.X)
+}
+
+// Right returns the right X coordinate as float64.
+func (a Area) Right() float64 {
+	return float64(a.X + a.W)
+}
+
+// Bottom returns the bottom Y coordinate as float64.
+func (a Area) Bottom() float64 {
+	return float64(a.Y + a.H)
+}
+
+// Surface returns the surface area.
+func (a Area) Surface() float64 {
+	return float64(a.W * a.H)
+}
+
+// SurfaceRatio returns the surface ratio.
+func (a Area) SurfaceRatio(area float64) float64 {
+	if area <= 0 {
+		return 0
+	}
+
+	if s := a.Surface(); s <= 0 {
+		return 0
+	} else if area > s {
+		return s / area
+	} else {
+		return area / s
+	}
+}
+
+// Overlap calculates the overlap of two areas.
+func (a Area) Overlap(other Area) (x, y float64) {
+	x = math.Max(0, math.Min(a.Right(), other.Right())-math.Max(a.Left(), other.Left()))
+	y = math.Max(0, math.Min(a.Bottom(), other.Bottom())-math.Max(a.Top(), other.Top()))
+
+	return x, y
+}
+
+// OverlapArea calculates the overlap area of two areas.
+func (a Area) OverlapArea(other Area) (area float64) {
+	x, y := a.Overlap(other)
+
+	return x * y
+}
+
+// OverlapPercent calculates the overlap ratio of two areas in percent.
+func (a Area) OverlapPercent(other Area) int {
+	return int(math.Round(other.SurfaceRatio(a.OverlapArea(other)) * 100))
 }
 
 // clipVal ensures the relative size is within a valid range.

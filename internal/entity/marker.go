@@ -482,6 +482,11 @@ func (m *Marker) Matched() error {
 	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
 }
 
+// Top returns the top Y coordinate as float64.
+func (m *Marker) Top() float64 {
+	return float64(m.Y)
+}
+
 // Left returns the left X coordinate as float64.
 func (m *Marker) Left() float64 {
 	return float64(m.X)
@@ -492,14 +497,29 @@ func (m *Marker) Right() float64 {
 	return float64(m.X + m.W)
 }
 
-// Top returns the top Y coordinate as float64.
-func (m *Marker) Top() float64 {
-	return float64(m.Y)
-}
-
 // Bottom returns the bottom Y coordinate as float64.
 func (m *Marker) Bottom() float64 {
 	return float64(m.Y + m.H)
+}
+
+// Surface returns the surface area.
+func (m *Marker) Surface() float64 {
+	return float64(m.W * m.H)
+}
+
+// SurfaceRatio returns the surface ratio.
+func (m *Marker) SurfaceRatio(area float64) float64 {
+	if area <= 0 {
+		return 0
+	}
+
+	if s := m.Surface(); s <= 0 {
+		return 0
+	} else if area > s {
+		return s / area
+	} else {
+		return area / s
+	}
 }
 
 // Overlap calculates the overlap of two markers.
@@ -515,6 +535,11 @@ func (m *Marker) OverlapArea(marker Marker) (area float64) {
 	x, y := m.Overlap(marker)
 
 	return x * y
+}
+
+// OverlapPercent calculates the overlap ratio of two markers in percent.
+func (m *Marker) OverlapPercent(marker Marker) int {
+	return int(math.Round(marker.SurfaceRatio(m.OverlapArea(marker)) * 100))
 }
 
 // FindMarker returns an existing row if exists.
@@ -552,7 +577,7 @@ func FindFaceMarker(faceId string) *Marker {
 
 // UpdateOrCreateMarker updates a marker in the database or creates a new one if needed.
 func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
-	const d = 0.07
+	const d = 0.0001
 
 	result := Marker{}
 

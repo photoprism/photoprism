@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -24,7 +25,7 @@ func (m Markers) Save(fileUID string) error {
 // Contains returns true if a marker at the same position already exists.
 func (m Markers) Contains(other Marker) bool {
 	for _, marker := range m {
-		if marker.OverlapArea(other) > 0.02 {
+		if marker.OverlapPercent(other) > face.OverlapThreshold {
 			return true
 		}
 	}
