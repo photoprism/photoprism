@@ -74,7 +74,7 @@ func NewTestOptions() *Options {
 		DatabaseDriver:   dbDriver,
 		DatabaseDsn:      dbDsn,
 		AdminPassword:    "photoprism",
-		OidcIssuer:       "http://host.docker.internal:9998",
+		OidcIssuer:       "http://oidc-test-op:9998",
 		OidcClientID:     "native",
 		OidcClientSecret: "random",
 	}

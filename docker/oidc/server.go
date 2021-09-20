@@ -21,7 +21,7 @@ func main() {
 
 	port := "9998"
 	config := &op.Config{
-		Issuer:         "http://host.docker.internal:9998",
+		Issuer:         "http://oidc-test-op:9998",
 		CryptoKey:      sha256.Sum256(b),
 		CodeMethodS256: true,
 	}

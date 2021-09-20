@@ -70,12 +70,6 @@ services:
 #      PHOTOPRISM_OIDC_ISSUER: "https://accounts.google.com"
 #      PHOTOPRISM_OIDC_CLIENT_ID: "86720117204-mb09c300nas5r9rid1ad0omv67nlvhck.apps.googleusercontent.com"
 #      PHOTOPRISM_OIDC_CLIENT_SECRET: "WQ2-LdfhYhHd-BdpfZCYGE12"
-#      PHOTOPRISM_OIDC_ISSUER: "http://host.docker.internal:9998"
-#      PHOTOPRISM_OIDC_CLIENT_ID: "native"
-#      PHOTOPRISM_OIDC_CLIENT_SECRET: "password"
-#      PHOTOPRISM_OIDC_ISSUER: "http://oidc-test.timovolkmann.de:9009"
-#      PHOTOPRISM_OIDC_CLIENT_ID: "foo"
-#      PHOTOPRISM_OIDC_CLIENT_SECRET: "bar"
 
   mariadb:
     image: mariadb:10.5
