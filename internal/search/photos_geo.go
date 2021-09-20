@@ -109,7 +109,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 
 	// Search for one or more keywords?
 	if f.Keywords != "" {
-		for _, where := range LikeAllKeywords("k.keyword", f.Keywords) {
+		for _, where := range LikeAnyKeyword("k.keyword", f.Keywords) {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
 	}
