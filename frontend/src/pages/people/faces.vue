@@ -182,15 +182,19 @@ export default {
       this.filter.q = query["q"] ? query["q"] : "";
       this.filter.all = query["all"] ? query["all"] : "";
       this.filter.order = this.sortOrder();
-      this.lastFilter = {};
       this.routeName = this.$route.name;
+
+      if (this.dirty) {
+        this.lastFilter = {};
+      }
+
       this.search();
     }
   },
   created() {
     this.search();
 
-    // this.subscriptions.push(Event.subscribe("subjects", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(Event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));

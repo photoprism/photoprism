@@ -10,7 +10,7 @@ type Album struct {
 	AlbumUID         string    `json:"UID"`
 	ParentUID        string    `json:"ParentUID"`
 	Thumb            string    `json:"Thumb"`
-	ThumbSrc         string    `json:"ThumbSrc"`
+	ThumbSrc         string    `json:"ThumbSrc,omitempty"`
 	AlbumSlug        string    `json:"Slug"`
 	AlbumType        string    `json:"Type"`
 	AlbumTitle       string    `json:"Title"`

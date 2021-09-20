@@ -21,8 +21,6 @@ type Subjects []Subject
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
 	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	MarkerUID    string          `gorm:"type:VARBINARY(42);index" json:"MarkerUID" yaml:"MarkerUID,omitempty"`
-	MarkerSrc    string          `gorm:"type:VARBINARY(8);default:''" json:"MarkerSrc,omitempty" yaml:"MarkerSrc,omitempty"`
 	SubjType     string          `gorm:"type:VARBINARY(8);default:''" json:"Type,omitempty" yaml:"Type,omitempty"`
 	SubjSrc      string          `gorm:"type:VARBINARY(8);default:''" json:"Src,omitempty" yaml:"Src,omitempty"`
 	SubjSlug     string          `gorm:"type:VARBINARY(255);index;default:''" json:"Slug" yaml:"-"`
@@ -34,6 +32,8 @@ type Subject struct {
 	SubjPrivate  bool            `gorm:"default:false" json:"Private" yaml:"Private,omitempty"`
 	SubjExcluded bool            `gorm:"default:false" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int             `gorm:"default:0" json:"FileCount" yaml:"-"`
+	Thumb        string          `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`

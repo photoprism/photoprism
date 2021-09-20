@@ -3,7 +3,7 @@ package entity
 import "github.com/photoprism/photoprism/internal/crop"
 
 // UnknownMarker can be used as a default for unknown markers.
-var UnknownMarker = NewMarker(File{}, crop.Area{}, "", SrcDefault, MarkerUnknown)
+var UnknownMarker = NewMarker(File{}, crop.Area{}, "", SrcDefault, MarkerUnknown, 0, 0)
 
 type MarkerMap map[string]Marker
 
@@ -27,7 +27,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-1": Marker{ //Photo04
 		MarkerUID:  "mqu0xs11qekk9jx8",
 		FileUID:    "ft2es39w45bnlqdw",
-		FileHash:   "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:      "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		SubjUID:    "jqu0xs11qekk9jx8",
 		MarkerSrc:  SrcImage,
 		MarkerType: MarkerLabel,
@@ -41,7 +41,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-2": Marker{ //Photo04
 		MarkerUID:  "mt9k3pw1wowuy3c3",
 		FileUID:    "ft2es39w45bnlqdw",
-		FileHash:   "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:      "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		SubjUID:    "lt9k3pw1wowuy3c3",
 		FaceID:     "LRG2HJBDZE66LYG7Q5SRFXO2MDTOES52",
 		MarkerName: "Unknown",
@@ -57,7 +57,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-3": Marker{ //Photo04
 		MarkerUID:  "mt9k3pw1wowuy111",
 		FileUID:    "ft2es39w45bnlqdw",
-		FileHash:   "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:      "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		SubjUID:    "",
 		MarkerSrc:  SrcImage,
 		MarkerType: MarkerLabel,
@@ -72,7 +72,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-4": Marker{ //Photo04
 		MarkerUID:      "mt9k3pw1wowuy222",
 		FileUID:        "ft2es39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		SubjUID:        "",
 		MarkerSrc:      SrcImage,
 		MarkerType:     MarkerFace,
@@ -89,7 +89,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-5": Marker{ //Photo04
 		MarkerUID:      "mt9k3pw1wowuy333",
 		FileUID:        "ft2es39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("unknown").ID,
 		SubjUID:        "",
 		SubjSrc:        SrcAuto,
@@ -108,7 +108,7 @@ var MarkerFixtures = MarkerMap{
 	"1000003-6": Marker{ //Photo04
 		MarkerUID:      "mt9k3pw1wowuy444",
 		FileUID:        "ft2es39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("john-doe").ID,
 		FaceDist:       0.2,
 		SubjSrc:        SrcAuto,
@@ -128,7 +128,7 @@ var MarkerFixtures = MarkerMap{
 	"ma-ba-1": Marker{ //Photo27
 		MarkerUID:      "mt9k3pw1wowuy555",
 		FileUID:        "ft2es49qhhinlple",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("fa-gr").ID,
 		FaceDist:       0.5,
 		SubjSrc:        "",
@@ -148,7 +148,7 @@ var MarkerFixtures = MarkerMap{
 	"fa-gr-1": Marker{ //Photo27
 		MarkerUID:      "mt9k3pw1wowuy666",
 		FileUID:        "ft2es49qhhinlple",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("fa-gr").ID,
 		FaceDist:       0.6,
 		SubjSrc:        SrcAuto,
@@ -168,7 +168,7 @@ var MarkerFixtures = MarkerMap{
 	"fa-gr-2": Marker{ //Photo03
 		MarkerUID:      "mt9k3pw1wowuy777",
 		FileUID:        "ft2es49w15bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("fa-gr").ID,
 		FaceDist:       0.6,
 		SubjSrc:        SrcAuto,
@@ -188,7 +188,7 @@ var MarkerFixtures = MarkerMap{
 	"fa-gr-3": Marker{ //19800101_000002_D640C559
 		MarkerUID:      "mt9k3pw1wowuy888",
 		FileUID:        "ft8es39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("fa-gr").ID,
 		FaceDist:       0.6,
 		SubjSrc:        SrcAuto,
@@ -208,9 +208,8 @@ var MarkerFixtures = MarkerMap{
 	"actress-a-1": Marker{ //Photo27
 		MarkerUID:      "mt9k3pw1wowuy999",
 		FileUID:        "ft2es49qhhinlple",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818-045038063041",
 		FaceID:         FaceFixtures.Get("actress-1").ID,
-		CropArea:       "045038063041",
 		FaceDist:       0.26852392873736236,
 		SubjSrc:        SrcManual,
 		SubjUID:        SubjectFixtures.Get("actress-1").SubjUID,
@@ -229,9 +228,8 @@ var MarkerFixtures = MarkerMap{
 	"actress-a-2": Marker{ //Photo03 - non primary file
 		MarkerUID:      "mt9k3pw1wowu1000",
 		FileUID:        "ft2es49whhbnlqdn",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818-046045043065",
 		FaceID:         FaceFixtures.Get("actress-1").ID,
-		CropArea:       "046045043065",
 		FaceDist:       0.4507357278575355,
 		SubjSrc:        "",
 		SubjUID:        SubjectFixtures.Get("actress-1").SubjUID,
@@ -250,9 +248,8 @@ var MarkerFixtures = MarkerMap{
 	"actress-a-3": Marker{ //19800101_000002_D640C559
 		MarkerUID:      "mt9k3pw1wowu1001",
 		FileUID:        "ft8es39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818-05403304060446",
 		FaceID:         FaceFixtures.Get("actress-1").ID,
-		CropArea:       "05403304060446",
 		FaceDist:       0.5099754448545762,
 		SubjSrc:        "",
 		SubjUID:        SubjectFixtures.Get("actress-1").SubjUID,
@@ -271,7 +268,7 @@ var MarkerFixtures = MarkerMap{
 	"actor-a-1": Marker{ //Photo05
 		MarkerUID:      "mt9k3pw1wowu1002",
 		FileUID:        "ft3es39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("actor-1").ID,
 		FaceDist:       0.5223304453393212,
 		SubjSrc:        "",
@@ -291,7 +288,7 @@ var MarkerFixtures = MarkerMap{
 	"actor-a-2": Marker{ //Photo02
 		MarkerUID:      "mt9k3pw1wowu1003",
 		FileUID:        "ft2es39q45bnlqd0",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("actor-1").ID,
 		FaceDist:       0.5088545446490167,
 		SubjSrc:        "",
@@ -311,7 +308,7 @@ var MarkerFixtures = MarkerMap{
 	"actor-a-3": Marker{ //Photo10
 		MarkerUID:      "mt9k3pw1wowu1004",
 		FileUID:        "fikjs39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("actor-1").ID,
 		FaceDist:       0.3139983399779298,
 		SubjSrc:        "",
@@ -331,7 +328,7 @@ var MarkerFixtures = MarkerMap{
 	"actor-a-4": Marker{ //19800101_000002_D640C559
 		MarkerUID:      "mt9k3pw1wowu1005",
 		FileUID:        "ft8es39w45bnlqdw",
-		FileHash:       "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		Thumb:          "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FaceID:         FaceFixtures.Get("actor-1").ID,
 		FaceDist:       0.3139983399779298,
 		SubjSrc:        "",

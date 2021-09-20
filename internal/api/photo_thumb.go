@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/crop"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -15,16 +17,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// GetThumb returns a thumbnail image matching the hash and type.
+// GetThumb returns a thumbnail image matching the file hash, crop area, and type.
 //
-// GET /api/v1/t/:hash/:token/:size
+// GET /api/v1/t/:thumb/:token/:size
 //
 // Parameters:
-//   hash: string sha1 file hash
+//   thumb: string sha1 file hash plus optional crop area
 //   token: string url security token, see config
 //   size: string thumb type, see thumb.Sizes
 func GetThumb(router *gin.RouterGroup) {
-	router.GET("/t/:hash/:token/:size", func(c *gin.Context) {
+	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
@@ -34,9 +36,45 @@ func GetThumb(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := service.Config()
-		fileHash := c.Param("hash")
-		thumbName := thumb.Name(c.Param("size"))
 		download := c.Query("download") != ""
+		fileHash, cropArea := crop.ParseThumb(c.Param("thumb"))
+
+		// Is cropped thumbnail?
+		if cropArea != "" {
+			cropName := crop.Name(c.Param("size"))
+
+			cropSize, ok := crop.Sizes[cropName]
+
+			if !ok {
+				log.Errorf("%s: invalid size %s", logPrefix, cropName)
+				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+				return
+			}
+
+			fileName, err := crop.FromRequest(fileHash, cropArea, cropSize, conf.ThumbPath())
+
+			if err != nil {
+				log.Warnf("%s: %s", logPrefix, err)
+				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+				return
+			} else if fileName == "" {
+				log.Errorf("%s: empty file name, potential bug", logPrefix)
+				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+				return
+			}
+
+			AddThumbCacheHeader(c)
+
+			if download {
+				c.FileAttachment(fileName, cropName.Jpeg())
+			} else {
+				c.File(fileName)
+			}
+
+			return
+		}
+
+		thumbName := thumb.Name(c.Param("size"))
 
 		size, ok := thumb.Sizes[thumbName]
 

@@ -198,8 +198,12 @@ export default {
       this.filter.q = query["q"] ? query["q"] : "";
       this.filter.all = query["all"] ? query["all"] : "";
       this.filter.order = this.sortOrder();
-      this.lastFilter = {};
       this.routeName = this.$route.name;
+
+      if (this.dirty) {
+        this.lastFilter = {};
+      }
+
       this.search();
     }
   },

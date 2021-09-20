@@ -82,21 +82,11 @@ export class Face extends RestModel {
   }
 
   thumbnailUrl(size) {
-    if (!this.Marker || !this.Marker.FileHash) {
+    if (!this.Marker) {
       return `${config.contentUri}/svg/portrait`;
     }
 
-    if (!size) {
-      size = "tile_160";
-    }
-
-    if (this.Marker.CropArea && (size === "tile_160" || size === "tile_320")) {
-      return `${config.contentUri}/t/${this.Marker.FileHash}/${config.previewToken()}/${size}/${
-        this.Marker.CropArea
-      }`;
-    } else {
-      return `${config.contentUri}/t/${this.Marker.FileHash}/${config.previewToken()}/${size}`;
-    }
+    return this.Marker.thumbnailUrl(size);
   }
 
   getDateString() {
@@ -114,7 +104,7 @@ export class Face extends RestModel {
   }
 
   static batchSize() {
-    return 500;
+    return 120;
   }
 
   static getCollectionResource() {
