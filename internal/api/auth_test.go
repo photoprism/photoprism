@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/photoprism/photoprism/internal/httpclient"
 	"net/http"
 	"strings"
 	"testing"
@@ -21,20 +22,21 @@ func TestAuthEndpoints(t *testing.T) {
 		// Step 1b: Redirect user agent to OP and save state cookie
 		l := r.Header().Get("Location")
 		log.Debug("Requesting AuthCode from OP: ", l)
-		cookie := r.Header().Get("Set-Cookie")
-		log.Debug("Cookie: ", cookie)
+		cookies := r.Header().Values("Set-Cookie")
+		log.Debug("Cookies: ", cookies)
 		assert.Contains(t, l, "authorize")
-		var l2 string
-		cl := &http.Client{
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				if strings.Contains(req.URL.String(), "localhost") {
 
-					l2 = req.URL.RequestURI()
-					return http.ErrUseLastResponse
-				}
-				return nil
-			},
+		var l2 string
+		cl := httpclient.Client(true)
+		cl.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			if strings.Contains(req.URL.String(), "localhost") {
+
+				l2 = req.URL.RequestURI()
+				return http.ErrUseLastResponse
+			}
+			return nil
 		}
+
 		_, err := cl.Get(l)
 		if err != nil {
 			t.Error(err)
@@ -45,11 +47,12 @@ func TestAuthEndpoints(t *testing.T) {
 		// Step 2a: OP redirects user agent back to PhotoPrism
 		// Step 2b: PhotoPrism redeems AuthCode and fetches tokens from OP
 		log.Debug("Redeem AuthCode...")
-		r3 := PerformRequestWithCookie(app, http.MethodGet, l2, cookie)
+		r3 := PerformRequestWithCookie(app, http.MethodGet, l2, strings.Join(cookies, "; "))
 
-		assert.Equal(t, r3.Code, http.StatusOK)
+		assert.Equal(t, http.StatusOK, r3.Code)
 		log.Debug("Successful")
 	})
+
 	t.Run("oidc authentication: missing cookie", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AuthEndpoints(router)
