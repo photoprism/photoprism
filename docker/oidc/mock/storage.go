@@ -124,7 +124,8 @@ func (s *AuthStorage) Health(ctx context.Context) error {
 	return nil
 }
 
-func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthRequest, _ string) (op.AuthRequest, error) {
+func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthRequest, userId string) (op.AuthRequest, error) {
+	fmt.Println("Userid: ", userId)
 	fmt.Println("CreateAuthRequest ID: ", authReq.ID)
 	fmt.Println("CreateAuthRequest CodeChallenge: ", authReq.CodeChallenge)
 	fmt.Println("CreateAuthRequest CodeChallengeMethod: ", authReq.CodeChallengeMethod)
@@ -133,7 +134,10 @@ func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthReq
 	fmt.Println("CreateAuthRequest ResponseType: ", authReq.ResponseType)
 	fmt.Println("CreateAuthRequest Nonce: ", authReq.Nonce)
 	fmt.Println("CreateAuthRequest Scopes: ", authReq.Scopes)
-	a = &AuthRequest{ID: "loginId", ClientID: authReq.ClientID, ResponseType: authReq.ResponseType, Nonce: authReq.Nonce, RedirectURI: authReq.RedirectURI}
+	fmt.Println("CreateAuthRequest Display: ", authReq.Display)
+	fmt.Println("CreateAuthRequest LoginHint: ", authReq.LoginHint)
+	fmt.Println("CreateAuthRequest IDTokenHint: ", authReq.IDTokenHint)
+	a = &AuthRequest{ID: "authReqUserAgentId", ClientID: authReq.ClientID, ResponseType: authReq.ResponseType, Nonce: authReq.Nonce, RedirectURI: authReq.RedirectURI}
 	if authReq.CodeChallenge != "" {
 		a.CodeChallenge = &oidc.CodeChallenge{
 			Challenge: authReq.CodeChallenge,
@@ -152,7 +156,7 @@ func (s *AuthStorage) AuthRequestByCode(_ context.Context, code string) (op.Auth
 }
 func (s *AuthStorage) SaveAuthCode(_ context.Context, id, code string) error {
 	if a.ID != id {
-		return errors.New("not found")
+		return errors.New("SaveAuthCode: not found")
 	}
 	c = code
 	return nil
@@ -162,8 +166,9 @@ func (s *AuthStorage) DeleteAuthRequest(context.Context, string) error {
 	return nil
 }
 func (s *AuthStorage) AuthRequestByID(_ context.Context, id string) (op.AuthRequest, error) {
-	if id != "loginId" || t {
-		return nil, errors.New("not found")
+	fmt.Println("AuthRequestByID: ", id)
+	if id != "authReqUserAgentId:usertoken" || t {
+		return nil, errors.New("AuthRequestByID: not found")
 	}
 	return a, nil
 }
@@ -227,7 +232,7 @@ func (s *AuthStorage) GetKeyByIDAndUserID(_ context.Context, _, _ string) (*jose
 
 func (s *AuthStorage) GetClientByClientID(_ context.Context, id string) (op.Client, error) {
 	if id == "none" {
-		return nil, errors.New("not found")
+		return nil, errors.New("GetClientByClientID: not found")
 	}
 	var appType op.ApplicationType
 	var authMethod oidc.AuthMethod
@@ -319,8 +324,8 @@ func (c *ConfClient) PostLogoutRedirectURIs() []string {
 }
 
 func (c *ConfClient) LoginURL(id string) string {
-	return "authorize/callback?id=" + id
-	//return "login?id=" + id
+	//return "authorize/callback?id=" + id
+	return "login?id=" + id
 }
 
 func (c *ConfClient) ApplicationType() op.ApplicationType {
