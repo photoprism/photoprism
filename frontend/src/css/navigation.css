@@ -81,8 +81,15 @@
     padding-left: 0;
 }
 
-#photoprism .v-text-field--single-line .v-select__selections {
+#photoprism .page-toolbar .input-category .v-select__selections {
+    min-width: 130px;
+}
+
+#photoprism .page-toolbar .input-category .v-select__selections input {
+    position: absolute;
+}
+
+#photoprism .page-toolbar .input-category .v-select__selections .v-select__selection {
     white-space: nowrap;
     overflow: hidden;
-    min-width: 130px;
 }

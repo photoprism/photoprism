@@ -17,8 +17,8 @@
                       @click:clear="clearQuery"
         ></v-text-field>
 
-        <v-select v-model="filter.category"
-                  solo hide-details overflow single-line
+        <v-overflow-btn v-model="filter.category"
+                  solo hide-details single-line
                   :label="$gettext('Category')"
                   color="secondary-dark"
                   background-color="secondary"
@@ -28,7 +28,7 @@
                   class="hidden-xs-only input-category background-inherit elevation-0"
                   @change="updateQuery"
         >
-        </v-select>
+        </v-overflow-btn>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>

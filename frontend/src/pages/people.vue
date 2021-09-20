@@ -71,7 +71,7 @@ export default {
         'label': this.$gettext('New'),
         'class': '',
         'path': '/people/new',
-        'icon': 'auto_awesome',
+        'icon': 'person_add',
         'readonly': true,
         'demo': true,
       },
