@@ -101,7 +101,7 @@
                   :hint="$gettext('Permanently remove files to free up storage.')"
                   prepend-icon="delete"
                   persistent-hint
-                  @change="onChangeDelete"
+                  @change="onChange"
               >
               </v-checkbox>
             </v-flex>
@@ -380,19 +380,6 @@ export default {
       }
 
       this.currentTheme = newTheme;
-
-      this.onChange();
-    },
-    onChangeDelete(enabled) {
-      if(enabled && !this.$config.values.sponsor) {
-        this.dialog.sponsor = true;
-
-        this.$nextTick(() => {
-          this.settings.features.delete = false;
-        });
-
-        return false;
-      }
 
       this.onChange();
     },
