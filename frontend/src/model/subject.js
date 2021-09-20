@@ -63,8 +63,8 @@ export class Subject extends RestModel {
   }
 
   route(view) {
-    if (!this.Type || this.Type === SubjPerson) {
-      return { name: view, query: { q: `people:"${this.Name}"` } };
+    if (this.Slug && (!this.Type || this.Type === SubjPerson)) {
+      return { name: view, query: { q: `person:${this.Slug}` } };
     }
 
     return { name: view, query: { q: "subject:" + this.UID } };

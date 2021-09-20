@@ -27,6 +27,7 @@ type PhotoSearchGeo struct {
 	Dist     uint      `form:"dist"`
 	Face     string    `form:"face"`     // UIDs
 	Subject  string    `form:"subject"`  // UIDs
+	Person   string    `form:"person"`   // Alias for Subject
 	Subjects string    `form:"subjects"` // Text
 	People   string    `form:"people"`   // Alias for Subjects
 	Keywords string    `form:"keywords"`
@@ -57,10 +58,17 @@ func (f *PhotoSearchGeo) ParseQueryString() error {
 
 	if f.Path == "" && f.Folder != "" {
 		f.Path = f.Folder
+		f.Folder = ""
 	}
 
-	if f.Subjects == "" {
+	if f.Subject == "" && f.Person != "" {
+		f.Subject = f.Person
+		f.Person = ""
+	}
+
+	if f.Subjects == "" && f.People != "" {
 		f.Subjects = f.People
+		f.People = ""
 	}
 
 	return err

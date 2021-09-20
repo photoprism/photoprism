@@ -19,6 +19,21 @@ func TestGeoSearch(t *testing.T) {
 
 		assert.Equal(t, "Jens Mander", form.Subjects)
 	})
+	t.Run("aliases", func(t *testing.T) {
+		form := &PhotoSearchGeo{Query: "people:\"Jens & Mander\" folder:Foo person:Bar"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "", form.Folder)
+		assert.Equal(t, "", form.Person)
+		assert.Equal(t, "", form.People)
+		assert.Equal(t, "Foo", form.Path)
+		assert.Equal(t, "Bar", form.Subject)
+		assert.Equal(t, "Jens & Mander", form.Subjects)
+	})
 	t.Run("keywords", func(t *testing.T) {
 		form := &PhotoSearchGeo{Query: "keywords:\"Foo Bar\""}
 
@@ -59,7 +74,7 @@ func TestGeoSearch(t *testing.T) {
 
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, "test", form.Path)
-		assert.Equal(t, "test", form.Folder)
+		assert.Equal(t, "", form.Folder)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, uint(0x61a8), form.Dist)
 		assert.Equal(t, float32(33.45343), form.Lat)

@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/jinzhu/gorm"
@@ -123,11 +125,16 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	// Filter for one or more subjects?
 	if f.Subject != "" {
 		for _, subj := range strings.Split(strings.ToLower(f.Subject), txt.And) {
-			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
-				entity.Marker{}.TableName()), strings.Split(subj, txt.Or))
+			if subjects := strings.Split(subj, txt.Or); rnd.ContainsUIDs(subjects, 'j') {
+				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
+					entity.Marker{}.TableName()), subjects)
+			} else {
+				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
+					entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(AnySlug("s.subj_slug", subj, txt.Or)))
+			}
 		}
 	} else if f.Subjects != "" {
-		for _, where := range LikeAnyWord("s.subj_name", f.Subjects) {
+		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, f.Subjects) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
 				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where))
 		}
