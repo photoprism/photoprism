@@ -28,16 +28,6 @@ func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response,
 	// Do "before sending requests" actions here.
 	log.Debugf("Sending request to %v\n", req.URL.String())
 
-	// Copy body into buffer for logging
-	//bu := new(bytes.Buffer)
-	//_, err := io.Copy(bu, req.Body)
-	//if err != nil {
-	//	log.Errorf("Error: %v", err)
-	//}
-	//log.Debugf("Request Header: %s\n", req.Header)
-	//log.Debugf("Request Body: %s\n", bu.String())
-	//req.Body = io.NopCloser(bu)
-
 	// Send the request, get the response (or the error)
 	res, e = lrt.proxy.RoundTrip(req)
 
@@ -53,6 +43,7 @@ func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response,
 		if err != nil {
 			log.Errorf("Error: %v", err)
 		}
+		log.Debugf("Header: %s\n", res.Header)
 		log.Debugf("Reponse Body: %s\n", buf.String())
 		res.Body = io.NopCloser(buf)
 	}
