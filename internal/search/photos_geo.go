@@ -141,10 +141,14 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	}
 
 	// Filter by album?
-	if f.Album != "" {
+	if rnd.IsPPID(f.Album, 'a') {
 		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").
 			Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
-	} else if f.Albums != "" {
+	} else if f.Albums != "" || f.Album != "" {
+		if f.Albums == "" {
+			f.Albums = f.Album
+		}
+
 		for _, where := range LikeAnyWord("a.album_title", f.Albums) {
 			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE (?))", gorm.Expr(where))
 		}
