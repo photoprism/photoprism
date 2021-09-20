@@ -18,15 +18,26 @@ func AuthEndpoints(router *gin.RouterGroup) {
 		log.Debugf("no oidc provider configured. skip mounting endpoints")
 		return
 	}
-	openIdConnect := service.Oidc()
 
 	router.GET("/auth/external", func(c *gin.Context) {
+		openIdConnect := service.Oidc()
+		if openIdConnect == nil {
+			AbortFeatureDisabled(c)
+			return
+		}
+
 		handle := openIdConnect.AuthUrlHandler()
 		handle(c.Writer, c.Request)
 		return
 	})
 
 	router.GET(oidc.RedirectPath, func(c *gin.Context) {
+		openIdConnect := service.Oidc()
+		if openIdConnect == nil {
+			AbortFeatureDisabled(c)
+			return
+		}
+
 		userInfo, err := openIdConnect.CodeExchangeUserInfo(c)
 		if err != nil {
 			log.Errorf("%s", err)

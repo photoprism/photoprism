@@ -1,12 +1,8 @@
 package service
 
 import (
-	"sync"
-
 	"github.com/photoprism/photoprism/internal/oidc"
 )
-
-var onceOidc sync.Once
 
 func initOidc() {
 	services.Oidc = oidc.NewClient(
@@ -19,6 +15,8 @@ func initOidc() {
 }
 
 func Oidc() *oidc.Client {
-	onceOidc.Do(initOidc)
+	if services.Oidc == nil {
+		initOidc()
+	}
 	return services.Oidc
 }
