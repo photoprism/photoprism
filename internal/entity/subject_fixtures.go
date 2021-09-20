@@ -84,7 +84,7 @@ var SubjectFixtures = SubjectMap{
 		SubjNotes:    "",
 		MetadataJSON: []byte(""),
 		FileCount:    3,
-		CreatedAt:    TimeStamp(),
+		CreatedAt:    TimeStamp().AddDate(0, 0, 1),
 		UpdatedAt:    TimeStamp(),
 		DeletedAt:    nil,
 	},
