@@ -61,7 +61,6 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680              # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # Show TensorFlow log messages for development
-      HOME: "/photoprism"
 
   postgres:
     image: postgres:12-alpine
