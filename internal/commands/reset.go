@@ -49,7 +49,7 @@ func resetAction(ctx *cli.Context) error {
 		tables.Drop()
 
 		log.Infoln("restoring default schema")
-		entity.MigrateDb()
+		entity.MigrateDb(true)
 
 		if conf.AdminPassword() != "" {
 			log.Infoln("restoring initial admin password")
