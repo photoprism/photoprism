@@ -21,11 +21,11 @@ type Subjects []Subject
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
 	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	SubjType     string          `gorm:"type:VARBINARY(8);default:''" json:"Type,omitempty" yaml:"Type,omitempty"`
-	SubjSrc      string          `gorm:"type:VARBINARY(8);default:''" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string          `gorm:"type:VARBINARY(255);index;default:''" json:"Slug" yaml:"-"`
-	SubjName     string          `gorm:"type:VARCHAR(255);unique_index;default:''" json:"Name" yaml:"Name"`
-	SubjAlias    string          `gorm:"type:VARCHAR(255);default:''" json:"Alias" yaml:"Alias"`
+	SubjType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjSlug     string          `gorm:"type:VARBINARY(255);index;default:'';" json:"Slug" yaml:"-"`
+	SubjName     string          `gorm:"type:VARCHAR(255);unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjAlias    string          `gorm:"type:VARCHAR(255);default:'';" json:"Alias" yaml:"Alias"`
 	SubjBio      string          `gorm:"type:TEXT;" json:"Bio" yaml:"Bio,omitempty"`
 	SubjNotes    string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	SubjFavorite bool            `gorm:"default:false" json:"Favorite" yaml:"Favorite,omitempty"`
@@ -42,7 +42,7 @@ type Subject struct {
 
 // TableName returns the entity database table name.
 func (Subject) TableName() string {
-	return "subjects_dev10"
+	return "subjects"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.

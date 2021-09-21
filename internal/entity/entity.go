@@ -122,7 +122,7 @@ func (list Types) Drop() {
 	}
 }
 
-// CreateDefaultFixtures creates default database entries for test and production.
+// CreateDefaultFixtures inserts default fixtures for test and production.
 func CreateDefaultFixtures() {
 	CreateUnknownAddress()
 	CreateDefaultUsers()
@@ -133,16 +133,19 @@ func CreateDefaultFixtures() {
 	CreateUnknownLens()
 }
 
-// MigrateDb creates all tables and inserts default entities as needed.
-func MigrateDb() {
-	DeprecatedTables.Drop()
+// MigrateDb creates database tables and inserts default fixtures as needed.
+func MigrateDb(dropDeprecated bool) {
+	if dropDeprecated {
+		DeprecatedTables.Drop()
+	}
+
 	Entities.Migrate()
 	Entities.WaitForMigration()
 
 	CreateDefaultFixtures()
 }
 
-// ResetTestFixtures drops database tables for all known entities and re-creates them with fixtures.
+// ResetTestFixtures re-creates registered database tables and inserts test fixtures.
 func ResetTestFixtures() {
 	Entities.Migrate()
 	Entities.WaitForMigration()

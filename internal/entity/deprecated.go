@@ -23,6 +23,7 @@ var DeprecatedTables = Deprecated{
 	"subjects_dev7",
 	"subjects_dev8",
 	"subjects_dev9",
+	"subjects_dev10",
 	"markers_dev1",
 	"markers_dev2",
 	"markers_dev3",
@@ -32,6 +33,7 @@ var DeprecatedTables = Deprecated{
 	"markers_dev7",
 	"markers_dev8",
 	"markers_dev9",
+	"markers_dev10",
 	"faces_dev1",
 	"faces_dev2",
 	"faces_dev3",
@@ -41,4 +43,5 @@ var DeprecatedTables = Deprecated{
 	"faces_dev7",
 	"faces_dev8",
 	"faces_dev9",
+	"faces_dev10",
 }
