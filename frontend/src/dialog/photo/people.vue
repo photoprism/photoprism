@@ -8,7 +8,7 @@
               <translate>Couldn't find any people</translate>
             </h3>
             <p class="mt-4 mb-0 pa-0">
-              <translate>To automatically detect faces, please re-index your library and wait until indexing has been completed.</translate>
+              <translate>Please reindex your library to find additional faces. Recognition starts after indexing has been completed.</translate>
             </p>
           </div>
         </v-card-title>

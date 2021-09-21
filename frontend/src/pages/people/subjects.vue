@@ -40,10 +40,11 @@
           <v-card-title primary-title>
             <div>
               <h3 class="title ma-0 pa-0">
-                <translate>Couldn't find anything</translate>
+                <translate>Couldn't find any people</translate>
               </h3>
               <p class="mt-4 mb-0 pa-0">
                 <translate>Try again using other filters or keywords.</translate>
+                <translate>Please reindex your library to find additional faces. Recognition starts after indexing has been completed.</translate>
               </p>
             </div>
           </v-card-title>

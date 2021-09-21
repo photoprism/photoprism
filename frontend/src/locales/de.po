@@ -25,7 +25,7 @@ msgstr "%{n} Alben gefunden"
 msgid "%{n} entries found"
 msgstr "%{n} Einträge gefunden"
 
-#: src/pages/people/faces.vue:348
+#: src/pages/people/faces.vue:352
 msgid "%{n} faces found"
 msgstr "%{n} Gesichter gefunden"
 
@@ -41,7 +41,7 @@ msgstr "%{n} Ordner gefunden"
 msgid "%{n} labels found"
 msgstr "%{n} Kategorien gefunden"
 
-#: src/pages/people/subjects.vue:339
+#: src/pages/people/subjects.vue:343
 msgid "%{n} people found"
 msgstr "%{n} Personen gefunden"
 
@@ -88,7 +88,7 @@ msgstr "Aktion"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: src/pages/albums.vue:172
+#: src/pages/albums.vue:171
 msgid "Add Album"
 msgstr "Neues Album erstellen"
 
@@ -184,7 +184,7 @@ msgstr "Alle %{n} Alben werden angezeigt"
 msgid "All %{n} entries loaded"
 msgstr "Alle %{n} Einträge werden angezeigt"
 
-#: src/pages/people/faces.vue:260
+#: src/pages/people/faces.vue:264
 msgid "All %{n} faces loaded"
 msgstr "Alle %{n} Gesichter werden angezeigt"
 
@@ -192,7 +192,7 @@ msgstr "Alle %{n} Gesichter werden angezeigt"
 msgid "All %{n} labels loaded"
 msgstr "Alle %{n} Kategorien werden angezeigt"
 
-#: src/pages/people/subjects.vue:251
+#: src/pages/people/subjects.vue:255
 msgid "All %{n} people loaded"
 msgstr "Alle %{n} Personen geladen"
 
@@ -338,7 +338,7 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Erstellt automatisch Alben mit besonderen Momenten, Reisen und Orten."
 
-#: src/pages/people/subjects.vue:343
+#: src/pages/people/subjects.vue:350
 msgid "Bio"
 msgstr "Biographie"
 
@@ -401,9 +401,9 @@ msgstr "Limit erreicht, bitte Suche eingrenzen"
 #: src/common/clipboard.js:105 src/common/clipboard.js:142
 #: src/pages/albums.vue:386 src/pages/albums.vue:402 src/pages/labels.vue:182
 #: src/pages/labels.vue:198 src/pages/library/files.vue:193
-#: src/pages/library/files.vue:209 src/pages/people/faces.vue:196
-#: src/pages/people/faces.vue:212 src/pages/people/subjects.vue:187
-#: src/pages/people/subjects.vue:203 src/share/albums.vue:345
+#: src/pages/library/files.vue:209 src/pages/people/faces.vue:200
+#: src/pages/people/faces.vue:216 src/pages/people/subjects.vue:191
+#: src/pages/people/subjects.vue:207 src/share/albums.vue:345
 #: src/share/albums.vue:361
 msgid "Can't select more items"
 msgstr "Maximale Anzahl wurde selektiert"
@@ -423,7 +423,7 @@ msgid "Cards"
 msgstr "Karteikarten"
 
 #: src/component/photo/toolbar.vue:349 src/dialog/album/edit.vue:163
-#: src/pages/about/feedback.vue:94 src/pages/albums.vue:123
+#: src/pages/about/feedback.vue:94 src/pages/albums.vue:122
 msgid "Category"
 msgstr "Kategorie"
 
@@ -493,12 +493,12 @@ msgid "Contact Us"
 msgstr "Kontakt"
 
 #: src/pages/albums.vue:100 src/pages/labels.vue:77
-#: src/pages/people/subjects.vue:76
+#: src/pages/people/subjects.vue:77
 msgid "Contains %{n} entries."
 msgstr "Enthält %{n} Einträge."
 
 #: src/pages/albums.vue:97 src/pages/labels.vue:74
-#: src/pages/people/subjects.vue:73
+#: src/pages/people/subjects.vue:74
 msgid "Contains one entry."
 msgstr "Enthält einen Eintrag."
 
@@ -518,15 +518,18 @@ msgstr "In Zwischenablage kopiert"
 msgid "Copyright"
 msgstr "Copyright"
 
-#: src/dialog/photo/people.vue:7
+#: src/pages/people/faces.vue:25
+msgid "Couldn't find any new faces"
+msgstr "Keine neuen Gesichter gefunden"
+
+#: src/dialog/photo/people.vue:7 src/pages/people/subjects.vue:28
 msgid "Couldn't find any people"
-msgstr "Leider nichts gefunden"
+msgstr "Keine Personen gefunden"
 
 #: src/component/photo/cards.vue:9 src/component/photo/list.vue:10
 #: src/component/photo/mosaic.vue:9 src/pages/albums.vue:37
 #: src/pages/albums.vue:46 src/pages/labels.vue:33
-#: src/pages/library/files.vue:36 src/pages/people/faces.vue:25
-#: src/pages/people/subjects.vue:28 src/share/albums.vue:20
+#: src/pages/library/files.vue:36 src/share/albums.vue:20
 #: src/share/photo/cards.vue:9 src/share/photo/list.vue:10
 #: src/share/photo/mosaic.vue:9
 msgid "Couldn't find anything"
@@ -616,7 +619,7 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: src/component/photo/cards.vue:24 src/dialog/album/edit.vue:143
-#: src/dialog/photo/details.vue:575 src/pages/albums.vue:462
+#: src/dialog/photo/details.vue:575 src/pages/albums.vue:461
 #: src/share/albums.vue:247 src/share/photo/cards.vue:24
 msgid "Description"
 msgstr "Beschreibung"
@@ -887,7 +890,7 @@ msgstr "Belichtungszeit"
 msgid "F Number"
 msgstr "F Nummer"
 
-#: src/model/face.js:125
+#: src/model/face.js:115
 msgid "Face"
 msgstr "Gesicht"
 
@@ -1319,7 +1322,7 @@ msgstr "Manuell"
 msgid "Manual Upload"
 msgstr "Manueller Upload"
 
-#: src/model/marker.js:145
+#: src/model/marker.js:142
 msgid "Marker"
 msgstr "Bildbereich"
 
@@ -1360,7 +1363,7 @@ msgstr "Moonlight"
 msgid "More than 20 albums found"
 msgstr "Mehr als 20 Alben gefunden"
 
-#: src/pages/people/faces.vue:350
+#: src/pages/people/faces.vue:354
 msgid "More than 20 faces found"
 msgstr "Mehr als 20 Gesichter gefunden"
 
@@ -1368,7 +1371,7 @@ msgstr "Mehr als 20 Gesichter gefunden"
 msgid "More than 20 labels found"
 msgstr "Mehr als 20 Labels gefunden"
 
-#: src/pages/people/subjects.vue:341
+#: src/pages/people/subjects.vue:345
 msgid "More than 20 people found"
 msgstr "Mehr als 20 Personen gefunden"
 
@@ -1401,7 +1404,7 @@ msgstr "Dateien verschieben"
 #: src/dialog/photo/people.vue:18 src/dialog/photo/people.vue:228
 #: src/pages/about/feedback.vue:144 src/pages/labels.vue:336
 #: src/pages/login.vue:73 src/pages/people/faces.vue:46
-#: src/pages/people/faces.vue:309 src/pages/people/subjects.vue:306
+#: src/pages/people/faces.vue:309 src/pages/people/subjects.vue:313
 #: src/share/photo/cards.vue:30 src/share/photo/list.vue:34
 #: src/share/photo/list.vue:219
 msgid "Name"
@@ -1419,7 +1422,7 @@ msgstr "Name zu  lang"
 msgid "Never"
 msgstr "Nie"
 
-#: src/pages/people.vue:43
+#: src/pages/people.vue:30
 msgid "New"
 msgstr "Neu"
 
@@ -1720,6 +1723,15 @@ msgstr ""
 msgid "Please don't upload photos containing offensive content."
 msgstr "Bitte lade keine anstößigen Bilder hoch."
 
+#: src/dialog/photo/people.vue:10 src/pages/people/faces.vue:28
+#: src/pages/people/subjects.vue:32
+msgid ""
+"Please reindex your library to find additional faces. Recognition starts "
+"after indexing has been completed."
+msgstr ""
+"Der Index muss aktualisiert werden, um weitere Gesichter zu finden. Die "
+"Erkennung beginnt, nachdem die Indexierung abgeschlossen ist."
+
 #: src/options/options.js:146
 msgid "Polish"
 msgstr "Polnisch"
@@ -1823,7 +1835,7 @@ msgstr "Zuletzt hinzugefügt"
 msgid "Recently edited"
 msgstr "Zuletzt bearbeitet"
 
-#: src/pages/people.vue:32
+#: src/pages/people.vue:21
 msgid "Recognized"
 msgstr "Erkannt"
 
@@ -1836,13 +1848,13 @@ msgid "Red"
 msgstr "Rot"
 
 #: src/component/album/toolbar.vue:54 src/component/photo/toolbar.vue:57
-#: src/dialog/reload.vue:15 src/pages/albums.vue:135 src/pages/labels.vue:89
+#: src/dialog/reload.vue:15 src/pages/albums.vue:134 src/pages/labels.vue:89
 #: src/pages/library/errors.vue:63 src/pages/library/files.vue:99
-#: src/pages/people/faces.vue:64 src/pages/people/subjects.vue:94
+#: src/pages/people/faces.vue:64 src/pages/people/subjects.vue:95
 msgid "Reload"
 msgstr "Neu laden"
 
-#: src/dialog/reload.vue:26 src/pages/settings/general.vue:83
+#: src/dialog/reload.vue:26 src/pages/settings/general.vue:70
 #: src/pages/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Wird neu geladen…"
@@ -1921,7 +1933,7 @@ msgstr "Scans"
 #: src/component/navigation.vue:4 src/component/navigation.vue:280
 #: src/component/photo/toolbar.vue:48 src/pages/albums.vue:109
 #: src/pages/labels.vue:79 src/pages/library/errors.vue:54
-#: src/pages/people/subjects.vue:77 src/pages/places.vue:30 src/routes.js:107
+#: src/pages/people/subjects.vue:78 src/pages/places.vue:30 src/routes.js:107
 msgid "Search"
 msgstr "Suche"
 
@@ -1986,7 +1998,7 @@ msgstr "Service URL"
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:87
+#: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:74
 #: src/pages/settings/library.vue:50
 msgid "Settings saved"
 msgstr "Einstellungen gespeichert"
@@ -2147,7 +2159,7 @@ msgstr "Straßen"
 msgid "Style"
 msgstr "Style"
 
-#: src/dialog/photo/details.vue:482 src/model/subject.js:143
+#: src/dialog/photo/details.vue:482 src/model/subject.js:135
 msgid "Subject"
 msgstr "Bildinhalt"
 
@@ -2238,14 +2250,6 @@ msgstr "Titel zu  lang"
 msgid "to"
 msgstr "nach"
 
-#: src/dialog/photo/people.vue:10
-msgid ""
-"To automatically detect faces, please re-index your library and wait until "
-"indexing has been completed."
-msgstr ""
-"Der Index muss vollständig aktualisiert werden, damit Gesichter von Personen "
-"automatisch erkannt werden können."
-
 #: src/component/album/toolbar.vue:125 src/component/album/toolbar.vue:142
 #: src/component/album/toolbar.vue:158 src/component/photo/toolbar.vue:74
 #: src/component/photo/toolbar.vue:91 src/component/photo/toolbar.vue:107
@@ -2267,10 +2271,9 @@ msgstr "Markenrechte"
 #: src/component/photo/cards.vue:12 src/component/photo/list.vue:13
 #: src/component/photo/list.vue:19 src/component/photo/mosaic.vue:12
 #: src/pages/albums.vue:40 src/pages/albums.vue:49 src/pages/labels.vue:36
-#: src/pages/people/faces.vue:28 src/pages/people/subjects.vue:31
-#: src/share/albums.vue:23 src/share/photo/cards.vue:12
-#: src/share/photo/list.vue:13 src/share/photo/list.vue:19
-#: src/share/photo/mosaic.vue:12
+#: src/pages/people/subjects.vue:31 src/share/albums.vue:23
+#: src/share/photo/cards.vue:12 src/share/photo/list.vue:13
+#: src/share/photo/list.vue:19 src/share/photo/mosaic.vue:12
 msgid "Try again using other filters or keywords."
 msgstr "Versuche es mit anderen Filtern oder Suchbegriffen."
 
@@ -2333,7 +2336,7 @@ msgstr "Aktualisiere Bildstapel"
 
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:126
 #: src/component/photo/toolbar.vue:125 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:54 src/pages/albums.vue:153
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:54 src/pages/albums.vue:152
 #: src/pages/library/import.vue:38 src/pages/settings/general.vue:140
 #: src/pages/settings/sync.vue:27
 msgid "Upload"
