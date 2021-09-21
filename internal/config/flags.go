@@ -158,7 +158,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-ffmpeg",
-		Usage:  "disables video transcoding with FFmpeg",
+		Usage:  "disables video transcoding and thumbnail generation with FFmpeg",
 		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
 	},
 	cli.BoolFlag{
