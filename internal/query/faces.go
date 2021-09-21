@@ -178,7 +178,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 				conflicts++
 
-				r := f1.SampleRadius + face.ClusterRadius
+				r := f1.SampleRadius + face.MatchRadius
 
 				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 

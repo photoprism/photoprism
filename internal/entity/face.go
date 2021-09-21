@@ -133,7 +133,7 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 	case dist < 0:
 		// Should never happen.
 		return false, dist
-	case dist > (m.SampleRadius + face.ClusterRadius):
+	case dist > (m.SampleRadius + face.MatchRadius):
 		// Too far.
 		return false, dist
 	case m.CollisionRadius > 0.1 && dist > m.CollisionRadius:
