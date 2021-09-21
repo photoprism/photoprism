@@ -45,17 +45,6 @@ const (
 	FormatOther    FileFormat = ""     // Unknown file format.
 )
 
-type FileExtensions map[string]FileFormat
-type TypeExtensions map[FileFormat][]string
-
-const (
-	YamlExt     = ".yml"
-	JpegExt     = ".jpg"
-	AvcExt      = ".avc"
-	FujiRawExt  = ".raf"
-	CanonCr3Ext = ".cr3"
-)
-
 // FileExt contains the filename extensions of file formats known to PhotoPrism.
 var FileExt = FileExtensions{
 	".bmp":  FormatBitmap,
@@ -329,13 +318,4 @@ func (t FileFormat) FindAll(fileName string, dirs []string, baseDir string, stri
 	}
 
 	return results
-}
-
-// NormalizedExt returns the file extension without dot and in lowercase.
-func NormalizedExt(fileName string) string {
-	if dot := strings.LastIndex(fileName, "."); dot != -1 && len(fileName[dot+1:]) >= 1 {
-		return strings.ToLower(fileName[dot+1:])
-	}
-
-	return ""
 }

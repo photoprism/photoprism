@@ -31,8 +31,8 @@ func (b Blacklist) Contains(ext string) bool {
 		return false
 	}
 
-	// Normalize extension string.
-	ext = strings.ToLower(strings.Trim(ext, ".,;: "))
+	// Remove unwanted characters from file extension and make it lowercase for comparison.
+	ext = TrimExt(ext)
 
 	// Skip check if extension is empty.
 	if ext == "" {
@@ -66,8 +66,8 @@ func (b Blacklist) Set(extensions string) {
 
 // Add adds a file extension to the blacklist.
 func (b Blacklist) Add(ext string) {
-	// Normalize extension string.
-	ext = strings.ToLower(strings.Trim(ext, ".,;: "))
+	// Remove unwanted characters from file extension and make it lowercase for comparison.
+	ext = TrimExt(ext)
 
 	if ext == "" {
 		return
