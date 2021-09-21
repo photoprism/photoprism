@@ -34,6 +34,11 @@ var KeywordFixtures = KeywordMap{
 		Keyword: "flower",
 		Skip:    false,
 	},
+	"kuh": {
+		ID:      1000003,
+		Keyword: "kuh",
+		Skip:    false,
+	},
 }
 
 // CreateKeywordFixtures inserts known entities into the database for testing.
