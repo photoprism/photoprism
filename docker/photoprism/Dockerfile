@@ -110,7 +110,6 @@ RUN ldconfig
 # Set default umask and create photoprism user
 RUN umask 0000 && useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism
 WORKDIR /photoprism
-ENV HOME="/photoprism"
 
 # Copy files to /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
