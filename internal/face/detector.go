@@ -124,7 +124,9 @@ func (d *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo.
 		return faces, params, err
 	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		err = file.Close()
+	}(file)
 
 	srcFile = file
 
@@ -176,27 +178,14 @@ func (d *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo.
 
 // Faces adds landmark coordinates to detected faces and returns the results.
 func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLandmarks bool) (results Faces, err error) {
-	// Sort by size.
+	// Sort results by size.
 	sort.Slice(det, func(i, j int) bool {
 		return det[i].Scale > det[j].Scale
 	})
 
 	for _, face := range det {
-		// Small faces require higher quality.
-		threshold := d.scoreThreshold
-
-		if face.Scale < 30 {
-			threshold += 11.5
-		} else if face.Scale < 50 {
-			threshold += 9.0
-		} else if face.Scale < 80 {
-			threshold += 6.5
-		} else if face.Scale < 110 {
-			threshold += 2.5
-		}
-
-		// Skip face if quality is too low.
-		if face.Q < threshold {
+		// Skip result if quality is too low.
+		if face.Q < ScaleScoreThreshold(face.Scale) {
 			continue
 		}
 
@@ -211,6 +200,7 @@ func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLa
 			face.Scale,
 		)
 
+		// Detect additional face landmarks?
 		if face.Scale > 50 && findLandmarks {
 			// Find left eye.
 			puploc = &pigo.Puploc{
@@ -314,6 +304,7 @@ func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLa
 			}
 		}
 
+		// Create face.
 		f := Face{
 			Rows:      params.ImageParams.Rows,
 			Cols:      params.ImageParams.Cols,
@@ -323,9 +314,11 @@ func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLa
 			Landmarks: landmarkCoords,
 		}
 
+		// Does the face significantly overlap with previous results?
 		if results.Contains(f) {
-			// Ignore.
+			// Ignore face.
 		} else {
+			// Append face.
 			results.Append(f)
 		}
 	}
