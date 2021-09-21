@@ -393,10 +393,13 @@ func (c *Config) AdminPassword() string {
 	return c.options.AdminPassword
 }
 
-// LogLevel returns the logrus log level.
+// LogLevel returns the Logrus log level.
 func (c *Config) LogLevel() logrus.Level {
-	if c.Debug() {
-		c.options.LogLevel = "debug"
+	// Normalize string.
+	c.options.LogLevel = strings.ToLower(strings.TrimSpace(c.options.LogLevel))
+
+	if c.Debug() && c.options.LogLevel != logrus.TraceLevel.String() {
+		c.options.LogLevel = logrus.DebugLevel.String()
 	}
 
 	if logLevel, err := logrus.ParseLevel(c.options.LogLevel); err == nil {
