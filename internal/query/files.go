@@ -170,22 +170,3 @@ func IndexedFiles() (result FileMap, err error) {
 
 	return result, err
 }
-
-type HashMap map[string]bool
-
-// FileHashes returns a map of all known file hashes.
-func FileHashes() (result HashMap, err error) {
-	result = make(HashMap)
-
-	var hashes []string
-
-	if err := UnscopedDb().Raw("SELECT file_hash FROM files WHERE file_missing = 0 AND deleted_at IS NULL").Pluck("file_hash", &hashes).Error; err != nil {
-		return result, err
-	}
-
-	for _, hash := range hashes {
-		result[hash] = true
-	}
-
-	return result, err
-}

@@ -73,6 +73,11 @@ type File struct {
 	markers         *Markers
 }
 
+// TableName returns the entity database table name.
+func (File) TableName() string {
+	return "files"
+}
+
 type FileInfos struct {
 	FileWidth       int
 	FileHeight      int
