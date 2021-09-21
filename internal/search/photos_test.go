@@ -1133,4 +1133,106 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 2)
 	})
+	t.Run("keywords:kuh|bridge > keywords:bridge&kuh", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "keywords:kuh|bridge"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		f.Query = "keywords:bridge&kuh"
+
+		photos2, _, err2 := Photos(f)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+
+		assert.Greater(t, len(photos), len(photos2))
+	})
+	t.Run("albums and and or search", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Query = "albums:Holiday|Berlin"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		f.Query = "albums:Berlin&Holiday"
+
+		photos2, _, err2 := Photos(f)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		assert.Greater(t, len(photos), len(photos2))
+	})
+	t.Run("people and and or search", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.People = "Actor A|Actress A"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		f.People = "Actor A&Actress A"
+
+		photos2, _, err2 := Photos(f)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+
+		assert.Greater(t, len(photos), len(photos2))
+	})
+	t.Run("people = subjects & person = subject", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.People = "Actor"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		var f2 form.PhotoSearch
+
+		f2.Subjects = "Actor"
+
+		photos2, _, err2 := Photos(f2)
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+
+		assert.Equal(t, len(photos), len(photos2))
+
+		var f3 form.PhotoSearch
+
+		f3.Person = "Actor A"
+
+		photos3, _, err3 := Photos(f3)
+
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+
+		var f4 form.PhotoSearch
+		f4.Subject = "Actor A"
+
+		photos4, _, err4 := Photos(f4)
+
+		if err4 != nil {
+			t.Fatal(err4)
+		}
+
+		assert.Equal(t, len(photos3), len(photos4))
+		assert.Equal(t, len(photos), len(photos4))
+	})
 }
