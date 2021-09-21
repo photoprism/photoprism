@@ -118,7 +118,9 @@ func configAction(ctx *cli.Context) error {
 	// External binaries and sidecar configuration.
 	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
+	fmt.Printf("%-25s %s\n", "darktable-blacklist", conf.DarktableBlacklist())
 	fmt.Printf("%-25s %s\n", "rawtherapee-bin", conf.RawtherapeeBin())
+	fmt.Printf("%-25s %s\n", "rawtherapee-blacklist", conf.RawtherapeeBlacklist())
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
 	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())

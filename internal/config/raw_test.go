@@ -12,6 +12,15 @@ func TestConfig_RawtherapeeBin(t *testing.T) {
 	assert.Equal(t, "/usr/bin/rawtherapee-cli", c.RawtherapeeBin())
 }
 
+func TestConfig_RawtherapeeBlacklist(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.RawtherapeeBlacklist = "foo,bar"
+	assert.Equal(t, "foo,bar", c.RawtherapeeBlacklist())
+	c.options.RawtherapeeBlacklist = ""
+	assert.Equal(t, "", c.RawtherapeeBlacklist())
+}
+
 func TestConfig_RawtherapeeEnabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.True(t, c.RawtherapeeEnabled())
@@ -24,6 +33,12 @@ func TestConfig_DarktableBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "/usr/bin/darktable-cli", c.DarktableBin())
+}
+
+func TestConfig_DarktableBlacklist(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "raf,cr3", c.DarktableBlacklist())
 }
 
 func TestConfig_DarktablePresets(t *testing.T) {

@@ -322,10 +322,22 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
 	cli.StringFlag{
+		Name:   "darktable-blacklist",
+		Usage:  "Comma-separated file extension `BLACKLIST`",
+		Value:  "raf,cr3",
+		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
+	},
+	cli.StringFlag{
 		Name:   "rawtherapee-bin",
 		Usage:  "RawTherapee CLI `COMMAND` for RAW file conversion",
 		Value:  "rawtherapee-cli",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
+	},
+	cli.StringFlag{
+		Name:   "rawtherapee-blacklist",
+		Usage:  "Comma-separated file extension `BLACKLIST`",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
