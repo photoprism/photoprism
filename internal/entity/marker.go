@@ -175,7 +175,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	} else if reported, err := f.ResolveCollision(m.Embeddings()); err != nil {
 		return false, err
 	} else if reported {
-		log.Infof("faces: collision of marker %s, subject %s, face %s, subject %s, source %s", m.MarkerUID, m.SubjUID, f.ID, f.SubjUID, m.SubjSrc)
+		log.Infof("marker: collision reported for %s, face %s, source %s, subject %s <> %s", m.MarkerUID, f.ID, m.SubjSrc, m.SubjUID, f.SubjUID)
 		return false, nil
 	} else {
 		return false, nil
@@ -329,7 +329,7 @@ func (m *Marker) Embeddings() Embeddings {
 	} else if len(m.embeddings) > 0 {
 		return m.embeddings
 	} else if err := json.Unmarshal(m.EmbeddingsJSON, &m.embeddings); err != nil {
-		log.Errorf("failed parsing marker embeddings json: %s", err)
+		log.Errorf("marker: %s while parsing embeddings json", err)
 	}
 
 	return m.embeddings
@@ -390,7 +390,7 @@ func (m *Marker) ClearSubject(src string) error {
 	} else if resolved, err := m.face.ResolveCollision(m.Embeddings()); err != nil {
 		return err
 	} else if resolved {
-		log.Debugf("faces: resolved collision with %s", m.face.ID)
+		log.Debugf("marker: resolved collision with face %s", m.face.ID)
 	}
 
 	// Clear references.
@@ -428,7 +428,7 @@ func (m *Marker) Face() (f *Face) {
 			log.Warnf("marker: failed adding face for id %s", m.MarkerUID)
 			return nil
 		} else if err := f.MatchMarkers(Faceless); err != nil {
-			log.Errorf("faces: %s (match markers)", err)
+			log.Errorf("marker: %s (match faces)", err)
 		}
 
 		m.face = f
@@ -568,7 +568,7 @@ func FindFaceMarker(faceId string) *Marker {
 	if err := Db().Where("face_id = ?", faceId).
 		Where("thumb <> '' AND marker_invalid = 0").
 		Order("face_dist ASC, q DESC").First(&result).Error; err != nil {
-		log.Warnf("face: no marker for %s", txt.Quote(faceId))
+		log.Warnf("marker: face %s not found", txt.Quote(faceId))
 		return nil
 	}
 
@@ -577,43 +577,21 @@ func FindFaceMarker(faceId string) *Marker {
 
 // UpdateOrCreateMarker updates a marker in the database or creates a new one if needed.
 func UpdateOrCreateMarker(m *Marker) (*Marker, error) {
-	const d = 0.0001
-
 	result := Marker{}
 
 	if m.MarkerUID != "" {
 		err := m.Save()
-		log.Debugf("faces: saved marker %s for file %s", m.MarkerUID, m.FileUID)
+		log.Debugf("marker: updated existing %s %s for %s", txt.Quote(m.MarkerType), txt.Quote(m.MarkerUID), txt.Quote(m.FileUID))
 		return m, err
-	} else if err := Db().Where(`file_uid = ? AND x > ? AND x < ? AND y > ? AND y < ?`,
-		m.FileUID, m.X-d, m.X+d, m.Y-d, m.Y+d).First(&result).Error; err == nil {
-
-		if SrcPriority[m.MarkerSrc] < SrcPriority[result.MarkerSrc] {
-			// Ignore.
-			return &result, nil
-		}
-
-		err := result.Updates(map[string]interface{}{
-			"MarkerType":     m.MarkerType,
-			"MarkerSrc":      m.MarkerSrc,
-			"X":              m.X,
-			"Y":              m.Y,
-			"W":              m.W,
-			"H":              m.H,
-			"Q":              m.Q,
-			"Size":           m.Size,
-			"Score":          m.Score,
-			"Thumb":          m.Thumb,
-			"LandmarksJSON":  m.LandmarksJSON,
-			"EmbeddingsJSON": m.EmbeddingsJSON,
-		})
-
-		log.Debugf("faces: updated existing marker %s for file %s", result.MarkerUID, result.FileUID)
-
+	} else if err := Db().Where(`file_uid = ? AND thumb = ? AND marker_type = ?`,
+		m.FileUID, m.Thumb, m.MarkerType).First(&result).Error; err == nil {
+		log.Infof("marker: found existing %s %s for %s", txt.Quote(m.MarkerType), txt.Quote(result.MarkerUID), txt.Quote(result.FileUID))
 		return &result, err
 	} else if err := m.Create(); err != nil {
-		log.Debugf("faces: added marker %s for file %s", m.MarkerUID, m.FileUID)
+		log.Warnf("marker: %s while creating %s for %s", err, txt.Quote(m.MarkerType), txt.Quote(m.FileUID))
 		return m, err
+	} else {
+		log.Debugf("marker: added %s %s for %s", txt.Quote(m.MarkerType), txt.Quote(m.MarkerUID), txt.Quote(m.FileUID))
 	}
 
 	return m, nil
