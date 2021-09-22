@@ -1,18 +1,17 @@
 <template>
   <div class="p-tab p-tab-photo-people">
     <v-container grid-list-xs fluid class="pa-2 p-faces">
-      <v-card v-if="markers.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
-        <v-card-title primary-title>
-          <div>
-            <h3 class="title ma-0 pa-0">
-              <translate>Couldn't find any people</translate>
-            </h3>
-            <p class="mt-4 mb-0 pa-0">
-              <translate>Please reindex your library to find additional faces. Recognition starts after indexing has been completed.</translate>
-            </p>
-          </div>
-        </v-card-title>
-      </v-card>
+      <v-alert
+          :value="markers.length === 0"
+          color="secondary-dark" icon="face" class="no-results ma-2 opacity-70" outline
+      >
+        <h3 class="body-2 ma-0 pa-0">
+          <translate>Couldn't find any people</translate>
+        </h3>
+        <p class="body-1 mt-2 mb-0 pa-0">
+          <translate>Reindex your library to find additional faces. Recognition starts after indexing has been completed.</translate>
+        </p>
+      </v-alert>
       <v-layout row wrap class="search-results face-results cards-view">
         <v-flex
             v-for="(marker, index) in markers"

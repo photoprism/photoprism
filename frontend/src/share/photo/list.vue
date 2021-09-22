@@ -1,23 +1,20 @@
 <template>
   <div>
-    <div v-if="photos.length === 0" class="pa-2">
-      <v-card class="no-results secondary-light lighten-1 ma-1" flat>
-        <v-card-title primary-title>
-          <div>
-            <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
-              <translate>Couldn't find recently edited</translate>
-            </h3>
-            <h3 v-else class="title ma-0 pa-0">
-              <translate>Couldn't find anything</translate>
-            </h3>
-            <p class="mt-4 mb-0 pa-0">
-              <translate>Try again using other filters or keywords.</translate>
-            </p>
-          </div>
-        </v-card-title>
-      </v-card>
-    </div>
-    <v-data-table v-else
+    <v-alert
+        :value="photos.length === 0"
+        color="secondary-dark" icon="lightbulb_outline" class="no-results ma-3 opacity-70" outline
+    >
+      <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+        <translate>Couldn't find recently edited</translate>
+      </h3>
+      <h3 v-else class="body-2 ma-0 pa-0">
+        <translate>Couldn't find anything</translate>
+      </h3>
+      <p class="body-1 mt-2 mb-0 pa-0">
+        <translate>Try again using other filters or keywords.</translate>
+      </p>
+    </v-alert>
+    <v-data-table v-if="photos.length > 0"
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"
