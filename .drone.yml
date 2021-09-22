@@ -25,6 +25,7 @@ steps:
     commands:
       - scripts/docker-login.sh
       - docker-compose -f docker-compose.drone.yml pull
+      - docker-compose -f docker-compose.drone.yml stop
       - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
   - name: test-develop
@@ -176,6 +177,6 @@ steps:
 
 ---
 kind: signature
-hmac: 0d3578ccf3d317b2db0b514ce2614bf4f943a971345176971bbab30cc624a1c5
+hmac: 7c59ebf5126f9f013b413e743de8e73d54dc07fbe43fc32d1757102863f7253e
 
 ...
