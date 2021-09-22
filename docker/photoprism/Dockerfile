@@ -1,4 +1,4 @@
-FROM photoprism/development:20210921 as build
+FROM photoprism/development:20210922 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
