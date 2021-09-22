@@ -23,7 +23,7 @@
       <v-container grid-list-xs fluid class="pa-2">
         <v-alert
             :value="results.length === 0"
-            color="secondary-dark" icon="face_retouching_natural" class="no-results ma-2 opacity-60" outline
+            color="secondary-dark" icon="face_retouching_natural" class="no-results ma-2 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
             <translate>Couldn't find any new faces</translate>
@@ -47,7 +47,8 @@
               <v-img :src="model.Marker.thumbnailUrl('tile_320')"
                      :transition="false"
                      aspect-ratio="1"
-                     class="accent lighten-2">
+                     class="accent lighten-2 clickable"
+                     @click.stop.prevent="$router.push(model.route(view))">
                 <v-btn v-if="!model.Marker.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
                        icon flat small absolute :title="$gettext('Hide')"
                        @click.stop.prevent="onHide(model)">
