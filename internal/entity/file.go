@@ -201,7 +201,7 @@ func (m File) Missing() bool {
 	return m.FileMissing || m.DeletedAt != nil
 }
 
-// Delete permanently deletes the entity from the database.
+// DeletePermanently permanently deletes the entity.
 func (m *File) DeletePermanently() error {
 	Db().Unscoped().Delete(FileShare{}, "file_id = ?", m.ID)
 	Db().Unscoped().Delete(FileSync{}, "file_id = ?", m.ID)
@@ -260,7 +260,7 @@ func (m *File) Create() error {
 		return err
 	}
 
-	if err := m.Markers().Save(m.FileUID); err != nil {
+	if _, err := m.SaveMarkers(); err != nil {
 		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -288,7 +288,7 @@ func (m *File) Save() error {
 		return err
 	}
 
-	if err := m.Markers().Save(m.FileUID); err != nil {
+	if _, err := m.SaveMarkers(); err != nil {
 		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -426,33 +426,62 @@ func (m *File) AddFaces(faces face.Faces) {
 
 // AddFace adds a face marker to the file.
 func (m *File) AddFace(f face.Face, subjUID string) {
-	marker := *NewFaceMarker(f, *m, subjUID)
+	// Only add faces with embedding, so that they can be clustered.
+	if len(f.Embeddings) != 1 {
+		return
+	}
 
-	if markers := m.Markers(); !markers.Contains(marker) {
-		markers.Append(marker)
+	// Create new marker from face.
+	marker := NewFaceMarker(f, *m, subjUID)
+
+	// Failed creating new marker?
+	if marker == nil {
+		return
+	}
+
+	// Append marker if it doesn't conflict with existing marker.
+	if markers := m.Markers(); !markers.Contains(*marker) {
+		markers.Append(*marker)
 	}
 }
 
 // FaceCount returns the current number of valid faces detected.
 func (m *File) FaceCount() (c int) {
-	if err := Db().Model(Marker{}).
-		Where("file_uid = ? AND marker_type = ?", m.FileUID, MarkerFace).
-		Where("marker_invalid = 0").
-		Count(&c).Error; err != nil {
-		log.Errorf("file: %s (count faces)", err)
-		return 0
-	} else {
-		return c
+	return FaceCount(m.FileUID)
+}
+
+// UpdatePhotoFaceCount updates the faces count in the index and returns it if the file is primary.
+func (m *File) UpdatePhotoFaceCount() (c int, err error) {
+	// Primary file of an existing photo?
+	if !m.FilePrimary || m.PhotoID == 0 {
+		return 0, nil
 	}
+
+	c = m.FaceCount()
+
+	err = UnscopedDb().Model(Photo{}).
+		Where("id = ?", m.PhotoID).
+		UpdateColumn("photo_faces", c).Error
+
+	return c, err
+}
+
+// SaveMarkers updates markers in the index.
+func (m *File) SaveMarkers() (count int, err error) {
+	if m.markers == nil {
+		return 0, nil
+	}
+
+	return m.markers.Save(m)
 }
 
 // Markers finds and returns existing file markers.
 func (m *File) Markers() *Markers {
 	if m.markers != nil {
 		return m.markers
-	}
-
-	if res, err := FindMarkers(m.FileUID); err != nil {
+	} else if m.FileUID == "" {
+		m.markers = &Markers{}
+	} else if res, err := FindMarkers(m.FileUID); err != nil {
 		log.Warnf("file: %s (load markers)", err)
 		m.markers = &Markers{}
 	} else {

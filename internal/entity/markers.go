@@ -8,18 +8,22 @@ import (
 type Markers []Marker
 
 // Save stores the markers in the database.
-func (m Markers) Save(fileUID string) error {
+func (m Markers) Save(file *File) (count int, err error) {
 	for _, marker := range m {
-		if fileUID != "" {
-			marker.FileUID = fileUID
+		if file != nil {
+			marker.FileUID = file.FileUID
 		}
 
 		if _, err := UpdateOrCreateMarker(&marker); err != nil {
-			return err
+			log.Errorf("markers: %s (save)", err)
 		}
 	}
 
-	return nil
+	if file == nil {
+		return len(m), nil
+	}
+
+	return file.UpdatePhotoFaceCount()
 }
 
 // Contains returns true if a marker at the same position already exists.

@@ -4,10 +4,11 @@ import (
 	"context"
 	"time"
 
+	"github.com/urfave/cli"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/urfave/cli"
 )
 
 // CleanUpCommand registers the cleanup command.

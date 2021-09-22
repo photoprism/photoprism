@@ -149,7 +149,7 @@ func (m *User) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-// FirstOrCreateUser returns an existing row, inserts a new row or nil in case of errors.
+// FirstOrCreateUser returns an existing row, inserts a new row, or nil in case of errors.
 func FirstOrCreateUser(m *User) *User {
 	result := User{}
 

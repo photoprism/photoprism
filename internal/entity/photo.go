@@ -938,7 +938,7 @@ func (m *Photo) Delete(permanently bool) error {
 	return m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
 }
 
-// Delete permanently deletes the entity from the database.
+// DeletePermanently permanently deletes the entity.
 func (m *Photo) DeletePermanently() error {
 	Db().Unscoped().Delete(File{}, "photo_id = ?", m.ID)
 	Db().Unscoped().Delete(Details{}, "photo_id = ?", m.ID)
@@ -954,7 +954,7 @@ func (m *Photo) NoDescription() bool {
 	return m.PhotoDescription == ""
 }
 
-// Updates a column in the database.
+// Update a column in the database.
 func (m *Photo) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

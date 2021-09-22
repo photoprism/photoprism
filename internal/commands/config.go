@@ -6,8 +6,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // ConfigCommand registers the display config cli command.

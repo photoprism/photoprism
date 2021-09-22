@@ -2,15 +2,19 @@ package commands
 
 import (
 	"context"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/manifoldco/promptui"
-
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/urfave/cli"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // FacesCommand registers the faces cli command.
@@ -25,7 +29,7 @@ var FacesCommand = cli.Command{
 		},
 		{
 			Name:  "audit",
-			Usage: "Conducts a data integrity audit",
+			Usage: "Scans the index for issues",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "fix, f",
@@ -35,25 +39,37 @@ var FacesCommand = cli.Command{
 			Action: facesAuditAction,
 		},
 		{
-			Name:   "reset",
-			Usage:  "Resets recognized faces",
+			Name:  "reset",
+			Usage: "Removes people and faces",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "force, f",
+					Usage: "remove all people and faces",
+				},
+			},
 			Action: facesResetAction,
+		},
+		{
+			Name:      "index",
+			Usage:     "Searches originals for faces",
+			ArgsUsage: "[path]",
+			Action:    facesIndexAction,
+		},
+		{
+			Name:  "match",
+			Usage: "Performs face clustering and matching",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "force, f",
+					Usage: "update all  faces",
+				},
+			},
+			Action: facesMatchAction,
 		},
 		{
 			Name:   "optimize",
 			Usage:  "Optimizes face clusters",
 			Action: facesOptimizeAction,
-		},
-		{
-			Name:  "update",
-			Usage: "Performs facial recognition",
-			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "force, f",
-					Usage: "update existing faces",
-				},
-			},
-			Action: facesUpdateAction,
 		},
 	},
 }
@@ -122,6 +138,10 @@ func facesAuditAction(ctx *cli.Context) error {
 
 // facesResetAction resets face clusters and matches.
 func facesResetAction(ctx *cli.Context) error {
+	if ctx.Bool("force") {
+		return facesResetAllAction(ctx)
+	}
+
 	actionPrompt := promptui.Prompt{
 		Label:     "Remove automatically recognized faces, matches, and dangling subjects?",
 		IsConfirm: true,
@@ -160,8 +180,17 @@ func facesResetAction(ctx *cli.Context) error {
 	return nil
 }
 
-// facesOptimizeAction optimizes existing face clusters.
-func facesOptimizeAction(ctx *cli.Context) error {
+// facesResetAllAction removes all people, faces, and face markers.
+func facesResetAllAction(ctx *cli.Context) error {
+	actionPrompt := promptui.Prompt{
+		Label:     "Permanently delete all people and faces?",
+		IsConfirm: true,
+	}
+
+	if _, err := actionPrompt.Run(); err != nil {
+		return nil
+	}
+
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
@@ -176,14 +205,12 @@ func facesOptimizeAction(ctx *cli.Context) error {
 
 	conf.InitDb()
 
-	w := service.Faces()
-
-	if res, err := w.Optimize(); err != nil {
+	if err := query.RemovePeopleAndFaces(); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("%d face clusters merged in %s", res.Merged, elapsed)
+		log.Infof("completed in %s", elapsed)
 	}
 
 	conf.Shutdown()
@@ -191,8 +218,71 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	return nil
 }
 
-// facesUpdateAction performs face clustering and matching.
-func facesUpdateAction(ctx *cli.Context) error {
+// facesIndexAction searches originals for faces.
+func facesIndexAction(ctx *cli.Context) error {
+	start := time.Now()
+
+	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
+
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := conf.Init(); err != nil {
+		return err
+	}
+
+	conf.InitDb()
+
+	// Use first argument to limit scope if set.
+	subPath := strings.TrimSpace(ctx.Args().First())
+
+	if subPath == "" {
+		log.Infof("finding faces in %s", txt.Quote(conf.OriginalsPath()))
+	} else {
+		log.Infof("finding faces in %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+	}
+
+	if conf.ReadOnly() {
+		log.Infof("index: read-only mode enabled")
+	}
+
+	var indexed fs.Done
+
+	if w := service.Index(); w != nil {
+		opt := photoprism.IndexOptions{
+			Path:      subPath,
+			Rescan:    true,
+			Convert:   conf.Settings().Index.Convert && conf.SidecarWritable(),
+			Stack:     true,
+			FacesOnly: true,
+		}
+
+		indexed = w.Start(opt)
+	} else if w := service.Purge(); w != nil {
+		opt := photoprism.PurgeOptions{
+			Path:   subPath,
+			Ignore: indexed,
+		}
+
+		if files, photos, err := w.Start(opt); err != nil {
+			log.Error(err)
+		} else if len(files) > 0 || len(photos) > 0 {
+			log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
+		}
+	}
+
+	elapsed := time.Since(start)
+
+	log.Infof("indexed %d files in %s", len(indexed), elapsed)
+
+	conf.Shutdown()
+
+	return nil
+}
+
+// facesMatchAction performs face clustering and matching.
+func facesMatchAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
@@ -219,6 +309,37 @@ func facesUpdateAction(ctx *cli.Context) error {
 		elapsed := time.Since(start)
 
 		log.Infof("completed in %s", elapsed)
+	}
+
+	conf.Shutdown()
+
+	return nil
+}
+
+// facesOptimizeAction optimizes existing face clusters.
+func facesOptimizeAction(ctx *cli.Context) error {
+	start := time.Now()
+
+	conf := config.NewConfig(ctx)
+	service.SetConfig(conf)
+
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := conf.Init(); err != nil {
+		return err
+	}
+
+	conf.InitDb()
+
+	w := service.Faces()
+
+	if res, err := w.Optimize(); err != nil {
+		return err
+	} else {
+		elapsed := time.Since(start)
+
+		log.Infof("%d face clusters merged in %s", res.Merged, elapsed)
 	}
 
 	conf.Shutdown()

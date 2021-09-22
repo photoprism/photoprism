@@ -31,6 +31,8 @@ type Index struct {
 	convert      *Convert
 	files        *Files
 	photos       *Photos
+	findFaces    bool
+	findLabels   bool
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
@@ -70,6 +72,12 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}()
 
 	done := make(fs.Done)
+
+	if ind.conf == nil {
+		log.Errorf("index: config is nil")
+		return done
+	}
+
 	originalsPath := ind.originalsPath()
 	optionsPath := filepath.Join(originalsPath, opt.Path)
 
@@ -82,6 +90,12 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 		event.Error(fmt.Sprintf("index: %s", err.Error()))
 		return done
 	}
+
+	// Detect faces in images?
+	ind.findFaces = ind.conf.Settings().Features.People
+
+	// Classify images with TensorFlow?
+	ind.findLabels = !ind.conf.DisableTensorFlow()
 
 	defer mutex.MainWorker.Stop()
 

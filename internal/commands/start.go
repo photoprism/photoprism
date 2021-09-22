@@ -9,18 +9,17 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/sevlyar/go-daemon"
+	"github.com/urfave/cli"
+
 	"github.com/photoprism/photoprism/internal/auto"
-
-	"github.com/photoprism/photoprism/internal/photoprism"
-
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/sevlyar/go-daemon"
-	"github.com/urfave/cli"
 )
 
 // StartCommand registers the start cli command.

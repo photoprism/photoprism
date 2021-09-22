@@ -208,3 +208,49 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 	return conflicts, resolved, nil
 }
+
+// RemovePeopleAndFaces permanently deletes all people, faces, and face markers.
+func RemovePeopleAndFaces() (err error) {
+	// Delete people.
+	if err = UnscopedDb().Delete(entity.Subject{}, "subj_type = ?", entity.SubjPerson).Error; err != nil {
+		return err
+	}
+
+	// Delete all faces.
+	if err = UnscopedDb().Delete(entity.Face{}).Error; err != nil {
+		return err
+	}
+
+	// Delete face markers.
+	if err = UnscopedDb().Delete(entity.Marker{}, "marker_type = ?", entity.MarkerFace).Error; err != nil {
+		return err
+	}
+
+	// Reset face counters.
+	if err = UnscopedDb().Model(entity.Photo{}).
+		UpdateColumn("photo_faces", 0).Error; err != nil {
+		return err
+	}
+
+	// Reset people label.
+	if label, err := LabelBySlug("people"); err != nil {
+		return err
+	} else if err = UnscopedDb().
+		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; err != nil {
+		return err
+	} else if err = label.Update("PhotoCount", 0); err != nil {
+		return err
+	}
+
+	// Reset portrait label.
+	if label, err := LabelBySlug("portrait"); err != nil {
+		return err
+	} else if err = UnscopedDb().
+		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; err != nil {
+		return err
+	} else if err = label.Update("PhotoCount", 0); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -70,6 +70,11 @@ func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
 
 // NewMarker creates a new entity.
 func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string, size, score int) *Marker {
+	if file.FileHash == "" {
+		log.Errorf("marker: file hash is empty - you might have found a bug")
+		return nil
+	}
+
 	m := &Marker{
 		FileUID:       file.FileUID,
 		MarkerSrc:     markerSrc,
@@ -95,6 +100,11 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 // NewFaceMarker creates a new entity.
 func NewFaceMarker(f face.Face, file File, subjUID string) *Marker {
 	m := NewMarker(file, f.CropArea(), subjUID, SrcImage, MarkerFace, f.Size(), f.Score)
+
+	// Failed creating new marker?
+	if m == nil {
+		return nil
+	}
 
 	m.EmbeddingsJSON = f.EmbeddingsJSON()
 	m.LandmarksJSON = f.RelativeLandmarksJSON()

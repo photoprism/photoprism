@@ -9,7 +9,8 @@ import (
 // Labels is list of MediaFile labels.
 type Labels []Label
 
-// Implements functions for the Sort Interface. Default Labels sort is by priority and uncertainty
+// Labels implement the sort interface to sort by priority and uncertainty.
+
 func (l Labels) Len() int      { return len(l) }
 func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 func (l Labels) Less(i, j int) bool {

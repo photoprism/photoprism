@@ -58,6 +58,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	var directories []string
 	done := make(fs.Done)
+
+	if imp.conf == nil {
+		log.Errorf("import: config is nil")
+		return done
+	}
+
 	ind := imp.index
 	importPath := opt.Path
 

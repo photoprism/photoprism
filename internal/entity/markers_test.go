@@ -28,7 +28,7 @@ func TestMarkers_Contains(t *testing.T) {
 		assert.False(t, m.Contains(m3))
 	})
 	t.Run("Conflicting", func(t *testing.T) {
-		file := File{FileHash: "cca7c46a4d39e933c30805e546028fe3eab361b5"}
+		file := File{FileUID: "", FileHash: "cca7c46a4d39e933c30805e546028fe3eab361b5"}
 
 		markers := Markers{
 			*NewMarker(file, crop.Area{Name: "subj-1", X: 0.549479, Y: 0.179688, W: 0.393229, H: 0.294922}, "jqyzmgbquh1msz6o", SrcImage, MarkerFace, 100, 65),
@@ -51,7 +51,7 @@ func TestMarkers_Contains(t *testing.T) {
 		assert.True(t, markers.Contains(conflicting))
 	})
 	t.Run("NoFace", func(t *testing.T) {
-		file := File{FileHash: "243cdbe99b865607f98a951e748d528bc22f3143"}
+		file := File{FileUID: "fqzuh672i9btq6gu", FileHash: "243cdbe99b865607f98a951e748d528bc22f3143"}
 
 		markers := Markers{
 			*NewMarker(file, crop.Area{Name: "no-face", X: 0.322656, Y: 0.3, W: 0.180469, H: 0.240625}, "jqyzmgbquh1msz6o", SrcImage, MarkerFace, 100, 65),

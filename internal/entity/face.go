@@ -12,8 +12,8 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/face"
-
 	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var faceMutex = sync.Mutex{}
@@ -349,4 +349,21 @@ func FindFace(id string) *Face {
 	}
 
 	return &f
+}
+
+// FaceCount counts the number of valid face markers for a file uid.
+func FaceCount(fileUID string) (c int) {
+	if !rnd.IsPPID(fileUID, 'f') {
+		return
+	}
+
+	if err := Db().Model(Marker{}).
+		Where("file_uid = ? AND marker_type = ?", fileUID, MarkerFace).
+		Where("marker_invalid = 0").
+		Count(&c).Error; err != nil {
+		log.Errorf("file: %s (count faces)", err)
+		return 0
+	} else {
+		return c
+	}
 }
