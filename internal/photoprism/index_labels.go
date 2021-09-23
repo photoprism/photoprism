@@ -58,9 +58,9 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 	}
 
 	if l := len(labels); l == 1 {
-		log.Infof("index: found %d matching label for %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
+		log.Infof("index: matched %d label with %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
 	} else if l > 1 {
-		log.Infof("index: found %d matching labels for %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
+		log.Infof("index: matched %d labels with %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
 	}
 
 	return results
