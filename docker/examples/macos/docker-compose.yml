@@ -22,8 +22,11 @@ version: '3.5'
 # Backup   | docker-compose exec photoprism photoprism backup -a -i
 # Restore  | docker-compose exec photoprism photoprism restore -a -i
 # Index    | docker-compose exec photoprism photoprism index
-# Reindex  | docker-compose exec photoprism photoprism index -a
+# Reindex  | docker-compose exec photoprism photoprism index -f
 # Import   | docker-compose exec photoprism photoprism import
+#
+# To search originals for faces without a complete rescan:
+# docker-compose exec photoprism photoprism faces index
 # -------------------------------------------------------------------
 
 services:
