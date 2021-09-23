@@ -3,6 +3,8 @@ package config
 import (
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/face"
 )
 
 // GlobalFlags describes global command-line parameters and flags.
@@ -425,5 +427,35 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "set to 90+ for high-quality thumbnails (25-100)",
 		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
+	},
+	cli.Float64Flag{
+		Name:   "face-score",
+		Usage:  "face `QUALITY` threshold",
+		Value:  face.ScoreThreshold,
+		EnvVar: "PHOTOPRISM_FACE_SCORE",
+	},
+	cli.IntFlag{
+		Name:   "face-overlap",
+		Usage:  "image area overlap threshold in `PERCENT`",
+		Value:  face.OverlapThreshold,
+		EnvVar: "PHOTOPRISM_FACE_OVERLAP",
+	},
+	cli.IntFlag{
+		Name:   "face-cluster-core",
+		Usage:  "`NUMBER` of faces forming a cluster core",
+		Value:  face.ClusterCore,
+		EnvVar: "PHOTOPRISM_FACE_CLUSTER_CORE",
+	},
+	cli.Float64Flag{
+		Name:   "face-cluster-dist",
+		Usage:  "`RADIUS` of faces forming a cluster core",
+		Value:  face.ClusterDist,
+		EnvVar: "PHOTOPRISM_FACE_CLUSTER_DIST",
+	},
+	cli.Float64Flag{
+		Name:   "face-match-dist",
+		Usage:  "`OFFSET` distance when matching faces with clusters",
+		Value:  face.MatchDist,
+		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
 	},
 }

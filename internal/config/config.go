@@ -13,27 +13,26 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dustin/go-humanize"
-
-	"github.com/pbnjay/memory"
-
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/photoprism/photoprism/internal/entity"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
+	"github.com/dustin/go-humanize"
 	"github.com/klauspost/cpuid/v2"
+	"github.com/pbnjay/memory"
+	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/hub"
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var log = event.Log
@@ -131,12 +130,22 @@ func (c *Config) Options() *Options {
 func (c *Config) Propagate() {
 	log.SetLevel(c.LogLevel())
 
+	// Set thumbnail generation parameters.
 	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
+
+	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
+
+	// Set facial recognition parameters.
+	face.ScoreThreshold = c.FaceScore()
+	face.OverlapThreshold = c.FaceOverlap()
+	face.ClusterCore = c.FaceClusterCore()
+	face.ClusterDist = c.FaceClusterDist()
+	face.MatchDist = c.FaceMatchDist()
 
 	c.Settings().Propagate()
 	c.Hub().Propagate()

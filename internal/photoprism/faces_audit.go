@@ -71,7 +71,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 				conflicts++
 
-				r := f1.SampleRadius + face.MatchRadius
+				r := f1.SampleRadius + face.MatchDist
 
 				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 

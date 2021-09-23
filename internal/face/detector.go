@@ -87,7 +87,7 @@ func Detect(fileName string, findLandmarks bool, minSize int) (faces Faces, err 
 		shiftFactor:    0.1,
 		scaleFactor:    1.1,
 		iouThreshold:   0.2,
-		scoreThreshold: ScoreThreshold,
+		scoreThreshold: float32(ScoreThreshold),
 		perturb:        63,
 	}
 
@@ -185,7 +185,7 @@ func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLa
 
 	for _, face := range det {
 		// Skip result if quality is too low.
-		if face.Q < ScaleScoreThreshold(face.Scale) {
+		if face.Q < QualityThreshold(face.Scale) {
 			continue
 		}
 
