@@ -50,6 +50,7 @@ require (
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
+	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/studio-b12/gowebdav v0.0.0-20210917133250-a3a86976a1df
 	github.com/tensorflow/tensorflow v1.15.2
