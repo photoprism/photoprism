@@ -107,9 +107,9 @@ export default class Link extends Model {
   }
 
   expires() {
-    return DateTime.fromISO(this.UpdatedAt)
+    return DateTime.fromISO(this.ModifiedAt)
       .plus({ seconds: this.Expires })
-      .toLocaleString(DateTime.DATE_SHORT);
+      .toLocaleString(DateTime.DATE_MED);
   }
 
   static getCollectionResource() {

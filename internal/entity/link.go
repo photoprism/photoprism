@@ -26,7 +26,7 @@ type Link struct {
 	CanComment  bool      `json:"CanComment" yaml:"CanComment,omitempty"`
 	CanEdit     bool      `json:"CanEdit" yaml:"CanEdit,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
-	ModifiedAt  time.Time `deepcopier:"skip" yaml:"ModifiedAt"`
+	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.

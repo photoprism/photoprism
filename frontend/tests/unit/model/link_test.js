@@ -79,11 +79,11 @@ describe("model/link", () => {
       Slug: "friends",
       Share: "family",
       Expires: 80000,
-      UpdatedAt: "2012-07-08T14:45:39Z",
+      ModifiedAt: "2012-07-08T14:45:39Z",
     };
     const link = new Link(values);
     const result = link.expires();
-    assert.equal(result, "7/9/2012");
+    assert.equal(result, "Jul 9, 2012");
   });
 
   it("should get collection resource", () => {
