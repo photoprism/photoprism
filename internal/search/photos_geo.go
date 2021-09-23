@@ -114,12 +114,18 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		}
 	}
 
-	// Filter for one or more faces?
-	if f.Face != "" {
+	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
+	if len(f.Face) >= 32 {
 		for _, f := range strings.Split(strings.ToUpper(f.Face), txt.And) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
 				entity.Marker{}.TableName()), strings.Split(f, txt.Or))
 		}
+	} else if txt.No(f.Face) {
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NULL OR face_id = '')",
+			entity.Marker{}.TableName()), entity.MarkerFace)
+	} else if txt.Yes(f.Face) {
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NOT NULL AND face_id <> '')",
+			entity.Marker{}.TableName()), entity.MarkerFace)
 	}
 
 	// Filter for one or more subjects?

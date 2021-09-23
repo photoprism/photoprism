@@ -19,12 +19,12 @@ func Bool(s string) bool {
 func Yes(s string) bool {
 	s = strings.ToLower(strings.TrimSpace(s))
 
-	return strings.IndexAny(s, "ytjosiд") == 0
+	return strings.IndexAny(s, "ytjposiд") == 0
 }
 
 // No returns true if a string represents "no".
 func No(s string) bool {
 	s = strings.ToLower(strings.TrimSpace(s))
 
-	return strings.IndexAny(s, "0nhfeн") == 0
+	return strings.IndexAny(s, "0nhufeн") == 0
 }

@@ -11,6 +11,15 @@ import (
 )
 
 func TestGeo(t *testing.T) {
+	t.Run("UnknownFaces", func(t *testing.T) {
+		query := form.NewGeoSearch("face:none")
+
+		if result, err := PhotosGeo(query); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, 0, len(result))
+		}
+	})
 	t.Run("form.keywords", func(t *testing.T) {
 		query := form.NewGeoSearch("keywords:bridge")
 

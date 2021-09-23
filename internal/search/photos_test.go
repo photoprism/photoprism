@@ -23,6 +23,19 @@ func TestPhotos(t *testing.T) {
 
 		assert.NoError(t, err)
 	})
+	t.Run("UnknownFaces", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Query = ""
+		frm.Face = "None"
+		frm.Count = 10
+		frm.Offset = 0
+
+		results, _, err := Photos(frm)
+
+		assert.NoError(t, err)
+		assert.LessOrEqual(t, 1, len(results))
+	})
 	t.Run("search all", func(t *testing.T) {
 		var frm form.PhotoSearch
 
