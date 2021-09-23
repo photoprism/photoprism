@@ -25,6 +25,7 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Review    bool
 		Invalid   bool
 		FaceID    string
+		FaceDist  float64 `json:",omitempty"`
 		SubjUID   string
 		SubjSrc   string
 		X         float32
@@ -45,6 +46,7 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Review:    m.MarkerReview,
 		Invalid:   m.MarkerInvalid,
 		FaceID:    m.FaceID,
+		FaceDist:  m.FaceDist,
 		SubjUID:   m.SubjUID,
 		SubjSrc:   m.SubjSrc,
 		X:         m.X,
