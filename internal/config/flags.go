@@ -436,7 +436,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "face-overlap",
-		Usage:  "image area overlap threshold in `PERCENT`",
+		Usage:  "face area overlap threshold in `PERCENT`",
 		Value:  face.OverlapThreshold,
 		EnvVar: "PHOTOPRISM_FACE_OVERLAP",
 	},

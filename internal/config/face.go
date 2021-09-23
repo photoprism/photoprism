@@ -11,7 +11,7 @@ func (c *Config) FaceScore() float64 {
 	return c.options.FaceScore
 }
 
-// FaceOverlap returns the image area overlap threshold for faces in percent.
+// FaceOverlap returns the face area overlap threshold in percent.
 func (c *Config) FaceOverlap() int {
 	if c.options.FaceOverlap < 1 || c.options.FaceOverlap > 100 {
 		return face.OverlapThreshold
