@@ -2,6 +2,15 @@ package config
 
 import "github.com/photoprism/photoprism/internal/face"
 
+// FaceSize returns the face size threshold in pixels.
+func (c *Config) FaceSize() int {
+	if c.options.FaceSize < 20 || c.options.FaceSize > 10000 {
+		return 40
+	}
+
+	return c.options.FaceSize
+}
+
 // FaceScore returns the face quality score threshold.
 func (c *Config) FaceScore() float64 {
 	if c.options.FaceScore < 1 || c.options.FaceScore > 100 {

@@ -142,6 +142,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
 
 	// Facial recognition.
+	fmt.Printf("%-25s %d\n", "face-size", conf.FaceSize())
 	fmt.Printf("%-25s %f\n", "face-score", conf.FaceScore())
 	fmt.Printf("%-25s %d\n", "face-overlap", conf.FaceOverlap())
 	fmt.Printf("%-25s %d\n", "face-cluster-core", conf.FaceClusterCore())

@@ -428,6 +428,12 @@ var GlobalFlags = []cli.Flag{
 		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
+	cli.IntFlag{
+		Name:   "face-size",
+		Usage:  "min face size in `PIXELS`",
+		Value:  40,
+		EnvVar: "PHOTOPRISM_FACE_SIZE",
+	},
 	cli.Float64Flag{
 		Name:   "face-score",
 		Usage:  "face `QUALITY` threshold",
