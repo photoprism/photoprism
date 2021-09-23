@@ -259,7 +259,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			"step": "counts",
 		})
 
-		// Update photo counts and visibilities.
+		// Update precalculated photo and file counts.
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("index: %s (update counts)", err)
 		}

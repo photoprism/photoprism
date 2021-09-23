@@ -261,14 +261,14 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 	log.Info("purge: updating photo counts")
 
-	// Update photo counts and visibilities.
+	// Update precalculated photo and file counts.
 	if err := entity.UpdatePhotoCounts(); err != nil {
 		log.Errorf("purge: %s (update counts)", err)
 	}
 
 	log.Info("purge: updating preview images")
 
-	// Update album, label, and subject preview image hashes.
+	// Update album, subject, and label preview thumbs.
 	if err := query.UpdatePreviews(); err != nil {
 		log.Errorf("purge: %s (update previews)", err)
 	}

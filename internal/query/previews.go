@@ -196,7 +196,7 @@ func UpdateSubjectPreviews() (err error) {
 	return err
 }
 
-// UpdatePreviews updates album, labels, and subject preview images.
+// UpdatePreviews updates album, subject, and label preview thumbs.
 func UpdatePreviews() (err error) {
 	// Update Albums.
 	if err = UpdateAlbumPreviews(); err != nil {

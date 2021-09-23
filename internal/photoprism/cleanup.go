@@ -138,14 +138,14 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 	if len(deleted) > 0 {
 		log.Info("cleanup: updating photo counts")
 
-		// Update photo counts and visibilities.
+		// Update precalculated photo and file counts.
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("cleanup: %s (update counts)", err)
 		}
 
 		log.Info("cleanup: updating preview images")
 
-		// Update album, label, and subject preview images.
+		// Update album, subject, and label preview thumbs.
 		if err := query.UpdatePreviews(); err != nil {
 			log.Errorf("cleanup: %s (update previews)", err)
 		}

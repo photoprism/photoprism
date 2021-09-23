@@ -186,6 +186,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		return err
 	}
 
+	// Update precalculated photo and file counts.
 	if err := UpdatePhotoCounts(); err != nil {
 		log.Errorf("photo: %s", err)
 	}
@@ -313,6 +314,7 @@ func (m *Photo) SaveLabels() error {
 		return err
 	}
 
+	// Update precalculated photo and file counts.
 	if err := UpdatePhotoCounts(); err != nil {
 		log.Errorf("photo: %s", err)
 	}
@@ -1005,6 +1007,7 @@ func (m *Photo) Approve() error {
 		return err
 	}
 
+	// Update precalculated photo and file counts.
 	if err := UpdatePhotoCounts(); err != nil {
 		log.Errorf("photo: %s", err)
 	}

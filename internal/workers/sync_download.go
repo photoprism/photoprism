@@ -179,8 +179,12 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 		}
 	}
 
+	// Any files downloaded?
 	if len(done) > 0 {
+		// Update precalculated photo and file counts.
 		worker.logError(entity.UpdatePhotoCounts())
+
+		// Update album, subject, and label preview thumbs.
 		worker.logError(query.UpdatePreviews())
 	}
 

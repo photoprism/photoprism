@@ -143,7 +143,7 @@ func UpdateLabelPhotoCounts() (err error) {
 	return nil
 }
 
-// UpdatePhotoCounts updates static photos counts and visibilities.
+// UpdatePhotoCounts updates precalculated photo and file counts.
 func UpdatePhotoCounts() (err error) {
 	if err = UpdatePlacesPhotoCounts(); err != nil {
 		return err
