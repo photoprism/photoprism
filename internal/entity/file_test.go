@@ -506,11 +506,11 @@ func TestFile_AddFaces(t *testing.T) {
 	})
 }
 
-func TestFile_FaceCount(t *testing.T) {
+func TestFile_ValidFaceCount(t *testing.T) {
 	t.Run("FileFixturesExampleBridge", func(t *testing.T) {
 		file := FileFixturesExampleBridge
 
-		result := file.FaceCount()
+		result := file.ValidFaceCount()
 
 		assert.GreaterOrEqual(t, result, 3)
 	})
@@ -587,5 +587,31 @@ func TestFile_SubjectNames(t *testing.T) {
 		} else {
 			assert.Equal(t, []string{"Corn McCornface", "Jens Mander"}, names)
 		}
+	})
+}
+
+func TestFile_UnsavedMarkers(t *testing.T) {
+	t.Run("bridge2.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("bridge2.jpg")
+		assert.Equal(t, "ft2es49w15bnlqdw", m.FileUID)
+		assert.False(t, m.UnsavedMarkers())
+
+		markers := m.Markers()
+
+		assert.Equal(t, 1, m.ValidFaceCount())
+		assert.Equal(t, 1, markers.ValidFaceCount())
+		assert.Equal(t, 1, markers.DetectedFaceCount())
+		assert.False(t, m.UnsavedMarkers())
+		assert.False(t, markers.Unsaved())
+
+		newMarker := *NewMarker(m, cropArea1, "lt9k3pw1wowuy1c1", SrcManual, MarkerFace, 100, 65)
+
+		markers.Append(newMarker)
+
+		assert.Equal(t, 1, m.ValidFaceCount())
+		assert.Equal(t, 2, markers.ValidFaceCount())
+		assert.Equal(t, 1, markers.DetectedFaceCount())
+		assert.True(t, m.UnsavedMarkers())
+		assert.True(t, markers.Unsaved())
 	})
 }

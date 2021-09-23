@@ -13,6 +13,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 )
@@ -71,10 +73,10 @@ func (list Types) WaitForMigration() {
 		for i := 0; i <= attempts; i++ {
 			count := RowCount{}
 			if err := Db().Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
-				// log.Debugf("entity: table %s migrated", name)
+				log.Tracef("entity: %s migrated", txt.Quote(name))
 				break
 			} else {
-				log.Debugf("entity: wait for migration %s (%s)", err.Error(), name)
+				log.Debugf("entity: waiting for %s migration (%s)", txt.Quote(name), err.Error())
 			}
 
 			if i == attempts {
@@ -93,20 +95,21 @@ func (list Types) Truncate() {
 			// log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
-			log.Debugf("entity: %s in %s", err, name)
+			log.Debugf("entity: %s in %s", err, txt.Quote(name))
 		}
 	}
 }
 
 // Migrate migrates all database tables of registered entities.
 func (list Types) Migrate() {
-	for _, entity := range list {
+	for name, entity := range list {
 		if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
-			log.Debugf("entity: migrate %s (waiting 1s)", err.Error())
+			log.Debugf("entity: %s (waiting 1s)", err.Error())
 
 			time.Sleep(time.Second)
 
 			if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
+				log.Errorf("entity: failed migrating %s", txt.Quote(name))
 				panic(err)
 			}
 		}

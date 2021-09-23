@@ -10,6 +10,9 @@ import (
 
 var photoDetailsMutex = sync.Mutex{}
 
+// ClipDetail is the size of a Details database column in runes.
+const ClipDetail = 250
+
 // Details stores additional metadata fields for each photo to improve search performance.
 type Details struct {
 	PhotoID      uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
@@ -17,13 +20,13 @@ type Details struct {
 	KeywordsSrc  string    `gorm:"type:VARBINARY(8);" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
 	Notes        string    `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
 	NotesSrc     string    `gorm:"type:VARBINARY(8);" json:"NotesSrc" yaml:"NotesSrc,omitempty"`
-	Subject      string    `gorm:"type:VARCHAR(255);" json:"Subject" yaml:"Subject,omitempty"`
+	Subject      string    `gorm:"type:VARCHAR(250);" json:"Subject" yaml:"Subject,omitempty"`
 	SubjectSrc   string    `gorm:"type:VARBINARY(8);" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
-	Artist       string    `gorm:"type:VARCHAR(255);" json:"Artist" yaml:"Artist,omitempty"`
+	Artist       string    `gorm:"type:VARCHAR(250);" json:"Artist" yaml:"Artist,omitempty"`
 	ArtistSrc    string    `gorm:"type:VARBINARY(8);" json:"ArtistSrc" yaml:"ArtistSrc,omitempty"`
-	Copyright    string    `gorm:"type:VARCHAR(255);" json:"Copyright" yaml:"Copyright,omitempty"`
+	Copyright    string    `gorm:"type:VARCHAR(250);" json:"Copyright" yaml:"Copyright,omitempty"`
 	CopyrightSrc string    `gorm:"type:VARBINARY(8);" json:"CopyrightSrc" yaml:"CopyrightSrc,omitempty"`
-	License      string    `gorm:"type:VARCHAR(255);" json:"License" yaml:"License,omitempty"`
+	License      string    `gorm:"type:VARCHAR(250);" json:"License" yaml:"License,omitempty"`
 	LicenseSrc   string    `gorm:"type:VARBINARY(8);" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
 	CreatedAt    time.Time `yaml:"-"`
 	UpdatedAt    time.Time `yaml:"-"`
@@ -160,7 +163,7 @@ func (m *Details) SetKeywords(data, src string) {
 
 // SetSubject updates the photo details field.
 func (m *Details) SetSubject(data, src string) {
-	val := txt.Clip(data, txt.ClipVarchar)
+	val := txt.Clip(data, ClipDetail)
 
 	if val == "" {
 		return
@@ -192,7 +195,7 @@ func (m *Details) SetNotes(data, src string) {
 
 // SetArtist updates the photo details field.
 func (m *Details) SetArtist(data, src string) {
-	val := txt.Clip(data, txt.ClipVarchar)
+	val := txt.Clip(data, ClipDetail)
 
 	if val == "" {
 		return
@@ -208,7 +211,7 @@ func (m *Details) SetArtist(data, src string) {
 
 // SetCopyright updates the photo details field.
 func (m *Details) SetCopyright(data, src string) {
-	val := txt.Clip(data, txt.ClipVarchar)
+	val := txt.Clip(data, ClipDetail)
 
 	if val == "" {
 		return
@@ -224,7 +227,7 @@ func (m *Details) SetCopyright(data, src string) {
 
 // SetLicense updates the photo details field.
 func (m *Details) SetLicense(data, src string) {
-	val := txt.Clip(data, txt.ClipVarchar)
+	val := txt.Clip(data, ClipDetail)
 
 	if val == "" {
 		return

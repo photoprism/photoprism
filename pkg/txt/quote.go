@@ -13,3 +13,8 @@ func Quote(text string) string {
 
 	return text
 }
+
+// QuoteLower converts a string to lowercase and adds quotation marks if needed.
+func QuoteLower(text string) string {
+	return Quote(strings.ToLower(text))
+}

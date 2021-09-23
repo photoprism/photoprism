@@ -7,22 +7,32 @@ import (
 )
 
 func TestClip(t *testing.T) {
-	t.Run("clip", func(t *testing.T) {
-		assert.Equal(t, "I'm ä", Clip("I'm ä lazy BRoWN fox!", 6))
-	})
-	t.Run("ok", func(t *testing.T) {
+	t.Run("ShortEnough", func(t *testing.T) {
 		assert.Equal(t, "I'm ä lazy BRoWN fox!", Clip("I'm ä lazy BRoWN fox!", 128))
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Clip", func(t *testing.T) {
+		assert.Equal(t, "I'm ä", Clip("I'm ä lazy BRoWN fox!", 6))
+		assert.Equal(t, "I'm ä", Clip("I'm ä lazy BRoWN fox!", 7))
+	})
+	t.Run("TrimSpace", func(t *testing.T) {
+		assert.Equal(t, "abc", Clip(" abc ty3q5y4y46uy", 4))
+	})
+	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Clip("", -1))
 	})
 }
 
-func TestTrimLen(t *testing.T) {
-	t.Run("len < size", func(t *testing.T) {
-		assert.Equal(t, "fox!", TrimLen("fox!", 6))
+func TestShorten(t *testing.T) {
+	t.Run("ShortEnough", func(t *testing.T) {
+		assert.Equal(t, "fox!", Shorten("fox!", 6, "..."))
 	})
-	t.Run("len > size", func(t *testing.T) {
-		assert.Equal(t, "I'm ...", TrimLen("I'm ä lazy BRoWN fox!", 8))
+	t.Run("CustomSuffix", func(t *testing.T) {
+		assert.Equal(t, "I'm...", Shorten("I'm ä lazy BRoWN fox!", 8, "..."))
+	})
+	t.Run("DefaultSuffix", func(t *testing.T) {
+		assert.Equal(t, "I'm…", Shorten("I'm ä lazy BRoWN fox!", 7, ""))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Shorten("", -1, ""))
 	})
 }

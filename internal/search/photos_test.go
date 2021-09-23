@@ -101,10 +101,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
-		photos, _, err := Photos(frm)
+		photos, count, err := Photos(frm)
 
-		assert.Equal(t, "dog not found", err.Error())
-		assert.Empty(t, photos)
+		assert.NoError(t, err)
+		assert.Equal(t, PhotoResults{}, photos)
+		assert.Equal(t, 0, count)
 	})
 	t.Run("label query landscape", func(t *testing.T) {
 		var frm form.PhotoSearch
@@ -127,14 +128,11 @@ func TestPhotos(t *testing.T) {
 		frm.Count = 10
 		frm.Offset = 0
 
-		photos, _, err := Photos(frm)
+		photos, count, err := Photos(frm)
 
-		assert.Error(t, err)
-		assert.Empty(t, photos)
-
-		if err != nil {
-			assert.Equal(t, err.Error(), "xxx not found")
-		}
+		assert.NoError(t, err)
+		assert.Equal(t, PhotoResults{}, photos)
+		assert.Equal(t, 0, count)
 	})
 	t.Run("form.location true", func(t *testing.T) {
 		var frm form.PhotoSearch

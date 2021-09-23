@@ -22,7 +22,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
-		return results, err
+		return GeoResults{}, err
 	}
 
 	s := UnscopedDb()
@@ -78,7 +78,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		var labelIds []uint
 
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Debugf("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
+			log.Debugf("search: label %s not found, using fuzzy search", txt.QuoteLower(f.Query))
 
 			for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
 				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
@@ -89,7 +89,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Debugf("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
+				log.Debugf("search: label %s includes %d categories", txt.QuoteLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)

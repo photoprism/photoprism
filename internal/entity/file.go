@@ -445,9 +445,9 @@ func (m *File) AddFace(f face.Face, subjUID string) {
 	}
 }
 
-// FaceCount returns the current number of valid faces detected.
-func (m *File) FaceCount() (c int) {
-	return FaceCount(m.FileUID)
+// ValidFaceCount returns the number of valid face markers.
+func (m *File) ValidFaceCount() (c int) {
+	return ValidFaceCount(m.FileUID)
 }
 
 // UpdatePhotoFaceCount updates the faces count in the index and returns it if the file is primary.
@@ -457,7 +457,7 @@ func (m *File) UpdatePhotoFaceCount() (c int, err error) {
 		return 0, nil
 	}
 
-	c = m.FaceCount()
+	c = m.ValidFaceCount()
 
 	err = UnscopedDb().Model(Photo{}).
 		Where("id = ?", m.PhotoID).
@@ -489,6 +489,15 @@ func (m *File) Markers() *Markers {
 	}
 
 	return m.markers
+}
+
+// UnsavedMarkers tests if any marker hasn't been saved yet.
+func (m *File) UnsavedMarkers() bool {
+	if m.markers == nil {
+		return false
+	}
+
+	return m.markers.Unsaved()
 }
 
 // SubjectNames returns all known subject names.

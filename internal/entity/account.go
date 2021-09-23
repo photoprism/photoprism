@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
 
@@ -24,8 +25,8 @@ type Accounts []Account
 // Account represents a remote service account for uploading, downloading or syncing media files.
 type Account struct {
 	ID            uint   `gorm:"primary_key"`
-	AccName       string `gorm:"type:VARCHAR(255);"`
-	AccOwner      string `gorm:"type:VARCHAR(255);"`
+	AccName       string `gorm:"type:VARCHAR(160);"`
+	AccOwner      string `gorm:"type:VARCHAR(160);"`
 	AccURL        string `gorm:"type:VARBINARY(512);"`
 	AccType       string `gorm:"type:VARBINARY(255);"`
 	AccKey        string `gorm:"type:VARBINARY(255);"`
@@ -66,7 +67,7 @@ func CreateAccount(form form.Account) (model *Account, err error) {
 	return model, err
 }
 
-// Saves the entity using form data and stores it in the database.
+// SaveForm saves the entity using form data and stores it in the database.
 func (m *Account) SaveForm(form form.Account) error {
 	db := Db()
 
@@ -94,6 +95,9 @@ func (m *Account) SaveForm(form form.Account) error {
 		m.SyncStatus = AccountSyncStatusRefresh
 	}
 
+	m.AccName = txt.Clip(m.AccName, txt.ClipName)
+	m.AccOwner = txt.Clip(m.AccOwner, txt.ClipName)
+
 	return db.Save(m).Error
 }
 
@@ -119,7 +123,7 @@ func (m *Account) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Updates a column in the database.
+// Update a column in the database.
 func (m *Account) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }

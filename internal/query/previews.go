@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -21,7 +22,13 @@ func UpdateAlbumDefaultPreviews() (err error) {
 			ORDER BY p.taken_at DESC LIMIT 1
 		) WHERE thumb_src='' AND album_type = 'album' AND deleted_at IS NULL`)).Error
 
-	log.Debugf("previews: updated albums [%s]", time.Since(start))
+	if err == nil {
+		log.Debugf("previews: updated albums [%s]", time.Since(start))
+	} else if strings.Contains(err.Error(), "Error 1054") {
+		log.Errorf("previews: failed updating albums, deprecated or unsupported database")
+		log.Tracef("previews: %s", err)
+		return nil
+	}
 
 	return err
 }
@@ -39,7 +46,13 @@ func UpdateAlbumFolderPreviews() (err error) {
 		) WHERE thumb_src = '' AND album_type = 'folder' AND deleted_at IS NULL`)).
 		Error
 
-	log.Debugf("previews: updated folders [%s]", time.Since(start))
+	if err == nil {
+		log.Debugf("previews: updated folders [%s]", time.Since(start))
+	} else if strings.Contains(err.Error(), "Error 1054") {
+		log.Errorf("previews: failed updating folders, deprecated or unsupported database")
+		log.Tracef("previews: %s", err)
+		return nil
+	}
 
 	return err
 }
@@ -80,7 +93,14 @@ func UpdateAlbumMonthPreviews() (err error) {
 		return nil
 	}
 	*/
-	log.Debugf("previews: updated calendar [%s]", time.Since(start))
+
+	if err == nil {
+		log.Debugf("previews: updated calendar [%s]", time.Since(start))
+	} else if strings.Contains(err.Error(), "Error 1054") {
+		log.Errorf("previews: failed updating calendar, deprecated or unsupported database")
+		log.Tracef("previews: %s", err)
+		return nil
+	}
 
 	return err
 }
@@ -110,7 +130,7 @@ func UpdateLabelPreviews() (err error) {
 	start := time.Now()
 
 	// Labels.
-	if err = Db().Table(entity.Label{}.TableName()).
+	err = Db().Table(entity.Label{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
@@ -118,13 +138,17 @@ func UpdateLabelPreviews() (err error) {
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
 		) WHERE thumb_src = '' AND deleted_at IS NULL`)).
-		Error; err != nil {
-		return err
+		Error
+
+	if err == nil {
+		log.Debugf("previews: updated labels [%s]", time.Since(start))
+	} else if strings.Contains(err.Error(), "Error 1054") {
+		log.Errorf("previews: failed updating labels, deprecated or unsupported database")
+		log.Tracef("previews: %s", err)
+		return nil
 	}
 
-	log.Debugf("previews: updated labels [%s]", time.Since(start))
-
-	return nil
+	return err
 }
 
 // UpdateCategoryPreviews updates category preview images.
@@ -132,7 +156,7 @@ func UpdateCategoryPreviews() (err error) {
 	start := time.Now()
 
 	// Categories.
-	if err = Db().Table(entity.Label{}.TableName()).
+	err = Db().Table(entity.Label{}.TableName()).
 		UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
@@ -141,13 +165,17 @@ func UpdateCategoryPreviews() (err error) {
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
 		) WHERE thumb IS NULL AND thumb_src = '' AND deleted_at IS NULL`)).
-		Error; err != nil {
-		return err
+		Error
+
+	if err == nil {
+		log.Debugf("previews: updated categories [%s]", time.Since(start))
+	} else if strings.Contains(err.Error(), "Error 1054") {
+		log.Errorf("previews: failed updating categories, deprecated or unsupported database")
+		log.Tracef("previews: %s", err)
+		return nil
 	}
 
-	log.Debugf("previews: updated categories [%s]", time.Since(start))
-
-	return nil
+	return err
 }
 
 // UpdateSubjectPreviews updates subject preview images.
@@ -191,7 +219,13 @@ func UpdateSubjectPreviews() (err error) {
 
 	*/
 
-	log.Debugf("previews: updated subjects [%s]", time.Since(start))
+	if err == nil {
+		log.Debugf("previews: updated subjects [%s]", time.Since(start))
+	} else if strings.Contains(err.Error(), "Error 1054") {
+		log.Errorf("previews: failed updating subjects, deprecated or unsupported database")
+		log.Tracef("previews: %s", err)
+		return nil
+	}
 
 	return err
 }

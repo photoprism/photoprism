@@ -4,7 +4,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
@@ -20,9 +19,9 @@ type Labels []Label
 type Label struct {
 	ID               uint       `gorm:"primary_key" json:"ID" yaml:"-"`
 	LabelUID         string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	LabelSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
-	CustomSlug       string     `gorm:"type:VARBINARY(255);index;" json:"CustomSlug" yaml:"-"`
-	LabelName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
+	LabelSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
+	CustomSlug       string     `gorm:"type:VARBINARY(160);index;" json:"CustomSlug" yaml:"-"`
+	LabelName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
 	LabelPriority    int        `json:"Priority" yaml:"Priority,omitempty"`
 	LabelFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
 	LabelDescription string     `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
@@ -60,12 +59,12 @@ func NewLabel(name string, priority int) *Label {
 	}
 
 	labelName = txt.Title(labelName)
-	labelSlug := slug.Make(txt.Clip(labelName, txt.ClipSlug))
+	labelSlug := txt.Slug(labelName)
 
 	result := &Label{
 		LabelSlug:     labelSlug,
 		CustomSlug:    labelSlug,
-		LabelName:     labelName,
+		LabelName:     txt.Clip(labelName, txt.ClipName),
 		LabelPriority: priority,
 		PhotoCount:    1,
 	}
@@ -142,7 +141,7 @@ func FirstOrCreateLabel(m *Label) *Label {
 
 // FindLabel returns an existing row if exists.
 func FindLabel(s string) *Label {
-	labelSlug := slug.Make(txt.Clip(s, txt.ClipSlug))
+	labelSlug := txt.Slug(s)
 
 	result := Label{}
 
@@ -167,8 +166,8 @@ func (m *Label) SetName(name string) {
 		return
 	}
 
-	m.LabelName = name
-	m.CustomSlug = txt.NameSlug(name)
+	m.LabelName = txt.Clip(name, txt.ClipName)
+	m.CustomSlug = txt.Slug(name)
 }
 
 // UpdateClassify updates a label if necessary

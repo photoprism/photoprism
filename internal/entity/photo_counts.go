@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -146,10 +147,22 @@ func UpdateLabelPhotoCounts() (err error) {
 // UpdatePhotoCounts updates precalculated photo and file counts.
 func UpdatePhotoCounts() (err error) {
 	if err = UpdatePlacesPhotoCounts(); err != nil {
+		if strings.Contains(err.Error(), "Error 1054") {
+			log.Errorf("counts: failed updating places, deprecated or unsupported database")
+			log.Tracef("counts: %s", err)
+			return nil
+		}
+
 		return err
 	}
 
 	if err = UpdateSubjectFileCounts(); err != nil {
+		if strings.Contains(err.Error(), "Error 1054") {
+			log.Errorf("counts: failed updating subjects, deprecated or unsupported database")
+			log.Tracef("counts: %s", err)
+			return nil
+		}
+
 		return err
 	}
 

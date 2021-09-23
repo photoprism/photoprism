@@ -31,12 +31,12 @@ type Album struct {
 	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
 	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
-	AlbumSlug        string      `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"Slug"`
+	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
 	AlbumPath        string      `gorm:"type:VARBINARY(500);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string      `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
-	AlbumTitle       string      `gorm:"type:VARCHAR(255);index;" json:"Title" yaml:"Title"`
-	AlbumLocation    string      `gorm:"type:VARCHAR(255);" json:"Location" yaml:"Location,omitempty"`
-	AlbumCategory    string      `gorm:"type:VARCHAR(255);index;" json:"Category" yaml:"Category,omitempty"`
+	AlbumTitle       string      `gorm:"type:VARCHAR(160);index;" json:"Title" yaml:"Title"`
+	AlbumLocation    string      `gorm:"type:VARCHAR(160);" json:"Location" yaml:"Location,omitempty"`
+	AlbumCategory    string      `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
 	AlbumCaption     string      `gorm:"type:TEXT;" json:"Caption" yaml:"Caption,omitempty"`
 	AlbumDescription string      `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	AlbumNotes       string      `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
@@ -292,7 +292,7 @@ func (m *Album) String() string {
 	return "[unknown album]"
 }
 
-// Checks if the album is of type moment.
+// IsMoment tests if the album is of type moment.
 func (m *Album) IsMoment() bool {
 	return m.AlbumType == AlbumMoment
 }
@@ -309,9 +309,9 @@ func (m *Album) SetTitle(title string) {
 
 	if m.AlbumType == AlbumDefault {
 		if len(m.AlbumTitle) < txt.ClipSlug {
-			m.AlbumSlug = slug.Make(m.AlbumTitle)
+			m.AlbumSlug = txt.Slug(m.AlbumTitle)
 		} else {
-			m.AlbumSlug = slug.Make(txt.Clip(m.AlbumTitle, txt.ClipSlug)) + "-" + m.AlbumUID
+			m.AlbumSlug = txt.Slug(m.AlbumTitle) + "-" + m.AlbumUID
 		}
 	}
 
@@ -327,7 +327,7 @@ func (m *Album) SaveForm(f form.Album) error {
 	}
 
 	if f.AlbumCategory != "" {
-		m.AlbumCategory = txt.Title(txt.Clip(f.AlbumCategory, txt.ClipKeyword))
+		m.AlbumCategory = txt.Clip(txt.Title(f.AlbumCategory), txt.ClipCategory)
 	}
 
 	if f.AlbumTitle != "" {

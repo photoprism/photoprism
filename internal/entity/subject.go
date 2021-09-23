@@ -3,10 +3,10 @@ package entity
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -23,17 +23,17 @@ type Subject struct {
 	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
 	SubjType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
 	SubjSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string          `gorm:"type:VARBINARY(255);index;default:'';" json:"Slug" yaml:"-"`
-	SubjName     string          `gorm:"type:VARCHAR(255);unique_index;default:'';" json:"Name" yaml:"Name"`
-	SubjAlias    string          `gorm:"type:VARCHAR(255);default:'';" json:"Alias" yaml:"Alias"`
+	SubjSlug     string          `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
+	SubjName     string          `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjAlias    string          `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
 	SubjBio      string          `gorm:"type:TEXT;" json:"Bio" yaml:"Bio,omitempty"`
 	SubjNotes    string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	SubjFavorite bool            `gorm:"default:false" json:"Favorite" yaml:"Favorite,omitempty"`
-	SubjPrivate  bool            `gorm:"default:false" json:"Private" yaml:"Private,omitempty"`
-	SubjExcluded bool            `gorm:"default:false" json:"Excluded" yaml:"Excluded,omitempty"`
-	FileCount    int             `gorm:"default:0" json:"FileCount" yaml:"-"`
-	Thumb        string          `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	SubjFavorite bool            `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
+	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
+	SubjExcluded bool            `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
+	FileCount    int             `gorm:"default:0;" json:"FileCount" yaml:"-"`
+	Thumb        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
@@ -56,24 +56,23 @@ func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 
 // NewSubject returns a new entity.
 func NewSubject(name, subjType, subjSrc string) *Subject {
+	// Name is required.
+	if strings.TrimSpace(name) == "" {
+		return nil
+	}
+
 	if subjType == "" {
 		subjType = SubjPerson
 	}
 
-	subjName := txt.Title(txt.Clip(name, txt.ClipDefault))
-	subjSlug := slug.Make(txt.Clip(name, txt.ClipSlug))
-
-	// Name is required.
-	if subjName == "" || subjSlug == "" {
-		return nil
-	}
-
 	result := &Subject{
-		SubjSlug:  subjSlug,
-		SubjName:  subjName,
 		SubjType:  subjType,
 		SubjSrc:   subjSrc,
 		FileCount: 1,
+	}
+
+	if err := result.SetName(name); err != nil {
+		log.Errorf("subject: %s", err)
 	}
 
 	return result
@@ -243,11 +242,11 @@ func (m *Subject) SetName(name string) error {
 	name = txt.NormalizeName(name)
 
 	if name == "" {
-		return fmt.Errorf("subject: name must not be empty")
+		return fmt.Errorf("name must not be empty")
 	}
 
 	m.SubjName = name
-	m.SubjSlug = txt.NameSlug(name)
+	m.SubjSlug = txt.Slug(name)
 
 	return nil
 }

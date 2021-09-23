@@ -7,7 +7,7 @@ import (
 )
 
 func TestLabelRules_Find(t *testing.T) {
-	result, ok := rules.Find("cat")
+	result, ok := Rules.Find("cat")
 	assert.True(t, ok)
 	assert.Equal(t, "cat", result.Label)
 	assert.Equal(t, "animal", result.Categories[0])

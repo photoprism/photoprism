@@ -29,7 +29,7 @@ type Marker struct {
 	FileUID        string          `gorm:"type:VARBINARY(42);index;default:'';" json:"FileUID" yaml:"FileUID"`
 	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerName     string          `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name,omitempty"`
+	MarkerName     string          `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
 	MarkerReview   bool            `json:"Review" yaml:"Review,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	SubjUID        string          `gorm:"type:VARBINARY(42);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
@@ -550,6 +550,49 @@ func (m *Marker) OverlapArea(marker Marker) (area float64) {
 // OverlapPercent calculates the overlap ratio of two markers in percent.
 func (m *Marker) OverlapPercent(marker Marker) int {
 	return int(math.Round(marker.SurfaceRatio(m.OverlapArea(marker)) * 100))
+}
+
+// Unsaved tests if the marker hasn't been saved yet.
+func (m *Marker) Unsaved() bool {
+	return m.MarkerUID == "" || m.CreatedAt.IsZero()
+}
+
+// ValidFace tests if the marker is a valid face.
+func (m *Marker) ValidFace() bool {
+	return m.MarkerType == MarkerFace && !m.MarkerInvalid
+}
+
+// DetectedFace tests if the marker is an automatically detected face.
+func (m *Marker) DetectedFace() bool {
+	return m.MarkerType == MarkerFace && m.MarkerSrc == SrcImage
+}
+
+// Uncertainty returns the detection uncertainty based on the score in percent.
+func (m *Marker) Uncertainty() int {
+	switch {
+	case m.Score > 300:
+		return 1
+	case m.Score > 200:
+		return 5
+	case m.Score > 100:
+		return 10
+	case m.Score > 80:
+		return 15
+	case m.Score > 65:
+		return 20
+	case m.Score > 50:
+		return 25
+	case m.Score > 40:
+		return 30
+	case m.Score > 30:
+		return 35
+	case m.Score > 20:
+		return 40
+	case m.Score > 10:
+		return 45
+	}
+
+	return 50
 }
 
 // FindMarker returns an existing row if exists.

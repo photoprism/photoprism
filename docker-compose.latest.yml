@@ -1,27 +1,18 @@
 version: '3.5'
 
+# Latest stable version for testing.
 services:
-  photoprism:
-    build: .
-    image: photoprism/photoprism:develop
-    container_name: photoprism
-    depends_on:
-      - mariadb
-      - webdav-dummy
+  photoprism-latest:
+    image: photoprism/photoprism:latest
+    container_name: photoprism-latest
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343" # Acceptance Tests
-    working_dir: "/go/src/github.com/photoprism/photoprism"
-    volumes:
-      - ".:/go/src/github.com/photoprism/photoprism"
-      - "go-mod:/go/pkg/mod"
-    shm_size: "2gb"
+      - "2344:2342" # [local port]:[container port]
     environment:
       UID: ${UID:-1000}
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_SITE_URL: "http://localhost:2344/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
@@ -29,23 +20,17 @@ services:
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_PUBLIC: "true"
-      PHOTOPRISM_EXPERIMENTAL: "true"
+      PHOTOPRISM_EXPERIMENTAL: "false"
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
-      PHOTOPRISM_DATABASE_NAME: "photoprism"
+      PHOTOPRISM_DATABASE_NAME: "latest"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
-      PHOTOPRISM_TEST_DRIVER: "sqlite"
-      PHOTOPRISM_TEST_DSN: ".test.db"
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # The initial admin password (min 4 characters)
-      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
-      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
       PHOTOPRISM_DISABLE_BACKUPS: "false"     # Don't backup photo and album metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"    # Disables Settings in Web UI
@@ -63,31 +48,12 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680              # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # Show TensorFlow log messages for development
-
-  mariadb:
-    image: mariadb:10.5
-    container_name: mariadb
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
-    expose:
-      - "4001"
-    ports:
-      - "4001:4001" # Exposes port 4001 on host
+    working_dir: "/photoprism"
     volumes:
-      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
-    environment:
-      MYSQL_ROOT_PASSWORD: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: photoprism
-      MYSQL_DATABASE: photoprism
-
-  webdav-dummy:
-    image: photoprism/webdav:20210602
-
-volumes:
-  go-mod:
-    driver: local
+      - "./storage/latest:/photoprism/storage"
+      - "./storage/originals:/photoprism/originals"
 
 networks:
   default:
-    name: shared
-    driver: bridge
+    external:
+      name: shared

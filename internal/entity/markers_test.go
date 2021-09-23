@@ -63,15 +63,26 @@ func TestMarkers_Contains(t *testing.T) {
 	})
 }
 
-func TestMarkers_FaceCount(t *testing.T) {
+func TestMarkers_DetectedFaceCount(t *testing.T) {
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
-	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
-	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcManual, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcManual, MarkerFace, 100, 65)
 	m3.MarkerInvalid = true
 
 	m := Markers{m1, m2, m3}
 
-	assert.Equal(t, 2, m.FaceCount())
+	assert.Equal(t, 1, m.DetectedFaceCount())
+}
+
+func TestMarkers_ValidFaceCount(t *testing.T) {
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcManual, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcManual, MarkerFace, 100, 65)
+	m3.MarkerInvalid = true
+
+	m := Markers{m1, m2, m3}
+
+	assert.Equal(t, 2, m.ValidFaceCount())
 }
 
 func TestMarkers_SubjectNames(t *testing.T) {
@@ -84,4 +95,64 @@ func TestMarkers_SubjectNames(t *testing.T) {
 	m := Markers{m1, m2, m3}
 
 	assert.Equal(t, []string{"Jens Mander", "Corn McCornface"}, m.SubjectNames())
+}
+
+func TestMarkers_Labels(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		m := Markers{}
+
+		result := m.Labels()
+
+		if len(result) > 0 {
+			t.Fatalf("unexpected result: %#v", result)
+		}
+	})
+	t.Run("One", func(t *testing.T) {
+		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 12)
+		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 300)
+
+		m2.MarkerInvalid = true
+
+		m := Markers{m1, m2}
+
+		result := m.Labels()
+
+		if len(result) == 1 {
+			t.Logf("labels: %#v", result)
+
+			assert.Equal(t, "portrait", result[0].Name)
+			assert.Equal(t, SrcImage, result[0].Source)
+			assert.Equal(t, 45, result[0].Uncertainty)
+			assert.Equal(t, 0, result[0].Priority)
+			assert.Len(t, result[0].Categories, 1)
+
+			if len(result[0].Categories) == 1 {
+				assert.Equal(t, "people", result[0].Categories[0])
+			}
+		} else {
+			t.Fatalf("unexpected result: %#v", result)
+		}
+	})
+	t.Run("Many", func(t *testing.T) {
+		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+		m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+		m3.MarkerInvalid = true
+
+		m := Markers{m1, m2, m3}
+
+		result := m.Labels()
+
+		if len(result) == 1 {
+			t.Logf("labels: %#v", result)
+
+			assert.Equal(t, "people", result[0].Name)
+			assert.Equal(t, SrcImage, result[0].Source)
+			assert.Equal(t, 25, result[0].Uncertainty)
+			assert.Equal(t, 0, result[0].Priority)
+			assert.Len(t, result[0].Categories, 0)
+		} else {
+			t.Fatalf("unexpected result: %#v", result)
+		}
+	})
 }

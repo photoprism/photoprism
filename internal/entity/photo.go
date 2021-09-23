@@ -49,7 +49,7 @@ type Photo struct {
 	PhotoUID         string       `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
 	TypeSrc          string       `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
-	PhotoTitle       string       `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title"`
+	PhotoTitle       string       `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
 	TitleSrc         string       `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
 	PhotoDescription string       `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
@@ -82,7 +82,7 @@ type Photo struct {
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoColor       uint8        `json:"Color" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
-	CameraSerial     string       `gorm:"type:VARBINARY(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
+	CameraSerial     string       `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
 	LensID           uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
 	Details          *Details     `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
@@ -1073,8 +1073,8 @@ func (m *Photo) MapKey() string {
 
 // SetCameraSerial updates the camera serial number.
 func (m *Photo) SetCameraSerial(s string) {
-	if val := txt.Clip(s, txt.ClipVarchar); m.NoCameraSerial() && val != "" {
-		m.CameraSerial = val
+	if s = txt.Clip(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
+		m.CameraSerial = s
 	}
 }
 
@@ -1083,6 +1083,6 @@ func (m *Photo) FaceCount() int {
 	if f, err := m.PrimaryFile(); err != nil {
 		return 0
 	} else {
-		return f.FaceCount()
+		return f.ValidFaceCount()
 	}
 }

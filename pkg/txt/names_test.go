@@ -129,18 +129,3 @@ func TestNormalizeName(t *testing.T) {
 		assert.Equal(t, "陈 赵", NormalizeName(" 陈  赵"))
 	})
 }
-
-func TestNameSlug(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, "", NameSlug(""))
-	})
-	t.Run("BillGates", func(t *testing.T) {
-		assert.Equal(t, "william-henry-gates-iii", NameSlug("William  Henry Gates III"))
-	})
-	t.Run("Quotes", func(t *testing.T) {
-		assert.Equal(t, "william-henry-gates", NameSlug("william \"HenRy\" gates' "))
-	})
-	t.Run("Chinese", func(t *testing.T) {
-		assert.Equal(t, "chen-zhao", NameSlug(" 陈  赵"))
-	})
-}

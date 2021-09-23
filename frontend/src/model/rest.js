@@ -188,7 +188,7 @@ export class Rest extends Model {
     };
 
     return Api.get(this.getCollectionResource(), options).then((resp) => {
-      let count = resp.data.length;
+      let count = resp.data ? resp.data.length : 0;
       let limit = 0;
       let offset = 0;
 
@@ -211,8 +211,10 @@ export class Rest extends Model {
       resp.limit = limit;
       resp.offset = offset;
 
-      for (let i = 0; i < resp.data.length; i++) {
-        resp.models.push(new this(resp.data[i]));
+      if (count > 0) {
+        for (let i = 0; i < resp.data.length; i++) {
+          resp.models.push(new this(resp.data[i]));
+        }
       }
 
       return Promise.resolve(resp);

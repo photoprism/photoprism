@@ -351,8 +351,8 @@ func FindFace(id string) *Face {
 	return &f
 }
 
-// FaceCount counts the number of valid face markers for a file uid.
-func FaceCount(fileUID string) (c int) {
+// ValidFaceCount counts the number of valid face markers for a file uid.
+func ValidFaceCount(fileUID string) (c int) {
 	if !rnd.IsPPID(fileUID, 'f') {
 		return
 	}

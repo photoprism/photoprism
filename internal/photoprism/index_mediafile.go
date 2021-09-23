@@ -260,21 +260,29 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		result.Status = IndexSkipped
 		return result
 	} else if ind.findFaces && file.FilePrimary {
-		faces := ind.Faces(m, photo.PhotoFaces)
+		if markers := file.Markers(); markers != nil {
+			// Detect faces.
+			faces := ind.Faces(m, markers.DetectedFaceCount())
 
-		if len(faces) > 0 {
-			file.AddFaces(faces)
-		}
-
-		if c := file.Markers().FaceCount(); photo.PhotoFaces != c {
-			if c > photo.PhotoFaces {
-				extraLabels = append(extraLabels, classify.FaceLabels(faces, entity.SrcImage)...)
+			// Create markers from faces and add them.
+			if len(faces) > 0 {
+				file.AddFaces(faces)
 			}
 
-			photo.PhotoFaces = c
-		} else if o.FacesOnly {
-			result.Status = IndexSkipped
-			return result
+			// Any new markers?
+			if file.UnsavedMarkers() {
+				// Add matching labels.
+				extraLabels = append(extraLabels, file.Markers().Labels()...)
+			} else if o.FacesOnly {
+				// Skip when indexing faces only.
+				result.Status = IndexSkipped
+				return result
+			}
+
+			// Update photo face count.
+			photo.PhotoFaces = markers.ValidFaceCount()
+		} else {
+			log.Errorf("index: failed loading markers for %s", logName)
 		}
 	}
 
