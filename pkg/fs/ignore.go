@@ -156,7 +156,7 @@ func (l *IgnoreList) Ignore(fileName string) bool {
 		}
 	}
 
-	if l.ignoreHidden && strings.HasPrefix(filepath.Base(fileName), ".") {
+	if l.ignoreHidden && FileNameHidden(fileName) {
 		l.hiddenFiles = append(l.hiddenFiles, fileName)
 		return true
 	}
