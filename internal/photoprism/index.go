@@ -92,10 +92,10 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}
 
 	// Detect faces in images?
-	ind.findFaces = ind.conf.Settings().Features.People
+	ind.findFaces = !ind.conf.DisableFaces() && ind.conf.Settings().Features.People
 
 	// Classify images with TensorFlow?
-	ind.findLabels = !ind.conf.DisableTensorFlow()
+	ind.findLabels = !ind.conf.DisableClassification()
 
 	defer mutex.MainWorker.Stop()
 

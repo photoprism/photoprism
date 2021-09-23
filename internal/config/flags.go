@@ -155,8 +155,18 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-tensorflow",
-		Usage:  "disables image classification with TensorFlow",
+		Usage:  "disables features that require TensorFlow",
 		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
+	},
+	cli.BoolFlag{
+		Name:   "disable-faces",
+		Usage:  "disables facial recognition",
+		EnvVar: "PHOTOPRISM_DISABLE_FACES",
+	},
+	cli.BoolFlag{
+		Name:   "disable-classification",
+		Usage:  "disables image classification",
+		EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
 	},
 	cli.BoolFlag{
 		Name:   "disable-ffmpeg",
