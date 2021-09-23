@@ -40,7 +40,7 @@
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>Duplicates will be skipped and only appear once.</translate>
-            <translate>If a file you expect is missing, please re-index your library and wait until indexing has been completed.</translate>
+            <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
         <v-layout row wrap class="search-results file-results cards-view" :class="{'select-results': selection.length > 0}">

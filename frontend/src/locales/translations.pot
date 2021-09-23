@@ -351,7 +351,7 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr ""
 
-#: src/pages/people/subjects.vue:344
+#: src/pages/people/subjects.vue:351
 msgid "Bio"
 msgstr ""
 
@@ -535,13 +535,13 @@ msgstr ""
 
 #: src/pages/albums.vue:92
 #: src/pages/labels.vue:73
-#: src/pages/people/subjects.vue:73
+#: src/pages/people/subjects.vue:74
 msgid "Contains %{n} entries."
 msgstr ""
 
 #: src/pages/albums.vue:89
 #: src/pages/labels.vue:70
-#: src/pages/people/subjects.vue:70
+#: src/pages/people/subjects.vue:71
 msgid "Contains one entry."
 msgstr ""
 
@@ -1114,7 +1114,7 @@ msgstr ""
 msgid "Hidden Files"
 msgstr ""
 
-#: src/pages/people/faces.vue:182
+#: src/pages/people/faces.vue:190
 msgid "Hide"
 msgstr ""
 
@@ -1136,13 +1136,6 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:40
 msgid "I'm a sponsor"
-msgstr ""
-
-#: src/component/photo/cards.vue:11
-#: src/component/photo/list.vue:11
-#: src/component/photo/mosaic.vue:11
-#: src/pages/library/files.vue:38
-msgid "If a file you expect is missing, please re-index your library and wait until indexing has been completed."
 msgstr ""
 
 #: src/dialog/photo/labels.vue:34
@@ -1511,13 +1504,13 @@ msgstr ""
 #: src/dialog/photo/info.vue:31
 #: src/dialog/photo/labels.vue:48
 #: src/dialog/photo/people.vue:18
-#: src/dialog/photo/people.vue:221
+#: src/dialog/photo/people.vue:228
 #: src/pages/about/feedback.vue:144
 #: src/pages/labels.vue:330
 #: src/pages/login.vue:73
 #: src/pages/people/faces.vue:46
-#: src/pages/people/faces.vue:302
-#: src/pages/people/subjects.vue:307
+#: src/pages/people/faces.vue:310
+#: src/pages/people/subjects.vue:314
 #: src/share/photo/cards.vue:30
 #: src/share/photo/list.vue:34
 #: src/share/photo/list.vue:208
@@ -1623,7 +1616,7 @@ msgid "Not Found"
 msgstr ""
 
 #: src/pages/library/import.vue:28
-msgid "Note that you can as well manage and re-index your originals manually."
+msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr ""
 
 #: src/pages/settings/sync.vue:34
@@ -1954,6 +1947,12 @@ msgstr ""
 msgid "Recently edited"
 msgstr ""
 
+#: src/dialog/photo/people.vue:9
+#: src/pages/people/faces.vue:27
+#: src/pages/people/subjects.vue:31
+msgid "Recognition starts after indexing has been completed."
+msgstr ""
+
 #: src/pages/people.vue:21
 msgid "Recognized"
 msgstr ""
@@ -1966,12 +1965,6 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: src/dialog/photo/people.vue:8
-#: src/pages/people/faces.vue:26
-#: src/pages/people/subjects.vue:30
-msgid "Reindex your library to find additional faces. Recognition starts after indexing has been completed."
-msgstr ""
-
 #: src/component/album/toolbar.vue:54
 #: src/component/photo/toolbar.vue:57
 #: src/dialog/reload.vue:15
@@ -1979,8 +1972,8 @@ msgstr ""
 #: src/pages/labels.vue:90
 #: src/pages/library/errors.vue:63
 #: src/pages/library/files.vue:100
-#: src/pages/people/faces.vue:64
-#: src/pages/people/subjects.vue:96
+#: src/pages/people/faces.vue:65
+#: src/pages/people/subjects.vue:97
 msgid "Reload"
 msgstr ""
 
@@ -1994,7 +1987,7 @@ msgstr ""
 msgid "Remote Sync"
 msgstr ""
 
-#: src/dialog/photo/people.vue:101
+#: src/dialog/photo/people.vue:108
 msgid "Remove"
 msgstr ""
 
@@ -2067,7 +2060,7 @@ msgstr ""
 #: src/pages/albums.vue:104
 #: src/pages/labels.vue:80
 #: src/pages/library/errors.vue:54
-#: src/pages/people/subjects.vue:79
+#: src/pages/people/subjects.vue:80
 #: src/pages/places.vue:30
 #: src/routes.js:107
 msgid "Search"
@@ -2435,8 +2428,8 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src/dialog/photo/people.vue:144
-#: src/pages/people/faces.vue:225
+#: src/dialog/photo/people.vue:151
+#: src/pages/people/faces.vue:233
 msgid "Undo"
 msgstr ""
 
@@ -2615,6 +2608,13 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr ""
 
+#: src/component/photo/cards.vue:11
+#: src/component/photo/list.vue:11
+#: src/component/photo/mosaic.vue:11
+#: src/pages/library/files.vue:38
+msgid "When a file you expect is missing, please rescan your library and wait until indexing has been completed."
+msgstr ""
+
 #: src/options/options.js:340
 msgid "White"
 msgstr ""
@@ -2660,6 +2660,12 @@ msgstr ""
 #: src/component/album/clipboard.vue:32
 #: src/component/album/clipboard.vue:45
 msgid "You may only select one item"
+msgstr ""
+
+#: src/dialog/photo/people.vue:8
+#: src/pages/people/faces.vue:26
+#: src/pages/people/subjects.vue:30
+msgid "You may rescan your library to find additional faces."
 msgstr ""
 
 #: src/pages/about/about.vue:51

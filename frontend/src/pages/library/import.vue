@@ -50,7 +50,7 @@
               <translate>Imported files will be sorted by date and given a unique name to avoid duplicates.</translate>
               <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
               <translate>Original file names will be stored and indexed.</translate>
-              <translate>Note that you can as well manage and re-index your originals manually.</translate>
+              <translate>Note you may manually manage your originals folder and importing is optional.</translate>
             </p>
           </v-flex>
         </v-layout>

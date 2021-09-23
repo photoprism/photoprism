@@ -338,7 +338,7 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Erstellt automatisch Alben mit besonderen Momenten, Reisen und Orten."
 
-#: src/pages/people/subjects.vue:344
+#: src/pages/people/subjects.vue:351
 msgid "Bio"
 msgstr "Biographie"
 
@@ -493,12 +493,12 @@ msgid "Contact Us"
 msgstr "Kontakt"
 
 #: src/pages/albums.vue:92 src/pages/labels.vue:73
-#: src/pages/people/subjects.vue:73
+#: src/pages/people/subjects.vue:74
 msgid "Contains %{n} entries."
 msgstr "Enthält %{n} Einträge."
 
 #: src/pages/albums.vue:89 src/pages/labels.vue:70
-#: src/pages/people/subjects.vue:70
+#: src/pages/people/subjects.vue:71
 msgid "Contains one entry."
 msgstr "Enthält einen Eintrag."
 
@@ -1035,7 +1035,7 @@ msgstr "Versteckt"
 msgid "Hidden Files"
 msgstr "Unsichtbare Dateien"
 
-#: src/pages/people/faces.vue:182
+#: src/pages/people/faces.vue:190
 msgid "Hide"
 msgstr "Verbergen"
 
@@ -1058,16 +1058,6 @@ msgstr "Hybrid"
 #: src/dialog/sponsor.vue:40
 msgid "I'm a sponsor"
 msgstr "Ich bin Sponsor"
-
-#: src/component/photo/cards.vue:11 src/component/photo/list.vue:11
-#: src/component/photo/mosaic.vue:11 src/pages/library/files.vue:38
-msgid ""
-"If a file you expect is missing, please re-index your library and wait until "
-"indexing has been completed."
-msgstr ""
-"Falls eine Datei fehlt, muss der Index möglicherweise aktualisiert werden. "
-"Es werden erst alle Dateien gefunden, wenn das Indexieren vollständig "
-"abgeschlossen ist."
 
 #: src/dialog/photo/labels.vue:34
 msgid "image"
@@ -1400,10 +1390,10 @@ msgstr "Dateien verschieben"
 #: src/dialog/album/edit.vue:106 src/dialog/photo/files.vue:70
 #: src/dialog/photo/files.vue:67 src/dialog/photo/files.vue:30
 #: src/dialog/photo/info.vue:31 src/dialog/photo/labels.vue:48
-#: src/dialog/photo/people.vue:18 src/dialog/photo/people.vue:221
+#: src/dialog/photo/people.vue:18 src/dialog/photo/people.vue:228
 #: src/pages/about/feedback.vue:144 src/pages/labels.vue:330
 #: src/pages/login.vue:73 src/pages/people/faces.vue:46
-#: src/pages/people/faces.vue:302 src/pages/people/subjects.vue:307
+#: src/pages/people/faces.vue:310 src/pages/people/subjects.vue:314
 #: src/share/photo/cards.vue:30 src/share/photo/list.vue:34
 #: src/share/photo/list.vue:208
 msgid "Name"
@@ -1501,11 +1491,11 @@ msgid "Not Found"
 msgstr "Keine Ergebnisse"
 
 #: src/pages/library/import.vue:28
-msgid "Note that you can as well manage and re-index your originals manually."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr ""
-"Hinweis: Falls die vorhandenen Ordner und Dateinamen beibehalten werden "
-"sollen, ist kein Import notwendig. Die Ordner müssen in diesem Fall manuell "
-"verwaltet und indexiert werden."
+"Die Verwaltung der Original-Dateien kann auch manuell erfolgen, der Import "
+"ist optional."
 
 #: src/pages/settings/sync.vue:34
 msgid "Note:"
@@ -1817,6 +1807,11 @@ msgstr "Zuletzt hinzugefügt"
 msgid "Recently edited"
 msgstr "Zuletzt bearbeitet"
 
+#: src/dialog/photo/people.vue:9 src/pages/people/faces.vue:27
+#: src/pages/people/subjects.vue:31
+msgid "Recognition starts after indexing has been completed."
+msgstr "Die Erkennung beginnt, nachdem die Indexierung abgeschlossen ist."
+
 #: src/pages/people.vue:21
 msgid "Recognized"
 msgstr "Erkannt"
@@ -1829,19 +1824,10 @@ msgstr "Erkennt Gesichter, so dass bestimmte Personen gefunden werden können."
 msgid "Red"
 msgstr "Rot"
 
-#: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:26
-#: src/pages/people/subjects.vue:30
-msgid ""
-"Reindex your library to find additional faces. Recognition starts after "
-"indexing has been completed."
-msgstr ""
-"Der Index muss aktualisiert werden, um weitere Gesichter zu finden. Die "
-"Erkennung beginnt, nachdem die Indexierung abgeschlossen ist."
-
 #: src/component/album/toolbar.vue:54 src/component/photo/toolbar.vue:57
 #: src/dialog/reload.vue:15 src/pages/albums.vue:129 src/pages/labels.vue:90
 #: src/pages/library/errors.vue:63 src/pages/library/files.vue:100
-#: src/pages/people/faces.vue:64 src/pages/people/subjects.vue:96
+#: src/pages/people/faces.vue:65 src/pages/people/subjects.vue:97
 msgid "Reload"
 msgstr "Neu laden"
 
@@ -1854,7 +1840,7 @@ msgstr "Wird neu geladen…"
 msgid "Remote Sync"
 msgstr "Remote Sync"
 
-#: src/dialog/photo/people.vue:101
+#: src/dialog/photo/people.vue:108
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -1924,7 +1910,7 @@ msgstr "Scans"
 #: src/component/navigation.vue:4 src/component/navigation.vue:280
 #: src/component/photo/toolbar.vue:48 src/pages/albums.vue:104
 #: src/pages/labels.vue:80 src/pages/library/errors.vue:54
-#: src/pages/people/subjects.vue:79 src/pages/places.vue:30 src/routes.js:107
+#: src/pages/people/subjects.vue:80 src/pages/places.vue:30 src/routes.js:107
 msgid "Search"
 msgstr "Suche"
 
@@ -2274,7 +2260,7 @@ msgstr "Versuche es mit anderen Filtern oder Suchbegriffen."
 msgid "Type"
 msgstr "Typ"
 
-#: src/dialog/photo/people.vue:144 src/pages/people/faces.vue:225
+#: src/dialog/photo/people.vue:151 src/pages/people/faces.vue:233
 msgid "Undo"
 msgstr "Rückgängig machen"
 
@@ -2431,6 +2417,16 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr "WebDAV Upload"
 
+#: src/component/photo/cards.vue:11 src/component/photo/list.vue:11
+#: src/component/photo/mosaic.vue:11 src/pages/library/files.vue:38
+msgid ""
+"When a file you expect is missing, please rescan your library and wait until "
+"indexing has been completed."
+msgstr ""
+"Falls eine Datei fehlt, muss der Index möglicherweise aktualisiert werden. "
+"Es werden erst alle Dateien gefunden, wenn das Indexieren vollständig "
+"abgeschlossen ist."
+
 #: src/options/options.js:340
 msgid "White"
 msgstr "Weiß"
@@ -2469,6 +2465,11 @@ msgstr "Es kann nur eine Kategorie gleichzeitig downgeloadet werden"
 msgid "You may only select one item"
 msgstr "Es darf nur ein Eintrag ausgewählt werden"
 
+#: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:26
+#: src/pages/people/subjects.vue:30
+msgid "You may rescan your library to find additional faces."
+msgstr "Der Index kann aktualisiert werden, um weitere Gesichter zu finden."
+
 #: src/pages/about/about.vue:51
 msgid ""
 "You may use it as required to describe our software, run your own server, "
@@ -2499,6 +2500,13 @@ msgstr "Deine Nachricht wurde gesendet"
 #: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
+#~ msgstr ""
+#~ "Hinweis: Falls die vorhandenen Ordner und Dateinamen beibehalten werden "
+#~ "sollen, ist kein Import notwendig. Die Ordner müssen in diesem Fall "
+#~ "manuell verwaltet und indexiert werden."
 
 #~ msgid ""
 #~ "PhotoPrism continuously analyzes your library to find special moments, "

@@ -12,7 +12,7 @@
       </h3>
       <p class="body-1 mt-2 mb-0 pa-0">
         <translate>Try again using other filters or keywords.</translate>
-        <translate>If a file you expect is missing, please re-index your library and wait until indexing has been completed.</translate>
+        <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
         <template v-if="$config.feature('review')" class="mt-2 mb-0 pa-0">
           <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
         </template>

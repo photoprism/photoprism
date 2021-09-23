@@ -29,7 +29,8 @@
             <translate>Couldn't find any new faces</translate>
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
-            <translate>Reindex your library to find additional faces. Recognition starts after indexing has been completed.</translate>
+            <translate>You may rescan your library to find additional faces.</translate>
+            <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
         <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
