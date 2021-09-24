@@ -180,7 +180,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-tensorflow",
-		Usage:  "disables all features that require TensorFlow",
+		Usage:  "disables all features depending on TensorFlow",
 		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
 	},
 	cli.BoolFlag{
