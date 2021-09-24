@@ -5,7 +5,7 @@ import "github.com/photoprism/photoprism/internal/face"
 // FaceSize returns the face size threshold in pixels.
 func (c *Config) FaceSize() int {
 	if c.options.FaceSize < 20 || c.options.FaceSize > 10000 {
-		return 40
+		return 50
 	}
 
 	return c.options.FaceSize

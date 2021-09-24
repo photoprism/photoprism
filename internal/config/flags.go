@@ -154,21 +154,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
 	},
 	cli.BoolFlag{
-		Name:   "disable-tensorflow",
-		Usage:  "disables features that require TensorFlow",
-		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
-	},
-	cli.BoolFlag{
-		Name:   "disable-faces",
-		Usage:  "disables facial recognition",
-		EnvVar: "PHOTOPRISM_DISABLE_FACES",
-	},
-	cli.BoolFlag{
-		Name:   "disable-classification",
-		Usage:  "disables image classification",
-		EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
-	},
-	cli.BoolFlag{
 		Name:   "disable-ffmpeg",
 		Usage:  "disables video transcoding and thumbnail generation with FFmpeg",
 		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
@@ -192,6 +177,21 @@ var GlobalFlags = []cli.Flag{
 		Name:   "disable-heifconvert",
 		Usage:  "disables HEIC/HEIF file conversion",
 		EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
+	},
+	cli.BoolFlag{
+		Name:   "disable-tensorflow",
+		Usage:  "disables all features that require TensorFlow",
+		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
+	},
+	cli.BoolFlag{
+		Name:   "disable-faces",
+		Usage:  "disables facial recognition",
+		EnvVar: "PHOTOPRISM_DISABLE_FACES",
+	},
+	cli.BoolFlag{
+		Name:   "disable-classification",
+		Usage:  "disables image classification",
+		EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
@@ -441,7 +441,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "face-size",
 		Usage:  "min face size in `PIXELS`",
-		Value:  40,
+		Value:  50,
 		EnvVar: "PHOTOPRISM_FACE_SIZE",
 	},
 	cli.Float64Flag{

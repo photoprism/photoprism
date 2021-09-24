@@ -37,7 +37,7 @@ func (c *Config) DisableExifTool() bool {
 	return c.options.DisableExifTool
 }
 
-// DisableTensorFlow tests if features that require TensorFlow should be disabled.
+// DisableTensorFlow tests if all features that require TensorFlow should be disabled.
 func (c *Config) DisableTensorFlow() bool {
 	if LowMem && !c.options.DisableTensorFlow {
 		c.options.DisableTensorFlow = true

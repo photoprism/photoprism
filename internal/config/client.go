@@ -72,14 +72,14 @@ type ClientDisable struct {
 	Settings       bool `json:"settings"`
 	Places         bool `json:"places"`
 	ExifTool       bool `json:"exiftool"`
-	TensorFlow     bool `json:"tensorflow"`
-	Faces          bool `json:"faces"`
-	Classification bool `json:"classification"`
+	FFmpeg         bool `json:"ffmpeg"`
 	Darktable      bool `json:"darktable"`
 	Rawtherapee    bool `json:"rawtherapee"`
 	Sips           bool `json:"sips"`
 	HeifConvert    bool `json:"heifconvert"`
-	FFmpeg         bool `json:"ffmpeg"`
+	TensorFlow     bool `json:"tensorflow"`
+	Faces          bool `json:"faces"`
+	Classification bool `json:"classification"`
 }
 
 // ClientCounts represents photo, video and album counts for the client UI.
@@ -168,17 +168,19 @@ func (c *Config) PublicConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:     true,
-			WebDAV:      true,
-			Settings:    c.DisableSettings(),
-			Places:      c.DisablePlaces(),
-			ExifTool:    true,
-			TensorFlow:  true,
-			Darktable:   true,
-			Rawtherapee: true,
-			Sips:        true,
-			HeifConvert: true,
-			FFmpeg:      true,
+			Backups:        true,
+			WebDAV:         true,
+			Settings:       c.DisableSettings(),
+			Places:         c.DisablePlaces(),
+			ExifTool:       true,
+			FFmpeg:         true,
+			Darktable:      true,
+			Rawtherapee:    true,
+			Sips:           true,
+			HeifConvert:    true,
+			TensorFlow:     true,
+			Faces:          true,
+			Classification: true,
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "public",
@@ -229,17 +231,19 @@ func (c *Config) GuestConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:     true,
-			WebDAV:      c.DisableWebDAV(),
-			Settings:    c.DisableSettings(),
-			Places:      c.DisablePlaces(),
-			ExifTool:    true,
-			TensorFlow:  true,
-			Darktable:   true,
-			Rawtherapee: true,
-			Sips:        true,
-			HeifConvert: true,
-			FFmpeg:      true,
+			Backups:        true,
+			WebDAV:         c.DisableWebDAV(),
+			Settings:       c.DisableSettings(),
+			Places:         c.DisablePlaces(),
+			ExifTool:       true,
+			FFmpeg:         true,
+			Darktable:      true,
+			Rawtherapee:    true,
+			Sips:           true,
+			HeifConvert:    true,
+			TensorFlow:     true,
+			Faces:          true,
+			Classification: true,
 		},
 		Flags:           "readonly public shared",
 		Mode:            "guest",
@@ -289,14 +293,14 @@ func (c *Config) UserConfig() ClientConfig {
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
 			ExifTool:       c.DisableExifTool(),
-			TensorFlow:     c.DisableTensorFlow(),
-			Faces:          c.DisableFaces(),
-			Classification: c.DisableClassification(),
+			FFmpeg:         c.DisableFFmpeg(),
 			Darktable:      c.DisableDarktable(),
 			Rawtherapee:    c.DisableRawtherapee(),
 			Sips:           c.DisableSips(),
 			HeifConvert:    c.DisableHeifConvert(),
-			FFmpeg:         c.DisableFFmpeg(),
+			TensorFlow:     c.DisableTensorFlow(),
+			Faces:          c.DisableFaces(),
+			Classification: c.DisableClassification(),
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "user",
