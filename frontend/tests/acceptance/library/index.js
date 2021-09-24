@@ -9,10 +9,9 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await page.openNav();
   await t.click(Selector(".nav-labels"));
   await page.search("cheetah");
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.openNav();
-  await t
-    .click(Selector(".nav-moments"));
+  await t.click(Selector(".nav-moments"));
   const MomentCount = await Selector("a.is-album").count;
   await page.openNav();
   await t.click(Selector(".nav-calendar"));
@@ -21,7 +20,7 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   } else {
     await page.search("December 2013");
   }
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.openNav();
   await t.click(Selector(".nav-folders"));
   if (t.browser.platform === "mobile") {
@@ -29,7 +28,7 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   } else {
     await page.search("Moment");
   }
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.openNav();
   await t.click(Selector(".nav-places + div > i")).click(Selector(".nav-states"));
   if (t.browser.platform === "mobile") {
@@ -38,18 +37,16 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   } else {
     await page.search("KwaZulu");
   }
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.openNav();
   await t
     .click(Selector(".nav-library+div>i"))
     .click(Selector(".nav-originals"))
     .click(Selector(".is-folder").withText("moment"))
-    .expect(Selector("h3").withText("Couldn't find anything").visible)
+    .expect(Selector("div.no-results").visible)
     .ok();
   await page.openNav();
-  await t
-    .click(Selector(".nav-browse + div"))
-    .click(Selector(".nav-monochrome"));
+  await t.click(Selector(".nav-browse + div")).click(Selector(".nav-monochrome"));
   const MonochromeCount = await Selector("a.is-album").count;
   await page.openNav();
   await t
@@ -70,7 +67,8 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await t.click(Selector(".nav-moments"));
   const MomentCountAfterIndex = await Selector("a.is-album").count;
   await t
-    .expect(MomentCountAfterIndex).gt(MomentCount)
+    .expect(MomentCountAfterIndex)
+    .gt(MomentCount)
     .click(Selector("a").withText("South Africa 2013"))
     .expect(Selector(".is-photo").visible)
     .ok();

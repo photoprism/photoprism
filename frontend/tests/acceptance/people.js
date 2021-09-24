@@ -2,7 +2,7 @@ import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
 import Page from "./page-model";
 
-fixture`Test albums`.page`${testcafeconfig.url}`;
+fixture`Test people`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 
