@@ -14,6 +14,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// GetConfig returns client config values.
+//
 // GET /api/v1/config
 func GetConfig(router *gin.RouterGroup) {
 	router.GET("/config", func(c *gin.Context) {
@@ -36,6 +38,8 @@ func GetConfig(router *gin.RouterGroup) {
 	})
 }
 
+// GetConfigOptions returns backend config options.
+//
 // GET /api/v1/config/options
 func GetConfigOptions(router *gin.RouterGroup) {
 	router.GET("/config/options", func(c *gin.Context) {
@@ -51,6 +55,8 @@ func GetConfigOptions(router *gin.RouterGroup) {
 	})
 }
 
+// SaveConfigOptions updates backend config options.
+//
 // POST /api/v1/config/options
 func SaveConfigOptions(router *gin.RouterGroup) {
 	router.POST("/config/options", func(c *gin.Context) {
