@@ -241,9 +241,8 @@ func (m *File) ReplaceHash(fileHash string) error {
 	}
 
 	entities := Types{
-		"albums":   Album{},
-		"labels":   Label{},
-		"subjects": Subject{},
+		"albums": Album{},
+		"labels": Label{},
 	}
 
 	// Wildcard search to include potential crops.
