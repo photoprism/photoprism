@@ -4,7 +4,6 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
-    container_name: photoprism
     depends_on:
       - mariadb
       - webdav-dummy
@@ -66,7 +65,6 @@ services:
 
   mariadb:
     image: mariadb:10.5
-    container_name: mariadb
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
     expose:
       - "4001"

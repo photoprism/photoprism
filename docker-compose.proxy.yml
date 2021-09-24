@@ -4,7 +4,6 @@ version: '3.5'
 services:
   caddy:
     image: caddy:2
-    container_name: caddy
     depends_on:
       - photoprism
     ports:

@@ -4,7 +4,6 @@ version: '3.5'
 services:
   photoprism-latest:
     image: photoprism/photoprism:latest
-    container_name: photoprism-latest
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
