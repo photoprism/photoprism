@@ -3,7 +3,7 @@
     <v-container grid-list-xs fluid class="pa-2 p-faces">
       <v-alert
           :value="markers.length === 0"
-          color="secondary-dark" icon="face" class="no-results ma-2 opacity-70" outline
+          color="secondary-dark" icon="portrait" class="no-results ma-1 opacity-70" outline
       >
         <h3 class="body-2 ma-0 pa-0">
           <translate>Couldn't find any people</translate>

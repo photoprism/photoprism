@@ -518,7 +518,7 @@ msgstr "In Zwischenablage kopiert"
 msgid "Copyright"
 msgstr "Copyright"
 
-#: src/pages/people/faces.vue:23
+#: src/pages/people/faces.vue:24 src/pages/people/faces.vue:3
 msgid "Couldn't find any new faces"
 msgstr "Keine neuen Gesichter gefunden"
 
@@ -1035,7 +1035,7 @@ msgstr "Versteckt"
 msgid "Hidden Files"
 msgstr "Unsichtbare Dateien"
 
-#: src/pages/people/faces.vue:190
+#: src/pages/people/faces.vue:213
 msgid "Hide"
 msgstr "Verbergen"
 
@@ -1393,7 +1393,7 @@ msgstr "Dateien verschieben"
 #: src/dialog/photo/people.vue:18 src/dialog/photo/people.vue:228
 #: src/pages/about/feedback.vue:144 src/pages/labels.vue:330
 #: src/pages/login.vue:73 src/pages/people/faces.vue:46
-#: src/pages/people/faces.vue:310 src/pages/people/subjects.vue:314
+#: src/pages/people/faces.vue:333 src/pages/people/subjects.vue:314
 #: src/share/photo/cards.vue:30 src/share/photo/list.vue:34
 #: src/share/photo/list.vue:208
 msgid "Name"
@@ -1807,8 +1807,8 @@ msgstr "Zuletzt hinzugefügt"
 msgid "Recently edited"
 msgstr "Zuletzt bearbeitet"
 
-#: src/dialog/photo/people.vue:9 src/pages/people/faces.vue:27
-#: src/pages/people/subjects.vue:31
+#: src/dialog/photo/people.vue:9 src/pages/people/faces.vue:28
+#: src/pages/people/faces.vue:7 src/pages/people/subjects.vue:31
 msgid "Recognition starts after indexing has been completed."
 msgstr "Die Erkennung beginnt, nachdem die Indexierung abgeschlossen ist."
 
@@ -1827,7 +1827,7 @@ msgstr "Rot"
 #: src/component/album/toolbar.vue:54 src/component/photo/toolbar.vue:57
 #: src/dialog/reload.vue:15 src/pages/albums.vue:129 src/pages/labels.vue:90
 #: src/pages/library/errors.vue:63 src/pages/library/files.vue:100
-#: src/pages/people/faces.vue:65 src/pages/people/subjects.vue:97
+#: src/pages/people/faces.vue:67 src/pages/people/subjects.vue:97
 msgid "Reload"
 msgstr "Neu laden"
 
@@ -2000,6 +2000,10 @@ msgstr "%{name} teilen"
 #: src/share/albums.vue:51
 msgid "Shared with you."
 msgstr "Mit dir geteilt."
+
+#: src/pages/people/faces.vue:33 src/pages/people/faces.vue:12
+msgid "Show all new faces"
+msgstr "Alle neuen Gesichter anzeigen"
 
 #: src/pages/labels.vue:125
 msgid "Show less"
@@ -2260,7 +2264,7 @@ msgstr "Versuche es mit anderen Filtern oder Suchbegriffen."
 msgid "Type"
 msgstr "Typ"
 
-#: src/dialog/photo/people.vue:151 src/pages/people/faces.vue:233
+#: src/dialog/photo/people.vue:151 src/pages/people/faces.vue:256
 msgid "Undo"
 msgstr "Rückgängig machen"
 
@@ -2465,8 +2469,8 @@ msgstr "Es kann nur eine Kategorie gleichzeitig downgeloadet werden"
 msgid "You may only select one item"
 msgstr "Es darf nur ein Eintrag ausgewählt werden"
 
-#: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:26
-#: src/pages/people/subjects.vue:30
+#: src/dialog/photo/people.vue:8 src/pages/people/faces.vue:27
+#: src/pages/people/faces.vue:6 src/pages/people/subjects.vue:30
 msgid "You may rescan your library to find additional faces."
 msgstr "Der Index kann aktualisiert werden, um weitere Gesichter zu finden."
 

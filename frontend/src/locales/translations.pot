@@ -1114,7 +1114,7 @@ msgstr ""
 msgid "Hidden Files"
 msgstr ""
 
-#: src/pages/people/faces.vue:190
+#: src/pages/people/faces.vue:192
 msgid "Hide"
 msgstr ""
 
@@ -1509,7 +1509,7 @@ msgstr ""
 #: src/pages/labels.vue:330
 #: src/pages/login.vue:73
 #: src/pages/people/faces.vue:46
-#: src/pages/people/faces.vue:310
+#: src/pages/people/faces.vue:312
 #: src/pages/people/subjects.vue:314
 #: src/share/photo/cards.vue:30
 #: src/share/photo/list.vue:34
@@ -1972,7 +1972,7 @@ msgstr ""
 #: src/pages/labels.vue:90
 #: src/pages/library/errors.vue:63
 #: src/pages/library/files.vue:100
-#: src/pages/people/faces.vue:65
+#: src/pages/people/faces.vue:67
 #: src/pages/people/subjects.vue:97
 msgid "Reload"
 msgstr ""
@@ -2161,6 +2161,10 @@ msgstr ""
 
 #: src/share/albums.vue:51
 msgid "Shared with you."
+msgstr ""
+
+#: src/pages/people/faces.vue:65
+msgid "Show all new faces"
 msgstr ""
 
 #: src/pages/labels.vue:125
@@ -2429,7 +2433,7 @@ msgid "Type"
 msgstr ""
 
 #: src/dialog/photo/people.vue:151
-#: src/pages/people/faces.vue:233
+#: src/pages/people/faces.vue:235
 msgid "Undo"
 msgstr ""
 

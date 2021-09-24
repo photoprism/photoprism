@@ -1,19 +1,21 @@
 <template>
   <div>
-    <v-alert
-        :value="photos.length === 0"
-        color="secondary-dark" icon="lightbulb_outline" class="no-results ma-3 opacity-70" outline
-    >
-      <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
-        <translate>Couldn't find recently edited</translate>
-      </h3>
-      <h3 v-else class="body-2 ma-0 pa-0">
-        <translate>Couldn't find anything</translate>
-      </h3>
-      <p class="body-1 mt-2 mb-0 pa-0">
-        <translate>Try again using other filters or keywords.</translate>
-      </p>
-    </v-alert>
+    <div v-if="photos.length === 0" class="pa-2">
+      <v-alert
+          :value="true"
+          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-1 opacity-70" outline
+      >
+        <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+          <translate>Couldn't find recently edited</translate>
+        </h3>
+        <h3 v-else class="body-2 ma-0 pa-0">
+          <translate>Couldn't find anything</translate>
+        </h3>
+        <p class="body-1 mt-2 mb-0 pa-0">
+          <translate>Try again using other filters or keywords.</translate>
+        </p>
+      </v-alert>
+    </div>
     <v-data-table v-if="photos.length > 0"
                   v-model="selected"
                   :headers="listColumns"

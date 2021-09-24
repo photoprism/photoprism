@@ -23,7 +23,7 @@
       <v-container grid-list-xs fluid class="pa-2">
         <v-alert
             :value="results.length === 0"
-            color="secondary-dark" icon="face_retouching_natural" class="no-results ma-2 opacity-70" outline
+            color="secondary-dark" icon="person_add_disabled" class="no-results ma-1 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
             <translate>Couldn't find any new faces</translate>
@@ -118,6 +118,14 @@
             </v-card>
           </v-flex>
         </v-layout>
+        <div class="text-xs-center my-2">
+          <v-btn
+              color="secondary" round
+              :to="{name: 'all', query: { q: 'face:new' }}"
+          >
+            <translate>Show all new faces</translate>
+          </v-btn>
+        </div>
       </v-container>
     </v-container>
   </div>
