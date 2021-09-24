@@ -72,14 +72,14 @@ type ClientDisable struct {
 	Settings       bool `json:"settings"`
 	Places         bool `json:"places"`
 	ExifTool       bool `json:"exiftool"`
+	TensorFlow     bool `json:"tensorflow"`
+	Faces          bool `json:"faces"`
+	Classification bool `json:"classification"`
 	Darktable      bool `json:"darktable"`
 	Rawtherapee    bool `json:"rawtherapee"`
 	Sips           bool `json:"sips"`
 	HeifConvert    bool `json:"heifconvert"`
 	FFmpeg         bool `json:"ffmpeg"`
-	TensorFlow     bool `json:"tensorflow"`
-	Faces          bool `json:"faces"`
-	Classification bool `json:"classification"`
 }
 
 // ClientCounts represents photo, video and album counts for the client UI.
