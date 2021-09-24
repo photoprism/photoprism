@@ -30,24 +30,24 @@ The help command shows a complete list of commands and config options.
 Use the --help flag to see a detailed command info like
 "docker-compose exec photoprism photoprism backup --help".
 
-| Action           | Command                                                 |
-|------------------|---------------------------------------------------------|
-| Start            | docker-compose up -d                                    |
-| Stop             | docker-compose stop                                     |
-| Update           | docker-compose pull                                     |
-| View Logs        | docker-compose logs --tail=25 -f                        |
-| Open Terminal    | docker-compose exec photoprism bash                     |
-| Show Help        | docker-compose exec photoprism photoprism help          |
-| Show Config      | docker-compose exec photoprism photoprism config        |
-| Reset Database   | docker-compose exec photoprism photoprism reset         |
-| Backup Database  | docker-compose exec photoprism photoprism backup -a -i  |
-| Restore Database | docker-compose exec photoprism photoprism restore -a -i |
-| Index Library    | docker-compose exec photoprism photoprism index         |
-| Complete Rescan  | docker-compose exec photoprism photoprism index --all   |
-| Import Files     | docker-compose exec photoprism photoprism import        |
+| Action   | Command
+|----------|---------------------------------------------------------
+| Start    | docker-compose up -d
+| Stop     | docker-compose stop
+| Update   | docker-compose pull
+| Logs     | docker-compose logs --tail=25 -f
+| Terminal | docker-compose exec photoprism bash
+| Help     | docker-compose exec photoprism photoprism help
+| Config   | docker-compose exec photoprism photoprism config
+| Reset    | docker-compose exec photoprism photoprism reset
+| Backup   | docker-compose exec photoprism photoprism backup -a -i
+| Restore  | docker-compose exec photoprism photoprism restore -a -i
+| Index    | docker-compose exec photoprism photoprism index
+| Re-index | docker-compose exec photoprism photoprism index -f
+| Import   | docker-compose exec photoprism photoprism import
+|----------|---------------------------------------------------------
 
-
-Note: "photoprism index --all" will re-index all originals, including already indexed and unchanged files.
+Note: "photoprism index -f" will re-index all originals, including already indexed and unchanged files.
 This may be necessary after upgrading, especially to new major versions.
 
 ## System Requirements ##
