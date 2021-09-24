@@ -159,7 +159,8 @@ import {ClickLong, ClickShort, Input, InputInvalid} from "common/input";
 export default {
   name: 'PPageSubjects',
   props: {
-    staticFilter: Object
+    staticFilter: Object,
+    active: Boolean,
   },
   data() {
     const query = this.$route.query;
@@ -194,6 +195,12 @@ export default {
   },
   watch: {
     '$route'() {
+      // Tab inactive?
+      if (!this.active) {
+        // Ignore event.
+        return;
+      }
+
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";

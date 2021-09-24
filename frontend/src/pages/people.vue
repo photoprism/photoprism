@@ -18,7 +18,7 @@
 
       <v-tabs-items touchless>
         <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
-          <component :is="item.component" :static-filter="item.filter"></component>
+          <component :is="item.component" :static-filter="item.filter" :active="active === index"></component>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
