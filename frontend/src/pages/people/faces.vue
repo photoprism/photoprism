@@ -23,10 +23,10 @@
       <v-container grid-list-xs fluid class="pa-2">
         <v-alert
             :value="results.length === 0"
-            color="secondary-dark" icon="check_circle_outline" class="no-results ma-1 opacity-70" outline
+            color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
-            <translate>No new people found</translate>
+            <translate>No people found</translate>
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>You may rescan your library to find additional faces.</translate>
@@ -123,7 +123,7 @@
               color="secondary" round
               :to="{name: 'all', query: { q: 'face:new' }}"
           >
-            <translate>Show unidentified faces</translate>
+            <translate>Show all new faces</translate>
           </v-btn>
         </div>
       </v-container>

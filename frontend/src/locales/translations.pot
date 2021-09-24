@@ -557,10 +557,6 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: src/dialog/photo/people.vue:5
-msgid "Couldn't find any people"
-msgstr ""
-
 #: src/component/photo/cards.vue:7
 #: src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:7
@@ -1508,6 +1504,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:52
 #: src/dialog/album/edit.vue:24
 #: src/dialog/photo/labels.vue:22
+#: src/dialog/photo/people.vue:21
 #: src/pages/labels.vue:38
 #: src/pages/library/files.vue:40
 #: src/pages/people/faces.vue:40
@@ -1562,10 +1559,8 @@ msgstr ""
 msgid "No labels found"
 msgstr ""
 
+#: src/dialog/photo/people.vue:5
 #: src/pages/people/faces.vue:23
-msgid "No new people found"
-msgstr ""
-
 #: src/pages/people/faces.vue:353
 #: src/pages/people/subjects.vue:26
 #: src/pages/people/subjects.vue:344
@@ -2175,6 +2170,10 @@ msgstr ""
 msgid "Shared with you."
 msgstr ""
 
+#: src/pages/people/faces.vue:65
+msgid "Show all new faces"
+msgstr ""
+
 #: src/pages/labels.vue:126
 msgid "Show less"
 msgstr ""
@@ -2189,10 +2188,6 @@ msgstr ""
 
 #: src/pages/settings/general.vue:427
 msgid "Show server logs in Library."
-msgstr ""
-
-#: src/pages/people/faces.vue:65
-msgid "Show unidentified faces"
 msgstr ""
 
 #: src/pages/photos.vue:268
@@ -2345,7 +2340,6 @@ msgid "Teal"
 msgstr ""
 
 #: src/dialog/photo/details.vue:26
-#: src/dialog/photo/people.vue:21
 #: src/pages/people/faces.vue:49
 msgid "Text too long"
 msgstr ""

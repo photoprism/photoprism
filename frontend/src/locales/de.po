@@ -510,10 +510,6 @@ msgstr "In Zwischenablage kopiert"
 msgid "Copyright"
 msgstr "Copyright"
 
-#: src/dialog/photo/people.vue:5
-msgid "Couldn't find any people"
-msgstr "Keine Personen gefunden"
-
 #: src/component/photo/cards.vue:7 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:7 src/pages/library/files.vue:34
 #: src/share/photo/cards.vue:7 src/share/photo/list.vue:8
@@ -1387,9 +1383,9 @@ msgid "Name"
 msgstr "Name"
 
 #: src/component/album/toolbar.vue:52 src/dialog/album/edit.vue:24
-#: src/dialog/photo/labels.vue:22 src/pages/labels.vue:38
-#: src/pages/library/files.vue:40 src/pages/people/faces.vue:40
-#: src/pages/people/subjects.vue:39
+#: src/dialog/photo/labels.vue:22 src/dialog/photo/people.vue:21
+#: src/pages/labels.vue:38 src/pages/library/files.vue:40
+#: src/pages/people/faces.vue:40 src/pages/people/subjects.vue:39
 msgid "Name too long"
 msgstr "Name zu  lang"
 
@@ -1431,10 +1427,7 @@ msgstr "Keine Einträge gefunden"
 msgid "No labels found"
 msgstr "Keine Kategorien gefunden"
 
-#: src/pages/people/faces.vue:23
-msgid "No new people found"
-msgstr "Keine neuen Personen gefunden"
-
+#: src/dialog/photo/people.vue:5 src/pages/people/faces.vue:23
 #: src/pages/people/faces.vue:353 src/pages/people/subjects.vue:26
 #: src/pages/people/subjects.vue:344
 msgid "No people found"
@@ -2007,6 +2000,10 @@ msgstr "%{name} teilen"
 msgid "Shared with you."
 msgstr "Mit dir geteilt."
 
+#: src/pages/people/faces.vue:65
+msgid "Show all new faces"
+msgstr "Alle neuen Gesichter anzeigen"
+
 #: src/pages/labels.vue:126
 msgid "Show less"
 msgstr "Weniger zeigen"
@@ -2022,10 +2019,6 @@ msgstr "Mehr zeigen"
 #: src/pages/settings/general.vue:427
 msgid "Show server logs in Library."
 msgstr "Server-Ereignisprotokoll anzeigen, um Fehler zu finden."
-
-#: src/pages/people/faces.vue:65
-msgid "Show unidentified faces"
-msgstr "Unbekannte Gesichter anzeigen"
 
 #: src/pages/photos.vue:268
 msgid "Showing all %{n} results"
@@ -2173,8 +2166,7 @@ msgstr "Aufgenommen"
 msgid "Teal"
 msgstr "Blaugrün"
 
-#: src/dialog/photo/details.vue:26 src/dialog/photo/people.vue:21
-#: src/pages/people/faces.vue:49
+#: src/dialog/photo/details.vue:26 src/pages/people/faces.vue:49
 msgid "Text too long"
 msgstr "Text ist zu lang"
 
@@ -2511,6 +2503,12 @@ msgstr "Deine Nachricht wurde gesendet"
 #: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#~ msgid "No new people found"
+#~ msgstr "Keine neuen Personen gefunden"
+
+#~ msgid "Couldn't find any people"
+#~ msgstr "Keine Personen gefunden"
 
 #~ msgid "%{n} faces found"
 #~ msgstr "%{n} Gesichter gefunden"

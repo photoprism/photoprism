@@ -44,7 +44,7 @@
     <div v-else class="pa-2">
       <v-alert
           :value="true"
-          color="secondary-dark" icon="check_circle_outline" class="no-results ma-1 opacity-70" outline
+          color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline
       >
         <p class="body-1 mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
