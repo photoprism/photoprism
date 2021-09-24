@@ -23,10 +23,10 @@
       <v-container grid-list-xs fluid class="pa-2">
         <v-alert
             :value="results.length === 0"
-            color="secondary-dark" icon="person_add_disabled" class="no-results ma-1 opacity-70" outline
+            color="secondary-dark" icon="check_circle_outline" class="no-results ma-1 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
-            <translate>Couldn't find any new people</translate>
+            <translate>No new people found</translate>
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>You may rescan your library to find additional faces.</translate>
@@ -123,7 +123,7 @@
               color="secondary" round
               :to="{name: 'all', query: { q: 'face:new' }}"
           >
-            <translate>Show all new faces</translate>
+            <translate>Show unidentified faces</translate>
           </v-btn>
         </div>
       </v-container>
@@ -395,7 +395,7 @@ export default {
         if (this.scrollDisabled) {
           this.setOffset(resp.offset);
           if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} faces loaded"), {n: this.results.length}));
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), {n: this.results.length}));
           }
         } else {
           this.setOffset(resp.offset + resp.limit);
@@ -483,7 +483,13 @@ export default {
         this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} faces found"), {n: this.results.length}));
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No people found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One person found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
+          }
         } else {
           this.$notify.info(this.$gettext('More than 20 faces found'));
 

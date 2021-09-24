@@ -41,7 +41,7 @@
             color="secondary-dark" icon="portrait" class="no-results ma-1 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
-            <translate>Couldn't find any people</translate>
+            <translate>No people found</translate>
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
@@ -491,7 +491,13 @@ export default {
         this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No people found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One person found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
+          }
         } else {
           this.$notify.info(this.$gettext('More than 20 people found'));
 

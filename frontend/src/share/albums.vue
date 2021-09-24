@@ -22,7 +22,7 @@
             color="secondary-dark" icon="bookmark" class="no-results ma-1 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
-            <translate>Couldn't find anything</translate>
+            <translate>No albums found</translate>
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
