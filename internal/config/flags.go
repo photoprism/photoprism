@@ -336,7 +336,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "darktable-blacklist",
 		Usage:  "Comma-separated file extension `BLACKLIST`",
-		Value:  "raf,cr3",
+		Value:  "raf,cr3,dng",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
 	cli.StringFlag{
