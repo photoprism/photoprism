@@ -206,3 +206,80 @@ test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
     .expect(Selector("a.is-subject").nth(0).getAttribute("data-uid"))
     .eql(NicoleUID);
 });
+
+test.meta("testID", "people-004")("Remove face", async (t) => {
+  await page.openNav();
+  await t.click(Selector(".nav-browse"));
+  await page.search("face:new");
+  const FirstPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+  await page.toggleSelectNthPhoto(0);
+  await page.editSelected();
+  await t.click(Selector("#tab-people"));
+  const MarkerCount = await Selector("div.is-marker").count;
+  if ((await Selector("div.input-name input").nth(0).value) == "") {
+    await t
+      .expect(Selector("button.action-undo").nth(0).visible)
+      .notOk()
+      .expect(Selector("div.input-name input").nth(0).value)
+      .eql("")
+      .click(Selector("button.input-reject"))
+      .expect(Selector("button.action-undo").nth(0).visible)
+      .ok()
+      .click(Selector("button.action-undo"));
+  } else if ((await Selector("div.input-name input").nth(0).value) != "") {
+    await t
+      .expect(Selector("div.input-name input").nth(1).value)
+      .eql("")
+      .click(Selector("button.input-reject"))
+      .expect(Selector("button.action-undo").nth(0).visible)
+      .ok()
+      .click(Selector("button.action-undo"));
+  }
+  await t.click("button.action-close");
+  await page.clearSelection();
+  await t.eval(() => location.reload());
+  await t.wait(6000);
+  await page.selectPhotoFromUID(FirstPhoto);
+  await page.editSelected();
+  await t.click(Selector("#tab-people"));
+  if ((await Selector("div.input-name input").nth(0).value) == "") {
+    await t
+      .expect(Selector("button.action-undo").nth(0).visible)
+      .notOk()
+      .expect(Selector("div.input-name input").nth(0).value)
+      .eql("")
+      .click(Selector("button.input-reject"))
+      .expect(Selector("button.action-undo").nth(0).visible)
+      .ok();
+  } else if ((await Selector("div.input-name input").nth(0).value) != "") {
+    await t
+      .expect(Selector("button.action-undo").nth(0).visible)
+      .notOk()
+      .expect(Selector("div.input-name input").nth(1).value)
+      .eql("")
+      .click(Selector("button.input-reject"))
+      .expect(Selector("button.action-undo").nth(0).visible)
+      .ok();
+  }
+  await t.click("button.action-close");
+  await t.eval(() => location.reload());
+  await page.editSelected();
+  await t.click(Selector("#tab-people"));
+  const MarkerCountAfterRemove = await Selector("div.is-marker").count;
+  await t.expect(MarkerCountAfterRemove).eql(MarkerCount - 1);
+});
+
+test.meta("testID", "people-005")("Hide face", async (t) => {
+  await page.openNav();
+  await t
+    .click(Selector(".nav-people"))
+    .click(Selector("#tab-people-faces > a"))
+    .click(Selector("form.p-faces-search button.action-reload"));
+  const FirstFaceID = await Selector("div.is-face").nth(0).getAttribute("data-id");
+  await t.click(Selector("div[data-id=" + FirstFaceID + "] button.input-hide"));
+  await t.eval(() => location.reload());
+  await t
+    .wait(6000)
+    .expect(Selector("div[data-id=" + FirstFaceID + "]").visible)
+    .notOk();
+});
