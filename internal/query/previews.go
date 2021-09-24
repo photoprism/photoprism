@@ -25,8 +25,8 @@ func UpdateAlbumDefaultPreviews() (err error) {
 	if err == nil {
 		log.Debugf("previews: updated albums [%s]", time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating albums, deprecated or unsupported database")
-		log.Tracef("previews: %s", err)
+		log.Errorf("previews: failed updating albums, incompatible database version")
+		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
 
@@ -49,8 +49,8 @@ func UpdateAlbumFolderPreviews() (err error) {
 	if err == nil {
 		log.Debugf("previews: updated folders [%s]", time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating folders, deprecated or unsupported database")
-		log.Tracef("previews: %s", err)
+		log.Errorf("previews: failed updating folders, incompatible database version")
+		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
 
@@ -97,8 +97,8 @@ func UpdateAlbumMonthPreviews() (err error) {
 	if err == nil {
 		log.Debugf("previews: updated calendar [%s]", time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating calendar, deprecated or unsupported database")
-		log.Tracef("previews: %s", err)
+		log.Errorf("previews: failed updating calendar, incompatible database version")
+		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
 
@@ -143,8 +143,8 @@ func UpdateLabelPreviews() (err error) {
 	if err == nil {
 		log.Debugf("previews: updated labels [%s]", time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating labels, deprecated or unsupported database")
-		log.Tracef("previews: %s", err)
+		log.Errorf("previews: failed updating labels, incompatible database version")
+		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
 
@@ -170,8 +170,8 @@ func UpdateCategoryPreviews() (err error) {
 	if err == nil {
 		log.Debugf("previews: updated categories [%s]", time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating categories, deprecated or unsupported database")
-		log.Tracef("previews: %s", err)
+		log.Errorf("previews: failed updating categories, incompatible database version")
+		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
 
@@ -222,8 +222,8 @@ func UpdateSubjectPreviews() (err error) {
 	if err == nil {
 		log.Debugf("previews: updated subjects [%s]", time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating subjects, deprecated or unsupported database")
-		log.Tracef("previews: %s", err)
+		log.Errorf("previews: failed updating subjects, incompatible database version")
+		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
 

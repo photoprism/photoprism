@@ -135,7 +135,7 @@ func (m *Subject) Restore() error {
 			})
 		}
 
-		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
+		return UnscopedDb().Model(m).UpdateColumn("DeletedAt", nil).Error
 	}
 
 	return nil
@@ -191,9 +191,7 @@ func FindSubject(s string) *Subject {
 
 	result := Subject{}
 
-	db := Db().Where("subj_uid = ?", s)
-
-	if err := db.First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("subj_uid = ?", s).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -211,9 +209,7 @@ func FindSubjectByName(name string) *Subject {
 	result := Subject{}
 
 	// Search database.
-	db := UnscopedDb().Where("subj_name LIKE ?", name).First(&result)
-
-	if err := db.First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -283,7 +279,7 @@ func (m *Subject) UpdateMarkerNames() error {
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ? AND subj_src <> ?", m.SubjUID, SrcAuto).
 		Where("marker_name <> ?", m.SubjName).
-		Update(Values{"MarkerName": m.SubjName}).Error; err != nil {
+		UpdateColumn("marker_name", m.SubjName).Error; err != nil {
 		return err
 	}
 
@@ -296,9 +292,11 @@ func (m *Subject) RefreshPhotos() error {
 		return fmt.Errorf("empty subject uid")
 	}
 
-	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
-		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.subj_uid = ? GROUP BY f.photo_id)`,
-		gorm.Expr(Marker{}.TableName()), m.SubjUID).Error
+	update := fmt.Sprintf(
+		"UPDATE photos SET checked_at = NULL WHERE id IN (SELECT DISTINCT f.photo_id FROM files f JOIN %s m ON m.file_uid = f.file_uid WHERE m.subj_uid = ?)",
+		Marker{}.TableName())
+
+	return UnscopedDb().Exec(update, m.SubjUID).Error
 }
 
 // MergeWith merges this subject with another subject and then deletes it.
@@ -314,11 +312,11 @@ func (m *Subject) MergeWith(other *Subject) error {
 	// Update markers and faces with new SubjUID.
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ?", m.SubjUID).
-		Update(Values{"SubjUID": other.SubjUID}).Error; err != nil {
+		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := Db().Model(&Face{}).
 		Where("subj_uid = ?", m.SubjUID).
-		Update(Values{"SubjUID": other.SubjUID}).Error; err != nil {
+		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := other.UpdateMarkerNames(); err != nil {
 		return err

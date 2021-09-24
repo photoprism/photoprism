@@ -7,15 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/face"
-
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/ulule/deepcopier"
+
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/ulule/deepcopier"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type DownloadName string
@@ -223,20 +222,25 @@ func (m *File) DeletePermanently() error {
 }
 
 // ReplaceHash updates file hash references.
-func (m *File) ReplaceHash(fileHash string) error {
-	if m.FileHash == fileHash {
+func (m *File) ReplaceHash(newHash string) error {
+	if m.FileHash == newHash {
 		// Nothing to do.
 		return nil
 	}
 
-	if m.FileHash != "" && fileHash == "" {
+	// Log values.
+	if m.FileHash != "" && newHash == "" {
 		log.Tracef("file: removing hash %s", txt.Quote(m.FileHash))
-	} else if m.FileHash != "" && fileHash != "" {
-		log.Tracef("file: hash %s changed to %s", txt.Quote(m.FileHash), txt.Quote(fileHash))
+	} else if m.FileHash != "" && newHash != "" {
+		log.Tracef("file: hash %s changed to %s", txt.Quote(m.FileHash), txt.Quote(newHash))
 	}
 
+	// Set file hash to new value.
+	oldHash := m.FileHash
+	m.FileHash = newHash
+
+	// Ok to skip updating related tables?
 	if m.NoJPEG() || m.FileHash == "" {
-		m.FileHash = fileHash
 		return nil
 	}
 
@@ -245,17 +249,11 @@ func (m *File) ReplaceHash(fileHash string) error {
 		"labels": Label{},
 	}
 
-	// Wildcard search to include potential crops.
-	like := m.FileHash + "%"
-
-	// Change file hash.
-	m.FileHash = fileHash
-
 	// Search related tables for references and update them.
 	for name, entity := range entities {
 		start := time.Now()
 
-		if res := UnscopedDb().Model(entity).Where("thumb LIKE ?", like).UpdateColumn("thumb", fileHash); res.Error != nil {
+		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).UpdateColumn("thumb", newHash); res.Error != nil {
 			return res.Error
 		} else if res.RowsAffected == 1 {
 			log.Infof("%s: updated %d preview [%s]", name, res.RowsAffected, time.Since(start))
