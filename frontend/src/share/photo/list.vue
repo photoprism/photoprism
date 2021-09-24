@@ -3,7 +3,7 @@
     <div v-if="photos.length === 0" class="pa-2">
       <v-alert
           :value="true"
-          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-1 opacity-70" outline
+          color="secondary-dark" icon="image_not_supported" class="no-results ma-1 opacity-70" outline
       >
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>Couldn't find recently edited</translate>

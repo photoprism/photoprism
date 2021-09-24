@@ -26,7 +26,7 @@
             color="secondary-dark" icon="person_add_disabled" class="no-results ma-1 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
-            <translate>Couldn't find any new faces</translate>
+            <translate>Couldn't find any new people</translate>
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>You may rescan your library to find additional faces.</translate>

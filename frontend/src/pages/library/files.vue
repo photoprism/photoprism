@@ -33,7 +33,7 @@
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
         <v-alert
             :value="results.length === 0"
-            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-1 opacity-70" outline
+            color="secondary-dark" icon="image_not_supported" class="no-results ma-1 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
             <translate>Couldn't find anything</translate>

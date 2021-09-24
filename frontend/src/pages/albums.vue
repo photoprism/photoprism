@@ -58,7 +58,7 @@
       <v-container grid-list-xs fluid class="pa-2">
         <v-alert
             :value="results.length === 0"
-            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-1 opacity-70" outline
+            color="secondary-dark" icon="bookmark" class="no-results ma-1 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
             <translate>Couldn't find anything</translate>
@@ -73,6 +73,7 @@
             </template>
           </p>
         </v-alert>
+
         <v-layout row wrap class="search-results album-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(album, index) in results"
@@ -183,6 +184,11 @@
             </v-card>
           </v-flex>
         </v-layout>
+        <div v-if="staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
+          <v-btn class="action-add" color="secondary" round @click.prevent="create">
+            <translate>Add Album</translate>
+          </v-btn>
+        </div>
       </v-container>
     </v-container>
     <p-share-dialog :show="dialog.share" :model="model" @upload="webdavUpload"
@@ -225,6 +231,7 @@ export default {
     }
 
     return {
+      config: this.$config.values,
       featureShare: this.$config.feature('share'),
       categories: categories,
       subscriptions: [],

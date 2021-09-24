@@ -91,7 +91,9 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/pages/albums.vue:166
+#: src/pages/albums.vue:50
+#: src/pages/albums.vue:17
+#: src/pages/albums.vue:168
 msgid "Add Album"
 msgstr ""
 
@@ -103,7 +105,7 @@ msgstr ""
 msgid "Add Link"
 msgstr ""
 
-#: src/pages/albums.vue:95
+#: src/pages/albums.vue:102
 msgid "Add photos or videos from search results by selecting them."
 msgstr ""
 
@@ -150,7 +152,8 @@ msgstr ""
 msgid "After one year"
 msgstr ""
 
-#: src/pages/albums.vue:40
+#: src/pages/albums.vue:41
+#: src/pages/albums.vue:8
 #: src/pages/albums.vue:1
 msgid "After selecting photos or videos from search results, you can add them to existing or new albums using the context menu."
 msgstr ""
@@ -459,7 +462,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:349
 #: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:94
-#: src/pages/albums.vue:117
+#: src/pages/albums.vue:119
 msgid "Category"
 msgstr ""
 
@@ -495,7 +498,7 @@ msgstr ""
 #: src/component/photo/viewer.vue:79
 #: src/dialog/photo/details.vue:117
 #: src/dialog/share.vue:87
-#: src/pages/library/errors.vue:54
+#: src/pages/library/errors.vue:58
 msgid "Close"
 msgstr ""
 
@@ -533,13 +536,13 @@ msgstr ""
 msgid "Contact Us"
 msgstr ""
 
-#: src/pages/albums.vue:92
+#: src/pages/albums.vue:99
 #: src/pages/labels.vue:73
 #: src/pages/people/subjects.vue:74
 msgid "Contains %{n} entries."
 msgstr ""
 
-#: src/pages/albums.vue:89
+#: src/pages/albums.vue:96
 #: src/pages/labels.vue:70
 #: src/pages/people/subjects.vue:71
 msgid "Contains one entry."
@@ -563,7 +566,7 @@ msgid "Copyright"
 msgstr ""
 
 #: src/pages/people/faces.vue:23
-msgid "Couldn't find any new faces"
+msgid "Couldn't find any new people"
 msgstr ""
 
 #: src/dialog/photo/people.vue:5
@@ -572,14 +575,15 @@ msgid "Couldn't find any people"
 msgstr ""
 
 #: src/component/photo/cards.vue:7
-#: src/component/photo/list.vue:7
+#: src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:7
-#: src/pages/albums.vue:35
+#: src/pages/albums.vue:36
+#: src/pages/albums.vue:3
 #: src/pages/labels.vue:31
 #: src/pages/library/files.vue:34
 #: src/share/albums.vue:18
 #: src/share/photo/cards.vue:7
-#: src/share/photo/list.vue:7
+#: src/share/photo/list.vue:8
 #: src/share/photo/mosaic.vue:7
 msgid "Couldn't find anything"
 msgstr ""
@@ -590,10 +594,10 @@ msgid "Couldn't find anything."
 msgstr ""
 
 #: src/component/photo/cards.vue:4
-#: src/component/photo/list.vue:4
+#: src/component/photo/list.vue:5
 #: src/component/photo/mosaic.vue:4
 #: src/share/photo/cards.vue:4
-#: src/share/photo/list.vue:4
+#: src/share/photo/list.vue:5
 #: src/share/photo/mosaic.vue:4
 msgid "Couldn't find recently edited"
 msgstr ""
@@ -681,7 +685,7 @@ msgstr ""
 #: src/component/photo/cards.vue:24
 #: src/dialog/album/edit.vue:143
 #: src/dialog/photo/details.vue:575
-#: src/pages/albums.vue:431
+#: src/pages/albums.vue:457
 #: src/share/albums.vue:238
 #: src/share/photo/cards.vue:24
 msgid "Description"
@@ -1343,11 +1347,11 @@ msgid "List"
 msgstr ""
 
 #: src/component/photo/cards.vue:215
-#: src/component/photo/list.vue:180
+#: src/component/photo/list.vue:188
 #: src/component/photo/mosaic.vue:190
 #: src/options/options.js:296
 #: src/share/photo/cards.vue:188
-#: src/share/photo/list.vue:159
+#: src/share/photo/list.vue:167
 #: src/share/photo/mosaic.vue:171
 msgid "Live"
 msgstr ""
@@ -1369,7 +1373,8 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: src/pages/library/errors.vue:33
+#: src/pages/library/errors.vue:35
+#: src/pages/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr ""
 
@@ -1495,7 +1500,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:30
 #: src/component/photo/list.vue:38
-#: src/component/photo/list.vue:229
+#: src/component/photo/list.vue:237
 #: src/dialog/account/edit.vue:397
 #: src/dialog/album/edit.vue:106
 #: src/dialog/photo/files.vue:70
@@ -1513,7 +1518,7 @@ msgstr ""
 #: src/pages/people/subjects.vue:314
 #: src/share/photo/cards.vue:30
 #: src/share/photo/list.vue:34
-#: src/share/photo/list.vue:208
+#: src/share/photo/list.vue:216
 msgid "Name"
 msgstr ""
 
@@ -1587,13 +1592,14 @@ msgstr ""
 msgid "No thanks"
 msgstr ""
 
-#: src/pages/library/errors.vue:30
+#: src/pages/library/errors.vue:32
+#: src/pages/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr ""
 
 #: src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:1
-#: src/component/photo/list.vue:13
+#: src/component/photo/list.vue:14
 #: src/component/photo/list.vue:1
 #: src/component/photo/list.vue:22
 #: src/component/photo/mosaic.vue:13
@@ -1968,9 +1974,9 @@ msgstr ""
 #: src/component/album/toolbar.vue:54
 #: src/component/photo/toolbar.vue:57
 #: src/dialog/reload.vue:15
-#: src/pages/albums.vue:129
+#: src/pages/albums.vue:131
 #: src/pages/labels.vue:90
-#: src/pages/library/errors.vue:63
+#: src/pages/library/errors.vue:69
 #: src/pages/library/files.vue:100
 #: src/pages/people/faces.vue:67
 #: src/pages/people/subjects.vue:97
@@ -2003,7 +2009,7 @@ msgstr ""
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr ""
 
-#: src/pages/library/errors.vue:81
+#: src/pages/library/errors.vue:87
 msgid "Report Bug"
 msgstr ""
 
@@ -2057,9 +2063,9 @@ msgstr ""
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:280
 #: src/component/photo/toolbar.vue:48
-#: src/pages/albums.vue:104
+#: src/pages/albums.vue:106
 #: src/pages/labels.vue:80
-#: src/pages/library/errors.vue:54
+#: src/pages/library/errors.vue:60
 #: src/pages/people/subjects.vue:80
 #: src/pages/places.vue:30
 #: src/routes.js:107
@@ -2410,15 +2416,16 @@ msgid "Trademarks"
 msgstr ""
 
 #: src/component/photo/cards.vue:10
-#: src/component/photo/list.vue:10
+#: src/component/photo/list.vue:11
 #: src/component/photo/list.vue:19
 #: src/component/photo/mosaic.vue:10
-#: src/pages/albums.vue:38
+#: src/pages/albums.vue:39
+#: src/pages/albums.vue:6
 #: src/pages/labels.vue:34
 #: src/pages/people/subjects.vue:29
 #: src/share/albums.vue:21
 #: src/share/photo/cards.vue:10
-#: src/share/photo/list.vue:10
+#: src/share/photo/list.vue:11
 #: src/share/photo/list.vue:19
 #: src/share/photo/mosaic.vue:10
 msgid "Try again using other filters or keywords."
@@ -2503,7 +2510,7 @@ msgstr ""
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
 #: src/dialog/upload.vue:54
-#: src/pages/albums.vue:147
+#: src/pages/albums.vue:149
 #: src/pages/library/import.vue:38
 #: src/pages/settings/general.vue:140
 #: src/pages/settings/sync.vue:27
@@ -2568,7 +2575,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:29
 #: src/component/photo/cards.vue:225
-#: src/component/photo/list.vue:190
+#: src/component/photo/list.vue:198
 #: src/component/photo/mosaic.vue:200
 #: src/model/file.js:184
 #: src/model/photo.js:618
@@ -2576,7 +2583,7 @@ msgstr ""
 #: src/options/options.js:300
 #: src/share/photo/cards.vue:29
 #: src/share/photo/cards.vue:198
-#: src/share/photo/list.vue:169
+#: src/share/photo/list.vue:177
 #: src/share/photo/mosaic.vue:181
 msgid "Video"
 msgstr ""
@@ -2613,7 +2620,7 @@ msgid "WebDAV Upload"
 msgstr ""
 
 #: src/component/photo/cards.vue:11
-#: src/component/photo/list.vue:11
+#: src/component/photo/list.vue:12
 #: src/component/photo/mosaic.vue:11
 #: src/pages/library/files.vue:38
 msgid "When a file you expect is missing, please rescan your library and wait until indexing has been completed."
@@ -2680,7 +2687,8 @@ msgstr ""
 msgid "Your continuous support helps..."
 msgstr ""
 
-#: src/pages/albums.vue:43
+#: src/pages/albums.vue:44
+#: src/pages/albums.vue:11
 #: src/pages/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr ""
