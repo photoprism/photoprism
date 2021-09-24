@@ -3,10 +3,10 @@
     <v-container grid-list-xs fluid class="pa-2 p-faces">
       <v-alert
           :value="markers.length === 0"
-          color="secondary-dark" icon="portrait" class="no-results ma-1 opacity-70" outline
+          color="secondary-dark" icon="block" class="no-results ma-1 opacity-70" outline
       >
         <h3 class="body-2 ma-0 pa-0">
-          <translate>Couldn't find any people</translate>
+          <translate>No people found</translate>
         </h3>
         <p class="body-1 mt-2 mb-0 pa-0">
           <translate>You may rescan your library to find additional faces.</translate>
@@ -123,7 +123,7 @@ export default {
           return this.$gettext("Name");
         }
 
-        return v.length <= this.$config.get('clip') || this.$gettext("Text too long");
+        return v.length <= this.$config.get('clip') || this.$gettext("Name too long");
       },
     };
   },
