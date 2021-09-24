@@ -952,24 +952,24 @@ func (m *Photo) DeletePermanently() (files Files, err error) {
 
 	for _, file := range files {
 		if err := file.DeletePermanently(); err != nil {
-			log.Errorf("file: %s (delete permanently)", err)
+			log.Errorf("photo: %s (delete file)", err)
 		}
 	}
 
 	if err := UnscopedDb().Delete(Details{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo-details: %s (delete permanently)", err)
+		log.Errorf("photo: %s (delete details)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoKeyword{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo-keyword: %s (delete permanently)", err)
+		log.Errorf("photo: %s (delete keywords)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoLabel{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo-label: %s (delete permanently)", err)
+		log.Errorf("photo: %s (delete labels)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID).Error; err != nil {
-		log.Errorf("photo-album: %s (delete permanently)", err)
+		log.Errorf("photo: %s (delete albums)", err)
 	}
 
 	return files, UnscopedDb().Delete(m).Error
