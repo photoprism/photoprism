@@ -3,6 +3,7 @@ package photoprism
 import (
 	"fmt"
 	"runtime/debug"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 
@@ -51,54 +52,72 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	defer mutex.FacesWorker.Stop()
 
+	var start time.Time
+
+	// Remove orphan file markers.
+	start = time.Now()
+	if removed, err := query.RemoveOrphanMarkers(); err != nil {
+		log.Errorf("faces: %s (remove orphan markers)", err)
+	} else if removed > 0 {
+		log.Infof("faces: removed %d orphan markers [%s]", removed, time.Since(start))
+	} else {
+		log.Debugf("faces: no orphan markers [%s]", time.Since(start))
+	}
+
 	// Repair invalid marker face and subject references.
+	start = time.Now()
 	if removed, err := query.FixMarkerReferences(); err != nil {
 		log.Errorf("faces: %s (fix references)", err)
 	} else if removed > 0 {
-		log.Infof("faces: fixed %d marker references", removed)
+		log.Infof("faces: fixed %d marker references [%s]", removed, time.Since(start))
 	} else {
-		log.Debugf("faces: no invalid marker references")
+		log.Debugf("faces: no invalid marker references [%s]", time.Since(start))
 	}
 
 	// Create known marker subjects if needed.
+	start = time.Now()
 	if affected, err := query.CreateMarkerSubjects(); err != nil {
 		log.Errorf("faces: %s (create subjects)", err)
 	} else if affected > 0 {
-		log.Infof("faces: added %d known marker subjects", affected)
+		log.Infof("faces: added %d known marker subjects [%s]", affected, time.Since(start))
 	} else {
-		log.Debugf("faces: marker subjects already exist")
+		log.Debugf("faces: marker subjects already exist [%s]", time.Since(start))
 	}
 
 	// Resolve collisions of different subject's faces.
+	start = time.Now()
 	if c, r, err := query.ResolveFaceCollisions(); err != nil {
 		log.Errorf("faces: %s (resolve collisions)", err)
 	} else if c > 0 {
-		log.Infof("faces: resolved %d / %d collisions", r, c)
+		log.Infof("faces: resolved %d / %d collisions [%s]", r, c, time.Since(start))
 	} else {
-		log.Debugf("faces: no collisions detected")
+		log.Debugf("faces: no collisions detected [%s]", time.Since(start))
 	}
 
 	// Optimize existing face clusters.
+	start = time.Now()
 	if res, err := w.Optimize(); err != nil {
 		return err
 	} else if res.Merged > 0 {
-		log.Infof("faces: merged %d clusters", res.Merged)
+		log.Infof("faces: merged %d clusters [%s]", res.Merged, time.Since(start))
 	} else {
-		log.Debugf("faces: no clusters could be merged")
+		log.Debugf("faces: no clusters could be merged [%s]", time.Since(start))
 	}
 
 	var added entity.Faces
 
 	// Cluster existing face embeddings.
+	start = time.Now()
 	if added, err = w.Cluster(opt); err != nil {
 		log.Errorf("faces: %s (cluster)", err)
 	} else if n := len(added); n > 0 {
-		log.Infof("faces: added %d new faces", n)
+		log.Infof("faces: added %d new faces [%s]", n, time.Since(start))
 	} else {
-		log.Debugf("faces: found no new faces")
+		log.Debugf("faces: found no new faces [%s]", time.Since(start))
 	}
 
 	// Match markers with faces and subjects.
+	start = time.Now()
 	matches, err := w.Match(opt)
 
 	if err != nil {
@@ -107,9 +126,9 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	// Log face matching results.
 	if matches.Updated > 0 {
-		log.Infof("faces: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
+		log.Infof("faces: %d markers updated, %d faces recognized, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
 	} else {
-		log.Debugf("faces: %d markers updated, %d faces recognized, %d unknown", matches.Updated, matches.Recognized, matches.Unknown)
+		log.Debugf("faces: %d markers updated, %d faces recognized, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
 	}
 
 	return nil
@@ -127,5 +146,5 @@ func (w *Faces) Canceled() bool {
 
 // Disabled tests if facial recognition is disabled.
 func (w *Faces) Disabled() bool {
-	return !w.conf.Settings().Features.People
+	return w.conf.DisableFaces()
 }

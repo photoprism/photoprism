@@ -896,7 +896,7 @@ func (m *Photo) AllFilesMissing() bool {
 
 // AllFiles returns all files of this photo.
 func (m *Photo) AllFiles() (files Files) {
-	if err := UnscopedDb().Where("files.photo_id = ?", m.ID).Find(&files).Error; err != nil {
+	if err := UnscopedDb().Where("photo_id = ?", m.ID).Find(&files).Error; err != nil {
 		log.Error(err)
 	}
 
@@ -929,26 +929,50 @@ func (m *Photo) Restore() error {
 	return nil
 }
 
-// Delete deletes the entity from the database.
-func (m *Photo) Delete(permanently bool) error {
+// Delete deletes the photo from the index.
+func (m *Photo) Delete(permanently bool) (files Files, err error) {
 	if permanently {
 		return m.DeletePermanently()
 	}
 
-	Db().Delete(File{}, "photo_id = ?", m.ID)
+	files = m.AllFiles()
 
-	return m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
+	for _, file := range files {
+		if err := file.Delete(false); err != nil {
+			log.Errorf("photo: %s (delete file)", err)
+		}
+	}
+
+	return files, m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
 }
 
-// DeletePermanently permanently deletes the entity.
-func (m *Photo) DeletePermanently() error {
-	Db().Unscoped().Delete(File{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(Details{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(PhotoKeyword{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(PhotoLabel{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID)
+// DeletePermanently permanently deletes a photo from the index.
+func (m *Photo) DeletePermanently() (files Files, err error) {
+	files = m.AllFiles()
 
-	return Db().Unscoped().Delete(m).Error
+	for _, file := range files {
+		if err := file.DeletePermanently(); err != nil {
+			log.Errorf("file: %s (delete permanently)", err)
+		}
+	}
+
+	if err := UnscopedDb().Delete(Details{}, "photo_id = ?", m.ID).Error; err != nil {
+		log.Errorf("photo-details: %s (delete permanently)", err)
+	}
+
+	if err := UnscopedDb().Delete(PhotoKeyword{}, "photo_id = ?", m.ID).Error; err != nil {
+		log.Errorf("photo-keyword: %s (delete permanently)", err)
+	}
+
+	if err := UnscopedDb().Delete(PhotoLabel{}, "photo_id = ?", m.ID).Error; err != nil {
+		log.Errorf("photo-label: %s (delete permanently)", err)
+	}
+
+	if err := UnscopedDb().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID).Error; err != nil {
+		log.Errorf("photo-album: %s (delete permanently)", err)
+	}
+
+	return files, UnscopedDb().Delete(m).Error
 }
 
 // NoDescription returns true if the photo has no description.

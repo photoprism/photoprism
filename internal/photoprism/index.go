@@ -37,6 +37,11 @@ type Index struct {
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
 func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
+	if conf == nil {
+		log.Errorf("index: config is nil")
+		return nil
+	}
+
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
@@ -45,6 +50,8 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 		convert:      convert,
 		files:        files,
 		photos:       photos,
+		findFaces:    !conf.DisableFaces(),
+		findLabels:   !conf.DisableClassification(),
 	}
 
 	return i
@@ -90,12 +97,6 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 		event.Error(fmt.Sprintf("index: %s", err.Error()))
 		return done
 	}
-
-	// Detect faces in images?
-	ind.findFaces = !ind.conf.DisableFaces() && ind.conf.Settings().Features.People
-
-	// Classify images with TensorFlow?
-	ind.findLabels = !ind.conf.DisableClassification()
 
 	defer mutex.MainWorker.Stop()
 

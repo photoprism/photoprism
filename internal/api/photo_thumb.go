@@ -163,7 +163,9 @@ func GetThumb(router *gin.RouterGroup) {
 			if f.AllFilesMissing() {
 				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, txt.Quote(f.FileName))
 
-				logError(logPrefix, f.RelatedPhoto().Delete(false))
+				if _, err := f.RelatedPhoto().Delete(false); err != nil {
+					log.Errorf("%s: %s while deleting %s", logPrefix, err, txt.Quote(f.FileName))
+				}
 			}
 
 			return

@@ -23,7 +23,7 @@ func (w *Faces) Reset() (err error) {
 	}
 
 	// Remove dangling marker subjects.
-	if removed, err := query.RemoveDanglingMarkerSubjects(); err != nil {
+	if removed, err := query.RemoveOrphanSubjects(); err != nil {
 		return fmt.Errorf("faces: %s (reset subjects)", err)
 	} else {
 		log.Infof("faces: removed %d dangling subjects", removed)

@@ -209,6 +209,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		fileHash = m.Hash()
 	}
 
+	// Update file hash references?
+	if !fileExists || file.FileHash == "" || file.FileHash == fileHash {
+		// Do nothing.
+	} else if err := file.ReplaceHash(fileHash); err != nil {
+		log.Errorf("index: %s while updating previews of %s", err, logName)
+	}
+
 	photo.PhotoPath = filePath
 
 	if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {

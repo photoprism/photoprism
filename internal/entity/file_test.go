@@ -615,3 +615,13 @@ func TestFile_UnsavedMarkers(t *testing.T) {
 		assert.True(t, markers.Unsaved())
 	})
 }
+
+func TestFile_ReplaceHash(t *testing.T) {
+	t.Run("exampleFileName.jpg", func(t *testing.T) {
+		m := FileFixtures.Get("exampleFileName.jpg")
+
+		if err := m.ReplaceHash(""); err != nil {
+			t.Fatal(err)
+		}
+	})
+}

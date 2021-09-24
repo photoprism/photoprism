@@ -61,8 +61,8 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 	return result, err
 }
 
-// RemoveDanglingMarkerSubjects permanently deletes dangling marker subjects from the index.
-func RemoveDanglingMarkerSubjects() (removed int64, err error) {
+// RemoveOrphanSubjects permanently deletes dangling marker subjects from the index.
+func RemoveOrphanSubjects() (removed int64, err error) {
 	res := UnscopedDb().
 		Where("subj_src = ?", entity.SrcMarker).
 		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Face{}.TableName())).

@@ -212,8 +212,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				continue
 			}
 
-			if err := photo.Delete(opt.Hard); err != nil {
-				log.Errorf("purge: %s", err)
+			if files, err := photo.Delete(opt.Hard); err != nil {
+				log.Errorf("purge: %s (delete photo)", err)
 			} else {
 				purgedPhotos[photo.PhotoUID] = true
 
@@ -224,7 +224,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				}
 
 				// Remove files from lookup table.
-				for _, file := range photo.AllFiles() {
+				for _, file := range files {
 					w.files.Remove(file.FileName, file.FileRoot)
 				}
 			}

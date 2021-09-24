@@ -56,7 +56,7 @@ var FacesCommand = cli.Command{
 			Action:    facesIndexAction,
 		},
 		{
-			Name:  "match",
+			Name:  "update",
 			Usage: "Performs face clustering and matching",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
@@ -64,7 +64,7 @@ var FacesCommand = cli.Command{
 					Usage: "update all  faces",
 				},
 			},
-			Action: facesMatchAction,
+			Action: facesUpdateAction,
 		},
 		{
 			Name:   "optimize",
@@ -281,8 +281,8 @@ func facesIndexAction(ctx *cli.Context) error {
 	return nil
 }
 
-// facesMatchAction performs face clustering and matching.
-func facesMatchAction(ctx *cli.Context) error {
+// facesUpdateAction performs face clustering and matching.
+func facesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)

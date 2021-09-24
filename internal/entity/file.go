@@ -201,12 +201,71 @@ func (m File) Missing() bool {
 	return m.FileMissing || m.DeletedAt != nil
 }
 
-// DeletePermanently permanently deletes the entity.
+// DeletePermanently permanently deletes a file from the index.
 func (m *File) DeletePermanently() error {
-	Db().Unscoped().Delete(FileShare{}, "file_id = ?", m.ID)
-	Db().Unscoped().Delete(FileSync{}, "file_id = ?", m.ID)
+	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
+		log.Errorf("file: %s (delete markers)", err)
+	}
 
-	return Db().Unscoped().Delete(m).Error
+	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
+		log.Errorf("file: %s (delete shares)", err)
+	}
+
+	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
+		log.Errorf("file: %s (delete sync)", err)
+	}
+
+	if err := m.ReplaceHash(""); err != nil {
+		log.Errorf("file: %s (delete previews)", err)
+	}
+
+	return UnscopedDb().Delete(m).Error
+}
+
+// ReplaceHash updates file hash references.
+func (m *File) ReplaceHash(fileHash string) error {
+	if m.FileHash == fileHash {
+		// Nothing to do.
+		return nil
+	}
+
+	if m.FileHash != "" && fileHash == "" {
+		log.Tracef("file: removing hash %s", txt.Quote(m.FileHash))
+	} else if m.FileHash != "" && fileHash != "" {
+		log.Tracef("file: hash %s changed to %s", txt.Quote(m.FileHash), txt.Quote(fileHash))
+	}
+
+	if m.NoJPEG() || m.FileHash == "" {
+		m.FileHash = fileHash
+		return nil
+	}
+
+	entities := Types{
+		"albums":   Album{},
+		"labels":   Label{},
+		"subjects": Subject{},
+	}
+
+	// Wildcard search to include potential crops.
+	like := m.FileHash + "%"
+
+	// Change file hash.
+	m.FileHash = fileHash
+
+	// Search related tables for references and update them.
+	for name, entity := range entities {
+		start := time.Now()
+
+		if res := UnscopedDb().Model(entity).Where("thumb LIKE ?", like).UpdateColumn("thumb", fileHash); res.Error != nil {
+			return res.Error
+		} else if res.RowsAffected == 1 {
+			log.Infof("%s: updated %d preview [%s]", name, res.RowsAffected, time.Since(start))
+		} else if res.RowsAffected > 1 {
+			log.Infof("%s: updated %d previews [%s]", name, res.RowsAffected, time.Since(start))
+		}
+	}
+
+	return nil
 }
 
 // Delete deletes the entity from the database.
@@ -214,8 +273,6 @@ func (m *File) Delete(permanently bool) error {
 	if permanently {
 		return m.DeletePermanently()
 	}
-
-	Db().Delete(File{}, "id = ?", m.ID)
 
 	return Db().Delete(m).Error
 }
