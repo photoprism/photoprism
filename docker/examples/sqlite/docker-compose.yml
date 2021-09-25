@@ -35,7 +35,6 @@ services:
   photoprism:
     # Use photoprism/photoprism:preview instead for testing preview builds:
     image: photoprism/photoprism:latest
-    container_name: photoprism
     # Only enable automatic restarts once your installation is properly
     # configured as it otherwise may get stuck in a restart loop:
     # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
@@ -91,7 +90,6 @@ services:
 #  watchtower:
 #    restart: unless-stopped
 #    image: containrrr/watchtower
-#    container_name: watchtower
 #    environment:
 #      WATCHTOWER_CLEANUP: "true"
 #      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
