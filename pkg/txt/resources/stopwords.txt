@@ -2155,7 +2155,6 @@ sien
 sienne
 siennes
 siens
-sinon
 sixième
 soi
 soi-même
@@ -2754,7 +2753,6 @@ saber
 sabes
 sal
 salvo
-sea
 seamos
 sean
 seas
@@ -2784,7 +2782,6 @@ siete
 sigue
 siguiente
 sin
-sino
 sobre
 sola
 solamente
