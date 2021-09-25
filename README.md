@@ -22,6 +22,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Our intuitive [user interface](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
+* Privacy-preserving face detection and recognition
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, 
   _location type_, and many other properties.
