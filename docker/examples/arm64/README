@@ -61,10 +61,13 @@ in order to use our Docker image.
 Alternatively, you may run the image on UbuntuDockerPi (https://github.com/guysoft/UbuntuDockerPi).
 It's a 64bit Ubuntu Server with Docker pre-installed.
 
-Note that indexing large photo and video collections significantly benefits from fast, local SSD storage,
-and enough memory for caching. Your device should have at least 4 GB of memory.
-Also make sure it has at least 4 GB of swap configured, so that indexing doesn't cause restarts when there are
-memory usage spikes. Especially the conversion of RAW images and the transcoding of videos are quite demanding.
+Your device should have at least 4 GB of memory. Also make sure it has at least 4 GB of swap
+configured, so that indexing doesn't cause restarts when there are memory usage spikes.
+Beyond these minimum requirements, the amount of RAM should match the number of cores.
+
+Indexing large photo and video collections significantly benefits from fast, local SSD storage,
+and lots of memory for caching. Especially the conversion of RAW images and the transcoding of
+videos are very demanding.
 
 ## Reducing Server Load ##
 
