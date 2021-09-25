@@ -107,7 +107,7 @@ services:
     user: "1000"
     # Don't expose port when running behind Traefik reverse proxy!
     # ports:
-    #  - "2342:2342" # [local port]:[container port]
+    #  - "2342:2342" # [server]:[container]
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"

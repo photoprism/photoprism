@@ -8,7 +8,7 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2344:2342" # [local port]:[container port]
+      - "2344:2342" # [server]:[container]
     environment:
       UID: ${UID:-1000}
       PHOTOPRISM_SITE_URL: "http://localhost:2344/"

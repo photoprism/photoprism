@@ -46,7 +46,7 @@ services:
     # Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
     # user: "1000"
     ports:
-      - "2342:2342" # [local port]:[container port]
+      - "2342:2342" # [server]:[container]
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
