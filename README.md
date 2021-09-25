@@ -44,7 +44,10 @@ all you need is a Web browser and Docker to run the server. It is available for 
 
 We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
 Beyond these minimum requirements, the amount of RAM should match the number of cores.
-Indexing large photo and video collections significantly benefits from fast, local SSD storage.
+
+Indexing large photo and video collections significantly benefits from fast, local SSD storage,
+and lots of memory for caching. Especially the conversion of RAW images and the transcoding of 
+videos are very demanding.
 
 ## Roadmap ##
 
