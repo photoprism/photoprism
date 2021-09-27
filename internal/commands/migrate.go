@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // MigrateCommand registers the migrate cli command.

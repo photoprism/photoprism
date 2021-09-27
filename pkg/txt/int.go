@@ -2,6 +2,7 @@ package txt
 
 import (
 	"strconv"
+	"strings"
 )
 
 // Int converts a string to a signed integer or 0 if invalid.
@@ -10,7 +11,7 @@ func Int(s string) int {
 		return 0
 	}
 
-	result, err := strconv.ParseInt(s, 10, 32)
+	result, err := strconv.ParseInt(strings.TrimSpace(s), 10, 32)
 
 	if err != nil {
 		return 0
@@ -25,7 +26,7 @@ func UInt(s string) uint {
 		return 0
 	}
 
-	result, err := strconv.ParseInt(s, 10, 32)
+	result, err := strconv.ParseInt(strings.TrimSpace(s), 10, 32)
 
 	if err != nil || result < 0 {
 		return 0

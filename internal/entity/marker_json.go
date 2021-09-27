@@ -19,14 +19,13 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		UID       string
 		FileUID   string
-		FileHash  string
-		CropArea  string
 		Type      string
 		Src       string
 		Name      string
 		Review    bool
 		Invalid   bool
 		FaceID    string
+		FaceDist  float64 `json:",omitempty"`
 		SubjUID   string
 		SubjSrc   string
 		X         float32
@@ -36,18 +35,18 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Q         int     `json:",omitempty"`
 		Size      int     `json:",omitempty"`
 		Score     int     `json:",omitempty"`
+		Thumb     string
 		CreatedAt time.Time
 	}{
 		UID:       m.MarkerUID,
 		FileUID:   m.FileUID,
-		FileHash:  m.FileHash,
-		CropArea:  m.CropArea,
 		Type:      m.MarkerType,
 		Src:       m.MarkerSrc,
 		Name:      name,
 		Review:    m.MarkerReview,
 		Invalid:   m.MarkerInvalid,
 		FaceID:    m.FaceID,
+		FaceDist:  m.FaceDist,
 		SubjUID:   m.SubjUID,
 		SubjSrc:   m.SubjSrc,
 		X:         m.X,
@@ -57,6 +56,7 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Q:         m.Q,
 		Size:      m.Size,
 		Score:     m.Score,
+		Thumb:     m.Thumb,
 		CreatedAt: m.CreatedAt,
 	})
 }

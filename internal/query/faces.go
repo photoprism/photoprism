@@ -50,7 +50,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 			Where("face_id = ?", f.ID).
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
-			Updates(entity.Values{"SubjUID": f.SubjUID, "MarkerReview": false}); res.Error != nil {
+			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
@@ -62,9 +62,8 @@ func MatchFaceMarkers() (affected int64, err error) {
 
 // RemoveAnonymousFaceClusters removes anonymous faces from the index.
 func RemoveAnonymousFaceClusters() (removed int64, err error) {
-	res := UnscopedDb().Delete(
-		entity.Face{},
-		"face_src = ? AND subj_uid = ''", entity.SrcAuto)
+	res := UnscopedDb().
+		Delete(entity.Face{}, "subj_uid = '' AND face_src = ?", entity.SrcAuto)
 
 	return res.RowsAffected, res.Error
 }
@@ -178,7 +177,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 				conflicts++
 
-				r := f1.SampleRadius + face.ClusterRadius
+				r := f1.SampleRadius + face.MatchDist
 
 				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
@@ -207,4 +206,50 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 	}
 
 	return conflicts, resolved, nil
+}
+
+// RemovePeopleAndFaces permanently deletes all people, faces, and face markers.
+func RemovePeopleAndFaces() (err error) {
+	// Delete people.
+	if err = UnscopedDb().Delete(entity.Subject{}, "subj_type = ?", entity.SubjPerson).Error; err != nil {
+		return err
+	}
+
+	// Delete all faces.
+	if err = UnscopedDb().Delete(entity.Face{}).Error; err != nil {
+		return err
+	}
+
+	// Delete face markers.
+	if err = UnscopedDb().Delete(entity.Marker{}, "marker_type = ?", entity.MarkerFace).Error; err != nil {
+		return err
+	}
+
+	// Reset face counters.
+	if err = UnscopedDb().Model(entity.Photo{}).
+		UpdateColumn("photo_faces", 0).Error; err != nil {
+		return err
+	}
+
+	// Reset people label.
+	if label, err := LabelBySlug("people"); err != nil {
+		return err
+	} else if err = UnscopedDb().
+		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; err != nil {
+		return err
+	} else if err = label.Update("PhotoCount", 0); err != nil {
+		return err
+	}
+
+	// Reset portrait label.
+	if label, err := LabelBySlug("portrait"); err != nil {
+		return err
+	} else if err = UnscopedDb().
+		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; err != nil {
+		return err
+	} else if err = label.Update("PhotoCount", 0); err != nil {
+		return err
+	}
+
+	return nil
 }

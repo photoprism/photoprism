@@ -18,7 +18,7 @@
 
       <v-tabs-items touchless>
         <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
-          <component :is="item.component" :static-filter="item.filter"></component>
+          <component :is="item.component" :static-filter="item.filter" :active="active === index"></component>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -28,17 +28,6 @@
 <script>
 import Subjects from "pages/people/subjects.vue";
 import Faces from "pages/people/faces.vue";
-
-function initTabs(flag, tabs) {
-  let i = 0;
-  while (i < tabs.length) {
-    if (!tabs[i][flag]) {
-      tabs.splice(i, 1);
-    } else {
-      i++;
-    }
-  }
-}
 
 export default {
   name: 'PPagePeople',
@@ -61,8 +50,6 @@ export default {
         'class': '',
         'path': '/people',
         'icon': 'people_alt',
-        'readonly': true,
-        'demo': true,
       },
       {
         'name': 'people-faces',
@@ -72,8 +59,6 @@ export default {
         'class': '',
         'path': '/people/new',
         'icon': 'person_add',
-        'readonly': true,
-        'demo': true,
       },
     ];
 

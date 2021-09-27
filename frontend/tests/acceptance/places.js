@@ -21,7 +21,15 @@ test.meta("testID", "places-001")("Test places", async (t) => {
     .expect(Selector("div.p-map-control").visible)
     .ok()
     .expect(getLocation())
-    .contains("Berlin");
+    .contains("Berlin")
+    .click(Selector(".nav-browse"))
+    .expect(Selector("div.is-photo").exists)
+    .ok()
+    .click(Selector(".nav-places"))
+    .expect(Selector("#map").exists, { timeout: 15000 })
+    .ok()
+    .expect(Selector("div.p-map-control").visible)
+    .ok();
 });
 
 test.meta("testID", "places-002")("Open photo from places", async (t) => {

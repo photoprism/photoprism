@@ -13,63 +13,13 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-const (
-	IndexUpdated   IndexStatus = "updated"
-	IndexAdded     IndexStatus = "added"
-	IndexStacked   IndexStatus = "stacked"
-	IndexSkipped   IndexStatus = "skipped"
-	IndexDuplicate IndexStatus = "skipped duplicate"
-	IndexArchived  IndexStatus = "skipped archived"
-	IndexFailed    IndexStatus = "failed"
-)
-
-type IndexStatus string
-
-type IndexResult struct {
-	Status   IndexStatus
-	Err      error
-	FileID   uint
-	FileUID  string
-	PhotoID  uint
-	PhotoUID string
-}
-
-func (r IndexResult) String() string {
-	return string(r.Status)
-}
-
-func (r IndexResult) Failed() bool {
-	return r.Err != nil
-}
-
-func (r IndexResult) Success() bool {
-	return r.Err == nil && (r.FileID > 0 || r.Stacked() || r.Skipped() || r.Archived())
-}
-
-func (r IndexResult) Indexed() bool {
-	return r.Status == IndexAdded || r.Status == IndexUpdated || r.Status == IndexStacked
-}
-
-func (r IndexResult) Stacked() bool {
-	return r.Status == IndexStacked
-}
-
-func (r IndexResult) Skipped() bool {
-	return r.Status == IndexSkipped
-}
-
-func (r IndexResult) Archived() bool {
-	return r.Status == IndexArchived
-}
-
+// MediaFile indexes a single media file.
 func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (result IndexResult) {
 	if m == nil {
 		err := errors.New("index: media file is nil - you might have found a bug")
@@ -79,7 +29,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		return result
 	}
 
+	// Skip file?
 	if ind.files.Ignore(m.RootRelName(), m.Root(), m.ModTime(), o.Rescan) {
+		// Skip known file.
+		result.Status = IndexSkipped
+		return result
+	} else if o.FacesOnly && !m.IsJpeg() {
+		// Skip non-jpeg file when indexing faces only.
 		result.Status = IndexSkipped
 		return result
 	}
@@ -253,6 +209,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		fileHash = m.Hash()
 	}
 
+	// Update file hash references?
+	if !fileExists || file.FileHash == "" || file.FileHash == fileHash {
+		// Do nothing.
+	} else if err := file.ReplaceHash(fileHash); err != nil {
+		log.Errorf("index: %s while updating previews of %s", err, logName)
+	}
+
 	photo.PhotoPath = filePath
 
 	if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
@@ -274,6 +237,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		}
 	}
 
+	// Set basic file information.
+	file.FileRoot = fileRoot
+	file.FileName = fileName
+	file.FileHash = fileHash
+	file.FileSize = fileSize
+
 	// Set file original name if available.
 	if originalName != "" {
 		file.OriginalName = originalName
@@ -287,6 +256,41 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore photos that have been purged automatically.
 		photo.DeletedAt = nil
+	}
+
+	// Extra labels to ba added when new files have a photo id.
+	extraLabels := classify.Labels{}
+
+	// Detect faces in images?
+	if o.FacesOnly && (!photoExists || !fileExists || !file.FilePrimary) {
+		// New and non-primary files can be skipped when updating faces only.
+		result.Status = IndexSkipped
+		return result
+	} else if ind.findFaces && file.FilePrimary {
+		if markers := file.Markers(); markers != nil {
+			// Detect faces.
+			faces := ind.Faces(m, markers.DetectedFaceCount())
+
+			// Create markers from faces and add them.
+			if len(faces) > 0 {
+				file.AddFaces(faces)
+			}
+
+			// Any new markers?
+			if file.UnsavedMarkers() {
+				// Add matching labels.
+				extraLabels = append(extraLabels, file.Markers().Labels()...)
+			} else if o.FacesOnly {
+				// Skip when indexing faces only.
+				result.Status = IndexSkipped
+				return result
+			}
+
+			// Update photo face count.
+			photo.PhotoFaces = markers.ValidFaceCount()
+		} else {
+			log.Errorf("index: failed loading markers for %s", logName)
+		}
 	}
 
 	// Handle file types.
@@ -487,9 +491,14 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if file.FilePrimary {
 		primaryFile = file
 
-		if !Config().DisableTensorFlow() {
-			// Image classification via TensorFlow.
-			labels = ind.classifyImage(m)
+		// Classify images with TensorFlow?
+		if ind.findLabels {
+			labels = ind.Labels(m)
+
+			// Append labels from other sources such as face detection.
+			if len(extraLabels) > 0 {
+				labels = append(labels, extraLabels...)
+			}
 
 			if !photoExists && Config().Settings().Features.Private && Config().DetectNSFW() {
 				photo.PhotoPrivate = ind.NSFW(m)
@@ -547,10 +556,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
-	file.FileRoot = fileRoot
-	file.FileName = fileName
-	file.FileHash = fileHash
-	file.FileSize = fileSize
 	file.FileType = string(m.FileType())
 	file.FileMime = m.MimeType()
 	file.FileOrientation = m.Orientation()
@@ -600,18 +605,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	// Main JPEG file.
 	if file.FilePrimary {
-		if Config().Settings().Features.People {
-			faces := ind.detectFaces(m)
-
-			photo.AddLabels(classify.FaceLabels(faces, entity.SrcImage))
-
-			if len(faces) > 0 {
-				file.AddFaces(faces)
-			}
-
-			photo.PhotoFaces = file.Markers().FaceCount()
-		}
-
 		labels := photo.ClassifyLabels()
 
 		if err := photo.UpdateTitle(labels); err != nil {
@@ -749,26 +742,4 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	}
 
 	return result
-}
-
-// NSFW returns true if media file might be offensive and detection is enabled.
-func (ind *Index) NSFW(jpeg *MediaFile) bool {
-	filename, err := jpeg.Thumbnail(Config().ThumbPath(), thumb.Fit720)
-
-	if err != nil {
-		log.Error(err)
-		return false
-	}
-
-	if nsfwLabels, err := ind.nsfwDetector.File(filename); err != nil {
-		log.Error(err)
-		return false
-	} else {
-		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
-			log.Warnf("index: %s might contain offensive content", txt.Quote(jpeg.RelName(Config().OriginalsPath())))
-			return true
-		}
-	}
-
-	return false
 }

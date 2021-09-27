@@ -13,8 +13,8 @@ type Subject struct {
 	SubjPrivate  bool   `json:"Private"`
 	SubjExcluded bool   `json:"Excluded"`
 	FileCount    int    `json:"FileCount"`
-	FileHash     string `json:"FileHash"`
-	CropArea     string `json:"CropArea"`
+	Thumb        string `json:"Thumb"`
+	ThumbSrc     string `json:"ThumbSrc,omitempty"`
 }
 
 // SubjectResults represents subject search results.

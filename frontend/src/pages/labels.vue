@@ -40,18 +40,18 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="title ma-0 pa-0">
-                <translate>Couldn't find anything</translate>
-              </h3>
-              <p class="mt-4 mb-0 pa-0">
-                <translate>Try again using other filters or keywords.</translate>
-              </p>
-            </div>
-          </v-card-title>
-        </v-card>
+        <v-alert
+            :value="results.length === 0"
+            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+        >
+          <h3 class="body-2 ma-0 pa-0">
+            <translate>No labels found</translate>
+          </h3>
+          <p class="body-1 mt-2 mb-0 pa-0">
+            <translate>Try again using other filters or keywords.</translate>
+            <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
+          </p>
+        </v-alert>
         <v-layout row wrap class="search-results label-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(label, index) in results"
@@ -481,7 +481,13 @@ export default {
         this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No labels found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One label found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
+          }
         } else {
           this.$notify.info(this.$gettext('More than 20 labels found'));
 

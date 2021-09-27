@@ -3,6 +3,7 @@ package entity
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -29,31 +30,31 @@ type Albums []Album
 type Album struct {
 	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
 	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	ParentUID        string      `gorm:"type:VARBINARY(42);default:''" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
-	Thumb            string      `gorm:"type:VARBINARY(128);index;default:''" json:"Thumb,omitempty" yaml:"Thumb,omitempty"`
-	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	AlbumSlug        string      `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"Slug"`
+	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
+	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
 	AlbumPath        string      `gorm:"type:VARBINARY(500);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string      `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
-	AlbumTitle       string      `gorm:"type:VARCHAR(255);index;" json:"Title" yaml:"Title"`
-	AlbumLocation    string      `gorm:"type:VARCHAR(255);" json:"Location" yaml:"Location,omitempty"`
-	AlbumCategory    string      `gorm:"type:VARCHAR(255);index;" json:"Category" yaml:"Category,omitempty"`
+	AlbumTitle       string      `gorm:"type:VARCHAR(160);index;" json:"Title" yaml:"Title"`
+	AlbumLocation    string      `gorm:"type:VARCHAR(160);" json:"Location" yaml:"Location,omitempty"`
+	AlbumCategory    string      `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
 	AlbumCaption     string      `gorm:"type:TEXT;" json:"Caption" yaml:"Caption,omitempty"`
 	AlbumDescription string      `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	AlbumNotes       string      `gorm:"type:TEXT;" json:"Notes" yaml:"Notes,omitempty"`
 	AlbumFilter      string      `gorm:"type:VARBINARY(1024);" json:"Filter" yaml:"Filter,omitempty"`
 	AlbumOrder       string      `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
 	AlbumTemplate    string      `gorm:"type:VARBINARY(255);" json:"Template" yaml:"Template,omitempty"`
-	AlbumCountry     string      `gorm:"type:VARBINARY(2);index:idx_albums_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
+	AlbumCountry     string      `gorm:"type:VARBINARY(2);index:idx_albums_country_year_month;default:'zz';" json:"Country" yaml:"Country,omitempty"`
 	AlbumYear        int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	AlbumMonth       int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
-	AlbumDay         int         `gorm:"index:idx_albums_ymd" json:"Day" yaml:"Day,omitempty"`
+	AlbumDay         int         `gorm:"index:idx_albums_ymd;" json:"Day" yaml:"Day,omitempty"`
 	AlbumFavorite    bool        `json:"Favorite" yaml:"Favorite,omitempty"`
 	AlbumPrivate     bool        `json:"Private" yaml:"Private,omitempty"`
+	Thumb            string      `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt        time.Time   `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	DeletedAt        *time.Time  `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
-	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID" json:"-" yaml:"Photos,omitempty"`
+	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID;" json:"-" yaml:"Photos,omitempty"`
 }
 
 // TableName returns the entity database table name.
@@ -199,8 +200,8 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	}
 
 	f := form.PhotoSearch{
-		Year:   year,
-		Month:  month,
+		Year:   strconv.Itoa(year),
+		Month:  strconv.Itoa(month),
 		Public: true,
 	}
 
@@ -291,7 +292,7 @@ func (m *Album) String() string {
 	return "[unknown album]"
 }
 
-// Checks if the album is of type moment.
+// IsMoment tests if the album is of type moment.
 func (m *Album) IsMoment() bool {
 	return m.AlbumType == AlbumMoment
 }
@@ -308,9 +309,9 @@ func (m *Album) SetTitle(title string) {
 
 	if m.AlbumType == AlbumDefault {
 		if len(m.AlbumTitle) < txt.ClipSlug {
-			m.AlbumSlug = slug.Make(m.AlbumTitle)
+			m.AlbumSlug = txt.Slug(m.AlbumTitle)
 		} else {
-			m.AlbumSlug = slug.Make(txt.Clip(m.AlbumTitle, txt.ClipSlug)) + "-" + m.AlbumUID
+			m.AlbumSlug = txt.Slug(m.AlbumTitle) + "-" + m.AlbumUID
 		}
 	}
 
@@ -326,7 +327,7 @@ func (m *Album) SaveForm(f form.Album) error {
 	}
 
 	if f.AlbumCategory != "" {
-		m.AlbumCategory = txt.Title(txt.Clip(f.AlbumCategory, txt.ClipKeyword))
+		m.AlbumCategory = txt.Clip(txt.Title(f.AlbumCategory), txt.ClipCategory)
 	}
 
 	if f.AlbumTitle != "" {

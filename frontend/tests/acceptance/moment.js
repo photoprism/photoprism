@@ -47,7 +47,7 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
     await page.search("category:Mountains");
   } else {
     await t
-      .click(Selector(".input-category i"))
+      .click(Selector(".input-category"))
       .click(Selector('div[role="listitem"]').withText("Mountains"));
   }
   await t.expect(Selector("button.action-title-edit").nth(0).innerText).contains("Winter");

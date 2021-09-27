@@ -17,18 +17,17 @@
                          :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
-          <v-card-title primary-title>
-            <div v-if="staticFilter.type === 'album'">
-              <h3 class="title ma-0 pa-0">
-                <translate>Couldn't find anything</translate>
-              </h3>
-              <p class="mt-4 mb-0 pa-0">
-                <translate>Try again using other filters or keywords.</translate>
-              </p>
-            </div>
-          </v-card-title>
-        </v-card>
+        <v-alert
+            :value="results.length === 0"
+            color="secondary-dark" icon="bookmark" class="no-results ma-2 opacity-70" outline
+        >
+          <h3 class="body-2 ma-0 pa-0">
+            <translate>No albums found</translate>
+          </h3>
+          <p class="body-1 mt-2 mb-0 pa-0">
+            <translate>Try again using other filters or keywords.</translate>
+          </p>
+        </v-alert>
         <v-layout row wrap class="search-results album-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(album, index) in results"

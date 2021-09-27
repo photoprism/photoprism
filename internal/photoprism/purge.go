@@ -212,8 +212,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				continue
 			}
 
-			if err := photo.Delete(opt.Hard); err != nil {
-				log.Errorf("purge: %s", err)
+			if files, err := photo.Delete(opt.Hard); err != nil {
+				log.Errorf("purge: %s (delete photo)", err)
 			} else {
 				purgedPhotos[photo.PhotoUID] = true
 
@@ -224,7 +224,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				}
 
 				// Remove files from lookup table.
-				for _, file := range photo.AllFiles() {
+				for _, file := range files {
 					w.files.Remove(file.FileName, file.FileRoot)
 				}
 			}
@@ -261,14 +261,14 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 	log.Info("purge: updating photo counts")
 
-	// Update photo counts and visibilities.
+	// Update precalculated photo and file counts.
 	if err := entity.UpdatePhotoCounts(); err != nil {
 		log.Errorf("purge: %s (update counts)", err)
 	}
 
 	log.Info("purge: updating preview images")
 
-	// Update album, label, and subject preview image hashes.
+	// Update album, subject, and label preview thumbs.
 	if err := query.UpdatePreviews(); err != nil {
 		log.Errorf("purge: %s (update previews)", err)
 	}

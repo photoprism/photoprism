@@ -3,10 +3,10 @@ package entity
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -21,19 +21,19 @@ type Subjects []Subject
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
 	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	MarkerUID    string          `gorm:"type:VARBINARY(42);index" json:"MarkerUID" yaml:"MarkerUID,omitempty"`
-	MarkerSrc    string          `gorm:"type:VARBINARY(8);default:''" json:"MarkerSrc,omitempty" yaml:"MarkerSrc,omitempty"`
-	SubjType     string          `gorm:"type:VARBINARY(8);default:''" json:"Type,omitempty" yaml:"Type,omitempty"`
-	SubjSrc      string          `gorm:"type:VARBINARY(8);default:''" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string          `gorm:"type:VARBINARY(255);index;default:''" json:"Slug" yaml:"-"`
-	SubjName     string          `gorm:"type:VARCHAR(255);unique_index;default:''" json:"Name" yaml:"Name"`
-	SubjAlias    string          `gorm:"type:VARCHAR(255);default:''" json:"Alias" yaml:"Alias"`
+	SubjType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjSlug     string          `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
+	SubjName     string          `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjAlias    string          `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
 	SubjBio      string          `gorm:"type:TEXT;" json:"Bio" yaml:"Bio,omitempty"`
 	SubjNotes    string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	SubjFavorite bool            `gorm:"default:false" json:"Favorite" yaml:"Favorite,omitempty"`
-	SubjPrivate  bool            `gorm:"default:false" json:"Private" yaml:"Private,omitempty"`
-	SubjExcluded bool            `gorm:"default:false" json:"Excluded" yaml:"Excluded,omitempty"`
-	FileCount    int             `gorm:"default:0" json:"FileCount" yaml:"-"`
+	SubjFavorite bool            `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
+	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
+	SubjExcluded bool            `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
+	FileCount    int             `gorm:"default:0;" json:"FileCount" yaml:"-"`
+	Thumb        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
@@ -42,7 +42,7 @@ type Subject struct {
 
 // TableName returns the entity database table name.
 func (Subject) TableName() string {
-	return "subjects_dev9"
+	return "subjects"
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -56,24 +56,23 @@ func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 
 // NewSubject returns a new entity.
 func NewSubject(name, subjType, subjSrc string) *Subject {
+	// Name is required.
+	if strings.TrimSpace(name) == "" {
+		return nil
+	}
+
 	if subjType == "" {
 		subjType = SubjPerson
 	}
 
-	subjName := txt.Title(txt.Clip(name, txt.ClipDefault))
-	subjSlug := slug.Make(txt.Clip(name, txt.ClipSlug))
-
-	// Name is required.
-	if subjName == "" || subjSlug == "" {
-		return nil
-	}
-
 	result := &Subject{
-		SubjSlug:  subjSlug,
-		SubjName:  subjName,
 		SubjType:  subjType,
 		SubjSrc:   subjSrc,
 		FileCount: 1,
+	}
+
+	if err := result.SetName(name); err != nil {
+		log.Errorf("subject: %s", err)
 	}
 
 	return result
@@ -136,7 +135,7 @@ func (m *Subject) Restore() error {
 			})
 		}
 
-		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
+		return UnscopedDb().Model(m).UpdateColumn("DeletedAt", nil).Error
 	}
 
 	return nil
@@ -192,9 +191,7 @@ func FindSubject(s string) *Subject {
 
 	result := Subject{}
 
-	db := Db().Where("subj_uid = ?", s)
-
-	if err := db.First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("subj_uid = ?", s).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -212,9 +209,7 @@ func FindSubjectByName(name string) *Subject {
 	result := Subject{}
 
 	// Search database.
-	db := UnscopedDb().Where("subj_name LIKE ?", name).First(&result)
-
-	if err := db.First(&result).Error; err != nil {
+	if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -243,11 +238,11 @@ func (m *Subject) SetName(name string) error {
 	name = txt.NormalizeName(name)
 
 	if name == "" {
-		return fmt.Errorf("subject: name must not be empty")
+		return fmt.Errorf("name must not be empty")
 	}
 
 	m.SubjName = name
-	m.SubjSlug = txt.NameSlug(name)
+	m.SubjSlug = txt.Slug(name)
 
 	return nil
 }
@@ -284,7 +279,7 @@ func (m *Subject) UpdateMarkerNames() error {
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ? AND subj_src <> ?", m.SubjUID, SrcAuto).
 		Where("marker_name <> ?", m.SubjName).
-		Update(Values{"MarkerName": m.SubjName}).Error; err != nil {
+		UpdateColumn("marker_name", m.SubjName).Error; err != nil {
 		return err
 	}
 
@@ -297,9 +292,11 @@ func (m *Subject) RefreshPhotos() error {
 		return fmt.Errorf("empty subject uid")
 	}
 
-	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
-		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.subj_uid = ? GROUP BY f.photo_id)`,
-		gorm.Expr(Marker{}.TableName()), m.SubjUID).Error
+	update := fmt.Sprintf(
+		"UPDATE photos SET checked_at = NULL WHERE id IN (SELECT DISTINCT f.photo_id FROM files f JOIN %s m ON m.file_uid = f.file_uid WHERE m.subj_uid = ?)",
+		Marker{}.TableName())
+
+	return UnscopedDb().Exec(update, m.SubjUID).Error
 }
 
 // MergeWith merges this subject with another subject and then deletes it.
@@ -315,11 +312,11 @@ func (m *Subject) MergeWith(other *Subject) error {
 	// Update markers and faces with new SubjUID.
 	if err := Db().Model(&Marker{}).
 		Where("subj_uid = ?", m.SubjUID).
-		Update(Values{"SubjUID": other.SubjUID}).Error; err != nil {
+		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := Db().Model(&Face{}).
 		Where("subj_uid = ?", m.SubjUID).
-		Update(Values{"SubjUID": other.SubjUID}).Error; err != nil {
+		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := other.UpdateMarkerNames(); err != nil {
 		return err

@@ -9,7 +9,7 @@ import (
 var onceFaceNet sync.Once
 
 func initFaceNet() {
-	services.FaceNet = face.NewNet(conf.FaceNetModelPath(), "", conf.DisableTensorFlow())
+	services.FaceNet = face.NewNet(conf.FaceNetModelPath(), "", conf.DisableFaces())
 }
 
 func FaceNet() *face.Net {

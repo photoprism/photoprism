@@ -1,4 +1,4 @@
-FROM photoprism/development:20210831 as build
+FROM photoprism/development:20210922 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -89,6 +89,8 @@ ENV TF_CPP_MIN_LOG_LEVEL="2" \
     PHOTOPRISM_DISABLE_EXIFTOOL="false" \
     PHOTOPRISM_DISABLE_PLACES="false" \
     PHOTOPRISM_DISABLE_TENSORFLOW="false" \
+    PHOTOPRISM_DISABLE_FACES="false" \
+    PHOTOPRISM_DISABLE_CLASSIFICATION="false" \
     PHOTOPRISM_DARKTABLE_PRESETS="false" \
     PHOTOPRISM_THUMB_FILTER="lanczos" \
     PHOTOPRISM_THUMB_UNCACHED="false" \
@@ -110,7 +112,6 @@ RUN ldconfig
 # Set default umask and create photoprism user
 RUN umask 0000 && useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism
 WORKDIR /photoprism
-ENV HOME="/photoprism"
 
 # Copy files to /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism

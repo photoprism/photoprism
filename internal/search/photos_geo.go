@@ -22,7 +22,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
-		return results, err
+		return GeoResults{}, err
 	}
 
 	s := UnscopedDb()
@@ -78,7 +78,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		var labelIds []uint
 
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Debugf("search: label %s not found, using fuzzy search", txt.Quote(f.Query))
+			log.Debugf("search: label %s not found, using fuzzy search", txt.QuoteLower(f.Query))
 
 			for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
 				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
@@ -89,7 +89,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Debugf("search: label %s includes %d categories", txt.Quote(l.LabelName), len(categories))
+				log.Debugf("search: label %s includes %d categories", txt.QuoteLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)
@@ -109,17 +109,23 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 
 	// Search for one or more keywords?
 	if f.Keywords != "" {
-		for _, where := range LikeAllKeywords("k.keyword", f.Keywords) {
+		for _, where := range LikeAnyKeyword("k.keyword", f.Keywords) {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
 	}
 
-	// Filter for one or more faces?
-	if f.Face != "" {
+	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
+	if len(f.Face) >= 32 {
 		for _, f := range strings.Split(strings.ToUpper(f.Face), txt.And) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
 				entity.Marker{}.TableName()), strings.Split(f, txt.Or))
 		}
+	} else if txt.No(f.Face) {
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NULL OR face_id = '')",
+			entity.Marker{}.TableName()), entity.MarkerFace)
+	} else if txt.Yes(f.Face) {
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NOT NULL AND face_id <> '')",
+			entity.Marker{}.TableName()), entity.MarkerFace)
 	}
 
 	// Filter for one or more subjects?
@@ -141,10 +147,14 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	}
 
 	// Filter by album?
-	if f.Album != "" {
+	if rnd.IsPPID(f.Album, 'a') {
 		s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = photos.photo_uid").
 			Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", f.Album)
-	} else if f.Albums != "" {
+	} else if f.Albums != "" || f.Album != "" {
+		if f.Albums == "" {
+			f.Albums = f.Album
+		}
+
 		for _, where := range LikeAnyWord("a.album_title", f.Albums) {
 			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE (?))", gorm.Expr(where))
 		}
@@ -161,18 +171,18 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	}
 
 	// Filter by year?
-	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.UnknownYear {
-		s = s.Where("photos.photo_year = ?", f.Year)
+	if f.Year != "" {
+		s = s.Where(AnyInt("photos.photo_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
 	}
 
 	// Filter by month?
-	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.UnknownMonth {
-		s = s.Where("photos.photo_month = ?", f.Month)
+	if f.Month != "" {
+		s = s.Where(AnyInt("photos.photo_month", f.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
 	}
 
 	// Filter by day?
-	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.UnknownDay {
-		s = s.Where("photos.photo_day = ?", f.Day)
+	if f.Day != "" {
+		s = s.Where(AnyInt("photos.photo_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
 	// Find or exclude people if detected.

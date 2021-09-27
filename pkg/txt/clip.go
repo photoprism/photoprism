@@ -1,12 +1,17 @@
 package txt
 
-import "strings"
+import (
+	"strings"
+)
 
 const (
-	ClipDefault     = 160
+	Ellipsis        = "…"
 	ClipKeyword     = 40
 	ClipSlug        = 80
-	ClipVarchar     = 255
+	ClipCategory    = 100
+	ClipDefault     = 160
+	ClipName        = 160
+	ClipTitle       = 200
 	ClipQuery       = 1000
 	ClipDescription = 16000
 )
@@ -25,13 +30,20 @@ func Clip(s string, size int) string {
 		s = string(runes[0 : size-1])
 	}
 
-	return s
+	return strings.TrimSpace(s)
 }
 
-func TrimLen(s string, size int) string {
-	if len(s) < size || size < 4 {
+// Shorten shortens a string with suffix.
+func Shorten(s string, size int, suffix string) string {
+	if suffix == "" {
+		suffix = Ellipsis
+	}
+
+	l := len(suffix)
+
+	if len(s) < size || size < l+1 {
 		return s
 	}
 
-	return Clip(s, size-3) + "..."
+	return Clip(s, size-l) + suffix
 }

@@ -201,3 +201,37 @@ func AnySlug(col, search, sep string) (where string) {
 
 	return strings.Join(wheres, " OR ")
 }
+
+// AnyInt returns a where condition that matches any integer within a range.
+func AnyInt(col, numbers, sep string, min, max int) (where string) {
+	if numbers == "" {
+		return ""
+	}
+
+	if sep == "" {
+		sep = txt.Or
+	}
+
+	var matches []int
+	var wheres []string
+
+	for _, n := range strings.Split(numbers, sep) {
+		i := txt.Int(n)
+
+		if i == 0 || i < min || i > max {
+			continue
+		}
+
+		matches = append(matches, i)
+	}
+
+	if len(matches) == 0 {
+		return ""
+	}
+
+	for _, n := range matches {
+		wheres = append(wheres, fmt.Sprintf("%s = %d", col, n))
+	}
+
+	return strings.Join(wheres, " OR ")
+}

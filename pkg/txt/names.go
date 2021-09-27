@@ -3,8 +3,6 @@ package txt
 import (
 	"fmt"
 	"strings"
-
-	"github.com/gosimple/slug"
 )
 
 // UniqueNames removes exact duplicates from a list of strings without changing their order.
@@ -110,22 +108,12 @@ func NormalizeName(name string) string {
 		return r
 	}, name)
 
-	// Shorten.
-	name = Clip(name, ClipDefault)
+	name = strings.TrimSpace(name)
 
 	if name == "" {
 		return ""
 	}
 
-	// Capitalize.
-	return Title(name)
-}
-
-// NameSlug converts a name to a valid slug.
-func NameSlug(name string) string {
-	if name == "" {
-		return ""
-	}
-
-	return slug.Make(Clip(name, ClipSlug))
+	// Shorten and capitalize.
+	return Clip(Title(name), ClipDefault)
 }

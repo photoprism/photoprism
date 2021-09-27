@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -25,8 +24,8 @@ type Folder struct {
 	Root              string     `gorm:"type:VARBINARY(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
 	FolderUID         string     `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string     `gorm:"type:VARBINARY(16);" json:"Type" yaml:"Type,omitempty"`
-	FolderTitle       string     `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title,omitempty"`
-	FolderCategory    string     `gorm:"type:VARCHAR(255);index;" json:"Category" yaml:"Category,omitempty"`
+	FolderTitle       string     `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title,omitempty"`
+	FolderCategory    string     `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
 	FolderDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	FolderOrder       string     `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
 	FolderCountry     string     `gorm:"type:VARBINARY(2);index:idx_folders_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
@@ -130,13 +129,13 @@ func (m *Folder) SetValuesFromPath() {
 	}
 
 	if m.FolderTitle == "" {
-		m.FolderTitle = txt.Title(s)
+		m.FolderTitle = txt.Clip(txt.Title(s), txt.ClipTitle)
 	}
 }
 
 // Slug returns a slug based on the folder title.
 func (m *Folder) Slug() string {
-	return slug.Make(m.Path)
+	return txt.Slug(m.Path)
 }
 
 // RootPath returns the full folder path including root.
@@ -144,12 +143,12 @@ func (m *Folder) RootPath() string {
 	return path.Join(m.Root, m.Path)
 }
 
-// Title returns a human readable folder title.
+// Title returns the human-readable folder title.
 func (m *Folder) Title() string {
 	return m.FolderTitle
 }
 
-// Saves the complete entity in the database.
+// Create inserts the entity to the index.
 func (m *Folder) Create() error {
 	folderMutex.Lock()
 	defer folderMutex.Unlock()
@@ -231,6 +230,9 @@ func (m *Folder) SetForm(f form.Folder) error {
 	if err := deepcopier.Copy(m).From(f); err != nil {
 		return err
 	}
+
+	m.FolderTitle = txt.Clip(m.FolderTitle, txt.ClipTitle)
+	m.FolderCategory = txt.Clip(m.FolderCategory, txt.ClipCategory)
 
 	return nil
 }

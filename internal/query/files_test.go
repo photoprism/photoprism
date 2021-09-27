@@ -233,20 +233,6 @@ func TestIndexedFiles(t *testing.T) {
 	t.Logf("INDEXED FILES: %#v", result)
 }
 
-func TestFileHashes(t *testing.T) {
-	result, err := FileHashes()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(result) < 3 {
-		t.Fatalf("at least 3 file hashes expected")
-	}
-
-	t.Logf("FILE HASHES: %#v", result)
-}
-
 func TestRenameFile(t *testing.T) {
 	t.Run("empty name", func(t *testing.T) {
 		err := RenameFile("xxx", "", "yyy", "yyy")

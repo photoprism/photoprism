@@ -13,7 +13,7 @@ services:
     ports:
       - "2342:2342" # Web Server (PhotoPrism)
       - "2343:2343" # Acceptance Tests
-      - "40000:40000"
+      - "40000:40000" # Go Debugging
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
@@ -73,7 +73,7 @@ services:
 
   mariadb:
     image: mariadb:10.5
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
     ports:
@@ -95,34 +95,11 @@ services:
     ports:
       - "9998:9998"
 
-  # Uncomment to test with MySQL 8:
-  #
-  # mysql:
-  #  image: mysql:8
-  #  command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
-  #  expose:
-  #    - "4001"
-  #  volumes:
-  #    - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
-  #  environment:
-  #    MYSQL_ROOT_PASSWORD: photoprism
-  #    MYSQL_USER: photoprism
-  #    MYSQL_PASSWORD: photoprism
-  #    MYSQL_DATABASE: photoprism
-
-  # Uncomment to test with Caddy as reverse proxy:
-  #
-  # caddy:
-  #  image: caddy:2
-  #  depends_on:
-  #   - photoprism
-  #  ports:
-  #    - "80:80"
-  #    - "443:443"
-  #  volumes:
-  #    - ./docker/development/caddy:/data/caddy/pki/authorities/local
-  #    - ./docker/development/caddy/Caddyfile:/etc/caddy/Caddyfile
-
 volumes:
   go-mod:
     driver: local
+
+networks:
+  default:
+    name: shared
+    driver: bridge

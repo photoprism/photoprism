@@ -53,3 +53,21 @@ func RelName(fileName, dir string) string {
 
 	return fileName
 }
+
+// FileNameHidden tests is a file name belongs to a hidden file.
+func FileNameHidden(name string) bool {
+	if name == "" {
+		return false
+	}
+
+	name = filepath.Base(name)
+
+	prefix := name[0:1]
+
+	switch prefix {
+	case ".", "@":
+		return true
+	default:
+		return false
+	}
+}

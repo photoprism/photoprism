@@ -66,6 +66,7 @@ var SubjectFixtures = SubjectMap{
 		SubjBio:      "",
 		SubjNotes:    "",
 		MetadataJSON: []byte(""),
+		Thumb:        "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FileCount:    0,
 		CreatedAt:    TimeStamp(),
 		UpdatedAt:    TimeStamp(),

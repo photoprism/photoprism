@@ -3,8 +3,6 @@ package classify
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/face"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,52 +49,5 @@ func TestLabel_Title(t *testing.T) {
 	t.Run("Berlin/Neukölln", func(t *testing.T) {
 		LocLabel := LocationLabel("berlin/neukölln_hasenheide", 23)
 		assert.Equal(t, "Berlin / Neukölln Hasenheide", LocLabel.Title())
-	})
-}
-
-func TestFaceLabels(t *testing.T) {
-	Face1 := face.Face{
-		Rows:       0,
-		Cols:       0,
-		Score:      0,
-		Area:       face.Area{},
-		Eyes:       nil,
-		Landmarks:  nil,
-		Embeddings: nil,
-	}
-	Face2 := face.Face{
-		Rows:       0,
-		Cols:       0,
-		Score:      0,
-		Area:       face.Area{},
-		Eyes:       nil,
-		Landmarks:  nil,
-		Embeddings: nil,
-	}
-	t.Run("count < 1", func(t *testing.T) {
-		Faces := face.Faces{}
-		FaceLabels := FaceLabels(Faces, "")
-		t.Log(FaceLabels)
-		assert.Equal(t, 0, FaceLabels.Len())
-	})
-	t.Run("count > 1", func(t *testing.T) {
-		Faces := face.Faces{Face1, Face2}
-		FaceLabels := FaceLabels(Faces, "")
-		t.Log(FaceLabels)
-		assert.Equal(t, "people", FaceLabels[0].Name)
-		assert.Equal(t, "", FaceLabels[0].Source)
-		assert.Equal(t, 50, FaceLabels[0].Uncertainty)
-		assert.Equal(t, 0, FaceLabels[0].Priority)
-		//assert.Equal(t, "", FaceLabels[0].Categories)
-	})
-	t.Run("count = 1", func(t *testing.T) {
-		Faces := face.Faces{Face1}
-		FaceLabels := FaceLabels(Faces, "test")
-		t.Log(FaceLabels)
-		assert.Equal(t, "portrait", FaceLabels[0].Name)
-		assert.Equal(t, "test", FaceLabels[0].Source)
-		assert.Equal(t, 50, FaceLabels[0].Uncertainty)
-		assert.Equal(t, 0, FaceLabels[0].Priority)
-		assert.Equal(t, "people", FaceLabels[0].Categories[0])
 	})
 }

@@ -142,7 +142,6 @@ RUN chmod 644 /root/.my.cnf /photoprism/.my.cnf
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
-ENV HOME="/go/src/github.com/photoprism/photoprism"
 
 # Expose HTTP port 2342, 2343 plus 9515 for chromedriver
 EXPOSE 2342 2343 9515

@@ -22,12 +22,14 @@ func TestMarker_TableName(t *testing.T) {
 }
 
 func TestNewMarker(t *testing.T) {
-	m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel)
+	m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 100, 29)
 	assert.IsType(t, &Marker{}, m)
 	assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
-	assert.Equal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", m.FileHash)
-	assert.Equal(t, "1340ce163163", m.CropArea)
+	assert.Equal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818-1340ce163163", m.Thumb)
 	assert.Equal(t, "lt9k3pw1wowuy3c3", m.SubjUID)
+	assert.True(t, m.MarkerReview)
+	assert.Equal(t, 119, m.Q)
+	assert.Equal(t, 29, m.Score)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)
 }
@@ -93,7 +95,7 @@ func TestMarker_SaveForm(t *testing.T) {
 
 func TestUpdateOrCreateMarker(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c3", SrcImage, MarkerLabel, 100, 65)
 		assert.IsType(t, &Marker{}, m)
 		assert.Equal(t, "ft8es39w45bnlqdw", m.FileUID)
 		assert.Equal(t, "lt9k3pw1wowuy3c3", m.SubjUID)
@@ -118,7 +120,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 
 func TestMarker_Updates(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {
@@ -143,7 +145,7 @@ func TestMarker_Updates(t *testing.T) {
 
 func TestMarker_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := UpdateOrCreateMarker(m)
 
 		if err != nil {
@@ -167,7 +169,7 @@ func TestMarker_Update(t *testing.T) {
 
 func TestMarker_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel)
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "lt9k3pw1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 
 		m, err := UpdateOrCreateMarker(m)
 
@@ -200,8 +202,6 @@ func TestMarker_Save(t *testing.T) {
 		assert.Empty(t, p.Files)
 		p.PreloadFiles()
 		assert.NotEmpty(t, p.Files)
-
-		// t.Logf("FILES: %#v", p.Files)
 	})
 	t.Run("invalid position", func(t *testing.T) {
 		m := Marker{X: 0, Y: 0}
@@ -431,7 +431,7 @@ func TestMarker_Subject(t *testing.T) {
 
 func TestMarker_GetFace(t *testing.T) {
 	t.Run("ExistingFaceID", func(t *testing.T) {
-		m := Marker{face: &Face{ID: "1234"}, FaceID: "1234"}
+		m := Marker{MarkerUID: "mqzop6s14ahkyd24", FaceID: "1234", face: &Face{ID: "1234"}}
 
 		if f := m.Face(); f == nil {
 			t.Fatal("return value must not be nil")
@@ -441,7 +441,7 @@ func TestMarker_GetFace(t *testing.T) {
 		}
 	})
 	t.Run("ConflictingFaceID", func(t *testing.T) {
-		m := Marker{face: &Face{ID: "1234"}, FaceID: "8888"}
+		m := Marker{MarkerUID: "mqzop6s14ahkyd24", FaceID: "8888", face: &Face{ID: "1234"}}
 
 		if f := m.Face(); f != nil {
 			t.Fatal("return value must be nil")
@@ -451,7 +451,7 @@ func TestMarker_GetFace(t *testing.T) {
 		}
 	})
 	t.Run("find face with ID", func(t *testing.T) {
-		m := Marker{FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
+		m := Marker{MarkerUID: "mqzop6s14ahkyd24", FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
 
 		if f := m.Face(); f == nil {
 			t.Fatal("return value must not be nil")
@@ -460,12 +460,13 @@ func TestMarker_GetFace(t *testing.T) {
 		}
 	})
 	t.Run("low quality marker", func(t *testing.T) {
-		m := Marker{FaceID: "", SubjSrc: SrcManual, Size: 130}
+		m := Marker{MarkerUID: "", FaceID: "", SubjSrc: SrcManual, Size: 130}
 
 		assert.Nil(t, m.Face())
 	})
 	t.Run("create face", func(t *testing.T) {
 		m := Marker{
+			MarkerUID:      "mqzop6s14ahkyd24",
 			FaceID:         "",
 			EmbeddingsJSON: MarkerFixtures.Get("actress-a-1").EmbeddingsJSON,
 			SubjSrc:        SrcManual,
@@ -522,7 +523,6 @@ func TestMarker_SetFace(t *testing.T) {
 		assert.True(t, updated2)
 		assert.Empty(t, m.FaceID)
 	})
-
 }
 
 func TestMarker_RefreshPhotos(t *testing.T) {
@@ -531,4 +531,46 @@ func TestMarker_RefreshPhotos(t *testing.T) {
 	if err := m.RefreshPhotos(); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestMarker_SurfaceRatio(t *testing.T) {
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+	m4 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+
+	assert.Equal(t, 99, int(m1.SurfaceRatio(m1.OverlapArea(m1))*100))
+	assert.Equal(t, 99, int(m1.SurfaceRatio(m1.OverlapArea(m2))*100))
+	assert.Equal(t, 29, int(m2.SurfaceRatio(m2.OverlapArea(m1))*100))
+	assert.Equal(t, 0, int(m1.SurfaceRatio(m1.OverlapArea(m3))*100))
+	assert.Equal(t, 30, int(m1.SurfaceRatio(m1.OverlapArea(m4))*100))
+	assert.Equal(t, 0, int(m1.SurfaceRatio(m3.OverlapArea(m1))*100))
+	assert.Equal(t, 30, int(m1.SurfaceRatio(m4.OverlapArea(m1))*100))
+}
+
+func TestMarker_OverlapArea(t *testing.T) {
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+	m4 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+
+	assert.Equal(t, 0.1264200823986168, m1.OverlapArea(m1))
+	assert.Equal(t, int(m1.Surface()*10000), int(m1.OverlapArea(m1)*10000))
+	assert.Equal(t, 0.1264200823986168, m1.OverlapArea(m2))
+	assert.Equal(t, 0.1264200823986168, m2.OverlapArea(m1))
+	assert.Equal(t, 0.0, m1.OverlapArea(m3))
+	assert.Equal(t, 0.038166598943088825, m1.OverlapArea(m4))
+}
+
+func TestMarker_OverlapPercent(t *testing.T) {
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+	m4 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+
+	assert.Equal(t, 100, m1.OverlapPercent(m1))
+	assert.Equal(t, 29, m1.OverlapPercent(m2))
+	assert.Equal(t, 100, m2.OverlapPercent(m1))
+	assert.Equal(t, 0, m1.OverlapPercent(m3))
+	assert.Equal(t, 96, m1.OverlapPercent(m4))
 }

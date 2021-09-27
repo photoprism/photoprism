@@ -41,14 +41,21 @@
         </v-list-tile-content>
       </v-list-tile>
     </v-list>
-    <v-card v-else class="errors-empty secondary-light lighten-1 ma-0 pa-2" flat>
-      <v-card-title v-if="filter.q !== ''" primary-title>
-        <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
-      </v-card-title>
-      <v-card-title v-else primary-title>
-        <translate>Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues.</translate>
-      </v-card-title>
-    </v-card>
+    <div v-else class="pa-2">
+      <v-alert
+          :value="true"
+          color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline
+      >
+        <p class="body-1 mt-0 mb-0 pa-0">
+          <template v-if="filter.q !== ''">
+            <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
+          </template>
+          <template>
+            <translate>Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues.</translate>
+          </template>
+        </p>
+      </v-alert>
+    </div>
 
     <v-dialog
         v-model="details.show"

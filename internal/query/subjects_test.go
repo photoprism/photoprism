@@ -54,8 +54,8 @@ func TestSubjectMap(t *testing.T) {
 	}
 }
 
-func TestRemoveDanglingMarkerSubjects(t *testing.T) {
-	affected, err := RemoveDanglingMarkerSubjects()
+func TestRemoveOrphanSubjects(t *testing.T) {
+	affected, err := RemoveOrphanSubjects()
 
 	if err != nil {
 		t.Fatal(err)

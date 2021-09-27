@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -17,8 +16,8 @@ type Links []Link
 type Link struct {
 	LinkUID     string    `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	ShareUID    string    `gorm:"type:VARBINARY(42);unique_index:idx_links_uid_token;" json:"Share" yaml:"Share"`
-	ShareSlug   string    `gorm:"type:VARBINARY(255);index;" json:"Slug" yaml:"Slug,omitempty"`
-	LinkToken   string    `gorm:"type:VARBINARY(255);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
+	ShareSlug   string    `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
+	LinkToken   string    `gorm:"type:VARBINARY(160);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `json:"Views" yaml:"-"`
 	MaxViews    uint      `json:"MaxViews" yaml:"-"`
@@ -26,7 +25,7 @@ type Link struct {
 	CanComment  bool      `json:"CanComment" yaml:"CanComment,omitempty"`
 	CanEdit     bool      `json:"CanEdit" yaml:"CanEdit,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
-	ModifiedAt  time.Time `deepcopier:"skip" yaml:"ModifiedAt"`
+	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
@@ -81,7 +80,7 @@ func (m *Link) Expired() bool {
 }
 
 func (m *Link) SetSlug(s string) {
-	m.ShareSlug = slug.Make(txt.Clip(s, txt.ClipSlug))
+	m.ShareSlug = txt.Slug(s)
 }
 
 func (m *Link) SetPassword(password string) error {

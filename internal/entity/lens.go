@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -18,11 +17,11 @@ type Lenses []Lens
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
 	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	LensSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
-	LensName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
-	LensMake        string     `gorm:"type:VARCHAR(255);" json:"Make" yaml:"Make,omitempty"`
-	LensModel       string     `gorm:"type:VARCHAR(255);" json:"Model" yaml:"Model,omitempty"`
-	LensType        string     `gorm:"type:VARCHAR(255);" json:"Type" yaml:"Type,omitempty"`
+	LensSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
+	LensName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
+	LensMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
+	LensModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
+	LensType        string     `gorm:"type:VARCHAR(100);" json:"Type" yaml:"Type,omitempty"`
 	LensDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	LensNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt       time.Time  `json:"-" yaml:"-"`
@@ -49,8 +48,8 @@ func (Lens) TableName() string {
 
 // NewLens creates a new lens in database
 func NewLens(modelName string, makeName string) *Lens {
-	modelName = txt.Clip(modelName, txt.ClipDefault)
-	makeName = txt.Clip(makeName, txt.ClipDefault)
+	modelName = strings.TrimSpace(modelName)
+	makeName = strings.TrimSpace(makeName)
 
 	if modelName == "" && makeName == "" {
 		return &UnknownLens
@@ -73,13 +72,12 @@ func NewLens(modelName string, makeName string) *Lens {
 	}
 
 	lensName := strings.Join(name, " ")
-	lensSlug := slug.Make(txt.Clip(lensName, txt.ClipSlug))
 
 	result := &Lens{
-		LensSlug:  lensSlug,
-		LensName:  lensName,
-		LensMake:  makeName,
-		LensModel: modelName,
+		LensSlug:  txt.Slug(lensName),
+		LensName:  txt.Clip(lensName, txt.ClipName),
+		LensMake:  txt.Clip(makeName, txt.ClipName),
+		LensModel: txt.Clip(modelName, txt.ClipName),
 	}
 
 	return result

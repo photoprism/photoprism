@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -18,11 +17,11 @@ type Cameras []Camera
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
 	ID                uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	CameraSlug        string     `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
-	CameraName        string     `gorm:"type:VARCHAR(255);" json:"Name" yaml:"Name"`
-	CameraMake        string     `gorm:"type:VARCHAR(255);" json:"Make" yaml:"Make,omitempty"`
-	CameraModel       string     `gorm:"type:VARCHAR(255);" json:"Model" yaml:"Model,omitempty"`
-	CameraType        string     `gorm:"type:VARCHAR(255);" json:"Type,omitempty" yaml:"Type,omitempty"`
+	CameraSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
+	CameraName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
+	CameraMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
+	CameraModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
+	CameraType        string     `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
 	CameraDescription string     `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	CameraNotes       string     `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
@@ -44,8 +43,8 @@ func CreateUnknownCamera() {
 
 // NewCamera creates a camera entity from a model name and a make name.
 func NewCamera(modelName string, makeName string) *Camera {
-	modelName = txt.Clip(modelName, txt.ClipDefault)
-	makeName = txt.Clip(makeName, txt.ClipDefault)
+	modelName = strings.TrimSpace(modelName)
+	makeName = strings.TrimSpace(makeName)
 
 	if modelName == "" && makeName == "" {
 		return &UnknownCamera
@@ -72,13 +71,12 @@ func NewCamera(modelName string, makeName string) *Camera {
 	}
 
 	cameraName := strings.Join(name, " ")
-	cameraSlug := slug.Make(txt.Clip(cameraName, txt.ClipSlug))
 
 	result := &Camera{
-		CameraSlug:  cameraSlug,
-		CameraName:  cameraName,
-		CameraMake:  makeName,
-		CameraModel: modelName,
+		CameraSlug:  txt.Slug(cameraName),
+		CameraName:  txt.Clip(cameraName, txt.ClipName),
+		CameraMake:  txt.Clip(makeName, txt.ClipName),
+		CameraModel: txt.Clip(modelName, txt.ClipName),
 	}
 
 	return result

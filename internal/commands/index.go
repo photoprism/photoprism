@@ -6,13 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/urfave/cli"
 )
 
 // IndexCommand registers the index cli command.
@@ -75,9 +75,7 @@ func indexAction(ctx *cli.Context) error {
 		}
 
 		indexed = w.Start(opt)
-	}
-
-	if w := service.Purge(); w != nil {
+	} else if w := service.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: indexed,
@@ -88,9 +86,7 @@ func indexAction(ctx *cli.Context) error {
 		} else if len(files) > 0 || len(photos) > 0 {
 			log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
 		}
-	}
-
-	if ctx.Bool("cleanup") {
+	} else if ctx.Bool("cleanup") {
 		w := service.CleanUp()
 
 		opt := photoprism.CleanUpOptions{

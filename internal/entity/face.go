@@ -9,11 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/photoprism/photoprism/internal/face"
-
 	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var faceMutex = sync.Mutex{}
@@ -23,7 +21,7 @@ type Face struct {
 	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjUID         string          `gorm:"type:VARBINARY(42);index;" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	SubjUID         string          `gorm:"type:VARBINARY(42);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
@@ -40,7 +38,7 @@ var Faceless = []string{""}
 
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev9"
+	return "faces"
 }
 
 // NewFace returns a new face.
@@ -133,7 +131,7 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 	case dist < 0:
 		// Should never happen.
 		return false, dist
-	case dist > (m.SampleRadius + face.ClusterRadius):
+	case dist > (m.SampleRadius + face.MatchDist):
 		// Too far.
 		return false, dist
 	case m.CollisionRadius > 0.1 && dist > m.CollisionRadius:
@@ -258,7 +256,7 @@ func (m *Face) SetSubjectUID(subjUID string) (err error) {
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
 		Where("marker_invalid = 0").
-		Updates(Values{"SubjUID": m.SubjUID, "MarkerReview": false}).Error; err != nil {
+		UpdateColumns(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
@@ -271,9 +269,11 @@ func (m *Face) RefreshPhotos() error {
 		return fmt.Errorf("empty face id")
 	}
 
-	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
-		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.face_id = ? GROUP BY f.photo_id)`,
-		gorm.Expr(Marker{}.TableName()), m.ID).Error
+	update := fmt.Sprintf(
+		"UPDATE photos SET checked_at = NULL WHERE id IN (SELECT f.photo_id FROM files f JOIN %s m ON m.file_uid = f.file_uid WHERE m.face_id = ?)",
+		Marker{}.TableName())
+
+	return UnscopedDb().Exec(update, m.ID).Error
 }
 
 // Hide hides the face by default.
@@ -349,4 +349,21 @@ func FindFace(id string) *Face {
 	}
 
 	return &f
+}
+
+// ValidFaceCount counts the number of valid face markers for a file uid.
+func ValidFaceCount(fileUID string) (c int) {
+	if !rnd.IsPPID(fileUID, 'f') {
+		return
+	}
+
+	if err := Db().Model(Marker{}).
+		Where("file_uid = ? AND marker_type = ?", fileUID, MarkerFace).
+		Where("marker_invalid = 0").
+		Count(&c).Error; err != nil {
+		log.Errorf("file: %s (count faces)", err)
+		return 0
+	} else {
+		return c
+	}
 }

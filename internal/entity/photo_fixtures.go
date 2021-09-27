@@ -1008,7 +1008,7 @@ var PhotoFixtures = PhotoMap{
 		OriginalName:     "",
 		PhotoFavorite:    false,
 		PhotoPrivate:     false,
-		PhotoScan:        false,
+		PhotoScan:        true,
 		PhotoPanorama:    false,
 		TimeZone:         "",
 		Place:            &UnknownPlace,

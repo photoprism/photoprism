@@ -7,21 +7,39 @@ import (
 )
 
 func TestIndexOptionsNone(t *testing.T) {
-	result := IndexOptionsNone()
-	assert.Equal(t, false, result.Rescan)
-	assert.Equal(t, false, result.Convert)
+	opt := IndexOptionsNone()
+
+	assert.Equal(t, "", opt.Path)
+	assert.Equal(t, false, opt.Rescan)
+	assert.Equal(t, false, opt.Convert)
+	assert.Equal(t, false, opt.Stack)
+	assert.Equal(t, false, opt.FacesOnly)
 }
 
 func TestIndexOptions_SkipUnchanged(t *testing.T) {
-	result := IndexOptionsNone()
-	assert.True(t, result.SkipUnchanged())
-	result.Rescan = true
-	assert.False(t, result.SkipUnchanged())
+	opt := IndexOptionsNone()
+
+	assert.True(t, opt.SkipUnchanged())
+
+	opt.Rescan = true
+
+	assert.False(t, opt.SkipUnchanged())
 }
 
 func TestIndexOptionsSingle(t *testing.T) {
-	r := IndexOptionsSingle()
-	assert.Equal(t, false, r.Stack)
-	assert.Equal(t, true, r.Convert)
-	assert.Equal(t, true, r.Rescan)
+	opt := IndexOptionsSingle()
+
+	assert.Equal(t, false, opt.Stack)
+	assert.Equal(t, true, opt.Convert)
+	assert.Equal(t, true, opt.Rescan)
+}
+
+func TestIndexOptionsFacesOnly(t *testing.T) {
+	opt := IndexOptionsFacesOnly()
+
+	assert.Equal(t, "/", opt.Path)
+	assert.Equal(t, true, opt.Rescan)
+	assert.Equal(t, true, opt.Convert)
+	assert.Equal(t, true, opt.Stack)
+	assert.Equal(t, true, opt.FacesOnly)
 }

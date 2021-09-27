@@ -1,27 +1,26 @@
 <template>
   <div>
     <div v-if="photos.length === 0" class="pa-2">
-      <v-card class="no-results secondary-light lighten-1 ma-1" flat>
-        <v-card-title primary-title>
-          <div>
-            <h3 v-if="filter.order === 'edited'" class="title ma-0 pa-0">
-              <translate>Couldn't find recently edited</translate>
-            </h3>
-            <h3 v-else class="title ma-0 pa-0">
-              <translate>Couldn't find anything</translate>
-            </h3>
-            <p class="mt-4 mb-0 pa-0">
-              <translate>Try again using other filters or keywords.</translate>
-              <translate>If a file you expect is missing, please re-index your library and wait until indexing has been completed.</translate>
-              <template v-if="config.settings.features.review" class="mt-2 mb-0 pa-0">
-                <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
-              </template>
-            </p>
-          </div>
-        </v-card-title>
-      </v-card>
+      <v-alert
+          :value="true"
+          color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+      >
+        <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
+          <translate>Couldn't find recently edited</translate>
+        </h3>
+        <h3 v-else class="body-2 ma-0 pa-0">
+          <translate>Couldn't find anything</translate>
+        </h3>
+        <p class="body-1 mt-2 mb-0 pa-0">
+          <translate>Try again using other filters or keywords.</translate>
+          <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
+          <template v-if="config.settings.features.review" class="mt-2 mb-0 pa-0">
+            <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
+          </template>
+        </p>
+      </v-alert>
     </div>
-    <v-data-table v-else
+    <v-data-table v-if="photos.length > 0"
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"
@@ -57,7 +56,9 @@
                    :ripple="false"
                    flat icon large absolute class="input-open"
                    @click.stop.prevent="openPhoto(props.index, true)">
-              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">$vuetify.icons.live_photo</v-icon>
+              <v-icon color="white" class="default-hidden action-live" :title="$gettext('Live')">
+                $vuetify.icons.live_photo
+              </v-icon>
               <v-icon color="white" class="default-hidden action-play" :title="$gettext('Video')">play_arrow</v-icon>
             </v-btn>
           </v-img>
@@ -99,7 +100,9 @@
           </v-btn>
           <v-btn class="input-like" icon small flat :ripple="false"
                  :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
-            <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">favorite</v-icon>
+            <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">
+              favorite
+            </v-icon>
             <v-icon v-else color="secondary" :data-uid="props.item.UID" class="select-off">favorite_border</v-icon>
           </v-btn>
         </td>

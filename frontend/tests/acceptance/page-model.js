@@ -47,7 +47,12 @@ export default class Page {
   }
 
   async search(term) {
-    await t.typeText(this.search1, term, { replace: true }).pressKey("enter");
+    await t
+      .typeText(this.search1, term, { replace: true })
+      .pressKey("enter")
+      .wait(10000)
+      .expect(this.search1.value)
+      .contains(term);
   }
 
   async openNav() {
@@ -152,7 +157,7 @@ export default class Page {
   async addSelectedToAlbum(name, type) {
     await t
       .click(Selector("button.action-menu"))
-      .click(Selector("button.action-" + type))
+      .click(Selector("button.action-" + type, { timeout: 15000 }))
       .typeText(Selector(".input-album input"), name, { replace: true })
       .pressKey("enter");
   }

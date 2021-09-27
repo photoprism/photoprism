@@ -39,10 +39,9 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
     .notContains("beacon")
     .click(Selector(".action-close"));
   await page.openNav();
-  await t
-    .click(Selector(".nav-labels"));
+  await t.click(Selector(".nav-labels"));
   await page.search("beacon");
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.search("test");
   const LabelTest = await Selector("a.is-label").nth(0).getAttribute("data-uid");
   await t
@@ -60,10 +59,9 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
     .notContains("test")
     .click(Selector(".action-close"));
   await page.openNav();
-  await t
-    .click(Selector(".nav-labels"));
+  await t.click(Selector(".nav-labels"));
   await page.search("test");
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.search("beacon");
   await t.expect(Selector("a").withAttribute("data-uid", LabelBeacon).visible).ok();
 });
@@ -106,8 +104,7 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
     .notContains("Zebra")
     .click(Selector(".action-close"));
   await page.openNav();
-  await t
-    .click(Selector(".nav-labels"));
+  await t.click(Selector(".nav-labels"));
   await page.search("horse");
   await t
     .expect(Selector("a").withAttribute("data-uid", LabelZebra).visible)
@@ -122,16 +119,14 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
     .pressKey("enter")
     .click(Selector(".action-close"));
   await page.openNav();
-  await t
-    .click(Selector(".nav-labels"));
+  await t.click(Selector(".nav-labels"));
   await page.search("horse");
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
 });
 
 test.meta("testID", "labels-003")("Add label to album", async (t) => {
   await page.openNav();
-  await t
-    .click(Selector(".nav-albums"));
+  await t.click(Selector(".nav-albums"));
   await page.search("Christmas");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
@@ -187,12 +182,9 @@ test.meta("testID", "labels-004")("Delete label", async (t) => {
   await t.expect(clipboardCount.textContent).eql("1");
   await page.deleteSelected();
   await page.search("dome");
-  await t
-    .expect(Selector("h3").withText("Couldn't find anything").visible)
-    .ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.openNav();
-  await t
-    .click(".nav-browse");
+  await t.click(".nav-browse");
   await page.setFilter("view", "Cards");
   await t
     .click(Selector(".action-title-edit").withAttribute("data-uid", FirstPhotoDome))

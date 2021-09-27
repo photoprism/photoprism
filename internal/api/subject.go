@@ -99,7 +99,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if txt.NameSlug(f.SubjName) == "" {
+		if txt.Slug(f.SubjName) == "" {
 			// Return unchanged model data if (normalized) name is empty.
 			c.JSON(http.StatusOK, m)
 			return

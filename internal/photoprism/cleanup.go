@@ -42,7 +42,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		}
 	}()
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.MainWorker.Start(); err != nil {
 		log.Warnf("cleanup: %s (start)", err.Error())
 		return thumbs, orphans, err
 	}
@@ -53,15 +53,19 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		log.Infof("cleanup: dry run, nothing will actually be removed")
 	}
 
-	// Find and remove orphan thumbnail files.
-	hashes, err := query.FileHashes()
+	var fileHashes, thumbHashes query.HashMap
 
-	if err != nil {
+	// Fetch existing media and thumb file hashes.
+	if fileHashes, err = query.FileHashMap(); err != nil {
+		return thumbs, orphans, err
+	} else if thumbHashes, err = query.ThumbHashMap(); err != nil {
 		return thumbs, orphans, err
 	}
 
+	// Thumbnails storage path.
 	thumbPath := w.conf.ThumbPath()
 
+	// Find and remove orphan thumbnail files.
 	if err := fastwalk.Walk(thumbPath, func(fileName string, info os.FileMode) error {
 		base := filepath.Base(fileName)
 
@@ -79,7 +83,9 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		hash := base[:i]
 		logName := txt.Quote(fs.RelName(fileName, thumbPath))
 
-		if ok := hashes[hash]; ok {
+		if ok := fileHashes[hash]; ok {
+			// Do nothing.
+		} else if ok := thumbHashes[hash]; ok {
 			// Do nothing.
 		} else if opt.Dry {
 			thumbs++
@@ -132,14 +138,14 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 	if len(deleted) > 0 {
 		log.Info("cleanup: updating photo counts")
 
-		// Update photo counts and visibilities.
+		// Update precalculated photo and file counts.
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("cleanup: %s (update counts)", err)
 		}
 
 		log.Info("cleanup: updating preview images")
 
-		// Update album, label, and subject preview images.
+		// Update album, subject, and label preview thumbs.
 		if err := query.UpdatePreviews(); err != nil {
 			log.Errorf("cleanup: %s (update previews)", err)
 		}

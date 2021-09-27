@@ -3,8 +3,9 @@ package commands
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // VersionCommand registers the version cli command.

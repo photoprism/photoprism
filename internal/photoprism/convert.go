@@ -23,18 +23,25 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Default FFmpeg AVC software encoder.
-const DefaultAvcEncoder = "libx264"
+const DefaultAvcEncoder = "libx264" // Default FFmpeg AVC software encoder.
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
-	conf     *config.Config
-	cmdMutex sync.Mutex
+	conf                 *config.Config
+	cmdMutex             sync.Mutex
+	darktableBlacklist   fs.Blacklist
+	rawtherapeeBlacklist fs.Blacklist
 }
 
 // NewConvert returns a new converter and expects the config as argument.
 func NewConvert(conf *config.Config) *Convert {
-	return &Convert{conf: conf}
+	c := &Convert{
+		conf:                 conf,
+		darktableBlacklist:   fs.NewBlacklist(conf.DarktableBlacklist()),
+		rawtherapeeBlacklist: fs.NewBlacklist(conf.RawtherapeeBlacklist()),
+	}
+
+	return c
 }
 
 // Start converts all files in a directory to JPEG if possible.
@@ -177,7 +184,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 // JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
 func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
 	if f == nil {
-		return result, useMutex, fmt.Errorf("convert: file is nil - you might have found a bug")
+		return result, useMutex, fmt.Errorf("file is nil - you might have found a bug")
 	}
 
 	size := strconv.Itoa(c.conf.JpegSize())
@@ -186,7 +193,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 	if f.IsRaw() {
 		if c.conf.SipsEnabled() {
 			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
-		} else if c.conf.DarktableEnabled() && fileExt != fs.CanonCr3Ext && fileExt != fs.FujiRawExt {
+		} else if c.conf.DarktableEnabled() && c.darktableBlacklist.Ok(fileExt) {
 			var args []string
 
 			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
@@ -205,7 +212,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 			}
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
-		} else if c.conf.RawtherapeeEnabled() {
+		} else if c.conf.RawtherapeeEnabled() && c.rawtherapeeBlacklist.Ok(fileExt) {
 			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
@@ -213,14 +220,19 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 
 			result = exec.Command(c.conf.RawtherapeeBin(), args...)
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(f.BaseName()))
+			return nil, useMutex, fmt.Errorf("no suitable converter found")
 		}
 	} else if f.IsVideo() && c.conf.FFmpegEnabled() {
 		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
 	} else if f.IsHEIF() && c.conf.HeifConvertEnabled() {
 		result = exec.Command(c.conf.HeifConvertBin(), f.FileName(), jpegName)
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
+		return nil, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
+	}
+
+	// Log convert command in trace mode only as it exposes server internals.
+	if result != nil {
+		log.Tracef("convert: %s", result.String())
 	}
 
 	return result, useMutex, nil

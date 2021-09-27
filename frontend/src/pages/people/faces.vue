@@ -21,18 +21,18 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="title ma-0 pa-0">
-                <translate>Couldn't find anything</translate>
-              </h3>
-              <p class="mt-4 mb-0 pa-0">
-                <translate>Try again using other filters or keywords.</translate>
-              </p>
-            </div>
-          </v-card-title>
-        </v-card>
+        <v-alert
+            :value="results.length === 0"
+            color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline
+        >
+          <h3 class="body-2 ma-0 pa-0">
+            <translate>No people found</translate>
+          </h3>
+          <p class="body-1 mt-2 mb-0 pa-0">
+            <translate>You may rescan your library to find additional faces.</translate>
+            <translate>Recognition starts after indexing has been completed.</translate>
+          </p>
+        </v-alert>
         <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
@@ -48,7 +48,8 @@
               <v-img :src="model.Marker.thumbnailUrl('tile_320')"
                      :transition="false"
                      aspect-ratio="1"
-                     class="accent lighten-2">
+                     class="accent lighten-2 clickable"
+                     @click.stop.prevent="$router.push(model.route(view))">
                 <v-btn v-if="!model.Marker.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
                        icon flat small absolute :title="$gettext('Hide')"
                        @click.stop.prevent="onHide(model)">
@@ -117,6 +118,14 @@
             </v-card>
           </v-flex>
         </v-layout>
+        <div class="text-xs-center my-2">
+          <v-btn
+              color="secondary" round
+              :to="{name: 'all', query: { q: 'face:new' }}"
+          >
+            <translate>Show all new faces</translate>
+          </v-btn>
+        </div>
       </v-container>
     </v-container>
   </div>
@@ -133,7 +142,8 @@ import {ClickLong, ClickShort, Input, InputInvalid} from "common/input";
 export default {
   name: 'PPageFaces',
   props: {
-    staticFilter: Object
+    staticFilter: Object,
+    active: Boolean,
   },
   data() {
     const query = this.$route.query;
@@ -177,20 +187,30 @@ export default {
   },
   watch: {
     '$route'() {
+      // Tab inactive?
+      if (!this.active) {
+        // Ignore event.
+        return;
+      }
+
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";
       this.filter.all = query["all"] ? query["all"] : "";
       this.filter.order = this.sortOrder();
-      this.lastFilter = {};
       this.routeName = this.$route.name;
+
+      if (this.dirty) {
+        this.lastFilter = {};
+      }
+
       this.search();
     }
   },
   created() {
     this.search();
 
-    // this.subscriptions.push(Event.subscribe("subjects", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(Event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
@@ -382,7 +402,7 @@ export default {
         if (this.scrollDisabled) {
           this.setOffset(resp.offset);
           if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} faces loaded"), {n: this.results.length}));
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), {n: this.results.length}));
           }
         } else {
           this.setOffset(resp.offset + resp.limit);
@@ -470,7 +490,13 @@ export default {
         this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} faces found"), {n: this.results.length}));
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No people found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One person found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
+          }
         } else {
           this.$notify.info(this.$gettext('More than 20 faces found'));
 

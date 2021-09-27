@@ -36,18 +36,19 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="title ma-0 pa-0">
-                <translate>Couldn't find anything</translate>
-              </h3>
-              <p class="mt-4 mb-0 pa-0">
-                <translate>Try again using other filters or keywords.</translate>
-              </p>
-            </div>
-          </v-card-title>
-        </v-card>
+        <v-alert
+            :value="results.length === 0"
+            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+        >
+          <h3 class="body-2 ma-0 pa-0">
+            <translate>No people found</translate>
+          </h3>
+          <p class="body-1 mt-2 mb-0 pa-0">
+            <translate>Try again using other filters or keywords.</translate>
+            <translate>You may rescan your library to find additional faces.</translate>
+            <translate>Recognition starts after indexing has been completed.</translate>
+          </p>
+        </v-alert>
         <v-layout row wrap class="search-results subject-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
@@ -158,7 +159,8 @@ import {ClickLong, ClickShort, Input, InputInvalid} from "common/input";
 export default {
   name: 'PPageSubjects',
   props: {
-    staticFilter: Object
+    staticFilter: Object,
+    active: Boolean,
   },
   data() {
     const query = this.$route.query;
@@ -193,13 +195,23 @@ export default {
   },
   watch: {
     '$route'() {
+      // Tab inactive?
+      if (!this.active) {
+        // Ignore event.
+        return;
+      }
+
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";
       this.filter.all = query["all"] ? query["all"] : "";
       this.filter.order = this.sortOrder();
-      this.lastFilter = {};
       this.routeName = this.$route.name;
+
+      if (this.dirty) {
+        this.lastFilter = {};
+      }
+
       this.search();
     }
   },
@@ -486,7 +498,13 @@ export default {
         this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No people found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One person found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
+          }
         } else {
           this.$notify.info(this.$gettext('More than 20 people found'));
 

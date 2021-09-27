@@ -3,6 +3,8 @@ package search
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/stretchr/testify/assert"
@@ -265,5 +267,32 @@ func TestAnySlug(t *testing.T) {
 	t.Run("len = 0", func(t *testing.T) {
 		where := AnySlug("custom_slug", " ", "")
 		assert.Equal(t, "custom_slug = '' OR custom_slug = ''", where)
+	})
+}
+
+func TestAnyInt(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		where := AnyInt("photos.photo_month", "", txt.Or, entity.UnknownMonth, txt.MonthMax)
+		assert.Equal(t, "", where)
+	})
+
+	t.Run("Range", func(t *testing.T) {
+		where := AnyInt("photos.photo_month", "-3|0|10|9|11|12|13", txt.Or, entity.UnknownMonth, txt.MonthMax)
+		assert.Equal(t, "photos.photo_month = 10 OR photos.photo_month = 9 OR photos.photo_month = 11 OR photos.photo_month = 12", where)
+	})
+
+	t.Run("Chars", func(t *testing.T) {
+		where := AnyInt("photos.photo_month", "a|b|c", txt.Or, entity.UnknownMonth, txt.MonthMax)
+		assert.Equal(t, "", where)
+	})
+
+	t.Run("CommaSeparated", func(t *testing.T) {
+		where := AnyInt("photos.photo_month", "-3,10,9,11,12,13", ",", entity.UnknownMonth, txt.MonthMax)
+		assert.Equal(t, "photos.photo_month = 10 OR photos.photo_month = 9 OR photos.photo_month = 11 OR photos.photo_month = 12", where)
+	})
+
+	t.Run("Invalid", func(t *testing.T) {
+		where := AnyInt("photos.photo_month", "  , |  ", ",", entity.UnknownMonth, txt.MonthMax)
+		assert.Equal(t, "", where)
 	})
 }

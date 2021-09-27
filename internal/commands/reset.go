@@ -9,9 +9,10 @@ import (
 	"time"
 
 	"github.com/manifoldco/promptui"
+	"github.com/urfave/cli"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/urfave/cli"
 )
 
 // ResetCommand resets the index and removes sidecar files after confirmation.
@@ -49,7 +50,7 @@ func resetAction(ctx *cli.Context) error {
 		tables.Drop()
 
 		log.Infoln("restoring default schema")
-		entity.MigrateDb()
+		entity.MigrateDb(true)
 
 		if conf.AdminPassword() != "" {
 			log.Infoln("restoring initial admin password")

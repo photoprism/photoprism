@@ -247,7 +247,7 @@ msgstr "Indexierung abgebrochen"
 #: messages.go:138
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr "%d Dateien und %d Fotos wurden entfernt"
+msgstr "%d Dateien und %d Bilder wurden entfernt"
 
 #: messages.go:139
 #, c-format

@@ -31,7 +31,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   await page.search("Holiday");
-  const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+  const AlbumUid = await Selector("a.is-album", { timeout: 55000 }).nth(0).getAttribute("data-uid");
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
     .contains("Holiday")
@@ -66,7 +66,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
     await page.search("category:Family");
   } else {
     await t
-      .click(Selector(".input-category i"))
+      .click(Selector(".input-category"))
       .click(Selector('div[role="listitem"]').withText("Family"));
   }
   await t.expect(Selector("button.action-title-edit").nth(0).innerText).contains("Christmas");
@@ -75,7 +75,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   if (t.browser.platform === "mobile") {
   } else {
     await t
-      .click(Selector(".input-category i"))
+      .click(Selector(".input-category"))
       .click(Selector('div[role="listitem"]').withText("All Categories"), { timeout: 55000 });
   }
   await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));

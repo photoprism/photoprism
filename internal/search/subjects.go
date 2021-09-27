@@ -19,10 +19,7 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 
 	// Base query.
 	s := UnscopedDb().Table(entity.Subject{}.TableName()).
-		Select(fmt.Sprintf("%s.*, m.file_hash, m.crop_area", entity.Subject{}.TableName()))
-
-	// Join markers table for face thumbs.
-	s = s.Joins(fmt.Sprintf("LEFT JOIN %s m ON m.marker_uid = %s.marker_uid", entity.Marker{}.TableName(), entity.Subject{}.TableName()))
+		Select(fmt.Sprintf("%s.*", entity.Subject{}.TableName()))
 
 	// Limit result count.
 	if f.Count > 0 && f.Count <= MaxResults {

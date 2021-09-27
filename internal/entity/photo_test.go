@@ -641,17 +641,19 @@ func TestPhoto_SetCoordinates(t *testing.T) {
 func TestPhoto_Delete(t *testing.T) {
 	t.Run("not permanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
-		err := m.Delete(false)
+		files, err := m.Delete(false)
 		if err != nil {
 			t.Fatal(err)
 		}
+		assert.Len(t, files, 1)
 	})
 	t.Run("permanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
-		err := m.Delete(true)
+		files, err := m.Delete(true)
 		if err != nil {
 			t.Fatal(err)
 		}
+		assert.Len(t, files, 1)
 	})
 }
 

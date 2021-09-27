@@ -34,9 +34,9 @@ type PhotoSearchGeo struct {
 	Album    string    `form:"album"`
 	Albums   string    `form:"albums"`
 	Country  string    `form:"country"`
-	Year     int       `form:"year"`  // Moments
-	Month    int       `form:"month"` // Moments
-	Day      int       `form:"day"`   // Moments
+	Year     string    `form:"year"`  // Moments
+	Month    string    `form:"month"` // Moments
+	Day      string    `form:"day"`   // Moments
 	Color    string    `form:"color"`
 	Camera   int       `form:"camera"`
 	Lens     int       `form:"lens"`

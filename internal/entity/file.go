@@ -7,15 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/face"
-
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+	"github.com/ulule/deepcopier"
+
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/ulule/deepcopier"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type DownloadName string
@@ -71,6 +70,11 @@ type File struct {
 	Share           []FileShare   `json:"-" yaml:"-"`
 	Sync            []FileSync    `json:"-" yaml:"-"`
 	markers         *Markers
+}
+
+// TableName returns the entity database table name.
+func (File) TableName() string {
+	return "files"
 }
 
 type FileInfos struct {
@@ -196,12 +200,69 @@ func (m File) Missing() bool {
 	return m.FileMissing || m.DeletedAt != nil
 }
 
-// Delete permanently deletes the entity from the database.
+// DeletePermanently permanently deletes a file from the index.
 func (m *File) DeletePermanently() error {
-	Db().Unscoped().Delete(FileShare{}, "file_id = ?", m.ID)
-	Db().Unscoped().Delete(FileSync{}, "file_id = ?", m.ID)
+	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
+		log.Errorf("file: %s (delete markers)", err)
+	}
 
-	return Db().Unscoped().Delete(m).Error
+	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
+		log.Errorf("file: %s (delete shares)", err)
+	}
+
+	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
+		log.Errorf("file: %s (delete sync)", err)
+	}
+
+	if err := m.ReplaceHash(""); err != nil {
+		log.Errorf("file: %s (delete previews)", err)
+	}
+
+	return UnscopedDb().Delete(m).Error
+}
+
+// ReplaceHash updates file hash references.
+func (m *File) ReplaceHash(newHash string) error {
+	if m.FileHash == newHash {
+		// Nothing to do.
+		return nil
+	}
+
+	// Log values.
+	if m.FileHash != "" && newHash == "" {
+		log.Tracef("file: removing hash %s", txt.Quote(m.FileHash))
+	} else if m.FileHash != "" && newHash != "" {
+		log.Tracef("file: hash %s changed to %s", txt.Quote(m.FileHash), txt.Quote(newHash))
+	}
+
+	// Set file hash to new value.
+	oldHash := m.FileHash
+	m.FileHash = newHash
+
+	// Ok to skip updating related tables?
+	if m.NoJPEG() || m.FileHash == "" {
+		return nil
+	}
+
+	entities := Types{
+		"albums": Album{},
+		"labels": Label{},
+	}
+
+	// Search related tables for references and update them.
+	for name, entity := range entities {
+		start := time.Now()
+
+		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).UpdateColumn("thumb", newHash); res.Error != nil {
+			return res.Error
+		} else if res.RowsAffected == 1 {
+			log.Infof("%s: updated %d preview [%s]", name, res.RowsAffected, time.Since(start))
+		} else if res.RowsAffected > 1 {
+			log.Infof("%s: updated %d previews [%s]", name, res.RowsAffected, time.Since(start))
+		}
+	}
+
+	return nil
 }
 
 // Delete deletes the entity from the database.
@@ -209,8 +270,6 @@ func (m *File) Delete(permanently bool) error {
 	if permanently {
 		return m.DeletePermanently()
 	}
-
-	Db().Delete(File{}, "id = ?", m.ID)
 
 	return Db().Delete(m).Error
 }
@@ -255,7 +314,7 @@ func (m *File) Create() error {
 		return err
 	}
 
-	if err := m.Markers().Save(m.FileUID); err != nil {
+	if _, err := m.SaveMarkers(); err != nil {
 		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -283,7 +342,7 @@ func (m *File) Save() error {
 		return err
 	}
 
-	if err := m.Markers().Save(m.FileUID); err != nil {
+	if _, err := m.SaveMarkers(); err != nil {
 		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
 		return err
 	}
@@ -421,33 +480,62 @@ func (m *File) AddFaces(faces face.Faces) {
 
 // AddFace adds a face marker to the file.
 func (m *File) AddFace(f face.Face, subjUID string) {
-	marker := *NewFaceMarker(f, *m, subjUID)
+	// Only add faces with embedding, so that they can be clustered.
+	if len(f.Embeddings) != 1 {
+		return
+	}
 
-	if markers := m.Markers(); !markers.Contains(marker) {
-		markers.Append(marker)
+	// Create new marker from face.
+	marker := NewFaceMarker(f, *m, subjUID)
+
+	// Failed creating new marker?
+	if marker == nil {
+		return
+	}
+
+	// Append marker if it doesn't conflict with existing marker.
+	if markers := m.Markers(); !markers.Contains(*marker) {
+		markers.Append(*marker)
 	}
 }
 
-// FaceCount returns the current number of valid faces detected.
-func (m *File) FaceCount() (c int) {
-	if err := Db().Model(Marker{}).
-		Where("file_uid = ? AND marker_type = ?", m.FileUID, MarkerFace).
-		Where("marker_invalid = 0").
-		Count(&c).Error; err != nil {
-		log.Errorf("file: %s (count faces)", err)
-		return 0
-	} else {
-		return c
+// ValidFaceCount returns the number of valid face markers.
+func (m *File) ValidFaceCount() (c int) {
+	return ValidFaceCount(m.FileUID)
+}
+
+// UpdatePhotoFaceCount updates the faces count in the index and returns it if the file is primary.
+func (m *File) UpdatePhotoFaceCount() (c int, err error) {
+	// Primary file of an existing photo?
+	if !m.FilePrimary || m.PhotoID == 0 {
+		return 0, nil
 	}
+
+	c = m.ValidFaceCount()
+
+	err = UnscopedDb().Model(Photo{}).
+		Where("id = ?", m.PhotoID).
+		UpdateColumn("photo_faces", c).Error
+
+	return c, err
+}
+
+// SaveMarkers updates markers in the index.
+func (m *File) SaveMarkers() (count int, err error) {
+	if m.markers == nil {
+		return 0, nil
+	}
+
+	return m.markers.Save(m)
 }
 
 // Markers finds and returns existing file markers.
 func (m *File) Markers() *Markers {
 	if m.markers != nil {
 		return m.markers
-	}
-
-	if res, err := FindMarkers(m.FileUID); err != nil {
+	} else if m.FileUID == "" {
+		m.markers = &Markers{}
+	} else if res, err := FindMarkers(m.FileUID); err != nil {
 		log.Warnf("file: %s (load markers)", err)
 		m.markers = &Markers{}
 	} else {
@@ -455,6 +543,15 @@ func (m *File) Markers() *Markers {
 	}
 
 	return m.markers
+}
+
+// UnsavedMarkers tests if any marker hasn't been saved yet.
+func (m *File) UnsavedMarkers() bool {
+	if m.markers == nil {
+		return false
+	}
+
+	return m.markers.Unsaved()
 }
 
 // SubjectNames returns all known subject names.

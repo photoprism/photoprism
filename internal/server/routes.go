@@ -65,7 +65,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		// Thumbnails and downloads.
 		api.GetThumb(v1)
-		api.GetThumbCrop(v1)
 		api.GetDownload(v1)
 		api.GetVideo(v1)
 		api.CreateZip(v1)

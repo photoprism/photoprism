@@ -236,7 +236,7 @@ func (c *Config) SetDbOptions() {
 func (c *Config) InitDb() {
 	c.SetDbOptions()
 	entity.SetDbProvider(c)
-	entity.MigrateDb()
+	entity.MigrateDb(true)
 
 	entity.Admin.InitPassword(c.AdminPassword())
 

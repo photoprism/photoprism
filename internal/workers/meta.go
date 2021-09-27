@@ -111,13 +111,6 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Warnf("metadata: %s (reset quality)", err.Error())
 	}
 
-	log.Debugf("metadata: updating photo counts")
-
-	// Update photo counts and visibilities.
-	if err := entity.UpdatePhotoCounts(); err != nil {
-		log.Warnf("metadata: %s (update counts)", err.Error())
-	}
-
 	// Run moments worker.
 	if w := photoprism.NewMoments(m.conf); w == nil {
 		log.Errorf("metadata: failed updating moments")
@@ -134,9 +127,16 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Warn(err)
 	}
 
+	log.Debugf("metadata: updating photo counts")
+
+	// Update precalculated photo and file counts.
+	if err := entity.UpdatePhotoCounts(); err != nil {
+		log.Warnf("metadata: %s (update counts)", err.Error())
+	}
+
 	log.Debugf("metadata: updating preview images")
 
-	// Update album, label, and subject preview image hashes.
+	// Update album, subject, and label preview thumbs.
 	if err := query.UpdatePreviews(); err != nil {
 		log.Errorf("metadata: %s (update previews)", err)
 	}

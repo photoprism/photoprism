@@ -11,16 +11,14 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/service"
-
-	"github.com/photoprism/photoprism/internal/photoprism"
-
-	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/urfave/cli"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // RestoreCommand configures the backup cli command.

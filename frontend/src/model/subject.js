@@ -40,8 +40,6 @@ export class Subject extends RestModel {
   getDefaults() {
     return {
       UID: "",
-      MarkerUID: "",
-      MarkerSrc: "",
       Type: "",
       Src: "",
       Slug: "",
@@ -53,8 +51,8 @@ export class Subject extends RestModel {
       Private: false,
       Excluded: false,
       FileCount: 0,
-      FileHash: "",
-      CropArea: "",
+      Thumb: "",
+      ThumbSrc: "",
       Metadata: {},
       CreatedAt: "",
       UpdatedAt: "",
@@ -90,7 +88,7 @@ export class Subject extends RestModel {
   }
 
   thumbnailUrl(size) {
-    if (!this.FileHash) {
+    if (!this.Thumb) {
       return `${config.contentUri}/svg/portrait`;
     }
 
@@ -98,13 +96,7 @@ export class Subject extends RestModel {
       size = "tile_160";
     }
 
-    if (this.CropArea && (size === "tile_160" || size === "tile_320")) {
-      return `${config.contentUri}/t/${this.FileHash}/${config.previewToken()}/${size}/${
-        this.CropArea
-      }`;
-    } else {
-      return `${config.contentUri}/t/${this.FileHash}/${config.previewToken()}/${size}`;
-    }
+    return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
   }
 
   getDateString() {
@@ -132,7 +124,7 @@ export class Subject extends RestModel {
   }
 
   static batchSize() {
-    return 500;
+    return 480;
   }
 
   static getCollectionResource() {

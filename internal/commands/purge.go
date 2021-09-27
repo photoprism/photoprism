@@ -6,12 +6,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/urfave/cli"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/urfave/cli"
 )
 
 // PurgeCommand registers the index cli command.

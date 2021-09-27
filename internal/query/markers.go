@@ -236,3 +236,17 @@ func CountMarkers(markerType string) (n int) {
 
 	return n
 }
+
+// RemoveOrphanMarkers removes markers without an existing file.
+func RemoveOrphanMarkers() (removed int64, err error) {
+	where := fmt.Sprintf("file_uid NOT IN (SELECT file_uid FROM %s)", entity.File{}.TableName())
+
+	if res := UnscopedDb().
+		Delete(&entity.Marker{}, where); res.Error != nil {
+		return removed, fmt.Errorf("markers: %s (purge orphans)", res.Error)
+	} else {
+		removed += res.RowsAffected
+	}
+
+	return removed, nil
+}

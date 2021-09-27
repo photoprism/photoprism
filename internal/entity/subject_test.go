@@ -52,10 +52,12 @@ func TestSubject_SetName(t *testing.T) {
 		assert.Equal(t, "jens-mander", m.SubjSlug)
 
 		err := m.SetName("")
+
 		if err == nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "subject: name must not be empty", err.Error())
+
+		assert.Equal(t, "name must not be empty", err.Error())
 		assert.Equal(t, "Jens Mander", m.SubjName)
 	})
 }

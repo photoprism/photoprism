@@ -12,7 +12,7 @@ import (
 func People() (people entity.People, err error) {
 	err = UnscopedDb().
 		Table(entity.Subject{}.TableName()).
-		Select("subj_uid, subj_name, subj_alias, subj_favorite ").
+		Select("subj_uid, subj_name, subj_alias, subj_favorite").
 		Where("deleted_at IS NULL AND subj_type = ?", entity.SubjPerson).
 		Order("subj_favorite DESC, subj_name").
 		Limit(2000).Offset(0).
@@ -61,8 +61,8 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 	return result, err
 }
 
-// RemoveDanglingMarkerSubjects permanently deletes dangling marker subjects from the index.
-func RemoveDanglingMarkerSubjects() (removed int64, err error) {
+// RemoveOrphanSubjects permanently deletes dangling marker subjects from the index.
+func RemoveOrphanSubjects() (removed int64, err error) {
 	res := UnscopedDb().
 		Where("subj_src = ?", entity.SrcMarker).
 		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Face{}.TableName())).

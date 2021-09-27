@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -143,13 +144,25 @@ func UpdateLabelPhotoCounts() (err error) {
 	return nil
 }
 
-// UpdatePhotoCounts updates static photos counts and visibilities.
+// UpdatePhotoCounts updates precalculated photo and file counts.
 func UpdatePhotoCounts() (err error) {
 	if err = UpdatePlacesPhotoCounts(); err != nil {
+		if strings.Contains(err.Error(), "Error 1054") {
+			log.Errorf("counts: failed updating places, incompatible database version")
+			log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
+			return nil
+		}
+
 		return err
 	}
 
 	if err = UpdateSubjectFileCounts(); err != nil {
+		if strings.Contains(err.Error(), "Error 1054") {
+			log.Errorf("counts: failed updating subjects, incompatible database version")
+			log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
+			return nil
+		}
+
 		return err
 	}
 

@@ -65,7 +65,10 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 			log.Errorf("archive: %s", err)
 		}
 
+		// Update precalculated photo and file counts.
 		logError("photos", entity.UpdatePhotoCounts())
+
+		// Update album, subject, and label preview thumbs.
 		logError("photos", query.UpdatePreviews())
 
 		UpdateClientConfig()
@@ -124,7 +127,10 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 			return
 		}
 
+		// Update precalculated photo and file counts.
 		logError("photos", entity.UpdatePhotoCounts())
+
+		// Update album, subject, and label preview thumbs.
 		logError("photos", query.UpdatePreviews())
 
 		UpdateClientConfig()
@@ -257,6 +263,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 			return
 		}
 
+		// Update precalculated photo and file counts.
 		logError("photos", entity.UpdatePhotoCounts())
 
 		if photos, err := query.PhotoSelection(f); err == nil {
@@ -372,8 +379,9 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			}
 		}
 
-		// Update counts and views if needed.
+		// Any photos deleted?
 		if len(deleted) > 0 {
+			// Update precalculated photo and file counts.
 			logError("photos", entity.UpdatePhotoCounts())
 
 			UpdateClientConfig()

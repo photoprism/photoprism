@@ -9,7 +9,7 @@ test.meta("testID", "library-import-001")("Import files from folder using copy",
   await page.openNav();
   await t.click(Selector(".nav-labels"));
   await page.search("bakery");
-  await t.expect(Selector("h3").withText("Couldn't find anything").visible).ok();
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.openNav();
   await t
     .click(Selector(".nav-library"))
@@ -20,9 +20,7 @@ test.meta("testID", "library-import-001")("Import files from folder using copy",
     //TODO replace wait
     .wait(60000);
   await page.openNav();
-  await t
-    .click(Selector(".nav-labels"))
-    .click(Selector(".action-reload"));
+  await t.click(Selector(".nav-labels")).click(Selector(".action-reload"));
   await page.search("bakery");
   await t.expect(Selector(".is-label").visible).ok();
 });

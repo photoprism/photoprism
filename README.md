@@ -22,6 +22,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Our intuitive [user interface](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
+* Privacy-preserving face detection and recognition.
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, 
   _location type_, and many other properties.
@@ -42,8 +43,13 @@ on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux, and Windows.
 
 We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
+Also make sure it has at least 4 GB of swap configured, so that indexing doesn't cause
+restarts when there are memory usage spikes.
 Beyond these minimum requirements, the amount of RAM should match the number of cores.
-Indexing large photo and video collections significantly benefits from fast, local SSD storage.
+
+Indexing large photo and video collections significantly benefits from fast, local SSD storage,
+and lots of memory for caching. Especially the conversion of RAW images and the transcoding of
+videos are very demanding.
 
 ## Roadmap ##
 

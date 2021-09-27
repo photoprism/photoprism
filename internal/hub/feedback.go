@@ -43,7 +43,7 @@ func NewFeedback(version, serial string) *Feedback {
 func (c *Config) SendFeedback(f form.Feedback) (err error) {
 	feedback := NewFeedback(c.Version, c.Serial)
 	feedback.Category = f.Category
-	feedback.Subject = txt.TrimLen(f.Message, 50)
+	feedback.Subject = txt.Shorten(f.Message, 50, "...")
 	feedback.Message = f.Message
 	feedback.UserName = f.UserName
 	feedback.UserEmail = f.UserEmail
