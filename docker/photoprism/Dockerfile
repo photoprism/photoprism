@@ -110,7 +110,7 @@ COPY --from=build /usr/lib/libtensorflow_framework.so /usr/lib/libtensorflow_fra
 RUN ldconfig
 
 # Set default umask and create photoprism user
-RUN umask 0000 && useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism
+RUN umask 0000 && useradd photoprism -m -U -u 1000 -d /photoprism && chmod a+rwx /photoprism
 WORKDIR /photoprism
 
 # Copy files to /photoprism

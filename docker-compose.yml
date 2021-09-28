@@ -19,7 +19,8 @@ services:
       - "go-mod:/go/pkg/mod"
     shm_size: "2gb"
     environment:
-      UID: ${UID:-1000}
+      PHOTOPRISM_UID: ${UID:-1000}
+      PHOTOPRISM_GID: ${GID:-1000}
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"

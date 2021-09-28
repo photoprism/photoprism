@@ -10,7 +10,8 @@ services:
     ports:
       - "2344:2342" # [server]:[container]
     environment:
-      UID: ${UID:-1000}
+      PHOTOPRISM_UID: ${UID:-1000}
+      PHOTOPRISM_GID: ${GID:-1000}
       PHOTOPRISM_SITE_URL: "http://localhost:2344/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"

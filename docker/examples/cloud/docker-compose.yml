@@ -104,7 +104,7 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     # Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
-    user: "1000"
+    user: "1000:1000"
     # Don't expose port when running behind Traefik reverse proxy!
     # ports:
     #  - "2342:2342" # [server]:[container]
