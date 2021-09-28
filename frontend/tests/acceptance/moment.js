@@ -180,9 +180,9 @@ test.meta("testID", "moments-004")("Create/delete album during add to album", as
   await t
     .expect(PhotoCountInAlbum)
     .eql(PhotoCountInMoment)
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
     .ok();
   await page.openNav();
   await t.click(Selector(".nav-albums"));
@@ -195,9 +195,9 @@ test.meta("testID", "moments-004")("Create/delete album during add to album", as
   await t
     .click(Selector(".nav-moments"))
     .click(Selector("a.is-album").withAttribute("data-uid", FirstMoment))
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
     .ok();
 });
 

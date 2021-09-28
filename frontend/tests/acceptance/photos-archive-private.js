@@ -24,26 +24,26 @@ test.meta("testID", "photos-005")(
     await page.openNav();
     await t.click(Selector(".nav-private"));
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-browse"));
     await page.selectPhotoFromUID(FirstPhoto);
     await page.selectFromUIDInFullscreen(SecondPhoto);
-    const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCount = await Selector("span.count-clipboard", { timeout: 15000 });
     await t.expect(clipboardCount.textContent).eql("2");
     await page.privateSelected();
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
     await page.setFilter("view", "List");
     await t.click(Selector("button.input-private").withAttribute("data-uid", ThirdPhoto));
     if (t.browser.platform === "mobile") {
@@ -52,11 +52,11 @@ test.meta("testID", "photos-005")(
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("td").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("td").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("td").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("td").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("td").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 5000 })
+      .expect(Selector("td").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-video"));
@@ -65,13 +65,13 @@ test.meta("testID", "photos-005")(
     await page.setFilter("view", "Card");
 
     await page.selectPhotoFromUID(FirstVideo);
-    const clipboardCountVideo = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCountVideo = await Selector("span.count-clipboard", { timeout: 15000 });
     await t
       .expect(clipboardCountVideo.textContent)
       .eql("1")
       .click(Selector("button.action-menu"))
       .click(Selector("button.action-private"))
-      .expect(Selector("button.action-menu").exists, { timeout: 5000 })
+      .expect(Selector("button.action-menu").exists, { timeout: 15000 })
       .notOk();
     await page.selectPhotoFromUID(ThirdVideo);
     await page.editSelected();
@@ -84,25 +84,25 @@ test.meta("testID", "photos-005")(
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-private"));
 
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 15000 })
       .ok();
     await page.selectPhotoFromUID(FirstPhoto);
     await page.selectPhotoFromUID(SecondPhoto);
@@ -124,43 +124,43 @@ test.meta("testID", "photos-005")(
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-browse"));
 
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t.click(Selector(".nav-video"));
 
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondVideo).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ThirdVideo).exists, { timeout: 15000 })
       .ok();
   }
 );
@@ -186,56 +186,56 @@ test.meta("testID", "photos-006")(
     await page.openNav();
     await t.click(Selector(".nav-archive"));
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .notOk()
       .expect(Selector("div").withAttribute("data-uid", FirstPrivatePhoto).exists, {
         timeout: 5000,
       })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-video"));
     await page.setFilter("view", "Card");
     await page.selectPhotoFromUID(FirstVideo);
-    const clipboardCountVideo = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCountVideo = await Selector("span.count-clipboard", { timeout: 15000 });
     await t.expect(clipboardCountVideo.textContent).eql("1");
     await page.archiveSelected();
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-browse"));
     await page.selectPhotoFromUID(FirstPhoto);
     await page.selectPhotoFromUID(SecondPhoto);
-    const clipboardCountPhotos = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCountPhotos = await Selector("span.count-clipboard", { timeout: 15000 });
     await t.expect(clipboardCountPhotos.textContent).eql("2");
     await page.archiveSelected();
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-private"));
     await page.selectPhotoFromUID(FirstPrivatePhoto);
-    const clipboardCountPrivate = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCountPrivate = await Selector("span.count-clipboard", { timeout: 15000 });
     await t.expect(clipboardCountPrivate.textContent).eql("1");
     await page.openNav();
     if (t.browser.platform === "mobile") {
@@ -244,17 +244,17 @@ test.meta("testID", "photos-006")(
       await t.click(Selector(".nav-review"));
     }
     await page.selectPhotoFromUID(FirstReviewPhoto);
-    const clipboardCountReview = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCountReview = await Selector("span.count-clipboard", { timeout: 15000 });
     await t.expect(clipboardCountReview.textContent).eql("2");
     await page.archiveSelected();
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     if (t.browser.platform === "mobile") {
@@ -263,62 +263,62 @@ test.meta("testID", "photos-006")(
       await t.click(Selector(".nav-archive"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .ok()
       .expect(Selector("div").withAttribute("data-uid", FirstPrivatePhoto).exists, {
         timeout: 5000,
       })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 15000 })
       .ok();
     await page.selectPhotoFromUID(FirstPhoto);
     await page.selectPhotoFromUID(SecondPhoto);
     await page.selectPhotoFromUID(FirstVideo);
     await page.selectPhotoFromUID(FirstPrivatePhoto);
     await page.selectPhotoFromUID(FirstReviewPhoto);
-    const clipboardCountArchive = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCountArchive = await Selector("span.count-clipboard", { timeout: 15000 });
     await t.expect(clipboardCountArchive.textContent).eql("5");
     await page.restoreSelected();
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .notOk()
       .expect(Selector("div").withAttribute("data-uid", FirstPrivatePhoto).exists, {
         timeout: 5000,
       })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-video"));
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t.click(Selector(".nav-browse"));
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .ok()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t.click(Selector(".nav-private"));
     await t
       .expect(Selector("div").withAttribute("data-uid", FirstPrivatePhoto).exists, {
-        timeout: 5000,
+        timeout: 15000,
       })
       .ok();
     await page.openNav();
@@ -328,7 +328,7 @@ test.meta("testID", "photos-006")(
       await t.click(Selector(".nav-review"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstReviewPhoto).exists, { timeout: 15000 })
       .ok();
   }
 );
@@ -405,67 +405,67 @@ test.meta("testID", "photos-013")(
     await t.click(Selector(".nav-browse + div")).click(Selector(".nav-archive"));
     const PhotoCountInArchiveAfterArchive = await Selector("div.is-photo").count;
     await t.expect(PhotoCountInArchiveAfterArchive).eql(InitialPhotoCountInArchive + 13);
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
 
     await page.openNav();
     await t
       .click(Selector(".nav-monochrome"))
-      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-panoramas"))
-      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-stacks"))
-      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-scans"))
-      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-review"))
-      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-favorites"))
-      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-private"))
-      .expect(Selector("div").withAttribute("data-uid", PrivatePhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", PrivatePhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-video"))
-      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 15000 })
       .notOk();
     await t
       .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
-      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-moments"))
       .click(Selector("a.is-album").nth(0))
-      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 15000 })
       .notOk();
     await t
       .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
-      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 15000 })
       .notOk()
       .navigateTo("/all?q=label%3Aseashore")
-      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 15000 })
       .notOk()
       .navigateTo("/folders/aqnah1321mgkt1w2/archive")
-      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 15000 })
       .notOk();
 
     await page.openNav();
@@ -487,67 +487,67 @@ test.meta("testID", "photos-013")(
     await page.restoreSelected();
     const PhotoCountInArchiveAfterRestore = await Selector("div.is-photo").count;
     await t.expect(PhotoCountInArchiveAfterRestore).eql(InitialPhotoCountInArchive);
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
 
     await page.openNav();
     await t
       .click(Selector(".nav-monochrome"))
-      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-panoramas"))
-      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-stacks"))
-      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-scans"))
-      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-review"))
-      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-favorites"))
-      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-private"))
-      .expect(Selector("div").withAttribute("data-uid", PrivatePhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", PrivatePhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-video"))
-      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 15000 })
       .ok();
     await t
       .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
-      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-moments"))
       .click(Selector("a.is-album").nth(0))
-      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 15000 })
       .ok();
     await t
       .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
-      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 15000 })
       .ok()
       .navigateTo("/all?q=label%3Aseashore")
-      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 15000 })
       .ok()
       .navigateTo("/folders/aqnah1321mgkt1w2/archive")
-      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 15000 })
       .ok();
   }
 );
@@ -627,67 +627,67 @@ test.meta("testID", "photos-014")(
     await t.click(Selector(".nav-private"));
     const PhotoCountInPrivateAfterPrivate = await Selector("div.is-photo").count;
     await t.expect(PhotoCountInPrivateAfterPrivate).eql(InitialPhotoCountInPrivate + 13);
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
 
     await page.openNav();
     await t
       .click(Selector(".nav-browse + div"))
       .click(Selector(".nav-monochrome"))
-      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-panoramas"))
-      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-stacks"))
-      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-scans"))
-      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-review"))
-      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 15000 })
       .notOk()
       .navigateTo("/albums?q=Holiday")
       .click(Selector("a.is-album").nth(0))
-      .expect(Selector("div").withAttribute("data-uid", AlbumPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", AlbumPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-favorites"))
-      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-video"))
-      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 15000 })
       .notOk();
     await t
       .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
-      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t
       .click(Selector(".nav-moments"))
       .click(Selector("a.is-album").nth(0))
-      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 15000 })
       .notOk();
     await t
       .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
-      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 15000 })
       .notOk()
       .navigateTo("/all?q=label%3Aseashore")
-      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 15000 })
       .notOk()
       .navigateTo("/folders/aqnah1321mgkt1w2/archive")
-      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 15000 })
       .notOk();
 
     await page.openNav();
@@ -713,67 +713,67 @@ test.meta("testID", "photos-014")(
     await t.click(Selector(".nav-private"));
     const PhotoCountInPrivateAfterUnprivate = await Selector("div.is-photo").count;
     await t.expect(PhotoCountInPrivateAfterUnprivate).eql(InitialPhotoCountInPrivate);
-    await t.expect(Selector("button.action-menu").exists, { timeout: 5000 }).notOk();
+    await t.expect(Selector("button.action-menu").exists, { timeout: 15000 }).notOk();
 
     await page.openNav();
     await t
       .click(Selector(".nav-browse + div"))
       .click(Selector(".nav-monochrome"))
-      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MonochromePhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-panoramas"))
-      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", PanoramaPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-stacks"))
-      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StackedPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-scans"))
-      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ScannedPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-review"))
-      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", ReviewPhoto).exists, { timeout: 15000 })
       .ok()
       .navigateTo("/albums?q=Holiday")
       .click(Selector("a.is-album").nth(0))
-      .expect(Selector("div").withAttribute("data-uid", AlbumPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", AlbumPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-favorites"))
-      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FavoritesPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-video"))
-      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", Video).exists, { timeout: 15000 })
       .ok();
     await t
       .navigateTo("/calendar/aqmxlr71p6zo22dk/january-2017")
-      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", CalendarPhoto).exists, { timeout: 15000 })
       .ok();
     await page.openNav();
     await t
       .click(Selector(".nav-moments"))
       .click(Selector("a.is-album").nth(0))
-      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", MomentPhoto).exists, { timeout: 15000 })
       .ok();
     await t
       .navigateTo("/states/aqmxlr71tebcohrw/western-cape-south-africa")
-      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", StatesPhoto).exists, { timeout: 15000 })
       .ok()
       .navigateTo("/all?q=label%3Aseashore")
-      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", LabelPhoto).exists, { timeout: 15000 })
       .ok()
       .navigateTo("/folders/aqnah1321mgkt1w2/archive")
-      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FolderPhoto).exists, { timeout: 15000 })
       .ok();
   }
 );

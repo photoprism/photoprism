@@ -45,7 +45,7 @@ test.meta("testID", "photos-002")(
     await t.click(Selector(".nav-video"));
     const FirstVideo = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
     await page.selectPhotoFromUID(FirstVideo);
-    const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
+    const clipboardCount = await Selector("span.count-clipboard", { timeout: 15000 });
     await t
       .expect(clipboardCount.textContent)
       .eql("2")
@@ -68,9 +68,9 @@ test.meta("testID", "photos-003")(
 
     await t.click(Selector(".nav-browse"));
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk();
     await page.openNav();
     await t.click(Selector(".nav-review"));
@@ -84,14 +84,14 @@ test.meta("testID", "photos-003")(
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).visible, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).visible, { timeout: 15000 })
       .ok();
     await page.editSelected();
     await t.click(Selector("button.action-approve"));
     if (t.browser.platform === "mobile") {
       await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
     } else {
-      await t.click(Selector("button.action-done", { timeout: 5000 }));
+      await t.click(Selector("button.action-done", { timeout: 15000 }));
     }
     await page.selectPhotoFromUID(SecondPhoto);
     await page.editSelected();
@@ -101,7 +101,7 @@ test.meta("testID", "photos-003")(
     if (t.browser.platform === "mobile") {
       await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
     } else {
-      await t.click(Selector("button.action-done", { timeout: 5000 }));
+      await t.click(Selector("button.action-done", { timeout: 15000 }));
     }
     await page.setFilter("view", "Cards");
     const ButtonThirdPhoto = 'div.is-photo[data-uid="' + ThirdPhoto + '"] button.action-approve';
@@ -112,9 +112,9 @@ test.meta("testID", "photos-003")(
       await t.click(Selector("button.action-reload"));
     }
     await t
-      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
       .notOk()
-      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
       .notOk()
       .expect(Selector("div").withAttribute("data-uid", ThirdPhoto).exists, { timeout: 5000 })
       .notOk();
@@ -141,11 +141,11 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-favorites"));
   await t
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
     .notOk()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
     .notOk()
-    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
     .notOk();
   await page.openNav();
   await t.click(Selector(".nav-browse"));
@@ -157,11 +157,11 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
         .click(Selector(".action-close"));
     await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", FirstPhoto).exists, {
-      timeout: 5000,
+      timeout: 15000,
     })
     .ok()
     .expect(Selector("div.is-photo").withAttribute("data-uid", SecondPhoto).exists, {
-      timeout: 5000,
+      timeout: 15000,
     })
     .ok();
   await page.openNav();
@@ -174,17 +174,17 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   }
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", FirstVideo).exists, {
-      timeout: 5000,
+      timeout: 15000,
     })
     .ok();
   await page.openNav();
   await t.click(Selector(".nav-favorites"));
   await t
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
     .ok();
   await page.toggleLike(FirstVideo);
   await page.toggleLike(FirstPhoto);
@@ -199,11 +199,11 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
     await t.click(Selector("button.action-reload"));
   }
   await t
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
     .notOk()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
     .notOk()
-    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
     .notOk();
 });
 
@@ -322,12 +322,12 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
       FirstPhotoKeywords,
       FirstPhotoNotes
   )
-  const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
+  const clipboardCount = await Selector("span.count-clipboard", { timeout: 15000 });
   await t
     .expect(clipboardCount.textContent)
     .eql("1")
     .click(Selector(".action-clear"))
-    .expect(Selector("button.action-menu").exists, { timeout: 5000 })
+    .expect(Selector("button.action-menu").exists, { timeout: 15000 })
     .notOk();
 });
 
@@ -342,7 +342,7 @@ test.meta("testID", "photos-008")("Change primary file", async (t) => {
     console.log(t.browser.platform);
     await t
       .click(Selector(".input-open"))
-      .click(Selector(".action-next", { timeout: 5000 }))
+      .click(Selector(".action-next", { timeout: 15000 }))
       .click(Selector(".action-previous"))
       .click(Selector(".action-close"));
   }
@@ -383,7 +383,7 @@ test.meta("testID", "photos-010")("Ungroup files", async (t) => {
   await t.click(Selector(".nav-browse")).click(Selector(".p-expand-search"));
   await page.search("group");
   await page.setFilter("view", "Cards");
-  const PhotoCount = await Selector("button.action-title-edit", { timeout: 5000 }).count;
+  const PhotoCount = await Selector("button.action-title-edit", { timeout: 15000 }).count;
   const SequentialPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
   await t.expect(PhotoCount).eql(1);
   await page.openNav();
@@ -407,7 +407,7 @@ test.meta("testID", "photos-010")("Ungroup files", async (t) => {
   } else {
     await t.click(Selector("button.action-reload"));
   }
-  const PhotoCountAfterUngroup = await Selector("button.action-title-edit", { timeout: 5000 })
+  const PhotoCountAfterUngroup = await Selector("button.action-title-edit", { timeout: 15000 })
     .count;
   await t.expect(PhotoCountAfterUngroup).eql(2);
 });
@@ -417,7 +417,7 @@ test.skip.meta("testID", "photos-011")("Delete non primary file", async (t) => {
   await t
     .click(Selector(".nav-library"))
     .click(Selector("#tab-library-import"))
-    .click(Selector(".input-import-folder input"), { timeout: 5000 })
+    .click(Selector(".input-import-folder input"), { timeout: 15000 })
     .click(Selector("div.v-list__tile__title").withText("/pizza"))
     .click(Selector(".action-import"))
     .wait(10000);
@@ -425,7 +425,7 @@ test.skip.meta("testID", "photos-011")("Delete non primary file", async (t) => {
   await t.click(Selector(".nav-browse")).click(Selector(".p-expand-search"));
   await page.search("mogale");
   await page.setFilter("view", "Cards");
-  const PhotoCount = await Selector("button.action-title-edit", { timeout: 5000 }).count;
+  const PhotoCount = await Selector("button.action-title-edit", { timeout: 15000 }).count;
 
   const Photo = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
   await t
@@ -433,7 +433,7 @@ test.skip.meta("testID", "photos-011")("Delete non primary file", async (t) => {
     .eql(1)
     .click(Selector("button.action-title-edit").withAttribute("data-uid", Photo))
     .click(Selector("#tab-files"));
-  const FileCount = await Selector("li.v-expansion-panel__container", { timeout: 5000 }).count;
+  const FileCount = await Selector("li.v-expansion-panel__container", { timeout: 15000 }).count;
   await t
     .expect(FileCount)
     .eql(2)
@@ -442,7 +442,7 @@ test.skip.meta("testID", "photos-011")("Delete non primary file", async (t) => {
     .click(Selector(".action-confirm"))
     .wait(10000);
   const FileCountAfterDeletion = await Selector("li.v-expansion-panel__container", {
-    timeout: 5000,
+    timeout: 15000,
   }).count;
   await t.expect(FileCountAfterDeletion).eql(1);
 });
@@ -456,18 +456,18 @@ test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (
     await page.openNav();
     await t.click(Selector(".nav-browse + div"))
         .click(Selector(".nav-scans"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
         .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
         .notOk();
     if (t.browser.platform === "mobile") {
         await page.openNav();
     }
     await t
         .click(Selector(".nav-panoramas"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
         .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
         .notOk();
     await page.openNav();
     await t.click(Selector(".nav-browse"));
@@ -482,16 +482,16 @@ test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (
     await page.turnSwitchOn("panorama");
     await t.click(Selector(".action-close"));
     await page.clearSelection();
-    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
         .ok()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
         .ok();
     if (t.browser.platform === "mobile") {
         await page.openNav();
     }
     await t
         .click(Selector(".nav-scans"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
         .ok();
     if (t.browser.platform === "mobile") {
         await page.openNav();
@@ -514,9 +514,9 @@ test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (
     } else {
         await t.click(Selector("button.action-reload"));
     }
-    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
         .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
         .notOk();
     if (t.browser.platform === "mobile") {
         await page.openNav();
@@ -524,9 +524,9 @@ test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (
     }
     await t
         .click(Selector(".nav-scans"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
         .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 15000 })
         .notOk();
 });
 

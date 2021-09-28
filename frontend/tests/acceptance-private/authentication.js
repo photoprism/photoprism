@@ -8,7 +8,7 @@ const page = new Page();
 test.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
   async (t) => {
-    await t.wait(5000);
+    await t.wait(15000);
   }
 );
 
@@ -33,7 +33,7 @@ test.meta("testID", "authentication-001")("Login and Logout", async (t) => {
     .expect(Selector(".input-password input").hasAttribute("type", "password"))
     .ok()
     .click(Selector(".action-confirm"))
-    .expect(Selector(".input-search input", { timeout: 7000 }).visible)
+    .expect(Selector(".input-search input", { timeout: 17000 }).visible)
     .ok();
   await page.openNav();
   await t
@@ -105,7 +105,7 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
   await t.expect(Selector(".input-search input").visible).ok();
   await page.openNav();
   await t
-    .click(Selector(".nav-settings", { timeout: 7000 }))
+    .click(Selector(".nav-settings", { timeout: 17000 }))
     .click(Selector("#tab-settings-account"))
     .typeText(Selector(".input-current-password input"), "photoprism123", { replace: true })
     .typeText(Selector(".input-new-password input"), "photoprism", { replace: true })

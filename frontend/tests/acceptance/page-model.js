@@ -86,12 +86,12 @@ export default class Page {
       .expect(Selector("#photo-viewer").visible)
       .ok()
       .click(Selector('button[title="Select"]'))
-      .click(Selector(".action-close", { timeout: 4000 }));
+      .click(Selector(".action-close", { timeout: 14000 }));
   }
 
   async toggleSelectNthPhoto(nPhoto) {
     await t
-      .hover(Selector(".is-photo.type-image", { timeout: 4000 }).nth(nPhoto))
+      .hover(Selector(".is-photo.type-image", { timeout: 14000 }).nth(nPhoto))
       .click(Selector(".is-photo.type-image .input-select").nth(nPhoto));
   }
 
@@ -101,34 +101,34 @@ export default class Page {
 
   async archiveSelected() {
     if (!(await Selector("#t-clipboard button.action-archive").visible)) {
-      await t.click(Selector("button.action-menu", { timeout: 5000 }));
+      await t.click(Selector("button.action-menu", { timeout: 15000 }));
     }
     if (t.browser.platform === "mobile") {
       if (!(await Selector("#t-clipboard button.action-archive").visible)) {
-        await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        await t.click(Selector("button.action-menu", { timeout: 15000 }));
         if (!(await Selector("#t-clipboard button.action-archive").visible)) {
-          await t.click(Selector("button.action-menu", { timeout: 5000 }));
+          await t.click(Selector("button.action-menu", { timeout: 15000 }));
         }
         if (!(await Selector("#t-clipboard button.action-archive").visible)) {
-          await t.click(Selector("button.action-menu", { timeout: 5000 }));
+          await t.click(Selector("button.action-menu", { timeout: 15000 }));
         }
       }
     }
-    await t.click(Selector("#t-clipboard button.action-archive", { timeout: 5000 }));
+    await t.click(Selector("#t-clipboard button.action-archive", { timeout: 15000 }));
   }
 
   async privateSelected() {
-    await t.click(Selector("button.action-menu", { timeout: 5000 }));
+    await t.click(Selector("button.action-menu", { timeout: 15000 }));
     if (!(await Selector("button.action-private").visible)) {
-      await t.click(Selector("button.action-menu", { timeout: 5000 }));
+      await t.click(Selector("button.action-menu", { timeout: 15000 }));
       if (!(await Selector("button.action-private").visible)) {
-        await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        await t.click(Selector("button.action-menu", { timeout: 15000 }));
       }
       if (!(await Selector("button.action-private").visible)) {
-        await t.click(Selector("button.action-menu", { timeout: 5000 }));
+        await t.click(Selector("button.action-menu", { timeout: 15000 }));
       }
     }
-    await t.click(Selector("button.action-private", { timeout: 5000 }));
+    await t.click(Selector("button.action-private", { timeout: 15000 }));
   }
 
   async restoreSelected() {
@@ -166,7 +166,7 @@ export default class Page {
     await t
       .click("#tab-info")
       .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+        Selector(".input-" + type + " input", { timeout: 18000 }).hasAttribute(
           "aria-checked",
           "true"
         )
@@ -174,7 +174,7 @@ export default class Page {
       .ok()
       .click(Selector(".input-" + type + " input"))
       .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+        Selector(".input-" + type + " input", { timeout: 18000 }).hasAttribute(
           "aria-checked",
           "false"
         )
@@ -186,7 +186,7 @@ export default class Page {
     await t
       .click("#tab-info")
       .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+        Selector(".input-" + type + " input", { timeout: 18000 }).hasAttribute(
           "aria-checked",
           "false"
         )
@@ -194,7 +194,7 @@ export default class Page {
       .ok()
       .click(Selector(".input-" + type + " input"))
       .expect(
-        Selector(".input-" + type + " input", { timeout: 8000 }).hasAttribute(
+        Selector(".input-" + type + " input", { timeout: 18000 }).hasAttribute(
           "aria-checked",
           "true"
         )
@@ -212,7 +212,7 @@ export default class Page {
 
   async login(username, password) {
     await t
-      .typeText(Selector(".input-name input"), username, { replace: true, timeout: 5000 })
+      .typeText(Selector(".input-name input"), username, { replace: true, timeout: 15000 })
       .typeText(Selector(".input-password input"), password, { replace: true })
       .click(Selector(".action-confirm"));
   }
@@ -314,10 +314,10 @@ export default class Page {
     await t.click(Selector(".nav-browse + div")).click(Selector(".nav-archive"));
     await this.selectPhotoFromUID(uid);
     await t
-      .click(Selector("button.action-menu", { timeout: 5000 }))
+      .click(Selector("button.action-menu", { timeout: 15000 }))
       .click(Selector(".remove"))
       .click(Selector(".action-confirm"))
-      .expect(Selector("div").withAttribute("data-uid", uid).exists, { timeout: 5000 })
+      .expect(Selector("div").withAttribute("data-uid", uid).exists, { timeout: 15000 })
       .notOk();
   }
 
@@ -491,11 +491,11 @@ export default class Page {
       .typeText(Selector(".input-keywords textarea"), keywords)
       .typeText(Selector(".input-notes textarea"), notes, { replace: true })
       .click(Selector("button.action-approve"));
-    await t.expect(Selector(".input-latitude input").visible, { timeout: 5000 }).ok();
+    await t.expect(Selector(".input-latitude input").visible, { timeout: 15000 }).ok();
     if (t.browser.platform === "mobile") {
       await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
     } else {
-      await t.click(Selector("button.action-done", { timeout: 5000 }));
+      await t.click(Selector("button.action-done", { timeout: 15000 }));
     }
   }
 
@@ -657,7 +657,7 @@ export default class Page {
     if (t.browser.platform === "mobile") {
       await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
     } else {
-      await t.click(Selector("button.action-done", { timeout: 5000 }));
+      await t.click(Selector("button.action-done", { timeout: 15000 }));
     }
   }
 }

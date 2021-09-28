@@ -50,7 +50,7 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
   await t.click(Selector(".nav-browse"));
   await page.search("digikam");
   await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 15000 })
     .notOk()
     .navigateTo("/library/files/2020/10");
   const FileCountAfterDelete = await Selector("div.is-file").count;
@@ -103,7 +103,7 @@ test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (
   await t.click(Selector(".nav-browse"));
   await page.search("korn");
   await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 15000 })
     .notOk()
     .navigateTo("/library/files/2020/06");
   const FileCountAfterDelete = await Selector("div.is-file").count;
@@ -139,13 +139,13 @@ test.meta("testID", "photos-upload-delete-003")("Upload to existing Album + Dele
   await t.click(Selector(".nav-browse"));
   await page.search("ladybug");
   await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 15000 })
     .notOk();
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   await t
     .click(Selector("a.is-album").withAttribute("data-uid", AlbumUid))
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 15000 })
     .notOk();
   const PhotoCountAfterDelete = await Selector("div.is-photo").count;
   await t.expect(PhotoCountAfterDelete).eql(PhotoCount);
@@ -156,7 +156,7 @@ test.meta("testID", "photos-upload-delete-004")("Upload jpg to new Album + Delet
   await t.click(Selector(".nav-albums"));
   const AlbumCount = await Selector("a.is-album").count;
   await t
-    .click(Selector(".action-upload", { timeout: 5000 }))
+    .click(Selector(".action-upload", { timeout: 15000 }))
     .click(Selector(".input-albums"))
     .typeText(Selector(".input-albums input"), "NewCreatedAlbum")
     .pressKey("enter")
@@ -182,14 +182,14 @@ test.meta("testID", "photos-upload-delete-004")("Upload jpg to new Album + Delet
   await t.click(Selector(".nav-browse"));
   await page.search("digikam");
   await t
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 15000 })
     .notOk();
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   await page.search("NewCreatedAlbum");
   await t
     .click(Selector("a.is-album").nth(0))
-    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", UploadedPhoto).exists, { timeout: 15000 })
     .notOk();
   const PhotoCountAfterDelete = await Selector("div.is-photo").count;
   await t.expect(PhotoCountAfterDelete).eql(0);

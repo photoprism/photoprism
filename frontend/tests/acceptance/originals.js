@@ -36,7 +36,7 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
     .click(Selector("button").withText("BotanicalGarden"))
     .click(Selector('a[href="/library/files/Vacation"]'));
   await page.selectPhotoFromUID(KanadaUid);
-  const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
+  const clipboardCount = await Selector("span.count-clipboard", { timeout: 15000 });
   await t.expect(clipboardCount.textContent).eql("1");
   await page.addSelectedToAlbum("KanadaVacation", "album");
   await page.openNav();
@@ -45,7 +45,7 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
   await page.search("KanadaVacation");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-album").nth(0));
-  const PhotoCountAfterAdd = await Selector("div.is-photo", { timeout: 5000 }).count;
+  const PhotoCountAfterAdd = await Selector("div.is-photo", { timeout: 15000 }).count;
   await t.expect(PhotoCountAfterAdd).eql(2);
   await page.openNav();
   await t.click(Selector(".nav-albums"));
@@ -58,7 +58,7 @@ test.meta("testID", "originals-002")("Download original files", async (t) => {
   await t.click(Selector("div.nav-library + div")).click(Selector(".nav-originals"));
   const FirstFile = await Selector("div.is-file").nth(0).getAttribute("data-uid");
   await page.selectPhotoFromUID(FirstFile);
-  const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
+  const clipboardCount = await Selector("span.count-clipboard", { timeout: 15000 });
   await t
     .expect(clipboardCount.textContent)
     .eql("1")

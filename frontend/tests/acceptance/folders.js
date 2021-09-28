@@ -179,7 +179,7 @@ const PhotoCountInAlbum = await Selector("div.is-photo").count;
 await t
   .expect(PhotoCountInAlbum)
   .eql(PhotoCountInFolder)
-  .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+  .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
   .ok();
 await page.openNav();
 await t.click(Selector(".nav-albums"));
@@ -192,7 +192,7 @@ await t.expect(countAlbumsAfterDelete).eql(countAlbums);
 await t
   .click(Selector(".nav-folders"))
   .click(Selector("a.is-album").withAttribute("data-uid", ThirdFolder))
-  .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+  .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
   .ok();
 });
 

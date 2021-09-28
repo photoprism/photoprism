@@ -118,9 +118,9 @@ test.meta("testID", "calendar-004")("Create/delete album during add to album", a
   await t
     .expect(PhotoCountInAlbum)
     .eql(PhotoCountInCalendar)
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
     .ok();
   await page.openNav();
   await t.click(Selector(".nav-albums"));
@@ -133,9 +133,9 @@ test.meta("testID", "calendar-004")("Create/delete album during add to album", a
   await t
     .click(Selector(".nav-calendar"))
     .click(Selector("a.is-album").withAttribute("data-uid", SecondCalendar))
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 15000 })
     .ok()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
+    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 15000 })
     .ok();
 });
 

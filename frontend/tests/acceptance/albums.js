@@ -9,7 +9,7 @@ const page = new Page();
 test.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
   async (t) => {
-    await t.wait(5000);
+    await t.wait(15000);
   }
 );
 

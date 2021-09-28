@@ -27,7 +27,7 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
     .expect(PhotoKeywords)
     .contains("beacon")
     .click(Selector("#tab-labels"))
-    .click(Selector("button.action-remove"), { timeout: 5000 })
+    .click(Selector("button.action-remove"), { timeout: 15000 })
     .typeText(Selector(".input-label input"), "Test")
     .click(Selector("button.p-photo-label-add"))
     .click(Selector("#tab-details"));
@@ -48,7 +48,7 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
     .click(Selector("a.is-label").withAttribute("data-uid", LabelTest))
     .click(Selector(".action-title-edit").withAttribute("data-uid", PhotoBeacon))
     .click(Selector("#tab-labels"))
-    .click(Selector(".action-delete"), { timeout: 5000 })
+    .click(Selector(".action-delete"), { timeout: 15000 })
     .click(Selector(".action-on"))
     .click(Selector("#tab-details"));
   const PhotoKeywordsAfterUndo = await Selector(".input-keywords textarea").value;
@@ -72,16 +72,16 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
   await page.search("zebra");
   const LabelZebra = await Selector("a.is-label").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-label").nth(0));
-  const FirstPhotoZebra = await Selector("div.is-photo", { timeout: 5000 })
+  const FirstPhotoZebra = await Selector("div.is-photo", { timeout: 15000 })
     .nth(0)
     .getAttribute("data-uid");
-  const SecondPhotoZebra = await Selector("div.is-photo", { timeout: 5000 })
+  const SecondPhotoZebra = await Selector("div.is-photo", { timeout: 15000 })
     .nth(1)
     .getAttribute("data-uid");
   await page.setFilter("view", "Cards");
   await t.click(Selector(".action-title-edit").withAttribute("data-uid", FirstPhotoZebra));
-  const FirstPhotoTitle = await Selector(".input-title input", { timeout: 5000 }).value;
-  const FirstPhotoKeywords = await Selector(".input-keywords textarea", { timeout: 5000 }).value;
+  const FirstPhotoTitle = await Selector(".input-title input", { timeout: 15000 }).value;
+  const FirstPhotoKeywords = await Selector(".input-keywords textarea", { timeout: 15000 }).value;
   await t
     .expect(FirstPhotoTitle)
     .contains("Zebra")
@@ -92,8 +92,8 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
     .typeText(Selector(".input-rename input"), "Horse", { replace: true })
     .pressKey("enter")
     .click(Selector("#tab-details"));
-  const FirstPhotoTitleAfterEdit = await Selector(".input-title input", { timeout: 5000 }).value;
-  const FirstPhotoKeywordsAfterEdit = await Selector(".input-keywords textarea", { timeout: 5000 })
+  const FirstPhotoTitleAfterEdit = await Selector(".input-title input", { timeout: 15000 }).value;
+  const FirstPhotoKeywordsAfterEdit = await Selector(".input-keywords textarea", { timeout: 15000 })
     .value;
   await t
     .expect(FirstPhotoTitleAfterEdit)
@@ -153,7 +153,7 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
   await t
     .click(Selector(".nav-albums"))
     .click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
-  const PhotoCountAfterAdd = await Selector("div.is-photo", { timeout: 5000 }).count;
+  const PhotoCountAfterAdd = await Selector("div.is-photo", { timeout: 15000 }).count;
   await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 6);
   await page.selectPhotoFromUID(FirstPhotoLandscape);
   await page.selectPhotoFromUID(SecondPhotoLandscape);
@@ -162,7 +162,7 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
   await page.selectPhotoFromUID(FifthPhotoLandscape);
   await page.selectPhotoFromUID(SixthPhotoLandscape);
   await page.removeSelected();
-  const PhotoCountAfterDelete = await Selector("div.is-photo", { timeout: 5000 }).count;
+  const PhotoCountAfterDelete = await Selector("div.is-photo", { timeout: 15000 }).count;
   await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 6);
 });
 
@@ -170,15 +170,15 @@ test.meta("testID", "labels-004")("Delete label", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-labels"));
   await page.search("dome");
-  const LabelDome = await Selector("a.is-label", { timeout: 5000 }).nth(0).getAttribute("data-uid");
+  const LabelDome = await Selector("a.is-label", { timeout: 15000 }).nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-label").withAttribute("data-uid", LabelDome));
-  const FirstPhotoDome = await Selector("div.is-photo", { timeout: 5000 })
+  const FirstPhotoDome = await Selector("div.is-photo", { timeout: 15000 })
     .nth(0)
     .getAttribute("data-uid");
   await page.openNav();
   await t.click(".nav-labels");
   await page.selectFromUID(LabelDome);
-  const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
+  const clipboardCount = await Selector("span.count-clipboard", { timeout: 15000 });
   await t.expect(clipboardCount.textContent).eql("1");
   await page.deleteSelected();
   await page.search("dome");
