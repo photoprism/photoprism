@@ -269,8 +269,6 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Infof("converting %s to %s", fileName, fs.FormatJpeg)
-
 	xmpName := fs.FormatXMP.Find(f.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
@@ -280,12 +278,18 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 		"xmpName":  filepath.Base(xmpName),
 	})
 
+	start := time.Now()
+
 	if f.IsImageOther() {
+		log.Infof("%s: converting %s to %s", f.FileType(), fileName, fs.FormatJpeg)
+
 		_, err = thumb.Jpeg(f.FileName(), jpegName, f.Orientation())
 
 		if err != nil {
 			return nil, err
 		}
+
+		log.Infof("%s: created %s [%s]", f.FileType(), filepath.Base(jpegName), time.Since(start))
 
 		return NewMediaFile(jpegName)
 	}
@@ -313,6 +317,8 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 
+	log.Infof("%s: converting %s to %s", filepath.Base(cmd.Path), fileName, fs.FormatJpeg)
+
 	// Run convert command.
 	if err := cmd.Run(); err != nil {
 		if stderr.String() != "" {
@@ -321,6 +327,8 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 			return nil, err
 		}
 	}
+
+	log.Infof("%s: created %s [%s]", filepath.Base(cmd.Path), filepath.Base(jpegName), time.Since(start))
 
 	return NewMediaFile(jpegName)
 }
@@ -442,7 +450,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 		"xmpName":  "",
 	})
 
-	log.Infof("converting %s to %s (%s)", fileName, fs.FormatAvc, encoderName)
+	log.Infof("%s: transcoding %s to %s", encoderName, fileName, fs.FormatAvc)
 
 	// Run convert command.
 	start := time.Now()
@@ -453,7 +461,13 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 			err = errors.New(stderr.String())
 		}
 
-		log.Warnf("ffmpeg: %s [%s]", err.Error(), time.Since(start))
+		// Log original ffmpeg error (unless empty).
+		if err.Error() != "" {
+			log.Error(err)
+		}
+
+		// Log filename and transcoding time.
+		log.Warnf("%s: failed transcoding %s [%s]", encoderName, filepath.Base(avcName), time.Since(start))
 
 		if encoderName != DefaultAvcEncoder {
 			return c.ToAvc(f, DefaultAvcEncoder)
@@ -462,7 +476,8 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 		}
 	}
 
-	log.Infof("created %s [%s]", avcName, time.Since(start))
+	// Log transcoding time.
+	log.Infof("%s: created %s [%s]", encoderName, filepath.Base(avcName), time.Since(start))
 
 	return NewMediaFile(avcName)
 }
