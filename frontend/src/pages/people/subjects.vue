@@ -254,6 +254,7 @@ export default {
       this.merge.show = true;
     },
     onCancelMerge() {
+      this.merge.subj1.Name = this.merge.subj1.originalValue("Name");
       this.merge.show = false;
       this.merge.subj1 = null;
       this.merge.subj2 = null;
