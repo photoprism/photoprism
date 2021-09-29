@@ -41,19 +41,13 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	// Clip to reasonable size and normalize operators.
 	f.Query = txt.NormalizeQuery(f.Query)
 
-	// Modify query if it contains subject names.
-	if f.Query != "" && f.Subject == "" {
-		if subj, names, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
-			f.Subject = strings.Join(subj, txt.And)
-			log.Debugf("search: subject %s", txt.Quote(strings.Join(names, ", ")))
-			f.Query = remaining
-		}
-	}
-
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
-		f.Name = fs.StripKnownExt(f.Query) + "*"
-		f.Query = ""
+		if f.Name == "" {
+			name := strings.Trim(fs.StripKnownExt(f.Query), "%*")
+			f.Name = fmt.Sprintf("%s*|%s*", name, strings.ToUpper(name))
+			f.Query = ""
+		}
 	} else if len(terms) > 0 {
 		switch {
 		case terms["faces"]:
@@ -226,17 +220,16 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
-		} else if strings.Contains(p, txt.Or) {
-			s = s.Where("photos.photo_path IN (?)", strings.Split(p, txt.Or))
 		} else {
-			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
+			where, values := OrLike("photos.photo_path", p)
+			s = s.Where(where, values...)
 		}
 	}
 
-	if strings.Contains(f.Name, txt.Or) {
-		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, txt.Or))
-	} else if f.Name != "" {
-		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
+	// Filter by main file name.
+	if f.Name != "" {
+		where, values := OrLike("photos.photo_name", f.Name)
+		s = s.Where(where, values...)
 	}
 
 	// Filter by status.

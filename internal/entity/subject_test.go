@@ -32,7 +32,7 @@ func TestNewSubject(t *testing.T) {
 }
 
 func TestSubject_SetName(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 
 		assert.Equal(t, "Jens Mander", m.SubjName)
@@ -45,7 +45,7 @@ func TestSubject_SetName(t *testing.T) {
 		assert.Equal(t, "Foo McBar", m.SubjName)
 		assert.Equal(t, "foo-mcbar", m.SubjSlug)
 	})
-	t.Run("new name empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 
 		assert.Equal(t, "Jens Mander", m.SubjName)

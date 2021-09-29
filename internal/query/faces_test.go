@@ -79,7 +79,7 @@ func TestMatchFaceMarkers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, int64(1), affected)
+	assert.Equal(t, int64(2), affected)
 
 	if m, err := MarkerByUID(faceFixtureId); err != nil {
 		t.Fatal(err)

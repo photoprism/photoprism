@@ -34,6 +34,31 @@ func TestNewMarker(t *testing.T) {
 	assert.Equal(t, MarkerLabel, m.MarkerType)
 }
 
+func TestMarker_SetName(t *testing.T) {
+	t.Run("InvalidName", func(t *testing.T) {
+		m := MarkerFixtures.Get("actress-a-1")
+		assert.IsType(t, Marker{}, m)
+		assert.Equal(t, "Actress A", m.MarkerName)
+		changed, err := m.SetName("", SrcManual)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, changed)
+		assert.Equal(t, "Actress A", m.MarkerName)
+
+		changed, err = m.SetName("Foo Bar", SrcAuto)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, changed)
+		assert.Equal(t, "Actress A", m.MarkerName)
+	})
+}
+
 func TestMarker_SaveForm(t *testing.T) {
 	t.Run("fa-ge add new name to marker then rename marker", func(t *testing.T) {
 		m := MarkerFixtures.Get("fa-gr-1")
@@ -456,7 +481,7 @@ func TestMarker_GetFace(t *testing.T) {
 		if f := m.Face(); f == nil {
 			t.Fatal("return value must not be nil")
 		} else {
-			assert.Equal(t, "jqy3y652h8njw0sx", f.SubjUID)
+			assert.Equal(t, "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6", f.ID)
 		}
 	})
 	t.Run("low quality marker", func(t *testing.T) {

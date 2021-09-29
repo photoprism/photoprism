@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -122,6 +121,29 @@ func (m *Marker) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
+// SetName changes the marker name.
+func (m *Marker) SetName(name, src string) (changed bool, err error) {
+	if src == SrcAuto || SrcPriority[src] < SrcPriority[m.SubjSrc] {
+		return false, nil
+	}
+
+	name = txt.NormalizeName(name)
+
+	if name == "" {
+		return false, nil
+	}
+
+	if m.MarkerName == name {
+		// Name didn't change.
+		return false, nil
+	}
+
+	m.SubjSrc = src
+	m.MarkerName = name
+
+	return true, m.SyncSubject(true)
+}
+
 // SaveForm updates the entity using form data and stores it in the database.
 func (m *Marker) SaveForm(f form.Marker) (changed bool, err error) {
 	if m.MarkerInvalid != f.MarkerInvalid {
@@ -134,14 +156,9 @@ func (m *Marker) SaveForm(f form.Marker) (changed bool, err error) {
 		changed = true
 	}
 
-	if f.SubjSrc == SrcManual && strings.TrimSpace(f.MarkerName) != "" && f.MarkerName != m.MarkerName {
-		m.SubjSrc = SrcManual
-		m.MarkerName = txt.NormalizeName(f.MarkerName)
-
-		if err := m.SyncSubject(true); err != nil {
-			return changed, err
-		}
-
+	if nameChanged, err := m.SetName(f.MarkerName, f.SubjSrc); err != nil {
+		return changed, err
+	} else if nameChanged {
 		changed = true
 	}
 
@@ -367,6 +384,7 @@ func (m *Marker) Subject() (subj *Subject) {
 	// Create subject?
 	if m.SubjSrc != SrcAuto && m.MarkerName != "" && m.SubjUID == "" {
 		if subj = NewSubject(m.MarkerName, SubjPerson, m.SubjSrc); subj == nil {
+			log.Errorf("marker: invalid subject %s", txt.Quote(m.MarkerName))
 			return nil
 		} else if subj = FirstOrCreateSubject(subj); subj == nil {
 			log.Debugf("marker: invalid subject %s", txt.Quote(m.MarkerName))
@@ -390,6 +408,16 @@ func (m *Marker) ClearSubject(src string) error {
 	if m.face == nil {
 		m.face = FindFace(m.FaceID)
 	}
+
+	defer func() {
+		// Find and (soft) delete unused subjects.
+		start := time.Now()
+		if count, err := DeleteOrphanPeople(); err != nil {
+			log.Errorf("marker: %s while removing unused subjects [%s]", err, time.Since(start))
+		} else if count > 0 {
+			log.Debugf("marker: removed %d people [%s]", count, time.Since(start))
+		}
+	}()
 
 	// Update index & resolve collisions.
 	if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjUID": "", "SubjSrc": src}); err != nil {

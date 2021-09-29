@@ -244,3 +244,8 @@ func (m *Photo) SubjectNames() []string {
 
 	return nil
 }
+
+// SubjectKeywords returns keywords for all known subject names.
+func (m *Photo) SubjectKeywords() []string {
+	return txt.Words(strings.Join(m.SubjectNames(), " "))
+}

@@ -202,24 +202,3 @@ func UniqueKeywords(s string) (results []string) {
 func SortCaseInsensitive(words []string) {
 	sort.Slice(words, func(i, j int) bool { return strings.ToLower(words[i]) < strings.ToLower(words[j]) })
 }
-
-// SearchTerms returns a bool map with all terms as key.
-func SearchTerms(s string) map[string]bool {
-	result := make(map[string]bool)
-
-	if s == "" {
-		return result
-	}
-
-	for _, w := range KeywordsRegexp.FindAllString(s, -1) {
-		w = strings.Trim(w, "- '")
-
-		if w == "" || len(w) < 3 && IsLatin(w) {
-			continue
-		}
-
-		result[w] = true
-	}
-
-	return result
-}

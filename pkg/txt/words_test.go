@@ -239,15 +239,3 @@ func TestRemoveFromWords(t *testing.T) {
 		assert.Equal(t, []string{"apple", "brown", "jpg", "lazy"}, result)
 	})
 }
-
-func TestSearchTerms(t *testing.T) {
-	t.Run("Many", func(t *testing.T) {
-		result := SearchTerms("I'm a lazy-BRoWN fox! Yellow banana, apple; pan-pot b&w")
-		assert.Len(t, result, 7)
-		assert.Equal(t, map[string]bool{"I'm": true, "Yellow": true, "apple": true, "banana": true, "fox": true, "lazy-BRoWN": true, "pan-pot": true}, result)
-	})
-	t.Run("Empty", func(t *testing.T) {
-		result := SearchTerms("")
-		assert.Len(t, result, 0)
-	})
-}

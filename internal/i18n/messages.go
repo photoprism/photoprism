@@ -33,6 +33,7 @@ const (
 	ErrZipFailed
 	ErrInvalidCredentials
 	ErrInvalidLink
+	ErrInvalidName
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -110,6 +111,7 @@ var Messages = MessageMap{
 	ErrZipFailed:          gettext("Failed to create zip file"),
 	ErrInvalidCredentials: gettext("Invalid credentials"),
 	ErrInvalidLink:        gettext("Invalid link"),
+	ErrInvalidName:        gettext("Invalid name"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),

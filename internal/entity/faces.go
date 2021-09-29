@@ -1,5 +1,7 @@
 package entity
 
+import "fmt"
+
 // Faces represents a Face slice.
 type Faces []Face
 
@@ -19,4 +21,37 @@ func (f Faces) IDs() (ids []string) {
 	}
 
 	return ids
+}
+
+// Delete (soft) deletes all subjects.
+func (f Faces) Delete() error {
+	for _, m := range f {
+		if err := m.Delete(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// OrphanFaces returns unused faces.
+func OrphanFaces() (Faces, error) {
+	orphans := Faces{}
+
+	err := Db().
+		Where(fmt.Sprintf("id NOT IN (SELECT DISTINCT face_id FROM %s)", Marker{}.TableName())).
+		Find(&orphans).Error
+
+	return orphans, err
+}
+
+// DeleteOrphanFaces finds and (soft) deletes all unused face clusters.
+func DeleteOrphanFaces() (count int, err error) {
+	orphans, err := OrphanFaces()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return len(orphans), orphans.Delete()
 }

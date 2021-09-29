@@ -304,6 +304,13 @@ func (m *Face) Create() error {
 
 // Delete removes the face from the database.
 func (m *Face) Delete() error {
+	// Remove face id from markers before deleting.
+	if err := Db().Model(&Marker{}).
+		Where("face_id = ?", m.ID).
+		UpdateColumns(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
+		return err
+	}
+
 	return Db().Delete(m).Error
 }
 

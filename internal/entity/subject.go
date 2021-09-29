@@ -15,9 +15,6 @@ import (
 
 var subjectMutex = sync.Mutex{}
 
-// Subjects represents a list of subjects.
-type Subjects []Subject
-
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
 	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
@@ -100,6 +97,9 @@ func (m *Subject) Delete() error {
 		return nil
 	}
 
+	subjectMutex.Lock()
+	defer subjectMutex.Unlock()
+
 	log.Infof("subject: deleting %s %s", m.SubjType, txt.Quote(m.SubjName))
 
 	event.EntitiesDeleted("subjects", []string{m.SubjUID})
@@ -109,6 +109,10 @@ func (m *Subject) Delete() error {
 		event.Publish("count.people", event.Data{
 			"count": -1,
 		})
+	}
+
+	if err := Db().Model(&Face{}).Where("subj_uid = ?", m.SubjUID).Update("subj_uid", "").Error; err != nil {
+		return err
 	}
 
 	return Db().Delete(m).Error

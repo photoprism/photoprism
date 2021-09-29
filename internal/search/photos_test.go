@@ -879,8 +879,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("Subject", func(t *testing.T) {
 		var frm form.PhotoSearch
 
-		frm.Query = "John"
-		frm.Subject = ""
+		frm.Subject = "jqu0xs11qekk9jx8"
 		frm.Count = 10
 		frm.Offset = 0
 
@@ -902,6 +901,21 @@ func TestPhotos(t *testing.T) {
 				assert.Equal(t, fix.PhotoName, r.PhotoName)
 			}
 		}
+	})
+	t.Run("NewFaces", func(t *testing.T) {
+		var frm form.PhotoSearch
+
+		frm.Face = "new"
+		frm.Count = 10
+		frm.Offset = 0
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
 	})
 	t.Run("query: videos", func(t *testing.T) {
 		var frm form.PhotoSearch

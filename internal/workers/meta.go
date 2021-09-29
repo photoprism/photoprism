@@ -44,6 +44,15 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 
 	defer mutex.MetaWorker.Stop()
 
+	log.Debugf("metadata: running facial recognition")
+
+	// Run faces worker.
+	if w := photoprism.NewFaces(m.conf); w.Disabled() {
+		log.Debugf("metadata: skipping facial recognition")
+	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
+		log.Warn(err)
+	}
+
 	log.Debugf("metadata: starting routine check")
 
 	settings := m.conf.Settings()
@@ -115,15 +124,6 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 	if w := photoprism.NewMoments(m.conf); w == nil {
 		log.Errorf("metadata: failed updating moments")
 	} else if err := w.Start(); err != nil {
-		log.Warn(err)
-	}
-
-	log.Debugf("metadata: running facial recognition")
-
-	// Run faces worker.
-	if w := photoprism.NewFaces(m.conf); w.Disabled() {
-		log.Debugf("metadata: skipping facial recognition")
-	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
 		log.Warn(err)
 	}
 
