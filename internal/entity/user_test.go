@@ -577,5 +577,23 @@ func TestCreateOrUpdateExternalUser(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, user)
 	})
+	t.Run("CreateOrUpdateExternalUser - append username suffix in case same username is already present", func(t *testing.T) {
+		u3 := &User{
+			UserName:     "admin",
+			FullName:     "Gopher Go Admin 2",
+			ExternalID:   "testid-0123455678-3",
+		}
+		u4 := &User{
+			UserName:     "admin",
+			FullName:     "Gopher Go Admin 1",
+			ExternalID:   "testid-0123455678-4",
+		}
+		user, err := CreateOrUpdateExternalUser(u3)
+		assert.Nil(t, err)
+		assert.Equal(t, "admin-01", user.UserName)
+		user2, err2 := CreateOrUpdateExternalUser(u4)
+		assert.Nil(t, err2)
+		assert.Equal(t, "admin-02", user2.UserName)
+	})
 
 }

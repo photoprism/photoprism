@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/mail"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -194,7 +195,11 @@ func CreateOrUpdateExternalUser(m *User) (*User, error) {
 		return &result, nil
 	} else {
 		err := m.Validate()
-		if err != nil {
+		if err == ErrUsernameAlreadyExists {
+			if e2 := m.AppendUsernameSuffix(); e2 != nil {
+				return nil, e2
+			}
+		} else if err != nil {
 			log.Errorf("user: %s", err)
 			return nil, err
 		}
@@ -385,6 +390,8 @@ func (m *User) Role() acl.Role {
 	return acl.RoleDefault
 }
 
+var ErrUsernameAlreadyExists = errors.New("username already exists")
+
 // Validate Makes sure username and email are unique and meet requirements. Returns error if any property is invalid
 func (m *User) Validate() error {
 	if m.UserName == "" {
@@ -396,7 +403,7 @@ func (m *User) Validate() error {
 	var err error
 	var resultName = User{}
 	if err = Db().Where("user_name = ? AND id <> ?", m.UserName, m.ID).First(&resultName).Error; err == nil {
-		return errors.New("username already exists")
+		return ErrUsernameAlreadyExists
 	} else if err != gorm.ErrRecordNotFound {
 		return err
 	}
@@ -446,4 +453,22 @@ func CreateWithPassword(uc form.UserCreate) error {
 		log.Infof("created user %v with uid %v", txt.Quote(u.UserName), txt.Quote(u.UserUID))
 		return nil
 	})
+}
+
+func (m *User) AppendUsernameSuffix() error {
+	oldname := m.UserName
+	for i := 1; i < 100; i++ {
+		m.UserName = strings.Join([]string{oldname, fmt.Sprintf("%02d", i)}, "-")
+		err := m.Validate()
+		if err == ErrUsernameAlreadyExists {
+			continue
+		}
+		if err != nil {
+			m.UserName = oldname
+			return err
+		} else {
+			return nil
+		}
+	}
+	return errors.New("username suffixes exhausted")
 }
