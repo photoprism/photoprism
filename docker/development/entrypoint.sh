@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 
-if [[ $(id -u) = "0" ]]; then
+if [[ $(id -u) == "0" ]]; then
   echo "development base image started as root"
+
+  if [ -e /root/.init ]; then
+    echo "initialized"
+  elif [[ ${PHOTOPRISM_INIT} ]]; then
+    for target in $PHOTOPRISM_INIT; do
+      echo "init ${target}..."
+      make -f /root/Makefile "${target}"
+    done
+    echo 1 >/root/.init
+  fi
 else
   echo "development base image started as uid $(id -u)"
 fi
@@ -21,7 +31,7 @@ if [[ ${PHOTOPRISM_UMASK} =~ $re ]]; then
 fi
 
 # Script runs as root?
-if [[ $(id -u) = "0" ]]; then
+if [[ $(id -u) == "0" ]]; then
   # Legacy user ID env variable in use?
   if [[ -z ${PHOTOPRISM_UID} ]] && [[ ${UID} =~ $re ]] && [[ ${UID} != "0" ]]; then
     PHOTOPRISM_UID=${UID}
@@ -40,7 +50,7 @@ if [[ $(id -u) = "0" ]]; then
     useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d /photoprism "user_${PHOTOPRISM_UID}" 2>/dev/null
     usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
 
-    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]] ; then
+    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
       echo "updating storage permissions..."
       chown -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /photoprism /var/lib/photoprism /tmp/photoprism /go
@@ -55,7 +65,7 @@ if [[ $(id -u) = "0" ]]; then
     useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d /photoprism "user_${PHOTOPRISM_UID}" 2>/dev/null
     usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
 
-    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]] ; then
+    if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
       echo "updating storage permissions..."
       chown -Rf "${PHOTOPRISM_UID}" /photoprism /var/lib/photoprism /tmp/photoprism /go

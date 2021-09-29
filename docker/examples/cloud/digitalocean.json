@@ -44,11 +44,11 @@
         "echo 'APT::Install-Suggests \"false\";' > /etc/apt/apt.conf.d/80suggests",
         "echo 'APT::Get::Assume-Yes \"true\";' > /etc/apt/apt.conf.d/80forceyes",
         "echo 'APT::Get::Fix-Missing \"true\";' > /etc/apt/apt.conf.d/80fixmissing",
-        "apt-get -qqy update",
+        "apt-get -qq update",
         "apt dist-upgrade 2>/dev/null",
-        "apt-get -qqy install {{user `apt_packages`}}",
-        "apt-get -qqy autoclean",
-        "apt-get -qqy autoremove",
+        "apt-get -qq install {{user `apt_packages`}}",
+        "apt-get -qq autoclean",
+        "apt-get -qq autoremove",
         "chmod 700 /var/lib/cloud/scripts/per-instance/install_photoprism.sh"
       ]
     },

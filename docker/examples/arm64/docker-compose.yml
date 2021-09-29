@@ -57,6 +57,7 @@ services:
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"               # Enables experimental features
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables all features depending on TensorFlow
@@ -83,9 +84,9 @@ services:
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
       HOME: "/photoprism"
-    # For hardware AVC transcoding using the h264_v4l2m2m encoder:
+    # Optional hardware devices for video transcoding and machine learning:
     # devices:
-    #  - "/dev/video11:/dev/video11"
+    #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     working_dir: "/photoprism"
     volumes:
       # Your photo and video files ([local path]:[container path]):

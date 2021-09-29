@@ -31,10 +31,11 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # Install additional distribution packages
-RUN apt-get update && apt dist-upgrade 2>/dev/null && apt-get -qq install -y --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     gpgv \
     wget \
     curl \
+    make \
     davfs2 \
     ca-certificates \
     mariadb-client \
@@ -83,6 +84,7 @@ ENV TF_CPP_MIN_LOG_LEVEL="2" \
     PHOTOPRISM_DATABASE_NAME="photoprism" \
     PHOTOPRISM_DATABASE_USER="photoprism" \
     PHOTOPRISM_DATABASE_PASSWORD="" \
+    PHOTOPRISM_DISABLE_CHOWN="false" \
     PHOTOPRISM_DISABLE_WEBDAV="false" \
     PHOTOPRISM_DISABLE_SETTINGS="false" \
     PHOTOPRISM_DISABLE_BACKUPS="false" \
@@ -113,10 +115,12 @@ RUN ldconfig
 RUN umask 0000 && useradd photoprism -m -U -u 1000 -d /photoprism && chmod a+rwx /photoprism
 WORKDIR /photoprism
 
-# Copy files to /photoprism
+# Copy additional files to image
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
 COPY --from=build /root/.photoprism/assets /photoprism/assets
-COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
+COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
+COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
+COPY --chown=root:root /docker/photoprism/entrypoint.sh /entrypoint.sh
 
 # Create directories
 RUN mkdir -m 777 -p \
@@ -127,7 +131,8 @@ RUN mkdir -m 777 -p \
     /photoprism/storage/config \
     /photoprism/storage/cache && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod -Rf a+rwx /photoprism /var/lib/photoprism /tmp/photoprism
+    chmod -Rf a+rwx /photoprism /var/lib/photoprism /tmp/photoprism && \
+    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh
 
 # Show photoprism version
 RUN photoprism -v
@@ -136,7 +141,6 @@ RUN photoprism -v
 EXPOSE 2342
 
 # Configure entrypoint
-COPY --chown=root:root --chmod=755 /docker/scripts/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 VOLUME /var/lib/photoprism
 

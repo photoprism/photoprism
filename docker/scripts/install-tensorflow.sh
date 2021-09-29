@@ -18,8 +18,8 @@ else
         exit 1
     fi
     echo "$URL"
-    curl -L "$URL" | \
-    tar -C "/usr" -xz && \
+    curl -fsSL "$URL" | \
+    tar --overwrite -C "/usr" -xz && \
     ldconfig
     echo "Done"
 fi
