@@ -1,9 +1,15 @@
 # Optional packages and drivers for PhotoPrism
 # Maintainer: Michael Mayer <hello@photoprism.org>
-.PHONY: tensorflow-amd64-avx tensorflow-amd64-avx-install \
+.PHONY: tensorflow-amd64-cpu tensorflow-amd64-cpu-install \
+		tensorflow-amd64-avx tensorflow-amd64-avx-install \
 		tensorflow-amd64-avx2 tensorflow-amd64-avx2-install \
-		tensorflow-amd64-cpu tensorflow-amd64-cpu-install \
 		intel-graphics;
+tensorflow-amd64-cpu: /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz tensorflow-amd64-cpu-install
+/tmp/libtensorflow-linux-cpu-1.15.2.tar.gz:
+	curl -fsSL "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-cpu-1.15.2.tar.gz" > /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz
+tensorflow-amd64-cpu-install:
+	tar --overwrite -C "/usr" -xzf /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz
+	ldconfig
 tensorflow-amd64-avx: /tmp/libtensorflow-linux-avx-1.15.2.tar.gz tensorflow-amd64-avx-install
 /tmp/libtensorflow-linux-avx-1.15.2.tar.gz:
 	curl -fsSL "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-avx-1.15.2.tar.gz" > /tmp/libtensorflow-linux-avx-1.15.2.tar.gz
@@ -15,12 +21,6 @@ tensorflow-amd64-avx2: /tmp/libtensorflow-linux-avx2-1.15.2.tar.gz tensorflow-am
 	curl -fsSL "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-avx2-1.15.2.tar.gz" > /tmp/libtensorflow-linux-avx2-1.15.2.tar.gz
 tensorflow-amd64-avx2-install:
 	tar --overwrite -C "/usr" -xzf /tmp/libtensorflow-linux-avx2-1.15.2.tar.gz
-	ldconfig
-tensorflow-amd64-cpu: /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz tensorflow-amd64-cpu-install
-/tmp/libtensorflow-linux-cpu-1.15.2.tar.gz:
-	curl -fsSL "https://dl.photoprism.org/tensorflow/linux/libtensorflow-linux-cpu-1.15.2.tar.gz" > /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz
-tensorflow-amd64-cpu-install:
-	tar --overwrite -C "/usr" -xzf /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz
 	ldconfig
 intel-graphics:
 	apt-get update

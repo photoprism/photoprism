@@ -80,7 +80,7 @@ services:
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-      # Enable TensorFlow AVX2 support for modern Intel CPUs:
+      # Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       # Hardware video transcoding options:
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)

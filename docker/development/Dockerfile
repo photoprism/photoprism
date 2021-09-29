@@ -130,7 +130,7 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu \
     cp /go/bin/gosu /bin/gosu
 
 # Create photoprism user and directory for deployment
-RUN useradd photoprism -m -U -u 1000 -d /photoprism && chmod a+rwx /photoprism && \
+RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism && \
     mkdir -m 777 -p /var/lib/photoprism /tmp/photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
