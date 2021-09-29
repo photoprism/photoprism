@@ -9,6 +9,7 @@ type PhotoSearchGeo struct {
 	Path     string    `form:"path"`
 	Folder   string    `form:"folder"` // Alias for Path
 	Name     string    `form:"name"`
+	Title    string    `form:"title"`
 	Before   time.Time `form:"before" time_format:"2006-01-02"`
 	After    time.Time `form:"after" time_format:"2006-01-02"`
 	Favorite bool      `form:"favorite"`

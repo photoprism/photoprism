@@ -5,14 +5,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/pluscode"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -43,9 +41,8 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
-		if f.Name == "" {
-			name := strings.Trim(fs.StripKnownExt(f.Query), "%*")
-			f.Name = fmt.Sprintf("%s*|%s*", name, strings.ToUpper(name))
+		if f.Title == "" {
+			f.Title = fmt.Sprintf("%s*", strings.Trim(f.Query, "%*"))
 			f.Query = ""
 		}
 	} else if len(terms) > 0 {
@@ -229,6 +226,12 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	// Filter by main file name.
 	if f.Name != "" {
 		where, values := OrLike("photos.photo_name", f.Name)
+		s = s.Where(where, values...)
+	}
+
+	// Filter by photo title.
+	if f.Title != "" {
+		where, values := OrLike("photos.photo_title", f.Title)
 		s = s.Where(where, values...)
 	}
 

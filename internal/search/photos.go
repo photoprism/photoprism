@@ -5,13 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -139,9 +137,8 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
-		if f.Name == "" {
-			name := strings.Trim(fs.StripKnownExt(f.Query), "%*")
-			f.Name = fmt.Sprintf("%s*|%s*", name, strings.ToUpper(name))
+		if f.Title == "" {
+			f.Title = fmt.Sprintf("%s*", strings.Trim(f.Query, "%*"))
 			f.Query = ""
 		}
 	} else if len(terms) > 0 {
