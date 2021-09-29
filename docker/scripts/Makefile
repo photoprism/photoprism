@@ -24,5 +24,5 @@ tensorflow-amd64-avx2-install:
 	ldconfig
 intel-graphics:
 	apt-get update
-	apt-get install intel-opencl-icd intel-media-va-driver-non-free libmfx1
+	apt-get install intel-opencl-icd intel-media-va-driver-non-free libva i965-va-driver i965-va-driver-shaders libmfx libmfx1
 	apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*

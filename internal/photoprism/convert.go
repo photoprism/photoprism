@@ -26,6 +26,7 @@ import (
 )
 
 const DefaultAvcEncoder = "libx264" // Default FFmpeg AVC software encoder.
+const IntelQsvEncoder = "h264_qsv"
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
@@ -361,24 +362,47 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 		// Don't transcode more than one video at the same time.
 		useMutex = true
 
-		format := "format=yuv420p"
-		result = exec.Command(
-			c.conf.FFmpegBin(),
-			"-i", f.FileName(),
-			"-c:v", codecName,
-			"-c:a", "aac",
-			"-vf", format,
-			"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
-			"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
-			"-max_muxing_queue_size", "1024",
-			"-crf", "23",
-			"-vsync", "vfr",
-			"-r", "30",
-			"-b:v", c.AvcBitrate(f),
-			"-f", "mp4",
-			"-y",
-			avcName,
-		)
+		if codecName == IntelQsvEncoder {
+			format := "format=rgb32"
+
+			result = exec.Command(
+				c.conf.FFmpegBin(),
+				"-qsv_device", "/dev/dri/renderD128",
+				"-init_hw_device", "qsv=hw",
+				"-filter_hw_device", "hw",
+				"-i", f.FileName(),
+				"-c:a", "aac",
+				"-vf", format,
+				"-c:v", codecName,
+				"-vsync", "vfr",
+				"-r", "30",
+				"-b:v", c.AvcBitrate(f),
+				"-maxrate", c.AvcBitrate(f),
+				"-f", "mp4",
+				"-y",
+				avcName,
+			)
+		} else {
+			format := "format=yuv420p"
+
+			result = exec.Command(
+				c.conf.FFmpegBin(),
+				"-i", f.FileName(),
+				"-c:v", codecName,
+				"-c:a", "aac",
+				"-vf", format,
+				"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
+				"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
+				"-max_muxing_queue_size", "1024",
+				"-crf", "23",
+				"-vsync", "vfr",
+				"-r", "30",
+				"-b:v", c.AvcBitrate(f),
+				"-f", "mp4",
+				"-y",
+				avcName,
+			)
+		}
 	} else {
 		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
 	}
@@ -461,9 +485,9 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 			err = errors.New(stderr.String())
 		}
 
-		// Log original ffmpeg error (unless empty).
+		// Log ffmpeg output for debugging.
 		if err.Error() != "" {
-			log.Error(err)
+			log.Debug(err)
 		}
 
 		// Log filename and transcoding time.
