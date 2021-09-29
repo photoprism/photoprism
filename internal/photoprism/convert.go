@@ -467,7 +467,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 		}
 
 		// Log filename and transcoding time.
-		log.Warnf("%s: failed transcoding %s [%s]", encoderName, filepath.Base(avcName), time.Since(start))
+		log.Warnf("%s: failed transcoding %s [%s]", encoderName, fileName, time.Since(start))
 
 		if encoderName != DefaultAvcEncoder {
 			return c.ToAvc(f, DefaultAvcEncoder)
