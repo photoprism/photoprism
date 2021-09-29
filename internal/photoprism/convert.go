@@ -13,8 +13,10 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/karrick/godirwalk"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -409,15 +411,6 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Infof("converting %s to %s (%s)", fileName, fs.FormatAvc, encoderName)
-
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": fileName,
-		"baseName": filepath.Base(fileName),
-		"xmpName":  "",
-	})
-
 	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoderName)
 
 	if err != nil {
@@ -442,7 +435,17 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 
+	event.Publish("index.converting", event.Data{
+		"fileType": f.FileType(),
+		"fileName": fileName,
+		"baseName": filepath.Base(fileName),
+		"xmpName":  "",
+	})
+
+	log.Infof("converting %s to %s (%s)", fileName, fs.FormatAvc, encoderName)
+
 	// Run convert command.
+	start := time.Now()
 	if err = cmd.Run(); err != nil {
 		_ = os.Remove(avcName)
 
@@ -450,7 +453,7 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 			err = errors.New(stderr.String())
 		}
 
-		log.Warnf("ffmpeg: %s", err.Error())
+		log.Warnf("ffmpeg: %s [%s]", err.Error(), time.Since(start))
 
 		if encoderName != DefaultAvcEncoder {
 			return c.ToAvc(f, DefaultAvcEncoder)
@@ -458,6 +461,8 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 			return nil, err
 		}
 	}
+
+	log.Infof("created %s [%s]", avcName, time.Since(start))
 
 	return NewMediaFile(avcName)
 }
