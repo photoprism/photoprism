@@ -74,14 +74,12 @@
                         v-model="model.Marker.Name"
                         :rules="[textRule]"
                         :disabled="busy"
+                        :readonly="false"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
                         hide-details
                         single-line
                         solo-inverted
-                        clearable
-                        clear-icon="eject"
-                        @click:clear="onClearSubject(model.Marker)"
                         @change="onRename(model.Marker)"
                         @keyup.enter.native="onRename(model.Marker)"
                     ></v-text-field>
@@ -522,11 +520,19 @@ export default {
     },
     onClearSubject(marker) {
       this.busy = true;
-      marker.clearSubject(marker).finally(() => this.busy = false);
+      this.$notify.blockUI();
+      marker.clearSubject(marker).finally(() => {
+        this.$notify.unblockUI();
+        this.busy = false;
+      });
     },
     onRename(marker) {
       this.busy = true;
-      marker.rename().finally(() => this.busy = false);
+      this.$notify.blockUI();
+      marker.rename().finally(() => {
+        this.$notify.unblockUI();
+        this.busy = false;
+      });
     },
     onUpdate(ev, data) {
       if (!this.listen) return;

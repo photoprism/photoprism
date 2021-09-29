@@ -188,6 +188,24 @@ export default class Config {
     }
   }
 
+  getPerson(name) {
+    name = name.toLowerCase();
+
+    const result = this.values.people.filter((m) => m.Name.toLowerCase() === name);
+    const l = result ? result.length : 0;
+
+    if (l === 0) {
+      return null;
+    } else if (l === 1) {
+      return result[0];
+    } else {
+      if (this.debug) {
+        console.warn("more than one person matching the same name", result);
+      }
+      return result[0];
+    }
+  }
+
   onCount(ev, data) {
     const type = ev.split(".")[1];
 

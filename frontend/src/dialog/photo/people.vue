@@ -53,6 +53,7 @@
                       v-model="marker.Name"
                       :rules="[textRule]"
                       :disabled="busy"
+                      :readonly="true"
                       browser-autocomplete="off"
                       class="input-name pa-0 ma-0"
                       hide-details

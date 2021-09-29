@@ -104,7 +104,7 @@ export class Face extends RestModel {
   }
 
   static batchSize() {
-    return 120;
+    return 24;
   }
 
   static getCollectionResource() {

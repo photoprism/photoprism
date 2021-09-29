@@ -145,6 +145,8 @@
         </v-layout>
       </v-container>
     </v-container>
+    <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge"
+                           @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
 
@@ -191,6 +193,11 @@ export default {
       titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      merge: {
+        subj1: null,
+        subj2: null,
+        show: false,
+      }
     };
   },
   watch: {
@@ -229,6 +236,38 @@ export default {
     }
   },
   methods: {
+    onSave(m) {
+      const existing = this.$config.getPerson(m.Name);
+
+      if(!existing) {
+        m.update();
+        return;
+      }
+
+      if (existing.UID === m.UID) {
+        // Name didn't change.
+        return;
+      }
+
+      this.merge.subj1 = m;
+      this.merge.subj2 = existing;
+      this.merge.show = true;
+    },
+    onCancelMerge() {
+      this.merge.show = false;
+      this.merge.subj1 = null;
+      this.merge.subj2 = null;
+    },
+    onMerge() {
+      this.merge.show = false;
+      this.$notify.blockUI();
+      this.merge.subj1.update().finally(() => {
+        this.merge.subj1 = null;
+        this.merge.subj2 = null;
+        this.$notify.unblockUI();
+        this.refresh();
+      });
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("subjects_offset"));
 
@@ -325,9 +364,6 @@ export default {
           this.selectRange(index, this.results);
         }
       }
-    },
-    onSave(m) {
-      m.update();
     },
     showAll() {
       this.filter.all = "true";
