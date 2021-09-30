@@ -202,20 +202,24 @@ func (m File) Missing() bool {
 
 // DeletePermanently permanently deletes a file from the index.
 func (m *File) DeletePermanently() error {
+	if m.ID < 1 || m.FileUID == "" {
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.Quote(m.FileUID))
+	}
+
 	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
-		log.Errorf("file: %s (delete markers)", err)
+		log.Errorf("file: %s (remove markers)", err)
 	}
 
 	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file: %s (delete shares)", err)
+		log.Errorf("file: %s (remove shares)", err)
 	}
 
 	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file: %s (delete sync)", err)
+		log.Errorf("file: %s (remove sync)", err)
 	}
 
 	if err := m.ReplaceHash(""); err != nil {
-		log.Errorf("file: %s (delete previews)", err)
+		log.Errorf("file: %s (remove previews)", err)
 	}
 
 	return UnscopedDb().Delete(m).Error
@@ -267,6 +271,10 @@ func (m *File) ReplaceHash(newHash string) error {
 
 // Delete deletes the entity from the database.
 func (m *File) Delete(permanently bool) error {
+	if m.ID < 1 || m.FileUID == "" {
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.Quote(m.FileUID))
+	}
+
 	if permanently {
 		return m.DeletePermanently()
 	}

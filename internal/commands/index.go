@@ -75,7 +75,9 @@ func indexAction(ctx *cli.Context) error {
 		}
 
 		indexed = w.Start(opt)
-	} else if w := service.Purge(); w != nil {
+	}
+
+	if w := service.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: indexed,
@@ -86,7 +88,9 @@ func indexAction(ctx *cli.Context) error {
 		} else if len(files) > 0 || len(photos) > 0 {
 			log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
 		}
-	} else if ctx.Bool("cleanup") {
+	}
+
+	if ctx.Bool("cleanup") {
 		w := service.CleanUp()
 
 		opt := photoprism.CleanUpOptions{

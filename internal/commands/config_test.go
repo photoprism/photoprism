@@ -18,6 +18,11 @@ func TestConfigCommand(t *testing.T) {
 		err = ConfigCommand.Run(ctx)
 	})
 
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Expected config command output.
 	assert.Contains(t, output, "NAME                      VALUE")
 	assert.Contains(t, output, "config-file")
 	assert.Contains(t, output, "darktable-cli")
@@ -25,7 +30,4 @@ func TestConfigCommand(t *testing.T) {
 	assert.Contains(t, output, "import-path")
 	assert.Contains(t, output, "cache-path")
 	assert.Contains(t, output, "assets-path")
-
-	assert.Equal(t, output, output)
-	assert.Nil(t, err)
 }

@@ -4,6 +4,14 @@ import "github.com/photoprism/photoprism/internal/entity"
 
 // PurgeOrphans removes orphan database entries.
 func PurgeOrphans() error {
+	if count, err := PurgeOrphanFiles(); err != nil {
+		return err
+	} else if count > 0 {
+		log.Warnf("purge: removed %d orphan files", count)
+	} else {
+		log.Debugf("purge: found no orphan files")
+	}
+
 	if err := PurgeOrphanDuplicates(); err != nil {
 		return err
 	}
@@ -18,6 +26,25 @@ func PurgeOrphans() error {
 	}
 
 	return nil
+}
+
+// PurgeOrphanFiles removes orphan files from the index.
+func PurgeOrphanFiles() (count int, err error) {
+	files, err := OrphanFiles()
+
+	if err != nil {
+		return count, err
+	}
+
+	for i := range files {
+		if err = files[i].DeletePermanently(); err != nil {
+			return count, err
+		}
+
+		count++
+	}
+
+	return count, err
 }
 
 // PurgeOrphanDuplicates deletes all files from the duplicates table that don't exist in the files table.

@@ -115,7 +115,7 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Infof("metadata: optimized %d photos", optimized)
 	}
 
-	// Explicitly set quality of photos without primary file to -1.
+	// Set photo quality scores to -1 if files are missing.
 	if err := query.ResetPhotoQuality(); err != nil {
 		log.Warnf("metadata: %s (reset quality)", err.Error())
 	}

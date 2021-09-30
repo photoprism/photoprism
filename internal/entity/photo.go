@@ -932,6 +932,10 @@ func (m *Photo) Restore() error {
 
 // Delete deletes the photo from the index.
 func (m *Photo) Delete(permanently bool) (files Files, err error) {
+	if m.ID < 1 || m.PhotoUID == "" {
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+	}
+
 	if permanently {
 		return m.DeletePermanently()
 	}
@@ -940,7 +944,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 
 	for _, file := range files {
 		if err := file.Delete(false); err != nil {
-			log.Errorf("photo: %s (delete file)", err)
+			log.Errorf("photo: %s (remove file)", err)
 		}
 	}
 
@@ -949,28 +953,32 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 
 // DeletePermanently permanently deletes a photo from the index.
 func (m *Photo) DeletePermanently() (files Files, err error) {
+	if m.ID < 1 || m.PhotoUID == "" {
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+	}
+
 	files = m.AllFiles()
 
 	for _, file := range files {
 		if err := file.DeletePermanently(); err != nil {
-			log.Errorf("photo: %s (delete file)", err)
+			log.Errorf("photo: %s (remove file)", err)
 		}
 	}
 
 	if err := UnscopedDb().Delete(Details{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (delete details)", err)
+		log.Errorf("photo: %s (remove details)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoKeyword{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (delete keywords)", err)
+		log.Errorf("photo: %s (remove keywords)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoLabel{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (delete labels)", err)
+		log.Errorf("photo: %s (remove labels)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID).Error; err != nil {
-		log.Errorf("photo: %s (delete albums)", err)
+		log.Errorf("photo: %s (remove albums)", err)
 	}
 
 	return files, UnscopedDb().Delete(m).Error

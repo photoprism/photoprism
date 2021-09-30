@@ -259,7 +259,9 @@ func facesIndexAction(ctx *cli.Context) error {
 		}
 
 		indexed = w.Start(opt)
-	} else if w := service.Purge(); w != nil {
+	}
+
+	if w := service.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: indexed,

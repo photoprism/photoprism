@@ -131,10 +131,22 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		}
 	}
 
-	if err := query.PurgeOrphans(); err != nil {
-		log.Errorf("cleanup: %s (purge orphans)", err)
+	// Remove orphan index entries.
+	if opt.Dry {
+		if files, err := query.OrphanFiles(); err != nil {
+			log.Errorf("cleanup: %s (find orphan files)", err)
+		} else if l := len(files); l > 0 {
+			log.Infof("cleanup: found %d orphan files", l)
+		} else {
+			log.Infof("cleanup: found no orphan files")
+		}
+	} else {
+		if err := query.PurgeOrphans(); err != nil {
+			log.Errorf("cleanup: %s (remove orphans)", err)
+		}
 	}
 
+	// Only update counts if anything was deleted.
 	if len(deleted) > 0 {
 		log.Info("cleanup: updating photo counts")
 
