@@ -430,6 +430,7 @@
       </v-list>
 
       <v-list class="p-user-box">
+
         <v-list-tile v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" @click.stop="">
           <v-list-tile-action :title="$gettext('Offline')">
             <v-icon color="warning">wifi_off</v-icon>
@@ -442,7 +443,26 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="!isPublic && auth" class="nav-logout" @click="logout">
+        <v-list-tile v-show="!isPublic && auth"  to="/" class="p-profile">
+          <v-list-tile-avatar color="grey" size="36">
+            <span class="white--text headline">{{ displayName[0].toUpperCase() }}</span>
+          </v-list-tile-avatar>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              {{ displayName }}
+            </v-list-tile-title>
+            <v-list-tile-sub-title>Profile</v-list-tile-sub-title>
+          </v-list-tile-content>
+
+          <v-list-tile-action :title="$gettext('Logout')">
+            <v-btn icon @click="logout">
+              <v-icon>power_settings_new</v-icon>
+            </v-btn>
+          </v-list-tile-action>
+        </v-list-tile>
+
+        <v-list-tile v-show="!isPublic && auth && isMini" class="nav-logout" @click="logout">
           <v-list-tile-action :title="$gettext('Logout')">
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>
@@ -472,6 +492,7 @@ import Event from "pubsub-js";
 export default {
   name: "PNavigation",
   data() {
+    let displayname = this.$session.getUser().FullName ? this.$session.getUser().FullName : this.$session.getUser().UserName;
     return {
       drawer: null,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false',
@@ -481,6 +502,7 @@ export default {
       session: this.$session,
       config: this.$config.values,
       page: this.$config.page,
+      displayName: displayname,
       reload: {
         subscription: null,
         dialog: false,
