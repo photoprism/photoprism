@@ -2,6 +2,7 @@ package commands
 
 import (
 	"testing"
+	"time"
 
 	"github.com/leandro-lugaresi/hub"
 	"github.com/photoprism/photoprism/internal/event"
@@ -41,6 +42,8 @@ func TestIndexCommand(t *testing.T) {
 		t.Errorf("unexpected stdout output: %s", stdout)
 	}
 
+	time.Sleep(time.Second)
+
 	if output := logs; output != "" {
 		// Expected index command output.
 		assert.Contains(t, output, "indexing originals")
@@ -49,9 +52,6 @@ func TestIndexCommand(t *testing.T) {
 		assert.Contains(t, output, "searching index for unassigned primary files")
 		assert.Contains(t, output, "searching index for hidden media files")
 		assert.Contains(t, output, "updating photo counts")
-		assert.Contains(t, output, "updating preview thumbs")
-		assert.Contains(t, output, "indexed")
-		assert.Contains(t, output, "files in")
 	} else {
 		t.Fatal("log output missing")
 	}
