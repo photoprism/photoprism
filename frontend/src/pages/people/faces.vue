@@ -373,7 +373,9 @@ export default {
       this.lastId = "";
     },
     loadMore() {
-      if (this.scrollDisabled) return;
+      if (this.scrollDisabled || !this.active) {
+        return;
+      }
 
       this.scrollDisabled = true;
       this.listen = false;
@@ -456,11 +458,15 @@ export default {
       return params;
     },
     refresh() {
-      if (this.loading) return;
+      if (this.loading || !this.active) {
+        return;
+      }
+
       this.loading = true;
       this.page = 0;
       this.dirty = true;
       this.scrollDisabled = false;
+
       this.loadMore();
     },
     search() {
