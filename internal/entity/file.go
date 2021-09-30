@@ -480,8 +480,8 @@ func (m *File) AddFaces(faces face.Faces) {
 
 // AddFace adds a face marker to the file.
 func (m *File) AddFace(f face.Face, subjUID string) {
-	// Only add faces with embedding, so that they can be clustered.
-	if len(f.Embeddings) != 1 {
+	// Only add faces with exactly one embedding so that they can be compared and clustered.
+	if !f.Embeddings.One() {
 		return
 	}
 
@@ -495,7 +495,7 @@ func (m *File) AddFace(f face.Face, subjUID string) {
 
 	// Append marker if it doesn't conflict with existing marker.
 	if markers := m.Markers(); !markers.Contains(*marker) {
-		markers.Append(*marker)
+		markers.AppendWithEmbedding(*marker)
 	}
 }
 

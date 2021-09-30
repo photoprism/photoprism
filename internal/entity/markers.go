@@ -6,16 +6,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Markers represents a list of markers.
 type Markers []Marker
 
 // Save stores the markers in the database.
 func (m Markers) Save(file *File) (count int, err error) {
-	for _, marker := range m {
+	for i := range m {
 		if file != nil {
-			marker.FileUID = file.FileUID
+			m[i].FileUID = file.FileUID
 		}
 
-		if _, err := UpdateOrCreateMarker(&marker); err != nil {
+		if _, err := UpdateOrCreateMarker(&m[i]); err != nil {
 			log.Errorf("markers: %s (save)", err)
 		}
 	}
@@ -29,8 +30,8 @@ func (m Markers) Save(file *File) (count int, err error) {
 
 // Unsaved tests if any marker hasn't been saved yet.
 func (m Markers) Unsaved() bool {
-	for _, marker := range m {
-		if marker.Unsaved() {
+	for i := range m {
+		if m[i].Unsaved() {
 			return true
 		}
 	}
@@ -40,8 +41,8 @@ func (m Markers) Unsaved() bool {
 
 // Contains returns true if a marker at the same position already exists.
 func (m Markers) Contains(other Marker) bool {
-	for _, marker := range m {
-		if marker.OverlapPercent(other) > face.OverlapThreshold {
+	for i := range m {
+		if m[i].OverlapPercent(other) > face.OverlapThreshold {
 			return true
 		}
 	}
@@ -51,8 +52,8 @@ func (m Markers) Contains(other Marker) bool {
 
 // DetectedFaceCount returns the number of automatically detected face markers.
 func (m Markers) DetectedFaceCount() (count int) {
-	for _, marker := range m {
-		if marker.DetectedFace() {
+	for i := range m {
+		if m[i].DetectedFace() {
 			count++
 		}
 	}
@@ -62,8 +63,8 @@ func (m Markers) DetectedFaceCount() (count int) {
 
 // ValidFaceCount returns the number of valid face markers.
 func (m Markers) ValidFaceCount() (count int) {
-	for _, marker := range m {
-		if marker.ValidFace() {
+	for i := range m {
+		if m[i].ValidFace() {
 			count++
 		}
 	}
@@ -73,10 +74,10 @@ func (m Markers) ValidFaceCount() (count int) {
 
 // SubjectNames returns known subject names.
 func (m Markers) SubjectNames() (names []string) {
-	for _, marker := range m {
-		if marker.MarkerInvalid || marker.MarkerType != MarkerFace {
+	for i := range m {
+		if m[i].MarkerInvalid || m[i].MarkerType != MarkerFace {
 			continue
-		} else if n := marker.SubjectName(); n != "" {
+		} else if n := m[i].SubjectName(); n != "" {
 			names = append(names, n)
 		}
 	}
@@ -91,16 +92,16 @@ func (m Markers) Labels() (result classify.Labels) {
 	labelSrc := SrcImage
 	labelUncertainty := 100
 
-	for _, marker := range m {
-		if marker.ValidFace() {
+	for i := range m {
+		if m[i].ValidFace() {
 			faceCount++
 
-			if u := marker.Uncertainty(); u < labelUncertainty {
+			if u := m[i].Uncertainty(); u < labelUncertainty {
 				labelUncertainty = u
 			}
 
-			if marker.MarkerSrc != "" {
-				labelSrc = marker.MarkerSrc
+			if m[i].MarkerSrc != "" {
+				labelSrc = m[i].MarkerSrc
 			}
 		}
 	}
@@ -129,6 +130,16 @@ func (m Markers) Labels() (result classify.Labels) {
 // Append adds a marker.
 func (m *Markers) Append(marker Marker) {
 	*m = append(*m, marker)
+}
+
+// AppendWithEmbedding adds a marker with face embedding.
+func (m *Markers) AppendWithEmbedding(marker Marker) {
+	if !marker.Embeddings().One() {
+		// Ignore markers that don't have exactly one embedding.
+		return
+	}
+
+	m.Append(marker)
 }
 
 // FindMarkers returns up to 1000 markers for a given file uid.

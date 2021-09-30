@@ -11,15 +11,14 @@ import (
 	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/clusters"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
 	MarkerUnknown = ""
-	MarkerFace    = "face"
-	MarkerLabel   = "label"
+	MarkerFace    = "face"  // MarkerType for faces (implemented).
+	MarkerLabel   = "label" // MarkerType for labels (todo).
 )
 
 // Marker represents an image marker point.
@@ -38,7 +37,7 @@ type Marker struct {
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
-	embeddings     Embeddings      `gorm:"-"`
+	embeddings     face.Embeddings `gorm:"-"`
 	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
 	X              float32         `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
 	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
@@ -105,10 +104,16 @@ func NewFaceMarker(f face.Face, file File, subjUID string) *Marker {
 		return nil
 	}
 
-	m.EmbeddingsJSON = f.EmbeddingsJSON()
+	m.SetEmbeddings(f.Embeddings)
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
 
 	return m
+}
+
+// SetEmbeddings assigns new face emebddings to the marker.
+func (m *Marker) SetEmbeddings(e face.Embeddings) {
+	m.embeddings = e
+	m.EmbeddingsJSON = e.JSON()
 }
 
 // Updates multiple columns in the database.
@@ -242,7 +247,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 				continue
 			}
 
-			if d := clusters.EuclideanDistance(e, faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
+			if d := e.Distance(faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
 				m.FaceDist = d
 			}
 		}
@@ -350,9 +355,9 @@ func (m *Marker) Create() error {
 }
 
 // Embeddings returns parsed marker embeddings.
-func (m *Marker) Embeddings() Embeddings {
+func (m *Marker) Embeddings() face.Embeddings {
 	if len(m.EmbeddingsJSON) == 0 {
-		return Embeddings{}
+		return face.Embeddings{}
 	} else if len(m.embeddings) > 0 {
 		return m.embeddings
 	} else if err := json.Unmarshal(m.EmbeddingsJSON, &m.embeddings); err != nil {
@@ -456,7 +461,7 @@ func (m *Marker) Face() (f *Face) {
 		if m.Size < face.ClusterMinSize || m.Score < face.ClusterMinScore {
 			log.Debugf("marker: skipped adding face due to low-quality (uid %s, size %d, score %d)", txt.Quote(m.MarkerUID), m.Size, m.Score)
 			return nil
-		} else if emb := m.Embeddings(); len(emb) == 0 {
+		} else if emb := m.Embeddings(); emb.Empty() {
 			log.Warnf("marker: %s has no embeddings", m.MarkerUID)
 			return nil
 		} else if f = NewFace(m.SubjUID, m.SubjSrc, emb); f == nil {

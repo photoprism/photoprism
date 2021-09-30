@@ -3,7 +3,6 @@ package photoprism
 import (
 	"github.com/montanaflynn/stats"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/clusters"
 )
 
 // Stats shows statistics on face embeddings.
@@ -27,7 +26,7 @@ func (w *Faces) Stats() (err error) {
 					continue
 				}
 
-				d := clusters.EuclideanDistance(embeddings[i], embeddings[j])
+				d := embeddings[i].Distance(embeddings[j])
 
 				if min < 0 || d < min {
 					min = d
@@ -55,7 +54,7 @@ func (w *Faces) Stats() (err error) {
 		log.Infof("faces: max Ø %f < median %f < %f", maxMin, maxMedian, maxMax)
 	}
 
-	if faces, err := query.Faces(true, false); err != nil {
+	if faces, err := query.Faces(true, false, false); err != nil {
 		log.Errorf("faces: %s", err)
 	} else if samples := len(faces); samples > 0 {
 		log.Infof("faces: computing distance of faces matching to the same person")
@@ -85,9 +84,7 @@ func (w *Faces) Stats() (err error) {
 					continue
 				}
 
-				e2 := f2.Embedding()
-
-				d := clusters.EuclideanDistance(e1, e2)
+				d := e1.Distance(f2.Embedding())
 
 				if min < 0 || d < min {
 					min = d

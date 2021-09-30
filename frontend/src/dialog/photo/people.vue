@@ -133,7 +133,11 @@ export default {
     },
     onReject(marker) {
       this.busy = true;
-      marker.reject().finally(() => this.busy = false);
+      this.$notify.blockUI();
+      marker.reject().finally(() => {
+        this.$notify.unblockUI();
+        this.busy = false;
+      });
     },
     onApprove(marker) {
       this.busy = true;
@@ -141,11 +145,19 @@ export default {
     },
     onClearSubject(marker) {
       this.busy = true;
-      marker.clearSubject(marker).finally(() => this.busy = false);
+      this.$notify.blockUI();
+      marker.clearSubject(marker).finally(() => {
+        this.$notify.unblockUI();
+        this.busy = false;
+      });
     },
     onRename(marker) {
       this.busy = true;
-      marker.rename().finally(() => this.busy = false);
+      this.$notify.blockUI();
+      marker.rename().finally(() => {
+        this.$notify.unblockUI();
+        this.busy = false;
+      });
     },
   },
 };

@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/face"
-	"github.com/photoprism/photoprism/pkg/clusters"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -27,7 +26,7 @@ type Face struct {
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
-	embedding       Embedding       `gorm:"-"`
+	embedding       face.Embedding  `gorm:"-"`
 	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
@@ -42,7 +41,7 @@ func (Face) TableName() string {
 }
 
 // NewFace returns a new face.
-func NewFace(subjUID, faceSrc string, embeddings Embeddings) *Face {
+func NewFace(subjUID, faceSrc string, embeddings face.Embeddings) *Face {
 	result := &Face{
 		SubjUID: subjUID,
 		FaceSrc: faceSrc,
@@ -56,8 +55,8 @@ func NewFace(subjUID, faceSrc string, embeddings Embeddings) *Face {
 }
 
 // SetEmbeddings assigns face embeddings.
-func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
-	m.embedding, m.SampleRadius, m.Samples = EmbeddingsMidpoint(embeddings)
+func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
+	m.embedding, m.SampleRadius, m.Samples = face.EmbeddingsMidpoint(embeddings)
 
 	// Limit sample radius to reduce false positives.
 	if m.SampleRadius > 0.35 {
@@ -91,9 +90,9 @@ func (m *Face) Matched() error {
 }
 
 // Embedding returns parsed face embedding.
-func (m *Face) Embedding() Embedding {
+func (m *Face) Embedding() face.Embedding {
 	if len(m.EmbeddingJSON) == 0 {
-		return Embedding{}
+		return face.Embedding{}
 	} else if len(m.embedding) > 0 {
 		return m.embedding
 	} else if err := json.Unmarshal(m.EmbeddingJSON, &m.embedding); err != nil {
@@ -104,10 +103,10 @@ func (m *Face) Embedding() Embedding {
 }
 
 // Match tests if embeddings match this face.
-func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
+func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 	dist = -1
 
-	if len(embeddings) == 0 {
+	if embeddings.Empty() {
 		// Np embeddings, no match.
 		return false, dist
 	}
@@ -119,9 +118,9 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 		return false, dist
 	}
 
-	// Calculate smallest distance to embeddings.
+	// Calculate the smallest distance to embeddings.
 	for _, e := range embeddings {
-		if d := clusters.EuclideanDistance(e, faceEmbedding); d < dist || dist < 0 {
+		if d := e.Distance(faceEmbedding); d < dist || dist < 0 {
 			dist = d
 		}
 	}
@@ -144,7 +143,7 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 }
 
 // ResolveCollision resolves a collision with a different subject's face.
-func (m *Face) ResolveCollision(embeddings Embeddings) (resolved bool, err error) {
+func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err error) {
 	if m.SubjUID == "" {
 		// Ignore reports for anonymous faces.
 		return false, nil

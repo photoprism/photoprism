@@ -52,7 +52,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	conflicts := 0
 	resolved := 0
 
-	faces, err := query.Faces(true, false)
+	faces, err := query.Faces(true, false, false)
 
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 		faceMap[f1.ID] = f1
 
 		for _, f2 := range faces {
-			if matched, dist := f1.Match(entity.Embeddings{f2.Embedding()}); matched {
+			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}); matched {
 				if f1.SubjUID == f2.SubjUID {
 					continue
 				}
@@ -89,7 +89,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 				if !fix {
 					// Do nothing.
-				} else if ok, err := f1.ResolveCollision(entity.Embeddings{f2.Embedding()}); err != nil {
+				} else if ok, err := f1.ResolveCollision(face.Embeddings{f2.Embedding()}); err != nil {
 					log.Errorf("face %s: %s", f1.ID, err)
 				} else if ok {
 					log.Infof("face %s: collision has been resolved", f1.ID)

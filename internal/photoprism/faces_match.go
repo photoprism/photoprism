@@ -42,7 +42,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	matchedAt := entity.TimePointer()
 
 	if opt.Force || unmatchedMarkers > 0 {
-		faces, err := query.Faces(false, false)
+		faces, err := query.Faces(false, false, false)
 
 		if err != nil {
 			return result, err
@@ -56,7 +56,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	// Find unmatched faces.
-	if unmatchedFaces, err := query.Faces(false, true); err != nil {
+	if unmatchedFaces, err := query.Faces(false, true, false); err != nil {
 		log.Error(err)
 	} else if len(unmatchedFaces) > 0 {
 		if r, err := w.MatchFaces(unmatchedFaces, false, matchedAt); err != nil {

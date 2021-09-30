@@ -40,7 +40,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
 		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
 			return added, err
-		} else if err = c.Learn(embeddings); err != nil {
+		} else if err = c.Learn(embeddings.Float64()); err != nil {
 			return added, err
 		}
 
@@ -52,10 +52,10 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 			log.Debugf("faces: found no new clusters")
 		}
 
-		results := make([]entity.Embeddings, len(sizes))
+		results := make([]face.Embeddings, len(sizes))
 
 		for i := range sizes {
-			results[i] = entity.Embeddings{}
+			results[i] = face.Embeddings{}
 		}
 
 		guesses := c.Guesses()

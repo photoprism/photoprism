@@ -1,12 +1,16 @@
 package entity
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/photoprism/photoprism/internal/face"
+)
 
 // Faces represents a Face slice.
 type Faces []Face
 
 // Embeddings returns all face embeddings in this slice.
-func (f Faces) Embeddings() (embeddings Embeddings) {
+func (f Faces) Embeddings() (embeddings face.Embeddings) {
 	for _, m := range f {
 		embeddings = append(embeddings, m.Embedding())
 	}

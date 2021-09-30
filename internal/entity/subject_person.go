@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	SubjPerson = "person"
+	SubjPerson = "person" // SubjType for people.
 )
 
 // People represents a list of people.
