@@ -127,14 +127,14 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Warn(err)
 	}
 
-	log.Debugf("metadata: updating photo counts")
+	log.Debugf("updating photo counts")
 
 	// Update precalculated photo and file counts.
 	if err := entity.UpdatePhotoCounts(); err != nil {
 		log.Warnf("metadata: %s (update counts)", err.Error())
 	}
 
-	log.Debugf("metadata: updating preview images")
+	log.Debugf("updating preview thumbs")
 
 	// Update album, subject, and label preview thumbs.
 	if err := query.UpdatePreviews(); err != nil {

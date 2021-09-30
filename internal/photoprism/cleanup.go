@@ -8,6 +8,8 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -136,7 +138,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		if files, err := query.OrphanFiles(); err != nil {
 			log.Errorf("cleanup: %s (find orphan files)", err)
 		} else if l := len(files); l > 0 {
-			log.Infof("cleanup: found %d orphan files", l)
+			log.Infof("cleanup: found %s", english.Plural(l, "orphan file", "orphan files"))
 		} else {
 			log.Infof("cleanup: found no orphan files")
 		}
@@ -148,14 +150,14 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 
 	// Only update counts if anything was deleted.
 	if len(deleted) > 0 {
-		log.Info("cleanup: updating photo counts")
+		log.Info("updating photo counts")
 
 		// Update precalculated photo and file counts.
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("cleanup: %s (update counts)", err)
 		}
 
-		log.Info("cleanup: updating preview images")
+		log.Info("updating preview thumbs")
 
 		// Update album, subject, and label preview thumbs.
 		if err := query.UpdatePreviews(); err != nil {

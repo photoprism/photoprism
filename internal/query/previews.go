@@ -5,7 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -13,19 +15,38 @@ import (
 func UpdateAlbumDefaultPreviews() (err error) {
 	start := time.Now()
 
-	err = Db().Table(entity.Album{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr(`(
+	var res *gorm.DB
+
+	switch DbDialect() {
+	case MySQL:
+		res = Db().Exec(`UPDATE albums LEFT JOIN (
+    	SELECT p2.album_uid, f.file_hash FROM files f, (
+        	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
+            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0
+        	WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+			) b ON b.album_uid = albums.album_uid
+		SET thumb = b.file_hash WHERE album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')
+        AND thumb <> b.file_hash`, entity.AlbumDefault, entity.SrcAuto)
+	case SQLite:
+		res = Db().Table(entity.Album{}.TableName()).
+			UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
-			WHERE f.deleted_at IS NULL AND f.file_missing = 0  AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_type = 'jpg' 
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality >= 0
+			WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE thumb_src='' AND album_type = 'album' AND deleted_at IS NULL`)).Error
+		) WHERE album_type = ? AND (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.AlbumDefault, entity.SrcDefault))
+	default:
+		return nil
+	}
+
+	err = res.Error
 
 	if err == nil {
-		log.Debugf("previews: updated albums [%s]", time.Since(start))
+		log.Debugf("previews: %s updated [%s]", english.Plural(int(res.RowsAffected), "album", "albums"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating albums, incompatible database version")
+		log.Errorf("previews: failed updating albums, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -37,19 +58,38 @@ func UpdateAlbumDefaultPreviews() (err error) {
 func UpdateAlbumFolderPreviews() (err error) {
 	start := time.Now()
 
-	err = Db().Table(entity.Album{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT f.file_hash FROM files f 
-			JOIN photos p ON p.id = f.photo_id AND p.photo_path = albums.album_path AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
-			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE thumb_src = '' AND album_type = 'folder' AND deleted_at IS NULL`)).
-		Error
+	var res *gorm.DB
+
+	switch DbDialect() {
+	case MySQL:
+		res = Db().Exec(`UPDATE albums LEFT JOIN (
+		SELECT p2.photo_path, f.file_hash FROM files f, (
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+			) b ON b.photo_path = albums.album_path
+		SET thumb = b.file_hash WHERE album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')
+		AND thumb <> b.file_hash`, entity.AlbumFolder, entity.SrcAuto)
+	case SQLite:
+		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		SELECT f.file_hash FROM files f,(
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			  WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  GROUP BY p.photo_path
+			) b
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_type = 'jpg'
+		AND b.photo_path = albums.album_path LIMIT 1)
+		WHERE album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')`, entity.AlbumFolder, entity.SrcAuto))
+	default:
+		return nil
+	}
+
+	err = res.Error
 
 	if err == nil {
-		log.Debugf("previews: updated folders [%s]", time.Since(start))
+		log.Debugf("previews: %s updated [%s]", english.Plural(int(res.RowsAffected), "folder", "folders"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating folders, incompatible database version")
+		log.Errorf("previews: failed updating folders, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -61,43 +101,38 @@ func UpdateAlbumFolderPreviews() (err error) {
 func UpdateAlbumMonthPreviews() (err error) {
 	start := time.Now()
 
-	err = Db().Table(entity.Album{}.TableName()).
-		Where("album_type = ?", entity.AlbumMonth).
-		Where("thumb IS NOT NULL AND thumb_src = ?", entity.SrcAuto).
-		UpdateColumns(entity.Values{"thumb": nil}).Error
-
-	/* TODO: Slow with many photos due to missing index.
+	var res *gorm.DB
 
 	switch DbDialect() {
 	case MySQL:
-		err = Db().Table(entity.Album{}.TableName()).
-			UpdateColumn("thumb", gorm.Expr(`(
-			SELECT f.file_hash FROM files f JOIN photos p ON p.id = f.photo_id
-			WHERE YEAR(p.taken_at) = albums.album_year AND MONTH(p.taken_at) = albums.album_month
-			AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1 AND f.deleted_at IS NULL
-			AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg'
-			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE thumb IS NULL AND thumb_src = '' AND album_type = 'month' AND deleted_at IS NULL`)).
-			Error
+		res = Db().Exec(`UPDATE albums LEFT JOIN (
+		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
+		SET thumb = b.file_hash WHERE album_type = ?
+		AND thumb <> b.file_hash AND (thumb_src = ? OR thumb IS NULL OR thumb = '')`, entity.AlbumMonth, entity.SrcAuto)
 	case SQLite:
-		err = Db().Table(entity.Album{}.TableName()).
-			UpdateColumn("thumb", gorm.Expr(`(
-			SELECT f.file_hash FROM files f JOIN photos p ON p.id = f.photo_id
-			WHERE strftime('%Y%m', p.taken_at) = (albums.album_year || printf('%02d', albums.album_month))
-			AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1 AND f.deleted_at IS NULL
-			AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg'
-			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE thumb IS NULL AND thumb_src = '' AND album_type = 'month' AND deleted_at IS NULL`)).
-			Error
+		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		SELECT f.file_hash FROM files f,(
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			  WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  GROUP BY p.photo_year, p.photo_month
+			) b
+		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
+		WHERE album_type = ? AND (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.AlbumMonth, entity.SrcAuto))
 	default:
 		return nil
 	}
-	*/
+
+	err = res.Error
 
 	if err == nil {
-		log.Debugf("previews: updated calendar [%s]", time.Since(start))
+		log.Debugf("previews: %s updated [%s]", english.Plural(int(res.RowsAffected), "month", "months"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating calendar, incompatible database version")
+		log.Errorf("previews: failed updating calendar, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -129,48 +164,57 @@ func UpdateAlbumPreviews() (err error) {
 func UpdateLabelPreviews() (err error) {
 	start := time.Now()
 
-	// Labels.
-	err = Db().Table(entity.Label{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr(`(
-			SELECT f.file_hash FROM files f 
+	var res *gorm.DB
+
+	switch DbDialect() {
+	case MySQL:
+		res = Db().Exec(`UPDATE labels JOIN (
+		SELECT p2.label_id, f.file_hash FROM files f, (
+			SELECT pl.label_id as label_id, max(p.id) AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			GROUP BY pl.label_id
+			UNION
+			SELECT c.category_id as label_id, max(p.id) AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+				JOIN categories c ON c.label_id = pl.label_id
+			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			GROUP BY c.category_id
+			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+		) b ON b.label_id = labels.id
+		SET thumb = b.file_hash WHERE thumb_src = '' OR thumb IS NULL OR thumb = ''`)
+	case SQLite:
+		res = Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality >= 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-		) WHERE thumb_src = '' AND deleted_at IS NULL`)).
-		Error
+		) WHERE (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.SrcAuto))
 
-	if err == nil {
-		log.Debugf("previews: updated labels [%s]", time.Since(start))
-	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating labels, incompatible database version")
-		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
-		return nil
-	}
-
-	return err
-}
-
-// UpdateCategoryPreviews updates category preview images.
-func UpdateCategoryPreviews() (err error) {
-	start := time.Now()
-
-	// Categories.
-	err = Db().Table(entity.Label{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr(`(
+		if res.Error == nil {
+			catRes := Db().Table(entity.Label{}.TableName()).
+				UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > -1
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality >= 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-		) WHERE thumb IS NULL AND thumb_src = '' AND deleted_at IS NULL`)).
-		Error
+			) WHERE thumb IS NULL`))
+
+			res.RowsAffected += catRes.RowsAffected
+		}
+	default:
+		return nil
+	}
+
+	err = res.Error
 
 	if err == nil {
-		log.Debugf("previews: updated categories [%s]", time.Since(start))
+		log.Debugf("previews: %s updated [%s]", english.Plural(int(res.RowsAffected), "label", "labels"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating categories, incompatible database version")
+		log.Errorf("previews: failed updating labels, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -182,47 +226,38 @@ func UpdateCategoryPreviews() (err error) {
 func UpdateSubjectPreviews() (err error) {
 	start := time.Now()
 
-	/* Previous implementation for reference:
+	var res *gorm.DB
 
-	return Db().Table(entity.Subject{}.TableName()).
-	UpdateColumn("thumb", gorm.Expr("(SELECT f.file_hash FROM files f "+
-		fmt.Sprintf(
-			"JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid = %s.subj_uid",
-			entity.Marker{}.TableName(),
-			entity.Subject{}.TableName())+
-		` JOIN photos p ON f.photo_id = p.id
-		WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL AND f.file_hash <> '' AND p.deleted_at IS NULL
-		AND f.file_primary = 1 AND f.file_missing = 0 AND p.photo_private = 0 AND p.photo_quality > -1
-		ORDER BY p.taken_at DESC LIMIT 1)
-		WHERE thumb_src='' AND deleted_at IS NULL`)).
-	Error */
+	// TODO: Avoid using private photos as subject covers.
+	switch DbDialect() {
+	case MySQL:
+		res = Db().Exec(`UPDATE ? LEFT JOIN (
+    	SELECT m.subj_uid, m.q, MAX(m.thumb) AS marker_thumb FROM ? m
+			WHERE m.subj_uid <> '' AND m.subj_uid IS NOT NULL
+			  AND m.marker_invalid = 0 AND m.thumb IS NOT NULL AND m.thumb <> ''
+			GROUP BY m.subj_uid, m.q
+			) b ON b.subj_uid = subjects.subj_uid
+		SET thumb = marker_thumb WHERE subjects.subj_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')`,
+			gorm.Expr(entity.Subject{}.TableName()), gorm.Expr(entity.Marker{}.TableName()), entity.SubjPerson, entity.SrcAuto)
+	case SQLite:
+		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb", gorm.Expr(
+			"(SELECT m.thumb FROM "+
+				fmt.Sprintf(
+					"%s m WHERE m.subj_uid = %s.subj_uid ",
+					entity.Marker{}.TableName(),
+					entity.Subject{}.TableName())+
+				` AND m.thumb <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1) 
+			WHERE subjects.subj_type = ? AND (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.SubjPerson, entity.SrcAuto))
+	default:
+		return nil
+	}
 
-	err = Db().Table(entity.Subject{}.TableName()).
-		UpdateColumn("thumb", gorm.Expr("(SELECT m.thumb FROM "+
-			fmt.Sprintf(
-				"%s m WHERE m.subj_uid = %s.subj_uid ",
-				entity.Marker{}.TableName(),
-				entity.Subject{}.TableName())+
-			` AND m.thumb <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1) 
-			WHERE (thumb_src = '' OR thumb_src IS NULL) AND deleted_at IS NULL`)).
-		Error
-
-	/** err = Db().Table(entity.Subject{}.TableName()).
-	UpdateColumn("thumb", gorm.Expr("(SELECT m.file_hash FROM "+
-		fmt.Sprintf(
-			"%s m WHERE m.subj_uid = %s.subj_uid AND m.subj_src = 'manual' ",
-			entity.Marker{}.TableName(),
-			entity.Subject{}.TableName())+
-		` AND m.file_hash <> '' ORDER BY m.w DESC LIMIT 1)
-		WHERE thumb_src = '' AND deleted_at IS NULL`)).
-	Error
-
-	*/
+	err = res.Error
 
 	if err == nil {
-		log.Debugf("previews: updated subjects [%s]", time.Since(start))
+		log.Debugf("previews: %s updated [%s]", english.Plural(int(res.RowsAffected), "subject", "subjects"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("previews: failed updating subjects, incompatible database version")
+		log.Errorf("previews: failed updating subjects, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -239,11 +274,6 @@ func UpdatePreviews() (err error) {
 
 	// Update Labels.
 	if err = UpdateLabelPreviews(); err != nil {
-		return err
-	}
-
-	// Update Categories.
-	if err = UpdateCategoryPreviews(); err != nil {
 		return err
 	}
 

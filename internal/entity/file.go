@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
@@ -259,10 +261,8 @@ func (m *File) ReplaceHash(newHash string) error {
 
 		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).UpdateColumn("thumb", newHash); res.Error != nil {
 			return res.Error
-		} else if res.RowsAffected == 1 {
-			log.Infof("%s: updated %d preview [%s]", name, res.RowsAffected, time.Since(start))
-		} else if res.RowsAffected > 1 {
-			log.Infof("%s: updated %d previews [%s]", name, res.RowsAffected, time.Since(start))
+		} else if res.RowsAffected > 0 {
+			log.Infof("%s: %s updated [%s]", name, english.Plural(int(res.RowsAffected), "preview", "previews"), time.Since(start))
 		}
 	}
 

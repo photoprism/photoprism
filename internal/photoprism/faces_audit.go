@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"github.com/dustin/go-humanize/english"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
@@ -123,11 +124,11 @@ func (w *Faces) Audit(fix bool) (err error) {
 	} else if l := len(orphans); l == 0 {
 		log.Infof("found no orphan face clusters")
 	} else if !fix {
-		log.Infof("found %d orphan face clusters", l)
+		log.Infof("found %s", english.Plural(l, "orphan face cluster", "orphan face clusters"))
 	} else if err := orphans.Delete(); err != nil {
-		log.Errorf("failed removing %d orphan face clusters: %s", l, err)
+		log.Errorf("failed removing %s: %s", english.Plural(l, "orphan face cluster", "orphan face clusters"), err)
 	} else {
-		log.Infof("removed %d orphan face clusters", l)
+		log.Infof("removed %s", english.Plural(l, "orphan face cluster", "orphan face clusters"))
 	}
 
 	// Find and fix orphan people.
@@ -136,11 +137,11 @@ func (w *Faces) Audit(fix bool) (err error) {
 	} else if l := len(orphans); l == 0 {
 		log.Infof("found no orphan people")
 	} else if !fix {
-		log.Infof("found %d orphan people", l)
+		log.Infof("found %s", english.Plural(l, "orphan person", "orphan people"))
 	} else if err := orphans.Delete(); err != nil {
-		log.Errorf("failed fixing %d orphan people: %s", l, err)
+		log.Errorf("failed fixing %s: %s", english.Plural(l, "orphan person", "orphan people"), err)
 	} else {
-		log.Infof("removed %d orphan people", l)
+		log.Infof("removed %s", english.Plural(l, "orphan person", "orphan people"))
 	}
 
 	return nil

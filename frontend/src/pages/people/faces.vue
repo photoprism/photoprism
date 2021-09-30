@@ -116,7 +116,7 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <div class="text-xs-center my-2">
+        <div class="text-xs-center mt-3 mb-2">
           <v-btn
               color="secondary" round
               :to="{name: 'all', query: { q: 'face:new' }}"

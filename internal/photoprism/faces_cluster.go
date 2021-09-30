@@ -3,6 +3,8 @@ package photoprism
 import (
 	"fmt"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
@@ -46,8 +48,8 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 
 		sizes := c.Sizes()
 
-		if len(sizes) > 1 {
-			log.Infof("faces: found %d new clusters", len(sizes))
+		if len(sizes) > 0 {
+			log.Infof("faces: found %s", english.Plural(len(sizes), "new cluster", "new clusters"))
 		} else {
 			log.Debugf("faces: found no new clusters")
 		}

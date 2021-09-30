@@ -6,6 +6,8 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -239,13 +241,13 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	log.Info("purge: searching index for unassigned primary files")
+	log.Info("searching index for unassigned primary files")
 
 	if err := query.FixPrimaries(); err != nil {
 		log.Errorf("purge: %s (fix primary files)", err.Error())
 	}
 
-	log.Info("purge: searching index for hidden media files")
+	log.Info("searching index for hidden media files")
 
 	// Set photo quality scores to -1 if files are missing.
 	if err := query.ResetPhotoQuality(); err != nil {
@@ -257,7 +259,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		if files, err := query.OrphanFiles(); err != nil {
 			log.Errorf("purge: %s (find orphan files)", err)
 		} else if l := len(files); l > 0 {
-			log.Infof("purge: found %d orphan files", l)
+			log.Infof("purge: found %s", english.Plural(l, "orphan file", "orphan files"))
 		} else {
 			log.Infof("purge: found no orphan files")
 		}
@@ -273,13 +275,13 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	}
 
 	// Update precalculated photo and file counts.
-	log.Info("purge: updating photo counts")
+	log.Info("updating photo counts")
 	if err := entity.UpdatePhotoCounts(); err != nil {
 		log.Errorf("purge: %s (update counts)", err)
 	}
 
 	// Update album, subject, and label preview thumbs.
-	log.Info("purge: updating preview images")
+	log.Info("updating preview thumbs")
 	if err := query.UpdatePreviews(); err != nil {
 		log.Errorf("purge: %s (update previews)", err)
 	}

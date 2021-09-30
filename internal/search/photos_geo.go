@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -293,7 +295,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		return results, result.Error
 	}
 
-	log.Infof("geo: found %d photos for %s [%s]", len(results), f.SerializeAll(), time.Since(start))
+	log.Infof("geo: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 	return results, nil
 }

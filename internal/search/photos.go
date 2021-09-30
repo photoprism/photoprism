@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -96,7 +98,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 			return results, 0, result.Error
 		}
 
-		log.Infof("photos: found %d results for %s [%s]", len(results), f.SerializeAll(), time.Since(start))
+		log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 		if f.Merged {
 			return results.Merged()
@@ -476,7 +478,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		return results, 0, err
 	}
 
-	log.Infof("photos: found %d results for %s [%s]", len(results), f.SerializeAll(), time.Since(start))
+	log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 	if f.Merged {
 		return results.Merged()
