@@ -93,3 +93,10 @@
     white-space: nowrap;
     overflow: hidden;
 }
+
+.p-user-box {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 0;
+}

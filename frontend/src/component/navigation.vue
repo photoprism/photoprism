@@ -415,18 +415,6 @@
           </v-list-group>
         </template>
 
-        <v-list-tile v-show="!isPublic && auth" class="nav-logout" @click="logout">
-          <v-list-tile-action :title="$gettext('Logout')">
-            <v-icon>power_settings_new</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Logout">Logout</translate>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
         <v-list-tile v-show="!auth" to="/login" class="nav-login" @click.stop="">
           <v-list-tile-action :title="$gettext('Login')">
             <v-icon>lock</v-icon>
@@ -439,8 +427,10 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" style="position:fixed; bottom: 0; left:0; right: 0;"
-                     @click.stop="">
+      </v-list>
+
+      <v-list class="p-user-box">
+        <v-list-tile v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" @click.stop="">
           <v-list-tile-action :title="$gettext('Offline')">
             <v-icon color="warning">wifi_off</v-icon>
           </v-list-tile-action>
@@ -451,7 +441,20 @@
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile v-show="!isPublic && auth" class="nav-logout" @click="logout">
+          <v-list-tile-action :title="$gettext('Logout')">
+            <v-icon>power_settings_new</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Logout">Logout</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
+
     </v-navigation-drawer>
     <div v-if="isTest" id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Browse Your Life in Pictures</a></div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
