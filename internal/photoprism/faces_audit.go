@@ -117,17 +117,17 @@ func (w *Faces) Audit(fix bool) (err error) {
 		}
 	}
 
-	// Find and fix orphan faces clusters.
+	// Find and fix orphan face clusters.
 	if orphans, err := entity.OrphanFaces(); err != nil {
-		log.Errorf("%s while finding orphan faces", err)
+		log.Errorf("%s while finding orphan face clusters", err)
 	} else if l := len(orphans); l == 0 {
-		log.Infof("found no orphan faces clusters")
+		log.Infof("found no orphan face clusters")
 	} else if !fix {
-		log.Infof("found %d orphan faces clusters", l)
+		log.Infof("found %d orphan face clusters", l)
 	} else if err := orphans.Delete(); err != nil {
-		log.Errorf("failed fixing %d orphan faces clusters: %s", l, err)
+		log.Errorf("failed removing %d orphan face clusters: %s", l, err)
 	} else {
-		log.Infof("removed %d orphan faces clusters", l)
+		log.Infof("removed %d orphan face clusters", l)
 	}
 
 	// Find and fix orphan people.
