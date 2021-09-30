@@ -42,7 +42,7 @@ Step-by-step installation instructions for our self-hosted [community edition](h
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and Docker to run the server. It is available for Mac, Linux, and Windows.
 
-We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
+We recommend hosting PhotoPrism on a server with ** 2 cores** and **4 GB memory respectively**.
 Also make sure it has at least 4 GB of swap configured, so that indexing doesn't cause
 restarts when there are memory usage spikes.
 Beyond these minimum requirements, the amount of RAM should match the number of cores.
