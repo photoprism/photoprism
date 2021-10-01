@@ -17,26 +17,29 @@ func UpdateAlbumDefaultPreviews() (err error) {
 
 	var res *gorm.DB
 
+	condition := gorm.Expr(
+		"album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')",
+		entity.AlbumDefault, entity.SrcDefault)
+
 	switch DbDialect() {
 	case MySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
     	SELECT p2.album_uid, f.file_hash FROM files f, (
         	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
             JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0
-        	WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+        	WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
         	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
 			) b ON b.album_uid = albums.album_uid
-		SET thumb = b.file_hash WHERE album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')
-        AND thumb <> b.file_hash`, entity.AlbumDefault, entity.SrcAuto)
+		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
 		res = Db().Table(entity.Album{}.TableName()).
 			UpdateColumn("thumb", gorm.Expr(`(
-			SELECT f.file_hash FROM files f 
+		SELECT f.file_hash FROM files f 
 			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality >= 0
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE album_type = ? AND (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.AlbumDefault, entity.SrcDefault))
+		) WHERE ?`, condition))
 	default:
 		return nil
 	}
@@ -60,26 +63,29 @@ func UpdateAlbumFolderPreviews() (err error) {
 
 	var res *gorm.DB
 
+	condition := gorm.Expr(
+		"album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')",
+		entity.AlbumFolder, entity.SrcAuto)
+
 	switch DbDialect() {
 	case MySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
 			) b ON b.photo_path = albums.album_path
-		SET thumb = b.file_hash WHERE album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')
-		AND thumb <> b.file_hash`, entity.AlbumFolder, entity.SrcAuto)
+		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
 		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			  GROUP BY p.photo_path
 			) b
 		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_type = 'jpg'
 		AND b.photo_path = albums.album_path LIMIT 1)
-		WHERE album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')`, entity.AlbumFolder, entity.SrcAuto))
+		WHERE ?`, condition))
 	default:
 		return nil
 	}
@@ -103,26 +109,29 @@ func UpdateAlbumMonthPreviews() (err error) {
 
 	var res *gorm.DB
 
+	condition := gorm.Expr(
+		"album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')",
+		entity.AlbumMonth, entity.SrcAuto)
+
 	switch DbDialect() {
 	case MySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
-		SET thumb = b.file_hash WHERE album_type = ?
-		AND thumb <> b.file_hash AND (thumb_src = ? OR thumb IS NULL OR thumb = '')`, entity.AlbumMonth, entity.SrcAuto)
+		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
 		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			  GROUP BY p.photo_year, p.photo_month
 			) b
 		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
-		WHERE album_type = ? AND (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.AlbumMonth, entity.SrcAuto))
+		WHERE ?`, condition))
 	default:
 		return nil
 	}
@@ -166,39 +175,40 @@ func UpdateLabelPreviews() (err error) {
 
 	var res *gorm.DB
 
+	condition := gorm.Expr("(thumb_src = ? OR thumb IS NULL OR thumb = '')", entity.SrcAuto)
+
 	switch DbDialect() {
 	case MySQL:
-		res = Db().Exec(`UPDATE labels JOIN (
+		res = Db().Exec(`UPDATE labels LEFT JOIN (
 		SELECT p2.label_id, f.file_hash FROM files f, (
 			SELECT pl.label_id as label_id, max(p.id) AS photo_id FROM photos p
 				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
-			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			GROUP BY pl.label_id
 			UNION
 			SELECT c.category_id as label_id, max(p.id) AS photo_id FROM photos p
 				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
 				JOIN categories c ON c.label_id = pl.label_id
-			WHERE p.photo_quality >= 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			GROUP BY c.category_id
 			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
 		) b ON b.label_id = labels.id
-		SET thumb = b.file_hash WHERE thumb_src = '' OR thumb IS NULL OR thumb = ''`)
+		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
 		res = Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality >= 0
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-		) WHERE (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.SrcAuto))
+		) WHERE ?`, condition))
 
 		if res.Error == nil {
-			catRes := Db().Table(entity.Label{}.TableName()).
-				UpdateColumn("thumb", gorm.Expr(`(
+			catRes := Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality >= 0
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
 			) WHERE thumb IS NULL`))
@@ -228,6 +238,13 @@ func UpdateSubjectPreviews() (err error) {
 
 	var res *gorm.DB
 
+	subjectTable := entity.Subject{}.TableName()
+	markerTable := entity.Marker{}.TableName()
+
+	condition := gorm.Expr(
+		fmt.Sprintf("%s.subj_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')", subjectTable),
+		entity.SubjPerson, entity.SrcAuto)
+
 	// TODO: Avoid using private photos as subject covers.
 	switch DbDialect() {
 	case MySQL:
@@ -237,17 +254,12 @@ func UpdateSubjectPreviews() (err error) {
 			  AND m.marker_invalid = 0 AND m.thumb IS NOT NULL AND m.thumb <> ''
 			GROUP BY m.subj_uid, m.q
 			) b ON b.subj_uid = subjects.subj_uid
-		SET thumb = marker_thumb WHERE subjects.subj_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')`,
-			gorm.Expr(entity.Subject{}.TableName()), gorm.Expr(entity.Marker{}.TableName()), entity.SubjPerson, entity.SrcAuto)
+		SET thumb = marker_thumb WHERE ?`, gorm.Expr(subjectTable), gorm.Expr(markerTable), condition)
 	case SQLite:
-		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb", gorm.Expr(
-			"(SELECT m.thumb FROM "+
-				fmt.Sprintf(
-					"%s m WHERE m.subj_uid = %s.subj_uid ",
-					entity.Marker{}.TableName(),
-					entity.Subject{}.TableName())+
-				` AND m.thumb <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1) 
-			WHERE subjects.subj_type = ? AND (thumb_src = ? OR thumb = '' OR thumb IS NULL)`, entity.SubjPerson, entity.SrcAuto))
+		from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjectTable))
+		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		SELECT m.thumb FROM ? AND m.thumb <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1
+		) WHERE ?`, from, condition))
 	default:
 		return nil
 	}
