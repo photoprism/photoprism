@@ -102,8 +102,8 @@ func UpdateMarker(router *gin.RouterGroup) {
 				}
 			}
 
-			if err := query.UpdateSubjectPreviews(); err != nil {
-				log.Errorf("faces: %s (update previews)", err)
+			if err := query.UpdateSubjectCovers(); err != nil {
+				log.Errorf("faces: %s (update covers)", err)
 			}
 
 			if err := entity.UpdateSubjectCounts(); err != nil {
@@ -148,8 +148,8 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (clear subject)", err)
 			AbortSaveFailed(c)
 			return
-		} else if err := query.UpdateSubjectPreviews(); err != nil {
-			log.Errorf("faces: %s (update previews)", err)
+		} else if err := query.UpdateSubjectCovers(); err != nil {
+			log.Errorf("faces: %s (update covers)", err)
 		} else if err := entity.UpdateSubjectCounts(); err != nil {
 			log.Errorf("faces: %s (update counts)", err)
 		}

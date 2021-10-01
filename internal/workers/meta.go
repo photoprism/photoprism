@@ -134,11 +134,11 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Warnf("metadata: %s (update counts)", err.Error())
 	}
 
-	log.Debugf("updating preview thumbs")
+	log.Debugf("updating cover thumbs")
 
-	// Update album, subject, and label preview thumbs.
-	if err := query.UpdatePreviews(); err != nil {
-		log.Errorf("metadata: %s (update previews)", err)
+	// Update album, subject, and label cover thumbs.
+	if err := query.UpdateCovers(); err != nil {
+		log.Errorf("metadata: %s (update covers)", err)
 	}
 
 	// Run garbage collection.

@@ -221,7 +221,7 @@ func (m *File) DeletePermanently() error {
 	}
 
 	if err := m.ReplaceHash(""); err != nil {
-		log.Errorf("file: %s (remove previews)", err)
+		log.Errorf("file: %s (remove covers)", err)
 	}
 
 	return UnscopedDb().Delete(m).Error
@@ -262,7 +262,7 @@ func (m *File) ReplaceHash(newHash string) error {
 		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).UpdateColumn("thumb", newHash); res.Error != nil {
 			return res.Error
 		} else if res.RowsAffected > 0 {
-			log.Infof("%s: %s updated [%s]", name, english.Plural(int(res.RowsAffected), "preview", "previews"), time.Since(start))
+			log.Infof("%s: %s updated [%s]", name, english.Plural(int(res.RowsAffected), "cover", "covers"), time.Since(start))
 		}
 	}
 

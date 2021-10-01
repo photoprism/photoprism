@@ -280,10 +280,10 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		log.Errorf("purge: %s (update counts)", err)
 	}
 
-	// Update album, subject, and label preview thumbs.
-	log.Info("updating preview thumbs")
-	if err := query.UpdatePreviews(); err != nil {
-		log.Errorf("purge: %s (update previews)", err)
+	// Update album, subject, and label cover thumbs.
+	log.Info("updating cover thumbs")
+	if err := query.UpdateCovers(); err != nil {
+		log.Errorf("purge: %s (update covers)", err)
 	}
 
 	return purgedFiles, purgedPhotos, nil

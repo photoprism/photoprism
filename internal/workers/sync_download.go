@@ -184,8 +184,8 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 		// Update precalculated photo and file counts.
 		worker.logError(entity.UpdatePhotoCounts())
 
-		// Update album, subject, and label preview thumbs.
-		worker.logError(query.UpdatePreviews())
+		// Update album, subject, and label cover thumbs.
+		worker.logError(query.UpdateCovers())
 	}
 
 	return false, nil

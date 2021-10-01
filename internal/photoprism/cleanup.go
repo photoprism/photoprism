@@ -157,11 +157,11 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 			log.Errorf("cleanup: %s (update counts)", err)
 		}
 
-		log.Info("updating preview thumbs")
+		log.Info("updating cover thumbs")
 
-		// Update album, subject, and label preview thumbs.
-		if err := query.UpdatePreviews(); err != nil {
-			log.Errorf("cleanup: %s (update previews)", err)
+		// Update album, subject, and label cover thumbs.
+		if err := query.UpdateCovers(); err != nil {
+			log.Errorf("cleanup: %s (update covers)", err)
 		}
 
 		// Show success notification.

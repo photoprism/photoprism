@@ -31,7 +31,7 @@ func LabelByUID(labelUID string) (label entity.Label, err error) {
 	return label, nil
 }
 
-// LabelThumbBySlug returns a label preview file based on the slug name.
+// LabelThumbBySlug returns a label cover file based on the slug name.
 func LabelThumbBySlug(labelSlug string) (file entity.File, err error) {
 	if err := Db().Where("files.file_primary AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_slug = ?", labelSlug).
@@ -45,7 +45,7 @@ func LabelThumbBySlug(labelSlug string) (file entity.File, err error) {
 	return file, nil
 }
 
-// LabelThumbByUID returns a label preview file based on the label UID.
+// LabelThumbByUID returns a label cover file based on the label UID.
 func LabelThumbByUID(labelUID string) (file entity.File, err error) {
 	// Search matching label
 	err = Db().Where("files.file_primary AND files.deleted_at IS NULL").
