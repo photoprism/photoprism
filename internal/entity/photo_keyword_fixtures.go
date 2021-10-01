@@ -19,6 +19,18 @@ var PhotoKeywordFixtures = PhotoKeywordMap{
 		PhotoID:   1000003,
 		KeywordID: 1000000,
 	},
+	"5": {
+		PhotoID:   1000003,
+		KeywordID: 1000003,
+	},
+	"6": {
+		PhotoID:   1000023,
+		KeywordID: 1000003,
+	},
+	"7": {
+		PhotoID:   1000027,
+		KeywordID: 1000004,
+	},
 }
 
 // CreatePhotoKeywordFixtures inserts known entities into the database for testing.

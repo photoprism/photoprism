@@ -7,6 +7,10 @@ body.chrome #photoprism .search-results .result {
     contain: layout style paint;
 }
 
+#photoprism .v-alert.no-results.v-alert--outline {
+    border: 0 !important;
+}
+
 #photoprism .cards-view,
 #photoprism .cards-view a,
 #photoprism .cards-view div,
@@ -245,6 +249,15 @@ body.chrome #photoprism .search-results .result {
     display: none;
 }
 
+#photoprism .cards-view .input-hide,
+#photoprism .mosaic-view .input-hide,
+#photoprism .cards-view .input-reject,
+#photoprism .mosaic-view .input-reject {
+    opacity: 0.75;
+    top: 4px;
+    right: 4px;
+}
+
 #photoprism .cards-view .input-private,
 #photoprism .mosaic-view .input-private {
     visibility: hidden;
@@ -360,6 +373,7 @@ body.chrome #photoprism .search-results .result {
     text-align: center;
 }
 
-#photoprism .face-results .invalid {
+#photoprism .face-results .is-face.is-hidden,
+#photoprism .face-results .is-marker.is-invalid {
     opacity: 0.5;
 }

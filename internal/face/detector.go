@@ -61,7 +61,6 @@ var (
 // Detector struct contains Pigo face detector general settings.
 type Detector struct {
 	minSize        int
-	maxSize        int
 	angle          float64
 	shiftFactor    float64
 	scaleFactor    float64
@@ -71,21 +70,24 @@ type Detector struct {
 }
 
 // Detect runs the detection algorithm over the provided source image.
-func Detect(fileName string) (faces Faces, err error) {
+func Detect(fileName string, findLandmarks bool, minSize int) (faces Faces, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("faces: %s (panic)\nstack: %s", r, debug.Stack())
 		}
 	}()
 
-	fd := &Detector{
-		minSize:        20,
-		maxSize:        1000,
+	if minSize < 20 {
+		minSize = 20
+	}
+
+	d := &Detector{
+		minSize:        minSize,
 		angle:          0.0,
 		shiftFactor:    0.1,
 		scaleFactor:    1.1,
 		iouThreshold:   0.2,
-		scoreThreshold: 9.0,
+		scoreThreshold: float32(ScoreThreshold),
 		perturb:        63,
 	}
 
@@ -93,7 +95,7 @@ func Detect(fileName string) (faces Faces, err error) {
 		return faces, fmt.Errorf("faces: file '%s' not found", txt.Quote(filepath.Base(fileName)))
 	}
 
-	det, params, err := fd.Detect(fileName)
+	det, params, err := d.Detect(fileName)
 
 	if err != nil {
 		return faces, fmt.Errorf("faces: %v (detect faces)", err)
@@ -103,7 +105,7 @@ func Detect(fileName string) (faces Faces, err error) {
 		return faces, fmt.Errorf("faces: no result")
 	}
 
-	faces, err = fd.Faces(det, params)
+	faces, err = d.Faces(det, params, findLandmarks)
 
 	if err != nil {
 		return faces, fmt.Errorf("faces: %s", err)
@@ -113,7 +115,7 @@ func Detect(fileName string) (faces Faces, err error) {
 }
 
 // Detect runs the detection algorithm over the provided source image.
-func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo.CascadeParams, err error) {
+func (d *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo.CascadeParams, err error) {
 	var srcFile io.Reader
 
 	file, err := os.Open(fileName)
@@ -122,17 +124,30 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 		return faces, params, err
 	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		err = file.Close()
+	}(file)
 
 	srcFile = file
 
 	src, err := pigo.DecodeImage(srcFile)
+
 	if err != nil {
 		return faces, params, err
 	}
 
 	pixels := pigo.RgbToGrayscale(src)
 	cols, rows := src.Bounds().Max.X, src.Bounds().Max.Y
+
+	var maxSize int
+
+	if cols < 20 || rows < 20 || cols < d.minSize || rows < d.minSize {
+		return faces, params, fmt.Errorf("image size %dx%d is too small", cols, rows)
+	} else if cols < rows {
+		maxSize = cols - 4
+	} else {
+		maxSize = rows - 4
+	}
 
 	imageParams := &pigo.ImageParams{
 		Pixels: pixels,
@@ -141,51 +156,42 @@ func (fd *Detector) Detect(fileName string) (faces []pigo.Detection, params pigo
 		Dim:    cols,
 	}
 
-	if rows > 800 || cols > 800 {
-		fd.scoreThreshold += 9.0
-	}
-
 	params = pigo.CascadeParams{
-		MinSize:     fd.minSize,
-		MaxSize:     fd.maxSize,
-		ShiftFactor: fd.shiftFactor,
-		ScaleFactor: fd.scaleFactor,
+		MinSize:     d.minSize,
+		MaxSize:     maxSize,
+		ShiftFactor: d.shiftFactor,
+		ScaleFactor: d.scaleFactor,
 		ImageParams: *imageParams,
 	}
 
+	log.Tracef("faces: image size %dx%d, face size min %d, max %d", cols, rows, params.MinSize, params.MaxSize)
+
 	// Run the classifier over the obtained leaf nodes and return the Face results.
 	// The result contains quadruplets representing the row, column, scale and Face score.
-	faces = classifier.RunCascade(params, fd.angle)
+	faces = classifier.RunCascade(params, d.angle)
 
 	// Calculate the intersection over union (IoU) of two clusters.
-	faces = classifier.ClusterDetections(faces, fd.iouThreshold)
+	faces = classifier.ClusterDetections(faces, d.iouThreshold)
 
 	return faces, params, nil
 }
 
 // Faces adds landmark coordinates to detected faces and returns the results.
-func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (results Faces, err error) {
-	var maxQ float32
-
-	// Sort by quality.
+func (d *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams, findLandmarks bool) (results Faces, err error) {
+	// Sort results by size.
 	sort.Slice(det, func(i, j int) bool {
-		return det[i].Q > det[j].Q
+		return det[i].Scale > det[j].Scale
 	})
 
 	for _, face := range det {
+		// Skip result if quality is too low.
+		if face.Q < QualityThreshold(face.Scale) {
+			continue
+		}
+
 		var eyesCoords []Area
 		var landmarkCoords []Area
 		var puploc *pigo.Puploc
-
-		if face.Q < fd.scoreThreshold {
-			continue
-		}
-
-		if maxQ < face.Q {
-			maxQ = face.Q
-		} else if maxQ >= 20 && face.Q < 15 {
-			continue
-		}
 
 		faceCoord := NewArea(
 			"face",
@@ -194,16 +200,17 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			face.Scale,
 		)
 
-		if face.Scale > 50 {
+		// Detect additional face landmarks?
+		if face.Scale > 50 && findLandmarks {
 			// Find left eye.
 			puploc = &pigo.Puploc{
 				Row:      face.Row - int(0.075*float32(face.Scale)),
 				Col:      face.Col - int(0.175*float32(face.Scale)),
 				Scale:    float32(face.Scale) * 0.25,
-				Perturbs: fd.perturb,
+				Perturbs: d.perturb,
 			}
 
-			leftEye := plc.RunDetector(*puploc, params.ImageParams, fd.angle, false)
+			leftEye := plc.RunDetector(*puploc, params.ImageParams, d.angle, false)
 
 			if leftEye.Row > 0 && leftEye.Col > 0 {
 				eyesCoords = append(eyesCoords, NewArea(
@@ -219,10 +226,10 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 				Row:      face.Row - int(0.075*float32(face.Scale)),
 				Col:      face.Col + int(0.185*float32(face.Scale)),
 				Scale:    float32(face.Scale) * 0.25,
-				Perturbs: fd.perturb,
+				Perturbs: d.perturb,
 			}
 
-			rightEye := plc.RunDetector(*puploc, params.ImageParams, fd.angle, false)
+			rightEye := plc.RunDetector(*puploc, params.ImageParams, d.angle, false)
 
 			if rightEye.Row > 0 && rightEye.Col > 0 {
 				eyesCoords = append(eyesCoords, NewArea(
@@ -240,7 +247,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 							continue
 						}
 
-						flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, false)
+						flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, false)
 						if flp.Row > 0 && flp.Col > 0 {
 							landmarkCoords = append(landmarkCoords, NewArea(
 								eye,
@@ -250,7 +257,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 							))
 						}
 
-						flp = flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, true)
+						flp = flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, true)
 						if flp.Row > 0 && flp.Col > 0 {
 							landmarkCoords = append(landmarkCoords, NewArea(
 								eye+"_v",
@@ -270,7 +277,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 						continue
 					}
 
-					flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, false)
+					flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, false)
 					if flp.Row > 0 && flp.Col > 0 {
 						landmarkCoords = append(landmarkCoords, NewArea(
 							"mouth_"+mouth,
@@ -285,7 +292,7 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			flpc := flpcs["lp84"][0]
 
 			if flpc != nil {
-				flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, fd.perturb, true)
+				flp := flpc.GetLandmarkPoint(leftEye, rightEye, params.ImageParams, d.perturb, true)
 				if flp.Row > 0 && flp.Col > 0 {
 					landmarkCoords = append(landmarkCoords, NewArea(
 						"lp84",
@@ -297,14 +304,23 @@ func (fd *Detector) Faces(det []pigo.Detection, params pigo.CascadeParams) (resu
 			}
 		}
 
-		results = append(results, Face{
+		// Create face.
+		f := Face{
 			Rows:      params.ImageParams.Rows,
 			Cols:      params.ImageParams.Cols,
 			Score:     int(face.Q),
-			Face:      faceCoord,
+			Area:      faceCoord,
 			Eyes:      eyesCoords,
 			Landmarks: landmarkCoords,
-		})
+		}
+
+		// Does the face significantly overlap with previous results?
+		if results.Contains(f) {
+			// Ignore face.
+		} else {
+			// Append face.
+			results.Append(f)
+		}
 	}
 
 	return results, nil

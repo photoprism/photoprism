@@ -68,6 +68,7 @@ func TestMissingPhotos(t *testing.T) {
 }
 
 func TestResetPhotosQuality(t *testing.T) {
+	// Set photo quality scores to -1 if files are missing.
 	if err := ResetPhotoQuality(); err != nil {
 		t.Fatal(err)
 	}

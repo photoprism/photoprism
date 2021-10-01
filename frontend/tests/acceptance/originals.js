@@ -10,7 +10,7 @@ test.meta("testID", "originals-001")("Add original files to album", async (t) =>
   await page.openNav();
   await t.click(Selector(".nav-albums"));
   await page.search("KanadaVacation");
-  await t.expect(Selector("h3").innerText).eql("Couldn't find anything");
+  await t.expect(Selector("div.no-results").visible).ok();
   await page.openNav();
   await t
     .click(Selector("div.nav-library + div"))

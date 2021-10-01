@@ -69,8 +69,11 @@ version: '3.5'
 #  Backup   | docker-compose exec photoprism photoprism backup -a -i
 #  Restore  | docker-compose exec photoprism photoprism restore -a -i
 #  Index    | docker-compose exec photoprism photoprism index
-#  Reindex  | docker-compose exec photoprism photoprism index -a
+#  Reindex  | docker-compose exec photoprism photoprism index -f
 #  Import   | docker-compose exec photoprism photoprism import
+#
+#  To search originals for faces without a complete rescan:
+#  docker-compose exec photoprism photoprism faces index
 #
 #  USING LET'S ENCRYPT HTTPS
 #  -------------------------------------------------------------------------
@@ -101,10 +104,10 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     # Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
-    user: "1000"
+    user: "1000:1000"
     # Don't expose port when running behind Traefik reverse proxy!
     # ports:
-    #  - "2342:2342" # [local port]:[container port]
+    #  - "2342:2342" # [server]:[container]
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
@@ -133,9 +136,12 @@ services:
       PHOTOPRISM_PUBLIC: "false"                       # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                     # Don't modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"                 # Enables experimental features
+      PHOTOPRISM_DISABLE_CHOWN: "false"                # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false"               # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"             # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"           # Disables using TensorFlow for image classification
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"           # Disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_FACES: "false"                # Disables facial recognition
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"       # Disables image classification
       PHOTOPRISM_DARKTABLE_PRESETS: "false"            # Enables Darktable presets and disables concurrent RAW conversion
       PHOTOPRISM_DETECT_NSFW: "false"                  # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                   # Allow uploads that MAY be offensive
@@ -144,6 +150,8 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB database user name
       PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB database user password
+      PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
+      HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
       # Your photo and video files ([local path]:[container path]):
@@ -175,7 +183,7 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=50
+    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes: # Don't remove permanent storage for index database files!
       - "./database:/var/lib/mysql"
     environment:

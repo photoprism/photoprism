@@ -20,14 +20,16 @@ const (
 	labelCover = "label-cover"
 )
 
-// GET /api/v1/albums/:uid/t/:token/:type
+// AlbumCover returns an album cover image.
+//
+// GET /api/v1/albums/:uid/t/:token/:size
 //
 // Parameters:
 //   uid: string album uid
 //   token: string security token (see config)
-//   type: string thumb type, see photoprism.ThumbnailTypes
+//   size: string thumb type, see photoprism.ThumbnailTypes
 func AlbumCover(router *gin.RouterGroup) {
-	router.GET("/albums/:uid/t/:token/:type", func(c *gin.Context) {
+	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", albumIconSvg)
 			return
@@ -35,19 +37,19 @@ func AlbumCover(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := service.Config()
-		typeName := c.Param("type")
+		thumbName := thumb.Name(c.Param("size"))
 		uid := c.Param("uid")
 
-		thumbType, ok := thumb.Types[typeName]
+		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid type %s", albumCover, typeName)
+			log.Errorf("%s: invalid size %s", albumCover, thumbName)
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
 
 		cache := service.CoverCache()
-		cacheKey := CacheKey(albumCover, uid, typeName)
+		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
@@ -92,8 +94,8 @@ func AlbumCover(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsSizeUncached() && c.Query("download") == "" {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", albumCover, thumbType.Width, thumbType.Height)
+		if size.ExceedsLimit() && c.Query("download") == "" {
+			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", albumCover, size.Width, size.Height)
 			AddCoverCacheHeader(c)
 			c.File(fileName)
 			return
@@ -101,10 +103,10 @@ func AlbumCover(router *gin.RouterGroup) {
 
 		var thumbnail string
 
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+		if conf.ThumbUncached() || size.Uncached() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {
@@ -130,14 +132,16 @@ func AlbumCover(router *gin.RouterGroup) {
 	})
 }
 
-// GET /api/v1/labels/:uid/t/:token/:type
+// LabelCover returns a label cover image.
+//
+// GET /api/v1/labels/:uid/t/:token/:size
 //
 // Parameters:
 //   uid: string label uid
 //   token: string security token (see config)
-//   type: string thumb type, see photoprism.ThumbnailTypes
+//   size: string thumb type, see photoprism.ThumbnailTypes
 func LabelCover(router *gin.RouterGroup) {
-	router.GET("/labels/:uid/t/:token/:type", func(c *gin.Context) {
+	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
 			c.Data(http.StatusForbidden, "image/svg+xml", labelIconSvg)
 			return
@@ -145,19 +149,19 @@ func LabelCover(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := service.Config()
-		typeName := c.Param("type")
+		thumbName := thumb.Name(c.Param("size"))
 		uid := c.Param("uid")
 
-		thumbType, ok := thumb.Types[typeName]
+		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid type %s", labelCover, txt.Quote(typeName))
+			log.Errorf("%s: invalid size %s", labelCover, thumbName)
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
 
 		cache := service.CoverCache()
-		cacheKey := CacheKey(labelCover, uid, typeName)
+		cacheKey := CacheKey(labelCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
@@ -202,8 +206,8 @@ func LabelCover(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if thumbType.ExceedsSizeUncached() {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", labelCover, thumbType.Width, thumbType.Height)
+		if size.ExceedsLimit() {
+			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", labelCover, size.Width, size.Height)
 
 			AddCoverCacheHeader(c)
 			c.File(fileName)
@@ -213,10 +217,10 @@ func LabelCover(router *gin.RouterGroup) {
 
 		var thumbnail string
 
-		if conf.ThumbUncached() || thumbType.OnDemand() {
-			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+		if conf.ThumbUncached() || size.Uncached() {
+			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
-			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, thumbType.Options...)
+			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...)
 		}
 
 		if err != nil {

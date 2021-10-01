@@ -3,12 +3,13 @@ package face
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
 )
+
+var modelPath, _ = filepath.Abs("../../assets/facenet")
 
 func TestNet(t *testing.T) {
 	expected := map[string]int{
@@ -33,8 +34,8 @@ func TestNet(t *testing.T) {
 		"19.jpg": 0,
 	}
 
-	faceindices := map[string][]int{
-		"18.jpg": {0, 1},
+	faceIndices := map[string][]int{
+		"18.jpg": {1, 0},
 		"1.jpg":  {2},
 		"4.jpg":  {3},
 		"5.jpg":  {4},
@@ -46,45 +47,46 @@ func TestNet(t *testing.T) {
 		"3.jpg":  {10},
 	}
 
-	faceindexToPersonid := [11]int{
+	faceIndexToPersonID := [11]int{
 		0, 1, 1, 1, 2, 0, 1, 0, 0, 1, 0,
 	}
 
-	var embeddings [11][]float32
+	var embeddings = make(Embeddings, 11)
 
 	faceNet := NewNet(modelPath, "testdata/cache", false)
 
 	if err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
-		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") || strings.Contains(fileName, "cache") {
+		if info.IsDir() || filepath.Base(filepath.Dir(fileName)) != "testdata" {
 			return nil
 		}
 
 		t.Run(fileName, func(t *testing.T) {
 			baseName := filepath.Base(fileName)
 
-			faces, err := faceNet.Detect(fileName)
+			faces, err := faceNet.Detect(fileName, 20, false, -1)
 
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			t.Logf("found %d faces in '%s'", len(faces), baseName)
+			// for i, f := range faces {
+			// 	t.Logf("FACE %d IN %s: %#v", i, fileName, f.Area)
+			// }
 
 			if len(faces) > 0 {
-				t.Logf("results: %#v", faces)
-
 				for i, f := range faces {
 					if len(f.Embeddings) > 0 {
-						embeddings[faceindices[baseName][i]] = f.Embeddings[0]
+						// t.Logf("FACE %d IN %s: %#v", i, fileName, f.Embeddings)
+						embeddings[faceIndices[baseName][i]] = f.Embeddings[0]
 					} else {
-						embeddings[faceindices[baseName][i]] = nil
+						embeddings[faceIndices[baseName][i]] = nil
 					}
 				}
 			}
 
 			if i, ok := expected[baseName]; ok {
-				assert.Equal(t, i, len(faces))
 				assert.Equal(t, i, faces.Count())
+
 				if faces.Count() == 0 {
 					assert.Equal(t, 100, faces.Uncertainty())
 				} else {
@@ -109,9 +111,11 @@ func TestNet(t *testing.T) {
 			if i >= j {
 				continue
 			}
-			dist := EuclidianDistance(embeddings[i], embeddings[j])
-			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceindexToPersonid[i], faceindexToPersonid[j], dist)
-			if faceindexToPersonid[i] == faceindexToPersonid[j] {
+
+			dist := embeddings[i].Distance(embeddings[j])
+
+			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceIndexToPersonID[i], faceIndexToPersonID[j], dist)
+			if faceIndexToPersonID[i] == faceIndexToPersonID[j] {
 				if dist < 1.21 {
 					correct += 1
 				}
@@ -127,5 +131,5 @@ func TestNet(t *testing.T) {
 
 	// there are a few incorrect results
 	// 4 out of 55 with the 1.21 threshold
-	assert.True(t, correct == 51)
+	assert.Equal(t, 51, correct)
 }

@@ -19,7 +19,6 @@ services:
       - "go-mod:/go/pkg/mod"
     shm_size: "2gb"
     environment:
-      TF_CPP_MIN_LOG_LEVEL: 0 # Show TensorFlow log messages for development
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
@@ -61,6 +60,7 @@ services:
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # On-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680              # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
+      TF_CPP_MIN_LOG_LEVEL: 0                 # Show TensorFlow log messages for development
 
   postgres:
     image: postgres:12-alpine

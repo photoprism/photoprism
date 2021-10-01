@@ -59,5 +59,5 @@ func Msg(id Message, params ...interface{}) string {
 }
 
 func Error(id Message, params ...interface{}) error {
-	return errors.New(Msg(id, params...))
+	return errors.New(strings.ToLower(Msg(id, params...)))
 }

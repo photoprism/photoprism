@@ -3,27 +3,28 @@ package commands
 import (
 	"time"
 
+	"github.com/urfave/cli"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/urfave/cli"
 )
 
-// ResampleCommand registers the thumbs cli command.
+// ResampleCommand registers the resample cli command.
 var ResampleCommand = cli.Command{
 	Name:    "resample",
 	Aliases: []string{"thumbs"},
-	Usage:   "Pre-renders thumbnails (significantly reduces memory and cpu usage)",
+	Usage:   "Pre-caches thumbnail images for improved performance",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
-			Usage: "re-create existing thumbnails",
+			Usage: "replace existing thumbnails",
 		},
 	},
 	Action: resampleAction,
 }
 
-// resampleAction pre-render the thumbnails
+// resampleAction pre-caches default thumbnails.
 func resampleAction(ctx *cli.Context) error {
 	start := time.Now()
 

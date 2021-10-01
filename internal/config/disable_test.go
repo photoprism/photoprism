@@ -27,3 +27,27 @@ func TestConfig_DisableExifTool(t *testing.T) {
 	c.options.ExifToolBin = "XXX"
 	assert.True(t, c.DisableExifTool())
 }
+
+func TestConfig_DisableFaces(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.DisableFaces())
+	c.options.DisableFaces = true
+	assert.True(t, c.DisableFaces())
+	c.options.DisableFaces = false
+	c.options.DisableTensorFlow = true
+	assert.True(t, c.DisableFaces())
+	c.options.DisableTensorFlow = false
+	assert.False(t, c.DisableFaces())
+}
+
+func TestConfig_DisableClassification(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.DisableClassification())
+	c.options.DisableClassification = true
+	assert.True(t, c.DisableClassification())
+	c.options.DisableClassification = false
+	c.options.DisableTensorFlow = true
+	assert.True(t, c.DisableClassification())
+	c.options.DisableTensorFlow = false
+	assert.False(t, c.DisableClassification())
+}

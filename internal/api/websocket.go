@@ -108,6 +108,7 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 		"albums.*",
 		"labels.*",
 		"subjects.*",
+		"people.*",
 		"sync.*",
 	)
 

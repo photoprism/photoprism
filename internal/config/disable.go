@@ -37,14 +37,32 @@ func (c *Config) DisableExifTool() bool {
 	return c.options.DisableExifTool
 }
 
-// DisableTensorFlow tests if TensorFlow should not be used for image classification (or anything else).
+// DisableTensorFlow tests if all features depending on TensorFlow should be disabled.
 func (c *Config) DisableTensorFlow() bool {
 	if LowMem && !c.options.DisableTensorFlow {
 		c.options.DisableTensorFlow = true
-		log.Warnf("config: disabled image classification due to memory constraints")
+		log.Warnf("config: disabled tensorflow due to memory constraints")
 	}
 
 	return c.options.DisableTensorFlow
+}
+
+// DisableFaces tests if facial recognition is disabled.
+func (c *Config) DisableFaces() bool {
+	if c.DisableTensorFlow() || c.options.DisableFaces {
+		return true
+	}
+
+	return false
+}
+
+// DisableClassification tests if image classification is disabled.
+func (c *Config) DisableClassification() bool {
+	if c.DisableTensorFlow() || c.options.DisableClassification {
+		return true
+	}
+
+	return false
 }
 
 // DisableFFmpeg tests if FFmpeg is disabled for video transcoding.

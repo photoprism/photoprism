@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -40,8 +42,8 @@ type ClientConfig struct {
 	Cameras         entity.Cameras      `json:"cameras"`
 	Lenses          entity.Lenses       `json:"lenses"`
 	Countries       entity.Countries    `json:"countries"`
-	Subjects        entity.Subjects     `json:"subjects"`
-	Thumbs          ThumbTypes          `json:"thumbs"`
+	People          entity.People       `json:"people"`
+	Thumbs          ThumbSizes          `json:"thumbs"`
 	Status          string              `json:"status"`
 	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken"`
@@ -65,17 +67,19 @@ type Years []int
 
 // ClientDisable represents disabled client features a user can't turn back on.
 type ClientDisable struct {
-	Backups     bool `json:"backups"`
-	WebDAV      bool `json:"webdav"`
-	Settings    bool `json:"settings"`
-	Places      bool `json:"places"`
-	ExifTool    bool `json:"exiftool"`
-	Darktable   bool `json:"darktable"`
-	Rawtherapee bool `json:"rawtherapee"`
-	Sips        bool `json:"sips"`
-	HeifConvert bool `json:"heifconvert"`
-	FFmpeg      bool `json:"ffmpeg"`
-	TensorFlow  bool `json:"tensorflow"`
+	Backups        bool `json:"backups"`
+	WebDAV         bool `json:"webdav"`
+	Settings       bool `json:"settings"`
+	Places         bool `json:"places"`
+	ExifTool       bool `json:"exiftool"`
+	FFmpeg         bool `json:"ffmpeg"`
+	Darktable      bool `json:"darktable"`
+	Rawtherapee    bool `json:"rawtherapee"`
+	Sips           bool `json:"sips"`
+	HeifConvert    bool `json:"heifconvert"`
+	TensorFlow     bool `json:"tensorflow"`
+	Faces          bool `json:"faces"`
+	Classification bool `json:"classification"`
 }
 
 // ClientCounts represents photo, video and album counts for the client UI.
@@ -164,17 +168,19 @@ func (c *Config) PublicConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:     true,
-			WebDAV:      true,
-			Settings:    c.DisableSettings(),
-			Places:      c.DisablePlaces(),
-			ExifTool:    true,
-			TensorFlow:  true,
-			Darktable:   true,
-			Rawtherapee: true,
-			Sips:        true,
-			HeifConvert: true,
-			FFmpeg:      true,
+			Backups:        true,
+			WebDAV:         true,
+			Settings:       c.DisableSettings(),
+			Places:         c.DisablePlaces(),
+			ExifTool:       true,
+			FFmpeg:         true,
+			Darktable:      true,
+			Rawtherapee:    true,
+			Sips:           true,
+			HeifConvert:    true,
+			TensorFlow:     true,
+			Faces:          true,
+			Classification: true,
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "public",
@@ -225,17 +231,19 @@ func (c *Config) GuestConfig() ClientConfig {
 			Share:    settings.Share,
 		},
 		Disable: ClientDisable{
-			Backups:     true,
-			WebDAV:      c.DisableWebDAV(),
-			Settings:    c.DisableSettings(),
-			Places:      c.DisablePlaces(),
-			ExifTool:    true,
-			TensorFlow:  true,
-			Darktable:   true,
-			Rawtherapee: true,
-			Sips:        true,
-			HeifConvert: true,
-			FFmpeg:      true,
+			Backups:        true,
+			WebDAV:         c.DisableWebDAV(),
+			Settings:       c.DisableSettings(),
+			Places:         c.DisablePlaces(),
+			ExifTool:       true,
+			FFmpeg:         true,
+			Darktable:      true,
+			Rawtherapee:    true,
+			Sips:           true,
+			HeifConvert:    true,
+			TensorFlow:     true,
+			Faces:          true,
+			Classification: true,
 		},
 		Flags:           "readonly public shared",
 		Mode:            "guest",
@@ -280,17 +288,19 @@ func (c *Config) UserConfig() ClientConfig {
 	result := ClientConfig{
 		Settings: *c.Settings(),
 		Disable: ClientDisable{
-			Backups:     c.DisableBackups(),
-			WebDAV:      c.DisableWebDAV(),
-			Settings:    c.DisableSettings(),
-			Places:      c.DisablePlaces(),
-			ExifTool:    c.DisableExifTool(),
-			TensorFlow:  c.DisableTensorFlow(),
-			Darktable:   c.DisableDarktable(),
-			Rawtherapee: c.DisableRawtherapee(),
-			Sips:        c.DisableSips(),
-			HeifConvert: c.DisableHeifConvert(),
-			FFmpeg:      c.DisableFFmpeg(),
+			Backups:        c.DisableBackups(),
+			WebDAV:         c.DisableWebDAV(),
+			Settings:       c.DisableSettings(),
+			Places:         c.DisablePlaces(),
+			ExifTool:       c.DisableExifTool(),
+			FFmpeg:         c.DisableFFmpeg(),
+			Darktable:      c.DisableDarktable(),
+			Rawtherapee:    c.DisableRawtherapee(),
+			Sips:           c.DisableSips(),
+			HeifConvert:    c.DisableHeifConvert(),
+			TensorFlow:     c.DisableTensorFlow(),
+			Faces:          c.DisableFaces(),
+			Classification: c.DisableClassification(),
 		},
 		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "user",
@@ -384,12 +394,6 @@ func (c *Config) UserConfig() ClientConfig {
 		Take(&result.Count)
 
 	c.Db().
-		Table(entity.Subject{}.TableName()).
-		Select("SUM(deleted_at IS NULL) AS people").
-		Where("subject_src <> ? AND subject_type = ?", entity.SrcDefault, entity.SubjectPerson).
-		Take(&result.Count)
-
-	c.Db().
 		Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id <> 'zz'").
@@ -398,6 +402,10 @@ func (c *Config) UserConfig() ClientConfig {
 	c.Db().
 		Order("country_slug").
 		Find(&result.Countries)
+
+	// People are subjects with type person.
+	result.Count.People, _ = query.PeopleCount()
+	result.People, _ = query.People()
 
 	c.Db().
 		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality >= 0 OR photos.deleted_at IS NULL)").

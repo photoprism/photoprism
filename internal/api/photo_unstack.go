@@ -142,7 +142,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 				log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(r.BaseName()))
 
 				// Remove new photo from database.
-				if err := newPhoto.Delete(true); err != nil {
+				if _, err := newPhoto.Delete(true); err != nil {
 					log.Errorf("photo: %s (unstack %s)", err.Error(), txt.Quote(r.BaseName()))
 				}
 

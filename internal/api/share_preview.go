@@ -14,13 +14,15 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// SharePreview returns a link share preview image.
+//
 // GET /s/:token/:uid/preview
 // TODO: Proof of concept, needs refactoring.
 func SharePreview(router *gin.RouterGroup) {
@@ -75,7 +77,7 @@ func SharePreview(router *gin.RouterGroup) {
 		f.Count = 12
 		f.Order = "relevance"
 
-		p, count, err := query.PhotoSearch(f)
+		p, count, err := search.Photos(f)
 
 		if err != nil {
 			log.Error(err)
@@ -88,7 +90,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		} else if count < 12 {
 			f := p[0]
-			thumbType, _ := thumb.Types["fit_720"]
+			size, _ := thumb.Sizes[thumb.Fit720]
 
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
@@ -98,7 +100,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 
 			if err != nil {
 				log.Error(err)
@@ -117,7 +119,7 @@ func SharePreview(router *gin.RouterGroup) {
 		y := 0
 
 		preview := imaging.New(width, height, color.NRGBA{255, 255, 255, 255})
-		thumbType, _ := thumb.Types["tile_224"]
+		size, _ := thumb.Sizes[thumb.Tile224]
 
 		for _, f := range p {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
@@ -128,7 +130,7 @@ func SharePreview(router *gin.RouterGroup) {
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), thumbType.Width, thumbType.Height, f.FileOrientation, thumbType.Options...)
+			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbPath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 
 			if err != nil {
 				log.Error(err)

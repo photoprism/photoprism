@@ -1,6 +1,10 @@
 PhotoPrism for Raspberry Pi (64bit)
 ===================================
 
+Our latest release comes as a single multi-arch image for AMD64, ARM64, and ARMv7.
+If your device meets the system requirements, the same installation instructions
+as for regular Linux servers apply.
+
 To get started, simply download our example config
 
   https://dl.photoprism.org/docker/arm64/docker-compose.yml
@@ -30,33 +34,40 @@ The help command shows a complete list of commands and config options.
 Use the --help flag to see a detailed command info like
 "docker-compose exec photoprism photoprism backup --help".
 
-| Action           | Command                                                 |
-|------------------|---------------------------------------------------------|
-| Start            | docker-compose up -d                                    |
-| Stop             | docker-compose stop                                     |
-| Update           | docker-compose pull                                     |
-| View Logs        | docker-compose logs --tail=25 -f                        |
-| Open Terminal    | docker-compose exec photoprism bash                     |
-| Show Help        | docker-compose exec photoprism photoprism help          |
-| Show Config      | docker-compose exec photoprism photoprism config        |
-| Reset Database   | docker-compose exec photoprism photoprism reset         |
-| Backup Database  | docker-compose exec photoprism photoprism backup -a -i  |
-| Restore Database | docker-compose exec photoprism photoprism restore -a -i |
-| Index Library    | docker-compose exec photoprism photoprism index         |
-| Complete Rescan  | docker-compose exec photoprism photoprism index --all   |
-| Import Files     | docker-compose exec photoprism photoprism import        |
+| Action   | Command
+|----------|---------------------------------------------------------
+| Start    | docker-compose up -d
+| Stop     | docker-compose stop
+| Update   | docker-compose pull
+| Logs     | docker-compose logs --tail=25 -f
+| Terminal | docker-compose exec photoprism bash
+| Help     | docker-compose exec photoprism photoprism help
+| Config   | docker-compose exec photoprism photoprism config
+| Reset    | docker-compose exec photoprism photoprism reset
+| Backup   | docker-compose exec photoprism photoprism backup -a -i
+| Restore  | docker-compose exec photoprism photoprism restore -a -i
+| Index    | docker-compose exec photoprism photoprism index
+| Re-index | docker-compose exec photoprism photoprism index -f
+| Import   | docker-compose exec photoprism photoprism import
 
-
-Note: "photoprism index --all" will re-index all originals, including already indexed and unchanged files.
+Note: "photoprism index -f" will re-index all originals, including already indexed and unchanged files.
 This may be necessary after upgrading, especially to new major versions.
 
 ## System Requirements ##
 
-You need to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1" in config.txt in order to use this image.
+It's important to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1" in config.txt
+in order to use our Docker image.
+
 Alternatively, you may run the image on UbuntuDockerPi (https://github.com/guysoft/UbuntuDockerPi).
 It's a 64bit Ubuntu Server with Docker pre-installed.
 
-Indexing large photo and video collections significantly benefits from fast, local SSD storage and enough memory for caching.
+Your device should have at least 4 GB of memory. Also make sure it has at least 4 GB of swap
+configured, so that indexing doesn't cause restarts when there are memory usage spikes.
+Beyond these minimum requirements, the amount of RAM should match the number of cores.
+
+Indexing large photo and video collections significantly benefits from fast, local SSD storage,
+and lots of memory for caching. Especially the conversion of RAW images and the transcoding of
+videos are very demanding.
 
 ## Reducing Server Load ##
 
@@ -64,9 +75,7 @@ If you're running out of memory - or other system resources - while indexing, pl
 number of workers by setting PHOTOPRISM_WORKERS to a value less than the number of logical CPU cores
 in docker-compose.yml.
 
-Also make sure your server has swap configured so that indexing doesn't cause restarts when
-there are memory usage spikes.
-As a measure of last resort, you may additionally disable image classification using TensorFlow.
+As a measure of last resort, you may disable using TensorFlow for image classification and facial recognition.
 
 To avoid permission issues, docker-compose.yml should include the following security options:
 

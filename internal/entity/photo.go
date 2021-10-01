@@ -49,7 +49,7 @@ type Photo struct {
 	PhotoUID         string       `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string       `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
 	TypeSrc          string       `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
-	PhotoTitle       string       `gorm:"type:VARCHAR(255);" json:"Title" yaml:"Title"`
+	PhotoTitle       string       `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
 	TitleSrc         string       `gorm:"type:VARBINARY(8);" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
 	PhotoDescription string       `gorm:"type:TEXT;" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string       `gorm:"type:VARBINARY(8);" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
@@ -70,9 +70,9 @@ type Photo struct {
 	PhotoLat         float32      `gorm:"type:FLOAT;index;" json:"Lat" yaml:"Lat,omitempty"`
 	PhotoLng         float32      `gorm:"type:FLOAT;index;" json:"Lng" yaml:"Lng,omitempty"`
 	PhotoCountry     string       `gorm:"type:VARBINARY(2);index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
-	PhotoYear        int          `gorm:"index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
-	PhotoMonth       int          `gorm:"index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
-	PhotoDay         int          `json:"Day" yaml:"Day"`
+	PhotoYear        int          `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
+	PhotoMonth       int          `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
+	PhotoDay         int          `gorm:"index:idx_photos_ymd" json:"Day" yaml:"Day"`
 	PhotoIso         int          `json:"Iso" yaml:"ISO,omitempty"`
 	PhotoExposure    string       `gorm:"type:VARBINARY(64);" json:"Exposure" yaml:"Exposure,omitempty"`
 	PhotoFNumber     float32      `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
@@ -82,7 +82,7 @@ type Photo struct {
 	PhotoResolution  int          `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoColor       uint8        `json:"Color" yaml:"-"`
 	CameraID         uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
-	CameraSerial     string       `gorm:"type:VARBINARY(255);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
+	CameraSerial     string       `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string       `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
 	LensID           uint         `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
 	Details          *Details     `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
@@ -186,6 +186,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		return err
 	}
 
+	// Update precalculated photo and file counts.
 	if err := UpdatePhotoCounts(); err != nil {
 		log.Errorf("photo: %s", err)
 	}
@@ -313,6 +314,7 @@ func (m *Photo) SaveLabels() error {
 		return err
 	}
 
+	// Update precalculated photo and file counts.
 	if err := UpdatePhotoCounts(); err != nil {
 		log.Errorf("photo: %s", err)
 	}
@@ -416,6 +418,7 @@ func (m *Photo) IndexKeywords() error {
 	// Add title, description and other keywords
 	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)
 	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
+	keywords = append(keywords, m.SubjectKeywords()...)
 	keywords = append(keywords, txt.Words(details.Keywords)...)
 	keywords = append(keywords, txt.Keywords(details.Subject)...)
 	keywords = append(keywords, txt.Keywords(details.Artist)...)
@@ -894,7 +897,7 @@ func (m *Photo) AllFilesMissing() bool {
 
 // AllFiles returns all files of this photo.
 func (m *Photo) AllFiles() (files Files) {
-	if err := UnscopedDb().Where("files.photo_id = ?", m.ID).Find(&files).Error; err != nil {
+	if err := UnscopedDb().Where("photo_id = ?", m.ID).Find(&files).Error; err != nil {
 		log.Error(err)
 	}
 
@@ -927,26 +930,58 @@ func (m *Photo) Restore() error {
 	return nil
 }
 
-// Delete deletes the entity from the database.
-func (m *Photo) Delete(permanently bool) error {
+// Delete deletes the photo from the index.
+func (m *Photo) Delete(permanently bool) (files Files, err error) {
+	if m.ID < 1 || m.PhotoUID == "" {
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+	}
+
 	if permanently {
 		return m.DeletePermanently()
 	}
 
-	Db().Delete(File{}, "photo_id = ?", m.ID)
+	files = m.AllFiles()
 
-	return m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
+	for _, file := range files {
+		if err := file.Delete(false); err != nil {
+			log.Errorf("photo: %s (remove file)", err)
+		}
+	}
+
+	return files, m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
 }
 
-// Delete permanently deletes the entity from the database.
-func (m *Photo) DeletePermanently() error {
-	Db().Unscoped().Delete(File{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(Details{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(PhotoKeyword{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(PhotoLabel{}, "photo_id = ?", m.ID)
-	Db().Unscoped().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID)
+// DeletePermanently permanently deletes a photo from the index.
+func (m *Photo) DeletePermanently() (files Files, err error) {
+	if m.ID < 1 || m.PhotoUID == "" {
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+	}
 
-	return Db().Unscoped().Delete(m).Error
+	files = m.AllFiles()
+
+	for _, file := range files {
+		if err := file.DeletePermanently(); err != nil {
+			log.Errorf("photo: %s (remove file)", err)
+		}
+	}
+
+	if err := UnscopedDb().Delete(Details{}, "photo_id = ?", m.ID).Error; err != nil {
+		log.Errorf("photo: %s (remove details)", err)
+	}
+
+	if err := UnscopedDb().Delete(PhotoKeyword{}, "photo_id = ?", m.ID).Error; err != nil {
+		log.Errorf("photo: %s (remove keywords)", err)
+	}
+
+	if err := UnscopedDb().Delete(PhotoLabel{}, "photo_id = ?", m.ID).Error; err != nil {
+		log.Errorf("photo: %s (remove labels)", err)
+	}
+
+	if err := UnscopedDb().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID).Error; err != nil {
+		log.Errorf("photo: %s (remove albums)", err)
+	}
+
+	return files, UnscopedDb().Delete(m).Error
 }
 
 // NoDescription returns true if the photo has no description.
@@ -954,7 +989,7 @@ func (m *Photo) NoDescription() bool {
 	return m.PhotoDescription == ""
 }
 
-// Updates a column in the database.
+// Update a column in the database.
 func (m *Photo) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
@@ -1005,6 +1040,7 @@ func (m *Photo) Approve() error {
 		return err
 	}
 
+	// Update precalculated photo and file counts.
 	if err := UpdatePhotoCounts(); err != nil {
 		log.Errorf("photo: %s", err)
 	}
@@ -1070,8 +1106,8 @@ func (m *Photo) MapKey() string {
 
 // SetCameraSerial updates the camera serial number.
 func (m *Photo) SetCameraSerial(s string) {
-	if val := txt.Clip(s, txt.ClipVarchar); m.NoCameraSerial() && val != "" {
-		m.CameraSerial = val
+	if s = txt.Clip(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
+		m.CameraSerial = s
 	}
 }
 
@@ -1080,6 +1116,6 @@ func (m *Photo) FaceCount() int {
 	if f, err := m.PrimaryFile(); err != nil {
 		return 0
 	} else {
-		return f.FaceCount()
+		return f.ValidFaceCount()
 	}
 }

@@ -67,6 +67,15 @@ func TestYes(t *testing.T) {
 	t.Run("include", func(t *testing.T) {
 		assert.Equal(t, true, Yes("include"))
 	})
+	t.Run("unknown", func(t *testing.T) {
+		assert.Equal(t, false, Yes("unknown"))
+	})
+	t.Run("please", func(t *testing.T) {
+		assert.Equal(t, true, Yes("please"))
+	})
+	t.Run("positive", func(t *testing.T) {
+		assert.Equal(t, true, Yes("positive"))
+	})
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, false, Yes(""))
 	})
@@ -103,7 +112,34 @@ func TestNo(t *testing.T) {
 	t.Run("include", func(t *testing.T) {
 		assert.Equal(t, false, No("include"))
 	})
+	t.Run("unknown", func(t *testing.T) {
+		assert.Equal(t, true, No("unknown"))
+	})
+	t.Run("please", func(t *testing.T) {
+		assert.Equal(t, false, No("please"))
+	})
+	t.Run("positive", func(t *testing.T) {
+		assert.Equal(t, false, No("positive"))
+	})
 	t.Run("empty", func(t *testing.T) {
 		assert.Equal(t, false, No(""))
+	})
+}
+
+func TestNew(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, false, New(""))
+	})
+	t.Run("Uppercase", func(t *testing.T) {
+		assert.Equal(t, true, New("NEW"))
+	})
+	t.Run("Lowercase", func(t *testing.T) {
+		assert.Equal(t, true, New("new"))
+	})
+	t.Run("True", func(t *testing.T) {
+		assert.Equal(t, true, New("New"))
+	})
+	t.Run("False", func(t *testing.T) {
+		assert.Equal(t, false, New("non"))
 	})
 }

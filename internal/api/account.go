@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -25,8 +26,10 @@ const (
 	accountFolder = "account-folder"
 )
 
+// SearchAccounts finds accounts and returns them as JSON.
+//
 // GET /api/v1/accounts
-func GetAccounts(router *gin.RouterGroup) {
+func SearchAccounts(router *gin.RouterGroup) {
 	router.GET("/accounts", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionSearch)
 
@@ -51,7 +54,7 @@ func GetAccounts(router *gin.RouterGroup) {
 			return
 		}
 
-		result, err := query.AccountSearch(f)
+		result, err := search.Accounts(f)
 
 		if err != nil {
 			AbortBadRequest(c)
@@ -66,6 +69,8 @@ func GetAccounts(router *gin.RouterGroup) {
 	})
 }
 
+// GetAccount returns an account as JSON.
+//
 // GET /api/v1/accounts/:id
 //
 // Parameters:
@@ -96,6 +101,8 @@ func GetAccount(router *gin.RouterGroup) {
 	})
 }
 
+// GetAccountFolders returns folders that belong to an account as JSON.
+//
 // GET /api/v1/accounts/:id/folders
 //
 // Parameters:

@@ -57,6 +57,13 @@ func TestIsUID(t *testing.T) {
 	assert.False(t, IsUID("", '_'))
 }
 
+func TestContainsUIDs(t *testing.T) {
+	assert.True(t, ContainsUIDs([]string{"lt9k3pw1wowuy3c2", "ltxk3pwawowuy0c0"}, 'l'))
+	assert.True(t, ContainsUIDs([]string{"dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"}, 'l'))
+	assert.False(t, ContainsUIDs([]string{"_"}, '_'))
+	assert.False(t, ContainsUIDs([]string{""}, '_'))
+}
+
 func TestIsLowerAlnum(t *testing.T) {
 	assert.False(t, IsLowerAlnum("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"))
 	assert.True(t, IsLowerAlnum("dafbe7996a701cdb"))

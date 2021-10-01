@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"github.com/dustin/go-humanize/english"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
@@ -52,7 +53,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	conflicts := 0
 	resolved := 0
 
-	faces, err := query.Faces(true, false)
+	faces, err := query.Faces(true, false, false)
 
 	if err != nil {
 		return err
@@ -64,32 +65,32 @@ func (w *Faces) Audit(fix bool) (err error) {
 		faceMap[f1.ID] = f1
 
 		for _, f2 := range faces {
-			if matched, dist := f1.Match(entity.Embeddings{f2.Embedding()}); matched {
-				if f1.SubjectUID == f2.SubjectUID {
+			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}); matched {
+				if f1.SubjUID == f2.SubjUID {
 					continue
 				}
 
 				conflicts++
 
-				r := f1.SampleRadius + face.ClusterRadius
+				r := f1.SampleRadius + face.MatchDist
 
 				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
-				if f1.SubjectUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f1.ID, txt.Quote(subj[f1.SubjectUID].SubjectName), f1.SubjectUID, entity.SrcString(f1.FaceSrc))
+				if f1.SubjUID != "" {
+					log.Infof("face %s: subject %s (%s %s)", f1.ID, txt.Quote(subj[f1.SubjUID].SubjName), f1.SubjUID, entity.SrcString(f1.FaceSrc))
 				} else {
 					log.Infof("face %s: no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
-				if f2.SubjectUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f2.ID, txt.Quote(subj[f2.SubjectUID].SubjectName), f2.SubjectUID, entity.SrcString(f2.FaceSrc))
+				if f2.SubjUID != "" {
+					log.Infof("face %s: subject %s (%s %s)", f2.ID, txt.Quote(subj[f2.SubjUID].SubjName), f2.SubjUID, entity.SrcString(f2.FaceSrc))
 				} else {
 					log.Infof("face %s: no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}
 
 				if !fix {
 					// Do nothing.
-				} else if ok, err := f1.ResolveCollision(entity.Embeddings{f2.Embedding()}); err != nil {
+				} else if ok, err := f1.ResolveCollision(face.Embeddings{f2.Embedding()}); err != nil {
 					log.Errorf("face %s: %s", f1.ID, err)
 				} else if ok {
 					log.Infof("face %s: collision has been resolved", f1.ID)
@@ -113,8 +114,34 @@ func (w *Faces) Audit(fix bool) (err error) {
 		log.Error(err)
 	} else {
 		for _, m := range markers {
-			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjectSrc), txt.Quote(subj[m.SubjectUID].SubjectName), m.FaceID, txt.Quote(subj[faceMap[m.FaceID].SubjectUID].SubjectName))
+			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjSrc), txt.Quote(subj[m.SubjUID].SubjName), m.FaceID, txt.Quote(subj[faceMap[m.FaceID].SubjUID].SubjName))
 		}
+	}
+
+	// Find and fix orphan face clusters.
+	if orphans, err := entity.OrphanFaces(); err != nil {
+		log.Errorf("%s while finding orphan face clusters", err)
+	} else if l := len(orphans); l == 0 {
+		log.Infof("found no orphan face clusters")
+	} else if !fix {
+		log.Infof("found %s", english.Plural(l, "orphan face cluster", "orphan face clusters"))
+	} else if err := orphans.Delete(); err != nil {
+		log.Errorf("failed removing %s: %s", english.Plural(l, "orphan face cluster", "orphan face clusters"), err)
+	} else {
+		log.Infof("removed %s", english.Plural(l, "orphan face cluster", "orphan face clusters"))
+	}
+
+	// Find and fix orphan people.
+	if orphans, err := entity.OrphanPeople(); err != nil {
+		log.Errorf("%s while finding orphan people", err)
+	} else if l := len(orphans); l == 0 {
+		log.Infof("found no orphan people")
+	} else if !fix {
+		log.Infof("found %s", english.Plural(l, "orphan person", "orphan people"))
+	} else if err := orphans.Delete(); err != nil {
+		log.Errorf("failed fixing %s: %s", english.Plural(l, "orphan person", "orphan people"), err)
+	} else {
+		log.Infof("removed %s", english.Plural(l, "orphan person", "orphan people"))
 	}
 
 	return nil

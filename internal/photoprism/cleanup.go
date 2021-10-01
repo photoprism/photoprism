@@ -8,6 +8,8 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -42,7 +44,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		}
 	}()
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.MainWorker.Start(); err != nil {
 		log.Warnf("cleanup: %s (start)", err.Error())
 		return thumbs, orphans, err
 	}
@@ -53,15 +55,19 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		log.Infof("cleanup: dry run, nothing will actually be removed")
 	}
 
-	// Find and remove orphan thumbnail files.
-	hashes, err := query.FileHashes()
+	var fileHashes, thumbHashes query.HashMap
 
-	if err != nil {
+	// Fetch existing media and thumb file hashes.
+	if fileHashes, err = query.FileHashMap(); err != nil {
+		return thumbs, orphans, err
+	} else if thumbHashes, err = query.ThumbHashMap(); err != nil {
 		return thumbs, orphans, err
 	}
 
+	// Thumbnails storage path.
 	thumbPath := w.conf.ThumbPath()
 
+	// Find and remove orphan thumbnail files.
 	if err := fastwalk.Walk(thumbPath, func(fileName string, info os.FileMode) error {
 		base := filepath.Base(fileName)
 
@@ -69,6 +75,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 			return nil
 		}
 
+		// Example: 01244519acf35c62a5fea7a5a7dcefdbec4fb2f5_3x3_resize.png
 		i := strings.Index(base, "_")
 
 		if i < 39 {
@@ -78,7 +85,9 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		hash := base[:i]
 		logName := txt.Quote(fs.RelName(fileName, thumbPath))
 
-		if ok := hashes[hash]; ok {
+		if ok := fileHashes[hash]; ok {
+			// Do nothing.
+		} else if ok := thumbHashes[hash]; ok {
 			// Do nothing.
 		} else if opt.Dry {
 			thumbs++
@@ -124,21 +133,33 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		}
 	}
 
-	if err := query.PurgeOrphans(); err != nil {
-		log.Errorf("cleanup: %s (purge orphans)", err)
+	// Remove orphan index entries.
+	if opt.Dry {
+		if files, err := query.OrphanFiles(); err != nil {
+			log.Errorf("cleanup: %s (find orphan files)", err)
+		} else if l := len(files); l > 0 {
+			log.Infof("cleanup: found %s", english.Plural(l, "orphan file", "orphan files"))
+		} else {
+			log.Infof("cleanup: found no orphan files")
+		}
+	} else {
+		if err := query.PurgeOrphans(); err != nil {
+			log.Errorf("cleanup: %s (remove orphans)", err)
+		}
 	}
 
+	// Only update counts if anything was deleted.
 	if len(deleted) > 0 {
-		log.Info("cleanup: updating photo counts")
+		log.Info("updating photo counts")
 
-		// Update photo counts and visibilities.
+		// Update precalculated photo and file counts.
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("cleanup: %s (update counts)", err)
 		}
 
-		log.Info("cleanup: updating preview images")
+		log.Info("updating preview thumbs")
 
-		// Update album, label, and subject preview images.
+		// Update album, subject, and label preview thumbs.
 		if err := query.UpdatePreviews(); err != nil {
 			log.Errorf("cleanup: %s (update previews)", err)
 		}

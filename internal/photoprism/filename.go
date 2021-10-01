@@ -5,9 +5,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func FileName(fileRoot, fileName string) string {

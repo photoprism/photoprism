@@ -17,14 +17,33 @@ func Bool(s string) bool {
 
 // Yes returns true if a string represents "yes".
 func Yes(s string) bool {
+	if s == "" {
+		return false
+	}
+
 	s = strings.ToLower(strings.TrimSpace(s))
 
-	return strings.IndexAny(s, "ytjosiд") == 0
+	return strings.IndexAny(s, "ytjposiд") == 0
 }
 
 // No returns true if a string represents "no".
 func No(s string) bool {
+	if s == "" {
+		return false
+	}
+
 	s = strings.ToLower(strings.TrimSpace(s))
 
-	return strings.IndexAny(s, "0nhfeн") == 0
+	return strings.IndexAny(s, "0nhufeн") == 0
+}
+
+// New returns true if a string represents "new".
+func New(s string) bool {
+	if s == "" {
+		return false
+	}
+
+	s = strings.ToLower(strings.TrimSpace(s))
+
+	return s == "new"
 }

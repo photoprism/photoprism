@@ -25,6 +25,7 @@ steps:
     commands:
       - scripts/docker-login.sh
       - docker-compose -f docker-compose.drone.yml pull
+      - docker-compose -f docker-compose.drone.yml stop
       - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
 
   - name: test-develop
@@ -42,7 +43,7 @@ steps:
       - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
     when:
       branch:
-        - master
+        - preview
         - release
 
   - name: down
@@ -67,7 +68,7 @@ steps:
       status:
         - success
       branch:
-        - master
+        - preview
 
   - name: deploy-demo
     environment:
@@ -83,7 +84,7 @@ steps:
       status:
         - success
       branch:
-        - master
+        - preview
 
   - name: deploy-release
     environment:
@@ -139,7 +140,7 @@ name: linux-arm64
 
 trigger:
   branch:
-    - master
+    - preview
   event:
     exclude:
       - pull_request
@@ -176,6 +177,6 @@ steps:
 
 ---
 kind: signature
-hmac: 7276095f851d0595a0471e4ec4249e14e7e809f0655883483bfafab2febaef6e
+hmac: 7c59ebf5126f9f013b413e743de8e73d54dc07fbe43fc32d1757102863f7253e
 
 ...

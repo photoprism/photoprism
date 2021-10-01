@@ -42,31 +42,40 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// JSON-REST API Version 1
 	v1 := router.Group(conf.BaseUri(config.ApiUri))
 	{
-		api.GetStatus(v1)
-		api.GetErrors(v1)
-
+		// Config options.
 		api.GetConfig(v1)
 		api.GetConfigOptions(v1)
 		api.SaveConfigOptions(v1)
 
+		// User profile and settings.
 		api.GetSettings(v1)
 		api.SaveSettings(v1)
-
 		api.ChangePassword(v1)
 		api.CreateSession(v1)
 		api.DeleteSession(v1)
 
+		// External account management.
+		api.SearchAccounts(v1)
+		api.GetAccount(v1)
+		api.GetAccountFolders(v1)
+		api.ShareWithAccount(v1)
+		api.CreateAccount(v1)
+		api.DeleteAccount(v1)
+		api.UpdateAccount(v1)
+
+		// Thumbnails and downloads.
 		api.GetThumb(v1)
 		api.GetDownload(v1)
 		api.GetVideo(v1)
 		api.CreateZip(v1)
 		api.DownloadZip(v1)
 
-		api.GetGeo(v1)
+		// Photos.
+		api.SearchPhotos(v1)
+		api.SearchPhotosGeo(v1)
 		api.GetPhoto(v1)
 		api.GetPhotoYaml(v1)
 		api.UpdatePhoto(v1)
-		api.GetPhotos(v1)
 		api.GetPhotoDownload(v1)
 		api.GetPhotoLinks(v1)
 		api.CreatePhotoLink(v1)
@@ -86,7 +95,27 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.PhotoPrimary(v1)
 		api.PhotoUnstack(v1)
 
-		api.GetLabels(v1)
+		// Albums.
+		api.SearchAlbums(v1)
+		api.GetAlbum(v1)
+		api.AlbumCover(v1)
+		api.CreateAlbum(v1)
+		api.UpdateAlbum(v1)
+		api.DeleteAlbum(v1)
+		api.DownloadAlbum(v1)
+		api.GetAlbumLinks(v1)
+		api.CreateAlbumLink(v1)
+		api.UpdateAlbumLink(v1)
+		api.DeleteAlbumLink(v1)
+		api.LikeAlbum(v1)
+		api.DislikeAlbum(v1)
+		api.CloneAlbums(v1)
+		api.AddPhotosToAlbum(v1)
+		api.RemovePhotosFromAlbum(v1)
+
+		// Labels.
+		api.SearchLabels(v1)
+		api.LabelCover(v1)
 		api.UpdateLabel(v1)
 		api.GetLabelLinks(v1)
 		api.CreateLabelLink(v1)
@@ -94,18 +123,32 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DeleteLabelLink(v1)
 		api.LikeLabel(v1)
 		api.DislikeLabel(v1)
-		api.LabelCover(v1)
 
+		// Folders.
+		api.FolderCover(v1)
 		api.GetFoldersOriginals(v1)
 		api.GetFoldersImport(v1)
-		api.GetFolderCover(v1)
 
+		// People and other subjects.
+		api.SearchSubjects(v1)
+		api.GetSubject(v1)
+		api.UpdateSubject(v1)
+		api.LikeSubject(v1)
+		api.DislikeSubject(v1)
+
+		// Faces.
+		api.SearchFaces(v1)
+		api.GetFace(v1)
+		api.UpdateFace(v1)
+
+		// Indexing and importing.
 		api.Upload(v1)
 		api.StartImport(v1)
 		api.CancelImport(v1)
 		api.StartIndexing(v1)
 		api.CancelIndexing(v1)
 
+		// Batch operations.
 		api.BatchPhotosApprove(v1)
 		api.BatchPhotosArchive(v1)
 		api.BatchPhotosRestore(v1)
@@ -114,35 +157,11 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.BatchAlbumsDelete(v1)
 		api.BatchLabelsDelete(v1)
 
-		api.GetAlbum(v1)
-		api.CreateAlbum(v1)
-		api.UpdateAlbum(v1)
-		api.DeleteAlbum(v1)
-		api.DownloadAlbum(v1)
-		api.GetAlbums(v1)
-		api.GetAlbumLinks(v1)
-		api.CreateAlbumLink(v1)
-		api.UpdateAlbumLink(v1)
-		api.DeleteAlbumLink(v1)
-		api.LikeAlbum(v1)
-		api.DislikeAlbum(v1)
-		api.AlbumCover(v1)
-		api.CloneAlbums(v1)
-		api.AddPhotosToAlbum(v1)
-		api.RemovePhotosFromAlbum(v1)
-
-		api.GetAccounts(v1)
-		api.GetAccount(v1)
-		api.GetAccountFolders(v1)
-		api.ShareWithAccount(v1)
-		api.CreateAccount(v1)
-		api.DeleteAccount(v1)
-		api.UpdateAccount(v1)
-
-		api.SendFeedback(v1)
-
+		// Other.
 		api.GetSvg(v1)
-
+		api.GetStatus(v1)
+		api.GetErrors(v1)
+		api.SendFeedback(v1)
 		api.Websocket(v1)
 	}
 

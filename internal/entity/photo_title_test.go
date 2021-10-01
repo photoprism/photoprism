@@ -104,7 +104,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "longlonglonglonglonglongName / 2016", m.PhotoTitle)
+		assert.Equal(t, "longlonglonglonglonglongName / 2018", m.PhotoTitle)
 	})
 
 	t.Run("photo with location and short city", func(t *testing.T) {
@@ -162,7 +162,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Examplefilenameoriginal", m.PhotoTitle)
+		assert.Equal(t, "Franzilein & Actress / 2008", m.PhotoTitle)
 	})
 	t.Run("no location", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
@@ -243,7 +243,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 
 		assert.Equal(t, SrcAuto, m.TitleSrc)
 		assert.Equal(t, SrcAuto, m.DescriptionSrc)
-		assert.Equal(t, "Corn McCornface & Jens Mander / 2014", m.PhotoTitle)
+		assert.Equal(t, "Corn & Jens / Germany / 2014", m.PhotoTitle)
 		assert.Equal(t, "", m.PhotoDescription)
 	})
 }

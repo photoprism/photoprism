@@ -1,23 +1,63 @@
 package query
 
-import "github.com/photoprism/photoprism/internal/entity"
+import (
+	"time"
+
+	"github.com/photoprism/photoprism/internal/entity"
+)
 
 // PurgeOrphans removes orphan database entries.
 func PurgeOrphans() error {
+	// Remove files without a photo.
+	start := time.Now()
+	if count, err := PurgeOrphanFiles(); err != nil {
+		return err
+	} else if count > 0 {
+		log.Warnf("purge: removed %d orphan files [%s]", count, time.Since(start))
+	} else {
+		log.Infof("purge: no orphan files [%s]", time.Since(start))
+	}
+
+	// Remove duplicates without an original file.
 	if err := PurgeOrphanDuplicates(); err != nil {
 		return err
 	}
+
+	// Remove unused countries.
 	if err := PurgeOrphanCountries(); err != nil {
 		return err
 	}
+
+	// Remove unused cameras.
 	if err := PurgeOrphanCameras(); err != nil {
 		return err
 	}
+
+	// Remove unused camera lenses.
 	if err := PurgeOrphanLenses(); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// PurgeOrphanFiles removes files without a photo from the index.
+func PurgeOrphanFiles() (count int, err error) {
+	files, err := OrphanFiles()
+
+	if err != nil {
+		return count, err
+	}
+
+	for i := range files {
+		if err = files[i].DeletePermanently(); err != nil {
+			return count, err
+		}
+
+		count++
+	}
+
+	return count, err
 }
 
 // PurgeOrphanDuplicates deletes all files from the duplicates table that don't exist in the files table.

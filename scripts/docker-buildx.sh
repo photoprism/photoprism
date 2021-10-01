@@ -36,5 +36,7 @@ else
       --push .
 fi
 
-docker buildx rm multibuilder
+echo "Removing multibuilder..."
+docker buildx rm multibuilder 2>/dev/null || true
+
 echo "Done"

@@ -13,8 +13,14 @@ import (
 func Delete(p entity.Photo) error {
 	yamlFileName := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
-	files := p.AllFiles()
+	// Permanently delete photo from index.
+	files, err := p.DeletePermanently()
 
+	if err != nil {
+		return err
+	}
+
+	// Delete related files.
 	for _, file := range files {
 		fileName := FileName(file.FileRoot, file.FileName)
 
@@ -39,10 +45,11 @@ func Delete(p entity.Photo) error {
 		}
 	}
 
+	// Remove sidecar backup.
 	if fs.FileExists(yamlFileName) {
 		log.Debugf("delete: removing yaml sidecar %s", txt.Quote(filepath.Base(yamlFileName)))
 		logWarn("delete", os.Remove(yamlFileName))
 	}
 
-	return p.DeletePermanently()
+	return nil
 }

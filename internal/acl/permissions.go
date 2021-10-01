@@ -11,6 +11,9 @@ var Permissions = ACL{
 	ResourceConfigOptions: Roles{
 		RoleAdmin: Actions{ActionDefault: true},
 	},
+	ResourceSubjects: Roles{
+		RoleAdmin: Actions{ActionDefault: true},
+	},
 	ResourceAlbums: Roles{
 		RoleAdmin: Actions{ActionDefault: true},
 		RoleGuest: Actions{ActionSearch: true, ActionRead: true},

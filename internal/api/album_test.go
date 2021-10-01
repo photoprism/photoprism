@@ -5,15 +5,16 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/i18n"
+
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetAlbums(t *testing.T) {
+func TestSearchAlbums(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetAlbums(router)
+		SearchAlbums(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums?count=10")
 		count := gjson.Get(r.Body.String(), "#")
 		assert.LessOrEqual(t, int64(3), count.Int())
@@ -21,7 +22,7 @@ func TestGetAlbums(t *testing.T) {
 	})
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		GetAlbums(router)
+		SearchAlbums(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums?xxx=10")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -112,7 +113,7 @@ func TestDeleteAlbum(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "delete", val.String())
-		GetAlbums(router)
+		SearchAlbums(router)
 		r2 := PerformRequest(app, "GET", "/api/v1/albums/"+uid)
 		assert.Equal(t, http.StatusNotFound, r2.Code)
 	})

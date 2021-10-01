@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
@@ -53,7 +54,7 @@ func (worker *Share) Start() (err error) {
 	}
 
 	// Find accounts for which sharing is enabled
-	accounts, err := query.AccountSearch(f)
+	accounts, err := search.Accounts(f)
 
 	// Upload newly shared files
 	for _, a := range accounts {
@@ -97,14 +98,14 @@ func (worker *Share) Start() (err error) {
 			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 
 			if a.ShareSize != "" {
-				thumbType, ok := thumb.Types[a.ShareSize]
+				size, ok := thumb.Sizes[thumb.Name(a.ShareSize)]
 
 				if !ok {
 					log.Errorf("share: invalid size %s", a.ShareSize)
 					continue
 				}
 
-				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), thumbType.Width, thumbType.Height, file.File.FileOrientation, thumbType.Options...)
+				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, worker.conf.ThumbPath(), size.Width, size.Height, file.File.FileOrientation, size.Options...)
 
 				if err != nil {
 					worker.logError(err)

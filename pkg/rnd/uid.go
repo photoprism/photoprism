@@ -72,3 +72,18 @@ func IsUID(s string, prefix byte) bool {
 
 	return IsPPID(s, prefix)
 }
+
+// ContainsUIDs tests if a slice of strings contains UIDs only.
+func ContainsUIDs(s []string, prefix byte) bool {
+	if len(s) < 1 {
+		return false
+	}
+
+	for _, id := range s {
+		if !IsUID(id, prefix) {
+			return false
+		}
+	}
+
+	return true
+}

@@ -13,8 +13,10 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/karrick/godirwalk"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -23,18 +25,26 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Default FFmpeg AVC software encoder.
-const DefaultAvcEncoder = "libx264"
+const DefaultAvcEncoder = "libx264" // Default FFmpeg AVC software encoder.
+const IntelQsvEncoder = "h264_qsv"
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
-	conf     *config.Config
-	cmdMutex sync.Mutex
+	conf                 *config.Config
+	cmdMutex             sync.Mutex
+	darktableBlacklist   fs.Blacklist
+	rawtherapeeBlacklist fs.Blacklist
 }
 
 // NewConvert returns a new converter and expects the config as argument.
 func NewConvert(conf *config.Config) *Convert {
-	return &Convert{conf: conf}
+	c := &Convert{
+		conf:                 conf,
+		darktableBlacklist:   fs.NewBlacklist(conf.DarktableBlacklist()),
+		rawtherapeeBlacklist: fs.NewBlacklist(conf.RawtherapeeBlacklist()),
+	}
+
+	return c
 }
 
 // Start converts all files in a directory to JPEG if possible.
@@ -177,7 +187,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 // JpegConvertCommand returns the command for converting files to JPEG, depending on the format.
 func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName string) (result *exec.Cmd, useMutex bool, err error) {
 	if f == nil {
-		return result, useMutex, fmt.Errorf("convert: file is nil - you might have found a bug")
+		return result, useMutex, fmt.Errorf("file is nil - you might have found a bug")
 	}
 
 	size := strconv.Itoa(c.conf.JpegSize())
@@ -186,7 +196,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 	if f.IsRaw() {
 		if c.conf.SipsEnabled() {
 			result = exec.Command(c.conf.SipsBin(), "-Z", size, "-s", "format", "jpeg", "--out", jpegName, f.FileName())
-		} else if c.conf.DarktableEnabled() && fileExt != fs.CanonCr3Ext && fileExt != fs.FujiRawExt {
+		} else if c.conf.DarktableEnabled() && c.darktableBlacklist.Ok(fileExt) {
 			var args []string
 
 			// Only one instance of darktable-cli allowed due to locking if presets are loaded.
@@ -205,7 +215,7 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 			}
 
 			result = exec.Command(c.conf.DarktableBin(), args...)
-		} else if c.conf.RawtherapeeEnabled() {
+		} else if c.conf.RawtherapeeEnabled() && c.rawtherapeeBlacklist.Ok(fileExt) {
 			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
@@ -213,14 +223,19 @@ func (c *Convert) JpegConvertCommand(f *MediaFile, jpegName string, xmpName stri
 
 			result = exec.Command(c.conf.RawtherapeeBin(), args...)
 		} else {
-			return nil, useMutex, fmt.Errorf("convert: no converter found for %s", txt.Quote(f.BaseName()))
+			return nil, useMutex, fmt.Errorf("no suitable converter found")
 		}
 	} else if f.IsVideo() && c.conf.FFmpegEnabled() {
 		result = exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", "00:00:00.001", "-vframes", "1", jpegName)
 	} else if f.IsHEIF() && c.conf.HeifConvertEnabled() {
 		result = exec.Command(c.conf.HeifConvertBin(), f.FileName(), jpegName)
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
+		return nil, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
+	}
+
+	// Log convert command in trace mode only as it exposes server internals.
+	if result != nil {
+		log.Tracef("convert: %s", result.String())
 	}
 
 	return result, useMutex, nil
@@ -255,8 +270,6 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	jpegName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.JpegExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Infof("converting %s to %s", fileName, fs.FormatJpeg)
-
 	xmpName := fs.FormatXMP.Find(f.FileName(), false)
 
 	event.Publish("index.converting", event.Data{
@@ -266,12 +279,18 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 		"xmpName":  filepath.Base(xmpName),
 	})
 
+	start := time.Now()
+
 	if f.IsImageOther() {
+		log.Infof("%s: converting %s to %s", f.FileType(), fileName, fs.FormatJpeg)
+
 		_, err = thumb.Jpeg(f.FileName(), jpegName, f.Orientation())
 
 		if err != nil {
 			return nil, err
 		}
+
+		log.Infof("%s: created %s [%s]", f.FileType(), filepath.Base(jpegName), time.Since(start))
 
 		return NewMediaFile(jpegName)
 	}
@@ -299,6 +318,8 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 
+	log.Infof("%s: converting %s to %s", filepath.Base(cmd.Path), fileName, fs.FormatJpeg)
+
 	// Run convert command.
 	if err := cmd.Run(); err != nil {
 		if stderr.String() != "" {
@@ -307,6 +328,8 @@ func (c *Convert) ToJpeg(f *MediaFile) (*MediaFile, error) {
 			return nil, err
 		}
 	}
+
+	log.Infof("%s: created %s [%s]", filepath.Base(cmd.Path), filepath.Base(jpegName), time.Since(start))
 
 	return NewMediaFile(jpegName)
 }
@@ -339,24 +362,47 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 		// Don't transcode more than one video at the same time.
 		useMutex = true
 
-		format := "format=yuv420p"
-		result = exec.Command(
-			c.conf.FFmpegBin(),
-			"-i", f.FileName(),
-			"-c:v", codecName,
-			"-c:a", "aac",
-			"-vf", format,
-			"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
-			"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
-			"-max_muxing_queue_size", "1024",
-			"-crf", "23",
-			"-vsync", "vfr",
-			"-r", "30",
-			"-b:v", c.AvcBitrate(f),
-			"-f", "mp4",
-			"-y",
-			avcName,
-		)
+		if codecName == IntelQsvEncoder {
+			format := "format=rgb32"
+
+			result = exec.Command(
+				c.conf.FFmpegBin(),
+				"-qsv_device", "/dev/dri/renderD128",
+				"-init_hw_device", "qsv=hw",
+				"-filter_hw_device", "hw",
+				"-i", f.FileName(),
+				"-c:a", "aac",
+				"-vf", format,
+				"-c:v", codecName,
+				"-vsync", "vfr",
+				"-r", "30",
+				"-b:v", c.AvcBitrate(f),
+				"-maxrate", c.AvcBitrate(f),
+				"-f", "mp4",
+				"-y",
+				avcName,
+			)
+		} else {
+			format := "format=yuv420p"
+
+			result = exec.Command(
+				c.conf.FFmpegBin(),
+				"-i", f.FileName(),
+				"-c:v", codecName,
+				"-c:a", "aac",
+				"-vf", format,
+				"-num_output_buffers", strconv.Itoa(c.conf.FFmpegBuffers()+8),
+				"-num_capture_buffers", strconv.Itoa(c.conf.FFmpegBuffers()),
+				"-max_muxing_queue_size", "1024",
+				"-crf", "23",
+				"-vsync", "vfr",
+				"-r", "30",
+				"-b:v", c.AvcBitrate(f),
+				"-f", "mp4",
+				"-y",
+				avcName,
+			)
+		}
 	} else {
 		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
 	}
@@ -397,15 +443,6 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.AvcExt)
 	fileName := f.RelName(c.conf.OriginalsPath())
 
-	log.Infof("converting %s to %s (%s)", fileName, fs.FormatAvc, encoderName)
-
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": fileName,
-		"baseName": filepath.Base(fileName),
-		"xmpName":  "",
-	})
-
 	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoderName)
 
 	if err != nil {
@@ -430,7 +467,17 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 
+	event.Publish("index.converting", event.Data{
+		"fileType": f.FileType(),
+		"fileName": fileName,
+		"baseName": filepath.Base(fileName),
+		"xmpName":  "",
+	})
+
+	log.Infof("%s: transcoding %s to %s", encoderName, fileName, fs.FormatAvc)
+
 	// Run convert command.
+	start := time.Now()
 	if err = cmd.Run(); err != nil {
 		_ = os.Remove(avcName)
 
@@ -438,7 +485,13 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 			err = errors.New(stderr.String())
 		}
 
-		log.Warnf("ffmpeg: %s", err.Error())
+		// Log ffmpeg output for debugging.
+		if err.Error() != "" {
+			log.Debug(err)
+		}
+
+		// Log filename and transcoding time.
+		log.Warnf("%s: failed transcoding %s [%s]", encoderName, fileName, time.Since(start))
 
 		if encoderName != DefaultAvcEncoder {
 			return c.ToAvc(f, DefaultAvcEncoder)
@@ -446,6 +499,9 @@ func (c *Convert) ToAvc(f *MediaFile, encoderName string) (file *MediaFile, err 
 			return nil, err
 		}
 	}
+
+	// Log transcoding time.
+	log.Infof("%s: created %s [%s]", encoderName, filepath.Base(avcName), time.Since(start))
 
 	return NewMediaFile(avcName)
 }

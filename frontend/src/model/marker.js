@@ -40,19 +40,20 @@ export class Marker extends RestModel {
     return {
       UID: "",
       FileUID: "",
-      Invalid: false,
-      Review: false,
+      Thumb: "",
       Type: "",
       Src: "",
       Name: "",
-      FaceID: "",
-      FaceThumb: "",
-      SubjectSrc: "",
-      SubjectUID: "",
+      Invalid: false,
+      Review: false,
       X: 0.0,
       Y: 0.0,
       W: 0.0,
       H: 0.0,
+      CropID: "",
+      FaceID: "",
+      SubjSrc: "",
+      SubjUID: "",
       Score: 0,
       Size: 0,
     };
@@ -81,8 +82,12 @@ export class Marker extends RestModel {
   }
 
   thumbnailUrl(size) {
-    if (this.FaceThumb) {
-      return `${config.contentUri}/ft/${this.FaceThumb}/${config.previewToken()}/${size}`;
+    if (!size) {
+      size = "tile_160";
+    }
+
+    if (this.Thumb) {
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
     } else {
       return `${config.contentUri}/svg/portrait`;
     }
@@ -106,13 +111,13 @@ export class Marker extends RestModel {
 
   rename() {
     if (!this.Name || this.Name.trim() === "") {
-      // Don't update empty name.
-      return Promise.reject();
+      // Can't save an empty name.
+      return Promise.resolve(this);
     }
 
-    this.SubjectSrc = src.Manual;
+    this.SubjSrc = src.Manual;
 
-    const payload = { SubjectSrc: this.SubjectSrc, Name: this.Name };
+    const payload = { SubjSrc: this.SubjSrc, Name: this.Name };
 
     return Api.put(this.getEntityResource(), payload).then((resp) =>
       Promise.resolve(this.setValues(resp.data))
@@ -126,7 +131,7 @@ export class Marker extends RestModel {
   }
 
   static batchSize() {
-    return 60;
+    return 48;
   }
 
   static getCollectionResource() {

@@ -12,7 +12,7 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="pa-4">
-      <p class="subheading">
+      <p class="body-2">
         <translate>Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.</translate>
       </p>
       <p class="body-1">

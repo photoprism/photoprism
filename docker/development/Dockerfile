@@ -21,7 +21,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
 # Install dev / build dependencies
-RUN apt-get update && apt dist-upgrade 2>/dev/null && apt-get -qq install -y --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     build-essential \
     ca-certificates \
     wget \
@@ -116,8 +116,11 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.org/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.org/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Install additional tools
-COPY --chown=root:root --chmod=755 /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
+# Copy additional files to image
+COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
+COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
+COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+
 RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu \
     golang.org/x/tools/cmd/goimports github.com/kyoh86/richgo && \
     [ "$TARGETARCH" = "arm" ] || \
@@ -127,12 +130,13 @@ RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu \
     cp /go/bin/gosu /bin/gosu
 
 # Create photoprism user and directory for deployment
-RUN useradd photoprism -m -d /photoprism && chmod a+rwx /photoprism && \
+RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism && \
     mkdir -m 777 -p /var/lib/photoprism /tmp/photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
     chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
+    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
     find /go -type d -print0 | xargs -0 chmod 777
 
 # Copy mysql client config for development
@@ -148,7 +152,6 @@ EXPOSE 2342 2343 9515
 VOLUME /var/lib/photoprism
 
 # Configure entrypoint
-COPY --chown=root:root --chmod=755 /docker/development/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Run server

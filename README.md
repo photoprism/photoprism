@@ -22,6 +22,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Our intuitive [user interface](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as 
   it should be — whether it’s on a phone, tablet, or desktop computer.
 * Index everything without worrying about duplicates or [RAW to JPEG conversion](https://docs.photoprism.org/developer-guide/library/converting/).
+* Privacy-preserving face detection and recognition.
 * Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
   based on Google TensorFlow. In addition, our indexer detects _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, 
   _location type_, and many other properties.
@@ -39,11 +40,17 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
-all you need is a Web browser and Docker to run the server. It is available for Mac, Linux, and Windows.
+all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. 
+It is available for Mac, Linux, and Windows.
 
-We recommend hosting PhotoPrism on a server with **at least 2 cores** and **4 GB of memory**.
-Beyond these minimum requirements, the amount of RAM should match the number of cores.
-Indexing large photo and video collections significantly benefits from fast, local SSD storage.
+## New Release 🌈 ##
+
+Our [latest release](https://docs.photoprism.org/release-notes/) not only includes 
+**facial recognition**, it also comes as a 
+**single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64, ARM64, and ARMv7**. 
+That means you don't need to pull from different Docker repositories anymore.
+We recommend updating your existing `docker-compose.yml` config based on 
+[our examples](https://dl.photoprism.org/docker/).
 
 ## Roadmap ##
 
@@ -73,13 +80,13 @@ In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) an
 
 Your continuous support helps...
 
-* pay for operating expenses and external services like satellite maps
-* developing new features and keeping them free for everyone 🌈
+* pay for operating expenses and external services like satellite maps 🛰 🌏
+* **developing new features and keeping them free for everyone**
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
 
-Thank you very much! <3
+Thank you very much! ❤️
 
 <sup>1</sup> Ideas backed by one or more [eligible sponsors](SPONSORS.md) are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
 Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).

@@ -213,40 +213,6 @@ func TestSetFileError(t *testing.T) {
 	//assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
 }
 
-func TestIndexedFiles(t *testing.T) {
-	if err := entity.AddDuplicate(
-		"Photo18.jpg",
-		entity.RootSidecar,
-		"3cad9168fa6acc5c5c2965ddf6ec465ca42fd818",
-		661858,
-		time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix(),
-	); err != nil {
-		t.Fatal(err)
-	}
-
-	result, err := IndexedFiles()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	t.Logf("INDEXED FILES: %#v", result)
-}
-
-func TestFileHashes(t *testing.T) {
-	result, err := FileHashes()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(result) < 3 {
-		t.Fatalf("at least 3 file hashes expected")
-	}
-
-	t.Logf("FILE HASHES: %#v", result)
-}
-
 func TestRenameFile(t *testing.T) {
 	t.Run("empty name", func(t *testing.T) {
 		err := RenameFile("xxx", "", "yyy", "yyy")
@@ -267,4 +233,34 @@ func TestRenameFile(t *testing.T) {
 		//assert.Equal(t, "", entity.FileFixturesExampleXMP.FileName)
 	})
 
+}
+
+func TestIndexedFiles(t *testing.T) {
+	if err := entity.AddDuplicate(
+		"Photo18.jpg",
+		entity.RootSidecar,
+		"3cad9168fa6acc5c5c2965ddf6ec465ca42fd818",
+		661858,
+		time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix(),
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := IndexedFiles()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("indexed files: %#v", result)
+}
+
+func TestOrphanFiles(t *testing.T) {
+	files, err := OrphanFiles()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.IsType(t, entity.Files{}, files)
 }

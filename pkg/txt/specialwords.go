@@ -3,6 +3,7 @@ package txt
 var SpecialWords = map[string]string{
 	"xd":                 "XD",
 	"hd":                 "HD",
+	"uk":                 "UK",
 	"nyc":                "NYC",
 	"ny":                 "NY",
 	"uae":                "UAE",

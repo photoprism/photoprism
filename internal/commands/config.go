@@ -6,8 +6,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // ConfigCommand registers the display config cli command.
@@ -66,6 +67,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-places", conf.DisablePlaces())
 	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
 	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
+	fmt.Printf("%-25s %t\n", "disable-faces", conf.DisableFaces())
+	fmt.Printf("%-25s %t\n", "disable-classification", conf.DisableClassification())
 	fmt.Printf("%-25s %t\n", "disable-darktable", conf.DisableDarktable())
 	fmt.Printf("%-25s %t\n", "disable-rawtherapee", conf.DisableRawtherapee())
 	fmt.Printf("%-25s %t\n", "disable-sips", conf.DisableSips())
@@ -118,7 +121,9 @@ func configAction(ctx *cli.Context) error {
 	// External binaries and sidecar configuration.
 	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
+	fmt.Printf("%-25s %s\n", "darktable-blacklist", conf.DarktableBlacklist())
 	fmt.Printf("%-25s %s\n", "rawtherapee-bin", conf.RawtherapeeBin())
+	fmt.Printf("%-25s %s\n", "rawtherapee-blacklist", conf.RawtherapeeBlacklist())
 	fmt.Printf("%-25s %s\n", "sips-bin", conf.SipsBin())
 	fmt.Printf("%-25s %s\n", "heifconvert-bin", conf.HeifConvertBin())
 	fmt.Printf("%-25s %s\n", "ffmpeg-bin", conf.FFmpegBin())
@@ -132,11 +137,19 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "preview-token", conf.PreviewToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
 	fmt.Printf("%-25s %t\n", "thumb-uncached", conf.ThumbUncached())
-	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSize())
+	fmt.Printf("%-25s %d\n", "thumb-size", conf.ThumbSizePrecached())
 	fmt.Printf("%-25s %d\n", "thumb-size-uncached", conf.ThumbSizeUncached())
 	fmt.Printf("%-25s %s\n", "thumb-path", conf.ThumbPath())
 	fmt.Printf("%-25s %d\n", "jpeg-size", conf.JpegSize())
 	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
+
+	// Facial recognition.
+	fmt.Printf("%-25s %d\n", "face-size", conf.FaceSize())
+	fmt.Printf("%-25s %f\n", "face-score", conf.FaceScore())
+	fmt.Printf("%-25s %d\n", "face-overlap", conf.FaceOverlap())
+	fmt.Printf("%-25s %d\n", "face-cluster-core", conf.FaceClusterCore())
+	fmt.Printf("%-25s %f\n", "face-cluster-dist", conf.FaceClusterDist())
+	fmt.Printf("%-25s %f\n", "face-match-dist", conf.FaceMatchDist())
 
 	return nil
 }

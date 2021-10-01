@@ -22,9 +22,9 @@ func (m *Photo) NoTitle() bool {
 
 // SetTitle changes the photo title and clips it to 300 characters.
 func (m *Photo) SetTitle(title, source string) {
-	newTitle := txt.Clip(title, txt.ClipDefault)
+	title = txt.Shorten(title, txt.ClipTitle, txt.Ellipsis)
 
-	if newTitle == "" {
+	if title == "" {
 		return
 	}
 
@@ -32,7 +32,7 @@ func (m *Photo) SetTitle(title, source string) {
 		return
 	}
 
-	m.PhotoTitle = newTitle
+	m.PhotoTitle = title
 	m.TitleSrc = source
 }
 
@@ -53,7 +53,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	m.UpdateDescription(people)
 
 	if n := len(people); n > 0 && n < 4 {
-		names = txt.JoinNames(people)
+		names = txt.JoinNames(people, true)
 	}
 
 	if m.LocationLoaded() {
@@ -204,7 +204,7 @@ func (m *Photo) UpdateDescription(people []string) {
 
 	// Add subject names to description when there's more than one person.
 	if len(people) > 3 {
-		m.PhotoDescription = txt.JoinNames(people)
+		m.PhotoDescription = txt.JoinNames(people, false)
 	} else {
 		m.PhotoDescription = ""
 	}
@@ -243,4 +243,9 @@ func (m *Photo) SubjectNames() []string {
 	}
 
 	return nil
+}
+
+// SubjectKeywords returns keywords for all known subject names.
+func (m *Photo) SubjectKeywords() []string {
+	return txt.Words(strings.Join(m.SubjectNames(), " "))
 }

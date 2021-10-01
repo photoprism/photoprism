@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/workers"
+	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/urfave/cli"
+	"github.com/photoprism/photoprism/internal/workers"
 )
 
 // OptimizeCommand registers the index cli command.

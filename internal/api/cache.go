@@ -47,7 +47,7 @@ func RemoveFromFolderCache(rootName string) {
 	cache.Delete(cacheKey)
 
 	if err := query.UpdateAlbumFolderPreviews(); err != nil {
-		log.Errorf("failed updating folder previews: %s", err)
+		log.Error(err)
 	}
 
 	log.Debugf("removed %s from cache", cacheKey)
@@ -57,8 +57,8 @@ func RemoveFromFolderCache(rootName string) {
 func RemoveFromAlbumCoverCache(uid string) {
 	cache := service.CoverCache()
 
-	for typeName := range thumb.Types {
-		cacheKey := CacheKey(albumCover, uid, typeName)
+	for thumbName := range thumb.Sizes {
+		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
 		cache.Delete(cacheKey)
 
@@ -66,7 +66,7 @@ func RemoveFromAlbumCoverCache(uid string) {
 	}
 
 	if err := query.UpdateAlbumPreviews(); err != nil {
-		log.Errorf("failed updating album previews: %s", err)
+		log.Error(err)
 	}
 }
 
@@ -75,7 +75,7 @@ func FlushCoverCache() {
 	service.CoverCache().Flush()
 
 	if err := query.UpdatePreviews(); err != nil {
-		log.Errorf("failed updating preview images: %s", err)
+		log.Error(err)
 	}
 
 	log.Debugf("albums: flushed cover cache")

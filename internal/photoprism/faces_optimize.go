@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
 )
 
@@ -26,7 +27,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
-		if faces, err = query.ManuallyAddedFaces(); err != nil {
+		if faces, err = query.ManuallyAddedFaces(false); err != nil {
 			return result, err
 		} else if n := len(faces) - 1; n < 1 {
 			// Need at least 2 faces to optimize.
@@ -37,7 +38,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 		for j := 0; j <= n; j++ {
 			if len(merge) == 0 {
 				merge = entity.Faces{faces[j]}
-			} else if faces[j].SubjectUID != merge[len(merge)-1].SubjectUID || j == n {
+			} else if faces[j].SubjUID != merge[len(merge)-1].SubjUID || j == n {
 				if len(merge) < 2 {
 					// Nothing to merge.
 				} else if _, err := query.MergeFaces(merge); err != nil {
@@ -47,8 +48,8 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 				}
 
 				merge = nil
-			} else if ok, dist := merge[0].Match(entity.Embeddings{faces[j].Embedding()}); ok {
-				log.Debugf("faces: can merge %s with %s, subject %s, dist %f", merge[0].ID, faces[j].ID, merge[0].SubjectUID, dist)
+			} else if ok, dist := merge[0].Match(face.Embeddings{faces[j].Embedding()}); ok {
+				log.Debugf("faces: can merge %s with %s, subject %s, dist %f", merge[0].ID, faces[j].ID, merge[0].SubjUID, dist)
 				merge = append(merge, faces[j])
 			} else if len(merge) == 1 {
 				merge = nil

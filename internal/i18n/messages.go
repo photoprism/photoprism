@@ -14,6 +14,9 @@ const (
 	ErrUserNotFound
 	ErrLabelNotFound
 	ErrAlbumNotFound
+	ErrSubjectNotFound
+	ErrPersonNotFound
+	ErrFaceNotFound
 	ErrPublic
 	ErrReadOnly
 	ErrUnauthorized
@@ -30,6 +33,7 @@ const (
 	ErrZipFailed
 	ErrInvalidCredentials
 	ErrInvalidLink
+	ErrInvalidName
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -59,6 +63,10 @@ const (
 	MsgCopyingFilesFrom
 	MsgLabelsDeleted
 	MsgLabelSaved
+	MsgSubjectSaved
+	MsgSubjectDeleted
+	MsgPersonSaved
+	MsgPersonDeleted
 	MsgFilesUploadedIn
 	MsgSelectionApproved
 	MsgSelectionArchived
@@ -76,14 +84,17 @@ var Messages = MessageMap{
 	ErrSaveFailed:         gettext("Changes could not be saved"),
 	ErrDeleteFailed:       gettext("Could not be deleted"),
 	ErrAlreadyExists:      gettext("%s already exists"),
-	ErrNotFound:           gettext("Not found on server, deleted?"),
+	ErrNotFound:           gettext("Not found"),
 	ErrFileNotFound:       gettext("File not found"),
 	ErrSelectionNotFound:  gettext("Selection not found"),
-	ErrEntityNotFound:     gettext("Not found on server, deleted?"),
+	ErrEntityNotFound:     gettext("Entity not found"),
 	ErrAccountNotFound:    gettext("Account not found"),
 	ErrUserNotFound:       gettext("User not found"),
 	ErrLabelNotFound:      gettext("Label not found"),
 	ErrAlbumNotFound:      gettext("Album not found"),
+	ErrSubjectNotFound:    gettext("Subject not found"),
+	ErrPersonNotFound:     gettext("Person not found"),
+	ErrFaceNotFound:       gettext("Face not found"),
 	ErrPublic:             gettext("Not available in public mode"),
 	ErrReadOnly:           gettext("not available in read-only mode"),
 	ErrUnauthorized:       gettext("Please log in and try again"),
@@ -100,6 +111,7 @@ var Messages = MessageMap{
 	ErrZipFailed:          gettext("Failed to create zip file"),
 	ErrInvalidCredentials: gettext("Invalid credentials"),
 	ErrInvalidLink:        gettext("Invalid link"),
+	ErrInvalidName:        gettext("Invalid name"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),
@@ -130,6 +142,10 @@ var Messages = MessageMap{
 	MsgCopyingFilesFrom:      gettext("Copying files from %s"),
 	MsgLabelsDeleted:         gettext("Labels deleted"),
 	MsgLabelSaved:            gettext("Label saved"),
+	MsgSubjectSaved:          gettext("Subject saved"),
+	MsgSubjectDeleted:        gettext("Subject deleted"),
+	MsgPersonSaved:           gettext("Person saved"),
+	MsgPersonDeleted:         gettext("Person deleted"),
 	MsgFilesUploadedIn:       gettext("%d files uploaded in %d s"),
 	MsgSelectionApproved:     gettext("Selection approved"),
 	MsgSelectionArchived:     gettext("Selection archived"),

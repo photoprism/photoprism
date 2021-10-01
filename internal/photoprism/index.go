@@ -31,10 +31,17 @@ type Index struct {
 	convert      *Convert
 	files        *Files
 	photos       *Photos
+	findFaces    bool
+	findLabels   bool
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
 func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
+	if conf == nil {
+		log.Errorf("index: config is nil")
+		return nil
+	}
+
 	i := &Index{
 		conf:         conf,
 		tensorFlow:   tensorFlow,
@@ -43,6 +50,8 @@ func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector
 		convert:      convert,
 		files:        files,
 		photos:       photos,
+		findFaces:    !conf.DisableFaces(),
+		findLabels:   !conf.DisableClassification(),
 	}
 
 	return i
@@ -70,6 +79,12 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	}()
 
 	done := make(fs.Done)
+
+	if ind.conf == nil {
+		log.Errorf("index: config is nil")
+		return done
+	}
+
 	originalsPath := ind.originalsPath()
 	optionsPath := filepath.Join(originalsPath, opt.Path)
 
@@ -245,7 +260,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			"step": "counts",
 		})
 
-		// Update photo counts and visibilities.
+		// Update precalculated photo and file counts.
 		if err := entity.UpdatePhotoCounts(); err != nil {
 			log.Errorf("index: %s (update counts)", err)
 		}

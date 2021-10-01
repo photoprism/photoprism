@@ -4,8 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/face"
 )
 
 func TestMarkerByUID(t *testing.T) {
@@ -118,7 +120,7 @@ func TestEmbeddings(t *testing.T) {
 		assert.GreaterOrEqual(t, len(results), 1)
 
 		for _, val := range results {
-			assert.IsType(t, entity.Embedding{}, val)
+			assert.IsType(t, face.Embedding{}, val)
 		}
 	})
 	t.Run("size", func(t *testing.T) {
@@ -131,7 +133,7 @@ func TestEmbeddings(t *testing.T) {
 		assert.Equal(t, len(results), 8)
 
 		for _, val := range results {
-			assert.IsType(t, entity.Embedding{}, val)
+			assert.IsType(t, face.Embedding{}, val)
 		}
 	})
 	t.Run("score", func(t *testing.T) {
@@ -144,7 +146,7 @@ func TestEmbeddings(t *testing.T) {
 		assert.GreaterOrEqual(t, len(results), 1)
 
 		for _, val := range results {
-			assert.IsType(t, entity.Embedding{}, val)
+			assert.IsType(t, face.Embedding{}, val)
 		}
 	})
 }

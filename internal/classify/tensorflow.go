@@ -180,7 +180,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 
 		labelText := strings.ToLower(t.labels[i])
 
-		rule, _ := rules.Find(labelText)
+		rule, _ := Rules.Find(labelText)
 
 		// discard labels that don't met the threshold
 		if p < rule.Threshold {

@@ -3,9 +3,11 @@ package config
 import (
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/face"
 )
 
-// PhotoPrism command-line parameters and flags.
+// GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",
@@ -152,13 +154,8 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
 	},
 	cli.BoolFlag{
-		Name:   "disable-tensorflow",
-		Usage:  "disables image classification with TensorFlow",
-		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
-	},
-	cli.BoolFlag{
 		Name:   "disable-ffmpeg",
-		Usage:  "disables video transcoding with FFmpeg",
+		Usage:  "disables video transcoding and thumbnail generation with FFmpeg",
 		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
 	},
 	cli.BoolFlag{
@@ -180,6 +177,21 @@ var GlobalFlags = []cli.Flag{
 		Name:   "disable-heifconvert",
 		Usage:  "disables HEIC/HEIF file conversion",
 		EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
+	},
+	cli.BoolFlag{
+		Name:   "disable-tensorflow",
+		Usage:  "disables all features depending on TensorFlow",
+		EnvVar: "PHOTOPRISM_DISABLE_TENSORFLOW",
+	},
+	cli.BoolFlag{
+		Name:   "disable-faces",
+		Usage:  "disables facial recognition",
+		EnvVar: "PHOTOPRISM_DISABLE_FACES",
+	},
+	cli.BoolFlag{
+		Name:   "disable-classification",
+		Usage:  "disables image classification",
+		EnvVar: "PHOTOPRISM_DISABLE_CLASSIFICATION",
 	},
 	cli.BoolFlag{
 		Name:   "detect-nsfw",
@@ -322,10 +334,22 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
 	cli.StringFlag{
+		Name:   "darktable-blacklist",
+		Usage:  "Comma-separated file extension `BLACKLIST`",
+		Value:  "raf,cr3,dng",
+		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
+	},
+	cli.StringFlag{
 		Name:   "rawtherapee-bin",
 		Usage:  "RawTherapee CLI `COMMAND` for RAW file conversion",
 		Value:  "rawtherapee-cli",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
+	},
+	cli.StringFlag{
+		Name:   "rawtherapee-blacklist",
+		Usage:  "Comma-separated file extension `BLACKLIST`",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
@@ -380,25 +404,25 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
-		Name:   "thumb-filter, f",
-		Usage:  "downscaling filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
+		Name:   "thumb-filter",
+		Usage:  "image downscaling `FILTER` (best to worst: blackman, lanczos, cubic, linear)",
 		Value:  "lanczos",
 		EnvVar: "PHOTOPRISM_THUMB_FILTER",
 	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "static thumbnail size limit in `PIXELS` (720-7680)",
+		Usage:  "max pre-cached thumbnail size in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
 	cli.BoolFlag{
 		Name:   "thumb-uncached, u",
-		Usage:  "enable dynamic thumbnail rendering (high memory and cpu usage)",
+		Usage:  "enable on-demand thumbnail generation (high memory and cpu usage)",
 		EnvVar: "PHOTOPRISM_THUMB_UNCACHED",
 	},
 	cli.IntFlag{
 		Name:   "thumb-size-uncached, x",
-		Usage:  "dynamic rendering size limit in `PIXELS` (720-7680)",
+		Usage:  "on-demand thumbnail generation size limit in `PIXELS` (720-7680)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
@@ -413,5 +437,41 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "set to 90+ for high-quality thumbnails (25-100)",
 		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
+	},
+	cli.IntFlag{
+		Name:   "face-size",
+		Usage:  "min face size in `PIXELS`",
+		Value:  50,
+		EnvVar: "PHOTOPRISM_FACE_SIZE",
+	},
+	cli.Float64Flag{
+		Name:   "face-score",
+		Usage:  "face `QUALITY` threshold",
+		Value:  face.ScoreThreshold,
+		EnvVar: "PHOTOPRISM_FACE_SCORE",
+	},
+	cli.IntFlag{
+		Name:   "face-overlap",
+		Usage:  "face area overlap threshold in `PERCENT`",
+		Value:  face.OverlapThreshold,
+		EnvVar: "PHOTOPRISM_FACE_OVERLAP",
+	},
+	cli.IntFlag{
+		Name:   "face-cluster-core",
+		Usage:  "`NUMBER` of faces forming a cluster core",
+		Value:  face.ClusterCore,
+		EnvVar: "PHOTOPRISM_FACE_CLUSTER_CORE",
+	},
+	cli.Float64Flag{
+		Name:   "face-cluster-dist",
+		Usage:  "`RADIUS` of faces forming a cluster core",
+		Value:  face.ClusterDist,
+		EnvVar: "PHOTOPRISM_FACE_CLUSTER_DIST",
+	},
+	cli.Float64Flag{
+		Name:   "face-match-dist",
+		Usage:  "`OFFSET` distance when matching faces with clusters",
+		Value:  face.MatchDist,
+		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
 	},
 }

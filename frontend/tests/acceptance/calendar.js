@@ -48,7 +48,7 @@ test.meta("testID", "calendar-001")("Update calendar", async (t) => {
     await page.search("category:Mountains");
   } else {
     await t
-      .click(Selector(".input-category i"))
+      .click(Selector(".input-category"))
       .click(Selector('div[role="listitem"]').withText("Mountains"));
   }
   await t.expect(Selector("button.action-title-edit").nth(0).innerText).contains("March 2014");

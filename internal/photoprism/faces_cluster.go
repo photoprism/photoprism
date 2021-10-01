@@ -3,6 +3,8 @@ package photoprism
 import (
 	"fmt"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
@@ -38,24 +40,24 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		var c clusters.HardClusterer
 
 		// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
-		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterRadius, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
+		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
 			return added, err
-		} else if err = c.Learn(embeddings); err != nil {
+		} else if err = c.Learn(embeddings.Float64()); err != nil {
 			return added, err
 		}
 
 		sizes := c.Sizes()
 
-		if len(sizes) > 1 {
-			log.Infof("faces: found %d new clusters", len(sizes))
+		if len(sizes) > 0 {
+			log.Infof("faces: found %s", english.Plural(len(sizes), "new cluster", "new clusters"))
 		} else {
 			log.Debugf("faces: found no new clusters")
 		}
 
-		results := make([]entity.Embeddings, len(sizes))
+		results := make([]face.Embeddings, len(sizes))
 
 		for i := range sizes {
-			results[i] = entity.Embeddings{}
+			results[i] = face.Embeddings{}
 		}
 
 		guesses := c.Guesses()

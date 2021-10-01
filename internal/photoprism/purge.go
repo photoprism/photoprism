@@ -6,6 +6,8 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -212,8 +214,8 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				continue
 			}
 
-			if err := photo.Delete(opt.Hard); err != nil {
-				log.Errorf("purge: %s", err)
+			if files, err := photo.Delete(opt.Hard); err != nil {
+				log.Errorf("purge: %s (delete photo)", err)
 			} else {
 				purgedPhotos[photo.PhotoUID] = true
 
@@ -224,7 +226,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				}
 
 				// Remove files from lookup table.
-				for _, file := range photo.AllFiles() {
+				for _, file := range files {
 					w.files.Remove(file.FileName, file.FileRoot)
 				}
 			}
@@ -239,36 +241,47 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	log.Info("purge: searching index for unassigned primary files")
+	log.Info("searching index for unassigned primary files")
 
 	if err := query.FixPrimaries(); err != nil {
 		log.Errorf("purge: %s (fix primary files)", err.Error())
 	}
 
-	log.Info("purge: searching index for hidden media files")
+	log.Info("searching index for hidden media files")
 
+	// Set photo quality scores to -1 if files are missing.
 	if err := query.ResetPhotoQuality(); err != nil {
 		return purgedFiles, purgedPhotos, err
 	}
 
-	if err := query.PurgeOrphans(); err != nil {
-		log.Errorf("purge: %s (orphans)", err)
+	// Remove orphan index entries.
+	if opt.Dry {
+		if files, err := query.OrphanFiles(); err != nil {
+			log.Errorf("purge: %s (find orphan files)", err)
+		} else if l := len(files); l > 0 {
+			log.Infof("purge: found %s", english.Plural(l, "orphan file", "orphan files"))
+		} else {
+			log.Infof("purge: found no orphan files")
+		}
+	} else {
+		if err := query.PurgeOrphans(); err != nil {
+			log.Errorf("purge: %s (remove orphans)", err)
+		}
 	}
 
+	// Hide missing album contents.
 	if err := query.UpdateMissingAlbumEntries(); err != nil {
 		log.Errorf("purge: %s (album entries)", err)
 	}
 
-	log.Info("purge: updating photo counts")
-
-	// Update photo counts and visibilities.
+	// Update precalculated photo and file counts.
+	log.Info("updating photo counts")
 	if err := entity.UpdatePhotoCounts(); err != nil {
 		log.Errorf("purge: %s (update counts)", err)
 	}
 
-	log.Info("purge: updating preview images")
-
-	// Update album, label, and subject preview image hashes.
+	// Update album, subject, and label preview thumbs.
+	log.Info("updating preview thumbs")
 	if err := query.UpdatePreviews(); err != nil {
 		log.Errorf("purge: %s (update previews)", err)
 	}

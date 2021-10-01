@@ -42,19 +42,21 @@ type PhotoSearch struct {
 	Mono      bool      `form:"mono"`
 	Portrait  bool      `form:"portrait"`
 	Geo       bool      `form:"geo"`
-	Subject   string    `form:"subject"`  // UIDs
-	Subjects  string    `form:"subjects"` // Text
-	People    string    `form:"people"`   // Alias for Subjects
 	Keywords  string    `form:"keywords"`
-	Album     string    `form:"album"`  // UIDs
-	Albums    string    `form:"albums"` // Text
 	Label     string    `form:"label"`
 	Category  string    `form:"category"` // Moments
 	Country   string    `form:"country"`  // Moments
 	State     string    `form:"state"`    // Moments
-	Year      int       `form:"year"`     // Moments
-	Month     int       `form:"month"`    // Moments
-	Day       int       `form:"day"`      // Moments
+	Year      string    `form:"year"`     // Moments
+	Month     string    `form:"month"`    // Moments
+	Day       string    `form:"day"`      // Moments
+	Face      string    `form:"face"`     // UIDs
+	Subject   string    `form:"subject"`  // UIDs
+	Person    string    `form:"person"`   // Alias for Subject
+	Subjects  string    `form:"subjects"` // Text
+	People    string    `form:"people"`   // Alias for Subjects
+	Album     string    `form:"album"`    // UIDs
+	Albums    string    `form:"albums"`   // Text
 	Color     string    `form:"color"`
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Quality   int       `form:"quality"`
@@ -84,10 +86,17 @@ func (f *PhotoSearch) ParseQueryString() error {
 
 	if f.Path == "" && f.Folder != "" {
 		f.Path = f.Folder
+		f.Folder = ""
 	}
 
-	if f.Subjects == "" {
+	if f.Subject == "" && f.Person != "" {
+		f.Subject = f.Person
+		f.Person = ""
+	}
+
+	if f.Subjects == "" && f.People != "" {
 		f.Subjects = f.People
+		f.People = ""
 	}
 
 	if f.Filter != "" {

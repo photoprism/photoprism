@@ -7,10 +7,10 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 )
 
-// GetPhotos searches the pictures index and returns the result as JSON.
+// SearchPhotos searches the pictures index and returns the result as JSON.
 //
 // GET /api/v1/photos
 //
@@ -26,7 +26,7 @@ import (
 //   before:    date   Find photos taken before (format: "2006-01-02")
 //   after:     date   Find photos taken after (format: "2006-01-02")
 //   favorite:  bool   Find favorites only
-func GetPhotos(router *gin.RouterGroup) {
+func SearchPhotos(router *gin.RouterGroup) {
 	router.GET("/photos", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionSearch)
 
@@ -58,10 +58,10 @@ func GetPhotos(router *gin.RouterGroup) {
 			f.Review = false
 		}
 
-		result, count, err := query.PhotoSearch(f)
+		result, count, err := search.Photos(f)
 
 		if err != nil {
-			log.Error(err)
+			log.Warnf("search: %s", err)
 			AbortBadRequest(c)
 			return
 		}

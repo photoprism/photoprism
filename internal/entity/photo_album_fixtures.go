@@ -65,6 +65,17 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Photo:     PhotoFixtures.Pointer("Photo19"),
 		Album:     AlbumFixtures.Pointer("april-1990"),
 	},
+	"5": {
+		PhotoUID:  "pt9jtdre2lvl0yh0",
+		AlbumUID:  "at9lxuqxpogaaba9",
+		Hidden:    false,
+		Missing:   false,
+		Order:     0,
+		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
+		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
+		Photo:     PhotoFixtures.Pointer("Photo03"),
+		Album:     AlbumFixtures.Pointer("berlin-2019"),
+	},
 }
 
 // CreatePhotoAlbumFixtures inserts known entities into the database for testing.

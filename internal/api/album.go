@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -41,7 +42,7 @@ func SaveAlbumAsYaml(a entity.Album) {
 }
 
 // GET /api/v1/albums
-func GetAlbums(router *gin.RouterGroup) {
+func SearchAlbums(router *gin.RouterGroup) {
 	router.GET("/albums", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionSearch)
 
@@ -61,10 +62,10 @@ func GetAlbums(router *gin.RouterGroup) {
 
 		// Guest permissions are limited to shared albums.
 		if s.Guest() {
-			f.ID = s.Shares.Join(query.Or)
+			f.ID = s.Shares.Join(txt.Or)
 		}
 
-		result, err := query.AlbumSearch(f)
+		result, err := search.Albums(f)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
@@ -201,7 +202,6 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		conf := service.Config()
 		id := c.Param("uid")
 
 		a, err := query.AlbumByUID(id)
@@ -211,9 +211,13 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishAlbumEvent(EntityDeleted, id, c)
+		if err := a.Delete(); err != nil {
+			log.Errorf("album: %s (delete)", err)
+			AbortDeleteFailed(c)
+			return
+		}
 
-		conf.Db().Delete(&a)
+		PublishAlbumEvent(EntityDeleted, id, c)
 
 		UpdateClientConfig()
 
@@ -331,7 +335,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 				continue
 			}
 
-			photos, err := query.AlbumPhotos(cloneAlbum, 10000)
+			photos, err := search.AlbumPhotos(cloneAlbum, 10000)
 
 			if err != nil {
 				log.Errorf("album: %s", err)
@@ -471,7 +475,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		files, err := query.AlbumPhotos(a, 10000)
+		files, err := search.AlbumPhotos(a, 10000)
 
 		if err != nil {
 			AbortEntityNotFound(c)

@@ -68,6 +68,15 @@ export class Rest extends Model {
   }
 
   update() {
+    // Get updated values.
+    const values = this.getValues(true);
+
+    // Return if no values were changed.
+    if (Object.keys(values).length === 0) {
+      return Promise.resolve(this);
+    }
+
+    // Send PUT request.
     return Api.put(this.getEntityResource(), this.getValues(true)).then((resp) =>
       Promise.resolve(this.setValues(resp.data))
     );
@@ -179,7 +188,7 @@ export class Rest extends Model {
     };
 
     return Api.get(this.getCollectionResource(), options).then((resp) => {
-      let count = resp.data.length;
+      let count = resp.data ? resp.data.length : 0;
       let limit = 0;
       let offset = 0;
 
@@ -202,8 +211,10 @@ export class Rest extends Model {
       resp.limit = limit;
       resp.offset = offset;
 
-      for (let i = 0; i < resp.data.length; i++) {
-        resp.models.push(new this(resp.data[i]));
+      if (count > 0) {
+        for (let i = 0; i < resp.data.length; i++) {
+          resp.models.push(new this(resp.data[i]));
+        }
       }
 
       return Promise.resolve(resp);

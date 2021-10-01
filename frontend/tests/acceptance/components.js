@@ -7,18 +7,20 @@ fixture`Test components`.page`${testcafeconfig.url}`;
 const page = new Page();
 
 test.meta("testID", "components-001")("Test filter options", async (t) => {
-  await t
-    .expect(Selector("body").withText("object Object").exists)
-    .notOk();
+  await t.expect(Selector("body").withText("object Object").exists).notOk();
 });
 
 test.meta("testID", "components-002")("Fullscreen mode", async (t) => {
-  await t
-    .click(Selector("div.v-image__image").nth(0))
-    .expect(Selector("#photo-viewer").visible)
-    .ok()
-    .expect(Selector("img.pswp__img").visible)
-    .ok();
+  await t.click(Selector("div.v-image__image").nth(0));
+  if (await Selector("#photo-viewer").visible) {
+    await t
+      .expect(Selector("#photo-viewer").visible)
+      .ok()
+      .expect(Selector("img.pswp__img").visible)
+      .ok();
+  } else {
+    await t.expect(Selector("div.video-viewer").visible).ok();
+  }
 });
 
 test.meta("testID", "components-003")("Mosaic view", async (t) => {

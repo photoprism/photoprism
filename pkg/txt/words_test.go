@@ -6,6 +6,33 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestUnknownWord(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, UnknownWord(""))
+	})
+	t.Run("qx", func(t *testing.T) {
+		assert.True(t, UnknownWord("qx"))
+	})
+	t.Run("atz", func(t *testing.T) {
+		assert.True(t, UnknownWord("atz"))
+	})
+	t.Run("xqx", func(t *testing.T) {
+		assert.True(t, UnknownWord("xqx"))
+	})
+	t.Run("kuh", func(t *testing.T) {
+		assert.False(t, UnknownWord("kuh"))
+	})
+	t.Run("muh", func(t *testing.T) {
+		assert.False(t, UnknownWord("muh"))
+	})
+	t.Run("桥", func(t *testing.T) {
+		assert.False(t, UnknownWord("桥"))
+	})
+	t.Run("桥船", func(t *testing.T) {
+		assert.False(t, UnknownWord("桥船"))
+	})
+}
+
 func TestWords(t *testing.T) {
 	t.Run("桥", func(t *testing.T) {
 		result := Words("桥")

@@ -5,12 +5,12 @@ import (
 	"encoding/base32"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/face"
-
-	"github.com/photoprism/photoprism/pkg/clusters"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var faceMutex = sync.Mutex{}
@@ -19,45 +19,32 @@ var faceMutex = sync.Mutex{}
 type Face struct {
 	ID              string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
-	SubjectUID      string          `gorm:"type:VARBINARY(42);index;" json:"SubjectUID" yaml:"SubjectUID,omitempty"`
+	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
+	SubjUID         string          `gorm:"type:VARBINARY(42);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
-	embedding       Embedding       `gorm:"-"`
+	embedding       face.Embedding  `gorm:"-"`
 	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 }
 
-// UnknownFace can be used as a placeholder for unknown faces.
-var UnknownFace = Face{
-	ID:            UnknownID,
-	FaceSrc:       SrcDefault,
-	MatchedAt:     TimePointer(),
-	SubjectUID:    "",
-	EmbeddingJSON: []byte{},
-}
-
 // Faceless can be used as argument to match unmatched face markers.
 var Faceless = []string{""}
 
-// CreateUnknownFace initializes the database with a placeholder for unknown faces.
-func CreateUnknownFace() {
-	_ = UnknownFace.Create()
-}
-
 // TableName returns the entity database table name.
 func (Face) TableName() string {
-	return "faces_dev6"
+	return "faces"
 }
 
 // NewFace returns a new face.
-func NewFace(subjectUID, faceSrc string, embeddings Embeddings) *Face {
+func NewFace(subjUID, faceSrc string, embeddings face.Embeddings) *Face {
 	result := &Face{
-		SubjectUID: subjectUID,
-		FaceSrc:    faceSrc,
+		SubjUID: subjUID,
+		FaceSrc: faceSrc,
 	}
 
 	if err := result.SetEmbeddings(embeddings); err != nil {
@@ -68,8 +55,14 @@ func NewFace(subjectUID, faceSrc string, embeddings Embeddings) *Face {
 }
 
 // SetEmbeddings assigns face embeddings.
-func (m *Face) SetEmbeddings(embeddings Embeddings) (err error) {
-	m.embedding, m.SampleRadius, m.Samples = EmbeddingsMidpoint(embeddings)
+func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
+	m.embedding, m.SampleRadius, m.Samples = face.EmbeddingsMidpoint(embeddings)
+
+	// Limit sample radius to reduce false positives.
+	if m.SampleRadius > 0.35 {
+		m.SampleRadius = 0.35
+	}
+
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
 
 	if err != nil {
@@ -97,9 +90,9 @@ func (m *Face) Matched() error {
 }
 
 // Embedding returns parsed face embedding.
-func (m *Face) Embedding() Embedding {
+func (m *Face) Embedding() face.Embedding {
 	if len(m.EmbeddingJSON) == 0 {
-		return Embedding{}
+		return face.Embedding{}
 	} else if len(m.embedding) > 0 {
 		return m.embedding
 	} else if err := json.Unmarshal(m.EmbeddingJSON, &m.embedding); err != nil {
@@ -110,10 +103,10 @@ func (m *Face) Embedding() Embedding {
 }
 
 // Match tests if embeddings match this face.
-func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
+func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 	dist = -1
 
-	if len(embeddings) == 0 {
+	if embeddings.Empty() {
 		// Np embeddings, no match.
 		return false, dist
 	}
@@ -125,9 +118,9 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 		return false, dist
 	}
 
-	// Calculate smallest distance to embeddings.
+	// Calculate the smallest distance to embeddings.
 	for _, e := range embeddings {
-		if d := clusters.EuclideanDistance(e, faceEmbedding); d < dist || dist < 0 {
+		if d := e.Distance(faceEmbedding); d < dist || dist < 0 {
 			dist = d
 		}
 	}
@@ -137,7 +130,7 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 	case dist < 0:
 		// Should never happen.
 		return false, dist
-	case dist > (m.SampleRadius + face.ClusterRadius):
+	case dist > (m.SampleRadius + face.MatchDist):
 		// Too far.
 		return false, dist
 	case m.CollisionRadius > 0.1 && dist > m.CollisionRadius:
@@ -150,8 +143,8 @@ func (m *Face) Match(embeddings Embeddings) (match bool, dist float64) {
 }
 
 // ResolveCollision resolves a collision with a different subject's face.
-func (m *Face) ResolveCollision(embeddings Embeddings) (resolved bool, err error) {
-	if m.SubjectUID == "" {
+func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err error) {
+	if m.SubjUID == "" {
 		// Ignore reports for anonymous faces.
 		return false, nil
 	} else if m.ID == "" {
@@ -171,9 +164,9 @@ func (m *Face) ResolveCollision(embeddings Embeddings) (resolved bool, err error
 		log.Infof("faces: %s collision at dist %f reported, same person?", m.ID, dist)
 
 		// Reset subject UID just in case.
-		m.SubjectUID = ""
+		m.SubjUID = ""
 
-		return false, m.Updates(Values{"SubjectUID": m.SubjectUID})
+		return false, m.Updates(Values{"SubjUID": m.SubjUID})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
@@ -248,24 +241,48 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.
-func (m *Face) SetSubjectUID(uid string) (err error) {
+func (m *Face) SetSubjectUID(subjUID string) (err error) {
 	// Update face.
-	if err = m.Update("SubjectUID", uid); err != nil {
+	if err = m.Update("SubjUID", subjUID); err != nil {
 		return err
 	} else {
-		m.SubjectUID = uid
+		m.SubjUID = subjUID
 	}
 
 	// Update related markers.
 	if err = Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		Where("subject_src = ?", SrcAuto).
-		Where("subject_uid <> ?", m.SubjectUID).
-		Updates(Values{"SubjectUID": m.SubjectUID}).Error; err != nil {
+		Where("subj_src = ?", SrcAuto).
+		Where("subj_uid <> ?", m.SubjUID).
+		Where("marker_invalid = 0").
+		UpdateColumns(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
-	return nil
+	return m.RefreshPhotos()
+}
+
+// RefreshPhotos flags related photos for metadata maintenance.
+func (m *Face) RefreshPhotos() error {
+	if m.ID == "" {
+		return fmt.Errorf("empty face id")
+	}
+
+	update := fmt.Sprintf(
+		"UPDATE photos SET checked_at = NULL WHERE id IN (SELECT f.photo_id FROM files f JOIN %s m ON m.file_uid = f.file_uid WHERE m.face_id = ?)",
+		Marker{}.TableName())
+
+	return UnscopedDb().Exec(update, m.ID).Error
+}
+
+// Hide hides the face by default.
+func (m *Face) Hide() (err error) {
+	return m.Update("FaceHidden", true)
+}
+
+// Show shows the face by default.
+func (m *Face) Show() (err error) {
+	return m.Update("FaceHidden", false)
 }
 
 // Save updates the existing or inserts a new face.
@@ -286,6 +303,13 @@ func (m *Face) Create() error {
 
 // Delete removes the face from the database.
 func (m *Face) Delete() error {
+	// Remove face id from markers before deleting.
+	if err := Db().Model(&Marker{}).
+		Where("face_id = ?", m.ID).
+		UpdateColumns(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
+		return err
+	}
+
 	return Db().Delete(m).Error
 }
 
@@ -304,12 +328,12 @@ func FirstOrCreateFace(m *Face) *Face {
 	result := Face{}
 
 	if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjectUID)
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
 	} else if err := UnscopedDb().Where("id = ?", m.ID).First(&result).Error; err == nil {
-		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjectUID)
+		log.Warnf("faces: %s has ambiguous subject %s", m.ID, m.SubjUID)
 		return &result
 	} else {
 		log.Errorf("faces: %s when trying to create %s", createErr, m.ID)
@@ -324,14 +348,28 @@ func FindFace(id string) *Face {
 		return nil
 	}
 
-	result := Face{}
+	f := Face{}
 
-	db := Db()
-	db = db.Where("id = ?", id)
-
-	if err := db.First(&result).Error; err != nil {
+	if err := Db().Where("id = ?", strings.ToUpper(id)).First(&f).Error; err != nil {
 		return nil
 	}
 
-	return &result
+	return &f
+}
+
+// ValidFaceCount counts the number of valid face markers for a file uid.
+func ValidFaceCount(fileUID string) (c int) {
+	if !rnd.IsPPID(fileUID, 'f') {
+		return
+	}
+
+	if err := Db().Model(Marker{}).
+		Where("file_uid = ? AND marker_type = ?", fileUID, MarkerFace).
+		Where("marker_invalid = 0").
+		Count(&c).Error; err != nil {
+		log.Errorf("file: %s (count faces)", err)
+		return 0
+	} else {
+		return c
+	}
 }

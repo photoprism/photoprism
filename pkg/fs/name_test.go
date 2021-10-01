@@ -67,3 +67,28 @@ func TestFileName(t *testing.T) {
 		assert.Equal(t, "testdata/FOO.XMP.jpeg", result)
 	})
 }
+
+func TestFileNameHidden(t *testing.T) {
+	t.Run("AtPrefix", func(t *testing.T) {
+		assert.True(t, FileNameHidden("/some/path/@eaDir"))
+	})
+	t.Run("DotPrefix", func(t *testing.T) {
+		assert.True(t, FileNameHidden("/some/.folder"))
+	})
+	t.Run("HasAts", func(t *testing.T) {
+		assert.False(t, FileNameHidden("/some/path/ea@Dir"))
+		assert.False(t, FileNameHidden("/some/@path/ea@Dir"))
+		assert.False(t, FileNameHidden("@/eaDir"))
+	})
+	t.Run("HasDots", func(t *testing.T) {
+		assert.False(t, FileNameHidden("/some/image.jpg."))
+		assert.False(t, FileNameHidden("./.some/foo"))
+	})
+	t.Run("False", func(t *testing.T) {
+		assert.False(t, FileNameHidden("/some/path/folder"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, FileNameHidden(""))
+	})
+
+}

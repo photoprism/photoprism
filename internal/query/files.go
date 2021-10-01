@@ -171,21 +171,11 @@ func IndexedFiles() (result FileMap, err error) {
 	return result, err
 }
 
-type HashMap map[string]bool
+// OrphanFiles finds files without a photo.
+func OrphanFiles() (files entity.Files, err error) {
+	err = UnscopedDb().
+		Raw(`SELECT * FROM files WHERE photo_id NOT IN (SELECT id FROM photos)`).
+		Find(&files).Error
 
-// FileHashes returns a map of all known file hashes.
-func FileHashes() (result HashMap, err error) {
-	result = make(HashMap)
-
-	var hashes []string
-
-	if err := UnscopedDb().Raw("SELECT file_hash FROM files WHERE file_missing = 0 AND deleted_at IS NULL").Pluck("file_hash", &hashes).Error; err != nil {
-		return result, err
-	}
-
-	for _, hash := range hashes {
-		result[hash] = true
-	}
-
-	return result, err
+	return files, err
 }

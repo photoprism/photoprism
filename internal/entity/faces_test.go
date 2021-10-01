@@ -21,3 +21,13 @@ func TestFaces_IDs(t *testing.T) {
 	r := Faces{m, m1}.IDs()
 	assert.Equal(t, []string{"VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6", "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG7"}, r)
 }
+
+func TestDeleteOrphanFaces(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		if count, err := DeleteOrphanFaces(); err != nil {
+			t.Fatal(err)
+		} else {
+			t.Logf("deleted %d faces", count)
+		}
+	})
+}

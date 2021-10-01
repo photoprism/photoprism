@@ -4,21 +4,18 @@
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field id="search"
                       v-model="filter.q"
-                      class="pt-3 pr-3 input-search"
-                      single-line
+                      class="input-search  background-inherit elevation-0"
+                      solo hide-details clearable overflow
                       :label="$gettext('Search')"
                       prepend-inner-icon="search"
                       browser-autocomplete="off"
-                      clearable
                       color="secondary-dark"
                       @click:clear="clearQuery"
                       @keyup.enter.native="updateQuery"
         ></v-text-field>
-
-        <v-spacer></v-spacer>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
@@ -43,18 +40,18 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="title ma-0 pa-0">
-                <translate>Couldn't find anything</translate>
-              </h3>
-              <p class="mt-4 mb-0 pa-0">
-                <translate>Try again using other filters or keywords.</translate>
-              </p>
-            </div>
-          </v-card-title>
-        </v-card>
+        <v-alert
+            :value="results.length === 0"
+            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+        >
+          <h3 class="body-2 ma-0 pa-0">
+            <translate>No labels found</translate>
+          </h3>
+          <p class="body-1 mt-2 mb-0 pa-0">
+            <translate>Try again using other filters or keywords.</translate>
+            <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
+          </p>
+        </v-alert>
         <v-layout row wrap class="search-results label-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(label, index) in results"
@@ -113,7 +110,7 @@
                     @save="onSave(label)"
                 >
                   <span v-if="label.Name" class="body-2 ma-0">
-                      {{ label.Name | capitalize }}
+                      {{ label.Name }}
                   </span>
                   <span v-else>
                       <v-icon>edit</v-icon>
@@ -122,14 +119,26 @@
                     <v-text-field
                         v-model="label.Name"
                         :rules="[titleRule]"
-                        :label="$gettext('Label Name')"
+                        :label="$gettext('Name')"
                         color="secondary-dark"
-                        single-line
-                        autofocus
+                        class="input-rename background-inherit elevation-0"
+                        single-line autofocus solo hide-details
                     ></v-text-field>
                   </template>
                 </v-edit-dialog>
               </v-card-title>
+
+              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none;"
+                           @click.stop.prevent="">
+                <div class="caption mb-2">
+                  <button v-if="label.PhotoCount === 1">
+                    <translate>Contains one entry.</translate>
+                  </button>
+                  <button v-else-if="label.PhotoCount > 0">
+                    <translate :translate-params="{n: label.PhotoCount}">Contains %{n} entries.</translate>
+                  </button>
+                </div>
+              </v-card-text>
             </v-card>
           </v-flex>
         </v-layout>
@@ -472,7 +481,13 @@ export default {
         this.scrollDisabled = (resp.count < resp.limit);
 
         if (this.scrollDisabled) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No labels found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One label found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
+          }
         } else {
           this.$notify.info(this.$gettext('More than 20 labels found'));
 

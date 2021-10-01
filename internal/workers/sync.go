@@ -10,8 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote"
+	"github.com/photoprism/photoprism/internal/search"
 )
 
 // Sync represents a sync worker.
@@ -59,7 +59,7 @@ func (worker *Sync) Start() (err error) {
 		Sync: true,
 	}
 
-	accounts, err := query.AccountSearch(f)
+	accounts, err := search.Accounts(f)
 
 	for _, a := range accounts {
 		if a.AccType != remote.ServiceWebDAV {

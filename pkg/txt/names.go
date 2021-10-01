@@ -24,14 +24,96 @@ func UniqueNames(names []string) (result []string) {
 }
 
 // JoinNames joins a list of names to be used in titles and descriptions.
-func JoinNames(names []string) string {
-	if l := len(names); l == 0 {
+func JoinNames(names []string, shorten bool) (result string) {
+	l := len(names)
+
+	if l == 0 {
 		return ""
 	} else if l == 1 {
 		return names[0]
-	} else if l == 2 {
-		return strings.Join(names, " & ")
-	} else {
-		return fmt.Sprintf("%s & %s", strings.Join(names[:l-1], ", "), names[l-1])
 	}
+
+	var familyName string
+
+	// Common family name?
+	if i := strings.LastIndex(names[0], " "); i > 1 && len(names[0][i:]) > 2 {
+		familyName = names[0][i:]
+
+		for i := 1; i < l; i++ {
+			if !strings.HasSuffix(names[i], familyName) {
+				familyName = ""
+				break
+			}
+		}
+	}
+
+	// Shorten names?
+	if shorten {
+		shortNames := make([]string, l)
+
+		for i := 0; i < l; i++ {
+			shortNames[i] = strings.SplitN(names[i], Space, 2)[0]
+
+			if i > 0 && shortNames[i] == strings.SplitN(names[i-1], Space, 2)[0] {
+				shortNames[i] = names[i]
+				shortNames[i-1] = names[i-1]
+			}
+		}
+
+		names = shortNames
+	}
+
+	if l == 2 {
+		result = strings.Join(names, " & ")
+	} else {
+		result = fmt.Sprintf("%s & %s", strings.Join(names[:l-1], ", "), names[l-1])
+	}
+
+	// Keep family name at the end.
+	if familyName != "" {
+		if shorten {
+			result = result + familyName
+		} else {
+			result = strings.Replace(result, familyName, "", l-1)
+		}
+	}
+
+	return result
+}
+
+// NameKeywords returns a list of unique, lowercase keywords based on a person's names and aliases.
+func NameKeywords(names, aliases string) (results []string) {
+	if names == "" && aliases == "" {
+		return []string{}
+	}
+
+	names = strings.ToLower(names)
+	aliases = strings.ToLower(aliases)
+
+	return UniqueNames(append(Words(names), Words(aliases)...))
+}
+
+// NormalizeName sanitizes and capitalizes names.
+func NormalizeName(name string) string {
+	if name == "" {
+		return ""
+	}
+
+	// Remove double quotes and other special characters.
+	name = strings.Map(func(r rune) rune {
+		switch r {
+		case '"', '`', '~', '\\', '/', '*', '%', '&', '|', '+', '=', '$', '@', '!', '?', ':', ';', '<', '>', '{', '}':
+			return -1
+		}
+		return r
+	}, name)
+
+	name = strings.TrimSpace(name)
+
+	if name == "" {
+		return ""
+	}
+
+	// Shorten and capitalize.
+	return Clip(Title(name), ClipDefault)
 }

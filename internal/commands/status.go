@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // StatusCommand performs a server health check.

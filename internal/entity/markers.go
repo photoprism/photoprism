@@ -1,30 +1,37 @@
 package entity
 
-import "github.com/photoprism/photoprism/pkg/txt"
+import (
+	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/pkg/txt"
+)
 
+// Markers represents a list of markers.
 type Markers []Marker
 
 // Save stores the markers in the database.
-func (m Markers) Save(fileUID string) error {
-	for _, marker := range m {
-		if fileUID != "" {
-			marker.FileUID = fileUID
+func (m Markers) Save(file *File) (count int, err error) {
+	for i := range m {
+		if file != nil {
+			m[i].FileUID = file.FileUID
 		}
 
-		if _, err := UpdateOrCreateMarker(&marker); err != nil {
-			return err
+		if _, err := UpdateOrCreateMarker(&m[i]); err != nil {
+			log.Errorf("markers: %s (save)", err)
 		}
 	}
 
-	return nil
+	if file == nil {
+		return len(m), nil
+	}
+
+	return file.UpdatePhotoFaceCount()
 }
 
-// Contains returns true if a marker at the same position already exists.
-func (m Markers) Contains(m2 Marker) bool {
-	const d = 0.07
-
-	for _, m1 := range m {
-		if m2.X > (m1.X-d) && m2.X < (m1.X+d) && m2.Y > (m1.Y-d) && m2.Y < (m1.Y+d) {
+// Unsaved tests if any marker hasn't been saved yet.
+func (m Markers) Unsaved() bool {
+	for i := range m {
+		if m[i].Unsaved() {
 			return true
 		}
 	}
@@ -32,23 +39,45 @@ func (m Markers) Contains(m2 Marker) bool {
 	return false
 }
 
-// FaceCount returns the number of valid face markers.
-func (m Markers) FaceCount() (faces int) {
-	for _, marker := range m {
-		if !marker.MarkerInvalid && marker.MarkerType == MarkerFace {
-			faces++
+// Contains returns true if a marker at the same position already exists.
+func (m Markers) Contains(other Marker) bool {
+	for i := range m {
+		if m[i].OverlapPercent(other) > face.OverlapThreshold {
+			return true
 		}
 	}
 
-	return faces
+	return false
+}
+
+// DetectedFaceCount returns the number of automatically detected face markers.
+func (m Markers) DetectedFaceCount() (count int) {
+	for i := range m {
+		if m[i].DetectedFace() {
+			count++
+		}
+	}
+
+	return count
+}
+
+// ValidFaceCount returns the number of valid face markers.
+func (m Markers) ValidFaceCount() (count int) {
+	for i := range m {
+		if m[i].ValidFace() {
+			count++
+		}
+	}
+
+	return count
 }
 
 // SubjectNames returns known subject names.
 func (m Markers) SubjectNames() (names []string) {
-	for _, marker := range m {
-		if marker.MarkerInvalid || marker.MarkerType != MarkerFace {
+	for i := range m {
+		if m[i].MarkerInvalid || m[i].MarkerType != MarkerFace {
 			continue
-		} else if n := marker.SubjectName(); n != "" {
+		} else if n := m[i].SubjectName(); n != "" {
 			names = append(names, n)
 		}
 	}
@@ -56,9 +85,61 @@ func (m Markers) SubjectNames() (names []string) {
 	return txt.UniqueNames(names)
 }
 
+// Labels returns matching labels.
+func (m Markers) Labels() (result classify.Labels) {
+	faceCount := 0
+
+	labelSrc := SrcImage
+	labelUncertainty := 100
+
+	for i := range m {
+		if m[i].ValidFace() {
+			faceCount++
+
+			if u := m[i].Uncertainty(); u < labelUncertainty {
+				labelUncertainty = u
+			}
+
+			if m[i].MarkerSrc != "" {
+				labelSrc = m[i].MarkerSrc
+			}
+		}
+	}
+
+	if faceCount < 1 {
+		return classify.Labels{}
+	}
+
+	var rule classify.LabelRule
+
+	if faceCount == 1 {
+		rule = classify.Rules["portrait"]
+	} else {
+		rule = classify.Rules["people"]
+	}
+
+	return classify.Labels{classify.Label{
+		Name:        rule.Label,
+		Source:      labelSrc,
+		Uncertainty: labelUncertainty,
+		Priority:    rule.Priority,
+		Categories:  rule.Categories,
+	}}
+}
+
 // Append adds a marker.
 func (m *Markers) Append(marker Marker) {
 	*m = append(*m, marker)
+}
+
+// AppendWithEmbedding adds a marker with face embedding.
+func (m *Markers) AppendWithEmbedding(marker Marker) {
+	if !marker.Embeddings().One() {
+		// Ignore markers that don't have exactly one embedding.
+		return
+	}
+
+	m.Append(marker)
 }
 
 // FindMarkers returns up to 1000 markers for a given file uid.

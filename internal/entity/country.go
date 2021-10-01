@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // altCountryNames defines mapping between different names for the same country
@@ -20,8 +20,8 @@ type Countries []Country
 // Country represents a country location, used for labeling photos.
 type Country struct {
 	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
-	CountrySlug        string `gorm:"type:VARBINARY(255);unique_index;" json:"Slug" yaml:"-"`
-	CountryName        string `json:"Name" yaml:"Name,omitempty"`
+	CountrySlug        string `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
+	CountryName        string `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
 	CountryDescription string `gorm:"type:TEXT;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	CountryNotes       string `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CountryPhoto       *Photo `json:"-" yaml:"-"`
@@ -51,12 +51,10 @@ func NewCountry(countryCode string, countryName string) *Country {
 		countryName = altName
 	}
 
-	countrySlug := slug.MakeLang(countryName, "en")
-
 	result := &Country{
 		ID:          countryCode,
-		CountryName: countryName,
-		CountrySlug: countrySlug,
+		CountryName: txt.Clip(countryName, txt.ClipName),
+		CountrySlug: txt.Slug(countryName),
 	}
 
 	return result

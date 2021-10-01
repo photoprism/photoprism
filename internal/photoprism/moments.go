@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"runtime/debug"
+	"strconv"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -102,11 +103,12 @@ func (w *Moments) Start() (err error) {
 	} else {
 		for _, mom := range results {
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMonth); a != nil {
-				if a.DeletedAt != nil {
-					// Nothing to do.
-					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-				} else {
+				if !a.Deleted() {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				} else if err := a.Restore(); err != nil {
+					log.Errorf("moments: %s (restore month)", err.Error())
+				} else {
+					log.Infof("moments: %s restored", txt.Quote(a.AlbumTitle))
 				}
 			} else if a := entity.NewMonthAlbum(mom.Title(), mom.Slug(), mom.Year, mom.Month); a != nil {
 				if err := a.Create(); err != nil {
@@ -125,7 +127,7 @@ func (w *Moments) Start() (err error) {
 		for _, mom := range results {
 			f := form.PhotoSearch{
 				Country: mom.Country,
-				Year:    mom.Year,
+				Year:    strconv.Itoa(mom.Year),
 				Public:  true,
 			}
 
@@ -202,7 +204,7 @@ func (w *Moments) Start() (err error) {
 				} else {
 					w := txt.Words(f.Label)
 					w = append(w, mom.Label)
-					f.Label = strings.Join(txt.UniqueWords(w), query.Or)
+					f.Label = strings.Join(txt.UniqueWords(w), txt.Or)
 				}
 
 				if err := a.Update("AlbumFilter", f.Serialize()); err != nil {

@@ -4,31 +4,31 @@
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery">
-      <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
+      <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field id="search"
                       v-model="filter.q"
-                      single-line
-                      class="input-search"
+                      solo hide-details clearable overflow single-line
+                      class="input-search background-inherit elevation-0"
                       :label="$gettext('Search')"
                       browser-autocomplete="off"
                       prepend-inner-icon="search"
-                      clearable
                       color="secondary-dark"
                       @keyup.enter.native="updateQuery"
                       @click:clear="clearQuery"
         ></v-text-field>
 
-        <v-select v-model="filter.category"
-                  single-line
+        <v-overflow-btn v-model="filter.category"
+                  solo hide-details single-line
                   :label="$gettext('Category')"
                   color="secondary-dark"
+                  background-color="secondary"
+                  prepend-icon="local_offer"
+                  append-icon=""
                   :items="categories"
-                  class="ml-3 hidden-xs-only input-category"
+                  class="hidden-xs-only input-category background-inherit elevation-0"
                   @change="updateQuery"
         >
-        </v-select>
-
-        <v-spacer></v-spacer>
+        </v-overflow-btn>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
@@ -56,28 +56,24 @@
                          :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-card v-if="results.length === 0" class="no-results secondary-light lighten-1 ma-1" flat>
-          <v-card-title primary-title>
-            <div v-if="staticFilter.type === 'album'">
-              <h3 class="title ma-0 pa-0">
-                <translate>Couldn't find anything</translate>
-              </h3>
-              <p class="mt-4 mb-0 pa-0">
-                <translate>Try again using other filters or keywords.</translate>
-                <translate>After selecting photos or videos from search results, you can add them to existing or new albums using the context menu.</translate>
-              </p>
-            </div>
-            <div v-else>
-              <h3 class="title mb-3">
-                <translate>Couldn't find anything</translate>
-              </h3>
-              <p class="mt-4 mb-0 pa-0">
-                <translate>Try again using other filters or keywords.</translate>
-                <translate>PhotoPrism continuously analyzes your library to find special moments, journeys and places.</translate>
-              </p>
-            </div>
-          </v-card-title>
-        </v-card>
+        <v-alert
+            :value="results.length === 0"
+            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
+        >
+          <h3 class="body-2 ma-0 pa-0">
+            <translate>No albums found</translate>
+          </h3>
+          <p class="body-1 mt-2 mb-0 pa-0">
+            <translate>Try again using other filters or keywords.</translate>
+            <template v-if="staticFilter.type === 'album'">
+              <translate>After selecting photos or videos from search results, you can add them to existing or new albums using the context menu.</translate>
+            </template>
+            <template v-else>
+              <translate>Your library is continuously analyzed to automatically create albums of special moments, trips, and places.</translate>
+            </template>
+          </p>
+        </v-alert>
+
         <v-layout row wrap class="search-results album-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(album, index) in results"
@@ -188,6 +184,11 @@
             </v-card>
           </v-flex>
         </v-layout>
+        <div v-if="staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
+          <v-btn class="action-add" color="secondary" round @click.prevent="create">
+            <translate>Add Album</translate>
+          </v-btn>
+        </div>
       </v-container>
     </v-container>
     <p-share-dialog :show="dialog.share" :model="model" @upload="webdavUpload"
@@ -230,6 +231,7 @@ export default {
     }
 
     return {
+      config: this.$config.values,
       featureShare: this.$config.feature('share'),
       categories: categories,
       subscriptions: [],

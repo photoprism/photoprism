@@ -6,13 +6,16 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/manifoldco/promptui"
+	"github.com/urfave/cli"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/urfave/cli"
 )
 
 // UsersCommand registers user management commands.
@@ -204,7 +207,7 @@ func usersDeleteAction(ctx *cli.Context) error {
 func usersListAction(ctx *cli.Context) error {
 	return callWithDependencies(ctx, func(conf *config.Config) error {
 		users := query.RegisteredUsers()
-		log.Infof("found %d users", len(users))
+		log.Infof("found %s", english.Plural(len(users), "user", "users"))
 
 		fmt.Printf("%-4s %-16s %-16s %-16s\n", "ID", "LOGIN", "NAME", "EMAIL")
 

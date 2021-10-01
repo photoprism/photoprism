@@ -20,7 +20,7 @@ func BackupAlbums(backupPath string, force bool) (count int, result error) {
 		return count, nil
 	}
 
-	albums, err := query.GetAlbums(0, 9999)
+	albums, err := query.Albums(0, 9999)
 
 	if err != nil {
 		return count, err
@@ -54,7 +54,7 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 		return count, nil
 	}
 
-	existing, err := query.GetAlbums(0, 1)
+	existing, err := query.Albums(0, 1)
 
 	if err != nil {
 		return count, err

@@ -3,10 +3,11 @@ package commands
 import (
 	"syscall"
 
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // StopCommand registers the stop cli command.
