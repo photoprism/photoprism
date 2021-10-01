@@ -62,10 +62,6 @@ export default {
       },
     ];
 
-    if (config.count.people === 0) {
-      tabName = "people-faces";
-    }
-
     let active = 0;
 
     if (typeof tabName === 'string' && tabName !== '') {
@@ -82,7 +78,17 @@ export default {
       rtl: this.$rtl,
     };
   },
+  created() {
+    this.load();
+  },
   methods: {
+    load() {
+      this.$config.load().then(() => {
+        if(this.$config.values.count.people === 0) {
+          this.changePath(this.tabs[1].path);
+        }
+      });
+    },
     changePath: function (path) {
       if (this.$route.path !== path) {
         this.$router.replace(path);

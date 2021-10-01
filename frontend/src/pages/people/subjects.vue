@@ -215,10 +215,6 @@ export default {
       this.filter.order = this.sortOrder();
       this.routeName = this.$route.name;
 
-      if (this.dirty) {
-        this.lastFilter = {};
-      }
-
       this.search();
     }
   },
