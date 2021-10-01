@@ -241,6 +241,70 @@ export const Themes = () => [
     disabled: false,
   },
 ];
+
+export const HomePages = () => [
+  {
+    text: $gettext("Search"),
+    value: "browse",
+    disabled: false,
+  },
+  {
+    text: $gettext("Albums"),
+    value: "albums",
+    disabled: false,
+  },
+  {
+    text: $gettext("Videos"),
+    value: "videos",
+    disabled: false,
+  },
+  {
+    text: $gettext("Favorites"),
+    value: "favorites",
+    disabled: false,
+  },
+  {
+    text: $gettext("Moments"),
+    value: "moments",
+    disabled: false,
+  },
+  {
+    text: $gettext("Calender"),
+    value: "calender",
+    disabled: false,
+  },
+  {
+    text: $gettext("Places"),
+    value: "places",
+    disabled: false,
+  },
+  {
+    text: $gettext("Labels"),
+    value: "labels",
+    disabled: false,
+  },
+  {
+    text: $gettext("Folders"),
+    value: "folders",
+    disabled: false,
+  },
+  {
+    text: $gettext("Private"),
+    value: "private",
+    disabled: false,
+  },
+  {
+    text: $gettext("Library"),
+    value: "library",
+    disabled: false,
+  },
+  {
+    text: $gettext("Library - Originals"),
+    value: "library/files",
+    disabled: false,
+  },
+];
+
 export const MapsAnimate = () => [
   {
     text: $gettext("None"),

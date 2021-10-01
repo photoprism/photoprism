@@ -46,6 +46,7 @@ import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
 import { $gettext } from "common/vm";
 import { session } from "./session";
+import { config } from "session";
 
 const c = window.__CONFIG__;
 const appName = c.name;
@@ -55,7 +56,7 @@ export default [
   {
     name: "home",
     path: "/",
-    redirect: "/browse",
+    redirect: config.values.settings.ui.homepage,
   },
   {
     name: "about",
@@ -384,6 +385,6 @@ export default [
   },
   {
     path: "*",
-    redirect: "/browse",
+    redirect: config.values.settings.ui.homepage,
   },
 ];

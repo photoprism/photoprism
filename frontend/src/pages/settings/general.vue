@@ -39,6 +39,20 @@
                   @change="onChange"
               ></v-select>
             </v-flex>
+            
+            <v-flex xs12 sm6 class="px-2 pb-2">
+              <v-select
+                  v-model="settings.ui.homepage"
+                  :disabled="busy"
+                  :items="homepages"
+                  :label="$gettext('Home Page')"
+                  color="secondary-dark"
+                  background-color="secondary-light"
+                  hide-details
+                  box class="input-homepage"
+                  @change="onChange"
+              ></v-select>
+            </v-flex>
           </v-layout>
         </v-card-actions>
       </v-card>
@@ -343,6 +357,7 @@ export default {
       themes: options.Themes(),
       currentTheme: this.$config.themeName,
       languages: options.Languages(),
+      homepages: options.HomePages(),
       dialog: {
         sponsor: false,
       },
