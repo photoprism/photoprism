@@ -59,7 +59,7 @@ func (m *Photo) EstimatePlace() {
 	case SQLite:
 		dateExpr = "ABS(JulianDay(taken_at) - JulianDay(?)) ASC"
 	default:
-		log.Errorf("photo: unknown sql dialect %s", DbDialect())
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return
 	}
 

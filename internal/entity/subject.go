@@ -29,6 +29,7 @@ type Subject struct {
 	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
 	SubjExcluded bool            `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int             `gorm:"default:0;" json:"FileCount" yaml:"-"`
+	PhotoCount   int             `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
 	Thumb        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`

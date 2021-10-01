@@ -41,6 +41,7 @@ func UpdateAlbumDefaultPreviews() (err error) {
 			ORDER BY p.taken_at DESC LIMIT 1
 		) WHERE ?`, condition))
 	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
 	}
 
@@ -87,6 +88,7 @@ func UpdateAlbumFolderPreviews() (err error) {
 		AND b.photo_path = albums.album_path LIMIT 1)
 		WHERE ?`, condition))
 	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
 	}
 
@@ -133,6 +135,7 @@ func UpdateAlbumMonthPreviews() (err error) {
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
 		WHERE ?`, condition))
 	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
 	}
 
@@ -216,6 +219,7 @@ func UpdateLabelPreviews() (err error) {
 			res.RowsAffected += catRes.RowsAffected
 		}
 	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
 	}
 
@@ -238,11 +242,11 @@ func UpdateSubjectPreviews() (err error) {
 
 	var res *gorm.DB
 
-	subjectTable := entity.Subject{}.TableName()
+	subjTable := entity.Subject{}.TableName()
 	markerTable := entity.Marker{}.TableName()
 
 	condition := gorm.Expr(
-		fmt.Sprintf("%s.subj_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')", subjectTable),
+		fmt.Sprintf("%s.subj_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')", subjTable),
 		entity.SubjPerson, entity.SrcAuto)
 
 	// TODO: Avoid using private photos as subject covers.
@@ -254,13 +258,14 @@ func UpdateSubjectPreviews() (err error) {
 			  AND m.marker_invalid = 0 AND m.thumb IS NOT NULL AND m.thumb <> ''
 			GROUP BY m.subj_uid, m.q
 			) b ON b.subj_uid = subjects.subj_uid
-		SET thumb = marker_thumb WHERE ?`, gorm.Expr(subjectTable), gorm.Expr(markerTable), condition)
+		SET thumb = marker_thumb WHERE ?`, gorm.Expr(subjTable), gorm.Expr(markerTable), condition)
 	case SQLite:
-		from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjectTable))
+		from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjTable))
 		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT m.thumb FROM ? AND m.thumb <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1
 		) WHERE ?`, from, condition))
 	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
 	}
 

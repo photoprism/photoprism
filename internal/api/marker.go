@@ -106,7 +106,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 				log.Errorf("faces: %s (update previews)", err)
 			}
 
-			if err := entity.UpdateSubjectFileCounts(); err != nil {
+			if err := entity.UpdateSubjectCounts(); err != nil {
 				log.Errorf("faces: %s (update counts)", err)
 			}
 		}
@@ -150,7 +150,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			return
 		} else if err := query.UpdateSubjectPreviews(); err != nil {
 			log.Errorf("faces: %s (update previews)", err)
-		} else if err := entity.UpdateSubjectFileCounts(); err != nil {
+		} else if err := entity.UpdateSubjectCounts(); err != nil {
 			log.Errorf("faces: %s (update counts)", err)
 		}
 
