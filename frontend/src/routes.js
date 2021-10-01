@@ -45,7 +45,7 @@ import Feedback from "pages/about/feedback.vue";
 import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
 import { $gettext } from "common/vm";
-import { session } from "./session";
+import { session, config } from "./session";
 
 const c = window.__CONFIG__;
 const appName = c.name;
@@ -264,6 +264,20 @@ export default [
     component: People,
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
     props: { tab: "people-subjects" },
+    beforeEnter: (to, from, next) => {
+      if (from.name.startsWith("people")) {
+        next();
+      } else {
+        config.load().finally(() => {
+          // Open new faces tab when there are no people.
+          if (config.values.count.people === 0) {
+            next({ name: "people_faces" });
+          } else {
+            next();
+          }
+        });
+      }
+    },
   },
   {
     name: "people_faces",

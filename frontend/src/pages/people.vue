@@ -8,8 +8,8 @@
         slider-color="secondary-dark"
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
-      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple
-             @click="changePath(item.path)">
+      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class"
+             ripple @click="changePath(item.path)">
         <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
           <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
@@ -78,17 +78,7 @@ export default {
       rtl: this.$rtl,
     };
   },
-  created() {
-    this.load();
-  },
   methods: {
-    load() {
-      this.$config.load().then(() => {
-        if(this.$config.values.count.people === 0) {
-          this.changePath(this.tabs[1].path);
-        }
-      });
-    },
     changePath: function (path) {
       if (this.$route.path !== path) {
         this.$router.replace(path);
