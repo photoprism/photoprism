@@ -451,7 +451,7 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:348
+#: src/component/photo/toolbar.vue:349
 #: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:94
 #: src/pages/albums.vue:122
@@ -499,7 +499,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:324
+#: src/component/photo/toolbar.vue:325
 msgid "Color"
 msgstr ""
 
@@ -656,7 +656,7 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:40
 #: src/dialog/photo/files.vue:37
-#: src/dialog/share.vue:231
+#: src/dialog/share.vue:232
 #: src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr ""
