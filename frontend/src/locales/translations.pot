@@ -36,8 +36,8 @@ msgstr ""
 msgid "%{n} labels found"
 msgstr ""
 
-#: src/pages/people/faces.vue:364
-#: src/pages/people/subjects.vue:389
+#: src/pages/people/faces.vue:366
+#: src/pages/people/subjects.vue:392
 msgid "%{n} people found"
 msgstr ""
 
@@ -198,8 +198,8 @@ msgstr ""
 msgid "All %{n} labels loaded"
 msgstr ""
 
-#: src/pages/people/faces.vue:271
-#: src/pages/people/subjects.vue:296
+#: src/pages/people/faces.vue:269
+#: src/pages/people/subjects.vue:295
 msgid "All %{n} people loaded"
 msgstr ""
 
@@ -420,10 +420,10 @@ msgstr ""
 #: src/pages/labels.vue:198
 #: src/pages/library/files.vue:193
 #: src/pages/library/files.vue:209
-#: src/pages/people/faces.vue:207
-#: src/pages/people/faces.vue:223
-#: src/pages/people/subjects.vue:232
-#: src/pages/people/subjects.vue:248
+#: src/pages/people/faces.vue:203
+#: src/pages/people/faces.vue:219
+#: src/pages/people/subjects.vue:229
+#: src/pages/people/subjects.vue:245
 #: src/share/albums.vue:345
 #: src/share/albums.vue:361
 msgid "Can't select more items"
@@ -451,7 +451,7 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:349
+#: src/component/photo/toolbar.vue:348
 #: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:94
 #: src/pages/albums.vue:122
@@ -499,7 +499,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:325
+#: src/component/photo/toolbar.vue:324
 msgid "Color"
 msgstr ""
 
@@ -656,7 +656,7 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:40
 #: src/dialog/photo/files.vue:37
-#: src/dialog/share.vue:232
+#: src/dialog/share.vue:231
 #: src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr ""
@@ -733,10 +733,10 @@ msgstr ""
 msgid "Disables reverse geocoding and maps."
 msgstr ""
 
-#: src/routes.js:361
-#: src/routes.js:368
 #: src/routes.js:375
 #: src/routes.js:382
+#: src/routes.js:389
+#: src/routes.js:396
 msgid "Discover"
 msgstr ""
 
@@ -1287,9 +1287,9 @@ msgstr ""
 #: src/component/navigation.vue:1131
 #: src/pages/settings.vue:41
 #: src/pages/settings/general.vue:404
-#: src/routes.js:279
-#: src/routes.js:286
 #: src/routes.js:293
+#: src/routes.js:300
+#: src/routes.js:307
 msgid "Library"
 msgstr ""
 
@@ -1445,7 +1445,7 @@ msgstr ""
 msgid "More than 20 albums found"
 msgstr ""
 
-#: src/pages/people/faces.vue:367
+#: src/pages/people/faces.vue:369
 msgid "More than 20 faces found"
 msgstr ""
 
@@ -1453,7 +1453,7 @@ msgstr ""
 msgid "More than 20 labels found"
 msgstr ""
 
-#: src/pages/people/subjects.vue:392
+#: src/pages/people/subjects.vue:395
 msgid "More than 20 people found"
 msgstr ""
 
@@ -1491,7 +1491,7 @@ msgstr ""
 #: src/dialog/photo/files.vue:30
 #: src/dialog/photo/info.vue:31
 #: src/dialog/photo/labels.vue:48
-#: src/dialog/photo/people.vue:19
+#: src/dialog/photo/people.vue:18
 #: src/dialog/photo/people.vue:229
 #: src/pages/about/feedback.vue:144
 #: src/pages/labels.vue:337
@@ -1508,7 +1508,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:52
 #: src/dialog/album/edit.vue:24
 #: src/dialog/photo/labels.vue:22
-#: src/dialog/photo/people.vue:22
+#: src/dialog/photo/people.vue:21
 #: src/pages/labels.vue:38
 #: src/pages/library/files.vue:40
 #: src/pages/people/faces.vue:41
@@ -1566,9 +1566,9 @@ msgstr ""
 
 #: src/dialog/photo/people.vue:5
 #: src/pages/people/faces.vue:23
-#: src/pages/people/faces.vue:360
+#: src/pages/people/faces.vue:362
 #: src/pages/people/subjects.vue:26
-#: src/pages/people/subjects.vue:385
+#: src/pages/people/subjects.vue:388
 msgid "No people found"
 msgstr ""
 
@@ -1680,8 +1680,8 @@ msgstr ""
 msgid "One label found"
 msgstr ""
 
-#: src/pages/people/faces.vue:362
-#: src/pages/people/subjects.vue:387
+#: src/pages/people/faces.vue:364
+#: src/pages/people/subjects.vue:390
 msgid "One person found"
 msgstr ""
 
@@ -1768,7 +1768,7 @@ msgstr ""
 #: src/dialog/photo/edit.vue:267
 #: src/pages/settings/general.vue:338
 #: src/routes.js:265
-#: src/routes.js:272
+#: src/routes.js:286
 msgid "People"
 msgstr ""
 
@@ -2138,11 +2138,11 @@ msgstr ""
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:1305
-#: src/routes.js:301
-#: src/routes.js:313
-#: src/routes.js:325
-#: src/routes.js:337
-#: src/routes.js:349
+#: src/routes.js:315
+#: src/routes.js:327
+#: src/routes.js:339
+#: src/routes.js:351
+#: src/routes.js:363
 msgid "Settings"
 msgstr ""
 
