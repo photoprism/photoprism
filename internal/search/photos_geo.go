@@ -2,15 +2,16 @@ package search
 
 import (
 	"fmt"
+	"path"
 	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/s2"
@@ -225,10 +226,16 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		}
 	}
 
-	// Filter by main file name.
+	// Filter by primary file name without path and extension.
 	if f.Name != "" {
-		where, values := OrLike("photos.photo_name", f.Name)
-		s = s.Where(where, values...)
+		where, names := OrLike("photos.photo_name", f.Name)
+
+		// Omit file path and known extensions.
+		for i := range names {
+			names[i] = fs.StripKnownExt(path.Base(names[i].(string)))
+		}
+
+		s = s.Where(where, names...)
 	}
 
 	// Filter by photo title.
