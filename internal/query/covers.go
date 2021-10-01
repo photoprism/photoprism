@@ -17,16 +17,14 @@ func UpdateAlbumDefaultCovers() (err error) {
 
 	var res *gorm.DB
 
-	condition := gorm.Expr(
-		"album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')",
-		entity.AlbumDefault, entity.SrcDefault)
+	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumDefault, entity.SrcAuto)
 
 	switch DbDialect() {
 	case MySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
     	SELECT p2.album_uid, f.file_hash FROM files f, (
         	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
-            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0
+            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0 AND pa.missing = 0
         	WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
         	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
 			) b ON b.album_uid = albums.album_uid
@@ -35,7 +33,7 @@ func UpdateAlbumDefaultCovers() (err error) {
 		res = Db().Table(entity.Album{}.TableName()).
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
-			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0
+			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0 AND pa.missing = 0
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_type = 'jpg' 
 			ORDER BY p.taken_at DESC LIMIT 1
@@ -64,9 +62,7 @@ func UpdateAlbumFolderCovers() (err error) {
 
 	var res *gorm.DB
 
-	condition := gorm.Expr(
-		"album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')",
-		entity.AlbumFolder, entity.SrcAuto)
+	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumFolder, entity.SrcAuto)
 
 	switch DbDialect() {
 	case MySQL:
@@ -111,9 +107,7 @@ func UpdateAlbumMonthCovers() (err error) {
 
 	var res *gorm.DB
 
-	condition := gorm.Expr(
-		"album_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')",
-		entity.AlbumMonth, entity.SrcAuto)
+	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumMonth, entity.SrcAuto)
 
 	switch DbDialect() {
 	case MySQL:
@@ -178,7 +172,7 @@ func UpdateLabelCovers() (err error) {
 
 	var res *gorm.DB
 
-	condition := gorm.Expr("(thumb_src = ? OR thumb IS NULL OR thumb = '')", entity.SrcAuto)
+	condition := gorm.Expr("thumb_src = ?", entity.SrcAuto)
 
 	switch DbDialect() {
 	case MySQL:
@@ -194,7 +188,7 @@ func UpdateLabelCovers() (err error) {
 				JOIN categories c ON c.label_id = pl.label_id
 			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			GROUP BY c.category_id
-			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg' AND f.file_missing = 0
 		) b ON b.label_id = labels.id
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
@@ -246,7 +240,7 @@ func UpdateSubjectCovers() (err error) {
 	markerTable := entity.Marker{}.TableName()
 
 	condition := gorm.Expr(
-		fmt.Sprintf("%s.subj_type = ? AND (thumb_src = ? OR thumb IS NULL OR thumb = '')", subjTable),
+		fmt.Sprintf("%s.subj_type = ? AND thumb_src = ?", subjTable),
 		entity.SubjPerson, entity.SrcAuto)
 
 	// TODO: Avoid using private photos as subject covers.

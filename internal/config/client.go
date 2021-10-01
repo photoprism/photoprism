@@ -369,7 +369,7 @@ func (c *Config) UserConfig() ClientConfig {
 
 	c.Db().
 		Table("labels").
-		Select("MAX(photo_count) as label_max_photos, COUNT(*) AS labels").
+		Select("MAX(photo_count) AS label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
 		Where("(label_priority >= 0 OR label_favorite = 1)").
