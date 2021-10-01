@@ -45,7 +45,7 @@ import Feedback from "pages/about/feedback.vue";
 import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
 import { $gettext } from "common/vm";
-import { session, config } from "./session";
+import { config, session } from "./session";
 
 const c = window.__CONFIG__;
 const appName = c.name;
@@ -265,7 +265,7 @@ export default [
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
     props: { tab: "people-subjects" },
     beforeEnter: (to, from, next) => {
-      if (from.name.startsWith("people")) {
+      if (!config || !from || !from.name || from.name.startsWith("people")) {
         next();
       } else {
         config.load().finally(() => {
