@@ -530,6 +530,6 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			}
 		}
 
-		log.Infof("download: created %s in %s", txt.Quote(zipFileName), time.Since(start))
+		log.Infof("download: created %s [%s]", txt.Quote(zipFileName), time.Since(start))
 	})
 }

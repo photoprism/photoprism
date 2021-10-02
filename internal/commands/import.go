@@ -71,7 +71,7 @@ func importAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("import completed in %s", elapsed)
+	log.Infof("import completed [%s]", elapsed)
 	conf.Shutdown()
 	return nil
 }

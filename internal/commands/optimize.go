@@ -45,7 +45,7 @@ func optimizeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed in %s", elapsed)
+		log.Infof("completed [%s]", elapsed)
 	}
 
 	conf.Shutdown()

@@ -99,7 +99,7 @@ func facesStatsAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed in %s", elapsed)
+		log.Infof("completed [%s]", elapsed)
 	}
 
 	conf.Shutdown()
@@ -130,7 +130,7 @@ func facesAuditAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed in %s", elapsed)
+		log.Infof("completed [%s]", elapsed)
 	}
 
 	conf.Shutdown()
@@ -174,7 +174,7 @@ func facesResetAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed in %s", elapsed)
+		log.Infof("completed [%s]", elapsed)
 	}
 
 	conf.Shutdown()
@@ -212,7 +212,7 @@ func facesResetAllAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed in %s", elapsed)
+		log.Infof("completed [%s]", elapsed)
 	}
 
 	conf.Shutdown()
@@ -312,7 +312,7 @@ func facesUpdateAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed in %s", elapsed)
+		log.Infof("completed [%s]", elapsed)
 	}
 
 	conf.Shutdown()

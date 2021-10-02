@@ -186,7 +186,7 @@ func backupAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("backup completed in %s", elapsed)
+	log.Infof("backup completed [%s]", elapsed)
 
 	conf.Shutdown()
 
