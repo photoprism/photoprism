@@ -45,7 +45,7 @@ It is available for Mac, Linux, and Windows.
 
 ## New Release 🌈 ##
 
-Our [latest release](https://docs.photoprism.org/release-notes/) not only includes 
+The [latest release](https://docs.photoprism.org/release-notes/) not only includes 
 **facial recognition**, it also comes as a 
 **single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64, ARM64, and ARMv7**. 
 That means you don't need to pull from different Docker repositories anymore.
