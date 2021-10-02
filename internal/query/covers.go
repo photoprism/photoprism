@@ -46,7 +46,7 @@ func UpdateAlbumDefaultCovers() (err error) {
 	err = res.Error
 
 	if err == nil {
-		log.Debugf("covers: %s updated [%s]", english.Plural(int(res.RowsAffected), "album", "albums"), time.Since(start))
+		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "album", "albums"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
 		log.Errorf("covers: failed updating albums, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
@@ -91,7 +91,7 @@ func UpdateAlbumFolderCovers() (err error) {
 	err = res.Error
 
 	if err == nil {
-		log.Debugf("covers: %s updated [%s]", english.Plural(int(res.RowsAffected), "folder", "folders"), time.Since(start))
+		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "folder", "folders"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
 		log.Errorf("covers: failed updating folders, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
@@ -136,7 +136,7 @@ func UpdateAlbumMonthCovers() (err error) {
 	err = res.Error
 
 	if err == nil {
-		log.Debugf("covers: %s updated [%s]", english.Plural(int(res.RowsAffected), "month", "months"), time.Since(start))
+		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "month", "months"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
 		log.Errorf("covers: failed updating calendar, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
@@ -220,7 +220,7 @@ func UpdateLabelCovers() (err error) {
 	err = res.Error
 
 	if err == nil {
-		log.Debugf("covers: %s updated [%s]", english.Plural(int(res.RowsAffected), "label", "labels"), time.Since(start))
+		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "label", "labels"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
 		log.Errorf("covers: failed updating labels, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
@@ -266,7 +266,7 @@ func UpdateSubjectCovers() (err error) {
 	err = res.Error
 
 	if err == nil {
-		log.Debugf("covers: %s updated [%s]", english.Plural(int(res.RowsAffected), "subject", "subjects"), time.Since(start))
+		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "subject", "subjects"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
 		log.Errorf("covers: failed updating subjects, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
@@ -278,6 +278,8 @@ func UpdateSubjectCovers() (err error) {
 
 // UpdateCovers updates album, subject, and label cover thumbs.
 func UpdateCovers() (err error) {
+	log.Info("index: updating covers")
+
 	// Update Albums.
 	if err = UpdateAlbumCovers(); err != nil {
 		return err

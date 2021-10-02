@@ -182,10 +182,10 @@ func (worker *Sync) download(a entity.Account) (complete bool, err error) {
 	// Any files downloaded?
 	if len(done) > 0 {
 		// Update precalculated photo and file counts.
-		worker.logError(entity.UpdatePhotoCounts())
+		worker.logWarn(entity.UpdateCounts())
 
 		// Update album, subject, and label cover thumbs.
-		worker.logError(query.UpdateCovers())
+		worker.logWarn(query.UpdateCovers())
 	}
 
 	return false, nil

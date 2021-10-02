@@ -46,8 +46,8 @@ func LabelCounts() LabelPhotoCounts {
 	return result
 }
 
-// UpdatePlacesPhotoCounts updates the places photo counts.
-func UpdatePlacesPhotoCounts() (err error) {
+// UpdatePlacesCounts updates the places photo counts.
+func UpdatePlacesCounts() (err error) {
 	start := time.Now()
 
 	// Update places.
@@ -62,7 +62,7 @@ func UpdatePlacesPhotoCounts() (err error) {
 		return res.Error
 	}
 
-	log.Debugf("counts: %s updated [%s]", english.Plural(int(res.RowsAffected), "place", "places"), time.Since(start))
+	log.Debugf("counts: updated %s [%s]", english.Plural(int(res.RowsAffected), "place", "places"), time.Since(start))
 
 	return nil
 }
@@ -114,13 +114,13 @@ func UpdateSubjectCounts() (err error) {
 		return res.Error
 	}
 
-	log.Debugf("counts: %s updated [%s]", english.Plural(int(res.RowsAffected), "subject", "subjects"), time.Since(start))
+	log.Debugf("counts: updated %s [%s]", english.Plural(int(res.RowsAffected), "subject", "subjects"), time.Since(start))
 
 	return nil
 }
 
-// UpdateLabelPhotoCounts updates the label photo counts.
-func UpdateLabelPhotoCounts() (err error) {
+// UpdateLabelCounts updates the label photo counts.
+func UpdateLabelCounts() (err error) {
 	start := time.Now()
 	var res *gorm.DB
 	if IsDialect(MySQL) {
@@ -166,14 +166,16 @@ func UpdateLabelPhotoCounts() (err error) {
 		return res.Error
 	}
 
-	log.Debugf("counts: %s updated [%s]", english.Plural(int(res.RowsAffected), "label", "labels"), time.Since(start))
+	log.Debugf("counts: updated %s [%s]", english.Plural(int(res.RowsAffected), "label", "labels"), time.Since(start))
 
 	return nil
 }
 
-// UpdatePhotoCounts updates precalculated photo and file counts.
-func UpdatePhotoCounts() (err error) {
-	if err = UpdatePlacesPhotoCounts(); err != nil {
+// UpdateCounts updates precalculated photo and file counts.
+func UpdateCounts() (err error) {
+	log.Info("index: updating counts")
+
+	if err = UpdatePlacesCounts(); err != nil {
 		if strings.Contains(err.Error(), "Error 1054") {
 			log.Errorf("counts: failed updating places, potentially incompatible database version")
 			log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
@@ -193,7 +195,7 @@ func UpdatePhotoCounts() (err error) {
 		return err
 	}
 
-	if err = UpdateLabelPhotoCounts(); err != nil {
+	if err = UpdateLabelCounts(); err != nil {
 		return err
 	}
 

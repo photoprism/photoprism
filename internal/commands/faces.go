@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
@@ -270,13 +272,13 @@ func facesIndexAction(ctx *cli.Context) error {
 		if files, photos, err := w.Start(opt); err != nil {
 			log.Error(err)
 		} else if len(files) > 0 || len(photos) > 0 {
-			log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
+			log.Infof("purge: removed %s and %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"))
 		}
 	}
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %d files in %s", len(indexed), elapsed)
+	log.Infof("indexed %d files [%s]", len(indexed), elapsed)
 
 	conf.Shutdown()
 
@@ -341,7 +343,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("%d face clusters merged in %s", res.Merged, elapsed)
+		log.Infof("%d face clusters merged [%s]", res.Merged, elapsed)
 	}
 
 	conf.Shutdown()

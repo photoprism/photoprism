@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -78,6 +80,7 @@ func indexAction(ctx *cli.Context) error {
 	}
 
 	if w := service.Purge(); w != nil {
+		purgeStart := time.Now()
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: indexed,
@@ -86,11 +89,12 @@ func indexAction(ctx *cli.Context) error {
 		if files, photos, err := w.Start(opt); err != nil {
 			log.Error(err)
 		} else if len(files) > 0 || len(photos) > 0 {
-			log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
+			log.Infof("purge: removed %s and %s [%s]", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(purgeStart))
 		}
 	}
 
 	if ctx.Bool("cleanup") {
+		cleanupStart := time.Now()
 		w := service.CleanUp()
 
 		opt := photoprism.CleanUpOptions{
@@ -100,13 +104,13 @@ func indexAction(ctx *cli.Context) error {
 		if thumbs, orphans, err := w.Start(opt); err != nil {
 			return err
 		} else {
-			log.Infof("cleanup: removed %d index entries and %d orphan thumbnails", orphans, thumbs)
+			log.Infof("cleanup: removed %s and %s [%s]", english.Plural(orphans, "index entry", "index entries"), english.Plural(thumbs, "thumbnail", "thumbnails"), time.Since(cleanupStart))
 		}
 	}
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %d files in %s", len(indexed), elapsed)
+	log.Infof("indexed %d files [%s]", len(indexed), elapsed)
 
 	conf.Shutdown()
 

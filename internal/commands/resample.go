@@ -46,7 +46,7 @@ func resampleAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("thumbnails created in %s", elapsed)
+	log.Infof("thumbnails created [%s]", elapsed)
 
 	return nil
 }

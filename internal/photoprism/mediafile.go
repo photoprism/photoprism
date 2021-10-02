@@ -14,6 +14,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/disintegration/imaging"
 	"github.com/djherbis/times"
 
@@ -926,11 +928,9 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("media: no new thumbs created for %s", m.BasePrefix(false))))
-		case 1:
-			log.Info(capture.Time(start, fmt.Sprintf("media: one thumbnail created for %s", m.BasePrefix(false))))
+			log.Debug(capture.Time(start, fmt.Sprintf("media: no new thumbnails created for %s", m.BasePrefix(false))))
 		default:
-			log.Info(capture.Time(start, fmt.Sprintf("media: %d thumbs created for %s", count, m.BasePrefix(false))))
+			log.Info(capture.Time(start, fmt.Sprintf("media: created %s for %s", english.Plural(count, "thumbnail", "thumbnails"), m.BasePrefix(false))))
 		}
 	}()
 

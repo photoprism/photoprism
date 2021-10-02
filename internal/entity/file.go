@@ -262,7 +262,7 @@ func (m *File) ReplaceHash(newHash string) error {
 		if res := UnscopedDb().Model(entity).Where("thumb = ?", oldHash).UpdateColumn("thumb", newHash); res.Error != nil {
 			return res.Error
 		} else if res.RowsAffected > 0 {
-			log.Infof("%s: %s updated [%s]", name, english.Plural(int(res.RowsAffected), "cover", "covers"), time.Since(start))
+			log.Infof("%s: updated %s [%s]", name, english.Plural(int(res.RowsAffected), "cover", "covers"), time.Since(start))
 		}
 	}
 

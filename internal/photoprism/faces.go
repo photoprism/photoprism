@@ -125,9 +125,9 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	// Log face matching results.
 	if matches.Updated > 0 {
-		log.Infof("faces: %d markers updated, %d faces recognized, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
+		log.Infof("faces: updated %d markers, recognized %d faces, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
 	} else {
-		log.Debugf("faces: %d markers updated, %d faces recognized, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
+		log.Debugf("faces: updated %d markers, recognized %d faces, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
 	}
 
 	// Remove unused people.

@@ -241,13 +241,9 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	log.Info("searching index for unassigned primary files")
-
 	if err := query.FixPrimaries(); err != nil {
-		log.Errorf("purge: %s (fix primary files)", err.Error())
+		log.Errorf("index: %s (update primary files)", err.Error())
 	}
-
-	log.Info("searching index for hidden media files")
 
 	// Set photo quality scores to -1 if files are missing.
 	if err := query.ResetPhotoQuality(); err != nil {
@@ -257,33 +253,31 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	// Remove orphan index entries.
 	if opt.Dry {
 		if files, err := query.OrphanFiles(); err != nil {
-			log.Errorf("purge: %s (find orphan files)", err)
+			log.Errorf("index: %s (find orphan files)", err)
 		} else if l := len(files); l > 0 {
-			log.Infof("purge: found %s", english.Plural(l, "orphan file", "orphan files"))
+			log.Infof("index: found %s", english.Plural(l, "orphan file", "orphan files"))
 		} else {
-			log.Infof("purge: found no orphan files")
+			log.Infof("index: found no orphan files")
 		}
 	} else {
 		if err := query.PurgeOrphans(); err != nil {
-			log.Errorf("purge: %s (remove orphans)", err)
+			log.Errorf("index: %s (remove orphans)", err)
 		}
 	}
 
 	// Hide missing album contents.
 	if err := query.UpdateMissingAlbumEntries(); err != nil {
-		log.Errorf("purge: %s (album entries)", err)
+		log.Errorf("index: %s (update album entries)", err)
 	}
 
 	// Update precalculated photo and file counts.
-	log.Info("updating photo counts")
-	if err := entity.UpdatePhotoCounts(); err != nil {
-		log.Errorf("purge: %s (update counts)", err)
+	if err := entity.UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
 	}
 
 	// Update album, subject, and label cover thumbs.
-	log.Info("updating cover thumbs")
 	if err := query.UpdateCovers(); err != nil {
-		log.Errorf("purge: %s (update covers)", err)
+		log.Warnf("index: %s (update covers)", err)
 	}
 
 	return purgedFiles, purgedPhotos, nil

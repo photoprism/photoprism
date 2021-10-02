@@ -91,12 +91,12 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 			// Do nothing.
 		} else if opt.Dry {
 			thumbs++
-			log.Debugf("cleanup: orphan thumbnail %s would be removed", logName)
+			log.Debugf("cleanup: thumbnail %s would be removed", logName)
 		} else if err := os.Remove(fileName); err != nil {
 			log.Warnf("cleanup: %s in %s", err, logName)
 		} else {
 			thumbs++
-			log.Debugf("cleanup: removed orphan thumbnail %s", logName)
+			log.Debugf("cleanup: removed thumbnail %s", logName)
 		}
 
 		return nil
@@ -136,32 +136,28 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 	// Remove orphan index entries.
 	if opt.Dry {
 		if files, err := query.OrphanFiles(); err != nil {
-			log.Errorf("cleanup: %s (find orphan files)", err)
+			log.Errorf("index: %s (find orphan files)", err)
 		} else if l := len(files); l > 0 {
-			log.Infof("cleanup: found %s", english.Plural(l, "orphan file", "orphan files"))
+			log.Infof("index: found %s", english.Plural(l, "orphan file", "orphan files"))
 		} else {
-			log.Infof("cleanup: found no orphan files")
+			log.Infof("index: found no orphan files")
 		}
 	} else {
 		if err := query.PurgeOrphans(); err != nil {
-			log.Errorf("cleanup: %s (remove orphans)", err)
+			log.Errorf("index: %s (remove orphans)", err)
 		}
 	}
 
 	// Only update counts if anything was deleted.
 	if len(deleted) > 0 {
-		log.Info("updating photo counts")
-
 		// Update precalculated photo and file counts.
-		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("cleanup: %s (update counts)", err)
+		if err := entity.UpdateCounts(); err != nil {
+			log.Warnf("index: %s (update counts)", err)
 		}
-
-		log.Info("updating cover thumbs")
 
 		// Update album, subject, and label cover thumbs.
 		if err := query.UpdateCovers(); err != nil {
-			log.Errorf("cleanup: %s (update covers)", err)
+			log.Warnf("index: %s (update covers)", err)
 		}
 
 		// Show success notification.

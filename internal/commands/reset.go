@@ -57,7 +57,7 @@ func resetAction(ctx *cli.Context) error {
 			entity.Admin.InitPassword(conf.AdminPassword())
 		}
 
-		log.Infof("database reset completed in %s", time.Since(start))
+		log.Infof("database reset completed [%s]", time.Since(start))
 	} else {
 		log.Infof("keeping index database")
 	}
@@ -89,7 +89,7 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed json files in %s", time.Since(start))
+			log.Infof("removed json files [%s]", time.Since(start))
 		} else {
 			log.Infof("no json files found")
 		}
@@ -124,7 +124,7 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed files in %s", time.Since(start))
+			log.Infof("removed files [%s]", time.Since(start))
 		} else {
 			log.Infof("no metadata backups found for removal")
 		}
@@ -159,7 +159,7 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed files in %s", time.Since(start))
+			log.Infof("removed files [%s]", time.Since(start))
 		} else {
 			log.Infof("no album backups found for removal")
 		}

@@ -212,7 +212,7 @@ func restoreAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("backup restored in %s", elapsed)
+	log.Infof("backup restored [%s]", elapsed)
 
 	conf.Shutdown()
 
