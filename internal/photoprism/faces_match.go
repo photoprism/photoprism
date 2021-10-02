@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 )
@@ -34,9 +36,9 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if opt.Force {
 		log.Infof("faces: updating all markers")
 	} else if unmatchedMarkers = query.CountUnmatchedFaceMarkers(); unmatchedMarkers > 0 {
-		log.Infof("faces: %d unmatched markers", unmatchedMarkers)
+		log.Infof("faces: found %s", english.Plural(unmatchedMarkers, "unmatched marker", "unmatched markers"))
 	} else {
-		log.Debugf("faces: no unmatched markers")
+		log.Debugf("faces: found no unmatched markers")
 	}
 
 	matchedAt := entity.TimePointer()
@@ -174,7 +176,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 		}
 
-		log.Debugf("faces: matched %d markers", matched)
+		log.Debugf("faces: matched %s", english.Plural(matched, "marker", "markers"))
 
 		if matched > max {
 			break

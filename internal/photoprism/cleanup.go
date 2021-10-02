@@ -144,7 +144,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		}
 	} else {
 		if err := query.PurgeOrphans(); err != nil {
-			log.Errorf("index: %s (remove orphans)", err)
+			log.Errorf("index: %s (purge orphans)", err)
 		}
 	}
 

@@ -261,7 +261,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 	} else {
 		if err := query.PurgeOrphans(); err != nil {
-			log.Errorf("index: %s (remove orphans)", err)
+			log.Errorf("index: %s (purge orphans)", err)
 		}
 	}
 
