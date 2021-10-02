@@ -99,7 +99,7 @@ func facesStatsAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed [%s]", elapsed)
+		log.Infof("completed in %s", elapsed)
 	}
 
 	conf.Shutdown()
@@ -130,7 +130,7 @@ func facesAuditAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed [%s]", elapsed)
+		log.Infof("completed in %s", elapsed)
 	}
 
 	conf.Shutdown()
@@ -174,7 +174,7 @@ func facesResetAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed [%s]", elapsed)
+		log.Infof("completed in %s", elapsed)
 	}
 
 	conf.Shutdown()
@@ -212,7 +212,7 @@ func facesResetAllAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed [%s]", elapsed)
+		log.Infof("completed in %s", elapsed)
 	}
 
 	conf.Shutdown()
@@ -278,7 +278,7 @@ func facesIndexAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %d files [%s]", len(indexed), elapsed)
+	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
 
 	conf.Shutdown()
 
@@ -312,7 +312,7 @@ func facesUpdateAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed [%s]", elapsed)
+		log.Infof("completed in %s", elapsed)
 	}
 
 	conf.Shutdown()
@@ -343,7 +343,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("%d face clusters merged [%s]", res.Merged, elapsed)
+		log.Infof("%s merged in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
 	}
 
 	conf.Shutdown()

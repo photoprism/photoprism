@@ -57,7 +57,7 @@ func resetAction(ctx *cli.Context) error {
 			entity.Admin.InitPassword(conf.AdminPassword())
 		}
 
-		log.Infof("database reset completed [%s]", time.Since(start))
+		log.Infof("database reset completed in %s", time.Since(start))
 	} else {
 		log.Infof("keeping index database")
 	}

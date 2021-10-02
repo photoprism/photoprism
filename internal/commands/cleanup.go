@@ -57,7 +57,7 @@ func cleanUpAction(ctx *cli.Context) error {
 	if thumbs, orphans, err := w.Start(opt); err != nil {
 		return err
 	} else {
-		log.Infof("cleanup: removed %s and %s [%s]", english.Plural(orphans, "index entry", "index entries"), english.Plural(thumbs, "thumbnail", "thumbnails"), time.Since(start))
+		log.Infof("removed %s and %s in %s", english.Plural(orphans, "index entry", "index entries"), english.Plural(thumbs, "thumbnail", "thumbnails"), time.Since(start))
 	}
 
 	conf.Shutdown()

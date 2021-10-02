@@ -44,7 +44,7 @@ func momentsAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("completed [%s]", elapsed)
+		log.Infof("completed in %s", elapsed)
 	}
 
 	conf.Shutdown()

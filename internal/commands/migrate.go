@@ -35,7 +35,7 @@ func migrateAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("database migration completed [%s]", elapsed)
+	log.Infof("database migration completed in %s", elapsed)
 
 	conf.Shutdown()
 
