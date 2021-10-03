@@ -464,13 +464,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.Float64Flag{
 		Name:   "face-cluster-dist",
-		Usage:  "`RADIUS` of faces forming a cluster core",
+		Usage:  "similarity `DISTANCE` of faces forming a cluster core",
 		Value:  face.ClusterDist,
 		EnvVar: "PHOTOPRISM_FACE_CLUSTER_DIST",
 	},
 	cli.Float64Flag{
 		Name:   "face-match-dist",
-		Usage:  "`OFFSET` distance when matching faces with clusters",
+		Usage:  "`DISTANCE` offset for matching new faces with clusters",
 		Value:  face.MatchDist,
 		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
 	},
