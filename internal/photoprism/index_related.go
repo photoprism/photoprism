@@ -31,7 +31,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		if jsonName, err := ind.convert.ToJson(f); err != nil {
 			log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 		} else {
-			log.Debugf("index: %s created", filepath.Base(jsonName))
+			log.Debugf("index: created %s", filepath.Base(jsonName))
 		}
 	}
 
@@ -42,7 +42,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 			return result
 		} else {
-			log.Debugf("index: %s created", txt.Quote(jpegFile.BaseName()))
+			log.Debugf("index: created %s", txt.Quote(jpegFile.BaseName()))
 
 			if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
 				result.Err = fmt.Errorf("index: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())
@@ -112,7 +112,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			if jsonName, err := ind.convert.ToJson(f); err != nil {
 				log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 			} else {
-				log.Debugf("index: %s created", filepath.Base(jsonName))
+				log.Debugf("index: created %s", filepath.Base(jsonName))
 			}
 		}
 
@@ -123,7 +123,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 				return result
 			} else {
-				log.Debugf("index: %s created", txt.Quote(jpegFile.BaseName()))
+				log.Debugf("index: created %s", txt.Quote(jpegFile.BaseName()))
 
 				if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
 					result.Err = fmt.Errorf("index: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())

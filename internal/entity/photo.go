@@ -187,8 +187,8 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	// Update precalculated photo and file counts.
-	if err := UpdatePhotoCounts(); err != nil {
-		log.Errorf("photo: %s", err)
+	if err := UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
 	}
 
 	return nil
@@ -315,8 +315,8 @@ func (m *Photo) SaveLabels() error {
 	}
 
 	// Update precalculated photo and file counts.
-	if err := UpdatePhotoCounts(); err != nil {
-		log.Errorf("photo: %s", err)
+	if err := UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
 	}
 
 	return nil
@@ -1041,8 +1041,8 @@ func (m *Photo) Approve() error {
 	}
 
 	// Update precalculated photo and file counts.
-	if err := UpdatePhotoCounts(); err != nil {
-		log.Errorf("photo: %s", err)
+	if err := UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
 	}
 
 	event.Publish("count.review", event.Data{

@@ -17,7 +17,7 @@ func TestLabelCounts(t *testing.T) {
 }
 
 func TestUpdatePhotoCounts(t *testing.T) {
-	err := UpdatePhotoCounts()
+	err := UpdateCounts()
 
 	if err != nil {
 		t.Fatal(err)

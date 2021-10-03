@@ -261,8 +261,8 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 		})
 
 		// Update precalculated photo and file counts.
-		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("index: %s (update counts)", err)
+		if err := entity.UpdateCounts(); err != nil {
+			log.Warnf("index: %s (update counts)", err)
 		}
 	} else {
 		log.Infof("index: no new or modified files")

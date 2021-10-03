@@ -35,7 +35,7 @@ func main() {
 	fileName := "rules.yml"
 
 	if !fs.FileExists(fileName) {
-		log.Panicf("classify: label rules not found in %s", txt.Quote(filepath.Base(fileName)))
+		log.Panicf("classify: found no label rules in %s", txt.Quote(filepath.Base(fileName)))
 	}
 
 	yamlConfig, err := ioutil.ReadFile(fileName)

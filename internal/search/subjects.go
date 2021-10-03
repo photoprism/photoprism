@@ -17,9 +17,11 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 		return results, err
 	}
 
+	subjTable := entity.Subject{}.TableName()
+
 	// Base query.
-	s := UnscopedDb().Table(entity.Subject{}.TableName()).
-		Select(fmt.Sprintf("%s.*", entity.Subject{}.TableName()))
+	s := UnscopedDb().Table(subjTable).
+		Select(fmt.Sprintf("%s.*", subjTable))
 
 	// Limit result count.
 	if f.Count > 0 && f.Count <= MaxResults {
@@ -35,7 +37,7 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 	case "count":
 		s = s.Order("file_count DESC")
 	case "added":
-		s = s.Order(fmt.Sprintf("%s.created_at DESC", entity.Subject{}.TableName()))
+		s = s.Order(fmt.Sprintf("%s.created_at DESC", subjTable))
 	case "relevance":
 		s = s.Order("subj_favorite DESC, subj_name")
 	default:
@@ -43,7 +45,7 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 	}
 
 	if f.ID != "" {
-		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", entity.Subject{}.TableName()), strings.Split(f.ID, txt.Or))
+		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(f.ID, txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -65,6 +67,10 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 		s = s.Where("file_count >= ?", f.Files)
 	}
 
+	if f.Photos > 0 {
+		s = s.Where("photo_count >= ?", f.Photos)
+	}
+
 	if f.Type != "" {
 		s = s.Where("subj_type IN (?)", strings.Split(f.Type, txt.Or))
 	}
@@ -82,7 +88,7 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 	}
 
 	// Omit deleted rows.
-	s = s.Where(fmt.Sprintf("%s.deleted_at IS NULL", entity.Subject{}.TableName()))
+	s = s.Where(fmt.Sprintf("%s.deleted_at IS NULL", subjTable))
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

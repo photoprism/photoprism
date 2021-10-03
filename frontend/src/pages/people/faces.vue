@@ -514,14 +514,17 @@ export default {
     },
     onShow(face) {
       this.busy = true;
+      this.dirty = true;
       face.show().finally(() => this.busy = false);
     },
     onHide(face) {
       this.busy = true;
+      this.dirty = true;
       face.hide().finally(() => this.busy = false);
     },
     onClearSubject(marker) {
       this.busy = true;
+      this.dirty = true;
       this.$notify.blockUI();
       marker.clearSubject(marker).finally(() => {
         this.$notify.unblockUI();
@@ -530,6 +533,7 @@ export default {
     },
     onRename(marker) {
       this.busy = true;
+      this.dirty = true;
       this.$notify.blockUI();
       marker.rename().finally(() => {
         this.$notify.unblockUI();

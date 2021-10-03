@@ -24,7 +24,7 @@ func AlbumByUID(albumUID string) (album entity.Album, err error) {
 	return album, nil
 }
 
-// AlbumCoverByUID returns a album preview file based on the uid.
+// AlbumCoverByUID returns an album cover file based on the uid.
 func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	a := entity.Album{}
 

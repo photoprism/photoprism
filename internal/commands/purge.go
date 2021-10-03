@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -74,9 +76,7 @@ func purgeAction(ctx *cli.Context) error {
 	if files, photos, err := w.Start(opt); err != nil {
 		return err
 	} else {
-		elapsed := time.Since(start)
-
-		log.Infof("purge: removed %d files and %d photos in %s", len(files), len(photos), elapsed)
+		log.Infof("purged %s and %s in %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(start))
 	}
 
 	conf.Shutdown()

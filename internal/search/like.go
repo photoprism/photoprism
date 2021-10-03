@@ -249,7 +249,7 @@ func OrLike(col, s string) (where string, values []interface{}) {
 	values = make([]interface{}, len(terms))
 
 	for i := range terms {
-		values[i] = terms[i]
+		values[i] = strings.TrimSpace(terms[i])
 	}
 
 	like := fmt.Sprintf("%s LIKE ?", col)

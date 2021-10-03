@@ -126,7 +126,7 @@ func CreateZip(router *gin.RouterGroup) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("download: zip %s created in %s", txt.Quote(zipBaseName), time.Since(start))
+		log.Infof("download: created %s [%s]", txt.Quote(zipBaseName), time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})

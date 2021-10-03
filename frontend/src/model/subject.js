@@ -51,6 +51,7 @@ export class Subject extends RestModel {
       Private: false,
       Excluded: false,
       FileCount: 0,
+      PhotoCount: 0,
       Thumb: "",
       ThumbSrc: "",
       Metadata: {},

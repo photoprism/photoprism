@@ -83,6 +83,8 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 
 // ResetPhotoQuality sets photo quality scores to -1 if files are missing.
 func ResetPhotoQuality() error {
+	log.Info("index: flagging hidden files")
+
 	return Db().Table("photos").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND deleted_at IS NULL)").
 		Update("photo_quality", -1).Error
@@ -122,21 +124,23 @@ func OrphanPhotos() (photos entity.Photos, err error) {
 
 // FixPrimaries tries to set a primary file for photos that have none.
 func FixPrimaries() error {
+	log.Info("index: updating primary files")
+
 	var photos entity.Photos
 
 	if err := UnscopedDb().
-		Raw(`SELECT * FROM photos WHERE 
-			deleted_at IS NULL 
+		Raw(`SELECT * FROM photos 
+			WHERE deleted_at IS NULL 
 			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1)`).
 		Find(&photos).Error; err != nil {
 		return err
 	}
 
 	for _, p := range photos {
-		log.Debugf("photo: finding new primary for %s", p.PhotoUID)
+		log.Debugf("index: finding new primary file for photo %s", p.PhotoUID)
 
 		if err := p.SetPrimary(""); err != nil {
-			log.Infof("photo: %s", err)
+			log.Infof("index: %s (set primary)", err)
 		}
 	}
 

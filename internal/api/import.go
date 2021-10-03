@@ -111,9 +111,9 @@ func StartImport(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		// Update album, label, and subject preview images.
-		if err := query.UpdatePreviews(); err != nil {
-			log.Errorf("import: %s (update previews)", err)
+		// Update album, label, and subject cover thumbs.
+		if err := query.UpdateCovers(); err != nil {
+			log.Warnf("index: %s (update covers)", err)
 		}
 
 		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
