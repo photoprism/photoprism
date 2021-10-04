@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/acl"
+
 	"github.com/photoprism/photoprism/internal/query"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -61,6 +63,7 @@ type ClientConfig struct {
 	Clip            int                 `json:"clip"`
 	Server          RuntimeInfo         `json:"server"`
 	Oidc            bool                `json:"oidc"`
+	Acl             acl.ACL             `json:"acl"`
 }
 
 // Years represents a list of years.
@@ -281,6 +284,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		Oidc:            c.OidcIssuerUrl() != nil,
+		Acl:             acl.Permissions,
 	}
 
 	return result
@@ -340,6 +344,7 @@ func (c *Config) UserConfig() ClientConfig {
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
 		Oidc:            c.OidcIssuerUrl() != nil,
+		Acl:             acl.Permissions,
 	}
 
 	c.Db().
