@@ -28,8 +28,8 @@ var Permissions = ACL{
 		RoleMember: Actions{ActionSearch: true, ActionRead: true, ActionDownload: true},
 	},
 	ResourceUsers: Roles{
-		//RoleDefault: Actions{ActionUpdateSelf: true},
-		RoleAdmin:  Actions{ActionUpdateSelf: true},
-		RoleMember: Actions{ActionUpdateSelf: true},
+		RoleDefault: Actions{ActionUpdateSelf: true},
+		RoleAdmin:   Actions{ActionUpdateSelf: true},
+		RoleMember:  Actions{ActionUpdateSelf: true},
 	},
 }

@@ -383,7 +383,7 @@ func TestUser_Role(t *testing.T) {
 	})
 	t.Run("default", func(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", FullName: ""}
-		assert.Equal(t, acl.Role("*"), p.Role())
+		assert.Equal(t, acl.Role("member"), p.Role())
 	})
 }
 
