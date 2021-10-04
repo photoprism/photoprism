@@ -26,7 +26,7 @@
         :width="270"
         :mobile-break-point="960"
         :mini-variant-width="80"
-        class="nav-sidebar navigation"
+        class="nav-sidebar navigation p-flex-nav"
         fixed dark app
         :right="rtl"
     >
@@ -51,7 +51,7 @@
         </v-list>
       </v-toolbar>
 
-      <v-list class="pt-3">
+      <v-list class="pt-3 p-flex-menu">
         <v-list-tile v-if="isMini" class="nav-expand" @click.stop="toggleIsMini()">
           <v-list-tile-action :title="$gettext('Expand')">
             <v-icon v-if="!rtl">chevron_right</v-icon>
@@ -445,7 +445,7 @@
 
         <v-list-tile v-show="!isPublic && auth"  to="/" class="p-profile">
           <v-list-tile-avatar color="grey" size="36">
-            <span class="white--text headline">{{ displayName[0].toUpperCase() }}</span>
+            <span class="white--text headline">{{ displayName.length >= 1 ? displayName[0].toUpperCase() : "E" }}</span>
           </v-list-tile-avatar>
 
           <v-list-tile-content>
@@ -492,7 +492,6 @@ import Event from "pubsub-js";
 export default {
   name: "PNavigation",
   data() {
-    let displayname = this.$session.getUser().FullName ? this.$session.getUser().FullName : this.$session.getUser().UserName;
     return {
       drawer: null,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false',
@@ -502,7 +501,6 @@ export default {
       session: this.$session,
       config: this.$config.values,
       page: this.$config.page,
-      displayName: displayname,
       reload: {
         subscription: null,
         dialog: false,
@@ -525,6 +523,10 @@ export default {
     auth() {
       return this.session.auth || this.isPublic;
     },
+    displayName() {
+      return this.$session.getUser().FullName ? this.$session.getUser().FullName : this.$session.getUser().UserName;
+    },
+
   },
   created() {
     this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);
