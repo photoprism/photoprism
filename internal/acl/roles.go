@@ -4,7 +4,7 @@ type Role string
 type Roles map[Role]Actions
 
 const (
-	RoleDefault     Role = "*"
+	RoleDefault     Role = "*" // used if no role matches
 	RoleAdmin       Role = "admin"
 	RolePartner     Role = "partner"
 	RoleFamily      Role = "family"
@@ -17,4 +17,5 @@ const (
 	RoleClassmate   Role = "classmate"
 	RoleWorkmate    Role = "workmate"
 	RoleGuest       Role = "guest"
+	RoleMember      Role = "member"
 )

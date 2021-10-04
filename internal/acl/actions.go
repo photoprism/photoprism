@@ -4,7 +4,7 @@ type Action string
 type Actions map[Action]bool
 
 const (
-	ActionDefault    Action = "*"
+	ActionDefault    Action = "*" // allows a subject/role to execute all other actions
 	ActionSearch     Action = "search"
 	ActionCreate     Action = "create"
 	ActionRead       Action = "read"

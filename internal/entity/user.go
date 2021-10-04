@@ -387,6 +387,10 @@ func (m *User) Role() acl.Role {
 		return acl.RoleGuest
 	}
 
+	if m.Registered() {
+		return acl.RoleMember
+	}
+
 	return acl.RoleDefault
 }
 
