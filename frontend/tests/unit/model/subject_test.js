@@ -200,6 +200,10 @@ describe("model/subject", () => {
     assert.equal(subject.Favorite, true);
   });
 
+  it("should return batch size", () => {
+    assert.equal(Subject.batchSize(), 60);
+  });
+
   it("should get collection resource", () => {
     const result = Subject.getCollectionResource();
     assert.equal(result, "subjects");
