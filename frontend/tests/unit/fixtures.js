@@ -315,6 +315,22 @@ Mock.onPut("api/v1/markers/mDC123ghytr", { SubjSrc: "manual", Name: "testname" }
   mockHeaders
 );
 Mock.onDelete("api/v1/markers/mEC123ghytr/subject").reply(200, { success: "ok" }, mockHeaders);
+Mock.onPut("api/v1/faces/f123ghytrfggd", { Hidden: false }).reply(
+  200,
+  {
+    success: "ok",
+  },
+  mockHeaders
+);
+Mock.onPut("api/v1/faces/f123ghytrfggd", { Hidden: true }).reply(
+  200,
+  {
+    success: "ok",
+  },
+  mockHeaders
+);
+Mock.onPost("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onDelete("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" }, mockHeaders);
 
 //Mock.onPost().reply(200);
 //Mock.onDelete().reply(200);
