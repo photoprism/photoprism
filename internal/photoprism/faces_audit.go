@@ -25,14 +25,14 @@ func (w *Faces) Audit(fix bool) (err error) {
 	if n := len(subj); n == 0 {
 		log.Infof("found no subjects")
 	} else {
-		log.Infof("%d known subjects", n)
+		log.Infof("found %s", english.Plural(n, "subject", "subjects"))
 	}
 
 	// Fix non-existent marker subjects references?
 	if n := len(invalidSubj); n == 0 {
 		log.Infof("found no invalid marker subjects")
 	} else if !fix {
-		log.Infof("%d markers with non-existent subjects", n)
+		log.Infof("%s with non-existent subjects", english.Plural(n, "marker", "markers"))
 	} else if removed, err := query.RemoveNonExistentMarkerSubjects(); err != nil {
 		log.Infof("removed %d / %d markers with non-existent subjects", removed, n)
 	} else {
@@ -43,7 +43,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	if n := len(invalidFaces); n == 0 {
 		log.Infof("found no invalid marker faces")
 	} else if !fix {
-		log.Infof("%d markers with non-existent faces", n)
+		log.Infof("%s with non-existent faces", english.Plural(n, "marker", "markers"))
 	} else if removed, err := query.RemoveNonExistentMarkerFaces(); err != nil {
 		log.Infof("removed %d / %d markers with non-existent faces", removed, n)
 	} else {
