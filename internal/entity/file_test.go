@@ -188,7 +188,7 @@ func TestFile_Save(t *testing.T) {
 			t.Fatalf("file id should be 0: %d", file.ID)
 		}
 
-		assert.Equal(t, "file: photo id must not be empty (save 123)", err.Error())
+		assert.Equal(t, "file 123: can't save file with empty photo id", err.Error())
 	})
 	t.Run("success", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}

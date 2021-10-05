@@ -298,8 +298,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	case m.IsJpeg():
 		// Color information
 		if p, err := m.Colors(Config().ThumbPath()); err != nil {
-			log.Errorf("index: %s in %s (detect colors)", err.Error(), logName)
+			log.Debugf("%s while detecting colors", err.Error())
 			file.FileError = err.Error()
+			file.FilePrimary = false
 		} else {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
@@ -633,9 +634,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
 		if details.Keywords != "" {
-			log.Tracef("index: set keywords %s for %s", details.Keywords, logName)
+			log.Tracef("index: using keywords %s for %s", details.Keywords, logName)
 		} else {
-			log.Tracef("index: no keywords for %s", logName)
+			log.Tracef("index: found no keywords for %s", logName)
 		}
 
 		photo.PhotoQuality = photo.QualityScore()

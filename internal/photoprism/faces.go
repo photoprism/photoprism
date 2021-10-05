@@ -5,6 +5,8 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -60,37 +62,37 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	} else if removed > 0 {
 		log.Infof("faces: removed %d orphan markers [%s]", removed, time.Since(start))
 	} else {
-		log.Debugf("faces: no orphan markers [%s]", time.Since(start))
+		log.Debugf("faces: found no orphan markers [%s]", time.Since(start))
 	}
 
 	// Repair invalid marker face and subject references.
 	start = time.Now()
 	if removed, err := query.FixMarkerReferences(); err != nil {
-		log.Errorf("faces: %s (fix references)", err)
+		log.Errorf("markers: %s (fix references)", err)
 	} else if removed > 0 {
-		log.Infof("faces: fixed %d marker references [%s]", removed, time.Since(start))
+		log.Infof("markers: fixed %d references [%s]", removed, time.Since(start))
 	} else {
-		log.Debugf("faces: no invalid marker references [%s]", time.Since(start))
+		log.Debugf("markers: found no invalid references [%s]", time.Since(start))
 	}
 
 	// Create known marker subjects if needed.
 	start = time.Now()
 	if affected, err := query.CreateMarkerSubjects(); err != nil {
-		log.Errorf("faces: %s (create subjects)", err)
+		log.Errorf("markers: %s (create subjects)", err)
 	} else if affected > 0 {
-		log.Infof("faces: added %d known marker subjects [%s]", affected, time.Since(start))
+		log.Infof("markers: added %d known subjects [%s]", affected, time.Since(start))
 	} else {
-		log.Debugf("faces: marker subjects already exist [%s]", time.Since(start))
+		log.Debugf("markers: found no missing subjects [%s]", time.Since(start))
 	}
 
 	// Resolve collisions of different subject's faces.
 	start = time.Now()
 	if c, r, err := query.ResolveFaceCollisions(); err != nil {
-		log.Errorf("faces: %s (resolve collisions)", err)
+		log.Errorf("faces: %s (resolve ambiguous subjects)", err)
 	} else if c > 0 {
-		log.Infof("faces: resolved %d / %d collisions [%s]", r, c, time.Since(start))
+		log.Infof("faces: resolved %d / %d ambiguous subjects [%s]", r, c, time.Since(start))
 	} else {
-		log.Debugf("faces: no collisions detected [%s]", time.Since(start))
+		log.Debugf("faces: found no ambiguous subjects [%s]", time.Since(start))
 	}
 
 	// Optimize existing face clusters.
@@ -100,7 +102,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	} else if res.Merged > 0 {
 		log.Infof("faces: merged %d clusters [%s]", res.Merged, time.Since(start))
 	} else {
-		log.Debugf("faces: no clusters could be merged [%s]", time.Since(start))
+		log.Debugf("faces: found no clusters to be merged [%s]", time.Since(start))
 	}
 
 	var added entity.Faces
@@ -125,9 +127,9 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	// Log face matching results.
 	if matches.Updated > 0 {
-		log.Infof("faces: updated %d markers, recognized %d faces, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
+		log.Infof("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
 	} else {
-		log.Debugf("faces: updated %d markers, recognized %d faces, %d unknown [%s]", matches.Updated, matches.Recognized, matches.Unknown, time.Since(start))
+		log.Debugf("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
 	}
 
 	// Remove unused people.

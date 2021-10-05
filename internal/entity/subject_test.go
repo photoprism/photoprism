@@ -136,7 +136,7 @@ func TestSubject_Restore(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
-		m := &Subject{DeletedAt: &deleteTime, SubjName: "ToBeRestored"}
+		m := &Subject{DeletedAt: &deleteTime, SubjType: SubjPerson, SubjName: "ToBeRestored"}
 		err := m.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -150,7 +150,7 @@ func TestSubject_Restore(t *testing.T) {
 		assert.False(t, m.Deleted())
 	})
 	t.Run("subject not deleted", func(t *testing.T) {
-		m := &Subject{DeletedAt: nil, SubjName: "NotDeleted1234"}
+		m := &Subject{DeletedAt: nil, SubjType: SubjPerson, SubjName: "NotDeleted1234"}
 		err := m.Restore()
 		if err != nil {
 			t.Fatal(err)

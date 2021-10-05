@@ -35,7 +35,7 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "fix, f",
-					Usage: "issues will be fixed automatically",
+					Usage: "automatically fixes issues",
 				},
 			},
 			Action: facesAuditAction,
@@ -46,7 +46,7 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
-					Usage: "remove all people and faces",
+					Usage: "removes all people and faces",
 				},
 			},
 			Action: facesResetAction,
@@ -63,7 +63,7 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
-					Usage: "update all  faces",
+					Usage: "updates all faces",
 				},
 			},
 			Action: facesUpdateAction,

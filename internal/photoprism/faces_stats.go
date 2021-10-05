@@ -10,7 +10,7 @@ func (w *Faces) Stats() (err error) {
 	if embeddings, err := query.Embeddings(true, false, 0, 0); err != nil {
 		return err
 	} else if samples := len(embeddings); samples == 0 {
-		log.Infof("faces: no samples found")
+		log.Infof("faces: found no samples")
 	} else {
 		log.Infof("faces: computing distance of %d samples", samples)
 
@@ -101,7 +101,7 @@ func (w *Faces) Stats() (err error) {
 		}
 
 		if l := len(dist); l == 0 {
-			log.Infof("faces: analyzed %d clusters, no matches", samples)
+			log.Infof("faces: analyzed %d clusters, found no matches", samples)
 		} else {
 			log.Infof("faces: %d faces match to the same person", l)
 		}

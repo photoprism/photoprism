@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"time"
+
+	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -39,12 +42,13 @@ func (m *Photo) SetTitle(title, source string) {
 // UpdateTitle updated the photo title based on location and labels.
 func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	if m.TitleSrc != SrcAuto && m.HasTitle() {
-		return fmt.Errorf("photo: won't update title, %s was modified", m.PhotoUID)
+		return fmt.Errorf("photo %s: keeping %s title %s", txt.Quote(m.PhotoUID), SrcString(m.TitleSrc), txt.Quote(m.PhotoTitle))
 	}
 
 	var names string
 	var knownLocation bool
 
+	start := time.Now()
 	oldTitle := m.PhotoTitle
 	fileTitle := m.FileTitle()
 
@@ -62,7 +66,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 
 		// TODO: User defined title format
 		if names != "" {
-			log.Debugf("photo: using %s to create title for %s", txt.Quote(names), m.PhotoUID)
+			log.Debugf("photo %s: generating title from %s (%s)", txt.Quote(m.PhotoUID), english.Plural(len(people), "person", "people"), txt.Quote(names))
 
 			if l := len([]rune(names)); l > 35 {
 				m.SetTitle(names, SrcAuto)
@@ -76,7 +80,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", names, loc.City(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		} else if title := labels.Title(loc.Name()); title != "" {
-			log.Debugf("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
+			log.Debugf("photo %s: generating title from label %s", txt.Quote(m.PhotoUID), txt.Quote(title))
 			if loc.NoCity() || loc.LongCity() || loc.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), loc.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -101,7 +105,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 		knownLocation = true
 
 		if names != "" {
-			log.Debugf("photo: using %s to create title for %s", txt.Quote(names), m.PhotoUID)
+			log.Debugf("photo %s: generating title from %s (%s)", txt.Quote(m.PhotoUID), english.Plural(len(people), "person", "people"), txt.Quote(names))
 
 			if l := len([]rune(names)); l > 35 {
 				m.SetTitle(names, SrcAuto)
@@ -115,7 +119,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", names, m.Place.City(), m.TakenAt.Format("2006")), SrcAuto)
 			}
 		} else if title := labels.Title(fileTitle); title != "" {
-			log.Debugf("photo: using label %s to create title for %s", txt.Quote(title), m.PhotoUID)
+			log.Debugf("photo %s: generating title from label %s", txt.Quote(m.PhotoUID), txt.Quote(title))
 			if m.Place.NoCity() || m.Place.LongCity() || m.Place.CityContains(title) {
 				m.SetTitle(fmt.Sprintf("%s / %s / %s", txt.Title(title), m.Place.CountryName(), m.TakenAt.Format("2006")), SrcAuto)
 			} else {
@@ -157,7 +161,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 	}
 
 	if m.PhotoTitle != oldTitle {
-		log.Debugf("photo: changed title of %s to %s", m.PhotoUID, txt.Quote(m.PhotoTitle))
+		log.Debugf("photo %s: changed title to %s [%s]", txt.Quote(m.PhotoUID), txt.Quote(m.PhotoTitle), time.Since(start))
 	}
 
 	return nil
@@ -166,7 +170,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 // UpdateAndSaveTitle updates the photo title and saves it.
 func (m *Photo) UpdateAndSaveTitle() error {
 	if !m.HasID() {
-		return fmt.Errorf("photo: can't save to database, id is empty")
+		return fmt.Errorf("can't save photo whithout id")
 	}
 
 	m.PhotoFaces = m.FaceCount()

@@ -161,7 +161,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		return false, fmt.Errorf("collision distance must be positive")
 	} else if dist < 0.02 {
 		// Ignore if distance is very small as faces may belong to the same person.
-		log.Infof("faces: %s collision at dist %f reported, same person?", m.ID, dist)
+		log.Warnf("face %s: clearing ambiguous subject %s, similar face at dist %f with source %s", m.ID, m.SubjUID, dist, SrcString(m.FaceSrc))
 
 		// Reset subject UID just in case.
 		m.SubjUID = ""
@@ -182,7 +182,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 	if revised, err := m.ReviseMatches(); err != nil {
 		return true, err
 	} else if r := len(revised); r > 0 {
-		log.Infof("faces: revised %d matches after collision", r)
+		log.Infof("faces: revised %d matches after conflict", r)
 	}
 
 	return true, nil

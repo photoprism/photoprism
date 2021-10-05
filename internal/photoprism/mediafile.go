@@ -902,7 +902,7 @@ func (m *MediaFile) Thumbnail(path string, sizeName thumb.Name) (filename string
 
 	if err != nil {
 		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", txt.Quote(m.BaseName()), err)
-		log.Error(err)
+		log.Debug(err)
 		return "", err
 	}
 
@@ -928,7 +928,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("media: no new thumbnails created for %s", m.BasePrefix(false))))
+			log.Debug(capture.Time(start, fmt.Sprintf("media: created no new thumbnails for %s", m.BasePrefix(false))))
 		default:
 			log.Info(capture.Time(start, fmt.Sprintf("media: created %s for %s", english.Plural(count, "thumbnail", "thumbnails"), m.BasePrefix(false))))
 		}
@@ -961,7 +961,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 				img, err := imaging.Open(m.FileName())
 
 				if err != nil {
-					log.Errorf("media: %s in %s", err.Error(), txt.Quote(m.BaseName()))
+					log.Debugf("media: %s in %s", err.Error(), txt.Quote(m.BaseName()))
 					return err
 				}
 

@@ -81,11 +81,11 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			AbortEntityNotFound(c)
 			return
 		} else if related.Len() == 0 {
-			log.Errorf("photo: no files found for %s (unstack)", txt.Quote(baseName))
+			log.Errorf("photo: found no files for %s (unstack)", txt.Quote(baseName))
 			AbortEntityNotFound(c)
 			return
 		} else if related.Main == nil {
-			log.Errorf("photo: no main file found for %s (unstack)", txt.Quote(baseName))
+			log.Errorf("photo: found no main file for %s (unstack)", txt.Quote(baseName))
 			AbortEntityNotFound(c)
 			return
 		}

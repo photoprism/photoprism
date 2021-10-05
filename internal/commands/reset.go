@@ -63,7 +63,7 @@ func resetAction(ctx *cli.Context) error {
 	}
 
 	removeSidecarJsonPrompt := promptui.Prompt{
-		Label:     "Permanently delete all *.json photo sidecar files?",
+		Label:     "Permanently remove all JSON photo sidecar files?",
 		IsConfirm: true,
 	}
 
@@ -77,7 +77,7 @@ func resetAction(ctx *cli.Context) error {
 		}
 
 		if len(matches) > 0 {
-			log.Infof("%d json photo sidecar files will be removed", len(matches))
+			log.Infof("removing %d JSON photo sidecar files", len(matches))
 
 			for _, name := range matches {
 				if err := os.Remove(name); err != nil {
@@ -89,16 +89,16 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed json files [%s]", time.Since(start))
+			log.Infof("removed JSON sidecar files [%s]", time.Since(start))
 		} else {
-			log.Infof("no json files found")
+			log.Infof("found no JSON sidecar files")
 		}
 	} else {
-		log.Infof("keeping json sidecar files")
+		log.Infof("keeping JSON sidecar files")
 	}
 
 	removeSidecarYamlPrompt := promptui.Prompt{
-		Label:     "Permanently delete all *.yml photo metadata backups?",
+		Label:     "Permanently remove all YAML photo metadata backup files?",
 		IsConfirm: true,
 	}
 
@@ -112,7 +112,7 @@ func resetAction(ctx *cli.Context) error {
 		}
 
 		if len(matches) > 0 {
-			log.Infof("%d photo metadata backups will be removed", len(matches))
+			log.Infof("%d YAML photo metadata backup files will be removed", len(matches))
 
 			for _, name := range matches {
 				if err := os.Remove(name); err != nil {
@@ -124,16 +124,16 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed files [%s]", time.Since(start))
+			log.Infof("removed YAML photo metadata backup files [%s]", time.Since(start))
 		} else {
-			log.Infof("no metadata backups found for removal")
+			log.Infof("found no YAML photo metadata backup files")
 		}
 	} else {
-		log.Infof("keeping backup files")
+		log.Infof("keeping YAML photo metadata backup files")
 	}
 
 	removeAlbumYamlPrompt := promptui.Prompt{
-		Label:     "Permanently delete all *.yml album backups?",
+		Label:     "Permanently remove all YAML album backup files?",
 		IsConfirm: true,
 	}
 
@@ -147,7 +147,7 @@ func resetAction(ctx *cli.Context) error {
 		}
 
 		if len(matches) > 0 {
-			log.Infof("%d album backups will be removed", len(matches))
+			log.Infof("%d YAML album backups will be removed", len(matches))
 
 			for _, name := range matches {
 				if err := os.Remove(name); err != nil {
@@ -159,12 +159,12 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed files [%s]", time.Since(start))
+			log.Infof("removed YAML album backup files [%s]", time.Since(start))
 		} else {
-			log.Infof("no album backups found for removal")
+			log.Infof("found no YAML album backup files")
 		}
 	} else {
-		log.Infof("keeping backup files")
+		log.Infof("keeping YAML album backup files")
 	}
 
 	conf.Shutdown()

@@ -78,9 +78,9 @@ type Options struct {
 	SiteUrl               string  `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SitePreview           string  `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
 	SiteTitle             string  `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
+	SiteAuthor            string  `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteCaption           string  `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string  `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
-	SiteAuthor            string  `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	DatabaseDriver        string  `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string  `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseServer        string  `yaml:"DatabaseServer" json:"-" flag:"database-server"`

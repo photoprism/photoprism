@@ -85,7 +85,7 @@ func FolderCover(router *gin.RouterGroup) {
 		f, err := query.FolderCoverByUID(uid)
 
 		if err != nil {
-			log.Debugf("%s: no photos yet, using generic image for %s", folderCover, uid)
+			log.Debugf("%s: %s contains no photos, using generic cover", folderCover, uid)
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		}

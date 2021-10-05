@@ -42,6 +42,9 @@ var TotalMem uint64
 
 const ApiUri = "/api/v1"
 const StaticUri = "/static"
+const DefaultWakeupInterval = int(15 * 60)
+const DefaultAutoIndexDelay = int(5 * 60)
+const DefaultAutoImportDelay = int(3 * 60)
 
 // Megabyte in bytes.
 const Megabyte = 1000 * 1000
@@ -328,6 +331,11 @@ func (c *Config) SiteTitle() string {
 	return c.options.SiteTitle
 }
 
+// SiteAuthor returns the site author / copyright.
+func (c *Config) SiteAuthor() string {
+	return c.options.SiteAuthor
+}
+
 // SiteCaption returns a short site caption.
 func (c *Config) SiteCaption() string {
 	return c.options.SiteCaption
@@ -336,11 +344,6 @@ func (c *Config) SiteCaption() string {
 // SiteDescription returns a long site description.
 func (c *Config) SiteDescription() string {
 	return c.options.SiteDescription
-}
-
-// SiteAuthor returns the site author / copyright.
-func (c *Config) SiteAuthor() string {
-	return c.options.SiteAuthor
 }
 
 // Debug tests if debug mode is enabled.
@@ -372,7 +375,7 @@ func (c *Config) Public() bool {
 	return c.options.Public
 }
 
-// Modify Public state while running. For testing purposes only.
+// SetPublic changes authentication while instance is running, for testing purposes only.
 func (c *Config) SetPublic(p bool) {
 	if c.Debug() {
 		c.options.Public = p
@@ -472,7 +475,7 @@ func (c *Config) Workers() int {
 // WakeupInterval returns the background worker wakeup interval duration.
 func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 86400 {
-		return 15 * time.Minute
+		return time.Duration(DefaultWakeupInterval) * time.Second
 	}
 
 	return time.Duration(c.options.WakeupInterval) * time.Second
@@ -483,7 +486,7 @@ func (c *Config) AutoIndex() time.Duration {
 	if c.options.AutoIndex < 0 {
 		return time.Duration(0)
 	} else if c.options.AutoIndex == 0 || c.options.AutoIndex > 86400 {
-		return 5 * time.Minute
+		return time.Duration(DefaultAutoIndexDelay) * time.Second
 	}
 
 	return time.Duration(c.options.AutoIndex) * time.Second
@@ -494,13 +497,13 @@ func (c *Config) AutoImport() time.Duration {
 	if c.options.AutoImport < 0 || c.ReadOnly() {
 		return time.Duration(0)
 	} else if c.options.AutoImport == 0 || c.options.AutoImport > 86400 {
-		return 3 * time.Minute
+		return time.Duration(DefaultAutoImportDelay) * time.Second
 	}
 
 	return time.Duration(c.options.AutoImport) * time.Second
 }
 
-// GeoApi returns the preferred geo coding api (none or places).
+// GeoApi returns the preferred geocoding api (none or places).
 func (c *Config) GeoApi() string {
 	if c.options.DisablePlaces {
 		return ""
