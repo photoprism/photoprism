@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
@@ -343,7 +342,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("%s merged in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
+		log.Infof("merged %s in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
 	}
 
 	conf.Shutdown()

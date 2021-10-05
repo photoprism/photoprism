@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/photoprism/photoprism/internal/entity"
-
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -98,7 +99,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 				if res, err := service.Faces().Optimize(); err != nil {
 					log.Errorf("faces: %s (optimize)", err)
 				} else if res.Merged > 0 {
-					log.Infof("faces: %d clusters merged", res.Merged)
+					log.Infof("faces: merged %s", english.Plural(res.Merged, "cluster", "clusters"))
 				}
 			}
 
