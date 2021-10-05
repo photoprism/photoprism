@@ -217,7 +217,7 @@ func (m *File) DeletePermanently() error {
 	}
 
 	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file %s: %s while removing sync info", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while removing remote sync info", txt.Quote(m.FileUID), err)
 	}
 
 	if err := m.ReplaceHash(""); err != nil {
