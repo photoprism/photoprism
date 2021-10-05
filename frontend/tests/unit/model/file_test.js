@@ -95,6 +95,16 @@ describe("model/file", () => {
     };
     const file3 = new File(values3);
     assert.equal(file3.thumbnailUrl("tile_224"), "/api/v1/svg/raw");
+    const values4 = {
+      InstanceID: 5,
+      UID: "ABC123",
+      Hash: "54ghtfd",
+      Type: "jpg",
+      Name: "1/2/IMG123.jpg",
+      Sidecar: true,
+    };
+    const file4 = new File(values4);
+    assert.equal(file4.thumbnailUrl("tile_224"), "/api/v1/svg/file");
   });
 
   it("should return download url", () => {
@@ -107,6 +117,17 @@ describe("model/file", () => {
     };
     const file = new File(values);
     assert.equal(file.getDownloadUrl("abc"), "/api/v1/dl/54ghtfd?t=2lbh9x09");
+  });
+
+  it("should not download as hash is missing", () => {
+    const values = {
+      InstanceID: 5,
+      UID: "ABC123",
+      Type: "jpg",
+      Name: "1/2/IMG123.jpg",
+    };
+    const file = new File(values);
+    assert.equal(file.download(), undefined);
   });
 
   it("should calculate size", () => {

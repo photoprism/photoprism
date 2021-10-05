@@ -64,6 +64,25 @@ describe("model/album", () => {
     const album = new Album(values);
     const result = album.thumbnailUrl("xyz");
     assert.equal(result, "/api/v1/t/d6b24d688564f7ddc7b245a414f003a8d8ff5a67/public/xyz");
+
+    const values2 = {
+      ID: 5,
+      Title: "Christmas 2019",
+      Slug: "christmas-2019",
+      UID: 66,
+    };
+    const album2 = new Album(values2);
+    const result2 = album2.thumbnailUrl("xyz");
+    assert.equal(result2, "/api/v1/albums/66/t/public/xyz");
+
+    const values3 = {
+      ID: 5,
+      Title: "Christmas 2019",
+      Slug: "christmas-2019",
+    };
+    const album3 = new Album(values3);
+    const result3 = album3.thumbnailUrl("xyz");
+    assert.equal(result3, "/api/v1/svg/album");
   });
 
   it("should get created date string", () => {
@@ -93,6 +112,21 @@ describe("model/album", () => {
     assert.equal(result, "May 2019");
   });
 
+  it("should get album date string with invalid month", () => {
+    const values = {
+      ID: 5,
+      Title: "Christmas 2019",
+      Slug: "christmas-2019",
+      CreatedAt: "2012-07-08T14:45:39Z",
+      Day: 1,
+      Month: -5,
+      Year: 2000,
+    };
+    const album = new Album(values);
+    const result = album.getDateString();
+    assert.equal(result, "2000");
+  });
+
   it("should get album date string with invalid year", () => {
     const values = {
       ID: 5,
@@ -106,6 +140,21 @@ describe("model/album", () => {
     const album = new Album(values);
     const result = album.getDateString();
     assert.equal(result, "Unknown");
+  });
+
+  it("should get album date string", () => {
+    const values = {
+      ID: 5,
+      Title: "Christmas 2019",
+      Slug: "christmas-2019",
+      CreatedAt: "2012-07-08T14:45:39Z",
+      Day: 1,
+      Month: 5,
+      Year: 2000,
+    };
+    const album = new Album(values);
+    const result = album.getDateString();
+    assert.equal(result, "Monday, May 1, 2000");
   });
 
   it("should get day string", () => {
