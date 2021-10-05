@@ -16,9 +16,9 @@ import (
 
 // ImportCommand registers the import cli command.
 var ImportCommand = cli.Command{
-	Name:    "import",
-	Aliases: []string{"mv"},
-	Usage:   "Moves files to originals folder, converts and indexes them as needed",
+	Name:    "mv",
+	Aliases: []string{"import"},
+	Usage:   "Moves media files to originals",
 	Action:  importAction,
 }
 
@@ -59,7 +59,7 @@ func importAction(ctx *cli.Context) error {
 	}
 
 	if sourcePath == conf.OriginalsPath() {
-		return errors.New("import folder is identical with originals")
+		return errors.New("import path is identical with originals")
 	}
 
 	log.Infof("moving media files from %s to %s", sourcePath, conf.OriginalsPath())

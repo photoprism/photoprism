@@ -20,7 +20,7 @@ import (
 // PurgeCommand registers the index cli command.
 var PurgeCommand = cli.Command{
 	Name:   "purge",
-	Usage:  "Removes missing files from search results",
+	Usage:  "Flags missing files as hidden, updates counts and covers",
 	Flags:  purgeFlags,
 	Action: purgeAction,
 }
@@ -28,7 +28,7 @@ var PurgeCommand = cli.Command{
 var purgeFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "hard",
-		Usage: "permanently delete from database",
+		Usage: "permanently remove from database",
 	},
 	cli.BoolFlag{
 		Name:  "dry",

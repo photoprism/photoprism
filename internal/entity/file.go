@@ -202,7 +202,7 @@ func (m File) Missing() bool {
 	return m.FileMissing || m.DeletedAt != nil
 }
 
-// DeletePermanently permanently deletes a file from the index.
+// DeletePermanently permanently removes a file from the index.
 func (m *File) DeletePermanently() error {
 	if m.ID < 1 || m.FileUID == "" {
 		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.Quote(m.FileUID))

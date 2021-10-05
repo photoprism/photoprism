@@ -543,7 +543,7 @@ func (m *MediaFile) Exists() bool {
 	return fs.FileExists(m.FileName())
 }
 
-// Remove permanently deletes a media file.
+// Remove permanently removes a media file.
 func (m *MediaFile) Remove() error {
 	return os.Remove(m.FileName())
 }
@@ -1036,7 +1036,7 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 	return renamed, nil
 }
 
-// RemoveSidecars permanently deletes related sidecar files.
+// RemoveSidecars permanently removes related sidecar files.
 func (m *MediaFile) RemoveSidecars() (err error) {
 	fileName := m.FileName()
 	sidecarPath := Config().SidecarPath()

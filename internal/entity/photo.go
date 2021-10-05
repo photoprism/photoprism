@@ -951,7 +951,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 	return files, m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
 }
 
-// DeletePermanently permanently deletes a photo from the index.
+// DeletePermanently permanently removes a photo from the index.
 func (m *Photo) DeletePermanently() (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
 		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))

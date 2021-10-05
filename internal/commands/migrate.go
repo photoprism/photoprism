@@ -12,7 +12,7 @@ import (
 // MigrateCommand registers the migrate cli command.
 var MigrateCommand = cli.Command{
 	Name:   "migrate",
-	Usage:  "Initializes the index database if needed",
+	Usage:  "Updates the index database schema",
 	Action: migrateAction,
 }
 

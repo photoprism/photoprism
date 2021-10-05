@@ -26,9 +26,12 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("%-25s VALUE\n", "NAME")
 
-	// Feature flags.
+	// Feature flags and auth.
 	fmt.Printf("%-25s %t\n", "debug", conf.Debug())
+	fmt.Printf("%-25s %s\n", "log-level", conf.LogLevel())
+	fmt.Printf("%-25s %s\n", "log-filename", conf.LogFilename())
 	fmt.Printf("%-25s %t\n", "public", conf.Public())
+	fmt.Printf("%-25s %s\n", "admin-password", strings.Repeat("*", utf8.RuneCountInString(conf.AdminPassword())))
 	fmt.Printf("%-25s %t\n", "read-only", conf.ReadOnly())
 	fmt.Printf("%-25s %t\n", "experimental", conf.Experimental())
 
@@ -84,8 +87,8 @@ func configAction(ctx *cli.Context) error {
 	// Site information.
 	fmt.Printf("%-25s %s\n", "site-url", conf.SiteUrl())
 	fmt.Printf("%-25s %s\n", "site-preview", conf.SitePreview())
-	fmt.Printf("%-25s %s\n", "site-title", conf.SiteTitle())
 	fmt.Printf("%-25s %s\n", "site-author", conf.SiteAuthor())
+	fmt.Printf("%-25s %s\n", "site-title", conf.SiteTitle())
 	fmt.Printf("%-25s %s\n", "site-caption", conf.SiteCaption())
 	fmt.Printf("%-25s %s\n", "site-description", conf.SiteDescription())
 	fmt.Printf("%-25s %s\n", "cdn-url", conf.CdnUrl("/"))
@@ -94,18 +97,10 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "api-uri", conf.ApiUri())
 	fmt.Printf("%-25s %s\n", "base-uri", conf.BaseUri("/"))
 
-	// Logging.
-	fmt.Printf("%-25s %s\n", "log-level", conf.LogLevel())
-	fmt.Printf("%-25s %s\n", "log-filename", conf.LogFilename())
-	fmt.Printf("%-25s %s\n", "pid-filename", conf.PIDFilename())
-
 	// HTTP server configuration.
 	fmt.Printf("%-25s %s\n", "http-host", conf.HttpHost())
 	fmt.Printf("%-25s %d\n", "http-port", conf.HttpPort())
 	fmt.Printf("%-25s %s\n", "http-mode", conf.HttpMode())
-
-	// Passwords.
-	fmt.Printf("%-25s %s\n", "admin-password", strings.Repeat("*", utf8.RuneCountInString(conf.AdminPassword())))
 
 	// Database configuration.
 	fmt.Printf("%-25s %s\n", "database-driver", dbDriver)
@@ -152,6 +147,9 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "face-cluster-core", conf.FaceClusterCore())
 	fmt.Printf("%-25s %f\n", "face-cluster-dist", conf.FaceClusterDist())
 	fmt.Printf("%-25s %f\n", "face-match-dist", conf.FaceMatchDist())
+
+	// Other.
+	fmt.Printf("%-25s %s\n", "pid-filename", conf.PIDFilename())
 
 	return nil
 }

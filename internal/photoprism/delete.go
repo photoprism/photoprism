@@ -13,7 +13,7 @@ import (
 func Delete(p entity.Photo) error {
 	yamlFileName := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
-	// Permanently delete photo from index.
+	// Permanently remove photo from index.
 	files, err := p.DeletePermanently()
 
 	if err != nil {

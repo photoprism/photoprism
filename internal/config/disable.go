@@ -1,14 +1,5 @@
 package config
 
-// DisableBackups tests if photo and album metadata backups should be disabled.
-func (c *Config) DisableBackups() bool {
-	if !c.SidecarWritable() {
-		return true
-	}
-
-	return c.options.DisableBackups
-}
-
 // DisableWebDAV tests if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
 	if c.ReadOnly() || c.Demo() {
@@ -16,6 +7,15 @@ func (c *Config) DisableWebDAV() bool {
 	}
 
 	return c.options.DisableWebDAV
+}
+
+// DisableBackups tests if photo and album metadata backups should be disabled.
+func (c *Config) DisableBackups() bool {
+	if !c.SidecarWritable() {
+		return true
+	}
+
+	return c.options.DisableBackups
 }
 
 // DisableSettings tests if users should not be allowed to change settings.

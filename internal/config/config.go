@@ -322,6 +322,11 @@ func (c *Config) SitePreview() string {
 	return c.options.SitePreview
 }
 
+// SiteAuthor returns the site author / copyright.
+func (c *Config) SiteAuthor() string {
+	return c.options.SiteAuthor
+}
+
 // SiteTitle returns the main site title (default is application name).
 func (c *Config) SiteTitle() string {
 	if c.options.SiteTitle == "" {
@@ -329,11 +334,6 @@ func (c *Config) SiteTitle() string {
 	}
 
 	return c.options.SiteTitle
-}
-
-// SiteAuthor returns the site author / copyright.
-func (c *Config) SiteAuthor() string {
-	return c.options.SiteAuthor
 }
 
 // SiteCaption returns a short site caption.

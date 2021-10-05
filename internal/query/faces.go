@@ -210,7 +210,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 	return conflicts, resolved, nil
 }
 
-// RemovePeopleAndFaces permanently deletes all people, faces, and face markers.
+// RemovePeopleAndFaces permanently removes all people, faces, and face markers.
 func RemovePeopleAndFaces() (err error) {
 	// Delete people.
 	if err = UnscopedDb().Delete(entity.Subject{}, "subj_type = ?", entity.SubjPerson).Error; err != nil {

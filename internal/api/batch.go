@@ -193,7 +193,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 	})
 }
 
-// BatchAlbumsDelete permanently deletes multiple albums.
+// BatchAlbumsDelete permanently removes multiple albums.
 //
 // POST /api/v1/batch/albums/delete
 func BatchAlbumsDelete(router *gin.RouterGroup) {
@@ -328,7 +328,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 	})
 }
 
-// BatchPhotosDelete permanently deletes multiple photos from the archive.
+// BatchPhotosDelete permanently removes multiple photos from the archive.
 //
 // POST /api/v1/batch/photos/delete
 func BatchPhotosDelete(router *gin.RouterGroup) {

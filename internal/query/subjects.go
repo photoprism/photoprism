@@ -61,7 +61,7 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 	return result, err
 }
 
-// RemoveOrphanSubjects permanently deletes dangling marker subjects from the index.
+// RemoveOrphanSubjects permanently removes dangling marker subjects from the index.
 func RemoveOrphanSubjects() (removed int64, err error) {
 	res := UnscopedDb().
 		Where("subj_src = ?", entity.SrcMarker).

@@ -21,7 +21,7 @@ import (
 // FacesCommand registers the faces cli command.
 var FacesCommand = cli.Command{
 	Name:  "faces",
-	Usage: "Facial recognition sub-commands",
+	Usage: "Facial recognition commands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "stats",
@@ -34,18 +34,18 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "fix, f",
-					Usage: "automatically fixes issues",
+					Usage: "fix discovered issues",
 				},
 			},
 			Action: facesAuditAction,
 		},
 		{
 			Name:  "reset",
-			Usage: "Removes people and faces",
+			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
-					Usage: "removes all people and faces",
+					Usage: "remove all people and faces",
 				},
 			},
 			Action: facesResetAction,
@@ -62,7 +62,7 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
-					Usage: "updates all faces",
+					Usage: "update all faces",
 				},
 			},
 			Action: facesUpdateAction,
@@ -184,7 +184,7 @@ func facesResetAction(ctx *cli.Context) error {
 // facesResetAllAction removes all people, faces, and face markers.
 func facesResetAllAction(ctx *cli.Context) error {
 	actionPrompt := promptui.Prompt{
-		Label:     "Permanently delete all people and faces?",
+		Label:     "Permanently remove all people and faces?",
 		IsConfirm: true,
 	}
 

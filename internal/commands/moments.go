@@ -13,7 +13,7 @@ import (
 // MomentsCommand registers the moments cli command.
 var MomentsCommand = cli.Command{
 	Name:   "moments",
-	Usage:  "Creates albums based on popular locations, dates, and labels",
+	Usage:  "Creates albums of special moments, trips, and places",
 	Action: momentsAction,
 }
 
