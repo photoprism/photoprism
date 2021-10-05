@@ -16,10 +16,11 @@ import (
 
 // ImportCommand registers the import cli command.
 var ImportCommand = cli.Command{
-	Name:    "mv",
-	Aliases: []string{"import"},
-	Usage:   "Moves media files to originals",
-	Action:  importAction,
+	Name:      "mv",
+	Aliases:   []string{"import"},
+	Usage:     "Moves media files to originals",
+	ArgsUsage: "[path]",
+	Action:    importAction,
 }
 
 // importAction moves photos to originals path. Default import path is used if no path argument provided

@@ -55,6 +55,7 @@ func main() {
 	app.Commands = []cli.Command{
 		commands.StartCommand,
 		commands.StopCommand,
+		commands.StatusCommand,
 		commands.IndexCommand,
 		commands.ImportCommand,
 		commands.CopyCommand,
@@ -63,9 +64,9 @@ func main() {
 		commands.PasswdCommand,
 		commands.PurgeCommand,
 		commands.CleanUpCommand,
+		commands.OptimizeCommand,
 		commands.ConvertCommand,
 		commands.ThumbsCommand,
-		commands.OptimizeCommand,
 		commands.MomentsCommand,
 		commands.MigrateCommand,
 		commands.BackupCommand,
@@ -73,7 +74,6 @@ func main() {
 		commands.ResetCommand,
 		commands.ConfigCommand,
 		commands.VersionCommand,
-		commands.StatusCommand,
 	}
 
 	if err := app.Run(os.Args); err != nil {

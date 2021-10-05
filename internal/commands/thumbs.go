@@ -12,9 +12,8 @@ import (
 
 // ThumbsCommand registers the resample cli command.
 var ThumbsCommand = cli.Command{
-	Name:    "thumbs",
-	Aliases: []string{"resample"},
-	Usage:   "Pre-renders thumbnail images",
+	Name:  "thumbs",
+	Usage: "Pre-renders thumbnail images based on config options",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",

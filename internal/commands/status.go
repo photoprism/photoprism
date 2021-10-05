@@ -12,14 +12,14 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// StatusCommand performs a server health check.
+// StatusCommand registers the status command.
 var StatusCommand = cli.Command{
 	Name:   "status",
-	Usage:  "Performs a server health check",
+	Usage:  "Checks if the web server is running",
 	Action: statusAction,
 }
 
-// statusAction shows the server health status
+// statusAction checks if the web server is running.
 func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	client := &http.Client{Timeout: 10 * time.Second}
