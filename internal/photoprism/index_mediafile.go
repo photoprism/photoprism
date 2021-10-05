@@ -262,7 +262,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	extraLabels := classify.Labels{}
 
 	// Detect faces in images?
-	if o.FacesOnly && (!photoExists || !fileExists || !file.FilePrimary) {
+	if o.FacesOnly && (!photoExists || !fileExists || !file.FilePrimary || file.FileError != "") {
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result

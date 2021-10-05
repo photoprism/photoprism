@@ -239,6 +239,8 @@ func (m *File) ReplaceHash(newHash string) error {
 		log.Tracef("file %s: removing hash %s", txt.Quote(m.FileUID), txt.Quote(m.FileHash))
 	} else if m.FileHash != "" && newHash != "" {
 		log.Tracef("file %s: hash %s changed to %s", txt.Quote(m.FileUID), txt.Quote(m.FileHash), txt.Quote(newHash))
+		// Reset error when hash changes.
+		m.FileError = ""
 	}
 
 	// Set file hash to new value.
