@@ -91,9 +91,7 @@ func ResetPhotoQuality() error {
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL)").
 		Update("photo_quality", -1)
 
-	if res.RowsAffected == 0 {
-		log.Debugf("index: found no additional broken photos [%s]", time.Since(start))
-	} else {
+	if res.RowsAffected > 0 {
 		log.Infof("index: flagged %s as hidden [%s]", english.Plural(int(res.RowsAffected), "broken photo", "broken photos"), time.Since(start))
 	}
 
