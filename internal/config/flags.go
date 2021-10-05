@@ -75,13 +75,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "originals-path",
-		Usage:  "photo and video library `PATH` containing your original files",
+		Usage:  "original media library `PATH` containing your photo and video collection",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.IntFlag{
 		Name:   "originals-limit",
 		Value:  1000,
-		Usage:  "original file size limit in `MB`",
+		Usage:  "original media file size limit in `MB`",
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
 	},
 	cli.StringFlag{
