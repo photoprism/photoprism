@@ -393,12 +393,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "custom download url `TOKEN`",
+		Usage:  "optional custom download url `TOKEN`",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "custom thumbnail and video streaming url `TOKEN`",
+		Usage:  "optional custom thumbnail and streaming url `TOKEN`",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
