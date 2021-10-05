@@ -117,6 +117,8 @@ type Options struct {
 	FaceSize              int     `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore             float64 `yaml:"-" json:"-" flag:"face-score"`
 	FaceOverlap           int     `yaml:"-" json:"-" flag:"face-overlap"`
+	FaceClusterSize       int     `yaml:"-" json:"-" flag:"face-cluster-size"`
+	FaceClusterScore      int     `yaml:"-" json:"-" flag:"face-cluster-score"`
 	FaceClusterCore       int     `yaml:"-" json:"-" flag:"face-cluster-core"`
 	FaceClusterDist       float64 `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceMatchDist         float64 `yaml:"-" json:"-" flag:"face-match-dist"`

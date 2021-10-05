@@ -143,6 +143,8 @@ func (c *Config) Propagate() {
 	// Set facial recognition parameters.
 	face.ScoreThreshold = c.FaceScore()
 	face.OverlapThreshold = c.FaceOverlap()
+	face.ClusterScoreThreshold = c.FaceClusterScore()
+	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()

@@ -458,7 +458,7 @@ func (m *Marker) Face() (f *Face) {
 
 	// Add face if size
 	if m.SubjSrc != SrcAuto && m.FaceID == "" {
-		if m.Size < face.ClusterMinSize || m.Score < face.ClusterMinScore {
+		if m.Size < face.ClusterSizeThreshold || m.Score < face.ClusterScoreThreshold {
 			log.Debugf("marker: skipped adding face due to low-quality (uid %s, size %d, score %d)", txt.Quote(m.MarkerUID), m.Size, m.Score)
 			return nil
 		} else if emb := m.Embeddings(); emb.Empty() {

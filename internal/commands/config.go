@@ -147,6 +147,8 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "face-size", conf.FaceSize())
 	fmt.Printf("%-25s %f\n", "face-score", conf.FaceScore())
 	fmt.Printf("%-25s %d\n", "face-overlap", conf.FaceOverlap())
+	fmt.Printf("%-25s %d\n", "face-cluster-size", conf.FaceClusterSize())
+	fmt.Printf("%-25s %d\n", "face-cluster-score", conf.FaceClusterScore())
 	fmt.Printf("%-25s %d\n", "face-cluster-core", conf.FaceClusterCore())
 	fmt.Printf("%-25s %f\n", "face-cluster-dist", conf.FaceClusterDist())
 	fmt.Printf("%-25s %f\n", "face-match-dist", conf.FaceMatchDist())

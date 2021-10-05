@@ -440,8 +440,8 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "face-size",
-		Usage:  "min face size in `PIXELS`",
-		Value:  50,
+		Usage:  "face size threshold in `PIXELS`",
+		Value:  face.SizeThreshold,
 		EnvVar: "PHOTOPRISM_FACE_SIZE",
 	},
 	cli.Float64Flag{
@@ -455,6 +455,18 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "face area overlap threshold in `PERCENT`",
 		Value:  face.OverlapThreshold,
 		EnvVar: "PHOTOPRISM_FACE_OVERLAP",
+	},
+	cli.IntFlag{
+		Name:   "face-cluster-size",
+		Usage:  "size threshold for faces forming a cluster in `PIXELS`",
+		Value:  face.ClusterSizeThreshold,
+		EnvVar: "PHOTOPRISM_FACE_CLUSTER_SIZE",
+	},
+	cli.IntFlag{
+		Name:   "face-cluster-score",
+		Usage:  "`QUALITY` threshold for faces forming a cluster",
+		Value:  face.ClusterScoreThreshold,
+		EnvVar: "PHOTOPRISM_FACE_CLUSTER_SCORE",
 	},
 	cli.IntFlag{
 		Name:   "face-cluster-core",

@@ -8,12 +8,13 @@ var CropSize = crop.Sizes[crop.Tile160]
 var MatchDist = 0.46
 var ClusterDist = 0.64
 var ClusterCore = 4
-var ClusterMinScore = 15
-var ClusterMinSize = 80
+var ClusterScoreThreshold = 15
+var ClusterSizeThreshold = 80
 var SampleThreshold = 2 * ClusterCore
 var OverlapThreshold = 42
 var OverlapThresholdFloor = OverlapThreshold - 1
 var ScoreThreshold = 9.0
+var SizeThreshold = 40
 
 // QualityThreshold returns the scale adjusted quality score threshold.
 func QualityThreshold(scale int) (score float32) {
