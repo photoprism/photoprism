@@ -13,7 +13,13 @@ func TestFaces(t *testing.T) {
 		results, err := Faces(form.FaceSearch{Unknown: "yes", Order: "added", Markers: true})
 		assert.NoError(t, err)
 		t.Logf("Faces: %#v", results)
-		assert.LessOrEqual(t, 1, len(results))
+		if len(results) == 0 {
+			t.Fatal("results are empty")
+		} else if results[0].Marker == nil {
+			t.Fatal("marker is nil")
+		} else if results[0].Marker.MarkerUID == "" {
+			t.Fatal("marker uid is empty")
+		}
 	})
 	t.Run("Search with limit", func(t *testing.T) {
 		results, err := Faces(form.FaceSearch{Offset: 3, Order: "subject", Markers: true})

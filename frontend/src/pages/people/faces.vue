@@ -40,7 +40,7 @@
               xs12 sm6 md4 lg3 xl2 xxl1 d-flex
           >
             <v-card v-if="model.Marker"
-                    :data-id="model.Marker.UID"
+                    :data-id="model.ID"
                     tile style="user-select: none;"
                     :class="model.classes()"
                     class="result accent lighten-3">
@@ -216,20 +216,13 @@ export default {
   },
   methods: {
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("faces_offset"));
-
-      if(this.offset > 0 || !offset) {
-        return this.batchSize;
-      }
-
-      return offset + this.batchSize;
+      return this.batchSize;
     },
     sortOrder() {
-      return "relevance";
+      return "samples";
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("faces_offset", offset);
     },
     toggleLike(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -375,6 +368,9 @@ export default {
 
       this.scrollDisabled = true;
       this.listen = false;
+
+      // Always refresh all faces for now.
+      this.dirty = true;
 
       const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
       const offset = this.dirty ? 0 : this.offset;

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -31,8 +33,33 @@ func Faces(f form.FaceSearch) (results FaceResults, err error) {
 		s = s.Order("subj_uid")
 	case "added":
 		s = s.Order(fmt.Sprintf("%s.created_at DESC", entity.Face{}.TableName()))
+	case "samples":
+		s = s.Order("samples DESC")
 	default:
 		s = s.Order("samples DESC")
+	}
+
+	// Make sure at least one marker exists.
+	if f.Markers || txt.Yes(f.Unknown) {
+		s = s.Where("id IN (SELECT face_id FROM ? WHERE "+
+			"face_id IS NOT NULL AND face_id <> '' AND marker_type = ? AND  marker_src = ? AND marker_invalid = 0)",
+			gorm.Expr(entity.Marker{}.TableName()), entity.MarkerFace, entity.SrcImage)
+	}
+
+	// Adds markers to search results if requested.
+	addMarkers := func(results FaceResults) FaceResults {
+		r := make(FaceResults, 0, len(results))
+
+		// Add markers to results.
+		for i := range results {
+			if marker := entity.FindFaceMarker(results[i].ID); marker != nil {
+				m := results[i]
+				m.Marker = marker
+				r = append(r, m)
+			}
+		}
+
+		return r
 	}
 
 	// Find specific IDs?
@@ -42,10 +69,7 @@ func Faces(f form.FaceSearch) (results FaceResults, err error) {
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		} else if f.Markers {
-			// Add markers to results.
-			for i := range results {
-				results[i].Marker = entity.FindFaceMarker(results[i].ID)
-			}
+			return addMarkers(results), nil
 		}
 
 		return results, nil
@@ -69,10 +93,7 @@ func Faces(f form.FaceSearch) (results FaceResults, err error) {
 	if res := s.Scan(&results); res.Error != nil {
 		return results, res.Error
 	} else if f.Markers {
-		// Add markers to results.
-		for i := range results {
-			results[i].Marker = entity.FindFaceMarker(results[i].ID)
-		}
+		return addMarkers(results), nil
 	}
 
 	return results, nil
