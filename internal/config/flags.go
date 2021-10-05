@@ -333,7 +333,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "darktable-blacklist",
-		Usage:  "disable using Darktable for specific file `EXTENSIONS`",
+		Usage:  "disable Darktable for specific file `EXTENSIONS`",
 		Value:  "raf,cr3,dng",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
@@ -345,7 +345,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "rawtherapee-blacklist",
-		Usage:  "disable using RawTherapee for specific file `EXTENSIONS`",
+		Usage:  "disable RawTherapee for specific file `EXTENSIONS`",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 	},
