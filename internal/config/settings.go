@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -185,7 +184,7 @@ func (s *Settings) Load(fileName string) error {
 		return fmt.Errorf("settings file not found: %s", txt.Quote(fileName))
 	}
 
-	yamlConfig, err := ioutil.ReadFile(fileName)
+	yamlConfig, err := os.ReadFile(fileName)
 
 	if err != nil {
 		return err
@@ -210,7 +209,7 @@ func (s *Settings) Save(fileName string) error {
 
 	s.Propagate()
 
-	if err := ioutil.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(fileName, data, os.ModePerm); err != nil {
 		return err
 	}
 

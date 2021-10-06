@@ -2,7 +2,7 @@ package clusters
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 )
 
 type jsonImporter struct {
@@ -17,7 +17,7 @@ func (i *jsonImporter) Import(file string, start, end int) ([][]float64, error) 
 		return [][]float64{}, errInvalidRange
 	}
 
-	f, err := ioutil.ReadFile(file)
+	f, err := os.ReadFile(file)
 	if err != nil {
 		return [][]float64{}, err
 	}

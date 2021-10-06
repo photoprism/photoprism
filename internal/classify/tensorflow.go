@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"image"
-	"io/ioutil"
 	"math"
 	"os"
 	"path"
@@ -49,7 +48,7 @@ func (t *TensorFlow) File(filename string) (result Labels, err error) {
 		return result, nil
 	}
 
-	imageBuffer, err := ioutil.ReadFile(filename)
+	imageBuffer, err := os.ReadFile(filename)
 
 	if err != nil {
 		return nil, err

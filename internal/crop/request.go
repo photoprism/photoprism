@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/disintegration/imaging"
@@ -30,7 +30,7 @@ func FromRequest(hash, area string, size Size, thumbPath string) (fileName strin
 	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area, fs.JpegExt)
 	cropName := filepath.Join(filepath.Dir(thumbName), cropBase)
 
-	imageBuffer, err := ioutil.ReadFile(thumbName)
+	imageBuffer, err := os.ReadFile(thumbName)
 
 	if err != nil {
 		return "", err

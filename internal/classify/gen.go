@@ -5,7 +5,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -38,7 +37,7 @@ func main() {
 		log.Panicf("classify: found no label rules in %s", txt.Quote(filepath.Base(fileName)))
 	}
 
-	yamlConfig, err := ioutil.ReadFile(fileName)
+	yamlConfig, err := os.ReadFile(fileName)
 
 	if err != nil {
 		panic(err)

@@ -2,7 +2,7 @@ package meta
 
 import (
 	"encoding/xml"
-	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 )
@@ -200,7 +200,7 @@ type XmpDocument struct {
 
 // Load parses an XMP file and populates document values with its contents.
 func (doc *XmpDocument) Load(filename string) error {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 
 	if err != nil {
 		return err

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"math"
 	"os"
 	"os/exec"
@@ -172,7 +171,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 	}
 
 	// Write output to file.
-	if err := ioutil.WriteFile(jsonName, []byte(out.String()), os.ModePerm); err != nil {
+	if err := os.WriteFile(jsonName, []byte(out.String()), os.ModePerm); err != nil {
 		return "", err
 	}
 
