@@ -105,9 +105,9 @@ describe("common/config", () => {
     const values = { Debug: true, siteTitle: "Foo", country: "Germany", city: "Hamburg" };
 
     const config = new Config(storage, values);
-    config.onPeople(".created");
+    config.onPeople("people.created", { entities: {} });
     assert.empty(config.values.people);
-    config.onPeople(".created", {
+    config.onPeople("people.created", {
       entities: [
         {
           UID: "abc123",
@@ -117,7 +117,7 @@ describe("common/config", () => {
       ],
     });
     assert.equal(config.values.people[0].Name, "Test Name");
-    config.onPeople(".updated", {
+    config.onPeople("people.updated", {
       entities: [
         {
           UID: "abc123",
@@ -127,7 +127,7 @@ describe("common/config", () => {
       ],
     });
     assert.equal(config.values.people[0].Name, "New Name");
-    config.onPeople(".deleted", {
+    config.onPeople("people.deleted", {
       entities: ["abc123"],
     });
     assert.empty(config.values.people);
@@ -262,9 +262,9 @@ describe("common/config", () => {
     });
     assert.equal(myConfig.values.count.private, 3);
     assert.equal(myConfig.values.count.all, 136);
-    myConfig.onCount("add.xxxphotos", {
+    myConfig.onCount("add.photos", {
       count: 4,
     });
-    assert.equal(myConfig.values.count.all, 136);
+    assert.equal(myConfig.values.count.all, 140);
   });
 });

@@ -25,10 +25,10 @@
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="showAll">
+        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="filterHidden('')">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="showDefault">
+        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="filterHidden('yes')">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
@@ -164,6 +164,7 @@
         </v-layout>
       </v-container>
     </v-container>
+    <p-sponsor-dialog :show="dialog.sponsor" @close="dialog.sponsor = false"></p-sponsor-dialog>
     <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge"
                            @confirm="onMerge"></p-people-merge-dialog>
   </div>
@@ -212,6 +213,9 @@ export default {
       titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      dialog: {
+        sponsor: false,
+      },
       merge: {
         subj1: null,
         subj2: null,
@@ -390,6 +394,14 @@ export default {
         }
       }
     },
+    filterHidden(val) {
+      this.$earlyAccess().then(() => {
+        this.filter.hidden = val;
+        this.updateQuery();
+      }).catch(() => {
+        this.dialog.sponsor = true;
+      });
+    },
     onToggleHidden(ev, index) {
       const inputType = this.input.eval(ev, index);
 
@@ -397,7 +409,11 @@ export default {
         return;
       }
 
-      return this.toggleHidden(this.results[index]);
+      this.$earlyAccess().then(() => {
+        this.toggleHidden(this.results[index]);
+      }).catch(() => {
+        this.dialog.sponsor = true;
+      });
     },
     toggleHidden(model) {
       if (!model) {
@@ -407,14 +423,6 @@ export default {
       model.toggleHidden().finally(() => {
         this.busy = false;
       });
-    },
-    showAll() {
-      this.filter.hidden = "yes";
-      this.updateQuery();
-    },
-    showDefault() {
-      this.filter.hidden = "";
-      this.updateQuery();
     },
     clearQuery() {
       this.filter.q = '';
@@ -608,7 +616,7 @@ export default {
     onUpdate(ev, data) {
       if (!this.listen) return;
 
-      if (!data || !data.entities) {
+      if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;
       }
 

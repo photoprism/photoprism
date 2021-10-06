@@ -330,6 +330,7 @@ Mock.onPut("api/v1/faces/f123ghytrfggd", { Hidden: true }).reply(
   mockHeaders
 );
 Mock.onPost("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onPut("api/v1/subjects/s123ghytrfggd").reply(200, { status: "ok" }, mockHeaders);
 Mock.onDelete("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onGet("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
 Mock.onPost("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
