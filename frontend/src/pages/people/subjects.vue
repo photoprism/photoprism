@@ -25,10 +25,10 @@
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="filterHidden('yes')">
+        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="showHidden('yes')">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="filterHidden('')">
+        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="showHidden('')">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
@@ -394,9 +394,9 @@ export default {
         }
       }
     },
-    filterHidden(val) {
+    showHidden(value) {
       this.$earlyAccess().then(() => {
-        this.filter.hidden = val;
+        this.filter.hidden = value;
         this.updateQuery();
       }).catch(() => {
         this.dialog.sponsor = true;
