@@ -20,7 +20,7 @@ import (
 // UsersCommand registers user management commands.
 var UsersCommand = cli.Command{
 	Name:  "users",
-	Usage: "User management commands",
+	Usage: "User management sub-commands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "list",
