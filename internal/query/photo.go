@@ -136,6 +136,14 @@ func FixPrimaries() error {
 
 	var photos entity.Photos
 
+	// Remove primary file flag from broken or missing files.
+	if err := UnscopedDb().Table(entity.File{}.TableName()).
+		Where("file_error <> '' OR file_missing = 1").
+		UpdateColumn("file_primary", 0).Error; err != nil {
+		return err
+	}
+
+	// Find photos without primary file.
 	if err := UnscopedDb().
 		Raw(`SELECT * FROM photos 
 			WHERE deleted_at IS NULL 
@@ -149,6 +157,7 @@ func FixPrimaries() error {
 		return nil
 	}
 
+	// Try to find matching primary files.
 	for _, p := range photos {
 		log.Debugf("index: searching primary file for %s", p.PhotoUID)
 
