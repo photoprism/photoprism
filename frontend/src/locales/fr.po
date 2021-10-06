@@ -1404,7 +1404,7 @@ msgstr "Jamais"
 
 #: src/pages/people.vue:30
 msgid "New"
-msgstr "Nouveaux"
+msgstr "Nouvelles"
 
 #: src/pages/settings/account.vue:78
 msgid "New Password"
@@ -1826,7 +1826,7 @@ msgstr "Modifiés récemment"
 #: src/dialog/photo/people.vue:9 src/pages/people/faces.vue:27
 #: src/pages/people/subjects.vue:31
 msgid "Recognition starts after indexing has been completed."
-msgstr ""
+msgstr "La reconnaissance démarrera après la fin de l'indexation."
 
 #: src/pages/people.vue:21
 msgid "Recognized"
@@ -1834,7 +1834,7 @@ msgstr "Reconnues"
 
 #: src/pages/settings/general.vue:339
 msgid "Recognizes faces so that specific people can be found."
-msgstr "Recherche les visages pour permettre de trouver des personnes données"
+msgstr "Recherche les visages pour permettre de trouver des personnes données."
 
 #: src/options/options.js:330
 msgid "Red"
@@ -2495,7 +2495,7 @@ msgstr "Vous ne pouvez sélectionner qu'un seul élément"
 #: src/pages/people/subjects.vue:30
 msgid "You may rescan your library to find additional faces."
 msgstr ""
-"VOus pouvez réanalyser votre bibliothèque pour trouver plus de visages."
+"Vous pouvez réanalyser votre bibliothèque pour trouver plus de visages."
 
 #: src/pages/about/about.vue:51
 msgid ""
