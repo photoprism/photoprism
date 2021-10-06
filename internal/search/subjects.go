@@ -39,7 +39,7 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 	case "added":
 		s = s.Order(fmt.Sprintf("%s.created_at DESC", subjTable))
 	case "relevance":
-		s = s.Order("subj_favorite DESC, subj_name")
+		s = s.Order("subj_favorite DESC, photo_count DESC")
 	default:
 		s = s.Order("subj_favorite DESC, subj_name")
 	}
