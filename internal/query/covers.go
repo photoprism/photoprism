@@ -9,10 +9,14 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // UpdateAlbumDefaultCovers updates default album cover thumbs.
 func UpdateAlbumDefaultCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -58,6 +62,9 @@ func UpdateAlbumDefaultCovers() (err error) {
 
 // UpdateAlbumFolderCovers updates folder album cover thumbs.
 func UpdateAlbumFolderCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -103,6 +110,9 @@ func UpdateAlbumFolderCovers() (err error) {
 
 // UpdateAlbumMonthCovers updates month album cover thumbs.
 func UpdateAlbumMonthCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -168,6 +178,9 @@ func UpdateAlbumCovers() (err error) {
 
 // UpdateLabelCovers updates label cover thumbs.
 func UpdateLabelCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -232,6 +245,9 @@ func UpdateLabelCovers() (err error) {
 
 // UpdateSubjectCovers updates subject cover thumbs.
 func UpdateSubjectCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB

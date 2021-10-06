@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -71,6 +72,9 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 
 // UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
 func UpdateAlbumDates() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	switch DbDialect() {
 	case MySQL:
 		return UnscopedDb().Exec(`UPDATE albums
@@ -87,6 +91,9 @@ func UpdateAlbumDates() error {
 
 // UpdateMissingAlbumEntries sets a flag for missing photo album entries.
 func UpdateMissingAlbumEntries() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	switch DbDialect() {
 	default:
 		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 1 WHERE photo_uid IN

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // PurgeOrphans removes orphan database entries.
@@ -43,6 +44,9 @@ func PurgeOrphans() error {
 
 // PurgeOrphanFiles removes files without a photo from the index.
 func PurgeOrphanFiles() (count int, err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	files, err := OrphanFiles()
 
 	if err != nil {
@@ -62,6 +66,9 @@ func PurgeOrphanFiles() (count int, err error) {
 
 // PurgeOrphanDuplicates deletes all files from the duplicates table that don't exist in the files table.
 func PurgeOrphanDuplicates() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	return UnscopedDb().Delete(
 		entity.Duplicate{},
 		"file_hash NOT IN (SELECT file_hash FROM files WHERE file_missing = 0 AND deleted_at IS NULL)").Error
@@ -69,6 +76,9 @@ func PurgeOrphanDuplicates() error {
 
 // PurgeOrphanCountries removes countries without any photos.
 func PurgeOrphanCountries() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	entity.FlushCountryCache()
 	switch DbDialect() {
 	default:
@@ -78,6 +88,9 @@ func PurgeOrphanCountries() error {
 
 // PurgeOrphanCameras removes cameras without any photos.
 func PurgeOrphanCameras() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	entity.FlushCameraCache()
 	switch DbDialect() {
 	default:
@@ -87,6 +100,9 @@ func PurgeOrphanCameras() error {
 
 // PurgeOrphanLenses removes cameras without any photos.
 func PurgeOrphanLenses() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	entity.FlushLensCache()
 	switch DbDialect() {
 	default:

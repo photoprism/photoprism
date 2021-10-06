@@ -4,9 +4,10 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // PhotoByID returns a Photo based on the ID.
@@ -83,21 +84,6 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 	return entities, err
 }
 
-// ResetPhotoQuality sets photo quality scores to -1 if files are missing.
-func ResetPhotoQuality() error {
-	start := time.Now()
-
-	res := Db().Table("photos").
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL)").
-		Update("photo_quality", -1)
-
-	if res.RowsAffected > 0 {
-		log.Infof("index: flagged %s as hidden [%s]", english.Plural(int(res.RowsAffected), "broken photo", "broken photos"), time.Since(start))
-	}
-
-	return res.Error
-}
-
 // PhotosCheck returns photos selected for maintenance.
 func PhotosCheck(limit, offset int, delay time.Duration) (entities entity.Photos, err error) {
 	err = Db().
@@ -132,6 +118,9 @@ func OrphanPhotos() (photos entity.Photos, err error) {
 
 // FixPrimaries tries to set a primary file for photos that have none.
 func FixPrimaries() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var photos entity.Photos
@@ -169,4 +158,22 @@ func FixPrimaries() error {
 	log.Infof("index: updated primary files [%s]", time.Since(start))
 
 	return nil
+}
+
+// FlagHiddenPhotos sets the quality score of photos without valid primary file to -1.
+func FlagHiddenPhotos() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
+	start := time.Now()
+
+	res := Db().Table("photos").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL)").
+		Update("photo_quality", -1)
+
+	if res.RowsAffected > 0 {
+		log.Infof("index: flagged %s as hidden [%s]", english.Plural(int(res.RowsAffected), "broken photo", "broken photos"), time.Since(start))
+	}
+
+	return res.Error
 }

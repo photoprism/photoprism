@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -212,6 +213,9 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 // RemovePeopleAndFaces permanently removes all people, faces, and face markers.
 func RemovePeopleAndFaces() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	// Delete people.
 	if err = UnscopedDb().Delete(entity.Subject{}, "subj_type = ?", entity.SubjPerson).Error; err != nil {
 		return err

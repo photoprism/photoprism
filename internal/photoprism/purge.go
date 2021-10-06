@@ -246,7 +246,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	}
 
 	// Set photo quality scores to -1 if files are missing.
-	if err := query.ResetPhotoQuality(); err != nil {
+	if err := query.FlagHiddenPhotos(); err != nil {
 		return purgedFiles, purgedPhotos, err
 	}
 
