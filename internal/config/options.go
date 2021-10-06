@@ -3,7 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"reflect"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -177,7 +177,7 @@ func (c *Options) Load(fileName string) error {
 		return errors.New(fmt.Sprintf("config: %s not found", fileName))
 	}
 
-	yamlConfig, err := ioutil.ReadFile(fileName)
+	yamlConfig, err := os.ReadFile(fileName)
 
 	if err != nil {
 		return err

@@ -3,7 +3,7 @@ package meta
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"runtime/debug"
 
@@ -37,7 +37,7 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 		return fmt.Errorf("metadata: %s not found", quotedName)
 	}
 
-	jsonData, err := ioutil.ReadFile(jsonName)
+	jsonData, err := os.ReadFile(jsonName)
 
 	if err != nil {
 		return fmt.Errorf("can't read json file %s", quotedName)

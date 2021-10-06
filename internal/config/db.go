@@ -3,7 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -301,7 +301,7 @@ func (c *Config) connectDb() error {
 
 // ImportSQL imports a file to the currently configured database.
 func (c *Config) ImportSQL(filename string) {
-	contents, err := ioutil.ReadFile(filename)
+	contents, err := os.ReadFile(filename)
 
 	if err != nil {
 		log.Error(err)

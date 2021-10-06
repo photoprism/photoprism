@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"hash/crc32"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -210,13 +209,13 @@ func (c *Config) initStorage() error {
 	storageName := filepath.Join(c.StoragePath(), serialName)
 	backupName := filepath.Join(c.BackupPath(), serialName)
 
-	if data, err := ioutil.ReadFile(storageName); err == nil {
+	if data, err := os.ReadFile(storageName); err == nil {
 		c.serial = string(data)
-	} else if data, err := ioutil.ReadFile(backupName); err == nil {
+	} else if data, err := os.ReadFile(backupName); err == nil {
 		c.serial = string(data)
-	} else if err := ioutil.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
+	} else if err := os.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
 		return fmt.Errorf("failed creating %s: %s", storageName, err)
-	} else if err := ioutil.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
+	} else if err := os.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {
 		return fmt.Errorf("failed creating %s: %s", backupName, err)
 	}
 

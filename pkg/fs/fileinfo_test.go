@@ -1,7 +1,6 @@
 package fs
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -26,10 +25,20 @@ func TestNewFileInfo(t *testing.T) {
 }
 
 func TestNewFileInfos(t *testing.T) {
-	infos, err := ioutil.ReadDir("testdata")
+	dirEntries, err := os.ReadDir("testdata")
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	infos := make([]os.FileInfo, 0, len(dirEntries))
+
+	for _, entry := range dirEntries {
+		info, err := entry.Info()
+		if err != nil {
+			t.Fatal(err)
+		}
+		infos = append(infos, info)
 	}
 
 	result := NewFileInfos(infos, PathSeparator)

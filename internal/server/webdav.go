@@ -1,7 +1,6 @@
 package server
 
 import (
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -37,7 +36,7 @@ func MarkUploadAsFavorite(fileName string) {
 	}
 
 	// Write YAML data to file.
-	if err := ioutil.WriteFile(yamlName, []byte("Favorite: true\n"), os.ModePerm); err != nil {
+	if err := os.WriteFile(yamlName, []byte("Favorite: true\n"), os.ModePerm); err != nil {
 		log.Errorf("webdav: %s", err.Error())
 		return
 	}

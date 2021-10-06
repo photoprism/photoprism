@@ -1,7 +1,6 @@
 package api
 
 import (
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -81,7 +80,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		v := make(valueMap)
 
 		if fs.FileExists(fileName) {
-			yamlData, err := ioutil.ReadFile(fileName)
+			yamlData, err := os.ReadFile(fileName)
 
 			if err != nil {
 				log.Errorf("options: %s", err)
@@ -118,7 +117,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		}
 
 		// Write YAML data to file.
-		if err := ioutil.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
+		if err := os.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
 			log.Errorf("options: %s", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
