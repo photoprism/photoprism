@@ -128,15 +128,9 @@ describe("common/config", () => {
     });
     assert.equal(config.values.people[0].Name, "New Name");
     config.onPeople(".deleted", {
-      entities: [
-        {
-          UID: "abc123",
-          Name: "New Name",
-          Keywords: ["New", "Name"],
-        },
-      ],
+      entities: ["abc123"],
     });
-    assert.equal(config.values.people[0].Name, "New Name");
+    assert.empty(config.values.people);
   });
 
   it("should return if language is rtl", () => {

@@ -200,6 +200,40 @@ describe("model/subject", () => {
     assert.equal(subject.Favorite, true);
   });
 
+  it("show and hide subject", () => {
+    const values = {
+      UID: "s123ghytrfggd",
+      Type: "person",
+      Src: "manual",
+      Name: "Jane Doe",
+      Slug: "jane-doe",
+      Hidden: true,
+    };
+    const subject = new Subject(values);
+    assert.equal(subject.Hidden, true);
+    subject.show();
+    assert.equal(subject.Hidden, false);
+    subject.hide();
+    assert.equal(subject.Hidden, true);
+  });
+
+  it("should toggle hidden", () => {
+    const values = {
+      UID: "s123ghytrfggd",
+      Type: "person",
+      Src: "manual",
+      Name: "Jane Doe",
+      Slug: "jane-doe",
+      Hidden: true,
+    };
+    const subject = new Subject(values);
+    assert.equal(subject.Hidden, true);
+    subject.toggleHidden();
+    assert.equal(subject.Hidden, false);
+    subject.toggleHidden();
+    assert.equal(subject.Hidden, true);
+  });
+
   it("should return batch size", () => {
     assert.equal(Subject.batchSize(), 60);
   });

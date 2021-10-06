@@ -1386,6 +1386,7 @@ describe("model/photo", () => {
       ],
     };
     const photo = new Photo(values);
+    photo.Title = "New Title";
     photo
       .update()
       .then((response) => {
@@ -1395,5 +1396,63 @@ describe("model/photo", () => {
       .catch((error) => {
         done(error);
       });
+    assert.equal(photo.Title, "New Title");
+  });
+
+  it("should test get Markers", () => {
+    const values = {
+      ID: 10,
+      UID: "pqbemz8276mhtobh",
+      Lat: 1.1,
+      Lng: 3.3,
+      CameraID: 123,
+      Title: "Test Titel",
+      Description: "Super nice video",
+      Files: [
+        {
+          UID: "fqbfk181n4ca5sud",
+          Name: "1980/01/superCuteKitten.mp4",
+          Primary: false,
+          Type: "mp4",
+          Hash: "1xxbgdt55",
+        },
+      ],
+    };
+    const photo = new Photo(values);
+    const result = photo.getMarkers(true);
+    assert.empty(result);
+    const values2 = {
+      ID: 10,
+      UID: "pqbemz8276mhtobh",
+      Lat: 1.1,
+      Lng: 3.3,
+      CameraID: 123,
+      Title: "Test Titel",
+      Description: "Super nice video",
+      Files: [
+        {
+          UID: "fqbfk181n4ca5sud",
+          Name: "1980/01/superCuteKitten.mp4",
+          Primary: true,
+          Type: "mp4",
+          Hash: "1xxbgdt55",
+          Markers: [
+            {
+              UID: "aaa123",
+              Invalid: false,
+            },
+            {
+              UID: "bbb123",
+              Invalid: true,
+            },
+          ],
+        },
+      ],
+    };
+    const photo2 = new Photo(values2);
+    const result2 = photo2.getMarkers(true);
+    assert.equal(result2.length, 1);
+    const result3 = photo2.getMarkers(false);
+    assert.equal(result3.length, 2);
   });
 });
