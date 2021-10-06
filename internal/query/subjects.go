@@ -14,7 +14,7 @@ func People() (people entity.People, err error) {
 		Table(entity.Subject{}.TableName()).
 		Select("subj_uid, subj_name, subj_alias, subj_favorite").
 		Where("deleted_at IS NULL AND subj_type = ?", entity.SubjPerson).
-		Order("subj_favorite DESC, subj_name").
+		Order("subj_name").
 		Limit(2000).Offset(0).
 		Scan(&people).Error
 
@@ -61,7 +61,7 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 	return result, err
 }
 
-// RemoveOrphanSubjects permanently deletes dangling marker subjects from the index.
+// RemoveOrphanSubjects permanently removes dangling marker subjects from the index.
 func RemoveOrphanSubjects() (removed int64, err error) {
 	res := UnscopedDb().
 		Where("subj_src = ?", entity.SrcMarker).
@@ -93,7 +93,7 @@ func CreateMarkerSubjects() (affected int64, err error) {
 		if name == m.MarkerName && subj != nil {
 			// Do nothing.
 		} else if subj = entity.NewSubject(m.MarkerName, entity.SubjPerson, entity.SrcMarker); subj == nil {
-			log.Errorf("faces: subject should not be nil - bug?")
+			log.Errorf("faces: invalid subject %s", txt.Quote(m.MarkerName))
 			continue
 		} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
 			log.Errorf("faces: failed adding subject %s", txt.Quote(m.MarkerName))

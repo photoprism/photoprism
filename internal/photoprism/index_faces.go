@@ -3,6 +3,8 @@ package photoprism
 import (
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/thumb"
 
@@ -44,10 +46,8 @@ func (ind *Index) Faces(jpeg *MediaFile, expected int) face.Faces {
 		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
 	}
 
-	if l := len(faces); l == 1 {
-		log.Infof("index: found %d face in %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
-	} else if l > 1 {
-		log.Infof("index: found %d faces in %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
+	if l := len(faces); l > 0 {
+		log.Infof("index: found %s in %s [%s]", english.Plural(l, "face", "faces"), txt.Quote(jpeg.BaseName()), time.Since(start))
 	}
 
 	return faces

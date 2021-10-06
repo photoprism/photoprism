@@ -2,7 +2,7 @@ package session
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path"
 	"sync"
 	"time"
@@ -30,7 +30,7 @@ func New(expiration time.Duration, cachePath string) *Session {
 		items := make(map[string]gc.Item)
 		s.cacheFile = path.Join(cachePath, cacheFileName)
 
-		if cached, err := ioutil.ReadFile(s.cacheFile); err != nil {
+		if cached, err := os.ReadFile(s.cacheFile); err != nil {
 			log.Debugf("session: %s", err)
 		} else if err := json.Unmarshal(cached, &savedItems); err != nil {
 			log.Errorf("session: %s", err)
@@ -92,7 +92,7 @@ func (s *Session) Save() error {
 
 	if serialized, err := json.MarshalIndent(savedItems, "", " "); err != nil {
 		return err
-	} else if err = ioutil.WriteFile(s.cacheFile, serialized, 0600); err != nil {
+	} else if err = os.WriteFile(s.cacheFile, serialized, 0600); err != nil {
 		return err
 	}
 

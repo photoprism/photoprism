@@ -1,8 +1,8 @@
 <template>
   <div class="p-tab p-tab-photo-files">
     <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
-      <template v-for="(file, index) in model.fileModels()">
-        <v-expansion-panel-content v-if="!file.Missing" :key="index" class="pa-0 elevation-0 secondary-light"
+      <template v-for="file in model.fileModels()">
+        <v-expansion-panel-content v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light"
                                    style="margin-top: 1px;">
           <template #header>
             <div class="caption">{{ file.baseName(70) }}</div>
@@ -41,13 +41,13 @@
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
-                            <v-btn v-if="features.edit && file.Type === 'jpg' && !file.Primary" small depressed dark
+                            <v-btn v-if="features.edit && file.Type === 'jpg' && file.Error === '' && !file.Primary" small depressed dark
                                    color="primary-button"
                                    class="ma-0 action-primary"
                                    @click.stop.prevent="primaryFile(file)">
                               <translate>Primary</translate>
                             </v-btn>
-                            <v-btn v-if="features.edit && !file.Sidecar && !file.Primary && file.Root === '/'" small
+                            <v-btn v-if="features.edit && !file.Sidecar && file.Error === '' && !file.Primary && file.Root === '/'" small
                                    depressed dark color="primary-button"
                                    class="ma-0 action-unstack"
                                    @click.stop.prevent="unstackFile(file)">
@@ -65,6 +65,12 @@
                             UID
                           </td>
                           <td>{{ file.UID | uppercase }}</td>
+                        </tr>
+                        <tr v-if="file.Error">
+                          <td>
+                            <translate>Error</translate>
+                          </td>
+                          <td><span class="body-2">{{ file.Error | uppercase }}</span></td>
                         </tr>
                         <tr v-if="file.InstanceID" title="XMP">
                           <td>
@@ -161,12 +167,6 @@
                             <translate>Chroma</translate>
                           </td>
                           <td>{{ file.Chroma }} / 100</td>
-                        </tr>
-                        <tr v-if="file.Error">
-                          <td>
-                            <translate>Error</translate>
-                          </td>
-                          <td>{{ file.Error }}</td>
                         </tr>
                         <tr v-if="file.Missing">
                           <td>

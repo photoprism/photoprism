@@ -39,7 +39,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 
 			if err != nil {
 				if strings.HasPrefix(err.Error(), "no exif header") {
-					return rawExif, fmt.Errorf("metadata: no exif header in %s (parse jpeg)", logName)
+					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse jpeg)", logName)
 				} else if strings.HasPrefix(err.Error(), "no exif data") {
 					log.Debugf("metadata: failed parsing %s, starting brute-force search (parse jpeg)", logName)
 				} else {
@@ -62,7 +62,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 
 		if err != nil {
 			if err.Error() == "file does not have EXIF" {
-				return rawExif, fmt.Errorf("metadata: no exif header in %s (parse png)", logName)
+				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse png)", logName)
 			} else {
 				log.Warnf("metadata: %s in %s (parse png)", err, logName)
 			}
@@ -82,7 +82,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 
 		if err != nil {
 			if err.Error() == "file does not have EXIF" {
-				return rawExif, fmt.Errorf("metadata: no exif header in %s (parse heic)", logName)
+				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse heic)", logName)
 			} else {
 				log.Warnf("metadata: %s in %s (parse heic)", err, logName)
 			}
@@ -102,7 +102,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 
 		if err != nil {
 			if err.Error() == "file does not have EXIF" {
-				return rawExif, fmt.Errorf("metadata: no exif header in %s (parse tiff)", logName)
+				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse tiff)", logName)
 			} else {
 				log.Warnf("metadata: %s in %s (parse tiff)", err, logName)
 			}
@@ -115,7 +115,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 		rawExif, err = exif.SearchFileAndExtractExif(fileName)
 
 		if err != nil {
-			return rawExif, fmt.Errorf("metadata: no exif header in %s (search and extract)", logName)
+			return rawExif, fmt.Errorf("metadata: found no exif header in %s (search and extract)", logName)
 		}
 	}
 

@@ -1,7 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-faces" style="user-select: none"
-       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
-       :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-faces" style="user-select: none">
 
     <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar dense flat color="secondary-light pa-0">
@@ -35,22 +33,21 @@
         </v-alert>
         <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
-              v-for="(model, index) in results"
-              :key="index"
+              v-for="model in results"
+              :key="model.ID"
               xs12 sm6 md4 lg3 xl2 xxl1 d-flex
           >
-            <v-card v-if="model.Marker"
-                    :data-id="model.Marker.UID"
+            <v-card :data-id="model.ID"
                     tile style="user-select: none;"
                     :class="model.classes()"
                     class="result accent lighten-3">
               <div class="card-background accent lighten-3"></div>
-              <v-img :src="model.Marker.thumbnailUrl('tile_320')"
+              <v-img :src="model.thumbnailUrl('tile_320')"
                      :transition="false"
                      aspect-ratio="1"
                      class="accent lighten-2 clickable"
                      @click.stop.prevent="$router.push(model.route(view))">
-                <v-btn v-if="!model.Marker.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
+                <v-btn v-if="!model.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
                        icon flat small absolute :title="$gettext('Hide')"
                        @click.stop.prevent="onHide(model)">
                   <v-icon color="white" class="action-hide">clear</v-icon>
@@ -68,29 +65,27 @@
                     </v-btn>
                   </v-flex>
                 </v-layout>
-                <v-layout v-else-if="model.Marker.SubjUID" row wrap align-center>
+                <v-layout v-else-if="model.SubjUID" row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
-                        v-model="model.Marker.Name"
+                        v-model="model.Name"
                         :rules="[textRule]"
                         :disabled="busy"
+                        :readonly="false"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
                         hide-details
                         single-line
                         solo-inverted
-                        clearable
-                        clear-icon="eject"
-                        @click:clear="onClearSubject(model.Marker)"
-                        @change="onRename(model.Marker)"
-                        @keyup.enter.native="onRename(model.Marker)"
+                        @change="onRename(model)"
+                        @keyup.enter.native="onRename(model)"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
                 <v-layout v-else row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-combobox
-                        v-model="model.Marker.Name"
+                        v-model="model.Name"
                         style="z-index: 250"
                         :items="$config.values.people"
                         item-value="Name"
@@ -108,8 +103,8 @@
                         prepend-inner-icon="person_add"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
-                        @change="onRename(model.Marker)"
-                        @keyup.enter.native="onRename(model.Marker)"
+                        @change="onRename(model)"
+                        @keyup.enter.native="onRename(model)"
                     >
                     </v-combobox>
                   </v-flex>
@@ -118,7 +113,7 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <div class="text-xs-center my-2">
+        <div class="text-xs-center mt-3 mb-2">
           <v-btn
               color="secondary" round
               :to="{name: 'all', query: { q: 'face:new' }}"
@@ -164,9 +159,10 @@ export default {
       scrollDisabled: true,
       loading: true,
       busy: false,
-      batchSize: Face.batchSize(),
+      batchSize: 999,
       offset: 0,
       page: 0,
+      faceCount: 0,
       selection: [],
       settings: settings,
       filter: filter,
@@ -200,10 +196,6 @@ export default {
       this.filter.order = this.sortOrder();
       this.routeName = this.$route.name;
 
-      if (this.dirty) {
-        this.lastFilter = {};
-      }
-
       this.search();
     }
   },
@@ -213,7 +205,6 @@ export default {
     this.subscriptions.push(Event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -222,20 +213,13 @@ export default {
   },
   methods: {
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("faces_offset"));
-
-      if(this.offset > 0 || !offset) {
-        return this.batchSize;
-      }
-
-      return offset + this.batchSize;
+      return this.batchSize;
     },
     sortOrder() {
-      return "relevance";
+      return "samples";
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("faces_offset", offset);
     },
     toggleLike(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -375,13 +359,18 @@ export default {
       this.lastId = "";
     },
     loadMore() {
-      if (this.scrollDisabled) return;
+      if (this.scrollDisabled || !this.active) {
+        return;
+      }
 
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
-      const offset = this.dirty ? 0 : this.offset;
+      // Always refresh all faces for now.
+      this.dirty = true;
+
+      const count = this.batchSize;
+      const offset = 0;
 
       const params = {
         count: count,
@@ -397,22 +386,14 @@ export default {
       Face.search(params).then(resp => {
         this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (resp.count < resp.limit);
+        this.setFaceCount(this.results.length);
 
-        if (this.scrollDisabled) {
-          this.setOffset(resp.offset);
-          if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), {n: this.results.length}));
-          }
+        if (!this.results.length) {
+          this.$notify.warn(this.$gettext("No people found"));
+        } else if (this.results.length === 1) {
+          this.$notify.info(this.$gettext("One person found"));
         } else {
-          this.setOffset(resp.offset + resp.limit);
-          this.page++;
-
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
-            }
-          });
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
         }
       }).catch(() => {
         this.scrollDisabled = false;
@@ -458,11 +439,15 @@ export default {
       return params;
     },
     refresh() {
-      if (this.loading) return;
+      if (this.loading || !this.active) {
+        return;
+      }
+
       this.loading = true;
       this.page = 0;
       this.dirty = true;
       this.scrollDisabled = false;
+
       this.loadMore();
     },
     search() {
@@ -470,7 +455,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        this.refresh();
         return;
       }
 
@@ -487,24 +472,14 @@ export default {
         this.offset = resp.limit;
         this.results = resp.models;
 
-        this.scrollDisabled = (resp.count < resp.limit);
+        this.setFaceCount(this.results.length);
 
-        if (this.scrollDisabled) {
-          if (!this.results.length) {
-            this.$notify.warn(this.$gettext("No people found"));
-          } else if (this.results.length === 1) {
-            this.$notify.info(this.$gettext("One person found"));
-          } else {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
-          }
+        if (!this.results.length) {
+          this.$notify.warn(this.$gettext("No people found"));
+        } else if (this.results.length === 1) {
+          this.$notify.info(this.$gettext("One person found"));
         } else {
-          this.$notify.info(this.$gettext('More than 20 faces found'));
-
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
-            }
-          });
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
         }
       }).finally(() => {
         this.dirty = false;
@@ -514,19 +489,35 @@ export default {
     },
     onShow(face) {
       this.busy = true;
-      face.show().finally(() => this.busy = false);
+      face.show().finally(() => {
+        this.busy = false;
+        this.changeFaceCount(1);
+      });
     },
     onHide(face) {
       this.busy = true;
-      face.hide().finally(() => this.busy = false);
+      face.hide().finally(() => {
+        this.busy = false;
+        this.changeFaceCount(-1);
+      });
     },
-    onClearSubject(marker) {
+    onRename(model) {
       this.busy = true;
-      marker.clearSubject(marker).finally(() => this.busy = false);
+      this.$notify.blockUI();
+
+      model.setName().finally(() => {
+        this.$notify.unblockUI();
+        this.busy = false;
+        this.changeFaceCount(-1);
+      });
     },
-    onRename(marker) {
-      this.busy = true;
-      marker.rename().finally(() => this.busy = false);
+    changeFaceCount(count) {
+      this.faceCount = this.faceCount + count;
+      this.$emit('updateFaceCount', this.faceCount);
+    },
+    setFaceCount(count) {
+      this.faceCount = count;
+      this.$emit('updateFaceCount', this.faceCount);
     },
     onUpdate(ev, data) {
       if (!this.listen) return;

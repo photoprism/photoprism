@@ -170,3 +170,12 @@ func IndexedFiles() (result FileMap, err error) {
 
 	return result, err
 }
+
+// OrphanFiles finds files without a photo.
+func OrphanFiles() (files entity.Files, err error) {
+	err = UnscopedDb().
+		Raw(`SELECT * FROM files WHERE photo_id NOT IN (SELECT id FROM photos)`).
+		Find(&files).Error
+
+	return files, err
+}

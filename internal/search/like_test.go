@@ -296,3 +296,24 @@ func TestAnyInt(t *testing.T) {
 		assert.Equal(t, "", where)
 	})
 }
+
+func TestOrLike(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		where, values := OrLike("k.keyword", "")
+
+		assert.Equal(t, "", where)
+		assert.Equal(t, []interface{}{}, values)
+	})
+	t.Run("OneTerm", func(t *testing.T) {
+		where, values := OrLike("k.keyword", "bar")
+
+		assert.Equal(t, "k.keyword LIKE ?", where)
+		assert.Equal(t, []interface{}{"bar"}, values)
+	})
+	t.Run("TwoTerms", func(t *testing.T) {
+		where, values := OrLike("k.keyword", "foo*%|bar")
+
+		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ?", where)
+		assert.Equal(t, []interface{}{"foo%", "bar"}, values)
+	})
+}

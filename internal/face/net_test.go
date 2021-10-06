@@ -34,7 +34,7 @@ func TestNet(t *testing.T) {
 		"19.jpg": 0,
 	}
 
-	faceindices := map[string][]int{
+	faceIndices := map[string][]int{
 		"18.jpg": {1, 0},
 		"1.jpg":  {2},
 		"4.jpg":  {3},
@@ -47,11 +47,11 @@ func TestNet(t *testing.T) {
 		"3.jpg":  {10},
 	}
 
-	faceindexToPersonid := [11]int{
+	faceIndexToPersonID := [11]int{
 		0, 1, 1, 1, 2, 0, 1, 0, 0, 1, 0,
 	}
 
-	var embeddings [11][]float32
+	var embeddings = make(Embeddings, 11)
 
 	faceNet := NewNet(modelPath, "testdata/cache", false)
 
@@ -76,9 +76,10 @@ func TestNet(t *testing.T) {
 			if len(faces) > 0 {
 				for i, f := range faces {
 					if len(f.Embeddings) > 0 {
-						embeddings[faceindices[baseName][i]] = f.Embeddings[0]
+						// t.Logf("FACE %d IN %s: %#v", i, fileName, f.Embeddings)
+						embeddings[faceIndices[baseName][i]] = f.Embeddings[0]
 					} else {
-						embeddings[faceindices[baseName][i]] = nil
+						embeddings[faceIndices[baseName][i]] = nil
 					}
 				}
 			}
@@ -110,9 +111,11 @@ func TestNet(t *testing.T) {
 			if i >= j {
 				continue
 			}
-			dist := EuclidianDistance(embeddings[i], embeddings[j])
-			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceindexToPersonid[i], faceindexToPersonid[j], dist)
-			if faceindexToPersonid[i] == faceindexToPersonid[j] {
+
+			dist := embeddings[i].Distance(embeddings[j])
+
+			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceIndexToPersonID[i], faceIndexToPersonID[j], dist)
+			if faceIndexToPersonID[i] == faceIndexToPersonID[j] {
 				if dist < 1.21 {
 					correct += 1
 				}

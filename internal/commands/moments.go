@@ -10,14 +10,14 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 )
 
-// MomentsCommand registers the moments cli command.
+// MomentsCommand registers the moments command.
 var MomentsCommand = cli.Command{
 	Name:   "moments",
-	Usage:  "Creates albums based on popular locations, dates, and labels",
+	Usage:  "Creates albums of special moments, trips, and places",
 	Action: momentsAction,
 }
 
-// momentsAction creates albums based on popular locations, dates and labels.
+// momentsAction creates albums of special moments, trips, and places.
 func momentsAction(ctx *cli.Context) error {
 	start := time.Now()
 

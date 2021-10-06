@@ -26,7 +26,7 @@ import (
 var StartCommand = cli.Command{
 	Name:    "start",
 	Aliases: []string{"up"},
-	Usage:   "Starts web server",
+	Usage:   "Starts the web server",
 	Flags:   startFlags,
 	Action:  startAction,
 }

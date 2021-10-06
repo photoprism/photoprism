@@ -33,7 +33,6 @@ package webdav
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"time"
@@ -166,7 +165,7 @@ func (c Client) Download(from, to string, force bool) error {
 		return err
 	}
 
-	return ioutil.WriteFile(to, bytes, 0644)
+	return os.WriteFile(to, bytes, 0644)
 }
 
 // DownloadDir downloads all files from a remote to a local directory.

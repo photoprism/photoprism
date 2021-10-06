@@ -3,9 +3,9 @@ package server
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
+	"os"
 	"runtime"
 
 	"github.com/gin-gonic/gin"
@@ -48,7 +48,7 @@ func stack(skip int) []byte {
 		// Print this much at least.  If we can't find the source, it won't show.
 		fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
 		if file != lastFile {
-			data, err := ioutil.ReadFile(file)
+			data, err := os.ReadFile(file)
 			if err != nil {
 				continue
 			}

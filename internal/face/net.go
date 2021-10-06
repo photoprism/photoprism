@@ -8,11 +8,10 @@ import (
 	"runtime/debug"
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/crop"
-
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+
+	"github.com/photoprism/photoprism/internal/crop"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Net is a wrapper for the TensorFlow Facenet model.
@@ -59,7 +58,7 @@ func (t *Net) Detect(fileName string, minSize int, cacheCrop bool, expected int)
 
 		if img, err := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); err != nil {
 			log.Errorf("faces: failed to decode image: %v", err)
-		} else if embeddings := t.getEmbeddings(img); len(embeddings) > 0 {
+		} else if embeddings := t.getEmbeddings(img); !embeddings.Empty() {
 			faces[i].Embeddings = embeddings
 		}
 	}
@@ -72,6 +71,7 @@ func (t *Net) ModelLoaded() bool {
 	return t.model != nil
 }
 
+// loadModel loads the TensorFlow model.
 func (t *Net) loadModel() error {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
@@ -96,7 +96,8 @@ func (t *Net) loadModel() error {
 	return nil
 }
 
-func (t *Net) getEmbeddings(img image.Image) [][]float32 {
+// getEmbeddings returns the face embeddings for an image.
+func (t *Net) getEmbeddings(img image.Image) Embeddings {
 	tensor, err := imageToTensor(img, CropSize.Width, CropSize.Height)
 
 	if err != nil {
@@ -124,7 +125,7 @@ func (t *Net) getEmbeddings(img image.Image) [][]float32 {
 	if len(output) < 1 {
 		log.Errorf("faces: inference failed, no output")
 	} else {
-		return output[0].Value().([][]float32)
+		return NewEmbeddings(output[0].Value().([][]float32))
 	}
 
 	return nil

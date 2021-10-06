@@ -106,7 +106,8 @@ func UpdateSubject(router *gin.RouterGroup) {
 		}
 
 		if _, err := m.UpdateName(f.SubjName); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UcFirst(err.Error())})
+			log.Errorf("subject: %s", err)
+			AbortSaveFailed(c)
 			return
 		}
 

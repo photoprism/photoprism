@@ -15,9 +15,6 @@ import (
 
 var subjectMutex = sync.Mutex{}
 
-// Subjects represents a list of subjects.
-type Subjects []Subject
-
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
 	SubjUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
@@ -32,6 +29,7 @@ type Subject struct {
 	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
 	SubjExcluded bool            `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int             `gorm:"default:0;" json:"FileCount" yaml:"-"`
+	PhotoCount   int             `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
 	Thumb        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	ThumbSrc     string          `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	MetadataJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"Metadata,omitempty" yaml:"Metadata,omitempty"`
@@ -100,7 +98,10 @@ func (m *Subject) Delete() error {
 		return nil
 	}
 
-	log.Infof("subject: deleting %s %s", m.SubjType, txt.Quote(m.SubjName))
+	subjectMutex.Lock()
+	defer subjectMutex.Unlock()
+
+	log.Infof("subject: deleting %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 	event.EntitiesDeleted("subjects", []string{m.SubjUID})
 
@@ -111,7 +112,20 @@ func (m *Subject) Delete() error {
 		})
 	}
 
+	if err := Db().Model(&Face{}).Where("subj_uid = ?", m.SubjUID).Update("subj_uid", "").Error; err != nil {
+		return err
+	}
+
 	return Db().Delete(m).Error
+}
+
+// AfterDelete resets file and photo counters when the entity was deleted.
+func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
+	tx.Model(m).Updates(Values{
+		"FileCount":  0,
+		"PhotoCount": 0,
+	})
+	return
 }
 
 // Deleted returns true if the entity is deleted.
@@ -124,7 +138,7 @@ func (m *Subject) Restore() error {
 	if m.Deleted() {
 		m.DeletedAt = nil
 
-		log.Infof("subject: restoring %s %s", m.SubjType, txt.Quote(m.SubjName))
+		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -162,7 +176,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	if found := FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else if createErr := m.Create(); createErr == nil {
-		log.Infof("subject: added %s %s", m.SubjType, txt.Quote(m.SubjName))
+		log.Infof("subject: added %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -252,7 +266,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
 		return m, err
 	} else if err := m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err == nil {
-		log.Infof("subject: renamed %s %s", m.SubjType, txt.Quote(m.SubjName))
+		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 		event.EntitiesUpdated("subjects", []*Subject{m})
 
@@ -319,6 +333,14 @@ func (m *Subject) MergeWith(other *Subject) error {
 		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := other.UpdateMarkerNames(); err != nil {
+		return err
+	}
+
+	// Update file and photo counts.
+	if err := Db().Model(other).Updates(Values{
+		"FileCount":  other.FileCount + m.FileCount,
+		"PhotoCount": other.PhotoCount + m.PhotoCount,
+	}).Error; err != nil {
 		return err
 	}
 

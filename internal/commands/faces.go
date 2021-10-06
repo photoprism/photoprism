@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
@@ -17,10 +18,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// FacesCommand registers the faces cli command.
+// FacesCommand registers the facial recognition subcommands.
 var FacesCommand = cli.Command{
 	Name:  "faces",
-	Usage: "Facial recognition sub-commands",
+	Usage: "Facial recognition subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "stats",
@@ -33,14 +34,14 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "fix, f",
-					Usage: "issues will be fixed automatically",
+					Usage: "fix discovered issues",
 				},
 			},
 			Action: facesAuditAction,
 		},
 		{
 			Name:  "reset",
-			Usage: "Removes people and faces",
+			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
@@ -61,7 +62,7 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
-					Usage: "update all  faces",
+					Usage: "update all faces",
 				},
 			},
 			Action: facesUpdateAction,
@@ -183,7 +184,7 @@ func facesResetAction(ctx *cli.Context) error {
 // facesResetAllAction removes all people, faces, and face markers.
 func facesResetAllAction(ctx *cli.Context) error {
 	actionPrompt := promptui.Prompt{
-		Label:     "Permanently delete all people and faces?",
+		Label:     "Permanently remove all people and faces?",
 		IsConfirm: true,
 	}
 
@@ -259,7 +260,9 @@ func facesIndexAction(ctx *cli.Context) error {
 		}
 
 		indexed = w.Start(opt)
-	} else if w := service.Purge(); w != nil {
+	}
+
+	if w := service.Purge(); w != nil {
 		opt := photoprism.PurgeOptions{
 			Path:   subPath,
 			Ignore: indexed,
@@ -268,13 +271,13 @@ func facesIndexAction(ctx *cli.Context) error {
 		if files, photos, err := w.Start(opt); err != nil {
 			log.Error(err)
 		} else if len(files) > 0 || len(photos) > 0 {
-			log.Infof("purge: removed %d files and %d photos", len(files), len(photos))
+			log.Infof("purge: removed %s and %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"))
 		}
 	}
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %d files in %s", len(indexed), elapsed)
+	log.Infof("indexed %s in %s", english.Plural(len(indexed), "file", "files"), elapsed)
 
 	conf.Shutdown()
 
@@ -339,7 +342,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("%d face clusters merged in %s", res.Merged, elapsed)
+		log.Infof("merged %s in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
 	}
 
 	conf.Shutdown()

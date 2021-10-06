@@ -40,7 +40,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			} else if err := related.Main.ReadExifToolJson(); err != nil {
 				log.Errorf("import: %s in %s (read metadata)", txt.Quote(err.Error()), txt.Quote(related.Main.BaseName()))
 			} else {
-				log.Debugf("import: %s created", filepath.Base(jsonName))
+				log.Debugf("import: created %s", filepath.Base(jsonName))
 			}
 		}
 
@@ -122,7 +122,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				if jsonName, err := imp.convert.ToJson(f); err != nil {
 					log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 				} else {
-					log.Debugf("import: %s created", filepath.Base(jsonName))
+					log.Debugf("import: created %s", filepath.Base(jsonName))
 				}
 			}
 
@@ -131,7 +131,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), txt.Quote(fs.RelName(destMainFileName, imp.originalsPath())))
 					continue
 				} else {
-					log.Debugf("import: %s created", txt.Quote(jpegFile.BaseName()))
+					log.Debugf("import: created %s", txt.Quote(jpegFile.BaseName()))
 				}
 			}
 
@@ -178,7 +178,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 			} else {
-				log.Warnf("import: no main file for %s, conversion to jpeg failed?", fs.RelName(destMainFileName, imp.originalsPath()))
+				log.Warnf("import: found no main file for %s, conversion to jpeg may have failed", fs.RelName(destMainFileName, imp.originalsPath()))
 			}
 
 			for _, f := range related.Files {
@@ -202,7 +202,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					if jsonName, err := imp.convert.ToJson(f); err != nil {
 						log.Debugf("import: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 					} else {
-						log.Debugf("import: %s created", filepath.Base(jsonName))
+						log.Debugf("import: created %s", filepath.Base(jsonName))
 					}
 				}
 
@@ -210,7 +210,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if res.Indexed() && f.IsJpeg() {
 					if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-						log.Errorf("import: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+						log.Errorf("import: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 						query.SetFileError(res.FileUID, err.Error())
 					}
 				}

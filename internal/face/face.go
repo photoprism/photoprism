@@ -42,13 +42,13 @@ var log = event.Log
 
 // Face represents a face detected.
 type Face struct {
-	Rows       int         `json:"rows,omitempty"`
-	Cols       int         `json:"cols,omitempty"`
-	Score      int         `json:"score,omitempty"`
-	Area       Area        `json:"face,omitempty"`
-	Eyes       Areas       `json:"eyes,omitempty"`
-	Landmarks  Areas       `json:"landmarks,omitempty"`
-	Embeddings [][]float32 `json:"embeddings,omitempty"`
+	Rows       int        `json:"rows,omitempty"`
+	Cols       int        `json:"cols,omitempty"`
+	Score      int        `json:"score,omitempty"`
+	Area       Area       `json:"face,omitempty"`
+	Eyes       Areas      `json:"eyes,omitempty"`
+	Landmarks  Areas      `json:"landmarks,omitempty"`
+	Embeddings Embeddings `json:"embeddings,omitempty"`
 }
 
 // Size returns the absolute face size in pixels.
@@ -136,11 +136,19 @@ func (f *Face) RelativeLandmarksJSON() (b []byte) {
 
 // EmbeddingsJSON returns detected face embeddings as JSON array.
 func (f *Face) EmbeddingsJSON() (b []byte) {
-	var noResult = []byte("")
+	return f.Embeddings.JSON()
+}
 
-	if result, err := json.Marshal(f.Embeddings); err != nil {
-		return noResult
-	} else {
-		return result
+// HasEmbedding tests if the face has at least one embedding.
+func (f *Face) HasEmbedding() bool {
+	return len(f.Embeddings) > 0
+}
+
+// NoEmbedding tests if the face has no embeddings.
+func (f *Face) NoEmbedding() bool {
+	if f.Embeddings == nil {
+		return true
 	}
+
+	return f.Embeddings.Empty()
 }

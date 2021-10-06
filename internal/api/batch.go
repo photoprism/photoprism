@@ -66,10 +66,10 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		}
 
 		// Update precalculated photo and file counts.
-		logError("photos", entity.UpdatePhotoCounts())
+		logWarn("index", entity.UpdateCounts())
 
-		// Update album, subject, and label preview thumbs.
-		logError("photos", query.UpdatePreviews())
+		// Update album, subject, and label cover thumbs.
+		logWarn("index", query.UpdateCovers())
 
 		UpdateClientConfig()
 
@@ -128,10 +128,10 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 		}
 
 		// Update precalculated photo and file counts.
-		logError("photos", entity.UpdatePhotoCounts())
+		logWarn("index", entity.UpdateCounts())
 
-		// Update album, subject, and label preview thumbs.
-		logError("photos", query.UpdatePreviews())
+		// Update album, subject, and label cover thumbs.
+		logWarn("index", query.UpdateCovers())
 
 		UpdateClientConfig()
 
@@ -193,7 +193,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 	})
 }
 
-// BatchAlbumsDelete permanently deletes multiple albums.
+// BatchAlbumsDelete permanently removes multiple albums.
 //
 // POST /api/v1/batch/albums/delete
 func BatchAlbumsDelete(router *gin.RouterGroup) {
@@ -264,7 +264,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		}
 
 		// Update precalculated photo and file counts.
-		logError("photos", entity.UpdatePhotoCounts())
+		logWarn("index", entity.UpdateCounts())
 
 		if photos, err := query.PhotoSelection(f); err == nil {
 			for _, p := range photos {
@@ -328,7 +328,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 	})
 }
 
-// BatchPhotosDelete permanently deletes multiple photos from the archive.
+// BatchPhotosDelete permanently removes multiple photos from the archive.
 //
 // POST /api/v1/batch/photos/delete
 func BatchPhotosDelete(router *gin.RouterGroup) {
@@ -382,7 +382,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		// Any photos deleted?
 		if len(deleted) > 0 {
 			// Update precalculated photo and file counts.
-			logError("photos", entity.UpdatePhotoCounts())
+			logWarn("index", entity.UpdateCounts())
 
 			UpdateClientConfig()
 

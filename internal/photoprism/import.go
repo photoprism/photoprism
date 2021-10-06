@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	"github.com/karrick/godirwalk"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -252,8 +253,8 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		}
 
 		// Update photo counts and visibilities.
-		if err := entity.UpdatePhotoCounts(); err != nil {
-			log.Errorf("import: %s (update counts)", err)
+		if err := entity.UpdateCounts(); err != nil {
+			log.Warnf("index: %s (update counts)", err)
 		}
 	}
 

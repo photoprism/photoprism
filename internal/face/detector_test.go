@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
 )
@@ -46,7 +48,7 @@ func TestDetect(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			t.Logf("found %d faces in '%s'", len(faces), baseName)
+			t.Logf("found %s in '%s'", english.Plural(len(faces), "face", "faces"), baseName)
 
 			if len(faces) > 0 {
 				// t.Logf("results: %#v", faces)
@@ -99,7 +101,7 @@ func TestDetectOverlap(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			t.Logf("found %d faces in '%s'", len(faces), baseName)
+			t.Logf("found %s in '%s'", english.Plural(len(faces), "face", "faces"), baseName)
 
 			if len(faces) > 0 {
 				// t.Logf("results: %#v", faces)

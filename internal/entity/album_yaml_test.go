@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -85,7 +84,7 @@ func TestAlbum_LoadFromYaml(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if existingYaml, err := ioutil.ReadFile(fileName); err != nil {
+		if existingYaml, err := os.ReadFile(fileName); err != nil {
 			t.Fatal(err)
 		} else if newYaml, err := a.Yaml(); err != nil {
 			t.Fatal(err)

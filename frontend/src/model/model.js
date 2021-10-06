@@ -96,6 +96,16 @@ export class Model {
     return result;
   }
 
+  originalValue(key) {
+    if (this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
+      return this.__originalValues[key];
+    } else if (this.hasOwnProperty(key) && key !== "__originalValues") {
+      return this[key];
+    }
+
+    return null;
+  }
+
   wasChanged() {
     const changed = this.getValues(true);
 

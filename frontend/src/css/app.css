@@ -202,6 +202,8 @@ main {
 #photoprism .v-tabs .v-badge__badge {
     right: -22px;
     font-size: 9px;
-    width: 1.1rem;
+    width: auto;
+    padding: 0 0.2rem;
+    min-width: 1.1rem;
     height: 1.1rem;
 }

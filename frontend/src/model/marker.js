@@ -131,7 +131,7 @@ export class Marker extends RestModel {
   }
 
   static batchSize() {
-    return 60;
+    return 48;
   }
 
   static getCollectionResource() {

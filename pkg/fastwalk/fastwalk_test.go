@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -35,7 +34,7 @@ func formatFileModes(m map[string]os.FileMode) string {
 }
 
 func testFastWalk(t *testing.T, files map[string]string, callback func(path string, typ os.FileMode) error, want map[string]os.FileMode) {
-	tempdir, err := ioutil.TempDir("", "test-fast-walk")
+	tempdir, err := os.MkdirTemp("", "test-fast-walk")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,7 +48,7 @@ func testFastWalk(t *testing.T, files map[string]string, callback func(path stri
 		if strings.HasPrefix(contents, "LINK:") {
 			err = os.Symlink(strings.TrimPrefix(contents, "LINK:"), file)
 		} else {
-			err = ioutil.WriteFile(file, []byte(contents), 0644)
+			err = os.WriteFile(file, []byte(contents), 0644)
 		}
 		if err != nil {
 			t.Fatal(err)

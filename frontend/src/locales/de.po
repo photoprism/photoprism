@@ -37,7 +37,7 @@ msgstr "%{n} Ordner gefunden"
 msgid "%{n} labels found"
 msgstr "%{n} Kategorien gefunden"
 
-#: src/pages/people/faces.vue:357 src/pages/people/subjects.vue:348
+#: src/pages/people/faces.vue:364 src/pages/people/subjects.vue:389
 msgid "%{n} people found"
 msgstr "%{n} Personen gefunden"
 
@@ -184,7 +184,7 @@ msgstr "Alle %{n} Einträge werden angezeigt"
 msgid "All %{n} labels loaded"
 msgstr "Alle %{n} Kategorien werden angezeigt"
 
-#: src/pages/people/faces.vue:264 src/pages/people/subjects.vue:255
+#: src/pages/people/faces.vue:271 src/pages/people/subjects.vue:296
 msgid "All %{n} people loaded"
 msgstr "Alle %{n} Personen geladen"
 
@@ -330,7 +330,7 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Erstellt automatisch Alben mit besonderen Momenten, Reisen und Orten."
 
-#: src/pages/people/subjects.vue:351
+#: src/pages/people/subjects.vue:352
 msgid "Bio"
 msgstr "Biographie"
 
@@ -393,9 +393,9 @@ msgstr "Limit erreicht, bitte Suche eingrenzen"
 #: src/common/clipboard.js:105 src/common/clipboard.js:142
 #: src/pages/albums.vue:387 src/pages/albums.vue:403 src/pages/labels.vue:182
 #: src/pages/labels.vue:198 src/pages/library/files.vue:193
-#: src/pages/library/files.vue:209 src/pages/people/faces.vue:200
-#: src/pages/people/faces.vue:216 src/pages/people/subjects.vue:191
-#: src/pages/people/subjects.vue:207 src/share/albums.vue:345
+#: src/pages/library/files.vue:209 src/pages/people/faces.vue:207
+#: src/pages/people/faces.vue:223 src/pages/people/subjects.vue:232
+#: src/pages/people/subjects.vue:248 src/share/albums.vue:345
 #: src/share/albums.vue:361
 msgid "Can't select more items"
 msgstr "Maximale Anzahl wurde selektiert"
@@ -1302,6 +1302,10 @@ msgstr "Bildbereich"
 msgid "Medium"
 msgstr "Mittel"
 
+#: src/dialog/people/merge.vue:25
+msgid "Merge %{a} with %{b}?"
+msgstr "%{a} und %{b} zusammenfassen?"
+
 #: src/pages/about/feedback.vue:27
 msgid "Message sent"
 msgstr "Nachricht versendet"
@@ -1335,7 +1339,7 @@ msgstr "Moonlight"
 msgid "More than 20 albums found"
 msgstr "Mehr als 20 Alben gefunden"
 
-#: src/pages/people/faces.vue:360
+#: src/pages/people/faces.vue:367
 msgid "More than 20 faces found"
 msgstr "Mehr als 20 Gesichter gefunden"
 
@@ -1343,7 +1347,7 @@ msgstr "Mehr als 20 Gesichter gefunden"
 msgid "More than 20 labels found"
 msgstr "Mehr als 20 Labels gefunden"
 
-#: src/pages/people/subjects.vue:351
+#: src/pages/people/subjects.vue:392
 msgid "More than 20 people found"
 msgstr "Mehr als 20 Personen gefunden"
 
@@ -1373,19 +1377,19 @@ msgstr "Dateien verschieben"
 #: src/dialog/album/edit.vue:106 src/dialog/photo/files.vue:70
 #: src/dialog/photo/files.vue:67 src/dialog/photo/files.vue:30
 #: src/dialog/photo/info.vue:31 src/dialog/photo/labels.vue:48
-#: src/dialog/photo/people.vue:18 src/dialog/photo/people.vue:228
+#: src/dialog/photo/people.vue:19 src/dialog/photo/people.vue:229
 #: src/pages/about/feedback.vue:144 src/pages/labels.vue:337
-#: src/pages/login.vue:73 src/pages/people/faces.vue:46
-#: src/pages/people/faces.vue:312 src/pages/people/subjects.vue:314
+#: src/pages/login.vue:73 src/pages/people/faces.vue:47
+#: src/pages/people/faces.vue:310 src/pages/people/subjects.vue:315
 #: src/share/photo/cards.vue:30 src/share/photo/list.vue:34
 #: src/share/photo/list.vue:216
 msgid "Name"
 msgstr "Name"
 
 #: src/component/album/toolbar.vue:52 src/dialog/album/edit.vue:24
-#: src/dialog/photo/labels.vue:22 src/dialog/photo/people.vue:21
+#: src/dialog/photo/labels.vue:22 src/dialog/photo/people.vue:22
 #: src/pages/labels.vue:38 src/pages/library/files.vue:40
-#: src/pages/people/faces.vue:40 src/pages/people/subjects.vue:39
+#: src/pages/people/faces.vue:41 src/pages/people/subjects.vue:40
 msgid "Name too long"
 msgstr "Name zu  lang"
 
@@ -1407,9 +1411,10 @@ msgstr "Neues Passwort"
 msgid "Newest first"
 msgstr "Neueste zuerst"
 
-#: src/dialog/photo/archive.vue:15 src/dialog/photo/info.vue:284
-#: src/dialog/photo/info.vue:305 src/dialog/photo/info.vue:325
-#: src/dialog/photo/info.vue:345 src/dialog/photo/info.vue:365
+#: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15
+#: src/dialog/photo/info.vue:284 src/dialog/photo/info.vue:305
+#: src/dialog/photo/info.vue:325 src/dialog/photo/info.vue:345
+#: src/dialog/photo/info.vue:365
 msgid "No"
 msgstr "Nein"
 
@@ -1428,8 +1433,8 @@ msgid "No labels found"
 msgstr "Keine Kategorien gefunden"
 
 #: src/dialog/photo/people.vue:5 src/pages/people/faces.vue:23
-#: src/pages/people/faces.vue:353 src/pages/people/subjects.vue:26
-#: src/pages/people/subjects.vue:344
+#: src/pages/people/faces.vue:360 src/pages/people/subjects.vue:26
+#: src/pages/people/subjects.vue:385
 msgid "No people found"
 msgstr "Keine Personen gefunden"
 
@@ -1550,7 +1555,7 @@ msgstr "Ein Ordner gefunden"
 msgid "One label found"
 msgstr "Eine Kategorie gefunden"
 
-#: src/pages/people/faces.vue:355 src/pages/people/subjects.vue:346
+#: src/pages/people/faces.vue:362 src/pages/people/subjects.vue:387
 msgid "One person found"
 msgstr "Eine Person gefunden"
 
@@ -1826,7 +1831,7 @@ msgstr "Rot"
 #: src/component/album/toolbar.vue:54 src/component/photo/toolbar.vue:57
 #: src/dialog/reload.vue:15 src/pages/albums.vue:134 src/pages/labels.vue:91
 #: src/pages/library/errors.vue:69 src/pages/library/files.vue:100
-#: src/pages/people/faces.vue:67 src/pages/people/subjects.vue:97
+#: src/pages/people/faces.vue:67 src/pages/people/subjects.vue:98
 msgid "Reload"
 msgstr "Neu laden"
 
@@ -1909,7 +1914,7 @@ msgstr "Scans"
 #: src/component/navigation.vue:4 src/component/navigation.vue:280
 #: src/component/photo/toolbar.vue:48 src/pages/albums.vue:109
 #: src/pages/labels.vue:81 src/pages/library/errors.vue:60
-#: src/pages/people/subjects.vue:80 src/pages/places.vue:30 src/routes.js:107
+#: src/pages/people/subjects.vue:81 src/pages/places.vue:30 src/routes.js:107
 msgid "Search"
 msgstr "Suche"
 
@@ -2166,7 +2171,7 @@ msgstr "Aufgenommen"
 msgid "Teal"
 msgstr "Blaugrün"
 
-#: src/dialog/photo/details.vue:26 src/pages/people/faces.vue:49
+#: src/dialog/photo/details.vue:26 src/pages/people/faces.vue:50
 msgid "Text too long"
 msgstr "Text ist zu lang"
 
@@ -2446,12 +2451,13 @@ msgstr "Gelb"
 msgid "Yellowstone"
 msgstr "Yellowstone"
 
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/files.vue:103
-#: src/dialog/photo/files.vue:111 src/dialog/photo/files.vue:157
-#: src/dialog/photo/files.vue:100 src/dialog/photo/files.vue:108
-#: src/dialog/photo/files.vue:154 src/dialog/photo/info.vue:284
-#: src/dialog/photo/info.vue:305 src/dialog/photo/info.vue:325
-#: src/dialog/photo/info.vue:345 src/dialog/photo/info.vue:365
+#: src/dialog/people/merge.vue:18 src/dialog/photo/archive.vue:18
+#: src/dialog/photo/files.vue:103 src/dialog/photo/files.vue:111
+#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:100
+#: src/dialog/photo/files.vue:108 src/dialog/photo/files.vue:154
+#: src/dialog/photo/info.vue:284 src/dialog/photo/info.vue:305
+#: src/dialog/photo/info.vue:325 src/dialog/photo/info.vue:345
+#: src/dialog/photo/info.vue:365
 msgid "Yes"
 msgstr "Ja"
 

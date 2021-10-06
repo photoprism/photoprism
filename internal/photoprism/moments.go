@@ -55,10 +55,10 @@ func (w *Moments) Start() (err error) {
 		threshold = int(math.Log2(float64(indexSize))) + 1
 	}
 
-	log.Debugf("moments: index contains %d photos and %d videos, using threshold %d", counts.Photos, counts.Videos, threshold)
+	log.Debugf("moments: analyzing %d photos / %d videos, using threshold %d", counts.Photos, counts.Videos, threshold)
 
 	if indexSize < threshold {
-		log.Debugf("moments: nothing to do, index size is smaller than threshold")
+		log.Debugf("moments: not enough files")
 
 		return nil
 	}

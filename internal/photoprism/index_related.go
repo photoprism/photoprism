@@ -12,7 +12,7 @@ import (
 func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
 	// Skip sidecar files without related media file.
 	if related.Main == nil {
-		result.Err = fmt.Errorf("index: no main file found for %s", txt.Quote(related.String()))
+		result.Err = fmt.Errorf("index: found no main file for %s", txt.Quote(related.String()))
 		result.Status = IndexFailed
 		return result
 	}
@@ -31,7 +31,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		if jsonName, err := ind.convert.ToJson(f); err != nil {
 			log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 		} else {
-			log.Debugf("index: %s created", filepath.Base(jsonName))
+			log.Debugf("index: created %s", filepath.Base(jsonName))
 		}
 	}
 
@@ -42,10 +42,10 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 			return result
 		} else {
-			log.Debugf("index: %s created", txt.Quote(jpegFile.BaseName()))
+			log.Debugf("index: created %s", txt.Quote(jpegFile.BaseName()))
 
 			if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
-				result.Err = fmt.Errorf("index: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+				result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 				result.Status = IndexFailed
 
 				return result
@@ -59,7 +59,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 	if result.Indexed() && f.IsJpeg() {
 		if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-			log.Errorf("index: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+			log.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 			query.SetFileError(result.FileUID, err.Error())
 		}
 	}
@@ -112,7 +112,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			if jsonName, err := ind.convert.ToJson(f); err != nil {
 				log.Debugf("index: %s in %s (extract metadata)", txt.Quote(err.Error()), txt.Quote(f.BaseName()))
 			} else {
-				log.Debugf("index: %s created", filepath.Base(jsonName))
+				log.Debugf("index: created %s", filepath.Base(jsonName))
 			}
 		}
 
@@ -123,10 +123,10 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 				return result
 			} else {
-				log.Debugf("index: %s created", txt.Quote(jpegFile.BaseName()))
+				log.Debugf("index: created %s", txt.Quote(jpegFile.BaseName()))
 
 				if err := jpegFile.ResampleDefault(ind.thumbPath(), false); err != nil {
-					result.Err = fmt.Errorf("index: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+					result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 					result.Status = IndexFailed
 
 					return result
@@ -140,7 +140,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 
 		if res.Indexed() && f.IsJpeg() {
 			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
-				log.Errorf("index: failed creating thumbs for %s (%s)", txt.Quote(f.BaseName()), err.Error())
+				log.Errorf("index: failed creating thumbnails for %s (%s)", txt.Quote(f.BaseName()), err.Error())
 				query.SetFileError(res.FileUID, err.Error())
 			}
 		}

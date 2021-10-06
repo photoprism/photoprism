@@ -526,10 +526,10 @@ func DownloadAlbum(router *gin.RouterGroup) {
 				}
 				log.Infof("download: added %s as %s", txt.Quote(file.FileName), txt.Quote(alias))
 			} else {
-				log.Errorf("download: file %s is missing", txt.Quote(file.FileName))
+				log.Errorf("download: failed finding %s", txt.Quote(file.FileName))
 			}
 		}
 
-		log.Infof("download: album zip %s created in %s", txt.Quote(zipFileName), time.Since(start))
+		log.Infof("download: created %s [%s]", txt.Quote(zipFileName), time.Since(start))
 	})
 }

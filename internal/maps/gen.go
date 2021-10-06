@@ -6,7 +6,6 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"strings"
 	"text/template"
@@ -20,7 +19,7 @@ type Country struct {
 var countries []Country
 
 func main() {
-	rawData, err := ioutil.ReadFile("./countries.json")
+	rawData, err := os.ReadFile("./countries.json")
 
 	if err != nil {
 		panic(err)

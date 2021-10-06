@@ -64,7 +64,7 @@ func SharePreview(router *gin.RouterGroup) {
 
 		var f form.PhotoSearch
 
-		// Previews may only contain public content in shared albums.
+		// Covers may only contain public content in shared albums.
 		f.Album = share
 		f.Public = true
 		f.Private = false

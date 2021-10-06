@@ -2,17 +2,18 @@ package search
 
 import (
 	"fmt"
+	"path"
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
-	"github.com/photoprism/photoprism/pkg/fs"
-
+	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/pluscode"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -41,19 +42,12 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 	// Clip to reasonable size and normalize operators.
 	f.Query = txt.NormalizeQuery(f.Query)
 
-	// Modify query if it contains subject names.
-	if f.Query != "" && f.Subject == "" {
-		if subj, names, remaining := SubjectUIDs(f.Query); len(subj) > 0 {
-			f.Subject = strings.Join(subj, txt.And)
-			log.Debugf("search: subject %s", txt.Quote(strings.Join(names, ", ")))
-			f.Query = remaining
-		}
-	}
-
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
-		f.Name = fs.StripKnownExt(f.Query) + "*"
-		f.Query = ""
+		if f.Title == "" {
+			f.Title = fmt.Sprintf("%s*", strings.Trim(f.Query, "%*"))
+			f.Query = ""
+		}
 	} else if len(terms) > 0 {
 		switch {
 		case terms["faces"]:
@@ -226,17 +220,28 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
-		} else if strings.Contains(p, txt.Or) {
-			s = s.Where("photos.photo_path IN (?)", strings.Split(p, txt.Or))
 		} else {
-			s = s.Where("photos.photo_path LIKE ?", strings.ReplaceAll(p, "*", "%"))
+			where, values := OrLike("photos.photo_path", p)
+			s = s.Where(where, values...)
 		}
 	}
 
-	if strings.Contains(f.Name, txt.Or) {
-		s = s.Where("photos.photo_name IN (?)", strings.Split(f.Name, txt.Or))
-	} else if f.Name != "" {
-		s = s.Where("photos.photo_name LIKE ?", strings.ReplaceAll(fs.StripKnownExt(f.Name), "*", "%"))
+	// Filter by primary file name without path and extension.
+	if f.Name != "" {
+		where, names := OrLike("photos.photo_name", f.Name)
+
+		// Omit file path and known extensions.
+		for i := range names {
+			names[i] = fs.StripKnownExt(path.Base(names[i].(string)))
+		}
+
+		s = s.Where(where, names...)
+	}
+
+	// Filter by photo title.
+	if f.Title != "" {
+		where, values := OrLike("photos.photo_title", f.Title)
+		s = s.Where(where, values...)
 	}
 
 	// Filter by status.
@@ -297,7 +302,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		return results, result.Error
 	}
 
-	log.Infof("geo: found %d photos for %s [%s]", len(results), f.SerializeAll(), time.Since(start))
+	log.Infof("geo: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 	return results, nil
 }

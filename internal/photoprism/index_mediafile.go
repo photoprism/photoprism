@@ -213,7 +213,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	if !fileExists || file.FileHash == "" || file.FileHash == fileHash {
 		// Do nothing.
 	} else if err := file.ReplaceHash(fileHash); err != nil {
-		log.Errorf("index: %s while updating previews of %s", err, logName)
+		log.Errorf("index: %s while updating covers of %s", err, logName)
 	}
 
 	photo.PhotoPath = filePath
@@ -229,7 +229,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	// Flag first JPEG as primary file for this photo.
 	if !file.FilePrimary {
 		if photoExists {
-			if q := entity.UnscopedDb().Where("file_type = 'jpg' AND file_primary = 1 AND photo_id = ?", photo.ID).First(&primaryFile); q.Error != nil {
+			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type = 'jpg' AND file_error = ''", photo.ID).First(&primaryFile); res.Error != nil {
 				file.FilePrimary = m.IsJpeg()
 			}
 		} else {
@@ -262,7 +262,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	extraLabels := classify.Labels{}
 
 	// Detect faces in images?
-	if o.FacesOnly && (!photoExists || !fileExists || !file.FilePrimary) {
+	if o.FacesOnly && (!photoExists || !fileExists || !file.FilePrimary || file.FileError != "") {
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result
@@ -298,8 +298,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	case m.IsJpeg():
 		// Color information
 		if p, err := m.Colors(Config().ThumbPath()); err != nil {
-			log.Errorf("index: %s in %s (detect colors)", err.Error(), logName)
+			log.Debugf("%s while detecting colors", err.Error())
 			file.FileError = err.Error()
+			file.FilePrimary = false
 		} else {
 			file.FileMainColor = p.MainColor.Name()
 			file.FileColors = p.Colors.Hex()
@@ -633,9 +634,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
 		if details.Keywords != "" {
-			log.Tracef("index: set keywords %s for %s", details.Keywords, logName)
+			log.Tracef("index: using keywords %s for %s", details.Keywords, logName)
 		} else {
-			log.Tracef("index: no keywords for %s", logName)
+			log.Tracef("index: found no keywords for %s", logName)
 		}
 
 		photo.PhotoQuality = photo.QualityScore()

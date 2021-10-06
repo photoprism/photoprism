@@ -125,3 +125,21 @@ func TestNo(t *testing.T) {
 		assert.Equal(t, false, No(""))
 	})
 }
+
+func TestNew(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, false, New(""))
+	})
+	t.Run("Uppercase", func(t *testing.T) {
+		assert.Equal(t, true, New("NEW"))
+	})
+	t.Run("Lowercase", func(t *testing.T) {
+		assert.Equal(t, true, New("new"))
+	})
+	t.Run("True", func(t *testing.T) {
+		assert.Equal(t, true, New("New"))
+	})
+	t.Run("False", func(t *testing.T) {
+		assert.Equal(t, false, New("non"))
+	})
+}

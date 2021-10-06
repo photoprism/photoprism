@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -187,7 +186,7 @@ func (c *Config) Load() error {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	yamlConfig, err := ioutil.ReadFile(c.FileName)
+	yamlConfig, err := os.ReadFile(c.FileName)
 
 	if err != nil {
 		return err
@@ -228,7 +227,7 @@ func (c *Config) Save() error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(c.FileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(c.FileName, data, os.ModePerm); err != nil {
 		return err
 	}
 

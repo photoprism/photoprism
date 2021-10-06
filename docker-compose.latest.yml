@@ -10,7 +10,8 @@ services:
     ports:
       - "2344:2342" # [server]:[container]
     environment:
-      UID: ${UID:-1000}
+      PHOTOPRISM_UID: ${UID:-1000}
+      PHOTOPRISM_GID: ${GID:-1000}
       PHOTOPRISM_SITE_URL: "http://localhost:2344/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
@@ -30,6 +31,7 @@ services:
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # The initial admin password (min 4 characters)
+      PHOTOPRISM_DISABLE_CHOWN: "false"       # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"     # Don't backup photo and album metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"    # Disables Settings in Web UI

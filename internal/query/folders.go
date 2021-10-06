@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -32,7 +33,7 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	return folders, nil
 }
 
-// FolderCoverByUID returns a folder preview file based on the uid.
+// FolderCoverByUID returns a folder cover file based on the uid.
 func FolderCoverByUID(uid string) (file entity.File, err error) {
 	if err := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type = 'jpg' AND files.deleted_at IS NULL").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
@@ -63,6 +64,9 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 
 // UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
 func UpdateFolderDates() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	switch DbDialect() {
 	case MySQL:
 		return UnscopedDb().Exec(`UPDATE folders

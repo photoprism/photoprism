@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
@@ -124,7 +124,7 @@ func restoreAction(ctx *cli.Context) error {
 
 		log.Infof("restoring index from %s", txt.Quote(indexFileName))
 
-		sqlBackup, err := ioutil.ReadFile(indexFileName)
+		sqlBackup, err := os.ReadFile(indexFileName)
 
 		if err != nil {
 			return err

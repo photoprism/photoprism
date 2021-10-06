@@ -5,7 +5,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -35,10 +34,10 @@ func main() {
 	fileName := "rules.yml"
 
 	if !fs.FileExists(fileName) {
-		log.Panicf("classify: label rules not found in %s", txt.Quote(filepath.Base(fileName)))
+		log.Panicf("classify: found no label rules in %s", txt.Quote(filepath.Base(fileName)))
 	}
 
-	yamlConfig, err := ioutil.ReadFile(fileName)
+	yamlConfig, err := os.ReadFile(fileName)
 
 	if err != nil {
 		panic(err)

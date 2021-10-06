@@ -57,7 +57,7 @@ if ! command -v docker-compose &> /dev/null; then
 fi
 
 # create user
-useradd photoprism -u 1000 -G docker -o -m -d /opt/photoprism || echo "User 'photoprism' already exists. Proceeding."
+useradd -o -m -U -u 1000 -G docker -d /opt/photoprism photoprism || echo "User 'photoprism' already exists. Proceeding."
 mkdir -p /opt/photoprism/originals /opt/photoprism/import /opt/photoprism/storage /opt/photoprism/backup \
       /opt/photoprism/database /opt/photoprism/traefik /opt/photoprism/certs
 

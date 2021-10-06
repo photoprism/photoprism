@@ -49,6 +49,15 @@ describe("common/config", () => {
     assert.equal(config.values.settings.ui.language, "en");
   });
 
+  it("should test constructor with empty values", () => {
+    const storage = new StorageShim();
+    const values = {};
+    const config = new Config(storage, values);
+    assert.equal(config.debug, true);
+    assert.equal(config.demo, false);
+    assert.equal(config.apiUri, "/api/v1");
+  });
+
   it("should store values", () => {
     const storage = new StorageShim();
     const values = { siteTitle: "Foo", country: "Germany", city: "Hamburg" };
@@ -79,6 +88,93 @@ describe("common/config", () => {
     assert.equal(config2.feature("places"), true);
     assert.equal(config2.feature("download"), true);
   });
+
+  it("should test get name", () => {
+    const result = config2.getPerson("a");
+    assert.equal(result, null);
+
+    const result2 = config2.getPerson("Andrea Sander");
+    assert.equal(result2.UID, "jr0jgyx2viicdnf7");
+
+    const result3 = config2.getPerson("Otto Sander");
+    assert.equal(result3.UID, "jr0jgyx2viicdn88");
+  });
+
+  it("should create, update and delete people", () => {
+    const storage = new StorageShim();
+    const values = { Debug: true, siteTitle: "Foo", country: "Germany", city: "Hamburg" };
+
+    const config = new Config(storage, values);
+    config.onPeople(".created");
+    assert.empty(config.values.people);
+    config.onPeople(".created", {
+      entities: [
+        {
+          UID: "abc123",
+          Name: "Test Name",
+          Keywords: ["Test", "Name"],
+        },
+      ],
+    });
+    assert.equal(config.values.people[0].Name, "Test Name");
+    config.onPeople(".updated", {
+      entities: [
+        {
+          UID: "abc123",
+          Name: "New Name",
+          Keywords: ["New", "Name"],
+        },
+      ],
+    });
+    assert.equal(config.values.people[0].Name, "New Name");
+    config.onPeople(".deleted", {
+      entities: [
+        {
+          UID: "abc123",
+          Name: "New Name",
+          Keywords: ["New", "Name"],
+        },
+      ],
+    });
+    assert.equal(config.values.people[0].Name, "New Name");
+  });
+
+  it("should return if language is rtl", () => {
+    const result = config2.rtl();
+    assert.equal(result, false);
+    const storage = new StorageShim();
+    const values = {
+      Debug: true,
+      siteTitle: "Foo",
+      country: "Germany",
+      city: "Hamburg",
+      settings: {
+        ui: {
+          language: "he",
+        },
+      },
+    };
+    const config = new Config(storage, values);
+    const result2 = config.rtl();
+    assert.equal(result2, true);
+    const values2 = { siteTitle: "Foo", country: "Germany", city: "Hamburg" };
+    const config3 = new Config(storage, values2);
+    const result3 = config3.rtl();
+    assert.equal(result3, false);
+  });
+
+  it("should return album categories", () => {
+    const myConfig = new Config(new StorageShim(), Object.assign({}, window.__CONFIG__));
+    const result = myConfig.albumCategories();
+    assert.equal(result[0], "Animal");
+    const newValues = {
+      albumCategories: ["Mouse"],
+    };
+    myConfig.setValues(newValues);
+    const result2 = myConfig.albumCategories();
+    assert.equal(result2[0], "Mouse");
+  });
+
   //TODO
   /*it.only("should test onCount",  () => {
         const items = [{}, {}, {}];

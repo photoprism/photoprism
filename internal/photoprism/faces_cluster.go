@@ -3,6 +3,8 @@ package photoprism
 import (
 	"fmt"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
@@ -17,16 +19,16 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 
 	// Skip clustering if index contains no new face markers, and force option isn't set.
 	if opt.Force {
-		log.Infof("faces: forced clustering")
-	} else if n := query.CountNewFaceMarkers(face.ClusterMinSize, face.ClusterMinScore); n < opt.SampleThreshold() {
-		log.Debugf("faces: skipping clustering")
+		log.Infof("faces: enforced clustering")
+	} else if n := query.CountNewFaceMarkers(face.ClusterSizeThreshold, face.ClusterScoreThreshold); n < opt.SampleThreshold() {
+		log.Debugf("faces: skipped clustering")
 		return added, nil
 	}
 
 	// Fetch unclustered face embeddings.
-	embeddings, err := query.Embeddings(false, true, face.ClusterMinSize, face.ClusterMinScore)
+	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold)
 
-	log.Debugf("faces: %d unclustered samples found", len(embeddings))
+	log.Debugf("faces: found %s", english.Plural(len(embeddings), "unclustered sample", "unclustered samples"))
 
 	// Anything that keeps us from doing this?
 	if err != nil {
@@ -40,22 +42,22 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
 		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
 			return added, err
-		} else if err = c.Learn(embeddings); err != nil {
+		} else if err = c.Learn(embeddings.Float64()); err != nil {
 			return added, err
 		}
 
 		sizes := c.Sizes()
 
-		if len(sizes) > 1 {
-			log.Infof("faces: found %d new clusters", len(sizes))
+		if len(sizes) > 0 {
+			log.Infof("faces: found %s", english.Plural(len(sizes), "new cluster", "new clusters"))
 		} else {
 			log.Debugf("faces: found no new clusters")
 		}
 
-		results := make([]entity.Embeddings, len(sizes))
+		results := make([]face.Embeddings, len(sizes))
 
 		for i := range sizes {
-			results[i] = entity.Embeddings{}
+			results[i] = face.Embeddings{}
 		}
 
 		guesses := c.Guesses()
@@ -73,7 +75,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 				log.Errorf("faces: face should not be nil - bug?")
 			} else if err := f.Create(); err == nil {
 				added = append(added, *f)
-				log.Debugf("faces: added cluster %s based on %d samples, radius %f", f.ID, f.Samples, f.SampleRadius)
+				log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)
 			} else if err := f.Updates(entity.Values{"UpdatedAt": entity.TimeStamp()}); err != nil {
 				log.Errorf("faces: %s", err)
 			} else {

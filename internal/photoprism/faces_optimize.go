@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
 )
 
@@ -26,7 +27,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
-		if faces, err = query.ManuallyAddedFaces(); err != nil {
+		if faces, err = query.ManuallyAddedFaces(false); err != nil {
 			return result, err
 		} else if n := len(faces) - 1; n < 1 {
 			// Need at least 2 faces to optimize.
@@ -47,7 +48,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 				}
 
 				merge = nil
-			} else if ok, dist := merge[0].Match(entity.Embeddings{faces[j].Embedding()}); ok {
+			} else if ok, dist := merge[0].Match(face.Embeddings{faces[j].Embedding()}); ok {
 				log.Debugf("faces: can merge %s with %s, subject %s, dist %f", merge[0].ID, faces[j].ID, merge[0].SubjUID, dist)
 				merge = append(merge, faces[j])
 			} else if len(merge) == 1 {

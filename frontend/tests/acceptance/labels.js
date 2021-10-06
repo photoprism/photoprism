@@ -194,3 +194,27 @@ test.meta("testID", "labels-004")("Delete label", async (t) => {
     .typeText(Selector(".input-label input"), "Dome")
     .click(Selector("button.p-photo-label-add"));
 });
+
+/*Does not work on sqlite
+test.skip("testID", "labels-005")("Check label count", async (t) => {
+  await page.openNav();
+  await t.click(Selector(".nav-labels"));
+  await page.search("cat");
+  const LabelCat = await Selector("a.is-label", { timeout: 55000 }).nth(0).getAttribute("data-uid");
+  const CatCaption = await Selector("a[data-uid=" + LabelCat + "] div.caption").innerText;
+  console.log(CatCaption);
+  await t.click(Selector("a.is-label").withAttribute("data-uid", LabelCat));
+  const countPhotosCat = await Selector("div.is-photo").count;
+  await t.expect(CatCaption).contains(countPhotosCat.toString());
+  console.log(countPhotosCat);
+  await page.openNav();
+  await t.click(Selector(".nav-labels"));
+  await page.search("people");
+  const LabelPeople = await Selector("a.is-label", { timeout: 55000 }).nth(0).getAttribute("data-uid");
+  const PeopleCaption = await Selector("a[data-uid=" + LabelCat + "] div.caption").innerText;
+  console.log(PeopleCaption);
+  await t.click(Selector("a.is-label").withAttribute("data-uid", LabelPeople));
+  const countPhotosPeople = await Selector("div.is-photo").count;
+  await t.expect(CatCaption).contains(countPhotosPeople.toString());
+  console.log(countPhotosPeople);
+});*/

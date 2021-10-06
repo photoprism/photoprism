@@ -26,6 +26,32 @@ func TestPurgeOrphans(t *testing.T) {
 	}
 }
 
+func TestPurgeOrphanFiles(t *testing.T) {
+	files, err := OrphanFiles()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.IsType(t, entity.Files{}, files)
+
+	t.Logf("%d oprhan files: %#v", len(files), files)
+
+	if count, err := PurgeOrphanFiles(); err != nil {
+		t.Fatal(err)
+	} else if l := len(files); l != count {
+		t.Errorf("found and removed files must match: %d <> %d", l, count)
+	} else {
+		t.Logf("removed %d orphan files", count)
+	}
+
+	if result, err := OrphanFiles(); err != nil {
+		t.Fatal(err)
+	} else if len(result) != 0 {
+		t.Errorf("there should be no more orphan files")
+	}
+}
+
 func TestPurgeFileDuplicates(t *testing.T) {
 	fileName := "hd89e5yhb8p9h.jpg"
 

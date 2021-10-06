@@ -80,8 +80,20 @@ test.meta("testID", "people-002")("Add + Rename", async (t) => {
     .click(Selector("#tab-people"))
     .expect(Selector("div.input-name input").nth(0).value)
     .contains("Jane Doe")
-    .typeText(Selector("div.input-name input").nth(0), "Max Mu", { replace: true })
+    .click("button.action-close");
+  await page.openNav();
+  await t
+    .click(Selector(".nav-people"))
+    .click(Selector("a[data-uid=" + JaneUID + "] div.v-card__title"))
+    .typeText(Selector("div.input-rename input"), "Max Mu", { replace: true })
     .pressKey("enter")
+    .expect(Selector("a[data-uid=" + JaneUID + "] div.v-card__title").innerText)
+    .contains("Max Mu")
+    .click(Selector("a.is-subject").withAttribute("data-uid", JaneUID));
+  await t.eval(() => location.reload());
+  await page.editSelected();
+  await t
+    .click(Selector("#tab-people"))
     .expect(Selector("div.input-name input").nth(0).value)
     .contains("Max Mu")
     .click("button.action-next")
@@ -99,35 +111,6 @@ test.meta("testID", "people-002")("Add + Rename", async (t) => {
     .pressKey("enter");
   const countPhotosSubjectAfterRename = await Selector("div.is-photo").count;
   await t.expect(countPhotosSubjectAfterRename).eql(countPhotosSubject);
-  await page.openNav();
-  await t
-    .click(Selector(".nav-people"))
-    .expect(Selector("a[data-uid=" + JaneUID + "] div.v-card__title").innerText)
-    .contains("Max Mu")
-    .click(Selector("a[data-uid=" + JaneUID + "] div.v-card__title"))
-    .typeText(Selector("div.input-rename input"), "Jane Mu", { replace: true })
-    .pressKey("enter")
-    .expect(Selector("a[data-uid=" + JaneUID + "] div.v-card__title").innerText)
-    .contains("Jane Mu")
-    .click(Selector("a.is-subject").withAttribute("data-uid", JaneUID))
-    .expect(Selector("div.input-search input").value)
-    .contains("person:jane-mu");
-  await page.toggleSelectNthPhoto(0);
-  await page.toggleSelectNthPhoto(1);
-  await page.toggleSelectNthPhoto(2);
-  await page.editSelected();
-  await t
-    .click(Selector("#tab-people"))
-    .expect(Selector("div.input-name input").nth(0).value)
-    .contains("Jane Mu")
-    .click("button.action-next")
-    .expect(Selector("div.input-name input").nth(0).value)
-    .contains("Jane Mu")
-    .click("button.action-next")
-    .expect(Selector("div.input-name input").nth(0).value)
-    .contains("Jane Mu")
-    .click("button.action-close");
-  await page.clearSelection();
 });
 
 test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
@@ -148,25 +131,9 @@ test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
     .click(Selector("#tab-people-subjects > a"));
   await t.typeText(Selector("div.input-search input"), "Andrea").pressKey("enter");
   const AndreaUID = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
-  await page.search("face:new filmpreis");
-  await page.toggleSelectNthPhoto(0);
-  await page.editSelected();
-  await t
-    .click(Selector("#tab-people"))
-    .expect(Selector("div.input-name input").nth(0).value)
-    .eql("")
-    .typeText(Selector("div.input-name input").nth(0), "Andrea Doe", { replace: true })
-    .click(Selector("div").withText("Andrea Doe"))
-    .expect(Selector("div.input-name input").nth(0).value)
-    .contains("Andrea Doe")
-    .click("button.action-close");
-  await page.clearSelection();
-  await page.openNav();
-  await t
-    .click(Selector(".nav-people"))
-    .click(Selector("a.is-subject").withAttribute("data-uid", AndreaUID));
+  await t.click(Selector("a.is-subject").withAttribute("data-uid", AndreaUID));
+  await t.eval(() => location.reload());
+  await t.wait(6000);
   const countPhotosAndreaAfterAdd = await Selector("div.is-photo").count;
   await page.toggleSelectNthPhoto(1);
   await page.editSelected();
@@ -186,10 +153,12 @@ test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
   const countPhotosAndreaAfterReject = await Selector("div.is-photo").count;
   const Diff = countPhotosAndreaAfterAdd - countPhotosAndreaAfterReject;
   await t
-    .typeText(Selector("div.input-search input"), "Nicole", { replace: true })
+    .typeText(Selector("div.input-search input"), "person:nicole", { replace: true })
     .pressKey("enter");
+  await t.eval(() => location.reload());
+  await t.wait(6000);
   const countPhotosNicole = await Selector("div.is-photo").count;
-  await t.expect(countPhotosNicole).eql(Diff);
+  await t.expect(Diff).eql(countPhotosNicole);
   await page.openNav();
   await t
     .click(Selector(".nav-people"))

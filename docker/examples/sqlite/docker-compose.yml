@@ -43,7 +43,7 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     # Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
-    # user: "1000"
+    # user: "1000:1000"
     ports:
       - "2342:2342" # [server]:[container]
     environment:
@@ -54,6 +54,7 @@ services:
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"               # Enables experimental features
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables all features depending on TensorFlow
@@ -68,11 +69,13 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      HOME: "/photoprism"
       # Set a non-root user, group, or custom umask if your Docker environment doesn't support this natively:
-      # UID: 1000
-      # GID: 1000
-      # UMASK: 0000
+      # PHOTOPRISM_UID: 1000
+      # PHOTOPRISM_GID: 1000
+      # PHOTOPRISM_UMASK: 0000
+      # Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
+      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
+      HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
       # Your photo and video files ([local path]:[container path]):

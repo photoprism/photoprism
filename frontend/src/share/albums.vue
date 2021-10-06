@@ -31,7 +31,7 @@
         <v-layout row wrap class="search-results album-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(album, index) in results"
-              :key="index"
+              :key="album.UID"
               xs6 sm4 md3 xlg2 xxl1 d-flex
           >
             <v-card tile

@@ -51,6 +51,7 @@ export class Subject extends RestModel {
       Private: false,
       Excluded: false,
       FileCount: 0,
+      PhotoCount: 0,
       Thumb: "",
       ThumbSrc: "",
       Metadata: {},
@@ -124,7 +125,7 @@ export class Subject extends RestModel {
   }
 
   static batchSize() {
-    return 480;
+    return 60;
   }
 
   static getCollectionResource() {

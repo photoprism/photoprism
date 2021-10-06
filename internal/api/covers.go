@@ -76,7 +76,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		f, err := query.AlbumCoverByUID(uid)
 
 		if err != nil {
-			log.Debugf("%s: no photos yet, using generic image for %s", albumCover, uid)
+			log.Debugf("%s: %s contains no photos, using generic cover", albumCover, uid)
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
@@ -84,7 +84,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: could not find original for %s", albumCover, fileName)
+			log.Errorf("%s: found no original for %s", albumCover, fileName)
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

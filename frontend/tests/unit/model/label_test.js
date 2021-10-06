@@ -59,6 +59,25 @@ describe("model/label", () => {
     const label = new Label(values);
     const result = label.thumbnailUrl("xyz");
     assert.equal(result, "/api/v1/t/c6b24d688564f7ddc7b245a414f003a8d8ff5a67/public/xyz");
+
+    const values2 = {
+      ID: 5,
+      UID: "ABC123",
+      Name: "Black Cat",
+      Slug: "black-cat",
+    };
+    const label2 = new Label(values2);
+    const result2 = label2.thumbnailUrl("xyz");
+    assert.equal(result2, "/api/v1/labels/ABC123/t/public/xyz");
+
+    const values3 = {
+      ID: 5,
+      Name: "Black Cat",
+      Slug: "black-cat",
+    };
+    const label3 = new Label(values3);
+    const result3 = label3.thumbnailUrl("xyz");
+    assert.equal(result3, "/api/v1/svg/label");
   });
 
   it("should get date string", () => {

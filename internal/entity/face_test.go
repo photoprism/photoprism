@@ -3,6 +3,8 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/face"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,13 +34,13 @@ func TestFace_Match(t *testing.T) {
 
 	t.Run("len(embeddings) == 0", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
-		match, dist := m.Match(Embeddings{})
+		match, dist := m.Match(face.Embeddings{})
 
 		assert.False(t, match)
 		assert.Equal(t, dist, float64(-1))
 	})
 	t.Run("len(efacEmbeddings) == 0", func(t *testing.T) {
-		m := NewFace("12345", SrcAuto, Embeddings{})
+		m := NewFace("12345", SrcAuto, face.Embeddings{})
 		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings())
 
 		assert.False(t, match)
@@ -86,7 +88,7 @@ func TestFace_ResolveCollision(t *testing.T) {
 		assert.Less(t, m.CollisionRadius, 1.272)
 	})
 	t.Run("subject id empty", func(t *testing.T) {
-		m := NewFace("", SrcAuto, Embeddings{})
+		m := NewFace("", SrcAuto, face.Embeddings{})
 		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
 			t.Fatal(err)
 		} else {
@@ -94,7 +96,7 @@ func TestFace_ResolveCollision(t *testing.T) {
 		}
 	})
 	t.Run("invalid face id", func(t *testing.T) {
-		m := NewFace("123", SrcAuto, Embeddings{})
+		m := NewFace("123", SrcAuto, face.Embeddings{})
 		m.ID = ""
 		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
 			t.Fatal(err)
@@ -104,7 +106,7 @@ func TestFace_ResolveCollision(t *testing.T) {
 		}
 	})
 	t.Run("embedding empty", func(t *testing.T) {
-		m := NewFace("123", SrcAuto, Embeddings{})
+		m := NewFace("123", SrcAuto, face.Embeddings{})
 		m.EmbeddingJSON = []byte("")
 		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
 			t.Fatal(err)
@@ -159,13 +161,13 @@ func TestFace_Embedding(t *testing.T) {
 		assert.Equal(t, 0.10730543085474682, m.Embedding()[0])
 	})
 	t.Run("empty embedding", func(t *testing.T) {
-		m := NewFace("12345", SrcAuto, Embeddings{})
+		m := NewFace("12345", SrcAuto, face.Embeddings{})
 		m.EmbeddingJSON = []byte("")
 
 		assert.Empty(t, m.Embedding())
 	})
 	t.Run("invalid embedding json", func(t *testing.T) {
-		m := NewFace("12345", SrcAuto, Embeddings{})
+		m := NewFace("12345", SrcAuto, face.Embeddings{})
 		m.EmbeddingJSON = []byte("[false]")
 
 		assert.Equal(t, float64(0), m.Embedding()[0])
@@ -173,7 +175,7 @@ func TestFace_Embedding(t *testing.T) {
 }
 
 func TestFace_UpdateMatchTime(t *testing.T) {
-	m := NewFace("12345", SrcAuto, Embeddings{})
+	m := NewFace("12345", SrcAuto, face.Embeddings{})
 	initialMatchTime := m.MatchedAt
 	assert.Equal(t, initialMatchTime, m.MatchedAt)
 	m.Matched()
@@ -181,7 +183,7 @@ func TestFace_UpdateMatchTime(t *testing.T) {
 }
 
 func TestFace_Save(t *testing.T) {
-	m := NewFace("12345fde", SrcAuto, Embeddings{Embedding{1}, Embedding{2}})
+	m := NewFace("12345fde", SrcAuto, face.Embeddings{face.Embedding{1}, face.Embedding{2}})
 	assert.Nil(t, FindFace(m.ID))
 	m.Save()
 	assert.NotNil(t, FindFace(m.ID))
@@ -189,7 +191,7 @@ func TestFace_Save(t *testing.T) {
 }
 
 func TestFace_Update(t *testing.T) {
-	m := NewFace("12345fdef", SrcAuto, Embeddings{Embedding{8}, Embedding{16}})
+	m := NewFace("12345fdef", SrcAuto, face.Embeddings{face.Embedding{8}, face.Embedding{16}})
 	assert.Nil(t, FindFace(m.ID))
 	m.Save()
 	assert.NotNil(t, FindFace(m.ID))
@@ -210,7 +212,7 @@ func TestFace_RefreshPhotos(t *testing.T) {
 
 func TestFirstOrCreateFace(t *testing.T) {
 	t.Run("create new face", func(t *testing.T) {
-		m := NewFace("12345unique", SrcAuto, Embeddings{Embedding{99}, Embedding{2}})
+		m := NewFace("12345unique", SrcAuto, face.Embeddings{face.Embedding{99}, face.Embedding{2}})
 		r := FirstOrCreateFace(m)
 		assert.Equal(t, "12345unique", r.SubjUID)
 	})

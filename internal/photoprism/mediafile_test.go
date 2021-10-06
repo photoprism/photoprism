@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -2145,7 +2144,7 @@ func TestMediaFile_RenameSidecars(t *testing.T) {
 		srcName := filepath.Join(conf.SidecarPath(), "foo/bar.jpg.json")
 		dstName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.jpg.json")
 
-		if err := ioutil.WriteFile(srcName, []byte("{}"), 0666); err != nil {
+		if err := os.WriteFile(srcName, []byte("{}"), 0666); err != nil {
 			t.Fatal(err)
 		}
 
@@ -2190,7 +2189,7 @@ func TestMediaFile_RemoveSidecars(t *testing.T) {
 
 		sidecarName := filepath.Join(conf.SidecarPath(), "2020/12/foobar.jpg.json")
 
-		if err := ioutil.WriteFile(sidecarName, []byte("{}"), 0666); err != nil {
+		if err := os.WriteFile(sidecarName, []byte("{}"), 0666); err != nil {
 			t.Fatal(err)
 		}
 

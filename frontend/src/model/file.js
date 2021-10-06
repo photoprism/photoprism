@@ -130,7 +130,6 @@ export class File extends RestModel {
 
   download() {
     if (!this.Hash) {
-      console.warn("no file hash found for download", this);
       return;
     }
 

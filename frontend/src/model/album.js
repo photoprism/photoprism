@@ -131,26 +131,16 @@ export class Album extends RestModel {
     return DateTime.fromISO(`${date}T12:00:00Z`).toUTC();
   }
 
-  localDate(time) {
-    if (!this.TakenAtLocal) {
-      return this.utcDate();
-    }
-
-    let zone = this.getTimeZone();
-
-    return DateTime.fromISO(this.localDateString(time), { zone });
-  }
-
   getDateString() {
     if (!this.Year || this.Year <= 1000) {
       return $gettext("Unknown");
     } else if (!this.Month || this.Month <= 0) {
-      return this.localYearString();
+      return this.Year.toString();
     } else if (!this.Day || this.Day <= 0) {
       return this.getDate().toLocaleString({ month: "long", year: "numeric" });
     }
 
-    return this.localDate().toLocaleString(DateTime.DATE_HUGE);
+    return this.getDate().toLocaleString(DateTime.DATE_HUGE);
   }
 
   getCreatedString() {

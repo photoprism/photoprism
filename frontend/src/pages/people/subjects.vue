@@ -52,7 +52,7 @@
         <v-layout row wrap class="search-results subject-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
-              :key="index"
+              :key="model.UID"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
             <v-card tile
@@ -132,11 +132,11 @@
                 </div>
 
                 <div class="caption mb-2">
-                  <button v-if="model.FileCount === 1">
+                  <button v-if="model.PhotoCount === 1">
                     <translate>Contains one entry.</translate>
                   </button>
-                  <button v-else-if="model.FileCount > 0">
-                    <translate :translate-params="{n: model.FileCount}">Contains %{n} entries.</translate>
+                  <button v-else-if="model.PhotoCount > 0">
+                    <translate :translate-params="{n: model.PhotoCount}">Contains %{n} entries.</translate>
                   </button>
                 </div>
               </v-card-text>
@@ -145,6 +145,8 @@
         </v-layout>
       </v-container>
     </v-container>
+    <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge"
+                           @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
 
@@ -191,6 +193,11 @@ export default {
       titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      merge: {
+        subj1: null,
+        subj2: null,
+        show: false,
+      }
     };
   },
   watch: {
@@ -207,10 +214,6 @@ export default {
       this.filter.all = query["all"] ? query["all"] : "";
       this.filter.order = this.sortOrder();
       this.routeName = this.$route.name;
-
-      if (this.dirty) {
-        this.lastFilter = {};
-      }
 
       this.search();
     }
@@ -229,6 +232,39 @@ export default {
     }
   },
   methods: {
+    onSave(m) {
+      const existing = this.$config.getPerson(m.Name);
+
+      if(!existing) {
+        m.update();
+        return;
+      }
+
+      if (existing.UID === m.UID) {
+        // Name didn't change.
+        return;
+      }
+
+      this.merge.subj1 = m;
+      this.merge.subj2 = existing;
+      this.merge.show = true;
+    },
+    onCancelMerge() {
+      this.merge.subj1.Name = this.merge.subj1.originalValue("Name");
+      this.merge.show = false;
+      this.merge.subj1 = null;
+      this.merge.subj2 = null;
+    },
+    onMerge() {
+      this.merge.show = false;
+      this.$notify.blockUI();
+      this.merge.subj1.update().finally(() => {
+        this.merge.subj1 = null;
+        this.merge.subj2 = null;
+        this.$notify.unblockUI();
+        this.refresh();
+      });
+    },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("subjects_offset"));
 
@@ -326,9 +362,6 @@ export default {
         }
       }
     },
-    onSave(m) {
-      m.update();
-    },
     showAll() {
       this.filter.all = "true";
       this.updateQuery();
@@ -383,7 +416,9 @@ export default {
       this.lastId = "";
     },
     loadMore() {
-      if (this.scrollDisabled) return;
+      if (this.scrollDisabled || !this.active) {
+        return;
+      }
 
       this.scrollDisabled = true;
       this.listen = false;
@@ -466,11 +501,15 @@ export default {
       return params;
     },
     refresh() {
-      if (this.loading) return;
+      if (this.loading || !this.active) {
+        return;
+      }
+
       this.loading = true;
       this.page = 0;
       this.dirty = true;
       this.scrollDisabled = false;
+
       this.loadMore();
     },
     search() {

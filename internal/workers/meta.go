@@ -44,6 +44,15 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 
 	defer mutex.MetaWorker.Stop()
 
+	log.Debugf("metadata: running facial recognition")
+
+	// Run faces worker.
+	if w := photoprism.NewFaces(m.conf); w.Disabled() {
+		log.Debugf("metadata: skipping facial recognition")
+	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
+		log.Warn(err)
+	}
+
 	log.Debugf("metadata: starting routine check")
 
 	settings := m.conf.Settings()
@@ -106,8 +115,8 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Infof("metadata: optimized %d photos", optimized)
 	}
 
-	// Explicitly set quality of photos without primary file to -1.
-	if err := query.ResetPhotoQuality(); err != nil {
+	// Set photo quality scores to -1 if files are missing.
+	if err := query.FlagHiddenPhotos(); err != nil {
 		log.Warnf("metadata: %s (reset quality)", err.Error())
 	}
 
@@ -118,27 +127,14 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 		log.Warn(err)
 	}
 
-	log.Debugf("metadata: running facial recognition")
-
-	// Run faces worker.
-	if w := photoprism.NewFaces(m.conf); w.Disabled() {
-		log.Debugf("metadata: skipping facial recognition")
-	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
-		log.Warn(err)
-	}
-
-	log.Debugf("metadata: updating photo counts")
-
 	// Update precalculated photo and file counts.
-	if err := entity.UpdatePhotoCounts(); err != nil {
-		log.Warnf("metadata: %s (update counts)", err.Error())
+	if err := entity.UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err.Error())
 	}
 
-	log.Debugf("metadata: updating preview images")
-
-	// Update album, subject, and label preview thumbs.
-	if err := query.UpdatePreviews(); err != nil {
-		log.Errorf("metadata: %s (update previews)", err)
+	// Update album, subject, and label cover thumbs.
+	if err := query.UpdateCovers(); err != nil {
+		log.Warnf("index: %s (update covers)", err)
 	}
 
 	// Run garbage collection.

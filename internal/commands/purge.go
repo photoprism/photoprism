@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -18,7 +20,7 @@ import (
 // PurgeCommand registers the index cli command.
 var PurgeCommand = cli.Command{
 	Name:   "purge",
-	Usage:  "Removes missing files from search results",
+	Usage:  "Flags missing files, updates counts and covers",
 	Flags:  purgeFlags,
 	Action: purgeAction,
 }
@@ -26,7 +28,7 @@ var PurgeCommand = cli.Command{
 var purgeFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "hard",
-		Usage: "permanently delete from database",
+		Usage: "permanently remove from index",
 	},
 	cli.BoolFlag{
 		Name:  "dry",
@@ -74,9 +76,7 @@ func purgeAction(ctx *cli.Context) error {
 	if files, photos, err := w.Start(opt); err != nil {
 		return err
 	} else {
-		elapsed := time.Since(start)
-
-		log.Infof("purge: removed %d files and %d photos in %s", len(files), len(photos), elapsed)
+		log.Infof("purged %s and %s in %s", english.Plural(len(files), "file", "files"), english.Plural(len(photos), "photo", "photos"), time.Since(start))
 	}
 
 	conf.Shutdown()

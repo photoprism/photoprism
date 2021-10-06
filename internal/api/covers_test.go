@@ -15,7 +15,7 @@ func TestAlbumCover(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("album has no photo (because is not existing)", func(t *testing.T) {
+	t.Run("album contains no photos (because is not existing)", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/987-986435/t/"+conf.PreviewToken()+"/tile_500")

@@ -235,3 +235,25 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 
 	return strings.Join(wheres, " OR ")
 }
+
+// OrLike returns a where condition and values for finding multiple terms combined with OR.
+func OrLike(col, s string) (where string, values []interface{}) {
+	if col == "" || s == "" {
+		return "", []interface{}{}
+	}
+
+	s = strings.ReplaceAll(s, "*", "%")
+	s = strings.ReplaceAll(s, "%%", "%")
+
+	terms := strings.Split(s, txt.Or)
+	values = make([]interface{}, len(terms))
+
+	for i := range terms {
+		values[i] = strings.TrimSpace(terms[i])
+	}
+
+	like := fmt.Sprintf("%s LIKE ?", col)
+	where = like + strings.Repeat(" OR "+like, len(terms)-1)
+
+	return where, values
+}

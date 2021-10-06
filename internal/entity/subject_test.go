@@ -32,7 +32,7 @@ func TestNewSubject(t *testing.T) {
 }
 
 func TestSubject_SetName(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 
 		assert.Equal(t, "Jens Mander", m.SubjName)
@@ -45,7 +45,7 @@ func TestSubject_SetName(t *testing.T) {
 		assert.Equal(t, "Foo McBar", m.SubjName)
 		assert.Equal(t, "foo-mcbar", m.SubjSlug)
 	})
-	t.Run("new name empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 
 		assert.Equal(t, "Jens Mander", m.SubjName)
@@ -136,7 +136,7 @@ func TestSubject_Restore(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
-		m := &Subject{DeletedAt: &deleteTime, SubjName: "ToBeRestored"}
+		m := &Subject{DeletedAt: &deleteTime, SubjType: SubjPerson, SubjName: "ToBeRestored"}
 		err := m.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -150,7 +150,7 @@ func TestSubject_Restore(t *testing.T) {
 		assert.False(t, m.Deleted())
 	})
 	t.Run("subject not deleted", func(t *testing.T) {
-		m := &Subject{DeletedAt: nil, SubjName: "NotDeleted1234"}
+		m := &Subject{DeletedAt: nil, SubjType: SubjPerson, SubjName: "NotDeleted1234"}
 		err := m.Restore()
 		if err != nil {
 			t.Fatal(err)

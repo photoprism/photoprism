@@ -140,7 +140,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if !model.HasID() {
-		return errors.New("photo: can't save form, id is empty")
+		return errors.New("can't save form when photo id is missing")
 	}
 
 	model.UpdateDateFields()
@@ -167,7 +167,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.SyncKeywordLabels(); err != nil {
-		log.Errorf("photo: %s", err)
+		log.Errorf("photo %s: %s while syncing keywords and labels", model.PhotoUID, err)
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
@@ -175,7 +175,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.IndexKeywords(); err != nil {
-		log.Errorf("photo: %s", err.Error())
+		log.Errorf("photo %s: %s while indexing keywords", model.PhotoUID, err.Error())
 	}
 
 	edited := TimeStamp()
@@ -187,8 +187,8 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	// Update precalculated photo and file counts.
-	if err := UpdatePhotoCounts(); err != nil {
-		log.Errorf("photo: %s", err)
+	if err := UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
 	}
 
 	return nil
@@ -315,8 +315,8 @@ func (m *Photo) SaveLabels() error {
 	}
 
 	// Update precalculated photo and file counts.
-	if err := UpdatePhotoCounts(); err != nil {
-		log.Errorf("photo: %s", err)
+	if err := UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
 	}
 
 	return nil
@@ -418,6 +418,7 @@ func (m *Photo) IndexKeywords() error {
 	// Add title, description and other keywords
 	keywords = append(keywords, txt.Keywords(m.PhotoTitle)...)
 	keywords = append(keywords, txt.Keywords(m.PhotoDescription)...)
+	keywords = append(keywords, m.SubjectKeywords()...)
 	keywords = append(keywords, txt.Words(details.Keywords)...)
 	keywords = append(keywords, txt.Keywords(details.Subject)...)
 	keywords = append(keywords, txt.Keywords(details.Artist)...)
@@ -824,7 +825,7 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 // SetCamera updates the camera.
 func (m *Photo) SetCamera(camera *Camera, source string) {
 	if camera == nil {
-		log.Warnf("photo: failed updating camera from source '%s'", source)
+		log.Warnf("photo %s: failed updating camera from source %s", txt.Quote(m.PhotoUID), SrcString(source))
 		return
 	}
 
@@ -844,7 +845,7 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 // SetLens updates the lens.
 func (m *Photo) SetLens(lens *Lens, source string) {
 	if lens == nil {
-		log.Warnf("photo: failed updating lens from source '%s'", source)
+		log.Warnf("photo %s: failed updating lens from source %s", txt.Quote(m.PhotoUID), SrcString(source))
 		return
 	}
 
@@ -931,6 +932,10 @@ func (m *Photo) Restore() error {
 
 // Delete deletes the photo from the index.
 func (m *Photo) Delete(permanently bool) (files Files, err error) {
+	if m.ID < 1 || m.PhotoUID == "" {
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+	}
+
 	if permanently {
 		return m.DeletePermanently()
 	}
@@ -939,37 +944,41 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 
 	for _, file := range files {
 		if err := file.Delete(false); err != nil {
-			log.Errorf("photo: %s (delete file)", err)
+			log.Errorf("photo: %s (remove file)", err)
 		}
 	}
 
 	return files, m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
 }
 
-// DeletePermanently permanently deletes a photo from the index.
+// DeletePermanently permanently removes a photo from the index.
 func (m *Photo) DeletePermanently() (files Files, err error) {
+	if m.ID < 1 || m.PhotoUID == "" {
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+	}
+
 	files = m.AllFiles()
 
 	for _, file := range files {
 		if err := file.DeletePermanently(); err != nil {
-			log.Errorf("photo: %s (delete file)", err)
+			log.Errorf("photo: %s (remove file)", err)
 		}
 	}
 
 	if err := UnscopedDb().Delete(Details{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (delete details)", err)
+		log.Errorf("photo: %s (remove details)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoKeyword{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (delete keywords)", err)
+		log.Errorf("photo: %s (remove keywords)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoLabel{}, "photo_id = ?", m.ID).Error; err != nil {
-		log.Errorf("photo: %s (delete labels)", err)
+		log.Errorf("photo: %s (remove labels)", err)
 	}
 
 	if err := UnscopedDb().Delete(PhotoAlbum{}, "photo_uid = ?", m.PhotoUID).Error; err != nil {
-		log.Errorf("photo: %s (delete albums)", err)
+		log.Errorf("photo: %s (remove albums)", err)
 	}
 
 	return files, UnscopedDb().Delete(m).Error
@@ -1032,8 +1041,8 @@ func (m *Photo) Approve() error {
 	}
 
 	// Update precalculated photo and file counts.
-	if err := UpdatePhotoCounts(); err != nil {
-		log.Errorf("photo: %s", err)
+	if err := UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
 	}
 
 	event.Publish("count.review", event.Data{
@@ -1064,12 +1073,12 @@ func (m *Photo) SetPrimary(fileUID string) error {
 	if fileUID != "" {
 		// Do nothing.
 	} else if err := Db().Model(File{}).
-		Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", m.PhotoUID).
+		Where("photo_uid = ? AND file_type = 'jpg' AND file_missing = 0 AND file_error = ''", m.PhotoUID).
 		Order("file_width DESC").Limit(1).
 		Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
-		return fmt.Errorf("%s has no jpeg", m.PhotoUID)
+		return fmt.Errorf("found no valid jpeg for %s", m.PhotoUID)
 	} else {
 		fileUID = files[0]
 	}
