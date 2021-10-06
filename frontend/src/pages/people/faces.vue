@@ -1,7 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-faces" style="user-select: none"
-       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
-       :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-faces" style="user-select: none">
 
     <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar dense flat color="secondary-light pa-0">
@@ -162,7 +160,7 @@ export default {
       scrollDisabled: true,
       loading: true,
       busy: false,
-      batchSize: Face.batchSize(),
+      batchSize: 999,
       offset: 0,
       page: 0,
       selection: [],
@@ -207,7 +205,6 @@ export default {
     this.subscriptions.push(Event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -372,8 +369,8 @@ export default {
       // Always refresh all faces for now.
       this.dirty = true;
 
-      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
-      const offset = this.dirty ? 0 : this.offset;
+      const count = this.batchSize;
+      const offset = 0;
 
       const params = {
         count: count,
@@ -389,22 +386,12 @@ export default {
       Face.search(params).then(resp => {
         this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (resp.count < resp.limit);
-
-        if (this.scrollDisabled) {
-          this.setOffset(resp.offset);
-          if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), {n: this.results.length}));
-          }
+        if (!this.results.length) {
+          this.$notify.warn(this.$gettext("No people found"));
+        } else if (this.results.length === 1) {
+          this.$notify.info(this.$gettext("One person found"));
         } else {
-          this.setOffset(resp.offset + resp.limit);
-          this.page++;
-
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
-            }
-          });
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
         }
       }).catch(() => {
         this.scrollDisabled = false;
@@ -456,7 +443,7 @@ export default {
 
       this.loading = true;
       this.page = 0;
-      this.dirty = true;
+      // this.dirty = true;
       this.scrollDisabled = false;
 
       this.loadMore();
@@ -466,7 +453,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        this.refresh();
         return;
       }
 
@@ -483,24 +470,12 @@ export default {
         this.offset = resp.limit;
         this.results = resp.models;
 
-        this.scrollDisabled = (resp.count < resp.limit);
-
-        if (this.scrollDisabled) {
-          if (!this.results.length) {
-            this.$notify.warn(this.$gettext("No people found"));
-          } else if (this.results.length === 1) {
-            this.$notify.info(this.$gettext("One person found"));
-          } else {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
-          }
+        if (!this.results.length) {
+          this.$notify.warn(this.$gettext("No people found"));
+        } else if (this.results.length === 1) {
+          this.$notify.info(this.$gettext("One person found"));
         } else {
-          this.$notify.info(this.$gettext('More than 20 faces found'));
-
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
-            }
-          });
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
         }
       }).finally(() => {
         this.dirty = false;
@@ -510,17 +485,17 @@ export default {
     },
     onShow(face) {
       this.busy = true;
-      this.dirty = true;
+      // this.dirty = true;
       face.show().finally(() => this.busy = false);
     },
     onHide(face) {
       this.busy = true;
-      this.dirty = true;
+      // this.dirty = true;
       face.hide().finally(() => this.busy = false);
     },
     onClearSubject(marker) {
       this.busy = true;
-      this.dirty = true;
+      // this.dirty = true;
       this.$notify.blockUI();
       marker.clearSubject(marker).finally(() => {
         this.$notify.unblockUI();
@@ -529,7 +504,7 @@ export default {
     },
     onRename(marker) {
       this.busy = true;
-      this.dirty = true;
+      // this.dirty = true;
       this.$notify.blockUI();
       marker.rename().finally(() => {
         this.$notify.unblockUI();
