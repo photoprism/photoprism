@@ -40,7 +40,7 @@
         </v-alert>
         <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
-              v-for="(model, index) in results"
+              v-for="model in results"
               :key="model.ID"
               xs12 sm6 md4 lg3 xl2 xxl1 d-flex
           >
@@ -68,8 +68,7 @@
                     <v-text-field
                         v-model="model.Name"
                         :rules="[textRule]"
-                        :disabled="busy"
-                        :readonly="model.Hidden"
+                        :readonly="readonly"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
                         hide-details
@@ -88,8 +87,7 @@
                         :items="$config.values.people"
                         item-value="Name"
                         item-text="Name"
-                        :disabled="busy"
-                        :readonly="model.Hidden"
+                        :readonly="readonly"
                         :return-object="false"
                         :menu-props="menuProps"
                         :allow-overflow="false"
@@ -98,6 +96,7 @@
                         single-line
                         solo-inverted
                         open-on-clear
+                        hide-no-data
                         append-icon=""
                         prepend-inner-icon="person_add"
                         browser-autocomplete="off"
@@ -179,6 +178,11 @@ export default {
         return v.length <= this.$config.get('clip') || this.$gettext("Text too long");
       },
     };
+  },
+  computed: {
+    readonly: function() {
+      return this.busy || this.loading;
+    },
   },
   watch: {
     '$route'() {
@@ -516,16 +520,21 @@ export default {
       this.busy = true;
 
       model.toggleHidden().finally(() => {
+        this.busy = false;
+
         if (model.Hidden) {
           this.changeFaceCount(-1);
         } else {
           this.changeFaceCount(1);
         }
-
-        this.busy = false;
       });
     },
     onRename(model) {
+      if (!model.Name || model.Name.trim() === "") {
+        // Refuse to save empty name.
+        return;
+      }
+
       this.busy = true;
       this.$notify.blockUI();
 

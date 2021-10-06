@@ -84,6 +84,7 @@
                       single-line
                       solo-inverted
                       open-on-clear
+                      hide-no-data
                       append-icon=""
                       prepend-inner-icon="person_add"
                       browser-autocomplete="off"

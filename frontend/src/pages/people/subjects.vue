@@ -134,6 +134,7 @@
                     <v-text-field
                         v-model="model.Name"
                         :rules="[titleRule]"
+                        :readonly="readonly"
                         :label="$gettext('Name')"
                         color="secondary-dark"
                         class="input-rename background-inherit elevation-0"
@@ -218,6 +219,11 @@ export default {
       },
     };
   },
+  computed: {
+    readonly: function() {
+      return this.busy || this.loading;
+    },
+  },
   watch: {
     '$route'() {
       // Tab inactive?
@@ -251,21 +257,23 @@ export default {
   },
   methods: {
     onSave(m) {
+      if (!m.Name || m.Name.trim() === "") {
+        // Refuse to save empty name.
+        return;
+      }
+
       const existing = this.$config.getPerson(m.Name);
 
       if (!existing) {
-        m.update();
-        return;
+        this.busy = true;
+        m.update().finally(() => {
+          this.busy = false;
+        });
+      } else if (existing.UID !== m.UID) {
+        this.merge.subj1 = m;
+        this.merge.subj2 = existing;
+        this.merge.show = true;
       }
-
-      if (existing.UID === m.UID) {
-        // Name didn't change.
-        return;
-      }
-
-      this.merge.subj1 = m;
-      this.merge.subj2 = existing;
-      this.merge.show = true;
     },
     onCancelMerge() {
       this.merge.subj1.Name = this.merge.subj1.originalValue("Name");
@@ -274,9 +282,11 @@ export default {
       this.merge.subj2 = null;
     },
     onMerge() {
+      this.busy = true;
       this.merge.show = false;
       this.$notify.blockUI();
       this.merge.subj1.update().finally(() => {
+        this.busy = false;
         this.merge.subj1 = null;
         this.merge.subj2 = null;
         this.$notify.unblockUI();
@@ -393,8 +403,10 @@ export default {
       if (!model) {
         return;
       }
-
-      model.toggleHidden();
+      this.busy = true;
+      model.toggleHidden().finally(() => {
+        this.busy = false;
+      });
     },
     showAll() {
       this.filter.hidden = "yes";
