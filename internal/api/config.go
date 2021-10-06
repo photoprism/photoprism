@@ -6,11 +6,13 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"gopkg.in/yaml.v2"
+
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"gopkg.in/yaml.v2"
 )
 
 // GetConfig returns client config values.
@@ -133,7 +135,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		log.Infof(i18n.Msg(i18n.MsgSettingsSaved))
+		event.InfoMsg(i18n.MsgSettingsSaved)
 
 		c.JSON(http.StatusOK, conf.Options())
 	})
