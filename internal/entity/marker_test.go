@@ -225,9 +225,9 @@ func TestMarker_InvalidArea(t *testing.T) {
 	})
 	t.Run("InvalidArea1", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), invalidArea1, "lt9k3pw1wowuy3c4", SrcImage, MarkerFace, 100, 65)
-		assert.EqualError(t, m.InvalidArea(), "markers: invalid face area x=-100% y=20% w=35% h=35%")
+		assert.EqualError(t, m.InvalidArea(), "invalid face crop area x=-100% y=20% w=35% h=35%")
 		m.MarkerUID = "m345634636"
-		assert.EqualError(t, m.InvalidArea(), "marker m345634636: invalid face area x=-100% y=20% w=35% h=35%")
+		assert.EqualError(t, m.InvalidArea(), "invalid face crop area x=-100% y=20% w=35% h=35%")
 		m.MarkerType = MarkerUnknown
 		assert.Nil(t, m.InvalidArea())
 	})
@@ -287,7 +287,7 @@ func TestMarker_Save(t *testing.T) {
 		if err := m.Save(); err == nil {
 			t.Fatal("error expected")
 		} else {
-			assert.Equal(t, "markers: invalid face area x=-100% y=0% w=20% h=13%", err.Error())
+			assert.Equal(t, "invalid face crop area x=-100% y=0% w=20% h=13%", err.Error())
 		}
 
 	})
@@ -420,7 +420,7 @@ func TestMarker_Create(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		} else {
-			assert.Equal(t, "markers: invalid face area x=0% y=0% w=0% h=0%", err.Error())
+			assert.Equal(t, "invalid face crop area x=0% y=0% w=0% h=0%", err.Error())
 		}
 	})
 }

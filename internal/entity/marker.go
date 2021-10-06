@@ -372,13 +372,7 @@ func (m *Marker) InvalidArea() error {
 		return nil
 	}
 
-	msg := fmt.Sprintf("invalid %s area x=%d%% y=%d%% w=%d%% h=%d%%", txt.Quote(m.MarkerType), int(m.X*100), int(m.Y*100), int(m.W*100), int(m.H*100))
-
-	if m.MarkerUID == "" {
-		return fmt.Errorf("markers: %s", msg)
-	} else {
-		return fmt.Errorf("marker %s: %s", m.MarkerUID, msg)
-	}
+	return fmt.Errorf("invalid %s crop area x=%d%% y=%d%% w=%d%% h=%d%%", TypeString(m.MarkerType), int(m.X*100), int(m.Y*100), int(m.W*100), int(m.H*100))
 }
 
 // Save updates the existing or inserts a new row.
@@ -712,15 +706,13 @@ func CreateMarkerIfNotExists(m *Marker) (*Marker, error) {
 
 	if m.MarkerUID != "" {
 		return m, nil
-	} else if err := Db().Where(`file_uid = ? AND thumb = ? AND marker_type = ?`,
-		m.FileUID, m.Thumb, m.MarkerType).First(&result).Error; err == nil {
-		log.Infof("markers: %s marker %s already exists for %s", txt.Quote(m.MarkerType), txt.Quote(result.MarkerUID), txt.Quote(result.FileUID))
-		return &result, err
+	} else if Db().Where(`file_uid = ? AND marker_type = ? AND thumb = ?`, m.FileUID, m.MarkerType, m.Thumb).
+		First(&result).Error == nil {
+		return &result, nil
 	} else if err := m.Create(); err != nil {
-		log.Warnf("markers: %s while adding %s", err, txt.Quote(m.MarkerType))
 		return m, err
 	} else {
-		log.Debugf("markers: added %s marker %s for %s", txt.Quote(m.MarkerType), txt.Quote(m.MarkerUID), txt.Quote(m.FileUID))
+		log.Debugf("markers: added %s marker %s for %s", TypeString(m.MarkerType), txt.Quote(m.MarkerUID), txt.Quote(m.FileUID))
 	}
 
 	return m, nil

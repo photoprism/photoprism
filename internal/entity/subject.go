@@ -101,7 +101,7 @@ func (m *Subject) Delete() error {
 	subjectMutex.Lock()
 	defer subjectMutex.Unlock()
 
-	log.Infof("subject: deleting %s %s", txt.Quote(m.SubjType), txt.Quote(m.SubjName))
+	log.Infof("subject: deleting %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 	event.EntitiesDeleted("subjects", []string{m.SubjUID})
 
@@ -138,7 +138,7 @@ func (m *Subject) Restore() error {
 	if m.Deleted() {
 		m.DeletedAt = nil
 
-		log.Infof("subject: restoring %s %s", txt.Quote(m.SubjType), txt.Quote(m.SubjName))
+		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -176,7 +176,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	if found := FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else if createErr := m.Create(); createErr == nil {
-		log.Infof("subject: added %s %s", txt.Quote(m.SubjType), txt.Quote(m.SubjName))
+		log.Infof("subject: added %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -266,7 +266,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
 		return m, err
 	} else if err := m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err == nil {
-		log.Infof("subject: renamed %s %s", txt.Quote(m.SubjType), txt.Quote(m.SubjName))
+		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
 
 		event.EntitiesUpdated("subjects", []*Subject{m})
 
