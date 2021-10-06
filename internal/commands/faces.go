@@ -21,7 +21,7 @@ import (
 // FacesCommand registers the faces cli command.
 var FacesCommand = cli.Command{
 	Name:  "faces",
-	Usage: "Facial recognition commands",
+	Usage: "Facial recognition sub-commands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "stats",
