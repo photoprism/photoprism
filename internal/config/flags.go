@@ -231,29 +231,29 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-preview",
-		Usage:  "public preview image `URL`",
+		Usage:  "custom site preview image `URL`",
 		EnvVar: "PHOTOPRISM_SITE_PREVIEW",
 	},
 	cli.StringFlag{
 		Name:   "site-author",
-		Usage:  "artist name or copyright",
+		Usage:  "site owner or `COPYRIGHT`",
 		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
 	},
 	cli.StringFlag{
 		Name:   "site-title",
-		Usage:  "site title",
+		Usage:  "site `TITLE`",
 		Value:  "PhotoPrism",
 		EnvVar: "PHOTOPRISM_SITE_TITLE",
 	},
 	cli.StringFlag{
 		Name:   "site-caption",
-		Usage:  "site caption",
+		Usage:  "site `CAPTION`",
 		Value:  "Browse Your Life",
 		EnvVar: "PHOTOPRISM_SITE_CAPTION",
 	},
 	cli.StringFlag{
 		Name:   "site-description",
-		Usage:  "site description",
+		Usage:  "site `DESCRIPTION`",
 		EnvVar: "PHOTOPRISM_SITE_DESCRIPTION",
 	},
 	cli.IntFlag{
@@ -274,7 +274,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "http-compression, z",
-		Usage:  "enable http compression to improve bandwidth utilization (none or gzip)",
+		Usage:  "http compression `METHOD` (none or gzip)",
 		EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
 	},
 	cli.StringFlag{
@@ -333,7 +333,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "darktable-blacklist",
-		Usage:  "disable Darktable for specific file `EXTENSIONS`",
+		Usage:  "file `EXTENSIONS` not to be converted with Darktable",
 		Value:  "raf,cr3,dng",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
@@ -345,7 +345,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "rawtherapee-blacklist",
-		Usage:  "disable RawTherapee for specific file `EXTENSIONS`",
+		Usage:  "file `EXTENSIONS` not to be converted with RawTherapee",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 	},
@@ -393,12 +393,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "optional custom download url `TOKEN`",
+		Usage:  "custom download URL `TOKEN` (generated automatically by default)",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "optional custom thumbnail and streaming url `TOKEN`",
+		Usage:  "custom thumbnail and streaming URL `TOKEN` (generated automatically by default)",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
@@ -474,13 +474,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.Float64Flag{
 		Name:   "face-cluster-dist",
-		Usage:  "similarity distance of faces forming a cluster core",
+		Usage:  "similarity `DISTANCE` of faces forming a cluster core",
 		Value:  face.ClusterDist,
 		EnvVar: "PHOTOPRISM_FACE_CLUSTER_DIST",
 	},
 	cli.Float64Flag{
 		Name:   "face-match-dist",
-		Usage:  "similarity offset for matching faces with existing clusters",
+		Usage:  "similarity `OFFSET` for matching faces with existing clusters",
 		Value:  face.MatchDist,
 		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
 	},

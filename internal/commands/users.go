@@ -17,10 +17,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// UsersCommand registers user management commands.
+// UsersCommand registers user management subcommands.
 var UsersCommand = cli.Command{
 	Name:  "users",
-	Usage: "User management sub-commands",
+	Usage: "User management subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "list",
