@@ -17,14 +17,14 @@ test.meta("testID", "people-001")("Faces tab preselected when subjects empty", a
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
-    .expect(Selector("#tab-people-faces > a").hasClass("v-tabs__item--active"))
+    .expect(Selector("#tab-people_faces > a").hasClass("v-tabs__item--active"))
     .ok()
-    .expect(Selector("#tab-people-subjects > a").hasClass("v-tabs__item--active"))
+    .expect(Selector("#tab-people > a").hasClass("v-tabs__item--active"))
     .notOk()
-    .click(Selector("#tab-people-subjects > a"))
-    .expect(Selector("#tab-people-faces > a").hasClass("v-tabs__item--active"))
+    .click(Selector("#tab-people > a"))
+    .expect(Selector("#tab-people_faces > a").hasClass("v-tabs__item--active"))
     .notOk()
-    .expect(Selector("#tab-people-subjects > a").hasClass("v-tabs__item--active"))
+    .expect(Selector("#tab-people > a").hasClass("v-tabs__item--active"))
     .ok();
   const countSubjects = await Selector("a.is-subject").count;
   await t.expect(countSubjects).eql(0);
@@ -34,19 +34,19 @@ test.meta("testID", "people-002")("Add + Rename", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
-    .click(Selector("#tab-people-faces > a"))
+    .click(Selector("#tab-people_faces > a"))
     .click(Selector("form.p-faces-search button.action-reload"));
   const countFaces = await Selector("div.is-face", { timeout: 55000 }).count;
-  await t.click(Selector("#tab-people-subjects > a"));
+  await t.click(Selector("#tab-people > a"));
   const countSubjects = await Selector("a.is-subject").count;
-  await t.click(Selector("#tab-people-faces > a"));
+  await t.click(Selector("#tab-people_faces > a"));
   const FirstFaceID = await Selector("div.is-face").nth(0).getAttribute("data-id");
   await t.click(Selector("div[data-id=" + FirstFaceID + "] div.clickable"));
   const countPhotosFace = await Selector("div.is-photo").count;
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
-    .click(Selector("#tab-people-faces > a"))
+    .click(Selector("#tab-people_faces > a"))
     .typeText(Selector("div[data-id=" + FirstFaceID + "] div.input-name input"), "Jane Doe")
     .pressKey("enter")
     .click(Selector("form.p-faces-search button"));
@@ -56,7 +56,7 @@ test.meta("testID", "people-002")("Add + Rename", async (t) => {
     .eql(countFaces - 1)
     .expect(Selector("div").withAttribute("data-id", FirstFaceID).exists)
     .notOk()
-    .click(Selector("#tab-people-subjects > a"));
+    .click(Selector("#tab-people > a"));
   const countSubjectsAfterAdd = await Selector("a.is-subject").count;
   await t
     .expect(countSubjectsAfterAdd)
@@ -117,7 +117,7 @@ test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
-    .click(Selector("#tab-people-faces > a"))
+    .click(Selector("#tab-people_faces > a"))
     .click(Selector("form.p-faces-search button.action-reload"));
   const FirstFaceID = await Selector("div.is-face").nth(0).getAttribute("data-id");
   await t
@@ -128,7 +128,7 @@ test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
     .ok()
     .typeText(Selector("div[data-id=" + FirstFaceID + "] div.input-name input"), "Andrea Doe")
     .pressKey("enter")
-    .click(Selector("#tab-people-subjects > a"));
+    .click(Selector("#tab-people > a"));
   await t.typeText(Selector("div.input-search input"), "Andrea").pressKey("enter");
   const AndreaUID = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-subject").withAttribute("data-uid", AndreaUID));
@@ -158,13 +158,10 @@ test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
   await t.eval(() => location.reload());
   await t.wait(6000);
   const countPhotosNicole = await Selector("div.is-photo").count;
-  await t.expect(Diff).eql(countPhotosNicole);
+  await t.expect(Diff).gte(countPhotosNicole);
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
-    .expect(Selector("a.is-subject").nth(0).getAttribute("data-uid"))
-    .eql(AndreaUID);
-  await t
     .typeText(Selector("div.input-search input"), "Nicole", { replace: true })
     .pressKey("enter");
   const NicoleUID = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
@@ -242,13 +239,59 @@ test.meta("testID", "people-005")("Hide face", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
-    .click(Selector("#tab-people-faces > a"))
+    .click(Selector("#tab-people_faces > a"))
     .click(Selector("form.p-faces-search button.action-reload"));
   const FirstFaceID = await Selector("div.is-face").nth(0).getAttribute("data-id");
-  await t.click(Selector("div[data-id=" + FirstFaceID + "] button.input-hide"));
+  await t
+    .hover(Selector("div[data-id=" + FirstFaceID + "]"))
+    .click(Selector("div[data-id=" + FirstFaceID + "] button.input-hidden"));
   await t.eval(() => location.reload());
   await t
     .wait(6000)
     .expect(Selector("div[data-id=" + FirstFaceID + "]").visible)
-    .notOk();
+    .notOk()
+    .click(Selector("button.action-show-all"));
+  await t.eval(() => location.reload());
+  await t
+    .wait(6000)
+    .expect(Selector("div[data-id=" + FirstFaceID + "]").visible)
+    .ok()
+    .hover(Selector("div[data-id=" + FirstFaceID + "]"))
+    .click(Selector("div[data-id=" + FirstFaceID + "] button.input-hidden"))
+    .click(Selector("button.action-show-default"));
+  await t.eval(() => location.reload());
+  await t
+    .wait(6000)
+    .expect(Selector("div[data-id=" + FirstFaceID + "]").visible)
+    .ok();
+});
+
+test.meta("testID", "people-006")("Hide person", async (t) => {
+  await page.openNav();
+  await t
+    .click(Selector(".nav-people"))
+    .click(Selector("#tab-people > a"));
+  const FirstPerson = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
+  await t
+    .hover(Selector("a[data-uid=" + FirstPerson + "]"))
+    .click(Selector("a[data-uid=" + FirstPerson + "] button.input-hidden"));
+  await t.eval(() => location.reload());
+  await t
+    .wait(6000)
+    .expect(Selector("a[data-uid=" + FirstPerson + "]").visible)
+    .notOk()
+    .click(Selector("button.action-show-all"));
+  await t.eval(() => location.reload());
+  await t
+    .wait(6000)
+    .expect(Selector("a[data-uid=" + FirstPerson + "]").visible)
+    .ok()
+    .hover(Selector("a[data-uid=" + FirstPerson + "]"))
+    .click(Selector("a[data-uid=" + FirstPerson + "] button.input-hidden"))
+    .click(Selector("button.action-show-default"));
+  await t.eval(() => location.reload());
+  await t
+    .wait(6000)
+    .expect(Selector("a[data-uid=" + FirstPerson + "]").visible)
+    .ok();
 });
