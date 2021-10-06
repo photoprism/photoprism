@@ -59,8 +59,6 @@ func main() {
 		commands.IndexCommand,
 		commands.ImportCommand,
 		commands.CopyCommand,
-		commands.PasswdCommand,
-		commands.UsersCommand,
 		commands.FacesCommand,
 		commands.PurgeCommand,
 		commands.CleanUpCommand,
@@ -72,6 +70,8 @@ func main() {
 		commands.BackupCommand,
 		commands.RestoreCommand,
 		commands.ResetCommand,
+		commands.PasswdCommand,
+		commands.UsersCommand,
 		commands.ConfigCommand,
 		commands.VersionCommand,
 	}
