@@ -20,8 +20,16 @@
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
+        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')"
+               @click.stop="refresh">
           <v-icon>refresh</v-icon>
+        </v-btn>
+
+        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="showAll">
+          <v-icon>visibility</v-icon>
+        </v-btn>
+        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="showDefault">
+          <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
@@ -31,7 +39,7 @@
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-subject-clipboard :refresh="refresh" :selection="selection"
-                         :clear-selection="clearSelection"></p-subject-clipboard>
+                           :clear-selection="clearSelection"></p-subject-clipboard>
 
       <p-scroll-top></p-scroll-top>
 
@@ -49,7 +57,8 @@
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results subject-results cards-view" :class="{'select-results': selection.length > 0}">
+        <v-layout row wrap class="search-results subject-results cards-view"
+                  :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
               :key="model.UID"
@@ -76,6 +85,15 @@
                   @mousedown="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
+                <v-btn :ripple="false" :depressed="false" class="input-hidden"
+                       icon flat small absolute
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
+                       @touchend.stop.prevent="onToggleHidden($event, index)"
+                       @touchmove.stop.prevent
+                       @click.stop.prevent="onToggleHidden($event, index)">
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+                </v-btn>
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
@@ -168,9 +186,9 @@ export default {
     const query = this.$route.query;
     const routeName = this.$route.name;
     const q = query['q'] ? query['q'] : '';
-    const all = query['all'] ? query['all'] : '';
+    const hidden = query['hidden'] ? query['hidden'] : '';
     const order = this.sortOrder();
-    const filter = {q: q, all: all, order: order};
+    const filter = {q, hidden, order};
     const settings = {};
 
     return {
@@ -197,7 +215,7 @@ export default {
         subj1: null,
         subj2: null,
         show: false,
-      }
+      },
     };
   },
   watch: {
@@ -211,7 +229,7 @@ export default {
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.all = query["all"] ? query["all"] : "";
+      this.filter.hidden = query["hidden"] ? query["hidden"] : "";
       this.filter.order = this.sortOrder();
       this.routeName = this.$route.name;
 
@@ -235,7 +253,7 @@ export default {
     onSave(m) {
       const existing = this.$config.getPerson(m.Name);
 
-      if(!existing) {
+      if (!existing) {
         m.update();
         return;
       }
@@ -268,7 +286,7 @@ export default {
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("subjects_offset"));
 
-      if(this.offset > 0 || !offset) {
+      if (this.offset > 0 || !offset) {
         return this.batchSize;
       }
 
@@ -362,12 +380,28 @@ export default {
         }
       }
     },
+    onToggleHidden(ev, index) {
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
+      return this.toggleHidden(this.results[index]);
+    },
+    toggleHidden(model) {
+      if (!model) {
+        return;
+      }
+
+      model.toggleHidden();
+    },
     showAll() {
-      this.filter.all = "true";
+      this.filter.hidden = "yes";
       this.updateQuery();
     },
-    showImportant() {
-      this.filter.all = "";
+    showDefault() {
+      this.filter.hidden = "";
       this.updateQuery();
     },
     clearQuery() {

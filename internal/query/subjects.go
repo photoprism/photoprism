@@ -12,7 +12,7 @@ import (
 func People() (people entity.People, err error) {
 	err = UnscopedDb().
 		Table(entity.Subject{}.TableName()).
-		Select("subj_uid, subj_name, subj_alias, subj_favorite").
+		Select("subj_uid, subj_name, subj_alias, subj_favorite, subj_hidden").
 		Where("deleted_at IS NULL AND subj_type = ?", entity.SubjPerson).
 		Order("subj_name").
 		Limit(2000).Offset(0).
@@ -26,6 +26,7 @@ func PeopleCount() (count int, err error) {
 	err = Db().
 		Table(entity.Subject{}.TableName()).
 		Where("deleted_at IS NULL").
+		Where("subj_hidden = 0").
 		Where("subj_type = ?", entity.SubjPerson).
 		Count(&count).Error
 

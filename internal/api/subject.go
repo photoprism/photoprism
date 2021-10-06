@@ -99,22 +99,17 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if txt.Slug(f.SubjName) == "" {
-			// Return unchanged model data if (normalized) name is empty.
-			c.JSON(http.StatusOK, m)
-			return
-		}
-
-		if _, err := m.UpdateName(f.SubjName); err != nil {
+		// Update subject from form values.
+		if changed, err := m.SaveForm(f); err != nil {
 			log.Errorf("subject: %s", err)
 			AbortSaveFailed(c)
 			return
-		}
-
-		if m.IsPerson() {
-			event.SuccessMsg(i18n.MsgPersonSaved)
-		} else {
-			event.SuccessMsg(i18n.MsgSubjectSaved)
+		} else if changed {
+			if m.IsPerson() {
+				event.SuccessMsg(i18n.MsgPersonSaved)
+			} else {
+				event.SuccessMsg(i18n.MsgSubjectSaved)
+			}
 		}
 
 		c.JSON(http.StatusOK, m)

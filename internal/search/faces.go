@@ -89,11 +89,9 @@ func Faces(f form.FaceSearch) (results FaceResults, err error) {
 		s = s.Where(fmt.Sprintf("%s.subj_uid <> '' AND %s.subj_uid IS NOT NULL", facesTable, facesTable))
 	}
 
-	// Exclude hidden faces?
-	if f.Hidden == "" || txt.No(f.Hidden) {
-		s = s.Where(fmt.Sprintf("%s.face_hidden = 0 OR %s.face_hidden IS NULL", facesTable, facesTable))
-	} else if txt.Yes(f.Hidden) {
-		s = s.Where(fmt.Sprintf("%s.face_hidden = 1", facesTable))
+	// Show hidden faces?
+	if !txt.Yes(f.Hidden) {
+		s = s.Where(fmt.Sprintf("%s.face_hidden = 0", facesTable))
 	}
 
 	// Perform query.

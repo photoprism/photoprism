@@ -9,6 +9,7 @@ type Subject struct {
 	SubjBio      string `json:"Bio"`
 	SubjNotes    string `json:"Notes"`
 	SubjFavorite bool   `json:"Favorite"`
+	SubjHidden   bool   `json:"Hidden"`
 	SubjPrivate  bool   `json:"Private"`
 	SubjExcluded bool   `json:"Excluded"`
 }

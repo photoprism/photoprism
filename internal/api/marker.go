@@ -89,7 +89,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			return
 		}
 
-		// Save marker.
+		// Update marker from form values.
 		if changed, err := marker.SaveForm(markerForm); err != nil {
 			log.Errorf("marker: %s", err)
 			AbortSaveFailed(c)
