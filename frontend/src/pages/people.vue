@@ -12,13 +12,19 @@
              ripple @click="changePath(item.path)">
         <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
-          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon> {{ item.label }}
+          <v-icon :size="18" :left="!rtl" :right="rtl">{{ item.icon }}</v-icon>
+          <v-badge color="secondary-dark" :left="rtl" :right="!rtl">
+            <template #badge>
+              <span v-if="item.count">{{ item.count }}</span>
+            </template>
+            {{ item.label }}
+          </v-badge>
         </template>
       </v-tab>
 
       <v-tabs-items touchless>
         <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
-          <component :is="item.component" :static-filter="item.filter" :active="active === index"></component>
+          <component :is="item.component" :static-filter="item.filter" :active="active === index" @updateFaceCount="onUpdateFaceCount"></component>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -59,6 +65,7 @@ export default {
         'class': '',
         'path': '/people/new',
         'icon': 'person_add',
+        'count': 0,
       },
     ];
 
@@ -79,7 +86,10 @@ export default {
     };
   },
   methods: {
-    changePath: function (path) {
+    onUpdateFaceCount(count) {
+      this.tabs[1].count = count;
+    },
+    changePath (path) {
       if (this.$route.path !== path) {
         this.$router.replace(path);
       }

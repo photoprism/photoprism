@@ -119,6 +119,15 @@ func (m *Subject) Delete() error {
 	return Db().Delete(m).Error
 }
 
+// AfterDelete resets file and photo counters when the entity was deleted.
+func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
+	tx.Model(m).Updates(Values{
+		"FileCount":  0,
+		"PhotoCount": 0,
+	})
+	return
+}
+
 // Deleted returns true if the entity is deleted.
 func (m *Subject) Deleted() bool {
 	return m.DeletedAt != nil
@@ -324,6 +333,14 @@ func (m *Subject) MergeWith(other *Subject) error {
 		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
 	} else if err := other.UpdateMarkerNames(); err != nil {
+		return err
+	}
+
+	// Update file and photo counts.
+	if err := Db().Model(other).Updates(Values{
+		"FileCount":  other.FileCount + m.FileCount,
+		"PhotoCount": other.PhotoCount + m.PhotoCount,
+	}).Error; err != nil {
 		return err
 	}
 

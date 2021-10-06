@@ -61,22 +61,22 @@ describe("model/face", () => {
     const values = {
       ID: "f123ghytrfggd",
       Samples: 5,
-      Marker: {
-        UID: "ABC123ghytr",
-        FileUID: "fhjouohnnmnd",
-        Type: "face",
-        Src: "image",
-        Thumb: "nicethumbuid",
-      },
+      MarkerUID: "ABC123ghytr",
+      FileUID: "fhjouohnnmnd",
+      Name: "",
+      Thumb: "7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1",
     };
+
     const face = new Face(values);
     const result = face.thumbnailUrl("xyz");
-    assert.equal(result, "/api/v1/t/nicethumbuid/public/xyz");
 
-    const values2 = { ID: "f123ghytrfggd", Samples: 5 };
+    assert.equal(result, "/api/v1/t/7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1/public/xyz");
+
+    const values2 = { ID: "f123ghytrfggd", Samples: 5, Thumb: "7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1" };
     const face2 = new Face(values2);
     const result2 = face2.thumbnailUrl();
-    assert.equal(result2, "/api/v1/svg/portrait");
+
+    assert.equal(result2, "/api/v1/t/7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1/public/tile_160");
   });
 
   it("should get date string", () => {

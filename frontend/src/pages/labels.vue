@@ -55,7 +55,7 @@
         <v-layout row wrap class="search-results label-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(label, index) in results"
-              :key="index"
+              :key="label.UID"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
             <v-card tile

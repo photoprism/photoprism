@@ -15,9 +15,7 @@ func TestFaces(t *testing.T) {
 		t.Logf("Faces: %#v", results)
 		if len(results) == 0 {
 			t.Fatal("results are empty")
-		} else if results[0].Marker == nil {
-			t.Fatal("marker is nil")
-		} else if results[0].Marker.MarkerUID == "" {
+		} else if results[0].MarkerUID == "" {
 			t.Fatal("marker uid is empty")
 		}
 	})
@@ -25,7 +23,7 @@ func TestFaces(t *testing.T) {
 		results, err := Faces(form.FaceSearch{Offset: 3, Order: "subject", Markers: true})
 		assert.NoError(t, err)
 		t.Logf("Faces: %#v", results)
-		assert.LessOrEqual(t, 3, len(results))
+		assert.LessOrEqual(t, 1, len(results))
 	})
 	t.Run("Find specific id", func(t *testing.T) {
 		results, err := Faces(form.FaceSearch{ID: "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", Markers: true})

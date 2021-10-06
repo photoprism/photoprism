@@ -37,18 +37,17 @@
               :key="model.ID"
               xs12 sm6 md4 lg3 xl2 xxl1 d-flex
           >
-            <v-card v-if="model.Marker"
-                    :data-id="model.ID"
+            <v-card :data-id="model.ID"
                     tile style="user-select: none;"
                     :class="model.classes()"
                     class="result accent lighten-3">
               <div class="card-background accent lighten-3"></div>
-              <v-img :src="model.Marker.thumbnailUrl('tile_320')"
+              <v-img :src="model.thumbnailUrl('tile_320')"
                      :transition="false"
                      aspect-ratio="1"
                      class="accent lighten-2 clickable"
                      @click.stop.prevent="$router.push(model.route(view))">
-                <v-btn v-if="!model.Marker.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
+                <v-btn v-if="!model.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
                        icon flat small absolute :title="$gettext('Hide')"
                        @click.stop.prevent="onHide(model)">
                   <v-icon color="white" class="action-hide">clear</v-icon>
@@ -66,10 +65,10 @@
                     </v-btn>
                   </v-flex>
                 </v-layout>
-                <v-layout v-else-if="model.Marker.SubjUID" row wrap align-center>
+                <v-layout v-else-if="model.SubjUID" row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
-                        v-model="model.Marker.Name"
+                        v-model="model.Name"
                         :rules="[textRule]"
                         :disabled="busy"
                         :readonly="false"
@@ -78,15 +77,15 @@
                         hide-details
                         single-line
                         solo-inverted
-                        @change="onRename(model.Marker)"
-                        @keyup.enter.native="onRename(model.Marker)"
+                        @change="onRename(model)"
+                        @keyup.enter.native="onRename(model)"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
                 <v-layout v-else row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-combobox
-                        v-model="model.Marker.Name"
+                        v-model="model.Name"
                         style="z-index: 250"
                         :items="$config.values.people"
                         item-value="Name"
@@ -104,8 +103,8 @@
                         prepend-inner-icon="person_add"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
-                        @change="onRename(model.Marker)"
-                        @keyup.enter.native="onRename(model.Marker)"
+                        @change="onRename(model)"
+                        @keyup.enter.native="onRename(model)"
                     >
                     </v-combobox>
                   </v-flex>
@@ -163,6 +162,7 @@ export default {
       batchSize: 999,
       offset: 0,
       page: 0,
+      faceCount: 0,
       selection: [],
       settings: settings,
       filter: filter,
@@ -386,6 +386,8 @@ export default {
       Face.search(params).then(resp => {
         this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
+        this.setFaceCount(this.results.length);
+
         if (!this.results.length) {
           this.$notify.warn(this.$gettext("No people found"));
         } else if (this.results.length === 1) {
@@ -443,7 +445,7 @@ export default {
 
       this.loading = true;
       this.page = 0;
-      // this.dirty = true;
+      this.dirty = true;
       this.scrollDisabled = false;
 
       this.loadMore();
@@ -470,6 +472,8 @@ export default {
         this.offset = resp.limit;
         this.results = resp.models;
 
+        this.setFaceCount(this.results.length);
+
         if (!this.results.length) {
           this.$notify.warn(this.$gettext("No people found"));
         } else if (this.results.length === 1) {
@@ -485,31 +489,35 @@ export default {
     },
     onShow(face) {
       this.busy = true;
-      // this.dirty = true;
-      face.show().finally(() => this.busy = false);
+      face.show().finally(() => {
+        this.busy = false;
+        this.changeFaceCount(1);
+      });
     },
     onHide(face) {
       this.busy = true;
-      // this.dirty = true;
-      face.hide().finally(() => this.busy = false);
-    },
-    onClearSubject(marker) {
-      this.busy = true;
-      // this.dirty = true;
-      this.$notify.blockUI();
-      marker.clearSubject(marker).finally(() => {
-        this.$notify.unblockUI();
+      face.hide().finally(() => {
         this.busy = false;
+        this.changeFaceCount(-1);
       });
     },
-    onRename(marker) {
+    onRename(model) {
       this.busy = true;
-      // this.dirty = true;
       this.$notify.blockUI();
-      marker.rename().finally(() => {
+
+      model.setName().finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
+        this.changeFaceCount(-1);
       });
+    },
+    changeFaceCount(count) {
+      this.faceCount = this.faceCount + count;
+      this.$emit('updateFaceCount', this.faceCount);
+    },
+    setFaceCount(count) {
+      this.faceCount = count;
+      this.$emit('updateFaceCount', this.faceCount);
     },
     onUpdate(ev, data) {
       if (!this.listen) return;

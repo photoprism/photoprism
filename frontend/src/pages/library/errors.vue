@@ -27,7 +27,7 @@
     </v-container>
     <v-list v-else-if="errors.length > 0" dense two-line class="transparent">
       <v-list-tile
-          v-for="(err, index) in errors" :key="index"
+          v-for="err in errors" :key="err.ID"
           avatar
           @click="showDetails(err)"
       >

@@ -1,8 +1,8 @@
 <template>
   <div class="p-tab p-tab-photo-files">
     <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
-      <template v-for="(file, index) in model.fileModels()">
-        <v-expansion-panel-content v-if="!file.Missing" :key="index" class="pa-0 elevation-0 secondary-light"
+      <template v-for="file in model.fileModels()">
+        <v-expansion-panel-content v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light"
                                    style="margin-top: 1px;">
           <template #header>
             <div class="caption">{{ file.baseName(70) }}</div>
