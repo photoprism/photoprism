@@ -33,8 +33,8 @@
         </v-alert>
         <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
-              v-for="(model, index) in results"
-              :key="index"
+              v-for="model in results"
+              :key="model.ID"
               xs12 sm6 md4 lg3 xl2 xxl1 d-flex
           >
             <v-card v-if="model.Marker"
