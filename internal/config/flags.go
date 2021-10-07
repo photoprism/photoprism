@@ -236,7 +236,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-author",
-		Usage:  "site `COPYRIGHT`, artist name, or owner",
+		Usage:  "site `COPYRIGHT`, artist, or owner name",
 		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
 	},
 	cli.StringFlag{
