@@ -19,21 +19,21 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 ## Key Features ##
 
-* Our intuitive [Web UI](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as 
+* Our intuitive [Web UI](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as
   it should be — whether it’s on a phone, tablet, or desktop computer
 * Index all your photos and videos without worrying about duplicates, [RAW to JPEG conversion](https://docs.photoprism.org/user-guide/settings/library/), or video transcoding
-* Enjoy privacy-preserving face detection and recognition 💎
-* Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/) 
-  based on Google TensorFlow – in addition, PhotoPrism detects many other properties such as _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, 
-  and _location type_
-* Four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
+* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
   and for rediscovering long-forgotten shots
-* Because PhotoPrism is built as a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
-  it provides a native app-like experience and you can install it on the home screen of any mobile device or desktop computer
+* Enjoy privacy-preserving face detection and recognition 💎
+* Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/)
+  based on Google TensorFlow – in addition, PhotoPrism detects many other properties such as _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_,
+  and _location type_
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android mobile devices in the background
-* WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may 
-  [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open, 
+* WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may
+  [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open,
   edit, and delete files from your computer or phone as if they were local
+* Because PhotoPrism is built as a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
+  it provides a native app-like experience, and you can install it on your home screen without struggling with compatibility issues
 
 ## Getting Started ##
 
