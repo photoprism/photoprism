@@ -16,7 +16,7 @@ import (
 // ConvertCommand registers the convert cli command.
 var ConvertCommand = cli.Command{
 	Name:      "convert",
-	Usage:     "Converts media files in other formats to JPEG / AVC",
+	Usage:     "Transcodes files in other formats to JPEG / AVC",
 	ArgsUsage: "[path]",
 	Action:    convertAction,
 }

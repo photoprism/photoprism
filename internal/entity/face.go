@@ -54,6 +54,11 @@ func NewFace(subjUID, faceSrc string, embeddings face.Embeddings) *Face {
 	return result
 }
 
+// Unsuitable tests if the face is unsuitable for clustering and matching.
+func (m *Face) Unsuitable() bool {
+	return m.Embedding().Unsuitable()
+}
+
 // SetEmbeddings assigns face embeddings.
 func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	m.embedding, m.SampleRadius, m.Samples = face.EmbeddingsMidpoint(embeddings)

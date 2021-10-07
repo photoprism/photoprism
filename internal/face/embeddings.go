@@ -52,6 +52,15 @@ func (embeddings Embeddings) One() bool {
 	return embeddings.Count() == 1
 }
 
+// First returns the first face embedding.
+func (embeddings Embeddings) First() Embedding {
+	if embeddings.Empty() {
+		return NullEmbedding
+	}
+
+	return embeddings[0]
+}
+
 // Float64 returns embeddings as a float64 slice.
 func (embeddings Embeddings) Float64() [][]float64 {
 	result := make([][]float64, len(embeddings))

@@ -18,16 +18,16 @@ import (
 // ResetCommand resets the index and removes sidecar files after confirmation.
 var ResetCommand = cli.Command{
 	Name:   "reset",
-	Usage:  "Resets the index and removes sidecar files after confirmation",
+	Usage:  "Resets the index and removes JSON / YAML sidecar files",
 	Action: resetAction,
 }
 
 // resetAction resets the index and removes sidecar files after confirmation.
 func resetAction(ctx *cli.Context) error {
-	log.Warnf("'photoprism reset' resets the index and removes sidecar files after confirmation")
+	log.Warnf("YOU ARE ABOUT TO RESET THE INDEX AND REMOVE ALL JSON / YAML SIDECAR FILES")
 
 	removeIndexPrompt := promptui.Prompt{
-		Label:     "Reset index database incl albums, labels, users and metadata?",
+		Label:     "Reset index database incl all albums and metadata?",
 		IsConfirm: true,
 	}
 
@@ -63,7 +63,7 @@ func resetAction(ctx *cli.Context) error {
 	}
 
 	removeSidecarJsonPrompt := promptui.Prompt{
-		Label:     "Permanently remove all JSON photo sidecar files?",
+		Label:     "Permanently delete existing JSON metadata sidecar files?",
 		IsConfirm: true,
 	}
 
@@ -77,7 +77,7 @@ func resetAction(ctx *cli.Context) error {
 		}
 
 		if len(matches) > 0 {
-			log.Infof("removing %d JSON photo sidecar files", len(matches))
+			log.Infof("removing %d JSON metadata sidecar files", len(matches))
 
 			for _, name := range matches {
 				if err := os.Remove(name); err != nil {
@@ -89,16 +89,16 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed JSON sidecar files [%s]", time.Since(start))
+			log.Infof("removed JSON metadata sidecar files [%s]", time.Since(start))
 		} else {
-			log.Infof("found no JSON sidecar files")
+			log.Infof("found no JSON metadata sidecar files")
 		}
 	} else {
-		log.Infof("keeping JSON sidecar files")
+		log.Infof("keeping JSON metadata sidecar files")
 	}
 
 	removeSidecarYamlPrompt := promptui.Prompt{
-		Label:     "Permanently remove all YAML photo metadata backup files?",
+		Label:     "Permanently delete existing YAML metadata backups?",
 		IsConfirm: true,
 	}
 
@@ -112,7 +112,7 @@ func resetAction(ctx *cli.Context) error {
 		}
 
 		if len(matches) > 0 {
-			log.Infof("%d YAML photo metadata backup files will be removed", len(matches))
+			log.Infof("%d YAML metadata backups will be removed", len(matches))
 
 			for _, name := range matches {
 				if err := os.Remove(name); err != nil {
@@ -124,16 +124,16 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed YAML photo metadata backup files [%s]", time.Since(start))
+			log.Infof("removed all YAML metadata backups [%s]", time.Since(start))
 		} else {
-			log.Infof("found no YAML photo metadata backup files")
+			log.Infof("found no YAML metadata backups")
 		}
 	} else {
-		log.Infof("keeping YAML photo metadata backup files")
+		log.Infof("keeping YAML metadata backups")
 	}
 
 	removeAlbumYamlPrompt := promptui.Prompt{
-		Label:     "Permanently remove all YAML album backup files?",
+		Label:     "Permanently delete existing YAML album backups?",
 		IsConfirm: true,
 	}
 
@@ -159,7 +159,7 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed YAML album backup files [%s]", time.Since(start))
+			log.Infof("removed all YAML album backups [%s]", time.Since(start))
 		} else {
 			log.Infof("found no YAML album backup files")
 		}

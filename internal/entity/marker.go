@@ -506,6 +506,8 @@ func (m *Marker) Face() (f *Face) {
 		} else if f = NewFace(m.SubjUID, m.SubjSrc, emb); f == nil {
 			log.Warnf("marker %s: failed assigning face", txt.Quote(m.MarkerUID))
 			return nil
+		} else if f.Unsuitable() {
+			log.Infof("marker %s: face %s is unsuitable for clustering and matching", txt.Quote(m.MarkerUID), f.ID)
 		} else if f = FirstOrCreateFace(f); f == nil {
 			log.Warnf("marker %s: failed assigning face", txt.Quote(m.MarkerUID))
 			return nil

@@ -26,7 +26,7 @@ var thumbFileNames = []string{
 	"%s_7680x4320_fit.jpg",
 }
 
-// Usable thumb file sizes.
+// Suitable thumb file sizes.
 var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit720],
 	thumb.Sizes[thumb.Fit1280],

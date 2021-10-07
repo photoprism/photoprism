@@ -14,7 +14,7 @@ import (
 // OptimizeCommand registers the index cli command.
 var OptimizeCommand = cli.Command{
 	Name:   "optimize",
-	Usage:  "Performs index metadata maintenance",
+	Usage:  "Performs photo metadata maintenance",
 	Action: optimizeAction,
 }
 

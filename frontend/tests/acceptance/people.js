@@ -250,7 +250,7 @@ test.meta("testID", "people-005")("Hide face", async (t) => {
     .wait(6000)
     .expect(Selector("div[data-id=" + FirstFaceID + "]").visible)
     .notOk()
-    .click(Selector("button.action-show-all"));
+    .click(Selector("button.action-show-hidden"));
   await t.eval(() => location.reload());
   await t
     .wait(6000)
@@ -258,7 +258,7 @@ test.meta("testID", "people-005")("Hide face", async (t) => {
     .ok()
     .hover(Selector("div[data-id=" + FirstFaceID + "]"))
     .click(Selector("div[data-id=" + FirstFaceID + "] button.input-hidden"))
-    .click(Selector("button.action-show-default"));
+    .click(Selector("button.action-exclude-hidden"));
   await t.eval(() => location.reload());
   await t
     .wait(6000)
@@ -280,7 +280,7 @@ test.meta("testID", "people-006")("Hide person", async (t) => {
     .wait(6000)
     .expect(Selector("a[data-uid=" + FirstPerson + "]").visible)
     .notOk()
-    .click(Selector("button.action-show-all"));
+    .click(Selector("button.action-show-hidden"));
   await t.eval(() => location.reload());
   await t
     .wait(6000)
@@ -288,7 +288,7 @@ test.meta("testID", "people-006")("Hide person", async (t) => {
     .ok()
     .hover(Selector("a[data-uid=" + FirstPerson + "]"))
     .click(Selector("a[data-uid=" + FirstPerson + "] button.input-hidden"))
-    .click(Selector("button.action-show-default"));
+    .click(Selector("button.action-exclude-hidden"));
   await t.eval(() => location.reload());
   await t
     .wait(6000)

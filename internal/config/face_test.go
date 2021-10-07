@@ -8,11 +8,11 @@ import (
 
 func TestConfig_FaceSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 40, c.FaceSize())
+	assert.Equal(t, 50, c.FaceSize())
 	c.options.FaceSize = 30
 	assert.Equal(t, 30, c.FaceSize())
 	c.options.FaceSize = 1
-	assert.Equal(t, 40, c.FaceSize())
+	assert.Equal(t, 50, c.FaceSize())
 }
 
 func TestConfig_FaceScore(t *testing.T) {
