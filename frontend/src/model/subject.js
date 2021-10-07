@@ -48,6 +48,7 @@ export class Subject extends RestModel {
       Bio: "",
       Notes: "",
       Favorite: false,
+      Hidden: false,
       Private: false,
       Excluded: false,
       FileCount: 0,
@@ -73,6 +74,7 @@ export class Subject extends RestModel {
     let classes = ["is-subject", "uid-" + this.UID];
 
     if (this.Favorite) classes.push("is-favorite");
+    if (this.Hidden) classes.push("is-hidden");
     if (this.Private) classes.push("is-private");
     if (this.Excluded) classes.push("is-excluded");
     if (selected) classes.push("is-selected");
@@ -102,6 +104,22 @@ export class Subject extends RestModel {
 
   getDateString() {
     return DateTime.fromISO(this.CreatedAt).toLocaleString(DateTime.DATETIME_MED);
+  }
+
+  show() {
+    this.Hidden = false;
+    return this.update();
+  }
+
+  hide() {
+    this.Hidden = true;
+    return this.update();
+  }
+
+  toggleHidden() {
+    this.Hidden = !this.Hidden;
+
+    return Api.put(this.getEntityResource(), { Hidden: this.Hidden });
   }
 
   toggleLike() {

@@ -48,7 +48,11 @@ export default class Config {
     this.translations = translations;
 
     if (!values || !values.siteTitle) {
-      console.warn("config: values missing");
+      // Omit warning in unit tests.
+      if (navigator && navigator.userAgent && !navigator.userAgent.includes("HeadlessChrome")) {
+        console.warn("config: values missing");
+      }
+
       this.debug = true;
       this.test = true;
       this.demo = false;
@@ -147,8 +151,7 @@ export default class Config {
       this.values.people = [];
     }
 
-    if (!data || !data.entities) {
-      console.warn("empty event data", ev, data);
+    if (!data || !data.entities || !Array.isArray(data.entities)) {
       return;
     }
 

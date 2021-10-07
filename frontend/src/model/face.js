@@ -114,6 +114,12 @@ export class Face extends RestModel {
     return this.update();
   }
 
+  toggleHidden() {
+    this.Hidden = !this.Hidden;
+
+    return Api.put(this.getEntityResource(), { Hidden: this.Hidden });
+  }
+
   setName() {
     if (!this.Name || this.Name.trim() === "") {
       // Can't save an empty name.

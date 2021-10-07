@@ -45,20 +45,20 @@ func TestSubjects(t *testing.T) {
 		assert.LessOrEqual(t, 3, len(results))
 	})
 	t.Run("search favorite", func(t *testing.T) {
-		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Favorite: true})
+		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Favorite: "yes"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
 		assert.Equal(t, "John Doe", results[0].SubjName)
 		assert.LessOrEqual(t, 1, len(results))
 	})
 	t.Run("search private", func(t *testing.T) {
-		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Private: true})
+		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Private: "true"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
 		assert.Equal(t, 0, len(results))
 	})
 	t.Run("search excluded", func(t *testing.T) {
-		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Excluded: true})
+		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Excluded: "ja"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
 		assert.Equal(t, 0, len(results))

@@ -1,6 +1,8 @@
 package event
 
 import (
+	"strings"
+
 	"github.com/leandro-lugaresi/hub"
 	"github.com/photoprism/photoprism/internal/i18n"
 )
@@ -21,22 +23,22 @@ func SharedHub() *Hub {
 }
 
 func Error(msg string) {
-	Log.Error(msg)
+	Log.Error(strings.ToLower(msg))
 	Publish("notify.error", Data{"message": msg})
 }
 
 func Success(msg string) {
-	Log.Info(msg)
+	Log.Info(strings.ToLower(msg))
 	Publish("notify.success", Data{"message": msg})
 }
 
 func Info(msg string) {
-	Log.Info(msg)
+	Log.Info(strings.ToLower(msg))
 	Publish("notify.info", Data{"message": msg})
 }
 
 func Warning(msg string) {
-	Log.Warn(msg)
+	Log.Warn(strings.ToLower(msg))
 	Publish("notify.warning", Data{"message": msg})
 }
 

@@ -14,12 +14,14 @@ func TestNewSubject(t *testing.T) {
 			SubjBio      string `json:"Bio"`
 			SubjNotes    string `json:"Notes"`
 			SubjFavorite bool   `json:"Favorite"`
+			SubjHidden   bool   `json:"Hidden"`
 			SubjPrivate  bool   `json:"Private"`
 			SubjExcluded bool   `json:"Excluded"`
 		}{
 			SubjName:     "Foo",
 			SubjAlias:    "bar",
 			SubjFavorite: true,
+			SubjHidden:   true,
 			SubjExcluded: false,
 		}
 
@@ -32,6 +34,7 @@ func TestNewSubject(t *testing.T) {
 		assert.Equal(t, "Foo", f.SubjName)
 		assert.Equal(t, "bar", f.SubjAlias)
 		assert.Equal(t, true, f.SubjFavorite)
+		assert.Equal(t, true, f.SubjHidden)
 		assert.Equal(t, false, f.SubjExcluded)
 	})
 }

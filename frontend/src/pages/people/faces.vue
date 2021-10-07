@@ -9,6 +9,13 @@
         <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
+
+        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="showAll">
+          <v-icon>visibility</v-icon>
+        </v-btn>
+        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="showDefault">
+          <v-icon>visibility_off</v-icon>
+        </v-btn>
       </v-toolbar>
     </v-form>
 
@@ -46,32 +53,22 @@
                      :transition="false"
                      aspect-ratio="1"
                      class="accent lighten-2 clickable"
-                     @click.stop.prevent="$router.push(model.route(view))">
-                <v-btn v-if="!model.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
-                       icon flat small absolute :title="$gettext('Hide')"
-                       @click.stop.prevent="onHide(model)">
-                  <v-icon color="white" class="action-hide">clear</v-icon>
+                     @click.stop.prevent="onView(model)">
+                <v-btn :ripple="false" :depressed="false" class="input-hidden"
+                       icon flat small absolute
+                       @click.stop.prevent="toggleHidden(model)">
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
                 </v-btn>
               </v-img>
 
               <v-card-actions class="card-details pa-0">
-                <v-layout v-if="model.Hidden" row wrap align-center>
-                  <v-flex xs12 class="text-xs-center pa-0">
-                    <v-btn color="transparent" :disabled="busy"
-                           large depressed block :round="false"
-                           class="action-undo text-xs-center"
-                           :title="$gettext('Undo')" @click.stop="onShow(model)">
-                      <v-icon dark>undo</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-                <v-layout v-else-if="model.SubjUID" row wrap align-center>
+                <v-layout v-if="model.SubjUID" row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
                         v-model="model.Name"
                         :rules="[textRule]"
-                        :disabled="busy"
-                        :readonly="false"
+                        :readonly="readonly"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
                         hide-details
@@ -90,7 +87,7 @@
                         :items="$config.values.people"
                         item-value="Name"
                         item-text="Name"
-                        :disabled="busy"
+                        :readonly="readonly"
                         :return-object="false"
                         :menu-props="menuProps"
                         :allow-overflow="false"
@@ -99,6 +96,7 @@
                         single-line
                         solo-inverted
                         open-on-clear
+                        hide-no-data
                         append-icon=""
                         prepend-inner-icon="person_add"
                         browser-autocomplete="off"
@@ -144,9 +142,9 @@ export default {
     const query = this.$route.query;
     const routeName = this.$route.name;
     const q = query['q'] ? query['q'] : '';
-    const all = query['all'] ? query['all'] : '';
+    const hidden = query['hidden'] ? query['hidden'] : '';
     const order = this.sortOrder();
-    const filter = {q: q, all: all, order: order};
+    const filter = {q, hidden, order};
     const settings = {};
 
     return {
@@ -181,6 +179,11 @@ export default {
       },
     };
   },
+  computed: {
+    readonly: function() {
+      return this.busy || this.loading;
+    },
+  },
   watch: {
     '$route'() {
       // Tab inactive?
@@ -192,7 +195,7 @@ export default {
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.all = query["all"] ? query["all"] : "";
+      this.filter.hidden = query["hidden"] ? query["hidden"] : "";
       this.filter.order = this.sortOrder();
       this.routeName = this.$route.name;
 
@@ -302,15 +305,23 @@ export default {
         }
       }
     },
+    onView(model) {
+      if (this.loading || this.busy || !this.active) {
+        // Don't redirect if page is not ready or active.
+        return;
+      }
+
+      this.$router.push(model.route(this.view));
+    },
     onSave(m) {
       m.update();
     },
     showAll() {
-      this.filter.all = "true";
+      this.filter.hidden = "true";
       this.updateQuery();
     },
-    showImportant() {
-      this.filter.all = "";
+    showDefault() {
+      this.filter.hidden = "";
       this.updateQuery();
     },
     clearQuery() {
@@ -487,21 +498,43 @@ export default {
         this.listen = true;
       });
     },
-    onShow(face) {
+    onShow(model) {
       this.busy = true;
-      face.show().finally(() => {
+      model.show().finally(() => {
         this.busy = false;
         this.changeFaceCount(1);
       });
     },
-    onHide(face) {
+    onHide(model) {
       this.busy = true;
-      face.hide().finally(() => {
+      model.hide().finally(() => {
         this.busy = false;
         this.changeFaceCount(-1);
       });
     },
+    toggleHidden(model) {
+      if (!model) {
+        return;
+      }
+
+      this.busy = true;
+
+      model.toggleHidden().finally(() => {
+        this.busy = false;
+
+        if (model.Hidden) {
+          this.changeFaceCount(-1);
+        } else {
+          this.changeFaceCount(1);
+        }
+      });
+    },
     onRename(model) {
+      if (!model.Name || model.Name.trim() === "") {
+        // Refuse to save empty name.
+        return;
+      }
+
       this.busy = true;
       this.$notify.blockUI();
 
@@ -522,7 +555,7 @@ export default {
     onUpdate(ev, data) {
       if (!this.listen) return;
 
-      if (!data || !data.entities) {
+      if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;
       }
 

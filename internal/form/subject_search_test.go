@@ -14,7 +14,7 @@ func TestSubjectSearchForm(t *testing.T) {
 
 func TestParseQueryStringSubject(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		form := &SubjectSearch{Query: "type:person favorite:true count:5"}
+		form := &SubjectSearch{Query: "type:person favorite:true hidden:all count:5"}
 
 		err := form.ParseQueryString()
 
@@ -25,7 +25,8 @@ func TestParseQueryStringSubject(t *testing.T) {
 		}
 
 		assert.Equal(t, "person", form.Type)
-		assert.Equal(t, true, form.Favorite)
+		assert.Equal(t, "true", form.Favorite)
+		assert.Equal(t, "all", form.Hidden)
 		assert.Equal(t, 5, form.Count)
 	})
 }

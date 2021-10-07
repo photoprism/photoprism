@@ -72,7 +72,11 @@ describe("model/face", () => {
 
     assert.equal(result, "/api/v1/t/7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1/public/xyz");
 
-    const values2 = { ID: "f123ghytrfggd", Samples: 5, Thumb: "7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1" };
+    const values2 = {
+      ID: "f123ghytrfggd",
+      Samples: 5,
+      Thumb: "7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1",
+    };
     const face2 = new Face(values2);
     const result2 = face2.thumbnailUrl();
 
@@ -102,6 +106,21 @@ describe("model/face", () => {
     face.show();
     assert.equal(face.Hidden, false);
     face.hide();
+    assert.equal(face.Hidden, true);
+  });
+
+  it("should toggle hidden", () => {
+    const values = {
+      ID: "f123ghytrfggd",
+      Samples: 5,
+      CreatedAt: "2012-07-08T14:45:39Z",
+      Hidden: true,
+    };
+    const face = new Face(values);
+    assert.equal(face.Hidden, true);
+    face.toggleHidden();
+    assert.equal(face.Hidden, false);
+    face.toggleHidden();
     assert.equal(face.Hidden, true);
   });
 

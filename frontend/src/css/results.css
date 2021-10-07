@@ -213,7 +213,9 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .search-results .result:hover .input-select,
-#photoprism .search-results .result.is-selected .input-select {
+#photoprism .search-results .result.is-selected .input-select,
+#photoprism .search-results .result:hover .input-hidden,
+#photoprism .search-results .result.is-hidden .input-hidden {
     visibility: visible;
     opacity: 1;
 }
@@ -240,19 +242,29 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .search-results .result .input-favorite .select-off,
-#photoprism .search-results .result.is-favorite .input-favorite .select-on {
+#photoprism .search-results .result.is-favorite .input-favorite .select-on,
+#photoprism .search-results .result .input-hidden .select-off,
+#photoprism .search-results .result.is-hidden .input-hidden .select-on {
     display: inline-flex;
 }
 
 #photoprism .search-results .result .input-favorite .select-on,
-#photoprism .search-results .result.is-favorite .input-favorite .select-off {
+#photoprism .search-results .result.is-favorite .input-favorite .select-off,
+#photoprism .search-results .result .input-hidden .select-on,
+#photoprism .search-results .result.is-hidden .input-hidden .select-off {
     display: none;
 }
 
-#photoprism .cards-view .input-hide,
-#photoprism .mosaic-view .input-hide,
 #photoprism .cards-view .input-reject,
 #photoprism .mosaic-view .input-reject {
+    opacity: 0.75;
+    top: 4px;
+    right: 4px;
+}
+
+#photoprism .cards-view .input-hidden,
+#photoprism .mosaic-view .input-hidden {
+    visibility: hidden;
     opacity: 0.75;
     top: 4px;
     right: 4px;

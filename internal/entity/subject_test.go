@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestSubject_TableName(t *testing.T) {
@@ -227,6 +229,68 @@ func TestSubject_Updates(t *testing.T) {
 		}
 	})
 
+}
+
+func TestSubject_Visible(t *testing.T) {
+	t.Run("Hidden", func(t *testing.T) {
+		subj := NewSubject("Jens Mander", SubjPerson, SrcManual)
+		assert.True(t, subj.Visible())
+		subj.SubjHidden = true
+		assert.False(t, subj.Visible())
+	})
+	t.Run("Private", func(t *testing.T) {
+		subj := NewSubject("Jens Mander", SubjPerson, SrcManual)
+		assert.True(t, subj.Visible())
+		subj.SubjPrivate = true
+		assert.False(t, subj.Visible())
+	})
+	t.Run("Excluded", func(t *testing.T) {
+		subj := NewSubject("Jens Mander", SubjPerson, SrcManual)
+		assert.True(t, subj.Visible())
+		subj.SubjExcluded = true
+		assert.False(t, subj.Visible())
+	})
+}
+
+func TestSubject_SaveForm(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		subj := NewSubject("Save Form Test", SubjPerson, SrcManual)
+
+		assert.Equal(t, "Save Form Test", subj.SubjName)
+		assert.Equal(t, "save-form-test", subj.SubjSlug)
+		assert.Equal(t, false, subj.SubjHidden)
+		assert.Equal(t, true, subj.IsPerson())
+
+		if err := subj.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm, err := form.NewSubject(subj)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm.SubjName = "Bill Gates III"
+		subjForm.SubjHidden = true
+
+		t.Logf("Subject Form: %#v", subjForm)
+
+		if changed, err := subj.SaveForm(subjForm); err != nil {
+			t.Fatal(err)
+		} else if !changed {
+			t.Fatal("subject must be changed")
+		}
+
+		assert.Equal(t, "Bill Gates III", subj.SubjName)
+		assert.Equal(t, "bill-gates-iii", subj.SubjSlug)
+		assert.Equal(t, true, subj.SubjHidden)
+		assert.Equal(t, true, subj.IsPerson())
+
+		if err := subj.Delete(); err != nil {
+			t.Fatal(err)
+		}
+	})
 }
 
 func TestSubject_UpdateName(t *testing.T) {

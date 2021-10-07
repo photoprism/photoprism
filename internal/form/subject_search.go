@@ -6,10 +6,11 @@ type SubjectSearch struct {
 	ID       string `form:"id"`
 	Type     string `form:"type"`
 	Name     string `form:"name"`
-	Hidden   bool   `form:"hidden"`
-	Favorite bool   `form:"favorite"`
-	Private  bool   `form:"private"`
-	Excluded bool   `form:"excluded"`
+	All      bool   `form:"all"`
+	Hidden   string `form:"hidden"`
+	Favorite string `form:"favorite"`
+	Private  string `form:"private"`
+	Excluded string `form:"excluded"`
 	Files    int    `form:"files"`
 	Photos   int    `form:"photos"`
 	Count    int    `form:"count" binding:"required" serialize:"-"`

@@ -375,6 +375,7 @@ const clientConfig = {
     files: 136,
     places: 17,
     states: 8,
+    people: 5,
     labels: 22,
     labelMaxPhotos: 118,
   },

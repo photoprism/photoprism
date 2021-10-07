@@ -179,7 +179,7 @@ export default {
   },
   methods: {
     onUpdate(ev, data) {
-      if (!data || !data.entities || this.loading || !this.model || !this.model.UID) {
+      if (!data || !data.entities || !Array.isArray(data.entities) || this.loading || !this.model || !this.model.UID) {
         return;
       }
 

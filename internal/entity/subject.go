@@ -8,7 +8,9 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -26,6 +28,7 @@ type Subject struct {
 	SubjBio      string          `gorm:"type:TEXT;" json:"Bio" yaml:"Bio,omitempty"`
 	SubjNotes    string          `gorm:"type:TEXT;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	SubjFavorite bool            `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
+	SubjHidden   bool            `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
 	SubjPrivate  bool            `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
 	SubjExcluded bool            `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int             `gorm:"default:0;" json:"FileCount" yaml:"-"`
@@ -251,7 +254,10 @@ func (m *Subject) Person() *Person {
 func (m *Subject) SetName(name string) error {
 	name = txt.NormalizeName(name)
 
-	if name == "" {
+	if name == m.SubjName {
+		// Nothing to do.
+		return nil
+	} else if name == "" {
 		return fmt.Errorf("name must not be empty")
 	}
 
@@ -259,6 +265,83 @@ func (m *Subject) SetName(name string) error {
 	m.SubjSlug = txt.Slug(name)
 
 	return nil
+}
+
+// Visible tests if the subject is generally visible and not hidden in any way.
+func (m *Subject) Visible() bool {
+	return m.DeletedAt == nil && !m.SubjHidden && !m.SubjExcluded && !m.SubjPrivate
+}
+
+// SaveForm updates the subject from form values.
+func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
+	if m.SubjUID == "" {
+		return false, fmt.Errorf("subject uid is empty")
+	}
+
+	// Change name?
+	if name := txt.NormalizeName(f.SubjName); name != "" && name != m.SubjName {
+		existing, err := m.UpdateName(name)
+
+		if existing.SubjUID != m.SubjUID || err != nil {
+			return err != nil, err
+		}
+
+		changed = true
+	}
+
+	// Change favorite status?
+	if m.SubjFavorite != f.SubjFavorite {
+		m.SubjFavorite = f.SubjFavorite
+		changed = true
+	}
+
+	// Change visibility?
+	if m.SubjHidden != f.SubjHidden || m.SubjPrivate != f.SubjPrivate || m.SubjExcluded != f.SubjExcluded {
+		m.SubjHidden = f.SubjHidden
+		m.SubjPrivate = f.SubjPrivate
+		m.SubjExcluded = f.SubjExcluded
+
+		// Update counter.
+		if !m.IsPerson() {
+			// Ignore.
+		} else if m.Visible() {
+			event.Publish("count.people", event.Data{
+				"count": 1,
+			})
+		} else {
+			event.Publish("count.people", event.Data{
+				"count": -1,
+			})
+		}
+
+		changed = true
+	}
+
+	// Update index?
+	if changed {
+		values := Values{
+			"SubjFavorite": m.SubjFavorite,
+			"SubjHidden":   m.SubjHidden,
+			"SubjPrivate":  m.SubjPrivate,
+			"SubjExcluded": m.SubjExcluded,
+		}
+
+		if err := m.Updates(values); err == nil {
+			log.Debugf("subject: updated values %v", values)
+
+			event.EntitiesUpdated("subjects", []*Subject{m})
+
+			if m.IsPerson() {
+				event.EntitiesUpdated("people", []*Person{m.Person()})
+			}
+
+			return true, nil
+		} else {
+			return false, err
+		}
+	}
+
+	return false, nil
 }
 
 // UpdateName changes and saves the subject's name in the index.

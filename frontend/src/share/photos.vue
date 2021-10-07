@@ -473,7 +473,7 @@ export default {
     onAlbumsUpdated(ev, data) {
       if (!this.listen) return;
 
-      if (!data || !data.entities) {
+      if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;
       }
 
