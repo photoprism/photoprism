@@ -42,33 +42,12 @@ on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. 
 It is available for Mac, Linux, and Windows.
 
-## New Release ##
-
 The [latest release](https://docs.photoprism.org/release-notes/) not only includes 
 **facial recognition**, it also comes as a 
 **single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64, ARM64, and ARMv7**. 
 That means you don't need to pull from different Docker repositories anymore.
 We recommend updating your existing `docker-compose.yml` config based on 
 [our examples](https://dl.photoprism.org/docker/).
-
-## Roadmap ##
-
-Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.
-The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
-what needs testing, and which feature requests are going to be implemented next.
-
-Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
-Ideas backed by one or more eligible [sponsors](SPONSORS.md) will be prioritized as well.
-
-## Contributions ##
-
-We welcome contributions of any kind. If you have a bug or an idea, read our 
-[guide](https://docs.photoprism.org/developer-guide/) before opening an issue.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
-[easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
-good (first) contributions. 
-
-Follow us on [Twitter][twitter] to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
 ## Let's Join Forces ##
 
@@ -89,6 +68,25 @@ Thank you very much! <3
 
 <sup>1</sup> Ideas backed by one or more [eligible sponsors](SPONSORS.md) are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
 Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+
+## Roadmap ##
+
+Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.
+The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
+what needs testing, and which feature requests are going to be implemented next.
+
+Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+Ideas backed by one or more eligible [sponsors](SPONSORS.md) will be prioritized as well.
+
+## Contributions ##
+
+We welcome contributions of any kind. If you have a bug or an idea, read our 
+[guide](https://docs.photoprism.org/developer-guide/) before opening an issue.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
+[easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
+good (first) contributions. 
+
+Follow us on [Twitter][twitter] to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
 ## Trademarks ##
 
