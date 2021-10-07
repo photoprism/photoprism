@@ -24,7 +24,7 @@ import (
 // RestoreCommand configures the backup cli command.
 var RestoreCommand = cli.Command{
 	Name:      "restore",
-	Usage:     "Restores index database and album backups",
+	Usage:     "Restores the index from database dumps and YAML album backups",
 	UsageText: `A custom index sql backup FILENAME may be passed as first argument. By default, the backup path is searched.`,
 	Flags:     restoreFlags,
 	Action:    restoreAction,
@@ -33,23 +33,23 @@ var RestoreCommand = cli.Command{
 var restoreFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "overwrite existing index",
+		Usage: "replace existing index",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore album yaml file backups",
+		Usage: "restore albums from YAML files",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album yaml file backup `PATH`",
+		Usage: "custom albums backup `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "restore index sql database backup",
+		Usage: "restore index from SQL dump",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom index sql database backup `PATH`",
+		Usage: "custom index backup `PATH`",
 	},
 }
 

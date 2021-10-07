@@ -26,6 +26,11 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_LOG_FILENAME",
 		Value:  "",
 	},
+	cli.StringFlag{
+		Name:   "pid-filename",
+		Usage:  "process id `FILENAME` when running in daemon mode",
+		EnvVar: "PHOTOPRISM_PID_FILENAME",
+	},
 	cli.BoolFlag{
 		Name:   "test",
 		Hidden: true,
@@ -111,7 +116,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "backup-path",
-		Usage:  "optional custom backup file `PATH`",
+		Usage:  "optional custom backup `PATH` for index backup files",
 		EnvVar: "PHOTOPRISM_BACKUP_PATH",
 	},
 	cli.StringFlag{
@@ -121,7 +126,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "workers, w",
-		Usage:  "maximum `NUMBER` of indexing workers",
+		Usage:  "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",
 		EnvVar: "PHOTOPRISM_WORKERS",
 		Value:  cpuid.CPU.PhysicalCores / 2,
 	},
@@ -149,11 +154,6 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DISABLE_WEBDAV",
 	},
 	cli.BoolFlag{
-		Name:   "disable-backups",
-		Usage:  "disable creating YAML metadata backup sidecar files",
-		EnvVar: "PHOTOPRISM_DISABLE_BACKUPS",
-	},
-	cli.BoolFlag{
 		Name:   "disable-settings",
 		Usage:  "disable settings UI and API",
 		EnvVar: "PHOTOPRISM_DISABLE_SETTINGS",
@@ -164,8 +164,13 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_DISABLE_PLACES",
 	},
 	cli.BoolFlag{
+		Name:   "disable-backups",
+		Usage:  "disable creating YAML metadata backup files",
+		EnvVar: "PHOTOPRISM_DISABLE_BACKUPS",
+	},
+	cli.BoolFlag{
 		Name:   "disable-exiftool",
-		Usage:  "disable metadata extraction with ExifTool",
+		Usage:  "disable creating JSON metadata sidecar files with ExifTool",
 		EnvVar: "PHOTOPRISM_DISABLE_EXIFTOOL",
 	},
 	cli.BoolFlag{
@@ -175,22 +180,22 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-darktable",
-		Usage:  "disable RAW file conversion with Darktable",
+		Usage:  "disable converting RAW files with Darktable",
 		EnvVar: "PHOTOPRISM_DISABLE_DARKTABLE",
 	},
 	cli.BoolFlag{
 		Name:   "disable-rawtherapee",
-		Usage:  "disable RAW file conversion with RawTherapee",
+		Usage:  "disable converting RAW files with RawTherapee",
 		EnvVar: "PHOTOPRISM_DISABLE_RAWTHERAPEE",
 	},
 	cli.BoolFlag{
 		Name:   "disable-sips",
-		Usage:  "disable RAW file conversion with Sips on macOS",
+		Usage:  "disable converting RAW files with Sips (macOS only)",
 		EnvVar: "PHOTOPRISM_DISABLE_SIPS",
 	},
 	cli.BoolFlag{
 		Name:   "disable-heifconvert",
-		Usage:  "disable HEIC/HEIF file conversion",
+		Usage:  "disable converting HEIC/HEIF files",
 		EnvVar: "PHOTOPRISM_DISABLE_HEIFCONVERT",
 	},
 	cli.BoolFlag{
@@ -351,7 +356,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
-		Usage:  "Sips `COMMAND` for RAW file conversion on macOS",
+		Usage:  "Sips `COMMAND` for RAW file conversion (macOS only)",
 		Value:  "sips",
 		EnvVar: "PHOTOPRISM_SIPS_BIN",
 	},
@@ -393,12 +398,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "custom download URL `TOKEN` (default: randomly generated)",
+		Usage:  "custom download URL `TOKEN` (default: random)",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "custom thumbnail and streaming URL `TOKEN` (default: randomly generated)",
+		Usage:  "custom thumbnail and streaming URL `TOKEN` (default: random)",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
@@ -483,10 +488,5 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "similarity `OFFSET` for matching faces with existing clusters",
 		Value:  face.MatchDist,
 		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
-	},
-	cli.StringFlag{
-		Name:   "pid-filename",
-		Usage:  "process id `FILENAME` when running in daemon mode",
-		EnvVar: "PHOTOPRISM_PID_FILENAME",
 	},
 }
