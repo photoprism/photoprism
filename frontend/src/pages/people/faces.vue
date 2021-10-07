@@ -10,10 +10,10 @@
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="showAll">
+        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="showDefault">
+        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
@@ -316,12 +316,14 @@ export default {
     onSave(m) {
       m.update();
     },
-    showAll() {
-      this.filter.hidden = "true";
-      this.updateQuery();
+    onShowHidden() {
+      this.showHidden("yes");
     },
-    showDefault() {
-      this.filter.hidden = "";
+    onExcludeHidden() {
+      this.showHidden("");
+    },
+    showHidden(value) {
+      this.filter.hidden = value;
       this.updateQuery();
     },
     clearQuery() {

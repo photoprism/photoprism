@@ -20,15 +20,14 @@
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')"
-               @click.stop="refresh">
+        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="!filter.hidden" icon class="action-show-all" :title="$gettext('Show all')" @click.stop="showHidden('yes')">
+        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
           <v-icon>visibility</v-icon>
         </v-btn>
-        <v-btn v-else icon class="action-show-default" :title="$gettext('Show less')" @click.stop="showHidden('')">
+        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
           <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
@@ -393,6 +392,12 @@ export default {
           this.selectRange(index, this.results);
         }
       }
+    },
+    onShowHidden() {
+      this.showHidden("yes");
+    },
+    onExcludeHidden() {
+      this.showHidden("");
     },
     showHidden(value) {
       this.$earlyAccess().then(() => {
