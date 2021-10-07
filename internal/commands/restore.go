@@ -11,6 +11,8 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -37,7 +39,7 @@ var restoreFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore albums from YAML files",
+		Usage: "restore albums from YAML backups",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
@@ -45,11 +47,11 @@ var restoreFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "restore index from SQL dump",
+		Usage: "restore index from database SQL dump",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom index backup `PATH`",
+		Usage: "custom database backup `PATH`",
 	},
 }
 
@@ -186,7 +188,7 @@ func restoreAction(ctx *cli.Context) error {
 		}
 	}
 
-	log.Infoln("migrating database")
+	log.Infoln("migrating index database schema")
 
 	conf.InitDb()
 
@@ -198,14 +200,14 @@ func restoreAction(ctx *cli.Context) error {
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("albums path %s not found", txt.Quote(albumsPath))
+			log.Warnf("albums backup path %s not found", txt.Quote(albumsPath))
 		} else {
 			log.Infof("restoring albums from %s", txt.Quote(albumsPath))
 
 			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
 				return err
 			} else {
-				log.Infof("%d albums restored from yaml files", count)
+				log.Infof("restored %s from YAML backups", english.Plural(count, "album", "albums"))
 			}
 		}
 	}

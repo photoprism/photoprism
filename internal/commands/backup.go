@@ -36,11 +36,11 @@ var backupFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "create album YAML backup files",
+		Usage: "create YAML album backups",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album backup `PATH`",
+		Usage: "custom albums backup `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
@@ -48,7 +48,7 @@ var backupFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom index database backup `PATH`",
+		Usage: "custom database backup `PATH`",
 	},
 }
 
@@ -169,7 +169,7 @@ func backupAction(ctx *cli.Context) error {
 
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
-				log.Warnf("custom albums backup path not writable, using default")
+				log.Warnf("albums backup path not writable, using default")
 			}
 
 			albumsPath = conf.AlbumsPath()
@@ -180,7 +180,7 @@ func backupAction(ctx *cli.Context) error {
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err
 		} else {
-			log.Infof("created %s", english.Plural(count, "YAML album backup file", "YAML album backup files"))
+			log.Infof("created %s", english.Plural(count, "YAML album backup", "YAML album backups"))
 		}
 	}
 
