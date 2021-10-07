@@ -11,12 +11,12 @@ import (
 var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:   "debug",
-		Usage:  "enable debug mode, shows additional log messages",
+		Usage:  "enable debug mode, show additional log messages",
 		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.StringFlag{
 		Name:   "log-level, l",
-		Usage:  "log verbosity `LEVEL` (trace, debug, info, warning, error, fatal or panic)",
+		Usage:  "trace, debug, info, warning, error, fatal, or panic",
 		Value:  "info",
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
@@ -50,7 +50,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "admin-password",
-		Usage:  "initial admin `PASSWORD`, min 4 characters",
+		Usage:  "initial admin user `PASSWORD`, minimum 4 characters",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.BoolFlag{
@@ -70,7 +70,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "config-path",
-		Usage:  "config `PATH` where settings and other config files can be found",
+		Usage:  "config `PATH` to be searched for additional configuration and settings files",
 		EnvVar: "PHOTOPRISM_CONFIG_PATH",
 	},
 	cli.StringFlag{
@@ -116,12 +116,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "assets-path",
-		Usage:  "static assets `PATH` containing resources like icons and templates",
+		Usage:  "assets `PATH` containing static resources like icons, models, and translations",
 		EnvVar: "PHOTOPRISM_ASSETS_PATH",
 	},
 	cli.IntFlag{
 		Name:   "workers, w",
-		Usage:  "max `NUMBER` of indexing workers",
+		Usage:  "maximum `NUMBER` of indexing workers",
 		EnvVar: "PHOTOPRISM_WORKERS",
 		Value:  cpuid.CPU.PhysicalCores / 2,
 	},
@@ -133,13 +133,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "auto-index",
-		Usage:  "WebDAV auto indexing safety delay in `SECONDS` (-1 to disable)",
+		Usage:  "WebDAV auto indexing safety delay in `SECONDS`, disable with -1",
 		Value:  DefaultAutoIndexDelay,
 		EnvVar: "PHOTOPRISM_AUTO_INDEX",
 	},
 	cli.IntFlag{
 		Name:   "auto-import",
-		Usage:  "WebDAV auto import safety delay in `SECONDS` (-1 to disable)",
+		Usage:  "WebDAV auto import safety delay in `SECONDS`, disable with -1",
 		Value:  DefaultAutoImportDelay,
 		EnvVar: "PHOTOPRISM_AUTO_IMPORT",
 	},
@@ -170,7 +170,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-ffmpeg",
-		Usage:  "disable video transcoding and thumbnail generation with FFmpeg",
+		Usage:  "disable video transcoding and still image extraction with FFmpeg",
 		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
 	},
 	cli.BoolFlag{
@@ -220,7 +220,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "cdn-url",
-		Usage:  "optional content delivery network `URL` (optional)",
+		Usage:  "optional content delivery network `URL`",
 		EnvVar: "PHOTOPRISM_CDN_URL",
 	},
 	cli.StringFlag{
@@ -230,13 +230,8 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_SITE_URL",
 	},
 	cli.StringFlag{
-		Name:   "site-preview",
-		Usage:  "custom site preview image `URL`",
-		EnvVar: "PHOTOPRISM_SITE_PREVIEW",
-	},
-	cli.StringFlag{
 		Name:   "site-author",
-		Usage:  "site owner or `COPYRIGHT`",
+		Usage:  "site `COPYRIGHT`, artist name, or owner",
 		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
 	},
 	cli.StringFlag{
@@ -253,8 +248,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-description",
-		Usage:  "site `DESCRIPTION`",
+		Usage:  "optional site `DESCRIPTION`",
 		EnvVar: "PHOTOPRISM_SITE_DESCRIPTION",
+	},
+	cli.StringFlag{
+		Name:   "site-preview",
+		Usage:  "optional preview image `URL`",
+		EnvVar: "PHOTOPRISM_SITE_PREVIEW",
 	},
 	cli.IntFlag{
 		Name:   "http-port",
@@ -274,7 +274,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "http-compression, z",
-		Usage:  "http compression `METHOD` (none or gzip)",
+		Usage:  "http server compression `METHOD` (none or gzip)",
 		EnvVar: "PHOTOPRISM_HTTP_COMPRESSION",
 	},
 	cli.StringFlag{
@@ -285,12 +285,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-dsn",
-		Usage:  "sqlite file name, specifying a `DSN` is optional other drivers",
+		Usage:  "sqlite file name, providing a `DSN` is optional for other drivers",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.StringFlag{
 		Name:   "database-server",
-		Usage:  "database server `HOST` and port e.g. mysql:3306",
+		Usage:  "database server `HOST` with optional port e.g. mysql:3306",
 		EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 	},
 	cli.StringFlag{
@@ -312,12 +312,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "database-conns",
-		Usage:  "max `NUMBER` of open database connections",
+		Usage:  "maximum `NUMBER` of open database connections",
 		EnvVar: "PHOTOPRISM_DATABASE_CONNS",
 	},
 	cli.IntFlag{
 		Name:   "database-conns-idle",
-		Usage:  "max `NUMBER` of idle database connections",
+		Usage:  "maximum `NUMBER` of idle database connections",
 		EnvVar: "PHOTOPRISM_DATABASE_CONNS_IDLE",
 	},
 	cli.BoolFlag{
@@ -363,7 +363,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "ffmpeg-bin",
-		Usage:  "FFmpeg `COMMAND` for video transcoding and cover images",
+		Usage:  "FFmpeg `COMMAND` for video transcoding and still image extraction",
 		Value:  "ffmpeg",
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
 	},
@@ -375,7 +375,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "ffmpeg-bitrate",
-		Usage:  "max FFmpeg encoding `BITRATE` (Mbit/s)",
+		Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
 		Value:  50,
 		EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
 	},
@@ -393,12 +393,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "custom download URL `TOKEN` (generated automatically by default)",
+		Usage:  "custom download URL `TOKEN` (default: randomly generated)",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "custom thumbnail and streaming URL `TOKEN` (generated automatically by default)",
+		Usage:  "custom thumbnail and streaming URL `TOKEN` (default: randomly generated)",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{
@@ -409,7 +409,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "thumb-size, s",
-		Usage:  "max pre-cached thumbnail size in `PIXELS` (720-7680)",
+		Usage:  "maximum pre-cached thumbnail image size in `PIXELS` (720-7680)",
 		Value:  2048,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE",
 	},
@@ -420,31 +420,31 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "thumb-size-uncached, x",
-		Usage:  "max on-demand thumbnail size in `PIXELS` (720-7680)",
+		Usage:  "maximum size of on-demand generated thumbnails in `PIXELS` (720-7680)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_THUMB_SIZE_UNCACHED",
 	},
 	cli.IntFlag{
 		Name:   "jpeg-size",
-		Usage:  "max size of generated JPEG files in `PIXELS` (720-30000)",
+		Usage:  "maximum size of generated JPEG images in `PIXELS` (720-30000)",
 		Value:  7680,
 		EnvVar: "PHOTOPRISM_JPEG_SIZE",
 	},
 	cli.IntFlag{
 		Name:   "jpeg-quality, q",
-		Usage:  "`QUALITY` of generated JPEG files, a higher value reduces compression (25-100)",
+		Usage:  "`QUALITY` of generated JPEG images, a higher value reduces compression (25-100)",
 		Value:  92,
 		EnvVar: "PHOTOPRISM_JPEG_QUALITY",
 	},
 	cli.IntFlag{
 		Name:   "face-size",
-		Usage:  "min face size in `PIXELS`",
+		Usage:  "minimum face size in `PIXELS`",
 		Value:  face.SizeThreshold,
 		EnvVar: "PHOTOPRISM_FACE_SIZE",
 	},
 	cli.Float64Flag{
 		Name:   "face-score",
-		Usage:  "quality `THRESHOLD` for faces",
+		Usage:  "minimum face `QUALITY` score",
 		Value:  face.ScoreThreshold,
 		EnvVar: "PHOTOPRISM_FACE_SCORE",
 	},
@@ -456,13 +456,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "face-cluster-size",
-		Usage:  "min size of faces forming a cluster in `PIXELS`",
+		Usage:  "minimum size of automatically clustered faces in `PIXELS`",
 		Value:  face.ClusterSizeThreshold,
 		EnvVar: "PHOTOPRISM_FACE_CLUSTER_SIZE",
 	},
 	cli.IntFlag{
 		Name:   "face-cluster-score",
-		Usage:  "quality `THRESHOLD` for faces forming a cluster",
+		Usage:  "minimum `QUALITY` score of automatically clustered faces",
 		Value:  face.ClusterScoreThreshold,
 		EnvVar: "PHOTOPRISM_FACE_CLUSTER_SCORE",
 	},
@@ -486,7 +486,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "pid-filename",
-		Usage:  "daemon process id `FILENAME`",
+		Usage:  "process id `FILENAME` when running in daemon mode",
 		EnvVar: "PHOTOPRISM_PID_FILENAME",
 	},
 }

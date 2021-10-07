@@ -22,7 +22,7 @@ import (
 // BackupCommand configures the backup cli command.
 var BackupCommand = cli.Command{
 	Name:      "backup",
-	Usage:     "Creates album and index backups",
+	Usage:     "Creates index database and album backups",
 	UsageText: `A custom index sql backup FILENAME may be passed as first argument. Use - for stdout. By default, the backup path is searched.`,
 	Flags:     backupFlags,
 	Action:    backupAction,

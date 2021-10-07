@@ -24,7 +24,7 @@ import (
 // RestoreCommand configures the backup cli command.
 var RestoreCommand = cli.Command{
 	Name:      "restore",
-	Usage:     "Restores album and index backups",
+	Usage:     "Restores index database and album backups",
 	UsageText: `A custom index sql backup FILENAME may be passed as first argument. By default, the backup path is searched.`,
 	Flags:     restoreFlags,
 	Action:    restoreAction,

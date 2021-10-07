@@ -20,7 +20,7 @@ import (
 // PurgeCommand registers the index cli command.
 var PurgeCommand = cli.Command{
 	Name:   "purge",
-	Usage:  "Flags missing files, updates counts and covers",
+	Usage:  "Updates missing files, photo counts, and album covers",
 	Flags:  purgeFlags,
 	Action: purgeAction,
 }
