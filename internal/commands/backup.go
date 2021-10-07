@@ -24,7 +24,7 @@ import (
 var BackupCommand = cli.Command{
 	Name:      "backup",
 	Usage:     "Creates index database dumps and optional YAML album backups",
-	UsageText: `A custom index sql backup FILENAME may be passed as first argument. Use - for stdout. By default, the backup path is searched.`,
+	UsageText: `A custom database SQL dump FILENAME may be passed as first argument. Use - for stdout. The backup paths will be detected automatically if not provided.`,
 	Flags:     backupFlags,
 	Action:    backupAction,
 }

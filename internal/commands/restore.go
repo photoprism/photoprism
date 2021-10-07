@@ -27,7 +27,7 @@ import (
 var RestoreCommand = cli.Command{
 	Name:      "restore",
 	Usage:     "Restores the index from database dumps and YAML album backups",
-	UsageText: `A custom index sql backup FILENAME may be passed as first argument. By default, the backup path is searched.`,
+	UsageText: `A custom database SQL dump FILENAME may be passed as first argument. The backup paths will be detected automatically if not provided.`,
 	Flags:     restoreFlags,
 	Action:    restoreAction,
 }
