@@ -130,6 +130,6 @@ func TestNet(t *testing.T) {
 	t.Logf("Correct for %d", correct)
 
 	// there are a few incorrect results
-	// 4 out of 55 with the 1.21 threshold
-	assert.Equal(t, 51, correct)
+	// 3 out of 55 with the 1.21 threshold
+	assert.Equal(t, 52, correct)
 }

@@ -86,7 +86,7 @@ func Detect(fileName string, findLandmarks bool, minSize int) (faces Faces, err 
 		angle:          0.0,
 		shiftFactor:    0.1,
 		scaleFactor:    1.1,
-		iouThreshold:   0.2,
+		iouThreshold:   float64(OverlapThresholdFloor) / 100,
 		scoreThreshold: float32(ScoreThreshold),
 		perturb:        63,
 	}
