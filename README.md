@@ -51,6 +51,7 @@ We recommend updating your existing `docker-compose.yml` config based on
 
 ## Let's Join Forces ##
 
+This open-source project is made possible thanks to our generous sponsors.
 You're welcome to support us via [GitHub Sponsors](https://github.com/sponsors/photoprism), 
 especially if you have feature requests<sup>1</sup> or need help with using our software.
 In addition, you can find us on [Patreon](https://www.patreon.com/photoprism) and 
