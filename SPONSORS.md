@@ -2,7 +2,7 @@
 
 If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism)
 or [GitHub Sponsors](https://github.com/sponsors/photoprism).
-Your continued support helps us fund operating costs, external services like satellite maps,
+Your continued support helps us fund operating costs, provide services like satellite maps,
 and develop new features.
 
 Thank you very much! ❤️
