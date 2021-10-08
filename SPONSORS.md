@@ -1,9 +1,7 @@
-THIS OPEN-SOURCE PROJECT IS MADE POSSIBLE THANKS TO OUR SPONSORS
-================================================================
+## THIS OPEN-SOURCE PROJECT IS MADE POSSIBLE THANKS TO OUR SPONSORS ##
 
 If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism)
 or [GitHub Sponsors](https://github.com/sponsors/photoprism).
-
 Your continued support helps us fund operating costs, external services like satellite maps,
 and develop new features.
 
