@@ -37,7 +37,7 @@ test.meta("testID", "authentication-001")("Login and Logout", async (t) => {
     .ok();
   await page.openNav();
   await t
-    .click(Selector(".nav-logout"))
+    .click(Selector('div[title="Logout"]'))
     .expect(Selector(".input-name input").visible)
     .ok()
     .expect(Selector(".input-search input").visible)
@@ -93,7 +93,7 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
     .notOk()
     .click(".action-confirm");
   await page.openNav();
-  await t.click(Selector(".nav-logout"));
+  await t.click(Selector('div[title="Logout"]'));
   await page.login("admin", "photoprism");
   await t
     .navigateTo("/archive")
@@ -112,9 +112,9 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
     .typeText(Selector(".input-retype-password input"), "photoprism", { replace: true })
     .click(".action-confirm");
   await page.openNav();
-  await t.click(Selector(".nav-logout"));
+  await t.click(Selector('div[title="Logout"]'));
   await page.login("admin", "photoprism");
   await t.expect(Selector(".input-search input").visible).ok();
   await page.openNav();
-  await t.click(Selector(".nav-logout"));
+  await t.click(Selector('div[title="Logout"]'));
 });
