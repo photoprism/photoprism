@@ -56,7 +56,7 @@ If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://w
 or [GitHub Sponsors](https://github.com/sponsors/photoprism).
 
 Your continued support helps us fund operating costs, provide services like satellite maps,
-and develop new features. Ideas backed by silver or gold sponsors are marked with 
+and develop new features. Requests backed by silver and gold sponsors are marked with 
 a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
 Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
