@@ -1384,9 +1384,21 @@ describe("model/photo", () => {
           Hash: "1xxbgdt55",
         },
       ],
+      Details: [],
     };
     const photo = new Photo(values);
     photo.Title = "New Title";
+    photo.Type = "newtype";
+    photo.Description = "New description";
+    photo.Day = 21;
+    photo.Country = "de";
+    photo.CameraID = "newcameraid";
+    photo.Details.Keywords = "newkeyword";
+    photo.Details.Notes = "New Notes";
+    photo.Details.Subject = "New Photo Subject";
+    photo.Details.Artist = "New Artist";
+    photo.Details.Copyright = "New Copyright";
+    photo.Details.License = "New License";
     photo
       .update()
       .then((response) => {
@@ -1397,6 +1409,17 @@ describe("model/photo", () => {
         done(error);
       });
     assert.equal(photo.Title, "New Title");
+    assert.equal(photo.Type, "newtype");
+    assert.equal(photo.Description, "New description");
+    assert.equal(photo.Day, 21);
+    assert.equal(photo.Country, "de");
+    assert.equal(photo.CameraID, "newcameraid");
+    assert.equal(photo.Details.Keywords, "newkeyword");
+    assert.equal(photo.Details.Notes, "New Notes");
+    assert.equal(photo.Details.Subject, "New Photo Subject");
+    assert.equal(photo.Details.Artist, "New Artist");
+    assert.equal(photo.Details.Copyright, "New Copyright");
+    assert.equal(photo.Details.License, "New License");
   });
 
   it("should test get Markers", () => {
