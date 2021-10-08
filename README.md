@@ -51,17 +51,20 @@ We recommend updating your existing `docker-compose.yml` config based on
 
 ## Funding ##
 
-This open-source project is made possible [thanks to our sponsors](SPONSORS.md). If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism) 
+This open-source project is made possible [thanks to our sponsors](SPONSORS.md). 
+If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism) 
 or [GitHub Sponsors](https://github.com/sponsors/photoprism) — especially if you have 
-feature requests<sup>1</sup> or need help with using our software.
-Your continued support helps us fund operating costs, external services like satellite maps, 
-and develop new features. Thank you very much! ❤️
+feature requests or need help with using our software.
+
+Your continued support helps us fund operating costs, external services like satellite maps,
+and develop new features. Ideas backed by silver or gold sponsors are marked with 
+a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
+Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+
+Thank you very much! ❤️
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
-
-<sup>1</sup> Ideas backed by silver or gold sponsors are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
-Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 ## Roadmap ##
 
