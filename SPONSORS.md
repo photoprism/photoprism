@@ -10,7 +10,7 @@ and develop new features. Thank you very much! ❤️
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress,
 what needs testing, and which feature requests are going to be implemented next.
 
-<sup>1</sup> Ideas backed by one or more eligible sponsors are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
+<sup>1</sup> Ideas backed by silver or gold sponsors are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
 Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 ##### Crypto Donations #####
