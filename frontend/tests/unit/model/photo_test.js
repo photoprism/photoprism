@@ -1375,6 +1375,8 @@ describe("model/photo", () => {
       CameraID: 123,
       Title: "Test Titel",
       Description: "Super nice video",
+      Day: 10,
+      Country: "es",
       Files: [
         {
           UID: "fqbfk181n4ca5sud",
@@ -1384,7 +1386,16 @@ describe("model/photo", () => {
           Hash: "1xxbgdt55",
         },
       ],
-      Details: [],
+      Details: [
+        {
+          Keywords: "old",
+          Notes: "old notes",
+          Subject: "old subject",
+          Artist: "Old Artist",
+          Copyright: "ABC",
+          License: "test",
+        },
+      ],
     };
     const photo = new Photo(values);
     photo.Title = "New Title";
