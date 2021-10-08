@@ -46,10 +46,15 @@ import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
 import { $gettext } from "common/vm";
 import { config, session } from "./session";
+import Acl, { Constants } from "./common/acl";
 
 const c = window.__CONFIG__;
 const appName = c.name;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
+
+const acl = () => new Acl(window.__CONFIG__.acl);
+const aclActions = Constants.actions;
+const aclResources = Constants.resources;
 
 export default [
   {
@@ -193,6 +198,14 @@ export default [
     component: Photos,
     meta: { title: $gettext("Review"), auth: true },
     props: { staticFilter: { review: true } },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceReview, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "private",
@@ -200,6 +213,14 @@ export default [
     component: Photos,
     meta: { title: $gettext("Private"), auth: true },
     props: { staticFilter: { private: true } },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourcePrivate, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "archive",
@@ -207,6 +228,14 @@ export default [
     component: Photos,
     meta: { title: $gettext("Archive"), auth: true },
     props: { staticFilter: { archived: true } },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceArchive, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "places",
@@ -238,6 +267,14 @@ export default [
     path: "/library/files*",
     component: Files,
     meta: { title: $gettext("File Browser"), auth: true },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "hidden",
@@ -245,12 +282,28 @@ export default [
     component: Photos,
     meta: { title: $gettext("Hidden Files"), auth: true },
     props: { staticFilter: { hidden: true } },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "errors",
     path: "/library/errors",
     component: Errors,
     meta: { title: appName, auth: true },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "labels",
@@ -290,6 +343,14 @@ export default [
     component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
     props: { tab: "library-index" },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "library_import",
@@ -297,6 +358,14 @@ export default [
     component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
     props: { tab: "library-import" },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "library_logs",
@@ -304,6 +373,14 @@ export default [
     component: Library,
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
     props: { tab: "library-logs" },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "settings",

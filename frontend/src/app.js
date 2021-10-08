@@ -57,6 +57,7 @@ import Hls from "hls.js";
 import "common/maptiler-lang";
 import { $gettext, Mount } from "common/vm";
 import * as offline from "@lcdp/offline-plugin/runtime";
+import Acl from "./common/acl";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -99,6 +100,17 @@ Vue.prototype.$earlyAccess = () => {
     }
   });
 };
+
+Vue.mixin({
+  data() {
+    return {};
+  },
+  computed: {
+    acl() {
+      return new Acl(window.__CONFIG__.acl);
+    },
+  },
+});
 
 // Register Vuetify
 Vue.use(Vuetify, { rtl, icons, theme });

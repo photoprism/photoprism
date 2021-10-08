@@ -32,6 +32,7 @@ import RestModel from "model/rest";
 import Form from "common/form";
 import Api from "common/api";
 import { $gettext } from "common/vm";
+import { Constants } from "../common/acl";
 
 export class User extends RestModel {
   getDefaults() {
@@ -112,6 +113,19 @@ export class User extends RestModel {
     return Api.post(this.getEntityResource() + "/profile", this.getValues()).then((response) =>
       Promise.resolve(this.setValues(response.data))
     );
+  }
+
+  getRole() {
+    const roles = Constants.roles;
+    if (this.RoleAdmin) return roles.RoleAdmin;
+    if (this.RoleChild) return roles.RoleChild;
+    if (this.RoleFamily) return roles.RoleFamily;
+    if (this.RoleFriend) return roles.RoleFriend;
+    if (this.RoleGuest) return roles.RoleGuest;
+    if (this.UserName.length >= 4 && this.UID.length === 16 && this.UID[0] === "u") {
+      return roles.RoleMember;
+    }
+    return roles.RoleDefault;
   }
 
   static getCollectionResource() {

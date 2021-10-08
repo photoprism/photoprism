@@ -116,7 +116,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile v-if="$config.feature('review')" to="/review" class="nav-review"
+          <v-list-tile v-if="$config.feature('review') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceReview, this.acl.getConstants().actions.ActionRead)" to="/review" class="nav-review"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -126,7 +126,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile v-show="$config.feature('archive')" to="/archive" class="nav-archive" @click.stop="">
+          <v-list-tile v-show="$config.feature('archive') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceArchive, this.acl.getConstants().actions.ActionRead)" to="/archive" class="nav-archive" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Archive</translate>
@@ -301,7 +301,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="$config.feature('private')" to="/private" class="nav-private" @click.stop="">
+        <v-list-tile v-show="$config.feature('private') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourcePrivate, this.acl.getConstants().actions.ActionRead)" to="/private" class="nav-private" @click.stop="">
           <v-list-tile-action :title="$gettext('Private')">
             <v-icon>lock</v-icon>
           </v-list-tile-action>
@@ -314,7 +314,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini && $config.feature('library')" to="/library" class="nav-library" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('library') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceLibrary, this.acl.getConstants().actions.ActionRead)" to="/library" class="nav-library" @click.stop="">
           <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
           </v-list-tile-action>
@@ -326,7 +326,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini && $config.feature('library')" prepend-icon="camera_roll" no-action>
+        <v-list-group v-if="!isMini && $config.feature('library') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceLibrary, this.acl.getConstants().actions.ActionRead)" prepend-icon="camera_roll" no-action>
           <template #activator>
             <v-list-tile to="/library" class="nav-library" @click.stop="">
               <v-list-tile-content>
@@ -488,6 +488,7 @@
 <script>
 import Album from "model/album";
 import Event from "pubsub-js";
+// import Acl from "common/acl";
 
 export default {
   name: "PNavigation",
@@ -526,7 +527,9 @@ export default {
     displayName() {
       return this.$session.getUser().FullName ? this.$session.getUser().FullName : this.$session.getUser().UserName;
     },
-
+    // acl() {
+    //   return new Acl(window.__CONFIG__.acl);
+    // }
   },
   created() {
     this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);

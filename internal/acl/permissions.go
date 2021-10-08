@@ -2,7 +2,8 @@ package acl
 
 var Permissions = ACL{
 	ResourceDefault: Roles{
-		RoleAdmin: Actions{ActionDefault: true},
+		RoleAdmin:  Actions{ActionDefault: true},
+		RoleMember: Actions{ActionDefault: true},
 	},
 	ResourceConfig: Roles{
 		RoleAdmin:  Actions{ActionDefault: true},
@@ -15,7 +16,7 @@ var Permissions = ACL{
 	},
 	ResourceSubjects: Roles{
 		RoleAdmin:  Actions{ActionDefault: true},
-		RoleMember: Actions{ActionRead: true},
+		RoleMember: Actions{ActionRead: true, ActionSearch: true},
 	},
 	ResourceAlbums: Roles{
 		RoleAdmin:  Actions{ActionDefault: true},
@@ -31,5 +32,17 @@ var Permissions = ACL{
 		RoleDefault: Actions{ActionUpdateSelf: true},
 		RoleAdmin:   Actions{ActionUpdateSelf: true},
 		RoleMember:  Actions{ActionUpdateSelf: true},
+	},
+	ResourceReview: Roles{
+		RoleAdmin: Actions{ActionDefault: true},
+	},
+	ResourcePrivate: Roles{
+		RoleAdmin: Actions{ActionDefault: true},
+	},
+	ResourceArchive: Roles{
+		RoleAdmin: Actions{ActionDefault: true},
+	},
+	ResourceLibrary: Roles{
+		RoleAdmin: Actions{ActionDefault: true},
 	},
 }

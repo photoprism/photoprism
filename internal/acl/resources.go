@@ -25,4 +25,8 @@ const (
 	ResourcePhotos        Resource = "photos"
 	ResourcePlaces        Resource = "places"
 	ResourceFeedback      Resource = "feedback"
+	ResourceReview        Resource = "review"
+	ResourcePrivate       Resource = "private"
+	ResourceArchive       Resource = "archive"
+	ResourceLibrary       Resource = "library"
 )

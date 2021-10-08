@@ -28,6 +28,12 @@ func TestACL_Allow(t *testing.T) {
 	t.Run("albums/guest/default", func(t *testing.T) {
 		assert.False(t, Permissions.Allow(ResourceAlbums, RoleGuest, ActionDefault))
 	})
+	t.Run("review/member/default", func(t *testing.T) {
+		assert.False(t, Permissions.Allow(ResourceReview, RoleMember, ActionDefault))
+	})
+	t.Run("review/admin/read", func(t *testing.T) {
+		assert.True(t, Permissions.Allow(ResourceReview, RoleAdmin, ActionRead))
+	})
 }
 
 func TestACL_Deny(t *testing.T) {
