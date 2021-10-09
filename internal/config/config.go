@@ -70,7 +70,11 @@ type Config struct {
 
 func init() {
 	TotalMem = memory.TotalMemory()
-	LowMem = TotalMem < MinMem
+
+	// Disable features with high memory requirements unless PHOTOPRISM_UNSAFE is set.
+	if os.Getenv("PHOTOPRISM_UNSAFE") == "" {
+		LowMem = TotalMem < MinMem
+	}
 
 	// Init public thumb sizes for use in client apps.
 	for i := len(thumb.DefaultSizes) - 1; i >= 0; i-- {
