@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:371
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:120
+#: src/pages/about/about.vue:92
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -244,6 +244,10 @@ msgstr ""
 msgid "All Years"
 msgstr ""
 
+#: src/pages/about/about.vue:36
+msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+msgstr ""
+
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
@@ -339,6 +343,10 @@ msgstr ""
 
 #: src/pages/settings/general.vue:361
 msgid "Automatically creates albums of special moments, trips, and places."
+msgstr ""
+
+#: src/pages/about/about.vue:26
+msgid "Become a sponsor"
 msgstr ""
 
 #: src/pages/people/subjects.vue:430
@@ -1098,6 +1106,10 @@ msgstr ""
 msgid "I'm a sponsor"
 msgstr ""
 
+#: src/pages/about/about.vue:22
+msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
+msgstr ""
+
 #: src/dialog/photo/labels.vue:34
 msgid "image"
 msgstr ""
@@ -1260,6 +1272,10 @@ msgstr ""
 
 #: src/dialog/photo/details.vue:414
 msgid "Lens"
+msgstr ""
+
+#: src/pages/about/about.vue:33
+msgid "Let us know when we mistakenly label an idea as unfunded."
 msgstr ""
 
 #: src/dialog/sponsor.vue:7
@@ -1780,7 +1796,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/pages/about/about.vue:50
+#: src/pages/about/about.vue:45
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr ""
 
@@ -2343,8 +2359,16 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
+#: src/pages/about/about.vue:39
+msgid "Thank you very much!"
+msgstr ""
+
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
+msgstr ""
+
+#: src/pages/about/about.vue:17
+msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
 msgstr ""
 
 #: src/pages/library/index.vue:37
@@ -2362,6 +2386,10 @@ msgstr ""
 #: src/dialog/webdav.vue:17
 #: src/pages/settings/sync.vue:36
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
+msgstr ""
+
+#: src/pages/about/about.vue:21
+msgid "This open-source project is made possible thanks to our sponsors."
 msgstr ""
 
 #: src/pages/settings/advanced.vue:253
@@ -2410,7 +2438,7 @@ msgstr ""
 msgid "Topographic"
 msgstr ""
 
-#: src/pages/about/about.vue:47
+#: src/pages/about/about.vue:42
 msgid "Trademarks"
 msgstr ""
 
@@ -2670,8 +2698,12 @@ msgstr ""
 msgid "You may rescan your library to find additional faces."
 msgstr ""
 
-#: src/pages/about/about.vue:51
+#: src/pages/about/about.vue:46
 msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
+msgstr ""
+
+#: src/pages/about/about.vue:32
+msgid "Your continued support helps us fund operating costs, provide services like satellite maps, and develop new features. Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
 msgstr ""
 
 #: src/dialog/sponsor.vue:21
