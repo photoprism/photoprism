@@ -9,13 +9,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/face"
-
 	"github.com/karrick/godirwalk"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -265,7 +265,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			log.Warnf("index: %s (update counts)", err)
 		}
 	} else {
-		log.Infof("index: no new or modified files")
+		log.Infof("index: found no new or modified files")
 	}
 
 	runtime.GC()

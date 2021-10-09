@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -63,6 +64,9 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 
 // UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
 func UpdateFolderDates() error {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	switch DbDialect() {
 	case MySQL:
 		return UnscopedDb().Exec(`UPDATE folders

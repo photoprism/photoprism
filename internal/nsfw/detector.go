@@ -3,7 +3,6 @@ package nsfw
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -34,7 +33,7 @@ func (t *Detector) File(filename string) (result Labels, err error) {
 		return result, fmt.Errorf("nsfw: %s is not a jpeg file", txt.Quote(filepath.Base(filename)))
 	}
 
-	imageBuffer, err := ioutil.ReadFile(filename)
+	imageBuffer, err := os.ReadFile(filename)
 
 	if err != nil {
 		return result, err

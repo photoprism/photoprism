@@ -5,7 +5,7 @@ import "github.com/photoprism/photoprism/internal/face"
 // FaceSize returns the face size threshold in pixels.
 func (c *Config) FaceSize() int {
 	if c.options.FaceSize < 20 || c.options.FaceSize > 10000 {
-		return 50
+		return face.SizeThreshold
 	}
 
 	return c.options.FaceSize
@@ -27,6 +27,24 @@ func (c *Config) FaceOverlap() int {
 	}
 
 	return c.options.FaceOverlap
+}
+
+// FaceClusterSize returns the size threshold for faces forming a cluster in pixels.
+func (c *Config) FaceClusterSize() int {
+	if c.options.FaceClusterSize < 20 || c.options.FaceClusterSize > 10000 {
+		return face.ClusterSizeThreshold
+	}
+
+	return c.options.FaceClusterSize
+}
+
+// FaceClusterScore returns the quality threshold for faces forming a cluster.
+func (c *Config) FaceClusterScore() int {
+	if c.options.FaceClusterScore < 1 || c.options.FaceClusterScore > 100 {
+		return face.ClusterScoreThreshold
+	}
+
+	return c.options.FaceClusterScore
 }
 
 // FaceClusterCore returns the number of faces forming a cluster core.

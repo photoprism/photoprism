@@ -293,6 +293,50 @@ Mock.onDelete("api/v1/photos/undefined/like").reply(200, { status: "ok" }, mockH
 Mock.onPost("api/v1/albums/undefined/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onDelete("api/v1/albums/undefined/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onGet("api/v1/config").reply(200, clientConfig, mockHeaders);
+Mock.onPut("api/v1/markers/mBC123ghytr", { Review: false, Invalid: false }).reply(
+  200,
+  {
+    success: "ok",
+  },
+  mockHeaders
+);
+Mock.onPut("api/v1/markers/mCC123ghytr", { Review: false, Invalid: true }).reply(
+  200,
+  {
+    success: "ok",
+  },
+  mockHeaders
+);
+Mock.onPut("api/v1/markers/mDC123ghytr", { SubjSrc: "manual", Name: "testname" }).reply(
+  200,
+  {
+    success: "ok",
+  },
+  mockHeaders
+);
+Mock.onDelete("api/v1/markers/mEC123ghytr/subject").reply(200, { success: "ok" }, mockHeaders);
+Mock.onPut("api/v1/faces/f123ghytrfggd", { Hidden: false }).reply(
+  200,
+  {
+    success: "ok",
+  },
+  mockHeaders
+);
+Mock.onPut("api/v1/faces/f123ghytrfggd", { Hidden: true }).reply(
+  200,
+  {
+    success: "ok",
+  },
+  mockHeaders
+);
+Mock.onPost("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onPut("api/v1/subjects/s123ghytrfggd").reply(200, { status: "ok" }, mockHeaders);
+Mock.onDelete("api/v1/subjects/s123ghytrfggd/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onGet("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
+Mock.onPost("api/v1/config/options").reply(200, { success: "ok" }, mockHeaders);
+Mock.onPost("api/v1/albums").reply(200, { success: "ok" }, mockHeaders);
+
+
 //Mock.onPost().reply(200);
 //Mock.onDelete().reply(200);
 /*

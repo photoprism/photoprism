@@ -10,6 +10,7 @@ type Subject struct {
 	SubjName     string `json:"Name"`
 	SubjAlias    string `json:"Alias"`
 	SubjFavorite bool   `json:"Favorite"`
+	SubjHidden   bool   `json:"Hidden"`
 	SubjPrivate  bool   `json:"Private"`
 	SubjExcluded bool   `json:"Excluded"`
 	FileCount    int    `json:"FileCount"`

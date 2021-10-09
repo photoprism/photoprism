@@ -5,11 +5,13 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"time"
+
+	"github.com/dustin/go-humanize/english"
 
 	"github.com/urfave/cli"
 
@@ -24,8 +26,8 @@ import (
 // RestoreCommand configures the backup cli command.
 var RestoreCommand = cli.Command{
 	Name:      "restore",
-	Usage:     "Restores album and index backups",
-	UsageText: `A custom index sql backup FILENAME may be passed as first argument. By default, the backup path is searched.`,
+	Usage:     "Restores the index from database dumps and YAML album backups",
+	UsageText: `A custom database SQL dump FILENAME may be passed as first argument. The backup paths will be detected automatically if not provided.`,
 	Flags:     restoreFlags,
 	Action:    restoreAction,
 }
@@ -33,23 +35,23 @@ var RestoreCommand = cli.Command{
 var restoreFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "overwrite existing index",
+		Usage: "replace existing index",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore album yaml file backups",
+		Usage: "restore albums from YAML backups",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album yaml file backup `PATH`",
+		Usage: "custom albums backup `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "restore index sql database backup",
+		Usage: "restore index from database SQL dump",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom index sql database backup `PATH`",
+		Usage: "custom database backup `PATH`",
 	},
 }
 
@@ -124,7 +126,7 @@ func restoreAction(ctx *cli.Context) error {
 
 		log.Infof("restoring index from %s", txt.Quote(indexFileName))
 
-		sqlBackup, err := ioutil.ReadFile(indexFileName)
+		sqlBackup, err := os.ReadFile(indexFileName)
 
 		if err != nil {
 			return err
@@ -186,7 +188,7 @@ func restoreAction(ctx *cli.Context) error {
 		}
 	}
 
-	log.Infoln("migrating database")
+	log.Infoln("migrating index database schema")
 
 	conf.InitDb()
 
@@ -198,14 +200,14 @@ func restoreAction(ctx *cli.Context) error {
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("albums path %s not found", txt.Quote(albumsPath))
+			log.Warnf("albums backup path %s not found", txt.Quote(albumsPath))
 		} else {
 			log.Infof("restoring albums from %s", txt.Quote(albumsPath))
 
 			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
 				return err
 			} else {
-				log.Infof("%d albums restored from yaml files", count)
+				log.Infof("restored %s from YAML backups", english.Plural(count, "album", "albums"))
 			}
 		}
 	}

@@ -1,17 +1,18 @@
 package api
 
 import (
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"gopkg.in/yaml.v2"
+
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"gopkg.in/yaml.v2"
 )
 
 // GetConfig returns client config values.
@@ -81,7 +82,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		v := make(valueMap)
 
 		if fs.FileExists(fileName) {
-			yamlData, err := ioutil.ReadFile(fileName)
+			yamlData, err := os.ReadFile(fileName)
 
 			if err != nil {
 				log.Errorf("options: %s", err)
@@ -118,7 +119,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		}
 
 		// Write YAML data to file.
-		if err := ioutil.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
+		if err := os.WriteFile(fileName, yamlData, os.ModePerm); err != nil {
 			log.Errorf("options: %s", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
@@ -134,7 +135,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		log.Infof(i18n.Msg(i18n.MsgSettingsSaved))
+		event.InfoMsg(i18n.MsgSettingsSaved)
 
 		c.JSON(http.StatusOK, conf.Options())
 	})

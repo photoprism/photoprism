@@ -46,7 +46,7 @@
         <v-layout row wrap class="search-results file-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
-              :key="index"
+              :key="model.UID"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
             <v-card tile
@@ -431,7 +431,7 @@ export default {
     onUpdate(ev, data) {
       if (!this.listen) return;
 
-      if (!data || !data.entities) {
+      if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;
       }
 

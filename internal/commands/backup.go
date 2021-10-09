@@ -5,12 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -23,8 +23,8 @@ import (
 // BackupCommand configures the backup cli command.
 var BackupCommand = cli.Command{
 	Name:      "backup",
-	Usage:     "Creates album and index backups",
-	UsageText: `A custom index sql backup FILENAME may be passed as first argument. Use - for stdout. By default, the backup path is searched.`,
+	Usage:     "Creates index database dumps and optional YAML album backups",
+	UsageText: `A custom database SQL dump FILENAME may be passed as first argument. Use - for stdout. The backup paths will be detected automatically if not provided.`,
 	Flags:     backupFlags,
 	Action:    backupAction,
 }
@@ -32,23 +32,23 @@ var BackupCommand = cli.Command{
 var backupFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "overwrite existing backup files",
+		Usage: "replace existing backup files",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "create album yaml file backups",
+		Usage: "create YAML album backups",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album yaml file backup `PATH`",
+		Usage: "custom albums backup `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "create index sql database backup",
+		Usage: "create index database SQL dump",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom index sql database backup `PATH`",
+		Usage: "custom database backup `PATH`",
 	},
 }
 
@@ -157,7 +157,7 @@ func backupAction(ctx *cli.Context) error {
 			fmt.Println(out.String())
 		} else {
 			// Write output to file.
-			if err := ioutil.WriteFile(indexFileName, []byte(out.String()), os.ModePerm); err != nil {
+			if err := os.WriteFile(indexFileName, []byte(out.String()), os.ModePerm); err != nil {
 				return err
 			}
 		}
@@ -169,7 +169,7 @@ func backupAction(ctx *cli.Context) error {
 
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
-				log.Warnf("custom albums backup path not writable, using default")
+				log.Warnf("albums backup path not writable, using default")
 			}
 
 			albumsPath = conf.AlbumsPath()
@@ -180,7 +180,7 @@ func backupAction(ctx *cli.Context) error {
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err
 		} else {
-			log.Infof("%d albums saved as yaml files", count)
+			log.Infof("created %s", english.Plural(count, "YAML album backup", "YAML album backups"))
 		}
 	}
 

@@ -6,6 +6,7 @@ import (
 
 var (
 	Db          = sync.Mutex{}
+	IndexUpdate = sync.Mutex{}
 	MainWorker  = Busy{}
 	SyncWorker  = Busy{}
 	ShareWorker = Busy{}

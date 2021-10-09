@@ -90,6 +90,15 @@ Vue.prototype.$config = config;
 Vue.prototype.$clipboard = Clipboard;
 Vue.prototype.$isMobile = isMobile;
 Vue.prototype.$rtl = rtl;
+Vue.prototype.$earlyAccess = () => {
+  return config.load().finally(() => {
+    if (config.values.sponsor) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  });
+};
 
 // Register Vuetify
 Vue.use(Vuetify, { rtl, icons, theme });

@@ -53,4 +53,8 @@ describe("common/util", () => {
     const result = Util.truncate("teststring for mocha", 5, "ng");
     assert.equal(result, "tesng");
   });
+  it("should encode html", () => {
+    const result = Util.encodeHTML("Micha & Theresa > < 'Lilly'");
+    assert.equal(result, "Micha &amp; Theresa &gt; &lt; &#x27;Lilly&#x27;");
+  });
 });

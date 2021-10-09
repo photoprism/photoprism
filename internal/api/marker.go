@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/photoprism/photoprism/internal/entity"
-
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -19,6 +20,7 @@ import (
 func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, err error) {
 	// Check authorization.
 	s := Auth(SessionID(c), acl.ResourceFiles, acl.ActionUpdate)
+
 	if s.Invalid() {
 		AbortUnauthorized(c)
 		return nil, nil, fmt.Errorf("unauthorized")
@@ -74,22 +76,21 @@ func UpdateMarker(router *gin.RouterGroup) {
 			return
 		}
 
-		markerForm, err := form.NewMarker(*marker)
+		// Initialize form.
+		f, err := form.NewMarker(*marker)
 
 		if err != nil {
 			log.Errorf("marker: %s (new form)", err)
 			AbortSaveFailed(c)
 			return
-		}
-
-		if err := c.BindJSON(&markerForm); err != nil {
+		} else if err := c.BindJSON(&f); err != nil {
 			log.Errorf("marker: %s (update form)", err)
 			AbortBadRequest(c)
 			return
 		}
 
-		// Save marker.
-		if changed, err := marker.SaveForm(markerForm); err != nil {
+		// Update marker from form values.
+		if changed, err := marker.SaveForm(f); err != nil {
 			log.Errorf("marker: %s", err)
 			AbortSaveFailed(c)
 			return
@@ -98,7 +99,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 				if res, err := service.Faces().Optimize(); err != nil {
 					log.Errorf("faces: %s (optimize)", err)
 				} else if res.Merged > 0 {
-					log.Infof("faces: %d clusters merged", res.Merged)
+					log.Infof("faces: merged %s", english.Plural(res.Merged, "cluster", "clusters"))
 				}
 			}
 

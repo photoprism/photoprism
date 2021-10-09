@@ -2,7 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -12,14 +12,14 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// StatusCommand performs a server health check.
+// StatusCommand registers the status command.
 var StatusCommand = cli.Command{
 	Name:   "status",
-	Usage:  "Performs a server health check",
+	Usage:  "Checks if the web server is running",
 	Action: statusAction,
 }
 
-// statusAction shows the server health status
+// statusAction checks if the web server is running.
 func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	client := &http.Client{Timeout: 10 * time.Second}
@@ -38,7 +38,7 @@ func statusAction(ctx *cli.Context) error {
 		return fmt.Errorf("can't connect to %s:%d", conf.HttpHost(), conf.HttpPort())
 	} else if resp.StatusCode != 200 {
 		return fmt.Errorf("server running at %s:%d, bad status %d\n", conf.HttpHost(), conf.HttpPort(), resp.StatusCode)
-	} else if body, err := ioutil.ReadAll(resp.Body); err != nil {
+	} else if body, err := io.ReadAll(resp.Body); err != nil {
 		return err
 	} else {
 		status = string(body)

@@ -23,6 +23,13 @@
         <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
+
+        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
+          <v-icon>visibility</v-icon>
+        </v-btn>
+        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
+          <v-icon>visibility_off</v-icon>
+        </v-btn>
       </v-toolbar>
     </v-form>
 
@@ -31,7 +38,7 @@
     </v-container>
     <v-container v-else fluid class="pa-0">
       <p-subject-clipboard :refresh="refresh" :selection="selection"
-                         :clear-selection="clearSelection"></p-subject-clipboard>
+                           :clear-selection="clearSelection"></p-subject-clipboard>
 
       <p-scroll-top></p-scroll-top>
 
@@ -49,10 +56,11 @@
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results subject-results cards-view" :class="{'select-results': selection.length > 0}">
+        <v-layout row wrap class="search-results subject-results cards-view"
+                  :class="{'select-results': selection.length > 0}">
           <v-flex
               v-for="(model, index) in results"
-              :key="index"
+              :key="model.UID"
               xs6 sm4 md3 lg2 xxl1 d-flex
           >
             <v-card tile
@@ -76,6 +84,15 @@
                   @mousedown="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
+                <v-btn :ripple="false" :depressed="false" class="input-hidden"
+                       icon flat small absolute
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
+                       @touchend.stop.prevent="onToggleHidden($event, index)"
+                       @touchmove.stop.prevent
+                       @click.stop.prevent="onToggleHidden($event, index)">
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
+                </v-btn>
                 <v-btn :ripple="false"
                        icon flat absolute
                        class="input-select"
@@ -116,6 +133,7 @@
                     <v-text-field
                         v-model="model.Name"
                         :rules="[titleRule]"
+                        :readonly="readonly"
                         :label="$gettext('Name')"
                         color="secondary-dark"
                         class="input-rename background-inherit elevation-0"
@@ -145,6 +163,7 @@
         </v-layout>
       </v-container>
     </v-container>
+    <p-sponsor-dialog :show="dialog.sponsor" @close="dialog.sponsor = false"></p-sponsor-dialog>
     <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge"
                            @confirm="onMerge"></p-people-merge-dialog>
   </div>
@@ -168,9 +187,9 @@ export default {
     const query = this.$route.query;
     const routeName = this.$route.name;
     const q = query['q'] ? query['q'] : '';
-    const all = query['all'] ? query['all'] : '';
+    const hidden = query['hidden'] ? query['hidden'] : '';
     const order = this.sortOrder();
-    const filter = {q: q, all: all, order: order};
+    const filter = {q, hidden, order};
     const settings = {};
 
     return {
@@ -193,12 +212,20 @@ export default {
       titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
+      dialog: {
+        sponsor: false,
+      },
       merge: {
         subj1: null,
         subj2: null,
         show: false,
-      }
+      },
     };
+  },
+  computed: {
+    readonly: function() {
+      return this.busy || this.loading;
+    },
   },
   watch: {
     '$route'() {
@@ -211,7 +238,7 @@ export default {
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.all = query["all"] ? query["all"] : "";
+      this.filter.hidden = query["hidden"] ? query["hidden"] : "";
       this.filter.order = this.sortOrder();
       this.routeName = this.$route.name;
 
@@ -233,21 +260,23 @@ export default {
   },
   methods: {
     onSave(m) {
+      if (!m.Name || m.Name.trim() === "") {
+        // Refuse to save empty name.
+        return;
+      }
+
       const existing = this.$config.getPerson(m.Name);
 
-      if(!existing) {
-        m.update();
-        return;
+      if (!existing) {
+        this.busy = true;
+        m.update().finally(() => {
+          this.busy = false;
+        });
+      } else if (existing.UID !== m.UID) {
+        this.merge.subj1 = m;
+        this.merge.subj2 = existing;
+        this.merge.show = true;
       }
-
-      if (existing.UID === m.UID) {
-        // Name didn't change.
-        return;
-      }
-
-      this.merge.subj1 = m;
-      this.merge.subj2 = existing;
-      this.merge.show = true;
     },
     onCancelMerge() {
       this.merge.subj1.Name = this.merge.subj1.originalValue("Name");
@@ -256,9 +285,11 @@ export default {
       this.merge.subj2 = null;
     },
     onMerge() {
+      this.busy = true;
       this.merge.show = false;
       this.$notify.blockUI();
       this.merge.subj1.update().finally(() => {
+        this.busy = false;
         this.merge.subj1 = null;
         this.merge.subj2 = null;
         this.$notify.unblockUI();
@@ -268,7 +299,7 @@ export default {
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("subjects_offset"));
 
-      if(this.offset > 0 || !offset) {
+      if (this.offset > 0 || !offset) {
         return this.batchSize;
       }
 
@@ -362,13 +393,41 @@ export default {
         }
       }
     },
-    showAll() {
-      this.filter.all = "true";
-      this.updateQuery();
+    onShowHidden() {
+      this.showHidden("yes");
     },
-    showImportant() {
-      this.filter.all = "";
-      this.updateQuery();
+    onExcludeHidden() {
+      this.showHidden("");
+    },
+    showHidden(value) {
+      this.$earlyAccess().then(() => {
+        this.filter.hidden = value;
+        this.updateQuery();
+      }).catch(() => {
+        this.dialog.sponsor = true;
+      });
+    },
+    onToggleHidden(ev, index) {
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
+      this.$earlyAccess().then(() => {
+        this.toggleHidden(this.results[index]);
+      }).catch(() => {
+        this.dialog.sponsor = true;
+      });
+    },
+    toggleHidden(model) {
+      if (!model) {
+        return;
+      }
+      this.busy = true;
+      model.toggleHidden().finally(() => {
+        this.busy = false;
+      });
     },
     clearQuery() {
       this.filter.q = '';
@@ -562,7 +621,7 @@ export default {
     onUpdate(ev, data) {
       if (!this.listen) return;
 
-      if (!data || !data.entities) {
+      if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;
       }
 

@@ -1,8 +1,8 @@
 <template>
   <div class="p-tab p-tab-photo-files">
     <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
-      <template v-for="(file, index) in model.fileModels()">
-        <v-expansion-panel-content v-if="!file.Missing" :key="index" class="pa-0 elevation-0 secondary-light"
+      <template v-for="file in model.fileModels()">
+        <v-expansion-panel-content v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light"
                                    style="margin-top: 1px;">
           <template #header>
             <div class="caption">{{ file.baseName(70) }}</div>
@@ -10,6 +10,10 @@
           <v-card>
             <v-card-text class="white pa-0">
               <v-container fluid class="pa-0">
+                <v-alert
+                    :value="file.Error"
+                    type="error" class="my-0 text-capitalize"
+                >{{ file.Error }}</v-alert>
                 <v-layout row wrap fill-height
                           align-center
                           justify-center>
@@ -41,13 +45,13 @@
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
-                            <v-btn v-if="features.edit && file.Type === 'jpg' && !file.Primary" small depressed dark
+                            <v-btn v-if="features.edit && file.Type === 'jpg' && !file.Error && !file.Primary" small depressed dark
                                    color="primary-button"
                                    class="ma-0 action-primary"
                                    @click.stop.prevent="primaryFile(file)">
                               <translate>Primary</translate>
                             </v-btn>
-                            <v-btn v-if="features.edit && !file.Sidecar && !file.Primary && file.Root === '/'" small
+                            <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small
                                    depressed dark color="primary-button"
                                    class="ma-0 action-unstack"
                                    @click.stop.prevent="unstackFile(file)">
@@ -156,17 +160,11 @@
                           </td>
                           <td>{{ file.MainColor | capitalize }}</td>
                         </tr>
-                        <tr v-if="file.Type === 'jpg'">
+                        <tr v-if="file.Chroma">
                           <td>
                             <translate>Chroma</translate>
                           </td>
                           <td>{{ file.Chroma }} / 100</td>
-                        </tr>
-                        <tr v-if="file.Error">
-                          <td>
-                            <translate>Error</translate>
-                          </td>
-                          <td>{{ file.Error }}</td>
                         </tr>
                         <tr v-if="file.Missing">
                           <td>

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
 )
@@ -58,7 +59,7 @@ func SaveSettings(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		log.Infof(i18n.Msg(i18n.MsgSettingsSaved))
+		event.InfoMsg(i18n.MsgSettingsSaved)
 
 		c.JSON(http.StatusOK, settings)
 	})

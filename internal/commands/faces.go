@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
@@ -19,10 +18,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// FacesCommand registers the faces cli command.
+// FacesCommand registers the facial recognition subcommands.
 var FacesCommand = cli.Command{
 	Name:  "faces",
-	Usage: "Facial recognition sub-commands",
+	Usage: "Facial recognition subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "stats",
@@ -35,14 +34,14 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "fix, f",
-					Usage: "issues will be fixed automatically",
+					Usage: "fix discovered issues",
 				},
 			},
 			Action: facesAuditAction,
 		},
 		{
 			Name:  "reset",
-			Usage: "Removes people and faces",
+			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
@@ -63,7 +62,7 @@ var FacesCommand = cli.Command{
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "force, f",
-					Usage: "update all  faces",
+					Usage: "update all faces",
 				},
 			},
 			Action: facesUpdateAction,
@@ -185,7 +184,7 @@ func facesResetAction(ctx *cli.Context) error {
 // facesResetAllAction removes all people, faces, and face markers.
 func facesResetAllAction(ctx *cli.Context) error {
 	actionPrompt := promptui.Prompt{
-		Label:     "Permanently delete all people and faces?",
+		Label:     "Permanently remove all people and faces?",
 		IsConfirm: true,
 	}
 
@@ -343,7 +342,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("%s merged in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
+		log.Infof("merged %s in %s", english.Plural(res.Merged, "face cluster", "face clusters"), elapsed)
 	}
 
 	conf.Shutdown()

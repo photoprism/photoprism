@@ -4,16 +4,17 @@ import (
 	"github.com/photoprism/photoprism/internal/crop"
 )
 
-var CropSize = crop.Sizes[crop.Tile160]
-var MatchDist = 0.46
-var ClusterDist = 0.64
-var ClusterCore = 4
-var ClusterMinScore = 15
-var ClusterMinSize = 80
-var SampleThreshold = 2 * ClusterCore
-var OverlapThreshold = 42
-var OverlapThresholdFloor = OverlapThreshold - 1
-var ScoreThreshold = 9.0
+var CropSize = crop.Sizes[crop.Tile160]          // Face image crop size for FaceNet.
+var OverlapThreshold = 42                        // Face area overlap threshold in percent.
+var OverlapThresholdFloor = OverlapThreshold - 1 // Reduced overlap area to avoid rounding inconsistencies.
+var ScoreThreshold = 9.0                         // Min face score.
+var ClusterScoreThreshold = 15                   // Min score for faces forming a cluster.
+var SizeThreshold = 50                           // Min face size in pixels.
+var ClusterSizeThreshold = 80                    // Min size for faces forming a cluster in pixels.
+var ClusterDist = 0.64                           // Similarity distance threshold of faces forming a cluster core.
+var MatchDist = 0.46                             // Distance offset threshold for matching new faces with clusters.
+var ClusterCore = 4                              // Min number of faces forming a cluster core.
+var SampleThreshold = 2 * ClusterCore            // Threshold for automatic clustering to start.
 
 // QualityThreshold returns the scale adjusted quality score threshold.
 func QualityThreshold(scale int) (score float32) {

@@ -220,7 +220,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				purgedPhotos[photo.PhotoUID] = true
 
 				if opt.Hard {
-					log.Infof("purge: permanently deleted %s", txt.Quote(photo.PhotoName))
+					log.Infof("purge: permanently removed %s", txt.Quote(photo.PhotoName))
 				} else {
 					log.Infof("purge: flagged photo %s as deleted", txt.Quote(photo.PhotoName))
 				}
@@ -246,7 +246,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	}
 
 	// Set photo quality scores to -1 if files are missing.
-	if err := query.ResetPhotoQuality(); err != nil {
+	if err := query.FlagHiddenPhotos(); err != nil {
 		return purgedFiles, purgedPhotos, err
 	}
 

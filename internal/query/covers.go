@@ -9,10 +9,14 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // UpdateAlbumDefaultCovers updates default album cover thumbs.
 func UpdateAlbumDefaultCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -26,7 +30,7 @@ func UpdateAlbumDefaultCovers() (err error) {
         	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
             JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0 AND pa.missing = 0
         	WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg'
 			) b ON b.album_uid = albums.album_uid
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
@@ -35,7 +39,7 @@ func UpdateAlbumDefaultCovers() (err error) {
 		SELECT f.file_hash FROM files f 
 			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0 AND pa.missing = 0
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_type = 'jpg' 
+			WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg' 
 			ORDER BY p.taken_at DESC LIMIT 1
 		) WHERE ?`, condition))
 	default:
@@ -58,6 +62,9 @@ func UpdateAlbumDefaultCovers() (err error) {
 
 // UpdateAlbumFolderCovers updates folder album cover thumbs.
 func UpdateAlbumFolderCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -70,7 +77,7 @@ func UpdateAlbumFolderCovers() (err error) {
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
 			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg'
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
@@ -80,7 +87,7 @@ func UpdateAlbumFolderCovers() (err error) {
 			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			  GROUP BY p.photo_path
 			) b
-		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_type = 'jpg'
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg'
 		AND b.photo_path = albums.album_path LIMIT 1)
 		WHERE ?`, condition))
 	default:
@@ -103,6 +110,9 @@ func UpdateAlbumFolderCovers() (err error) {
 
 // UpdateAlbumMonthCovers updates month album cover thumbs.
 func UpdateAlbumMonthCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -115,7 +125,7 @@ func UpdateAlbumMonthCovers() (err error) {
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
 			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg'
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
@@ -125,7 +135,7 @@ func UpdateAlbumMonthCovers() (err error) {
 			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			  GROUP BY p.photo_year, p.photo_month
 			) b
-		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg'
+		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg'
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
 		WHERE ?`, condition))
 	default:
@@ -168,6 +178,9 @@ func UpdateAlbumCovers() (err error) {
 
 // UpdateLabelCovers updates label cover thumbs.
 func UpdateLabelCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -188,7 +201,7 @@ func UpdateLabelCovers() (err error) {
 				JOIN categories c ON c.label_id = pl.label_id
 			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
 			GROUP BY c.category_id
-			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_type = 'jpg' AND f.file_missing = 0
+			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg' AND f.file_missing = 0
 		) b ON b.label_id = labels.id
 		SET thumb = b.file_hash WHERE ?`, condition)
 	case SQLite:
@@ -196,7 +209,7 @@ func UpdateLabelCovers() (err error) {
 		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
+			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
 		) WHERE ?`, condition))
 
@@ -206,7 +219,7 @@ func UpdateLabelCovers() (err error) {
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_type = 'jpg' 
+			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_error = '' AND f.file_type = 'jpg' 
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
 			) WHERE thumb IS NULL`))
 
@@ -232,6 +245,9 @@ func UpdateLabelCovers() (err error) {
 
 // UpdateSubjectCovers updates subject cover thumbs.
 func UpdateSubjectCovers() (err error) {
+	mutex.IndexUpdate.Lock()
+	defer mutex.IndexUpdate.Unlock()
+
 	start := time.Now()
 
 	var res *gorm.DB

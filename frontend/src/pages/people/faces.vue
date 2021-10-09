@@ -1,7 +1,5 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-faces" style="user-select: none"
-       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="1200"
-       :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div class="p-page p-page-faces" style="user-select: none">
 
     <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
       <v-toolbar dense flat color="secondary-light pa-0">
@@ -10,6 +8,13 @@
 
         <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
+        </v-btn>
+
+        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
+          <v-icon>visibility</v-icon>
+        </v-btn>
+        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
+          <v-icon>visibility_off</v-icon>
         </v-btn>
       </v-toolbar>
     </v-form>
@@ -35,65 +40,54 @@
         </v-alert>
         <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
           <v-flex
-              v-for="(model, index) in results"
-              :key="index"
+              v-for="model in results"
+              :key="model.ID"
               xs12 sm6 md4 lg3 xl2 xxl1 d-flex
           >
-            <v-card v-if="model.Marker"
-                    :data-id="model.Marker.UID"
+            <v-card :data-id="model.ID"
                     tile style="user-select: none;"
                     :class="model.classes()"
                     class="result accent lighten-3">
               <div class="card-background accent lighten-3"></div>
-              <v-img :src="model.Marker.thumbnailUrl('tile_320')"
+              <v-img :src="model.thumbnailUrl('tile_320')"
                      :transition="false"
                      aspect-ratio="1"
                      class="accent lighten-2 clickable"
-                     @click.stop.prevent="$router.push(model.route(view))">
-                <v-btn v-if="!model.Marker.SubjUID && !model.Hidden" :ripple="false" :depressed="false" class="input-hide"
-                       icon flat small absolute :title="$gettext('Hide')"
-                       @click.stop.prevent="onHide(model)">
-                  <v-icon color="white" class="action-hide">clear</v-icon>
+                     @click.stop.prevent="onView(model)">
+                <v-btn :ripple="false" :depressed="false" class="input-hidden"
+                       icon flat small absolute
+                       @click.stop.prevent="toggleHidden(model)">
+                  <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
+                  <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
                 </v-btn>
               </v-img>
 
               <v-card-actions class="card-details pa-0">
-                <v-layout v-if="model.Hidden" row wrap align-center>
-                  <v-flex xs12 class="text-xs-center pa-0">
-                    <v-btn color="transparent" :disabled="busy"
-                           large depressed block :round="false"
-                           class="action-undo text-xs-center"
-                           :title="$gettext('Undo')" @click.stop="onShow(model)">
-                      <v-icon dark>undo</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-                <v-layout v-else-if="model.Marker.SubjUID" row wrap align-center>
+                <v-layout v-if="model.SubjUID" row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
-                        v-model="model.Marker.Name"
+                        v-model="model.Name"
                         :rules="[textRule]"
-                        :disabled="busy"
-                        :readonly="false"
+                        :readonly="readonly"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
                         hide-details
                         single-line
                         solo-inverted
-                        @change="onRename(model.Marker)"
-                        @keyup.enter.native="onRename(model.Marker)"
+                        @change="onRename(model)"
+                        @keyup.enter.native="onRename(model)"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
                 <v-layout v-else row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-combobox
-                        v-model="model.Marker.Name"
+                        v-model="model.Name"
                         style="z-index: 250"
                         :items="$config.values.people"
                         item-value="Name"
                         item-text="Name"
-                        :disabled="busy"
+                        :readonly="readonly"
                         :return-object="false"
                         :menu-props="menuProps"
                         :allow-overflow="false"
@@ -102,12 +96,13 @@
                         single-line
                         solo-inverted
                         open-on-clear
+                        hide-no-data
                         append-icon=""
                         prepend-inner-icon="person_add"
                         browser-autocomplete="off"
                         class="input-name pa-0 ma-0"
-                        @change="onRename(model.Marker)"
-                        @keyup.enter.native="onRename(model.Marker)"
+                        @change="onRename(model)"
+                        @keyup.enter.native="onRename(model)"
                     >
                     </v-combobox>
                   </v-flex>
@@ -147,9 +142,9 @@ export default {
     const query = this.$route.query;
     const routeName = this.$route.name;
     const q = query['q'] ? query['q'] : '';
-    const all = query['all'] ? query['all'] : '';
+    const hidden = query['hidden'] ? query['hidden'] : '';
     const order = this.sortOrder();
-    const filter = {q: q, all: all, order: order};
+    const filter = {q, hidden, order};
     const settings = {};
 
     return {
@@ -162,9 +157,10 @@ export default {
       scrollDisabled: true,
       loading: true,
       busy: false,
-      batchSize: Face.batchSize(),
+      batchSize: 999,
       offset: 0,
       page: 0,
+      faceCount: 0,
       selection: [],
       settings: settings,
       filter: filter,
@@ -183,6 +179,11 @@ export default {
       },
     };
   },
+  computed: {
+    readonly: function() {
+      return this.busy || this.loading;
+    },
+  },
   watch: {
     '$route'() {
       // Tab inactive?
@@ -194,7 +195,7 @@ export default {
       const query = this.$route.query;
 
       this.filter.q = query["q"] ? query["q"] : "";
-      this.filter.all = query["all"] ? query["all"] : "";
+      this.filter.hidden = query["hidden"] ? query["hidden"] : "";
       this.filter.order = this.sortOrder();
       this.routeName = this.$route.name;
 
@@ -207,7 +208,6 @@ export default {
     this.subscriptions.push(Event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -216,20 +216,13 @@ export default {
   },
   methods: {
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("faces_offset"));
-
-      if(this.offset > 0 || !offset) {
-        return this.batchSize;
-      }
-
-      return offset + this.batchSize;
+      return this.batchSize;
     },
     sortOrder() {
-      return "relevance";
+      return "samples";
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("faces_offset", offset);
     },
     toggleLike(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -312,15 +305,25 @@ export default {
         }
       }
     },
+    onView(model) {
+      if (this.loading || this.busy || !this.active) {
+        // Don't redirect if page is not ready or active.
+        return;
+      }
+
+      this.$router.push(model.route(this.view));
+    },
     onSave(m) {
       m.update();
     },
-    showAll() {
-      this.filter.all = "true";
-      this.updateQuery();
+    onShowHidden() {
+      this.showHidden("yes");
     },
-    showImportant() {
-      this.filter.all = "";
+    onExcludeHidden() {
+      this.showHidden("");
+    },
+    showHidden(value) {
+      this.filter.hidden = value;
       this.updateQuery();
     },
     clearQuery() {
@@ -376,8 +379,11 @@ export default {
       this.scrollDisabled = true;
       this.listen = false;
 
-      const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
-      const offset = this.dirty ? 0 : this.offset;
+      // Always refresh all faces for now.
+      this.dirty = true;
+
+      const count = this.batchSize;
+      const offset = 0;
 
       const params = {
         count: count,
@@ -393,22 +399,14 @@ export default {
       Face.search(params).then(resp => {
         this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (resp.count < resp.limit);
+        this.setFaceCount(this.results.length);
 
-        if (this.scrollDisabled) {
-          this.setOffset(resp.offset);
-          if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), {n: this.results.length}));
-          }
+        if (!this.results.length) {
+          this.$notify.warn(this.$gettext("No people found"));
+        } else if (this.results.length === 1) {
+          this.$notify.info(this.$gettext("One person found"));
         } else {
-          this.setOffset(resp.offset + resp.limit);
-          this.page++;
-
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
-            }
-          });
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
         }
       }).catch(() => {
         this.scrollDisabled = false;
@@ -470,7 +468,7 @@ export default {
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
-        this.$nextTick(() => this.$emit("scrollRefresh"));
+        this.refresh();
         return;
       }
 
@@ -487,24 +485,14 @@ export default {
         this.offset = resp.limit;
         this.results = resp.models;
 
-        this.scrollDisabled = (resp.count < resp.limit);
+        this.setFaceCount(this.results.length);
 
-        if (this.scrollDisabled) {
-          if (!this.results.length) {
-            this.$notify.warn(this.$gettext("No people found"));
-          } else if (this.results.length === 1) {
-            this.$notify.info(this.$gettext("One person found"));
-          } else {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
-          }
+        if (!this.results.length) {
+          this.$notify.warn(this.$gettext("No people found"));
+        } else if (this.results.length === 1) {
+          this.$notify.info(this.$gettext("One person found"));
         } else {
-          this.$notify.info(this.$gettext('More than 20 faces found'));
-
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
-            }
-          });
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
         }
       }).finally(() => {
         this.dirty = false;
@@ -512,38 +500,64 @@ export default {
         this.listen = true;
       });
     },
-    onShow(face) {
+    onShow(model) {
       this.busy = true;
-      this.dirty = true;
-      face.show().finally(() => this.busy = false);
-    },
-    onHide(face) {
-      this.busy = true;
-      this.dirty = true;
-      face.hide().finally(() => this.busy = false);
-    },
-    onClearSubject(marker) {
-      this.busy = true;
-      this.dirty = true;
-      this.$notify.blockUI();
-      marker.clearSubject(marker).finally(() => {
-        this.$notify.unblockUI();
+      model.show().finally(() => {
         this.busy = false;
+        this.changeFaceCount(1);
       });
     },
-    onRename(marker) {
+    onHide(model) {
       this.busy = true;
-      this.dirty = true;
+      model.hide().finally(() => {
+        this.busy = false;
+        this.changeFaceCount(-1);
+      });
+    },
+    toggleHidden(model) {
+      if (!model) {
+        return;
+      }
+
+      this.busy = true;
+
+      model.toggleHidden().finally(() => {
+        this.busy = false;
+
+        if (model.Hidden) {
+          this.changeFaceCount(-1);
+        } else {
+          this.changeFaceCount(1);
+        }
+      });
+    },
+    onRename(model) {
+      if (!model.Name || model.Name.trim() === "") {
+        // Refuse to save empty name.
+        return;
+      }
+
+      this.busy = true;
       this.$notify.blockUI();
-      marker.rename().finally(() => {
+
+      model.setName().finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
+        this.changeFaceCount(-1);
       });
+    },
+    changeFaceCount(count) {
+      this.faceCount = this.faceCount + count;
+      this.$emit('updateFaceCount', this.faceCount);
+    },
+    setFaceCount(count) {
+      this.faceCount = count;
+      this.$emit('updateFaceCount', this.faceCount);
     },
     onUpdate(ev, data) {
       if (!this.listen) return;
 
-      if (!data || !data.entities) {
+      if (!data || !data.entities || !Array.isArray(data.entities)) {
         return;
       }
 

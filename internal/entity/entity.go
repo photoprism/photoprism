@@ -22,10 +22,20 @@ import (
 var log = event.Log
 var GeoApi = "places"
 
+// logError logs the message if the argument is an error.
 func logError(result *gorm.DB) {
 	if result.Error != nil {
 		log.Error(result.Error.Error())
 	}
+}
+
+// TypeString returns an entity type string for logging.
+func TypeString(entityType string) string {
+	if entityType == "" {
+		return "unknown"
+	}
+
+	return entityType
 }
 
 type Types map[string]interface{}

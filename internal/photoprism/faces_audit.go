@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
@@ -25,14 +26,14 @@ func (w *Faces) Audit(fix bool) (err error) {
 	if n := len(subj); n == 0 {
 		log.Infof("found no subjects")
 	} else {
-		log.Infof("%d known subjects", n)
+		log.Infof("found %s", english.Plural(n, "subject", "subjects"))
 	}
 
 	// Fix non-existent marker subjects references?
 	if n := len(invalidSubj); n == 0 {
 		log.Infof("found no invalid marker subjects")
 	} else if !fix {
-		log.Infof("%d markers with non-existent subjects", n)
+		log.Infof("%s with non-existent subjects", english.Plural(n, "marker", "markers"))
 	} else if removed, err := query.RemoveNonExistentMarkerSubjects(); err != nil {
 		log.Infof("removed %d / %d markers with non-existent subjects", removed, n)
 	} else {
@@ -43,7 +44,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	if n := len(invalidFaces); n == 0 {
 		log.Infof("found no invalid marker faces")
 	} else if !fix {
-		log.Infof("%d markers with non-existent faces", n)
+		log.Infof("%s with non-existent faces", english.Plural(n, "marker", "markers"))
 	} else if removed, err := query.RemoveNonExistentMarkerFaces(); err != nil {
 		log.Infof("removed %d / %d markers with non-existent faces", removed, n)
 	} else {
@@ -74,18 +75,18 @@ func (w *Faces) Audit(fix bool) (err error) {
 
 				r := f1.SampleRadius + face.MatchDist
 
-				log.Infof("face %s: conflict at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
+				log.Infof("face %s: ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
 					log.Infof("face %s: subject %s (%s %s)", f1.ID, txt.Quote(subj[f1.SubjUID].SubjName), f1.SubjUID, entity.SrcString(f1.FaceSrc))
 				} else {
-					log.Infof("face %s: no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
+					log.Infof("face %s: has no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
 				if f2.SubjUID != "" {
 					log.Infof("face %s: subject %s (%s %s)", f2.ID, txt.Quote(subj[f2.SubjUID].SubjName), f2.SubjUID, entity.SrcString(f2.FaceSrc))
 				} else {
-					log.Infof("face %s: no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
+					log.Infof("face %s: has no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}
 
 				if !fix {
@@ -93,21 +94,21 @@ func (w *Faces) Audit(fix bool) (err error) {
 				} else if ok, err := f1.ResolveCollision(face.Embeddings{f2.Embedding()}); err != nil {
 					log.Errorf("face %s: %s", f1.ID, err)
 				} else if ok {
-					log.Infof("face %s: collision has been resolved", f1.ID)
+					log.Infof("face %s: ambiguous subject has been resolved", f1.ID)
 					resolved++
 				} else {
-					log.Infof("face %s: collision could not be resolved", f1.ID)
+					log.Infof("face %s: ambiguous subject could not be resolved", f1.ID)
 				}
 			}
 		}
 	}
 
 	if conflicts == 0 {
-		log.Infof("found no conflicting face clusters")
+		log.Infof("found no ambiguous subjects")
 	} else if !fix {
-		log.Infof("%d conflicting face clusters", conflicts)
+		log.Infof("%s", english.Plural(conflicts, "ambiguous subject", "ambiguous subjects"))
 	} else {
-		log.Infof("%d conflicting face clusters, %d resolved", conflicts, resolved)
+		log.Infof("%s, %d resolved", english.Plural(conflicts, "ambiguous subject", "ambiguous subjects"), resolved)
 	}
 
 	if markers, err := query.MarkersWithSubjectConflict(); err != nil {

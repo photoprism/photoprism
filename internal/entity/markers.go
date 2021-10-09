@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"fmt"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -11,18 +13,20 @@ type Markers []Marker
 
 // Save stores the markers in the database.
 func (m Markers) Save(file *File) (count int, err error) {
-	for i := range m {
-		if file != nil {
-			m[i].FileUID = file.FileUID
-		}
-
-		if _, err := UpdateOrCreateMarker(&m[i]); err != nil {
-			log.Errorf("markers: %s (save)", err)
-		}
+	if file == nil {
+		return 0, fmt.Errorf("file required for saving markers")
 	}
 
-	if file == nil {
-		return len(m), nil
+	for i := range m {
+		if m[i].UpdateFile(file) {
+			continue
+		}
+
+		if created, err := CreateMarkerIfNotExists(&m[i]); err != nil {
+			log.Errorf("markers: %s (save)", err)
+		} else {
+			m[i] = *created
+		}
 	}
 
 	return file.UpdatePhotoFaceCount()

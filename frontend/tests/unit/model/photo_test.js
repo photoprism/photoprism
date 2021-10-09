@@ -1375,6 +1375,73 @@ describe("model/photo", () => {
       CameraID: 123,
       Title: "Test Titel",
       Description: "Super nice video",
+      Day: 10,
+      Country: "es",
+      Files: [
+        {
+          UID: "fqbfk181n4ca5sud",
+          Name: "1980/01/superCuteKitten.mp4",
+          Primary: false,
+          Type: "mp4",
+          Hash: "1xxbgdt55",
+        },
+      ],
+      Details: [
+        {
+          Keywords: "old",
+          Notes: "old notes",
+          Subject: "old subject",
+          Artist: "Old Artist",
+          Copyright: "ABC",
+          License: "test",
+        },
+      ],
+    };
+    const photo = new Photo(values);
+    photo.Title = "New Title";
+    photo.Type = "newtype";
+    photo.Description = "New description";
+    photo.Day = 21;
+    photo.Country = "de";
+    photo.CameraID = "newcameraid";
+    photo.Details.Keywords = "newkeyword";
+    photo.Details.Notes = "New Notes";
+    photo.Details.Subject = "New Photo Subject";
+    photo.Details.Artist = "New Artist";
+    photo.Details.Copyright = "New Copyright";
+    photo.Details.License = "New License";
+    photo
+      .update()
+      .then((response) => {
+        assert.equal(response.TitleSrc, "manual");
+        done();
+      })
+      .catch((error) => {
+        done(error);
+      });
+    assert.equal(photo.Title, "New Title");
+    assert.equal(photo.Type, "newtype");
+    assert.equal(photo.Description, "New description");
+    assert.equal(photo.Day, 21);
+    assert.equal(photo.Country, "de");
+    assert.equal(photo.CameraID, "newcameraid");
+    assert.equal(photo.Details.Keywords, "newkeyword");
+    assert.equal(photo.Details.Notes, "New Notes");
+    assert.equal(photo.Details.Subject, "New Photo Subject");
+    assert.equal(photo.Details.Artist, "New Artist");
+    assert.equal(photo.Details.Copyright, "New Copyright");
+    assert.equal(photo.Details.License, "New License");
+  });
+
+  it("should test get Markers", () => {
+    const values = {
+      ID: 10,
+      UID: "pqbemz8276mhtobh",
+      Lat: 1.1,
+      Lng: 3.3,
+      CameraID: 123,
+      Title: "Test Titel",
+      Description: "Super nice video",
       Files: [
         {
           UID: "fqbfk181n4ca5sud",
@@ -1386,14 +1453,40 @@ describe("model/photo", () => {
       ],
     };
     const photo = new Photo(values);
-    photo
-      .update()
-      .then((response) => {
-        assert.equal(response.TitleSrc, "manual");
-        done();
-      })
-      .catch((error) => {
-        done(error);
-      });
+    const result = photo.getMarkers(true);
+    assert.empty(result);
+    const values2 = {
+      ID: 10,
+      UID: "pqbemz8276mhtobh",
+      Lat: 1.1,
+      Lng: 3.3,
+      CameraID: 123,
+      Title: "Test Titel",
+      Description: "Super nice video",
+      Files: [
+        {
+          UID: "fqbfk181n4ca5sud",
+          Name: "1980/01/superCuteKitten.mp4",
+          Primary: true,
+          Type: "mp4",
+          Hash: "1xxbgdt55",
+          Markers: [
+            {
+              UID: "aaa123",
+              Invalid: false,
+            },
+            {
+              UID: "bbb123",
+              Invalid: true,
+            },
+          ],
+        },
+      ],
+    };
+    const photo2 = new Photo(values2);
+    const result2 = photo2.getMarkers(true);
+    assert.equal(result2.length, 1);
+    const result3 = photo2.getMarkers(false);
+    assert.equal(result3.length, 2);
   });
 });

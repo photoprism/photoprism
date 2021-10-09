@@ -16,10 +16,11 @@ import (
 
 // CopyCommand registers the copy cli command.
 var CopyCommand = cli.Command{
-	Name:    "copy",
-	Aliases: []string{"cp"},
-	Usage:   "Copies files to originals folder, converts and indexes them as needed",
-	Action:  copyAction,
+	Name:      "cp",
+	Aliases:   []string{"copy"},
+	Usage:     "Copies media files to originals",
+	ArgsUsage: "[path]",
+	Action:    copyAction,
 }
 
 // copyAction copies photos to originals path. Default import path is used if no path argument provided
@@ -59,7 +60,7 @@ func copyAction(ctx *cli.Context) error {
 	}
 
 	if sourcePath == conf.OriginalsPath() {
-		return errors.New("import folder is identical with originals")
+		return errors.New("import path is identical with originals")
 	}
 
 	log.Infof("copying media files from %s to %s", sourcePath, conf.OriginalsPath())

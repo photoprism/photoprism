@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,4 +23,9 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	os.Exit(code)
+}
+
+func TestTypeString(t *testing.T) {
+	assert.Equal(t, "unknown", TypeString(""))
+	assert.Equal(t, "foo", TypeString("foo"))
 }

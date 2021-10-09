@@ -48,9 +48,7 @@ func TestIndexCommand(t *testing.T) {
 		// Expected index command output.
 		assert.Contains(t, output, "indexing originals")
 		assert.Contains(t, output, "classify: loading labels")
-		assert.Contains(t, output, "index: no .ppignore file found")
-		assert.Contains(t, output, "index: updating primary files")
-		assert.Contains(t, output, "index: flagging hidden files")
+		assert.Contains(t, output, "index: found no .ppignore file")
 	} else {
 		t.Fatal("log output missing")
 	}

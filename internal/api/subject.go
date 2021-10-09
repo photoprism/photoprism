@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -84,13 +85,6 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.Subject
-
-		if err := c.BindJSON(&f); err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
 		uid := c.Param("uid")
 		m := entity.FindSubject(uid)
 
@@ -99,22 +93,30 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if txt.Slug(f.SubjName) == "" {
-			// Return unchanged model data if (normalized) name is empty.
-			c.JSON(http.StatusOK, m)
+		// Initialize form.
+		f, err := form.NewSubject(*m)
+
+		if err != nil {
+			log.Errorf("subject: %s (new form)", err)
+			AbortSaveFailed(c)
+			return
+		} else if err := c.BindJSON(&f); err != nil {
+			log.Errorf("subject: %s (update form)", err)
+			AbortBadRequest(c)
 			return
 		}
 
-		if _, err := m.UpdateName(f.SubjName); err != nil {
+		// Update subject from form values.
+		if changed, err := m.SaveForm(f); err != nil {
 			log.Errorf("subject: %s", err)
 			AbortSaveFailed(c)
 			return
-		}
-
-		if m.IsPerson() {
-			event.SuccessMsg(i18n.MsgPersonSaved)
-		} else {
-			event.SuccessMsg(i18n.MsgSubjectSaved)
+		} else if changed {
+			if m.IsPerson() {
+				event.SuccessMsg(i18n.MsgPersonSaved)
+			} else {
+				event.SuccessMsg(i18n.MsgSubjectSaved)
+			}
 		}
 
 		c.JSON(http.StatusOK, m)

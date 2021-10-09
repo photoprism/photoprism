@@ -16,8 +16,8 @@ import (
 // ConvertCommand registers the convert cli command.
 var ConvertCommand = cli.Command{
 	Name:      "convert",
-	Usage:     "Converts originals in other formats to JPEG and AVC sidecar files",
-	UsageText: `To limit scope, a sub folder may be passed as first argument.`,
+	Usage:     "Transcodes files in other formats to JPEG / AVC",
+	ArgsUsage: "[path]",
 	Action:    convertAction,
 }
 

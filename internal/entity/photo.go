@@ -140,7 +140,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if !model.HasID() {
-		return errors.New("photo: can't save form, id is empty")
+		return errors.New("can't save form when photo id is missing")
 	}
 
 	model.UpdateDateFields()
@@ -167,7 +167,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.SyncKeywordLabels(); err != nil {
-		log.Errorf("photo: %s", err)
+		log.Errorf("photo %s: %s while syncing keywords and labels", model.PhotoUID, err)
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
@@ -175,7 +175,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.IndexKeywords(); err != nil {
-		log.Errorf("photo: %s", err.Error())
+		log.Errorf("photo %s: %s while indexing keywords", model.PhotoUID, err.Error())
 	}
 
 	edited := TimeStamp()
@@ -825,7 +825,7 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 // SetCamera updates the camera.
 func (m *Photo) SetCamera(camera *Camera, source string) {
 	if camera == nil {
-		log.Warnf("photo: failed updating camera from source '%s'", source)
+		log.Warnf("photo %s: failed updating camera from source %s", txt.Quote(m.PhotoUID), SrcString(source))
 		return
 	}
 
@@ -845,7 +845,7 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 // SetLens updates the lens.
 func (m *Photo) SetLens(lens *Lens, source string) {
 	if lens == nil {
-		log.Warnf("photo: failed updating lens from source '%s'", source)
+		log.Warnf("photo %s: failed updating lens from source %s", txt.Quote(m.PhotoUID), SrcString(source))
 		return
 	}
 
@@ -951,7 +951,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 	return files, m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
 }
 
-// DeletePermanently permanently deletes a photo from the index.
+// DeletePermanently permanently removes a photo from the index.
 func (m *Photo) DeletePermanently() (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
 		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
@@ -1073,12 +1073,12 @@ func (m *Photo) SetPrimary(fileUID string) error {
 	if fileUID != "" {
 		// Do nothing.
 	} else if err := Db().Model(File{}).
-		Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", m.PhotoUID).
+		Where("photo_uid = ? AND file_type = 'jpg' AND file_missing = 0 AND file_error = ''", m.PhotoUID).
 		Order("file_width DESC").Limit(1).
 		Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
-		return fmt.Errorf("%s has no jpeg", m.PhotoUID)
+		return fmt.Errorf("found no valid jpeg for %s", m.PhotoUID)
 	} else {
 		fileUID = files[0]
 	}

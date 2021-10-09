@@ -96,7 +96,7 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 	img, err := imaging.Open(imageFilename)
 
 	if err != nil {
-		log.Errorf("resample: %s in %s", err, txt.Quote(filepath.Base(imageFilename)))
+		log.Debugf("resample: %s in %s", err, txt.Quote(filepath.Base(imageFilename)))
 		return "", err
 	}
 

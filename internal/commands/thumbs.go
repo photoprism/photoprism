@@ -10,22 +10,21 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// ResampleCommand registers the resample cli command.
-var ResampleCommand = cli.Command{
-	Name:    "resample",
-	Aliases: []string{"thumbs"},
-	Usage:   "Pre-caches thumbnail images for improved performance",
+// ThumbsCommand registers the resample cli command.
+var ThumbsCommand = cli.Command{
+	Name:  "thumbs",
+	Usage: "Regenerates thumbnails based on the current settings",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
 			Usage: "replace existing thumbnails",
 		},
 	},
-	Action: resampleAction,
+	Action: thumbsAction,
 }
 
-// resampleAction pre-caches default thumbnails.
-func resampleAction(ctx *cli.Context) error {
+// thumbsAction pre-renders thumbnail images.
+func thumbsAction(ctx *cli.Context) error {
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)

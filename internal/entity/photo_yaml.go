@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -43,7 +42,7 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	defer photoYamlMutex.Unlock()
 
 	// Write YAML data to file.
-	if err := ioutil.WriteFile(fileName, data, os.ModePerm); err != nil {
+	if err := os.WriteFile(fileName, data, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -52,7 +51,7 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 
 // LoadFromYaml photo data from a YAML file.
 func (m *Photo) LoadFromYaml(fileName string) error {
-	data, err := ioutil.ReadFile(fileName)
+	data, err := os.ReadFile(fileName)
 
 	if err != nil {
 		return err

@@ -202,26 +202,26 @@ func (m File) Missing() bool {
 	return m.FileMissing || m.DeletedAt != nil
 }
 
-// DeletePermanently permanently deletes a file from the index.
+// DeletePermanently permanently removes a file from the index.
 func (m *File) DeletePermanently() error {
 	if m.ID < 1 || m.FileUID == "" {
 		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.Quote(m.FileUID))
 	}
 
 	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
-		log.Errorf("file: %s (remove markers)", err)
+		log.Errorf("file %s: %s while removing markers", txt.Quote(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file: %s (remove shares)", err)
+		log.Errorf("file %s: %s while removing share info", txt.Quote(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file: %s (remove sync)", err)
+		log.Errorf("file %s: %s while removing remote sync info", txt.Quote(m.FileUID), err)
 	}
 
 	if err := m.ReplaceHash(""); err != nil {
-		log.Errorf("file: %s (remove covers)", err)
+		log.Errorf("file %s: %s while removing covers", txt.Quote(m.FileUID), err)
 	}
 
 	return UnscopedDb().Delete(m).Error
@@ -236,9 +236,11 @@ func (m *File) ReplaceHash(newHash string) error {
 
 	// Log values.
 	if m.FileHash != "" && newHash == "" {
-		log.Tracef("file: removing hash %s", txt.Quote(m.FileHash))
+		log.Tracef("file %s: removing hash %s", txt.Quote(m.FileUID), txt.Quote(m.FileHash))
 	} else if m.FileHash != "" && newHash != "" {
-		log.Tracef("file: hash %s changed to %s", txt.Quote(m.FileHash), txt.Quote(newHash))
+		log.Tracef("file %s: hash %s changed to %s", txt.Quote(m.FileUID), txt.Quote(m.FileHash), txt.Quote(newHash))
+		// Reset error when hash changes.
+		m.FileError = ""
 	}
 
 	// Set file hash to new value.
@@ -314,16 +316,16 @@ func (m *File) AllFilesMissing() bool {
 // Create inserts a new row to the database.
 func (m *File) Create() error {
 	if m.PhotoID == 0 {
-		return fmt.Errorf("file: photo id must not be empty (create)")
+		return fmt.Errorf("file: can't create file with empty photo id")
 	}
 
 	if err := UnscopedDb().Create(m).Error; err != nil {
-		log.Errorf("file: %s (create)", err)
+		log.Errorf("file: %s while saving", err)
 		return err
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file: %s (create markers for %s)", err, m.FileUID)
+		log.Errorf("file %s: %s while saving markers", txt.Quote(m.FileUID), err)
 		return err
 	}
 
@@ -342,16 +344,16 @@ func (m *File) ResolvePrimary() error {
 // Save stores the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
-		return fmt.Errorf("file: photo id must not be empty (save %s)", m.FileUID)
+		return fmt.Errorf("file %s: can't save file with empty photo id", m.FileUID)
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("file: %s (save %s)", err, m.FileUID)
+		log.Errorf("file %s: %s while saving", txt.Quote(m.FileUID), err)
 		return err
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file: %s (save markers for %s)", err, m.FileUID)
+		log.Errorf("file %s: %s while saving markers", txt.Quote(m.FileUID), err)
 		return err
 	}
 
@@ -381,7 +383,7 @@ func (m *File) Updates(values interface{}) error {
 
 // Rename updates the name and path of this file.
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
-	log.Debugf("file: renaming %s to %s", txt.Quote(m.FileName), txt.Quote(fileName))
+	log.Debugf("file %s: renaming %s to %s", txt.Quote(m.FileUID), txt.Quote(m.FileName), txt.Quote(fileName))
 
 	// Update database row.
 	if err := m.Updates(map[string]interface{}{
@@ -425,7 +427,7 @@ func (m *File) Undelete() error {
 		return err
 	}
 
-	log.Debugf("file: removed missing flag from %s", txt.Quote(m.FileName))
+	log.Debugf("file %s: removed missing flag from %s", txt.Quote(m.FileUID), txt.Quote(m.FileName))
 
 	m.FileMissing = false
 	m.DeletedAt = nil
@@ -544,7 +546,7 @@ func (m *File) Markers() *Markers {
 	} else if m.FileUID == "" {
 		m.markers = &Markers{}
 	} else if res, err := FindMarkers(m.FileUID); err != nil {
-		log.Warnf("file: %s (load markers)", err)
+		log.Warnf("file %s: %s while loading markers", txt.Quote(m.FileUID), err)
 		m.markers = &Markers{}
 	} else {
 		m.markers = &res

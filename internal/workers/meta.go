@@ -116,7 +116,7 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 	}
 
 	// Set photo quality scores to -1 if files are missing.
-	if err := query.ResetPhotoQuality(); err != nil {
+	if err := query.FlagHiddenPhotos(); err != nil {
 		log.Warnf("metadata: %s (reset quality)", err.Error())
 	}
 

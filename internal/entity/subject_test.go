@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestSubject_TableName(t *testing.T) {
@@ -136,7 +138,7 @@ func TestSubject_Restore(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
-		m := &Subject{DeletedAt: &deleteTime, SubjName: "ToBeRestored"}
+		m := &Subject{DeletedAt: &deleteTime, SubjType: SubjPerson, SubjName: "ToBeRestored"}
 		err := m.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -150,7 +152,7 @@ func TestSubject_Restore(t *testing.T) {
 		assert.False(t, m.Deleted())
 	})
 	t.Run("subject not deleted", func(t *testing.T) {
-		m := &Subject{DeletedAt: nil, SubjName: "NotDeleted1234"}
+		m := &Subject{DeletedAt: nil, SubjType: SubjPerson, SubjName: "NotDeleted1234"}
 		err := m.Restore()
 		if err != nil {
 			t.Fatal(err)
@@ -227,6 +229,68 @@ func TestSubject_Updates(t *testing.T) {
 		}
 	})
 
+}
+
+func TestSubject_Visible(t *testing.T) {
+	t.Run("Hidden", func(t *testing.T) {
+		subj := NewSubject("Jens Mander", SubjPerson, SrcManual)
+		assert.True(t, subj.Visible())
+		subj.SubjHidden = true
+		assert.False(t, subj.Visible())
+	})
+	t.Run("Private", func(t *testing.T) {
+		subj := NewSubject("Jens Mander", SubjPerson, SrcManual)
+		assert.True(t, subj.Visible())
+		subj.SubjPrivate = true
+		assert.False(t, subj.Visible())
+	})
+	t.Run("Excluded", func(t *testing.T) {
+		subj := NewSubject("Jens Mander", SubjPerson, SrcManual)
+		assert.True(t, subj.Visible())
+		subj.SubjExcluded = true
+		assert.False(t, subj.Visible())
+	})
+}
+
+func TestSubject_SaveForm(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		subj := NewSubject("Save Form Test", SubjPerson, SrcManual)
+
+		assert.Equal(t, "Save Form Test", subj.SubjName)
+		assert.Equal(t, "save-form-test", subj.SubjSlug)
+		assert.Equal(t, false, subj.SubjHidden)
+		assert.Equal(t, true, subj.IsPerson())
+
+		if err := subj.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm, err := form.NewSubject(subj)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm.SubjName = "Bill Gates III"
+		subjForm.SubjHidden = true
+
+		t.Logf("Subject Form: %#v", subjForm)
+
+		if changed, err := subj.SaveForm(subjForm); err != nil {
+			t.Fatal(err)
+		} else if !changed {
+			t.Fatal("subject must be changed")
+		}
+
+		assert.Equal(t, "Bill Gates III", subj.SubjName)
+		assert.Equal(t, "bill-gates-iii", subj.SubjSlug)
+		assert.Equal(t, true, subj.SubjHidden)
+		assert.Equal(t, true, subj.IsPerson())
+
+		if err := subj.Delete(); err != nil {
+			t.Fatal(err)
+		}
+	})
 }
 
 func TestSubject_UpdateName(t *testing.T) {

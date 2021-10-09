@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/entity"
-
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestPhotoByID(t *testing.T) {
@@ -67,13 +67,6 @@ func TestMissingPhotos(t *testing.T) {
 	assert.LessOrEqual(t, 1, len(result))
 }
 
-func TestResetPhotosQuality(t *testing.T) {
-	// Set photo quality scores to -1 if files are missing.
-	if err := ResetPhotoQuality(); err != nil {
-		t.Fatal(err)
-	}
-}
-
 func TestPhotosCheck(t *testing.T) {
 	result, err := PhotosCheck(10, 0, time.Second)
 
@@ -102,4 +95,11 @@ func TestFixPrimaries(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+}
+
+func TestFlagHiddenPhotos(t *testing.T) {
+	// Set photo quality scores to -1 if files are missing.
+	if err := FlagHiddenPhotos(); err != nil {
+		t.Fatal(err)
+	}
 }

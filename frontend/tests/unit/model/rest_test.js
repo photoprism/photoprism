@@ -65,6 +65,15 @@ describe("model/abstract", () => {
     assert.equal(album.Description, undefined);
     await album.save();
     assert.equal(album.Description, "Test description");
+
+    const values2 = { Name: "Christmas 2019", Slug: "christmas-2019" };
+    const album2 = new Album(values2);
+    album.Name = "Christmas 2020";
+    assert.equal(album2.Description, undefined);
+    await album2.save().then((response) => {
+      assert.equal(response.success, "ok");
+    });
+    assert.equal(album2.Description, undefined);
   });
 
   it("should remove album", async () => {
@@ -174,6 +183,7 @@ describe("model/abstract", () => {
       Slug: "friends",
       Expires: 80000,
       UpdatedAt: "2012-07-08T14:45:39Z",
+      Token: "abchhgftryue2345",
     };
     const link = new Link(values);
     const values2 = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };

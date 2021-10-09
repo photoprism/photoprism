@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
@@ -18,19 +17,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// UsersCommand registers user management commands.
+// UsersCommand registers user management subcommands.
 var UsersCommand = cli.Command{
 	Name:  "users",
-	Usage: "User management sub-commands",
+	Usage: "User management subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "list",
-			Usage:  "lists registered users",
+			Usage:  "Lists registered users",
 			Action: usersListAction,
 		},
 		{
 			Name:   "add",
-			Usage:  "adds a new user",
+			Usage:  "Adds a new user",
 			Action: usersAddAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
@@ -53,7 +52,7 @@ var UsersCommand = cli.Command{
 		},
 		{
 			Name:   "update",
-			Usage:  "select user by username and update it's information",
+			Usage:  "Updates user information",
 			Action: usersUpdateAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
@@ -72,7 +71,7 @@ var UsersCommand = cli.Command{
 		},
 		{
 			Name:      "delete",
-			Usage:     "deletes an existing user",
+			Usage:     "Removes an existing user",
 			Action:    usersDeleteAction,
 			ArgsUsage: "[username]",
 		},

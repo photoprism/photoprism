@@ -21,7 +21,7 @@
     <v-layout row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}">
       <v-flex
           v-for="(photo, index) in photos"
-          :key="index"
+          :key="photo.ID"
           xs4 sm3 md2 lg1 d-flex
       >
         <v-card tile

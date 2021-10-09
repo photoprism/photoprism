@@ -4,10 +4,9 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 

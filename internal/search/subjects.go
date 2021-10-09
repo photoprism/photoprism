@@ -39,7 +39,7 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 	case "added":
 		s = s.Order(fmt.Sprintf("%s.created_at DESC", subjTable))
 	case "relevance":
-		s = s.Order("subj_favorite DESC, subj_name")
+		s = s.Order("subj_favorite DESC, photo_count DESC")
 	default:
 		s = s.Order("subj_favorite DESC, subj_name")
 	}
@@ -75,16 +75,28 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 		s = s.Where("subj_type IN (?)", strings.Split(f.Type, txt.Or))
 	}
 
-	if f.Favorite {
-		s = s.Where("subj_favorite = 1")
-	}
+	if !f.All {
+		if txt.Yes(f.Favorite) {
+			s = s.Where("subj_favorite = 1")
+		} else if txt.No(f.Favorite) {
+			s = s.Where("subj_favorite = 0")
+		}
 
-	if f.Private {
-		s = s.Where("subj_private = 1")
-	}
+		if !txt.Yes(f.Hidden) {
+			s = s.Where("subj_hidden = 0")
+		}
 
-	if f.Excluded {
-		s = s.Where("subj_excluded = 1")
+		if txt.Yes(f.Private) {
+			s = s.Where("subj_private = 1")
+		} else if txt.No(f.Private) {
+			s = s.Where("subj_private = 0")
+		}
+
+		if txt.Yes(f.Excluded) {
+			s = s.Where("subj_excluded = 1")
+		} else if txt.No(f.Excluded) {
+			s = s.Where("subj_excluded = 0")
+		}
 	}
 
 	// Omit deleted rows.

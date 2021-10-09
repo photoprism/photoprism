@@ -33,13 +33,11 @@ import RestModel from "model/rest";
 import { DateTime } from "luxon";
 import { config } from "../session";
 import { $gettext } from "common/vm";
+import * as src from "../common/src";
+import Api from "../common/api";
 
 export class Face extends RestModel {
   constructor(values) {
-    if (values && values.Marker) {
-      values.Marker = new Marker(values.Marker);
-    }
-
     super(values);
   }
 
@@ -48,15 +46,24 @@ export class Face extends RestModel {
       ID: "",
       Src: "",
       SubjUID: "",
+      SubjSrc: "",
+      FileUID: "",
+      MarkerUID: "",
       Samples: 0,
       SampleRadius: 0.0,
       Collisions: 0,
       CollisionRadius: 0.0,
-      Marker: new Marker(),
       Hidden: false,
       MatchedAt: "",
       CreatedAt: "",
       UpdatedAt: "",
+      Name: "",
+      FaceDist: 0.0,
+      Size: 0,
+      Score: 0,
+      Review: false,
+      Invalid: false,
+      Thumb: "",
     };
   }
 
@@ -65,7 +72,7 @@ export class Face extends RestModel {
   }
 
   classes(selected) {
-    let classes = ["is-face", "uid-" + this.UID];
+    let classes = ["is-face", "uid-" + this.ID];
 
     if (this.Hidden) classes.push("is-hidden");
     if (selected) classes.push("is-selected");
@@ -82,11 +89,15 @@ export class Face extends RestModel {
   }
 
   thumbnailUrl(size) {
-    if (!this.Marker) {
-      return `${config.contentUri}/svg/portrait`;
+    if (!size) {
+      size = "tile_160";
     }
 
-    return this.Marker.thumbnailUrl(size);
+    if (this.Thumb) {
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken()}/${size}`;
+    } else {
+      return `${config.contentUri}/svg/portrait`;
+    }
   }
 
   getDateString() {
@@ -101,6 +112,39 @@ export class Face extends RestModel {
   hide() {
     this.Hidden = true;
     return this.update();
+  }
+
+  toggleHidden() {
+    this.Hidden = !this.Hidden;
+
+    return Api.put(this.getEntityResource(), { Hidden: this.Hidden });
+  }
+
+  setName() {
+    if (!this.Name || this.Name.trim() === "") {
+      // Can't save an empty name.
+      return Promise.resolve(this);
+    }
+
+    this.SubjSrc = src.Manual;
+
+    const payload = { SubjSrc: this.SubjSrc, Name: this.Name };
+
+    return Api.put(Marker.getCollectionResource() + "/" + this.MarkerUID, payload).then((resp) => {
+      if (resp && resp.data && resp.data.Name) {
+        const data = resp.data;
+        this.setValues({
+          Name: data.Name,
+          SubjSrc: data.SubjSrc,
+          SubjUID: data.SubjUID,
+          Review: data.Review,
+          Invalid: data.Invalid,
+          Thumb: data.Thumb,
+        });
+      }
+
+      return Promise.resolve(this);
+    });
   }
 
   static batchSize() {

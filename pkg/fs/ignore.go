@@ -122,7 +122,7 @@ func (l *IgnoreList) Dir(dir string) error {
 	}
 
 	if !FileExists(fileName) {
-		return fmt.Errorf("no %s file found", l.configFile)
+		return fmt.Errorf("found no %s file", l.configFile)
 	}
 
 	return l.ConfigFile(fileName)

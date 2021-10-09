@@ -26,7 +26,7 @@
         :width="270"
         :mobile-break-point="960"
         :mini-variant-width="80"
-        class="nav-sidebar navigation"
+        class="nav-sidebar navigation p-flex-nav"
         fixed dark app
         :right="rtl"
     >
@@ -51,7 +51,7 @@
         </v-list>
       </v-toolbar>
 
-      <v-list class="pt-3">
+      <v-list class="pt-3 p-flex-menu">
         <v-list-tile v-if="isMini" class="nav-expand" @click.stop="toggleIsMini()">
           <v-list-tile-action :title="$gettext('Expand')">
             <v-icon v-if="!rtl">chevron_right</v-icon>
@@ -415,18 +415,6 @@
           </v-list-group>
         </template>
 
-        <v-list-tile v-show="!isPublic && auth" class="nav-logout" @click="logout">
-          <v-list-tile-action :title="$gettext('Logout')">
-            <v-icon>power_settings_new</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <translate key="Logout">Logout</translate>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
         <v-list-tile v-show="!auth" to="/login" class="nav-login" @click.stop="">
           <v-list-tile-action :title="$gettext('Login')">
             <v-icon>lock</v-icon>
@@ -439,8 +427,11 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" style="position:fixed; bottom: 0; left:0; right: 0;"
-                     @click.stop="">
+      </v-list>
+
+      <v-list class="p-user-box">
+
+        <v-list-tile v-show="$config.disconnected" to="/help/websockets" class="nav-connecting navigation" @click.stop="">
           <v-list-tile-action :title="$gettext('Offline')">
             <v-icon color="warning">wifi_off</v-icon>
           </v-list-tile-action>
@@ -451,7 +442,39 @@
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile v-show="!isPublic && auth"  to="/" class="p-profile">
+          <v-list-tile-avatar color="grey" size="36">
+            <span class="white--text headline">{{ displayName.length >= 1 ? displayName[0].toUpperCase() : "E" }}</span>
+          </v-list-tile-avatar>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              {{ displayName }}
+            </v-list-tile-title>
+            <v-list-tile-sub-title>Profile</v-list-tile-sub-title>
+          </v-list-tile-content>
+
+          <v-list-tile-action :title="$gettext('Logout')">
+            <v-btn icon @click="logout">
+              <v-icon>power_settings_new</v-icon>
+            </v-btn>
+          </v-list-tile-action>
+        </v-list-tile>
+
+        <v-list-tile v-show="!isPublic && auth && isMini" class="nav-logout" @click="logout">
+          <v-list-tile-action :title="$gettext('Logout')">
+            <v-icon>power_settings_new</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Logout">Logout</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
+
     </v-navigation-drawer>
     <div v-if="isTest" id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Browse Your Life in Pictures</a></div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
@@ -500,6 +523,10 @@ export default {
     auth() {
       return this.session.auth || this.isPublic;
     },
+    displayName() {
+      return this.$session.getUser().FullName ? this.$session.getUser().FullName : this.$session.getUser().UserName;
+    },
+
   },
   created() {
     this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);

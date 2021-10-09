@@ -15,7 +15,7 @@ func (m *MediaFile) Location() (*entity.Cell, error) {
 	data := m.MetaData()
 
 	if data.Lat == 0 && data.Lng == 0 {
-		return nil, errors.New("media: no latitude and longitude in metadata")
+		return nil, errors.New("media: found no latitude and longitude")
 	}
 
 	m.location = entity.NewCell(data.Lat, data.Lng)

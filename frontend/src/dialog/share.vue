@@ -18,7 +18,7 @@
       </v-card-title>
       <v-card-text>
         <v-expansion-panel class="pa-0 elevation-0">
-          <v-expansion-panel-content v-for="(link, index) in links" :key="index"
+          <v-expansion-panel-content v-for="(link, index) in links" :key="link.UID"
                                      class="pa-0 elevation-0 secondary mb-1">
             <template #header>
               <button :class="`text-xs-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none;"

@@ -263,7 +263,6 @@ export default [
     path: "/people",
     component: People,
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
-    props: { tab: "people-subjects" },
     beforeEnter: (to, from, next) => {
       if (!config || !from || !from.name || from.name.startsWith("people")) {
         next();
@@ -284,7 +283,6 @@ export default [
     path: "/people/new",
     component: People,
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
-    props: { tab: "people-faces" },
   },
   {
     name: "library",

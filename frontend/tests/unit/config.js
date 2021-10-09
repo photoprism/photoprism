@@ -23,7 +23,7 @@ const clientConfig = {
   test: true,
   demo: false,
   sponsor: true,
-  albumCategories: null,
+  albumCategories: ["Animal", "Holiday"],
   albums: [
     {
       ID: 69,
@@ -218,6 +218,23 @@ const clientConfig = {
       Name: "Unknown",
     },
   ],
+  people: [
+    {
+      UID: "jr0jgyx2viicdnf7",
+      Name: "Andrea Sander",
+      Keywords: ["andrea"],
+    },
+    {
+      UID: "jr0jgyx2viicdn88",
+      Name: "Otto Sander",
+      Keywords: ["andrea"],
+    },
+    {
+      UID: "jr0jgzi2qmp5wt97",
+      Name: "Otto Sander",
+      Keywords: ["otto", "sander"],
+    },
+  ],
   thumbs: [
     {
       size: "fit_720",
@@ -358,6 +375,7 @@ const clientConfig = {
     files: 136,
     places: 17,
     states: 8,
+    people: 5,
     labels: 22,
     labelMaxPhotos: 118,
   },

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
-	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -26,7 +26,7 @@ var thumbFileNames = []string{
 	"%s_7680x4320_fit.jpg",
 }
 
-// Usable thumb file sizes.
+// Suitable thumb file sizes.
 var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit720],
 	thumb.Sizes[thumb.Fit1280],
@@ -162,7 +162,7 @@ func findIdealThumbFileName(hash string, width int, filePath string) (fileName s
 func openIdealThumbFile(fileName, hash string, area Area, size Size) (image.Image, error) {
 	if len(hash) != 40 || area.W <= 0 || size.Width <= 0 {
 		// Not a standard thumb name with sha1 hash prefix.
-		if imageBuffer, err := ioutil.ReadFile(fileName); err != nil {
+		if imageBuffer, err := os.ReadFile(fileName); err != nil {
 			return nil, err
 		} else {
 			return imaging.Decode(bytes.NewReader(imageBuffer), imaging.AutoOrientation(true))
@@ -173,7 +173,7 @@ func openIdealThumbFile(fileName, hash string, area Area, size Size) (image.Imag
 		fileName = name
 	}
 
-	if imageBuffer, err := ioutil.ReadFile(fileName); err != nil {
+	if imageBuffer, err := os.ReadFile(fileName); err != nil {
 		return nil, err
 	} else {
 		return imaging.Decode(bytes.NewReader(imageBuffer))
