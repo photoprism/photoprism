@@ -49,7 +49,7 @@
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
-            <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
+            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
         <v-layout row wrap class="search-results label-results cards-view" :class="{'select-results': selection.length > 0}">
@@ -132,10 +132,10 @@
                            @click.stop.prevent="">
                 <div class="caption mb-2">
                   <button v-if="label.PhotoCount === 1">
-                    <translate>Contains one entry.</translate>
+                    <translate>Contains one picture.</translate>
                   </button>
                   <button v-else-if="label.PhotoCount > 0">
-                    <translate :translate-params="{n: label.PhotoCount}">Contains %{n} entries.</translate>
+                    <translate :translate-params="{n: label.PhotoCount}">Contains %{n} pictures.</translate>
                   </button>
                 </div>
               </v-card-text>

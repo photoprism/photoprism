@@ -66,7 +66,7 @@
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>Try again using other filters or keywords.</translate>
             <template v-if="staticFilter.type === 'album'">
-              <translate>After selecting photos or videos from search results, you can add them to existing or new albums using the context menu.</translate>
+              <translate>After selecting pictures from search results, you can add them to an album using the context menu.</translate>
             </template>
             <template v-else>
               <translate>Your library is continuously analyzed to automatically create albums of special moments, trips, and places.</translate>
@@ -159,13 +159,13 @@
 
                 <div v-else-if="album.Type === 'album'" class="caption mb-2">
                   <button v-if="album.PhotoCount === 1" @click.exact="edit(album)">
-                    <translate>Contains one entry.</translate>
+                    <translate>Contains one picture.</translate>
                   </button>
                   <button v-else-if="album.PhotoCount > 0">
-                    <translate :translate-params="{n: album.PhotoCount}">Contains %{n} entries.</translate>
+                    <translate :translate-params="{n: album.PhotoCount}">Contains %{n} pictures.</translate>
                   </button>
                   <button v-else @click.stop.prevent="$router.push({name: 'browse'})">
-                    <translate>Add photos or videos from search results by selecting them.</translate>
+                    <translate>Add pictures from search results by selecting them.</translate>
                   </button>
                 </div>
                 <div v-else-if="album.Type === 'folder'" class="caption mb-2">

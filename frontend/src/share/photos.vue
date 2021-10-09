@@ -329,7 +329,7 @@ export default {
           this.offset = offset;
 
           if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} entries loaded"), {n: this.results.length}));
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
           }
         } else if (this.results.length >= Photo.limit()) {
           this.offset = offset;
@@ -437,14 +437,14 @@ export default {
 
         if (this.complete) {
           if (!this.results.length) {
-            this.$notify.warn(this.$gettext("No entries found"));
+            this.$notify.warn(this.$gettext("No pictures found"));
           } else if (this.results.length === 1) {
-            this.$notify.info(this.$gettext("One entry found"));
+            this.$notify.info(this.$gettext("One picture found"));
           } else {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} entries found"), {n: this.results.length}));
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
           }
         } else {
-          this.$notify.info(this.$gettext('More than 50 entries found'));
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 50}));
 
           this.$nextTick(() => {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
