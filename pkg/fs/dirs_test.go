@@ -52,7 +52,9 @@ func TestDirs(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Contains(t, result, "/bar")
+
+		assert.Len(t, result, 1)
+		assert.Contains(t, result, "/animals")
 	})
 
 	t.Run("non-recursive symlinks", func(t *testing.T) {

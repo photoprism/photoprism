@@ -190,7 +190,7 @@ func TestLikeAllNames(t *testing.T) {
 		assert.Empty(t, w)
 	})
 	t.Run("SingleCharacter", func(t *testing.T) {
-		if w :=  LikeAllNames(Cols{"k.name"}, "a"); len(w) == 1 {
+		if w := LikeAllNames(Cols{"k.name"}, "a"); len(w) == 1 {
 			assert.Equal(t, "k.name LIKE '%a%'", w[0])
 		} else {
 			t.Fatalf("unexpected result: %#v", w)

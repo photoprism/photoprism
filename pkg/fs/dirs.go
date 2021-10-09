@@ -104,7 +104,6 @@ var AssetPaths = []string{
 // Warning: Following symlinks can make the result non-deterministic and hard to test!
 func Dirs(root string, recursive bool, followLinks bool) (result []string, err error) {
 	result = []string{}
-	ignore := NewIgnoreList(".ppignore", true, false)
 	mutex := sync.Mutex{}
 
 	symlinks := make(map[string]bool)
@@ -116,6 +115,10 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 		defer mutex.Unlock()
 		result = append(result, fileName)
 	}
+
+	// Ignore hidden folders as well as those listed in an optional ".ppignore" file.
+	ignore := NewIgnoreList(IgnoreFile, true, false)
+	_ = ignore.Dir(root)
 
 	err = fastwalk.Walk(root, func(fileName string, typ os.FileMode) error {
 		if typ.IsDir() || typ == os.ModeSymlink && followLinks {
