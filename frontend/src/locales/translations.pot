@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:371
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:92
+#: src/pages/about/about.vue:88
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -244,10 +244,6 @@ msgstr ""
 msgid "All Years"
 msgstr ""
 
-#: src/pages/about/about.vue:36
-msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-msgstr ""
-
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
@@ -345,6 +341,7 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr ""
 
+#: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:26
 msgid "Become a sponsor"
 msgstr ""
@@ -662,10 +659,6 @@ msgstr ""
 #: src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:178
 msgid "Details"
-msgstr ""
-
-#: src/dialog/sponsor.vue:25
-msgid "developing new features and keeping them free for everyone"
 msgstr ""
 
 #: src/dialog/photo/files.vue:31
@@ -1102,7 +1095,7 @@ msgstr ""
 msgid "Hybrid"
 msgstr ""
 
-#: src/dialog/sponsor.vue:40
+#: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
 msgstr ""
 
@@ -1274,12 +1267,8 @@ msgstr ""
 msgid "Lens"
 msgstr ""
 
-#: src/pages/about/about.vue:33
+#: src/pages/about/about.vue:37
 msgid "Let us know when we mistakenly label an idea as unfunded."
-msgstr ""
-
-#: src/dialog/sponsor.vue:7
-msgid "Let's Join Forces"
 msgstr ""
 
 #: src/component/navigation.vue:301
@@ -1591,7 +1580,7 @@ msgstr ""
 msgid "No servers configured."
 msgstr ""
 
-#: src/dialog/sponsor.vue:35
+#: src/dialog/sponsor.vue:31
 msgid "No thanks"
 msgstr ""
 
@@ -1761,10 +1750,6 @@ msgstr ""
 msgid "Password changed"
 msgstr ""
 
-#: src/dialog/sponsor.vue:24
-msgid "pay for operating expenses and external services like satellite maps"
-msgstr ""
-
 #: src/component/navigation.vue:176
 #: src/component/navigation.vue:702
 #: src/dialog/photo/edit.vue:52
@@ -1796,7 +1781,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/pages/about/about.vue:45
+#: src/pages/about/about.vue:46
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr ""
 
@@ -1840,7 +1825,7 @@ msgstr ""
 msgid "Please confirm your new password."
 msgstr ""
 
-#: src/dialog/sponsor.vue:28
+#: src/dialog/sponsor.vue:24
 msgid "Please contact us at hello@photoprism.app if you have questions or need help."
 msgstr ""
 
@@ -2025,6 +2010,10 @@ msgstr ""
 
 #: src/common/api.js:78
 msgid "Request failed - invalid response"
+msgstr ""
+
+#: src/pages/about/about.vue:36
+msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
 msgstr ""
 
 #: src/pages/about/feedback.vue:103
@@ -2221,7 +2210,7 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
-#: src/dialog/sponsor.vue:43
+#: src/dialog/sponsor.vue:39
 msgid "Sign Up"
 msgstr ""
 
@@ -2359,7 +2348,7 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
-#: src/pages/about/about.vue:39
+#: src/pages/about/about.vue:40
 msgid "Thank you very much!"
 msgstr ""
 
@@ -2438,7 +2427,7 @@ msgstr ""
 msgid "Topographic"
 msgstr ""
 
-#: src/pages/about/about.vue:42
+#: src/pages/about/about.vue:43
 msgid "Trademarks"
 msgstr ""
 
@@ -2698,16 +2687,13 @@ msgstr ""
 msgid "You may rescan your library to find additional faces."
 msgstr ""
 
-#: src/pages/about/about.vue:46
+#: src/pages/about/about.vue:47
 msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
 msgstr ""
 
-#: src/pages/about/about.vue:32
-msgid "Your continued support helps us fund operating costs, provide services like satellite maps, and develop new features. Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
-msgstr ""
-
 #: src/dialog/sponsor.vue:21
-msgid "Your continuous support helps..."
+#: src/pages/about/about.vue:32
+msgid "Your continued support helps us fund operating costs, provide services like satellite maps, and develop new features."
 msgstr ""
 
 #: src/pages/albums.vue:43

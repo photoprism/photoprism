@@ -61,7 +61,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Auf den Link klicken, um ihn zu kopieren."
 
 #: src/component/navigation.vue:371 src/component/navigation.vue:27
-#: src/pages/about/about.vue:4 src/pages/about/about.vue:92
+#: src/pages/about/about.vue:4 src/pages/about/about.vue:88
 #: src/pages/help.vue:45
 msgid "About"
 msgstr "Info"
@@ -224,12 +224,6 @@ msgstr "Alle Ordner durchsuchen"
 msgid "All Years"
 msgstr "Alle Jahre"
 
-#: src/pages/about/about.vue:36
-msgid ""
-"Also, please leave a star on GitHub if you like this project. It provides "
-"additional motivation to keep going."
-msgstr "Wir freuen uns auch sehr über jeden zusätzlichen Stern auf GitHub."
-
 #: src/dialog/share.vue:75
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
@@ -331,7 +325,7 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Erstellt automatisch Alben mit besonderen Momenten, Reisen und Orten."
 
-#: src/pages/about/about.vue:26
+#: src/dialog/sponsor.vue:7 src/pages/about/about.vue:26
 msgid "Become a sponsor"
 msgstr "Sponsor werden"
 
@@ -606,10 +600,6 @@ msgstr "Unser englischer User Guide enthält eine detaillierte Anleitung."
 #: src/dialog/photo/edit.vue:178
 msgid "Details"
 msgstr "Details"
-
-#: src/dialog/sponsor.vue:25
-msgid "developing new features and keeping them free for everyone"
-msgstr "neue Funktionen zu entwickeln und sie für alle frei zu halten"
 
 #: src/dialog/photo/files.vue:31
 msgid "Dimensions"
@@ -1030,7 +1020,7 @@ msgstr "Wie können wir helfen?"
 msgid "Hybrid"
 msgstr "Hybrid"
 
-#: src/dialog/sponsor.vue:40
+#: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
 msgstr "Ich bin Sponsor"
 
@@ -1039,8 +1029,8 @@ msgid ""
 "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
 "GitHub Sponsors."
 msgstr ""
-"Falls Sie PhotoPrism gerne verwenden, unterstützen Sie uns bitte via Patreon "
-"oder GitHub Sponsors."
+"Unterstütze uns auf Patreon oder GitHub Sponsors, falls dir PhotoPrism "
+"gefällt."
 
 #: src/dialog/photo/labels.vue:34
 msgid "image"
@@ -1204,15 +1194,9 @@ msgstr "Lavendel"
 msgid "Lens"
 msgstr "Objektiv"
 
-#: src/pages/about/about.vue:33
+#: src/pages/about/about.vue:37
 msgid "Let us know when we mistakenly label an idea as unfunded."
-msgstr ""
-"Ein kurzer Hinweis genügt, sollte eine Idee fälschlicherweise als \"unfunded"
-"\" eingeordnet worden sein."
-
-#: src/dialog/sponsor.vue:7
-msgid "Let's Join Forces"
-msgstr "Jetzt Unterstützer werden"
+msgstr "Ein kurzer Hinweis genügt, sollten wir etwas falsch eingeordnet haben."
 
 #: src/component/navigation.vue:301 src/component/navigation.vue:311
 #: src/component/navigation.vue:4 src/component/navigation.vue:1135
@@ -1464,7 +1448,7 @@ msgstr "Keine kürzlich bearbeiteten Bilder"
 msgid "No servers configured."
 msgstr "Keine Backup-Server eingerichtet."
 
-#: src/dialog/sponsor.vue:35
+#: src/dialog/sponsor.vue:31
 msgid "No thanks"
 msgstr "Nein danke"
 
@@ -1618,8 +1602,8 @@ msgid ""
 "Our vision is to provide the most user-friendly solution for browsing, "
 "organizing, and sharing your photo collection."
 msgstr ""
-"Unsere Vision ist es, die benutzerfreundlichste Software zum Finden, "
-"Organisieren und Teilen von Bildern anzubieten."
+"Unsere Vision ist es, die benutzerfreundlichste Lösung zum Durchstöbern, "
+"Organisieren und Teilen von Bildersammlungen anbieten zu können."
 
 #: src/options/options.js:281
 msgid "Outdoor"
@@ -1641,10 +1625,6 @@ msgstr "Passwort"
 #: src/pages/settings/account.vue:22
 msgid "Password changed"
 msgstr "Passwort geändert"
-
-#: src/dialog/sponsor.vue:24
-msgid "pay for operating expenses and external services like satellite maps"
-msgstr "Betriebskosten und externe Dienste wie Satellitenkarten zu bezahlen"
 
 #: src/component/navigation.vue:176 src/component/navigation.vue:702
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
@@ -1673,7 +1653,7 @@ msgstr "Bild"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism wurde aktualisiert…"
 
-#: src/pages/about/about.vue:45
+#: src/pages/about/about.vue:46
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr "PhotoPrism® ist ein eingetragenes Markenzeichen von Michael Mayer."
 
@@ -1709,7 +1689,7 @@ msgstr "Abspielen"
 msgid "Please confirm your new password."
 msgstr "Neues Passwort bitte bestätigen."
 
-#: src/dialog/sponsor.vue:28
+#: src/dialog/sponsor.vue:24
 msgid ""
 "Please contact us at hello@photoprism.app if you have questions or need help."
 msgstr ""
@@ -1883,6 +1863,14 @@ msgstr "Fehler melden"
 #: src/common/api.js:78
 msgid "Request failed - invalid response"
 msgstr "Anfrage fehlgeschlagen - ungültige Antwort"
+
+#: src/pages/about/about.vue:36
+msgid ""
+"Requests endorsed by silver and gold sponsors receive a golden label and "
+"will be prioritized."
+msgstr ""
+"Ideen, die von Silber- und Goldsponsoren unterstützt werden, erhalten ein "
+"goldenes Label und werden vorrangig behandelt."
 
 #: src/pages/about/feedback.vue:103 src/pages/about/feedback.vue:123
 #: src/pages/about/feedback.vue:165
@@ -2059,7 +2047,7 @@ msgstr "Sidecar"
 msgid "Sign in"
 msgstr "Anmelden"
 
-#: src/dialog/sponsor.vue:43
+#: src/dialog/sponsor.vue:39
 msgid "Sign Up"
 msgstr "Anmelden"
 
@@ -2191,7 +2179,7 @@ msgstr "Blaugrün"
 msgid "Text too long"
 msgstr "Text ist zu lang"
 
-#: src/pages/about/about.vue:39
+#: src/pages/about/about.vue:40
 msgid "Thank you very much!"
 msgstr "Vielen Dank!"
 
@@ -2280,7 +2268,7 @@ msgstr "Code"
 msgid "Topographic"
 msgstr "Topographisch"
 
-#: src/pages/about/about.vue:42
+#: src/pages/about/about.vue:43
 msgid "Trademarks"
 msgstr "Markenrechte"
 
@@ -2500,7 +2488,7 @@ msgstr "Es darf nur ein Eintrag ausgewählt werden"
 msgid "You may rescan your library to find additional faces."
 msgstr "Der Index kann aktualisiert werden, um weitere Gesichter zu finden."
 
-#: src/pages/about/about.vue:46
+#: src/pages/about/about.vue:47
 msgid ""
 "You may use it as required to describe our software, run your own server, "
 "for educational purposes, but not for offering commercial goods, products, "
@@ -2511,20 +2499,13 @@ msgstr ""
 "Das Bewerben kommerzieller Produkte, Waren oder Dienstleistungen ist nur "
 "nach vorheriger, schriftlicher Genehmigung erlaubt."
 
-#: src/pages/about/about.vue:32
+#: src/dialog/sponsor.vue:21 src/pages/about/about.vue:32
 msgid ""
 "Your continued support helps us fund operating costs, provide services like "
-"satellite maps, and develop new features. Requests endorsed by silver and "
-"gold sponsors receive a golden label and will be prioritized."
+"satellite maps, and develop new features."
 msgstr ""
 "Regelmäßige Einkünfte helfen uns, Betriebskosten zu finanzieren, Dienste wie "
-"Satellitenkarten anzubieten und neue Funktionen zu entwickeln. Ideen, die "
-"von Silber- und Goldsponsoren unterstützt werden, erhalten ein goldenes "
-"Label und werden vorrangig behandelt."
-
-#: src/dialog/sponsor.vue:21
-msgid "Your continuous support helps..."
-msgstr "Regelmäßige Spenden helfen uns..."
+"Satellitenkarten anzubieten und neue Funktionen zu entwickeln."
 
 #: src/pages/albums.vue:43 src/pages/albums.vue:1
 msgid ""
@@ -2541,6 +2522,23 @@ msgstr "Deine Nachricht wurde gesendet"
 #: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#~ msgid "developing new features and keeping them free for everyone"
+#~ msgstr "neue Funktionen zu entwickeln und sie für alle frei zu halten"
+
+#~ msgid "pay for operating expenses and external services like satellite maps"
+#~ msgstr "Betriebskosten und externe Dienste wie Satellitenkarten zu bezahlen"
+
+#~ msgid "Your continuous support helps..."
+#~ msgstr "Regelmäßige Einkünfte helfen uns..."
+
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr "Wir freuen uns auch sehr über Sterne für unser Projekt auf GitHub."
+
+#~ msgid "Let's Join Forces"
+#~ msgstr "Jetzt Unterstützer werden"
 
 #~ msgid "Select membership"
 #~ msgstr "Mitgliedschaft wählen"
