@@ -1004,11 +1004,11 @@ msgstr "Hilfe"
 
 #: src/component/navigation.vue:329
 msgid "Hidden"
-msgstr "Versteckt"
+msgstr "Verborgen"
 
 #: src/routes.js:246
 msgid "Hidden Files"
-msgstr "Unsichtbare Dateien"
+msgstr "Verborgene Dateien"
 
 #: src/pages/people/faces.vue:237 src/pages/people/subjects.vue:295
 msgid "Hide"
@@ -2197,7 +2197,7 @@ msgstr "Vielen Dank!"
 
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
-msgstr "Der Index enthält momentan %{n} versteckte Dateien."
+msgstr "Der Index enthält momentan %{n} verborgene Dateien."
 
 #: src/pages/about/about.vue:17
 msgid ""
