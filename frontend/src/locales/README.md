@@ -15,16 +15,13 @@ It's source code can be obtained on [GitHub](https://github.com/vslavik/poedit).
 
 `*.po` files contain localized messages for each 
 [language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html#Usual-Language-Codes),
-identified by their [two-letter locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html), 
+identified by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html), 
 like `de.po` for German.
 You can open, edit and save them with Poedit to update existing translations. 
 
-As it doesn't seem necessary for now, and to reduce the amount of work, 
-we don't maintain translations for dialects like `de_AT` or `pt_BR`.
-
 To add a new translation, open `translations.pot`, click on "Create New Translation" at the bottom, select
 the language, and start translating. 
-When done, save your translation as `*.po` file using the two-letter language locale as name.
+When done, save your translation as `*.po` file using the [locale](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html) as name.
 In addition, the new language needs to be added to the `Languages` function
 in `/frontend/src/options/options.js`.
 

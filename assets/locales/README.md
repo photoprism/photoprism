@@ -19,7 +19,7 @@ Technical log messages should be in English to avoid ambiguities and (even sligh
 
 `default.po` files in subdirectories contain localized messages for each 
 [language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html#Usual-Language-Codes),
-identified by their [two-letter locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html), 
+identified by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html), 
 like `de/default.po` for German. You can open, edit and save them with Poedit. Please
 also add and commit binary `*.mo` files, which will be automatically created by Poedit.
 
