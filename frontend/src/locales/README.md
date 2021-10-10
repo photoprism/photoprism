@@ -16,7 +16,7 @@ It's source code can be obtained on [GitHub](https://github.com/vslavik/poedit).
 `*.po` files contain localized messages for each 
 [language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html#Usual-Language-Codes),
 identified by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html), 
-like `de.po` for German.
+like `de.po` for German or `pt_BR.po` for Brazilian Portuguese.
 You can open, edit and save them with Poedit to update existing translations. 
 
 To add a new translation, open `translations.pot`, click on "Create New Translation" at the bottom, select
