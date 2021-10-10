@@ -10,7 +10,7 @@ Messages may optionally contain placeholders, like `Found %d files`, for numbers
 other variables.
 
 We strongly recommend [Poedit](https://poedit.net/download) for creating and updating translations.
-Download is free for Mac, Windows and Linux.
+Download is free for Mac, Windows, and Linux.
 It's source code can be obtained on [GitHub](https://github.com/vslavik/poedit).
 
 Only asynchronous notifications and certain API responses need translation to provide a 
@@ -18,13 +18,14 @@ consistent user experience.
 Technical log messages should be in English to avoid ambiguities and (even slightly) wrong translations. 
 
 `default.po` files in subdirectories contain localized messages for each 
-[language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html#Usual-Language-Codes),
-identified by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html), 
-like `de/default.po` for German. You can open, edit and save them with Poedit. Please
-also add and commit binary `*.mo` files, which will be automatically created by Poedit.
+[language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html) identified 
+by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html),
+for example `de/default.po` for German and `pt_BR/default.po` for Brazilian Portuguese. 
+You can open, edit, and save them with Poedit. Please also add and commit binary `*.mo` files, 
+which will be automatically created by Poedit.
 
-To add a new translation, open `messages.pot`, click on "Create New Translation" at the bottom, select
-the language, and start translating. 
+To add a new translation, open `messages.pot`, click on "Create New Translation" at the bottom and select
+the language. Now you can start translating.
 When done, create a new directory (using the locale as name) and save your translation there as `default.po`.
 
 The POT file `/assets/locales/messages.pot` will be automatically updated when 

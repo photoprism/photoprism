@@ -10,20 +10,19 @@ Messages may optionally contain placeholders, like `%{n} files found`, for numbe
 other variables.
 
 We strongly recommend [Poedit](https://poedit.net/download) for creating and updating translations.
-Download is free for Mac, Windows and Linux.
+Download is free for Mac, Windows, and Linux.
 It's source code can be obtained on [GitHub](https://github.com/vslavik/poedit).
 
 `*.po` files contain localized messages for each 
-[language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html#Usual-Language-Codes),
-identified by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html), 
-like `de.po` for German or `pt_BR.po` for Brazilian Portuguese.
-You can open, edit and save them with Poedit to update existing translations. 
+[language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html) identified 
+by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html),
+for example `de.po` for German and `pt_BR.po` for Brazilian Portuguese.
+You can open, edit, and save them with Poedit to update existing translations. 
 
-To add a new translation, open `translations.pot`, click on "Create New Translation" at the bottom, select
-the language, and start translating. 
-When done, save your translation as `*.po` file using the [locale](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html) as name.
-In addition, the new language needs to be added to the `Languages` function
-in `/frontend/src/options/options.js`.
+To add a new translation, open `translations.pot`, click on "Create New Translation" at the bottom and select
+the language. Now you can start translating. 
+When done, save your translation as `*.po` file using the [locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html) as name.
+In addition, the new language needs to be added to the `Languages` function in `/frontend/src/options/options.js`.
 
 A binary `*.mo` (machine object) file will be automatically saved along with every `*.po` file. 
 You won't be able to open those in a text editor, but please include them in git commits or when sending
