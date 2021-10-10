@@ -16,7 +16,7 @@
         </p>
       </v-alert>
     </div>
-    <v-data-table v-if="photos.length > 0"
+    <v-data-table v-else
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"
