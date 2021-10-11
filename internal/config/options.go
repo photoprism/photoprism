@@ -49,11 +49,11 @@ type Options struct {
 	OriginalsLimit        int64   `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ImportPath            string  `yaml:"ImportPath" json:"-" flag:"import-path"`
 	StoragePath           string  `yaml:"StoragePath" json:"-" flag:"storage-path"`
+	CachePath             string  `yaml:"CachePath" json:"-" flag:"cache-path"`
 	SidecarPath           string  `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
 	TempPath              string  `yaml:"TempPath" json:"-" flag:"temp-path"`
 	BackupPath            string  `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	AssetsPath            string  `yaml:"AssetsPath" json:"-" flag:"assets-path"`
-	CachePath             string  `yaml:"CachePath" json:"-" flag:"cache-path"`
 	Workers               int     `yaml:"Workers" json:"Workers" flag:"workers"`
 	WakeupInterval        int     `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex             int     `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
