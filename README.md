@@ -17,23 +17,24 @@ Say goodbye to uploading your visual memories to the cloud!
 
 To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
 
-## Key Features ##
+## Features ##
 
-* Our intuitive [Web UI](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as
-  it should be — whether it’s on a phone, tablet, or desktop computer
-* Index all your photos and videos without worrying about duplicates, [RAW to JPEG conversion](https://docs.photoprism.org/user-guide/settings/library/), or video transcoding
+* PhotoPrism® makes browsing and organizing your pictures as easy as it should be, whether it’s on a phone, tablet, or desktop computer
+* Because the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
+  it provides a native app-like experience, and you can easily install it on the home screen of common operating systems and devices
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
   and for rediscovering long-forgotten shots
 * Enjoy privacy-preserving face detection and recognition 💎
-* Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/)
-  based on Google TensorFlow – in addition, PhotoPrism detects many other properties such as _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_,
-  and _location type_
+* AI-powered [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/)
+  based on Google TensorFlow
+* Metadata can be extracted and merged from Exif, XMP, and proprietary formats such as Google Photos JSON sidecar files
+* Image properties like _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, and _location type_
+  will be detected automatically whenever you update the index or add new files
+* Index all your photos and videos without worrying about duplicates, [RAW to JPEG conversion](https://docs.photoprism.org/user-guide/settings/library/), or video transcoding
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android mobile devices in the background
 * WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may
   [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open,
   edit, and delete files from your computer or phone as if they were local
-* Because PhotoPrism is built as a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
-  it provides a native app-like experience, and you can install it on your home screen without struggling with compatibility issues
 
 ## Getting Started ##
 
