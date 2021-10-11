@@ -44,6 +44,7 @@ import About from "pages/about/about.vue";
 import Feedback from "pages/about/feedback.vue";
 import License from "pages/about/license.vue";
 import Help from "pages/help.vue";
+import Profile from "pages/profile.vue";
 import { $gettext } from "common/vm";
 import { config, session } from "./session";
 import Acl, { Constants } from "./common/acl";
@@ -419,13 +420,12 @@ export default [
     props: { tab: "settings-sync" },
   },
   {
-    name: "settings_account",
-    path: "/settings/account",
-    component: Settings,
+    name: "profile_account",
+    path: "/account",
+    component: Profile,
     meta: {
       title: $gettext("Settings"),
       auth: true,
-      settings: true,
       background: "application-light",
     },
     props: { tab: "settings-account" },

@@ -27,10 +27,7 @@
 </template>
 
 <script>
-import General from "pages/settings/general.vue";
-import Library from "pages/settings/library.vue";
-import Advanced from "pages/settings/advanced.vue";
-import Sync from "pages/settings/sync.vue";
+import Account from "pages/settings/account.vue";
 
 function initTabs(flag, tabs) {
   let i = 0;
@@ -44,7 +41,7 @@ function initTabs(flag, tabs) {
 }
 
 export default {
-  name: 'PPageSettings',
+  name: 'PPageProfile',
   props: {
     tab: String,
   },
@@ -53,46 +50,13 @@ export default {
     const isPublic = this.$config.get("public");
     const tabs = [
       {
-        'name': 'settings-general',
-        'component': General,
-        'label': this.$gettext('General'),
+        'name': 'settings-account',
+        'component': Account,
+        'label': this.$gettext('Account'),
         'class': '',
-        'path': '/settings',
-        'icon': 'tv',
-        'public': true,
-        'admin': true,
-        'demo': true,
-      },
-      {
-        'name': 'settings-library',
-        'component': Library,
-        'label': this.$gettext('Library'),
-        'class': '',
-        'path': '/settings/library',
-        'icon': 'camera_roll',
-        'public': true,
-        'admin': true,
-        'demo': true,
-      },
-      {
-        'name': 'settings-advanced',
-        'component': Advanced,
-        'label': this.$gettext('Advanced'),
-        'class': '',
-        'path': '/settings/advanced',
-        'icon': 'build',
+        'path': '/account',
+        'icon': 'person',
         'public': false,
-        'admin': true,
-        'demo': true,
-      },
-      {
-        'name': 'settings-sync',
-        'component': Sync,
-        'label': this.$gettext('Sync'),
-        'class': '',
-        'path': '/settings/sync',
-        'icon': 'sync_alt',
-        'public': true,
         'admin': true,
         'demo': true,
       },
