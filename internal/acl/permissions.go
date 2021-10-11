@@ -2,8 +2,7 @@ package acl
 
 var Permissions = ACL{
 	ResourceDefault: Roles{
-		RoleAdmin:  Actions{ActionDefault: true},
-		RoleMember: Actions{ActionDefault: true},
+		RoleAdmin: Actions{ActionDefault: true},
 	},
 	ResourceConfig: Roles{
 		RoleAdmin:  Actions{ActionDefault: true},
@@ -43,6 +42,9 @@ var Permissions = ACL{
 		RoleAdmin: Actions{ActionDefault: true},
 	},
 	ResourceLibrary: Roles{
+		RoleAdmin: Actions{ActionDefault: true},
+	},
+	ResourceSettings: Roles{
 		RoleAdmin: Actions{ActionDefault: true},
 	},
 }

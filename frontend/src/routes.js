@@ -394,6 +394,14 @@ export default [
       background: "application-light",
     },
     props: { tab: "settings-general" },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceSettings, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "settings_library",
@@ -406,6 +414,14 @@ export default [
       background: "application-light",
     },
     props: { tab: "settings-library" },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceSettings, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "settings_sync",
@@ -418,6 +434,14 @@ export default [
       background: "application-light",
     },
     props: { tab: "settings-sync" },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceSettings, aclActions.ActionRead)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "profile_account",
@@ -429,6 +453,14 @@ export default [
       background: "application-light",
     },
     props: { tab: "settings-account" },
+    beforeEnter: (to, from, next) => {
+      const userrole = session.getUser().getRole();
+      if (acl().accessAllowed(userrole, aclResources.ResourceUsers, aclActions.ActionUpdateSelf)) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "settings_advanced",

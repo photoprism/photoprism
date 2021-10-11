@@ -364,7 +364,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <template v-if="!config.disable.settings">
+        <template v-if="!config.disable.settings && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceSettings, this.acl.getConstants().actions.ActionRead)">
           <v-list-tile v-if="isMini" to="/settings" class="nav-settings" @click.stop="">
             <v-list-tile-action :title="$gettext('Settings')">
               <v-icon>settings</v-icon>
@@ -452,7 +452,7 @@
             <v-list-tile-title>
               {{ displayName }}
             </v-list-tile-title>
-            <v-list-tile-sub-title>{{ accountInfo }}</v-list-tile-sub-title>
+            <v-list-tile-sub-title style="font-size: smaller">{{ accountInfo }}</v-list-tile-sub-title>
           </v-list-tile-content>
 
           <v-list-tile-action :title="$gettext('Logout')">
