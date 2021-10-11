@@ -443,7 +443,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="!isPublic && auth"  to="/" class="p-profile">
+        <v-list-tile v-show="!isPublic && auth"  to="/settings/account" class="p-profile">
           <v-list-tile-avatar color="grey" size="36">
             <span class="white--text headline">{{ displayName.length >= 1 ? displayName[0].toUpperCase() : "E" }}</span>
           </v-list-tile-avatar>
@@ -452,7 +452,7 @@
             <v-list-tile-title>
               {{ displayName }}
             </v-list-tile-title>
-            <v-list-tile-sub-title>Profile</v-list-tile-sub-title>
+            <v-list-tile-sub-title>{{ accountInfo }}</v-list-tile-sub-title>
           </v-list-tile-content>
 
           <v-list-tile-action :title="$gettext('Logout')">
@@ -488,7 +488,6 @@
 <script>
 import Album from "model/album";
 import Event from "pubsub-js";
-// import Acl from "common/acl";
 
 export default {
   name: "PNavigation",
@@ -525,11 +524,13 @@ export default {
       return this.session.auth || this.isPublic;
     },
     displayName() {
-      return this.$session.getUser().FullName ? this.$session.getUser().FullName : this.$session.getUser().UserName;
+      const user = this.$session.getUser();
+      return user.FullName ? user.FullName : user.UserName;
     },
-    // acl() {
-    //   return new Acl(window.__CONFIG__.acl);
-    // }
+    accountInfo() {
+      const user = this.$session.getUser();
+      return user.PrimaryEmail ? user.PrimaryEmail : this.$gettext("Account");
+    }
   },
   created() {
     this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);

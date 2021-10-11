@@ -183,6 +183,7 @@ describe("model/abstract", () => {
       Slug: "friends",
       Expires: 80000,
       UpdatedAt: "2012-07-08T14:45:39Z",
+      Token: "abchhgftryue2345",
     };
     const link = new Link(values);
     const values2 = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };

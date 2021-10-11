@@ -5,11 +5,11 @@
         <v-layout row wrap>
           <v-flex xs9>
             <h3 class="title mb-0">
-              <translate>Let's Join Forces</translate>
+              <translate>Become a sponsor</translate>
             </h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
-            <v-icon color="secondary-dark">favorite</v-icon>
+            <v-icon color="secondary-dark">volunteer_activism</v-icon>
           </v-flex>
         </v-layout>
       </v-card-title>
@@ -19,13 +19,9 @@
           <translate>We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors.</translate>
         </p>
         <p class="body-1">
-          <translate>Your continuous support helps...</translate>
+          <translate>Your continued support helps us fund operating costs, provide services like satellite maps, and develop new features.</translate>
         </p>
-        <ul>
-          <li><translate>pay for operating expenses and external services like satellite maps</translate></li>
-          <li><translate>developing new features and keeping them free for everyone</translate></li>
-        </ul>
-        <p class="body-1 pt-3">
+        <p class="body-1">
           <translate>Please contact us at hello@photoprism.app if you have questions or need help.</translate>
         </p>
       </v-card-text>
@@ -62,6 +58,7 @@ export default {
   data() {
     return {
       host: window.location.host,
+      rtl: this.$rtl,
     };
   },
   methods: {

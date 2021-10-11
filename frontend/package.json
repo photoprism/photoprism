@@ -91,7 +91,7 @@
     "resolve-url-loader": "^3.1.4",
     "sass": "^1.36.0",
     "sass-loader": "^12.1.0",
-    "server": "^1.0.34",
+    "server": "^1.0.36",
     "sockette": "^2.0.6",
     "style-loader": "^3.1.0",
     "svg-url-loader": "^7.1.1",

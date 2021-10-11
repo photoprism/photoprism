@@ -22,7 +22,7 @@ test.meta("testID", "photos-001")("Scroll to top", async (t) => {
     .expect(Selector('div[class="v-image__image v-image__image--cover"]').nth(0).visible)
     .ok();
   await scroll(0, 1400);
-  await scroll(0, 1000);
+  await scroll(0, 900);
   await t.click(Selector("button.p-scroll-top")).expect(getcurrentPosition()).eql(0);
 });
 

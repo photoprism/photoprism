@@ -151,10 +151,10 @@
 
                 <div class="caption mb-2">
                   <button v-if="model.PhotoCount === 1">
-                    <translate>Contains one entry.</translate>
+                    <translate>Contains one picture.</translate>
                   </button>
                   <button v-else-if="model.PhotoCount > 0">
-                    <translate :translate-params="{n: model.PhotoCount}">Contains %{n} entries.</translate>
+                    <translate :translate-params="{n: model.PhotoCount}">Contains %{n} pictures.</translate>
                   </button>
                 </div>
               </v-card-text>

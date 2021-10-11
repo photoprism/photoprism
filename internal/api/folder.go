@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 )
 
+// FoldersResponse represents the folders API response.
 type FoldersResponse struct {
 	Root      string          `json:"root,omitempty"`
 	Folders   []entity.Folder `json:"folders"`
@@ -97,12 +98,16 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	router.GET("/folders/"+urlPath+"/*path", handler)
 }
 
+// GetFoldersOriginals returns folders in originals as JSON.
+//
 // GET /api/v1/folders/originals
 func GetFoldersOriginals(router *gin.RouterGroup) {
 	conf := service.Config()
 	GetFolders(router, "originals", entity.RootOriginals, conf.OriginalsPath())
 }
 
+// GetFoldersImport returns import folders as JSON.
+//
 // GET /api/v1/folders/import
 func GetFoldersImport(router *gin.RouterGroup) {
 	conf := service.Config()

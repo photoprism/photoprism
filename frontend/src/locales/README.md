@@ -3,30 +3,26 @@
 PhotoPrism uses [gettext](https://en.wikipedia.org/wiki/Gettext) for localizing frontend and backend.
 It's one of the most widely adopted standards for translating user interfaces.
  
-Human readable messages like `File not found` are used as ids for finding matching translations, 
+Human-readable messages like `File not found` are used as ids for finding matching translations, 
 and used as defaults whenever there is no translation available.
 
-Messages may optionally contain placeholders, like `Found %{n} files`, for numbers and 
+Messages may optionally contain placeholders, like `%{n} files found`, for numbers and 
 other variables.
 
 We strongly recommend [Poedit](https://poedit.net/download) for creating and updating translations.
-Download is free for Mac, Windows and Linux.
+Download is free for Mac, Windows, and Linux.
 It's source code can be obtained on [GitHub](https://github.com/vslavik/poedit).
 
 `*.po` files contain localized messages for each 
-[language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html#Usual-Language-Codes),
-identified by their [two-letter locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html), 
-like `de.po` for German.
-You can open, edit and save them with Poedit to update existing translations. 
+[language](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html) identified 
+by their [locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html),
+for example `de.po` for German and `pt_BR.po` for Brazilian Portuguese.
+You can open, edit, and save them with Poedit to update existing translations. 
 
-As it doesn't seem necessary for now, and to reduce the amount of work, 
-we don't maintain translations for dialects like `de_AT` or `pt_BR`.
-
-To add a new translation, open `translations.pot`, click on "Create New Translation" at the bottom, select
-the language, and start translating. 
-When done, save your translation as `*.po` file using the two-letter language locale as name.
-In addition, the new language needs to be added to the `Languages` function
-in `/frontend/src/options/options.js`.
+To add a new translation, open `translations.pot`, click on "Create New Translation" at the bottom and select
+the language. Now you can start translating. 
+When done, save your translation as `*.po` file using the [locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html) as name.
+In addition, the new language needs to be added to the `Languages` function in `/frontend/src/options/options.js`.
 
 A binary `*.mo` (machine object) file will be automatically saved along with every `*.po` file. 
 You won't be able to open those in a text editor, but please include them in git commits or when sending

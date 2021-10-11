@@ -51,18 +51,18 @@ We recommend updating your existing `docker-compose.yml` config based on
 
 ## Funding ##
 
-**This open-source project is made possible thanks to our generous sponsors.**
-If you enjoy using PhotoPrism, please consider supporting us via [Patreon](https://www.patreon.com/photoprism) 
-or [GitHub Sponsors](https://github.com/sponsors/photoprism) — especially if you have 
-feature requests<sup>1</sup> or need help with using our software.
-Your continued support helps us fund operating costs, external services like satellite maps, 
-and develop new features. Thank you very much!
+This open-source project is made possible [thanks to our sponsors](SPONSORS.md). 
+If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism) 
+or [GitHub Sponsors](https://github.com/sponsors/photoprism).
+
+Your continued support helps us fund operating costs, provide services like satellite maps,
+and develop new features. Requests endorsed by silver and gold sponsors [receive a golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
+Let us know when we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
 
-<sup>1</sup> Ideas backed by one or more [eligible sponsors](SPONSORS.md) are marked with a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor).
-Let us know if we mistakenly [label an idea as unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+Thank you very much! 💜
 
 ## Roadmap ##
 
@@ -71,7 +71,6 @@ The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what ta
 what needs testing, and which feature requests are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
-Ideas backed by one or more eligible [sponsors](SPONSORS.md) will be prioritized as well.
 
 ## Contributions ##
 
