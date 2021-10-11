@@ -1,5 +1,5 @@
-PhotoPrism: Browse Your Life in Pictures
-========================================
+PhotoPrism: Browse Your Life
+============================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
 [![Code Quality](https://goreportcard.com/badge/github.com/photoprism/photoprism)][goreport]
@@ -9,7 +9,7 @@ PhotoPrism: Browse Your Life in Pictures
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
-PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection.
+PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your pictures.
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
 Say goodbye to uploading your visual memories to the cloud!
 
