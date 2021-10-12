@@ -68,7 +68,7 @@ Thank you very much! 💜
 
 ## Roadmap ##
 
-Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your pictures.
+Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which feature requests are going to be implemented next.
 
