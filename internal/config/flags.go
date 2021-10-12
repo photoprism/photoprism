@@ -100,14 +100,14 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
 	},
 	cli.StringFlag{
-		Name:   "sidecar-path",
-		Usage:  "optional custom relative or absolute sidecar `PATH`",
-		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
-	},
-	cli.StringFlag{
 		Name:   "cache-path",
 		Usage:  "optional custom cache `PATH` for sessions and thumbnail files",
 		EnvVar: "PHOTOPRISM_CACHE_PATH",
+	},
+	cli.StringFlag{
+		Name:   "sidecar-path",
+		Usage:  "optional custom relative or absolute sidecar `PATH`",
+		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.StringFlag{
 		Name:   "temp-path",
