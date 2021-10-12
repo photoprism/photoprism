@@ -155,6 +155,15 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		case terms["videos"]:
 			f.Query = strings.ReplaceAll(f.Query, "videos", "")
 			f.Video = true
+		case terms["video"]:
+			f.Query = strings.ReplaceAll(f.Query, "video", "")
+			f.Video = true
+		case terms["photos"]:
+			f.Query = strings.ReplaceAll(f.Query, "photos", "")
+			f.Photo = true
+		case terms["photo"]:
+			f.Query = strings.ReplaceAll(f.Query, "photo", "")
+			f.Photo = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
 			f.Favorite = true
@@ -169,6 +178,9 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 			f.Scan = true
 		case terms["monochrome"]:
 			f.Query = strings.ReplaceAll(f.Query, "monochrome", "")
+			f.Mono = true
+		case terms["mono"]:
+			f.Query = strings.ReplaceAll(f.Query, "mono", "")
 			f.Mono = true
 		}
 	}
@@ -216,6 +228,17 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		for _, where := range LikeAnyKeyword("k.keyword", f.Keywords) {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
+	}
+
+	// Filter by number of faces.
+	if txt.IsUInt(f.Faces) {
+		s = s.Where("photos.photo_faces >= ?", txt.Int(f.Faces))
+	} else if txt.Yes(f.Faces) {
+		s = s.Where("photos.photo_faces > 0")
+	} else if txt.No(f.Faces) {
+		s = s.Where("photos.photo_faces = 0")
+	} else if txt.New(f.Faces) && f.Face == "" {
+		f.Face = f.Faces
 	}
 
 	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
@@ -299,15 +322,6 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 	// Filter by day?
 	if f.Day != "" {
 		s = s.Where(AnyInt("photos.photo_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
-	}
-
-	// Find or exclude people if detected.
-	if txt.IsUInt(f.Faces) {
-		s = s.Where("photos.photo_faces >= ?", txt.Int(f.Faces))
-	} else if txt.Yes(f.Faces) {
-		s = s.Where("photos.photo_faces > 0")
-	} else if txt.No(f.Faces) {
-		s = s.Where("photos.photo_faces = 0")
 	}
 
 	if f.Color != "" {
