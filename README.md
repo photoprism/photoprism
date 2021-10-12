@@ -28,7 +28,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Enjoy privacy-preserving [face detection and recognition](https://demo.photoprism.org/people) 💎
 * AI-powered [image classification](https://demo.photoprism.org/labels)
   based on Google TensorFlow
-* Metadata is extracted and merged from Exif, XMP, and proprietary formats such as Google Photos JSON sidecar files
+* Metadata is extracted and merged from Exif, XMP, and proprietary formats such as Google Photos JSON
 * Image properties like colors, chroma, luminance, quality, panoramic projection, and location type are automatically detected when you update the index or import files
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android mobile devices in the background
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer or phone as if they were local
