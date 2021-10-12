@@ -28,7 +28,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Enjoy privacy-preserving face detection and recognition 💎
 * AI-powered [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/)
   based on Google TensorFlow
-* Metadata can be extracted and merged from Exif, XMP, and proprietary formats such as Google Photos JSON sidecar files
+* Metadata is extracted and merged from Exif, XMP, and proprietary formats such as Google Photos JSON sidecar files
 * Image properties like _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_, and _location type_
   will be detected automatically whenever you update the index or import files
 * Index all your photos and videos without worrying about duplicates, the conversion of [RAW images](https://docs.photoprism.org/user-guide/settings/library/), or video transcoding
