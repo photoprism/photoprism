@@ -74,8 +74,7 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
   await t.expect(Selector(".input-search input").visible).ok();
   await page.openNav();
   await t
-    .click(Selector(".nav-settings"))
-    .click(Selector("#tab-settings-account"))
+    .click(Selector(".p-profile"))
     .typeText(Selector(".input-current-password input"), "wrong", { replace: true })
     .typeText(Selector(".input-new-password input"), "photoprism", { replace: true })
     .expect(Selector(".action-confirm").hasAttribute("disabled", "disabled"))
@@ -105,8 +104,7 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
   await t.expect(Selector(".input-search input").visible).ok();
   await page.openNav();
   await t
-    .click(Selector(".nav-settings", { timeout: 7000 }))
-    .click(Selector("#tab-settings-account"))
+    .click(Selector(".p-profile", { timeout: 7000 }))
     .typeText(Selector(".input-current-password input"), "photoprism123", { replace: true })
     .typeText(Selector(".input-new-password input"), "photoprism", { replace: true })
     .typeText(Selector(".input-retype-password input"), "photoprism", { replace: true })
