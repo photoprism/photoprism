@@ -806,7 +806,7 @@ msgstr "Оценить примерное местоположение фото�
 #: src/pages/settings/library.vue:71
 #| msgid "States"
 msgid "Estimates"
-msgstr "Stime"
+msgstr "Примерное местоположение"
 
 #: src/options/options.js:311
 msgid "Every two days"
