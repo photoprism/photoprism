@@ -23,6 +23,8 @@ type PhotoSearch struct {
 	Stackable bool      `form:"stackable"`
 	Video     bool      `form:"video"`
 	Photo     bool      `form:"photo"`
+	Raw       bool      `form:"raw"`
+	Live      bool      `form:"live"`
 	Scan      bool      `form:"scan"`
 	Panorama  bool      `form:"panorama"`
 	Error     bool      `form:"error"`

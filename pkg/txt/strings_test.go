@@ -130,6 +130,12 @@ func TestNew(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, false, New(""))
 	})
+	t.Run("EnNew", func(t *testing.T) {
+		assert.Equal(t, true, New(EnNew))
+	})
+	t.Run("Spaces", func(t *testing.T) {
+		assert.Equal(t, true, New("     new "))
+	})
 	t.Run("Uppercase", func(t *testing.T) {
 		assert.Equal(t, true, New("NEW"))
 	})
