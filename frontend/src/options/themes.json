@@ -288,5 +288,34 @@
       "navigation": "#111",
       "navigation-home": "#000000"
     }
+  },
+  "midnight": {
+    "dark": true,
+    "sponsor": true,
+    "colors": {
+      "application": "#212121",
+      "form": "#AFB42B",
+      "primary": "#7e8acd",
+      "primary-button": "#444444",
+      "secondary-dark": "#5C6BC0",
+      "secondary": "#111111",
+      "secondary-light": "#1a1a1a",
+      "accent": "#090c10",
+      "error": "#e57373",
+      "info": "#00acc1",
+      "success": "#4db6ac",
+      "warning": "#ffd740",
+      "remove": "#e57373",
+      "restore": "#64b5f6",
+      "album": "#ffab00",
+      "download": "#00bfa5",
+      "private": "#00b8d4",
+      "edit": "#00b8d4",
+      "share": "#9575cd",
+      "love": "#ef5350",
+      "terminal": "#333333",
+      "navigation": "#0d0d0d",
+      "navigation-home": "#000000"
+    }
   }
 }
