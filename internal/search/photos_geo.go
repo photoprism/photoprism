@@ -39,7 +39,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
 
-	// Clip to reasonable size and normalize operators.
+	// Clip and normalize search query.
 	f.Query = txt.NormalizeQuery(f.Query)
 
 	// Set search filters based on search terms.
@@ -62,19 +62,25 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		case terms["video"]:
 			f.Query = strings.ReplaceAll(f.Query, "video", "")
 			f.Video = true
-		case terms["photos"]:
-			f.Query = strings.ReplaceAll(f.Query, "photos", "")
-			f.Photo = true
-		case terms["photo"]:
-			f.Query = strings.ReplaceAll(f.Query, "photo", "")
-			f.Photo = true
+		case terms["live"]:
+			f.Query = strings.ReplaceAll(f.Query, "live", "")
+			f.Live = true
+		case terms["raws"]:
+			f.Query = strings.ReplaceAll(f.Query, "raws", "")
+			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
 			f.Favorite = true
+		case terms["panoramas"]:
+			f.Query = strings.ReplaceAll(f.Query, "panoramas", "")
+			f.Panorama = true
+		case terms["scans"]:
+			f.Query = strings.ReplaceAll(f.Query, "scans", "")
+			f.Scan = true
 		}
 	}
 
-	// Filter by label, label category and keywords.
+	// Filter by label, label category, and keywords?
 	if f.Query != "" {
 		var categories []entity.Category
 		var labels []entity.Label
@@ -117,15 +123,16 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		}
 	}
 
-	// Filter by number of faces.
+	// Filter by number of faces?
 	if txt.IsUInt(f.Faces) {
 		s = s.Where("photos.photo_faces >= ?", txt.Int(f.Faces))
+	} else if txt.New(f.Faces) && f.Face == "" {
+		f.Face = f.Faces
+		f.Faces = ""
 	} else if txt.Yes(f.Faces) {
 		s = s.Where("photos.photo_faces > 0")
 	} else if txt.No(f.Faces) {
 		s = s.Where("photos.photo_faces = 0")
-	} else if txt.New(f.Faces) && f.Face == "" {
-		f.Face = f.Faces
 	}
 
 	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
@@ -134,6 +141,9 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
 				entity.Marker{}.TableName()), strings.Split(f, txt.Or))
 		}
+	} else if txt.New(f.Face) {
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE subj_uid IS NULL OR subj_uid = '')",
+			entity.Marker{}.TableName()), entity.MarkerFace)
 	} else if txt.No(f.Face) {
 		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NULL OR face_id = '')",
 			entity.Marker{}.TableName()), entity.MarkerFace)
@@ -199,29 +209,45 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		s = s.Where(AnyInt("photos.photo_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
+	// Filter by main color?
 	if f.Color != "" {
 		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), txt.Or))
 	}
 
+	// Find favorites only?
 	if f.Favorite {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
+	// Find scans only?
+	if f.Scan {
+		s = s.Where("photos.photo_scan = 1")
+	}
+
+	// Find panoramas only?
+	if f.Panorama {
+		s = s.Where("photos.photo_panorama = 1")
+	}
+
+	// Filter by location country?
 	if f.Country != "" {
 		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), txt.Or))
 	}
 
-	// Filter by media type.
+	// Filter by media type?
 	if f.Type != "" {
 		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
-	}
-
-	if f.Video {
+	} else if f.Video {
 		s = s.Where("photos.photo_type = 'video'")
 	} else if f.Photo {
 		s = s.Where("photos.photo_type IN ('image','raw','live')")
+	} else if f.Raw {
+		s = s.Where("photos.photo_type = 'raw'")
+	} else if f.Live {
+		s = s.Where("photos.photo_type = 'live'")
 	}
 
+	// Filter by storage path?
 	if f.Path != "" {
 		p := f.Path
 
@@ -237,7 +263,7 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		}
 	}
 
-	// Filter by primary file name without path and extension.
+	// Filter by primary file name without path and extension?
 	if f.Name != "" {
 		where, names := OrLike("photos.photo_name", f.Name)
 
@@ -249,13 +275,13 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		s = s.Where(where, names...)
 	}
 
-	// Filter by photo title.
+	// Filter by photo title?
 	if f.Title != "" {
 		where, values := OrLike("photos.photo_title", f.Title)
 		s = s.Where(where, values...)
 	}
 
-	// Filter by status.
+	// Filter by status?
 	if f.Archived {
 		s = s.Where("photos.photo_quality > -1")
 		s = s.Where("photos.deleted_at IS NOT NULL")
@@ -273,10 +299,6 @@ func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
 		} else if f.Quality != 0 && f.Private == false {
 			s = s.Where("photos.photo_quality >= ?", f.Quality)
 		}
-	}
-
-	if f.Favorite {
-		s = s.Where("photos.photo_favorite = 1")
 	}
 
 	if f.S2 != "" {

@@ -16,10 +16,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		return wheres
 	}
 
-	s = strings.ReplaceAll(s, txt.Or, " ")
-	s = strings.ReplaceAll(s, txt.OrEn, " ")
-	s = strings.ReplaceAll(s, txt.AndEn, txt.And)
-	s = strings.ReplaceAll(s, txt.Plus, txt.And)
+	s = txt.StripOr(txt.NormalizeQuery(s))
 
 	var wildcardThreshold int
 
