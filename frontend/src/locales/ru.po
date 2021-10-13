@@ -990,7 +990,7 @@ msgstr "Помощь"
 
 #: src/component/navigation.vue:329
 msgid "Hidden"
-msgstr "Скрытый"
+msgstr "Скрытые"
 
 #: src/routes.js:246
 msgid "Hidden Files"
@@ -1324,7 +1324,7 @@ msgstr "Моменты"
 
 #: src/component/navigation.vue:76
 msgid "Monochrome"
-msgstr "Монохром"
+msgstr "Монохромные"
 
 #: src/component/photo/toolbar.vue:300 src/dialog/photo/details.vue:142
 msgid "Month"
@@ -1744,7 +1744,7 @@ msgstr "Главная"
 #: src/dialog/photo/info.vue:102 src/pages/settings/general.vue:272
 #: src/routes.js:201
 msgid "Private"
-msgstr "Приватный"
+msgstr "Приватные"
 
 #: src/options/options.js:347
 msgid "Product Feedback"
@@ -1895,7 +1895,7 @@ msgstr "Повторите пароль"
 
 #: src/component/navigation.vue:108 src/routes.js:194
 msgid "Review"
-msgstr "Нуждается в обзоре"
+msgstr "Не одобрены"
 
 #: src/options/options.js:161
 msgid "Russian"
