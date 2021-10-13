@@ -726,7 +726,7 @@ msgstr "Скачивание..."
 
 #: src/pages/settings/advanced.vue:282
 msgid "Downscaling Filter"
-msgstr "Фильтр уменьшения масштаба"
+msgstr "Алгоритм создания превью"
 
 #: src/pages/library/files.vue:37
 msgid "Duplicates will be skipped and only appear once."
