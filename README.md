@@ -23,11 +23,11 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
 * Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
-* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back memories of your favorite trips
+* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips
 * Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
 * [Automatic classification of pictures](https://demo.photoprism.org/labels) based on their content and location
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
-* Image properties like colors, luminance, and quality are detected when scanning your library
+* Image properties like colors, luminance, and quality are detected as you scan your library
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
