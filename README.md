@@ -9,9 +9,8 @@ PhotoPrism: Browse Your Life in Pictures
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
-PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection.
+PhotoPrism® is a privacy-friendly app for browsing, organizing, and sharing your photo collection.
 It makes use of the latest technologies without getting in your way.
-Say goodbye to uploading your visual memories to the cloud!
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
@@ -19,15 +18,14 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 ## Features ##
 
-* Browse all your photos and videos without worrying about RAW conversion, duplicates or video formats
-* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?q=mono%3Atrue%20quality%3A3%20photo%3Atrue)
+* Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
+* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
 * Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been and for rediscovering long-forgotten shots
 * Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
-* Enjoy privacy-preserving [face detection and recognition](https://demo.photoprism.org/people) 💎
-* AI-powered [image classification](https://demo.photoprism.org/labels)
-  based on Google TensorFlow
+* [Recognizes faces](https://demo.photoprism.org/people) so you can find pictures of family and friends  💎
+* Automatic [image classification](https://demo.photoprism.org/labels) based on Google TensorFlow
 * Metadata is extracted and merged from Exif, XMP, and proprietary formats such as Google Photos JSON
 * Image properties like colors, chroma, luminance, quality, and location are automatically detected when you update the index or import files
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
