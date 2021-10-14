@@ -33,6 +33,7 @@
           <v-icon>share</v-icon>
         </v-btn>
         <v-btn
+            v-if="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate)"
             fab dark small
             :title="$gettext('Edit')"
             color="edit"
@@ -54,7 +55,7 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            v-if="features.albums"
+            v-if="features.albums && hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate, aclActions.ActionCreate)"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"
@@ -65,7 +66,7 @@
           <v-icon>bookmark</v-icon>
         </v-btn>
         <v-btn
-            v-if="deletable.includes(context)"
+            v-if="deletable.includes(context) && hasPermission(aclResources.ResourceAlbums, aclActions.ActionDelete)"
             fab dark small
             color="remove"
             :title="$gettext('Delete')"

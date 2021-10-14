@@ -36,7 +36,7 @@
         </v-btn>
 
         <v-btn
-            v-if="features.albums"
+            v-if="features.albums && hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate, aclActions.ActionCreate)"
             fab dark small
             :title="$gettext('Add to album')"
             color="album"

@@ -39,7 +39,7 @@
           <v-icon>cloud_upload</v-icon>
         </v-btn>
 
-        <v-btn v-if="staticFilter.type === 'album'" icon class="action-add" :title="$gettext('Add Album')"
+        <v-btn v-if="staticFilter.type === 'album' && hasPermission(aclResources.ResourceAlbums, aclActions.ActionCreate)" icon class="action-add" :title="$gettext('Add Album')"
                @click.prevent="create">
           <v-icon>add</v-icon>
         </v-btn>
@@ -126,9 +126,9 @@
                        icon flat absolute
                        class="input-favorite"
                        @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="toggleLike($event, index)"
+                       @touchend.stop.prevent="hasPermission(aclResources.ResourceAlbums, aclActions.ActionLike) && toggleLike($event, index)"
                        @touchmove.stop.prevent
-                       @click.stop.prevent="toggleLike($event, index)">
+                       @click.stop.prevent="hasPermission(aclResources.ResourceAlbums, aclActions.ActionLike) && toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
@@ -138,7 +138,7 @@
                 <div>
                   <h3 class="body-2 mb-0">
                     <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID"
-                            @click.stop.prevent="edit(album)">
+                            @click.stop.prevent="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
                       {{ album.Title | truncate(80) }}
                     </button>
                     <button v-else class="action-title-edit" :data-uid="album.UID"

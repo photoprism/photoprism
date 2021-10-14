@@ -13,7 +13,7 @@
         <v-icon>refresh</v-icon>
       </v-btn>
 
-      <v-btn icon class="action-edit" :title="$gettext('Edit')" @click.stop="dialog.edit = true">
+      <v-btn v-if="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate)" icon class="action-edit" :title="$gettext('Edit')" @click.stop="dialog.edit = true">
         <v-icon>edit</v-icon>
       </v-btn>
 

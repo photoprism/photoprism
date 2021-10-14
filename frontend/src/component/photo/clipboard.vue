@@ -78,7 +78,7 @@
           <v-icon>get_app</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive' && features.albums" fab dark
+            v-if="context !== 'archive' && features.albums && hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate, aclActions.ActionCreate)" fab dark
             small
             :title="$gettext('Add to album')"
             color="album"
@@ -111,7 +111,7 @@
           <v-icon>unarchive</v-icon>
         </v-btn>
         <v-btn
-            v-if="isAlbum && features.albums" fab dark
+            v-if="isAlbum && features.albums && hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate)" fab dark
             small
             :title="$gettext('Remove from album')"
             color="remove"
