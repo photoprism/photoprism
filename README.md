@@ -20,9 +20,9 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 ## Features ##
 
 * Browse all your photos and videos without worrying about RAW conversion, duplicates or video formats
-* Powerful [search filters](https://demo.photoprism.org/browse?q=mono%3Atrue%20quality%3A3%20photo%3Atrue) make it easy to find the right pictures
+* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?q=mono%3Atrue%20quality%3A3%20photo%3Atrue)
 * Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
-  it provides a native app-like experience, and you can easily install it on the home screen of all major operating systems and mobile devices
+  it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been and for rediscovering long-forgotten shots
 * Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
 * Enjoy privacy-preserving [face detection and recognition](https://demo.photoprism.org/people) 💎
