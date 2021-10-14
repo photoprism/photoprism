@@ -47,14 +47,11 @@ That means you don't need to pull from different Docker repositories anymore.
 We recommend updating your existing `docker-compose.yml` config based on 
 [our examples](https://dl.photoprism.org/docker/).
 
-## Funding ##
+## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
-This open-source project is made possible [thanks to our sponsors](SPONSORS.md). 
-If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism) 
-or [GitHub Sponsors](https://github.com/sponsors/photoprism).
+Your continued support helps us provide services like satellite maps and develop new features.
 
-Your continued support helps us fund operating costs, provide services like satellite maps,
-and develop new features. Requests endorsed by silver and gold sponsors [receive a golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
+Requests endorsed by silver and [gold sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
 Let us know when we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
