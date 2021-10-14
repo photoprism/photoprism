@@ -114,9 +114,10 @@ Vue.mixin({
     },
   },
   methods: {
-    hasPermission(resource, action) {
+    hasPermission(resource, ...actions) {
       if (this.$config.values.public) return true;
-      return this.acl.accessAllowed(this.$session.getUser().getRole(), resource, action);
+      const role = this.$session.getUser().getRole();
+      return this.acl.accessAllowedAny(role, resource, actions);
     },
   },
 });

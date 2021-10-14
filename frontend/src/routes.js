@@ -56,12 +56,12 @@ const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 const aclActions = Constants.actions;
 const aclResources = Constants.resources;
 
-const hasPermission = (resource, action) => {
+const hasPermission = (resource, ...actions) => {
   if (config.values.public) return true;
   // const acl = new Acl(window.__CONFIG__.acl);
   const acl = new Acl(config.values.acl);
-  const userrole = session.getUser().getRole();
-  return acl.accessAllowed(userrole, resource, action);
+  const role = session.getUser().getRole();
+  return acl.accessAllowedAny(role, resource, actions);
 };
 
 export default [
