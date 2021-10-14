@@ -83,7 +83,7 @@
               <v-icon color="white" class="action-play">play_arrow</v-icon>
             </v-btn>
 
-            <v-btn v-if="hidePrivate" :ripple="false"
+            <v-btn v-if="hidePrivate && hasPermission(aclResources.ResourcePhotos, aclActions.ActionPrivate)" :ripple="false"
                    icon flat absolute
                    class="input-private">
               <v-icon color="white" class="select-on">lock</v-icon>
@@ -104,9 +104,10 @@
                    icon flat absolute
                    class="input-favorite"
                    @touchstart.stop.prevent="input.touchStart($event, index)"
-                   @touchend.stop.prevent="toggleLike($event, index)"
+                   @touchend.stop.prevent="hasPermission(aclResources.ResourcePhotos, aclActions.ActionLike) && toggleLike($event, index)"
                    @touchmove.stop.prevent
-                   @click.stop.prevent="toggleLike($event, index)">
+                   @click.stop.prevent="hasPermission(aclResources.ResourcePhotos, aclActions.ActionLike) && toggleLike($event, index)"
+            >
               <v-icon color="white" class="select-on">favorite</v-icon>
               <v-icon color="white" class="select-off">favorite_border</v-icon>
             </v-btn>

@@ -11,6 +11,7 @@ const (
 	ActionUpdate     Action = "update"
 	ActionUpdateSelf Action = "update-self"
 	ActionDelete     Action = "delete"
+	ActionArchive    Action = "archive" // includes restore
 	ActionPrivate    Action = "private"
 	ActionUpload     Action = "upload"
 	ActionDownload   Action = "download"

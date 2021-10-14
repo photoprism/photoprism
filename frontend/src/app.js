@@ -57,7 +57,7 @@ import Hls from "hls.js";
 import "common/maptiler-lang";
 import { $gettext, Mount } from "common/vm";
 import * as offline from "@lcdp/offline-plugin/runtime";
-import Acl from "./common/acl";
+import Acl, { Constants } from "./common/acl";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -103,11 +103,26 @@ Vue.prototype.$earlyAccess = () => {
 
 Vue.mixin({
   data() {
-    return {};
+    return {
+      aclResources: Constants.resources,
+      aclActions: Constants.actions,
+    };
   },
   computed: {
     acl() {
-      return new Acl(window.__CONFIG__.acl);
+      return new Acl(this.$config.values.acl);
+      // return new Acl(window.__CONFIG__.acl);
+    },
+  },
+  methods: {
+    hasPermission(resource, action) {
+      console.log(this.$config.values);
+      if (this.$config.values.public) return true;
+      // let acl = new Acl(window.__CONFIG__.acl);
+      console.log(`USER: ${this.$session.getUser().UserName}`);
+      console.log(this.$session.getUser());
+      console.log(`ROLE: ${this.$session.getUser().getRole()}`);
+      return this.acl.accessAllowed(this.$session.getUser().getRole(), resource, action);
     },
   },
 });

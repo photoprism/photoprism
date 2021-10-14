@@ -57,7 +57,7 @@
           <v-icon>edit</v-icon>
         </v-btn>
         <v-btn
-            v-if="context !== 'archive' && features.private" fab dark
+            v-if="context !== 'archive' && features.private && hasPermission(aclResources.ResourcePhotos, aclActions.ActionPrivate)" fab dark
             small
             :title="$gettext('Change private flag')"
             color="private"
@@ -89,7 +89,7 @@
           <v-icon>bookmark</v-icon>
         </v-btn>
         <v-btn
-            v-if="!isAlbum && context !== 'archive' && features.archive" fab dark
+            v-if="!isAlbum && context !== 'archive' && features.archive && hasPermission(aclResources.ResourcePhotos, aclActions.ActionArchive)" fab dark
             small
             color="remove"
             :title="$gettext('Archive')"
@@ -100,7 +100,7 @@
           <v-icon>archive</v-icon>
         </v-btn>
         <v-btn
-            v-if="!album && context === 'archive'" fab dark
+            v-if="!album && context === 'archive' && hasPermission(aclResources.ResourcePhotos, aclActions.ActionArchive)" fab dark
             small
             color="restore"
             :title="$gettext('Restore')"
@@ -122,7 +122,7 @@
           <v-icon>eject</v-icon>
         </v-btn>
         <v-btn
-            v-if="!album && context === 'archive' && features.delete" fab dark
+            v-if="!album && context === 'archive' && features.delete && hasPermission(aclResources.ResourcePhotos, aclActions.ActionDelete)" fab dark
             small
             :title="$gettext('Delete')"
             color="remove"

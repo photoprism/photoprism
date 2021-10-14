@@ -21,7 +21,7 @@ import (
 // POST /api/v1/batch/photos/archive
 func BatchPhotosArchive(router *gin.RouterGroup) {
 	router.POST("/batch/photos/archive", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionArchive)
 
 		if s.Invalid() {
 			AbortUnauthorized(c)
@@ -84,7 +84,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 // POST /api/v1/batch/photos/restore
 func BatchPhotosRestore(router *gin.RouterGroup) {
 	router.POST("/batch/photos/restore", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionDelete)
+		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionArchive)
 
 		if s.Invalid() {
 			AbortUnauthorized(c)

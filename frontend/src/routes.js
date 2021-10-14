@@ -53,9 +53,16 @@ const c = window.__CONFIG__;
 const appName = c.name;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 
-const acl = () => new Acl(window.__CONFIG__.acl);
 const aclActions = Constants.actions;
 const aclResources = Constants.resources;
+
+const hasPermission = (resource, action) => {
+  if (config.values.public) return true;
+  // const acl = new Acl(window.__CONFIG__.acl);
+  const acl = new Acl(config.values.acl);
+  const userrole = session.getUser().getRole();
+  return acl.accessAllowed(userrole, resource, action);
+};
 
 export default [
   {
@@ -200,8 +207,7 @@ export default [
     meta: { title: $gettext("Review"), auth: true },
     props: { staticFilter: { review: true } },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceReview, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceReview, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -215,8 +221,7 @@ export default [
     meta: { title: $gettext("Private"), auth: true },
     props: { staticFilter: { private: true } },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourcePrivate, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourcePrivate, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -230,8 +235,7 @@ export default [
     meta: { title: $gettext("Archive"), auth: true },
     props: { staticFilter: { archived: true } },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceArchive, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceArchive, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -269,8 +273,7 @@ export default [
     component: Files,
     meta: { title: $gettext("File Browser"), auth: true },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -284,8 +287,7 @@ export default [
     meta: { title: $gettext("Hidden Files"), auth: true },
     props: { staticFilter: { hidden: true } },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -298,8 +300,7 @@ export default [
     component: Errors,
     meta: { title: appName, auth: true },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -345,8 +346,7 @@ export default [
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
     props: { tab: "library-index" },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -360,8 +360,7 @@ export default [
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
     props: { tab: "library-import" },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -375,8 +374,7 @@ export default [
     meta: { title: $gettext("Library"), auth: true, background: "application-light" },
     props: { tab: "library-logs" },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceLibrary, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -395,8 +393,7 @@ export default [
     },
     props: { tab: "settings-general" },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceSettings, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceSettings, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -415,8 +412,7 @@ export default [
     },
     props: { tab: "settings-library" },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceSettings, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceSettings, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -435,8 +431,7 @@ export default [
     },
     props: { tab: "settings-sync" },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceSettings, aclActions.ActionRead)) {
+      if (hasPermission(aclResources.ResourceSettings, aclActions.ActionRead)) {
         next();
       } else {
         next({ name: "home" });
@@ -454,8 +449,7 @@ export default [
     },
     props: { tab: "settings-account" },
     beforeEnter: (to, from, next) => {
-      const userrole = session.getUser().getRole();
-      if (acl().accessAllowed(userrole, aclResources.ResourceUsers, aclActions.ActionUpdateSelf)) {
+      if (hasPermission(aclResources.ResourceUsers, aclActions.ActionUpdateSelf)) {
         next();
       } else {
         next({ name: "home" });

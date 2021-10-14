@@ -422,7 +422,6 @@ export default {
   },
   data() {
     return {
-      disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       all: {
         colors: [{label: this.$gettext("Unknown"), name: ""}],
@@ -446,6 +445,9 @@ export default {
     lensOptions() {
       return this.config.lenses;
     },
+    disabled() {
+      return !this.$config.feature("edit") || !this.hasPermission(this.aclResources.ResourcePhotos, this.aclActions.ActionUpdate);
+    }
   },
   watch: {
     model() {

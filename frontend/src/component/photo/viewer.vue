@@ -33,7 +33,7 @@
             <v-icon v-else size="16" color="white">radio_button_off</v-icon>
           </button>
 
-          <button class="pswp__button action-like hidden-shared-only" style="background: none;"
+          <button v-if="hasPermission(aclResources.ResourcePhotos, aclActions.ActionLike)" class="pswp__button action-like hidden-shared-only" style="background: none;"
                   :title="$gettext('Like')" @click.exact="onLike">
             <v-icon v-if="item.favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
@@ -255,7 +255,7 @@ export default {
       g.close(); // Close Gallery
 
       Event.publish("dialog.edit", {selection, album, index}); // Open Edit Dialog
-    }
+    },
   }
 };
 </script>

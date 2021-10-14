@@ -116,7 +116,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile v-if="$config.feature('review') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceReview, this.acl.getConstants().actions.ActionRead)" to="/review" class="nav-review"
+          <v-list-tile v-if="$config.feature('review') && hasPermission(aclResources.ResourceReview, aclActions.ActionRead)" to="/review" class="nav-review"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -126,7 +126,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile v-show="$config.feature('archive') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceArchive, this.acl.getConstants().actions.ActionRead)" to="/archive" class="nav-archive" @click.stop="">
+          <v-list-tile v-show="$config.feature('archive') && hasPermission(aclResources.ResourceArchive, aclActions.ActionRead)" to="/archive" class="nav-archive" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Archive</translate>
@@ -301,7 +301,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="$config.feature('private') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourcePrivate, this.acl.getConstants().actions.ActionRead)" to="/private" class="nav-private" @click.stop="">
+        <v-list-tile v-show="$config.feature('private') && hasPermission(aclResources.ResourcePrivate, aclActions.ActionRead)" to="/private" class="nav-private" @click.stop="">
           <v-list-tile-action :title="$gettext('Private')">
             <v-icon>lock</v-icon>
           </v-list-tile-action>
@@ -314,7 +314,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-if="isMini && $config.feature('library') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceLibrary, this.acl.getConstants().actions.ActionRead)" to="/library" class="nav-library" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('library') && hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)" to="/library" class="nav-library" @click.stop="">
           <v-list-tile-action :title="$gettext('Library')">
             <v-icon>camera_roll</v-icon>
           </v-list-tile-action>
@@ -326,7 +326,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-group v-if="!isMini && $config.feature('library') && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceLibrary, this.acl.getConstants().actions.ActionRead)" prepend-icon="camera_roll" no-action>
+        <v-list-group v-if="!isMini && $config.feature('library') && hasPermission(aclResources.ResourceLibrary, aclActions.ActionRead)" prepend-icon="camera_roll" no-action>
           <template #activator>
             <v-list-tile to="/library" class="nav-library" @click.stop="">
               <v-list-tile-content>
@@ -364,7 +364,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <template v-if="!config.disable.settings && this.acl.accessAllowed(session.getUser().getRole(), this.acl.getConstants().resources.ResourceSettings, this.acl.getConstants().actions.ActionRead)">
+        <template v-if="!config.disable.settings && hasPermission(aclResources.ResourceSettings, aclActions.ActionRead)">
           <v-list-tile v-if="isMini" to="/settings" class="nav-settings" @click.stop="">
             <v-list-tile-action :title="$gettext('Settings')">
               <v-icon>settings</v-icon>

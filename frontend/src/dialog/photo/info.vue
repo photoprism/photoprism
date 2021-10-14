@@ -18,6 +18,7 @@
           </td>
           <td>
             <v-select
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                 v-model="model.Type"
                 flat solo
                 browser-autocomplete="off"
@@ -47,6 +48,7 @@
           </td>
           <td>
             <v-text-field
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                 v-model="model.OriginalName"
                 flat solo dense hide-details color="secondary-dark"
                 @change="save"
@@ -100,6 +102,7 @@
           </td>
           <td>
             <v-switch
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                 v-model="model.Stack"
                 hide-details
                 class="input-stackable"
@@ -116,6 +119,7 @@
           </td>
           <td>
             <v-switch
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionLike)"
                 v-model="model.Favorite"
                 hide-details
                 class="input-favorite"
@@ -130,6 +134,7 @@
           </td>
           <td>
             <v-switch
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionPrivate)"
                 v-model="model.Private"
                 hide-details
                 class="input-private"
@@ -144,6 +149,7 @@
           </td>
           <td>
             <v-switch
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                 v-model="model.Scan"
                 hide-details
                 class="input-scan"
@@ -158,6 +164,7 @@
           </td>
           <td>
             <v-switch
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                 v-model="model.Panorama"
                 hide-details
                 class="input-panorama"
@@ -205,6 +212,7 @@
           </td>
           <td>
             <v-text-field
+                :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                 v-model="model.CellAccuracy"
                 flat solo dense hide-details color="secondary-dark"
                 type="number"

@@ -23,6 +23,7 @@ export const Constants = {
     ActionUpdate: "update",
     ActionUpdateSelf: "update-self",
     ActionDelete: "delete",
+    ActionArchive: "archive",
     ActionPrivate: "private",
     ActionUpload: "upload",
     ActionDownload: "download",
@@ -68,14 +69,9 @@ export default class Acl {
   }
   accessAllowed(role, resource, action) {
     if (!this.acl) return false;
-    console.log("resource: ", resource);
-    console.log("role: ", role);
-    console.log("action: ", action);
     let res;
     if (!this.acl[resource]) {
-      console.log("resource not found");
       if (!this.acl[Constants.resources.ResourceDefault]) return false;
-      console.log("using default resource");
       res = this.acl[Constants.resources.ResourceDefault];
     } else {
       res = this.acl[resource];
@@ -83,9 +79,7 @@ export default class Acl {
 
     let rol;
     if (!res[role]) {
-      console.log("role not found");
       if (!res[Constants.roles.RoleDefault]) return false;
-      console.log("using default role");
       rol = res[Constants.roles.RoleDefault];
     } else {
       rol = res[role];
@@ -93,32 +87,14 @@ export default class Acl {
 
     let act;
     if (!rol[action]) {
-      console.log("action not found");
       if (!rol[Constants.actions.ActionDefault]) return false;
-      console.log("using default action");
       act = rol[Constants.actions.ActionDefault];
     } else {
       act = rol[action];
     }
-    console.log("Result: ", act);
     return act;
   }
   accessAllowedAny(role, resource, ...actions) {
-    // let result = false;
-    // for (const a in actions) {
-    //   result = result || this.accessAllowed(role, resource, a);
-    // }
-    // return result;
-    // return actions.reduce((accumulator, action) => {
-    //   return accumulator || this.accessAllowed(role, resource, action);
-    // });
-    // for (const a in actions) {
-    //   if (this.accessAllowed(role, resource, a)) return true;
-    // }
-    // return false;
     return actions.some((action) => this.accessAllowed(role, resource, action));
-  }
-  getConstants() {
-    return Constants;
   }
 }

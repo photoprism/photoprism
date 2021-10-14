@@ -93,13 +93,13 @@
                 </span>
         </td>
         <td class="text-xs-center">
-          <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
+          <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false" :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionPrivate)"
                  :data-uid="props.item.UID" @click.stop.prevent="props.item.togglePrivate()">
             <v-icon v-if="props.item.Private" color="secondary-dark" class="select-on">lock</v-icon>
             <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
           </v-btn>
-          <v-btn class="input-like" icon small flat :ripple="false"
-                 :data-uid="props.item.UID" @click.stop.prevent="props.item.toggleLike()">
+          <v-btn class="input-like" icon small flat :ripple="false" :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionLike)"
+                 :data-uid="props.item.UID" @click.stop.prevent="hasPermission(aclResources.ResourcePhotos, aclActions.ActionLike) && props.item.toggleLike()">
             <v-icon v-if="props.item.Favorite" color="pink lighten-3" :data-uid="props.item.UID" class="select-on">
               favorite
             </v-icon>
