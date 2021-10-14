@@ -111,17 +111,11 @@ Vue.mixin({
   computed: {
     acl() {
       return new Acl(this.$config.values.acl);
-      // return new Acl(window.__CONFIG__.acl);
     },
   },
   methods: {
     hasPermission(resource, action) {
-      console.log(this.$config.values);
       if (this.$config.values.public) return true;
-      // let acl = new Acl(window.__CONFIG__.acl);
-      console.log(`USER: ${this.$session.getUser().UserName}`);
-      console.log(this.$session.getUser());
-      console.log(`ROLE: ${this.$session.getUser().getRole()}`);
       return this.acl.accessAllowed(this.$session.getUser().getRole(), resource, action);
     },
   },
