@@ -25,9 +25,9 @@ To get a first impression, you're welcome to play with our public demo at [demo.
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips
 * Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
-* [Automatic classification of pictures](https://demo.photoprism.org/labels) based on their content and location
+* Automatic [classification](https://demo.photoprism.org/labels) of pictures based on their content and location
+* Many more image properties such as colors, luminance and quality can be searched as well
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
-* Image properties like colors, luminance, and quality are detected as you scan your library
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
