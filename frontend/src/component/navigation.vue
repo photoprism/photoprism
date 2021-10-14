@@ -75,9 +75,9 @@
           <template #activator>
             <v-list-tile to="/browse" class="nav-browse" @click.stop="">
               <v-list-tile-content>
-                <v-list-tile-title>
+                <v-list-tile-title class="p-flex-menuitem">
                   <translate key="Search">Search</translate>
-                  <span v-if="config.count.all > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.all }}</span>
+                  <span v-if="config.count.all > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.all | abbreviateCount }}</span>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -85,7 +85,7 @@
 
           <v-list-tile :to="{name: 'browse', query: { q: 'mono:true quality:3 photo:true' }}" :exact="true" class="nav-monochrome" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Monochrome</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -102,7 +102,7 @@
 
           <v-list-tile :to="{name: 'photos', query: { q: 'stack:true' }}" :exact="true" class="nav-stacks" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Stacks</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -110,7 +110,7 @@
 
           <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" class="nav-scans" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Scans</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -119,16 +119,16 @@
           <v-list-tile v-if="$config.feature('review')" to="/review" class="nav-review"
                        @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Review</translate>
-                <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review }}</span>
+                <span v-show="config.count.review > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.review | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
           <v-list-tile v-show="$config.feature('archive')" to="/archive" class="nav-archive" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Archive</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -151,9 +151,9 @@
           <template #activator>
             <v-list-tile to="/albums" class="nav-albums" @click.stop="">
               <v-list-tile-content>
-                <v-list-tile-title>
+                <v-list-tile-title class="p-flex-menuitem">
                   <translate key="Albums">Albums</translate>
-                  <span v-if="config.count.albums > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums }}</span>
+                  <span v-if="config.count.albums > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.albums | abbreviateCount }}</span>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -161,7 +161,7 @@
 
           <v-list-tile to="/unsorted" class="nav-unsorted">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Unsorted">Unsorted</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -174,9 +174,9 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Videos">Videos</translate>
-              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos }}</span>
+              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -187,10 +187,10 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="People">People</translate>
               <span v-show="config.count.people > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.people | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -201,9 +201,9 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Favorites">Favorites</translate>
-              <span v-show="config.count.favorites > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.favorites }}</span>
+              <span v-show="config.count.favorites > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.favorites | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -215,10 +215,10 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Moments">Moments</translate>
               <span v-show="config.count.moments > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.moments | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -229,10 +229,10 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Calendar">Calendar</translate>
               <span v-show="config.count.months > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.months }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.months | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -244,7 +244,7 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Places">Places</translate>
             </v-list-tile-title>
           </v-list-tile-content>
@@ -254,10 +254,10 @@
           <template #activator>
             <v-list-tile to="/places" class="nav-places" @click.stop="">
               <v-list-tile-content>
-                <v-list-tile-title>
+                <v-list-tile-title class="p-flex-menuitem">
                   <translate key="Places">Places</translate>
                   <span v-show="config.count.places > 0"
-                        :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.places }}</span>
+                        :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.places | abbreviateCount }}</span>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -265,9 +265,9 @@
 
           <v-list-tile to="/states" class="nav-states" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="States">States</translate>
-                <span v-show="config.count.states > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states }}</span>
+                <span v-show="config.count.states > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.states | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -279,10 +279,10 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Labels">Labels</translate>
               <span v-show="config.count.labels > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.labels }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.labels | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -293,10 +293,10 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Folders">Folders</translate>
               <span v-show="config.count.folders > 0"
-                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.folders }}</span>
+                    :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.folders | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -307,9 +307,9 @@
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="p-flex-menuitem">
               <translate key="Private">Private</translate>
-              <span v-show="config.count.private > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.private }}</span>
+              <span v-show="config.count.private > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.private | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -330,7 +330,7 @@
           <template #activator>
             <v-list-tile to="/library" class="nav-library" @click.stop="">
               <v-list-tile-content>
-                <v-list-tile-title>
+                <v-list-tile-title class="p-flex-menuitem">
                   <translate key="Library">Library</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
@@ -339,25 +339,25 @@
 
           <v-list-tile v-show="$config.feature('files')" to="/library/files" class="nav-originals" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Originals">Originals</translate>
-                <span v-show="config.count.files > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files }}</span>
+                <span v-show="config.count.files > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
           <v-list-tile to="/library/hidden" class="nav-hidden" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Hidden">Hidden</translate>
-                <span v-show="config.count.hidden > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.hidden }}</span>
+                <span v-show="config.count.hidden > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.hidden | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
 
           <v-list-tile to="/library/errors" class="nav-errors" @click.stop="">
             <v-list-tile-content>
-              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Errors">Errors</translate>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -581,6 +581,17 @@ export default {
     logout() {
       this.$session.logout();
     },
-  }
+  },
+  filters: {
+    abbreviateCount: (val) => {
+      const value = Number.parseInt(val);
+      // TODO: make abbreviation configurable by userprofile settings or env var before enabling it.
+      // if (value >= 1000) {
+      //   const digits = value % 1000 <= 50 ? 0 : 1;
+      //   return (value/1000).toFixed(digits).toString()+'k';
+      // }
+      return value;
+    }
+  },
 };
 </script>
