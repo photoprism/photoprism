@@ -23,7 +23,7 @@
         </template>
 
         <v-btn
-            v-if="context !== 'archive' && context !== 'review' && features.share" fab dark
+            v-if="context !== 'archive' && context !== 'review' && features.share && hasPermission(aclResources.ResourcePhotos, aclActions.ActionShare)" fab dark
             small
             :title="$gettext('Share')"
             color="share"

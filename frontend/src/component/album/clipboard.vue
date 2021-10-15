@@ -22,7 +22,7 @@
         </template>
 
         <v-btn
-            v-if="features.share"
+            v-if="features.share && hasPermission(aclResources.ResourceAlbums, aclActions.ActionShare)"
             fab dark small
             :title="$gettext('Share')"
             color="share"
