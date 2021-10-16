@@ -150,12 +150,12 @@
     "colors": {
       "application": "#fafafa",
       "form": "#fafafa",
-      "primary": "#8c9eff",
+      "primary": "#9ca2c9",
       "primary-button": "#6c6f84",
-      "secondary-dark": "#545f9c",
-      "secondary": "#b0bec5",
-      "secondary-light": "#b0bec5",
-      "accent": "#b0bec5",
+      "secondary-dark": "#475185",
+      "secondary": "#dee0ed",
+      "secondary-light": "#eef0f6",
+      "accent": "#8c8c8c",
       "error": "#e57373",
       "info": "#00acc1",
       "success": "#4db6ac",
@@ -169,8 +169,8 @@
       "share": "#9575cd",
       "love": "#ef5350",
       "terminal": "#333333",
-      "navigation": "#37474f",
-      "navigation-home": "#263238"
+      "navigation": "#1b1e32",
+      "navigation-home": "#121421"
     }
   },
   "moonlight": {
