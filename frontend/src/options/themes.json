@@ -295,9 +295,9 @@
     "colors": {
       "application": "#212121",
       "form": "#AFB42B",
-      "primary": "#7e8acd",
+      "primary": "#04acaf",
       "primary-button": "#444444",
-      "secondary-dark": "#5C6BC0",
+      "secondary-dark": "#04acaf",
       "secondary": "#111111",
       "secondary-light": "#1a1a1a",
       "accent": "#090c10",
