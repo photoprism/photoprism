@@ -1,26 +1,5 @@
 ## THIS OPEN-SOURCE PROJECT IS MADE POSSIBLE THANKS TO OUR SPONSORS ##
 
-If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism)
-or [GitHub Sponsors](https://github.com/sponsors/photoprism).
-Your continued support helps us fund operating costs, provide services like satellite maps,
-and develop new features.
-
-Thank you very much! ❤️
-
-##### Crypto Donations #####
-
-Monero
-
-[`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)
-
-Dogecoin
-
-[`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)
-
----
-
-## Sponsors ##
-
 [Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
 
 [Simen Eriksen](https://github.com/dennorske) (GitHub Sponsors, December 2019)
@@ -57,16 +36,26 @@ Garn Penrod (Patreon, November 2020)
 
 [Daniel Hähnke](https://github.com/DanBenHa) (GitHub Sponsors, July 2021)
 
-For a full list of GitHub sponsors, see https://github.com/sponsors/photoprism.
+Thank you very much! 💜
 
-## Donations ##
+See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
+
+## One-Time Donations ##
 
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, 
 Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
 The Gordon Project
 
-[patreon]: https://www.patreon.com/photoprism
-[paypal]: https://www.paypal.me/photoprism
-[issues:sponsor]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor
-[issues:unfunded]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded
+## Crypto ##
+
+| Currency   | Dontation Address                                                                                    |
+|:-----------|:-----------------------------------------------------------------------------------------------------|
+| Monero     | [`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)            |
+| Dogecoin   | [`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)                  |
+
+
+
+
+
+

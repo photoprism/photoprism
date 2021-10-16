@@ -10,10 +10,10 @@
 
 #p-navigation .nav-count {
     opacity: 0.5;
-    position: absolute;
-    left: 80px;
-    width: 40px;
-    display: inline-block;
+    /*position: absolute;*/
+    /*left: 80px;*/
+    /*width: 40px;*/
+    /*display: inline-block;*/
     text-align: right;
 }
 
@@ -95,8 +95,6 @@
 }
 
 .p-user-box {
-    /*position: fixed;*/
-    /*bottom: 0;*/
     width: 100%;
     padding: 0;
 }
@@ -109,6 +107,18 @@
     overflow-y: hidden;
 }
 .p-flex-menu {
-    overflow-y: scroll;
+    overflow-y: auto;
     flex-grow: 1;
+}
+.p-flex-menuitem {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+}
+.p-flex-menuitem .nav-count {
+    margin-right: 48px;
+    margin-left: 8px;
+}
+.v-list__group__header .p-flex-menuitem .nav-count {
+    margin-right: 0px;
 }

@@ -1,0 +1,93 @@
+/* Grayscale Theme */
+
+.theme-grayscale .v-content__wrap,
+.theme-grayscale .p-page,
+.theme-grayscale .form,
+.theme-grayscale .v-content {
+    background: #525252 !important;
+}
+
+#photoprism.theme-grayscale .theme--light.v-small-dialog__content,
+#photoprism.theme-grayscale .theme--light.v-sheet,
+#photoprism.theme-grayscale .theme--light.v-card {
+    background: #525252;
+}
+
+.theme-grayscale .application.theme--light {
+    background: #525252;
+}
+
+#photoprism.theme-grayscale .theme--light .v-table {
+    background: #4E4E4E;
+}
+
+#photoprism.theme-grayscale .theme--light.v-table thead th,
+#photoprism.theme-grayscale .theme--light.v-table tbody td {
+    color: #fff;
+}
+
+#photoprism.theme-grayscale .theme--light.v-table tbody tr:hover {
+    background: #666;
+}
+
+#photoprism.theme-grayscale .theme--light.v-chip,
+#photoprism.theme-grayscale .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: #777;
+}
+
+#photoprism.theme-grayscale .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: #4E4E4E;
+}
+
+#photoprism.theme-grayscale .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-grayscale .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-grayscale .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-grayscale .theme--light.v-input--is-disabled input,
+#photoprism.theme-grayscale .theme--light.v-input--is-disabled textarea {
+    color: #ccc;
+}
+
+#photoprism.theme-grayscale,
+#photoprism.theme-grayscale .p-page a,
+#photoprism.theme-grayscale .v-datatable a,
+#photoprism.theme-grayscale .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-grayscale .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-grayscale .theme--light {
+    color: #fff;
+}
+
+#photoprism.theme-grayscale .theme--light.v-list {
+    background: #555;
+}
+
+#photoprism.theme-grayscale a.text-link {
+    color: #e3d5c3 !important;
+}
+
+#photoprism.theme-grayscale .theme--light.v-select .v-select__selections {
+    color: #e3d5c3;
+}
+
+#photoprism.theme-grayscale .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-grayscale .accent--text {
+    color: #e3d5c3 !important;
+}
+
+#photoprism.theme-grayscale .theme--light.v-input:not(.v-input--is-disabled) input,
+#photoprism.theme-grayscale .theme--light.v-input:not(.v-input--is-disabled) textarea {
+    color: #fff;
+}
+
+#photoprism.theme-grayscale .theme--light.v-btn.v-btn--disabled,
+#photoprism.theme-grayscale .theme--light.v-btn.v-btn--disabled .v-btn__loading,
+#photoprism.theme-grayscale .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-grayscale .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
+}

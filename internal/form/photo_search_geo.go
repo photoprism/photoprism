@@ -15,6 +15,10 @@ type PhotoSearchGeo struct {
 	Favorite bool      `form:"favorite"`
 	Video    bool      `form:"video"`
 	Photo    bool      `form:"photo"`
+	Raw      bool      `form:"raw"`
+	Live     bool      `form:"live"`
+	Scan     bool      `form:"scan"`
+	Panorama bool      `form:"panorama"`
 	Archived bool      `form:"archived"`
 	Public   bool      `form:"public"`
 	Private  bool      `form:"private"`

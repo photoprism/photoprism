@@ -153,8 +153,7 @@ func TestLikeAllKeywords(t *testing.T) {
 			assert.Equal(t, "k.keyword LIKE 'mander%'", w[0])
 			assert.Equal(t, "k.keyword LIKE '李'", w[1])
 		} else {
-			t.Logf("wheres: %#v", w)
-			t.Fatal("two where conditions expected")
+			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
 }
@@ -166,8 +165,7 @@ func TestLikeAllWords(t *testing.T) {
 			assert.Equal(t, "k.name LIKE 'mander%'", w[1])
 			assert.Equal(t, "k.name LIKE '王%'", w[2])
 		} else {
-			t.Logf("wheres: %#v", w)
-			t.Fatal("two where conditions expected")
+			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
 }
@@ -177,53 +175,56 @@ func TestLikeAllNames(t *testing.T) {
 		if w := LikeAllNames(Cols{"k.name"}, "j Mander 王"); len(w) == 1 {
 			assert.Equal(t, "k.name LIKE 'j Mander 王%'", w[0])
 		} else {
-			t.Fatalf("one where conditions expected:  %#v", w)
+			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
 	t.Run("MultipleColumns", func(t *testing.T) {
 		if w := LikeAllNames(Cols{"a.col1", "b.col2"}, "Mo Mander"); len(w) == 1 {
 			assert.Equal(t, "a.col1 LIKE 'Mo Mander%' OR b.col2 LIKE 'Mo Mander%'", w[0])
 		} else {
-			t.Fatalf("one where conditions expected:  %#v", w)
+			t.Fatalf("unexpected result: %#v", w)
 		}
 	})
 	t.Run("EmptyName", func(t *testing.T) {
 		w := LikeAllNames(Cols{"k.name"}, "")
 		assert.Empty(t, w)
 	})
-	t.Run("NoWords", func(t *testing.T) {
-		w := LikeAllNames(Cols{"k.name"}, "a")
-		assert.Empty(t, w)
+	t.Run("SingleCharacter", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"k.name"}, "a"); len(w) == 1 {
+			assert.Equal(t, "k.name LIKE '%a%'", w[0])
+		} else {
+			t.Fatalf("unexpected result: %#v", w)
+		}
 	})
 	t.Run("FullNames", func(t *testing.T) {
 		if w := LikeAllNames(Cols{"j.name", "j.alias"}, "Bill & Melinda Gates"); len(w) == 2 {
-			assert.Equal(t, "j.name LIKE 'Bill' OR j.name LIKE 'Bill %' OR j.alias LIKE 'Bill' OR j.alias LIKE 'Bill %'", w[0])
+			assert.Equal(t, "j.name LIKE '%Bill%' OR j.alias LIKE '%Bill%'", w[0])
 			assert.Equal(t, "j.name LIKE 'Melinda Gates%' OR j.alias LIKE 'Melinda Gates%'", w[1])
 		} else {
-			t.Fatalf("two where conditions expected: %#v", w)
+			t.Fatalf("unexpected result: %#v", w)
 		}
 	})
 	t.Run("Plus", func(t *testing.T) {
 		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul + Paula")); len(w) == 2 {
-			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %'", w[0])
+			assert.Equal(t, "name LIKE '%paul%'", w[0])
 			assert.Equal(t, "name LIKE '%paula%'", w[1])
 		} else {
-			t.Fatalf("two where conditions expected:  %#v", w)
+			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
-	t.Run("Ane", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul and Paula")); len(w) == 2 {
-			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %'", w[0])
+	t.Run("And", func(t *testing.T) {
+		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("P and Paula")); len(w) == 2 {
+			assert.Equal(t, "name LIKE '%p%'", w[0])
 			assert.Equal(t, "name LIKE '%paula%'", w[1])
 		} else {
-			t.Fatalf("two where conditions expected:  %#v", w)
+			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
 	t.Run("Or", func(t *testing.T) {
 		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul or Paula")); len(w) == 1 {
-			assert.Equal(t, "name LIKE 'paul' OR name LIKE 'paul %' OR name LIKE '%paula%'", w[0])
+			assert.Equal(t, "name LIKE '%paul%' OR name LIKE '%paula%'", w[0])
 		} else {
-			t.Fatalf("one where conditions expected:  %#v", w)
+			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
 }

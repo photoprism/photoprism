@@ -201,16 +201,6 @@ export const Themes = () => [
     disabled: false,
   },
   {
-    text: $gettext("Cyano"),
-    value: "cyano",
-    disabled: false,
-  },
-  {
-    text: $gettext("Lavender"),
-    value: "lavender",
-    disabled: false,
-  },
-  {
     text: $gettext("Moonlight"),
     value: "moonlight",
     disabled: false,
@@ -221,6 +211,16 @@ export const Themes = () => [
     disabled: false,
   },
   {
+    text: $gettext("Cyano"),
+    value: "cyano",
+    disabled: false,
+  },
+  {
+    text: $gettext("Lavender"),
+    value: "lavender",
+    disabled: false,
+  },
+  {
     text: $gettext("Raspberry"),
     value: "raspberry",
     disabled: false,
@@ -228,6 +228,11 @@ export const Themes = () => [
   {
     text: $gettext("Seaweed"),
     value: "seaweed",
+    disabled: false,
+  },
+  {
+    text: $gettext("Midnight"),
+    value: "midnight",
     disabled: false,
   },
   {

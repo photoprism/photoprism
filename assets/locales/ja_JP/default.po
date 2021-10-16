@@ -7,280 +7,324 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-03 19:34+0000\n"
-"PO-Revision-Date: 2021-01-04 18:33+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2021-10-01 12:14+0000\n"
+"PO-Revision-Date: 2021-10-10 08:24+0200\n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: \n"
 "Language: ja_JP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: messages.go:73
+#: messages.go:82
 msgid "Unexpected error, please try again"
 msgstr "予期しないエラーが発生しました、再度試してみてください"
 
-#: messages.go:74
+#: messages.go:83
 msgid "Invalid request"
 msgstr "不正なリクエスト"
 
-#: messages.go:75
+#: messages.go:84
 msgid "Changes could not be saved"
 msgstr "変更を保存できませんでした"
 
-#: messages.go:76
+#: messages.go:85
 msgid "Could not be deleted"
 msgstr "削除できませんでした"
 
-#: messages.go:77
+#: messages.go:86
 #, c-format
 msgid "%s already exists"
 msgstr "%s は既に存在します"
 
-#: messages.go:78 messages.go:81
-msgid "Not found on server, deleted?"
-msgstr "サーバーには見つかりませんでした、削除されましたか？"
+#: messages.go:87
+msgid "Not found"
+msgstr "見つかりません"
 
-#: messages.go:79
+#: messages.go:88
 msgid "File not found"
 msgstr "ファイルが見つかりませんでした"
 
-#: messages.go:80
+#: messages.go:89
 msgid "Selection not found"
 msgstr "選択した項目は存在しません"
 
-#: messages.go:82
+#: messages.go:90
+msgid "Entity not found"
+msgstr "エンティティが見つかりません"
+
+#: messages.go:91
 msgid "Account not found"
 msgstr "アカウントは存在しません"
 
-#: messages.go:83
+#: messages.go:92
 msgid "User not found"
 msgstr "ユーザは存在しません"
 
-#: messages.go:84
+#: messages.go:93
 msgid "Label not found"
 msgstr "ラベルは存在しません"
 
-#: messages.go:85
+#: messages.go:94
 msgid "Album not found"
 msgstr "アルバムは存在しません"
 
-#: messages.go:86
+#: messages.go:95
+msgid "Subject not found"
+msgstr "件名が見つかりません"
+
+#: messages.go:96
+msgid "Person not found"
+msgstr "人が見つかりません"
+
+#: messages.go:97
+msgid "Face not found"
+msgstr "顔が見つからない"
+
+#: messages.go:98
 msgid "Not available in public mode"
 msgstr "公開モードでは利用できません"
 
-#: messages.go:87
+#: messages.go:99
 msgid "not available in read-only mode"
 msgstr "読み込み専用モードでは利用できません"
 
-#: messages.go:88
+#: messages.go:100
 msgid "Please log in and try again"
 msgstr "ログインして再度試してみてください"
 
-#: messages.go:89
+#: messages.go:101
 msgid "Upload might be offensive"
 msgstr "アップロードされた項目に過激なものが含まれている可能性があります"
 
-#: messages.go:90
+#: messages.go:102
 msgid "No items selected"
 msgstr "項目が選択されていません"
 
-#: messages.go:91
+#: messages.go:103
 msgid "Failed creating file, please check permissions"
 msgstr "ファイルの作成に失敗しました、権限を確認してください"
 
-#: messages.go:92
+#: messages.go:104
 msgid "Failed creating folder, please check permissions"
 msgstr "フォルダの作成に失敗しました、権限を確認してください"
 
-#: messages.go:93
+#: messages.go:105
 msgid "Could not connect, please try again"
 msgstr "接続できませんでした、再度試してみてください"
 
-#: messages.go:94
+#: messages.go:106
 msgid "Invalid password, please try again"
 msgstr "不正なパスワードです、再度試してみてください"
 
-#: messages.go:95
+#: messages.go:107
 msgid "Feature disabled"
 msgstr "機能が無効になりました"
 
-#: messages.go:96
+#: messages.go:108
 msgid "No labels selected"
 msgstr "ラベルが選択されていません"
 
-#: messages.go:97
+#: messages.go:109
 msgid "No albums selected"
 msgstr "アルバムが選択されていません"
 
-#: messages.go:98
+#: messages.go:110
 msgid "No files available for download"
 msgstr "ダウンロードできるファイルはありません"
 
-#: messages.go:99
+#: messages.go:111
 msgid "Failed to create zip file"
 msgstr "zip ファイルの作成に失敗しました"
 
-#: messages.go:100
+#: messages.go:112
 msgid "Invalid credentials"
 msgstr "不正な認証情報"
 
-#: messages.go:101
+#: messages.go:113
 msgid "Invalid link"
 msgstr "不正なリンク"
 
-#: messages.go:104
+#: messages.go:114
+#| msgid "Invalid link"
+msgid "Invalid name"
+msgstr "無効なバケット名"
+
+#: messages.go:117
 msgid "Changes successfully saved"
 msgstr "正常に変更が保存されました"
 
-#: messages.go:105
+#: messages.go:118
 msgid "Album created"
 msgstr "アルバムを作成しました"
 
-#: messages.go:106
+#: messages.go:119
 msgid "Album saved"
 msgstr "アルバムを保存しました"
 
-#: messages.go:107
+#: messages.go:120
 #, c-format
 msgid "Album %s deleted"
 msgstr "アルバム %s を削除しました"
 
-#: messages.go:108
+#: messages.go:121
 msgid "Album contents cloned"
 msgstr "アルバムの内容が複製されました"
 
-#: messages.go:109
+#: messages.go:122
 msgid "File removed from stack"
 msgstr "スタックからファイルが削除されました"
 
-#: messages.go:110
+#: messages.go:123
 msgid "File deleted"
 msgstr "ファイルが削除されました"
 
-#: messages.go:111
+#: messages.go:124
 #, c-format
 msgid "Selection added to %s"
 msgstr "選択した項目が %s に追加されました"
 
-#: messages.go:112
+#: messages.go:125
 #, c-format
 msgid "One entry added to %s"
 msgstr "1 件の項目が %s に追加されました"
 
-#: messages.go:113
+#: messages.go:126
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d 件の項目が %s に追加されました"
 
-#: messages.go:114
+#: messages.go:127
 #, c-format
 msgid "One entry removed from %s"
 msgstr "1 件の項目が %s から削除されました"
 
-#: messages.go:115
+#: messages.go:128
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d 件の項目が %s から削除されました"
 
-#: messages.go:116
+#: messages.go:129
 msgid "Account created"
 msgstr "アカウントが作成されました"
 
-#: messages.go:117
+#: messages.go:130
 msgid "Account saved"
 msgstr "アカウントが保存されました"
 
-#: messages.go:118
+#: messages.go:131
 msgid "Account deleted"
 msgstr "アカウントが削除されました"
 
-#: messages.go:119
+#: messages.go:132
 msgid "Settings saved"
 msgstr "設定が保存されました"
 
-#: messages.go:120
+#: messages.go:133
 msgid "Password changed"
 msgstr "パスワードが変更されました"
 
-#: messages.go:121
+#: messages.go:134
 #, c-format
 msgid "Import completed in %d s"
 msgstr "インポートが %d 秒で完了しました"
 
-#: messages.go:122
+#: messages.go:135
 msgid "Import canceled"
 msgstr "インポートが取り消されました"
 
-#: messages.go:123
+#: messages.go:136
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "インデックスが %d 秒で完了しました"
 
-#: messages.go:124
+#: messages.go:137
 msgid "Indexing originals..."
 msgstr "オリジナルの項目をインデックスしています..."
 
-#: messages.go:125
+#: messages.go:138
 #, c-format
 msgid "Indexing files in %s"
 msgstr "%s 内のファイルをインデックスしています"
 
-#: messages.go:126
+#: messages.go:139
 msgid "Indexing canceled"
 msgstr "インデックスが取り消されました"
 
-#: messages.go:127
+#: messages.go:140
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "%d 件のファイルと %d 件の写真が削除されました"
 
-#: messages.go:128
+#: messages.go:141
 #, c-format
 msgid "Moving files from %s"
 msgstr "%s からファイルを移動しています"
 
-#: messages.go:129
+#: messages.go:142
 #, c-format
 msgid "Copying files from %s"
 msgstr "%s からファイルをコピーしています"
 
-#: messages.go:130
+#: messages.go:143
 msgid "Labels deleted"
 msgstr "ラベルが削除されました"
 
-#: messages.go:131
+#: messages.go:144
 msgid "Label saved"
 msgstr "ラベルが保存されました"
 
-#: messages.go:132
+#: messages.go:145
+msgid "Subject saved"
+msgstr "保存対象"
+
+#: messages.go:146
+msgid "Subject deleted"
+msgstr "件名 削除"
+
+#: messages.go:147
+msgid "Person saved"
+msgstr "保存された人"
+
+#: messages.go:148
+msgid "Person deleted"
+msgstr "削除された人"
+
+#: messages.go:149
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d 件のファイルを %d 秒でアップロードしました"
 
-#: messages.go:133
+#: messages.go:150
 msgid "Selection approved"
 msgstr "選択した項目が承認されました"
 
-#: messages.go:134
+#: messages.go:151
 msgid "Selection archived"
 msgstr "選択した項目がアーカイブされました"
 
-#: messages.go:135
+#: messages.go:152
 msgid "Selection restored"
 msgstr "選択した項目が復元されました"
 
-#: messages.go:136
+#: messages.go:153
 msgid "Selection marked as private"
 msgstr "選択した項目をプライベートにしました"
 
-#: messages.go:137
+#: messages.go:154
 msgid "Albums deleted"
 msgstr "アルバムが削除されました"
 
-#: messages.go:138
+#: messages.go:155
 #, c-format
 msgid "Zip created in %d s"
 msgstr "%d 秒で zip ファイルを作成しました"
+
+#: messages.go:156
+msgid "Permanently deleted"
+msgstr "永久に削除"
+
+#~ msgid "Not found on server, deleted?"
+#~ msgstr "サーバーには見つかりませんでした、削除されましたか？"

@@ -6,21 +6,21 @@
           color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
       >
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
-          <translate>Couldn't find recently edited</translate>
+          <translate>No recently edited pictures</translate>
         </h3>
         <h3 v-else class="body-2 ma-0 pa-0">
-          <translate>Couldn't find anything</translate>
+          <translate>No pictures found</translate>
         </h3>
         <p class="body-1 mt-2 mb-0 pa-0">
           <translate>Try again using other filters or keywords.</translate>
-          <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
+          <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           <template v-if="config.settings.features.review" class="mt-2 mb-0 pa-0">
             <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
           </template>
         </p>
       </v-alert>
     </div>
-    <v-data-table v-if="photos.length > 0"
+    <v-data-table v-else
                   v-model="selected"
                   :headers="listColumns"
                   :items="photos"

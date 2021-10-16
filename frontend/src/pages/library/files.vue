@@ -36,11 +36,11 @@
             color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
         >
           <h3 class="body-2 ma-0 pa-0">
-            <translate>Couldn't find anything</translate>
+            <translate>No pictures found</translate>
           </h3>
           <p class="body-1 mt-2 mb-0 pa-0">
             <translate>Duplicates will be skipped and only appear once.</translate>
-            <translate>When a file you expect is missing, please rescan your library and wait until indexing has been completed.</translate>
+            <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
         <v-layout row wrap class="search-results file-results cards-view" :class="{'select-results': selection.length > 0}">

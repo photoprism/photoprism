@@ -9,31 +9,27 @@ PhotoPrism: Browse Your Life in Pictures
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
-PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection.
-It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
-Say goodbye to uploading your visual memories to the cloud!
+PhotoPrism® is a privacy-friendly app for browsing, organizing, and sharing your photo collection.
+It makes use of the latest technologies without getting in your way.
 
 ![](https://dl.photoprism.org/assets/img/preview.jpg)
 
 To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
 
-## Key Features ##
+## Features ##
 
-* Our intuitive [Web UI](https://demo.photoprism.org/) makes browsing and organizing your photo collection as easy as
-  it should be — whether it’s on a phone, tablet, or desktop computer
-* Index all your photos and videos without worrying about duplicates, [RAW to JPEG conversion](https://docs.photoprism.org/user-guide/settings/library/), or video transcoding
-* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to see where you've been,
-  and for rediscovering long-forgotten shots
-* Enjoy privacy-preserving face detection and recognition 💎
-* Automatic [image classification](https://docs.photoprism.org/developer-guide/metadata/classification/)
-  based on Google TensorFlow – in addition, PhotoPrism detects many other properties such as _colors_, _chroma_, _luminance_, _quality_, _panoramic projection_,
-  and _location type_
-* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android mobile devices in the background
-* WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, may
-  [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism so that you to can open,
-  edit, and delete files from your computer or phone as if they were local
-* Because PhotoPrism is built as a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
-  it provides a native app-like experience, and you can install it on your home screen without struggling with compatibility issues
+* Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
+* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
+* Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
+* Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
+  it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
+* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips
+* Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
+* [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location
+* Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
+* Many more image properties like [colors](https://demo.photoprism.org/browse?view=cards&q=color:red), [chroma](https://demo.photoprism.org/browse?view=cards&q=mono%3Atrue), and [quality](https://demo.photoprism.org/review) can be searched as well
+* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
+* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
 ## Getting Started ##
 
@@ -42,22 +38,18 @@ on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. 
 It is available for Mac, Linux, and Windows.
 
-The [latest release](https://docs.photoprism.org/release-notes/) not only includes 
+Our [latest release](https://docs.photoprism.org/release-notes/) not only includes 
 **facial recognition**, it also comes as a 
 **single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64, ARM64, and ARMv7**. 
 That means you don't need to pull from different Docker repositories anymore.
 We recommend updating your existing `docker-compose.yml` config based on 
 [our examples](https://dl.photoprism.org/docker/).
 
-## Funding ##
+## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
-This open-source project is made possible [thanks to our sponsors](SPONSORS.md). 
-If you enjoy using PhotoPrism, please consider backing us on [Patreon](https://www.patreon.com/photoprism) 
-or [GitHub Sponsors](https://github.com/sponsors/photoprism).
+Your continued support helps us provide services like satellite maps and develop new features.
 
-Your continued support helps us fund operating costs, provide services like satellite maps,
-and develop new features. Requests endorsed by silver and gold sponsors [receive a golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
-Let us know when we mistakenly label an idea as [unfunded](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded).
+Ideas endorsed by silver and [gold sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
@@ -68,7 +60,7 @@ Thank you very much! 💜
 
 Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
-what needs testing, and which feature requests are going to be implemented next.
+what needs testing, and which features are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
 

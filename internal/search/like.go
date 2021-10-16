@@ -16,10 +16,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		return wheres
 	}
 
-	s = strings.ReplaceAll(s, txt.Or, " ")
-	s = strings.ReplaceAll(s, txt.OrEn, " ")
-	s = strings.ReplaceAll(s, txt.AndEn, txt.And)
-	s = strings.ReplaceAll(s, txt.Plus, txt.And)
+	s = txt.StripOr(txt.NormalizeQuery(s))
 
 	var wildcardThreshold int
 
@@ -127,7 +124,7 @@ func LikeAllWords(col, s string) (wheres []string) {
 
 // LikeAllNames returns a list of where conditions matching all names.
 func LikeAllNames(cols Cols, s string) (wheres []string) {
-	if len(cols) == 0 || len(s) < 2 {
+	if len(cols) == 0 || len(s) < 1 {
 		return wheres
 	}
 
@@ -137,19 +134,15 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 		for _, w := range strings.Split(k, txt.Or) {
 			w = strings.TrimSpace(w)
 
-			if w == txt.Empty || len(w) < 2 && txt.IsLatin(w) {
+			if w == txt.Empty {
 				continue
 			}
 
 			for _, c := range cols {
-				if len(w) > 4 {
-					if strings.Contains(w, txt.Space) {
-						orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, w))
-					} else {
-						orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, w))
-					}
+				if strings.Contains(w, txt.Space) {
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, w))
 				} else {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s' OR %s LIKE '%s %%'", c, w, c, w))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, w))
 				}
 			}
 		}

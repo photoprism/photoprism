@@ -206,7 +206,7 @@ export default {
           this.$viewer.show(Thumb.fromPhotos(this.photos), index);
         }
       } else {
-        this.$notify.warn(this.$gettext("No photos found"));
+        this.$notify.warn(this.$gettext("No pictures found"));
       }
     },
     formChange() {
@@ -245,7 +245,7 @@ export default {
         if (!response.data.features || response.data.features.length === 0) {
           this.loading = false;
 
-          this.$notify.warn(this.$gettext("No photos found"));
+          this.$notify.warn(this.$gettext("No pictures found"));
 
           return;
         }

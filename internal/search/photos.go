@@ -135,7 +135,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		}
 	}
 
-	// Clip to reasonable size and normalize operators.
+	// Clip and normalize search query.
 	f.Query = txt.NormalizeQuery(f.Query)
 
 	// Set search filters based on search terms.
@@ -155,6 +155,15 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		case terms["videos"]:
 			f.Query = strings.ReplaceAll(f.Query, "videos", "")
 			f.Video = true
+		case terms["video"]:
+			f.Query = strings.ReplaceAll(f.Query, "video", "")
+			f.Video = true
+		case terms["live"]:
+			f.Query = strings.ReplaceAll(f.Query, "live", "")
+			f.Live = true
+		case terms["raws"]:
+			f.Query = strings.ReplaceAll(f.Query, "raws", "")
+			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
 			f.Favorite = true
@@ -169,6 +178,9 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 			f.Scan = true
 		case terms["monochrome"]:
 			f.Query = strings.ReplaceAll(f.Query, "monochrome", "")
+			f.Mono = true
+		case terms["mono"]:
+			f.Query = strings.ReplaceAll(f.Query, "mono", "")
 			f.Mono = true
 		}
 	}
@@ -216,6 +228,18 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		for _, where := range LikeAnyKeyword("k.keyword", f.Keywords) {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
+	}
+
+	// Filter by number of faces?
+	if txt.IsUInt(f.Faces) {
+		s = s.Where("photos.photo_faces >= ?", txt.Int(f.Faces))
+	} else if txt.New(f.Faces) && f.Face == "" {
+		f.Face = f.Faces
+		f.Faces = ""
+	} else if txt.Yes(f.Faces) {
+		s = s.Where("photos.photo_faces > 0")
+	} else if txt.No(f.Faces) {
+		s = s.Where("photos.photo_faces = 0")
 	}
 
 	// Filter for specific face clusters? Example: PLJ7A3G4MBGZJRMVDIUCBLC46IAP4N7O
@@ -301,29 +325,29 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		s = s.Where(AnyInt("photos.photo_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
-	// Find or exclude people if detected.
-	if txt.IsUInt(f.Faces) {
-		s = s.Where("photos.photo_faces >= ?", txt.Int(f.Faces))
-	} else if txt.Yes(f.Faces) {
-		s = s.Where("photos.photo_faces > 0")
-	} else if txt.No(f.Faces) {
-		s = s.Where("photos.photo_faces = 0")
-	}
-
+	// Filter by main color?
 	if f.Color != "" {
 		s = s.Where("files.file_main_color IN (?)", strings.Split(strings.ToLower(f.Color), txt.Or))
 	}
 
+	// Find favorites only?
 	if f.Favorite {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
+	// Find scans only?
 	if f.Scan {
 		s = s.Where("photos.photo_scan = 1")
 	}
 
+	// Find panoramas only?
 	if f.Panorama {
 		s = s.Where("photos.photo_panorama = 1")
+	}
+
+	// Find portraits only?
+	if f.Portrait {
+		s = s.Where("files.file_portrait = 1")
 	}
 
 	if f.Stackable {
@@ -332,30 +356,36 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		s = s.Where("photos.photo_stack = -1")
 	}
 
+	// Filter by location country?
 	if f.Country != "" {
 		s = s.Where("photos.photo_country IN (?)", strings.Split(strings.ToLower(f.Country), txt.Or))
 	}
 
+	// Filter by location state?
 	if f.State != "" {
 		s = s.Where("places.place_state IN (?)", strings.Split(f.State, txt.Or))
 	}
 
+	// Filter by location category?
 	if f.Category != "" {
 		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
 			Where("cells.cell_category IN (?)", strings.Split(strings.ToLower(f.Category), txt.Or))
 	}
 
-	// Filter by media type.
+	// Filter by media type?
 	if f.Type != "" {
 		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
-	}
-
-	if f.Video {
+	} else if f.Video {
 		s = s.Where("photos.photo_type = 'video'")
 	} else if f.Photo {
 		s = s.Where("photos.photo_type IN ('image','raw','live')")
+	} else if f.Raw {
+		s = s.Where("photos.photo_type = 'raw'")
+	} else if f.Live {
+		s = s.Where("photos.photo_type = 'live'")
 	}
 
+	// Filter by storage path?
 	if f.Path != "" {
 		p := f.Path
 
@@ -383,31 +413,27 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		s = s.Where(where, names...)
 	}
 
-	// Filter by complete file names.
+	// Filter by complete file names?
 	if f.Filename != "" {
 		where, values := OrLike("files.file_name", f.Filename)
 		s = s.Where(where, values...)
 	}
 
-	// Filter by original file name.
+	// Filter by original file name?
 	if f.Original != "" {
 		where, values := OrLike("photos.original_name", f.Original)
 		s = s.Where(where, values...)
 	}
 
-	// Filter by photo title.
+	// Filter by photo title?
 	if f.Title != "" {
 		where, values := OrLike("photos.photo_title", f.Title)
 		s = s.Where(where, values...)
 	}
 
-	// Filter by file hash.
+	// Filter by file hash?
 	if f.Hash != "" {
 		s = s.Where("files.file_hash IN (?)", strings.Split(strings.ToLower(f.Hash), txt.Or))
-	}
-
-	if f.Portrait {
-		s = s.Where("files.file_portrait = 1")
 	}
 
 	if f.Mono {

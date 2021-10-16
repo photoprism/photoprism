@@ -5,10 +5,10 @@
         color="secondary-dark" icon="image_not_supported" class="no-results ma-2 opacity-70" outline
     >
       <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
-        <translate>Couldn't find recently edited</translate>
+        <translate>No recently edited pictures</translate>
       </h3>
       <h3 v-else class="body-2 ma-0 pa-0">
-        <translate>Couldn't find anything</translate>
+        <translate>No pictures found</translate>
       </h3>
       <p class="body-1 mt-2 mb-0 pa-0">
         <translate>Try again using other filters or keywords.</translate>

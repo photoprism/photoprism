@@ -45,5 +45,5 @@ func New(s string) bool {
 
 	s = strings.ToLower(strings.TrimSpace(s))
 
-	return s == "new"
+	return s == EnNew
 }

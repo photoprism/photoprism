@@ -13,38 +13,40 @@
     </v-toolbar>
     <v-container fluid class="pa-4">
       <p class="body-2">
-        <translate>Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.</translate>
+          <translate>Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.</translate>
+          <a href="https://github.com/photoprism/photoprism/projects/5" target="_blank">
+            <translate>The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next.</translate>
+          </a>
       </p>
-      <p class="body-1">
-        The
-        <a href="https://github.com/photoprism/photoprism/projects/5" target="_blank" class="text-link">roadmap</a>
-        shows what tasks are in progress,
-        what needs testing, and which feature requests are going to be implemented next.
-        Please give ideas you like a thumbs-up, so that we know what is most popular.
-        Ideas backed by one or more eligible
-        <a href="https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md" target="_blank" class="text-link">sponsors</a>
-        will be prioritized as well.
-      </p>
-      <p class="body-1">
-        You're welcome to support us via
-        <a href="https://github.com/sponsors/photoprism" target="_blank" class="text-link">GitHub Sponsors</a>,
-        especially if you have feature requests, or need help with using our software.
-        In addition, you can find us on
-        <a href="https://www.patreon.com/photoprism" target="_blank" class="text-link">Patreon</a>
-        and
-        <a href="https://www.paypal.me/photoprism" target="_blank" class="text-link">PayPal</a>.
-      </p>
-      <p class="body-1">Your continuous support helps...</p>
-      <ul class="pb-3 body-1">
-        <li>pay for operating expenses and external services like satellite maps</li>
-        <li>developing new features and keeping them free for everyone 🌈</li>
-      </ul>
-      <p class="body-1">Also, please <a href="https://github.com/photoprism/photoprism/stargazers" target="_blank" class="text-link">leave a star</a> on
-        GitHub if you like this project.
-        It provides additional motivation to keep going.</p>
-      <p class="body-1">Thank you very much! ❤️</p>
 
-      <h2 class="py-2 subheading">
+      <p class="body-1 mt-4"><translate>This open-source project is made possible thanks to our sponsors.</translate>
+        <translate>If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors.</translate></p>
+
+      <p class="text-xs-center">
+        <v-btn
+            href="https://www.patreon.com/photoprism"
+            target="_blank"
+            color="primary-button"
+            class="white--text px-3 py-2 action-sponsor"
+            round depressed small
+        >
+          <translate>Become a sponsor</translate>
+          <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>volunteer_activism</v-icon>
+        </v-btn>
+      </p>
+
+      <p class="body-1 mt-4">
+        <translate>Your continued support helps us fund operating costs, provide services like satellite maps, and develop new features.</translate>
+      </p>
+
+      <p class="body-1">
+        <translate>Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized.</translate>
+        <translate>Let us know when we mistakenly label an idea as unfunded.</translate>
+      </p>
+
+      <p class="body-1"><translate>Thank you very much!</translate> 💜</p>
+
+      <h2 class="mt-4 mb-2 subheading">
         <translate>Trademarks</translate>
       </h2>
       <p class="body-1 pb-2">
@@ -74,7 +76,9 @@
 export default {
   name: 'PPageAbout',
   data() {
-    return {};
+    return {
+      rtl: this.$rtl,
+    };
   },
   methods: {},
 };
