@@ -231,8 +231,8 @@ export const Themes = () => [
     disabled: false,
   },
   {
-    text: $gettext("Midnight"),
-    value: "midnight",
+    text: $gettext("Vanta"),
+    value: "vanta",
     disabled: false,
   },
   {
