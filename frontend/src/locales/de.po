@@ -1590,8 +1590,8 @@ msgid ""
 "Our vision is to provide the most user-friendly solution for browsing, "
 "organizing, and sharing your photo collection."
 msgstr ""
-"Unsere Vision ist es, die benutzerfreundlichste Lösung zum Durchstöbern, "
-"Organisieren und Teilen von Bildersammlungen anbieten zu können."
+"Unsere Vision ist es, die benutzerfreundlichste Lösung zum Durchsuchen, "
+"Organisieren und Teilen deiner Fotosammlung anzubieten."
 
 #: src/options/options.js:286
 msgid "Outdoor"
