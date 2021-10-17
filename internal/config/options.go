@@ -37,6 +37,7 @@ type Options struct {
 	LogLevel              string  `yaml:"LogLevel" json:"-" flag:"log-level"`
 	LogFilename           string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	Test                  bool    `yaml:"-" json:"Test,omitempty" flag:"test"`
+	Unsafe                bool    `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                  bool    `yaml:"Demo" json:"-" flag:"demo"`
 	Sponsor               bool    `yaml:"-" json:"-" flag:"sponsor"`
 	Public                bool    `yaml:"Public" json:"-" flag:"public"`

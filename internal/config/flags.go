@@ -28,13 +28,19 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "pid-filename",
-		Usage:  "process id `FILENAME` when running in daemon mode",
+		Usage:  "daemon mode process id `FILENAME`",
 		EnvVar: "PHOTOPRISM_PID_FILENAME",
 	},
 	cli.BoolFlag{
 		Name:   "test",
 		Hidden: true,
 		Usage:  "enable test mode",
+	},
+	cli.BoolFlag{
+		Name:   "unsafe",
+		Hidden: true,
+		Usage:  "enable unsafe mode",
+		EnvVar: "PHOTOPRISM_UNSAFE",
 	},
 	cli.BoolFlag{
 		Name:   "demo",
@@ -55,7 +61,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "admin-password",
-		Usage:  "initial admin user `PASSWORD`, minimum 4 characters",
+		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
 		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.BoolFlag{
@@ -132,13 +138,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "wakeup-interval",
-		Usage:  "background worker wakeup interval in `SECONDS`",
+		Usage:  "metadata, share & sync background worker wakeup interval in `SECONDS` (1-604800)",
 		Value:  DefaultWakeupInterval,
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
 	},
 	cli.IntFlag{
 		Name:   "auto-index",
-		Usage:  "WebDAV auto indexing safety delay in `SECONDS`, disable with -1",
+		Usage:  "WebDAV auto index safety delay in `SECONDS`, disable with -1",
 		Value:  DefaultAutoIndexDelay,
 		EnvVar: "PHOTOPRISM_AUTO_INDEX",
 	},
@@ -175,7 +181,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-ffmpeg",
-		Usage:  "disable video transcoding and still image extraction with FFmpeg",
+		Usage:  "disable video transcoding and thumbnail extraction with FFmpeg",
 		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
 	},
 	cli.BoolFlag{
@@ -338,7 +344,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "darktable-blacklist",
-		Usage:  "file `EXTENSIONS` not to be converted with Darktable",
+		Usage:  "RAW file `EXTENSIONS` incompatible with Darktable",
 		Value:  "raf,cr3,dng",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
@@ -350,7 +356,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "rawtherapee-blacklist",
-		Usage:  "file `EXTENSIONS` not to be converted with RawTherapee",
+		Usage:  "RAW file `EXTENSIONS` incompatible with RawTherapee",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 	},
@@ -368,7 +374,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "ffmpeg-bin",
-		Usage:  "FFmpeg `COMMAND` for video transcoding and still image extraction",
+		Usage:  "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
 		Value:  "ffmpeg",
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
 	},

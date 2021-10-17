@@ -14,7 +14,7 @@ import (
 var StopCommand = cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},
-	Usage:   "Stops the web server when running in daemon mode",
+	Usage:   "Stops the web server in daemon mode",
 	Action:  stopAction,
 }
 

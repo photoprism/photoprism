@@ -33,7 +33,7 @@ func ShouldIndex() {
 	autoIndex = time.Now()
 }
 
-// mustIndex tests if auto indexing must be started.
+// mustIndex tests if the index must be updated.
 func mustIndex(delay time.Duration) bool {
 	if delay.Seconds() <= 0 {
 		return false
