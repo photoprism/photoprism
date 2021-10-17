@@ -7,7 +7,7 @@
             <v-flex xs12 class="pa-2">
               <v-text-field
                   v-model="oldPassword"
-                  hide-details required autofocus
+                  hide-details required
                   type="password"
                   :disabled="busy"
                   browser-autocomplete="off"
