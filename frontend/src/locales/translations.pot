@@ -330,7 +330,7 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: src/pages/settings/account.vue:82
+#: src/pages/settings/account.vue:81
 msgid "At least 6 characters."
 msgstr ""
 
@@ -584,7 +584,7 @@ msgstr ""
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr ""
 
-#: src/pages/settings/account.vue:56
+#: src/pages/settings/account.vue:55
 msgid "Current Password"
 msgstr ""
 
@@ -1503,7 +1503,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: src/pages/settings/account.vue:78
+#: src/pages/settings/account.vue:77
 msgid "New Password"
 msgstr ""
 
@@ -1814,7 +1814,7 @@ msgstr ""
 msgid "Play"
 msgstr ""
 
-#: src/pages/settings/account.vue:105
+#: src/pages/settings/account.vue:104
 msgid "Please confirm your new password."
 msgstr ""
 
@@ -2023,7 +2023,7 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
-#: src/pages/settings/account.vue:101
+#: src/pages/settings/account.vue:100
 msgid "Retype Password"
 msgstr ""
 
