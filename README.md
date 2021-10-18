@@ -16,7 +16,7 @@ It runs where you need it, at home or in the cloud. Say goodbye to selling your 
 
 To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
 
-## Features ##
+## Feature Overview ##
 
 * Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
 * Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
