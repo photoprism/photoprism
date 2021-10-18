@@ -10,7 +10,7 @@ PhotoPrism: Browse Your Life in Pictures
 [![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
 PhotoPrism® is an AI-Powered Open Source App for browsing, organizing & sharing your photo collection.
-It runs where you need it: at home, on a private server, or in the cloud.
+You can run it at home, on a private server, or in the cloud.
 
 ![](https://dl.photoprism.org/img/ui/desktop-1000px.jpg)
 
