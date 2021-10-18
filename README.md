@@ -57,7 +57,7 @@ Thank you very much! 💜
 
 ## Roadmap ##
 
-Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
+Our vision is to provide the most user- and privacy-friendly solution for keeping your pictures organized and accessible.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which features are going to be implemented next.
 
