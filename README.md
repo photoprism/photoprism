@@ -9,10 +9,9 @@ PhotoPrism: Browse Your Life in Pictures
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
-PhotoPrism® is a privacy-friendly app for browsing, organizing, and sharing your photo collection.
-It makes use of the latest technologies without getting in your way.
+PhotoPrism® is an AI-Powered Open Source App for browsing, organizing & sharing your photo collection. You can install it at home or on a private server.
 
-![](https://dl.photoprism.org/assets/img/preview.jpg)
+![](https://dl.photoprism.org/img/ui/desktop-1000px.jpg)
 
 To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
 
@@ -48,7 +47,6 @@ We recommend updating your existing `docker-compose.yml` config based on
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
 Your continued support helps us provide services like satellite maps and develop new features.
-
 Ideas endorsed by silver and [gold sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
@@ -58,7 +56,7 @@ Thank you very much! 💜
 
 ## Roadmap ##
 
-Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.
+Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which features are going to be implemented next.
 
