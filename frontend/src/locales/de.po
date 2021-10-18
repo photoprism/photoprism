@@ -309,7 +309,7 @@ msgstr "Ersteller"
 msgid "Aspect Ratio"
 msgstr "Seitenverhältnis"
 
-#: src/pages/settings/account.vue:82
+#: src/pages/settings/account.vue:81
 msgid "At least 6 characters."
 msgstr "Mindestens 6 Zeichen."
 
@@ -533,7 +533,7 @@ msgstr "Erstelle Thumbnails für"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubisch: Mittlere Qualität, gute Performance"
 
-#: src/pages/settings/account.vue:56
+#: src/pages/settings/account.vue:55
 msgid "Current Password"
 msgstr "Aktuelles Passwort"
 
@@ -1385,7 +1385,7 @@ msgstr "Nie"
 msgid "New"
 msgstr "Neu"
 
-#: src/pages/settings/account.vue:78
+#: src/pages/settings/account.vue:77
 msgid "New Password"
 msgstr "Neues Passwort"
 
@@ -1673,7 +1673,7 @@ msgstr "Karten"
 msgid "Play"
 msgstr "Abspielen"
 
-#: src/pages/settings/account.vue:105
+#: src/pages/settings/account.vue:104
 msgid "Please confirm your new password."
 msgstr "Neues Passwort bitte bestätigen."
 
@@ -1873,7 +1873,7 @@ msgstr "Auflösung"
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: src/pages/settings/account.vue:101
+#: src/pages/settings/account.vue:100
 msgid "Retype Password"
 msgstr "Passwort wiederholen"
 
@@ -2181,7 +2181,7 @@ msgid ""
 "feature requests are going to be implemented next."
 msgstr ""
 "Die Roadmap zeigt, welche Funktionen aktuell entwickelt werden, was getestet "
-"werden kann und welche Ideen als nächstes implementiert werden."
+"werden kann und welche Ideen als nächstes umgesetzt werden."
 
 #: src/pages/library/index.vue:37
 msgid ""
