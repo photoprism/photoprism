@@ -115,7 +115,7 @@
                   <span v-else>
                       <v-icon>edit</v-icon>
                   </span>
-                  <template #input>
+                  <template v-if="hasPermission(aclResources.ResourceLabels, aclActions.ActionUpdate)" #input>
                     <v-text-field
                         v-model="label.Name"
                         :rules="[titleRule]"

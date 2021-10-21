@@ -47,6 +47,7 @@
           <v-icon>bookmark</v-icon>
         </v-btn>
         <v-btn
+            v-if="hasPermission(aclResources.ResourceLabels, aclActions.ActionDelete)"
             fab dark small
             color="remove"
             :title="$gettext('Delete')"

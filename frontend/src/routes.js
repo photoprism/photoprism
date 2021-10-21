@@ -312,6 +312,15 @@ export default [
     path: "/labels",
     component: Labels,
     meta: { title: $gettext("Labels"), auth: true },
+    beforeEnter: (to, from, next) => {
+      if (
+        hasPermission(aclResources.ResourceLabels, aclActions.ActionSearch, aclActions.ActionRead)
+      ) {
+        next();
+      } else {
+        next({ name: "home" });
+      }
+    },
   },
   {
     name: "people",

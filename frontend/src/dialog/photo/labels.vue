@@ -19,7 +19,7 @@
               @save="renameLabel(props.item.Label)"
           >
             {{ props.item.Label.Name }}
-            <template #input>
+            <template v-if="hasPermission(aclResources.ResourceLabels, aclActions.ActionUpdate)" #input>
               <v-text-field
                   v-model="props.item.Label.Name"
                   :rules="[nameRule]"
@@ -40,24 +40,27 @@
             <v-icon color="secondary-dark">search</v-icon>
           </v-btn>
           <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon
+                 :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                  small flat :ripple="false"
                  class="action-delete" title="Delete"
                  @click.stop.prevent="removeLabel(props.item.Label)">
             <v-icon color="secondary-dark">delete</v-icon>
           </v-btn>
           <v-btn v-else-if="props.item.Uncertainty < 100" icon small flat :ripple="false"
+                 :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                  class="action-remove" title="Remove"
                  @click.stop.prevent="removeLabel(props.item.Label)">
             <v-icon color="secondary-dark">remove</v-icon>
           </v-btn>
           <v-btn v-else icon small flat :ripple="false"
+                 :disabled="!hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate)"
                  class="action-on" title="Activate"
                  @click.stop.prevent="activateLabel(props.item.Label)">
             <v-icon color="secondary-dark">add</v-icon>
           </v-btn>
         </td>
       </template>
-      <template v-if="!disabled" #footer>
+      <template v-if="!disabled && hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpdate) && hasPermission(aclResources.ResourceLabels, aclActions.ActionCreate)" #footer>
         <td>
           <v-text-field
               v-model="newLabel"

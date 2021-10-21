@@ -47,4 +47,8 @@ var Permissions = ACL{
 	ResourceSettings: Roles{
 		RoleAdmin: Actions{ActionDefault: true},
 	},
+	ResourceLabels: Roles{
+		RoleAdmin:  Actions{ActionDefault: true},
+		RoleMember: Actions{ActionSearch: true, ActionRead: true},
+	},
 }
