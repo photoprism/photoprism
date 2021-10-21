@@ -1,9 +1,7 @@
-**We value freedom and privacy.** Your continued [support](https://docs.photoprism.org/funding/)
-helps us provide services like satellite maps and develop new features.
-
-Thank you very much! 💜
-
 ## Gold and Platinum Sponsors ##
+
+Your continued [support](https://docs.photoprism.org/funding/) helps us provide 
+services like satellite maps and develop new features. Thank you very much! 💜
 
 [Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
 
