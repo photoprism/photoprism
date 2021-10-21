@@ -1,5 +1,5 @@
-PhotoPrism for Raspberry Pi (64bit)
-===================================
+PhotoPrism for the Raspberry Pi and other ARM-based devices
+===========================================================
 
 Our latest release comes as a single multi-arch image for AMD64, ARM64, and ARMv7.
 If your device meets the system requirements, the same installation instructions
@@ -55,10 +55,10 @@ This may be necessary after upgrading, especially to new major versions.
 
 ## System Requirements ##
 
-It's important to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1" in config.txt
-in order to use our Docker image.
+It's important that you boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1"
+in config.txt to use our ARM64 image.
 
-Alternatively, you may run the image on UbuntuDockerPi (https://github.com/guysoft/UbuntuDockerPi).
+Alternatively, you may run it on UbuntuDockerPi (https://github.com/guysoft/UbuntuDockerPi).
 It's a 64bit Ubuntu Server with Docker pre-installed.
 
 Your device should have at least 4 GB of memory. Also make sure it has at least 4 GB of swap

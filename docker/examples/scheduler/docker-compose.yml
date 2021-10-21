@@ -88,14 +88,14 @@ services:
       HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
-      # Your photo and video files ([local path]:[container path]):
+      # The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
       - "~/Pictures:/photoprism/originals"
-      # Multiple folders can be indexed by mounting them as sub-folders of /photoprism/originals:
-      # - "/mnt/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
-      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
-      # Mounting an import folder is optional (see docs):
+      # Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
+      # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
+      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
+      # You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "~/Import:/photoprism/import"
-      # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
+      # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
   mariadb:
@@ -106,10 +106,10 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    volumes: # Don't remove permanent storage for index database files!
-      - "./database:/var/lib/mysql"
+    volumes:
+      - "./database:/var/lib/mysql" # Never remove
     environment:
-      MYSQL_ROOT_PASSWORD: please_change
+      MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure

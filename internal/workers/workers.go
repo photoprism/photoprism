@@ -42,9 +42,17 @@ import (
 var log = event.Log
 var stop = make(chan bool, 1)
 
-// Start runs PhotoPrism background workers every wakeup interval.
+// Start runs the metadata, share & sync background workers at regular intervals.
 func Start(conf *config.Config) {
-	ticker := time.NewTicker(conf.WakeupInterval())
+	interval := conf.WakeupInterval()
+
+	// Disabled in safe mode?
+	if interval.Seconds() <= 0 {
+		log.Warnf("config: disabled metadata, share & sync background workers")
+		return
+	}
+
+	ticker := time.NewTicker(interval)
 
 	go func() {
 		for {

@@ -78,14 +78,14 @@ services:
       HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
-      # Your photo and video files ([local path]:[container path]):
+      # The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
       - "~/Pictures:/photoprism/originals"
-      # Multiple folders can be indexed by mounting them as sub-folders of /photoprism/originals:
-      # - "/mnt/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
-      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
+      # Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
+      # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
+      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
       # Mounting the import folder is optional (see docs):
       # - "~/Import:/photoprism/import"
-      # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
+      # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
 # Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:

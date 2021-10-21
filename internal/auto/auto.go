@@ -1,6 +1,6 @@
 /*
 
-Package workers contains auto indexing & importing workers.
+Package auto contains index & import background workers.
 
 Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 

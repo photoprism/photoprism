@@ -1,9 +1,6 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (Raspberry Pi and other ARM-based devices)
-#
-# ATTENTION: It's important that you boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1"
-# in config.txt to use our ARM64 image.
+# Example Docker Compose config file for PhotoPrism (ARMv7-based devices)
 #
 # Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
@@ -39,8 +36,7 @@ services:
     # Our stable version and development preview now come as a single multi-arch image for AMD64, ARM64, and ARMv7.
     # Use photoprism/photoprism:preview instead for testing preview builds:
     image: photoprism/photoprism:latest
-    # Owners of ARMv7-based devices may have to explicitly specify the image architecture:
-    # platform: "linux/arm/v7"
+    platform: "linux/arm"
     depends_on:
       - mariadb
     # Only enable automatic restarts once your installation is properly
@@ -58,7 +54,7 @@ services:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "none"            # Improves transfer speed and bandwidth utilization (none or gzip)
-      PHOTOPRISM_WORKERS: 2                          # Limits the number of indexing workers to reduce system load
+      PHOTOPRISM_WORKERS: 1                          # Limits the number of indexing workers to reduce system load
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
       PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
       PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
@@ -69,7 +65,6 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # Disables facial recognition
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # Disables image classification
-      PHOTOPRISM_DARKTABLE_PRESETS: "true"           # Enables Darktable presets and disables concurrent RAW conversion
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # FFmpeg AVC encoder for video transcoding (default: libx264)
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive
@@ -105,18 +100,15 @@ services:
       # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
-  # ATTENTION: Owners of ARMv7-based devices have to revert to an alternative image if they want to use MariaDB.
-  # The official image is available for AMD64 and ARM64 only. Pay close attention to changed directory and
-  # environment variable names.
   mariadb:
     restart: unless-stopped
-    image: arm64v8/mariadb:10.5
+    image: lscr.io/linuxserver/mariadb
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
-      - "./database:/var/lib/mysql" # Never remove
+      - "./mariadb:/config" # Never remove
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism

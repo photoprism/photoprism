@@ -9,7 +9,7 @@
             </h3>
           </v-flex>
           <v-flex xs3 text-xs-right>
-            <v-icon color="secondary-dark">volunteer_activism</v-icon>
+            <v-icon color="secondary-dark">$vuetify.icons.sponsor</v-icon>
           </v-flex>
         </v-layout>
       </v-card-title>
@@ -19,7 +19,7 @@
           <translate>We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors.</translate>
         </p>
         <p class="body-1">
-          <translate>Your continued support helps us fund operating costs, provide services like satellite maps, and develop new features.</translate>
+          <translate>Your continued support helps us provide services like satellite maps and develop new features.</translate>
         </p>
         <p class="body-1">
           <translate>Please contact us at hello@photoprism.app if you have questions or need help.</translate>

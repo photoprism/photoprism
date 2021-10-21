@@ -71,8 +71,9 @@ type Config struct {
 func init() {
 	TotalMem = memory.TotalMemory()
 
-	// Disable features with high memory requirements unless PHOTOPRISM_UNSAFE is set.
+	// Check available memory if not running in unsafe mode.
 	if os.Getenv("PHOTOPRISM_UNSAFE") == "" {
+		// Disable features with high memory requirements?
 		LowMem = TotalMem < MinMem
 	}
 
@@ -475,31 +476,35 @@ func (c *Config) Workers() int {
 	return 1
 }
 
-// WakeupInterval returns the background worker wakeup interval duration.
+// WakeupInterval returns the metadata, share & sync background worker wakeup interval duration (1 - 604800 seconds).
 func (c *Config) WakeupInterval() time.Duration {
-	if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 86400 {
+	if c.options.Unsafe && c.options.WakeupInterval < 0 {
+		// Background worker can be disabled in unsafe mode.
+		return time.Duration(0)
+	} else if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 604800 {
+		// Default if out of range.
 		return time.Duration(DefaultWakeupInterval) * time.Second
 	}
 
 	return time.Duration(c.options.WakeupInterval) * time.Second
 }
 
-// AutoIndex returns the auto indexing delay duration.
+// AutoIndex returns the auto index delay duration.
 func (c *Config) AutoIndex() time.Duration {
 	if c.options.AutoIndex < 0 {
 		return time.Duration(0)
-	} else if c.options.AutoIndex == 0 || c.options.AutoIndex > 86400 {
+	} else if c.options.AutoIndex == 0 || c.options.AutoIndex > 604800 {
 		return time.Duration(DefaultAutoIndexDelay) * time.Second
 	}
 
 	return time.Duration(c.options.AutoIndex) * time.Second
 }
 
-// AutoImport returns the auto importing delay duration.
+// AutoImport returns the auto import delay duration.
 func (c *Config) AutoImport() time.Duration {
 	if c.options.AutoImport < 0 || c.ReadOnly() {
 		return time.Duration(0)
-	} else if c.options.AutoImport == 0 || c.options.AutoImport > 86400 {
+	} else if c.options.AutoImport == 0 || c.options.AutoImport > 604800 {
 		return time.Duration(DefaultAutoImportDelay) * time.Second
 	}
 

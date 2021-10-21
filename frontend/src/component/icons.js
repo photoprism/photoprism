@@ -29,12 +29,19 @@ https://docs.photoprism.org/developer-guide/
 */
 
 import IconLivePhoto from "./icon/live_photo.vue";
+import IconSponsor from "./icon/sponsor.vue";
 
 const icons = {
   live_photo: {
     component: IconLivePhoto,
     props: {
       name: "live_photo",
+    },
+  },
+  sponsor: {
+    component: IconSponsor,
+    props: {
+      name: "sponsor",
     },
   },
 };

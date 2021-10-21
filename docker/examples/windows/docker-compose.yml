@@ -77,13 +77,14 @@ services:
       HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
-      # Your photo and video files (multiple directories or drives can be indexed by mounting them as sub-folders):
+      # The *originals* folder contains your original photo and video files (- "C:/Directory:/photoprism/originals"):
       - "~/Pictures:/photoprism/originals/Pictures"
+      # Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
       # - "D:/Pictures:/photoprism/originals/Pictures"
       # - "E:/Friends:/photoprism/originals/Friends"
-      # Mounting an import folder is optional (see docs):
+      # You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "E:/:/photoprism/import"
-      # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
+      # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
   mariadb:
@@ -93,10 +94,10 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    volumes: # Don't remove permanent storage for index database files!
-      - "mariadb_data:/var/lib/mysql"
+    volumes:
+      - "mariadb_data:/var/lib/mysql" # Never remove
     environment:
-      MYSQL_ROOT_PASSWORD: please_change
+      MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure

@@ -9,14 +9,15 @@ PhotoPrism: Browse Your Life in Pictures
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
 [![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
 
-PhotoPrism® is a privacy-friendly app for browsing, organizing, and sharing your photo collection.
-It makes use of the latest technologies without getting in your way.
+PhotoPrism® is an AI-powered app for browsing, organizing & sharing your photo collection.
+It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
+You can run it at home, on a private server, or in the cloud.
 
-![](https://dl.photoprism.org/assets/img/preview.jpg)
+![](https://dl.photoprism.org/img/ui/desktop-1000px.jpg)
 
 To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
 
-## Features ##
+## Feature Overview ##
 
 * Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
 * Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
@@ -48,7 +49,6 @@ We recommend updating your existing `docker-compose.yml` config based on
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
 Your continued support helps us provide services like satellite maps and develop new features.
-
 Ideas endorsed by silver and [gold sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
@@ -58,21 +58,39 @@ Thank you very much! 💜
 
 ## Roadmap ##
 
-Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.
+Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which features are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+You are welcome to submit specific feature requests via [GitHub Issues](https://github.com/photoprism/photoprism/issues)
+if you have verified that no similar [idea](https://github.com/photoprism/photoprism/labels/idea) or
+[todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
+
+## Questions?
+
+Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
+to get regular updates, connect with other contributors, and discuss your ideas. Don't be afraid to ask silly questions.
+
+## Getting Support ##
+
+Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs and 
+impediments to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
+or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.org/funding/) 
+receive direct [technical support](https://photoprism.app/contact) via email.
+
+When reporting a problem, please include the version you are using and information
+about your environment such as browser, operating system, installed memory, and
+processor type.
 
 ## Contributions ##
 
-We welcome contributions of any kind. If you have a bug or an idea, read our 
-[guide](https://docs.photoprism.org/developer-guide/) before opening an issue.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
+We welcome contributions of any kind, including bug reports, testing, writing documentation, 
+tutorials, blog posts, and pull requests. Issues labeled 
+[help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
-good (first) contributions. 
-
-Follow us on [Twitter][twitter] to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
+good (first) contributions. Our step-by-step guide explains how to submit 
+[pull requests](https://docs.photoprism.org/developer-guide/pull-requests/).
 
 ## Trademarks ##
 

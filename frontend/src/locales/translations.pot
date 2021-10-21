@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:371
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:88
+#: src/pages/about/about.vue:81
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -330,7 +330,7 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: src/pages/settings/account.vue:82
+#: src/pages/settings/account.vue:81
 msgid "At least 6 characters."
 msgstr ""
 
@@ -343,7 +343,7 @@ msgid "Automatically creates albums of special moments, trips, and places."
 msgstr ""
 
 #: src/dialog/sponsor.vue:7
-#: src/pages/about/about.vue:26
+#: src/pages/about/about.vue:23
 msgid "Become a sponsor"
 msgstr ""
 
@@ -584,7 +584,7 @@ msgstr ""
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr ""
 
-#: src/pages/settings/account.vue:56
+#: src/pages/settings/account.vue:55
 msgid "Current Password"
 msgstr ""
 
@@ -596,7 +596,7 @@ msgstr ""
 msgid "Cyan"
 msgstr ""
 
-#: src/options/options.js:214
+#: src/options/options.js:219
 msgid "Cyano"
 msgstr ""
 
@@ -1100,10 +1100,6 @@ msgstr ""
 msgid "I'm a sponsor"
 msgstr ""
 
-#: src/pages/about/about.vue:22
-msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-msgstr ""
-
 #: src/dialog/photo/labels.vue:34
 msgid "image"
 msgstr ""
@@ -1260,16 +1256,12 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/options/options.js:219
+#: src/options/options.js:224
 msgid "Lavender"
 msgstr ""
 
 #: src/dialog/photo/details.vue:414
 msgid "Lens"
-msgstr ""
-
-#: src/pages/about/about.vue:37
-msgid "Let us know when we mistakenly label an idea as unfunded."
 msgstr ""
 
 #: src/component/navigation.vue:301
@@ -1402,10 +1394,6 @@ msgstr ""
 msgid "Message sent"
 msgstr ""
 
-#: src/options/options.js:234
-msgid "Midnight"
-msgstr ""
-
 #: src/component/navigation.vue:204
 msgid "Minimize"
 msgstr ""
@@ -1432,7 +1420,7 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: src/options/options.js:204
+#: src/options/options.js:209
 msgid "Moonlight"
 msgstr ""
 
@@ -1515,7 +1503,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: src/pages/settings/account.vue:78
+#: src/pages/settings/account.vue:77
 msgid "New Password"
 msgstr ""
 
@@ -1687,7 +1675,7 @@ msgstr ""
 msgid "One picture found"
 msgstr ""
 
-#: src/options/options.js:209
+#: src/options/options.js:214
 msgid "Onyx"
 msgstr ""
 
@@ -1786,7 +1774,7 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/pages/about/about.vue:46
+#: src/pages/about/about.vue:38
 msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 msgstr ""
 
@@ -1826,7 +1814,7 @@ msgstr ""
 msgid "Play"
 msgstr ""
 
-#: src/pages/settings/account.vue:105
+#: src/pages/settings/account.vue:104
 msgid "Please confirm your new password."
 msgstr ""
 
@@ -1914,7 +1902,7 @@ msgstr ""
 msgid "Random"
 msgstr ""
 
-#: src/options/options.js:224
+#: src/options/options.js:229
 msgid "Raspberry"
 msgstr ""
 
@@ -2017,7 +2005,7 @@ msgstr ""
 msgid "Request failed - invalid response"
 msgstr ""
 
-#: src/pages/about/about.vue:36
+#: src/pages/about/about.vue:30
 msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
 msgstr ""
 
@@ -2035,7 +2023,7 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
-#: src/pages/settings/account.vue:101
+#: src/pages/settings/account.vue:100
 msgid "Retype Password"
 msgstr ""
 
@@ -2084,7 +2072,7 @@ msgstr ""
 msgid "Season"
 msgstr ""
 
-#: src/options/options.js:229
+#: src/options/options.js:234
 msgid "Seaweed"
 msgstr ""
 
@@ -2353,7 +2341,7 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
-#: src/pages/about/about.vue:40
+#: src/pages/about/about.vue:31
 msgid "Thank you very much!"
 msgstr ""
 
@@ -2380,10 +2368,6 @@ msgstr ""
 #: src/dialog/webdav.vue:17
 #: src/pages/settings/sync.vue:36
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr ""
-
-#: src/pages/about/about.vue:21
-msgid "This open-source project is made possible thanks to our sponsors."
 msgstr ""
 
 #: src/pages/settings/advanced.vue:253
@@ -2432,7 +2416,7 @@ msgstr ""
 msgid "Topographic"
 msgstr ""
 
-#: src/pages/about/about.vue:43
+#: src/pages/about/about.vue:35
 msgid "Trademarks"
 msgstr ""
 
@@ -2592,6 +2576,10 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
+#: src/options/options.js:204
+msgid "Vanta"
+msgstr ""
+
 #: src/component/photo/cards.vue:29
 #: src/component/photo/cards.vue:225
 #: src/component/photo/list.vue:196
@@ -2692,13 +2680,13 @@ msgstr ""
 msgid "You may rescan your library to find additional faces."
 msgstr ""
 
-#: src/pages/about/about.vue:47
+#: src/pages/about/about.vue:39
 msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
 msgstr ""
 
 #: src/dialog/sponsor.vue:21
-#: src/pages/about/about.vue:32
-msgid "Your continued support helps us fund operating costs, provide services like satellite maps, and develop new features."
+#: src/pages/about/about.vue:29
+msgid "Your continued support helps us provide services like satellite maps and develop new features."
 msgstr ""
 
 #: src/pages/albums.vue:43
