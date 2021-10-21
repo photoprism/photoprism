@@ -72,7 +72,7 @@ if you have verified that no similar [idea](https://github.com/photoprism/photop
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other contributors, and discuss your ideas. Don't be afraid to ask silly questions.
 
-## Reporting Bugs ##
+## Getting Support ##
 
 Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs and 
 impediments to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
