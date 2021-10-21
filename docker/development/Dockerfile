@@ -39,6 +39,8 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libzmq3-dev \
     libx264-dev \
     libx265-dev \
+    libnss3 \
+    libxtst6 \
     pkg-config \
     software-properties-common \
     rsync \
@@ -81,46 +83,38 @@ ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
-# Install & configure TensorFlow for C,
-# see https://www.tensorflow.org/install/lang_c
-#
-# We also have custom builds available:
-# https://dl.photoprism.org/tensorflow/linux/
-#
-RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH
-
-# Install NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
+# Install TensorFlow for C & NodeJS
+RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get update && \
-    apt-get -qq install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
+    apt-get -qq install nodejs && \
     apt-get -y autoremove && \
     apt-get -y autoclean && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install NodeJS & NPM
+# Install NPM, Puppeteer, TestCafe & ChromeDriver
 RUN umask 0000 && npm install --unsafe-perm=true --allow-root -g npm && npm config set cache ~/.cache/npm && \
-    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g testcafe chromedriver;
-
+    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g puppeteer testcafe testcafe-browser-provider-puppeteer chromedriver;
 
 # Install Go
 RUN /root/.local/bin/install-go.sh ${TARGETARCH} && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go"
 
-# Download TensorFlow model and test files
+# Download TensorFlow models & example files for testing
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.org/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.org/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Copy additional files to image
+# Copy additional scripts to image
 COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
 COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
 
+# Install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
     /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
