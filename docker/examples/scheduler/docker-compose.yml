@@ -100,7 +100,7 @@ services:
 
   mariadb:
     restart: unless-stopped
-    image: mariadb:10.5
+    image: mariadb:10.6
     container_name: mariadb
     security_opt:
       - seccomp:unconfined

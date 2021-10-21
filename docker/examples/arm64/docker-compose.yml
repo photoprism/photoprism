@@ -110,7 +110,7 @@ services:
   # environment variable names.
   mariadb:
     restart: unless-stopped
-    image: arm64v8/mariadb:10.5
+    image: arm64v8/mariadb:10.6
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
