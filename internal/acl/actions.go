@@ -12,7 +12,7 @@ const (
 	ActionUpdateSelf Action = "update-self"
 	ActionDelete     Action = "delete"
 	ActionArchive    Action = "archive" // includes restore
-	ActionPrivate    Action = "private"
+	ActionPrivate    Action = "private" // includes hidden faces
 	ActionUpload     Action = "upload"
 	ActionDownload   Action = "download"
 	ActionShare      Action = "share"

@@ -9,13 +9,15 @@
         <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
+        <template v-if="">
+          <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
+            <v-icon>visibility</v-icon>
+          </v-btn>
+          <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
+            <v-icon>visibility_off</v-icon>
+          </v-btn>
 
-        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
-          <v-icon>visibility</v-icon>
-        </v-btn>
-        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
-          <v-icon>visibility_off</v-icon>
-        </v-btn>
+        </template>
       </v-toolbar>
     </v-form>
 

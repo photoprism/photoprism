@@ -23,13 +23,14 @@
         <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh">
           <v-icon>refresh</v-icon>
         </v-btn>
-
-        <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
-          <v-icon>visibility</v-icon>
-        </v-btn>
-        <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
-          <v-icon>visibility_off</v-icon>
-        </v-btn>
+        <template v-if="hasPermission(aclResources.ResourceSubjects, aclActions.ActionPrivate)">
+          <v-btn v-if="!filter.hidden" icon class="action-show-hidden" :title="$gettext('Show hidden')" @click.stop="onShowHidden">
+            <v-icon>visibility</v-icon>
+          </v-btn>
+          <v-btn v-else icon class="action-exclude-hidden" :title="$gettext('Exclude hidden')" @click.stop="onExcludeHidden">
+            <v-icon>visibility_off</v-icon>
+          </v-btn>
+        </template>
       </v-toolbar>
     </v-form>
 
@@ -84,7 +85,7 @@
                   @mousedown="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn :ripple="false" :depressed="false" class="input-hidden"
+                <v-btn v-if="hasPermission(aclResources.ResourceSubjects, aclActions.ActionPrivate)" :ripple="false" :depressed="false" class="input-hidden"
                        icon flat small absolute
                        @touchstart.stop.prevent="input.touchStart($event, index)"
                        @touchend.stop.prevent="onToggleHidden($event, index)"
@@ -108,9 +109,9 @@
                        icon flat absolute
                        class="input-favorite"
                        @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="toggleLike($event, index)"
+                       @touchend.stop.prevent="hasPermission(aclResources.ResourceSubjects, aclActions.ActionLike) && toggleLike($event, index)"
                        @touchmove.stop.prevent
-                       @click.stop.prevent="toggleLike($event, index)">
+                       @click.stop.prevent="hasPermission(aclResources.ResourceSubjects, aclActions.ActionLike) && toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
