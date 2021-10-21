@@ -92,7 +92,8 @@ We welcome contributions of any kind, including bug reports, testing, writing do
 tutorials, blog posts, and pull requests. Issues labeled 
 [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
-good (first) contributions. 
+good (first) contributions. Our step-by-step guide explains how to submit 
+[pull requests](https://docs.photoprism.org/developer-guide/pull-requests/).
 
 ## Trademarks ##
 
