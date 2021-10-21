@@ -121,11 +121,12 @@ COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-conve
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
 COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
 
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu \
-    golang.org/x/tools/cmd/goimports github.com/kyoh86/richgo && \
+RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
+    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
+    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
     [ "$TARGETARCH" = "arm" ] || \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated \
-    github.com/tsliwowicz/go-wrk github.com/dsoprea/go-exif/v3/command/exif-read-tool; \
+    /usr/local/go/bin/go install github.com/psampaz/go-mod-outdated@latest && \
+    /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
     echo "alias go=richgo" > /root/.bash_aliases && \
     cp /go/bin/gosu /bin/gosu
 

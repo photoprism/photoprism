@@ -5,7 +5,7 @@ LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 # Set up project directory
 WORKDIR "/webdav"
 
-RUN go get github.com/hacdias/webdav
+RUN go install github.com/hacdias/webdav@latest
 
 # Expose HTTP port
 EXPOSE 80
