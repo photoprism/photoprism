@@ -75,6 +75,7 @@ services:
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
       # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # Enable TensorFlow AVX2 & Intel Graphics support
+      # PHOTOPRISM_INIT: "install-updates"           # Installs general operating system updates
     # Optional hardware devices for video transcoding and machine learning:
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
@@ -86,7 +87,7 @@ services:
       - "go-mod:/go/pkg/mod"
 
   mariadb:
-    image: mariadb:10.5
+    image: mariadb:10.6
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
@@ -101,7 +102,7 @@ services:
       MYSQL_DATABASE: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20210602
+    image: photoprism/webdav:20211021
 
   oidc-test-op:
     build: docker/oidc/.

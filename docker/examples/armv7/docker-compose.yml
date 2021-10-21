@@ -102,7 +102,7 @@ services:
 
   mariadb:
     restart: unless-stopped
-    image: lscr.io/linuxserver/mariadb
+    image: lscr.io/linuxserver/mariadb:latest
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined

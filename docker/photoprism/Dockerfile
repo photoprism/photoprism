@@ -1,4 +1,4 @@
-FROM photoprism/development:20210929 as build
+FROM photoprism/development:20211021 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -12,7 +12,7 @@ COPY . .
 RUN make dep build-js install
 
 # Should be the same as used for photoprism/development!
-FROM ubuntu:21.04
+FROM ubuntu:21.10
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 

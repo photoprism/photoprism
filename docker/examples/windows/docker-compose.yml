@@ -89,7 +89,7 @@ services:
 
   mariadb:
     restart: unless-stopped
-    image: mariadb:10.5
+    image: mariadb:10.6
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
