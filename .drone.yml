@@ -164,7 +164,7 @@ steps:
 
   - name: test
     commands:
-      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test-go install migrate
 
   - name: down
     commands:
@@ -177,6 +177,6 @@ steps:
 
 ---
 kind: signature
-hmac: 7c59ebf5126f9f013b413e743de8e73d54dc07fbe43fc32d1757102863f7253e
+hmac: 61a27b3c3142a9a1d1972f0fe00a8aa19d99623e6fea6e1d5ad44b6b20cd5cd1
 
 ...

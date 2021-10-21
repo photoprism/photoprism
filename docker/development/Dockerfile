@@ -95,7 +95,7 @@ RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH && \
 
 # Install NPM, Puppeteer, TestCafe & ChromeDriver
 RUN umask 0000 && npm install --unsafe-perm=true --allow-root -g npm && npm config set cache ~/.cache/npm && \
-    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g puppeteer testcafe testcafe-browser-provider-puppeteer chromedriver;
+    [ "$TARGETARCH" != "amd64" ] || npm install --unsafe-perm=true --allow-root -g puppeteer testcafe testcafe-browser-provider-puppeteer chromedriver;
 
 # Install Go
 RUN /root/.local/bin/install-go.sh ${TARGETARCH} && \
