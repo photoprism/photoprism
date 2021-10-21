@@ -52,7 +52,7 @@ const Megabyte = 1000 * 1000
 const Gigabyte = Megabyte * 1000
 
 // MinMem is the minimum amount of system memory required.
-const MinMem = 2 * Gigabyte
+const MinMem = Gigabyte
 
 // RecommendedMem is the recommended amount of system memory.
 const RecommendedMem = 5 * Gigabyte
