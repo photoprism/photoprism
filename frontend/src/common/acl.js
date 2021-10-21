@@ -95,6 +95,8 @@ export default class Acl {
     return act;
   }
   accessAllowedAny(role, resource, ...actions) {
-    return actions.some((action) => this.accessAllowed(role, resource, action));
+    return actions.some((action) => {
+      return this.accessAllowed(role, resource, action);
+    });
   }
 }

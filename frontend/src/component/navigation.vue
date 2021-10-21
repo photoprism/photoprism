@@ -181,7 +181,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="$config.feature('people')" :to="{ name: 'people' }" class="nav-people" @click.stop="">
+        <v-list-tile v-show="$config.feature('people') && hasPermission(aclResources.ResourceSubjects, aclActions.ActionSearch, aclActions.ActionRead)" :to="{ name: 'people' }" class="nav-people" @click.stop="">
           <v-list-tile-action :title="$gettext('People')">
             <v-icon>person</v-icon>
           </v-list-tile-action>
@@ -273,7 +273,7 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-show="$config.feature('labels')" to="/labels" class="nav-labels" @click.stop="">
+        <v-list-tile v-show="$config.feature('labels') && hasPermission(aclResources.ResourceLabels, aclActions.ActionRead, aclActions.ActionSearch)" to="/labels" class="nav-labels" @click.stop="">
           <v-list-tile-action :title="$gettext('Labels')">
             <v-icon>label</v-icon>
           </v-list-tile-action>

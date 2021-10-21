@@ -8,7 +8,7 @@
         slider-color="secondary-dark"
         :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
     >
-      <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class"
+      <v-tab v-for="(item, index) in permittedTabs" :id="'tab-' + item.name" :key="index" :class="item.class"
              ripple @click.stop.prevent="changePath(item.path)">
         <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
         <template v-else>
@@ -23,7 +23,7 @@
       </v-tab>
 
       <v-tabs-items touchless>
-        <v-tab-item v-for="(item, index) in tabs" :key="index" lazy>
+        <v-tab-item v-for="(item, index) in permittedTabs" :key="index" lazy>
           <component :is="item.component" :static-filter="item.filter" :active="active === index"
                      @updateFaceCount="onUpdateFaceCount"></component>
         </v-tab-item>
@@ -53,6 +53,9 @@ export default {
         'class': '',
         'path': '/people',
         'icon': 'people_alt',
+        'permission': () => {
+          return this.hasPermission(this.aclResources.ResourceSubjects, this.aclActions.ActionRead, this.aclActions.ActionSearch);
+        },
       },
       {
         'name': 'people_faces',
@@ -63,6 +66,9 @@ export default {
         'path': '/people/new',
         'icon': 'person_add',
         'count': 0,
+        'permission': () => {
+          return this.hasPermission(this.aclResources.ResourceSubjects, this.aclActions.ActionUpdate);
+        },
       },
     ];
 
@@ -75,6 +81,14 @@ export default {
       active: 0,
       rtl: this.$rtl,
     };
+  },
+  computed: {
+    permittedTabs() {
+      if (!this.tabs) return this.tabs;
+      return this.tabs.filter(tab => {
+        return tab.permission();
+      });
+    }
   },
   watch: {
     '$route'() {

@@ -51,4 +51,8 @@ var Permissions = ACL{
 		RoleAdmin:  Actions{ActionDefault: true},
 		RoleMember: Actions{ActionSearch: true, ActionRead: true},
 	},
+	ResourceFiles: Roles{
+		RoleAdmin:  Actions{ActionDefault: true},
+		RoleMember: Actions{ActionSearch: true, ActionRead: true},
+	},
 }

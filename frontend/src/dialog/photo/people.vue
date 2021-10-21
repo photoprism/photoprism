@@ -29,7 +29,7 @@
                    :transition="false"
                    aspect-ratio="1"
                    class="accent lighten-2">
-              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" :depressed="false" class="input-reject"
+              <v-btn v-if="!marker.SubjUID && !marker.Invalid && hasPermission(aclResources.ResourceFiles, aclActions.ActionUpdate)" :ripple="false" :depressed="false" class="input-reject"
                      icon flat small absolute :title="$gettext('Remove')"
                      @click.stop.prevent="onReject(marker)">
                 <v-icon color="white" class="action-reject">clear</v-icon>
@@ -52,7 +52,7 @@
                   <v-text-field
                       v-model="marker.Name"
                       :rules="[textRule]"
-                      :disabled="busy"
+                      :disabled="busy || !hasPermission(aclResources.ResourceFiles, aclActions.ActionUpdate)"
                       :readonly="true"
                       browser-autocomplete="off"
                       class="input-name pa-0 ma-0"
@@ -75,7 +75,7 @@
                       :items="$config.values.people"
                       item-value="Name"
                       item-text="Name"
-                      :disabled="busy"
+                      :disabled="busy || !hasPermission(aclResources.ResourceFiles, aclActions.ActionUpdate)"
                       :return-object="false"
                       :menu-props="menuProps"
                       :allow-overflow="false"

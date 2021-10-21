@@ -66,6 +66,7 @@
                 <v-layout v-if="model.SubjUID" row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
+                        v-if="hasPermission(aclResources.ResourceSubjects, aclActions.ActionUpdate)"
                         v-model="model.Name"
                         :rules="[textRule]"
                         :readonly="readonly"

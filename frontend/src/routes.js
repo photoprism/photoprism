@@ -61,7 +61,7 @@ const hasPermission = (resource, ...actions) => {
   // const acl = new Acl(window.__CONFIG__.acl);
   const acl = new Acl(config.values.acl);
   const role = session.getUser().getRole();
-  return acl.accessAllowedAny(role, resource, actions);
+  return acl.accessAllowedAny(role, resource, ...actions);
 };
 
 export default [
@@ -328,15 +328,28 @@ export default [
     component: People,
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
     beforeEnter: (to, from, next) => {
+      const nextGuarded = () => {
+        if (
+          hasPermission(
+            aclResources.ResourceSubjects,
+            aclActions.ActionRead,
+            aclActions.ActionSearch
+          )
+        ) {
+          next();
+        } else {
+          next({ name: "home" });
+        }
+      };
       if (!config || !from || !from.name || from.name.startsWith("people")) {
-        next();
+        nextGuarded();
       } else {
         config.load().finally(() => {
           // Open new faces tab when there are no people.
           if (config.values.count.people === 0) {
             next({ name: "people_faces" });
           } else {
-            next();
+            nextGuarded();
           }
         });
       }
@@ -347,6 +360,13 @@ export default [
     path: "/people/new",
     component: People,
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
+    beforeEnter: (to, from, next) => {
+      if (hasPermission(aclResources.ResourceSubjects, aclActions.ActionUpdate)) {
+        next();
+      } else {
+        next({ name: "people" });
+      }
+    },
   },
   {
     name: "library",
