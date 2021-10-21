@@ -70,7 +70,7 @@ if you have verified that no similar [idea](https://github.com/photoprism/photop
 ## Questions?
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
-to get regular updates, connect with other contributors, and discuss your ideas. Don't be afraid to ask silly questions.
+to get regular updates, connect with other users, and discuss your ideas. Don't be afraid to ask silly questions.
 
 ## Getting Support ##
 
