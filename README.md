@@ -63,7 +63,6 @@ The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what ta
 what needs testing, and which features are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
-
 You are welcome to submit specific feature requests via [GitHub Issues](https://github.com/photoprism/photoprism/issues)
 if you have verified that no similar [idea](https://github.com/photoprism/photoprism/labels/idea) or
 [todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
@@ -72,8 +71,6 @@ if you have verified that no similar [idea](https://github.com/photoprism/photop
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other contributors, and discuss your ideas. Don't be afraid to ask silly questions.
-
-Don't use GitHub Issues to ask general questions or for assistance.
 
 ## Reporting Bugs ##
 
