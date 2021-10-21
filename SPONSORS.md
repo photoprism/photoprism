@@ -1,4 +1,9 @@
-## THIS OPEN-SOURCE PROJECT IS MADE POSSIBLE THANKS TO OUR SPONSORS ##
+**We value freedom and privacy.** Your continued [support](https://docs.photoprism.org/funding/)
+helps us provide services like satellite maps and develop new features.
+
+Thank you very much! 💜
+
+## Gold and Platinum Sponsors ##
 
 [Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
 
@@ -36,9 +41,7 @@ Garn Penrod (Patreon, November 2020)
 
 [Daniel Hähnke](https://github.com/DanBenHa) (GitHub Sponsors, July 2021)
 
-Thank you very much! 💜
-
-See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
+*See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.*
 
 ## One-Time Donations ##
 
@@ -47,9 +50,9 @@ Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
 The Gordon Project
 
-## Crypto ##
+## Crypto Wallets ##
 
-| Currency   | Dontation Address                                                                                    |
+| Currency   | Address                                                                                              |
 |:-----------|:-----------------------------------------------------------------------------------------------------|
 | Monero     | [`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)            |
 | Dogecoin   | [`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)                  |
