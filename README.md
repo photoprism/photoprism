@@ -64,15 +64,35 @@ what needs testing, and which features are going to be implemented next.
 
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
 
+You are welcome to submit specific feature requests via [GitHub Issues](https://github.com/photoprism/photoprism/issues)
+if you have verified that no similar [idea](https://github.com/photoprism/photoprism/labels/idea) or
+[todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
+
+## Questions?
+
+Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
+to get regular updates, connect with other contributors, and discuss your ideas. Don't be afraid to ask silly questions.
+
+Don't use GitHub Issues to ask general questions or for assistance.
+
+## Reporting Bugs ##
+
+Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs and 
+impediments to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
+or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.org/funding/) 
+receive direct [technical support](https://photoprism.app/contact) via email.
+
+When reporting a problem, please include the version you are using and information
+about your environment such as browser, operating system, installed memory, and
+processor type.
+
 ## Contributions ##
 
-We welcome contributions of any kind. If you have a bug or an idea, read our 
-[guide](https://docs.photoprism.org/developer-guide/) before opening an issue.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
+We welcome contributions of any kind, including bug reports, testing, writing documentation, 
+tutorials, blog posts, and pull requests. Issues labeled 
+[help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
 [easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
 good (first) contributions. 
-
-Follow us on [Twitter][twitter] to receive regular project updates and discuss development related topics. Don't be afraid to ask stupid questions.
 
 ## Trademarks ##
 
