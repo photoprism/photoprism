@@ -184,7 +184,7 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <div v-if="staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
+        <div v-if="staticFilter.type === 'album' && config.count.albums === 0 && hasPermission(aclResources.ResourceAlbums, aclActions.ActionCreate)" class="text-xs-center my-2">
           <v-btn class="action-add" color="secondary" round @click.prevent="create">
             <translate>Add Album</translate>
           </v-btn>

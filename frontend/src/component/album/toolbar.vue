@@ -17,7 +17,7 @@
         <v-icon>edit</v-icon>
       </v-btn>
 
-      <v-btn v-if="$config.feature('share')" icon class="action-share" :title="$gettext('Share')"
+      <v-btn v-if="$config.feature('share') && hasPermission(aclResources.ResourceAlbums, aclActions.ActionShare)" icon class="action-share" :title="$gettext('Share')"
              @click.stop="dialog.share = true">
         <v-icon>share</v-icon>
       </v-btn>
@@ -37,8 +37,8 @@
         <v-icon>view_column</v-icon>
       </v-btn>
 
-      <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
-             :title="$gettext('Upload')" @click.stop="showUpload()">
+      <v-btn v-if="!$config.values.readonly && $config.feature('upload') && hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpload)"
+        icon class="hidden-sm-and-down action-upload" :title="$gettext('Upload')" @click.stop="showUpload()">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
     </v-toolbar>
