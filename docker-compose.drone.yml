@@ -153,4 +153,4 @@ services:
       MYSQL_DATABASE: photoprism
 
   webdav-dummy:
-    image: photoprism/webdav:20210602
+    image: photoprism/webdav:20211021
