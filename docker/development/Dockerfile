@@ -8,7 +8,15 @@ ARG BUILD_TAG
 
 # Set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
-    TMPDIR="/tmp"
+    TMPDIR="/tmp" \
+    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
+    TF_CPP_MIN_LOG_LEVEL="0" \
+    NODE_ENV="production" \
+    GOPATH="/go" \
+    GOBIN="/go/bin" \
+    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    GO111MODULE="on" \
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
 # Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
@@ -20,7 +28,10 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 # Copy scripts to /root/.local/bin
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
-# Install dev / build dependencies
+# 1. Install distribution packages
+# 2. Install TensorFlow for C
+# 3. Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
+# 4. Install Go
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     build-essential \
     ca-certificates \
@@ -71,26 +82,9 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     fonts-roboto \
     sudo && \
     [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
-    apt-get -y autoremove && apt-get -y autoclean && apt-get clean
-
-# Set environment variables
-ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
-    TF_CPP_MIN_LOG_LEVEL="0" \
-    NODE_ENV="production" \
-    GOPATH="/go" \
-    GOBIN="/go/bin" \
-    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-    GO111MODULE="on" \
-    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
-
-# Install TensorFlow for C
-RUN /root/.local/bin/install-tensorflow.sh ${TARGETARCH}
-
-# Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
-RUN /root/.local/bin/install-devtools.sh ${TARGETARCH}
-
-# Install Go
-RUN /root/.local/bin/install-go.sh ${TARGETARCH} && \
+    /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
+    /root/.local/bin/install-devtools.sh ${TARGETARCH} && \
+    /root/.local/bin/install-go.sh ${TARGETARCH} && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go"
 
