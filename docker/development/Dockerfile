@@ -83,19 +83,11 @@ ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
-# Install TensorFlow for C & NodeJS
-RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get update && \
-    apt-get -qq install nodejs && \
-    apt-get -y autoremove && \
-    apt-get -y autoclean && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install TensorFlow for C
+RUN /root/.local/bin/install-tensorflow.sh ${TARGETARCH}
 
-# Install NPM, Puppeteer, TestCafe & ChromeDriver
-RUN umask 0000 && npm install --unsafe-perm=true --allow-root -g npm && npm config set cache ~/.cache/npm && \
-    [ "$TARGETARCH" != "amd64" ] || npm install --unsafe-perm=true --allow-root -g puppeteer testcafe testcafe-browser-provider-puppeteer chromedriver;
+# Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
+RUN /root/.local/bin/install-devtools.sh ${TARGETARCH}
 
 # Install Go
 RUN /root/.local/bin/install-go.sh ${TARGETARCH} && \
