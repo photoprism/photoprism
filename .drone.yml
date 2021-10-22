@@ -37,6 +37,7 @@ steps:
     when:
       branch:
         - develop
+        - feature/*
 
   - name: test
     commands:
@@ -177,6 +178,6 @@ steps:
 
 ---
 kind: signature
-hmac: 61a27b3c3142a9a1d1972f0fe00a8aa19d99623e6fea6e1d5ad44b6b20cd5cd1
+hmac: c2c78e8f8a5537005233ef69ea85f0b5ce6131913037b2a44f401505b887de3f
 
 ...
