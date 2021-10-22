@@ -29,7 +29,13 @@ https://docs.photoprism.org/developer-guide/
 */
 
 const path = require("path");
-process.env.CHROME_BIN = require("puppeteer").executablePath();
+const findChrome = require("chrome-finder");
+const chromeBin = findChrome();
+if (chromeBin) {
+  process.env.CHROME_BIN = chromeBin;
+} else {
+  process.env.CHROME_BIN = require("puppeteer").executablePath();
+}
 
 module.exports = (config) => {
   config.set({
