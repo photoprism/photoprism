@@ -220,11 +220,15 @@ docker-demo-local:
 	scripts/docker-build.sh photoprism
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
-docker-webdav:
+docker-dummy-webdav:
 	docker pull --platform=amd64 golang:1
 	docker pull --platform=arm64 golang:1
 	docker pull --platform=arm golang:1
-	scripts/docker-buildx.sh webdav linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+	scripts/docker-buildx.sh dummy-webdav linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+docker-dummy-oidc:
+	docker pull --platform=amd64 golang:1
+	docker pull --platform=arm64 golang:1
+	scripts/docker-buildx.sh dummy-oidc linux/amd64,linux/arm64 $(DOCKER_TAG)
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./docker/examples/cloud && packer build digitalocean.json)

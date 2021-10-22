@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	testUrl  = "http://webdav-dummy/"
+	testUrl  = "http://dummy-webdav/"
 	testUser = "admin"
 	testPass = "photoprism"
 )

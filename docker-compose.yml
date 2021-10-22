@@ -6,14 +6,15 @@ services:
     image: photoprism/photoprism:develop
     depends_on:
       - mariadb
-      - webdav-dummy
+      - dummy-webdav
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    # Expose ports 2342, 2343 & 40000 on host
     ports:
-      - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343" # Acceptance Tests
-      - "40000:40000" # Go Debugging
+      - "2342:2342"   # PhotoPrism
+      - "2343:2343"   # Acceptance Tests
+      - "40000:40000" # Go Debugger
     shm_size: "2gb"
     environment:
       PHOTOPRISM_UID: ${UID:-1000}
@@ -91,8 +92,9 @@ services:
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
+    # Expose port 4001 on host
     ports:
-      - "4001:4001" # Exposes port 4001 on host
+      - "4001:4001"
     volumes:
       - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
     environment:
@@ -101,14 +103,14 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
-  webdav-dummy:
-    image: photoprism/webdav:20211021
+  dummy-webdav:
+    image: photoprism/dummy-webdav:20211022
 
-  oidc-test-op:
-    build: docker/oidc/.
-    image: test-op:latest
-#    ports:
-#      - "9998:9998"
+  dummy-oidc:
+    image: photoprism/dummy-oidc:20211022
+    # Expose port 9998 on host
+    # ports:
+    #  - "9998:9998"
 
 volumes:
   go-mod:

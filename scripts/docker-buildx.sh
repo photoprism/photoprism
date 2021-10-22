@@ -21,7 +21,7 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
       --platform $2 \
       --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
-      -f docker/$1/Dockerfile \
+      -f docker/${1/-//}/Dockerfile \
       -t photoprism/$1:preview \
       --push .
 else
@@ -30,7 +30,7 @@ else
       --platform $2 \
       --no-cache \
       --build-arg BUILD_TAG=$3 \
-      -f docker/$1/Dockerfile \
+      -f docker/${1/-//}/Dockerfile \
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 \
       --push .

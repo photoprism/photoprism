@@ -6,7 +6,7 @@ services:
     image: photoprism/photoprism:develop
     depends_on:
       - postgres
-      - webdav-dummy
+      - dummy-webdav
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -71,8 +71,14 @@ services:
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
 
-  webdav-dummy:
-    image: photoprism/webdav:20211021
+  dummy-webdav:
+    image: photoprism/dummy-webdav:20211022
+
+  dummy-oidc:
+    image: photoprism/dummy-oidc:20211022
+    # Expose port 9998 on host
+    # ports:
+    #  - "9998:9998"
 
 volumes:
   go-mod:
