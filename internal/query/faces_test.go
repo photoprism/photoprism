@@ -223,3 +223,13 @@ func TestResolveFaceCollisions(t *testing.T) {
 	assert.LessOrEqual(t, 3, c)
 	assert.LessOrEqual(t, 3, r)
 }
+
+func TestRemoveAutoFaceClusters(t *testing.T) {
+	removed, err := RemoveAutoFaceClusters()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, int64(3), removed)
+}
