@@ -876,6 +876,18 @@ func TestPhotos(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 9)
 	})
+	t.Run("f.face yes", func(t *testing.T) {
+		var f form.PhotoSearch
+		f.Face = "yes"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 9)
+	})
 	t.Run("faces:2", func(t *testing.T) {
 		var f form.PhotoSearch
 		f.Faces = "2"
