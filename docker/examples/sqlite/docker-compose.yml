@@ -10,8 +10,7 @@ version: '3.5'
 #            Your files and passwords will be transmitted in clear text otherwise.
 #
 # DOCKER COMPOSE COMMAND REFERENCE
-# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
-# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
 # Update   | docker-compose pull
@@ -26,13 +25,16 @@ version: '3.5'
 # Reindex  | docker-compose exec photoprism photoprism index -f
 # Import   | docker-compose exec photoprism photoprism import
 #
+# See https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface for more examples.
+#
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
 #
 # NOTE: All commands may have to be prefixed with "sudo" when not running as root.
-#       This will point the home directory placeholder ~ to /root in volume mounts.
+# This will point the home directory placeholder ~ to /root in volume mounts.
 
 services:
+  # REQUIRED: PhotoPrism Application Server
   photoprism:
     # Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
@@ -90,6 +92,7 @@ services:
       - "./storage:/photoprism/storage"
 
   # OPTIONAL: Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available.
+  # see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped

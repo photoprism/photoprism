@@ -10,8 +10,7 @@ version: '3.5'
 #            Your files and passwords will be transmitted in clear text otherwise.
 #
 # DOCKER COMPOSE COMMAND REFERENCE
-# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
-# --------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
 # Update   | docker-compose pull
@@ -26,10 +25,13 @@ version: '3.5'
 # Reindex  | docker-compose exec photoprism photoprism index -f
 # Import   | docker-compose exec photoprism photoprism import
 #
+# See https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface for more examples.
+#
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
 
 services:
+  # REQUIRED: PhotoPrism Application Server
   photoprism:
     # Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
@@ -62,11 +64,11 @@ services:
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
-      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name
-      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database user name
-      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB database user password
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB or MySQL database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB or MySQL database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB or MySQL database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB or MySQL database user password
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
@@ -85,6 +87,8 @@ services:
       # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
+  # RECOMMENDED: MariaDB Server, a MySQL-compatible Database
+  # see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
     image: mariadb:10.6
@@ -101,6 +105,7 @@ services:
       MYSQL_PASSWORD: insecure
 
   # OPTIONAL: Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available.
+  # see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped
