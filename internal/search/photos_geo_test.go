@@ -265,6 +265,31 @@ func TestGeo(t *testing.T) {
 
 		assert.GreaterOrEqual(t, len(photos), 4)
 	})
+	t.Run("face:yes", func(t *testing.T) {
+		var f form.PhotoSearchGeo
+		f.Face = "Yes"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 4)
+	})
+	t.Run("f.Faces:new", func(t *testing.T) {
+		var f form.PhotoSearchGeo
+		f.Faces = "New"
+		f.Face = ""
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 3)
+	})
 	t.Run("faces:no", func(t *testing.T) {
 		var f form.PhotoSearchGeo
 		f.Faces = "No"
@@ -288,6 +313,18 @@ func TestGeo(t *testing.T) {
 		}
 
 		assert.GreaterOrEqual(t, len(photos), 1)
+	})
+	t.Run("face: TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ", func(t *testing.T) {
+		var f form.PhotoSearchGeo
+		f.Face = "TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ"
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 2)
 	})
 	t.Run("day", func(t *testing.T) {
 		var f form.PhotoSearchGeo
@@ -367,6 +404,97 @@ func TestGeo(t *testing.T) {
 			assert.IsType(t, GeoResult{}, r)
 			assert.NotEmpty(t, r.ID)
 			assert.Equal(t, "video", r.PhotoType)
+		}
+	})
+	t.Run("query: video", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "video"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, "video", r.PhotoType)
+		}
+	})
+	t.Run("query: live", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "live"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, "live", r.PhotoType)
+		}
+	})
+	t.Run("query: raws", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "raws"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.Equal(t, "raw", r.PhotoType)
+		}
+	})
+	t.Run("query: panoramas", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "panoramas"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("query: scans", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Query = "scans"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
 		}
 	})
 	t.Run("query: faces", func(t *testing.T) {
@@ -462,6 +590,24 @@ func TestGeo(t *testing.T) {
 		}
 		assert.Greater(t, len(photos), len(photos2))
 	})
+	t.Run("f.Album = uid", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Album = "at9lxuqxpogaaba9"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
 	t.Run("people and and or search", func(t *testing.T) {
 		var f form.PhotoSearchGeo
 		f.People = "Actor A|Actress A"
@@ -524,5 +670,125 @@ func TestGeo(t *testing.T) {
 
 		assert.Equal(t, len(photos3), len(photos4))
 		assert.Equal(t, len(photos), len(photos4))
+
+		var f5 form.PhotoSearchGeo
+		f5.Subject = "jqy1y111h1njaaad"
+
+		photos5, err5 := PhotosGeo(f5)
+
+		if err5 != nil {
+			t.Fatal(err5)
+		}
+
+		assert.Equal(t, len(photos5), len(photos4))
+	})
+
+	t.Run("f.Scan = true", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Scan = true
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("f.Panorama = true", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Panorama = true
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("f.Raw = true", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Raw = true
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("f.Live = true", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Live = true
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("f.Title = phototobebatchapproved2", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+
+		frm.Title = "phototobebatchapproved2"
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
+	})
+	t.Run("f.Query = p", func(t *testing.T) {
+		var frm form.PhotoSearchGeo
+		frm.Query = "p"
+		frm.Title = ""
+
+		photos, err := PhotosGeo(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			assert.NotEmpty(t, r.ID)
+		}
 	})
 }

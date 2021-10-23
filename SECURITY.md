@@ -1,20 +1,21 @@
-# Security Policy
+**Please contact us at [security@photoprism.app](mailto:security@photoprism.app) when you've discovered a potential security issue.**
 
-When you think you've discovered a security issue, please contact us at hello@photoprism.app.
+At a minimum, your report should include the following:
 
-Your report should at least include the following:
+* Version and architecture
+* Vulnerability description
+* Reproduction steps
 
-- Version and architecture
-- Vulnerability description
-- Reproduction steps
+We will then try to reproduce the problem, determine the impact and get back to you as soon as possible.
 
-We will then try to reproduce it, determine the impact, and get back to you as soon as possible.
+Avoid activities that disrupt, degrade, or interrupt our services or compromise other users' data, such as spam, brute force attacks, denial of service attacks, and malicious file distribution.
 
-Please also report vulnerabilities in third-party applications.
+You are welcome to also report vulnerabilities in third-party applications that we may not be able to fix directly.
 
 ### Responsible Disclosure ###
 
-- Only test for vulnerabilities on your own PhotoPrism instance
-- Confirm the vulnerability applies to a supported version
-- Share vulnerability details with us first
-- Wait for a fix before publicly sharing details
+1. Confirm that the vulnerability applies to a current version
+2. First share the vulnerability details with us
+3. Wait for resolution before sharing details
+
+**Thank you!** 👍

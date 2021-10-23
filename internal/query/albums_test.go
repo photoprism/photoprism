@@ -57,6 +57,13 @@ func TestAlbumCoverByUID(t *testing.T) {
 		assert.Error(t, err, "record not found")
 		t.Log(file)
 	})
+
+	t.Run("existing uid empty month album", func(t *testing.T) {
+		file, err := AlbumCoverByUID("at1lxuqipogaabj9")
+
+		assert.EqualError(t, err, "no cover found", err)
+		assert.Equal(t, "", file.FileName)
+	})
 }
 
 func TestUpdateAlbumDates(t *testing.T) {

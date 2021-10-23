@@ -14,9 +14,9 @@ to a folder of your choice, change it as needed, and run "docker-compose up":
   wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
   sudo docker-compose up -d
 
-Please always change PHOTOPRISM_ADMIN_PASSWORD so that PhotoPrism starts with a secure initial password.
-Never use "photoprism", or other easy-to-guess passwords, on a public server.
-A minimum length of 4 characters is required.
+Always change PHOTOPRISM_ADMIN_PASSWORD so that the app starts with a secure initial password.
+Never use easy-to-guess passwords or default values like insecure on publicly accessible servers.
+There is no default in case no password was provided. A minimum length of 4 characters is required.
 
 For more details, see:
   - https://docs.photoprism.org/getting-started/docker-compose/
@@ -50,8 +50,10 @@ Use the --help flag to see a detailed command info like
 | Re-index | docker-compose exec photoprism photoprism index -f
 | Import   | docker-compose exec photoprism photoprism import
 
-Note: "photoprism index -f" will re-index all originals, including already indexed and unchanged files.
-This may be necessary after upgrading, especially to new major versions.
+For more examples, see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+
+NOTE: "photoprism index -f" will re-index all originals, including already indexed and unchanged files.
+      This may be necessary after upgrading, especially to new major versions.
 
 ## System Requirements ##
 

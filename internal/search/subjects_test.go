@@ -64,13 +64,13 @@ func TestSubjects(t *testing.T) {
 		assert.Equal(t, 0, len(results))
 	})
 	t.Run("search file count >2", func(t *testing.T) {
-		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Files: 2})
+		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Files: 2, Excluded: "no"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
 		assert.LessOrEqual(t, 1, len(results))
 	})
 	t.Run("search for alias", func(t *testing.T) {
-		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Query: "Powell"})
+		results, err := Subjects(form.SubjectSearch{Type: entity.SubjPerson, Query: "Powell", Favorite: "no", Private: "no"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
 		assert.Equal(t, "Dangling Subject", results[0].SubjName)
