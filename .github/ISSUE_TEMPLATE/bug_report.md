@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: Bug Report
 about: Create a report to help us improve
 title: 'Bug: Short Issue Description'
 labels: bug
@@ -7,26 +7,47 @@ assignees: ''
 
 ---
 
-## Getting Support ##
+PLEASE USE GITHUB ISSUES ONLY TO REPORT CLEARLY IDENTIFIED BUGS,
+NOT FOR SUPPORT REQUESTS - THANK YOU!
 
-Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs and impediments to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.org/funding/) receive direct [technical support](https://photoprism.app/contact) via email.
+Use GitHub Discussions if you need assistance and for general questions:  
+https://github.com/photoprism/photoprism/discussions
 
-**What bug did you find?**
+Sponsors receive direct technical support via email:
+https://photoprism.app/contact
+
+**What does not work as expected?**
+
 A clear and concise description of what the bug is.
 
 **How can we reproduce it?**
+
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
 **What behavior do you expect?**
+
 A clear and concise description of what you expected to happen.
 
-**Do you have any screenshots?**
-If applicable, add screenshots to help explain your problem.
+**Can you provide us with example files for testing or screenshots?**
 
-**What PhotoPrism version you are using?**
+Please add example files or screenshots that help to reproduce your problem.
+You may also send files via email or share a download link:
+https://photoprism.app/contact
 
-**Please also include details about your Web browser, operating system, installed memory, and processor type when you are reporting a performance problem or frontend issue.**
+**What version you are using?**
+
+Your app version / build number can be found in *Settings* when you scroll to the bottom.
+
+**Any other helpful information?**
+
+If you are reporting a UI or performance issue, please always provide details about your...
+
+- Web browsers
+- operating systems
+- installed memory
+- and processors
