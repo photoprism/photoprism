@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-PLEASE USE GITHUB ISSUES ONLY TO REPORT CLEARLY IDENTIFIED BUGS - THANK YOU!
+PLEASE USE GITHUB ISSUES ONLY TO REPORT CLEARLY IDENTIFIED BUGS
 
 Use GitHub Discussions or our Community Chat if you need assistance and for general questions:
 
@@ -17,6 +17,8 @@ Use GitHub Discussions or our Community Chat if you need assistance and for gene
 Sponsors receive direct technical support via email:
 
 - https://photoprism.app/contact
+
+THANK YOU! :)
 
 **What does not work as expected?**
 
