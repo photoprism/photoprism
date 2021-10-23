@@ -106,9 +106,6 @@ services:
 
   # RECOMMENDED: MariaDB Server, a MySQL-compatible Database
   # see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
-  #
-  # NOTE: Owners of ARMv7-based devices have to revert to lscr.io/linuxserver/mariadb:latest if they
-  # want to use MariaDB. The official image is available for AMD64 and ARM64 only.
   mariadb:
     restart: unless-stopped
     image: lscr.io/linuxserver/mariadb:latest
