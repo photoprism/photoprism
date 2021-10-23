@@ -60,7 +60,7 @@ func BasicAuth() gin.HandlerFunc {
 		user := entity.FindUserByName(username)
 
 		if user != nil {
-			invalid = user.InvalidPassword(password)
+			invalid = user.InvalidPassword(password) || !user.Admin()
 		}
 
 		if user == nil || invalid {
