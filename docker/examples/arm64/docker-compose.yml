@@ -12,9 +12,6 @@ version: '3.5'
 # Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
-# e.g. when running PhotoPrism on a public server outside your home network.
-#
 # DOCKER COMPOSE COMMAND REFERENCE
 # see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 # --------------------------------------------------------------------------------------
