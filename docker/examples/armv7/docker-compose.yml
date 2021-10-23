@@ -30,7 +30,7 @@ version: '3.5'
 # docker-compose exec photoprism photoprism faces index
 #
 # NOTE: All commands may have to be prefixed with "sudo" when not running as root.
-#       This will change the home directory "~" to "/root" in your configuration.
+#       This will point the home directory placeholder ~ to /root in volume mounts.
 
 services:
   photoprism:
