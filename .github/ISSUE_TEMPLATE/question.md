@@ -1,13 +1,11 @@
 ---
-name: Support Request
-about: You have general questions or need assistance
-title: NO SUPPORT REQUESTS PLEASE
+name: Question
+about: You have a general question or need assistance
+title: Please don't use GitHub Issues! 🙃
 labels: question
 assignees: ''
 
 ---
-
-Please don't create GitHub Issues to get support! 🙃
 
 You are welcome to use our Community Chat...
 
