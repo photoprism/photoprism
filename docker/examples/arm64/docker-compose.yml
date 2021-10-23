@@ -145,7 +145,7 @@ services:
   #    MYSQL_USER: photoprism
   #    MYSQL_PASSWORD: insecure
 
-  # OPTIONAL: Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available.
+  # OPTIONAL: Upgrades services automatically, whenever there is a new Docker image available.
   # see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:

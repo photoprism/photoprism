@@ -119,6 +119,7 @@ services:
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
 
+  # REQUIRED: Ofelia Job Runner, see https://github.com/mcuadros/ofelia
   ofelia:
     restart: unless-stopped
     image: mcuadros/ofelia:latest
@@ -127,7 +128,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./jobs.ini:/etc/ofelia/config.ini"
 
-  # OPTIONAL: Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available.
+  # OPTIONAL: Upgrades services automatically, whenever there is a new Docker image available.
   # see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:
