@@ -101,8 +101,7 @@ services:
       # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
-  # RECOMMENDED: MariaDB Server, a MySQL-compatible Database
-  # see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  # RECOMMENDED: MariaDB Server, see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
     image: mariadb:10.6
@@ -128,8 +127,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./jobs.ini:/etc/ofelia/config.ini"
 
-  # OPTIONAL: Upgrades services automatically, whenever there is a new Docker image available.
-  # see https://docs.photoprism.org/getting-started/updates/#watchtower
+  # OPTIONAL: Upgrades services automatically, see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped

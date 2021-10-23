@@ -91,8 +91,7 @@ services:
       # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
-  # OPTIONAL: Upgrades services automatically, whenever there is a new Docker image available.
-  # see https://docs.photoprism.org/getting-started/updates/#watchtower
+  # OPTIONAL: Upgrades services automatically, see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped

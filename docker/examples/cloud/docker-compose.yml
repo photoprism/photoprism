@@ -164,7 +164,7 @@ services:
       - "./storage:/photoprism/storage"
       - "./backup:/var/lib/photoprism"
 
-  # REQUIRED: Traefik Reverse Proxy
+  # REQUIRED: Traefik Reverse Proxy, see https://docs.photoprism.org/getting-started/proxies/traefik/
   traefik:
     restart: always
     image: traefik:v2.4
@@ -181,8 +181,7 @@ services:
       - "./traefik.yaml:/etc/traefik/traefik.yaml"
       - "./certs/:/certs/"
 
-  # RECOMMENDED: MariaDB Server, a MySQL-compatible Database
-  # see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  # RECOMMENDED: MariaDB Server, see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: always
     image: mariadb:10.6
@@ -208,8 +207,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./jobs.ini:/etc/ofelia/config.ini"
 
-  # OPTIONAL: Upgrades services automatically, whenever there is a new Docker image available.
-  # see https://docs.photoprism.org/getting-started/updates/#watchtower
+  # OPTIONAL: Upgrades services automatically, see https://docs.photoprism.org/getting-started/updates/#watchtower
   watchtower:
     restart: always
     image: containrrr/watchtower
