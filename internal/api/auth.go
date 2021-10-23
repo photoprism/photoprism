@@ -18,11 +18,16 @@ func AuthEndpoints(router *gin.RouterGroup) {
 		log.Debugf("no oidc provider configured. skip mounting endpoints")
 		return
 	}
+	_, err := service.Oidc()
+	if err != nil {
+		log.Error(err)
+	}
 
 	router.GET("/auth/external", func(c *gin.Context) {
-		openIdConnect := service.Oidc()
-		if openIdConnect == nil {
-			AbortFeatureDisabled(c)
+		openIdConnect, _ := service.Oidc()
+		if err := openIdConnect.IsAvailable(); err != nil {
+			c.Error(err)
+			callbackError(c, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -32,15 +37,12 @@ func AuthEndpoints(router *gin.RouterGroup) {
 	})
 
 	router.GET(oidc.RedirectPath, func(c *gin.Context) {
-		openIdConnect := service.Oidc()
-		if openIdConnect == nil {
-			AbortFeatureDisabled(c)
-			return
-		}
+		openIdConnect, _ := service.Oidc()
 
 		userInfo, err := openIdConnect.CodeExchangeUserInfo(c)
 		if err != nil {
-			log.Errorf("%s", err)
+			c.Error(err)
+			callbackError(c, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		var uname string
@@ -61,7 +63,6 @@ func AuthEndpoints(router *gin.RouterGroup) {
 			UserName:     uname,
 			PrimaryEmail: userInfo.GetEmail(),
 			ExternalID:   userInfo.GetSubject(),
-			RoleAdmin:    true,
 		}
 
 		log.Debugf("USER: %s %s %s %s\n", u.FullName, u.UserName, u.PrimaryEmail, u.ExternalID)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
 )
@@ -14,9 +15,12 @@ func Client(debug bool) *http.Client {
 	if debug {
 		return &http.Client{
 			Transport: LoggingRoundTripper{http.DefaultTransport},
+			Timeout:   time.Second * 10,
 		}
 	}
-	return http.DefaultClient
+	cl := http.DefaultClient
+	cl.Timeout = time.Second * 10
+	return cl
 }
 
 // This type implements the http.RoundTripper interface

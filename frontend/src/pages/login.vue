@@ -67,13 +67,12 @@
 </template>
 
 <script>
+import Notify from "../common/notify";
+
 export default {
   name: 'Login',
   data() {
     const c = this.$config.values;
-    console.log(c)
-    console.log(c.oidc)
-    console.log(!!(c.oidc ? "OpenID Connect" : null))
     return {
       loading: false,
       showPassword: false,
@@ -100,15 +99,13 @@ export default {
       ).catch(() => this.loading = false);
     },
     loginExternal() {
-      this.loading = true;
-      let popup = window.open('api/v1/auth/external', "test");
+      let popup = window.open('api/v1/auth/external', "external-login");
       const onstorage = window.onstorage;
       const cleanup = () => {
         popup.close();
         window.localStorage.removeItem('config');
         window.localStorage.removeItem('auth_error');
         window.onstorage = onstorage;
-        this.loading = false;
       };
 
       window.onstorage = () => {
@@ -116,26 +113,11 @@ export default {
         const data = window.localStorage.getItem('data');
         const config = window.localStorage.getItem('config');
         const error = window.localStorage.getItem('auth_error');
-        // const linkUser = window.localStorage.getItem('link_user');
-        if (error === "authentication failed") {
-          window.localStorage.removeItem('config');
-          window.localStorage.removeItem('auth_error');
-          window.onstorage = onstorage;
-          return;
-        }
-        // if (linkUser !== null) {
-        //   if (this.$session.isUser()) {
-        //     this.localStorage.removeItem('link_user');
-        //     this.$router.push(this.nextUrl);
-        //   } else {
-        //     this.$router.push('/link_user');
-        //   }
-        //   cleanup();
-        //   return;
-        // }
+
         if (error !== null) {
-          // TODO: handle Error
+          console.log(error);
           cleanup();
+          Notify.error(`${error}`);
           return;
         }
         if (sid === null || data === null || config === null) {
@@ -150,6 +132,6 @@ export default {
         cleanup();
       };
     },
-  }
+  },
 };
 </script>

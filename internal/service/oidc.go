@@ -4,19 +4,20 @@ import (
 	"github.com/photoprism/photoprism/internal/oidc"
 )
 
-func initOidc() {
-	services.Oidc = oidc.NewClient(
+func initOidc() (err error) {
+	services.Oidc, err = oidc.NewClient(
 		Config().OidcIssuerUrl(),
 		Config().OidcClientId(),
 		Config().OidcClientSecret(),
 		Config().SiteUrl(),
 		Config().Debug(),
 	)
+	return
 }
 
-func Oidc() *oidc.Client {
+func Oidc() (c *oidc.Client, err error) {
 	if services.Oidc == nil {
-		initOidc()
+		err = initOidc()
 	}
-	return services.Oidc
+	return services.Oidc, err
 }

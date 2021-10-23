@@ -24,14 +24,16 @@ var log = event.Log
 
 type Client struct {
 	rp.RelyingParty
+	debug bool
 }
 
-func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool) *Client {
+func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool) (*Client, error) {
 	log.Debugf("Provider Params: %s %s %s %s", iss.String(), clientId, clientSecret, siteUrl)
 
 	u, err := url.Parse(siteUrl)
 	if err != nil {
 		log.Error(err)
+		return nil, err
 	}
 	u.Path = path.Join(u.Path, "/api/v1/", RedirectPath)
 	log.Debugf(u.String())
@@ -40,7 +42,7 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 	encryptKey, err := rnd.RandomBytes(16)
 	if err != nil {
 		log.Errorf("oidc intialization: %q", err)
-		return nil
+		return nil, err
 	}
 
 	cookieHandler := utils.NewCookieHandler(hashKey, encryptKey, utils.WithUnsecure())
@@ -57,7 +59,7 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 	discover, err := client.Discover(iss.String(), httpClient)
 	if err != nil {
 		log.Errorf("oidc intialization: %q", err)
-		return nil
+		return nil, err
 	}
 	for _, v := range discover.CodeChallengeMethodsSupported {
 		if v == oidc.CodeChallengeMethodS256 {
@@ -70,13 +72,14 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 	provider, err := rp.NewRelyingPartyOIDC(iss.String(), clientId, clientSecret, u.String(), scopes, options...)
 	if err != nil {
 		log.Errorf("oidc intialization: %s", err)
-		return nil
+		return nil, err
 	}
 	log.Debugf("PKCE enabled: %v", provider.IsPKCE())
 
 	return &Client{
 		provider,
-	}
+		debug,
+	}, nil
 }
 
 func state() string {
@@ -86,17 +89,6 @@ func state() string {
 func (c *Client) AuthUrlHandler() http.HandlerFunc {
 	return rp.AuthURLHandler(state, c)
 }
-
-//var tempstate string
-//
-//func (c *Client) AuthUrl() string {
-//	tempstate = state()
-//	return rp.AuthURL(tempstate, c)
-//}
-
-//func (c *Client) Available() bool {
-//	return c.RelyingParty != nil
-//}
 
 func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	var userinfo oidc.UserInfo
@@ -123,10 +115,20 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	handle(ctx.Writer, ctx.Request)
 
 	log.Debugf("current request state: %v", ctx.Writer.Status())
-	//log.Debugf("RESPONSE BODY: %v", ctx.Wri)
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
 		return nil, errors.New("oidc: couldn't exchange auth code and thus not retrieve external user info")
 	}
 
 	return userinfo, nil
+}
+
+func (c *Client) IsAvailable() error {
+	if c == nil {
+		return errors.New("oidc: not initialized")
+	}
+	_, err := client.Discover(c.Issuer(), httpclient.Client(c.debug))
+	if err != nil {
+		return err
+	}
+	return nil
 }
