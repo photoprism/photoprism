@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-ONLY CREATE AN ISSUE AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA EXISTS:
+ONLY CREATE AN ISSUE AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA EXISTS
 
 Roadmap: https://github.com/photoprism/photoprism/projects/5
 
