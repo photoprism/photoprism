@@ -2,8 +2,9 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Raspberry Pi and other ARM-based devices)
 #
-# ATTENTION: It's important that you boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1"
-# in config.txt to use our ARM64 image.
+# IMPORTANT: When installing PhotoPrism on a public server outside your home network, please
+#            always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
+#            Your files and passwords will be transmitted in clear text otherwise.
 #
 # Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
@@ -11,9 +12,9 @@ version: '3.5'
 # Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
 # e.g. when running PhotoPrism on a public server outside your home network.
 #
-# -------------------------------------------------------------------
 # DOCKER COMPOSE COMMAND REFERENCE
-# -------------------------------------------------------------------
+# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+# --------------------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
 # Update   | docker-compose pull
@@ -30,17 +31,18 @@ version: '3.5'
 #
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
-# -------------------------------------------------------------------
-# Note: All commands may have to be prefixed with "sudo" when not running as root.
+#
+# NOTE: All commands may have to be prefixed with "sudo" when not running as root.
 #       This will change the home directory "~" to "/root" in your configuration.
 
 services:
   photoprism:
-    # Our stable version and development preview now come as a single multi-arch image for AMD64, ARM64, and ARMv7.
-    # Use photoprism/photoprism:preview instead for testing preview builds:
+    # ATTENTION: photoprism/photoprism-arm64 has been replaced by a single multi-arch image for AMD64,
+    # ARM64, and ARMv7. Use photoprism/photoprism:preview for testing preview builds or
+    # photoprism/photoprism:latest for the stable release.
     image: photoprism/photoprism:latest
     # Owners of ARMv7-based devices may have to explicitly specify the image architecture:
-    # platform: "linux/arm/v7"
+    # platform: "linux/arm"
     depends_on:
       - mariadb
     # Only enable automatic restarts once your installation is properly
@@ -105,9 +107,6 @@ services:
       # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
-  # ATTENTION: Owners of ARMv7-based devices have to revert to an alternative image if they want to use MariaDB.
-  # The official image is available for AMD64 and ARM64 only. Pay close attention to changed directory and
-  # environment variable names.
   mariadb:
     restart: unless-stopped
     image: arm64v8/mariadb:10.6
@@ -123,14 +122,33 @@ services:
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
 
-# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
-#
-#  watchtower:
-#    restart: unless-stopped
-#    image: containrrr/watchtower
-#    environment:
-#      WATCHTOWER_CLEANUP: "true"
-#      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
-#    volumes:
-#      - "/var/run/docker.sock:/var/run/docker.sock"
-#      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
+  # ATTENTION: Owners of ARMv7-based devices have to revert to an alternative image if they want to use MariaDB.
+  # The official image is available for AMD64 and ARM64 only. Pay close attention to changed directory and
+  # environment variable names.
+  #
+  # mariadb:
+  #  restart: unless-stopped
+  #  image: lscr.io/linuxserver/mariadb:latest
+  #  security_opt:
+  #    - seccomp:unconfined
+  #    - apparmor:unconfined
+  #  command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+  #  volumes:
+  #    - "./mariadb:/config" # Never remove
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: insecure
+  #    MYSQL_DATABASE: photoprism
+  #    MYSQL_USER: photoprism
+  #    MYSQL_PASSWORD: insecure
+
+  # OPTIONAL: Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available.
+  #
+  # watchtower:
+  #   restart: unless-stopped
+  #   image: containrrr/watchtower
+  #   environment:
+  #     WATCHTOWER_CLEANUP: "true"
+  #     WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account

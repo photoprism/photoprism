@@ -5,12 +5,13 @@ version: '3.5'
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
-# e.g. when running PhotoPrism on a public server outside your home network.
+# IMPORTANT: When installing PhotoPrism on a public server outside your home network, please
+#            always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
+#            Your files and passwords will be transmitted in clear text otherwise.
 #
-# ------------------------------------------------------------------
 # DOCKER COMPOSE COMMAND REFERENCE
-# ------------------------------------------------------------------
+# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+# --------------------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
 # Update   | docker-compose pull
@@ -27,11 +28,10 @@ version: '3.5'
 #
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
-# -------------------------------------------------------------------
 
 services:
   photoprism:
-    # Use photoprism/photoprism:preview instead for testing preview builds:
+    # Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
     depends_on:
       - mariadb
@@ -100,17 +100,17 @@ services:
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
 
-# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
-#
-#  watchtower:
-#    restart: unless-stopped
-#    image: containrrr/watchtower
-#    environment:
-#      WATCHTOWER_CLEANUP: "true"
-#      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
-#    volumes:
-#      - "/var/run/docker.sock:/var/run/docker.sock"
-#      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
+  # OPTIONAL: Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available.
+  #
+  # watchtower:
+  #   restart: unless-stopped
+  #   image: containrrr/watchtower
+  #   environment:
+  #     WATCHTOWER_CLEANUP: "true"
+  #     WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
 
 volumes:
   mariadb_data:
