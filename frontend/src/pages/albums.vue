@@ -142,7 +142,7 @@
                       {{ album.Title | truncate(80) }}
                     </button>
                     <button v-else class="action-title-edit" :data-uid="album.UID"
-                    @click.stop.prevent="edit(album)">
+                    @click.stop.prevent="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
                       {{ album.getDateString() | capitalize }}
                     </button>
                   </h3>
@@ -152,13 +152,13 @@
               <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none;"
                            @click.stop.prevent="">
                 <div v-if="album.Description" class="caption mb-2" :title="$gettext('Description')">
-                  <button @click.exact="edit(album)">
+                  <button @click.exact="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
                     {{ album.Description | truncate(100) }}
                   </button>
                 </div>
 
                 <div v-else-if="album.Type === 'album'" class="caption mb-2">
-                  <button v-if="album.PhotoCount === 1" @click.exact="edit(album)">
+                  <button v-if="album.PhotoCount === 1" @click.exact="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
                     <translate>Contains one picture.</translate>
                   </button>
                   <button v-else-if="album.PhotoCount > 0">
@@ -169,13 +169,13 @@
                   </button>
                 </div>
                 <div v-else-if="album.Type === 'folder'" class="caption mb-2">
-                  <button @click.exact="edit(album)">
+                  <button @click.exact="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
                     /{{ album.Path | truncate(100) }}
                   </button>
                 </div>
 
                 <div v-if="album.Location" class="caption mb-2 d-block">
-                  <button @click.exact="edit(album)">
+                  <button @click.exact="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
                     <v-icon size="14">location_on</v-icon>
                     {{ album.Location }}
                   </button>
