@@ -328,28 +328,27 @@ export default [
     component: People,
     meta: { title: $gettext("People"), auth: true, background: "application-light" },
     beforeEnter: (to, from, next) => {
-      const nextGuarded = () => {
-        if (
-          hasPermission(
-            aclResources.ResourceSubjects,
-            aclActions.ActionRead,
-            aclActions.ActionSearch
-          )
-        ) {
-          next();
-        } else {
-          next({ name: "home" });
-        }
-      };
+      if (
+        !hasPermission(
+          aclResources.ResourceSubjects,
+          aclActions.ActionRead,
+          aclActions.ActionSearch
+        )
+      ) {
+        next({ name: "home" });
+      }
       if (!config || !from || !from.name || from.name.startsWith("people")) {
-        nextGuarded();
+        next();
       } else {
         config.load().finally(() => {
           // Open new faces tab when there are no people.
-          if (config.values.count.people === 0) {
+          if (
+            config.values.count.people === 0 &&
+            hasPermission(aclResources.ResourceSubjects, aclActions.ActionUpdate)
+          ) {
             next({ name: "people_faces" });
           } else {
-            nextGuarded();
+            next();
           }
         });
       }
