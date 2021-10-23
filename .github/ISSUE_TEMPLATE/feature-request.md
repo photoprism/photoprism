@@ -7,8 +7,10 @@ assignees: ''
 
 ---
 
-PLEASE ONLY SUBMIT A NEW IDEA AFTER YOU HAVE VERIFIED THAT 
-NO SIMILAR IDEA OR TODO ALREADY EXISTS - THANK YOU!
+PLEASE ONLY SUBMIT A NEW IDEA AFTER YOU HAVE VERIFIED THAT NO SIMILAR ISSUE ALREADY EXISTS - THANK YOU!
+
+- Roadmap: https://github.com/photoprism/photoprism/projects/5
+- Open Issues: https://github.com/photoprism/photoprism/issues
 
 **Is your feature request related to a problem? Please describe.**
 
