@@ -2,15 +2,15 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Raspberry Pi and other ARM-based devices)
 #
+# Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
+# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
+#
 # ATTENTION: You have to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1"
 #            in config.txt to use our ARM64 image.
 #
 # IMPORTANT: When installing PhotoPrism on a public server outside your home network, please
 #            always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
 #            Your files and passwords will be transmitted in clear text otherwise.
-#
-# Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
-# Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
 # DOCKER COMPOSE COMMAND REFERENCE
 # see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
