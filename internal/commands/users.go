@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
@@ -48,6 +49,10 @@ var UsersCommand = cli.Command{
 					Name:  "email, m",
 					Usage: "sets the users email",
 				},
+				cli.BoolFlag{
+					Name:  "admin, a",
+					Usage: "user will be created with full admin permissions",
+				},
 			},
 		},
 		{
@@ -66,6 +71,10 @@ var UsersCommand = cli.Command{
 				cli.StringFlag{
 					Name:  "email, m",
 					Usage: "sets the users email",
+				},
+				cli.StringFlag{
+					Name:  "admin, a",
+					Usage: "pass true/false to modify admin permissions",
 				},
 			},
 		},
@@ -86,6 +95,7 @@ func usersAddAction(ctx *cli.Context) error {
 			FullName: strings.TrimSpace(ctx.String("fullname")),
 			Email:    strings.TrimSpace(ctx.String("email")),
 			Password: strings.TrimSpace(ctx.String("password")),
+			Admin:    ctx.Bool("admin"),
 		}
 
 		interactive := true
@@ -208,11 +218,10 @@ func usersListAction(ctx *cli.Context) error {
 		users := query.RegisteredUsers()
 		log.Infof("found %s", english.Plural(len(users), "user", "users"))
 
-		fmt.Printf("%-4s %-16s %-16s %-16s\n", "ID", "LOGIN", "NAME", "EMAIL")
+		fmt.Printf("%-4s %-16s %-16s %-32s %-8s %-8s\n", "ID", "LOGIN", "NAME", "EMAIL", "ADMIN", "EXTERNAL")
 
 		for _, user := range users {
-			fmt.Printf("%-4d %-16s %-16s %-16s", user.ID, user.UserName, user.FullName, user.PrimaryEmail)
-			fmt.Printf("\n")
+			fmt.Printf("%-4d %-16s %-16s %-32s %-8v %-8v\n", user.ID, user.UserName, user.FullName, user.PrimaryEmail, user.Admin(), user.ExternalID != "")
 		}
 
 		return nil
@@ -236,6 +245,11 @@ func usersUpdateAction(ctx *cli.Context) error {
 			Email:    strings.TrimSpace(ctx.String("email")),
 			Password: strings.TrimSpace(ctx.String("password")),
 		}
+		var err error
+		uc.Admin, err = strconv.ParseBool(strings.TrimSpace(ctx.String("admin")))
+		if err != nil {
+			return err
+		}
 
 		if ctx.IsSet("password") {
 			err := u.SetPassword(uc.Password)
@@ -251,6 +265,10 @@ func usersUpdateAction(ctx *cli.Context) error {
 
 		if ctx.IsSet("email") && len(uc.Email) > 0 {
 			u.PrimaryEmail = uc.Email
+		}
+
+		if ctx.IsSet("admin") {
+			u.RoleAdmin = uc.Admin
 		}
 
 		if err := u.Validate(); err != nil {
