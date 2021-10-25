@@ -72,10 +72,10 @@ version: '3.5'
 #  Reindex  | docker-compose exec photoprism photoprism index -f
 #  Import   | docker-compose exec photoprism photoprism import
 #
-#  See https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface for more examples.
-#
 #  To search originals for faces without a complete rescan:
 #  docker-compose exec photoprism photoprism faces index
+#
+#  More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 #
 #  USING LET'S ENCRYPT HTTPS
 #  --------------------------------------------------------------------------
@@ -94,10 +94,13 @@ version: '3.5'
 #  You should now be able to access your instance without security warnings.
 
 services:
-  # REQUIRED: PhotoPrism Application Server
+  ## App Server (required)
   photoprism:
+    ## Only enable automatic restarts once your installation is properly
+    ## configured as it otherwise may get stuck in a restart loop,
+    ## see https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     restart: always
-    # Use photoprism/photoprism:preview for testing preview builds:
+    ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
     container_name: photoprism
     depends_on:
@@ -105,27 +108,27 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    # Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
+    ## Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
     user: "1000:1000"
-    # Don't expose port when running behind Traefik reverse proxy!
+    ## Don't expose port when running behind Traefik reverse proxy!
     # ports:
-    #  - "2342:2342" # [server]:[container]
+    #  - "2342:2342" # HTTP port (host:container)
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.routers.photoprism.tls=true"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
-      # !! REMOVE default route if your server has a public domain name !!
+      ## !! REMOVE default route if your server has a public domain name !!
       - "traefik.http.routers.photoprism.rule=PathPrefix(`/`)"
-      # !! UNCOMMENT and CHANGE to set the public domain name !!
+      ## !! UNCOMMENT and CHANGE to set the public domain name !!
       # - "traefik.http.routers.photoprism.rule=Host(`photos.yourdomain.com`)"
-      # !! UNCOMMENT to enable Let's Encrypt HTTPS !!
+      ## !! UNCOMMENT to enable Let's Encrypt HTTPS !!
       # - "traefik.http.routers.photoprism.tls.certresolver=myresolver"
-      # !! REMOVE both for Let's Encrypt HTTPS with default HTTP challenge (DNS challenge supports wildcards) !!
+      ## !! REMOVE both for Let's Encrypt HTTPS with default HTTP challenge (DNS challenge supports wildcards) !!
       - "traefik.http.routers.photoprism.tls.domains[0].main=example.com"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.example.com"
     environment:
-      # !! CHANGE site url if your server has a public domain name e.g. "https://photos.yourdomain.com/" !!
+      ## !! CHANGE site url if your server has a public domain name e.g. "https://photos.yourdomain.com/" !!
       PHOTOPRISM_SITE_URL: "https://_public_ip_/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
@@ -156,15 +159,16 @@ services:
       HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
-      # The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
+      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
       - "./originals:/photoprism/originals"
-      # You may mount an *import* folder from which files can be transferred to *originals* (optional):
+      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       - "./import:/photoprism/import"
-      # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
+      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
       - "./backup:/var/lib/photoprism"
 
-  # REQUIRED: Traefik Reverse Proxy, see https://docs.photoprism.org/getting-started/proxies/traefik/
+  ## Traefik Reverse Proxy (required)
+  ## see https://docs.photoprism.org/getting-started/proxies/traefik/
   traefik:
     restart: always
     image: traefik:v2.4
@@ -181,7 +185,8 @@ services:
       - "./traefik.yaml:/etc/traefik/traefik.yaml"
       - "./certs/:/certs/"
 
-  # RECOMMENDED: MariaDB Server, see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  ## Database Server (recommended)
+  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: always
     image: mariadb:10.6
@@ -198,7 +203,8 @@ services:
       MYSQL_USER: "photoprism"
       MYSQL_PASSWORD: "_admin_password_"
 
-  # RECOMMENDED: Ofelia Job Runner, see https://github.com/mcuadros/ofelia
+  ## Ofelia Job Runner (recommended)
+  ## see https://github.com/mcuadros/ofelia
   ofelia:
     restart: always
     image: mcuadros/ofelia:latest
@@ -207,7 +213,8 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./jobs.ini:/etc/ofelia/config.ini"
 
-  # OPTIONAL: Upgrades services automatically, see https://docs.photoprism.org/getting-started/updates/#watchtower
+  ## Watchtower upgrades services automatically (optional)
+  ## see https://docs.photoprism.org/getting-started/updates/#watchtower
   watchtower:
     restart: always
     image: containrrr/watchtower

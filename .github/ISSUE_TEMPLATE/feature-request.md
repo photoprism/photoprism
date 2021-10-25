@@ -7,12 +7,13 @@ assignees: ''
 
 ---
 
-ONLY SUBMIT A NEW IDEA AFTER YOU HAVE VERIFIED THAT NO SIMILAR ISSUE EXISTS:
+ONLY CREATE AN ISSUE AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA EXISTS
 
-- Roadmap: https://github.com/photoprism/photoprism/projects/5
-- Open Issues: https://github.com/photoprism/photoprism/issues
+Roadmap: https://github.com/photoprism/photoprism/projects/5
 
-THANK YOU! :)
+Open Issues: https://github.com/photoprism/photoprism/issues
+
+THANK YOU! 🙃
 
 **Is your feature request related to a problem? Please describe.**
 

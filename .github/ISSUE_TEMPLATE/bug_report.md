@@ -7,22 +7,13 @@ assignees: ''
 
 ---
 
-PLEASE USE GITHUB ISSUES ONLY TO REPORT CLEARLY IDENTIFIED BUGS
-
-Use GitHub Discussions or our Community Chat if you need assistance and for general questions:
-
-- https://github.com/photoprism/photoprism/discussions
-- https://gitter.im/browseyourlife/community
-
-Sponsors receive direct technical support via email:
-
-- https://photoprism.app/contact
-
-THANK YOU! :)
-
 **What does not work as expected?**
 
 A clear and concise description of what the bug is.
+
+You are welcome to use our Community Chat and GitHub Discussions for help and general questions.
+Sponsors receive direct technical support via email: https://photoprism.app/contact
+Please don't create GitHub Issues to get support! 🙃
 
 **How can we reproduce it?**
 
