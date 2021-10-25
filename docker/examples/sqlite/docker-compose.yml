@@ -28,7 +28,7 @@ version: '3.5'
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
 #
-# Note: All commands may have to be prefixed with "sudo" when not running as root.
+# All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory placeholder ~ to /root in volume mounts.
 #
 # More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
