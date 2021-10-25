@@ -122,7 +122,8 @@ services:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
 
-## Named volume for the Database Server, never remove unless you mount a regular folder instead (slower)
+## Create named volumes, advanced users may remove this if they mount a regular host folder
+## for the database or use SQLite instead (never remove otherwise)
 volumes:
   mariadb_data:
     driver: local
