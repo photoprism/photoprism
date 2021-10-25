@@ -53,7 +53,7 @@ services:
     ## Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
     # user: "1000:1000"
     ports:
-      - "2342:2342" # Exposed HTTP port (host:container)
+      - "2342:2342" # HTTP port (host:container)
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public Server URL incl http:// or https:// and /path, :port is optional
