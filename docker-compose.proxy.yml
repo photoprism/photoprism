@@ -1,7 +1,6 @@
 version: '3.5'
 
-# HTTP / HTTPS Reverse Proxy Servers (for developers only)
-
+## HTTP / HTTPS Reverse Proxy Servers (for developers only)
 services:
   ## Caddy 2
   caddy:
@@ -15,6 +14,7 @@ services:
       - ./docker/development/caddy:/data/caddy/pki/authorities/local
       - ./docker/development/caddy/Caddyfile:/etc/caddy/Caddyfile
 
+## Join shared network
 networks:
   default:
     external:

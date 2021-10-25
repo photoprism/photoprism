@@ -1,7 +1,6 @@
 version: '3.5'
 
-# Default environment with app server, database, and dummy services (for developers only)
-
+## Development environment with app server, database, and dummy services (for developers only)
 services:
   ## App Server
   photoprism:
@@ -89,7 +88,7 @@ services:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
 
-  ## Database Server
+  ## MariaDB Database Server
   mariadb:
     image: mariadb:10.6
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -105,19 +104,23 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+  ## Dummy WebDAV Server (for testing)
   dummy-webdav:
     image: photoprism/dummy-webdav:20211022
 
+  ## Dummy OpenID Connect Server (for testing)
   dummy-oidc:
     image: photoprism/dummy-oidc:20211022
     # Expose port 9998 on host
     # ports:
     #  - "9998:9998"
 
+## Create named volumes
 volumes:
   go-mod:
     driver: local
 
+## Create shared network
 networks:
   default:
     name: shared

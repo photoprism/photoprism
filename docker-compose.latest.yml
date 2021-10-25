@@ -1,9 +1,8 @@
 version: '3.5'
 
-# Stable Release (for developers only)
-
+## Stable Release (for testing only)
 services:
-  ## App Server (required)
+  ## App Server
   photoprism-latest:
     image: photoprism/photoprism:latest
     security_opt:
@@ -56,6 +55,7 @@ services:
       - "./storage/latest:/photoprism/storage"
       - "./storage/originals:/photoprism/originals"
 
+## Join shared network
 networks:
   default:
     external:

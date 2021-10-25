@@ -1,11 +1,10 @@
 version: '3.5'
 
-# For developers only! PostgreSQL is NOT supported yet as Gorm (the ORM library) needs to be
-# upgraded first. The current version does NOT support compatible general data types:
-# https://github.com/photoprism/photoprism/issues/47
-
+## For developers only! PostgreSQL is NOT supported yet as Gorm (the ORM library) needs to be
+## upgraded first. The current version does NOT support compatible general data types:
+## https://github.com/photoprism/photoprism/issues/47
 services:
-  ## App Server (required)
+  ## App Server
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -67,6 +66,7 @@ services:
       PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # Show TensorFlow log messages for development
 
+  ## PostgreSQL Database Server
   postgres:
     image: postgres:12-alpine
     ports:
@@ -76,15 +76,18 @@ services:
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
 
+  ## Dummy WebDAV Server (for testing)
   dummy-webdav:
     image: photoprism/dummy-webdav:20211022
 
+  ## Dummy OpenID Connect Server (for testing)
   dummy-oidc:
     image: photoprism/dummy-oidc:20211022
     # Expose port 9998 on host
     # ports:
     #  - "9998:9998"
 
+## Join shared network
 volumes:
   go-mod:
     driver: local

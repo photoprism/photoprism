@@ -1,9 +1,9 @@
 version: '3.5'
 
-# Legacy Databases Servers (for developers only)
-
+## Legacy Databases Servers (for developers only)
 services:
-  ## Affected by MDEV-25362: Incorrect name resolution for subqueries in ON expressions
+  ## MariaDB 10.5.5 Database Server
+  ## affected by MDEV-25362: Incorrect name resolution for subqueries in ON expressions
   ## see https://jira.mariadb.org/browse/MDEV-25362
   mariadb-10-5-5:
     image: mariadb:10.5.5
@@ -18,6 +18,7 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+  ## MariaDB 10.3 Database Server
   mariadb-10-3:
     image: mariadb:10.3
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -31,6 +32,7 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+  ## MariaDB 10.2 Database Server
   mariadb-10-2:
     image: mariadb:10.2
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -44,6 +46,7 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+  ## MariaDB 10.1 Database Server
   mariadb-10-1:
     image: mariadb:10.1
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -57,6 +60,7 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+  ## MySQL 8 Database Server
   mysql-8:
     image: mysql:8
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -70,6 +74,7 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+## Join shared network
 networks:
   default:
     external:
