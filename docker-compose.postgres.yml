@@ -1,6 +1,11 @@
 version: '3.5'
 
+# For developers only! PostgreSQL is NOT supported yet as Gorm (the ORM library) needs to be
+# upgraded first. The current version does NOT support compatible general data types:
+# https://github.com/photoprism/photoprism/issues/47
+
 services:
+  ## App Server (required)
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -11,8 +16,8 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343" # Acceptance Tests
+      - "2342:2342" # Default HTTP port (host:container)
+      - "2343:2343" # Acceptance Test HTTP port (host:container)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
@@ -65,7 +70,7 @@ services:
   postgres:
     image: postgres:12-alpine
     ports:
-      - "5432:5432" # Exposes port 5432 on host
+      - "5432:5432" # Database port (host:container)
     environment:
       POSTGRES_DB: photoprism
       POSTGRES_USER: photoprism

@@ -23,7 +23,7 @@ For more details, see:
   - https://docs.photoprism.org/getting-started/config-options/
 
 All commands may have to be prefixed with "sudo" when not running as root.
-Note that this will change the home directory "~" to "/root" in your configuration.
+This will change the home directory "~" to "/root" in your configuration.
 
 Our repository on Docker Hub:
   - https://hub.docker.com/r/photoprism/photoprism
@@ -50,10 +50,10 @@ Use the --help flag to see a detailed command info like
 | Re-index | docker-compose exec photoprism photoprism index -f
 | Import   | docker-compose exec photoprism photoprism import
 
-For more examples, see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
-NOTE: "photoprism index -f" will re-index all originals, including already indexed and unchanged files.
-      This may be necessary after upgrading, especially to new major versions.
+"photoprism index -f" will re-index all originals, including already indexed and unchanged files.
+This may be necessary after upgrading, especially to new major versions.
 
 ## System Requirements ##
 

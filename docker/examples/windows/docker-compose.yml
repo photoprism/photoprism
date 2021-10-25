@@ -2,15 +2,18 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Windows / AMD64)
 #
-# NOTE: You may need to disable the WSL 2 based engine in Docker Settings > General
-#       to mount drives other than C: on Windows.
+# Windows Pro users should disable the WSL 2 based engine in Docker Settings > General so that
+# they can mount drives other than C:. This will enable Hyper-V, which Microsoft doesn't offer
+# to its Windows Home customers. Docker Desktop uses dynamic memory allocation with WSL 2.
+# It's important to explicitly increase the Docker memory limit to 4 GB or more when using Hyper-V.
+# The default of 2 GB may reduce indexing performance and cause unexpected restarts.
 #
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# IMPORTANT: When installing PhotoPrism on a public server outside your home network, please
-#            always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
-#            Your files and passwords will be transmitted in clear text otherwise.
+# Attention: When installing PhotoPrism on a public server outside your home network,
+# always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
+# Your files and passwords will be transmitted in clear text otherwise.
 #
 # DOCKER COMPOSE COMMAND REFERENCE
 # --------------------------------------------------------------------------
@@ -28,30 +31,30 @@ version: '3.5'
 # Reindex  | docker-compose exec photoprism photoprism index -f
 # Import   | docker-compose exec photoprism photoprism import
 #
-# See https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface for more examples.
-#
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
+#
+# More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
 services:
-  # REQUIRED: PhotoPrism Application Server
+  ## App Server (required)
   photoprism:
-    # Use photoprism/photoprism:preview for testing preview builds:
+    ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
     depends_on:
       - mariadb
-    # Only enable automatic restarts once your installation is properly
-    # configured as it otherwise may get stuck in a restart loop:
-    # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## Only enable automatic restarts once your installation is properly
+    ## configured as it otherwise may get stuck in a restart loop,
+    ## see https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342" # [server]:[container]
+      - "2342:2342" # Exposed HTTP port (host:container)
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public Server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode, shows additional log messages
@@ -79,17 +82,18 @@ services:
       HOME: "/photoprism"
     working_dir: "/photoprism"
     volumes:
-      # The *originals* folder contains your original photo and video files (- "C:/Directory:/photoprism/originals"):
+      ## The *originals* folder contains your original photo and video files (- "C:/Directory:/photoprism/originals"):
       - "~/Pictures:/photoprism/originals/Pictures"
-      # Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
+      ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
       # - "D:/Pictures:/photoprism/originals/Pictures"
       # - "E:/Friends:/photoprism/originals/Friends"
-      # You may mount an *import* folder from which files can be transferred to *originals* (optional):
+      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "E:/:/photoprism/import"
-      # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
+      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
-  # RECOMMENDED: MariaDB Server, see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  ## Database Server (recommended)
+  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
     image: mariadb:10.6
@@ -98,14 +102,15 @@ services:
       - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
-      - "mariadb_data:/var/lib/mysql" # Never remove
+      - "mariadb_data:/var/lib/mysql" # Never remove, the named volume "mariadb_data" is defined at the bottom
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
 
-  # OPTIONAL: Upgrades services automatically, see https://docs.photoprism.org/getting-started/updates/#watchtower
+  ## Watchtower upgrades services automatically (optional)
+  ## see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped
@@ -117,6 +122,7 @@ services:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
 
+## Named volume for the Database Server, never remove unless you mount a regular folder instead (slower)
 volumes:
   mariadb_data:
     driver: local

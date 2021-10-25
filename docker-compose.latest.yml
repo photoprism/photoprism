@@ -1,14 +1,16 @@
 version: '3.5'
 
-# Latest stable version for testing.
+# Stable Release (for developers only)
+
 services:
+  ## App Server (required)
   photoprism-latest:
     image: photoprism/photoprism:latest
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2344:2342" # [server]:[container]
+      - "2344:2342" # HTTP port (host:container)
     environment:
       PHOTOPRISM_UID: ${UID:-1000}
       PHOTOPRISM_GID: ${GID:-1000}

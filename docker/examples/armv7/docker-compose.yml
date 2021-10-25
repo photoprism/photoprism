@@ -5,9 +5,9 @@ version: '3.5'
 # Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# IMPORTANT: When installing PhotoPrism on a public server outside your home network, please
-#            always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
-#            Your files and passwords will be transmitted in clear text otherwise.
+# Attention: When installing PhotoPrism on a public server outside your home network,
+# always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
+# Your files and passwords will be transmitted in clear text otherwise.
 #
 # DOCKER COMPOSE COMMAND REFERENCE
 # --------------------------------------------------------------------------
@@ -25,38 +25,38 @@ version: '3.5'
 # Reindex  | docker-compose exec photoprism photoprism index -f
 # Import   | docker-compose exec photoprism photoprism import
 #
-# See https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface for more examples.
-#
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
 #
-# NOTE: All commands may have to be prefixed with "sudo" when not running as root.
+# Note: All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory placeholder ~ to /root in volume mounts.
+#
+# More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
 services:
-  # REQUIRED: PhotoPrism Application Server
+  ## App Server (required)
   photoprism:
-    # NOTE: photoprism/photoprism-arm64 has been replaced by a single multi-arch image for AMD64,
-    # ARM64, and ARMv7. Use photoprism/photoprism:preview for testing preview builds or
-    # photoprism/photoprism:latest for the stable release.
+    ## photoprism/photoprism-arm64 has been replaced by a single multi-arch image for AMD64,
+    ## ARM64, and ARMv7. Use photoprism/photoprism:preview for testing preview builds or
+    ## photoprism/photoprism:latest for the stable release:
     image: photoprism/photoprism:latest
     platform: "linux/arm"
     depends_on:
       - mariadb
-    # Only enable automatic restarts once your installation is properly
-    # configured as it otherwise may get stuck in a restart loop:
-    # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## Only enable automatic restarts once your installation is properly
+    ## configured as it otherwise may get stuck in a restart loop,
+    ## see https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    # Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
+    ## Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
     # user: "1000:1000"
     ports:
-      - "2342:2342" # [server]:[container]
+      - "2342:2342" # Exposed HTTP port (host:container)
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public Server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "none"            # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_WORKERS: 1                          # Limits the number of indexing workers to reduce system load
@@ -84,27 +84,28 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      # Set a non-root user, group, or custom umask if your Docker environment doesn't support this natively:
+      ## Set a non-root user, group, or custom umask if your Docker environment doesn't support this natively:
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
       HOME: "/photoprism"
-    # Optional hardware devices for video transcoding and machine learning:
+    ## Hardware devices for video transcoding and machine learning (optional):
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     working_dir: "/photoprism"
     volumes:
-      # The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
+      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
       - "~/Pictures:/photoprism/originals"
-      # Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
+      ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
       # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
       # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
-      # You may mount an *import* folder from which files can be transferred to *originals* (optional):
+      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "~/Import:/photoprism/import"
-      # Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
+      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
-  # RECOMMENDED: MariaDB Server, see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  ## Database Server (recommended)
+  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
     image: lscr.io/linuxserver/mariadb:latest
@@ -120,7 +121,8 @@ services:
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
 
-  # OPTIONAL: Upgrades services automatically, see https://docs.photoprism.org/getting-started/updates/#watchtower
+  ## Watchtower upgrades services automatically (optional)
+  ## see https://docs.photoprism.org/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped

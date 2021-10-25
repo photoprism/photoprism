@@ -1,14 +1,16 @@
 version: '3.5'
 
-# Reverse proxy servers for testing.
+# HTTP / HTTPS Reverse Proxy Servers (for developers only)
+
 services:
+  ## Caddy 2
   caddy:
     image: caddy:2
     depends_on:
       - photoprism
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:80"   # HTTP port (host:container)
+      - "443:443" # HTTPS port (host:container)
     volumes:
       - ./docker/development/caddy:/data/caddy/pki/authorities/local
       - ./docker/development/caddy/Caddyfile:/etc/caddy/Caddyfile
