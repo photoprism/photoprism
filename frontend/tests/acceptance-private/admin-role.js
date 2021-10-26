@@ -16,23 +16,23 @@ test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
   await page.login("admin", "photoprism");
   await page.openNav();
   await t.expect(Selector(".nav-settings").visible).ok();
+  await t.navigateTo("/settings");
   await t
-    .click(Selector(".nav-settings"))
     .expect(Selector(".input-language input", { timeout: 8000 }).visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
-    .click(Selector("#tab-settings-library"))
+    .navigateTo("/settings/library")
     .expect(Selector("form.p-form-settings").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
-    .click(Selector("#tab-settings-advanced"))
+    .navigateTo("/settings/advanced")
     .expect(Selector("label").withText("Read-Only Mode").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
-    .click(Selector("#tab-settings-sync"))
+    .navigateTo("/settings/sync")
     .expect(Selector("div.p-accounts-list").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
@@ -44,8 +44,8 @@ test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.click(Selector(".nav-browse + div")).expect(Selector(".nav-archive").visible).ok();
+  await t.navigateTo("/archive");
   await t
-    .click(Selector(".nav-archive"))
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqnahct2mvee8sr4").visible)
     .ok();
   const PhotoCountArchive = await Selector("div.is-photo", { timeout: 5000 }).count;
@@ -57,8 +57,8 @@ test.meta("testID", "admin-role-003")("Access to review", async (t) => {
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.click(Selector(".nav-browse + div")).expect(Selector(".nav-review").visible).ok();
+  await t.navigateTo("/review");
   await t
-    .click(Selector(".nav-review"))
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqzuein2pdcg1kc7").visible)
     .ok();
   const PhotoCountReview = await Selector("div.is-photo", { timeout: 5000 }).count;
@@ -70,8 +70,8 @@ test.meta("testID", "admin-role-004")("Access to private", async (t) => {
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.expect(Selector(".nav-private").visible).ok();
+  await t.navigateTo("/private");
   await t
-    .click(Selector(".nav-private"))
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqmxlquf9tbc8mk2").visible)
     .ok();
   const PhotoCountPrivate = await Selector("div.is-photo", { timeout: 5000 }).count;
@@ -83,18 +83,18 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.expect(Selector(".nav-library").visible).ok();
+  await t.navigateTo("/library");
   await t
-    .click(Selector(".nav-library"))
     .expect(Selector(".input-index-folder input").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
-    .click(Selector("#tab-library-import"))
+    .navigateTo("/library/import")
     .expect(Selector(".input-import-folder input").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
-    .click(Selector("#tab-library-logs"))
+    .navigateTo("/library/logs")
     .expect(Selector("p.p-log-debug").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
@@ -102,21 +102,21 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
     .click(Selector(".nav-library + div"))
     .expect(Selector(".nav-originals").visible)
     .ok()
-    .click(Selector(".nav-originals"))
+    .navigateTo("/library/files")
     .expect(Selector("div.p-page-files").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
     .expect(Selector(".nav-hidden").visible)
     .ok()
-    .click(Selector(".nav-hidden"));
+    .navigateTo("/library/hidden");
   const PhotoCountHidden = await Selector("div.is-photo", { timeout: 5000 }).count;
   await t
     .expect(PhotoCountBrowse)
     .gte(PhotoCountHidden)
     .expect(Selector(".nav-errors").visible)
     .ok()
-    .click(Selector(".nav-errors"))
+    .navigateTo("/library/errors")
     .expect(Selector("div.p-page-errors").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)

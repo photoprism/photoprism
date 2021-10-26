@@ -660,4 +660,52 @@ export default class Page {
       await t.click(Selector("button.action-done", { timeout: 5000 }));
     }
   }
+
+  async checkMemberAlbumRights() {
+    await t.expect(Selector("button.action-add").exists).notOk();
+    const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+    await this.selectFromUID(FirstAlbum);
+    await t
+      .click(Selector("button.action-menu"))
+      .expect(Selector("button.action-edit").visible)
+      .notOk()
+      .expect(Selector("button.action-share").visible)
+      .notOk()
+      .expect(Selector("button.action-clone").visible)
+      .notOk()
+      .expect(Selector("button.action-delete").visible)
+      .notOk()
+      .expect(Selector("button.action-download").visible)
+      .ok();
+    await this.clearSelection();
+    await t
+      .click(Selector("button.action-title-edit"))
+      .expect(Selector(".input-title input").visible)
+      .notOk()
+      .expect(Selector(`a.uid-${FirstAlbum} i.select-on`).visible)
+      .notOk()
+      .expect(Selector(`a.uid-${FirstAlbum} i.select-off`).visible)
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum} i.select-on`).visible)
+      .notOk()
+      .expect(Selector(`a.uid-${FirstAlbum} i.select-off`).visible)
+      .ok()
+      .click(Selector("a.is-album").nth(0))
+      .expect(Selector("button.action-share").visible)
+      .notOk()
+      .expect(Selector("button.action-edit").visible)
+      .notOk();
+    await this.toggleSelectNthPhoto(0);
+    await t
+      .click(Selector("button.action-menu"))
+      .expect(Selector("button.action-remove").visible)
+      .notOk()
+      .expect(Selector("button.action-album").visible)
+      .notOk()
+      .expect(Selector("button.action-private").visible)
+      .notOk()
+      .expect(Selector("button.action-share").visible)
+      .notOk();
+  }
 }
