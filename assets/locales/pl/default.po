@@ -144,7 +144,7 @@ msgstr "Nie udało się utworzyć pliku zip"
 
 #: messages.go:112
 msgid "Invalid credentials"
-msgstr "Nieprawidłowe poświadczenia"
+msgstr "Nieprawidłowe dane logowania"
 
 #: messages.go:113
 msgid "Invalid link"
@@ -290,7 +290,7 @@ msgstr "Przedmiot usunięty"
 
 #: messages.go:147
 msgid "Person saved"
-msgstr "Osoba uratowana"
+msgstr "Osoba zapisana"
 
 #: messages.go:148
 msgid "Person deleted"
