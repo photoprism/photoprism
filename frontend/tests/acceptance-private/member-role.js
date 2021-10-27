@@ -160,6 +160,9 @@ test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
     .click(Selector(".nav-video"))
     .expect(Selector("button.action-upload").visible)
     .notOk()
+    .click(Selector(".nav-people"))
+    .expect(Selector("button.action-upload").visible)
+    .notOk()
     .click(Selector(".nav-favorites"))
     .expect(Selector("button.action-upload").visible)
     .notOk()
@@ -214,7 +217,12 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
   const SecondPhoto = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
   await page.openNav();
   await t.click(Selector(".nav-favorites"));
+  const FirstFavorite = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
+  await t.expect(Selector(`div.uid-${FirstFavorite}`).hasClass("is-favorite")).ok();
+  await page.toggleLike(FirstFavorite);
   await t
+    .expect(Selector(`div.uid-${FirstFavorite}`).hasClass("is-favorite"))
+    .ok()
     .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
     .notOk()
     .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
@@ -235,8 +243,9 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
     .click(Selector('button[title="Close"]'))
     .click(Selector(".p-expand-search"));
   await page.setFilter("view", "Cards");
-  //await t.expect(Selector(`.uid-${FirstPhoto} .input-favorite`).hasAttribute("disabled")).ok();
+  await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
   await page.toggleLike(FirstPhoto);
+  await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
   await page.selectPhotoFromUID(SecondPhoto);
   await page.editSelected();
   await t
@@ -245,30 +254,21 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
     .ok();
   await page.turnSwitchOn("favorite");
   await t.click(Selector(".action-close"));
-  await page.openNav();
-  await t.click(Selector(".nav-favorites"));
-  await t
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-    .notOk()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
-    .notOk();
+  await page.clearSelection();
+  await t.expect(Selector(`div.uid-${SecondPhoto}`).hasClass("is-favorite")).notOk();
   await page.openNav();
   await t.click(Selector(".nav-browse"));
   await page.setFilter("view", "Mosaic");
-  //await t.expect(Selector(`.uid-${FirstPhoto} .input-favorite`).hasAttribute("disabled")).ok();
+  await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
   await page.toggleLike(FirstPhoto);
+  await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
   await page.setFilter("view", "List");
   await t
     .expect(Selector(`button.input-like`).hasAttribute("disabled"))
     .ok()
     .click(Selector(`button.input-like`));
-  await page.openNav();
-  await t.click(Selector(".nav-favorites"));
-  await t
-    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-    .notOk()
-    .expect(Selector("div").withAttribute("data-uid", SecondPhoto).exists, { timeout: 5000 })
-    .notOk();
+  await page.setFilter("view", "Cards");
+  await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
   await t
     .click(Selector(".nav-albums"))
     .click(Selector("a.is-album").nth(0))
@@ -277,7 +277,6 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
     .ok();
 });
 
-//TODO add to admin test as well
 test.meta("testID", "member-role-009")(
   "Member cannot private, archive, share, add/remove to album",
   async (t) => {
@@ -332,7 +331,6 @@ test.meta("testID", "member-role-010")("Member cannot approve low quality photos
   await t.expect(Selector("button.action-approve").visible).notOk();
 });
 
-//TODO Admin version
 test.meta("testID", "member-role-011")("Edit dialog is read only for member", async (t) => {
   await page.login("member", "passwdmember");
   await page.search("faces:new");
@@ -429,61 +427,54 @@ test.meta("testID", "member-role-011")("Edit dialog is read only for member", as
     .ok();
 });
 
-//TODO admin version
-//TODO Already shared albums are visible
 test.meta("testID", "member-role-012")("No edit album functionality", async (t) => {
   await page.login("member", "passwdmember");
-  await t.click(Selector(".nav-albums"));
-  await page.checkMemberAlbumRights();
+  await t.click(Selector(".nav-albums")).expect(Selector("button.action-add").exists).notOk();
+  await page.checkMemberAlbumRights("album");
 });
 
 test.meta("testID", "member-role-013")("No edit moment functionality", async (t) => {
   await page.login("member", "passwdmember");
   await t.click(Selector(".nav-moments"));
-  await page.checkMemberAlbumRights();
+  await page.checkMemberAlbumRights("moment");
 });
 
 test.meta("testID", "member-role-014")("No edit state functionality", async (t) => {
   await page.login("member", "passwdmember");
   await page.openNav();
   await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
-  await page.checkMemberAlbumRights();
+  await page.checkMemberAlbumRights("state");
 });
 
 test.meta("testID", "member-role-015")("No edit calendar functionality", async (t) => {
   await page.login("member", "passwdmember");
   await page.openNav();
   await t.click(Selector(".nav-calendar"));
-  await page.checkMemberAlbumRights();
+  await page.checkMemberAlbumRights("calendar");
 });
 
 test.meta("testID", "member-role-016")("No edit folder functionality", async (t) => {
   await page.login("member", "passwdmember");
   await page.openNav();
   await t.click(Selector(".nav-folders"));
-  await page.checkMemberAlbumRights();
+  await page.checkMemberAlbumRights("folder");
 });
 
-//TODO admin version
-//TODO improve star testing
 test.meta("testID", "member-role-017")("No edit labels functionality", async (t) => {
   await page.login("member", "passwdmember");
   await page.openNav();
   await t.click(Selector(".nav-labels"));
   const FirstLabel = await Selector("a.is-label").nth(0).getAttribute("data-uid");
   await t
+    .hover(Selector(`a.uid-${FirstLabel}`))
+    .expect(Selector(`a.uid-${FirstLabel}`).hasClass("is-favorite"))
+    .notOk()
+    .click(Selector(`.uid-${FirstLabel} .input-favorite`))
+    .expect(Selector(`a.uid-${FirstLabel}`).hasClass("is-favorite"))
+    .notOk()
     .click(Selector(`a.uid-${FirstLabel} div.inline-edit`))
     .expect(Selector(".input-rename input").visible)
-    .notOk()
-    .expect(Selector(`a.uid-${FirstLabel} i.select-on`).visible)
-    .notOk()
-    .expect(Selector(`a.uid-${FirstLabel} i.select-off`).visible)
-    .ok()
-    .click(Selector(`.uid-${FirstLabel} .input-favorite`))
-    .expect(Selector(`a.uid-${FirstLabel} i.select-on`).visible)
-    .notOk()
-    .expect(Selector(`a.uid-${FirstLabel} i.select-off`).visible)
-    .ok();
+    .notOk();
   await page.selectFromUID(FirstLabel);
   await t
     .click(Selector("button.action-menu"))
@@ -519,16 +510,62 @@ test.meta("testID", "member-role-018")("No unstack, change primary actions", asy
     .ok();
 });
 
-//TODO existing people one normal + one hidden
-/*test.meta("testID", "member-role-009")("No edit people functionality", async (t) => {
-  //name on edit done
-  //rename fixture needed
-  //reject name fixture needed
-  //see new faces
-  //see hidden people fixture needed
-  //find hidden people fixture needed
-  //share
-  //add to album etc
-  //star
+test.meta("testID", "member-role-019")("No edit people functionality", async (t) => {
+  await page.login("member", "passwdmember");
+  await t
+    .click(Selector(".nav-people"))
+    .expect(Selector("#tab-people_faces > a").exists)
+    .notOk()
+    .expect(Selector("button.action-show-hidden").exists)
+    .notOk()
+    .expect(Selector("button.action-upload").visible)
+    .notOk()
+    .expect(Selector("a div.v-card__title").withText("Otto Visible").visible)
+    .ok()
+    .expect(Selector("a div.v-card__title").withText("Monika Hide").visible)
+    .notOk()
+    .click(Selector("a div.v-card__title").nth(0))
+    .expect(Selector("div.input-rename input").visible)
+    .notOk()
+    .hover(Selector("a div.v-card__title").nth(0))
+    .expect(Selector("button.input-hidden").exists)
+    .notOk()
+    .click(Selector(`a.is-subject .input-select`).nth(0))
+    .click(Selector("button.action-menu"))
+    .expect(Selector("button.action-album").visible)
+    .notOk();
+  await page.clearSelection();
+  const FirstSubject = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
+  if (await Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite")) {
+    await t
+      .expect(Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstSubject} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite"))
+      .ok();
+  } else {
+    await t
+      .expect(Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstSubject} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite"))
+      .notOk();
+  }
+  await t.click(Selector("a.is-subject").nth(0));
+  await page.toggleSelectNthPhoto(0);
+  await page.editSelected();
+  await t
+    .click(Selector("#tab-people"))
+    .expect(Selector(".input-name input").hasAttribute("disabled"))
+    .ok()
+    .expect(Selector("div.v-input__icon--clear > i").hasClass("v-icon--disabled"))
+    .ok()
+    .navigateTo("/people/new")
+    .expect(Selector("div.is-face").visible)
+    .notOk()
+    .expect(Selector("#tab-people_faces > a").exists)
+    .notOk()
+    .navigateTo("/people?hidden=yes&order=relevance")
+    .expect(Selector("a.is-subject").visible)
+    .notOk();
 });
-*/
