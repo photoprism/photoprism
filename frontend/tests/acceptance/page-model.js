@@ -661,8 +661,8 @@ export default class Page {
     }
   }
 
-  async checkMemberAlbumRights() {
-    await t.expect(Selector("button.action-add").exists).notOk();
+  async checkMemberAlbumRights(type) {
+    await t.expect(Selector("a.is-album button.action-share").visible).notOk();
     const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
     await this.selectFromUID(FirstAlbum);
     await t
@@ -673,39 +673,116 @@ export default class Page {
       .notOk()
       .expect(Selector("button.action-clone").visible)
       .notOk()
-      .expect(Selector("button.action-delete").visible)
-      .notOk()
       .expect(Selector("button.action-download").visible)
       .ok();
+    if (type == "album" || type == "moment" || type == "state") {
+      await t.expect(Selector("button.action-delete").visible).motOk();
+    }
     await this.clearSelection();
     await t
       .click(Selector("button.action-title-edit"))
-      .expect(Selector(".input-title input").visible)
-      .notOk()
-      .expect(Selector(`a.uid-${FirstAlbum} i.select-on`).visible)
-      .notOk()
-      .expect(Selector(`a.uid-${FirstAlbum} i.select-off`).visible)
-      .ok()
-      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
-      .expect(Selector(`a.uid-${FirstAlbum} i.select-on`).visible)
-      .notOk()
-      .expect(Selector(`a.uid-${FirstAlbum} i.select-off`).visible)
-      .ok()
+      .expect(Selector(".input-description textarea").visible)
+      .notOk();
+    if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
+      await t
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .ok()
+        .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .ok();
+    } else {
+      await t
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .notOk()
+        .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .notOk();
+    }
+    await t
       .click(Selector("a.is-album").nth(0))
       .expect(Selector("button.action-share").visible)
       .notOk()
       .expect(Selector("button.action-edit").visible)
       .notOk();
     await this.toggleSelectNthPhoto(0);
+    await t.click(Selector("button.action-menu"));
+    if (type == "album") {
+      await t.expect(Selector("button.action-remove").visible).notOk();
+    } else {
+      await t.expect(Selector("button.action-archive").visible).notOk();
+    }
     await t
-      .click(Selector("button.action-menu"))
-      .expect(Selector("button.action-remove").visible)
-      .notOk()
       .expect(Selector("button.action-album").visible)
       .notOk()
       .expect(Selector("button.action-private").visible)
       .notOk()
       .expect(Selector("button.action-share").visible)
       .notOk();
+  }
+
+  async checkAdminAlbumRights(type) {
+    await t.expect(Selector("a.is-album button.action-share").visible).ok();
+    const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+    await this.selectFromUID(FirstAlbum);
+    await t
+      .click(Selector("button.action-menu"))
+      .expect(Selector("button.action-edit").visible)
+      .ok()
+      .expect(Selector("button.action-share").visible)
+      .ok()
+      .expect(Selector("button.action-clone").visible)
+      .ok()
+      .expect(Selector("button.action-download").visible)
+      .ok();
+    if (type == "album" || type == "moment" || type == "state") {
+      await t.expect(Selector("button.action-delete").visible).ok();
+    }
+    await this.clearSelection();
+    await t
+      .click(Selector("button.action-title-edit"))
+      .expect(Selector(".input-description textarea").visible)
+      .ok()
+      .click(Selector("button.action-cancel"));
+    if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
+      await t
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .ok()
+        .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .notOk()
+        .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .ok();
+    } else {
+      await t
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .notOk()
+        .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .ok()
+        .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+        .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+        .notOk();
+    }
+    await t
+      .click(Selector("a.is-album").nth(0))
+      .expect(Selector("button.action-share").visible)
+      .ok()
+      .expect(Selector("button.action-edit").visible)
+      .ok();
+    await this.toggleSelectNthPhoto(0);
+    await t.click(Selector("button.action-menu"));
+    if (type == "album") {
+      await t.expect(Selector("button.action-remove").visible).ok();
+    } else {
+      await t.expect(Selector("button.action-archive").visible).ok();
+    }
+    await t
+      .expect(Selector("button.action-album").visible)
+      .ok()
+      .expect(Selector("button.action-private").visible)
+      .ok()
+      .expect(Selector("button.action-share").visible)
+      .ok();
   }
 }
