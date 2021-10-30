@@ -18,7 +18,7 @@ services:
       - "2343:2343" # Acceptance Test HTTP port (host:container)
     shm_size: "2gb"
     environment:
-      PHOTOPRISM_UID: ${UID:-1000}
+      PHOTOPRISM_UID: ${UID:-997}
       PHOTOPRISM_GID: ${GID:-1000}
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
