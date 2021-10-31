@@ -20,7 +20,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 ## Feature Overview ##
 
 * Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
-* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared) 🔍
+* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared) 🕵️‍♂️
 * Privacy-friendly: No data is ever sent to Google, Amazon, Facebook, or Apple unless you explicitly upload files to one of their services 🔐
 * Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
 * [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location 🌈
