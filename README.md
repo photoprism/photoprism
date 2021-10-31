@@ -30,8 +30,8 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips 🌍
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
 * Many more image properties like [colors](https://demo.photoprism.org/browse?view=cards&q=color:red), [chroma](https://demo.photoprism.org/browse?view=cards&q=mono%3Atrue), and [quality](https://demo.photoprism.org/review) can be searched as well
-* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background 📱
-* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local 🖥
+* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background 📡
+* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
 ## Getting Started ##
 
