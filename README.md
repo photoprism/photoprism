@@ -20,11 +20,11 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 ## Feature Overview ##
 
 * Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
-* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared) 🕵️‍♂️
+* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
 * Privacy-friendly: No data is ever sent to Google, Amazon, Facebook, or Apple unless you explicitly upload files to one of their services 🔐
 * Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
 * [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location 🌈
-* Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive) 🎬
+* Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
 * Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
 * Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips 🌍
@@ -50,10 +50,13 @@ We recommend updating your existing `docker-compose.yml` config based on
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
 Your continued support helps us provide services like satellite maps and develop new features.
-Ideas endorsed by silver and [gold sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
+GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
+Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
+
+You're welcome to [contact us](https://photoprism.app/contact) for other options and corporate sponsorship.
 
 Thank you very much! 💜
 
