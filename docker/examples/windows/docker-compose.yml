@@ -100,7 +100,9 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
+    ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
+    command: mysqld --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
       - "mariadb_data:/var/lib/mysql" # Never remove, the named volume "mariadb_data" is defined at the bottom
     environment:
@@ -122,7 +124,8 @@ services:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
 
-## Named volume for the Database Server, never remove unless you mount a regular folder instead (slower)
+## Create named volumes, advanced users may remove this if they mount a regular host folder
+## for the database or use SQLite instead (never remove otherwise)
 volumes:
   mariadb_data:
     driver: local
