@@ -34,7 +34,7 @@
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
             <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
-              <img :src="$config.staticUri + '/img/logo-avatar.svg'" alt="Logo">
+              <img :src="$config.staticUri + '/img/logo.svg'" alt="Logo">
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title">

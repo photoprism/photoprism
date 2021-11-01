@@ -21,15 +21,16 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 * Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
 * Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
+* Privacy-friendly: No data is ever sent to Google, Amazon, Facebook, or Apple unless you explicitly upload files to one of their services 🔐
+* Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
+* [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location 🌈
 * Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
 * Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
-* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips
-* Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
-* [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location
+* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips 🌍
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
 * Many more image properties like [colors](https://demo.photoprism.org/browse?view=cards&q=color:red), [chroma](https://demo.photoprism.org/browse?view=cards&q=mono%3Atrue), and [quality](https://demo.photoprism.org/review) can be searched as well
-* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
+* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background 📡
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
 ## Getting Started ##
@@ -49,10 +50,13 @@ We recommend updating your existing `docker-compose.yml` config based on
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
 Your continued support helps us provide services like satellite maps and develop new features.
-Ideas endorsed by silver and [gold sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
+GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
+Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
+
+You're welcome to [contact us](https://photoprism.app/contact) for other options and corporate sponsorship.
 
 Thank you very much! 💜
 
@@ -74,8 +78,7 @@ to get regular updates, connect with other users, and discuss your ideas. Don't 
 
 ## Getting Support ##
 
-Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs and 
-impediments to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
+Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
 or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.org/funding/) 
 receive direct [technical support](https://photoprism.app/contact) via email.
 
