@@ -1,7 +1,10 @@
 # Thank you for sponsoring PhotoPrism! #
 
 The most effective way to [support](https://docs.photoprism.org/funding/) us is through [Patreon](https://www.patreon.com/photoprism) in €
-and [GitHub Sponsors](https://github.com/sponsors/photoprism) in USD.
+and [GitHub](https://github.com/sponsors/photoprism) in USD.
+GitHub Sponsors now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
+You're welcome to [contact us](https://photoprism.app/contact) for other options and corporate sponsorship.
+
 ## Platinum Sponsors ##
 
 [Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
@@ -55,6 +58,8 @@ Garn Penrod (Patreon, November 2020)
 Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
 The Gordon Project
+
+*See [GitHub Sponsors](https://github.com/sponsors/photoprism?frequency=one-time) for one-time donation options.*
 
 ## Crypto Wallets ##
 
