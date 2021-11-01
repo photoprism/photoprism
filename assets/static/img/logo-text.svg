@@ -1,0 +1,55 @@
+<svg id="f394fb39-4024-46e8-9a68-3f5e53f52bfd" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 400 400">
+    <defs>
+        <style>
+            .a8bd947d-a1f8-4a14-8069-c9663505e4b1{fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b);}.a4ee1f07-8fee-4200-835a-e030a32bca90{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:5px;}
+            .e973c102-193a-465f-a6ce-238077277871,.fc6d24c6-9a63-4383-a118-2195cb69577d{fill:none;}.bb0146b0-9b01-4116-a7e2-79b9809a5f83{clip-path:url(#aced1c04-d137-4184-b323-97ff0384d552);}.b8904b42-fb62-4aa5-aae5-dc17759b185d{clip-path:url(#ed8c2ee9-6712-480b-97dc-53fde4d07a40);}.e973c102-193a-465f-a6ce-238077277871{stroke:#000;stroke-miterlimit:10;stroke-width:5px;}.f5ddff88-48c1-46f9-a031-aee9bce94bd6{clip-path:url(#a1251993-bbf1-4548-8238-fa794c0bb4e3);}.ead6f749-dce3-444a-a4f2-acc8f3078dec{clip-path:url(#be2d8169-fac1-479f-9595-ff9fe03b48a4);}.a34fac52-8499-4455-a7f4-105abc9df09b,.f18ba0a9-054f-4ae5-b0d0-1c52cbadb98f{font-size:63px;fill:#000;}.a34fac52-8499-4455-a7f4-105abc9df09b{font-family:Roboto-Regular,
+            Roboto;}.beccc81f-4365-4373-9899-0d823daf22a9{letter-spacing:0.01em;}.ec36acec-7560-4cc7-a996-f8eb36ef5fbb{letter-spacing:0.01em;}.bf8a9fd3-72ac-44b7-b1db-6841c2e3b7c3{letter-spacing:0.01em;}.ab7ea333-5d0f-46b3-aa31-a0e9b6a570d5{letter-spacing:-0.01em;}.f18ba0a9-054f-4ae5-b0d0-1c52cbadb98f{font-family:Roboto-Light,
+            Roboto;font-weight:300;letter-spacing:0em;}.a1c74a14-667e-420f-8ecb-79364b36eb33{letter-spacing:0.01em;}.a5f515e4-173e-416e-b367-cf57e24c9bf3{letter-spacing:0em;}.b6eb0847-9369-4e0b-bcf6-7f9ec038fd4c{letter-spacing:0em;}.e138f84f-74e3-43c0-81f5-2b4cc59558be{letter-spacing:0em;}
+        </style>
+        <linearGradient id="b905e2c4-4772-4914-b70f-44b4d19aca4b" x1="45" y1="355" x2="355" y2="45"
+                        gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset="0" stop-color="#9afbfe"/>
+            <stop offset="1" stop-color="#ffb3e0"/>
+        </linearGradient>
+        <clipPath id="aced1c04-d137-4184-b323-97ff0384d552">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="12.89" y="201.65" width="321" height="126"/>
+        </clipPath>
+        <clipPath id="ed8c2ee9-6712-480b-97dc-53fde4d07a40">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="-44.79" y="40.23" width="457.74" height="262.31"/>
+        </clipPath>
+        <clipPath id="a1251993-bbf1-4548-8238-fa794c0bb4e3">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="58.39" y="20.65" width="232" height="126"/>
+        </clipPath>
+        <clipPath id="be2d8169-fac1-479f-9595-ff9fe03b48a4">
+            <rect class="fc6d24c6-9a63-4383-a118-2195cb69577d" x="-46.29" y="40.23" width="457.74" height="262.31"/>
+        </clipPath>
+    </defs>
+    <circle class="a8bd947d-a1f8-4a14-8069-c9663505e4b1" cx="200" cy="200" r="192"/>
+    <g class="bb0146b0-9b01-4116-a7e2-79b9809a5f83" transform="translate(23.615 8.615)">
+        <g class="b8904b42-fb62-4aa5-aae5-dc17759b185d">
+            <path class="e973c102-193a-465f-a6ce-238077277871"
+                  d="M319.18,262l-7.06,39.05m-288-37.76,23.24,23m155.07-223-155,222.31a.17.17,0,0,0,.12.25L311.86,301a.15.15,0,0,0,.15-.22L202.72,63.35A.15.15,0,0,0,202.46,63.33ZM170.52,41.82,23.45,263a.2.2,0,0,0,.17.31L318.27,262a.2.2,0,0,0,.16-.31L170.86,41.82A.21.21,0,0,0,170.52,41.82Zm.18-.25,31.91,21.54"/>
+        </g>
+    </g>
+    <g class="f5ddff88-48c1-46f9-a031-aee9bce94bd6" transform="translate(23.615 8.615)">
+        <g class="ead6f749-dce3-444a-a4f2-acc8f3078dec">
+            <path class="e973c102-193a-465f-a6ce-238077277871"
+                  d="M317.68,262l-7.06,39.05m-288-37.76,23.24,23M201,63.33,46,285.64a.17.17,0,0,0,.12.25L310.36,301a.15.15,0,0,0,.15-.22L201.22,63.35A.15.15,0,0,0,201,63.33ZM169,41.82,22,263a.2.2,0,0,0,.17.31L316.77,262a.2.2,0,0,0,.16-.31L169.36,41.82A.21.21,0,0,0,169,41.82Zm.18-.25,31.91,21.54"/>
+        </g>
+    </g>
+    <text class="a34fac52-8499-4455-a7f4-105abc9df09b" transform="translate(34.035 204.43)">
+        <tspan class="beccc81f-4365-4373-9899-0d823daf22a9">P</tspan>
+        <tspan class="ec36acec-7560-4cc7-a996-f8eb36ef5fbb" x="40.37" y="0">h</tspan>
+        <tspan class="bf8a9fd3-72ac-44b7-b1db-6841c2e3b7c3" x="75.83" y="0">o</tspan>
+        <tspan class="ab7ea333-5d0f-46b3-aa31-a0e9b6a570d5" x="112.33" y="0">t</tspan>
+        <tspan x="132.53" y="0">o</tspan>
+    </text>
+    <text class="f18ba0a9-054f-4ae5-b0d0-1c52cbadb98f" transform="translate(203.065 204.435)">P
+        <tspan class="a1c74a14-667e-420f-8ecb-79364b36eb33" x="38.98" y="0">r</tspan>
+        <tspan class="a5f515e4-173e-416e-b367-cf57e24c9bf3" x="60.68" y="0">i</tspan>
+        <tspan class="b6eb0847-9369-4e0b-bcf6-7f9ec038fd4c" x="74.55" y="0">s</tspan>
+        <tspan class="e138f84f-74e3-43c0-81f5-2b4cc59558be" x="106.76" y="0">m</tspan>
+    </text>
+</svg>
