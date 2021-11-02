@@ -496,21 +496,21 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
 	},
 	cli.StringFlag{
-		Name:   "client-id",
+		Name:   "oidc-client-id",
 		Usage:  "OpenID Connect Client ID",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_OIDC_CLIENT_ID",
 	},
 	cli.StringFlag{
-		Name:   "client-secret",
+		Name:   "oidc-client-secret",
 		Usage:  "OpenID Connect Client Secret",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_OIDC_CLIENT_SECRET",
 	},
 	cli.StringFlag{
-		Name:   "oidc-issuer",
-		Usage:  "OpenID Connect Provider/Issuer URL",
+		Name:   "oidc-issuer-url",
+		Usage:  "OpenID Connect Issuer URL",
 		Value:  "",
-		EnvVar: "PHOTOPRISM_OIDC_ISSUER",
+		EnvVar: "PHOTOPRISM_OIDC_ISSUER_URL",
 	},
 }

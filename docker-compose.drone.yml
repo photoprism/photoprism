@@ -1,8 +1,9 @@
 version: '3.5'
 
-## Continuous integration environment (for Drone CI)
+## Integration Environment for Drone CI
 services:
-  ## App Server
+  ## App Dev Container
+  ## Docs: https://docs.photoprism.org/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -142,23 +143,24 @@ services:
       DRONE_TARGET_BRANCH:
 
   ## MariaDB Database Server
+  ## Docs: https://mariadb.com/docs/reference/cs10.6/
   mariadb:
     image: mariadb:10.6
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # Database port (internal)
     volumes:
-      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
-  ## Dummy WebDAV Server (for testing)
+  ## Dummy WebDAV Server
   dummy-webdav:
     image: photoprism/dummy-webdav:20211022
 
-  ## Dummy OpenID Connect Server (for testing)
+  ## Dummy OpenID Connect Server
   dummy-oidc:
     image: photoprism/dummy-oidc:20211022

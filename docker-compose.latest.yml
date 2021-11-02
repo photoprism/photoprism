@@ -1,8 +1,9 @@
 version: '3.5'
 
-## Stable Release (for testing only)
+## Latest Stable Release for QA
 services:
   ## App Server
+  ## Docs: https://docs.photoprism.org/
   photoprism-latest:
     image: photoprism/photoprism:latest
     security_opt:
@@ -10,10 +11,20 @@ services:
       - apparmor:unconfined
     ports:
       - "2344:2342" # HTTP port (host:container)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.photoprism-latest.loadbalancer.server.port=2342"
+      - "traefik.http.routers.photoprism-latest.entrypoints=websecure"
+      - "traefik.http.routers.photoprism-latest.rule=Host(`photoprism-latest.reverseproxy.dev`)"
+      - "traefik.http.routers.photoprism-latest.tls.domains[0].main=reverseproxy.dev"
+      - "traefik.http.routers.photoprism-latest.tls.domains[0].sans=*.reverseproxy.dev"
+      - "traefik.http.routers.photoprism-latest.tls=true"
     environment:
-      PHOTOPRISM_UID: ${UID:-1000}
-      PHOTOPRISM_GID: ${GID:-1000}
-      PHOTOPRISM_SITE_URL: "http://localhost:2344/"
+      PHOTOPRISM_UID: ${UID:-1000}                   # User ID
+      PHOTOPRISM_GID: ${GID:-1000}                   # Group ID
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Admin password (min 4 characters)
+      ## Public server URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_SITE_URL: "https://photoprism-latest.reverseproxy.dev/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
@@ -28,10 +39,9 @@ services:
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
-      PHOTOPRISM_DATABASE_NAME: "latest"
-      PHOTOPRISM_DATABASE_USER: "root"
-      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # The initial admin password (min 4 characters)
+      PHOTOPRISM_DATABASE_NAME: "photoprism_latest"
+      PHOTOPRISM_DATABASE_USER: "photoprism_latest"
+      PHOTOPRISM_DATABASE_PASSWORD: "photoprism_latest"
       PHOTOPRISM_DISABLE_CHOWN: "false"       # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"     # Don't backup photo and album metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # Disables built-in WebDAV server

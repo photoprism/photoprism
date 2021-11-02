@@ -21,13 +21,10 @@ const (
 	Postgres = "postgres" // TODO: Requires GORM 2.0 for generic column data types
 )
 
-// Options provides a struct in which application configuration is stored.
-// Application code must use functions to get config options, for two reasons:
-//
-// 1. Some options are computed and we don't want to leak implementation details (aims at reducing refactoring overhead).
-//
-// 2. Paths might actually be dynamic later (if we build a multi-user version).
-//
+// Options provides a struct in which the application configuration is stored.
+// The application code must use functions to obtain configuration values:
+// 1. We don't want to leak implementation details to reduce refactoring overhead
+// 2. Path names can be dynamic later, for example depending on the user ID
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Options struct {
 	Name                  string  `json:"-"`
@@ -42,6 +39,9 @@ type Options struct {
 	Sponsor               bool    `yaml:"-" json:"-" flag:"sponsor"`
 	Public                bool    `yaml:"Public" json:"-" flag:"public"`
 	AdminPassword         string  `yaml:"AdminPassword" json:"-" flag:"admin-password"`
+	OidcClientID          string  `yaml:"-" json:"-" flag:"oidc-client-id"`
+	OidcClientSecret      string  `yaml:"-" json:"-" flag:"oidc-client-secret"`
+	OidcIssuerUrl         string  `yaml:"-" json:"-" flag:"oidc-issuer-url"`
 	ReadOnly              bool    `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool    `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	ConfigPath            string  `yaml:"ConfigPath" json:"-" flag:"config-path"`
@@ -123,9 +123,6 @@ type Options struct {
 	FaceClusterDist       float64 `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceMatchDist         float64 `yaml:"-" json:"-" flag:"face-match-dist"`
 	PIDFilename           string  `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
-	OidcClientID          string  `yaml:"OidcClientID" json:"-" flag:"client-id"`
-	OidcClientSecret      string  `yaml:"OidcClientSecret" json:"-" flag:"client-secret"`
-	OidcIssuer            string  `yaml:"OidcIssuer" json:"-" flag:"oidc-issuer"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:

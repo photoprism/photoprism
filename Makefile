@@ -26,9 +26,9 @@ dep: dep-tensorflow dep-js dep-go
 build: generate build-js build-go
 install: install-bin install-assets
 test: test-js test-go
-test-go: reset-test-databases run-test-go
-test-api: reset-test-databases run-test-api
-test-short: reset-test-databases run-test-short
+test-go: reset-testdb run-test-go
+test-api: reset-testdb run-test-api
+test-short: reset-testdb run-test-short
 acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
 acceptance-public-run-chromium: acceptance-restart acceptance acceptance-stop
 acceptance-private-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop
@@ -161,9 +161,8 @@ acceptance-private-firefox:
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	mysql < scripts/sql/reset-mariadb.sql
-reset-test-databases:
-	$(info Resetting test databases...)
-	mysql < scripts/sql/init-test-databases.sql
+reset-testdb:
+	$(info Removing test database files...)
 	find ./internal -type f -name '.test.*' -delete
 run-test-short:
 	$(info Running short Go unit tests in parallel mode...)

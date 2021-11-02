@@ -1,10 +1,16 @@
 version: '3.5'
 
-## For developers only! PostgreSQL is NOT supported yet as Gorm (the ORM library) needs to be
-## upgraded first. The current version does NOT support compatible general data types:
-## https://github.com/photoprism/photoprism/issues/47
+# ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
+# The current Gorm version does NOT support compatible general data types:
+# https://github.com/photoprism/photoprism/issues/47
+
+## Development Environment with
+## - App Dev Container
+## - PostgreSQL Database Server
+## - and Dummy Services
 services:
-  ## App Server
+  ## App Dev Container
+  ## Docs: https://docs.photoprism.org/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -23,7 +29,10 @@ services:
       - "go-mod:/go/pkg/mod"
     shm_size: "2gb"
     environment:
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_UID: ${UID:-1000}                   # User ID
+      PHOTOPRISM_GID: ${GID:-1000}                   # Group ID
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Admin password (min 4 characters)
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public server URL incl http:// or https:// and /path, :port is option
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
@@ -43,7 +52,6 @@ services:
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
       PHOTOPRISM_TEST_DSN: ".test.db"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # The initial admin password (min 4 characters)
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
@@ -67,6 +75,7 @@ services:
       TF_CPP_MIN_LOG_LEVEL: 0                 # Show TensorFlow log messages for development
 
   ## PostgreSQL Database Server
+  ## Docs: https://www.postgresql.org/docs/
   postgres:
     image: postgres:12-alpine
     ports:
@@ -76,11 +85,11 @@ services:
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
 
-  ## Dummy WebDAV Server (for testing)
+  ## Dummy WebDAV Server
   dummy-webdav:
     image: photoprism/dummy-webdav:20211022
 
-  ## Dummy OpenID Connect Server (for testing)
+  ## Dummy OpenID Connect Server
   dummy-oidc:
     image: photoprism/dummy-oidc:20211022
     # Expose port 9998 on host

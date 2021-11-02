@@ -74,7 +74,7 @@ func NewTestOptions() *Options {
 		DatabaseDriver:   dbDriver,
 		DatabaseDsn:      dbDsn,
 		AdminPassword:    "photoprism",
-		OidcIssuer:       "http://dummy-oidc:9998",
+		OidcIssuerUrl:    "http://dummy-oidc:9998",
 		OidcClientID:     "native",
 		OidcClientSecret: "random",
 	}

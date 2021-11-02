@@ -27,21 +27,28 @@ type Client struct {
 	debug bool
 }
 
-func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool) (*Client, error) {
-	log.Debugf("Provider Params: %s %s %s %s", iss.String(), clientId, clientSecret, siteUrl)
+func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool) (result *Client, err error) {
+	log.Debugf("oidc: Provider Params: %s %s %s %s", iss.String(), clientId, clientSecret, siteUrl)
 
 	u, err := url.Parse(siteUrl)
+
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
-	u.Path = path.Join(u.Path, "/api/v1/", RedirectPath)
-	log.Debugf(u.String())
 
-	hashKey, err := rnd.RandomBytes(16)
-	encryptKey, err := rnd.RandomBytes(16)
-	if err != nil {
-		log.Errorf("oidc intialization: %q", err)
+	u.Path = path.Join(u.Path, "/api/v1/", RedirectPath)
+	log.Debugf("oidc: %s", u.String())
+
+	var hashKey, encryptKey []byte
+
+	if hashKey, err = rnd.RandomBytes(16); err != nil {
+		log.Errorf("oidc: %q (create hash key)", err)
+		return nil, err
+	}
+
+	if encryptKey, err = rnd.RandomBytes(16); err != nil {
+		log.Errorf("oidc: %q (create encrypt key)", err)
 		return nil, err
 	}
 
@@ -57,10 +64,12 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 	}
 
 	discover, err := client.Discover(iss.String(), httpClient)
+
 	if err != nil {
-		log.Errorf("oidc intialization: %q", err)
+		log.Errorf("oidc: %q (discover)", err)
 		return nil, err
 	}
+
 	for _, v := range discover.CodeChallengeMethodsSupported {
 		if v == oidc.CodeChallengeMethodS256 {
 			options = append(options, rp.WithPKCE(cookieHandler))
@@ -70,11 +79,13 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 	scopes := strings.Split("openid profile email", " ")
 
 	provider, err := rp.NewRelyingPartyOIDC(iss.String(), clientId, clientSecret, u.String(), scopes, options...)
+
 	if err != nil {
-		log.Errorf("oidc intialization: %s", err)
+		log.Errorf("oidc: %s (issuer)", err)
 		return nil, err
 	}
-	log.Debugf("PKCE enabled: %v", provider.IsPKCE())
+
+	log.Debugf("oidc: PKCE enabled %v", provider.IsPKCE())
 
 	return &Client{
 		provider,
@@ -94,10 +105,10 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	var userinfo oidc.UserInfo
 
 	userinfoClosure := func(w http.ResponseWriter, r *http.Request, tokens *oidc.Tokens, state string, rp rp.RelyingParty, info oidc.UserInfo) {
-		log.Infof("UserInfo: %s %s %s %s %s", info.GetEmail(), info.GetSubject(), info.GetNickname(), info.GetName(), info.GetPreferredUsername())
-		log.Debugf("IDToken: %s", tokens.IDToken)
-		log.Debugf("AToken: %s", tokens.AccessToken)
-		log.Debugf("RToken: %s", tokens.RefreshToken)
+		log.Infof("oidc: UserInfo: %s %s %s %s %s", info.GetEmail(), info.GetSubject(), info.GetNickname(), info.GetName(), info.GetPreferredUsername())
+		log.Debugf("oidc: IDToken: %s", tokens.IDToken)
+		log.Debugf("oidc: AToken: %s", tokens.AccessToken)
+		log.Debugf("oidc: RToken: %s", tokens.RefreshToken)
 
 		userinfo = info
 	}
@@ -114,7 +125,7 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	//handle := rp.CodeExchangeHandler(tokeninfoClosure, c)
 	handle(ctx.Writer, ctx.Request)
 
-	log.Debugf("current request state: %v", ctx.Writer.Status())
+	log.Debugf("oidc: current request state: %v", ctx.Writer.Status())
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
 		return nil, errors.New("oidc: couldn't exchange auth code and thus not retrieve external user info")
 	}
