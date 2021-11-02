@@ -56,6 +56,9 @@
                 <translate>Sign in with {{ authProvider }}</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>login</v-icon>
               </v-btn>
+            <template v-if="authProvider">
+              <p class="mt-3">⚠️ Sign in with local user accounts except admin is disabled when using OpenID Connect.</p>
+            </template>
             </v-flex>
           </v-layout>
         </v-card-actions>
@@ -84,6 +87,15 @@ export default {
       rtl: this.$rtl,
     };
   },
+  mounted() {
+    if (this.authProvider) {
+      const preventAutoLogin = sessionStorage.getItem("preventAutoLogin");
+      sessionStorage.removeItem("preventAutoLogin");
+      if (!preventAutoLogin && !(this.$route.query.preventAutoLogin)) {
+        this.loginExternal();
+      }
+    }
+  },
   methods: {
     login() {
       if (!this.username || !this.password) {
@@ -102,10 +114,10 @@ export default {
       let popup = window.open('api/v1/auth/external', "external-login");
       const onstorage = window.onstorage;
       const cleanup = () => {
-        popup.close();
         window.localStorage.removeItem('config');
         window.localStorage.removeItem('auth_error');
         window.onstorage = onstorage;
+        popup.close();
       };
 
       window.onstorage = () => {
@@ -123,7 +135,6 @@ export default {
         if (sid === null || data === null || config === null) {
           return;
         }
-        console.log("sid = ", sid);
         this.$session.setId(sid);
         this.$session.setData(JSON.parse(data));
         this.$session.setConfig(JSON.parse(config));

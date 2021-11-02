@@ -456,7 +456,7 @@
           </v-list-tile-content>
 
           <v-list-tile-action :title="$gettext('Logout')">
-            <v-btn icon @click="logout">
+            <v-btn icon @click.stop.prevent="logout">
               <v-icon>power_settings_new</v-icon>
             </v-btn>
           </v-list-tile-action>

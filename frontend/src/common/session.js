@@ -232,6 +232,7 @@ export default class Session {
   }
 
   logout(noRedirect) {
+    sessionStorage.setItem("preventAutoLogin", Date.now().toString());
     if (this.hasId()) {
       return Api.delete("session/" + this.getId())
         .then(() => {
