@@ -65,9 +65,10 @@ The Gordon Project
 
 | Currency   | Address                                                                                              |
 |:-----------|:-----------------------------------------------------------------------------------------------------|
+| Ethereum   | [`0x04e73F3326E26916356f76b04ca15e0c4C2d9C79`](ethereum:0x04e73F3326E26916356f76b04ca15e0c4C2d9C79)  |
+| Bitcoin    | [`bc1qfdjqauera5cm243h3yadwrnena0mxusafvchzr`](bitcoin:bc1qfdjqauera5cm243h3yadwrnena0mxusafvchzr)   |
 | Monero     | [`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)            |
-| Dogecoin   | [`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)                  |
-
+| Dogecoin   | [`DKf8bFPaUYdJ5fkjtJNY1jMjtRtiXi3Vzy`](dogecoin:DKf8bFPaUYdJ5fkjtJNY1jMjtRtiXi3Vzy)                  |
 
 
 
