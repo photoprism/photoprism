@@ -56,7 +56,7 @@ Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [g
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
 
-You're welcome to [contact us](https://photoprism.app/contact) for other options and corporate sponsorship.
+You're welcome to [contact us](https://photoprism.app/contact) for other options.
 
 Thank you very much! 💜
 
