@@ -134,6 +134,8 @@ services:
       MYSQL_DATABASE: photoprism
 
   ## Keycloak OpenID Connect Provider
+  ## Test User: user / photoprism
+  ## Test Admin: admin / photoprism
   ## Docs: https://www.keycloak.org/getting-started/getting-started-docker
   keycloak:
     image: quay.io/keycloak/keycloak:15.0.2
