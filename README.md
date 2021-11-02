@@ -51,12 +51,10 @@ We recommend updating your existing `docker-compose.yml` config based on
 
 Your continued support helps us provide services like satellite maps and develop new features.
 GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
-Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
+You're welcome to [contact us](https://photoprism.app/contact) for other options.
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
 It provides additional motivation to keep going.
-
-You're welcome to [contact us](https://photoprism.app/contact) for other options.
 
 Thank you very much! 💜
 
@@ -70,6 +68,8 @@ Please give ideas you like a thumbs-up 👍  , so that we know what is most popu
 You are welcome to submit specific feature requests via [GitHub Issues](https://github.com/photoprism/photoprism/issues)
 if you have verified that no similar [idea](https://github.com/photoprism/photoprism/labels/idea) or
 [todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
+
+Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
 
 ## Questions?
 
