@@ -71,6 +71,7 @@
 
 <script>
 import Notify from "../common/notify";
+import axios from "axios";
 
 export default {
   name: 'Login',
@@ -87,14 +88,28 @@ export default {
       rtl: this.$rtl,
     };
   },
-  mounted() {
-    if (this.authProvider) {
-      const preventAutoLogin = sessionStorage.getItem("preventAutoLogin");
-      sessionStorage.removeItem("preventAutoLogin");
-      if (!preventAutoLogin && !(this.$route.query.preventAutoLogin)) {
-        this.loginExternal();
-      }
+  created() {
+    const c = window.__CONFIG__;
+    const preventAutoLogin = sessionStorage.getItem("preventAutoLogin");
+    sessionStorage.removeItem("preventAutoLogin");
+    if (!c.oidc || this.$route.query.preventAutoLogin || preventAutoLogin) {
+      return;
     }
+    const cleanup = () => {
+      window.localStorage.removeItem('config');
+      window.localStorage.removeItem('auth_error');
+    };
+    const redirect = () => {
+      // check if oidc provider is available
+      axios.get(c.oidc,{ timeout: 1000}).then(response => {
+        // redirect to oidc provider
+        window.location.href = '/api/v1/auth/external';
+      }).catch(error => {
+        if (c.debug) console.log(error);
+      });
+    };
+    const externalLogin = this.onExternalLogin(cleanup, redirect);
+    externalLogin();
   },
   methods: {
     login() {
@@ -120,7 +135,10 @@ export default {
         popup.close();
       };
 
-      window.onstorage = () => {
+      window.onstorage = this.onExternalLogin(cleanup);
+    },
+    onExternalLogin(cleanup, redirect) {
+      return () => {
         const sid = window.localStorage.getItem('session_id');
         const data = window.localStorage.getItem('data');
         const config = window.localStorage.getItem('config');
@@ -133,6 +151,7 @@ export default {
           return;
         }
         if (sid === null || data === null || config === null) {
+          if (typeof redirect === 'function') redirect();
           return;
         }
         this.$session.setId(sid);

@@ -62,7 +62,7 @@ type ClientConfig struct {
 	Categories      CategoryLabels      `json:"categories"`
 	Clip            int                 `json:"clip"`
 	Server          RuntimeInfo         `json:"server"`
-	Oidc            bool                `json:"oidc"`
+	Oidc            string              `json:"oidc,omitempty"`
 	Acl             acl.ACL             `json:"acl"`
 }
 
@@ -218,7 +218,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
-		Oidc:            c.OidcIssuerUrl() != nil && c.OidcClientId() != "" && c.OidcClientSecret() != "",
+		Oidc:            c.OidcIssuerUrl().String(),
 		Acl:             acl.Permissions,
 	}
 
@@ -284,7 +284,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		CSSHash:         fs.Checksum(c.BuildPath() + "/share.css"),
 		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
-		Oidc:            c.OidcIssuerUrl() != nil && c.OidcClientId() != "" && c.OidcClientSecret() != "",
+		Oidc:            c.OidcIssuerUrl().String(),
 		Acl:             acl.Permissions,
 	}
 
@@ -344,7 +344,7 @@ func (c *Config) UserConfig() ClientConfig {
 		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
-		Oidc:            c.OidcIssuerUrl() != nil && c.OidcClientId() != "" && c.OidcClientSecret() != "",
+		Oidc:            c.OidcIssuerUrl().String(),
 		Acl:             acl.Permissions,
 	}
 
