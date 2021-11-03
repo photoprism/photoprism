@@ -10,7 +10,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn v-if="auth && !config.readonly && $config.feature('upload')" icon class="action-upload"
+        <v-btn v-if="auth && !config.readonly && $config.feature('upload') && hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpload)" icon class="action-upload"
                :title="$gettext('Upload')" @click.stop="openUpload()">
           <v-icon>cloud_upload</v-icon>
         </v-btn>

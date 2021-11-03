@@ -110,12 +110,14 @@ Vue.mixin({
   },
   computed: {
     acl() {
-      return new Acl(this.$config.values.acl);
+      const c = config.values.acl ? config.values : window.__CONFIG__;
+      return new Acl(c.acl);
     },
   },
   methods: {
     hasPermission(resource, ...actions) {
-      if (this.$config.values.public) return true;
+      const c = config.values.acl ? config.values : window.__CONFIG__;
+      if (c.public) return true;
       const role = this.$session.getUser().getRole();
       return this.acl.accessAllowedAny(role, resource, ...actions);
     },

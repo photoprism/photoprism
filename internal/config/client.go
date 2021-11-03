@@ -219,6 +219,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		PreviewToken:    "public",
 		DownloadToken:   "public",
 		Oidc:            c.OidcIssuerUrl() != nil && c.OidcClientId() != "" && c.OidcClientSecret() != "",
+		Acl:             acl.Permissions,
 	}
 
 	return result

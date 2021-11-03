@@ -57,9 +57,9 @@ const aclActions = Constants.actions;
 const aclResources = Constants.resources;
 
 const hasPermission = (resource, ...actions) => {
-  if (config.values.public) return true;
-  // const acl = new Acl(window.__CONFIG__.acl);
-  const acl = new Acl(config.values.acl);
+  const conf = config.values.acl ? config.values : c;
+  if (conf.public) return true;
+  const acl = new Acl(conf.acl);
   const role = session.getUser().getRole();
   return acl.accessAllowedAny(role, resource, ...actions);
 };

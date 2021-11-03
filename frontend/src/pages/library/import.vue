@@ -65,7 +65,7 @@
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn v-if="!$config.values.readonly && $config.feature('upload')"
+        <v-btn v-if="!$config.values.readonly && $config.feature('upload') && hasPermission(aclResources.ResourcePhotos, aclActions.ActionUpload)"
                :disabled="busy || !ready"
                color="primary-button"
                class="white--text ml-0 hidden-xs-only action-upload"

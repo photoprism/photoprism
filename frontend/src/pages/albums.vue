@@ -101,7 +101,7 @@
                   @mousedown="input.mouseDown($event, index)"
                   @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="featureShare && album.LinkCount > 0" :ripple="false"
+                <v-btn v-if="featureShare && album.LinkCount > 0 && hasPermission(aclResources.ResourceAlbums, aclActions.ActionShare)" :ripple="false"
                        icon flat absolute
                        class="action-share"
                        @touchstart.stop.prevent="input.touchStart($event, index)"

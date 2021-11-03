@@ -94,9 +94,9 @@
                        icon flat absolute
                        class="input-favorite"
                        @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="toggleLike($event, index)"
+                       @touchend.stop.prevent="hasPermission(aclResources.ResourceLabels, aclActions.ActionLike) && toggleLike($event, index)"
                        @touchmove.stop.prevent
-                       @click.stop.prevent="toggleLike($event, index)">
+                       @click.stop.prevent="hasPermission(aclResources.ResourceLabels, aclActions.ActionLike) && toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
