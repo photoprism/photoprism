@@ -292,6 +292,11 @@ func (m *User) Guest() bool {
 	return m.RoleGuest
 }
 
+// Guest returns true if the user is a guest.
+func (m *User) External() bool {
+	return m.ExternalID != ""
+}
+
 // SetPassword sets a new password stored as hash.
 func (m *User) SetPassword(password string) error {
 	if !m.Registered() {

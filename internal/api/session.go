@@ -66,6 +66,13 @@ func CreateSession(router *gin.RouterGroup) {
 				return
 			}
 
+			oidcEnabled := conf.OidcIssuerUrl() != nil && conf.OidcClientId() != "" && conf.OidcClientSecret() != ""
+			if user.ID != entity.Admin.ID && oidcEnabled && !user.External() {
+				log.Warn("Internal users are disabled when using OpenID Connect")
+				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				return
+			}
+
 			data.User = *user
 		} else {
 			c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidPassword)})

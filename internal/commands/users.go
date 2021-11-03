@@ -288,6 +288,10 @@ func usersUpdateAction(ctx *cli.Context) error {
 func callWithDependencies(ctx *cli.Context, f func(conf *config.Config) error) error {
 	conf := config.NewConfig(ctx)
 
+	if conf.OidcIssuerUrl() != nil && conf.OidcClientId() != "" && conf.OidcClientSecret() != "" {
+		log.Warn("Internal users are disabled when using OpenID Connect")
+	}
+
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
