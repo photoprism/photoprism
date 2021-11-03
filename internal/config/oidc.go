@@ -4,12 +4,12 @@ import "net/url"
 
 func (c *Config) OidcIssuerUrl() *url.URL {
 	if c.Options().OidcIssuerUrl == "" {
-		return nil
+		return new(url.URL)
 	}
 	res, err := url.Parse(c.Options().OidcIssuerUrl)
 	if err != nil {
 		log.Debugf("error parsing oidc issuer url: %q", err)
-		return nil
+		return new(url.URL)
 	}
 	return res
 }

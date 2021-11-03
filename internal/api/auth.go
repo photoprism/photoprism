@@ -14,7 +14,7 @@ import (
 // GET /api/v1/auth/
 func AuthEndpoints(router *gin.RouterGroup) {
 	conf := service.Config()
-	if conf.OidcIssuerUrl() == nil || conf.OidcClientId() == "" || conf.OidcClientSecret() == "" {
+	if conf.OidcIssuerUrl().String() == "" || conf.OidcClientId() == "" || conf.OidcClientSecret() == "" {
 		log.Debugf("no oidc provider configured. skip mounting endpoints")
 		return
 	}

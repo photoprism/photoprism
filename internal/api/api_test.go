@@ -26,6 +26,15 @@ func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config
 	return app, router, service.Config()
 }
 
+// NewApiTestWithOIDC returns new API test helper configured for OIDC.
+func NewApiTestWithOIDC() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config) {
+	app, router, conf = NewApiTest()
+	conf.Options().OidcIssuerUrl = "http://dummy-oidc:9998"
+	conf.Options().OidcClientID = "native"
+	conf.Options().OidcClientSecret = "random"
+	return app, router, conf
+}
+
 // AuthenticateAdmin Register session routes and returns valid SessionId.
 // Call this func after registering other routes and before performing other requests.
 func AuthenticateAdmin(app *gin.Engine, router *gin.RouterGroup) (sessId string) {

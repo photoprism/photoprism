@@ -12,7 +12,7 @@ import (
 
 func TestAuthEndpoints(t *testing.T) {
 	t.Run("successful oidc authentication", func(t *testing.T) {
-		app, router, _ := NewApiTest()
+		app, router, _ := NewApiTestWithOIDC()
 		AuthEndpoints(router)
 
 		// Step 1a: Request AuthURL
@@ -55,7 +55,7 @@ func TestAuthEndpoints(t *testing.T) {
 	})
 
 	t.Run("oidc authentication: missing cookie", func(t *testing.T) {
-		app, router, _ := NewApiTest()
+		app, router, _ := NewApiTestWithOIDC()
 		AuthEndpoints(router)
 
 		// Step 1a: Request AuthURL
