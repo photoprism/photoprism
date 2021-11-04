@@ -94,6 +94,12 @@
     overflow: hidden;
 }
 
+#photoprism .zoom-factor {
+    min-width: 150px;
+    flex: 0 1;
+    padding-right: 8px;
+}
+
 .p-user-box {
     width: 100%;
     padding: 0;

@@ -9,6 +9,8 @@
 
       <v-spacer></v-spacer>
 
+      <zoom-factor v-if="settings.view === 'mosaic' "/>
+
       <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh">
         <v-icon>refresh</v-icon>
       </v-btn>
@@ -71,9 +73,13 @@
 import Event from "pubsub-js";
 import Notify from "common/notify";
 import download from "common/download";
+import ZoomFactor from "component/zoom-factor.vue";
 
 export default {
   name: 'PAlbumToolbar',
+  components: {
+    ZoomFactor
+  },
   props: {
     album: Object,
     filter: Object,

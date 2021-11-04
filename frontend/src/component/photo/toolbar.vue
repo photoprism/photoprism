@@ -14,6 +14,8 @@
                     @keyup.enter.native="filterChange"
       ></v-text-field>
 
+      <zoom-factor v-if="settings.view === 'mosaic' "/>
+
       <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh">
         <v-icon>refresh</v-icon>
       </v-btn>
@@ -151,9 +153,13 @@
 <script>
 import Event from "pubsub-js";
 import * as options from "options/options";
+import ZoomFactor from "component/zoom-factor.vue";
 
 export default {
   name: 'PPhotoToolbar',
+  components: {
+    ZoomFactor
+  },
   props: {
     dirty: Boolean,
     filter: Object,

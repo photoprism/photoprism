@@ -22,7 +22,8 @@
       <v-flex
           v-for="(photo, index) in photos"
           :key="photo.ID"
-          xs4 sm3 md2 lg1 d-flex
+          d-flex
+          :class="thumbSize"
       >
         <v-card tile
                 :data-id="photo.ID"
@@ -116,6 +117,8 @@
   </v-container>
 </template>
 <script>
+
+import Event from "pubsub-js";
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 
 export default {
@@ -133,7 +136,25 @@ export default {
     return {
       hidePrivate: this.$config.settings().features.private,
       input: new Input(),
+      zoomFactor: null
     };
+  },
+  computed: {
+    thumbSize() {
+      switch (this.zoomFactor) {
+        default: return "xs4 sm3 md2 lg1";
+        case 2: return "xs6 sm4 md3 lg2";
+        case 3: return "xs12 sm6 md4 lg3";
+        case 4: return "xs12 sm6 md6 lg4";
+        case 5: return "xs12 sm6 md6 lg6";
+      }
+    }
+  },
+  created() {
+    Event.subscribe('zoom.factor.change', (evt, zoomFactor) => {
+      this.$set(this, 'zoomFactor', zoomFactor);
+    });
+    Event.publish('zoom.factor.refresh');
   },
   methods: {
     livePlayer(photo) {
