@@ -95,7 +95,7 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
     .navigateTo("/library/logs")
-    .expect(Selector("p.p-log-debug").visible)
+    .expect(Selector("p.p-log-message").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()

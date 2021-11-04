@@ -676,7 +676,7 @@ export default class Page {
       .expect(Selector("button.action-download").visible)
       .ok();
     if (type == "album" || type == "moment" || type == "state") {
-      await t.expect(Selector("button.action-delete").visible).motOk();
+      await t.expect(Selector("button.action-delete").visible).notOk();
     }
     await this.clearSelection();
     await t

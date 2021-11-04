@@ -89,7 +89,7 @@ test.meta("testID", "member-role-005")("No access to library", async (t) => {
     .expect(Selector("div.p-page-photos").visible)
     .ok()
     .navigateTo("/library/logs")
-    .expect(Selector("p.p-log-debug").visible)
+    .expect(Selector("p.p-log-message").visible)
     .notOk()
     .expect(Selector("div.p-page-photos").visible)
     .ok()
@@ -240,8 +240,9 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
     .ok()
     .expect(Selector('button[title="Like"]').exists)
     .notOk()
-    .click(Selector('button[title="Close"]'))
-    .click(Selector(".p-expand-search"));
+    .click(Selector("button.action-close"))
+    .wait(5000)
+    .click(Selector(".p-expand-search", { timeout: 8000 }));
   await page.setFilter("view", "Cards");
   await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
   await page.toggleLike(FirstPhoto);
@@ -502,12 +503,12 @@ test.meta("testID", "member-role-018")("No unstack, change primary actions", asy
     .ok()
     .expect(Selector("button.action-download").hasAttribute("disabled"))
     .notOk()
-    .expect(Selector("button.action-unstack").hasAttribute("disabled"))
-    .ok()
-    .expect(Selector("button.action-primary").hasAttribute("disabled"))
-    .ok()
-    .expect(Selector("button.action-delete").hasAttribute("disabled"))
-    .ok();
+    .expect(Selector("button.action-unstack").visible)
+    .notOk()
+    .expect(Selector("button.action-primary").visible)
+    .notOk()
+    .expect(Selector("button.action-delete").visible)
+    .notOk();
 });
 
 test.meta("testID", "member-role-019")("No edit people functionality", async (t) => {
