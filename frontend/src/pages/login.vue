@@ -91,8 +91,13 @@ export default {
   created() {
     const c = window.__CONFIG__;
     const preventAutoLogin = sessionStorage.getItem("preventAutoLogin");
+    const err = window.localStorage.getItem('auth_error');
     sessionStorage.removeItem("preventAutoLogin");
     if (!c.oidc || this.$route.query.preventAutoLogin || preventAutoLogin) {
+      if (err) {
+        Notify.error(err);
+        window.localStorage.removeItem('auth_error');
+      }
       return;
     }
     const cleanup = () => {
@@ -100,6 +105,7 @@ export default {
       window.localStorage.removeItem('auth_error');
     };
     const redirect = () => {
+      if (err) return;
       // check if oidc provider is available
       axios.get(c.oidc,{ timeout: 1000}).then(response => {
         // redirect to oidc provider
@@ -127,6 +133,7 @@ export default {
     },
     loginExternal() {
       let popup = window.open('api/v1/auth/external', "external-login");
+      window.localStorage.removeItem('auth_error');
       const onstorage = window.onstorage;
       const cleanup = () => {
         window.localStorage.removeItem('config');
@@ -145,9 +152,8 @@ export default {
         const error = window.localStorage.getItem('auth_error');
 
         if (error !== null) {
-          console.log(error);
-          cleanup();
           Notify.error(`${error}`);
+          cleanup();
           return;
         }
         if (sid === null || data === null || config === null) {
@@ -157,7 +163,6 @@ export default {
         this.$session.setId(sid);
         this.$session.setData(JSON.parse(data));
         this.$session.setConfig(JSON.parse(config));
-        //this.$session.sendClientInfo();
         this.$router.push(this.nextUrl);
         cleanup();
       };

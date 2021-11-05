@@ -2,6 +2,7 @@ package oidc
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
@@ -61,6 +62,11 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 		rp.WithVerifierOpts(
 			rp.WithIssuedAtOffset(5 * time.Second),
 		),
+		rp.WithErrorHandler(func(w http.ResponseWriter, r *http.Request, errorType string, errorDesc string, state string) {
+			log.Errorf("oidc: %s: %s (state: %s)", errorType, errorDesc, state)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Header().Add("oidc_error", fmt.Sprintf("oidc: %s", errorDesc))
+		}),
 	}
 
 	discover, err := client.Discover(iss.String(), httpClient)
@@ -127,7 +133,11 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 
 	log.Debugf("oidc: current request state: %v", ctx.Writer.Status())
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
-		return nil, errors.New("oidc: couldn't exchange auth code and thus not retrieve external user info")
+		err := ctx.Writer.Header().Get("oidc_error")
+		if err == "" {
+			return nil, errors.New("oidc: couldn't exchange auth code and thus not retrieve external user info (unknown error)")
+		}
+		return nil, errors.New(ctx.Writer.Header().Get("oidc_error"))
 	}
 
 	return userinfo, nil

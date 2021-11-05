@@ -35,7 +35,7 @@
 </head>
 <body class="{{ .config.Flags }}">
 {{ if and .status (eq .status "ok") }}
-<p class="browserupgrade">Login successful. Window can be closed.</p>
+<p class="browserupgrade">Login successful. You can safely close this tab.</p>
 {{ else if and .status (eq .status "error") }}
 <p class="browserupgrade">Login Error: {{ .errors }}</p>
 {{ else }}
@@ -47,10 +47,10 @@
     window.localStorage.setItem("session_id", {{ .id }})
     window.localStorage.setItem("data", JSON.stringify({{ .data }}));
     window.localStorage.setItem("config", JSON.stringify({{ .config }}));
-    window.location.href = '/login'
+    window.location.href = '/login';
     {{ else if and .status (eq .status "error") }}
     window.localStorage.setItem("auth_error", {{ .errors }});
-    window.location.href = '/login?preventAutoLogin=true'
+    window.location.href = '/login?preventAutoLogin=true';
     {{ end }}
 </script>
 </body>
