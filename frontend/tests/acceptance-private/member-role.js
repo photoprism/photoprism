@@ -213,6 +213,7 @@ test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
 
 test.meta("testID", "member-role-008")("Member cannot like photos", async (t) => {
   await page.login("member", "passwdmember");
+  await t.wait(5000);
   const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   const SecondPhoto = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
   await page.openNav();
@@ -240,9 +241,10 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
     .ok()
     .expect(Selector('button[title="Like"]').exists)
     .notOk()
-    .click(Selector("button.action-close"))
+    .hover(Selector("button.pswp__button--close"))
+    .click(Selector("button.pswp__button--close"))
     .wait(5000)
-    .click(Selector(".p-expand-search", { timeout: 8000 }));
+    .click(Selector(".p-expand-search", { timeout: 10000 }));
   await page.setFilter("view", "Cards");
   await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
   await page.toggleLike(FirstPhoto);

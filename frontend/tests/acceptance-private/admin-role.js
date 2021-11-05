@@ -95,7 +95,7 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
     .navigateTo("/library/logs")
-    .expect(Selector("p.p-log-message").visible)
+    .expect(Selector("div.terminal").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
@@ -107,6 +107,7 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk()
+    .click(Selector(".nav-library + div"))
     .expect(Selector(".nav-hidden").visible)
     .ok()
     .navigateTo("/library/hidden");
@@ -114,6 +115,7 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
   await t
     .expect(PhotoCountBrowse)
     .gte(PhotoCountHidden)
+    .click(Selector(".nav-library + div"))
     .expect(Selector(".nav-errors").visible)
     .ok()
     .navigateTo("/library/errors")
