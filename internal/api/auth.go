@@ -1,14 +1,12 @@
 package api
 
 import (
-	"net/http"
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/oidc"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/session"
+	"net/http"
 )
 
 // GET /api/v1/auth/
@@ -39,35 +37,31 @@ func AuthEndpoints(router *gin.RouterGroup) {
 	router.GET(oidc.RedirectPath, func(c *gin.Context) {
 		openIdConnect, _ := service.Oidc()
 
-		userInfo, err := openIdConnect.CodeExchangeUserInfo(c)
-		if err != nil {
-			c.Error(err)
-			callbackError(c, err.Error(), http.StatusInternalServerError)
+		userInfo, claimErr := openIdConnect.CodeExchangeUserInfo(c)
+		if claimErr != nil {
+			c.Error(claimErr)
+			callbackError(c, claimErr.Error(), http.StatusInternalServerError)
 			return
-		}
-		var uname string
-		if len(userInfo.GetPreferredUsername()) >= 4 {
-			uname = userInfo.GetPreferredUsername()
-		} else if len(userInfo.GetNickname()) >= 4 {
-			uname = userInfo.GetNickname()
-		} else if len(userInfo.GetName()) >= 4 {
-			uname = strings.ReplaceAll(strings.ToLower(userInfo.GetName()), " ", "-")
-		} else if len(userInfo.GetEmail()) >= 4 {
-			uname = userInfo.GetEmail()
-		} else {
-			log.Error("auth: no username found")
 		}
 
 		u := &entity.User{
 			FullName:     userInfo.GetName(),
-			UserName:     uname,
+			UserName:     oidc.UsernameFromUserInfo(userInfo),
 			PrimaryEmail: userInfo.GetEmail(),
 			ExternalID:   userInfo.GetSubject(),
 		}
 
+		isAdmin, claimErr := oidc.HasRoleAdmin(userInfo)
+		if claimErr == nil {
+			u.RoleAdmin = isAdmin
+			log.Debug("photoprism_admin: ", isAdmin)
+		} else {
+			log.Debug(claimErr)
+		}
+
 		log.Debugf("USER: %s %s %s %s\n", u.FullName, u.UserName, u.PrimaryEmail, u.ExternalID)
 
-		user, e := entity.CreateOrUpdateExternalUser(u)
+		user, e := entity.CreateOrUpdateExternalUser(u, claimErr == nil)
 		if e != nil {
 			c.Error(e)
 			callbackError(c, e.Error(), http.StatusInternalServerError)

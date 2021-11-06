@@ -9,6 +9,7 @@ func initOidc() (err error) {
 		Config().OidcIssuerUrl(),
 		Config().OidcClientId(),
 		Config().OidcClientSecret(),
+		Config().OidcScopes(),
 		Config().SiteUrl(),
 		Config().Debug(),
 	)

@@ -166,7 +166,7 @@ func FirstOrCreateUser(m *User) *User {
 }
 
 // CreateOrUpdateExternalUser Retrieves User by its ExternalID and updates relevant properties. If no User exists, a new one will be inserted into database.
-func CreateOrUpdateExternalUser(m *User) (*User, error) {
+func CreateOrUpdateExternalUser(m *User, updateRole bool) (*User, error) {
 	result := User{}
 
 	if err := Db().Preload("Address").Where("external_id = ?", m.ExternalID).First(&result).Error; err == nil {
@@ -177,6 +177,10 @@ func CreateOrUpdateExternalUser(m *User) (*User, error) {
 		}
 		if m.FullName != result.FullName {
 			result.FullName = m.FullName
+			mustUpdate = true
+		}
+		if updateRole && m.RoleAdmin != result.RoleAdmin {
+			result.RoleAdmin = m.RoleAdmin
 			mustUpdate = true
 		}
 		if mustUpdate {

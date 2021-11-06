@@ -42,6 +42,7 @@ type Options struct {
 	OidcClientID          string  `yaml:"-" json:"-" flag:"oidc-client-id"`
 	OidcClientSecret      string  `yaml:"-" json:"-" flag:"oidc-client-secret"`
 	OidcIssuerUrl         string  `yaml:"-" json:"-" flag:"oidc-issuer-url"`
+	OidcScopes            string  `yaml:"-" json:"-" flag:"oidc-scopes"`
 	ReadOnly              bool    `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool    `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	ConfigPath            string  `yaml:"ConfigPath" json:"-" flag:"config-path"`

@@ -19,7 +19,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-const RedirectPath = "/auth/callback"
+const (
+	RedirectPath  = "/auth/callback"
+	OidcRoleClaim = "photoprism_role"
+	OidcAdminRole = "photoprism_admin"
+)
 
 var log = event.Log
 
@@ -28,7 +32,7 @@ type Client struct {
 	debug bool
 }
 
-func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool) (result *Client, err error) {
+func NewClient(iss *url.URL, clientId, clientSecret, customScopes, siteUrl string, debug bool) (result *Client, err error) {
 	log.Debugf("oidc: Provider Params: %s %s %s %s", iss.String(), clientId, clientSecret, siteUrl)
 
 	u, err := url.Parse(siteUrl)
@@ -82,7 +86,7 @@ func NewClient(iss *url.URL, clientId, clientSecret, siteUrl string, debug bool)
 		}
 	}
 
-	scopes := strings.Split("openid profile email", " ")
+	scopes := strings.Split(strings.TrimSpace("openid profile email "+customScopes), " ")
 
 	provider, err := rp.NewRelyingPartyOIDC(iss.String(), clientId, clientSecret, u.String(), scopes, options...)
 
@@ -111,10 +115,7 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	var userinfo oidc.UserInfo
 
 	userinfoClosure := func(w http.ResponseWriter, r *http.Request, tokens *oidc.Tokens, state string, rp rp.RelyingParty, info oidc.UserInfo) {
-		log.Infof("oidc: UserInfo: %s %s %s %s %s", info.GetEmail(), info.GetSubject(), info.GetNickname(), info.GetName(), info.GetPreferredUsername())
-		log.Debugf("oidc: IDToken: %s", tokens.IDToken)
-		log.Debugf("oidc: AToken: %s", tokens.AccessToken)
-		log.Debugf("oidc: RToken: %s", tokens.RefreshToken)
+		log.Debugf("oidc: UserInfo: %s %s %s %s %s", info.GetEmail(), info.GetSubject(), info.GetNickname(), info.GetName(), info.GetPreferredUsername())
 
 		userinfo = info
 	}
@@ -152,4 +153,55 @@ func (c *Client) IsAvailable() error {
 		return err
 	}
 	return nil
+}
+
+func UsernameFromUserInfo(userinfo oidc.UserInfo) (uname string) {
+	if len(userinfo.GetPreferredUsername()) >= 4 {
+		uname = userinfo.GetPreferredUsername()
+	} else if len(userinfo.GetNickname()) >= 4 {
+		uname = userinfo.GetNickname()
+	} else if len(userinfo.GetName()) >= 4 {
+		uname = strings.ReplaceAll(strings.ToLower(userinfo.GetName()), " ", "-")
+	} else if len(userinfo.GetEmail()) >= 4 {
+		uname = userinfo.GetEmail()
+	} else {
+		log.Error("oidc: no username found")
+	}
+	return uname
+}
+
+// HasRoleAdmin searches UserInfo claims for admin role.
+// Returns true if role is present or false if claim was found but no role in there.
+// Error will be returned if the role claim is not delivered at all.
+func HasRoleAdmin(userinfo oidc.UserInfo) (bool, error) {
+	claim := userinfo.GetClaim(OidcRoleClaim)
+	return claimContainsProp(claim, OidcAdminRole)
+}
+
+func claimContainsProp(claim interface{}, property string) (bool, error) {
+	switch t := claim.(type) {
+	case nil:
+		return false, errors.New("oidc: claim not found")
+	case []interface{}:
+		for _, value := range t {
+			res, err := claimContainsProp(value, property)
+			if err != nil {
+				return false, err
+			}
+			if res {
+				return res, nil
+			}
+		}
+		return false, nil
+	case interface{}:
+		if value, ok := t.(string); ok {
+			return value == property, nil
+		} else {
+			return false, errors.New("oidc: unexpected type")
+		}
+	//case string:
+	//	return t == property, nil
+	default:
+		return false, errors.New("oidc: unexpected type")
+	}
 }

@@ -513,4 +513,10 @@ var GlobalFlags = []cli.Flag{
 		Value:  "",
 		EnvVar: "PHOTOPRISM_OIDC_ISSUER_URL",
 	},
+	cli.StringFlag{
+		Name:   "oidc-scopes",
+		Usage:  "Add custom scopes to OpenID Connect Token Requests",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_OIDC_CUSTOM_SCOPES",
+	},
 }

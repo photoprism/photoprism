@@ -21,3 +21,7 @@ func (c *Config) OidcClientId() string {
 func (c *Config) OidcClientSecret() string {
 	return c.Options().OidcClientSecret
 }
+
+func (c *Config) OidcScopes() string {
+	return c.Options().OidcScopes
+}

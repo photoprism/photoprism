@@ -544,7 +544,7 @@ func TestCreateOrUpdateExternalUser(t *testing.T) {
 	}
 	var uid string
 	t.Run("CreateOrUpdateExternalUser - new", func(t *testing.T) {
-		user, err := CreateOrUpdateExternalUser(u)
+		user, err := CreateOrUpdateExternalUser(u, false)
 		if err != nil {
 			t.Error(err)
 		}
@@ -555,13 +555,13 @@ func TestCreateOrUpdateExternalUser(t *testing.T) {
 
 	})
 	t.Run("CreateOrUpdateExternalUser - new invalid", func(t *testing.T) {
-		user, err := CreateOrUpdateExternalUser(u2)
+		user, err := CreateOrUpdateExternalUser(u2, false)
 		assert.Error(t, err)
 		assert.Nil(t, user)
 	})
 	t.Run("CreateOrUpdateExternalUser - update", func(t *testing.T) {
 		u.PrimaryEmail = "gopher-new@example.com"
-		user, err := CreateOrUpdateExternalUser(u)
+		user, err := CreateOrUpdateExternalUser(u, false)
 		if err != nil {
 			t.Error(err)
 		}
@@ -573,7 +573,7 @@ func TestCreateOrUpdateExternalUser(t *testing.T) {
 	})
 	t.Run("CreateOrUpdateExternalUser - update invalid", func(t *testing.T) {
 		u.PrimaryEmail = "noemail"
-		user, err := CreateOrUpdateExternalUser(u)
+		user, err := CreateOrUpdateExternalUser(u, false)
 		assert.Error(t, err)
 		assert.Nil(t, user)
 	})
@@ -588,10 +588,10 @@ func TestCreateOrUpdateExternalUser(t *testing.T) {
 			FullName:   "Gopher Go Admin 1",
 			ExternalID: "testid-0123455678-4",
 		}
-		user, err := CreateOrUpdateExternalUser(u3)
+		user, err := CreateOrUpdateExternalUser(u3, false)
 		assert.Nil(t, err)
 		assert.Equal(t, "admin-01", user.UserName)
-		user2, err2 := CreateOrUpdateExternalUser(u4)
+		user2, err2 := CreateOrUpdateExternalUser(u4, false)
 		assert.Nil(t, err2)
 		assert.Equal(t, "admin-02", user2.UserName)
 	})
