@@ -25,11 +25,11 @@ func AuthEndpoints(router *gin.RouterGroup) {
 
 	router.GET("/auth/external", func(c *gin.Context) {
 		openIdConnect, _ := service.Oidc()
-		if err := openIdConnect.IsAvailable(); err != nil {
-			c.Error(err)
-			callbackError(c, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		//if err := openIdConnect.IsAvailable(); err != nil {
+		//	c.Error(err)
+		//	callbackError(c, err.Error(), http.StatusInternalServerError)
+		//	return
+		//}
 
 		handle := openIdConnect.AuthUrlHandler()
 		handle(c.Writer, c.Request)

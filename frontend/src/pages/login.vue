@@ -132,17 +132,25 @@ export default {
       ).catch(() => this.loading = false);
     },
     loginExternal() {
-      let popup = window.open('api/v1/auth/external', "external-login");
-      window.localStorage.removeItem('auth_error');
-      const onstorage = window.onstorage;
-      const cleanup = () => {
-        window.localStorage.removeItem('config');
+      const c = this.$config.values;
+      this.loading = true;
+      axios.get(c.oidc,{ timeout: 3000}).then(response => {
+        let popup = window.open('api/v1/auth/external', "external-login");
         window.localStorage.removeItem('auth_error');
-        window.onstorage = onstorage;
-        popup.close();
-      };
-
-      window.onstorage = this.onExternalLogin(cleanup);
+        const onstorage = window.onstorage;
+        const cleanup = () => {
+          window.localStorage.removeItem('config');
+          window.localStorage.removeItem('auth_error');
+          window.onstorage = onstorage;
+          popup.close();
+        };
+        window.onstorage = this.onExternalLogin(cleanup);
+      }).catch(error => {
+        if (c.debug) console.log(error);
+        Notify.error(`Couldn't connect to OpenID Connect Provider. ${error}`);
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     onExternalLogin(cleanup, redirect) {
       return () => {
