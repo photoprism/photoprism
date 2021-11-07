@@ -595,5 +595,32 @@ func TestCreateOrUpdateExternalUser(t *testing.T) {
 		assert.Nil(t, err2)
 		assert.Equal(t, "admin-02", user2.UserName)
 	})
+	t.Run("CreateOrUpdateExternalUser - update with roles", func(t *testing.T) {
+		u.PrimaryEmail = "gopher-new@example.com"
+		u.RoleAdmin = true
+		user, err := CreateOrUpdateExternalUser(u, true)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, uid, user.UserUID)
+		assert.True(t, user.RoleAdmin)
+		u.RoleAdmin = false
+		user, err = CreateOrUpdateExternalUser(u, true)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, uid, user.UserUID)
+		assert.False(t, user.RoleAdmin)
+	})
+	t.Run("CreateOrUpdateExternalUser - update with roles invalid", func(t *testing.T) {
+		u.PrimaryEmail = "gopher-new@example.com"
+		u.RoleAdmin = true
+		user, err := CreateOrUpdateExternalUser(u, false)
+		if err != nil {
+			t.Error(err)
+		}
+		assert.Equal(t, uid, user.UserUID)
+		assert.False(t, user.RoleAdmin)
+	})
 
 }

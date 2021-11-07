@@ -1,12 +1,13 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/oidc"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/session"
-	"net/http"
 )
 
 // GET /api/v1/auth/
@@ -22,12 +23,12 @@ func AuthEndpoints(router *gin.RouterGroup) {
 	}
 
 	router.GET("/auth/external", func(c *gin.Context) {
-		openIdConnect, _ := service.Oidc()
-		//if err := openIdConnect.IsAvailable(); err != nil {
-		//	c.Error(err)
-		//	callbackError(c, err.Error(), http.StatusInternalServerError)
-		//	return
-		//}
+		openIdConnect, err := service.Oidc()
+		if err != nil {
+			c.Error(err)
+			callbackError(c, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		handle := openIdConnect.AuthUrlHandler()
 		handle(c.Writer, c.Request)
