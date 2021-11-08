@@ -11,8 +11,6 @@ fixture`Test photos`.page`${testcafeconfig.url}`;
 const page = new Page();
 
 test.meta("testID", "photos-001")("Scroll to top", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
   await page.setFilter("view", "Cards");
   await t
     .expect(Selector("button.is-photo-scroll-top").exists)
@@ -206,8 +204,12 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
 });
 
 test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
+  if (t.browser.platform === "mobile") {
+    await t.navigateTo("/browse");
+  } else {
+    await page.openNav();
+    await t.click(Selector(".nav-browse"));
+  }
   await page.setFilter("view", "Cards");
   const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   await t
@@ -350,8 +352,12 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
 });
 
 test.meta("testID", "photos-008")("Change primary file", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse")).click(Selector(".p-expand-search"));
+  if (t.browser.platform === "mobile") {
+    await t.navigateTo("/browse");
+  } else {
+    await page.openNav();
+    await t.click(Selector(".nav-browse")).click(Selector(".p-expand-search"));
+  }
   await page.search("ski");
   const SequentialPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
 
@@ -397,8 +403,12 @@ test.meta("testID", "photos-009")("Navigate from card view to place", async (t) 
 });
 
 test.meta("testID", "photos-010")("Ungroup files", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse")).click(Selector(".p-expand-search"));
+  if (t.browser.platform === "mobile") {
+    await t.navigateTo("/browse");
+  } else {
+    await page.openNav();
+    await t.click(Selector(".nav-browse")).click(Selector(".p-expand-search"));
+  }
   await page.search("group");
   await page.setFilter("view", "Cards");
   const PhotoCount = await Selector("button.action-title-edit", { timeout: 5000 }).count;
@@ -466,7 +476,6 @@ test.skip.meta("testID", "photos-011")("Delete non primary file", async (t) => {
 });
 
 test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (t) => {
-  await page.openNav();
   await page.search("photo:true");
   const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   await page.search("video:true");

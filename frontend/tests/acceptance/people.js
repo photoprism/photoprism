@@ -159,8 +159,6 @@ test.meta("testID", "people-002")("Add + Reject + Star", async (t) => {
 });
 
 test.meta("testID", "people-003")("Remove face", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
   await page.search("face:new");
   const FirstPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
   await page.toggleSelectNthPhoto(0);

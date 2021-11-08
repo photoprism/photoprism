@@ -41,25 +41,20 @@ test.meta("testID", "photos-download-001")(
   }
 );
 
-test.meta("testID", "photos-download-002")(
-  "Test download video from context menu",
-  async (t) => {
-    await page.openNav();
-    await t.click(Selector("div.nav-browse"));
-    await page.search("name:Mohn.mp4");
-    const Photo = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
-    await page.selectPhotoFromUID(Photo);
-    await t.click(Selector("button.action-menu"));
-    await logger.clear();
-    await t.click(Selector("button.action-download"));
-    const requestInfo = await logger.requests[1].response;
-    const requestInfo2 = await logger.requests[2].response;
-    await page.validateDownloadRequest(requestInfo, "Mohn", ".mp4.jpg");
-    await page.validateDownloadRequest(requestInfo2, "Mohn", ".mp4");
-    await logger.clear();
-    await page.clearSelection();
-  }
-);
+test.meta("testID", "photos-download-002")("Test download video from context menu", async (t) => {
+  await page.search("name:Mohn.mp4");
+  const Photo = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
+  await page.selectPhotoFromUID(Photo);
+  await t.click(Selector("button.action-menu"));
+  await logger.clear();
+  await t.click(Selector("button.action-download"));
+  const requestInfo = await logger.requests[1].response;
+  const requestInfo2 = await logger.requests[2].response;
+  await page.validateDownloadRequest(requestInfo, "Mohn", ".mp4.jpg");
+  await page.validateDownloadRequest(requestInfo2, "Mohn", ".mp4");
+  await logger.clear();
+  await page.clearSelection();
+});
 
 test.meta("testID", "photos-download-003")(
   "Test download multiple jpg files from context menu",
@@ -85,8 +80,6 @@ test.meta("testID", "photos-download-003")(
 test.meta("testID", "photos-download-004")(
   "Test raw file from context menu and fullscreen mode",
   async (t) => {
-    await page.openNav();
-    await t.click(Selector("div.nav-browse"));
     await page.search("name:elephantRAW");
     const Photo = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
     await page.selectPhotoFromUID(Photo);

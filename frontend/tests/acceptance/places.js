@@ -21,10 +21,11 @@ test.meta("testID", "places-001")("Test places", async (t) => {
     .expect(Selector("div.p-map-control").visible)
     .ok()
     .expect(getLocation())
-    .contains("Berlin")
-    .click(Selector(".nav-browse"))
-    .expect(Selector("div.is-photo").exists)
-    .ok()
+    .contains("Berlin");
+  await page.openNav();
+  await t.click(Selector(".nav-browse")).expect(Selector("div.is-photo").exists).ok();
+  await page.openNav();
+  await t
     .click(Selector(".nav-places"))
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()

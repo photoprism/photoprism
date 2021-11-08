@@ -10,8 +10,6 @@ const page = new Page();
 
 test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", async (t) => {
   await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).notOk();
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
   await page.search("digikam");
   const PhotoCount = await Selector("div.is-photo").count;
   await t
@@ -55,24 +53,21 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
     .navigateTo("/library/files/2020/10");
   const FileCountAfterDelete = await Selector("div.is-file").count;
   await t.expect(FileCountAfterDelete).eql(0);
-  const originalsLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/10")
-    .length;
+  const originalsLengthAfterDelete = fs.readdirSync(
+    "../storage/acceptance/originals/2020/10"
+  ).length;
   await t.expect(originalsLengthAfterDelete).eql(0);
 });
 
 test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (t) => {
   await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).notOk();
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
   await page.search("korn");
   const PhotoCount = await Selector("div.is-photo").count;
   await t
     .expect(PhotoCount)
     .eql(0)
     .click(Selector(".action-upload"))
-    .setFilesToUpload(Selector(".input-upload"), [
-      "./upload-files/korn.mp4",
-    ])
+    .setFilesToUpload(Selector(".input-upload"), ["./upload-files/korn.mp4"])
     .wait(15000);
   const PhotoCountAfterUpload = await Selector("div.is-photo").count;
   await t.expect(PhotoCountAfterUpload).eql(1);
@@ -108,8 +103,9 @@ test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (
     .navigateTo("/library/files/2020/06");
   const FileCountAfterDelete = await Selector("div.is-file").count;
   await t.expect(FileCountAfterDelete).eql(0);
-  const originalsLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/06")
-    .length;
+  const originalsLengthAfterDelete = fs.readdirSync(
+    "../storage/acceptance/originals/2020/06"
+  ).length;
   await t.expect(originalsLengthAfterDelete).eql(0);
   const sidecarLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
   await t.expect(sidecarLengthAfterDelete).eql(0);
@@ -201,8 +197,6 @@ test.meta("testID", "photos-upload-delete-004")("Upload jpg to new Album + Delet
 });
 
 test.meta("testID", "photos-upload-delete-005")("Try uploading nsfw file", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
   await t
     .click(Selector(".action-upload"))
     .setFilesToUpload(Selector(".input-upload"), ["./upload-files/hentai_2.jpg"])
@@ -216,8 +210,6 @@ test.meta("testID", "photos-upload-delete-005")("Try uploading nsfw file", async
 });
 
 test.meta("testID", "photos-upload-delete-006")("Try uploading txt file", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
   await t
     .click(Selector(".action-upload"))
     .setFilesToUpload(Selector(".input-upload"), ["./upload-files/foo.txt"])

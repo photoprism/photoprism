@@ -9,10 +9,7 @@ const page = new Page();
 test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await t.expect(Selector(".action-upload").exists, { timeout: 5000 }).ok();
   await page.openNav();
-  await t
-    .expect(Selector(".nav-browse").innerText)
-    .contains("Search")
-    .click(Selector(".nav-browse"));
+  await t.expect(Selector(".nav-browse").innerText).contains("Search").navigateTo("/browse");
   await page.setFilter("view", "Cards");
   await page.search("photo:true");
   await page.toggleSelectNthPhoto(0);
@@ -34,7 +31,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector(".action-download").exists)
     .ok()
     .click(Selector(".action-close"));
-  if (t.browser.os.name !== "macOS") {
+  if (t.browser.os.name !== "macOS" && t.browser.platform !== "mobile") {
     if (await Selector(".action-close").exists) {
       await t.click(Selector(".action-close"));
     }
@@ -109,41 +106,28 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector(".input-review input"));
   await page.openNav();
   await t.eval(() => location.reload());
-  await page.openNav();
-  await t.click(Selector(".nav-calendar"));
+  await t.navigateTo("/calendar");
   await page.checkButtonVisibility("download", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-calendar"));
+  await t.navigateTo("/calendar");
   await page.checkButtonVisibility("share", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-calendar"));
+  await t.navigateTo("/calendar");
   await page.checkButtonVisibility("upload", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-folders"));
+  await t.navigateTo("/folders");
   await page.checkButtonVisibility("download", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-folders"));
+  await t.navigateTo("/folders");
   await page.checkButtonVisibility("share", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-folders"));
+  await t.navigateTo("/folders");
   await page.checkButtonVisibility("upload", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
+  await t.navigateTo("/albums");
   await page.checkButtonVisibility("download", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
+  await t.navigateTo("/albums");
   await page.checkButtonVisibility("share", false, false);
-  await page.openNav();
-  await t.click(Selector(".nav-albums"));
+  await t.navigateTo("/albums");
   await page.checkButtonVisibility("upload", false, false);
+  await t.navigateTo("/browse").expect(Selector("button.action-upload").exists).notOk();
   await page.openNav();
-  await t
-    .click(Selector(".nav-browse"))
-    .expect(Selector("button.action-upload").exists)
-    .notOk()
-    .expect(Selector(".nav-browse").innerText)
-    .contains("Suche")
-    .click(Selector(".nav-browse"));
+  await t.expect(Selector(".nav-browse").innerText).contains("Suche");
+  await t.navigateTo("/browse");
   await page.search("photo:true");
   await page.toggleSelectNthPhoto(0);
   await t
@@ -165,7 +149,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector(".action-download").exists)
     .notOk()
     .click(Selector(".action-close"));
-  if (await Selector(".action-close").visible) {
+  if ((await Selector(".action-close").visible) && t.browser.platform !== "mobile") {
     await t.click(Selector(".action-close"));
   }
   await page.toggleSelectNthPhoto(0);

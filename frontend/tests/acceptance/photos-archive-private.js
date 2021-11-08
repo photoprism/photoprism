@@ -9,8 +9,6 @@ const page = new Page();
 test.meta("testID", "photos-005")(
   "Private/unprivate photo/video using clipboard and list",
   async (t) => {
-    await page.openNav();
-    await t.click(Selector(".nav-browse"));
     await page.search("photo:true");
     await page.setFilter("view", "Mosaic");
     const FirstPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
@@ -168,8 +166,6 @@ test.meta("testID", "photos-005")(
 test.meta("testID", "photos-006")(
   "Archive/restore video, photos, private photos and review photos using clipboard",
   async (t) => {
-    await page.openNav();
-    await t.click(Selector(".nav-browse"));
     await page.search("photo:true");
     await page.setFilter("view", "Mosaic");
     const FirstPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");

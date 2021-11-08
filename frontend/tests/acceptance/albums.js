@@ -170,8 +170,6 @@ test.meta("testID", "albums-007")("Create/delete album during add to album", asy
 });
 
 test.meta("testID", "albums-008")("Test album autocomplete", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
   await page.search("photo:true");
   const FirstPhotoUid = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
   await page.selectPhotoFromUID(FirstPhotoUid);
