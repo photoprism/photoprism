@@ -11,7 +11,7 @@ services:
     image: photoprism/photoprism:develop
     depends_on:
       - postgres
-      - webdav-dummy
+      - dummy-webdav
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -76,7 +76,7 @@ services:
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
 
-  webdav-dummy:
+  dummy-webdav:
     image: photoprism/webdav:20211021
 
 volumes:

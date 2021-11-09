@@ -11,7 +11,7 @@ services:
       - apparmor:unconfined
     depends_on:
       - mariadb
-      - webdav-dummy
+      - dummy-webdav
     volumes:
       - "~/.cache/npm:/root/.cache/npm"
       - "~/.cache/go-mod:/go/pkg/mod"
@@ -154,5 +154,5 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
-  webdav-dummy:
+  dummy-webdav:
     image: photoprism/webdav:20211021
