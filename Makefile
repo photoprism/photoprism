@@ -222,8 +222,7 @@ docker-demo-local:
 docker-dummy-webdav:
 	docker pull --platform=amd64 golang:1
 	docker pull --platform=arm64 golang:1
-	docker pull --platform=arm golang:1
-	scripts/docker-buildx.sh dummy-webdav linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+	scripts/docker-buildx.sh dummy-webdav linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-dummy-oidc:
 	docker pull --platform=amd64 golang:1
 	docker pull --platform=arm64 golang:1

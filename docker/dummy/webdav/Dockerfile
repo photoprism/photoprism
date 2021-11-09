@@ -7,6 +7,9 @@ WORKDIR "/webdav"
 
 RUN go install github.com/hacdias/webdav@latest
 
+ENV WEBDAV_USERNAME admin
+ENV WEBDAV_PASSWORD photoprism
+
 # Expose HTTP port
 EXPOSE 80
 
