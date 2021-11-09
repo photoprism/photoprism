@@ -7,9 +7,10 @@ import (
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/internal/maps/osm"
 	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Photo location
+// Location represents a geolocation.
 type Location struct {
 	ID          string
 	LocName     string
@@ -40,7 +41,7 @@ func NewLocation(id, name, category, label, city, state, country, source string,
 		LocCategory: category,
 		LocLabel:    label,
 		LocCity:     city,
-		LocState:    state,
+		LocState:    txt.NormalizeState(state),
 		LocCountry:  country,
 		LocSource:   source,
 		LocKeywords: keywords,
@@ -164,7 +165,7 @@ func (l Location) City() string {
 }
 
 func (l Location) State() string {
-	return l.LocState
+	return txt.NormalizeState(l.LocState)
 }
 
 func (l Location) CountryCode() string {

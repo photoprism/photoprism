@@ -1,6 +1,6 @@
 package txt
 
-// List of titles and ranks in lowercase, see https://en.wikipedia.org/wiki/List_of_titles.
+// TitlesAndRanks contains a list of name titles and ranks in lowercase, see https://en.wikipedia.org/wiki/List_of_titles.
 var TitlesAndRanks = map[string]bool{
 	"emperor":     true,
 	"caliph":      true,

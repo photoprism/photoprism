@@ -35,6 +35,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"runtime/debug"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -72,8 +73,14 @@ func (c Client) readDir(path string) ([]os.FileInfo, error) {
 	return c.client.ReadDir(path)
 }
 
-// Files returns all files in path as string slice.
+// Files returns all files in a directory as string slice.
 func (c Client) Files(dir string) (result fs.FileInfos, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("webdav: %s (panic while listing files)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
 	files, err := c.readDir(dir)
 
 	if err != nil {
@@ -142,7 +149,13 @@ func (c Client) fetchDirs(root string, recursive bool, start time.Time, timeout 
 }
 
 // Download downloads a single file to the given location.
-func (c Client) Download(from, to string, force bool) error {
+func (c Client) Download(from, to string, force bool) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("webdav: %s (panic while downloading)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
 	if _, err := os.Stat(to); err == nil && !force {
 		return fmt.Errorf("webdav: download skipped, %s already exists", to)
 	}
@@ -159,7 +172,9 @@ func (c Client) Download(from, to string, force bool) error {
 		return fmt.Errorf("webdav: %s is not a folder", dir)
 	}
 
-	bytes, err := c.client.Read(from)
+	var bytes []byte
+
+	bytes, err = c.client.Read(from)
 
 	if err != nil {
 		return err
@@ -179,18 +194,18 @@ func (c Client) DownloadDir(from, to string, recursive, force bool) (errs []erro
 	for _, file := range files {
 		dest := to + string(os.PathSeparator) + file.Abs
 
-		if _, err := os.Stat(dest); err == nil {
-			// File exists
+		if _, err = os.Stat(dest); err == nil {
+			// File already exists.
 			msg := fmt.Errorf("webdav: %s exists", dest)
 			errs = append(errs, msg)
-			log.Error(msg)
+			log.Warn(msg)
 			continue
 		}
 
-		if err := c.Download(file.Abs, dest, force); err != nil {
-			msg := fmt.Errorf("webdav: %s", err)
-			errs = append(errs, msg)
-			log.Error(msg)
+		if err = c.Download(file.Abs, dest, force); err != nil {
+			// Failed to download file.
+			errs = append(errs, err)
+			log.Error(err)
 			continue
 		}
 	}
@@ -218,14 +233,22 @@ func (c Client) CreateDir(dir string) error {
 }
 
 // Upload uploads a single file to the remote server.
-func (c Client) Upload(from, to string) error {
+func (c Client) Upload(from, to string) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("webdav: %s (panic while uploading)\nstack: %s", r, debug.Stack())
+		}
+	}()
+
 	file, err := os.Open(from)
 
 	if err != nil || file == nil {
 		return err
 	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	return c.client.WriteStream(to, file, 0644)
 }

@@ -92,28 +92,3 @@ func NameKeywords(names, aliases string) (results []string) {
 
 	return UniqueNames(append(Words(names), Words(aliases)...))
 }
-
-// NormalizeName sanitizes and capitalizes names.
-func NormalizeName(name string) string {
-	if name == "" {
-		return ""
-	}
-
-	// Remove double quotes and other special characters.
-	name = strings.Map(func(r rune) rune {
-		switch r {
-		case '"', '`', '~', '\\', '/', '*', '%', '&', '|', '+', '=', '$', '@', '!', '?', ':', ';', '<', '>', '{', '}':
-			return -1
-		}
-		return r
-	}, name)
-
-	name = strings.TrimSpace(name)
-
-	if name == "" {
-		return ""
-	}
-
-	// Shorten and capitalize.
-	return Clip(Title(name), ClipDefault)
-}

@@ -24,19 +24,6 @@ func StripOr(s string) string {
 	return s
 }
 
-// NormalizeQuery replaces search operator with default symbols.
-func NormalizeQuery(s string) string {
-	s = strings.ToLower(Clip(s, ClipQuery))
-	s = strings.ReplaceAll(s, Spaced(EnOr), Or)
-	s = strings.ReplaceAll(s, Spaced(EnAnd), And)
-	s = strings.ReplaceAll(s, Spaced(EnWith), And)
-	s = strings.ReplaceAll(s, Spaced(EnIn), And)
-	s = strings.ReplaceAll(s, Spaced(EnAt), And)
-	s = strings.ReplaceAll(s, SpacedPlus, And)
-	s = strings.ReplaceAll(s, "%", "*")
-	return strings.Trim(s, "+&|_-=!@$%^(){}\\<>,.;: ")
-}
-
 // QueryTooShort tests if a search query is too short.
 func QueryTooShort(q string) bool {
 	q = strings.Trim(q, "- '")
