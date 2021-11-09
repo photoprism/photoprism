@@ -9,10 +9,11 @@ import (
 	"strings"
 	"time"
 
+	utils "github.com/caos/oidc/pkg/http"
+
 	"github.com/caos/oidc/pkg/client"
 	"github.com/caos/oidc/pkg/client/rp"
 	"github.com/caos/oidc/pkg/oidc"
-	"github.com/caos/oidc/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/httpclient"
