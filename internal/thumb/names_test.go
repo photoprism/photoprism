@@ -1,8 +1,9 @@
 package thumb
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestName_Jpeg(t *testing.T) {

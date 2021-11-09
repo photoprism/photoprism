@@ -1,6 +1,6 @@
 package places
 
-// Place
+// Place represents a region identified by city, state, and country.
 type Place struct {
 	PlaceID     string `json:"id"`
 	LocLabel    string `json:"label"`

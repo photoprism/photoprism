@@ -12,5 +12,5 @@ rules: []
 
 # Accounts
 users:
-  - username: admin
-    password: photoprism
+  - username: "{env}WEBDAV_USERNAME"
+    password: "{env}WEBDAV_PASSWORD"

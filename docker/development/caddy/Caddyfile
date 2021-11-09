@@ -1,3 +1,0 @@
-*, localhost {
-    reverse_proxy photoprism:2342
-}
