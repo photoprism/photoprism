@@ -35,9 +35,7 @@ require (
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
-	github.com/lunixbochs/vtclean v1.0.0 // indirect
-	github.com/manifoldco/promptui v0.8.0
-	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/melihmucuk/geocache v0.0.0-20160621165317-521b336a001c
@@ -60,7 +58,7 @@ require (
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	golang.org/x/net v0.0.0-20211108170745-6635138e15ea
-	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
+	golang.org/x/sys v0.0.0-20211109065445-02f5c0300f6e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3
 	google.golang.org/protobuf v1.27.1 // indirect
@@ -79,7 +77,6 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
-	github.com/juju/ansiterm v0.0.0-20180109212912-720a0952cc2a // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
