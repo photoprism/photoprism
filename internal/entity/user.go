@@ -70,7 +70,7 @@ type User struct {
 	ResetToken     string     `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
 	ApiToken       string     `gorm:"column:api_token;type:VARBINARY(128);" json:"-" yaml:"-"`
 	ApiSecret      string     `gorm:"column:api_secret;type:VARBINARY(128);" json:"-" yaml:"-"`
-	ExternalID     string     `gorm:"size:255;column:external_id;" json:"-" yaml:"-"`
+	ExternalID     string     `gorm:"size:255;column:external_id;" json:"ExternalID" yaml:"ExternalID,omitempty"`
 	LoginAttempts  int        `json:"-" yaml:"-"`
 	LoginAt        *time.Time `json:"-" yaml:"-"`
 	CreatedAt      time.Time  `json:"CreatedAt" yaml:"-"`

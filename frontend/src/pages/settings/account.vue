@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-settings-account">
-    <v-form ref="form" dense class="form-password" accept-charset="UTF-8">
+    <v-form v-if="!user.ExternalID" ref="form" dense class="form-password" accept-charset="UTF-8">
       <v-card flat tile class="ma-2 application">
         <v-card-actions>
           <v-layout wrap align-top>
@@ -68,6 +68,9 @@
         </v-card-actions>
       </v-card>
     </v-form>
+    <template v-else>
+      <p class="mt-3 px-4">⚠️ Please head to your Identity Provider to manage your account details.</p>
+    </template>
 
     <p-about-footer></p-about-footer>
   </div>
@@ -82,12 +85,17 @@ export default {
 
     return {
       demo: isDemo,
+      user: this.$session.getUser(),
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
       busy: false,
       rtl: this.$rtl,
     };
+  },
+  mounted() {
+    console.log("this.$session.getUser()");
+    console.log(this.$session.getUser());
   },
   methods: {
     disabled() {
