@@ -1,8 +1,9 @@
 version: '3.5'
 
-# Drone CI Test Environment
-
+## Integration Environment for Drone CI
 services:
+  ## App Dev Container
+  ## Docs: https://docs.photoprism.org/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -141,6 +142,8 @@ services:
       DRONE_TAG:
       DRONE_TARGET_BRANCH:
 
+  ## MariaDB Database Server
+  ## Docs: https://mariadb.com/docs/reference/cs10.6/
   mariadb:
     image: mariadb:10.6
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -154,5 +157,9 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+  ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/webdav:20211021
+    image: photoprism/dummy-webdav:20211109
+    environment:
+      WEBDAV_USERNAME: admin
+      WEBDAV_PASSWORD: photoprism
