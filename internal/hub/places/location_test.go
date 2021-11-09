@@ -56,7 +56,7 @@ func TestFindLocation(t *testing.T) {
 }
 
 func TestLocationGetters(t *testing.T) {
-	var p = NewPlace("1", "testLabel", "berlin", "berlin", "de", "foobar")
+	var p = NewPlace("1", "testLabel", "Berlin", "Berlin", "de", "foobar")
 	location := NewLocation("1e95998417cc", 52.51961810676184, 13.40806264572578, "TestLocation", "test", p, true)
 	t.Run("wrong id", func(t *testing.T) {
 		assert.Equal(t, "1e95998417cc", location.CellID())
@@ -65,7 +65,7 @@ func TestLocationGetters(t *testing.T) {
 		assert.Equal(t, "testLabel", location.Label())
 		assert.Equal(t, "Berlin", location.State())
 		assert.Equal(t, "de", location.CountryCode())
-		assert.Equal(t, "berlin", location.City())
+		assert.Equal(t, "Berlin", location.City())
 		assert.Equal(t, 52.51961810676184, location.Latitude())
 		assert.Equal(t, 13.40806264572578, location.Longitude())
 		assert.Equal(t, "places", location.Source())

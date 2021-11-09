@@ -9,8 +9,8 @@ CA:California
 CO:Colorado
 CT:Connecticut
 DE:Delaware
-DC:District Of Columbia
-FM:Federated States Of Micronesia
+DC:District of Columbia
+FM:Federated States of Micronesia
 FL:Florida
 GA:Georgia
 GU:Guam

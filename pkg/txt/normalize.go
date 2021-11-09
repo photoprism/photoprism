@@ -39,7 +39,7 @@ func NormalizeState(s string) string {
 		return expanded
 	}
 
-	return Title(s)
+	return s
 }
 
 // NormalizeQuery replaces search operator with default symbols.

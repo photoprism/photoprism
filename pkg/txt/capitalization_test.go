@@ -46,6 +46,9 @@ func TestUcFirst(t *testing.T) {
 }
 
 func TestTitle(t *testing.T) {
+	t.Run("Île-de-France", func(t *testing.T) {
+		assert.Equal(t, "Île-De-France", Title("Île-de-France"))
+	})
 	t.Run("BrowseYourLife", func(t *testing.T) {
 		assert.Equal(t, "Browse Your Life in Pictures", Title("Browse your life in pictures"))
 	})

@@ -53,7 +53,7 @@ func TestNormalizeState(t *testing.T) {
 
 	t.Run("Never mind Nirvana", func(t *testing.T) {
 		result := NormalizeState("Never mind Nirvana.")
-		assert.Equal(t, "Never Mind Nirvana.", result)
+		assert.Equal(t, "Never mind Nirvana.", result)
 	})
 
 	t.Run("Empty", func(t *testing.T) {
