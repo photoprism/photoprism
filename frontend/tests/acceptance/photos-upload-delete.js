@@ -40,9 +40,11 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
     .ok()
     .click(Selector(".action-close"));
   await page.clearSelection();
-  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).ok();
-  const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/10").length;
-  await t.expect(originalsLength).eql(2);
+  if (t.browser.platform !== "mobile") {
+    await t.expect(fs.existsSync("../storage/acceptance/originals/2020/10")).ok();
+    const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/10").length;
+    await t.expect(originalsLength).eql(2);
+  }
   await page.deletePhotoFromUID(UploadedPhoto);
   await page.openNav();
   await t.click(Selector(".nav-browse"));
@@ -53,10 +55,12 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
     .navigateTo("/library/files/2020/10");
   const FileCountAfterDelete = await Selector("div.is-file").count;
   await t.expect(FileCountAfterDelete).eql(0);
-  const originalsLengthAfterDelete = fs.readdirSync(
-    "../storage/acceptance/originals/2020/10"
-  ).length;
-  await t.expect(originalsLengthAfterDelete).eql(0);
+  if (t.browser.platform !== "mobile") {
+    const originalsLengthAfterDelete = fs.readdirSync(
+      "../storage/acceptance/originals/2020/10"
+    ).length;
+    await t.expect(originalsLengthAfterDelete).eql(0);
+  }
 });
 
 test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (t) => {
@@ -88,11 +92,13 @@ test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (
     .ok()
     .click(Selector(".action-close"));
   await page.clearSelection();
-  await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).ok();
-  const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
-  await t.expect(originalsLength).eql(1);
-  const sidecarLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
-  await t.expect(sidecarLength).eql(1);
+  if (t.browser.platform !== "mobile") {
+    await t.expect(fs.existsSync("../storage/acceptance/originals/2020/06")).ok();
+    const originalsLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
+    await t.expect(originalsLength).eql(1);
+    const sidecarLength = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
+    await t.expect(sidecarLength).eql(1);
+  }
   await page.deletePhotoFromUID(UploadedPhoto);
   await page.openNav();
   await t.click(Selector(".nav-browse"));
@@ -103,12 +109,16 @@ test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (
     .navigateTo("/library/files/2020/06");
   const FileCountAfterDelete = await Selector("div.is-file").count;
   await t.expect(FileCountAfterDelete).eql(0);
-  const originalsLengthAfterDelete = fs.readdirSync(
-    "../storage/acceptance/originals/2020/06"
-  ).length;
-  await t.expect(originalsLengthAfterDelete).eql(0);
-  const sidecarLengthAfterDelete = fs.readdirSync("../storage/acceptance/originals/2020/06").length;
-  await t.expect(sidecarLengthAfterDelete).eql(0);
+  if (t.browser.platform !== "mobile") {
+    const originalsLengthAfterDelete = fs.readdirSync(
+      "../storage/acceptance/originals/2020/06"
+    ).length;
+    await t.expect(originalsLengthAfterDelete).eql(0);
+    const sidecarLengthAfterDelete = fs.readdirSync(
+      "../storage/acceptance/originals/2020/06"
+    ).length;
+    await t.expect(sidecarLengthAfterDelete).eql(0);
+  }
 });
 
 test.meta("testID", "photos-upload-delete-003")("Upload to existing Album + Delete", async (t) => {

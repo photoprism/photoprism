@@ -150,9 +150,9 @@ test.meta("testID", "admin-role-006")("private/archived photos in search results
 
 test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
   await page.login("admin", "photoprism");
+  await t.expect(Selector("button.action-upload").visible).ok();
+  await page.openNav();
   await t
-    .expect(Selector("button.action-upload").visible)
-    .ok()
     .click(Selector(".nav-albums"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -162,13 +162,13 @@ test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
     .expect(Selector("div.is-photo").visible)
     .ok()
     .expect(Selector("button.action-upload").visible)
-    .ok()
-    .click(Selector(".nav-video"))
-    .expect(Selector("button.action-upload").visible)
-    .ok()
-    .click(Selector(".nav-favorites"))
-    .expect(Selector("button.action-upload").visible)
-    .ok()
+    .ok();
+  await page.openNav();
+  await t.click(Selector(".nav-video")).expect(Selector("button.action-upload").visible).ok();
+  await page.openNav();
+  await t.click(Selector(".nav-favorites")).expect(Selector("button.action-upload").visible).ok();
+  await page.openNav();
+  await t
     .click(Selector(".nav-moments"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -178,7 +178,9 @@ test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
     .expect(Selector("div.is-photo").visible)
     .ok()
     .expect(Selector("button.action-upload").visible)
-    .ok()
+    .ok();
+  await page.openNav();
+  await t
     .click(Selector(".nav-calendar"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -201,7 +203,9 @@ test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
     .expect(Selector("div.is-photo").visible)
     .ok()
     .expect(Selector("button.action-upload").visible)
-    .ok()
+    .ok();
+  await page.openNav();
+  await t
     .click(Selector(".nav-folders"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -234,6 +238,7 @@ test.meta("testID", "admin-role-008")(
     await page.clearSelection();
     await page.setFilter("view", "List");
     await t.expect(Selector(`button.input-private`).hasAttribute("disabled")).notOk();
+    await page.openNav();
     await t
       .click(Selector(".nav-albums"))
       .click(Selector("a.is-album").nth(0))
@@ -323,9 +328,10 @@ test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", 
     .expect(Selector(".input-notes textarea").hasAttribute("disabled"))
     .notOk()
     .expect(Selector("button.action-apply").visible)
-    .ok()
-    .expect(Selector("button.action-done").visible)
     .ok();
+  if (t.browser.platform !== "mobile") {
+    await t.expect(Selector("button.action-done").visible).ok();
+  }
   //labels
   await t
     .click(Selector("#tab-labels"))
@@ -391,12 +397,14 @@ test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => 
 
 test.meta("testID", "admin-role-012")("Edit album functionality", async (t) => {
   await page.login("admin", "photoprism");
+  await page.openNav();
   await t.click(Selector(".nav-albums")).expect(Selector("button.action-add").visible).ok();
   await page.checkAdminAlbumRights("album");
 });
 
 test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => {
   await page.login("admin", "photoprism");
+  await page.openNav();
   await t.click(Selector(".nav-moments"));
   await page.checkAdminAlbumRights("moment");
 });
@@ -424,6 +432,7 @@ test.meta("testID", "admin-role-016")("Edit folder functionality", async (t) => 
 
 test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => {
   await page.login("admin", "photoprism");
+  await page.openNav();
   await t
     .click(Selector(".nav-people"))
     .expect(Selector("#tab-people_faces > a").exists)

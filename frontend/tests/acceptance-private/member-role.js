@@ -144,9 +144,9 @@ test.meta("testID", "member-role-006")(
 
 test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
   await page.login("member", "passwdmember");
+  await t.expect(Selector("button.action-upload").visible).notOk();
+  await page.openNav();
   await t
-    .expect(Selector("button.action-upload").visible)
-    .notOk()
     .click(Selector(".nav-albums"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -156,16 +156,18 @@ test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
     .expect(Selector("div.is-photo").visible)
     .ok()
     .expect(Selector("button.action-upload").visible)
-    .notOk()
-    .click(Selector(".nav-video"))
-    .expect(Selector("button.action-upload").visible)
-    .notOk()
-    .click(Selector(".nav-people"))
-    .expect(Selector("button.action-upload").visible)
-    .notOk()
+    .notOk();
+  await page.openNav();
+  await t.click(Selector(".nav-video")).expect(Selector("button.action-upload").visible).notOk();
+  await page.openNav();
+  await t.click(Selector(".nav-people")).expect(Selector("button.action-upload").visible).notOk();
+  await page.openNav();
+  await t
     .click(Selector(".nav-favorites"))
     .expect(Selector("button.action-upload").visible)
-    .notOk()
+    .notOk();
+  await page.openNav();
+  await t
     .click(Selector(".nav-moments"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -175,7 +177,9 @@ test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
     .expect(Selector("div.is-photo").visible)
     .ok()
     .expect(Selector("button.action-upload").visible)
-    .notOk()
+    .notOk();
+  await page.openNav();
+  await t
     .click(Selector(".nav-calendar"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -198,7 +202,9 @@ test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
     .expect(Selector("div.is-photo").visible)
     .ok()
     .expect(Selector("button.action-upload").visible)
-    .notOk()
+    .notOk();
+  await page.openNav();
+  await t
     .click(Selector(".nav-folders"))
     .expect(Selector("a.is-album").visible)
     .ok()
@@ -272,12 +278,15 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
     .click(Selector(`button.input-like`));
   await page.setFilter("view", "Cards");
   await t.expect(Selector(`div.uid-${FirstPhoto}`).hasClass("is-favorite")).notOk();
+  await page.openNav();
   await t
     .click(Selector(".nav-albums"))
     .click(Selector("a.is-album").nth(0))
-    .click(Selector('button[title="Toggle View"]'))
-    .expect(Selector(`button.input-like`).hasAttribute("disabled"))
-    .ok();
+    .click(Selector('button[title="Toggle View"]'));
+  if (t.browser.platform === "mobile") {
+    await t.click(Selector('button[title="Toggle View"]'));
+  }
+  await t.expect(Selector(`button.input-like`).hasAttribute("disabled")).ok();
 });
 
 test.meta("testID", "member-role-009")(
@@ -300,6 +309,7 @@ test.meta("testID", "member-role-009")(
     await page.clearSelection();
     await page.setFilter("view", "List");
     await t.expect(Selector(`button.input-private`).hasAttribute("disabled")).ok();
+    await page.openNav();
     await t
       .click(Selector(".nav-albums"))
       .click(Selector("a.is-album").nth(0))
@@ -319,10 +329,11 @@ test.meta("testID", "member-role-009")(
       .expect(Selector("button.action-remove").visible)
       .notOk();
     await page.clearSelection();
-    await t
-      .click(Selector('button[title="Toggle View"]'))
-      .expect(Selector(`button.input-private`).hasAttribute("disabled"))
-      .ok();
+    await t.click(Selector('button[title="Toggle View"]'));
+    if (t.browser.platform === "mobile") {
+      await t.click(Selector('button[title="Toggle View"]'));
+    }
+    await t.expect(Selector(`button.input-private`).hasAttribute("disabled")).ok();
   }
 );
 
@@ -391,9 +402,10 @@ test.meta("testID", "member-role-011")("Edit dialog is read only for member", as
     .expect(Selector(".input-notes textarea").hasAttribute("disabled"))
     .ok()
     .expect(Selector("button.action-apply").visible)
-    .notOk()
-    .expect(Selector("button.action-done").visible)
     .notOk();
+  if (t.browser.platform !== "mobile") {
+    await t.expect(Selector("button.action-done").visible).notOk();
+  }
   //labels
   await t
     .click(Selector("#tab-labels"))
@@ -432,12 +444,14 @@ test.meta("testID", "member-role-011")("Edit dialog is read only for member", as
 
 test.meta("testID", "member-role-012")("No edit album functionality", async (t) => {
   await page.login("member", "passwdmember");
+  await page.openNav();
   await t.click(Selector(".nav-albums")).expect(Selector("button.action-add").exists).notOk();
   await page.checkMemberAlbumRights("album");
 });
 
 test.meta("testID", "member-role-013")("No edit moment functionality", async (t) => {
   await page.login("member", "passwdmember");
+  await page.openNav();
   await t.click(Selector(".nav-moments"));
   await page.checkMemberAlbumRights("moment");
 });
@@ -515,6 +529,7 @@ test.meta("testID", "member-role-018")("No unstack, change primary actions", asy
 
 test.meta("testID", "member-role-019")("No edit people functionality", async (t) => {
   await page.login("member", "passwdmember");
+  await page.openNav();
   await t
     .click(Selector(".nav-people"))
     .expect(Selector("#tab-people_faces > a").exists)
