@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Moment contains photo counts per month and year
@@ -77,6 +79,8 @@ func (m Moment) Slug() string {
 
 // Title returns an english title for the moment.
 func (m Moment) Title() string {
+	state := txt.NormalizeState(m.State)
+
 	if m.Year == 0 && m.Month == 0 {
 		if m.Label != "" {
 			return MomentLabels[m.Label]
@@ -84,20 +88,20 @@ func (m Moment) Title() string {
 
 		country := maps.CountryName(m.Country)
 
-		if strings.Contains(m.State, country) {
-			return m.State
+		if strings.Contains(state, country) {
+			return state
 		}
 
-		if m.State == "" {
+		if state == "" {
 			return m.Country
 		}
 
-		return fmt.Sprintf("%s / %s", m.State, country)
+		return fmt.Sprintf("%s / %s", state, country)
 	}
 
 	if m.Country != "" && m.Year > 1900 && m.Month == 0 {
-		if m.State != "" {
-			return fmt.Sprintf("%s / %s / %d", m.State, maps.CountryName(m.Country), m.Year)
+		if state != "" {
+			return fmt.Sprintf("%s / %s / %d", state, maps.CountryName(m.Country), m.Year)
 		}
 
 		return fmt.Sprintf("%s %d", maps.CountryName(m.Country), m.Year)

@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+var UnknownStateCode = "zz"
 var UnknownCountryCode = "zz"
 var CountryWordsRegexp = regexp.MustCompile("[\\p{L}]{2,}")
 

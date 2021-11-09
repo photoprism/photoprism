@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/melihmucuk/geocache"
+
 	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type Location struct {
@@ -25,7 +27,7 @@ type Location struct {
 
 var ReverseLookupURL = "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=jsonv2&accept-language=en&zoom=18"
 
-// API docs see https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
+// FindLocation retrieves geolocation data, docs see https://wiki.openstreetmap.org/wiki/Nominatim#Reverse_Geocoding
 func FindLocation(id string) (result Location, err error) {
 	if len(id) > 16 || len(id) == 0 {
 		return result, errors.New("osm: invalid location id")
@@ -84,9 +86,7 @@ func (l Location) CellID() (result string) {
 }
 
 func (l Location) State() (result string) {
-	result = l.Address.State
-
-	return strings.TrimSpace(result)
+	return txt.NormalizeState(l.Address.State)
 }
 
 func (l Location) City() (result string) {

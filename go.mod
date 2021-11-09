@@ -21,9 +21,9 @@ require (
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20211105222919-588c0e721570
+	github.com/google/open-location-code/go v0.0.0-20211109014933-06433367679b
 	github.com/gorilla/websocket v1.4.2
-	github.com/gosimple/slug v1.11.0
+	github.com/gosimple/slug v1.11.2
 	github.com/h2non/filetype v1.1.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
@@ -57,9 +57,9 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/net v0.0.0-20211105192438-b53810dc28af
+	golang.org/x/net v0.0.0-20211108170745-6635138e15ea
 	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3
@@ -78,7 +78,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b // indirect
-	github.com/gosimple/unidecode v1.0.0 // indirect
+	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/juju/ansiterm v0.0.0-20180109212912-720a0952cc2a // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
