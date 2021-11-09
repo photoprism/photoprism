@@ -161,7 +161,10 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:20211022
+    image: photoprism/dummy-webdav:20211109
+    environment:
+      WEBDAV_USERNAME: admin
+      WEBDAV_PASSWORD: photoprism
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dummy-webdav.loadbalancer.server.port=80"
