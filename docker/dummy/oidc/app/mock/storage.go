@@ -108,7 +108,7 @@ func (a *AuthRequest) GetScopes() []string {
 func (a *AuthRequest) SetCurrentScopes(scopes []string) {}
 
 func (a *AuthRequest) GetState() string {
-	return state
+	return a.State
 }
 
 func (a *AuthRequest) GetSubject() string {
@@ -120,10 +120,9 @@ func (a *AuthRequest) Done() bool {
 }
 
 var (
-	a     = &AuthRequest{}
-	t     bool
-	c     string
-	state string
+	a = &AuthRequest{}
+	t bool
+	c string
 )
 
 func (s *AuthStorage) Health(ctx context.Context) error {
@@ -149,7 +148,6 @@ func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthReq
 			Method:    authReq.CodeChallengeMethod,
 		}
 	}
-	state = authReq.State
 	t = false
 	return a, nil
 }
