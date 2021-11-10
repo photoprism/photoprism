@@ -37,10 +37,16 @@ func NewAuthStorage() op.Storage {
 type AuthRequest struct {
 	ID            string
 	ResponseType  oidc.ResponseType
+	ResponseMode  oidc.ResponseMode
 	RedirectURI   string
 	Nonce         string
 	ClientID      string
 	CodeChallenge *oidc.CodeChallenge
+	State         string
+}
+
+func (a *AuthRequest) GetResponseMode() oidc.ResponseMode {
+	return a.ResponseMode
 }
 
 func (a *AuthRequest) GetACR() string {
@@ -126,7 +132,6 @@ func (s *AuthStorage) Health(ctx context.Context) error {
 
 func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthRequest, userId string) (op.AuthRequest, error) {
 	fmt.Println("Userid: ", userId)
-	fmt.Println("CreateAuthRequest ID: ", authReq.ID)
 	fmt.Println("CreateAuthRequest CodeChallenge: ", authReq.CodeChallenge)
 	fmt.Println("CreateAuthRequest CodeChallengeMethod: ", authReq.CodeChallengeMethod)
 	fmt.Println("CreateAuthRequest State: ", authReq.State)
@@ -137,7 +142,7 @@ func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthReq
 	fmt.Println("CreateAuthRequest Display: ", authReq.Display)
 	fmt.Println("CreateAuthRequest LoginHint: ", authReq.LoginHint)
 	fmt.Println("CreateAuthRequest IDTokenHint: ", authReq.IDTokenHint)
-	a = &AuthRequest{ID: "authReqUserAgentId", ClientID: authReq.ClientID, ResponseType: authReq.ResponseType, Nonce: authReq.Nonce, RedirectURI: authReq.RedirectURI}
+	a = &AuthRequest{ID: "authReqUserAgentId", ClientID: authReq.ClientID, ResponseType: authReq.ResponseType, Nonce: authReq.Nonce, RedirectURI: authReq.RedirectURI, State: authReq.State}
 	if authReq.CodeChallenge != "" {
 		a.CodeChallenge = &oidc.CodeChallenge{
 			Challenge: authReq.CodeChallenge,
@@ -292,6 +297,10 @@ func (s *AuthStorage) SetIntrospectionFromToken(ctx context.Context, introspect 
 
 func (s *AuthStorage) ValidateJWTProfileScopes(ctx context.Context, userID string, scope []string) ([]string, error) {
 	return scope, nil
+}
+
+func (s *AuthStorage) RevokeToken(ctx context.Context, token string, userID string, clientID string) *oidc.Error {
+	return nil
 }
 
 type ConfClient struct {

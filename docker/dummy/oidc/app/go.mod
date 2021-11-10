@@ -3,7 +3,7 @@ module caos-test-op
 go 1.17
 
 require (
-	github.com/caos/oidc v0.15.10
+	github.com/caos/oidc v1.0.0
 	github.com/gorilla/mux v1.8.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
