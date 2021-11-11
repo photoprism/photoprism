@@ -49,6 +49,7 @@ Garn Penrod (Patreon, November 2020)
 
 [@jasontitus](https://github.com/jasontitus) (GitHub Sponsors, October 2021)
 
+[Łukasz Anwajler](https://github.com/anwajler) (GitHub Sponsors, November 2021)
 
 *See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.*
 
