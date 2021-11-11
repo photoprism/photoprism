@@ -9,13 +9,17 @@ assignees: ''
 
 **What does not work as expected?**
 
-A clear and concise description of what the bug is.
+Please use GitHub Discussions for INSTALLATION PROBLEMS, SUPPORT REQUESTS, and GENERAL QUESTIONS:
 
-*It is not a bug, but a support request if you need general help using Linux or setting up HTTPS.*
-You are welcome to use our Community Chat and GitHub Discussions for help and general questions.
-Sponsors receive direct technical support via email: https://photoprism.app/contact
+  https://github.com/photoprism/photoprism/discussions
 
-Please don't create GitHub Issues to get support! 🙃
+Thank you! 🙏
+
+Our Troubleshooting Guide helps you quickly find and fix common problems:
+
+  https://docs.photoprism.org/getting-started/troubleshooting/
+
+Sponsors receive direct technical support via email: https://photoprism.app/contact 📬
 
 **How can we reproduce it?**
 
