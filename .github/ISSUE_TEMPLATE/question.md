@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Please use GitHub Discussions for 👉 INSTALLATION PROBLEMS, SUPPORT REQUESTS, and GENERAL QUESTIONS:
+Please use GitHub Discussions for 👉 INSTALLATION PROBLEMS, SUPPORT REQUESTS, and GENERAL QUESTIONS:
 
   https://github.com/photoprism/photoprism/discussions
 
