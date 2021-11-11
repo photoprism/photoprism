@@ -79,7 +79,7 @@ func (m Moment) Slug() string {
 
 // Title returns an english title for the moment.
 func (m Moment) Title() string {
-	state := txt.NormalizeState(m.State)
+	state := txt.NormalizeState(m.State, m.Country)
 
 	if m.Year == 0 && m.Month == 0 {
 		if m.Label != "" {

@@ -21,7 +21,7 @@ require (
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20211109014933-06433367679b
+	github.com/google/open-location-code/go v0.0.0-20211110234603-604ed00fe9d8
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.11.2
 	github.com/h2non/filetype v1.1.1
@@ -57,7 +57,7 @@ require (
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/net v0.0.0-20211108170745-6635138e15ea
+	golang.org/x/net v0.0.0-20211111083644-e5c967477495
 	golang.org/x/sys v0.0.0-20211109065445-02f5c0300f6e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3

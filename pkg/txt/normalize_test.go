@@ -32,42 +32,57 @@ func TestNormalizeName(t *testing.T) {
 
 func TestNormalizeState(t *testing.T) {
 	t.Run("Berlin", func(t *testing.T) {
-		result := NormalizeState("Berlin")
+		result := NormalizeState("Berlin", "de")
 		assert.Equal(t, "Berlin", result)
 	})
 
 	t.Run("WA", func(t *testing.T) {
-		result := NormalizeState("WA")
+		result := NormalizeState("WA", "us")
 		assert.Equal(t, "Washington", result)
 	})
 
+	t.Run("QCUnknownCountry", func(t *testing.T) {
+		result := NormalizeState("QC", "")
+		assert.Equal(t, "QC", result)
+	})
+
+	t.Run("QCCanada", func(t *testing.T) {
+		result := NormalizeState("QC", "ca")
+		assert.Equal(t, "Quebec", result)
+	})
+
+	t.Run("QCUnitedStates", func(t *testing.T) {
+		result := NormalizeState("QC", "us")
+		assert.Equal(t, "QC", result)
+	})
+
 	t.Run("Wa", func(t *testing.T) {
-		result := NormalizeState("Wa")
+		result := NormalizeState("Wa", "us")
 		assert.Equal(t, "Wa", result)
 	})
 
 	t.Run("Washington", func(t *testing.T) {
-		result := NormalizeState("Washington")
+		result := NormalizeState("Washington", "us")
 		assert.Equal(t, "Washington", result)
 	})
 
 	t.Run("Never mind Nirvana", func(t *testing.T) {
-		result := NormalizeState("Never mind Nirvana.")
+		result := NormalizeState("Never mind Nirvana.", "us")
 		assert.Equal(t, "Never mind Nirvana.", result)
 	})
 
 	t.Run("Empty", func(t *testing.T) {
-		result := NormalizeState("")
+		result := NormalizeState("", "us")
 		assert.Equal(t, "", result)
 	})
 
 	t.Run("Unknown", func(t *testing.T) {
-		result := NormalizeState("zz")
+		result := NormalizeState("zz", "us")
 		assert.Equal(t, "", result)
 	})
 
 	t.Run("Space", func(t *testing.T) {
-		result := NormalizeState(" ")
+		result := NormalizeState(" ", "us")
 		assert.Equal(t, "", result)
 	})
 

@@ -86,7 +86,7 @@ func (l Location) CellID() (result string) {
 }
 
 func (l Location) State() (result string) {
-	return txt.NormalizeState(l.Address.State)
+	return txt.NormalizeState(l.Address.State, l.CountryCode())
 }
 
 func (l Location) City() (result string) {

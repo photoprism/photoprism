@@ -235,6 +235,26 @@ func TestLocation_place(t *testing.T) {
 
 		assert.Equal(t, "Unknown", l.label())
 	})
+	t.Run("Freiburg im Breisgau, BW, Germany", func(t *testing.T) {
+		l := NewLocation("47911b1a4f84", "", "", "Freiburg im Breisgau, BW, Germany", "Freiburg im Breisgau", "BW", "de", "", []string{})
+
+		assert.Equal(t, "Freiburg im Breisgau, Baden-Württemberg, Germany", l.label())
+	})
+	t.Run("Sevilla, ES, Spain", func(t *testing.T) {
+		l := NewLocation("0d126c12219c", "", "", "Sevilla, ES, Spain", "Sevilla", "ES", "es", "", []string{})
+
+		assert.Equal(t, "Sevilla, Spain", l.label())
+	})
+	t.Run("Guarapari, ES, Brazil", func(t *testing.T) {
+		l := NewLocation("00b85797fdbc", "", "", "Guarapari, ES, Brazil", "Guarapari", "ES", "br", "", []string{})
+
+		assert.Equal(t, "Guarapari, Espírito Santo, Brazil", l.label())
+	})
+	t.Run("Porto Novo, PT, Portugal", func(t *testing.T) {
+		l := NewLocation("0d1f30bb5564", "", "", "", "Porto Novo", "PT", "pt", "", []string{})
+
+		assert.Equal(t, "Porto Novo, Portugal", l.label())
+	})
 }
 
 func TestLocation_S2Token(t *testing.T) {
