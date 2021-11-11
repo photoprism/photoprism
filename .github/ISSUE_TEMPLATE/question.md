@@ -1,20 +1,20 @@
 ---
 name: Question
 about: You have a general question or need assistance
-title: Please don't use GitHub Issues! 🙃
+title: STOP! DON'T SUBMIT, USE GITHUB DISCUSSIONS INSTEAD! 🙏
 labels: question
 assignees: ''
 
 ---
 
-You are welcome to use our Community Chat...
-
-  https://gitter.im/browseyourlife/community
-
-...and GitHub Discussions for help and general questions:
+Please use GitHub Discussions for 👉 INSTALLATION PROBLEMS, SUPPORT REQUESTS, and GENERAL QUESTIONS:
 
   https://github.com/photoprism/photoprism/discussions
 
-Sponsors receive direct technical support via email:
+THANK YOU! 💐
 
-  https://photoprism.app/contact
+Our Troubleshooting Guide helps you quickly find and fix common problems:
+
+  https://docs.photoprism.org/getting-started/troubleshooting/
+
+Sponsors receive direct technical support via email: https://photoprism.app/contact 📬
