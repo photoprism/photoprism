@@ -51,7 +51,8 @@ Garn Penrod (Patreon, November 2020)
 
 [Łukasz Anwajler](https://github.com/anwajler) (GitHub Sponsors, November 2021)
 
-*See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.*
+See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
+[Let us know](https://photoprism.app/contact) if you do not want to be listed for any reason.
 
 ## One-Time Donations ##
 
@@ -60,7 +61,7 @@ Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
 The Gordon Project
 
-*See [GitHub Sponsors](https://github.com/sponsors/photoprism?frequency=one-time) for one-time donation options.*
+[Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
 
 ## Crypto Wallets ##
 
