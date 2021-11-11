@@ -27,6 +27,7 @@ build: generate build-js build-go
 install: install-bin install-assets
 test: test-js test-go
 test-go: reset-testdb run-test-go
+test-pkg: reset-testdb run-test-pkg
 test-api: reset-testdb run-test-api
 test-short: reset-testdb run-test-short
 acceptance-private-run-chromium: acceptance-private-restart acceptance-private acceptance-private-stop
@@ -164,6 +165,9 @@ run-test-short:
 run-test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
+run-test-pkg:
+	$(info Running all Go unit tests in '/pkg'...)
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/...
 run-test-api:
 	$(info Running all API unit tests...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./internal/api/...
