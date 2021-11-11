@@ -142,7 +142,7 @@ func TestLocation_Assign(t *testing.T) {
 		}
 
 		assert.Equal(t, "Airport", l.LocName)
-		assert.Equal(t, "Tegel, Berlin, Germany", l.LocLabel)
+		assert.Equal(t, "Berlin, Germany", l.LocLabel)
 	})
 
 	t.Run("SouthAfrica", func(t *testing.T) {
