@@ -35,6 +35,9 @@ test.meta("testID", "member-role-001")("No access to settings", async (t) => {
 
 test.meta("testID", "member-role-002")("No access to archive", async (t) => {
   await page.login("member", "passwdmember");
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.click(Selector(".nav-browse + div")).expect(Selector(".nav-archive").visible).notOk();
@@ -42,12 +45,18 @@ test.meta("testID", "member-role-002")("No access to archive", async (t) => {
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqnahct2mvee8sr4").visible)
     .notOk();
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountArchive = await Selector("div.is-photo", { timeout: 5000 }).count;
   await t.expect(PhotoCountBrowse).eql(PhotoCountArchive);
 });
 
 test.meta("testID", "member-role-003")("No access to review", async (t) => {
   await page.login("member", "passwdmember");
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.click(Selector(".nav-browse + div")).expect(Selector(".nav-review").visible).notOk();
@@ -55,12 +64,18 @@ test.meta("testID", "member-role-003")("No access to review", async (t) => {
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqzuein2pdcg1kc7").visible)
     .notOk();
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountReview = await Selector("div.is-photo", { timeout: 5000 }).count;
   await t.expect(PhotoCountBrowse).eql(PhotoCountReview);
 });
 
 test.meta("testID", "member-role-004")("No access to private", async (t) => {
   await page.login("member", "passwdmember");
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.expect(Selector(".nav-private").visible).notOk();
@@ -68,12 +83,18 @@ test.meta("testID", "member-role-004")("No access to private", async (t) => {
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqmxlquf9tbc8mk2").visible)
     .notOk();
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountPrivate = await Selector("div.is-photo", { timeout: 5000 }).count;
   await t.expect(PhotoCountBrowse).eql(PhotoCountPrivate);
 });
 
 test.meta("testID", "member-role-005")("No access to library", async (t) => {
   await page.login("member", "passwdmember");
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
   await t.expect(Selector(".nav-library").visible).notOk();
@@ -103,6 +124,9 @@ test.meta("testID", "member-role-005")("No access to library", async (t) => {
     .navigateTo("/library/hidden")
     .expect(Selector(".nav-hidden").visible)
     .notOk();
+  if (t.browser.platform === "mobile") {
+    await t.wait(5000);
+  }
   const PhotoCountHidden = await Selector("div.is-photo", { timeout: 5000 }).count;
   await t
     .expect(PhotoCountBrowse)
@@ -120,6 +144,9 @@ test.meta("testID", "member-role-006")(
   "No private/archived photos in search results",
   async (t) => {
     await page.login("member", "passwdmember");
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
     const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
     await page.search("private:true");
     const PhotoCountPrivate = await Selector("div.is-photo", { timeout: 5000 }).count;
@@ -134,6 +161,9 @@ test.meta("testID", "member-role-006")(
       .expect(Selector("div.is-photo").withAttribute("data-uid", "pqnahct2mvee8sr4").visible)
       .notOk();
     await page.search("quality:0");
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
     const PhotoCountReview = await Selector("div.is-photo", { timeout: 5000 }).count;
     await t.expect(PhotoCountReview).gte(PhotoCountBrowse);
     await t

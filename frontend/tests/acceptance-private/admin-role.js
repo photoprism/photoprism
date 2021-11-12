@@ -5,12 +5,12 @@ import Page from "../acceptance/page-model";
 fixture`Test admin role`.page`${testcafeconfig.url}`;
 
 const page = new Page();
-test.meta("testID", "authentication-000")(
+/*test.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
   async (t) => {
     await t.wait(5000);
   }
-);
+);*/
 
 test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
   await page.login("admin", "photoprism");
@@ -18,6 +18,7 @@ test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
   await t.expect(Selector(".nav-settings").visible).ok();
   await t.navigateTo("/settings");
   await t
+    .wait(5000)
     .expect(Selector(".input-language input", { timeout: 8000 }).visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
@@ -39,7 +40,7 @@ test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
     .notOk();
 });
 
-test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
+/*test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
   await page.login("admin", "photoprism");
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
@@ -98,7 +99,9 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
     .expect(Selector("div.terminal").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
-    .notOk()
+    .notOk();
+  await page.openNav();
+  await t
     .click(Selector(".nav-library + div"))
     .expect(Selector(".nav-originals").visible)
     .ok()
@@ -106,15 +109,17 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
     .expect(Selector("div.p-page-files").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
-    .notOk()
+    .notOk();
+  await page.openNav();
+  await t
     .click(Selector(".nav-library + div"))
     .expect(Selector(".nav-hidden").visible)
     .ok()
     .navigateTo("/library/hidden");
   const PhotoCountHidden = await Selector("div.is-photo", { timeout: 5000 }).count;
+  await t.expect(PhotoCountBrowse).gte(PhotoCountHidden);
+  await page.openNav();
   await t
-    .expect(PhotoCountBrowse)
-    .gte(PhotoCountHidden)
     .click(Selector(".nav-library + div"))
     .expect(Selector(".nav-errors").visible)
     .ok()
@@ -493,4 +498,4 @@ test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => 
     .navigateTo("/people/new")
     .expect(Selector("div.is-face").visible)
     .ok();
-});
+});*/

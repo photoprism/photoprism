@@ -13,7 +13,6 @@ test.meta("testID", "authentication-000")(
 );
 
 test.meta("testID", "authentication-001")("Login and Logout", async (t) => {
-  //await t.wait(800000);
   await t.navigateTo("/browse");
   await t
     .expect(Selector(".input-name input").visible)
@@ -93,10 +92,13 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
     .click(".action-confirm");
   await page.openNav();
   await t.click(Selector('div[title="Logout"]'));
+  if (t.browser.platform === "mobile") {
+    await t.wait(7000);
+  }
   await page.login("admin", "photoprism");
   await t
     .navigateTo("/archive")
-    .expect(Selector(".input-name input").visible)
+    .expect(Selector(".input-name input", { timeout: 7000 }).visible)
     .ok()
     .expect(Selector(".input-search input").visible)
     .notOk();
