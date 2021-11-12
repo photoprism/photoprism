@@ -94,6 +94,7 @@ var StatesDE = LookupTable{
 	"HH":                     "Hamburg",
 	"HE":                     "Hessen",
 	"NI":                     "Niedersachsen",
+	"NDS":                    "Niedersachsen",
 	"Lower Saxony":           "Niedersachsen",
 	"Lower-Saxony":           "Niedersachsen",
 	"MV":                     "Mecklenburg-Vorpommern",
