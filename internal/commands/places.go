@@ -15,17 +15,17 @@ import (
 // PlacesCommand registers the places subcommands.
 var PlacesCommand = cli.Command{
 	Name:  "places",
-	Usage: "Geolocation data subcommands",
+	Usage: "Location information subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "update",
-			Usage:  "Fetches updated location infos",
+			Usage:  "Fetches updated location data",
 			Action: placesUpdateAction,
 		},
 	},
 }
 
-// placesUpdateAction fetches updated location infos.
+// placesUpdateAction fetches updated location data.
 func placesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 

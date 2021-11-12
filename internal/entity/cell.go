@@ -83,7 +83,7 @@ func (m *Cell) Refresh(api string) (err error) {
 
 	// Find existing place by label.
 	if err := UnscopedDb().Where("place_label = ?", l.Label()).First(&place).Error; err != nil {
-		log.Error(err)
+		log.Tracef("places: %s for cell %s", err, m.ID)
 		place = &Place{ID: m.ID}
 	} else {
 		log.Tracef("places: found matching place %s for cell %s", place.ID, m.ID)
