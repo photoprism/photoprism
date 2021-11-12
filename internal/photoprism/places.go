@@ -81,7 +81,7 @@ func (w *Places) Start() (updated []string, err error) {
 		}
 
 		// Short break.
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(25 * time.Millisecond)
 	}
 
 	return updated, err

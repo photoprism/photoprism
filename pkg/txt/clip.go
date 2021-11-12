@@ -8,6 +8,7 @@ const (
 	Ellipsis        = "…"
 	ClipCountryCode = 2
 	ClipKeyword     = 40
+	ClipUsername    = 64
 	ClipSlug        = 80
 	ClipCategory    = 100
 	ClipPlace       = 128

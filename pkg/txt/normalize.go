@@ -67,3 +67,8 @@ func NormalizeQuery(s string) string {
 	s = strings.ReplaceAll(s, "%", "*")
 	return strings.Trim(s, "+&|_-=!@$%^(){}\\<>,.;: ")
 }
+
+// NormalizeUsername returns the normalized username (lowercase, whitespace trimmed).
+func NormalizeUsername(s string) string {
+	return strings.ToLower(Clip(s, ClipUsername))
+}

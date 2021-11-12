@@ -79,34 +79,41 @@ func (m *Cell) Refresh(api string) (err error) {
 		return nil
 	}
 
-	place := &Place{}
+	cellTable := Cell{}.TableName()
+	placeTable := Place{}.TableName()
+
+	place := Place{}
 
 	// Find existing place by label.
 	if err := UnscopedDb().Where("place_label = ?", l.Label()).First(&place).Error; err != nil {
 		log.Tracef("places: %s for cell %s", err, m.ID)
-		place = &Place{ID: m.ID}
+		place = Place{ID: m.ID}
 	} else {
 		log.Tracef("places: found matching place %s for cell %s", place.ID, m.ID)
 	}
 
 	// Update place.
-	if res := UnscopedDb().Model(place).Updates(Values{
-		"PlaceLabel":    l.Label(),
-		"PlaceCity":     l.City(),
-		"PlaceDistrict": l.District(),
-		"PlaceState":    l.State(),
-		"PlaceCountry":  l.CountryCode(),
-		"PlaceKeywords": l.KeywordString(),
-	}); res.Error == nil && res.RowsAffected == 1 {
+	if place.ID == "" {
+		// Do nothing.
+	} else if res := UnscopedDb().Table(placeTable).Where("id = ?", place.ID).UpdateColumns(Values{
+		"place_label":    l.Label(),
+		"place_city":     l.City(),
+		"place_district": l.District(),
+		"place_state":    l.State(),
+		"place_country":  l.CountryCode(),
+		"place_keywords": l.KeywordString(),
+	}); res.Error != nil {
+		log.Tracef("places: %s for cell %s", err, m.ID)
+	} else if res.RowsAffected > 0 {
 		// Update cell place id, name, and category.
 		log.Tracef("places: updating place, name, and category for cell %s", m.ID)
-		m.PlaceID = place.ID
-		err = UnscopedDb().Model(m).Updates(Values{"PlaceID": m.PlaceID, "CellName": l.Name(), "CellCategory": l.Category()}).Error
-
+		err = UnscopedDb().Table(cellTable).Where("id = ?", m.ID).
+			UpdateColumns(Values{"cell_name": l.Name(), "cell_category": l.Category(), "place_id": place.ID}).Error
 	} else {
 		// Update cell name and category.
 		log.Tracef("places: updating name and category for cell %s", m.ID)
-		err = UnscopedDb().Model(m).Updates(Values{"CellName": l.Name(), "CellCategory": l.Category()}).Error
+		err = UnscopedDb().Table(cellTable).Where("id = ?", m.ID).
+			UpdateColumns(Values{"cell_name": l.Name(), "cell_category": l.Category()}).Error
 	}
 
 	log.Debugf("places: refreshed cell %s [%s]", txt.Quote(m.ID), time.Since(start))

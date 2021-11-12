@@ -211,7 +211,7 @@ func usersListAction(ctx *cli.Context) error {
 		fmt.Printf("%-4s %-16s %-16s %-16s\n", "ID", "LOGIN", "NAME", "EMAIL")
 
 		for _, user := range users {
-			fmt.Printf("%-4d %-16s %-16s %-16s", user.ID, user.UserName, user.FullName, user.PrimaryEmail)
+			fmt.Printf("%-4d %-16s %-16s %-16s", user.ID, user.Username(), user.FullName, user.PrimaryEmail)
 			fmt.Printf("\n")
 		}
 
@@ -242,7 +242,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("password successfully changed: %v\n", u.UserName)
+			fmt.Printf("password successfully changed: %v\n", u.Username())
 		}
 
 		if ctx.IsSet("fullname") {
@@ -261,7 +261,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			return err
 		}
 
-		fmt.Printf("user successfully updated: %v\n", u.UserName)
+		fmt.Printf("user successfully updated: %v\n", u.Username())
 
 		return nil
 	})
