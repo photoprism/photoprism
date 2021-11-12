@@ -83,6 +83,7 @@ var StatesCA = LookupTable{
 // StatesDE maps common abbreviations for German states.
 var StatesDE = LookupTable{
 	"BW":                     "Baden-Württemberg",
+	"Ba-Wü":                  "Baden-Württemberg",
 	"Baden-Wurttemberg":      "Baden-Württemberg",
 	"BY":                     "Bayern",
 	"Bavaria":                "Bayern",
@@ -100,6 +101,7 @@ var StatesDE = LookupTable{
 	"NRW":                    "Nordrhein-Westfalen",
 	"North Rhine-Westphalia": "Nordrhein-Westfalen",
 	"RP":                     "Rheinland-Pfalz",
+	"RLP":                    "Rheinland-Pfalz",
 	"Rhineland-Palatinate":   "Rheinland-Pfalz",
 	"SL":                     "Saarland",
 	"SN":                     "Sachsen",
