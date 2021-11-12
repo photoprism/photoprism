@@ -139,6 +139,10 @@ func (l Location) City() (result string) {
 	return l.Place.LocCity
 }
 
+func (l Location) District() (result string) {
+	return l.Place.LocDistrict
+}
+
 func (l Location) CountryCode() (result string) {
 	return l.Place.LocCountry
 }

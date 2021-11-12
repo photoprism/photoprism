@@ -257,7 +257,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.NotEmpty(t, cc.ManifestHash)
 	assert.Equal(t, true, cc.Debug)
 	assert.Equal(t, false, cc.Demo)
-	assert.Equal(t, false, cc.Sponsor)
+	assert.Equal(t, true, cc.Sponsor)
 	assert.Equal(t, false, cc.ReadOnly)
 }
 

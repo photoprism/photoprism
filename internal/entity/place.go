@@ -13,9 +13,10 @@ var placeMutex = sync.Mutex{}
 // Place used to associate photos to places
 type Place struct {
 	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	PlaceLabel    string    `gorm:"type:VARBINARY(755);unique_index;" json:"Label" yaml:"Label"`
-	PlaceCity     string    `gorm:"type:VARCHAR(255);" json:"City" yaml:"City,omitempty"`
-	PlaceState    string    `gorm:"type:VARCHAR(255);" json:"State" yaml:"State,omitempty"`
+	PlaceLabel    string    `gorm:"type:VARBINARY(512);unique_index;" json:"Label" yaml:"Label"`
+	PlaceCity     string    `gorm:"type:VARCHAR(128);" json:"City" yaml:"City,omitempty"`
+	PlaceState    string    `gorm:"type:VARCHAR(128);" json:"State" yaml:"State,omitempty"`
+	PlaceDistrict string    `gorm:"type:VARCHAR(128);" json:"District" yaml:"District,omitempty"`
 	PlaceCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
 	PlaceKeywords string    `gorm:"type:VARCHAR(255);" json:"Keywords" yaml:"Keywords,omitempty"`
 	PlaceFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
@@ -24,11 +25,17 @@ type Place struct {
 	UpdatedAt     time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
+// TableName returns the entity database table name.
+func (Place) TableName() string {
+	return "places"
+}
+
 // UnknownPlace is PhotoPrism's default place.
 var UnknownPlace = Place{
 	ID:            UnknownID,
 	PlaceLabel:    "Unknown",
 	PlaceCity:     "Unknown",
+	PlaceDistrict: "Unknown",
 	PlaceState:    "Unknown",
 	PlaceCountry:  UnknownID,
 	PlaceKeywords: "",

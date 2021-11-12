@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/hub/places"
-	"github.com/photoprism/photoprism/internal/maps/osm"
+
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -17,6 +17,7 @@ type Location struct {
 	LocCategory string
 	LocLabel    string
 	LocCity     string
+	LocDistrict string
 	LocState    string
 	LocCountry  string
 	LocSource   string
@@ -29,18 +30,20 @@ type LocationSource interface {
 	Category() string
 	Name() string
 	City() string
+	District() string
 	State() string
 	Source() string
 	Keywords() []string
 }
 
-func NewLocation(id, name, category, label, city, state, country, source string, keywords []string) *Location {
+func NewLocation(id, name, category, label, city, district, state, country, source string, keywords []string) *Location {
 	result := &Location{
 		ID:          id,
 		LocName:     name,
 		LocCategory: category,
 		LocLabel:    label,
 		LocCity:     city,
+		LocDistrict: district,
 		LocCountry:  country,
 		LocState:    txt.NormalizeState(state, country),
 		LocSource:   source,
@@ -52,8 +55,6 @@ func NewLocation(id, name, category, label, city, state, country, source string,
 
 func (l *Location) QueryApi(api string) error {
 	switch api {
-	case "osm":
-		return l.QueryOSM()
 	case "places":
 		return l.QueryPlaces()
 	}
@@ -71,6 +72,7 @@ func (l *Location) QueryPlaces() error {
 	l.LocSource = s.Source()
 	l.LocName = s.Name()
 	l.LocCity = s.City()
+	l.LocDistrict = s.District()
 	l.LocState = s.State()
 	l.LocCountry = s.CountryCode()
 	l.LocCategory = s.Category()
@@ -80,64 +82,8 @@ func (l *Location) QueryPlaces() error {
 	return nil
 }
 
-func (l *Location) QueryOSM() error {
-	s, err := osm.FindLocation(l.ID)
-
-	if err != nil {
-		return err
-	}
-
-	return l.Assign(s)
-}
-
-func (l *Location) Assign(s LocationSource) error {
-	l.LocSource = s.Source()
-
-	l.ID = s.CellID()
-
-	if l.Unknown() {
-		l.LocCategory = "unknown"
-		return errors.New("maps: unknown location")
-	}
-
-	l.LocName = s.Name()
-	l.LocCity = s.City()
-	l.LocState = s.State()
-	l.LocCountry = s.CountryCode()
-	l.LocCategory = s.Category()
-	l.LocLabel = l.label()
-	l.LocKeywords = s.Keywords()
-
-	return nil
-}
-
 func (l *Location) Unknown() bool {
 	return l.ID == ""
-}
-
-func (l *Location) label() string {
-	if l.Unknown() {
-		return "Unknown"
-	}
-
-	var countryName = l.CountryName()
-	var loc []string
-
-	shortCountry := len([]rune(countryName)) <= 20
-
-	if l.LocCity != "" {
-		loc = append(loc, l.LocCity)
-	}
-
-	if shortCountry && l.LocState != "" && !strings.EqualFold(l.LocState, l.LocCity) && !strings.EqualFold(l.LocState, l.LocCountry) {
-		loc = append(loc, l.LocState)
-	}
-
-	if countryName != "" {
-		loc = append(loc, countryName)
-	}
-
-	return strings.Join(loc[:], ", ")
 }
 
 func (l Location) S2Token() string {
@@ -149,27 +95,31 @@ func (l Location) PrefixedToken() string {
 }
 
 func (l Location) Name() string {
-	return l.LocName
+	return txt.Shorten(l.LocName, txt.ClipTitle, txt.Ellipsis)
 }
 
 func (l Location) Category() string {
-	return l.LocCategory
+	return txt.Shorten(l.LocCategory, txt.ClipKeyword, txt.Ellipsis)
 }
 
 func (l Location) Label() string {
-	return l.LocLabel
+	return txt.Shorten(l.LocLabel, txt.ClipLabel, txt.Ellipsis)
 }
 
 func (l Location) City() string {
-	return l.LocCity
+	return txt.Shorten(l.LocCity, txt.ClipPlace, txt.Ellipsis)
+}
+
+func (l Location) District() string {
+	return txt.Shorten(l.LocDistrict, txt.ClipPlace, txt.Ellipsis)
 }
 
 func (l Location) CountryCode() string {
-	return l.LocCountry
+	return txt.Clip(l.LocCountry, txt.ClipCountryCode)
 }
 
 func (l Location) State() string {
-	return txt.NormalizeState(l.LocState, l.CountryCode())
+	return txt.Shorten(txt.NormalizeState(l.LocState, l.CountryCode()), txt.ClipPlace, txt.Ellipsis)
 }
 
 func (l Location) CountryName() string {
@@ -185,5 +135,5 @@ func (l Location) Keywords() []string {
 }
 
 func (l Location) KeywordString() string {
-	return strings.Join(l.LocKeywords, ", ")
+	return txt.Clip(strings.Join(l.LocKeywords, ", "), txt.ClipVarchar)
 }

@@ -60,6 +60,7 @@ func main() {
 		commands.ImportCommand,
 		commands.CopyCommand,
 		commands.FacesCommand,
+		commands.PlacesCommand,
 		commands.PurgeCommand,
 		commands.CleanUpCommand,
 		commands.OptimizeCommand,

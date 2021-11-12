@@ -55,6 +55,7 @@ func NewTestOptions() *Options {
 		Name:           "PhotoPrism",
 		Version:        "0.0.0",
 		Copyright:      "(c) 2018-2021 Michael Mayer",
+		Test:           true,
 		Debug:          true,
 		Public:         true,
 		Experimental:   true,
