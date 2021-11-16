@@ -1,10 +1,12 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
 import Page from "../acceptance/page-model";
+import { ClientFunction } from "testcafe";
 
 fixture`Test member role`.page`${testcafeconfig.url}`;
 
 const page = new Page();
+const getLocation = ClientFunction(() => document.location.href);
 
 test.meta("testID", "member-role-001")("No access to settings", async (t) => {
   await page.login("member", "passwdmember");
@@ -169,6 +171,41 @@ test.meta("testID", "member-role-006")(
     await t
       .expect(Selector("div.is-photo").withAttribute("data-uid", "pqzuein2pdcg1kc7").visible)
       .ok();
+    //Places
+    await page.openNav();
+    await t
+      .click(Selector(".nav-places"))
+      .expect(Selector("#map").exists, { timeout: 15000 })
+      .ok()
+      .expect(Selector("div.p-map-control").visible)
+      .ok()
+      .wait(5000);
+    await t
+      .typeText(Selector('input[aria-label="Search"]'), "oaxaca", { replace: true })
+      .pressKey("enter");
+    await t
+      .expect(Selector("div.p-map-control").visible)
+      .ok()
+      .expect(getLocation())
+      .contains("oaxaca")
+      .wait(5000)
+      .expect(Selector('div[title="Viewpoint / Mexico / 2017"]').visible)
+      .notOk()
+      .expect(Selector('div[title="Viewpoint / Mexico / 2018"]').visible)
+      .notOk();
+    await t
+      .typeText(Selector('input[aria-label="Search"]'), "canada", { replace: true })
+      .pressKey("enter");
+    await t
+      .expect(Selector("div.p-map-control").visible)
+      .ok()
+      .expect(getLocation())
+      .contains("canada")
+      .wait(8000)
+      .expect(Selector('div[title="Cape / Bowen Island / 2019"]').visible)
+      .ok()
+      .expect(Selector('div[title="Truck / Vancouver / 2019"]').visible)
+      .notOk();
   }
 );
 

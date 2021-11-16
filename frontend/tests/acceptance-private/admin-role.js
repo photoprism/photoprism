@@ -1,16 +1,19 @@
 import { Selector } from "testcafe";
+import { ClientFunction } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
 import Page from "../acceptance/page-model";
 
 fixture`Test admin role`.page`${testcafeconfig.url}`;
 
 const page = new Page();
-/*test.meta("testID", "authentication-000")(
+const getLocation = ClientFunction(() => document.location.href);
+
+test.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
   async (t) => {
     await t.wait(5000);
   }
-);*/
+);
 
 test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
   await page.login("admin", "photoprism");
@@ -40,7 +43,7 @@ test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
     .notOk();
 });
 
-/*test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
+test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
   await page.login("admin", "photoprism");
   const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
   await page.openNav();
@@ -151,6 +154,41 @@ test.meta("testID", "admin-role-006")("private/archived photos in search results
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqzuein2pdcg1kc7").visible)
     .ok();
+  //Places
+  await page.openNav();
+  await t
+    .click(Selector(".nav-places"))
+    .expect(Selector("#map").exists, { timeout: 15000 })
+    .ok()
+    .expect(Selector("div.p-map-control").visible)
+    .ok()
+    .wait(5000);
+  await t
+    .typeText(Selector('input[aria-label="Search"]'), "oaxaca", { replace: true })
+    .pressKey("enter");
+  await t
+    .expect(Selector("div.p-map-control").visible)
+    .ok()
+    .expect(getLocation())
+    .contains("oaxaca")
+    .wait(5000)
+    .expect(Selector('div[title="Viewpoint / Mexico / 2017"]').visible)
+    .notOk()
+    .expect(Selector('div[title="Viewpoint / Mexico / 2018"]').visible)
+    .notOk();
+  await t
+    .typeText(Selector('input[aria-label="Search"]'), "canada", { replace: true })
+    .pressKey("enter");
+  await t
+    .expect(Selector("div.p-map-control").visible)
+    .ok()
+    .expect(getLocation())
+    .contains("canada")
+    .wait(8000)
+    .expect(Selector('div[title="Cape / Bowen Island / 2019"]').visible)
+    .ok()
+    .expect(Selector('div[title="Truck / Vancouver / 2019"]').visible)
+    .notOk();
 });
 
 test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
@@ -498,4 +536,4 @@ test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => 
     .navigateTo("/people/new")
     .expect(Selector("div.is-face").visible)
     .ok();
-});*/
+});
