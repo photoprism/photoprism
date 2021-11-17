@@ -40,8 +40,18 @@ func TestFindLocation(t *testing.T) {
 		t.Log(l)
 	})
 	t.Run("cached true", func(t *testing.T) {
-		var p = NewPlace("1", "", "", "", "", "de", "")
-		location := NewLocation("1e95998417cc", 52.51961810676184, 13.40806264572578, "TestLocation", "test", p, true)
+		location := Location{
+			ID:          "1e95998417cc",
+			LocLat:      52.51961810676184,
+			LocLng:      13.40806264572578,
+			LocName:     "TestLocation",
+			LocStreet:   "",
+			LocPostcode: "",
+			LocCategory: "test",
+			Place:       Place{PlaceID: "1"},
+			Cached:      true,
+		}
+
 		l, err := FindLocation(location.ID)
 		if err != nil {
 			t.Fatal(err)
@@ -57,8 +67,17 @@ func TestFindLocation(t *testing.T) {
 }
 
 func TestLocationGetters(t *testing.T) {
-	var p = NewPlace("1", "testLabel", "Berlin", "", "Berlin", "de", "foobar")
-	location := NewLocation("1e95998417cc", 52.51961810676184, 13.40806264572578, "TestLocation", "test", p, true)
+	location := Location{
+		ID:          "1e95998417cc",
+		LocLat:      52.51961810676184,
+		LocLng:      13.40806264572578,
+		LocName:     "TestLocation",
+		LocStreet:   "",
+		LocPostcode: "",
+		LocCategory: "test",
+		Place:       Place{PlaceID: "1", LocLabel: "testLabel", LocDistrict: "Berlin", LocCity: "", LocState: "Berlin", LocCountry: "de", LocKeywords: "foobar"},
+		Cached:      true,
+	}
 	t.Run("wrong id", func(t *testing.T) {
 		assert.Equal(t, "1e95998417cc", location.CellID())
 		assert.Equal(t, "TestLocation", location.Name())
@@ -66,7 +85,8 @@ func TestLocationGetters(t *testing.T) {
 		assert.Equal(t, "testLabel", location.Label())
 		assert.Equal(t, "Berlin", location.State())
 		assert.Equal(t, "de", location.CountryCode())
-		assert.Equal(t, "Berlin", location.City())
+		assert.Equal(t, "Berlin", location.District())
+		assert.Equal(t, "", location.City())
 		assert.Equal(t, 52.51961810676184, location.Latitude())
 		assert.Equal(t, 13.40806264572578, location.Longitude())
 		assert.Equal(t, "places", location.Source())
@@ -75,9 +95,18 @@ func TestLocationGetters(t *testing.T) {
 }
 
 func TestLocation_State(t *testing.T) {
+	location := Location{
+		ID:          "54903ee07f74",
+		LocLat:      47.6129432,
+		LocLng:      -122.4821475,
+		LocName:     "TestLocation",
+		LocStreet:   "",
+		LocPostcode: "",
+		LocCategory: "test",
+		Place:       Place{PlaceID: "549ed22c0434", LocLabel: "Seattle, WA", LocDistrict: "Berlin", LocCity: "Seattle", LocState: "WA", LocCountry: "us", LocKeywords: "foobar"},
+		Cached:      true,
+	}
 	t.Run("Washington", func(t *testing.T) {
-		var p = NewPlace("549ed22c0434", "Seattle, WA", "Seattle", "", "WA", "us", "")
-		location := NewLocation("54903ee07f74", 47.6129432, -122.4821475, "", "", p, true)
 		assert.Equal(t, "54903ee07f74", location.CellID())
 		assert.Equal(t, "Seattle, WA", location.Label())
 		assert.Equal(t, "Washington", location.State())
@@ -88,9 +117,18 @@ func TestLocation_State(t *testing.T) {
 }
 
 func TestLocation_District(t *testing.T) {
+	location := Location{
+		ID:          "54903ee07f74",
+		LocLat:      47.6129432,
+		LocLng:      -122.4821475,
+		LocName:     "TestLocation",
+		LocStreet:   "",
+		LocPostcode: "",
+		LocCategory: "test",
+		Place:       Place{PlaceID: "549ed22c0434", LocLabel: "Seattle, WA", LocDistrict: "Foo", LocCity: "Seattle", LocState: "WA", LocCountry: "us", LocKeywords: "foobar"},
+		Cached:      true,
+	}
 	t.Run("Washington", func(t *testing.T) {
-		var p = NewPlace("549ed22c0434", "Seattle, WA", "Seattle", "Foo", "WA", "us", "")
-		location := NewLocation("54903ee07f74", 47.6129432, -122.4821475, "", "", p, true)
 		assert.Equal(t, "54903ee07f74", location.CellID())
 		assert.Equal(t, "Seattle, WA", location.Label())
 		assert.Equal(t, "Foo", location.District())

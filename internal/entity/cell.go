@@ -18,6 +18,8 @@ var cellMutex = sync.Mutex{}
 type Cell struct {
 	ID           string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	CellName     string    `gorm:"type:VARCHAR(200);" json:"Name" yaml:"Name,omitempty"`
+	CellStreet   string    `gorm:"type:VARCHAR(100);" json:"Street" yaml:"Street,omitempty"`
+	CellPostcode string    `gorm:"type:VARCHAR(50);" json:"Postcode" yaml:"Postcode,omitempty"`
 	CellCategory string    `gorm:"type:VARCHAR(50);" json:"Category" yaml:"Category,omitempty"`
 	PlaceID      string    `gorm:"type:VARBINARY(42);default:'zz'" json:"-" yaml:"PlaceID"`
 	Place        *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
@@ -36,6 +38,8 @@ var UnknownLocation = Cell{
 	Place:        &UnknownPlace,
 	PlaceID:      UnknownID,
 	CellName:     "",
+	CellStreet:   "",
+	CellPostcode: "",
 	CellCategory: "",
 }
 
@@ -55,13 +59,13 @@ func NewCell(lat, lng float32) *Cell {
 
 // Refresh updates the index by retrieving the latest data from an external API.
 func (m *Cell) Refresh(api string) (err error) {
-	start := time.Now()
-
 	// Unknown?
 	if m.Unknown() {
 		// Skip.
 		return nil
 	}
+
+	start := time.Now()
 
 	// Initialize.
 	l := &maps.Location{
@@ -79,44 +83,50 @@ func (m *Cell) Refresh(api string) (err error) {
 		return nil
 	}
 
-	cellTable := Cell{}.TableName()
-	placeTable := Place{}.TableName()
+	oldPlaceID := m.PlaceID
 
-	place := Place{}
+	cellMutex.Lock()
+	defer cellMutex.Unlock()
 
-	// Find existing place by label.
-	if err := UnscopedDb().Where("place_label = ?", l.Label()).First(&place).Error; err != nil {
-		log.Tracef("places: %s for cell %s", err, m.ID)
-		place = Place{ID: m.ID}
-	} else {
-		log.Tracef("places: found matching place %s for cell %s", place.ID, m.ID)
+	place := Place{
+		ID:            l.PlaceID(),
+		PlaceLabel:    l.Label(),
+		PlaceDistrict: l.District(),
+		PlaceCity:     l.City(),
+		PlaceState:    l.State(),
+		PlaceCountry:  l.CountryCode(),
+		PlaceKeywords: l.KeywordString(),
+		PhotoCount:    1,
 	}
 
-	// Update place.
-	if place.ID == "" {
-		// Do nothing.
-	} else if res := UnscopedDb().Table(placeTable).Where("id = ?", place.ID).UpdateColumns(Values{
-		"place_label":    l.Label(),
-		"place_city":     l.City(),
-		"place_district": l.District(),
-		"place_state":    l.State(),
-		"place_country":  l.CountryCode(),
-		"place_keywords": l.KeywordString(),
-	}); res.Error != nil {
-		log.Tracef("places: %s for cell %s", err, m.ID)
-	} else if res.RowsAffected > 0 {
-		// Update cell place id, name, and category.
-		log.Tracef("places: updating place, name, and category for cell %s", m.ID)
-		err = UnscopedDb().Table(cellTable).Where("id = ?", m.ID).
-			UpdateColumns(Values{"cell_name": l.Name(), "cell_category": l.Category(), "place_id": place.ID}).Error
+	// Create or update place.
+	if err = place.Save(); err != nil {
+		log.Warnf("place: failed updating %s [%s]", place.ID, time.Since(start))
 	} else {
-		// Update cell name and category.
-		log.Tracef("places: updating name and category for cell %s", m.ID)
-		err = UnscopedDb().Table(cellTable).Where("id = ?", m.ID).
-			UpdateColumns(Values{"cell_name": l.Name(), "cell_category": l.Category()}).Error
+		m.Place = &place
+		m.PlaceID = l.PlaceID()
+		log.Tracef("place: updated %s [%s]", place.ID, time.Since(start))
 	}
 
-	log.Debugf("places: refreshed cell %s [%s]", txt.Quote(m.ID), time.Since(start))
+	m.CellName = l.Name()
+	m.CellStreet = l.Street()
+	m.CellPostcode = l.Postcode()
+	m.CellCategory = l.Category()
+
+	// Update cell.
+	err = m.Save()
+
+	if err != nil {
+		log.Warnf("place: failed updating %s [%s]", m.ID, time.Since(start))
+		return err
+	} else if oldPlaceID != m.PlaceID {
+		err = UnscopedDb().Table(Photo{}.TableName()).
+			Where("place_id = ?", oldPlaceID).
+			UpdateColumn("place_id", m.PlaceID).
+			Error
+	}
+
+	log.Debugf("place: updated %s [%s]", m.ID, time.Since(start))
 
 	return err
 }
@@ -127,7 +137,7 @@ func (m *Cell) Find(api string) error {
 	db := Db()
 
 	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
-		log.Debugf("location: found cell %s", m.ID)
+		log.Debugf("place: found cell %s", m.ID)
 		return nil
 	}
 
@@ -139,12 +149,13 @@ func (m *Cell) Find(api string) error {
 		return err
 	}
 
-	if found := FindPlace(l.PrefixedToken(), l.Label()); found != nil {
+	if found := FindPlace(l.PlaceID(), l.Label()); found != nil {
 		m.Place = found
 	} else {
 		place := &Place{
-			ID:            l.PrefixedToken(),
+			ID:            l.PlaceID(),
 			PlaceLabel:    l.Label(),
+			PlaceDistrict: l.District(),
 			PlaceCity:     l.City(),
 			PlaceState:    l.State(),
 			PlaceCountry:  l.CountryCode(),
@@ -157,33 +168,35 @@ func (m *Cell) Find(api string) error {
 				"count": 1,
 			})
 
-			log.Infof("location: added place %s [%s]", place.ID, time.Since(start))
+			log.Infof("place: added %s [%s]", place.ID, time.Since(start))
 
 			m.Place = place
-		} else if found := FindPlace(l.PrefixedToken(), l.Label()); found != nil {
+		} else if found := FindPlace(l.PlaceID(), l.Label()); found != nil {
 			m.Place = found
 		} else {
-			log.Errorf("location: %s (create place %s)", createErr, place.ID)
+			log.Errorf("place: %s (create %s)", createErr, place.ID)
 			m.Place = &UnknownPlace
 		}
 	}
 
 	m.PlaceID = m.Place.ID
 	m.CellName = l.Name()
+	m.CellStreet = l.Street()
+	m.CellPostcode = l.Postcode()
 	m.CellCategory = l.Category()
 
 	cellMutex.Lock()
 	defer cellMutex.Unlock()
 
 	if createErr := db.Create(m).Error; createErr == nil {
-		log.Debugf("location: added cell %s [%s]", m.ID, time.Since(start))
+		log.Debugf("place: added cell %s [%s]", m.ID, time.Since(start))
 		return nil
 	} else if findErr := db.Preload("Place").First(m, "id = ?", m.ID).Error; findErr != nil {
-		log.Errorf("location: %s (create cell %s)", createErr, m.ID)
-		log.Errorf("location: %s (find cell %s)", findErr, m.ID)
+		log.Errorf("place: %s (create cell %s)", createErr, m.ID)
+		log.Errorf("place: %s (find cell %s)", findErr, m.ID)
 		return createErr
 	} else {
-		log.Debugf("location: found cell %s [%s]", m.ID, time.Since(start))
+		log.Debugf("place: found cell %s [%s]", m.ID, time.Since(start))
 	}
 
 	return nil
@@ -194,15 +207,25 @@ func (m *Cell) Create() error {
 	return Db().Create(m).Error
 }
 
+// Save updates the existing or inserts a new row.
+func (m *Cell) Save() error {
+	return Db().Save(m).Error
+}
+
+// Delete removes the entity from the index.
+func (m *Cell) Delete() (err error) {
+	return UnscopedDb().Delete(m).Error
+}
+
 // FirstOrCreateCell fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateCell(m *Cell) *Cell {
 	if m.ID == "" {
-		log.Errorf("location: cell must not be empty")
+		log.Errorf("place: cell must not be empty")
 		return nil
 	}
 
 	if m.PlaceID == "" {
-		log.Errorf("location: place must not be empty (find or create cell %s)", m.ID)
+		log.Errorf("place: id must not be empty (find or create cell %s)", m.ID)
 		return nil
 	}
 
@@ -215,7 +238,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 	} else if err := Db().Where("id = ?", m.ID).Preload("Place").First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("location: %s (find or create cell %s)", createErr, m.ID)
+		log.Errorf("place: %s (find or create cell %s)", createErr, m.ID)
 	}
 
 	return nil
@@ -224,15 +247,17 @@ func FirstOrCreateCell(m *Cell) *Cell {
 // Keywords returns search keywords for a location.
 func (m *Cell) Keywords() (result []string) {
 	if m.Place == nil {
-		log.Errorf("location: place for cell %s is nil - you might have found a bug", m.ID)
+		log.Errorf("place: info for cell %s is nil - you might have found a bug", m.ID)
 		return result
 	}
 
+	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.District(), "-"))...)
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.City(), "-"))...)
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.State(), "-"))...)
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.CountryName(), "-"))...)
-	result = append(result, txt.Keywords(m.Category())...)
 	result = append(result, txt.Keywords(m.Name())...)
+	result = append(result, txt.Keywords(m.Street())...)
+	result = append(result, txt.Keywords(m.Category())...)
 	result = append(result, txt.Words(m.Place.PlaceKeywords)...)
 
 	result = txt.UniqueWords(result)
@@ -255,6 +280,26 @@ func (m *Cell) NoName() bool {
 	return m.CellName == ""
 }
 
+// Street returns the street name if any.
+func (m *Cell) Street() string {
+	return m.CellStreet
+}
+
+// NoStreet checks if the location has a street.
+func (m *Cell) NoStreet() bool {
+	return m.CellStreet == ""
+}
+
+// Postcode returns the postcode if any.
+func (m *Cell) Postcode() string {
+	return m.CellPostcode
+}
+
+// NoPostcode checks if the location has a postcode.
+func (m *Cell) NoPostcode() bool {
+	return m.CellPostcode == ""
+}
+
 // Category returns the location category
 func (m *Cell) Category() string {
 	return m.CellCategory
@@ -270,7 +315,12 @@ func (m *Cell) Label() string {
 	return m.Place.Label()
 }
 
-// City returns the location place city
+// District returns the district name if any.
+func (m *Cell) District() string {
+	return m.Place.District()
+}
+
+// City returns the location city name if any.
 func (m *Cell) City() string {
 	return m.Place.City()
 }

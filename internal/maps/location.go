@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/hub/places"
-
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -13,44 +12,33 @@ import (
 // Location represents a geolocation.
 type Location struct {
 	ID          string
+	placeID     string
 	LocName     string
+	LocStreet   string
+	LocPostcode string
 	LocCategory string
 	LocLabel    string
-	LocCity     string
 	LocDistrict string
+	LocCity     string
 	LocState    string
 	LocCountry  string
-	LocSource   string
 	LocKeywords []string
+	LocSource   string
 }
 
 type LocationSource interface {
 	CellID() string
-	CountryCode() string
-	Category() string
+	PlaceID() string
 	Name() string
-	City() string
+	Street() string
+	Category() string
+	Postcode() string
 	District() string
+	City() string
 	State() string
-	Source() string
+	CountryCode() string
 	Keywords() []string
-}
-
-func NewLocation(id, name, category, label, city, district, state, country, source string, keywords []string) *Location {
-	result := &Location{
-		ID:          id,
-		LocName:     name,
-		LocCategory: category,
-		LocLabel:    label,
-		LocCity:     city,
-		LocDistrict: district,
-		LocCountry:  country,
-		LocState:    txt.NormalizeState(state, country),
-		LocSource:   source,
-		LocKeywords: keywords,
-	}
-
-	return result
+	Source() string
 }
 
 func (l *Location) QueryApi(api string) error {
@@ -69,14 +57,17 @@ func (l *Location) QueryPlaces() error {
 		return err
 	}
 
+	l.placeID = s.PlaceID()
 	l.LocSource = s.Source()
 	l.LocName = s.Name()
-	l.LocCity = s.City()
-	l.LocDistrict = s.District()
-	l.LocState = s.State()
-	l.LocCountry = s.CountryCode()
+	l.LocStreet = s.Street()
+	l.LocPostcode = s.Postcode()
 	l.LocCategory = s.Category()
 	l.LocLabel = s.Label()
+	l.LocDistrict = s.District()
+	l.LocCity = s.City()
+	l.LocState = s.State()
+	l.LocCountry = s.CountryCode()
 	l.LocKeywords = s.Keywords()
 
 	return nil
@@ -84,6 +75,14 @@ func (l *Location) QueryPlaces() error {
 
 func (l *Location) Unknown() bool {
 	return l.ID == ""
+}
+
+func (l Location) PlaceID() string {
+	if l.placeID != "" {
+		return s2.Prefix(l.placeID)
+	}
+
+	return l.PrefixedToken()
 }
 
 func (l Location) S2Token() string {
@@ -95,39 +94,43 @@ func (l Location) PrefixedToken() string {
 }
 
 func (l Location) Name() string {
-	return txt.Shorten(l.LocName, txt.ClipTitle, txt.Ellipsis)
+	return txt.Clip(l.LocName, 200)
+}
+
+func (l Location) Street() string {
+	return txt.Clip(l.LocStreet, 100)
+}
+
+func (l Location) Postcode() string {
+	return txt.Clip(l.LocPostcode, 50)
 }
 
 func (l Location) Category() string {
-	return txt.Shorten(l.LocCategory, txt.ClipKeyword, txt.Ellipsis)
+	return txt.Clip(l.LocCategory, 50)
 }
 
 func (l Location) Label() string {
-	return txt.Shorten(l.LocLabel, txt.ClipLabel, txt.Ellipsis)
+	return txt.Clip(l.LocLabel, 400)
 }
 
 func (l Location) City() string {
-	return txt.Shorten(l.LocCity, txt.ClipPlace, txt.Ellipsis)
+	return txt.Clip(l.LocCity, 100)
 }
 
 func (l Location) District() string {
-	return txt.Shorten(l.LocDistrict, txt.ClipPlace, txt.Ellipsis)
+	return txt.Clip(l.LocDistrict, 100)
 }
 
 func (l Location) CountryCode() string {
-	return txt.Clip(l.LocCountry, txt.ClipCountryCode)
+	return txt.Clip(l.LocCountry, 2)
 }
 
 func (l Location) State() string {
-	return txt.Shorten(txt.NormalizeState(l.LocState, l.CountryCode()), txt.ClipPlace, txt.Ellipsis)
+	return txt.Clip(txt.NormalizeState(l.LocState, l.CountryCode()), 100)
 }
 
 func (l Location) CountryName() string {
 	return CountryNames[l.LocCountry]
-}
-
-func (l Location) Source() string {
-	return l.LocSource
 }
 
 func (l Location) Keywords() []string {
@@ -135,5 +138,9 @@ func (l Location) Keywords() []string {
 }
 
 func (l Location) KeywordString() string {
-	return txt.Clip(strings.Join(l.LocKeywords, ", "), txt.ClipVarchar)
+	return txt.Clip(strings.Join(l.LocKeywords, ", "), 300)
+}
+
+func (l Location) Source() string {
+	return l.LocSource
 }

@@ -1,39 +1,49 @@
 package query
 
 import (
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// CellIDs returns all known S2 cell ids as string slice.
-func CellIDs() (ids []string, err error) {
+type Cell struct {
+	ID      string
+	PlaceID string
+}
+
+type Cells []Cell
+
+// CellIDs returns all known S2 cell ids as Cell slice.
+func CellIDs() (result Cells, err error) {
 	tableName := entity.Cell{}.TableName()
 
 	var count int64
 
 	if err = UnscopedDb().Table(tableName).Where("id <> 'zz'").Count(&count).Error; err != nil {
-		return []string{}, err
+		return result, err
 	}
 
-	ids = make([]string, 0, count)
+	result = make(Cells, 0, count)
 
-	err = UnscopedDb().Table(tableName).Select("id").Where("id <> 'zz'").Pluck("id", &ids).Error
+	err = UnscopedDb().Table(tableName).Select("id, place_id").Where("id <> 'zz'").Order("id").Scan(&result).Error
 
-	return ids, err
+	return result, err
 }
 
-// PlaceIDs returns all known S2 place ids as string slice.
-func PlaceIDs() (ids []string, err error) {
-	tableName := entity.Place{}.TableName()
+// UpdatePlaceIDs finds and replaces invalid place references.
+func UpdatePlaceIDs() (fixed int64, err error) {
+	photosTable := entity.Photo{}.TableName()
+	placesTable := entity.Place{}.TableName()
 
-	var count int64
+	res := Db().Table(photosTable).Where("place_id NOT IN (SELECT place_id FROM ?)", gorm.Expr(placesTable)).
+		UpdateColumn("place_id", "zz")
 
-	if err = UnscopedDb().Table(tableName).Where("id <> 'zz'").Count(&count).Error; err != nil {
-		return []string{}, err
+	if res.Error != nil {
+		return res.RowsAffected, res.Error
 	}
 
-	ids = make([]string, 0, count)
+	res = Db().Table(photosTable).Where("cell_id IS NOT NULL AND cell_id <> 'zz'").
+		UpdateColumn("place_id", gorm.Expr("(SELECT id FROM cells WHERE id = cell_id)"))
 
-	err = UnscopedDb().Table(tableName).Select("id").Where("id <> 'zz'").Pluck("id", &ids).Error
-
-	return ids, err
+	return res.RowsAffected, res.Error
 }

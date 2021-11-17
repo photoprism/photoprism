@@ -1,8 +1,9 @@
 package crop
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestThumbFileName(t *testing.T) {

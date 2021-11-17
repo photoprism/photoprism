@@ -40,6 +40,9 @@ func TestUcFirst(t *testing.T) {
 	t.Run("cat", func(t *testing.T) {
 		assert.Equal(t, "Cat", UcFirst("Cat"))
 	})
+	t.Run("KwaZulu natal", func(t *testing.T) {
+		assert.Equal(t, "KwaZulu Natal", Title("KwaZulu natal"))
+	})
 	t.Run("empty string", func(t *testing.T) {
 		assert.Equal(t, "", UcFirst(""))
 	})

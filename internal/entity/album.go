@@ -448,6 +448,17 @@ func (m *Album) Title() string {
 	return m.AlbumTitle
 }
 
+// ZipName returns the zip download filename.
+func (m *Album) ZipName() string {
+	s := slug.Make(m.AlbumTitle)
+
+	if len(s) < 2 {
+		s = fmt.Sprintf("photoprism-album-%s", m.AlbumUID)
+	}
+
+	return fmt.Sprintf("%s.zip", s)
+}
+
 // AddPhotos adds photos to an existing album.
 func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 	for _, uid := range UIDs {

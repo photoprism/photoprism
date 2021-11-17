@@ -39,6 +39,11 @@ var once sync.Once
 var LowMem = false
 var TotalMem uint64
 
+const MsgFreeBeer = "Help us make a difference and become a sponsor today!"
+const MsgFundingInfo = "Visit https://docs.photoprism.org/funding/ to learn more."
+const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
+	" we unfortunately can't offer it for free."
+
 const ApiUri = "/api/v1"
 const StaticUri = "/static"
 const DefaultWakeupInterval = int(15 * 60)
@@ -168,6 +173,12 @@ func (c *Config) Init() error {
 
 	if err := c.initStorage(); err != nil {
 		return err
+	}
+
+	// Show funding info?
+	if !c.Sponsor() {
+		log.Info(MsgFreeBeer)
+		log.Info(MsgFundingInfo)
 	}
 
 	if insensitive, err := c.CaseInsensitive(); err != nil {

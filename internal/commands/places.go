@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/manifoldco/promptui"
+
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/urfave/cli"
@@ -15,11 +17,11 @@ import (
 // PlacesCommand registers the places subcommands.
 var PlacesCommand = cli.Command{
 	Name:  "places",
-	Usage: "Location information subcommands",
+	Usage: "Geolocation management subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "update",
-			Usage:  "Fetches updated location data",
+			Usage:  "Updates the index with the latest geodata from our backend",
 			Action: placesUpdateAction,
 		},
 	},
@@ -28,6 +30,16 @@ var PlacesCommand = cli.Command{
 // placesUpdateAction fetches updated location data.
 func placesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
+
+	confirmPrompt := promptui.Prompt{
+		Label:     "Interrupting the update may result in inconsistent data. Proceed?",
+		IsConfirm: true,
+	}
+
+	if _, err := confirmPrompt.Run(); err != nil {
+		// Abort.
+		return nil
+	}
 
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
@@ -49,7 +61,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 	} else {
 		elapsed := time.Since(start)
 
-		log.Infof("updated %s in %s", english.Plural(len(updated), "location", "locations"), elapsed)
+		log.Infof("updated %s in %s", english.Plural(len(updated), "place", "places"), elapsed)
 	}
 
 	conf.Shutdown()

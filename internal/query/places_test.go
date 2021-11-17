@@ -16,14 +16,16 @@ func TestCellIDs(t *testing.T) {
 	})
 }
 
-func TestPlaceIDs(t *testing.T) {
+func TestUpdatePlaceIDs(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		result, err := PlaceIDs()
+		fixed, err := UpdatePlaceIDs()
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		t.Logf("place count: %v", len(result))
+		if fixed < 0 {
+			t.Fatal("fixed must be a positive integer")
+		}
 	})
 }

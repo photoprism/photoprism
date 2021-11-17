@@ -72,8 +72,51 @@ var MomentLabels = map[string]string{
 	"hamster":          "Pets",
 }
 
+// MomentLabelsFilter returns the smart filter string for a moment based on a matching label.
+func MomentLabelsFilter(label string) string {
+	// TODO: Needs refactoring
+	label = strings.SplitN(label, txt.Or, 2)[0]
+
+	title := MomentLabels[label]
+
+	if title == "" {
+		return ""
+	}
+
+	var l []string
+
+	for i := range MomentLabels {
+		if MomentLabels[i] == title {
+			l = append(l, i)
+		}
+	}
+
+	return strings.Join(txt.UniqueWords(l), txt.Or)
+}
+
 // Slug returns an identifier string for a moment.
-func (m Moment) Slug() string {
+func (m Moment) Slug() (s string) {
+	state := txt.NormalizeState(m.State, m.Country)
+
+	if state == "" {
+		return m.TitleSlug()
+	}
+
+	country := maps.CountryName(m.Country)
+
+	if m.Year > 1900 && m.Month == 0 {
+		s = fmt.Sprintf("%s-%s-%04d", country, state, m.Year)
+	} else if m.Year > 1900 && m.Month > 0 && m.Month <= 12 {
+		s = fmt.Sprintf("%s-%s-%04d-%02d", country, state, m.Year, m.Month)
+	} else {
+		s = fmt.Sprintf("%s-%s", country, state)
+	}
+
+	return slug.Make(s)
+}
+
+// TitleSlug returns an identifier string based on the title.
+func (m Moment) TitleSlug() string {
 	return slug.Make(m.Title())
 }
 
@@ -83,7 +126,7 @@ func (m Moment) Title() string {
 
 	if m.Year == 0 && m.Month == 0 {
 		if m.Label != "" {
-			return MomentLabels[m.Label]
+			return MomentLabels[strings.SplitN(m.Label, txt.Or, 2)[0]]
 		}
 
 		country := maps.CountryName(m.Country)
@@ -93,7 +136,7 @@ func (m Moment) Title() string {
 		}
 
 		if state == "" {
-			return m.Country
+			return country
 		}
 
 		return fmt.Sprintf("%s / %s", state, country)
@@ -182,6 +225,8 @@ func MomentsLabels(threshold int) (results Moments, err error) {
 		cats = append(cats, cat)
 	}
 
+	m := Moments{}
+
 	db := UnscopedDb().Table("photos").
 		Select("l.label_slug AS label, COUNT(*) AS photo_count").
 		Joins("JOIN photos_labels pl ON pl.photo_id = photos.id AND pl.uncertainty < 100").
@@ -190,8 +235,23 @@ func MomentsLabels(threshold int) (results Moments, err error) {
 		Group("l.label_slug").
 		Having("photo_count >= ?", threshold)
 
-	if err := db.Scan(&results).Error; err != nil {
-		return results, err
+	if err := db.Scan(&m).Error; err != nil {
+		return m, err
+	}
+
+	done := make(map[string]bool)
+
+	for i := 0; i < len(m); i++ {
+		f := MomentLabelsFilter(m[i].Label)
+
+		if _, ok := done[f]; ok {
+			continue
+		} else {
+			done[f] = true
+		}
+
+		m[i].Label = f
+		results = append(results, m[i])
 	}
 
 	return results, nil

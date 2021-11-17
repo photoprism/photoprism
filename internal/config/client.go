@@ -133,6 +133,10 @@ func (c *Config) Flags() (flags []string) {
 		flags = append(flags, "debug")
 	}
 
+	if c.Sponsor() {
+		flags = append(flags, "sponsor")
+	}
+
 	if c.Experimental() {
 		flags = append(flags, "experimental")
 	}
@@ -245,7 +249,7 @@ func (c *Config) GuestConfig() ClientConfig {
 			Faces:          true,
 			Classification: true,
 		},
-		Flags:           "readonly public shared",
+		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "guest",
 		Name:            c.Name(),
 		BaseUri:         c.BaseUri(""),
