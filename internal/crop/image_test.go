@@ -24,6 +24,24 @@ func TestThumbFileName(t *testing.T) {
 		}
 		assert.Contains(t, err.Error(), "path missing")
 	})
+	t.Run("invalid width", func(t *testing.T) {
+		a := NewArea("face", 1.000, 0.33333, 0.000, 0.5)
+		s := Size{Tile50, Tile320, "Lists", 50, 50, DefaultOptions}
+		_, err := ThumbFileName("2105662d3f8d6e68d9e94280449fbf26ed89xxxx", a, s, "path/b")
+		if err == nil {
+			t.Fatal(err)
+		}
+		assert.Contains(t, err.Error(), "invalid area width")
+	})
+	t.Run("invalid crop size", func(t *testing.T) {
+		a := NewArea("face", 1.000, 0.33333, 0.001, 0.5)
+		s := Size{Tile50, Tile320, "Lists", 0, 50, DefaultOptions}
+		_, err := ThumbFileName("2105662d3f8d6e68d9e94280449fbf26ed89xxxx", a, s, "path/b")
+		if err == nil {
+			t.Fatal(err)
+		}
+		assert.Contains(t, err.Error(), "invalid crop size")
+	})
 	t.Run("File not found", func(t *testing.T) {
 		a := NewArea("face", 1.000, 0.33333, 0.001, 0.5)
 		s := Size{Tile50, Tile320, "Lists", 50, 50, DefaultOptions}
