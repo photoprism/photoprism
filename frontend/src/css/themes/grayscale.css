@@ -1,5 +1,26 @@
 /* Grayscale Theme */
 
+#photoprism.container.theme-grayscale {
+    background: #353839 !important;
+    position: fixed;
+    max-width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#photoprism.container.theme-grayscale div.loading-animation {
+    color: #c8bdb1 !important;
+    caret-color: #c8bdb1 !important;
+}
+
+#photoprism.container.theme-grayscale div.loading-animation .loading-underlay {
+    stroke: rgba(200, 189, 177, 0.3);
+}
+
 .theme-grayscale .v-content__wrap,
 .theme-grayscale .p-page,
 .theme-grayscale .form,

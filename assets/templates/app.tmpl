@@ -1,17 +1,13 @@
-<div id="photoprism" class="container">
+<div id="photoprism" class="container{{if .config.SiteCaption}} theme-{{ .config.Settings.UI.Theme }}{{end}}">
   <div class="loading-logo">
-    <svg id="f394fb39-4024-46e8-9a68-3f5e53f52bfd" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 276.76 276.76"><defs><style>.a8bd947d-a1f8-4a14-8069-c9663505e4b1{fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b);}.a4ee1f07-8fee-4200-835a-e030a32bca90{fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:5px;}</style><linearGradient id="b905e2c4-4772-4914-b70f-44b4d19aca4b" x1="45.04" y1="231.72" x2="231.72" y2="45.04" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset="0" stop-color="#c2fde4"/><stop offset="1" stop-color="#cdc6e9"/></linearGradient></defs><circle class="a8bd947d-a1f8-4a14-8069-c9663505e4b1" cx="138.38" cy="138.38" r="132"/><path id="bfa29dbe-bd65-4058-95bb-bdb844b1d3b1" data-name="Logo Pfad" class="a4ee1f07-8fee-4200-835a-e030a32bca90" d="M229.57,181.89l-4,24.19M47.29,182.88l14.81,14M157.86,59.23,62,196.69a.09.09,0,0,0,.07.15l163.41,9.37a.09.09,0,0,0,.09-.13L158,59.25A.1.1,0,0,0,157.86,59.23ZM138.12,45.94,47.18,182.69a.13.13,0,0,0,.11.19l182.18-.8a.12.12,0,0,0,.1-.19L138.33,45.94A.12.12,0,0,0,138.12,45.94Zm.11-.16L158,59.1"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 276.76 276.76"><defs><linearGradient id="a" x1="45.04" y1="231.72" x2="231.72" y2="45.04" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset="0" stop-color="#9afbfe"/><stop offset="1" stop-color="#ffb3e0"/></linearGradient></defs><circle cx="138.38" cy="138.38" r="132" style="fill:url(#a)"/><path d="m229.57 181.89-4 24.19m-178.28-23.2 14.81 14m95.76-137.65L62 196.69a.09.09 0 0 0 .07.15l163.41 9.37a.09.09 0 0 0 .09-.13L158 59.25a.1.1 0 0 0-.14-.02Zm-19.74-13.29L47.18 182.69a.13.13 0 0 0 .11.19l182.18-.8a.12.12 0 0 0 .1-.19L138.33 45.94a.12.12 0 0 0-.21 0Zm.11-.16L158 59.1" style="fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:5px"/></svg>
   </div>
-  <div class="loading-bar">
-    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" class="v-progress-linear" style="height: 7px;">
-      <div class="v-progress-linear__background black" style="height: 7px; opacity: 0.3; width: 100%;"></div>
-      <div class="v-progress-linear__bar">
-        <div class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active">
-          <div class="v-progress-linear__bar__indeterminate long black"></div>
-          <div class="v-progress-linear__bar__indeterminate short black"></div>
-        </div><!----></div>
-    </div>
+  <div class="loading-animation">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="23.529411764705884 23.529411764705884 47.05882352941177 47.05882352941177" style="transform: rotate(360deg);">
+      <circle fill="transparent" cx="47.05882352941177" cy="47.05882352941177" r="20" stroke-width="7.058823529411765" stroke-dasharray="125.664" stroke-dashoffset="0" class="loading-underlay"></circle>
+      <circle fill="transparent" cx="47.05882352941177" cy="47.05882352941177" r="20" stroke-width="7.058823529411765" stroke-dasharray="125.664" stroke-dashoffset="62.83185307179586px" class="loading-overlay"></circle></svg>
   </div>
+  {{if not .config.Sponsor}}<div id="photoprism-info"><a href="https://docs.photoprism.org/funding/" target="_blank">Become a sponsor.</a></div>{{end}}
 </div>
 
 <div id="busy-overlay"></div>
