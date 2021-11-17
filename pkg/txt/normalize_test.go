@@ -93,3 +93,15 @@ func TestNormalizeQuery(t *testing.T) {
 		assert.Equal(t, "table spoon & usa | img* json|bill", q)
 	})
 }
+
+func TestNormalizeUsername(t *testing.T) {
+	t.Run("Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", NormalizeUsername("Admin "))
+	})
+	t.Run(" Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", NormalizeUsername(" Admin "))
+	})
+	t.Run(" admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", NormalizeUsername(" admin "))
+	})
+}
