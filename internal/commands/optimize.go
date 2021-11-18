@@ -13,12 +13,18 @@ import (
 
 // OptimizeCommand registers the index cli command.
 var OptimizeCommand = cli.Command{
-	Name:   "optimize",
-	Usage:  "Updates estimates, titles, and descriptions",
+	Name:  "optimize",
+	Usage: "Updates estimates, titles, and other metadata",
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "force, f",
+			Usage: "update all, including recently estimated",
+		},
+	},
 	Action: optimizeAction,
 }
 
-// optimizeAction updates metadata such as titles and estimate.
+// optimizeAction updates estimates, titles, and other metadata.
 func optimizeAction(ctx *cli.Context) error {
 	start := time.Now()
 
@@ -38,9 +44,10 @@ func optimizeAction(ctx *cli.Context) error {
 		log.Infof("config: read-only mode enabled")
 	}
 
+	force := ctx.Bool("force")
 	worker := workers.NewMeta(conf)
 
-	if err := worker.Start(time.Second * 15); err != nil {
+	if err := worker.Start(time.Second*15, force); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)
