@@ -7,6 +7,84 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPhoto_UnknownLocation(t *testing.T) {
+	t.Run("no_location", func(t *testing.T) {
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		assert.True(t, m.UnknownLocation())
+	})
+
+	t.Run("no_lat_lng", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		m.PhotoLat = 0.0
+		m.PhotoLng = 0.0
+		// t.Logf("MODEL: %+v", m)
+		assert.False(t, m.HasLocation())
+		assert.True(t, m.UnknownLocation())
+	})
+
+	t.Run("lat_lng_cell_id", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		// t.Logf("MODEL: %+v", m)
+		assert.True(t, m.HasLocation())
+		assert.False(t, m.UnknownLocation())
+	})
+}
+
+func TestPhoto_HasLocation(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		assert.False(t, m.HasLocation())
+	})
+	t.Run("true", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		assert.True(t, m.HasLocation())
+	})
+}
+
+func TestPhoto_HasLatLng(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		assert.True(t, m.HasLatLng())
+	})
+	t.Run("false", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo09")
+		assert.False(t, m.HasLatLng())
+	})
+}
+
+func TestPhoto_NoLatLng(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		assert.False(t, m.NoLatLng())
+	})
+	t.Run("true", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo09")
+		assert.True(t, m.NoLatLng())
+	})
+}
+
+func TestPhoto_NoPlace(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		assert.True(t, m.UnknownPlace())
+	})
+	t.Run("false", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		assert.False(t, m.UnknownPlace())
+	})
+}
+
+func TestPhoto_HasPlace(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
+		m := PhotoFixtures.Get("19800101_000002_D640C559")
+		assert.False(t, m.HasPlace())
+	})
+	t.Run("true", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		assert.True(t, m.HasPlace())
+	})
+}
+
 func TestPhoto_GetTimeZone(t *testing.T) {
 	m := Photo{}
 	m.PhotoLat = 48.533905555

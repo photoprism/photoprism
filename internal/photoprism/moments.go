@@ -179,14 +179,17 @@ func (w *Moments) Start() (err error) {
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumState); a != nil {
-				if a.DeletedAt != nil {
-					// Nothing to do.
-					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-				} else {
+				if !a.Deleted() {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				} else if err := a.Restore(); err != nil {
+					log.Errorf("moments: %s (restore state)", err.Error())
+				} else {
+					log.Infof("moments: %s restored", txt.Quote(a.AlbumTitle))
 				}
 			} else if a := entity.NewStateAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+				a.AlbumLocation = mom.CountryName()
 				a.AlbumCountry = mom.Country
+				a.AlbumState = mom.State
 
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err)

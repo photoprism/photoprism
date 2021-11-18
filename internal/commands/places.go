@@ -5,12 +5,11 @@ import (
 	"time"
 
 	"github.com/manifoldco/promptui"
-
-	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 )
 
@@ -36,11 +35,12 @@ func placesUpdateAction(ctx *cli.Context) error {
 		IsConfirm: true,
 	}
 
+	// Abort?
 	if _, err := confirmPrompt.Run(); err != nil {
-		// Abort.
 		return nil
 	}
 
+	// Load config.
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
 
@@ -53,16 +53,40 @@ func placesUpdateAction(ctx *cli.Context) error {
 
 	conf.InitDb()
 
-	w := service.Places()
-
 	// Run places worker.
-	if updated, err := w.Start(); err != nil {
-		return err
-	} else {
-		elapsed := time.Since(start)
+	if w := service.Places(); w != nil {
+		_, err := w.Start()
 
-		log.Infof("updated %s in %s", english.Plural(len(updated), "place", "places"), elapsed)
+		if err != nil {
+			return err
+		}
 	}
+
+	// Run moments worker.
+	if w := service.Moments(); w != nil {
+		err := w.Start()
+
+		if err != nil {
+			return err
+		}
+	}
+
+	// Hide missing album contents.
+	if err := query.UpdateMissingAlbumEntries(); err != nil {
+		log.Errorf("index: %s (update album entries)", err)
+	}
+
+	// Update precalculated photo and file counts.
+	if err := entity.UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
+	}
+
+	// Update album, subject, and label cover thumbs.
+	if err := query.UpdateCovers(); err != nil {
+		log.Warnf("index: %s (update covers)", err)
+	}
+
+	log.Infof("completed in %s", time.Since(start))
 
 	conf.Shutdown()
 

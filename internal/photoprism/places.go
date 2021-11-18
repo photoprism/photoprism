@@ -67,6 +67,8 @@ func (w *Places) Start() (updated []string, err error) {
 	// List of updated cells.
 	updated = make([]string, 0, len(cells))
 
+	log.Infof("index: downloading latest data")
+
 	// Update known locations.
 	for i, cell := range cells {
 		if i%10 == 0 {
@@ -92,25 +94,69 @@ func (w *Places) Start() (updated []string, err error) {
 		}
 
 		// Short break.
-		time.Sleep(40 * time.Millisecond)
+		time.Sleep(33 * time.Millisecond)
 	}
 
-	// Find and fix bad place ids.
-	log.Debug("places: updating references")
-	if fixed, err := query.UpdatePlaceIDs(); err != nil {
-		log.Errorf("places: %s (updated references)", err)
-	} else if fixed > 0 {
-		log.Infof("places: updated %d references", fixed)
+	// Update location-related photo metadata in the index.
+	if _, err := w.UpdatePhotos(); err != nil {
+		log.Errorf("index: %s (update photos)", err)
 	}
 
 	// Update photo counts in places.
 	if err := entity.UpdatePlacesCounts(); err != nil {
 		log.Errorf("index: %s (update counts)", err)
-	} else {
-		log.Infof("index: updated counts")
 	}
 
 	return updated, err
+}
+
+// UpdatePhotos updates all location-related photo metadata in the index.
+func (w *Places) UpdatePhotos() (affected int, err error) {
+	start := time.Now()
+
+	var u []string
+
+	// Find photos without location.
+	if err = query.UnscopedDb().
+		Raw(`SELECT photo_uid FROM photos WHERE place_id <> 'zz' OR photo_lat <> 0 OR photo_lng <> 0 ORDER BY id`).
+		Pluck("photo_uid", &u).Error; err != nil {
+		return affected, err
+	}
+
+	n := len(u)
+
+	if n == 0 {
+		log.Debugf("index: found no photos with location [%s]", time.Since(start))
+		return affected, err
+	}
+
+	log.Infof("index: updating references, titles, and keywords")
+
+	for i := 0; i < n; i++ {
+		if i%10 == 0 {
+			log.Infof("index: updated %s, %d remaining", english.Plural(i, "photo", "photos"), n-i)
+		}
+
+		var model entity.Photo
+
+		model, err = query.PhotoByUID(u[i])
+
+		if err != nil {
+			log.Errorf("index: %s while loading %s", err, model.PhotoUID)
+			continue
+		} else if model.NoLatLng() {
+			log.Debugf("index: photo %s has no location", model.PhotoUID)
+			continue
+		}
+
+		if err = model.SaveLocation(); err != nil {
+			log.Errorf("index: %s while updating %s", err, model.PhotoUID)
+		} else {
+			affected++
+		}
+	}
+
+	return affected, err
 }
 
 // Canceled tests if the worker should be stopped.

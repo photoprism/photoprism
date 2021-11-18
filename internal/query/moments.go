@@ -94,6 +94,15 @@ func MomentLabelsFilter(label string) string {
 	return strings.Join(txt.UniqueWords(l), txt.Or)
 }
 
+// CountryName returns the country name if any.
+func (m Moment) CountryName() string {
+	if m.Country == "" {
+		return ""
+	}
+
+	return maps.CountryName(m.Country)
+}
+
 // Slug returns an identifier string for a moment.
 func (m Moment) Slug() (s string) {
 	state := txt.NormalizeState(m.State, m.Country)
@@ -128,43 +137,40 @@ func (m Moment) Title() string {
 		if m.Label != "" {
 			return MomentLabels[strings.SplitN(m.Label, txt.Or, 2)[0]]
 		}
-
-		country := maps.CountryName(m.Country)
-
-		if strings.Contains(state, country) {
+		if state != "" {
 			return state
 		}
 
-		if state == "" {
-			return country
-		}
-
-		return fmt.Sprintf("%s / %s", state, country)
+		return m.CountryName()
 	}
 
 	if m.Country != "" && m.Year > 1900 && m.Month == 0 {
 		if state != "" {
-			return fmt.Sprintf("%s / %s / %d", state, maps.CountryName(m.Country), m.Year)
+			return fmt.Sprintf("%s / %d", state, m.Year)
 		}
 
-		return fmt.Sprintf("%s %d", maps.CountryName(m.Country), m.Year)
+		return fmt.Sprintf("%s %d", m.CountryName(), m.Year)
 	}
 
 	if m.Year > 1900 && m.Month > 0 && m.Month <= 12 {
 		date := time.Date(m.Year, time.Month(m.Month), 1, 0, 0, 0, 0, time.UTC)
 
+		if state != "" {
+			return fmt.Sprintf("%s / %s", state, date.Format("January 2006"))
+		}
+
 		if m.Country == "" {
 			return date.Format("January 2006")
 		}
 
-		return fmt.Sprintf("%s / %s", maps.CountryName(m.Country), date.Format("January 2006"))
+		return fmt.Sprintf("%s / %s", m.CountryName(), date.Format("January 2006"))
 	}
 
 	if m.Month > 0 && m.Month <= 12 {
 		return time.Month(m.Month).String()
 	}
 
-	return maps.CountryName(m.Country)
+	return m.CountryName()
 }
 
 // Moments represents a list of moments.

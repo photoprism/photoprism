@@ -47,14 +47,16 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 		}
 
 		// Automatically hide empty months.
-		if a.AlbumType == entity.AlbumMonth {
+		switch a.AlbumType {
+		case entity.AlbumMonth, entity.AlbumState:
 			if err := a.Delete(); err != nil {
-				log.Errorf("album: %s (hide %s)", err, a.AlbumType)
+				log.Errorf("%s: %s (hide)", a.AlbumType, err)
 			} else {
-				log.Infof("album: %s hidden", txt.Quote(a.AlbumTitle))
+				log.Infof("%s: %s hidden", a.AlbumType, txt.Quote(a.AlbumTitle))
 			}
 		}
 
+		// Return without album cover.
 		return file, fmt.Errorf("no cover found")
 	}
 

@@ -178,7 +178,7 @@ func TestMoment_Title(t *testing.T) {
 			PhotoCount: 0,
 		}
 
-		assert.Equal(t, "Pfalz / Germany / 2010", moment.Title())
+		assert.Equal(t, "Pfalz / 2010", moment.Title())
 	})
 	t.Run("state, country, month and year", func(t *testing.T) {
 		moment := Moment{
@@ -190,7 +190,7 @@ func TestMoment_Title(t *testing.T) {
 			PhotoCount: 0,
 		}
 
-		assert.Equal(t, "Germany / December 2010", moment.Title())
+		assert.Equal(t, "Pfalz / December 2010", moment.Title())
 	})
 	t.Run("month", func(t *testing.T) {
 		moment := Moment{
