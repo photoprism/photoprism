@@ -7,7 +7,7 @@
       <circle fill="transparent" cx="47.05882352941177" cy="47.05882352941177" r="20" stroke-width="7.058823529411765" stroke-dasharray="125.664" stroke-dashoffset="0" class="loading-underlay"></circle>
       <circle fill="transparent" cx="47.05882352941177" cy="47.05882352941177" r="20" stroke-width="7.058823529411765" stroke-dasharray="125.664" stroke-dashoffset="62.83185307179586px" class="loading-overlay"></circle></svg>
   </div>
-  {{if not .config.Sponsor}}<div id="photoprism-info"><a href="https://docs.photoprism.org/funding/" target="_blank">Become a sponsor.</a></div>{{end}}
+  {{if not .config.Sponsor}}<div id="photoprism-info"><a href="https://docs.photoprism.org/funding/" target="_blank">{{ .config.SiteDescription }}</a></div>{{end}}
 </div>
 
 <div id="busy-overlay"></div>

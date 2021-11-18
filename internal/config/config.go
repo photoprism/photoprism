@@ -360,6 +360,10 @@ func (c *Config) SiteCaption() string {
 
 // SiteDescription returns a long site description.
 func (c *Config) SiteDescription() string {
+	if !c.Sponsor() {
+		return MsgFreeBeer
+	}
+
 	return c.options.SiteDescription
 }
 

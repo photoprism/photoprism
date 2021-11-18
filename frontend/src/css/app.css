@@ -33,6 +33,7 @@ https://docs.photoprism.org/developer-guide/
 @import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
 @import url("themes.css");
 @import url("animate.css");
+@import url("splash.css");
 @import url("navigation.css");
 @import url("logs.css");
 @import url("visibility.css");
@@ -107,32 +108,6 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-}
-
-#photoprism div.logo-large {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
-}
-
-#photoprism div.loading-logo {
-    position: fixed;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
-    z-index: 2;
-}
-
-#photoprism div.loading-bar {
-    position: fixed;
-    bottom: 15%;
-    right: 10%;
-    left: 10%;
 }
 
 #photoprism .v-badge__badge {

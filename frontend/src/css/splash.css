@@ -1,0 +1,73 @@
+/* App Loading Animation */
+
+#photoprism div.logo-large {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+}
+
+#photoprism div.loading-logo {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+    z-index: 2;
+}
+
+#photoprism div.loading-bar {
+    position: fixed;
+    bottom: 15%;
+    right: 10%;
+    left: 10%;
+}
+
+#photoprism div.loading-animation {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    height: 280px;
+    z-index: 1;
+    text-align: center !important;
+    color: #e2daf1 !important;
+    caret-color: #e2daf1 !important;
+}
+
+#photoprism div.loading-animation .loading-overlay {
+    -webkit-animation: progress-circular-dash 1.7s ease-in-out infinite;
+    animation: progress-circular-dash 1.7s ease-in-out infinite;
+}
+
+#photoprism div.loading-animation .loading-underlay {
+    stroke: rgba(209, 196, 233, 0.2);
+    z-index: 1;
+}
+
+#photoprism div.loading-animation .loading-overlay {
+    stroke: currentColor;
+    z-index: 2;
+}
+
+#photoprism div.loading-animation svg {
+    transform: rotate(0deg);
+    -webkit-animation: progress-circular-rotate 1.7s linear infinite;
+    animation: progress-circular-rotate 1.7s linear infinite;
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    overflow: hidden;
+}
