@@ -8,9 +8,7 @@ const page = new Page();
 
 test.meta("testID", "states-001")("Update state", async (t) => {
   await page.openNav();
-  await t
-    .click(Selector(".nav-places + div"))
-    .click(Selector(".nav-states"));
+  await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
   await page.search("Canada");
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t
@@ -36,6 +34,8 @@ test.meta("testID", "states-001")("Update state", async (t) => {
     .expect(Selector('div[title="Description"]').nth(0).innerText)
     .contains("We love earth")
     .expect(Selector("div.caption").nth(1).innerText)
+    .contains("Mountains")
+    .expect(Selector("div.caption").nth(2).innerText)
     .contains("Earth")
     .click(Selector("a.is-album").nth(0));
   await t
@@ -87,9 +87,7 @@ test.meta("testID", "states-001")("Update state", async (t) => {
 
 test.meta("testID", "states-002")("Download states", async (t) => {
   await page.openNav();
-  await t
-    .click(Selector(".nav-places + div"))
-    .click(Selector(".nav-states"));
+  await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
   await page.checkButtonVisibility("download", true, true);
 });
 
@@ -166,9 +164,7 @@ test.meta("testID", "states-004")("Create/delete album during add to album", asy
   await t.click(Selector(".nav-albums"));
   const countAlbums = await Selector("a.is-album").count;
   await page.openNav();
-  await t
-    .click(Selector(".nav-places + div"))
-    .click(Selector(".nav-states"));
+  await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
   const FirstMoment = await Selector("a.is-album").nth(2).getAttribute("data-uid");
   await t.click(Selector("a.is-album").withAttribute("data-uid", FirstMoment));
   const PhotoCountInMoment = await Selector("div.is-photo").count;
@@ -212,8 +208,6 @@ test.meta("testID", "states-004")("Create/delete album during add to album", asy
 
 test.meta("testID", "states-005")("Delete states button visible", async (t) => {
   await page.openNav();
-  await t
-    .click(Selector(".nav-places + div"))
-    .click(Selector(".nav-states"));
+  await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
   await page.checkButtonVisibility("delete", false, false);
 });

@@ -34,6 +34,8 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
     .expect(Selector('div[title="Description"]').nth(0).innerText)
     .contains("We went to ski")
     .expect(Selector("div.caption").nth(1).innerText)
+    .contains("Mountains")
+    .expect(Selector("div.caption").nth(2).innerText)
     .contains("Snow-Land")
     .click(Selector("a.is-album").nth(0));
   await t
