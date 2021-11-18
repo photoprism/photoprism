@@ -67,14 +67,30 @@ func TestPhoto_EstimatePlace(t *testing.T) {
 		assert.True(t, m.HasPlace())
 		assert.Equal(t, "mx", m.CountryCode())
 		assert.Equal(t, "Mexico", m.CountryName())
-		m.EstimatePlace()
+		m.EstimatePlace(true)
 		assert.Equal(t, "mx", m.CountryCode())
 		assert.Equal(t, "Mexico", m.CountryName())
+	})
+	t.Run("RecentlyEstimates", func(t *testing.T) {
+		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", EstimatedAt: TimePointer(), TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
+		assert.Equal(t, UnknownID, m2.CountryCode())
+		m2.EstimatePlace(false)
+		assert.Equal(t, "zz", m2.CountryCode())
+		assert.Equal(t, UnknownCountry.CountryName, m2.CountryName())
+		assert.Equal(t, SrcAuto, m2.PlaceSrc)
+	})
+	t.Run("ForceEstimate", func(t *testing.T) {
+		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", EstimatedAt: TimePointer(), TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
+		assert.Equal(t, UnknownID, m2.CountryCode())
+		m2.EstimatePlace(true)
+		assert.Equal(t, "mx", m2.CountryCode())
+		assert.Equal(t, "Mexico", m2.CountryName())
+		assert.Equal(t, SrcEstimate, m2.PlaceSrc)
 	})
 	t.Run("recent photo has place", func(t *testing.T) {
 		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace()
+		m2.EstimatePlace(false)
 		assert.Equal(t, "mx", m2.CountryCode())
 		assert.Equal(t, "Mexico", m2.CountryName())
 		assert.Equal(t, SrcEstimate, m2.PlaceSrc)
@@ -82,7 +98,7 @@ func TestPhoto_EstimatePlace(t *testing.T) {
 	t.Run("cant estimate - out of scope", func(t *testing.T) {
 		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 13, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace()
+		m2.EstimatePlace(true)
 		assert.Equal(t, UnknownID, m2.CountryCode())
 	})
 	/*t.Run("recent photo has country", func(t *testing.T) {

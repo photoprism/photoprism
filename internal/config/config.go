@@ -44,11 +44,13 @@ const MsgFundingInfo = "Visit https://docs.photoprism.org/funding/ to learn more
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
 	" we unfortunately can't offer it for free."
 
-const ApiUri = "/api/v1"
-const StaticUri = "/static"
-const DefaultWakeupInterval = int(15 * 60)
-const DefaultAutoIndexDelay = int(5 * 60)
-const DefaultAutoImportDelay = int(3 * 60)
+const ApiUri = "/api/v1"    // REST API
+const StaticUri = "/static" // Static Content
+
+const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
+const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
+
+const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 
 // Megabyte in bytes.
 const Megabyte = 1000 * 1000
@@ -494,7 +496,7 @@ func (c *Config) WakeupInterval() time.Duration {
 		return time.Duration(0)
 	} else if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 604800 {
 		// Default if out of range.
-		return time.Duration(DefaultWakeupInterval) * time.Second
+		return time.Duration(DefaultWakeupIntervalSeconds) * time.Second
 	}
 
 	return time.Duration(c.options.WakeupInterval) * time.Second

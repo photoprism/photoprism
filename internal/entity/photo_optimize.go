@@ -29,7 +29,7 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace bool) (updated bool
 	}
 
 	if estimatePlace {
-		m.EstimatePlace()
+		m.EstimatePlace(false)
 	}
 
 	labels := m.ClassifyLabels()

@@ -139,7 +139,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "wakeup-interval",
 		Usage:  "metadata, share & sync background worker wakeup interval in `SECONDS` (1-604800)",
-		Value:  DefaultWakeupInterval,
+		Value:  DefaultWakeupIntervalSeconds,
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
 	},
 	cli.IntFlag{

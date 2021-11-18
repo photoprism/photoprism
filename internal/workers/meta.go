@@ -64,7 +64,7 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 
 	// Run index optimization.
 	for {
-		photos, err := query.PhotosCheck(limit, offset, delay)
+		photos, err := query.PhotosMetadataUpdate(limit, offset, delay)
 
 		if err != nil {
 			return err

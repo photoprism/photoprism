@@ -19,6 +19,9 @@ import (
 	"github.com/ulule/deepcopier"
 )
 
+var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
+var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
+
 var photoMutex = sync.Mutex{}
 
 type Photos []Photo
@@ -98,6 +101,7 @@ type Photo struct {
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
 	CheckedAt        *time.Time   `sql:"index" yaml:"-"`
+	EstimatedAt      *time.Time   `json:"EstimatedAt,omitempty" yaml:"-"`
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 

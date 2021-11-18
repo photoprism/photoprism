@@ -44,32 +44,49 @@ func (m *Photo) EstimateCountry() {
 }
 
 // EstimatePlace updates the photo with an estimated place and country if possible.
-func (m *Photo) EstimatePlace() {
+func (m *Photo) EstimatePlace(force bool) {
 	if m.HasLocation() || m.HasPlace() && m.PlaceSrc != SrcAuto && m.PlaceSrc != SrcEstimate {
-		// Do nothing.
+		// Don't estimate if location is known.
+		return
+	} else if force || m.EstimatedAt == nil {
+		// Proceed.
+	} else if hours := TimeStamp().Sub(*m.EstimatedAt) / time.Hour; hours < MetadataEstimateInterval {
+		// Ignore if estimated less than 7 days ago.
 		return
 	}
 
+	var err error
+
+	rangeMin := m.TakenAt.AddDate(0, 0, -1)
+	rangeMax := m.TakenAt.AddDate(0, 0, 1)
+
+	// Find photo with location info taken at a similar time...
 	var recentPhoto Photo
-	var dateExpr string
 
 	switch DbDialect() {
 	case MySQL:
-		dateExpr = "ABS(DATEDIFF(taken_at, ?)) ASC"
+		err = UnscopedDb().
+			Where("place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz' AND place_src <> '' AND place_src <> ?", SrcEstimate).
+			Where("taken_at BETWEEN CAST(? AS DATETIME) AND CAST(? AS DATETIME)", rangeMin, rangeMax).
+			Order(gorm.Expr("ABS(DATEDIFF(taken_at, ?)) ASC", m.TakenAt)).
+			Preload("Place").First(&recentPhoto).Error
 	case SQLite:
-		dateExpr = "ABS(JulianDay(taken_at) - JulianDay(?)) ASC"
+		err = UnscopedDb().
+			Where("place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz' AND place_src <> '' AND place_src <> ?", SrcEstimate).
+			Where("taken_at BETWEEN ? AND ?", rangeMin, rangeMax).
+			Order(gorm.Expr("ABS(JulianDay(taken_at) - JulianDay(?)) ASC", m.TakenAt)).
+			Preload("Place").First(&recentPhoto).Error
 	default:
-		log.Warnf("sql: unsupported dialect %s", DbDialect())
+		log.Warnf("photo: unsupported sql dialect %s", txt.Quote(DbDialect()))
 		return
 	}
 
-	if err := UnscopedDb().
-		Where("place_id <> '' AND place_id <> 'zz' AND place_src <> '' AND place_src <> ?", SrcEstimate).
-		Order(gorm.Expr(dateExpr, m.TakenAt)).
-		Preload("Place").First(&recentPhoto).Error; err != nil {
+	// Found?
+	if err != nil {
 		log.Debugf("photo: can't estimate place at %s", m.TakenAt)
 		m.EstimateCountry()
 	} else {
+		// Too much time difference?
 		if hours := recentPhoto.TakenAt.Sub(m.TakenAt) / time.Hour; hours < -36 || hours > 36 {
 			log.Debugf("photo: can't estimate position of %s, %d hours time difference", m, hours)
 		} else if recentPhoto.HasPlace() {
@@ -90,4 +107,6 @@ func (m *Photo) EstimatePlace() {
 			m.EstimateCountry()
 		}
 	}
+
+	m.EstimatedAt = TimePointer()
 }
