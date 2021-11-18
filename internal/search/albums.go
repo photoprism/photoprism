@@ -14,6 +14,9 @@ func Albums(f form.AlbumSearch) (results AlbumResults, err error) {
 		return results, err
 	}
 
+	// Clip and normalize search query.
+	f.Query = txt.NormalizeQuery(f.Query)
+
 	// Base query.
 	s := UnscopedDb().Table("albums").
 		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year").
@@ -27,6 +30,35 @@ func Albums(f form.AlbumSearch) (results AlbumResults, err error) {
 		s = s.Limit(f.Count).Offset(f.Offset)
 	} else {
 		s = s.Limit(MaxResults).Offset(f.Offset)
+	}
+
+	// Filter by storage path?
+	if f.Query != "" && f.Type == entity.AlbumFolder {
+		f.Order = entity.SortOrderPath
+
+		p := f.Query
+
+		if strings.HasPrefix(p, "/") {
+			p = p[1:]
+		}
+
+		if strings.HasSuffix(p, "/") {
+			s = s.Where("albums.album_path = ?", p[:len(p)-1])
+		} else {
+			p = p + "*"
+
+			where, values := OrLike("albums.album_path", p)
+
+			if w, v := OrLike("albums.album_title", p); len(v) > 0 {
+				where = where + " OR " + w
+				values = append(values, v...)
+			}
+
+			s = s.Where(where, values...)
+		}
+	} else if f.Query != "" {
+		likeString := "%" + f.Query + "%"
+		s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", likeString, likeString)
 	}
 
 	// Set sort order.
@@ -44,11 +76,11 @@ func Albums(f form.AlbumSearch) (results AlbumResults, err error) {
 	case entity.SortOrderMoment:
 		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
 	case entity.SortOrderPlace:
-		s = s.Order("albums.album_favorite DESC, albums.album_country, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
+		s = s.Order("albums.album_favorite DESC, albums.album_country, albums.album_state, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
 	case entity.SortOrderName:
 		s = s.Order("albums.album_title ASC, albums.album_uid DESC")
 	case entity.SortOrderPath:
-		s = s.Order("albums.album_favorite DESC, albums.album_path DESC, albums.album_uid DESC")
+		s = s.Order("albums.album_path, albums.album_uid DESC")
 	case entity.SortOrderCategory:
 		s = s.Order("albums.album_category, albums.album_title, albums.album_uid DESC")
 	case entity.SortOrderSlug:
@@ -65,11 +97,6 @@ func Albums(f form.AlbumSearch) (results AlbumResults, err error) {
 		}
 
 		return results, nil
-	}
-
-	if f.Query != "" {
-		likeString := "%" + f.Query + "%"
-		s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", likeString, likeString)
 	}
 
 	if f.Type != "" {
