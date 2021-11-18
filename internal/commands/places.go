@@ -17,11 +17,11 @@ import (
 // PlacesCommand registers the places subcommands.
 var PlacesCommand = cli.Command{
 	Name:  "places",
-	Usage: "Geolocation management subcommands",
+	Usage: "Geodata management subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "update",
-			Usage:  "Updates the index with the latest geodata from our backend",
+			Usage:  "Updates your index with the latest location data",
 			Action: placesUpdateAction,
 		},
 	},

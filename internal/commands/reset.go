@@ -18,7 +18,7 @@ import (
 // ResetCommand resets the index and removes sidecar files after confirmation.
 var ResetCommand = cli.Command{
 	Name:   "reset",
-	Usage:  "Resets the index and removes JSON / YAML sidecar files",
+	Usage:  "Resets the index and removes generated sidecar files",
 	Action: resetAction,
 }
 
@@ -27,7 +27,7 @@ func resetAction(ctx *cli.Context) error {
 	log.Warnf("YOU ARE ABOUT TO RESET THE INDEX AND REMOVE ALL JSON / YAML SIDECAR FILES")
 
 	removeIndexPrompt := promptui.Prompt{
-		Label:     "Reset index database incl all albums and metadata?",
+		Label:     "Reset index database including albums and metadata?",
 		IsConfirm: true,
 	}
 

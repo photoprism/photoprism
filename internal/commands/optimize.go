@@ -14,11 +14,11 @@ import (
 // OptimizeCommand registers the index cli command.
 var OptimizeCommand = cli.Command{
 	Name:   "optimize",
-	Usage:  "Performs photo metadata maintenance",
+	Usage:  "Updates estimates, titles, and descriptions",
 	Action: optimizeAction,
 }
 
-// optimizeAction starts metadata check and optimization.
+// optimizeAction updates metadata such as titles and estimate.
 func optimizeAction(ctx *cli.Context) error {
 	start := time.Now()
 
@@ -35,7 +35,7 @@ func optimizeAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if conf.ReadOnly() {
-		log.Infof("optimize: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	worker := workers.NewMeta(conf)
