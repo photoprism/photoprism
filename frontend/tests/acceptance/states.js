@@ -169,7 +169,7 @@ test.meta("testID", "states-004")("Create/delete album during add to album", asy
   await t
     .click(Selector(".nav-places + div"))
     .click(Selector(".nav-states"));
-  const FirstMoment = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+  const FirstMoment = await Selector("a.is-album").nth(2).getAttribute("data-uid");
   await t.click(Selector("a.is-album").withAttribute("data-uid", FirstMoment));
   const PhotoCountInMoment = await Selector("div.is-photo").count;
   const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
@@ -215,5 +215,5 @@ test.meta("testID", "states-005")("Delete states button visible", async (t) => {
   await t
     .click(Selector(".nav-places + div"))
     .click(Selector(".nav-states"));
-  await page.checkButtonVisibility("delete", true, false);
+  await page.checkButtonVisibility("delete", false, false);
 });
