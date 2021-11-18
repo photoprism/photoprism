@@ -21,7 +21,7 @@ var PlacesCommand = cli.Command{
 	Subcommands: []cli.Command{
 		{
 			Name:   "update",
-			Usage:  "Updates your index with the latest location data",
+			Usage:  "Downloads the latest location data and updates your places",
 			Action: placesUpdateAction,
 		},
 	},
