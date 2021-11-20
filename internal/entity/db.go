@@ -36,10 +36,12 @@ func RecreateTable(models ...interface{}) (err error) {
 		return fmt.Errorf("%s (drop table)", err)
 	}
 
+	time.Sleep(100 * time.Millisecond)
+
 	done := 0
 
 	// Create dropped tables.
-	for i := 0; i < 15; i++ {
+	for i := 0; i < 60; i++ {
 		for m := range models {
 			if err = Db().CreateTable(models[m]).Error; err != nil {
 				log.Debugf("entity: %s (create table)", err)
@@ -52,8 +54,8 @@ func RecreateTable(models ...interface{}) (err error) {
 			}
 		}
 
-		// Wait a second to avoid timing issues.
-		time.Sleep(time.Second)
+		// Wait 3 seconds before trying again...
+		time.Sleep(3 * time.Second)
 	}
 
 	return err
