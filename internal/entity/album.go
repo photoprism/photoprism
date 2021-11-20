@@ -43,6 +43,7 @@ type Album struct {
 	AlbumFilter      string      `gorm:"type:VARBINARY(1024);" json:"Filter" yaml:"Filter,omitempty"`
 	AlbumOrder       string      `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
 	AlbumTemplate    string      `gorm:"type:VARBINARY(255);" json:"Template" yaml:"Template,omitempty"`
+	AlbumState       string      `gorm:"type:VARCHAR(100);index;" json:"State" yaml:"State,omitempty"`
 	AlbumCountry     string      `gorm:"type:VARBINARY(2);index:idx_albums_country_year_month;default:'zz';" json:"Country" yaml:"Country,omitempty"`
 	AlbumYear        int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	AlbumMonth       int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
@@ -446,6 +447,17 @@ func (m *Album) Restore() error {
 // Title returns the album title.
 func (m *Album) Title() string {
 	return m.AlbumTitle
+}
+
+// ZipName returns the zip download filename.
+func (m *Album) ZipName() string {
+	s := slug.Make(m.AlbumTitle)
+
+	if len(s) < 2 {
+		s = fmt.Sprintf("photoprism-album-%s", m.AlbumUID)
+	}
+
+	return fmt.Sprintf("%s.zip", s)
 }
 
 // AddPhotos adds photos to an existing album.

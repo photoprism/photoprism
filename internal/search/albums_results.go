@@ -23,6 +23,7 @@ type Album struct {
 	AlbumOrder       string    `json:"Order"`
 	AlbumTemplate    string    `json:"Template"`
 	AlbumPath        string    `json:"Path"`
+	AlbumState       string    `json:"State"`
 	AlbumCountry     string    `json:"Country"`
 	AlbumYear        int       `json:"Year"`
 	AlbumMonth       int       `json:"Month"`

@@ -104,7 +104,7 @@ func startAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("start: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	// start web server

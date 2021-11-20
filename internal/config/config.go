@@ -39,11 +39,18 @@ var once sync.Once
 var LowMem = false
 var TotalMem uint64
 
-const ApiUri = "/api/v1"
-const StaticUri = "/static"
-const DefaultWakeupInterval = int(15 * 60)
-const DefaultAutoIndexDelay = int(5 * 60)
-const DefaultAutoImportDelay = int(3 * 60)
+const MsgFreeBeer = "Help us make a difference and become a sponsor today!"
+const MsgFundingInfo = "Visit https://docs.photoprism.org/funding/ to learn more."
+const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
+	" we unfortunately can't offer it for free."
+
+const ApiUri = "/api/v1"    // REST API
+const StaticUri = "/static" // Static Content
+
+const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
+const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
+
+const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 
 // Megabyte in bytes.
 const Megabyte = 1000 * 1000
@@ -168,6 +175,12 @@ func (c *Config) Init() error {
 
 	if err := c.initStorage(); err != nil {
 		return err
+	}
+
+	// Show funding info?
+	if !c.Sponsor() {
+		log.Info(MsgFreeBeer)
+		log.Info(MsgFundingInfo)
 	}
 
 	if insensitive, err := c.CaseInsensitive(); err != nil {
@@ -347,6 +360,10 @@ func (c *Config) SiteCaption() string {
 
 // SiteDescription returns a long site description.
 func (c *Config) SiteDescription() string {
+	if !c.Sponsor() {
+		return MsgFreeBeer
+	}
+
 	return c.options.SiteDescription
 }
 
@@ -483,7 +500,7 @@ func (c *Config) WakeupInterval() time.Duration {
 		return time.Duration(0)
 	} else if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 604800 {
 		// Default if out of range.
-		return time.Duration(DefaultWakeupInterval) * time.Second
+		return time.Duration(DefaultWakeupIntervalSeconds) * time.Second
 	}
 
 	return time.Duration(c.options.WakeupInterval) * time.Second

@@ -23,13 +23,13 @@ func TestPrism_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := worker.Start(time.Second); err == nil {
+	if err := worker.Start(time.Second, true); err == nil {
 		t.Fatal("error expected")
 	}
 
 	mutex.MetaWorker.Stop()
 
-	if err := worker.Start(time.Second); err != nil {
+	if err := worker.Start(time.Second, true); err != nil {
 		t.Fatal(err)
 	}
 }

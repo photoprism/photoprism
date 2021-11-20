@@ -63,7 +63,7 @@ func indexAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("index: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	var indexed fs.Done

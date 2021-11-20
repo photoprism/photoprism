@@ -5,7 +5,6 @@ import (
 	"math"
 	"runtime/debug"
 	"strconv"
-	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -27,6 +26,17 @@ func NewMoments(conf *config.Config) *Moments {
 	}
 
 	return instance
+}
+
+// MigrateSlug updates deprecated moment slugs if needed.
+func (w *Moments) MigrateSlug(m query.Moment, albumType string) {
+	if m.Slug() == m.TitleSlug() {
+		return
+	}
+
+	if a := entity.FindAlbumBySlug(m.TitleSlug(), albumType); a != nil {
+		logWarn("moments", a.Update("album_slug", m.Slug()))
+	}
 }
 
 // Start creates albums based on popular locations, dates and categories.
@@ -102,6 +112,8 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
+			w.MigrateSlug(mom, entity.AlbumMonth)
+
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMonth); a != nil {
 				if !a.Deleted() {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
@@ -125,6 +137,8 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
+			w.MigrateSlug(mom, entity.AlbumMoment)
+
 			f := form.PhotoSearch{
 				Country: mom.Country,
 				Year:    strconv.Itoa(mom.Year),
@@ -156,6 +170,8 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
+			w.MigrateSlug(mom, entity.AlbumState)
+
 			f := form.PhotoSearch{
 				Country: mom.Country,
 				State:   mom.State,
@@ -163,14 +179,17 @@ func (w *Moments) Start() (err error) {
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumState); a != nil {
-				if a.DeletedAt != nil {
-					// Nothing to do.
-					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
-				} else {
+				if !a.Deleted() {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+				} else if err := a.Restore(); err != nil {
+					log.Errorf("moments: %s (restore state)", err.Error())
+				} else {
+					log.Infof("moments: %s restored", txt.Quote(a.AlbumTitle))
 				}
 			} else if a := entity.NewStateAlbum(mom.Title(), mom.Slug(), f.Serialize()); a != nil {
+				a.AlbumLocation = mom.CountryName()
 				a.AlbumCountry = mom.Country
+				a.AlbumState = mom.State
 
 				if err := a.Create(); err != nil {
 					log.Errorf("moments: %s", err)
@@ -186,25 +205,17 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
+			w.MigrateSlug(mom, entity.AlbumMoment)
+
 			f := form.PhotoSearch{
 				Label:  mom.Label,
 				Public: true,
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMoment); a != nil {
-				log.Tracef("moments: %s already exists (%s)", txt.Quote(mom.Title()), f.Serialize())
-
-				if f.Serialize() == a.AlbumFilter || a.DeletedAt != nil {
-					// Nothing to do.
+				if a.DeletedAt != nil || f.Serialize() == a.AlbumFilter {
+					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 					continue
-				}
-
-				if err := form.Unserialize(&f, a.AlbumFilter); err != nil {
-					log.Errorf("moments: %s", err.Error())
-				} else {
-					w := txt.Words(f.Label)
-					w = append(w, mom.Label)
-					f.Label = strings.Join(txt.UniqueWords(w), txt.Or)
 				}
 
 				if err := a.Update("AlbumFilter", f.Serialize()); err != nil {

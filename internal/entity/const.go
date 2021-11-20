@@ -64,11 +64,17 @@ const (
 // Sort Orders
 
 const (
+	SortOrderRelevance = "relevance"
+	SortOrderCount     = "count"
 	SortOrderAdded     = "added"
+	SortOrderEdited    = "edited"
 	SortOrderNewest    = "newest"
 	SortOrderOldest    = "oldest"
+	SortOrderPlace     = "place"
+	SortOrderMoment    = "moment"
 	SortOrderName      = "name"
+	SortOrderPath      = "path"
+	SortOrderSlug      = "slug"
+	SortOrderCategory  = "category"
 	SortOrderSimilar   = "similar"
-	SortOrderRelevance = "relevance"
-	SortOrderEdited    = "edited"
 )

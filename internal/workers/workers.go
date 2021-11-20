@@ -83,7 +83,7 @@ func StartMeta(conf *config.Config) {
 	if !mutex.WorkersBusy() {
 		go func() {
 			worker := NewMeta(conf)
-			if err := worker.Start(time.Minute); err != nil {
+			if err := worker.Start(time.Minute, false); err != nil {
 				log.Warnf("metadata: %s", err)
 			}
 		}()

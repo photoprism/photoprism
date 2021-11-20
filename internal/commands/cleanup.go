@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -16,7 +15,7 @@ import (
 // CleanUpCommand registers the cleanup command.
 var CleanUpCommand = cli.Command{
 	Name:   "cleanup",
-	Usage:  "Removes orphan index entries and thumbnails",
+	Usage:  "Removes orphan index entries and thumbnail files",
 	Flags:  cleanUpFlags,
 	Action: cleanUpAction,
 }
@@ -45,7 +44,7 @@ func cleanUpAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if conf.ReadOnly() {
-		log.Infof("cleanup: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	w := service.CleanUp()

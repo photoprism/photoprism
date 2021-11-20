@@ -67,8 +67,8 @@ func TestMissingPhotos(t *testing.T) {
 	assert.LessOrEqual(t, 1, len(result))
 }
 
-func TestPhotosCheck(t *testing.T) {
-	result, err := PhotosCheck(10, 0, time.Second)
+func TestPhotosMetadataUpdate(t *testing.T) {
+	result, err := PhotosMetadataUpdate(10, 0, time.Second)
 
 	if err != nil {
 		t.Fatal(err)

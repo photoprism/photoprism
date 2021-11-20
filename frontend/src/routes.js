@@ -119,7 +119,7 @@ export default [
     path: "/moments",
     component: Albums,
     meta: { title: $gettext("Moments"), auth: true },
-    props: { view: "moment", staticFilter: { type: "moment" } },
+    props: { view: "moment", staticFilter: { type: "moment", order: "moment" } },
   },
   {
     name: "moment",
@@ -132,7 +132,7 @@ export default [
     path: "/albums",
     component: Albums,
     meta: { title: $gettext("Albums"), auth: true },
-    props: { view: "album", staticFilter: { type: "album" } },
+    props: { view: "album", staticFilter: { type: "album", order: "relevance" } },
   },
   {
     name: "album",
@@ -145,7 +145,7 @@ export default [
     path: "/calendar",
     component: Albums,
     meta: { title: $gettext("Calendar"), auth: true },
-    props: { view: "month", staticFilter: { type: "month" } },
+    props: { view: "month", staticFilter: { type: "month", order: "newest" } },
   },
   {
     name: "month",
@@ -158,7 +158,7 @@ export default [
     path: "/folders",
     component: Albums,
     meta: { title: $gettext("Folders"), auth: true },
-    props: { view: "folder", staticFilter: { type: "folder", order: "default" } },
+    props: { view: "folder", staticFilter: { type: "folder", order: "newest" } },
   },
   {
     name: "folder",
@@ -225,7 +225,7 @@ export default [
     path: "/states",
     component: Albums,
     meta: { title: $gettext("Places"), auth: true },
-    props: { view: "state", staticFilter: { type: "state" } },
+    props: { view: "state", staticFilter: { type: "state", order: "place" } },
   },
   {
     name: "state",

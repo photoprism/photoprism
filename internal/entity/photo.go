@@ -11,13 +11,17 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/ulule/deepcopier"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/ulule/deepcopier"
 )
+
+var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
+var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
 
 var photoMutex = sync.Mutex{}
 
@@ -98,6 +102,7 @@ type Photo struct {
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
 	CheckedAt        *time.Time   `sql:"index" yaml:"-"`
+	EstimatedAt      *time.Time   `json:"EstimatedAt,omitempty" yaml:"-"`
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
@@ -489,119 +494,6 @@ func (m *Photo) PreloadMany() {
 // HasID tests if the photo has a database id and uid.
 func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
-}
-
-// UnknownLocation tests if the photo has an unknown location.
-func (m *Photo) UnknownLocation() bool {
-	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
-}
-
-// HasLocation tests if the photo has a known location.
-func (m *Photo) HasLocation() bool {
-	return !m.UnknownLocation()
-}
-
-// LocationLoaded tests if the photo has a known location that is currently loaded.
-func (m *Photo) LocationLoaded() bool {
-	if m.Cell == nil {
-		return false
-	}
-
-	if m.Cell.Place == nil {
-		return false
-	}
-
-	return !m.Cell.Unknown() && m.Cell.ID == m.CellID
-}
-
-// LoadLocation loads the photo location from the database if not done already.
-func (m *Photo) LoadLocation() error {
-	if m.LocationLoaded() {
-		return nil
-	}
-
-	if m.UnknownLocation() {
-		return fmt.Errorf("photo: unknown location (%s)", m)
-	}
-
-	var location Cell
-
-	err := Db().Preload("Place").First(&location, "id = ?", m.CellID).Error
-
-	if err != nil {
-		return err
-	}
-
-	if location.Place == nil {
-		location.Place = &UnknownPlace
-		location.PlaceID = UnknownPlace.ID
-	}
-
-	m.Cell = &location
-
-	return nil
-}
-
-// PlaceLoaded checks if the photo has a known place that is currently loaded.
-func (m *Photo) PlaceLoaded() bool {
-	if m.Place == nil {
-		return false
-	}
-
-	return !m.Place.Unknown() && m.Place.ID == m.PlaceID
-}
-
-// LoadPlace loads the photo place from the database if not done already.
-func (m *Photo) LoadPlace() error {
-	if m.PlaceLoaded() {
-		return nil
-	}
-
-	if m.UnknownPlace() {
-		return fmt.Errorf("photo: unknown place (%s)", m)
-	}
-
-	var place Place
-
-	err := Db().First(&place, "id = ?", m.PlaceID).Error
-
-	if err != nil {
-		return err
-	}
-
-	m.Place = &place
-
-	return nil
-}
-
-// HasLatLng checks if the photo has a latitude and longitude.
-func (m *Photo) HasLatLng() bool {
-	return m.PhotoLat != 0.0 || m.PhotoLng != 0.0
-}
-
-// NoLatLng checks if latitude and longitude are missing.
-func (m *Photo) NoLatLng() bool {
-	return !m.HasLatLng()
-}
-
-// UnknownPlace checks if the photo has an unknown place.
-func (m *Photo) UnknownPlace() bool {
-	return m.PlaceID == "" || m.PlaceID == UnknownPlace.ID
-}
-
-// HasPlace checks if the photo has a known place.
-func (m *Photo) HasPlace() bool {
-	return !m.UnknownPlace()
-}
-
-// HasCountry checks if the photo has a known country.
-func (m *Photo) HasCountry() bool {
-	return !m.UnknownCountry()
-}
-
-// UnknownCountry checks if the photo has an unknown country.
-func (m *Photo) UnknownCountry() bool {
-	return m.CountryCode() == UnknownCountry.ID
 }
 
 // NoCameraSerial checks if the photo has no CameraSerial

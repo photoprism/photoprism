@@ -12,14 +12,17 @@ type Saved struct {
 	Expiration int64    `json:"expiration"`
 }
 
+// UIDs represents a slice of unique ID strings.
 type UIDs []string
 
-func (list UIDs) String() string {
-	return list.Join(",")
+// String returns all UIDs as comma separated string.
+func (u UIDs) String() string {
+	return u.Join(",")
 }
 
-func (list UIDs) Join(s string) string {
-	return strings.Join(list, s)
+// Join returns all UIDs as custom separated string.
+func (u UIDs) Join(s string) string {
+	return strings.Join(u, s)
 }
 
 type Data struct {

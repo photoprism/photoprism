@@ -9,7 +9,7 @@ import (
 )
 
 // Optimize photo data, improve if possible.
-func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace bool) (updated bool, merged Photos, err error) {
+func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace, force bool) (updated bool, merged Photos, err error) {
 	if !m.HasID() {
 		return false, merged, errors.New("photo: can't maintain, id is empty")
 	}
@@ -29,7 +29,7 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace bool) (updated bool
 	}
 
 	if estimatePlace {
-		m.EstimatePlace()
+		m.EstimatePlace(force)
 	}
 
 	labels := m.ClassifyLabels()

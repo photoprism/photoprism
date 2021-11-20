@@ -116,7 +116,7 @@ func TestAccount_Delete(t *testing.T) {
 
 func TestAccount_Directories(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		account := Account{AccName: "DirectoriesAccount", AccOwner: "Owner", AccURL: "http://webdav-dummy/", AccType: "webdav", AccKey: "123", AccUser: "admin", AccPass: "photoprism",
+		account := Account{AccName: "DirectoriesAccount", AccOwner: "Owner", AccURL: "http://dummy-webdav/", AccType: "webdav", AccKey: "123", AccUser: "admin", AccPass: "photoprism",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
 			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}
 
@@ -141,7 +141,7 @@ func TestAccount_Directories(t *testing.T) {
 
 	})
 	t.Run("no directory", func(t *testing.T) {
-		account := Account{AccName: "DirectoriesAccount", AccOwner: "Owner", AccURL: "http://webdav-dummy/", AccType: "xxx", AccKey: "123", AccUser: "admin", AccPass: "photoprism",
+		account := Account{AccName: "DirectoriesAccount", AccOwner: "Owner", AccURL: "http://dummy-webdav/", AccType: "xxx", AccKey: "123", AccUser: "admin", AccPass: "photoprism",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
 			SyncInterval: 5, SyncUpload: true, SyncDownload: false, SyncFilenames: true, SyncRaw: false}
 

@@ -14,7 +14,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .contains("Search")
     .click(Selector(".nav-browse"));
   await page.setFilter("view", "Cards");
-  await page.search("photo:true");
+  await page.search("photo:true stack:true");
   await page.toggleSelectNthPhoto(0);
   await t
     .click(Selector("button.action-menu"))
@@ -26,6 +26,17 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .ok()
     .expect(Selector("button.action-private").visible)
     .ok();
+  await page.editSelected();
+  await t
+    .click(Selector("#tab-files"))
+    .expect(Selector("button.action-download").nth(0).visible)
+    .ok()
+    .click(Selector("li.v-expansion-panel__container").nth(1))
+    .expect(Selector("button.action-download").nth(1).visible)
+    .ok()
+    .expect(Selector("button.action-delete").visible)
+    .ok()
+    .click(Selector("button.action-close"));
   await page.clearSelection();
   await t.click(Selector("div.is-photo").nth(0));
   await t
@@ -33,10 +44,11 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .ok()
     .expect(Selector(".action-download").exists)
     .ok()
-    .click(Selector(".action-close"));
+    .hover(Selector('button[title="Close"]'))
+    .click(Selector('button[title="Close"]'));
   if (t.browser.os.name !== "macOS") {
-    if (await Selector(".action-close").exists) {
-      await t.click(Selector(".action-close"));
+    if (await Selector('button[title="Close"]').exists) {
+      await t.click(Selector('button[title="Close"]'));
     }
   }
   await t
@@ -144,7 +156,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector(".nav-browse").innerText)
     .contains("Suche")
     .click(Selector(".nav-browse"));
-  await page.search("photo:true");
+  await page.search("photo:true stack:true");
   await page.toggleSelectNthPhoto(0);
   await t
     .click(Selector("button.action-menu"))
@@ -155,7 +167,18 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector("button.action-edit").visible)
     .notOk()
     .expect(Selector("button.action-private").exists)
-    .notOk();
+    .notOk()
+    .click(Selector("button.action-title-edit").nth(0))
+    .click(Selector("#tab-files"))
+    .expect(Selector("button.action-download").nth(0).visible)
+    .notOk()
+    .click(Selector("li.v-expansion-panel__container").nth(1))
+    .expect(Selector("button.action-download").nth(1).visible)
+    .notOk()
+    .expect(Selector("button.action-delete").visible)
+    .notOk()
+    .click(Selector("button.action-close"));
+  await page.search("photo:true");
   await t
     .hover(Selector(".is-photo.type-image").nth(0))
     .click(Selector(".is-photo.type-image .action-fullscreen").nth(0));
@@ -164,9 +187,10 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .ok()
     .expect(Selector(".action-download").exists)
     .notOk()
-    .click(Selector(".action-close"));
-  if (await Selector(".action-close").visible) {
-    await t.click(Selector(".action-close"));
+    .hover(Selector('button[title="Schließen"]'))
+    .click(Selector('button[title="Schließen"]'));
+  if (await Selector('button[title="Schließen"]').visible) {
+    await t.click(Selector('button[title="Schließen"]'));
   }
   await page.toggleSelectNthPhoto(0);
   await t

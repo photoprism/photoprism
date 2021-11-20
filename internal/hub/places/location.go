@@ -12,12 +12,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Location
+// Location represents a specific geolocation identified by its S2 ID.
 type Location struct {
 	ID          string  `json:"id"`
 	LocLat      float64 `json:"lat"`
 	LocLng      float64 `json:"lng"`
 	LocName     string  `json:"name"`
+	LocStreet   string  `json:"street"`
+	LocPostcode string  `json:"postcode"`
 	LocCategory string  `json:"category"`
 	Place       Place   `json:"place"`
 	Cached      bool    `json:"-"`
@@ -30,20 +32,6 @@ var Secret = "photoprism"
 var UserAgent = "PhotoPrism/0.0.0"
 var ReverseLookupURL = "https://places.photoprism.app/v1/location/%s"
 var client = &http.Client{Timeout: 60 * time.Second}
-
-func NewLocation(id string, lat, lng float64, name, category string, place Place, cached bool) *Location {
-	result := &Location{
-		ID:          id,
-		LocLat:      lat,
-		LocLng:      lng,
-		LocName:     name,
-		LocCategory: category,
-		Place:       place,
-		Cached:      cached,
-	}
-
-	return result
-}
 
 func FindLocation(id string) (result Location, err error) {
 	if len(id) > 16 || len(id) == 0 {
@@ -119,12 +107,24 @@ func FindLocation(id string) (result Location, err error) {
 	return result, nil
 }
 
-func (l Location) CellID() (result string) {
+func (l Location) CellID() string {
 	return l.ID
+}
+
+func (l Location) PlaceID() string {
+	return l.Place.PlaceID
 }
 
 func (l Location) Name() (result string) {
 	return strings.SplitN(l.LocName, "/", 2)[0]
+}
+
+func (l Location) Street() (result string) {
+	return strings.SplitN(l.LocStreet, "/", 2)[0]
+}
+
+func (l Location) Postcode() (result string) {
+	return strings.SplitN(l.LocPostcode, "/", 2)[0]
 }
 
 func (l Location) Category() (result string) {
@@ -135,16 +135,20 @@ func (l Location) Label() (result string) {
 	return l.Place.LocLabel
 }
 
-func (l Location) State() (result string) {
-	return l.Place.LocState
-}
-
 func (l Location) City() (result string) {
 	return l.Place.LocCity
 }
 
+func (l Location) District() (result string) {
+	return l.Place.LocDistrict
+}
+
 func (l Location) CountryCode() (result string) {
 	return l.Place.LocCountry
+}
+
+func (l Location) State() (result string) {
+	return txt.NormalizeState(l.Place.LocState, l.CountryCode())
 }
 
 func (l Location) Latitude() (result float64) {

@@ -19,6 +19,8 @@ var SmallWords = map[string]bool{
 	"the":            true,
 	"from":           true,
 	"with":           true,
+	"de":             true, // French ↓
+	"en":             true,
 	"zu":             true, // German ↓
 	"ab":             true,
 	"um":             true,
