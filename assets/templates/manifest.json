@@ -82,8 +82,8 @@
   "scope": "{{ .config.BaseUri }}/",
   "start_url": "{{ .config.BaseUri }}/",
   "display": "standalone",
-  "theme_color": "#333333",
-  "background_color": "#333333",
+  "theme_color": "#0d0d0d",
+  "background_color": "#0d0d0d",
   "permissions": [
     "geolocation",
     "downloads",
