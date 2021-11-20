@@ -23,7 +23,7 @@
 
 #photoprism div.loading-logo {
     position: fixed;
-    top: 45%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 250px;
@@ -63,11 +63,11 @@
 
 #photoprism div.loading-animation {
     position: fixed;
-    top: 45%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 265px;
-    height: 265px;
+    width: 260px;
+    height: 260px;
     z-index: 1;
     text-align: center !important;
     color: #e2daf1 !important;
