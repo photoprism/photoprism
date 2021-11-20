@@ -11,7 +11,7 @@ func UUID() string {
 	return uuid.NewV4().String()
 }
 
-// Returns true if the string looks like a standard UUID.
+// IsUUID tests if the string looks like a standard UUID.
 func IsUUID(s string) bool {
 	return len(s) == 36 && IsHex(s)
 }
