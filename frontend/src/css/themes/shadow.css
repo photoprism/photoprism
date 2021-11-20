@@ -1,15 +1,7 @@
 /* Shadow Theme */
 
 #photoprism.container.theme-shadow {
-    background: #212121 !important;
-    position: fixed;
-    max-width: 100%;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 0;
+    background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
 }
 
 #photoprism.container.theme-shadow div.loading-animation {
