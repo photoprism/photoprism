@@ -15,17 +15,17 @@ import (
 // OptimizeCommand registers the index cli command.
 var OptimizeCommand = cli.Command{
 	Name:  "optimize",
-	Usage: "Updates estimates, titles, and other metadata",
+	Usage: "Maintains titles, estimates, and other metadata",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
-			Usage: "update all, including recently estimated",
+			Usage: "update all, including recently optimized",
 		},
 	},
 	Action: optimizeAction,
 }
 
-// optimizeAction updates estimates, titles, and other metadata.
+// optimizeAction updates titles, estimates, and other metadata.
 func optimizeAction(ctx *cli.Context) error {
 	start := time.Now()
 
