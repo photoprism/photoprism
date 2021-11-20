@@ -29,8 +29,11 @@ const ApiName = "places"
 
 var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
 var Secret = "photoprism"
-var UserAgent = "PhotoPrism/0.0.0"
+var UserAgent = "PhotoPrism/dev"
 var ReverseLookupURL = "https://places.photoprism.app/v1/location/%s"
+
+var Retries = 3
+var RetryDelay = 33 * time.Millisecond
 var client = &http.Client{Timeout: 60 * time.Second}
 
 func FindLocation(id string) (result Location, err error) {
@@ -46,16 +49,18 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	if hit, ok := cache.Get(id); ok {
-		log.Debugf("places: cache hit for lat %f, lng %f", lat, lng)
+		log.Tracef("places: cache hit for lat %f, lng %f", lat, lng)
 		cached := hit.(Location)
 		cached.Cached = true
 		return cached, nil
 	}
 
+	// Compose request URL.
 	url := fmt.Sprintf(ReverseLookupURL, id)
 
-	log.Debugf("places: sending request to %s", url)
+	log.Tracef("places: sending request to %s", url)
 
+	// Create GET request instance.
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
@@ -63,8 +68,12 @@ func FindLocation(id string) (result Location, err error) {
 		return result, err
 	}
 
-	req.Header.Set("User-Agent", UserAgent)
+	// Add User-Agent header?
+	if UserAgent != "" {
+		req.Header.Set("User-Agent", UserAgent)
+	}
 
+	// Add API key?
 	if Key != "" {
 		req.Header.Set("X-Key", Key)
 		req.Header.Set("X-Signature", fmt.Sprintf("%x", sha1.Sum([]byte(Key+url+Secret))))
@@ -72,14 +81,22 @@ func FindLocation(id string) (result Location, err error) {
 
 	var r *http.Response
 
-	for i := 0; i < 3; i++ {
+	// Perform request.
+	for i := 0; i < Retries; i++ {
 		r, err = client.Do(req)
 
+		// Successful?
 		if err == nil {
 			break
 		}
+
+		// Wait before trying again?
+		if RetryDelay.Nanoseconds() > 0 {
+			time.Sleep(RetryDelay)
+		}
 	}
 
+	// Failed?
 	if err != nil {
 		log.Errorf("places: %s (http request)", err.Error())
 		return result, err
@@ -88,6 +105,7 @@ func FindLocation(id string) (result Location, err error) {
 		return result, err
 	}
 
+	// Decode JSON response body.
 	err = json.NewDecoder(r.Body).Decode(&result)
 
 	if err != nil {
@@ -100,7 +118,7 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	cache.SetDefault(id, result)
-	log.Debugf("places: cached cell %s [%s]", id, time.Since(start))
+	log.Tracef("places: cached cell %s [%s]", id, time.Since(start))
 
 	result.Cached = false
 
