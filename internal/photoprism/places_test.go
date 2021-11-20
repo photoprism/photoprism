@@ -6,28 +6,24 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestPlaces_Start(t *testing.T) {
+func TestPlaces(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
 	w := NewPlaces(config.TestConfig())
 
-	updated, err := w.Start()
+	t.Run("Start", func(t *testing.T) {
+		updated, err := w.Start()
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	t.Logf("updated: %#v", updated)
-}
+		t.Logf("updated: %#v", updated)
+	})
 
-func TestPlaces_UpdatePhotos(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
-	t.Run("success", func(t *testing.T) {
+	t.Run("UpdatePhotos", func(t *testing.T) {
 		w := NewPlaces(config.TestConfig())
 		affected, err := w.UpdatePhotos()
 

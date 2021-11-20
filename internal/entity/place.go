@@ -11,10 +11,10 @@ import (
 
 var placeMutex = sync.Mutex{}
 
-// Place used to associate photos to places
+// Place represents a distinct region identified by city, district, state, and country.
 type Place struct {
 	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	PlaceLabel    string    `gorm:"type:VARCHAR(400);unique_index;" json:"Label" yaml:"Label"`
+	PlaceLabel    string    `gorm:"type:VARCHAR(400);" json:"Label" yaml:"Label"`
 	PlaceDistrict string    `gorm:"type:VARCHAR(100);index;" json:"District" yaml:"District,omitempty"`
 	PlaceCity     string    `gorm:"type:VARCHAR(100);index;" json:"City" yaml:"City,omitempty"`
 	PlaceState    string    `gorm:"type:VARCHAR(100);index;" json:"State" yaml:"State,omitempty"`
@@ -50,19 +50,11 @@ func CreateUnknownPlace() {
 }
 
 // FindPlace finds a matching place or returns nil.
-func FindPlace(id string, label string) *Place {
+func FindPlace(id string) *Place {
 	place := Place{}
 
-	if label == "" {
-		if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
-			log.Debugf("place: %s no found", txt.Quote(id))
-			return nil
-		} else {
-			return &place
-		}
-	}
-
-	if err := Db().Where("id = ? OR place_label = ?", id, label).First(&place).Error; err != nil {
+	if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
+		log.Debugf("place: %s no found", txt.Quote(id))
 		return nil
 	} else {
 		return &place
@@ -113,11 +105,11 @@ func FirstOrCreatePlace(m *Place) *Place {
 
 	result := Place{}
 
-	if findErr := Db().Where("id = ? OR place_label = ?", m.ID, m.PlaceLabel).First(&result).Error; findErr == nil {
+	if findErr := Db().Where("id = ?", m.ID).First(&result).Error; findErr == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("id = ? OR place_label = ?", m.ID, m.PlaceLabel).First(&result).Error; err == nil {
+	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
 		return &result
 	} else {
 		log.Errorf("place: %s (create %s)", createErr, m.ID)

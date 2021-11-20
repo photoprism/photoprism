@@ -78,11 +78,7 @@ func (l *Location) Unknown() bool {
 }
 
 func (l Location) PlaceID() string {
-	if l.placeID != "" {
-		return s2.Prefix(l.placeID)
-	}
-
-	return l.PrefixedToken()
+	return l.placeID
 }
 
 func (l Location) S2Token() string {
