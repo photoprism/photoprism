@@ -59,11 +59,6 @@ func (w *Places) Start() (updated []string, err error) {
 		return []string{}, nil
 	}
 
-	// Drop and recreate places database table.
-	if err = entity.RecreateTable(entity.Place{}); err != nil {
-		return []string{}, fmt.Errorf("index: %s", err)
-	}
-
 	// List of updated cells.
 	updated = make([]string, 0, len(cells))
 
@@ -95,6 +90,11 @@ func (w *Places) Start() (updated []string, err error) {
 
 		// Short break.
 		time.Sleep(33 * time.Millisecond)
+	}
+
+	// Remove unused entries from the places table.
+	if err := query.PurgePlaces(); err != nil {
+		log.Errorf("index: %s (purge places)", err)
 	}
 
 	// Update location-related photo metadata in the index.

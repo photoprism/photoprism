@@ -35,6 +35,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 )
@@ -83,7 +84,11 @@ func StartMeta(conf *config.Config) {
 	if !mutex.WorkersBusy() {
 		go func() {
 			worker := NewMeta(conf)
-			if err := worker.Start(time.Minute, false); err != nil {
+
+			delay := time.Minute
+			interval := entity.MetadataUpdateInterval
+
+			if err := worker.Start(delay, interval, false); err != nil {
 				log.Warnf("metadata: %s", err)
 			}
 		}()

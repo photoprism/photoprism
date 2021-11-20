@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 )
@@ -47,7 +48,15 @@ func optimizeAction(ctx *cli.Context) error {
 	force := ctx.Bool("force")
 	worker := workers.NewMeta(conf)
 
-	if err := worker.Start(time.Second*15, force); err != nil {
+	delay := 15 * time.Second
+	interval := entity.MetadataUpdateInterval
+
+	if force {
+		delay = 0
+		interval = 0
+	}
+
+	if err := worker.Start(delay, interval, force); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

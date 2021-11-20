@@ -130,9 +130,11 @@ func (c *Config) Refresh() (err error) {
 	}
 
 	c.Sanitize()
+
 	client := &http.Client{Timeout: 60 * time.Second}
 	url := ServiceURL
 	method := http.MethodPost
+
 	var req *http.Request
 
 	if c.Key != "" {

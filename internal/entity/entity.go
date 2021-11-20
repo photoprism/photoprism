@@ -146,6 +146,13 @@ func CreateDefaultFixtures() {
 	CreateUnknownLens()
 }
 
+// MigrateIndexes runs additional table index migration queries.
+func MigrateIndexes() {
+	if err := Db().Exec("DROP INDEX IF EXISTS idx_places_place_label ON places").Error; err != nil {
+		log.Errorf("%s: %s (drop index)", DbDialect(), err)
+	}
+}
+
 // MigrateDb creates database tables and inserts default fixtures as needed.
 func MigrateDb(dropDeprecated bool) {
 	if dropDeprecated {
@@ -154,6 +161,8 @@ func MigrateDb(dropDeprecated bool) {
 
 	Entities.Migrate()
 	Entities.WaitForMigration()
+
+	MigrateIndexes()
 
 	CreateDefaultFixtures()
 }

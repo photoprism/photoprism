@@ -21,10 +21,7 @@ func TestPlaces(t *testing.T) {
 		}
 
 		t.Logf("updated: %#v", updated)
-	})
 
-	t.Run("UpdatePhotos", func(t *testing.T) {
-		w := NewPlaces(config.TestConfig())
 		affected, err := w.UpdatePhotos()
 
 		if err != nil {

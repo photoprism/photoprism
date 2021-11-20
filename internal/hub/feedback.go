@@ -53,6 +53,7 @@ func (c *Config) SendFeedback(f form.Feedback) (err error) {
 	client := &http.Client{Timeout: 60 * time.Second}
 	url := fmt.Sprintf(FeedbackURL, c.Key)
 	method := http.MethodPost
+
 	var req *http.Request
 
 	log.Debugf("sending feedback to %s", ApiHost())

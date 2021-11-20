@@ -22,45 +22,6 @@ type DbProvider interface {
 	Db() *gorm.DB
 }
 
-// RecreateTable drops and recreates the database table for a clean start.
-func RecreateTable(models ...interface{}) (err error) {
-	n := len(models)
-
-	// Return if no models were provided.
-	if n < 1 {
-		return nil
-	}
-
-	// Drop existing tables.
-	if err = Db().DropTable(models...).Error; err != nil {
-		return fmt.Errorf("%s (drop table)", err)
-	}
-
-	time.Sleep(100 * time.Millisecond)
-
-	done := 0
-
-	// Create dropped tables.
-	for i := 0; i < 60; i++ {
-		for m := range models {
-			if err = Db().CreateTable(models[m]).Error; err != nil {
-				log.Debugf("entity: %s (create table)", err)
-			} else {
-				done++
-			}
-
-			if done >= n {
-				return err
-			}
-		}
-
-		// Wait 3 seconds before trying again...
-		time.Sleep(3 * time.Second)
-	}
-
-	return err
-}
-
 // IsDialect returns true if the given sql dialect is used.
 func IsDialect(name string) bool {
 	return name == Db().Dialect().GetName()

@@ -270,6 +270,11 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		log.Errorf("index: %s (update album entries)", err)
 	}
 
+	// Remove unused entries from the places table.
+	if err := query.PurgePlaces(); err != nil {
+		log.Errorf("index: %s (purge places)", err)
+	}
+
 	// Update precalculated photo and file counts.
 	if err := entity.UpdateCounts(); err != nil {
 		log.Warnf("index: %s (update counts)", err)
