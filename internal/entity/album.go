@@ -10,9 +10,9 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 
-	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
