@@ -6,18 +6,18 @@ type Priorities map[string]int
 
 // Data source names.
 const (
-	SrcAuto     = ""
-	SrcDefault  = "default"
-	SrcManual   = "manual"
-	SrcEstimate = "estimate"
-	SrcName     = "name"
-	SrcMeta     = "meta"
-	SrcXmp      = "xmp"
-	SrcYaml     = "yaml"
-	SrcMarker   = "marker"
-	SrcImage    = classify.SrcImage
-	SrcKeyword  = classify.SrcKeyword
-	SrcLocation = classify.SrcLocation
+	SrcAuto     = ""                   // Prio 1
+	SrcDefault  = "default"            // Prio 1
+	SrcEstimate = "estimate"           // Prio 2
+	SrcName     = "name"               // Prio 4
+	SrcYaml     = "yaml"               // Prio 8
+	SrcLocation = classify.SrcLocation // Prio 8
+	SrcMarker   = "marker"             // Prio 8
+	SrcImage    = classify.SrcImage    // Prio 8
+	SrcKeyword  = classify.SrcKeyword  // Prio 16
+	SrcMeta     = "meta"               // Prio 16
+	SrcXmp      = "xmp"                // Prio 32
+	SrcManual   = "manual"             // Prio 64
 )
 
 // SrcString returns a source string for logging.

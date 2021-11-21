@@ -11,7 +11,7 @@ import (
 
 // EstimateCountry updates the photo with an estimated country if possible.
 func (m *Photo) EstimateCountry() {
-	if m.HasLocation() || m.HasPlace() || m.HasCountry() && m.PlaceSrc != SrcAuto && m.PlaceSrc != SrcEstimate {
+	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() || m.HasPlace() {
 		// Do nothing.
 		return
 	}
@@ -46,8 +46,8 @@ func (m *Photo) EstimateCountry() {
 
 // EstimatePlace updates the photo with an estimated place and country if possible.
 func (m *Photo) EstimatePlace(force bool) {
-	if m.HasLocation() || m.HasPlace() && m.PlaceSrc != SrcAuto && m.PlaceSrc != SrcEstimate {
-		// Don't estimate if location is known.
+	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() {
+		// Don't estimate if location is known or set otherwise.
 		return
 	} else if force || m.EstimatedAt == nil {
 		// Proceed.
