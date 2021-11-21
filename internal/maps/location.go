@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/hub/overpass"
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -69,6 +70,15 @@ func (l *Location) QueryPlaces() error {
 	l.LocState = s.State()
 	l.LocCountry = s.CountryCode()
 	l.LocKeywords = s.Keywords()
+
+	if l.LocState == "" {
+		state, err := overpass.FindState(l.ID)
+		if err != nil {
+			return err
+		}
+
+		l.LocState = state
+	}
 
 	return nil
 }
