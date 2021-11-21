@@ -71,3 +71,12 @@ func Trim(s string, maxLen int) string {
 func SanitizeTypeString(s string) string {
 	return Trim(ToASCII(strings.ToLower(s)), TrimTypeString)
 }
+
+// TypeString returns an entity type string for logging.
+func TypeString(entityType string) string {
+	if entityType == "" {
+		return "unknown"
+	}
+
+	return entityType
+}
