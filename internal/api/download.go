@@ -49,7 +49,7 @@ func GetDownload(router *gin.RouterGroup) {
 		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -57,7 +57,7 @@ func GetDownload(router *gin.RouterGroup) {
 
 		if !fs.FileExists(fileName) {
 			log.Errorf("download: file %s is missing", txt.Quote(f.FileName))
-			c.Data(404, "image/svg+xml", brokenIconSvg)
+			c.Data(http.StatusNotFound, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			logError("download", f.Update("FileMissing", true))

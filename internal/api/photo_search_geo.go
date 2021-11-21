@@ -98,7 +98,7 @@ func SearchPhotosGeo(router *gin.RouterGroup) {
 		resp, err := fc.MarshalJSON()
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 

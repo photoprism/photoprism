@@ -22,7 +22,7 @@ func GetErrors(router *gin.RouterGroup) {
 		offset := txt.Int(c.Query("offset"))
 
 		if resp, err := query.Errors(limit, offset, c.Query("q")); err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		} else {
 			AddCountHeader(c, len(resp))

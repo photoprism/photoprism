@@ -69,7 +69,7 @@ func SearchAlbums(router *gin.RouterGroup) {
 		result, err := search.Albums(f)
 
 		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": txt.UcFirst(err.Error())})
 			return
 		}
 
