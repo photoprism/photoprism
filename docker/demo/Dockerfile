@@ -16,9 +16,11 @@ ENV TF_CPP_MIN_LOG_LEVEL=2 \
     PHOTOPRISM_THUMB_SIZE_UNCACHED=4096 \
     PHOTOPRISM_JPEG_SIZE=4096 \
     PHOTOPRISM_JPEG_QUALITY=95 \
-    PHOTOPRISM_SITE_TITLE="Demo" \
-    PHOTOPRISM_SITE_CAPTION="PhotoPrism" \
-    PHOTOPRISM_SITE_DESCRIPTION="Open-Source Photo Management. Say goodbye to uploading your visual memories to the cloud!"
+    PHOTOPRISM_APP_NAME="Demo" \
+    PHOTOPRISM_APP_ICON="favicon" \
+    PHOTOPRISM_SITE_TITLE="PhotoPrism" \
+    PHOTOPRISM_SITE_CAPTION="Demo" \
+    PHOTOPRISM_SITE_DESCRIPTION="AI-powered app for browsing, organizing & sharing your photo collection. Tags and finds pictures without getting in your way."
 
 # Copy assets
 COPY /docker/demo/index.tmpl /photoprism/assets/templates

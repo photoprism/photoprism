@@ -24,11 +24,14 @@ type ClientConfig struct {
 	ApiUri          string              `json:"apiUri"`
 	ContentUri      string              `json:"contentUri"`
 	SiteUrl         string              `json:"siteUrl"`
-	SitePreview     string              `json:"sitePreview"`
+	SiteAuthor      string              `json:"siteAuthor"`
 	SiteTitle       string              `json:"siteTitle"`
 	SiteCaption     string              `json:"siteCaption"`
 	SiteDescription string              `json:"siteDescription"`
-	SiteAuthor      string              `json:"siteAuthor"`
+	SitePreview     string              `json:"sitePreview"`
+	AppName         string              `json:"appName"`
+	AppMode         string              `json:"appMode"`
+	AppIcon         string              `json:"appIcon"`
 	Debug           bool                `json:"debug"`
 	Test            bool                `json:"test"`
 	Demo            bool                `json:"demo"`
@@ -194,11 +197,14 @@ func (c *Config) PublicConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
-		SitePreview:     c.SitePreview(),
+		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
-		SiteAuthor:      c.SiteAuthor(),
+		SitePreview:     c.SitePreview(),
+		AppName:         c.AppName(),
+		AppMode:         c.AppMode(),
+		AppIcon:         c.AppIcon(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
@@ -257,11 +263,14 @@ func (c *Config) GuestConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
-		SitePreview:     c.SitePreview(),
+		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
-		SiteAuthor:      c.SiteAuthor(),
+		SitePreview:     c.SitePreview(),
+		AppName:         c.AppName(),
+		AppMode:         c.AppMode(),
+		AppIcon:         c.AppIcon(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
@@ -314,11 +323,14 @@ func (c *Config) UserConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
-		SitePreview:     c.SitePreview(),
+		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
-		SiteAuthor:      c.SiteAuthor(),
+		SitePreview:     c.SitePreview(),
+		AppName:         c.AppName(),
+		AppMode:         c.AppMode(),
+		AppIcon:         c.AppIcon(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
