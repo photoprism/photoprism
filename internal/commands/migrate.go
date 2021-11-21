@@ -29,13 +29,13 @@ func migrateAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infoln("migrating database")
+	log.Infoln("migrating database schema...")
 
 	conf.InitDb()
 
 	elapsed := time.Since(start)
 
-	log.Infof("database migration completed in %s", elapsed)
+	log.Infof("migration completed in %s", elapsed)
 
 	conf.Shutdown()
 

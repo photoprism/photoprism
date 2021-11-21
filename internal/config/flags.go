@@ -267,6 +267,24 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "optional preview image `URL`",
 		EnvVar: "PHOTOPRISM_SITE_PREVIEW",
 	},
+	cli.StringFlag{
+		Name:   "app-name",
+		Usage:  "application `NAME` when installed on a device",
+		Value:  "PhotoPrism",
+		EnvVar: "PHOTOPRISM_APP_NAME",
+	},
+	cli.StringFlag{
+		Name:   "app-mode",
+		Usage:  "application `MODE` (fullscreen, standalone, minimal-ui, browser)",
+		Value:  "standalone",
+		EnvVar: "PHOTOPRISM_APP_MODE",
+	},
+	cli.StringFlag{
+		Name:   "app-icon",
+		Usage:  "application `ICON` (favicon, lens)",
+		Value:  "favicon",
+		EnvVar: "PHOTOPRISM_APP_ICON",
+	},
 	cli.IntFlag{
 		Name:   "http-port",
 		Value:  2342,
