@@ -28,7 +28,7 @@ func TestCreateSession(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateSession(router)
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "xxx"}`)
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("valid token", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -42,7 +42,7 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "xxx"}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("alice - successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -70,7 +70,7 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "bob", "password": "helloworld"}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 }
 

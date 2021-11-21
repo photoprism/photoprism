@@ -39,7 +39,7 @@ func CreateSession(router *gin.RouterGroup) {
 			links := entity.FindValidLinks(f.Token, "")
 
 			if len(links) == 0 {
-				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidLink)})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidLink)})
 			}
 
 			data.Tokens = []string{f.Token}
@@ -57,18 +57,18 @@ func CreateSession(router *gin.RouterGroup) {
 			user := entity.FindUserByName(f.UserName)
 
 			if user == nil {
-				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 				return
 			}
 
 			if user.InvalidPassword(f.Password) {
-				c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 				return
 			}
 
 			data.User = *user
 		} else {
-			c.AbortWithStatusJSON(400, gin.H{"error": i18n.Msg(i18n.ErrInvalidPassword)})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidPassword)})
 			return
 		}
 
