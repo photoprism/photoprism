@@ -99,3 +99,29 @@
     -o-transition-duration: 15ms !important;
     transition-duration: 15ms !important;
 }
+
+@-webkit-keyframes circle-animation {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes circle-animation {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}

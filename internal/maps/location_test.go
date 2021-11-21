@@ -68,12 +68,12 @@ func TestLocation_QueryPlaces(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "", l.LocName)
-		assert.Equal(t, "ocean", l.LocCategory)
-		assert.Equal(t, "", l.LocState)
-		assert.Equal(t, "South Pacific Ocean", l.LocDistrict)
+		assert.Equal(t, "Puerto Velasco Ibarra", l.LocName)
+		assert.Equal(t, "", l.LocCategory)
+		assert.Equal(t, "Galápagos", l.LocState)
+		assert.Equal(t, "", l.LocDistrict)
 		assert.Equal(t, "ec", l.LocCountry)
-		assert.Equal(t, "South Pacific Ocean, Ecuador", l.LocLabel)
+		assert.Equal(t, "Galápagos, Ecuador", l.LocLabel)
 		assert.Equal(t, "places", l.LocSource)
 	})
 }

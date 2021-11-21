@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -55,10 +56,19 @@ func (m *Photo) EstimatePlace(force bool) {
 		return
 	}
 
+	// Only estimate country if date isn't known with certainty.
+	if m.TakenSrc == SrcAuto {
+		m.PlaceID = UnknownPlace.ID
+		m.PlaceSrc = SrcEstimate
+		m.EstimateCountry()
+		m.EstimatedAt = TimePointer()
+		return
+	}
+
 	var err error
 
-	rangeMin := m.TakenAt.AddDate(0, 0, -1)
-	rangeMax := m.TakenAt.AddDate(0, 0, 1)
+	rangeMin := m.TakenAt.Add(-1 * time.Hour * 72)
+	rangeMax := m.TakenAt.Add(time.Hour * 72)
 
 	// Find photo with location info taken at a similar time...
 	var recentPhoto Photo

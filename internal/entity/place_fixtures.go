@@ -24,8 +24,8 @@ func (m PlacesMap) Pointer(name string) *Place {
 
 var PlaceFixtures = PlacesMap{
 	"mexico": {
-		ID:            s2.TokenPrefix + "85d1ea7d3278",
-		PlaceLabel:    "Teotihuacán, Mexico, Mexico",
+		ID:            "mx:VvfNBpFegSCr",
+		PlaceLabel:    "Teotihuacán, State of Mexico, Mexico",
 		PlaceCity:     "Teotihuacán",
 		PlaceState:    "State of Mexico",
 		PlaceCountry:  "mx",
@@ -36,7 +36,7 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:     TimeStamp(),
 	},
 	"zinkwazi": {
-		ID:            s2.TokenPrefix + "1ef744d1e279",
+		ID:            "za:Rc1K7dTWRzBD",
 		PlaceLabel:    "KwaDukuza, KwaZulu-Natal, South Africa",
 		PlaceCity:     "KwaDukuza",
 		PlaceState:    "KwaZulu-Natal",
@@ -48,9 +48,10 @@ var PlaceFixtures = PlacesMap{
 		UpdatedAt:     TimeStamp(),
 	},
 	"holidaypark": {
-		ID:            s2.TokenPrefix + "1ef744d1e280",
-		PlaceLabel:    "Holiday Park, Amusement",
-		PlaceCity:     "",
+		ID:            "de:HFqPHxa2Hsol",
+		PlaceLabel:    "Neustadt an der Weinstraße, Rheinland-Pfalz, Germany",
+		PlaceDistrict: "Hambach an der Weinstraße",
+		PlaceCity:     "Neustadt an der Weinstraße",
 		PlaceState:    "Rheinland-Pfalz",
 		PlaceCountry:  "de",
 		PlaceKeywords: "",

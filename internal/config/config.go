@@ -206,6 +206,9 @@ func (c *Config) Init() error {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
+	// Set User Agent for HTTP requests.
+	places.UserAgent = fmt.Sprintf("%s/%s", c.Name(), c.Version())
+
 	c.initSettings()
 	c.initHub()
 

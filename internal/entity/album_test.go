@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/gosimple/slug"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestNewAlbum(t *testing.T) {
@@ -66,6 +66,33 @@ is an oblate spheroid.`
 		album := NewAlbum(longName, AlbumDefault)
 		assert.Equal(t, expected, album.AlbumTitle)
 		assert.Contains(t, album.AlbumSlug, slug.Make(slugExpected))
+	})
+}
+
+func TestAlbum_UpdateState(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		album := NewAlbum("Any State", AlbumState)
+
+		assert.Equal(t, "Any State", album.AlbumTitle)
+		assert.Equal(t, "any-state", album.AlbumSlug)
+
+		if err := album.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := album.UpdateState("Alberta", "ca"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Alberta", album.AlbumTitle)
+		assert.Equal(t, "", album.AlbumDescription)
+		assert.Equal(t, "Canada", album.AlbumLocation)
+		assert.Equal(t, "Alberta", album.AlbumState)
+		assert.Equal(t, "ca", album.AlbumCountry)
+
+		if err := album.DeletePermanently(); err != nil {
+			t.Fatal(err)
+		}
 	})
 }
 

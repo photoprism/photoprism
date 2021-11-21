@@ -7,14 +7,13 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/maps"
-
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var cellMutex = sync.Mutex{}
 
-// Cell represents a S2 cell with location data.
+// Cell represents an S2 cell with metadata and reference to a place.
 type Cell struct {
 	ID           string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
 	CellName     string    `gorm:"type:VARCHAR(200);" json:"Name" yaml:"Name,omitempty"`
@@ -142,14 +141,14 @@ func (m *Cell) Find(api string) error {
 	}
 
 	l := &maps.Location{
-		ID: s2.NormalizeToken(m.ID),
+		ID: m.ID,
 	}
 
 	if err := l.QueryApi(api); err != nil {
 		return err
 	}
 
-	if found := FindPlace(l.PlaceID(), l.Label()); found != nil {
+	if found := FindPlace(l.PlaceID()); found != nil {
 		m.Place = found
 	} else {
 		place := &Place{
@@ -171,7 +170,7 @@ func (m *Cell) Find(api string) error {
 			log.Infof("place: added %s [%s]", place.ID, time.Since(start))
 
 			m.Place = place
-		} else if found := FindPlace(l.PlaceID(), l.Label()); found != nil {
+		} else if found := FindPlace(l.PlaceID()); found != nil {
 			m.Place = found
 		} else {
 			log.Errorf("place: %s (create %s)", createErr, place.ID)
