@@ -5,7 +5,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3\n"
 "Project-Id-Version: photoprism\n"
-"Language: en\n"
+"Language: hu\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
@@ -457,7 +457,7 @@ msgstr "Teljes újraolvasás"
 
 #: src/dialog/photo/labels.vue:19
 msgid "Confidence"
-msgstr "Bizalom"
+msgstr "Pontosság"
 
 #: src/dialog/account/add.vue:16
 msgid "Connect"
@@ -572,7 +572,7 @@ msgstr "Alapértelmezett mappa"
 #: src/dialog/photo/files.vue:41 src/dialog/photo/files.vue:38
 #: src/dialog/share.vue:232 src/pages/settings/general.vue:206
 msgid "Delete"
-msgstr "Töröl"
+msgstr "Törlés"
 
 #: src/component/photo/cards.vue:24 src/dialog/album/edit.vue:143
 #: src/dialog/photo/details.vue:575 src/pages/albums.vue:436
@@ -919,7 +919,7 @@ msgstr "Teljes képernyő"
 
 #: src/pages/settings.vue:30
 msgid "General"
-msgstr "Tábornok"
+msgstr "Általános"
 
 #: src/options/options.js:100
 msgid "German"
@@ -1030,7 +1030,7 @@ msgstr "Fájlok importálása eredetibe…"
 #: src/dialog/photo/files.vue:160 src/dialog/photo/files.vue:169
 #: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:166
 msgid "in"
-msgstr "ban ben"
+msgstr "-ban/-ben"
 
 #: src/component/photo/cards.vue:11 src/component/photo/list.vue:12
 #: src/component/photo/mosaic.vue:11 src/pages/labels.vue:35
@@ -1155,7 +1155,7 @@ msgstr "Engedély"
 
 #: src/component/photo/viewer.vue:147
 msgid "Like"
-msgstr "Mint"
+msgstr "Kedvelés"
 
 #: src/options/options.js:344
 msgid "Lime"
@@ -1366,7 +1366,7 @@ msgstr "Nem találhatók címkék"
 #: src/pages/people/faces.vue:278 src/pages/people/faces.vue:364
 #: src/pages/people/subjects.vue:33 src/pages/people/subjects.vue:428
 msgid "No people found"
-msgstr "Nem találhatók emberek"
+msgstr "Nem találhatók személyek"
 
 #: src/component/photo/cards.vue:7 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:7 src/pages/album/photos.vue:336
@@ -1401,7 +1401,7 @@ msgstr "Nincsenek figyelmeztetések vagy hibák, amelyek ezt a kulcsszót tartal
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:50
 #: src/pages/settings/library.vue:93
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "A nem fényképes és rossz minőségű képeket ellenőrizni kell, mielőtt megjelennének a keresési eredmények között."
+msgstr "A rossz minőségű képek ellenörzésre kerülnek, mielőtt megjelennének a keresési eredmények között."
 
 #: src/options/options.js:256
 msgid "None"
@@ -1421,7 +1421,7 @@ msgstr "Vegye figyelembe, hogy manuálisan is kezelheti az eredeti mappát, és 
 
 #: src/pages/settings/sync.vue:34
 msgid "Note:"
-msgstr "Jegyzet:"
+msgstr "Megjegyzés:"
 
 #: src/dialog/account/add.vue:22
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
@@ -1547,7 +1547,7 @@ msgstr "A jelszó megváltozott"
 #: src/dialog/photo/edit.vue:267 src/pages/settings/general.vue:338
 #: src/routes.js:265 src/routes.js:285
 msgid "People"
-msgstr "Emberek"
+msgstr "Személyek"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
@@ -1655,7 +1655,7 @@ msgstr "Elsődleges"
 #: src/dialog/photo/info.vue:102 src/pages/settings/general.vue:272
 #: src/routes.js:201
 msgid "Private"
-msgstr "Magán"
+msgstr "Privát"
 
 #: src/options/options.js:357
 msgid "Product Feedback"
@@ -1900,7 +1900,7 @@ msgstr "Árnyék"
 #: src/component/album/clipboard.vue:70 src/component/album/toolbar.vue:88
 #: src/component/photo/clipboard.vue:77 src/pages/settings/general.vue:250
 msgid "Share"
-msgstr "Részvény"
+msgstr "Megosztás"
 
 #: src/dialog/share.vue:7
 msgid "Share %{name}"
@@ -1995,7 +1995,7 @@ msgstr "Kazal"
 
 #: src/pages/settings/library.vue:195
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Fájlok halmozása, amelyek ugyanazt az egyedi képet vagy példányazonosítót osztják meg."
+msgstr "Fájlok csoportosítása, amelyek ugyanazt az egyedi képet vagy példányazonosítót tartalmazzák."
 
 #: src/pages/settings/library.vue:174
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
@@ -2023,7 +2023,7 @@ msgstr "Diavetítés indítása/leállítása"
 
 #: src/component/navigation.vue:248
 msgid "States"
-msgstr "Államok"
+msgstr "Országok"
 
 #: src/pages/settings/advanced.vue:374
 msgid "Static Size Limit: %{n}px"
@@ -2051,11 +2051,11 @@ msgstr "Tantárgy"
 
 #: src/dialog/account/add.vue:23
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "A további szolgáltatások, például a Google Drive támogatása idővel bővülni fog."
+msgstr "A további szolgáltatások, például a Google Drive támogatása jelenleg fejlesztés alatt áll."
 
 #: src/pages/settings.vue:63 src/pages/settings/sync.vue:28
 msgid "Sync"
-msgstr "Szinkronizál"
+msgstr "Szinkronizálás"
 
 #: src/dialog/account/edit.vue:372
 msgid "Sync raw and video files"

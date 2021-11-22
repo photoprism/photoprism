@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-21 14:16+0100\n"
-"PO-Revision-Date: 2021-11-21 14:49+0100\n"
+"PO-Revision-Date: 2021-11-22 17:37+0100\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,7 +28,7 @@ msgstr "Érvénytelen kérelem"
 
 #: messages.go:84
 msgid "Changes could not be saved"
-msgstr "A módosításokat nem sikerült menteni"
+msgstr "Módosításokat nem sikerült menteni"
 
 #: messages.go:85
 msgid "Could not be deleted"
@@ -53,7 +53,7 @@ msgstr "Kiválasztás nem található"
 
 #: messages.go:90
 msgid "Entity not found"
-msgstr "Az entitás nem található"
+msgstr "Entitás nem található"
 
 #: messages.go:91
 msgid "Account not found"
@@ -69,7 +69,7 @@ msgstr "Címke nem található"
 
 #: messages.go:94
 msgid "Album not found"
-msgstr "Az album nem található"
+msgstr "Album nem található"
 
 #: messages.go:95
 msgid "Subject not found"
@@ -81,7 +81,7 @@ msgstr "Személy nem található"
 
 #: messages.go:97
 msgid "Face not found"
-msgstr "Az arc nem található"
+msgstr "Arc nem található"
 
 #: messages.go:98
 msgid "Not available in public mode"
@@ -97,230 +97,230 @@ msgstr "Kérjük, jelentkezzen be, és próbálja újra"
 
 #: messages.go:101
 msgid "Upload might be offensive"
-msgstr "A feltöltés sértő lehet"
+msgstr "Fájl feltöltése sértő lehet"
 
 #: messages.go:102
 msgid "No items selected"
-msgstr ""
+msgstr "Nincsenek kiválasztva elemek"
 
 #: messages.go:103
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Nem sikerült létrehozni a fájlt. Kérjük, ellenőrizze a jogosultságokat"
 
 #: messages.go:104
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Mappa létrehozása sikertelen, kérjük, ellenőrizze a jogosultságokat"
 
 #: messages.go:105
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Nem sikerült csatlakozni, próbálja újra"
 
 #: messages.go:106
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Érvénytelen jelszó, próbálkozzon újra"
 
 #: messages.go:107
 msgid "Feature disabled"
-msgstr ""
+msgstr "Funkció letiltva"
 
 #: messages.go:108
 msgid "No labels selected"
-msgstr ""
+msgstr "Nincsenek kiválasztva címkék"
 
 #: messages.go:109
 msgid "No albums selected"
-msgstr ""
+msgstr "Nincsenek kiválasztott albumok"
 
 #: messages.go:110
 msgid "No files available for download"
-msgstr ""
+msgstr "Nincsenek letölthető fájlok"
 
 #: messages.go:111
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Nem sikerült létrehozni a zip fájlt"
 
 #: messages.go:112
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Érvénytelen belépési adatok"
 
 #: messages.go:113
 msgid "Invalid link"
-msgstr ""
+msgstr "Érvénytelen hivatkozás"
 
 #: messages.go:114
 msgid "Invalid name"
-msgstr ""
+msgstr "Érvénytelen név"
 
 #: messages.go:117
 msgid "Changes successfully saved"
-msgstr ""
+msgstr "Módosítások sikeresen mentve"
 
 #: messages.go:118
 msgid "Album created"
-msgstr ""
+msgstr "Album létrehozva"
 
 #: messages.go:119
 msgid "Album saved"
-msgstr ""
+msgstr "Album mentve"
 
 #: messages.go:120
 #, c-format
 msgid "Album %s deleted"
-msgstr ""
+msgstr "%s album törölve"
 
 #: messages.go:121
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Album tartalma klónozva"
 
 #: messages.go:122
 msgid "File removed from stack"
-msgstr ""
+msgstr "Fájl eltávolítva a halomból"
 
 #: messages.go:123
 msgid "File deleted"
-msgstr ""
+msgstr "Fájl törölve"
 
 #: messages.go:124
 #, c-format
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Választék hozzáadva a következőhöz: %s"
 
 #: messages.go:125
 #, c-format
 msgid "One entry added to %s"
-msgstr ""
+msgstr "Egy bejegyzés hozzáadva a következőhöz: %s"
 
 #: messages.go:126
 #, c-format
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d bejegyzés hozzáadva a következőhöz: %s"
 
 #: messages.go:127
 #, c-format
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "Egy bejegyzés eltávolítva innen: %s"
 
 #: messages.go:128
 #, c-format
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d bejegyzés eltávolítva innen: %s"
 
 #: messages.go:129
 msgid "Account created"
-msgstr ""
+msgstr "Fiók létrehozva"
 
 #: messages.go:130
 msgid "Account saved"
-msgstr ""
+msgstr "Fiók mentve"
 
 #: messages.go:131
 msgid "Account deleted"
-msgstr ""
+msgstr "Fiók törölve"
 
 #: messages.go:132
 msgid "Settings saved"
-msgstr ""
+msgstr "Beállítások elmentve"
 
 #: messages.go:133
 msgid "Password changed"
-msgstr ""
+msgstr "Jelszó megváltoztatva"
 
 #: messages.go:134
 #, c-format
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Importálás %d másodperc alatt befejeződött"
 
 #: messages.go:135
 msgid "Import canceled"
-msgstr ""
+msgstr "Importálás megszakítva"
 
 #: messages.go:136
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Indexelés %d másodperc alatt befejeződött"
 
 #: messages.go:137
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Eredeti dokumentumok indexelése..."
 
 #: messages.go:138
 #, c-format
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Fájlok indexelése itt: %s"
 
 #: messages.go:139
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Indexelés megszakítva"
 
 #: messages.go:140
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "%d fájl és %d fénykép eltávolítva"
 
 #: messages.go:141
 #, c-format
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Fájlok áthelyezése innen: %s"
 
 #: messages.go:142
 #, c-format
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Fájlok másolása innen: %s"
 
 #: messages.go:143
 msgid "Labels deleted"
-msgstr ""
+msgstr "Címkék törölve"
 
 #: messages.go:144
 msgid "Label saved"
-msgstr ""
+msgstr "Címkék mentve"
 
 #: messages.go:145
 msgid "Subject saved"
-msgstr ""
+msgstr "Tárgy mentve"
 
 #: messages.go:146
 msgid "Subject deleted"
-msgstr ""
+msgstr "Tárgy törölve"
 
 #: messages.go:147
 msgid "Person saved"
-msgstr ""
+msgstr "Személy mentve"
 
 #: messages.go:148
 msgid "Person deleted"
-msgstr ""
+msgstr "Személy törölve"
 
 #: messages.go:149
 #, c-format
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d fájl feltöltve %d másodperc alatt"
 
 #: messages.go:150
 msgid "Selection approved"
-msgstr ""
+msgstr "Választék jóváhagyva"
 
 #: messages.go:151
 msgid "Selection archived"
-msgstr ""
+msgstr "Választék archiválva"
 
 #: messages.go:152
 msgid "Selection restored"
-msgstr ""
+msgstr "Választék visszaállítva"
 
 #: messages.go:153
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Választék privátként megjelölve"
 
 #: messages.go:154
 msgid "Albums deleted"
-msgstr ""
+msgstr "Albumok törölve"
 
 #: messages.go:155
 #, c-format
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "A tömörített fájl létrejött %d másodperc alatt"
 
 #: messages.go:156
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Véglegesen törölve"
