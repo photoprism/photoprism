@@ -200,10 +200,10 @@ func TestConfig_AppMode(t *testing.T) {
 	assert.Equal(t, "standalone", c.AppMode())
 }
 
-func TestConfig_ApIcon(t *testing.T) {
+func TestConfig_AppIcon(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "favicon", c.AppIcon())
+	assert.Equal(t, "logo", c.AppIcon())
 }
 
 func TestConfig_NSFWModelPath(t *testing.T) {

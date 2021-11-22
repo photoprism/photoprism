@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"path/filepath"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // AppName returns the app name when installed on a device.
