@@ -416,7 +416,7 @@ msgstr "Módosíthatja a fotók címét, helyét és egyéb metaadatait."
 
 #: src/component/photo/clipboard.vue:146
 msgid "Change private flag"
-msgstr "Saját zászló módosítása"
+msgstr "Privát fotóként jelölés"
 
 #: src/dialog/photo/info.vue:191
 msgid "Checked"
@@ -802,7 +802,7 @@ msgstr "Rejtett kizárás"
 
 #: src/component/navigation.vue:251
 msgid "Expand"
-msgstr "Kiterjed"
+msgstr "Kiterjesztés"
 
 #: src/component/photo/toolbar.vue:142
 msgid "Expand Search"
@@ -1229,7 +1229,7 @@ msgstr "Fő szín"
 
 #: src/dialog/photo/labels.vue:32
 msgid "manual"
-msgstr "kézikönyv"
+msgstr "kézi"
 
 #: src/dialog/account/edit.vue:52
 msgid "Manual Upload"
@@ -1805,11 +1805,11 @@ msgstr "Orosz"
 #: src/dialog/account/edit.vue:97 src/dialog/album/edit.vue:45
 #: src/dialog/share.vue:61
 msgid "Save"
-msgstr "Megment"
+msgstr "Mentés"
 
 #: src/dialog/photo/info.vue:110
 msgid "Scan"
-msgstr "Letapogatás"
+msgstr "Felderítés"
 
 #: src/component/navigation.vue:100
 msgid "Scans"
@@ -1841,7 +1841,7 @@ msgstr "Titok"
 
 #: src/component/photo/viewer.vue:119
 msgid "Select"
-msgstr "Válassza ki"
+msgstr "Kiválasztás"
 
 #: src/dialog/upload.vue:139
 msgid "Select albums or create a new one"
@@ -1991,7 +1991,7 @@ msgstr "Spanyol"
 #: src/component/photo/cards.vue:235 src/component/photo/mosaic.vue:210
 #: src/share/photo/cards.vue:208 src/share/photo/mosaic.vue:191
 msgid "Stack"
-msgstr "Kazal"
+msgstr "Csoportosítás"
 
 #: src/pages/settings/library.vue:195
 msgid "Stack files sharing the same unique image or instance identifier."
@@ -1999,7 +1999,7 @@ msgstr "Fájlok csoportosítása, amelyek ugyanazt az egyedi képet vagy példá
 
 #: src/pages/settings/library.vue:174
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "A metaadataik alapján rakja egymásra a pontosan ugyanabban az időben és helyen készült képeket."
+msgstr "A metaadataik alapján csoportosítsa a pontosan ugyanabban az időben és helyen készült képeket."
 
 #: src/dialog/photo/info.vue:86
 msgid "Stackable"
@@ -2210,7 +2210,7 @@ msgstr "Előnézetek frissítése"
 
 #: src/pages/library/index.vue:149
 msgid "Updating stacks"
-msgstr "Veremek frissítése"
+msgstr "Csoportosítások frissítése"
 
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:129
 #: src/component/photo/toolbar.vue:125 src/dialog/share/upload.vue:35
