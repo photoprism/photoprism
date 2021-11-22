@@ -395,7 +395,7 @@ msgstr "Nem lehet több elemet kiválasztani"
 #: src/dialog/share.vue:22 src/dialog/share/upload.vue:29
 #: src/pages/library/import.vue:34 src/pages/library/index.vue:27
 msgid "Cancel"
-msgstr "Megszünteti"
+msgstr "Mégsem"
 
 #: src/component/album/toolbar.vue:32 src/component/photo/toolbar.vue:31
 msgid "Cards"
