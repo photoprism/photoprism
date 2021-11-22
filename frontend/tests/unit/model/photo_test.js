@@ -213,7 +213,7 @@ describe("model/photo", () => {
     };
     const photo = new Photo(values);
     const result = photo.localDateString();
-    assert.equal(result, "2012-07-08T14:45:39");
+    assert.equal(result, "2012-07-08T14:45:39Z");
   });
 
   it("should get local date", () => {
@@ -224,6 +224,20 @@ describe("model/photo", () => {
       TimeZone: "Indian/Reunion",
     };
     const photo = new Photo(values);
+    const result = photo.localDate();
+    assert.equal(String(result), "2012-07-08T14:45:39.000Z");
+  });
+
+  it("UTC", () => {
+    const values = {
+      ID: 9999,
+      Title: "Video",
+      TakenAt: "2012-07-08T14:45:39Z",
+      TakenAtLocal: "2012-07-08T14:45:39Z",
+      TimeZone: "UTC",
+    };
+    const photo = new Photo(values);
+    assert.equal(String(photo.localDateString("10:00:00")), "2012-07-08T10:00:00Z");
     const result = photo.localDate();
     assert.equal(String(result), "2012-07-08T14:45:39.000Z");
   });
