@@ -188,6 +188,24 @@ func TestConfig_AdminPassword(t *testing.T) {
 	assert.Equal(t, "photoprism", result)
 }
 
+func TestConfig_AppName(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "config.test", c.AppName())
+}
+
+func TestConfig_AppMode(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "standalone", c.AppMode())
+}
+
+func TestConfig_AppIcon(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "logo", c.AppIcon())
+}
+
 func TestConfig_NSFWModelPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

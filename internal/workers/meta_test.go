@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPrism_Start(t *testing.T) {
@@ -23,13 +24,16 @@ func TestPrism_Start(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := worker.Start(time.Second, true); err == nil {
+	delay := time.Second
+	interval := time.Second
+
+	if err := worker.Start(delay, interval, true); err == nil {
 		t.Fatal("error expected")
 	}
 
 	mutex.MetaWorker.Stop()
 
-	if err := worker.Start(time.Second, true); err != nil {
+	if err := worker.Start(delay, interval, true); err != nil {
 		t.Fatal(err)
 	}
 }

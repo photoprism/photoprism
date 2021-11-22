@@ -68,7 +68,8 @@ func TestMissingPhotos(t *testing.T) {
 }
 
 func TestPhotosMetadataUpdate(t *testing.T) {
-	result, err := PhotosMetadataUpdate(10, 0, time.Second)
+	interval := entity.MetadataUpdateInterval
+	result, err := PhotosMetadataUpdate(10, 0, time.Second, interval)
 
 	if err != nil {
 		t.Fatal(err)

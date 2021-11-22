@@ -76,7 +76,7 @@ func Albums(f form.AlbumSearch) (results AlbumResults, err error) {
 	case entity.SortOrderMoment:
 		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
 	case entity.SortOrderPlace:
-		s = s.Order("albums.album_favorite DESC, albums.album_country, albums.album_state, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
+		s = s.Order("albums.album_favorite DESC, albums.album_location, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
 	case entity.SortOrderName:
 		s = s.Order("albums.album_title ASC, albums.album_uid DESC")
 	case entity.SortOrderPath:

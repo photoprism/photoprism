@@ -9,8 +9,10 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
@@ -308,7 +310,7 @@ func (m *Album) SetTitle(title string) {
 
 	m.AlbumTitle = txt.Clip(title, txt.ClipDefault)
 
-	if m.AlbumType == AlbumDefault {
+	if m.AlbumType == AlbumDefault || m.AlbumSlug == "" {
 		if len(m.AlbumTitle) < txt.ClipSlug {
 			m.AlbumSlug = txt.Slug(m.AlbumTitle)
 		} else {
@@ -319,6 +321,39 @@ func (m *Album) SetTitle(title string) {
 	if m.AlbumSlug == "" {
 		m.AlbumSlug = "-"
 	}
+}
+
+// UpdateState updates the album location.
+func (m *Album) UpdateState(stateName, countryCode string) error {
+	if stateName == "" || countryCode == "" {
+		return nil
+	}
+
+	changed := false
+	countryName := maps.CountryName(countryCode)
+
+	if m.AlbumCountry != countryCode {
+		m.AlbumCountry = countryCode
+		changed = true
+	}
+
+	if changed || m.AlbumLocation == "" {
+		m.AlbumLocation = countryName
+		changed = true
+	}
+
+	if m.AlbumState != stateName {
+		m.AlbumState = stateName
+		changed = true
+	}
+
+	if !changed {
+		return nil
+	}
+
+	m.AlbumTitle = stateName
+
+	return m.Updates(Values{"album_title": m.AlbumTitle, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
@@ -341,6 +376,11 @@ func (m *Album) SaveForm(f form.Album) error {
 // Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+}
+
+// Updates multiple columns in the database.
+func (m *Album) Updates(values interface{}) error {
+	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
 // UpdateFolder updates the path, filter and slug for a folder album.
@@ -408,6 +448,31 @@ func (m *Album) Delete() error {
 		event.Publish("count.months", event.Data{"count": -1})
 	case AlbumFolder:
 		event.Publish("count.folders", event.Data{"count": -1})
+	}
+
+	return nil
+}
+
+// DeletePermanently permanently removes an album from the index.
+func (m *Album) DeletePermanently() error {
+	albumType := m.AlbumType
+	wasDeleted := m.Deleted()
+
+	if err := UnscopedDb().Delete(m).Error; err != nil {
+		return err
+	}
+
+	if !wasDeleted {
+		switch albumType {
+		case AlbumDefault:
+			event.Publish("count.albums", event.Data{"count": -1})
+		case AlbumMoment:
+			event.Publish("count.moments", event.Data{"count": -1})
+		case AlbumMonth:
+			event.Publish("count.months", event.Data{"count": -1})
+		case AlbumFolder:
+			event.Publish("count.folders", event.Data{"count": -1})
+		}
 	}
 
 	return nil

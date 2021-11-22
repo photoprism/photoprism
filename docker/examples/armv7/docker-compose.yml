@@ -40,7 +40,6 @@ services:
     ## ARM64, and ARMv7. Use photoprism/photoprism:preview for testing preview builds or
     ## photoprism/photoprism:latest for the stable release:
     image: photoprism/photoprism:latest
-    platform: "linux/arm"
     depends_on:
       - mariadb
     ## Only enable automatic restarts once your installation is properly

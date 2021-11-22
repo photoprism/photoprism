@@ -179,6 +179,10 @@ func (w *Moments) Start() (err error) {
 			}
 
 			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumState); a != nil {
+				if err := a.UpdateState(mom.State, mom.Country); err != nil {
+					log.Errorf("moments: %s (update state)", err.Error())
+				}
+
 				if !a.Deleted() {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				} else if err := a.Restore(); err != nil {

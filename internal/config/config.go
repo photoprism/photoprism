@@ -42,7 +42,7 @@ var TotalMem uint64
 const MsgFreeBeer = "Help us make a difference and become a sponsor today!"
 const MsgFundingInfo = "Visit https://docs.photoprism.org/funding/ to learn more."
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
-	" we unfortunately can't offer it for free."
+	" we unfortunately can only offer it to sponsors."
 
 const ApiUri = "/api/v1"    // REST API
 const StaticUri = "/static" // Static Content
@@ -206,6 +206,9 @@ func (c *Config) Init() error {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
+	// Set User Agent for HTTP requests.
+	places.UserAgent = fmt.Sprintf("%s/%s", c.Name(), c.Version())
+
 	c.initSettings()
 	c.initHub()
 
@@ -326,19 +329,6 @@ func (c *Config) SiteUrl() string {
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
 }
 
-// SitePreview returns the site preview image URL for sharing.
-func (c *Config) SitePreview() string {
-	if c.options.SitePreview == "" {
-		return c.SiteUrl() + "static/img/preview.jpg"
-	}
-
-	if !strings.HasPrefix(c.options.SitePreview, "http") {
-		return c.SiteUrl() + c.options.SitePreview
-	}
-
-	return c.options.SitePreview
-}
-
 // SiteAuthor returns the site author / copyright.
 func (c *Config) SiteAuthor() string {
 	return c.options.SiteAuthor
@@ -360,11 +350,20 @@ func (c *Config) SiteCaption() string {
 
 // SiteDescription returns a long site description.
 func (c *Config) SiteDescription() string {
-	if !c.Sponsor() {
-		return MsgFreeBeer
+	return c.options.SiteDescription
+}
+
+// SitePreview returns the site preview image URL for sharing.
+func (c *Config) SitePreview() string {
+	if c.options.SitePreview == "" {
+		return c.SiteUrl() + "static/img/preview.jpg"
 	}
 
-	return c.options.SiteDescription
+	if !strings.HasPrefix(c.options.SitePreview, "http") {
+		return c.SiteUrl() + c.options.SitePreview
+	}
+
+	return c.options.SitePreview
 }
 
 // Debug tests if debug mode is enabled.

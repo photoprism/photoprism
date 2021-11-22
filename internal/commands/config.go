@@ -26,7 +26,7 @@ func configAction(ctx *cli.Context) error {
 
 	fmt.Printf("%-25s VALUE\n", "NAME")
 
-	// Feature flags and auth.
+	// Flags.
 	fmt.Printf("%-25s %t\n", "debug", conf.Debug())
 	fmt.Printf("%-25s %s\n", "log-level", conf.LogLevel())
 	fmt.Printf("%-25s %s\n", "log-filename", conf.LogFilename())
@@ -35,12 +35,12 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "read-only", conf.ReadOnly())
 	fmt.Printf("%-25s %t\n", "experimental", conf.Experimental())
 
-	// Config path and main file.
+	// Config.
 	fmt.Printf("%-25s %s\n", "config-file", conf.ConfigFile())
 	fmt.Printf("%-25s %s\n", "config-path", conf.ConfigPath())
 	fmt.Printf("%-25s %s\n", "settings-file", conf.SettingsFile())
 
-	// Main directories.
+	// Paths.
 	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
 	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
 	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
@@ -52,19 +52,19 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "backup-path", conf.BackupPath())
 	fmt.Printf("%-25s %s\n", "assets-path", conf.AssetsPath())
 
-	// Asset path and file names.
+	// Assets.
 	fmt.Printf("%-25s %s\n", "static-path", conf.StaticPath())
 	fmt.Printf("%-25s %s\n", "build-path", conf.BuildPath())
 	fmt.Printf("%-25s %s\n", "img-path", conf.ImgPath())
 	fmt.Printf("%-25s %s\n", "templates-path", conf.TemplatesPath())
 
-	// Background workers.
+	// Workers.
 	fmt.Printf("%-25s %d\n", "workers", conf.Workers())
 	fmt.Printf("%-25s %d\n", "wakeup-interval", conf.WakeupInterval()/time.Second)
 	fmt.Printf("%-25s %d\n", "auto-index", conf.AutoIndex()/time.Second)
 	fmt.Printf("%-25s %d\n", "auto-import", conf.AutoImport()/time.Second)
 
-	// Disable features.
+	// Features.
 	fmt.Printf("%-25s %t\n", "disable-backups", conf.DisableBackups())
 	fmt.Printf("%-25s %t\n", "disable-settings", conf.DisableSettings())
 	fmt.Printf("%-25s %t\n", "disable-places", conf.DisablePlaces())
@@ -78,31 +78,38 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-heifconvert", conf.DisableHeifConvert())
 	fmt.Printf("%-25s %t\n", "disable-ffmpeg", conf.DisableFFmpeg())
 
-	// Everything related to TensorFlow.
+	// TensorFlow.
 	fmt.Printf("%-25s %s\n", "tensorflow-version", conf.TensorFlowVersion())
 	fmt.Printf("%-25s %s\n", "tensorflow-model-path", conf.TensorFlowModelPath())
 	fmt.Printf("%-25s %t\n", "detect-nsfw", conf.DetectNSFW())
 	fmt.Printf("%-25s %t\n", "upload-nsfw", conf.UploadNSFW())
 
-	// Site information.
+	// Site.
 	fmt.Printf("%-25s %s\n", "site-url", conf.SiteUrl())
-	fmt.Printf("%-25s %s\n", "site-preview", conf.SitePreview())
 	fmt.Printf("%-25s %s\n", "site-author", conf.SiteAuthor())
 	fmt.Printf("%-25s %s\n", "site-title", conf.SiteTitle())
 	fmt.Printf("%-25s %s\n", "site-caption", conf.SiteCaption())
 	fmt.Printf("%-25s %s\n", "site-description", conf.SiteDescription())
+	fmt.Printf("%-25s %s\n", "site-preview", conf.SitePreview())
+
+	// Progressive Web App.
+	fmt.Printf("%-25s %s\n", "app-name", conf.AppName())
+	fmt.Printf("%-25s %s\n", "app-mode", conf.AppMode())
+	fmt.Printf("%-25s %s\n", "app-icon", conf.AppIcon())
+
+	// URLs.
 	fmt.Printf("%-25s %s\n", "cdn-url", conf.CdnUrl("/"))
 	fmt.Printf("%-25s %s\n", "content-uri", conf.ContentUri())
 	fmt.Printf("%-25s %s\n", "static-uri", conf.StaticUri())
 	fmt.Printf("%-25s %s\n", "api-uri", conf.ApiUri())
 	fmt.Printf("%-25s %s\n", "base-uri", conf.BaseUri("/"))
 
-	// HTTP server configuration.
+	// Web Server..
 	fmt.Printf("%-25s %s\n", "http-host", conf.HttpHost())
 	fmt.Printf("%-25s %d\n", "http-port", conf.HttpPort())
 	fmt.Printf("%-25s %s\n", "http-mode", conf.HttpMode())
 
-	// Database configuration.
+	// Database.
 	fmt.Printf("%-25s %s\n", "database-driver", dbDriver)
 	fmt.Printf("%-25s %s\n", "database-server", conf.DatabaseServer())
 	fmt.Printf("%-25s %s\n", "database-host", conf.DatabaseHost())
@@ -113,7 +120,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "database-conns", conf.DatabaseConns())
 	fmt.Printf("%-25s %d\n", "database-conns-idle", conf.DatabaseConnsIdle())
 
-	// External binaries and sidecar configuration.
+	// External Tools.
 	fmt.Printf("%-25s %t\n", "raw-presets", conf.RawPresets())
 	fmt.Printf("%-25s %s\n", "darktable-bin", conf.DarktableBin())
 	fmt.Printf("%-25s %s\n", "darktable-blacklist", conf.DarktableBlacklist())
@@ -127,7 +134,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "ffmpeg-buffers", conf.FFmpegBuffers())
 	fmt.Printf("%-25s %s\n", "exiftool-bin", conf.ExifToolBin())
 
-	// Thumbs, resampling and download security token.
+	// Thumbnails.
 	fmt.Printf("%-25s %s\n", "download-token", conf.DownloadToken())
 	fmt.Printf("%-25s %s\n", "preview-token", conf.PreviewToken())
 	fmt.Printf("%-25s %s\n", "thumb-filter", conf.ThumbFilter())
@@ -138,7 +145,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %d\n", "jpeg-size", conf.JpegSize())
 	fmt.Printf("%-25s %d\n", "jpeg-quality", conf.JpegQuality())
 
-	// Facial recognition.
+	// Facial Recognition.
 	fmt.Printf("%-25s %d\n", "face-size", conf.FaceSize())
 	fmt.Printf("%-25s %f\n", "face-score", conf.FaceScore())
 	fmt.Printf("%-25s %d\n", "face-overlap", conf.FaceOverlap())

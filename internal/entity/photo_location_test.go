@@ -140,7 +140,7 @@ func TestUpdateLocation(t *testing.T) {
 			PhotoCountry: UnknownID,
 			PhotoLat:     0.0,
 			PhotoLng:     0.0,
-			PlaceID:      "s2:85d1ea7d3278",
+			PlaceID:      "mx:VvfNBpFegSCr",
 			PlaceSrc:     SrcEstimate,
 		}
 
@@ -152,7 +152,7 @@ func TestUpdateLocation(t *testing.T) {
 		assert.Equal(t, "mx", m.PhotoCountry)
 		assert.Equal(t, float32(0.0), m.PhotoLat)
 		assert.Equal(t, float32(0.0), m.PhotoLng)
-		assert.Equal(t, "s2:85d1ea7d3278", m.PlaceID)
+		assert.Equal(t, "mx:VvfNBpFegSCr", m.PlaceID)
 		assert.Equal(t, SrcEstimate, m.PlaceSrc)
 	})
 
@@ -162,7 +162,7 @@ func TestUpdateLocation(t *testing.T) {
 			PhotoCountry: "de",
 			PhotoLat:     0.0,
 			PhotoLng:     0.0,
-			PlaceID:      "s2:85d1ea7d3278",
+			PlaceID:      "de:HFqPHxa2Hsol",
 			PlaceSrc:     SrcManual,
 		}
 

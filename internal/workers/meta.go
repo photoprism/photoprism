@@ -30,7 +30,7 @@ func (m *Meta) originalsPath() string {
 }
 
 // Start metadata optimization routine.
-func (m *Meta) Start(delay time.Duration, force bool) (err error) {
+func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("metadata: %s (panic)\nstack: %s", r, debug.Stack())
@@ -64,7 +64,7 @@ func (m *Meta) Start(delay time.Duration, force bool) (err error) {
 
 	// Run index optimization.
 	for {
-		photos, err := query.PhotosMetadataUpdate(limit, offset, delay)
+		photos, err := query.PhotosMetadataUpdate(limit, offset, delay, interval)
 
 		if err != nil {
 			return err

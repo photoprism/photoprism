@@ -28,18 +28,6 @@ var PlacesCommand = cli.Command{
 
 // placesUpdateAction fetches updated location data.
 func placesUpdateAction(ctx *cli.Context) error {
-	start := time.Now()
-
-	confirmPrompt := promptui.Prompt{
-		Label:     "Interrupting the update may result in inconsistent data. Proceed?",
-		IsConfirm: true,
-	}
-
-	// Abort?
-	if _, err := confirmPrompt.Run(); err != nil {
-		return nil
-	}
-
 	// Load config.
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
@@ -52,6 +40,23 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+
+	if !conf.Sponsor() && !conf.Test() {
+		log.Errorf(config.MsgSponsorCommand)
+		return nil
+	}
+
+	confirmPrompt := promptui.Prompt{
+		Label:     "Interrupting the update may result in inconsistent data. Proceed?",
+		IsConfirm: true,
+	}
+
+	// Abort?
+	if _, err := confirmPrompt.Run(); err != nil {
+		return nil
+	}
+
+	start := time.Now()
 
 	// Run places worker.
 	if w := service.Places(); w != nil {

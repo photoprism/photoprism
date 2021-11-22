@@ -12,9 +12,9 @@ func TestCreateUnknownPlace(t *testing.T) {
 	assert.True(t, r.Unknown())
 }
 
-func TestFindPlaceByLabel(t *testing.T) {
-	t.Run("find by id", func(t *testing.T) {
-		r := FindPlace(s2.TokenPrefix+"1ef744d1e280", "")
+func TestFindPlace(t *testing.T) {
+	t.Run("Holiday Park", func(t *testing.T) {
+		r := FindPlace("de:HFqPHxa2Hsol")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
@@ -22,16 +22,16 @@ func TestFindPlaceByLabel(t *testing.T) {
 
 		assert.Equal(t, "de", r.PlaceCountry)
 	})
-	t.Run("find by id", func(t *testing.T) {
-		r := FindPlace(s2.TokenPrefix+"85d1ea7d3278", "")
+	t.Run("Mexico", func(t *testing.T) {
+		r := FindPlace("mx:VvfNBpFegSCr")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
 		}
 		assert.Equal(t, "mx", r.PlaceCountry)
 	})
-	t.Run("find by label", func(t *testing.T) {
-		r := FindPlace("", "KwaDukuza, KwaZulu-Natal, South Africa")
+	t.Run("KwaDukuza", func(t *testing.T) {
+		r := FindPlace("za:Rc1K7dTWRzBD")
 
 		if r == nil {
 			t.Fatal("result should not be nil")
@@ -40,14 +40,14 @@ func TestFindPlaceByLabel(t *testing.T) {
 		assert.Equal(t, "za", r.PlaceCountry)
 	})
 	t.Run("not matching", func(t *testing.T) {
-		r := FindPlace("111", "xxx")
+		r := FindPlace("111")
 
 		if r != nil {
 			t.Fatal("result should be nil")
 		}
 	})
 	t.Run("not matching empty label", func(t *testing.T) {
-		r := FindPlace("111", "")
+		r := FindPlace("111")
 
 		if r != nil {
 			t.Fatal("result should be nil")

@@ -15,3 +15,10 @@ func TestCellIDs(t *testing.T) {
 		t.Logf("cell count: %v", len(result))
 	})
 }
+func TestPurgePlaces(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		if err := PurgePlaces(); err != nil {
+			t.Fatal(err)
+		}
+	})
+}

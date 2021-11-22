@@ -252,7 +252,7 @@ func (m *File) ReplaceHash(newHash string) error {
 		return nil
 	}
 
-	entities := Types{
+	entities := Tables{
 		"albums": Album{},
 		"labels": Label{},
 	}

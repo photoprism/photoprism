@@ -36,13 +36,9 @@ func (w *Places) Start() (updated []string, err error) {
 		}
 	}()
 
+	// Check if a worker is already running.
 	if err := mutex.MainWorker.Start(); err != nil {
-		// A worker is already running.
 		log.Warnf("index: %s (update places)", err.Error())
-		return []string{}, err
-	} else if !w.conf.Sponsor() && !w.conf.Test() {
-		log.Errorf(config.MsgSponsorCommand)
-		log.Errorf(config.MsgFundingInfo)
 		return []string{}, err
 	}
 
@@ -57,11 +53,6 @@ func (w *Places) Start() (updated []string, err error) {
 	} else if len(cells) == 0 {
 		log.Warnf("index: found no places to update")
 		return []string{}, nil
-	}
-
-	// Drop and recreate places database table.
-	if err = entity.RecreateTable(entity.Place{}); err != nil {
-		return []string{}, fmt.Errorf("index: %s", err)
 	}
 
 	// List of updated cells.
@@ -95,6 +86,11 @@ func (w *Places) Start() (updated []string, err error) {
 
 		// Short break.
 		time.Sleep(33 * time.Millisecond)
+	}
+
+	// Remove unused entries from the places table.
+	if err := query.PurgePlaces(); err != nil {
+		log.Errorf("index: %s (purge places)", err)
 	}
 
 	// Update location-related photo metadata in the index.

@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"testing"
 	"time"
 )
 
@@ -17,16 +16,4 @@ type TestEntity struct {
 // TableName returns the entity database table name.
 func (TestEntity) TableName() string {
 	return "test_ignore"
-}
-
-func TestRecreateTable(t *testing.T) {
-	t.Run("TestEntity", func(t *testing.T) {
-		if err := Db().CreateTable(TestEntity{}).Error; err != nil {
-			t.Fatal(err)
-		}
-
-		if err := RecreateTable(TestEntity{}); err != nil {
-			t.Fatal(err)
-		}
-	})
 }
