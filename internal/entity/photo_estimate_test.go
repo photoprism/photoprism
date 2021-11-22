@@ -60,29 +60,34 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 
 }
 
-func TestPhoto_EstimatePlace(t *testing.T) {
+func TestPhoto_EstimateLocation(t *testing.T) {
 	t.Run("photo already has location", func(t *testing.T) {
 		p := &Place{ID: "1000000001", PlaceCountry: "mx"}
 		m := Photo{TakenSrc: SrcMeta, PhotoName: "PhotoWithLocation", OriginalName: "demo/xyz.jpg", Place: p, PlaceID: "1000000001", PlaceSrc: SrcManual, PhotoCountry: "mx"}
 		assert.True(t, m.HasPlace())
 		assert.Equal(t, "mx", m.CountryCode())
 		assert.Equal(t, "Mexico", m.CountryName())
-		m.EstimatePlace(true)
+		m.EstimateLocation(true)
 		assert.Equal(t, "mx", m.CountryCode())
 		assert.Equal(t, "Mexico", m.CountryName())
 	})
 	t.Run("RecentlyEstimates", func(t *testing.T) {
 		m2 := Photo{TakenSrc: SrcMeta, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", EstimatedAt: TimePointer(), TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace(false)
+		m2.EstimateLocation(false)
 		assert.Equal(t, "zz", m2.CountryCode())
 		assert.Equal(t, UnknownCountry.CountryName, m2.CountryName())
 		assert.Equal(t, SrcAuto, m2.PlaceSrc)
 	})
 	t.Run("ForceEstimate", func(t *testing.T) {
-		m2 := Photo{TakenSrc: SrcMeta, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", EstimatedAt: TimePointer(), TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
+		m2 := Photo{
+			TakenSrc:     SrcMeta,
+			PhotoName:    "PhotoWithoutLocation",
+			OriginalName: "demo/xyy.jpg",
+			EstimatedAt:  TimePointer(),
+			TakenAt:      time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace(true)
+		m2.EstimateLocation(true)
 		assert.Equal(t, "mx", m2.CountryCode())
 		assert.Equal(t, "Mexico", m2.CountryName())
 		assert.Equal(t, SrcEstimate, m2.PlaceSrc)
@@ -90,7 +95,7 @@ func TestPhoto_EstimatePlace(t *testing.T) {
 	t.Run("recent photo has place", func(t *testing.T) {
 		m2 := Photo{TakenSrc: SrcMeta, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace(false)
+		m2.EstimateLocation(false)
 		assert.Equal(t, "mx", m2.CountryCode())
 		assert.Equal(t, "Mexico", m2.CountryName())
 		assert.Equal(t, SrcEstimate, m2.PlaceSrc)
@@ -98,7 +103,7 @@ func TestPhoto_EstimatePlace(t *testing.T) {
 	t.Run("SrcAuto", func(t *testing.T) {
 		m2 := Photo{TakenSrc: SrcAuto, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace(false)
+		m2.EstimateLocation(false)
 		assert.Equal(t, "zz", m2.CountryCode())
 		assert.Equal(t, "Unknown", m2.CountryName())
 		assert.Equal(t, "zz", m2.PlaceID)
@@ -107,13 +112,13 @@ func TestPhoto_EstimatePlace(t *testing.T) {
 	t.Run("cant estimate - out of scope", func(t *testing.T) {
 		m2 := Photo{TakenSrc: SrcMeta, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", TakenAt: time.Date(2016, 11, 13, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace(true)
+		m2.EstimateLocation(true)
 		assert.Equal(t, UnknownID, m2.CountryCode())
 	})
 	/*t.Run("recent photo has country", func(t *testing.T) {
 		m2 := Photo{PhotoName: "PhotoWithoutLocation", OriginalName: "demo/zzz.jpg", TakenAt:  time.Date(2001, 1, 1, 7, 20, 0, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
-		m2.EstimatePlace()
+		m2.EstimateLocation()
 		assert.Equal(t, "mx", m2.CountryCode())
 		assert.Equal(t, "Mexico", m2.CountryName())
 		assert.Equal(t, SrcEstimate, m2.PlaceSrc)

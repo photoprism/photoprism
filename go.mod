@@ -33,7 +33,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.0.9
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.5.0
-	github.com/lib/pq v1.3.0 // indirect
+	github.com/lib/pq v1.8.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-isatty v0.0.14 // indirect

@@ -395,8 +395,8 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 }
 
 func TestPhoto_UpdateTimeZone(t *testing.T) {
-	t.Run("Estimate", func(t *testing.T) {
-		m := PhotoFixtures.Get("EstimateTimeZone")
+	t.Run("PhotoTimeZone", func(t *testing.T) {
+		m := PhotoFixtures.Get("PhotoTimeZone")
 
 		takenLocal := time.Date(2015, time.May, 17, 23, 2, 46, 0, time.UTC)
 		takenJerusalemUtc := time.Date(2015, time.May, 17, 20, 2, 46, 0, time.UTC)
@@ -407,6 +407,12 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 		assert.Equal(t, takenLocal, m.TakenAtLocal)
 
 		zone1 := "Asia/Jerusalem"
+
+		m.UpdateTimeZone(zone1)
+
+		assert.Equal(t, zone1, m.TimeZone)
+		assert.Equal(t, takenJerusalemUtc, m.TakenAt)
+		assert.Equal(t, takenLocal, m.TakenAtLocal)
 
 		m.UpdateTimeZone(zone1)
 
@@ -429,6 +435,47 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 		assert.Equal(t, zone2, m.TimeZone)
 		assert.Equal(t, takenShanghaiUtc, m.TakenAt)
 		assert.Equal(t, takenLocal, m.TakenAtLocal)
+	})
+	t.Run("VideoTimeZone", func(t *testing.T) {
+		m := PhotoFixtures.Get("VideoTimeZone")
+
+		takenUtc := time.Date(2015, 5, 17, 17, 48, 46, 0, time.UTC)
+		takenJerusalem := time.Date(2015, time.May, 17, 20, 48, 46, 0, time.UTC)
+		takenShanghaiUtc := time.Date(2015, time.May, 17, 12, 48, 46, 0, time.UTC)
+
+		assert.Equal(t, "UTC", m.TimeZone)
+		assert.Equal(t, takenUtc, m.TakenAt)
+		assert.Equal(t, takenUtc, m.TakenAtLocal)
+
+		zone1 := "Asia/Jerusalem"
+
+		m.UpdateTimeZone(zone1)
+
+		assert.Equal(t, zone1, m.TimeZone)
+		assert.Equal(t, takenUtc, m.TakenAt)
+		assert.Equal(t, takenJerusalem, m.TakenAtLocal)
+
+		m.UpdateTimeZone(zone1)
+
+		assert.Equal(t, zone1, m.TimeZone)
+		assert.Equal(t, takenUtc, m.TakenAt)
+		assert.Equal(t, takenJerusalem, m.TakenAtLocal)
+
+		zone2 := "Asia/Shanghai"
+
+		m.UpdateTimeZone(zone2)
+
+		assert.Equal(t, zone2, m.TimeZone)
+		assert.Equal(t, takenShanghaiUtc, m.TakenAt)
+		assert.Equal(t, takenJerusalem, m.TakenAtLocal)
+
+		zone3 := "UTC"
+
+		m.UpdateTimeZone(zone3)
+
+		assert.Equal(t, zone2, m.TimeZone)
+		assert.Equal(t, takenShanghaiUtc, m.TakenAt)
+		assert.Equal(t, takenJerusalem, m.TakenAtLocal)
 	})
 	t.Run("UTC", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
