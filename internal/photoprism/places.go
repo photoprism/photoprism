@@ -36,13 +36,9 @@ func (w *Places) Start() (updated []string, err error) {
 		}
 	}()
 
+	// Check if a worker is already running.
 	if err := mutex.MainWorker.Start(); err != nil {
-		// A worker is already running.
 		log.Warnf("index: %s (update places)", err.Error())
-		return []string{}, err
-	} else if !w.conf.Sponsor() && !w.conf.Test() {
-		log.Errorf(config.MsgSponsorCommand)
-		log.Errorf(config.MsgFundingInfo)
 		return []string{}, err
 	}
 
