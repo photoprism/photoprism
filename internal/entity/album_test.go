@@ -263,6 +263,16 @@ func TestFindAlbumBySlug(t *testing.T) {
 		assert.Equal(t, "Holiday 2030", album.AlbumTitle)
 		assert.Equal(t, "holiday-2030", album.AlbumSlug)
 	})
+	t.Run("state album", func(t *testing.T) {
+		album := FindAlbumBySlug("california-usa", AlbumState)
+
+		if album == nil {
+			t.Fatal("expected to find an album")
+		}
+
+		assert.Equal(t, "California / USA", album.AlbumTitle)
+		assert.Equal(t, "california-usa", album.AlbumSlug)
+	})
 	t.Run("no result", func(t *testing.T) {
 		album := FindAlbumBySlug("holiday-2030", AlbumMonth)
 
