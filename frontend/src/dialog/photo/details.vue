@@ -472,7 +472,13 @@ export default {
         return;
       }
 
-      const utcDate = localDate.toUTC();
+      let utcDate;
+
+      if (this.model.originalTimeZoneUTC()) {
+        utcDate = this.model.utcDate();
+      } else {
+        utcDate = localDate.toUTC();
+      }
 
       this.localTime = localDate.toFormat("HH:mm:ss");
       this.utcTime = utcDate.toFormat("HH:mm:ss");
@@ -494,10 +500,12 @@ export default {
         includeOffset: false,
       }) + "Z";
 
-      this.model.TakenAt = localDate.toUTC().toISO({
-        suppressMilliseconds: true,
-        includeOffset: false,
-      }) + "Z";
+      if (!this.model.originalTimeZoneUTC()) {
+        this.model.TakenAt = localDate.toUTC().toISO({
+          suppressMilliseconds: true,
+          includeOffset: false,
+        }) + "Z";
+      }
     },
     left() {
       this.$emit('next');

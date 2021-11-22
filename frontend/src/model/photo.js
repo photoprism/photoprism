@@ -52,6 +52,7 @@ export const TypeRaw = "raw";
 export const YearUnknown = -1;
 export const MonthUnknown = -1;
 export const DayUnknown = -1;
+export const TimeZoneUTC = "UTC";
 
 const num = "numeric";
 const short = "short";
@@ -231,7 +232,13 @@ export class Photo extends RestModel {
       time = this.TakenAtLocal.substr(11, 8);
     }
 
-    return `${date}T${time}`;
+    let iso = `${date}T${time}`;
+
+    if (this.originalTimeZoneUTC()) {
+      iso += "Z";
+    }
+
+    return iso;
   }
 
   getTimeZone() {
@@ -239,17 +246,30 @@ export class Photo extends RestModel {
       return this.TimeZone;
     }
 
-    return "utc";
+    return "";
+  }
+
+  originalTimeZoneUTC() {
+    const tz = this.originalValue("TimeZone");
+
+    if (tz) {
+      return tz.toLowerCase() === TimeZoneUTC.toLowerCase();
+    }
+
+    return false;
   }
 
   localDate(time) {
-    if (!this.TakenAtLocal) {
+    if (!this.TakenAtLocal || this.getTimeZone().toLowerCase() === TimeZoneUTC.toLowerCase()) {
       return this.utcDate();
+    } else if (this.getTimeZone() === "") {
+      return DateTime.fromISO(this.localDateString(time));
     }
 
     let zone = this.getTimeZone();
+    let iso = this.localDateString(time);
 
-    return DateTime.fromISO(this.localDateString(time), { zone });
+    return DateTime.fromISO(iso, { zone });
   }
 
   utcDate() {

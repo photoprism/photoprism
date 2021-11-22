@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/photoprism/go-tz.v2/tz"
 )
@@ -14,6 +15,14 @@ import (
 // UnknownLocation tests if the photo has an unknown location.
 func (m *Photo) UnknownLocation() bool {
 	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
+}
+
+// RemoveLocation removes the current location.
+func (m *Photo) RemoveLocation() {
+	m.PhotoLat = 0
+	m.PhotoLng = 0
+	m.Cell = &UnknownLocation
+	m.CellID = UnknownLocation.ID
 }
 
 // HasLocation tests if the photo has a known location.
@@ -92,6 +101,15 @@ func (m *Photo) LoadPlace() error {
 	m.Place = &place
 
 	return nil
+}
+
+// Position returns the coordinates as geo.Position.
+func (m *Photo) Position() geo.Position {
+	if m.NoLatLng() {
+		return geo.Position{}
+	}
+
+	return geo.Position{Lat: float64(m.PhotoLat), Lng: float64(m.PhotoLng)}
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.
