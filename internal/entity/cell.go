@@ -71,6 +71,9 @@ func (m *Cell) Refresh(api string) (err error) {
 		ID: s2.NormalizeToken(m.ID),
 	}
 
+	cellMutex.Lock()
+	defer cellMutex.Unlock()
+
 	// Query geodata API.
 	if err = l.QueryApi(api); err != nil {
 		return err
@@ -83,9 +86,6 @@ func (m *Cell) Refresh(api string) (err error) {
 	}
 
 	oldPlaceID := m.PlaceID
-
-	cellMutex.Lock()
-	defer cellMutex.Unlock()
 
 	place := Place{
 		ID:            l.PlaceID(),
@@ -144,8 +144,11 @@ func (m *Cell) Find(api string) error {
 	}
 
 	l := &maps.Location{
-		ID: m.ID,
+		ID: s2.NormalizeToken(m.ID),
 	}
+
+	cellMutex.Lock()
+	defer cellMutex.Unlock()
 
 	if err := l.QueryApi(api); err != nil {
 		return err
@@ -186,9 +189,6 @@ func (m *Cell) Find(api string) error {
 	m.CellStreet = l.Street()
 	m.CellPostcode = l.Postcode()
 	m.CellCategory = l.Category()
-
-	cellMutex.Lock()
-	defer cellMutex.Unlock()
 
 	if createErr := db.Create(m).Error; createErr == nil {
 		log.Debugf("place: added cell %s [%s]", m.ID, time.Since(start))
