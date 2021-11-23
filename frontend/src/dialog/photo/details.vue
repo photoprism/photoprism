@@ -457,9 +457,6 @@ export default {
         return;
       }
 
-      console.log("updateTakenAt BEFORE", this.model.TakenAt);
-      console.log("updateTakenAtLocal BEFORE", this.model.TakenAtLocal);
-
       let localDate = this.model.localDate(this.time);
 
       this.invalidDate = !localDate.isValid;
@@ -490,9 +487,6 @@ export default {
       if (this.model.currentTimeZoneUTC()) {
         this.model.TakenAt = isoTime;
       }
-
-      console.log("updateTakenAt AFTER", this.model.TakenAt);
-      console.log("updateTakenAtLocal AFTER", this.model.TakenAtLocal);
     },
     left() {
       this.$emit('next');
