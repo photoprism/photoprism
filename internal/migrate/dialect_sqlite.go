@@ -5,6 +5,6 @@ var DialectSQLite = Migrations{
 	{
 		ID:      "20211121-094727",
 		Dialect: "sqlite",
-		Query:   "DROP INDEX IF EXISTS idx_places_place_label;",
+		Query:   "DROP INDEX IF EXISTS idx_places_place_label",
 	},
 }

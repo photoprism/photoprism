@@ -69,6 +69,36 @@ is an oblate spheroid.`
 	})
 }
 
+func TestAlbum_UpdateSlug(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		album := NewMonthAlbum("Foo ", "foo", 2002, 11)
+
+		assert.Equal(t, "Foo", album.AlbumTitle)
+		assert.Equal(t, "foo", album.AlbumSlug)
+		assert.Equal(t, "", album.AlbumDescription)
+		assert.Equal(t, 2002, album.AlbumYear)
+		assert.Equal(t, 11, album.AlbumMonth)
+
+		if err := album.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := album.UpdateSlug("November / 2002", "november-2002"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "November / 2002", album.AlbumTitle)
+		assert.Equal(t, "november-2002", album.AlbumSlug)
+		assert.Equal(t, "", album.AlbumDescription)
+		assert.Equal(t, 2002, album.AlbumYear)
+		assert.Equal(t, 11, album.AlbumMonth)
+
+		if err := album.DeletePermanently(); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
 func TestAlbum_UpdateState(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		album := NewAlbum("Any State", AlbumState)
@@ -80,7 +110,7 @@ func TestAlbum_UpdateState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := album.UpdateState("Alberta", "ca"); err != nil {
+		if err := album.UpdateState("Alberta", "canada-alberta", "Alberta", "ca"); err != nil {
 			t.Fatal(err)
 		}
 

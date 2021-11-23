@@ -5,6 +5,6 @@ var DialectMySQL = Migrations{
 	{
 		ID:      "20211121-094727",
 		Dialect: "mysql",
-		Query:   "DROP INDEX IF EXISTS uix_places_place_label ON `places`;",
+		Query:   "DROP INDEX IF EXISTS uix_places_place_label ON `places`",
 	},
 }

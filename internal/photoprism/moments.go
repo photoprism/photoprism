@@ -112,9 +112,11 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			w.MigrateSlug(mom, entity.AlbumMonth)
+			if a := entity.FindMonthAlbum(mom.Year, mom.Month); a != nil {
+				if err := a.UpdateSlug(mom.Title(), mom.Slug()); err != nil {
+					log.Errorf("moments: %s (update slug)", err.Error())
+				}
 
-			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMonth); a != nil {
 				if !a.Deleted() {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 				} else if err := a.Restore(); err != nil {
@@ -137,15 +139,17 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			w.MigrateSlug(mom, entity.AlbumMoment)
-
 			f := form.PhotoSearch{
 				Country: mom.Country,
 				Year:    strconv.Itoa(mom.Year),
 				Public:  true,
 			}
 
-			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMoment); a != nil {
+			if a := entity.FindAlbumByFilter(f.Serialize(), entity.AlbumMoment); a != nil {
+				if err := a.UpdateSlug(mom.Title(), mom.Slug()); err != nil {
+					log.Errorf("moments: %s (update slug)", err.Error())
+				}
+
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
@@ -170,16 +174,14 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			w.MigrateSlug(mom, entity.AlbumState)
-
 			f := form.PhotoSearch{
 				Country: mom.Country,
 				State:   mom.State,
 				Public:  true,
 			}
 
-			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumState); a != nil {
-				if err := a.UpdateState(mom.State, mom.Country); err != nil {
+			if a := entity.FindAlbumByFilter(f.Serialize(), entity.AlbumState); a != nil {
+				if err := a.UpdateState(mom.Title(), mom.Slug(), mom.State, mom.Country); err != nil {
 					log.Errorf("moments: %s (update state)", err.Error())
 				}
 

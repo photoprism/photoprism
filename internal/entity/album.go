@@ -177,6 +177,9 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 
 // NewStateAlbum creates a new moment.
 func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
+	albumTitle = strings.TrimSpace(albumTitle)
+	albumSlug = strings.TrimSpace(albumSlug)
+
 	if albumTitle == "" || albumSlug == "" || albumFilter == "" {
 		return nil
 	}
@@ -198,6 +201,9 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 
 // NewMonthAlbum creates a new month album.
 func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
+	albumTitle = strings.TrimSpace(albumTitle)
+	albumSlug = strings.TrimSpace(albumSlug)
+
 	if albumTitle == "" || albumSlug == "" || year == 0 || month == 0 {
 		return nil
 	}
@@ -225,11 +231,33 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 	return result
 }
 
+// FindMonthAlbum finds a matching month album or returns nil.
+func FindMonthAlbum(year, month int) *Album {
+	result := Album{}
+
+	if err := UnscopedDb().Where("album_year = ? AND album_month = ? AND album_type = ?", year, month, AlbumMonth).First(&result).Error; err != nil {
+		return nil
+	}
+
+	return &result
+}
+
 // FindAlbumBySlug finds a matching album or returns nil.
 func FindAlbumBySlug(albumSlug, albumType string) *Album {
 	result := Album{}
 
 	if err := UnscopedDb().Where("album_slug = ? AND album_type = ?", albumSlug, albumType).First(&result).Error; err != nil {
+		return nil
+	}
+
+	return &result
+}
+
+// FindAlbumByFilter finds a matching album or returns nil.
+func FindAlbumByFilter(albumFilter, albumType string) *Album {
+	result := Album{}
+
+	if err := UnscopedDb().Where("album_filter = ? AND album_type = ?", albumFilter, albumType).First(&result).Error; err != nil {
 		return nil
 	}
 
@@ -333,9 +361,34 @@ func (m *Album) SetTitle(title string) {
 	}
 }
 
+// UpdateSlug updates title and slug of generated albums if needed.
+func (m *Album) UpdateSlug(title, slug string) error {
+	title = strings.TrimSpace(title)
+	slug = strings.TrimSpace(slug)
+
+	if title == "" || slug == "" {
+		return nil
+	}
+
+	changed := false
+
+	if m.AlbumSlug != slug {
+		m.AlbumSlug = slug
+		changed = true
+	}
+
+	if !changed {
+		return nil
+	}
+
+	m.AlbumTitle = title
+
+	return m.Updates(Values{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug})
+}
+
 // UpdateState updates the album location.
-func (m *Album) UpdateState(stateName, countryCode string) error {
-	if stateName == "" || countryCode == "" {
+func (m *Album) UpdateState(title, slug, stateName, countryCode string) error {
+	if title == "" || slug == "" || stateName == "" || countryCode == "" {
 		return nil
 	}
 
@@ -357,13 +410,18 @@ func (m *Album) UpdateState(stateName, countryCode string) error {
 		changed = true
 	}
 
+	if m.AlbumSlug != slug {
+		m.AlbumSlug = slug
+		changed = true
+	}
+
 	if !changed {
 		return nil
 	}
 
-	m.AlbumTitle = stateName
+	m.AlbumTitle = title
 
-	return m.Updates(Values{"album_title": m.AlbumTitle, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
+	return m.Updates(Values{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
