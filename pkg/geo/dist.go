@@ -4,19 +4,13 @@ import (
 	"math"
 )
 
-// Position represents a geo coordinate.
-type Position struct {
-	Lat float64
-	Lng float64
-}
-
 // DegToRad converts a value from degrees to radians.
 func DegToRad(d float64) float64 {
 	return d * math.Pi / 180
 }
 
-// Dist returns the shortest path between two positions in km.
-func Dist(p, q Position) (km float64) {
+// Km returns the shortest path between two positions in km.
+func Km(p, q Position) (km float64) {
 	if p.Lat == q.Lat && p.Lng == q.Lng {
 		return 0.0
 	}

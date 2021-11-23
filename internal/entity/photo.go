@@ -148,6 +148,13 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		return errors.New("can't save form when photo id is missing")
 	}
 
+	// Update time fields.
+	if model.TimeZoneUTC() {
+		model.TakenAtLocal = model.TakenAt
+	} else {
+		model.TakenAt = model.GetTakenAt()
+	}
+
 	model.UpdateDateFields()
 
 	details := model.GetDetails()
@@ -645,16 +652,21 @@ func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
 		// Apply new time zone.
 		m.TimeZone = zone
 		m.TakenAt = m.GetTakenAt()
-	} else if m.TimeZone == time.UTC.String() {
+	} else if m.TimeZoneUTC() {
 		// Local is UTC.
 		m.TimeZone = zone
 		m.TakenAtLocal = taken
 	} else if m.TimeZone != "" {
 		// Apply existing time zone.
-		m.TakenAtLocal = m.GetTakenAtLocal()
+		m.TakenAt = m.GetTakenAt()
 	}
 
 	m.UpdateDateFields()
+}
+
+// TimeZoneUTC tests if the current time zone is UTC.
+func (m *Photo) TimeZoneUTC() bool {
+	return strings.EqualFold(m.TimeZone, time.UTC.String())
 }
 
 // UpdateTimeZone updates the time zone.
@@ -667,7 +679,7 @@ func (m *Photo) UpdateTimeZone(zone string) {
 		return
 	}
 
-	if m.TimeZone == time.UTC.String() {
+	if m.TimeZoneUTC() {
 		m.TimeZone = zone
 		m.TakenAtLocal = m.GetTakenAtLocal()
 	} else {

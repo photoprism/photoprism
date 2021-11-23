@@ -300,6 +300,16 @@ func (m *Album) IsMoment() bool {
 	return m.AlbumType == AlbumMoment
 }
 
+// IsState tests if the album is of type state.
+func (m *Album) IsState() bool {
+	return m.AlbumType == AlbumState
+}
+
+// IsDefault tests if the album is a regular album.
+func (m *Album) IsDefault() bool {
+	return m.AlbumType == AlbumDefault
+}
+
 // SetTitle changes the album name.
 func (m *Album) SetTitle(title string) {
 	title = strings.TrimSpace(title)
@@ -416,17 +426,25 @@ func (m *Album) Create() error {
 		return err
 	}
 
+	m.PublishCountChange(1)
+
+	return nil
+}
+
+// PublishCountChange publishes an event with the added or removed number of albums.
+func (m *Album) PublishCountChange(n int) {
+	data := event.Data{"count": n}
+
 	switch m.AlbumType {
 	case AlbumDefault:
-		event.Publish("count.albums", event.Data{"count": 1})
+		event.Publish("count.albums", data)
 	case AlbumMoment:
-		event.Publish("count.moments", event.Data{"count": 1})
+		event.Publish("count.moments", data)
 	case AlbumMonth:
-		event.Publish("count.months", event.Data{"count": 1})
+		event.Publish("count.months", data)
 	case AlbumFolder:
-		event.Publish("count.folders", event.Data{"count": 1})
+		event.Publish("count.folders", data)
 	}
-	return nil
 }
 
 // Delete marks the entity as deleted in the database.
@@ -439,23 +457,13 @@ func (m *Album) Delete() error {
 		return err
 	}
 
-	switch m.AlbumType {
-	case AlbumDefault:
-		event.Publish("count.albums", event.Data{"count": -1})
-	case AlbumMoment:
-		event.Publish("count.moments", event.Data{"count": -1})
-	case AlbumMonth:
-		event.Publish("count.months", event.Data{"count": -1})
-	case AlbumFolder:
-		event.Publish("count.folders", event.Data{"count": -1})
-	}
+	m.PublishCountChange(-1)
 
-	return nil
+	return DeleteShareLinks(m.AlbumUID)
 }
 
 // DeletePermanently permanently removes an album from the index.
 func (m *Album) DeletePermanently() error {
-	albumType := m.AlbumType
 	wasDeleted := m.Deleted()
 
 	if err := UnscopedDb().Delete(m).Error; err != nil {
@@ -463,19 +471,10 @@ func (m *Album) DeletePermanently() error {
 	}
 
 	if !wasDeleted {
-		switch albumType {
-		case AlbumDefault:
-			event.Publish("count.albums", event.Data{"count": -1})
-		case AlbumMoment:
-			event.Publish("count.moments", event.Data{"count": -1})
-		case AlbumMonth:
-			event.Publish("count.months", event.Data{"count": -1})
-		case AlbumFolder:
-			event.Publish("count.folders", event.Data{"count": -1})
-		}
+		m.PublishCountChange(-1)
 	}
 
-	return nil
+	return DeleteShareLinks(m.AlbumUID)
 }
 
 // Deleted tests if the entity is deleted.
@@ -495,16 +494,7 @@ func (m *Album) Restore() error {
 
 	m.DeletedAt = nil
 
-	switch m.AlbumType {
-	case AlbumDefault:
-		event.Publish("count.albums", event.Data{"count": 1})
-	case AlbumMoment:
-		event.Publish("count.moments", event.Data{"count": 1})
-	case AlbumMonth:
-		event.Publish("count.months", event.Data{"count": 1})
-	case AlbumFolder:
-		event.Publish("count.folders", event.Data{"count": 1})
-	}
+	m.PublishCountChange(1)
 
 	return nil
 }

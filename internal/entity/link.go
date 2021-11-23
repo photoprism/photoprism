@@ -124,13 +124,18 @@ func (m *Link) Save() error {
 	return Db().Save(m).Error
 }
 
-// Deletes the link.
+// Delete the link.
 func (m *Link) Delete() error {
 	if m.LinkToken == "" {
 		return fmt.Errorf("link: empty share token")
 	}
 
 	return Db().Delete(m).Error
+}
+
+// DeleteShareLinks removed all links matching the share uid.
+func DeleteShareLinks(shareUID string) error {
+	return Db().Delete(&Link{}, "share_uid = ?", shareUID).Error
 }
 
 // FindLink returns an entity pointer if exists.

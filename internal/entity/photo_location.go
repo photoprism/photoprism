@@ -23,6 +23,9 @@ func (m *Photo) RemoveLocation() {
 	m.PhotoLng = 0
 	m.Cell = &UnknownLocation
 	m.CellID = UnknownLocation.ID
+	m.CellAccuracy = 0
+	m.Place = &UnknownPlace
+	m.PlaceID = UnknownPlace.ID
 }
 
 // HasLocation tests if the photo has a known location.
@@ -105,11 +108,8 @@ func (m *Photo) LoadPlace() error {
 
 // Position returns the coordinates as geo.Position.
 func (m *Photo) Position() geo.Position {
-	if m.NoLatLng() {
-		return geo.Position{}
-	}
-
-	return geo.Position{Lat: float64(m.PhotoLat), Lng: float64(m.PhotoLng)}
+	return geo.Position{Name: m.String(), Time: m.TakenAt.UTC(),
+		Lat: float64(m.PhotoLat), Lng: float64(m.PhotoLng), Altitude: float64(m.PhotoAltitude)}
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.
@@ -215,18 +215,25 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 
 		err := location.Find(GeoApi)
 
-		if location.Place == nil {
+		if err != nil {
+			log.Errorf("photo: %s (find location)", err)
+		} else if location.Place == nil {
 			log.Warnf("photo: failed fetching geo data (uid %s, cell %s)", m.PhotoUID, location.ID)
-		} else if err == nil && location.ID != UnknownLocation.ID {
+		} else if location.ID != UnknownLocation.ID {
+			changed := m.CellID != location.ID
+
+			if changed {
+				log.Debugf("photo: changing location of %s from %s to %s", m.String(), m.CellID, location.ID)
+			}
+
 			m.Cell = location
 			m.CellID = location.ID
 			m.Place = location.Place
 			m.PlaceID = location.PlaceID
 			m.PhotoCountry = location.CountryCode()
 
-			if m.TakenSrc != SrcManual {
-				m.TimeZone = m.GetTimeZone()
-				m.TakenAt = m.GetTakenAt()
+			if changed && m.TakenSrc != SrcManual {
+				m.UpdateTimeZone(m.GetTimeZone())
 			}
 
 			FirstOrCreateCountry(NewCountry(location.CountryCode(), location.CountryName()))
@@ -271,7 +278,7 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 		log.Warnf("photo: place %s not found in %s", m.PlaceID, m.PhotoName)
 	}
 
-	if m.UnknownCountry() {
+	if m.UnknownCountry() && m.CellID == UnknownID && m.PlaceID == UnknownID {
 		m.EstimateCountry()
 	}
 

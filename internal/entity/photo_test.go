@@ -319,25 +319,28 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 	})
 	t.Run("fallback", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+		assert.Equal(t, time.Date(2013, time.November, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, time.November, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 
 		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
 
-		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcAuto)
+		m.SetTakenAt(time.Date(2019, time.December, 11, 9, 7, 18, 0, time.UTC),
+			time.Date(2019, time.December, 11, 10, 7, 18, 0, time.UTC), "", SrcAuto)
 
 		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
 
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
+		assert.Equal(t, time.Date(2013, time.November, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2013, time.November, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
 
-		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC)
+		newTime := time.Date(2013, time.November, 11, 9, 7, 18, 0, time.UTC)
+
+		expected := time.Date(2013, time.November, 11, 8, 7, 18, 0, time.UTC)
+
 		m.TimeZone = "Europe/Berlin"
 
 		m.SetTakenAt(newTime, newTime, "", SrcName)
 
-		assert.Equal(t, newTime, m.TakenAt)
+		assert.Equal(t, expected, m.TakenAt)
 		assert.Equal(t, m.GetTakenAtLocal(), m.TakenAtLocal)
 	})
 	t.Run("time zone", func(t *testing.T) {

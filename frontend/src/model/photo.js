@@ -249,6 +249,28 @@ export class Photo extends RestModel {
     return "";
   }
 
+  timeIsUTC() {
+    return this.originalTimeZoneUTC() || this.currentTimeZoneUTC();
+  }
+
+  getDateTime() {
+    if (this.timeIsUTC()) {
+      return DateTime.fromISO(this.TakenAt).toUTC();
+    } else {
+      return DateTime.fromISO(this.TakenAtLocal).toUTC();
+    }
+  }
+
+  currentTimeZoneUTC() {
+    const tz = this.getTimeZone();
+
+    if (tz) {
+      return tz.toLowerCase() === TimeZoneUTC.toLowerCase();
+    }
+
+    return false;
+  }
+
   originalTimeZoneUTC() {
     const tz = this.originalValue("TimeZone");
 
@@ -260,14 +282,16 @@ export class Photo extends RestModel {
   }
 
   localDate(time) {
-    if (!this.TakenAtLocal || this.getTimeZone().toLowerCase() === TimeZoneUTC.toLowerCase()) {
+    if (!this.TakenAtLocal) {
       return this.utcDate();
-    } else if (this.getTimeZone() === "") {
-      return DateTime.fromISO(this.localDateString(time));
     }
 
-    let zone = this.getTimeZone();
     let iso = this.localDateString(time);
+    let zone = this.getTimeZone();
+
+    if (this.getTimeZone() === "") {
+      zone = "UTC";
+    }
 
     return DateTime.fromISO(iso, { zone });
   }

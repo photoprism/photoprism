@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -220,7 +221,16 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := a.Delete(); err != nil {
+		// Regular, manually created album?
+		if a.IsDefault() {
+			// Soft delete manually created albums.
+			err = a.Delete()
+		} else {
+			// Permanently delete automatically created albums.
+			err = a.DeletePermanently()
+		}
+
+		if err != nil {
 			log.Errorf("album: %s (delete)", err)
 			AbortDeleteFailed(c)
 			return
