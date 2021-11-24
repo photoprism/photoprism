@@ -92,6 +92,18 @@ func (m *Movement) Midpoint() Position {
 	}
 }
 
+// Closest returns the position closest in time, either start or end.
+func (m *Movement) Closest(t time.Time) Position {
+	delaStart := math.Abs(m.Start.Time.Sub(t).Seconds())
+	deltaEnd := math.Abs(m.End.Time.Sub(t).Seconds())
+
+	if delaStart > deltaEnd {
+		return m.End
+	} else {
+		return m.Start
+	}
+}
+
 // Seconds returns the movement duration in seconds.
 func (m *Movement) Seconds() float64 {
 	return math.Abs(m.Duration().Seconds())
@@ -191,25 +203,33 @@ func (m *Movement) EstimatePosition(t time.Time) Position {
 		Time:     t,
 		Altitude: m.EstimateAltitude(t),
 		Accuracy: m.EstimateAccuracy(t),
+		Estimate: true,
 	}
 
-	if !m.Realistic() {
+	if m.Realistic() {
+		if t.Before(m.Start.Time) || t.After(m.End.Time) {
+			s = math.Copysign(math.Sqrt(math.Abs(s)), s)
+		}
+
+		latSec, lngSec := m.DegPerSecond()
+
+		estimate.Lat = m.Start.Lat + latSec*s
+		estimate.Lng = m.Start.Lng + lngSec*s
+
+		return estimate
+	} else if km := m.Km(); km < 1 {
 		p := m.Midpoint()
 
 		estimate.Lat = p.Lat
 		estimate.Lng = p.Lng
 
 		return estimate
+	} else {
+		p := m.Closest(t)
+
+		estimate.Lat = p.Lat
+		estimate.Lng = p.Lng
+
+		return estimate
 	}
-
-	if t.Before(m.Start.Time) || t.After(m.End.Time) {
-		s = math.Copysign(math.Sqrt(math.Abs(s)), s)
-	}
-
-	latSec, lngSec := m.DegPerSecond()
-
-	estimate.Lat = m.Start.Lat + latSec*s
-	estimate.Lng = m.Start.Lng + lngSec*s
-
-	return estimate
 }

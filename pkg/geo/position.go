@@ -16,6 +16,7 @@ type Position struct {
 	Lng      float64   // In degree
 	Altitude float64   // In meter
 	Accuracy int       // In meter
+	Estimate bool
 }
 
 // String returns the position information as string for logging.
@@ -32,6 +33,11 @@ func (p Position) String() string {
 // AltitudeInt returns the altitude as integer.
 func (p Position) AltitudeInt() int {
 	return int(math.Round(p.Altitude))
+}
+
+// Km calculates the distance to another position in km.
+func (p Position) Km(other Position) float64 {
+	return math.Abs(Km(p, other))
 }
 
 // InRange tests if coordinates are within a certain range of the position.

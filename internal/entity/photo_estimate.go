@@ -10,6 +10,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+const Accuracy1Km = 1000
+
 // EstimateCountry updates the photo with an estimated country if possible.
 func (m *Photo) EstimateCountry() {
 	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() || m.HasPlace() {
@@ -65,7 +67,7 @@ func (m *Photo) EstimateLocation(force bool) {
 
 	// Estimate country if taken date is unreliable.
 	if SrcPriority[m.TakenSrc] <= SrcPriority[SrcName] {
-		m.RemoveLocation(false)
+		m.RemoveLocation(SrcEstimate, false)
 		m.EstimateCountry()
 		return
 	}
@@ -105,80 +107,42 @@ func (m *Photo) EstimateLocation(force bool) {
 	// Found?
 	if len(mostRecent) == 0 {
 		log.Debugf("photo: unknown position at %s", m.TakenAt)
-		m.RemoveLocation(false)
+		m.RemoveLocation(SrcEstimate, false)
 		m.EstimateCountry()
 	} else if recentPhoto := mostRecent[0]; recentPhoto.HasLocation() && recentPhoto.HasPlace() {
 		// Too much time difference?
 		if hours := recentPhoto.TakenAt.Sub(m.TakenAt) / time.Hour; hours < -36 || hours > 36 {
 			log.Debugf("photo: skipping %s, %d hours time difference to recent position", m, hours)
-			m.RemoveLocation(false)
+			m.RemoveLocation(SrcEstimate, false)
 			m.EstimateCountry()
 		} else if len(mostRecent) == 1 {
-			m.RemoveLocation(false)
-
-			m.Place = recentPhoto.Place
-			m.PlaceID = recentPhoto.PlaceID
-			m.PhotoCountry = recentPhoto.PhotoCountry
-			m.PlaceSrc = SrcEstimate
-
-			m.UpdateTimeZone(recentPhoto.TimeZone)
-
-			log.Debugf("photo: approximate place of %s is %s (id %s)", m, txt.Quote(m.Place.Label()), recentPhoto.PlaceID)
+			m.AdoptPlace(recentPhoto, SrcEstimate, false)
 		} else if recentPhoto.HasPlace() {
 			p1 := mostRecent[0]
 			p2 := mostRecent[1]
 
 			movement := geo.NewMovement(p1.Position(), p2.Position())
 
-			if movement.Km() < 100 {
-				estimate := movement.EstimatePosition(m.TakenAt)
-
-				if m.CellID != UnknownID && estimate.InRange(float64(m.PhotoLat), float64(m.PhotoLng), geo.Meter*50) {
-					log.Debugf("photo: keeping position estimate %f, %f for %s", m.PhotoLat, m.PhotoLng, m.String())
-				} else {
-					estimate.Randomize(geo.Meter * 5)
-
-					m.PhotoLat = float32(estimate.Lat)
-					m.PhotoLng = float32(estimate.Lng)
-					m.PlaceSrc = SrcEstimate
-					m.CellAccuracy = estimate.Accuracy
-					m.SetAltitude(estimate.AltitudeInt(), SrcEstimate)
-
-					log.Debugf("photo: %s %s", m.String(), estimate.String())
-
-					m.UpdateLocation()
-
-					if m.Place == nil {
-						log.Warnf("photo: failed updating position of %s", m)
-					} else {
-						log.Debugf("photo: approximate place of %s is %s (id %s)", m, txt.Quote(m.Place.Label()), m.PlaceID)
-					}
-				}
+			// Ignore inaccurate coordinate estimates.
+			if estimate := movement.EstimatePosition(m.TakenAt); movement.Km() < 100 && estimate.Accuracy < Accuracy1Km {
+				m.SetPosition(estimate, SrcEstimate, false)
 			} else {
-				m.RemoveLocation(false)
-
-				m.Place = recentPhoto.Place
-				m.PlaceID = recentPhoto.PlaceID
-				m.PlaceSrc = SrcEstimate
-				m.PhotoCountry = recentPhoto.PhotoCountry
-				m.SetAltitude(movement.EstimateAltitudeInt(m.TakenAt), SrcEstimate)
-
-				m.UpdateTimeZone(recentPhoto.TimeZone)
+				m.AdoptPlace(recentPhoto, SrcEstimate, false)
 			}
 		} else if recentPhoto.HasCountry() {
-			m.RemoveLocation(false)
+			m.RemoveLocation(SrcEstimate, false)
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.PlaceSrc = SrcEstimate
 			m.UpdateTimeZone(recentPhoto.TimeZone)
 
 			log.Debugf("photo: probable country for %s is %s", m, txt.Quote(m.CountryName()))
 		} else {
-			m.RemoveLocation(false)
+			m.RemoveLocation(SrcEstimate, false)
 			m.EstimateCountry()
 		}
 	} else {
 		log.Warnf("photo: %s has no location, uid %s", recentPhoto.PhotoName, recentPhoto.PhotoUID)
-		m.RemoveLocation(false)
+		m.RemoveLocation(SrcEstimate, false)
 		m.EstimateCountry()
 	}
 

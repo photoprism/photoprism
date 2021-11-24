@@ -13,7 +13,7 @@ func (m *Photo) TrustedTime() bool {
 		return false
 	} else if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		return false
-	} else if m.TimeZone == "" || m.TimeZoneUTC() {
+	} else if m.TimeZone == "" {
 		return false
 	}
 

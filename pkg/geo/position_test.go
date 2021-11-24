@@ -12,12 +12,14 @@ func TestPosition_InRange(t *testing.T) {
 		assert.True(t, pos.InRange(14.2, -3.0, 1.5))
 	})
 	t.Run("Zero", func(t *testing.T) {
-		pos := Position{Lat: 0, Lng: 0}
+		pos := Position{Lat: 0, Lng: 0, Estimate: true}
 		assert.False(t, pos.InRange(0.1, -0.1, 1.5))
+		assert.True(t, pos.Estimate)
 	})
 	t.Run("False", func(t *testing.T) {
 		pos := Position{Lat: 15.2, Lng: -4.0}
 		assert.False(t, pos.InRange(13.2, -3.0, 1.5))
+		assert.False(t, pos.Estimate)
 	})
 }
 

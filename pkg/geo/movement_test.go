@@ -43,6 +43,7 @@ func TestMovement(t *testing.T) {
 		// estimate @ 31.325956, 120.931898, 4.000000 m
 		assert.InEpsilon(t, 52.008745, posEst1.Lat, 0.01)
 		assert.InEpsilon(t, 16.025854, posEst1.Lng, 0.01)
+		assert.True(t, posEst1.Estimate)
 
 		posEst2 := result.EstimatePosition(time.Date(2015, 5, 17, 18, 14, 34, 0, time.UTC))
 		t.Log(posEst2.String())
@@ -50,6 +51,7 @@ func TestMovement(t *testing.T) {
 		// 2015-05-17 18:14:34 @ 40.540746, 74.193174
 		assert.InEpsilon(t, 40.540746, posEst2.Lat, 0.01)
 		assert.InEpsilon(t, 74.193174, posEst2.Lng, 0.01)
+		assert.True(t, posEst2.Estimate)
 
 		posMid := result.Midpoint()
 		t.Log(posMid.String())
@@ -93,6 +95,7 @@ func TestMovement(t *testing.T) {
 		// 2019-07-21 11:56:47 @ 48.299200, 8.930116
 		assert.InEpsilon(t, 48.299200, posEst.Lat, 0.01)
 		assert.InEpsilon(t, 8.930116, posEst.Lng, 0.01)
+		assert.True(t, posEst.Estimate)
 
 		posMid := result.Midpoint()
 
@@ -128,6 +131,7 @@ func TestMovement(t *testing.T) {
 		// midpoint @ 48.301200, 8.928630
 		assert.InEpsilon(t, 48.301200, posEst.Lat, 0.01)
 		assert.InEpsilon(t, 8.928630, posEst.Lng, 0.01)
+		assert.True(t, posEst.Estimate)
 
 		posMid := result.Midpoint()
 
@@ -163,6 +167,7 @@ func TestMovement(t *testing.T) {
 		// 2019-07-21 11:56:47: lat 48.299237, lng 8.929458
 		assert.InEpsilon(t, 48.299237, posEst.Lat, 0.01)
 		assert.InEpsilon(t, 8.929458, posEst.Lng, 0.01)
+		assert.True(t, posEst.Estimate)
 
 		posMid := result.Midpoint()
 
@@ -171,5 +176,47 @@ func TestMovement(t *testing.T) {
 		// midpoint: lat 48.299300, lng 8.929335
 		assert.InEpsilon(t, 48.299300, posMid.Lat, 0.01)
 		assert.InEpsilon(t, 8.929335, posMid.Lng, 0.01)
+	})
+
+	t.Run("NotRealistic", func(t *testing.T) {
+		timeEst := time.Date(2013, time.August, 10, 00, 05, 37, 0, time.UTC)
+
+		time1 := time.Date(2013, time.August, 9, 17, 9, 0, 0, time.UTC)
+		time2 := time.Date(2013, time.August, 9, 17, 8, 44, 0, time.UTC)
+
+		pos1 := Position{Name: "Pos1", Time: time1, Lat: 52.6648, Lng: 13.3387}
+		pos2 := Position{Name: "Pos2", Time: time2, Lat: 48.5193, Lng: 9.04933}
+
+		result := NewMovement(pos1, pos2)
+
+		t.Log(result.String())
+
+		// movement from 2013-08-09 17:08:44 to 2013-08-09 17:09:00 in 16.000000 s
+		// Δ lat 4.145500, Δ lng  4.289370, dist 551.290399 km, speed 124040.339691 km/h
+		assert.InEpsilon(t, 16.000000, result.Seconds(), 0.01)
+		assert.InEpsilon(t, 4.145500, result.DegLat(), 0.01)
+		assert.InEpsilon(t, 4.289370, result.DegLng(), 0.01)
+		assert.InEpsilon(t, 551.290399, result.Km(), 0.01)
+		assert.InEpsilon(t, 124040.339691, result.Speed(), 0.1)
+		assert.False(t, result.Realistic())
+
+		posEst := result.EstimatePosition(timeEst)
+
+		t.Log(posEst.String())
+
+		// estimate @ 52.664800, 13.338700, alt 0.000000 m ± 275645 m
+		assert.InEpsilon(t, 52.664800, posEst.Lat, 0.01)
+		assert.InEpsilon(t, 13.338700, posEst.Lng, 0.01)
+		assert.InEpsilon(t, 275645, posEst.Accuracy, 0.1)
+		assert.True(t, posEst.Estimate)
+
+		posMid := result.Midpoint()
+
+		t.Log(posMid.String())
+
+		// midpoint @ 50.592050, 11.194015, alt 0.000000 m ± 0 m
+		assert.InEpsilon(t, 50.592050, posMid.Lat, 0.01)
+		assert.InEpsilon(t, 11.194015, posMid.Lng, 0.01)
+		assert.Equal(t, 275645, result.EstimateAccuracy(timeEst))
 	})
 }

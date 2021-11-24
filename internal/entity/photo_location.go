@@ -47,9 +47,62 @@ func (m *Photo) UnknownLocation() bool {
 	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
 }
 
+// SetPosition sets a position estimate.
+func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
+	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
+		return
+	} else if pos.Lat == 0 && pos.Lng == 0 {
+		return
+	}
+
+	if m.CellID != UnknownID && pos.InRange(float64(m.PhotoLat), float64(m.PhotoLng), geo.Meter*50) {
+		log.Debugf("photo: %s keeps position %f, %f", m.String(), m.PhotoLat, m.PhotoLng)
+	} else {
+		if pos.Estimate {
+			pos.Randomize(geo.Meter * 5)
+		}
+
+		m.PhotoLat = float32(pos.Lat)
+		m.PhotoLng = float32(pos.Lng)
+		m.PlaceSrc = source
+		m.CellAccuracy = pos.Accuracy
+		m.SetAltitude(pos.AltitudeInt(), source)
+
+		log.Debugf("photo: %s %s", m.String(), pos.String())
+
+		m.UpdateLocation()
+
+		if m.Place == nil {
+			log.Warnf("photo: failed updating position of %s", m)
+		} else {
+			log.Debugf("photo: approximate place of %s is %s (id %s)", m, txt.Quote(m.Place.Label()), m.PlaceID)
+		}
+	}
+}
+
+// AdoptPlace sets the place based on another photo.
+func (m *Photo) AdoptPlace(other Photo, source string, force bool) {
+	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
+		return
+	} else if other.Place == nil {
+		return
+	}
+
+	m.RemoveLocation(source, force)
+
+	m.Place = other.Place
+	m.PlaceID = other.PlaceID
+	m.PhotoCountry = other.PhotoCountry
+	m.PlaceSrc = source
+
+	m.UpdateTimeZone(other.TimeZone)
+
+	log.Debugf("photo: %s now located at %s (id %s)", m.String(), txt.Quote(m.Place.Label()), m.PlaceID)
+}
+
 // RemoveLocation removes the current location.
-func (m *Photo) RemoveLocation(force bool) {
-	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] && !force {
+func (m *Photo) RemoveLocation(source string, force bool) {
+	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
 		return
 	}
 
