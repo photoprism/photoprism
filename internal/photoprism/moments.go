@@ -6,6 +6,8 @@ import (
 	"runtime/debug"
 	"strconv"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -53,6 +55,13 @@ func (w *Moments) Start() (err error) {
 	}
 
 	defer mutex.MainWorker.Stop()
+
+	// Remove duplicate moments.
+	if removed, err := query.RemoveDuplicateMoments(); err != nil {
+		log.Warnf("moments: %s (remove duplicates)", err)
+	} else if removed > 0 {
+		log.Infof("moments: removed %s", english.Plural(removed, "duplicate", "duplicates"))
+	}
 
 	counts := query.Counts{}
 	counts.Refresh()

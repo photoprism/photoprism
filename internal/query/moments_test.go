@@ -3,6 +3,8 @@ package query
 import (
 	"testing"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -203,5 +205,16 @@ func TestMoment_Title(t *testing.T) {
 		}
 
 		assert.Equal(t, "December", moment.Title())
+	})
+}
+
+func TestRemoveDuplicateMoments(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		if removed, err := RemoveDuplicateMoments(); err != nil {
+			t.Fatal(err)
+		} else {
+			t.Logf("moments: removed %s", english.Plural(removed, "duplicate", "duplicates"))
+			assert.Equal(t, 2, removed)
+		}
 	})
 }
