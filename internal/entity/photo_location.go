@@ -18,14 +18,29 @@ func (m *Photo) UnknownLocation() bool {
 }
 
 // RemoveLocation removes the current location.
-func (m *Photo) RemoveLocation() {
+func (m *Photo) RemoveLocation(force bool) {
+	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] && !force {
+		return
+	}
+
+	// Reset latitude and longitude.
 	m.PhotoLat = 0
 	m.PhotoLng = 0
+
+	// Reset cell reference.
 	m.Cell = &UnknownLocation
 	m.CellID = UnknownLocation.ID
 	m.CellAccuracy = 0
+
+	// Reset country code.
+	m.PhotoCountry = UnknownCountry.ID
+
+	// Reset place reference.
 	m.Place = &UnknownPlace
 	m.PlaceID = UnknownPlace.ID
+
+	// Reset place source.
+	m.PlaceSrc = SrcAuto
 }
 
 // HasLocation tests if the photo has a known location.

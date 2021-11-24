@@ -17,13 +17,16 @@ func (m *Photo) EstimateCountry() {
 		return
 	}
 
+	// Reset country.
 	unknown := UnknownCountry.ID
 	countryCode := unknown
 
-	if code := txt.CountryCode(m.PhotoTitle); code != unknown {
+	// Try to guess country from photo title.
+	if code := txt.CountryCode(m.PhotoTitle); code != unknown && m.TitleSrc != SrcAuto {
 		countryCode = code
 	}
 
+	// Try to guess country from filename and path.
 	if countryCode == unknown {
 		if code := txt.CountryCode(m.PhotoName); code != unknown && !fs.IsGenerated(m.PhotoName) {
 			countryCode = code
@@ -32,12 +35,14 @@ func (m *Photo) EstimateCountry() {
 		}
 	}
 
+	// Try to guess country from original filename.
 	if countryCode == unknown && m.OriginalName != "" && !fs.IsGenerated(m.OriginalName) {
 		if code := txt.CountryCode(m.OriginalName); code != UnknownCountry.ID {
 			countryCode = code
 		}
 	}
 
+	// Set new country?
 	if countryCode != unknown {
 		m.PhotoCountry = countryCode
 		m.PlaceSrc = SrcEstimate
@@ -58,9 +63,9 @@ func (m *Photo) EstimateLocation(force bool) {
 		return
 	}
 
-	// Estimate country if date is unreliable.
-	if m.TakenSrc == SrcAuto {
-		m.RemoveLocation()
+	// Estimate country if taken date is unreliable.
+	if SrcPriority[m.TakenSrc] <= SrcPriority[SrcName] {
+		m.RemoveLocation(false)
 		m.EstimateCountry()
 		return
 	}
@@ -100,29 +105,28 @@ func (m *Photo) EstimateLocation(force bool) {
 	// Found?
 	if len(mostRecent) == 0 {
 		log.Debugf("photo: unknown position at %s", m.TakenAt)
-		m.RemoveLocation()
+		m.RemoveLocation(false)
 		m.EstimateCountry()
 	} else if recentPhoto := mostRecent[0]; recentPhoto.HasLocation() && recentPhoto.HasPlace() {
 		// Too much time difference?
 		if hours := recentPhoto.TakenAt.Sub(m.TakenAt) / time.Hour; hours < -36 || hours > 36 {
 			log.Debugf("photo: skipping %s, %d hours time difference to recent position", m, hours)
-			m.RemoveLocation()
+			m.RemoveLocation(false)
 			m.EstimateCountry()
 		} else if len(mostRecent) == 1 {
-			m.RemoveLocation()
+			m.RemoveLocation(false)
 
 			m.Place = recentPhoto.Place
 			m.PlaceID = recentPhoto.PlaceID
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.PlaceSrc = SrcEstimate
+
 			m.UpdateTimeZone(recentPhoto.TimeZone)
 
 			log.Debugf("photo: approximate place of %s is %s (id %s)", m, txt.Quote(m.Place.Label()), recentPhoto.PlaceID)
 		} else if recentPhoto.HasPlace() {
 			p1 := mostRecent[0]
 			p2 := mostRecent[1]
-
-			m.PlaceSrc = SrcEstimate
 
 			movement := geo.NewMovement(p1.Position(), p2.Position())
 
@@ -136,8 +140,9 @@ func (m *Photo) EstimateLocation(force bool) {
 
 					m.PhotoLat = float32(estimate.Lat)
 					m.PhotoLng = float32(estimate.Lng)
-					m.PhotoAltitude = estimate.AltitudeInt()
+					m.PlaceSrc = SrcEstimate
 					m.CellAccuracy = estimate.Accuracy
+					m.SetAltitude(estimate.AltitudeInt(), SrcEstimate)
 
 					log.Debugf("photo: %s %s", m.String(), estimate.String())
 
@@ -149,30 +154,31 @@ func (m *Photo) EstimateLocation(force bool) {
 						log.Debugf("photo: approximate place of %s is %s (id %s)", m, txt.Quote(m.Place.Label()), m.PlaceID)
 					}
 				}
-
 			} else {
-				m.RemoveLocation()
+				m.RemoveLocation(false)
 
-				m.PhotoAltitude = movement.EstimateAltitudeInt(m.TakenAt)
 				m.Place = recentPhoto.Place
 				m.PlaceID = recentPhoto.PlaceID
+				m.PlaceSrc = SrcEstimate
 				m.PhotoCountry = recentPhoto.PhotoCountry
+				m.SetAltitude(movement.EstimateAltitudeInt(m.TakenAt), SrcEstimate)
+
 				m.UpdateTimeZone(recentPhoto.TimeZone)
 			}
 		} else if recentPhoto.HasCountry() {
-			m.RemoveLocation()
+			m.RemoveLocation(false)
 			m.PhotoCountry = recentPhoto.PhotoCountry
 			m.PlaceSrc = SrcEstimate
 			m.UpdateTimeZone(recentPhoto.TimeZone)
 
 			log.Debugf("photo: probable country for %s is %s", m, txt.Quote(m.CountryName()))
 		} else {
-			m.RemoveLocation()
+			m.RemoveLocation(false)
 			m.EstimateCountry()
 		}
 	} else {
 		log.Warnf("photo: %s has no location, uid %s", recentPhoto.PhotoName, recentPhoto.PhotoUID)
-		m.RemoveLocation()
+		m.RemoveLocation(false)
 		m.EstimateCountry()
 	}
 

@@ -710,8 +710,10 @@ func (m *Photo) UpdateDateFields() {
 	}
 }
 
-// SetCoordinates changes the photo lat, lng and altitude if not empty and from the same source.
+// SetCoordinates changes the photo lat, lng and altitude if not empty and from an acceptable source.
 func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
+	m.SetAltitude(altitude, source)
+
 	if lat == 0.0 && lng == 0.0 {
 		return
 	}
@@ -722,8 +724,20 @@ func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
 
 	m.PhotoLat = lat
 	m.PhotoLng = lng
-	m.PhotoAltitude = altitude
 	m.PlaceSrc = source
+}
+
+// SetAltitude sets the photo altitude if not empty and from an acceptable source.
+func (m *Photo) SetAltitude(altitude int, source string) {
+	if altitude == 0 && source != SrcManual {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.PlaceSrc] {
+		return
+	}
+
+	m.PhotoAltitude = altitude
 }
 
 // SetCamera updates the camera.
