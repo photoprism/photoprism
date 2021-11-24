@@ -14,7 +14,7 @@ const Accuracy1Km = 1000
 
 // EstimateCountry updates the photo with an estimated country if possible.
 func (m *Photo) EstimateCountry() {
-	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() || m.HasPlace() {
+	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.UnknownCamera() || m.HasLocation() || m.HasPlace() {
 		// Ignore.
 		return
 	}
@@ -65,7 +65,15 @@ func (m *Photo) EstimateLocation(force bool) {
 		return
 	}
 
-	// Estimate country if taken date is unreliable.
+	m.EstimatedAt = TimePointer()
+
+	// Don't estimate if it's a non-photographic image.
+	if m.UnknownCamera() {
+		m.RemoveLocation(SrcEstimate, false)
+		return
+	}
+
+	// Estimate country if TakenAt is unreliable.
 	if SrcPriority[m.TakenSrc] <= SrcPriority[SrcName] {
 		m.RemoveLocation(SrcEstimate, false)
 		m.EstimateCountry()
@@ -145,6 +153,4 @@ func (m *Photo) EstimateLocation(force bool) {
 		m.RemoveLocation(SrcEstimate, false)
 		m.EstimateCountry()
 	}
-
-	m.EstimatedAt = TimePointer()
 }
