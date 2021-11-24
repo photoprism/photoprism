@@ -270,14 +270,14 @@ func RemoveDuplicateMoments() (removed int, err error) {
 		IN (SELECT a.album_uid FROM albums a JOIN albums b ON a.album_type = b.album_type 
 		AND a.album_type <> ? AND a.id > b.id WHERE (a.album_slug = b.album_slug 
 		OR a.album_filter = b.album_filter) GROUP BY a.album_uid)`, entity.AlbumDefault); res.Error != nil {
-		return removed, err
+		return removed, res.Error
 	}
 
 	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id 
 		IN (SELECT a.id FROM albums a JOIN albums b ON a.album_type = b.album_type 
 		AND a.album_type <> ? AND a.id > b.id WHERE (a.album_slug = b.album_slug 
 		OR a.album_filter = b.album_filter) GROUP BY a.album_uid)`, entity.AlbumDefault); res.Error != nil {
-		return removed, err
+		return removed, res.Error
 	} else if res.RowsAffected > 0 {
 		removed = int(res.RowsAffected)
 	}
