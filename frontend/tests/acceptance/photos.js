@@ -230,7 +230,6 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
 
   const FirstPhotoTitle = await Selector(".input-title input").value;
   const FirstPhotoLocalTime = await Selector(".input-local-time input").value;
-  const FirstPhotoUTCTime = await Selector(".input-utc-time input").value;
   const FirstPhotoDay = await Selector(".input-day input").value;
   const FirstPhotoMonth = await Selector(".input-month input").value;
   const FirstPhotoYear = await Selector(".input-year input").value;
@@ -297,7 +296,7 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
     "07",
     "2019",
     "04:30:30",
-    "01:30:30",
+    "",
     "Europe/Moscow",
     "Albania",
     "-1",
