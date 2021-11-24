@@ -12,6 +12,36 @@ import (
 	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
+// SetCoordinates changes the photo lat, lng and altitude if not empty and from an acceptable source.
+func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
+	m.SetAltitude(altitude, source)
+
+	if lat == 0.0 && lng == 0.0 {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.PlaceSrc] && m.HasLatLng() {
+		return
+	}
+
+	m.PhotoLat = lat
+	m.PhotoLng = lng
+	m.PlaceSrc = source
+}
+
+// SetAltitude sets the photo altitude if not empty and from an acceptable source.
+func (m *Photo) SetAltitude(altitude int, source string) {
+	if altitude == 0 && source != SrcManual {
+		return
+	}
+
+	if SrcPriority[source] < SrcPriority[m.PlaceSrc] {
+		return
+	}
+
+	m.PhotoAltitude = altitude
+}
+
 // UnknownLocation tests if the photo has an unknown location.
 func (m *Photo) UnknownLocation() bool {
 	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
@@ -46,6 +76,11 @@ func (m *Photo) RemoveLocation(force bool) {
 // HasLocation tests if the photo has a known location.
 func (m *Photo) HasLocation() bool {
 	return !m.UnknownLocation()
+}
+
+// TrustedLocation tests if the photo has a known location from a trusted source.
+func (m *Photo) TrustedLocation() bool {
+	return m.HasLocation() && SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate]
 }
 
 // LocationLoaded tests if the photo has a known location that is currently loaded.

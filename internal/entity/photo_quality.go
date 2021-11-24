@@ -28,7 +28,7 @@ func (m *Photo) QualityScore() (score int) {
 		score++
 	}
 
-	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] {
+	if m.TrustedLocation() {
 		score++
 	}
 
