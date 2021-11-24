@@ -145,7 +145,7 @@ func (w *Moments) Start() (err error) {
 				Public:  true,
 			}
 
-			if a := entity.FindAlbumByFilter(f.Serialize(), entity.AlbumMoment); a != nil {
+			if a := entity.FindAlbumByAttr(S{mom.Slug(), mom.TitleSlug()}, S{f.Serialize()}, entity.AlbumMoment); a != nil {
 				if err := a.UpdateSlug(mom.Title(), mom.Slug()); err != nil {
 					log.Errorf("moments: %s (update slug)", err.Error())
 				}
@@ -180,7 +180,7 @@ func (w *Moments) Start() (err error) {
 				Public:  true,
 			}
 
-			if a := entity.FindAlbumByFilter(f.Serialize(), entity.AlbumState); a != nil {
+			if a := entity.FindAlbumByAttr(S{mom.Slug(), mom.TitleSlug()}, S{f.Serialize()}, entity.AlbumState); a != nil {
 				if err := a.UpdateState(mom.Title(), mom.Slug(), mom.State, mom.Country); err != nil {
 					log.Errorf("moments: %s (update state)", err.Error())
 				}
@@ -218,7 +218,11 @@ func (w *Moments) Start() (err error) {
 				Public: true,
 			}
 
-			if a := entity.FindAlbumBySlug(mom.Slug(), entity.AlbumMoment); a != nil {
+			if a := entity.FindAlbumByAttr(S{mom.Slug(), mom.TitleSlug()}, S{f.Serialize()}, entity.AlbumMoment); a != nil {
+				if err := a.UpdateSlug(mom.Title(), mom.Slug()); err != nil {
+					log.Errorf("moments: %s (update slug)", err.Error())
+				}
+
 				if a.DeletedAt != nil || f.Serialize() == a.AlbumFilter {
 					log.Tracef("moments: %s already exists (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
 					continue
