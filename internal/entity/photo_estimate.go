@@ -53,7 +53,7 @@ func (m *Photo) EstimateCountry() {
 
 // EstimateLocation updates the photo with an estimated place and country if possible.
 func (m *Photo) EstimateLocation(force bool) {
-	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] {
+	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() && m.PlaceSrc == SrcAuto {
 		// Ignore if location was set otherwise.
 		return
 	} else if force || m.EstimatedAt == nil {
