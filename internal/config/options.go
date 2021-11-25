@@ -74,6 +74,9 @@ type Options struct {
 	DisableClassification bool    `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DetectNSFW            bool    `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	UploadNSFW            bool    `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
+	AppName               string  `yaml:"AppName" json:"AppName" flag:"app-name"`
+	AppMode               string  `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
+	AppIcon               string  `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	CdnUrl                string  `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
 	SiteUrl               string  `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SiteAuthor            string  `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
@@ -81,9 +84,6 @@ type Options struct {
 	SiteCaption           string  `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string  `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string  `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
-	AppName               string  `yaml:"AppName" json:"AppName" flag:"app-name"`
-	AppMode               string  `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
-	AppIcon               string  `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	DatabaseDriver        string  `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string  `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseServer        string  `yaml:"DatabaseServer" json:"-" flag:"database-server"`

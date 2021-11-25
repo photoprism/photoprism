@@ -39,8 +39,9 @@ var once sync.Once
 var LowMem = false
 var TotalMem uint64
 
-const MsgFreeBeer = "Help us make a difference and become a sponsor today!"
-const MsgFundingInfo = "Visit https://docs.photoprism.org/funding/ to learn more."
+const MsgSponsor = "Help us make a difference and become a sponsor today!"
+const SignUpURL = "https://docs.photoprism.org/funding/"
+const MsgSignUp = "Visit " + SignUpURL + " to learn more."
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
 	" we unfortunately can only offer it to sponsors."
 
@@ -179,8 +180,8 @@ func (c *Config) Init() error {
 
 	// Show funding info?
 	if !c.Sponsor() {
-		log.Info(MsgFreeBeer)
-		log.Info(MsgFundingInfo)
+		log.Info(MsgSponsor)
+		log.Info(MsgSignUp)
 	}
 
 	if insensitive, err := c.CaseInsensitive(); err != nil {

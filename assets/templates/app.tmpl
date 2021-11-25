@@ -10,7 +10,7 @@
   <div class="loading-animation">
     <div class="loading-circle"></div>
   </div>
-  {{if not .config.Sponsor}}<div id="photoprism-info"><a href="https://docs.photoprism.org/funding/" target="_blank">{{ .config.SiteDescription }}</a></div>{{end}}
+  {{if not .config.Sponsor}}<div id="loading-info"><a href="{{ .signUp.url }}" target="_blank">{{ .signUp.message }}</a></div>{{end}}
 </div>
 
 <div id="busy-overlay"></div>

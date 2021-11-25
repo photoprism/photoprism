@@ -187,7 +187,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Default HTML page for client-side rendering and routing via VueJS.
 	router.NoRoute(func(c *gin.Context) {
-		clientConfig := conf.PublicConfig()
-		c.HTML(http.StatusOK, conf.TemplateName(), gin.H{"config": clientConfig})
+		signUp := gin.H{"message": config.MsgSponsor, "url": config.SignUpURL}
+		values := gin.H{"signUp": signUp, "config": conf.PublicConfig()}
+		c.HTML(http.StatusOK, conf.TemplateName(), values)
 	})
 }

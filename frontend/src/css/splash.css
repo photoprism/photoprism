@@ -106,3 +106,43 @@
     z-index: 0;
     overflow: hidden;
 }
+
+#noscript-info {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    border-radius: 5px;
+    min-width: 200px;
+    text-align: center;
+}
+
+#noscript-info a {
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    color: #000;
+}
+
+#loading-info {
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    border-radius: 5px;
+    min-width: 200px;
+    text-align: center;
+}
+
+#loading-info a {
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    color: #000;
+}
