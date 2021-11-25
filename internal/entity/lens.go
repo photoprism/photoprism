@@ -38,7 +38,7 @@ var UnknownLens = Lens{
 
 // CreateUnknownLens initializes the database with an unknown lens if not exists
 func CreateUnknownLens() {
-	FirstOrCreateLens(&UnknownLens)
+	UnknownLens = *FirstOrCreateLens(&UnknownLens)
 }
 
 // TableName returns the entity database table name.

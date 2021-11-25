@@ -14,8 +14,11 @@ const Accuracy1Km = 1000
 
 // EstimateCountry updates the photo with an estimated country if possible.
 func (m *Photo) EstimateCountry() {
-	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.UnknownCamera() || m.HasLocation() || m.HasPlace() {
-		// Ignore.
+	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() || m.HasPlace() {
+		// Keep existing data.
+		return
+	} else if m.UnknownCamera() && m.PhotoType == TypeImage {
+		// Don't estimate if it seems to be a non-photographic image.
 		return
 	}
 
@@ -56,18 +59,18 @@ func (m *Photo) EstimateCountry() {
 // EstimateLocation updates the photo with an estimated place and country if possible.
 func (m *Photo) EstimateLocation(force bool) {
 	if SrcPriority[m.PlaceSrc] > SrcPriority[SrcEstimate] || m.HasLocation() && m.PlaceSrc == SrcAuto {
-		// Ignore if location was set otherwise.
+		// Keep existing data.
 		return
 	} else if force || m.EstimatedAt == nil {
 		// Proceed.
 	} else if hours := TimeStamp().Sub(*m.EstimatedAt) / time.Hour; hours < MetadataEstimateInterval {
-		// Ignore if estimated less than 7 days ago.
+		// Ignore if location has been estimated recently (in the last 7 days by default).
 		return
 	}
 
 	m.EstimatedAt = TimePointer()
 
-	// Don't estimate if it's a non-photographic image.
+	// Don't estimate if it seems to be a non-photographic image.
 	if m.UnknownCamera() && m.PhotoType == TypeImage {
 		m.RemoveLocation(SrcEstimate, false)
 		return

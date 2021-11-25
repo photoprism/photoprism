@@ -38,7 +38,7 @@ var UnknownCountry = Country{
 
 // CreateUnknownCountry is used to initialize the database with the default country
 func CreateUnknownCountry() {
-	FirstOrCreateCountry(&UnknownCountry)
+	UnknownCountry = *FirstOrCreateCountry(&UnknownCountry)
 }
 
 // NewCountry creates a new country, with default country code if not provided

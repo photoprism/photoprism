@@ -44,7 +44,7 @@ var UnknownLocation = Cell{
 
 // CreateUnknownLocation creates the default location if not exists.
 func CreateUnknownLocation() {
-	FirstOrCreateCell(&UnknownLocation)
+	UnknownLocation = *FirstOrCreateCell(&UnknownLocation)
 }
 
 // NewCell creates a location using a token extracted from coordinate

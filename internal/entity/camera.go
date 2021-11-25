@@ -38,7 +38,7 @@ var UnknownCamera = Camera{
 
 // CreateUnknownCamera initializes the database with an unknown camera if not exists
 func CreateUnknownCamera() {
-	FirstOrCreateCamera(&UnknownCamera)
+	UnknownCamera = *FirstOrCreateCamera(&UnknownCamera)
 }
 
 // NewCamera creates a camera entity from a model name and a make name.
