@@ -39,7 +39,7 @@ func (m *PhotoLabel) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// Updates a column in the database.
+// Update a column in the database.
 func (m *PhotoLabel) Update(attr string, value interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
@@ -60,6 +60,11 @@ func (m *PhotoLabel) Save() error {
 // Create inserts a new row to the database.
 func (m *PhotoLabel) Create() error {
 	return Db().Create(m).Error
+}
+
+// Delete deletes the label reference.
+func (m *PhotoLabel) Delete() error {
+	return Db().Delete(m).Error
 }
 
 // FirstOrCreatePhotoLabel returns the existing row, inserts a new row or nil in case of errors.

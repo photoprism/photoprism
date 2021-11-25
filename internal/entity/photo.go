@@ -179,7 +179,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.SyncKeywordLabels(); err != nil {
-		log.Errorf("photo %s: %s while syncing keywords and labels", model.PhotoUID, err)
+		log.Errorf("photo: %s %s while syncing keywords and labels", model.String(), err)
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
@@ -187,7 +187,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.IndexKeywords(); err != nil {
-		log.Errorf("photo %s: %s while indexing keywords", model.PhotoUID, err.Error())
+		log.Errorf("photo: %s %s while indexing keywords", model.String(), err.Error())
 	}
 
 	edited := TimeStamp()
@@ -465,7 +465,7 @@ func (m *Photo) PreloadFiles() {
 		Where("files.photo_id = ? AND files.deleted_at IS NULL", m.ID).
 		Order("files.file_name DESC")
 
-	logError(q.Scan(&m.Files))
+	Log("photo", "preload files", q.Scan(&m.Files).Error)
 }
 
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
@@ -476,7 +476,7 @@ func (m *Photo) PreloadKeywords() {
 		Joins("JOIN photos_keywords ON photos_keywords.keyword_id = keywords.id AND photos_keywords.photo_id = ?", m.ID).
 		Order("keywords.keyword ASC")
 
-	logError(q.Scan(&m.Keywords))
+	Log("photo", "preload files", q.Scan(&m.Keywords).Error)
 }
 
 // PreloadAlbums prepares gorm scope to retrieve photo albums
@@ -488,7 +488,7 @@ func (m *Photo) PreloadAlbums() {
 		Where("albums.deleted_at IS NULL").
 		Order("albums.album_title ASC")
 
-	logError(q.Scan(&m.Albums))
+	Log("photo", "preload albums", q.Scan(&m.Albums).Error)
 }
 
 // PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
@@ -613,7 +613,7 @@ func (m *Photo) SetDescription(desc, source string) {
 // SetCamera updates the camera.
 func (m *Photo) SetCamera(camera *Camera, source string) {
 	if camera == nil {
-		log.Warnf("photo %s: failed updating camera from source %s", txt.Quote(m.PhotoUID), SrcString(source))
+		log.Warnf("photo: %s failed updating camera from source %s", m.String(), SrcString(source))
 		return
 	}
 
@@ -633,7 +633,7 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 // SetLens updates the lens.
 func (m *Photo) SetLens(lens *Lens, source string) {
 	if lens == nil {
-		log.Warnf("photo %s: failed updating lens from source %s", txt.Quote(m.PhotoUID), SrcString(source))
+		log.Warnf("photo: %s failed updating lens from source %s", m.String(), SrcString(source))
 		return
 	}
 

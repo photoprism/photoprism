@@ -93,7 +93,7 @@ func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 				log.Errorf("metadata: %s (optimize photo)", err)
 			} else if updated {
 				optimized++
-				log.Debugf("metadata: optimized photo %s", photo.String())
+				log.Debugf("metadata: updated photo %s", photo.String())
 			}
 
 			for _, p := range merged {
@@ -112,7 +112,7 @@ func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	}
 
 	if optimized > 0 {
-		log.Infof("metadata: optimized %d photos", optimized)
+		log.Infof("metadata: updated %d photos", optimized)
 	}
 
 	// Set photo quality scores to -1 if files are missing.

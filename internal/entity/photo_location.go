@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/geo"
@@ -86,6 +88,13 @@ func (m *Photo) AdoptPlace(other Photo, source string, force bool) {
 		return
 	} else if other.Place == nil {
 		return
+	} else if other.Place.Unknown() {
+		return
+	}
+
+	// Remove existing location labels if place changes.
+	if other.Place.ID != m.PlaceID {
+		m.RemoveLocationLabels()
 	}
 
 	m.RemoveLocation(source, force)
@@ -124,6 +133,41 @@ func (m *Photo) RemoveLocation(source string, force bool) {
 
 	// Reset place source.
 	m.PlaceSrc = SrcAuto
+}
+
+// RemoveLocationLabels removes existing location labels.
+func (m *Photo) RemoveLocationLabels() {
+	if len(m.Labels) == 0 {
+		res := Db().Delete(PhotoLabel{}, "photo_id = ? AND label_src = ?", m.ID, SrcLocation)
+
+		if res.Error != nil {
+			Log("photo", "remove location labels", res.Error)
+		} else if res.RowsAffected > 0 {
+			log.Infof("photo: removed %s from %s",
+				english.Plural(int(res.RowsAffected), "location label", "location labels"), m)
+		}
+
+		return
+	}
+
+	labels := make([]PhotoLabel, 0, len(m.Labels))
+
+	for _, l := range m.Labels {
+		if l.LabelSrc != SrcLocation {
+			labels = append(labels, l)
+			continue
+		}
+
+		Log("photo", "remove location label", l.Delete())
+	}
+
+	removed := len(m.Labels) - len(labels)
+
+	if removed > 0 {
+		log.Infof("photo: removed %s from %s",
+			english.Plural(removed, "location label", "location labels"), m)
+		m.Labels = labels
+	}
 }
 
 // HasLocation tests if the photo has a known location.
@@ -327,6 +371,7 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 
 			if changed {
 				log.Debugf("photo: changing location of %s from %s to %s", m.String(), m.CellID, location.ID)
+				m.RemoveLocationLabels()
 			}
 
 			m.Cell = location
@@ -404,7 +449,7 @@ func (m *Photo) SaveLocation() error {
 	m.GetDetails().Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
 	if err := m.SyncKeywordLabels(); err != nil {
-		log.Errorf("photo %s: %s while syncing keywords and labels", m.PhotoUID, err)
+		log.Errorf("photo: %s %s while syncing keywords and labels", m.String(), err)
 	}
 
 	if err := m.UpdateTitle(m.ClassifyLabels()); err != nil {
@@ -412,7 +457,7 @@ func (m *Photo) SaveLocation() error {
 	}
 
 	if err := m.IndexKeywords(); err != nil {
-		log.Errorf("photo %s: %s while indexing keywords", m.PhotoUID, err)
+		log.Errorf("photo: %s %s while indexing keywords", m.String(), err)
 	}
 
 	return m.Save()
