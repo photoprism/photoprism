@@ -55,7 +55,7 @@ func (worker *Sync) Start() (err error) {
 
 	defer mutex.SyncWorker.Stop()
 
-	f := form.AccountSearch{
+	f := form.SearchAccounts{
 		Sync: true,
 	}
 

@@ -1,7 +1,7 @@
 package form
 
-// AlbumSearch represents search form fields for "/api/v1/albums".
-type AlbumSearch struct {
+// SearchAlbums represents search form fields for "/api/v1/albums".
+type SearchAlbums struct {
 	Query    string `form:"q"`
 	ID       string `form:"id"`
 	Type     string `form:"type"`
@@ -20,18 +20,18 @@ type AlbumSearch struct {
 	Order    string `form:"order" serialize:"-"`
 }
 
-func (f *AlbumSearch) GetQuery() string {
+func (f *SearchAlbums) GetQuery() string {
 	return f.Query
 }
 
-func (f *AlbumSearch) SetQuery(q string) {
+func (f *SearchAlbums) SetQuery(q string) {
 	f.Query = q
 }
 
-func (f *AlbumSearch) ParseQueryString() error {
+func (f *SearchAlbums) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
-func NewAlbumSearch(query string) AlbumSearch {
-	return AlbumSearch{Query: query}
+func NewAlbumSearch(query string) SearchAlbums {
+	return SearchAlbums{Query: query}
 }

@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/search"
@@ -29,7 +30,7 @@ func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 }
 
 func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.AlbumSearch{ID: uid}
+	f := form.SearchAlbums{ID: uid}
 	result, err := search.Albums(f)
 
 	if err != nil {
@@ -42,7 +43,7 @@ func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
 }
 
 func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.LabelSearch{ID: uid}
+	f := form.SearchLabels{ID: uid}
 	result, err := search.Labels(f)
 
 	if err != nil {
@@ -55,7 +56,7 @@ func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
 }
 
 func PublishSubjectEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.SubjectSearch{ID: uid}
+	f := form.SearchSubjects{ID: uid}
 	result, err := search.Subjects(f)
 
 	if err != nil {

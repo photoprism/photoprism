@@ -9,7 +9,7 @@ import (
 )
 
 // Albums searches albums based on their name.
-func Albums(f form.AlbumSearch) (results AlbumResults, err error) {
+func Albums(f form.SearchAlbums) (results AlbumResults, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

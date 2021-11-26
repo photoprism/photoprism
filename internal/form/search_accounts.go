@@ -1,7 +1,7 @@
 package form
 
-// AccountSearch represents search form fields for "/api/v1/accounts".
-type AccountSearch struct {
+// SearchAccounts represents search form fields for "/api/v1/accounts".
+type SearchAccounts struct {
 	Query  string `form:"q"`
 	Share  bool   `form:"share"`
 	Sync   bool   `form:"sync"`
@@ -11,18 +11,18 @@ type AccountSearch struct {
 	Order  string `form:"order" serialize:"-"`
 }
 
-func (f *AccountSearch) GetQuery() string {
+func (f *SearchAccounts) GetQuery() string {
 	return f.Query
 }
 
-func (f *AccountSearch) SetQuery(q string) {
+func (f *SearchAccounts) SetQuery(q string) {
 	f.Query = q
 }
 
-func (f *AccountSearch) ParseQueryString() error {
+func (f *SearchAccounts) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
-func NewAccountSearch(query string) AccountSearch {
-	return AccountSearch{Query: query}
+func NewAccountSearch(query string) SearchAccounts {
+	return SearchAccounts{Query: query}
 }

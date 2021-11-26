@@ -1,7 +1,7 @@
 package form
 
-// FolderSearch represents search form fields for "/api/v1/folders".
-type FolderSearch struct {
+// SearchFolders represents search form fields for "/api/v1/folders".
+type SearchFolders struct {
 	Query     string `form:"q"`
 	Recursive bool   `form:"recursive"`
 	Files     bool   `form:"files"`
@@ -10,24 +10,24 @@ type FolderSearch struct {
 	Offset    int    `form:"offset" serialize:"-"`
 }
 
-func (f *FolderSearch) GetQuery() string {
+func (f *SearchFolders) GetQuery() string {
 	return f.Query
 }
 
-func (f *FolderSearch) SetQuery(q string) {
+func (f *SearchFolders) SetQuery(q string) {
 	f.Query = q
 }
 
-func (f *FolderSearch) ParseQueryString() error {
+func (f *SearchFolders) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
 // Serialize returns a string containing non-empty fields and values of a struct.
-func (f *FolderSearch) Serialize() string {
+func (f *SearchFolders) Serialize() string {
 	return Serialize(f, false)
 }
 
 // SerializeAll returns a string containing all non-empty fields and values of a struct.
-func (f *FolderSearch) SerializeAll() string {
+func (f *SearchFolders) SerializeAll() string {
 	return Serialize(f, true)
 }

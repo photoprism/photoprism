@@ -1,7 +1,7 @@
 package form
 
-// SubjectSearch represents search form fields for "/api/v1/subjects".
-type SubjectSearch struct {
+// SearchSubjects represents search form fields for "/api/v1/subjects".
+type SearchSubjects struct {
 	Query    string `form:"q"`
 	ID       string `form:"id"`
 	Type     string `form:"type"`
@@ -18,18 +18,18 @@ type SubjectSearch struct {
 	Order    string `form:"order" serialize:"-"`
 }
 
-func (f *SubjectSearch) GetQuery() string {
+func (f *SearchSubjects) GetQuery() string {
 	return f.Query
 }
 
-func (f *SubjectSearch) SetQuery(q string) {
+func (f *SearchSubjects) SetQuery(q string) {
 	f.Query = q
 }
 
-func (f *SubjectSearch) ParseQueryString() error {
+func (f *SearchSubjects) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
-func NewSubjectSearch(query string) SubjectSearch {
-	return SubjectSearch{Query: query}
+func NewSubjectSearch(query string) SearchSubjects {
+	return SearchSubjects{Query: query}
 }

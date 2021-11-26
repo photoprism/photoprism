@@ -19,7 +19,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		GetFoldersOriginals(router)
+		SearchFoldersOriginals(router)
 		r := PerformRequest(app, "GET", "/api/v1/folders/originals")
 
 		// t.Logf("RESPONSE: %s", r.Body.Bytes())
@@ -61,7 +61,7 @@ func TestGetFoldersOriginals(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		GetFoldersOriginals(router)
+		SearchFoldersOriginals(router)
 		r := PerformRequest(app, "GET", "/api/v1/folders/originals?recursive=true")
 
 		// t.Logf("RESPONSE: %s", r.Body.Bytes())
@@ -102,7 +102,7 @@ func TestGetFoldersImport(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		GetFoldersImport(router)
+		SearchFoldersImport(router)
 		r := PerformRequest(app, "GET", "/api/v1/folders/import")
 
 		// t.Logf("RESPONSE: %s", r.Body.Bytes())
@@ -146,7 +146,7 @@ func TestGetFoldersImport(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		GetFoldersImport(router)
+		SearchFoldersImport(router)
 		r := PerformRequest(app, "GET", "/api/v1/folders/import?recursive=true")
 
 		var resp FoldersResponse

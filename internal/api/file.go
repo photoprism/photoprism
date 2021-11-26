@@ -8,10 +8,11 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
-// GET /api/v1/files/:hash
+// GetFile returns file details as JSON.
 //
-// Parameters:
-//   hash: string SHA-1 hash of the file
+// Route: GET /api/v1/files/:hash
+// Params:
+// - hash (string) SHA-1 hash of the file
 func GetFile(router *gin.RouterGroup) {
 	router.GET("/files/:hash", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceFiles, acl.ActionRead)

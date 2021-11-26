@@ -8,17 +8,17 @@ import (
 
 func TestNewFaceSearch(t *testing.T) {
 	r := NewFaceSearch("yes")
-	assert.IsType(t, FaceSearch{}, r)
+	assert.IsType(t, SearchFaces{}, r)
 }
 
 func TestFaceSearch_GetQuery(t *testing.T) {
-	form := &FaceSearch{Query: "test"}
+	form := &SearchFaces{Query: "test"}
 
 	assert.Equal(t, "test", form.GetQuery())
 }
 
 func TestFaceSearch_SetQuery(t *testing.T) {
-	form := &FaceSearch{Query: "test"}
+	form := &SearchFaces{Query: "test"}
 	form.SetQuery("new query")
 
 	assert.Equal(t, "new query", form.GetQuery())
@@ -27,7 +27,7 @@ func TestFaceSearch_SetQuery(t *testing.T) {
 func TestFaceSearch_ParseQueryString(t *testing.T) {
 
 	t.Run("valid query", func(t *testing.T) {
-		form := &FaceSearch{Query: "subject:test count:10 offset:1"}
+		form := &SearchFaces{Query: "subject:test count:10 offset:1"}
 
 		err := form.ParseQueryString()
 
@@ -43,7 +43,7 @@ func TestFaceSearch_ParseQueryString(t *testing.T) {
 
 	})
 	t.Run("valid query with umlauts", func(t *testing.T) {
-		form := &FaceSearch{Query: "query:\"tübingen\""}
+		form := &SearchFaces{Query: "query:\"tübingen\""}
 
 		err := form.ParseQueryString()
 
@@ -56,7 +56,7 @@ func TestFaceSearch_ParseQueryString(t *testing.T) {
 		assert.Equal(t, "tübingen", form.Query)
 	})
 	t.Run("query for invalid filter", func(t *testing.T) {
-		form := &FaceSearch{Query: "xxx:false"}
+		form := &SearchFaces{Query: "xxx:false"}
 
 		err := form.ParseQueryString()
 
@@ -69,7 +69,7 @@ func TestFaceSearch_ParseQueryString(t *testing.T) {
 		assert.Equal(t, "unknown filter: Xxx", err.Error())
 	})
 	t.Run("query for count with invalid type", func(t *testing.T) {
-		form := &FaceSearch{Query: "count:cat"}
+		form := &SearchFaces{Query: "count:cat"}
 
 		err := form.ParseQueryString()
 

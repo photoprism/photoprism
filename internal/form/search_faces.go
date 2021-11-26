@@ -1,7 +1,7 @@
 package form
 
-// FaceSearch represents search form fields for "/api/v1/faces".
-type FaceSearch struct {
+// SearchFaces represents search form fields for "/api/v1/faces".
+type SearchFaces struct {
 	Query   string `form:"q"`
 	ID      string `form:"id"`
 	Subject string `form:"subject"`
@@ -13,18 +13,18 @@ type FaceSearch struct {
 	Order   string `form:"order" serialize:"-"`
 }
 
-func (f *FaceSearch) GetQuery() string {
+func (f *SearchFaces) GetQuery() string {
 	return f.Query
 }
 
-func (f *FaceSearch) SetQuery(q string) {
+func (f *SearchFaces) SetQuery(q string) {
 	f.Query = q
 }
 
-func (f *FaceSearch) ParseQueryString() error {
+func (f *SearchFaces) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
-func NewFaceSearch(query string) FaceSearch {
-	return FaceSearch{Query: query}
+func NewFaceSearch(query string) SearchFaces {
+	return SearchFaces{Query: query}
 }

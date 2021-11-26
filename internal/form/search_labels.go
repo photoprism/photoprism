@@ -1,7 +1,7 @@
 package form
 
-// LabelSearch represents search form fields for "/api/v1/labels".
-type LabelSearch struct {
+// SearchLabels represents search form fields for "/api/v1/labels".
+type SearchLabels struct {
 	Query    string `form:"q"`
 	ID       string `form:"id"`
 	Slug     string `form:"slug"`
@@ -13,18 +13,18 @@ type LabelSearch struct {
 	Order    string `form:"order" serialize:"-"`
 }
 
-func (f *LabelSearch) GetQuery() string {
+func (f *SearchLabels) GetQuery() string {
 	return f.Query
 }
 
-func (f *LabelSearch) SetQuery(q string) {
+func (f *SearchLabels) SetQuery(q string) {
 	f.Query = q
 }
 
-func (f *LabelSearch) ParseQueryString() error {
+func (f *SearchLabels) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
-func NewLabelSearch(query string) LabelSearch {
-	return LabelSearch{Query: query}
+func NewLabelSearch(query string) SearchLabels {
+	return SearchLabels{Query: query}
 }

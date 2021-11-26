@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -24,8 +25,24 @@ type FoldersResponse struct {
 	Cached    bool            `json:"cached,omitempty"`
 }
 
-// GetFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
-func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
+// SearchFoldersOriginals returns folders in originals as JSON.
+//
+// GET /api/v1/folders/originals
+func SearchFoldersOriginals(router *gin.RouterGroup) {
+	conf := service.Config()
+	SearchFolders(router, "originals", entity.RootOriginals, conf.OriginalsPath())
+}
+
+// SearchFoldersImport returns import folders as JSON.
+//
+// GET /api/v1/folders/import
+func SearchFoldersImport(router *gin.RouterGroup) {
+	conf := service.Config()
+	SearchFolders(router, "import", entity.RootImport, conf.ImportPath())
+}
+
+// SearchFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
+func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourceFolders, acl.ActionSearch)
 
@@ -34,7 +51,7 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 			return
 		}
 
-		var f form.FolderSearch
+		var f form.SearchFolders
 
 		start := time.Now()
 		err := c.MustBindWith(&f, binding.Form)
@@ -96,20 +113,4 @@ func GetFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 
 	router.GET("/folders/"+urlPath, handler)
 	router.GET("/folders/"+urlPath+"/*path", handler)
-}
-
-// GetFoldersOriginals returns folders in originals as JSON.
-//
-// GET /api/v1/folders/originals
-func GetFoldersOriginals(router *gin.RouterGroup) {
-	conf := service.Config()
-	GetFolders(router, "originals", entity.RootOriginals, conf.OriginalsPath())
-}
-
-// GetFoldersImport returns import folders as JSON.
-//
-// GET /api/v1/folders/import
-func GetFoldersImport(router *gin.RouterGroup) {
-	conf := service.Config()
-	GetFolders(router, "import", entity.RootImport, conf.ImportPath())
 }

@@ -109,7 +109,7 @@ func TestLabels(t *testing.T) {
 	})
 
 	t.Run("search for ID", func(t *testing.T) {
-		f := form.LabelSearch{
+		f := form.SearchLabels{
 			Query:    "",
 			ID:       "lt9k3pw1wowuy3c4",
 			Slug:     "",
@@ -131,7 +131,7 @@ func TestLabels(t *testing.T) {
 	})
 
 	t.Run("search for label landscape", func(t *testing.T) {
-		f := form.LabelSearch{
+		f := form.SearchLabels{
 			Query: "landscape",
 		}
 

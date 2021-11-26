@@ -10,7 +10,7 @@ import (
 
 func TestAccounts(t *testing.T) {
 	t.Run("find accounts", func(t *testing.T) {
-		f := form.AccountSearch{
+		f := form.SearchAccounts{
 			Query:  "",
 			Share:  true,
 			Sync:   true,
@@ -35,7 +35,7 @@ func TestAccounts(t *testing.T) {
 	})
 
 	t.Run("find accounts count 1001", func(t *testing.T) {
-		f := form.AccountSearch{
+		f := form.SearchAccounts{
 			Query:  "",
 			Share:  false,
 			Sync:   false,
@@ -59,7 +59,7 @@ func TestAccounts(t *testing.T) {
 		}
 	})
 	t.Run("find accounts count > max results", func(t *testing.T) {
-		f := form.AccountSearch{
+		f := form.SearchAccounts{
 			Query:  "",
 			Status: "refresh",
 			Count:  100000,

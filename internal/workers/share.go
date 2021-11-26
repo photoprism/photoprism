@@ -49,7 +49,7 @@ func (worker *Share) Start() (err error) {
 
 	defer mutex.ShareWorker.Stop()
 
-	f := form.AccountSearch{
+	f := form.SearchAccounts{
 		Share: true,
 	}
 

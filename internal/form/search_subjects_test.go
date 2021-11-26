@@ -7,14 +7,14 @@ import (
 )
 
 func TestSubjectSearchForm(t *testing.T) {
-	form := &SubjectSearch{}
+	form := &SearchSubjects{}
 
-	assert.IsType(t, new(SubjectSearch), form)
+	assert.IsType(t, new(SearchSubjects), form)
 }
 
 func TestParseQueryStringSubject(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		form := &SubjectSearch{Query: "type:person favorite:true hidden:all count:5"}
+		form := &SearchSubjects{Query: "type:person favorite:true hidden:all count:5"}
 
 		err := form.ParseQueryString()
 
@@ -33,5 +33,5 @@ func TestParseQueryStringSubject(t *testing.T) {
 
 func TestNewSubjectSearch(t *testing.T) {
 	r := NewSubjectSearch("john")
-	assert.IsType(t, SubjectSearch{}, r)
+	assert.IsType(t, SearchSubjects{}, r)
 }
