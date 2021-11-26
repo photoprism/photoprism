@@ -22,7 +22,7 @@ type GeoResult struct {
 	FileHash         string    `json:"Hash"`
 	FileWidth        int       `json:"Width"`
 	FileHeight       int       `json:"Height"`
-	TakenAt          time.Time `json:"TakenAt"`
+	TakenAtLocal     time.Time `json:"TakenAt"`
 }
 
 // Lat returns the position latitude.
@@ -67,7 +67,7 @@ func (photos GeoResults) GeoJSON() ([]byte, error) {
 			"Hash":    p.FileHash,
 			"Width":   p.FileWidth,
 			"Height":  p.FileHeight,
-			"TakenAt": p.TakenAt,
+			"TakenAt": p.TakenAtLocal,
 			"Title":   p.PhotoTitle,
 		}
 

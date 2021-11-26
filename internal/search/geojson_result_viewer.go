@@ -13,7 +13,7 @@ func NewViewerResult(p GeoResult, contentUri, apiUri, previewToken, downloadToke
 	return viewer.Result{
 		UID:         p.PhotoUID,
 		Title:       p.PhotoTitle,
-		Taken:       p.TakenAt,
+		Taken:       p.TakenAtLocal,
 		Description: p.PhotoDescription,
 		Favorite:    p.PhotoFavorite,
 		Playable:    p.PhotoType == entity.TypeVideo || p.PhotoType == entity.TypeLive,

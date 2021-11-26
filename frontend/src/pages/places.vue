@@ -200,9 +200,9 @@ export default {
     query: function () {
       return this.$route.params.q ? this.$route.params.q : "";
     },
-    openNearbyPhotos(uid) {
+    openPhoto(uid) {
       // Abort if uid is empty or results aren't loaded.
-      if (!uid || this.loading) {
+      if (!uid || this.loading || !this.result || !this.result.features || this.result.features.length === 0) {
         return;
       }
 
@@ -228,34 +228,6 @@ export default {
       }).finally(() => {
         this.loading = false;
       });
-    },
-    openPhoto(uid) {
-      // Abort if uid is empty or results aren't loaded.
-      if (!uid || this.loading || !this.result || !this.result.features) {
-        return;
-      }
-
-      // Perform a backend request to find nearby photos?
-      if (this.result.features.length > 50) {
-        return this.openNearbyPhotos(uid);
-      }
-
-      if (!this.photos || !this.photos.length) {
-        this.photos = this.result.features.map((f) => new Photo(f.properties));
-      }
-
-      if (this.photos.length > 0) {
-        const index = this.photos.findIndex((p) => p.UID === uid);
-        const selected = this.photos[index];
-
-        if (selected.Type === TypeVideo || selected.Type === TypeLive) {
-          this.$viewer.play({video: selected});
-        } else {
-          this.$viewer.show(Thumb.fromPhotos(this.photos), index);
-        }
-      } else {
-        this.$notify.warn(this.$gettext("No pictures found"));
-      }
     },
     formChange() {
       this.search();

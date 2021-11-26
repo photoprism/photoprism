@@ -58,7 +58,7 @@ const num = "numeric";
 const short = "short";
 const long = "long";
 
-const DATE_FULL = {
+export const DATE_FULL = {
   year: num,
   month: long,
   day: num,
@@ -67,7 +67,7 @@ const DATE_FULL = {
   minute: num,
 };
 
-const DATE_FULL_TZ = {
+export const DATE_FULL_TZ = {
   year: num,
   month: long,
   day: num,

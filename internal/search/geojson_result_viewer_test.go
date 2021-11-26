@@ -22,7 +22,7 @@ func TestGeoResults_ViewerJSON(t *testing.T) {
 			FileHash:         "d2b4a5d18276f96f1b5a1bf17fd82d6fab3807f2",
 			FileWidth:        1920,
 			FileHeight:       1080,
-			TakenAt:          taken,
+			TakenAtLocal:     taken,
 		},
 		GeoResult{
 			ID:               "2",
@@ -36,7 +36,7 @@ func TestGeoResults_ViewerJSON(t *testing.T) {
 			FileHash:         "da639e836dfa9179e66c619499b0a5e592f72fc1",
 			FileWidth:        3024,
 			FileHeight:       3024,
-			TakenAt:          taken,
+			TakenAtLocal:     taken,
 		},
 		GeoResult{
 			ID:               "3",
@@ -50,7 +50,7 @@ func TestGeoResults_ViewerJSON(t *testing.T) {
 			FileHash:         "412fe4c157a82b636efebc5bc4bc4a15c321aad1",
 			FileWidth:        5000,
 			FileHeight:       10000,
-			TakenAt:          taken,
+			TakenAtLocal:     taken,
 		},
 	}
 

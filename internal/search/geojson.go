@@ -26,6 +26,8 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		return GeoResults{}, err
 	}
 
+	S2Levels := 7
+
 	// Search for nearby photos?
 	if f.Near != "" {
 		photo := Photo{}
@@ -35,6 +37,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		}
 
 		f.S2 = photo.CellID
+		S2Levels = 12
 	}
 
 	s := UnscopedDb()
@@ -43,8 +46,8 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	s = s.Table("photos").
 		Select(`photos.id, photos.photo_uid, photos.photo_type, photos.photo_lat, photos.photo_lng, 
-		photos.photo_title, photos.photo_description, photos.photo_favorite, photos.taken_at, files.file_hash, files.file_width, 
-		files.file_height`).
+		photos.photo_title, photos.photo_description, photos.photo_favorite, photos.taken_at_local, 
+		files.file_hash, files.file_width, files.file_height`).
 		Joins(`JOIN files ON files.photo_id = photos.id AND 
 		files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.deleted_at IS NULL").
@@ -313,10 +316,10 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 	}
 
 	if f.S2 != "" {
-		s2Min, s2Max := s2.PrefixedRange(f.S2, 7)
+		s2Min, s2Max := s2.PrefixedRange(f.S2, S2Levels)
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else if f.Olc != "" {
-		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), 7)
+		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), S2Levels)
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else {
 		// Filter by approx distance to coordinate:
