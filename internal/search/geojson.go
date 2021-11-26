@@ -18,8 +18,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// PhotosGeo searches for photos based on Form values and returns GeoResults ([]GeoResult).
-func PhotosGeo(f form.PhotoSearchGeo) (results GeoResults, err error) {
+// Geo searches for photos based on Form values and returns GeoResults ([]GeoResult).
+func Geo(f form.SearchGeo) (results GeoResults, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {

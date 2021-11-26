@@ -7,7 +7,7 @@ import (
 
 // AlbumPhotos returns up to count photos from an album.
 func AlbumPhotos(a entity.Album, count int) (results PhotoResults, err error) {
-	results, _, err = Photos(form.PhotoSearch{
+	results, _, err = Photos(form.SearchPhotos{
 		Album:  a.AlbumUID,
 		Filter: a.AlbumFilter,
 		Count:  count,

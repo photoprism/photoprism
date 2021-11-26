@@ -208,7 +208,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 		return nil
 	}
 
-	f := form.PhotoSearch{
+	f := form.SearchPhotos{
 		Year:   strconv.Itoa(year),
 		Month:  strconv.Itoa(month),
 		Public: true,

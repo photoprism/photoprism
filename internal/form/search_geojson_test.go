@@ -9,7 +9,7 @@ import (
 
 func TestGeoSearch(t *testing.T) {
 	t.Run("subjects", func(t *testing.T) {
-		form := &PhotoSearchGeo{Query: "subjects:\"Jens Mander\""}
+		form := &SearchGeo{Query: "subjects:\"Jens Mander\""}
 
 		err := form.ParseQueryString()
 
@@ -20,7 +20,7 @@ func TestGeoSearch(t *testing.T) {
 		assert.Equal(t, "Jens Mander", form.Subjects)
 	})
 	t.Run("aliases", func(t *testing.T) {
-		form := &PhotoSearchGeo{Query: "people:\"Jens & Mander\" folder:Foo person:Bar"}
+		form := &SearchGeo{Query: "people:\"Jens & Mander\" folder:Foo person:Bar"}
 
 		err := form.ParseQueryString()
 
@@ -35,7 +35,7 @@ func TestGeoSearch(t *testing.T) {
 		assert.Equal(t, "Jens & Mander", form.Subjects)
 	})
 	t.Run("keywords", func(t *testing.T) {
-		form := &PhotoSearchGeo{Query: "keywords:\"Foo Bar\""}
+		form := &SearchGeo{Query: "keywords:\"Foo Bar\""}
 
 		err := form.ParseQueryString()
 
@@ -46,7 +46,7 @@ func TestGeoSearch(t *testing.T) {
 		assert.Equal(t, "Foo Bar", form.Keywords)
 	})
 	t.Run("valid query", func(t *testing.T) {
-		form := &PhotoSearchGeo{Query: "query:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667"}
+		form := &SearchGeo{Query: "query:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667"}
 
 		err := form.ParseQueryString()
 
@@ -62,7 +62,7 @@ func TestGeoSearch(t *testing.T) {
 		assert.Equal(t, float32(33.45343), form.Lat)
 	})
 	t.Run("valid query path empty folder not empty", func(t *testing.T) {
-		form := &PhotoSearchGeo{Query: "query:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667 folder:test"}
+		form := &SearchGeo{Query: "query:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667 folder:test"}
 
 		err := form.ParseQueryString()
 
@@ -82,18 +82,18 @@ func TestGeoSearch(t *testing.T) {
 }
 
 func TestGeoSearch_Serialize(t *testing.T) {
-	form := &PhotoSearchGeo{Query: "query:\"fooBar baz\"", Favorite: true}
+	form := &SearchGeo{Query: "query:\"fooBar baz\"", Favorite: true}
 
 	assert.Equal(t, "q:\"query:fooBar baz\" favorite:true", form.Serialize())
 }
 
 func TestGeoSearch_SerializeAll(t *testing.T) {
-	form := &PhotoSearchGeo{Query: "query:\"fooBar baz\"", Favorite: true}
+	form := &SearchGeo{Query: "query:\"fooBar baz\"", Favorite: true}
 
 	assert.Equal(t, "q:\"query:fooBar baz\" favorite:true", form.SerializeAll())
 }
 
 func TestNewGeoSearch(t *testing.T) {
 	r := NewGeoSearch("Berlin")
-	assert.IsType(t, PhotoSearchGeo{}, r)
+	assert.IsType(t, SearchGeo{}, r)
 }

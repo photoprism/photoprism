@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-// PhotoSearch represents search form fields for "/api/v1/photos".
-type PhotoSearch struct {
+// SearchPhotos represents search form fields for "/api/v1/photos".
+type SearchPhotos struct {
 	Query     string    `form:"q"`
 	Filter    string    `form:"filter"`
 	ID        string    `form:"id"`
@@ -73,15 +73,15 @@ type PhotoSearch struct {
 	Merged    bool      `form:"merged" serialize:"-"`
 }
 
-func (f *PhotoSearch) GetQuery() string {
+func (f *SearchPhotos) GetQuery() string {
 	return f.Query
 }
 
-func (f *PhotoSearch) SetQuery(q string) {
+func (f *SearchPhotos) SetQuery(q string) {
 	f.Query = q
 }
 
-func (f *PhotoSearch) ParseQueryString() error {
+func (f *SearchPhotos) ParseQueryString() error {
 	if err := ParseQueryString(f); err != nil {
 		return err
 	}
@@ -111,15 +111,15 @@ func (f *PhotoSearch) ParseQueryString() error {
 }
 
 // Serialize returns a string containing non-empty fields and values of a struct.
-func (f *PhotoSearch) Serialize() string {
+func (f *SearchPhotos) Serialize() string {
 	return Serialize(f, false)
 }
 
 // SerializeAll returns a string containing all non-empty fields and values of a struct.
-func (f *PhotoSearch) SerializeAll() string {
+func (f *SearchPhotos) SerializeAll() string {
 	return Serialize(f, true)
 }
 
-func NewPhotoSearch(query string) PhotoSearch {
-	return PhotoSearch{Query: query}
+func NewPhotoSearch(query string) SearchPhotos {
+	return SearchPhotos{Query: query}
 }

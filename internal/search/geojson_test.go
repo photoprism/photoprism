@@ -14,7 +14,7 @@ func TestGeo(t *testing.T) {
 	t.Run("UnknownFaces", func(t *testing.T) {
 		query := form.NewGeoSearch("face:none")
 
-		if result, err := PhotosGeo(query); err != nil {
+		if result, err := Geo(query); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, 0, len(result))
@@ -23,7 +23,7 @@ func TestGeo(t *testing.T) {
 	t.Run("form.keywords", func(t *testing.T) {
 		query := form.NewGeoSearch("keywords:bridge")
 
-		if result, err := PhotosGeo(query); err != nil {
+		if result, err := Geo(query); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.GreaterOrEqual(t, len(result), 1)
@@ -32,7 +32,7 @@ func TestGeo(t *testing.T) {
 	t.Run("form.subjects", func(t *testing.T) {
 		query := form.NewGeoSearch("subjects:John")
 
-		if result, err := PhotosGeo(query); err != nil {
+		if result, err := Geo(query); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.GreaterOrEqual(t, len(result), 0)
@@ -41,7 +41,7 @@ func TestGeo(t *testing.T) {
 	t.Run("find_all", func(t *testing.T) {
 		query := form.NewGeoSearch("")
 
-		if result, err := PhotosGeo(query); err != nil {
+		if result, err := Geo(query); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 4, len(result))
@@ -50,7 +50,7 @@ func TestGeo(t *testing.T) {
 
 	t.Run("search for bridge", func(t *testing.T) {
 		query := form.NewGeoSearch("Query:bridge Before:3006-01-02")
-		result, err := PhotosGeo(query)
+		result, err := Geo(query)
 		t.Logf("RESULT: %+v", result)
 
 		if err != nil {
@@ -63,7 +63,7 @@ func TestGeo(t *testing.T) {
 
 	t.Run("search for date range", func(t *testing.T) {
 		query := form.NewGeoSearch("After:2014-12-02 Before:3006-01-02")
-		result, err := PhotosGeo(query)
+		result, err := Geo(query)
 
 		// t.Logf("RESULT: %+v", result)
 
@@ -75,7 +75,7 @@ func TestGeo(t *testing.T) {
 	})
 
 	t.Run("search for review true, quality 0", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query:    "",
 			Before:   time.Time{},
 			After:    time.Time{},
@@ -89,7 +89,7 @@ func TestGeo(t *testing.T) {
 			Review:   true,
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -103,7 +103,7 @@ func TestGeo(t *testing.T) {
 	})
 
 	t.Run("search for review false, quality > 0", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query:    "",
 			Before:   time.Time{},
 			After:    time.Time{},
@@ -117,7 +117,7 @@ func TestGeo(t *testing.T) {
 			Review:   false,
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -126,7 +126,7 @@ func TestGeo(t *testing.T) {
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("search for s2", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query:    "",
 			Before:   time.Time{},
 			After:    time.Time{},
@@ -140,7 +140,7 @@ func TestGeo(t *testing.T) {
 			Review:   false,
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -149,7 +149,7 @@ func TestGeo(t *testing.T) {
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("search for Olc", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query:    "",
 			Before:   time.Time{},
 			After:    time.Time{},
@@ -163,7 +163,7 @@ func TestGeo(t *testing.T) {
 			Review:   false,
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -171,11 +171,11 @@ func TestGeo(t *testing.T) {
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("query for label flower", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query: "flower",
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -183,7 +183,7 @@ func TestGeo(t *testing.T) {
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("query for label landscape", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query:    "landscape",
 			Album:    "test",
 			Camera:   123,
@@ -200,7 +200,7 @@ func TestGeo(t *testing.T) {
 			Private:  true,
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -208,7 +208,7 @@ func TestGeo(t *testing.T) {
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("search with multiple parameters", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query:    "landscape",
 			Photo:    true,
 			Path:     "/xxx,xxx",
@@ -218,7 +218,7 @@ func TestGeo(t *testing.T) {
 			Public:   true,
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -226,7 +226,7 @@ func TestGeo(t *testing.T) {
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("search for archived true", func(t *testing.T) {
-		f := form.PhotoSearchGeo{
+		f := form.SearchGeo{
 			Query:    "landscape",
 			Photo:    true,
 			Path:     "/xxx/xxx/",
@@ -234,7 +234,7 @@ func TestGeo(t *testing.T) {
 			Archived: true,
 		}
 
-		result, err := PhotosGeo(f)
+		result, err := Geo(f)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -242,10 +242,10 @@ func TestGeo(t *testing.T) {
 		assert.IsType(t, GeoResults{}, result)
 	})
 	t.Run("faces:true", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Query = "faces:true"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -254,10 +254,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 4)
 	})
 	t.Run("faces:yes", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Faces = "Yes"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -266,10 +266,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 4)
 	})
 	t.Run("face:yes", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Face = "Yes"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -278,11 +278,11 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 4)
 	})
 	t.Run("f.Faces:new", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Faces = "New"
 		f.Face = ""
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -291,10 +291,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 3)
 	})
 	t.Run("faces:no", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Faces = "No"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -303,10 +303,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 8)
 	})
 	t.Run("faces:2", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Faces = "2"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -315,10 +315,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 1)
 	})
 	t.Run("face: TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Face = "TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -327,11 +327,11 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 2)
 	})
 	t.Run("day", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Day = "18"
 		f.Month = "4"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -340,10 +340,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 1)
 	})
 	t.Run("subject uid in query", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Query = "Actress"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -352,10 +352,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 1)
 	})
 	t.Run("albums", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Albums = "2030"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -364,10 +364,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 10)
 	})
 	t.Run("path or path", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Path = "1990/04" + "|" + "2015/11"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -376,10 +376,10 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 3)
 	})
 	t.Run("name or name", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Name = "20151101_000000_51C501B5" + "|" + "Video"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -388,11 +388,11 @@ func TestGeo(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 2)
 	})
 	t.Run("query: videos", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "videos"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -407,11 +407,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: video", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "video"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -426,11 +426,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: live", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "live"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -445,11 +445,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: raws", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "raws"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -464,11 +464,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: panoramas", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "panoramas"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -481,11 +481,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: scans", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "scans"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -498,11 +498,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: faces", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "faces"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -515,11 +515,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: people", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "people"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -533,11 +533,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("query: favorites", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Query = "favorites"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -552,10 +552,10 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("keywords:kuh|bridge > keywords:bridge&kuh", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Query = "keywords:kuh|bridge"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -563,7 +563,7 @@ func TestGeo(t *testing.T) {
 
 		f.Query = "keywords:bridge&kuh"
 
-		photos2, err2 := PhotosGeo(f)
+		photos2, err2 := Geo(f)
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -572,10 +572,10 @@ func TestGeo(t *testing.T) {
 		assert.Greater(t, len(photos), len(photos2))
 	})
 	t.Run("albums and and or search", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.Query = "albums:Holiday|Berlin"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -583,7 +583,7 @@ func TestGeo(t *testing.T) {
 
 		f.Query = "albums:Berlin&Holiday"
 
-		photos2, err2 := PhotosGeo(f)
+		photos2, err2 := Geo(f)
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -591,11 +591,11 @@ func TestGeo(t *testing.T) {
 		assert.Greater(t, len(photos), len(photos2))
 	})
 	t.Run("f.Album = uid", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Album = "at9lxuqxpogaaba9"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -609,10 +609,10 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("people and and or search", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.People = "Actor A|Actress A"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
@@ -620,7 +620,7 @@ func TestGeo(t *testing.T) {
 
 		f.People = "Actor A&Actress A"
 
-		photos2, err2 := PhotosGeo(f)
+		photos2, err2 := Geo(f)
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -629,19 +629,19 @@ func TestGeo(t *testing.T) {
 		assert.Greater(t, len(photos), len(photos2))
 	})
 	t.Run("people = subjects & person = subject", func(t *testing.T) {
-		var f form.PhotoSearchGeo
+		var f form.SearchGeo
 		f.People = "Actor"
 
-		photos, err := PhotosGeo(f)
+		photos, err := Geo(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
-		var f2 form.PhotoSearchGeo
+		var f2 form.SearchGeo
 
 		f2.Subjects = "Actor"
 
-		photos2, err2 := PhotosGeo(f2)
+		photos2, err2 := Geo(f2)
 
 		if err2 != nil {
 			t.Fatal(err2)
@@ -649,20 +649,20 @@ func TestGeo(t *testing.T) {
 
 		assert.Equal(t, len(photos), len(photos2))
 
-		var f3 form.PhotoSearchGeo
+		var f3 form.SearchGeo
 
 		f3.Person = "Actor A"
 
-		photos3, err3 := PhotosGeo(f3)
+		photos3, err3 := Geo(f3)
 
 		if err3 != nil {
 			t.Fatal(err3)
 		}
 
-		var f4 form.PhotoSearchGeo
+		var f4 form.SearchGeo
 		f4.Subject = "Actor A"
 
-		photos4, err4 := PhotosGeo(f4)
+		photos4, err4 := Geo(f4)
 
 		if err4 != nil {
 			t.Fatal(err4)
@@ -671,10 +671,10 @@ func TestGeo(t *testing.T) {
 		assert.Equal(t, len(photos3), len(photos4))
 		assert.Equal(t, len(photos), len(photos4))
 
-		var f5 form.PhotoSearchGeo
+		var f5 form.SearchGeo
 		f5.Subject = "jqy1y111h1njaaad"
 
-		photos5, err5 := PhotosGeo(f5)
+		photos5, err5 := Geo(f5)
 
 		if err5 != nil {
 			t.Fatal(err5)
@@ -684,11 +684,11 @@ func TestGeo(t *testing.T) {
 	})
 
 	t.Run("f.Scan = true", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Scan = true
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -702,11 +702,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("f.Panorama = true", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Panorama = true
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -720,11 +720,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("f.Raw = true", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Raw = true
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -738,11 +738,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("f.Live = true", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Live = true
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -756,11 +756,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("f.Title = phototobebatchapproved2", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 
 		frm.Title = "phototobebatchapproved2"
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)
@@ -774,11 +774,11 @@ func TestGeo(t *testing.T) {
 		}
 	})
 	t.Run("f.Query = p", func(t *testing.T) {
-		var frm form.PhotoSearchGeo
+		var frm form.SearchGeo
 		frm.Query = "p"
 		frm.Title = ""
 
-		photos, err := PhotosGeo(frm)
+		photos, err := Geo(frm)
 
 		if err != nil {
 			t.Fatal(err)

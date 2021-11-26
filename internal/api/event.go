@@ -16,7 +16,7 @@ const (
 )
 
 func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.PhotoSearch{ID: uid, Merged: true}
+	f := form.SearchPhotos{ID: uid, Merged: true}
 	result, _, err := search.Photos(f)
 
 	if err != nil {

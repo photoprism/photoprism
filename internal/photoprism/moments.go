@@ -87,7 +87,7 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			f := form.PhotoSearch{
+			f := form.SearchPhotos{
 				Path:   mom.Path,
 				Public: true,
 			}
@@ -148,7 +148,7 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			f := form.PhotoSearch{
+			f := form.SearchPhotos{
 				Country: mom.Country,
 				Year:    strconv.Itoa(mom.Year),
 				Public:  true,
@@ -183,7 +183,7 @@ func (w *Moments) Start() (err error) {
 		log.Errorf("moments: %s", err.Error())
 	} else {
 		for _, mom := range results {
-			f := form.PhotoSearch{
+			f := form.SearchPhotos{
 				Country: mom.Country,
 				State:   mom.State,
 				Public:  true,
@@ -222,7 +222,7 @@ func (w *Moments) Start() (err error) {
 		for _, mom := range results {
 			w.MigrateSlug(mom, entity.AlbumMoment)
 
-			f := form.PhotoSearch{
+			f := form.SearchPhotos{
 				Label:  mom.Label,
 				Public: true,
 			}

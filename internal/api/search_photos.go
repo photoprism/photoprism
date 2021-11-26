@@ -35,7 +35,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.PhotoSearch
+		var f form.SearchPhotos
 
 		err := c.MustBindWith(&f, binding.Form)
 

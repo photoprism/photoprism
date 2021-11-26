@@ -62,7 +62,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		var f form.PhotoSearch
+		var f form.SearchPhotos
 
 		// Covers may only contain public content in shared albums.
 		f.Album = share
