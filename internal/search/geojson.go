@@ -26,6 +26,17 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		return GeoResults{}, err
 	}
 
+	// Search for nearby photos?
+	if f.Near != "" {
+		photo := Photo{}
+
+		if err := Db().First(&photo, "photo_uid = ?", f.Near).Error; err != nil {
+			return GeoResults{}, err
+		}
+
+		f.S2 = photo.CellID
+	}
+
 	s := UnscopedDb()
 
 	// s.LogMode(true)
@@ -308,7 +319,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), 7)
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
 	} else {
-		// Filter by approx distance to coordinates:
+		// Filter by approx distance to coordinate:
 		if f.Lat != 0 {
 			latMin := f.Lat - Radius*float32(f.Dist)
 			latMax := f.Lat + Radius*float32(f.Dist)
@@ -321,16 +332,32 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		}
 	}
 
+	// Find photos taken before date?
 	if !f.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))
 	}
 
+	// Find photos taken after date?
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}
 
-	s = s.Order("taken_at, photos.photo_uid")
+	// Sort order.
+	if f.Near != "" {
+		// Sort by distance to UID.
+		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS((? - photos.photo_lat)*(? - photos.photo_lng))", f.Near, f.Lat, f.Lng))
+		s = s.Limit(1000)
+	} else {
+		// Default.
+		s = s.Order("taken_at, photos.photo_uid")
+	}
 
+	// Limit result count?
+	if f.Count > 0 {
+		s = s.Limit(f.Count).Offset(f.Offset)
+	}
+
+	// Fetch results.
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}

@@ -1,48 +1,13 @@
 package search
 
 import (
-	"bytes"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-func TestGeoResult_Lat(t *testing.T) {
-	geo := GeoResult{
-		ID:            "123",
-		PhotoLat:      7.775,
-		PhotoLng:      8.775,
-		PhotoUID:      "",
-		PhotoTitle:    "",
-		PhotoFavorite: false,
-		FileHash:      "",
-		FileWidth:     0,
-		FileHeight:    0,
-		TakenAt:       time.Time{},
-	}
-	assert.Equal(t, 7.775000095367432, geo.Lat())
-}
-
-func TestGeoResult_Lng(t *testing.T) {
-	geo := GeoResult{
-		ID:            "123",
-		PhotoLat:      7.775,
-		PhotoLng:      8.775,
-		PhotoUID:      "",
-		PhotoTitle:    "",
-		PhotoFavorite: false,
-		FileHash:      "",
-		FileWidth:     0,
-		FileHeight:    0,
-		TakenAt:       time.Time{},
-	}
-	assert.Equal(t, 8.774999618530273, geo.Lng())
-}
-
-func TestGeoResults_GeoJSON(t *testing.T) {
+func TestGeoResults_ViewerJSON(t *testing.T) {
 	taken := time.Date(2000, 1, 1, 1, 1, 1, 1, time.UTC).UTC().Round(time.Second)
 	items := GeoResults{
 		GeoResult{
@@ -89,15 +54,11 @@ func TestGeoResults_GeoJSON(t *testing.T) {
 		},
 	}
 
-	b, err := items.GeoJSON()
+	b, err := items.ViewerJSON("/content", "/api/v1", "preview-token", "download-token")
 
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	expected := []byte("{\"type\":\"FeatureCollection\",\"bbox\":[-5.775000095367432,-1.774999976158142,100.7750015258789,7.775000095367432]")
-
-	assert.Truef(t, bytes.Contains(b, expected), "GeoJSON not as expected")
 
 	t.Logf("result: %s", b)
 }

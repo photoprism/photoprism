@@ -1,6 +1,6 @@
 /*
 
-Package search performs common index search queries.
+Package viewer provides photo viewer data structures and utility functions.
 
 Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 
@@ -29,42 +29,4 @@ Additional information can be found in our Developer Guide:
 https://docs.photoprism.org/developer-guide/
 
 */
-package search
-
-import (
-	"github.com/jinzhu/gorm"
-
-	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
-)
-
-var log = event.Log
-
-// MaxResults is max result limit for queries.
-const MaxResults = 10000
-
-// Radius is about 1 km.
-const Radius = 0.009
-
-// Cols represents a list of database columns.
-type Cols []string
-
-// Query searches given an originals path and a db instance.
-type Query struct {
-	db *gorm.DB
-}
-
-// Count represents the total number of search results.
-type Count struct {
-	Total int
-}
-
-// Db returns a database connection instance.
-func Db() *gorm.DB {
-	return entity.Db()
-}
-
-// UnscopedDb returns an unscoped database connection instance.
-func UnscopedDb() *gorm.DB {
-	return entity.Db().Unscoped()
-}
+package viewer

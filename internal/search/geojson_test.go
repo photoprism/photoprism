@@ -11,6 +11,16 @@ import (
 )
 
 func TestGeo(t *testing.T) {
+	t.Run("Near", func(t *testing.T) {
+		query := form.NewGeoSearch("near:pt9jtdre2lvl0y43")
+
+		if result, err := Geo(query); err != nil {
+			t.Fatal(err)
+		} else {
+			t.Logf("RESULT: %#v", result)
+			assert.LessOrEqual(t, 4, len(result))
+		}
+	})
 	t.Run("UnknownFaces", func(t *testing.T) {
 		query := form.NewGeoSearch("face:none")
 

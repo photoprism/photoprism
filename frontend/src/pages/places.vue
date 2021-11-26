@@ -200,13 +200,52 @@ export default {
     query: function () {
       return this.$route.params.q ? this.$route.params.q : "";
     },
-    openPhoto(id) {
+    openNearbyPhotos(uid) {
+      // Abort if uid is empty or results aren't loaded.
+      if (!uid || this.loading) {
+        return;
+      }
+
+      // Get request parameters.
+      const options = {
+        params: {
+          near: uid,
+          count: 1000,
+        },
+      };
+
+      this.loading = true;
+
+      // Perform get request to find nearby photos.
+      return Api.get("geo/view", options).then((r) => {
+        if (r && r.data && r.data.length > 0) {
+          // Show photos.
+          this.$viewer.show(r.data, 0);
+        } else {
+          // Don't open viewer if nothing was found.
+          this.$notify.warn(this.$gettext("No pictures found"));
+        }
+      }).finally(() => {
+        this.loading = false;
+      });
+    },
+    openPhoto(uid) {
+      // Abort if uid is empty or results aren't loaded.
+      if (!uid || this.loading || !this.result || !this.result.features) {
+        return;
+      }
+
+      // Perform a backend request to find nearby photos?
+      if (this.result.features.length > 50) {
+        return this.openNearbyPhotos(uid);
+      }
+
       if (!this.photos || !this.photos.length) {
         this.photos = this.result.features.map((f) => new Photo(f.properties));
       }
 
       if (this.photos.length > 0) {
-        const index = this.photos.findIndex((p) => p.UID === id);
+        const index = this.photos.findIndex((p) => p.UID === uid);
         const selected = this.photos[index];
 
         if (selected.Type === TypeVideo || selected.Type === TypeLive) {
@@ -275,10 +314,11 @@ export default {
         }
 
         this.initialized = true;
-        this.loading = false;
 
         this.updateMarkers();
-      }).catch(() => this.loading = false);
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     renderMap() {
       this.map = new mapboxgl.Map(this.options);

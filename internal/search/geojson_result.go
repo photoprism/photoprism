@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	geojson "github.com/paulmach/go.geojson"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -37,8 +38,8 @@ func (photo GeoResult) Lng() float64 {
 // GeoResults represents a list of geo search results.
 type GeoResults []GeoResult
 
-// MarshalJSON returns results as Geo.
-func (photos GeoResults) MarshalJSON() ([]byte, error) {
+// GeoJSON returns results as specified on https://geojson.org/.
+func (photos GeoResults) GeoJSON() ([]byte, error) {
 	fc := geojson.NewFeatureCollection()
 
 	bbox := make([]float64, 4)

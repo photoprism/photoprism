@@ -5,6 +5,7 @@ import "time"
 // SearchGeo represents search form fields for "/api/v1/geo".
 type SearchGeo struct {
 	Query    string    `form:"q"`
+	Near     string    `form:"near"`
 	Type     string    `form:"type"`
 	Path     string    `form:"path"`
 	Folder   string    `form:"folder"` // Alias for Path
@@ -45,6 +46,8 @@ type SearchGeo struct {
 	Color    string    `form:"color"`
 	Camera   int       `form:"camera"`
 	Lens     int       `form:"lens"`
+	Count    int       `form:"count" serialize:"-"`
+	Offset   int       `form:"offset" serialize:"-"`
 }
 
 // GetQuery returns the query parameter as string.

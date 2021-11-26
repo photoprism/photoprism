@@ -9,14 +9,15 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// SearchGeo finds photos and returns results as Geo, so they can be displayed on a map.
+// SearchGeo finds photos and returns results as JSON, so they can be displayed on a map or in a viewer.
 //
 // GET /api/v1/geo
 func SearchGeo(router *gin.RouterGroup) {
-	router.GET("/geo", func(c *gin.Context) {
+	handler := func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionSearch)
 
 		if s.Invalid() {
@@ -55,8 +56,16 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		// Create GeoJSON from search results.
-		resp, err := photos.MarshalJSON()
+		var resp []byte
+
+		// Render JSON response.
+		switch c.Param("format") {
+		case "view":
+			conf := service.Config()
+			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())
+		default:
+			resp, err = photos.GeoJSON()
+		}
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
@@ -66,5 +75,8 @@ func SearchGeo(router *gin.RouterGroup) {
 		AddTokenHeaders(c)
 
 		c.Data(http.StatusOK, "application/json", resp)
-	})
+	}
+
+	router.GET("/geo", handler)
+	router.GET("/geo/:format", handler)
 }
