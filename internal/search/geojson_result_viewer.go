@@ -39,5 +39,5 @@ func (photos GeoResults) ViewerJSON(contentUri, apiUri, previewToken, downloadTo
 		results = append(results, NewViewerResult(p, contentUri, apiUri, previewToken, downloadToken))
 	}
 
-	return json.MarshalIndent(results, "", "  ")
+	return json.Marshal(results)
 }
