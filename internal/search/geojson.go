@@ -37,6 +37,9 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		}
 
 		f.S2 = photo.CellID
+		f.Lat = photo.PhotoLat
+		f.Lng = photo.PhotoLng
+
 		S2Levels = 12
 	}
 
@@ -345,14 +348,12 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}
 
-	// Sort order.
-	if f.Near != "" {
+	if f.Near == "" {
+		// Default sort order.
+		s = s.Order("taken_at, photos.photo_uid")
+	} else {
 		// Sort by distance to UID.
 		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", f.Near, f.Lat, f.Lng))
-		s = s.Limit(1000)
-	} else {
-		// Default.
-		s = s.Order("taken_at, photos.photo_uid")
 	}
 
 	// Limit result count?
