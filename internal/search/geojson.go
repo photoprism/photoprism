@@ -345,7 +345,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 	// Sort order.
 	if f.Near != "" {
 		// Sort by distance to UID.
-		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS((? - photos.photo_lat)*(? - photos.photo_lng))", f.Near, f.Lat, f.Lng))
+		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", f.Near, f.Lat, f.Lng))
 		s = s.Limit(1000)
 	} else {
 		// Default.
