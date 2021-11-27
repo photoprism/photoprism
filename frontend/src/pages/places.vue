@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import {Photo, TypeLive, TypeVideo} from "model/photo";
 import mapboxgl from "mapbox-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
@@ -42,7 +41,6 @@ export default {
       attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
       options: {},
       mapFont: [],
-      photos: [],
       result: {},
       filter: {q: this.query()},
       lastFilter: {},
@@ -270,7 +268,6 @@ export default {
           return;
         }
 
-        this.photos = {};
         this.result = response.data;
 
         this.map.getSource("photos").setData(this.result);
