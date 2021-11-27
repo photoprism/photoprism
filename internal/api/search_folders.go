@@ -74,7 +74,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			if cacheData, ok := cache.Get(cacheKey); ok {
 				cached := cacheData.(FoldersResponse)
 
-				log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+				log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 				c.JSON(http.StatusOK, cached)
 				return

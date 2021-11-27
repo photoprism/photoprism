@@ -16,11 +16,11 @@ import (
 // PlacesCommand registers the places subcommands.
 var PlacesCommand = cli.Command{
 	Name:  "places",
-	Usage: "Geodata management subcommands",
+	Usage: "Geographic data subcommands",
 	Subcommands: []cli.Command{
 		{
 			Name:   "update",
-			Usage:  "Downloads the latest location data and updates your places",
+			Usage:  "Retrieves updated location details",
 			Action: placesUpdateAction,
 		},
 	},
@@ -47,7 +47,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	confirmPrompt := promptui.Prompt{
-		Label:     "Interrupting the update may result in inconsistent data. Proceed?",
+		Label:     "Interrupting the update may result in inconsistent location details. Proceed?",
 		IsConfirm: true,
 	}
 

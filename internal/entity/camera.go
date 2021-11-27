@@ -97,7 +97,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 	}
 
 	if cacheData, ok := cameraCache.Get(m.CameraSlug); ok {
-		log.Debugf("camera: cache hit for %s", m.CameraSlug)
+		log.Tracef("camera: cache hit for %s", m.CameraSlug)
 
 		return cacheData.(*Camera)
 	}

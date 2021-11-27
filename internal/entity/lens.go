@@ -98,7 +98,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 	}
 
 	if cacheData, ok := lensCache.Get(m.LensSlug); ok {
-		log.Debugf("lens: cache hit for %s", m.LensSlug)
+		log.Tracef("lens: cache hit for %s", m.LensSlug)
 
 		return cacheData.(*Lens)
 	}
