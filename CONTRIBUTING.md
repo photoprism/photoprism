@@ -40,7 +40,6 @@ When reporting an issue, please provide the version in use and information about
 
 The [Developer Guide](https://docs.photoprism.org/developer-guide/) contains all information 
 necessary to get you started.
-
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
 
