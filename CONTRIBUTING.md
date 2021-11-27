@@ -45,6 +45,9 @@ The Developer Guide contains all information necessary to get you started.
 
 Our [step-by-step guide](https://docs.photoprism.org/developer-guide/pull-requests/) explains how to submit new features, bugfixes and documentation.
 
+Because we want to create the best possible product for our users, we have a set of [guidelines](https://docs.photoprism.org/developer-guide/pull-requests#please-be-patient) which ensure that all source code contributions are acceptable.
+
+Reviewing, testing and finally merging pull requests consumes significant resources on our side. Unless it's just a small fix, it may take several months.
 ## Can't code? ##
 
 No worries, you may also contribute by...
