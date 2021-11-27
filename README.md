@@ -89,11 +89,21 @@ processor type.
 ## Contributions ##
 
 We welcome contributions of any kind, including bug reports, testing, writing documentation, 
-tutorials, blog posts, and pull requests. Issues labeled 
-[help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
-[easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
-good (first) contributions. Our step-by-step guide explains how to submit 
-[pull requests](https://docs.photoprism.org/developer-guide/pull-requests/).
+tutorials, blog posts, and pull requests.
+
+The [Developer Guide](https://docs.photoprism.org/developer-guide/) contains all information
+necessary to get you started.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
+[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
+
+Because we want to create the best possible product for our users,
+we have a set of [guidelines](https://docs.photoprism.org/developer-guide/pull-requests)
+to ensure that all source code submissions are acceptable.
+They include step-by-step instructions for submitting new features,
+bug fixes, and documentation improvements.
+
+**Reviewing, testing and finally merging pull requests requires significant resources
+on our side. If it's not just a small fix, it can take several months.**
 
 ## Trademarks ##
 
