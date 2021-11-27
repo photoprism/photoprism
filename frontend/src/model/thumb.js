@@ -171,6 +171,10 @@ export class Thumb extends Model {
     return new this(result);
   }
 
+  static wrap(data) {
+    return data.map((values) => new this(values));
+  }
+
   static fromFiles(photos) {
     let result = [];
 

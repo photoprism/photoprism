@@ -22,7 +22,8 @@ type GeoResult struct {
 	FileHash         string    `json:"Hash"`
 	FileWidth        int       `json:"Width"`
 	FileHeight       int       `json:"Height"`
-	TakenAtLocal     time.Time `json:"TakenAt"`
+	TakenAt          time.Time `json:"TakenAt"`
+	TakenAtLocal     time.Time `json:"TakenAtLocal"`
 }
 
 // Lat returns the position latitude.
@@ -65,14 +66,8 @@ func (photos GeoResults) GeoJSON() ([]byte, error) {
 		props := gin.H{
 			"UID":     p.PhotoUID,
 			"Hash":    p.FileHash,
-			"Width":   p.FileWidth,
-			"Height":  p.FileHeight,
-			"TakenAt": p.TakenAtLocal,
+			"TakenAt": p.TakenAt,
 			"Title":   p.PhotoTitle,
-		}
-
-		if p.PhotoDescription != "" {
-			props["Description"] = p.PhotoDescription
 		}
 
 		if p.PhotoType != entity.TypeImage && p.PhotoType != entity.TypeDefault {

@@ -220,7 +220,7 @@ export default {
       return Api.get("geo/view", options).then((r) => {
         if (r && r.data && r.data.length > 0) {
           // Show photos.
-          this.$viewer.show(r.data, 0);
+          this.$viewer.show(Thumb.wrap(r.data), 0);
         } else {
           // Don't open viewer if nothing was found.
           this.$notify.warn(this.$gettext("No pictures found"));

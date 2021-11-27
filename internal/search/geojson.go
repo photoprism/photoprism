@@ -49,7 +49,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	s = s.Table("photos").
 		Select(`photos.id, photos.photo_uid, photos.photo_type, photos.photo_lat, photos.photo_lng, 
-		photos.photo_title, photos.photo_description, photos.photo_favorite, photos.taken_at_local, 
+		photos.photo_title, photos.photo_description, photos.photo_favorite, photos.taken_at, photos.taken_at_local, 
 		files.file_hash, files.file_width, files.file_height`).
 		Joins(`JOIN files ON files.photo_id = photos.id AND 
 		files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
