@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/migrate"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -44,7 +46,7 @@ var Entities = Tables{
 }
 
 // WaitForMigration waits for the database migration to be successful.
-func (list Tables) WaitForMigration() {
+func (list Tables) WaitForMigration(db *gorm.DB) {
 	type RowCount struct {
 		Count int
 	}
@@ -53,7 +55,7 @@ func (list Tables) WaitForMigration() {
 	for name := range list {
 		for i := 0; i <= attempts; i++ {
 			count := RowCount{}
-			if err := Db().Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
+			if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
 				log.Tracef("entity: %s migrated", txt.Quote(name))
 				break
 			} else {
@@ -70,9 +72,9 @@ func (list Tables) WaitForMigration() {
 }
 
 // Truncate removes all data from tables without dropping them.
-func (list Tables) Truncate() {
+func (list Tables) Truncate(db *gorm.DB) {
 	for name := range list {
-		if err := Db().Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
+		if err := db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
 			// log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
@@ -82,29 +84,29 @@ func (list Tables) Truncate() {
 }
 
 // Migrate migrates all database tables of registered entities.
-func (list Tables) Migrate() {
+func (list Tables) Migrate(db *gorm.DB, runFailed bool) {
 	for name, entity := range list {
-		if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
+		if err := db.AutoMigrate(entity).Error; err != nil {
 			log.Debugf("entity: %s (waiting 1s)", err.Error())
 
 			time.Sleep(time.Second)
 
-			if err := UnscopedDb().AutoMigrate(entity).Error; err != nil {
+			if err := db.AutoMigrate(entity).Error; err != nil {
 				log.Errorf("entity: failed migrating %s", txt.Quote(name))
 				panic(err)
 			}
 		}
 	}
 
-	if err := migrate.Auto(Db()); err != nil {
+	if err := migrate.Auto(db, runFailed); err != nil {
 		log.Error(err)
 	}
 }
 
 // Drop drops all database tables of registered entities.
-func (list Tables) Drop() {
+func (list Tables) Drop(db *gorm.DB) {
 	for _, entity := range list {
-		if err := UnscopedDb().DropTableIfExists(entity).Error; err != nil {
+		if err := db.DropTableIfExists(entity).Error; err != nil {
 			panic(err)
 		}
 	}

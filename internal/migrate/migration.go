@@ -1,6 +1,7 @@
 package migrate
 
 import (
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -29,6 +30,7 @@ func (m *Migration) Fail(err error, db *gorm.DB) {
 	}
 
 	m.Error = err.Error()
+
 	db.Model(m).Updates(Values{"Error": m.Error})
 }
 
@@ -41,7 +43,11 @@ func (m *Migration) Finish(db *gorm.DB) error {
 func (m *Migration) Execute(db *gorm.DB) error {
 	for _, s := range m.Statements {
 		if err := db.Exec(s).Error; err != nil {
-			return err
+			if strings.HasPrefix(s, "DROP ") && strings.Contains(err.Error(), "DROP") {
+				log.Tracef("migrate: %s (drop statement)", err)
+			} else {
+				return err
+			}
 		}
 	}
 

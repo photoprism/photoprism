@@ -16,11 +16,18 @@ import (
 // PlacesCommand registers the places subcommands.
 var PlacesCommand = cli.Command{
 	Name:  "places",
-	Usage: "Geographic data subcommands",
+	Usage: "Maps and location details subcommands",
 	Subcommands: []cli.Command{
 		{
-			Name:   "update",
-			Usage:  "Retrieves updated location details",
+			Name:  "update",
+			Usage: "Retrieves updated location details",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:   "yes, y",
+					Hidden: true,
+					Usage:  "assume \"yes\" as answer to all prompts and run non-interactively",
+				},
+			},
 			Action: placesUpdateAction,
 		},
 	},
@@ -46,14 +53,16 @@ func placesUpdateAction(ctx *cli.Context) error {
 		return nil
 	}
 
-	confirmPrompt := promptui.Prompt{
-		Label:     "Interrupting the update may result in inconsistent location details. Proceed?",
-		IsConfirm: true,
-	}
+	if !ctx.Bool("yes") {
+		confirmPrompt := promptui.Prompt{
+			Label:     "Interrupting the update may result in inconsistent location details. Proceed?",
+			IsConfirm: true,
+		}
 
-	// Abort?
-	if _, err := confirmPrompt.Run(); err != nil {
-		return nil
+		// Abort?
+		if _, err := confirmPrompt.Run(); err != nil {
+			return nil
+		}
 	}
 
 	start := time.Now()

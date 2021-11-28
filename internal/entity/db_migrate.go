@@ -1,13 +1,13 @@
 package entity
 
 // MigrateDb creates database tables and inserts default fixtures as needed.
-func MigrateDb(dropDeprecated bool) {
+func MigrateDb(dropDeprecated, runFailed bool) {
 	if dropDeprecated {
-		DeprecatedTables.Drop()
+		DeprecatedTables.Drop(Db())
 	}
 
-	Entities.Migrate()
-	Entities.WaitForMigration()
+	Entities.Migrate(Db(), runFailed)
+	Entities.WaitForMigration(Db())
 
 	CreateDefaultFixtures()
 }
