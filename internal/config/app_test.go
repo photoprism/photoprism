@@ -10,19 +10,19 @@ import (
 func TestConfig_AppIcon(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "default", c.AppIcon())
+	assert.Equal(t, "logo", c.AppIcon())
 	c.options.AppIcon = "foo"
-	assert.Equal(t, "default", c.AppIcon())
+	assert.Equal(t, "logo", c.AppIcon())
 	c.options.AppIcon = "app"
 	assert.Equal(t, "app", c.AppIcon())
-	c.options.AppIcon = "fresh"
-	assert.Equal(t, "fresh", c.AppIcon())
+	c.options.AppIcon = "crisp"
+	assert.Equal(t, "crisp", c.AppIcon())
 	c.options.AppIcon = "mint"
 	assert.Equal(t, "mint", c.AppIcon())
 	c.options.AppIcon = "bold"
 	assert.Equal(t, "bold", c.AppIcon())
-	c.options.AppIcon = "default"
-	assert.Equal(t, "default", c.AppIcon())
+	c.options.AppIcon = "logo"
+	assert.Equal(t, "logo", c.AppIcon())
 }
 
 func TestConfig_AppIconsPath(t *testing.T) {

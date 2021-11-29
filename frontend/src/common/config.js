@@ -359,12 +359,12 @@ export default class Config {
 
   appIcon() {
     switch (this.get("appIcon")) {
-      case "fresh":
+      case "crisp":
       case "mint":
       case "bold":
         return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
       default:
-        return `${this.staticUri}/icons/default.svg`;
+        return `${this.staticUri}/icons/logo.svg`;
     }
   }
 }

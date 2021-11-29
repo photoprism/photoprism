@@ -10,7 +10,7 @@ import (
 
 // AppIcon returns the app icon when installed on a device.
 func (c *Config) AppIcon() string {
-	defaultIcon := "default"
+	defaultIcon := "logo"
 
 	if c.options.AppIcon == "" || c.options.AppIcon == defaultIcon {
 		// Default.
