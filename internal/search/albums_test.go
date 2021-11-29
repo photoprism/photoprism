@@ -53,7 +53,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Import Album", result[0].AlbumTitle)
+		assert.Equal(t, "April 1990", result[0].AlbumTitle)
 	})
 
 	t.Run("favorites true", func(t *testing.T) {
