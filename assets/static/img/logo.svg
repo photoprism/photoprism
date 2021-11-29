@@ -2,11 +2,11 @@
 <svg
    id="f394fb39-4024-46e8-9a68-3f5e53f52bfd"
    data-name="Ebene 1"
-   viewBox="0 0 267.99999 267.99999"
+   viewBox="0 0 265.99999 265.99999"
    version="1.1"
-   sodipodi:docname="logo-default.svg"
-   width="268"
-   height="268"
+   sodipodi:docname="logo.svg"
+   width="266"
+   height="266"
    inkscape:version="1.1.1 (3bf5ae0, 2021-09-20)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -21,13 +21,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     fit-margin-top="2"
-     fit-margin-left="2"
-     fit-margin-right="2"
-     fit-margin-bottom="2"
+     fit-margin-top="1"
+     fit-margin-left="1"
+     fit-margin-right="1"
+     fit-margin-bottom="1"
      inkscape:zoom="3.1543575"
-     inkscape:cx="36.933036"
-     inkscape:cy="133.9417"
+     inkscape:cx="35.981971"
+     inkscape:cy="132.99063"
      inkscape:window-width="2560"
      inkscape:window-height="1384"
      inkscape:window-x="0"
@@ -48,7 +48,7 @@
        x2="231.72"
        y2="45.040001"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(-4.3800049,-4.3800049)">
+       gradientTransform="translate(-5.3800049,-5.3800049)">
       <stop
          offset="0"
          stop-color="#fff"
@@ -65,8 +65,8 @@
   </defs>
   <circle
      class="a8bd947d-a1f8-4a14-8069-c9663505e4b1"
-     cx="134"
-     cy="134"
+     cx="133"
+     cy="133"
      r="132"
      id="circle647"
      style="fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b)" />
@@ -74,5 +74,5 @@
      id="bfa29dbe-bd65-4058-95bb-bdb844b1d3b1"
      data-name="Logo Pfad"
      class="a4ee1f07-8fee-4200-835a-e030a32bca90"
-     d="m 225.19,177.51 -4,24.19 m -178.280005,-23.2 14.81,14 M 153.48,54.849995 57.619995,192.31 a 0.09,0.09 0 0 0 0.07,0.15 L 221.1,201.83 a 0.09,0.09 0 0 0 0.09,-0.13 L 153.62,54.869995 a 0.1,0.1 0 0 0 -0.14,-0.02 z m -19.74,-13.29 L 42.799995,178.31 a 0.13,0.13 0 0 0 0.11,0.19 L 225.09,177.7 a 0.12,0.12 0 0 0 0.1,-0.19 L 133.95,41.559995 a 0.12,0.12 0 0 0 -0.21,0 z m 0.11,-0.16 19.77,13.32" />
+     d="m 224.19,176.51 -4,24.19 m -178.280005,-23.2 14.81,14 M 152.48,53.849995 56.619995,191.31 a 0.09,0.09 0 0 0 0.07,0.15 L 220.1,200.83 a 0.09,0.09 0 0 0 0.09,-0.13 L 152.62,53.869995 a 0.1,0.1 0 0 0 -0.14,-0.02 z m -19.74,-13.29 L 41.799995,177.31 a 0.13,0.13 0 0 0 0.11,0.19 L 224.09,176.7 a 0.12,0.12 0 0 0 0.1,-0.19 L 132.95,40.559995 a 0.12,0.12 0 0 0 -0.21,0 z m 0.11,-0.16 19.77,13.32" />
 </svg>
