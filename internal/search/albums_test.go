@@ -3,9 +3,10 @@ package search
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/entity"
-	form "github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestAlbumPhotos(t *testing.T) {
