@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="f394fb39-4024-46e8-9a68-3f5e53f52bfd"
+   data-name="Ebene 1"
+   viewBox="0 0 267.99999 267.99999"
+   version="1.1"
+   sodipodi:docname="logo-dark.svg"
+   width="268"
+   height="268"
+   inkscape:version="1.1.1 (3bf5ae0, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview727"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-right="2"
+     fit-margin-bottom="2"
+     inkscape:zoom="3.1543575"
+     inkscape:cx="36.933036"
+     inkscape:cy="133.9417"
+     inkscape:window-width="2560"
+     inkscape:window-height="1384"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="f394fb39-4024-46e8-9a68-3f5e53f52bfd"
+     lock-margins="true" />
+  <defs
+     id="defs721">
+    <style
+       id="style712">
+            .a8bd947d-a1f8-4a14-8069-c9663505e4b1{fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b);}.a4ee1f07-8fee-4200-835a-e030a32bca90{fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:7px;}
+        </style>
+    <linearGradient
+       id="b905e2c4-4772-4914-b70f-44b4d19aca4b"
+       x1="45.040001"
+       y1="231.72"
+       x2="231.72"
+       y2="45.040001"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-4.3800049,-4.3800049)">
+      <stop
+         offset="0"
+         stop-color="#fff"
+         id="stop714" />
+      <stop
+         offset="0"
+         stop-color="#99e6ff"
+         id="stop716" />
+      <stop
+         offset="1"
+         stop-color="#c299ff"
+         id="stop718" />
+    </linearGradient>
+  </defs>
+  <circle
+     class="a8bd947d-a1f8-4a14-8069-c9663505e4b1"
+     cx="134"
+     cy="134"
+     r="132"
+     id="circle723"
+     style="fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b)" />
+  <path
+     id="bfa29dbe-bd65-4058-95bb-bdb844b1d3b1"
+     data-name="Logo Pfad"
+     class="a4ee1f07-8fee-4200-835a-e030a32bca90"
+     d="m 225.19,177.51 -4,24.19 m -178.280005,-23.2 14.81,14 M 153.48,54.849995 57.619995,192.31 a 0.09,0.09 0 0 0 0.07,0.15 L 221.1,201.83 a 0.09,0.09 0 0 0 0.09,-0.13 L 153.62,54.869995 a 0.1,0.1 0 0 0 -0.14,-0.02 z m -19.74,-13.29 L 42.799995,178.31 a 0.13,0.13 0 0 0 0.11,0.19 L 225.09,177.7 a 0.12,0.12 0 0 0 0.1,-0.19 L 133.95,41.559995 a 0.12,0.12 0 0 0 -0.21,0 z m 0.11,-0.16 19.77,13.32" />
+</svg>

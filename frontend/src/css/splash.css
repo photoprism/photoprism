@@ -21,21 +21,43 @@
     height: 300px;
 }
 
-#photoprism div.loading-logo {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 250px;
-    height: 250px;
-    z-index: 2;
-}
-
 #photoprism div.loading-bar {
     position: fixed;
     bottom: 15%;
     right: 10%;
     left: 10%;
+}
+
+#photoprism div.loading-logo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 264px;
+    height: 264px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+}
+
+#photoprism div.loading-logo svg {
+    width: 264px;
+    height: 264px;
+}
+
+#photoprism div.loading-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 264px;
+    height: 264px;
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    text-align: center !important;
+    color: #e2daf1 !important;
+    caret-color: #e2daf1 !important;
 }
 
 #photoprism div.loading-circle {
@@ -49,29 +71,15 @@
     right: 0;
     z-index: 0;
     overflow: hidden;
-    border: 4px rgba(0, 0, 0, 0.25) solid;
-    border-top: 20px #d48af4 solid;
-    border-right: 20px #a990ec solid;
-    border-bottom: 20px #86c8ed solid;
-    border-left: 20px #a3ddf4 solid;
+    border-top: 5px #d48af4 solid;
+    border-right: 5px #a990ec solid;
+    border-bottom: 5px #86c8ed solid;
+    border-left: 5px #a3ddf4 solid;
     border-radius: 50%;
     -webkit-transform-origin: center center;
     transform-origin: center center;
     -webkit-animation: circle-animation 1s infinite linear;
     animation: circle-animation 1s infinite linear;
-}
-
-#photoprism div.loading-animation {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 260px;
-    height: 260px;
-    z-index: 1;
-    text-align: center !important;
-    color: #e2daf1 !important;
-    caret-color: #e2daf1 !important;
 }
 
 #photoprism div.loading-animation .loading-overlay {

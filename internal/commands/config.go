@@ -85,9 +85,9 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "upload-nsfw", conf.UploadNSFW())
 
 	// Progressive Web App.
+	fmt.Printf("%-25s %s\n", "app-icon", conf.AppIcon())
 	fmt.Printf("%-25s %s\n", "app-name", conf.AppName())
 	fmt.Printf("%-25s %s\n", "app-mode", conf.AppMode())
-	fmt.Printf("%-25s %s\n", "app-icon", conf.AppIcon())
 
 	// Site.
 	fmt.Printf("%-25s %s\n", "cdn-url", conf.CdnUrl("/"))

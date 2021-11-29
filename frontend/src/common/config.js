@@ -356,4 +356,15 @@ export default class Config {
 
     return [];
   }
+
+  appIcon() {
+    switch (this.get("appIcon")) {
+      case "dark":
+      case "light":
+      case "mint":
+        return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
+      default:
+        return `${this.staticUri}/icons/default.svg`;
+    }
+  }
 }

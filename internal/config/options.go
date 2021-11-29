@@ -74,9 +74,9 @@ type Options struct {
 	DisableClassification bool    `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DetectNSFW            bool    `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	UploadNSFW            bool    `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
+	AppIcon               string  `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	AppName               string  `yaml:"AppName" json:"AppName" flag:"app-name"`
 	AppMode               string  `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
-	AppIcon               string  `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	CdnUrl                string  `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
 	SiteUrl               string  `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SiteAuthor            string  `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
