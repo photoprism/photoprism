@@ -71,10 +71,10 @@
     right: 0;
     z-index: 0;
     overflow: hidden;
-    border-top: 5px #d48af4 solid;
-    border-right: 5px #a990ec solid;
-    border-bottom: 5px #86c8ed solid;
-    border-left: 5px #a3ddf4 solid;
+    border-top: 6px #d48af4 solid;
+    border-right: 6px #a990ec solid;
+    border-bottom: 6px #86c8ed solid;
+    border-left: 6px #a3ddf4 solid;
     border-radius: 50%;
     -webkit-transform-origin: center center;
     transform-origin: center center;
