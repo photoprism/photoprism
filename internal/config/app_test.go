@@ -15,12 +15,12 @@ func TestConfig_AppIcon(t *testing.T) {
 	assert.Equal(t, "default", c.AppIcon())
 	c.options.AppIcon = "app"
 	assert.Equal(t, "app", c.AppIcon())
-	c.options.AppIcon = "dark"
-	assert.Equal(t, "dark", c.AppIcon())
-	c.options.AppIcon = "light"
-	assert.Equal(t, "light", c.AppIcon())
+	c.options.AppIcon = "fresh"
+	assert.Equal(t, "fresh", c.AppIcon())
 	c.options.AppIcon = "mint"
 	assert.Equal(t, "mint", c.AppIcon())
+	c.options.AppIcon = "bold"
+	assert.Equal(t, "bold", c.AppIcon())
 	c.options.AppIcon = "default"
 	assert.Equal(t, "default", c.AppIcon())
 }

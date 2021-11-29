@@ -231,7 +231,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "app-icon",
-		Usage:  "application `ICON` (default, app, dark, light, mint)",
+		Usage:  "application `ICON` (default, app, fresh, mint, bold)",
 		EnvVar: "PHOTOPRISM_APP_ICON",
 	},
 	cli.StringFlag{

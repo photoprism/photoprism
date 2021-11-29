@@ -359,9 +359,9 @@ export default class Config {
 
   appIcon() {
     switch (this.get("appIcon")) {
-      case "dark":
-      case "light":
+      case "fresh":
       case "mint":
+      case "bold":
         return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
       default:
         return `${this.staticUri}/icons/default.svg`;
