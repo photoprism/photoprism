@@ -132,7 +132,7 @@ export default [
     path: "/albums",
     component: Albums,
     meta: { title: $gettext("Albums"), auth: true },
-    props: { view: "album", staticFilter: { type: "album", order: "relevance" } },
+    props: { view: "album", staticFilter: { type: "album", order: "name" } },
   },
   {
     name: "album",
