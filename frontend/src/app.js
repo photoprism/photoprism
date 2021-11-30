@@ -57,7 +57,7 @@ import Hls from "hls.js";
 import "common/maptiler-lang";
 import { $gettext, Mount } from "common/vm";
 import * as offline from "@lcdp/offline-plugin/runtime";
-import Acl, { Constants } from "./common/acl";
+import { aclMixin } from "./common/acl";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -101,28 +101,7 @@ Vue.prototype.$earlyAccess = () => {
   });
 };
 
-Vue.mixin({
-  data() {
-    return {
-      aclResources: Constants.resources,
-      aclActions: Constants.actions,
-    };
-  },
-  computed: {
-    acl() {
-      const c = config.values.acl ? config.values : window.__CONFIG__;
-      return new Acl(c.acl);
-    },
-  },
-  methods: {
-    hasPermission(resource, ...actions) {
-      const c = config.values.acl ? config.values : window.__CONFIG__;
-      if (c.public) return true;
-      const role = this.$session.getUser().getRole();
-      return this.acl.accessAllowedAny(role, resource, ...actions);
-    },
-  },
-});
+Vue.mixin(aclMixin);
 
 // Register Vuetify
 Vue.use(Vuetify, { rtl, icons, theme });

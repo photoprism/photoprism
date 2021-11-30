@@ -109,6 +109,7 @@ export default {
       // check if oidc provider is available
       axios.get(c.oidc,{ timeout: 1000}).then(response => {
         // redirect to oidc provider
+        sessionStorage.setItem("preventAutoLogin", Date.now().toString());
         window.location.href = '/api/v1/auth/external';
       }).catch(error => {
         if (c.debug) console.log(error);

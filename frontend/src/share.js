@@ -56,6 +56,7 @@ import VueInfiniteScroll from "vue-infinite-scroll";
 import Hls from "hls.js";
 import { $gettext, Mount } from "common/vm";
 import * as options from "./options/options";
+import { aclMixin } from "./common/acl";
 
 // Initialize helpers
 const viewer = new Viewer();
@@ -89,6 +90,8 @@ Vue.prototype.$config = config;
 Vue.prototype.$clipboard = Clipboard;
 Vue.prototype.$isMobile = isMobile;
 Vue.prototype.$rtl = rtl;
+
+Vue.mixin(aclMixin);
 
 // Register Vuetify
 Vue.use(Vuetify, { rtl, icons, theme });

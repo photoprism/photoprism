@@ -47,6 +47,7 @@
     window.localStorage.setItem("session_id", {{ .id }})
     window.localStorage.setItem("data", JSON.stringify({{ .data }}));
     window.localStorage.setItem("config", JSON.stringify({{ .config }}));
+    window.sessionStorage.removeItem("preventAutoLogin");
     window.location.href = '/login';
     {{ else if and .status (eq .status "error") }}
     window.localStorage.setItem("auth_error", {{ .errors }});

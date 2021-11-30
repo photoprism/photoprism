@@ -1,3 +1,5 @@
+import { config } from "../session";
+
 export const Constants = {
   roles: {
     RoleDefault: "*", // used if no role matches
@@ -100,3 +102,27 @@ export default class Acl {
     });
   }
 }
+
+export const aclMixin = {
+  data() {
+    return {
+      aclResources: Constants.resources,
+      aclActions: Constants.actions,
+    };
+  },
+  computed: {
+    acl() {
+      const c = config.values.acl ? config.values : window.__CONFIG__;
+      return new Acl(c.acl);
+    },
+  },
+  methods: {
+    hasPermission(resource, ...actions) {
+      const c = config.values.acl ? config.values : window.__CONFIG__;
+      console.log(c);
+      if (c.public) return true;
+      const role = this.$session.getUser().getRole();
+      return this.acl.accessAllowedAny(role, resource, ...actions);
+    },
+  },
+};
