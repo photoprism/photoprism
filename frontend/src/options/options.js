@@ -255,6 +255,16 @@ export const Themes = () => [
     value: "yellowstone",
     disabled: false,
   },
+  {
+    text: $gettext("Dark Purple"),
+    value: "dark-purple",
+    disabled: false,
+  },
+  {
+    text: $gettext("Lavender Dark"),
+    value: "dark-lavender",
+    disabled: false,
+  },
 ];
 export const MapsAnimate = () => [
   {

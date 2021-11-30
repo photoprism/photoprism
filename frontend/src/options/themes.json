@@ -317,5 +317,63 @@
       "navigation": "#0d0d0d",
       "navigation-home": "#000000"
     }
+  },
+  "dark-purple": {
+    "dark": true,
+    "sponsor": true,
+    "colors": {
+      "application": "#212121",
+      "form": "#AFB42B",
+      "primary": "#7e57c2",
+      "primary-button": "#7e57c2",
+      "secondary-dark": "#7e57c2",
+      "secondary": "#111111",
+      "secondary-light": "#1a1a1a",
+      "accent": "#090c10",
+      "error": "#e57373",
+      "info": "#00acc1",
+      "success": "#4db6ac",
+      "warning": "#ffd740",
+      "remove": "#9575cd",
+      "restore": "#64b5f6",
+      "album": "#7e57c2",
+      "download": "#673ab7",
+      "private": "#512da8",
+      "edit": "#4527a0",
+      "share": "#311b92",
+      "love": "#ef5350",
+      "terminal": "#333333",
+      "navigation": "#0d0d0d",
+      "navigation-home": "#000000"
+    }
+  },
+  "dark-lavender": {
+    "dark": true,
+    "sponsor": true,
+    "colors": {
+      "application": "#444",
+      "form": "#eeeeee",
+      "primary": "#9ca2c9",
+      "primary-button": "#6c6f84",
+      "secondary-dark": "#646fb4",
+      "secondary": "#585858",
+      "secondary-light": "#666",
+      "accent": "#333",
+      "error": "#e57373",
+      "info": "#00acc1",
+      "success": "#4db6ac",
+      "warning": "#ffd740",
+      "remove": "#e57373",
+      "restore": "#64b5f6",
+      "album": "#ffab00",
+      "download": "#00bfa5",
+      "private": "#00b8d4",
+      "edit": "#00b8d4",
+      "share": "#9575cd",
+      "love": "#ef5350",
+      "terminal": "#333333",
+      "navigation": "#1b1e32",
+      "navigation-home": "#121421"
+    }
   }
 }
