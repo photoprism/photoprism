@@ -959,7 +959,11 @@ func TestPhotos(t *testing.T) {
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
 			assert.NotEmpty(t, r.ID)
-			assert.Equal(t, "video", r.PhotoType)
+
+			if r.PhotoType != "video" && r.PhotoType != "live" {
+				t.Error("type should be video or live")
+			}
+
 			assert.NotEmpty(t, r.LensID)
 
 			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
@@ -985,7 +989,11 @@ func TestPhotos(t *testing.T) {
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)
 			assert.NotEmpty(t, r.ID)
-			assert.Equal(t, "video", r.PhotoType)
+
+			if r.PhotoType != "video" && r.PhotoType != "live" {
+				t.Error("type should be video or live")
+			}
+
 			assert.NotEmpty(t, r.LensID)
 
 			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {

@@ -89,6 +89,7 @@ type ClientDisable struct {
 type ClientCounts struct {
 	All            int `json:"all"`
 	Photos         int `json:"photos"`
+	Live           int `json:"live"`
 	Videos         int `json:"videos"`
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`
@@ -376,12 +377,17 @@ func (c *Config) UserConfig() ClientConfig {
 
 	c.Db().
 		Table("photos").
-		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
+		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, " +
+			"SUM(photo_type = 'live' AND photo_quality >= 0 AND photo_private = 0) AS live, " +
+			"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw') AND photo_private = 0 AND photo_quality >= 0) AS photos, " +
+			"SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, " +
+			"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality >= 0) AS favorites, " +
+			"SUM(photo_private = 1 AND photo_quality >= 0) AS private").
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	result.Count.All = result.Count.Photos + result.Count.Videos
+	result.Count.All = result.Count.Photos + result.Count.Live + result.Count.Videos
 
 	c.Db().
 		Table("labels").

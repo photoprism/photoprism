@@ -3,12 +3,14 @@
     <template v-if="$vuetify.breakpoint.smAndDown || !auth">
       <v-toolbar dark fixed flat scroll-off-screen :dense="$vuetify.breakpoint.smAndDown"  color="navigation darken-1" class="nav-small"
                   @click.stop="showNavigation()">
-
         <v-toolbar-side-icon v-if="auth" class="nav-show"></v-toolbar-side-icon>
 
-        <v-toolbar-title class="nav-title">{{ page.title }}</v-toolbar-title>
-
-        <v-spacer></v-spacer>
+        <v-toolbar-title class="nav-title">
+          <v-avatar v-if="$route.meta.icon" tile :size="28">
+            <img :src="$config.staticUri + '/img/logo-white.svg'" :alt="config.name">
+          </v-avatar>
+          <template v-else>{{ page.title }}</template>
+        </v-toolbar-title>
 
         <v-btn v-if="auth && !config.readonly && $config.feature('upload')" icon class="action-upload"
                :title="$gettext('Upload')" @click.stop="openUpload()">
@@ -34,7 +36,7 @@
         <v-list class="navigation-home">
           <v-list-tile class="nav-logo">
             <v-list-tile-avatar class="clickable" @click.stop.prevent="goHome">
-              <img :src="$config.appIcon()" alt="Logo">
+              <img :src="$config.appIcon()" :alt="config.name">
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title">
@@ -108,6 +110,15 @@
             </v-list-tile-content>
           </v-list-tile>
 
+          <v-list-tile :to="{name: 'live'}" class="nav-live" @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
+                <translate>Live</translate>
+                <span v-show="config.count.live > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.live | abbreviateCount }}</span>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
           <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" class="nav-scans" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
@@ -176,7 +187,7 @@
           <v-list-tile-content>
             <v-list-tile-title class="p-flex-menuitem">
               <translate key="Videos">Videos</translate>
-              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos | abbreviateCount }}</span>
+              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ (config.count.videos + config.count.live) | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>

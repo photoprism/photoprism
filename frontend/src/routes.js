@@ -98,7 +98,7 @@ export default [
     name: "browse",
     path: "/browse",
     component: Photos,
-    meta: { title: appName, auth: true },
+    meta: { title: appName, icon: true, auth: true },
   },
   {
     name: "all",
@@ -179,6 +179,13 @@ export default [
     component: Photos,
     meta: { title: $gettext("Favorites"), auth: true },
     props: { staticFilter: { favorite: true } },
+  },
+  {
+    name: "live",
+    path: "/live",
+    component: Photos,
+    meta: { title: $gettext("Live"), auth: true },
+    props: { staticFilter: { live: "true" } },
   },
   {
     name: "videos",

@@ -259,6 +259,19 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.Equal(t, false, cc.Demo)
 	assert.Equal(t, true, cc.Sponsor)
 	assert.Equal(t, false, cc.ReadOnly)
+
+	// Counts.
+	assert.NotEmpty(t, cc.Count.All)
+	assert.NotEmpty(t, cc.Count.Photos)
+	assert.LessOrEqual(t, 20, cc.Count.Photos)
+	assert.LessOrEqual(t, 1, cc.Count.Live)
+	assert.LessOrEqual(t, 4, cc.Count.Videos)
+	assert.LessOrEqual(t, cc.Count.Photos+cc.Count.Live+cc.Count.Videos, cc.Count.All)
+	assert.LessOrEqual(t, 6, cc.Count.Cameras)
+	assert.LessOrEqual(t, 1, cc.Count.Lenses)
+	assert.LessOrEqual(t, 13, cc.Count.Review)
+	assert.LessOrEqual(t, 1, cc.Count.Private)
+	assert.LessOrEqual(t, 4, cc.Count.Albums)
 }
 
 func TestConfig_Workers(t *testing.T) {
