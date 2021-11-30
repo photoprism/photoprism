@@ -217,7 +217,7 @@ export const Themes = () => [
   },
   {
     text: $gettext("Abyss"),
-    value: "dark-purple",
+    value: "abyss",
     disabled: false,
   },
   {
@@ -241,8 +241,8 @@ export const Themes = () => [
     disabled: false,
   },
   {
-    text: $gettext("Lavender Dark"),
-    value: "dark-lavender",
+    text: $gettext("Gemstone"),
+    value: "gemstone",
     disabled: false,
   },
   {

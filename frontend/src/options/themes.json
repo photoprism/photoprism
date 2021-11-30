@@ -318,7 +318,7 @@
       "navigation-home": "#000000"
     }
   },
-  "dark-purple": {
+  "abyss": {
     "dark": true,
     "sponsor": true,
     "colors": {
@@ -347,7 +347,7 @@
       "navigation-home": "#000000"
     }
   },
-  "dark-lavender": {
+  "gemstone": {
     "dark": true,
     "sponsor": true,
     "colors": {
