@@ -960,8 +960,8 @@ func TestPhotos(t *testing.T) {
 			assert.IsType(t, Photo{}, r)
 			assert.NotEmpty(t, r.ID)
 
-			if r.PhotoType != "video" && r.PhotoType != "live" {
-				t.Error("type should be video or live")
+			if r.PhotoType != "video" {
+				t.Error("type should be video only")
 			}
 
 			assert.NotEmpty(t, r.LensID)
@@ -990,8 +990,8 @@ func TestPhotos(t *testing.T) {
 			assert.IsType(t, Photo{}, r)
 			assert.NotEmpty(t, r.ID)
 
-			if r.PhotoType != "video" && r.PhotoType != "live" {
-				t.Error("type should be video or live")
+			if r.PhotoType != "video" {
+				t.Error("type should be video only")
 			}
 
 			assert.NotEmpty(t, r.LensID)

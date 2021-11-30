@@ -110,15 +110,6 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'live'}" class="nav-live" @click.stop="">
-            <v-list-tile-content>
-              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
-                <translate>Live</translate>
-                <span v-show="config.count.live > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.live | abbreviateCount }}</span>
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-
           <v-list-tile :to="{name: 'photos', query: { q: 'scan:true' }}" :exact="true" class="nav-scans" @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
@@ -179,18 +170,39 @@
           </v-list-tile>
         </v-list-group>
 
-        <v-list-tile v-if="$config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
+        <v-list-tile v-if="isMini && $config.feature('videos')" to="/videos" class="nav-video" @click.stop="">
           <v-list-tile-action :title="$gettext('Videos')">
             <v-icon>play_circle_fill</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title class="p-flex-menuitem">
+            <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
               <translate key="Videos">Videos</translate>
-              <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ (config.count.videos + config.count.live) | abbreviateCount }}</span>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-group v-if="!isMini && $config.feature('videos')" prepend-icon="play_circle_fill" no-action>
+          <template #activator>
+            <v-list-tile to="/videos" class="nav-video" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title class="p-flex-menuitem">
+                  <translate key="Videos">Videos</translate>
+                  <span v-show="config.count.videos > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.videos | abbreviateCount }}</span>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
+
+          <v-list-tile :to="{name: 'live'}" class="nav-live" @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
+                <translate>Live</translate>
+                <span v-show="config.count.live > 0" :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.live | abbreviateCount }}</span>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list-group>
 
         <v-list-tile v-show="$config.feature('people')" :to="{ name: 'people' }" class="nav-people" @click.stop="">
           <v-list-tile-action :title="$gettext('People')">

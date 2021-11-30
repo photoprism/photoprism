@@ -30,7 +30,7 @@ func TestMediaFile_Location(t *testing.T) {
 		}
 
 		assert.Equal(t, "高砂市", location.City())
-		assert.Equal(t, "兵庫県", location.State())
+		assert.Equal(t, "姫路市", location.State())
 		assert.Equal(t, "Japan", location.CountryName())
 		assert.Equal(t, "", location.Category())
 		assert.True(t, strings.HasPrefix(location.ID, s2.TokenPrefix+"3554df45"))
@@ -44,7 +44,7 @@ func TestMediaFile_Location(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "高砂市", location2.City())
+		assert.Equal(t, "姫路市", location2.City())
 		assert.Equal(t, "兵庫県", location2.State())
 	})
 	t.Run("cat_brown.jpg", func(t *testing.T) {

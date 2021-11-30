@@ -377,7 +377,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	if f.Type != "" {
 		s = s.Where("photos.photo_type IN (?)", strings.Split(strings.ToLower(f.Type), txt.Or))
 	} else if f.Video {
-		s = s.Where("photos.photo_type IN ('video','live')")
+		s = s.Where("photos.photo_type = 'video'")
 	} else if f.Photo {
 		s = s.Where("photos.photo_type IN ('image','raw','live')")
 	} else if f.Raw {
