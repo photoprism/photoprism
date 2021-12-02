@@ -2,17 +2,21 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Raspberry Pi and other ARM-based devices)
 #
-# Important: You have to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1"
-# in config.txt to use our ARM64 image.
+# Note:
+# - You have to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1" in config.txt to use our ARM64 image.
+# - If you see errors related to "cgroups", it may help to add the following line to /boot/firmware/cmdline.txt:
+#   cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
+# - Running PhotoPrism on a server with less than 4 GB of swap (or setting a Docker memory / swap limit) can cause
+#   unexpected restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
+# - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
+#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
 #
 # Documentation : https://docs.photoprism.org/getting-started/raspberry-pi/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Attention: When installing PhotoPrism on a public server outside your home network,
-# always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
-# Your files and passwords will be transmitted in clear text otherwise.
-#
 # DOCKER COMPOSE COMMAND REFERENCE
+# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 # --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
@@ -33,8 +37,6 @@ version: '3.5'
 #
 # All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory placeholder ~ to /root in volume mounts.
-#
-# More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
 services:
   ## App Server (required)

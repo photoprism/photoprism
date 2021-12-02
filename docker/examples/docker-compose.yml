@@ -2,14 +2,18 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Linux / AMD64)
 #
+# Note:
+# - Running PhotoPrism on a server with less than 4 GB of swap (or setting a Docker memory / swap limit) can cause
+#   unexpected restarts ("crashes"), especially when it temporarily needs more memory to index large files.
+# - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
+#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
+#
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Attention: When installing PhotoPrism on a public server outside your home network,
-# always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
-# Your files and passwords will be transmitted in clear text otherwise.
-#
 # DOCKER COMPOSE COMMAND REFERENCE
+# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 # --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
@@ -30,8 +34,6 @@ version: '3.5'
 #
 # All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory placeholder ~ to /root in volume mounts.
-#
-# More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
 services:
   ## App Server (required)

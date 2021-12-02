@@ -2,20 +2,23 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Windows / AMD64)
 #
-# Windows Pro users should disable the WSL 2 based engine in Docker Settings > General so that
-# they can mount drives other than C:. This will enable Hyper-V, which Microsoft doesn't offer
-# to its Windows Home customers. Docker Desktop uses dynamic memory allocation with WSL 2.
-# It's important to explicitly increase the Docker memory limit to 4 GB or more when using Hyper-V.
-# The default of 2 GB may reduce indexing performance and cause unexpected restarts.
+# Note:
+# - Running PhotoPrism on a server with less than 4 GB of swap (or setting a Docker memory / swap limit) can cause
+#   unexpected restarts ("crashes"), especially when it temporarily needs more memory to index large files.
+# - Windows Pro users should disable the WSL 2 based engine in Docker Settings > General so that
+#   they can mount drives other than C:. This will enable Hyper-V, which Microsoft doesn't offer
+#   to its Windows Home customers. Docker Desktop uses dynamic memory allocation with WSL 2.
+#   It's important to explicitly increase the Docker memory limit to 4 GB or more when using Hyper-V.
+#   The default of 2 GB may reduce indexing performance and cause unexpected restarts.
+# - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
+#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
 #
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Attention: When installing PhotoPrism on a public server outside your home network,
-# always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
-# Your files and passwords will be transmitted in clear text otherwise.
-#
 # DOCKER COMPOSE COMMAND REFERENCE
+# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 # --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
@@ -33,8 +36,6 @@ version: '3.5'
 #
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
-#
-# More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
 services:
   ## App Server (required)
