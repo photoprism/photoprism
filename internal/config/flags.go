@@ -20,17 +20,6 @@ var GlobalFlags = []cli.Flag{
 		Value:  "info",
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
-	cli.StringFlag{
-		Name:   "log-filename",
-		Usage:  "optional server log `FILENAME`",
-		EnvVar: "PHOTOPRISM_LOG_FILENAME",
-		Value:  "",
-	},
-	cli.StringFlag{
-		Name:   "pid-filename",
-		Usage:  "daemon mode process id `FILENAME`",
-		EnvVar: "PHOTOPRISM_PID_FILENAME",
-	},
 	cli.BoolFlag{
 		Name:   "test",
 		Hidden: true,
@@ -511,5 +500,16 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "similarity `OFFSET` for matching faces with existing clusters",
 		Value:  face.MatchDist,
 		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
+	},
+	cli.StringFlag{
+		Name:   "pid-filename",
+		Usage:  "process id `FILENAME` (daemon mode only)",
+		EnvVar: "PHOTOPRISM_PID_FILENAME",
+	},
+	cli.StringFlag{
+		Name:   "log-filename",
+		Usage:  "server log `FILENAME` (daemon mode only)",
+		EnvVar: "PHOTOPRISM_LOG_FILENAME",
+		Value:  "",
 	},
 }

@@ -29,7 +29,6 @@ func configAction(ctx *cli.Context) error {
 	// Flags.
 	fmt.Printf("%-25s %t\n", "debug", conf.Debug())
 	fmt.Printf("%-25s %s\n", "log-level", conf.LogLevel())
-	fmt.Printf("%-25s %s\n", "log-filename", conf.LogFilename())
 	fmt.Printf("%-25s %t\n", "public", conf.Public())
 	fmt.Printf("%-25s %s\n", "admin-password", strings.Repeat("*", utf8.RuneCountInString(conf.AdminPassword())))
 	fmt.Printf("%-25s %t\n", "read-only", conf.ReadOnly())
@@ -155,8 +154,9 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %f\n", "face-cluster-dist", conf.FaceClusterDist())
 	fmt.Printf("%-25s %f\n", "face-match-dist", conf.FaceMatchDist())
 
-	// Other.
+	// Daemon Mode.
 	fmt.Printf("%-25s %s\n", "pid-filename", conf.PIDFilename())
+	fmt.Printf("%-25s %s\n", "log-filename", conf.LogFilename())
 
 	return nil
 }

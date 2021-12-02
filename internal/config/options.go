@@ -35,7 +35,6 @@ type Options struct {
 	Copyright             string  `json:"-"`
 	Debug                 bool    `yaml:"Debug" json:"Debug" flag:"debug"`
 	LogLevel              string  `yaml:"LogLevel" json:"-" flag:"log-level"`
-	LogFilename           string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	Test                  bool    `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool    `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                  bool    `yaml:"Demo" json:"-" flag:"demo"`
@@ -126,6 +125,7 @@ type Options struct {
 	FaceClusterDist       float64 `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceMatchDist         float64 `yaml:"-" json:"-" flag:"face-match-dist"`
 	PIDFilename           string  `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
+	LogFilename           string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:
