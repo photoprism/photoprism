@@ -1,10 +1,10 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (Raspberry Pi and other ARM-based devices)
+# Example Docker Compose config file for PhotoPrism (Raspberry Pi 3/4 and other ARM64-based devices)
 #
 # Note:
 # - Use https://dl.photoprism.org/docker/armv7/docker-compose.yml for running PhotoPrism on ARMv7-based devices.
-# - You have to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1" in config.txt to use our ARM64 image.
+# - You have to boot your Raspberry Pi 3/4 with the parameter "arm_64bit=1" in config.txt to use our ARM64 image.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
 # - If you see Docker errors related to "cgroups", it may help to add the following to /boot/firmware/cmdline.txt:
