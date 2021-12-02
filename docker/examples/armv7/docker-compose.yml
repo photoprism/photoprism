@@ -4,10 +4,10 @@ version: '3.5'
 #
 # Note:
 # - Use https://dl.photoprism.org/docker/arm64/docker-compose.yml for running PhotoPrism on ARM64-based devices.
-# - If you see errors related to "cgroups", it may help to add the following line to /boot/firmware/cmdline.txt:
-#   cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
 # - Running PhotoPrism on a server with less than 4 GB of swap (or setting a Docker memory / swap limit) can cause
 #   unexpected restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
+# - If you see errors related to "cgroups", it may help to add the following line to /boot/firmware/cmdline.txt:
+#   cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
 #   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
 #   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
@@ -118,7 +118,7 @@ services:
       - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
-      - "./mariadb:/config" # Never remove
+      - "./mariadb:/config" # never remove
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
@@ -133,7 +133,7 @@ services:
   #   image: containrrr/watchtower
   #   environment:
   #     WATCHTOWER_CLEANUP: "true"
-  #     WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
+  #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
   #   volumes:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
