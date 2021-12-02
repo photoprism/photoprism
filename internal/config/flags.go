@@ -9,16 +9,21 @@ import (
 
 // GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:   "debug",
-		Usage:  "enable debug mode, show additional log messages",
-		EnvVar: "PHOTOPRISM_DEBUG",
+	cli.StringFlag{
+		Name:   "admin-password",
+		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.StringFlag{
 		Name:   "log-level, l",
 		Usage:  "trace, debug, info, warning, error, fatal, or panic",
 		Value:  "info",
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
+	},
+	cli.BoolFlag{
+		Name:   "debug",
+		Usage:  "enable debug mode, show additional log messages",
+		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
 		Name:   "test",
@@ -47,11 +52,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "public, p",
 		Usage:  "disable password authentication",
 		EnvVar: "PHOTOPRISM_PUBLIC",
-	},
-	cli.StringFlag{
-		Name:   "admin-password",
-		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",

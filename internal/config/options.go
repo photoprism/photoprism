@@ -33,14 +33,14 @@ type Options struct {
 	Name                  string  `json:"-"`
 	Version               string  `json:"-"`
 	Copyright             string  `json:"-"`
-	Debug                 bool    `yaml:"Debug" json:"Debug" flag:"debug"`
+	AdminPassword         string  `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	LogLevel              string  `yaml:"LogLevel" json:"-" flag:"log-level"`
+	Debug                 bool    `yaml:"Debug" json:"Debug" flag:"debug"`
 	Test                  bool    `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool    `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                  bool    `yaml:"Demo" json:"-" flag:"demo"`
 	Sponsor               bool    `yaml:"-" json:"-" flag:"sponsor"`
 	Public                bool    `yaml:"Public" json:"-" flag:"public"`
-	AdminPassword         string  `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	ReadOnly              bool    `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool    `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	ConfigPath            string  `yaml:"ConfigPath" json:"-" flag:"config-path"`
