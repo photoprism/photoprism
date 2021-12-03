@@ -2201,7 +2201,7 @@ msgstr "Téma"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is a sponsor feature to thank everyone who supports the development of this application."
+"This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
 "Ide o funkciu s predčasným prístupom, ktorou sa chceme poďakovať našim "
 "sponzorom a prispievateľom."

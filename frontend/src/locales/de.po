@@ -2196,7 +2196,7 @@ msgstr "Theme"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is a sponsor feature to thank everyone who supports the development of this application."
+"This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
 "Dies ist ein neues Feature, mit dem wir uns bei unseren Sponsoren und "
 "Mitwirkenden bedanken wollen."

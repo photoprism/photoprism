@@ -2141,7 +2141,7 @@ msgstr "主題"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is a sponsor feature to thank everyone who supports the development of this application."
+"This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "這是一項搶先體驗功能，感謝我們的讚助商和貢獻者。"
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36

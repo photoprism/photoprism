@@ -2164,7 +2164,7 @@ msgstr "ערכת נושא"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is a sponsor feature to thank everyone who supports the development of this application."
+"This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "זוהי תכונה המוגבלת לגישה מוקדמת כדי לפרגן לספונסרים ולתורמים שלנו."
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36

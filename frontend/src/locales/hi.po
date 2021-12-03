@@ -2098,7 +2098,7 @@ msgid "Theme"
 msgstr "विषय"
 
 #: src/dialog/sponsor.vue:17
-msgid "This is a sponsor feature to thank everyone who supports the development of this application."
+msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "यह हमारे प्रायोजकों और योगदानकर्ताओं को धन्यवाद कहने के लिए एक अर्ली-एक्सेस सुविधा है।"
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36

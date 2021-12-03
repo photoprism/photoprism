@@ -2171,7 +2171,7 @@ msgstr "테마"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is a sponsor feature to thank everyone who supports the development of this application."
+"This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
 "이것은 우리의 후원자와 기여자에게 감사의 말을 전하는 초기 액세스 기능입니다."
 
