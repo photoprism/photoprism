@@ -120,7 +120,7 @@ var StatesDE = LookupTable{
 
 // StatesFR maps common abbreviations for French states.
 var StatesFR = LookupTable{
-	"France métropolitaine": "Île-de-France",
+	"France métropolitaine": "",
 }
 
 // StatesNZ maps common abbreviations for provinces and territories in New Zealand.
