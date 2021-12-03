@@ -1490,8 +1490,7 @@ msgstr "Outro"
 
 #: src/pages/about/about.vue:15
 msgid ""
-"Our vision is to provide the most user-friendly solution for browsing, "
-"organizing, and sharing your photo collection."
+"Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
 "A nossa visão é oferecer a solução mais amigável para navegar, organizar e "
 "partilhar sua coleção de fotos."
@@ -2063,8 +2062,7 @@ msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is an early-access feature to say thanks to our sponsors and "
-"contributors."
+"This is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
 "Esta é uma funcionalidade exclusiva para os nossos patrocinadores e "
 "colaboradores, como forma de agradecimento."

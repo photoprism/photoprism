@@ -1558,8 +1558,7 @@ msgstr "אחר"
 
 #: src/pages/about/about.vue:15
 msgid ""
-"Our vision is to provide the most user-friendly solution for browsing, "
-"organizing, and sharing your photo collection."
+"Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
 "החזון שלנו הוא לספק את הפתרון הכי ידידותי-למשתמש לגלישה, ארגון ושיתוף של "
 "אוסף התמונות שלך."
@@ -2165,8 +2164,7 @@ msgstr "ערכת נושא"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is an early-access feature to say thanks to our sponsors and "
-"contributors."
+"This is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "זוהי תכונה המוגבלת לגישה מוקדמת כדי לפרגן לספונסרים ולתורמים שלנו."
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36

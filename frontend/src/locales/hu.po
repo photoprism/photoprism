@@ -2096,7 +2096,7 @@ msgid "Theme"
 msgstr "Téma"
 
 #: src/dialog/sponsor.vue:17
-msgid "This is an early-access feature to say thanks to our sponsors and contributors."
+msgid "This is a sponsor feature to thank everyone who supports the development of this application."
 msgstr "Ez egy korai hozzáférésű funkció, köszönetet mondunk szponzorainknak és közreműködőinknek."
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36

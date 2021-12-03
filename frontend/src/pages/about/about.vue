@@ -13,7 +13,7 @@
     </v-toolbar>
     <v-container fluid class="pa-4">
       <p class="body-2">
-          <translate>Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.</translate>
+          <translate>Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
           <a href="https://github.com/photoprism/photoprism/projects/5" target="_blank">
             <translate>The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next.</translate>
           </a>
