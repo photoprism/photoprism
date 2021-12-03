@@ -197,7 +197,6 @@ clean:
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
 docker-development:
-	scripts/install-qemu.sh
 	docker pull --platform=amd64 ubuntu:21.10
 	docker pull --platform=arm64 ubuntu:21.10
 	docker pull --platform=arm ubuntu:21.10
