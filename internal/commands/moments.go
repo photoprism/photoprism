@@ -34,7 +34,7 @@ func momentsAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if conf.ReadOnly() {
-		log.Infof("moments: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	w := service.Moments()

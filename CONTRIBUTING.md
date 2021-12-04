@@ -38,12 +38,19 @@ When reporting an issue, please provide the version in use and information about
 
 ## Pull Requests ##
 
+The [Developer Guide](https://docs.photoprism.org/developer-guide/) contains all information 
+necessary to get you started.
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
 
-The Developer Guide contains all information necessary to get you started.
+Because we want to create the best possible product for our users, 
+we have a set of [guidelines](https://docs.photoprism.org/developer-guide/pull-requests) 
+to ensure that all source code submissions are acceptable.
+They include step-by-step instructions for submitting new features, 
+bug fixes, and documentation improvements.
 
-Our [step-by-step guide](https://docs.photoprism.org/developer-guide/pull-requests/) explains how to submit new features, bugfixes and documentation.
+**Reviewing, testing and finally merging pull requests requires significant resources 
+on our side. If it's not just a small fix, it can take several months.**
 
 ## Can't code? ##
 

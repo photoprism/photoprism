@@ -21,7 +21,7 @@ import (
 var IndexCommand = cli.Command{
 	Name:      "index",
 	Usage:     "Indexes original media files",
-	ArgsUsage: "[path]",
+	ArgsUsage: "[originals subfolder]",
 	Flags:     indexFlags,
 	Action:    indexAction,
 }
@@ -63,7 +63,7 @@ func indexAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("index: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	var indexed fs.Done

@@ -11,7 +11,7 @@
       <div class="pswp__ui pswp__ui--hidden">
 
         <div class="pswp__top-bar">
-          <div class="pswp__taken hidden-xs-only">{{ item.taken }}</div>
+          <div class="pswp__taken hidden-xs-only">{{ formatDate(item.taken) }}</div>
 
           <div class="pswp__counter"></div>
 
@@ -88,8 +88,9 @@ import 'photoswipe/dist/photoswipe.css';
 import 'photoswipe/dist/default-skin/default-skin.css';
 import Event from "pubsub-js";
 import Thumb from "model/thumb";
-import Photo from "model/photo";
+import {Photo,DATE_FULL} from "model/photo";
 import Notify from "common/notify";
+import {DateTime} from "luxon";
 
 export default {
   name: "PPhotoViewer",
@@ -129,6 +130,19 @@ export default {
     }
   },
   methods: {
+    formatDate(s) {
+      if (!s || !s.length) {
+        return s;
+      }
+
+      const l = s.length;
+
+      if (l !== 20 || s[l-1] !== 'Z') {
+        return s;
+      }
+
+      return DateTime.fromISO(s, { zone:  "UTC" }).toLocaleString(DATE_FULL);
+    },
     onShow() {
       this.$scrollbar.hide();
     },

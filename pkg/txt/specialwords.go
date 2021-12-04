@@ -125,4 +125,9 @@ var SpecialWords = map[string]string{
 	"saarbruecken":       "Saarbrücken",
 	"zuerich":            "Zürich",
 	"wg":                 "WG",
+	"webdav":             "WebDAV",
+	"goland":             "GoLand",
+	"phpstorm":           "PhpStorm",
+	"vuejs":              "VueJS",
+	"nodejs":             "NodeJS",
 }

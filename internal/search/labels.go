@@ -10,7 +10,7 @@ import (
 )
 
 // Labels searches labels based on their name.
-func Labels(f form.LabelSearch) (results []Label, err error) {
+func Labels(f form.SearchLabels) (results []Label, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

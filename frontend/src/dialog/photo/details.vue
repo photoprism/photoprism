@@ -39,7 +39,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs4 md2 pa-2>
+              <v-flex xs4 md1 pa-2>
                 <v-autocomplete
                     v-model="model.Day"
                     :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
@@ -54,7 +54,7 @@
                     @change="updateTime">
                 </v-autocomplete>
               </v-flex>
-              <v-flex xs4 md2 pa-2>
+              <v-flex xs4 md1 pa-2>
                 <v-autocomplete
                     v-model="model.Month"
                     :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
@@ -87,34 +87,19 @@
 
               <v-flex xs6 md2 class="pa-2">
                 <v-text-field
-                    v-model="localTime"
+                    v-model="time"
                     :append-icon="model.TakenSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
-                    :label="$gettext('Local Time')"
+                    :label="model.timeIsUTC() ? $gettext('Time UTC') : $gettext('Local Time')"
                     browser-autocomplete="off"
                     hide-details
                     return-masked-value mask="##:##:##"
                     color="secondary-dark"
                     class="input-local-time"
-                    @change="updateTime"
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs6 sm6 md2 pa-2>
-                <v-text-field
-                    v-model="utcTime"
-                    :disabled="disabled"
-                    :label="$gettext('Time UTC')"
-                    browser-autocomplete="off"
-                    readonly
-                    hide-details return-masked-value mask="##:##:##"
-                    color="secondary-dark"
-                    class="input-utc-time"
-                    @change="updateTime"
-                ></v-text-field>
-              </v-flex>
-
-              <v-flex xs12 sm6 md2 class="pa-2">
+              <v-flex xs6 sm6 md6 class="pa-2">
                 <v-autocomplete
                     v-model="model.TimeZone"
                     :disabled="disabled"
@@ -130,7 +115,7 @@
                 </v-autocomplete>
               </v-flex>
 
-              <v-flex xs12 sm6 md4 class="pa-2">
+              <v-flex xs12 sm8 md4 class="pa-2">
                 <v-autocomplete
                     v-model="model.Country"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
@@ -160,7 +145,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs4 md3 class="pa-2">
+              <v-flex xs4 sm6 md3 class="pa-2">
                 <v-text-field
                     v-model="model.Lat"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
@@ -174,7 +159,7 @@
                 ></v-text-field>
               </v-flex>
 
-              <v-flex xs4 md3 class="pa-2">
+              <v-flex xs4 sm6 md3 class="pa-2">
                 <v-text-field
                     v-model="model.Lng"
                     :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
@@ -433,8 +418,7 @@ export default {
       showDatePicker: false,
       showTimePicker: false,
       invalidDate: false,
-      utcTime: "",
-      localTime: "",
+      time: "",
       textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
       rtl: this.$rtl,
     };
@@ -464,18 +448,22 @@ export default {
         return;
       }
 
-      let localDate = this.model.localDate(this.localTime);
+      const taken = this.model.getDateTime();
+
+      this.time = taken.toFormat("HH:mm:ss");
+    },
+    updateModel() {
+      if (!this.model.hasId()) {
+        return;
+      }
+
+      let localDate = this.model.localDate(this.time);
 
       this.invalidDate = !localDate.isValid;
 
       if (this.invalidDate) {
         return;
       }
-
-      const utcDate = localDate.toUTC();
-
-      this.localTime = localDate.toFormat("HH:mm:ss");
-      this.utcTime = utcDate.toFormat("HH:mm:ss");
 
       if (this.model.Day === 0) {
         this.model.Day = parseInt(localDate.toFormat("d"));
@@ -489,15 +477,16 @@ export default {
         this.model.Year = parseInt(localDate.toFormat("y"));
       }
 
-      this.model.TakenAtLocal = localDate.toISO({
+      const isoTime = localDate.toISO({
         suppressMilliseconds: true,
         includeOffset: false,
       }) + "Z";
 
-      this.model.TakenAt = localDate.toUTC().toISO({
-        suppressMilliseconds: true,
-        includeOffset: false,
-      }) + "Z";
+      this.model.TakenAtLocal = isoTime;
+
+      if (this.model.currentTimeZoneUTC()) {
+        this.model.TakenAt = isoTime;
+      }
     },
     left() {
       this.$emit('next');
@@ -513,6 +502,8 @@ export default {
         this.$notify.error(this.$gettext("Invalid date"));
         return;
       }
+
+      this.updateModel();
 
       this.model.update().then(() => {
         if (close) {

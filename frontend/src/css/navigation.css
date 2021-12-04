@@ -8,6 +8,16 @@
     background: transparent;
 }
 
+#p-navigation .nav-title {
+    text-align: center;
+    -webkit-box-flex: 1!important;
+    -ms-flex-positive: 1!important;
+    flex-grow: 1!important;
+    margin-left: 10px;
+    margin-right: 10px;
+    max-height: 100%;
+}
+
 #p-navigation .nav-count {
     opacity: 0.5;
     /*position: absolute;*/
@@ -120,5 +130,5 @@
     margin-left: 8px;
 }
 .v-list__group__header .p-flex-menuitem .nav-count {
-    margin-right: 0px;
+    margin-right: 0;
 }

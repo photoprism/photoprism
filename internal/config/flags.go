@@ -9,10 +9,10 @@ import (
 
 // GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:   "debug",
-		Usage:  "enable debug mode, show additional log messages",
-		EnvVar: "PHOTOPRISM_DEBUG",
+	cli.StringFlag{
+		Name:   "admin-password",
+		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.StringFlag{
 		Name:   "log-level, l",
@@ -20,21 +20,21 @@ var GlobalFlags = []cli.Flag{
 		Value:  "info",
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
-	cli.StringFlag{
-		Name:   "log-filename",
-		Usage:  "optional server log `FILENAME`",
-		EnvVar: "PHOTOPRISM_LOG_FILENAME",
-		Value:  "",
-	},
-	cli.StringFlag{
-		Name:   "pid-filename",
-		Usage:  "process id `FILENAME` when running in daemon mode",
-		EnvVar: "PHOTOPRISM_PID_FILENAME",
+	cli.BoolFlag{
+		Name:   "debug",
+		Usage:  "enable debug mode, show additional log messages",
+		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
 		Name:   "test",
 		Hidden: true,
 		Usage:  "enable test mode",
+	},
+	cli.BoolFlag{
+		Name:   "unsafe",
+		Hidden: true,
+		Usage:  "enable unsafe mode",
+		EnvVar: "PHOTOPRISM_UNSAFE",
 	},
 	cli.BoolFlag{
 		Name:   "demo",
@@ -52,11 +52,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "public, p",
 		Usage:  "disable password authentication",
 		EnvVar: "PHOTOPRISM_PUBLIC",
-	},
-	cli.StringFlag{
-		Name:   "admin-password",
-		Usage:  "initial admin user `PASSWORD`, minimum 4 characters",
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",
@@ -132,13 +127,13 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:   "wakeup-interval",
-		Usage:  "background worker wakeup interval in `SECONDS`",
-		Value:  DefaultWakeupInterval,
+		Usage:  "metadata, share & sync background worker wakeup interval in `SECONDS` (1-604800)",
+		Value:  DefaultWakeupIntervalSeconds,
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
 	},
 	cli.IntFlag{
 		Name:   "auto-index",
-		Usage:  "WebDAV auto indexing safety delay in `SECONDS`, disable with -1",
+		Usage:  "WebDAV auto index safety delay in `SECONDS`, disable with -1",
 		Value:  DefaultAutoIndexDelay,
 		EnvVar: "PHOTOPRISM_AUTO_INDEX",
 	},
@@ -175,7 +170,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "disable-ffmpeg",
-		Usage:  "disable video transcoding and still image extraction with FFmpeg",
+		Usage:  "disable video transcoding and thumbnail extraction with FFmpeg",
 		EnvVar: "PHOTOPRISM_DISABLE_FFMPEG",
 	},
 	cli.BoolFlag{
@@ -222,6 +217,23 @@ var GlobalFlags = []cli.Flag{
 		Name:   "upload-nsfw",
 		Usage:  "allow uploads that may be offensive",
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
+	},
+	cli.StringFlag{
+		Name:   "app-icon",
+		Usage:  "application `ICON` (logo, app, crisp, mint, bold)",
+		EnvVar: "PHOTOPRISM_APP_ICON",
+	},
+	cli.StringFlag{
+		Name:   "app-name",
+		Usage:  "application `NAME` when installed on a device",
+		Value:  "PhotoPrism",
+		EnvVar: "PHOTOPRISM_APP_NAME",
+	},
+	cli.StringFlag{
+		Name:   "app-mode",
+		Usage:  "application `MODE` (fullscreen, standalone, minimal-ui, browser)",
+		Value:  "standalone",
+		EnvVar: "PHOTOPRISM_APP_MODE",
 	},
 	cli.StringFlag{
 		Name:   "cdn-url",
@@ -338,8 +350,8 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "darktable-blacklist",
-		Usage:  "file `EXTENSIONS` not to be converted with Darktable",
-		Value:  "raf,cr3,dng",
+		Usage:  "file `EXTENSIONS` incompatible with Darktable",
+		Value:  "cr3,dng",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
 	cli.StringFlag{
@@ -350,7 +362,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "rawtherapee-blacklist",
-		Usage:  "file `EXTENSIONS` not to be converted with RawTherapee",
+		Usage:  "file `EXTENSIONS` incompatible with RawTherapee",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 	},
@@ -368,7 +380,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "ffmpeg-bin",
-		Usage:  "FFmpeg `COMMAND` for video transcoding and still image extraction",
+		Usage:  "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
 		Value:  "ffmpeg",
 		EnvVar: "PHOTOPRISM_FFMPEG_BIN",
 	},
@@ -488,5 +500,16 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "similarity `OFFSET` for matching faces with existing clusters",
 		Value:  face.MatchDist,
 		EnvVar: "PHOTOPRISM_FACE_MATCH_DIST",
+	},
+	cli.StringFlag{
+		Name:   "pid-filename",
+		Usage:  "process id `FILENAME` (daemon mode only)",
+		EnvVar: "PHOTOPRISM_PID_FILENAME",
+	},
+	cli.StringFlag{
+		Name:   "log-filename",
+		Usage:  "server log `FILENAME` (daemon mode only)",
+		EnvVar: "PHOTOPRISM_LOG_FILENAME",
+		Value:  "",
 	},
 }

@@ -30,11 +30,7 @@
       window.__CONFIG__ = {{ .config }};
   </script>
 </head>
-<body class="{{ .config.Flags }}">
-<!--[if lt IE 8]>
-<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> to improve your experience.</p>
-<![endif]-->
+<body class="shared {{ .config.Flags }}">
 
 {{template "app.tmpl" .}}
 

@@ -8,14 +8,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -25,49 +24,6 @@ import (
 const (
 	accountFolder = "account-folder"
 )
-
-// SearchAccounts finds accounts and returns them as JSON.
-//
-// GET /api/v1/accounts
-func SearchAccounts(router *gin.RouterGroup) {
-	router.GET("/accounts", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceAccounts, acl.ActionSearch)
-
-		if s.Invalid() {
-			AbortUnauthorized(c)
-			return
-		}
-
-		conf := service.Config()
-
-		if conf.Demo() || conf.DisableSettings() {
-			c.JSON(http.StatusOK, entity.Accounts{})
-			return
-		}
-
-		var f form.AccountSearch
-
-		err := c.MustBindWith(&f, binding.Form)
-
-		if err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		result, err := search.Accounts(f)
-
-		if err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		// TODO c.Header("X-Count", strconv.Itoa(count))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
-
-		c.JSON(http.StatusOK, result)
-	})
-}
 
 // GetAccount returns an account as JSON.
 //
@@ -131,7 +87,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		if cacheData, ok := cache.Get(cacheKey); ok {
 			cached := cacheData.(fs.FileInfos)
 
-			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			c.JSON(http.StatusOK, cached)
 			return

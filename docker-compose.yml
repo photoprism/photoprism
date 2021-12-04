@@ -1,26 +1,34 @@
 version: '3.5'
 
+## Development Environment with
+## - HTTPS Reverse Proxy
+## - App Dev Container
+## - MariaDB Database Server
+## - Keycloak OpenID Connect Provider
+## - and Dummy Services
 services:
+  ## App Server
   photoprism:
     build: .
     image: photoprism/photoprism:develop
     depends_on:
       - mariadb
-      - webdav-dummy
+      - dummy-webdav
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343" # Acceptance Tests
+      - "2342:2342" # Default HTTP port (host:container)
+      - "2343:2343" # Acceptance Test HTTP port (host:container)
     shm_size: "2gb"
     environment:
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # The initial admin password (min 4 characters)
       PHOTOPRISM_UID: ${UID:-1000}
       PHOTOPRISM_GID: ${GID:-1000}
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
+      PHOTOPRISM_SITE_DESCRIPTION: "AI-powered app for browsing, organizing & sharing your photo collection."
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
@@ -37,7 +45,7 @@ services:
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
       PHOTOPRISM_TEST_DSN: ".test.db"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # The initial admin password (min 4 characters)
+      PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
@@ -60,15 +68,16 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                        # Show TensorFlow log messages for development
-      # Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
+      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
-      # Hardware video transcoding options:
+      ## Hardware video transcoding config (optional):
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
       # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # Enable TensorFlow AVX2 & Intel Graphics support
-    # Optional hardware devices for video transcoding and machine learning:
+      # PHOTOPRISM_INIT: "install-updates"           # Installs general operating system updates
+    ## Hardware devices for video transcoding and machine learning (optional):
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
@@ -78,13 +87,15 @@ services:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
 
+  ## MariaDB Database Server
+  ## Docs: https://mariadb.com/docs/reference/cs10.6/
   mariadb:
-    image: mariadb:10.5
+    image: mariadb:10.6
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
     ports:
-      - "4001:4001" # Exposes port 4001 on host
+      - "4001:4001" # Database port (host:container)
     volumes:
       - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
     environment:
@@ -93,8 +104,27 @@ services:
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
-  webdav-dummy:
-    image: photoprism/webdav:20210602
+  ## MySQL Database Server
+  ## Docs: https://dev.mysql.com/doc/refman/8.0/en/
+  mysql:
+    image: mysql:8
+    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    expose:
+      - "4001" # Database port (internal)
+    volumes:
+      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
+    environment:
+      MYSQL_ROOT_PASSWORD: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: photoprism
+      MYSQL_DATABASE: photoprism
+
+  ## Dummy WebDAV Server
+  dummy-webdav:
+    image: photoprism/dummy-webdav:20211109
+    environment:
+      WEBDAV_USERNAME: admin
+      WEBDAV_PASSWORD: photoprism
 
 volumes:
   go-mod:

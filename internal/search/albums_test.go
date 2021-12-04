@@ -3,9 +3,10 @@ package search
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/entity"
-	form "github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestAlbumPhotos(t *testing.T) {
@@ -93,7 +94,7 @@ func TestAlbums(t *testing.T) {
 		t.Log(result)
 	})
 	t.Run("search for existing ID", func(t *testing.T) {
-		f := form.AlbumSearch{
+		f := form.SearchAlbums{
 			Query:    "",
 			ID:       "at9lxuqxpogaaba7",
 			Slug:     "",
@@ -114,7 +115,7 @@ func TestAlbums(t *testing.T) {
 		assert.Equal(t, "christmas-2030", result[0].AlbumSlug)
 	})
 	t.Run("search with multiple filters", func(t *testing.T) {
-		f := form.AlbumSearch{
+		f := form.SearchAlbums{
 			Query:    "",
 			Type:     "moment",
 			Category: "Fun",
@@ -135,7 +136,7 @@ func TestAlbums(t *testing.T) {
 		assert.Equal(t, "Empty Moment", result[0].AlbumTitle)
 	})
 	t.Run("search for  year/month/day", func(t *testing.T) {
-		f := form.AlbumSearch{
+		f := form.SearchAlbums{
 			Year:   2021,
 			Month:  10,
 			Day:    3,

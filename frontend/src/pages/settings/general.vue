@@ -288,13 +288,13 @@
               <v-select
                   v-model="settings.maps.style"
                   :disabled="busy"
-                  :items="options.MapsStyle()"
+                  :items="mapsStyle"
                   :label="$gettext('Style')"
                   color="secondary-dark"
                   background-color="secondary-light"
                   hide-details
                   box class="input-style"
-                  @change="onChange"
+                  @change="onChangeMapsStyle"
               ></v-select>
             </v-flex>
 
@@ -342,6 +342,8 @@ export default {
       subscriptions: [],
       themes: options.Themes(),
       currentTheme: this.$config.themeName,
+      mapsStyle: options.MapsStyle(),
+      currentMapsStyle: this.$config.settings().maps.style,
       languages: options.Languages(),
       dialog: {
         sponsor: false,
@@ -364,22 +366,48 @@ export default {
         this.busy = false;
       });
     },
-    onChangeTheme(newTheme) {
-      if(!newTheme || !themes[newTheme]) {
+    onChangeTheme(value) {
+      if(!value || !themes[value]) {
         return false;
       }
 
       this.$earlyAccess().then(() => {
-        this.currentTheme = newTheme;
+        this.currentTheme = value;
         this.onChange();
       }).catch(() => {
-        if (themes[newTheme].sponsor) {
+        if (themes[value].sponsor) {
           this.dialog.sponsor = true;
           this.$nextTick(() => {
             this.settings.ui.theme = this.currentTheme;
           });
         } else {
-          this.currentTheme = newTheme;
+          this.currentTheme = value;
+          this.onChange();
+        }
+      });
+    },
+    onChangeMapsStyle(value) {
+      if (!value) {
+        return false;
+      }
+
+      const style = this.mapsStyle.find(s => s.value === value);
+
+      if (!style) {
+        return false;
+      }
+
+      this.$earlyAccess().then(() => {
+        this.currentMapsStyle = value;
+        this.onChange();
+      }).catch(() => {
+        if (style.sponsor) {
+          this.dialog.sponsor = true;
+          this.$nextTick(() => {
+            this.settings.maps.style = this.currentMapsStyle;
+          });
+        } else {
+          this.currentMapsStyle = value;
           this.onChange();
         }
       });

@@ -2,14 +2,12 @@ package api
 
 import (
 	"archive/zip"
-	"fmt"
 	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -41,46 +39,8 @@ func SaveAlbumAsYaml(a entity.Album) {
 	}
 }
 
-// GET /api/v1/albums
-func SearchAlbums(router *gin.RouterGroup) {
-	router.GET("/albums", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceAlbums, acl.ActionSearch)
-
-		if s.Invalid() {
-			AbortUnauthorized(c)
-			return
-		}
-
-		var f form.AlbumSearch
-
-		err := c.MustBindWith(&f, binding.Form)
-
-		if err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		// Guest permissions are limited to shared albums.
-		if s.Guest() {
-			f.ID = s.Shares.Join(txt.Or)
-		}
-
-		result, err := search.Albums(f)
-
-		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
-			return
-		}
-
-		AddCountHeader(c, len(result))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
-
-		c.JSON(http.StatusOK, result)
-	})
-}
-
+// GetAlbum returns album details as JSON.
+//
 // GET /api/v1/albums/:uid
 func GetAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid", func(c *gin.Context) {
@@ -103,6 +63,8 @@ func GetAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// CreateAlbum adds a new album.
+//
 // POST /api/v1/albums
 func CreateAlbum(router *gin.RouterGroup) {
 	router.POST("/albums", func(c *gin.Context) {
@@ -142,6 +104,8 @@ func CreateAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// UpdateAlbum updates album metadata like title and description.
+//
 // PUT /api/v1/albums/:uid
 func UpdateAlbum(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid", func(c *gin.Context) {
@@ -192,6 +156,8 @@ func UpdateAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// DeleteAlbum deletes an existing album.
+//
 // DELETE /api/v1/albums/:uid
 func DeleteAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid", func(c *gin.Context) {
@@ -211,7 +177,16 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := a.Delete(); err != nil {
+		// Regular, manually created album?
+		if a.IsDefault() {
+			// Soft delete manually created albums.
+			err = a.Delete()
+		} else {
+			// Permanently delete automatically created albums.
+			err = a.DeletePermanently()
+		}
+
+		if err != nil {
 			log.Errorf("album: %s (delete)", err)
 			AbortDeleteFailed(c)
 			return
@@ -229,6 +204,8 @@ func DeleteAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// LikeAlbum sets the favorite flag for an album.
+//
 // POST /api/v1/albums/:uid/like
 //
 // Parameters:
@@ -265,6 +242,8 @@ func LikeAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// DislikeAlbum removes the favorite flag from an album.
+//
 // DELETE /api/v1/albums/:uid/like
 //
 // Parameters:
@@ -301,6 +280,8 @@ func DislikeAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// CloneAlbums creates a new album containing pictures from other albums.
+//
 // POST /api/v1/albums/:uid/clone
 func CloneAlbums(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/clone", func(c *gin.Context) {
@@ -357,6 +338,8 @@ func CloneAlbums(router *gin.RouterGroup) {
 	})
 }
 
+// AddPhotosToAlbum adds photos to an album.
+//
 // POST /api/v1/albums/:uid/photos
 func AddPhotosToAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/photos", func(c *gin.Context) {
@@ -410,6 +393,8 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// RemovePhotosFromAlbum removes photos from an album.
+//
 // DELETE /api/v1/albums/:uid/photos
 func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/photos", func(c *gin.Context) {
@@ -459,6 +444,8 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 	})
 }
 
+// DownloadAlbum streams the album contents as zip archive.
+//
 // GET /api/v1/albums/:uid/dl
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
@@ -482,13 +469,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		albumName := strings.Title(a.AlbumSlug)
-
-		if len(albumName) < 2 {
-			albumName = fmt.Sprintf("photoprism-album-%s", a.AlbumUID)
-		}
-
-		zipFileName := fmt.Sprintf("%s.zip", albumName)
+		zipFileName := a.ZipName()
 
 		AddDownloadHeader(c, zipFileName)
 

@@ -152,10 +152,9 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   await page.toggleLike(FirstPhoto);
   await page.selectPhotoFromUID(SecondPhoto);
   await page.editSelected();
-    await page.turnSwitchOn("favorite");
-    await t
-        .click(Selector(".action-close"));
-    await t
+  await page.turnSwitchOn("favorite");
+  await t.click(Selector(".action-close"));
+  await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", FirstPhoto).exists, {
       timeout: 5000,
     })
@@ -189,9 +188,8 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   await page.toggleLike(FirstVideo);
   await page.toggleLike(FirstPhoto);
   await page.editSelected();
-    await page.turnSwitchOff("private");
-    await t
-    .click(Selector(".action-close"));
+  await page.turnSwitchOff("private");
+  await t.click(Selector(".action-close"));
   await page.clearSelection();
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
@@ -206,8 +204,6 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
     .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
     .notOk();
 });
-
-
 
 test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
   await page.openNav();
@@ -234,7 +230,6 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
 
   const FirstPhotoTitle = await Selector(".input-title input").value;
   const FirstPhotoLocalTime = await Selector(".input-local-time input").value;
-  const FirstPhotoUTCTime = await Selector(".input-utc-time input").value;
   const FirstPhotoDay = await Selector(".input-day input").value;
   const FirstPhotoMonth = await Selector(".input-month input").value;
   const FirstPhotoYear = await Selector(".input-year input").value;
@@ -264,26 +259,26 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
     .expect(Selector(".input-title input").value)
     .eql(FirstPhotoTitle);
   await page.editPhoto(
-      "New Photo Title",
-      "Europe/Moscow",
-      "15",
-      "07",
-      "2019",
-      "04:30:30",
-      "-1",
-      "41.15333",
-      "20.168331",
-      "32",
-      "1/32",
-      "29",
-      "33",
-      "Super nice edited photo",
-      "Happy",
-      "Happy2020",
-      "Super nice cat license",
-      "Description of a nice image :)",
-      ", cat, love",
-      "Some notes"
+    "New Photo Title",
+    "Europe/Moscow",
+    "15",
+    "07",
+    "2019",
+    "04:30:30",
+    "-1",
+    "41.15333",
+    "20.168331",
+    "32",
+    "1/32",
+    "29",
+    "33",
+    "Super nice edited photo",
+    "Happy",
+    "Happy2020",
+    "Super nice cat license",
+    "Description of a nice image :)",
+    ", cat, love",
+    "Some notes"
   );
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
@@ -295,33 +290,55 @@ test.meta("testID", "photos-007")("Edit photo/video", async (t) => {
     .eql("New Photo Title");
   await page.selectPhotoFromUID(FirstPhoto);
   await page.editSelected();
-  await page.checkEditFormValues("New Photo Title", "15", "07", "2019", "04:30:30",
-      "01:30:30", "Europe/Moscow", "Albania", "-1", "", "", "",
-      "32", "1/32", "",  "29", "33", "Super nice edited photo", "Happy",
-      "Happy2020", "Super nice cat license", "Description of a nice image :)", "cat", "");
+  await page.checkEditFormValues(
+    "New Photo Title",
+    "15",
+    "07",
+    "2019",
+    "04:30:30",
+    "",
+    "Europe/Moscow",
+    "Albania",
+    "-1",
+    "",
+    "",
+    "",
+    "32",
+    "1/32",
+    "",
+    "29",
+    "33",
+    "Super nice edited photo",
+    "Happy",
+    "Happy2020",
+    "Super nice cat license",
+    "Description of a nice image :)",
+    "cat",
+    ""
+  );
   await page.undoPhotoEdit(
-      FirstPhotoTitle,
-      FirstPhotoTimezone,
-      FirstPhotoDay,
-      FirstPhotoMonth,
-      FirstPhotoYear,
-      FirstPhotoLocalTime,
-      FirstPhotoAltitude,
-      FirstPhotoLatitude,
-      FirstPhotoLongitude,
-      FirstPhotoCountry,
-      FirstPhotoIso,
-      FirstPhotoExposure,
-      FirstPhotoFnumber,
-      FirstPhotoFocalLength,
-      FirstPhotoSubject,
-      FirstPhotoArtist,
-      FirstPhotoCopyright,
-      FirstPhotoLicense,
-      FirstPhotoDescription,
-      FirstPhotoKeywords,
-      FirstPhotoNotes
-  )
+    FirstPhotoTitle,
+    FirstPhotoTimezone,
+    FirstPhotoDay,
+    FirstPhotoMonth,
+    FirstPhotoYear,
+    FirstPhotoLocalTime,
+    FirstPhotoAltitude,
+    FirstPhotoLatitude,
+    FirstPhotoLongitude,
+    FirstPhotoCountry,
+    FirstPhotoIso,
+    FirstPhotoExposure,
+    FirstPhotoFnumber,
+    FirstPhotoFocalLength,
+    FirstPhotoSubject,
+    FirstPhotoArtist,
+    FirstPhotoCopyright,
+    FirstPhotoLicense,
+    FirstPhotoDescription,
+    FirstPhotoKeywords,
+    FirstPhotoNotes
+  );
   const clipboardCount = await Selector("span.count-clipboard", { timeout: 5000 });
   await t
     .expect(clipboardCount.textContent)
@@ -395,7 +412,7 @@ test.meta("testID", "photos-010")("Ungroup files", async (t) => {
     .click(Selector("button.action-title-edit").withAttribute("data-uid", SequentialPhoto))
     .click(Selector("#tab-files"))
     .click(Selector("div.v-expansion-panel__header__icon").nth(0))
-      .click(Selector("div.v-expansion-panel__header__icon").nth(1))
+    .click(Selector("div.v-expansion-panel__header__icon").nth(1))
     .click(Selector(".action-unstack"))
     .wait(12000)
     .click(Selector("button.action-close"));
@@ -448,85 +465,86 @@ test.skip.meta("testID", "photos-011")("Delete non primary file", async (t) => {
 });
 
 test.meta("testID", "photos-012")("Mark photos/videos as panorama/scan", async (t) => {
+  await page.openNav();
+  await page.search("photo:true");
+  const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
+  await page.search("video:true");
+  const FirstVideo = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
+  await page.openNav();
+  await t
+    .click(Selector(".nav-browse + div"))
+    .click(Selector(".nav-scans"))
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .notOk()
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .notOk();
+  if (t.browser.platform === "mobile") {
     await page.openNav();
-    await page.search("photo:true");
-    const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
-    await page.search("video:true");
-    const FirstVideo = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
+  }
+  await t
+    .click(Selector(".nav-panoramas"))
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .notOk()
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .notOk();
+  await page.openNav();
+  await t.click(Selector(".nav-browse"));
+  await page.selectPhotoFromUID(FirstPhoto);
+  await page.editSelected();
+  await page.turnSwitchOn("scan");
+  await page.turnSwitchOn("panorama");
+  await t.click(Selector(".action-close"));
+  await page.clearSelection();
+  await page.selectPhotoFromUID(FirstVideo);
+  await page.editSelected();
+  await page.turnSwitchOn("panorama");
+  await t.click(Selector(".action-close"));
+  await page.clearSelection();
+  await t
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .ok()
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .ok();
+  if (t.browser.platform === "mobile") {
     await page.openNav();
-    await t.click(Selector(".nav-browse + div"))
-        .click(Selector(".nav-scans"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-        .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
-        .notOk();
-    if (t.browser.platform === "mobile") {
-        await page.openNav();
-    }
-    await t
-        .click(Selector(".nav-panoramas"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-        .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
-        .notOk();
+  }
+  await t
+    .click(Selector(".nav-scans"))
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .ok();
+  if (t.browser.platform === "mobile") {
     await page.openNav();
-    await t.click(Selector(".nav-browse"));
-    await page.selectPhotoFromUID(FirstPhoto);
-    await page.editSelected();
-    await page.turnSwitchOn("scan");
-    await page.turnSwitchOn("panorama");
-    await t.click(Selector(".action-close"));
-    await page.clearSelection();
-    await page.selectPhotoFromUID(FirstVideo);
-    await page.editSelected();
-    await page.turnSwitchOn("panorama");
-    await t.click(Selector(".action-close"));
-    await page.clearSelection();
-    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-        .ok()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
-        .ok();
-    if (t.browser.platform === "mobile") {
-        await page.openNav();
-    }
-    await t
-        .click(Selector(".nav-scans"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-        .ok();
-    if (t.browser.platform === "mobile") {
-        await page.openNav();
-    }
-    await t
-        .click(Selector(".nav-panoramas"))
-    await page.selectPhotoFromUID(FirstPhoto);
-    await page.editSelected();
-    await page.turnSwitchOff("panorama");
-    await page.turnSwitchOff("scan");
-    await t.click(Selector(".action-close"));
-    await page.clearSelection();
-    await page.selectPhotoFromUID(FirstVideo);
-    await page.editSelected();
-    await page.turnSwitchOff("panorama");
-    await t.click(Selector(".action-close"));
-    await page.clearSelection();
-    if (t.browser.platform === "mobile") {
-        await t.eval(() => location.reload());
-    } else {
-        await t.click(Selector("button.action-reload"));
-    }
-    await t.expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-        .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
-        .notOk();
-    if (t.browser.platform === "mobile") {
-        await page.openNav();
-        await t.click(Selector(".nav-browse + div"));
-    }
-    await t
-        .click(Selector(".nav-scans"))
-        .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-        .notOk()
-        .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
-        .notOk();
+  }
+  await t.click(Selector(".nav-panoramas"));
+  await page.selectPhotoFromUID(FirstPhoto);
+  await page.editSelected();
+  await page.turnSwitchOff("panorama");
+  await page.turnSwitchOff("scan");
+  await t.click(Selector(".action-close"));
+  await page.clearSelection();
+  await page.selectPhotoFromUID(FirstVideo);
+  await page.editSelected();
+  await page.turnSwitchOff("panorama");
+  await t.click(Selector(".action-close"));
+  await page.clearSelection();
+  if (t.browser.platform === "mobile") {
+    await t.eval(() => location.reload());
+  } else {
+    await t.click(Selector("button.action-reload"));
+  }
+  await t
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .notOk()
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .notOk();
+  if (t.browser.platform === "mobile") {
+    await page.openNav();
+    await t.click(Selector(".nav-browse + div"));
+  }
+  await t
+    .click(Selector(".nav-scans"))
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .notOk()
+    .expect(Selector("div").withAttribute("data-uid", FirstVideo).exists, { timeout: 5000 })
+    .notOk();
 });
-

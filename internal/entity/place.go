@@ -6,28 +6,36 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var placeMutex = sync.Mutex{}
 
-// Place used to associate photos to places
+// Place represents a distinct region identified by city, district, state, and country.
 type Place struct {
 	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
-	PlaceLabel    string    `gorm:"type:VARBINARY(755);unique_index;" json:"Label" yaml:"Label"`
-	PlaceCity     string    `gorm:"type:VARCHAR(255);" json:"City" yaml:"City,omitempty"`
-	PlaceState    string    `gorm:"type:VARCHAR(255);" json:"State" yaml:"State,omitempty"`
+	PlaceLabel    string    `gorm:"type:VARCHAR(400);" json:"Label" yaml:"Label"`
+	PlaceDistrict string    `gorm:"type:VARCHAR(100);index;" json:"District" yaml:"District,omitempty"`
+	PlaceCity     string    `gorm:"type:VARCHAR(100);index;" json:"City" yaml:"City,omitempty"`
+	PlaceState    string    `gorm:"type:VARCHAR(100);index;" json:"State" yaml:"State,omitempty"`
 	PlaceCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
-	PlaceKeywords string    `gorm:"type:VARCHAR(255);" json:"Keywords" yaml:"Keywords,omitempty"`
+	PlaceKeywords string    `gorm:"type:VARCHAR(300);" json:"Keywords" yaml:"Keywords,omitempty"`
 	PlaceFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoCount    int       `gorm:"default:1" json:"PhotoCount" yaml:"-"`
 	CreatedAt     time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
+// TableName returns the entity database table name.
+func (Place) TableName() string {
+	return "places"
+}
+
 // UnknownPlace is PhotoPrism's default place.
 var UnknownPlace = Place{
 	ID:            UnknownID,
 	PlaceLabel:    "Unknown",
+	PlaceDistrict: "Unknown",
 	PlaceCity:     "Unknown",
 	PlaceState:    "Unknown",
 	PlaceCountry:  UnknownID,
@@ -38,23 +46,15 @@ var UnknownPlace = Place{
 
 // CreateUnknownPlace creates the default place if not exists.
 func CreateUnknownPlace() {
-	FirstOrCreatePlace(&UnknownPlace)
+	UnknownPlace = *FirstOrCreatePlace(&UnknownPlace)
 }
 
 // FindPlace finds a matching place or returns nil.
-func FindPlace(id string, label string) *Place {
+func FindPlace(id string) *Place {
 	place := Place{}
 
-	if label == "" {
-		if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
-			log.Debugf("places: failed finding %s", id)
-			return nil
-		} else {
-			return &place
-		}
-	}
-
-	if err := Db().Where("id = ? OR place_label = ?", id, label).First(&place).Error; err != nil {
+	if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
+		log.Debugf("place: %s no found", txt.Quote(id))
 		return nil
 	} else {
 		return &place
@@ -78,28 +78,41 @@ func (m *Place) Create() error {
 	return Db().Create(m).Error
 }
 
+// Save updates the existing or inserts a new row.
+func (m *Place) Save() error {
+	placeMutex.Lock()
+	defer placeMutex.Unlock()
+
+	return Db().Save(m).Error
+}
+
+// Delete removes the entity from the index.
+func (m *Place) Delete() (err error) {
+	return UnscopedDb().Delete(m).Error
+}
+
 // FirstOrCreatePlace fetches an existing row, inserts a new row or nil in case of errors.
 func FirstOrCreatePlace(m *Place) *Place {
 	if m.ID == "" {
-		log.Errorf("places: place must not be empty (find or create)")
+		log.Errorf("place: id must not be empty (find or create)")
 		return nil
 	}
 
 	if m.PlaceLabel == "" {
-		log.Errorf("places: label must not be empty (find or create place %s)", m.ID)
+		log.Errorf("place: label must not be empty (find or create place %s)", m.ID)
 		return nil
 	}
 
 	result := Place{}
 
-	if findErr := Db().Where("id = ? OR place_label = ?", m.ID, m.PlaceLabel).First(&result).Error; findErr == nil {
+	if findErr := Db().Where("id = ?", m.ID).First(&result).Error; findErr == nil {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("id = ? OR place_label = ?", m.ID, m.PlaceLabel).First(&result).Error; err == nil {
+	} else if err := Db().Where("id = ?", m.ID).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("places: %s (create place %s)", createErr, m.ID)
+		log.Errorf("place: %s (create %s)", createErr, m.ID)
 	}
 
 	return nil
@@ -115,7 +128,12 @@ func (m Place) Label() string {
 	return m.PlaceLabel
 }
 
-// City returns place City
+// District returns the place district name if any.
+func (m Place) District() string {
+	return m.PlaceDistrict
+}
+
+// City returns place city if any.
 func (m Place) City() string {
 	return m.PlaceCity
 }

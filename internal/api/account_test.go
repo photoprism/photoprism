@@ -4,31 +4,11 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/internal/i18n"
 )
-
-func TestSearchAccounts(t *testing.T) {
-	t.Run("successful request", func(t *testing.T) {
-		app, router, _ := NewApiTest()
-		SearchAccounts(router)
-		sess := AuthenticateAdmin(app, router)
-		r := AuthenticatedRequest(app, "GET", "/api/v1/accounts?count=10", sess)
-		val := gjson.Get(r.Body.String(), "#(AccName=\"Test Account\").AccURL")
-		count := gjson.Get(r.Body.String(), "#")
-		assert.LessOrEqual(t, int64(1), count.Int())
-		assert.Equal(t, "http://webdav-dummy/", val.String())
-		assert.Equal(t, http.StatusOK, r.Code)
-	})
-	t.Run("invalid request", func(t *testing.T) {
-		app, router, _ := NewApiTest()
-		SearchAccounts(router)
-		r := PerformRequest(app, "GET", "/api/v1/accounts?xxx=10")
-		assert.Equal(t, http.StatusBadRequest, r.Code)
-	})
-}
 
 func TestGetAccount(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
@@ -111,7 +91,7 @@ func TestCreateAccount(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateAccount(router)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/accounts", `{"AccName": "CreateTest", "AccOwner": "Test", "AccUrl": "http://webdav-dummy/", "AccType": "webdav",
+		r := PerformRequestWithBody(app, "POST", "/api/v1/accounts", `{"AccName": "CreateTest", "AccOwner": "Test", "AccUrl": "http://dummy-webdav/", "AccType": "webdav",
 "AccKey": "123", "AccUser": "admin", "AccPass": "photoprism", "AccError": "", "AccShare": false, "AccSync": false, "RetryLimit": 3, "SharePath": "", "ShareSize": "", "ShareExpires": 0,
 "SyncPath": "", "SyncInterval": 3, "SyncUpload": false, "SyncDownload": false, "SyncFilenames": false, "SyncRaw": false}`)
 		val := gjson.Get(r.Body.String(), "AccOwner")
@@ -123,7 +103,7 @@ func TestCreateAccount(t *testing.T) {
 func TestUpdateAccount(t *testing.T) {
 	app, router, _ := NewApiTest()
 	CreateAccount(router)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/accounts", `{"AccName": "CreateTest3", "AccOwner": "TestUpdate", "AccUrl": "http://webdav-dummy/", "AccType": "webdav",
+	r := PerformRequestWithBody(app, "POST", "/api/v1/accounts", `{"AccName": "CreateTest3", "AccOwner": "TestUpdate", "AccUrl": "http://dummy-webdav/", "AccType": "webdav",
 "AccKey": "123", "AccUser": "admin", "AccPass": "photoprism", "AccError": "", "AccShare": false, "AccSync": false, "RetryLimit": 3, "SharePath": "", "ShareSize": "", "ShareExpires": 0,
 "SyncPath": "", "SyncInterval": 5, "SyncUpload": false, "SyncDownload": false, "SyncFilenames": false, "SyncRaw": false}`)
 	val := gjson.Get(r.Body.String(), "AccOwner")
@@ -131,7 +111,7 @@ func TestUpdateAccount(t *testing.T) {
 	val2 := gjson.Get(r.Body.String(), "SyncInterval")
 	assert.Equal(t, int64(5), val2.Int())
 	val3 := gjson.Get(r.Body.String(), "AccName")
-	assert.Equal(t, "Webdav-Dummy", val3.String())
+	assert.Equal(t, "Dummy-Webdav", val3.String())
 	assert.Equal(t, http.StatusOK, r.Code)
 	id := gjson.Get(r.Body.String(), "ID").String()
 
@@ -170,7 +150,7 @@ func TestUpdateAccount(t *testing.T) {
 func TestDeleteAccount(t *testing.T) {
 	app, router, _ := NewApiTest()
 	CreateAccount(router)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/accounts", `{"AccName": "DeleteTest", "AccOwner": "TestDelete", "AccUrl": "http://webdav-dummy/", "AccType": "webdav",
+	r := PerformRequestWithBody(app, "POST", "/api/v1/accounts", `{"AccName": "DeleteTest", "AccOwner": "TestDelete", "AccUrl": "http://dummy-webdav/", "AccType": "webdav",
 "AccKey": "123", "AccUser": "admin", "AccPass": "photoprism", "AccError": "", "AccShare": false, "AccSync": false, "RetryLimit": 3, "SharePath": "", "ShareSize": "", "ShareExpires": 0,
 "SyncPath": "", "SyncInterval": 5, "SyncUpload": false, "SyncDownload": false, "SyncFilenames": false, "SyncRaw": false}`)
 	assert.Equal(t, http.StatusOK, r.Code)

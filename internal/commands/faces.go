@@ -53,7 +53,7 @@ var FacesCommand = cli.Command{
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
-			ArgsUsage: "[path]",
+			ArgsUsage: "[originals subfolder]",
 			Action:    facesIndexAction,
 		},
 		{
@@ -245,7 +245,7 @@ func facesIndexAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("index: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	var indexed fs.Done

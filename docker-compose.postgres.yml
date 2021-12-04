@@ -1,18 +1,28 @@
 version: '3.5'
 
+# ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
+# The current Gorm version does NOT support compatible general data types:
+# https://github.com/photoprism/photoprism/issues/47
+
+## Development Environment with
+## - App Dev Container
+## - PostgreSQL Database Server
+## - and Dummy Services
 services:
+  ## App Dev Container
+  ## Docs: https://docs.photoprism.org/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
     depends_on:
       - postgres
-      - webdav-dummy
+      - dummy-webdav
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342" # Web Server (PhotoPrism)
-      - "2343:2343" # Acceptance Tests
+      - "2342:2342" # Default HTTP port (host:container)
+      - "2343:2343" # Acceptance Test HTTP port (host:container)
     working_dir: "/go/src/github.com/photoprism/photoprism"
     volumes:
       - ".:/go/src/github.com/photoprism/photoprism"
@@ -62,17 +72,23 @@ services:
       PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # Show TensorFlow log messages for development
 
+  ## PostgreSQL Database Server
+  ## Docs: https://www.postgresql.org/docs/
   postgres:
     image: postgres:12-alpine
     ports:
-      - "5432:5432" # Exposes port 5432 on host
+      - "5432:5432" # Database port (host:container)
     environment:
       POSTGRES_DB: photoprism
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
 
-  webdav-dummy:
-    image: photoprism/webdav:20210602
+  ## Dummy WebDAV Server
+  dummy-webdav:
+    image: photoprism/dummy-webdav:20211109
+    environment:
+      WEBDAV_USERNAME: admin
+      WEBDAV_PASSWORD: photoprism
 
 volumes:
   go-mod:

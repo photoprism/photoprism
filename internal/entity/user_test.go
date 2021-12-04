@@ -20,6 +20,10 @@ func TestFindUserByName(t *testing.T) {
 		assert.Equal(t, 1, m.ID)
 		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "admin", m.UserName)
+		assert.Equal(t, "admin", m.Username())
+		m.UserName = "Admin "
+		assert.Equal(t, "admin", m.Username())
+		assert.Equal(t, "Admin ", m.UserName)
 		assert.Equal(t, "Admin", m.FullName)
 		assert.True(t, m.RoleAdmin)
 		assert.False(t, m.RoleGuest)
@@ -203,7 +207,7 @@ func TestFindUserByUID(t *testing.T) {
 
 		assert.Equal(t, 5, m.ID)
 		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
-		assert.Equal(t, "alice", m.UserName)
+		assert.Equal(t, "alice", m.Username())
 		assert.Equal(t, "Alice", m.FullName)
 		assert.Equal(t, "alice@example.com", m.PrimaryEmail)
 		assert.True(t, m.RoleAdmin)
@@ -251,17 +255,17 @@ func TestFindUserByUID(t *testing.T) {
 }
 
 func TestUser_String(t *testing.T) {
-	t.Run("return UID", func(t *testing.T) {
+	t.Run("UID", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "", FullName: ""}
 		assert.Equal(t, "abc123", p.String())
 	})
-	t.Run("return display name", func(t *testing.T) {
+	t.Run("DisplayName", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "", FullName: "Test"}
 		assert.Equal(t, "Test", p.String())
 	})
-	t.Run("return user name", func(t *testing.T) {
-		p := User{UserUID: "abc123", UserName: "Super-User", FullName: "Test"}
-		assert.Equal(t, "Super-User", p.String())
+	t.Run("UserName", func(t *testing.T) {
+		p := User{UserUID: "abc123", UserName: "Super-User ", FullName: "Test"}
+		assert.Equal(t, "super-user", p.String())
 	})
 }
 

@@ -6,12 +6,17 @@ import (
 
 const (
 	Ellipsis        = "…"
+	ClipCountryCode = 2
 	ClipKeyword     = 40
+	ClipUsername    = 64
 	ClipSlug        = 80
 	ClipCategory    = 100
+	ClipPlace       = 128
 	ClipDefault     = 160
 	ClipName        = 160
 	ClipTitle       = 200
+	ClipVarchar     = 255
+	ClipLabel       = 500
 	ClipQuery       = 1000
 	ClipDescription = 16000
 )

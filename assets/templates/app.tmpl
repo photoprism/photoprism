@@ -1,17 +1,24 @@
-<div id="photoprism" class="container">
-  <div class="loading-logo">
-    <svg id="f394fb39-4024-46e8-9a68-3f5e53f52bfd" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 276.76 276.76"><defs><style>.a8bd947d-a1f8-4a14-8069-c9663505e4b1{fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b);}.a4ee1f07-8fee-4200-835a-e030a32bca90{fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:5px;}</style><linearGradient id="b905e2c4-4772-4914-b70f-44b4d19aca4b" x1="45.04" y1="231.72" x2="231.72" y2="45.04" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset="0" stop-color="#c2fde4"/><stop offset="1" stop-color="#cdc6e9"/></linearGradient></defs><circle class="a8bd947d-a1f8-4a14-8069-c9663505e4b1" cx="138.38" cy="138.38" r="132"/><path id="bfa29dbe-bd65-4058-95bb-bdb844b1d3b1" data-name="Logo Pfad" class="a4ee1f07-8fee-4200-835a-e030a32bca90" d="M229.57,181.89l-4,24.19M47.29,182.88l14.81,14M157.86,59.23,62,196.69a.09.09,0,0,0,.07.15l163.41,9.37a.09.09,0,0,0,.09-.13L158,59.25A.1.1,0,0,0,157.86,59.23ZM138.12,45.94,47.18,182.69a.13.13,0,0,0,.11.19l182.18-.8a.12.12,0,0,0,.1-.19L138.33,45.94A.12.12,0,0,0,138.12,45.94Zm.11-.16L158,59.1"/></svg>
-  </div>
-  <div class="loading-bar">
-    <div role="progressbar" aria-valuemin="0" aria-valuemax="100" class="v-progress-linear" style="height: 7px;">
-      <div class="v-progress-linear__background black" style="height: 7px; opacity: 0.3; width: 100%;"></div>
-      <div class="v-progress-linear__bar">
-        <div class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active">
-          <div class="v-progress-linear__bar__indeterminate long black"></div>
-          <div class="v-progress-linear__bar__indeterminate short black"></div>
-        </div><!----></div>
+<div id="photoprism" class="container{{if .config.SiteCaption}} theme-{{ .config.Settings.UI.Theme }}{{end}}">
+  <noscript>
+    <div id="noscript-info">
+      <a href="https://enable-javascript.com/" target="_blank">PhotoPrism can't load because JavaScript is disabled.</a>
     </div>
+  </noscript>
+  <div class="loading-animation">
+    <div class="loading-circle"></div>
   </div>
+  <div class="loading-logo">
+    {{if eq .config.AppIcon "crisp"}}
+      <svg width="264" height="264" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="45.04" y1="231.72" x2="231.72" y2="45.04" gradientUnits="userSpaceOnUse" gradientTransform="translate(-6.38 -6.38)"><stop offset="0" stop-color="#fff"/><stop offset="0" stop-color="#9afbfe"/><stop offset="1" stop-color="#ffb3e0"/></linearGradient></defs><circle cx="132" cy="132" r="132" style="fill:url(#a)"/><path d="m223.19 175.51-4 24.19M40.91 176.5l14.81 14m95.76-137.65L55.62 190.31a.09.09 0 0 0 .07.15l163.41 9.37a.09.09 0 0 0 .09-.13L151.62 52.87a.1.1 0 0 0-.14-.02zm-19.74-13.29L40.8 176.31a.13.13 0 0 0 .11.19l182.18-.8a.12.12 0 0 0 .1-.19L131.95 39.56a.12.12 0 0 0-.21 0zm.11-.16 19.77 13.32" style="fill:none;stroke:#1d1d1b;stroke-width:5px;stroke-miterlimit:10"/></svg>
+    {{else if eq .config.AppIcon "mint"}}
+      <svg width="264" height="264" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="45.04" y1="231.72" x2="231.72" y2="45.04" gradientUnits="userSpaceOnUse" gradientTransform="translate(-6.38 -6.38)"><stop offset="0" stop-color="#fff"/><stop offset="0" stop-color="#c2fde4"/><stop offset="1" stop-color="#cdc6e9"/></linearGradient></defs><circle cx="132" cy="132" r="132" style="fill:url(#a)"/><path d="m223.19 175.51-4 24.19M40.91 176.5l14.81 14m95.76-137.65L55.62 190.31a.09.09 0 0 0 .07.15l163.41 9.37a.09.09 0 0 0 .09-.13L151.62 52.87a.1.1 0 0 0-.14-.02zm-19.74-13.29L40.8 176.31a.13.13 0 0 0 .11.19l182.18-.8a.12.12 0 0 0 .1-.19L131.95 39.56a.12.12 0 0 0-.21 0zm.11-.16 19.77 13.32" style="fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:5px"/></svg>
+    {{else if eq .config.AppIcon "bold"}}
+      <svg width="264" height="264" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="45.04" y1="231.72" x2="231.72" y2="45.04" gradientUnits="userSpaceOnUse" gradientTransform="translate(-6.38 -6.38)"><stop offset="0" stop-color="#fff"/><stop offset="0" stop-color="#99e6ff"/><stop offset="1" stop-color="#c299ff"/></linearGradient></defs><circle cx="132" cy="132" r="132" style="fill:url(#a)"/><path data-name="Logo Pfad" d="m223.19 175.51-4 24.19M40.91 176.5l14.81 14m95.76-137.65L55.62 190.31a.09.09 0 0 0 .07.15l163.41 9.37a.09.09 0 0 0 .09-.13L151.62 52.87a.1.1 0 0 0-.14-.02zm-19.74-13.29L40.8 176.31a.13.13 0 0 0 .11.19l182.18-.8a.12.12 0 0 0 .1-.19L131.95 39.56a.12.12 0 0 0-.21 0zm.11-.16 19.77 13.32" style="fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:7px"/></svg>
+    {{else}}
+      <svg width="264" height="264" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="45.04" y1="231.72" x2="231.72" y2="45.04" gradientUnits="userSpaceOnUse" gradientTransform="translate(-6.38 -6.38)"><stop offset="0" stop-color="#fff"/><stop offset="0" stop-color="#b8edff"/><stop offset="1" stop-color="#d4b8ff"/></linearGradient></defs><circle cx="132" cy="132" r="132" style="fill:url(#a)"/><path data-name="Logo Pfad" d="m223.19 175.51-4 24.19M40.91 176.5l14.81 14m95.76-137.65L55.62 190.31a.09.09 0 0 0 .07.15l163.41 9.37a.09.09 0 0 0 .09-.13L151.62 52.87a.1.1 0 0 0-.14-.02zm-19.74-13.29L40.8 176.31a.13.13 0 0 0 .11.19l182.18-.8a.12.12 0 0 0 .1-.19L131.95 39.56a.12.12 0 0 0-.21 0zm.11-.16 19.77 13.32" style="fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:6px;shape-rendering:geometricPrecision"/></svg>
+    {{end}}
+  </div>
+  {{if not .config.Sponsor}}<div id="loading-info"><a href="{{ .signUp.url }}" target="_blank">{{ .signUp.message }}</a></div>{{end}}
 </div>
 
 <div id="busy-overlay"></div>

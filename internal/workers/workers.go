@@ -35,6 +35,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 )
@@ -42,9 +43,17 @@ import (
 var log = event.Log
 var stop = make(chan bool, 1)
 
-// Start runs PhotoPrism background workers every wakeup interval.
+// Start runs the metadata, share & sync background workers at regular intervals.
 func Start(conf *config.Config) {
-	ticker := time.NewTicker(conf.WakeupInterval())
+	interval := conf.WakeupInterval()
+
+	// Disabled in safe mode?
+	if interval.Seconds() <= 0 {
+		log.Warnf("config: disabled metadata, share & sync background workers")
+		return
+	}
+
+	ticker := time.NewTicker(interval)
 
 	go func() {
 		for {
@@ -75,7 +84,11 @@ func StartMeta(conf *config.Config) {
 	if !mutex.WorkersBusy() {
 		go func() {
 			worker := NewMeta(conf)
-			if err := worker.Start(time.Minute); err != nil {
+
+			delay := time.Minute
+			interval := entity.MetadataUpdateInterval
+
+			if err := worker.Start(delay, interval, false); err != nil {
 				log.Warnf("metadata: %s", err)
 			}
 		}()

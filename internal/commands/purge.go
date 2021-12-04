@@ -62,7 +62,7 @@ func purgeAction(ctx *cli.Context) error {
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("purge: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	w := service.Purge()

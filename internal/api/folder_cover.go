@@ -61,7 +61,7 @@ func FolderCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(folderCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 

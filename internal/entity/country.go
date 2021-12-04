@@ -38,7 +38,7 @@ var UnknownCountry = Country{
 
 // CreateUnknownCountry is used to initialize the database with the default country
 func CreateUnknownCountry() {
-	FirstOrCreateCountry(&UnknownCountry)
+	UnknownCountry = *FirstOrCreateCountry(&UnknownCountry)
 }
 
 // NewCountry creates a new country, with default country code if not provided
@@ -68,7 +68,7 @@ func (m *Country) Create() error {
 // FirstOrCreateCountry returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateCountry(m *Country) *Country {
 	if cacheData, ok := countryCache.Get(m.ID); ok {
-		log.Debugf("country: cache hit for %s", m.ID)
+		log.Tracef("country: cache hit for %s", m.ID)
 
 		return cacheData.(*Country)
 	}

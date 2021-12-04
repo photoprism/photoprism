@@ -30,7 +30,7 @@ func (m *Meta) originalsPath() string {
 }
 
 // Start metadata optimization routine.
-func (m *Meta) Start(delay time.Duration) (err error) {
+func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("metadata: %s (panic)\nstack: %s", r, debug.Stack())
@@ -64,7 +64,7 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 
 	// Run index optimization.
 	for {
-		photos, err := query.PhotosCheck(limit, offset, delay)
+		photos, err := query.PhotosMetadataUpdate(limit, offset, delay, interval)
 
 		if err != nil {
 			return err
@@ -87,13 +87,13 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 
 			done[photo.PhotoUID] = true
 
-			updated, merged, err := photo.Optimize(settings.StackMeta(), settings.StackUUID(), settings.Features.Estimates)
+			updated, merged, err := photo.Optimize(settings.StackMeta(), settings.StackUUID(), settings.Features.Estimates, force)
 
 			if err != nil {
 				log.Errorf("metadata: %s (optimize photo)", err)
 			} else if updated {
 				optimized++
-				log.Debugf("metadata: optimized photo %s", photo.String())
+				log.Debugf("metadata: updated photo %s", photo.String())
 			}
 
 			for _, p := range merged {
@@ -112,7 +112,7 @@ func (m *Meta) Start(delay time.Duration) (err error) {
 	}
 
 	if optimized > 0 {
-		log.Infof("metadata: optimized %d photos", optimized)
+		log.Infof("metadata: updated %d photos", optimized)
 	}
 
 	// Set photo quality scores to -1 if files are missing.

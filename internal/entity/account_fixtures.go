@@ -7,11 +7,11 @@ import (
 type AccountMap map[string]Account
 
 var AccountFixtures = AccountMap{
-	"webdav-dummy": {
+	"dummy-webdav": {
 		ID:            1000000,
 		AccName:       "Test Account",
 		AccOwner:      "",
-		AccURL:        "http://webdav-dummy/",
+		AccURL:        "http://dummy-webdav/",
 		AccType:       "webdav",
 		AccKey:        "",
 		AccUser:       "admin",
@@ -36,11 +36,11 @@ var AccountFixtures = AccountMap{
 		UpdatedAt:     TimeStamp(),
 		DeletedAt:     nil,
 	},
-	"webdav-dummy2": {
+	"dummy-webdav2": {
 		ID:            1000001,
 		AccName:       "Test Account2",
 		AccOwner:      "",
-		AccURL:        "http://webdav-dummy/",
+		AccURL:        "http://dummy-webdav/",
 		AccType:       "webdav",
 		AccKey:        "",
 		AccUser:       "admin",
@@ -67,8 +67,8 @@ var AccountFixtures = AccountMap{
 	},
 }
 
-var AccountFixtureWebdavDummy = AccountFixtures["webdav-dummy"]
-var AccountFixtureWebdavDummy2 = AccountFixtures["webdav-dummy2"]
+var AccountFixtureWebdavDummy = AccountFixtures["dummy-webdav"]
+var AccountFixtureWebdavDummy2 = AccountFixtures["dummy-webdav2"]
 
 // CreateLabelFixtures inserts known entities into the database for testing.
 func CreateAccountFixtures() {

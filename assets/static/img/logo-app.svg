@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="f394fb39-4024-46e8-9a68-3f5e53f52bfd"
+   data-name="Ebene 1"
+   viewBox="0 0 223.99999 223.99999"
+   version="1.1"
+   sodipodi:docname="app.svg"
+   width="224"
+   height="224"
+   inkscape:version="1.1.1 (3bf5ae0, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview316"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="3.1543575"
+     inkscape:cx="15.058534"
+     inkscape:cy="112.0672"
+     inkscape:window-width="2560"
+     inkscape:window-height="1384"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="f394fb39-4024-46e8-9a68-3f5e53f52bfd" />
+  <defs
+     id="defs310">
+    <style
+       id="style301">
+            .a8bd947d-a1f8-4a14-8069-c9663505e4b1{fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b);}.a4ee1f07-8fee-4200-835a-e030a32bca90{fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:6px;shape-rendering:geometricPrecision;}
+        </style>
+    <linearGradient
+       id="b905e2c4-4772-4914-b70f-44b4d19aca4b"
+       x1="26.379999"
+       y1="231.72"
+       x2="231.72"
+       y2="26.379999"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-26.379999,-26.379999)">
+      <stop
+         offset="0"
+         stop-color="#fff"
+         id="stop303" />
+      <stop
+         offset="0"
+         stop-color="#b8edff"
+         id="stop305" />
+      <stop
+         offset="1"
+         stop-color="#d4b8ff"
+         id="stop307" />
+    </linearGradient>
+  </defs>
+  <rect
+     class="a8bd947d-a1f8-4a14-8069-c9663505e4b1"
+     x="0"
+     y="0"
+     rx="22%"
+     ry="22%"
+     width="224"
+     height="224"
+     id="rect312"
+     style="fill:url(#b905e2c4-4772-4914-b70f-44b4d19aca4b)" />
+  <path
+     id="bfa29dbe-bd65-4058-95bb-bdb844b1d3b1"
+     class="a4ee1f07-8fee-4200-835a-e030a32bca90"
+     d="m 198.62972,157.71985 -3.8,22.9805 m -169.366,-22.04 14.0695,13.3 m 90.972,-130.767504 -91.067,130.587004 a 0.0855,0.0855 0 0 0 0.0665,0.1425 l 155.2395,8.9015 a 0.0855,0.0855 0 0 0 0.0855,-0.1235 L 130.63822,41.211846 a 0.095,0.095 0 0 0 -0.133,-0.019 z m -18.753,-12.6255 -86.393,129.912504 a 0.1235,0.1235 0 0 0 0.1045,0.1805 l 173.071,-0.76 a 0.114,0.114 0 0 0 0.095,-0.1805 l -86.678,-129.152504 a 0.114,0.114 0 0 0 -0.1995,0 z m 0.1045,-0.152 18.7815,12.654" />
+</svg>

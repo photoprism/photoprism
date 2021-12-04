@@ -1,6 +1,17 @@
-## THIS OPEN-SOURCE PROJECT IS MADE POSSIBLE THANKS TO OUR SPONSORS ##
+# Thank you for sponsoring PhotoPrism! #
+
+The most effective way to [support us](https://docs.photoprism.org/funding/) is through [Patreon](https://www.patreon.com/photoprism) in €
+and [GitHub Sponsors](https://github.com/sponsors/photoprism) in USD.
+GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
+You're welcome to [contact us](https://photoprism.app/contact) for other options.
+
+## Platinum Sponsors ##
 
 [Sid Karunaratne](https://github.com/sakaru) (Patreon, May 2019)
+
+Andrew (Patreon, October 2021)
+
+## Gold Sponsors ##
 
 [Simen Eriksen](https://github.com/dennorske) (GitHub Sponsors, December 2019)
 
@@ -36,9 +47,12 @@ Garn Penrod (Patreon, November 2020)
 
 [Daniel Hähnke](https://github.com/DanBenHa) (GitHub Sponsors, July 2021)
 
-Thank you very much! 💜
+[@jasontitus](https://github.com/jasontitus) (GitHub Sponsors, October 2021)
+
+[Łukasz Anwajler](https://github.com/anwajler) (GitHub Sponsors, November 2021)
 
 See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
+[Let us know](https://photoprism.app/contact) if you do not want to be listed for any reason.
 
 ## One-Time Donations ##
 
@@ -47,13 +61,16 @@ Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
 The Gordon Project
 
-## Crypto ##
+[Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
 
-| Currency   | Dontation Address                                                                                    |
+## Crypto Wallets ##
+
+| Currency   | Address                                                                                              |
 |:-----------|:-----------------------------------------------------------------------------------------------------|
+| Ethereum   | [`0x04e73F3326E26916356f76b04ca15e0c4C2d9C79`](ethereum:0x04e73F3326E26916356f76b04ca15e0c4C2d9C79)  |
+| Bitcoin    | [`bc1qfdjqauera5cm243h3yadwrnena0mxusafvchzr`](bitcoin:bc1qfdjqauera5cm243h3yadwrnena0mxusafvchzr)   |
 | Monero     | [`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT)            |
-| Dogecoin   | [`DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq`](dogecoin:DRCBHso4xaE2DRGpWuaif7jma1UwTKcAGq)                  |
-
+| Dogecoin   | [`DKf8bFPaUYdJ5fkjtJNY1jMjtRtiXi3Vzy`](dogecoin:DKf8bFPaUYdJ5fkjtJNY1jMjtRtiXi3Vzy)                  |
 
 
 

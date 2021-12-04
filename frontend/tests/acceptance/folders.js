@@ -34,6 +34,8 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
     .expect(Selector('div[title="Description"]').nth(0).innerText)
     .contains("Last holiday")
     .expect(Selector("div.caption").nth(1).innerText)
+    .contains("Mountains")
+    .expect(Selector("div.caption").nth(2).innerText)
     .contains("USA")
     .click(Selector("a.is-album").nth(0));
   await t
@@ -92,7 +94,7 @@ test.meta("testID", "folders-002")("Download folders", async (t) => {
 //TODO test that sharing link works as expected
 test.meta("testID", "folders-003")("Create, Edit, delete sharing link", async (t) => {
   await page.testCreateEditDeleteSharingLink("folders");
-/*await page.openNav();
+  /*await page.openNav();
 await t.click(Selector(".nav-folders"));
 const FirstAlbum = await Selector("a.is-album").nth(0).getAttribute("data-uid");
 await page.selectFromUID(FirstAlbum);
@@ -155,49 +157,49 @@ await t
 });
 
 test.meta("testID", "folders-004")("Create/delete album during add to album", async (t) => {
-await page.openNav();
-await t.click(Selector(".nav-albums"));
-const countAlbums = await Selector("a.is-album").count;
-await page.openNav();
-await t.click(Selector(".nav-folders"));
-const ThirdFolder = await Selector("a.is-album").nth(2).getAttribute("data-uid");
-await t.click(Selector("a.is-album").withAttribute("data-uid", ThirdFolder));
-const PhotoCountInFolder = await Selector("div.is-photo").count;
-const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
-await page.openNav();
-await t.click(Selector(".nav-folders"));
-await page.selectFromUID(ThirdFolder);
-await page.addSelectedToAlbum("NotYetExistingAlbumForFolder", "clone");
-await page.openNav();
-await t.click(Selector(".nav-albums"));
-const countAlbumsAfterCreation = await Selector("a.is-album").count;
-await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
-await page.search("NotYetExistingAlbumForFolder");
-const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
-await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
-const PhotoCountInAlbum = await Selector("div.is-photo").count;
-await t
-  .expect(PhotoCountInAlbum)
-  .eql(PhotoCountInFolder)
-  .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-  .ok();
-await page.openNav();
-await t.click(Selector(".nav-albums"));
-await page.selectFromUID(AlbumUid);
-await page.deleteSelected();
-await page.openNav();
-await t.click(Selector(".nav-albums"));
-const countAlbumsAfterDelete = await Selector("a.is-album").count;
-await t.expect(countAlbumsAfterDelete).eql(countAlbums);
-await t
-  .click(Selector(".nav-folders"))
-  .click(Selector("a.is-album").withAttribute("data-uid", ThirdFolder))
-  .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
-  .ok();
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  const countAlbums = await Selector("a.is-album").count;
+  await page.openNav();
+  await t.click(Selector(".nav-folders"));
+  const ThirdFolder = await Selector("a.is-album").nth(2).getAttribute("data-uid");
+  await t.click(Selector("a.is-album").withAttribute("data-uid", ThirdFolder));
+  const PhotoCountInFolder = await Selector("div.is-photo").count;
+  const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
+  await page.openNav();
+  await t.click(Selector(".nav-folders"));
+  await page.selectFromUID(ThirdFolder);
+  await page.addSelectedToAlbum("NotYetExistingAlbumForFolder", "clone");
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  const countAlbumsAfterCreation = await Selector("a.is-album").count;
+  await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
+  await page.search("NotYetExistingAlbumForFolder");
+  const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
+  await t.click(Selector("a.is-album").withAttribute("data-uid", AlbumUid));
+  const PhotoCountInAlbum = await Selector("div.is-photo").count;
+  await t
+    .expect(PhotoCountInAlbum)
+    .eql(PhotoCountInFolder)
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .ok();
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  await page.selectFromUID(AlbumUid);
+  await page.deleteSelected();
+  await page.openNav();
+  await t.click(Selector(".nav-albums"));
+  const countAlbumsAfterDelete = await Selector("a.is-album").count;
+  await t.expect(countAlbumsAfterDelete).eql(countAlbums);
+  await t
+    .click(Selector(".nav-folders"))
+    .click(Selector("a.is-album").withAttribute("data-uid", ThirdFolder))
+    .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
+    .ok();
 });
 
 test.meta("testID", "folders-005")("No delete folder functionality", async (t) => {
-await page.openNav();
-await t.click(Selector(".nav-folders"));
-await page.checkButtonVisibility("delete", false, false);
+  await page.openNav();
+  await t.click(Selector(".nav-folders"));
+  await page.checkButtonVisibility("delete", false, false);
 });

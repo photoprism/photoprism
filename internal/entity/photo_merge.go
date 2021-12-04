@@ -20,31 +20,43 @@ func (m *Photo) ResolvePrimary() error {
 	return nil
 }
 
+// Stackable tests if the photo may be stacked.
+func (m *Photo) Stackable() bool {
+	if !m.HasID() || m.PhotoStack == IsUnstacked || m.PhotoName == "" {
+		return false
+	}
+
+	return true
+}
+
 // Identical returns identical photos that can be merged.
 func (m *Photo) Identical(includeMeta, includeUuid bool) (identical Photos, err error) {
-	if m.PhotoStack == IsUnstacked || m.PhotoName == "" {
+	if !m.Stackable() {
 		return identical, nil
 	}
 
+	includeMeta = includeMeta && m.TrustedLocation() && m.TrustedTime()
+	includeUuid = includeUuid && rnd.IsUUID(m.UUID)
+
 	switch {
-	case includeMeta && includeUuid && m.HasLocation() && m.TakenSrc == SrcMeta && rnd.IsUUID(m.UUID):
+	case includeMeta && includeUuid:
 		if err := Db().
-			Where("(taken_at = ? AND taken_src = 'meta' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
+			Where("(taken_at = ? AND taken_src = 'meta' AND place_src <> 'estimate' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
 				"OR (uuid = ? AND photo_stack > -1)"+
 				"OR (photo_path = ? AND photo_name = ?)",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.UUID, m.PhotoPath, m.PhotoName).
 			Order("photo_quality DESC, id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
-	case includeMeta && m.HasLocation() && m.TakenSrc == SrcMeta:
+	case includeMeta:
 		if err := Db().
-			Where("(taken_at = ? AND taken_src = 'meta' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
+			Where("(taken_at = ? AND taken_src = 'meta' AND place_src <> 'estimate' AND photo_stack > -1 AND cell_id = ? AND camera_serial = ? AND camera_id = ?) "+
 				"OR (photo_path = ? AND photo_name = ?)",
 				m.TakenAt, m.CellID, m.CameraSerial, m.CameraID, m.PhotoPath, m.PhotoName).
 			Order("photo_quality DESC, id ASC").Find(&identical).Error; err != nil {
 			return identical, err
 		}
-	case includeUuid && rnd.IsUUID(m.UUID):
+	case includeUuid:
 		if err := Db().
 			Where("(uuid = ? AND photo_stack > -1) OR (photo_path = ? AND photo_name = ?)",
 				m.UUID, m.PhotoPath, m.PhotoName).

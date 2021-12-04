@@ -122,6 +122,16 @@ export const Languages = () => [
     value: "hi",
   },
   {
+    text: "Magyar",
+    translated: $gettext("Hungarian"),
+    value: "hu",
+  },
+  {
+    text: "Bahasa Indonesia",
+    translated: $gettext("Bahasa Indonesia"),
+    value: "id",
+  },
+  {
     text: "Italian",
     translated: $gettext("Italian"),
     value: "it",
@@ -201,6 +211,16 @@ export const Themes = () => [
     disabled: false,
   },
   {
+    text: $gettext("Vanta"),
+    value: "vanta",
+    disabled: false,
+  },
+  {
+    text: $gettext("Abyss"),
+    value: "abyss",
+    disabled: false,
+  },
+  {
     text: $gettext("Moonlight"),
     value: "moonlight",
     disabled: false,
@@ -221,6 +241,11 @@ export const Themes = () => [
     disabled: false,
   },
   {
+    text: $gettext("Gemstone"),
+    value: "gemstone",
+    disabled: false,
+  },
+  {
     text: $gettext("Raspberry"),
     value: "raspberry",
     disabled: false,
@@ -228,11 +253,6 @@ export const Themes = () => [
   {
     text: $gettext("Seaweed"),
     value: "seaweed",
-    disabled: false,
-  },
-  {
-    text: $gettext("Midnight"),
-    value: "midnight",
     disabled: false,
   },
   {
@@ -277,14 +297,17 @@ export const MapsStyle = () => [
   {
     text: $gettext("Hybrid"),
     value: "hybrid",
+    sponsor: true,
   },
   {
     text: $gettext("Topographic"),
     value: "topographique",
+    sponsor: true,
   },
   {
     text: $gettext("Outdoor"),
     value: "outdoor",
+    sponsor: true,
   },
 ];
 

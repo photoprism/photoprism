@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -35,10 +36,11 @@ func SavePhotoAsYaml(p entity.Photo) {
 	}
 }
 
-// GET /api/v1/photos/:uid
+// GetPhoto returns photo details as JSON.
 //
-// Parameters:
-//   uid: string PhotoUID as returned by the API
+// Route : GET /api/v1/photos/:uid
+// Params:
+// - uid (string) PhotoUID as returned by the API
 func GetPhoto(router *gin.RouterGroup) {
 	router.GET("/photos/:uid", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionRead)
@@ -59,6 +61,8 @@ func GetPhoto(router *gin.RouterGroup) {
 	})
 }
 
+// UpdatePhoto updates photo details and returns them as JSON.
+//
 // PUT /api/v1/photos/:uid
 func UpdatePhoto(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid", func(c *gin.Context) {
@@ -119,10 +123,11 @@ func UpdatePhoto(router *gin.RouterGroup) {
 	})
 }
 
-// GET /api/v1/photos/:uid/dl
+// GetPhotoDownload returns the primary file matching that belongs to the photo.
 //
-// Parameters:
-//   uid: string PhotoUID as returned by the API
+// Route :GET /api/v1/photos/:uid/dl
+// Params:
+// - uid (string) PhotoUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {

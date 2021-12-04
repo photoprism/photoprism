@@ -7,4 +7,4 @@ var Children = Embeddings{
 }
 
 // ChildrenRadius is the distance threshold to be recognized as child.
-var ChildrenRadius = 0.75
+var ChildrenRadius = 0.66

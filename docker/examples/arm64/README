@@ -1,5 +1,5 @@
-PhotoPrism for Raspberry Pi (64bit)
-===================================
+PhotoPrism for the Raspberry Pi and other ARM-based devices
+===========================================================
 
 Our latest release comes as a single multi-arch image for AMD64, ARM64, and ARMv7.
 If your device meets the system requirements, the same installation instructions
@@ -14,16 +14,16 @@ to a folder of your choice, change it as needed, and run "docker-compose up":
   wget https://dl.photoprism.org/docker/arm64/docker-compose.yml
   sudo docker-compose up -d
 
-Please always change PHOTOPRISM_ADMIN_PASSWORD so that PhotoPrism starts with a secure initial password.
-Never use "photoprism", or other easy-to-guess passwords, on a public server.
-A minimum length of 4 characters is required.
+Always change PHOTOPRISM_ADMIN_PASSWORD so that the app starts with a secure initial password.
+Never use easy-to-guess passwords or default values like insecure on publicly accessible servers.
+There is no default in case no password was provided. A minimum length of 4 characters is required.
 
 For more details, see:
   - https://docs.photoprism.org/getting-started/docker-compose/
   - https://docs.photoprism.org/getting-started/config-options/
 
 All commands may have to be prefixed with "sudo" when not running as root.
-Note that this will change the home directory "~" to "/root" in your configuration.
+This will change the home directory "~" to "/root" in your configuration.
 
 Our repository on Docker Hub:
   - https://hub.docker.com/r/photoprism/photoprism
@@ -50,15 +50,17 @@ Use the --help flag to see a detailed command info like
 | Re-index | docker-compose exec photoprism photoprism index -f
 | Import   | docker-compose exec photoprism photoprism import
 
-Note: "photoprism index -f" will re-index all originals, including already indexed and unchanged files.
+More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+
+"photoprism index -f" will re-index all originals, including already indexed and unchanged files.
 This may be necessary after upgrading, especially to new major versions.
 
 ## System Requirements ##
 
-It's important to boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1" in config.txt
-in order to use our Docker image.
+It's important that you boot your Raspberry Pi 3 / 4 with the parameter "arm_64bit=1"
+in config.txt to use our ARM64 image.
 
-Alternatively, you may run the image on UbuntuDockerPi (https://github.com/guysoft/UbuntuDockerPi).
+Alternatively, you may run it on UbuntuDockerPi (https://github.com/guysoft/UbuntuDockerPi).
 It's a 64bit Ubuntu Server with Docker pre-installed.
 
 Your device should have at least 4 GB of memory. Also make sure it has at least 4 GB of swap

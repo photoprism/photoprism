@@ -79,7 +79,7 @@ func (c *Config) BuildPath() string {
 	return filepath.Join(c.StaticPath(), "build")
 }
 
-// ImgPath returns the static image path.
+// ImgPath returns the path to static image files.
 func (c *Config) ImgPath() string {
 	return filepath.Join(c.StaticPath(), "img")
 }

@@ -1,8 +1,9 @@
 package form
 
 import (
-	"github.com/photoprism/photoprism/internal/remote"
 	"github.com/ulule/deepcopier"
+
+	"github.com/photoprism/photoprism/internal/remote"
 )
 
 // Account represents a remote service account form for uploading, downloading or syncing media files.

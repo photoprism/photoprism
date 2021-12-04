@@ -159,7 +159,7 @@ func (m *Folder) Create() error {
 		return nil
 	}
 
-	f := form.PhotoSearch{
+	f := form.SearchPhotos{
 		Path:   m.Path,
 		Public: true,
 	}

@@ -47,6 +47,7 @@ func main() {
 	app.Name = "PhotoPrism"
 	app.HelpName = filepath.Base(os.Args[0])
 	app.Usage = "Browse Your Life in Pictures"
+	app.Description = "For setup instructions and a user guide, visit https://docs.photoprism.org/"
 	app.Version = version
 	app.Copyright = "(c) 2018-2021 Michael Mayer <hello@photoprism.org>"
 	app.EnableBashCompletion = true
@@ -60,6 +61,7 @@ func main() {
 		commands.ImportCommand,
 		commands.CopyCommand,
 		commands.FacesCommand,
+		commands.PlacesCommand,
 		commands.PurgeCommand,
 		commands.CleanUpCommand,
 		commands.OptimizeCommand,

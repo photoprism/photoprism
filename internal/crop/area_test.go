@@ -71,6 +71,17 @@ func TestArea_Thumb(t *testing.T) {
 	})
 }
 
+func TestArea_FileWidth(t *testing.T) {
+	t.Run("Tile50", func(t *testing.T) {
+		m := NewArea("face", 1.000, 0.33333, 0.001, 0.5)
+		assert.Equal(t, 49999, m.FileWidth(Size{Tile50, Tile320, "Lists", 50, 50, DefaultOptions}))
+	})
+	t.Run("Tile500", func(t *testing.T) {
+		m := NewArea("face", 1.000, 0.33333, 0.001, 0.5)
+		assert.Equal(t, 499999, m.FileWidth(Size{Tile500, "", "FaceNet", 500, 500, DefaultOptions}))
+	})
+}
+
 func TestAreaFromString(t *testing.T) {
 	t.Run("3e814d0011f4", func(t *testing.T) {
 		a := AreaFromString("3e814d0011f4")
@@ -143,6 +154,7 @@ func TestArea_SurfaceRatio(t *testing.T) {
 	var a2 = Area{Name: "face", X: 0.208313, Y: 0.156914, W: 0.655556, H: 0.655556}
 	var a3 = Area{Name: "face", X: 0.998133, Y: 0.816944, W: 0.0001, H: 0.0001}
 	var a4 = Area{Name: "face", X: 0.298133, Y: 0.216944, W: 0.255556, H: 0.155556}
+	var a5 = Area{Name: "face", X: 0.298133, Y: 0.216944, W: 0, H: 0}
 
 	assert.Equal(t, 99, int(a1.SurfaceRatio(a1.OverlapArea(a1))*100))
 	assert.Equal(t, 99, int(a1.SurfaceRatio(a1.OverlapArea(a2))*100))
@@ -151,6 +163,7 @@ func TestArea_SurfaceRatio(t *testing.T) {
 	assert.Equal(t, 30, int(a1.SurfaceRatio(a1.OverlapArea(a4))*100))
 	assert.Equal(t, 0, int(a1.SurfaceRatio(a3.OverlapArea(a1))*100))
 	assert.Equal(t, 30, int(a1.SurfaceRatio(a4.OverlapArea(a1))*100))
+	assert.Equal(t, 0, int(a1.SurfaceRatio(a5.OverlapArea(a1))*100))
 }
 
 func TestArea_OverlapArea(t *testing.T) {

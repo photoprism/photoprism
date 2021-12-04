@@ -2,15 +2,19 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (macOS)
 #
+# Note:
+# - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
+#   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
+# - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
+#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
+#
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Please run behind a reverse proxy like Caddy, Traefik or Nginx if you need HTTPS / SSL support
-# e.g. when running PhotoPrism on a public server outside your home network.
-#
-# ------------------------------------------------------------------
 # DOCKER COMPOSE COMMAND REFERENCE
-# ------------------------------------------------------------------
+# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+# --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
 # Update   | docker-compose pull
@@ -27,25 +31,26 @@ version: '3.5'
 #
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
-# -------------------------------------------------------------------
 
 services:
+  ## App Server (required)
   photoprism:
-    # Use photoprism/photoprism:preview instead for testing preview builds:
+    ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
     depends_on:
       - mariadb
-    # Only enable automatic restarts once your installation is properly
-    # configured as it otherwise may get stuck in a restart loop:
-    # https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## Only enable automatic restarts once your installation is properly
+    ## configured as it otherwise may get stuck in a restart loop,
+    ## see https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342" # [server]:[container]
+      - "2342:2342" # HTTP port (host:container)
     environment:
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public server URL incl http:// or https:// and /path, :port is optional
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
@@ -61,56 +66,60 @@ services:
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion
       PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB (or MySQL) instead of SQLite for improved performance
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
-      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name
-      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database user name
-      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB database user password
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public PhotoPrism URL
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # Use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB or MySQL database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB or MySQL database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB or MySQL database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB or MySQL database user password
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      # Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
+      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       HOME: "/photoprism"
     volumes:
-      # Your photo and video files ([local path]:[container path]):
+      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
       - "~/Pictures:/photoprism/originals"
-      # Multiple folders can be indexed by mounting them as sub-folders of /photoprism/originals:
-      # - "/mnt/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
-      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
-      # Mounting an import folder is optional (see docs):
+      ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
+      # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
+      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
+      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
       # - "~/Import:/photoprism/import"
-      # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
+      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
       - "./storage:/photoprism/storage"
 
+  ## Database Server (recommended)
+  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
-    image: mariadb:10.5
+    image: mariadb:10.6
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    volumes: # Don't remove permanent storage for index database files!
-      - "mariadb_data:/var/lib/mysql"
+    ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
+    ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
+    command: mysqld --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    volumes:
+      - "mariadb_data:/var/lib/mysql" # never remove
     environment:
-      MYSQL_ROOT_PASSWORD: please_change
+      MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
 
-# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
-#
-#  watchtower:
-#    restart: unless-stopped
-#    image: containrrr/watchtower
-#    environment:
-#      WATCHTOWER_CLEANUP: "true"
-#      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
-#    volumes:
-#      - "/var/run/docker.sock:/var/run/docker.sock"
-#      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
+  ## Watchtower upgrades services automatically (optional)
+  ## see https://docs.photoprism.org/getting-started/updates/#watchtower
+  #
+  # watchtower:
+  #   restart: unless-stopped
+  #   image: containrrr/watchtower
+  #   environment:
+  #     WATCHTOWER_CLEANUP: "true"
+  #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
 
 volumes:
   mariadb_data:

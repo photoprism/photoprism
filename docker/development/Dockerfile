@@ -1,4 +1,4 @@
-FROM ubuntu:21.04
+FROM ubuntu:21.10
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
@@ -8,7 +8,15 @@ ARG BUILD_TAG
 
 # Set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
-    TMPDIR="/tmp"
+    TMPDIR="/tmp" \
+    LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
+    TF_CPP_MIN_LOG_LEVEL="0" \
+    NODE_ENV="production" \
+    GOPATH="/go" \
+    GOBIN="/go/bin" \
+    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    GO111MODULE="on" \
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
 # Configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
@@ -20,7 +28,10 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 # Copy scripts to /root/.local/bin
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
-# Install dev / build dependencies
+# 1. Install distribution packages
+# 2. Install TensorFlow for C
+# 3. Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
+# 4. Install Go
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     build-essential \
     ca-certificates \
@@ -39,6 +50,9 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libzmq3-dev \
     libx264-dev \
     libx265-dev \
+    libnss3 \
+    libxtst6 \
+    librsvg2-bin \
     pkg-config \
     software-properties-common \
     rsync \
@@ -69,63 +83,31 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     fonts-roboto \
     sudo && \
     [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
-    apt-get -y autoremove && apt-get -y autoclean && apt-get clean
-
-# Set environment variables
-ENV LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
-    TF_CPP_MIN_LOG_LEVEL="0" \
-    NODE_ENV="production" \
-    GOPATH="/go" \
-    GOBIN="/go/bin" \
-    PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-    GO111MODULE="on" \
-    CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
-
-# Install & configure TensorFlow for C,
-# see https://www.tensorflow.org/install/lang_c
-#
-# We also have custom builds available:
-# https://dl.photoprism.org/tensorflow/linux/
-#
-RUN /root/.local/bin/install-tensorflow.sh $TARGETARCH
-
-# Install NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN add-apt-repository -y ppa:saiarcot895/chromium-beta && \
-    apt-get update && \
-    apt-get -qq install chromium-browser chromium-codecs-ffmpeg-extra nodejs && \
-    apt-get -y autoremove && \
-    apt-get -y autoclean && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install NodeJS & NPM
-RUN umask 0000 && npm install --unsafe-perm=true --allow-root -g npm && npm config set cache ~/.cache/npm && \
-    [ "$TARGETARCH" = "arm" ] || npm install --unsafe-perm=true --allow-root -g testcafe chromedriver;
-
-
-# Install Go
-RUN /root/.local/bin/install-go.sh ${TARGETARCH} && \
+    /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
+    /root/.local/bin/install-devtools.sh ${TARGETARCH} && \
+    /root/.local/bin/install-go.sh ${TARGETARCH} && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go"
 
-# Download TensorFlow model and test files
+# Download TensorFlow models & example files for testing
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.org/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.org/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Copy additional files to image
+# Copy additional scripts to image
 COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
 COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
 
-RUN env GO111MODULE=off /usr/local/go/bin/go get -u github.com/tianon/gosu \
-    golang.org/x/tools/cmd/goimports github.com/kyoh86/richgo && \
+# Install Go tools
+RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
+    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
+    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
     [ "$TARGETARCH" = "arm" ] || \
-    env GO111MODULE=off /usr/local/go/bin/go get -u github.com/psampaz/go-mod-outdated \
-    github.com/tsliwowicz/go-wrk github.com/dsoprea/go-exif/v3/command/exif-read-tool; \
+    /usr/local/go/bin/go install github.com/psampaz/go-mod-outdated@latest && \
+    /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
     echo "alias go=richgo" > /root/.bash_aliases && \
     cp /go/bin/gosu /bin/gosu
 

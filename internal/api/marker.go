@@ -49,9 +49,6 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	if f, err := query.FileByUID(marker.FileUID); err != nil {
 		AbortEntityNotFound(c)
 		return nil, marker, err
-	} else if !f.FilePrimary {
-		AbortBadRequest(c)
-		return nil, marker, fmt.Errorf("can't update markers for non-primary files")
 	} else {
 		file = &f
 	}
@@ -113,7 +110,9 @@ func UpdateMarker(router *gin.RouterGroup) {
 		}
 
 		// Update photo metadata.
-		if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
+		if !file.FilePrimary {
+			log.Infof("faces: skipped updating photo for non-primary file")
+		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			log.Errorf("faces: %s (find photo))", err)
 		} else if err := p.UpdateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
@@ -156,7 +155,9 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 		}
 
 		// Update photo metadata.
-		if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
+		if !file.FilePrimary {
+			log.Infof("faces: skipped updating photo for non-primary file")
+		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			log.Errorf("faces: %s (find photo))", err)
 		} else if err := p.UpdateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)

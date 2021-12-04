@@ -24,11 +24,11 @@ func (m *Photo) QualityScore() (score int) {
 		score += 3
 	}
 
-	if m.TakenSrc != SrcAuto {
+	if SrcPriority[m.TakenSrc] > SrcPriority[SrcEstimate] {
 		score++
 	}
 
-	if m.HasLatLng() {
+	if m.TrustedLocation() {
 		score++
 	}
 

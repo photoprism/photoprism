@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import {Photo, TypeLive, TypeVideo} from "model/photo";
 import mapboxgl from "mapbox-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
@@ -32,145 +31,21 @@ import Thumb from "model/thumb";
 export default {
   name: 'PPagePlaces',
   data() {
-    const s = this.$config.values.settings.maps;
-    const filter = {
-      q: this.query(),
-    };
-
-    let mapKey = "";
-
-    if (this.$config.has("mapKey")) {
-      mapKey = this.$config.get("mapKey");
-    }
-
-    const settings = this.$config.settings();
-
-    if (settings && settings.features.private) {
-      filter.public = true;
-    }
-
-    if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
-      filter.quality = 3;
-    }
-
-    let mapFont = ['Roboto', 'sans-serif'];
-    let mapOptions = {
-      container: "map",
-      style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=" + mapKey,
-      attributionControl: true,
-      customAttribution: this.attribution,
-      zoom: 0,
-    };
-
-    if (!mapKey || s.style === "offline") {
-      mapFont = ["Open Sans Semibold"];
-      mapOptions = {
-        container: "map",
-        style: {
-          "version": 8,
-          "sources": {
-            "world": {
-              "type": "geojson",
-              "data": `${this.$config.staticUri}/geo/world.json`,
-              "maxzoom": 6
-            }
-          },
-          "glyphs": `${this.$config.staticUri}/font/{fontstack}/{range}.pbf`,
-          "layers": [
-            {
-              "id": "background",
-              "type": "background",
-              "paint": {
-                "background-color": "#aadafe"
-              }
-            },
-            {
-              id: "land",
-              type: "fill",
-              source: "world",
-              // "source-layer": "land",
-              paint: {
-                "fill-color": "#cbe5ca",
-              },
-            },
-            {
-              "id": "country-abbrev",
-              "type": "symbol",
-              "source": "world",
-              "maxzoom": 3,
-              "layout": {
-                "text-field": "{abbrev}",
-                "text-font": ["Open Sans Semibold"],
-                "text-transform": "uppercase",
-                "text-max-width": 20,
-                "text-size": {
-                  "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
-                },
-                "text-letter-spacing": {
-                  "stops": [[4, 0], [5, 1], [6, 2]]
-                },
-                "text-line-height": {
-                  "stops": [[5, 1.2], [6, 2]]
-                }
-              },
-              "paint": {
-                "text-halo-color": "#fff",
-                "text-halo-width": 1
-              },
-            },
-            {
-              "id": "country-border",
-              "type": "line",
-              "source": "world",
-              "paint": {
-                "line-color": "#226688",
-                "line-opacity": 0.25,
-                "line-dasharray": [6, 2, 2, 2],
-                "line-width": 1.2
-              }
-            },
-            {
-              "id": "country-name",
-              "type": "symbol",
-              "minzoom": 3,
-              "source": "world",
-              "layout": {
-                "text-field": "{name}",
-                "text-font": ["Open Sans Semibold"],
-                "text-max-width": 20,
-                "text-size": {
-                  "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
-                }
-              },
-              "paint": {
-                "text-halo-color": "#fff",
-                "text-halo-width": 1
-              },
-            },
-          ],
-        },
-        attributionControl: true,
-        customAttribution: this.attribution,
-        zoom: 0,
-      };
-    }
-
     return {
       initialized: false,
       map: null,
       markers: {},
       markersOnScreen: {},
       loading: false,
-      url: 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=' + mapKey,
+      url: "",
       attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-      options: mapOptions,
-      mapFont: mapFont,
-      photos: [],
+      options: {},
+      mapFont: [],
       result: {},
-      filter: filter,
+      filter: {q: this.query()},
       lastFilter: {},
       config: this.$config.values,
-      settings: s,
+      settings: this.$config.values.settings.maps,
     };
   },
   watch: {
@@ -182,32 +57,175 @@ export default {
   },
   mounted() {
     this.$scrollbar.hide();
-    this.renderMap();
+    this.configureMap().then(() => this.renderMap());
   },
   destroyed() {
     this.$scrollbar.show();
   },
   methods: {
+    configureMap() {
+      return this.$config.load().finally(() => {
+        const s = this.$config.values.settings.maps;
+        const filter = {
+          q: this.query(),
+        };
+
+        let mapKey = "";
+
+        if (this.$config.has("mapKey")) {
+          mapKey = this.$config.get("mapKey");
+        }
+
+        const settings = this.$config.settings();
+
+        if (settings && settings.features.private) {
+          filter.public = true;
+        }
+
+        if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+          filter.quality = 3;
+        }
+
+        let mapFont = ['Roboto', 'sans-serif'];
+
+        let mapOptions = {
+          container: "map",
+          style: "https://api.maptiler.com/maps/" + s.style + "/style.json?key=" + mapKey,
+          attributionControl: true,
+          customAttribution: this.attribution,
+          zoom: 0,
+        };
+
+        if (!mapKey || s.style === "offline") {
+          mapFont = ["Open Sans Semibold"];
+          mapOptions = {
+            container: "map",
+            style: {
+              "version": 8,
+              "sources": {
+                "world": {
+                  "type": "geojson",
+                  "data": `${this.$config.staticUri}/geo/world.json`,
+                  "maxzoom": 6
+                }
+              },
+              "glyphs": `${this.$config.staticUri}/font/{fontstack}/{range}.pbf`,
+              "layers": [
+                {
+                  "id": "background",
+                  "type": "background",
+                  "paint": {
+                    "background-color": "#aadafe"
+                  }
+                },
+                {
+                  id: "land",
+                  type: "fill",
+                  source: "world",
+                  // "source-layer": "land",
+                  paint: {
+                    "fill-color": "#cbe5ca",
+                  },
+                },
+                {
+                  "id": "country-abbrev",
+                  "type": "symbol",
+                  "source": "world",
+                  "maxzoom": 3,
+                  "layout": {
+                    "text-field": "{abbrev}",
+                    "text-font": ["Open Sans Semibold"],
+                    "text-transform": "uppercase",
+                    "text-max-width": 20,
+                    "text-size": {
+                      "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
+                    },
+                    "text-letter-spacing": {
+                      "stops": [[4, 0], [5, 1], [6, 2]]
+                    },
+                    "text-line-height": {
+                      "stops": [[5, 1.2], [6, 2]]
+                    }
+                  },
+                  "paint": {
+                    "text-halo-color": "#fff",
+                    "text-halo-width": 1
+                  },
+                },
+                {
+                  "id": "country-border",
+                  "type": "line",
+                  "source": "world",
+                  "paint": {
+                    "line-color": "#226688",
+                    "line-opacity": 0.25,
+                    "line-dasharray": [6, 2, 2, 2],
+                    "line-width": 1.2
+                  }
+                },
+                {
+                  "id": "country-name",
+                  "type": "symbol",
+                  "minzoom": 3,
+                  "source": "world",
+                  "layout": {
+                    "text-field": "{name}",
+                    "text-font": ["Open Sans Semibold"],
+                    "text-max-width": 20,
+                    "text-size": {
+                      "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
+                    }
+                  },
+                  "paint": {
+                    "text-halo-color": "#fff",
+                    "text-halo-width": 1
+                  },
+                },
+              ],
+            },
+            attributionControl: true,
+            customAttribution: this.attribution,
+            zoom: 0,
+          };
+        }
+
+        this.filter = filter;
+        this.url = 'https://api.maptiler.com/maps/' + s.style + '/{z}/{x}/{y}.png?key=' + mapKey;
+        this.options = mapOptions;
+        this.mapFont = mapFont;
+      });
+    },
     query: function () {
       return this.$route.params.q ? this.$route.params.q : "";
     },
-    openPhoto(id) {
-      if (!this.photos || !this.photos.length) {
-        this.photos = this.result.features.map((f) => new Photo(f.properties));
+    openPhoto(uid) {
+      // Abort if uid is empty or results aren't loaded.
+      if (!uid || this.loading || !this.result || !this.result.features || this.result.features.length === 0) {
+        return;
       }
 
-      if (this.photos.length > 0) {
-        const index = this.photos.findIndex((p) => p.UID === id);
-        const selected = this.photos[index];
+      // Get request parameters.
+      const options = {
+        params: {
+          near: uid,
+          count: 1000,
+        },
+      };
 
-        if (selected.Type === TypeVideo || selected.Type === TypeLive) {
-          this.$viewer.play({video: selected});
+      this.loading = true;
+
+      // Perform get request to find nearby photos.
+      return Api.get("geo/view", options).then((r) => {
+        if (r && r.data && r.data.length > 0) {
+          // Show photos.
+          this.$viewer.show(Thumb.wrap(r.data), 0);
         } else {
-          this.$viewer.show(Thumb.fromPhotos(this.photos), index);
+          // Don't open viewer if nothing was found.
+          this.$notify.warn(this.$gettext("No pictures found"));
         }
-      } else {
-        this.$notify.warn(this.$gettext("No pictures found"));
-      }
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     formChange() {
       this.search();
@@ -250,7 +268,6 @@ export default {
           return;
         }
 
-        this.photos = {};
         this.result = response.data;
 
         this.map.getSource("photos").setData(this.result);
@@ -266,10 +283,11 @@ export default {
         }
 
         this.initialized = true;
-        this.loading = false;
 
         this.updateMarkers();
-      }).catch(() => this.loading = false);
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     renderMap() {
       this.map = new mapboxgl.Map(this.options);

@@ -33,7 +33,6 @@ func (Address) TableName() string {
 
 // UnknownAddress may be used as placeholder for an unknown address.
 var UnknownAddress = Address{
-	ID:             1,
 	CellID:         UnknownLocation.ID,
 	AddressSrc:     SrcDefault,
 	AddressCountry: UnknownCountry.ID,
@@ -41,7 +40,7 @@ var UnknownAddress = Address{
 
 // CreateUnknownAddress creates the default address if not exists.
 func CreateUnknownAddress() {
-	FirstOrCreateAddress(&UnknownAddress)
+	UnknownAddress = *FirstOrCreateAddress(&UnknownAddress)
 }
 
 // FirstOrCreateAddress returns the existing row, inserts a new row or nil in case of errors.

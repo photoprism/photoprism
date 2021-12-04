@@ -10,7 +10,7 @@ import (
 )
 
 // Faces searches faces and returns them.
-func Faces(f form.FaceSearch) (results FaceResults, err error) {
+func Faces(f form.SearchFaces) (results FaceResults, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}

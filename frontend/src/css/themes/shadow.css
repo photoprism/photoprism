@@ -1,5 +1,18 @@
 /* Shadow Theme */
 
+#photoprism.container.theme-shadow {
+    background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
+}
+
+#photoprism.container.theme-shadow div.loading-animation {
+    color: #c4f1e5 !important;
+    caret-color: #c4f1e5 !important;
+}
+
+#photoprism.container.theme-shadow div.loading-animation .loading-underlay {
+    stroke: rgba(196, 241, 229, 0.3);
+}
+
 .theme-shadow .v-content__wrap,
 .theme-shadow .p-page,
 .theme-shadow .form,

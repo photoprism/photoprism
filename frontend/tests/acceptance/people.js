@@ -13,24 +13,7 @@ test.meta("testID", "authentication-000")(
   }
 );
 
-test.meta("testID", "people-001")("Faces tab preselected when subjects empty", async (t) => {
-  await page.openNav();
-  await t
-    .click(Selector(".nav-people"))
-    .expect(Selector("#tab-people_faces > a").hasClass("v-tabs__item--active"))
-    .ok()
-    .expect(Selector("#tab-people > a").hasClass("v-tabs__item--active"))
-    .notOk()
-    .click(Selector("#tab-people > a"))
-    .expect(Selector("#tab-people_faces > a").hasClass("v-tabs__item--active"))
-    .notOk()
-    .expect(Selector("#tab-people > a").hasClass("v-tabs__item--active"))
-    .ok();
-  const countSubjects = await Selector("a.is-subject").count;
-  await t.expect(countSubjects).eql(0);
-});
-
-test.meta("testID", "people-002")("Add + Rename", async (t) => {
+test.meta("testID", "people-001")("Add + Rename", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
@@ -57,6 +40,8 @@ test.meta("testID", "people-002")("Add + Rename", async (t) => {
     .expect(Selector("div").withAttribute("data-id", FirstFaceID).exists)
     .notOk()
     .click(Selector("#tab-people > a"));
+  await t.eval(() => location.reload());
+  await t.wait(6000);
   const countSubjectsAfterAdd = await Selector("a.is-subject").count;
   await t
     .expect(countSubjectsAfterAdd)
@@ -113,7 +98,7 @@ test.meta("testID", "people-002")("Add + Rename", async (t) => {
   await t.expect(countPhotosSubjectAfterRename).eql(countPhotosSubject);
 });
 
-test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
+test.meta("testID", "people-002")("Add + Reject + Star", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
@@ -173,9 +158,7 @@ test.meta("testID", "people-003")("Add + Reject + Star", async (t) => {
     .eql(NicoleUID);
 });
 
-test.meta("testID", "people-004")("Remove face", async (t) => {
-  await page.openNav();
-  await t.click(Selector(".nav-browse"));
+test.meta("testID", "people-003")("Remove face", async (t) => {
   await page.search("face:new");
   const FirstPhoto = await Selector("div.is-photo").nth(0).getAttribute("data-uid");
   await page.toggleSelectNthPhoto(0);
@@ -235,7 +218,7 @@ test.meta("testID", "people-004")("Remove face", async (t) => {
   await t.expect(MarkerCountAfterRemove).eql(MarkerCount - 1);
 });
 
-test.meta("testID", "people-005")("Hide face", async (t) => {
+test.meta("testID", "people-004")("Hide face", async (t) => {
   await page.openNav();
   await t
     .click(Selector(".nav-people"))
@@ -266,11 +249,9 @@ test.meta("testID", "people-005")("Hide face", async (t) => {
     .ok();
 });
 
-test.meta("testID", "people-006")("Hide person", async (t) => {
+test.meta("testID", "people-005")("Hide person", async (t) => {
   await page.openNav();
-  await t
-    .click(Selector(".nav-people"))
-    .click(Selector("#tab-people > a"));
+  await t.click(Selector(".nav-people")).click(Selector("#tab-people > a"));
   const FirstPerson = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
   await t
     .hover(Selector("a[data-uid=" + FirstPerson + "]"))

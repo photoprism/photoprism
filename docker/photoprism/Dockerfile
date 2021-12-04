@@ -1,4 +1,4 @@
-FROM photoprism/development:20210929 as build
+FROM photoprism/development:20211203 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -12,7 +12,7 @@ COPY . .
 RUN make dep build-js install
 
 # Should be the same as used for photoprism/development!
-FROM ubuntu:21.04
+FROM ubuntu:21.10
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
@@ -44,6 +44,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libc6 \
     libatomic1 \
     libheif-examples \
+    librsvg2-bin \
     gnupg \
     gpg-agent \
     apt-utils \

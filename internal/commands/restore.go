@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -151,7 +150,7 @@ func restoreAction(ctx *cli.Context) error {
 			)
 		case config.SQLite:
 			log.Infoln("dropping existing tables")
-			tables.Drop()
+			tables.Drop(conf.Db())
 			cmd = exec.Command(
 				conf.SqliteBin(),
 				conf.DatabaseDsn(),

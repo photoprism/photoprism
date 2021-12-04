@@ -1,0 +1,106 @@
+/* Gemstone Theme */
+
+#photoprism.container.theme-gemstone {
+    background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
+}
+
+#photoprism.container.theme-gemstone div.loading-animation {
+    color: #c4f1e5 !important;
+    caret-color: #c4f1e5 !important;
+}
+
+#photoprism.container.theme-gemstone div.loading-animation .loading-underlay {
+    stroke: rgba(196, 241, 229, 0.3);
+}
+
+.theme-gemstone .v-content__wrap,
+.theme-gemstone .p-page,
+.theme-gemstone .form,
+.theme-gemstone .v-content {
+    background: #444 !important;
+}
+
+#photoprism.theme-gemstone .theme--light.v-small-dialog__content,
+#photoprism.theme-gemstone .theme--light.v-sheet,
+#photoprism.theme-gemstone .theme--light.v-card {
+    background: #444;
+}
+
+.theme-gemstone .application.theme--light {
+    background: #444;
+}
+
+#photoprism.theme-gemstone .theme--light .v-table {
+    background: #4E4E4E;
+}
+
+#photoprism.theme-gemstone .theme--light.v-table thead th,
+#photoprism.theme-gemstone .theme--light.v-table tbody td {
+    color: #fff;
+}
+
+#photoprism.theme-gemstone .theme--light.v-table tbody tr:hover {
+    background: #666;
+}
+
+#photoprism.theme-gemstone .theme--light.v-chip,
+#photoprism.theme-gemstone .v-card__actions .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: #333;
+}
+
+#photoprism.theme-gemstone .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: #4E4E4E;
+}
+
+#photoprism.theme-gemstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-gemstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-gemstone .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-gemstone .theme--light.v-input--is-disabled input,
+#photoprism.theme-gemstone .theme--light.v-input--is-disabled textarea {
+    color: #ccc;
+}
+
+#photoprism.theme-gemstone,
+#photoprism.theme-gemstone .p-page a,
+#photoprism.theme-gemstone .v-datatable a,
+#photoprism.theme-gemstone .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-gemstone .theme--light.v-tabs__bar .v-tabs__div,
+#photoprism.theme-gemstone .theme--light {
+    color: #fff;
+}
+
+#photoprism.theme-gemstone .theme--light.v-list {
+    background: #555;
+}
+
+#photoprism.theme-gemstone a.text-link {
+    color: #c8e3e7 !important;
+}
+
+#photoprism.theme-gemstone .theme--light.v-select .v-select__selections {
+    color: #eee;
+}
+
+#photoprism.theme-gemstone .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-gemstone .accent--text {
+    color: #7a83b8 !important;
+}
+
+#photoprism.theme-gemstone .theme--light.v-input:not(.v-input--is-disabled) input,
+#photoprism.theme-gemstone .theme--light.v-input:not(.v-input--is-disabled) textarea {
+    color: #fff;
+}
+
+#photoprism.theme-gemstone .theme--light.v-btn.v-btn--disabled,
+#photoprism.theme-gemstone .theme--light.v-btn.v-btn--disabled .v-btn__loading,
+#photoprism.theme-gemstone .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-gemstone .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
+}

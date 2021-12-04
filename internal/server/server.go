@@ -21,18 +21,35 @@ func Start(ctx context.Context, conf *config.Config) {
 		}
 	}()
 
-	// Set http server mode.
+	// Set HTTP server mode.
 	if conf.HttpMode() != "" {
 		gin.SetMode(conf.HttpMode())
 	} else if conf.Debug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Create router and add routing middleware.
+	// Create new HTTP router engine without standard middleware.
 	router := gin.New()
+
+	// Register logger middleware.
 	router.Use(Logger(), Recovery())
 
-	// Enable http compression (if any).
+	// Register security middleware.
+	router.Use(Security(SecurityOptions{
+		IsDevelopment:         gin.Mode() != gin.ReleaseMode || conf.Test(),
+		AllowedHosts:          []string{},
+		SSLRedirect:           false,
+		SSLHost:               "",
+		SSLProxyHeaders:       map[string]string{"X-Forwarded-Proto": "https"},
+		STSSeconds:            0,
+		STSIncludeSubdomains:  false,
+		FrameDeny:             true,
+		ContentTypeNosniff:    false,
+		BrowserXssFilter:      false,
+		ContentSecurityPolicy: "frame-ancestors 'none';",
+	}))
+
+	// Enable HTTP compression?
 	switch conf.HttpCompression() {
 	case "gzip":
 		log.Infof("http: enabling gzip compression")
@@ -50,13 +67,16 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Set template directory
 	router.LoadHTMLGlob(conf.TemplatesPath() + "/*")
 
+	// Register HTTP route handlers.
 	registerRoutes(router, conf)
 
+	// Create new HTTP server instance.
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 		Handler: router,
 	}
 
+	// Start HTTP server.
 	go func() {
 		log.Infof("http: starting web server at %s", server.Addr)
 
@@ -69,6 +89,7 @@ func Start(ctx context.Context, conf *config.Config) {
 		}
 	}()
 
+	// Graceful HTTP server shutdown.
 	<-ctx.Done()
 	log.Info("http: shutting down web server")
 	err := server.Close()

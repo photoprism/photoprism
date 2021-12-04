@@ -1,0 +1,16 @@
+# Server related settings
+address: 0.0.0.0
+port: 80
+auth: true
+tls: false
+prefix: /
+
+# Default settings
+scope: /webdav/files
+modify: true
+rules: []
+
+# Accounts
+users:
+  - username: "{env}WEBDAV_USERNAME"
+    password: "{env}WEBDAV_PASSWORD"

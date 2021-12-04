@@ -1,6 +1,6 @@
 /*
 
-Package query contains frequently used database queries for use in commands and API.
+Package query provides frequently used database queries for use in commands and API.
 
 Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
 

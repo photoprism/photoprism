@@ -8,29 +8,29 @@ import (
 
 func TestDiscover(t *testing.T) {
 	t.Run("webdav", func(t *testing.T) {
-		r, err := Discover("http://admin:photoprism@webdav-dummy/", "", "")
+		r, err := Discover("http://admin:photoprism@dummy-webdav/", "", "")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Webdav-Dummy", r.AccName)
+		assert.Equal(t, "Dummy-Webdav", r.AccName)
 		assert.Equal(t, "webdav", r.AccType)
-		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
+		assert.Equal(t, "http://dummy-webdav/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)
 		assert.Equal(t, "photoprism", r.AccPass)
 	})
 
 	t.Run("webdav password", func(t *testing.T) {
-		r, err := Discover("http://admin@webdav-dummy/", "", "photoprism")
+		r, err := Discover("http://admin@dummy-webdav/", "", "photoprism")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Webdav-Dummy", r.AccName)
+		assert.Equal(t, "Dummy-Webdav", r.AccName)
 		assert.Equal(t, "webdav", r.AccType)
-		assert.Equal(t, "http://webdav-dummy/", r.AccURL)
+		assert.Equal(t, "http://dummy-webdav/", r.AccURL)
 		assert.Equal(t, "admin", r.AccUser)
 		assert.Equal(t, "photoprism", r.AccPass)
 	})

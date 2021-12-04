@@ -84,8 +84,8 @@ func PhotosMissing(limit int, offset int) (entities entity.Photos, err error) {
 	return entities, err
 }
 
-// PhotosCheck returns photos selected for maintenance.
-func PhotosCheck(limit, offset int, delay time.Duration) (entities entity.Photos, err error) {
+// PhotosMetadataUpdate returns photos selected for metadata maintenance.
+func PhotosMetadataUpdate(limit, offset int, delay, interval time.Duration) (entities entity.Photos, err error) {
 	err = Db().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
@@ -97,7 +97,7 @@ func PhotosCheck(limit, offset int, delay time.Duration) (entities entity.Photos
 		Preload("Place").
 		Preload("Cell").
 		Preload("Cell.Place").
-		Where("checked_at IS NULL OR checked_at < ?", time.Now().Add(-1*time.Hour*24*3)).
+		Where("checked_at IS NULL OR checked_at < ?", time.Now().Add(-1*interval)).
 		Where("updated_at < ? OR (cell_id = 'zz' AND photo_lat <> 0)", time.Now().Add(-1*delay)).
 		Order("photos.ID ASC").Limit(limit).Offset(offset).Find(&entities).Error
 
