@@ -884,6 +884,19 @@ export class Photo extends RestModel {
     });
   }
 
+  webShare() {
+    // Fetches the photo in the browser and opens the native share dialog
+    return fetch(this.getDownloadUrl())
+      .then((res) => res.blob())
+      .then((blob) => {
+        const filesArray = [Util.JSFileFromPhoto(blob, this.mainFile())];
+        const shareData = {
+          files: filesArray,
+        };
+        return navigator.share(shareData);
+      });
+  }
+
   static batchSize() {
     return 60;
   }
