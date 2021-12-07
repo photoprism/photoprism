@@ -195,8 +195,9 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## Never store database files on a shared network drive or open them with two server instances at the same time:
     volumes:
-      - "./database:/var/lib/mysql" # never remove
+      - "./database:/var/lib/mysql" # Important, don't remove
     environment:
       MYSQL_ROOT_PASSWORD: "_admin_password_"
       MYSQL_DATABASE: "photoprism"
