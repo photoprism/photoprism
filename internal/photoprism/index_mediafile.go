@@ -587,6 +587,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			event.Publish("count.videos", event.Data{
 				"count": 1,
 			})
+		} else if photo.PhotoType == entity.TypeLive {
+			event.Publish("count.live", event.Data{
+				"count": 1,
+			})
 		} else {
 			event.Publish("count.photos", event.Data{
 				"count": 1,

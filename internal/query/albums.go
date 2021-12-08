@@ -32,7 +32,7 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	if err := UnscopedDb().Where("album_uid = ?", uid).First(&a).Error; err != nil {
 		return file, err
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
-		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
+		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
 		if photos, _, err := search.Photos(f); err != nil {
 			return file, err

@@ -14,7 +14,7 @@ func TestPhoto_QualityScore(t *testing.T) {
 		assert.Equal(t, 7, PhotoFixtures.Pointer("Photo01").QualityScore())
 	})
 	t.Run("PhotoFixturePhoto06 - taken at after 2012 - resolution 2", func(t *testing.T) {
-		assert.Equal(t, 4, PhotoFixtures.Pointer("Photo06").QualityScore())
+		assert.Equal(t, 3, PhotoFixtures.Pointer("Photo06").QualityScore())
 	})
 	t.Run("PhotoFixturePhoto07 - score < 3 bit edited", func(t *testing.T) {
 		assert.Equal(t, 3, PhotoFixtures.Pointer("Photo07").QualityScore())

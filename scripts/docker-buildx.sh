@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 # https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds
 export DOCKER_BUILDKIT=1
 
@@ -10,9 +8,12 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
     exit 1
 fi
 
-echo "Recreating multibuilder..."
-docker buildx rm multibuilder 2>/dev/null || true
-docker buildx create --name multibuilder --use
+echo "Removing existing multibuilder..."
+docker buildx rm multibuilder 2>/dev/null
+sleep 3
+scripts/install-qemu.sh || { echo 'failed'; exit 1; }
+sleep 3
+docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
 
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
     echo "Building 'photoprism/$1:preview'..."
@@ -37,6 +38,6 @@ else
 fi
 
 echo "Removing multibuilder..."
-docker buildx rm multibuilder 2>/dev/null || true
+docker buildx rm multibuilder
 
 echo "Done"

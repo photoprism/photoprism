@@ -38,7 +38,7 @@ var UnknownLens = Lens{
 
 // CreateUnknownLens initializes the database with an unknown lens if not exists
 func CreateUnknownLens() {
-	FirstOrCreateLens(&UnknownLens)
+	UnknownLens = *FirstOrCreateLens(&UnknownLens)
 }
 
 // TableName returns the entity database table name.
@@ -98,7 +98,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 	}
 
 	if cacheData, ok := lensCache.Get(m.LensSlug); ok {
-		log.Debugf("lens: cache hit for %s", m.LensSlug)
+		log.Tracef("lens: cache hit for %s", m.LensSlug)
 
 		return cacheData.(*Lens)
 	}

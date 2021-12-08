@@ -13,9 +13,9 @@ func CreateDefaultFixtures() {
 
 // ResetTestFixtures re-creates registered database tables and inserts test fixtures.
 func ResetTestFixtures() {
-	Entities.Migrate()
-	Entities.WaitForMigration()
-	Entities.Truncate()
+	Entities.Migrate(Db(), false)
+	Entities.WaitForMigration(Db())
+	Entities.Truncate(Db())
 
 	CreateDefaultFixtures()
 

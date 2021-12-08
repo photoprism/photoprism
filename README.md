@@ -2,7 +2,7 @@ PhotoPrism: Browse Your Life in Pictures
 ========================================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
-[![Build Status](https://drone.photoprism.app/api/badges/photoprism/photoprism/status.svg?ref=refs/heads/develop)][ci]
+![Build Status](https://dl.photoprism.org/img/badges/badge-build-success.svg)
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
@@ -19,19 +19,19 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 ## Feature Overview ##
 
-* Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
-* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
+* Browse [all your photos](https://docs.photoprism.org/user-guide/organize/browse/) and [videos](https://demo.photoprism.org/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.org/user-guide/settings/library/)
+* Easily find specific pictures using [powerful search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
 * Privacy-friendly: No data is ever sent to Google, Amazon, Facebook, or Apple unless you explicitly upload files to one of their services 🔐
-* Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
-* [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location 🌈
-* Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
-* Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
+* Recognizes [the faces of your family and friends](https://demo.photoprism.org/people)
+* [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location
+* [Play Live Photos](https://demo.photoprism.org/live) by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
+* Since the [User Interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
-* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips 🌍
+* Includes four high-resolution [World Maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
-* Many more image properties like [colors](https://demo.photoprism.org/browse?view=cards&q=color:red), [chroma](https://demo.photoprism.org/browse?view=cards&q=mono%3Atrue), and [quality](https://demo.photoprism.org/review) can be searched as well
-* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background 📡
-* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
+* Many more image properties like [Colors](https://demo.photoprism.org/browse?view=cards&q=color:red), [Chroma](https://demo.photoprism.org/browse?view=cards&q=mono%3Atrue), and [Quality](https://demo.photoprism.org/review) can be searched as well
+* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
+* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.org/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
 ## Getting Started ##
 
@@ -49,7 +49,7 @@ We recommend updating your existing `docker-compose.yml` config based on
 
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
-Your continued support helps us provide services like satellite maps and develop new features.
+Your continued support helps us provide services like world maps and develop new features.
 GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
 You're welcome to [contact us](https://photoprism.app/contact) for other options.
 
@@ -89,11 +89,21 @@ processor type.
 ## Contributions ##
 
 We welcome contributions of any kind, including bug reports, testing, writing documentation, 
-tutorials, blog posts, and pull requests. Issues labeled 
-[help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
-[easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
-good (first) contributions. Our step-by-step guide explains how to submit 
-[pull requests](https://docs.photoprism.org/developer-guide/pull-requests/).
+tutorials, blog posts, and pull requests.
+
+The [Developer Guide](https://docs.photoprism.org/developer-guide/) contains all information
+necessary to get you started.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
+[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
+
+Because we want to create the best possible product for our users,
+we have a set of [guidelines](https://docs.photoprism.org/developer-guide/pull-requests)
+to ensure that all source code submissions are acceptable.
+They include step-by-step instructions for submitting new features,
+bug fixes, and documentation improvements.
+
+**Reviewing, testing and finally merging pull requests requires significant resources
+on our side. If it's not just a small fix, it can take several months.**
 
 ## Trademarks ##
 

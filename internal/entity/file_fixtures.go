@@ -902,7 +902,7 @@ var FileFixtures = FileMap{
 		FileCodec:       "jpeg",
 		FileType:        "raw",
 		FileMime:        "image/x-canon-cr2",
-		FilePrimary:     true,
+		FilePrimary:     false,
 		FileSidecar:     false,
 		FileVideo:       false,
 		FileMissing:     false,

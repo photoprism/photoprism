@@ -17,7 +17,7 @@ import (
 )
 
 // Photos searches for photos based on a Form and returns PhotoResults ([]Photo).
-func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
+func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
@@ -75,6 +75,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
 	}
 
+	// Include hidden files?
 	if !f.Hidden {
 		s = s.Where("files.file_type = 'jpg' OR files.file_video = 1")
 

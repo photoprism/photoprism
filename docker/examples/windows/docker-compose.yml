@@ -2,20 +2,23 @@ version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Windows / AMD64)
 #
-# Windows Pro users should disable the WSL 2 based engine in Docker Settings > General so that
-# they can mount drives other than C:. This will enable Hyper-V, which Microsoft doesn't offer
-# to its Windows Home customers. Docker Desktop uses dynamic memory allocation with WSL 2.
-# It's important to explicitly increase the Docker memory limit to 4 GB or more when using Hyper-V.
-# The default of 2 GB may reduce indexing performance and cause unexpected restarts.
+# Note:
+# - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
+#   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
+# - Windows Pro users should disable the WSL 2 based engine in Docker Settings > General so that
+#   they can mount drives other than C:. This will enable Hyper-V, which Microsoft doesn't offer
+#   to its Windows Home customers. Docker Desktop uses dynamic memory allocation with WSL 2.
+#   It's important to explicitly increase the Docker memory limit to 4 GB or more when using Hyper-V.
+#   The default of 2 GB may reduce indexing performance and cause unexpected restarts.
+# - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
+#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
 #
 # Documentation : https://docs.photoprism.org/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Attention: When installing PhotoPrism on a public server outside your home network,
-# always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
-# Your files and passwords will be transmitted in clear text otherwise.
-#
 # DOCKER COMPOSE COMMAND REFERENCE
+# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 # --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
@@ -33,8 +36,6 @@ version: '3.5'
 #
 # To search originals for faces without a complete rescan:
 # docker-compose exec photoprism photoprism faces index
-#
-# More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
 services:
   ## App Server (required)
@@ -102,9 +103,10 @@ services:
       - apparmor:unconfined
     ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
     ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: mysqld --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --innodb-buffer-pool-size=128M --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - "mariadb_data:/var/lib/mysql" # Never remove, the named volume "mariadb_data" is defined at the bottom
+      - "mariadb_data:/var/lib/mysql" # Important, don't remove; named volume "mariadb_data" is defined at the bottom
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
@@ -119,7 +121,7 @@ services:
   #   image: containrrr/watchtower
   #   environment:
   #     WATCHTOWER_CLEANUP: "true"
-  #     WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
+  #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
   #   volumes:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account

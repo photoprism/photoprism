@@ -10,6 +10,11 @@ func (n Name) Jpeg() string {
 	return string(n) + fs.JpegExt
 }
 
+// String returns the thumbnail name as string.
+func (n Name) String() string {
+	return string(n)
+}
+
 // Names of thumbnail sizes.
 const (
 	Tile50   Name = "tile_50"

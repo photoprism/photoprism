@@ -35,7 +35,7 @@
 }
 
 #photoprism .animate-rainbow {
-    background: repeating-linear-gradient(315deg, #ff9aa2, #dabcd2, #c7ceea, #bbe0de, #b5ead7);
+    background: repeating-linear-gradient(315deg, #b8edff, #d4b8ff, #9afbfe, #ffb3e0, #c2fde4);
     background-size: 200% 200%;
 
     -webkit-animation: rainbow 6s ease infinite;
@@ -45,7 +45,7 @@
 
 #photoprism .static-rainbow {
     background-size: 200% 200%;
-    background: repeating-linear-gradient(315deg, #ff9aa2, #dabcd2, #c7ceea, #bbe0de, #b5ead7) 100% 50%;
+    background: repeating-linear-gradient(315deg, #b8edff, #d4b8ff, #9afbfe, #ffb3e0, #c2fde4) 100% 50%;
 }
 
 @keyframes rotation {

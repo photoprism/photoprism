@@ -39,10 +39,11 @@ var once sync.Once
 var LowMem = false
 var TotalMem uint64
 
-const MsgFreeBeer = "Help us make a difference and become a sponsor today!"
-const MsgFundingInfo = "Visit https://docs.photoprism.org/funding/ to learn more."
+const MsgSponsor = "Help us make a difference and become a sponsor today!"
+const SignUpURL = "https://docs.photoprism.org/funding/"
+const MsgSignUp = "Visit " + SignUpURL + " to learn more."
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
-	" we unfortunately can't offer it for free."
+	" we unfortunately can only offer it to sponsors."
 
 const ApiUri = "/api/v1"    // REST API
 const StaticUri = "/static" // Static Content
@@ -179,8 +180,8 @@ func (c *Config) Init() error {
 
 	// Show funding info?
 	if !c.Sponsor() {
-		log.Info(MsgFreeBeer)
-		log.Info(MsgFundingInfo)
+		log.Info(MsgSponsor)
+		log.Info(MsgSignUp)
 	}
 
 	if insensitive, err := c.CaseInsensitive(); err != nil {
@@ -350,10 +351,6 @@ func (c *Config) SiteCaption() string {
 
 // SiteDescription returns a long site description.
 func (c *Config) SiteDescription() string {
-	if !c.Sponsor() {
-		return MsgFreeBeer
-	}
-
 	return c.options.SiteDescription
 }
 
@@ -368,49 +365,6 @@ func (c *Config) SitePreview() string {
 	}
 
 	return c.options.SitePreview
-}
-
-// AppName returns the app name when installed on a device.
-func (c *Config) AppName() string {
-	name := strings.TrimSpace(c.options.AppName)
-
-	if name == "" {
-		name = c.SiteTitle()
-	}
-
-	clean := func(r rune) rune {
-		switch r {
-		case '\'', '"':
-			return -1
-		}
-
-		return r
-	}
-
-	name = strings.Map(clean, name)
-
-	return txt.Clip(name, 32)
-}
-
-// AppMode returns the app mode when installed on a device.
-func (c *Config) AppMode() string {
-	switch c.options.AppMode {
-	case "fullscreen", "standalone", "minimal-ui", "browser":
-		return c.options.AppMode
-	default:
-		return "standalone"
-	}
-}
-
-// AppIcon returns the app icon when installed on a device.
-func (c *Config) AppIcon() string {
-	if c.options.AppIcon == "" || c.options.AppIcon == "favicon" {
-		// Default.
-	} else if fs.FileExists(filepath.Join(c.ImgPath(), c.options.AppIcon+"-192.png")) {
-		return c.options.AppIcon
-	}
-
-	return "favicon"
 }
 
 // Debug tests if debug mode is enabled.

@@ -52,12 +52,13 @@ export const TypeRaw = "raw";
 export const YearUnknown = -1;
 export const MonthUnknown = -1;
 export const DayUnknown = -1;
+export const TimeZoneUTC = "UTC";
 
 const num = "numeric";
 const short = "short";
 const long = "long";
 
-const DATE_FULL = {
+export const DATE_FULL = {
   year: num,
   month: long,
   day: num,
@@ -66,7 +67,7 @@ const DATE_FULL = {
   minute: num,
 };
 
-const DATE_FULL_TZ = {
+export const DATE_FULL_TZ = {
   year: num,
   month: long,
   day: num,
@@ -231,7 +232,13 @@ export class Photo extends RestModel {
       time = this.TakenAtLocal.substr(11, 8);
     }
 
-    return `${date}T${time}`;
+    let iso = `${date}T${time}`;
+
+    if (this.originalTimeZoneUTC()) {
+      iso += "Z";
+    }
+
+    return iso;
   }
 
   getTimeZone() {
@@ -239,7 +246,39 @@ export class Photo extends RestModel {
       return this.TimeZone;
     }
 
-    return "utc";
+    return "";
+  }
+
+  timeIsUTC() {
+    return this.originalTimeZoneUTC() || this.currentTimeZoneUTC();
+  }
+
+  getDateTime() {
+    if (this.timeIsUTC()) {
+      return DateTime.fromISO(this.TakenAt).toUTC();
+    } else {
+      return DateTime.fromISO(this.TakenAtLocal).toUTC();
+    }
+  }
+
+  currentTimeZoneUTC() {
+    const tz = this.getTimeZone();
+
+    if (tz) {
+      return tz.toLowerCase() === TimeZoneUTC.toLowerCase();
+    }
+
+    return false;
+  }
+
+  originalTimeZoneUTC() {
+    const tz = this.originalValue("TimeZone");
+
+    if (tz) {
+      return tz.toLowerCase() === TimeZoneUTC.toLowerCase();
+    }
+
+    return false;
   }
 
   localDate(time) {
@@ -247,9 +286,14 @@ export class Photo extends RestModel {
       return this.utcDate();
     }
 
+    let iso = this.localDateString(time);
     let zone = this.getTimeZone();
 
-    return DateTime.fromISO(this.localDateString(time), { zone });
+    if (this.getTimeZone() === "") {
+      zone = "UTC";
+    }
+
+    return DateTime.fromISO(iso, { zone });
   }
 
   utcDate() {

@@ -3,8 +3,13 @@ package migrate
 
 var DialectSQLite = Migrations{
 	{
-		ID:      "20211121-094727",
-		Dialect: "sqlite",
-		Query:   "DROP INDEX IF EXISTS idx_places_place_label;",
+		ID:         "20211121-094727",
+		Dialect:    "sqlite",
+		Statements: []string{"DROP INDEX IF EXISTS idx_places_place_label;"},
+	},
+	{
+		ID:         "20211124-120008",
+		Dialect:    "sqlite",
+		Statements: []string{"DROP INDEX IF EXISTS uix_places_place_label;", "DROP INDEX IF EXISTS uix_places_label;"},
 	},
 }

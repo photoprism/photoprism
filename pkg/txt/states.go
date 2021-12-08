@@ -6,6 +6,7 @@ var StatesByCountry = LookupTableMap{
 	"br": StatesBR,
 	"ca": StatesCA,
 	"de": StatesDE,
+	"fr": StatesFR,
 	"nz": StatesNZ,
 	"us": StatesUS,
 }
@@ -115,6 +116,11 @@ var StatesDE = LookupTable{
 	"TH":                     "Thüringen",
 	"Thuringia":              "Thüringen",
 	"Thuringen":              "Thüringen",
+}
+
+// StatesFR maps common abbreviations for French states.
+var StatesFR = LookupTable{
+	"France métropolitaine": "",
 }
 
 // StatesNZ maps common abbreviations for provinces and territories in New Zealand.

@@ -16,11 +16,18 @@ import (
 // PlacesCommand registers the places subcommands.
 var PlacesCommand = cli.Command{
 	Name:  "places",
-	Usage: "Geodata management subcommands",
+	Usage: "Maps and location details subcommands",
 	Subcommands: []cli.Command{
 		{
-			Name:   "update",
-			Usage:  "Downloads the latest location data and updates your places",
+			Name:  "update",
+			Usage: "Retrieves updated location details",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:   "yes, y",
+					Hidden: true,
+					Usage:  "assume \"yes\" as answer to all prompts and run non-interactively",
+				},
+			},
 			Action: placesUpdateAction,
 		},
 	},
@@ -28,18 +35,6 @@ var PlacesCommand = cli.Command{
 
 // placesUpdateAction fetches updated location data.
 func placesUpdateAction(ctx *cli.Context) error {
-	start := time.Now()
-
-	confirmPrompt := promptui.Prompt{
-		Label:     "Interrupting the update may result in inconsistent data. Proceed?",
-		IsConfirm: true,
-	}
-
-	// Abort?
-	if _, err := confirmPrompt.Run(); err != nil {
-		return nil
-	}
-
 	// Load config.
 	conf := config.NewConfig(ctx)
 	service.SetConfig(conf)
@@ -52,6 +47,25 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	conf.InitDb()
+
+	if !conf.Sponsor() && !conf.Test() {
+		log.Errorf(config.MsgSponsorCommand)
+		return nil
+	}
+
+	if !ctx.Bool("yes") {
+		confirmPrompt := promptui.Prompt{
+			Label:     "Interrupting the update may result in inconsistent location details. Proceed?",
+			IsConfirm: true,
+		}
+
+		// Abort?
+		if _, err := confirmPrompt.Run(); err != nil {
+			return nil
+		}
+	}
+
+	start := time.Now()
 
 	// Run places worker.
 	if w := service.Places(); w != nil {

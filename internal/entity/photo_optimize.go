@@ -28,8 +28,9 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace, force bool) (updat
 		return false, photos, nil
 	}
 
-	if estimatePlace {
-		m.EstimatePlace(force)
+	// Estimate if feature is enabled and place wasn't set otherwise.
+	if estimatePlace && SrcPriority[m.PlaceSrc] <= SrcPriority[SrcEstimate] {
+		m.EstimateLocation(force)
 	}
 
 	labels := m.ClassifyLabels()

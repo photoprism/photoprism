@@ -1,5 +1,5 @@
 /*
-Package entity contains models for data storage based on GORM.
+Package entity provides models for storing index information based on the GORM library.
 
 See http://gorm.io/docs/ for more information about GORM.
 
@@ -10,16 +10,15 @@ https://github.com/photoprism/photoprism/wiki/Storage
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 )
 
 var log = event.Log
 var GeoApi = "places"
 
-// logError logs the message if the argument is an error.
-func logError(result *gorm.DB) {
-	if result.Error != nil {
-		log.Error(result.Error.Error())
+// Log logs the error if any and keeps quiet otherwise.
+func Log(model, action string, err error) {
+	if err != nil {
+		log.Errorf("%s: %s (%s)", model, err, action)
 	}
 }

@@ -273,293 +273,6 @@ func TestPhoto_SetDescription(t *testing.T) {
 	})
 }
 
-func TestPhoto_SetTakenAt(t *testing.T) {
-	t.Run("empty taken", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		m.SetTakenAt(time.Time{}, time.Time{}, "", SrcManual)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-	})
-	t.Run("taken not from the same source", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), "", SrcAuto)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-	})
-	t.Run("from name", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		m.TimeZone = ""
-		m.TakenSrc = SrcAuto
-
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-		assert.Equal(t, "", m.TimeZone)
-		assert.Equal(t, SrcAuto, m.TakenSrc)
-
-		m.SetTakenAt(time.Date(2011, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 11, 11, 10, 7, 18, 0, time.UTC), "America/New_York", SrcName)
-
-		assert.Equal(t, "", m.TimeZone)
-		assert.Equal(t, SrcName, m.TakenSrc)
-
-		assert.Equal(t, time.Date(2011, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2019, 11, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
-	})
-	t.Run("success", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-
-		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcMeta)
-
-		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), m.TakenAtLocal)
-	})
-	t.Run("fallback", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-
-		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
-
-		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2019, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcAuto)
-
-		t.Logf("SRC, ZONE, UTC, LOCAL: %s / %s / %s /%s", m.TakenSrc, m.TimeZone, m.TakenAt, m.TakenAtLocal)
-
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-
-		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC)
-		m.TimeZone = "Europe/Berlin"
-
-		m.SetTakenAt(newTime, newTime, "", SrcName)
-
-		assert.Equal(t, newTime, m.TakenAt)
-		assert.Equal(t, m.GetTakenAtLocal(), m.TakenAtLocal)
-	})
-	t.Run("time zone", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-
-		zone := "Europe/Berlin"
-
-		loc, _ := time.LoadLocation(zone)
-
-		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, loc)
-
-		m.SetTakenAt(newTime, newTime, zone, SrcName)
-
-		assert.Equal(t, newTime.UTC(), m.TakenAt)
-		assert.Equal(t, newTime, m.TakenAtLocal)
-	})
-	t.Run("time > max year", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-		m.SetTakenAt(time.Date(2123, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2123, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcManual)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-	})
-	t.Run("success with empty takenAtLocal", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Time{}, "test", SrcXmp)
-		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
-		assert.Equal(t, time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), m.TakenAtLocal)
-	})
-	t.Run("don't update older date", func(t *testing.T) {
-		photo := &Photo{TakenAt: time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC)}
-		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2014, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcAuto)
-		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
-	})
-	t.Run("set local time from utc", func(t *testing.T) {
-		photo := &Photo{TakenAt: time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin"}
-		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2014, 12, 11, 10, 7, 18, 0, time.UTC), time.UTC.String(), SrcManual)
-		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
-		assert.Equal(t, time.Date(2014, 12, 11, 10, 07, 18, 0, time.UTC), photo.TakenAtLocal)
-	})
-	t.Run("local is UTC", func(t *testing.T) {
-		photo := &Photo{TakenAt: time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), TimeZone: time.UTC.String()}
-		photo.SetTakenAt(time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC),
-			time.Date(2014, 12, 11, 10, 7, 18, 0, time.UTC), "", SrcManual)
-		assert.Equal(t, time.Date(2014, 12, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
-		assert.Equal(t, time.Date(2014, 12, 11, 9, 07, 18, 0, time.UTC), photo.TakenAtLocal)
-	})
-}
-
-func TestPhoto_UpdateTimeZone(t *testing.T) {
-	t.Run("UTC", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo12")
-		m.TimeZone = "UTC"
-
-		zone := "Europe/Berlin"
-
-		takenAt := m.TakenAt
-		takenAtLocal := m.TakenAtLocal
-
-		assert.Equal(t, takenAt, m.TakenAt)
-		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
-
-		m.UpdateTimeZone(zone)
-
-		assert.Equal(t, takenAt, m.TakenAt)
-		assert.Equal(t, m.GetTakenAtLocal(), m.TakenAtLocal)
-	})
-
-	t.Run("Europe/Berlin", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo12")
-
-		zone := "Europe/Berlin"
-
-		takenAt := m.TakenAt
-		takenAtLocal := m.TakenAtLocal
-
-		assert.Equal(t, takenAt, m.TakenAt)
-		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
-		assert.Equal(t, "", m.TimeZone)
-
-		m.UpdateTimeZone(zone)
-
-		assert.Equal(t, m.GetTakenAt(), m.TakenAt)
-		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
-	})
-
-	t.Run("America/New_York", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo12")
-		m.TimeZone = "Europe/Berlin"
-		m.TakenAt = m.GetTakenAt()
-
-		zone := "America/New_York"
-
-		takenAt := m.TakenAt
-		takenAtLocal := m.TakenAtLocal
-
-		assert.Equal(t, takenAt, m.TakenAt)
-		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
-		assert.Equal(t, "Europe/Berlin", m.TimeZone)
-
-		m.UpdateTimeZone(zone)
-
-		assert.Equal(t, m.GetTakenAt(), m.TakenAt)
-		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
-	})
-
-	t.Run("manual", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo12")
-		m.TimeZone = "Europe/Berlin"
-		m.TakenAt = m.GetTakenAt()
-		m.TakenSrc = SrcManual
-
-		zone := "America/New_York"
-
-		takenAt := m.TakenAt
-		takenAtLocal := m.TakenAtLocal
-
-		assert.Equal(t, takenAt, m.TakenAt)
-		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
-		assert.Equal(t, "Europe/Berlin", m.TimeZone)
-
-		m.UpdateTimeZone(zone)
-
-		assert.Equal(t, takenAt, m.TakenAt)
-		assert.Equal(t, takenAtLocal, m.TakenAtLocal)
-		assert.Equal(t, "Europe/Berlin", m.TimeZone)
-	})
-	t.Run("zone = UTC", func(t *testing.T) {
-		photo := &Photo{TakenAt: time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), TimeZone: "Europe/Berlin"}
-		photo.UpdateTimeZone("")
-		assert.Equal(t, time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
-		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
-	})
-}
-
-func TestPhoto_SetCoordinates(t *testing.T) {
-	t.Run("empty coordinates", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-
-		m.SetCoordinates(0, 0, 5, SrcManual)
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-	})
-	t.Run("same source new values", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-
-		m.SetCoordinates(5.555, 5.555, 5, SrcMeta)
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(5.555), m.PhotoLat)
-		assert.Equal(t, float32(5.555), m.PhotoLng)
-		assert.Equal(t, 5, m.PhotoAltitude)
-	})
-	t.Run("different source lower priority", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-
-		m.SetCoordinates(5.555, 5.555, 5, SrcName)
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-	})
-	t.Run("different source equal priority", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-
-		m.SetCoordinates(5.555, 5.555, 5, SrcKeyword)
-		assert.Equal(t, float32(5.555), m.PhotoLat)
-		assert.Equal(t, float32(5.555), m.PhotoLng)
-		assert.Equal(t, 5, m.PhotoAltitude)
-	})
-	t.Run("different source higher priority", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo21")
-		assert.Equal(t, SrcEstimate, m.PlaceSrc)
-		assert.Equal(t, float32(0), m.PhotoLat)
-		assert.Equal(t, float32(0), m.PhotoLng)
-		assert.Equal(t, 0, m.PhotoAltitude)
-
-		m.SetCoordinates(5.555, 5.555, 5, SrcMeta)
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(5.555), m.PhotoLat)
-		assert.Equal(t, float32(5.555), m.PhotoLng)
-		assert.Equal(t, 5, m.PhotoAltitude)
-	})
-	t.Run("different source highest priority (manual)", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, SrcMeta, m.PlaceSrc)
-		assert.Equal(t, float32(1.234), m.PhotoLat)
-		assert.Equal(t, float32(4.321), m.PhotoLng)
-		assert.Equal(t, 3, m.PhotoAltitude)
-
-		m.SetCoordinates(5.555, 5.555, 5, SrcManual)
-		assert.Equal(t, SrcManual, m.PlaceSrc)
-		assert.Equal(t, float32(5.555), m.PhotoLat)
-		assert.Equal(t, float32(5.555), m.PhotoLng)
-		assert.Equal(t, 5, m.PhotoAltitude)
-	})
-}
-
 func TestPhoto_Delete(t *testing.T) {
 	t.Run("not permanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
@@ -806,22 +519,28 @@ func TestPhoto_Updates(t *testing.T) {
 func TestPhoto_SetFavorite(t *testing.T) {
 	t.Run("set to true", func(t *testing.T) {
 		photo := Photo{PhotoFavorite: true}
-		photo.Save()
 
-		err := photo.SetFavorite(false)
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+
+		if err := photo.SetFavorite(false); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, false, photo.PhotoFavorite)
 	})
 	t.Run("set to false", func(t *testing.T) {
 		photo := Photo{PhotoFavorite: false}
-		photo.Save()
 
-		err := photo.SetFavorite(true)
-		if err != nil {
+		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+
+		if err := photo.SetFavorite(true); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, true, photo.PhotoFavorite)
 	})
 }

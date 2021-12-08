@@ -1,4 +1,4 @@
-FROM photoprism/development:20211109 as build
+FROM photoprism/development:20211203 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -44,6 +44,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libc6 \
     libatomic1 \
     libheif-examples \
+    librsvg2-bin \
     gnupg \
     gpg-agent \
     apt-utils \

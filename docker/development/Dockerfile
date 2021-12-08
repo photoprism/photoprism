@@ -52,6 +52,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libx265-dev \
     libnss3 \
     libxtst6 \
+    librsvg2-bin \
     pkg-config \
     software-properties-common \
     rsync \

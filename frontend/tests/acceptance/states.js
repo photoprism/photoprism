@@ -13,12 +13,12 @@ test.meta("testID", "states-001")("Update state", async (t) => {
   const AlbumUid = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t
     .expect(Selector("button.action-title-edit").nth(0).innerText)
-    .contains("Canada")
+    .contains("British Columbia")
     .click(Selector(".action-title-edit").nth(0))
     .expect(Selector(".input-title input").value)
-    .eql("British Columbia / Canada")
+    .eql("British Columbia")
     .expect(Selector(".input-location input").value)
-    .eql("")
+    .eql("Canada")
     .typeText(Selector(".input-title input"), "Wonderland", { replace: true })
     .typeText(Selector(".input-location input"), "Earth", { replace: true })
     .expect(Selector(".input-description textarea").value)
@@ -69,9 +69,7 @@ test.meta("testID", "states-001")("Update state", async (t) => {
     .click(Selector(".input-description textarea"))
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(Selector(".input-location input"))
-    .pressKey("ctrl+a delete")
-    .pressKey("enter")
+    .typeText(Selector(".input-location input"), "Canada", { replace: true })
     .click(".action-confirm");
   await page.openNav();
   await t.click(Selector(".nav-states"));
@@ -165,7 +163,8 @@ test.meta("testID", "states-004")("Create/delete album during add to album", asy
   const countAlbums = await Selector("a.is-album").count;
   await page.openNav();
   await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
-  const FirstMoment = await Selector("a.is-album").nth(2).getAttribute("data-uid");
+  await page.search("Canada");
+  const FirstMoment = await Selector("a.is-album").nth(0).getAttribute("data-uid");
   await t.click(Selector("a.is-album").withAttribute("data-uid", FirstMoment));
   const PhotoCountInMoment = await Selector("div.is-photo").count;
   const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
@@ -209,5 +208,5 @@ test.meta("testID", "states-004")("Create/delete album during add to album", asy
 test.meta("testID", "states-005")("Delete states button visible", async (t) => {
   await page.openNav();
   await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
-  await page.checkButtonVisibility("delete", false, false);
+  await page.checkButtonVisibility("delete", true, false);
 });

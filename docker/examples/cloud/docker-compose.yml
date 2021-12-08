@@ -194,9 +194,10 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - "./database:/var/lib/mysql" # Never remove
+      - "./database:/var/lib/mysql" # Important, don't remove
     environment:
       MYSQL_ROOT_PASSWORD: "_admin_password_"
       MYSQL_DATABASE: "photoprism"
@@ -221,6 +222,6 @@ services:
     container_name: watchtower
     environment:
       WATCHTOWER_CLEANUP: "true"
-      WATCHTOWER_POLL_INTERVAL: 86400 # Checks for updates every day
+      WATCHTOWER_POLL_INTERVAL: 86400 # checks for updates every day
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"

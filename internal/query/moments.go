@@ -7,6 +7,7 @@ import (
 
 	"github.com/gosimple/slug"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -261,4 +262,25 @@ func MomentsLabels(threshold int) (results Moments, err error) {
 	}
 
 	return results, nil
+}
+
+// RemoveDuplicateMoments deletes generated albums with duplicate slug or filter.
+func RemoveDuplicateMoments() (removed int, err error) {
+	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid 
+		IN (SELECT a.album_uid FROM albums a JOIN albums b ON a.album_type = b.album_type 
+		AND a.album_type <> ? AND a.id > b.id WHERE (a.album_slug = b.album_slug 
+		OR a.album_filter = b.album_filter) GROUP BY a.album_uid)`, entity.AlbumDefault); res.Error != nil {
+		return removed, res.Error
+	}
+
+	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id 
+		IN (SELECT a.id FROM albums a JOIN albums b ON a.album_type = b.album_type 
+		AND a.album_type <> ? AND a.id > b.id WHERE (a.album_slug = b.album_slug 
+		OR a.album_filter = b.album_filter) GROUP BY a.album_uid)`, entity.AlbumDefault); res.Error != nil {
+		return removed, res.Error
+	} else if res.RowsAffected > 0 {
+		removed = int(res.RowsAffected)
+	}
+
+	return removed, nil
 }

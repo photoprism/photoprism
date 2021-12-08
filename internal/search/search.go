@@ -33,6 +33,7 @@ package search
 
 import (
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 )

@@ -217,6 +217,10 @@ export default class Config {
         this.values.count.all += data.count;
         this.values.count.photos += data.count;
         break;
+      case "live":
+        this.values.count.all += data.count;
+        this.values.count.live += data.count;
+        break;
       case "videos":
         this.values.count.all += data.count;
         this.values.count.videos += data.count;
@@ -355,5 +359,16 @@ export default class Config {
     }
 
     return [];
+  }
+
+  appIcon() {
+    switch (this.get("appIcon")) {
+      case "crisp":
+      case "mint":
+      case "bold":
+        return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
+      default:
+        return `${this.staticUri}/icons/logo.svg`;
+    }
   }
 }

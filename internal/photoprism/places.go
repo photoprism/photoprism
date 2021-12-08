@@ -31,18 +31,14 @@ func NewPlaces(conf *config.Config) *Places {
 func (w *Places) Start() (updated []string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("index: %s (update places)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("index: %s (update locations)\nstack: %s", r, debug.Stack())
 			log.Error(err)
 		}
 	}()
 
+	// Check if a worker is already running.
 	if err := mutex.MainWorker.Start(); err != nil {
-		// A worker is already running.
-		log.Warnf("index: %s (update places)", err.Error())
-		return []string{}, err
-	} else if !w.conf.Sponsor() && !w.conf.Test() {
-		log.Errorf(config.MsgSponsorCommand)
-		log.Errorf(config.MsgFundingInfo)
+		log.Warnf("index: %s (update locations)", err.Error())
 		return []string{}, err
 	}
 
@@ -55,19 +51,21 @@ func (w *Places) Start() (updated []string, err error) {
 	if err != nil {
 		return []string{}, err
 	} else if len(cells) == 0 {
-		log.Warnf("index: found no places to update")
+		log.Warnf("index: found no locations to update")
 		return []string{}, nil
 	}
 
 	// List of updated cells.
 	updated = make([]string, 0, len(cells))
 
-	log.Infof("index: downloading latest data")
+	log.Infof("index: retrieving location details")
 
 	// Update known locations.
 	for i, cell := range cells {
 		if i%10 == 0 {
-			log.Infof("index: updated %s, %d remaining", english.Plural(i, "place", "places"), len(cells)-i)
+			log.Infof("index: updated %s, %s remaining",
+				english.Plural(i, "location", "locations"),
+				english.Plural(len(cells)-i, "location", "locations"))
 		}
 
 		if w.Canceled() {
@@ -134,7 +132,9 @@ func (w *Places) UpdatePhotos() (affected int, err error) {
 
 	for i := 0; i < n; i++ {
 		if i%10 == 0 {
-			log.Infof("index: updated %s, %d remaining", english.Plural(i, "photo", "photos"), n-i)
+			log.Infof("index: updated %s, %s remaining",
+				english.Plural(i, "photo", "photos"),
+				english.Plural(n-i, "photo", "photos"))
 		}
 
 		var model entity.Photo

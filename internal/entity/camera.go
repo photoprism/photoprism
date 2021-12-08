@@ -38,7 +38,7 @@ var UnknownCamera = Camera{
 
 // CreateUnknownCamera initializes the database with an unknown camera if not exists
 func CreateUnknownCamera() {
-	FirstOrCreateCamera(&UnknownCamera)
+	UnknownCamera = *FirstOrCreateCamera(&UnknownCamera)
 }
 
 // NewCamera creates a camera entity from a model name and a make name.
@@ -97,7 +97,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 	}
 
 	if cacheData, ok := cameraCache.Get(m.CameraSlug); ok {
-		log.Debugf("camera: cache hit for %s", m.CameraSlug)
+		log.Tracef("camera: cache hit for %s", m.CameraSlug)
 
 		return cacheData.(*Camera)
 	}

@@ -21,7 +21,7 @@ import (
 var IndexCommand = cli.Command{
 	Name:      "index",
 	Usage:     "Indexes original media files",
-	ArgsUsage: "[path]",
+	ArgsUsage: "[originals subfolder]",
 	Flags:     indexFlags,
 	Action:    indexAction,
 }

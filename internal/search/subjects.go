@@ -12,7 +12,7 @@ import (
 )
 
 // Subjects searches subjects and returns them.
-func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
+func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
