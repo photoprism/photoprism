@@ -34,8 +34,8 @@ servers apply:
   ```
   cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
   ```
-- We recommend disabling Linux kernel security in your [docker-compose.yml](https://dl.photoprism.org/docker/arm64/docker-compose.yml),
-  especially if you do not have experience with the configuration:
+- We recommend disabling Linux kernel security in your `docker-compose.yml`, especially if you do not have experience
+  with the configuration:
   ```yaml
   photoprism:
     security_opt:
