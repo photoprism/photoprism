@@ -316,9 +316,6 @@ export default {
 
       this.expanded = false;
     },
-    onWebShare(path) {
-      console.log(path);
-    },
     edit() {
       // Open Edit Dialog
       Event.PubSub.publish("dialog.edit", {selection: this.selection, album: this.album, index: 0});
