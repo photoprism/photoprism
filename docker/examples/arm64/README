@@ -15,7 +15,7 @@ servers apply:
     update their `docker-compose.yml` config based on our examples for [ARM64](https://dl.photoprism.org/docker/arm64/docker-compose.yml)
     and [ARMv7](https://dl.photoprism.org/docker/armv7/docker-compose.yml)-based devices.
 
-!!! ARMv7-based Devices
+!!! ARMv7-based Devices (32-bit)
     Owners of [ARMv7-based devices](https://dl.photoprism.org/docker/armv7/docker-compose.yml) have to revert to
     an [alternative image](https://hub.docker.com/r/linuxserver/mariadb) if they want to use MariaDB.
     The [official image](https://hub.docker.com/_/mariadb) is available for AMD64 and ARM64 only.
