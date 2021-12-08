@@ -103,7 +103,7 @@ services:
       - apparmor:unconfined
     ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
     ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: mysqld --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --innodb-buffer-pool-size=128M --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
       - "mariadb_data:/var/lib/mysql" # Important, don't remove; named volume "mariadb_data" is defined at the bottom
