@@ -74,8 +74,8 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 
 // UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
 func UpdateAlbumDates() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	case MySQL:
@@ -93,8 +93,8 @@ func UpdateAlbumDates() error {
 
 // UpdateMissingAlbumEntries sets a flag for missing photo album entries.
 func UpdateMissingAlbumEntries() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	default:

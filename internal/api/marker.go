@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 )
@@ -66,6 +67,13 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //   id: int Marker ID as returned by the API
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
+		if err := mutex.People.Start(); err != nil {
+			AbortBusy(c)
+			return
+		}
+
+		defer mutex.People.Stop()
+
 		file, marker, err := findFileMarker(c)
 
 		if err != nil {
@@ -137,6 +145,13 @@ func UpdateMarker(router *gin.RouterGroup) {
 //   id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
+		if err := mutex.People.Start(); err != nil {
+			AbortBusy(c)
+			return
+		}
+
+		defer mutex.People.Stop()
+
 		file, marker, err := findFileMarker(c)
 
 		if err != nil {

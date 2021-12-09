@@ -111,3 +111,7 @@ func AbortAlreadyExists(c *gin.Context, s string) {
 func AbortFeatureDisabled(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrFeatureDisabled)
 }
+
+func AbortBusy(c *gin.Context) {
+	Abort(c, http.StatusTooManyRequests, i18n.ErrBusy)
+}

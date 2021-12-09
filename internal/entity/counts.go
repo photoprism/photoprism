@@ -49,8 +49,8 @@ func LabelCounts() LabelPhotoCounts {
 
 // UpdatePlacesCounts updates the places photo counts.
 func UpdatePlacesCounts() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -73,8 +73,8 @@ func UpdatePlacesCounts() (err error) {
 
 // UpdateSubjectCounts updates the subject file counts.
 func UpdateSubjectCounts() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -128,8 +128,8 @@ func UpdateSubjectCounts() (err error) {
 
 // UpdateLabelCounts updates the label photo counts.
 func UpdateLabelCounts() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 	var res *gorm.DB

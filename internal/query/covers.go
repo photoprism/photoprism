@@ -14,8 +14,8 @@ import (
 
 // UpdateAlbumDefaultCovers updates default album cover thumbs.
 func UpdateAlbumDefaultCovers() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -62,8 +62,8 @@ func UpdateAlbumDefaultCovers() (err error) {
 
 // UpdateAlbumFolderCovers updates folder album cover thumbs.
 func UpdateAlbumFolderCovers() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -110,8 +110,8 @@ func UpdateAlbumFolderCovers() (err error) {
 
 // UpdateAlbumMonthCovers updates month album cover thumbs.
 func UpdateAlbumMonthCovers() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -178,8 +178,8 @@ func UpdateAlbumCovers() (err error) {
 
 // UpdateLabelCovers updates label cover thumbs.
 func UpdateLabelCovers() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -245,8 +245,8 @@ func UpdateLabelCovers() (err error) {
 
 // UpdateSubjectCovers updates subject cover thumbs.
 func UpdateSubjectCovers() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 

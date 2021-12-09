@@ -118,8 +118,8 @@ func OrphanPhotos() (photos entity.Photos, err error) {
 
 // FixPrimaries tries to set a primary file for photos that have none.
 func FixPrimaries() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -162,8 +162,8 @@ func FixPrimaries() error {
 
 // FlagHiddenPhotos sets the quality score of photos without valid primary file to -1.
 func FlagHiddenPhotos() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 

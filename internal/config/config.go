@@ -446,10 +446,12 @@ func (c *Config) LogLevel() logrus.Level {
 
 // Shutdown services and workers.
 func (c *Config) Shutdown() {
+	mutex.People.Cancel()
 	mutex.MainWorker.Cancel()
 	mutex.ShareWorker.Cancel()
 	mutex.SyncWorker.Cancel()
 	mutex.MetaWorker.Cancel()
+	mutex.FacesWorker.Cancel()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
