@@ -475,8 +475,8 @@ func (c *Config) Workers() int {
 		cores = cpuid.CPU.PhysicalCores
 	}
 
-	// Limit number of workers when using SQLite to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
+	// Limit number of workers when using SQLite3 to avoid database locking issues.
+	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
 		return 4
 	}
 

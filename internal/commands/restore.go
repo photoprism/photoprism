@@ -148,7 +148,7 @@ func restoreAction(ctx *cli.Context) error {
 				"-f",
 				conf.DatabaseName(),
 			)
-		case config.SQLite:
+		case config.SQLite3:
 			log.Infoln("dropping existing tables")
 			tables.Drop(conf.Db())
 			cmd = exec.Command(

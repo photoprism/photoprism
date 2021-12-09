@@ -176,7 +176,7 @@ func FlagHiddenPhotos() error {
 		if res.RowsAffected > 0 {
 			log.Infof("index: flagged %s as hidden or missing [%s]", english.Plural(int(res.RowsAffected), "photo", "photos"), time.Since(start))
 		}
-	case SQLite:
+	case SQLite3:
 		if res.RowsAffected > 0 {
 			log.Debugf("index: flagged %s as hidden or missing [%s]", english.Plural(int(res.RowsAffected), "photo", "photos"), time.Since(start))
 		}

@@ -129,7 +129,7 @@ func backupAction(ctx *cli.Context) error {
 				"-p"+conf.DatabasePassword(),
 				conf.DatabaseName(),
 			)
-		case config.SQLite:
+		case config.SQLite3:
 			cmd = exec.Command(
 				conf.SqliteBin(),
 				conf.DatabaseDsn(),

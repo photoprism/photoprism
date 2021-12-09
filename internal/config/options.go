@@ -8,16 +8,18 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Database drivers (sql dialects).
 const (
 	MySQL    = "mysql"
 	MariaDB  = "mariadb"
-	SQLite   = "sqlite3"
+	SQLite3  = "sqlite3"
 	Postgres = "postgres" // TODO: Requires GORM 2.0 for generic column data types
 )
 

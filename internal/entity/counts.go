@@ -96,7 +96,7 @@ func UpdateSubjectCounts() (err error) {
 		SET subjects.file_count = CASE WHEN b.subj_files IS NULL THEN 0 ELSE b.subj_files END, 
 			subjects.photo_count = CASE WHEN b.subj_photos IS NULL THEN 0 ELSE b.subj_photos END
 		WHERE ?`, gorm.Expr(subjTable), gorm.Expr(filesTable), gorm.Expr(markerTable), condition)
-	case SQLite:
+	case SQLite3:
 		// Update files count.
 		res = Db().Table(subjTable).
 			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id) FROM files f "+
@@ -147,7 +147,7 @@ func UpdateLabelCounts() (err error) {
 			) p2 GROUP BY p2.label_id
 		) b ON b.label_id = labels.id
 		SET photo_count = CASE WHEN b.label_photos IS NULL THEN 0 ELSE b.label_photos END`)
-	} else if IsDialect(SQLite) {
+	} else if IsDialect(SQLite3) {
 		res = Db().
 			Table("labels").
 			UpdateColumn("photo_count",

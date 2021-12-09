@@ -109,7 +109,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			logResult(UnscopedDb().Exec("UPDATE IGNORE `photos_keywords` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE IGNORE `photos_labels` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE IGNORE `photos_albums` SET `photo_uid` = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
-		case SQLite:
+		case SQLite3:
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE `photos_keywords` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE `photos_labels` SET `photo_id` = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE `photos_albums` SET `photo_uid` = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))

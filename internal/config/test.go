@@ -48,7 +48,7 @@ func NewTestOptions() *Options {
 	//   dbDsn = "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true",
 
 	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == "" {
-		dbDriver = SQLite
+		dbDriver = SQLite3
 		dbDsn = ".test.db"
 	}
 
@@ -94,7 +94,7 @@ func NewTestOptionsError() *Options {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		DatabaseDriver: SQLite,
+		DatabaseDriver: SQLite3,
 		DatabaseDsn:    ".test-error.db",
 	}
 
