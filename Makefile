@@ -22,7 +22,7 @@ else
 endif
 
 all: dep build
-dep: dep-tensorflow dep-js dep-go
+dep: dep-tensorflow dep-js
 build: generate build-js build-go
 install: install-bin install-assets
 test: test-js test-go
