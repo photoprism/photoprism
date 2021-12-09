@@ -129,7 +129,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 6, data.Orientation)
 		assert.Equal(t, "Apple", data.LensMake)
 		assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", data.LensModel)
-
+		assert.Equal(t, "", data.ColorProfile)
 	})
 
 	t.Run("gps-2000.jpg", func(t *testing.T) {
@@ -321,6 +321,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 6, data.FocalLength)
 		assert.Equal(t, 0, data.Orientation)
 		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "", data.ColorProfile)
 	})
 
 	t.Run("exif-example.tiff", func(t *testing.T) {
@@ -352,6 +353,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 0, data.FocalLength)
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "", data.ColorProfile)
 	})
 
 	t.Run("out-of-range-500.jpg", func(t *testing.T) {
@@ -383,6 +385,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 29, data.FocalLength)
 		assert.Equal(t, 3, data.Orientation)
 		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "", data.ColorProfile)
 	})
 
 	t.Run("digikam.jpg", func(t *testing.T) {
@@ -417,6 +420,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, 27, data.FocalLength)
 		assert.Equal(t, 0, int(data.Orientation))
+		assert.Equal(t, "", data.ColorProfile)
 	})
 
 	t.Run("notebook.jpg", func(t *testing.T) {
@@ -479,5 +483,69 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, "", data.LensMake)
 		assert.Equal(t, "EF70-200mm f/4L IS USM", data.LensModel)
 		assert.Equal(t, 1, data.Orientation)
+	})
+
+	t.Run("Iceland-P3.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/Iceland-P3.jpg", fs.FormatJpeg)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "Nicolas Cornet", data.Artist)
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords.String())
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "Nicolas Cornet", data.Copyright)
+		assert.Equal(t, 400, data.Height)
+		assert.Equal(t, 600, data.Width)
+		assert.Equal(t, float32(65.05558), data.Lat)
+		assert.Equal(t, float32(-16.625702), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/8", data.Exposure)
+		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
+		assert.Equal(t, "NIKON D800E", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 16, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "", data.ColorProfile)
+	})
+
+	t.Run("Iceland-sRGB.jpg", func(t *testing.T) {
+		data, err := Exif("testdata/Iceland-sRGB.jpg", fs.FormatJpeg)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "Nicolas Cornet", data.Artist)
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords.String())
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "Nicolas Cornet", data.Copyright)
+		assert.Equal(t, 400, data.Height)
+		assert.Equal(t, 600, data.Width)
+		assert.Equal(t, float32(65.05558), data.Lat)
+		assert.Equal(t, float32(-16.625702), data.Lng)
+		assert.Equal(t, 0, data.Altitude)
+		assert.Equal(t, "1/8", data.Exposure)
+		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
+		assert.Equal(t, "NIKON D800E", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "", data.CameraSerial)
+		assert.Equal(t, 16, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "", data.ColorProfile)
 	})
 }

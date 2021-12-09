@@ -30,6 +30,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Orientation  int           `json:",omitempty"`
 		Projection   string        `json:",omitempty"`
 		AspectRatio  float32       `json:",omitempty"`
+		ColorProfile string        `json:",omitempty"`
 		MainColor    string        `json:",omitempty"`
 		Colors       string        `json:",omitempty"`
 		Luminance    string        `json:",omitempty"`
@@ -66,6 +67,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Orientation:  m.FileOrientation,
 		Projection:   m.FileProjection,
 		AspectRatio:  m.FileAspectRatio,
+		ColorProfile: m.FileColorProfile,
 		MainColor:    m.FileMainColor,
 		Colors:       m.FileColors,
 		Luminance:    m.FileLuminance,
