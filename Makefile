@@ -200,16 +200,19 @@ clean:
 docker-development:
 	docker pull --platform=amd64 ubuntu:21.10
 	docker pull --platform=arm64 ubuntu:21.10
-	docker pull --platform=arm ubuntu:21.10
-	scripts/docker-buildx.sh development linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+	scripts/docker-buildx.sh development linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-preview:
-	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64
 docker-release:
-	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64,linux/arm $(DOCKER_TAG)
+	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
+docker-preview-armv7:
+	scripts/docker-buildx.sh photoprism linux/arm preview-armv7
+docker-release-armv7:
+	scripts/docker-buildx.sh photoprism linux/arm $(DOCKER_TAG)-armv7
 docker-local:
 	scripts/docker-build.sh photoprism
 docker-pull:
-	docker pull photoprism/photoprism:latest
+	docker pull photoprism/photoprism:preview photoprism/photoprism:latest
 docker-goproxy:
 	docker pull golang:alpine
 	scripts/docker-buildx.sh goproxy linux/amd64,linux/arm64 $(DOCKER_TAG)

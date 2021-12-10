@@ -8,13 +8,17 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
     exit 1
 fi
 
+NUMERIC='^[0-9]+$'
 GOPROXY=${GOPROXY:-'https://goproxy.io,direct'}
 
+# Kill old multibuilder if still alive.
 echo "Removing existing multibuilder..."
 docker buildx rm multibuilder 2>/dev/null
-sleep 3
-scripts/install-qemu.sh || { echo 'failed'; exit 1; }
-sleep 3
+
+# Wait 5 seconds.
+sleep 5
+
+# Create new multibuilder.
 docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
 
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
@@ -27,8 +31,21 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
-      -f docker/$1/Dockerfile \
+      -f docker/${1/-//}/Dockerfile \
       -t photoprism/$1:preview \
+      --push .
+elif [[ $3 =~ $NUMERIC ]]; then
+    echo "Building 'photoprism/$1:$3'..."
+    docker buildx build \
+      --platform $2 \
+      --pull \
+      --no-cache \
+      --build-arg BUILD_TAG=$3 \
+      --build-arg GOPROXY \
+      --build-arg GODEBUG \
+      -f docker/${1/-//}/Dockerfile \
+      -t photoprism/$1:latest \
+      -t photoprism/$1:$3 \
       --push .
 else
     echo "Building 'photoprism/$1:$3'..."
@@ -39,8 +56,7 @@ else
       --build-arg BUILD_TAG=$3 \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
-      -f docker/$1/Dockerfile \
-      -t photoprism/$1:latest \
+      -f docker/${1/-//}/Dockerfile \
       -t photoprism/$1:$3 \
       --push .
 fi

@@ -1,3 +1,4 @@
+##################################################### BUILD STAGE ######################################################
 FROM golang:alpine AS build
 
 ARG GOPROXY
@@ -10,6 +11,7 @@ RUN git clone https://github.com/goproxyio/goproxy.git /src/goproxy && \
     export CGO_ENABLED=0 && \
     make
 
+################################################## PRODUCTION STAGE ####################################################
 FROM golang:alpine
 
 ENV TINI_VERSION v0.19.0
