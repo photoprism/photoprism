@@ -210,8 +210,8 @@ docker-local:
 docker-pull:
 	docker pull photoprism/photoprism:latest
 docker-goproxy:
-	scripts/docker-build.sh goproxy $(DOCKER_TAG)
-	scripts/docker-push.sh goproxy $(DOCKER_TAG)
+	docker pull golang:alpine
+	scripts/docker-buildx.sh goproxy linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)
