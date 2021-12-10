@@ -12,11 +12,12 @@ if [[ -z $1 ]] && [[ -z $2 ]]; then
     echo "Please provide a container image name and version" 1>&2
     exit 1
 elif [[ $1 ]] && [[ -z $2 ]]; then
-    DOCKER_TAG=$(date -u +%Y%m%d)
     echo "Building 'photoprism/$1:preview'...";
+    DOCKER_TAG=$(date -u +%Y%m%d)
     docker build \
       --no-cache \
-      --build-arg BUILD_TAG="${DOCKER_TAG}" \
+      --pull \
+      --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:preview \
@@ -26,6 +27,7 @@ elif [[ $2 =~ $NUMERIC ]]; then
     echo "Building 'photoprism/$1:$2'...";
     docker build \
       --no-cache \
+      --pull \
       --build-arg BUILD_TAG=$2 \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
@@ -35,12 +37,14 @@ elif [[ $2 =~ $NUMERIC ]]; then
     echo "Done"
 else
     echo "Building 'photoprism/$1:$2'...";
+    DOCKER_TAG=$(date -u +%Y%m%d)
     docker build \
       --no-cache \
-      --build-arg BUILD_TAG=$2 \
+      --pull \
+      --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:$2 \
-      -f docker/${1/-//}/Dockerfile .
+      -f docker/${1/-//}$3/Dockerfile .
     echo "Done"
 fi

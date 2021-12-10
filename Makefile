@@ -211,9 +211,9 @@ docker-preview:
 docker-release:
 	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-armv7-preview:
-	scripts/docker-buildx.sh photoprism-armv7 linux/arm armv7-preview
+	scripts/docker-buildx.sh photoprism linux/arm armv7-preview /armv7
 docker-armv7-release:
-	scripts/docker-buildx.sh photoprism-armv7 linux/arm armv7
+	scripts/docker-buildx.sh photoprism linux/arm armv7 /armv7
 docker-local:
 	scripts/docker-build.sh photoprism
 docker-pull:
