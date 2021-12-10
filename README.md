@@ -42,10 +42,11 @@ It is available for Mac, Linux, and Windows.
 
 Our [latest release](https://docs.photoprism.org/release-notes/) not only includes 
 **facial recognition**, it also comes as a 
-**single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64, ARM64, and ARMv7**. 
-That means you don't need to pull from different Docker repositories anymore.
-We recommend updating your existing `docker-compose.yml` config based on 
-[our examples](https://dl.photoprism.org/docker/).
+**single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64 and ARM64 (64-bit)**.
+That means, Raspberry Pi 3 / 4 owners don't need a custom config and can pull from the same repository.
+We recommend updating your existing `docker-compose.yml` config based on our examples:
+
+  https://dl.photoprism.org/docker/
 
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
