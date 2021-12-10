@@ -45,7 +45,7 @@ elif [[ $1 == "static" ]]; then
 else
   echo "Building production binary..."
   for i in {1..3}; do
-    echo "Attempt $i" && go build -ldflags "-s -w -X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}" -o $2 cmd/photoprism/photoprism.go && break || sleep 5;
+    echo "Build #$i:" && go build -ldflags "-s -w -X main.version=${PHOTOPRISM_DATE}-${PHOTOPRISM_VERSION}-${PHOTOPRISM_OS}-${PHOTOPRISM_ARCH}" -o $2 cmd/photoprism/photoprism.go && break || sleep 5;
   done
 	du -h $2
 	echo "Done."
