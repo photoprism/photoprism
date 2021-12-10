@@ -3,7 +3,7 @@
 set -e
 
 # Login
-scripts/docker-login.sh
+scripts/docker/login.sh
 
 # Run tests
 docker-compose -f docker-compose.ci.yml pull
