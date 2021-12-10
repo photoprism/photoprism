@@ -205,22 +205,22 @@ clean:
 docker-development:
 	docker pull --platform=amd64 ubuntu:21.10
 	docker pull --platform=arm64 ubuntu:21.10
-	scripts/docker/multarch.sh development linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/multiarch.sh development linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-preview:
-	scripts/docker/multarch.sh photoprism linux/amd64,linux/arm64
+	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64
 docker-release:
-	scripts/docker/multarch.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-armv7-preview:
-	scripts/docker/multarch.sh photoprism linux/arm armv7-preview /armv7
+	scripts/docker/arch.sh photoprism linux/arm armv7-preview /armv7
 docker-armv7-release:
-	scripts/docker/multarch.sh photoprism linux/arm armv7 /armv7
+	scripts/docker/arch.sh photoprism linux/arm armv7 /armv7
 docker-local:
 	scripts/docker/build.sh photoprism
 docker-pull:
 	docker pull photoprism/photoprism:preview photoprism/photoprism:latest
 docker-goproxy:
 	docker pull golang:alpine
-	scripts/docker/multarch.sh goproxy linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/multiarch.sh goproxy linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker/build.sh demo $(DOCKER_TAG)
 	scripts/docker/push.sh demo $(DOCKER_TAG)
@@ -231,11 +231,11 @@ docker-demo-local:
 docker-dummy-webdav:
 	docker pull --platform=amd64 golang:1
 	docker pull --platform=arm64 golang:1
-	scripts/docker/multarch.sh dummy-webdav linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/multiarch.sh dummy-webdav linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-dummy-oidc:
 	docker pull --platform=amd64 golang:1
 	docker pull --platform=arm64 golang:1
-	scripts/docker/multarch.sh dummy-oidc linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/multiarch.sh dummy-oidc linux/amd64,linux/arm64 $(DOCKER_TAG)
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./docker/examples/cloud && packer build digitalocean.json)

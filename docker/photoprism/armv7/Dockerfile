@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM ubuntu:21.10
+FROM ubuntu:21.10 as build
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
