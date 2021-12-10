@@ -1,4 +1,4 @@
-# Running PhotoPrism on Modern ARM64-based Devices (64-bit)
+# Running PhotoPrism on ARM64-based devices (64-bit)
 
 Our stable version and development preview now come as a single multi-arch image for AMD64 and ARM64 (64-bit).
 

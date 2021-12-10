@@ -1,4 +1,4 @@
-# Running PhotoPrism on Older ARMv7-based Devices (32-bit)
+# Running PhotoPrism on ARMv7-based devices (32-bit)
 
 You have to resort to alternative Docker images to run *PhotoPrism* and *MariaDB* on ARMv7-based devices
 and those with a 32-bit operating system:
