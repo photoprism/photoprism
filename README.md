@@ -41,12 +41,15 @@ on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. 
 It is available for Mac, Linux, and Windows.
 
-Our [latest release](https://docs.photoprism.org/release-notes/) not only includes **facial recognition**, it also comes as a 
-**single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64 and ARM64 (64-bit)**.
-That means, Raspberry Pi 3 / 4 owners don't need a custom config and can pull from the same repository.
-We recommend updating your existing `docker-compose.yml` config based on our examples:
+The [stable version](https://docs.photoprism.org/release-notes/) and development 
+preview have been built into a single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for 64-bit AMD, Intel,
+and ARM processors. That means, [Raspberry Pi](https://docs.photoprism.org/getting-started/raspberry-pi/) 3 / 4 owners can pull 
+from the same repository, enjoy the exact same functionality, and can follow the regular 
+[installation instructions](https://docs.photoprism.org/getting-started/docker-compose/) 
+after going through a short list of [requirements](https://docs.photoprism.org/getting-started/raspberry-pi/).
 
-  https://dl.photoprism.org/docker/
+Existing users are advised to update their `docker-compose.yml` config based on our examples
+available at [dl.photoprism.org/docker/](https://dl.photoprism.org/docker/).
 
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
