@@ -34,14 +34,14 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.org/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
 ## Getting Started ##
+<img align="right" width="25%" src="https://photoprism.app/user/pages/01.home/03._screenshots/iphone-maps-hybrid-540px.png">
 
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
 on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
 all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. 
 It is available for Mac, Linux, and Windows.
 
-Our [latest release](https://docs.photoprism.org/release-notes/) not only includes 
-**facial recognition**, it also comes as a 
+Our [latest release](https://docs.photoprism.org/release-notes/) not only includes **facial recognition**, it also comes as a 
 **single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64 and ARM64 (64-bit)**.
 That means, Raspberry Pi 3 / 4 owners don't need a custom config and can pull from the same repository.
 We recommend updating your existing `docker-compose.yml` config based on our examples:
