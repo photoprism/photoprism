@@ -2,6 +2,9 @@ FROM golang:1
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
+ARG GOPROXY
+ARG GODEBUG
+
 # Set up project directory
 WORKDIR "/webdav"
 
