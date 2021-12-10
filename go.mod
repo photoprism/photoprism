@@ -35,6 +35,7 @@ require (
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
+	github.com/mandykoh/prism v0.34.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
@@ -49,13 +50,13 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/studio-b12/gowebdav v0.0.0-20211106090535-29e74efa701f
 	github.com/tensorflow/tensorflow v1.15.2
-	github.com/tidwall/gjson v1.12.0
+	github.com/tidwall/gjson v1.12.1
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871
-	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9
+	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e
+	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
+	golang.org/x/net v0.0.0-20211208012354-db4efeb81f4b
 	golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gonum.org/v1/gonum v0.9.3
@@ -76,6 +77,7 @@ require (
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/mandykoh/go-parallel v0.1.0 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect

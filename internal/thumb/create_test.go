@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestResampleOptions(t *testing.T) {

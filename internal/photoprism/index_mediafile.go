@@ -329,6 +329,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if metaData := m.MetaData(); metaData.Error == nil {
 			file.FileCodec = metaData.Codec
 			file.SetProjection(metaData.Projection)
+			file.SetColorProfile(metaData.ColorProfile)
 
 			if metaData.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, txt.Quote(metaData.InstanceID))
@@ -387,6 +388,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
 			file.SetProjection(metaData.Projection)
+			file.SetColorProfile(metaData.ColorProfile)
 
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
@@ -437,6 +439,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.FilePortrait = m.Portrait()
 			file.FileDuration = metaData.Duration
 			file.SetProjection(metaData.Projection)
+			file.SetColorProfile(metaData.ColorProfile)
 
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res

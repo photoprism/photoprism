@@ -34,6 +34,7 @@ const (
 	ErrInvalidCredentials
 	ErrInvalidLink
 	ErrInvalidName
+	ErrBusy
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -112,6 +113,7 @@ var Messages = MessageMap{
 	ErrInvalidCredentials: gettext("Invalid credentials"),
 	ErrInvalidLink:        gettext("Invalid link"),
 	ErrInvalidName:        gettext("Invalid name"),
+	ErrBusy:               gettext("Busy, please try again later"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),

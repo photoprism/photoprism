@@ -213,8 +213,8 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 // RemovePeopleAndFaces permanently removes all people, faces, and face markers.
 func RemovePeopleAndFaces() (err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	// Delete people.
 	if err = UnscopedDb().Delete(entity.Subject{}, "subj_type = ?", entity.SubjPerson).Error; err != nil {

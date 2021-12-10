@@ -4,10 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/face"
-
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/pkg/colors"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestFirstFileByHash(t *testing.T) {
@@ -623,5 +624,27 @@ func TestFile_ReplaceHash(t *testing.T) {
 		if err := m.ReplaceHash(""); err != nil {
 			t.Fatal(err)
 		}
+	})
+}
+
+func TestFile_SetColorProfile(t *testing.T) {
+	t.Run("DisplayP3", func(t *testing.T) {
+		m := FileFixtures.Get("exampleFileName.jpg")
+
+		assert.Equal(t, "", m.ColorProfile())
+		assert.True(t, m.HasColorProfile(colors.Default))
+		assert.False(t, m.HasColorProfile(colors.ProfileDisplayP3))
+
+		m.SetColorProfile(string(colors.ProfileDisplayP3))
+
+		assert.Equal(t, "Display P3", m.ColorProfile())
+		assert.False(t, m.HasColorProfile(colors.Default))
+		assert.True(t, m.HasColorProfile(colors.ProfileDisplayP3))
+
+		m.SetColorProfile("")
+
+		assert.Equal(t, "", m.ColorProfile())
+		assert.True(t, m.HasColorProfile(colors.Default))
+		assert.False(t, m.HasColorProfile(colors.ProfileDisplayP3))
 	})
 }

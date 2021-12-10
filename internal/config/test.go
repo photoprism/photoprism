@@ -18,7 +18,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// define constants used for testing the config package
+// Download URL and ZIP hash for test files.
 const (
 	TestDataZip  = "/tmp/photoprism/testdata.zip"
 	TestDataURL  = "https://dl.photoprism.org/qa/testdata.zip"
@@ -28,12 +28,13 @@ const (
 var testConfig *Config
 var testConfigOnce sync.Once
 var testConfigMutex sync.Mutex
+var testDataMutex sync.Mutex
 
 func testDataPath(assetsPath string) string {
 	return assetsPath + "/testdata"
 }
 
-// NewTestOptions inits valid options used for testing
+// NewTestOptions returns valid config options for tests.
 func NewTestOptions() *Options {
 	assetsPath := fs.Abs("../../assets")
 	storagePath := fs.Abs("../../storage")
@@ -47,7 +48,7 @@ func NewTestOptions() *Options {
 	//   dbDsn = "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true",
 
 	if dbDriver == "test" || dbDriver == "sqlite" || dbDriver == "" || dbDsn == "" {
-		dbDriver = SQLite
+		dbDriver = SQLite3
 		dbDsn = ".test.db"
 	}
 
@@ -80,7 +81,7 @@ func NewTestOptions() *Options {
 	return c
 }
 
-// NewTestOptionsError inits invalid options used for testing
+// NewTestOptionsError returns invalid config options for tests.
 func NewTestOptionsError() *Options {
 	assetsPath := fs.Abs("../..")
 	testDataPath := fs.Abs("../../storage/testdata")
@@ -93,7 +94,7 @@ func NewTestOptionsError() *Options {
 		OriginalsPath:  testDataPath + "/originals",
 		ImportPath:     testDataPath + "/import",
 		TempPath:       testDataPath + "/temp",
-		DatabaseDriver: SQLite,
+		DatabaseDriver: SQLite3,
 		DatabaseDsn:    ".test-error.db",
 	}
 
@@ -104,14 +105,14 @@ func SetNewTestConfig() {
 	testConfig = NewTestConfig()
 }
 
-// TestConfig inits the global testConfig if it was not already initialised
+// TestConfig returns the existing test config instance or creates a new instance and returns it.
 func TestConfig() *Config {
 	testConfigOnce.Do(SetNewTestConfig)
 
 	return testConfig
 }
 
-// NewTestConfig inits valid config used for testing
+// NewTestConfig returns a valid test config.
 func NewTestConfig() *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
@@ -147,14 +148,14 @@ func NewTestConfig() *Config {
 	return c
 }
 
-// NewTestErrorConfig inits invalid config used for testing
+// NewTestErrorConfig returns an invalid test config.
 func NewTestErrorConfig() *Config {
 	c := &Config{options: NewTestOptionsError()}
 
 	return c
 }
 
-// CliTestContext returns example cli config for testing
+// CliTestContext returns a CLI context for testing.
 func CliTestContext() *cli.Context {
 	config := NewTestOptions()
 
@@ -200,7 +201,7 @@ func CliTestContext() *cli.Context {
 	return c
 }
 
-// RemoveTestData deletes files in import, export, originals and cache folders
+// RemoveTestData deletes files in import, export, originals, and cache folders.
 func (c *Config) RemoveTestData(t *testing.T) {
 	if err := os.RemoveAll(c.ImportPath()); err != nil {
 		t.Fatal(err)
@@ -219,7 +220,7 @@ func (c *Config) RemoveTestData(t *testing.T) {
 	}
 }
 
-// DownloadTestData downloads test data from photoprism.org server
+// DownloadTestData downloads the test files from the file server.
 func (c *Config) DownloadTestData(t *testing.T) {
 	if fs.FileExists(TestDataZip) {
 		hash := fs.Hash(TestDataZip)
@@ -242,20 +243,23 @@ func (c *Config) DownloadTestData(t *testing.T) {
 	}
 }
 
-// UnzipTestData in default test folder
+// UnzipTestData extracts tests files from the zip archive.
 func (c *Config) UnzipTestData(t *testing.T) {
 	if _, err := fs.Unzip(TestDataZip, c.StoragePath()); err != nil {
 		t.Fatalf("config: could not unzip test data: %s", err.Error())
 	}
 }
 
-// InitializeTestData using testing constant
+// InitializeTestData resets the test file directory.
 func (c *Config) InitializeTestData(t *testing.T) {
-	defer t.Logf(capture.Time(time.Now(), "config: initialized test data"))
+	testDataMutex.Lock()
+	defer testDataMutex.Unlock()
+
+	start := time.Now()
 
 	c.RemoveTestData(t)
-
 	c.DownloadTestData(t)
-
 	c.UnzipTestData(t)
+
+	t.Logf("config: initialized test data [%s]", time.Since(start))
 }

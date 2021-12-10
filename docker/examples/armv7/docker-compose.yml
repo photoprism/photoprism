@@ -3,7 +3,7 @@ version: '3.5'
 # Example Docker Compose config file for PhotoPrism (ARMv7-based devices)
 #
 # Note:
-# - Use https://dl.photoprism.org/docker/arm64/docker-compose.yml for running PhotoPrism on ARM64-based devices.
+# - Use https://dl.photoprism.org/docker/arm64/docker-compose.yml for running PhotoPrism on ARM64-based (64-bit) devices.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
 # - If you see Docker errors related to "cgroups", it may help to add the following to /boot/firmware/cmdline.txt:
@@ -116,9 +116,10 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - "./mariadb:/config" # never remove
+      - "./mariadb:/config" # Important, don't remove
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism

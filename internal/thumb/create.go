@@ -9,10 +9,10 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/disintegration/imaging"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/disintegration/imaging"
 )
 
 // Suffix returns the thumb cache file suffix.
@@ -86,6 +86,7 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 		return "", err
 	}
 
+	// Generate thumb cache filename.
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
 
 	if err != nil {
@@ -93,17 +94,15 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 		return "", err
 	}
 
-	img, err := imaging.Open(imageFilename)
+	// Load image from storage.
+	img, err := Open(imageFilename, orientation)
 
 	if err != nil {
-		log.Debugf("resample: %s in %s", err, txt.Quote(filepath.Base(imageFilename)))
+		log.Error(err)
 		return "", err
 	}
 
-	if orientation > 1 {
-		img = Rotate(img, orientation)
-	}
-
+	// Create thumb from image.
 	if _, err := Create(img, fileName, width, height, opts...); err != nil {
 		return "", err
 	}

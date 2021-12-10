@@ -8,6 +8,8 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
     exit 1
 fi
 
+GOPROXY=${GOPROXY:-'https://goproxy.io,direct'}
+
 echo "Removing existing multibuilder..."
 docker buildx rm multibuilder 2>/dev/null
 sleep 3
@@ -20,8 +22,10 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
     DOCKER_TAG=$(date -u +%Y%m%d)
     docker buildx build \
       --platform $2 \
+      --pull \
       --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg GOPROXY \
       -f docker/$1/Dockerfile \
       -t photoprism/$1:preview \
       --push .
@@ -29,8 +33,10 @@ else
     echo "Building 'photoprism/$1:$3'..."
     docker buildx build \
       --platform $2 \
+      --pull \
       --no-cache \
       --build-arg BUILD_TAG=$3 \
+      --build-arg GOPROXY \
       -f docker/$1/Dockerfile \
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 \

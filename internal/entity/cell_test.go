@@ -62,7 +62,7 @@ func TestLocation_Find(t *testing.T) {
 			t.Fatal("error expected")
 		}
 
-		assert.Equal(t, "maps: reverse lookup disabled", err.Error())
+		assert.Equal(t, "maps: location lookup disabled", err.Error())
 	})
 }
 

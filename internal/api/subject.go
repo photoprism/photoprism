@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -39,6 +40,13 @@ func GetSubject(router *gin.RouterGroup) {
 // PUT /api/v1/subjects/:uid
 func UpdateSubject(router *gin.RouterGroup) {
 	router.PUT("/subjects/:uid", func(c *gin.Context) {
+		if err := mutex.People.Start(); err != nil {
+			AbortBusy(c)
+			return
+		}
+
+		defer mutex.People.Stop()
+
 		s := Auth(SessionID(c), acl.ResourceSubjects, acl.ActionUpdate)
 
 		if s.Invalid() {

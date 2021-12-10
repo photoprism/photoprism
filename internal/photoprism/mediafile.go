@@ -958,14 +958,12 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if originalImg == nil {
-				img, err := imaging.Open(m.FileName())
+				img, err := thumb.Open(m.FileName(), m.Orientation())
 
 				if err != nil {
 					log.Debugf("media: %s in %s", err.Error(), txt.Quote(m.BaseName()))
 					return err
 				}
-
-				img = thumb.Rotate(img, m.Orientation())
 
 				originalImg = img
 			}

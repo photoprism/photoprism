@@ -10,7 +10,7 @@ func TestConfig_DatabaseDriver(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	driver := c.DatabaseDriver()
-	assert.Equal(t, SQLite, driver)
+	assert.Equal(t, SQLite3, driver)
 }
 
 func TestConfig_ParseDatabaseDsn(t *testing.T) {
@@ -73,7 +73,7 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	dsn := c.DatabaseDriver()
-	assert.Equal(t, SQLite, dsn)
+	assert.Equal(t, SQLite3, dsn)
 	c.options.DatabaseDsn = ""
 	c.options.DatabaseDriver = "MariaDB"
 	assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", c.DatabaseDsn())

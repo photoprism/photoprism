@@ -1,8 +1,9 @@
-FROM photoprism/development:20211203 as build
+FROM photoprism/development:20211209 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
+ARG GOPROXY
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"

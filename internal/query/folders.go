@@ -64,8 +64,8 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 
 // UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
 func UpdateFolderDates() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	case MySQL:

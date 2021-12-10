@@ -22,7 +22,7 @@ else
 endif
 
 all: dep build
-dep: dep-tensorflow dep-js dep-go
+dep: dep-tensorflow dep-js
 build: generate build-js build-go
 install: install-bin install-assets
 test: test-js test-go
@@ -209,6 +209,9 @@ docker-local:
 	scripts/docker-build.sh photoprism
 docker-pull:
 	docker pull photoprism/photoprism:latest
+docker-goproxy:
+	scripts/docker-build.sh goproxy $(DOCKER_TAG)
+	scripts/docker-push.sh goproxy $(DOCKER_TAG)
 docker-demo:
 	scripts/docker-build.sh demo $(DOCKER_TAG)
 	scripts/docker-push.sh demo $(DOCKER_TAG)

@@ -43,11 +43,11 @@ type LocationSource interface {
 
 func (l *Location) QueryApi(api string) error {
 	switch api {
-	case "places":
+	case places.ApiName:
 		return l.QueryPlaces()
 	}
 
-	return errors.New("maps: reverse lookup disabled")
+	return errors.New("maps: location lookup disabled")
 }
 
 func (l *Location) QueryPlaces() error {

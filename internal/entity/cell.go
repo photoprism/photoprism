@@ -74,7 +74,7 @@ func (m *Cell) Refresh(api string) (err error) {
 	cellMutex.Lock()
 	defer cellMutex.Unlock()
 
-	// Query geodata API.
+	// Retrieve location details from Places API.
 	if err = l.QueryApi(api); err != nil {
 		return err
 	}
@@ -150,6 +150,7 @@ func (m *Cell) Find(api string) error {
 	cellMutex.Lock()
 	defer cellMutex.Unlock()
 
+	// Retrieve location details from Places API.
 	if err := l.QueryApi(api); err != nil {
 		return err
 	}

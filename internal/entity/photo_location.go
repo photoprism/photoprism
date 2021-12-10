@@ -358,36 +358,37 @@ func (m *Photo) GetTakenAtLocal() time.Time {
 // UpdateLocation updates location and labels based on latitude and longitude.
 func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	if m.HasLatLng() {
-		var location = NewCell(m.PhotoLat, m.PhotoLng)
+		var loc = NewCell(m.PhotoLat, m.PhotoLng)
 
-		err := location.Find(GeoApi)
-
-		if err != nil {
+		if loc.Unknown() {
+			// Empty or unknown S2 cell id... should not happen, unless coordinates are invalid.
+			log.Warnf("photo: unknown cell id for lat %f, lng %f (uid %s)", m.PhotoLat, m.PhotoLng, m.PhotoUID)
+		} else if err := loc.Find(GeoApi); err != nil {
 			log.Errorf("photo: %s (find location)", err)
-		} else if location.Place == nil {
-			log.Warnf("photo: failed fetching geo data (uid %s, cell %s)", m.PhotoUID, location.ID)
-		} else if location.ID != UnknownLocation.ID {
-			changed := m.CellID != location.ID
+		} else if loc.Place == nil {
+			log.Warnf("photo: failed fetching geo data (uid %s, cell %s)", m.PhotoUID, loc.ID)
+		} else if loc.ID != UnknownLocation.ID {
+			changed := m.CellID != loc.ID
 
 			if changed {
-				log.Debugf("photo: changing location of %s from %s to %s", m.String(), m.CellID, location.ID)
+				log.Debugf("photo: changing location of %s from %s to %s", m.String(), m.CellID, loc.ID)
 				m.RemoveLocationLabels()
 			}
 
-			m.Cell = location
-			m.CellID = location.ID
-			m.Place = location.Place
-			m.PlaceID = location.PlaceID
-			m.PhotoCountry = location.CountryCode()
+			m.Cell = loc
+			m.CellID = loc.ID
+			m.Place = loc.Place
+			m.PlaceID = loc.PlaceID
+			m.PhotoCountry = loc.CountryCode()
 
 			if changed && m.TakenSrc != SrcManual {
 				m.UpdateTimeZone(m.GetTimeZone())
 			}
 
-			FirstOrCreateCountry(NewCountry(location.CountryCode(), location.CountryName()))
+			FirstOrCreateCountry(NewCountry(loc.CountryCode(), loc.CountryName()))
 
-			locCategory := location.Category()
-			keywords = append(keywords, location.Keywords()...)
+			locCategory := loc.Category()
+			keywords = append(keywords, loc.Keywords()...)
 
 			// Append category from reverse location lookup
 			if locCategory != "" {

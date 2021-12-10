@@ -118,8 +118,8 @@ func OrphanPhotos() (photos entity.Photos, err error) {
 
 // FixPrimaries tries to set a primary file for photos that have none.
 func FixPrimaries() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -155,15 +155,15 @@ func FixPrimaries() error {
 		}
 	}
 
-	log.Infof("index: updated primary files [%s]", time.Since(start))
+	log.Debugf("index: updated primary files [%s]", time.Since(start))
 
 	return nil
 }
 
 // FlagHiddenPhotos sets the quality score of photos without valid primary file to -1.
 func FlagHiddenPhotos() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
@@ -171,8 +171,18 @@ func FlagHiddenPhotos() error {
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL)").
 		Update("photo_quality", -1)
 
-	if res.RowsAffected > 0 {
-		log.Infof("index: flagged %s as hidden [%s]", english.Plural(int(res.RowsAffected), "broken photo", "broken photos"), time.Since(start))
+	switch DbDialect() {
+	case MySQL:
+		if res.RowsAffected > 0 {
+			log.Infof("index: flagged %s as hidden or missing [%s]", english.Plural(int(res.RowsAffected), "photo", "photos"), time.Since(start))
+		}
+	case SQLite3:
+		if res.RowsAffected > 0 {
+			log.Debugf("index: flagged %s as hidden or missing [%s]", english.Plural(int(res.RowsAffected), "photo", "photos"), time.Since(start))
+		}
+	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
+		return nil
 	}
 
 	return res.Error

@@ -446,10 +446,12 @@ func (c *Config) LogLevel() logrus.Level {
 
 // Shutdown services and workers.
 func (c *Config) Shutdown() {
+	mutex.People.Cancel()
 	mutex.MainWorker.Cancel()
 	mutex.ShareWorker.Cancel()
 	mutex.SyncWorker.Cancel()
 	mutex.MetaWorker.Cancel()
+	mutex.FacesWorker.Cancel()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
@@ -473,8 +475,8 @@ func (c *Config) Workers() int {
 		cores = cpuid.CPU.PhysicalCores
 	}
 
-	// Limit number of workers when using SQLite to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
+	// Limit number of workers when using SQLite3 to avoid database locking issues.
+	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
 		return 4
 	}
 

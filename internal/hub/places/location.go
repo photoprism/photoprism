@@ -25,6 +25,7 @@ type Location struct {
 	Cached      bool    `json:"-"`
 }
 
+// ApiName is the backend API name.
 const ApiName = "places"
 
 var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
@@ -36,18 +37,30 @@ var Retries = 3
 var RetryDelay = 33 * time.Millisecond
 var client = &http.Client{Timeout: 60 * time.Second}
 
+// FindLocation retrieves location details from the backend API.
 func FindLocation(id string) (result Location, err error) {
-	if len(id) > 16 || len(id) == 0 {
-		return result, fmt.Errorf("invalid cell %s (%s)", id, ApiName)
+	// Normalize S2 Cell ID.
+	id = s2.NormalizeToken(id)
+
+	// Valid?
+	if len(id) == 0 {
+		return result, fmt.Errorf("empty cell id")
+	} else if n := len(id); n < 4 || n > 16 {
+		return result, fmt.Errorf("invalid cell id %s", txt.Quote(id))
 	}
 
+	// Remember start time.
 	start := time.Now()
+
+	// Convert S2 Cell ID to latitude and longitude.
 	lat, lng := s2.LatLng(id)
 
+	// Return if latitude and longitude are null.
 	if lat == 0.0 || lng == 0.0 {
-		return result, fmt.Errorf("skipping lat %f, lng %f (%s)", lat, lng, ApiName)
+		return result, fmt.Errorf("skipping lat %f, lng %f", lat, lng)
 	}
 
+	// Location details cached?
 	if hit, ok := cache.Get(id); ok {
 		log.Tracef("places: cache hit for lat %f, lng %f", lat, lng)
 		cached := hit.(Location)
@@ -58,11 +71,13 @@ func FindLocation(id string) (result Location, err error) {
 	// Compose request URL.
 	url := fmt.Sprintf(ReverseLookupURL, id)
 
+	// Log request URL.
 	log.Tracef("places: sending request to %s", url)
 
 	// Create GET request instance.
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
+	// Ok?
 	if err != nil {
 		log.Errorf("places: %s", err.Error())
 		return result, err
@@ -98,10 +113,10 @@ func FindLocation(id string) (result Location, err error) {
 
 	// Failed?
 	if err != nil {
-		log.Errorf("places: %s (http request)", err.Error())
+		log.Errorf("places: %s (http request failed)", err.Error())
 		return result, err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("request failed with code %d (%s)", r.StatusCode, ApiName)
+		err = fmt.Errorf("request failed with code %d", r.StatusCode)
 		return result, err
 	}
 
@@ -109,78 +124,93 @@ func FindLocation(id string) (result Location, err error) {
 	err = json.NewDecoder(r.Body).Decode(&result)
 
 	if err != nil {
-		log.Errorf("places: %s (decode json)", err.Error())
+		log.Errorf("places: %s (decode json failed)", err.Error())
 		return result, err
 	}
 
 	if result.ID == "" {
-		return result, fmt.Errorf("no result for %s (%s)", id, ApiName)
+		return result, fmt.Errorf("no result for %s", id)
 	}
 
 	cache.SetDefault(id, result)
-	log.Tracef("places: cached cell %s [%s]", id, time.Since(start))
+	log.Tracef("places: cached cell %s [%s]", txt.Quote(id), time.Since(start))
 
 	result.Cached = false
 
 	return result, nil
 }
 
+// CellID returns the S2 cell identifier string.
 func (l Location) CellID() string {
 	return l.ID
 }
 
+// PlaceID returns the place identifier string.
 func (l Location) PlaceID() string {
 	return l.Place.PlaceID
 }
 
+// Name returns the location name if any.
 func (l Location) Name() (result string) {
 	return strings.SplitN(l.LocName, "/", 2)[0]
 }
 
+// Street returns the location street if any.
 func (l Location) Street() (result string) {
 	return strings.SplitN(l.LocStreet, "/", 2)[0]
 }
 
+// Postcode returns the location postcode if any.
 func (l Location) Postcode() (result string) {
 	return strings.SplitN(l.LocPostcode, "/", 2)[0]
 }
 
+// Category returns the location category if any.
 func (l Location) Category() (result string) {
 	return l.LocCategory
 }
 
+// Label returns the location label.
 func (l Location) Label() (result string) {
 	return l.Place.LocLabel
 }
 
+// City returns the location address city name.
 func (l Location) City() (result string) {
 	return l.Place.LocCity
 }
 
+// District returns the location address district name.
 func (l Location) District() (result string) {
 	return l.Place.LocDistrict
 }
 
+// CountryCode returns the location address country code.
 func (l Location) CountryCode() (result string) {
 	return l.Place.LocCountry
 }
 
+// State returns the location address state name.
 func (l Location) State() (result string) {
 	return txt.NormalizeState(l.Place.LocState, l.CountryCode())
 }
 
+// Latitude returns the location position latitude.
 func (l Location) Latitude() (result float64) {
 	return l.LocLat
 }
 
+// Longitude returns the location position longitude.
 func (l Location) Longitude() (result float64) {
 	return l.LocLng
 }
 
+// Keywords returns location keywords if any.
 func (l Location) Keywords() (result []string) {
 	return txt.UniqueWords(txt.Words(l.Place.LocKeywords))
 }
 
+// Source returns the backend API name.
 func (l Location) Source() string {
 	return "places"
 }

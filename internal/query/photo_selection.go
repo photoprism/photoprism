@@ -19,7 +19,7 @@ func PhotoSelection(f form.Selection) (results entity.Photos, err error) {
 	switch DbDialect() {
 	case MySQL:
 		concat = "CONCAT(a.path, '/%')"
-	case SQLite:
+	case SQLite3:
 		concat = "a.path || '/%'"
 	default:
 		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())
@@ -59,7 +59,7 @@ func FileSelection(f form.Selection) (results entity.Files, err error) {
 	switch DbDialect() {
 	case MySQL:
 		concat = "CONCAT(a.path, '/%')"
-	case SQLite:
+	case SQLite3:
 		concat = "a.path || '/%'"
 	default:
 		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())

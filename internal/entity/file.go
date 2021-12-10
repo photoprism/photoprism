@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -32,46 +32,47 @@ type Files []File
 
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
-	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`
-	Photo           *Photo        `json:"-" yaml:"-"`
-	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
-	PhotoUID        string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
-	InstanceID      string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
-	FileUID         string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName        string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot        string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
-	OriginalName    string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
-	FileHash        string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
-	FileSize        int64         `json:"Size" yaml:"Size,omitempty"`
-	FileCodec       string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
-	FileType        string        `gorm:"type:VARBINARY(32)" json:"Type" yaml:"Type,omitempty"`
-	FileMime        string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
-	FilePrimary     bool          `json:"Primary" yaml:"Primary,omitempty"`
-	FileSidecar     bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
-	FileMissing     bool          `json:"Missing" yaml:"Missing,omitempty"`
-	FilePortrait    bool          `json:"Portrait" yaml:"Portrait,omitempty"`
-	FileVideo       bool          `json:"Video" yaml:"Video,omitempty"`
-	FileDuration    time.Duration `json:"Duration" yaml:"Duration,omitempty"`
-	FileWidth       int           `json:"Width" yaml:"Width,omitempty"`
-	FileHeight      int           `json:"Height" yaml:"Height,omitempty"`
-	FileOrientation int           `json:"Orientation" yaml:"Orientation,omitempty"`
-	FileProjection  string        `gorm:"type:VARBINARY(32);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
-	FileAspectRatio float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
-	FileMainColor   string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
-	FileColors      string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
-	FileLuminance   string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
-	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`
-	FileChroma      uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
-	FileError       string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
-	ModTime         int64         `json:"ModTime" yaml:"-"`
-	CreatedAt       time.Time     `json:"CreatedAt" yaml:"-"`
-	CreatedIn       int64         `json:"CreatedIn" yaml:"-"`
-	UpdatedAt       time.Time     `json:"UpdatedAt" yaml:"-"`
-	UpdatedIn       int64         `json:"UpdatedIn" yaml:"-"`
-	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-	Share           []FileShare   `json:"-" yaml:"-"`
-	Sync            []FileSync    `json:"-" yaml:"-"`
-	markers         *Markers
+	ID               uint          `gorm:"primary_key" json:"-" yaml:"-"`
+	Photo            *Photo        `json:"-" yaml:"-"`
+	PhotoID          uint          `gorm:"index;" json:"-" yaml:"-"`
+	PhotoUID         string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
+	InstanceID       string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	FileUID          string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	FileName         string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileRoot         string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	FileHash         string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
+	FileSize         int64         `json:"Size" yaml:"Size,omitempty"`
+	FileCodec        string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
+	FileType         string        `gorm:"type:VARBINARY(32)" json:"Type" yaml:"Type,omitempty"`
+	FileMime         string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
+	FilePrimary      bool          `json:"Primary" yaml:"Primary,omitempty"`
+	FileSidecar      bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
+	FileMissing      bool          `json:"Missing" yaml:"Missing,omitempty"`
+	FilePortrait     bool          `json:"Portrait" yaml:"Portrait,omitempty"`
+	FileVideo        bool          `json:"Video" yaml:"Video,omitempty"`
+	FileDuration     time.Duration `json:"Duration" yaml:"Duration,omitempty"`
+	FileWidth        int           `json:"Width" yaml:"Width,omitempty"`
+	FileHeight       int           `json:"Height" yaml:"Height,omitempty"`
+	FileOrientation  int           `json:"Orientation" yaml:"Orientation,omitempty"`
+	FileProjection   string        `gorm:"type:VARBINARY(32);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileAspectRatio  float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
+	FileColorProfile string        `gorm:"type:VARBINARY(32);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
+	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
+	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
+	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
+	FileDiff         uint32        `json:"Diff" yaml:"Diff,omitempty"`
+	FileChroma       uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
+	FileError        string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
+	ModTime          int64         `json:"ModTime" yaml:"-"`
+	CreatedAt        time.Time     `json:"CreatedAt" yaml:"-"`
+	CreatedIn        int64         `json:"CreatedIn" yaml:"-"`
+	UpdatedAt        time.Time     `json:"UpdatedAt" yaml:"-"`
+	UpdatedIn        int64         `json:"UpdatedIn" yaml:"-"`
+	DeletedAt        *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	Share            []FileShare   `json:"-" yaml:"-"`
+	Sync             []FileSync    `json:"-" yaml:"-"`
+	markers          *Markers
 }
 
 // TableName returns the entity database table name.
@@ -467,14 +468,29 @@ func (m *File) Panorama() bool {
 	return m.Projection() != ProjDefault || (m.FileWidth/m.FileHeight) >= 2
 }
 
-// Projection returns the panorama projection type string.
+// Projection returns the panorama projection name if any.
 func (m *File) Projection() string {
 	return SanitizeTypeString(m.FileProjection)
 }
 
-// SetProjection sets the panorama projection type string.
-func (m *File) SetProjection(projType string) {
-	m.FileProjection = SanitizeTypeString(projType)
+// SetProjection sets the panorama projection name.
+func (m *File) SetProjection(name string) {
+	m.FileProjection = SanitizeTypeString(name)
+}
+
+// ColorProfile returns the ICC color profile name if any.
+func (m *File) ColorProfile() string {
+	return SanitizeTypeCaseSensitive(m.FileColorProfile)
+}
+
+// HasColorProfile tests if the file has a matching color profile.
+func (m *File) HasColorProfile(profile colors.Profile) bool {
+	return profile.Equal(m.FileColorProfile)
+}
+
+// SetColorProfile sets the ICC color profile name such as "Display P3".
+func (m *File) SetColorProfile(name string) {
+	m.FileColorProfile = SanitizeTypeCaseSensitive(name)
 }
 
 // AddFaces adds face markers to the file.
