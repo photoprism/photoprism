@@ -48,7 +48,7 @@ elif [[ $3 =~ $NUMERIC ]]; then
       -t photoprism/$1:$3 \
       --push .
 else
-    echo "Building 'photoprism/$1:$3'..."
+    echo "Building 'photoprism/$1:$3' in docker/${1/-//}$4/Dockerfile..."
     DOCKER_TAG=$(date -u +%Y%m%d)
     docker buildx build \
       --platform $2 \

@@ -36,7 +36,7 @@ elif [[ $2 =~ $NUMERIC ]]; then
       -f docker/${1/-//}/Dockerfile .
     echo "Done"
 else
-    echo "Building 'photoprism/$1:$2'...";
+    echo "Building 'photoprism/$1:$2' in docker/${1/-//}$3/Dockerfile...";
     DOCKER_TAG=$(date -u +%Y%m%d)
     docker build \
       --no-cache \
