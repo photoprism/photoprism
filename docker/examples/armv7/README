@@ -5,7 +5,7 @@ servers apply:
 
   https://docs.photoprism.org/getting-started/docker-compose/
 
-Use `photoprism/photoprism:armv7` for the stable release or `photoprism/photoprism:armv7-preview` for testing
+Pull from `photoprism/photoprism:armv7` for the stable release and `photoprism/photoprism:armv7-preview` for testing
 preview builds. Make sure to explicitly pull the most recent image from Docker Hub. Existing users are advised to
 update their `docker-compose.yml` config based on our example:
 
