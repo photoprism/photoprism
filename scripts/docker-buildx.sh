@@ -26,6 +26,7 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
       --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
+      --build-arg GODEBUG \
       -f docker/$1/Dockerfile \
       -t photoprism/$1:preview \
       --push .
@@ -37,6 +38,7 @@ else
       --no-cache \
       --build-arg BUILD_TAG=$3 \
       --build-arg GOPROXY \
+      --build-arg GODEBUG \
       -f docker/$1/Dockerfile \
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 \
