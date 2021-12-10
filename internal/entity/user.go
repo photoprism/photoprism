@@ -142,6 +142,15 @@ func (m *User) Save() error {
 	return Db().Save(m).Error
 }
 
+// Save and Validate entity properties.
+func (m *User) SaveAndValidate() error {
+	err := m.Validate()
+	if err != nil {
+		return err
+	}
+	return Db().Save(m).Error
+}
+
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *User) BeforeCreate(tx *gorm.DB) error {
 	if rnd.IsUID(m.UserUID, 'u') {
@@ -184,12 +193,7 @@ func CreateOrUpdateExternalUser(m *User, updateRole bool) (*User, error) {
 			mustUpdate = true
 		}
 		if mustUpdate {
-			err := result.Validate()
-			if err != nil {
-				log.Errorf("user: %s", err)
-				return nil, err
-			}
-			err = result.Save()
+			err = result.SaveAndValidate()
 			if err != nil {
 				log.Errorf("user: %s", err)
 				return nil, err

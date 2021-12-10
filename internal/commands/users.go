@@ -271,11 +271,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			u.RoleAdmin = uc.Admin
 		}
 
-		if err := u.Validate(); err != nil {
-			return err
-		}
-
-		if err := u.Save(); err != nil {
+		if err := u.SaveAndValidate(); err != nil {
 			return err
 		}
 
