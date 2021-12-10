@@ -1,30 +1,20 @@
-# Running PhotoPrism on a Raspberry Pi 3 / 4 or other ARM64-based devices (64-bit)
+# Running PhotoPrism on Modern ARM64-based Devices (64-bit)
 
-Our stable version and development preview now come as a single multi-arch image for AMD64 and ARM64:
+Our stable version and development preview now come as a single multi-arch image for AMD64 and ARM64 (64-bit).
 
-  https://hub.docker.com/r/photoprism/photoprism
+Stable Release     : photoprism/photoprism:latest
+Development Preview: photoprism/photoprism:preview
+MariaDB            : arm64v8/mariadb:10.6
 
 If your device meets the system requirements, mostly the same installation instructions as for regular Linux
-servers apply:
+servers apply: https://docs.photoprism.org/getting-started/docker-compose/
 
-  https://docs.photoprism.org/getting-started/docker-compose/
-
-Pull from `photoprism/photoprism:latest` for the stable release and `photoprism/photoprism:preview` for testing
-preview builds. Make sure to explicitly pull the most recent image from Docker Hub. Existing users are advised to
-update their `docker-compose.yml` config based on our example:
-
-  https://dl.photoprism.org/docker/arm64/docker-compose.yml
-
-To ensure compatibility with 64-bit Docker images, you have to boot your Pi with
-the "arm_64bit=1" flag in its "config.txt":
-
-  https://www.raspberrypi.org/documentation/installation/installing-images/README.md
-
+To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must boot with the "arm_64bit=1"
+flag in its config.txt file (https://www.raspberrypi.org/documentation/installation/installing-images/README.md).
 An "exec format error" will occur otherwise.
 
-Alternatively, you can install UbuntuDockerPi - it's a 64-bit Ubuntu with Docker pre-configured:
-
-  https://github.com/guysoft/UbuntuDockerPi
+Alternatively, you can run your device with [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi).
+It's a 64-bit Ubuntu Server with Docker pre-configured.
 
 ### System Requirements ###
 
@@ -58,5 +48,13 @@ Alternatively, you can install UbuntuDockerPi - it's a 64-bit Ubuntu with Docker
     `PHOTOPRISM_WORKERS` to a reasonably small value in `docker-compose.yml` (depending on the performance of the server).
     As a measure of last resort, you may disable using TensorFlow for image classification and facial recognition.
 
-Big thank you to [Guy Sheffer](https://github.com/guysoft)
-for [building](https://github.com/photoprism/photoprism/issues/109) this!
+### Getting Updates ###
+
+If an old version is running on your device and doesn't update, you need to [explicitly pull](updates.md)
+the latest image from [Docker Hub](https://hub.docker.com/r/photoprism/photoprism). Assuming that `:latest`
+means new versions are automatically downloaded is a common mistake for users new to Docker.
+
+### Credits ###
+
+A big thank you to [Guy Sheffer](https://github.com/guysoft) for helping us [build](https://github.com/photoprism/photoprism/issues/109)
+a Raspberry Pi version!

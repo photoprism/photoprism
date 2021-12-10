@@ -110,7 +110,7 @@ services:
   ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
-    image: lscr.io/linuxserver/mariadb:latest
+    image: linuxserver/mariadb:latest
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
