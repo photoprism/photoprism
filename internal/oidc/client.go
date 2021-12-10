@@ -108,8 +108,9 @@ func state() string {
 	return rnd.UUID()
 }
 
-func (c *Client) AuthUrlHandler() http.HandlerFunc {
-	return rp.AuthURLHandler(state, c)
+func (c *Client) AuthCodeUrlHandler(ctx *gin.Context) {
+	handle := rp.AuthURLHandler(state, c)
+	handle(ctx.Writer, ctx.Request)
 }
 
 func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
@@ -117,7 +118,6 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 
 	userinfoClosure := func(w http.ResponseWriter, r *http.Request, tokens *oidc.Tokens, state string, rp rp.RelyingParty, info oidc.UserInfo) {
 		log.Debugf("oidc: UserInfo: %s %s %s %s %s", info.GetEmail(), info.GetSubject(), info.GetNickname(), info.GetName(), info.GetPreferredUsername())
-
 		userinfo = info
 	}
 
@@ -143,15 +143,4 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	}
 
 	return userinfo, nil
-}
-
-func (c *Client) IsAvailable() error {
-	if c == nil {
-		return errors.New("oidc: not initialized")
-	}
-	_, err := client.Discover(c.Issuer(), httpclient.Client(c.debug))
-	if err != nil {
-		return err
-	}
-	return nil
 }

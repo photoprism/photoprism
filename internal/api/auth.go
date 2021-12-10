@@ -29,10 +29,7 @@ func AuthEndpoints(router *gin.RouterGroup) {
 			callbackError(c, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		handle := openIdConnect.AuthUrlHandler()
-		handle(c.Writer, c.Request)
-		return
+		openIdConnect.AuthCodeUrlHandler(c)
 	})
 
 	router.GET(oidc.RedirectPath, func(c *gin.Context) {
