@@ -23,7 +23,7 @@ else
 endif
 
 all: dep build
-dep: dep-tensorflow dep-js
+dep: dep-tensorflow dep-js dep-go
 build: generate build-js build-go
 install: install-bin install-assets
 test: test-js test-go
@@ -211,9 +211,9 @@ docker-preview:
 docker-release:
 	scripts/docker-buildx.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-preview-armv7:
-	scripts/docker-buildx.sh photoprism linux/arm preview-armv7
+	scripts/docker-buildx.sh photoprism linux/arm armv7-preview
 docker-release-armv7:
-	scripts/docker-buildx.sh photoprism linux/arm $(DOCKER_TAG)-armv7
+	scripts/docker-buildx.sh photoprism linux/arm armv7
 docker-local:
 	scripts/docker-build.sh photoprism
 docker-pull:
