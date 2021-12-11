@@ -1,6 +1,6 @@
 # A big thank you to all our sponsors! #
 
-## Sponsorship Options ##
+We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
 - [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
