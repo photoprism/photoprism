@@ -1,9 +1,13 @@
-# Thank you for sponsoring PhotoPrism! #
+# A big thank you to all our sponsors! #
 
-The most effective way to [support us](https://docs.photoprism.org/funding/) is through [Patreon](https://www.patreon.com/photoprism) in €
-and [GitHub Sponsors](https://github.com/sponsors/photoprism) in USD.
-GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
-You're welcome to [contact us](https://photoprism.app/contact) for other options.
+## Sponsorship Options ##
+
+- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
+- [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
+- For next year, we're working on a Stripe integration, so you can sign up directly in the app without having a Patreon or GitHub account.
+- You're welcome to [contact us](https://photoprism.app/contact) for other options.
+
+Visit https://docs.photoprism.org/funding/ to learn more.
 
 ## Platinum Sponsors ##
 
