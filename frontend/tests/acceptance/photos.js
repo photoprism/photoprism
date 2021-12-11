@@ -96,8 +96,8 @@ test.meta("testID", "photos-003")(
     await page.selectPhotoFromUID(SecondPhoto);
     await page.editSelected();
     await t
-      .typeText(Selector('input[aria-label="Latitude"]'), "9.999")
-      .typeText(Selector('input[aria-label="Longitude"]'), "9.999");
+      .typeText(Selector('input[aria-label="Latitude"]'), "9.999", { replace: true })
+      .typeText(Selector('input[aria-label="Longitude"]'), "9.999", { replace: true });
     if (t.browser.platform === "mobile") {
       await t.click(Selector("button.action-apply")).click(Selector("button.action-close"));
     } else {
