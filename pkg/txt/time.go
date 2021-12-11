@@ -9,6 +9,7 @@ import (
 var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2,}")
 var DatePathRegexp = regexp.MustCompile("\\D\\d{4}/\\d{1,2}/?\\d*")
 var DateTimeRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2,}")
+var DateTimeCompactRegex = regexp.MustCompile("\\D([1-9][0-9]{3})(\\d{2})(\\d{2})[-_T](\\d{2})(\\d{2})(\\d{2})[-_]")
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 var YearRegexp = regexp.MustCompile("\\d{4,5}")
 var IsDateRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}")
@@ -141,7 +142,33 @@ func Time(s string) (result time.Time) {
 				0,
 				time.UTC)
 		}
-	}
+	} else if found := DateTimeCompactRegex.Find(b); len(found) > 0 { // Is it a filename like "20130518_142022_3D657EBD.jpg"?
+		n := DateTimeCompactRegex.FindSubmatch(b)
+
+		year := Int(string(n[1]))
+		month := Int(string(n[2]))
+		day := Int(string(n[3]))
+		hour := Int(string(n[4]))
+		min := Int(string(n[5]))
+		sec := Int(string(n[6]))
+
+		if year < YearMin || year > YearMax || month < MonthMin || month > MonthMax || day < DayMin || day > DayMax {
+			return result
+		}
+
+		if hour < HourMin || hour > HourMax || min < MinMin || min > MinMax || sec < SecMin || sec > SecMax {
+			return result
+		}
+
+		result = time.Date(
+			year,
+			time.Month(month),
+			day,
+			hour,
+			min,
+			sec,
+			0,
+			time.UTC)	}
 
 	return result.UTC()
 }

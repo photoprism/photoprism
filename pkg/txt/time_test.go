@@ -44,8 +44,8 @@ func TestTime(t *testing.T) {
 
 	t.Run("20130518_142022_3D657EBD.jpg", func(t *testing.T) {
 		result := Time("20130518_142022_3D657EBD.jpg")
-		//assert.False(t, result.IsZero())
-		assert.True(t, result.IsZero())
+		assert.False(t, result.IsZero())
+		assert.Equal(t, "2013-05-18 14:20:22 +0000 UTC", result.String())
 	})
 
 	t.Run("telegram_2020_01_30_09_57_18.jpg", func(t *testing.T) {
