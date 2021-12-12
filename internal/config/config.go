@@ -40,7 +40,7 @@ var LowMem = false
 var TotalMem uint64
 
 const MsgSponsor = "Help us make a difference and become a sponsor today!"
-const SignUpURL = "https://docs.photoprism.org/funding/"
+const SignUpURL = "https://docs.photoprism.app/funding/"
 const MsgSignUp = "Visit " + SignUpURL + " to learn more."
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
 	" we unfortunately can only offer it to sponsors."

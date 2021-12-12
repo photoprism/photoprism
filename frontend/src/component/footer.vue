@@ -11,7 +11,7 @@
         </v-flex>
 
         <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-xs-left text-sm-right">
-          <a href="https://docs.photoprism.org/credits/"
+          <a href="https://docs.photoprism.app/credits/"
              target="_blank">Thank you</a> to everyone who made this possible!
           <br>
           <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"

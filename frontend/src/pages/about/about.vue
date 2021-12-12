@@ -50,7 +50,7 @@
         <router-link to="/about/license">
           <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width:100%;"/>
         </router-link>
-        <a target="_blank" href="https://docs.photoprism.org/" rel="nofollow"><img :src="$config.staticUri + '/img/badge-docs.svg'"
+        <a target="_blank" href="https://docs.photoprism.app/" rel="nofollow"><img :src="$config.staticUri + '/img/badge-docs.svg'"
                                                                                    alt="Documentation"
                                                                                    style="max-width:100%;"></a>
         <a target="_blank" href="https://gitter.im/browseyourlife/community" rel="nofollow"><img

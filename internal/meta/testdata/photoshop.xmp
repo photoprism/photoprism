@@ -134,7 +134,7 @@
          <exif:GPSAltitude>0/100</exif:GPSAltitude>
          <exif:GPSTimeStamp>2020-01-01T16:28:22Z</exif:GPSTimeStamp>
          <xmpRights:Marked>False</xmpRights:Marked>
-         <xmpRights:WebStatement>http://docs.photoprism.org/en/latest/contact/</xmpRights:WebStatement>
+         <xmpRights:WebStatement>http://docs.photoprism.app/en/latest/contact/</xmpRights:WebStatement>
          <Iptc4xmpCore:CreatorContactInfo rdf:parseType="Resource">
             <Iptc4xmpCore:CiAdrExtadr>Zimmermannstr. 37</Iptc4xmpCore:CiAdrExtadr>
             <Iptc4xmpCore:CiAdrCity>Berlin</Iptc4xmpCore:CiAdrCity>

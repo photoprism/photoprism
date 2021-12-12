@@ -10,7 +10,7 @@ MariaDB            : linuxserver/mariadb:latest
 Pay close attention to changed directory and environment variable names.
 
 If your device meets the system requirements, mostly the same installation instructions as for regular Linux
-servers apply otherwise: https://docs.photoprism.org/getting-started/docker-compose/
+servers apply otherwise: https://docs.photoprism.app/getting-started/docker-compose/
 
 ### System Requirements ###
 
@@ -40,7 +40,7 @@ servers apply otherwise: https://docs.photoprism.org/getting-started/docker-comp
 
 !!! Reducing System Load
     If you're running out of memory - or other system resources - while indexing, try reducing the
-    [number of workers](https://docs.photoprism.org/getting-started/config-options/) by setting
+    [number of workers](https://docs.photoprism.app/getting-started/config-options/) by setting
     `PHOTOPRISM_WORKERS` to a reasonably small value in `docker-compose.yml` (depending on the performance of the server).
     As a measure of last resort, you may disable using TensorFlow for image classification and facial recognition.
 

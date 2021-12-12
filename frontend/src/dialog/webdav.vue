@@ -39,7 +39,7 @@
             type="info"
             outline
         >
-          <a style="color: inherit;" href="https://docs.photoprism.org/user-guide/sync/webdav/" target="_blank">
+          <a style="color: inherit;" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
         </v-alert>

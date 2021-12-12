@@ -15,6 +15,6 @@ THANK YOU! 💐
 
 Our Troubleshooting Guide helps you quickly find and fix common problems:
 
-  https://docs.photoprism.org/getting-started/troubleshooting/
+  https://docs.photoprism.app/getting-started/troubleshooting/
 
 Sponsors receive direct technical support via email: https://photoprism.app/contact 📬
