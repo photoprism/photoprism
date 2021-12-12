@@ -6,8 +6,6 @@ LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
-ARG GOPROXY
-ARG GODEBUG
 
 # Set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
