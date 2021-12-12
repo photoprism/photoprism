@@ -8,14 +8,14 @@ import (
 )
 
 func TestNewSettings(t *testing.T) {
-	c := NewSettings()
+	c := NewSettings(TestConfig())
 
 	assert.IsType(t, new(Settings), c)
 }
 
 func TestSettings_Load(t *testing.T) {
 	t.Run("existing filename", func(t *testing.T) {
-		c := NewSettings()
+		c := NewSettings(TestConfig())
 
 		if err := c.Load("testdata/settings.yml"); err != nil {
 			t.Fatal(err)
@@ -25,7 +25,7 @@ func TestSettings_Load(t *testing.T) {
 		assert.Equal(t, "de", c.UI.Language)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
-		c := NewSettings()
+		c := NewSettings(TestConfig())
 
 		err := c.Load("testdata/settings_123.yml")
 
@@ -37,7 +37,7 @@ func TestSettings_Load(t *testing.T) {
 }
 func TestSettings_Save(t *testing.T) {
 	t.Run("existing filename", func(t *testing.T) {
-		c := NewSettings()
+		c := NewSettings(TestConfig())
 
 		assert.Equal(t, "default", c.UI.Theme)
 		assert.Equal(t, "en", c.UI.Language)
@@ -53,7 +53,7 @@ func TestSettings_Save(t *testing.T) {
 		}
 	})
 	t.Run("not existing filename", func(t *testing.T) {
-		c := NewSettings()
+		c := NewSettings(TestConfig())
 		c.UI.Theme = "onyx"
 		c.UI.Language = "de"
 
@@ -71,7 +71,7 @@ func TestSettings_Save(t *testing.T) {
 }
 
 func TestSettings_Stacks(t *testing.T) {
-	c := NewSettings()
+	c := NewSettings(TestConfig())
 	assert.False(t, c.StackSequences())
 	assert.True(t, c.StackUUID())
 	assert.True(t, c.StackMeta())

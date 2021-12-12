@@ -5,6 +5,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 // GlobalFlags describes global command-line parameters and flags.
@@ -219,6 +220,18 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
 	cli.StringFlag{
+		Name:   "default-theme",
+		Usage:  "standard user interface theme `NAME`",
+		Hidden: true,
+		EnvVar: "PHOTOPRISM_DEFAULT_THEME",
+	},
+	cli.StringFlag{
+		Name:   "default-locale",
+		Usage:  "standard user interface language `CODE`",
+		Value:  i18n.Default.Locale(),
+		EnvVar: "PHOTOPRISM_DEFAULT_LOCALE",
+	},
+	cli.StringFlag{
 		Name:   "app-icon",
 		Usage:  "application `ICON` (logo, app, crisp, mint, bold)",
 		EnvVar: "PHOTOPRISM_APP_ICON",
@@ -248,7 +261,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-author",
-		Usage:  "site `COPYRIGHT`, artist, or owner name",
+		Usage:  "`COPYRIGHT`, artist, or owner name",
 		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
 	},
 	cli.StringFlag{

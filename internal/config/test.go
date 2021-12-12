@@ -124,7 +124,7 @@ func NewTestConfig() *Config {
 		token:   rnd.Token(8),
 	}
 
-	s := NewSettings()
+	s := NewSettings(c)
 
 	if err := os.MkdirAll(c.ConfigPath(), os.ModePerm); err != nil {
 		log.Fatalf("config: %s", err.Error())

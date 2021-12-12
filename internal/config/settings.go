@@ -99,13 +99,13 @@ type Settings struct {
 }
 
 // NewSettings creates a new Settings instance.
-func NewSettings() *Settings {
+func NewSettings(c *Config) *Settings {
 	return &Settings{
 		UI: UISettings{
 			Scrollbar: true,
 			Zoom:      false,
-			Theme:     "default",
-			Language:  i18n.Default.Locale(),
+			Theme:     c.DefaultTheme(),
+			Language:  c.DefaultLocale(),
 		},
 		Templates: TemplateSettings{
 			Default: "index.tmpl",
@@ -218,7 +218,7 @@ func (s *Settings) Save(fileName string) error {
 
 // initSettings initializes user settings from a config file.
 func (c *Config) initSettings() {
-	c.settings = NewSettings()
+	c.settings = NewSettings(c)
 	fileName := c.SettingsFile()
 
 	if err := c.settings.Load(fileName); err == nil {
