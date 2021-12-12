@@ -273,11 +273,19 @@ func (m *Face) RefreshPhotos() error {
 		return fmt.Errorf("empty face id")
 	}
 
-	update := fmt.Sprintf(
-		"UPDATE photos SET checked_at = NULL WHERE id IN (SELECT f.photo_id FROM files f JOIN %s m ON m.file_uid = f.file_uid WHERE m.face_id = ?)",
-		Marker{}.TableName())
+	var err error
+	switch DbDialect() {
+	case MySQL:
+		update := fmt.Sprintf(`UPDATE photos p JOIN files f ON f.photo_id = p.id JOIN %s m ON m.file_uid = f.file_uid
+			SET p.checked_at = NULL WHERE m.face_id = ?`, Marker{}.TableName())
+		err = UnscopedDb().Exec(update, m.ID).Error
+	default:
+		update := fmt.Sprintf(`UPDATE photos SET checked_at = NULL WHERE id IN (SELECT f.photo_id FROM files f
+			JOIN %s m ON m.file_uid = f.file_uid WHERE m.face_id = ?)`, Marker{}.TableName())
+		err = UnscopedDb().Exec(update, m.ID).Error
+	}
 
-	return UnscopedDb().Exec(update, m.ID).Error
+	return err
 }
 
 // Hide hides the face by default.
