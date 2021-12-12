@@ -15,21 +15,21 @@ You can run it at home, on a private server, or in the cloud.
 
 ![](https://dl.photoprism.org/img/ui/desktop-1000px.jpg)
 
-To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
+To get a first impression, you're welcome to play with our public demo at [demo.photoprism.app](https://demo.photoprism.app/).
 
 ## Feature Overview ##
 
-* Browse [all your photos](https://docs.photoprism.org/user-guide/organize/browse/) and [videos](https://demo.photoprism.org/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.org/user-guide/settings/library/)
-* Easily find specific pictures using [powerful search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
+* Browse [all your photos](https://docs.photoprism.org/user-guide/organize/browse/) and [videos](https://demo.photoprism.app/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.org/user-guide/settings/library/)
+* Easily find specific pictures using [powerful search filters](https://demo.photoprism.app/browse?view=cards&q=flower%20color%3Ared)
 * Privacy-friendly: No data is ever sent to Google, Amazon, Facebook, or Apple unless you explicitly upload files to one of their services 🔐
-* Recognizes [the faces of your family and friends](https://demo.photoprism.org/people)
-* [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location
-* [Play Live Photos](https://demo.photoprism.org/live) by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
-* Since the [User Interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
+* Recognizes [the faces of your family and friends](https://demo.photoprism.app/people)
+* [Automatic classification](https://demo.photoprism.app/labels) of pictures based on their content and location
+* [Play Live Photos](https://demo.photoprism.app/live) by hovering over them in [albums](https://demo.photoprism.app/albums) and [search results](https://demo.photoprism.app/browse?view=cards&q=type%3Alive)
+* Since the [User Interface](https://demo.photoprism.app/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
-* Includes four high-resolution [World Maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips
+* Includes four high-resolution [World Maps](https://demo.photoprism.app/places) to bring back the memories of your favorite trips
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
-* Many more image properties like [Colors](https://demo.photoprism.org/browse?view=cards&q=color:red), [Chroma](https://demo.photoprism.org/browse?view=cards&q=mono%3Atrue), and [Quality](https://demo.photoprism.org/review) can be searched as well
+* Many more image properties like [Colors](https://demo.photoprism.app/browse?view=cards&q=color:red), [Chroma](https://demo.photoprism.app/browse?view=cards&q=mono%3Atrue), and [Quality](https://demo.photoprism.app/review) can be searched as well
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.org/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
