@@ -16,7 +16,7 @@ You can run it at home, on a private server, or in the cloud.
 ![](https://dl.photoprism.app/img/ui/desktop-1000px.jpg)
 
 To get a first impression, you're welcome to play with our public demo at [demo.photoprism.app](https://demo.photoprism.app/) 
-(also available in [汉语](https://demo-zh.photoprism.app/), [Deutsch](https://demo-de.photoprism.app/), and [Français](https://demo-fr.photoprism.app/)).
+(also available in [Deutsch](https://demo-de.photoprism.app/), [Français](https://demo-fr.photoprism.app/), and [汉语](https://demo-zh.photoprism.app/)).
 
 ## Feature Overview ##
 
