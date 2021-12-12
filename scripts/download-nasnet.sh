@@ -3,7 +3,7 @@
 TODAY=`date -u +%Y%m%d`
 
 MODEL_NAME="NASNet Mobile"
-MODEL_URL="https://dl.photoprism.org/tensorflow/nasnet.zip?$TODAY"
+MODEL_URL="https://dl.photoprism.app/tensorflow/nasnet.zip?$TODAY"
 MODEL_PATH="assets/nasnet"
 MODEL_ZIP="/tmp/photoprism/nasnet.zip"
 MODEL_HASH="f18b801354e95cade497b4f12e8d2537d04c04f6  $MODEL_ZIP"

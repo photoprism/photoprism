@@ -3,7 +3,7 @@
 # PhotoPrism Demo Environment - Setup Script
 #
 # Usage:
-#   bash <(curl -s https://dl.photoprism.org/docker/demo/setup.sh)
+#   bash <(curl -s https://dl.photoprism.app/docker/demo/setup.sh)
 #
 # Note:
 # - demo.yourdomain.com must be replaced with the actual hostname
@@ -82,12 +82,12 @@ mkdir -p /opt/photoprism/config /opt/photoprism/traefik
 PUBLIC_IP=$(curl -sfSL ifconfig.me)
 
 # download service config
-COMPOSE_CONFIG=$(curl -fsSL https://dl.photoprism.org/docker/demo/docker-compose.yml)
+COMPOSE_CONFIG=$(curl -fsSL https://dl.photoprism.app/docker/demo/docker-compose.yml)
 COMPOSE_CONFIG=${COMPOSE_CONFIG//_public_ip_/$PUBLIC_IP}
 echo "${COMPOSE_CONFIG}" > /opt/photoprism/docker-compose.yml
-curl -fsSL https://dl.photoprism.org/docker/demo/jobs.ini > /opt/photoprism/jobs.ini
-curl -fsSL https://dl.photoprism.org/docker/demo/traefik.yaml > /opt/photoprism/traefik.yaml
-curl -fsSL https://dl.photoprism.org/docker/demo/Makefile > /opt/photoprism/Makefile
+curl -fsSL https://dl.photoprism.app/docker/demo/jobs.ini > /opt/photoprism/jobs.ini
+curl -fsSL https://dl.photoprism.app/docker/demo/traefik.yaml > /opt/photoprism/traefik.yaml
+curl -fsSL https://dl.photoprism.app/docker/demo/Makefile > /opt/photoprism/Makefile
 
 # change permissions
 chown -Rf photoprism:photoprism /opt/photoprism

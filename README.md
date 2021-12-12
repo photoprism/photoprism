@@ -2,7 +2,7 @@ PhotoPrism: Browse Your Life in Pictures
 ========================================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
-![Build Status](https://dl.photoprism.org/img/badges/badge-build-success.svg)
+![Build Status](https://dl.photoprism.app/img/badges/badge-build-success.svg)
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
@@ -13,7 +13,7 @@ PhotoPrism® is an AI-powered app for browsing, organizing & sharing your photo 
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
 You can run it at home, on a private server, or in the cloud.
 
-![](https://dl.photoprism.org/img/ui/desktop-1000px.jpg)
+![](https://dl.photoprism.app/img/ui/desktop-1000px.jpg)
 
 To get a first impression, you're welcome to play with our public demo at [demo.photoprism.app](https://demo.photoprism.app/).
 
@@ -49,7 +49,7 @@ from the same repository, enjoy the exact same functionality, and can follow the
 after going through a short list of [requirements](https://docs.photoprism.app/getting-started/raspberry-pi/).
 
 Existing users are advised to update their `docker-compose.yml` config based on our examples
-available at [dl.photoprism.org/docker/](https://dl.photoprism.org/docker/).
+available at [dl.photoprism.app/docker/](https://dl.photoprism.app/docker/).
 
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 

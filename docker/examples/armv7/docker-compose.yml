@@ -3,7 +3,7 @@ version: '3.5'
 # Example Docker Compose config file for PhotoPrism (ARMv7-based, 32-bit devices)
 #
 # Note:
-# - Use https://dl.photoprism.org/docker/arm64/docker-compose.yml for running PhotoPrism on ARM64-based (64-bit) devices.
+# - Use https://dl.photoprism.app/docker/arm64/docker-compose.yml for running PhotoPrism on ARM64-based (64-bit) devices.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
 # - If you see Docker errors related to "cgroups", it may help to add the following to /boot/firmware/cmdline.txt:

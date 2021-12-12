@@ -10,7 +10,7 @@
 # so that it runs once when the server is booting for the first time:
 #
 #   cd /var/lib/cloud/scripts/per-instance
-#   curl -fsSL https://dl.photoprism.org/docker/cloud/install_photoprism.sh > install_photoprism.sh
+#   curl -fsSL https://dl.photoprism.app/docker/cloud/install_photoprism.sh > install_photoprism.sh
 #   chmod 700 install_photoprism.sh
 #
 # To create a reusable image for DigitalOcean:
@@ -21,4 +21,4 @@
 #
 # Enjoy!
 
-bash <(curl -s https://dl.photoprism.org/docker/cloud/setup.sh)
+bash <(curl -s https://dl.photoprism.app/docker/cloud/setup.sh)

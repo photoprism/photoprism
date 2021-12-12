@@ -39,7 +39,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	} else {
 		var c clusters.HardClusterer
 
-		// See https://dl.photoprism.org/research/ for research on face clustering algorithms.
+		// See https://dl.photoprism.app/research/ for research on face clustering algorithms.
 		if c, err = clusters.DBSCAN(face.ClusterCore, face.ClusterDist, w.conf.Workers(), clusters.EuclideanDistance); err != nil {
 			return added, err
 		} else if err = c.Learn(embeddings.Float64()); err != nil {

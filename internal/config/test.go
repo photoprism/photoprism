@@ -21,7 +21,7 @@ import (
 // Download URL and ZIP hash for test files.
 const (
 	TestDataZip  = "/tmp/photoprism/testdata.zip"
-	TestDataURL  = "https://dl.photoprism.org/qa/testdata.zip"
+	TestDataURL  = "https://dl.photoprism.app/qa/testdata.zip"
 	TestDataHash = "be394d5bee8a5634d415e9e0663eef20b5604510" // sha1sum
 )
 
