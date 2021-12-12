@@ -9,7 +9,7 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
 fi
 
 NUMERIC='^[0-9]+$'
-GOPROXY=${GOPROXY:-'https://goproxy.io,direct'}
+GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
 
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
     echo "Building 'photoprism/$1:preview'..."

@@ -9,7 +9,7 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
 fi
 
 NUMERIC='^[0-9]+$'
-GOPROXY=${GOPROXY:-'https://goproxy.io,direct'}
+GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
 
 # Kill old multibuilder if still alive.
 echo "Removing existing multibuilder..."

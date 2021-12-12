@@ -6,7 +6,7 @@ set -e
 export DOCKER_BUILDKIT=1
 
 NUMERIC='^[0-9]+$'
-GOPROXY=${GOPROXY:-'https://goproxy.io,direct'}
+GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
 
 if [[ -z $1 ]] && [[ -z $2 ]]; then
     echo "Please provide a container image name and version" 1>&2
