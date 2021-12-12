@@ -17,6 +17,7 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
     docker buildx build \
       --platform $2 \
       --pull \
+      --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
@@ -28,6 +29,7 @@ elif [[ $3 =~ $NUMERIC ]]; then
     docker buildx build \
       --platform $2 \
       --pull \
+      --no-cache \
       --build-arg BUILD_TAG=$3 \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
@@ -41,6 +43,7 @@ else
     docker buildx build \
       --platform $2 \
       --pull \
+      --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
