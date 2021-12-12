@@ -13,7 +13,7 @@ To learn more, visit https://photoprism.app/ or try our [demo](https://demo.phot
 SOFTWARE INCLUDED
 ---------------------------------------
 
-- [PhotoPrism latest](https://docs.photoprism.org/release-notes/), AGPL 3
+- [PhotoPrism latest](https://docs.photoprism.app/release-notes/), AGPL 3
 - [Docker CE 20.10](https://docs.docker.com/engine/release-notes/), Apache 2
 - [Traefik 2.4](https://github.com/traefik/traefik/releases), MIT
 - [MariaDB 10.5](https://mariadb.com/kb/en/release-notes/), GPL 2

@@ -10,7 +10,7 @@ version: '3.5'
 ## - and Dummy Services
 services:
   ## App Dev Container
-  ## Docs: https://docs.photoprism.org/developer-guide/
+  ## Docs: https://docs.photoprism.app/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop

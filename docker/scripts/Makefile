@@ -1,5 +1,5 @@
 # INSTALLS OPTIONAL PACKAGES AND DRIVERS IN DOCKER IMAGES
-# Maintainer: Michael Mayer <hello@photoprism.org>
+# Maintainer: Michael Mayer <hello@photoprism.app>
 
 .PHONY: apt-upgrade apt-cleanup install-updates install-intel-graphics intel-graphics \
 		tensorflow-amd64-cpu tensorflow-amd64-cpu-install \

@@ -1,6 +1,6 @@
 FROM golang:1
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG GOPROXY
 ARG GODEBUG

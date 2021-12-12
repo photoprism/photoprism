@@ -7,7 +7,7 @@ We currently have the following sponsorship options:
 - For next year, we're working on a Stripe integration, so you can sign up directly in the app without having a Patreon or GitHub account.
 - You're welcome to [contact us](https://photoprism.app/contact) for other options.
 
-Visit https://docs.photoprism.org/funding/ to learn more.
+Visit https://docs.photoprism.app/funding/ to learn more.
 
 ## Platinum Sponsors ##
 

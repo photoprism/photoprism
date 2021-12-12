@@ -19,7 +19,7 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 
 ## Feature Overview ##
 
-* Browse [all your photos](https://docs.photoprism.org/user-guide/organize/browse/) and [videos](https://demo.photoprism.app/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.org/user-guide/settings/library/)
+* Browse [all your photos](https://docs.photoprism.app/user-guide/organize/browse/) and [videos](https://demo.photoprism.app/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.app/user-guide/settings/library/)
 * Easily find specific pictures using [powerful search filters](https://demo.photoprism.app/browse?view=cards&q=flower%20color%3Ared)
 * Privacy-friendly: No data is ever sent to Google, Amazon, Facebook, or Apple unless you explicitly upload files to one of their services 🔐
 * Recognizes [the faces of your family and friends](https://demo.photoprism.app/people)
@@ -31,22 +31,22 @@ To get a first impression, you're welcome to play with our public demo at [demo.
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
 * Many more image properties like [Colors](https://demo.photoprism.app/browse?view=cards&q=color:red), [Chroma](https://demo.photoprism.app/browse?view=cards&q=mono%3Atrue), and [Quality](https://demo.photoprism.app/review) can be searched as well
 * Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
-* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.org/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
+* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.app/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
 ## Getting Started ##
 <img align="right" width="25%" src="https://photoprism.app/user/pages/01.home/03._screenshots/iphone-maps-hybrid-540px.png">
 
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
-on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
+on [docs.photoprism.app](https://docs.photoprism.app/getting-started/) -
 all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. 
 It is available for Mac, Linux, and Windows.
 
-The [stable version](https://docs.photoprism.org/release-notes/) and development 
+The [stable version](https://docs.photoprism.app/release-notes/) and development 
 preview have been built into a single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for 64-bit AMD, Intel,
-and ARM processors. That means, [Raspberry Pi](https://docs.photoprism.org/getting-started/raspberry-pi/) 3 / 4 owners can pull 
+and ARM processors. That means, [Raspberry Pi](https://docs.photoprism.app/getting-started/raspberry-pi/) 3 / 4 owners can pull 
 from the same repository, enjoy the exact same functionality, and can follow the regular 
-[installation instructions](https://docs.photoprism.org/getting-started/docker-compose/) 
-after going through a short list of [requirements](https://docs.photoprism.org/getting-started/raspberry-pi/).
+[installation instructions](https://docs.photoprism.app/getting-started/docker-compose/) 
+after going through a short list of [requirements](https://docs.photoprism.app/getting-started/raspberry-pi/).
 
 Existing users are advised to update their `docker-compose.yml` config based on our examples
 available at [dl.photoprism.org/docker/](https://dl.photoprism.org/docker/).
@@ -83,7 +83,7 @@ to get regular updates, connect with other users, and discuss your ideas. Don't 
 ## Getting Support ##
 
 Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
-or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.org/funding/) 
+or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.app/funding/) 
 receive direct [technical support](https://photoprism.app/contact) via email.
 
 When reporting a problem, please include the version you are using and information
@@ -95,13 +95,13 @@ processor type.
 We welcome contributions of any kind, including bug reports, testing, writing documentation, 
 tutorials, blog posts, and pull requests.
 
-The [Developer Guide](https://docs.photoprism.org/developer-guide/) contains all information
+The [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all information
 necessary to get you started.
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
 
 Because we want to create the best possible product for our users,
-we have a set of [guidelines](https://docs.photoprism.org/developer-guide/pull-requests)
+we have a set of [guidelines](https://docs.photoprism.app/developer-guide/pull-requests)
 to ensure that all source code submissions are acceptable.
 They include step-by-step instructions for submitting new features,
 bug fixes, and documentation improvements.
@@ -125,7 +125,7 @@ goods, products, or services without prior written permission. In other words, p
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://drone.photoprism.app/photoprism/photoprism
-[docs]: https://docs.photoprism.org/
+[docs]: https://docs.photoprism.app/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
 [ask]: https://github.com/photoprism/photoprism/discussions

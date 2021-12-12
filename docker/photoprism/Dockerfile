@@ -17,7 +17,7 @@ RUN make dep build-js install
 ################################################## PRODUCTION STAGE ####################################################
 FROM ubuntu:21.10
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -60,7 +60,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     [ "$TARGETARCH" = "arm" ] || apt-get install darktable; \
     apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables, see https://docs.photoprism.org/getting-started/config-options/
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/
 ENV TF_CPP_MIN_LOG_LEVEL="2" \
     PATH="/photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     PHOTOPRISM_ASSETS_PATH="/photoprism/assets" \

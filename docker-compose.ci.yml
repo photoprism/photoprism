@@ -3,7 +3,7 @@ version: '3.5'
 ## Integration Environment for Drone CI
 services:
   ## App Dev Container
-  ## Docs: https://docs.photoprism.org/developer-guide/
+  ## Docs: https://docs.photoprism.app/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop

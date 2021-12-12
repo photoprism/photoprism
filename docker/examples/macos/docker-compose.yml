@@ -9,11 +9,11 @@ version: '3.5'
 #   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
 #   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
 #
-# Documentation : https://docs.photoprism.org/getting-started/docker-compose/
+# Documentation : https://docs.photoprism.app/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
 # DOCKER COMPOSE COMMAND REFERENCE
-# see https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+# see https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 # --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
@@ -41,7 +41,7 @@ services:
       - mariadb
     ## Only enable automatic restarts once your installation is properly
     ## configured as it otherwise may get stuck in a restart loop,
-    ## see https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## see https://docs.photoprism.app/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
@@ -90,7 +90,7 @@ services:
       - "./storage:/photoprism/storage"
 
   ## Database Server (recommended)
-  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
     image: mariadb:10.6
@@ -110,7 +110,7 @@ services:
       MYSQL_PASSWORD: insecure
 
   ## Watchtower upgrades services automatically (optional)
-  ## see https://docs.photoprism.org/getting-started/updates/#watchtower
+  ## see https://docs.photoprism.app/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped
