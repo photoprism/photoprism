@@ -49,7 +49,7 @@ from the same repository, enjoy the exact same functionality, and can follow the
 after going through a short list of [requirements](https://docs.photoprism.app/getting-started/raspberry-pi/).
 
 Existing users are advised to update their `docker-compose.yml` config based on our examples
-available at [dl.photoprism.app/docker/](https://dl.photoprism.app/docker/).
+available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
