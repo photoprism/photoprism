@@ -13,8 +13,6 @@ services:
       - "traefik.http.routers.demo.rule=Host(`demo.yourdomain.com`)"
       - "traefik.http.routers.demo.tls=true"
       - "traefik.http.routers.demo.tls.certresolver=myresolver"
-    volumes:
-      - "./config:/photoprism/storage/config"
     environment:
       PHOTOPRISM_SITE_URL: "https://demo.yourdomain.com/"
       # PHOTOPRISM_CDN_URL: "https://demo-cdn.yourdomain.com/"
@@ -24,7 +22,7 @@ services:
       PHOTOPRISM_SITE_PREVIEW: "https://i.photoprism.app/logo?cover=17&title=Demo"
       PHOTOPRISM_SITE_AUTHOR: "PhotoPrism"
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"
-      PHOTOPRISM_SPONSOR: "true"
+      PHOTOPRISM_DEFAULT_LOCALE: "en"
 
   traefik:
     restart: always
