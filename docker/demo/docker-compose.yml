@@ -13,6 +13,8 @@ services:
       - "traefik.http.routers.demo.rule=Host(`demo.yourdomain.com`)"
       - "traefik.http.routers.demo.tls=true"
       - "traefik.http.routers.demo.tls.certresolver=myresolver"
+    volumes:
+      - "./config:/photoprism/storage/config"
     environment:
       PHOTOPRISM_SITE_URL: "https://demo.yourdomain.com/"
       # PHOTOPRISM_CDN_URL: "https://demo-cdn.yourdomain.com/"

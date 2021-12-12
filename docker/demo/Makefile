@@ -3,7 +3,8 @@ all: restart
 restart:
 	docker-compose pull demo
 	docker-compose stop demo
-	docker-compose up -d --force-recreate demo
+	find config -type f -name 'settings.yml' -delete
+	docker-compose up -d -V --force-recreate demo
 install:
 	docker-compose pull
 	docker-compose stop
