@@ -52,16 +52,37 @@ after going through a short list of [requirements](https://docs.photoprism.app/g
 Existing users are advised to update their `docker-compose.yml` config based on our examples
 available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
-## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
+##  Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
 Your continued support helps us provide services like world maps and develop new features.
-GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
-You're welcome to [contact us](https://photoprism.app/contact) for other options.
+We currently have the following sponsorship options:
 
-Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
+- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
+- [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
+- For next year, we're working on a Stripe integration, so you can sign up directly in the app without having a Patreon or GitHub account.
+- You're welcome to [contact us](https://photoprism.app/contact) for other options.
+
+Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
 
-Thank you very much! 💜
+## Getting Support ##
+
+Please the [Troubleshooting Guide](https://docs.photoprism.app/getting-started/troubleshooting/)
+before reporting problems. If this doesn't help, or you have other questions:
+
+- you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
+- and post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
+
+In addition, [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) receive direct
+[technical support](https://photoprism.app/contact) via email.
+
+We'll do our best to answer all your questions. In return, we ask you to back us on [Patreon](https://www.patreon.com/photoprism)
+or [GitHub Sponsors](https://github.com/sponsors/photoprism).
+Think of "free software" as in "free speech," not as in "free beer". Thank you! 💜
+
+*When reporting a problem, always include the version you are using and information
+about your environment such as browser, operating system, installed memory, and
+processor type.*
 
 ## Roadmap ##
 
@@ -80,16 +101,6 @@ Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [g
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other users, and discuss your ideas. Don't be afraid to ask silly questions.
-
-## Getting Support ##
-
-Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
-or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.app/funding/) 
-receive direct [technical support](https://photoprism.app/contact) via email.
-
-When reporting a problem, please include the version you are using and information
-about your environment such as browser, operating system, installed memory, and
-processor type.
 
 ## Contributions ##
 
