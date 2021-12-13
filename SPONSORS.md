@@ -4,7 +4,7 @@ We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
 - [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
-- For next year, we're working on a Stripe integration, so you can sign up directly in the app without having a Patreon or GitHub account.
+- Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account.
 - You're welcome to [contact us](https://photoprism.app/contact) for other options.
 
 Visit https://docs.photoprism.app/funding/ to learn more.
