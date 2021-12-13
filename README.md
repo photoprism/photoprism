@@ -67,7 +67,7 @@ It provides additional motivation to keep going.
 
 ## Getting Support ##
 
-Please the [Troubleshooting Guide](https://docs.photoprism.app/getting-started/troubleshooting/)
+Please read the [Troubleshooting Guide](https://docs.photoprism.app/getting-started/troubleshooting/)
 before reporting problems. If this doesn't help, or you have other questions:
 
 - you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
