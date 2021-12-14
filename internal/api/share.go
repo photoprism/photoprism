@@ -5,9 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // GET /s/:token/...
@@ -15,7 +17,7 @@ func Shares(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
 		conf := service.Config()
 
-		token := c.Param("token")
+		token := sanitize.Token(c.Param("token"))
 
 		links := entity.FindValidLinks(token, "")
 
@@ -34,8 +36,8 @@ func Shares(router *gin.RouterGroup) {
 	router.GET("/:token/:share", func(c *gin.Context) {
 		conf := service.Config()
 
-		token := c.Param("token")
-		share := c.Param("share")
+		token := sanitize.Token(c.Param("token"))
+		share := sanitize.Token(c.Param("share"))
 
 		links := entity.FindValidLinks(token, share)
 
@@ -46,13 +48,13 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		uid := links[0].ShareUID
+		clientConfig := conf.GuestConfig()
 
 		if uid != share {
-			c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("/s/%s/%s", token, uid))
+			c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, token, uid))
 			return
 		}
 
-		clientConfig := conf.GuestConfig()
 		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s/%s", clientConfig.SiteUrl, token, uid)
 		clientConfig.SitePreview = fmt.Sprintf("%s/preview", clientConfig.SiteUrl)
 
