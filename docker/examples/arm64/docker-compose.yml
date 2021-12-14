@@ -4,7 +4,7 @@ version: '3.5'
 #
 # Note:
 # - You have to boot your Raspberry Pi 3/4 with the parameter "arm_64bit=1" in config.txt to use our ARM64 (64-bit) image.
-#   An "exec format error" will occur otherwise.
+#   An "exec format" or "no matching manifest" error will occur otherwise.
 # - Use https://dl.photoprism.app/docker/armv7/docker-compose.yml for running PhotoPrism on ARMv7-based (32-bit) devices.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
