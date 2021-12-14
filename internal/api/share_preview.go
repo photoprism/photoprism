@@ -95,7 +95,7 @@ func SharePreview(router *gin.RouterGroup) {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", txt.Quote(f.FileName))
+				log.Errorf("share: file %s is missing (preview)", txt.LogParam(f.FileName))
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 				return
 			}
@@ -125,7 +125,7 @@ func SharePreview(router *gin.RouterGroup) {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", txt.Quote(f.FileName))
+				log.Errorf("share: file %s is missing (preview)", txt.LogParam(f.FileName))
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 				return
 			}

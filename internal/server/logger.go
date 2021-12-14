@@ -3,6 +3,8 @@ package server
 import (
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,7 +34,7 @@ func Logger() gin.HandlerFunc {
 		// Use debug level to keep production logs clean.
 		log.Debugf("http: %s %s (%3d) [%v]",
 			method,
-			path,
+			txt.LogParam(path),
 			statusCode,
 			latency,
 		)

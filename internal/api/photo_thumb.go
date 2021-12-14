@@ -154,17 +154,17 @@ func GetThumb(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: file %s is missing", logPrefix, txt.Quote(f.FileName))
+			log.Errorf("%s: file %s is missing", logPrefix, txt.LogParam(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			logError(logPrefix, f.Update("FileMissing", true))
 
 			if f.AllFilesMissing() {
-				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, txt.Quote(f.FileName))
+				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, txt.LogParam(f.FileName))
 
 				if _, err := f.RelatedPhoto().Delete(false); err != nil {
-					log.Errorf("%s: %s while deleting %s", logPrefix, err, txt.Quote(f.FileName))
+					log.Errorf("%s: %s while deleting %s", logPrefix, err, txt.LogParam(f.FileName))
 				}
 			}
 

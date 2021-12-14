@@ -58,17 +58,17 @@ func DeleteFile(router *gin.RouterGroup) {
 		mediaFile, err := photoprism.NewMediaFile(fileName)
 
 		if err != nil {
-			log.Errorf("photo: %s (delete %s)", err, txt.Quote(baseName))
+			log.Errorf("photo: %s (delete %s)", err, txt.LogParam(baseName))
 			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := mediaFile.Remove(); err != nil {
-			log.Errorf("photo: %s (delete %s from folder)", err, txt.Quote(baseName))
+			log.Errorf("photo: %s (delete %s from folder)", err, txt.LogParam(baseName))
 		}
 
 		if err := file.Delete(true); err != nil {
-			log.Errorf("photo: %s (delete %s from index)", err, txt.Quote(baseName))
+			log.Errorf("photo: %s (delete %s from index)", err, txt.LogParam(baseName))
 			AbortDeleteFailed(c)
 			return
 		}

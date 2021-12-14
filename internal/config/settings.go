@@ -181,7 +181,7 @@ func (s Settings) StackMeta() bool {
 // Load user settings from file.
 func (s *Settings) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
-		return fmt.Errorf("settings file not found: %s", txt.Quote(fileName))
+		return fmt.Errorf("settings file not found: %s", txt.LogParam(fileName))
 	}
 
 	yamlConfig, err := os.ReadFile(fileName)

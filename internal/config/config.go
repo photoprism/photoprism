@@ -124,7 +124,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		if err := c.options.Load(configFile); err != nil {
 			log.Warnf("config: %s", err)
 		} else {
-			log.Debugf("config: options loaded from %s", txt.Quote(configFile))
+			log.Debugf("config: options loaded from %s", txt.LogParam(configFile))
 		}
 	}
 
@@ -192,7 +192,7 @@ func (c *Config) Init() error {
 	}
 
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
-		log.Debugf("config: running on %s, %s memory detected", txt.Quote(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+		log.Debugf("config: running on %s, %s memory detected", txt.LogParam(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
 
 	// Check memory requirements.

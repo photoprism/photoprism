@@ -18,14 +18,14 @@ import (
 func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (raw exif panic)\nstack: %s", e, txt.Quote(filepath.Base(fileName)), debug.Stack())
+			err = fmt.Errorf("metadata: %s in %s (raw exif panic)\nstack: %s", e, txt.LogParam(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 
 	// Extract raw EXIF block.
 	var parsed bool
 
-	logName := txt.Quote(filepath.Base(fileName))
+	logName := txt.LogParam(filepath.Base(fileName))
 
 	if fileType == fs.FormatJpeg {
 		jpegMp := jpegstructure.NewJpegMediaParser()

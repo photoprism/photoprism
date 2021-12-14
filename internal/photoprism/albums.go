@@ -36,7 +36,7 @@ func BackupAlbums(backupPath string, force bool) (count int, result error) {
 			log.Errorf("album: %s (update yaml)", err)
 			result = err
 		} else {
-			log.Tracef("backup: saved album yaml file %s", txt.Quote(filepath.Base(fileName)))
+			log.Tracef("backup: saved album yaml file %s", txt.LogParam(filepath.Base(fileName)))
 			count++
 		}
 	}
@@ -87,14 +87,14 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 		a := entity.Album{}
 
 		if err := a.LoadFromYaml(fileName); err != nil {
-			log.Errorf("restore: %s in %s", err, txt.Quote(filepath.Base(fileName)))
+			log.Errorf("restore: %s in %s", err, txt.LogParam(filepath.Base(fileName)))
 			result = err
 		} else if a.AlbumType == "" || len(a.Photos) == 0 && a.AlbumFilter == "" {
-			log.Debugf("restore: skipping %s", txt.Quote(filepath.Base(fileName)))
+			log.Debugf("restore: skipping %s", txt.LogParam(filepath.Base(fileName)))
 		} else if err := a.Find(); err == nil {
-			log.Infof("%s: %s already exists", a.AlbumType, txt.Quote(a.AlbumTitle))
+			log.Infof("%s: %s already exists", a.AlbumType, txt.LogParam(a.AlbumTitle))
 		} else if err := a.Create(); err != nil {
-			log.Errorf("%s: %s in %s", a.AlbumType, err, txt.Quote(filepath.Base(fileName)))
+			log.Errorf("%s: %s in %s", a.AlbumType, err, txt.LogParam(filepath.Base(fileName)))
 		} else {
 			count++
 		}

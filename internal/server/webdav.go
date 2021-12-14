@@ -25,7 +25,7 @@ func MarkUploadAsFavorite(fileName string) {
 
 	// Abort if YAML file already exists to avoid overwriting metadata.
 	if fs.FileExists(yamlName) {
-		log.Warnf("webdav: %s already exists", txt.Quote(filepath.Base(yamlName)))
+		log.Warnf("webdav: %s already exists", txt.LogParam(filepath.Base(yamlName)))
 		return
 	}
 
@@ -42,7 +42,7 @@ func MarkUploadAsFavorite(fileName string) {
 	}
 
 	// Log success.
-	log.Infof("webdav: marked %s as favorite", txt.Quote(filepath.Base(fileName)))
+	log.Infof("webdav: marked %s as favorite", txt.LogParam(filepath.Base(fileName)))
 }
 
 // WebDAV handles any requests to /originals|import/*
@@ -67,11 +67,11 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 			if err != nil {
 				switch r.Method {
 				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
-					log.Errorf("webdav: %s in %s %s", txt.Quote(err.Error()), r.Method, r.URL)
+					log.Errorf("webdav: %s in %s %s", txt.LogParam(err.Error()), txt.LogParam(r.Method), txt.LogParam(r.URL.String()))
 				case MethodPropfind:
-					log.Tracef("webdav: %s in %s %s", txt.Quote(err.Error()), r.Method, r.URL)
+					log.Tracef("webdav: %s in %s %s", txt.LogParam(err.Error()), txt.LogParam(r.Method), txt.LogParam(r.URL.String()))
 				default:
-					log.Debugf("webdav: %s in %s %s", txt.Quote(err.Error()), r.Method, r.URL)
+					log.Debugf("webdav: %s in %s %s", txt.LogParam(err.Error()), txt.LogParam(r.Method), txt.LogParam(r.URL.String()))
 				}
 
 			} else {
@@ -86,7 +86,7 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 
 				switch r.Method {
 				case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
-					log.Infof("webdav: %s %s", r.Method, r.URL)
+					log.Infof("webdav: %s %s", txt.LogParam(r.Method), txt.LogParam(r.URL.String()))
 
 					if router.BasePath() == WebDAVOriginals {
 						auto.ShouldIndex()
@@ -94,7 +94,7 @@ func WebDAV(path string, router *gin.RouterGroup, conf *config.Config) {
 						auto.ShouldImport()
 					}
 				default:
-					log.Tracef("webdav: %s %s", r.Method, r.URL)
+					log.Tracef("webdav: %s %s", txt.LogParam(r.Method), txt.LogParam(r.URL.String()))
 				}
 			}
 		},

@@ -89,7 +89,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	optionsPath := filepath.Join(originalsPath, opt.Path)
 
 	if !fs.PathExists(optionsPath) {
-		event.Error(fmt.Sprintf("index: %s does not exist", txt.Quote(optionsPath)))
+		event.Error(fmt.Sprintf("index: %s does not exist", txt.LogParam(optionsPath)))
 		return done
 	}
 
@@ -182,7 +182,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			}
 
 			if mf.FileSize() == 0 {
-				log.Infof("index: skipped empty file %s", txt.Quote(mf.BaseName()))
+				log.Infof("index: skipped empty file %s", txt.LogParam(mf.BaseName()))
 				return nil
 			}
 

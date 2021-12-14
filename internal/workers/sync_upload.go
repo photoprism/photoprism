@@ -56,7 +56,7 @@ func (worker *Sync) upload(a entity.Account) (complete bool, err error) {
 			continue // try again next time
 		}
 
-		log.Infof("sync: uploaded %s to %s (%s)", txt.Quote(file.FileName), txt.Quote(remoteName), a.AccName)
+		log.Infof("sync: uploaded %s to %s (%s)", txt.LogParam(file.FileName), txt.LogParam(remoteName), a.AccName)
 
 		fileSync := entity.NewFileSync(a.ID, remoteName)
 		fileSync.Status = entity.FileSyncUploaded

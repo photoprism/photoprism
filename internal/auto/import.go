@@ -66,7 +66,7 @@ func Import() error {
 
 	api.RemoveFromFolderCache(entity.RootImport)
 
-	event.InfoMsg(i18n.MsgCopyingFilesFrom, txt.Quote(filepath.Base(path)))
+	event.InfoMsg(i18n.MsgCopyingFilesFrom, txt.LogParam(filepath.Base(path)))
 
 	var opt photoprism.ImportOptions
 

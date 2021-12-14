@@ -33,7 +33,7 @@ func TestLens_TableName(t *testing.T) {
 
 func TestLens_String(t *testing.T) {
 	lens := NewLens("F500-99", "samsung")
-	assert.Equal(t, "Samsung F500-99", lens.String())
+	assert.Equal(t, "'Samsung F500-99'", lens.String())
 }
 
 func TestFirstOrCreateLens(t *testing.T) {

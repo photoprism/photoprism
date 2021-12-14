@@ -56,7 +56,7 @@ func PurgeDuplicate(fileName, fileRoot string) error {
 	}
 
 	if err := UnscopedDb().Delete(Duplicate{}, "file_name = ? AND file_root = ?", fileName, fileRoot).Error; err != nil {
-		log.Errorf("duplicate: %s in %s (purge)", err, txt.Quote(fileName))
+		log.Errorf("duplicate: %s in %s (purge)", err, txt.LogParam(fileName))
 		return err
 	}
 
@@ -101,7 +101,7 @@ func (m *Duplicate) Save() error {
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("duplicate: %s in %s (save)", err, txt.Quote(m.FileName))
+		log.Errorf("duplicate: %s in %s (save)", err, txt.LogParam(m.FileName))
 		return err
 	}
 

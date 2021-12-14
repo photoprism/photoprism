@@ -59,7 +59,7 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 		likeString := "%" + f.Query + "%"
 
 		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
-			log.Infof("search: label %s not found", txt.Quote(f.Query))
+			log.Infof("search: label %s not found", txt.LogParam(f.Query))
 
 			s = s.Where("labels.label_name LIKE ?", likeString)
 		} else {
@@ -71,7 +71,7 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("search: label %s includes %d categories", txt.Quote(label.LabelName), len(labelIds))
+			log.Infof("search: label %s includes %d categories", txt.LogParam(label.LabelName), len(labelIds))
 
 			s = s.Where("labels.id IN (?)", labelIds)
 		}

@@ -33,9 +33,9 @@ func findExecutable(configBin, defaultBin string) (result string) {
 func (c *Config) CreateDirectories() error {
 	createError := func(path string, err error) (result error) {
 		if fs.FileExists(path) {
-			result = fmt.Errorf("%s is a file, not a folder: please check your configuration", txt.Quote(path))
+			result = fmt.Errorf("%s is a file, not a folder: please check your configuration", txt.LogParam(path))
 		} else {
-			result = fmt.Errorf("can't create %s: please check configuration and permissions", txt.Quote(path))
+			result = fmt.Errorf("can't create %s: please check configuration and permissions", txt.LogParam(path))
 		}
 
 		log.Debug(err)

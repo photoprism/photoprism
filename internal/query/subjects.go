@@ -94,10 +94,10 @@ func CreateMarkerSubjects() (affected int64, err error) {
 		if name == m.MarkerName && subj != nil {
 			// Do nothing.
 		} else if subj = entity.NewSubject(m.MarkerName, entity.SubjPerson, entity.SrcMarker); subj == nil {
-			log.Errorf("faces: invalid subject %s", txt.Quote(m.MarkerName))
+			log.Errorf("faces: invalid subject %s", txt.LogParam(m.MarkerName))
 			continue
 		} else if subj = entity.FirstOrCreateSubject(subj); subj == nil {
-			log.Errorf("faces: failed adding subject %s", txt.Quote(m.MarkerName))
+			log.Errorf("faces: failed adding subject %s", txt.LogParam(m.MarkerName))
 			continue
 		} else {
 			affected++

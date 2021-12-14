@@ -148,7 +148,7 @@ func (t *TensorFlow) loadModel() error {
 
 	modelPath := path.Join(t.modelsPath, t.modelName)
 
-	log.Infof("classify: loading %s", txt.Quote(filepath.Base(modelPath)))
+	log.Infof("classify: loading %s", txt.LogParam(filepath.Base(modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(modelPath, t.modelTags, nil)

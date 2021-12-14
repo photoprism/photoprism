@@ -34,7 +34,7 @@ func thumbsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("creating thumbnails in %s", txt.Quote(conf.ThumbPath()))
+	log.Infof("creating thumbnails in %s", txt.LogParam(conf.ThumbPath()))
 
 	rs := service.Resample()
 

@@ -57,9 +57,9 @@ func indexAction(ctx *cli.Context) error {
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("indexing originals in %s", txt.Quote(conf.OriginalsPath()))
+		log.Infof("indexing originals in %s", txt.LogParam(conf.OriginalsPath()))
 	} else {
-		log.Infof("indexing originals in %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("indexing originals in %s", txt.LogParam(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {

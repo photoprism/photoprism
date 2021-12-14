@@ -192,5 +192,5 @@ func FindValidLinks(token, share string) (result Links) {
 
 // String returns an human readable identifier for logging.
 func (m *Link) String() string {
-	return m.LinkUID
+	return txt.LogParam(m.LinkUID)
 }

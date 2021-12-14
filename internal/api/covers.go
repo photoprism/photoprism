@@ -88,7 +88,7 @@ func AlbumCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("%s: %s is missing", albumCover, txt.Quote(f.FileName))
+			log.Warnf("%s: %s is missing", albumCover, txt.LogParam(f.FileName))
 			logError(albumCover, f.Update("FileMissing", true))
 			return
 		}
@@ -196,7 +196,7 @@ func LabelCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: file %s is missing", labelCover, txt.Quote(f.FileName))
+			log.Errorf("%s: file %s is missing", labelCover, txt.LogParam(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

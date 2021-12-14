@@ -272,7 +272,7 @@ func TestFromFile(t *testing.T) {
 			t.Fatal("error expected")
 		}
 		assert.Equal(t, "", fileName)
-		assert.Equal(t, "resample: invalid file name “”", err.Error())
+		assert.Equal(t, "resample: invalid file name ''", err.Error())
 	})
 }
 
@@ -325,7 +325,7 @@ func TestFromCache(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Equal(t, "resample: invalid file name “”", err.Error())
+		assert.Equal(t, "resample: invalid file name ''", err.Error())
 		assert.Empty(t, fileName)
 	})
 }

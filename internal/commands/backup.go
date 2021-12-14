@@ -113,7 +113,7 @@ func backupAction(ctx *cli.Context) error {
 				}
 			}
 
-			log.Infof("backing up database to %s", txt.Quote(indexFileName))
+			log.Infof("backing up database to %s", txt.LogParam(indexFileName))
 		}
 
 		var cmd *exec.Cmd
@@ -175,7 +175,7 @@ func backupAction(ctx *cli.Context) error {
 			albumsPath = conf.AlbumsPath()
 		}
 
-		log.Infof("backing up albums to %s", txt.Quote(albumsPath))
+		log.Infof("backing up albums to %s", txt.LogParam(albumsPath))
 
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err

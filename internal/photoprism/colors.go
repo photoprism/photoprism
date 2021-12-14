@@ -15,13 +15,13 @@ import (
 // Colors returns the ColorPerception of an image (only JPEG supported).
 func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception, err error) {
 	if !m.IsJpeg() {
-		return perception, fmt.Errorf("%s is not a jpeg", txt.Quote(m.BaseName()))
+		return perception, fmt.Errorf("%s is not a jpeg", txt.LogParam(m.BaseName()))
 	}
 
 	img, err := m.Resample(thumbPath, thumb.Colors)
 
 	if err != nil {
-		log.Debugf("colors: %s in %s (resample)", err, txt.Quote(m.BaseName()))
+		log.Debugf("colors: %s in %s (resample)", err, txt.LogParam(m.BaseName()))
 		return perception, err
 	}
 

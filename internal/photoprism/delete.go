@@ -24,16 +24,16 @@ func Delete(p entity.Photo) error {
 	for _, file := range files {
 		fileName := FileName(file.FileRoot, file.FileName)
 
-		log.Debugf("delete: removing file %s", txt.Quote(file.FileName))
+		log.Debugf("delete: removing file %s", txt.LogParam(file.FileName))
 
 		if f, err := NewMediaFile(fileName); err == nil {
 			if sidecarJson := f.SidecarJsonName(); fs.FileExists(sidecarJson) {
-				log.Debugf("delete: removing json sidecar %s", txt.Quote(filepath.Base(sidecarJson)))
+				log.Debugf("delete: removing json sidecar %s", txt.LogParam(filepath.Base(sidecarJson)))
 				logWarn("delete", os.Remove(sidecarJson))
 			}
 
 			if exifJson, err := f.ExifToolJsonName(); err == nil && fs.FileExists(exifJson) {
-				log.Debugf("delete: removing exiftool sidecar %s", txt.Quote(filepath.Base(exifJson)))
+				log.Debugf("delete: removing exiftool sidecar %s", txt.LogParam(filepath.Base(exifJson)))
 				logWarn("delete", os.Remove(exifJson))
 			}
 
@@ -47,7 +47,7 @@ func Delete(p entity.Photo) error {
 
 	// Remove sidecar backup.
 	if fs.FileExists(yamlFileName) {
-		log.Debugf("delete: removing yaml sidecar %s", txt.Quote(filepath.Base(yamlFileName)))
+		log.Debugf("delete: removing yaml sidecar %s", txt.LogParam(filepath.Base(yamlFileName)))
 		logWarn("delete", os.Remove(yamlFileName))
 	}
 

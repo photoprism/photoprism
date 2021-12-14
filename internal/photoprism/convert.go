@@ -82,7 +82,7 @@ func (c *Convert) Start(path string) (err error) {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof("convert: ignoring %s", txt.Quote(filepath.Base(fileName)))
+		log.Infof("convert: ignoring %s", txt.LogParam(filepath.Base(fileName)))
 	}
 
 	err = godirwalk.Walk(path, &godirwalk.Options{
@@ -403,7 +403,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 			)
 		}
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
+		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.LogParam(f.BaseName()))
 	}
 
 	return result, useMutex, nil

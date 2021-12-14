@@ -46,7 +46,7 @@ func FindLocation(id string) (result Location, err error) {
 	if len(id) == 0 {
 		return result, fmt.Errorf("empty cell id")
 	} else if n := len(id); n < 4 || n > 16 {
-		return result, fmt.Errorf("invalid cell id %s", txt.Quote(id))
+		return result, fmt.Errorf("invalid cell id %s", txt.LogParam(id))
 	}
 
 	// Remember start time.
@@ -133,7 +133,7 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	cache.SetDefault(id, result)
-	log.Tracef("places: cached cell %s [%s]", txt.Quote(id), time.Since(start))
+	log.Tracef("places: cached cell %s [%s]", txt.LogParam(id), time.Since(start))
 
 	result.Cached = false
 

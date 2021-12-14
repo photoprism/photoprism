@@ -14,7 +14,7 @@ type ConvertJob struct {
 func ConvertWorker(jobs <-chan ConvertJob) {
 	logError := func(err error, job ConvertJob) {
 		fileName := job.file.RelName(job.convert.conf.OriginalsPath())
-		log.Errorf("convert: %s for %s", strings.TrimSpace(err.Error()), txt.Quote(fileName))
+		log.Errorf("convert: %s for %s", strings.TrimSpace(err.Error()), txt.LogParam(fileName))
 	}
 
 	for job := range jobs {

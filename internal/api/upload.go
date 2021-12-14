@@ -52,7 +52,7 @@ func Upload(router *gin.RouterGroup) {
 		p := path.Join(conf.ImportPath(), "upload", subPath)
 
 		if err := os.MkdirAll(p, os.ModePerm); err != nil {
-			log.Errorf("upload: failed creating folder %s", txt.Quote(subPath))
+			log.Errorf("upload: failed creating folder %s", txt.LogParam(subPath))
 			AbortBadRequest(c)
 			return
 		}
@@ -60,7 +60,7 @@ func Upload(router *gin.RouterGroup) {
 		for _, file := range files {
 			filename := path.Join(p, filepath.Base(file.Filename))
 
-			log.Debugf("upload: saving file %s", txt.Quote(file.Filename))
+			log.Debugf("upload: saving file %s", txt.LogParam(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
 				log.Errorf("upload: failed saving file %s", filepath.Base(file.Filename))
@@ -88,7 +88,7 @@ func Upload(router *gin.RouterGroup) {
 					continue
 				}
 
-				log.Infof("nsfw: %s might be offensive", txt.Quote(filename))
+				log.Infof("nsfw: %s might be offensive", txt.LogParam(filename))
 
 				containsNSFW = true
 			}
@@ -96,7 +96,7 @@ func Upload(router *gin.RouterGroup) {
 			if containsNSFW {
 				for _, filename := range uploads {
 					if err := os.Remove(filename); err != nil {
-						log.Errorf("nsfw: could not delete %s", txt.Quote(filename))
+						log.Errorf("nsfw: could not delete %s", txt.LogParam(filename))
 					}
 				}
 

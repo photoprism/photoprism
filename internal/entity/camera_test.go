@@ -119,7 +119,7 @@ func TestCamera_String(t *testing.T) {
 	t.Run("model XXX make Nikon", func(t *testing.T) {
 		camera := NewCamera("XXX", "Nikon")
 		cameraString := camera.String()
-		assert.Equal(t, "Nikon XXX", cameraString)
+		assert.Equal(t, "'Nikon XXX'", cameraString)
 	})
 	t.Run("model XXX make Unknown", func(t *testing.T) {
 		camera := NewCamera("XXX", "")

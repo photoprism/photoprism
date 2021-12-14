@@ -92,7 +92,7 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 // ThumbFileName returns the ideal thumb file name.
 func ThumbFileName(hash string, area Area, size Size, thumbPath string) (string, error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("invalid file hash %s", txt.Quote(hash))
+		return "", fmt.Errorf("invalid file hash %s", txt.LogParam(hash))
 	}
 
 	if len(thumbPath) < 1 {

@@ -54,7 +54,7 @@ func FindPlace(id string) *Place {
 	place := Place{}
 
 	if err := Db().Where("id = ?", id).First(&place).Error; err != nil {
-		log.Debugf("place: %s no found", txt.Quote(id))
+		log.Debugf("place: %s no found", txt.LogParam(id))
 		return nil
 	} else {
 		return &place

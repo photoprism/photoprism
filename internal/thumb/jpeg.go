@@ -12,7 +12,7 @@ func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, er
 	img, err = imaging.Open(srcFilename)
 
 	if err != nil {
-		log.Errorf("resample: can't open %s", txt.Quote(filepath.Base(srcFilename)))
+		log.Errorf("resample: can't open %s", txt.LogParam(filepath.Base(srcFilename)))
 		return img, err
 	}
 
@@ -23,7 +23,7 @@ func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, er
 	saveOption := imaging.JPEGQuality(JpegQuality)
 
 	if err = imaging.Save(img, jpgFilename, saveOption); err != nil {
-		log.Errorf("resample: failed to save %s", txt.Quote(filepath.Base(jpgFilename)))
+		log.Errorf("resample: failed to save %s", txt.LogParam(filepath.Base(jpgFilename)))
 		return img, err
 	}
 

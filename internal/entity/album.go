@@ -336,15 +336,15 @@ func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 // String returns the id or name as string.
 func (m *Album) String() string {
 	if m.AlbumSlug != "" {
-		return m.AlbumSlug
+		return txt.LogParam(m.AlbumSlug)
 	}
 
 	if m.AlbumTitle != "" {
-		return txt.Quote(m.AlbumTitle)
+		return txt.LogParam(m.AlbumTitle)
 	}
 
 	if m.AlbumUID != "" {
-		return m.AlbumUID
+		return txt.LogParam(m.AlbumUID)
 	}
 
 	return "[unknown album]"

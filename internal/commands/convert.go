@@ -48,7 +48,7 @@ func convertAction(ctx *cli.Context) error {
 		convertPath = filepath.Join(convertPath, subPath)
 	}
 
-	log.Infof("converting originals in %s", txt.Quote(convertPath))
+	log.Infof("converting originals in %s", txt.LogParam(convertPath))
 
 	w := service.Convert()
 

@@ -56,10 +56,10 @@ func (list Tables) WaitForMigration(db *gorm.DB) {
 		for i := 0; i <= attempts; i++ {
 			count := RowCount{}
 			if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) AS count FROM %s", name)).Scan(&count).Error; err == nil {
-				log.Tracef("entity: %s migrated", txt.Quote(name))
+				log.Tracef("entity: %s migrated", txt.LogParam(name))
 				break
 			} else {
-				log.Debugf("entity: waiting for %s migration (%s)", txt.Quote(name), err.Error())
+				log.Debugf("entity: waiting for %s migration (%s)", txt.LogParam(name), err.Error())
 			}
 
 			if i == attempts {
@@ -78,7 +78,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 			// log.Debugf("entity: removed all data from %s", name)
 			break
 		} else if err.Error() != "record not found" {
-			log.Debugf("entity: %s in %s", err, txt.Quote(name))
+			log.Debugf("entity: %s in %s", err, txt.LogParam(name))
 		}
 	}
 }
@@ -92,7 +92,7 @@ func (list Tables) Migrate(db *gorm.DB, runFailed bool) {
 			time.Sleep(time.Second)
 
 			if err := db.AutoMigrate(entity).Error; err != nil {
-				log.Errorf("entity: failed migrating %s", txt.Quote(name))
+				log.Errorf("entity: failed migrating %s", txt.LogParam(name))
 				panic(err)
 			}
 		}

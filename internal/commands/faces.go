@@ -239,9 +239,9 @@ func facesIndexAction(ctx *cli.Context) error {
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("finding faces in %s", txt.Quote(conf.OriginalsPath()))
+		log.Infof("finding faces in %s", txt.LogParam(conf.OriginalsPath()))
 	} else {
-		log.Infof("finding faces in %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("finding faces in %s", txt.LogParam(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {

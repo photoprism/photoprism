@@ -22,7 +22,7 @@ var StopCommand = cli.Command{
 func stopAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
-	log.Infof("looking for pid in %s", txt.Quote(conf.PIDFilename()))
+	log.Infof("looking for pid in %s", txt.LogParam(conf.PIDFilename()))
 
 	dcxt := new(daemon.Context)
 	dcxt.PidFileName = conf.PIDFilename()

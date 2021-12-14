@@ -74,7 +74,7 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 
 	if err != nil {
 		resp.Details = err.Error()
-		log.Errorf("api: error %s with code %d in %s (%s)", txt.Quote(err.Error()), code, c.FullPath(), resp.String())
+		log.Errorf("api: error %s with code %d in %s (%s)", txt.LogParam(err.Error()), code, c.FullPath(), resp.String())
 	}
 
 	c.AbortWithStatusJSON(code, resp)

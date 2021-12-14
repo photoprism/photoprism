@@ -20,7 +20,7 @@ func (ind *Index) NSFW(jpeg *MediaFile) bool {
 		return false
 	} else {
 		if nsfwLabels.NSFW(nsfw.ThresholdHigh) {
-			log.Warnf("index: %s might contain offensive content", txt.Quote(jpeg.RelName(Config().OriginalsPath())))
+			log.Warnf("index: %s might contain offensive content", txt.LogParam(jpeg.RelName(Config().OriginalsPath())))
 			return true
 		}
 	}

@@ -183,7 +183,7 @@ func usersDeleteAction(ctx *cli.Context) error {
 		}
 
 		actionPrompt := promptui.Prompt{
-			Label:     fmt.Sprintf("Delete %s?", txt.Quote(userName)),
+			Label:     fmt.Sprintf("Delete %s?", txt.LogParam(userName)),
 			IsConfirm: true,
 		}
 
@@ -193,7 +193,7 @@ func usersDeleteAction(ctx *cli.Context) error {
 			} else if err := m.Delete(); err != nil {
 				return err
 			} else {
-				log.Infof("%s deleted", txt.Quote(userName))
+				log.Infof("%s deleted", txt.LogParam(userName))
 			}
 		} else {
 			log.Infof("keeping user")
@@ -242,7 +242,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("password successfully changed: %v\n", u.Username())
+			fmt.Printf("password successfully changed: %s\n", txt.LogParam(u.Username()))
 		}
 
 		if ctx.IsSet("fullname") {
@@ -261,7 +261,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			return err
 		}
 
-		fmt.Printf("user successfully updated: %v\n", u.Username())
+		fmt.Printf("user successfully updated: %s\n", txt.LogParam(u.Username()))
 
 		return nil
 	})

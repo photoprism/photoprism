@@ -49,7 +49,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 		return result, fmt.Errorf("filename missing")
 	}
 
-	logName := txt.Quote(filepath.Base(fileName))
+	logName := txt.LogParam(filepath.Base(fileName))
 
 	// Open file.
 	fileReader, err := os.Open(fileName)
@@ -81,7 +81,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 		// Do nothing.
 		log.Tracef("resample: detected no color profile in %s", logName)
 	} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
-		log.Debugf("resample: detected color profile %s in %s", txt.Quote(profile), logName)
+		log.Debugf("resample: detected color profile %s in %s", txt.LogParam(profile), logName)
 		switch {
 		case colors.ProfileDisplayP3.Equal(profile):
 			img = colors.ToSRGB(img, colors.ProfileDisplayP3)

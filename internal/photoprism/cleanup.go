@@ -82,7 +82,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 		}
 
 		hash := base[:i]
-		logName := txt.Quote(fs.RelName(fileName, thumbPath))
+		logName := txt.LogParam(fs.RelName(fileName, thumbPath))
 
 		if ok := fileHashes[hash]; ok {
 			// Do nothing.
@@ -119,7 +119,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, err error)
 
 		if opt.Dry {
 			orphans++
-			log.Infof("cleanup: orphan photo %s would be removed", txt.Quote(p.PhotoUID))
+			log.Infof("cleanup: orphan photo %s would be removed", txt.LogParam(p.PhotoUID))
 			continue
 		}
 

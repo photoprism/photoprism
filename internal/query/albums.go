@@ -52,7 +52,7 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 			if err := a.Delete(); err != nil {
 				log.Errorf("%s: %s (hide)", a.AlbumType, err)
 			} else {
-				log.Infof("%s: %s hidden", a.AlbumType, txt.Quote(a.AlbumTitle))
+				log.Infof("%s: %s hidden", a.AlbumType, txt.LogParam(a.AlbumTitle))
 			}
 		}
 

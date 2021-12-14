@@ -30,7 +30,7 @@ func GetVideo(router *gin.RouterGroup) {
 		videoType, ok := video.Types[typeName]
 
 		if !ok {
-			log.Errorf("video: invalid type %s", txt.Quote(typeName))
+			log.Errorf("video: invalid type %s", txt.LogParam(typeName))
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 			return
 		}
@@ -62,7 +62,7 @@ func GetVideo(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if mf, err := photoprism.NewMediaFile(fileName); err != nil {
-			log.Errorf("video: file %s is missing", txt.Quote(f.FileName))
+			log.Errorf("video: file %s is missing", txt.LogParam(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
@@ -73,7 +73,7 @@ func GetVideo(router *gin.RouterGroup) {
 			conv := service.Convert()
 
 			if avcFile, err := conv.ToAvc(mf, service.Config().FFmpegEncoder()); err != nil {
-				log.Errorf("video: transcoding %s failed", txt.Quote(f.FileName))
+				log.Errorf("video: transcoding %s failed", txt.LogParam(f.FileName))
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 				return
 			} else {

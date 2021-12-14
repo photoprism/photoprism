@@ -87,20 +87,20 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			if file.FileMissing {
 				if fs.FileExists(fileName) {
 					if opt.Dry {
-						log.Infof("purge: found %s", txt.Quote(file.FileName))
+						log.Infof("purge: found %s", txt.LogParam(file.FileName))
 						continue
 					}
 
 					if err := file.Found(); err != nil {
 						log.Errorf("purge: %s", err)
 					} else {
-						log.Infof("purge: found %s", txt.Quote(file.FileName))
+						log.Infof("purge: found %s", txt.LogParam(file.FileName))
 					}
 				}
 			} else if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
-					log.Infof("purge: file %s would be flagged as missing", txt.Quote(file.FileName))
+					log.Infof("purge: file %s would be flagged as missing", txt.LogParam(file.FileName))
 					continue
 				}
 
@@ -113,7 +113,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 				w.files.Remove(file.FileName, file.FileRoot)
 				purgedFiles[fileName] = true
-				log.Infof("purge: flagged file %s as missing", txt.Quote(file.FileName))
+				log.Infof("purge: flagged file %s as missing", txt.LogParam(file.FileName))
 
 				if !wasPrimary {
 					continue
@@ -162,7 +162,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			if !fs.FileExists(fileName) {
 				if opt.Dry {
 					purgedFiles[fileName] = true
-					log.Infof("purge: duplicate %s would be removed", txt.Quote(file.FileName))
+					log.Infof("purge: duplicate %s would be removed", txt.LogParam(file.FileName))
 					continue
 				}
 
@@ -171,7 +171,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				} else {
 					w.files.Remove(file.FileName, file.FileRoot)
 					purgedFiles[fileName] = true
-					log.Infof("purge: removed duplicate %s", txt.Quote(file.FileName))
+					log.Infof("purge: removed duplicate %s", txt.LogParam(file.FileName))
 				}
 			}
 		}
@@ -210,7 +210,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 			if opt.Dry {
 				purgedPhotos[photo.PhotoUID] = true
-				log.Infof("purge: %s would be removed", txt.Quote(photo.PhotoName))
+				log.Infof("purge: %s would be removed", txt.LogParam(photo.PhotoName))
 				continue
 			}
 
@@ -220,9 +220,9 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 				purgedPhotos[photo.PhotoUID] = true
 
 				if opt.Hard {
-					log.Infof("purge: permanently removed %s", txt.Quote(photo.PhotoName))
+					log.Infof("purge: permanently removed %s", txt.LogParam(photo.PhotoName))
 				} else {
-					log.Infof("purge: flagged photo %s as deleted", txt.Quote(photo.PhotoName))
+					log.Infof("purge: flagged photo %s as deleted", txt.LogParam(photo.PhotoName))
 				}
 
 				// Remove files from lookup table.

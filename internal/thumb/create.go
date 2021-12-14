@@ -35,7 +35,7 @@ func FileName(hash string, thumbPath string, width, height int, opts ...Resample
 	}
 
 	if len(hash) < 4 {
-		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", txt.Quote(hash))
+		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", txt.LogParam(hash))
 	}
 
 	if len(thumbPath) == 0 {
@@ -57,11 +57,11 @@ func FileName(hash string, thumbPath string, width, height int, opts ...Resample
 // FromCache returns the thumb cache file name for an image.
 func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("resample: invalid file hash %s", txt.Quote(hash))
+		return "", fmt.Errorf("resample: invalid file hash %s", txt.LogParam(hash))
 	}
 
 	if len(imageFilename) < 4 {
-		return "", fmt.Errorf("resample: invalid file name %s", txt.Quote(imageFilename))
+		return "", fmt.Errorf("resample: invalid file name %s", txt.LogParam(imageFilename))
 	}
 
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
@@ -135,7 +135,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 	err = imaging.Save(result, fileName, saveOption)
 
 	if err != nil {
-		log.Errorf("resample: failed to save %s", txt.Quote(filepath.Base(fileName)))
+		log.Errorf("resample: failed to save %s", txt.LogParam(filepath.Base(fileName)))
 		return result, err
 	}
 

@@ -179,7 +179,7 @@ func (m *Folder) Create() error {
 		if err := a.Create(); err != nil {
 			log.Errorf("folder: %s (add album)", err)
 		} else {
-			log.Infof("folder: added album %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+			log.Infof("folder: added album %s (%s)", txt.LogParam(a.AlbumTitle), a.AlbumFilter)
 		}
 	}
 

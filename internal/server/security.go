@@ -83,7 +83,7 @@ func (s *security) process(w http.ResponseWriter, r *http.Request) error {
 
 		if !isGoodHost {
 			s.opt.BadHostHandler.ServeHTTP(w, r)
-			return fmt.Errorf("http: bad host %s", txt.Quote(r.Host))
+			return fmt.Errorf("http: bad host %s", txt.LogParam(r.Host))
 		}
 	}
 

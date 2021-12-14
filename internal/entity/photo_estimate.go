@@ -52,7 +52,7 @@ func (m *Photo) EstimateCountry() {
 		m.PhotoCountry = countryCode
 		m.PlaceSrc = SrcEstimate
 		m.EstimatedAt = TimePointer()
-		log.Debugf("photo: estimated country for %s is %s", m, txt.Quote(m.CountryName()))
+		log.Debugf("photo: estimated country for %s is %s", m, txt.LogParam(m.CountryName()))
 	}
 }
 
@@ -109,7 +109,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			Order(gorm.Expr("ABS(JulianDay(taken_at) - JulianDay(?))", m.TakenAt)).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
 	default:
-		log.Warnf("photo: unsupported sql dialect %s", txt.Quote(DbDialect()))
+		log.Warnf("photo: unsupported sql dialect %s", txt.LogParam(DbDialect()))
 		return
 	}
 
@@ -146,7 +146,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			}
 		}
 	} else if recentPhoto.HasCountry() {
-		log.Debugf("photo: estimated country for %s is %s", m, txt.Quote(m.CountryName()))
+		log.Debugf("photo: estimated country for %s is %s", m, txt.LogParam(m.CountryName()))
 		m.RemoveLocation(SrcEstimate, false)
 		m.RemoveLocationLabels()
 		m.PhotoCountry = recentPhoto.PhotoCountry

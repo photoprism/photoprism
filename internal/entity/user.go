@@ -176,7 +176,7 @@ func FindUserByName(userName string) *User {
 	if err := Db().Preload("Address").Where("user_name = ?", userName).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Debugf("user %s not found", txt.Quote(userName))
+		log.Debugf("user %s not found", txt.LogParam(userName))
 		return nil
 	}
 }
@@ -192,7 +192,7 @@ func FindUserByUID(uid string) *User {
 	if err := Db().Preload("Address").Where("user_uid = ?", uid).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Debugf("user %s not found", txt.Quote(uid))
+		log.Debugf("user %s not found", txt.LogParam(uid))
 		return nil
 	}
 }
@@ -214,14 +214,14 @@ func (m *User) Deleted() bool {
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
 	if n := m.Username(); n != "" {
-		return n
+		return txt.LogParam(n)
 	}
 
 	if m.FullName != "" {
-		return m.FullName
+		return txt.LogParam(m.FullName)
 	}
 
-	return m.UserUID
+	return txt.LogParam(m.UserUID)
 }
 
 // Username returns the normalized username.
@@ -256,7 +256,7 @@ func (m *User) SetPassword(password string) error {
 	}
 
 	if len(password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(m.Username()))
+		return fmt.Errorf("new password for %s must be at least 4 characters", txt.LogParam(m.Username()))
 	}
 
 	pw := NewPassword(m.UserUID, password)
@@ -398,7 +398,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		RoleAdmin:    true,
 	}
 	if len(uc.Password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(u.Username()))
+		return fmt.Errorf("new password for %s must be at least 4 characters", txt.LogParam(u.Username()))
 	}
 	err := u.Validate()
 	if err != nil {
@@ -412,7 +412,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		if err := tx.Create(&pw).Error; err != nil {
 			return err
 		}
-		log.Infof("created user %v with uid %v", txt.Quote(u.Username()), txt.Quote(u.UserUID))
+		log.Infof("created user %s with uid %s", txt.LogParam(u.Username()), txt.LogParam(u.UserUID))
 		return nil
 	})
 }

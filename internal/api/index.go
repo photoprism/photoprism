@@ -56,7 +56,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		if len(indOpt.Path) > 1 {
-			event.InfoMsg(i18n.MsgIndexingFiles, txt.Quote(indOpt.Path))
+			event.InfoMsg(i18n.MsgIndexingFiles, txt.LogParam(indOpt.Path))
 		} else {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}

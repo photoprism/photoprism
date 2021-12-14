@@ -35,7 +35,7 @@ func SaveAlbumAsYaml(a entity.Album) {
 	if err := a.SaveAsYaml(fileName); err != nil {
 		log.Errorf("album: %s (update yaml)", err)
 	} else {
-		log.Debugf("album: updated yaml file %s", txt.Quote(filepath.Base(fileName)))
+		log.Debugf("album: updated yaml file %s", txt.LogParam(filepath.Base(fileName)))
 	}
 }
 
@@ -85,10 +85,8 @@ func CreateAlbum(router *gin.RouterGroup) {
 		a := entity.NewAlbum(f.AlbumTitle, entity.AlbumDefault)
 		a.AlbumFavorite = f.AlbumFavorite
 
-		log.Debugf("album: creating %+v %+v", f, a)
-
 		if res := entity.Db().Create(a); res.Error != nil {
-			AbortAlreadyExists(c, txt.Quote(a.AlbumTitle))
+			AbortAlreadyExists(c, txt.LogParam(a.AlbumTitle))
 			return
 		}
 
@@ -198,7 +196,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 		SaveAlbumAsYaml(a)
 
-		event.SuccessMsg(i18n.MsgAlbumDeleted, txt.Quote(a.AlbumTitle))
+		event.SuccessMsg(i18n.MsgAlbumDeleted, txt.LogParam(a.AlbumTitle))
 
 		c.JSON(http.StatusOK, a)
 	})
@@ -327,7 +325,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		}
 
 		if len(added) > 0 {
-			event.SuccessMsg(i18n.MsgSelectionAddedTo, txt.Quote(a.Title()))
+			event.SuccessMsg(i18n.MsgSelectionAddedTo, txt.LogParam(a.Title()))
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
@@ -377,9 +375,9 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		if len(added) > 0 {
 			if len(added) == 1 {
-				event.SuccessMsg(i18n.MsgEntryAddedTo, txt.Quote(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryAddedTo, txt.LogParam(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), txt.Quote(a.Title()))
+				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), txt.LogParam(a.Title()))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
@@ -428,9 +426,9 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 		if len(removed) > 0 {
 			if len(removed) == 1 {
-				event.SuccessMsg(i18n.MsgEntryRemovedFrom, txt.Quote(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryRemovedFrom, txt.LogParam(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), txt.Quote(txt.Quote(a.Title())))
+				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), txt.LogParam(txt.LogParam(a.Title())))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
@@ -480,12 +478,12 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		for _, file := range files {
 			if file.FileHash == "" {
-				log.Warnf("download: empty file hash, skipped %s", txt.Quote(file.FileName))
+				log.Warnf("download: empty file hash, skipped %s", txt.LogParam(file.FileName))
 				continue
 			}
 
 			if file.FileSidecar {
-				log.Debugf("download: skipped sidecar %s", txt.Quote(file.FileName))
+				log.Debugf("download: skipped sidecar %s", txt.LogParam(file.FileName))
 				continue
 			}
 
@@ -505,12 +503,12 @@ func DownloadAlbum(router *gin.RouterGroup) {
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
-				log.Infof("download: added %s as %s", txt.Quote(file.FileName), txt.Quote(alias))
+				log.Infof("download: added %s as %s", txt.LogParam(file.FileName), txt.LogParam(alias))
 			} else {
-				log.Errorf("download: failed finding %s", txt.Quote(file.FileName))
+				log.Errorf("download: failed finding %s", txt.LogParam(file.FileName))
 			}
 		}
 
-		log.Infof("download: created %s [%s]", txt.Quote(zipFileName), time.Since(start))
+		log.Infof("download: created %s [%s]", txt.LogParam(zipFileName), time.Since(start))
 	})
 }

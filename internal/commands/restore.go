@@ -123,7 +123,7 @@ func restoreAction(ctx *cli.Context) error {
 			log.Warnf("replacing existing index with %d photos", counts.Photos)
 		}
 
-		log.Infof("restoring index from %s", txt.Quote(indexFileName))
+		log.Infof("restoring index from %s", txt.LogParam(indexFileName))
 
 		sqlBackup, err := os.ReadFile(indexFileName)
 
@@ -199,9 +199,9 @@ func restoreAction(ctx *cli.Context) error {
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("albums backup path %s not found", txt.Quote(albumsPath))
+			log.Warnf("albums backup path %s not found", txt.LogParam(albumsPath))
 		} else {
-			log.Infof("restoring albums from %s", txt.Quote(albumsPath))
+			log.Infof("restoring albums from %s", txt.LogParam(albumsPath))
 
 			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
 				return err

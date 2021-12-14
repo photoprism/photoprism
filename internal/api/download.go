@@ -56,7 +56,7 @@ func GetDownload(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("download: file %s is missing", txt.Quote(f.FileName))
+			log.Errorf("download: file %s is missing", txt.LogParam(f.FileName))
 			c.Data(404, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

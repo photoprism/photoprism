@@ -182,7 +182,7 @@ func (c *Config) Refresh() (err error) {
 // Load backend api credentials from a YAML file.
 func (c *Config) Load() error {
 	if !fs.FileExists(c.FileName) {
-		return fmt.Errorf("settings file not found: %s", txt.Quote(c.FileName))
+		return fmt.Errorf("settings file not found: %s", txt.LogParam(c.FileName))
 	}
 
 	mutex.Lock()
