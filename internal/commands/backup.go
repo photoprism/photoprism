@@ -17,7 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // BackupCommand configures the backup cli command.
@@ -113,7 +113,7 @@ func backupAction(ctx *cli.Context) error {
 				}
 			}
 
-			log.Infof("backing up database to %s", txt.LogParam(indexFileName))
+			log.Infof("backing up database to %s", sanitize.Log(indexFileName))
 		}
 
 		var cmd *exec.Cmd
@@ -175,7 +175,7 @@ func backupAction(ctx *cli.Context) error {
 			albumsPath = conf.AlbumsPath()
 		}
 
-		log.Infof("backing up albums to %s", txt.LogParam(albumsPath))
+		log.Infof("backing up albums to %s", sanitize.Log(albumsPath))
 
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err

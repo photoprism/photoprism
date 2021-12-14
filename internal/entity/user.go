@@ -11,6 +11,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -176,7 +177,7 @@ func FindUserByName(userName string) *User {
 	if err := Db().Preload("Address").Where("user_name = ?", userName).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Debugf("user %s not found", txt.LogParam(userName))
+		log.Debugf("user %s not found", sanitize.Log(userName))
 		return nil
 	}
 }
@@ -192,7 +193,7 @@ func FindUserByUID(uid string) *User {
 	if err := Db().Preload("Address").Where("user_uid = ?", uid).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Debugf("user %s not found", txt.LogParam(uid))
+		log.Debugf("user %s not found", sanitize.Log(uid))
 		return nil
 	}
 }
@@ -214,14 +215,14 @@ func (m *User) Deleted() bool {
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
 	if n := m.Username(); n != "" {
-		return txt.LogParam(n)
+		return sanitize.Log(n)
 	}
 
 	if m.FullName != "" {
-		return txt.LogParam(m.FullName)
+		return sanitize.Log(m.FullName)
 	}
 
-	return txt.LogParam(m.UserUID)
+	return sanitize.Log(m.UserUID)
 }
 
 // Username returns the normalized username.
@@ -256,7 +257,7 @@ func (m *User) SetPassword(password string) error {
 	}
 
 	if len(password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", txt.LogParam(m.Username()))
+		return fmt.Errorf("new password for %s must be at least 4 characters", sanitize.Log(m.Username()))
 	}
 
 	pw := NewPassword(m.UserUID, password)
@@ -398,7 +399,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		RoleAdmin:    true,
 	}
 	if len(uc.Password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", txt.LogParam(u.Username()))
+		return fmt.Errorf("new password for %s must be at least 4 characters", sanitize.Log(u.Username()))
 	}
 	err := u.Validate()
 	if err != nil {
@@ -412,7 +413,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		if err := tx.Create(&pw).Error; err != nil {
 			return err
 		}
-		log.Infof("created user %s with uid %s", txt.LogParam(u.Username()), txt.LogParam(u.UserUID))
+		log.Infof("created user %s with uid %s", sanitize.Log(u.Username()), sanitize.Log(u.UserUID))
 		return nil
 	})
 }

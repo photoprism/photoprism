@@ -13,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // DELETE /api/v1/photos/:uid/files/:file_uid
@@ -60,17 +59,17 @@ func DeleteFile(router *gin.RouterGroup) {
 		mediaFile, err := photoprism.NewMediaFile(fileName)
 
 		if err != nil {
-			log.Errorf("photo: %s (delete %s)", err, txt.LogParam(baseName))
+			log.Errorf("photo: %s (delete %s)", err, sanitize.Log(baseName))
 			AbortEntityNotFound(c)
 			return
 		}
 
 		if err := mediaFile.Remove(); err != nil {
-			log.Errorf("photo: %s (delete %s from folder)", err, txt.LogParam(baseName))
+			log.Errorf("photo: %s (delete %s from folder)", err, sanitize.Log(baseName))
 		}
 
 		if err := file.Delete(true); err != nil {
-			log.Errorf("photo: %s (delete %s from index)", err, txt.LogParam(baseName))
+			log.Errorf("photo: %s (delete %s from index)", err, sanitize.Log(baseName))
 			AbortDeleteFailed(c)
 			return
 		}

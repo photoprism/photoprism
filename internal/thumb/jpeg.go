@@ -5,14 +5,14 @@ import (
 	"path/filepath"
 
 	"github.com/disintegration/imaging"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, err error) {
 	img, err = imaging.Open(srcFilename)
 
 	if err != nil {
-		log.Errorf("resample: can't open %s", txt.LogParam(filepath.Base(srcFilename)))
+		log.Errorf("resample: can't open %s", sanitize.Log(filepath.Base(srcFilename)))
 		return img, err
 	}
 
@@ -23,7 +23,7 @@ func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, er
 	saveOption := imaging.JPEGQuality(JpegQuality)
 
 	if err = imaging.Save(img, jpgFilename, saveOption); err != nil {
-		log.Errorf("resample: failed to save %s", txt.LogParam(filepath.Base(jpgFilename)))
+		log.Errorf("resample: failed to save %s", sanitize.Log(filepath.Base(jpgFilename)))
 		return img, err
 	}
 

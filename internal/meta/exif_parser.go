@@ -12,20 +12,20 @@ import (
 	pngstructure "github.com/dsoprea/go-png-image-structure/v2"
 	tiffstructure "github.com/dsoprea/go-tiff-image-structure/v2"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error) {
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (raw exif panic)\nstack: %s", e, txt.LogParam(filepath.Base(fileName)), debug.Stack())
+			err = fmt.Errorf("metadata: %s in %s (raw exif panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 
 	// Extract raw EXIF block.
 	var parsed bool
 
-	logName := txt.LogParam(filepath.Base(fileName))
+	logName := sanitize.Log(filepath.Base(fileName))
 
 	if fileType == fs.FormatJpeg {
 		jpegMp := jpegstructure.NewJpegMediaParser()

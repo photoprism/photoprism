@@ -15,7 +15,6 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GetThumb returns a thumbnail image matching the file hash, crop area, and type.
@@ -47,7 +46,7 @@ func GetThumb(router *gin.RouterGroup) {
 			cropSize, ok := crop.Sizes[cropName]
 
 			if !ok {
-				log.Errorf("%s: invalid size %s", logPrefix, txt.LogParam(string(cropName)))
+				log.Errorf("%s: invalid size %s", logPrefix, sanitize.Log(string(cropName)))
 				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 				return
 			}
@@ -80,7 +79,7 @@ func GetThumb(router *gin.RouterGroup) {
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", logPrefix, txt.LogParam(thumbName.String()))
+			log.Errorf("%s: invalid size %s", logPrefix, sanitize.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -155,17 +154,17 @@ func GetThumb(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: file %s is missing", logPrefix, txt.LogParam(f.FileName))
+			log.Errorf("%s: file %s is missing", logPrefix, sanitize.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			logError(logPrefix, f.Update("FileMissing", true))
 
 			if f.AllFilesMissing() {
-				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, txt.LogParam(f.FileName))
+				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, sanitize.Log(f.FileName))
 
 				if _, err := f.RelatedPhoto().Delete(false); err != nil {
-					log.Errorf("%s: %s while deleting %s", logPrefix, err, txt.LogParam(f.FileName))
+					log.Errorf("%s: %s while deleting %s", logPrefix, err, sanitize.Log(f.FileName))
 				}
 			}
 

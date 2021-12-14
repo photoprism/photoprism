@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
@@ -66,7 +68,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		listFiles := f.Files
 		uncached := listFiles || f.Uncached
 		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
-		path := c.Param("path")
+		path := sanitize.Path(c.Param("path"))
 
 		cacheKey := fmt.Sprintf("folder:%s:%t:%t", filepath.Join(rootName, path), recursive, listFiles)
 

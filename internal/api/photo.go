@@ -17,7 +17,6 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SavePhotoAsYaml saves photo data as YAML file.
@@ -34,7 +33,7 @@ func SavePhotoAsYaml(p entity.Photo) {
 	if err := p.SaveAsYaml(fileName); err != nil {
 		log.Errorf("photo: %s (update yaml)", err)
 	} else {
-		log.Debugf("photo: updated yaml file %s", txt.LogParam(filepath.Base(fileName)))
+		log.Debugf("photo: updated yaml file %s", sanitize.Log(filepath.Base(fileName)))
 	}
 }
 
@@ -147,7 +146,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("photo: file %s is missing", txt.LogParam(f.FileName))
+			log.Errorf("photo: file %s is missing", sanitize.Log(f.FileName))
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

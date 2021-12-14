@@ -14,7 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Open loads an image from disk, rotates it, and converts the color profile if necessary.
@@ -49,7 +49,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 		return result, fmt.Errorf("filename missing")
 	}
 
-	logName := txt.LogParam(filepath.Base(fileName))
+	logName := sanitize.Log(filepath.Base(fileName))
 
 	// Open file.
 	fileReader, err := os.Open(fileName)
@@ -81,7 +81,7 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 		// Do nothing.
 		log.Tracef("resample: detected no color profile in %s", logName)
 	} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
-		log.Debugf("resample: detected color profile %s in %s", txt.LogParam(profile), logName)
+		log.Debugf("resample: detected color profile %s in %s", sanitize.Log(profile), logName)
 		switch {
 		case colors.ProfileDisplayP3.Equal(profile):
 			img = colors.ToSRGB(img, colors.ProfileDisplayP3)

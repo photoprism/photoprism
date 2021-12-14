@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -123,7 +124,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		cameraCache.SetDefault(m.CameraSlug, &result)
 		return &result
 	} else {
-		log.Errorf("camera: %s (create %s)", err.Error(), txt.LogParam(m.String()))
+		log.Errorf("camera: %s (create %s)", err.Error(), sanitize.Log(m.String()))
 	}
 
 	return &UnknownCamera
@@ -131,7 +132,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 
 // String returns an identifier that can be used in logs.
 func (m *Camera) String() string {
-	return txt.LogParam(m.CameraName)
+	return sanitize.Log(m.CameraName)
 }
 
 // Unknown returns true if the camera is not a known make or model.

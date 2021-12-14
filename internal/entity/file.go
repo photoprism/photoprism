@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 type DownloadName string
@@ -206,23 +206,23 @@ func (m File) Missing() bool {
 // DeletePermanently permanently removes a file from the index.
 func (m *File) DeletePermanently() error {
 	if m.ID < 1 || m.FileUID == "" {
-		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.LogParam(m.FileUID))
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, sanitize.Log(m.FileUID))
 	}
 
 	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
-		log.Errorf("file %s: %s while removing markers", txt.LogParam(m.FileUID), err)
+		log.Errorf("file %s: %s while removing markers", sanitize.Log(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file %s: %s while removing share info", txt.LogParam(m.FileUID), err)
+		log.Errorf("file %s: %s while removing share info", sanitize.Log(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file %s: %s while removing remote sync info", txt.LogParam(m.FileUID), err)
+		log.Errorf("file %s: %s while removing remote sync info", sanitize.Log(m.FileUID), err)
 	}
 
 	if err := m.ReplaceHash(""); err != nil {
-		log.Errorf("file %s: %s while removing covers", txt.LogParam(m.FileUID), err)
+		log.Errorf("file %s: %s while removing covers", sanitize.Log(m.FileUID), err)
 	}
 
 	return UnscopedDb().Delete(m).Error
@@ -237,9 +237,9 @@ func (m *File) ReplaceHash(newHash string) error {
 
 	// Log values.
 	if m.FileHash != "" && newHash == "" {
-		log.Tracef("file %s: removing hash %s", txt.LogParam(m.FileUID), txt.LogParam(m.FileHash))
+		log.Tracef("file %s: removing hash %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileHash))
 	} else if m.FileHash != "" && newHash != "" {
-		log.Tracef("file %s: hash %s changed to %s", txt.LogParam(m.FileUID), txt.LogParam(m.FileHash), txt.LogParam(newHash))
+		log.Tracef("file %s: hash %s changed to %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileHash), sanitize.Log(newHash))
 		// Reset error when hash changes.
 		m.FileError = ""
 	}
@@ -275,7 +275,7 @@ func (m *File) ReplaceHash(newHash string) error {
 // Delete deletes the entity from the database.
 func (m *File) Delete(permanently bool) error {
 	if m.ID < 1 || m.FileUID == "" {
-		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.LogParam(m.FileUID))
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, sanitize.Log(m.FileUID))
 	}
 
 	if permanently {
@@ -326,7 +326,7 @@ func (m *File) Create() error {
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file %s: %s while saving markers", txt.LogParam(m.FileUID), err)
+		log.Errorf("file %s: %s while saving markers", sanitize.Log(m.FileUID), err)
 		return err
 	}
 
@@ -349,12 +349,12 @@ func (m *File) Save() error {
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("file %s: %s while saving", txt.LogParam(m.FileUID), err)
+		log.Errorf("file %s: %s while saving", sanitize.Log(m.FileUID), err)
 		return err
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file %s: %s while saving markers", txt.LogParam(m.FileUID), err)
+		log.Errorf("file %s: %s while saving markers", sanitize.Log(m.FileUID), err)
 		return err
 	}
 
@@ -384,7 +384,7 @@ func (m *File) Updates(values interface{}) error {
 
 // Rename updates the name and path of this file.
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
-	log.Debugf("file %s: renaming %s to %s", txt.LogParam(m.FileUID), txt.LogParam(m.FileName), txt.LogParam(fileName))
+	log.Debugf("file %s: renaming %s to %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileName), sanitize.Log(fileName))
 
 	// Update database row.
 	if err := m.Updates(map[string]interface{}{
@@ -428,7 +428,7 @@ func (m *File) Undelete() error {
 		return err
 	}
 
-	log.Debugf("file %s: removed missing flag from %s", txt.LogParam(m.FileUID), txt.LogParam(m.FileName))
+	log.Debugf("file %s: removed missing flag from %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileName))
 
 	m.FileMissing = false
 	m.DeletedAt = nil
@@ -562,7 +562,7 @@ func (m *File) Markers() *Markers {
 	} else if m.FileUID == "" {
 		m.markers = &Markers{}
 	} else if res, err := FindMarkers(m.FileUID); err != nil {
-		log.Warnf("file %s: %s while loading markers", txt.LogParam(m.FileUID), err)
+		log.Warnf("file %s: %s while loading markers", sanitize.Log(m.FileUID), err)
 		m.markers = &Markers{}
 	} else {
 		m.markers = &res

@@ -8,7 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"gopkg.in/yaml.v2"
 )
 
@@ -181,7 +181,7 @@ func (s Settings) StackMeta() bool {
 // Load user settings from file.
 func (s *Settings) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
-		return fmt.Errorf("settings file not found: %s", txt.LogParam(fileName))
+		return fmt.Errorf("settings file not found: %s", sanitize.Log(fileName))
 	}
 
 	yamlConfig, err := os.ReadFile(fileName)

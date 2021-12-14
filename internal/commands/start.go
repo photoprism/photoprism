@@ -19,7 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // StartCommand registers the start cli command.
@@ -95,7 +95,7 @@ func startAction(ctx *cli.Context) error {
 
 		if child != nil {
 			if !fs.Overwrite(conf.PIDFilename(), []byte(strconv.Itoa(child.Pid))) {
-				log.Fatalf("failed writing process id to %s", txt.LogParam(conf.PIDFilename()))
+				log.Fatalf("failed writing process id to %s", sanitize.Log(conf.PIDFilename()))
 			}
 
 			log.Infof("daemon started with process id %v\n", child.Pid)

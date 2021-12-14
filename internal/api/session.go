@@ -131,7 +131,7 @@ func InvalidPreviewToken(c *gin.Context) bool {
 	token := sanitize.Token(c.Param("token"))
 
 	if token == "" {
-		token = c.Query("t")
+		token = sanitize.Token(c.Query("t"))
 	}
 
 	return service.Config().InvalidPreviewToken(token)
@@ -139,5 +139,5 @@ func InvalidPreviewToken(c *gin.Context) bool {
 
 // InvalidDownloadToken returns true if the token is invalid.
 func InvalidDownloadToken(c *gin.Context) bool {
-	return service.Config().InvalidDownloadToken(c.Query("t"))
+	return service.Config().InvalidDownloadToken(sanitize.Token(c.Query("t")))
 }

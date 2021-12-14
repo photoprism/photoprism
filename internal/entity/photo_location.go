@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/geo"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"gopkg.in/photoprism/go-tz.v2/tz"
 )
@@ -77,7 +78,7 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 		if m.Place == nil {
 			log.Warnf("photo: failed updating position of %s", m)
 		} else {
-			log.Debugf("photo: approximate place of %s is %s (id %s)", m, txt.LogParam(m.Place.Label()), m.PlaceID)
+			log.Debugf("photo: approximate place of %s is %s (id %s)", m, sanitize.Log(m.Place.Label()), m.PlaceID)
 		}
 	}
 }
@@ -106,7 +107,7 @@ func (m *Photo) AdoptPlace(other Photo, source string, force bool) {
 
 	m.UpdateTimeZone(other.TimeZone)
 
-	log.Debugf("photo: %s now located at %s (id %s)", m.String(), txt.LogParam(m.Place.Label()), m.PlaceID)
+	log.Debugf("photo: %s now located at %s (id %s)", m.String(), sanitize.Log(m.Place.Label()), m.PlaceID)
 }
 
 // RemoveLocation removes the current location.

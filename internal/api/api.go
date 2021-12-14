@@ -39,7 +39,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 var log = event.Log
@@ -65,7 +65,7 @@ func UpdateClientConfig() {
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
 
-	log.Debugf("api: abort %s with code %d (%s)", txt.LogParam(c.FullPath()), code, resp.String())
+	log.Debugf("api: abort %s with code %d (%s)", sanitize.Log(c.FullPath()), code, resp.String())
 
 	c.AbortWithStatusJSON(code, resp)
 }
@@ -75,7 +75,7 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 
 	if err != nil {
 		resp.Details = err.Error()
-		log.Errorf("api: error %s with code %d in %s (%s)", txt.LogParam(err.Error()), code, txt.LogParam(c.FullPath()), resp.String())
+		log.Errorf("api: error %s with code %d in %s (%s)", sanitize.Log(err.Error()), code, sanitize.Log(c.FullPath()), resp.String())
 	}
 
 	c.AbortWithStatusJSON(code, resp)

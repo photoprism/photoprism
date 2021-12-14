@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/tidwall/gjson"
 	"gopkg.in/photoprism/go-tz.v2/tz"
@@ -29,7 +30,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	j := gjson.GetBytes(jsonData, "@flatten|@join")
 
 	if !j.IsObject() {
-		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", txt.LogParam(filepath.Base(originalName)))
+		return fmt.Errorf("metadata: data is not an object in %s (exiftool)", sanitize.Log(filepath.Base(originalName)))
 	}
 
 	jsonStrings := make(map[string]string)
@@ -40,7 +41,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	if fileName, ok := jsonStrings["FileName"]; ok && fileName != "" && originalName != "" && fileName != originalName {
-		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", txt.LogParam(originalName), txt.LogParam(fileName))
+		return fmt.Errorf("metadata: original name %s does not match %s (exiftool)", sanitize.Log(originalName), sanitize.Log(fileName))
 	}
 
 	v := reflect.ValueOf(data).Elem()

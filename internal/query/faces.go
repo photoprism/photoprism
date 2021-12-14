@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Faces returns all (known / unmatched) faces from the index.
@@ -138,15 +138,15 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	for i := 1; i < len(merge); i++ {
 		if merge[i].SubjUID != subjUID {
 			return merged, fmt.Errorf("faces: can't merge clusters with conflicting subjects %s <> %s",
-				txt.LogParam(subjUID), txt.LogParam(merge[i].SubjUID))
+				sanitize.Log(subjUID), sanitize.Log(merge[i].SubjUID))
 		}
 	}
 
 	// Find or create merged face cluster.
 	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings()); merged == nil {
-		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", txt.LogParam(subjUID))
+		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", sanitize.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
-		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", txt.LogParam(subjUID))
+		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", sanitize.Log(subjUID))
 	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
 		return merged, err
 	}
@@ -155,9 +155,9 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 	if removed, err := PurgeOrphanFaces(merge.IDs()); err != nil {
 		return merged, err
 	} else if removed > 0 {
-		log.Debugf("faces: removed %d orphans for subject %s", removed, txt.LogParam(subjUID))
+		log.Debugf("faces: removed %d orphans for subject %s", removed, sanitize.Log(subjUID))
 	} else {
-		log.Warnf("faces: failed removing merged clusters for subject %s", txt.LogParam(subjUID))
+		log.Warnf("faces: failed removing merged clusters for subject %s", sanitize.Log(subjUID))
 	}
 
 	return merged, err
@@ -185,13 +185,13 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 				log.Infof("face %s: ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
-					log.Debugf("face %s: subject %s (%s %s)", f1.ID, txt.LogParam(f1.SubjUID), f1.SubjUID, entity.SrcString(f1.FaceSrc))
+					log.Debugf("face %s: subject %s (%s %s)", f1.ID, sanitize.Log(f1.SubjUID), f1.SubjUID, entity.SrcString(f1.FaceSrc))
 				} else {
 					log.Debugf("face %s: has no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
 				if f2.SubjUID != "" {
-					log.Debugf("face %s: subject %s (%s %s)", f2.ID, txt.LogParam(f2.SubjUID), f2.SubjUID, entity.SrcString(f2.FaceSrc))
+					log.Debugf("face %s: subject %s (%s %s)", f2.ID, sanitize.Log(f2.SubjUID), f2.SubjUID, entity.SrcString(f2.FaceSrc))
 				} else {
 					log.Debugf("face %s: has no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}

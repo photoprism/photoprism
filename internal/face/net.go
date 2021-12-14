@@ -11,7 +11,7 @@ import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 
 	"github.com/photoprism/photoprism/internal/crop"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Net is a wrapper for the TensorFlow Facenet model.
@@ -82,7 +82,7 @@ func (t *Net) loadModel() error {
 
 	modelPath := path.Join(t.modelPath)
 
-	log.Infof("faces: loading %s", txt.LogParam(filepath.Base(modelPath)))
+	log.Infof("faces: loading %s", sanitize.Log(filepath.Base(modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(modelPath, t.modelTags, nil)

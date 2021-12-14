@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -46,7 +47,7 @@ func FindLocation(id string) (result Location, err error) {
 	if len(id) == 0 {
 		return result, fmt.Errorf("empty cell id")
 	} else if n := len(id); n < 4 || n > 16 {
-		return result, fmt.Errorf("invalid cell id %s", txt.LogParam(id))
+		return result, fmt.Errorf("invalid cell id %s", sanitize.Log(id))
 	}
 
 	// Remember start time.
@@ -133,7 +134,7 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	cache.SetDefault(id, result)
-	log.Tracef("places: cached cell %s [%s]", txt.LogParam(id), time.Since(start))
+	log.Tracef("places: cached cell %s [%s]", sanitize.Log(id), time.Since(start))
 
 	result.Cached = false
 

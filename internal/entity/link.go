@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -192,5 +193,5 @@ func FindValidLinks(token, share string) (result Links) {
 
 // String returns an human readable identifier for logging.
 func (m *Link) String() string {
-	return txt.LogParam(m.LinkUID)
+	return sanitize.Log(m.LinkUID)
 }

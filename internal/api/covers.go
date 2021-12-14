@@ -13,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Namespaces for caching and logs.
@@ -45,7 +44,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", albumCover, txt.LogParam(thumbName.String()))
+			log.Errorf("%s: invalid size %s", albumCover, sanitize.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
@@ -86,11 +85,11 @@ func AlbumCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: found no original for %s", albumCover, txt.LogParam(fileName))
+			log.Errorf("%s: found no original for %s", albumCover, sanitize.Log(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("%s: %s is missing", albumCover, txt.LogParam(f.FileName))
+			log.Warnf("%s: %s is missing", albumCover, sanitize.Log(f.FileName))
 			logError(albumCover, f.Update("FileMissing", true))
 			return
 		}
@@ -157,7 +156,7 @@ func LabelCover(router *gin.RouterGroup) {
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", labelCover, txt.LogParam(thumbName.String()))
+			log.Errorf("%s: invalid size %s", labelCover, sanitize.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
@@ -198,7 +197,7 @@ func LabelCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: file %s is missing", labelCover, txt.LogParam(f.FileName))
+			log.Errorf("%s: file %s is missing", labelCover, sanitize.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

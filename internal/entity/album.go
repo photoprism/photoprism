@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -336,15 +337,15 @@ func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 // String returns the id or name as string.
 func (m *Album) String() string {
 	if m.AlbumSlug != "" {
-		return txt.LogParam(m.AlbumSlug)
+		return sanitize.Log(m.AlbumSlug)
 	}
 
 	if m.AlbumTitle != "" {
-		return txt.LogParam(m.AlbumTitle)
+		return sanitize.Log(m.AlbumTitle)
 	}
 
 	if m.AlbumUID != "" {
-		return txt.LogParam(m.AlbumUID)
+		return sanitize.Log(m.AlbumUID)
 	}
 
 	return "[unknown album]"

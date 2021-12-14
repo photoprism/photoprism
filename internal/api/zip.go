@@ -19,9 +19,10 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // POST /api/v1/zip
@@ -92,12 +93,12 @@ func CreateZip(router *gin.RouterGroup) {
 
 		for _, file := range files {
 			if file.FileHash == "" {
-				log.Warnf("download: empty file hash, skipped %s", txt.LogParam(file.FileName))
+				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
 				continue
 			}
 
 			if file.FileSidecar {
-				log.Debugf("download: skipped sidecar %s", txt.LogParam(file.FileName))
+				log.Debugf("download: skipped sidecar %s", sanitize.Log(file.FileName))
 				continue
 			}
 
@@ -116,16 +117,16 @@ func CreateZip(router *gin.RouterGroup) {
 					Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 					return
 				}
-				log.Infof("download: added %s as %s", txt.LogParam(file.FileName), txt.LogParam(alias))
+				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
 			} else {
-				log.Warnf("download: file %s is missing", txt.LogParam(file.FileName))
+				log.Warnf("download: file %s is missing", sanitize.Log(file.FileName))
 				logError("download", file.Update("FileMissing", true))
 			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("download: created %s [%s]", txt.LogParam(zipBaseName), time.Since(start))
+		log.Infof("download: created %s [%s]", sanitize.Log(zipBaseName), time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})
@@ -140,12 +141,12 @@ func DownloadZip(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
-		zipBaseName := filepath.Base(c.Param("filename"))
+		zipBaseName := sanitize.FileName(filepath.Base(c.Param("filename")))
 		zipPath := path.Join(conf.TempPath(), "zip")
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
-			log.Errorf("could not find zip file: %s", txt.LogParam(zipFileName))
+			log.Errorf("could not find zip file: %s", sanitize.Log(zipFileName))
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -153,7 +154,7 @@ func DownloadZip(router *gin.RouterGroup) {
 		c.FileAttachment(zipFileName, zipBaseName)
 
 		if err := os.Remove(zipFileName); err != nil {
-			log.Errorf("download: failed removing %s (%s)", txt.LogParam(zipFileName), err.Error())
+			log.Errorf("download: failed removing %s (%s)", sanitize.Log(zipFileName), err.Error())
 		}
 	})
 }

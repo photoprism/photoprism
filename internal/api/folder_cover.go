@@ -13,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
@@ -99,7 +98,7 @@ func FolderCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("%s: %s is missing", folderCover, txt.LogParam(f.FileName))
+			log.Warnf("%s: %s is missing", folderCover, sanitize.Log(f.FileName))
 			logError(folderCover, f.Update("FileMissing", true))
 			return
 		}

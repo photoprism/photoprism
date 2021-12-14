@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -210,15 +211,15 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 func (m *Photo) String() string {
 	if m.PhotoUID == "" {
 		if m.PhotoName != "" {
-			return txt.LogParam(m.PhotoName)
+			return sanitize.Log(m.PhotoName)
 		} else if m.OriginalName != "" {
-			return txt.LogParam(m.OriginalName)
+			return sanitize.Log(m.OriginalName)
 		}
 
 		return "(unknown)"
 	}
 
-	return "uid " + txt.LogParam(m.PhotoUID)
+	return "uid " + sanitize.Log(m.PhotoUID)
 }
 
 // FirstOrCreate fetches an existing row from the database or inserts a new one.
@@ -561,12 +562,12 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		labelEntity := FirstOrCreateLabel(NewLabel(classifyLabel.Title(), classifyLabel.Priority))
 
 		if labelEntity == nil {
-			log.Errorf("index: label %s should not be nil - bug? (%s)", txt.LogParam(classifyLabel.Title()), m)
+			log.Errorf("index: label %s should not be nil - bug? (%s)", sanitize.Log(classifyLabel.Title()), m)
 			continue
 		}
 
 		if labelEntity.Deleted() {
-			log.Debugf("index: skipping deleted label %s (%s)", txt.LogParam(classifyLabel.Title()), m)
+			log.Debugf("index: skipping deleted label %s (%s)", sanitize.Log(classifyLabel.Title()), m)
 			continue
 		}
 
@@ -721,7 +722,7 @@ func (m *Photo) Restore() error {
 // Delete deletes the photo from the index.
 func (m *Photo) Delete(permanently bool) (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
-		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.LogParam(m.PhotoUID))
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, sanitize.Log(m.PhotoUID))
 	}
 
 	if permanently {
@@ -742,7 +743,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 // DeletePermanently permanently removes a photo from the index.
 func (m *Photo) DeletePermanently() (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
-		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.LogParam(m.PhotoUID))
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, sanitize.Log(m.PhotoUID))
 	}
 
 	files = m.AllFiles()

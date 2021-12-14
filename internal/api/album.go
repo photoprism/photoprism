@@ -21,7 +21,6 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SaveAlbumAsYaml saves album data as YAML file.
@@ -38,7 +37,7 @@ func SaveAlbumAsYaml(a entity.Album) {
 	if err := a.SaveAsYaml(fileName); err != nil {
 		log.Errorf("album: %s (update yaml)", err)
 	} else {
-		log.Debugf("album: updated yaml file %s", txt.LogParam(filepath.Base(fileName)))
+		log.Debugf("album: updated yaml file %s", sanitize.Log(filepath.Base(fileName)))
 	}
 }
 
@@ -89,7 +88,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 		a.AlbumFavorite = f.AlbumFavorite
 
 		if res := entity.Db().Create(a); res.Error != nil {
-			AbortAlreadyExists(c, txt.LogParam(a.AlbumTitle))
+			AbortAlreadyExists(c, sanitize.Log(a.AlbumTitle))
 			return
 		}
 
@@ -199,7 +198,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 		SaveAlbumAsYaml(a)
 
-		event.SuccessMsg(i18n.MsgAlbumDeleted, txt.LogParam(a.AlbumTitle))
+		event.SuccessMsg(i18n.MsgAlbumDeleted, sanitize.Log(a.AlbumTitle))
 
 		c.JSON(http.StatusOK, a)
 	})
@@ -328,7 +327,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		}
 
 		if len(added) > 0 {
-			event.SuccessMsg(i18n.MsgSelectionAddedTo, txt.LogParam(a.Title()))
+			event.SuccessMsg(i18n.MsgSelectionAddedTo, sanitize.Log(a.Title()))
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
@@ -378,9 +377,9 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		if len(added) > 0 {
 			if len(added) == 1 {
-				event.SuccessMsg(i18n.MsgEntryAddedTo, txt.LogParam(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryAddedTo, sanitize.Log(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), txt.LogParam(a.Title()))
+				event.SuccessMsg(i18n.MsgEntriesAddedTo, len(added), sanitize.Log(a.Title()))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
@@ -429,9 +428,9 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 		if len(removed) > 0 {
 			if len(removed) == 1 {
-				event.SuccessMsg(i18n.MsgEntryRemovedFrom, txt.LogParam(a.Title()))
+				event.SuccessMsg(i18n.MsgEntryRemovedFrom, sanitize.Log(a.Title()))
 			} else {
-				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), txt.LogParam(txt.LogParam(a.Title())))
+				event.SuccessMsg(i18n.MsgEntriesRemovedFrom, len(removed), sanitize.Log(sanitize.Log(a.Title())))
 			}
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
@@ -481,12 +480,12 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		for _, file := range files {
 			if file.FileHash == "" {
-				log.Warnf("download: empty file hash, skipped %s", txt.LogParam(file.FileName))
+				log.Warnf("download: empty file hash, skipped %s", sanitize.Log(file.FileName))
 				continue
 			}
 
 			if file.FileSidecar {
-				log.Debugf("download: skipped sidecar %s", txt.LogParam(file.FileName))
+				log.Debugf("download: skipped sidecar %s", sanitize.Log(file.FileName))
 				continue
 			}
 
@@ -506,12 +505,12 @@ func DownloadAlbum(router *gin.RouterGroup) {
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
-				log.Infof("download: added %s as %s", txt.LogParam(file.FileName), txt.LogParam(alias))
+				log.Infof("download: added %s as %s", sanitize.Log(file.FileName), sanitize.Log(alias))
 			} else {
-				log.Errorf("download: failed finding %s", txt.LogParam(file.FileName))
+				log.Errorf("download: failed finding %s", sanitize.Log(file.FileName))
 			}
 		}
 
-		log.Infof("download: created %s [%s]", txt.LogParam(zipFileName), time.Since(start))
+		log.Infof("download: created %s [%s]", sanitize.Log(zipFileName), time.Since(start))
 	})
 }

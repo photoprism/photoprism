@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -54,7 +55,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
 	fullBase := m.BasePrefix(false)
-	logName := txt.LogParam(fileName)
+	logName := sanitize.Log(fileName)
 	fileSize, modTime, err := m.Stat()
 
 	if err != nil {
@@ -160,13 +161,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 		if fileRenamed {
 			fileChanged = true
-			log.Debugf("index: %s was renamed", txt.LogParam(m.BaseName()))
+			log.Debugf("index: %s was renamed", sanitize.Log(m.BaseName()))
 		} else if file.Changed(fileSize, modTime) {
 			fileChanged = true
-			log.Debugf("index: %s was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", txt.LogParam(m.BaseName()), fileSize, file.FileSize, modTime.Unix(), file.ModTime)
+			log.Debugf("index: %s was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", sanitize.Log(m.BaseName()), fileSize, file.FileSize, modTime.Unix(), file.ModTime)
 		} else if file.Missing() {
 			fileChanged = true
-			log.Debugf("index: %s was missing", txt.LogParam(m.BaseName()))
+			log.Debugf("index: %s was missing", sanitize.Log(m.BaseName()))
 		}
 	}
 
@@ -196,10 +197,10 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			if err := photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else if err := photo.Find(); err != nil {
-				log.Infof("index: %s restored from %s", txt.LogParam(m.BaseName()), txt.LogParam(filepath.Base(yamlName)))
+				log.Infof("index: %s restored from %s", sanitize.Log(m.BaseName()), sanitize.Log(filepath.Base(yamlName)))
 			} else {
 				photoExists = true
-				log.Infof("index: uid %s restored from %s", photo.PhotoUID, txt.LogParam(filepath.Base(yamlName)))
+				log.Infof("index: uid %s restored from %s", photo.PhotoUID, sanitize.Log(filepath.Base(yamlName)))
 			}
 		}
 	}
@@ -332,7 +333,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			file.SetColorProfile(metaData.ColorProfile)
 
 			if metaData.HasInstanceID() {
-				log.Infof("index: %s has instance_id %s", logName, txt.LogParam(metaData.InstanceID))
+				log.Infof("index: %s has instance_id %s", logName, sanitize.Log(metaData.InstanceID))
 
 				file.InstanceID = metaData.InstanceID
 			}
@@ -371,13 +372,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Infof("index: %s has document_id %s", logName, txt.LogParam(metaData.DocumentID))
+				log.Infof("index: %s has document_id %s", logName, sanitize.Log(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
 
 			if metaData.HasInstanceID() {
-				log.Infof("index: %s has instance_id %s", logName, txt.LogParam(metaData.InstanceID))
+				log.Infof("index: %s has instance_id %s", logName, sanitize.Log(metaData.InstanceID))
 
 				file.InstanceID = metaData.InstanceID
 			}
@@ -421,13 +422,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Infof("index: %s has document_id %s", logName, txt.LogParam(metaData.DocumentID))
+				log.Infof("index: %s has document_id %s", logName, sanitize.Log(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
 
 			if metaData.HasInstanceID() {
-				log.Infof("index: %s has instance_id %s", logName, txt.LogParam(metaData.InstanceID))
+				log.Infof("index: %s has instance_id %s", logName, sanitize.Log(metaData.InstanceID))
 
 				file.InstanceID = metaData.InstanceID
 			}
@@ -526,7 +527,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
 
 			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document_id %s", logName, txt.LogParam(metaData.DocumentID))
+				log.Debugf("index: %s has document_id %s", logName, sanitize.Log(metaData.DocumentID))
 
 				photo.UUID = metaData.DocumentID
 			}
@@ -745,7 +746,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 		if err := photo.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("index: %s in %s (update yaml)", err.Error(), logName)
 		} else {
-			log.Debugf("index: updated yaml file %s", txt.LogParam(filepath.Base(yamlFile)))
+			log.Debugf("index: updated yaml file %s", sanitize.Log(filepath.Base(yamlFile)))
 		}
 	}
 
