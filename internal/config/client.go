@@ -24,6 +24,7 @@ type ClientConfig struct {
 	ApiUri          string              `json:"apiUri"`
 	ContentUri      string              `json:"contentUri"`
 	SiteUrl         string              `json:"siteUrl"`
+	SiteDomain      string              `json:"siteDomain"`
 	SiteAuthor      string              `json:"siteAuthor"`
 	SiteTitle       string              `json:"siteTitle"`
 	SiteCaption     string              `json:"siteCaption"`
@@ -198,6 +199,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
+		SiteDomain:      c.SiteDomain(),
 		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
@@ -264,6 +266,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
+		SiteDomain:      c.SiteDomain(),
 		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
@@ -324,6 +327,7 @@ func (c *Config) UserConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
+		SiteDomain:      c.SiteDomain(),
 		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),

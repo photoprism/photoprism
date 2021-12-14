@@ -375,6 +375,16 @@ func TestConfig_SiteUrl(t *testing.T) {
 	assert.Equal(t, "http://superhost/", c.SiteUrl())
 }
 
+func TestConfig_SiteDomain(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "localhost", c.SiteDomain())
+	c.options.SiteUrl = "https://foo.bar.com:2342/"
+	assert.Equal(t, "foo.bar.com", c.SiteDomain())
+	c.options.SiteUrl = ""
+	assert.Equal(t, "localhost", c.SiteDomain())
+}
+
 func TestConfig_SitePreview(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "http://localhost:2342/static/img/preview.jpg", c.SitePreview())

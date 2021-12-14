@@ -330,6 +330,15 @@ func (c *Config) SiteUrl() string {
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
 }
 
+// SiteDomain returns the public server domain.
+func (c *Config) SiteDomain() string {
+	if u, err := url.Parse(c.SiteUrl()); err != nil {
+		return "localhost"
+	} else {
+		return u.Hostname()
+	}
+}
+
 // SiteAuthor returns the site author / copyright.
 func (c *Config) SiteAuthor() string {
 	return c.options.SiteAuthor
