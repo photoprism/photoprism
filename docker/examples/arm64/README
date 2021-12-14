@@ -7,7 +7,9 @@ Development Preview: photoprism/photoprism:preview
 MariaDB            : arm64v8/mariadb:10.6
 
 If your device meets the system requirements, mostly the same installation instructions as for regular Linux
-servers apply: https://docs.photoprism.app/getting-started/docker-compose/
+servers apply:
+
+  https://docs.photoprism.app/getting-started/docker-compose/
 
 To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must boot with the "arm_64bit=1"
 flag in its config.txt file (https://www.raspberrypi.org/documentation/installation/installing-images/README.md).

@@ -9,7 +9,9 @@ MariaDB       : linuxserver/mariadb:latest
 Pay close attention to changed directory and environment variable names.
 
 If your device meets the system requirements, mostly the same installation instructions as for regular Linux
-servers apply otherwise: https://docs.photoprism.app/getting-started/docker-compose/
+servers apply:
+
+  https://docs.photoprism.app/getting-started/docker-compose/
 
 ### System Requirements ###
 
