@@ -9,6 +9,8 @@ import (
 	"path"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -29,8 +31,8 @@ func SharePreview(router *gin.RouterGroup) {
 	router.GET("/:token/:share/preview", func(c *gin.Context) {
 		conf := service.Config()
 
-		token := c.Param("token")
-		share := c.Param("share")
+		token := sanitize.Token(c.Param("token"))
+		share := sanitize.Token(c.Param("share"))
 		links := entity.FindLinks(token, share)
 
 		if len(links) != 1 {
@@ -51,13 +53,13 @@ func SharePreview(router *gin.RouterGroup) {
 		yesterday := time.Now().Add(-24 * time.Hour)
 
 		if info, err := os.Stat(previewFilename); err != nil {
-			log.Debugf("share: creating new preview for %s", share)
+			log.Debugf("share: creating new preview for %s", txt.LogParam(share))
 		} else if info.ModTime().After(yesterday) {
-			log.Debugf("share: using cached preview for %s", share)
+			log.Debugf("share: using cached preview for %s", txt.LogParam(share))
 			c.File(previewFilename)
 			return
 		} else if err := os.Remove(previewFilename); err != nil {
-			log.Errorf("share: could not remove old preview of %s", share)
+			log.Errorf("share: could not remove old preview of %s", txt.LogParam(share))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}

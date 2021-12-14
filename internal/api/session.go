@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -89,7 +91,7 @@ func CreateSession(router *gin.RouterGroup) {
 // DELETE /api/v1/session/:id
 func DeleteSession(router *gin.RouterGroup) {
 	router.DELETE("/session/:id", func(c *gin.Context) {
-		id := c.Param("id")
+		id := sanitize.Token(c.Param("id"))
 
 		service.Session().Delete(id)
 
@@ -126,7 +128,7 @@ func Auth(id string, resource acl.Resource, action acl.Action) session.Data {
 
 // InvalidPreviewToken returns true if the token is invalid.
 func InvalidPreviewToken(c *gin.Context) bool {
-	token := c.Param("token")
+	token := sanitize.Token(c.Param("token"))
 
 	if token == "" {
 		token = c.Query("t")

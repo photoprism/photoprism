@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
@@ -59,7 +61,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		var resp []byte
 
 		// Render JSON response.
-		switch c.Param("format") {
+		switch sanitize.Token(c.Param("format")) {
 		case "view":
 			conf := service.Config()
 			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), conf.PreviewToken(), conf.DownloadToken())

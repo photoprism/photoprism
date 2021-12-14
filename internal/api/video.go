@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/photoprism/photoprism/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -24,8 +26,8 @@ func GetVideo(router *gin.RouterGroup) {
 			return
 		}
 
-		fileHash := c.Param("hash")
-		typeName := c.Param("type")
+		fileHash := sanitize.Token(c.Param("hash"))
+		typeName := sanitize.Token(c.Param("type"))
 
 		videoType, ok := video.Types[typeName]
 

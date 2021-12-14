@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -17,7 +18,9 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/service"
+
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -51,7 +54,7 @@ func GetAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -114,7 +117,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
@@ -166,7 +169,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 
 		a, err := query.AlbumByUID(id)
 
@@ -217,7 +220,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -255,7 +258,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(id)
 
 		if err != nil {
@@ -290,7 +293,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 			return
 		}
 
-		a, err := query.AlbumByUID(c.Param("uid"))
+		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -355,7 +358,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		a, err := query.AlbumByUID(uid)
 
 		if err != nil {
@@ -415,7 +418,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		a, err := query.AlbumByUID(c.Param("uid"))
+		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -453,7 +456,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		a, err := query.AlbumByUID(c.Param("uid"))
+		a, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)

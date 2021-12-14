@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -35,8 +37,8 @@ func DeleteFile(router *gin.RouterGroup) {
 			return
 		}
 
-		photoUID := c.Param("uid")
-		fileUID := c.Param("file_uid")
+		photoUID := sanitize.IdString(c.Param("uid"))
+		fileUID := sanitize.IdString(c.Param("file_uid"))
 
 		file, err := query.FileByUID(fileUID)
 

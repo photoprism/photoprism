@@ -5,15 +5,16 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/crop"
-
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
+
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -37,16 +38,16 @@ func GetThumb(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		download := c.Query("download") != ""
-		fileHash, cropArea := crop.ParseThumb(c.Param("thumb"))
+		fileHash, cropArea := crop.ParseThumb(sanitize.Token(c.Param("thumb")))
 
 		// Is cropped thumbnail?
 		if cropArea != "" {
-			cropName := crop.Name(c.Param("size"))
+			cropName := crop.Name(sanitize.Token(c.Param("size")))
 
 			cropSize, ok := crop.Sizes[cropName]
 
 			if !ok {
-				log.Errorf("%s: invalid size %s", logPrefix, cropName)
+				log.Errorf("%s: invalid size %s", logPrefix, txt.LogParam(string(cropName)))
 				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 				return
 			}
@@ -74,12 +75,12 @@ func GetThumb(router *gin.RouterGroup) {
 			return
 		}
 
-		thumbName := thumb.Name(c.Param("size"))
+		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
 
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", logPrefix, thumbName)
+			log.Errorf("%s: invalid size %s", logPrefix, txt.LogParam(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
 			return
 		}

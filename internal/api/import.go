@@ -77,7 +77,7 @@ func StartImport(router *gin.RouterGroup) {
 		}
 
 		if len(f.Albums) > 0 {
-			log.Debugf("import: adding files to album %s", strings.Join(f.Albums, " and "))
+			log.Debugf("import: adding files to album %s", txt.LogParam(strings.Join(f.Albums, " and ")))
 			opt.Albums = f.Albums
 		}
 

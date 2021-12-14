@@ -3,16 +3,16 @@ package api
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/entity"
-
-	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/internal/service"
 
-	"github.com/gin-gonic/gin"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // TODO: GET /api/v1/dl/file/:hash
@@ -44,7 +44,7 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		fileHash := c.Param("hash")
+		fileHash := sanitize.Token(c.Param("hash"))
 
 		f, err := query.FileByHash(fileHash)
 

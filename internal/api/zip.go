@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -20,9 +20,8 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
-
-	"github.com/gin-gonic/gin"
 )
 
 // POST /api/v1/zip
@@ -146,7 +145,7 @@ func DownloadZip(router *gin.RouterGroup) {
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
-			log.Errorf("could not find zip file: %s", zipFileName)
+			log.Errorf("could not find zip file: %s", txt.LogParam(zipFileName))
 			c.Data(404, "image/svg+xml", photoIconSvg)
 			return
 		}

@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -26,7 +28,7 @@ func GetSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if subj := entity.FindSubject(c.Param("uid")); subj == nil {
+		if subj := entity.FindSubject(sanitize.IdString(c.Param("uid"))); subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
 			return
 		} else {
@@ -54,7 +56,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		m := entity.FindSubject(uid)
 
 		if m == nil {
@@ -107,7 +109,7 @@ func LikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		subj := entity.FindSubject(uid)
 
 		if subj == nil {
@@ -141,7 +143,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		subj := entity.FindSubject(uid)
 
 		if subj == nil {

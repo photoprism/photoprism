@@ -17,7 +17,9 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
+
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Namespaces for caching and logs.
@@ -47,7 +49,7 @@ func GetAccount(router *gin.RouterGroup) {
 			return
 		}
 
-		id := ParseUint(c.Param("id"))
+		id := sanitize.IdUint(c.Param("id"))
 
 		if m, err := query.AccountByID(id); err == nil {
 			c.JSON(http.StatusOK, m)
@@ -80,7 +82,7 @@ func GetAccountFolders(router *gin.RouterGroup) {
 		}
 
 		start := time.Now()
-		id := ParseUint(c.Param("id"))
+		id := sanitize.IdUint(c.Param("id"))
 		cache := service.FolderCache()
 		cacheKey := fmt.Sprintf("%s:%d", accountFolder, id)
 
@@ -128,7 +130,7 @@ func ShareWithAccount(router *gin.RouterGroup) {
 			return
 		}
 
-		id := ParseUint(c.Param("id"))
+		id := sanitize.IdUint(c.Param("id"))
 
 		m, err := query.AccountByID(id)
 
@@ -237,7 +239,7 @@ func UpdateAccount(router *gin.RouterGroup) {
 			return
 		}
 
-		id := ParseUint(c.Param("id"))
+		id := sanitize.IdUint(c.Param("id"))
 
 		m, err := query.AccountByID(id)
 
@@ -306,7 +308,7 @@ func DeleteAccount(router *gin.RouterGroup) {
 			return
 		}
 
-		id := ParseUint(c.Param("id"))
+		id := sanitize.IdUint(c.Param("id"))
 
 		m, err := query.AccountByID(id)
 

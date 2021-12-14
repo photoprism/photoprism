@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
@@ -36,7 +38,7 @@ func FolderCover(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		uid := c.Param("uid")
-		thumbName := thumb.Name(c.Param("size"))
+		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
 		download := c.Query("download") != ""
 
 		size, ok := thumb.Sizes[thumbName]

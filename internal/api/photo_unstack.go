@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -31,7 +33,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		conf := service.Config()
-		fileUID := c.Param("file_uid")
+		fileUID := sanitize.IdString(c.Param("file_uid"))
 		file, err := query.FileByUID(fileUID)
 
 		if err != nil {

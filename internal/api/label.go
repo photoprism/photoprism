@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -33,7 +35,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		m, err := query.LabelByUID(id)
 
 		if err != nil {
@@ -67,7 +69,7 @@ func LikeLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
@@ -107,7 +109,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		label, err := query.LabelByUID(id)
 
 		if err != nil {

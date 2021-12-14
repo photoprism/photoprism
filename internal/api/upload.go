@@ -63,7 +63,7 @@ func Upload(router *gin.RouterGroup) {
 			log.Debugf("upload: saving file %s", txt.LogParam(file.Filename))
 
 			if err := c.SaveUploadedFile(file, filename); err != nil {
-				log.Errorf("upload: failed saving file %s", filepath.Base(file.Filename))
+				log.Errorf("upload: failed saving file %s", txt.LogParam(filepath.Base(file.Filename)))
 				AbortBadRequest(c)
 				return
 			}
