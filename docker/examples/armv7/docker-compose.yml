@@ -41,7 +41,6 @@ version: '3.5'
 services:
   ## App Server (required)
   photoprism:
-    ## Use photoprism/photoprism:armv7-preview for testing preview builds or :armv7 for the stable release:
     image: photoprism/photoprism:armv7
     depends_on:
       - mariadb
