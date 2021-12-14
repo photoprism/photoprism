@@ -33,7 +33,7 @@ COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 # 2. Install TensorFlow for C
 # 3. Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
 # 4. Install Go
-RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null && apt-get -qq install --no-install-recommends \
     build-essential \
     ca-certificates \
     wget \
@@ -137,7 +137,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # Install additional distribution packages
-RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null && apt-get -qq install --no-install-recommends \
     gpgv \
     wget \
     curl \
@@ -159,8 +159,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
-    libavcodec-extra  && \
-    [ "$TARGETARCH" = "arm" ] || apt-get install darktable; \
+    libavcodec-extra && \
     apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/
