@@ -70,7 +70,7 @@ func Serialize(f interface{}, all bool) string {
 					q = append(q, fmt.Sprintf("%s:%t", fieldName, fieldValue.Bool()))
 				}
 			default:
-				log.Warnf("form: can't serialize value of type %s in %s", t, sanitize.Token(fieldName))
+				log.Warnf("form: failed serializing %T %s", t, sanitize.Token(fieldName))
 			}
 		}
 	}
