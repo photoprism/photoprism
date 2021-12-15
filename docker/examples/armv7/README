@@ -47,9 +47,9 @@ servers apply:
 
 ### Getting Updates ###
 
-If an old version is running on your device and doesn't update, you need to [explicitly pull](updates.md)
-the latest image from [Docker Hub](https://hub.docker.com/r/photoprism/photoprism). Assuming that `:latest`
-means new versions are automatically downloaded is a common mistake for users new to Docker.
+If an old version is running on your device and is not updated, you may need to explicitly
+pull the latest image from [Docker Hub](https://hub.docker.com/r/photoprism/photoprism).
+Note that the `:latest` image tag does not cause Docker to automatically download new images.
 
 ### Credits ###
 
