@@ -22,7 +22,7 @@ services:
       - "2343:2343" # Acceptance Test HTTP port (host:container)
     shm_size: "2gb"
     environment:
-      GOPROXY: ${PHOTOPRISM_GOPROXY:-http://goproxy:8888,direct}
+      GOPROXY: "https://proxy.golang.org,direct"
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # The initial admin password (min 4 characters)
       PHOTOPRISM_UID: ${UID:-1000}
       PHOTOPRISM_GID: ${GID:-1000}
@@ -126,14 +126,6 @@ services:
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
-
-  ## Proxy for Go Modules
-  goproxy:
-    image: photoprism/goproxy:latest
-    ports:
-      - "8888:8888"
-    volumes:
-      - "./storage/go:/go"
 
 volumes:
   go-mod:
