@@ -6,8 +6,8 @@ import (
 
 // Token removes invalid character from a token string.
 func Token(s string) string {
-	if s == "" {
-		return s
+	if s == "" || len(s) > 200 || strings.Contains(s, "${") {
+		return ""
 	}
 
 	// Remove all invalid characters.

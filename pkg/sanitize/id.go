@@ -7,7 +7,7 @@ import (
 
 // IdString removes invalid character from an id string.
 func IdString(s string) string {
-	if s == "" || len(s) > 256 {
+	if s == "" || len(s) > 256 || strings.Contains(s, "${") {
 		return ""
 	}
 
@@ -27,7 +27,10 @@ func IdString(s string) string {
 
 // IdUint converts the string converted to an unsigned integer and 0 if the string is invalid.
 func IdUint(s string) uint {
-	if s == "" || len(s) > 64 {
+	// Largest possible values:
+	// UInt64: 18446744073709551615 (20 digits)
+	// UInt32: 4294967295 (10 digits)
+	if s == "" || len(s) > 10 || strings.Contains(s, "${") {
 		return 0
 	}
 

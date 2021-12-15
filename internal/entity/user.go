@@ -6,13 +6,13 @@ import (
 	"net/mail"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/sanitize"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 type Users []User
@@ -166,7 +166,7 @@ func FirstOrCreateUser(m *User) *User {
 
 // FindUserByName returns an existing user or nil if not found.
 func FindUserByName(userName string) *User {
-	userName = txt.NormalizeUsername(userName)
+	userName = sanitize.Username(userName)
 
 	if userName == "" {
 		return nil
@@ -227,7 +227,7 @@ func (m *User) String() string {
 
 // Username returns the normalized username.
 func (m *User) Username() string {
-	return txt.NormalizeUsername(m.UserName)
+	return sanitize.Username(m.UserName)
 }
 
 // Registered tests if the user is registered e.g. has a username.

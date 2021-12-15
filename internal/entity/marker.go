@@ -14,9 +14,9 @@ import (
 	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
+
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/sanitize"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
@@ -158,7 +158,7 @@ func (m *Marker) SetName(name, src string) (changed bool, err error) {
 		return false, nil
 	}
 
-	name = txt.NormalizeName(name)
+	name = sanitize.Name(name)
 
 	if name == "" {
 		return false, nil

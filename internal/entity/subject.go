@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -218,7 +219,7 @@ func FindSubject(s string) *Subject {
 
 // FindSubjectByName find an existing subject by name.
 func FindSubjectByName(name string) *Subject {
-	name = txt.NormalizeName(name)
+	name = sanitize.Name(name)
 
 	if name == "" {
 		return nil
@@ -253,7 +254,7 @@ func (m *Subject) Person() *Person {
 
 // SetName changes the subject's name.
 func (m *Subject) SetName(name string) error {
-	name = txt.NormalizeName(name)
+	name = sanitize.Name(name)
 
 	if name == m.SubjName {
 		// Nothing to do.
@@ -280,7 +281,7 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 	}
 
 	// Change name?
-	if name := txt.NormalizeName(f.SubjName); name != "" && name != m.SubjName {
+	if name := sanitize.Name(f.SubjName); name != "" && name != m.SubjName {
 		existing, err := m.UpdateName(name)
 
 		if existing.SubjUID != m.SubjUID || err != nil {

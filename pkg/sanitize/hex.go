@@ -6,8 +6,8 @@ import (
 
 // Hex removes invalid character from a hex string and makes it lowercase.
 func Hex(s string) string {
-	if s == "" {
-		return s
+	if s == "" || len(s) > 1024 || strings.Contains(s, "${") {
+		return ""
 	}
 
 	s = strings.ToLower(s)

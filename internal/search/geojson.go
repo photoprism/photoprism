@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
@@ -57,7 +59,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		Where("photos.photo_lat <> 0")
 
 	// Clip and normalize search query.
-	f.Query = txt.NormalizeQuery(f.Query)
+	f.Query = sanitize.Query(f.Query)
 
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {

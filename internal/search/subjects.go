@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/jinzhu/gorm"
@@ -55,7 +57,7 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 	}
 
 	// Clip to reasonable size and normalize operators.
-	f.Query = txt.NormalizeQuery(f.Query)
+	f.Query = sanitize.Query(f.Query)
 
 	if f.Query != "" {
 		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, f.Query) {
@@ -163,5 +165,5 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 		result = append(result, strings.Join(subj, txt.Or))
 	}
 
-	return result, names, txt.NormalizeQuery(remaining)
+	return result, names, sanitize.Query(remaining)
 }

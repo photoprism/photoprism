@@ -8,6 +8,8 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/araddon/dateparse"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -68,7 +70,7 @@ func Serialize(f interface{}, all bool) string {
 					q = append(q, fmt.Sprintf("%s:%t", fieldName, fieldValue.Bool()))
 				}
 			default:
-				log.Warnf("can't serialize value of type %s from form field %s", t, fieldName)
+				log.Warnf("form: can't serialize value of type %s in %s", t, sanitize.Token(fieldName))
 			}
 		}
 	}
@@ -155,7 +157,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 	}
 
 	if result != nil {
-		log.Errorf("error while parsing form values: %s", result)
+		log.Warnf("form: failed parsing values")
 	}
 
 	return result

@@ -193,7 +193,7 @@ func (l Location) CountryCode() (result string) {
 
 // State returns the location address state name.
 func (l Location) State() (result string) {
-	return txt.NormalizeState(l.Place.LocState, l.CountryCode())
+	return sanitize.State(l.Place.LocState, l.CountryCode())
 }
 
 // Latitude returns the location position latitude.
