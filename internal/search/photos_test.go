@@ -68,7 +68,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 5000
 		frm.Offset = 0
-		frm.ID = "pt9jtdre2lvl0yh7"
+		frm.UID = "pt9jtdre2lvl0yh7"
 		frm.Merged = true
 
 		photos, _, err := Photos(frm)
@@ -84,7 +84,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 5000
 		frm.Offset = 0
-		frm.ID = "pt9jtdre2lvl0yh7"
+		frm.UID = "pt9jtdre2lvl0yh7"
 		frm.Merged = false
 
 		photos, _, err := Photos(frm)

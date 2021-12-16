@@ -3,7 +3,7 @@ package form
 // SearchAlbums represents search form fields for "/api/v1/albums".
 type SearchAlbums struct {
 	Query    string `form:"q"`
-	ID       string `form:"id"`
+	UID      string `form:"uid"`
 	Type     string `form:"type"`
 	Location string `form:"location"`
 	Category string `form:"category"`

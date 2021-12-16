@@ -46,8 +46,8 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 		s = s.Order("subj_favorite DESC, subj_name")
 	}
 
-	if f.ID != "" {
-		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(f.ID, txt.Or))
+	if f.UID != "" {
+		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(strings.ToLower(f.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error

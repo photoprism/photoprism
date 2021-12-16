@@ -91,8 +91,8 @@ func Albums(f form.SearchAlbums) (results AlbumResults, err error) {
 		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
 	}
 
-	if f.ID != "" {
-		s = s.Where("albums.album_uid IN (?)", strings.Split(f.ID, txt.Or))
+	if f.UID != "" {
+		s = s.Where("albums.album_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error

@@ -96,7 +96,7 @@ func TestAlbums(t *testing.T) {
 	t.Run("search for existing ID", func(t *testing.T) {
 		f := form.SearchAlbums{
 			Query:    "",
-			ID:       "at9lxuqxpogaaba7",
+			UID:      "at9lxuqxpogaaba7",
 			Slug:     "",
 			Title:    "",
 			Favorite: false,

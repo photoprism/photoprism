@@ -35,7 +35,7 @@ func SearchAlbums(router *gin.RouterGroup) {
 
 		// Guest permissions are limited to shared albums.
 		if s.Guest() {
-			f.ID = s.Shares.Join(txt.Or)
+			f.UID = s.Shares.Join(txt.Or)
 		}
 
 		result, err := search.Albums(f)

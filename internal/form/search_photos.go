@@ -8,7 +8,7 @@ import (
 type SearchPhotos struct {
 	Query     string    `form:"q"`
 	Filter    string    `form:"filter"`
-	ID        string    `form:"id"`
+	UID       string    `form:"uid"`
 	Type      string    `form:"type"`
 	Path      string    `form:"path"`
 	Folder    string    `form:"folder"` // Alias for Path

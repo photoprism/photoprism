@@ -93,22 +93,25 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		s = s.Where("files.file_primary = 1")
 	}
 
-	// Shortcut for known photo ids.
-	if f.ID != "" {
-		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, txt.Or))
-		s = s.Order("files.file_primary DESC")
+	if f.UID != "" {
+		s = s.Where("photos.photo_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
 
-		if result := s.Scan(&results); result.Error != nil {
-			return results, 0, result.Error
+		// Take shortcut?
+		if f.Album == "" && f.Albums == "" && f.Label == "" && f.Query == "" {
+			s = s.Order("files.file_primary DESC")
+
+			if result := s.Scan(&results); result.Error != nil {
+				return results, 0, result.Error
+			}
+
+			log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+
+			if f.Merged {
+				return results.Merged()
+			}
+
+			return results, len(results), nil
 		}
-
-		log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
-
-		if f.Merged {
-			return results.Merged()
-		}
-
-		return results, len(results), nil
 	}
 
 	// Filter by label, label category and keywords.

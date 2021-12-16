@@ -17,7 +17,7 @@ const (
 )
 
 func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.SearchPhotos{ID: uid, Merged: true}
+	f := form.SearchPhotos{UID: uid, Merged: true}
 	result, _, err := search.Photos(f)
 
 	if err != nil {
@@ -30,7 +30,7 @@ func PublishPhotoEvent(e EntityEvent, uid string, c *gin.Context) {
 }
 
 func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.SearchAlbums{ID: uid}
+	f := form.SearchAlbums{UID: uid}
 	result, err := search.Albums(f)
 
 	if err != nil {
@@ -43,7 +43,7 @@ func PublishAlbumEvent(e EntityEvent, uid string, c *gin.Context) {
 }
 
 func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.SearchLabels{ID: uid}
+	f := form.SearchLabels{UID: uid}
 	result, err := search.Labels(f)
 
 	if err != nil {
@@ -56,7 +56,7 @@ func PublishLabelEvent(e EntityEvent, uid string, c *gin.Context) {
 }
 
 func PublishSubjectEvent(e EntityEvent, uid string, c *gin.Context) {
-	f := form.SearchSubjects{ID: uid}
+	f := form.SearchSubjects{UID: uid}
 	result, err := search.Subjects(f)
 
 	if err != nil {

@@ -94,7 +94,9 @@ func Unserialize(f SearchForm, q string) (result error) {
 		if unicode.IsSpace(char) && !escaped {
 			if isKeyValue {
 				fieldName := strings.Title(string(key))
-				field := formValues.FieldByName(fieldName)
+				field := formValues.FieldByNameFunc(func(name string) bool {
+					return strings.EqualFold(name, fieldName)
+				})
 				stringValue := string(value)
 
 				if field.CanSet() {

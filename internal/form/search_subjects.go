@@ -3,7 +3,7 @@ package form
 // SearchSubjects represents search form fields for "/api/v1/subjects".
 type SearchSubjects struct {
 	Query    string `form:"q"`
-	ID       string `form:"id"`
+	UID      string `form:"uid"`
 	Type     string `form:"type"`
 	Name     string `form:"name"`
 	All      bool   `form:"all"`

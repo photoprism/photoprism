@@ -3,7 +3,7 @@ package form
 // SearchFaces represents search form fields for "/api/v1/faces".
 type SearchFaces struct {
 	Query   string `form:"q"`
-	ID      string `form:"id"`
+	UID     string `form:"uid"`
 	Subject string `form:"subject"`
 	Unknown string `form:"unknown"`
 	Hidden  string `form:"hidden"`

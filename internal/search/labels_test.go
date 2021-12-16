@@ -111,7 +111,7 @@ func TestLabels(t *testing.T) {
 	t.Run("search for ID", func(t *testing.T) {
 		f := form.SearchLabels{
 			Query:    "",
-			ID:       "lt9k3pw1wowuy3c4",
+			UID:      "lt9k3pw1wowuy3c4",
 			Slug:     "",
 			Name:     "",
 			All:      false,

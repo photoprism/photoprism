@@ -72,8 +72,8 @@ func Faces(f form.SearchFaces) (results FaceResults, err error) {
 	}
 
 	// Find specific IDs?
-	if f.ID != "" {
-		s = s.Where(fmt.Sprintf("%s.id IN (?)", facesTable), strings.Split(strings.ToUpper(f.ID), txt.Or))
+	if f.UID != "" {
+		s = s.Where(fmt.Sprintf("%s.id IN (?)", facesTable), strings.Split(strings.ToUpper(f.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error

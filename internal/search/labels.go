@@ -41,8 +41,8 @@ func Labels(f form.SearchLabels) (results []Label, err error) {
 		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	}
 
-	if f.ID != "" {
-		s = s.Where("labels.label_uid IN (?)", strings.Split(f.ID, txt.Or))
+	if f.UID != "" {
+		s = s.Where("labels.label_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error

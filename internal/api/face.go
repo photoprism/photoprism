@@ -28,7 +28,7 @@ func GetFace(router *gin.RouterGroup) {
 			return
 		}
 
-		f := form.SearchFaces{ID: c.Param("id"), Markers: true}
+		f := form.SearchFaces{UID: c.Param("id"), Markers: true}
 
 		if results, err := search.Faces(f); err != nil || len(results) < 1 {
 			Abort(c, http.StatusNotFound, i18n.ErrFaceNotFound)

@@ -3,7 +3,7 @@ package form
 // SearchLabels represents search form fields for "/api/v1/labels".
 type SearchLabels struct {
 	Query    string `form:"q"`
-	ID       string `form:"id"`
+	UID      string `form:"uid"`
 	Slug     string `form:"slug"`
 	Name     string `form:"name"`
 	All      bool   `form:"all"`

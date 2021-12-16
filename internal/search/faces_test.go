@@ -26,7 +26,7 @@ func TestFaces(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(results))
 	})
 	t.Run("Find specific id", func(t *testing.T) {
-		results, err := Faces(form.SearchFaces{ID: "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", Markers: true})
+		results, err := Faces(form.SearchFaces{UID: "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", Markers: true})
 		assert.NoError(t, err)
 		t.Logf("Faces: %#v", results)
 		assert.LessOrEqual(t, 1, len(results))
