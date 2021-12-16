@@ -95,7 +95,8 @@ You are welcome to submit specific feature requests via [GitHub Issues](https://
 if you have verified that no similar [idea](https://github.com/photoprism/photoprism/labels/idea) or
 [todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
 
-Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
+Ideas endorsed by [silver, gold, and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor)
+and will be prioritized on the [roadmap](https://github.com/photoprism/photoprism/projects/5).
 
 ## Questions?
 
