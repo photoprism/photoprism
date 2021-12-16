@@ -1,26 +1,36 @@
 package sanitize
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
 
 // spaced returns the string padded with a space left and right.
 func spaced(s string) string {
 	return Space + s + Space
 }
 
+// replace performs a case-insensitive string replacement.
+func replace(subject string, search string, replace string) string {
+	return regexp.MustCompile("(?i)"+search).ReplaceAllString(subject, replace)
+}
+
 // Query replaces search operator with default symbols.
 func Query(s string) string {
-	if s == "" || len(s) > 1024 || strings.Contains(s, "${") {
+	if s == "" || reject(s, MaxLength) {
 		return Empty
 	}
 
-	s = strings.ToLower(s)
-	s = strings.ReplaceAll(s, spaced(EnOr), Or)
-	s = strings.ReplaceAll(s, spaced(EnAnd), And)
-	s = strings.ReplaceAll(s, spaced(EnWith), And)
-	s = strings.ReplaceAll(s, spaced(EnIn), And)
-	s = strings.ReplaceAll(s, spaced(EnAt), And)
+	// Normalize.
+	s = replace(s, spaced(EnOr), Or)
+	s = replace(s, spaced(EnOr), Or)
+	s = replace(s, spaced(EnAnd), And)
+	s = replace(s, spaced(EnWith), And)
+	s = replace(s, spaced(EnIn), And)
+	s = replace(s, spaced(EnAt), And)
 	s = strings.ReplaceAll(s, SpacedPlus, And)
 	s = strings.ReplaceAll(s, "%", "*")
 
-	return strings.Trim(s, "+&|_-=!@$%^(){}\\<>,.;: ")
+	// Trim.
+	return strings.Trim(s, "+&|-=$^(){}\\<>,;: \n\r\t")
 }

@@ -126,7 +126,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 							field.SetUint(uint64(intValue))
 						}
 					case string:
-						field.SetString(stringValue)
+						field.SetString(sanitize.Query(stringValue))
 					case bool:
 						field.SetBool(txt.Bool(stringValue))
 					default:
@@ -155,11 +155,11 @@ func Unserialize(f SearchForm, q string) (result error) {
 	}
 
 	if len(queryStrings) > 0 {
-		f.SetQuery(strings.Join(queryStrings, " "))
+		f.SetQuery(sanitize.Query(strings.Join(queryStrings, " ")))
 	}
 
 	if result != nil {
-		log.Warnf("form: failed parsing values")
+		log.Warnf("form: failed parsing search query")
 	}
 
 	return result

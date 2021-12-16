@@ -7,7 +7,7 @@ import (
 
 // FileName removes invalid character from a filename string.
 func FileName(s string) string {
-	if len(s) > 512 || strings.Contains(s, "${") || strings.Contains(s, "/") || strings.Contains(s, "..") {
+	if s == "" || reject(s, 512) || strings.Contains(s, "/") || strings.Contains(s, "..") {
 		return ""
 	}
 

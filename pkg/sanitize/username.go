@@ -8,5 +8,11 @@ import (
 
 // Username returns the normalized username (lowercase, whitespace trimmed).
 func Username(s string) string {
-	return strings.ToLower(txt.Clip(s, txt.ClipUsername))
+	s = strings.TrimSpace(s)
+
+	if s == "" || reject(s, txt.ClipUsername) {
+		return ""
+	}
+
+	return strings.ToLower(s)
 }

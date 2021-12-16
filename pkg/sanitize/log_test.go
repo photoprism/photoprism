@@ -20,7 +20,7 @@ func TestLog(t *testing.T) {
 		assert.Equal(t, "?", Log("${https://<host>:<port>/<path>}"))
 	})
 	t.Run("Ldap", func(t *testing.T) {
-		assert.Equal(t, "'User-Agent: ?jndi:ldap://?host?:?port?/?path??'", Log("User-Agent: {jndi:ldap://<host>:<port>/<path>}"))
+		assert.Equal(t, "?", Log("User-Agent: {jndi:ldap://<host>:<port>/<path>}"))
 	})
 }
 

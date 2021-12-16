@@ -6,11 +6,11 @@ import (
 
 // Hex removes invalid character from a hex string and makes it lowercase.
 func Hex(s string) string {
-	if s == "" || len(s) > 1024 || strings.Contains(s, "${") {
+	if s == "" || reject(s, 1024) {
 		return ""
 	}
 
-	s = strings.ToLower(s)
+	s = strings.ToLower(strings.TrimSpace(s))
 
 	// Remove all invalid characters.
 	s = strings.Map(func(r rune) rune {

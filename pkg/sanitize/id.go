@@ -7,7 +7,7 @@ import (
 
 // IdString removes invalid character from an id string.
 func IdString(s string) string {
-	if s == "" || len(s) > 256 || strings.Contains(s, "${") {
+	if s == "" || reject(s, 512) {
 		return ""
 	}
 
@@ -30,9 +30,11 @@ func IdUint(s string) uint {
 	// Largest possible values:
 	// UInt64: 18446744073709551615 (20 digits)
 	// UInt32: 4294967295 (10 digits)
-	if s == "" || len(s) > 10 || strings.Contains(s, "${") {
+	if s == "" || reject(s, 10) {
 		return 0
 	}
+
+	s = strings.TrimSpace(s)
 
 	result, err := strconv.ParseUint(s, 10, 32)
 

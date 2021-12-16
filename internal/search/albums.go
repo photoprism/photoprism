@@ -3,8 +3,6 @@ package search
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
-
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -15,9 +13,6 @@ func Albums(f form.SearchAlbums) (results AlbumResults, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
-
-	// Clip and normalize search query.
-	f.Query = sanitize.Query(f.Query)
 
 	// Base query.
 	s := UnscopedDb().Table("albums").

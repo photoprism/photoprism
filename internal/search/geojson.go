@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
-
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
@@ -57,9 +55,6 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		files.file_missing = 0 AND files.file_primary AND files.deleted_at IS NULL`).
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
-
-	// Clip and normalize search query.
-	f.Query = sanitize.Query(f.Query)
 
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
@@ -368,7 +363,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 		return results, result.Error
 	}
 
-	log.Infof("geo: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+	log.Debugf("geo: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 	return results, nil
 }

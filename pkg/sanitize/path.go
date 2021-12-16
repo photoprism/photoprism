@@ -7,7 +7,7 @@ import (
 
 // Path removes invalid character from a path string.
 func Path(s string) string {
-	if len(s) > 512 || strings.Contains(s, "${") || strings.Contains(s, "..") || strings.Contains(s, "//") {
+	if s == "" || reject(s, 512) || strings.Contains(s, "..") || strings.Contains(s, "//") {
 		return ""
 	}
 

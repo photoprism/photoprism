@@ -56,9 +56,6 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 		return results, nil
 	}
 
-	// Clip to reasonable size and normalize operators.
-	f.Query = sanitize.Query(f.Query)
-
 	if f.Query != "" {
 		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, f.Query) {
 			s = s.Where("?", gorm.Expr(where))

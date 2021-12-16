@@ -8,7 +8,7 @@ import (
 
 // Name sanitizes and capitalizes names.
 func Name(name string) string {
-	if name == "" {
+	if name == "" || reject(name, txt.ClipDefault) {
 		return ""
 	}
 

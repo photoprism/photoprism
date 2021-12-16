@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/sanitize"
-
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
@@ -97,14 +95,14 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		s = s.Where("photos.photo_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
 
 		// Take shortcut?
-		if f.Album == "" && f.Albums == "" && f.Label == "" && f.Query == "" {
+		if f.Album == "" && f.Query == "" {
 			s = s.Order("files.file_primary DESC")
 
 			if result := s.Scan(&results); result.Error != nil {
 				return results, 0, result.Error
 			}
 
-			log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+			log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 			if f.Merged {
 				return results.Merged()
@@ -140,9 +138,6 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 				Group("photos.id, files.id")
 		}
 	}
-
-	// Clip and normalize search query.
-	f.Query = sanitize.Query(f.Query)
 
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
@@ -517,7 +512,7 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 		return results, 0, err
 	}
 
-	log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+	log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 	if f.Merged {
 		return results.Merged()

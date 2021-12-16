@@ -8,12 +8,12 @@ import (
 
 // Log sanitizes strings created from user input in response to the log4j debacle.
 func Log(s string) string {
-	if len(s) > 200 || strings.Contains(s, "${") {
+	if reject(s, 512) {
 		return "?"
 	}
 
 	// Trim quotes, tabs, and newline characters.
-	s = strings.Trim(s, "'\"“`\t\n\r")
+	s = strings.Trim(s, " '\"“`\t\n\r")
 
 	// Remove non-printable and other potentially problematic characters.
 	s = strings.Map(func(r rune) rune {

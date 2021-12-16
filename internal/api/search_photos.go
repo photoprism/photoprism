@@ -51,6 +51,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 				return
 			}
 
+			f.UID = ""
 			f.Public = true
 			f.Private = false
 			f.Hidden = false

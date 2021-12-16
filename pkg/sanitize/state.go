@@ -8,18 +8,22 @@ import (
 )
 
 // State returns the full, normalized state name.
-func State(stateName, countryCode string) string {
+func State(s, countryCode string) string {
+	if s == "" || reject(s, txt.ClipName) {
+		return Empty
+	}
+
 	// Remove whitespace from name.
-	stateName = strings.TrimSpace(stateName)
+	s = strings.TrimSpace(s)
 
 	// Empty?
-	if stateName == "" || stateName == txt.UnknownStateCode {
+	if s == "" || s == txt.UnknownStateCode {
 		// State doesn't have a name.
 		return ""
 	}
 
 	// Remove non-printable and other potentially problematic characters.
-	stateName = strings.Map(func(r rune) rune {
+	s = strings.Map(func(r rune) rune {
 		if !unicode.IsPrint(r) {
 			return -1
 		}
@@ -30,7 +34,7 @@ func State(stateName, countryCode string) string {
 		default:
 			return r
 		}
-	}, stateName)
+	}, s)
 
 	// Normalize country code.
 	countryCode = strings.ToLower(strings.TrimSpace(countryCode))
@@ -38,13 +42,13 @@ func State(stateName, countryCode string) string {
 	// Is the name an abbreviation that should be normalized?
 	if states, found := txt.StatesByCountry[countryCode]; !found {
 		// Unknown country.
-	} else if normalized, found := states[stateName]; !found {
+	} else if normalized, found := states[s]; !found {
 		// Unknown abbreviation.
 	} else if normalized != "" {
 		// Yes, use normalized name.
-		stateName = normalized
+		s = normalized
 	}
 
 	// Return normalized state name.
-	return stateName
+	return s
 }
