@@ -11,9 +11,17 @@ import (
 )
 
 var OriginalPaths = []string{
-	"/photoprism/photos/originals",
+	"/photoprism/library/originals",
 	"/photoprism/storage/originals",
 	"/photoprism/originals",
+	"/opt/photoprism/library/originals",
+	"/opt/photoprism/storage/originals",
+	"/opt/photoprism/originals",
+	"/library/originals",
+	"/storage/originals",
+	"/originals",
+	"library/originals",
+	"storage/originals",
 	"photoprism/originals",
 	"PhotoPrism/Originals",
 	"photoprism/original",
@@ -24,7 +32,6 @@ var OriginalPaths = []string{
 	"Pictures/Original",
 	"photos/originals",
 	"Photos/Originals",
-	"storage/originals",
 	"photos/original",
 	"Photos/Original",
 	"originals",
@@ -67,16 +74,23 @@ var OriginalPaths = []string{
 }
 
 var ImportPaths = []string{
-	"/photoprism/photos/import",
+	"/photoprism/library/import",
 	"/photoprism/storage/import",
 	"/photoprism/import",
+	"/opt/photoprism/library/import",
+	"/opt/photoprism/storage/import",
+	"/opt/photoprism/import",
+	"/library/import",
+	"/storage/import",
+	"/import",
+	"library/import",
+	"storage/import",
 	"photoprism/import",
 	"PhotoPrism/Import",
 	"pictures/import",
 	"Pictures/Import",
 	"photos/import",
 	"Photos/Import",
-	"storage/import",
 	"import",
 	"Import",
 	"~/pictures/import",
@@ -92,6 +106,7 @@ var ImportPaths = []string{
 
 var AssetPaths = []string{
 	"/photoprism/assets",
+	"/opt/photoprism/assets",
 	"~/.photoprism/assets",
 	"~/photoprism/assets",
 	"photoprism/assets",
