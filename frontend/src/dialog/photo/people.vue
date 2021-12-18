@@ -133,28 +133,40 @@ export default {
     refresh() {
     },
     onReject(marker) {
+      if (this.busy || !marker) return;
+
       this.busy = true;
       this.$notify.blockUI();
+
       marker.reject().finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
       });
     },
     onApprove(marker) {
+      if (this.busy || !marker) return;
+
       this.busy = true;
+
       marker.approve().finally(() => this.busy = false);
     },
     onClearSubject(marker) {
+      if (this.busy || !marker) return;
+
       this.busy = true;
       this.$notify.blockUI();
+
       marker.clearSubject(marker).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
       });
     },
     onRename(marker) {
+      if (this.busy || !marker) return;
+
       this.busy = true;
       this.$notify.blockUI();
+
       marker.rename().finally(() => {
         this.$notify.unblockUI();
         this.busy = false;

@@ -1,0 +1,10 @@
+# PhotoPrism Demo Environment
+
+Run to install a pre-configured demo instance on Ubuntu 20.04 LTS:
+
+  bash <(curl -s https://dl.photoprism.app/docker/demo/setup.sh)
+
+Note:
+- demo.yourdomain.com must be replaced with the actual hostname
+- The demo is frequently restarted to remove uploaded content
+- There is no password protection, it is running in public mode

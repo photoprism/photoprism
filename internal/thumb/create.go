@@ -9,10 +9,10 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/disintegration/imaging"
+
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Suffix returns the thumb cache file suffix.
@@ -35,7 +35,7 @@ func FileName(hash string, thumbPath string, width, height int, opts ...Resample
 	}
 
 	if len(hash) < 4 {
-		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", txt.Quote(hash))
+		return "", fmt.Errorf("resample: file hash is empty or too short (%s)", sanitize.Log(hash))
 	}
 
 	if len(thumbPath) == 0 {
@@ -57,11 +57,11 @@ func FileName(hash string, thumbPath string, width, height int, opts ...Resample
 // FromCache returns the thumb cache file name for an image.
 func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ...ResampleOption) (fileName string, err error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("resample: invalid file hash %s", txt.Quote(hash))
+		return "", fmt.Errorf("resample: invalid file hash %s", sanitize.Log(hash))
 	}
 
 	if len(imageFilename) < 4 {
-		return "", fmt.Errorf("resample: invalid file name %s", txt.Quote(imageFilename))
+		return "", fmt.Errorf("resample: invalid file name %s", sanitize.Log(imageFilename))
 	}
 
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
@@ -86,6 +86,7 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 		return "", err
 	}
 
+	// Generate thumb cache filename.
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
 
 	if err != nil {
@@ -93,17 +94,15 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 		return "", err
 	}
 
-	img, err := imaging.Open(imageFilename)
+	// Load image from storage.
+	img, err := Open(imageFilename, orientation)
 
 	if err != nil {
-		log.Debugf("resample: %s in %s", err, txt.Quote(filepath.Base(imageFilename)))
+		log.Error(err)
 		return "", err
 	}
 
-	if orientation > 1 {
-		img = Rotate(img, orientation)
-	}
-
+	// Create thumb from image.
 	if _, err := Create(img, fileName, width, height, opts...); err != nil {
 		return "", err
 	}
@@ -136,7 +135,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 	err = imaging.Save(result, fileName, saveOption)
 
 	if err != nil {
-		log.Errorf("resample: failed to save %s", txt.Quote(filepath.Base(fileName)))
+		log.Errorf("resample: failed to save %s", sanitize.Log(filepath.Base(fileName)))
 		return result, err
 	}
 

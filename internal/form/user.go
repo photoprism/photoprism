@@ -1,5 +1,7 @@
 package form
 
+import "github.com/photoprism/photoprism/pkg/sanitize"
+
 // UserCreate represents a User with a new password.
 type UserCreate struct {
 	UserName string `json:"username"`
@@ -7,4 +9,9 @@ type UserCreate struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Admin    bool   `json:"admin"`
+}
+
+// Username returns the normalized username in lowercase and without whitespace padding.
+func (f UserCreate) Username() string {
+	return sanitize.Username(f.UserName)
 }

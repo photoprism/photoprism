@@ -6,7 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Audit face clusters and subjects.
@@ -78,13 +78,13 @@ func (w *Faces) Audit(fix bool) (err error) {
 				log.Infof("face %s: ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f1.ID, txt.Quote(subj[f1.SubjUID].SubjName), f1.SubjUID, entity.SrcString(f1.FaceSrc))
+					log.Infof("face %s: subject %s (%s %s)", f1.ID, sanitize.Log(subj[f1.SubjUID].SubjName), f1.SubjUID, entity.SrcString(f1.FaceSrc))
 				} else {
 					log.Infof("face %s: has no subject (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
 				}
 
 				if f2.SubjUID != "" {
-					log.Infof("face %s: subject %s (%s %s)", f2.ID, txt.Quote(subj[f2.SubjUID].SubjName), f2.SubjUID, entity.SrcString(f2.FaceSrc))
+					log.Infof("face %s: subject %s (%s %s)", f2.ID, sanitize.Log(subj[f2.SubjUID].SubjName), f2.SubjUID, entity.SrcString(f2.FaceSrc))
 				} else {
 					log.Infof("face %s: has no subject (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
 				}
@@ -115,7 +115,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 		log.Error(err)
 	} else {
 		for _, m := range markers {
-			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjSrc), txt.Quote(subj[m.SubjUID].SubjName), m.FaceID, txt.Quote(subj[faceMap[m.FaceID].SubjUID].SubjName))
+			log.Infof("marker %s: %s subject %s conflicts with face %s subject %s", m.MarkerUID, entity.SrcString(m.SubjSrc), sanitize.Log(subj[m.SubjUID].SubjName), m.FaceID, sanitize.Log(subj[faceMap[m.FaceID].SubjUID].SubjName))
 		}
 	}
 

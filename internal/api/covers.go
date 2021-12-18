@@ -5,13 +5,14 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Namespaces for caching and logs.
@@ -37,13 +38,13 @@ func AlbumCover(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := service.Config()
-		thumbName := thumb.Name(c.Param("size"))
-		uid := c.Param("uid")
+		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
+		uid := sanitize.IdString(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", albumCover, thumbName)
+			log.Errorf("%s: invalid size %s", albumCover, sanitize.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
@@ -52,7 +53,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -84,11 +85,11 @@ func AlbumCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: found no original for %s", albumCover, fileName)
+			log.Errorf("%s: found no original for %s", albumCover, sanitize.Log(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("%s: %s is missing", albumCover, txt.Quote(f.FileName))
+			log.Warnf("%s: %s is missing", albumCover, sanitize.Log(f.FileName))
 			logError(albumCover, f.Update("FileMissing", true))
 			return
 		}
@@ -149,13 +150,13 @@ func LabelCover(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := service.Config()
-		thumbName := thumb.Name(c.Param("size"))
-		uid := c.Param("uid")
+		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
+		uid := sanitize.IdString(c.Param("uid"))
 
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", labelCover, thumbName)
+			log.Errorf("%s: invalid size %s", labelCover, sanitize.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
@@ -164,7 +165,7 @@ func LabelCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(labelCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -196,7 +197,7 @@ func LabelCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: file %s is missing", labelCover, txt.Quote(f.FileName))
+			log.Errorf("%s: file %s is missing", labelCover, sanitize.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.

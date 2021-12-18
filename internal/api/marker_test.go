@@ -209,13 +209,13 @@ func TestClearMarkerSubject(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, resp.Code)
 	})
-	t.Run("bad request non- primary file", func(t *testing.T) {
+	t.Run("non-primary file", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		ClearMarkerSubject(router)
 
 		r := PerformRequestWithBody(app, "DELETE", "/api/v1/markers/mt9k3pw1wowu1000/subject", "")
 
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

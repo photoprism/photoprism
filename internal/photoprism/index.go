@@ -19,7 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Index represents an indexer that indexes files in the originals directory.
@@ -89,7 +89,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 	optionsPath := filepath.Join(originalsPath, opt.Path)
 
 	if !fs.PathExists(optionsPath) {
-		event.Error(fmt.Sprintf("index: %s does not exist", txt.Quote(optionsPath)))
+		event.Error(fmt.Sprintf("index: %s does not exist", sanitize.Log(optionsPath)))
 		return done
 	}
 
@@ -182,7 +182,7 @@ func (ind *Index) Start(opt IndexOptions) fs.Done {
 			}
 
 			if mf.FileSize() == 0 {
-				log.Infof("index: skipped empty file %s", txt.Quote(mf.BaseName()))
+				log.Infof("index: skipped empty file %s", sanitize.Log(mf.BaseName()))
 				return nil
 			}
 

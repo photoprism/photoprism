@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // BackupAlbums creates a YAML file backup of all albums.
@@ -36,7 +36,7 @@ func BackupAlbums(backupPath string, force bool) (count int, result error) {
 			log.Errorf("album: %s (update yaml)", err)
 			result = err
 		} else {
-			log.Tracef("backup: saved album yaml file %s", txt.Quote(filepath.Base(fileName)))
+			log.Tracef("backup: saved album yaml file %s", sanitize.Log(filepath.Base(fileName)))
 			count++
 		}
 	}
@@ -87,14 +87,14 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 		a := entity.Album{}
 
 		if err := a.LoadFromYaml(fileName); err != nil {
-			log.Errorf("restore: %s in %s", err, txt.Quote(filepath.Base(fileName)))
+			log.Errorf("restore: %s in %s", err, sanitize.Log(filepath.Base(fileName)))
 			result = err
 		} else if a.AlbumType == "" || len(a.Photos) == 0 && a.AlbumFilter == "" {
-			log.Debugf("restore: skipping %s", txt.Quote(filepath.Base(fileName)))
+			log.Debugf("restore: skipping %s", sanitize.Log(filepath.Base(fileName)))
 		} else if err := a.Find(); err == nil {
-			log.Infof("%s: %s already exists", a.AlbumType, txt.Quote(a.AlbumTitle))
+			log.Infof("%s: %s already exists", a.AlbumType, sanitize.Log(a.AlbumTitle))
 		} else if err := a.Create(); err != nil {
-			log.Errorf("%s: %s in %s", a.AlbumType, err, txt.Quote(filepath.Base(fileName)))
+			log.Errorf("%s: %s in %s", a.AlbumType, err, sanitize.Log(filepath.Base(fileName)))
 		} else {
 			count++
 		}

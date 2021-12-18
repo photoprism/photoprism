@@ -29,15 +29,15 @@ func (c *Config) DatabaseDriver() string {
 	switch strings.ToLower(c.options.DatabaseDriver) {
 	case MySQL, MariaDB:
 		c.options.DatabaseDriver = MySQL
-	case SQLite, "sqlite", "sqllite", "test", "file", "":
-		c.options.DatabaseDriver = SQLite
+	case SQLite3, "sqlite", "sqllite", "test", "file", "":
+		c.options.DatabaseDriver = SQLite3
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
-		c.options.DatabaseDriver = SQLite
+		c.options.DatabaseDriver = SQLite3
 		c.options.DatabaseDsn = ""
 	default:
 		log.Warnf("config: unsupported database driver %s, using sqlite", c.options.DatabaseDriver)
-		c.options.DatabaseDriver = SQLite
+		c.options.DatabaseDriver = SQLite3
 		c.options.DatabaseDsn = ""
 	}
 
@@ -65,7 +65,7 @@ func (c *Config) DatabaseDsn() string {
 				c.DatabaseHost(),
 				c.DatabasePort(),
 			)
-		case SQLite:
+		case SQLite3:
 			return filepath.Join(c.StoragePath(), "index.db")
 		default:
 			log.Errorf("config: empty database dsn")
@@ -227,16 +227,21 @@ func (c *Config) SetDbOptions() {
 		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
 	case Postgres:
 		// Ignore for now.
-	case SQLite:
+	case SQLite3:
 		// Not required as unicode is default.
 	}
 }
 
-// InitDb will initialize the database connection and schema.
+// InitDb initializes the database without running previously failed migrations.
 func (c *Config) InitDb() {
+	c.MigrateDb(false)
+}
+
+// MigrateDb initializes the database and migrates the schema if needed.
+func (c *Config) MigrateDb(runFailed bool) {
 	c.SetDbOptions()
 	entity.SetDbProvider(c)
-	entity.MigrateDb(true)
+	entity.MigrateDb(true, runFailed)
 
 	entity.Admin.InitPassword(c.AdminPassword())
 

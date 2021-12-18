@@ -31,7 +31,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 var log = event.Log
@@ -39,11 +39,19 @@ var once sync.Once
 var LowMem = false
 var TotalMem uint64
 
-const ApiUri = "/api/v1"
-const StaticUri = "/static"
-const DefaultWakeupInterval = int(15 * 60)
-const DefaultAutoIndexDelay = int(5 * 60)
-const DefaultAutoImportDelay = int(3 * 60)
+const MsgSponsor = "Help us make a difference and become a sponsor today!"
+const SignUpURL = "https://docs.photoprism.app/funding/"
+const MsgSignUp = "Visit " + SignUpURL + " to learn more."
+const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
+	" we unfortunately can only offer it to sponsors."
+
+const ApiUri = "/api/v1"    // REST API
+const StaticUri = "/static" // Static Content
+
+const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
+const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
+
+const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 
 // Megabyte in bytes.
 const Megabyte = 1000 * 1000
@@ -116,7 +124,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		if err := c.options.Load(configFile); err != nil {
 			log.Warnf("config: %s", err)
 		} else {
-			log.Debugf("config: options loaded from %s", txt.Quote(configFile))
+			log.Debugf("config: options loaded from %s", sanitize.Log(configFile))
 		}
 	}
 
@@ -170,6 +178,12 @@ func (c *Config) Init() error {
 		return err
 	}
 
+	// Show funding info?
+	if !c.Sponsor() {
+		log.Info(MsgSponsor)
+		log.Info(MsgSignUp)
+	}
+
 	if insensitive, err := c.CaseInsensitive(); err != nil {
 		return err
 	} else if insensitive {
@@ -178,7 +192,7 @@ func (c *Config) Init() error {
 	}
 
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
-		log.Debugf("config: running on %s, %s memory detected", txt.Quote(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+		log.Debugf("config: running on %s, %s memory detected", sanitize.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
 
 	// Check memory requirements.
@@ -192,6 +206,9 @@ func (c *Config) Init() error {
 	if TotalMem < RecommendedMem {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
+
+	// Set User Agent for HTTP requests.
+	places.UserAgent = fmt.Sprintf("%s/%s", c.Name(), c.Version())
 
 	c.initSettings()
 	c.initHub()
@@ -313,17 +330,13 @@ func (c *Config) SiteUrl() string {
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
 }
 
-// SitePreview returns the site preview image URL for sharing.
-func (c *Config) SitePreview() string {
-	if c.options.SitePreview == "" {
-		return c.SiteUrl() + "static/img/preview.jpg"
+// SiteDomain returns the public server domain.
+func (c *Config) SiteDomain() string {
+	if u, err := url.Parse(c.SiteUrl()); err != nil {
+		return "localhost"
+	} else {
+		return u.Hostname()
 	}
-
-	if !strings.HasPrefix(c.options.SitePreview, "http") {
-		return c.SiteUrl() + c.options.SitePreview
-	}
-
-	return c.options.SitePreview
 }
 
 // SiteAuthor returns the site author / copyright.
@@ -348,6 +361,19 @@ func (c *Config) SiteCaption() string {
 // SiteDescription returns a long site description.
 func (c *Config) SiteDescription() string {
 	return c.options.SiteDescription
+}
+
+// SitePreview returns the site preview image URL for sharing.
+func (c *Config) SitePreview() string {
+	if c.options.SitePreview == "" {
+		return c.SiteUrl() + "static/img/preview.jpg"
+	}
+
+	if !strings.HasPrefix(c.options.SitePreview, "http") {
+		return c.SiteUrl() + c.options.SitePreview
+	}
+
+	return c.options.SitePreview
 }
 
 // Debug tests if debug mode is enabled.
@@ -429,10 +455,12 @@ func (c *Config) LogLevel() logrus.Level {
 
 // Shutdown services and workers.
 func (c *Config) Shutdown() {
+	mutex.People.Cancel()
 	mutex.MainWorker.Cancel()
 	mutex.ShareWorker.Cancel()
 	mutex.SyncWorker.Cancel()
 	mutex.MetaWorker.Cancel()
+	mutex.FacesWorker.Cancel()
 
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
@@ -456,8 +484,8 @@ func (c *Config) Workers() int {
 		cores = cpuid.CPU.PhysicalCores
 	}
 
-	// Limit number of workers when using SQLite to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
+	// Limit number of workers when using SQLite3 to avoid database locking issues.
+	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
 		return 4
 	}
 
@@ -483,7 +511,7 @@ func (c *Config) WakeupInterval() time.Duration {
 		return time.Duration(0)
 	} else if c.options.WakeupInterval <= 0 || c.options.WakeupInterval > 604800 {
 		// Default if out of range.
-		return time.Duration(DefaultWakeupInterval) * time.Second
+		return time.Duration(DefaultWakeupIntervalSeconds) * time.Second
 	}
 
 	return time.Duration(c.options.WakeupInterval) * time.Second

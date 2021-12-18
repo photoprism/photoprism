@@ -18,7 +18,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"gopkg.in/yaml.v2"
 )
 
@@ -130,9 +130,11 @@ func (c *Config) Refresh() (err error) {
 	}
 
 	c.Sanitize()
+
 	client := &http.Client{Timeout: 60 * time.Second}
 	url := ServiceURL
 	method := http.MethodPost
+
 	var req *http.Request
 
 	if c.Key != "" {
@@ -180,7 +182,7 @@ func (c *Config) Refresh() (err error) {
 // Load backend api credentials from a YAML file.
 func (c *Config) Load() error {
 	if !fs.FileExists(c.FileName) {
-		return fmt.Errorf("settings file not found: %s", txt.Quote(c.FileName))
+		return fmt.Errorf("settings file not found: %s", sanitize.Log(c.FileName))
 	}
 
 	mutex.Lock()

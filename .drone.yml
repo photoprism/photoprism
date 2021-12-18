@@ -23,17 +23,17 @@ steps:
       CODECOV_TOKEN:
         from_secret: codecov_token
     commands:
-      - scripts/docker-login.sh
-      - docker-compose -f docker-compose.drone.yml pull
-      - docker-compose -f docker-compose.drone.yml stop
-      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+      - scripts/login.sh
+      - docker-compose -f docker-compose.ci.yml pull
+      - docker-compose -f docker-compose.ci.yml stop
+      - docker-compose -f docker-compose.ci.yml up -d --build --force-recreate
 
   - name: test-develop
     environment:
       CODECOV_TOKEN:
         from_secret: codecov_token
     commands:
-      - docker-compose -f docker-compose.drone.yml exec -e CODECOV_TOKEN=$${CODECOV_TOKEN} -T photoprism make all test-js test-codecov install migrate
+      - docker-compose -f docker-compose.ci.yml exec -e CODECOV_TOKEN=$${CODECOV_TOKEN} -T photoprism make all test-js test-codecov install migrate
     when:
       branch:
         - develop
@@ -41,7 +41,7 @@ steps:
 
   - name: test
     commands:
-      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+      - docker-compose -f docker-compose.ci.yml exec -T photoprism make all test install migrate
     when:
       branch:
         - preview
@@ -49,7 +49,7 @@ steps:
 
   - name: down
     commands:
-      - docker-compose -f docker-compose.drone.yml down
+      - docker-compose -f docker-compose.ci.yml down
     when:
       status:
         - failure
@@ -62,7 +62,7 @@ steps:
       DOCKER_PASSWORD:
         from_secret: docker_password
     commands:
-      - scripts/docker-login.sh
+      - scripts/login.sh
       - scripts/install-qemu.sh
       - make docker-preview
     when:
@@ -78,7 +78,7 @@ steps:
       DOCKER_PASSWORD:
         from_secret: docker_password
     commands:
-      - scripts/docker-login.sh
+      - scripts/login.sh
       - docker pull photoprism/photoprism:preview
       - make docker-demo
     when:
@@ -94,7 +94,7 @@ steps:
       DOCKER_PASSWORD:
         from_secret: docker_password
     commands:
-      - scripts/docker-login.sh
+      - scripts/login.sh
       - scripts/install-qemu.sh
       - make docker-release
     when:
@@ -120,15 +120,15 @@ trigger:
 steps:
   - name: up
     commands:
-      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+      - docker-compose -f docker-compose.ci.yml up -d --build --force-recreate
 
   - name: test
     commands:
-      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test install migrate
+      - docker-compose -f docker-compose.ci.yml exec -T photoprism make all test install migrate
 
   - name: down
     commands:
-      - docker-compose -f docker-compose.drone.yml down
+      - docker-compose -f docker-compose.ci.yml down
     when:
       status:
         - failure
@@ -159,17 +159,17 @@ steps:
       DOCKER_PASSWORD:
         from_secret: docker_password
     commands:
-      - scripts/docker-login.sh
-      - docker-compose -f docker-compose.drone.yml stop
-      - docker-compose -f docker-compose.drone.yml up -d --build --force-recreate
+      - scripts/login.sh
+      - docker-compose -f docker-compose.ci.yml stop
+      - docker-compose -f docker-compose.ci.yml up -d --build --force-recreate
 
   - name: test
     commands:
-      - docker-compose -f docker-compose.drone.yml exec -T photoprism make all test-go install migrate
+      - docker-compose -f docker-compose.ci.yml exec -T photoprism make all test-go install migrate
 
   - name: down
     commands:
-      - docker-compose -f docker-compose.drone.yml down
+      - docker-compose -f docker-compose.ci.yml down
       - docker system prune -f
     when:
       status:

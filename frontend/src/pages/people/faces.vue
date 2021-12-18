@@ -455,7 +455,7 @@ export default {
       return params;
     },
     refresh() {
-      if (this.loading || !this.active) {
+      if (this.loading || !this.active || this.busy) {
         return;
       }
 
@@ -504,6 +504,8 @@ export default {
       });
     },
     onShow(model) {
+      if (this.busy || !model) return;
+
       this.busy = true;
       model.show().finally(() => {
         this.busy = false;
@@ -511,6 +513,8 @@ export default {
       });
     },
     onHide(model) {
+      if (this.busy || !model) return;
+
       this.busy = true;
       model.hide().finally(() => {
         this.busy = false;
@@ -518,9 +522,7 @@ export default {
       });
     },
     toggleHidden(model) {
-      if (!model) {
-        return;
-      }
+      if (this.busy || !model) return;
 
       this.busy = true;
 
@@ -535,8 +537,8 @@ export default {
       });
     },
     onRename(model) {
-      if (!model.Name || model.Name.trim() === "") {
-        // Refuse to save empty name.
+      if (this.busy || !model || !model.Name || model.Name.trim() === "") {
+        // Ignore if busy, refuse to save empty name.
         return;
       }
 

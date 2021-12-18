@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import {Photo, TypeLive, TypeVideo} from "model/photo";
 import mapboxgl from "mapbox-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
@@ -42,7 +41,6 @@ export default {
       attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
       options: {},
       mapFont: [],
-      photos: [],
       result: {},
       filter: {q: this.query()},
       lastFilter: {},
@@ -200,23 +198,34 @@ export default {
     query: function () {
       return this.$route.params.q ? this.$route.params.q : "";
     },
-    openPhoto(id) {
-      if (!this.photos || !this.photos.length) {
-        this.photos = this.result.features.map((f) => new Photo(f.properties));
+    openPhoto(uid) {
+      // Abort if uid is empty or results aren't loaded.
+      if (!uid || this.loading || !this.result || !this.result.features || this.result.features.length === 0) {
+        return;
       }
 
-      if (this.photos.length > 0) {
-        const index = this.photos.findIndex((p) => p.UID === id);
-        const selected = this.photos[index];
+      // Get request parameters.
+      const options = {
+        params: {
+          near: uid,
+          count: 1000,
+        },
+      };
 
-        if (selected.Type === TypeVideo || selected.Type === TypeLive) {
-          this.$viewer.play({video: selected});
+      this.loading = true;
+
+      // Perform get request to find nearby photos.
+      return Api.get("geo/view", options).then((r) => {
+        if (r && r.data && r.data.length > 0) {
+          // Show photos.
+          this.$viewer.show(Thumb.wrap(r.data), 0);
         } else {
-          this.$viewer.show(Thumb.fromPhotos(this.photos), index);
+          // Don't open viewer if nothing was found.
+          this.$notify.warn(this.$gettext("No pictures found"));
         }
-      } else {
-        this.$notify.warn(this.$gettext("No pictures found"));
-      }
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     formChange() {
       this.search();
@@ -259,7 +268,6 @@ export default {
           return;
         }
 
-        this.photos = {};
         this.result = response.data;
 
         this.map.getSource("photos").setData(this.result);
@@ -275,10 +283,11 @@ export default {
         }
 
         this.initialized = true;
-        this.loading = false;
 
         this.updateMarkers();
-      }).catch(() => this.loading = false);
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     renderMap() {
       this.map = new mapboxgl.Map(this.options);

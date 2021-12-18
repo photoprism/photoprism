@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   data-name="Ebene 1"
+   viewBox="0 0 267.99999 267.99999"
+   version="1.1"
+   id="svg482"
+   sodipodi:docname="logo-light.svg"
+   width="268"
+   height="268"
+   inkscape:version="1.1.1 (3bf5ae0, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview484"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-right="2"
+     fit-margin-bottom="2"
+     inkscape:zoom="3.1543575"
+     inkscape:cx="36.933036"
+     inkscape:cy="133.9417"
+     inkscape:window-width="2560"
+     inkscape:window-height="1384"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg482"
+     lock-margins="true" />
+  <defs
+     id="defs476">
+    <linearGradient
+       id="a"
+       x1="45.040001"
+       y1="231.72"
+       x2="231.72"
+       y2="45.040001"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-4.3800049,-4.3800049)">
+      <stop
+         offset="0"
+         stop-color="#fff"
+         id="stop469" />
+      <stop
+         offset="0"
+         stop-color="#9afbfe"
+         id="stop471" />
+      <stop
+         offset="1"
+         stop-color="#ffb3e0"
+         id="stop473" />
+    </linearGradient>
+  </defs>
+  <circle
+     cx="134"
+     cy="134"
+     r="132"
+     style="fill:url(#a)"
+     id="circle478" />
+  <path
+     d="m 225.19,177.51 -4,24.19 m -178.280005,-23.2 14.81,14 M 153.48,54.849995 57.619995,192.31 a 0.09,0.09 0 0 0 0.07,0.15 L 221.1,201.83 a 0.09,0.09 0 0 0 0.09,-0.13 L 153.62,54.869995 a 0.1,0.1 0 0 0 -0.14,-0.02 z m -19.74,-13.29 L 42.799995,178.31 a 0.13,0.13 0 0 0 0.11,0.19 L 225.09,177.7 a 0.12,0.12 0 0 0 0.1,-0.19 L 133.95,41.559995 a 0.12,0.12 0 0 0 -0.21,0 z m 0.11,-0.16 19.77,13.32"
+     style="fill:none;stroke:#1d1d1b;stroke-width:5px;stroke-miterlimit:10"
+     id="path480" />
+</svg>

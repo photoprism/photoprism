@@ -7,7 +7,7 @@ import (
 
 var ServiceURL = "https://hub.photoprism.app/v1/hello"
 
-// Backend api credentials request incl basic runtime specs.
+// Request represents basic environment specs for debugging.
 type Request struct {
 	ClientVersion string `json:"ClientVersion"`
 	ClientSerial  string `json:"ClientSerial"`
@@ -16,7 +16,7 @@ type Request struct {
 	ClientCPU     int    `json:"ClientCPU"`
 }
 
-// NewRequest creates a new hub key request instance.
+// NewRequest creates a new backend key request instance.
 func NewRequest(version, serial string) *Request {
 	return &Request{
 		ClientVersion: version,
@@ -27,7 +27,7 @@ func NewRequest(version, serial string) *Request {
 	}
 }
 
-// ApiHost returns the full API URL host name.
+// ApiHost returns the backend host name.
 func ApiHost() string {
 	u, err := url.Parse(ServiceURL)
 

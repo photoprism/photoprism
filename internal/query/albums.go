@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Albums returns a slice of albums.
@@ -32,7 +32,7 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	if err := UnscopedDb().Where("album_uid = ?", uid).First(&a).Error; err != nil {
 		return file, err
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
-		f := form.PhotoSearch{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
+		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
 		if photos, _, err := search.Photos(f); err != nil {
 			return file, err
@@ -47,14 +47,16 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 		}
 
 		// Automatically hide empty months.
-		if a.AlbumType == entity.AlbumMonth {
+		switch a.AlbumType {
+		case entity.AlbumMonth, entity.AlbumState:
 			if err := a.Delete(); err != nil {
-				log.Errorf("album: %s (hide %s)", err, a.AlbumType)
+				log.Errorf("%s: %s (hide)", a.AlbumType, err)
 			} else {
-				log.Infof("album: %s hidden", txt.Quote(a.AlbumTitle))
+				log.Infof("%s: %s hidden", a.AlbumType, sanitize.Log(a.AlbumTitle))
 			}
 		}
 
+		// Return without album cover.
 		return file, fmt.Errorf("no cover found")
 	}
 
@@ -72,8 +74,8 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 
 // UpdateAlbumDates updates album year, month and day based on indexed photo metadata.
 func UpdateAlbumDates() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	case MySQL:
@@ -91,8 +93,8 @@ func UpdateAlbumDates() error {
 
 // UpdateMissingAlbumEntries sets a flag for missing photo album entries.
 func UpdateMissingAlbumEntries() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	default:

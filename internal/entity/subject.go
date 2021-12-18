@@ -11,7 +11,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -104,7 +106,7 @@ func (m *Subject) Delete() error {
 	subjectMutex.Lock()
 	defer subjectMutex.Unlock()
 
-	log.Infof("subject: deleting %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
+	log.Infof("subject: deleting %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
 
 	event.EntitiesDeleted("subjects", []string{m.SubjUID})
 
@@ -141,7 +143,7 @@ func (m *Subject) Restore() error {
 	if m.Deleted() {
 		m.DeletedAt = nil
 
-		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
+		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -179,7 +181,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	if found := FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else if createErr := m.Create(); createErr == nil {
-		log.Infof("subject: added %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
+		log.Infof("subject: added %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
 
 		event.EntitiesCreated("subjects", []*Subject{m})
 
@@ -194,7 +196,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if found = FindSubjectByName(m.SubjName); found != nil {
 		return found
 	} else {
-		log.Errorf("subject: %s while creating %s", createErr, txt.Quote(m.SubjName))
+		log.Errorf("subject: %s while creating %s", createErr, sanitize.Log(m.SubjName))
 	}
 
 	return nil
@@ -217,7 +219,7 @@ func FindSubject(s string) *Subject {
 
 // FindSubjectByName find an existing subject by name.
 func FindSubjectByName(name string) *Subject {
-	name = txt.NormalizeName(name)
+	name = sanitize.Name(name)
 
 	if name == "" {
 		return nil
@@ -252,7 +254,7 @@ func (m *Subject) Person() *Person {
 
 // SetName changes the subject's name.
 func (m *Subject) SetName(name string) error {
-	name = txt.NormalizeName(name)
+	name = sanitize.Name(name)
 
 	if name == m.SubjName {
 		// Nothing to do.
@@ -279,7 +281,7 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 	}
 
 	// Change name?
-	if name := txt.NormalizeName(f.SubjName); name != "" && name != m.SubjName {
+	if name := sanitize.Name(f.SubjName); name != "" && name != m.SubjName {
 		existing, err := m.UpdateName(name)
 
 		if existing.SubjUID != m.SubjUID || err != nil {
@@ -327,8 +329,6 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 		}
 
 		if err := m.Updates(values); err == nil {
-			log.Debugf("subject: updated values %v", values)
-
 			event.EntitiesUpdated("subjects", []*Subject{m})
 
 			if m.IsPerson() {
@@ -349,7 +349,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	if err := m.SetName(name); err != nil {
 		return m, err
 	} else if err := m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err == nil {
-		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), txt.Quote(m.SubjName))
+		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), sanitize.Log(m.SubjName))
 
 		event.EntitiesUpdated("subjects", []*Subject{m})
 

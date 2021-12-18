@@ -8,7 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"gopkg.in/yaml.v2"
 )
 
@@ -99,13 +99,13 @@ type Settings struct {
 }
 
 // NewSettings creates a new Settings instance.
-func NewSettings() *Settings {
+func NewSettings(c *Config) *Settings {
 	return &Settings{
 		UI: UISettings{
 			Scrollbar: true,
 			Zoom:      false,
-			Theme:     "default",
-			Language:  i18n.Default.Locale(),
+			Theme:     c.DefaultTheme(),
+			Language:  c.DefaultLocale(),
 		},
 		Templates: TemplateSettings{
 			Default: "index.tmpl",
@@ -181,7 +181,7 @@ func (s Settings) StackMeta() bool {
 // Load user settings from file.
 func (s *Settings) Load(fileName string) error {
 	if !fs.FileExists(fileName) {
-		return fmt.Errorf("settings file not found: %s", txt.Quote(fileName))
+		return fmt.Errorf("settings file not found: %s", sanitize.Log(fileName))
 	}
 
 	yamlConfig, err := os.ReadFile(fileName)
@@ -218,7 +218,7 @@ func (s *Settings) Save(fileName string) error {
 
 // initSettings initializes user settings from a config file.
 func (c *Config) initSettings() {
-	c.settings = NewSettings()
+	c.settings = NewSettings(c)
 	fileName := c.SettingsFile()
 
 	if err := c.settings.Load(fileName); err == nil {

@@ -3,54 +3,18 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-// SearchSubjects finds and returns subjects as JSON.
-//
-// GET /api/v1/subjects
-func SearchSubjects(router *gin.RouterGroup) {
-	router.GET("/subjects", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceSubjects, acl.ActionSearch)
-
-		if s.Invalid() {
-			AbortUnauthorized(c)
-			return
-		}
-
-		var f form.SubjectSearch
-
-		err := c.MustBindWith(&f, binding.Form)
-
-		if err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		result, err := search.Subjects(f)
-
-		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
-			return
-		}
-
-		AddCountHeader(c, len(result))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
-
-		c.JSON(http.StatusOK, result)
-	})
-}
 
 // GetSubject returns a subject as JSON.
 //
@@ -64,7 +28,7 @@ func GetSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if subj := entity.FindSubject(c.Param("uid")); subj == nil {
+		if subj := entity.FindSubject(sanitize.IdString(c.Param("uid"))); subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
 			return
 		} else {
@@ -78,6 +42,13 @@ func GetSubject(router *gin.RouterGroup) {
 // PUT /api/v1/subjects/:uid
 func UpdateSubject(router *gin.RouterGroup) {
 	router.PUT("/subjects/:uid", func(c *gin.Context) {
+		if err := mutex.People.Start(); err != nil {
+			AbortBusy(c)
+			return
+		}
+
+		defer mutex.People.Stop()
+
 		s := Auth(SessionID(c), acl.ResourceSubjects, acl.ActionUpdate)
 
 		if s.Invalid() {
@@ -85,7 +56,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		m := entity.FindSubject(uid)
 
 		if m == nil {
@@ -138,7 +109,7 @@ func LikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		subj := entity.FindSubject(uid)
 
 		if subj == nil {
@@ -172,7 +143,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		subj := entity.FindSubject(uid)
 
 		if subj == nil {

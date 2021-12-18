@@ -72,7 +72,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 		// Photos.
 		api.SearchPhotos(v1)
-		api.SearchPhotosGeo(v1)
+		api.SearchGeo(v1)
 		api.GetPhoto(v1)
 		api.GetPhotoYaml(v1)
 		api.UpdatePhoto(v1)
@@ -125,9 +125,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 		api.DislikeLabel(v1)
 
 		// Folders.
+		api.SearchFoldersOriginals(v1)
+		api.SearchFoldersImport(v1)
 		api.FolderCover(v1)
-		api.GetFoldersOriginals(v1)
-		api.GetFoldersImport(v1)
 
 		// People and other subjects.
 		api.SearchSubjects(v1)
@@ -189,7 +189,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Default HTML page for client-side rendering and routing via VueJS.
 	router.NoRoute(func(c *gin.Context) {
-		clientConfig := conf.PublicConfig()
-		c.HTML(http.StatusOK, conf.TemplateName(), gin.H{"config": clientConfig})
+		signUp := gin.H{"message": config.MsgSponsor, "url": config.SignUpURL}
+		values := gin.H{"signUp": signUp, "config": conf.PublicConfig()}
+		c.HTML(http.StatusOK, conf.TemplateName(), values)
 	})
 }

@@ -6,11 +6,12 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Labels searches labels based on their name.
-func Labels(f form.LabelSearch) (results []Label, err error) {
+func Labels(f form.SearchLabels) (results []Label, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
@@ -40,8 +41,8 @@ func Labels(f form.LabelSearch) (results []Label, err error) {
 		s = s.Order("labels.label_favorite DESC, custom_slug ASC")
 	}
 
-	if f.ID != "" {
-		s = s.Where("labels.label_uid IN (?)", strings.Split(f.ID, txt.Or))
+	if f.UID != "" {
+		s = s.Where("labels.label_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -59,7 +60,7 @@ func Labels(f form.LabelSearch) (results []Label, err error) {
 		likeString := "%" + f.Query + "%"
 
 		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
-			log.Infof("search: label %s not found", txt.Quote(f.Query))
+			log.Infof("search: label %s not found", sanitize.Log(f.Query))
 
 			s = s.Where("labels.label_name LIKE ?", likeString)
 		} else {
@@ -71,7 +72,7 @@ func Labels(f form.LabelSearch) (results []Label, err error) {
 				labelIds = append(labelIds, category.LabelID)
 			}
 
-			log.Infof("search: label %s includes %d categories", txt.Quote(label.LabelName), len(labelIds))
+			log.Infof("search: label %s includes %d categories", sanitize.Log(label.LabelName), len(labelIds))
 
 			s = s.Where("labels.id IN (?)", labelIds)
 		}

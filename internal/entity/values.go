@@ -71,3 +71,17 @@ func Trim(s string, maxLen int) string {
 func SanitizeTypeString(s string) string {
 	return Trim(ToASCII(strings.ToLower(s)), TrimTypeString)
 }
+
+// SanitizeTypeCaseSensitive omits invalid runes, ensures a maximum length of 32 characters, and returns the result.
+func SanitizeTypeCaseSensitive(s string) string {
+	return Trim(ToASCII(s), TrimTypeString)
+}
+
+// TypeString returns an entity type string for logging.
+func TypeString(entityType string) string {
+	if entityType == "" {
+		return "unknown"
+	}
+
+	return entityType
+}

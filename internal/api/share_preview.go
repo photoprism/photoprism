@@ -9,6 +9,8 @@ import (
 	"path"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -18,7 +20,6 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SharePreview returns a link share preview image.
@@ -29,8 +30,8 @@ func SharePreview(router *gin.RouterGroup) {
 	router.GET("/:token/:share/preview", func(c *gin.Context) {
 		conf := service.Config()
 
-		token := c.Param("token")
-		share := c.Param("share")
+		token := sanitize.Token(c.Param("token"))
+		share := sanitize.Token(c.Param("share"))
 		links := entity.FindLinks(token, share)
 
 		if len(links) != 1 {
@@ -51,18 +52,18 @@ func SharePreview(router *gin.RouterGroup) {
 		yesterday := time.Now().Add(-24 * time.Hour)
 
 		if info, err := os.Stat(previewFilename); err != nil {
-			log.Debugf("share: creating new preview for %s", share)
+			log.Debugf("share: creating new preview for %s", sanitize.Log(share))
 		} else if info.ModTime().After(yesterday) {
-			log.Debugf("share: using cached preview for %s", share)
+			log.Debugf("share: using cached preview for %s", sanitize.Log(share))
 			c.File(previewFilename)
 			return
 		} else if err := os.Remove(previewFilename); err != nil {
-			log.Errorf("share: could not remove old preview of %s", share)
+			log.Errorf("share: could not remove old preview of %s", sanitize.Log(share))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
 
-		var f form.PhotoSearch
+		var f form.SearchPhotos
 
 		// Covers may only contain public content in shared albums.
 		f.Album = share
@@ -95,7 +96,7 @@ func SharePreview(router *gin.RouterGroup) {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", txt.Quote(f.FileName))
+				log.Errorf("share: file %s is missing (preview)", sanitize.Log(f.FileName))
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 				return
 			}
@@ -125,7 +126,7 @@ func SharePreview(router *gin.RouterGroup) {
 			fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", txt.Quote(f.FileName))
+				log.Errorf("share: file %s is missing (preview)", sanitize.Log(f.FileName))
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 				return
 			}

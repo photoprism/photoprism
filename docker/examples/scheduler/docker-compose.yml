@@ -1,17 +1,20 @@
 version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Linux / AMD64)
-#
 # Includes Ophelia, a docker job scheduler: https://github.com/mcuadros/ofelia
 #
-# Documentation : https://docs.photoprism.org/getting-started/docker-compose/
+# Note:
+# - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
+#   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
+# - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
+#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
+#
+# Documentation : https://docs.photoprism.app/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
 #
-# Attention: When installing PhotoPrism on a public server outside your home network,
-# always run it behind a secure HTTPS reverse proxy like Traefik, Caddy, or NGINX.
-# Your files and passwords will be transmitted in clear text otherwise.
-#
 # DOCKER COMPOSE COMMAND REFERENCE
+# see https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 # --------------------------------------------------------------------------
 # Start    | docker-compose up -d
 # Stop     | docker-compose stop
@@ -32,8 +35,6 @@ version: '3.5'
 #
 # All commands may have to be prefixed with "sudo" when not running as root.
 # This will point the home directory placeholder ~ to /root in volume mounts.
-#
-# More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
 
 services:
   ## App Server (required)
@@ -45,7 +46,7 @@ services:
       - mariadb
     ## Only enable automatic restarts once your installation is properly
     ## configured as it otherwise may get stuck in a restart loop,
-    ## see https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## see https://docs.photoprism.app/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
@@ -102,7 +103,7 @@ services:
       - "./storage:/photoprism/storage"
 
   ## Database Server (recommended)
-  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: unless-stopped
     image: mariadb:10.6
@@ -110,16 +111,17 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - "./database:/var/lib/mysql" # Never remove
+      - "./database:/var/lib/mysql" # Important, don't remove
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
 
-  ## Ofelia Job Runner (required)
+  ## Ofelia Job Runner (recommended for running background jobs)
   ## see https://github.com/mcuadros/ofelia
   ofelia:
     restart: unless-stopped
@@ -130,14 +132,14 @@ services:
       - "./jobs.ini:/etc/ofelia/config.ini"
 
   ## Watchtower upgrades services automatically (optional)
-  ## see https://docs.photoprism.org/getting-started/updates/#watchtower
+  ## see https://docs.photoprism.app/getting-started/updates/#watchtower
   #
   # watchtower:
   #   restart: unless-stopped
   #   image: containrrr/watchtower
   #   environment:
   #     WATCHTOWER_CLEANUP: "true"
-  #     WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
+  #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
   #   volumes:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account

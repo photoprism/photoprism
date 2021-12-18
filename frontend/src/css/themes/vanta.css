@@ -1,4 +1,17 @@
-/* Black Aqua Theme */
+/* Vanta Theme */
+
+#photoprism.container.theme-vanta {
+    background-image: linear-gradient(160deg, #333333 0%, #000000 100%);
+}
+
+#photoprism.container.theme-vanta div.loading-animation {
+    color: #05dde1 !important;
+    caret-color: #05dde1 !important;
+}
+
+#photoprism.container.theme-vanta div.loading-animation .loading-underlay {
+    stroke: rgba(5, 221, 225, 0.3);
+}
 
 .theme-vanta .v-content__wrap,
 .theme-vanta .p-page,

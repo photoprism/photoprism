@@ -26,7 +26,7 @@ Feel free to send an e-mail to hello@photoprism.org if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.org/developer-guide/
+https://docs.photoprism.app/developer-guide/
 
 */
 package photoprism
@@ -36,6 +36,8 @@ import (
 )
 
 var log = event.Log
+
+type S []string
 
 func logWarn(prefix string, err error) {
 	if err != nil {

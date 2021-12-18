@@ -173,11 +173,16 @@
                     /{{ album.Path | truncate(100) }}
                   </button>
                 </div>
-
-                <div v-if="album.Location" class="caption mb-2 d-block">
+                <div v-if="album.Category !== ''" class="caption mb-2 d-inline-block">
+                  <button @click.exact="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
+                    <v-icon size="14">local_offer</v-icon>
+                    {{ album.Category }}
+                  </button>
+                </div>
+                <div v-if="album.getLocation() !== ''" class="caption mb-2 d-inline-block">
                   <button @click.exact="hasPermission(aclResources.ResourceAlbums, aclActions.ActionUpdate) && edit(album)">
                     <v-icon size="14">location_on</v-icon>
-                    {{ album.Location }}
+                    {{ album.getLocation() }}
                   </button>
                 </div>
               </v-card-text>

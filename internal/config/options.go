@@ -8,16 +8,18 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/photoprism/photoprism/pkg/fs"
+
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Database drivers (sql dialects).
 const (
 	MySQL    = "mysql"
 	MariaDB  = "mariadb"
-	SQLite   = "sqlite3"
+	SQLite3  = "sqlite3"
 	Postgres = "postgres" // TODO: Requires GORM 2.0 for generic column data types
 )
 
@@ -30,15 +32,14 @@ type Options struct {
 	Name                  string  `json:"-"`
 	Version               string  `json:"-"`
 	Copyright             string  `json:"-"`
-	Debug                 bool    `yaml:"Debug" json:"Debug" flag:"debug"`
+	AdminPassword         string  `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	LogLevel              string  `yaml:"LogLevel" json:"-" flag:"log-level"`
-	LogFilename           string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
+	Debug                 bool    `yaml:"Debug" json:"Debug" flag:"debug"`
 	Test                  bool    `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool    `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                  bool    `yaml:"Demo" json:"-" flag:"demo"`
 	Sponsor               bool    `yaml:"-" json:"-" flag:"sponsor"`
 	Public                bool    `yaml:"Public" json:"-" flag:"public"`
-	AdminPassword         string  `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	OidcClientID          string  `yaml:"-" json:"-" flag:"oidc-client-id"`
 	OidcClientSecret      string  `yaml:"-" json:"-" flag:"oidc-client-secret"`
 	OidcIssuerUrl         string  `yaml:"-" json:"-" flag:"oidc-issuer-url"`
@@ -75,13 +76,18 @@ type Options struct {
 	DisableClassification bool    `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DetectNSFW            bool    `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	UploadNSFW            bool    `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
+	DefaultTheme          string  `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
+	DefaultLocale         string  `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
+	AppIcon               string  `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
+	AppName               string  `yaml:"AppName" json:"AppName" flag:"app-name"`
+	AppMode               string  `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
 	CdnUrl                string  `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
 	SiteUrl               string  `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
-	SitePreview           string  `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
 	SiteAuthor            string  `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteTitle             string  `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
 	SiteCaption           string  `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string  `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
+	SitePreview           string  `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
 	DatabaseDriver        string  `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string  `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseServer        string  `yaml:"DatabaseServer" json:"-" flag:"database-server"`
@@ -124,6 +130,7 @@ type Options struct {
 	FaceClusterDist       float64 `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceMatchDist         float64 `yaml:"-" json:"-" flag:"face-match-dist"`
 	PIDFilename           string  `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
+	LogFilename           string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:

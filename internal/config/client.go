@@ -26,11 +26,15 @@ type ClientConfig struct {
 	ApiUri          string              `json:"apiUri"`
 	ContentUri      string              `json:"contentUri"`
 	SiteUrl         string              `json:"siteUrl"`
-	SitePreview     string              `json:"sitePreview"`
+	SiteDomain      string              `json:"siteDomain"`
+	SiteAuthor      string              `json:"siteAuthor"`
 	SiteTitle       string              `json:"siteTitle"`
 	SiteCaption     string              `json:"siteCaption"`
 	SiteDescription string              `json:"siteDescription"`
-	SiteAuthor      string              `json:"siteAuthor"`
+	SitePreview     string              `json:"sitePreview"`
+	AppName         string              `json:"appName"`
+	AppMode         string              `json:"appMode"`
+	AppIcon         string              `json:"appIcon"`
 	Debug           bool                `json:"debug"`
 	Test            bool                `json:"test"`
 	Demo            bool                `json:"demo"`
@@ -90,6 +94,7 @@ type ClientDisable struct {
 type ClientCounts struct {
 	All            int `json:"all"`
 	Photos         int `json:"photos"`
+	Live           int `json:"live"`
 	Videos         int `json:"videos"`
 	Cameras        int `json:"cameras"`
 	Lenses         int `json:"lenses"`
@@ -135,6 +140,10 @@ func (c *Config) Flags() (flags []string) {
 
 	if c.Debug() {
 		flags = append(flags, "debug")
+	}
+
+	if c.Sponsor() {
+		flags = append(flags, "sponsor")
 	}
 
 	if c.Experimental() {
@@ -194,11 +203,15 @@ func (c *Config) PublicConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
-		SitePreview:     c.SitePreview(),
+		SiteDomain:      c.SiteDomain(),
+		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
-		SiteAuthor:      c.SiteAuthor(),
+		SitePreview:     c.SitePreview(),
+		AppName:         c.AppName(),
+		AppMode:         c.AppMode(),
+		AppIcon:         c.AppIcon(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
@@ -251,7 +264,7 @@ func (c *Config) GuestConfig() ClientConfig {
 			Faces:          true,
 			Classification: true,
 		},
-		Flags:           "readonly public shared",
+		Flags:           strings.Join(c.Flags(), " "),
 		Mode:            "guest",
 		Name:            c.Name(),
 		BaseUri:         c.BaseUri(""),
@@ -259,11 +272,15 @@ func (c *Config) GuestConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
-		SitePreview:     c.SitePreview(),
+		SiteDomain:      c.SiteDomain(),
+		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
-		SiteAuthor:      c.SiteAuthor(),
+		SitePreview:     c.SitePreview(),
+		AppName:         c.AppName(),
+		AppMode:         c.AppMode(),
+		AppIcon:         c.AppIcon(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
@@ -318,11 +335,15 @@ func (c *Config) UserConfig() ClientConfig {
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
-		SitePreview:     c.SitePreview(),
+		SiteDomain:      c.SiteDomain(),
+		SiteAuthor:      c.SiteAuthor(),
 		SiteTitle:       c.SiteTitle(),
 		SiteCaption:     c.SiteCaption(),
 		SiteDescription: c.SiteDescription(),
-		SiteAuthor:      c.SiteAuthor(),
+		SitePreview:     c.SitePreview(),
+		AppName:         c.AppName(),
+		AppMode:         c.AppMode(),
+		AppIcon:         c.AppIcon(),
 		Version:         c.Version(),
 		Copyright:       c.Copyright(),
 		Debug:           c.Debug(),
@@ -370,12 +391,17 @@ func (c *Config) UserConfig() ClientConfig {
 
 	c.Db().
 		Table("photos").
-		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live') AND photo_private = 0 AND photo_quality >= 0) AS photos, SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality >= 0) AS favorites, SUM(photo_private = 1 AND photo_quality >= 0) AS private").
+		Select("SUM(photo_type = 'video' AND photo_quality >= 0 AND photo_private = 0) AS videos, " +
+			"SUM(photo_type = 'live' AND photo_quality >= 0 AND photo_private = 0) AS live, " +
+			"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw') AND photo_private = 0 AND photo_quality >= 0) AS photos, " +
+			"SUM(photo_type IN ('image','raw','live') AND photo_quality < 3 AND photo_quality >= 0 AND photo_private = 0) AS review, " +
+			"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality >= 0) AS favorites, " +
+			"SUM(photo_private = 1 AND photo_quality >= 0) AS private").
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(&result.Count)
 
-	result.Count.All = result.Count.Photos + result.Count.Videos
+	result.Count.All = result.Count.Photos + result.Count.Live + result.Count.Videos
 
 	c.Db().
 		Table("labels").

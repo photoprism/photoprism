@@ -867,7 +867,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Canon EOS 6D", data.CameraModel)
 		assert.Equal(t, "", data.CameraOwner)
 		assert.Equal(t, "012324001432", data.CameraSerial)
-		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 35, data.FocalLength)
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, "", data.Projection)
 	})
@@ -888,5 +888,101 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, float32(0), data.Lng)
 		assert.Equal(t, 0, data.Altitude)
 		assert.Equal(t, 1, data.Orientation)
+	})
+
+	t.Run("Iceland-P3.jpg", func(t *testing.T) {
+		data, err := JSON("testdata/Iceland-P3.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "Nicolas Cornet", data.Artist)
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords.String())
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "Nicolas Cornet", data.Copyright)
+		assert.Equal(t, 400, data.Height)
+		assert.Equal(t, 600, data.Width)
+		assert.Equal(t, float32(65.05558), data.Lat)
+		assert.Equal(t, float32(-16.625702), data.Lng)
+		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, "1/8", data.Exposure)
+		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
+		assert.Equal(t, "NIKON D800E", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "6001440", data.CameraSerial)
+		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "Display P3", data.ColorProfile)
+	})
+
+	t.Run("Iceland-P3-n.jpg", func(t *testing.T) {
+		data, err := JSON("testdata/Iceland-P3-n.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "Nicolas Cornet", data.Artist)
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords.String())
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "Nicolas Cornet", data.Copyright)
+		assert.Equal(t, 400, data.Height)
+		assert.Equal(t, 600, data.Width)
+		assert.Equal(t, float32(65.05558), data.Lat)
+		assert.Equal(t, float32(-16.625702), data.Lng)
+		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, "0.125", data.Exposure)
+		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
+		assert.Equal(t, "NIKON D800E", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "6001440", data.CameraSerial)
+		assert.Equal(t, 16, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "Display P3", data.ColorProfile)
+	})
+
+	t.Run("Iceland-sRGB.jpg", func(t *testing.T) {
+		data, err := JSON("testdata/Iceland-sRGB.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("all: %+v", data.All)
+
+		assert.Equal(t, "Nicolas Cornet", data.Artist)
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2012-08-08T22:07:18Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "", data.Title)
+		assert.Equal(t, "", data.Keywords.String())
+		assert.Equal(t, "", data.Description)
+		assert.Equal(t, "Nicolas Cornet", data.Copyright)
+		assert.Equal(t, 400, data.Height)
+		assert.Equal(t, 600, data.Width)
+		assert.Equal(t, float32(65.05558), data.Lat)
+		assert.Equal(t, float32(-16.625702), data.Lng)
+		assert.Equal(t, 30, data.Altitude)
+		assert.Equal(t, "1/8", data.Exposure)
+		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
+		assert.Equal(t, "NIKON D800E", data.CameraModel)
+		assert.Equal(t, "", data.CameraOwner)
+		assert.Equal(t, "6001440", data.CameraSerial)
+		assert.Equal(t, 0, data.FocalLength)
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, "", data.Projection)
+		assert.Equal(t, "Display P3", data.ColorProfile)
 	})
 }

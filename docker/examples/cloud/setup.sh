@@ -62,10 +62,10 @@ mkdir -p /opt/photoprism/originals /opt/photoprism/import /opt/photoprism/storag
       /opt/photoprism/database /opt/photoprism/traefik /opt/photoprism/certs
 
 # download ssl config
-curl -fsSL https://dl.photoprism.org/docker/cloud/certs/ca.conf > /opt/photoprism/certs/ca.conf
-curl -fsSL https://dl.photoprism.org/docker/cloud/certs/cert.conf > /opt/photoprism/certs/cert.conf
-curl -fsSL https://dl.photoprism.org/docker/cloud/certs/config.yml > /opt/photoprism/certs/config.yml
-curl -fsSL https://dl.photoprism.org/docker/cloud/certs/openssl.conf > /opt/photoprism/certs/openssl.conf
+curl -fsSL https://dl.photoprism.app/docker/cloud/certs/ca.conf > /opt/photoprism/certs/ca.conf
+curl -fsSL https://dl.photoprism.app/docker/cloud/certs/cert.conf > /opt/photoprism/certs/cert.conf
+curl -fsSL https://dl.photoprism.app/docker/cloud/certs/config.yml > /opt/photoprism/certs/config.yml
+curl -fsSL https://dl.photoprism.app/docker/cloud/certs/openssl.conf > /opt/photoprism/certs/openssl.conf
 
 # create ca
 openssl genrsa -out /opt/photoprism/certs/ca.key 4096
@@ -93,12 +93,12 @@ chmod 600 /root/.initial-password.txt
 PUBLIC_IP=$(curl -sfSL ifconfig.me)
 
 # download service config
-COMPOSE_CONFIG=$(curl -fsSL https://dl.photoprism.org/docker/cloud/docker-compose.yml)
+COMPOSE_CONFIG=$(curl -fsSL https://dl.photoprism.app/docker/cloud/docker-compose.yml)
 COMPOSE_CONFIG=${COMPOSE_CONFIG//_public_ip_/$PUBLIC_IP}
 COMPOSE_CONFIG=${COMPOSE_CONFIG//$PASSWORD_PLACEHOLDER/$ADMIN_PASSWORD}
 echo "${COMPOSE_CONFIG}" > /opt/photoprism/docker-compose.yml
-curl -fsSL https://dl.photoprism.org/docker/cloud/jobs.ini > /opt/photoprism/jobs.ini
-curl -fsSL https://dl.photoprism.org/docker/cloud/traefik.yaml > /opt/photoprism/traefik.yaml
+curl -fsSL https://dl.photoprism.app/docker/cloud/jobs.ini > /opt/photoprism/jobs.ini
+curl -fsSL https://dl.photoprism.app/docker/cloud/traefik.yaml > /opt/photoprism/traefik.yaml
 
 # change permissions
 chown -Rf photoprism:photoprism /opt/photoprism

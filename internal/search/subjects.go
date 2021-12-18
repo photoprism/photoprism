@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/jinzhu/gorm"
@@ -12,7 +14,7 @@ import (
 )
 
 // Subjects searches subjects and returns them.
-func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
+func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 	if err := f.ParseQueryString(); err != nil {
 		return results, err
 	}
@@ -44,8 +46,8 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 		s = s.Order("subj_favorite DESC, subj_name")
 	}
 
-	if f.ID != "" {
-		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(f.ID, txt.Or))
+	if f.UID != "" {
+		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(strings.ToLower(f.UID), txt.Or))
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -53,9 +55,6 @@ func Subjects(f form.SubjectSearch) (results SubjectResults, err error) {
 
 		return results, nil
 	}
-
-	// Clip to reasonable size and normalize operators.
-	f.Query = txt.NormalizeQuery(f.Query)
 
 	if f.Query != "" {
 		for _, where := range LikeAllNames(Cols{"subj_name", "subj_alias"}, f.Query) {
@@ -163,5 +162,5 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 		result = append(result, strings.Join(subj, txt.Or))
 	}
 
-	return result, names, txt.NormalizeQuery(remaining)
+	return result, names, sanitize.Query(remaining)
 }

@@ -7,12 +7,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 
-	"github.com/jinzhu/gorm"
-	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 type Users []User
@@ -223,6 +224,8 @@ func CreateOrUpdateExternalUser(m *User, updateRole bool) (*User, error) {
 
 // FindUserByName returns an existing user or nil if not found.
 func FindUserByName(userName string) *User {
+	userName = sanitize.Username(userName)
+
 	if userName == "" {
 		return nil
 	}
@@ -232,7 +235,7 @@ func FindUserByName(userName string) *User {
 	if err := Db().Preload("Address").Where("user_name = ?", userName).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Debugf("user %s not found", txt.Quote(userName))
+		log.Debugf("user %s not found", sanitize.Log(userName))
 		return nil
 	}
 }
@@ -248,7 +251,7 @@ func FindUserByUID(uid string) *User {
 	if err := Db().Preload("Address").Where("user_uid = ?", uid).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Debugf("user %s not found", txt.Quote(uid))
+		log.Debugf("user %s not found", sanitize.Log(uid))
 		return nil
 	}
 }
@@ -269,20 +272,25 @@ func (m *User) Deleted() bool {
 
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
-	if m.UserName != "" {
-		return m.UserName
+	if n := m.Username(); n != "" {
+		return sanitize.Log(n)
 	}
 
 	if m.FullName != "" {
-		return m.FullName
+		return sanitize.Log(m.FullName)
 	}
 
-	return m.UserUID
+	return sanitize.Log(m.UserUID)
+}
+
+// Username returns the normalized username.
+func (m *User) Username() string {
+	return sanitize.Username(m.UserName)
 }
 
 // Registered tests if the user is registered e.g. has a username.
 func (m *User) Registered() bool {
-	return m.UserName != "" && rnd.IsPPID(m.UserUID, 'u')
+	return m.Username() != "" && rnd.IsPPID(m.UserUID, 'u')
 }
 
 // Admin returns true if the user is an admin with user name.
@@ -312,7 +320,7 @@ func (m *User) SetPassword(password string) error {
 	}
 
 	if len(password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(m.UserName))
+		return fmt.Errorf("new password for %s must be at least 4 characters", sanitize.Log(m.Username()))
 	}
 
 	pw := NewPassword(m.UserUID, password)
@@ -411,30 +419,37 @@ var ErrUsernameAlreadyExists = errors.New("username already exists")
 
 // Validate Makes sure username and email are unique and meet requirements. Returns error if any property is invalid
 func (m *User) Validate() error {
-	if m.UserName == "" {
+	if m.Username() == "" {
 		return errors.New("username must not be empty")
 	}
-	if len(m.UserName) < 4 {
+
+	if len(m.Username()) < 4 {
 		return errors.New("username must be at least 4 characters")
 	}
+
 	var err error
 	var resultName = User{}
-	if err = Db().Where("user_name = ? AND id <> ?", m.UserName, m.ID).First(&resultName).Error; err == nil {
+
+	if err = Db().Where("user_name = ? AND id <> ?", m.Username(), m.ID).First(&resultName).Error; err == nil {
 		return ErrUsernameAlreadyExists
 	} else if err != gorm.ErrRecordNotFound {
 		return err
 	}
+
 	// stop here if no email is provided
 	if m.PrimaryEmail == "" {
 		return nil
 	}
+
 	// validate email address
 	if a, err := mail.ParseAddress(m.PrimaryEmail); err != nil {
 		return err
 	} else {
 		m.PrimaryEmail = a.Address // make sure email address will be used without name
 	}
+
 	var resultMail = User{}
+
 	if err = Db().Where("primary_email = ? AND id <> ?", m.PrimaryEmail, m.ID).First(&resultMail).Error; err == nil {
 		return errors.New("email already exists")
 	} else if err != gorm.ErrRecordNotFound {
@@ -453,7 +468,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		RoleAdmin:    uc.Admin,
 	}
 	if len(uc.Password) < 4 {
-		return fmt.Errorf("new password for %s must be at least 4 characters", txt.Quote(u.UserName))
+		return fmt.Errorf("new password for %s must be at least 4 characters", sanitize.Log(u.Username()))
 	}
 	err := u.Validate()
 	if err != nil {
@@ -467,7 +482,7 @@ func CreateWithPassword(uc form.UserCreate) error {
 		if err := tx.Create(&pw).Error; err != nil {
 			return err
 		}
-		log.Infof("created user %v with uid %v", txt.Quote(u.UserName), txt.Quote(u.UserUID))
+		log.Infof("created user %s with uid %s", sanitize.Log(u.Username()), sanitize.Log(u.UserUID))
 		return nil
 	})
 }

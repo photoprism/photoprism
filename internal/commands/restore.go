@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -20,7 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // RestoreCommand configures the backup cli command.
@@ -124,7 +123,7 @@ func restoreAction(ctx *cli.Context) error {
 			log.Warnf("replacing existing index with %d photos", counts.Photos)
 		}
 
-		log.Infof("restoring index from %s", txt.Quote(indexFileName))
+		log.Infof("restoring index from %s", sanitize.Log(indexFileName))
 
 		sqlBackup, err := os.ReadFile(indexFileName)
 
@@ -149,9 +148,9 @@ func restoreAction(ctx *cli.Context) error {
 				"-f",
 				conf.DatabaseName(),
 			)
-		case config.SQLite:
+		case config.SQLite3:
 			log.Infoln("dropping existing tables")
-			tables.Drop()
+			tables.Drop(conf.Db())
 			cmd = exec.Command(
 				conf.SqliteBin(),
 				conf.DatabaseDsn(),
@@ -200,9 +199,9 @@ func restoreAction(ctx *cli.Context) error {
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("albums backup path %s not found", txt.Quote(albumsPath))
+			log.Warnf("albums backup path %s not found", sanitize.Log(albumsPath))
 		} else {
-			log.Infof("restoring albums from %s", txt.Quote(albumsPath))
+			log.Infof("restoring albums from %s", sanitize.Log(albumsPath))
 
 			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
 				return err

@@ -3,8 +3,10 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -13,43 +15,6 @@ import (
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-// SearchFaces finds and returns faces as JSON.
-//
-// GET /api/v1/faces
-func SearchFaces(router *gin.RouterGroup) {
-	router.GET("/faces", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceSubjects, acl.ActionSearch)
-
-		if s.Invalid() {
-			AbortUnauthorized(c)
-			return
-		}
-
-		var f form.FaceSearch
-
-		err := c.MustBindWith(&f, binding.Form)
-
-		if err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		result, err := search.Faces(f)
-
-		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
-			return
-		}
-
-		AddCountHeader(c, len(result))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
-
-		c.JSON(http.StatusOK, result)
-	})
-}
 
 // GetFace returns a face as JSON.
 //
@@ -63,7 +28,7 @@ func GetFace(router *gin.RouterGroup) {
 			return
 		}
 
-		f := form.FaceSearch{ID: c.Param("id"), Markers: true}
+		f := form.SearchFaces{UID: c.Param("id"), Markers: true}
 
 		if results, err := search.Faces(f); err != nil || len(results) < 1 {
 			Abort(c, http.StatusNotFound, i18n.ErrFaceNotFound)
@@ -93,7 +58,7 @@ func UpdateFace(router *gin.RouterGroup) {
 			return
 		}
 
-		faceId := c.Param("id")
+		faceId := sanitize.Token(c.Param("id"))
 		m := entity.FindFace(faceId)
 
 		if m == nil {

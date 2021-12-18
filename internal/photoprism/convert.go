@@ -21,7 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 const DefaultAvcEncoder = "libx264" // Default FFmpeg AVC software encoder.
@@ -82,7 +82,7 @@ func (c *Convert) Start(path string) (err error) {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof("convert: ignoring %s", txt.Quote(filepath.Base(fileName)))
+		log.Infof("convert: ignoring %s", sanitize.Log(filepath.Base(fileName)))
 	}
 
 	err = godirwalk.Walk(path, &godirwalk.Options{
@@ -153,7 +153,7 @@ func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
 
 	log.Debugf("exiftool: extracting metadata from %s", relName)
 
-	cmd := exec.Command(c.conf.ExifToolBin(), "-m", "-api", "LargeFileSupport", "-j", f.FileName())
+	cmd := exec.Command(c.conf.ExifToolBin(), "-n", "-m", "-api", "LargeFileSupport", "-j", f.FileName())
 
 	// Fetch command output.
 	var out bytes.Buffer
@@ -403,7 +403,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 			)
 		}
 	} else {
-		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), txt.Quote(f.BaseName()))
+		return nil, useMutex, fmt.Errorf("convert: file type %s not supported in %s", f.FileType(), sanitize.Log(f.BaseName()))
 	}
 
 	return result, useMutex, nil

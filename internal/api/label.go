@@ -3,54 +3,18 @@ package api
 import (
 	"net/http"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-// SearchLabels finds and returns labels as JSON.
-//
-// GET /api/v1/labels
-func SearchLabels(router *gin.RouterGroup) {
-	router.GET("/labels", func(c *gin.Context) {
-		s := Auth(SessionID(c), acl.ResourceLabels, acl.ActionSearch)
-
-		if s.Invalid() {
-			AbortUnauthorized(c)
-			return
-		}
-
-		var f form.LabelSearch
-
-		err := c.MustBindWith(&f, binding.Form)
-
-		if err != nil {
-			AbortBadRequest(c)
-			return
-		}
-
-		result, err := search.Labels(f)
-
-		if err != nil {
-			c.AbortWithStatusJSON(400, gin.H{"error": txt.UcFirst(err.Error())})
-			return
-		}
-
-		// TODO c.Header("X-Count", strconv.Itoa(count))
-		AddLimitHeader(c, f.Count)
-		AddOffsetHeader(c, f.Offset)
-		AddTokenHeaders(c)
-
-		c.JSON(http.StatusOK, result)
-	})
-}
 
 // UpdateLabel updates label properties.
 //
@@ -71,7 +35,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		m, err := query.LabelByUID(id)
 
 		if err != nil {
@@ -105,7 +69,7 @@ func LikeLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
@@ -145,7 +109,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		label, err := query.LabelByUID(id)
 
 		if err != nil {

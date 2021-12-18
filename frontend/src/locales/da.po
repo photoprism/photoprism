@@ -1587,8 +1587,7 @@ msgstr "Andre"
 
 #: src/pages/about/about.vue:15
 msgid ""
-"Our vision is to provide the most user-friendly solution for browsing, "
-"organizing, and sharing your photo collection."
+"Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
 "Vores vision er at give den mest brugervenlige løsning til at gennemse, "
 "organisere og dele din fotosamling."
@@ -2200,8 +2199,7 @@ msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This is an early-access feature to say thanks to our sponsors and "
-"contributors."
+"This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
 "Dette er en tidlig adgangsfunktion til at sige tak til vores sponsorer og "
 "bidragydere."

@@ -9,11 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Filenames of usable thumb sizes.
@@ -92,7 +91,7 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 // ThumbFileName returns the ideal thumb file name.
 func ThumbFileName(hash string, area Area, size Size, thumbPath string) (string, error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("invalid file hash %s", txt.Quote(hash))
+		return "", fmt.Errorf("invalid file hash %s", sanitize.Log(hash))
 	}
 
 	if len(thumbPath) < 1 {

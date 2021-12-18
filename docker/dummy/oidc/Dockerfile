@@ -3,6 +3,9 @@ FROM golang:1
 # Move to working directory /app
 WORKDIR /app
 
+ARG GOPROXY
+ARG GODEBUG
+
 # Copy files and download dependency using go mod
 COPY /docker/dummy/oidc/app/. .
 RUN go mod download

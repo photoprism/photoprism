@@ -7,18 +7,25 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/workers"
 )
 
 // OptimizeCommand registers the index cli command.
 var OptimizeCommand = cli.Command{
-	Name:   "optimize",
-	Usage:  "Performs photo metadata maintenance",
+	Name:  "optimize",
+	Usage: "Maintains titles, estimates, and other metadata",
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "force, f",
+			Usage: "update all, including recently optimized",
+		},
+	},
 	Action: optimizeAction,
 }
 
-// optimizeAction starts metadata check and optimization.
+// optimizeAction updates titles, estimates, and other metadata.
 func optimizeAction(ctx *cli.Context) error {
 	start := time.Now()
 
@@ -35,12 +42,21 @@ func optimizeAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	if conf.ReadOnly() {
-		log.Infof("optimize: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
+	force := ctx.Bool("force")
 	worker := workers.NewMeta(conf)
 
-	if err := worker.Start(time.Second * 15); err != nil {
+	delay := 15 * time.Second
+	interval := entity.MetadataUpdateInterval
+
+	if force {
+		delay = 0
+		interval = 0
+	}
+
+	if err := worker.Start(delay, interval, force); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

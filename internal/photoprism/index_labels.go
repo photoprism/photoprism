@@ -6,8 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/thumb"
-
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Labels classifies a JPEG image and returns matching labels.
@@ -28,14 +27,14 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 		filename, err := jpeg.Thumbnail(Config().ThumbPath(), size)
 
 		if err != nil {
-			log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
+			log.Debugf("%s in %s", err, sanitize.Log(jpeg.BaseName()))
 			continue
 		}
 
 		imageLabels, err := ind.tensorFlow.File(filename)
 
 		if err != nil {
-			log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
+			log.Debugf("%s in %s", err, sanitize.Log(jpeg.BaseName()))
 			continue
 		}
 
@@ -58,9 +57,9 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 	}
 
 	if l := len(labels); l == 1 {
-		log.Infof("index: matched %d label with %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
+		log.Infof("index: matched %d label with %s [%s]", l, sanitize.Log(jpeg.BaseName()), time.Since(start))
 	} else if l > 1 {
-		log.Infof("index: matched %d labels with %s [%s]", l, txt.Quote(jpeg.BaseName()), time.Since(start))
+		log.Infof("index: matched %d labels with %s [%s]", l, sanitize.Log(jpeg.BaseName()), time.Since(start))
 	}
 
 	return results

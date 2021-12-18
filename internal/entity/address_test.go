@@ -38,7 +38,7 @@ func TestAddress_String(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		address := Address{ID: 1234567, AddressLine1: "Line 1", AddressLine2: "Line 2", AddressCity: "Berlin", AddressCountry: "DE"}
 		addressString := address.String()
-		assert.Equal(t, "Line 1,  Berlin, DE", addressString)
+		assert.Equal(t, "'Line 1,  Berlin, DE'", addressString)
 	})
 }
 

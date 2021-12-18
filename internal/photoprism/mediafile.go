@@ -24,6 +24,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -60,7 +61,7 @@ func NewMediaFile(fileName string) (*MediaFile, error) {
 	}
 
 	if _, _, err := m.Stat(); err != nil {
-		return m, fmt.Errorf("media: %s not found", txt.Quote(m.BaseName()))
+		return m, fmt.Errorf("media: %s not found", sanitize.Log(m.BaseName()))
 	}
 
 	return m, nil
@@ -300,12 +301,12 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		f, err := NewMediaFile(fileName)
 
 		if err != nil {
-			log.Warnf("media: %s in %s", err, txt.Quote(filepath.Base(fileName)))
+			log.Warnf("media: %s in %s", err, sanitize.Log(filepath.Base(fileName)))
 			continue
 		}
 
 		if f.FileSize() == 0 {
-			log.Warnf("media: %s is empty", txt.Quote(filepath.Base(fileName)))
+			log.Warnf("media: %s is empty", sanitize.Log(filepath.Base(fileName)))
 			continue
 		}
 
@@ -335,7 +336,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			t = "unknown type"
 		}
 
-		return result, fmt.Errorf("no supported files found for %s (%s)", txt.Quote(m.BaseName()), t)
+		return result, fmt.Errorf("no supported files found for %s (%s)", sanitize.Log(m.BaseName()), t)
 	}
 
 	// Add hidden JPEG if exists.
@@ -789,7 +790,7 @@ func (m *MediaFile) HasJpeg() bool {
 
 func (m *MediaFile) decodeDimensions() error {
 	if !m.IsMedia() {
-		return fmt.Errorf("failed decoding dimensions for %s", txt.Quote(m.BaseName()))
+		return fmt.Errorf("failed decoding dimensions for %s", sanitize.Log(m.BaseName()))
 	}
 
 	if m.IsJpeg() || m.IsPng() || m.IsGif() {
@@ -901,7 +902,7 @@ func (m *MediaFile) Thumbnail(path string, sizeName thumb.Name) (filename string
 	thumbnail, err := thumb.FromFile(m.FileName(), m.Hash(), path, size.Width, size.Height, m.Orientation(), size.Options...)
 
 	if err != nil {
-		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", txt.Quote(m.BaseName()), err)
+		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", sanitize.Log(m.BaseName()), err)
 		log.Debug(err)
 		return "", err
 	}
@@ -949,7 +950,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 		}
 
 		if fileName, err := thumb.FileName(hash, thumbPath, size.Width, size.Height, size.Options...); err != nil {
-			log.Errorf("media: failed creating %s (%s)", txt.Quote(string(name)), err)
+			log.Errorf("media: failed creating %s (%s)", sanitize.Log(string(name)), err)
 
 			return err
 		} else {
@@ -958,14 +959,12 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if originalImg == nil {
-				img, err := imaging.Open(m.FileName())
+				img, err := thumb.Open(m.FileName(), m.Orientation())
 
 				if err != nil {
-					log.Debugf("media: %s in %s", err.Error(), txt.Quote(m.BaseName()))
+					log.Debugf("media: %s in %s", err.Error(), sanitize.Log(m.BaseName()))
 					return err
 				}
-
-				img = thumb.Rotate(img, m.Orientation())
 
 				originalImg = img
 			}
@@ -982,7 +981,7 @@ func (m *MediaFile) ResampleDefault(thumbPath string, force bool) (err error) {
 			}
 
 			if err != nil {
-				log.Errorf("media: failed creating %s (%s)", txt.Quote(string(name)), err)
+				log.Errorf("media: failed creating %s (%s)", sanitize.Log(string(name)), err)
 				return err
 			}
 
@@ -1017,9 +1016,9 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 
 			if err := os.Remove(srcName); err != nil {
-				log.Errorf("media: failed removing sidecar %s", txt.Quote(fs.RelName(srcName, sidecarPath)))
+				log.Errorf("media: failed removing sidecar %s", sanitize.Log(fs.RelName(srcName, sidecarPath)))
 			} else {
-				log.Infof("media: removed sidecar %s", txt.Quote(fs.RelName(srcName, sidecarPath)))
+				log.Infof("media: removed sidecar %s", sanitize.Log(fs.RelName(srcName, sidecarPath)))
 			}
 
 			continue
@@ -1028,7 +1027,7 @@ func (m *MediaFile) RenameSidecars(oldFileName string) (renamed map[string]strin
 		if err := fs.Move(srcName, destName); err != nil {
 			return renamed, err
 		} else {
-			log.Infof("media: moved existing sidecar to %s", txt.Quote(newName+filepath.Ext(srcName)))
+			log.Infof("media: moved existing sidecar to %s", sanitize.Log(newName+filepath.Ext(srcName)))
 			renamed[fs.RelName(srcName, sidecarPath)] = fs.RelName(destName, sidecarPath)
 		}
 	}
@@ -1053,9 +1052,9 @@ func (m *MediaFile) RemoveSidecars() (err error) {
 
 	for _, sidecarName := range matches {
 		if err = os.Remove(sidecarName); err != nil {
-			log.Errorf("media: failed removing sidecar %s", txt.Quote(fs.RelName(sidecarName, sidecarPath)))
+			log.Errorf("media: failed removing sidecar %s", sanitize.Log(fs.RelName(sidecarName, sidecarPath)))
 		} else {
-			log.Infof("media: removed sidecar %s", txt.Quote(fs.RelName(sidecarName, sidecarPath)))
+			log.Infof("media: removed sidecar %s", sanitize.Log(fs.RelName(sidecarName, sidecarPath)))
 		}
 	}
 

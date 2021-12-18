@@ -1,9 +1,13 @@
-# Thank you for sponsoring PhotoPrism! #
+# A big thank you to all our sponsors! #
 
-The most effective way to [support us](https://docs.photoprism.org/funding/) is through [Patreon](https://www.patreon.com/photoprism) in €
-and [GitHub Sponsors](https://github.com/sponsors/photoprism) in USD.
-GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
-You're welcome to [contact us](https://photoprism.app/contact) for other options.
+We currently have the following sponsorship options:
+
+- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
+- [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
+- Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account.
+- You're welcome to [contact us](https://photoprism.app/contact) for other options.
+
+Visit https://docs.photoprism.app/funding/ to learn more.
 
 ## Platinum Sponsors ##
 
@@ -49,8 +53,10 @@ Garn Penrod (Patreon, November 2020)
 
 [@jasontitus](https://github.com/jasontitus) (GitHub Sponsors, October 2021)
 
+[Łukasz Anwajler](https://github.com/anwajler) (GitHub Sponsors, November 2021)
 
-*See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.*
+See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
+[Let us know](https://photoprism.app/contact) if you do not want to be listed for any reason.
 
 ## One-Time Donations ##
 
@@ -59,7 +65,7 @@ Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
 The Gordon Project
 
-*See [GitHub Sponsors](https://github.com/sponsors/photoprism?frequency=one-time) for one-time donation options.*
+[Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
 
 ## Crypto Wallets ##
 

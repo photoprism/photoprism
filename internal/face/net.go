@@ -11,7 +11,7 @@ import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 
 	"github.com/photoprism/photoprism/internal/crop"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Net is a wrapper for the TensorFlow Facenet model.
@@ -57,7 +57,7 @@ func (t *Net) Detect(fileName string, minSize int, cacheCrop bool, expected int)
 		}
 
 		if img, err := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); err != nil {
-			log.Errorf("faces: failed to decode image: %v", err)
+			log.Errorf("faces: failed to decode image: %s", err)
 		} else if embeddings := t.getEmbeddings(img); !embeddings.Empty() {
 			faces[i].Embeddings = embeddings
 		}
@@ -82,7 +82,7 @@ func (t *Net) loadModel() error {
 
 	modelPath := path.Join(t.modelPath)
 
-	log.Infof("faces: loading %s", txt.Quote(filepath.Base(modelPath)))
+	log.Infof("faces: loading %s", sanitize.Log(filepath.Base(modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(modelPath, t.modelTags, nil)
@@ -101,7 +101,7 @@ func (t *Net) getEmbeddings(img image.Image) Embeddings {
 	tensor, err := imageToTensor(img, CropSize.Width, CropSize.Height)
 
 	if err != nil {
-		log.Errorf("faces: failed to convert image to tensor: %v", err)
+		log.Errorf("faces: failed to convert image to tensor: %s", err)
 	}
 
 	// TODO: pre-whiten image as in facenet

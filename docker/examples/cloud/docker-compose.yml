@@ -5,7 +5,7 @@ version: '3.5'
 #
 #  Run this script as root to install PhotoPrism on a cloud server e.g. at DigitalOcean:
 #
-#    bash <(curl -s https://dl.photoprism.org/docker/cloud/setup.sh)
+#    bash <(curl -s https://dl.photoprism.app/docker/cloud/setup.sh)
 #
 #  This may take a while to complete, depending on the performance of your
 #  server and its internet connection.
@@ -75,7 +75,7 @@ version: '3.5'
 #  To search originals for faces without a complete rescan:
 #  docker-compose exec photoprism photoprism faces index
 #
-#  More examples: https://docs.photoprism.org/getting-started/docker-compose/#command-line-interface
+#  More examples: https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 #
 #  USING LET'S ENCRYPT HTTPS
 #  --------------------------------------------------------------------------
@@ -98,7 +98,7 @@ services:
   photoprism:
     ## Only enable automatic restarts once your installation is properly
     ## configured as it otherwise may get stuck in a restart loop,
-    ## see https://docs.photoprism.org/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## see https://docs.photoprism.app/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
     restart: always
     ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
@@ -168,7 +168,7 @@ services:
       - "./backup:/var/lib/photoprism"
 
   ## Traefik Reverse Proxy (required)
-  ## see https://docs.photoprism.org/getting-started/proxies/traefik/
+  ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
     image: traefik:v2.5
@@ -186,7 +186,7 @@ services:
       - "./certs/:/certs/"
 
   ## Database Server (recommended)
-  ## see https://docs.photoprism.org/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
+  ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     restart: always
     image: mariadb:10.6
@@ -194,9 +194,10 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mysqld --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - "./database:/var/lib/mysql" # Never remove
+      - "./database:/var/lib/mysql" # Important, don't remove
     environment:
       MYSQL_ROOT_PASSWORD: "_admin_password_"
       MYSQL_DATABASE: "photoprism"
@@ -214,13 +215,13 @@ services:
       - "./jobs.ini:/etc/ofelia/config.ini"
 
   ## Watchtower upgrades services automatically (optional)
-  ## see https://docs.photoprism.org/getting-started/updates/#watchtower
+  ## see https://docs.photoprism.app/getting-started/updates/#watchtower
   watchtower:
     restart: always
     image: containrrr/watchtower
     container_name: watchtower
     environment:
       WATCHTOWER_CLEANUP: "true"
-      WATCHTOWER_POLL_INTERVAL: 86400 # Checks for updates every day
+      WATCHTOWER_POLL_INTERVAL: 86400 # checks for updates every day
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"

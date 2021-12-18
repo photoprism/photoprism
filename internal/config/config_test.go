@@ -257,8 +257,21 @@ func TestConfig_ClientConfig(t *testing.T) {
 	assert.NotEmpty(t, cc.ManifestHash)
 	assert.Equal(t, true, cc.Debug)
 	assert.Equal(t, false, cc.Demo)
-	assert.Equal(t, false, cc.Sponsor)
+	assert.Equal(t, true, cc.Sponsor)
 	assert.Equal(t, false, cc.ReadOnly)
+
+	// Counts.
+	assert.NotEmpty(t, cc.Count.All)
+	assert.NotEmpty(t, cc.Count.Photos)
+	assert.LessOrEqual(t, 20, cc.Count.Photos)
+	assert.LessOrEqual(t, 1, cc.Count.Live)
+	assert.LessOrEqual(t, 4, cc.Count.Videos)
+	assert.LessOrEqual(t, cc.Count.Photos+cc.Count.Live+cc.Count.Videos, cc.Count.All)
+	assert.LessOrEqual(t, 6, cc.Count.Cameras)
+	assert.LessOrEqual(t, 1, cc.Count.Lenses)
+	assert.LessOrEqual(t, 13, cc.Count.Review)
+	assert.LessOrEqual(t, 1, cc.Count.Private)
+	assert.LessOrEqual(t, 4, cc.Count.Albums)
 }
 
 func TestConfig_Workers(t *testing.T) {
@@ -360,6 +373,16 @@ func TestConfig_SiteUrl(t *testing.T) {
 	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
 	c.options.SiteUrl = "http://superhost"
 	assert.Equal(t, "http://superhost/", c.SiteUrl())
+}
+
+func TestConfig_SiteDomain(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "localhost", c.SiteDomain())
+	c.options.SiteUrl = "https://foo.bar.com:2342/"
+	assert.Equal(t, "foo.bar.com", c.SiteDomain())
+	c.options.SiteUrl = ""
+	assert.Equal(t, "localhost", c.SiteDomain())
 }
 
 func TestConfig_SitePreview(t *testing.T) {

@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/form"
-
 	"github.com/gosimple/slug"
-	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestNewAlbum(t *testing.T) {
@@ -66,6 +66,63 @@ is an oblate spheroid.`
 		album := NewAlbum(longName, AlbumDefault)
 		assert.Equal(t, expected, album.AlbumTitle)
 		assert.Contains(t, album.AlbumSlug, slug.Make(slugExpected))
+	})
+}
+
+func TestAlbum_UpdateSlug(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		album := NewMonthAlbum("Foo ", "foo", 2002, 11)
+
+		assert.Equal(t, "Foo", album.AlbumTitle)
+		assert.Equal(t, "foo", album.AlbumSlug)
+		assert.Equal(t, "", album.AlbumDescription)
+		assert.Equal(t, 2002, album.AlbumYear)
+		assert.Equal(t, 11, album.AlbumMonth)
+
+		if err := album.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := album.UpdateSlug("November / 2002", "november-2002"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "November / 2002", album.AlbumTitle)
+		assert.Equal(t, "november-2002", album.AlbumSlug)
+		assert.Equal(t, "", album.AlbumDescription)
+		assert.Equal(t, 2002, album.AlbumYear)
+		assert.Equal(t, 11, album.AlbumMonth)
+
+		if err := album.DeletePermanently(); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestAlbum_UpdateState(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		album := NewAlbum("Any State", AlbumState)
+
+		assert.Equal(t, "Any State", album.AlbumTitle)
+		assert.Equal(t, "any-state", album.AlbumSlug)
+
+		if err := album.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := album.UpdateState("Alberta", "canada-alberta", "Alberta", "ca"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Alberta", album.AlbumTitle)
+		assert.Equal(t, "", album.AlbumDescription)
+		assert.Equal(t, "Canada", album.AlbumLocation)
+		assert.Equal(t, "Alberta", album.AlbumState)
+		assert.Equal(t, "ca", album.AlbumCountry)
+
+		if err := album.DeletePermanently(); err != nil {
+			t.Fatal(err)
+		}
 	})
 }
 
@@ -235,6 +292,16 @@ func TestFindAlbumBySlug(t *testing.T) {
 
 		assert.Equal(t, "Holiday 2030", album.AlbumTitle)
 		assert.Equal(t, "holiday-2030", album.AlbumSlug)
+	})
+	t.Run("state album", func(t *testing.T) {
+		album := FindAlbumBySlug("california-usa", AlbumState)
+
+		if album == nil {
+			t.Fatal("expected to find an album")
+		}
+
+		assert.Equal(t, "California / USA", album.AlbumTitle)
+		assert.Equal(t, "california-usa", album.AlbumSlug)
 	})
 	t.Run("no result", func(t *testing.T) {
 		album := FindAlbumBySlug("holiday-2030", AlbumMonth)

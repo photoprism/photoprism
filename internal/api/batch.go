@@ -3,17 +3,18 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/service"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // BatchPhotosArchive moves multiple photos to the archive.
@@ -40,7 +41,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("photos: archiving %s", f.String())
+		log.Infof("photos: archiving %s", sanitize.Log(f.String()))
 
 		if service.Config().BackupYaml() {
 			photos, err := query.PhotoSelection(f)
@@ -103,7 +104,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("photos: restoring %s", f.String())
+		log.Infof("photos: restoring %s", sanitize.Log(f.String()))
 
 		if service.Config().BackupYaml() {
 			photos, err := query.PhotoSelection(f)
@@ -165,7 +166,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("photos: approving %s", f.String())
+		log.Infof("photos: approving %s", sanitize.Log(f.String()))
 
 		photos, err := query.PhotoSelection(f)
 
@@ -217,7 +218,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("albums: deleting %s", f.String())
+		log.Infof("albums: deleting %s", sanitize.Log(f.String()))
 
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.Album{})
 		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
@@ -254,7 +255,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("photos: updating private flag for %s", f.String())
+		log.Infof("photos: updating private flag for %s", sanitize.Log(f.String()))
 
 		if err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("photo_private",
 			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error; err != nil {
@@ -307,7 +308,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("labels: deleting %s", f.String())
+		log.Infof("labels: deleting %s", sanitize.Log(f.String()))
 
 		var labels entity.Labels
 
@@ -359,7 +360,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			return
 		}
 
-		log.Infof("photos: deleting %s", f.String())
+		log.Infof("photos: deleting %s", sanitize.Log(f.String()))
 
 		photos, err := query.PhotoSelection(f)
 

@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // FromCache returns the crop file name if cached.
@@ -28,7 +28,7 @@ func FromCache(hash, area string, size Size, thumbPath string) (fileName string,
 // FileName returns the crop file name based on cache path, size, and area.
 func FileName(hash, area string, width, height int, thumbPath string) (fileName string, err error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("crop: invalid file hash %s", txt.Quote(hash))
+		return "", fmt.Errorf("crop: invalid file hash %s", sanitize.Log(hash))
 	}
 
 	if len(thumbPath) < 1 {

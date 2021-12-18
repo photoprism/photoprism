@@ -138,8 +138,8 @@ func TestNewDetails(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Logf("PHOTO: %#v", p)
-		t.Logf("DETAILS: %#v", d)
+		// t.Logf("PHOTO: %#v", p)
+		// t.Logf("DETAILS: %#v", d)
 	})
 }
 

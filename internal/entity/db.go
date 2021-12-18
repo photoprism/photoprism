@@ -12,8 +12,8 @@ import (
 
 // Database drivers (sql dialects).
 const (
-	MySQL  = "mysql"
-	SQLite = "sqlite3"
+	MySQL   = "mysql"
+	SQLite3 = "sqlite3"
 )
 
 var dbProvider DbProvider

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.app>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
@@ -20,11 +20,11 @@ Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
     offering commercial goods, products, or services without prior written permission.
     In other words, please ask.
 
-Feel free to send an e-mail to hello@photoprism.org if you have questions,
+Feel free to send an e-mail to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.org/developer-guide/
+https://docs.photoprism.app/developer-guide/
 
 */
 
@@ -111,7 +111,7 @@ export default [
     name: "browse",
     path: "/browse",
     component: Photos,
-    meta: { title: appName, auth: true },
+    meta: { title: appName, icon: true, auth: true },
   },
   {
     name: "all",
@@ -132,7 +132,7 @@ export default [
     path: "/moments",
     component: Albums,
     meta: { title: $gettext("Moments"), auth: true },
-    props: { view: "moment", staticFilter: { type: "moment" } },
+    props: { view: "moment", staticFilter: { type: "moment", order: "moment" } },
   },
   {
     name: "moment",
@@ -145,7 +145,7 @@ export default [
     path: "/albums",
     component: Albums,
     meta: { title: $gettext("Albums"), auth: true },
-    props: { view: "album", staticFilter: { type: "album" } },
+    props: { view: "album", staticFilter: { type: "album", order: "name" } },
   },
   {
     name: "album",
@@ -158,7 +158,7 @@ export default [
     path: "/calendar",
     component: Albums,
     meta: { title: $gettext("Calendar"), auth: true },
-    props: { view: "month", staticFilter: { type: "month" } },
+    props: { view: "month", staticFilter: { type: "month", order: "newest" } },
   },
   {
     name: "month",
@@ -171,7 +171,7 @@ export default [
     path: "/folders",
     component: Albums,
     meta: { title: $gettext("Folders"), auth: true },
-    props: { view: "folder", staticFilter: { type: "folder", order: "default" } },
+    props: { view: "folder", staticFilter: { type: "folder", order: "newest" } },
   },
   {
     name: "folder",
@@ -192,6 +192,13 @@ export default [
     component: Photos,
     meta: { title: $gettext("Favorites"), auth: true },
     props: { staticFilter: { favorite: true } },
+  },
+  {
+    name: "live",
+    path: "/live",
+    component: Photos,
+    meta: { title: $gettext("Live"), auth: true },
+    props: { staticFilter: { live: "true" } },
   },
   {
     name: "videos",
@@ -259,7 +266,7 @@ export default [
     path: "/states",
     component: Albums,
     meta: { title: $gettext("Places"), auth: true },
-    props: { view: "state", staticFilter: { type: "state" } },
+    props: { view: "state", staticFilter: { type: "state", order: "place" } },
   },
   {
     name: "state",

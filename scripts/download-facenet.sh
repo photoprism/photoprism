@@ -3,7 +3,7 @@
 TODAY=`date -u +%Y%m%d`
 
 MODEL_NAME="Facenet"
-MODEL_URL="https://dl.photoprism.org/tensorflow/facenet.zip?$TODAY"
+MODEL_URL="https://dl.photoprism.app/tensorflow/facenet.zip?$TODAY"
 MODEL_PATH="assets/facenet"
 MODEL_ZIP="/tmp/photoprism/facenet.zip"
 MODEL_HASH="0492eb1d67789108b7eefb274e26633504b059be  $MODEL_ZIP"

@@ -17,7 +17,7 @@ import (
 )
 
 // Photos searches for photos based on a Form and returns PhotoResults ([]Photo).
-func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
+func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
@@ -75,6 +75,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		s = s.Order("taken_at DESC, photos.photo_uid, files.file_primary DESC")
 	}
 
+	// Include hidden files?
 	if !f.Hidden {
 		s = s.Where("files.file_type = 'jpg' OR files.file_video = 1")
 
@@ -90,22 +91,25 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		s = s.Where("files.file_primary = 1")
 	}
 
-	// Shortcut for known photo ids.
-	if f.ID != "" {
-		s = s.Where("photos.photo_uid IN (?)", strings.Split(f.ID, txt.Or))
-		s = s.Order("files.file_primary DESC")
+	if f.UID != "" {
+		s = s.Where("photos.photo_uid IN (?)", strings.Split(strings.ToLower(f.UID), txt.Or))
 
-		if result := s.Scan(&results); result.Error != nil {
-			return results, 0, result.Error
+		// Take shortcut?
+		if f.Album == "" && f.Query == "" {
+			s = s.Order("files.file_primary DESC")
+
+			if result := s.Scan(&results); result.Error != nil {
+				return results, 0, result.Error
+			}
+
+			log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+
+			if f.Merged {
+				return results.Merged()
+			}
+
+			return results, len(results), nil
 		}
-
-		log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
-
-		if f.Merged {
-			return results.Merged()
-		}
-
-		return results, len(results), nil
 	}
 
 	// Filter by label, label category and keywords.
@@ -115,7 +119,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 
 	if f.Label != "" {
 		if err := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Debugf("search: label %s not found", txt.QuoteLower(f.Label))
+			log.Debugf("search: label %s not found", txt.LogParamLower(f.Label))
 			return PhotoResults{}, 0, nil
 		} else {
 			for _, l := range labels {
@@ -123,7 +127,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Infof("search: label %s includes %d categories", txt.QuoteLower(l.LabelName), len(categories))
+				log.Infof("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)
@@ -134,9 +138,6 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 				Group("photos.id, files.id")
 		}
 	}
-
-	// Clip and normalize search query.
-	f.Query = txt.NormalizeQuery(f.Query)
 
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
@@ -194,7 +195,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		}
 	} else if f.Query != "" {
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Debugf("search: label %s not found, using fuzzy search", txt.QuoteLower(f.Query))
+			log.Debugf("search: label %s not found, using fuzzy search", txt.LogParamLower(f.Query))
 
 			for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
 				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
@@ -205,7 +206,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Debugf("search: label %s includes %d categories", txt.QuoteLower(l.LabelName), len(categories))
+				log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)
@@ -511,7 +512,7 @@ func Photos(f form.PhotoSearch) (results PhotoResults, count int, err error) {
 		return results, 0, err
 	}
 
-	log.Infof("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+	log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
 
 	if f.Merged {
 		return results.Merged()

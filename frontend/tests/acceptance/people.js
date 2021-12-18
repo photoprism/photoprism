@@ -251,9 +251,7 @@ test.meta("testID", "people-004")("Hide face", async (t) => {
 
 test.meta("testID", "people-005")("Hide person", async (t) => {
   await page.openNav();
-  await t
-    .click(Selector(".nav-people"))
-    .click(Selector("#tab-people > a"));
+  await t.click(Selector(".nav-people")).click(Selector("#tab-people > a"));
   const FirstPerson = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
   await t
     .hover(Selector("a[data-uid=" + FirstPerson + "]"))

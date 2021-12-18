@@ -8,15 +8,15 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 type DownloadName string
@@ -32,46 +32,47 @@ type Files []File
 
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
-	ID              uint          `gorm:"primary_key" json:"-" yaml:"-"`
-	Photo           *Photo        `json:"-" yaml:"-"`
-	PhotoID         uint          `gorm:"index;" json:"-" yaml:"-"`
-	PhotoUID        string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
-	InstanceID      string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
-	FileUID         string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName        string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot        string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
-	OriginalName    string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
-	FileHash        string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
-	FileSize        int64         `json:"Size" yaml:"Size,omitempty"`
-	FileCodec       string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
-	FileType        string        `gorm:"type:VARBINARY(32)" json:"Type" yaml:"Type,omitempty"`
-	FileMime        string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
-	FilePrimary     bool          `json:"Primary" yaml:"Primary,omitempty"`
-	FileSidecar     bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
-	FileMissing     bool          `json:"Missing" yaml:"Missing,omitempty"`
-	FilePortrait    bool          `json:"Portrait" yaml:"Portrait,omitempty"`
-	FileVideo       bool          `json:"Video" yaml:"Video,omitempty"`
-	FileDuration    time.Duration `json:"Duration" yaml:"Duration,omitempty"`
-	FileWidth       int           `json:"Width" yaml:"Width,omitempty"`
-	FileHeight      int           `json:"Height" yaml:"Height,omitempty"`
-	FileOrientation int           `json:"Orientation" yaml:"Orientation,omitempty"`
-	FileProjection  string        `gorm:"type:VARBINARY(32);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
-	FileAspectRatio float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
-	FileMainColor   string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
-	FileColors      string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
-	FileLuminance   string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
-	FileDiff        uint32        `json:"Diff" yaml:"Diff,omitempty"`
-	FileChroma      uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
-	FileError       string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
-	ModTime         int64         `json:"ModTime" yaml:"-"`
-	CreatedAt       time.Time     `json:"CreatedAt" yaml:"-"`
-	CreatedIn       int64         `json:"CreatedIn" yaml:"-"`
-	UpdatedAt       time.Time     `json:"UpdatedAt" yaml:"-"`
-	UpdatedIn       int64         `json:"UpdatedIn" yaml:"-"`
-	DeletedAt       *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-	Share           []FileShare   `json:"-" yaml:"-"`
-	Sync            []FileSync    `json:"-" yaml:"-"`
-	markers         *Markers
+	ID               uint          `gorm:"primary_key" json:"-" yaml:"-"`
+	Photo            *Photo        `json:"-" yaml:"-"`
+	PhotoID          uint          `gorm:"index;" json:"-" yaml:"-"`
+	PhotoUID         string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
+	InstanceID       string        `gorm:"type:VARBINARY(42);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	FileUID          string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	FileName         string        `gorm:"type:VARBINARY(755);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileRoot         string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	FileHash         string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
+	FileSize         int64         `json:"Size" yaml:"Size,omitempty"`
+	FileCodec        string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
+	FileType         string        `gorm:"type:VARBINARY(32)" json:"Type" yaml:"Type,omitempty"`
+	FileMime         string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
+	FilePrimary      bool          `json:"Primary" yaml:"Primary,omitempty"`
+	FileSidecar      bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
+	FileMissing      bool          `json:"Missing" yaml:"Missing,omitempty"`
+	FilePortrait     bool          `json:"Portrait" yaml:"Portrait,omitempty"`
+	FileVideo        bool          `json:"Video" yaml:"Video,omitempty"`
+	FileDuration     time.Duration `json:"Duration" yaml:"Duration,omitempty"`
+	FileWidth        int           `json:"Width" yaml:"Width,omitempty"`
+	FileHeight       int           `json:"Height" yaml:"Height,omitempty"`
+	FileOrientation  int           `json:"Orientation" yaml:"Orientation,omitempty"`
+	FileProjection   string        `gorm:"type:VARBINARY(32);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileAspectRatio  float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
+	FileColorProfile string        `gorm:"type:VARBINARY(32);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
+	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
+	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
+	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`
+	FileDiff         uint32        `json:"Diff" yaml:"Diff,omitempty"`
+	FileChroma       uint8         `json:"Chroma" yaml:"Chroma,omitempty"`
+	FileError        string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
+	ModTime          int64         `json:"ModTime" yaml:"-"`
+	CreatedAt        time.Time     `json:"CreatedAt" yaml:"-"`
+	CreatedIn        int64         `json:"CreatedIn" yaml:"-"`
+	UpdatedAt        time.Time     `json:"UpdatedAt" yaml:"-"`
+	UpdatedIn        int64         `json:"UpdatedIn" yaml:"-"`
+	DeletedAt        *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	Share            []FileShare   `json:"-" yaml:"-"`
+	Sync             []FileSync    `json:"-" yaml:"-"`
+	markers          *Markers
 }
 
 // TableName returns the entity database table name.
@@ -205,23 +206,23 @@ func (m File) Missing() bool {
 // DeletePermanently permanently removes a file from the index.
 func (m *File) DeletePermanently() error {
 	if m.ID < 1 || m.FileUID == "" {
-		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.Quote(m.FileUID))
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, sanitize.Log(m.FileUID))
 	}
 
 	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
-		log.Errorf("file %s: %s while removing markers", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while removing markers", sanitize.Log(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file %s: %s while removing share info", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while removing share info", sanitize.Log(m.FileUID), err)
 	}
 
 	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
-		log.Errorf("file %s: %s while removing remote sync info", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while removing remote sync info", sanitize.Log(m.FileUID), err)
 	}
 
 	if err := m.ReplaceHash(""); err != nil {
-		log.Errorf("file %s: %s while removing covers", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while removing covers", sanitize.Log(m.FileUID), err)
 	}
 
 	return UnscopedDb().Delete(m).Error
@@ -236,9 +237,9 @@ func (m *File) ReplaceHash(newHash string) error {
 
 	// Log values.
 	if m.FileHash != "" && newHash == "" {
-		log.Tracef("file %s: removing hash %s", txt.Quote(m.FileUID), txt.Quote(m.FileHash))
+		log.Tracef("file %s: removing hash %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileHash))
 	} else if m.FileHash != "" && newHash != "" {
-		log.Tracef("file %s: hash %s changed to %s", txt.Quote(m.FileUID), txt.Quote(m.FileHash), txt.Quote(newHash))
+		log.Tracef("file %s: hash %s changed to %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileHash), sanitize.Log(newHash))
 		// Reset error when hash changes.
 		m.FileError = ""
 	}
@@ -252,7 +253,7 @@ func (m *File) ReplaceHash(newHash string) error {
 		return nil
 	}
 
-	entities := Types{
+	entities := Tables{
 		"albums": Album{},
 		"labels": Label{},
 	}
@@ -274,7 +275,7 @@ func (m *File) ReplaceHash(newHash string) error {
 // Delete deletes the entity from the database.
 func (m *File) Delete(permanently bool) error {
 	if m.ID < 1 || m.FileUID == "" {
-		return fmt.Errorf("invalid file id %d / uid %s", m.ID, txt.Quote(m.FileUID))
+		return fmt.Errorf("invalid file id %d / uid %s", m.ID, sanitize.Log(m.FileUID))
 	}
 
 	if permanently {
@@ -325,7 +326,7 @@ func (m *File) Create() error {
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file %s: %s while saving markers", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while saving markers", sanitize.Log(m.FileUID), err)
 		return err
 	}
 
@@ -348,12 +349,12 @@ func (m *File) Save() error {
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
-		log.Errorf("file %s: %s while saving", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while saving", sanitize.Log(m.FileUID), err)
 		return err
 	}
 
 	if _, err := m.SaveMarkers(); err != nil {
-		log.Errorf("file %s: %s while saving markers", txt.Quote(m.FileUID), err)
+		log.Errorf("file %s: %s while saving markers", sanitize.Log(m.FileUID), err)
 		return err
 	}
 
@@ -383,7 +384,7 @@ func (m *File) Updates(values interface{}) error {
 
 // Rename updates the name and path of this file.
 func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
-	log.Debugf("file %s: renaming %s to %s", txt.Quote(m.FileUID), txt.Quote(m.FileName), txt.Quote(fileName))
+	log.Debugf("file %s: renaming %s to %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileName), sanitize.Log(fileName))
 
 	// Update database row.
 	if err := m.Updates(map[string]interface{}{
@@ -427,7 +428,7 @@ func (m *File) Undelete() error {
 		return err
 	}
 
-	log.Debugf("file %s: removed missing flag from %s", txt.Quote(m.FileUID), txt.Quote(m.FileName))
+	log.Debugf("file %s: removed missing flag from %s", sanitize.Log(m.FileUID), sanitize.Log(m.FileName))
 
 	m.FileMissing = false
 	m.DeletedAt = nil
@@ -467,14 +468,29 @@ func (m *File) Panorama() bool {
 	return m.Projection() != ProjDefault || (m.FileWidth/m.FileHeight) >= 2
 }
 
-// Projection returns the panorama projection type string.
+// Projection returns the panorama projection name if any.
 func (m *File) Projection() string {
 	return SanitizeTypeString(m.FileProjection)
 }
 
-// SetProjection sets the panorama projection type string.
-func (m *File) SetProjection(projType string) {
-	m.FileProjection = SanitizeTypeString(projType)
+// SetProjection sets the panorama projection name.
+func (m *File) SetProjection(name string) {
+	m.FileProjection = SanitizeTypeString(name)
+}
+
+// ColorProfile returns the ICC color profile name if any.
+func (m *File) ColorProfile() string {
+	return SanitizeTypeCaseSensitive(m.FileColorProfile)
+}
+
+// HasColorProfile tests if the file has a matching color profile.
+func (m *File) HasColorProfile(profile colors.Profile) bool {
+	return profile.Equal(m.FileColorProfile)
+}
+
+// SetColorProfile sets the ICC color profile name such as "Display P3".
+func (m *File) SetColorProfile(name string) {
+	m.FileColorProfile = SanitizeTypeCaseSensitive(name)
 }
 
 // AddFaces adds face markers to the file.
@@ -546,7 +562,7 @@ func (m *File) Markers() *Markers {
 	} else if m.FileUID == "" {
 		m.markers = &Markers{}
 	} else if res, err := FindMarkers(m.FileUID); err != nil {
-		log.Warnf("file %s: %s while loading markers", txt.Quote(m.FileUID), err)
+		log.Warnf("file %s: %s while loading markers", sanitize.Log(m.FileUID), err)
 		m.markers = &Markers{}
 	} else {
 		m.markers = &res

@@ -7,6 +7,23 @@ import (
 )
 
 func TestFirstOrCreateCamera(t *testing.T) {
+	t.Run("UnknownCamera", func(t *testing.T) {
+		m := UnknownCamera
+
+		assert.Equal(t, uint(1), m.ID)
+		assert.Equal(t, UnknownID, m.CameraSlug)
+
+		result := FirstOrCreateCamera(&m)
+
+		if result == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, uint(1), m.ID)
+		assert.Equal(t, UnknownID, m.CameraSlug)
+		assert.Equal(t, uint(1), result.ID)
+		assert.Equal(t, UnknownID, result.CameraSlug)
+	})
 	t.Run("existing camera", func(t *testing.T) {
 		camera := NewCamera("iPhone SE", "Apple")
 
@@ -102,7 +119,7 @@ func TestCamera_String(t *testing.T) {
 	t.Run("model XXX make Nikon", func(t *testing.T) {
 		camera := NewCamera("XXX", "Nikon")
 		cameraString := camera.String()
-		assert.Equal(t, "Nikon XXX", cameraString)
+		assert.Equal(t, "'Nikon XXX'", cameraString)
 	})
 	t.Run("model XXX make Unknown", func(t *testing.T) {
 		camera := NewCamera("XXX", "")

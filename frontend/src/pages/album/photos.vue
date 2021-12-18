@@ -154,8 +154,6 @@ export default {
 
       if (photo.CellID && photo.CellID !== "zz") {
         this.$router.push({name: "place", params: {q: photo.CellID}});
-      } else if (photo.PlaceID && photo.PlaceID !== "zz") {
-        this.$router.push({name: "place", params: {q: photo.PlaceID}});
       } else if (photo.Country && photo.Country !== "zz") {
         this.$router.push({name: "place", params: {q: "country:" + photo.Country}});
       } else {

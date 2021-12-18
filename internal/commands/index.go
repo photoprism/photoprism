@@ -14,14 +14,14 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // IndexCommand registers the index cli command.
 var IndexCommand = cli.Command{
 	Name:      "index",
 	Usage:     "Indexes original media files",
-	ArgsUsage: "[path]",
+	ArgsUsage: "[originals subfolder]",
 	Flags:     indexFlags,
 	Action:    indexAction,
 }
@@ -57,13 +57,13 @@ func indexAction(ctx *cli.Context) error {
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("indexing originals in %s", txt.Quote(conf.OriginalsPath()))
+		log.Infof("indexing originals in %s", sanitize.Log(conf.OriginalsPath()))
 	} else {
-		log.Infof("indexing originals in %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("indexing originals in %s", sanitize.Log(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("index: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	var indexed fs.Done

@@ -23,7 +23,7 @@ func AddCoverCacheHeader(c *gin.Context) {
 	AddCacheHeader(c, CoverCacheTTL)
 }
 
-// AddCacheHeader adds thumbnail cache control headers to the response.
+// AddThumbCacheHeader adds thumbnail cache control headers to the response.
 func AddThumbCacheHeader(c *gin.Context) {
 	c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform, immutable", ThumbCacheTTL.String()))
 }

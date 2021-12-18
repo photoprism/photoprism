@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // UsersCommand registers user management subcommands.
@@ -193,7 +193,7 @@ func usersDeleteAction(ctx *cli.Context) error {
 		}
 
 		actionPrompt := promptui.Prompt{
-			Label:     fmt.Sprintf("Delete %s?", txt.Quote(userName)),
+			Label:     fmt.Sprintf("Delete %s?", sanitize.Log(userName)),
 			IsConfirm: true,
 		}
 
@@ -203,7 +203,7 @@ func usersDeleteAction(ctx *cli.Context) error {
 			} else if err := m.Delete(); err != nil {
 				return err
 			} else {
-				log.Infof("%s deleted", txt.Quote(userName))
+				log.Infof("%s deleted", sanitize.Log(userName))
 			}
 		} else {
 			log.Infof("keeping user")
@@ -221,7 +221,7 @@ func usersListAction(ctx *cli.Context) error {
 		fmt.Printf("%-4s %-16s %-16s %-32s %-8s %-8s\n", "ID", "LOGIN", "NAME", "EMAIL", "ADMIN", "EXTERNAL")
 
 		for _, user := range users {
-			fmt.Printf("%-4d %-16s %-16s %-32s %-8v %-8v\n", user.ID, user.UserName, user.FullName, user.PrimaryEmail, user.Admin(), user.ExternalID != "")
+			fmt.Printf("%-4d %-16s %-16s %-32s %-8v %-8v\n", user.ID, user.Username(), user.FullName, user.PrimaryEmail, user.Admin(), user.ExternalID != "")
 		}
 
 		return nil
@@ -256,7 +256,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("password successfully changed: %v\n", u.UserName)
+			fmt.Printf("password successfully changed: %s\n", sanitize.Log(u.Username()))
 		}
 
 		if ctx.IsSet("fullname") {
@@ -275,7 +275,7 @@ func usersUpdateAction(ctx *cli.Context) error {
 			return err
 		}
 
-		fmt.Printf("user successfully updated: %v\n", u.UserName)
+		fmt.Printf("user successfully updated: %s\n", sanitize.Log(u.Username()))
 
 		return nil
 	})

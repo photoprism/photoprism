@@ -18,7 +18,7 @@ test.meta("testID", "about-001")("About page is displayed with all links", async
     .ok()
     .expect(Selector('a[href="https://github.com/photoprism/photoprism/projects/5"]').visible)
     .ok()
-    .expect(Selector('a[href="https://docs.photoprism.org/"]').visible)
+    .expect(Selector('a[href="https://docs.photoprism.app/"]').visible)
     .ok()
     .expect(Selector('a[href="/about/license"]').visible)
     .ok()

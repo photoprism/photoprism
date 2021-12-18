@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/classify"
@@ -27,7 +29,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		m, err := query.PhotoByUID(c.Param("uid"))
+		m, err := query.PhotoByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -68,7 +70,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			}
 		}
 
-		p, err := query.PhotoPreloadByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -102,14 +104,14 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		m, err := query.PhotoByUID(c.Param("uid"))
+		m, err := query.PhotoByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
 
-		labelId, err := strconv.Atoi(c.Param("id"))
+		labelId, err := strconv.Atoi(sanitize.Token(c.Param("id")))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
@@ -130,7 +132,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			logError("label", entity.Db().Save(&label).Error)
 		}
 
-		p, err := query.PhotoPreloadByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -144,7 +146,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
+		PublishPhotoEvent(EntityUpdated, sanitize.IdString(c.Param("uid")), c)
 
 		event.Success("label removed")
 
@@ -168,14 +170,14 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 
 		// TODO: Code clean-up, simplify
 
-		m, err := query.PhotoByUID(c.Param("uid"))
+		m, err := query.PhotoByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
 
-		labelId, err := strconv.Atoi(c.Param("id"))
+		labelId, err := strconv.Atoi(sanitize.Token(c.Param("id")))
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UcFirst(err.Error())})
@@ -199,7 +201,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -211,7 +213,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
+		PublishPhotoEvent(EntityUpdated, sanitize.IdString(c.Param("uid")), c)
 
 		event.Success("label saved")
 

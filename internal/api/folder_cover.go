@@ -5,13 +5,14 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
@@ -36,7 +37,7 @@ func FolderCover(router *gin.RouterGroup) {
 		start := time.Now()
 		conf := service.Config()
 		uid := c.Param("uid")
-		thumbName := thumb.Name(c.Param("size"))
+		thumbName := thumb.Name(sanitize.Token(c.Param("size")))
 		download := c.Query("download") != ""
 
 		size, ok := thumb.Sizes[thumbName]
@@ -61,7 +62,7 @@ func FolderCover(router *gin.RouterGroup) {
 		cacheKey := CacheKey(folderCover, uid, string(thumbName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
-			log.Debugf("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
 
@@ -97,7 +98,7 @@ func FolderCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			log.Warnf("%s: %s is missing", folderCover, txt.Quote(f.FileName))
+			log.Warnf("%s: %s is missing", folderCover, sanitize.Log(f.FileName))
 			logError(folderCover, f.Update("FileMissing", true))
 			return
 		}

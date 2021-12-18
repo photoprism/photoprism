@@ -1,8 +1,11 @@
-FROM photoprism/development:20211109 as build
+##################################################### BUILD STAGE ######################################################
+FROM photoprism/development:20211210 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
+ARG GOPROXY
+ARG GODEBUG
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
@@ -11,10 +14,10 @@ COPY . .
 # Build frontend and backend
 RUN make dep build-js install
 
-# Should be the same as used for photoprism/development!
+################################################## PRODUCTION STAGE ####################################################
 FROM ubuntu:21.10
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -31,7 +34,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # Install additional distribution packages
-RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null && apt-get -qq install --no-install-recommends \
     gpgv \
     wget \
     curl \
@@ -44,6 +47,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libc6 \
     libatomic1 \
     libheif-examples \
+    librsvg2-bin \
     gnupg \
     gpg-agent \
     apt-utils \
@@ -56,7 +60,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     [ "$TARGETARCH" = "arm" ] || apt-get install darktable; \
     apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables, see https://docs.photoprism.org/getting-started/config-options/
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/
 ENV TF_CPP_MIN_LOG_LEVEL="2" \
     PATH="/photoprism/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     PHOTOPRISM_ASSETS_PATH="/photoprism/assets" \

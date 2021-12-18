@@ -3,6 +3,8 @@ package search
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -205,24 +207,24 @@ func TestLikeAllNames(t *testing.T) {
 		}
 	})
 	t.Run("Plus", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul + Paula")); len(w) == 2 {
-			assert.Equal(t, "name LIKE '%paul%'", w[0])
-			assert.Equal(t, "name LIKE '%paula%'", w[1])
+		if w := LikeAllNames(Cols{"name"}, sanitize.Query("Paul + Paula")); len(w) == 2 {
+			assert.Equal(t, "name LIKE '%Paul%'", w[0])
+			assert.Equal(t, "name LIKE '%Paula%'", w[1])
 		} else {
 			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
 	t.Run("And", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("P and Paula")); len(w) == 2 {
-			assert.Equal(t, "name LIKE '%p%'", w[0])
-			assert.Equal(t, "name LIKE '%paula%'", w[1])
+		if w := LikeAllNames(Cols{"name"}, sanitize.Query("P and Paula")); len(w) == 2 {
+			assert.Equal(t, "name LIKE '%P%'", w[0])
+			assert.Equal(t, "name LIKE '%Paula%'", w[1])
 		} else {
 			t.Fatalf("unexpected result:  %#v", w)
 		}
 	})
 	t.Run("Or", func(t *testing.T) {
-		if w := LikeAllNames(Cols{"name"}, txt.NormalizeQuery("Paul or Paula")); len(w) == 1 {
-			assert.Equal(t, "name LIKE '%paul%' OR name LIKE '%paula%'", w[0])
+		if w := LikeAllNames(Cols{"name"}, sanitize.Query("Paul or Paula")); len(w) == 1 {
+			assert.Equal(t, "name LIKE '%Paul%' OR name LIKE '%Paula%'", w[0])
 		} else {
 			t.Fatalf("unexpected result:  %#v", w)
 		}

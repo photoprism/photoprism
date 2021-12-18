@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/sanitize"
+
 	"github.com/gosimple/slug"
 	"github.com/photoprism/photoprism/pkg/txt"
 
@@ -16,7 +18,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		return wheres
 	}
 
-	s = txt.StripOr(txt.NormalizeQuery(s))
+	s = txt.StripOr(sanitize.Query(s))
 
 	var wildcardThreshold int
 

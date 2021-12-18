@@ -130,4 +130,7 @@ var SpecialWords = map[string]string{
 	"phpstorm":           "PhpStorm",
 	"vuejs":              "VueJS",
 	"nodejs":             "NodeJS",
+	"d'honneur":          "d'Honneur",
+	"île-de-france":      "Île-de-France",
+	"ile-de-france":      "Île-de-France",
 }

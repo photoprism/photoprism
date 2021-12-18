@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -38,7 +39,7 @@ var UnknownCamera = Camera{
 
 // CreateUnknownCamera initializes the database with an unknown camera if not exists
 func CreateUnknownCamera() {
-	FirstOrCreateCamera(&UnknownCamera)
+	UnknownCamera = *FirstOrCreateCamera(&UnknownCamera)
 }
 
 // NewCamera creates a camera entity from a model name and a make name.
@@ -97,7 +98,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 	}
 
 	if cacheData, ok := cameraCache.Get(m.CameraSlug); ok {
-		log.Debugf("camera: cache hit for %s", m.CameraSlug)
+		log.Tracef("camera: cache hit for %s", m.CameraSlug)
 
 		return cacheData.(*Camera)
 	}
@@ -123,7 +124,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		cameraCache.SetDefault(m.CameraSlug, &result)
 		return &result
 	} else {
-		log.Errorf("camera: %s (create %s)", err.Error(), txt.Quote(m.String()))
+		log.Errorf("camera: %s (create %s)", err.Error(), sanitize.Log(m.String()))
 	}
 
 	return &UnknownCamera
@@ -131,7 +132,7 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 
 // String returns an identifier that can be used in logs.
 func (m *Camera) String() string {
-	return m.CameraName
+	return sanitize.Log(m.CameraName)
 }
 
 // Unknown returns true if the camera is not a known make or model.

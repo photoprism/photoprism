@@ -4,21 +4,9 @@ package places
 type Place struct {
 	PlaceID     string `json:"id"`
 	LocLabel    string `json:"label"`
+	LocDistrict string `json:"district"`
 	LocCity     string `json:"city"`
 	LocState    string `json:"state"`
 	LocCountry  string `json:"country"`
 	LocKeywords string `json:"keywords"`
-}
-
-func NewPlace(id, label, city, state, country, keywords string) Place {
-	result := Place{
-		PlaceID:     id,
-		LocLabel:    label,
-		LocCity:     city,
-		LocState:    state,
-		LocCountry:  country,
-		LocKeywords: keywords,
-	}
-
-	return result
 }

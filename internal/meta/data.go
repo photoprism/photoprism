@@ -4,9 +4,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/s2"
-
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/s2"
 )
 
 // Data represents image meta data.
@@ -26,6 +25,7 @@ type Data struct {
 	Description  string        `meta:"Description"`
 	Copyright    string        `meta:"Rights,Copyright"`
 	Projection   string        `meta:"ProjectionType"`
+	ColorProfile string        `meta:"ICCProfileName,ProfileDescription"`
 	CameraMake   string        `meta:"CameraMake,Make"`
 	CameraModel  string        `meta:"CameraModel,Model"`
 	CameraOwner  string        `meta:"OwnerName"`
@@ -33,7 +33,7 @@ type Data struct {
 	LensMake     string        `meta:"LensMake"`
 	LensModel    string        `meta:"Lens,LensModel"`
 	Flash        bool          `meta:"-"`
-	FocalLength  int           `meta:"-"`
+	FocalLength  int           `meta:"FocalLength"`
 	Exposure     string        `meta:"ExposureTime"`
 	Aperture     float32       `meta:"ApertureValue"`
 	FNumber      float32       `meta:"FNumber"`

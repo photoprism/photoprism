@@ -12,7 +12,7 @@ import (
 
 	pigo "github.com/esimov/pigo/core"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 //go:embed cascade/facefinder
@@ -92,13 +92,13 @@ func Detect(fileName string, findLandmarks bool, minSize int) (faces Faces, err 
 	}
 
 	if !fs.FileExists(fileName) {
-		return faces, fmt.Errorf("faces: file '%s' not found", txt.Quote(filepath.Base(fileName)))
+		return faces, fmt.Errorf("faces: file '%s' not found", sanitize.Log(filepath.Base(fileName)))
 	}
 
 	det, params, err := d.Detect(fileName)
 
 	if err != nil {
-		return faces, fmt.Errorf("faces: %v (detect faces)", err)
+		return faces, fmt.Errorf("faces: %s (detect faces)", err)
 	}
 
 	if det == nil {

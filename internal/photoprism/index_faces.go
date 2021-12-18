@@ -7,8 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/thumb"
-
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // Faces finds faces in JPEG media files and returns them.
@@ -29,12 +28,12 @@ func (ind *Index) Faces(jpeg *MediaFile, expected int) face.Faces {
 	thumbName, err := jpeg.Thumbnail(Config().ThumbPath(), thumbSize)
 
 	if err != nil {
-		log.Debugf("index: %s in %s (faces)", err, txt.Quote(jpeg.BaseName()))
+		log.Debugf("index: %s in %s (faces)", err, sanitize.Log(jpeg.BaseName()))
 		return face.Faces{}
 	}
 
 	if thumbName == "" {
-		log.Debugf("index: thumb %s not found in %s (faces)", thumbSize, txt.Quote(jpeg.BaseName()))
+		log.Debugf("index: thumb %s not found in %s (faces)", thumbSize, sanitize.Log(jpeg.BaseName()))
 		return face.Faces{}
 	}
 
@@ -43,11 +42,11 @@ func (ind *Index) Faces(jpeg *MediaFile, expected int) face.Faces {
 	faces, err := ind.faceNet.Detect(thumbName, Config().FaceSize(), true, expected)
 
 	if err != nil {
-		log.Debugf("%s in %s", err, txt.Quote(jpeg.BaseName()))
+		log.Debugf("%s in %s", err, sanitize.Log(jpeg.BaseName()))
 	}
 
 	if l := len(faces); l > 0 {
-		log.Infof("index: found %s in %s [%s]", english.Plural(l, "face", "faces"), txt.Quote(jpeg.BaseName()), time.Since(start))
+		log.Infof("index: found %s in %s [%s]", english.Plural(l, "face", "faces"), sanitize.Log(jpeg.BaseName()), time.Since(start))
 	}
 
 	return faces

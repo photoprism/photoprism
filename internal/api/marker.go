@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 )
@@ -49,9 +50,6 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	if f, err := query.FileByUID(marker.FileUID); err != nil {
 		AbortEntityNotFound(c)
 		return nil, marker, err
-	} else if !f.FilePrimary {
-		AbortBadRequest(c)
-		return nil, marker, fmt.Errorf("can't update markers for non-primary files")
 	} else {
 		file = &f
 	}
@@ -69,6 +67,13 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //   id: int Marker ID as returned by the API
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
+		if err := mutex.People.Start(); err != nil {
+			AbortBusy(c)
+			return
+		}
+
+		defer mutex.People.Stop()
+
 		file, marker, err := findFileMarker(c)
 
 		if err != nil {
@@ -113,7 +118,9 @@ func UpdateMarker(router *gin.RouterGroup) {
 		}
 
 		// Update photo metadata.
-		if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
+		if !file.FilePrimary {
+			log.Infof("faces: skipped updating photo for non-primary file")
+		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			log.Errorf("faces: %s (find photo))", err)
 		} else if err := p.UpdateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
@@ -138,6 +145,13 @@ func UpdateMarker(router *gin.RouterGroup) {
 //   id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
+		if err := mutex.People.Start(); err != nil {
+			AbortBusy(c)
+			return
+		}
+
+		defer mutex.People.Stop()
+
 		file, marker, err := findFileMarker(c)
 
 		if err != nil {
@@ -156,7 +170,9 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 		}
 
 		// Update photo metadata.
-		if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
+		if !file.FilePrimary {
+			log.Infof("faces: skipped updating photo for non-primary file")
+		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
 			log.Errorf("faces: %s (find photo))", err)
 		} else if err := p.UpdateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)

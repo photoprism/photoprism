@@ -13,7 +13,7 @@
     </v-toolbar>
     <v-container fluid class="pa-4">
       <p class="body-2">
-          <translate>Our vision is to provide the most user-friendly solution for browsing, organizing, and sharing your photo collection.</translate>
+          <translate>Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
           <a href="https://github.com/photoprism/photoprism/projects/5" target="_blank">
             <translate>The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next.</translate>
           </a>
@@ -50,7 +50,7 @@
         <router-link to="/about/license">
           <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width:100%;"/>
         </router-link>
-        <a target="_blank" href="https://docs.photoprism.org/" rel="nofollow"><img :src="$config.staticUri + '/img/badge-docs.svg'"
+        <a target="_blank" href="https://docs.photoprism.app/" rel="nofollow"><img :src="$config.staticUri + '/img/badge-docs.svg'"
                                                                                    alt="Documentation"
                                                                                    style="max-width:100%;"></a>
         <a target="_blank" href="https://gitter.im/browseyourlife/community" rel="nofollow"><img

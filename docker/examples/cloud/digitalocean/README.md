@@ -8,12 +8,12 @@ DESCRIPTION
 
 PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to uploading your visual memories to the cloud!
 
-To learn more, visit https://photoprism.app/ or try our [demo](https://demo.photoprism.org/).
+To learn more, visit https://photoprism.app/ or try our [demo](https://demo.photoprism.app/).
 
 SOFTWARE INCLUDED
 ---------------------------------------
 
-- [PhotoPrism latest](https://docs.photoprism.org/release-notes/), AGPL 3
+- [PhotoPrism latest](https://docs.photoprism.app/release-notes/), AGPL 3
 - [Docker CE 20.10](https://docs.docker.com/engine/release-notes/), Apache 2
 - [Traefik 2.5](https://github.com/traefik/traefik/releases), MIT
 - [MariaDB 10.6](https://mariadb.com/kb/en/release-notes/), GPL 2

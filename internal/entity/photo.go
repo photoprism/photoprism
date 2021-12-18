@@ -11,13 +11,18 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/ulule/deepcopier"
+
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/ulule/deepcopier"
 )
+
+var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
+var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
 
 var photoMutex = sync.Mutex{}
 
@@ -98,6 +103,7 @@ type Photo struct {
 	UpdatedAt        time.Time    `yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time   `yaml:"EditedAt,omitempty"`
 	CheckedAt        *time.Time   `sql:"index" yaml:"-"`
+	EstimatedAt      *time.Time   `json:"EstimatedAt,omitempty" yaml:"-"`
 	DeletedAt        *time.Time   `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
@@ -143,6 +149,13 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		return errors.New("can't save form when photo id is missing")
 	}
 
+	// Update time fields.
+	if model.TimeZoneUTC() {
+		model.TakenAtLocal = model.TakenAt
+	} else {
+		model.TakenAt = model.GetTakenAt()
+	}
+
 	model.UpdateDateFields()
 
 	details := model.GetDetails()
@@ -167,7 +180,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.SyncKeywordLabels(); err != nil {
-		log.Errorf("photo %s: %s while syncing keywords and labels", model.PhotoUID, err)
+		log.Errorf("photo: %s %s while syncing keywords and labels", model.String(), err)
 	}
 
 	if err := model.UpdateTitle(model.ClassifyLabels()); err != nil {
@@ -175,7 +188,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if err := model.IndexKeywords(); err != nil {
-		log.Errorf("photo %s: %s while indexing keywords", model.PhotoUID, err.Error())
+		log.Errorf("photo: %s %s while indexing keywords", model.String(), err.Error())
 	}
 
 	edited := TimeStamp()
@@ -198,15 +211,15 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 func (m *Photo) String() string {
 	if m.PhotoUID == "" {
 		if m.PhotoName != "" {
-			return txt.Quote(m.PhotoName)
+			return sanitize.Log(m.PhotoName)
 		} else if m.OriginalName != "" {
-			return txt.Quote(m.OriginalName)
+			return sanitize.Log(m.OriginalName)
 		}
 
 		return "(unknown)"
 	}
 
-	return "uid " + txt.Quote(m.PhotoUID)
+	return "uid " + sanitize.Log(m.PhotoUID)
 }
 
 // FirstOrCreate fetches an existing row from the database or inserts a new one.
@@ -453,7 +466,7 @@ func (m *Photo) PreloadFiles() {
 		Where("files.photo_id = ? AND files.deleted_at IS NULL", m.ID).
 		Order("files.file_name DESC")
 
-	logError(q.Scan(&m.Files))
+	Log("photo", "preload files", q.Scan(&m.Files).Error)
 }
 
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
@@ -464,7 +477,7 @@ func (m *Photo) PreloadKeywords() {
 		Joins("JOIN photos_keywords ON photos_keywords.keyword_id = keywords.id AND photos_keywords.photo_id = ?", m.ID).
 		Order("keywords.keyword ASC")
 
-	logError(q.Scan(&m.Keywords))
+	Log("photo", "preload files", q.Scan(&m.Keywords).Error)
 }
 
 // PreloadAlbums prepares gorm scope to retrieve photo albums
@@ -476,7 +489,7 @@ func (m *Photo) PreloadAlbums() {
 		Where("albums.deleted_at IS NULL").
 		Order("albums.album_title ASC")
 
-	logError(q.Scan(&m.Albums))
+	Log("photo", "preload albums", q.Scan(&m.Albums).Error)
 }
 
 // PreloadMany prepares gorm scope to retrieve photo file, albums and keywords
@@ -489,119 +502,6 @@ func (m *Photo) PreloadMany() {
 // HasID tests if the photo has a database id and uid.
 func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
-}
-
-// UnknownLocation tests if the photo has an unknown location.
-func (m *Photo) UnknownLocation() bool {
-	return m.CellID == "" || m.CellID == UnknownLocation.ID || m.NoLatLng()
-}
-
-// HasLocation tests if the photo has a known location.
-func (m *Photo) HasLocation() bool {
-	return !m.UnknownLocation()
-}
-
-// LocationLoaded tests if the photo has a known location that is currently loaded.
-func (m *Photo) LocationLoaded() bool {
-	if m.Cell == nil {
-		return false
-	}
-
-	if m.Cell.Place == nil {
-		return false
-	}
-
-	return !m.Cell.Unknown() && m.Cell.ID == m.CellID
-}
-
-// LoadLocation loads the photo location from the database if not done already.
-func (m *Photo) LoadLocation() error {
-	if m.LocationLoaded() {
-		return nil
-	}
-
-	if m.UnknownLocation() {
-		return fmt.Errorf("photo: unknown location (%s)", m)
-	}
-
-	var location Cell
-
-	err := Db().Preload("Place").First(&location, "id = ?", m.CellID).Error
-
-	if err != nil {
-		return err
-	}
-
-	if location.Place == nil {
-		location.Place = &UnknownPlace
-		location.PlaceID = UnknownPlace.ID
-	}
-
-	m.Cell = &location
-
-	return nil
-}
-
-// PlaceLoaded checks if the photo has a known place that is currently loaded.
-func (m *Photo) PlaceLoaded() bool {
-	if m.Place == nil {
-		return false
-	}
-
-	return !m.Place.Unknown() && m.Place.ID == m.PlaceID
-}
-
-// LoadPlace loads the photo place from the database if not done already.
-func (m *Photo) LoadPlace() error {
-	if m.PlaceLoaded() {
-		return nil
-	}
-
-	if m.UnknownPlace() {
-		return fmt.Errorf("photo: unknown place (%s)", m)
-	}
-
-	var place Place
-
-	err := Db().First(&place, "id = ?", m.PlaceID).Error
-
-	if err != nil {
-		return err
-	}
-
-	m.Place = &place
-
-	return nil
-}
-
-// HasLatLng checks if the photo has a latitude and longitude.
-func (m *Photo) HasLatLng() bool {
-	return m.PhotoLat != 0.0 || m.PhotoLng != 0.0
-}
-
-// NoLatLng checks if latitude and longitude are missing.
-func (m *Photo) NoLatLng() bool {
-	return !m.HasLatLng()
-}
-
-// UnknownPlace checks if the photo has an unknown place.
-func (m *Photo) UnknownPlace() bool {
-	return m.PlaceID == "" || m.PlaceID == UnknownPlace.ID
-}
-
-// HasPlace checks if the photo has a known place.
-func (m *Photo) HasPlace() bool {
-	return !m.UnknownPlace()
-}
-
-// HasCountry checks if the photo has a known country.
-func (m *Photo) HasCountry() bool {
-	return !m.UnknownCountry()
-}
-
-// UnknownCountry checks if the photo has an unknown country.
-func (m *Photo) UnknownCountry() bool {
-	return m.CountryCode() == UnknownCountry.ID
 }
 
 // NoCameraSerial checks if the photo has no CameraSerial
@@ -662,12 +562,12 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		labelEntity := FirstOrCreateLabel(NewLabel(classifyLabel.Title(), classifyLabel.Priority))
 
 		if labelEntity == nil {
-			log.Errorf("index: label %s should not be nil - bug? (%s)", txt.Quote(classifyLabel.Title()), m)
+			log.Errorf("index: label %s should not be nil - bug? (%s)", sanitize.Log(classifyLabel.Title()), m)
 			continue
 		}
 
 		if labelEntity.Deleted() {
-			log.Debugf("index: skipping deleted label %s (%s)", txt.Quote(classifyLabel.Title()), m)
+			log.Debugf("index: skipping deleted label %s (%s)", sanitize.Log(classifyLabel.Title()), m)
 			continue
 		}
 
@@ -711,121 +611,10 @@ func (m *Photo) SetDescription(desc, source string) {
 	m.DescriptionSrc = source
 }
 
-// SetTakenAt changes the photo date if not empty and from the same source.
-func (m *Photo) SetTakenAt(taken, local time.Time, zone, source string) {
-	if taken.IsZero() || taken.Year() < 1000 || taken.Year() > txt.YearMax {
-		return
-	}
-
-	if SrcPriority[source] < SrcPriority[m.TakenSrc] && !m.TakenAt.IsZero() {
-		return
-	}
-
-	// Remove time zone if time was extracted from file name.
-	if source == SrcName {
-		zone = ""
-	}
-
-	// Round times to avoid jitter.
-	taken = taken.Round(time.Second).UTC()
-
-	// Default local time to taken if zero or invalid.
-	if local.IsZero() || local.Year() < 1000 {
-		local = taken
-	} else {
-		local = local.Round(time.Second)
-	}
-
-	// Don't update older date.
-	if SrcPriority[source] <= SrcPriority[SrcAuto] && !m.TakenAt.IsZero() && taken.After(m.TakenAt) {
-		return
-	}
-
-	// Set UTC time and date source.
-	m.TakenAt = taken
-	m.TakenAtLocal = local
-	m.TakenSrc = source
-
-	if zone == time.UTC.String() && m.TimeZone != "" {
-		// Location exists, set local time from UTC.
-		m.TakenAtLocal = m.GetTakenAtLocal()
-	} else if zone != "" {
-		// Apply new time zone.
-		m.TimeZone = zone
-		m.TakenAt = m.GetTakenAt()
-	} else if m.TimeZone == time.UTC.String() {
-		// Local is UTC.
-		m.TimeZone = zone
-		m.TakenAtLocal = taken
-	} else if m.TimeZone != "" {
-		// Apply existing time zone.
-		m.TakenAtLocal = m.GetTakenAtLocal()
-	}
-
-	m.UpdateDateFields()
-}
-
-// UpdateTimeZone updates the time zone.
-func (m *Photo) UpdateTimeZone(zone string) {
-	if zone == "" || zone == time.UTC.String() {
-		return
-	}
-
-	if SrcPriority[m.TakenSrc] >= SrcPriority[SrcManual] && m.TimeZone != "" {
-		return
-	}
-
-	if m.TimeZone == time.UTC.String() {
-		m.TimeZone = zone
-		m.TakenAtLocal = m.GetTakenAtLocal()
-	} else {
-		m.TimeZone = zone
-		m.TakenAt = m.GetTakenAt()
-	}
-}
-
-// UpdateDateFields updates internal date fields.
-func (m *Photo) UpdateDateFields() {
-	if m.TakenAt.IsZero() || m.TakenAt.Year() < 1000 {
-		return
-	}
-
-	if m.TakenAtLocal.IsZero() || m.TakenAtLocal.Year() < 1000 {
-		m.TakenAtLocal = m.TakenAt
-	}
-
-	// Set date to unknown if file system date is about the same as indexing time.
-	if m.TakenSrc == SrcAuto && m.TakenAt.After(m.CreatedAt.Add(-24*time.Hour)) {
-		m.PhotoYear = UnknownYear
-		m.PhotoMonth = UnknownMonth
-		m.PhotoDay = UnknownDay
-	} else if m.TakenSrc != SrcManual {
-		m.PhotoYear = m.TakenAtLocal.Year()
-		m.PhotoMonth = int(m.TakenAtLocal.Month())
-		m.PhotoDay = m.TakenAtLocal.Day()
-	}
-}
-
-// SetCoordinates changes the photo lat, lng and altitude if not empty and from the same source.
-func (m *Photo) SetCoordinates(lat, lng float32, altitude int, source string) {
-	if lat == 0.0 && lng == 0.0 {
-		return
-	}
-
-	if SrcPriority[source] < SrcPriority[m.PlaceSrc] && m.HasLatLng() {
-		return
-	}
-
-	m.PhotoLat = lat
-	m.PhotoLng = lng
-	m.PhotoAltitude = altitude
-	m.PlaceSrc = source
-}
-
 // SetCamera updates the camera.
 func (m *Photo) SetCamera(camera *Camera, source string) {
 	if camera == nil {
-		log.Warnf("photo %s: failed updating camera from source %s", txt.Quote(m.PhotoUID), SrcString(source))
+		log.Warnf("photo: %s failed updating camera from source %s", m.String(), SrcString(source))
 		return
 	}
 
@@ -845,7 +634,7 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 // SetLens updates the lens.
 func (m *Photo) SetLens(lens *Lens, source string) {
 	if lens == nil {
-		log.Warnf("photo %s: failed updating lens from source %s", txt.Quote(m.PhotoUID), SrcString(source))
+		log.Warnf("photo: %s failed updating lens from source %s", m.String(), SrcString(source))
 		return
 	}
 
@@ -933,7 +722,7 @@ func (m *Photo) Restore() error {
 // Delete deletes the photo from the index.
 func (m *Photo) Delete(permanently bool) (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
-		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, sanitize.Log(m.PhotoUID))
 	}
 
 	if permanently {
@@ -954,7 +743,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 // DeletePermanently permanently removes a photo from the index.
 func (m *Photo) DeletePermanently() (files Files, err error) {
 	if m.ID < 1 || m.PhotoUID == "" {
-		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, txt.Quote(m.PhotoUID))
+		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, sanitize.Log(m.PhotoUID))
 	}
 
 	files = m.AllFiles()

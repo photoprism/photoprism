@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
@@ -30,7 +30,7 @@ func New(modelPath string) *Detector {
 // File returns matching labels for a jpeg media file.
 func (t *Detector) File(filename string) (result Labels, err error) {
 	if fs.MimeType(filename) != "image/jpeg" {
-		return result, fmt.Errorf("nsfw: %s is not a jpeg file", txt.Quote(filepath.Base(filename)))
+		return result, fmt.Errorf("nsfw: %s is not a jpeg file", sanitize.Log(filepath.Base(filename)))
 	}
 
 	imageBuffer, err := os.ReadFile(filename)
@@ -76,7 +76,7 @@ func (t *Detector) Labels(img []byte) (result Labels, err error) {
 	// Return best labels
 	result = t.getLabels(output[0].Value().([][]float32)[0])
 
-	log.Debugf("nsfw: image classified as %+v", result)
+	log.Tracef("nsfw: image classified as %+v", result)
 
 	return result, nil
 }
@@ -118,7 +118,7 @@ func (t *Detector) loadModel() error {
 		return nil
 	}
 
-	log.Infof("nsfw: loading %s", txt.Quote(filepath.Base(t.modelPath)))
+	log.Infof("nsfw: loading %s", sanitize.Log(filepath.Base(t.modelPath)))
 
 	// Load model
 	model, err := tf.LoadSavedModel(t.modelPath, t.modelTags, nil)

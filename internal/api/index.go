@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -56,7 +57,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		if len(indOpt.Path) > 1 {
-			event.InfoMsg(i18n.MsgIndexingFiles, txt.Quote(indOpt.Path))
+			event.InfoMsg(i18n.MsgIndexingFiles, sanitize.Log(indOpt.Path))
 		} else {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}

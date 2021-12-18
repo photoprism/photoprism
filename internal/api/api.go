@@ -26,7 +26,7 @@ Feel free to send an e-mail to hello@photoprism.org if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.org/developer-guide/
+https://docs.photoprism.app/developer-guide/
 
 */
 package api
@@ -35,10 +35,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 var log = event.Log
@@ -64,7 +65,7 @@ func UpdateClientConfig() {
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 	resp := i18n.NewResponse(code, id, params...)
 
-	log.Debugf("api: abort %s with code %d (%s)", c.FullPath(), code, resp.String())
+	log.Debugf("api: abort %s with code %d (%s)", sanitize.Log(c.FullPath()), code, resp.String())
 
 	c.AbortWithStatusJSON(code, resp)
 }
@@ -74,7 +75,7 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 
 	if err != nil {
 		resp.Details = err.Error()
-		log.Errorf("api: error %s with code %d in %s (%s)", txt.Quote(err.Error()), code, c.FullPath(), resp.String())
+		log.Errorf("api: error %s with code %d in %s (%s)", sanitize.Log(err.Error()), code, sanitize.Log(c.FullPath()), resp.String())
 	}
 
 	c.AbortWithStatusJSON(code, resp)
@@ -110,4 +111,8 @@ func AbortAlreadyExists(c *gin.Context, s string) {
 
 func AbortFeatureDisabled(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrFeatureDisabled)
+}
+
+func AbortBusy(c *gin.Context) {
+	Abort(c, http.StatusTooManyRequests, i18n.ErrBusy)
 }

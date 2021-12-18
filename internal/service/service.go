@@ -27,6 +27,7 @@ var services struct {
 	Index       *photoprism.Index
 	Moments     *photoprism.Moments
 	Faces       *photoprism.Faces
+	Places      *photoprism.Places
 	Purge       *photoprism.Purge
 	CleanUp     *photoprism.CleanUp
 	Nsfw        *nsfw.Detector

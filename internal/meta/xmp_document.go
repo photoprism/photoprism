@@ -112,7 +112,7 @@ type XmpDocument struct {
 			Model                     string `xml:"Model"`                     // ELE-L29
 			ExifVersion               string `xml:"ExifVersion"`               // 0210
 			FlashpixVersion           string `xml:"FlashpixVersion"`           // 0100
-			ColorSpace                string `xml:"ColorSpace"`                // 1
+			ColorSpace                string `xml:"ColorProfile"`              // 1
 			ComponentsConfiguration   struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
 				Seq  struct {

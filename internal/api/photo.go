@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -13,8 +14,9 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
+
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // SavePhotoAsYaml saves photo data as YAML file.
@@ -31,14 +33,15 @@ func SavePhotoAsYaml(p entity.Photo) {
 	if err := p.SaveAsYaml(fileName); err != nil {
 		log.Errorf("photo: %s (update yaml)", err)
 	} else {
-		log.Debugf("photo: updated yaml file %s", txt.Quote(filepath.Base(fileName)))
+		log.Debugf("photo: updated yaml file %s", sanitize.Log(filepath.Base(fileName)))
 	}
 }
 
-// GET /api/v1/photos/:uid
+// GetPhoto returns photo details as JSON.
 //
-// Parameters:
-//   uid: string PhotoUID as returned by the API
+// Route : GET /api/v1/photos/:uid
+// Params:
+// - uid (string) PhotoUID as returned by the API
 func GetPhoto(router *gin.RouterGroup) {
 	router.GET("/photos/:uid", func(c *gin.Context) {
 		s := Auth(SessionID(c), acl.ResourcePhotos, acl.ActionRead)
@@ -48,7 +51,7 @@ func GetPhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -59,6 +62,8 @@ func GetPhoto(router *gin.RouterGroup) {
 	})
 }
 
+// UpdatePhoto updates photo details and returns them as JSON.
+//
 // PUT /api/v1/photos/:uid
 func UpdatePhoto(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid", func(c *gin.Context) {
@@ -69,7 +74,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
+		uid := sanitize.IdString(c.Param("uid"))
 		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
@@ -119,10 +124,11 @@ func UpdatePhoto(router *gin.RouterGroup) {
 	})
 }
 
-// GET /api/v1/photos/:uid/dl
+// GetPhotoDownload returns the primary file matching that belongs to the photo.
 //
-// Parameters:
-//   uid: string PhotoUID as returned by the API
+// Route :GET /api/v1/photos/:uid/dl
+// Params:
+// - uid (string) PhotoUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
@@ -130,7 +136,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		f, err := query.FileByPhotoUID(c.Param("uid"))
+		f, err := query.FileByPhotoUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
@@ -140,7 +146,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("photo: file %s is missing", txt.Quote(f.FileName))
+			log.Errorf("photo: file %s is missing", sanitize.Log(f.FileName))
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
@@ -166,7 +172,7 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(c.Param("uid"))
+		p, err := query.PhotoPreloadByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusNotFound)
@@ -181,7 +187,7 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 		}
 
 		if c.Query("download") != "" {
-			AddDownloadHeader(c, c.Param("uid")+fs.YamlExt)
+			AddDownloadHeader(c, sanitize.IdString(c.Param("uid"))+fs.YamlExt)
 		}
 
 		c.Data(http.StatusOK, "text/x-yaml; charset=utf-8", data)
@@ -201,7 +207,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
@@ -236,7 +242,7 @@ func LikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
@@ -271,7 +277,7 @@ func DislikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		id := c.Param("uid")
+		id := sanitize.IdString(c.Param("uid"))
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
@@ -307,8 +313,8 @@ func PhotoPrimary(router *gin.RouterGroup) {
 			return
 		}
 
-		uid := c.Param("uid")
-		fileUID := c.Param("file_uid")
+		uid := sanitize.IdString(c.Param("uid"))
+		fileUID := sanitize.IdString(c.Param("file_uid"))
 		err := query.SetPhotoPrimary(uid, fileUID)
 
 		if err != nil {

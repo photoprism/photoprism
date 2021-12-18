@@ -1,0 +1,1 @@
+DROP INDEX uix_places_place_label ON `places`;

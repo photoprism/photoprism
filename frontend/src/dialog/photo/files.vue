@@ -41,7 +41,7 @@
                             <translate>Actions</translate>
                           </td>
                           <td>
-                            <v-btn small depressed dark color="primary-button" class="ma-0 action-download"
+                            <v-btn v-if="features.download" small depressed dark color="primary-button" class="ma-0 action-download"
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
@@ -155,6 +155,12 @@
                           <td>
                             <translate>{{ file.Orientation }}</translate>
                           </td>
+                        </tr>
+                        <tr v-if="file.ColorProfile">
+                          <td>
+                            <translate>Color Profile</translate>
+                          </td>
+                          <td>{{ file.ColorProfile }}</td>
                         </tr>
                         <tr v-if="file.MainColor">
                           <td>

@@ -3,7 +3,7 @@
 TODAY=`date -u +%Y%m%d`
 
 MODEL_NAME="NSFW"
-MODEL_URL="https://dl.photoprism.org/tensorflow/nsfw.zip?$TODAY"
+MODEL_URL="https://dl.photoprism.app/tensorflow/nsfw.zip?$TODAY"
 MODEL_PATH="assets/nsfw"
 MODEL_ZIP="/tmp/photoprism/nsfw.zip"
 MODEL_HASH="2e03ad3c6aec27c270c650d0574ff2a6291d992b  $MODEL_ZIP"

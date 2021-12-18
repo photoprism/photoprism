@@ -14,7 +14,7 @@ import (
 	exifcommon "github.com/dsoprea/go-exif/v3/common"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"gopkg.in/photoprism/go-tz.v2/tz"
 )
 
@@ -51,7 +51,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, txt.Quote(filepath.Base(fileName)), debug.Stack())
+			err = fmt.Errorf("metadata: %s in %s (exif panic)\nstack: %s", e, sanitize.Log(filepath.Base(fileName)), debug.Stack())
 		}
 	}()
 
@@ -62,7 +62,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 		return err
 	}
 
-	logName := txt.Quote(filepath.Base(fileName))
+	logName := sanitize.Log(filepath.Base(fileName))
 
 	if data.All == nil {
 		data.All = make(map[string]string)

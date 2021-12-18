@@ -22,7 +22,7 @@ func TestPublishSubscribe(t *testing.T) {
 
 	msg := <-s.Receiver
 
-	t.Logf("receive msg with topic %s: %v\n", msg.Name, msg.Fields)
+	// t.Logf("receive msg with topic %s: %v\n", msg.Name, msg.Fields)
 
 	assert.Equal(t, "foo.bar", msg.Name)
 	assert.Equal(t, Data{"id": 13}, msg.Fields)

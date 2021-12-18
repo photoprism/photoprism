@@ -5,12 +5,15 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
+
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -30,7 +33,7 @@ func UpdateLink(c *gin.Context) {
 		return
 	}
 
-	link := entity.FindLink(c.Param("link"))
+	link := entity.FindLink(sanitize.Token(c.Param("link")))
 
 	link.SetSlug(f.ShareSlug)
 	link.MaxViews = f.MaxViews
@@ -70,7 +73,7 @@ func DeleteLink(c *gin.Context) {
 		return
 	}
 
-	link := entity.FindLink(c.Param("link"))
+	link := entity.FindLink(sanitize.Token(c.Param("link")))
 
 	if err := link.Delete(); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": txt.UcFirst(err.Error())})
@@ -102,7 +105,7 @@ func CreateLink(c *gin.Context) {
 		return
 	}
 
-	link := entity.NewLink(c.Param("uid"), f.CanComment, f.CanEdit)
+	link := entity.NewLink(sanitize.IdString(c.Param("uid")), f.CanComment, f.CanEdit)
 
 	link.SetSlug(f.ShareSlug)
 	link.MaxViews = f.MaxViews
@@ -132,7 +135,7 @@ func CreateLink(c *gin.Context) {
 // POST /api/v1/albums/:uid/links
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
-		if _, err := query.AlbumByUID(c.Param("uid")); err != nil {
+		if _, err := query.AlbumByUID(sanitize.IdString(c.Param("uid"))); err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
 			return
 		}
@@ -158,7 +161,7 @@ func DeleteAlbumLink(router *gin.RouterGroup) {
 // GET /api/v1/albums/:uid/links
 func GetAlbumLinks(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/links", func(c *gin.Context) {
-		m, err := query.AlbumByUID(c.Param("uid"))
+		m, err := query.AlbumByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -172,7 +175,7 @@ func GetAlbumLinks(router *gin.RouterGroup) {
 // POST /api/v1/photos/:uid/links
 func CreatePhotoLink(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/links", func(c *gin.Context) {
-		if _, err := query.PhotoByUID(c.Param("uid")); err != nil {
+		if _, err := query.PhotoByUID(sanitize.IdString(c.Param("uid"))); err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
@@ -198,7 +201,7 @@ func DeletePhotoLink(router *gin.RouterGroup) {
 // GET /api/v1/photos/:uid/links
 func GetPhotoLinks(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/links", func(c *gin.Context) {
-		m, err := query.PhotoByUID(c.Param("uid"))
+		m, err := query.PhotoByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)
@@ -212,7 +215,7 @@ func GetPhotoLinks(router *gin.RouterGroup) {
 // POST /api/v1/labels/:uid/links
 func CreateLabelLink(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/links", func(c *gin.Context) {
-		if _, err := query.LabelByUID(c.Param("uid")); err != nil {
+		if _, err := query.LabelByUID(sanitize.IdString(c.Param("uid"))); err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
@@ -238,7 +241,7 @@ func DeleteLabelLink(router *gin.RouterGroup) {
 // GET /api/v1/labels/:uid/links
 func GetLabelLinks(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/links", func(c *gin.Context) {
-		m, err := query.LabelByUID(c.Param("uid"))
+		m, err := query.LabelByUID(sanitize.IdString(c.Param("uid")))
 
 		if err != nil {
 			Abort(c, http.StatusNotFound, i18n.ErrAlbumNotFound)

@@ -44,8 +44,8 @@ func PurgeOrphans() error {
 
 // PurgeOrphanFiles removes files without a photo from the index.
 func PurgeOrphanFiles() (count int, err error) {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	files, err := OrphanFiles()
 
@@ -66,8 +66,8 @@ func PurgeOrphanFiles() (count int, err error) {
 
 // PurgeOrphanDuplicates deletes all files from the duplicates table that don't exist in the files table.
 func PurgeOrphanDuplicates() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	return UnscopedDb().Delete(
 		entity.Duplicate{},
@@ -76,8 +76,8 @@ func PurgeOrphanDuplicates() error {
 
 // PurgeOrphanCountries removes countries without any photos.
 func PurgeOrphanCountries() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	entity.FlushCountryCache()
 	switch DbDialect() {
@@ -88,8 +88,8 @@ func PurgeOrphanCountries() error {
 
 // PurgeOrphanCameras removes cameras without any photos.
 func PurgeOrphanCameras() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	entity.FlushCameraCache()
 	switch DbDialect() {
@@ -100,8 +100,8 @@ func PurgeOrphanCameras() error {
 
 // PurgeOrphanLenses removes cameras without any photos.
 func PurgeOrphanLenses() error {
-	mutex.IndexUpdate.Lock()
-	defer mutex.IndexUpdate.Unlock()
+	mutex.Index.Lock()
+	defer mutex.Index.Unlock()
 
 	entity.FlushLensCache()
 	switch DbDialect() {

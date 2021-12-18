@@ -5,14 +5,15 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 // GlobalFlags describes global command-line parameters and flags.
 var GlobalFlags = []cli.Flag{
-	cli.BoolFlag{
-		Name:   "debug",
-		Usage:  "enable debug mode, show additional log messages",
-		EnvVar: "PHOTOPRISM_DEBUG",
+	cli.StringFlag{
+		Name:   "admin-password",
+		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
+		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.StringFlag{
 		Name:   "log-level, l",
@@ -20,16 +21,10 @@ var GlobalFlags = []cli.Flag{
 		Value:  "info",
 		EnvVar: "PHOTOPRISM_LOG_LEVEL",
 	},
-	cli.StringFlag{
-		Name:   "log-filename",
-		Usage:  "optional server log `FILENAME`",
-		EnvVar: "PHOTOPRISM_LOG_FILENAME",
-		Value:  "",
-	},
-	cli.StringFlag{
-		Name:   "pid-filename",
-		Usage:  "daemon mode process id `FILENAME`",
-		EnvVar: "PHOTOPRISM_PID_FILENAME",
+	cli.BoolFlag{
+		Name:   "debug",
+		Usage:  "enable debug mode, show additional log messages",
+		EnvVar: "PHOTOPRISM_DEBUG",
 	},
 	cli.BoolFlag{
 		Name:   "test",
@@ -58,11 +53,6 @@ var GlobalFlags = []cli.Flag{
 		Name:   "public, p",
 		Usage:  "disable password authentication",
 		EnvVar: "PHOTOPRISM_PUBLIC",
-	},
-	cli.StringFlag{
-		Name:   "admin-password",
-		Usage:  "initial admin `PASSWORD`, minimum 4 characters",
-		EnvVar: "PHOTOPRISM_ADMIN_PASSWORD",
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",
@@ -139,7 +129,7 @@ var GlobalFlags = []cli.Flag{
 	cli.IntFlag{
 		Name:   "wakeup-interval",
 		Usage:  "metadata, share & sync background worker wakeup interval in `SECONDS` (1-604800)",
-		Value:  DefaultWakeupInterval,
+		Value:  DefaultWakeupIntervalSeconds,
 		EnvVar: "PHOTOPRISM_WAKEUP_INTERVAL",
 	},
 	cli.IntFlag{
@@ -230,6 +220,35 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_UPLOAD_NSFW",
 	},
 	cli.StringFlag{
+		Name:   "default-theme",
+		Usage:  "standard user interface theme `NAME`",
+		Hidden: true,
+		EnvVar: "PHOTOPRISM_DEFAULT_THEME",
+	},
+	cli.StringFlag{
+		Name:   "default-locale",
+		Usage:  "standard user interface language `CODE`",
+		Value:  i18n.Default.Locale(),
+		EnvVar: "PHOTOPRISM_DEFAULT_LOCALE",
+	},
+	cli.StringFlag{
+		Name:   "app-icon",
+		Usage:  "application `ICON` (logo, app, crisp, mint, bold)",
+		EnvVar: "PHOTOPRISM_APP_ICON",
+	},
+	cli.StringFlag{
+		Name:   "app-name",
+		Usage:  "application `NAME` when installed on a device",
+		Value:  "PhotoPrism",
+		EnvVar: "PHOTOPRISM_APP_NAME",
+	},
+	cli.StringFlag{
+		Name:   "app-mode",
+		Usage:  "application `MODE` (fullscreen, standalone, minimal-ui, browser)",
+		Value:  "standalone",
+		EnvVar: "PHOTOPRISM_APP_MODE",
+	},
+	cli.StringFlag{
 		Name:   "cdn-url",
 		Usage:  "optional content delivery network `URL`",
 		EnvVar: "PHOTOPRISM_CDN_URL",
@@ -242,7 +261,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-author",
-		Usage:  "site `COPYRIGHT`, artist, or owner name",
+		Usage:  "`COPYRIGHT`, artist, or owner name",
 		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
 	},
 	cli.StringFlag{
@@ -344,8 +363,8 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "darktable-blacklist",
-		Usage:  "RAW file `EXTENSIONS` incompatible with Darktable",
-		Value:  "raf,cr3,dng",
+		Usage:  "file `EXTENSIONS` incompatible with Darktable",
+		Value:  "cr3,dng",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
 	cli.StringFlag{
@@ -356,7 +375,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "rawtherapee-blacklist",
-		Usage:  "RAW file `EXTENSIONS` incompatible with RawTherapee",
+		Usage:  "file `EXTENSIONS` incompatible with RawTherapee",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BLACKLIST",
 	},
@@ -518,5 +537,16 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "Add custom scopes to OpenID Connect Token Requests",
 		Value:  "",
 		EnvVar: "PHOTOPRISM_OIDC_CUSTOM_SCOPES",
+	},
+	cli.StringFlag{
+		Name:   "pid-filename",
+		Usage:  "process id `FILENAME` (daemon mode only)",
+		EnvVar: "PHOTOPRISM_PID_FILENAME",
+	},
+	cli.StringFlag{
+		Name:   "log-filename",
+		Usage:  "server log `FILENAME` (daemon mode only)",
+		EnvVar: "PHOTOPRISM_LOG_FILENAME",
+		Value:  "",
 	},
 }

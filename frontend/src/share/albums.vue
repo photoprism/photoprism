@@ -85,10 +85,16 @@
                 <div v-else class="caption mb-2">
                   <translate>Shared with you.</translate>
                 </div>
-                <div v-if="album.Location" class="caption mb-2 d-block">
+                <div v-if="album.Category !== ''" class="caption mb-2 d-inline-block">
+                  <button @click.stop="">
+                    <v-icon size="14">local_offer</v-icon>
+                    {{ album.Category }}
+                  </button>
+                </div>
+                <div v-if="album.getLocation() !== ''" class="caption mb-2 d-inline-block">
                   <button @click.stop="">
                     <v-icon size="14">location_on</v-icon>
-                    {{ album.Location }}
+                    {{ album.getLocation() }}
                   </button>
                 </div>
               </v-card-text>

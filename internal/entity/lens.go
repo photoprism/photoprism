@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -38,7 +39,7 @@ var UnknownLens = Lens{
 
 // CreateUnknownLens initializes the database with an unknown lens if not exists
 func CreateUnknownLens() {
-	FirstOrCreateLens(&UnknownLens)
+	UnknownLens = *FirstOrCreateLens(&UnknownLens)
 }
 
 // TableName returns the entity database table name.
@@ -98,7 +99,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 	}
 
 	if cacheData, ok := lensCache.Get(m.LensSlug); ok {
-		log.Debugf("lens: cache hit for %s", m.LensSlug)
+		log.Tracef("lens: cache hit for %s", m.LensSlug)
 
 		return cacheData.(*Lens)
 	}
@@ -124,7 +125,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 		lensCache.SetDefault(m.LensSlug, &result)
 		return &result
 	} else {
-		log.Errorf("lens: %s (create %s)", err.Error(), txt.Quote(m.String()))
+		log.Errorf("lens: %s (create %s)", err.Error(), sanitize.Log(m.String()))
 	}
 
 	return &UnknownLens
@@ -132,7 +133,7 @@ func FirstOrCreateLens(m *Lens) *Lens {
 
 // String returns an identifier that can be used in logs.
 func (m *Lens) String() string {
-	return m.LensName
+	return sanitize.Log(m.LensName)
 }
 
 // Unknown returns true if the lens is not a known make or model.

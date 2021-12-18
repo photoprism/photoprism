@@ -10,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/ulule/deepcopier"
 )
@@ -159,7 +160,7 @@ func (m *Folder) Create() error {
 		return nil
 	}
 
-	f := form.PhotoSearch{
+	f := form.SearchPhotos{
 		Path:   m.Path,
 		Public: true,
 	}
@@ -179,7 +180,7 @@ func (m *Folder) Create() error {
 		if err := a.Create(); err != nil {
 			log.Errorf("folder: %s (add album)", err)
 		} else {
-			log.Infof("folder: added album %s (%s)", txt.Quote(a.AlbumTitle), a.AlbumFilter)
+			log.Infof("folder: added album %s (%s)", sanitize.Log(a.AlbumTitle), a.AlbumFilter)
 		}
 	}
 

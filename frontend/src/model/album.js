@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.app>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
@@ -24,12 +24,13 @@ Feel free to send an e-mail to hello@photoprism.org if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
-https://docs.photoprism.org/developer-guide/
+https://docs.photoprism.app/developer-guide/
 
 */
 
 import RestModel from "model/rest";
 import Api from "common/api";
+import countries from "options/countries.json";
 import { DateTime } from "luxon";
 import { config } from "../session";
 import { $gettext } from "common/vm";
@@ -53,6 +54,7 @@ export class Album extends RestModel {
       Filter: "",
       Order: "",
       Template: "",
+      State: "",
       Country: "",
       Day: -1,
       Year: -1,
@@ -89,6 +91,50 @@ export class Album extends RestModel {
 
   getTitle() {
     return this.Title;
+  }
+
+  hasCountry() {
+    return this.Country !== "" && this.Country !== "zz";
+  }
+
+  getCountry() {
+    if (!this.hasCountry()) {
+      return "";
+    }
+
+    const country = countries.find((c) => c.Code === this.Country);
+
+    if (country) {
+      return country.Name;
+    }
+
+    return "";
+  }
+
+  hasLocation() {
+    return this.Location !== "" || this.State !== "" || this.hasCountry();
+  }
+
+  getLocation() {
+    if (this.Location !== "" && this.Location !== this.Title) {
+      return this.Location;
+    }
+
+    const country = this.getCountry();
+
+    if (country !== "" && !this.Title.includes(country)) {
+      if (this.State !== "" && this.State !== this.Title) {
+        return `${this.State}, ${country}`;
+      }
+
+      return country;
+    }
+
+    if (this.State !== "" && !this.Title.includes(this.State)) {
+      return this.State;
+    }
+
+    return "";
   }
 
   thumbnailUrl(size) {

@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // FacesCommand registers the facial recognition subcommands.
@@ -53,7 +53,7 @@ var FacesCommand = cli.Command{
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
-			ArgsUsage: "[path]",
+			ArgsUsage: "[originals subfolder]",
 			Action:    facesIndexAction,
 		},
 		{
@@ -239,13 +239,13 @@ func facesIndexAction(ctx *cli.Context) error {
 	subPath := strings.TrimSpace(ctx.Args().First())
 
 	if subPath == "" {
-		log.Infof("finding faces in %s", txt.Quote(conf.OriginalsPath()))
+		log.Infof("finding faces in %s", sanitize.Log(conf.OriginalsPath()))
 	} else {
-		log.Infof("finding faces in %s", txt.Quote(filepath.Join(conf.OriginalsPath(), subPath)))
+		log.Infof("finding faces in %s", sanitize.Log(filepath.Join(conf.OriginalsPath(), subPath)))
 	}
 
 	if conf.ReadOnly() {
-		log.Infof("index: read-only mode enabled")
+		log.Infof("config: read-only mode enabled")
 	}
 
 	var indexed fs.Done

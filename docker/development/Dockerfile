@@ -1,10 +1,12 @@
 FROM ubuntu:21.10
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
+ARG GOPROXY
+ARG GODEBUG
 
 # Set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -32,7 +34,7 @@ COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 # 2. Install TensorFlow for C
 # 3. Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
 # 4. Install Go
-RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null && apt-get -qq install --no-install-recommends \
     build-essential \
     ca-certificates \
     wget \
@@ -52,6 +54,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libx265-dev \
     libnss3 \
     libxtst6 \
+    librsvg2-bin \
     pkg-config \
     software-properties-common \
     rsync \
@@ -90,10 +93,10 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
 
 # Download TensorFlow models & example files for testing
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
-    wget "https://dl.photoprism.org/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
-    wget "https://dl.photoprism.org/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
-    wget "https://dl.photoprism.org/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
-    wget "https://dl.photoprism.org/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
+    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
+    wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
+    wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
+    wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # Copy additional scripts to image
 COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert

@@ -15,7 +15,7 @@
       </v-card-title>
       <v-card-text>
         <p class="body-1">
-          <translate>This is an early-access feature to say thanks to our sponsors and contributors.</translate>
+          <translate>This currently is a sponsor feature to thank everyone who supports the development of this application.</translate>
           <translate>We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors.</translate>
         </p>
         <p class="body-1">

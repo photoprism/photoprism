@@ -2,7 +2,7 @@ PhotoPrism: Browse Your Life in Pictures
 ========================================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
-[![Build Status](https://drone.photoprism.app/api/badges/photoprism/photoprism/status.svg?ref=refs/heads/develop)][ci]
+![Build Status](https://dl.photoprism.app/img/badges/badge-build-success.svg)
 [![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
@@ -13,50 +13,76 @@ PhotoPrism® is an AI-powered app for browsing, organizing & sharing your photo 
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
 You can run it at home, on a private server, or in the cloud.
 
-![](https://dl.photoprism.org/img/ui/desktop-1000px.jpg)
+![](https://dl.photoprism.app/img/ui/desktop-1000px.jpg)
 
-To get a first impression, you're welcome to play with our public demo at [demo.photoprism.org](https://demo.photoprism.org/).
+To get a first impression, you're welcome to play with our public demo at [demo.photoprism.app](https://demo.photoprism.app/) 
+(also available in [Deutsch](https://demo-de.photoprism.app/), [Français](https://demo-fr.photoprism.app/), and [汉语](https://demo-zh.photoprism.app/)).
 
 ## Feature Overview ##
 
-* Browse all your photos and [videos](https://demo.photoprism.org/videos) without worrying about RAW conversion, duplicates or video formats
-* Easily find specific pictures using powerful [search filters](https://demo.photoprism.org/browse?view=cards&q=flower%20color%3Ared)
+* Browse [all your photos](https://docs.photoprism.app/user-guide/organize/browse/) and [videos](https://demo.photoprism.app/videos) without worrying about [RAW conversion, duplicates or video formats](https://docs.photoprism.app/user-guide/settings/library/)
+* Easily find specific pictures using [powerful search filters](https://demo.photoprism.app/browse?view=cards&q=flower%20color%3Ared)
 * Privacy-friendly: No data is ever sent to Google, Amazon, Facebook, or Apple unless you explicitly upload files to one of their services 🔐
-* Recognizes the faces of your [family and friends](https://demo.photoprism.org/people) 💎
-* [Automatic classification](https://demo.photoprism.org/labels) of pictures based on their content and location 🌈
-* Play Live Photos™ by hovering over them in [albums](https://demo.photoprism.org/albums) and [search results](https://demo.photoprism.org/browse?view=cards&q=type%3Alive)
-* Since the [user interface](https://demo.photoprism.org/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
+* Recognizes [the faces of your family and friends](https://demo.photoprism.app/people)
+* [Automatic classification](https://demo.photoprism.app/labels) of pictures based on their content and location
+* [Play Live Photos](https://demo.photoprism.app/live) by hovering over them in [albums](https://demo.photoprism.app/albums) and [search results](https://demo.photoprism.app/browse?view=cards&q=type%3Alive)
+* Since the [User Interface](https://demo.photoprism.app/) is a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps),
   it provides a native app-like experience, and you can conveniently install it on the home screen of all major operating systems and mobile devices
-* Includes four high-resolution [world maps](https://demo.photoprism.org/places) to bring back the memories of your favorite trips 🌍
+* Includes four high-resolution [World Maps](https://demo.photoprism.app/places) to bring back the memories of your favorite trips
 * Metadata is extracted and merged from Exif, XMP, and other sources such as Google Photos
-* Many more image properties like [colors](https://demo.photoprism.org/browse?view=cards&q=color:red), [chroma](https://demo.photoprism.org/browse?view=cards&q=mono%3Atrue), and [quality](https://demo.photoprism.org/review) can be searched as well
-* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background 📡
-* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder can [connect](https://docs.photoprism.org/user-guide/sync/webdav/) directly to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
+* Many more image properties like [Colors](https://demo.photoprism.app/browse?view=cards&q=color:red), [Chroma](https://demo.photoprism.app/browse?view=cards&q=mono%3Atrue), and [Quality](https://demo.photoprism.app/review) can be searched as well
+* Use [PhotoSync](https://www.photosync-app.com/) to securely backup iOS and Android phones in the background
+* WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.app/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
 ## Getting Started ##
+<img align="right" width="25%" src="https://photoprism.app/user/pages/01.home/03._screenshots/iphone-maps-hybrid-540px.png">
 
 Step-by-step installation instructions for our self-hosted [community edition](https://photoprism.app/get) can be found 
-on [docs.photoprism.org](https://docs.photoprism.org/getting-started/) -
+on [docs.photoprism.app](https://docs.photoprism.app/getting-started/) -
 all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. 
 It is available for Mac, Linux, and Windows.
 
-Our [latest release](https://docs.photoprism.org/release-notes/) not only includes 
-**facial recognition**, it also comes as a 
-**single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for AMD64, ARM64, and ARMv7**. 
-That means you don't need to pull from different Docker repositories anymore.
-We recommend updating your existing `docker-compose.yml` config based on 
-[our examples](https://dl.photoprism.org/docker/).
+The [stable version](https://docs.photoprism.app/release-notes/) and development 
+preview have been built into a single [multi-arch image](https://hub.docker.com/r/photoprism/photoprism) for 64-bit AMD, Intel,
+and ARM processors. That means, [Raspberry Pi](https://docs.photoprism.app/getting-started/raspberry-pi/) 3 / 4 owners can pull 
+from the same repository, enjoy the exact same functionality, and can follow the regular 
+[installation instructions](https://docs.photoprism.app/getting-started/docker-compose/) 
+after going through a short list of [requirements](https://docs.photoprism.app/getting-started/raspberry-pi/).
 
-## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
+Existing users are advised to update their `docker-compose.yml` config based on our examples
+available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
-Your continued support helps us provide services like satellite maps and develop new features.
-GitHub now also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time).
-You're welcome to [contact us](https://photoprism.app/contact) for other options.
+##  Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
 
-Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. 
+Your continued support helps us provide services like world maps and develop new features.
+We currently have the following sponsorship options:
+
+- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
+- [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
+- Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account.
+- You're welcome to [contact us](https://photoprism.app/contact) for other options.
+
+Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
 
-Thank you very much! 💜
+## Getting Support ##
+
+Please read the [Troubleshooting Guide](https://docs.photoprism.app/getting-started/troubleshooting/)
+before reporting problems. If this doesn't help, or you have other questions:
+
+- you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
+- and post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
+
+In addition, [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) receive direct
+[technical support](https://photoprism.app/contact) via email.
+
+We'll do our best to answer all your questions. In return, we ask you to back us on [Patreon](https://www.patreon.com/photoprism)
+or [GitHub Sponsors](https://github.com/sponsors/photoprism).
+Think of "free software" as in "free speech," not as in "free beer". Thank you! 💜
+
+*When reporting a problem, always include the version you are using and information
+about your environment such as browser, operating system, installed memory, and
+processor type.*
 
 ## Roadmap ##
 
@@ -69,31 +95,32 @@ You are welcome to submit specific feature requests via [GitHub Issues](https://
 if you have verified that no similar [idea](https://github.com/photoprism/photoprism/labels/idea) or
 [todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
 
-Ideas endorsed by silver, [gold and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor) and will be prioritized.
+Ideas endorsed by [silver, gold, and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor)
+and will be prioritized on the [roadmap](https://github.com/photoprism/photoprism/projects/5).
 
 ## Questions?
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other users, and discuss your ideas. Don't be afraid to ask silly questions.
 
-## Getting Support ##
-
-Please use [GitHub Issues](https://github.com/photoprism/photoprism/issues) only to report clearly identified bugs to us. If you are not sure, first use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) 
-or ask in our [Community Chat](https://gitter.im/browseyourlife/community). [Sponsors](https://docs.photoprism.org/funding/) 
-receive direct [technical support](https://photoprism.app/contact) via email.
-
-When reporting a problem, please include the version you are using and information
-about your environment such as browser, operating system, installed memory, and
-processor type.
-
 ## Contributions ##
 
 We welcome contributions of any kind, including bug reports, testing, writing documentation, 
-tutorials, blog posts, and pull requests. Issues labeled 
-[help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) / 
-[easy](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) can be
-good (first) contributions. Our step-by-step guide explains how to submit 
-[pull requests](https://docs.photoprism.org/developer-guide/pull-requests/).
+tutorials, blog posts, and pull requests.
+
+The [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all information
+necessary to get you started.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
+[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
+
+Because we want to create the best possible product for our users,
+we have a set of [guidelines](https://docs.photoprism.app/developer-guide/pull-requests)
+to ensure that all source code submissions are acceptable.
+They include step-by-step instructions for submitting new features,
+bug fixes, and documentation improvements.
+
+**Reviewing, testing and finally merging pull requests requires significant resources
+on our side. If it's not just a small fix, it can take several months.**
 
 ## Trademarks ##
 
@@ -111,7 +138,7 @@ goods, products, or services without prior written permission. In other words, p
 [goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
 [coverage]: https://codecov.io/gh/photoprism/photoprism
 [ci]: https://drone.photoprism.app/photoprism/photoprism
-[docs]: https://docs.photoprism.org/
+[docs]: https://docs.photoprism.app/
 [issuehunt]: https://issuehunt.io/repos/119160553
 [chat]: https://gitter.im/browseyourlife/community
 [ask]: https://github.com/photoprism/photoprism/discussions

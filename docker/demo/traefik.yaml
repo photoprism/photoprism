@@ -1,0 +1,39 @@
+# Uncomment to enable debug mode:
+# log:
+#  level: DEBUG
+
+serversTransport:
+  # Required to proxy services with self-signed HTTPS certificates:
+  insecureSkipVerify: true
+
+# Open ports ond protocols (HTTP will be redirected to HTTPS):
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  myresolver:
+    # See https://doc.traefik.io/traefik/https/acme/
+    acme:
+      email: tls@yourdomain.com
+      storage: /data/letsencrypt.json
+      httpChallenge:
+        entryPoint: web
+
+providers:
+  # Always keep this:
+  docker:
+    exposedByDefault: false
+    watch: true
+
+# Disable API & Dashboard by default, please read Traefik docs before enabling this:
+api:
+  insecure: false
+  dashboard: false

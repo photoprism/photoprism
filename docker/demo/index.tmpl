@@ -35,7 +35,7 @@
       window.__CONFIG__ = {{ .config }};
   </script>
 
-  <script async defer data-domain="demo.photoprism.org" src="https://a.photoprism.app/js/plausible.js"></script>
+  <script async defer data-domain="{{ .config.SiteDomain }}" src="https://a.photoprism.app/js/plausible.js"></script>
 </head>
 <body class="{{ .config.Flags }}">
 <!--[if lt IE 8]>

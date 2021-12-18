@@ -2,7 +2,7 @@
 
 set -e
 
-GOLANG_VERSION=1.17.3
+GOLANG_VERSION=1.17.5
 
 if [[ -z $1 ]]; then
     echo "architecture required: amd64, arm64, or arm" 1>&2
@@ -10,14 +10,14 @@ if [[ -z $1 ]]; then
 else
     set -eux;
     if [[ $1 == "amd64" ]]; then
-        URL="https://golang.org/dl/go${GOLANG_VERSION}.linux-$1.tar.gz"
-        CHECKSUM="550f9845451c0c94be679faf116291e7807a8d78b43149f9506c1b15eb89008c *go.tgz"
+        URL="https://go.dev/dl/go${GOLANG_VERSION}.linux-$1.tar.gz"
+        CHECKSUM="bd78114b0d441b029c8fe0341f4910370925a4d270a6a590668840675b0c653e *go.tgz"
     elif [[ $1 == "arm64" ]]; then
-        URL="https://golang.org/dl/go${GOLANG_VERSION}.linux-$1.tar.gz"
-        CHECKSUM="06f505c8d27203f78706ad04e47050b49092f1b06dc9ac4fbee4f0e4d015c8d4 *go.tgz"
+        URL="https://go.dev/dl/go{GOLANG_VERSION}.linux-$1.tar.gz"
+        CHECKSUM="6f95ce3da40d9ce1355e48f31f4eb6508382415ca4d7413b1e7a3314e6430e7e *go.tgz"
     elif [[ $1 == "arm" ]]; then
-        URL="https://golang.org/dl/go${GOLANG_VERSION}.linux-armv6l.tar.gz"
-        CHECKSUM="aa0d5516c8bd61654990916274d27491cfa229d322475502b247a8dc885adec5 *go.tgz"
+        URL="https://go.dev/dl/go${GOLANG_VERSION}.linux-armv6l.tar.gz"
+        CHECKSUM="aa1fb6c53b4fe72f159333362a10aca37ae938bde8adc9c6eaf2a8e87d1e47de *go.tgz"
     else
         echo "unsupported architecture" 1>&2
         exit 1
