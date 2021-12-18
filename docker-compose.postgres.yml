@@ -29,6 +29,7 @@ services:
       - "go-mod:/go/pkg/mod"
     shm_size: "2gb"
     environment:
+      GOPROXY: "https://proxy.golang.org,direct"
       PHOTOPRISM_UID: ${UID:-1000}                   # User ID
       PHOTOPRISM_GID: ${GID:-1000}                   # Group ID
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Admin password (min 4 characters)
@@ -87,14 +88,14 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:20211109
+    image: photoprism/dummy-webdav:20211218
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
 
   ## Dummy OpenID Connect Server
   dummy-oidc:
-    image: photoprism/dummy-oidc:20211022
+    image: photoprism/dummy-oidc:20211218
     # Expose port 9998 on host
     # ports:
     #  - "9998:9998"

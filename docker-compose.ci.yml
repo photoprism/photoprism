@@ -17,7 +17,7 @@ services:
       - "~/.cache/npm:/root/.cache/npm"
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
-      GOPROXY: ${GOPROXY:-http://goproxy:8888,direct}
+      GOPROXY: "https://proxy.golang.org,direct"
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
@@ -176,11 +176,11 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:20211109
+    image: photoprism/dummy-webdav:20211218
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
 
   ## Dummy OpenID Connect Server
   dummy-oidc:
-    image: photoprism/dummy-oidc:20211022
+    image: photoprism/dummy-oidc:20211218
