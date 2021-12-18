@@ -243,9 +243,6 @@ docker-local:
 	scripts/docker/build.sh photoprism
 docker-pull:
 	docker pull photoprism/photoprism:preview photoprism/photoprism:latest
-docker-goproxy:
-	docker pull golang:alpine
-	scripts/docker/multiarch.sh goproxy linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-demo:
 	scripts/docker/build.sh demo $(DOCKER_TAG)
 	scripts/docker/push.sh demo $(DOCKER_TAG)
@@ -254,12 +251,10 @@ docker-demo-local:
 	scripts/docker/build.sh demo $(DOCKER_TAG)
 	scripts/docker/push.sh demo $(DOCKER_TAG)
 docker-dummy-webdav:
-	docker pull --platform=amd64 golang:1
-	docker pull --platform=arm64 golang:1
+	docker pull golang:alpine
 	scripts/docker/multiarch.sh dummy-webdav linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-dummy-oidc:
-	docker pull --platform=amd64 golang:1
-	docker pull --platform=arm64 golang:1
+	docker pull golang:alpine
 	scripts/docker/multiarch.sh dummy-oidc linux/amd64,linux/arm64 $(DOCKER_TAG)
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
