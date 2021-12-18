@@ -45,6 +45,7 @@ upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
 debug-go: build-go-remote start-debug
+### Development Environment
 upgrade-amd64: upgrade-npm upgrade-go-amd64 # Upgrades NPM & Go in local AMD64 dev environment
 upgrade-arm64: upgrade-npm upgrade-go-arm64 # Upgrades NPM & Go in local ARM64 dev environment
 upgrade-npm:
@@ -58,6 +59,106 @@ upgrade-go-arm64:
 	$(info Upgrading Go in ARM64 dev environment...)
 	sudo docker/scripts/install-go.sh arm64
 	go build -v ./...
+start:
+	go run cmd/photoprism/photoprism.go start -d
+stop:
+	go run cmd/photoprism/photoprism.go stop
+terminal:
+	docker-compose exec -u $(UID) photoprism bash
+root-terminal:
+	docker-compose exec -u root photoprism bash
+migrate:
+	go run cmd/photoprism/photoprism.go migrate
+generate:
+	go generate ./pkg/... ./internal/...
+	go fmt ./pkg/... ./internal/...
+	# Revert unnecessary file change?
+	POT_UNCHANGED='1 file changed, 1 insertion(+), 1 deletion(-)'
+	@if [ ${$(shell git diff --shortstat assets/locales/messages.pot):1:45} == $(POT_UNCHANGED) ]; then\
+		git checkout -- assets/locales/messages.pot;\
+	fi
+### Production Build & Installation
+install-bin:
+	scripts/build.sh prod ~/.local/bin/$(BINARY_NAME)
+install-assets:
+	$(info Installing assets)
+	mkdir -p ~/.photoprism/storage/config
+	mkdir -p ~/.photoprism/storage/cache
+	mkdir -p ~/.photoprism/storage
+	mkdir -p ~/.photoprism/assets
+	mkdir -p ~/Pictures/Originals
+	mkdir -p ~/Pictures/Import
+	cp -r assets/locales assets/facenet assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
+	find ~/.photoprism/assets -name '.*' -type f -delete
+### Dependencies
+dep-list:
+	go list -u -m -json all | go-mod-outdated -direct
+dep-js:
+	(cd frontend &&	npm install --silent --legacy-peer-deps)
+dep-go:
+	go build -v ./...
+dep-upgrade:
+	go get -u -t ./...
+dep-upgrade-js:
+	(cd frontend &&	npm --depth 3 update --legacy-peer-deps)
+dep-tensorflow:
+	scripts/download-facenet.sh
+	scripts/download-nasnet.sh
+	scripts/download-nsfw.sh
+zip-facenet:
+	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
+zip-nasnet:
+	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
+zip-nsfw:
+	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
+### Build Commands
+build-js:
+	(cd frontend &&	env NODE_ENV=production npm run build)
+build-go:
+	rm -f $(BINARY_NAME)
+	scripts/build.sh debug $(BINARY_NAME)
+build-go-remote:
+	docker-compose exec -u root photoprism make build-go
+build-race:
+	rm -f $(BINARY_NAME)
+	scripts/build.sh race $(BINARY_NAME)
+build-static:
+	rm -f $(BINARY_NAME)
+	scripts/build.sh static $(BINARY_NAME)
+build-tensorflow:
+	docker build -t photoprism/tensorflow:build docker/tensorflow
+	docker run -ti photoprism/tensorflow:build bash
+build-tensorflow-arm64:
+	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
+	docker run -ti photoprism/tensorflow:arm64 bash
+start-debug:
+	docker-compose exec -u root photoprism go install github.com/go-delve/delve/cmd/dlv@latest
+	docker-compose exec -u root photoprism dlv --listen=:40000 --headless=true --api-version=2 --accept-multiclient exec ./photoprism start
+### Frontend Tests
+watch-js:
+	(cd frontend &&	env NODE_ENV=development npm run watch)
+test-js:
+	$(info Running JS unit tests...)
+	(cd frontend &&	env NODE_ENV=development BABEL_ENV=test npm run test)
+### Acceptance Tests
+acceptance:
+	$(info Running JS acceptance tests in Chrome...)
+	(cd frontend &&	npm run acceptance && cd ..)
+acceptance-firefox:
+	$(info Running JS acceptance tests in Firefox...)
+	(cd frontend &&	npm run acceptance-firefox && cd ..)
+acceptance-private:
+	$(info Running JS acceptance-private tests in Chrome...)
+	(cd frontend &&	npm run acceptance-private && cd ..)
+acceptance-private-firefox:
+	$(info Running JS acceptance-private tests in Firefox...)
+	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
+acceptance-openid:
+	$(info Running JS acceptance-private tests in Chrome...)
+	(cd frontend &&	npm run acceptance-openid && cd ..)
+acceptance-openid-firefox:
+	$(info Running JS acceptance-private tests in Firefox...)
+	(cd frontend &&	npm run acceptance-openid-firefox && cd ..)
 acceptance-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
@@ -83,107 +184,7 @@ acceptance-openid-restart:
 	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver="sqlite" --database-dsn="./storage/acceptance/index.db" --import-path="./storage/acceptance/import" --http-port=2342 --config-path="./storage/acceptance/config" --originals-path="./storage/acceptance/originals" --storage-path="./storage/acceptance" --test --backup-path="./storage/acceptance/backup" --disable-backups start -d
 acceptance-openid-stop:
 	go run cmd/photoprism/photoprism.go --public=false --upload-nsfw=false --database-driver="sqlite" --database-dsn="./storage/acceptance/index.db" --import-path="./storage/acceptance/import" --http-port=2342 --config-path="./storage/acceptance/config" --originals-path="./storage/acceptance/originals" --storage-path="./storage/acceptance" --test --backup-path="./storage/acceptance/backup" --disable-backups stop
-start:
-	go run cmd/photoprism/photoprism.go start -d
-stop:
-	go run cmd/photoprism/photoprism.go stop
-terminal:
-	docker-compose exec -u $(UID) photoprism bash
-root-terminal:
-	docker-compose exec -u root photoprism bash
-migrate:
-	go run cmd/photoprism/photoprism.go migrate
-generate:
-	go generate ./pkg/... ./internal/...
-	go fmt ./pkg/... ./internal/...
-	# Revert unnecessary file change?
-	POT_UNCHANGED='1 file changed, 1 insertion(+), 1 deletion(-)'
-	@if [ ${$(shell git diff --shortstat assets/locales/messages.pot):1:45} == $(POT_UNCHANGED) ]; then\
-		git checkout -- assets/locales/messages.pot;\
-	fi
-install-bin:
-	scripts/build.sh prod ~/.local/bin/$(BINARY_NAME)
-install-assets:
-	$(info Installing assets)
-	mkdir -p ~/.photoprism/storage/config
-	mkdir -p ~/.photoprism/storage/cache
-	mkdir -p ~/.photoprism/storage
-	mkdir -p ~/.photoprism/assets
-	mkdir -p ~/Pictures/Originals
-	mkdir -p ~/Pictures/Import
-	cp -r assets/locales assets/facenet assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
-	find ~/.photoprism/assets -name '.*' -type f -delete
-clean-local-assets:
-	rm -rf ~/.photoprism/assets/*
-clean-local-cache:
-	rm -rf ~/.photoprism/storage/cache/*
-clean-local-config:
-	rm -f ~/.photoprism/storage/config/*
-dep-list:
-	go list -u -m -json all | go-mod-outdated -direct
-dep-js:
-	(cd frontend &&	npm install --silent --legacy-peer-deps)
-dep-go:
-	go build -v ./...
-dep-upgrade:
-	go get -u -t ./...
-dep-upgrade-js:
-	(cd frontend &&	npm --depth 3 update --legacy-peer-deps)
-dep-tensorflow:
-	scripts/download-facenet.sh
-	scripts/download-nasnet.sh
-	scripts/download-nsfw.sh
-zip-facenet:
-	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
-zip-nasnet:
-	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
-zip-nsfw:
-	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
-build-js:
-	(cd frontend &&	env NODE_ENV=production npm run build)
-build-go:
-	rm -f $(BINARY_NAME)
-	scripts/build.sh debug $(BINARY_NAME)
-build-go-remote:
-	docker-compose exec -u root photoprism make build-go
-build-race:
-	rm -f $(BINARY_NAME)
-	scripts/build.sh race $(BINARY_NAME)
-build-static:
-	rm -f $(BINARY_NAME)
-	scripts/build.sh static $(BINARY_NAME)
-build-tensorflow:
-	docker build -t photoprism/tensorflow:build docker/tensorflow
-	docker run -ti photoprism/tensorflow:build bash
-build-tensorflow-arm64:
-	docker build -t photoprism/tensorflow:arm64 docker/tensorflow/arm64
-	docker run -ti photoprism/tensorflow:arm64 bash
-start-debug:
-	docker-compose exec -u root photoprism go install github.com/go-delve/delve/cmd/dlv@latest
-	docker-compose exec -u root photoprism dlv --listen=:40000 --headless=true --api-version=2 --accept-multiclient exec ./photoprism start
-watch-js:
-	(cd frontend &&	env NODE_ENV=development npm run watch)
-test-js:
-	$(info Running JS unit tests...)
-	(cd frontend &&	env NODE_ENV=development BABEL_ENV=test npm run test)
-acceptance:
-	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run acceptance && cd ..)
-acceptance-firefox:
-	$(info Running JS acceptance tests in Firefox...)
-	(cd frontend &&	npm run acceptance-firefox && cd ..)
-acceptance-private:
-	$(info Running JS acceptance-private tests in Chrome...)
-	(cd frontend &&	npm run acceptance-private && cd ..)
-acceptance-private-firefox:
-	$(info Running JS acceptance-private tests in Firefox...)
-	(cd frontend &&	npm run acceptance-private-firefox && cd ..)
-acceptance-openid:
-	$(info Running JS acceptance-private tests in Chrome...)
-	(cd frontend &&	npm run acceptance-openid && cd ..)
-acceptance-openid-firefox:
-	$(info Running JS acceptance-private tests in Firefox...)
-	(cd frontend &&	npm run acceptance-openid-firefox && cd ..)
+### Backend Tests
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	mysql < scripts/sql/reset-mariadb.sql
@@ -219,14 +220,7 @@ test-coverage:
 	$(info Running all Go unit tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
-clean:
-	rm -f $(BINARY_NAME)
-	rm -f *.log
-	rm -rf node_modules
-	rm -rf storage/testdata
-	rm -rf storage/backup
-	rm -rf storage/cache
-	rm -rf frontend/node_modules
+### 64-bit Multi-Arch Docker Image
 docker-develop:
 	docker pull --platform=amd64 ubuntu:21.10
 	docker pull --platform=arm64 ubuntu:21.10
@@ -235,6 +229,7 @@ docker-preview:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64
 docker-release:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
+### ARMv7 32-bit Docker Image
 armv7-develop:
 	scripts/docker/arch.sh develop linux/arm armv7 /armv7
 armv7-preview:
@@ -243,6 +238,7 @@ armv7-preview:
 armv7-release:
 	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/arch.sh photoprism linux/arm armv7 /armv7
+### Additional Docker Images / Commands for Development & Testing
 docker-local:
 	scripts/docker/build.sh photoprism
 docker-pull:
@@ -263,10 +259,12 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./docker/examples/cloud && packer build digitalocean.json)
+### CI
 drone-sign:
 	drone sign photoprism/photoprism --save
 lint-js:
 	(cd frontend &&	npm run lint)
+### Build & Code Clean-Up
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:
@@ -274,3 +272,17 @@ fmt-go:
 	goimports -w pkg internal cmd
 tidy:
 	go mod tidy
+clean:
+	rm -f $(BINARY_NAME)
+	rm -f *.log
+	rm -rf node_modules
+	rm -rf storage/testdata
+	rm -rf storage/backup
+	rm -rf storage/cache
+	rm -rf frontend/node_modules
+clean-local-assets:
+	rm -rf ~/.photoprism/assets/*
+clean-local-cache:
+	rm -rf ~/.photoprism/storage/cache/*
+clean-local-config:
+	rm -f ~/.photoprism/storage/config/*
