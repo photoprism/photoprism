@@ -39,7 +39,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-var version = "development"
+var version = "develop"
 var log = event.Log
 
 func main() {

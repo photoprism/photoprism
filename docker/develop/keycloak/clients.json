@@ -1,7 +1,7 @@
 {
   "clients": [
     {
-      "clientId": "photoprism-development",
+      "clientId": "photoprism-develop",
       "secret": "9d8351a0-ca01-4556-9c37-85eb634869b9",
       "name": "PhotoPrism",
       "rootUrl": "https://photoprism.traefik.net/",

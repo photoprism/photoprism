@@ -44,14 +44,19 @@ fmt: fmt-js fmt-go
 upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
 clean-install: clean-local dep build-js install-bin install-assets
-dev: dev-npm dev-go-amd64
 debug-go: build-go-remote start-debug
-dev-npm:
-	$(info Upgrading NPM in local dev environment...)
+upgrade-amd64: upgrade-npm upgrade-go-amd64 # Upgrades NPM & Go in local AMD64 dev environment
+upgrade-arm64: upgrade-npm upgrade-go-arm64 # Upgrades NPM & Go in local ARM64 dev environment
+upgrade-npm:
+	$(info Upgrading NPM in dev environment...)
 	sudo npm update -g npm
-dev-go-amd64:
-	$(info Installing Go in local AMD64 dev environment...)
+upgrade-go-amd64:
+	$(info Upgrading Go in AMD64 dev environment...)
 	sudo docker/scripts/install-go.sh amd64
+	go build -v ./...
+upgrade-go-arm64:
+	$(info Upgrading Go in ARM64 dev environment...)
+	sudo docker/scripts/install-go.sh arm64
 	go build -v ./...
 acceptance-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
@@ -222,22 +227,21 @@ clean:
 	rm -rf storage/backup
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
-docker-development:
+docker-develop:
 	docker pull --platform=amd64 ubuntu:21.10
 	docker pull --platform=arm64 ubuntu:21.10
-	scripts/docker/multiarch.sh development linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/multiarch.sh develop linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-preview:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64
 docker-release:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
-docker-armv7-development:
-	docker pull --platform=arm ubuntu:21.10
-	scripts/docker/arch.sh development linux/arm armv7 /armv7
-docker-armv7-preview:
-	docker pull --platform=arm photoprism/development:armv7
+armv7-develop:
+	scripts/docker/arch.sh develop linux/arm armv7 /armv7
+armv7-preview:
+	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/arch.sh photoprism linux/arm armv7-preview /armv7
-docker-armv7-release:
-	docker pull --platform=arm photoprism/development:armv7
+armv7-release:
+	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/arch.sh photoprism linux/arm armv7 /armv7
 docker-local:
 	scripts/docker/build.sh photoprism
