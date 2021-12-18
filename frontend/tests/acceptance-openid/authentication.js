@@ -2,7 +2,7 @@ import { Selector } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
 import Page from "../acceptance/page-model";
 
-fixture`Test authentication with openid`.page`https://photoprism.reverseproxy.dev`;
+fixture`Test authentication with openid`.page`https://photoprism.traefik.net`;
 
 const page = new Page();
 test.meta("testID", "authentication-000")(
@@ -46,11 +46,11 @@ test.meta("testID", "authentication-001")("Login and Logout as admin", async (t)
     .click(Selector('div[title="Logout"]'))
     .expect(Selector(".input-name input").visible)
     .ok()
-    .navigateTo("https://keycloak.reverseproxy.dev")
-    .click(Selector('a[href="https://keycloak.reverseproxy.dev/auth/admin/"]'))
+    .navigateTo("https://keycloak.traefik.net")
+    .click(Selector('a[href="https://keycloak.traefik.net/auth/admin/"]'))
     .click(Selector("a.dropdown-toggle"))
     .click(Selector("a").withText("Sign Out"));
-  await t.navigateTo("https://photoprism.reverseproxy.dev/settings");
+  await t.navigateTo("https://photoprism.traefik.net/settings");
   await t
     .expect(Selector("#username").visible)
     .ok()
@@ -91,11 +91,11 @@ test.meta("testID", "authentication-001")("Login and Logout as user", async (t) 
     .click(Selector('div[title="Logout"]'))
     .expect(Selector(".input-name input").visible)
     .ok()
-    .navigateTo("https://keycloak.reverseproxy.dev")
-    .click(Selector('a[href="https://keycloak.reverseproxy.dev/auth/admin/"]'))
+    .navigateTo("https://keycloak.traefik.net")
+    .click(Selector('a[href="https://keycloak.traefik.net/auth/admin/"]'))
     .click(Selector("a.dropdown-toggle"))
     .click(Selector("a").withText("Sign Out"));
-  await t.navigateTo("https://photoprism.reverseproxy.dev/settings");
+  await t.navigateTo("https://photoprism.traefik.net/settings");
   await t
     .expect(Selector("#username").visible)
     .ok()
@@ -115,7 +115,7 @@ test.meta("testID", "authentication-002")("Login with wrong credentials", async 
     .expect(Selector(".input-search input", { timeout: 7000 }).visible)
     .notOk();
   await t
-    .navigateTo("https://photoprism.reverseproxy.dev/favorites")
+    .navigateTo("https://photoprism.traefik.net/favorites")
     .expect(Selector(".input-name input").visible)
     .ok()
     .expect(Selector(".input-search input").visible)

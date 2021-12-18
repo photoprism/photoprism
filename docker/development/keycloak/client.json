@@ -2,17 +2,17 @@
   "clientId": "photoprism-development",
   "secret": "9d8351a0-ca01-4556-9c37-85eb634869b9",
   "name": "PhotoPrism",
-  "rootUrl": "https://photoprism.reverseproxy.dev/",
-  "adminUrl": "https://photoprism.reverseproxy.dev/",
+  "rootUrl": "https://photoprism.traefik.net/",
+  "adminUrl": "https://photoprism.traefik.net/",
   "surrogateAuthRequired": false,
   "enabled": true,
   "alwaysDisplayInConsole": false,
   "clientAuthenticatorType": "client-secret",
   "redirectUris": [
-    "https://photoprism.reverseproxy.dev/api/v1/auth/callback"
+    "https://photoprism.traefik.net/api/v1/auth/callback"
   ],
   "webOrigins": [
-    "https://photoprism.reverseproxy.dev"
+    "https://photoprism.traefik.net"
   ],
   "notBefore": 0,
   "bearerOnly": false,

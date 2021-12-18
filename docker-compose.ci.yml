@@ -21,7 +21,7 @@ services:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
+      PHOTOPRISM_SITE_DESCRIPTION: "AI-Powered Photos App. Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "false"
       PHOTOPRISM_READONLY: "false"

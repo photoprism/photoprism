@@ -1,7 +1,38 @@
 version: '3.5'
 
-## Legacy Database Servers for Development & Testing
+## MariaDB Server Versions for Development & Testing
 services:
+  ## MariaDB 10.7 Database Server
+  mariadb-10-7:
+    image: mariadb:10.7
+    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    expose:
+      - "4001" # Database port (internal)
+    volumes:
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      MYSQL_ROOT_PASSWORD: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: photoprism
+      MYSQL_DATABASE: photoprism
+
+  ## MariaDB 10.6 Database Server
+  ## Docs: https://mariadb.com/docs/reference/cs10.6/
+  mariadb:
+    image: mariadb:10.6
+    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    expose:
+      - "4001"
+    ports:
+      - "4001:4001" # Database port (host:container)
+    volumes:
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      MYSQL_ROOT_PASSWORD: photoprism
+      MYSQL_USER: photoprism
+      MYSQL_PASSWORD: photoprism
+      MYSQL_DATABASE: photoprism
+
   ## MariaDB 10.5.5 Database Server
   ## affected by MDEV-25362: Incorrect name resolution for subqueries in ON expressions
   ## see https://jira.mariadb.org/browse/MDEV-25362
@@ -19,6 +50,7 @@ services:
       MYSQL_DATABASE: photoprism
 
   ## MariaDB 10.3 Database Server
+  ## Docs: https://mariadb.com/docs/reference/cs10.3/
   mariadb-10-3:
     image: mariadb:10.3
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -33,6 +65,7 @@ services:
       MYSQL_DATABASE: photoprism
 
   ## MariaDB 10.2 Database Server
+  ## Docs: https://mariadb.com/docs/reference/cs10.2/
   mariadb-10-2:
     image: mariadb:10.2
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
@@ -63,4 +96,4 @@ services:
 networks:
   default:
     external:
-      name: shared
+      name: photoprism-dev

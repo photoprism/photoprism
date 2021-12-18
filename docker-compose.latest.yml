@@ -15,19 +15,19 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism-latest.loadbalancer.server.port=2342"
       - "traefik.http.routers.photoprism-latest.entrypoints=websecure"
-      - "traefik.http.routers.photoprism-latest.rule=Host(`photoprism-latest.reverseproxy.dev`)"
-      - "traefik.http.routers.photoprism-latest.tls.domains[0].main=reverseproxy.dev"
-      - "traefik.http.routers.photoprism-latest.tls.domains[0].sans=*.reverseproxy.dev"
+      - "traefik.http.routers.photoprism-latest.rule=Host(`photoprism-latest.traefik.net`)"
+      - "traefik.http.routers.photoprism-latest.tls.domains[0].main=traefik.net"
+      - "traefik.http.routers.photoprism-latest.tls.domains[0].sans=*.traefik.net"
       - "traefik.http.routers.photoprism-latest.tls=true"
     environment:
       PHOTOPRISM_UID: ${UID:-1000}                   # User ID
       PHOTOPRISM_GID: ${GID:-1000}                   # Group ID
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Admin password (min 4 characters)
       ## Public server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_SITE_URL: "https://photoprism-latest.reverseproxy.dev/"
+      PHOTOPRISM_SITE_URL: "https://photoprism-latest.traefik.net/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
+      PHOTOPRISM_SITE_DESCRIPTION: "AI-Powered Photos App. Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
@@ -69,4 +69,4 @@ services:
 networks:
   default:
     external:
-      name: shared
+      name: photoprism-dev

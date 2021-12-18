@@ -35,7 +35,7 @@ services:
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public server URL incl http:// or https:// and /path, :port is option
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
+      PHOTOPRISM_SITE_DESCRIPTION: "AI-Powered Photos App. Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
@@ -99,7 +99,6 @@ services:
     # ports:
     #  - "9998:9998"
 
-## Join shared network
 volumes:
   go-mod:
     driver: local

@@ -22,7 +22,7 @@ else
     GOTEST=go test
 endif
 
-all: dep build
+all: tidy dep build
 dep: dep-tensorflow dep-js dep-go
 build: generate build-js build-go
 install: install-bin install-assets
