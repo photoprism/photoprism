@@ -1,4 +1,5 @@
-FROM golang:1
+##################################################### BUILD STAGE ######################################################
+FROM golang:alpine AS build
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
@@ -19,4 +20,4 @@ EXPOSE 80
 COPY /docker/dummy/webdav/config.yml /webdav/config.yml
 COPY /docker/dummy/webdav/files /webdav/files
 
-CMD webdav -c /webdav/config.yml
+CMD ["/go/bin/webdav", "-c", "/webdav/config.yml"]

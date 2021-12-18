@@ -1,10 +1,13 @@
-FROM golang:1
+##################################################### BUILD STAGE ######################################################
+FROM golang:alpine AS build
 
-# Move to working directory /app
-WORKDIR /app
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG GOPROXY
 ARG GODEBUG
+
+# Move to working directory /app
+WORKDIR /app
 
 # Copy files and download dependency using go mod
 COPY /docker/dummy/oidc/app/. .
