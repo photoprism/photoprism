@@ -93,7 +93,7 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
 # Copy additional scripts to image
 COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
-COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
 
 # Install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
