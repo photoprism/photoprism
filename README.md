@@ -89,14 +89,16 @@ processor type.*
 Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
 what needs testing, and which features are going to be implemented next.
-
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
-You are welcome to submit specific feature requests via [GitHub Issues](https://github.com/photoprism/photoprism/issues)
-if you have verified that no similar [idea](https://github.com/photoprism/photoprism/labels/idea) or
-[todo](https://github.com/photoprism/photoprism/labels/todo) already exists.
 
 Ideas endorsed by [silver, gold, and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor)
 and will be prioritized on the [roadmap](https://github.com/photoprism/photoprism/projects/5).
+
+We have a zero bug policy and do our best to help users when they need support or have other questions.
+This comes at a price, as we can't give exact deadlines for new features.
+
+Having said that, funding really has the highest impact. So users can do their part and
+[become a sponsor](https://docs.photoprism.app/funding/) to get their favorite features as soon as possible.
 
 ## Questions?
 
