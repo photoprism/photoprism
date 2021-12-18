@@ -98,7 +98,7 @@ services:
       TF_CPP_MIN_LOG_LEVEL: 0                        # Show TensorFlow log messages for development
       ## OpenID Connect Provider (pre-configured for local Keycloak test server):
       PHOTOPRISM_OIDC_ISSUER_URL: "https://keycloak.traefik.net/auth/realms/master"
-      PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-development"
+      PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-develop"
       PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
       ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
@@ -204,13 +204,13 @@ services:
       - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.traefik.net"
       - "traefik.http.routers.dummy-oidc.tls=true"
 
-## Create named volume for Go module cache.
+## Create named volume for Go module cache
 volumes:
   go-mod:
     driver: local
 
-## Create shared network for connecting with services in other docker-compose.yml files.
+## Create shared "photoprism-develop" network for connecting with services in other docker-compose.yml files
 networks:
   default:
-    name: photoprism-dev
+    name: photoprism-develop
     driver: bridge

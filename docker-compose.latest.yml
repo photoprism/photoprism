@@ -65,8 +65,8 @@ services:
       - "./storage/latest:/photoprism/storage"
       - "./storage/originals:/photoprism/originals"
 
-## Join shared network
+## Join shared "photoprism-develop" network
 networks:
   default:
     external:
-      name: photoprism-dev
+      name: photoprism-develop
