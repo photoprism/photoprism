@@ -128,11 +128,33 @@ bug fixes, and documentation improvements.
 **Reviewing, testing and finally merging pull requests requires significant resources
 on our side. If it's not just a small fix, it can take several months.**
 
-## Trademarks ##
+## Trademark Fair Use ##
 
-PhotoPrism® is a registered trademark of Michael Mayer. You may use it as required to describe 
-our software, run your server, for educational purposes, but not for offering commercial 
-goods, products, or services without prior written permission. In other words, please ask.
+PhotoPrism® is a registered trademark. It is important to us that any permitted use is fair and meets the highest standards.
+To ensure this, we reserve the right to revoke your permission to use the trademark at any time and for any reason.
+
+When referring to PhotoPrism, make sure that it is spelled correctly:
+
+- PhotoPrism is one word and must not be separated into two words
+- It has two capitals, so Photoprism is not a correct spelling
+
+Also, be sure to use our [official logo](https://dl.photoprism.org/img/logo/logo.svg), do not alter it in any way, 
+and avoid overlapping with other logos or images.
+
+You should not include the PhotoPrism brand in the name of your app, product or service, whether commercial or non-commercial in nature.
+This includes online services such as e-commerce, community, blog, information, advertising, and personal home pages, as well as 
+PhotoPrism apps, client apps, or third-party apps that interact with PhotoPrism.
+
+We recognize that the community needs a way to identify compatible projects, products, and services.
+At the same time, it is essential that users are not in doubt about whether or not a compatible project, product, or service is official.
+For this reason, we ask you to indicate compatibility with PhotoPrism using one of the following options:
+
+- *compatible with PhotoPrism*
+- *powered by PhotoPrism*
+- *works with PhotoPrism*
+- *uses PhotoPrism*
+- *for use with PhotoPrism*
+- *for PhotoPrism*
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
