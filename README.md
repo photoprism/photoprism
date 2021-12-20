@@ -54,7 +54,7 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 ##  Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) 🎄 ##
 
-Your continued support helps us provide services like world maps and develop new features.
+Your continued support helps us provide services like world maps and develop [new features](https://github.com/photoprism/photoprism/projects/5).
 Sponsors get access to [additional features](https://github.com/photoprism/photoprism/issues?q=label%3Asponsor-feature),
 receive direct [technical support](https://photoprism.app/contact) via email, and can join our private chat room 
 on [matrix.org](https://matrix.org/).
