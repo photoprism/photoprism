@@ -1,11 +1,13 @@
-# A big thank you to all our sponsors! #
+# A big thank you to all our sponsors! 🎄 #
+
+Your continued support helps us provide services like world maps and develop [new features](https://github.com/photoprism/photoprism/projects/5).
 
 We currently have the following sponsorship options:
 
-- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
-- [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
-- Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account.
-- You're welcome to [contact us](https://photoprism.app/contact) for other options.
+- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD and also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time)
+- [Patreon](https://www.patreon.com/photoprism) is priced in Euro and also offers yearly payments
+- Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account
+- You're welcome to [contact us](https://photoprism.app/contact) for other options
 
 Visit https://docs.photoprism.app/funding/ to learn more.
 
@@ -63,7 +65,7 @@ See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, 
 Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
-The Gordon Project
+The Gordon Project, [@swingstate](https://github.com/photoprism/photoprism/issues/808#issuecomment-997467377)
 
 [Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
 

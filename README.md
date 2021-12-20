@@ -52,15 +52,19 @@ after going through a short list of [requirements](https://docs.photoprism.app/g
 Existing users are advised to update their `docker-compose.yml` config based on our examples
 available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
-##  Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) ##
+##  Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) 🎄 ##
 
-Your continued support helps us provide services like world maps and develop new features.
+Your continued support helps us provide services like world maps and develop [new features](https://github.com/photoprism/photoprism/projects/5).
+Sponsors get access to [additional features](https://github.com/photoprism/photoprism/issues?q=label%3Asponsor-feature),
+receive direct [technical support](https://photoprism.app/contact) via email, and can join our private chat room 
+on [matrix.org](https://matrix.org/).
+
 We currently have the following sponsorship options:
 
-- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD, also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time), and takes a small commission for currency conversion as we're based in Berlin.
-- [Patreon](https://www.patreon.com/photoprism) has a higher commission, is priced in Euro, and offers yearly payments. That may be a plus for some.
-- Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account.
-- You're welcome to [contact us](https://photoprism.app/contact) for other options.
+- [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD and also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time)
+- [Patreon](https://www.patreon.com/photoprism) is priced in Euro and also offers yearly payments
+- Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account
+- You're welcome to [contact us](https://photoprism.app/contact) for other options
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
@@ -124,11 +128,11 @@ bug fixes, and documentation improvements.
 **Reviewing, testing and finally merging pull requests requires significant resources
 on our side. If it's not just a small fix, it can take several months.**
 
-## Trademarks ##
+## Trademark Guidelines ##
 
-PhotoPrism® is a registered trademark of Michael Mayer. You may use it as required to describe 
-our software, run your server, for educational purposes, but not for offering commercial 
-goods, products, or services without prior written permission. In other words, please ask.
+PhotoPrism® is a registered trademark. It is important to us that [any permitted use is fair](https://photoprism.app/trademark)
+and meets the highest standards. To ensure this, we reserve the right to revoke your permission to use the trademark 
+at any time and for any reason.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
