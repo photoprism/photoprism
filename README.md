@@ -130,10 +130,8 @@ on our side. If it's not just a small fix, it can take several months.**
 
 ## Trademark Guidelines ##
 
-PhotoPrism® is a registered trademark. It is important to us that any permitted use is fair 
-and meets the highest standards.
-
-Visit [photoprism.app/trademark](https://photoprism.app/trademark) to learn more.
+PhotoPrism® is a registered trademark. It is important to us that any permitted use is fair and meets
+the highest standards. Visit [photoprism.app/trademark](https://photoprism.app/trademark) to learn more.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
