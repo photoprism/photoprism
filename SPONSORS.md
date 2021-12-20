@@ -65,7 +65,7 @@ See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, 
 Klemens Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel,
 [INIT_6](https://twitter.com/init_3), Sandro Rüegge, William Kray, Ovace Mamnoon, Clément Caplain Moreau,
-The Gordon Project
+The Gordon Project, [@swingstate](https://github.com/swingstate)
 
 [Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
 
