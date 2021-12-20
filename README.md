@@ -131,7 +131,7 @@ on our side. If it's not just a small fix, it can take several months.**
 ## Trademark Guidelines ##
 
 PhotoPrism® is a registered trademark. It is important to us that [any permitted use is fair](https://photoprism.app/trademark)
-and meets the highest standards. To ensure this, we reserve the right to revoke your permission to use the trademark 
+and meets the highest standards. To ensure this, we reserve the right to revoke your permission to use our brand assets
 at any time and for any reason.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
