@@ -149,11 +149,11 @@ We recognize that the community needs a way to identify compatible projects, pro
 At the same time, it is essential that users are not in doubt about whether or not a compatible project, product, or service is official.
 For this reason, we ask you to indicate compatibility with PhotoPrism using one of the following options:
 
-- *compatible with PhotoPrism*
 - *powered by PhotoPrism*
+- *compatible with PhotoPrism*
 - *works with PhotoPrism*
-- *uses PhotoPrism*
 - *for use with PhotoPrism*
+- *uses PhotoPrism*
 - *for PhotoPrism*
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
