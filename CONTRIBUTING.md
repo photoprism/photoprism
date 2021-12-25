@@ -8,10 +8,12 @@ We welcome contributions of any kind including pull requests, ideas, bug reports
 testing, writing documentation, tutorials and blog posts. If you help with development,
 you have the opportunity to learn Docker, Go, TensorFlow and much more.
 
+Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the dos and don’ts.
+
 ## Questions? ##
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) to receive regular project updates, 
-get in contact with other contributors and discuss your ideas. Don't be afraid to ask stupid questions.
+get in contact with other contributors and discuss your ideas.
 
 Of all the tools we tested, it works best to get and give continuous feedback. 
 Especially polls are amazing for product development.
