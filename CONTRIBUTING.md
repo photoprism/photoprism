@@ -8,7 +8,7 @@ We welcome contributions of any kind including pull requests, ideas, bug reports
 testing, writing documentation, tutorials and blog posts. If you help with development,
 you have the opportunity to learn Docker, Go, TensorFlow and much more.
 
-Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the dos and don’ts of social interaction.
+Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the dos and don’ts of social interactions.
 
 ## Questions? ##
 
