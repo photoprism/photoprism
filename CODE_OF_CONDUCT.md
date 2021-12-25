@@ -19,7 +19,11 @@ created this non-exhaustive list of "dos and don'ts."
 - If you are not sure, don't use GitHub Issues
 - If you are having a bad day and want to offend someone, please go somewhere else
 
-Any violation will be punished with a snarky comment and finally a "plonk", 
-which means that we will ignore you according to rule #3.
+## Enforcement and Reporting ##
 
-If that's not clear enough, feel free to contact us at hello@photoprism.app.
+Any violation may be punished with a snarky comment and finally a "plonk",
+which means that we ignore you according to rule #3.
+
+We encourage all community members to resolve problems on their own whenever 
+possible. Instances of abusive, harassing, or otherwise unacceptable behavior 
+may be [reported](https://photoprism.app/contact) to us.
