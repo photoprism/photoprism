@@ -1,6 +1,6 @@
 # Code of Conduct
 
-To keep it simple, we only have three basic rules:
+We only have three basic rules:
 
 1. Don't panic
 2. Don't be evil
