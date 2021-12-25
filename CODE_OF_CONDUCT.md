@@ -1,6 +1,8 @@
 # Code of Conduct
 
-We only have three basic rules:
+## Basic Rules ##
+
+To keep it simple, we only have three basic rules:
 
 1. Don't panic
 2. Don't be evil
@@ -8,8 +10,7 @@ We only have three basic rules:
 
 ## Dos and Don’ts ##
 
-To help you understand what to do and what not to do, we've 
-created this non-exhaustive list of "dos and don'ts."
+The following non-exhaustive list provides specific guidelines and examples:
 
 - Don't ask for deadlines
 - Don't be afraid to ask other silly questions
