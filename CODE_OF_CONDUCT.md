@@ -1,6 +1,6 @@
 # Code of Conduct
 
-## Basic Rules ##
+## Rules ##
 
 To keep it simple, we only have three basic rules:
 
@@ -8,7 +8,7 @@ To keep it simple, we only have three basic rules:
 2. Don't be evil
 3. Don’t feed the trolls
 
-## Dos and Don’ts ##
+## Examples ##
 
 The following non-exhaustive list provides specific guidelines and examples:
 
