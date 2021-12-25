@@ -129,10 +129,12 @@ bug fixes, and documentation improvements.
 **Reviewing, testing and finally merging pull requests requires significant resources
 on our side. If it's not just a small fix, it can take several months.**
 
-## Trademark Guidelines ##
+## PhotoPrism® Trademark ##
 
-PhotoPrism® is a registered trademark. It is important to us that any permitted use is fair and meets
-the highest standards. Visit [photoprism.app/trademark](https://photoprism.app/trademark) to learn more.
+Our [trademark and brand guidelines](https://photoprism.app/trademark), which may be updated 
+from time to time, describe how our Brand Assets may be used. It is important to us that any 
+permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, 
+we reserve the right to object to any use or misuse in any jurisdiction worldwide.
 
 [wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
 [wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
