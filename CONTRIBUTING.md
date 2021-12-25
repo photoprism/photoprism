@@ -9,7 +9,7 @@ tutorials, blog posts, and pull requests.
 
 ## Code of Conduct ##
 
-Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don'ts."
+Our [code of conduct](CODE_OF_CONDUCT.md) explains the "dos and don'ts."
 
 ## Questions? ##
 

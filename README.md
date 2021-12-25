@@ -108,7 +108,7 @@ Having said that, funding really has the highest impact. So users can do their p
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other users, and discuss your ideas.
-Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the dos and don’ts.
+Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
 ## Contributions ##
 
