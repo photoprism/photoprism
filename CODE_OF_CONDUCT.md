@@ -20,11 +20,12 @@ The following non-exhaustive list provides specific guidelines and examples:
 - If you need technical support, don't use GitHub Issues
 - If you are not sure, don't use GitHub Issues
 
-## Enforcement and Reporting ##
+## Reporting ## 
 
-Any violation may be punished with a snarky comment and finally a "plonk",
-which means that we ignore you according to rule #3.
+We encourage all community members to resolve problems on their own whenever possible. Instances of abusive, 
+harassing, or otherwise unacceptable behavior may be [reported](https://photoprism.app/contact) to us.
 
-We encourage all community members to resolve problems on their own whenever 
-possible. Instances of abusive, harassing, or otherwise unacceptable behavior 
-may be [reported](https://photoprism.app/contact) to us.
+## Enforcement ## 
+
+Any violation may be punished with a snarky comment and finally a "plonk", which means that we ignore you 
+according to rule #3.
