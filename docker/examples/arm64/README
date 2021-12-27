@@ -67,6 +67,15 @@ a standard 64-bit Linux distribution to run modern server applications, for exam
     `PHOTOPRISM_WORKERS` to a reasonably small value in `docker-compose.yml` (depending on the performance of the server).
     As a measure of last resort, you may disable using TensorFlow for image classification and facial recognition.
 
+### Is a Raspberry Pi fast enough? ###
+
+This largely depends on your expectations and the number of files you have. Most users report that
+PhotoPrism runs smoothly on their Raspberry Pi 4. However, initial indexing typically takes much longer
+than on standard desktop computers.
+
+Also keep in mind that the hardware has limited video transcoding capabilities, so the conversion of video
+file formats is not well-supported and software transcoding is generally slow.
+
 ### Getting Updates ###
 
 Open a terminal and change to the folder where the docker-compose.yml file was saved. Now run the
