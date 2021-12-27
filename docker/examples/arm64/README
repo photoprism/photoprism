@@ -11,21 +11,30 @@ servers apply:
 
   https://docs.photoprism.app/getting-started/docker-compose/
 
-To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must boot with the "arm_64bit=1"
-flag in its config.txt file (https://www.raspberrypi.org/documentation/installation/installing-images/README.md).
+### Raspberry Pi OS ###
+
+To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must boot with
+the "arm_64bit=1" flag in its "config.txt" file:
+
+  https://www.raspberrypi.org/documentation/installation/installing-images/README.md
+
 An "exec format" error will occur otherwise.
 
-### No Matching Manifest ###
-
-Try explicitly pulling the ARM64 version if you've booted your device with the "arm_64bit=1" flag
-and you see the "no matching manifest" error on Raspberry Pi OS (Raspbian):
+Try explicitly pulling the ARM64 version if you've booted your device with the "arm_64bit=1"
+flag and you see the "no matching manifest" error on Raspberry Pi OS (Raspbian):
 
   docker pull --platform=arm64 photoprism/photoprism:latest
 
 It may also help to set the DOCKER_DEFAULT_PLATFORM environment variable to "linux/arm64".
 
-Alternatively, you can run your device with [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi).
-It's a 64-bit Ubuntu Server with Docker pre-configured.
+### Raspbian Alternatives ###
+
+Raspberry Pi OS is designed to be compatible with older 32-bit applications. We recommend choosing
+a standard 64-bit Linux distribution to run modern server applications, for example:
+
+- [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi) is a 64-bit Ubuntu Server with Docker pre-configured
+- [Ubuntu for Raspberry Pi](https://ubuntu.com/raspberry-pi)
+- [Ubuntu MATE for Raspberry Pi](https://ubuntu-mate.org/raspberry-pi/)
 
 ### System Requirements ###
 
@@ -38,7 +47,7 @@ It's a 64-bit Ubuntu Server with Docker pre-configured.
   ```
 - We recommend disabling Linux kernel security in your `docker-compose.yml`, especially if you do not have experience
   with the configuration:
-  ```yaml
+  ```
   photoprism:
     security_opt:
       - seccomp:unconfined
@@ -49,9 +58,8 @@ It's a 64-bit Ubuntu Server with Docker pre-configured.
   clear text and can be intercepted by anyone, including your provider, hackers, and governments.
 
 !!! Note
-    Indexing large photo and video collections significantly benefits from fast, local SSD storage,
-    and plenty of memory for caching. Especially the conversion of RAW images and the transcoding of
-    videos are very demanding.
+    Indexing large photo and video collections significantly benefits from local SSD storage and plenty of memory
+    for caching. Especially the conversion of RAW images and the transcoding of videos are very demanding.
 
 !!! Reducing System Load
     If you're running out of memory - or other system resources - while indexing, try reducing the
@@ -61,9 +69,18 @@ It's a 64-bit Ubuntu Server with Docker pre-configured.
 
 ### Getting Updates ###
 
-If an old version is running on your device and is not updated, you may need to explicitly
-pull the latest image from [Docker Hub](https://hub.docker.com/r/photoprism/photoprism).
-Note that the `:latest` image tag does not cause Docker to automatically download new images.
+Open a terminal and change to the folder where the docker-compose.yml file was saved. Now run the
+following commands to download the most recent image from Docker Hub and restart your instance
+in the background:
+
+  docker-compose pull --platform=arm64 photoprism
+  docker-compose stop photoprism
+  docker-compose up -d photoprism
+
+Pulling a new version can take several minutes, depending on your internet connection speed.
+
+Note that running an image with ":latest" tag does not cause Docker to automatically download
+new images.
 
 ### Credits ###
 
