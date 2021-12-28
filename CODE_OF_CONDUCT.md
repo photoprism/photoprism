@@ -16,7 +16,7 @@ The following non-exhaustive list provides specific guidelines and examples:
 - Avoid asking for deadlines
 - Don't feel entitled to free support, advice, or features if you are not a contributor, sponsor, or paying customer
 - If you have a general question or need technical support, don't use GitHub Issues
-- If you are having a bad day and want to offend someone, please go somewhere elseues
+- If you are having a bad day and want to offend someone, please go somewhere else
 
 ## Reporting ## 
 
