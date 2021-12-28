@@ -26,6 +26,7 @@ import (
 
 const DefaultAvcEncoder = "libx264" // Default FFmpeg AVC software encoder.
 const IntelQsvEncoder = "h264_qsv"
+const AppleVideoToolbox = "h264_videotoolbox"
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
@@ -379,6 +380,24 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 				"-maxrate", c.AvcBitrate(f),
 				"-f", "mp4",
 				"-y",
+				avcName,
+			)
+		} else if codecName == AppleVideoToolbox {
+			format := "format=yuv420p"
+
+			result = exec.Command(
+				c.conf.FFmpegBin(),
+				"-i", f.FileName(),
+				"-c:v", codecName,
+				"-c:a", "aac",
+				"-vf", format,
+				"-profile", "high",
+				"-level", "51",
+				"-vsync", "vfr",
+				"-r", "30",
+				"-b:v", c.AvcBitrate(f),
+				"-f", "mp4",
+				 "-y",
 				avcName,
 			)
 		} else {
