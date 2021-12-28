@@ -12,13 +12,11 @@ To keep it simple, we only have three basic rules:
 
 The following non-exhaustive list provides specific guidelines and examples:
 
-- If you are having a bad day and want to offend someone, please go somewhere else
 - Be respectful, be responsible, be kind
 - Avoid asking for deadlines
 - Don't feel entitled to free support, advice, or features if you are not a contributor, sponsor, or paying customer
-- If you have a general question, don't use GitHub Issues
-- If you need technical support, don't use GitHub Issues
-- If you are not sure, don't use GitHub Issues
+- If you have a general question or need technical support, don't use GitHub Issues
+- If you are having a bad day and want to offend someone, please go somewhere elseues
 
 ## Reporting ## 
 
