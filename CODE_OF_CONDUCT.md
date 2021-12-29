@@ -14,8 +14,8 @@ The following non-exhaustive list provides specific guidelines and examples:
 
 - Be respectful, be responsible, be kind
 - Avoid asking for deadlines
-- Don't feel entitled to free support, advice, or features if you are not a contributor, sponsor, or paying customer
-- If you have a general question or need technical support, don't use GitHub Issues
+- Don't feel entitled to free support, advice, or features if you are not a [contributor](https://docs.photoprism.app/developer-guide/), [sponsor](https://docs.photoprism.app/funding/), or paying customer
+- If you have a [general question](https://github.com/photoprism/photoprism/discussions) or need [technical support](https://docs.photoprism.app/user-guide/#getting-support), don't use GitHub Issues
 - If you are having a bad day and want to offend someone, please go somewhere else
 
 ## Reporting ## 
