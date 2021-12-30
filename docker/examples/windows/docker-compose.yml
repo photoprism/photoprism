@@ -96,6 +96,8 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
+    ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
+    ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
     image: mariadb:10.6
     security_opt:
@@ -106,7 +108,7 @@ services:
     command: mysqld --innodb-buffer-pool-size=128M --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - "mariadb_data:/var/lib/mysql" # Important, don't remove; named volume "mariadb_data" is defined at the bottom
+      - "database:/var/lib/mysql" # Important, don't remove; named volume "database" is defined at the bottom
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
@@ -129,5 +131,5 @@ services:
 ## Create named volumes, advanced users may remove this if they mount a regular host folder
 ## for the database or use SQLite instead (never remove otherwise)
 volumes:
-  mariadb_data:
+  database:
     driver: local

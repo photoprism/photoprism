@@ -102,7 +102,7 @@ services:
     command: mysqld --lower-case-table-names=1 --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
     volumes:
-      - "mariadb_data:/var/lib/mysql" # Important, don't remove
+      - "database:/var/lib/mysql" # Important, don't remove; named volume "database" is defined at the bottom
     environment:
       MYSQL_ROOT_PASSWORD: insecure
       MYSQL_DATABASE: photoprism
@@ -122,6 +122,8 @@ services:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
 
+## Create named volumes, advanced users may remove this if they mount a regular host folder
+## for the database or use SQLite instead (never remove otherwise)
 volumes:
-  mariadb_data:
+  database:
     driver: local
