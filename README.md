@@ -1,13 +1,13 @@
 PhotoPrism: Browse Your Life in Pictures
 ========================================
 
-[![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)][license]
-![Build Status](https://dl.photoprism.app/img/badges/badge-build-success.svg)
-[![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://github.com/photoprism/photoprism/graphs/contributors/)
-[![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)][docs]
-[![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)][chat]
-[![GitHub Discussions](https://img.shields.io/badge/ask-%20on%20github-4d6a91.svg)][ask]
-[![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)][twitter]
+[![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)](https://docs.photoprism.app/license/)
+[![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://photoprism.app/team)
+[![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)](https://docs.photoprism.app/)
+[![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)](https://gitter.im/browseyourlife/community)
+[![GitHub Discussions](https://img.shields.io/badge/ask-%20on%20github-4d6a91.svg)](https://github.com/photoprism/photoprism/discussions)
+[![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)](https://twitter.com/photoprism_app)
+[![Reddit](https://img.shields.io/badge/join-/r/photoprism-EC5800.svg)](https://www.reddit.com/r/photoprism/)
 
 PhotoPrism® is an AI-powered app for browsing, organizing & sharing your photo collection.
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
@@ -135,21 +135,3 @@ Our [trademark and brand guidelines](https://photoprism.app/trademark), which ma
 from time to time, describe how our Brand Assets may be used. It is important to us that any 
 permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, 
 we reserve the right to object to any use or misuse in any jurisdiction worldwide.
-
-[wiki:classification]: https://github.com/photoprism/photoprism/wiki/Image-Classification
-[wiki:xmp]: https://github.com/photoprism/photoprism/wiki/XMP
-[wiki:geocoding]: https://github.com/photoprism/photoprism/wiki/Geocoding
-[wiki:raw]: https://github.com/photoprism/photoprism/wiki/Converting-RAW-to-JPEG
-[license]: https://github.com/photoprism/photoprism/blob/develop/LICENSE
-[patreon]: https://www.patreon.com/photoprism
-[paypal]: https://www.paypal.me/photoprism
-[goreport]: https://goreportcard.com/report/github.com/photoprism/photoprism
-[coverage]: https://codecov.io/gh/photoprism/photoprism
-[ci]: https://drone.photoprism.app/photoprism/photoprism
-[docs]: https://docs.photoprism.app/
-[issuehunt]: https://issuehunt.io/repos/119160553
-[chat]: https://gitter.im/browseyourlife/community
-[ask]: https://github.com/photoprism/photoprism/discussions
-[twitter]: https://twitter.com/photoprism_app
-[unfunded issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Aunfunded
-[sponsored issues]: https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor
