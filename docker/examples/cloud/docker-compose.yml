@@ -96,9 +96,9 @@ version: '3.5'
 services:
   ## App Server (required)
   photoprism:
-    ## Only enable automatic restarts once your installation is properly
-    ## configured as it otherwise may get stuck in a restart loop,
-    ## see https://docs.photoprism.app/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
+    ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
+    ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: always
     ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
@@ -195,7 +195,7 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     command: mysqld --innodb-buffer-pool-size=128M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    ## Never store database files on an unreliable device such as a USB flash drive or a shared network folder:
+    ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
       - "./database:/var/lib/mysql" # Important, don't remove
     environment:

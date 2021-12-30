@@ -42,9 +42,9 @@ services:
   photoprism:
     ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
-    ## Only enable automatic restarts once your installation is properly
-    ## configured as it otherwise may get stuck in a restart loop,
-    ## see https://docs.photoprism.app/getting-started/faq/#why-is-photoprism-getting-stuck-in-a-restart-loop
+    ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
+    ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
+    ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     # restart: unless-stopped
     security_opt:
       - seccomp:unconfined
