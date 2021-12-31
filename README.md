@@ -54,7 +54,8 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 ##  Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) 🎄 ##
 
-Your continued support helps us provide services like world maps and develop [new features](https://github.com/photoprism/photoprism/projects/5).
+Your continued support helps us provide [regular updates](https://github.com/photoprism/photoprism/projects/5)
+and services like [world maps](https://demo.photoprism.app/places).
 Sponsors get access to [additional features](https://github.com/photoprism/photoprism/issues?q=label%3Asponsor-feature),
 receive direct [technical support](https://photoprism.app/contact) via email, and can join our private chat room 
 on [matrix.org](https://matrix.org/).
@@ -64,7 +65,7 @@ We currently have the following sponsorship options:
 - [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD and also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time)
 - [Patreon](https://www.patreon.com/photoprism) is priced in Euro and also offers yearly payments
 - Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account
-- You're welcome to [contact us](https://photoprism.app/contact) for other options
+- You're welcome to [contact us](https://photoprism.app/contact) for [other options](SPONSORS.md#crypto-wallets)
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
@@ -121,7 +122,7 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
 
 Because we want to create the best possible product for our users,
-we have a set of [guidelines](https://docs.photoprism.app/developer-guide/pull-requests)
+we have a [set of guidelines](https://docs.photoprism.app/developer-guide/pull-requests)
 to ensure that all source code submissions are acceptable.
 They include step-by-step instructions for submitting new features,
 bug fixes, and documentation improvements.
@@ -131,7 +132,7 @@ on our side. If it's not just a small fix, it can take several months.**
 
 ## PhotoPrism® Trademark ##
 
-Our [trademark and brand guidelines](https://photoprism.app/trademark), which may be updated 
+Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which may be updated 
 from time to time, describe how our Brand Assets may be used. It is important to us that any 
 permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, 
 we reserve the right to object to any use or misuse in any jurisdiction worldwide.
