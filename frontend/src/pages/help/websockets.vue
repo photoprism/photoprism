@@ -39,7 +39,7 @@ http {
 }
             </pre>
             <p>
-              Please refer to the <a target="_blank" href="https://caddyserver.com/v1/docs/websocket" class="text-link">official documentation</a> for more details.
+              Please refer to the <a target="_blank" href="https://nginx.org/en/docs/" class="text-link">official documentation</a> for more details.
             </p>
           </v-card-text>
         </v-card>
@@ -62,7 +62,7 @@ example.com {
 }
             </pre>
             <p>
-              Please refer to the <a target="_blank" href="https://nginx.org/en/docs/" class="text-link">official documentation</a> for more details.
+              Please refer to the <a target="_blank" href="https://caddyserver.com/v1/docs/websocket" class="text-link">official documentation</a> for more details.
             </p>
           </v-card-text>
         </v-card>
