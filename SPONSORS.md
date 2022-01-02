@@ -1,7 +1,7 @@
 # A big thank you to all our sponsors! 🎄 #
 
-Your continued support helps us provide services like world maps and
-develop [new features](https://github.com/photoprism/photoprism/projects/5).
+Your continued support helps us provide [regular updates](https://docs.photoprism.app/release-notes/)
+and services like [world maps](https://demo.photoprism.app/places).
 
 We currently have the following sponsorship options:
 
@@ -10,7 +10,7 @@ We currently have the following sponsorship options:
 - [Patreon](https://www.patreon.com/photoprism) is priced in Euro and also offers yearly payments
 - Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub
   account
-- You're welcome to [contact us](https://photoprism.app/contact) for other options
+- You're welcome to [contact us](https://photoprism.app/contact) for [other options](#crypto-wallets)
 
 Visit https://docs.photoprism.app/funding/ to learn more.
 
@@ -62,14 +62,13 @@ Garn Penrod (Patreon, November 2020)
 
 [Łukasz Anwajler](https://github.com/anwajler) (GitHub Sponsors, November 2021)
 
-See https://github.com/sponsors/photoprism for a full list of GitHub sponsors.
-[Let us know](https://photoprism.app/contact) if you do not want to be listed for any reason.
+[Let us know if you do not want to be listed.](https://photoprism.app/contact)
 
 ## One-Time Donations ##
 
 [David Pennington](https://github.com/Xeoncross), Jun Li, Jonas Aaberg, Dmitry, Fabian Graf, Klemens
 Guder, [Greg](https://github.com/oziee), Jean-Louis Frenkel, [INIT_6](https://twitter.com/init_3), Sandro Rüegge,
-William Kray, Ovace Mamnoon, Clément Caplain Moreau, The Gordon Project,
+William Kray, Ovace Mamnoon, Clément Caplain Moreau, The Gordon Project, [@pluja](https://github.com/pluja),
 [@swingstate](https://github.com/photoprism/photoprism/issues/808#issuecomment-997467377)
 
 [Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
