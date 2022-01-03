@@ -13,8 +13,6 @@ handy
 tumblr
 bilder
 bild
-films
-filme
 foto
 fotos
 flickr
@@ -1958,9 +1956,6 @@ mais
 malgre
 malgré
 maximale
-meme
-memes
-merci
 mes
 mien
 mienne

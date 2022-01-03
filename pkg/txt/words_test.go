@@ -239,3 +239,36 @@ func TestRemoveFromWords(t *testing.T) {
 		assert.Equal(t, []string{"apple", "brown", "jpg", "lazy"}, result)
 	})
 }
+
+func TestStopwordsOnly(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, StopwordsOnly(""))
+	})
+	t.Run("FoldersDateienFile", func(t *testing.T) {
+		assert.True(t, StopwordsOnly("Folders Dateien File"))
+	})
+	t.Run("FoldersDateienFile", func(t *testing.T) {
+		assert.False(t, StopwordsOnly("Folders Dateien Meme File"))
+	})
+	t.Run("qx", func(t *testing.T) {
+		assert.True(t, StopwordsOnly("qx"))
+	})
+	t.Run("atz", func(t *testing.T) {
+		assert.True(t, StopwordsOnly("atz"))
+	})
+	t.Run("xqx", func(t *testing.T) {
+		assert.True(t, StopwordsOnly("xqx"))
+	})
+	t.Run("kuh", func(t *testing.T) {
+		assert.False(t, StopwordsOnly("kuh"))
+	})
+	t.Run("muh", func(t *testing.T) {
+		assert.False(t, StopwordsOnly("muh"))
+	})
+	t.Run("桥", func(t *testing.T) {
+		assert.False(t, StopwordsOnly("桥"))
+	})
+	t.Run("桥船", func(t *testing.T) {
+		assert.False(t, StopwordsOnly("桥船"))
+	})
+}

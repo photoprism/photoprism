@@ -202,3 +202,26 @@ func UniqueKeywords(s string) (results []string) {
 func SortCaseInsensitive(words []string) {
 	sort.Slice(words, func(i, j int) bool { return strings.ToLower(words[i]) < strings.ToLower(words[j]) })
 }
+
+// StopwordsOnly tests if the string contains stopwords only.
+func StopwordsOnly(s string) bool {
+	s = strings.TrimSpace(s)
+
+	if s == "" {
+		return false
+	}
+
+	for _, w := range Words(s) {
+		w = strings.ToLower(w)
+
+		if UnknownWord(w) {
+			continue
+		}
+
+		if _, ok := StopWords[w]; ok == false {
+			return false
+		}
+	}
+
+	return true
+}
