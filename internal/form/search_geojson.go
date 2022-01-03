@@ -5,6 +5,7 @@ import "time"
 // SearchGeo represents search form fields for "/api/v1/geo".
 type SearchGeo struct {
 	Query    string    `form:"q"`
+	Filter   string    `form:"filter"`
 	Near     string    `form:"near"`
 	Type     string    `form:"type"`
 	Path     string    `form:"path"`
@@ -14,6 +15,7 @@ type SearchGeo struct {
 	Before   time.Time `form:"before" time_format:"2006-01-02"`
 	After    time.Time `form:"after" time_format:"2006-01-02"`
 	Favorite bool      `form:"favorite"`
+	Unsorted bool      `form:"unsorted"`
 	Video    bool      `form:"video"`
 	Photo    bool      `form:"photo"`
 	Raw      bool      `form:"raw"`
@@ -77,6 +79,12 @@ func (f *SearchGeo) ParseQueryString() error {
 	if f.Subjects == "" && f.People != "" {
 		f.Subjects = f.People
 		f.People = ""
+	}
+
+	if f.Filter != "" {
+		if err := Unserialize(f, f.Filter); err != nil {
+			return err
+		}
 	}
 
 	return err

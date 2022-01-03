@@ -316,7 +316,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 				continue
 			}
 
-			photos, err := search.AlbumPhotos(cloneAlbum, 10000)
+			photos, err := search.AlbumPhotos(cloneAlbum, 10000, false)
 
 			if err != nil {
 				log.Errorf("album: %s", err)
@@ -462,7 +462,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		files, err := search.AlbumPhotos(a, 10000)
+		files, err := search.AlbumPhotos(a, 10000, true)
 
 		if err != nil {
 			AbortEntityNotFound(c)

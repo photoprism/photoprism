@@ -11,7 +11,7 @@ import (
 
 func TestAlbumPhotos(t *testing.T) {
 	t.Run("search with string", func(t *testing.T) {
-		results, err := AlbumPhotos(entity.AlbumFixtures.Get("april-1990"), 2)
+		results, err := AlbumPhotos(entity.AlbumFixtures.Get("april-1990"), 2, true)
 
 		if err != nil {
 			t.Fatal(err)
