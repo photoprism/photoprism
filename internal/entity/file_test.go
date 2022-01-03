@@ -644,6 +644,12 @@ func TestFile_SetColorProfile(t *testing.T) {
 
 		m.SetColorProfile("")
 
+		assert.Equal(t, "Display P3", m.ColorProfile())
+		assert.False(t, m.HasColorProfile(colors.Default))
+		assert.True(t, m.HasColorProfile(colors.ProfileDisplayP3))
+
+		m.ResetColorProfile()
+
 		assert.Equal(t, "", m.ColorProfile())
 		assert.True(t, m.HasColorProfile(colors.Default))
 		assert.False(t, m.HasColorProfile(colors.ProfileDisplayP3))

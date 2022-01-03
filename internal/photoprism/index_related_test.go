@@ -4,14 +4,14 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestIndexRelated(t *testing.T) {

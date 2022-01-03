@@ -138,22 +138,35 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			fileStacked = true
 		}
 
-		// Stack file based on matching location and time metadata?
-		if o.Stack && photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
-			metaData = m.MetaData()
-			photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
+		// Find existing photo stack?
+		if o.Stack {
+			// Matching location and time metadata?
+			if photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
+				metaData = m.MetaData()
+				photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
 
-			if photoQuery.Error == nil {
-				fileStacked = true
+				if photoQuery.Error == nil {
+					fileStacked = true
+				}
 			}
-		}
 
-		// Stack file based on the same unique ID?
-		if o.Stack && photoQuery.Error != nil && Config().Settings().StackUUID() && m.MetaData().HasDocumentID() {
-			photoQuery = entity.UnscopedDb().First(&photo, "uuid <> '' AND uuid = ?", m.MetaData().DocumentID)
+			// Same unique ID?
+			if photoQuery.Error != nil && Config().Settings().StackUUID() && m.MetaData().HasDocumentID() {
+				photoQuery = entity.UnscopedDb().First(&photo, "uuid <> '' AND uuid = ?", sanitize.Log(m.MetaData().DocumentID))
 
-			if photoQuery.Error == nil {
-				fileStacked = true
+				if photoQuery.Error == nil {
+					fileStacked = true
+				}
+			}
+
+			// Related file?
+			if photoQuery.Error != nil {
+				photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_sidecar = 0 AND file_missing = 0 AND file_name = LIKE ?)", fs.StripKnownExt(fileName)+".%")
+
+				if photoQuery.Error == nil {
+					log.Debugf("index: %s belongs to %s", sanitize.Log(m.BaseName()), sanitize.Log(filepath.Join(photo.PhotoPath, photo.PhotoName)))
+					fileStacked = true
+				}
 			}
 		}
 	} else {
@@ -353,6 +366,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			details.SetArtist(metaData.Artist, entity.SrcXmp)
 			details.SetCopyright(metaData.Copyright, entity.SrcXmp)
 		} else {
+			log.Warn(err.Error())
 			file.FileError = err.Error()
 		}
 	case m.IsRaw(), m.IsHEIF(), m.IsImageOther():
@@ -400,10 +414,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
-		if photo.TypeSrc == entity.SrcAuto {
-			// Update photo type only if not manually modified.
-			if m.IsRaw() && photo.PhotoType == entity.TypeImage {
+		// Update photo type if an image and not manually modified.
+		if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.TypeImage {
+			if m.IsRaw() {
 				photo.PhotoType = entity.TypeRaw
+			} else if m.IsLive() {
+				photo.PhotoType = entity.TypeLive
 			}
 		}
 	case m.IsVideo():
@@ -555,10 +571,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 
 	photo.UpdateDateFields()
 
+	// Panorama?
 	if file.Panorama() {
 		photo.PhotoPanorama = true
 	}
 
+	// Set remaining file properties.
 	file.FileSidecar = m.IsSidecar()
 	file.FileVideo = m.IsVideo()
 	file.FileType = string(m.FileType())
@@ -566,6 +584,12 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName string) (
 	file.FileOrientation = m.Orientation()
 	file.ModTime = modTime.Unix()
 
+	// Detect ICC color profile for JPEGs if still unknown at this point.
+	if file.FileColorProfile == "" && file.FileType == string(fs.FormatJpeg) {
+		file.SetColorProfile(m.ColorProfile())
+	}
+
+	// Update existing photo?
 	if photoExists || photo.HasID() {
 		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s in %s (update existing photo)", err, logName)

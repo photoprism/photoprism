@@ -490,7 +490,14 @@ func (m *File) HasColorProfile(profile colors.Profile) bool {
 
 // SetColorProfile sets the ICC color profile name such as "Display P3".
 func (m *File) SetColorProfile(name string) {
-	m.FileColorProfile = SanitizeTypeCaseSensitive(name)
+	if name = SanitizeTypeCaseSensitive(name); name != "" {
+		m.FileColorProfile = SanitizeTypeCaseSensitive(name)
+	}
+}
+
+// ResetColorProfile removes the ICC color profile name.
+func (m *File) ResetColorProfile() {
+	m.FileColorProfile = ""
 }
 
 // AddFaces adds face markers to the file.

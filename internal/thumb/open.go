@@ -77,14 +77,16 @@ func OpenJpeg(fileName string, orientation int) (result image.Image, err error) 
 	}
 
 	// Read ICC profile and convert colors if possible.
-	if iccProfile, err := md.ICCProfile(); err != nil || iccProfile == nil {
-		// Do nothing.
-		log.Tracef("resample: detected no color profile in %s", logName)
-	} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
-		log.Debugf("resample: detected color profile %s in %s", sanitize.Log(profile), logName)
-		switch {
-		case colors.ProfileDisplayP3.Equal(profile):
-			img = colors.ToSRGB(img, colors.ProfileDisplayP3)
+	if md != nil {
+		if iccProfile, err := md.ICCProfile(); err != nil || iccProfile == nil {
+			// Do nothing.
+			log.Tracef("resample: %s has no color profile", logName)
+		} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
+			log.Tracef("resample: %s has color profile %s", logName, sanitize.Log(profile))
+			switch {
+			case colors.ProfileDisplayP3.Equal(profile):
+				img = colors.ToSRGB(img, colors.ProfileDisplayP3)
+			}
 		}
 	}
 

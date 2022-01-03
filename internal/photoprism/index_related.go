@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
@@ -69,7 +71,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 	return result
 }
 
-// IndexMain indexes a group of related files and returns the result.
+// IndexRelated indexes a group of related files and returns the result.
 func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
 	done := make(map[string]bool)
 	sizeLimit := ind.conf.OriginalsLimit()
@@ -79,9 +81,15 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 	if result.Failed() {
 		log.Warn(result.Err)
 		return result
-	} else if !result.Success() || result.Stacked() {
-		// Skip related files if main file was stacked or indexing was not completely successful.
+	} else if !result.Success() {
+		// Skip related files if indexing was not completely successful.
 		return result
+	} else if result.Stacked() && len(related.Files) > 1 && related.Main != nil {
+		// Show info if main file was stacked and has additional related files.
+		fileType := string(related.Main.FileType())
+		relatedFiles := len(related.Files) - 1
+		mainLogName := sanitize.Log(related.Main.RelName(ind.originalsPath()))
+		log.Infof("index: stacked main %s file %s has %s", fileType, mainLogName, english.Plural(relatedFiles, "related file", "related files"))
 	}
 
 	done[related.Main.FileName()] = true
