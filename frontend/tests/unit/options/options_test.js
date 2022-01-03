@@ -19,7 +19,8 @@ describe("options/options", () => {
 
   it("should get years", () => {
     const Years = options.Years();
-    assert.equal(Years[0].text, "2021");
+    const currentYear = new Date().getUTCFullYear();
+    assert.equal(Years[0].text, currentYear);
   });
 
   it("should get indexed years", () => {
