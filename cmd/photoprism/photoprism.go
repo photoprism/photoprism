@@ -49,7 +49,7 @@ func main() {
 	app.Usage = "Browse Your Life in Pictures"
 	app.Description = "For setup instructions and a user guide, visit https://docs.photoprism.app/"
 	app.Version = version
-	app.Copyright = "(c) 2018-2021 Michael Mayer <hello@photoprism.app>"
+	app.Copyright = "(c) 2018-2022 Michael Mayer <hello@photoprism.app>"
 	app.EnableBashCompletion = true
 	app.Flags = config.GlobalFlags
 
