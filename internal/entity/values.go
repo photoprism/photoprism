@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	TrimTypeString = 32
+	TrimTypeString = 40
 )
 
 // Values is a shortcut for map[string]interface{}
@@ -63,7 +63,7 @@ func Trim(s string, maxLen int) string {
 	if l <= maxLen {
 		return s
 	} else {
-		return s[:l-1]
+		return s[:maxLen]
 	}
 }
 

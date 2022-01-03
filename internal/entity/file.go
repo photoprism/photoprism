@@ -55,9 +55,9 @@ type File struct {
 	FileWidth        int           `json:"Width" yaml:"Width,omitempty"`
 	FileHeight       int           `json:"Height" yaml:"Height,omitempty"`
 	FileOrientation  int           `json:"Orientation" yaml:"Orientation,omitempty"`
-	FileProjection   string        `gorm:"type:VARBINARY(32);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileProjection   string        `gorm:"type:VARBINARY(40);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
 	FileAspectRatio  float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
-	FileColorProfile string        `gorm:"type:VARBINARY(32);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
+	FileColorProfile string        `gorm:"type:VARBINARY(40);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
 	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance    string        `gorm:"type:VARBINARY(9);" json:"Luminance" yaml:"Luminance,omitempty"`

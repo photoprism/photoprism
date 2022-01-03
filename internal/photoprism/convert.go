@@ -397,7 +397,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName, codecName string) (re
 				"-r", "30",
 				"-b:v", c.AvcBitrate(f),
 				"-f", "mp4",
-				 "-y",
+				"-y",
 				avcName,
 			)
 		} else {
