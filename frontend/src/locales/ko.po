@@ -1654,7 +1654,7 @@ msgstr "새 비밀번호를 확인하세요."
 
 #: src/dialog/sponsor.vue:24
 msgid ""
-"Please contact us at hello@photoprism.app if you have questions or need help."
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "질문이 있거나 도움이 필요하면 hello@photoprism.app으로 문의하십시오."
 
 #: src/dialog/upload.vue:45
@@ -2458,8 +2458,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
-"Your continued support helps us provide services like satellite maps and "
-"develop new features."
+"Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 "귀하의 지속적인 지원은 위성 지도와 같은 서비스를 제공하고 새로운 기능을 개발"
 "하는 데 도움이 됩니다."

@@ -1669,7 +1669,7 @@ msgstr "Harap konfirmasi kata sandi baru Anda."
 
 #: src/dialog/sponsor.vue:24
 msgid ""
-"Please contact us at hello@photoprism.app if you have questions or need help."
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "Silakan hubungi kami di hello@photoprism.app jika Anda memiliki pertanyaan "
 "atau butuh bantuan."
@@ -2485,8 +2485,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
-"Your continued support helps us provide services like satellite maps and "
-"develop new features."
+"Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 "Dukungan Anda yang berkelanjutan membantu kami menyediakan layanan seperti "
 "peta satelit dan mengembangkan fitur-fitur terbaru."

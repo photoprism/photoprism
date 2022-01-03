@@ -706,6 +706,32 @@
         For more information on this, and how to apply and follow the GNU AGPL, see
         &lt;<a target="_blank" href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>&gt;.</p>
 
+      <h3><a name="trademark"></a>PhotoPrism® Trademark</h3>
+
+      <p>
+        PhotoPrism® is a registered trademark. PhotoPrism’s Brand Assets — including
+        trademarks, logos, icons, designs, fonts, products, services, and any other
+        brand features and elements, whether registered or unregistered („Brand Assets“)
+        — are proprietary assets owned exclusively by Michael Mayer and his legal
+        successors („PhotoPrism“).
+      </p>
+      <p>
+        Third parties, including licensees, may never claim ownership of PhotoPrism's
+        Brand Assets or brands confusingly similar to PhotoPrism's Brand Assets in any
+        way, including, without limitation, as a trademark, service mark, company name
+        or designation, domain name, social media profile/handle, or in any other manner.
+      </p>
+      <p>
+        You may not include the PhotoPrism trademark in the name of your app, product,
+        or service, whether commercial or non-commercial in nature. This includes online
+        services such as e-commerce, community, blog, information, advertising, and personal
+        home pages, as well as apps, client apps, or third-party apps that interact with
+        PhotoPrism.
+      </p>
+      <p>
+        We reserve the right to object to any use or misuse in any jurisdiction worldwide.
+        Visit <a target="_blank" href="https://photoprism.app/trademark">photoprism.app/trademark</a> to learn more.
+      </p>
     </v-container>
 
     <p-about-footer></p-about-footer>

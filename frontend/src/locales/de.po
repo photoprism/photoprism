@@ -1678,7 +1678,7 @@ msgstr "Neues Passwort bitte bestätigen."
 
 #: src/dialog/sponsor.vue:24
 msgid ""
-"Please contact us at hello@photoprism.app if you have questions or need help."
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "Bei Fragen, Wünschen oder Problemen helfen wir gerne per E-Mail an "
 "hello@photoprism.app."
@@ -2198,8 +2198,7 @@ msgstr "Theme"
 msgid ""
 "This currently is a sponsor feature to thank everyone who supports the development of this application."
 msgstr ""
-"Dies ist ein neues Feature, mit dem wir uns bei unseren Sponsoren und "
-"Mitwirkenden bedanken wollen."
+"Mit diesem Feature möchten wir uns bei unseren Sponsoren und Mitwirkenden bedanken."
 
 #: src/dialog/webdav.vue:17 src/pages/settings/sync.vue:36
 msgid ""
@@ -2487,12 +2486,10 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
-"Your continued support helps us provide services like satellite maps and "
-"develop new features."
+"Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
-"Deine kontinuierliche Unterstützung ermöglicht es uns, Dienste wie "
-"Satellitenkarten anzubieten und neue Funktionen zu entwickeln."
-
+"Deine Unterstützung ermöglicht es uns, regelmäßige Aktualisierungen und Dienste wie"
+"Weltkarten anzubieten."
 #: src/pages/albums.vue:43 src/pages/albums.vue:1
 msgid ""
 "Your library is continuously analyzed to automatically create albums of "

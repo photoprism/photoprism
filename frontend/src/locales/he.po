@@ -1649,7 +1649,7 @@ msgstr "אנא אשר את הסיסמה החדשה שלך."
 
 #: src/dialog/sponsor.vue:24
 msgid ""
-"Please contact us at hello@photoprism.app if you have questions or need help."
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "אנא צור איתנו קשר בכתובת hello@photoprism.app אם יש לך שאלות או שאתה זקוק "
 "לעזרה."
@@ -2448,8 +2448,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
-"Your continued support helps us provide services like satellite maps and "
-"develop new features."
+"Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 "התמיכה המתמשכת שלך עוזרת לנו לממן עלויות תפעול, לספק שירותים כמו מפות לוויין "
 "ולפתח תכונות חדשות."

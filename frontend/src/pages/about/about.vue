@@ -32,18 +32,23 @@
         </v-btn>
       </p>
 
-      <p class="body-1">
-        <translate>Your continued support helps us provide services like satellite maps and develop new features.</translate>
+      <p class="body-1 pb-2">
+        <translate>Your continued support helps us provide regular updates and services like world maps.</translate>
         <translate>Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized.</translate>
         <translate>Thank you very much!</translate>
       </p>
 
       <h2 class="mt-4 mb-2 subheading">
-        <translate>Trademarks</translate>
+        <translate>PhotoPrism® is a registered trademark</translate>
       </h2>
+      <p class="body-1">
+        Our <a target="_blank" href="https://photoprism.app/trademark">Trademark and Brand Guidelines</a>,
+        which may be updated from time to time, describe how our Brand Assets may be used.
+        It is important to us that any permitted use of our Brand Assets is fair and meets the highest standards.
+      </p>
       <p class="body-1 pb-2">
-        <translate>PhotoPrism® is a registered trademark of Michael Mayer.</translate>
-        <translate>You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask.</translate>
+        To ensure this, we reserve the right to object to any use or misuse in any jurisdiction worldwide.
+        Visit <a target="_blank" href="https://photoprism.app/trademark">photoprism.app/trademark</a> to learn more.
       </p>
 
       <p class="text-xs-center pt-3 mb-2">

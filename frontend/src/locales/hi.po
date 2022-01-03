@@ -1601,7 +1601,7 @@ msgid "Please confirm your new password."
 msgstr "कृपया अपने नए पासवर्ड की पुष्टि करें।"
 
 #: src/dialog/sponsor.vue:24
-msgid "Please contact us at hello@photoprism.app if you have questions or need help."
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "यदि आपके कोई प्रश्न हैं या सहायता चाहिए तो कृपया hello@photoprism.app पर हमसे संपर्क करें।"
 
 #: src/dialog/upload.vue:45
@@ -2367,8 +2367,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:32
 msgid ""
-"Your continued support helps us fund operating costs, provide services like satellite maps, "
-"and develop new features."
+"Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 "आपका निरंतर समर्थन हमें परिचालन लागतों को निधि देने, उपग्रह मानचित्र जैसी सेवाएं प्रदान करने और नई सुविधाओं को "
 "विकसित करने में मदद करता है।"

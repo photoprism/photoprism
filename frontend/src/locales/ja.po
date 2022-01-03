@@ -1670,7 +1670,7 @@ msgstr "あなたの新しいパスワードを確認してください。"
 
 #: src/dialog/sponsor.vue:24
 msgid ""
-"Please contact us at hello@photoprism.app if you have questions or need help."
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "ご質問やお困りのことがございましたら、hello@photoprism.app までご連絡くださ"
 "い。"
@@ -2480,8 +2480,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
-"Your continued support helps us provide services like satellite maps and "
-"develop new features."
+"Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 "皆様の継続的なご支援により、衛星地図などのサービスの提供や新機能の開発が可能"
 "になります。"

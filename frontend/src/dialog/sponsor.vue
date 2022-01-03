@@ -19,10 +19,10 @@
           <translate>We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors.</translate>
         </p>
         <p class="body-1">
-          <translate>Your continued support helps us provide services like satellite maps and develop new features.</translate>
+          <translate>Your continued support helps us provide regular updates and services like world maps.</translate>
         </p>
         <p class="body-1">
-          <translate>Please contact us at hello@photoprism.app if you have questions or need help.</translate>
+          <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
         </p>
       </v-card-text>
       <v-card-actions class="pt-0">
@@ -70,7 +70,7 @@ export default {
       this.$emit('close');
     },
     signUp() {
-      window.open("https://www.patreon.com/photoprism", "_blank");
+      window.open("https://docs.photoprism.app/funding/", "_blank");
       this.$emit('close');
     },
   },

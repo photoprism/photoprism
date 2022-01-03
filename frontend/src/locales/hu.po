@@ -1606,7 +1606,7 @@ msgid "Please confirm your new password."
 msgstr "Kérjük, erősítse meg új jelszavát."
 
 #: src/dialog/sponsor.vue:24
-msgid "Please contact us at hello@photoprism.app if you have questions or need help."
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kérjük, lépjen kapcsolatba velünk a hello@photoprism.app címen, ha kérdése van, vagy segítségre van szüksége."
 
 #: src/dialog/upload.vue:45
@@ -2362,7 +2362,7 @@ msgid "You may use it as required to describe our software, run your own server,
 msgstr "Szükség szerint használhatja szoftverünk leírására, saját szerver futtatására, oktatási célokra, de kereskedelmi áruk, termékek vagy szolgáltatások kínálására előzetes írásbeli engedély nélkül nem. Más szóval, kérdezzen."
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
-msgid "Your continued support helps us provide services like satellite maps and develop new features."
+msgid "Your continued support helps us provide regular updates and services like world maps."
 msgstr "Folyamatos támogatása segít nekünk olyan szolgáltatásokat nyújtani, mint a műholdas térképek és új funkciók fejlesztése."
 
 #: src/pages/albums.vue:43 src/pages/albums.vue:1

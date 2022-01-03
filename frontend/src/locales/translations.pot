@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:394
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:81
+#: src/pages/about/about.vue:86
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -460,7 +460,7 @@ msgstr ""
 msgid "Cards"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:348
+#: src/component/photo/toolbar.vue:349
 #: src/dialog/album/edit.vue:163
 #: src/pages/about/feedback.vue:94
 #: src/pages/albums.vue:128
@@ -508,7 +508,7 @@ msgstr ""
 msgid "Codec"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:324
+#: src/component/photo/toolbar.vue:325
 msgid "Color"
 msgstr ""
 
@@ -651,7 +651,7 @@ msgstr ""
 #: src/dialog/photo/delete.vue:18
 #: src/dialog/photo/files.vue:41
 #: src/dialog/photo/files.vue:38
-#: src/dialog/share.vue:231
+#: src/dialog/share.vue:232
 #: src/pages/settings/general.vue:206
 msgid "Delete"
 msgstr ""
@@ -981,6 +981,10 @@ msgstr ""
 #: src/component/navigation.vue:402
 #: src/component/navigation.vue:35
 msgid "Feedback"
+msgstr ""
+
+#: src/dialog/sponsor.vue:24
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 
 #: src/model/file.js:245
@@ -1797,8 +1801,8 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/pages/about/about.vue:38
-msgid "PhotoPrism® is a registered trademark of Michael Mayer."
+#: src/pages/about/about.vue:35
+msgid "PhotoPrism® Trademark"
 msgstr ""
 
 #: src/routes.js:114
@@ -1839,10 +1843,6 @@ msgstr ""
 
 #: src/pages/settings/account.vue:104
 msgid "Please confirm your new password."
-msgstr ""
-
-#: src/dialog/sponsor.vue:24
-msgid "Please contact us at hello@photoprism.app if you have questions or need help."
 msgstr ""
 
 #: src/dialog/upload.vue:45
@@ -2439,10 +2439,6 @@ msgstr ""
 msgid "Topographic"
 msgstr ""
 
-#: src/pages/about/about.vue:35
-msgid "Trademarks"
-msgstr ""
-
 #: src/component/photo/cards.vue:10
 #: src/component/photo/list.vue:11
 #: src/component/photo/list.vue:19
@@ -2705,13 +2701,9 @@ msgstr ""
 msgid "You may rescan your library to find additional faces."
 msgstr ""
 
-#: src/pages/about/about.vue:39
-msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-msgstr ""
-
 #: src/dialog/sponsor.vue:21
 #: src/pages/about/about.vue:29
-msgid "Your continued support helps us provide services like satellite maps and develop new features."
+msgid "Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 
 #: src/pages/albums.vue:43

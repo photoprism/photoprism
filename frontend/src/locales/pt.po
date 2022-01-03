@@ -1592,7 +1592,7 @@ msgstr "Por favor, confirme a nova senha."
 
 #: src/dialog/sponsor.vue:28
 msgid ""
-"Please contact us at hello@photoprism.app if you have questions or need help."
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "Por favor, entre em contato via hello@photoprism.app se tiver dúvidas ou "
 "precisar de ajuda."

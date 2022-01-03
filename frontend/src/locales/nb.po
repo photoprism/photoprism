@@ -1681,7 +1681,7 @@ msgstr "Vennligst bekreft ditt nye passord."
 
 #: src/dialog/sponsor.vue:24
 msgid ""
-"Please contact us at hello@photoprism.app if you have questions or need help."
+"Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 "Vennligst kontakt oss på hello@photoprism.app hvis du har noen spørsmål "
 "eller trenger hjelp."
@@ -2492,8 +2492,7 @@ msgstr ""
 
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:32
 msgid ""
-"Your continued support helps us fund operating costs, provide services like "
-"satellite maps, and develop new features."
+"Your continued support helps us provide regular updates and services like world maps."
 msgstr ""
 "Din fortsatte støtte hjelper oss med å finansiere driftskostnader, tilby "
 "tjenester som satellittkart og utvikle nye funksjoner."
