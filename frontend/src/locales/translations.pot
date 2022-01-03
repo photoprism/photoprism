@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:394
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:86
+#: src/pages/about/about.vue:94
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -1802,7 +1802,7 @@ msgid "PhotoPrism has been updated…"
 msgstr ""
 
 #: src/pages/about/about.vue:35
-msgid "PhotoPrism® Trademark"
+msgid "PhotoPrism® is a registered trademark"
 msgstr ""
 
 #: src/routes.js:114
