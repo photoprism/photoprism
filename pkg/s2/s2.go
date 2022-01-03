@@ -4,7 +4,7 @@ Package s2 encapsulates Google's S2 library.
 
 See https://s2geometry.io/
 
-Copyright (c) 2018 - 2021 Michael Mayer <hello@photoprism.app>
+Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published

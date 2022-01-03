@@ -6,7 +6,7 @@
           <router-link to="/about">
             PhotoPrism®
             {{ $config.get("version") }}
-            <br>© 2018-2021 Michael Mayer
+            <br>© 2018-2022 Michael Mayer
           </router-link>
         </v-flex>
 
