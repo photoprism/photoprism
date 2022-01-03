@@ -556,9 +556,20 @@ func (m *Marker) RefreshPhotos() error {
 		return fmt.Errorf("empty marker uid")
 	}
 
-	return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
-		(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid WHERE m.marker_uid = ? GROUP BY f.photo_id)`,
-		gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
+	var err error
+	switch DbDialect() {
+	case MySQL:
+		err = UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
+			JOIN ? m ON m.file_uid = f.file_uid SET p.checked_at = NULL
+			WHERE m.marker_uid = ?`,
+			gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
+	default:
+		err = UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
+			(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid
+			WHERE m.marker_uid = ? GROUP BY f.photo_id)`,
+			gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
+	}
+	return err
 }
 
 // Matched updates the match timestamp.

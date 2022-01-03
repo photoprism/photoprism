@@ -389,11 +389,19 @@ func (m *Subject) RefreshPhotos() error {
 		return fmt.Errorf("empty subject uid")
 	}
 
-	update := fmt.Sprintf(
-		"UPDATE photos SET checked_at = NULL WHERE id IN (SELECT DISTINCT f.photo_id FROM files f JOIN %s m ON m.file_uid = f.file_uid WHERE m.subj_uid = ?)",
-		Marker{}.TableName())
+	var err error
+	switch DbDialect() {
+	case MySQL:
+		update := fmt.Sprintf(`UPDATE photos p JOIN files f ON f.photo_id = p.id JOIN %s m ON m.file_uid = f.file_uid
+			SET p.checked_at = NULL WHERE m.subj_uid = ?`, Marker{}.TableName())
+		err = UnscopedDb().Exec(update, m.SubjUID).Error
+	default:
+		update := fmt.Sprintf(`UPDATE photos SET checked_at = NULL WHERE id IN (SELECT f.photo_id FROM files f
+			JOIN %s m ON m.file_uid = f.file_uid WHERE m.subj_uid = ?)`, Marker{}.TableName())
+		err = UnscopedDb().Exec(update, m.SubjUID).Error
+	}
 
-	return UnscopedDb().Exec(update, m.SubjUID).Error
+	return err
 }
 
 // MergeWith merges this subject with another subject and then deletes it.
