@@ -8,7 +8,7 @@ import (
 
 func TestConfig_MapKey(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/new.yml", "zqkunt22r0bewti9")
+		c := NewConfig("0.0.0", "testdata/new.yml", "zqkunt22r0bewti9", "test")
 		assert.Equal(t, "", c.MapKey())
 	})
 }

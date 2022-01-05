@@ -17,9 +17,8 @@ type MigrationMap map[string]Migration
 // Existing finds and returns previously executed database schema migrations.
 func Existing(db *gorm.DB) MigrationMap {
 	result := make(MigrationMap)
-	dialect := db.Dialect().GetName()
 
-	stmt := db.Model(Migration{}).Where("dialect = ?", dialect)
+	stmt := db.Model(Migration{})
 	stmt = stmt.Select("id, dialect, error, source, started_at, finished_at")
 
 	rows, err := stmt.Rows()
@@ -52,7 +51,11 @@ func (m *Migrations) Start(db *gorm.DB, runFailed bool) {
 	// Find previously executed migrations.
 	executed := Existing(db)
 
-	log.Debugf("migrate: found %s", english.Plural(len(executed), "previous migration", "previous migrations"))
+	if prev := len(executed); prev == 0 {
+		log.Infof("migrate: found no previous migrations")
+	} else {
+		log.Debugf("migrate: found %s", english.Plural(len(executed), "previous migration", "previous migrations"))
+	}
 
 	for _, migration := range *m {
 		start := time.Now()

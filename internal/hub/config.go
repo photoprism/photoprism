@@ -24,25 +24,27 @@ import (
 
 // Config represents backend api credentials for maps & geodata.
 type Config struct {
-	Key      string `json:"key" yaml:"Key"`
-	Secret   string `json:"secret" yaml:"Secret"`
-	Session  string `json:"session" yaml:"Session"`
-	Status   string `json:"status" yaml:"Status"`
-	Version  string `json:"version" yaml:"Version"`
-	Serial   string `json:"serial" yaml:"Serial"`
-	FileName string `json:"-" yaml:"-"`
+	Key       string `json:"key" yaml:"Key"`
+	Secret    string `json:"secret" yaml:"Secret"`
+	Session   string `json:"session" yaml:"Session"`
+	Status    string `json:"status" yaml:"Status"`
+	Version   string `json:"version" yaml:"Version"`
+	Serial    string `json:"serial" yaml:"Serial"`
+	FileName  string `json:"-" yaml:"-"`
+	PartnerID string `json:"-" yaml:"-"`
 }
 
 // NewConfig creates a new backend api credentials instance.
-func NewConfig(version, fileName, serial string) *Config {
+func NewConfig(version, fileName, serial, partner string) *Config {
 	return &Config{
-		Key:      "",
-		Secret:   "",
-		Session:  "",
-		Status:   "",
-		Version:  version,
-		Serial:   serial,
-		FileName: fileName,
+		Key:       "",
+		Secret:    "",
+		Session:   "",
+		Status:    "",
+		Version:   version,
+		Serial:    serial,
+		FileName:  fileName,
+		PartnerID: partner,
 	}
 }
 
@@ -140,12 +142,12 @@ func (c *Config) Refresh() (err error) {
 	if c.Key != "" {
 		url = fmt.Sprintf(ServiceURL+"/%s", c.Key)
 		method = http.MethodPut
-		log.Debugf("getting updated api key for maps & places from %s", ApiHost())
+		log.Debugf("config: requesting updated api key for maps and places")
 	} else {
-		log.Debugf("requesting api key for maps & places from %s", ApiHost())
+		log.Debugf("config: requesting new api key for maps and places")
 	}
 
-	if j, err := json.Marshal(NewRequest(c.Version, c.Serial)); err != nil {
+	if j, err := json.Marshal(NewRequest(c.Version, c.Serial, c.PartnerID)); err != nil {
 		return err
 	} else if req, err = http.NewRequest(method, url, bytes.NewReader(j)); err != nil {
 		return err
@@ -166,7 +168,7 @@ func (c *Config) Refresh() (err error) {
 	if err != nil {
 		return err
 	} else if r.StatusCode >= 400 {
-		err = fmt.Errorf("getting api key from %s failed (error %d)", ApiHost(), r.StatusCode)
+		err = fmt.Errorf("fetching api key from %s failed (error %d)", ApiHost(), r.StatusCode)
 		return err
 	}
 

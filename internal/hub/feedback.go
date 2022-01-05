@@ -22,6 +22,7 @@ type Feedback struct {
 	UserEmail     string `json:"UserEmail"`
 	UserAgent     string `json:"UserAgent"`
 	ApiKey        string `json:"ApiKey"`
+	PartnerID     string `json:"PartnerID"`
 	ClientVersion string `json:"ClientVersion"`
 	ClientSerial  string `json:"ClientSerial"`
 	ClientOS      string `json:"ClientOS"`
@@ -30,8 +31,9 @@ type Feedback struct {
 }
 
 // NewFeedback creates a new hub feedback instance.
-func NewFeedback(version, serial string) *Feedback {
+func NewFeedback(version, serial, partner string) *Feedback {
 	return &Feedback{
+		PartnerID:     partner,
 		ClientVersion: version,
 		ClientSerial:  serial,
 		ClientOS:      runtime.GOOS,
@@ -41,7 +43,7 @@ func NewFeedback(version, serial string) *Feedback {
 }
 
 func (c *Config) SendFeedback(f form.Feedback) (err error) {
-	feedback := NewFeedback(c.Version, c.Serial)
+	feedback := NewFeedback(c.Version, c.Serial, c.PartnerID)
 	feedback.Category = f.Category
 	feedback.Subject = txt.Shorten(f.Message, 50, "...")
 	feedback.Message = f.Message

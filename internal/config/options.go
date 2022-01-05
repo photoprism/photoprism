@@ -26,15 +26,16 @@ const (
 // Options provides a struct in which application configuration is stored.
 // Application code must use functions to get config options, for two reasons:
 //
-// 1. Some options are computed and we don't want to leak implementation details (aims at reducing refactoring overhead).
-//
-// 2. Paths might actually be dynamic later (if we build a multi-user version).
+// 1. We do not want to leak implementation details so refactoring overhead is kept low
+// 2. Some config values are dynamically generated
+// 3. Paths may become dynamic too at a later time
 //
 // See https://github.com/photoprism/photoprism/issues/50#issuecomment-433856358
 type Options struct {
 	Name                  string  `json:"-"`
 	Version               string  `json:"-"`
 	Copyright             string  `json:"-"`
+	PartnerID             string  `yaml:"-" json:"-" flag:"partner-id"`
 	AdminPassword         string  `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	LogLevel              string  `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Debug                 bool    `yaml:"Debug" json:"Debug" flag:"debug"`

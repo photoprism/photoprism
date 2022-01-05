@@ -9,6 +9,7 @@ var ServiceURL = "https://hub.photoprism.app/v1/hello"
 
 // Request represents basic environment specs for debugging.
 type Request struct {
+	PartnerID     string `json:"PartnerID"`
 	ClientVersion string `json:"ClientVersion"`
 	ClientSerial  string `json:"ClientSerial"`
 	ClientOS      string `json:"ClientOS"`
@@ -17,8 +18,9 @@ type Request struct {
 }
 
 // NewRequest creates a new backend key request instance.
-func NewRequest(version, serial string) *Request {
+func NewRequest(version, serial, partner string) *Request {
 	return &Request{
+		PartnerID:     partner,
 		ClientVersion: version,
 		ClientSerial:  serial,
 		ClientOS:      runtime.GOOS,

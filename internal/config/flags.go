@@ -65,6 +65,12 @@ var GlobalFlags = []cli.Flag{
 		EnvVar: "PHOTOPRISM_EXPERIMENTAL",
 	},
 	cli.StringFlag{
+		Name:   "partner-id",
+		Hidden: true,
+		Usage:  "hosting partner id",
+		EnvVar: "PHOTOPRISM_PARTNER_ID",
+	},
+	cli.StringFlag{
 		Name:   "config-file, c",
 		Usage:  "load config options from `FILENAME`",
 		EnvVar: "PHOTOPRISM_CONFIG_FILE",

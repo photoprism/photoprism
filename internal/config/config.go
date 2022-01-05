@@ -170,6 +170,8 @@ func (c *Config) Propagate() {
 
 // Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
 func (c *Config) Init() error {
+	start := time.Now()
+
 	if err := c.CreateDirectories(); err != nil {
 		return err
 	}
@@ -215,7 +217,13 @@ func (c *Config) Init() error {
 
 	c.Propagate()
 
-	return c.connectDb()
+	err := c.connectDb()
+
+	if err == nil {
+		log.Debugf("config: successfully initialized [%s]", time.Since(start))
+	}
+
+	return err
 }
 
 // initStorage initializes storage directories with a random serial.
@@ -571,7 +579,7 @@ func (c *Config) UpdateHub() {
 
 // initHub initializes PhotoPrism hub config.
 func (c *Config) initHub() {
-	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial)
+	c.hub = hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.options.PartnerID)
 
 	if err := c.hub.Load(); err == nil {
 		// Do nothing.
