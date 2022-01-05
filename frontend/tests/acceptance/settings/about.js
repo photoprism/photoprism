@@ -10,8 +10,6 @@ test.meta("testID", "about-001")("About page is displayed with all links", async
   await t
     .click(Selector(".nav-settings + div"))
     .click(Selector(".nav-about"))
-    .expect(Selector("h2").withText("Trademarks").visible)
-    .ok()
     .expect(Selector('a[href="https://photoprism.app/"]').visible)
     .ok()
     .expect(Selector('a[href="https://www.patreon.com/photoprism"]').visible)
