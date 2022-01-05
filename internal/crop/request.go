@@ -57,7 +57,8 @@ func FromRequest(hash, area string, size Size, thumbPath string) (fileName strin
 
 	// Save crop image.
 	if err := imaging.Save(img, cropName); err != nil {
-		log.Errorf("failed caching %s", filepath.Base(cropName))
+		log.Errorf("failed saving %s - no permission or disk full?", filepath.Base(cropName))
+		log.Debug(err.Error())
 	} else {
 		log.Debugf("saved %s", filepath.Base(cropName))
 	}
