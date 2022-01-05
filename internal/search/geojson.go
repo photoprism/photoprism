@@ -132,11 +132,7 @@ func Geo(f form.SearchGeo) (results GeoResults, err error) {
 
 	// Search for one or more keywords?
 	if f.Keywords != "" {
-		if txt.StopwordsOnly(f.Keywords) {
-			return GeoResults{}, fmt.Errorf("keywords contain stopwords only")
-		}
-
-		for _, where := range LikeAnyKeyword("k.keyword", f.Keywords) {
+		for _, where := range LikeAnyWord("k.keyword", f.Keywords) {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
 		}
 	}
