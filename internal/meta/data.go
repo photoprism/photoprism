@@ -8,9 +8,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/s2"
 )
 
+const (
+	ImageTypeHDR = 3 // see https://exiftool.org/TagNames/Apple.html
+)
+
 // Data represents image meta data.
 type Data struct {
-	DocumentID   string        `meta:"ImageUniqueID,OriginalDocumentID,DocumentID"`
+	DocumentID   string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID"`
 	InstanceID   string        `meta:"InstanceID,DocumentID"`
 	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
 	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
@@ -38,6 +42,7 @@ type Data struct {
 	Aperture     float32       `meta:"ApertureValue"`
 	FNumber      float32       `meta:"FNumber"`
 	Iso          int           `meta:"ISO"`
+	ImageType    int           `meta:"HDRImageType"`
 	GPSPosition  string        `meta:"GPSPosition"`
 	GPSLatitude  string        `meta:"GPSLatitude"`
 	GPSLongitude string        `meta:"GPSLongitude"`
@@ -78,6 +83,11 @@ func (data Data) AspectRatio() float32 {
 // Portrait returns true if it is a portrait picture or video based on width and height.
 func (data Data) Portrait() bool {
 	return data.ActualWidth() < data.ActualHeight()
+}
+
+// IsHDR tests if it is a high dynamic range file.
+func (data Data) IsHDR() bool {
+	return data.ImageType == ImageTypeHDR
 }
 
 // Megapixels returns the resolution in megapixels.

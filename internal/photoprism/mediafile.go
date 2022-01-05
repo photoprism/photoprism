@@ -278,14 +278,26 @@ func (m *MediaFile) EditedName() string {
 
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
-	var prefix string
+	// File path and name without any extensions.
+	prefix := m.AbsPrefix(stripSequence)
 
+	// Storage folder path prefixes.
+	sidecarPrefix := Config().SidecarPath() + "/"
+	originalsPrefix := Config().OriginalsPath() + "/"
+
+	// Replace sidecar with originals path in search prefix.
+	if len(sidecarPrefix) > 1 && sidecarPrefix != originalsPrefix && strings.HasPrefix(prefix, sidecarPrefix) {
+		prefix = strings.Replace(prefix, sidecarPrefix, originalsPrefix, 1)
+		log.Debugf("media: replaced sidecar with originals path in related file matching pattern")
+	}
+
+	// Quote path for glob.
 	if stripSequence {
 		// Strip common name sequences like "copy 2" and escape meta characters.
-		prefix = regexp.QuoteMeta(m.AbsPrefix(true))
+		prefix = regexp.QuoteMeta(prefix)
 	} else {
 		// Use strict file name matching and escape meta characters.
-		prefix = regexp.QuoteMeta(m.AbsPrefix(false) + ".")
+		prefix = regexp.QuoteMeta(prefix + ".")
 	}
 
 	// Find related files.
@@ -1085,6 +1097,7 @@ func (m *MediaFile) ColorProfile() string {
 		return m.colorProfile
 	}
 
+	start := time.Now()
 	logName := sanitize.Log(m.BaseName())
 
 	// Open file.
@@ -1109,12 +1122,12 @@ func (m *MediaFile) ColorProfile() string {
 	if iccProfile, err := md.ICCProfile(); err != nil || iccProfile == nil {
 		// Do nothing.
 	} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
-		log.Debugf("media: %s has color profile %s", logName, sanitize.Log(profile))
+		log.Debugf("media: %s has color profile %s [%s]", logName, sanitize.Log(profile), time.Since(start))
 		m.colorProfile = profile
 		return m.colorProfile
 	}
 
-	log.Tracef("media: %s has no color profile", logName)
+	log.Tracef("media: %s has no color profile [%s]", logName, time.Since(start))
 	m.noColorProfile = true
 	return ""
 }

@@ -7,14 +7,15 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
 // IndexMain indexes the main file from a group of related files and returns the result.
 func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
-	// Skip sidecar files without related media file.
+	// Skip if main file is nil.
 	if related.Main == nil {
-		result.Err = fmt.Errorf("index: found no main file for %s", sanitize.Log(related.String()))
+		result.Err = fmt.Errorf("index: no main file for %s", sanitize.Log(related.String()))
 		result.Status = IndexFailed
 		return result
 	}
@@ -57,7 +58,7 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 		}
 	}
 
-	result = ind.MediaFile(f, opt, "")
+	result = ind.MediaFile(f, opt, "", "")
 
 	if result.Indexed() && f.IsJpeg() {
 		if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {
@@ -73,6 +74,13 @@ func IndexMain(related *RelatedFiles, ind *Index, opt IndexOptions) (result Inde
 
 // IndexRelated indexes a group of related files and returns the result.
 func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result IndexResult) {
+	// Skip if main file is nil.
+	if related.Main == nil {
+		result.Err = fmt.Errorf("index: no main file for %s", sanitize.Log(related.String()))
+		result.Status = IndexFailed
+		return result
+	}
+
 	done := make(map[string]bool)
 	sizeLimit := ind.conf.OriginalsLimit()
 
@@ -84,12 +92,15 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 	} else if !result.Success() {
 		// Skip related files if indexing was not completely successful.
 		return result
-	} else if result.Stacked() && len(related.Files) > 1 && related.Main != nil {
+	} else if !result.Indexed() {
+		// Skip related files if main file was not indexed but for example skipped.
+		if related.Len() > 1 {
+			log.Warnf("index: %s main %s file %s has %s", result, related.MainFileType(), related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
+		}
+		return result
+	} else if result.Stacked() && related.Len() > 1 {
 		// Show info if main file was stacked and has additional related files.
-		fileType := string(related.Main.FileType())
-		relatedFiles := len(related.Files) - 1
-		mainLogName := sanitize.Log(related.Main.RelName(ind.originalsPath()))
-		log.Infof("index: stacked main %s file %s has %s", fileType, mainLogName, english.Plural(relatedFiles, "related file", "related files"))
+		log.Infof("index: %s main %s file %s has %s", result, related.MainFileType(), related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
 	}
 
 	done[related.Main.FileName()] = true
@@ -144,7 +155,7 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 			}
 		}
 
-		res := ind.MediaFile(f, opt, "")
+		res := ind.MediaFile(f, opt, "", result.PhotoUID)
 
 		if res.Indexed() && f.IsJpeg() {
 			if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {

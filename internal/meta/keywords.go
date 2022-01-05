@@ -46,6 +46,9 @@ func (data *Data) AutoAddKeywords(s string) {
 	for _, w := range AutoKeywords {
 		if strings.Contains(s, w) {
 			data.AddKeywords(w)
+			if w == KeywordHdr {
+				data.ImageType = ImageTypeHDR
+			}
 		}
 	}
 }

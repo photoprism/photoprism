@@ -4,10 +4,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/query"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
@@ -159,6 +159,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			done := make(map[string]bool)
 			ind := imp.index
 			sizeLimit := ind.conf.OriginalsLimit()
+			photoUID := ""
 
 			if related.Main != nil {
 				f := related.Main
@@ -169,17 +170,19 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				res := ind.MediaFile(f, indexOpt, originalName)
+				res := ind.MediaFile(f, indexOpt, originalName, "")
 
 				log.Infof("import: %s main %s file %s", res, f.FileType(), sanitize.Log(f.RelName(ind.originalsPath())))
 				done[f.FileName()] = true
 
-				if res.Success() {
-					if err := entity.AddPhotoToAlbums(res.PhotoUID, opt.Albums); err != nil {
+				if !res.Success() {
+					continue
+				} else if res.PhotoUID != "" {
+					photoUID = res.PhotoUID
+
+					if err := entity.AddPhotoToAlbums(photoUID, opt.Albums); err != nil {
 						log.Warn(err)
 					}
-				} else {
-					continue
 				}
 			} else {
 				log.Warnf("import: found no main file for %s, conversion to jpeg may have failed", fs.RelName(destMainFileName, imp.originalsPath()))
@@ -210,7 +213,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 
-				res := ind.MediaFile(f, indexOpt, "")
+				res := ind.MediaFile(f, indexOpt, "", photoUID)
 
 				if res.Indexed() && f.IsJpeg() {
 					if err := f.ResampleDefault(ind.thumbPath(), false); err != nil {

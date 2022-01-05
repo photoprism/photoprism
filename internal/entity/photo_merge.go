@@ -13,7 +13,7 @@ var photoMergeMutex = sync.Mutex{}
 func (m *Photo) ResolvePrimary() error {
 	var file File
 
-	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).First(&file).Error; err == nil && file.ID > 0 {
+	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).Order("file_width DESC, file_hdr DESC").First(&file).Error; err == nil && file.ID > 0 {
 		return file.ResolvePrimary()
 	}
 

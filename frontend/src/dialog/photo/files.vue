@@ -154,6 +154,14 @@
                             <translate>{{ file.Orientation }}</translate>
                           </td>
                         </tr>
+                        <tr v-if="file.HDR">
+                          <td>
+                            <translate>HDR</translate>
+                          </td>
+                          <td>
+                            <translate>Yes</translate>
+                          </td>
+                        </tr>
                         <tr v-if="file.ColorProfile">
                           <td>
                             <translate>Color Profile</translate>

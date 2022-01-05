@@ -125,8 +125,8 @@ msgstr ""
 msgid "Add to album"
 msgstr ""
 
-#: src/dialog/photo/files.vue:163
-#: src/dialog/photo/files.vue:160
+#: src/dialog/photo/files.vue:171
+#: src/dialog/photo/files.vue:168
 msgid "Added"
 msgstr ""
 
@@ -491,8 +491,8 @@ msgstr ""
 msgid "Chinese Traditional"
 msgstr ""
 
-#: src/dialog/photo/files.vue:149
-#: src/dialog/photo/files.vue:146
+#: src/dialog/photo/files.vue:157
+#: src/dialog/photo/files.vue:154
 msgid "Chroma"
 msgstr ""
 
@@ -512,8 +512,8 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: src/dialog/photo/files.vue:137
-#: src/dialog/photo/files.vue:134
+#: src/dialog/photo/files.vue:145
+#: src/dialog/photo/files.vue:142
 msgid "Color Profile"
 msgstr ""
 
@@ -987,7 +987,7 @@ msgstr ""
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr ""
 
-#: src/model/file.js:245
+#: src/model/file.js:246
 msgid "File"
 msgstr ""
 
@@ -1080,6 +1080,11 @@ msgstr ""
 msgid "Hash"
 msgstr ""
 
+#: src/dialog/photo/files.vue:137
+#: src/dialog/photo/files.vue:134
+msgid "HDR"
+msgstr ""
+
 #: src/options/options.js:115
 msgid "Hebrew"
 msgstr ""
@@ -1163,10 +1168,10 @@ msgstr ""
 msgid "Importing files to originals…"
 msgstr ""
 
-#: src/dialog/photo/files.vue:166
-#: src/dialog/photo/files.vue:175
-#: src/dialog/photo/files.vue:163
-#: src/dialog/photo/files.vue:172
+#: src/dialog/photo/files.vue:174
+#: src/dialog/photo/files.vue:183
+#: src/dialog/photo/files.vue:171
+#: src/dialog/photo/files.vue:180
 msgid "in"
 msgstr ""
 
@@ -1392,8 +1397,8 @@ msgstr ""
 msgid "Magenta"
 msgstr ""
 
-#: src/dialog/photo/files.vue:143
-#: src/dialog/photo/files.vue:140
+#: src/dialog/photo/files.vue:151
+#: src/dialog/photo/files.vue:148
 msgid "Main Color"
 msgstr ""
 
@@ -1425,8 +1430,8 @@ msgstr ""
 msgid "Minimize"
 msgstr ""
 
-#: src/dialog/photo/files.vue:155
-#: src/dialog/photo/files.vue:152
+#: src/dialog/photo/files.vue:163
+#: src/dialog/photo/files.vue:160
 msgid "Missing"
 msgstr ""
 
@@ -2218,7 +2223,7 @@ msgstr ""
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr ""
 
-#: src/model/file.js:186
+#: src/model/file.js:187
 msgid "Sidecar"
 msgstr ""
 
@@ -2500,8 +2505,8 @@ msgstr ""
 msgid "Unstack"
 msgstr ""
 
-#: src/dialog/photo/files.vue:172
-#: src/dialog/photo/files.vue:169
+#: src/dialog/photo/files.vue:180
+#: src/dialog/photo/files.vue:177
 #: src/dialog/photo/info.vue:175
 msgid "Updated"
 msgstr ""
@@ -2603,7 +2608,7 @@ msgstr ""
 #: src/component/photo/cards.vue:225
 #: src/component/photo/list.vue:196
 #: src/component/photo/mosaic.vue:200
-#: src/model/file.js:184
+#: src/model/file.js:185
 #: src/model/photo.js:662
 #: src/model/photo.js:676
 #: src/options/options.js:328
@@ -2668,10 +2673,12 @@ msgstr ""
 #: src/dialog/photo/archive.vue:18
 #: src/dialog/photo/files.vue:104
 #: src/dialog/photo/files.vue:112
-#: src/dialog/photo/files.vue:158
+#: src/dialog/photo/files.vue:140
+#: src/dialog/photo/files.vue:166
 #: src/dialog/photo/files.vue:101
 #: src/dialog/photo/files.vue:109
-#: src/dialog/photo/files.vue:155
+#: src/dialog/photo/files.vue:137
+#: src/dialog/photo/files.vue:163
 #: src/dialog/photo/info.vue:284
 #: src/dialog/photo/info.vue:305
 #: src/dialog/photo/info.vue:325

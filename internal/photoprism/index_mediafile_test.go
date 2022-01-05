@@ -3,12 +3,12 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestIndex_MediaFile(t *testing.T) {
@@ -36,7 +36,7 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		assert.Equal(t, "", mediaFile.metaData.Keywords.String())
 
-		result := ind.MediaFile(mediaFile, indexOpt, "flash.jpg")
+		result := ind.MediaFile(mediaFile, indexOpt, "flash.jpg", "")
 
 		words := mediaFile.metaData.Keywords.String()
 
@@ -66,7 +66,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		}
 		assert.Equal(t, "", mediaFile.metaData.Title)
 
-		result := ind.MediaFile(mediaFile, indexOpt, "blue-go-video.mp4")
+		result := ind.MediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "")
 		assert.Equal(t, "Blue Gopher", mediaFile.metaData.Title)
 		assert.Equal(t, IndexStatus("added"), result.Status)
 	})
@@ -83,7 +83,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		ind := NewIndex(conf, tf, nd, fn, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll()
 
-		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4")
+		result := ind.MediaFile(nil, indexOpt, "blue-go-video.mp4", "")
 		assert.Equal(t, IndexStatus("failed"), result.Status)
 	})
 }

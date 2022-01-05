@@ -57,6 +57,7 @@ type File struct {
 	FileOrientation  int           `json:"Orientation" yaml:"Orientation,omitempty"`
 	FileProjection   string        `gorm:"type:VARBINARY(40);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
 	FileAspectRatio  float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
+	FileHDR          bool          `gorm:"column:file_hdr;"  json:"IsHDR" yaml:"IsHDR,omitempty"`
 	FileColorProfile string        `gorm:"type:VARBINARY(40);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
 	FileMainColor    string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors       string        `gorm:"type:VARBINARY(9);" json:"Colors" yaml:"Colors,omitempty"`
@@ -476,6 +477,23 @@ func (m *File) Projection() string {
 // SetProjection sets the panorama projection name.
 func (m *File) SetProjection(name string) {
 	m.FileProjection = SanitizeTypeString(name)
+}
+
+// IsHDR returns true if it is a high dynamic range file.
+func (m *File) IsHDR() bool {
+	return m.FileHDR
+}
+
+// SetHDR sets the high dynamic range flag.
+func (m *File) SetHDR(isHdr bool) {
+	if isHdr {
+		m.FileHDR = true
+	}
+}
+
+// ResetHDR removes the high dynamic range flag.
+func (m *File) ResetHDR() {
+	m.FileHDR = false
 }
 
 // ColorProfile returns the ICC color profile name if any.

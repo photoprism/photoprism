@@ -17,6 +17,8 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 )
 
+// PhotoUnstack removes a file from an existing photo stack.
+//
 // POST /api/v1/photos/:uid/files/:file_uid/unstack
 //
 // Parameters:

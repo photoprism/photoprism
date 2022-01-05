@@ -111,7 +111,7 @@ func SetPhotoPrimary(photoUID, fileUID string) error {
 
 	if fileUID != "" {
 		// Do nothing.
-	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", photoUID).Order("file_width DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
+	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", photoUID).Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
 		return fmt.Errorf("cannot find primary file for %s", photoUID)

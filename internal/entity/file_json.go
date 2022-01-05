@@ -36,6 +36,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Luminance    string        `json:",omitempty"`
 		Diff         uint32        `json:",omitempty"`
 		Chroma       uint8         `json:",omitempty"`
+		HDR          bool          `json:",omitempty"`
 		Error        string        `json:",omitempty"`
 		ModTime      int64         `json:",omitempty"`
 		CreatedAt    time.Time     `json:",omitempty"`
@@ -73,6 +74,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Luminance:    m.FileLuminance,
 		Diff:         m.FileDiff,
 		Chroma:       m.FileChroma,
+		HDR:          m.FileHDR,
 		Error:        m.FileError,
 		ModTime:      m.ModTime,
 		CreatedAt:    m.CreatedAt,

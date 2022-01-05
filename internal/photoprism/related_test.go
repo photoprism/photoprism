@@ -3,8 +3,11 @@ package photoprism
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/config"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestRelatedFiles_ContainsJpeg(t *testing.T) {
@@ -91,5 +94,128 @@ func TestRelatedFiles_Len(t *testing.T) {
 			Main:  mediaFile3,
 		}
 		assert.Equal(t, 2, relatedFiles.Len())
+	})
+}
+
+func TestRelatedFiles_Count(t *testing.T) {
+	conf := config.TestConfig()
+	t.Run("NoMainFile", func(t *testing.T) {
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{},
+			Main:  nil,
+		}
+		assert.Equal(t, 0, relatedFiles.Count())
+	})
+	t.Run("None", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{},
+			Main:  mediaFile,
+		}
+		assert.Equal(t, 0, relatedFiles.Count())
+	})
+	t.Run("One", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		mediaFile2, err2 := NewMediaFile(conf.ExamplesPath() + "/Screenshot 2019-05-21 at 10.45.52.png")
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		mediaFile3, err3 := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{mediaFile, mediaFile2},
+			Main:  mediaFile3,
+		}
+		assert.Equal(t, 1, relatedFiles.Count())
+	})
+}
+
+func TestRelatedFiles_MainFileType(t *testing.T) {
+	conf := config.TestConfig()
+	t.Run("None", func(t *testing.T) {
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{},
+			Main:  nil,
+		}
+		assert.Equal(t, "", relatedFiles.MainFileType())
+	})
+	t.Run("Jpeg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{},
+			Main:  mediaFile,
+		}
+		assert.Equal(t, string(fs.FormatJpeg), relatedFiles.MainFileType())
+	})
+	t.Run("Heif", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		mediaFile2, err2 := NewMediaFile(conf.ExamplesPath() + "/Screenshot 2019-05-21 at 10.45.52.png")
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		mediaFile3, err3 := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{mediaFile, mediaFile2},
+			Main:  mediaFile3,
+		}
+		assert.Equal(t, string(fs.FormatHEIF), relatedFiles.MainFileType())
+	})
+}
+
+func TestRelatedFiles_MainLogName(t *testing.T) {
+	conf := config.TestConfig()
+	t.Run("None", func(t *testing.T) {
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{},
+			Main:  nil,
+		}
+		assert.Equal(t, "", relatedFiles.MainFileType())
+	})
+	t.Run("Telegram", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{},
+			Main:  mediaFile,
+		}
+		assert.Equal(t, conf.ExamplesPath()+"/telegram_2020-01-30_09-57-18.jpg", relatedFiles.MainLogName())
+	})
+	t.Run("iPhone7", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		mediaFile2, err2 := NewMediaFile(conf.ExamplesPath() + "/Screenshot 2019-05-21 at 10.45.52.png")
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+		mediaFile3, err3 := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		if err3 != nil {
+			t.Fatal(err3)
+		}
+		relatedFiles := RelatedFiles{
+			Files: MediaFiles{mediaFile, mediaFile2, mediaFile3},
+			Main:  mediaFile3,
+		}
+		assert.Equal(t, conf.ExamplesPath()+"/iphone_7.heic", relatedFiles.MainLogName())
 	})
 }
