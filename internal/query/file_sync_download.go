@@ -10,7 +10,7 @@ import (
 // SetDownloadFileID updates the local file id for remote downloads.
 func SetDownloadFileID(filename string, fileId uint) error {
 	if len(filename) == 0 {
-		return errors.New("sync: can't update, filename empty")
+		return errors.New("sync: cannot update, filename empty")
 	}
 
 	// TODO: Might break on Windows

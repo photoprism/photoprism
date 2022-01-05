@@ -202,7 +202,7 @@ func TestMergeFaces(t *testing.T) {
 
 		result, err := MergeFaces(faces)
 
-		assert.EqualError(t, err, "faces: can't merge clusters with conflicting subjects jqynvsf28rhn6b0c <> jqynvt925h8c1asv")
+		assert.EqualError(t, err, "faces: cannot merge clusters with conflicting subjects jqynvsf28rhn6b0c <> jqynvt925h8c1asv")
 		assert.Nil(t, result)
 	})
 	t.Run("OneSubject", func(t *testing.T) {

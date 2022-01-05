@@ -146,7 +146,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	if !model.HasID() {
-		return errors.New("can't save form when photo id is missing")
+		return errors.New("cannot save form when photo id is missing")
 	}
 
 	// Update time fields.
@@ -300,7 +300,7 @@ func (m *Photo) Find() error {
 // SaveLabels updates the photo after labels have changed.
 func (m *Photo) SaveLabels() error {
 	if !m.HasID() {
-		return errors.New("photo: can't save to database, id is empty")
+		return errors.New("photo: cannot save to database, id is empty")
 	}
 
 	labels := m.ClassifyLabels()

@@ -20,35 +20,41 @@ import (
 	"github.com/photoprism/photoprism/pkg/sanitize"
 )
 
+const backupDescription = "A user-defined SQL dump FILENAME or - for stdout can be passed as the first argument. " +
+	"The -i parameter can be omitted in this case.\n" +
+	"   Make sure to run the command with exec -T when using Docker to prevent log messages from being sent to stdout.\n" +
+	"   The index backup and album exports paths are automatically detected if not specified explicitly."
+
 // BackupCommand configures the backup cli command.
 var BackupCommand = cli.Command{
-	Name:      "backup",
-	Usage:     "Creates index database dumps and optional YAML album backups",
-	UsageText: `A custom database SQL dump FILENAME may be passed as first argument. Use - for stdout. The backup paths will be detected automatically if not provided.`,
-	Flags:     backupFlags,
-	Action:    backupAction,
+	Name:        "backup",
+	Description: backupDescription,
+	Usage:       "Creates an index SQL dump and optionally album YAML exports organized by type",
+	ArgsUsage:   "[FILENAME | -]",
+	Flags:       backupFlags,
+	Action:      backupAction,
 }
 
 var backupFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "replace existing backup files",
+		Usage: "replace existing files",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "create YAML album backups",
+		Usage: "create album YAML exports organized by type",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom albums backup `PATH`",
+		Usage: "custom album exports `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "create index database SQL dump",
+		Usage: "create index SQL dump",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom database backup `PATH`",
+		Usage: "custom index backup `PATH`",
 	},
 }
 
@@ -64,13 +70,7 @@ func backupAction(ctx *cli.Context) error {
 	backupAlbums := ctx.Bool("albums") || albumsPath != ""
 
 	if !backupIndex && !backupAlbums {
-		fmt.Printf("OPTIONS:\n")
-
-		for _, flag := range backupFlags {
-			fmt.Printf("   %s\n", flag.String())
-		}
-
-		return nil
+		return cli.ShowSubcommandHelp(ctx)
 	}
 
 	start := time.Now()
@@ -101,9 +101,9 @@ func backupAction(ctx *cli.Context) error {
 
 		if indexFileName != "-" {
 			if _, err := os.Stat(indexFileName); err == nil && !ctx.Bool("force") {
-				return fmt.Errorf("backup file already exists: %s", indexFileName)
+				return fmt.Errorf("SQL dump already exists: %s", indexFileName)
 			} else if err == nil {
-				log.Warnf("replacing existing backup file")
+				log.Warnf("replacing existing SQL dump")
 			}
 
 			// Create backup directory if not exists.
@@ -113,7 +113,7 @@ func backupAction(ctx *cli.Context) error {
 				}
 			}
 
-			log.Infof("backing up database to %s", sanitize.Log(indexFileName))
+			log.Infof("writing SQL dump to %s", sanitize.Log(indexFileName))
 		}
 
 		var cmd *exec.Cmd
@@ -169,18 +169,18 @@ func backupAction(ctx *cli.Context) error {
 
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
-				log.Warnf("albums backup path not writable, using default")
+				log.Warnf("album exports path not writable, using default")
 			}
 
 			albumsPath = conf.AlbumsPath()
 		}
 
-		log.Infof("backing up albums to %s", sanitize.Log(albumsPath))
+		log.Infof("exporting albums to %s", sanitize.Log(albumsPath))
 
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err
 		} else {
-			log.Infof("created %s", english.Plural(count, "YAML album backup", "YAML album backups"))
+			log.Infof("created %s", english.Plural(count, "YAML album export", "YAML album exports"))
 		}
 	}
 

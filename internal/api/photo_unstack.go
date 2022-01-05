@@ -42,11 +42,11 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		if file.FilePrimary {
-			log.Errorf("photo: can't unstack primary file")
+			log.Errorf("photo: cannot unstack primary file")
 			AbortBadRequest(c)
 			return
 		} else if file.FileSidecar {
-			log.Errorf("photo: can't unstack sidecar files")
+			log.Errorf("photo: cannot unstack sidecar files")
 			AbortBadRequest(c)
 			return
 		} else if file.FileRoot != entity.RootOriginals {
@@ -70,7 +70,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		stackPrimary, err := stackPhoto.PrimaryFile()
 
 		if err != nil {
-			log.Errorf("photo: can't find primary file for %s (unstack)", sanitize.Log(baseName))
+			log.Errorf("photo: cannot find primary file for %s (unstack)", sanitize.Log(baseName))
 			AbortUnexpected(c)
 			return
 		}
@@ -96,7 +96,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 		if unstackFile.BasePrefix(false) == stackPhoto.PhotoName {
 			if conf.ReadOnly() {
-				log.Errorf("photo: can't rename files in read only mode (unstack %s)", sanitize.Log(baseName))
+				log.Errorf("photo: cannot rename files in read only mode (unstack %s)", sanitize.Log(baseName))
 				AbortFeatureDisabled(c)
 				return
 			}
@@ -104,7 +104,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			destName := fmt.Sprintf("%s.%s%s", unstackFile.AbsPrefix(false), unstackFile.Checksum(), unstackFile.Extension())
 
 			if err := unstackFile.Move(destName); err != nil {
-				log.Errorf("photo: can't rename %s to %s (unstack)", sanitize.Log(unstackFile.BaseName()), sanitize.Log(filepath.Base(destName)))
+				log.Errorf("photo: cannot rename %s to %s (unstack)", sanitize.Log(unstackFile.BaseName()), sanitize.Log(filepath.Base(destName)))
 				AbortUnexpected(c)
 				return
 			}

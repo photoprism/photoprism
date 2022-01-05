@@ -19,7 +19,7 @@ var ImportCommand = cli.Command{
 	Name:      "mv",
 	Aliases:   []string{"import"},
 	Usage:     "Moves media files to originals",
-	ArgsUsage: "[path]",
+	ArgsUsage: "[PATH]",
 	Action:    importAction,
 }
 

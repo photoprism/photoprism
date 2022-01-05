@@ -95,7 +95,7 @@ func FileByHash(fileHash string) (file entity.File, err error) {
 // RenameFile renames an indexed file.
 func RenameFile(srcRoot, srcName, destRoot, destName string) error {
 	if srcRoot == "" || srcName == "" || destRoot == "" || destName == "" {
-		return fmt.Errorf("can't rename %s/%s to %s/%s", srcRoot, srcName, destRoot, destName)
+		return fmt.Errorf("cannot rename %s/%s to %s/%s", srcRoot, srcName, destRoot, destName)
 	}
 
 	return Db().Exec("UPDATE files SET file_root = ?, file_name = ?, file_missing = 0, deleted_at = NULL WHERE file_root = ? AND file_name = ?", destRoot, destName, srcRoot, srcName).Error
@@ -114,7 +114,7 @@ func SetPhotoPrimary(photoUID, fileUID string) error {
 	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type = 'jpg'", photoUID).Order("file_width DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
-		return fmt.Errorf("can't find primary file for %s", photoUID)
+		return fmt.Errorf("cannot find primary file for %s", photoUID)
 	} else {
 		fileUID = files[0]
 	}

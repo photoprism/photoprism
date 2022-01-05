@@ -137,7 +137,7 @@ func MergeFaces(merge entity.Faces) (merged *entity.Face, err error) {
 
 	for i := 1; i < len(merge); i++ {
 		if merge[i].SubjUID != subjUID {
-			return merged, fmt.Errorf("faces: can't merge clusters with conflicting subjects %s <> %s",
+			return merged, fmt.Errorf("faces: cannot merge clusters with conflicting subjects %s <> %s",
 				sanitize.Log(subjUID), sanitize.Log(merge[i].SubjUID))
 		}
 	}

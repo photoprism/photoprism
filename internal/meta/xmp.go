@@ -26,7 +26,7 @@ func (data *Data) XMP(fileName string) (err error) {
 	doc := XmpDocument{}
 
 	if err := doc.Load(fileName); err != nil {
-		return fmt.Errorf("metadata: can't read %s (xmp)", sanitize.Log(filepath.Base(fileName)))
+		return fmt.Errorf("metadata: cannot read %s (xmp)", sanitize.Log(filepath.Base(fileName)))
 	}
 
 	if doc.Title() != "" {

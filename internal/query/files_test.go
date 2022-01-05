@@ -200,7 +200,7 @@ func TestSetPhotoPrimary(t *testing.T) {
 		if err == nil {
 			t.Fatal("error expected")
 		}
-		assert.Contains(t, err.Error(), "can't find primary file")
+		assert.Contains(t, err.Error(), "cannot find primary file")
 	})
 }
 

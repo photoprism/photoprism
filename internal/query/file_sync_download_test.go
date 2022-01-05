@@ -18,6 +18,6 @@ func TestSetDownloadFileID(t *testing.T) {
 		if err == nil {
 			t.Fatal()
 		}
-		assert.Equal(t, "sync: can't update, filename empty", err.Error())
+		assert.Equal(t, "sync: cannot update, filename empty", err.Error())
 	})
 }

@@ -335,7 +335,7 @@ func TestUser_InitPassword(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", FullName: ""}
 
 		if err := p.Save(); err != nil {
-			t.Logf("can't user %s: ", err)
+			t.Logf("cannot user %s: ", err)
 		}
 
 		if err := p.SetPassword("hutfdt"); err != nil {

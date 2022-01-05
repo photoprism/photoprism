@@ -45,7 +45,7 @@ func stack(skip int) []byte {
 		if !ok {
 			break
 		}
-		// Print this much at least.  If we can't find the source, it won't show.
+		// Print this much at least.  If we cannot find the source, it won't show.
 		fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
 		if file != lastFile {
 			data, err := os.ReadFile(file)

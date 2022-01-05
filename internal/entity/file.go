@@ -317,7 +317,7 @@ func (m *File) AllFilesMissing() bool {
 // Create inserts a new row to the database.
 func (m *File) Create() error {
 	if m.PhotoID == 0 {
-		return fmt.Errorf("file: can't create file with empty photo id")
+		return fmt.Errorf("file: cannot create file with empty photo id")
 	}
 
 	if err := UnscopedDb().Create(m).Error; err != nil {
@@ -345,7 +345,7 @@ func (m *File) ResolvePrimary() error {
 // Save stores the file in the database.
 func (m *File) Save() error {
 	if m.PhotoID == 0 {
-		return fmt.Errorf("file %s: can't save file with empty photo id", m.FileUID)
+		return fmt.Errorf("file %s: cannot save file with empty photo id", m.FileUID)
 	}
 
 	if err := UnscopedDb().Save(m).Error; err != nil {

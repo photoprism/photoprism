@@ -171,7 +171,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 // UpdateAndSaveTitle updates the photo title and saves it.
 func (m *Photo) UpdateAndSaveTitle() error {
 	if !m.HasID() {
-		return fmt.Errorf("can't save photo whithout id")
+		return fmt.Errorf("cannot save photo whithout id")
 	}
 
 	m.PhotoFaces = m.FaceCount()

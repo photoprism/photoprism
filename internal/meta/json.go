@@ -39,7 +39,7 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 	jsonData, err := os.ReadFile(jsonName)
 
 	if err != nil {
-		return fmt.Errorf("can't read json file %s", quotedName)
+		return fmt.Errorf("cannot read json file %s", quotedName)
 	}
 
 	if bytes.Contains(jsonData, []byte("ExifToolVersion")) {

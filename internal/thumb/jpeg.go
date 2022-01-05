@@ -12,7 +12,7 @@ func Jpeg(srcFilename, jpgFilename string, orientation int) (img image.Image, er
 	img, err = imaging.Open(srcFilename)
 
 	if err != nil {
-		log.Errorf("resample: can't open %s", sanitize.Log(filepath.Base(srcFilename)))
+		log.Errorf("resample: cannot open %s", sanitize.Log(filepath.Base(srcFilename)))
 		return img, err
 	}
 

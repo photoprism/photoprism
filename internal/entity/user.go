@@ -201,7 +201,7 @@ func FindUserByUID(uid string) *User {
 // Delete marks the entity as deleted.
 func (m *User) Delete() error {
 	if m.ID <= 1 {
-		return fmt.Errorf("can't delete system user")
+		return fmt.Errorf("cannot delete system user")
 	}
 
 	return Db().Delete(m).Error

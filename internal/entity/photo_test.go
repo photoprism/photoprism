@@ -109,7 +109,7 @@ func TestPhoto_SaveLabels(t *testing.T) {
 
 		err := photo.SaveLabels()
 
-		assert.EqualError(t, err, "photo: can't save to database, id is empty")
+		assert.EqualError(t, err, "photo: cannot save to database, id is empty")
 	})
 
 	t.Run("existing photo", func(t *testing.T) {

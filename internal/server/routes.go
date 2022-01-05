@@ -10,7 +10,7 @@ import (
 )
 
 func registerRoutes(router *gin.Engine, conf *config.Config) {
-	// Enables automatic redirection if the current route can't be matched but a
+	// Enables automatic redirection if the current route cannot be matched but a
 	// handler for the path with (without) the trailing slash exists.
 	router.RedirectTrailingSlash = true
 

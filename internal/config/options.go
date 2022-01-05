@@ -253,7 +253,7 @@ func (c *Options) SetContext(ctx *cli.Context) error {
 					fieldValue.SetBool(f)
 				}
 			default:
-				log.Warnf("can't assign value of type %s from cli flag %s", t, tagValue)
+				log.Warnf("cannot assign value of type %s from cli flag %s", t, tagValue)
 			}
 		}
 	}

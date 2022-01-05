@@ -203,7 +203,7 @@ func TestThumb_Create(t *testing.T) {
 		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
 
 		if err != nil {
-			t.Errorf("can't open original: %s", err)
+			t.Errorf("cannot open original: %s", err)
 		}
 
 		res, err := thumb.Create(img, expectedFilename, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
@@ -230,7 +230,7 @@ func TestThumb_Create(t *testing.T) {
 		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
 
 		if err != nil {
-			t.Errorf("can't open original: %s", err)
+			t.Errorf("cannot open original: %s", err)
 		}
 
 		res, err := thumb.Create(img, expectedFilename, -1, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)
@@ -256,7 +256,7 @@ func TestThumb_Create(t *testing.T) {
 		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
 
 		if err != nil {
-			t.Errorf("can't open original: %s", err)
+			t.Errorf("cannot open original: %s", err)
 		}
 
 		res, err := thumb.Create(img, expectedFilename, 150, -1, thumb.ResampleFit, thumb.ResampleNearestNeighbor)

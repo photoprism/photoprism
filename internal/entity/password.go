@@ -17,7 +17,7 @@ type Password struct {
 // NewPassword creates a new password instance.
 func NewPassword(uid, password string) Password {
 	if uid == "" {
-		panic("auth: can't set password without uid")
+		panic("auth: cannot set password without uid")
 	}
 
 	m := Password{UID: uid}

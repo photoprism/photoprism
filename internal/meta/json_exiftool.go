@@ -130,7 +130,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 				fieldValue.SetBool(jsonValue.Bool())
 			default:
-				log.Warnf("metadata: can't assign value of type %s to %s (exiftool)", t, tagValue)
+				log.Warnf("metadata: cannot assign value of type %s to %s (exiftool)", t, tagValue)
 			}
 		}
 	}

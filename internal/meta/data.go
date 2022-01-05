@@ -75,7 +75,7 @@ func (data Data) AspectRatio() float32 {
 	return aspectRatio
 }
 
-// Portrait returns true if it's a portrait picture or video based on width and height.
+// Portrait returns true if it is a portrait picture or video based on width and height.
 func (data Data) Portrait() bool {
 	return data.ActualWidth() < data.ActualHeight()
 }

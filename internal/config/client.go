@@ -69,7 +69,7 @@ type ClientConfig struct {
 // Years represents a list of years.
 type Years []int
 
-// ClientDisable represents disabled client features a user can't turn back on.
+// ClientDisable represents disabled client features a user cannot turn back on.
 type ClientDisable struct {
 	Backups        bool `json:"backups"`
 	WebDAV         bool `json:"webdav"`

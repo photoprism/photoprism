@@ -486,7 +486,7 @@ func (m *Marker) ClearSubject(src string) error {
 // Face returns a matching face entity if possible.
 func (m *Marker) Face() (f *Face) {
 	if m.MarkerUID == "" {
-		log.Debugf("markers: can't find face when uid is empty")
+		log.Debugf("markers: cannot find face when uid is empty")
 		return nil
 	}
 

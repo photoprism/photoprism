@@ -73,7 +73,7 @@ var UsersCommand = cli.Command{
 			Name:      "delete",
 			Usage:     "Removes an existing user",
 			Action:    usersDeleteAction,
-			ArgsUsage: "[username]",
+			ArgsUsage: "[USERNAME]",
 		},
 	},
 }

@@ -48,7 +48,7 @@ func DeleteFile(router *gin.RouterGroup) {
 		}
 
 		if file.FilePrimary {
-			log.Errorf("photo: can't delete primary file")
+			log.Errorf("photo: cannot delete primary file")
 			AbortDeleteFailed(c)
 			return
 		}

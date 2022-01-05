@@ -53,7 +53,7 @@ var FacesCommand = cli.Command{
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
-			ArgsUsage: "[originals subfolder]",
+			ArgsUsage: "[ORIGINALS SUB-FOLDER]",
 			Action:    facesIndexAction,
 		},
 		{

@@ -166,7 +166,7 @@ func (c Client) Download(from, to string, force bool) (err error) {
 	if err != nil {
 		// Create directory
 		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-			return fmt.Errorf("webdav: can't create %s (%s)", dir, err)
+			return fmt.Errorf("webdav: cannot create %s (%s)", dir, err)
 		}
 	} else if !dirInfo.IsDir() {
 		return fmt.Errorf("webdav: %s is not a folder", dir)
