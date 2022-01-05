@@ -33,7 +33,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 		sl, err := jpegMp.ParseFile(fileName)
 
 		if err != nil {
-			log.Warnf("metadata: %s in %s (parse jpeg)", err, logName)
+			log.Infof("metadata: %s in %s (parse jpeg)", err, logName)
 		} else {
 			_, rawExif, err = sl.Exif()
 
@@ -43,7 +43,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 				} else if strings.HasPrefix(err.Error(), "no exif data") {
 					log.Debugf("metadata: failed parsing %s, starting brute-force search (parse jpeg)", logName)
 				} else {
-					log.Warnf("metadata: %s in %s, starting brute-force search (parse jpeg)", err, logName)
+					log.Infof("metadata: %s in %s, starting brute-force search (parse jpeg)", err, logName)
 				}
 			} else {
 				parsed = true
@@ -64,7 +64,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 			if err.Error() == "file does not have EXIF" {
 				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse png)", logName)
 			} else {
-				log.Warnf("metadata: %s in %s (parse png)", err, logName)
+				log.Infof("metadata: %s in %s (parse png)", err, logName)
 			}
 		} else {
 			parsed = true
@@ -84,7 +84,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 			if err.Error() == "file does not have EXIF" {
 				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse heic)", logName)
 			} else {
-				log.Warnf("metadata: %s in %s (parse heic)", err, logName)
+				log.Infof("metadata: %s in %s (parse heic)", err, logName)
 			}
 		} else {
 			parsed = true
@@ -104,7 +104,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 			if err.Error() == "file does not have EXIF" {
 				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse tiff)", logName)
 			} else {
-				log.Warnf("metadata: %s in %s (parse tiff)", err, logName)
+				log.Infof("metadata: %s in %s (parse tiff)", err, logName)
 			}
 		} else {
 			parsed = true
