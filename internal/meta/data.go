@@ -14,6 +14,7 @@ const (
 
 // Data represents image meta data.
 type Data struct {
+	FileName     string        `meta:"FileName"`
 	DocumentID   string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID"`
 	InstanceID   string        `meta:"InstanceID,DocumentID"`
 	TakenAt      time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`

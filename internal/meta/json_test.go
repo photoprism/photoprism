@@ -19,6 +19,7 @@ func TestJSON(t *testing.T) {
 
 		// t.Logf("DATA: %+v", data)
 
+		assert.Equal(t, "20170323-083538-Berlin-Zoologischer-Garten-2017-2u4.mov", data.FileName)
 		assert.Equal(t, CodecAvc1, data.Codec)
 		assert.Equal(t, "3s", data.Duration.String())
 		assert.Equal(t, "2018-09-08 19:20:14 +0000 UTC", data.TakenAtLocal.String())
@@ -142,7 +143,7 @@ func TestJSON(t *testing.T) {
 		}
 
 		// t.Logf("DATA: %+v", data)
-
+		assert.Equal(t, "photoshop.xmp", data.FileName)
 		assert.Equal(t, CodecXMP, data.Codec)
 		assert.Equal(t, "0s", data.Duration.String())
 		assert.Equal(t, float32(52.45969), data.Lat)

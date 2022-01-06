@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// FileName returns the full file name based on the root folder type.
 func FileName(fileRoot, fileName string) string {
 	switch fileRoot {
 	case entity.RootSidecar:
@@ -42,4 +44,57 @@ func CacheName(fileHash, namespace, cacheKey string) (cacheName string, err erro
 	cacheName = filepath.Join(cachePath, fmt.Sprintf("%s_%s", fileHash, cacheKey))
 
 	return cacheName, nil
+}
+
+// RelName returns the relative filename.
+func RelName(fileName, directory string) string {
+	return fs.RelName(fileName, directory)
+}
+
+// RootPath returns the file root path based on the configuration.
+func RootPath(fileName string) string {
+	switch Root(fileName) {
+	case entity.RootSidecar:
+		return Config().SidecarPath()
+	case entity.RootImport:
+		return Config().ImportPath()
+	case entity.RootExamples:
+		return Config().ExamplesPath()
+	default:
+		return Config().OriginalsPath()
+	}
+}
+
+// Root returns the file root directory.
+func Root(fileName string) string {
+	originalsPath := Config().OriginalsPath()
+
+	if originalsPath != "" && strings.HasPrefix(fileName, originalsPath) {
+		return entity.RootOriginals
+	}
+
+	importPath := Config().ImportPath()
+
+	if importPath != "" && strings.HasPrefix(fileName, importPath) {
+		return entity.RootImport
+	}
+
+	sidecarPath := Config().SidecarPath()
+
+	if sidecarPath != "" && strings.HasPrefix(fileName, sidecarPath) {
+		return entity.RootSidecar
+	}
+
+	examplesPath := Config().ExamplesPath()
+
+	if examplesPath != "" && strings.HasPrefix(fileName, examplesPath) {
+		return entity.RootExamples
+	}
+
+	return entity.RootUnknown
+}
+
+// RootRelName returns the relative filename, and automatically detects the root path.
+func RootRelName(fileName string) string {
+	return RelName(fileName, RootPath(fileName))
 }

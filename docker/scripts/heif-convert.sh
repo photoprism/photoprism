@@ -13,5 +13,7 @@ fi
 # Reset Exif orientation flag if output image was rotated based on "QuickTime:Rotation"
 
 if [[ $(exiftool -n -QuickTime:Rotation "$1") ]]; then
-    /usr/bin/exiftool -overwrite_original -P -n -Orientation=1 "$2"
+    /usr/bin/exiftool -overwrite_original -P -n '-ModifyDate<FileModifyDate' -Orientation=1 "$2"
+else
+    /usr/bin/exiftool -overwrite_original -P -n '-ModifyDate<FileModifyDate' "$2"
 fi

@@ -154,6 +154,9 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
+		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0)", fs.StripKnownExt(fileName)+".%", entity.RootOriginals); photoQuery.Error == nil {
+			// Found.
+			fileStacked = true
 		}
 
 		// Find existing photo by unique id or time and location?
@@ -266,8 +269,8 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		log.Errorf("index: %s while updating covers of %s", err, logName)
 	}
 
-	// Update photo path based on main file.
-	if photoUID == "" && !fileStacked {
+	// Update photo path and name based on the main filename.
+	if photoUID == "" && !fileStacked && (fileRenamed || photo.PhotoName == "") {
 		photo.PhotoPath = filePath
 
 		if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
@@ -386,6 +389,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 			file.SetHDR(metaData.IsHDR())
 			file.SetColorProfile(metaData.ColorProfile)
 
+			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
+				file.OriginalName = metaData.FileName
+				if photo.OriginalName == "" {
+					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+				}
+			}
+
 			if metaData.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, sanitize.Log(metaData.InstanceID))
 
@@ -436,6 +446,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 				log.Infof("index: %s has instance_id %s", logName, sanitize.Log(metaData.InstanceID))
 
 				file.InstanceID = metaData.InstanceID
+			}
+
+			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
+				file.OriginalName = metaData.FileName
+				if photo.OriginalName == "" {
+					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+				}
 			}
 
 			file.FileCodec = metaData.Codec
@@ -489,6 +506,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 				log.Infof("index: %s has instance_id %s", logName, sanitize.Log(metaData.InstanceID))
 
 				file.InstanceID = metaData.InstanceID
+			}
+
+			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
+				file.OriginalName = metaData.FileName
+				if photo.OriginalName == "" {
+					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+				}
 			}
 
 			file.FileCodec = metaData.Codec
