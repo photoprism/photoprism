@@ -154,7 +154,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0)", fs.StripKnownExt(fileName)+".%", entity.RootOriginals); photoQuery.Error == nil {
+		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0) AND photo_path = ?", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
 		}
