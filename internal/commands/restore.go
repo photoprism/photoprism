@@ -24,13 +24,13 @@ import (
 
 const restoreDescription = "A user-defined SQL dump FILENAME can be passed as the first argument. " +
 	"The -i parameter can be omitted in this case.\n" +
-	"   The index backup and album exports paths are automatically detected if not specified explicitly."
+	"   The index backup and album file paths are automatically detected if not specified explicitly."
 
 // RestoreCommand configures the backup cli command.
 var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
-	Usage:       "Restores the index from an SQL dump and optionally albums from YAML exports",
+	Usage:       "Restores the index from an SQL dump and optionally albums from YAML files",
 	ArgsUsage:   "[FILENAME]",
 	Flags:       restoreFlags,
 	Action:      restoreAction,
@@ -43,11 +43,11 @@ var restoreFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore albums from YAML exports",
+		Usage: "restore albums from YAML files",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album exports `PATH`",
+		Usage: "custom album files `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
@@ -200,14 +200,14 @@ func restoreAction(ctx *cli.Context) error {
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("album exports path %s not found", sanitize.Log(albumsPath))
+			log.Warnf("album files path %s not found", sanitize.Log(albumsPath))
 		} else {
 			log.Infof("restoring albums from %s", sanitize.Log(albumsPath))
 
 			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
 				return err
 			} else {
-				log.Infof("restored %s from YAML exports", english.Plural(count, "album", "albums"))
+				log.Infof("restored %s from YAML files", english.Plural(count, "album", "albums"))
 			}
 		}
 	}

@@ -16,10 +16,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// ResetCommand resets the index, clears the cache, and removes sidecar backup files after confirmation.
+// ResetCommand resets the index, clears the cache, and removes sidecar files after confirmation.
 var ResetCommand = cli.Command{
 	Name:  "reset",
-	Usage: "Resets the index, clears the cache, and removes sidecar backup files",
+	Usage: "Resets the index, clears the cache, and removes sidecar files",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "index, i",
@@ -114,21 +114,21 @@ func resetAction(ctx *cli.Context) error {
 		log.Infof("keeping *.json sidecar files")
 	}
 
-	// *.yml backup files.
+	// *.yml metadata files.
 	removeSidecarYamlPrompt := promptui.Prompt{
-		Label:     "Delete all *.yml metadata backups?",
+		Label:     "Delete all *.yml metadata files?",
 		IsConfirm: true,
 	}
 
 	if _, err := removeSidecarYamlPrompt.Run(); err == nil {
 		resetSidecarYaml(conf)
 	} else {
-		log.Infof("keeping *.yml metadata backups")
+		log.Infof("keeping *.yml metadata files")
 	}
 
-	// *.yml album backups.
+	// *.yml album files.
 	removeAlbumYamlPrompt := promptui.Prompt{
-		Label:     "Delete all *.yml album backups?",
+		Label:     "Delete all *.yml album files?",
 		IsConfirm: true,
 	}
 
@@ -142,7 +142,7 @@ func resetAction(ctx *cli.Context) error {
 		}
 
 		if len(matches) > 0 {
-			log.Infof("%d *.yml album backups will be removed", len(matches))
+			log.Infof("%d *.yml album files will be removed", len(matches))
 
 			for _, name := range matches {
 				if err := os.Remove(name); err != nil {
@@ -154,12 +154,12 @@ func resetAction(ctx *cli.Context) error {
 
 			fmt.Println("")
 
-			log.Infof("removed all *.yml album backups [%s]", time.Since(start))
+			log.Infof("removed all *.yml album files [%s]", time.Since(start))
 		} else {
-			log.Infof("found no *.yml album backup files")
+			log.Infof("found no *.yml album files")
 		}
 	} else {
-		log.Infof("keeping *.yml album backup files")
+		log.Infof("keeping *.yml album files")
 	}
 
 	return nil
@@ -252,12 +252,12 @@ func resetSidecarYaml(conf *config.Config) {
 	matches, err := filepath.Glob(regexp.QuoteMeta(conf.SidecarPath()) + "/**/*.yml")
 
 	if err != nil {
-		log.Errorf("reset: %s (find *.yml metadata backups)", err)
+		log.Errorf("reset: %s (find *.yml metadata files)", err)
 		return
 	}
 
 	if len(matches) > 0 {
-		log.Infof("%d *.yml metadata backups will be removed", len(matches))
+		log.Infof("%d *.yml metadata files will be removed", len(matches))
 
 		for _, name := range matches {
 			if err := os.Remove(name); err != nil {
@@ -269,8 +269,8 @@ func resetSidecarYaml(conf *config.Config) {
 
 		fmt.Println("")
 
-		log.Infof("removed all *.yml metadata backups [%s]", time.Since(start))
+		log.Infof("removed all *.yml metadata files [%s]", time.Since(start))
 	} else {
-		log.Infof("found no *.yml metadata backups")
+		log.Infof("found no *.yml metadata files")
 	}
 }

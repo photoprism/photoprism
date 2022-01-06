@@ -23,13 +23,13 @@ import (
 const backupDescription = "A user-defined SQL dump FILENAME or - for stdout can be passed as the first argument. " +
 	"The -i parameter can be omitted in this case.\n" +
 	"   Make sure to run the command with exec -T when using Docker to prevent log messages from being sent to stdout.\n" +
-	"   The index backup and album exports paths are automatically detected if not specified explicitly."
+	"   The index backup and album file paths are automatically detected if not specified explicitly."
 
 // BackupCommand configures the backup cli command.
 var BackupCommand = cli.Command{
 	Name:        "backup",
 	Description: backupDescription,
-	Usage:       "Creates an index SQL dump and optionally album YAML exports organized by type",
+	Usage:       "Creates an index SQL dump and optionally album YAML files organized by type",
 	ArgsUsage:   "[FILENAME | -]",
 	Flags:       backupFlags,
 	Action:      backupAction,
@@ -42,11 +42,11 @@ var backupFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "create album YAML exports organized by type",
+		Usage: "create album YAML files organized by type",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album exports `PATH`",
+		Usage: "custom album files `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
@@ -169,18 +169,18 @@ func backupAction(ctx *cli.Context) error {
 
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
-				log.Warnf("album exports path not writable, using default")
+				log.Warnf("album files path not writable, using default")
 			}
 
 			albumsPath = conf.AlbumsPath()
 		}
 
-		log.Infof("exporting albums to %s", sanitize.Log(albumsPath))
+		log.Infof("saving albums in %s", sanitize.Log(albumsPath))
 
 		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
 			return err
 		} else {
-			log.Infof("created %s", english.Plural(count, "YAML album export", "YAML album exports"))
+			log.Infof("created %s", english.Plural(count, "YAML album file", "YAML album files"))
 		}
 	}
 

@@ -226,7 +226,7 @@ func (c *Config) ExifToolJson() bool {
 	return !c.DisableExifTool()
 }
 
-// BackupYaml tests if creating YAML backups is enabled.
+// BackupYaml tests if creating YAML files is enabled.
 func (c *Config) BackupYaml() bool {
 	return !c.DisableBackups()
 }
@@ -364,7 +364,7 @@ func (c *Config) AlbumsPath() string {
 	return filepath.Join(c.StoragePath(), "albums")
 }
 
-// OriginalsAlbumsPath returns the optional album YAML backup folder inside originals.
+// OriginalsAlbumsPath returns the optional album YAML file path inside originals.
 func (c *Config) OriginalsAlbumsPath() string {
 	return filepath.Join(c.OriginalsPath(), "albums")
 }

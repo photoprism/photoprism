@@ -9,7 +9,7 @@ func (c *Config) DisableWebDAV() bool {
 	return c.options.DisableWebDAV
 }
 
-// DisableBackups tests if photo and album metadata backups should be disabled.
+// DisableBackups tests if photo and album metadata files should be disabled.
 func (c *Config) DisableBackups() bool {
 	if !c.SidecarWritable() {
 		return true
