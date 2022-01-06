@@ -31,7 +31,7 @@ var ResetCommand = cli.Command{
 		},
 		cli.BoolFlag{
 			Name:  "yes, y",
-			Usage: "assume \"yes\" as answer to all prompts and run non-interactively",
+			Usage: "assume \"yes\" and run non-interactively",
 		},
 	},
 	Action: resetAction,
@@ -86,7 +86,7 @@ func resetAction(ctx *cli.Context) error {
 	}
 
 	// Reset index only?
-	if ctx.Bool("index") {
+	if ctx.Bool("index") || ctx.Bool("yes") {
 		return nil
 	}
 

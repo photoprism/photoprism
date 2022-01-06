@@ -545,6 +545,23 @@ func TestPhoto_SetFavorite(t *testing.T) {
 	})
 }
 
+func TestPhoto_SetStack(t *testing.T) {
+	t.Run("Ignore", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo27")
+		assert.Equal(t, IsStackable, m.PhotoStack)
+		m.SetStack(IsStackable)
+		assert.Equal(t, IsStackable, m.PhotoStack)
+	})
+	t.Run("Update", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo27")
+		assert.Equal(t, IsStackable, m.PhotoStack)
+		m.SetStack(IsUnstacked)
+		assert.Equal(t, IsUnstacked, m.PhotoStack)
+		m.SetStack(IsStackable)
+		assert.Equal(t, IsStackable, m.PhotoStack)
+	})
+}
+
 func TestPhoto_Approve(t *testing.T) {
 	t.Run("quality = 4", func(t *testing.T) {
 		photo := Photo{PhotoQuality: 4}

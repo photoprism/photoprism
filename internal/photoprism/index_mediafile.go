@@ -131,7 +131,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 	}
 
 	// Find existing photo if a photo uid was provided or file has not been indexed yet...
-	if photoUID != "" {
+	if !fileExists && photoUID != "" {
 		// Find existing photo by UID.
 		photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", photoUID)
 
@@ -154,7 +154,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0) AND photo_path = ?", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
+		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0) AND photo_path = ? AND photo_stack > -1", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
 		}
@@ -269,17 +269,6 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		log.Errorf("index: %s while updating covers of %s", err, logName)
 	}
 
-	// Update photo path and name based on the main filename.
-	if photoUID == "" && !fileStacked && (fileRenamed || photo.PhotoName == "") {
-		photo.PhotoPath = filePath
-
-		if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
-			photo.PhotoName = fullBase
-		} else {
-			photo.PhotoName = fileBase
-		}
-	}
-
 	// Clear (previous) file error.
 	file.FileError = ""
 
@@ -291,6 +280,17 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 			}
 		} else {
 			file.FilePrimary = m.IsJpeg()
+		}
+	}
+
+	// Update photo path and name based on the main filename.
+	if !fileStacked && (file.FilePrimary || photo.PhotoName == "") {
+		photo.PhotoPath = filePath
+
+		if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
+			photo.PhotoName = fullBase
+		} else {
+			photo.PhotoName = fileBase
 		}
 	}
 

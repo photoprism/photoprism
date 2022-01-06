@@ -9,8 +9,8 @@ msgstr ""
 msgid ""
 msgstr ""
 
-#: src/dialog/photo/files.vue:132
-#: src/dialog/photo/files.vue:129
+#: src/dialog/photo/files.vue:140
+#: src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
 msgstr ""
 
@@ -329,8 +329,8 @@ msgstr ""
 msgid "Artist"
 msgstr ""
 
-#: src/dialog/photo/files.vue:123
-#: src/dialog/photo/files.vue:120
+#: src/dialog/photo/files.vue:131
+#: src/dialog/photo/files.vue:128
 msgid "Aspect Ratio"
 msgstr ""
 
@@ -1080,11 +1080,6 @@ msgstr ""
 msgid "Hash"
 msgstr ""
 
-#: src/dialog/photo/files.vue:137
-#: src/dialog/photo/files.vue:134
-msgid "HDR"
-msgstr ""
-
 #: src/options/options.js:115
 msgid "Hebrew"
 msgstr ""
@@ -1108,6 +1103,11 @@ msgstr ""
 
 #: src/pages/settings/general.vue:295
 msgid "Hide photos that have been moved to archive."
+msgstr ""
+
+#: src/dialog/photo/files.vue:109
+#: src/dialog/photo/files.vue:106
+msgid "High Dynamic Range (HDR)"
 msgstr ""
 
 #: src/options/options.js:121
@@ -1719,8 +1719,8 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
-#: src/dialog/photo/files.vue:129
-#: src/dialog/photo/files.vue:126
+#: src/dialog/photo/files.vue:137
+#: src/dialog/photo/files.vue:134
 msgid "Orientation"
 msgstr ""
 
@@ -1858,8 +1858,8 @@ msgstr ""
 msgid "Polish"
 msgstr ""
 
-#: src/dialog/photo/files.vue:109
-#: src/dialog/photo/files.vue:106
+#: src/dialog/photo/files.vue:117
+#: src/dialog/photo/files.vue:114
 msgid "Portrait"
 msgstr ""
 
@@ -1909,8 +1909,8 @@ msgstr ""
 msgid "Product Feedback"
 msgstr ""
 
-#: src/dialog/photo/files.vue:117
-#: src/dialog/photo/files.vue:114
+#: src/dialog/photo/files.vue:125
+#: src/dialog/photo/files.vue:122
 msgid "Projection"
 msgstr ""
 
@@ -2673,11 +2673,11 @@ msgstr ""
 #: src/dialog/photo/archive.vue:18
 #: src/dialog/photo/files.vue:104
 #: src/dialog/photo/files.vue:112
-#: src/dialog/photo/files.vue:140
+#: src/dialog/photo/files.vue:120
 #: src/dialog/photo/files.vue:166
 #: src/dialog/photo/files.vue:101
 #: src/dialog/photo/files.vue:109
-#: src/dialog/photo/files.vue:137
+#: src/dialog/photo/files.vue:117
 #: src/dialog/photo/files.vue:163
 #: src/dialog/photo/info.vue:284
 #: src/dialog/photo/info.vue:305

@@ -95,12 +95,12 @@ func IndexRelated(related RelatedFiles, ind *Index, opt IndexOptions) (result In
 	} else if !result.Indexed() {
 		// Skip related files if main file was not indexed but for example skipped.
 		if related.Len() > 1 {
-			log.Warnf("index: %s main %s file %s has %s", result, related.MainFileType(), related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
+			log.Warnf("index: %s has %s", related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
 		}
 		return result
 	} else if result.Stacked() && related.Len() > 1 {
 		// Show info if main file was stacked and has additional related files.
-		log.Infof("index: %s main %s file %s has %s", result, related.MainFileType(), related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
+		log.Infof("index: %s has %s", related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
 	}
 
 	done[related.Main.FileName()] = true

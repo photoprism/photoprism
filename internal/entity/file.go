@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -29,6 +30,8 @@ const (
 )
 
 type Files []File
+
+var primaryFileMutex = sync.Mutex{}
 
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
@@ -331,11 +334,14 @@ func (m *File) Create() error {
 		return err
 	}
 
-	return nil
+	return m.ResolvePrimary()
 }
 
-// ResolvePrimary ensures there is only one primary file for a photo..
+// ResolvePrimary ensures there is only one primary file for a photo.
 func (m *File) ResolvePrimary() error {
+	primaryFileMutex.Lock()
+	defer primaryFileMutex.Unlock()
+
 	if m.FilePrimary {
 		return UnscopedDb().Exec("UPDATE `files` SET file_primary = (id = ?) WHERE photo_id = ?", m.ID, m.PhotoID).Error
 	}

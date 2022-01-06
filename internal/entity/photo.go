@@ -788,7 +788,7 @@ func (m *Photo) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
-// SetFavorite updates the favorite status of a photo.
+// SetFavorite updates the favorite flag of a photo.
 func (m *Photo) SetFavorite(favorite bool) error {
 	changed := m.PhotoFavorite != favorite
 	m.PhotoFavorite = favorite
@@ -812,6 +812,14 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	}
 
 	return nil
+}
+
+// SetStack updates the stack flag of a photo.
+func (m *Photo) SetStack(stack int8) {
+	if m.PhotoStack != stack {
+		m.PhotoStack = stack
+		Log("photo", "update stack flag", m.Update("PhotoStack", m.PhotoStack))
+	}
 }
 
 // Approve approves a photo in review.

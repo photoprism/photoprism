@@ -66,6 +66,10 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			log.Errorf("photo: %s (unstack %s)", err, sanitize.Log(baseName))
 			AbortEntityNotFound(c)
 			return
+		} else if file.Photo == nil {
+			log.Errorf("photo: cannot find photo for file uid %s (unstack)", fileUID)
+			AbortEntityNotFound(c)
+			return
 		}
 
 		stackPhoto := *file.Photo
@@ -76,6 +80,9 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			AbortUnexpected(c)
 			return
 		}
+
+		// Flag original photo as unstacked / not stackable.
+		stackPhoto.SetStack(entity.IsUnstacked)
 
 		related, err := unstackFile.RelatedFiles(false)
 
@@ -117,6 +124,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			files = related.Files
 		}
 
+		// Create new photo, also flagged as unstacked / not stackable.
 		newPhoto := entity.NewPhoto(false)
 		newPhoto.PhotoPath = unstackFile.RootRelPath()
 		newPhoto.PhotoName = unstackFile.BasePrefix(false)
