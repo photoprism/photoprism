@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/development:20211210 as build
+FROM photoprism/develop:20211218 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM

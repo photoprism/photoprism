@@ -1,9 +1,9 @@
 version: '3.5'
 
-# Stable Release (for developers only)
-
+## Latest Stable Release for QA
 services:
-  ## App Server (required)
+  ## App Server
+  ## Docs: https://docs.photoprism.org/
   photoprism-latest:
     image: photoprism/photoprism:latest
     security_opt:
@@ -11,10 +11,20 @@ services:
       - apparmor:unconfined
     ports:
       - "2344:2342" # HTTP port (host:container)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.photoprism-latest.loadbalancer.server.port=2342"
+      - "traefik.http.routers.photoprism-latest.entrypoints=websecure"
+      - "traefik.http.routers.photoprism-latest.rule=Host(`photoprism-latest.traefik.net`)"
+      - "traefik.http.routers.photoprism-latest.tls.domains[0].main=traefik.net"
+      - "traefik.http.routers.photoprism-latest.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.photoprism-latest.tls=true"
     environment:
-      PHOTOPRISM_UID: ${UID:-1000}
-      PHOTOPRISM_GID: ${GID:-1000}
-      PHOTOPRISM_SITE_URL: "http://localhost:2344/"
+      PHOTOPRISM_UID: ${UID:-1000}                   # User ID
+      PHOTOPRISM_GID: ${GID:-1000}                   # Group ID
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Admin password (min 4 characters)
+      ## Public server URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_SITE_URL: "https://photoprism-latest.traefik.net/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
@@ -32,7 +42,6 @@ services:
       PHOTOPRISM_DATABASE_NAME: "latest"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # The initial admin password (min 4 characters)
       PHOTOPRISM_DISABLE_CHOWN: "false"       # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"     # Don't backup photo and album metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"      # Disables built-in WebDAV server
@@ -56,7 +65,8 @@ services:
       - "./storage/latest:/photoprism/storage"
       - "./storage/originals:/photoprism/originals"
 
+## Join shared "photoprism-develop" network
 networks:
   default:
     external:
-      name: shared
+      name: photoprism-develop

@@ -152,7 +152,7 @@ services:
     expose:
       - "4001" # Database port (internal)
     volumes:
-      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
@@ -167,7 +167,7 @@ services:
     expose:
       - "4001" # Database port (internal)
     volumes:
-      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism

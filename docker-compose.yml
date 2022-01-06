@@ -7,7 +7,19 @@ version: '3.5'
 ## - Keycloak OpenID Connect Provider
 ## - and Dummy Services
 services:
-  ## App Server
+  ## Traefik v2.5.5 HTTPS Reverse Proxy
+  ## Includes test certificates for https://*.traefik.net/
+  ## Docs: https://doc.traefik.io/traefik/
+  traefik:
+    image: photoprism/traefik:20211218
+    ports:
+      # - "80:80" # HTTP (redirects to HTTPS)
+      - "443:443" # HTTPS (required)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # Host names are configured with Docker labels
+
+  ## App Build Environment
+  ## Docs: https://docs.photoprism.org/developer-guide/
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -18,18 +30,33 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
-      - "2342:2342" # Default HTTP port (host:container)
-      - "2343:2343" # Acceptance Test HTTP port (host:container)
+      - "2342:2342"   # Default HTTP port (host:container)
+      - "2343:2343"   # Acceptance Test HTTP port (host:container)
+      - "40000:40000" # Go Debugger (host:container)
     shm_size: "2gb"
+    links:
+      - "traefik:keycloak.traefik.net"
+      - "traefik:photoprism.traefik.net"
+      - "traefik:dummy-webdav.traefik.net"
+      - "traefik:dummy-oidc.traefik.net"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
+      - "traefik.http.routers.photoprism.entrypoints=websecure"
+      - "traefik.http.routers.photoprism.rule=Host(`photoprism.traefik.net`)"
+      - "traefik.http.routers.photoprism.tls.domains[0].main=traefik.net"
+      - "traefik.http.routers.photoprism.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.photoprism.tls=true"
     environment:
       GOPROXY: "https://proxy.golang.org,direct"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # The initial admin password (min 4 characters)
-      PHOTOPRISM_UID: ${UID:-1000}
-      PHOTOPRISM_GID: ${GID:-1000}
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_UID: ${UID:-1000}                   # User ID
+      PHOTOPRISM_GID: ${GID:-1000}                   # Group ID
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # Admin password (min 4 characters)
+      ## External development server URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_SITE_URL: "https://photoprism.traefik.net/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "AI-powered app for browsing, organizing & sharing your photo collection."
+      PHOTOPRISM_SITE_DESCRIPTION: "AI-Powered Photos App. Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
@@ -69,6 +96,10 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 92                    # Set to 95 for high-quality thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                        # Show TensorFlow log messages for development
+      ## OpenID Connect Provider (pre-configured for local Keycloak test server):
+      PHOTOPRISM_OIDC_ISSUER_URL: "https://keycloak.traefik.net/auth/realms/master"
+      PHOTOPRISM_OIDC_CLIENT_ID: "photoprism-develop"
+      PHOTOPRISM_OIDC_CLIENT_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
       ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       ## Hardware video transcoding config (optional):
@@ -98,7 +129,7 @@ services:
     ports:
       - "4001:4001" # Database port (host:container)
     volumes:
-      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
@@ -113,25 +144,73 @@ services:
     expose:
       - "4001" # Database port (internal)
     volumes:
-      - "./scripts/sql/init-test-databases.sql:/docker-entrypoint-initdb.d/init-test-databases.sql"
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       MYSQL_ROOT_PASSWORD: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: photoprism
       MYSQL_DATABASE: photoprism
 
+  ## Keycloak OpenID Connect Provider
+  ## Test User: user / photoprism
+  ## Test Admin: admin / photoprism
+  ## Docs: https://www.keycloak.org/getting-started/getting-started-docker
+  keycloak:
+    image: quay.io/keycloak/keycloak:16.0.0
+    links:
+      - "traefik:photoprism.traefik.net"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.rule=Host(`keycloak.traefik.net`)"
+      - "traefik.http.routers.keycloak.tls.domains[0].main=traefik.net"
+      - "traefik.http.routers.keycloak.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.keycloak.tls=true"
+    environment:
+      KEYCLOAK_USER: "admin"
+      KEYCLOAK_PASSWORD: "photoprism"
+      KEYCLOAK_FRONTEND_URL: "https://keycloak.traefik.net/auth"
+      DB_VENDOR: "mariadb"
+      DB_PORT: 4001
+      DB_DATABASE: "keycloak"
+      DB_USER: "keycloak"
+      DB_PASSWORD: "keycloak"
+
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:20211109
+    image: photoprism/dummy-webdav:20211218
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dummy-webdav.loadbalancer.server.port=80"
+      - "traefik.http.routers.dummy-webdav.entrypoints=websecure"
+      - "traefik.http.routers.dummy-webdav.rule=Host(`dummy-webdav.traefik.net`)"
+      - "traefik.http.routers.dummy-webdav.tls.domains[0].main=traefik.net"
+      - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.dummy-webdav.tls=true"
 
+  ## Dummy OpenID Connect Server
+  dummy-oidc:
+    image: photoprism/dummy-oidc:20211218
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
+      - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
+      - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.traefik.net`)"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].main=traefik.net"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.traefik.net"
+      - "traefik.http.routers.dummy-oidc.tls=true"
+
+## Create named volume for Go module cache
 volumes:
   go-mod:
     driver: local
 
+## Create shared "photoprism-develop" network for connecting with services in other docker-compose.yml files
 networks:
   default:
-    name: shared
+    name: photoprism-develop
     driver: bridge

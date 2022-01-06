@@ -202,22 +202,22 @@ clean:
 	rm -rf storage/backup
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
-docker-development:
+docker-develop:
 	docker pull --platform=amd64 ubuntu:21.10
 	docker pull --platform=arm64 ubuntu:21.10
-	scripts/docker/multiarch.sh development linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/multiarch.sh develop linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-preview:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64
 docker-release:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
-docker-armv7-development:
+docker-armv7-develop:
 	docker pull --platform=arm ubuntu:21.10
-	scripts/docker/arch.sh development linux/arm armv7 /armv7
+	scripts/docker/arch.sh develop linux/arm armv7 /armv7
 docker-armv7-preview:
-	docker pull --platform=arm photoprism/development:armv7
+	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/arch.sh photoprism linux/arm armv7-preview /armv7
 docker-armv7-release:
-	docker pull --platform=arm photoprism/development:armv7
+	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/arch.sh photoprism linux/arm armv7 /armv7
 docker-local:
 	scripts/docker/build.sh photoprism

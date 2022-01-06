@@ -1,11 +1,12 @@
-##################################################### BUILD STAGE ######################################################
-FROM ubuntu:21.10 as build
+FROM ubuntu:21.10
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
+ARG GOPROXY
+ARG GODEBUG
 
 # Set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -68,15 +69,22 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null &
     nano \
     git \
     gettext \
+    mariadb-client \
     sqlite3 \
     tzdata \
     gconf-service \
+    firefox \
     libheif-examples \
     exiftool \
+    rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
     libavcodec-extra \
+    lsof \
+    apache2-utils \
+    fonts-roboto \
     sudo && \
+    [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
     /root/.local/bin/install-devtools.sh ${TARGETARCH} && \
     /root/.local/bin/install-go.sh ${TARGETARCH} && \
@@ -93,12 +101,15 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
 # Copy additional scripts to image
 COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
-COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
 
 # Install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
     /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
+    [ "$TARGETARCH" = "arm" ] || \
+    /usr/local/go/bin/go install github.com/psampaz/go-mod-outdated@latest && \
+    /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
     echo "alias go=richgo" > /root/.bash_aliases && \
     cp /go/bin/gosu /bin/gosu
 
@@ -111,6 +122,11 @@ RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism &
     chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
     chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
     find /go -type d -print0 | xargs -0 chmod 777
+
+# Copy mysql client config for develop
+COPY --chown=root:root /docker/develop/.my.cnf /root/.my.cnf
+COPY --chown=photoprism:photoprism /docker/develop/.my.cnf /photoprism/.my.cnf
+RUN chmod 644 /root/.my.cnf /photoprism/.my.cnf
 
 # Set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"

@@ -1,7 +1,7 @@
-FROM photoprism/development:20211210
+FROM photoprism/develop:20211218
 
 # Copy latest entrypoint script
-COPY --chown=root:root /docker/development/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
 
 # Set up project directory
