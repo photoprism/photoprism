@@ -1,5 +1,11 @@
 # Dockerfiles and Docker Compose Examples
 
+[**Dockerfiles**](https://docs.docker.com/engine/reference/builder/) are text documents that contain all commands a user
+could call in a terminal to assemble an application image.
+
+[**Docker Compose**](https://docs.docker.com/compose/) uses human-readable [YAML files](https://docs.photoprism.app/developer-guide/technologies/yaml/)
+to configure all application services so you can easily start them with a single command.
+
 ## Why are we using Docker? ##
 
 Containers are nothing new; [Solaris Zones](https://en.wikipedia.org/wiki/Solaris_Containers) have been around for
@@ -13,7 +19,8 @@ systems and devices, which saves our team a lot of time that we can then spend m
 providing support and developing one of the many features that users are waiting for.
 
 Human-readable and versioned Dockerfiles as part of our public source code also help avoid surprises and
-"works for me" moments by enabling us to have the exact same environment everywhere in development and production.
+"works for me" moments by enabling us to have the exact same environment everywhere in [development](develop/Dockerfile)
+and [production](photoprism/Dockerfile).
 
 Last but not least, virtually all file format parsers have vulnerabilities that just haven't been discovered yet.
 This is a known risk that can affect you even if your computer is not directly connected to the Internet.
