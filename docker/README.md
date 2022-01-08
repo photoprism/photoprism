@@ -27,17 +27,28 @@ This is a known risk that can affect you even if your computer is not directly c
 Running apps in a container with limited host access is an easy way to improve security without
 compromising performance and usability.
 
-## Virtual Machines ##
+## What about Virtual Machines? ##
 
 A virtual machine running its own operating system provides more security, but typically has side effects
-such as lower performance and more difficult handling. Note that you can also run Docker in a VM to get the
-best of both worlds. It's essentially what happens when you run Docker on operating systems other than Linux.
+such as lower performance and more difficult handling. You can also run Docker in a VM to get the best of
+both worlds. It's essentially what happens when you run Docker on operating systems other than Linux.
 
-## Setup without Docker ##
+## Alternatives ##
 
-If your environment doesn't support Docker and there are no [ports](https://docs.photoprism.app/getting-started/freebsd/)
-or native packages available, you can build and install PhotoPrism from the publicly available
-[source code](https://docs.photoprism.app/developer-guide/setup/):
+### Installation Packages ###
+
+Everyone is invited to contribute by building and testing installation packages
+for Linux distributions and other operating systems! 💐
+
+Visit [docs.photoprism.app/developer-guide](https://docs.photoprism.app/developer-guide/) to learn more.
+
+### BSD Ports ###
+
+An [unofficial port](https://docs.photoprism.app/getting-started/freebsd/) is available for FreeBSD / FreeNAS users. 
+
+### Building From Source ###
+
+You can build and install PhotoPrism from the publicly available [source code](https://docs.photoprism.app/developer-guide/setup/):
 
 ```bash
 git clone https://github.com/photoprism/photoprism.git
@@ -51,12 +62,4 @@ need to use the exact same versions, so it's possible to replace packages with w
 
 Note we don't have the resources to provide private users with dependencies and TensorFlow libraries for their personal
 environments. We therefore recommend learning Docker if your operating system supports it. Docker vastly simplifies
-installation and upgrades. It saves our team a lot of time that we can then spend more effectively, see next question.
-
-## Contribute ##
-
-Everyone is invited to contribute by building and testing native packages
-for Linux distributions and other operating systems! 💐
-
-Visit [docs.photoprism.app/developer-guide](https://docs.photoprism.app/developer-guide/) to learn more.
-
+installation and upgrades. It saves our team a lot of time that we can then spend more effectively.
