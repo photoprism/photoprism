@@ -3,7 +3,7 @@
 [**Dockerfiles**](https://docs.docker.com/engine/reference/builder/) are text documents that contain all commands a user
 could call in a terminal to assemble an application image.
 
-[**Docker Compose**](https://docs.docker.com/compose/) uses human-friendly [YAML files](https://docs.photoprism.app/developer-guide/technologies/yaml/)
+[**Docker Compose**](https://docs.docker.com/compose/) uses [human-friendly YAML files](https://docs.photoprism.app/developer-guide/technologies/yaml/)
 to configure all application services so you can easily start them with a single command.
 
 ## Why are we using Docker? ##
