@@ -252,6 +252,7 @@ fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:
 	go fmt ./pkg/... ./internal/... ./cmd/...
+	gofmt -w -s pkg internal cmd
 	goimports -w pkg internal cmd
 tidy:
 	go mod tidy

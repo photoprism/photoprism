@@ -108,7 +108,7 @@ func getPassword(prompt string) string {
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, os.Interrupt)
 	go func() {
-		for _ = range signalChannel {
+		for range signalChannel {
 			fmt.Println("")
 			termEcho(true)
 			os.Exit(1)

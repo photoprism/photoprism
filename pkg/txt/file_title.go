@@ -57,7 +57,7 @@ func FileTitle(s string) string {
 	title = strings.ReplaceAll(title, "  ", " ")
 
 	// Remove small words from title ending.
-	for w, _ := range SmallWords {
+	for w := range SmallWords {
 		title = strings.TrimSuffix(title, " "+w)
 	}
 

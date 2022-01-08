@@ -34,7 +34,7 @@ func (i *jsonImporter) Import(file string, start, end int) ([][]float64, error) 
 		return [][]float64{}, err
 	}
 
-	for i, _ := range d {
+	for i := range d {
 		c = 0
 
 		for j := start; j <= end; j++ {

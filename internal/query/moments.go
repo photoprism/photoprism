@@ -229,7 +229,7 @@ func MomentsStates(threshold int) (results Moments, err error) {
 func MomentsLabels(threshold int) (results Moments, err error) {
 	var cats []string
 
-	for cat, _ := range MomentLabels {
+	for cat := range MomentLabels {
 		cats = append(cats, cat)
 	}
 
