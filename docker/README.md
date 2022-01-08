@@ -31,8 +31,8 @@ compromising performance and usability.
 
 A virtual machine running its own operating system provides more security, but typically has side effects
 such as lower performance and more difficult handling. You can also run Docker in a VM to get the best of
-both worlds. It's essentially what happens when you run Docker on operating systems other than Linux
-or on [virtual servers in the cloud](https://docs.photoprism.app/getting-started/cloud/digitalocean/).
+both worlds. It's essentially what happens when you run dockerized applications on [virtual cloud servers](https://docs.photoprism.app/getting-started/cloud/digitalocean/)
+and operating systems other than Linux.
 
 ## Alternatives ##
 
