@@ -1,13 +1,13 @@
 ---
 name: Question
 about: You have a general question or need assistance
-title: STOP! PLEASE NEVER USE GITHUB ISSUES, USE GITHUB DISCUSSIONS INSTEAD! 🙏
+title: 'STOP! NEVER USE GITHUB ISSUES, USE GITHUB DISCUSSIONS INSTEAD! 🙏'
 labels: question
 assignees: ''
 
 ---
 
-Never use GitHub Issues if you are unsure, have a general question, or need assistance. Thank you! 💐
+Never use GitHub Issues if you have a general question or need assistance. Thank you! 💐
 
 You are welcome to use GitHub Discussions instead:
 https://github.com/photoprism/photoprism/discussions
