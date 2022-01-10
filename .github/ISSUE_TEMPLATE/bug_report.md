@@ -53,6 +53,8 @@ https://photoprism.app/contact
 Learn how to diagnose frontend issues:
 https://docs.photoprism.app/getting-started/troubleshooting/browsers/
 
+Always provide a sample file if it is a file, import or index issue, otherwise we will not be able to process your report.
+
 **Which software versions do you use?**
 
 Your app version / build number can be found in *Settings* when you scroll to the bottom.
@@ -63,6 +65,8 @@ Your app version / build number can be found in *Settings* when you scroll to th
 - Browser Types & Versions (Firefox, Chrome, Safari on iPhone,...)
 - Browser Plugins (if any)
 
+Always provide PhotoPrism, Database, and Operating System details if it is a server, file, import or index issue, otherwise we will not be able to process your report.
+
 **What device is the backend running on?**
 
 This is especially important if you are reporting a performance, timing, or indexing problem. You can skip this if you are reporting a problem found on our public demo, or if it is a completely unrelated issue, such as a broken page layout.
@@ -72,6 +76,10 @@ This is especially important if you are reporting a performance, timing, or inde
 - Storage Type (HDD, SSD, RAID, USB, Network Storage,...) 
 - anything else that might be helpful
 
+Always provide Device, Memory, and Storage details if it is a server, file, import or index issue, otherwise we will not be able to process your report.
+
 **Do you use a proxy, load balancer, firewall, VPN, or CDN?**
 
 If yes, please specify type and version. You can skip this if you are reporting a completely unrelated issue.
+
+NOTE THAT INCOMPLETE REPORTS CANNOT BE PROCESSED
