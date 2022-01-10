@@ -14,6 +14,9 @@ ONLY CREATE A NEW FEATURE REQUEST AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA A
 
 Never use GitHub Issues if you are unsure, have a general question, or need assistance. Thank you! 🙃
 
+You are welcome to use GitHub Discussions instead:
+https://github.com/photoprism/photoprism/discussions
+
 **Is your feature request related to a problem? Please describe.**
 
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
