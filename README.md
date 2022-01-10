@@ -72,8 +72,8 @@ It provides additional motivation to keep going.
 
 ## Getting Support ##
 
-Please read the [Troubleshooting Guide](https://docs.photoprism.app/getting-started/troubleshooting/)
-before reporting problems. If this doesn't help, or you have other questions:
+Before reporting a bug, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
+to determine the cause of your problem. If this doesn't help, or you have other questions:
 
 - you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
 - and post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
