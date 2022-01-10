@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-ONLY CREATE AN ISSUE AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA EXISTS:
+ONLY CREATE A NEW FEATURE REQUEST AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA ALREADY EXISTS:
 
 - Roadmap: https://github.com/photoprism/photoprism/projects/5
 - Open Issues: https://github.com/photoprism/photoprism/issues
