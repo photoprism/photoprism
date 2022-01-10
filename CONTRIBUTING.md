@@ -16,13 +16,17 @@ Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
 ## Reporting Bugs ##
 
-Before reporting a bug, try to [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/).
+Before reporting a bug, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
+to determine the cause of your problem. If you are unsure, need technical support, or have other questions:
 
-If you ARE UNSURE, need TECHNICAL SUPPORT, or have a GENERAL QUESTION:
-PLEASE USE [GITHUB DISCUSSIONS](https://github.com/photoprism/photoprism/discussions) 🗯
+- you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
+- and post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
 
-When [reporting a problem](https://github.com/photoprism/photoprism/issues), always include the version you are using
-and information about your environment such as browser, operating system, installed memory, and processor type.
+In addition, [sponsors](https://docs.photoprism.app/funding/) receive direct [technical support](https://photoprism.app/contact) via email.
+
+When reporting a [clearly identified bug](https://github.com/photoprism/photoprism/issues), always include the
+version you are using and information about your environment such as browser, operating system, installed memory,
+and processor type (see [template](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md)).
 
 ## Pull Requests ##
 

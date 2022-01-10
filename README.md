@@ -87,7 +87,7 @@ Think of "free software" as in "free speech," not as in "free beer". Thank you! 
 
 *When reporting a problem, always include the version you are using and information
 about your environment such as browser, operating system, installed memory, and
-processor type.*
+processor type (see [template](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md)).*
 
 ## Roadmap ##
 

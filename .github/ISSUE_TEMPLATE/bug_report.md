@@ -54,8 +54,9 @@ Your app version / build number can be found in *Settings* when you scroll to th
 
 - PhotoPrism Architecture & Build Number
 - Database Type & Version (MySQL or SQLite)
-- Browser Types & Versions (Firefox, Chrome, Safari on iPhone,...)
 - Operating System Types & Versions (Linux, Windows, Android,...)
+- Browser Types & Versions (Firefox, Chrome, Safari on iPhone,...)
+- Browser Plugins (if any)
 
 **What device is the backend running on?**
 
@@ -66,6 +67,6 @@ This is especially important if you are reporting a performance, timing, or inde
 - Storage Type (HDD, SSD, RAID, USB, Network Storage,...) 
 - anything else that might be helpful
 
-**Do you use a proxy, load balancer, firewall, or CDN?**
+**Do you use a proxy, load balancer, firewall, VPN, or CDN?**
 
 If yes, please specify type and version. You can skip this if you are reporting a completely unrelated issue.
