@@ -19,7 +19,7 @@ Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 Before reporting a bug, try to [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/).
 
 If you ARE UNSURE, need TECHNICAL SUPPORT, or have a GENERAL QUESTION:
-PLEASE USE [GITHUB DISCUSSIONS](https://github.com/photoprism/photoprism/discussions)! THANK YOU 💐
+PLEASE USE [GITHUB DISCUSSIONS](https://github.com/photoprism/photoprism/discussions) 🗯
 
 When [reporting a problem](https://github.com/photoprism/photoprism/issues), always include the version you are using
 and information about your environment such as browser, operating system, installed memory, and processor type.
