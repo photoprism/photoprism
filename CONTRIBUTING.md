@@ -24,7 +24,7 @@ to determine the cause of your problem. If you are unsure, have a general questi
 
 In addition, [sponsors](https://docs.photoprism.app/funding/) receive direct [technical support](https://photoprism.app/contact) via email.
 
-*When reporting a problem, always include the software versions you are using and [other information about your environment](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) such as browser, browser plugins, operating system, installed memory, and processor type.*
+**When reporting a problem, always include the software versions you are using and [other information about your environment](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) such as [browser](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), browser plugins, operating system, installed memory, and processor type.**
 
 ## Pull Requests ##
 
