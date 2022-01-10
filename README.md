@@ -85,7 +85,7 @@ We'll do our best to answer all your questions. In return, we ask you to [back u
 on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism).
 Think of "free software" as in "free speech," not as in "free beer". Thank you! 💜
 
-**When reporting a problem, always include the software versions you are using and [other information about your environment](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) such as [browser](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), browser plugins, operating system, installed memory, and processor type.**
+**When reporting a problem, always include the software versions you are using and [other information about your environment](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) such as [browser](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), browser plugins, operating system, storage type, memory size, and processor.**
 
 ## Roadmap ##
 
