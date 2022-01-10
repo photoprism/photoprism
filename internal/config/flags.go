@@ -51,12 +51,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:   "public, p",
-		Usage:  "disable password authentication",
+		Usage:  "disable password authentication, WebDAV, and the advanced settings page",
 		EnvVar: "PHOTOPRISM_PUBLIC",
 	},
 	cli.BoolFlag{
 		Name:   "read-only, r",
-		Usage:  "disable import, upload, and delete",
+		Usage:  "disable import, upload, delete, and all other operations that require write permissions",
 		EnvVar: "PHOTOPRISM_READONLY",
 	},
 	cli.BoolFlag{
