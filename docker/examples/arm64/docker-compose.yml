@@ -41,7 +41,7 @@ version: '3.5'
 # docker-compose exec photoprism photoprism faces index
 #
 # All commands may have to be prefixed with "sudo" when not running as root.
-# This will point the home directory placeholder ~ to /root in volume mounts.
+# This will point the home directory shortcut ~ to /root in volume mounts.
 
 services:
   ## App Server (required)
