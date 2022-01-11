@@ -11,8 +11,9 @@ version: '3.5'
 #   It's important to explicitly increase the Docker memory limit to 4 GB or more when using Hyper-V.
 #   The default of 2 GB may reduce indexing performance and cause unexpected restarts.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
-#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
-#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
+#   HTTPS reverse proxy such as Traefik or Caddy. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:
+#   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
 # Documentation : https://docs.photoprism.app/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
@@ -82,16 +83,13 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""
       HOME: "/photoprism"
     working_dir: "/photoprism"
+    ## Storage Folders: use "/" not "\" as separator, "~" is a placeholder for C:/user/{username}, "." for the current directory
     volumes:
-      ## The *originals* folder contains your original photo and video files (- "C:/Directory:/photoprism/originals"):
-      - "~/Pictures:/photoprism/originals/Pictures"
-      ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
-      # - "D:/Pictures:/photoprism/originals/Pictures"
-      # - "E:/Friends:/photoprism/originals/Friends"
-      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
-      # - "E:/:/photoprism/import"
-      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
-      - "./storage:/photoprism/storage"
+      # "C:/user/username/folder:/photoprism/folder"       # example
+      - "~/Pictures:/photoprism/originals"                 # original media files (photos and videos)
+      # - "D:/example/family:/photoprism/originals/family" # *additional* media folders can be mounted like this
+      # - "E:/:/photoprism/import"                         # *optional* base folder from which files can be imported to originals
+      - "./storage:/photoprism/storage"                    # *writable* storage folder for cache, database, and sidecar files (never remove)
 
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql

@@ -8,8 +8,9 @@ version: '3.5'
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
-#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
-#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
+#   HTTPS reverse proxy such as Traefik or Caddy. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:
+#   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
 # Documentation : https://docs.photoprism.app/getting-started/docker-compose/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
@@ -84,16 +85,13 @@ services:
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       HOME: "/photoprism"
     working_dir: "/photoprism"
+    ## Storage Folders: "~" is a placeholder for the home directory of the current user, "." for the current directory
     volumes:
-      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
-      - "~/Pictures:/photoprism/originals"
-      ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
-      # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
-      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
-      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
-      # - "~/Import:/photoprism/import"
-      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
-      - "./storage:/photoprism/storage"
+      # "/host/folder:/photoprism/folder"                # example
+      - "~/Pictures:/photoprism/originals"               # original media files (photos and videos)
+      # - "/example/family:/photoprism/originals/family" # *additional* media folders can be mounted like this
+      # - "~/Import:/photoprism/import"                  # *optional* base folder from which files can be imported to originals
+      - "./storage:/photoprism/storage"                  # *writable* storage folder for cache, database, and sidecar files (never remove)
 
   ## Watchtower upgrades services automatically (optional)
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower

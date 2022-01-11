@@ -82,24 +82,24 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "originals-path",
-		Usage:  "original media library `PATH` containing your photo and video collection",
+		Usage:  "storage `PATH` of your original media files (photos and videos)",
 		EnvVar: "PHOTOPRISM_ORIGINALS_PATH",
 	},
 	cli.IntFlag{
 		Name:   "originals-limit",
 		Value:  1000,
-		Usage:  "original media file size limit in `MB`",
+		Usage:  "file size limit in `MB`",
 		EnvVar: "PHOTOPRISM_ORIGINALS_LIMIT",
-	},
-	cli.StringFlag{
-		Name:   "import-path",
-		Usage:  "optional import `PATH` from which files can be added to originals",
-		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "storage-path",
 		Usage:  "writable storage `PATH` for cache, database, and sidecar files",
 		EnvVar: "PHOTOPRISM_STORAGE_PATH",
+	},
+	cli.StringFlag{
+		Name:   "import-path",
+		Usage:  "optional base `PATH` from which files can be imported to originals",
+		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "cache-path",

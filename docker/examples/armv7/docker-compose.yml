@@ -9,8 +9,9 @@ version: '3.5'
 # - If you see Docker errors related to "cgroups", it may help to add the following to /boot/firmware/cmdline.txt:
 #   cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
-#   HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted
-#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments.
+#   HTTPS reverse proxy such as Traefik or Caddy. Your files and passwords will otherwise be transmitted
+#   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:
+#   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
 # Documentation : https://docs.photoprism.app/getting-started/raspberry-pi/
 # Docker Hub URL: https://hub.docker.com/r/photoprism/photoprism/
@@ -95,16 +96,13 @@ services:
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     working_dir: "/photoprism"
+    ## Storage Folders: "~" is a placeholder for the home directory of the current user, "." for the current directory
     volumes:
-      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
-      - "~/Pictures:/photoprism/originals"
-      ## Multiple folders can be made accessible by mounting them as subfolders of /photoprism/originals:
-      # - "/mnt/Family:/photoprism/originals/Family"    # [folder 1]:/photoprism/originals/[folder 1]
-      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder 2]:/photoprism/originals/[folder 2]
-      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
-      # - "~/Import:/photoprism/import"
-      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
-      - "./storage:/photoprism/storage"
+      # "/host/folder:/photoprism/folder"                # example
+      - "~/Pictures:/photoprism/originals"               # original media files (photos and videos)
+      # - "/example/family:/photoprism/originals/family" # *additional* media folders can be mounted like this
+      # - "~/Import:/photoprism/import"                  # *optional* base folder from which files can be imported to originals
+      - "./storage:/photoprism/storage"                  # *writable* storage folder for cache, database, and sidecar files (never remove)
 
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql

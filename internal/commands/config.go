@@ -42,8 +42,8 @@ func configAction(ctx *cli.Context) error {
 	// Paths.
 	fmt.Printf("%-25s %s\n", "originals-path", conf.OriginalsPath())
 	fmt.Printf("%-25s %d\n", "originals-limit", conf.OriginalsLimit())
-	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "storage-path", conf.StoragePath())
+	fmt.Printf("%-25s %s\n", "import-path", conf.ImportPath())
 	fmt.Printf("%-25s %s\n", "cache-path", conf.CachePath())
 	fmt.Printf("%-25s %s\n", "sidecar-path", conf.SidecarPath())
 	fmt.Printf("%-25s %s\n", "albums-path", conf.AlbumsPath())

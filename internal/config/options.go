@@ -50,8 +50,8 @@ type Options struct {
 	ConfigFile            string  `json:"-"`
 	OriginalsPath         string  `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
 	OriginalsLimit        int64   `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
-	ImportPath            string  `yaml:"ImportPath" json:"-" flag:"import-path"`
 	StoragePath           string  `yaml:"StoragePath" json:"-" flag:"storage-path"`
+	ImportPath            string  `yaml:"ImportPath" json:"-" flag:"import-path"`
 	CachePath             string  `yaml:"CachePath" json:"-" flag:"cache-path"`
 	SidecarPath           string  `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
 	TempPath              string  `yaml:"TempPath" json:"-" flag:"temp-path"`

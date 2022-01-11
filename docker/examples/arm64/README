@@ -54,8 +54,9 @@ a standard 64-bit Linux distribution to run modern server applications, for exam
       - apparmor:unconfined
   ```
 - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
-  HTTPS reverse proxy such as Traefik, Caddy, or NGINX. Your files and passwords will otherwise be transmitted in
-  clear text and can be intercepted by anyone, including your provider, hackers, and governments.
+  HTTPS reverse proxy such as Traefik or Caddy. Your files and passwords will otherwise be transmitted in
+  clear text and can be intercepted by anyone, including your provider, hackers, and governments:
+  https://docs.photoprism.app/getting-started/proxies/traefik/
 
 !!! Note
     Indexing large photo and video collections significantly benefits from local SSD storage and plenty of memory

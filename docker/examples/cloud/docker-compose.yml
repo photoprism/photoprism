@@ -158,20 +158,19 @@ services:
       PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       HOME: "/photoprism"
     working_dir: "/photoprism"
+    ## Storage Folders: "~" is a placeholder for the home directory of the current user, "." for the current directory
     volumes:
-      ## The *originals* folder contains your original photo and video files (- "[host folder]:/photoprism/originals"):
-      - "./originals:/photoprism/originals"
-      ## You may mount an *import* folder from which files can be transferred to *originals* (optional):
-      - "./import:/photoprism/import"
-      ## Cache, session, thumbnail, and sidecar files will be created in the *storage* folder (never remove):
-      - "./storage:/photoprism/storage"
-      - "./backup:/var/lib/photoprism"
+      # "/host/folder:/photoprism/folder"       # example:
+      - "./originals:/photoprism/originals"     # original media files (photos and videos)
+      - "./import:/photoprism/import"           # *optional* base folder from which files can be imported to originals
+      - "./storage:/photoprism/storage"         # *writable* storage folder for cache, database, and sidecar files (never remove)
+      - "./backup:/var/lib/photoprism"          # *optional* storage folder for database backups
 
   ## Traefik Reverse Proxy (required)
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v2.4
+    image: traefik:v2.5
     container_name: traefik
     ports:
       - "80:80"
