@@ -87,6 +87,6 @@ If yes, please specify type and version. You can skip this if you are reporting 
 
 IMPORTANT:
 1. Always provide this information when you have a Reliability, Performance, or Frontend problem, such as failed uploads, connection errors, broken thumbnails, or video playback issues.
-2. If you are using NGINX, add its configuration and consider asking the NGINX community for advice as we do not specialize in supporting their product (which is known to be difficult to configure properly). We recommend using Traefik as reverse proxy instead.
+2. If you are using NGINX, also provide its configuration and/or consider asking the NGINX community for advice as we do not specialize in supporting their product: https://docs.photoprism.app/getting-started/proxies/nginx/
 
 # INCOMPLETE REPORTS CANNOT BE PROCESSED ☹️ #
