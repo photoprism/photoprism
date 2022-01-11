@@ -7,8 +7,8 @@ assignees: ''
 
 ---
 
-ONLY CREATE A NEW ISSUE AFTER YOU HAVE VERIFIED THAT NO SIMILAR OR RELATED ISSUE ALREADY EXISTS:
-https://github.com/photoprism/photoprism/issues
+## ONLY CREATE A NEW ISSUE AFTER YOU HAVE VERIFIED THAT NO SIMILAR OR RELATED ISSUE ALREADY EXISTS ##
+Existing Issues: https://github.com/photoprism/photoprism/issues
 
 Never use GitHub Issues if you are unsure, have a general question, or need assistance. Thank you! 💐
 
@@ -53,33 +53,37 @@ https://photoprism.app/contact
 Learn how to diagnose frontend issues:
 https://docs.photoprism.app/getting-started/troubleshooting/browsers/
 
-Always provide a sample file if it is a file, import or index issue, otherwise we will not be able to process your report.
+IMPORTANT: Always provide a sample file and logs if it is an import or indexing issue, otherwise we will not be able to process your report.
 
 **Which software versions do you use?**
 
-Your app version / build number can be found in *Settings* when you scroll to the bottom.
-
-- PhotoPrism Architecture & Build Number
-- Database Type & Version (MySQL or SQLite)
+- PhotoPrism Architecture & Build Number (AMD64, ARM64, ARMv7,...)
+- Database Type & Version (MariaDB, MySQL, SQLite,...)
 - Operating System Types & Versions (Linux, Windows, Android,...)
 - Browser Types & Versions (Firefox, Chrome, Safari on iPhone,...)
-- Browser Plugins (if any)
+- Browser Plugins & Ad Blockers (if any)
 
-Always provide PhotoPrism, Database, and Operating System details if it is a server, file, import or index issue, otherwise we will not be able to process your report.
+NOTE: The app version / build number can be found in *Settings* when you scroll to the bottom.
 
-**What device is the backend running on?**
+IMPORTANT:
+1. Always provide database and operating system details if it is a backend, performance, import, or indexing issue.
+2. Always provide web browser and operating system details if it is a frontend or performance issue.
 
-This is especially important if you are reporting a performance, timing, or indexing problem. You can skip this if you are reporting a problem found on our public demo, or if it is a completely unrelated issue, such as a broken page layout.
+**What device / server was PhotoPrism installed on?**
+
+This is especially important if you are reporting a performance, import, or indexing problem. You can skip this if you are reporting a problem found on our public demo, or if it is a completely unrelated issue, such as a broken page layout.
 
 - Device / Processor Type (Raspberry Pi 4, AMD Ryzen, Intel,...)
 - Physical Memory incl Swap Space (in GB)
 - Storage Type (HDD, SSD, RAID, USB, Network Storage,...) 
 - anything else that might be helpful
 
-Always provide Device, Memory, and Storage details if it is a server, file, import or index issue, otherwise we will not be able to process your report.
+IMPORTANT: Always provide device, memory, and storage details when you have a backend, performance, import, or indexing issue.
 
 **Do you use a proxy, load balancer, firewall, VPN, or CDN?**
 
 If yes, please specify type and version. You can skip this if you are reporting a completely unrelated issue.
 
-NOTE THAT INCOMPLETE REPORTS CANNOT BE PROCESSED
+IMPORTANT: Always provide this information if the issue is a performance, reliability, or frontend problem, such as connection errors, broken thumbnails, or video playback issues.
+
+# INCOMPLETE REPORTS CANNOT BE PROCESSED #
