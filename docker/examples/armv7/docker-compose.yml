@@ -53,8 +53,6 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ## Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
-    # user: "1000:1000"
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
@@ -87,12 +85,14 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ## Set a non-root user, group, or custom umask if your Docker environment doesn't support this natively:
+      ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
       HOME: "/photoprism"
-    ## Hardware devices for video transcoding and machine learning (optional):
+    ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
+    # user: "1000:1000"
+    ## Hardware devices for video transcoding and machine learning (optional)
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     working_dir: "/photoprism"

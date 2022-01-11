@@ -50,8 +50,6 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ## Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
-    # user: "1000:1000"
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
@@ -77,13 +75,15 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ## Set a non-root user, group, or custom umask if your Docker environment doesn't support this natively:
+      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root)
+      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
+      ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
-      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       HOME: "/photoprism"
+    ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
+    # user: "1000:1000"
     working_dir: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:

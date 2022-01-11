@@ -82,7 +82,7 @@ version: '3.5'
 #
 #  If your server has a public domain name, please disable the self-signed
 #  certificate and enable domain based routing in docker-compose.yml and
-#  traefik.yaml (see inline instructions in !! UPPERCASE !!):
+#  traefik.yaml (see inline instructions in !! UPPERCASE !!)
 #
 #    ssh root@<YOUR SERVER IP>
 #    cd /opt/photoprism
@@ -108,7 +108,7 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ## Run as a specific, non-root user (see https://docs.docker.com/engine/reference/run/#user):
+    ## Run as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
     user: "1000:1000"
     ## Don't expose port when running behind Traefik reverse proxy!
     # ports:

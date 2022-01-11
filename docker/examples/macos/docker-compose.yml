@@ -76,7 +76,7 @@ services:
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
+      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root)
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       HOME: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
