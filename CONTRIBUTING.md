@@ -10,13 +10,13 @@ We welcome contributions of any kind, including blog posts, tutorials, testing, 
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other contributors, and discuss your ideas.
-
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
 ## Reporting Bugs ##
 
 Before reporting a bug, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
-to determine the cause of your problem. If you are unsure, have a general question, or need assistance:
+to determine the cause of your problem. If you have a general question, need help, or an issue has not
+(yet) been clearly identified:
 
 - you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
 - and post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)

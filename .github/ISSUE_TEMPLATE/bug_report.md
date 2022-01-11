@@ -10,7 +10,7 @@ assignees: ''
 ## ONLY CREATE A NEW ISSUE AFTER YOU HAVE VERIFIED THAT NO SIMILAR OR RELATED ISSUE ALREADY EXISTS ##
 Existing Issues: https://github.com/photoprism/photoprism/issues
 
-Never use GitHub Issues if you are unsure, have a general question, or need assistance. Thank you! 💐
+Never use GitHub Issues if you have a general question, need help, or an issue has not (yet) been clearly identified. Thank you! 💐
 
 You are welcome to use GitHub Discussions instead:
 https://github.com/photoprism/photoprism/discussions
