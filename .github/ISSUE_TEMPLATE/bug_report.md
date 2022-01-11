@@ -75,7 +75,7 @@ IMPORTANT:
 This is especially important if you are reporting a Performance, Import, or Indexing problem. You can skip this if you are reporting a problem found on our public demo, or if it is a completely unrelated issue, such as a broken page layout.
 
 - Device / Processor Type (Raspberry Pi 4, AMD Ryzen, Intel,...)
-- Physical Memory incl Swap Space (in GB)
+- Physical Memory & Swap Space (in GB)
 - Storage Type (HDD, SSD, RAID, USB, Network Storage,...) 
 - anything else that might be helpful
 
