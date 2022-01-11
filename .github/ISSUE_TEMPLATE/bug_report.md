@@ -63,7 +63,7 @@ IMPORTANT: Always provide a sample file and logs if it is an Import, Indexing, o
 - Browser Types & Versions (Firefox, Chrome, Safari on iPhone,...)
 - Browser Plugins & Ad Blockers (if any)
 
-NOTE: The app version / build number can be found in *Settings* when you scroll to the bottom. MySQL 8 is not supported anymore, see FAQs and Release Notes.
+NOTE: The app version / build number can be found in *Settings* when you scroll to the bottom. MySQL 8 is not officially supported anymore, see FAQs and Release Notes.
 
 IMPORTANT:
 1. Always provide database and operating system details if it is a Backend, Import, or Indexing issue.
