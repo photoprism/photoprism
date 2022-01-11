@@ -86,4 +86,4 @@ If yes, please specify type and version. You can skip this if you are reporting 
 
 IMPORTANT: Always provide this information if the issue is a performance, reliability, or frontend problem, such as connection errors, broken thumbnails, or video playback issues.
 
-# INCOMPLETE REPORTS CANNOT BE PROCESSED #
+# INCOMPLETE REPORTS CANNOT BE PROCESSED ☹️ #
