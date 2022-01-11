@@ -96,7 +96,7 @@ services:
     # devices:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     working_dir: "/photoprism"
-    ## Storage Folders: "~" is a placeholder for the home directory of the current user, "." for the current directory
+    ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
       # "/host/folder:/photoprism/folder"                # example
       - "~/Pictures:/photoprism/originals"               # original media files (photos and videos)

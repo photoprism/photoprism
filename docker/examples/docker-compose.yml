@@ -101,7 +101,7 @@ services:
     #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
     #  - "/dev/dri/card0:/dev/dri/card0"
     working_dir: "/photoprism"
-    ## Storage Folders: "~" is a placeholder for the home directory of the current user, "." for the current directory
+    ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
       # "/host/folder:/photoprism/folder"                # example
       - "~/Pictures:/photoprism/originals"               # original media files (photos and videos)

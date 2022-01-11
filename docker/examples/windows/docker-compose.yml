@@ -83,7 +83,7 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""
       HOME: "/photoprism"
     working_dir: "/photoprism"
-    ## Storage Folders: use "/" not "\" as separator, "~" is a placeholder for C:/user/{username}, "." for the current directory
+    ## Storage Folders: use "/" not "\" as separator, "~" is a shortcut for C:/user/{username}, "." for the current directory
     volumes:
       # "C:/user/username/folder:/photoprism/folder"       # example
       - "~/Pictures:/photoprism/originals"                 # original media files (photos and videos)

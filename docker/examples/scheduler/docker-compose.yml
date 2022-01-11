@@ -92,7 +92,7 @@ services:
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       HOME: "/photoprism"
     working_dir: "/photoprism"
-    ## Storage Folders: "~" is a placeholder for the home directory of the current user, "." for the current directory
+    ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
       # "/host/folder:/photoprism/folder"                # example
       - "~/Pictures:/photoprism/originals"               # original media files (photos and videos)
