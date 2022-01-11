@@ -53,7 +53,7 @@ https://photoprism.app/contact
 Learn how to diagnose frontend issues:
 https://docs.photoprism.app/getting-started/troubleshooting/browsers/
 
-IMPORTANT: Always provide a sample file and logs if it is an import or indexing issue, otherwise we will not be able to process your report.
+IMPORTANT: Always provide a sample file and logs if it is an import, indexing, or metadata issue, otherwise we will not be able to process your report.
 
 **Which software versions do you use?**
 
