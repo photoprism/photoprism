@@ -69,7 +69,7 @@ IMPORTANT:
 1. Always provide database and operating system details if it is a backend, performance, import, or indexing issue.
 2. Always provide web browser and operating system details if it is a frontend or performance issue.
 
-**What device / server was PhotoPrism installed on?**
+**On what kind of device is PhotoPrism installed?**
 
 This is especially important if you are reporting a performance, import, or indexing problem. You can skip this if you are reporting a problem found on our public demo, or if it is a completely unrelated issue, such as a broken page layout.
 
