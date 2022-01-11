@@ -56,8 +56,8 @@ installation and upgrades. It saves our team a lot of time that we can then spen
 
 ### Installation Packages ###
 
-Everyone is [invited to contribute](https://docs.photoprism.app/developer-guide/) by building and testing installation
-packages for Linux distributions and other operating systems! We currently don't have the resources to do this,
+Everyone is invited to [contribute by building and testing standalone packages](https://docs.photoprism.app/developer-guide/)
+for Linux distributions and other operating systems. We currently don't have the resources to do this,
 as new versions are released several times a month and the long list of dependencies would lead to an enormous
 testing effort.
 
