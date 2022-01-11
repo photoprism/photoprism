@@ -41,7 +41,7 @@ A clear and concise description of what you expected to happen.
 
 **What could be the cause of your problem?**
 
-Before reporting a bug, try to determine the cause of your problem:
+Try to determine the cause of your problem before submitting a bug report:
 https://docs.photoprism.app/getting-started/troubleshooting/
 
 **Can you provide us with example files for testing, error logs, or screenshots?**
