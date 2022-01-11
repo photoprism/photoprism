@@ -1,8 +1,8 @@
 # Every Contribution Makes a Difference
 
-Think of Open Source development as free training with a visible outcome. Exploring new 
-technologies is easier than in typical enterprise environments, where development efforts 
-are more focused on immediate results.
+Think of Open Source development as free training with a visible outcome. Exploring new technologies
+is easier than in traditional enterprise environments, where risk tends to be avoided and developers
+often struggle to maintain decades-old code full of technical debt.
 
 We welcome contributions of any kind, including bug reports, testing, writing documentation,
 tutorials, blog posts, and pull requests.
