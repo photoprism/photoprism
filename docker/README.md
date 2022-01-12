@@ -50,7 +50,7 @@ Missing build dependencies must be installed manually as shown in our human-read
 [Dockerfile](https://github.com/photoprism/photoprism/blob/develop/docker/develop/Dockerfile). You often don't
 need to use the exact same versions, so it's possible to replace packages with what is available in your environment.
 
-Note we don't have the resources to provide private users with dependencies and TensorFlow libraries for their personal
+Note we don't have the resources to provide private users with dependencies and [TensorFlow libraries](https://dl.photoprism.app/tensorflow/) for their personal
 environments. We therefore recommend learning Docker if your operating system supports it. Docker vastly simplifies
 installation and upgrades. It saves our team a lot of time that we can then spend more effectively.
 
