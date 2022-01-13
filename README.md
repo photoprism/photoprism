@@ -110,10 +110,9 @@ Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Communit
 to get regular updates, connect with other users, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
-## Contributions ##
+## Every Contribution Makes a Difference ##
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
-
 [The Developer Guide contains all information necessary to get you started.](https://docs.photoprism.app/developer-guide/)
 
 ## PhotoPrism® Trademark ##
