@@ -15,7 +15,7 @@ You can run it at home, on a private server, or in the cloud.
 
 ![](https://dl.photoprism.app/img/ui/desktop-1000px.jpg)
 
-To get a first impression, you're welcome to play with our public demo at [demo.photoprism.app](https://demo.photoprism.app/) 
+To get a first impression, you are welcome to play with our public demo at [demo.photoprism.app](https://demo.photoprism.app/) 
 (also available in [Deutsch](https://demo-de.photoprism.app/), [Français](https://demo-fr.photoprism.app/), and [汉语](https://demo-zh.photoprism.app/)).
 
 ## Feature Overview ##
@@ -65,7 +65,7 @@ We currently have the following sponsorship options:
 - [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD and also offers [one-time donations](https://github.com/sponsors/photoprism?frequency=one-time)
 - [Patreon](https://www.patreon.com/photoprism) is priced in Euro and also offers yearly payments
 - Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub account
-- You're welcome to [contact us](https://photoprism.app/contact) for [other options](SPONSORS.md#crypto-wallets)
+- You are welcome to [contact us](https://photoprism.app/contact) for [other options](SPONSORS.md#crypto-wallets)
 
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
