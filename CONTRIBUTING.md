@@ -2,11 +2,25 @@
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
 
+## Upcoming Features and Improvements ##
+
+The [public roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress,
+what needs testing, and which features are going to be implemented next.
+
+You are welcome to [submit specific feature requests](https://docs.photoprism.app/developer-guide/issues/) if you have verified that no similar
+[idea](https://github.com/photoprism/photoprism/labels/idea) or [todo](https://github.com/photoprism/photoprism/labels/todo)
+already exists. Give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+
 ## Questions? ##
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other contributors, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
+
+## We Love Feedback ##
+
+An important part of our journey is to explore new ways in product development and build better software through simplicity
+and consistent use of community feedback. You are always [welcome to share your thoughts](https://photoprism.app/contact) with us.
 
 ## Reporting Bugs ##
 
@@ -16,8 +30,6 @@ to determine the cause of your problem. If you have a general question, need hel
 
 - you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
 - and post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
-
-In addition, [sponsors](https://docs.photoprism.app/funding/) receive direct [technical support](https://photoprism.app/contact) via email.
 
 **When reporting a problem, always include the software versions you are using and [other information about your environment](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) such as [browser](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), browser plugins, operating system, storage type, memory size, and processor.**
 
