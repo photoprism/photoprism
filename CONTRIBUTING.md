@@ -17,12 +17,7 @@ Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Communit
 to get regular updates, connect with other contributors, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
-## We Love Feedback ##
-
-An important part of our journey is to explore new ways in product development and build better software through simplicity
-and consistent use of community feedback. You are always [welcome to share your thoughts](https://photoprism.app/contact) with us.
-
-## Reporting Bugs ##
+## Creating Bug Reports ##
 
 Before reporting a bug, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
 to determine the cause of your problem. If you have a general question, need help, or an issue has not
@@ -33,7 +28,7 @@ to determine the cause of your problem. If you have a general question, need hel
 
 **When reporting a problem, always include the software versions you are using and [other information about your environment](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) such as [browser](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), browser plugins, operating system, storage type, memory size, and processor.**
 
-## Pull Requests ##
+## Submitting Pull Requests ##
 
 The [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all information
 necessary to get you started.
@@ -62,7 +57,7 @@ No worries, you can also contribute by...
 
 Thank you! <3
 
+## We Love Feedback ##
 
-
-
-
+An important part of our journey is to explore new ways in product development and build better software through simplicity
+and consistent use of community feedback. You are always [welcome to share your thoughts](https://photoprism.app/contact) with us.
