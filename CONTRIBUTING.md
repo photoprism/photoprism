@@ -2,15 +2,6 @@
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
 
-## Upcoming Features and Improvements ##
-
-The [public roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress,
-what needs testing, and which features are going to be implemented next.
-
-You are welcome to [submit specific feature requests](https://docs.photoprism.app/developer-guide/issues/) if you have verified that no similar
-[idea](https://github.com/photoprism/photoprism/labels/idea) or [todo](https://github.com/photoprism/photoprism/labels/todo)
-already exists. Give ideas you like a thumbs-up 👍  , so that we know what is most popular.
-
 ## Questions? ##
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
