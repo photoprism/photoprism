@@ -114,19 +114,7 @@ Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
 
-The [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all information
-necessary to get you started.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
-[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
-
-Because we want to create the best possible product for our users,
-we have a [set of guidelines](https://docs.photoprism.app/developer-guide/pull-requests)
-to ensure that all source code submissions are acceptable.
-They include step-by-step instructions for submitting new features,
-bug fixes, and documentation improvements.
-
-**Reviewing, testing and finally merging pull requests requires significant resources
-on our side. If it's not just a small fix, it can take several months.**
+[The Developer Guide contains all information necessary to get you started.](https://docs.photoprism.app/developer-guide/)
 
 ## PhotoPrism® Trademark ##
 
@@ -134,3 +122,8 @@ Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which ma
 from time to time, describe how our Brand Assets may be used. It is important to us that any 
 permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, 
 we reserve the right to object to any use or misuse in any jurisdiction worldwide.
+
+## We Love Feedback ##
+
+An important part of our journey is to explore new ways in product development and build better software through simplicity
+and consistent use of community feedback. You are always [welcome to share your thoughts](https://photoprism.app/contact) with us.
