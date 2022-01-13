@@ -88,7 +88,7 @@ Think of "free software" as in "free speech," not as in "free beer". Thank you! 
 
 **When reporting a problem, always include the software versions you are using and [other information about your environment](https://github.com/photoprism/photoprism/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) such as [browser](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), browser plugins, operating system, storage type, memory size, and processor.**
 
-## Roadmap ##
+## Upcoming Features and Improvements ##
 
 Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
@@ -113,7 +113,7 @@ Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 ## Every Contribution Makes a Difference ##
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
-[The Developer Guide contains all information necessary to get you started.](https://docs.photoprism.app/developer-guide/)
+[The Developer Guide contains all the information necessary for you to get started.](https://docs.photoprism.app/developer-guide/)
 
 ## PhotoPrism® Trademark ##
 
