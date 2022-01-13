@@ -57,7 +57,7 @@ installation and upgrades. It saves our team a lot of time that we can then spen
 ### Installation Packages ###
 
 Developers are invited to [contribute by building and testing standalone packages](https://docs.photoprism.app/developer-guide/)
-for Linux distributions and other operating systems. New versions are released several times a month, and testing
+for Linux distributions and other operating systems. New versions are [released several times a month](https://docs.photoprism.app/release-notes/), and testing
 the long list of dependencies in multiple environments would [absorb much of our resources](https://docs.photoprism.app/funding/).
 
 ### BSD Ports 😈 ###
