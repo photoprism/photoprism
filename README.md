@@ -77,7 +77,7 @@ to determine the cause of your problem. If this doesn't help, or you have other 
 
 - you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
 - post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
-- join us on [Reddit](https://www.reddit.com/r/photoprism/)
+- and join us on [Reddit](https://www.reddit.com/r/photoprism/)
 
 In addition, [sponsors](https://github.com/photoprism/photoprism/blob/develop/SPONSORS.md) receive direct
 [technical support](https://photoprism.app/contact) via email.
