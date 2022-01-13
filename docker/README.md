@@ -15,7 +15,7 @@ applications exposed to the public Internet.
 
 Modern Linux containers are an incremental improvement. A main advantage of Docker is that application images
 can be easily made available to users via Internet. It provides a common standard across most operating
-systems and devices, which saves our team a lot of time that we can then spend more effectively, for example,
+systems and devices, which saves our team a lot of time that we can then spend [more effectively](https://docs.photoprism.app/developer-guide/issues/#effectiveness-efficiency), for example,
 providing support and developing one of the many features that users are waiting for.
 
 Human-readable and versioned Dockerfiles as part of our public source code also help avoid surprises and
@@ -52,7 +52,7 @@ need to use the exact same versions, so it's possible to replace packages with w
 
 Note we don't have the resources to provide private users with dependencies and [TensorFlow libraries](https://dl.photoprism.app/tensorflow/) for their personal
 environments. We therefore recommend learning Docker if your operating system supports it. Docker vastly simplifies
-installation and upgrades. It saves our team a lot of time that we can then spend more effectively.
+installation and upgrades. It saves our team a lot of time that we can then spend [more effectively](https://docs.photoprism.app/developer-guide/issues/#effectiveness-efficiency).
 
 ### Installation Packages ###
 
