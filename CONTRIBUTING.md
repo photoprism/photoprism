@@ -1,6 +1,7 @@
 # Every Contribution Makes a Difference
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
+[The Developer Guide contains all the information necessary for you to get started.](https://docs.photoprism.app/developer-guide/)
 
 ## Questions? ##
 
@@ -21,23 +22,16 @@ to determine the cause of your problem. If you have a general question, need hel
 
 ## Submitting Pull Requests ##
 
-The [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all information
-necessary to get you started.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
-[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
-
-Because we want to create the best possible product for our users,
-we have a [set of guidelines](https://docs.photoprism.app/developer-guide/pull-requests)
-to ensure that all source code submissions are acceptable.
+[Because we want to create the best possible product for our users, we have a set of guidelines to ensure that all source code submissions are acceptable.](https://docs.photoprism.app/developer-guide/pull-requests)
 They include step-by-step instructions for submitting new features,
 bug fixes, and documentation improvements.
+Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
+[easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
 
 **Reviewing, testing and finally merging pull requests requires significant resources
 on our side. If it's not just a small fix, it can take several months.**
 
-## Can't code? ##
-
-No worries, you can also contribute by...
+## You can also contribute by... ##
 
 * Doing [research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) or improving our [docs](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
 * Recommending PhotoPrism to your friends
@@ -45,8 +39,6 @@ No worries, you can also contribute by...
    * https://alternativeto.net/software/photoprism/about/
    * https://www.saashub.com/google-photos-alternatives
 * Publishing tutorials, blog posts, or podcasts
-
-Thank you! <3
 
 ## We Love Feedback ##
 
