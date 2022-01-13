@@ -33,12 +33,12 @@ on our side. If it's not just a small fix, it can take several months.**
 
 ## You can also contribute by... ##
 
-* Doing [research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) or improving our [docs](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
-* Recommending PhotoPrism to your friends
+* [Conducting research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) and [improving the documentation](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
+* Publishing tutorials, blog posts, and podcasts
 * Voting for us on pages like:
    * https://alternativeto.net/software/photoprism/about/
    * https://www.saashub.com/google-photos-alternatives
-* Publishing tutorials, blog posts, or podcasts
+* Recommending PhotoPrism to your friends
 
 ## We Love Feedback ##
 
