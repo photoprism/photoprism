@@ -2,7 +2,7 @@
 name: Question
 about: You have a general question or need assistance
 title: 'STOP! NEVER USE GITHUB ISSUES, USE GITHUB DISCUSSIONS INSTEAD! 🙏'
-labels: question
+labels: technical-support
 assignees: ''
 
 ---
