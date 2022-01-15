@@ -1,4 +1,7 @@
-<!-- 
+<!--
+
+You'll be asked to accept the PhotoPrism.org Individual Contributor License Agreement https://cla-assistant.io/photoprism/photoprism once your PR will be created, please review them, your PR will be rejected if you don't accept them.
+
 Because we want to create the best possible product for our users, we have a set of guidelines which ensure that all source code contributions are acceptable:
 
 Please check the following items by replacing "[ ]" with "[x]", you can also do it when viewing the pull request once it has been created
