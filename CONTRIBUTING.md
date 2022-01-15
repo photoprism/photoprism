@@ -28,6 +28,8 @@ Don't report a bug unless you are sure you found a new problem that must be fixe
 
 ## Submitting Pull Requests ##
 
+You'll be asked to accept the [PhotoPrism.org Individual Contributor License Agreement](https://cla-assistant.io/photoprism/photoprism) once your PR will be created, please review them, your PR will be rejected if you don't accept them.
+
 [Because we want to create the best possible product for our users, we have a set of guidelines to ensure that all source code submissions are acceptable.](https://docs.photoprism.app/developer-guide/pull-requests)
 They include step-by-step instructions for submitting new features,
 bug fixes, and documentation improvements.
