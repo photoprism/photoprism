@@ -70,6 +70,22 @@ We currently have the following sponsorship options:
 Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
 
+## Upcoming Features and Improvements ##
+
+Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
+The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress,
+what needs testing, and which features are going to be implemented next.
+Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
+
+Ideas endorsed by [silver, gold, and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor)
+and will be prioritized on the [roadmap](https://github.com/photoprism/photoprism/projects/5).
+
+We have a zero bug policy and do our best to help users when they need support or have other questions.
+This comes at a price, as we can't give exact deadlines for new features.
+
+Having said that, funding really has the highest impact. So users can do their part and
+[become a sponsor](https://docs.photoprism.app/funding/) to get their favorite features as soon as possible.
+
 ## Getting Support ##
 
 Before submitting a support request, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
@@ -93,22 +109,6 @@ Don't report a bug unless you are sure you found a new problem that must be fixe
 - Ask for [technical support](https://photoprism.app/contact) if you need help, it could be a local configuration issue, or a misunderstanding in how the software works
 - This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of spending time handling incomplete and/or duplicate bug reports
 - When reporting a problem, always include the software versions you are using and other information about your environment such as [browser, browser plugins](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), operating system, storage type, memory size, and processor
-
-## Upcoming Features and Improvements ##
-
-Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
-The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress, 
-what needs testing, and which features are going to be implemented next.
-Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
-
-Ideas endorsed by [silver, gold, and platinum sponsors](SPONSORS.md) receive a [golden label](https://github.com/photoprism/photoprism/issues?q=is%3Aissue+is%3Aopen+label%3Asponsor)
-and will be prioritized on the [roadmap](https://github.com/photoprism/photoprism/projects/5).
-
-We have a zero bug policy and do our best to help users when they need support or have other questions.
-This comes at a price, as we can't give exact deadlines for new features.
-
-Having said that, funding really has the highest impact. So users can do their part and
-[become a sponsor](https://docs.photoprism.app/funding/) to get their favorite features as soon as possible.
 
 ## Questions?
 
