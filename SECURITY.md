@@ -1,5 +1,7 @@
 **Please contact us at [security@photoprism.app](mailto:security@photoprism.app) when you've discovered a potential security issue.**
 
+You are welcome to also report vulnerabilities in third-party applications that we may not be able to fix directly.
+
 At a minimum, your report should include the following:
 
 * Version and architecture
@@ -8,9 +10,7 @@ At a minimum, your report should include the following:
 
 We will then try to reproduce the problem, determine the impact and get back to you as soon as possible.
 
-Avoid activities that disrupt, degrade, or interrupt our services or compromise other users' data, such as spam, brute force attacks, denial of service attacks, and malicious file distribution.
-
-You are welcome to also report vulnerabilities in third-party applications that we may not be able to fix directly.
+*Avoid activities that disrupt, degrade, or interrupt our services or compromise other users' data, such as spam, brute force attacks, denial of service attacks, and malicious file distribution.*
 
 ### Responsible Disclosure ###
 
