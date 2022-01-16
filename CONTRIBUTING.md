@@ -2,7 +2,7 @@
 
 [We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.](https://docs.photoprism.app/developer-guide/)
 
-Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
+Follow us on [Twitter](https://twitter.com/photoprism_app) and join the [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other contributors, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
