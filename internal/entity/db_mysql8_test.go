@@ -9,9 +9,13 @@ import (
 )
 
 func TestMySQL8(t *testing.T) {
-	dbDriver := MySQL
 	dbDsn := os.Getenv("PHOTOPRISM_TEST_DSN_MYSQL8")
 
+	if dbDsn == "" {
+		t.Skip("skipping MySQL 8 test: PHOTOPRISM_TEST_DSN_MYSQL8 is not set")
+	}
+
+	dbDriver := MySQL
 	db, err := gorm.Open(dbDriver, dbDsn)
 
 	if err != nil || db == nil {
