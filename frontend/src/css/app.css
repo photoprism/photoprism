@@ -145,7 +145,7 @@ main {
 
 #photoprism .text-selectable,
 #photoprism .p-page .text-selectable {
-    user-select: text;
+    user-select: text !important;
 }
 
 #photoprism .p-page pre {

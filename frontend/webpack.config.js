@@ -48,6 +48,7 @@ const PATHS = {
   js: path.join(__dirname, "src"),
   css: path.join(__dirname, "src/css"),
   build: path.join(__dirname, "../assets/static/build"),
+  public: "/static/build/",
 };
 
 const config = {
@@ -62,6 +63,7 @@ const config = {
   },
   output: {
     path: PATHS.build,
+    publicPath: PATHS.public,
     filename: "[name].js",
   },
   resolve: {
@@ -135,7 +137,7 @@ const config = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: PATHS.build,
+              publicPath: PATHS.public,
             },
           },
           {
@@ -164,7 +166,7 @@ const config = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: PATHS.build,
+              publicPath: PATHS.public,
             },
           },
           {
@@ -192,7 +194,7 @@ const config = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: PATHS.build,
+              publicPath: PATHS.public,
             },
           },
           {
@@ -217,21 +219,13 @@ const config = {
       },
       {
         test: /\.(png|jpg|jpeg|gif)$/,
-        loader: "file-loader",
-        options: {
-          name: "[hash].[ext]",
-          publicPath: "./img",
-          outputPath: "img",
-        },
+        type: "asset/resource",
+        dependency: { not: ["url"] },
       },
       {
         test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "file-loader",
-        options: {
-          name: "[hash].[ext]",
-          publicPath: "./fonts",
-          outputPath: "fonts",
-        },
+        type: "asset/resource",
+        dependency: { not: ["url"] },
       },
       {
         test: /\.svg/,
@@ -244,7 +238,7 @@ const config = {
   },
 };
 
-// No sourcemap for production
+// Don't create sourcemap for production builds.
 if (isDev) {
   const devToolPlugin = new webpack.SourceMapDevToolPlugin({
     filename: "[file].map",
