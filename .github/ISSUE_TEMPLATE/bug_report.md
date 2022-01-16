@@ -9,7 +9,7 @@ assignees: ''
 NEVER REPORT A BUG UNLESS YOU ARE SURE YOU FOUND A NEW PROBLEM THAT MUST BE FIXED DIRECTLY IN OUR SOURCE CODE:
 
 - Ask for *technical support* if you need help, it could be a local configuration issue, or a misunderstanding in how the software works
-- This gives our team the opportunity to improve the documentation and provide best-in-class support to you, instead of spending time handling incomplete and/or duplicate bug reports
+- This gives our team the opportunity to improve the documentation and provide best-in-class support to you, instead of handling incomplete and/or duplicate bug reports
 
 Existing Issues: https://github.com/photoprism/photoprism/issues
 

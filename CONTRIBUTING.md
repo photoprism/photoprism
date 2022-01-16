@@ -23,7 +23,7 @@ to determine the cause of your problem. If you have a general question, need hel
 Don't report a bug unless you are sure you found a new problem that must be fixed directly in the app:
 
 - Ask for [technical support](https://photoprism.app/contact) if you need help, it could be a local configuration issue, or a misunderstanding in how the software works
-- This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of spending time handling incomplete and/or duplicate bug reports
+- This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling incomplete and/or duplicate bug reports
 - When reporting a problem, always include the software versions you are using and other information about your environment such as [browser, browser plugins](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), operating system, storage type, memory size, and processor
 
 ## Submitting Pull Requests ##
