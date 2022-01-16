@@ -118,14 +118,10 @@ Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
 ## Every Contribution Makes a Difference ##
 
-We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
-
-[The Developer Guide contains all the information necessary for you to get started.](https://docs.photoprism.app/developer-guide/)
-
-## We Love Feedback ##
+We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests. Our [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all the information necessary for you to get started.
 
 An important part of our journey is to explore new ways in product development and build better software through simplicity
-and consistent use of community feedback. You are always welcome to [share your thoughts](https://photoprism.app/contact) with us.
+and consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
 
 ----
 

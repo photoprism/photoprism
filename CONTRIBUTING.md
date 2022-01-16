@@ -1,7 +1,7 @@
 # Every Contribution Makes a Difference
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
-[The Developer Guide contains all the information necessary for you to get started.](https://docs.photoprism.app/developer-guide/)
+Our [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all the information necessary for you to get started.
 
 ## Questions? ##
 
@@ -37,16 +37,17 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 **Reviewing, testing and finally merging pull requests requires significant resources
 on our side. If it's not just a small fix, it can take several months.**
 
-## You can also contribute by... ##
+## Not a Developer? No Problem. ##
 
-* [Conducting research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) and [improving the documentation](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
-* Publishing tutorials, blog posts, and podcasts
-* Voting for us on pages like:
+You can also contribute by...
+
+* [conducting research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) and [improving the documentation](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
+* publishing tutorials, blog posts, and podcasts
+* voting for us on pages like:
    * https://alternativeto.net/software/photoprism/about/
    * https://www.saashub.com/google-photos-alternatives
-* Recommending PhotoPrism to your friends
+* recommending PhotoPrism to your friends
 
-## We Love Feedback ##
+----
 
-An important part of our journey is to explore new ways in product development and build better software through simplicity
-and consistent use of community feedback. You are always [welcome to share your thoughts](https://photoprism.app/contact) with us.
+*An important part of our journey is to explore new ways in product development and build better software through simplicity and consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.*
