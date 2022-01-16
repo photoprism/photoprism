@@ -1,13 +1,12 @@
 # Every Contribution Makes a Difference
 
-We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
-Our [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all the information necessary for you to get started.
-
-## Questions? ##
+[We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.](https://docs.photoprism.app/developer-guide/)
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) or join our [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other contributors, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
+
+An important part of our journey is to explore new ways in product development and build better software through simplicity and consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
 
 ## Creating Bug Reports ##
 
@@ -50,4 +49,4 @@ You can also contribute by...
 
 ----
 
-*An important part of our journey is to explore new ways in product development and build better software through simplicity and consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.*
+*PhotoPrism® is a registered trademark. Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which may be updated from time to time, describe how our Brand Assets may be used. It is important to us that any permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, we reserve the right to object to any use or misuse in any jurisdiction worldwide.*
