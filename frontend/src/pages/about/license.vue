@@ -709,11 +709,10 @@
       <h3><a name="trademark"></a>PhotoPrism® Trademark</h3>
 
       <p>
-        PhotoPrism® is a registered trademark. PhotoPrism’s Brand Assets — including
-        trademarks, logos, icons, designs, fonts, products, services, and any other
-        brand features and elements, whether registered or unregistered („Brand Assets“)
-        — are proprietary assets owned exclusively by Michael Mayer and his legal
-        successors („PhotoPrism“).
+        PhotoPrism’s Brand Assets — including trademarks, logos, icons, designs, fonts,
+        products, services, and any other brand features and elements, whether registered
+        or unregistered („Brand Assets“) — are proprietary assets owned exclusively by
+        Michael Mayer and his legal successors („PhotoPrism“).
       </p>
       <p>
         Third parties, including licensees, may never claim ownership of PhotoPrism's
