@@ -16,7 +16,7 @@ to determine the cause of your problem. If you have a general question, need hel
 (yet) been clearly identified:
 
 - you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
-- and post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
+- or post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
 
 ### GitHub Issues ###
 
