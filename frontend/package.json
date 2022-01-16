@@ -73,7 +73,7 @@
     "luxon": "^1.28.0",
     "mapbox-gl": "^1.13.0",
     "material-design-icons-iconfont": "^6.1.0",
-    "mini-css-extract-plugin": "^2.1.0",
+    "mini-css-extract-plugin": "2.4.7",
     "minimist": ">=1.2.5",
     "mocha": "^9.0.2",
     "node-storage-shim": "^2.0.1",
