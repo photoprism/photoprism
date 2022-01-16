@@ -119,16 +119,15 @@ Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 ## Every Contribution Makes a Difference ##
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.
+
 [The Developer Guide contains all the information necessary for you to get started.](https://docs.photoprism.app/developer-guide/)
-
-## PhotoPrism® Trademark ##
-
-Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which may be updated 
-from time to time, describe how our Brand Assets may be used. It is important to us that any 
-permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, 
-we reserve the right to object to any use or misuse in any jurisdiction worldwide.
 
 ## We Love Feedback ##
 
 An important part of our journey is to explore new ways in product development and build better software through simplicity
-and consistent use of community feedback. You are always [welcome to share your thoughts](https://photoprism.app/contact) with us.
+and consistent use of community feedback. You are always welcome to [share your thoughts](https://photoprism.app/contact) with us.
+
+----
+
+*PhotoPrism® is a registered trademark. Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which may be updated from time to time, describe how our Brand Assets may be used. It is important to us that any permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, we reserve the right to object to any use or misuse in any jurisdiction worldwide.*
+
