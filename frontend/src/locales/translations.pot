@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:394
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:94
+#: src/pages/about/about.vue:141
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -249,6 +249,10 @@ msgstr ""
 msgid "All Years"
 msgstr ""
 
+#: src/pages/about/about.vue:34
+msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
+msgstr ""
+
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr ""
@@ -353,6 +357,10 @@ msgstr ""
 #: src/dialog/sponsor.vue:7
 #: src/pages/about/about.vue:23
 msgid "Become a sponsor"
+msgstr ""
+
+#: src/pages/about/about.vue:42
+msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr ""
 
 #: src/pages/people/subjects.vue:430
@@ -1053,6 +1061,10 @@ msgstr ""
 msgid "German"
 msgstr ""
 
+#: src/pages/about/about.vue:38
+msgid "Getting Support"
+msgstr ""
+
 #: src/options/options.js:360
 msgid "Gold"
 msgstr ""
@@ -1130,6 +1142,10 @@ msgstr ""
 msgid "I'm a sponsor"
 msgstr ""
 
+#: src/pages/about/about.vue:43
+msgid "If this doesn't help, or you have other questions:"
+msgstr ""
+
 #: src/dialog/photo/labels.vue:34
 msgid "image"
 msgstr ""
@@ -1173,6 +1189,10 @@ msgstr ""
 #: src/dialog/photo/files.vue:171
 #: src/dialog/photo/files.vue:180
 msgid "in"
+msgstr ""
+
+#: src/pages/about/about.vue:52
+msgid "In addition, sponsors receive direct technical support via email."
 msgstr ""
 
 #: src/component/photo/cards.vue:11
@@ -1715,6 +1735,10 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
+#: src/pages/about/about.vue:49
+msgid "or ask in our Community Chat"
+msgstr ""
+
 #: src/options/options.js:359
 msgid "Orange"
 msgstr ""
@@ -1806,10 +1830,6 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/pages/about/about.vue:35
-msgid "PhotoPrism® is a registered trademark"
-msgstr ""
-
 #: src/routes.js:114
 msgid "Photos"
 msgstr ""
@@ -1865,6 +1885,10 @@ msgstr ""
 
 #: src/options/options.js:161
 msgid "Português de Portugal"
+msgstr ""
+
+#: src/pages/about/about.vue:48
+msgid "post your question in GitHub Discussions"
 msgstr ""
 
 #: src/dialog/account/edit.vue:338
@@ -2031,10 +2055,6 @@ msgstr ""
 
 #: src/common/api.js:78
 msgid "Request failed - invalid response"
-msgstr ""
-
-#: src/pages/about/about.vue:30
-msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
 msgstr ""
 
 #: src/pages/about/feedback.vue:103
@@ -2273,6 +2293,10 @@ msgstr ""
 msgid "Spanish"
 msgstr ""
 
+#: src/pages/about/about.vue:30
+msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
+msgstr ""
+
 #: src/component/photo/cards.vue:235
 #: src/component/photo/mosaic.vue:210
 #: src/share/photo/cards.vue:208
@@ -2369,8 +2393,8 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
-#: src/pages/about/about.vue:31
-msgid "Thank you very much!"
+#: src/pages/about/about.vue:57
+msgid "Thank you!"
 msgstr ""
 
 #: src/pages/library/index.vue:36
@@ -2387,6 +2411,10 @@ msgstr ""
 
 #: src/pages/settings/general.vue:72
 msgid "Theme"
+msgstr ""
+
+#: src/pages/about/about.vue:56
+msgid "Think of \"free software\" as in \"free speech,\" not as in \"free beer\"."
 msgstr ""
 
 #: src/dialog/sponsor.vue:17
@@ -2635,6 +2663,10 @@ msgstr ""
 msgid "View"
 msgstr ""
 
+#: src/pages/about/about.vue:55
+msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+msgstr ""
+
 #: src/dialog/sponsor.vue:18
 msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
 msgstr ""
@@ -2685,6 +2717,10 @@ msgstr ""
 #: src/dialog/photo/info.vue:345
 #: src/dialog/photo/info.vue:365
 msgid "Yes"
+msgstr ""
+
+#: src/pages/about/about.vue:47
+msgid "you are welcome to join us on Reddit"
 msgstr ""
 
 #: src/component/album/clipboard.vue:79

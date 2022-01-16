@@ -43,6 +43,7 @@ https://docs.photoprism.app/developer-guide/
 @import url("maps.css");
 @import url("labels.css");
 @import url("files.css");
+@import url("pages.css");
 @import url("help.css");
 
 @media (min-width: 1750px) {
@@ -182,4 +183,25 @@ main {
     padding: 0 0.2rem;
     min-width: 1.1rem;
     height: 1.1rem;
+}
+
+/* Line Height */
+
+.lh-15 {
+    line-height: 1.5rem !important;
+}
+.lh-16 {
+    line-height: 1.6rem !important;
+}
+.lh-17 {
+    line-height: 1.7rem !important;
+}
+.lh-18 {
+    line-height: 1.8rem !important;
+}
+.lh-19 {
+    line-height: 1.9rem !important;
+}
+.lh-20 {
+    line-height: 2.0rem !important;
 }
