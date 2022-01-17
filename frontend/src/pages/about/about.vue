@@ -41,7 +41,7 @@
         <translate>Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going.</translate>
         </a>
       </p>
-      <h2 class="mt-4 mb-2 subheading">
+      <h2 class="mt-4 mb-2 body-2 lh-17">
         <translate>Getting Support</translate>
       </h2>
       <p class="body-1">
