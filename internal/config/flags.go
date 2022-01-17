@@ -326,7 +326,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-server",
-		Usage:  "database server `HOST` with optional port e.g. mysql:3306",
+		Usage:  "database server `HOST` with optional port e.g. mariadb:3306",
 		EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 	},
 	cli.StringFlag{
