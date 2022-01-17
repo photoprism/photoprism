@@ -54,7 +54,7 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 ## Back us on [Patreon](https://www.patreon.com/photoprism) or [GitHub Sponsors](https://github.com/sponsors/photoprism) 💎 ##
 
-PhotoPrism is 100% self-funded and independent. Your continued support helps us provide [regular updates](https://docs.photoprism.app/release-notes/)
+**PhotoPrism is 100% self-funded and independent.** Your continued support helps us provide [regular updates](https://docs.photoprism.app/release-notes/)
 and services like [world maps](https://demo.photoprism.app/places).
 Sponsors get access to [additional features](https://github.com/photoprism/photoprism/issues?q=label%3Asponsor-feature),
 receive direct [technical support](https://photoprism.app/contact) via email, and can join our private chat room 
