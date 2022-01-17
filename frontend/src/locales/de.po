@@ -61,7 +61,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Auf den Link klicken, um ihn zu kopieren."
 
 #: src/component/navigation.vue:394 src/component/navigation.vue:27
-#: src/pages/about/about.vue:4 src/pages/about/about.vue:141
+#: src/pages/about/about.vue:4 src/pages/about/about.vue:138
 #: src/pages/help.vue:45
 msgid "About"
 msgstr "Info"
@@ -1753,7 +1753,7 @@ msgstr "Portugiesisch (Portugal)"
 
 #: src/pages/about/about.vue:48
 msgid "post your question in GitHub Discussions"
-msgstr "diskutiere in GitHub Discussions"
+msgstr "tausche dich mit anderen in GitHub Discussions aus"
 
 #: src/dialog/account/edit.vue:338
 msgid "Preserve filenames"
@@ -2223,10 +2223,6 @@ msgstr "Blaugrün"
 msgid "Text too long"
 msgstr "Text ist zu lang"
 
-#: src/pages/about/about.vue:57
-msgid "Thank you!"
-msgstr "Vielen Dank!"
-
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Der Index enthält momentan %{n} verborgene Dateien."
@@ -2251,12 +2247,6 @@ msgstr ""
 #: src/pages/settings/general.vue:72
 msgid "Theme"
 msgstr "Theme"
-
-#: src/pages/about/about.vue:56
-msgid ""
-"Think of \"free software\" as in \"free speech,\" not as in \"free beer\"."
-msgstr ""
-"Denke bei \"freier Software\" an \"freie Rede\", nicht an \"Freibier\"."
 
 #: src/dialog/sponsor.vue:17
 msgid ""
@@ -2472,8 +2462,9 @@ msgid ""
 "We'll do our best to answer all your questions. In return, we ask you to "
 "back us on Patreon or GitHub Sponsors."
 msgstr ""
-"Wir tun unser Bestes, um alle Fragen zu beantworten. Im Gegenzug bitten wir "
-"darum, uns via Patreon oder GitHub Sponsors zu unterstützen."
+"Wir geben immer unser Bestes, um so viele Fragen wie möglich zu beantworten. "
+"Im Gegenzug bitten wir darum, uns auf Patreon oder GitHub Sponsors zu "
+"unterstützen."
 
 #: src/dialog/sponsor.vue:18
 msgid ""
@@ -2529,7 +2520,7 @@ msgstr "Ja"
 
 #: src/pages/about/about.vue:47
 msgid "you are welcome to join us on Reddit"
-msgstr "trete uns auf Reddit bei"
+msgstr "trete unserer Community auf Reddit bei"
 
 #: src/component/album/clipboard.vue:79 src/component/subject/clipboard.vue:40
 #: src/share/album/clipboard.vue:33
@@ -2572,6 +2563,14 @@ msgstr "Deine Nachricht wurde gesendet"
 #: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#~ msgid "Thank you!"
+#~ msgstr "Vielen Dank!"
+
+#~ msgid ""
+#~ "Think of \"free software\" as in \"free speech,\" not as in \"free beer\"."
+#~ msgstr ""
+#~ "Denke bei \"freier Software\" an \"freie Rede\", nicht an \"Freibier\"."
 
 #~ msgid "PhotoPrism® Trademark"
 #~ msgstr "PhotoPrism® Trademark"

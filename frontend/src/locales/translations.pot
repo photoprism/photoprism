@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:394
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:141
+#: src/pages/about/about.vue:138
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -2393,10 +2393,6 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
-#: src/pages/about/about.vue:57
-msgid "Thank you!"
-msgstr ""
-
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr ""
@@ -2411,10 +2407,6 @@ msgstr ""
 
 #: src/pages/settings/general.vue:72
 msgid "Theme"
-msgstr ""
-
-#: src/pages/about/about.vue:56
-msgid "Think of \"free software\" as in \"free speech,\" not as in \"free beer\"."
 msgstr ""
 
 #: src/dialog/sponsor.vue:17

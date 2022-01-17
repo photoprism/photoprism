@@ -60,8 +60,6 @@
       </p>
       <p class="body-1 pb-2">
         <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
-        <translate>Think of "free software" as in "free speech," not as in "free beer".</translate>
-        <translate>Thank you!</translate> 💜
       </p>
 
       <p class="text-xs-center pt-2 ma-0 pb-0">
