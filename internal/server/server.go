@@ -64,6 +64,7 @@ func Start(ctx context.Context, conf *config.Config) {
 				conf.BaseUri(config.ApiUri + "/zip"),
 				conf.BaseUri(config.ApiUri + "/albums"),
 				conf.BaseUri(config.ApiUri + "/labels"),
+				conf.BaseUri(config.ApiUri + "/videos"),
 			})))
 	}
 
