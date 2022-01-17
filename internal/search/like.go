@@ -18,7 +18,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 		return wheres
 	}
 
-	s = txt.StripOr(sanitize.Query(s))
+	s = txt.StripOr(sanitize.SearchQuery(s))
 
 	var wildcardThreshold int
 
@@ -244,7 +244,7 @@ func OrLike(col, s string) (where string, values []interface{}) {
 	values = make([]interface{}, len(terms))
 
 	for i := range terms {
-		values[i] = strings.TrimSpace(terms[i])
+		values[i] = terms[i]
 	}
 
 	like := fmt.Sprintf("%s LIKE ?", col)

@@ -162,5 +162,5 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 		result = append(result, strings.Join(subj, txt.Or))
 	}
 
-	return result, names, sanitize.Query(remaining)
+	return result, names, sanitize.SearchQuery(remaining)
 }

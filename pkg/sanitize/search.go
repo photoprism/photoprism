@@ -15,8 +15,23 @@ func replace(subject string, search string, replace string) string {
 	return regexp.MustCompile("(?i)"+search).ReplaceAllString(subject, replace)
 }
 
-// Query replaces search operator with default symbols.
-func Query(s string) string {
+// SearchString replaces search operator with default symbols.
+func SearchString(s string) string {
+	if s == "" || reject(s, MaxLength) {
+		return Empty
+	}
+
+	// Normalize.
+	s = strings.ReplaceAll(s, "%%", "%")
+	s = strings.ReplaceAll(s, "%", "*")
+	s = strings.ReplaceAll(s, "**", "*")
+
+	// Trim.
+	return strings.Trim(s, "&|\\<>\n\r\t")
+}
+
+// SearchQuery replaces search operator with default symbols.
+func SearchQuery(s string) string {
 	if s == "" || reject(s, MaxLength) {
 		return Empty
 	}
@@ -29,7 +44,9 @@ func Query(s string) string {
 	s = replace(s, spaced(EnIn), And)
 	s = replace(s, spaced(EnAt), And)
 	s = strings.ReplaceAll(s, SpacedPlus, And)
+	s = strings.ReplaceAll(s, "%%", "%")
 	s = strings.ReplaceAll(s, "%", "*")
+	s = strings.ReplaceAll(s, "**", "*")
 
 	// Trim.
 	return strings.Trim(s, "+&|-=$^(){}\\<>,;: \n\r\t")

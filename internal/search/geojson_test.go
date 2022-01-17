@@ -783,7 +783,7 @@ func TestGeo(t *testing.T) {
 			assert.NotEmpty(t, r.ID)
 		}
 	})
-	t.Run("f.Query = p", func(t *testing.T) {
+	t.Run("QueryP", func(t *testing.T) {
 		var frm form.SearchGeo
 		frm.Query = "p"
 		frm.Title = ""
