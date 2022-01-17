@@ -51,4 +51,4 @@ You can also contribute by...
 
 ----
 
-*PhotoPrism® is a registered trademark. Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which may be updated from time to time, describe how our Brand Assets may be used. It is important to us that any permitted use of our Brand Assets is fair and meets the highest standards. To ensure this, we reserve the right to object to any use or misuse in any jurisdiction worldwide.*
+*PhotoPrism® is a registered trademark. Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which may be updated from time to time, describe how our Brand Assets may be used. It is important to us that any permitted use of our Brand Assets is fair and meets the highest standards.*

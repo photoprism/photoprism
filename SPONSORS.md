@@ -1,8 +1,7 @@
-# A big thank you to all our sponsors! 🎄 #
+# A Big Thank You to All Our Sponsors! 💎 #
 
-Your continued support helps us provide [regular updates](https://docs.photoprism.app/release-notes/)
+PhotoPrism is 100% self-funded and independent. Your continued support helps us provide [regular updates](https://docs.photoprism.app/release-notes/)
 and services like [world maps](https://demo.photoprism.app/places).
-
 We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://github.com/sponsors/photoprism) is priced in USD and also
@@ -12,7 +11,7 @@ We currently have the following sponsorship options:
   account
 - You are welcome to [contact us](https://photoprism.app/contact) for [other options](#crypto-wallets)
 
-Visit https://docs.photoprism.app/funding/ to learn more.
+Visit [docs.photoprism.app/funding](https://docs.photoprism.app/funding/) to learn more.
 
 ## Platinum Sponsors ##
 
