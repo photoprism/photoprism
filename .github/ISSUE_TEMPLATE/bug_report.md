@@ -6,10 +6,12 @@ labels: bug
 assignees: ''
 
 ---
-NEVER REPORT A BUG UNLESS YOU ARE SURE YOU FOUND A NEW PROBLEM THAT MUST BE FIXED DIRECTLY IN OUR SOURCE CODE:
 
-- Ask for *technical support* if you need help, it could be a local configuration issue, or a misunderstanding in how the software works
-- This gives our team the opportunity to improve the documentation and provide best-in-class support to you, instead of handling incomplete and/or duplicate bug reports
+## We kindly ask you not to report a bug unless you are certain to have found a new issue that must be fixed directly in the application source code ##
+
+Contact us or a community member if you need help, it could be a local configuration problem, or a misunderstanding in how the software works.
+
+This gives our team the opportunity to improve the documentation and provide best-in-class support to you, instead of handling unclear and/or duplicate bug reports.
 
 Existing Issues: https://github.com/photoprism/photoprism/issues
 
