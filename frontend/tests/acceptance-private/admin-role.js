@@ -2,10 +2,27 @@ import { Selector } from "testcafe";
 import { ClientFunction } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
 import Page from "../acceptance/page-model";
+import Menu from "../page-model/menu";
+import Photo from "../page-model/photo";
+import Toolbar from "../page-model/toolbar";
+import ContextMenu from "../page-model/context-menu";
+import PhotoViews from "../page-model/photo-views";
+import Label from "../page-model/label";
+import Album from "../page-model/album";
+import Subject from "../page-model/subject";
 
 fixture`Test admin role`.page`${testcafeconfig.url}`;
 
 const page = new Page();
+const menu = new Menu();
+const photo = new Photo();
+const toolbar = new Toolbar();
+const contextmenu = new ContextMenu();
+const photoviews = new PhotoViews();
+const label = new Label();
+const album = new Album();
+const subject = new Subject();
+
 const getLocation = ClientFunction(() => document.location.href);
 
 test.meta("testID", "authentication-000")(
@@ -17,8 +34,7 @@ test.meta("testID", "authentication-000")(
 
 test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.expect(Selector(".nav-settings").visible).ok();
+  await menu.checkMenuItemAvailability("settings", true);
   await t.navigateTo("/settings");
   await t
     .wait(5000)
@@ -45,48 +61,44 @@ test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
 
 test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
   await page.login("admin", "photoprism");
-  const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await page.openNav();
-  await t.click(Selector(".nav-browse + div")).expect(Selector(".nav-archive").visible).ok();
+  const PhotoCountBrowse = await photo.getPhotoCount("all");
+  await menu.checkMenuItemAvailability("archive", true);
   await t.navigateTo("/archive");
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqnahct2mvee8sr4").visible)
     .ok();
-  const PhotoCountArchive = await Selector("div.is-photo", { timeout: 5000 }).count;
+  const PhotoCountArchive = await photo.getPhotoCount("all");
   await t.expect(PhotoCountBrowse).gte(PhotoCountArchive);
 });
 
 test.meta("testID", "admin-role-003")("Access to review", async (t) => {
   await page.login("admin", "photoprism");
-  const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await page.openNav();
-  await t.click(Selector(".nav-browse + div")).expect(Selector(".nav-review").visible).ok();
+  const PhotoCountBrowse = await photo.getPhotoCount("all");
+  await menu.checkMenuItemAvailability("review", true);
   await t.navigateTo("/review");
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqzuein2pdcg1kc7").visible)
     .ok();
-  const PhotoCountReview = await Selector("div.is-photo", { timeout: 5000 }).count;
+  const PhotoCountReview = await photo.getPhotoCount("all");
   await t.expect(PhotoCountBrowse).gte(PhotoCountReview);
 });
 
 test.meta("testID", "admin-role-004")("Access to private", async (t) => {
   await page.login("admin", "photoprism");
-  const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await page.openNav();
-  await t.expect(Selector(".nav-private").visible).ok();
+  const PhotoCountBrowse = await photo.getPhotoCount("all");
+  await menu.checkMenuItemAvailability("private", true);
   await t.navigateTo("/private");
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqmxlquf9tbc8mk2").visible)
     .ok();
-  const PhotoCountPrivate = await Selector("div.is-photo", { timeout: 5000 }).count;
+  const PhotoCountPrivate = await photo.getPhotoCount("all");
   await t.expect(PhotoCountBrowse).gte(PhotoCountPrivate);
 });
 
 test.meta("testID", "admin-role-005")("Access to library", async (t) => {
   await page.login("admin", "photoprism");
-  const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await page.openNav();
-  await t.expect(Selector(".nav-library").visible).ok();
+  const PhotoCountBrowse = await photo.getPhotoCount("all");
+  await menu.checkMenuItemAvailability("library", true);
   await t.navigateTo("/library");
   await t
     .expect(Selector(".input-index-folder input").visible)
@@ -103,29 +115,19 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk();
-  await page.openNav();
+  await menu.checkMenuItemAvailability("originals", true);
   await t
-    .click(Selector(".nav-library + div"))
-    .expect(Selector(".nav-originals").visible)
-    .ok()
     .navigateTo("/library/files")
     .expect(Selector("div.p-page-files").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk();
-  await page.openNav();
-  await t
-    .click(Selector(".nav-library + div"))
-    .expect(Selector(".nav-hidden").visible)
-    .ok()
-    .navigateTo("/library/hidden");
-  const PhotoCountHidden = await Selector("div.is-photo", { timeout: 5000 }).count;
+  await menu.checkMenuItemAvailability("hidden", true);
+  await t.navigateTo("/library/hidden");
+  const PhotoCountHidden = await photo.getPhotoCount("all");
   await t.expect(PhotoCountBrowse).gte(PhotoCountHidden);
-  await page.openNav();
+  await menu.checkMenuItemAvailability("errors", true);
   await t
-    .click(Selector(".nav-library + div"))
-    .expect(Selector(".nav-errors").visible)
-    .ok()
     .navigateTo("/library/errors")
     .expect(Selector("div.p-page-errors").visible)
     .ok()
@@ -135,29 +137,28 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
 
 test.meta("testID", "admin-role-006")("private/archived photos in search results", async (t) => {
   await page.login("admin", "photoprism");
-  const PhotoCountBrowse = await Selector("div.is-photo", { timeout: 5000 }).count;
-  await page.search("private:true");
-  const PhotoCountPrivate = await Selector("div.is-photo", { timeout: 5000 }).count;
+  const PhotoCountBrowse = await photo.getPhotoCount("all");
+  await toolbar.search("private:true");
+  const PhotoCountPrivate = await photo.getPhotoCount("all");
   await t.expect(PhotoCountPrivate).eql(2);
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqmxlquf9tbc8mk2").visible)
     .ok();
-  await page.search("archived:true");
-  const PhotoCountArchive = await Selector("div.is-photo", { timeout: 5000 }).count;
+  await toolbar.search("archived:true");
+  const PhotoCountArchive = await photo.getPhotoCount("all");
   await t.expect(PhotoCountArchive).eql(3);
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqnahct2mvee8sr4").visible)
     .ok();
-  await page.search("quality:0");
-  const PhotoCountReview = await Selector("div.is-photo", { timeout: 5000 }).count;
+  await toolbar.search("quality:0");
+  const PhotoCountReview = await photo.getPhotoCount("all");
   await t.expect(PhotoCountReview).gte(PhotoCountBrowse);
   await t
     .expect(Selector("div.is-photo").withAttribute("data-uid", "pqzuein2pdcg1kc7").visible)
     .ok();
   //Places
-  await page.openNav();
+  await menu.openPage("places");
   await t
-    .click(Selector(".nav-places"))
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.p-map-control").visible)
@@ -193,140 +194,98 @@ test.meta("testID", "admin-role-006")("private/archived photos in search results
 
 test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await t.expect(Selector("button.action-upload").visible).ok();
-  await page.openNav();
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await menu.openPage("albums");
+  await t.expect(Selector("a.is-album").visible).ok();
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await t.click(Selector("a.is-album").nth(0)).expect(Selector("div.is-photo").visible).ok();
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await menu.openPage("video");
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await menu.openPage("favorites");
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await menu.openPage("moments");
   await t
-    .click(Selector(".nav-albums"))
     .expect(Selector("a.is-album").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
+    .ok();
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await t.click(Selector("a.is-album").nth(0)).expect(Selector("div.is-photo").visible).ok();
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await menu.openPage("calendar");
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await t
+    .expect(Selector("a.is-album").visible)
     .ok()
     .click(Selector("a.is-album").nth(0))
     .expect(Selector("div.is-photo").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
     .ok();
-  await page.openNav();
-  await t.click(Selector(".nav-video")).expect(Selector("button.action-upload").visible).ok();
-  await page.openNav();
-  await t.click(Selector(".nav-favorites")).expect(Selector("button.action-upload").visible).ok();
-  await page.openNav();
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await menu.openPage("states");
+  await toolbar.checkToolbarActionAvailability("upload", true);
   await t
-    .click(Selector(".nav-moments"))
     .expect(Selector("a.is-album").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
     .ok()
     .click(Selector("a.is-album").nth(0))
     .expect(Selector("div.is-photo").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
     .ok();
-  await page.openNav();
+  await toolbar.checkToolbarActionAvailability("upload", true);
+  await menu.openPage("folders");
+  await toolbar.checkToolbarActionAvailability("upload", true);
   await t
-    .click(Selector(".nav-calendar"))
     .expect(Selector("a.is-album").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
     .ok()
     .click(Selector("a.is-album").nth(0))
     .expect(Selector("div.is-photo").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
     .ok();
-  await page.openNav();
-  await t
-    .click(Selector(".nav-places + div"))
-    .click(Selector(".nav-states"))
-    .expect(Selector("a.is-album").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
-    .ok()
-    .click(Selector("a.is-album").nth(0))
-    .expect(Selector("div.is-photo").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
-    .ok();
-  await page.openNav();
-  await t
-    .click(Selector(".nav-folders"))
-    .expect(Selector("a.is-album").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
-    .ok()
-    .click(Selector("a.is-album").nth(0))
-    .expect(Selector("div.is-photo").visible)
-    .ok()
-    .expect(Selector("button.action-upload").visible)
-    .ok();
+  await toolbar.checkToolbarActionAvailability("upload", true);
 });
 
 test.meta("testID", "admin-role-008")(
   "Admin can private, archive, share, add/remove to album",
   async (t) => {
     await page.login("admin", "photoprism");
-    const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
-    const SecondPhoto = await Selector("div.is-photo").nth(1).getAttribute("data-uid");
-    await page.selectPhotoFromUID(FirstPhoto);
-    await t
-      .click(Selector("button.action-menu"))
-      .expect(Selector("button.action-private").visible)
-      .ok()
-      .expect(Selector("button.action-archive").visible)
-      .ok()
-      .expect(Selector("button.action-share").visible)
-      .ok()
-      .expect(Selector("button.action-album").visible)
-      .ok();
-    await page.clearSelection();
-    await page.setFilter("view", "List");
-    await t.expect(Selector(`button.input-private`).hasAttribute("disabled")).notOk();
-    await page.openNav();
-    await t
-      .click(Selector(".nav-albums"))
-      .click(Selector("a.is-album").nth(0))
-      .expect(Selector("button.action-share").visible)
-      .ok();
-    await page.toggleSelectNthPhoto(0);
-    await t
-      .click(Selector("button.action-menu"))
-      .expect(Selector("button.action-private").visible)
-      .ok()
-      .expect(Selector("button.action-share").visible)
-      .ok()
-      .expect(Selector("button.action-album").visible)
-      .ok()
-      .expect(Selector("button.action-remove").visible)
-      .ok();
-    await page.clearSelection();
-    await t
-      .click(Selector('button[title="Toggle View"]'))
-      .expect(Selector(`button.input-private`).hasAttribute("disabled"))
-      .notOk();
+    const FirstPhoto = await photo.getNthPhotoUid("image", 0);
+    await photo.selectPhotoFromUID(FirstPhoto);
+    await contextmenu.checkContextMenuActionAvailability("private", true);
+    await contextmenu.checkContextMenuActionAvailability("archive", true);
+    await contextmenu.checkContextMenuActionAvailability("share", true);
+    await contextmenu.checkContextMenuActionAvailability("album", true);
+    await contextmenu.clearSelection();
+    await toolbar.setFilter("view", "List");
+    await photoviews.checkListViewActionAvailability("private", false);
+    await menu.openPage("albums");
+    await t.click(Selector("a.is-album").nth(0));
+    await toolbar.checkToolbarActionAvailability("share", true);
+    await photo.toggleSelectNthPhoto(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("private", true);
+    await contextmenu.checkContextMenuActionAvailability("remove", true);
+    await contextmenu.checkContextMenuActionAvailability("share", true);
+    await contextmenu.checkContextMenuActionAvailability("album", true);
+    await contextmenu.clearSelection();
+    await toolbar.triggerToolbarAction("list-view", "");
+    await photoviews.checkListViewActionAvailability("private", false);
   }
 );
 
 test.meta("testID", "admin-role-009")("Admin can approve low quality photos", async (t) => {
   await page.login("admin", "photoprism");
-  await page.search('quality:0 name:"photos-013_1"');
-  await page.toggleSelectNthPhoto(0);
-  await page.editSelected();
+  await toolbar.search('quality:0 name:"photos-013_1"');
+  await photo.toggleSelectNthPhoto(0, "all");
+  await contextmenu.triggerContextMenuAction("edit", "", "");
   await t.expect(Selector("button.action-approve").visible).ok();
 });
 
 test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", async (t) => {
   await page.login("admin", "photoprism");
-  await page.search("faces:new");
+  await toolbar.search("faces:new");
   //details
-  const FirstPhoto = await Selector("div.is-photo.type-image").nth(0).getAttribute("data-uid");
-  await page.selectPhotoFromUID(FirstPhoto);
-  await page.editSelected();
+  const FirstPhoto = await photo.getNthPhotoUid("image", 0);
+  await photo.selectPhotoFromUID(FirstPhoto);
+  await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .expect(Selector(".input-title input").hasAttribute("disabled"))
     .notOk()
     .expect(Selector(".input-local-time input").hasAttribute("disabled"))
-    .notOk()
-    .expect(Selector(".input-utc-time input").hasAttribute("disabled"))
     .notOk()
     .expect(Selector(".input-day input").hasAttribute("disabled"))
     .notOk()
@@ -413,9 +372,8 @@ test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", 
 
 test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.click(Selector(".nav-labels"));
-  const FirstLabel = await Selector("a.is-label").nth(0).getAttribute("data-uid");
+  await menu.openPage("labels");
+  const FirstLabel = await label.getNthLabeltUid(0);
   await t
     .hover(Selector(`a.uid-${FirstLabel}`))
     .expect(Selector(`a.uid-${FirstLabel}`).hasClass("is-favorite"))
@@ -429,64 +387,270 @@ test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => 
     .click(Selector(`a.uid-${FirstLabel} div.inline-edit`))
     .expect(Selector(".input-rename input").visible)
     .ok();
-  await page.selectFromUID(FirstLabel);
-  await t
-    .click(Selector("button.action-menu"))
-    .expect(Selector("button.action-delete").visible)
-    .ok()
-    .expect(Selector("button.action-album").visible)
-    .ok();
+  await label.selectLabelFromUID(FirstLabel);
+  await contextmenu.checkContextMenuActionAvailability("delete", true);
+  await contextmenu.checkContextMenuActionAvailability("album", true);
 });
 
 test.meta("testID", "admin-role-012")("Edit album functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.click(Selector(".nav-albums")).expect(Selector("button.action-add").visible).ok();
-  await page.checkAdminAlbumRights("album");
+  await menu.openPage("albums");
+  await toolbar.checkToolbarActionAvailability("add", true);
+  await t.expect(Selector("a.is-album button.action-share").visible).ok();
+  const FirstAlbum = await album.getNthAlbumUid("all", 0);
+  await album.selectAlbumFromUID(FirstAlbum);
+  await contextmenu.checkContextMenuActionAvailability("edit", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("clone", true);
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.checkContextMenuActionAvailability("delete", true);
+  await contextmenu.clearSelection();
+  await t
+    .click(Selector("button.action-title-edit"))
+    .expect(Selector(".input-description textarea").visible)
+    .ok()
+    .click(Selector("button.action-cancel"));
+  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok();
+  } else {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk();
+  }
+  await t.click(Selector("a.is-album").nth(0));
+  await toolbar.checkToolbarActionAvailability("share", true);
+  await toolbar.checkToolbarActionAvailability("edit", true);
+
+  await photo.toggleSelectNthPhoto(0, "all");
+  await contextmenu.checkContextMenuActionAvailability("album", true);
+  await contextmenu.checkContextMenuActionAvailability("private", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("remove", true);
 });
 
 test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.click(Selector(".nav-moments"));
-  await page.checkAdminAlbumRights("moment");
+  await menu.openPage("moments");
+  await t.expect(Selector("a.is-album button.action-share").visible).ok();
+  const FirstAlbum = await album.getNthAlbumUid("moment", 0);
+  await album.selectAlbumFromUID(FirstAlbum);
+  await contextmenu.checkContextMenuActionAvailability("edit", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("clone", true);
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.checkContextMenuActionAvailability("delete", true);
+
+  await contextmenu.clearSelection();
+  await t
+    .click(Selector("button.action-title-edit"))
+    .expect(Selector(".input-description textarea").visible)
+    .ok()
+    .click(Selector("button.action-cancel"));
+  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok();
+  } else {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk();
+  }
+  await t.click(Selector("a.is-album").nth(0));
+  await toolbar.checkToolbarActionAvailability("share", true);
+  await toolbar.checkToolbarActionAvailability("edit", true);
+  await photo.toggleSelectNthPhoto(0, "all");
+  await contextmenu.checkContextMenuActionAvailability("album", true);
+  await contextmenu.checkContextMenuActionAvailability("private", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("archive", true);
+  await contextmenu.checkContextMenuActionAvailability("remove", false);
 });
 
 test.meta("testID", "admin-role-014")("Edit state functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.click(Selector(".nav-places + div")).click(Selector(".nav-states"));
-  await page.checkAdminAlbumRights("state");
+  await menu.openPage("states");
+  await t.expect(Selector("a.is-album button.action-share").visible).ok();
+  const FirstAlbum = await album.getNthAlbumUid("state", 0);
+  await album.selectAlbumFromUID(FirstAlbum);
+  await contextmenu.checkContextMenuActionAvailability("edit", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("clone", true);
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.checkContextMenuActionAvailability("delete", true);
+  await contextmenu.clearSelection();
+  await t
+    .click(Selector("button.action-title-edit"))
+    .expect(Selector(".input-description textarea").visible)
+    .ok()
+    .click(Selector("button.action-cancel"));
+  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok();
+  } else {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk();
+  }
+  await t.click(Selector("a.is-album").nth(0));
+  await toolbar.checkToolbarActionAvailability("share", true);
+  await toolbar.checkToolbarActionAvailability("edit", true);
+  await photo.toggleSelectNthPhoto(0, "all");
+  await contextmenu.checkContextMenuActionAvailability("album", true);
+  await contextmenu.checkContextMenuActionAvailability("private", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("archive", true);
+  await contextmenu.checkContextMenuActionAvailability("remove", false);
 });
 
 test.meta("testID", "admin-role-015")("Edit calendar functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.click(Selector(".nav-calendar"));
-  await page.checkAdminAlbumRights("calendar");
+  await menu.openPage("calendar");
+  await t.expect(Selector("a.is-album button.action-share").visible).ok();
+  const FirstAlbum = await album.getNthAlbumUid("month", 0);
+  await album.selectAlbumFromUID(FirstAlbum);
+  await contextmenu.checkContextMenuActionAvailability("edit", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("clone", true);
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.checkContextMenuActionAvailability("delete", false);
+  await contextmenu.clearSelection();
+  await t
+    .click(Selector("button.action-title-edit"))
+    .expect(Selector(".input-description textarea").visible)
+    .ok()
+    .click(Selector("button.action-cancel"));
+  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok();
+  } else {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk();
+  }
+  await t.click(Selector("a.is-album").nth(0));
+  await toolbar.checkToolbarActionAvailability("share", true);
+  await toolbar.checkToolbarActionAvailability("edit", true);
+  await photo.toggleSelectNthPhoto(0, "all");
+  await contextmenu.checkContextMenuActionAvailability("album", true);
+  await contextmenu.checkContextMenuActionAvailability("private", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("archive", true);
 });
 
 test.meta("testID", "admin-role-016")("Edit folder functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
-  await t.click(Selector(".nav-folders"));
-  await page.checkAdminAlbumRights("folder");
+  await menu.openPage("folders");
+  await t.expect(Selector("a.is-album button.action-share").visible).ok();
+  const FirstAlbum = await album.getNthAlbumUid("folder", 0);
+  await album.selectAlbumFromUID(FirstAlbum);
+  await contextmenu.checkContextMenuActionAvailability("edit", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("clone", true);
+  await contextmenu.checkContextMenuActionAvailability("download", true);
+  await contextmenu.checkContextMenuActionAvailability("delete", false);
+  await contextmenu.clearSelection();
+  await t
+    .click(Selector("button.action-title-edit"))
+    .expect(Selector(".input-description textarea").visible)
+    .ok()
+    .click(Selector("button.action-cancel"));
+  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok();
+  } else {
+    await t
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .ok()
+      .click(Selector(`.uid-${FirstAlbum} .input-favorite`))
+      .expect(Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite"))
+      .notOk();
+  }
+  await t.click(Selector("a.is-album").nth(0));
+  await toolbar.checkToolbarActionAvailability("share", true);
+  await toolbar.checkToolbarActionAvailability("edit", true);
+  await photo.toggleSelectNthPhoto(0, "all");
+  await contextmenu.checkContextMenuActionAvailability("album", true);
+  await contextmenu.checkContextMenuActionAvailability("private", true);
+  await contextmenu.checkContextMenuActionAvailability("share", true);
+  await contextmenu.checkContextMenuActionAvailability("archive", true);
 });
 
 test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => {
   await page.login("admin", "photoprism");
-  await page.openNav();
+  //await page.openNav();
+  await menu.openPage("people");
+  await toolbar.checkToolbarActionAvailability("show-hidden", true);
   await t
-    .click(Selector(".nav-people"))
     .expect(Selector("#tab-people_faces > a").exists)
-    .ok()
-    .expect(Selector("button.action-show-hidden").exists)
     .ok()
     .expect(Selector("a div.v-card__title").withText("Otto Visible").visible)
     .ok()
     .expect(Selector("a div.v-card__title").withText("Monika Hide").visible)
-    .notOk()
-    .click(Selector("button.action-show-hidden"))
+    .notOk();
+  await toolbar.triggerToolbarAction("show-hidden", "");
+  await t
     .expect(Selector("a div.v-card__title").withText("Otto Visible").visible)
     .ok()
     .expect(Selector("a div.v-card__title").withText("Monika Hide").visible)
@@ -496,13 +660,11 @@ test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => 
     .ok()
     .hover(Selector("a div.v-card__title").nth(0))
     .expect(Selector("button.input-hidden").exists)
-    .ok()
-    .click(Selector(`a.is-subject .input-select`).nth(0))
-    .click(Selector("button.action-menu"))
-    .expect(Selector("button.action-album").visible)
     .ok();
-  await page.clearSelection();
-  const FirstSubject = await Selector("a.is-subject").nth(0).getAttribute("data-uid");
+  await subject.toggleSelectNthSubject(0);
+  await contextmenu.checkContextMenuActionAvailability("album", "true");
+  await contextmenu.clearSelection();
+  const FirstSubject = await subject.getNthSubjectUid(0);
   if (await Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite")) {
     await t
       .expect(Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite"))
@@ -525,8 +687,8 @@ test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => 
       .notOk();
   }
   await t.click(Selector("a.is-subject").nth(0));
-  await page.toggleSelectNthPhoto(0);
-  await page.editSelected();
+  await photo.toggleSelectNthPhoto(0, "all");
+  await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click(Selector("#tab-people"))
     .expect(Selector(".input-name input").hasAttribute("disabled"))
