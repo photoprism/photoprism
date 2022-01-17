@@ -38,7 +38,6 @@ services:
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
       PHOTOPRISM_TEST_DSN: ".test.db"
-      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # The initial admin password (min 4 characters)
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
@@ -147,21 +146,6 @@ services:
   ## Docs: https://mariadb.com/docs/reference/cs10.6/
   mariadb:
     image: mariadb:10.6
-    command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    expose:
-      - "4001" # Database port (internal)
-    volumes:
-      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
-    environment:
-      MYSQL_ROOT_PASSWORD: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: photoprism
-      MYSQL_DATABASE: photoprism
-
-  ## MySQL Database Server
-  ## Docs: https://dev.mysql.com/doc/refman/8.0/en/
-  mysql:
-    image: mysql:8
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # Database port (internal)
