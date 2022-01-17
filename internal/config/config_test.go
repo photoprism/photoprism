@@ -317,9 +317,9 @@ func TestConfig_BaseUri(t *testing.T) {
 	assert.Equal(t, "", c.BaseUri(""))
 	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "", c.BaseUri(""))
-	c.options.SiteUrl = "http://foo:2342/foo/"
-	assert.Equal(t, "/foo", c.BaseUri(""))
-	assert.Equal(t, "/foo/bar", c.BaseUri("/bar"))
+	c.options.SiteUrl = "http://foo:2342/foo bar/"
+	assert.Equal(t, "/foo%20bar", c.BaseUri(""))
+	assert.Equal(t, "/foo%20bar/baz", c.BaseUri("/baz"))
 }
 
 func TestConfig_StaticUri(t *testing.T) {

@@ -226,7 +226,7 @@ export default class Session {
   onLogout(noRedirect) {
     this.deleteId();
     if (noRedirect !== true) {
-      window.location = "/";
+      window.location = this.config.baseUri + "/";
     }
     return Promise.resolve();
   }

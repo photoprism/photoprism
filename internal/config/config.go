@@ -306,7 +306,7 @@ func (c *Config) BaseUri(res string) string {
 		return res
 	}
 
-	return strings.TrimRight(u.Path, "/") + res
+	return strings.TrimRight(u.EscapedPath(), "/") + res
 }
 
 // ApiUri returns the api URI.
