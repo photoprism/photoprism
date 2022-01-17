@@ -72,7 +72,7 @@ It provides additional motivation to keep going.
 
 ## Upcoming Features and Improvements ##
 
-Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.
+**Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.**
 The [roadmap](https://github.com/photoprism/photoprism/projects/5) shows what tasks are in progress,
 what needs testing, and which features are going to be implemented next.
 Please give ideas you like a thumbs-up 👍  , so that we know what is most popular.
