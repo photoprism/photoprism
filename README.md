@@ -110,18 +110,19 @@ Don't report a bug unless you are sure you found a new problem that must be fixe
 - This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling incomplete and/or duplicate bug reports
 - When reporting a problem, always include the software versions you are using and other information about your environment such as [browser, browser plugins](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), operating system, storage type, memory size, and processor
 
-## Questions?
+## Join the Community ##
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) and join the [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other users, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
-An important part of our journey is to explore new ways in product development and build better software through simplicity
-and consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
+An important part of our journey is to explore new ways in product development and build better software through consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
 
 ## Every Contribution Makes a Difference ##
 
 We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests. Our [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all the information necessary for you to get started.
+
+![](https://dl.photoprism.app/img/diagrams/milestones.png)
 
 ----
 

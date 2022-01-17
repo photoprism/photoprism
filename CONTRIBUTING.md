@@ -1,12 +1,14 @@
 # Every Contribution Makes a Difference
 
-[We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests.](https://docs.photoprism.app/developer-guide/)
+We welcome contributions of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests. Our [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all the information necessary for you to get started.
+
+## Join the Community ##
 
 Follow us on [Twitter](https://twitter.com/photoprism_app) and join the [Community Chat](https://gitter.im/browseyourlife/community)
 to get regular updates, connect with other contributors, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
-An important part of our journey is to explore new ways in product development and build better software through simplicity and consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
+An important part of our journey is to explore new ways in product development and build better software through consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
 
 ## Creating Bug Reports ##
 
