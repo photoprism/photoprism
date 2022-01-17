@@ -38,7 +38,7 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 **Reviewing, testing and finally merging pull requests requires significant resources
 on our side. If it's not just a small fix, it can take several months.**
 
-## Not a Developer? No Problem. ##
+## Not a Developer? No Problem ##
 
 You can also contribute by...
 
