@@ -21,7 +21,7 @@ to determine the cause of your problem. If you have a general question, need hel
 
 ### GitHub Issues ###
 
-Don't report a bug unless you are sure you found a new problem that must be fixed directly in the app:
+**Never report a bug unless you are sure you found a new problem that must be fixed directly in [our source code](https://github.com/photoprism/photoprism):**
 
 - Ask for [technical support](https://photoprism.app/contact) if you need help, it could be a local configuration issue, or a misunderstanding in how the software works
 - This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling incomplete and/or duplicate bug reports
@@ -29,7 +29,8 @@ Don't report a bug unless you are sure you found a new problem that must be fixe
 
 ## Submitting Pull Requests ##
 
-[Because we want to create the best possible product for our users, we have a set of guidelines to ensure that all source code submissions are acceptable.](https://docs.photoprism.app/developer-guide/pull-requests)
+Because we want to create the best possible product for our users, we have a [set of guidelines](https://docs.photoprism.app/developer-guide/pull-requests) to ensure that all source code submissions are acceptable.
+
 They include step-by-step instructions for submitting new features,
 bug fixes, and documentation improvements.
 Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
