@@ -104,7 +104,7 @@ Think of "free software" as in "free speech," not as in "free beer". Thank you! 
 
 ### GitHub Issues ###
 
-Don't report a bug unless you are sure you found a new problem that must be fixed directly in the app:
+Don't open an issue unless you are sure you found a new problem that must be fixed directly in the app:
 
 - Ask for [technical support](https://photoprism.app/contact) if you need help, it could be a local configuration issue, or a misunderstanding in how the software works
 - This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling incomplete and/or duplicate bug reports
