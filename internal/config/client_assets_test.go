@@ -85,13 +85,13 @@ func TestConfig_ClientAssets(t *testing.T) {
 func TestClientManifestUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/manifest.json?1638035864", c.ClientManifestUri())
+	assert.True(t, strings.HasPrefix(c.ClientManifestUri(), "/manifest.json?"))
 
 	c.options.SiteUrl = ""
 
-	assert.Equal(t, "/manifest.json?1638035864", c.ClientManifestUri())
+	assert.True(t, strings.HasPrefix(c.ClientManifestUri(), "/manifest.json?"))
 
 	c.options.SiteUrl = "http://myhost/foo"
 
-	assert.True(t, strings.HasPrefix(c.ClientManifestUri(), "/foo/manifest.json"))
+	assert.True(t, strings.HasPrefix(c.ClientManifestUri(), "/foo/manifest.json?"))
 }
