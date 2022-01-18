@@ -1,6 +1,6 @@
 version: '3.5'
 
-## Integration Environment for Drone CI
+## Continuous Integration (CI) Test Environment
 services:
   ## App Dev Container
   ## Docs: https://docs.photoprism.app/developer-guide/

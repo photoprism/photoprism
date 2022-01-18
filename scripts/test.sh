@@ -7,7 +7,6 @@ scripts/docker/login.sh
 
 # Run tests
 docker-compose -f docker-compose.ci.yml pull
-docker-compose -f docker-compose.ci.yml stop
-docker-compose -f docker-compose.ci.yml up -d --build --force-recreate
-docker-compose -f docker-compose.ci.yml exec -T photoprism make all test install migrate
-docker-compose -f docker-compose.ci.yml down
+docker-compose -f docker-compose.ci.yml build
+trap "docker rm -f -v photoprism-test " INT TERM
+docker-compose -f docker-compose.ci.yml run --name photoprism-test --rm -T photoprism make all test install migrate
