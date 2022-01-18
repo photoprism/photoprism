@@ -30,4 +30,67 @@ export default class Page {
       .hover(Selector("a.is-label", { timeout: 4000 }).nth(nth))
       .click(Selector("a.is-label .input-select").nth(nth));
   }
+
+  // favorite, select
+  async triggerHoverAction(mode, uidOrNth, action) {
+    if (mode === "uid") {
+      await t.hover(Selector("a.uid-" + uidOrNth));
+      Selector("a.uid-" + uidOrNth + " .input-" + action);
+      await t.click(Selector("a.uid-" + uidOrNth + " .input-" + action));
+    }
+    if (mode === "nth") {
+      await t.hover(Selector("a.is-label").nth(uidOrNth));
+      await t.click(Selector(`.input-` + action));
+    }
+  }
+
+  async checkHoverActionAvailability(mode, uidOrNth, action, visible) {
+    if (mode === "uid") {
+      await t.hover(Selector("a.is-label").withAttribute("data-uid", uidOrNth));
+      if (visible) {
+        await t.expect(Selector(`.uid-${uidOrNth} .input-` + action).visible).ok();
+      } else {
+        await t.expect(Selector(`.uid-${uidOrNth} .input-` + action).visible).notOk();
+      }
+    }
+    if (mode === "nth") {
+      await t.hover(Selector("a.is-label").nth(uidOrNth));
+      if (visible) {
+        await t.expect(Selector(`div.input-` + action).visible).ok();
+      } else {
+        await t.expect(Selector(`div.input-` + action).visible).notOk();
+      }
+    }
+  }
+
+  async checkHoverActionState(mode, uidOrNth, action, set) {
+    if (mode === "uid") {
+      await t.hover(Selector("a").withAttribute("data-uid", uidOrNth));
+      if (set) {
+        await t.expect(Selector(`a.uid-${uidOrNth}`).hasClass("is-" + action)).ok();
+      } else {
+        await t.expect(Selector(`a.uid-${uidOrNth}`).hasClass("is-" + action)).notOk();
+      }
+    }
+    if (mode === "nth") {
+      await t.hover(Selector("a.is-label").nth(uidOrNth));
+      if (set) {
+        await t
+          .expect(
+            Selector("a.is-label")
+              .nth(uidOrNth)
+              .hasClass("is-" + action)
+          )
+          .ok();
+      } else {
+        await t
+          .expect(
+            Selector("a.is-label")
+              .nth(uidOrNth)
+              .hasClass("is-" + action)
+          )
+          .notOk();
+      }
+    }
+  }
 }
