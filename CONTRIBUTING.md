@@ -29,7 +29,7 @@ to determine the cause of your problem. If you have a general question, need hel
 
 ## Submitting Pull Requests ##
 
-Because we want to create the best possible product for our users, we have a [set of guidelines](https://docs.photoprism.app/developer-guide/pull-requests) to ensure that all source code submissions are acceptable.
+Because we want to create the best possible product for our users, we have a [set of guidelines](https://docs.photoprism.app/developer-guide/pull-requests) to ensure that all submissions are acceptable.
 
 They include step-by-step instructions for submitting new features,
 bug fixes, and documentation improvements.
