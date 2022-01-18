@@ -13,6 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/video"
 )
 
+// GetVideo streams videos.
+//
 // GET /api/v1/videos/:hash/:token/:type
 //
 // Parameters:
