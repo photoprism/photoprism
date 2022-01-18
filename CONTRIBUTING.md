@@ -39,6 +39,14 @@ Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/hel
 **Reviewing, testing and finally merging pull requests requires significant resources
 on our side. If it's not just a small fix, it can take several months.**
 
+### Contributor License Agreement ###
+
+After submitting your first pull request, you will automatically be asked to accept our [Contributor License Agreement (CLA)](https://cla-assistant.io/photoprism/photoprism):
+- This gives us the ability to [(re-)license all code and docs](https://en.wikipedia.org/wiki/Software_relicensing) at any time, almost as if every line was written by us (you retain the rights to your own work, which may be different for other CLAs)
+- Otherwise, we cannot accept pull requests, as this would mean that we are not able to change the license at a later time, even though most of the code was developed by us
+- This may be necessary, for example, if the license is incompatible with a larger combined work, we want to remove some restrictions on the AGPL/Creative Commons license to make it more open, or it turns out that someone is abusing the existing license in a way we don't yet know about
+- The lack of a formal contract would also lead to legal uncertainty, as some contributors could later claim that they did not intend to license their code in any way and that it was stolen
+
 ## Not a Developer? No Problem ##
 
 You can also contribute by...
