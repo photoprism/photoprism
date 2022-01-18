@@ -48,4 +48,17 @@ export default class Page {
         .click(Selector("div.type-" + type + " .input-select").nth(nPhoto));
     }
   }
+
+  async checkPhotoVisibility(uid, visible) {
+    if(visible) {
+      await t
+          .expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible)
+          .ok();
+    } else {
+      await t
+          .expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible)
+          .notOk();
+    }
+
+  }
 }
