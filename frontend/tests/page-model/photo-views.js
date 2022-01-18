@@ -45,6 +45,37 @@ export default class Page {
     }
   }
 
+  async checkHoverActionState(mode, uidOrNth, action, set) {
+    if (mode === "uid") {
+      await t.hover(Selector("div.is-photo").withAttribute("data-uid", uidOrNth));
+      if (set) {
+        await t.expect(Selector(`div.uid-${uidOrNth}`).hasClass("is-" + action)).ok();
+      } else {
+        await t.expect(Selector(`div.uid-${uidOrNth}`).hasClass("is-" + action)).notOk();
+      }
+    }
+    if (mode === "nth") {
+      await t.hover(Selector("div.is-photo").nth(uidOrNth));
+      if (set) {
+        await t
+          .expect(
+            Selector("div.is-photo")
+              .nth(uidOrNth)
+              .hasClass("is-" + action)
+          )
+          .ok();
+      } else {
+        await t
+          .expect(
+            Selector("div.is-photo")
+              .nth(uidOrNth)
+              .hasClass("is-" + action)
+          )
+          .notOk();
+      }
+    }
+  }
+
   async triggerListViewActions(nth, action) {
     await t.click(Selector(`td button.input-` + action).nth(nth));
   }
