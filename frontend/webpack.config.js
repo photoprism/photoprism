@@ -31,6 +31,7 @@ https://docs.photoprism.app/developer-guide/
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
+const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const OfflinePlugin = require("@lcdp/offline-plugin");
 const webpack = require("webpack");
 const isDev = process.env.NODE_ENV !== "production";
@@ -64,7 +65,8 @@ const config = {
   output: {
     path: PATHS.build,
     publicPath: PATHS.public,
-    filename: "[name].js",
+    filename: "[name].[contenthash].js",
+    clean: true,
   },
   resolve: {
     modules: [path.join(__dirname, "src"), path.join(__dirname, "node_modules")],
@@ -74,8 +76,12 @@ const config = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].css",
+      filename: "[name].[contenthash].css",
       experimentalUseImportModule: false,
+    }),
+    new WebpackManifestPlugin({
+      fileName: "assets.json",
+      publicPath: "",
     }),
     new webpack.ProgressPlugin(),
     new VueLoaderPlugin(),

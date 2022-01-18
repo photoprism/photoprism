@@ -6,7 +6,7 @@ import (
 	"github.com/djherbis/times"
 )
 
-// BirthTime returns the create time of a file or folder.
+// BirthTime returns the creation time of a file or folder.
 func BirthTime(fileName string) time.Time {
 	s, err := times.Stat(fileName)
 

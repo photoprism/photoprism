@@ -23,8 +23,8 @@
 
 {{template "favicons.tmpl" .}}
 
-  <link rel="stylesheet" href="{{ .config.StaticUri }}/build/share.css?{{ .config.CSSHash }}">
-  <link rel="manifest" href="{{ .config.BaseUri }}/manifest.json?{{ .config.ManifestHash }}" crossorigin="use-credentials">
+  <link rel="stylesheet" href="{{ .config.CssUri }}">
+  <link rel="manifest" href="{{ .config.ManifestUri }}" crossorigin="use-credentials">
 
   <script>
       window.__CONFIG__ = {{ .config }};
@@ -34,6 +34,6 @@
 
 {{template "app.tmpl" .}}
 
-<script src="{{ .config.StaticUri }}/build/share.js?{{ .config.JSHash }}"></script>
+<script src="{{ .config.JsUri }}"></script>
 </body>
 </html>

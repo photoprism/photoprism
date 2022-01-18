@@ -189,8 +189,8 @@ export default class Session {
     const hasConfig = !!window.__CONFIG__;
     const clientInfo = {
       session: this.getId(),
-      js: hasConfig ? window.__CONFIG__.jsHash : "",
-      css: hasConfig ? window.__CONFIG__.cssHash : "",
+      cssUri: hasConfig ? window.__CONFIG__.cssUri : "",
+      jsUri: hasConfig ? window.__CONFIG__.jsUri : "",
       version: hasConfig ? window.__CONFIG__.version : "",
     };
 

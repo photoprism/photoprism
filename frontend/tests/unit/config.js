@@ -283,9 +283,9 @@ const clientConfig = {
   mapKey: "D9ve6edlcVR2mEsNvCXa",
   downloadToken: "2lbh9x09",
   previewToken: "public",
-  jsHash: "4b3198d7",
-  cssHash: "62f08685",
-  manifestHash: "3c637fa8",
+  cssUri: "/static/build/app.2259c0edcc020e7af593.css",
+  jsUri: "/static/build/app.9bd7132eaee8e4c7c7e3.js",
+  manifestUri: "/manifest.json?0e41a7e5",
   settings: {
     ui: {
       scrollbar: true,

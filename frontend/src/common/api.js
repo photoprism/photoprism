@@ -41,8 +41,9 @@ const testConfig = {
   debug: false,
   previewToken: "public",
   downloadToken: "public",
-  jsHash: "00000000",
-  cssHash: "00000000",
+  cssUri: "/static/build/app.2259c0edcc020e7af593.css",
+  jsUri: "/static/build/app.9bd7132eaee8e4c7c7e3.js",
+  manifestUri: "/manifest.json?0e41a7e5",
 };
 
 const config = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
@@ -52,7 +53,7 @@ const Api = Axios.create({
   headers: {
     common: {
       "X-Session-ID": window.localStorage.getItem("session_id"),
-      "X-Client-Hash": config.jsHash,
+      "X-Client-Uri": config.jsUri,
       "X-Client-Version": config.version,
     },
   },

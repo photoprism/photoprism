@@ -24,9 +24,8 @@ var wsTimeout = 90 * time.Second
 
 type clientInfo struct {
 	SessionToken string `json:"session"`
-	JsHash       string `json:"js"`
-	CssHash      string `json:"css"`
-	ManifestHash string `json:"manifest"`
+	CssUri       string `json:"css"`
+	JsUri        string `json:"js"`
 	Version      string `json:"version"`
 }
 

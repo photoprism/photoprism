@@ -4,11 +4,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/query"
-
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/colors"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -21,6 +19,9 @@ type ClientConfig struct {
 	Flags           string              `json:"flags"`
 	BaseUri         string              `json:"baseUri"`
 	StaticUri       string              `json:"staticUri"`
+	CssUri          string              `json:"cssUri"`
+	JsUri           string              `json:"jsUri"`
+	ManifestUri     string              `json:"manifestUri"`
 	ApiUri          string              `json:"apiUri"`
 	ContentUri      string              `json:"contentUri"`
 	SiteUrl         string              `json:"siteUrl"`
@@ -52,9 +53,6 @@ type ClientConfig struct {
 	MapKey          string              `json:"mapKey"`
 	DownloadToken   string              `json:"downloadToken"`
 	PreviewToken    string              `json:"previewToken"`
-	JSHash          string              `json:"jsHash"`
-	CSSHash         string              `json:"cssHash"`
-	ManifestHash    string              `json:"manifestHash"`
 	Settings        Settings            `json:"settings"`
 	Disable         ClientDisable       `json:"disable"`
 	Count           ClientCounts        `json:"count"`
@@ -167,6 +165,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		return c.UserConfig()
 	}
 
+	assets := c.ClientAssets()
 	settings := c.Settings()
 
 	result := ClientConfig{
@@ -196,6 +195,8 @@ func (c *Config) PublicConfig() ClientConfig {
 		Name:            c.Name(),
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
+		CssUri:          assets.AppCssUri(),
+		JsUri:           assets.AppJsUri(),
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
@@ -221,9 +222,7 @@ func (c *Config) PublicConfig() ClientConfig {
 		MapKey:          "",
 		Thumbs:          Thumbs,
 		Colors:          colors.All.List(),
-		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
-		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
-		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
+		ManifestUri:     c.ClientManifestUri(),
 		Clip:            txt.ClipDefault,
 		PreviewToken:    "public",
 		DownloadToken:   "public",
@@ -234,6 +233,7 @@ func (c *Config) PublicConfig() ClientConfig {
 
 // GuestConfig returns client config options for the sharing with guests.
 func (c *Config) GuestConfig() ClientConfig {
+	assets := c.ClientAssets()
 	settings := c.Settings()
 
 	result := ClientConfig{
@@ -263,6 +263,8 @@ func (c *Config) GuestConfig() ClientConfig {
 		Name:            c.Name(),
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
+		CssUri:          assets.ShareCssUri(),
+		JsUri:           assets.ShareJsUri(),
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
@@ -291,9 +293,7 @@ func (c *Config) GuestConfig() ClientConfig {
 		MapKey:          c.Hub().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
-		JSHash:          fs.Checksum(c.BuildPath() + "/share.js"),
-		CSSHash:         fs.Checksum(c.BuildPath() + "/share.css"),
-		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
+		ManifestUri:     c.ClientManifestUri(),
 		Clip:            txt.ClipDefault,
 	}
 
@@ -302,6 +302,8 @@ func (c *Config) GuestConfig() ClientConfig {
 
 // UserConfig returns client configuration options for registered users.
 func (c *Config) UserConfig() ClientConfig {
+	assets := c.ClientAssets()
+
 	result := ClientConfig{
 		Settings: *c.Settings(),
 		Disable: ClientDisable{
@@ -324,6 +326,8 @@ func (c *Config) UserConfig() ClientConfig {
 		Name:            c.Name(),
 		BaseUri:         c.BaseUri(""),
 		StaticUri:       c.StaticUri(),
+		CssUri:          assets.AppCssUri(),
+		JsUri:           assets.AppJsUri(),
 		ApiUri:          c.ApiUri(),
 		ContentUri:      c.ContentUri(),
 		SiteUrl:         c.SiteUrl(),
@@ -352,9 +356,7 @@ func (c *Config) UserConfig() ClientConfig {
 		MapKey:          c.Hub().MapKey(),
 		DownloadToken:   c.DownloadToken(),
 		PreviewToken:    c.PreviewToken(),
-		JSHash:          fs.Checksum(c.BuildPath() + "/app.js"),
-		CSSHash:         fs.Checksum(c.BuildPath() + "/app.css"),
-		ManifestHash:    fs.Checksum(c.TemplatesPath() + "/manifest.json"),
+		ManifestUri:     c.ClientManifestUri(),
 		Clip:            txt.ClipDefault,
 		Server:          NewRuntimeInfo(),
 	}
