@@ -1,6 +1,7 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -92,5 +93,5 @@ func TestClientManifestUri(t *testing.T) {
 
 	c.options.SiteUrl = "http://myhost/foo"
 
-	assert.Equal(t, "/foo/manifest.json?1638035864", c.ClientManifestUri())
+	assert.True(t, strings.HasPrefix(c.ClientManifestUri(), "/foo/manifest.json"))
 }
