@@ -7,7 +7,7 @@ Please describe your pull request:
 <!--
 After submitting your first pull request, you will automatically be asked to accept our Contributor License Agreement (CLA):
 
-https://github.com/photoprism/photoprism/blob/develop/CONTRIBUTING.md#contributor-license-agreement
+https://github.com/photoprism/photoprism/blob/develop/CONTRIBUTING.md#contributor-license-agreement-cla
 
 Because we want to create the best possible product for our users, we have a set of guidelines to ensure that all submissions are acceptable.
 Please check the following items by replacing "[ ]" with "[x]".
