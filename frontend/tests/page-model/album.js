@@ -7,8 +7,7 @@ const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
 });
 
 export default class Page {
-  constructor() {
-  }
+  constructor() {}
 
   async getNthAlbumUid(type, nth) {
     if (type === "all") {
@@ -47,6 +46,74 @@ export default class Page {
       await t
         .hover(Selector("a.type-" + type, { timeout: 4000 }).nth(nth))
         .click(Selector("a.type-" + type + " .input-select").nth(nth));
+    }
+  }
+
+  async openNthAlbum(nth) {
+    await t.click(Selector("a.is-album").nth(nth)).expect(Selector("div.is-photo").visible).ok();
+  }
+
+  //favorite, select, share
+  //TODO rename share class
+  async triggerHoverAction(mode, uidOrNth, action) {
+    if (mode === "uid") {
+      await t.hover(Selector("a.uid-" + uidOrNth));
+      Selector("a.uid-" + uidOrNth + " .input-" + action);
+      await t.click(Selector("a.uid-" + uidOrNth + " .input-" + action));
+    }
+    if (mode === "nth") {
+      await t.hover(Selector("a.is-album").nth(uidOrNth));
+      await t.click(Selector(`.input-` + action));
+    }
+  }
+
+  async checkHoverActionAvailability(mode, uidOrNth, action, visible) {
+    if (mode === "uid") {
+      await t.hover(Selector("a.is-album").withAttribute("data-uid", uidOrNth));
+      if (visible) {
+        await t.expect(Selector(`.uid-${uidOrNth} .input-` + action).visible).ok();
+      } else {
+        await t.expect(Selector(`.uid-${uidOrNth} .input-` + action).visible).notOk();
+      }
+    }
+    if (mode === "nth") {
+      await t.hover(Selector("a.is-album").nth(uidOrNth));
+      if (visible) {
+        await t.expect(Selector(`div.input-` + action).visible).ok();
+      } else {
+        await t.expect(Selector(`div.input-` + action).visible).notOk();
+      }
+    }
+  }
+
+  async checkHoverActionState(mode, uidOrNth, action, set) {
+    if (mode === "uid") {
+      await t.hover(Selector("a").withAttribute("data-uid", uidOrNth));
+      if (set) {
+        await t.expect(Selector(`a.uid-${uidOrNth}`).hasClass("is-" + action)).ok();
+      } else {
+        await t.expect(Selector(`a.uid-${uidOrNth}`).hasClass("is-" + action)).notOk();
+      }
+    }
+    if (mode === "nth") {
+      await t.hover(Selector("a.is-album").nth(uidOrNth));
+      if (set) {
+        await t
+          .expect(
+            Selector("a.is-album")
+              .nth(uidOrNth)
+              .hasClass("is-" + action)
+          )
+          .ok();
+      } else {
+        await t
+          .expect(
+            Selector("a.is-album")
+              .nth(uidOrNth)
+              .hasClass("is-" + action)
+          )
+          .notOk();
+      }
     }
   }
 }
