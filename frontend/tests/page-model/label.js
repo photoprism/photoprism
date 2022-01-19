@@ -25,6 +25,14 @@ export default class Page {
       .click(Selector("a.is-label .input-select").nth(nth));
   }
 
+  async openNthLabel(nth) {
+    await t.click(Selector("a.is-label").nth(nth)).expect(Selector("div.is-photo").visible).ok();
+  }
+
+  async openLabelWithUid(uid) {
+    await t.click(Selector("a.is-label").withAttribute("data-uid", uid));
+  }
+
   // favorite, select
   async triggerHoverAction(mode, uidOrNth, action) {
     if (mode === "uid") {

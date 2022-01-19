@@ -47,6 +47,18 @@ export default class Page {
     await t.click(Selector("a.is-album").nth(nth)).expect(Selector("div.is-photo").visible).ok();
   }
 
+  async openAlbumWithUid(uid) {
+    await t.click(Selector("a.is-album").withAttribute("data-uid", uid));
+  }
+
+  async checkAlbumVisibility(uid, visible) {
+    if (visible) {
+      await t.expect(Selector("a").withAttribute("data-uid", uid).visible).ok();
+    } else {
+      await t.expect(Selector("a").withAttribute("data-uid", uid).visible).notOk();
+    }
+  }
+
   //favorite, select, share
   //TODO rename share class
   async triggerHoverAction(mode, uidOrNth, action) {

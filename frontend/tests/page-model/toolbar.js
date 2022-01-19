@@ -7,6 +7,8 @@ export default class Page {
     this.countries = Selector("div.p-countries-select", { timeout: 15000 });
     this.time = Selector("div.p-time-select", { timeout: 15000 });
     this.search1 = Selector("div.input-search input", { timeout: 15000 });
+    this.toolbarDescription = Selector(".v-card__text").nth(0);
+    this.toolbarTitle = Selector("div.v-toolbar__title");
   }
 
   async toggleFilterBar() {
@@ -25,13 +27,9 @@ export default class Page {
   //click trigger action on toolbar -- toolbar --album (reload, switch view, upload, add album, hide/show,
   async triggerToolbarAction(action, name) {
     await t.click(Selector("nav.page-toolbar button.action-" + action));
-    if (action === "add") {
-      await t.typeText(Selector(".input-album input"), name, { replace: true }).pressKey("enter");
-    }
   }
 
-  //set filter --toolbar category as well
-  //TODO refactor
+  //TODO refactor selectors
   async setFilter(filter, option) {
     let filterSelector = "";
 
@@ -47,6 +45,9 @@ export default class Page {
         break;
       case "countries":
         filterSelector = "div.p-countries-select";
+        break;
+      case "category":
+        filterSelector = ".input-category";
         break;
       default:
         throw "unknown filter";
@@ -65,12 +66,6 @@ export default class Page {
 
   //search --toolbar
   async search(term) {
-    await t
-      .typeText(this.search1, term, { replace: true })
-      .pressKey("enter")
-      //TODO remove wait
-      //.wait(10000)
-      .expect(this.search1.value, { timeout: 15000 })
-      .contains(term);
+    await t.typeText(this.search1, term, { replace: true }).pressKey("enter");
   }
 }

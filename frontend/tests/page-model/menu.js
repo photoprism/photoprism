@@ -23,13 +23,21 @@ export default class Page {
     ) {
       await t.click(Selector("div.nav-browse + div"));
     } else if (page === "live") {
-      await t.click(Selector("div.nav-video + div"));
+      if (!(await Selector("div.v-list__group--active div.nav-video").visible)) {
+        await t.click(Selector("div.nav-video + div"));
+      }
     } else if (page === "states") {
-      await t.click(Selector("div.nav-places + div"));
+      if (!(await Selector("div.v-list__group--active div.nav-places").visible)) {
+        await t.click(Selector("div.nav-places + div"));
+      }
     } else if ((page === "originals") | (page === "hidden") | (page === "errors")) {
-      await t.click(Selector("div.nav-library + div"));
+      if (!(await Selector("div.v-list__group--active div.nav-library").visible)) {
+        await t.click(Selector("div.nav-library + div"));
+      }
     } else if ((page === "abouts") | (page === "feedback") | (page === "license")) {
-      await t.click(Selector("div.nav-settings + div"));
+      if (!(await Selector("div.v-list__group--active div.nav-settings").visible)) {
+        await t.click(Selector("div.nav-settings + div"));
+      }
     }
     await t.click(Selector(".nav-" + page));
   }

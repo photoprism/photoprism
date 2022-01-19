@@ -21,9 +21,9 @@ export default class Page {
     if (mode === "nth") {
       await t.hover(Selector("div.is-photo").nth(uidOrNth));
       if (visible) {
-        await t.expect(Selector(`div.input-` + action).visible).ok();
+        await t.expect(Selector(`div.is-photo .input-` + action).visible).ok();
       } else {
-        await t.expect(Selector(`div.input-` + action).visible).notOk();
+        await t.expect(Selector(`div.is-photo .input-` + action).visible).notOk();
       }
     }
   }
@@ -35,7 +35,7 @@ export default class Page {
     }
     if (mode === "nth") {
       await t.hover(Selector("div.is-photo").nth(uidOrNth));
-      await t.click(Selector(`div.input-` + action));
+      await t.click(Selector(`div.is-photo .input-` + action).nth(uidOrNth));
     }
   }
 

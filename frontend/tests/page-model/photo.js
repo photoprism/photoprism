@@ -44,15 +44,10 @@ export default class Page {
   }
 
   async checkPhotoVisibility(uid, visible) {
-    if(visible) {
-      await t
-          .expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible)
-          .ok();
+    if (visible) {
+      await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible).ok();
     } else {
-      await t
-          .expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible)
-          .notOk();
+      await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible).notOk();
     }
-
   }
 }

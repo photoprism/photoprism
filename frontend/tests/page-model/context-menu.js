@@ -35,7 +35,7 @@ export default class Page {
       await t.click(Selector("button.action-confirm"));
     }
     if ((action === "album") | (action === "clone")) {
-      await t.typeText(Selector(".input-album input"), name, { replace: true }).pressKey("enter");
+      await t.typeText(Selector(".input-album input"), albumName, { replace: true }).pressKey("enter");
     }
   }
 
