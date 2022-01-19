@@ -124,5 +124,4 @@ We welcome [contributions](CONTRIBUTING.md) of any kind, including blog posts, t
 
 ----
 
-*PhotoPrism® is a registered trademark. Our [Trademark and Brand Guidelines](https://photoprism.app/trademark), which may be updated from time to time, describe how our Brand Assets may be used. It is important to us that any permitted use of our Brand Assets is fair and meets the highest standards.*
-
+*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs [are available](https://github.com/photoprism/photoprism-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/LICENSE) may apply. By using our software and services, you agree to our [terms & conditions](https://photoprism.app/terms).*
