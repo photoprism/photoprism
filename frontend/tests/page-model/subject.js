@@ -1,10 +1,4 @@
 import { Selector, t } from "testcafe";
-import { RequestLogger } from "testcafe";
-
-const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
-  logResponseHeaders: true,
-  logResponseBody: true,
-});
 
 export default class Page {
   constructor() {}
