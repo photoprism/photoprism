@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:394
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:138
+#: src/pages/about/about.vue:163
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -265,7 +265,7 @@ msgstr ""
 msgid "Altitude (m)"
 msgstr ""
 
-#: src/common/api.js:104
+#: src/common/api.js:105
 msgid "An error occurred - are you offline?"
 msgstr ""
 
@@ -2053,7 +2053,7 @@ msgstr ""
 msgid "Report Bug"
 msgstr ""
 
-#: src/common/api.js:78
+#: src/common/api.js:79
 msgid "Request failed - invalid response"
 msgstr ""
 
