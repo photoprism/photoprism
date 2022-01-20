@@ -731,6 +731,10 @@
         We reserve the right to object to any use or misuse in any jurisdiction worldwide.
         Visit <a target="_blank" href="https://photoprism.app/trademark">photoprism.app/trademark</a> to learn more.
       </p>
+      <p>
+        In the event that any provision is found to be unenforceable by a court or other competent
+        jurisdiction, the remaining portions hereof shall remain in full force and effect.
+      </p>
     </v-container>
 
     <p-about-footer></p-about-footer>
