@@ -9,11 +9,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: easygettext\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: easygettext\n"
+"X-Generator: Poedit 3.0.1\n"
 
-#: src/dialog/photo/files.vue:132 src/dialog/photo/files.vue:129
+#: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
 msgstr ""
 
@@ -61,7 +61,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Cliquez pour copier vers le presse-papier."
 
 #: src/component/navigation.vue:394 src/component/navigation.vue:27
-#: src/pages/about/about.vue:4 src/pages/about/about.vue:81
+#: src/pages/about/about.vue:4 src/pages/about/about.vue:163
 #: src/pages/help.vue:45
 msgid "About"
 msgstr "A propos"
@@ -114,7 +114,7 @@ msgstr "Ajouter un serveur"
 msgid "Add to album"
 msgstr "Ajouter à l'album"
 
-#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
+#: src/dialog/photo/files.vue:171 src/dialog/photo/files.vue:168
 msgid "Added"
 msgstr "Ajouté"
 
@@ -229,6 +229,14 @@ msgstr "Tous les fichiers originaux"
 msgid "All Years"
 msgstr "Toutes les années"
 
+#: src/pages/about/about.vue:34
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"En outre, veuillez laisser une étoile sur GitHub si vous aimez ce projet. "
+"Cela nous donne une motivation supplémentaire pour continuer."
+
 #: src/dialog/share.vue:75
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
@@ -245,7 +253,7 @@ msgstr "Altitude"
 msgid "Altitude (m)"
 msgstr "Altitude (m)"
 
-#: src/common/api.js:104
+#: src/common/api.js:105
 msgid "An error occurred - are you offline?"
 msgstr "Un problème est survenu - êtes-vous hors ligne ?"
 
@@ -308,7 +316,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer définitivement ce fichier ?"
 msgid "Artist"
 msgstr "Artiste"
 
-#: src/dialog/photo/files.vue:123 src/dialog/photo/files.vue:120
+#: src/dialog/photo/files.vue:131 src/dialog/photo/files.vue:128
 msgid "Aspect Ratio"
 msgstr "Ratio d’aspect"
 
@@ -337,6 +345,14 @@ msgstr "Indonésien"
 #: src/dialog/sponsor.vue:7 src/pages/about/about.vue:23
 msgid "Become a sponsor"
 msgstr "Devenir un sponsor"
+
+#: src/pages/about/about.vue:42
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Avant de soumettre une demande d'assistance, veuillez utiliser nos listes de "
+"contrôle de dépannage pour déterminer la cause de votre problème."
 
 #: src/pages/people/subjects.vue:430
 msgid "Bio"
@@ -451,7 +467,7 @@ msgstr "Chinois simplifié"
 msgid "Chinese Traditional"
 msgstr "Chinois traditionnel"
 
-#: src/dialog/photo/files.vue:143 src/dialog/photo/files.vue:140
+#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
 msgid "Chroma"
 msgstr "Chrome"
 
@@ -467,6 +483,10 @@ msgstr "Codec"
 #: src/component/photo/toolbar.vue:325
 msgid "Color"
 msgstr "Couleur"
+
+#: src/dialog/photo/files.vue:145 src/dialog/photo/files.vue:142
+msgid "Color Profile"
+msgstr "Profil de couleur"
 
 #: src/pages/discover.vue:4
 msgid "Colors"
@@ -908,7 +928,14 @@ msgstr "Demander une fonctionnalité"
 msgid "Feedback"
 msgstr "Retour d'information"
 
-#: src/model/file.js:244
+#: src/dialog/sponsor.vue:24
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"Contactez-nous à hello@photoprism.app si vous avez des questions ou besoin "
+"d'aide."
+
+#: src/model/file.js:246
 msgid "File"
 msgstr "Fichier"
 
@@ -972,6 +999,10 @@ msgstr "Général"
 msgid "German"
 msgstr "Allemand"
 
+#: src/pages/about/about.vue:38
+msgid "Getting Support"
+msgstr "Obtenir de l’aide"
+
 #: src/options/options.js:360
 msgid "Gold"
 msgstr "Or"
@@ -1021,6 +1052,10 @@ msgstr "Cacher"
 msgid "Hide photos that have been moved to archive."
 msgstr "Cacher les photos archivées."
 
+#: src/dialog/photo/files.vue:109 src/dialog/photo/files.vue:106
+msgid "High Dynamic Range (HDR)"
+msgstr "Gamme dynamique élevée (HDR)"
+
 #: src/options/options.js:121
 msgid "Hindi"
 msgstr "Hindi"
@@ -1040,6 +1075,10 @@ msgstr "Hybride"
 #: src/dialog/sponsor.vue:36
 msgid "I'm a sponsor"
 msgstr "Je contribue"
+
+#: src/pages/about/about.vue:43
+msgid "If this doesn't help, or you have other questions:"
+msgstr "Si cela ne vous aide pas, ou si vous avez d'autres questions :"
 
 #: src/dialog/photo/labels.vue:34
 msgid "image"
@@ -1083,10 +1122,16 @@ msgstr "Importation de %{name} en cours…"
 msgid "Importing files to originals…"
 msgstr "Importation des fichiers vers le dossier des originaux…"
 
-#: src/dialog/photo/files.vue:160 src/dialog/photo/files.vue:169
-#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:166
+#: src/dialog/photo/files.vue:174 src/dialog/photo/files.vue:183
+#: src/dialog/photo/files.vue:171 src/dialog/photo/files.vue:180
 msgid "in"
 msgstr "en"
+
+#: src/pages/about/about.vue:52
+msgid "In addition, sponsors receive direct technical support via email."
+msgstr ""
+"En outre, les sponsors bénéficient d'une assistance technique directe par "
+"courrier électronique."
 
 #: src/component/photo/cards.vue:11 src/component/photo/list.vue:12
 #: src/component/photo/mosaic.vue:11 src/pages/labels.vue:35
@@ -1288,7 +1333,7 @@ msgstr "Longitude"
 msgid "Magenta"
 msgstr "Magenta"
 
-#: src/dialog/photo/files.vue:137 src/dialog/photo/files.vue:134
+#: src/dialog/photo/files.vue:151 src/dialog/photo/files.vue:148
 msgid "Main Color"
 msgstr "Couleur principale"
 
@@ -1320,7 +1365,7 @@ msgstr "Message envoyé"
 msgid "Minimize"
 msgstr "Minimiser"
 
-#: src/dialog/photo/files.vue:149 src/dialog/photo/files.vue:146
+#: src/dialog/photo/files.vue:163 src/dialog/photo/files.vue:160
 msgid "Missing"
 msgstr "Manquant"
 
@@ -1572,11 +1617,15 @@ msgstr "Onyx"
 msgid "Options"
 msgstr "Options"
 
+#: src/pages/about/about.vue:49
+msgid "or ask in our Community Chat"
+msgstr "ou posez vos questions dans notre chat communautaire"
+
 #: src/options/options.js:359
 msgid "Orange"
 msgstr "Orange"
 
-#: src/dialog/photo/files.vue:129 src/dialog/photo/files.vue:126
+#: src/dialog/photo/files.vue:137 src/dialog/photo/files.vue:134
 msgid "Orientation"
 msgstr "Orientation"
 
@@ -1661,10 +1710,6 @@ msgstr "Photo"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism a été mis à jour…"
 
-#: src/pages/about/about.vue:38
-msgid "PhotoPrism® is a registered trademark of Michael Mayer."
-msgstr "PhotoPrism® is une marque déposée par Michael Mayer."
-
 #: src/routes.js:114
 msgid "Photos"
 msgstr "Photos"
@@ -1697,13 +1742,6 @@ msgstr "Lancer"
 msgid "Please confirm your new password."
 msgstr "Veuillez confirmer votre nouveau mot de passe."
 
-#: src/dialog/sponsor.vue:24
-msgid ""
-"Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Contactez-nous à hello@photoprism.app si vous avez des questions ou besoin "
-"d'aide."
-
 #: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
 msgstr "Veuillez ne pas charger de photos choquantes."
@@ -1712,13 +1750,17 @@ msgstr "Veuillez ne pas charger de photos choquantes."
 msgid "Polish"
 msgstr "Polonais"
 
-#: src/dialog/photo/files.vue:109 src/dialog/photo/files.vue:106
+#: src/dialog/photo/files.vue:117 src/dialog/photo/files.vue:114
 msgid "Portrait"
 msgstr "Portrait"
 
 #: src/options/options.js:161
 msgid "Português de Portugal"
 msgstr "Portugais du Potugal"
+
+#: src/pages/about/about.vue:48
+msgid "post your question in GitHub Discussions"
+msgstr "postez votre question dans les discussions de GitHub"
 
 #: src/dialog/account/edit.vue:338
 msgid "Preserve filenames"
@@ -1756,7 +1798,7 @@ msgstr "Privée"
 msgid "Product Feedback"
 msgstr "Commentaires sur le produit"
 
-#: src/dialog/photo/files.vue:117 src/dialog/photo/files.vue:114
+#: src/dialog/photo/files.vue:125 src/dialog/photo/files.vue:122
 msgid "Projection"
 msgstr "Projection"
 
@@ -1871,17 +1913,9 @@ msgstr ""
 msgid "Report Bug"
 msgstr "Rapportez une erreur"
 
-#: src/common/api.js:78
+#: src/common/api.js:79
 msgid "Request failed - invalid response"
 msgstr "Échec de la requête - réponse incorrecte"
-
-#: src/pages/about/about.vue:30
-msgid ""
-"Requests endorsed by silver and gold sponsors receive a golden label and "
-"will be prioritized."
-msgstr ""
-"Les demandes soutenues par les sponsors argent et or reçoivent un label doré "
-"et seront prioritaires."
 
 #: src/pages/about/feedback.vue:103 src/pages/about/feedback.vue:123
 #: src/pages/about/feedback.vue:165
@@ -2048,7 +2082,7 @@ msgstr "Afficher les journaux serveurs dans Bibliothèque."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Rend les journaux plus détaillés. Requiert un redémarrage."
 
-#: src/model/file.js:185
+#: src/model/file.js:187
 msgid "Sidecar"
 msgstr "Fichier annexe"
 
@@ -2093,6 +2127,15 @@ msgstr "Source"
 #: src/options/options.js:105
 msgid "Spanish"
 msgstr "Espagnol"
+
+#: src/pages/about/about.vue:30
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"Les sponsors ont accès à des fonctionnalités supplémentaires, bénéficient "
+"d'une assistance technique directe par e-mail et peuvent rejoindre notre "
+"salon de discussion privé sur matrix.org."
 
 #: src/component/photo/cards.vue:235 src/component/photo/mosaic.vue:210
 #: src/share/photo/cards.vue:208 src/share/photo/mosaic.vue:191
@@ -2192,10 +2235,6 @@ msgstr "Sarcelle"
 msgid "Text too long"
 msgstr "Texte trop long"
 
-#: src/pages/about/about.vue:31
-msgid "Thank you very much!"
-msgstr "En vous remerciant très sincèrement !"
-
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "L'index contient actuellement %{n} fichiers cachés."
@@ -2277,10 +2316,6 @@ msgstr "Jeton"
 msgid "Topographic"
 msgstr "Topograpique"
 
-#: src/pages/about/about.vue:35
-msgid "Trademarks"
-msgstr "Marques déposées"
-
 #: src/component/photo/cards.vue:10 src/component/photo/list.vue:11
 #: src/component/photo/list.vue:19 src/component/photo/mosaic.vue:10
 #: src/pages/albums.vue:38 src/pages/labels.vue:34
@@ -2322,7 +2357,7 @@ msgstr "Non trié"
 msgid "Unstack"
 msgstr "Dégrouper"
 
-#: src/dialog/photo/files.vue:166 src/dialog/photo/files.vue:163
+#: src/dialog/photo/files.vue:180 src/dialog/photo/files.vue:177
 #: src/dialog/photo/info.vue:175
 msgid "Updated"
 msgstr "Mis à jour"
@@ -2416,7 +2451,7 @@ msgstr "Vanta"
 
 #: src/component/photo/cards.vue:29 src/component/photo/cards.vue:225
 #: src/component/photo/list.vue:196 src/component/photo/mosaic.vue:200
-#: src/model/file.js:183 src/model/photo.js:662 src/model/photo.js:676
+#: src/model/file.js:185 src/model/photo.js:662 src/model/photo.js:676
 #: src/options/options.js:328 src/share/photo/cards.vue:29
 #: src/share/photo/cards.vue:198 src/share/photo/list.vue:175
 #: src/share/photo/mosaic.vue:181
@@ -2434,6 +2469,14 @@ msgstr "Vidéos"
 #: src/share/photo/mosaic.vue:209
 msgid "View"
 msgstr "Voir"
+
+#: src/pages/about/about.vue:55
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Nous ferons de notre mieux pour répondre à toutes vos questions. En retour, "
+"nous vous demandons de nous soutenir sur Patreon ou GitHub Sponsors."
 
 #: src/dialog/sponsor.vue:18
 msgid ""
@@ -2479,13 +2522,18 @@ msgstr "Yellowstone"
 
 #: src/dialog/people/merge.vue:18 src/dialog/photo/archive.vue:18
 #: src/dialog/photo/files.vue:104 src/dialog/photo/files.vue:112
-#: src/dialog/photo/files.vue:152 src/dialog/photo/files.vue:101
-#: src/dialog/photo/files.vue:109 src/dialog/photo/files.vue:149
+#: src/dialog/photo/files.vue:120 src/dialog/photo/files.vue:166
+#: src/dialog/photo/files.vue:101 src/dialog/photo/files.vue:109
+#: src/dialog/photo/files.vue:117 src/dialog/photo/files.vue:163
 #: src/dialog/photo/info.vue:284 src/dialog/photo/info.vue:305
 #: src/dialog/photo/info.vue:325 src/dialog/photo/info.vue:345
 #: src/dialog/photo/info.vue:365
 msgid "Yes"
 msgstr "Oui"
+
+#: src/pages/about/about.vue:47
+msgid "you are welcome to join us on Reddit"
+msgstr "vous êtes invités à nous rejoindre sur Reddit"
 
 #: src/component/album/clipboard.vue:79 src/component/subject/clipboard.vue:40
 #: src/share/album/clipboard.vue:33
@@ -2506,20 +2554,10 @@ msgid "You may rescan your library to find additional faces."
 msgstr ""
 "Vous pouvez réanalyser votre bibliothèque pour trouver plus de visages."
 
-#: src/pages/about/about.vue:39
-msgid ""
-"You may use it as required to describe our software, run your own server, "
-"for educational purposes, but not for offering commercial goods, products, "
-"or services without prior written permission. In other words, please ask."
-msgstr ""
-"Vous pouvez l'utiliser au besoin pour décrire notre logiciel, faire "
-"fonctionner votre propre serveur, à des fins éducatives, mais pas pour "
-"offrir des biens, produits ou services commerciaux sans autorisation écrite "
-"préalable. En d'autres termes, veuillez demander."
-
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
-"Your continued support helps us provide regular updates and services like world maps."
+"Your continued support helps us provide regular updates and services like "
+"world maps."
 msgstr ""
 "Votre soutien continu nous permet de fournir des services tels que les "
 "cartes satellites et de développer de nouvelles fonctionnalités."
@@ -2539,6 +2577,33 @@ msgstr "Votre message a été envoyé"
 #: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
+#~ msgstr "PhotoPrism® is une marque déposée par Michael Mayer."
+
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "Les demandes soutenues par les sponsors argent et or reçoivent un label "
+#~ "doré et seront prioritaires."
+
+#~ msgid "Thank you very much!"
+#~ msgstr "En vous remerciant très sincèrement !"
+
+#~ msgid "Trademarks"
+#~ msgstr "Marques déposées"
+
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "Vous pouvez l'utiliser au besoin pour décrire notre logiciel, faire "
+#~ "fonctionner votre propre serveur, à des fins éducatives, mais pas pour "
+#~ "offrir des biens, produits ou services commerciaux sans autorisation "
+#~ "écrite préalable. En d'autres termes, veuillez demander."
 
 #~ msgid ""
 #~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "

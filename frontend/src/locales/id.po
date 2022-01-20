@@ -1,19 +1,19 @@
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Generated-By: easygettext\n"
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
+"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
 "Language-Team: \n"
-"MIME-Version: 1.0\n"
-"X-Generator: Poedit 3.0\n"
-"Last-Translator: \n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: easygettext\n"
+"X-Generator: Poedit 3.0.1\n"
 
-#: src/dialog/photo/files.vue:132 src/dialog/photo/files.vue:129
+#: src/dialog/photo/files.vue:140 src/dialog/photo/files.vue:137
 msgid "{{ file.Orientation }}"
 msgstr "{{ file.Orientation }}"
 
@@ -38,21 +38,21 @@ msgstr "%{n} label yang ditemukan"
 msgid "%{n} people found"
 msgstr "%{n} orang yang ditemukan"
 
-#: src/pages/album/photos.vue:228 src/pages/album/photos.vue:340
-#: src/pages/photos.vue:268 src/pages/photos.vue:378 src/share/photos.vue:243
-#: src/share/photos.vue:355
+#: src/pages/album/photos.vue:226 src/pages/album/photos.vue:338
+#: src/pages/photos.vue:266 src/pages/photos.vue:376 src/share/photos.vue:241
+#: src/share/photos.vue:353
 msgid "%{n} pictures found"
 msgstr "%{n} gambar yang ditemukan"
 
-#: src/options/options.js:312
+#: src/options/options.js:335
 msgid "1 hour"
 msgstr "1 jam"
 
-#: src/options/options.js:314
+#: src/options/options.js:337
 msgid "12 hours"
 msgstr "12 jam"
 
-#: src/options/options.js:313
+#: src/options/options.js:336
 msgid "4 hours"
 msgstr "4 jam"
 
@@ -60,11 +60,15 @@ msgstr "4 jam"
 msgid "A click will copy it to your clipboard."
 msgstr "Satu klik akan menyalinnya ke clipboard Anda."
 
-#: src/component/navigation.vue:371 src/component/navigation.vue:27
-#: src/pages/about/about.vue:4 src/pages/about/about.vue:81
+#: src/component/navigation.vue:394 src/component/navigation.vue:27
+#: src/pages/about/about.vue:4 src/pages/about/about.vue:163
 #: src/pages/help.vue:45
 msgid "About"
 msgstr "Tentang"
+
+#: src/options/options.js:219
+msgid "Abyss"
+msgstr "Neraka"
 
 #: src/component/navigation.vue:44 src/dialog/share/upload.vue:113
 #: src/model/account.js:96 src/pages/settings.vue:74
@@ -83,7 +87,7 @@ msgstr "Tindakan"
 msgid "Actions"
 msgstr "Tindakan"
 
-#: src/pages/albums.vue:117 src/pages/albums.vue:171
+#: src/pages/albums.vue:122 src/pages/albums.vue:177
 msgid "Add Album"
 msgstr "Tambah album"
 
@@ -109,7 +113,7 @@ msgstr "Tambah Server"
 msgid "Add to album"
 msgstr "Tambahkan ke album"
 
-#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
+#: src/dialog/photo/files.vue:171 src/dialog/photo/files.vue:168
 msgid "Added"
 msgstr "Sudah ditambahkan"
 
@@ -117,23 +121,23 @@ msgstr "Sudah ditambahkan"
 msgid "Advanced"
 msgstr "Lanjutan"
 
-#: src/options/options.js:322
+#: src/options/options.js:345
 msgid "After 1 day"
 msgstr "Setelah 1 hari"
 
-#: src/options/options.js:323
+#: src/options/options.js:346
 msgid "After 3 days"
 msgstr "Setelah 3 hari"
 
-#: src/options/options.js:324
+#: src/options/options.js:347
 msgid "After 7 days"
 msgstr "Setelah 7 hari"
 
-#: src/options/options.js:326
+#: src/options/options.js:349
 msgid "After one month"
 msgstr "Setelah 1 bulan"
 
-#: src/options/options.js:328
+#: src/options/options.js:351
 msgid "After one year"
 msgstr "Setelah 1 tahun"
 
@@ -145,15 +149,15 @@ msgstr ""
 "Setelah memilah gambar dari hasil pencarian, Anda dapat menambahkannya ke "
 "album menggunakan menu kontek."
 
-#: src/options/options.js:327
+#: src/options/options.js:350
 msgid "After two months"
 msgstr "Setelah 2 bulan"
 
-#: src/options/options.js:325
+#: src/options/options.js:348
 msgid "After two weeks"
 msgstr "Setelah 2 minggu"
 
-#: src/model/album.js:179
+#: src/model/album.js:225
 msgid "Album"
 msgstr "Album"
 
@@ -161,8 +165,8 @@ msgstr "Album"
 msgid "Album Name"
 msgstr "Nama Album"
 
-#: src/component/navigation.vue:130 src/component/navigation.vue:140
-#: src/component/navigation.vue:4 src/component/navigation.vue:544
+#: src/component/navigation.vue:132 src/component/navigation.vue:142
+#: src/component/navigation.vue:4 src/component/navigation.vue:562
 #: src/routes.js:134 src/routes.js:141 src/share/albums.vue:4
 msgid "Albums"
 msgstr "Koleksi Album"
@@ -224,6 +228,14 @@ msgstr "Semua yang asli"
 msgid "All Years"
 msgstr "Dalam semua tahun"
 
+#: src/pages/about/about.vue:34
+msgid ""
+"Also, please leave a star on GitHub if you like this project. It provides "
+"additional motivation to keep going."
+msgstr ""
+"Juga, silakan tinggalkan bintang di GitHub jika Anda menyukai proyek ini. "
+"Ini memberikan motivasi tambahan untuk terus berjalan."
+
 #: src/dialog/share.vue:75
 msgid ""
 "Alternatively, you can upload files directly to WebDAV servers like "
@@ -236,11 +248,11 @@ msgstr ""
 msgid "Altitude"
 msgstr "Ketinggian"
 
-#: src/dialog/photo/details.vue:288
+#: src/dialog/photo/details.vue:263
 msgid "Altitude (m)"
 msgstr "Ketinggian (m)"
 
-#: src/common/api.js:104
+#: src/common/api.js:105
 msgid "An error occurred - are you offline?"
 msgstr "Sebuah error terjadi - apakah Anda tidak tersambung dengan internet?"
 
@@ -256,18 +268,18 @@ msgstr "Semua foto dan video pribadi tetap pribadi dan tidak akan dibagikan."
 msgid "API Key"
 msgstr "Kunci API"
 
-#: src/dialog/photo/details.vue:121
+#: src/dialog/photo/details.vue:117
 msgid "Apply"
 msgstr "Terapkan"
 
 #: src/component/photo/cards.vue:26 src/component/photo/clipboard.vue:100
-#: src/dialog/photo/details.vue:120 src/share/photo/cards.vue:26
+#: src/dialog/photo/details.vue:116 src/share/photo/cards.vue:26
 msgid "Approve"
 msgstr "Setujui"
 
-#: src/component/navigation.vue:117 src/component/photo/cards.vue:27
+#: src/component/navigation.vue:119 src/component/photo/cards.vue:27
 #: src/component/photo/clipboard.vue:215 src/pages/settings/general.vue:294
-#: src/routes.js:208 src/share/photo/cards.vue:27
+#: src/routes.js:215 src/share/photo/cards.vue:27
 msgid "Archive"
 msgstr "Arsip"
 
@@ -299,11 +311,11 @@ msgstr "Apakah Anda yakin ingin mengapus gambar ini secara permanen?"
 msgid "Are you sure you want to permanently delete this file?"
 msgstr "Apakah Anda yakin untuk menghapus berkas ini secara permanen?"
 
-#: src/dialog/photo/details.vue:506
+#: src/dialog/photo/details.vue:483
 msgid "Artist"
 msgstr "Artis"
 
-#: src/dialog/photo/files.vue:123 src/dialog/photo/files.vue:120
+#: src/dialog/photo/files.vue:131 src/dialog/photo/files.vue:128
 msgid "Aspect Ratio"
 msgstr "Rasio Aspek"
 
@@ -323,31 +335,43 @@ msgstr ""
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Secara otomatis membuat album momen spesial, perjalanan, dan tempat."
 
+#: src/options/options.js:131
+msgid "Bahasa Indonesia"
+msgstr "Bahasa Indonesia"
+
 #: src/dialog/sponsor.vue:7 src/pages/about/about.vue:23
 msgid "Become a sponsor"
 msgstr "Menjadi sponsor"
+
+#: src/pages/about/about.vue:42
+msgid ""
+"Before submitting a support request, please use our Troubleshooting "
+"Checklists to determine the cause of your problem."
+msgstr ""
+"Sebelum mengirimkan permintaan dukungan, harap gunakan Daftar Periksa "
+"Pemecahan Masalah kami untuk menentukan penyebab masalah Anda."
 
 #: src/pages/people/subjects.vue:430
 msgid "Bio"
 msgstr "Bio"
 
-#: src/options/options.js:347
+#: src/options/options.js:370
 msgid "Black"
 msgstr "Hitam"
 
-#: src/options/options.js:360
+#: src/options/options.js:383
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Modifikasi Lanczos, Artefak Berdering Lebih Sedikit"
 
-#: src/options/options.js:343
+#: src/options/options.js:366
 msgid "Blue"
 msgstr "Biru"
 
-#: src/options/options.js:156
+#: src/options/options.js:166
 msgid "Brazilian Portuguese"
 msgstr "Portugis Brasil"
 
-#: src/options/options.js:344
+#: src/options/options.js:367
 msgid "Brown"
 msgstr "Coklat"
 
@@ -359,7 +383,7 @@ msgstr "Jelajahi dan edit label klasifikasi gambar."
 msgid "Browse indexed files and folders in Library."
 msgstr "Jelajahi file dan folder yang diindeks di Perpustakaan."
 
-#: src/options/options.js:354
+#: src/options/options.js:377
 msgid "Bug Report"
 msgstr "Laporan Bug"
 
@@ -367,13 +391,13 @@ msgstr "Laporan Bug"
 msgid "Busy, please wait…"
 msgstr "Sibuk, harap tunggu…"
 
-#: src/component/navigation.vue:215 src/component/navigation.vue:834
+#: src/component/navigation.vue:238 src/component/navigation.vue:924
 #: src/routes.js:147 src/routes.js:154
 msgid "Calendar"
 msgstr "Kalender"
 
 #: src/component/photo/cards.vue:28 src/component/photo/list.vue:36
-#: src/component/photo/toolbar.vue:207 src/dialog/photo/details.vue:350
+#: src/component/photo/toolbar.vue:207 src/dialog/photo/details.vue:327
 #: src/share/photo/cards.vue:28 src/share/photo/list.vue:32
 msgid "Camera"
 msgstr "Kamera"
@@ -382,8 +406,8 @@ msgstr "Kamera"
 msgid "Camera Serial"
 msgstr "Serial Kamera"
 
-#: src/pages/album/photos.vue:234 src/pages/photos.vue:274
-#: src/share/photos.vue:249
+#: src/pages/album/photos.vue:232 src/pages/photos.vue:272
+#: src/share/photos.vue:247
 msgid "Can't load more, limit reached"
 msgstr "Tidak dapat memuat lebih banyak, batas tercapai"
 
@@ -412,7 +436,7 @@ msgid "Cards"
 msgstr "Kartu"
 
 #: src/component/photo/toolbar.vue:349 src/dialog/album/edit.vue:163
-#: src/pages/about/feedback.vue:94 src/pages/albums.vue:122
+#: src/pages/about/feedback.vue:94 src/pages/albums.vue:128
 msgid "Category"
 msgstr "Kategori"
 
@@ -432,19 +456,19 @@ msgstr "Ubah bendera pribadi"
 msgid "Checked"
 msgstr "Diperiksa"
 
-#: src/options/options.js:171
+#: src/options/options.js:181
 msgid "Chinese Simplified"
 msgstr "Chinese Simplified"
 
-#: src/options/options.js:176
+#: src/options/options.js:186
 msgid "Chinese Traditional"
 msgstr "Chinese Traditional"
 
-#: src/dialog/photo/files.vue:143 src/dialog/photo/files.vue:140
+#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:154
 msgid "Chroma"
 msgstr "Kroma"
 
-#: src/component/photo/viewer.vue:79 src/dialog/photo/details.vue:117
+#: src/component/photo/viewer.vue:79 src/dialog/photo/details.vue:113
 #: src/dialog/share.vue:87 src/pages/library/errors.vue:58
 msgid "Close"
 msgstr "Tutup"
@@ -456,6 +480,10 @@ msgstr "Codec"
 #: src/component/photo/toolbar.vue:325
 msgid "Color"
 msgstr "Warna"
+
+#: src/dialog/photo/files.vue:145 src/dialog/photo/files.vue:142
+msgid "Color Profile"
+msgstr "Profil Warna"
 
 #: src/pages/discover.vue:4
 msgid "Colors"
@@ -503,7 +531,7 @@ msgstr "Mengubah"
 msgid "Copied to clipboard"
 msgstr "Disalin ke papan klip"
 
-#: src/dialog/photo/details.vue:529
+#: src/dialog/photo/details.vue:506
 msgid "Copyright"
 msgstr "Hak Cipta"
 
@@ -511,7 +539,7 @@ msgstr "Hak Cipta"
 msgid "Couldn't find anything."
 msgstr "Tidak dapat menemukan apa pun."
 
-#: src/component/photo/toolbar.vue:182 src/dialog/photo/details.vue:263
+#: src/component/photo/toolbar.vue:182 src/dialog/photo/details.vue:238
 msgid "Country"
 msgstr "Negara"
 
@@ -527,7 +555,7 @@ msgstr "Dibuat"
 msgid "Creating thumbnails for"
 msgstr "Membuat thumbnail untuk"
 
-#: src/options/options.js:362
+#: src/options/options.js:385
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubik: Kualitas Sedang, Performa Bagus"
 
@@ -535,15 +563,15 @@ msgstr "Kubik: Kualitas Sedang, Performa Bagus"
 msgid "Current Password"
 msgstr "Kata Sandi Saat Ini"
 
-#: src/options/options.js:351
+#: src/options/options.js:374
 msgid "Customer Support"
 msgstr "Dukungan Pelanggan"
 
-#: src/options/options.js:342
+#: src/options/options.js:365
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/options.js:219
+#: src/options/options.js:234
 msgid "Cyano"
 msgstr "Siano"
 
@@ -551,7 +579,7 @@ msgstr "Siano"
 msgid "Czech"
 msgstr "Ceko"
 
-#: src/options/options.js:315
+#: src/options/options.js:338
 msgid "Daily"
 msgstr "Harian"
 
@@ -567,7 +595,7 @@ msgstr "Hari"
 msgid "Debug Logs"
 msgstr "Log Debug"
 
-#: src/options/options.js:194
+#: src/options/options.js:204
 msgid "Default"
 msgstr "Bawaan"
 
@@ -585,8 +613,8 @@ msgid "Delete"
 msgstr "Hapus"
 
 #: src/component/photo/cards.vue:24 src/dialog/album/edit.vue:143
-#: src/dialog/photo/details.vue:575 src/pages/albums.vue:436
-#: src/share/albums.vue:238 src/share/photo/cards.vue:24
+#: src/dialog/photo/details.vue:552 src/pages/albums.vue:442
+#: src/share/albums.vue:243 src/share/photo/cards.vue:24
 msgid "Description"
 msgstr "Deskripsi"
 
@@ -647,7 +675,7 @@ msgstr "Dinonaktifkan"
 msgid "Disables reverse geocoding and maps."
 msgstr "Menonaktifkan geocoding dan peta terbalik."
 
-#: src/routes.js:373 src/routes.js:380 src/routes.js:387 src/routes.js:394
+#: src/routes.js:380 src/routes.js:387 src/routes.js:394 src/routes.js:401
 msgid "Discover"
 msgstr "Temukan"
 
@@ -680,11 +708,11 @@ msgstr "Jangan gunakan RawTherapee untuk mengonversi file RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Jangan gunakan TensorFlow untuk klasifikasi gambar."
 
-#: src/options/options.js:355
+#: src/options/options.js:378
 msgid "Donations"
 msgstr "Donasi"
 
-#: src/dialog/photo/details.vue:124 src/dialog/share.vue:23
+#: src/dialog/photo/details.vue:120 src/dialog/share.vue:23
 msgid "Done"
 msgstr "Selesai"
 
@@ -713,11 +741,11 @@ msgstr "Unduh file tunggal dan arsip zip."
 #: src/component/album/clipboard.vue:83 src/component/album/toolbar.vue:97
 #: src/component/file/clipboard.vue:43 src/component/label/clipboard.vue:56
 #: src/component/photo/cards.vue:54 src/component/photo/clipboard.vue:115
-#: src/component/photo/list.vue:58 src/component/photo/viewer.vue:144
+#: src/component/photo/list.vue:58 src/component/photo/viewer.vue:158
 #: src/component/subject/clipboard.vue:44 src/dialog/photo/files.vue:44
 #: src/pages/library/files.vue:99 src/share/album/clipboard.vue:37
 #: src/share/photo/cards.vue:54 src/share/photo/clipboard.vue:39
-#: src/share/photo/list.vue:53 src/share/photos.vue:488
+#: src/share/photo/list.vue:53 src/share/photos.vue:486
 msgid "Downloading…"
 msgstr "Mengunduh…"
 
@@ -729,7 +757,7 @@ msgstr "Filter Penurunan Skala"
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Duplikat akan dilewati dan hanya muncul sekali."
 
-#: src/options/options.js:141
+#: src/options/options.js:151
 msgid "Dutch"
 msgstr "BelAnda"
 
@@ -792,7 +820,7 @@ msgstr ""
 msgid "English"
 msgstr "Inggris"
 
-#: src/component/navigation.vue:338
+#: src/component/navigation.vue:361
 msgid "Errors"
 msgstr "Kesalahan"
 
@@ -804,7 +832,7 @@ msgstr "Perkiraan lokasi gambar tanpa menggunakan koordinat."
 msgid "Estimates"
 msgstr "Perkiraan"
 
-#: src/options/options.js:316
+#: src/options/options.js:339
 msgid "Every two days"
 msgstr "Setiap dua hari"
 
@@ -820,7 +848,7 @@ msgstr ""
 msgid "Exclude hidden"
 msgstr "Pengecualian untuk yang tersembunyi"
 
-#: src/component/navigation.vue:251
+#: src/component/navigation.vue:269
 msgid "Expand"
 msgstr "Perluas"
 
@@ -836,11 +864,11 @@ msgstr "Fitur Eksperimental"
 msgid "Expires"
 msgstr "Kedaluwarsa"
 
-#: src/dialog/photo/details.vue:394
+#: src/dialog/photo/details.vue:371
 msgid "Exposure"
 msgstr "Eksposur"
 
-#: src/dialog/photo/details.vue:438
+#: src/dialog/photo/details.vue:415
 msgid "F Number"
 msgstr "Nilai F"
 
@@ -868,7 +896,7 @@ msgstr "Gagal memperbarui tautan"
 msgid "Failure while importing uploaded files"
 msgstr "Gagal saat mengimpor file yang diunggah"
 
-#: src/options/options.js:255
+#: src/options/options.js:275
 msgid "Fast"
 msgstr "Cepat"
 
@@ -876,24 +904,31 @@ msgstr "Cepat"
 msgid "Favorite"
 msgstr "Favorit"
 
-#: src/component/navigation.vue:189 src/component/navigation.vue:746
+#: src/component/navigation.vue:212 src/component/navigation.vue:836
 #: src/routes.js:180
 msgid "Favorites"
 msgstr "Favorit"
 
-#: src/options/options.js:353
+#: src/options/options.js:376
 msgid "Feature Request"
 msgstr "Permintaan Fitur"
 
-#: src/component/navigation.vue:379 src/component/navigation.vue:35
+#: src/component/navigation.vue:402 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Umpan Balik"
 
-#: src/model/file.js:244
+#: src/dialog/sponsor.vue:24
+msgid ""
+"Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+"Silakan hubungi kami di hello@photoprism.app jika Anda memiliki pertanyaan "
+"atau butuh bantuan."
+
+#: src/model/file.js:246
 msgid "File"
 msgstr "Berkas"
 
-#: src/routes.js:240
+#: src/routes.js:247
 msgid "File Browser"
 msgstr "Peramban Berkas"
 
@@ -910,7 +945,7 @@ msgstr ""
 "File dengan nama berurutan seperti 'IMG_1234 (2)' dan 'IMG_1234 (3)' milik "
 "gambar yang sama."
 
-#: src/dialog/photo/details.vue:458
+#: src/dialog/photo/details.vue:435
 msgid "Focal Length"
 msgstr "Panjang Fokus"
 
@@ -928,7 +963,7 @@ msgstr "Folder berisi %{n} berkas"
 msgid "Folder is empty"
 msgstr "Folder kosong"
 
-#: src/component/navigation.vue:275 src/component/navigation.vue:1042
+#: src/component/navigation.vue:298 src/component/navigation.vue:1132
 #: src/routes.js:160 src/routes.js:167
 msgid "Folders"
 msgstr "Folder"
@@ -941,6 +976,10 @@ msgstr "Prancis"
 msgid "Fullscreen"
 msgstr "Layar Penuh"
 
+#: src/options/options.js:244
+msgid "Gemstone"
+msgstr "Batu permata"
+
 #: src/pages/settings.vue:30
 msgid "General"
 msgstr "Umum"
@@ -949,19 +988,23 @@ msgstr "Umum"
 msgid "German"
 msgstr "Jerman"
 
-#: src/options/options.js:337
+#: src/pages/about/about.vue:38
+msgid "Getting Support"
+msgstr "Mendapatkan Dukungan"
+
+#: src/options/options.js:360
 msgid "Gold"
 msgstr "Emas"
 
-#: src/options/options.js:199
+#: src/options/options.js:209
 msgid "Grayscale"
 msgstr "Grayscale"
 
-#: src/options/options.js:340
+#: src/options/options.js:363
 msgid "Green"
 msgstr "Hijau"
 
-#: src/options/options.js:346
+#: src/options/options.js:369
 msgid "Grey"
 msgstr "Abu-abu"
 
@@ -982,11 +1025,11 @@ msgstr "Ibrani"
 msgid "Help"
 msgstr "Bantuan"
 
-#: src/component/navigation.vue:329
+#: src/component/navigation.vue:352
 msgid "Hidden"
 msgstr "Tersembunyi"
 
-#: src/routes.js:246
+#: src/routes.js:253
 msgid "Hidden Files"
 msgstr "Berkas tersembunyi"
 
@@ -998,6 +1041,10 @@ msgstr "Sembunyikan"
 msgid "Hide photos that have been moved to archive."
 msgstr "Sembunyikan foto yang telah dipindahkan ke arsip."
 
+#: src/dialog/photo/files.vue:109 src/dialog/photo/files.vue:106
+msgid "High Dynamic Range (HDR)"
+msgstr "Rentang Dinamis Tinggi (HDR)"
+
 #: src/options/options.js:121
 msgid "Hindi"
 msgstr "Hindi"
@@ -1006,7 +1053,11 @@ msgstr "Hindi"
 msgid "How can we help?"
 msgstr "Bagaimana kami bisa membantu?"
 
-#: src/options/options.js:278
+#: src/options/options.js:126
+msgid "Hungarian"
+msgstr "Hongaria"
+
+#: src/options/options.js:298
 msgid "Hybrid"
 msgstr "Hybrid"
 
@@ -1014,11 +1065,15 @@ msgstr "Hybrid"
 msgid "I'm a sponsor"
 msgstr "Saya seorang sponsor"
 
+#: src/pages/about/about.vue:43
+msgid "If this doesn't help, or you have other questions:"
+msgstr "Jika ini tidak membantu, atau Anda memiliki pertanyaan lain:"
+
 #: src/dialog/photo/labels.vue:34
 msgid "image"
 msgstr "gambar"
 
-#: src/options/options.js:293
+#: src/options/options.js:316
 msgid "Image"
 msgstr "Gambar"
 
@@ -1057,10 +1112,14 @@ msgstr "Mengimpor %{name}…"
 msgid "Importing files to originals…"
 msgstr "Mengimpor file ke aslinya…"
 
-#: src/dialog/photo/files.vue:160 src/dialog/photo/files.vue:169
-#: src/dialog/photo/files.vue:157 src/dialog/photo/files.vue:166
+#: src/dialog/photo/files.vue:174 src/dialog/photo/files.vue:183
+#: src/dialog/photo/files.vue:171 src/dialog/photo/files.vue:180
 msgid "in"
 msgstr "dalam"
+
+#: src/pages/about/about.vue:52
+msgid "In addition, sponsors receive direct technical support via email."
+msgstr "Selain itu, sponsor menerima dukungan teknis langsung melalui email."
 
 #: src/component/photo/cards.vue:11 src/component/photo/list.vue:12
 #: src/component/photo/mosaic.vue:11 src/pages/labels.vue:35
@@ -1096,11 +1155,11 @@ msgstr "ID Instance"
 msgid "Interval"
 msgstr "Interval"
 
-#: src/dialog/photo/details.vue:101
+#: src/dialog/photo/details.vue:105
 msgid "Invalid date"
 msgstr "Tanggal tidak valid"
 
-#: src/options/options.js:126
+#: src/options/options.js:136
 msgid "Italian"
 msgstr "Italian"
 
@@ -1108,7 +1167,7 @@ msgstr "Italian"
 msgid "Item"
 msgstr "Item"
 
-#: src/options/options.js:181
+#: src/options/options.js:191
 msgid "Japanese"
 msgstr "Jepang"
 
@@ -1124,15 +1183,15 @@ msgstr "Batas Ukuran JPEG: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG dan thumbnail secara otomatis dirender sesuai dengan kebutuhan."
 
-#: src/dialog/photo/details.vue:598
+#: src/dialog/photo/details.vue:575
 msgid "Keywords"
 msgstr "Kata kunci"
 
-#: src/options/options.js:131
+#: src/options/options.js:141
 msgid "Korean"
 msgstr "Korea"
 
-#: src/options/options.js:186
+#: src/options/options.js:196
 msgid "Kurdish"
 msgstr "Kurdi"
 
@@ -1140,10 +1199,10 @@ msgstr "Kurdi"
 msgid "Label"
 msgstr "Label"
 
-#: src/component/navigation.vue:262 src/component/navigation.vue:997
+#: src/component/navigation.vue:285 src/component/navigation.vue:1087
 #: src/dialog/photo/edit.vue:39 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:216 src/pages/settings/general.vue:382
-#: src/routes.js:259
+#: src/routes.js:266
 msgid "Labels"
 msgstr "Label"
 
@@ -1151,7 +1210,7 @@ msgstr "Label"
 msgid "Labels deleted"
 msgstr "Label dihapus"
 
-#: src/options/options.js:361
+#: src/options/options.js:384
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Pelestarian Detail, Artefak Minimal"
 
@@ -1163,27 +1222,27 @@ msgstr "Bahasa"
 msgid "Last Backup"
 msgstr "Cadangan Terakhir"
 
-#: src/dialog/photo/details.vue:309 src/dialog/photo/info.vue:135
+#: src/dialog/photo/details.vue:285 src/dialog/photo/info.vue:135
 msgid "Latitude"
 msgstr "Lintang"
 
-#: src/options/options.js:224
+#: src/options/options.js:239
 msgid "Lavender"
 msgstr "Lavender"
 
-#: src/dialog/photo/details.vue:414
+#: src/dialog/photo/details.vue:391
 msgid "Lens"
 msgstr "Lensa"
 
-#: src/component/navigation.vue:301 src/component/navigation.vue:311
-#: src/component/navigation.vue:4 src/component/navigation.vue:1134
+#: src/component/navigation.vue:324 src/component/navigation.vue:334
+#: src/component/navigation.vue:4 src/component/navigation.vue:1224
 #: src/pages/settings.vue:41 src/pages/settings/general.vue:404
-#: src/routes.js:291 src/routes.js:298 src/routes.js:305
+#: src/routes.js:298 src/routes.js:305 src/routes.js:312
 msgid "Library"
 msgstr "Perpustakaan"
 
-#: src/component/navigation.vue:387 src/component/navigation.vue:43
-#: src/dialog/photo/details.vue:553 src/pages/about/license.vue:4
+#: src/component/navigation.vue:410 src/component/navigation.vue:43
+#: src/dialog/photo/details.vue:530 src/pages/about/license.vue:4
 msgid "License"
 msgstr "Lisensi"
 
@@ -1191,7 +1250,7 @@ msgstr "Lisensi"
 msgid "Like"
 msgstr "Suka"
 
-#: src/options/options.js:339
+#: src/options/options.js:362
 msgid "Lime"
 msgstr "Lime"
 
@@ -1199,7 +1258,7 @@ msgstr "Lime"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Batas tercapai, menampilkan %{n} file pertama"
 
-#: src/options/options.js:363
+#: src/options/options.js:386
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Sangat Halus, Performa Terbaik"
 
@@ -1211,10 +1270,10 @@ msgstr "Tautan"
 msgid "List"
 msgstr "Daftar"
 
-#: src/component/photo/cards.vue:215 src/component/photo/list.vue:186
-#: src/component/photo/mosaic.vue:190 src/options/options.js:301
-#: src/share/photo/cards.vue:188 src/share/photo/list.vue:165
-#: src/share/photo/mosaic.vue:171
+#: src/component/navigation.vue:185 src/component/photo/cards.vue:215
+#: src/component/photo/list.vue:186 src/component/photo/mosaic.vue:190
+#: src/options/options.js:324 src/routes.js:187 src/share/photo/cards.vue:188
+#: src/share/photo/list.vue:165 src/share/photo/mosaic.vue:171
 msgid "Live"
 msgstr "Langsung"
 
@@ -1240,12 +1299,12 @@ msgstr ""
 "Pesan log muncul di sini setiap kali PhotoPrism menemukan file yang rusak, "
 "atau ada masalah potensial lainnya."
 
-#: src/component/navigation.vue:401 src/component/navigation.vue:1470
+#: src/component/navigation.vue:424 src/component/navigation.vue:1560
 msgid "Login"
 msgstr "Masuk"
 
-#: src/component/navigation.vue:448 src/component/navigation.vue:1580
-#: src/component/navigation.vue:1611
+#: src/component/navigation.vue:471 src/component/navigation.vue:1670
+#: src/component/navigation.vue:1701
 msgid "Logout"
 msgstr "Keluar"
 
@@ -1253,15 +1312,15 @@ msgstr "Keluar"
 msgid "Logs"
 msgstr "Log"
 
-#: src/dialog/photo/details.vue:330 src/dialog/photo/info.vue:143
+#: src/dialog/photo/details.vue:307 src/dialog/photo/info.vue:143
 msgid "Longitude"
 msgstr "Bujur"
 
-#: src/options/options.js:333
+#: src/options/options.js:356
 msgid "Magenta"
 msgstr "Magenta"
 
-#: src/dialog/photo/files.vue:137 src/dialog/photo/files.vue:134
+#: src/dialog/photo/files.vue:151 src/dialog/photo/files.vue:148
 msgid "Main Color"
 msgstr "Warna Utama"
 
@@ -1277,7 +1336,7 @@ msgstr "Unggah manual"
 msgid "Marker"
 msgstr "PenAnda"
 
-#: src/options/options.js:259
+#: src/options/options.js:279
 msgid "Medium"
 msgstr "Sedang"
 
@@ -1289,20 +1348,20 @@ msgstr "Gabungkan %{a} dengan %{b}?"
 msgid "Message sent"
 msgstr "Pesan terkirim"
 
-#: src/component/navigation.vue:204
+#: src/component/navigation.vue:222
 msgid "Minimize"
 msgstr "Perkecil"
 
-#: src/dialog/photo/files.vue:149 src/dialog/photo/files.vue:146
+#: src/dialog/photo/files.vue:163 src/dialog/photo/files.vue:160
 msgid "Missing"
 msgstr "Hilang"
 
-#: src/component/navigation.vue:202 src/component/navigation.vue:789
+#: src/component/navigation.vue:225 src/component/navigation.vue:879
 #: src/pages/settings/general.vue:360 src/routes.js:121 src/routes.js:128
 msgid "Moments"
 msgstr "Momen"
 
-#: src/component/navigation.vue:76
+#: src/component/navigation.vue:78
 msgid "Monochrome"
 msgstr "Monokrom"
 
@@ -1310,12 +1369,12 @@ msgstr "Monokrom"
 msgid "Month"
 msgstr "Setelah 1 bulanBulan"
 
-#: src/options/options.js:209
+#: src/options/options.js:224
 msgid "Moonlight"
 msgstr "Cahaya Bulan"
 
-#: src/pages/album/photos.vue:343 src/pages/photos.vue:381
-#: src/share/photos.vue:358
+#: src/pages/album/photos.vue:341 src/pages/photos.vue:379
+#: src/share/photos.vue:356
 msgid "More than %{n} pictures found"
 msgstr "Lebih dari %{n} gambar ditemukan"
 
@@ -1365,7 +1424,7 @@ msgstr "Nama"
 msgid "Name too long"
 msgstr "Nama terlalu panjang"
 
-#: src/options/options.js:311 src/options/options.js:321
+#: src/options/options.js:334 src/options/options.js:344
 #: src/pages/settings/sync.vue:50
 msgid "Never"
 msgstr "Tidak Pernah"
@@ -1407,11 +1466,11 @@ msgid "No people found"
 msgstr "Tidak ada orang yang ditemukan"
 
 #: src/component/photo/cards.vue:7 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:7 src/pages/album/photos.vue:336
-#: src/pages/library/files.vue:34 src/pages/photos.vue:374
-#: src/pages/places.vue:183 src/pages/places.vue:222
+#: src/component/photo/mosaic.vue:7 src/pages/album/photos.vue:334
+#: src/pages/library/files.vue:34 src/pages/photos.vue:372
+#: src/pages/places.vue:198 src/pages/places.vue:240
 #: src/share/photo/cards.vue:7 src/share/photo/list.vue:8
-#: src/share/photo/mosaic.vue:7 src/share/photos.vue:351
+#: src/share/photo/mosaic.vue:7 src/share/photos.vue:349
 msgid "No pictures found"
 msgstr "Tidak ada gambar yang ditemukan"
 
@@ -1449,11 +1508,11 @@ msgstr ""
 "Gambar non-fotografis dan berkualitas rendah memerlukan peninjauan sebelum "
 "muncul di hasil pencarian."
 
-#: src/options/options.js:251
+#: src/options/options.js:271
 msgid "None"
 msgstr "Tidak ada"
 
-#: src/options/options.js:136
+#: src/options/options.js:146
 msgid "Norwegian"
 msgstr "Norwegia"
 
@@ -1489,7 +1548,7 @@ msgstr ""
 "Catatan: Memperbarui kata sandi tidak akan mencabut akses dari pengguna yang "
 "sudah terautentikasi."
 
-#: src/dialog/photo/details.vue:621
+#: src/dialog/photo/details.vue:598
 msgid "Notes"
 msgstr "Catatan"
 
@@ -1497,8 +1556,8 @@ msgstr "Catatan"
 msgid "Nothing to see here yet. Be patient."
 msgstr "Belum ada yang bisa dilihat di sini. Bersabarlah."
 
-#: src/component/navigation.vue:417 src/component/navigation.vue:1515
-#: src/options/options.js:270
+#: src/component/navigation.vue:440 src/component/navigation.vue:1605
+#: src/options/options.js:290
 msgid "Offline"
 msgstr "Offline"
 
@@ -1507,7 +1566,7 @@ msgstr "Offline"
 msgid "Oldest first"
 msgstr "Paling lama"
 
-#: src/options/options.js:317
+#: src/options/options.js:340
 msgid "Once a week"
 msgstr "Seminggu sekali"
 
@@ -1532,12 +1591,12 @@ msgstr "Satu label ditemukan"
 msgid "One person found"
 msgstr "Satu orang ditemukan"
 
-#: src/pages/album/photos.vue:338 src/pages/photos.vue:376
-#: src/share/photos.vue:353
+#: src/pages/album/photos.vue:336 src/pages/photos.vue:374
+#: src/share/photos.vue:351
 msgid "One picture found"
 msgstr "Satu gambar ditemukan"
 
-#: src/options/options.js:214
+#: src/options/options.js:229
 msgid "Onyx"
 msgstr "Onyx"
 
@@ -1545,11 +1604,15 @@ msgstr "Onyx"
 msgid "Options"
 msgstr "Opsi"
 
-#: src/options/options.js:336
+#: src/pages/about/about.vue:49
+msgid "or ask in our Community Chat"
+msgstr "atau tanyakan di Obrolan Komunitas kami"
+
+#: src/options/options.js:359
 msgid "Orange"
 msgstr "Oranye"
 
-#: src/dialog/photo/files.vue:129 src/dialog/photo/files.vue:126
+#: src/dialog/photo/files.vue:137 src/dialog/photo/files.vue:134
 msgid "Orientation"
 msgstr "Orientasi"
 
@@ -1566,23 +1629,24 @@ msgstr "Nama file asli akan disimpan dan diindeks."
 msgid "Original Name"
 msgstr "Nama Asli"
 
-#: src/component/navigation.vue:320 src/pages/library/files.vue:6
+#: src/component/navigation.vue:343 src/pages/library/files.vue:6
 #: src/pages/settings/general.vue:316
 msgid "Originals"
 msgstr "Asli"
 
-#: src/options/options.js:356
+#: src/options/options.js:379
 msgid "Other"
 msgstr "Lainnya"
 
 #: src/pages/about/about.vue:15
 msgid ""
-"Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+"Our vision is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
 msgstr ""
 "Visi kami adalah memberikan solusi yang paling ramah untuk menjelajah, "
 "mengatur, dan berbagi koleksi foto Anda."
 
-#: src/options/options.js:286
+#: src/options/options.js:308
 msgid "Outdoor"
 msgstr "Luar ruangan"
 
@@ -1590,7 +1654,7 @@ msgstr "Luar ruangan"
 msgid "Panorama"
 msgstr "Panorama"
 
-#: src/component/navigation.vue:84
+#: src/component/navigation.vue:86
 msgid "Panoramas"
 msgstr "Panorama"
 
@@ -1603,10 +1667,10 @@ msgstr "Kata sandi"
 msgid "Password changed"
 msgstr "Kata sandi diubah"
 
-#: src/component/navigation.vue:176 src/component/navigation.vue:701
+#: src/component/navigation.vue:199 src/component/navigation.vue:791
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:267 src/pages/settings/general.vue:338
-#: src/routes.js:265 src/routes.js:285
+#: src/routes.js:272 src/routes.js:292
 msgid "People"
 msgstr "Orang"
 
@@ -1623,7 +1687,7 @@ msgstr "Dihapus permanen"
 msgid "Permanently remove files to free up storage."
 msgstr "Hapus file secara permanen untuk mengosongkan penyimpanan."
 
-#: src/model/photo.js:852
+#: src/model/photo.js:896
 msgid "Photo"
 msgstr "Foto"
 
@@ -1631,15 +1695,11 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism telah diperbarui…"
 
-#: src/pages/about/about.vue:38
-msgid "PhotoPrism® is a registered trademark of Michael Mayer."
-msgstr "PhotoPrism® adalah merek dagang terdaftar dari Michael Mayer."
-
 #: src/routes.js:114
 msgid "Photos"
 msgstr "Foto"
 
-#: src/options/options.js:334
+#: src/options/options.js:357
 msgid "Pink"
 msgstr "Merah Muda"
 
@@ -1651,10 +1711,10 @@ msgstr "Tempat"
 msgid "Place & Time"
 msgstr "Tempat & Waktu"
 
-#: src/component/navigation.vue:228 src/component/navigation.vue:238
-#: src/component/navigation.vue:4 src/component/navigation.vue:879
+#: src/component/navigation.vue:251 src/component/navigation.vue:261
+#: src/component/navigation.vue:4 src/component/navigation.vue:969
 #: src/pages/settings/general.vue:108 src/pages/settings/general.vue:450
-#: src/routes.js:215 src/routes.js:221 src/routes.js:227 src/routes.js:234
+#: src/routes.js:222 src/routes.js:228 src/routes.js:234 src/routes.js:241
 msgid "Places"
 msgstr "Tempat"
 
@@ -1667,28 +1727,25 @@ msgstr "Mainkan"
 msgid "Please confirm your new password."
 msgstr "Harap konfirmasi kata sandi baru Anda."
 
-#: src/dialog/sponsor.vue:24
-msgid ""
-"Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Silakan hubungi kami di hello@photoprism.app jika Anda memiliki pertanyaan "
-"atau butuh bantuan."
-
 #: src/dialog/upload.vue:45
 msgid "Please don't upload photos containing offensive content."
 msgstr "Jangan mengunggah foto yang mengandung konten SARA."
 
-#: src/options/options.js:146
+#: src/options/options.js:156
 msgid "Polish"
 msgstr "Polandia"
 
-#: src/dialog/photo/files.vue:109 src/dialog/photo/files.vue:106
+#: src/dialog/photo/files.vue:117 src/dialog/photo/files.vue:114
 msgid "Portrait"
 msgstr "Potret"
 
-#: src/options/options.js:151
+#: src/options/options.js:161
 msgid "Português de Portugal"
 msgstr "Bahasa Portugis"
+
+#: src/pages/about/about.vue:48
+msgid "post your question in GitHub Discussions"
+msgstr "posting pertanyaan Anda di Diskusi GitHub"
 
 #: src/dialog/account/edit.vue:338
 msgid "Preserve filenames"
@@ -1716,21 +1773,21 @@ msgstr "Pratinjau"
 msgid "Primary"
 msgstr "Utama"
 
-#: src/component/navigation.vue:288 src/component/navigation.vue:1087
+#: src/component/navigation.vue:311 src/component/navigation.vue:1177
 #: src/dialog/photo/info.vue:102 src/pages/settings/general.vue:272
-#: src/routes.js:201
+#: src/routes.js:208
 msgid "Private"
 msgstr "Pribadi"
 
-#: src/options/options.js:352
+#: src/options/options.js:375
 msgid "Product Feedback"
 msgstr "Umpan Balik Produk"
 
-#: src/dialog/photo/files.vue:117 src/dialog/photo/files.vue:114
+#: src/dialog/photo/files.vue:125 src/dialog/photo/files.vue:122
 msgid "Projection"
 msgstr "Proyeksi"
 
-#: src/options/options.js:332
+#: src/options/options.js:355
 msgid "Purple"
 msgstr "Ungu"
 
@@ -1746,11 +1803,11 @@ msgstr "Angka Mutu"
 msgid "Random"
 msgstr "Acak"
 
-#: src/options/options.js:229
+#: src/options/options.js:249
 msgid "Raspberry"
 msgstr "Raspberry"
 
-#: src/options/options.js:297
+#: src/options/options.js:320
 msgid "Raw"
 msgstr "Raw"
 
@@ -1796,18 +1853,18 @@ msgstr "Pengenalan"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Mengenali wajah sehingga orang tertentu dapat ditemukan."
 
-#: src/options/options.js:335
+#: src/options/options.js:358
 msgid "Red"
 msgstr "Merah"
 
 #: src/component/album/toolbar.vue:54 src/component/photo/toolbar.vue:57
-#: src/dialog/reload.vue:15 src/pages/albums.vue:134 src/pages/labels.vue:91
+#: src/dialog/reload.vue:15 src/pages/albums.vue:140 src/pages/labels.vue:91
 #: src/pages/library/errors.vue:69 src/pages/library/files.vue:100
 #: src/pages/people/faces.vue:65 src/pages/people/subjects.vue:103
 msgid "Reload"
 msgstr "Muat ulang"
 
-#: src/dialog/reload.vue:26 src/pages/settings/general.vue:71
+#: src/dialog/reload.vue:26 src/pages/settings/general.vue:99
 #: src/pages/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Memuat ulang…"
@@ -1840,17 +1897,9 @@ msgstr ""
 msgid "Report Bug"
 msgstr "Laporkan Masalah"
 
-#: src/common/api.js:78
+#: src/common/api.js:79
 msgid "Request failed - invalid response"
 msgstr "Permintaan gagal - tanggapan tidak valid"
-
-#: src/pages/about/about.vue:30
-msgid ""
-"Requests endorsed by silver and gold sponsors receive a golden label and "
-"will be prioritized."
-msgstr ""
-"Permintaan yang didukung oleh sponsor perak dan emas menerima label emas dan "
-"akan diprioritaskan."
 
 #: src/pages/about/feedback.vue:103 src/pages/about/feedback.vue:123
 #: src/pages/about/feedback.vue:165
@@ -1869,11 +1918,11 @@ msgstr "Pulihkan"
 msgid "Retype Password"
 msgstr "Kata sandiKetik Ulang Kata Sandi"
 
-#: src/component/navigation.vue:108 src/routes.js:194
+#: src/component/navigation.vue:110 src/routes.js:201
 msgid "Review"
 msgstr "Ulasan"
 
-#: src/options/options.js:161
+#: src/options/options.js:171
 msgid "Russian"
 msgstr "Rusia"
 
@@ -1886,13 +1935,13 @@ msgstr "Simpan"
 msgid "Scan"
 msgstr "Pindai"
 
-#: src/component/navigation.vue:100
+#: src/component/navigation.vue:102
 msgid "Scans"
 msgstr "Pindai"
 
-#: src/component/navigation.vue:56 src/component/navigation.vue:66
-#: src/component/navigation.vue:4 src/component/navigation.vue:283
-#: src/component/photo/toolbar.vue:48 src/pages/albums.vue:109
+#: src/component/navigation.vue:58 src/component/navigation.vue:68
+#: src/component/navigation.vue:4 src/component/navigation.vue:301
+#: src/component/photo/toolbar.vue:48 src/pages/albums.vue:115
 #: src/pages/labels.vue:81 src/pages/library/errors.vue:60
 #: src/pages/people/subjects.vue:86 src/pages/places.vue:30 src/routes.js:107
 msgid "Search"
@@ -1906,7 +1955,7 @@ msgstr "Mencari dan menampilkan foto di peta."
 msgid "Season"
 msgstr "Musim"
 
-#: src/options/options.js:234
+#: src/options/options.js:254
 msgid "Seaweed"
 msgstr "Rumput laut"
 
@@ -1951,15 +2000,15 @@ msgstr "Server"
 msgid "Service URL"
 msgstr "URL Layanan"
 
-#: src/component/navigation.vue:352 src/component/navigation.vue:362
+#: src/component/navigation.vue:375 src/component/navigation.vue:385
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
-#: src/component/navigation.vue:4 src/component/navigation.vue:1308
-#: src/routes.js:313 src/routes.js:325 src/routes.js:337 src/routes.js:349
-#: src/routes.js:361
+#: src/component/navigation.vue:4 src/component/navigation.vue:1398
+#: src/routes.js:320 src/routes.js:332 src/routes.js:344 src/routes.js:356
+#: src/routes.js:368
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:75
+#: src/pages/settings/advanced.vue:39 src/pages/settings/general.vue:103
 #: src/pages/settings/library.vue:50
 msgid "Settings saved"
 msgstr "Pengaturan disimpan"
@@ -1968,7 +2017,7 @@ msgstr "Pengaturan disimpan"
 msgid "Setup"
 msgstr "Setelan"
 
-#: src/options/options.js:239
+#: src/options/options.js:259
 msgid "Shadow"
 msgstr "Bayangan"
 
@@ -2017,7 +2066,7 @@ msgstr "Tampilkan log server di Perpustakaan."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Menampilkan pesan log yang lebih detail. Memerlukan restart."
 
-#: src/model/file.js:185
+#: src/model/file.js:187
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2038,11 +2087,11 @@ msgstr "Serupa"
 msgid "Size"
 msgstr "Ukuran"
 
-#: src/options/options.js:166
+#: src/options/options.js:176
 msgid "Slovak"
 msgstr "Slovakia"
 
-#: src/options/options.js:263
+#: src/options/options.js:283
 msgid "Slow"
 msgstr "Lambat"
 
@@ -2062,6 +2111,15 @@ msgstr "Sumber"
 #: src/options/options.js:105
 msgid "Spanish"
 msgstr "Spanyol"
+
+#: src/pages/about/about.vue:30
+msgid ""
+"Sponsors get access to additional features, receive direct technical support "
+"via email, and can join our private chat room on matrix.org."
+msgstr ""
+"Sponsor mendapatkan akses ke fitur tambahan, menerima dukungan teknis "
+"langsung melalui email, dan dapat bergabung dengan ruang obrolan pribadi "
+"kami di matrix.org."
 
 #: src/component/photo/cards.vue:235 src/component/photo/mosaic.vue:210
 #: src/share/photo/cards.vue:208 src/share/photo/mosaic.vue:191
@@ -2086,7 +2144,7 @@ msgstr ""
 msgid "Stackable"
 msgstr "Dapat ditumpuk"
 
-#: src/component/navigation.vue:92 src/pages/settings/library.vue:34
+#: src/component/navigation.vue:94 src/pages/settings/library.vue:34
 msgid "Stacks"
 msgstr "Tumpukan"
 
@@ -2106,7 +2164,7 @@ msgstr "Mulai"
 msgid "Start/Stop Slideshow"
 msgstr "Mulai/Hentikan Slideshow"
 
-#: src/component/navigation.vue:248
+#: src/component/navigation.vue:271
 msgid "States"
 msgstr "Negara"
 
@@ -2122,7 +2180,7 @@ msgstr "Status"
 msgid "Storage Folder"
 msgstr "Folder Penyimpanan"
 
-#: src/options/options.js:274
+#: src/options/options.js:294
 msgid "Streets"
 msgstr "Jalan"
 
@@ -2130,7 +2188,7 @@ msgstr "Jalan"
 msgid "Style"
 msgstr "Gaya"
 
-#: src/dialog/photo/details.vue:482 src/model/subject.js:154
+#: src/dialog/photo/details.vue:459 src/model/subject.js:154
 msgid "Subject"
 msgstr "Subjek"
 
@@ -2155,17 +2213,13 @@ msgstr "Sinkronkan file mentah dan video"
 msgid "Taken"
 msgstr "Diambil"
 
-#: src/options/options.js:341
+#: src/options/options.js:364
 msgid "Teal"
 msgstr "Teal"
 
-#: src/dialog/photo/details.vue:26 src/pages/people/faces.vue:51
+#: src/dialog/photo/details.vue:25 src/pages/people/faces.vue:51
 msgid "Text too long"
 msgstr "Teks terlalu panjang"
-
-#: src/pages/about/about.vue:31
-msgid "Thank you very much!"
-msgstr "Terima kasih banyak!"
 
 #: src/pages/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
@@ -2193,7 +2247,8 @@ msgstr "Tema"
 
 #: src/dialog/sponsor.vue:17
 msgid ""
-"This currently is a sponsor feature to thank everyone who supports the development of this application."
+"This currently is a sponsor feature to thank everyone who supports the "
+"development of this application."
 msgstr ""
 "Ini adalah fitur akses awal untuk mengucapkan terima kasih kepada sponsor "
 "kami dan kontributor."
@@ -2212,11 +2267,11 @@ msgstr ""
 msgid "Thumbnail Generation"
 msgstr "Pembuatan Thumbnail"
 
-#: src/dialog/photo/details.vue:212
+#: src/dialog/photo/details.vue:189
 msgid "Time UTC"
 msgstr "Waktu UTC"
 
-#: src/dialog/photo/details.vue:236
+#: src/dialog/photo/details.vue:211
 msgid "Time Zone"
 msgstr "Zona Waktu"
 
@@ -2243,13 +2298,9 @@ msgstr "Beralih Tampilan"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:282
+#: src/options/options.js:303
 msgid "Topographic"
 msgstr "Topografi"
-
-#: src/pages/about/about.vue:35
-msgid "Trademarks"
-msgstr "Merek Dagang"
 
 #: src/component/photo/cards.vue:10 src/component/photo/list.vue:11
 #: src/component/photo/list.vue:19 src/component/photo/mosaic.vue:10
@@ -2275,16 +2326,16 @@ msgid "Unique ID"
 msgstr "ID Unik"
 
 #: src/dialog/photo/details.vue:16 src/dialog/photo/info.vue:21
-#: src/model/album.js:136 src/model/photo.js:527 src/model/photo.js:544
-#: src/model/photo.js:567 src/model/photo.js:581 src/model/photo.js:658
-#: src/model/photo.js:671 src/options/options.js:20 src/options/options.js:34
+#: src/model/album.js:182 src/model/photo.js:571 src/model/photo.js:588
+#: src/model/photo.js:611 src/model/photo.js:625 src/model/photo.js:702
+#: src/model/photo.js:715 src/options/options.js:20 src/options/options.js:34
 #: src/options/options.js:51 src/options/options.js:65
 #: src/options/options.js:77 src/pages/library/errors.vue:116
 #: src/pages/library/errors.vue:123 src/pages/library/logs.vue:16
 msgid "Unknown"
 msgstr "Tidak diketahui"
 
-#: src/component/navigation.vue:150 src/routes.js:173
+#: src/component/navigation.vue:152 src/routes.js:173
 msgid "Unsorted"
 msgstr "Tidak disortir"
 
@@ -2292,7 +2343,7 @@ msgstr "Tidak disortir"
 msgid "Unstack"
 msgstr "Buang tumpukan"
 
-#: src/dialog/photo/files.vue:166 src/dialog/photo/files.vue:163
+#: src/dialog/photo/files.vue:180 src/dialog/photo/files.vue:177
 #: src/dialog/photo/info.vue:175
 msgid "Updated"
 msgstr "Telah diperbarui"
@@ -2317,9 +2368,9 @@ msgstr "Memperbarui pratinjau"
 msgid "Updating stacks"
 msgstr "Memperbarui tumpukan"
 
-#: src/component/album/toolbar.vue:176 src/component/navigation.vue:129
+#: src/component/album/toolbar.vue:176 src/component/navigation.vue:147
 #: src/component/photo/toolbar.vue:125 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:54 src/pages/albums.vue:152
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:54 src/pages/albums.vue:158
 #: src/pages/library/import.vue:38 src/pages/settings/general.vue:140
 #: src/pages/settings/sync.vue:27
 msgid "Upload"
@@ -2379,21 +2430,22 @@ msgstr "Tampilan Pengguna"
 msgid "Username"
 msgstr "Nama pengguna"
 
-#: src/options/options.js:204
+#: src/options/options.js:214
 msgid "Vanta"
 msgstr "Vanta"
 
 #: src/component/photo/cards.vue:29 src/component/photo/cards.vue:225
 #: src/component/photo/list.vue:196 src/component/photo/mosaic.vue:200
-#: src/model/file.js:183 src/model/photo.js:618 src/model/photo.js:632
-#: src/options/options.js:305 src/share/photo/cards.vue:29
+#: src/model/file.js:185 src/model/photo.js:662 src/model/photo.js:676
+#: src/options/options.js:328 src/share/photo/cards.vue:29
 #: src/share/photo/cards.vue:198 src/share/photo/list.vue:175
 #: src/share/photo/mosaic.vue:181
 msgid "Video"
 msgstr "Video"
 
-#: src/component/navigation.vue:163 src/component/navigation.vue:657
-#: src/routes.js:187
+#: src/component/navigation.vue:165 src/component/navigation.vue:175
+#: src/component/navigation.vue:4 src/component/navigation.vue:675
+#: src/routes.js:194
 msgid "Videos"
 msgstr "Koleksi Video"
 
@@ -2402,6 +2454,15 @@ msgstr "Koleksi Video"
 #: src/share/photo/mosaic.vue:209
 msgid "View"
 msgstr "Melihat"
+
+#: src/pages/about/about.vue:55
+msgid ""
+"We'll do our best to answer all your questions. In return, we ask you to "
+"back us on Patreon or GitHub Sponsors."
+msgstr ""
+"Kami akan melakukan yang terbaik untuk menjawab semua pertanyaan Anda. "
+"Sebagai imbalannya, kami meminta Anda untuk mendukung kami di Patreon atau "
+"Sponsor GitHub."
 
 #: src/dialog/sponsor.vue:18
 msgid ""
@@ -2427,7 +2488,7 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr "Unggah WebDAV"
 
-#: src/options/options.js:345
+#: src/options/options.js:368
 msgid "White"
 msgstr "Putih"
 
@@ -2435,23 +2496,28 @@ msgstr "Putih"
 msgid "Year"
 msgstr "Tahun"
 
-#: src/options/options.js:338
+#: src/options/options.js:361
 msgid "Yellow"
 msgstr "Kuning"
 
-#: src/options/options.js:244
+#: src/options/options.js:264
 msgid "Yellowstone"
 msgstr "Yellowstone"
 
 #: src/dialog/people/merge.vue:18 src/dialog/photo/archive.vue:18
 #: src/dialog/photo/files.vue:104 src/dialog/photo/files.vue:112
-#: src/dialog/photo/files.vue:152 src/dialog/photo/files.vue:101
-#: src/dialog/photo/files.vue:109 src/dialog/photo/files.vue:149
+#: src/dialog/photo/files.vue:120 src/dialog/photo/files.vue:166
+#: src/dialog/photo/files.vue:101 src/dialog/photo/files.vue:109
+#: src/dialog/photo/files.vue:117 src/dialog/photo/files.vue:163
 #: src/dialog/photo/info.vue:284 src/dialog/photo/info.vue:305
 #: src/dialog/photo/info.vue:325 src/dialog/photo/info.vue:345
 #: src/dialog/photo/info.vue:365
 msgid "Yes"
 msgstr "Ya"
+
+#: src/pages/about/about.vue:47
+msgid "you are welcome to join us on Reddit"
+msgstr "Anda dipersilakan untuk bergabung dengan kami di Reddit"
 
 #: src/component/album/clipboard.vue:79 src/component/subject/clipboard.vue:40
 #: src/share/album/clipboard.vue:33
@@ -2472,20 +2538,10 @@ msgid "You may rescan your library to find additional faces."
 msgstr ""
 "Anda dapat memindai ulang perpustakaan Anda untuk menemukan wajah tambahan."
 
-#: src/pages/about/about.vue:39
-msgid ""
-"You may use it as required to describe our software, run your own server, "
-"for educational purposes, but not for offering commercial goods, products, "
-"or services without prior written permission. In other words, please ask."
-msgstr ""
-"Anda dapat menggunakannya sesuai kebutuhan untuk menjelaskan perangkat lunak "
-"kami, menjalankan server Anda sendiri, untuk tujuan pendidikan, tetapi tidak "
-"untuk menawarkan barang secara komersial, produk, atau layanan tanpa izin "
-"tertulis sebelumnya. Dengan kata lain, silakan bertanya terlebih dahulu."
-
 #: src/dialog/sponsor.vue:21 src/pages/about/about.vue:29
 msgid ""
-"Your continued support helps us provide regular updates and services like world maps."
+"Your continued support helps us provide regular updates and services like "
+"world maps."
 msgstr ""
 "Dukungan Anda yang berkelanjutan membantu kami menyediakan layanan seperti "
 "peta satelit dan mengembangkan fitur-fitur terbaru."
@@ -2505,3 +2561,31 @@ msgstr "Pesan Anda telah dikirim"
 #: src/component/photo/viewer.vue:178
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
+
+#~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
+#~ msgstr "PhotoPrism® adalah merek dagang terdaftar dari Michael Mayer."
+
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "Permintaan yang didukung oleh sponsor perak dan emas menerima label emas "
+#~ "dan akan diprioritaskan."
+
+#~ msgid "Thank you very much!"
+#~ msgstr "Terima kasih banyak!"
+
+#~ msgid "Trademarks"
+#~ msgstr "Merek Dagang"
+
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "Anda dapat menggunakannya sesuai kebutuhan untuk menjelaskan perangkat "
+#~ "lunak kami, menjalankan server Anda sendiri, untuk tujuan pendidikan, "
+#~ "tetapi tidak untuk menawarkan barang secara komersial, produk, atau "
+#~ "layanan tanpa izin tertulis sebelumnya. Dengan kata lain, silakan "
+#~ "bertanya terlebih dahulu."
