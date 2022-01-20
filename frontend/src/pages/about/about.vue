@@ -81,13 +81,11 @@
             :src="$config.staticUri + '/img/badge-reddit.svg'" alt="Reddit" style="max-width:100%;"></a>
       </p>
 
-      <p class="caption mt-4">
-        <a target="_blank" href="https://photoprism.app/trademark">
-        PhotoPrism® is a registered trademark. Our Trademark and Brand Guidelines,
-        which may be updated from time to time, describe how our Brand Assets may be used.
-        It is important to us that any permitted use of our Brand Assets is fair and meets the highest standards.
-        Visit photoprism.app/trademark to learn more.
-        </a>
+      <p class="caption mt-4 text-xs-center">
+        PhotoPrism® is a <a href="https://photoprism.app/trademark" rel="nofollow" target="_blank" class="text-link">registered trademark</a>.
+        Docs <a href="https://github.com/photoprism/photoprism-docs" rel="nofollow" target="_blank" class="text-link">are available</a> under the
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="nofollow" target="_blank" class="text-link">CC BY-NC-SA 4.0 License</a>; additional terms may apply.
+        By using our software and services, you agree to our <a href="https://photoprism.app/terms" rel="nofollow" target="_blank" class="text-link">terms &amp; conditions</a>.
       </p>
     </v-container>
     <p-about-footer></p-about-footer>
