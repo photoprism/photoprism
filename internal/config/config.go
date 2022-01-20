@@ -63,7 +63,7 @@ const Gigabyte = Megabyte * 1000
 const MinMem = Gigabyte
 
 // RecommendedMem is the recommended amount of system memory.
-const RecommendedMem = 5 * Gigabyte
+const RecommendedMem = 3 * Gigabyte
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
