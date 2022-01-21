@@ -103,7 +103,7 @@
               >
                 <v-btn v-if="featureShare && album.LinkCount > 0 && hasPermission(aclResources.ResourceAlbums, aclActions.ActionShare)" :ripple="false"
                        icon flat absolute
-                       class="action-share"
+                       class="input-share"
                        @touchstart.stop.prevent="input.touchStart($event, index)"
                        @touchend.stop.prevent="onShare($event, index)"
                        @touchmove.stop.prevent
