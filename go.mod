@@ -17,11 +17,11 @@ require (
 	github.com/esimov/pigo v1.4.5
 	github.com/gin-contrib/gzip v0.0.5
 	github.com/gin-gonic/gin v1.7.7
-	github.com/go-errors/errors v1.4.1 // indirect
+	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/open-location-code/go v0.0.0-20211115190122-6707912175c3
+	github.com/google/open-location-code/go v0.0.0-20220120191843-cafb35c0d74d
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.12.0
 	github.com/h2non/filetype v1.1.3
