@@ -1,15 +1,10 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Menu from "../page-model/menu";
 import Photo from "../page-model/photo";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
-import PhotoViews from "../page-model/photo-views";
-import Label from "../page-model/label";
 import Album from "../page-model/album";
-import Subject from "../page-model/subject";
-import NewPage from "../page-model/page";
 import Originals from "../page-model/originals";
 
 fixture`Test files`.page`${testcafeconfig.url}`;

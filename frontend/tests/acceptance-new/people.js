@@ -1,28 +1,22 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Menu from "../page-model/menu";
-import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import PhotoViewer from "../page-model/photoviewer";
-import NewPage from "../page-model/page";
 import Subject from "../page-model/subject";
 import PhotoViews from "../page-model/photo-views";
+import PhotoEdit from "../page-model/photo-edit";
 
-fixture.only`Test people`.page`${testcafeconfig.url}`;
+fixture`Test people`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const menu = new Menu();
-const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const photoviewer = new PhotoViewer();
-const newpage = new NewPage();
 const subject = new Subject();
 const photoviews = new PhotoViews();
+const photoedit = new PhotoEdit();
 
 test.meta("testID", "people-001")("Add + Rename", async (t) => {
   await menu.openPage("people");
@@ -65,9 +59,9 @@ test.meta("testID", "people-001")("Add + Rename", async (t) => {
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click(Selector("#tab-people"))
-    .expect(Selector("div.input-name input").nth(0).value)
+    .expect(photoedit.inputName.nth(0).value)
     .contains("Jane Doe")
-    .click("button.action-close");
+    .click(photoedit.dialogClose);
   await menu.openPage("people");
   await t
     .click(Selector("a[data-uid=" + JaneUID + "] div.v-card__title"))
@@ -81,16 +75,12 @@ test.meta("testID", "people-001")("Add + Rename", async (t) => {
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click(Selector("#tab-people"))
-    .expect(Selector("div.input-name input").nth(0).value)
+    .expect(photoedit.inputName.nth(0).value)
     .contains("Max Mu")
-    .click(Selector("button.action-next"))
-    .expect(Selector("div.input-name input").nth(0).value)
-    .contains("Max Mu")
-    .click(Selector("button.action-next"))
-    .expect(Selector("div.input-name input").nth(0).value)
-    .contains("Max Mu")
-    .click(Selector("button.action-close"));
-  await page.clearSelection();
+    .click(photoedit.dialogNext);
+  await t.expect(photoedit.inputName.nth(0).value).contains("Max Mu").click(photoedit.dialogNext);
+  await t.expect(photoedit.inputName.nth(0).value).contains("Max Mu").click(photoedit.dialogClose);
+  await contextmenu.clearSelection();
   await toolbar.search("person:max-mu");
   const countPhotosSubjectAfterRename = await photo.getPhotoCount("all");
   await t.expect(countPhotosSubjectAfterRename).eql(countPhotosSubject);
@@ -120,14 +110,14 @@ test.meta("testID", "people-002")("Add + Reject + Star", async (t) => {
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click(Selector("#tab-people"))
-    .expect(Selector("div.input-name input").nth(0).value)
+    .expect(photoedit.inputName.nth(0).value)
     .eql("Andrea Doe")
-    .click(Selector("div.input-name div.v-input__icon--clear"))
-    .expect(Selector("div.input-name input").nth(0).value)
+    .click(photoedit.rejectName.nth(0))
+    .expect(photoedit.inputName.nth(0).value)
     .eql("")
-    .typeText(Selector("div.input-name input").nth(0), "Nicole", { replace: true })
+    .typeText(photoedit.inputName.nth(0), "Nicole", { replace: true })
     .pressKey("enter")
-    .click("button.action-close");
+    .click(photoedit.dialogClose);
   await contextmenu.clearSelection();
   await t.eval(() => location.reload());
   await t.wait(5000);
@@ -153,52 +143,52 @@ test.meta("testID", "people-003")("Remove face", async (t) => {
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t.click(Selector("#tab-people"));
   const MarkerCount = await subject.getMarkerCount();
-  if ((await Selector("div.input-name input").nth(0).value) == "") {
+  if ((await photoedit.inputName.nth(0).value) == "") {
     await t
-      .expect(Selector("button.action-undo").nth(0).visible)
+      .expect(photoedit.undoRemoveMarker.nth(0).visible)
       .notOk()
-      .expect(Selector("div.input-name input").nth(0).value)
+      .expect(photoedit.inputName.nth(0).value)
       .eql("")
-      .click(Selector("button.input-reject"))
-      .expect(Selector("button.action-undo").nth(0).visible)
+      .click(photoedit.removeMarker)
+      .expect(photoedit.undoRemoveMarker.nth(0).visible)
       .ok()
-      .click(Selector("button.action-undo"));
-  } else if ((await Selector("div.input-name input").nth(0).value) != "") {
+      .click(photoedit.undoRemoveMarker);
+  } else if ((await photoedit.inputName.nth(0).value) != "") {
     await t
-      .expect(Selector("div.input-name input").nth(1).value)
+      .expect(photoedit.inputName.nth(1).value)
       .eql("")
-      .click(Selector("button.input-reject"))
-      .expect(Selector("button.action-undo").nth(0).visible)
+      .click(photoedit.removeMarker)
+      .expect(photoedit.undoRemoveMarker.nth(0).visible)
       .ok()
-      .click(Selector("button.action-undo"));
+      .click(photoedit.undoRemoveMarker);
   }
-  await t.click("button.action-close");
+  await t.click(photoedit.dialogClose);
   await contextmenu.clearSelection();
   await t.eval(() => location.reload());
   await t.wait(5000);
   await photoviews.triggerHoverAction("uid", FirstPhoto, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t.click(Selector("#tab-people"));
-  if ((await Selector("div.input-name input").nth(0).value) == "") {
+  if ((await photoedit.inputName.nth(0).value) == "") {
     await t
-      .expect(Selector("button.action-undo").nth(0).visible)
+      .expect(photoedit.undoRemoveMarker.nth(0).visible)
       .notOk()
-      .expect(Selector("div.input-name input").nth(0).value)
+      .expect(photoedit.inputName.nth(0).value)
       .eql("")
-      .click(Selector("button.input-reject"))
-      .expect(Selector("button.action-undo").nth(0).visible)
+      .click(photoedit.removeMarker)
+      .expect(photoedit.undoRemoveMarker.nth(0).visible)
       .ok();
-  } else if ((await Selector("div.input-name input").nth(0).value) != "") {
+  } else if ((await photoedit.inputName.nth(0).value) != "") {
     await t
-      .expect(Selector("button.action-undo").nth(0).visible)
+      .expect(photoedit.undoRemoveMarker.nth(0).visible)
       .notOk()
-      .expect(Selector("div.input-name input").nth(1).value)
+      .expect(photoedit.inputName.nth(1).value)
       .eql("")
-      .click(Selector("button.input-reject"))
-      .expect(Selector("button.action-undo").nth(0).visible)
+      .click(photoedit.removeMarker)
+      .expect(photoedit.undoRemoveMarker.nth(0).visible)
       .ok();
   }
-  await t.click("button.action-close");
+  await t.click(photoedit.dialogClose);
   await t.eval(() => location.reload());
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t.click(Selector("#tab-people"));

@@ -1,28 +1,26 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Menu from "../page-model/menu";
 import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import PhotoViewer from "../page-model/photoviewer";
 import NewPage from "../page-model/page";
 import Label from "../page-model/label";
 import PhotoViews from "../page-model/photo-views";
+import PhotoEdit from "../page-model/photo-edit";
 
 fixture`Test labels`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const menu = new Menu();
 const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const photoviewer = new PhotoViewer();
 const newpage = new NewPage();
 const label = new Label();
 const photoviews = new PhotoViews();
+const photoedit = new PhotoEdit();
 
 test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo", async (t) => {
   await menu.openPage("labels");
@@ -42,9 +40,9 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
     .expect(PhotoKeywords)
     .contains("beacon")
     .click(Selector("#tab-labels"))
-    .click(Selector("button.action-remove"), { timeout: 5000 })
-    .typeText(Selector(".input-label input"), "Test")
-    .click(Selector("button.p-photo-label-add"))
+    .click(photoedit.removeLabel)
+    .typeText(photoedit.inputLabelName, "Test")
+    .click(Selector(photoedit.addLabel))
     .click(Selector("#tab-details"));
   const PhotoKeywordsAfterEdit = await Selector(".input-keywords textarea").value;
   await t
@@ -52,7 +50,7 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
     .contains("test")
     .expect(PhotoKeywordsAfterEdit)
     .notContains("beacon")
-    .click(Selector(".action-close"));
+    .click(photoedit.dialogClose);
   await menu.openPage("labels");
   await toolbar.search("beacon");
   await t.expect(Selector("div.no-results").visible).ok();
@@ -62,8 +60,8 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
   await t
     .click(newpage.cardTitle.withAttribute("data-uid", PhotoBeacon))
     .click(Selector("#tab-labels"))
-    .click(Selector(".action-delete"), { timeout: 5000 })
-    .click(Selector(".action-on"))
+    .click(photoedit.deleteLabel)
+    .click(photoedit.activateLabel)
     .click(Selector("#tab-details"));
   const PhotoKeywordsAfterUndo = await Selector(".input-keywords textarea").value;
   await t
@@ -71,7 +69,7 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
     .contains("beacon")
     .expect(PhotoKeywordsAfterUndo)
     .notContains("test")
-    .click(Selector(".action-close"));
+    .click(photoedit.dialogClose);
   await menu.openPage("labels");
   await toolbar.search("test");
   await t.expect(Selector("div.no-results").visible).ok();
@@ -85,7 +83,6 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
   const LabelZebra = await label.getNthLabeltUid(0);
   await label.openNthLabel(0);
   const FirstPhotoZebra = await photo.getNthPhotoUid("all", 0);
-  const SecondPhotoZebra = await photo.getNthPhotoUid("all", 1);
   await toolbar.setFilter("view", "Cards");
   await t.click(newpage.cardTitle.withAttribute("data-uid", FirstPhotoZebra));
   const FirstPhotoTitle = await Selector(".input-title input", { timeout: 5000 }).value;
@@ -96,8 +93,8 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
     .expect(FirstPhotoKeywords)
     .contains("zebra")
     .click(Selector("#tab-labels"))
-    .click(Selector("div.p-inline-edit"))
-    .typeText(Selector(".input-rename input"), "Horse", { replace: true })
+    .click(photoedit.openInlineEdit)
+    .typeText(photoedit.inputLabelRename, "Horse", { replace: true })
     .pressKey("enter")
     .click(Selector("#tab-details"));
   const FirstPhotoTitleAfterEdit = await Selector(".input-title input", { timeout: 5000 }).value;
@@ -110,7 +107,7 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
     .contains("horse")
     .expect(FirstPhotoTitleAfterEdit)
     .notContains("Zebra")
-    .click(Selector(".action-close"));
+    .click(photoedit.dialogClose);
   await menu.openPage("labels");
   await toolbar.search("horse");
   await album.checkAlbumVisibility(LabelZebra, true);
@@ -119,12 +116,12 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
   await t
     .click(newpage.cardTitle.withAttribute("data-uid", FirstPhotoZebra))
     .click(Selector("#tab-labels"))
-    .click(Selector("div.p-inline-edit"))
-    .typeText(Selector(".input-rename input"), "Zebra", { replace: true })
+    .click(photoedit.openInlineEdit)
+    .typeText(photoedit.inputLabelRename, "Zebra", { replace: true })
     .pressKey("enter")
-    .click(Selector(".action-close"));
+    .click(photoedit.dialogClose);
   await menu.openPage("labels");
-  await page.search("horse");
+  await toolbar.search("horse");
   await t.expect(Selector("div.no-results").visible).ok();
 });
 
@@ -146,13 +143,7 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
   const SixthPhotoLandscape = await photo.getNthPhotoUid("all", 5);
   await menu.openPage("labels");
   await label.triggerHoverAction("uid", LabelLandscape, "select");
-
-  //await page.selectFromUID(LabelLandscape);
-
-  //const clipboardCount = await Selector("span.count-clipboard");
-  //await t.expect(clipboardCount.textContent).eql("1");
   await contextmenu.checkContextMenuCount("1");
-  //await page.addSelectedToAlbum("Christmas", "album");
   await contextmenu.triggerContextMenuAction("album", "Christmas", "");
   await menu.openPage("albums");
   await album.openAlbumWithUid(AlbumUid);
@@ -188,8 +179,8 @@ test.meta("testID", "labels-004")("Delete label", async (t) => {
     .click(Selector("#tab-labels"))
     .expect(Selector("td").withText("No labels found").visible)
     .ok()
-    .typeText(Selector(".input-label input"), "Dome")
-    .click(Selector("button.p-photo-label-add"));
+    .typeText(photoedit.inputLabelName, "Dome")
+    .click(photoedit.addLabel);
 });
 
 /*Does not work on sqlite

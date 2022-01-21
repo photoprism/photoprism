@@ -1,14 +1,10 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Toolbar from "../page-model/toolbar";
-import PhotoViewer from "../page-model/photoviewer";
 
 fixture`Test components`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const toolbar = new Toolbar();
-const photoviewer = new PhotoViewer();
 
 test.meta("testID", "components-001")("Test filter options", async (t) => {
   await t.expect(Selector("body").withText("object Object").exists).notOk();
