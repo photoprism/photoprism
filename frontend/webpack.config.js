@@ -235,10 +235,8 @@ const config = {
       },
       {
         test: /\.svg/,
-        use: {
-          loader: "svg-url-loader",
-          options: {},
-        },
+        type: "asset/resource",
+        dependency: { not: ["url"] },
       },
     ],
   },
