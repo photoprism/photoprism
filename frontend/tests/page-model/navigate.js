@@ -15,33 +15,28 @@ export default class Page {
     this.search1 = Selector("div.input-search input", { timeout: 15000 });
   }
 
-  //login
-
-  //logout
+  //login Selectors
 
   //review card actions
 
   //open tab
 
-  // album with uid visible
-
-  // open album with uid
+  //edit single fields / check disabled, selectors for single fields?
+  // check edit form values // get all current edit form values // set edit form values
 
   //?dialogs?
 
-  //checkboxen settings ?
-
-  // selectors for index/import/logs/ ? input folder edit dialog
-
   //edit dialog disabled --funcionalities
-  //edit dialog close, next, previous
-  // edit dialog clear, reject face etc
   // update album --functionalities
 
   //selectors card view album location/ subject count / label count
+
   //remove album type from trigger context menu action
-  //selectors edit dialogs label etc
 
   //sharing
+
+  //update all tests with new selectors
+
+  //refactor admin/ member tests --> for each resource (photo, video, subject, label, albums , states) check context menu action/fullscreen actions/edit dialog/
 
 }

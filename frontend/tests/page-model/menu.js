@@ -21,7 +21,9 @@ export default class Page {
       (page === "review") |
       (page === "archive")
     ) {
-      await t.click(Selector("div.nav-browse + div"));
+      if (!(await Selector("div.v-list__group--active div.nav-browse").visible)) {
+        await t.click(Selector("div.nav-browse + div"));
+      }
     } else if (page === "live") {
       if (!(await Selector("div.v-list__group--active div.nav-video").visible)) {
         await t.click(Selector("div.nav-video + div"));
@@ -34,7 +36,7 @@ export default class Page {
       if (!(await Selector("div.v-list__group--active div.nav-library").visible)) {
         await t.click(Selector("div.nav-library + div"));
       }
-    } else if ((page === "abouts") | (page === "feedback") | (page === "license")) {
+    } else if ((page === "about") | (page === "feedback") | (page === "license")) {
       if (!(await Selector("div.v-list__group--active div.nav-settings").visible)) {
         await t.click(Selector("div.nav-settings + div"));
       }
@@ -52,7 +54,9 @@ export default class Page {
       (page === "review") |
       (page === "archive")
     ) {
-      await t.click(Selector("div.nav-browse + div"));
+      if (!(await Selector("div.v-list__group--active div.nav-browse").visible)) {
+        await t.click(Selector("div.nav-browse + div"));
+      }
     } else if (page === "live") {
       if (await Selector(".nav-video").visible) {
         if (!(await Selector("div.v-list__group--active div.nav-video").visible)) {

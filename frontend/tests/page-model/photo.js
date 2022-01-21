@@ -17,10 +17,10 @@ export default class Page {
 
   async getPhotoCount(type) {
     if (type === "all") {
-      const PhotoCount = await Selector("div.is-photo", { timeout: 5000 }).count;
+      const PhotoCount = await Selector("div.is-photo", { timeout: 2000 }).count;
       return PhotoCount;
     } else {
-      const PhotoCount = await Selector("div.type-" + type, { timeout: 5000 }).count;
+      const PhotoCount = await Selector("div.type-" + type, { timeout: 2000 }).count;
       return PhotoCount;
     }
   }
@@ -45,9 +45,9 @@ export default class Page {
 
   async checkPhotoVisibility(uid, visible) {
     if (visible) {
-      await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible).ok();
+      await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).exists).ok();
     } else {
-      await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).visible).notOk();
+      await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).exists).notOk();
     }
   }
 }

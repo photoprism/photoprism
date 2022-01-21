@@ -70,8 +70,13 @@ export default class Page {
     }
   }
 
-  async triggerListViewActions(nth, action) {
-    await t.click(Selector(`td button.input-` + action).nth(nth));
+  async triggerListViewActions(mode, uidOrnth, action) {
+    if (mode === "nth") {
+      await t.click(Selector(`td button.input-` + action).nth(uidOrnth));
+    } else if (mode === "uid") {
+      await t.click(Selector(`td button.input-` + action).withAttribute("data-uid", uidOrnth));
+    }
+
   }
 
   async checkListViewActionAvailability(action, disabled) {

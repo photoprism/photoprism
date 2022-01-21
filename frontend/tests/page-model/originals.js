@@ -23,6 +23,11 @@ export default class Page {
     return FolderCount;
   }
 
+  async getFileCount() {
+    const FileCount = await Selector("div.is-file", { timeout: 5000 }).count;
+    return FileCount;
+  }
+
   async selectFolderFromUID(uid) {
     await t
       .hover(Selector("div.is-folder").withAttribute("data-uid", uid))

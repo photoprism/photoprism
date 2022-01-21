@@ -30,15 +30,18 @@ export default class Page {
 
   async checkPhotoViewerActionAvailability(action, visible) {
     if (visible) {
-      await t.expect(Selector("div.pswp__top-bar button.action-" + action).visible).ok();
+      await t.expect(Selector("button.pswp__button.action-" + action).visible).ok();
     } else {
-      await t.expect(Selector("div.pswp__top-bar button.action-" + action).visible).notOk();
+      await t.expect(Selector("button.pswp__button.action-" + action).visible).notOk();
     }
   }
 
-  //trigger fullscreen menu action (edit/like/close) --fullscreen
   async triggerPhotoViewerAction(action) {
-    await t.click(Selector("div.pswp__top-bar button.action-" + action));
+    await t.click(Selector("button.pswp__button.action-" + action));
+    if (action === "close") {
+      if (await Selector("button.pswp__button.action-" + action).visible) {
+        await t.click(Selector("button.pswp__button.action-" + action));
+      }
+    }
   }
-
 }

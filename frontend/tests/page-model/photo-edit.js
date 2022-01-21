@@ -1,9 +1,41 @@
 import { Selector, t } from "testcafe";
 
 export default class Page {
-  constructor() {}
+  constructor() {
+    this.dialogClose = Selector("div.v-dialog button.action-close", { timeout: 15000 });
+    this.dialogNext = Selector("div.v-dialog button.action-next", { timeout: 15000 });
+    this.dialogPrevious = Selector("div.v-dialog button.action-previous", { timeout: 15000 });
 
-  // turn switch of --photo --edit
+    this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", { timeout: 15000 });
+    this.detailsApprove = Selector(".p-form-photo-details-meta button.action-approve", { timeout: 15000 });
+    this.detailsClose = Selector(".p-form-photo-details-meta button.action-close", { timeout: 15000 });
+    this.detailsApply = Selector(".p-form-photo-details-meta button.action-apply", { timeout: 15000 });
+
+    this.rejectName = Selector("div.input-name div.v-input__icon--clear", { timeout: 15000 });
+    this.removeMarker = Selector("button.input-reject", { timeout: 15000 });
+    this.undoRemoveMarker = Selector("button.action-undo", { timeout: 15000 });
+    this.inputName = Selector("div.input-name input", { timeout: 15000 });
+
+    this.addLabel = Selector("button.p-photo-label-add", { timeout: 15000 });
+    this.removeLabel = Selector("button.action-remove", { timeout: 15000 })
+    this.activateLabel = Selector(".action-on", { timeout: 15000 });
+    this.deleteLabel = Selector(".action-delete", { timeout: 15000 });
+    this.inputLabelName = Selector(".input-label input", { timeout: 15000 });
+    this.openInlineEdit = Selector("div.p-inline-edit", { timeout: 15000 });
+    this.inputLabelRename = Selector(".input-rename input", { timeout: 15000 });
+
+    this.downloadFile = Selector("button.action-download", { timeout: 15000 });
+    this.unstackFile = Selector(".action-unstack", { timeout: 15000 });
+    this.deleteFile = Selector(".action-delete", { timeout: 15000 });
+    this.makeFilePrimary = Selector(".action-primary", { timeout: 15000 });
+    this.toggleExpandFile = Selector("li.v-expansion-panel__container", { timeout: 15000 });
+  }
+
+  async getFileCount() {
+    const FileCount = await Selector("li.v-expansion-panel__container", { timeout: 5000 }).count;
+    return FileCount;
+  }
+
   async turnSwitchOff(type) {
     await t
       .click("#tab-info")
@@ -51,7 +83,6 @@ export default class Page {
     month,
     year,
     localTime,
-    utcTime,
     timezone,
     country,
     altitude,
@@ -88,9 +119,6 @@ export default class Page {
     }
     if (localTime !== "") {
       await t.expect(Selector(".input-local-time input").value).eql(localTime);
-    }
-    if (utcTime !== "") {
-      await t.expect(Selector(".input-utc-time input").value).eql(utcTime);
     }
     if (altitude !== "") {
       await t.expect(Selector(".input-altitude input").value).eql(altitude);

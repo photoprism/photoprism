@@ -44,7 +44,7 @@ export default class Page {
   }
 
   async openNthAlbum(nth) {
-    await t.click(Selector("a.is-album").nth(nth)).expect(Selector("div.is-photo").visible).ok();
+    await t.click(Selector("a.is-album").nth(nth));
   }
 
   async openAlbumWithUid(uid) {
@@ -64,7 +64,6 @@ export default class Page {
   async triggerHoverAction(mode, uidOrNth, action) {
     if (mode === "uid") {
       await t.hover(Selector("a.uid-" + uidOrNth));
-      Selector("a.uid-" + uidOrNth + " .input-" + action);
       await t.click(Selector("a.uid-" + uidOrNth + " .input-" + action));
     }
     if (mode === "nth") {
