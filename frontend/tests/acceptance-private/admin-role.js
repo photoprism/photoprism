@@ -1,7 +1,6 @@
 import { Selector } from "testcafe";
 import { ClientFunction } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
-import Page from "../acceptance/page-model";
 import Menu from "../page-model/menu";
 import Photo from "../page-model/photo";
 import Toolbar from "../page-model/toolbar";
@@ -10,10 +9,10 @@ import PhotoViews from "../page-model/photo-views";
 import Label from "../page-model/label";
 import Album from "../page-model/album";
 import Subject from "../page-model/subject";
+import NewPage from "../page-model/page";
 
 fixture`Test admin role`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const menu = new Menu();
 const photo = new Photo();
 const toolbar = new Toolbar();
@@ -22,6 +21,7 @@ const photoviews = new PhotoViews();
 const label = new Label();
 const album = new Album();
 const subject = new Subject();
+const newpage = new NewPage();
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -33,7 +33,7 @@ test.meta("testID", "authentication-000")(
 );
 
 test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.checkMenuItemAvailability("settings", true);
   await t.navigateTo("/settings");
   await t
@@ -60,7 +60,7 @@ test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
 });
 
 test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
   await menu.checkMenuItemAvailability("archive", true);
   await t.navigateTo("/archive");
@@ -70,7 +70,7 @@ test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
 });
 
 test.meta("testID", "admin-role-003")("Access to review", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
   await menu.checkMenuItemAvailability("review", true);
   await t.navigateTo("/review");
@@ -80,7 +80,7 @@ test.meta("testID", "admin-role-003")("Access to review", async (t) => {
 });
 
 test.meta("testID", "admin-role-004")("Access to private", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
   await menu.checkMenuItemAvailability("private", true);
   await t.navigateTo("/private");
@@ -90,7 +90,7 @@ test.meta("testID", "admin-role-004")("Access to private", async (t) => {
 });
 
 test.meta("testID", "admin-role-005")("Access to library", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
   await menu.checkMenuItemAvailability("library", true);
   await t.navigateTo("/library");
@@ -130,7 +130,7 @@ test.meta("testID", "admin-role-005")("Access to library", async (t) => {
 });
 
 test.meta("testID", "admin-role-006")("private/archived photos in search results", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
   await toolbar.search("private:true");
   const PhotoCountPrivate = await photo.getPhotoCount("all");
@@ -180,7 +180,7 @@ test.meta("testID", "admin-role-006")("private/archived photos in search results
 });
 
 test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await toolbar.checkToolbarActionAvailability("upload", true);
   await menu.openPage("albums");
   await toolbar.checkToolbarActionAvailability("upload", true);
@@ -211,7 +211,7 @@ test.meta("testID", "admin-role-007")("Upload functionality", async (t) => {
 test.meta("testID", "admin-role-008")(
   "Admin can private, archive, share, add/remove to album",
   async (t) => {
-    await page.login("admin", "photoprism");
+    await newpage.login("admin", "photoprism");
     const FirstPhoto = await photo.getNthPhotoUid("image", 0);
     await photo.selectPhotoFromUID(FirstPhoto);
     await contextmenu.checkContextMenuActionAvailability("private", true);
@@ -236,7 +236,7 @@ test.meta("testID", "admin-role-008")(
 );
 
 test.meta("testID", "admin-role-009")("Admin can approve low quality photos", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await toolbar.search('quality:0 name:"photos-013_1"');
   await photo.toggleSelectNthPhoto(0, "all");
   await contextmenu.triggerContextMenuAction("edit", "", "");
@@ -244,7 +244,7 @@ test.meta("testID", "admin-role-009")("Admin can approve low quality photos", as
 });
 
 test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await toolbar.search("faces:new");
   //details
   const FirstPhoto = await photo.getNthPhotoUid("image", 0);
@@ -339,7 +339,7 @@ test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", 
 });
 
 test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.openPage("labels");
   const FirstLabel = await label.getNthLabeltUid(0);
   await label.checkHoverActionState("uid", FirstLabel, "favorite", false);
@@ -357,7 +357,7 @@ test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => 
 });
 
 test.meta("testID", "admin-role-012")("Edit album functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.openPage("albums");
   await toolbar.checkToolbarActionAvailability("add", true);
   await t.expect(Selector("a.is-album button.action-share").visible).ok();
@@ -370,7 +370,7 @@ test.meta("testID", "admin-role-012")("Edit album functionality", async (t) => {
   await contextmenu.checkContextMenuActionAvailability("delete", true);
   await contextmenu.clearSelection();
   await t
-    .click(Selector("button.action-title-edit"))
+    .click(newpage.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .ok()
     .click(Selector("button.action-cancel"));
@@ -399,7 +399,7 @@ test.meta("testID", "admin-role-012")("Edit album functionality", async (t) => {
 });
 
 test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.openPage("moments");
   await t.expect(Selector("a.is-album button.action-share").visible).ok();
   const FirstAlbum = await album.getNthAlbumUid("moment", 0);
@@ -412,7 +412,7 @@ test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => 
 
   await contextmenu.clearSelection();
   await t
-    .click(Selector("button.action-title-edit"))
+    .click(newpage.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .ok()
     .click(Selector("button.action-cancel"));
@@ -441,7 +441,7 @@ test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => 
 });
 
 test.meta("testID", "admin-role-014")("Edit state functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.openPage("states");
   await t.expect(Selector("a.is-album button.action-share").visible).ok();
   const FirstAlbum = await album.getNthAlbumUid("state", 0);
@@ -453,7 +453,7 @@ test.meta("testID", "admin-role-014")("Edit state functionality", async (t) => {
   await contextmenu.checkContextMenuActionAvailability("delete", true);
   await contextmenu.clearSelection();
   await t
-    .click(Selector("button.action-title-edit"))
+    .click(newpage.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .ok()
     .click(Selector("button.action-cancel"));
@@ -482,7 +482,7 @@ test.meta("testID", "admin-role-014")("Edit state functionality", async (t) => {
 });
 
 test.meta("testID", "admin-role-015")("Edit calendar functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.openPage("calendar");
   await t.expect(Selector("a.is-album button.action-share").visible).ok();
   const FirstAlbum = await album.getNthAlbumUid("month", 0);
@@ -494,7 +494,7 @@ test.meta("testID", "admin-role-015")("Edit calendar functionality", async (t) =
   await contextmenu.checkContextMenuActionAvailability("delete", false);
   await contextmenu.clearSelection();
   await t
-    .click(Selector("button.action-title-edit"))
+    .click(newpage.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .ok()
     .click(Selector("button.action-cancel"));
@@ -522,7 +522,7 @@ test.meta("testID", "admin-role-015")("Edit calendar functionality", async (t) =
 });
 
 test.meta("testID", "admin-role-016")("Edit folder functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.openPage("folders");
   await t.expect(Selector("a.is-album button.action-share").visible).ok();
   const FirstAlbum = await album.getNthAlbumUid("folder", 0);
@@ -534,7 +534,7 @@ test.meta("testID", "admin-role-016")("Edit folder functionality", async (t) => 
   await contextmenu.checkContextMenuActionAvailability("delete", false);
   await contextmenu.clearSelection();
   await t
-    .click(Selector("button.action-title-edit"))
+    .click(newpage.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .ok()
     .click(Selector("button.action-cancel"));
@@ -562,15 +562,15 @@ test.meta("testID", "admin-role-016")("Edit folder functionality", async (t) => 
 });
 
 test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => {
-  await page.login("admin", "photoprism");
+  await newpage.login("admin", "photoprism");
   await menu.openPage("people");
   await toolbar.checkToolbarActionAvailability("show-hidden", true);
   await t.expect(Selector("#tab-people_faces > a").exists).ok();
-  await subject.checkSubjectVisibility("Otto Visible", true);
-  await subject.checkSubjectVisibility("Monika Hide", false);
+  await subject.checkSubjectVisibility("name", "Otto Visible", true);
+  await subject.checkSubjectVisibility("name", "Monika Hide", false);
   await toolbar.triggerToolbarAction("show-hidden", "");
-  await subject.checkSubjectVisibility("Otto Visible", true);
-  await subject.checkSubjectVisibility("Monika Hide", true);
+  await subject.checkSubjectVisibility("name", "Otto Visible", true);
+  await subject.checkSubjectVisibility("name", "Monika Hide", true);
   await t
     .click(Selector("a div.v-card__title").nth(0))
     .expect(Selector("div.input-rename input").visible)
