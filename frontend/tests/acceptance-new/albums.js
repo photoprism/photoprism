@@ -1,6 +1,5 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Menu from "../page-model/menu";
 import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
@@ -11,7 +10,6 @@ import NewPage from "../page-model/page";
 
 fixture`Test albums`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const menu = new Menu();
 const album = new Album();
 const toolbar = new Toolbar();
@@ -115,7 +113,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
 
 //TODO test that sharing link works as expected --> move to sharing.js
 test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t) => {
-  await page.testCreateEditDeleteSharingLink("albums");
+  await newpage.testCreateEditDeleteSharingLink("albums");
 });
 
 test.meta("testID", "albums-007")("Create/delete album during add to album", async (t) => {

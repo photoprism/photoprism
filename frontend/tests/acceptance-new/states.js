@@ -1,23 +1,19 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Menu from "../page-model/menu";
 import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import PhotoViewer from "../page-model/photoviewer";
 import NewPage from "../page-model/page";
 
 fixture`Test states`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const menu = new Menu();
 const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const photoviewer = new PhotoViewer();
 const newpage = new NewPage();
 
 test.meta("testID", "states-001")("Update state", async (t) => {
@@ -55,7 +51,7 @@ test.meta("testID", "states-001")("Update state", async (t) => {
   await t.expect(toolbar.toolbarDescription.innerText).contains("We love earth");
   await menu.openPage("states");
   if (t.browser.platform === "mobile") {
-    await page.search("category:Mountains");
+    await toolbar.search("category:Mountains");
   } else {
     await toolbar.setFilter("category", "Mountains");
   }
@@ -91,7 +87,7 @@ test.meta("testID", "states-001")("Update state", async (t) => {
 
 //TODO test that sharing link works as expected
 test.meta("testID", "states-003")("Create, Edit, delete sharing link", async (t) => {
-  await page.testCreateEditDeleteSharingLink("states");
+  await newpage.testCreateEditDeleteSharingLink("states");
 });
 
 test.meta("testID", "states-004")("Create/delete album-clone from state", async (t) => {

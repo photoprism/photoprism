@@ -1,23 +1,19 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Menu from "../page-model/menu";
 import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import PhotoViewer from "../page-model/photoviewer";
 import NewPage from "../page-model/page";
 
 fixture`Test moments`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const menu = new Menu();
 const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const photoviewer = new PhotoViewer();
 const newpage = new NewPage();
 
 test.meta("testID", "moments-001")("Update moment", async (t) => {
@@ -91,9 +87,8 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
     .notContains("Snow-Land");
 });
 
-//TODO test that sharing link works as expected
 test.meta("testID", "moments-003")("Create, Edit, delete sharing link", async (t) => {
-  await page.testCreateEditDeleteSharingLink("moments");
+  await newpage.testCreateEditDeleteSharingLink("moments");
 });
 
 test.meta("testID", "moments-004")("Create/delete album-clone from moment", async (t) => {

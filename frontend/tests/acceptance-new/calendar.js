@@ -1,13 +1,11 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import { RequestLogger } from "testcafe";
 import Menu from "../page-model/menu";
 import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import PhotoViewer from "../page-model/photoviewer";
 import NewPage from "../page-model/page";
 
 const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
@@ -17,13 +15,11 @@ const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
 
 fixture`Test calendar`.page`${testcafeconfig.url}`.requestHooks(logger);
 
-const page = new Page();
 const menu = new Menu();
 const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const photoviewer = new PhotoViewer();
 const newpage = new NewPage();
 
 test.meta("testID", "albums-005")("View calendar", async (t) => {
@@ -100,7 +96,7 @@ test.meta("testID", "calendar-001")("Update calendar", async (t) => {
 
 //TODO test that sharing link works as expected
 test.meta("testID", "calendar-003")("Create, Edit, delete sharing link", async (t) => {
-  await page.testCreateEditDeleteSharingLink("calendar");
+  await newpage.testCreateEditDeleteSharingLink("calendar");
 });
 
 test.meta("testID", "calendar-004")("Create/delete album-clone from calendar", async (t) => {

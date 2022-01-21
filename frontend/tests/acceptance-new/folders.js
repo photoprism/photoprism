@@ -1,23 +1,19 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
 import Menu from "../page-model/menu";
 import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import PhotoViewer from "../page-model/photoviewer";
 import NewPage from "../page-model/page";
 
 fixture`Test folders`.page`${testcafeconfig.url}`;
 
-const page = new Page();
 const menu = new Menu();
 const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const photoviewer = new PhotoViewer();
 const newpage = new NewPage();
 
 test.meta("testID", "albums-004")("View folders", async (t) => {
@@ -67,8 +63,6 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
     .contains("Last holiday")
     .expect(toolbar.toolbarTitle.nth(0).innerText)
     .contains("MyFolder");
-  //.expect(Selector("div").withText("MyFolder").exists)
-  //.ok();
   await menu.openPage("folders");
   if (t.browser.platform === "mobile") {
     await toolbar.search("category:Mountains");
@@ -109,7 +103,7 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
 
 //TODO test that sharing link works as expected
 test.meta("testID", "folders-003")("Create, Edit, delete sharing link", async (t) => {
-  await page.testCreateEditDeleteSharingLink("folders");
+  await newpage.testCreateEditDeleteSharingLink("folders");
 });
 
 test.meta("testID", "folders-004")("Create/delete album-clone from folder", async (t) => {
