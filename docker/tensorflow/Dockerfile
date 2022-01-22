@@ -58,6 +58,5 @@ RUN mv bazel-0.24.1-linux-x86_64 /usr/local/bin/bazel && chmod 755 /usr/local/bi
 # Configure TensorFlow
 WORKDIR "/home/tensorflow/tensorflow-1.15.2"
 COPY ./*.sh ./
-COPY ./*.diff ./
 COPY ./.tf_configure.bazelrc .tf_configure.bazelrc
 COPY ./Makefile Makefile
