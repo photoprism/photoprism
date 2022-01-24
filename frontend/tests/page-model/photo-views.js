@@ -76,7 +76,6 @@ export default class Page {
     } else if (mode === "uid") {
       await t.click(Selector(`td button.input-` + action).withAttribute("data-uid", uidOrnth));
     }
-
   }
 
   async checkListViewActionAvailability(action, disabled) {

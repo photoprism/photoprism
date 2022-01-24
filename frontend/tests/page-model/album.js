@@ -59,8 +59,6 @@ export default class Page {
     }
   }
 
-  //favorite, select, share
-  //TODO rename share class
   async triggerHoverAction(mode, uidOrNth, action) {
     if (mode === "uid") {
       await t.hover(Selector("a.uid-" + uidOrNth));

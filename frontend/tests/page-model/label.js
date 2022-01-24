@@ -33,7 +33,6 @@ export default class Page {
     await t.click(Selector("a.is-label").withAttribute("data-uid", uid));
   }
 
-  // favorite, select
   async triggerHoverAction(mode, uidOrNth, action) {
     if (mode === "uid") {
       await t.hover(Selector("a.uid-" + uidOrNth));

@@ -36,18 +36,6 @@ export default class Page {
     await t.click(Selector("div.nav-logout"));
   }
 
-  async validateDownloadRequest(request, filename, extension) {
-    const downloadedFileName = request.headers["content-disposition"];
-    await t
-      .expect(request.statusCode === 200)
-      .ok()
-      .expect(downloadedFileName)
-      .contains(filename)
-      .expect(downloadedFileName)
-      .contains(extension);
-    await logger.clear();
-  }
-
   async testCreateEditDeleteSharingLink(type) {
     await menu.openPage(type);
     const FirstAlbum = await album.getNthAlbumUid("all", 0);
@@ -101,5 +89,17 @@ export default class Page {
     await toolbar.triggerToolbarAction("reload", "");
     await album.triggerHoverAction("uid", FirstAlbum, "share");
     await t.click(sharedialog.expandLink).click(sharedialog.deleteLink);
+  }
+
+  async validateDownloadRequest(request, filename, extension) {
+    const downloadedFileName = request.headers["content-disposition"];
+    await t
+      .expect(request.statusCode === 200)
+      .ok()
+      .expect(downloadedFileName)
+      .contains(filename)
+      .expect(downloadedFileName)
+      .contains(extension);
+    await logger.clear();
   }
 }

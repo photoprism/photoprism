@@ -18,14 +18,14 @@ export default class Page {
     return SubjectCount;
   }
 
-  async getMarkerCount() {
-    const MarkerCount = await Selector("div.is-marker", { timeout: 5000 }).count;
-    return MarkerCount;
-  }
-
   async getFaceCount() {
     const FaceCount = await Selector("div.is-face", { timeout: 5000 }).count;
     return FaceCount;
+  }
+
+  async getMarkerCount() {
+    const MarkerCount = await Selector("div.is-marker", { timeout: 5000 }).count;
+    return MarkerCount;
   }
 
   async selectSubjectFromUID(uid) {
@@ -76,11 +76,17 @@ export default class Page {
     }
   }
 
-  //hidden, favorite, select
+  async triggerToolbarAction(action) {
+    if (await Selector("form.p-faces-search button.action-" + action).visible) {
+      await t.click(Selector("form.p-faces-search button.action-" + action));
+    } else if (await Selector("form.p-people-search button.action-" + action).visible) {
+      await t.click(Selector("form.p-people-search button.action-" + action));
+    }
+  }
+
   async triggerHoverAction(mode, uidOrNth, action) {
     if (mode === "uid") {
       await t.hover(Selector("a.uid-" + uidOrNth));
-      //Selector("a.uid-" + uidOrNth + " .input-" + action);
       await t.click(Selector("a.uid-" + uidOrNth + " .input-" + action));
     }
     if (mode === "nth") {
@@ -111,18 +117,6 @@ export default class Page {
         await t.expect(Selector(`.input-` + action).visible).notOk();
       }
     }
-  }
-
-  async triggerToolbarAction(action) {
-    if (await Selector("form.p-faces-search button.action-" + action).visible) {
-      await t.click(Selector("form.p-faces-search button.action-" + action));
-    } else if (await Selector("form.p-people-search button.action-" + action).visible) {
-      await t.click(Selector("form.p-people-search button.action-" + action));
-    }
-  }
-
-  async openNthSubject(nth) {
-    await t.click(Selector("a.is-subject").nth(nth)).expect(Selector("div.is-photo").visible).ok();
   }
 
   async checkHoverActionState(mode, uidOrNth, action, set) {

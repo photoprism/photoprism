@@ -31,6 +31,11 @@ export default class Page {
     this.toggleExpandFile = Selector("li.v-expansion-panel__container", { timeout: 15000 });
   }
 
+  //edit single fields / check disabled, selectors for single fields?
+  // check edit form values // get all current edit form values // set edit form values
+  //edit dialog disabled --funcionalities
+
+
   async getFileCount() {
     const FileCount = await Selector("li.v-expansion-panel__container", { timeout: 5000 }).count;
     return FileCount;
