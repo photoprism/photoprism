@@ -5,9 +5,8 @@ import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 import Label from "../page-model/label";
-import PhotoViews from "../page-model/photo-views";
 import PhotoEdit from "../page-model/photo-edit";
 
 fixture`Test labels`.page`${testcafeconfig.url}`;
@@ -17,9 +16,8 @@ const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const newpage = new NewPage();
+const page = new Page();
 const label = new Label();
-const photoviews = new PhotoViews();
 const photoedit = new PhotoEdit();
 
 test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo", async (t) => {
@@ -34,7 +32,7 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
   await label.openLabelWithUid(LabelBeacon);
   await toolbar.setFilter("view", "Cards");
   const PhotoBeacon = await photo.getNthPhotoUid("all", 0);
-  await t.click(newpage.cardTitle.withAttribute("data-uid", PhotoBeacon));
+  await t.click(page.cardTitle.withAttribute("data-uid", PhotoBeacon));
   const PhotoKeywords = await Selector(".input-keywords textarea").value;
   await t
     .expect(PhotoKeywords)
@@ -58,7 +56,7 @@ test.meta("testID", "labels-001")("Remove/Activate Add/Delete Label from photo",
   const LabelTest = await label.getNthLabeltUid(0);
   await label.openLabelWithUid(LabelTest);
   await t
-    .click(newpage.cardTitle.withAttribute("data-uid", PhotoBeacon))
+    .click(page.cardTitle.withAttribute("data-uid", PhotoBeacon))
     .click(Selector("#tab-labels"))
     .click(photoedit.deleteLabel)
     .click(photoedit.activateLabel)
@@ -84,7 +82,7 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
   await label.openNthLabel(0);
   const FirstPhotoZebra = await photo.getNthPhotoUid("all", 0);
   await toolbar.setFilter("view", "Cards");
-  await t.click(newpage.cardTitle.withAttribute("data-uid", FirstPhotoZebra));
+  await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoZebra));
   const FirstPhotoTitle = await Selector(".input-title input", { timeout: 5000 }).value;
   const FirstPhotoKeywords = await Selector(".input-keywords textarea", { timeout: 5000 }).value;
   await t
@@ -114,7 +112,7 @@ test.meta("testID", "labels-002")("Rename Label", async (t) => {
   await label.openLabelWithUid(LabelZebra);
   await photo.checkPhotoVisibility(FirstPhotoZebra, true);
   await t
-    .click(newpage.cardTitle.withAttribute("data-uid", FirstPhotoZebra))
+    .click(page.cardTitle.withAttribute("data-uid", FirstPhotoZebra))
     .click(Selector("#tab-labels"))
     .click(photoedit.openInlineEdit)
     .typeText(photoedit.inputLabelRename, "Zebra", { replace: true })
@@ -149,12 +147,12 @@ test.meta("testID", "labels-003")("Add label to album", async (t) => {
   await album.openAlbumWithUid(AlbumUid);
   const PhotoCountAfterAdd = await photo.getPhotoCount("all");
   await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 6);
-  await photoviews.triggerHoverAction("uid", FirstPhotoLandscape, "select");
-  await photoviews.triggerHoverAction("uid", SecondPhotoLandscape, "select");
-  await photoviews.triggerHoverAction("uid", ThirdPhotoLandscape, "select");
-  await photoviews.triggerHoverAction("uid", FourthPhotoLandscape, "select");
-  await photoviews.triggerHoverAction("uid", FifthPhotoLandscape, "select");
-  await photoviews.triggerHoverAction("uid", SixthPhotoLandscape, "select");
+  await photo.triggerHoverAction("uid", FirstPhotoLandscape, "select");
+  await photo.triggerHoverAction("uid", SecondPhotoLandscape, "select");
+  await photo.triggerHoverAction("uid", ThirdPhotoLandscape, "select");
+  await photo.triggerHoverAction("uid", FourthPhotoLandscape, "select");
+  await photo.triggerHoverAction("uid", FifthPhotoLandscape, "select");
+  await photo.triggerHoverAction("uid", SixthPhotoLandscape, "select");
   await contextmenu.triggerContextMenuAction("remove", "");
   const PhotoCountAfterDelete = await photo.getPhotoCount("all");
   await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 6);
@@ -175,7 +173,7 @@ test.meta("testID", "labels-004")("Delete label", async (t) => {
   await menu.openPage("browse");
   await toolbar.setFilter("view", "Cards");
   await t
-    .click(newpage.cardTitle.withAttribute("data-uid", FirstPhotoDome))
+    .click(page.cardTitle.withAttribute("data-uid", FirstPhotoDome))
     .click(Selector("#tab-labels"))
     .expect(Selector("td").withText("No labels found").visible)
     .ok()

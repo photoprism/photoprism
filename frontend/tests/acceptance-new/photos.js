@@ -6,8 +6,7 @@ import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import PhotoViewer from "../page-model/photoviewer";
-import NewPage from "../page-model/page";
-import PhotoViews from "../page-model/photo-views";
+import Page from "../page-model/page";
 import PhotoEdit from "../page-model/photo-edit";
 
 const scroll = ClientFunction((x, y) => window.scrollTo(x, y));
@@ -20,8 +19,7 @@ const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
 const photoviewer = new PhotoViewer();
-const newpage = new NewPage();
-const photoviews = new PhotoViews();
+const page = new Page();
 const photoedit = new PhotoEdit();
 
 test.meta("testID", "photos-001")("Scroll to top", async (t) => {
@@ -48,8 +46,8 @@ test.meta("testID", "photos-002")(
     await photoviewer.openPhotoViewer("uid", SecondPhoto);
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
     await photoviewer.triggerPhotoViewerAction("close");
-    await photoviews.triggerHoverAction("uid", FirstPhoto, "select");
-    await photoviews.triggerHoverAction("uid", FirstVideo, "select");
+    await photo.triggerHoverAction("uid", FirstPhoto, "select");
+    await photo.triggerHoverAction("uid", FirstVideo, "select");
     await contextmenu.checkContextMenuCount("2");
     await contextmenu.checkContextMenuActionAvailability("download", true);
   }
@@ -66,7 +64,7 @@ test.meta("testID", "photos-003")(
     await photo.checkPhotoVisibility(FirstPhoto, false);
     await photo.checkPhotoVisibility(SecondPhoto, false);
     await menu.openPage("review");
-    await photoviews.triggerHoverAction("uid", FirstPhoto, "select");
+    await photo.triggerHoverAction("uid", FirstPhoto, "select");
     await contextmenu.triggerContextMenuAction("edit", "");
     await t.click(photoedit.detailsClose);
     if (t.browser.platform === "mobile") {
@@ -82,7 +80,7 @@ test.meta("testID", "photos-003")(
     } else {
       await t.click(photoedit.detailsDone);
     }
-    await photoviews.triggerHoverAction("uid", SecondPhoto, "select");
+    await photo.triggerHoverAction("uid", SecondPhoto, "select");
     await contextmenu.triggerContextMenuAction("edit", "");
     await t
       .typeText(Selector('input[aria-label="Latitude"]'), "9.999", { replace: true })
@@ -120,9 +118,9 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   await photo.checkPhotoVisibility(SecondPhoto, false);
   await photo.checkPhotoVisibility(FirstVideo, false);
   await menu.openPage("browse");
-  await photoviews.triggerHoverAction("uid", FirstPhoto, "favorite");
-  await photoviews.triggerHoverAction("uid", FirstVideo, "favorite");
-  await photoviews.triggerHoverAction("uid", SecondPhoto, "select");
+  await photo.triggerHoverAction("uid", FirstPhoto, "favorite");
+  await photo.triggerHoverAction("uid", FirstVideo, "favorite");
+  await photo.triggerHoverAction("uid", SecondPhoto, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOn("favorite");
   await t.click(photoedit.dialogClose);
@@ -134,8 +132,8 @@ test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
   await photo.checkPhotoVisibility(FirstPhoto, true);
   await photo.checkPhotoVisibility(FirstVideo, true);
   await photo.checkPhotoVisibility(SecondPhoto, true);
-  await photoviews.triggerHoverAction("uid", SecondPhoto, "favorite");
-  await photoviews.triggerHoverAction("uid", FirstVideo, "select");
+  await photo.triggerHoverAction("uid", SecondPhoto, "favorite");
+  await photo.triggerHoverAction("uid", FirstVideo, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOff("favorite");
   await t.click(photoedit.dialogClose);
@@ -157,7 +155,7 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
   await toolbar.setFilter("view", "Cards");
   const FirstPhoto = await photo.getNthPhotoUid("image", 0);
   await t
-    .click(newpage.cardTitle.withAttribute("data-uid", FirstPhoto))
+    .click(page.cardTitle.withAttribute("data-uid", FirstPhoto))
     .expect(Selector('input[aria-label="Latitude"]').visible)
     .ok();
   await t.click(photoedit.dialogNext);
@@ -228,9 +226,9 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
     await toolbar.triggerToolbarAction("reload", "");
   }
   await t
-    .expect(newpage.cardTitle.withAttribute("data-uid", FirstPhoto).innerText)
+    .expect(page.cardTitle.withAttribute("data-uid", FirstPhoto).innerText)
     .eql("New Photo Title");
-  await photoviews.triggerHoverAction("uid", FirstPhoto, "select");
+  await photo.triggerHoverAction("uid", FirstPhoto, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await photoedit.checkEditFormValues(
     "New Photo Title",
@@ -287,7 +285,7 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
 test.meta("testID", "photos-006")("Navigate from card view to place", async (t) => {
   await toolbar.setFilter("view", "Cards");
   await t
-    .click(newpage.cardLocation.nth(0))
+    .click(page.cardLocation.nth(0))
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.p-map-control").visible)
@@ -306,8 +304,8 @@ test.meta("testID", "photos-007")("Mark photos/videos as panorama/scan", async (
   await photo.checkPhotoVisibility(FirstPhoto, false);
   await photo.checkPhotoVisibility(FirstVideo, false);
   await menu.openPage("browse");
-  await photoviews.triggerHoverAction("uid", FirstPhoto, "select");
-  await photoviews.triggerHoverAction("uid", FirstVideo, "select");
+  await photo.triggerHoverAction("uid", FirstPhoto, "select");
+  await photo.triggerHoverAction("uid", FirstVideo, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOn("scan");
   await photoedit.turnSwitchOn("panorama");
@@ -324,8 +322,8 @@ test.meta("testID", "photos-007")("Mark photos/videos as panorama/scan", async (
   await menu.openPage("panoramas");
   await photo.checkPhotoVisibility(FirstPhoto, true);
   await photo.checkPhotoVisibility(FirstVideo, true);
-  await photoviews.triggerHoverAction("uid", FirstPhoto, "select");
-  await photoviews.triggerHoverAction("uid", FirstVideo, "select");
+  await photo.triggerHoverAction("uid", FirstPhoto, "select");
+  await photo.triggerHoverAction("uid", FirstVideo, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");

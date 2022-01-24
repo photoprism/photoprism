@@ -11,7 +11,7 @@ import Album from "../page-model/album";
 import Subject from "../page-model/subject";
 import PhotoViewer from "../page-model/photoviewer";
 import PhotoEdit from "../page-model/photo-edit";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 
 fixture`Test member role`.page`${testcafeconfig.url}`;
 
@@ -25,11 +25,11 @@ const album = new Album();
 const subject = new Subject();
 const photoviewer = new PhotoViewer();
 const photoedit = new PhotoEdit();
-const newpage = new NewPage();
+const page = new Page();
 const getLocation = ClientFunction(() => document.location.href);
 
 test.meta("testID", "member-role-001")("No access to settings", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.checkMenuItemAvailability("settings", false);
   await t.navigateTo("/settings");
   await t
@@ -55,7 +55,7 @@ test.meta("testID", "member-role-001")("No access to settings", async (t) => {
 });
 
 test.meta("testID", "member-role-002")("No access to archive", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   if (t.browser.platform === "mobile") {
     await t.wait(5000);
   }
@@ -71,7 +71,7 @@ test.meta("testID", "member-role-002")("No access to archive", async (t) => {
 });
 
 test.meta("testID", "member-role-003")("No access to review", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   if (t.browser.platform === "mobile") {
     await t.wait(5000);
   }
@@ -87,7 +87,7 @@ test.meta("testID", "member-role-003")("No access to review", async (t) => {
 });
 
 test.meta("testID", "member-role-004")("No access to private", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   if (t.browser.platform === "mobile") {
     await t.wait(5000);
   }
@@ -103,7 +103,7 @@ test.meta("testID", "member-role-004")("No access to private", async (t) => {
 });
 
 test.meta("testID", "member-role-005")("No access to library", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   if (t.browser.platform === "mobile") {
     await t.wait(5000);
   }
@@ -151,7 +151,7 @@ test.meta("testID", "member-role-005")("No access to library", async (t) => {
 test.meta("testID", "member-role-006")(
   "No private/archived photos in search results",
   async (t) => {
-    await newpage.login("member", "passwdmember");
+    await page.login("member", "passwdmember");
     if (t.browser.platform === "mobile") {
       await t.wait(5000);
     }
@@ -208,7 +208,7 @@ test.meta("testID", "member-role-006")(
 );
 
 test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await toolbar.checkToolbarActionAvailability("upload", false);
   await menu.openPage("albums");
   await toolbar.checkToolbarActionAvailability("upload", false);
@@ -239,15 +239,15 @@ test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
 });
 
 test.meta("testID", "member-role-008")("Member cannot like photos", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await t.wait(5000);
   const FirstPhoto = await photo.getNthPhotoUid("image", 0);
   const SecondPhoto = await photo.getNthPhotoUid("all", 1);
   await menu.openPage("favorites");
   const FirstFavorite = await photo.getNthPhotoUid("image", 0);
-  await photoviews.checkHoverActionState("uid", FirstFavorite, "favorite", true);
-  await photoviews.triggerHoverAction("uid", FirstFavorite, "favorite");
-  await photoviews.checkHoverActionState("uid", FirstFavorite, "favorite", true);
+  await photo.checkHoverActionState("uid", FirstFavorite, "favorite", true);
+  await photo.triggerHoverAction("uid", FirstFavorite, "favorite");
+  await photo.checkHoverActionState("uid", FirstFavorite, "favorite", true);
   await t
     .expect(Selector("div").withAttribute("data-uid", FirstPhoto).exists, { timeout: 5000 })
     .notOk()
@@ -261,9 +261,9 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
   await photoviewer.triggerPhotoViewerAction("close");
   await t.wait(5000).click(Selector(".p-expand-search", { timeout: 10000 }));
   await toolbar.setFilter("view", "Cards");
-  await photoviews.checkHoverActionState("uid", FirstPhoto, "favorite", false);
-  await photoviews.triggerHoverAction("uid", FirstPhoto, "favorite");
-  await photoviews.checkHoverActionState("uid", FirstPhoto, "favorite", false);
+  await photo.checkHoverActionState("uid", FirstPhoto, "favorite", false);
+  await photo.triggerHoverAction("uid", FirstPhoto, "favorite");
+  await photo.checkHoverActionState("uid", FirstPhoto, "favorite", false);
   await photo.selectPhotoFromUID(SecondPhoto);
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
@@ -273,30 +273,30 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
   await photoedit.turnSwitchOn("favorite");
   await t.click(Selector(".action-close"));
   await contextmenu.clearSelection();
-  await photoviews.checkHoverActionState("uid", SecondPhoto, "favorite", false);
+  await photo.checkHoverActionState("uid", SecondPhoto, "favorite", false);
   await menu.openPage("browse");
   await toolbar.setFilter("view", "Mosaic");
-  await photoviews.checkHoverActionState("uid", FirstPhoto, "favorite", false);
-  await photoviews.triggerHoverAction("uid", FirstPhoto, "favorite");
-  await photoviews.checkHoverActionState("uid", FirstPhoto, "favorite", false);
+  await photo.checkHoverActionState("uid", FirstPhoto, "favorite", false);
+  await photo.triggerHoverAction("uid", FirstPhoto, "favorite");
+  await photo.checkHoverActionState("uid", FirstPhoto, "favorite", false);
   await toolbar.setFilter("view", "List");
-  await photoviews.checkListViewActionAvailability("like", true);
-  await photoviews.triggerListViewActions("nth", 0, "like");
+  await photo.checkListViewActionAvailability("like", true);
+  await photo.triggerListViewActions("nth", 0, "like");
   await toolbar.setFilter("view", "Cards");
-  await photoviews.checkHoverActionState("uid", FirstPhoto, "favorite", false);
+  await photo.checkHoverActionState("uid", FirstPhoto, "favorite", false);
   await menu.openPage("albums");
   await t.click(Selector("a.is-album").nth(0));
   await toolbar.triggerToolbarAction("list-view", "");
   if (t.browser.platform === "mobile") {
     await toolbar.triggerToolbarAction("list-view", "");
   }
-  await photoviews.checkListViewActionAvailability("like", true);
+  await photo.checkListViewActionAvailability("like", true);
 });
 
 test.meta("testID", "member-role-009")(
   "Member cannot private, archive, share, add/remove to album",
   async (t) => {
-    await newpage.login("member", "passwdmember");
+    await page.login("member", "passwdmember");
     const FirstPhoto = await photo.getNthPhotoUid("image", 0);
     await photo.selectPhotoFromUID(FirstPhoto);
     await contextmenu.checkContextMenuActionAvailability("private", false);
@@ -307,7 +307,7 @@ test.meta("testID", "member-role-009")(
     await contextmenu.checkContextMenuActionAvailability("edit", true);
     await contextmenu.clearSelection();
     await toolbar.setFilter("view", "List");
-    await photoviews.checkListViewActionAvailability("private", true);
+    await photo.checkListViewActionAvailability("private", true);
     await menu.openPage("albums");
     await album.openNthAlbum(0);
     await toolbar.checkToolbarActionAvailability("share", false);
@@ -321,12 +321,12 @@ test.meta("testID", "member-role-009")(
     if (t.browser.platform === "mobile") {
       await toolbar.triggerToolbarAction("list-view", "");
     }
-    await photoviews.checkListViewActionAvailability("private", true);
+    await photo.checkListViewActionAvailability("private", true);
   }
 );
 
 test.meta("testID", "member-role-010")("Member cannot approve low quality photos", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await toolbar.search('quality:0 name:"photos-013_1"');
   await photo.toggleSelectNthPhoto(0, "all");
   await contextmenu.triggerContextMenuAction("edit", "", "");
@@ -334,7 +334,7 @@ test.meta("testID", "member-role-010")("Member cannot approve low quality photos
 });
 
 test.meta("testID", "member-role-011")("Edit dialog is read only for member", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await toolbar.search("faces:new");
   //details
   const FirstPhoto = await photo.getNthPhotoUid("image", 0);
@@ -429,7 +429,7 @@ test.meta("testID", "member-role-011")("Edit dialog is read only for member", as
 });
 
 test.meta("testID", "member-role-012")("No edit album functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.openPage("albums");
   await toolbar.checkToolbarActionAvailability("add", false);
   await t.expect(Selector("a.is-album button.action-share").visible).notOk();
@@ -443,7 +443,7 @@ test.meta("testID", "member-role-012")("No edit album functionality", async (t) 
 
   await contextmenu.clearSelection();
   await t
-    .click(newpage.cardTitle)
+    .click(page.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .notOk();
   if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
@@ -467,7 +467,7 @@ test.meta("testID", "member-role-012")("No edit album functionality", async (t) 
 });
 
 test.meta("testID", "member-role-013")("No edit moment functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.openPage("moments");
   await t.expect(Selector("a.is-album button.action-share").visible).notOk();
   const FirstAlbum = await album.getNthAlbumUid("all", 0);
@@ -480,7 +480,7 @@ test.meta("testID", "member-role-013")("No edit moment functionality", async (t)
 
   await contextmenu.clearSelection();
   await t
-    .click(newpage.cardTitle)
+    .click(page.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .notOk();
   if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
@@ -504,7 +504,7 @@ test.meta("testID", "member-role-013")("No edit moment functionality", async (t)
 });
 
 test.meta("testID", "member-role-014")("No edit state functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.openPage("states");
   await t.expect(Selector("a.is-album button.action-share").visible).notOk();
   const FirstAlbum = await album.getNthAlbumUid("all", 0);
@@ -517,7 +517,7 @@ test.meta("testID", "member-role-014")("No edit state functionality", async (t) 
 
   await contextmenu.clearSelection();
   await t
-    .click(newpage.cardTitle)
+    .click(page.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .notOk();
   if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
@@ -541,7 +541,7 @@ test.meta("testID", "member-role-014")("No edit state functionality", async (t) 
 });
 
 test.meta("testID", "member-role-015")("No edit calendar functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.openPage("calendar");
   await t.expect(Selector("a.is-album button.action-share").visible).notOk();
   const FirstAlbum = await album.getNthAlbumUid("all", 0);
@@ -554,7 +554,7 @@ test.meta("testID", "member-role-015")("No edit calendar functionality", async (
 
   await contextmenu.clearSelection();
   await t
-    .click(newpage.cardTitle)
+    .click(page.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .notOk();
   if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
@@ -578,7 +578,7 @@ test.meta("testID", "member-role-015")("No edit calendar functionality", async (
 });
 
 test.meta("testID", "member-role-016")("No edit folder functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.openPage("folders");
   await t.expect(Selector("a.is-album button.action-share").visible).notOk();
   const FirstAlbum = await album.getNthAlbumUid("all", 0);
@@ -591,7 +591,7 @@ test.meta("testID", "member-role-016")("No edit folder functionality", async (t)
 
   await contextmenu.clearSelection();
   await t
-    .click(newpage.cardTitle)
+    .click(page.cardTitle)
     .expect(Selector(".input-description textarea").visible)
     .notOk();
   if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
@@ -615,7 +615,7 @@ test.meta("testID", "member-role-016")("No edit folder functionality", async (t)
 });
 
 test.meta("testID", "member-role-017")("No edit labels functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.openPage("labels");
   const FirstLabel = await label.getNthLabeltUid(0);
   await label.checkHoverActionState("uid", FirstLabel, "favorite", false);
@@ -631,7 +631,7 @@ test.meta("testID", "member-role-017")("No edit labels functionality", async (t)
 });
 
 test.meta("testID", "member-role-018")("No unstack, change primary actions", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await toolbar.search("stack:true");
   //details
   const FirstPhoto = await photo.getNthPhotoUid("image", 0);
@@ -657,7 +657,7 @@ test.meta("testID", "member-role-018")("No unstack, change primary actions", asy
 });
 
 test.meta("testID", "member-role-019")("No edit people functionality", async (t) => {
-  await newpage.login("member", "passwdmember");
+  await page.login("member", "passwdmember");
   await menu.openPage("people");
   await toolbar.checkToolbarActionAvailability("show-hidden", false);
   await toolbar.checkToolbarActionAvailability("upload", false);

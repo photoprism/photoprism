@@ -5,7 +5,7 @@ import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 
 fixture`Test folders`.page`${testcafeconfig.url}`;
 
@@ -14,7 +14,7 @@ const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const newpage = new NewPage();
+const page = new Page();
 
 test.meta("testID", "albums-004")("View folders", async (t) => {
   await menu.openPage("folders");
@@ -32,9 +32,9 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
   await toolbar.search("Kanada");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("Kanada")
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .expect(Selector(".input-title input").value)
     .eql("Kanada")
     .expect(Selector(".input-location input").value)
@@ -49,9 +49,9 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
     .typeText(Selector(".input-category input"), "Mountains")
     .pressKey("enter")
     .click(".action-confirm")
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("MyFolder")
-    .expect(newpage.cardDescription.nth(0).innerText)
+    .expect(page.cardDescription.nth(0).innerText)
     .contains("Last holiday")
     .expect(Selector("div.caption").nth(1).innerText)
     .contains("Mountains")
@@ -69,7 +69,7 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
   } else {
     await toolbar.setFilter("category", "Mountains");
   }
-  await t.expect(newpage.cardTitle.nth(0).innerText).contains("MyFolder");
+  await t.expect(page.cardTitle.nth(0).innerText).contains("MyFolder");
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit", "");
   await t
@@ -93,9 +93,9 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
   await menu.openPage("folders");
   await toolbar.search("Kanada");
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("Kanada")
-    .expect(newpage.cardDescription.nth(0).innerText)
+    .expect(page.cardDescription.nth(0).innerText)
     .notContains("We went to ski")
     .expect(Selector("div.caption").nth(0).innerText)
     .notContains("USA");
@@ -103,7 +103,7 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
 
 //TODO test that sharing link works as expected
 test.meta("testID", "folders-003")("Create, Edit, delete sharing link", async (t) => {
-  await newpage.testCreateEditDeleteSharingLink("folders");
+  await page.testCreateEditDeleteSharingLink("folders");
 });
 
 test.meta("testID", "folders-004")("Create/delete album-clone from folder", async (t) => {

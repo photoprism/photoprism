@@ -3,7 +3,7 @@ import testcafeconfig from "../testcafeconfig";
 import Menu from "../../page-model/menu";
 import Toolbar from "../../page-model/toolbar";
 import Photo from "../../page-model/photo";
-import NewPage from "../../page-model/page";
+import Page from "../../page-model/page";
 import Library from "../../page-model/library";
 import Album from "../../page-model/album";
 
@@ -12,7 +12,7 @@ fixture`Test index`.page`${testcafeconfig.url}`;
 const menu = new Menu();
 const toolbar = new Toolbar();
 const photo = new Photo();
-const newpage = new NewPage();
+const page = new Page();
 const library = new Library();
 const album = new Album();
 
@@ -56,7 +56,7 @@ test.meta("testID", "library-index-001")("Index files from folder", async (t) =>
   await t
     .click(Selector("#tab-library-index"))
     .click(library.indexFolderSelect)
-    .click(newpage.selectOption.withText("/moment"))
+    .click(page.selectOption.withText("/moment"))
     .click(library.index)
     //TODO replace wait
     .wait(50000)

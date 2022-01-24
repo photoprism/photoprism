@@ -5,7 +5,7 @@ import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 
 fixture`Test states`.page`${testcafeconfig.url}`;
 
@@ -14,16 +14,16 @@ const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const newpage = new NewPage();
+const page = new Page();
 
 test.meta("testID", "states-001")("Update state", async (t) => {
   await menu.openPage("states");
   await toolbar.search("Canada");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("British Columbia")
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .expect(Selector(".input-title input").value)
     .eql("British Columbia")
     .expect(Selector(".input-location input").value)
@@ -38,9 +38,9 @@ test.meta("testID", "states-001")("Update state", async (t) => {
     .typeText(Selector(".input-category input"), "Mountains")
     .pressKey("enter")
     .click(".action-confirm")
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("Wonderland")
-    .expect(newpage.cardDescription.nth(0).innerText)
+    .expect(page.cardDescription.nth(0).innerText)
     .contains("We love earth")
     .expect(Selector("div.caption").nth(1).innerText)
     .contains("Mountains")
@@ -55,7 +55,7 @@ test.meta("testID", "states-001")("Update state", async (t) => {
   } else {
     await toolbar.setFilter("category", "Mountains");
   }
-  await t.expect(newpage.cardTitle.nth(0).innerText).contains("Wonderland");
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Wonderland");
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit", "");
   await t
@@ -77,9 +77,9 @@ test.meta("testID", "states-001")("Update state", async (t) => {
   await menu.openPage("states");
   await toolbar.search("Canada");
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("British Columbia / Canada")
-    .expect(newpage.cardDescription.innerText)
+    .expect(page.cardDescription.innerText)
     .notContains("We love earth")
     .expect(Selector("div.caption").nth(0).innerText)
     .notContains("Earth");
@@ -87,7 +87,7 @@ test.meta("testID", "states-001")("Update state", async (t) => {
 
 //TODO test that sharing link works as expected
 test.meta("testID", "states-003")("Create, Edit, delete sharing link", async (t) => {
-  await newpage.testCreateEditDeleteSharingLink("states");
+  await page.testCreateEditDeleteSharingLink("states");
 });
 
 test.meta("testID", "states-004")("Create/delete album-clone from state", async (t) => {

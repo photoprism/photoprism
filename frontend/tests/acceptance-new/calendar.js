@@ -6,7 +6,7 @@ import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 
 const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
   logResponseHeaders: true,
@@ -20,7 +20,7 @@ const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const newpage = new NewPage();
+const page = new Page();
 
 test.meta("testID", "albums-005")("View calendar", async (t) => {
   await menu.openPage("calendar");
@@ -36,9 +36,9 @@ test.meta("testID", "calendar-001")("Update calendar", async (t) => {
   await toolbar.search("March 2014");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("March 2014")
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .typeText(Selector(".input-location input"), "Snow", { replace: true })
     .expect(Selector(".input-description textarea").value)
     .eql("")
@@ -48,9 +48,9 @@ test.meta("testID", "calendar-001")("Update calendar", async (t) => {
     .typeText(Selector(".input-category input"), "Mountains")
     .pressKey("enter")
     .click(".action-confirm")
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("March 2014")
-    .expect(newpage.cardDescription.nth(0).innerText)
+    .expect(page.cardDescription.nth(0).innerText)
     .contains("We went to ski")
     .expect(Selector("div.caption").nth(1).innerText)
     .contains("Mountains")
@@ -65,7 +65,7 @@ test.meta("testID", "calendar-001")("Update calendar", async (t) => {
   } else {
     await toolbar.setFilter("category", "Mountains");
   }
-  await t.expect(newpage.cardTitle.nth(0).innerText).contains("March 2014");
+  await t.expect(page.cardTitle.nth(0).innerText).contains("March 2014");
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit", "");
   await t
@@ -88,7 +88,7 @@ test.meta("testID", "calendar-001")("Update calendar", async (t) => {
   await menu.openPage("calendar");
   await toolbar.search("March 2014");
   await t
-    .expect(newpage.cardDescription.innerText)
+    .expect(page.cardDescription.innerText)
     .notContains("We went to ski")
     .expect(Selector("div.caption").nth(0).innerText)
     .notContains("Snow");
@@ -96,7 +96,7 @@ test.meta("testID", "calendar-001")("Update calendar", async (t) => {
 
 //TODO test that sharing link works as expected
 test.meta("testID", "calendar-003")("Create, Edit, delete sharing link", async (t) => {
-  await newpage.testCreateEditDeleteSharingLink("calendar");
+  await page.testCreateEditDeleteSharingLink("calendar");
 });
 
 test.meta("testID", "calendar-004")("Create/delete album-clone from calendar", async (t) => {

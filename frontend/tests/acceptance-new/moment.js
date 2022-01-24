@@ -5,7 +5,7 @@ import Album from "../page-model/album";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 
 fixture`Test moments`.page`${testcafeconfig.url}`;
 
@@ -14,16 +14,16 @@ const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const newpage = new NewPage();
+const page = new Page();
 
 test.meta("testID", "moments-001")("Update moment", async (t) => {
   await menu.openPage("moments");
   await toolbar.search("Nature");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("Nature")
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .expect(Selector(".input-title input").value)
     .eql("Nature & Landscape")
     .expect(Selector(".input-location input").value)
@@ -38,9 +38,9 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
     .typeText(Selector(".input-category input"), "Mountains")
     .pressKey("enter")
     .click(".action-confirm")
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("Winter")
-    .expect(newpage.cardDescription.nth(0).innerText)
+    .expect(page.cardDescription.nth(0).innerText)
     .contains("We went to ski")
     .expect(Selector("div.caption").nth(1).innerText)
     .contains("Mountains")
@@ -55,7 +55,7 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
   } else {
     await toolbar.setFilter("category", "Mountains");
   }
-  await t.expect(newpage.cardTitle.nth(0).innerText).contains("Winter");
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Winter");
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit", "");
   await t
@@ -79,16 +79,16 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
   await menu.openPage("moments");
   await toolbar.search("Nature");
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("Nature & Landscape")
-    .expect(newpage.cardDescription.innerText)
+    .expect(page.cardDescription.innerText)
     .notContains("We went to ski")
     .expect(Selector("div.caption").nth(0).innerText)
     .notContains("Snow-Land");
 });
 
 test.meta("testID", "moments-003")("Create, Edit, delete sharing link", async (t) => {
-  await newpage.testCreateEditDeleteSharingLink("moments");
+  await page.testCreateEditDeleteSharingLink("moments");
 });
 
 test.meta("testID", "moments-004")("Create/delete album-clone from moment", async (t) => {

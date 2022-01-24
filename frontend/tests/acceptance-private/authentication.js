@@ -1,11 +1,11 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 import Menu from "../page-model/menu";
 
 fixture`Test authentication`.page`${testcafeconfig.url}`;
 
-const newpage = new NewPage();
+const page = new Page();
 const menu = new Menu();
 
 test.meta("testID", "authentication-000")(
@@ -55,14 +55,14 @@ test.meta("testID", "authentication-001")("Login and Logout", async (t) => {
 //TODO test all pages not accessible while logged out
 
 test.meta("testID", "authentication-002")("Login with wrong credentials", async (t) => {
-  await newpage.login("wrong", "photoprism");
+  await page.login("wrong", "photoprism");
   await t
     .navigateTo("/favorites")
     .expect(Selector(".input-name input").visible)
     .ok()
     .expect(Selector(".input-search input").visible)
     .notOk();
-  await newpage.login("admin", "abcdefg");
+  await page.login("admin", "abcdefg");
   await t
     .navigateTo("/archive")
     .expect(Selector(".input-name input").visible)
@@ -72,7 +72,7 @@ test.meta("testID", "authentication-002")("Login with wrong credentials", async 
 });
 
 test.meta("testID", "authentication-003")("Change password", async (t) => {
-  await newpage.login("admin", "photoprism");
+  await page.login("admin", "photoprism");
   await t.expect(Selector(".input-search input").visible).ok();
   await page.openNav();
   await t
@@ -98,14 +98,14 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
   if (t.browser.platform === "mobile") {
     await t.wait(7000);
   }
-  await newpage.login("admin", "photoprism");
+  await page.login("admin", "photoprism");
   await t
     .navigateTo("/archive")
     .expect(Selector(".input-name input", { timeout: 7000 }).visible)
     .ok()
     .expect(Selector(".input-search input").visible)
     .notOk();
-  await newpage.login("admin", "photoprism123");
+  await page.login("admin", "photoprism123");
   await t.expect(Selector(".input-search input").visible).ok();
   await page.openNav();
   await t
@@ -116,7 +116,7 @@ test.meta("testID", "authentication-003")("Change password", async (t) => {
     .click(".action-confirm");
   await page.openNav();
   await t.click(Selector('div[title="Logout"]'));
-  await newpage.login("admin", "photoprism");
+  await page.login("admin", "photoprism");
   await t.expect(Selector(".input-search input").visible).ok();
   await page.openNav();
   await t.click(Selector('div[title="Logout"]'));

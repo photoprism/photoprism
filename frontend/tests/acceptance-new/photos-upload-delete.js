@@ -5,8 +5,7 @@ import Menu from "../page-model/menu";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
-import NewPage from "../page-model/page";
-import PhotoViews from "../page-model/photo-views";
+import Page from "../page-model/page";
 import PhotoEdit from "../page-model/photo-edit";
 import Originals from "../page-model/originals";
 import Album from "../page-model/album";
@@ -18,8 +17,7 @@ const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
-const newpage = new NewPage();
-const photoviews = new PhotoViews();
+const page = new Page();
 const photoedit = new PhotoEdit();
 const originals = new Originals();
 
@@ -43,7 +41,7 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
   await t.expect(FileCount).eql(2);
   await menu.openPage("browse");
   await toolbar.search("digikam");
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click("#tab-files")
@@ -59,7 +57,7 @@ test.meta("testID", "photos-upload-delete-001")("Upload + Delete jpg/json", asyn
   }
   await contextmenu.triggerContextMenuAction("archive", "", "");
   await menu.openPage("archive");
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("delete", "", "");
   await menu.openPage("browse");
   await toolbar.search("digikam");
@@ -90,7 +88,7 @@ test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (
   await t.expect(FileCount).eql(1);
   await menu.openPage("browse");
   await toolbar.search("korn");
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click("#tab-files")
@@ -108,7 +106,7 @@ test.meta("testID", "photos-upload-delete-002")("Upload + Delete video", async (
   }
   await contextmenu.triggerContextMenuAction("archive", "", "");
   await menu.openPage("archive");
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("delete", "", "");
   await menu.openPage("browse");
   await toolbar.search("korn");
@@ -137,7 +135,7 @@ test.meta("testID", "photos-upload-delete-003")("Upload to existing Album + Dele
   await toolbar.triggerToolbarAction("upload", "");
   await t
     .click(Selector(".input-albums"))
-    .click(newpage.selectOption.withText("Christmas"))
+    .click(page.selectOption.withText("Christmas"))
     .setFilesToUpload(Selector(".input-upload"), ["./upload-files/ladybug.jpg"])
     .wait(15000);
   const PhotoCountAfterUpload = await photo.getPhotoCount("all");
@@ -145,10 +143,10 @@ test.meta("testID", "photos-upload-delete-003")("Upload to existing Album + Dele
   await menu.openPage("browse");
   await toolbar.search("ladybug");
   const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("archive", "", "");
   await menu.openPage("archive");
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("delete", "", "");
   await menu.openPage("browse");
   await toolbar.search("ladybug");
@@ -184,10 +182,10 @@ test.meta("testID", "photos-upload-delete-004")("Upload jpg to new Album + Delet
   await menu.openPage("browse");
   await toolbar.search("digikam");
   const UploadedPhoto = await photo.getNthPhotoUid("all", 0);
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("archive", "", "");
   await menu.openPage("archive");
-  await photoviews.triggerHoverAction("uid", UploadedPhoto, "select");
+  await photo.triggerHoverAction("uid", UploadedPhoto, "select");
   await contextmenu.triggerContextMenuAction("delete", "", "");
   await menu.openPage("browse");
   await toolbar.search("digikam");

@@ -5,7 +5,6 @@ import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import Subject from "../page-model/subject";
-import PhotoViews from "../page-model/photo-views";
 import PhotoEdit from "../page-model/photo-edit";
 
 fixture`Test people`.page`${testcafeconfig.url}`;
@@ -15,7 +14,6 @@ const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
 const subject = new Subject();
-const photoviews = new PhotoViews();
 const photoedit = new PhotoEdit();
 
 test.meta("testID", "people-001")("Add + Rename", async (t) => {
@@ -53,9 +51,9 @@ test.meta("testID", "people-001")("Add + Rename", async (t) => {
   await subject.openSubjectWithUid(JaneUID);
   const countPhotosSubject = await photo.getPhotoCount("all");
   await t.expect(countPhotosFace).eql(countPhotosSubject);
-  await photoviews.triggerHoverAction("nth", 0, "select");
-  await photoviews.triggerHoverAction("nth", 1, "select");
-  await photoviews.triggerHoverAction("nth", 2, "select");
+  await photo.triggerHoverAction("nth", 0, "select");
+  await photo.triggerHoverAction("nth", 1, "select");
+  await photo.triggerHoverAction("nth", 2, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click(Selector("#tab-people"))
@@ -106,7 +104,7 @@ test.meta("testID", "people-002")("Add + Reject + Star", async (t) => {
   await t.eval(() => location.reload());
   await t.wait(5000);
   const countPhotosAndreaAfterAdd = await photo.getPhotoCount("all");
-  await photoviews.triggerHoverAction("nth", 1, "select");
+  await photo.triggerHoverAction("nth", 1, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t
     .click(Selector("#tab-people"))
@@ -139,7 +137,7 @@ test.meta("testID", "people-002")("Add + Reject + Star", async (t) => {
 test.meta("testID", "people-003")("Remove face", async (t) => {
   await toolbar.search("face:new");
   const FirstPhoto = await photo.getNthPhotoUid("all", 0);
-  await photoviews.triggerHoverAction("nth", 0, "select");
+  await photo.triggerHoverAction("nth", 0, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t.click(Selector("#tab-people"));
   const MarkerCount = await subject.getMarkerCount();
@@ -166,7 +164,7 @@ test.meta("testID", "people-003")("Remove face", async (t) => {
   await contextmenu.clearSelection();
   await t.eval(() => location.reload());
   await t.wait(5000);
-  await photoviews.triggerHoverAction("uid", FirstPhoto, "select");
+  await photo.triggerHoverAction("uid", FirstPhoto, "select");
   await contextmenu.triggerContextMenuAction("edit", "", "");
   await t.click(Selector("#tab-people"));
   if ((await photoedit.inputName.nth(0).value) == "") {

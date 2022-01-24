@@ -6,7 +6,7 @@ import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import PhotoViewer from "../page-model/photoviewer";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 
 fixture`Test albums`.page`${testcafeconfig.url}`;
 
@@ -16,7 +16,7 @@ const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
 const photoviewer = new PhotoViewer();
-const newpage = new NewPage();
+const page = new Page();
 
 test.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
@@ -25,27 +25,30 @@ test.meta("testID", "authentication-000")(
   }
 );
 
-test.meta("testID", "albums-001")("Create/delete album on /albums", async (t) => {
-  await menu.openPage("albums");
-  const countAlbums = await album.getAlbumCount("all");
-  await toolbar.triggerToolbarAction("add", "");
-  const countAlbumsAfterCreate = await album.getAlbumCount("all");
-  const NewAlbum = await album.getNthAlbumUid("all", 0);
-  await t.expect(countAlbumsAfterCreate).eql(countAlbums + 1);
-  await album.selectAlbumFromUID(NewAlbum);
-  await contextmenu.triggerContextMenuAction("delete", "", "");
-  const countAlbumsAfterDelete = await album.getAlbumCount("all");
-  await t.expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
-});
+test.meta("testID", "albums-001").meta({ type: "smoke" })(
+  "Create/delete album on /albums",
+  async (t) => {
+    await menu.openPage("albums");
+    const countAlbums = await album.getAlbumCount("all");
+    await toolbar.triggerToolbarAction("add", "");
+    const countAlbumsAfterCreate = await album.getAlbumCount("all");
+    const NewAlbum = await album.getNthAlbumUid("all", 0);
+    await t.expect(countAlbumsAfterCreate).eql(countAlbums + 1);
+    await album.selectAlbumFromUID(NewAlbum);
+    await contextmenu.triggerContextMenuAction("delete", "", "");
+    const countAlbumsAfterDelete = await album.getAlbumCount("all");
+    await t.expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
+  }
+);
 
 test.meta("testID", "albums-002")("Update album", async (t) => {
   await menu.openPage("albums");
   await toolbar.search("Holiday");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
   await t
-    .expect(newpage.cardTitle.nth(0).innerText)
+    .expect(page.cardTitle.nth(0).innerText)
     .contains("Holiday")
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .typeText(Selector(".input-title input"), "Animals", { replace: true })
     .expect(Selector(".input-description textarea").value)
     .eql("")
@@ -74,7 +77,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
   } else {
     await toolbar.setFilter("category", "Family");
   }
-  await t.expect(newpage.cardTitle.nth(0).innerText).contains("Christmas");
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Christmas");
   await menu.openPage("albums");
   await toolbar.triggerToolbarAction("reload", "");
   if (t.browser.platform === "mobile") {
@@ -113,7 +116,7 @@ test.meta("testID", "albums-002")("Update album", async (t) => {
 
 //TODO test that sharing link works as expected --> move to sharing.js
 test.meta("testID", "albums-006")("Create, Edit, delete sharing link", async (t) => {
-  await newpage.testCreateEditDeleteSharingLink("albums");
+  await page.testCreateEditDeleteSharingLink("albums");
 });
 
 test.meta("testID", "albums-007")("Create/delete album during add to album", async (t) => {
@@ -146,15 +149,15 @@ test.meta("testID", "albums-008")("Test album autocomplete", async (t) => {
   await t
     .click(Selector("button.action-album"))
     .click(Selector(".input-album input"))
-    .expect(newpage.selectOption.withText("Holiday").visible)
+    .expect(page.selectOption.withText("Holiday").visible)
     .ok()
-    .expect(newpage.selectOption.withText("Christmas").visible)
+    .expect(page.selectOption.withText("Christmas").visible)
     .ok()
     .typeText(Selector(".input-album input"), "C", { replace: true })
-    .expect(newpage.selectOption.withText("Holiday").visible)
+    .expect(page.selectOption.withText("Holiday").visible)
     .notOk()
-    .expect(newpage.selectOption.withText("Christmas").visible)
+    .expect(page.selectOption.withText("Christmas").visible)
     .ok()
-    .expect(newpage.selectOption.withText("C").visible)
+    .expect(page.selectOption.withText("C").visible)
     .ok();
 });

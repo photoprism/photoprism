@@ -4,8 +4,7 @@ import Menu from "../../page-model/menu";
 import Toolbar from "../../page-model/toolbar";
 import ContextMenu from "../../page-model/context-menu";
 import PhotoViewer from "../../page-model/photoviewer";
-import NewPage from "../../page-model/page";
-import PhotoViews from "../../page-model/photo-views";
+import Page from "../../page-model/page";
 import PhotoEdit from "../../page-model/photo-edit";
 import Album from "../../page-model/album";
 import Settings from "../../page-model/settings";
@@ -16,8 +15,7 @@ const menu = new Menu();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photoviewer = new PhotoViewer();
-const newpage = new NewPage();
-const photoviews = new PhotoViews();
+const page = new Page();
 const photoedit = new PhotoEdit();
 const album = new Album();
 const settings = new Settings();
@@ -26,7 +24,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await toolbar.checkToolbarActionAvailability("upload", true);
   await t.expect(Selector(".nav-browse").innerText).contains("Search").navigateTo("/browse");
   await toolbar.search("photo:true stack:true");
-  await photoviews.triggerHoverAction("nth", 0, "select");
+  await photo.triggerHoverAction("nth", 0, "select");
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
   await contextmenu.checkContextMenuActionAvailability("edit", true);
@@ -47,9 +45,9 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await photoviewer.checkPhotoViewerActionAvailability("download", true);
   await photoviewer.triggerPhotoViewerAction("close");
   await t
-    .expect(newpage.cardLocation.visible)
+    .expect(page.cardLocation.visible)
     .ok()
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .expect(Selector(".input-title input", { timeout: 8000 }).hasAttribute("disabled"))
     .notOk()
     .click(Selector("#tab-labels"))
@@ -64,7 +62,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .expect(Selector("#tab-library-logs a").visible)
     .ok();
   await menu.openPage("archive");
-  await photoviews.triggerHoverAction("nth", 0, "select");
+  await photo.triggerHoverAction("nth", 0, "select");
   await contextmenu.checkContextMenuActionAvailability("delete", true);
   await contextmenu.clearSelection();
   await menu.checkMenuItemAvailability("archive", true);
@@ -143,7 +141,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await toolbar.checkToolbarActionAvailability("upload", false);
   await t.expect(Selector(".nav-browse").innerText).contains("Suche");
   await toolbar.search("photo:true stack:true");
-  await photoviews.triggerHoverAction("nth", 0, "select");
+  await photo.triggerHoverAction("nth", 0, "select");
   await contextmenu.checkContextMenuActionAvailability("download", false);
   await contextmenu.checkContextMenuActionAvailability("share", false);
   await contextmenu.checkContextMenuActionAvailability("edit", false);
@@ -151,7 +149,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await contextmenu.checkContextMenuActionAvailability("archive", false);
   await contextmenu.clearSelection();
   await t
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .click(Selector("#tab-files"))
     .expect(photoedit.downloadFile.nth(0).visible)
     .notOk()
@@ -167,9 +165,9 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
   await photoviewer.checkPhotoViewerActionAvailability("edit", true);
   await photoviewer.triggerPhotoViewerAction("close");
   await t
-    .expect(newpage.cardLocation.exists)
+    .expect(page.cardLocation.exists)
     .notOk()
-    .click(newpage.cardTitle.nth(0))
+    .click(page.cardTitle.nth(0))
     .expect(Selector(".input-title input").hasAttribute("disabled"))
     .ok()
     .expect(Selector(".input-latitude input").hasAttribute("disabled"))
@@ -222,7 +220,7 @@ test.meta("testID", "settings-general-001")("General Settings", async (t) => {
     .click(Selector("#tab-settings-library"))
     .click(settings.reviewCheckbox);
   await menu.openPage("archive");
-  await photoviews.triggerHoverAction("nth", 0, "select");
+  await photo.triggerHoverAction("nth", 0, "select");
   await contextmenu.checkContextMenuActionAvailability("restore", true);
   await contextmenu.checkContextMenuActionAvailability("delete", false);
   await contextmenu.clearSelection();

@@ -1,7 +1,7 @@
 import { Selector } from "testcafe";
 import { Role } from "testcafe";
 import testcafeconfig from "../acceptance/testcafeconfig";
-import NewPage from "../page-model/page";
+import Page from "../page-model/page";
 import Menu from "../page-model/menu";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
@@ -12,7 +12,7 @@ import ShareDialog from "../page-model/dialog-share";
 
 fixture`Test link sharing`.page`${testcafeconfig.url}`.skip("Urls are not working anymore");
 
-const newpage = new NewPage();
+const page = new Page();
 const menu = new Menu();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
@@ -30,7 +30,7 @@ test.skip.meta("testID", "authentication-000")(
 );
 
 test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
-  await newpage.login("admin", "photoprism");
+  await page.login("admin", "photoprism");
   await menu.openPage("albums");
   const FirstAlbum = await album.getNthAlbumUid("all", 0);
   await album.triggerHoverAction("uid", FirstAlbum, "select");
@@ -80,7 +80,7 @@ test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
   const countAlbumsAnonymous = await Selector("a.is-album").count;
   await t.expect(countAlbumsAnonymous).eql(2);
   await t.navigateTo("http://localhost:2343/browse");
-  await newpage.login("admin", "photoprism");
+  await page.login("admin", "photoprism");
   await menu.openPage("albums");
   await album.openAlbumWithUid(FirstAlbum);
   await toolbar.triggerToolbarAction("share", "");
@@ -95,7 +95,7 @@ test.skip.meta("testID", "sharing-001")("View shared albums", async (t) => {
   const countAlbumsAnonymousAfterDelete = await album.getAlbumCount("all");
   await t.expect(countAlbumsAnonymousAfterDelete).eql(1);
   await t.navigateTo("http://localhost:2343/browse");
-  await newpage.login("admin", "photoprism");
+  await page.login("admin", "photoprism");
   await menu.openPage("folders");
   await album.openAlbumWithUid(FirstFolder);
   await toolbar.triggerToolbarAction("share", "");
@@ -123,7 +123,7 @@ test.skip.meta("testID", "sharing-002")("Verify anonymous user has limited optio
   await toolbar.checkToolbarActionAvailability("upload", false);
   await toolbar.checkToolbarActionAvailability("reload", true);
   await toolbar.checkToolbarActionAvailability("download", true);
-  await photoviews.triggerHoverAction("nth", 0, "select");
+  await photo.triggerHoverAction("nth", 0, "select");
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.checkContextMenuActionAvailability("archive", false);
   await contextmenu.checkContextMenuActionAvailability("private", false);
@@ -131,7 +131,7 @@ test.skip.meta("testID", "sharing-002")("Verify anonymous user has limited optio
   await contextmenu.checkContextMenuActionAvailability("share", false);
   await contextmenu.checkContextMenuActionAvailability("album", false);
   await contextmenu.clearSelection();
-  await t.expect(newpage.cardTitle.visible).notOk();
+  await t.expect(page.cardTitle.visible).notOk();
   await photoviewer.openPhotoViewer("nth", 0);
   await photoviewer.checkPhotoViewerActionAvailability("download", true);
   await photoviewer.checkPhotoViewerActionAvailability("select", true);
@@ -140,8 +140,8 @@ test.skip.meta("testID", "sharing-002")("Verify anonymous user has limited optio
   await photoviewer.checkPhotoViewerActionAvailability("like", false);
   await photoviewer.checkPhotoViewerActionAvailability("edit", false);
   await photoviewer.triggerPhotoViewerAction("close");
-  await photoviews.checkHoverActionAvailability("nth", 0, "favorite", false);
-  await photoviews.checkHoverActionAvailability("nth", 0, "select", true);
+  await photo.checkHoverActionAvailability("nth", 0, "favorite", false);
+  await photo.checkHoverActionAvailability("nth", 0, "select", true);
   await toolbar.triggerToolbarAction("view-list", "");
   await t
     .expect(Selector(`td button.input-private`).visible)
