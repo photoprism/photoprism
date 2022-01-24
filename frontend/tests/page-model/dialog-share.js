@@ -7,7 +7,7 @@ export default class Page {
     this.addLink = Selector(".action-add-link", { timeout: 15000 });
     this.deleteLink = Selector(".action-delete", { timeout: 15000 });
     this.expandLink = Selector("div.v-expansion-panel__header__icon", { timeout: 15000 });
-    this.linkUrl = Selector("div.input-url input", { timeout: 15000 });
+    this.linkUrl = Selector(".action-url", { timeout: 15000 });
     this.linkSecretInput = Selector(".input-secret input", { timeout: 15000 });
     this.linkExpireInput = Selector(".input-expires input", { timeout: 15000 });
   }

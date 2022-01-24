@@ -4,8 +4,6 @@ import Menu from "./menu";
 import Album from "./album";
 import Toolbar from "./toolbar";
 import ContextMenu from "./context-menu";
-import Photo from "./photo";
-import PhotoViewer from "./photoviewer";
 import ShareDialog from "./dialog-share";
 
 const logger = RequestLogger(/http:\/\/localhost:2343\/api\/v1\/*/, {
@@ -17,8 +15,6 @@ const menu = new Menu();
 const album = new Album();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
-const photo = new Photo();
-const photoviewer = new PhotoViewer();
 const sharedialog = new ShareDialog();
 
 export default class Page {
@@ -56,14 +52,11 @@ export default class Page {
     await menu.openPage(type);
     const FirstAlbum = await album.getNthAlbumUid("all", 0);
     await album.triggerHoverAction("uid", FirstAlbum, "select");
-    //await this.selectFromUID(FirstAlbum);
     await contextmenu.checkContextMenuCount("1");
     await contextmenu.triggerContextMenuAction("share", "", "");
     await t.click(sharedialog.expandLink.nth(0));
     const InitialUrl = await sharedialog.linkUrl.innerText;
     const InitialSecret = await sharedialog.linkSecretInput.value;
-    //const InitialUrl = await Selector(".action-url").innerText;
-    // const InitialSecret = await Selector(".input-secret input").value;
     const InitialExpire = await Selector("div.v-select__selections").innerText;
     await t
       .expect(InitialUrl)
