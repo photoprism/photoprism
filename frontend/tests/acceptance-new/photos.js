@@ -238,7 +238,6 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
     "07",
     "2019",
     "04:30:30",
-    "",
     "Europe/Moscow",
     "Albania",
     "-1",
@@ -256,7 +255,7 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
     "Super nice cat license",
     "Description of a nice image :)",
     "cat",
-    ""
+    "Some notes"
   );
   await photoedit.undoPhotoEdit(
     FirstPhotoTitle,

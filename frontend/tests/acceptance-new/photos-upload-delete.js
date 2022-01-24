@@ -1,7 +1,5 @@
 import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
-import Page from "./page-model";
-import { ClientFunction } from "testcafe";
 import fs from "fs";
 import Menu from "../page-model/menu";
 import Toolbar from "../page-model/toolbar";

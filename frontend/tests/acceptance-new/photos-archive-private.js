@@ -246,7 +246,7 @@ test.meta("testID", "photos-013")(
     const LabelPhoto = await photo.getNthPhotoUid("all", 0);
     await photoviews.triggerHoverAction("uid", LabelPhoto, "select");
     await menu.openPage("people");
-    await subject.openNthSubject(0);
+    await subject.openNthSubject(1);
     const SubjectPhoto = await photo.getNthPhotoUid("all", 1);
     await photoviews.triggerHoverAction("uid", SubjectPhoto, "select");
     await menu.openPage("folders");
@@ -287,7 +287,7 @@ test.meta("testID", "photos-013")(
     await t.navigateTo("/all?q=label%3Aseashore");
     await photo.checkPhotoVisibility(LabelPhoto, false);
     await menu.openPage("people");
-    await subject.openNthSubject(0);
+    await subject.openNthSubject(1);
     await photo.checkPhotoVisibility(SubjectPhoto, false);
     await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
     await photo.checkPhotoVisibility(FolderPhoto, false);
@@ -368,7 +368,7 @@ test.meta("testID", "photos-014")(
     const LabelPhoto = await photo.getNthPhotoUid("all", 0);
     await photoviews.triggerHoverAction("uid", LabelPhoto, "select");
     await menu.openPage("people");
-    await subject.openNthSubject(0);
+    await subject.openNthSubject(1);
     const SubjectPhoto = await photo.getNthPhotoUid("all", 1);
     await photoviews.triggerHoverAction("uid", SubjectPhoto, "select");
     await menu.openPage("folders");
@@ -410,7 +410,7 @@ test.meta("testID", "photos-014")(
     await t.navigateTo("/all?q=label%3Aseashore");
     await photo.checkPhotoVisibility(LabelPhoto, false);
     await menu.openPage("people");
-    await subject.openNthSubject(0);
+    await subject.openNthSubject(1);
     await photo.checkPhotoVisibility(SubjectPhoto, false);
     await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
     await photo.checkPhotoVisibility(FolderPhoto, false);
@@ -465,7 +465,7 @@ test.meta("testID", "photos-014")(
     await t.navigateTo("/all?q=label%3Aseashore");
     await photo.checkPhotoVisibility(LabelPhoto, true);
     await menu.openPage("people");
-    await subject.openNthSubject(0);
+    await subject.openNthSubject(1);
     await photo.checkPhotoVisibility(SubjectPhoto, true);
     await t.navigateTo("/folders/aqnah1321mgkt1w2/archive");
     await photo.checkPhotoVisibility(FolderPhoto, true);
