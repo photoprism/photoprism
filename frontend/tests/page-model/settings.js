@@ -18,6 +18,7 @@ export default class Page {
     this.peopleCheckbox = Selector(".input-people input", { timeout: 5000 });
     this.deleteCheckbox = Selector(".input-delete input", { timeout: 5000 });
 
+    this.libraryTab = Selector("#tab-settings-library", { timeout: 15000 });
     this.reviewCheckbox = Selector(".input-review input", { timeout: 5000 });
   }
 }

@@ -6,6 +6,12 @@ export default class Page {
     this.dialogNext = Selector("div.v-dialog button.action-next", { timeout: 15000 });
     this.dialogPrevious = Selector("div.v-dialog button.action-previous", { timeout: 15000 });
 
+    this.filesTab = Selector("#tab-files", { timeout: 15000 });
+    this.detailsTab = Selector("#tab-details", { timeout: 15000 });
+    this.labelsTab = Selector("#tab-labels", { timeout: 15000 });
+    this.peopleTab = Selector("", { timeout: 15000 });
+
+
     this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", { timeout: 15000 });
     this.detailsApprove = Selector(".p-form-photo-details-meta button.action-approve", { timeout: 15000 });
     this.detailsClose = Selector(".p-form-photo-details-meta button.action-close", { timeout: 15000 });
