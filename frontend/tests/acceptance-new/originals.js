@@ -16,47 +16,75 @@ const contextmenu = new ContextMenu();
 const album = new Album();
 const originals = new Originals();
 
-test.meta("testID", "originals-001")("Add original files to album", async (t) => {
-  await menu.openPage("albums");
-  await toolbar.search("KanadaVacation");
-  await t.expect(Selector("div.no-results").visible).ok();
+test.meta("testID", "originals-001").meta({ type: "smoke" })("Navigate in originals", async (t) => {
   await menu.openPage("originals");
   await t.click(Selector("button").withText("Vacation"));
-  await t.wait(15000);
-  const FirstItemInVacation = await Selector("div.result", { timeout: 15000 }).nth(0).innerText;
-  const KanadaUid = await originals.getNthFolderUid(0);
-  const SecondItemInVacation = await Selector("div.result").nth(1).innerText;
+  const FirstItemInVacationName = await Selector("div.result", { timeout: 15000 }).nth(0).innerText;
+  const KanadaFolderUid = await originals.getNthFolderUid(0);
+  const SecondItemInVacationName = await Selector("div.result").nth(1).innerText;
+
   await t
-    .expect(FirstItemInVacation)
+    .expect(FirstItemInVacationName)
     .contains("Kanada")
-    .expect(SecondItemInVacation)
+    .expect(SecondItemInVacationName)
     .contains("Korsika");
-  await originals.openFolderWithUid(KanadaUid);
-  const FirstItemInKanada = await Selector("div.result").nth(0).innerText;
-  const SecondItemInKanada = await Selector("div.result").nth(1).innerText;
+
+  await originals.openFolderWithUid(KanadaFolderUid);
+
+  const FirstItemInKanadaName = await Selector("div.result").nth(0).innerText;
+  const SecondItemInKanadaName = await Selector("div.result").nth(1).innerText;
+
   await t
-    .expect(FirstItemInKanada)
+    .expect(FirstItemInKanadaName)
     .contains("BotanicalGarden")
-    .expect(SecondItemInKanada)
-    .contains("originals-001_2.jpg")
-    .click(Selector("button").withText("BotanicalGarden"))
-    .click(Selector('a[href="/library/files/Vacation"]'));
-  await originals.triggerHoverAction("is-folder","uid", KanadaUid, "select");
-  await contextmenu.checkContextMenuCount("1");
-  await contextmenu.triggerContextMenuAction("album", "KanadaVacation", "");
-  await menu.openPage("albums");
-  await toolbar.search("KanadaVacation");
-  const AlbumUid = await album.getNthAlbumUid("all", 0);
-  await album.openAlbumWithUid(AlbumUid);
-  const PhotoCountAfterAdd = await photo.getPhotoCount("all");
-  await t.expect(PhotoCountAfterAdd).eql(2);
-  await menu.openPage("albums");
-  await album.triggerHoverAction("uid", AlbumUid, "select");
-  await contextmenu.checkContextMenuCount("1");
-  await contextmenu.triggerContextMenuAction("delete", "", "");
+    .expect(SecondItemInKanadaName)
+    .contains("originals-001_2.jpg");
+
+  await t.click(Selector("button").withText("BotanicalGarden"));
+  const FirstItemInBotanicalGardenName = await Selector("div.result", { timeout: 15000 }).nth(0)
+    .innerText;
+  await t.expect(FirstItemInBotanicalGardenName).contains("originals-001_1.jpg");
+  await t.click(Selector('a[href="/library/files/Vacation"]'));
+  const FolderCount = await originals.getFolderCount();
+
+  await t.expect(FolderCount).eql(2);
 });
 
-test.meta("testID", "originals-002")("Download original files", async (t) => {
+test.meta("testID", "originals-002").meta({ type: "smoke" })(
+  "Add original files to album",
+  async (t) => {
+    await menu.openPage("albums");
+    await toolbar.search("KanadaVacation");
+
+    await t.expect(Selector("div.no-results").visible).ok();
+
+    await menu.openPage("originals");
+    await t.click(Selector("button").withText("Vacation"));
+    const KanadaFolderUid = await originals.getNthFolderUid(0);
+    await originals.openFolderWithUid(KanadaFolderUid);
+    const FilesCountInKanada = await originals.getFileCount();
+    await t.click(Selector("button").withText("BotanicalGarden"));
+    const FilesCountInKanadaSubfolder = await originals.getFileCount();
+    await t.navigateTo("/library/files/Vacation");
+    await originals.triggerHoverAction("is-folder", "uid", KanadaFolderUid, "select");
+    await contextmenu.checkContextMenuCount("1");
+    await contextmenu.triggerContextMenuAction("album", "KanadaVacation");
+    await menu.openPage("albums");
+    await toolbar.search("KanadaVacation");
+    const AlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.openAlbumWithUid(AlbumUid);
+    const PhotoCountAfterAdd = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountAfterAdd).eql(FilesCountInKanada + FilesCountInKanadaSubfolder);
+
+    await menu.openPage("albums");
+    await album.triggerHoverAction("uid", AlbumUid, "select");
+    await contextmenu.checkContextMenuCount("1");
+    await contextmenu.triggerContextMenuAction("delete", "");
+  }
+);
+
+test.meta("testID", "originals-003")("Download available in originals", async (t) => {
   await menu.openPage("originals");
   const FirstFile = await originals.getNthFileUid(0);
   await originals.triggerHoverAction("is-file", "uid", FirstFile, "select");
@@ -64,7 +92,7 @@ test.meta("testID", "originals-002")("Download original files", async (t) => {
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.clearSelection();
   const FirstFolder = await originals.getNthFolderUid(0);
-  await originals.triggerHoverAction("is-folder","uid", FirstFolder, "select");
+  await originals.triggerHoverAction("is-folder", "uid", FirstFolder, "select");
   await contextmenu.checkContextMenuCount("1");
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.clearSelection();
