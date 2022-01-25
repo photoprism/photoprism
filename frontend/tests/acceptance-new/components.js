@@ -2,16 +2,17 @@ import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
 import Toolbar from "../page-model/toolbar";
 
-fixture`Test components`.page`${testcafeconfig.url}`;
+fixture.only`Test components`.page`${testcafeconfig.url}`;
 
 const toolbar = new Toolbar();
 
-test.meta("testID", "components-001")("Test filter options", async (t) => {
+test.meta("testID", "components-001").meta({ type: "smoke" })("Test filter options", async (t) => {
   await t.expect(Selector("body").withText("object Object").exists).notOk();
 });
 
-test.meta("testID", "components-002")("Fullscreen mode", async (t) => {
+test.meta("testID", "components-002").meta({ type: "smoke" })("Fullscreen mode", async (t) => {
   await t.click(Selector("div.v-image__image").nth(0));
+
   if (await Selector("#photo-viewer").visible) {
     await t
       .expect(Selector("#photo-viewer").visible)
@@ -23,8 +24,9 @@ test.meta("testID", "components-002")("Fullscreen mode", async (t) => {
   }
 });
 
-test.meta("testID", "components-003")("Mosaic view", async (t) => {
+test.meta("testID", "components-003").meta({ type: "smoke" })("Mosaic view", async (t) => {
   await toolbar.setFilter("view", "Mosaic");
+
   await t
     .expect(Selector("div.v-image__image").visible)
     .ok()
@@ -38,6 +40,7 @@ test.meta("testID", "components-003")("Mosaic view", async (t) => {
 
 test.meta("testID", "components-004")("List view", async (t) => {
   await toolbar.setFilter("view", "List");
+
   await t
     .expect(Selector("table.v-datatable").visible)
     .ok()
@@ -45,8 +48,9 @@ test.meta("testID", "components-004")("List view", async (t) => {
     .ok();
 });
 
-test.meta("testID", "components-005")("#Card view", async (t) => {
+test.meta("testID", "components-005").meta({ type: "smoke" })("Card view", async (t) => {
   await toolbar.setFilter("view", "Cards");
+
   await t
     .expect(Selector("div.v-image__image").visible)
     .ok()

@@ -7,6 +7,7 @@ import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
+import AlbumDialog from "../page-model/dialog-album";
 
 fixture`Test albums`.page`${testcafeconfig.url}`;
 
@@ -17,6 +18,7 @@ const contextmenu = new ContextMenu();
 const photo = new Photo();
 const photoviewer = new PhotoViewer();
 const page = new Page();
+const albumdialog = new AlbumDialog();
 
 test.meta("testID", "authentication-000")(
   "Time to start instance (will be marked as unstable)",
@@ -29,18 +31,18 @@ test.meta("testID", "albums-001").meta({ type: "smoke" })(
   "Create/delete album on /albums",
   async (t) => {
     await menu.openPage("albums");
-    const countAlbums = await album.getAlbumCount("all");
+    const AlbumCount = await album.getAlbumCount("all");
     await toolbar.triggerToolbarAction("add");
-    const countAlbumsAfterCreate = await album.getAlbumCount("all");
+    const AlbumCountAfterCreate = await album.getAlbumCount("all");
     const NewAlbumUid = await album.getNthAlbumUid("all", 0);
 
-    await t.expect(countAlbumsAfterCreate).eql(countAlbums + 1);
+    await t.expect(AlbumCountAfterCreate).eql(AlbumCount + 1);
 
     await album.selectAlbumFromUID(NewAlbumUid);
     await contextmenu.triggerContextMenuAction("delete", "");
-    const countAlbumsAfterDelete = await album.getAlbumCount("all");
+    const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
-    await t.expect(countAlbumsAfterDelete).eql(countAlbumsAfterCreate - 1);
+    await t.expect(AlbumCountAfterDelete).eql(AlbumCountAfterCreate - 1);
   }
 );
 
@@ -48,7 +50,7 @@ test.meta("testID", "albums-002").meta({ type: "smoke" })(
   "Create/delete album during add to album",
   async (t) => {
     await menu.openPage("albums");
-    const countAlbums = await album.getAlbumCount("all");
+    const AlbumCount = await album.getAlbumCount("all");
     await menu.openPage("browse");
     await toolbar.search("photo:true");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
@@ -57,18 +59,18 @@ test.meta("testID", "albums-002").meta({ type: "smoke" })(
     await photo.selectPhotoFromUID(FirstPhotoUid);
     await contextmenu.triggerContextMenuAction("album", "NotYetExistingAlbum");
     await menu.openPage("albums");
-    const countAlbumsAfterCreation = await album.getAlbumCount("all");
+    const AlbumCountAfterCreation = await album.getAlbumCount("all");
 
-    await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
+    await t.expect(AlbumCountAfterCreation).eql(AlbumCount + 1);
 
     await toolbar.search("NotYetExistingAlbum");
     const AlbumUid = await album.getNthAlbumUid("all", 0);
     await album.selectAlbumFromUID(AlbumUid);
     await contextmenu.triggerContextMenuAction("delete", "");
     await menu.openPage("albums");
-    const countAlbumsAfterDelete = await album.getAlbumCount("all");
+    const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
-    await t.expect(countAlbumsAfterDelete).eql(countAlbums);
+    await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
   }
 );
 
@@ -79,35 +81,36 @@ test.meta("testID", "albums-003").meta({ type: "smoke" })("Update album details"
 
   await t.expect(page.cardTitle.nth(0).innerText).contains("Holiday");
 
+  await t.click(page.cardTitle.nth(0)).typeText(albumdialog.title, "Animals", { replace: true });
+
+  await t.expect(albumdialog.description.value).eql("").expect(albumdialog.category.value).eql("");
+
   await t
-    .click(page.cardTitle.nth(0))
-    .typeText(Selector(".input-title input"), "Animals", { replace: true })
-    .expect(Selector(".input-description textarea").value)
-    .eql("")
-    .expect(Selector(".input-category input").value)
-    .eql("")
-    .typeText(Selector(".input-description textarea"), "All my animals")
-    .typeText(Selector(".input-category input"), "Pets")
+    .typeText(albumdialog.description, "All my animals")
+    .typeText(albumdialog.category, "Pets")
     .pressKey("enter")
-    .click(".action-confirm");
+    .click(albumdialog.dialogSave);
 
   await t.expect(page.cardTitle.nth(0).innerText).contains("Animals");
 
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit");
+  await t.typeText(albumdialog.title, "Holiday", { replace: true });
+
   await t
-    .typeText(Selector(".input-title input"), "Holiday", { replace: true })
-    .expect(Selector(".input-description textarea").value)
+    .expect(albumdialog.description.value)
     .eql("All my animals")
-    .expect(Selector(".input-category input").value)
-    .eql("Pets")
-    .click(Selector(".input-description textarea"))
+    .expect(albumdialog.category.value)
+    .eql("Pets");
+
+  await t
+    .click(albumdialog.description)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(Selector(".input-category input"))
+    .click(albumdialog.category)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(".action-confirm");
+    .click(albumdialog.dialogSave);
   await menu.openPage("albums");
 
   await t
@@ -143,9 +146,9 @@ test.meta("testID", "albums-004").meta({ type: "smoke" })(
     await photo.selectPhotoFromUID(FirstPhotoUid);
     await photo.selectPhotoFromUID(SecondPhotoUid);
     await contextmenu.triggerContextMenuAction("remove", "");
-    const PhotoCountAfterDelete = await photo.getPhotoCount("all");
+    const PhotoCountAfterRemove = await photo.getPhotoCount("all");
 
-    await t.expect(PhotoCountAfterDelete).eql(PhotoCountAfterAdd - 2);
+    await t.expect(PhotoCountAfterRemove).eql(PhotoCountAfterAdd - 2);
   }
 );
 
