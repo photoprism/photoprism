@@ -8,5 +8,6 @@ export default class Page {
     this.index = Selector(".action-index");
     this.importTab = Selector("#tab-library-import", { timeout: 15000 });
     this.indexTab = Selector("#tab-library-index", { timeout: 15000 });
+    this.logsTab = Selector("#tab-library-logs", { timeout: 15000 });
   }
 }

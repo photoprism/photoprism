@@ -11,14 +11,41 @@ export default class Page {
     this.labelsTab = Selector("#tab-labels", { timeout: 15000 });
     this.peopleTab = Selector("#tab-people", { timeout: 15000 });
 
-
-    this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", { timeout: 15000 });
-    this.detailsApprove = Selector(".p-form-photo-details-meta button.action-approve", { timeout: 15000 });
-    this.detailsClose = Selector(".p-form-photo-details-meta button.action-close", { timeout: 15000 });
-    this.detailsApply = Selector(".p-form-photo-details-meta button.action-apply", { timeout: 15000 });
+    this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", {
+      timeout: 15000,
+    });
+    this.detailsApprove = Selector(".p-form-photo-details-meta button.action-approve", {
+      timeout: 15000,
+    });
+    this.detailsClose = Selector(".p-form-photo-details-meta button.action-close", {
+      timeout: 15000,
+    });
+    this.detailsApply = Selector(".p-form-photo-details-meta button.action-apply", {
+      timeout: 15000,
+    });
     this.keywords = Selector(".input-keywords textarea", { timeout: 15000 });
     this.title = Selector(".input-title input", { timeout: 15000 });
-
+    this.latitude = Selector('input[aria-label="Latitude"]', { timeout: 15000 });
+    this.longitude = Selector('input[aria-label="Longitude"]', { timeout: 15000 });
+    this.localTime = Selector(".input-local-time input", { timeout: 15000 });
+    this.day = Selector(".input-day input", { timeout: 15000 });
+    this.month = Selector(".input-month input", { timeout: 15000 });
+    this.year = Selector(".input-year input", { timeout: 15000 });
+    this.timezone = Selector(".input-timezone input", { timeout: 15000 });
+    this.altitude = Selector(".input-altitude input", { timeout: 15000 });
+    this.country = Selector(".input-country input", { timeout: 15000 });
+    this.iso = Selector(".input-iso input", { timeout: 15000 });
+    this.exposure = Selector(".input-exposure input", { timeout: 15000 });
+    this.fnumber = Selector(".input-fnumber input", { timeout: 15000 });
+    this.focallength = Selector(".input-focal-length input", { timeout: 15000 });
+    this.subject = Selector(".input-subject textarea", { timeout: 15000 });
+    this.artist = Selector(".input-artist input", { timeout: 15000 });
+    this.copyright = Selector(".input-copyright input", { timeout: 15000 });
+    this.license = Selector(".input-license textarea", { timeout: 15000 });
+    this.description = Selector(".input-description textarea", { timeout: 15000 });
+    this.notes = Selector(".input-notes textarea", { timeout: 15000 });
+    this.camera = Selector("div.p-camera-select div.v-select__selection", { timeout: 15000 });
+    this.lens = Selector("div.p-lens-select div.v-select__selection", { timeout: 15000 });
 
     this.rejectName = Selector("div.input-name div.v-input__icon--clear", { timeout: 15000 });
     this.removeMarker = Selector("button.input-reject", { timeout: 15000 });
@@ -26,7 +53,7 @@ export default class Page {
     this.inputName = Selector("div.input-name input", { timeout: 15000 });
 
     this.addLabel = Selector("button.p-photo-label-add", { timeout: 15000 });
-    this.removeLabel = Selector("button.action-remove", { timeout: 15000 })
+    this.removeLabel = Selector("button.action-remove", { timeout: 15000 });
     this.activateLabel = Selector(".action-on", { timeout: 15000 });
     this.deleteLabel = Selector(".action-delete", { timeout: 15000 });
     this.inputLabelName = Selector(".input-label input", { timeout: 15000 });
@@ -43,7 +70,6 @@ export default class Page {
   //edit single fields / check disabled, selectors for single fields?
   // check edit form values // get all current edit form values // set edit form values
   //edit dialog disabled --funcionalities
-
 
   async getFileCount() {
     const FileCount = await Selector("li.v-expansion-panel__container", { timeout: 5000 }).count;
