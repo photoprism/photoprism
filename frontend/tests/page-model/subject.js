@@ -1,7 +1,23 @@
 import { Selector, t } from "testcafe";
 
 export default class Page {
-  constructor() {}
+  constructor() {
+    this.recognizedTab = Selector("#tab-people > a", { timeout: 15000 });
+    this.newTab = Selector("#tab-people_faces > a", { timeout: 15000 });
+  }
+
+  async addNameToFace(id, name) {
+    await t
+      .typeText(Selector("div[data-id=" + id + "] div.input-name input"), name)
+      .pressKey("enter");
+  }
+
+  async renameSubject(uid, name) {
+    await t
+      .click(Selector("a[data-uid=" + uid + "] div.v-card__title"))
+      .typeText(Selector("div.input-rename input"), name, { replace: true })
+      .pressKey("enter");
+  }
 
   async getNthSubjectUid(nth) {
     const NthSubject = await Selector("a.is-subject").nth(nth).getAttribute("data-uid");

@@ -9,13 +9,16 @@ export default class Page {
     this.filesTab = Selector("#tab-files", { timeout: 15000 });
     this.detailsTab = Selector("#tab-details", { timeout: 15000 });
     this.labelsTab = Selector("#tab-labels", { timeout: 15000 });
-    this.peopleTab = Selector("", { timeout: 15000 });
+    this.peopleTab = Selector("#tab-people", { timeout: 15000 });
 
 
     this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", { timeout: 15000 });
     this.detailsApprove = Selector(".p-form-photo-details-meta button.action-approve", { timeout: 15000 });
     this.detailsClose = Selector(".p-form-photo-details-meta button.action-close", { timeout: 15000 });
     this.detailsApply = Selector(".p-form-photo-details-meta button.action-apply", { timeout: 15000 });
+    this.keywords = Selector(".input-keywords textarea", { timeout: 15000 });
+    this.title = Selector(".input-title input", { timeout: 15000 });
+
 
     this.rejectName = Selector("div.input-name div.v-input__icon--clear", { timeout: 15000 });
     this.removeMarker = Selector("button.input-reject", { timeout: 15000 });

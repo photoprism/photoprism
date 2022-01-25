@@ -19,7 +19,7 @@ export default class Page {
   }
 
   async getFolderCount() {
-    const FolderCount = await Selector("div.is-foler", { timeout: 5000 }).count;
+    const FolderCount = await Selector("div.is-folder", { timeout: 8000 }).count;
     return FolderCount;
   }
 
