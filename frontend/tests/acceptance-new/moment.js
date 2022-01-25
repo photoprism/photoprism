@@ -6,6 +6,7 @@ import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import Page from "../page-model/page";
+import AlbumDialog from "../page-model/dialog-album";
 
 fixture`Test moments`.page`${testcafeconfig.url}`;
 
@@ -15,29 +16,36 @@ const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
 const page = new Page();
+const albumdialog = new AlbumDialog();
 
-test.meta("testID", "moments-001")("Update moment", async (t) => {
+test.meta("testID", "moments-001")("Update moment details", async (t) => {
   await menu.openPage("moments");
   await toolbar.search("Nature");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
+
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Nature");
+
+  await t.click(page.cardTitle.nth(0));
+
   await t
-    .expect(page.cardTitle.nth(0).innerText)
-    .contains("Nature")
-    .click(page.cardTitle.nth(0))
-    .expect(Selector(".input-title input").value)
+    .expect(albumdialog.title.value)
     .eql("Nature & Landscape")
-    .expect(Selector(".input-location input").value)
+    .expect(albumdialog.location.value)
     .eql("")
-    .typeText(Selector(".input-title input"), "Winter", { replace: true })
-    .typeText(Selector(".input-location input"), "Snow-Land", { replace: true })
-    .expect(Selector(".input-description textarea").value)
+    .expect(albumdialog.description.value)
     .eql("")
-    .expect(Selector(".input-category input").value)
-    .eql("")
-    .typeText(Selector(".input-description textarea"), "We went to ski")
-    .typeText(Selector(".input-category input"), "Mountains")
+    .expect(albumdialog.category.value)
+    .eql("");
+
+  await t
+    .typeText(albumdialog.title, "Winter", { replace: true })
+    .typeText(albumdialog.location, "Snow-Land", { replace: true })
+    .typeText(albumdialog.description, "We went to ski")
+    .typeText(albumdialog.category, "Mountains")
     .pressKey("enter")
-    .click(".action-confirm")
+    .click(albumdialog.dialogSave);
+
+  await t
     .expect(page.cardTitle.nth(0).innerText)
     .contains("Winter")
     .expect(page.cardDescription.nth(0).innerText)
@@ -46,38 +54,47 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
     .contains("Mountains")
     .expect(Selector("div.caption").nth(2).innerText)
     .contains("Snow-Land");
+
   await album.openNthAlbum(0);
+
   await t.expect(toolbar.toolbarTitle.innerText).contains("Winter");
   await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
+
   await menu.openPage("moments");
   if (t.browser.platform === "mobile") {
     await toolbar.search("category:Mountains");
   } else {
     await toolbar.setFilter("category", "Mountains");
   }
+
   await t.expect(page.cardTitle.nth(0).innerText).contains("Winter");
+
   await album.openAlbumWithUid(AlbumUid);
-  await toolbar.triggerToolbarAction("edit", "");
+  await toolbar.triggerToolbarAction("edit");
+
   await t
-    .expect(Selector(".input-description textarea").value)
+    .expect(albumdialog.description.value)
     .eql("We went to ski")
-    .expect(Selector(".input-category input").value)
+    .expect(albumdialog.category.value)
     .eql("Mountains")
-    .expect(Selector(".input-location input").value)
-    .eql("Snow-Land")
-    .typeText(Selector(".input-title input"), "Nature & Landscape", { replace: true })
-    .click(Selector(".input-category input"))
+    .expect(albumdialog.location.value)
+    .eql("Snow-Land");
+
+  await t
+    .typeText(albumdialog.title, "Nature & Landscape", { replace: true })
+    .click(albumdialog.category)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(Selector(".input-description textarea"))
+    .click(albumdialog.description)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(Selector(".input-location input"))
+    .click(albumdialog.location)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(".action-confirm");
+    .click(albumdialog.dialogSave);
   await menu.openPage("moments");
   await toolbar.search("Nature");
+
   await t
     .expect(page.cardTitle.nth(0).innerText)
     .contains("Nature & Landscape")
@@ -87,40 +104,46 @@ test.meta("testID", "moments-001")("Update moment", async (t) => {
     .notContains("Snow-Land");
 });
 
-test.meta("testID", "moments-003")("Create, Edit, delete sharing link", async (t) => {
+test.meta("testID", "moments-002")("Create, Edit, delete sharing link for moment", async (t) => {
   await page.testCreateEditDeleteSharingLink("moments");
 });
 
-test.meta("testID", "moments-004")("Create/delete album-clone from moment", async (t) => {
+test.meta("testID", "moments-003")("Create/delete album-clone from moment", async (t) => {
   await menu.openPage("albums");
-  const countAlbums = await album.getAlbumCount("all");
+  const AlbumCount = await album.getAlbumCount("all");
   await menu.openPage("moments");
-  const FirstMoment = await album.getNthAlbumUid("all", 0);
-  await album.openAlbumWithUid(FirstMoment);
+  const FirstMomentUid = await album.getNthAlbumUid("all", 0);
+  await album.openAlbumWithUid(FirstMomentUid);
   const PhotoCountInMoment = await photo.getPhotoCount("all");
-  const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-  const SecondPhoto = await photo.getNthPhotoUid("image", 1);
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
   await menu.openPage("moments");
-  await album.selectAlbumFromUID(FirstMoment);
-  await contextmenu.triggerContextMenuAction("clone", "NotYetExistingAlbumForMoment", "");
+  await album.selectAlbumFromUID(FirstMomentUid);
+  await contextmenu.triggerContextMenuAction("clone", "NotYetExistingAlbumForMoment");
   await menu.openPage("albums");
-  const countAlbumsAfterCreation = await album.getAlbumCount("all");
-  await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
+  const AlbumCountAfterCreation = await album.getAlbumCount("all");
+
+  await t.expect(AlbumCountAfterCreation).eql(AlbumCount + 1);
+
   await toolbar.search("NotYetExistingAlbumForMoment");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
   await album.openAlbumWithUid(AlbumUid);
   const PhotoCountInAlbum = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountInAlbum).eql(PhotoCountInMoment);
-  await photo.checkPhotoVisibility(FirstPhoto, true);
-  await photo.checkPhotoVisibility(SecondPhoto, true);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(SecondPhotoUid, true);
   await menu.openPage("albums");
   await album.selectAlbumFromUID(AlbumUid);
-  await contextmenu.triggerContextMenuAction("delete", "", "");
+  await contextmenu.triggerContextMenuAction("delete", "");
   await menu.openPage("albums");
-  const countAlbumsAfterDelete = await album.getAlbumCount("all");
-  await t.expect(countAlbumsAfterDelete).eql(countAlbums);
+  const AlbumCountAfterDelete = await album.getAlbumCount("all");
+
+  await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
+
   await menu.openPage("moments");
-  await album.openAlbumWithUid(FirstMoment);
-  await photo.checkPhotoVisibility(FirstPhoto, true);
-  await photo.checkPhotoVisibility(SecondPhoto, true);
+  await album.openAlbumWithUid(FirstMomentUid);
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(SecondPhotoUid, true);
 });

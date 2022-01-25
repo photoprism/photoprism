@@ -2,7 +2,7 @@ import { Selector } from "testcafe";
 import testcafeconfig from "./testcafeconfig";
 import Toolbar from "../page-model/toolbar";
 
-fixture.only`Test components`.page`${testcafeconfig.url}`;
+fixture`Test components`.page`${testcafeconfig.url}`;
 
 const toolbar = new Toolbar();
 

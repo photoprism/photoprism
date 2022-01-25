@@ -6,6 +6,7 @@ import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import Page from "../page-model/page";
+import AlbumDialog from "../page-model/dialog-album";
 
 fixture`Test folders`.page`${testcafeconfig.url}`;
 
@@ -15,9 +16,11 @@ const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
 const photo = new Photo();
 const page = new Page();
+const albumdialog = new AlbumDialog();
 
-test.meta("testID", "albums-004")("View folders", async (t) => {
+test.meta("testID", "folders-001").meta({ type: "smoke" })("View folders", async (t) => {
   await menu.openPage("folders");
+
   await t
     .expect(Selector("a").withText("BotanicalGarden").visible)
     .ok()
@@ -27,28 +30,33 @@ test.meta("testID", "albums-004")("View folders", async (t) => {
     .ok();
 });
 
-test.meta("testID", "folders-001")("Update folders", async (t) => {
+test.meta("testID", "folders-002")("Update folder details", async (t) => {
   await menu.openPage("folders");
   await toolbar.search("Kanada");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
+  await t.expect(page.cardTitle.nth(0).innerText).contains("Kanada");
+
+  await t.click(page.cardTitle.nth(0));
+
   await t
-    .expect(page.cardTitle.nth(0).innerText)
-    .contains("Kanada")
-    .click(page.cardTitle.nth(0))
-    .expect(Selector(".input-title input").value)
+    .expect(albumdialog.title.value)
     .eql("Kanada")
-    .expect(Selector(".input-location input").value)
+    .expect(albumdialog.location.value)
     .eql("")
-    .typeText(Selector(".input-title input"), "MyFolder", { replace: true })
-    .typeText(Selector(".input-location input"), "USA", { replace: true })
-    .expect(Selector(".input-description textarea").value)
+    .expect(albumdialog.description.value)
     .eql("")
-    .expect(Selector(".input-category input").value)
-    .eql("")
-    .typeText(Selector(".input-description textarea"), "Last holiday")
-    .typeText(Selector(".input-category input"), "Mountains")
+    .expect(albumdialog.category.value)
+    .eql("");
+
+  await t
+    .typeText(albumdialog.title, "MyFolder", { replace: true })
+    .typeText(albumdialog.location, "USA", { replace: true })
+    .typeText(albumdialog.description, "Last holiday")
+    .typeText(albumdialog.category, "Mountains")
     .pressKey("enter")
-    .click(".action-confirm")
+    .click(albumdialog.dialogSave);
+
+  await t
     .expect(page.cardTitle.nth(0).innerText)
     .contains("MyFolder")
     .expect(page.cardDescription.nth(0).innerText)
@@ -57,41 +65,50 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
     .contains("Mountains")
     .expect(Selector("div.caption").nth(2).innerText)
     .contains("USA");
+
   await album.openNthAlbum(0);
+
   await t
     .expect(toolbar.toolbarDescription.nth(0).innerText)
     .contains("Last holiday")
     .expect(toolbar.toolbarTitle.nth(0).innerText)
     .contains("MyFolder");
+
   await menu.openPage("folders");
   if (t.browser.platform === "mobile") {
     await toolbar.search("category:Mountains");
   } else {
     await toolbar.setFilter("category", "Mountains");
   }
+
   await t.expect(page.cardTitle.nth(0).innerText).contains("MyFolder");
+
   await album.openAlbumWithUid(AlbumUid);
-  await toolbar.triggerToolbarAction("edit", "");
+  await toolbar.triggerToolbarAction("edit");
+
   await t
-    .expect(Selector(".input-description textarea").value)
+    .expect(albumdialog.description.value)
     .eql("Last holiday")
-    .expect(Selector(".input-category input").value)
+    .expect(albumdialog.category.value)
     .eql("Mountains")
-    .expect(Selector(".input-location input").value)
-    .eql("USA")
-    .typeText(Selector(".input-title input"), "Kanada", { replace: true })
-    .click(Selector(".input-category input"))
+    .expect(albumdialog.location.value)
+    .eql("USA");
+
+  await t
+    .typeText(albumdialog.title, "Kanada", { replace: true })
+    .click(albumdialog.category)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(Selector(".input-description textarea"))
+    .click(albumdialog.description)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(Selector(".input-location input"))
+    .click(albumdialog.location)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
-    .click(".action-confirm");
+    .click(albumdialog.dialogSave);
   await menu.openPage("folders");
   await toolbar.search("Kanada");
+
   await t
     .expect(page.cardTitle.nth(0).innerText)
     .contains("Kanada")
@@ -101,38 +118,43 @@ test.meta("testID", "folders-001")("Update folders", async (t) => {
     .notContains("USA");
 });
 
-//TODO test that sharing link works as expected
 test.meta("testID", "folders-003")("Create, Edit, delete sharing link", async (t) => {
   await page.testCreateEditDeleteSharingLink("folders");
 });
 
 test.meta("testID", "folders-004")("Create/delete album-clone from folder", async (t) => {
   await menu.openPage("albums");
-  const countAlbums = await album.getAlbumCount("all");
+  const AlbumCount = await album.getAlbumCount("all");
   await menu.openPage("folders");
-  const ThirdFolder = await album.getNthAlbumUid("all", 2);
-  await album.openAlbumWithUid(ThirdFolder);
+  const ThirdFolderUid = await album.getNthAlbumUid("all", 2);
+  await album.openAlbumWithUid(ThirdFolderUid);
   const PhotoCountInFolder = await photo.getPhotoCount("all");
-  const FirstPhoto = await photo.getNthPhotoUid("image", 0);
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
   await menu.openPage("folders");
-  await album.selectAlbumFromUID(ThirdFolder);
-  await contextmenu.triggerContextMenuAction("clone", "NotYetExistingAlbumForFolder", "");
+  await album.selectAlbumFromUID(ThirdFolderUid);
+  await contextmenu.triggerContextMenuAction("clone", "NotYetExistingAlbumForFolder");
   await menu.openPage("albums");
-  const countAlbumsAfterCreation = await album.getAlbumCount("all");
-  await t.expect(countAlbumsAfterCreation).eql(countAlbums + 1);
+  const AlbumCountAfterCreation = await album.getAlbumCount("all");
+
+  await t.expect(AlbumCountAfterCreation).eql(AlbumCount + 1);
+
   await toolbar.search("NotYetExistingAlbumForFolder");
   const AlbumUid = await album.getNthAlbumUid("all", 0);
   await album.openAlbumWithUid(AlbumUid);
   const PhotoCountInAlbum = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountInAlbum).eql(PhotoCountInFolder);
-  await photo.checkPhotoVisibility(FirstPhoto, true);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
   await menu.openPage("albums");
   await album.selectAlbumFromUID(AlbumUid);
-  await contextmenu.triggerContextMenuAction("delete", "", "");
+  await contextmenu.triggerContextMenuAction("delete", "");
   await menu.openPage("albums");
-  const countAlbumsAfterDelete = await album.getAlbumCount("all");
-  await t.expect(countAlbumsAfterDelete).eql(countAlbums);
+  const AlbumCountAfterDelete = await album.getAlbumCount("all");
+
+  await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
+
   await menu.openPage("folders");
-  await album.openAlbumWithUid(ThirdFolder);
-  await photo.checkPhotoVisibility(FirstPhoto, true);
+  await album.openAlbumWithUid(ThirdFolderUid);
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
 });
