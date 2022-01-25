@@ -20,34 +20,36 @@ const album = new Album();
 const label = new Label();
 const subject = new Subject();
 
-test.meta("testID", "photos-005")(
+test.meta("testID", "photos-archive-private-001").meta({ type: "smoke" })(
   "Private/unprivate photo/video using clipboard and list",
   async (t) => {
     await toolbar.setFilter("view", "Mosaic");
-    const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-    const SecondPhoto = await photo.getNthPhotoUid("image", 1);
-    const ThirdPhoto = await photo.getNthPhotoUid("image", 2);
-    const FirstVideo = await photo.getNthPhotoUid("video", 0);
-    const SecondVideo = await photo.getNthPhotoUid("video", 1);
-    const ThirdVideo = await photo.getNthPhotoUid("video", 2);
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    const ThirdPhotoUid = await photo.getNthPhotoUid("image", 2);
+    const FirstVideoUid = await photo.getNthPhotoUid("video", 0);
+    const SecondVideoUid = await photo.getNthPhotoUid("video", 1);
+    const ThirdVideoUid = await photo.getNthPhotoUid("video", 2);
     await menu.openPage("private");
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
-    await photo.checkPhotoVisibility(ThirdPhoto, false);
-    await photo.checkPhotoVisibility(FirstVideo, false);
-    await photo.checkPhotoVisibility(SecondVideo, false);
-    await photo.checkPhotoVisibility(ThirdVideo, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    await photo.checkPhotoVisibility(ThirdPhotoUid, false);
+    await photo.checkPhotoVisibility(FirstVideoUid, false);
+    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    await photo.checkPhotoVisibility(ThirdVideoUid, false);
+
     await menu.openPage("browse");
-    await photo.triggerHoverAction("uid", FirstPhoto, "select");
-    await photo.triggerHoverAction("uid", FirstVideo, "select");
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+    await photo.triggerHoverAction("uid", FirstVideoUid, "select");
     await contextmenu.triggerContextMenuAction("private", "");
     await toolbar.setFilter("view", "List");
-    await photo.triggerListViewActions("uid", SecondPhoto, "private");
-    await photo.triggerListViewActions("uid", SecondVideo, "private");
+    await photo.triggerListViewActions("uid", SecondPhotoUid, "private");
+    await photo.triggerListViewActions("uid", SecondVideoUid, "private");
     await toolbar.setFilter("view", "Cards");
-    await photo.triggerHoverAction("uid", ThirdPhoto, "select");
-    await photo.triggerHoverAction("uid", ThirdVideo, "select");
-    await contextmenu.triggerContextMenuAction("edit", "", "");
+    await photo.triggerHoverAction("uid", ThirdPhotoUid, "select");
+    await photo.triggerHoverAction("uid", ThirdVideoUid, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
     await photoedit.turnSwitchOn("private");
     await t.click(photoedit.dialogNext);
     await photoedit.turnSwitchOn("private");
@@ -55,141 +57,166 @@ test.meta("testID", "photos-005")(
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
-    await photo.checkPhotoVisibility(ThirdPhoto, false);
-    await photo.checkPhotoVisibility(FirstVideo, false);
-    await photo.checkPhotoVisibility(SecondVideo, false);
-    await photo.checkPhotoVisibility(ThirdVideo, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    await photo.checkPhotoVisibility(ThirdPhotoUid, false);
+    await photo.checkPhotoVisibility(FirstVideoUid, false);
+    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    await photo.checkPhotoVisibility(ThirdVideoUid, false);
+
     await menu.openPage("video");
-    await photo.checkPhotoVisibility(FirstVideo, false);
-    await photo.checkPhotoVisibility(SecondVideo, false);
-    await photo.checkPhotoVisibility(ThirdVideo, false);
+
+    await photo.checkPhotoVisibility(FirstVideoUid, false);
+    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    await photo.checkPhotoVisibility(ThirdVideoUid, false);
+
     await menu.openPage("private");
-    await photo.checkPhotoVisibility(FirstPhoto, true);
-    await photo.checkPhotoVisibility(SecondPhoto, true);
-    await photo.checkPhotoVisibility(ThirdPhoto, true);
-    await photo.checkPhotoVisibility(FirstVideo, true);
-    await photo.checkPhotoVisibility(SecondVideo, true);
-    await photo.checkPhotoVisibility(ThirdVideo, true);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, true);
+    await photo.checkPhotoVisibility(SecondPhotoUid, true);
+    await photo.checkPhotoVisibility(ThirdPhotoUid, true);
+    await photo.checkPhotoVisibility(FirstVideoUid, true);
+    await photo.checkPhotoVisibility(SecondVideoUid, true);
+    await photo.checkPhotoVisibility(ThirdVideoUid, true);
+
     await contextmenu.clearSelection();
-    await photo.triggerHoverAction("uid", FirstPhoto, "select");
-    await photo.triggerHoverAction("uid", SecondPhoto, "select");
-    await photo.triggerHoverAction("uid", ThirdPhoto, "select");
-    await photo.triggerHoverAction("uid", FirstVideo, "select");
-    await photo.triggerHoverAction("uid", SecondVideo, "select");
-    await photo.triggerHoverAction("uid", ThirdVideo, "select");
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+    await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
+    await photo.triggerHoverAction("uid", ThirdPhotoUid, "select");
+    await photo.triggerHoverAction("uid", FirstVideoUid, "select");
+    await photo.triggerHoverAction("uid", SecondVideoUid, "select");
+    await photo.triggerHoverAction("uid", ThirdVideoUid, "select");
     await contextmenu.checkContextMenuCount("6");
     await contextmenu.triggerContextMenuAction("private", "");
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
-    await photo.checkPhotoVisibility(ThirdPhoto, false);
-    await photo.checkPhotoVisibility(FirstVideo, false);
-    await photo.checkPhotoVisibility(SecondVideo, false);
-    await photo.checkPhotoVisibility(ThirdVideo, false);
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    await photo.checkPhotoVisibility(ThirdPhotoUid, false);
+    await photo.checkPhotoVisibility(FirstVideoUid, false);
+    await photo.checkPhotoVisibility(SecondVideoUid, false);
+    await photo.checkPhotoVisibility(ThirdVideoUid, false);
+
     await menu.openPage("browse");
-    await photo.checkPhotoVisibility(FirstPhoto, true);
-    await photo.checkPhotoVisibility(SecondPhoto, true);
-    await photo.checkPhotoVisibility(ThirdPhoto, true);
-    await photo.checkPhotoVisibility(FirstVideo, true);
-    await photo.checkPhotoVisibility(SecondVideo, true);
-    await photo.checkPhotoVisibility(ThirdVideo, true);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, true);
+    await photo.checkPhotoVisibility(SecondPhotoUid, true);
+    await photo.checkPhotoVisibility(ThirdPhotoUid, true);
+    await photo.checkPhotoVisibility(FirstVideoUid, true);
+    await photo.checkPhotoVisibility(SecondVideoUid, true);
+    await photo.checkPhotoVisibility(ThirdVideoUid, true);
   }
 );
 
-test.meta("testID", "photos-006")(
+test.meta("testID", "photos-archive-private-002").meta({ type: "smoke" })(
   "Archive/restore video, photos, private photos and review photos using clipboard",
   async (t) => {
     await toolbar.setFilter("view", "Mosaic");
-    const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-    const SecondPhoto = await photo.getNthPhotoUid("image", 1);
-    const FirstVideo = await photo.getNthPhotoUid("video", 0);
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    const FirstVideoUid = await photo.getNthPhotoUid("video", 0);
     await menu.openPage("private");
-    const FirstPrivatePhoto = await photo.getNthPhotoUid("all", 0);
+    const FirstPrivatePhotoUid = await photo.getNthPhotoUid("all", 0);
     await menu.openPage("review");
-    const FirstReviewPhoto = await photo.getNthPhotoUid("all", 0);
+    const FirstReviewPhotoUid = await photo.getNthPhotoUid("all", 0);
     await menu.openPage("archive");
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
-    await photo.checkPhotoVisibility(FirstVideo, false);
-    await photo.checkPhotoVisibility(FirstPrivatePhoto, false);
-    await photo.checkPhotoVisibility(FirstReviewPhoto, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    await photo.checkPhotoVisibility(FirstVideoUid, false);
+    await photo.checkPhotoVisibility(FirstPrivatePhotoUid, false);
+    await photo.checkPhotoVisibility(FirstReviewPhotoUid, false);
+
     await menu.openPage("browse");
-    await photo.triggerHoverAction("uid", FirstPhoto, "select");
-    await photo.triggerHoverAction("uid", SecondPhoto, "select");
-    await photo.triggerHoverAction("uid", FirstVideo, "select");
-    await contextmenu.triggerContextMenuAction("archive", "", "");
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+    await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
+    await photo.triggerHoverAction("uid", FirstVideoUid, "select");
+    await contextmenu.triggerContextMenuAction("archive", "");
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
-    await photo.checkPhotoVisibility(FirstVideo, false);
-    await photo.checkPhotoVisibility(FirstPrivatePhoto, false);
-    await photo.checkPhotoVisibility(FirstReviewPhoto, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    await photo.checkPhotoVisibility(FirstVideoUid, false);
+    await photo.checkPhotoVisibility(FirstPrivatePhotoUid, false);
+    await photo.checkPhotoVisibility(FirstReviewPhotoUid, false);
+
     await menu.openPage("review");
-    await photo.triggerHoverAction("uid", FirstReviewPhoto, "select");
-    await contextmenu.triggerContextMenuAction("archive", "", "");
+    await photo.triggerHoverAction("uid", FirstReviewPhotoUid, "select");
+    await contextmenu.triggerContextMenuAction("archive", "");
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstReviewPhoto, false);
+
+    await photo.checkPhotoVisibility(FirstReviewPhotoUid, false);
+
     await menu.openPage("private");
-    await photo.triggerHoverAction("uid", FirstPrivatePhoto, "select");
-    await contextmenu.triggerContextMenuAction("archive", "", "");
+    await photo.triggerHoverAction("uid", FirstPrivatePhotoUid, "select");
+    await contextmenu.triggerContextMenuAction("archive", "");
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstPrivatePhoto, false);
+
+    await photo.checkPhotoVisibility(FirstPrivatePhotoUid, false);
+
     await menu.openPage("archive");
-    await photo.checkPhotoVisibility(FirstPhoto, true);
-    await photo.checkPhotoVisibility(SecondPhoto, true);
-    await photo.checkPhotoVisibility(FirstVideo, true);
-    await photo.checkPhotoVisibility(FirstPrivatePhoto, true);
-    await photo.checkPhotoVisibility(FirstReviewPhoto, true);
-    await photo.triggerHoverAction("uid", FirstPrivatePhoto, "select");
-    await photo.triggerHoverAction("uid", FirstReviewPhoto, "select");
-    await photo.triggerHoverAction("uid", FirstPhoto, "select");
-    await photo.triggerHoverAction("uid", SecondPhoto, "select");
-    await photo.triggerHoverAction("uid", FirstVideo, "select");
-    await contextmenu.triggerContextMenuAction("restore", "", "");
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, true);
+    await photo.checkPhotoVisibility(SecondPhotoUid, true);
+    await photo.checkPhotoVisibility(FirstVideoUid, true);
+    await photo.checkPhotoVisibility(FirstPrivatePhotoUid, true);
+    await photo.checkPhotoVisibility(FirstReviewPhotoUid, true);
+
+    await photo.triggerHoverAction("uid", FirstPrivatePhotoUid, "select");
+    await photo.triggerHoverAction("uid", FirstReviewPhotoUid, "select");
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+    await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
+    await photo.triggerHoverAction("uid", FirstVideoUid, "select");
+    await contextmenu.triggerContextMenuAction("restore", "");
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
-    await photo.checkPhotoVisibility(FirstVideo, false);
-    await photo.checkPhotoVisibility(FirstPrivatePhoto, false);
-    await photo.checkPhotoVisibility(FirstReviewPhoto, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    await photo.checkPhotoVisibility(FirstVideoUid, false);
+    await photo.checkPhotoVisibility(FirstPrivatePhotoUid, false);
+    await photo.checkPhotoVisibility(FirstReviewPhotoUid, false);
+
     await menu.openPage("browse");
-    await photo.checkPhotoVisibility(FirstPhoto, true);
-    await photo.checkPhotoVisibility(SecondPhoto, true);
-    await photo.checkPhotoVisibility(FirstVideo, true);
-    await photo.checkPhotoVisibility(FirstPrivatePhoto, false);
-    await photo.checkPhotoVisibility(FirstReviewPhoto, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, true);
+    await photo.checkPhotoVisibility(SecondPhotoUid, true);
+    await photo.checkPhotoVisibility(FirstVideoUid, true);
+    await photo.checkPhotoVisibility(FirstPrivatePhotoUid, false);
+    await photo.checkPhotoVisibility(FirstReviewPhotoUid, false);
+
     await menu.openPage("private");
-    await photo.checkPhotoVisibility(FirstPrivatePhoto, true);
+
+    await photo.checkPhotoVisibility(FirstPrivatePhotoUid, true);
+
     await menu.openPage("review");
-    await photo.checkPhotoVisibility(FirstReviewPhoto, true);
+
+    await photo.checkPhotoVisibility(FirstReviewPhotoUid, true);
   }
 );
 
-test.meta("testID", "photos-013")(
+test.meta("testID", "photos-archive-private-003")(
   "Check that archived files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/private/videos/calendar/moments/states/labels/folders/originals",
   async (t) => {
     await menu.openPage("archive");
@@ -247,11 +274,12 @@ test.meta("testID", "photos-013")(
     const FolderPhoto = await photo.getNthPhotoUid("all", 0);
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
-    await contextmenu.triggerContextMenuAction("archive", "", "");
+    await contextmenu.triggerContextMenuAction("archive", "");
     await menu.openPage("archive");
     await toolbar.triggerToolbarAction("reload");
     const PhotoCountInArchiveAfterArchive = await photo.getPhotoCount("all");
     await t.expect(PhotoCountInArchiveAfterArchive).eql(InitialPhotoCountInArchive + 14);
+
     await menu.openPage("monochrome");
     await photo.checkPhotoVisibility(MonochromePhoto, false);
     await menu.openPage("panoramas");
@@ -300,7 +328,7 @@ test.meta("testID", "photos-013")(
     await photo.triggerHoverAction("uid", SubjectPhoto, "select");
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
-    await contextmenu.triggerContextMenuAction("restore", "", "");
+    await contextmenu.triggerContextMenuAction("restore", "");
 
     const PhotoCountInArchiveAfterRestore = await photo.getPhotoCount("all");
     await t.expect(PhotoCountInArchiveAfterRestore).eql(InitialPhotoCountInArchive);
@@ -309,7 +337,7 @@ test.meta("testID", "photos-013")(
   }
 );
 
-test.meta("testID", "photos-014")(
+test.meta("testID", "photos-archive-private-004").meta({ type: "smoke" })(
   "Check that private files are not shown in monochrome/panoramas/stacks/scans/review/albums/favorites/archive/videos/calendar/moments/states/labels/folders/originals",
   async (t) => {
     await menu.openPage("private");
@@ -369,10 +397,11 @@ test.meta("testID", "photos-014")(
     const FolderPhoto = await photo.getNthPhotoUid("all", 0);
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
-    await contextmenu.triggerContextMenuAction("private", "", "");
+    await contextmenu.triggerContextMenuAction("private", "");
     await menu.openPage("private");
     await toolbar.triggerToolbarAction("reload");
     const PhotoCountInPrivateAfterArchive = await photo.getPhotoCount("all");
+
     await t.expect(PhotoCountInPrivateAfterArchive).eql(InitialPhotoCountInPrivate + 14);
     await menu.openPage("monochrome");
     await photo.checkPhotoVisibility(MonochromePhoto, false);
@@ -423,10 +452,10 @@ test.meta("testID", "photos-014")(
     await photo.triggerHoverAction("uid", SubjectPhoto, "select");
     await photo.triggerHoverAction("uid", FolderPhoto, "select");
     await contextmenu.checkContextMenuCount("14");
-    await contextmenu.triggerContextMenuAction("private", "", "");
-    await toolbar.triggerToolbarAction("reload", "");
-
+    await contextmenu.triggerContextMenuAction("private", "");
+    await toolbar.triggerToolbarAction("reload");
     const PhotoCountInPrivateAfterRestore = await photo.getPhotoCount("all");
+
     await t.expect(PhotoCountInPrivateAfterRestore).eql(InitialPhotoCountInPrivate);
 
     await menu.openPage("monochrome");

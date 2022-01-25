@@ -18,30 +18,41 @@ const page = new Page();
 const photoedit = new PhotoEdit();
 const library = new Library();
 
-test.meta("testID", "stacks-001")("Change primary file", async (t) => {
-  await toolbar.search("ski");
-  const SequentialPhoto = await photo.getNthPhotoUid("all", 0);
-  await photo.checkHoverActionAvailability("uid", SequentialPhoto, "open", true);
-  if (t.browser.platform === "desktop") {
-    console.log(t.browser.platform);
-    await photo.triggerHoverAction("nth", 0, "open");
-    await photoviewer.triggerPhotoViewerAction("next");
-    await photoviewer.triggerPhotoViewerAction("previous");
-    await photoviewer.triggerPhotoViewerAction("close");
+test.meta("testID", "stacks-001").meta({ type: "smoke" })(
+  "View all files of a stack",
+  async (t) => {
+    await toolbar.search("ski");
+    const SequentialPhotoUid = await photo.getNthPhotoUid("all", 0);
+    await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
+    if (t.browser.platform === "desktop") {
+      console.log(t.browser.platform);
+      await photo.triggerHoverAction("nth", 0, "open");
+      await photoviewer.triggerPhotoViewerAction("next");
+      await photoviewer.triggerPhotoViewerAction("previous");
+      await photoviewer.triggerPhotoViewerAction("close");
+    }
+    await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
   }
+);
+
+test.meta("testID", "stacks-002").meta({ type: "smoke" })("Change primary file", async (t) => {
+  await toolbar.search("ski");
+  const SequentialPhotoUid = await photo.getNthPhotoUid("all", 0);
   await toolbar.setFilter("view", "Cards");
   await t
-    .click(page.cardTitle.withAttribute("data-uid", SequentialPhoto))
-    .click(Selector("#tab-files"));
+    .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid))
+    .click(photoedit.filesTab);
   const FirstFileName = await Selector("div.caption").nth(0).innerText;
+
+  await t.expect(FirstFileName).contains("photos8_1_ski.jpg");
+
   await t
-    .expect(FirstFileName)
-    .contains("photos8_1_ski.jpg")
     .click(photoedit.toggleExpandFile.nth(1))
     .click(photoedit.makeFilePrimary)
     .click(photoedit.dialogClose)
-    .click(page.cardTitle.withAttribute("data-uid", SequentialPhoto));
+    .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid));
   const FirstFileNameAfterChange = await Selector("div.caption").nth(0).innerText;
+
   await t
     .expect(FirstFileNameAfterChange)
     .notContains("photos8_1_ski.jpg")
@@ -49,17 +60,19 @@ test.meta("testID", "stacks-001")("Change primary file", async (t) => {
     .contains("photos8_2_ski.jpg");
 });
 
-test.meta("testID", "stacks-002")("Ungroup files", async (t) => {
+test.meta("testID", "stacks-003").meta({ type: "smoke" })("Ungroup files", async (t) => {
   await toolbar.search("group");
   await toolbar.setFilter("view", "Cards");
   const PhotoCount = await photo.getPhotoCount("all");
-  const SequentialPhoto = await photo.getNthPhotoUid("all", 0);
+  const SequentialPhotoUid = await photo.getNthPhotoUid("all", 0);
+
   await t.expect(PhotoCount).eql(1);
+
   await menu.openPage("stacks");
-  await photo.checkHoverActionAvailability("uid", SequentialPhoto, "open", true);
+  await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
   await t
-    .click(page.cardTitle.withAttribute("data-uid", SequentialPhoto))
-    .click(Selector("#tab-files"))
+    .click(page.cardTitle.withAttribute("data-uid", SequentialPhotoUid))
+    .click(photoedit.filesTab)
     .click(photoedit.toggleExpandFile.nth(0))
     .click(photoedit.toggleExpandFile.nth(1))
     .click(photoedit.unstackFile)
@@ -70,16 +83,18 @@ test.meta("testID", "stacks-002")("Ungroup files", async (t) => {
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
-    await toolbar.triggerToolbarAction("reload", "");
+    await toolbar.triggerToolbarAction("reload");
   }
   const PhotoCountAfterUngroup = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountAfterUngroup).eql(2);
+  await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", false);
 });
 
-test.meta("testID", "stacks-003")("Delete non primary file", async (t) => {
+test.meta("testID", "stacks-004")("Delete non primary file", async (t) => {
   await menu.openPage("library");
   await t
-    .click(Selector("#tab-library-import"))
+    .click(library.importTab)
     .click(library.openImportFolderSelect, { timeout: 5000 })
     .click(page.selectOption.withText("/pizza"))
     .click(library.import)
@@ -88,20 +103,21 @@ test.meta("testID", "stacks-003")("Delete non primary file", async (t) => {
   await toolbar.search("pizza");
   await toolbar.setFilter("view", "Cards");
   const PhotoCount = await photo.getPhotoCount("all");
-  const Photo = await photo.getNthPhotoUid("all", 0);
-  await t
-    .expect(PhotoCount)
-    .eql(1)
-    .click(page.cardTitle.withAttribute("data-uid", Photo))
-    .click(Selector("#tab-files"));
+  const PhotoUid = await photo.getNthPhotoUid("all", 0);
+
+  await t.expect(PhotoCount).eql(1);
+
+  await t.click(page.cardTitle.withAttribute("data-uid", PhotoUid)).click(photoedit.filesTab);
   const FileCount = await photoedit.getFileCount();
+
+  await t.expect(FileCount).eql(2);
+
   await t
-    .expect(FileCount)
-    .eql(2)
     .click(photoedit.toggleExpandFile.nth(1))
     .click(Selector(photoedit.deleteFile))
     .click(Selector(".action-confirm"))
     .wait(10000);
   const FileCountAfterDeletion = await photoedit.getFileCount();
+
   await t.expect(FileCountAfterDeletion).eql(1);
 });

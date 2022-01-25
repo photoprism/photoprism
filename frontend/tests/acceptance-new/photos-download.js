@@ -22,26 +22,27 @@ const photo = new Photo();
 const photoviewer = new PhotoViewer();
 const page = new Page();
 
-//TODO Make those run from within the container
-test.meta("testID", "photos-download-001")(
+test.meta("testID", "photos-download-001").meta({ type: "smoke" })(
   "Test download jpg file from context menu and fullscreen",
   async (t) => {
     await toolbar.search("name:monochrome-2.jpg");
-    const Photo = await photo.getNthPhotoUid("all", 0);
-    await photo.triggerHoverAction("uid", Photo, "select");
+    const PhotoUid = await photo.getNthPhotoUid("all", 0);
+    await photo.triggerHoverAction("uid", PhotoUid, "select");
     await logger.clear();
-    await contextmenu.triggerContextMenuAction("download", "", "");
+    await contextmenu.triggerContextMenuAction("download", "");
     const requestInfo = await logger.requests[1].response;
     console.log(requestInfo);
     const requestInfo0 = await logger.requests[0].response;
     console.log(requestInfo0);
+
     await page.validateDownloadRequest(requestInfo, "monochrome-2", ".jpg");
+
     await logger.clear();
     await contextmenu.clearSelection();
     await toolbar.search("name:IMG_20200711_174006.jpg");
-    const SecondPhoto = await photo.getNthPhotoUid("all", 0);
-    await t.click(Selector("div").withAttribute("data-uid", SecondPhoto));
-    await photoviewer.openPhotoViewer("uid", SecondPhoto);
+    const SecondPhotoUid = await photo.getNthPhotoUid("all", 0);
+    await t.click(Selector("div").withAttribute("data-uid", SecondPhotoUid));
+    await photoviewer.openPhotoViewer("uid", SecondPhotoUid);
     await logger.clear();
     await photoviewer.triggerPhotoViewerAction("download");
     await logger.clear();
@@ -49,35 +50,42 @@ test.meta("testID", "photos-download-001")(
   }
 );
 
-test.meta("testID", "photos-download-002")("Test download video from context menu", async (t) => {
-  await toolbar.search("name:Mohn.mp4");
-  const Photo = await photo.getNthPhotoUid("all", 0);
-  await photo.triggerHoverAction("uid", Photo, "select");
-  await logger.clear();
-  await contextmenu.triggerContextMenuAction("download", "", "");
-  const requestInfo = await logger.requests[0].response;
-  console.log(requestInfo);
-  const requestInfo2 = await logger.requests[1].response;
-  await page.validateDownloadRequest(requestInfo, "Mohn", ".mp4.jpg");
-  await page.validateDownloadRequest(requestInfo2, "Mohn", ".mp4");
-  await logger.clear();
-  await contextmenu.clearSelection();
-});
+test.meta("testID", "photos-download-002").meta({ type: "smoke" })(
+  "Test download video from context menu",
+  async (t) => {
+    await toolbar.search("name:Mohn.mp4");
+    const PhotoUid = await photo.getNthPhotoUid("all", 0);
+    await photo.triggerHoverAction("uid", PhotoUid, "select");
+    await logger.clear();
+    await contextmenu.triggerContextMenuAction("download", "");
+    const requestInfo = await logger.requests[0].response;
+    console.log(requestInfo);
+    const requestInfo2 = await logger.requests[1].response;
+
+    await page.validateDownloadRequest(requestInfo, "Mohn", ".mp4.jpg");
+    await page.validateDownloadRequest(requestInfo2, "Mohn", ".mp4");
+
+    await logger.clear();
+    await contextmenu.clearSelection();
+  }
+);
 
 test.meta("testID", "photos-download-003")(
   "Test download multiple jpg files from context menu",
   async (t) => {
     await toolbar.search("name:panorama_2.jpg");
-    const Photo = await photo.getNthPhotoUid("all", 0);
-    await photo.triggerHoverAction("uid", Photo, "select");
+    const PhotoUid = await photo.getNthPhotoUid("all", 0);
+    await photo.triggerHoverAction("uid", PhotoUid, "select");
     await toolbar.search("name:IMG_6478.JPG");
-    const SecondPhoto = await photo.getNthPhotoUid("all", 0);
-    await photo.triggerHoverAction("uid", SecondPhoto, "select");
+    const SecondPhotoUid = await photo.getNthPhotoUid("all", 0);
+    await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
     await logger.clear();
-    await contextmenu.triggerContextMenuAction("download", "", "");
+    await contextmenu.triggerContextMenuAction("download", "");
     const requestInfo = await logger.requests[1].response;
     console.log(requestInfo);
+
     await page.validateDownloadRequest(requestInfo, "photoprism-download", ".zip");
+
     await logger.clear();
     await contextmenu.clearSelection();
   }
@@ -88,12 +96,14 @@ test.meta("testID", "photos-download-004")(
   "Test raw file from context menu and fullscreen mode",
   async (t) => {
     await toolbar.search("name:elephantRAW");
-    const Photo = await photo.getNthPhotoUid("all", 0);
-    await photo.triggerHoverAction("uid", Photo, "select");
+    const PhotoUid = await photo.getNthPhotoUid("all", 0);
+    await photo.triggerHoverAction("uid", PhotoUid, "select");
     await logger.clear();
-    await contextmenu.triggerContextMenuAction("download", "", "");
+    await contextmenu.triggerContextMenuAction("download", "");
     const requestInfo = await logger.requests[1].response;
+
     await page.validateDownloadRequest(requestInfo, "elephantRAW", ".JPG");
+
     await logger.clear();
     await contextmenu.clearSelection();
     await t.click(Selector("div").withAttribute("data-uid", Photo));

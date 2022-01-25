@@ -24,6 +24,7 @@ const photoedit = new PhotoEdit();
 
 test.meta("testID", "photos-001")("Scroll to top", async (t) => {
   await toolbar.setFilter("view", "Cards");
+
   await t
     .expect(Selector("button.is-photo-scroll-top").exists)
     .notOk()
@@ -31,8 +32,10 @@ test.meta("testID", "photos-001")("Scroll to top", async (t) => {
     .eql(0)
     .expect(Selector('div[class="v-image__image v-image__image--cover"]').nth(0).visible)
     .ok();
+
   await scroll(0, 1400);
   await scroll(0, 900);
+
   await t.click(Selector("button.p-scroll-top")).expect(getcurrentPosition()).eql(0);
 });
 
@@ -40,39 +43,46 @@ test.meta("testID", "photos-001")("Scroll to top", async (t) => {
 test.meta("testID", "photos-002")(
   "Download single photo/video using clipboard and fullscreen mode",
   async (t) => {
-    const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-    const SecondPhoto = await photo.getNthPhotoUid("image", 1);
-    const FirstVideo = await photo.getNthPhotoUid("video", 0);
-    await photoviewer.openPhotoViewer("uid", SecondPhoto);
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+    const FirstVideoUid = await photo.getNthPhotoUid("video", 0);
+    await photoviewer.openPhotoViewer("uid", SecondPhotoUid);
+
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
+
     await photoviewer.triggerPhotoViewerAction("close");
-    await photo.triggerHoverAction("uid", FirstPhoto, "select");
-    await photo.triggerHoverAction("uid", FirstVideo, "select");
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+    await photo.triggerHoverAction("uid", FirstVideoUid, "select");
     await contextmenu.checkContextMenuCount("2");
+
     await contextmenu.checkContextMenuActionAvailability("download", true);
   }
 );
 
-test.meta("testID", "photos-003")(
+test.meta("testID", "photos-003").meta({ type: "smoke" })(
   "Approve photo using approve and by adding location",
   async (t) => {
     await menu.openPage("review");
-    const FirstPhoto = await photo.getNthPhotoUid("all", 0);
-    const SecondPhoto = await photo.getNthPhotoUid("all", 1);
-    const ThirdPhoto = await photo.getNthPhotoUid("all", 2);
+    const FirstPhotoUid = await photo.getNthPhotoUid("all", 0);
+    const SecondPhotoUid = await photo.getNthPhotoUid("all", 1);
+    const ThirdPhotoUid = await photo.getNthPhotoUid("all", 2);
     await menu.openPage("browse");
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+
     await menu.openPage("review");
-    await photo.triggerHoverAction("uid", FirstPhoto, "select");
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
     await contextmenu.triggerContextMenuAction("edit", "");
     await t.click(photoedit.detailsClose);
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstPhoto, true);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, true);
+
     await contextmenu.triggerContextMenuAction("edit", "");
     await t.click(photoedit.detailsApprove);
     if (t.browser.platform === "mobile") {
@@ -80,11 +90,11 @@ test.meta("testID", "photos-003")(
     } else {
       await t.click(photoedit.detailsDone);
     }
-    await photo.triggerHoverAction("uid", SecondPhoto, "select");
+    await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
     await contextmenu.triggerContextMenuAction("edit", "");
     await t
-      .typeText(Selector('input[aria-label="Latitude"]'), "9.999", { replace: true })
-      .typeText(Selector('input[aria-label="Longitude"]'), "9.999", { replace: true });
+      .typeText(photoedit.latitude, "9.999", { replace: true })
+      .typeText(photoedit.longitude, "9.999", { replace: true });
     if (t.browser.platform === "mobile") {
       await t.click(photoedit.detailsApply).click(photoedit.detailsClose);
     } else {
@@ -92,112 +102,118 @@ test.meta("testID", "photos-003")(
     }
     await toolbar.setFilter("view", "Cards");
     const ApproveButtonThirdPhoto =
-      'div.is-photo[data-uid="' + ThirdPhoto + '"] button.action-approve';
+      'div.is-photo[data-uid="' + ThirdPhotoUid + '"] button.action-approve';
     await t.click(Selector(ApproveButtonThirdPhoto));
     if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
-      await toolbar.triggerToolbarAction("reload", "");
+      await toolbar.triggerToolbarAction("reload");
     }
-    await photo.checkPhotoVisibility(FirstPhoto, false);
-    await photo.checkPhotoVisibility(SecondPhoto, false);
-    await photo.checkPhotoVisibility(ThirdPhoto, false);
+
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+    await photo.checkPhotoVisibility(ThirdPhotoUid, false);
     await menu.openPage("browse");
-    await photo.checkPhotoVisibility(FirstPhoto, true);
-    await photo.checkPhotoVisibility(SecondPhoto, true);
-    await photo.checkPhotoVisibility(ThirdPhoto, true);
+    await photo.checkPhotoVisibility(FirstPhotoUid, true);
+    await photo.checkPhotoVisibility(SecondPhotoUid, true);
+    await photo.checkPhotoVisibility(ThirdPhotoUid, true);
   }
 );
 
-test.meta("testID", "photos-004")("Like/dislike photo/video", async (t) => {
-  const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-  const SecondPhoto = await photo.getNthPhotoUid("image", 1);
-  const FirstVideo = await photo.getNthPhotoUid("video", 0);
+test.meta("testID", "photos-004").meta({ type: "smoke" })("Like/dislike photo/video", async (t) => {
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+  const FirstVideoUid = await photo.getNthPhotoUid("video", 0);
   await menu.openPage("favorites");
-  await photo.checkPhotoVisibility(FirstPhoto, false);
-  await photo.checkPhotoVisibility(SecondPhoto, false);
-  await photo.checkPhotoVisibility(FirstVideo, false);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, false);
+  await photo.checkPhotoVisibility(SecondPhotoUid, false);
+  await photo.checkPhotoVisibility(FirstVideoUid, false);
+
   await menu.openPage("browse");
-  await photo.triggerHoverAction("uid", FirstPhoto, "favorite");
-  await photo.triggerHoverAction("uid", FirstVideo, "favorite");
-  await photo.triggerHoverAction("uid", SecondPhoto, "select");
+  await photo.triggerHoverAction("uid", FirstPhotoUid, "favorite");
+  await photo.triggerHoverAction("uid", FirstVideoUid, "favorite");
+  await photo.triggerHoverAction("uid", SecondPhotoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOn("favorite");
   await t.click(photoedit.dialogClose);
   await contextmenu.clearSelection();
-  await photo.checkPhotoVisibility(FirstPhoto, true);
-  await photo.checkPhotoVisibility(FirstVideo, true);
-  await photo.checkPhotoVisibility(SecondPhoto, true);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(FirstVideoUid, true);
+  await photo.checkPhotoVisibility(SecondPhotoUid, true);
+
   await menu.openPage("favorites");
-  await photo.checkPhotoVisibility(FirstPhoto, true);
-  await photo.checkPhotoVisibility(FirstVideo, true);
-  await photo.checkPhotoVisibility(SecondPhoto, true);
-  await photo.triggerHoverAction("uid", SecondPhoto, "favorite");
-  await photo.triggerHoverAction("uid", FirstVideo, "select");
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(FirstVideoUid, true);
+  await photo.checkPhotoVisibility(SecondPhotoUid, true);
+
+  await photo.triggerHoverAction("uid", SecondPhotoUid, "favorite");
+  await photo.triggerHoverAction("uid", FirstVideoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOff("favorite");
   await t.click(photoedit.dialogClose);
   await contextmenu.clearSelection();
-  await photoviewer.openPhotoViewer("uid", FirstPhoto);
+  await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
   await photoviewer.triggerPhotoViewerAction("like");
   await photoviewer.triggerPhotoViewerAction("close");
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
-    await toolbar.triggerToolbarAction("reload", "");
+    await toolbar.triggerToolbarAction("reload");
   }
-  await photo.checkPhotoVisibility(FirstPhoto, false);
-  await photo.checkPhotoVisibility(FirstVideo, false);
-  await photo.checkPhotoVisibility(SecondPhoto, false);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, false);
+  await photo.checkPhotoVisibility(FirstVideoUid, false);
+  await photo.checkPhotoVisibility(SecondPhotoUid, false);
 });
 
-test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
+test.meta("testID", "photos-005").meta({ type: "smoke" })("Edit photo/video", async (t) => {
   await toolbar.setFilter("view", "Cards");
-  const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-  await t
-    .click(page.cardTitle.withAttribute("data-uid", FirstPhoto))
-    .expect(Selector('input[aria-label="Latitude"]').visible)
-    .ok();
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+
+  await t.expect(photoedit.latitude.visible).ok();
+
   await t.click(photoedit.dialogNext);
-  await t
-    .expect(photoedit.dialogPrevious.getAttribute("disabled"))
-    .notEql("disabled")
-    .click(photoedit.dialogPrevious)
-    .click(photoedit.dialogClose);
-  await photoviewer.openPhotoViewer("uid", FirstPhoto);
+
+  await t.expect(photoedit.dialogPrevious.getAttribute("disabled")).notEql("disabled");
+
+  await t.click(photoedit.dialogPrevious).click(photoedit.dialogClose);
+  await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
   await photoviewer.triggerPhotoViewerAction("edit");
-  await t.expect(Selector('input[aria-label="Latitude"]').visible).ok();
-
-  const FirstPhotoTitle = await Selector(".input-title input").value;
-  const FirstPhotoLocalTime = await Selector(".input-local-time input").value;
-  const FirstPhotoDay = await Selector(".input-day input").value;
-  const FirstPhotoMonth = await Selector(".input-month input").value;
-  const FirstPhotoYear = await Selector(".input-year input").value;
-  const FirstPhotoTimezone = await Selector(".input-timezone input").value;
-  const FirstPhotoLatitude = await Selector(".input-latitude input").value;
-  const FirstPhotoLongitude = await Selector(".input-longitude input").value;
-  const FirstPhotoAltitude = await Selector(".input-altitude input").value;
-  const FirstPhotoCountry = await Selector(".input-country input").value;
-  const FirstPhotoCamera = await Selector("div.p-camera-select div.v-select__selection").innerText;
-  const FirstPhotoIso = await Selector(".input-iso input").value;
-  const FirstPhotoExposure = await Selector(".input-exposure input").value;
-  const FirstPhotoLens = await Selector("div.p-lens-select div.v-select__selection").innerText;
-  const FirstPhotoFnumber = await Selector(".input-fnumber input").value;
-  const FirstPhotoFocalLength = await Selector(".input-focal-length input").value;
-  const FirstPhotoSubject = await Selector(".input-subject textarea").value;
-  const FirstPhotoArtist = await Selector(".input-artist input").value;
-  const FirstPhotoCopyright = await Selector(".input-copyright input").value;
-  const FirstPhotoLicense = await Selector(".input-license textarea").value;
-  const FirstPhotoDescription = await Selector(".input-description textarea").value;
-  const FirstPhotoKeywords = await Selector(".input-keywords textarea").value;
-  const FirstPhotoNotes = await Selector(".input-notes textarea").value;
+  const FirstPhotoTitle = await photoedit.title.value;
+  const FirstPhotoLocalTime = await photoedit.localTime.value;
+  const FirstPhotoDay = await photoedit.day.value;
+  const FirstPhotoMonth = await photoedit.month.value;
+  const FirstPhotoYear = await photoedit.year.value;
+  const FirstPhotoTimezone = await photoedit.timezone.value;
+  const FirstPhotoLatitude = await photoedit.latitude.value;
+  const FirstPhotoLongitude = await photoedit.longitude.value;
+  const FirstPhotoAltitude = await photoedit.altitude.value;
+  const FirstPhotoCountry = await photoedit.country.value;
+  const FirstPhotoCamera = await photoedit.camera.innerText;
+  const FirstPhotoIso = await photoedit.iso.value;
+  const FirstPhotoExposure = await photoedit.exposure.value;
+  const FirstPhotoLens = await photoedit.lens.innerText;
+  const FirstPhotoFnumber = await photoedit.fnumber.value;
+  const FirstPhotoFocalLength = await photoedit.focallength.value;
+  const FirstPhotoSubject = await photoedit.subject.value;
+  const FirstPhotoArtist = await photoedit.artist.value;
+  const FirstPhotoCopyright = await photoedit.copyright.value;
+  const FirstPhotoLicense = await photoedit.license.value;
+  const FirstPhotoDescription = await photoedit.description.value;
+  const FirstPhotoKeywords = await photoedit.keywords.value;
+  const FirstPhotoNotes = await photoedit.notes.value;
 
   await t
-    .typeText(Selector(".input-title input"), "Not saved photo title", { replace: true })
+    .typeText(photoedit.title, "Not saved photo title", { replace: true })
     .click(photoedit.detailsClose)
-    .click(Selector("button.action-date-edit").withAttribute("data-uid", FirstPhoto))
-    .expect(Selector(".input-title input").value)
-    .eql(FirstPhotoTitle);
+    .click(Selector("button.action-date-edit").withAttribute("data-uid", FirstPhotoUid));
+
+  await t.expect(photoedit.title.value).eql(FirstPhotoTitle);
+
   await photoedit.editPhoto(
     "New Photo Title",
     "Europe/Moscow",
@@ -223,13 +239,16 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
-    await toolbar.triggerToolbarAction("reload", "");
+    await toolbar.triggerToolbarAction("reload");
   }
+
   await t
-    .expect(page.cardTitle.withAttribute("data-uid", FirstPhoto).innerText)
+    .expect(page.cardTitle.withAttribute("data-uid", FirstPhotoUid).innerText)
     .eql("New Photo Title");
-  await photo.triggerHoverAction("uid", FirstPhoto, "select");
-  await contextmenu.triggerContextMenuAction("edit", "", "");
+
+  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+  await contextmenu.triggerContextMenuAction("edit", "");
+
   await photoedit.checkEditFormValues(
     "New Photo Title",
     "15",
@@ -255,6 +274,7 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
     "cat",
     "Some notes"
   );
+
   await photoedit.undoPhotoEdit(
     FirstPhotoTitle,
     FirstPhotoTimezone,
@@ -284,8 +304,9 @@ test.meta("testID", "photos-005")("Edit photo/video", async (t) => {
 
 test.meta("testID", "photos-006")("Navigate from card view to place", async (t) => {
   await toolbar.setFilter("view", "Cards");
+  await t.click(page.cardLocation.nth(0));
+
   await t
-    .click(page.cardLocation.nth(0))
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.p-map-control").visible)
@@ -295,17 +316,21 @@ test.meta("testID", "photos-006")("Navigate from card view to place", async (t) 
 });
 
 test.meta("testID", "photos-007")("Mark photos/videos as panorama/scan", async (t) => {
-  const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-  const FirstVideo = await photo.getNthPhotoUid("video", 1);
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  const FirstVideoUid = await photo.getNthPhotoUid("video", 1);
   await menu.openPage("scans");
-  await photo.checkPhotoVisibility(FirstPhoto, false);
-  await photo.checkPhotoVisibility(FirstVideo, false);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, false);
+  await photo.checkPhotoVisibility(FirstVideoUid, false);
+
   await menu.openPage("panoramas");
-  await photo.checkPhotoVisibility(FirstPhoto, false);
-  await photo.checkPhotoVisibility(FirstVideo, false);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, false);
+  await photo.checkPhotoVisibility(FirstVideoUid, false);
+
   await menu.openPage("browse");
-  await photo.triggerHoverAction("uid", FirstPhoto, "select");
-  await photo.triggerHoverAction("uid", FirstVideo, "select");
+  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+  await photo.triggerHoverAction("uid", FirstVideoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOn("scan");
   await photoedit.turnSwitchOn("panorama");
@@ -314,16 +339,22 @@ test.meta("testID", "photos-007")("Mark photos/videos as panorama/scan", async (
   await photoedit.turnSwitchOn("panorama");
   await t.click(photoedit.dialogClose);
   await contextmenu.clearSelection();
-  await photo.checkPhotoVisibility(FirstPhoto, true);
-  await photo.checkPhotoVisibility(FirstVideo, true);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(FirstVideoUid, true);
+
   await menu.openPage("scans");
-  await photo.checkPhotoVisibility(FirstPhoto, true);
-  await photo.checkPhotoVisibility(FirstVideo, false);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(FirstVideoUid, false);
+
   await menu.openPage("panoramas");
-  await photo.checkPhotoVisibility(FirstPhoto, true);
-  await photo.checkPhotoVisibility(FirstVideo, true);
-  await photo.triggerHoverAction("uid", FirstPhoto, "select");
-  await photo.triggerHoverAction("uid", FirstVideo, "select");
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(FirstVideoUid, true);
+
+  await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
+  await photo.triggerHoverAction("uid", FirstVideoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
@@ -333,6 +364,7 @@ test.meta("testID", "photos-007")("Mark photos/videos as panorama/scan", async (
   await t.click(photoedit.dialogClose);
   await toolbar.triggerToolbarAction("reload");
   await contextmenu.clearSelection();
-  await photo.checkPhotoVisibility(FirstPhoto, false);
-  await photo.checkPhotoVisibility(FirstVideo, false);
+
+  await photo.checkPhotoVisibility(FirstPhotoUid, false);
+  await photo.checkPhotoVisibility(FirstVideoUid, false);
 });
