@@ -5,11 +5,14 @@ import Menu from "../page-model/menu";
 import Photo from "../page-model/photo";
 import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
-import PhotoViews from "../page-model/photo-views";
 import Label from "../page-model/label";
 import Album from "../page-model/album";
 import Subject from "../page-model/subject";
 import Page from "../page-model/page";
+import Settings from "../page-model/settings";
+import Library from "../page-model/library";
+import PhotoEdit from "../page-model/photo-edit";
+import AlbumDialog from "../page-model/dialog-album";
 
 fixture`Test admin role`.page`${testcafeconfig.url}`;
 
@@ -17,11 +20,14 @@ const menu = new Menu();
 const photo = new Photo();
 const toolbar = new Toolbar();
 const contextmenu = new ContextMenu();
-const photoviews = new PhotoViews();
 const label = new Label();
 const album = new Album();
 const subject = new Subject();
 const page = new Page();
+const settings = new Settings();
+const library = new Library();
+const photoedit = new PhotoEdit();
+const albumdialog = new AlbumDialog();
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -34,25 +40,35 @@ test.meta("testID", "authentication-000")(
 
 test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
   await page.login("admin", "photoprism");
+
   await menu.checkMenuItemAvailability("settings", true);
+
   await t.navigateTo("/settings");
   await t
-    .wait(5000)
-    .expect(Selector(".input-language input", { timeout: 8000 }).visible)
+    .expect(settings.languageInput.visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
-    .notOk()
-    .navigateTo("/settings/library")
+    .notOk();
+
+  await t.navigateTo("/settings/library");
+
+  await t
     .expect(Selector("form.p-form-settings").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
-    .notOk()
-    .navigateTo("/settings/advanced")
+    .notOk();
+
+  await t.navigateTo("/settings/advanced");
+
+  await t
     .expect(Selector("label").withText("Read-Only Mode").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
-    .notOk()
-    .navigateTo("/settings/sync")
+    .notOk();
+
+  await t.navigateTo("/settings/sync");
+
+  await t
     .expect(Selector("div.p-accounts-list").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
@@ -62,67 +78,97 @@ test.meta("testID", "admin-role-001")("Access to settings", async (t) => {
 test.meta("testID", "admin-role-002")("Access to archive", async (t) => {
   await page.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
+
   await menu.checkMenuItemAvailability("archive", true);
+
   await t.navigateTo("/archive");
+
   await photo.checkPhotoVisibility("pqnahct2mvee8sr4", true);
+
   const PhotoCountArchive = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountBrowse).gte(PhotoCountArchive);
 });
 
 test.meta("testID", "admin-role-003")("Access to review", async (t) => {
   await page.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
+
   await menu.checkMenuItemAvailability("review", true);
+
   await t.navigateTo("/review");
+
   await photo.checkPhotoVisibility("pqzuein2pdcg1kc7", true);
+
   const PhotoCountReview = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountBrowse).gte(PhotoCountReview);
 });
 
 test.meta("testID", "admin-role-004")("Access to private", async (t) => {
   await page.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
+
   await menu.checkMenuItemAvailability("private", true);
+
   await t.navigateTo("/private");
+
   await photo.checkPhotoVisibility("pqmxlquf9tbc8mk2", true);
+
   const PhotoCountPrivate = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountBrowse).gte(PhotoCountPrivate);
 });
 
 test.meta("testID", "admin-role-005")("Access to library", async (t) => {
   await page.login("admin", "photoprism");
   const PhotoCountBrowse = await photo.getPhotoCount("all");
+
   await menu.checkMenuItemAvailability("library", true);
+
   await t.navigateTo("/library");
+
   await t
-    .expect(Selector(".input-index-folder input").visible)
+    .expect(library.indexFolderSelect.visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
-    .notOk()
-    .navigateTo("/library/import")
-    .expect(Selector(".input-import-folder input").visible)
+    .notOk();
+
+  await t.navigateTo("/library/import");
+
+  await t
+    .expect(library.openImportFolderSelect.visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
-    .notOk()
-    .navigateTo("/library/logs")
+    .notOk();
+
+  await t.navigateTo("/library/logs");
+
+  await t
     .expect(Selector("div.terminal").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk();
   await menu.checkMenuItemAvailability("originals", true);
+
+  await t.navigateTo("/library/files");
+
   await t
-    .navigateTo("/library/files")
     .expect(Selector("div.p-page-files").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
     .notOk();
   await menu.checkMenuItemAvailability("hidden", true);
+
   await t.navigateTo("/library/hidden");
   const PhotoCountHidden = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountBrowse).gte(PhotoCountHidden);
   await menu.checkMenuItemAvailability("errors", true);
+
+  await t.navigateTo("/library/errors");
+
   await t
-    .navigateTo("/library/errors")
     .expect(Selector("div.p-page-errors").visible)
     .ok()
     .expect(Selector("div.p-page-photos").visible)
@@ -134,26 +180,35 @@ test.meta("testID", "admin-role-006")("private/archived photos in search results
   const PhotoCountBrowse = await photo.getPhotoCount("all");
   await toolbar.search("private:true");
   const PhotoCountPrivate = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountPrivate).eql(2);
   await photo.checkPhotoVisibility("pqmxlquf9tbc8mk2", true);
+
   await toolbar.search("archived:true");
   const PhotoCountArchive = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountArchive).eql(3);
   await photo.checkPhotoVisibility("pqnahct2mvee8sr4", true);
+
   await toolbar.search("quality:0");
   const PhotoCountReview = await photo.getPhotoCount("all");
+
   await t.expect(PhotoCountReview).gte(PhotoCountBrowse);
   await photo.checkPhotoVisibility("pqzuein2pdcg1kc7", true);
+
   await menu.openPage("places");
+
   await t
     .expect(Selector("#map").exists, { timeout: 15000 })
     .ok()
     .expect(Selector("div.p-map-control").visible)
     .ok()
     .wait(5000);
+
   await t
     .typeText(Selector('input[aria-label="Search"]'), "oaxaca", { replace: true })
     .pressKey("enter");
+
   await t
     .expect(Selector("div.p-map-control").visible)
     .ok()
@@ -164,9 +219,11 @@ test.meta("testID", "admin-role-006")("private/archived photos in search results
     .notOk()
     .expect(Selector('div[title="Viewpoint / Mexico / 2018"]').visible)
     .notOk();
+
   await t
     .typeText(Selector('input[aria-label="Search"]'), "canada", { replace: true })
     .pressKey("enter");
+
   await t
     .expect(Selector("div.p-map-control").visible)
     .ok()
@@ -212,25 +269,34 @@ test.meta("testID", "admin-role-008")(
   "Admin can private, archive, share, add/remove to album",
   async (t) => {
     await page.login("admin", "photoprism");
-    const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-    await photo.selectPhotoFromUID(FirstPhoto);
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+
     await contextmenu.checkContextMenuActionAvailability("private", true);
     await contextmenu.checkContextMenuActionAvailability("archive", true);
     await contextmenu.checkContextMenuActionAvailability("share", true);
     await contextmenu.checkContextMenuActionAvailability("album", true);
+
     await contextmenu.clearSelection();
     await toolbar.setFilter("view", "List");
+
     await photo.checkListViewActionAvailability("private", false);
+
     await menu.openPage("albums");
     await album.openNthAlbum(0);
+
     await toolbar.checkToolbarActionAvailability("share", true);
+
     await photo.toggleSelectNthPhoto(0, "all");
+
     await contextmenu.checkContextMenuActionAvailability("private", true);
     await contextmenu.checkContextMenuActionAvailability("remove", true);
     await contextmenu.checkContextMenuActionAvailability("share", true);
     await contextmenu.checkContextMenuActionAvailability("album", true);
+
     await contextmenu.clearSelection();
-    await toolbar.triggerToolbarAction("list-view", "");
+    await toolbar.triggerToolbarAction("list-view");
+
     await photo.checkListViewActionAvailability("private", false);
   }
 );
@@ -239,119 +305,131 @@ test.meta("testID", "admin-role-009")("Admin can approve low quality photos", as
   await page.login("admin", "photoprism");
   await toolbar.search('quality:0 name:"photos-013_1"');
   await photo.toggleSelectNthPhoto(0, "all");
-  await contextmenu.triggerContextMenuAction("edit", "", "");
-  await t.expect(Selector("button.action-approve").visible).ok();
+  await contextmenu.triggerContextMenuAction("edit", "");
+
+  await t.expect(photoedit.detailsApprove.visible).ok();
 });
 
 test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", async (t) => {
   await page.login("admin", "photoprism");
   await toolbar.search("faces:new");
-  //details
-  const FirstPhoto = await photo.getNthPhotoUid("image", 0);
-  await photo.selectPhotoFromUID(FirstPhoto);
-  await contextmenu.triggerContextMenuAction("edit", "", "");
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  await photo.selectPhotoFromUID(FirstPhotoUid);
+  await contextmenu.triggerContextMenuAction("edit", "");
+
   await t
-    .expect(Selector(".input-title input").hasAttribute("disabled"))
+    .expect(photoedit.title.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-local-time input").hasAttribute("disabled"))
+    .expect(photoedit.localTime.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-day input").hasAttribute("disabled"))
+    .expect(photoedit.day.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-month input").hasAttribute("disabled"))
+    .expect(photoedit.month.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-year input").hasAttribute("disabled"))
+    .expect(photoedit.year.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-timezone input").hasAttribute("disabled"))
+    .expect(photoedit.timezone.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-latitude input").hasAttribute("disabled"))
+    .expect(photoedit.latitude.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-longitude input").hasAttribute("disabled"))
+    .expect(photoedit.longitude.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-altitude input").hasAttribute("disabled"))
+    .expect(photoedit.altitude.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-country input").hasAttribute("disabled"))
+    .expect(photoedit.country.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-camera input").hasAttribute("disabled"))
+    .expect(photoedit.camera.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-iso input").hasAttribute("disabled"))
+    .expect(photoedit.iso.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-exposure input").hasAttribute("disabled"))
+    .expect(photoedit.exposure.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-lens input").hasAttribute("disabled"))
+    .expect(photoedit.lens.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-fnumber input").hasAttribute("disabled"))
+    .expect(photoedit.fnumber.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-focal-length input").hasAttribute("disabled"))
+    .expect(photoedit.focallength.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-subject textarea").hasAttribute("disabled"))
+    .expect(photoedit.subject.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-artist input").hasAttribute("disabled"))
+    .expect(photoedit.artist.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-copyright input").hasAttribute("disabled"))
+    .expect(photoedit.copyright.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-license textarea").hasAttribute("disabled"))
+    .expect(photoedit.license.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-description textarea").hasAttribute("disabled"))
+    .expect(photoedit.description.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-keywords textarea").hasAttribute("disabled"))
+    .expect(photoedit.keywords.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-notes textarea").hasAttribute("disabled"))
+    .expect(photoedit.notes.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector("button.action-apply").visible)
+    .expect(photoedit.detailsApply.visible)
     .ok();
   if (t.browser.platform !== "mobile") {
-    await t.expect(Selector("button.action-done").visible).ok();
+    await t.expect(photoedit.detailsDone.visible).ok();
   }
-  //labels
+
+  await t.click(photoedit.labelsTab);
+
   await t
-    .click(Selector("#tab-labels"))
-    .expect(Selector("button.action-remove").hasAttribute("disabled"))
+    .expect(photoedit.removeLabel.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-label input").exists)
+    .expect(photoedit.inputLabelName.exists)
     .ok()
-    .expect(Selector("button.p-photo-label-add").exists)
-    .ok()
-    .click(Selector("div.p-inline-edit"))
-    .expect(Selector(".input-rename input").exists)
+    .expect(photoedit.addLabel.exists)
     .ok();
-  //people
+
+  await t.click(photoedit.openInlineEdit);
+
+  await t.expect(photoedit.inputLabelRename.exists).ok();
+
+  await t.click(photoedit.peopleTab);
+
   await t
-    .click(Selector("#tab-people"))
-    .expect(Selector(".input-name input").hasAttribute("disabled"))
+    .expect(photoedit.inputName.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector("button.input-reject").exists)
+    .expect(photoedit.removeMarker.exists)
     .ok();
-  //info
+
+  await t.click(photoedit.infoTab);
+
   await t
-    .click(Selector("#tab-info"))
-    .expect(Selector(".input-favorite input").hasAttribute("disabled"))
+    .expect(photoedit.favoriteInput.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-private input").hasAttribute("disabled"))
+    .expect(photoedit.privateInput.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-scan input").hasAttribute("disabled"))
+    .expect(photoedit.scanInput.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-panorama input").hasAttribute("disabled"))
+    .expect(photoedit.panoramaInput.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-stackable input").hasAttribute("disabled"))
+    .expect(photoedit.stackableInput.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector(".input-type input").hasAttribute("disabled"))
+    .expect(photoedit.typeInput.hasAttribute("disabled"))
     .notOk();
 });
 
 test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("labels");
-  const FirstLabel = await label.getNthLabeltUid(0);
-  await label.checkHoverActionState("uid", FirstLabel, "favorite", false);
-  await label.triggerHoverAction("uid", FirstLabel, "favorite");
-  await label.checkHoverActionState("uid", FirstLabel, "favorite", true);
-  await label.triggerHoverAction("uid", FirstLabel, "favorite");
-  await label.checkHoverActionState("uid", FirstLabel, "favorite", false);
-  await t
-    .click(Selector(`a.uid-${FirstLabel} div.inline-edit`))
-    .expect(Selector(".input-rename input").visible)
-    .ok();
-  await label.selectLabelFromUID(FirstLabel);
+  const FirstLabelUid = await label.getNthLabeltUid(0);
+
+  await label.checkHoverActionState("uid", FirstLabelUid, "favorite", false);
+
+  await label.triggerHoverAction("uid", FirstLabelUid, "favorite");
+
+  await label.checkHoverActionState("uid", FirstLabelUid, "favorite", true);
+
+  await label.triggerHoverAction("uid", FirstLabelUid, "favorite");
+
+  await label.checkHoverActionState("uid", FirstLabelUid, "favorite", false);
+
+  await t.click(Selector(`a.uid-${FirstLabelUid} div.inline-edit`));
+
+  await t.expect(photoedit.inputLabelRename.visible).ok();
+
+  await label.selectLabelFromUID(FirstLabelUid);
+
   await contextmenu.checkContextMenuActionAvailability("delete", true);
   await contextmenu.checkContextMenuActionAvailability("album", true);
 });
@@ -359,39 +437,46 @@ test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => 
 test.meta("testID", "admin-role-012")("Edit album functionality", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("albums");
+
   await toolbar.checkToolbarActionAvailability("add", true);
-  await t.expect(Selector("a.is-album button.action-share").visible).ok();
-  const FirstAlbum = await album.getNthAlbumUid("all", 0);
-  await album.selectAlbumFromUID(FirstAlbum);
+  await album.checkHoverActionAvailability("nth", 1, "share", true);
+
+  const FirstAlbumUid = await album.getNthAlbumUid("all", 0);
+  await album.selectAlbumFromUID(FirstAlbumUid);
+
   await contextmenu.checkContextMenuActionAvailability("edit", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
   await contextmenu.checkContextMenuActionAvailability("clone", true);
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.checkContextMenuActionAvailability("delete", true);
+
   await contextmenu.clearSelection();
-  await t
-    .click(page.cardTitle)
-    .expect(Selector(".input-description textarea").visible)
-    .ok()
-    .click(Selector("button.action-cancel"));
-  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
+  await t.click(page.cardTitle);
+
+  await t.expect(albumdialog.description.visible).ok();
+
+  await t.click(albumdialog.dialogCancel);
+
+  if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
   } else {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
   }
   await album.openNthAlbum(0);
+
   await toolbar.checkToolbarActionAvailability("share", true);
   await toolbar.checkToolbarActionAvailability("edit", true);
 
   await photo.toggleSelectNthPhoto(0, "all");
+
   await contextmenu.checkContextMenuActionAvailability("album", true);
   await contextmenu.checkContextMenuActionAvailability("private", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
@@ -401,9 +486,12 @@ test.meta("testID", "admin-role-012")("Edit album functionality", async (t) => {
 test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("moments");
-  await t.expect(Selector("a.is-album button.action-share").visible).ok();
-  const FirstAlbum = await album.getNthAlbumUid("moment", 0);
-  await album.selectAlbumFromUID(FirstAlbum);
+
+  await album.checkHoverActionAvailability("nth", 0, "share", true);
+
+  const FirstAlbumUid = await album.getNthAlbumUid("moment", 0);
+  await album.selectAlbumFromUID(FirstAlbumUid);
+
   await contextmenu.checkContextMenuActionAvailability("edit", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
   await contextmenu.checkContextMenuActionAvailability("clone", true);
@@ -411,28 +499,32 @@ test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => 
   await contextmenu.checkContextMenuActionAvailability("delete", true);
 
   await contextmenu.clearSelection();
-  await t
-    .click(page.cardTitle)
-    .expect(Selector(".input-description textarea").visible)
-    .ok()
-    .click(Selector("button.action-cancel"));
-  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
+  await t.click(page.cardTitle);
+
+  await t.expect(albumdialog.description.visible).ok();
+
+  await t.click(albumdialog.dialogCancel);
+
+  if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
   } else {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
   }
   await album.openNthAlbum(0);
+
   await toolbar.checkToolbarActionAvailability("share", true);
   await toolbar.checkToolbarActionAvailability("edit", true);
+
   await photo.toggleSelectNthPhoto(0, "all");
+
   await contextmenu.checkContextMenuActionAvailability("album", true);
   await contextmenu.checkContextMenuActionAvailability("private", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
@@ -443,37 +535,46 @@ test.meta("testID", "admin-role-013")("Edit moment functionality", async (t) => 
 test.meta("testID", "admin-role-014")("Edit state functionality", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("states");
-  await t.expect(Selector("a.is-album button.action-share").visible).ok();
-  const FirstAlbum = await album.getNthAlbumUid("state", 0);
-  await album.selectAlbumFromUID(FirstAlbum);
+
+  await album.checkHoverActionAvailability("nth", 0, "share", true);
+
+  const FirstAlbumUid = await album.getNthAlbumUid("state", 0);
+  await album.selectAlbumFromUID(FirstAlbumUid);
+
   await contextmenu.checkContextMenuActionAvailability("edit", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
   await contextmenu.checkContextMenuActionAvailability("clone", true);
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.checkContextMenuActionAvailability("delete", true);
+
   await contextmenu.clearSelection();
-  await t
-    .click(page.cardTitle)
-    .expect(Selector(".input-description textarea").visible)
-    .ok()
-    .click(Selector("button.action-cancel"));
-  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
+  await t.click(page.cardTitle);
+
+  await t.expect(albumdialog.description.visible).ok();
+
+  await t.click(albumdialog.dialogCancel);
+
+  if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
   } else {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
   }
+
   await album.openNthAlbum(0);
+
   await toolbar.checkToolbarActionAvailability("share", true);
   await toolbar.checkToolbarActionAvailability("edit", true);
+
   await photo.toggleSelectNthPhoto(0, "all");
+
   await contextmenu.checkContextMenuActionAvailability("album", true);
   await contextmenu.checkContextMenuActionAvailability("private", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
@@ -484,37 +585,46 @@ test.meta("testID", "admin-role-014")("Edit state functionality", async (t) => {
 test.meta("testID", "admin-role-015")("Edit calendar functionality", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("calendar");
-  await t.expect(Selector("a.is-album button.action-share").visible).ok();
-  const FirstAlbum = await album.getNthAlbumUid("month", 0);
-  await album.selectAlbumFromUID(FirstAlbum);
+
+  await album.checkHoverActionAvailability("nth", 0, "share", true);
+
+  const FirstAlbumUid = await album.getNthAlbumUid("month", 0);
+  await album.selectAlbumFromUID(FirstAlbumUid);
+
   await contextmenu.checkContextMenuActionAvailability("edit", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
   await contextmenu.checkContextMenuActionAvailability("clone", true);
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.checkContextMenuActionAvailability("delete", false);
+
   await contextmenu.clearSelection();
-  await t
-    .click(page.cardTitle)
-    .expect(Selector(".input-description textarea").visible)
-    .ok()
-    .click(Selector("button.action-cancel"));
-  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
+  await t.click(page.cardTitle);
+
+  await t.expect(albumdialog.description.visible).ok();
+
+  await t.click(albumdialog.dialogCancel);
+
+  if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
   } else {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
   }
+
   await album.openNthAlbum(0);
+
   await toolbar.checkToolbarActionAvailability("share", true);
   await toolbar.checkToolbarActionAvailability("edit", true);
+
   await photo.toggleSelectNthPhoto(0, "all");
+
   await contextmenu.checkContextMenuActionAvailability("album", true);
   await contextmenu.checkContextMenuActionAvailability("private", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
@@ -524,37 +634,46 @@ test.meta("testID", "admin-role-015")("Edit calendar functionality", async (t) =
 test.meta("testID", "admin-role-016")("Edit folder functionality", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("folders");
-  await t.expect(Selector("a.is-album button.action-share").visible).ok();
-  const FirstAlbum = await album.getNthAlbumUid("folder", 0);
-  await album.selectAlbumFromUID(FirstAlbum);
+
+  await album.checkHoverActionAvailability("nth", 0, "share", true);
+
+  const FirstAlbumUid = await album.getNthAlbumUid("folder", 0);
+  await album.selectAlbumFromUID(FirstAlbumUid);
+
   await contextmenu.checkContextMenuActionAvailability("edit", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
   await contextmenu.checkContextMenuActionAvailability("clone", true);
   await contextmenu.checkContextMenuActionAvailability("download", true);
   await contextmenu.checkContextMenuActionAvailability("delete", false);
+
   await contextmenu.clearSelection();
-  await t
-    .click(page.cardTitle)
-    .expect(Selector(".input-description textarea").visible)
-    .ok()
-    .click(Selector("button.action-cancel"));
-  if (await Selector(`a.uid-${FirstAlbum}`).hasClass("is-favorite")) {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
+  await t.click(page.cardTitle);
+
+  await t.expect(albumdialog.description.visible).ok();
+
+  await t.click(albumdialog.dialogCancel);
+
+  if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
   } else {
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbum, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbum, "favorite", false);
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
   }
+
   await album.openNthAlbum(0);
+
   await toolbar.checkToolbarActionAvailability("share", true);
   await toolbar.checkToolbarActionAvailability("edit", true);
+
   await photo.toggleSelectNthPhoto(0, "all");
+
   await contextmenu.checkContextMenuActionAvailability("album", true);
   await contextmenu.checkContextMenuActionAvailability("private", true);
   await contextmenu.checkContextMenuActionAvailability("share", true);
@@ -564,45 +683,58 @@ test.meta("testID", "admin-role-016")("Edit folder functionality", async (t) => 
 test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => {
   await page.login("admin", "photoprism");
   await menu.openPage("people");
+
   await toolbar.checkToolbarActionAvailability("show-hidden", true);
-  await t.expect(Selector("#tab-people_faces > a").exists).ok();
+  await t.expect(subject.newTab.exists).ok();
   await subject.checkSubjectVisibility("name", "Otto Visible", true);
   await subject.checkSubjectVisibility("name", "Monika Hide", false);
-  await toolbar.triggerToolbarAction("show-hidden", "");
+
+  await toolbar.triggerToolbarAction("show-hidden");
+
   await subject.checkSubjectVisibility("name", "Otto Visible", true);
   await subject.checkSubjectVisibility("name", "Monika Hide", true);
-  await t
-    .click(Selector("a div.v-card__title").nth(0))
-    .expect(Selector("div.input-rename input").visible)
-    .ok();
+
+  await t.click(Selector("a div.v-card__title").nth(0));
+
+  await t.expect(Selector("div.input-rename input").visible).ok();
   await subject.checkHoverActionAvailability("nth", 0, "hidden", true);
+
   await subject.toggleSelectNthSubject(0);
   await contextmenu.checkContextMenuActionAvailability("album", "true");
   await contextmenu.clearSelection();
-  const FirstSubject = await subject.getNthSubjectUid(0);
-  if (await Selector(`a.uid-${FirstSubject}`).hasClass("is-favorite")) {
-    await subject.checkHoverActionState("uid", FirstSubject, "favorite", true);
-    await subject.triggerHoverAction("uid", FirstSubject, "favorite");
-    await subject.checkHoverActionState("uid", FirstSubject, "favorite", false);
-    await subject.triggerHoverAction("uid", FirstSubject, "favorite");
-    await subject.checkHoverActionState("uid", FirstSubject, "favorite", true);
+
+  const FirstSubjectUid = await subject.getNthSubjectUid(0);
+
+  if (await Selector(`a.uid-${FirstSubjectUid}`).hasClass("is-favorite")) {
+    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
+    await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
+    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
+    await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
+    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
   } else {
-    await subject.checkHoverActionState("uid", FirstSubject, "favorite", false);
-    await subject.triggerHoverAction("uid", FirstSubject, "favorite");
-    await subject.checkHoverActionState("uid", FirstSubject, "favorite", true);
-    await subject.triggerHoverAction("uid", FirstSubject, "favorite");
-    await subject.checkHoverActionState("uid", FirstSubject, "favorite", false);
+    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
+    await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
+    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
+    await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
+    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
   }
+
   await subject.openNthSubject(0);
   await photo.toggleSelectNthPhoto(0, "all");
-  await contextmenu.triggerContextMenuAction("edit", "", "");
+  await contextmenu.triggerContextMenuAction("edit", "");
+
+  await t.click(photoedit.peopleTab);
+
   await t
-    .click(Selector("#tab-people"))
-    .expect(Selector(".input-name input").hasAttribute("disabled"))
+    .expect(photoedit.inputName.hasAttribute("disabled"))
     .notOk()
-    .expect(Selector("div.v-input__icon--clear > i").hasClass("v-icon--disabled"))
-    .notOk()
-    .navigateTo("/people/new")
-    .expect(Selector("div.is-face").visible)
-    .ok();
+    .expect(photoedit.rejectName.hasClass("v-icon--disabled"))
+    .notOk();
+
+  await t.navigateTo("/people/new");
+
+  await t.expect(Selector("div.is-face").visible).ok();
+
+  await t.navigateTo("/people?hidden=yes&order=relevance");
+  await t.expect(Selector("a.is-subject").visible).ok();
 });
