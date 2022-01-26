@@ -466,7 +466,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="!isPublic && auth"  to="/account" class="p-profile">
+        <v-list-tile v-show="!isPublic && auth"  to="/account" class="nav-profile">
           <v-list-tile-avatar color="grey" size="36">
             <span class="white--text headline">{{ displayName.length >= 1 ? displayName[0].toUpperCase() : "E" }}</span>
           </v-list-tile-avatar>
