@@ -23,6 +23,10 @@ export default class Page {
     this.cardTitle = Selector("button.action-title-edit");
     this.cardDescription = Selector('div[title="Description"]');
     this.cardLocation = Selector("button.action-location");
+    this.nameInput = Selector(".input-name input");
+    this.passwordInput = Selector(".input-password input");
+    this.togglePasswordMode = Selector(".v-input__icon--append");
+    this.loginAction = Selector(".action-confirm");
   }
 
   async login(username, password) {
@@ -33,7 +37,8 @@ export default class Page {
   }
 
   async logout() {
-    await t.click(Selector("div.nav-logout"));
+    await menu.openNav();
+    await t.click(Selector('div[title="Logout"]'));
   }
 
   async testCreateEditDeleteSharingLink(type) {

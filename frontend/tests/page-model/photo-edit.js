@@ -7,6 +7,7 @@ export default class Page {
     this.dialogPrevious = Selector("div.v-dialog button.action-previous", { timeout: 15000 });
 
     this.filesTab = Selector("#tab-files", { timeout: 15000 });
+    this.infoTab = Selector("#tab-info", { timeout: 15000 });
     this.detailsTab = Selector("#tab-details", { timeout: 15000 });
     this.labelsTab = Selector("#tab-labels", { timeout: 15000 });
     this.peopleTab = Selector("#tab-people", { timeout: 15000 });
@@ -44,8 +45,10 @@ export default class Page {
     this.license = Selector(".input-license textarea", { timeout: 15000 });
     this.description = Selector(".input-description textarea", { timeout: 15000 });
     this.notes = Selector(".input-notes textarea", { timeout: 15000 });
-    this.camera = Selector("div.p-camera-select div.v-select__selection", { timeout: 15000 });
-    this.lens = Selector("div.p-lens-select div.v-select__selection", { timeout: 15000 });
+    this.camera = Selector(".input-camera input", { timeout: 15000 });
+    this.lens = Selector(".input-lens input", { timeout: 15000 });
+    //this.camera = Selector("div.p-camera-select div.v-select__selection", { timeout: 15000 });
+    //this.lens = Selector("div.p-lens-select div.v-select__selection", { timeout: 15000 });
 
     this.rejectName = Selector("div.input-name div.v-input__icon--clear", { timeout: 15000 });
     this.removeMarker = Selector("button.input-reject", { timeout: 15000 });
@@ -65,6 +68,15 @@ export default class Page {
     this.deleteFile = Selector(".action-delete", { timeout: 15000 });
     this.makeFilePrimary = Selector(".action-primary", { timeout: 15000 });
     this.toggleExpandFile = Selector("li.v-expansion-panel__container", { timeout: 15000 });
+
+    this.favoriteInput = Selector(".input-favorite input");
+    this.privateInput = Selector(".input-private input");
+    this.scanInput = Selector(".input-scan input");
+    this.panoramaInput = Selector(".input-panorama input");
+    this.stackableInput = Selector(".input-stackable input");
+    this.typeInput = Selector(".input-type input");
+
+
   }
 
   //edit single fields / check disabled, selectors for single fields?

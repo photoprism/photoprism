@@ -82,9 +82,9 @@ export default class Page {
     if (mode === "nth") {
       await t.hover(Selector("a.is-album").nth(uidOrNth));
       if (visible) {
-        await t.expect(Selector(`div.input-` + action).visible).ok();
+        await t.expect(Selector(`button.input-` + action).visible).ok();
       } else {
-        await t.expect(Selector(`div.input-` + action).visible).notOk();
+        await t.expect(Selector(`button.input-` + action).visible).notOk();
       }
     }
   }
