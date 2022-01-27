@@ -658,11 +658,8 @@ test.meta("testID", "admin-role-017")("Edit people functionality", async (t) => 
 
   await t.click(photoedit.peopleTab);
 
-  await t
-    .expect(photoedit.inputName.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.rejectName.hasClass("v-icon--disabled"))
-    .notOk();
+  await photoedit.checkFieldDisabled(photoedit.inputName, false);
+  await t.expect(photoedit.rejectName.hasClass("v-icon--disabled")).notOk();
 
   await t.navigateTo("/people/new");
 

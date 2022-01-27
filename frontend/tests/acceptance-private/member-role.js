@@ -331,10 +331,8 @@ test.meta("testID", "member-role-008")("Member cannot like photos", async (t) =>
   await contextmenu.triggerContextMenuAction("edit", "");
   await t.click(photoedit.infoTab);
 
-  await t.expect(Selector(".input-favorite input").hasAttribute("disabled")).ok();
-
   await photoedit.turnSwitchOn("favorite");
-  await t.click(Selector(".action-close"));
+  await t.click(photoedit.dialogClose);
   await contextmenu.clearSelection();
 
   await photo.checkHoverActionState("uid", SecondPhotoUid, "favorite", false);
@@ -700,11 +698,10 @@ test.meta("testID", "member-role-018")("No unstack, change primary actions", asy
 
   await t.click(photoedit.toggleExpandFile.nth(1));
 
+  await photoedit.checkFieldDisabled(photoedit.downloadFile, false);
   await t
     .expect(photoedit.downloadFile.visible)
     .ok()
-    .expect(photoedit.downloadFile.hasAttribute("disabled"))
-    .notOk()
     .expect(photoedit.unstackFile.visible)
     .notOk()
     .expect(photoedit.makeFilePrimary.visible)
@@ -751,11 +748,8 @@ test.meta("testID", "member-role-019")("No edit people functionality", async (t)
   await contextmenu.triggerContextMenuAction("edit", "");
   await t.click(photoedit.peopleTab);
 
-  await t
-    .expect(photoedit.inputName.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.rejectName.hasClass("v-icon--disabled"))
-    .ok();
+  await photoedit.checkFieldDisabled(photoedit.inputName);
+  await t.expect(photoedit.rejectName.hasClass("v-icon--disabled")).ok();
 
   await t.navigateTo("/people/new");
 
