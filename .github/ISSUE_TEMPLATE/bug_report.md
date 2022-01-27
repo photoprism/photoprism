@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## We kindly ask you not to report a bug unless you are certain to have found a new issue that must be fixed directly in the application source code ##
+## We kindly ask you not to report a bug unless you are certain to have found a fully reproducible and previously unreported issue that must be fixed directly in the application source code ##
 
 Contact us or a community member if you need help, it could be a local configuration problem, or a misunderstanding in how the software works.
 

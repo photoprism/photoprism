@@ -21,7 +21,8 @@ to determine the cause of your problem. If you have a general question, need hel
 
 ### GitHub Issues ###
 
-Never report a bug unless you are certain to have found a new issue that must be fixed directly in [our source code](https://github.com/photoprism/photoprism):
+Never report a bug unless you are certain to have found a fully reproducible and previously unreported issue that
+must be fixed directly in [our source code](https://github.com/photoprism/photoprism):
 
 - [Contact us](https://photoprism.app/contact) or [a community member](https://github.com/photoprism/photoprism/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works
 - This gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling unclear and/or duplicate bug reports
