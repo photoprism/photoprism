@@ -9,7 +9,7 @@ We currently have the following sponsorship options:
 - [Patreon](https://www.patreon.com/photoprism) is priced in Euro and also offers yearly payments
 - Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub
   account
-- You are welcome to [contact us](https://photoprism.app/contact) for [other options](#crypto-wallets)
+- you are welcome to [contact us](https://photoprism.app/contact) for [other options](#crypto-wallets)
 
 Visit [docs.photoprism.app/funding](https://docs.photoprism.app/funding/) to learn more.
 

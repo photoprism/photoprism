@@ -4,9 +4,9 @@ You are welcome to also report vulnerabilities in third-party applications that 
 
 At a minimum, your report should include the following:
 
-* Version and architecture
-* Vulnerability description
-* Reproduction steps
+* version and architecture
+* vulnerability description
+* reproduction steps
 
 We will then try to reproduce the problem, determine the impact and get back to you as soon as possible.
 
