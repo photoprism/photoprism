@@ -1100,6 +1100,11 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+#: src/component/footer.vue:6
+#: src/component/footer.vue:1
+msgid "Help us make a difference and become a sponsor today!"
+msgstr ""
+
 #: src/component/navigation.vue:352
 msgid "Hidden"
 msgstr ""
@@ -2391,6 +2396,11 @@ msgstr ""
 #: src/dialog/photo/details.vue:25
 #: src/pages/people/faces.vue:51
 msgid "Text too long"
+msgstr ""
+
+#: src/component/footer.vue:5
+#: src/component/footer.vue:1
+msgid "Thank you very much for your support!"
 msgstr ""
 
 #: src/pages/library/index.vue:36

@@ -4,7 +4,7 @@
       <v-layout wrap align-top pt-3>
         <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-selectable">
           <template v-if="sponsor"><router-link to="/about"><translate>Thank you very much for your support!</translate></router-link></template>
-          <template v-else><router-link to="/about" class="text-link">Help us make a difference and become a sponsor today!</router-link></template>
+          <template v-else><router-link to="/about" class="text-link"><translate>Help us make a difference and become a sponsor today!</translate></router-link></template>
           <br>
           PhotoPrism® {{ $config.get("version") }}
         </v-flex>
