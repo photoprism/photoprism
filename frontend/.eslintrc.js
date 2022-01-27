@@ -51,6 +51,13 @@ module.exports = {
     "no-console": 0,
     "no-case-declarations": 0,
     "no-prototype-builtins": 0,
+    "vue/first-attribute-linebreak": [
+      "error",
+      {
+        singleline: "ignore",
+        multiline: "ignore",
+      },
+    ],
     "prettier-vue/prettier": [
       "error",
       {
