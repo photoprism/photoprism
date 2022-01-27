@@ -75,11 +75,66 @@ export default class Page {
     this.panoramaInput = Selector(".input-panorama input");
     this.stackableInput = Selector(".input-stackable input");
     this.typeInput = Selector(".input-type input");
-
-
   }
 
-  //edit single fields / check disabled, selectors for single fields?
+  async editDetailsField(field, value) {
+    await t.typeText(field, value, { replace: true });
+  }
+
+  async checkFieldDisabled(field, disabled) {
+    if (disabled) {
+      await t.expect(field.hasAttribute("disabled")).ok();
+    } else {
+      await t.expect(field.hasAttribute("disabled")).notOk();
+    }
+  }
+
+  async checkAllDetailsFieldsDisabled(disabled) {
+    const fields = [
+      this.title,
+      this.latitude,
+      this.longitude,
+      this.keywords,
+      this.localTime,
+      this.day,
+      this.month,
+      this.year,
+      this.timezone,
+      this.altitude,
+      this.country,
+      this.iso,
+      this.exposure,
+      this.fnumber,
+      this.focallength,
+      this.subject,
+      this.artist,
+      this.copyright,
+      this.license,
+      this.description,
+      this.notes,
+      this.camera,
+      this.lens,
+    ];
+
+    fields.forEach((item) => {
+      this.checkFieldDisabled(item, disabled);
+    });
+  }
+
+  async checkAllInfoFieldsDisabled(disabled) {
+    const fields = [
+      this.favoriteInput,
+      this.privateInput,
+      this.scanInput,
+      this.panoramaInput,
+      this.stackableInput,
+      this.typeInput,
+    ];
+
+    fields.forEach((item) => {
+      this.checkFieldDisabled(item, disabled);
+    });
+  }
   // check edit form values // get all current edit form values // set edit form values
   //edit dialog disabled --funcionalities
 
