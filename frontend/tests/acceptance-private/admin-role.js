@@ -317,68 +317,16 @@ test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", 
   await photo.selectPhotoFromUID(FirstPhotoUid);
   await contextmenu.triggerContextMenuAction("edit", "");
 
-  await t
-    .expect(photoedit.title.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.localTime.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.day.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.month.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.year.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.timezone.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.latitude.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.longitude.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.altitude.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.country.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.camera.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.iso.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.exposure.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.lens.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.fnumber.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.focallength.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.subject.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.artist.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.copyright.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.license.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.description.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.keywords.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.notes.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.detailsApply.visible)
-    .ok();
+  await photoedit.checkAllDetailsFieldsDisabled(false);
+  await t.expect(photoedit.detailsApply.visible).ok();
   if (t.browser.platform !== "mobile") {
     await t.expect(photoedit.detailsDone.visible).ok();
   }
 
   await t.click(photoedit.labelsTab);
 
-  await t
-    .expect(photoedit.removeLabel.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.inputLabelName.exists)
-    .ok()
-    .expect(photoedit.addLabel.exists)
-    .ok();
+  await photoedit.checkFieldDisabled(photoedit.removeLabel, false);
+  await t.expect(photoedit.inputLabelName.exists).ok().expect(photoedit.addLabel.exists).ok();
 
   await t.click(photoedit.openInlineEdit);
 
@@ -386,27 +334,12 @@ test.meta("testID", "admin-role-010")("Edit dialog is not read only for admin", 
 
   await t.click(photoedit.peopleTab);
 
-  await t
-    .expect(photoedit.inputName.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.removeMarker.exists)
-    .ok();
+  await photoedit.checkFieldDisabled(photoedit.inputName, false);
+  await t.expect(photoedit.removeMarker.exists).ok();
 
   await t.click(photoedit.infoTab);
 
-  await t
-    .expect(photoedit.favoriteInput.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.privateInput.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.scanInput.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.panoramaInput.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.stackableInput.hasAttribute("disabled"))
-    .notOk()
-    .expect(photoedit.typeInput.hasAttribute("disabled"))
-    .notOk();
+  await photoedit.checkAllInfoFieldsDisabled(false);
 });
 
 test.meta("testID", "admin-role-011")("Edit labels functionality", async (t) => {

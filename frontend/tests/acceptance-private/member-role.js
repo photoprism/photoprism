@@ -424,68 +424,17 @@ test.meta("testID", "member-role-011")("Edit dialog is read only for member", as
   await photo.selectPhotoFromUID(FirstPhotoUid);
   await contextmenu.triggerContextMenuAction("edit", "");
 
-  await t
-    .expect(photoedit.title.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.localTime.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.day.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.month.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.year.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.timezone.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.latitude.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.longitude.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.altitude.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.country.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.camera.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.iso.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.exposure.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.lens.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.fnumber.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.focallength.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.subject.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.artist.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.copyright.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.license.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.description.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.keywords.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.notes.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.detailsApply.visible)
-    .notOk();
+  await photoedit.checkAllDetailsFieldsDisabled(true);
+
+  await t.expect(photoedit.detailsApply.visible).notOk();
   if (t.browser.platform !== "mobile") {
     await t.expect(photoedit.detailsDone.visible).notOk();
   }
 
   await t.click(photoedit.labelsTab);
 
-  await t
-    .expect(photoedit.removeLabel.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.inputLabelName.exists)
-    .notOk()
-    .expect(photoedit.addLabel.exists)
-    .notOk();
+  await photoedit.checkFieldDisabled(photoedit.removeLabel, true);
+  await t.expect(photoedit.inputLabelName.exists).notOk().expect(photoedit.addLabel.exists).notOk();
 
   await t.click(photoedit.openInlineEdit);
 
@@ -493,27 +442,12 @@ test.meta("testID", "member-role-011")("Edit dialog is read only for member", as
 
   await t.click(photoedit.peopleTab);
 
-  await t
-    .expect(photoedit.inputName.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.removeMarker.exists)
-    .notOk();
+  await photoedit.checkFieldDisabled(photoedit.inputName, true);
+  await t.expect(photoedit.removeMarker.exists).notOk();
 
   await t.click(photoedit.infoTab);
 
-  await t
-    .expect(photoedit.favoriteInput.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.privateInput.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.scanInput.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.panoramaInput.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.stackableInput.hasAttribute("disabled"))
-    .ok()
-    .expect(photoedit.typeInput.hasAttribute("disabled"))
-    .ok();
+  await photoedit.checkAllInfoFieldsDisabled(true);
 });
 
 test.meta("testID", "member-role-012")("No edit album functionality", async (t) => {
