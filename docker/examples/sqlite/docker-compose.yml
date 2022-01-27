@@ -39,7 +39,6 @@ version: '3.5'
 # This will point the home directory shortcut ~ to /root in volume mounts.
 
 services:
-  ## App Server (required)
   photoprism:
     ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest

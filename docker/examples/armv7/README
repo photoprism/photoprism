@@ -3,9 +3,10 @@
 You have to resort to alternative Docker images to run PhotoPrism and MariaDB on ARMv7-based devices
 and those with a 32-bit operating system:
 
-ARMv7 Release: photoprism/photoprism:armv7
-MariaDB      : linuxserver/mariadb:latest
+PhotoPrism: photoprism/photoprism:armv7
+MariaDB   : linuxserver/mariadb:latest
 
+Darktable is not included in the ARMv7 version because it is not 32-bit compatible.
 Pay close attention to changed directory and environment variable names.
 
 If your device meets the system requirements, mostly the same installation instructions as for regular Linux
@@ -15,9 +16,11 @@ servers apply:
 
 ### System Requirements ###
 
-- Your device should have at least 4 GB of memory. Running PhotoPrism on a server with less than 4 GB of swap space
-  or setting a memory/swap limit can cause unexpected restarts, especially when the indexer temporarily needs more
-  memory to process large files.
+- Your device should have at least 3 GB of physical memory. While PhotoPrism has been reported to work on devices with
+  less memory, we take no responsibility for instability or performance issues. RAW image conversion and TensorFlow are
+  disabled on systems with 1 GB or less memory.
+- If less than 4 GB of swap space is configured or a manual memory/swap limit is set, this can cause unexpected restarts,
+  especially if the indexer temporarily needs more memory to process large files.
 - If you see Docker errors related to "cgroups", it may help to add the following to `/boot/firmware/cmdline.txt`:
   ```
   cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
@@ -40,11 +43,22 @@ servers apply:
     and plenty of memory for caching. Especially the conversion of RAW images and the transcoding of
     videos are very demanding.
 
-!!! Reducing System Load
-    If you're running out of memory - or other system resources - while indexing, try reducing the
-    [number of workers](https://docs.photoprism.app/getting-started/config-options/) by setting
-    `PHOTOPRISM_WORKERS` to a reasonably small value in `docker-compose.yml` (depending on the performance of the server).
-    As a measure of last resort, you may disable using TensorFlow for image classification and facial recognition.
+### Troubleshooting ###
+
+If your server runs out of memory, the index is frequently locked, or other system resources are running low:
+
+- Try reducing the number of workers by setting PHOTOPRISM_WORKERS to a reasonably small value in docker-compose.yml,
+  depending on the performance of your device or cloud server:
+
+  https://docs.photoprism.app/getting-started/config-options/
+
+- If you are using SQLite, switch to MariaDB, which is better optimized for high concurrency
+
+- As a last measure, you can disable the use of TensorFlow for image classification and facial recognition.
+
+Other issues? Our troubleshooting checklists help you quickly diagnose and solve them:
+
+  https://docs.photoprism.app/getting-started/troubleshooting/
 
 ### Getting Updates ###
 

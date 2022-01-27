@@ -40,7 +40,6 @@ version: '3.5'
 # This will point the home directory shortcut ~ to /root in volume mounts.
 
 services:
-  ## App Server (required)
   photoprism:
     ## Special Docker image for running PhotoPrism on ARMv7-based devices and those with a 32-bit operating system:
     image: photoprism/photoprism:armv7

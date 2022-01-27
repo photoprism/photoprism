@@ -53,8 +53,8 @@ version: '3.5'
 #  should match the number of cores. Indexing large photo and video
 #  collections significantly benefits from fast, local SSD storage.
 #
-#  RAW file conversion and automatic image classification using TensorFlow
-#  will be disabled on servers with less than 2 GB of physical memory.
+#  RAW image conversion and automatic image classification using TensorFlow
+#  will be disabled on servers with 1 GB or less memory.
 #
 #  DOCKER COMPOSE COMMAND REFERENCE
 #  --------------------------------------------------------------------------
@@ -94,7 +94,6 @@ version: '3.5'
 #  You should now be able to access your instance without security warnings.
 
 services:
-  ## App Server (required)
   photoprism:
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
