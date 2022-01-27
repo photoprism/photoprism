@@ -5,7 +5,7 @@ version: '3.5'
 #
 # Note:
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
-#   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
+#   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
 #   HTTPS reverse proxy such as Traefik or Caddy. Your files and passwords will otherwise be transmitted
 #   in clear text and can be intercepted by anyone, including your provider, hackers, and governments:

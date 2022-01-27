@@ -4,7 +4,7 @@ version: '3.5'
 #
 # Note:
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
-#   restarts ("crashes"), especially when the indexer temporarily needs more memory to process large files.
+#   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - Windows Pro users should disable the WSL 2 based engine in Docker Settings > General so that
 #   they can mount drives other than C:. This will enable Hyper-V, which Microsoft doesn't offer
 #   to its Windows Home customers. Docker Desktop uses dynamic memory allocation with WSL 2.

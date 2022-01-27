@@ -20,7 +20,7 @@ servers apply:
   less memory, we take no responsibility for instability or performance issues. RAW image conversion and TensorFlow are
   disabled on systems with 1 GB or less memory.
 - If less than 4 GB of swap space is configured or a manual memory/swap limit is set, this can cause unexpected restarts,
-  especially if the indexer temporarily needs more memory to process large files.
+  for example, when the indexer temporarily needs more memory to process large files.
 - If you see Docker errors related to "cgroups", it may help to add the following to `/boot/firmware/cmdline.txt`:
   ```
   cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
@@ -54,7 +54,7 @@ If your server runs out of memory, the index is frequently locked, or other syst
 
 - If you are using SQLite, switch to MariaDB, which is better optimized for high concurrency
 
-- As a last measure, you can disable the use of TensorFlow for image classification and facial recognition.
+- As a last measure, you can disable the use of TensorFlow for image classification and facial recognition
 
 Other issues? Our troubleshooting checklists help you quickly diagnose and solve them:
 
