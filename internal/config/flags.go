@@ -363,7 +363,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "darktable-bin",
-		Usage:  "Darktable CLI `COMMAND` for RAW file conversion",
+		Usage:  "Darktable CLI `COMMAND` for RAW image conversion",
 		Value:  "darktable-cli",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BIN",
 	},
@@ -375,7 +375,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "rawtherapee-bin",
-		Usage:  "RawTherapee CLI `COMMAND` for RAW file conversion",
+		Usage:  "RawTherapee CLI `COMMAND` for RAW image conversion",
 		Value:  "rawtherapee-cli",
 		EnvVar: "PHOTOPRISM_RAWTHERAPEE_BIN",
 	},
@@ -387,7 +387,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "sips-bin",
-		Usage:  "Sips `COMMAND` for RAW file conversion (macOS only)",
+		Usage:  "Sips `COMMAND` for RAW image conversion (macOS only)",
 		Value:  "sips",
 		EnvVar: "PHOTOPRISM_SIPS_BIN",
 	},
