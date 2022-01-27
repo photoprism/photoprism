@@ -33,66 +33,72 @@ const albumdialog = new AlbumDialog();
 
 const getLocation = ClientFunction(() => document.location.href);
 
-test.meta("testID", "member-role-001")("No access to settings", async (t) => {
-  await page.login("member", "passwdmember");
+test.meta("testID", "member-role-001").meta({ type: "smoke" })(
+  "No access to settings",
+  async (t) => {
+    await page.login("member", "passwdmember");
 
-  await menu.checkMenuItemAvailability("settings", false);
+    await menu.checkMenuItemAvailability("settings", false);
 
-  await t.navigateTo("/settings");
+    await t.navigateTo("/settings");
 
-  await t
-    .expect(settings.languageInput.visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
+    await t
+      .expect(settings.languageInput.visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
 
-  await t.navigateTo("/settings/library");
+    await t.navigateTo("/settings/library");
 
-  await t
-    .expect(Selector("form.p-form-settings").visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
+    await t
+      .expect(Selector("form.p-form-settings").visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
 
-  await t.navigateTo("/settings/advanced");
+    await t.navigateTo("/settings/advanced");
 
-  await t
-    .expect(Selector("label").withText("Read-Only Mode").visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
+    await t
+      .expect(Selector("label").withText("Read-Only Mode").visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
 
-  await t.navigateTo("/settings/sync");
+    await t.navigateTo("/settings/sync");
 
-  await t
-    .expect(Selector("div.p-accounts-list").visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
-});
-
-test.meta("testID", "member-role-002")("No access to archive", async (t) => {
-  await page.login("member", "passwdmember");
-  if (t.browser.platform === "mobile") {
-    await t.wait(5000);
+    await t
+      .expect(Selector("div.p-accounts-list").visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
   }
-  const PhotoCountBrowse = await photo.getPhotoCount("all");
+);
 
-  await menu.checkMenuItemAvailability("archive", false);
+test.meta("testID", "member-role-002").meta({ type: "smoke" })(
+  "No access to archive",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
+    const PhotoCountBrowse = await photo.getPhotoCount("all");
 
-  await t.navigateTo("/archive");
+    await menu.checkMenuItemAvailability("archive", false);
 
-  await photo.checkPhotoVisibility("pqnahct2mvee8sr4", false);
+    await t.navigateTo("/archive");
 
-  if (t.browser.platform === "mobile") {
-    await t.wait(5000);
+    await photo.checkPhotoVisibility("pqnahct2mvee8sr4", false);
+
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
+
+    const PhotoCountArchive = await photo.getPhotoCount("all");
+    await t.expect(PhotoCountBrowse).eql(PhotoCountArchive);
   }
+);
 
-  const PhotoCountArchive = await photo.getPhotoCount("all");
-  await t.expect(PhotoCountBrowse).eql(PhotoCountArchive);
-});
-
-test.meta("testID", "member-role-003")("No access to review", async (t) => {
+test.meta("testID", "member-role-003").meta({ type: "smoke" })("No access to review", async (t) => {
   await page.login("member", "passwdmember");
   if (t.browser.platform === "mobile") {
     await t.wait(5000);
@@ -113,89 +119,95 @@ test.meta("testID", "member-role-003")("No access to review", async (t) => {
   await t.expect(PhotoCountBrowse).eql(PhotoCountReview);
 });
 
-test.meta("testID", "member-role-004")("No access to private", async (t) => {
-  await page.login("member", "passwdmember");
-  if (t.browser.platform === "mobile") {
-    await t.wait(5000);
+test.meta("testID", "member-role-004").meta({ type: "smoke" })(
+  "No access to private",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
+    const PhotoCountBrowse = await photo.getPhotoCount("all");
+
+    await menu.checkMenuItemAvailability("private", false);
+
+    await t.navigateTo("/private");
+
+    await photo.checkPhotoVisibility("pqmxlquf9tbc8mk2", false);
+
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
+    const PhotoCountPrivate = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountBrowse).eql(PhotoCountPrivate);
   }
-  const PhotoCountBrowse = await photo.getPhotoCount("all");
+);
 
-  await menu.checkMenuItemAvailability("private", false);
+test.meta("testID", "member-role-005").meta({ type: "smoke" })(
+  "No access to library",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
+    const PhotoCountBrowse = await photo.getPhotoCount("all");
 
-  await t.navigateTo("/private");
+    await menu.checkMenuItemAvailability("library", false);
 
-  await photo.checkPhotoVisibility("pqmxlquf9tbc8mk2", false);
+    await t.navigateTo("/library");
 
-  if (t.browser.platform === "mobile") {
-    await t.wait(5000);
+    await t
+      .expect(library.indexFolderSelect.visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
+
+    await t.navigateTo("/library/import");
+
+    await t
+      .expect(library.openImportFolderSelect.visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
+
+    await t.navigateTo("/library/logs");
+
+    await t
+      .expect(Selector("p.p-log-message").visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
+    await menu.checkMenuItemAvailability("originals", false);
+
+    await t.navigateTo("/library/files");
+
+    await t
+      .expect(Selector("div.p-page-files").visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
+    await menu.checkMenuItemAvailability("hidden", false);
+
+    await t.navigateTo("/library/hidden");
+    if (t.browser.platform === "mobile") {
+      await t.wait(5000);
+    }
+    const PhotoCountHidden = await photo.getPhotoCount("all");
+
+    await t.expect(PhotoCountBrowse).eql(PhotoCountHidden);
+    await menu.checkMenuItemAvailability("errors", false);
+
+    await t.navigateTo("/library/errors");
+
+    await t
+      .expect(Selector("div.p-page-errors").visible)
+      .notOk()
+      .expect(Selector("div.p-page-photos").visible)
+      .ok();
   }
-  const PhotoCountPrivate = await photo.getPhotoCount("all");
+);
 
-  await t.expect(PhotoCountBrowse).eql(PhotoCountPrivate);
-});
-
-test.meta("testID", "member-role-005")("No access to library", async (t) => {
-  await page.login("member", "passwdmember");
-  if (t.browser.platform === "mobile") {
-    await t.wait(5000);
-  }
-  const PhotoCountBrowse = await photo.getPhotoCount("all");
-
-  await menu.checkMenuItemAvailability("library", false);
-
-  await t.navigateTo("/library");
-
-  await t
-    .expect(library.indexFolderSelect.visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
-
-  await t.navigateTo("/library/import");
-
-  await t
-    .expect(library.openImportFolderSelect.visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
-
-  await t.navigateTo("/library/logs");
-
-  await t
-    .expect(Selector("p.p-log-message").visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
-  await menu.checkMenuItemAvailability("originals", false);
-
-  await t.navigateTo("/library/files");
-
-  await t
-    .expect(Selector("div.p-page-files").visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
-  await menu.checkMenuItemAvailability("hidden", false);
-
-  await t.navigateTo("/library/hidden");
-  if (t.browser.platform === "mobile") {
-    await t.wait(5000);
-  }
-  const PhotoCountHidden = await photo.getPhotoCount("all");
-
-  await t.expect(PhotoCountBrowse).eql(PhotoCountHidden);
-  await menu.checkMenuItemAvailability("errors", false);
-
-  await t.navigateTo("/library/errors");
-
-  await t
-    .expect(Selector("div.p-page-errors").visible)
-    .notOk()
-    .expect(Selector("div.p-page-photos").visible)
-    .ok();
-});
-
-test.meta("testID", "member-role-006")(
+test.meta("testID", "member-role-006").meta({ type: "smoke" })(
   "No private/archived photos in search results",
   async (t) => {
     await page.login("member", "passwdmember");
@@ -265,107 +277,113 @@ test.meta("testID", "member-role-006")(
   }
 );
 
-test.meta("testID", "member-role-007")("No upload functionality", async (t) => {
-  await page.login("member", "passwdmember");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("albums");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await album.openNthAlbum(0);
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("video");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("people");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("favorites");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("moments");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await album.openNthAlbum(0);
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("calendar");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await album.openNthAlbum(0);
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("states");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await album.openNthAlbum(0);
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await menu.openPage("folders");
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await album.openNthAlbum(0);
-  await toolbar.checkToolbarActionAvailability("upload", false);
-});
-
-test.meta("testID", "member-role-008")("Member cannot like photos", async (t) => {
-  await page.login("member", "passwdmember");
-  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
-  const SecondPhotoUid = await photo.getNthPhotoUid("all", 1);
-  await menu.openPage("favorites");
-  const FirstFavoriteUid = await photo.getNthPhotoUid("image", 0);
-
-  await photo.checkHoverActionState("uid", FirstFavoriteUid, "favorite", true);
-
-  await photo.triggerHoverAction("uid", FirstFavoriteUid, "favorite");
-
-  await photo.checkHoverActionState("uid", FirstFavoriteUid, "favorite", true);
-  await photo.checkPhotoVisibility(FirstPhotoUid, false);
-  await photo.checkPhotoVisibility(SecondPhotoUid, false);
-
-  await menu.openPage("browse");
-  await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
-
-  await photoviewer.checkPhotoViewerActionAvailability("like", false);
-  await photoviewer.checkPhotoViewerActionAvailability("close", true);
-
-  await photoviewer.triggerPhotoViewerAction("close");
-  await t.wait(5000).click(Selector(".p-expand-search", { timeout: 10000 }));
-  await toolbar.setFilter("view", "Cards");
-
-  await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
-
-  await photo.triggerHoverAction("uid", FirstPhotoUid, "favorite");
-
-  await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
-
-  await photo.selectPhotoFromUID(SecondPhotoUid);
-  await contextmenu.triggerContextMenuAction("edit", "");
-  await t.click(photoedit.infoTab);
-
-  await photoedit.turnSwitchOn("favorite");
-  await t.click(photoedit.dialogClose);
-  await contextmenu.clearSelection();
-
-  await photo.checkHoverActionState("uid", SecondPhotoUid, "favorite", false);
-
-  await menu.openPage("browse");
-  await toolbar.setFilter("view", "Mosaic");
-
-  await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
-
-  await photo.triggerHoverAction("uid", FirstPhotoUid, "favorite");
-
-  await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
-
-  await toolbar.setFilter("view", "List");
-
-  await photo.checkListViewActionAvailability("like", true);
-
-  await photo.triggerListViewActions("nth", 0, "like");
-  await toolbar.setFilter("view", "Cards");
-
-  await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
-
-  await menu.openPage("albums");
-  await album.openNthAlbum(0);
-  await toolbar.triggerToolbarAction("list-view");
-  if (t.browser.platform === "mobile") {
-    await toolbar.triggerToolbarAction("list-view");
+test.meta("testID", "member-role-007").meta({ type: "smoke" })(
+  "No upload functionality",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("albums");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("video");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("people");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("favorites");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("moments");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("calendar");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("states");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await menu.openPage("folders");
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("upload", false);
   }
+);
 
-  await photo.checkListViewActionAvailability("like", true);
-});
+test.meta("testID", "member-role-008").meta({ type: "smoke" })(
+  "Member cannot like photos",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    const SecondPhotoUid = await photo.getNthPhotoUid("all", 1);
+    await menu.openPage("favorites");
+    const FirstFavoriteUid = await photo.getNthPhotoUid("image", 0);
 
-test.meta("testID", "member-role-009")(
+    await photo.checkHoverActionState("uid", FirstFavoriteUid, "favorite", true);
+
+    await photo.triggerHoverAction("uid", FirstFavoriteUid, "favorite");
+
+    await photo.checkHoverActionState("uid", FirstFavoriteUid, "favorite", true);
+    await photo.checkPhotoVisibility(FirstPhotoUid, false);
+    await photo.checkPhotoVisibility(SecondPhotoUid, false);
+
+    await menu.openPage("browse");
+    await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
+
+    await photoviewer.checkPhotoViewerActionAvailability("like", false);
+    await photoviewer.checkPhotoViewerActionAvailability("close", true);
+
+    await photoviewer.triggerPhotoViewerAction("close");
+    await t.wait(5000).click(Selector(".p-expand-search", { timeout: 10000 }));
+    await toolbar.setFilter("view", "Cards");
+
+    await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
+
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "favorite");
+
+    await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
+
+    await photo.selectPhotoFromUID(SecondPhotoUid);
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.infoTab);
+
+    await photoedit.turnSwitchOn("favorite");
+    await t.click(photoedit.dialogClose);
+    await contextmenu.clearSelection();
+
+    await photo.checkHoverActionState("uid", SecondPhotoUid, "favorite", false);
+
+    await menu.openPage("browse");
+    await toolbar.setFilter("view", "Mosaic");
+
+    await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
+
+    await photo.triggerHoverAction("uid", FirstPhotoUid, "favorite");
+
+    await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
+
+    await toolbar.setFilter("view", "List");
+
+    await photo.checkListViewActionAvailability("like", true);
+
+    await photo.triggerListViewActions("nth", 0, "like");
+    await toolbar.setFilter("view", "Cards");
+
+    await photo.checkHoverActionState("uid", FirstPhotoUid, "favorite", false);
+
+    await menu.openPage("albums");
+    await album.openNthAlbum(0);
+    await toolbar.triggerToolbarAction("list-view");
+    if (t.browser.platform === "mobile") {
+      await toolbar.triggerToolbarAction("list-view");
+    }
+
+    await photo.checkListViewActionAvailability("like", true);
+  }
+);
+
+test.meta("testID", "member-role-009").meta({ type: "smoke" })(
   "Member cannot private, archive, share, add/remove to album",
   async (t) => {
     await page.login("member", "passwdmember");
@@ -406,90 +424,103 @@ test.meta("testID", "member-role-009")(
   }
 );
 
-test.meta("testID", "member-role-010")("Member cannot approve low quality photos", async (t) => {
-  await page.login("member", "passwdmember");
-  await toolbar.search('quality:0 name:"photos-013_1"');
-  await photo.toggleSelectNthPhoto(0, "all");
-  await contextmenu.triggerContextMenuAction("edit", "");
+test.meta("testID", "member-role-010").meta({ type: "smoke" })(
+  "Member cannot approve low quality photos",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await toolbar.search('quality:0 name:"photos-013_1"');
+    await photo.toggleSelectNthPhoto(0, "all");
+    await contextmenu.triggerContextMenuAction("edit", "");
 
-  await t.expect(photoedit.detailsApprove.visible).notOk();
-});
-
-test.meta("testID", "member-role-011")("Edit dialog is read only for member", async (t) => {
-  await page.login("member", "passwdmember");
-  await toolbar.search("faces:new");
-  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
-  await photo.selectPhotoFromUID(FirstPhotoUid);
-  await contextmenu.triggerContextMenuAction("edit", "");
-
-  await photoedit.checkAllDetailsFieldsDisabled(true);
-
-  await t.expect(photoedit.detailsApply.visible).notOk();
-  if (t.browser.platform !== "mobile") {
-    await t.expect(photoedit.detailsDone.visible).notOk();
+    await t.expect(photoedit.detailsApprove.visible).notOk();
   }
+);
 
-  await t.click(photoedit.labelsTab);
+test.meta("testID", "member-role-011").meta({ type: "smoke" })(
+  "Edit dialog is read only for member",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await toolbar.search("faces:new");
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+    await contextmenu.triggerContextMenuAction("edit", "");
 
-  await photoedit.checkFieldDisabled(photoedit.removeLabel, true);
-  await t.expect(photoedit.inputLabelName.exists).notOk().expect(photoedit.addLabel.exists).notOk();
+    await photoedit.checkAllDetailsFieldsDisabled(true);
 
-  await t.click(photoedit.openInlineEdit);
+    await t.expect(photoedit.detailsApply.visible).notOk();
+    if (t.browser.platform !== "mobile") {
+      await t.expect(photoedit.detailsDone.visible).notOk();
+    }
 
-  await t.expect(photoedit.inputLabelRename.exists).notOk();
+    await t.click(photoedit.labelsTab);
 
-  await t.click(photoedit.peopleTab);
+    await photoedit.checkFieldDisabled(photoedit.removeLabel, true);
+    await t
+      .expect(photoedit.inputLabelName.exists)
+      .notOk()
+      .expect(photoedit.addLabel.exists)
+      .notOk();
 
-  await photoedit.checkFieldDisabled(photoedit.inputName, true);
-  await t.expect(photoedit.removeMarker.exists).notOk();
+    await t.click(photoedit.openInlineEdit);
 
-  await t.click(photoedit.infoTab);
+    await t.expect(photoedit.inputLabelRename.exists).notOk();
 
-  await photoedit.checkAllInfoFieldsDisabled(true);
-});
+    await t.click(photoedit.peopleTab);
 
-test.meta("testID", "member-role-012")("No edit album functionality", async (t) => {
-  await page.login("member", "passwdmember");
-  await menu.openPage("albums");
+    await photoedit.checkFieldDisabled(photoedit.inputName, true);
+    await t.expect(photoedit.removeMarker.exists).notOk();
 
-  await toolbar.checkToolbarActionAvailability("add", false);
-  await album.checkHoverActionAvailability("nth", 1, "share", false);
+    await t.click(photoedit.infoTab);
 
-  const FirstAlbumUid = await album.getNthAlbumUid("all", 0);
-  await album.selectAlbumFromUID(FirstAlbumUid);
-
-  await contextmenu.checkContextMenuActionAvailability("edit", false);
-  await contextmenu.checkContextMenuActionAvailability("share", false);
-  await contextmenu.checkContextMenuActionAvailability("clone", false);
-  await contextmenu.checkContextMenuActionAvailability("download", true);
-  await contextmenu.checkContextMenuActionAvailability("delete", false);
-
-  await contextmenu.clearSelection();
-  await t.click(page.cardTitle);
-
-  await t.expect(albumdialog.description.visible).notOk();
-
-  if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
-  } else {
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    await photoedit.checkAllInfoFieldsDisabled(true);
   }
-  await album.openNthAlbum(0);
+);
 
-  await toolbar.checkToolbarActionAvailability("share", false);
-  await toolbar.checkToolbarActionAvailability("edit", false);
+test.meta("testID", "member-role-012").meta({ type: "smoke" })(
+  "No edit album functionality",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await menu.openPage("albums");
 
-  await photo.toggleSelectNthPhoto(0, "all");
+    await toolbar.checkToolbarActionAvailability("add", false);
+    await album.checkHoverActionAvailability("nth", 1, "share", false);
 
-  await contextmenu.checkContextMenuActionAvailability("album", false);
-  await contextmenu.checkContextMenuActionAvailability("private", false);
-  await contextmenu.checkContextMenuActionAvailability("share", false);
-  await contextmenu.checkContextMenuActionAvailability("remove", false);
-});
+    const FirstAlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.selectAlbumFromUID(FirstAlbumUid);
+
+    await contextmenu.checkContextMenuActionAvailability("edit", false);
+    await contextmenu.checkContextMenuActionAvailability("share", false);
+    await contextmenu.checkContextMenuActionAvailability("clone", false);
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.checkContextMenuActionAvailability("delete", false);
+
+    await contextmenu.clearSelection();
+    await t.click(page.cardTitle);
+
+    await t.expect(albumdialog.description.visible).notOk();
+
+    if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+      await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    } else {
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+      await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    }
+    await album.openNthAlbum(0);
+
+    await toolbar.checkToolbarActionAvailability("share", false);
+    await toolbar.checkToolbarActionAvailability("edit", false);
+
+    await photo.toggleSelectNthPhoto(0, "all");
+
+    await contextmenu.checkContextMenuActionAvailability("album", false);
+    await contextmenu.checkContextMenuActionAvailability("private", false);
+    await contextmenu.checkContextMenuActionAvailability("share", false);
+    await contextmenu.checkContextMenuActionAvailability("remove", false);
+  }
+);
 
 test.meta("testID", "member-role-013")("No edit moment functionality", async (t) => {
   await page.login("member", "passwdmember");
@@ -617,144 +648,156 @@ test.meta("testID", "member-role-015")("No edit calendar functionality", async (
   await contextmenu.checkContextMenuActionAvailability("remove", false);
 });
 
-test.meta("testID", "member-role-016")("No edit folder functionality", async (t) => {
-  await page.login("member", "passwdmember");
-  await menu.openPage("folders");
+test.meta("testID", "member-role-016").meta({ type: "smoke" })(
+  "No edit folder functionality",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await menu.openPage("folders");
 
-  await album.checkHoverActionAvailability("nth", 0, "share", false);
+    await album.checkHoverActionAvailability("nth", 0, "share", false);
 
-  const FirstAlbumUid = await album.getNthAlbumUid("all", 0);
-  await album.selectAlbumFromUID(FirstAlbumUid);
+    const FirstAlbumUid = await album.getNthAlbumUid("all", 0);
+    await album.selectAlbumFromUID(FirstAlbumUid);
 
-  await contextmenu.checkContextMenuActionAvailability("edit", false);
-  await contextmenu.checkContextMenuActionAvailability("share", false);
-  await contextmenu.checkContextMenuActionAvailability("clone", false);
-  await contextmenu.checkContextMenuActionAvailability("download", true);
-  await contextmenu.checkContextMenuActionAvailability("delete", false);
+    await contextmenu.checkContextMenuActionAvailability("edit", false);
+    await contextmenu.checkContextMenuActionAvailability("share", false);
+    await contextmenu.checkContextMenuActionAvailability("clone", false);
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.checkContextMenuActionAvailability("delete", false);
 
-  await contextmenu.clearSelection();
-  await t.click(page.cardTitle);
+    await contextmenu.clearSelection();
+    await t.click(page.cardTitle);
 
-  await t.expect(albumdialog.description.visible).notOk();
+    await t.expect(albumdialog.description.visible).notOk();
 
-  if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
-    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
-  } else {
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
-    await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
-    await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    if (await Selector(`a.uid-${FirstAlbumUid}`).hasClass("is-favorite")) {
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+      await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", true);
+    } else {
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+      await album.triggerHoverAction("uid", FirstAlbumUid, "favorite");
+      await album.checkHoverActionState("uid", FirstAlbumUid, "favorite", false);
+    }
+
+    await album.openNthAlbum(0);
+
+    await toolbar.checkToolbarActionAvailability("share", false);
+    await toolbar.checkToolbarActionAvailability("edit", false);
+
+    await photo.toggleSelectNthPhoto(0, "all");
+
+    await contextmenu.checkContextMenuActionAvailability("album", false);
+    await contextmenu.checkContextMenuActionAvailability("private", false);
+    await contextmenu.checkContextMenuActionAvailability("share", false);
+    await contextmenu.checkContextMenuActionAvailability("remove", false);
   }
+);
 
-  await album.openNthAlbum(0);
+test.meta("testID", "member-role-017").meta({ type: "smoke" })(
+  "No edit labels functionality",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await menu.openPage("labels");
+    const FirstLabelUid = await label.getNthLabeltUid(0);
 
-  await toolbar.checkToolbarActionAvailability("share", false);
-  await toolbar.checkToolbarActionAvailability("edit", false);
+    await label.checkHoverActionState("uid", FirstLabelUid, "favorite", false);
 
-  await photo.toggleSelectNthPhoto(0, "all");
+    await label.triggerHoverAction("uid", FirstLabelUid, "favorite");
 
-  await contextmenu.checkContextMenuActionAvailability("album", false);
-  await contextmenu.checkContextMenuActionAvailability("private", false);
-  await contextmenu.checkContextMenuActionAvailability("share", false);
-  await contextmenu.checkContextMenuActionAvailability("remove", false);
-});
+    await label.checkHoverActionState("uid", FirstLabelUid, "favorite", false);
 
-test.meta("testID", "member-role-017")("No edit labels functionality", async (t) => {
-  await page.login("member", "passwdmember");
-  await menu.openPage("labels");
-  const FirstLabelUid = await label.getNthLabeltUid(0);
+    await t.click(Selector(`a.uid-${FirstLabelUid} div.inline-edit`));
 
-  await label.checkHoverActionState("uid", FirstLabelUid, "favorite", false);
+    await t.expect(photoedit.inputLabelRename.visible).notOk();
 
-  await label.triggerHoverAction("uid", FirstLabelUid, "favorite");
+    await label.selectLabelFromUID(FirstLabelUid);
 
-  await label.checkHoverActionState("uid", FirstLabelUid, "favorite", false);
-
-  await t.click(Selector(`a.uid-${FirstLabelUid} div.inline-edit`));
-
-  await t.expect(photoedit.inputLabelRename.visible).notOk();
-
-  await label.selectLabelFromUID(FirstLabelUid);
-
-  await contextmenu.checkContextMenuActionAvailability("delete", false);
-  await contextmenu.checkContextMenuActionAvailability("album", false);
-});
-
-test.meta("testID", "member-role-018")("No unstack, change primary actions", async (t) => {
-  await page.login("member", "passwdmember");
-  await toolbar.search("stack:true");
-
-  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
-  await photo.selectPhotoFromUID(FirstPhotoUid);
-  await contextmenu.triggerContextMenuAction("edit", "");
-  await t.click(photoedit.filesTab);
-
-  await t
-    .expect(photoedit.downloadFile.visible)
-    .ok()
-    .expect(photoedit.downloadFile.hasAttribute("disabled"))
-    .notOk();
-
-  await t.click(photoedit.toggleExpandFile.nth(1));
-
-  await photoedit.checkFieldDisabled(photoedit.downloadFile, false);
-  await t
-    .expect(photoedit.downloadFile.visible)
-    .ok()
-    .expect(photoedit.unstackFile.visible)
-    .notOk()
-    .expect(photoedit.makeFilePrimary.visible)
-    .notOk()
-    .expect(photoedit.deleteFile.visible)
-    .notOk();
-});
-
-test.meta("testID", "member-role-019")("No edit people functionality", async (t) => {
-  await page.login("member", "passwdmember");
-  await menu.openPage("people");
-
-  await toolbar.checkToolbarActionAvailability("show-hidden", false);
-  await toolbar.checkToolbarActionAvailability("upload", false);
-  await subject.checkSubjectVisibility("name", "Otto Visible", true);
-  await subject.checkSubjectVisibility("name", "Monika Hide", false);
-  await t.expect(subject.newTab.exists).notOk();
-
-  await t.click(Selector("a div.v-card__title").nth(0));
-
-  await t.expect(Selector("div.input-rename input").visible).notOk();
-  await subject.checkHoverActionAvailability("nth", 0, "hidden", false);
-
-  await subject.toggleSelectNthSubject(0);
-
-  await contextmenu.checkContextMenuActionAvailability("album", "false");
-  await contextmenu.checkContextMenuActionAvailability("download", "true");
-
-  await contextmenu.clearSelection();
-  const FirstSubjectUid = subject.getNthSubjectUid(0);
-
-  if (await Selector(`a.uid-${FirstSubjectUid}`).hasClass("is-favorite")) {
-    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
-    await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
-    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
-  } else {
-    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
-    await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
-    await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
+    await contextmenu.checkContextMenuActionAvailability("delete", false);
+    await contextmenu.checkContextMenuActionAvailability("album", false);
   }
+);
 
-  await subject.openNthSubject(0);
-  await photo.toggleSelectNthPhoto(0);
-  await contextmenu.triggerContextMenuAction("edit", "");
-  await t.click(photoedit.peopleTab);
+test.meta("testID", "member-role-018").meta({ type: "smoke" })(
+  "No unstack, change primary actions",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await toolbar.search("stack:true");
 
-  await photoedit.checkFieldDisabled(photoedit.inputName);
-  await t.expect(photoedit.rejectName.hasClass("v-icon--disabled")).ok();
+    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+    await photo.selectPhotoFromUID(FirstPhotoUid);
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.filesTab);
 
-  await t.navigateTo("/people/new");
+    await t
+      .expect(photoedit.downloadFile.visible)
+      .ok()
+      .expect(photoedit.downloadFile.hasAttribute("disabled"))
+      .notOk();
 
-  await t.expect(Selector("div.is-face").visible).notOk().expect(subject.newTab.exists).notOk();
+    await t.click(photoedit.toggleExpandFile.nth(1));
 
-  await t.navigateTo("/people?hidden=yes&order=relevance");
-  await t.expect(Selector("a.is-subject").visible).notOk();
-});
+    await photoedit.checkFieldDisabled(photoedit.downloadFile, false);
+    await t
+      .expect(photoedit.downloadFile.visible)
+      .ok()
+      .expect(photoedit.unstackFile.visible)
+      .notOk()
+      .expect(photoedit.makeFilePrimary.visible)
+      .notOk()
+      .expect(photoedit.deleteFile.visible)
+      .notOk();
+  }
+);
+
+test.meta("testID", "member-role-019").meta({ type: "smoke" })(
+  "No edit people functionality",
+  async (t) => {
+    await page.login("member", "passwdmember");
+    await menu.openPage("people");
+
+    await toolbar.checkToolbarActionAvailability("show-hidden", false);
+    await toolbar.checkToolbarActionAvailability("upload", false);
+    await subject.checkSubjectVisibility("name", "Otto Visible", true);
+    await subject.checkSubjectVisibility("name", "Monika Hide", false);
+    await t.expect(subject.newTab.exists).notOk();
+
+    await t.click(Selector("a div.v-card__title").nth(0));
+
+    await t.expect(Selector("div.input-rename input").visible).notOk();
+    await subject.checkHoverActionAvailability("nth", 0, "hidden", false);
+
+    await subject.toggleSelectNthSubject(0);
+
+    await contextmenu.checkContextMenuActionAvailability("album", "false");
+    await contextmenu.checkContextMenuActionAvailability("download", "true");
+
+    await contextmenu.clearSelection();
+    const FirstSubjectUid = subject.getNthSubjectUid(0);
+
+    if (await Selector(`a.uid-${FirstSubjectUid}`).hasClass("is-favorite")) {
+      await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
+      await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
+      await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", true);
+    } else {
+      await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
+      await subject.triggerHoverAction("uid", FirstSubjectUid, "favorite");
+      await subject.checkHoverActionState("uid", FirstSubjectUid, "favorite", false);
+    }
+
+    await subject.openNthSubject(0);
+    await photo.toggleSelectNthPhoto(0);
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.peopleTab);
+
+    await photoedit.checkFieldDisabled(photoedit.inputName);
+    await t.expect(photoedit.rejectName.hasClass("v-icon--disabled")).ok();
+
+    await t.navigateTo("/people/new");
+
+    await t.expect(Selector("div.is-face").visible).notOk().expect(subject.newTab.exists).notOk();
+
+    await t.navigateTo("/people?hidden=yes&order=relevance");
+    await t.expect(Selector("a.is-subject").visible).notOk();
+  }
+);
