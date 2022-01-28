@@ -25,7 +25,7 @@ export default {
   name: 'PAboutFooter',
   data() {
     return {
-      sponsor: this.$config.values.sponsor,
+      sponsor: this.$config.values.sponsor && !this.$config.values.demo,
     };
   },
   methods: {},

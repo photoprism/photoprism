@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       rtl: this.$rtl,
-      sponsor: this.$config.values.sponsor,
+      sponsor: this.$config.values.sponsor && !this.$config.values.demo,
     };
   },
   methods: {},
