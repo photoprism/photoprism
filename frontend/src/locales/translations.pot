@@ -65,7 +65,7 @@ msgstr ""
 #: src/component/navigation.vue:394
 #: src/component/navigation.vue:27
 #: src/pages/about/about.vue:4
-#: src/pages/about/about.vue:163
+#: src/pages/about/about.vue:184
 #: src/pages/help.vue:45
 msgid "About"
 msgstr ""
@@ -2665,7 +2665,7 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: src/pages/about/about.vue:55
+#: src/pages/about/about.vue:56
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr ""
 

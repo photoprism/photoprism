@@ -19,7 +19,7 @@
           </a>
       </p>
 
-      <p class="text-xs-center my-4">
+      <p v-if="!sponsor" class="text-xs-center my-4">
         <v-btn
             href="https://www.patreon.com/photoprism"
             target="_blank"
@@ -36,7 +36,7 @@
         <translate>Your continued support helps us provide regular updates and services like world maps.</translate>
         <translate>Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org.</translate>
       </p>
-      <p class="body-1 pb-2">
+      <p v-if="!sponsor" class="body-1 pb-2">
         <a target="_blank" href="https://github.com/photoprism/photoprism">
         <translate>Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going.</translate>
         </a>
@@ -58,8 +58,13 @@
       <p class="body-1">
         <a target="_blank" href="https://photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
       </p>
-      <p class="body-1 pb-2">
+
+      <p v-if="!sponsor" class="body-1 pb-2">
         <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
+      </p>
+
+      <p  v-if="sponsor" class="text-xs-center">
+        <img src="https://art.photoprism.app/thank-you.png" width="100%" alt="THANK YOU">
       </p>
 
       <p class="text-xs-center pt-2 ma-0 pb-0">
@@ -98,6 +103,7 @@ export default {
   data() {
     return {
       rtl: this.$rtl,
+      sponsor: this.$config.values.sponsor,
     };
   },
   methods: {},
