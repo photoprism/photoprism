@@ -2,11 +2,11 @@ import { Selector, t } from "testcafe";
 
 export default class Page {
   constructor() {
-    this.view = Selector("div.p-view-select", { timeout: 15000 });
-    this.camera = Selector("div.p-camera-select", { timeout: 15000 });
-    this.countries = Selector("div.p-countries-select", { timeout: 15000 });
-    this.time = Selector("div.p-time-select", { timeout: 15000 });
-    this.search1 = Selector("div.input-search input", { timeout: 15000 });
+    this.view = Selector("div.p-view-select");
+    this.camera = Selector("div.p-camera-select");
+    this.countries = Selector("div.p-countries-select");
+    this.time = Selector("div.p-time-select");
+    this.search1 = Selector("div.input-search input");
     this.toolbarDescription = Selector(".v-card__text").nth(0);
     this.toolbarTitle = Selector("div.v-toolbar__title");
   }
