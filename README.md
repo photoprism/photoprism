@@ -125,4 +125,4 @@ We welcome [contributions](CONTRIBUTING.md) of any kind, including blog posts, t
 
 ----
 
-*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs [are available](https://github.com/photoprism/photoprism-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/LICENSE) may apply. By using our software and services, you agree to our [terms & conditions](https://photoprism.app/terms).*
+*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://github.com/photoprism/photoprism-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/LICENSE) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms).*

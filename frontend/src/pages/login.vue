@@ -64,9 +64,9 @@ export default {
     return {
       loading: false,
       showPassword: false,
-      username: "admin",
+      username: "",
       password: "",
-      sponsor: this.$config.values.sponsor,
+      sponsor: this.$config.isSponsor(),
       siteDescription: c.siteDescription ? c.siteDescription : c.siteCaption,
       nextUrl: this.$route.params.nextUrl ? this.$route.params.nextUrl : "/",
       rtl: this.$rtl,

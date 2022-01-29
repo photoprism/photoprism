@@ -361,6 +361,14 @@ export default class Config {
     return [];
   }
 
+  isSponsor() {
+    if (!this.values || !this.values.sponsor) {
+      return false;
+    }
+
+    return !this.values.demo && !this.values.test;
+  }
+
   appIcon() {
     switch (this.get("appIcon")) {
       case "crisp":

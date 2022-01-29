@@ -90,7 +90,7 @@ Vue.prototype.$config = config;
 Vue.prototype.$clipboard = Clipboard;
 Vue.prototype.$isMobile = isMobile;
 Vue.prototype.$rtl = rtl;
-Vue.prototype.$earlyAccess = () => {
+Vue.prototype.$sponsorFeatures = () => {
   return config.load().finally(() => {
     if (config.values.sponsor) {
       return Promise.resolve();

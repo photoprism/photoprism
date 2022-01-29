@@ -400,7 +400,7 @@ export default {
       this.showHidden("");
     },
     showHidden(value) {
-      this.$earlyAccess().then(() => {
+      this.$sponsorFeatures().then(() => {
         this.filter.hidden = value;
         this.updateQuery();
       }).catch(() => {
@@ -414,7 +414,7 @@ export default {
         return;
       }
 
-      this.$earlyAccess().then(() => {
+      this.$sponsorFeatures().then(() => {
         this.toggleHidden(this.results[index]);
       }).catch(() => {
         this.dialog.sponsor = true;

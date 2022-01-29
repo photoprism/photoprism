@@ -22,7 +22,7 @@ import "./css/app.css";
 import Event from "pubsub-js";
 
 export default {
-  name: 'Photoprism',
+  name: 'PhotoPrism',
   data() {
     return {
       touchStart: 0,
