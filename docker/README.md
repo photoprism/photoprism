@@ -57,9 +57,10 @@ applications like PhotoPrism. It also effectively helps avoid "works for me" mom
 
 ### Installation Packages ###
 
-Developers are invited to [contribute by building and testing standalone packages](https://docs.photoprism.app/developer-guide/)
-for Linux distributions and other operating systems. New versions are [released several times a month](https://docs.photoprism.app/release-notes/),
-so maintaining and testing the long list of dependencies for multiple environments would [consume much of our resources](https://docs.photoprism.app/funding/).
+You are invited to contribute by [building and testing standalone packages](https://docs.photoprism.app/developer-guide/) for Linux distributions and other operating systems.
+
+New versions are often [released several times a month](https://docs.photoprism.app/release-notes/), so maintaining the long list of dependencies for multiple environments would take up a lot of [our resources](https://docs.photoprism.app/funding/).
+
 
 ### BSD Ports 😈 ###
 
