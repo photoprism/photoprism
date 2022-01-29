@@ -39,7 +39,7 @@ var once sync.Once
 var LowMem = false
 var TotalMem uint64
 
-const MsgSponsor = "Help us make a difference and become a sponsor today!"
+const MsgSponsor = "PhotoPrism® needs your support!"
 const SignUpURL = "https://docs.photoprism.app/funding/"
 const MsgSignUp = "Visit " + SignUpURL + " to learn more."
 const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
