@@ -61,7 +61,6 @@ You are invited to contribute by [building and testing standalone packages](http
 
 New versions are often [released several times a month](https://docs.photoprism.app/release-notes/), so maintaining the long list of dependencies for multiple environments would take up a lot of [our resources](https://docs.photoprism.app/funding/).
 
-
 ### BSD Ports 😈 ###
 
 An [unofficial port](https://docs.photoprism.app/getting-started/freebsd/) is available for FreeBSD / FreeNAS users. 
