@@ -57,10 +57,7 @@ applications like PhotoPrism. It also effectively helps avoid "works for me" mom
 
 ### Installation Packages ###
 
+An [unofficial port](https://docs.photoprism.app/getting-started/freebsd/) is available for FreeBSD / FreeNAS users.
 You are invited to contribute by [building and testing standalone packages](https://docs.photoprism.app/developer-guide/) for Linux distributions and other operating systems.
 
-New versions are often [released several times a month](https://docs.photoprism.app/release-notes/), so maintaining the long list of dependencies for multiple environments would take up a lot of [our resources](https://docs.photoprism.app/funding/).
-
-### BSD Ports 😈 ###
-
-An [unofficial port](https://docs.photoprism.app/getting-started/freebsd/) is available for FreeBSD / FreeNAS users. 
+Updates are [released several times a month](https://docs.photoprism.app/release-notes/), so maintaining the long list of dependencies for multiple environments would currently consume too many of [our resources](https://docs.photoprism.app/funding/).
