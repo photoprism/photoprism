@@ -59,7 +59,7 @@ applications like PhotoPrism. It also effectively helps avoid "works for me" mom
 
 Developers are invited to [contribute by building and testing standalone packages](https://docs.photoprism.app/developer-guide/)
 for Linux distributions and other operating systems. New versions are [released several times a month](https://docs.photoprism.app/release-notes/),
-so maintaining and testing the long list of dependencies in multiple environments would [consume much of our resources](https://docs.photoprism.app/funding/).
+so maintaining and testing the long list of dependencies for multiple environments would [consume much of our resources](https://docs.photoprism.app/funding/).
 
 ### BSD Ports 😈 ###
 
