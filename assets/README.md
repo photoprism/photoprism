@@ -6,7 +6,7 @@
 
 (c) Our [documentation](https://docs.photoprism.app/) is available under the terms of the [CC BY-NC-SA 4.0 License](https://docs.photoprism.app/license/documentation/). Other terms may apply to Digital Assets — in particular illustrations, graphics, and videos — embedded in the documentation if they are licensed solely for direct distribution to us. When in doubt, please ask before distributing or using them for other works.
 
-(d) PhotoPrism’s Brand Assets — including trademarks, logos, icons, custom fonts, corporate design, product and service names, and any other brand features and elements, whether registered or unregistered („Brand Assets“) — are proprietary assets owned exclusively by Michael Mayer and his legal successors („PhotoPrism“).
+(d) PhotoPrism’s Brand Assets — including trademarks, logos, icons, fonts, corporate design, product and service names, and any other brand features and elements, whether registered or unregistered („Brand Assets“) — are proprietary assets owned exclusively by Michael Mayer and his legal successors („PhotoPrism“).
 
 (e) Third parties, including licensees, may never claim ownership of PhotoPrism's Brand Assets or brands confusingly similar to PhotoPrism's Brand Assets in any way, including, without limitation, as a trademark, service mark, company name or designation, domain name, social media profile/handle, or in any other manner.
 
