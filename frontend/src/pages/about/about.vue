@@ -63,8 +63,8 @@
         <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
       </p>
 
-      <p  v-if="sponsor" class="text-xs-center">
-        <img src="https://art.photoprism.app/thank-you.png" width="100%" alt="THANK YOU">
+      <p v-if="sponsor" class="text-xs-center">
+        <img src="https://da.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU">
       </p>
 
       <p class="text-xs-center pt-2 ma-0 pb-0">
