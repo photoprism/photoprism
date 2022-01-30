@@ -1,6 +1,7 @@
 # Code of Conduct
 
 ## Rules ##
+<img align="right" width="25%" src="https://da.photoprism.app/no-trolling/original.svg">
 
 To keep it simple, we only have three basic rules:
 
