@@ -30,16 +30,22 @@ fi
 
 # Script runs as root?
 if [[ $(id -u) == "0" ]]; then
-  # Legacy user ID env variable in use?
-  if [[ -z ${PHOTOPRISM_UID} ]] && [[ ${UID} =~ $re ]] && [[ ${UID} != "0" ]]; then
-    PHOTOPRISM_UID=${UID}
-    echo "WARNING: UID without PHOTOPRISM_ prefix is deprecated, use PHOTOPRISM_UID: \"${PHOTOPRISM_UID}\" instead"
+  # Alternate USER ID environment variable check
+  if [[ -z ${PHOTOPRISM_UID} ]]; then
+    if [[ ${UID} =~ $re ]] && [[ ${UID} != "0" ]]; then
+      PHOTOPRISM_UID=${UID}
+    elif [[ ${PUID} =~ $re ]] && [[ ${PUID} != "0" ]]; then
+      PHOTOPRISM_UID=${PUID}
+    fi
   fi
 
-  # Legacy group ID env variable in use?
-  if [[ -z ${PHOTOPRISM_GID} ]] && [[ ${GID} =~ $re ]] && [[ ${GID} != "0" ]]; then
-    PHOTOPRISM_GID=${GID}
-    echo "WARNING: GID without PHOTOPRISM_ prefix is deprecated, use PHOTOPRISM_GID: \"${PHOTOPRISM_GID}\" instead"
+  # Alternate GROUP ID environment variable check
+  if [[ -z ${PHOTOPRISM_GID} ]]; then
+    if [[ ${GID} =~ $re ]] && [[ ${GID} != "0" ]]; then
+      PHOTOPRISM_GID=${GID}
+    elif [[ ${PGID} =~ $re ]] && [[ ${PGID} != "0" ]]; then
+      PHOTOPRISM_GID=${PGID}
+    fi
   fi
 
   # User and group ID set?
