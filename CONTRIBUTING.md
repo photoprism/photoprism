@@ -30,15 +30,13 @@ must be fixed directly in [our source code](https://github.com/photoprism/photop
 
 ## Submitting Pull Requests ##
 
-Because we want to create the best possible product for our users, we have a [set of guidelines](https://docs.photoprism.app/developer-guide/pull-requests) to ensure that all submissions are acceptable.
+Because we want to create the best possible product for our users, we have a [set of criteria](https://docs.photoprism.app/developer-guide/pull-requests#acceptance-criteria) to ensure that all submissions are acceptable.
 
-They include step-by-step instructions for submitting new features,
-bug fixes, and documentation improvements.
-Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
+Follow our [step-by-step guide](https://docs.photoprism.app/developer-guide/pull-requests#how-to-create-and-submit-a-pull-request) to learn how to submit
+new features, bug fixes, and documentation improvements. Issues labeled [help wanted](https://github.com/photoprism/photoprism/labels/help%20wanted) /
 [easy](https://github.com/photoprism/photoprism/labels/easy) can be good (first) contributions.
 
-**Reviewing, testing and finally merging pull requests requires significant resources
-on our side. If it's not just a small fix, it can take several months.**
+**Reviewing, testing and finally merging pull requests requires significant resources on our side. If it's not just a small fix, it can take several months.**
 
 ### Contributor License Agreement (CLA) ###
 
