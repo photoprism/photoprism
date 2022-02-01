@@ -80,4 +80,4 @@ Donations in Monero (XMR) and IOTA (MIOTA) can be made to the following wallet a
 |-----------|---------------------------------------------------------------------------------------------------|
 | IOTA      | `iota1qrcspztm2v2nldpuysq5j5fydn8ulyrnhr86qjymxwmmvzax8zlw7g0jyww`                                |
 
-Please [contact us by email](https://photoprism.app/contact) with a reference to the transaction so we can help you unlock additional features and provide technical support :)
+Please [contact us by email](https://photoprism.app/contact) with a reference to the transaction so we can help you unlock additional features and provide technical support. Thank You! :)
