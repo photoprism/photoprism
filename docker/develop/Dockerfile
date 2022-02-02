@@ -34,7 +34,7 @@ COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 # 2. Install TensorFlow for C
 # 3. Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
 # 4. Install Go
-RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null && apt-get -qq install --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     build-essential \
     ca-certificates \
     wget \

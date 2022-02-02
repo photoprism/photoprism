@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:20220116 as build
+FROM photoprism/develop:20220202 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -34,7 +34,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # Install additional distribution packages
-RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null && apt-get -qq install --no-install-recommends \
+RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     gpgv \
     wget \
     curl \
@@ -57,8 +57,8 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt dist-upgrade 2>/dev/null &
     ffmpeg \
     ffmpegthumbnailer \
     libavcodec-extra  && \
-    [ "$TARGETARCH" = "arm" ] || apt-get install darktable; \
-    apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
+    [ "$TARGETARCH" = "arm" ] || apt-get -y install darktable; \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/
 ENV TF_CPP_MIN_LOG_LEVEL="2" \

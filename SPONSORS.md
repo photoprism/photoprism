@@ -72,15 +72,12 @@ William Kray, Ovace Mamnoon, Clément Caplain Moreau, The Gordon Project, [@pluj
 
 [Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
 
-## Crypto Wallets ##
+## Crypto Donations ##
 
-We are happy to accept donations in cryptocurrency via the following addresses:
+Donations in Monero (XMR) and IOTA (MIOTA) can be made to the following wallet addresses:
 
-| Currency | Address                                                                                                                                                                                                     |
-|:----------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Ethereum  | [`0x04e73F3326E26916356f76b04ca15e0c4C2d9C79`](ethereum:0x04e73F3326E26916356f76b04ca15e0c4C2d9C79)                                                                                                         |
-| Bitcoin   | [`bc1qfdjqauera5cm243h3yadwrnena0mxusafvchzr`](bitcoin:bc1qfdjqauera5cm243h3yadwrnena0mxusafvchzr)                                                                                                          |
-| Monero    | [`474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT`](monero:474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT) |
-| Dogecoin  | [`DKf8bFPaUYdJ5fkjtJNY1jMjtRtiXi3Vzy`](dogecoin:DKf8bFPaUYdJ5fkjtJNY1jMjtRtiXi3Vzy)                                                                                                                         |
+| Monero    | `474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT` |
+|-----------|---------------------------------------------------------------------------------------------------|
+| IOTA      | `iota1qrcspztm2v2nldpuysq5j5fydn8ulyrnhr86qjymxwmmvzax8zlw7g0jyww`                                |
 
-Sponsors are welcome to [contact us](https://photoprism.app/contact) for technical support and assistance with enabling sponsor features.
+Please [contact us by email](https://photoprism.app/contact) with a reference to the transaction so we can help you unlock additional features and provide technical support. Thank You! :)

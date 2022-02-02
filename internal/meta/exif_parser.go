@@ -22,7 +22,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 		}
 	}()
 
-	// Extract raw EXIF block.
+	// Extract raw Exif block.
 	var parsed bool
 
 	logName := sanitize.Log(filepath.Base(fileName))
@@ -56,18 +56,18 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 
 		if err != nil {
 			return rawExif, fmt.Errorf("metadata: %s in %s (parse png)", err, logName)
-		}
-
-		_, rawExif, err = cs.Exif()
-
-		if err != nil {
-			if err.Error() == "file does not have EXIF" {
-				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse png)", logName)
-			} else {
-				log.Infof("metadata: %s in %s (parse png)", err, logName)
-			}
 		} else {
-			parsed = true
+			_, rawExif, err = cs.Exif()
+
+			if err != nil {
+				if err.Error() == "file does not have EXIF" || strings.HasPrefix(err.Error(), "no exif data") {
+					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse png)", logName)
+				} else {
+					log.Infof("metadata: %s in %s (parse png)", err, logName)
+				}
+			} else {
+				parsed = true
+			}
 		}
 	} else if fileType == fs.FormatHEIF {
 		heicMp := heicexif.NewHeicExifMediaParser()
@@ -76,18 +76,18 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 
 		if err != nil {
 			return rawExif, fmt.Errorf("metadata: %s in %s (parse heic)", err, logName)
-		}
-
-		_, rawExif, err = cs.Exif()
-
-		if err != nil {
-			if err.Error() == "file does not have EXIF" {
-				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse heic)", logName)
-			} else {
-				log.Infof("metadata: %s in %s (parse heic)", err, logName)
-			}
 		} else {
-			parsed = true
+			_, rawExif, err = cs.Exif()
+
+			if err != nil {
+				if err.Error() == "file does not have EXIF" || strings.HasPrefix(err.Error(), "no exif data") {
+					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse heic)", logName)
+				} else {
+					log.Infof("metadata: %s in %s (parse heic)", err, logName)
+				}
+			} else {
+				parsed = true
+			}
 		}
 	} else if fileType == fs.FormatTiff {
 		tiffMp := tiffstructure.NewTiffMediaParser()
@@ -96,18 +96,18 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 
 		if err != nil {
 			return rawExif, fmt.Errorf("metadata: %s in %s (parse tiff)", err, logName)
-		}
-
-		_, rawExif, err = cs.Exif()
-
-		if err != nil {
-			if err.Error() == "file does not have EXIF" {
-				return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse tiff)", logName)
-			} else {
-				log.Infof("metadata: %s in %s (parse tiff)", err, logName)
-			}
 		} else {
-			parsed = true
+			_, rawExif, err = cs.Exif()
+
+			if err != nil {
+				if err.Error() == "file does not have EXIF" || strings.HasPrefix(err.Error(), "no exif data") {
+					return rawExif, fmt.Errorf("metadata: found no exif header in %s (parse tiff)", logName)
+				} else {
+					log.Infof("metadata: %s in %s (parse tiff)", err, logName)
+				}
+			} else {
+				parsed = true
+			}
 		}
 	}
 

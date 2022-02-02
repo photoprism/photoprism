@@ -55,7 +55,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 		}
 	}()
 
-	// Extract raw EXIF block.
+	// Extract raw Exif block.
 	rawExif, err := RawExif(fileName, fileType)
 
 	if err != nil {
@@ -68,7 +68,7 @@ func (data *Data) Exif(fileName string, fileType fs.FileFormat) (err error) {
 		data.All = make(map[string]string)
 	}
 
-	// Enumerate tags in EXIF block.
+	// Enumerate tags in Exif block.
 	opt := exif.ScanOptions{}
 	entries, _, err := exif.GetFlatExifData(rawExif, &opt)
 

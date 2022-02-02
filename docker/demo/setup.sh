@@ -93,8 +93,8 @@ curl -fsSL https://dl.photoprism.app/docker/demo/Makefile > /opt/photoprism/Make
 chown -Rf photoprism:photoprism /opt/photoprism
 
 # clear package cache
-apt-get autoclean
-apt-get autoremove
+apt-get -y autoclean
+apt-get -y autoremove
 
 # start services using docker-compose
 (cd /opt/photoprism && make install)

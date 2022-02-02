@@ -38,7 +38,7 @@ EOF
     # Remove package files
     apt-get -y autoremove
     apt-get -y autoclean
-    apt-get clean
+    apt-get -y clean
     rm -rf /var/lib/apt/lists/*
 
     # Install NPM

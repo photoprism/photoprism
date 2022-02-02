@@ -1,4 +1,4 @@
-FROM photoprism/develop:20220116
+FROM photoprism/develop:20220202
 
 # Copy latest entrypoint script
 COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
