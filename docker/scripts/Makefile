@@ -12,12 +12,12 @@ tensorflow-amd64-cpu: /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz tensorflow-amd6
 tensorflow-amd64-avx: /tmp/libtensorflow-linux-avx-1.15.2.tar.gz tensorflow-amd64-avx-install
 tensorflow-amd64-avx2: /tmp/libtensorflow-linux-avx2-1.15.2.tar.gz tensorflow-amd64-avx2-install
 apt-upgrade:
-	apt-get update
-	apt-get dist-upgrade
+	apt-get -y update
+	apt-get -y dist-upgrade
 apt-cleanup:
-	apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists/*
+	apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/*
 install-intel-graphics:
-	apt-get install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders libmfx1
+	apt-get -y install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders libmfx1
 /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz:
 	curl -fsSL "https://dl.photoprism.app/tensorflow/linux/libtensorflow-linux-cpu-1.15.2.tar.gz" > /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz
 tensorflow-amd64-cpu-install:
