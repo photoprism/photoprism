@@ -22,7 +22,7 @@ func RawExif(fileName string, fileType fs.FileFormat) (rawExif []byte, err error
 		}
 	}()
 
-	// Extract raw EXIF block.
+	// Extract raw Exif block.
 	var parsed bool
 
 	logName := sanitize.Log(filepath.Base(fileName))
