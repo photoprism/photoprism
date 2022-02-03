@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
@@ -19,6 +20,7 @@ var services struct {
 	CoverCache  *gc.Cache
 	ThumbCache  *gc.Cache
 	Classify    *classify.TensorFlow
+	Clip        *clip.Clip
 	Convert     *photoprism.Convert
 	Files       *photoprism.Files
 	Photos      *photoprism.Photos

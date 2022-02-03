@@ -60,6 +60,7 @@ services:
       PHOTOPRISM_DISABLE_PLACES: "false"      # Disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"    # Don't create ExifTool JSON files for improved metadata extraction
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # Don't use TensorFlow for image classification
+      PHOTOPRISM_DISABLE_CLIP: "true"         # Don't use Clip for image content search
       PHOTOPRISM_DETECT_NSFW: "false"         # Flag photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"         # Allow uploads that may be offensive
       PHOTOPRISM_DARKTABLE_PRESETS: "false"   # Enables Darktable presets and disables concurrent RAW conversion

@@ -68,6 +68,7 @@ services:
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_CLIP: "true"                # Disables all features depending on Clip
       PHOTOPRISM_DISABLE_FACES: "false"              # Disables facial recognition
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # Disables image classification
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # FFmpeg AVC encoder for video transcoding (default: libx264)

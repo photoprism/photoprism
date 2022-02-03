@@ -64,6 +64,7 @@ services:
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_CLIP: "true"                # Disables all features depending on Clip
       PHOTOPRISM_DISABLE_FACES: "false"              # Disables facial recognition
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # Disables image classification
       PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion

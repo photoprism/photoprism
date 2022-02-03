@@ -7,6 +7,7 @@ import (
 	gc "github.com/patrickmn/go-cache"
 
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
@@ -46,6 +47,10 @@ func TestThumbCache(t *testing.T) {
 
 func TestClassify(t *testing.T) {
 	assert.IsType(t, &classify.TensorFlow{}, Classify())
+}
+
+func TestClip(t *testing.T) {
+	assert.IsType(t, &clip.Clip{}, Clip())
 }
 
 func TestConvert(t *testing.T) {

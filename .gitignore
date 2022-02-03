@@ -15,6 +15,7 @@
 /assets/static/build/
 /package-lock.json
 /frontend/tests_output
+/embedding-db
 *.log
 *.db
 *.db-journal

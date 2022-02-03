@@ -131,6 +131,21 @@
               >
               </v-checkbox>
             </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.DisableClip"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-private"
+                  color="secondary-dark"
+                  :label="$gettext('Disable Clip')"
+                  :hint="$gettext('Don\'t use Clip for image content search.')"
+                  prepend-icon="layers_clear"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
           </v-layout>
         </v-card-actions>
 

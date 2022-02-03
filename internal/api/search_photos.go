@@ -59,7 +59,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 			f.Review = false
 		}
 
-		result, count, err := search.Photos(f)
+		result, count, err := search.Photos(f, search.Clip())
 
 		if err != nil {
 			log.Warnf("search: %s", err)

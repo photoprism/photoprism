@@ -9,6 +9,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/clip"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -17,7 +18,7 @@ import (
 )
 
 // Photos searches for photos based on a Form and returns PhotoResults ([]Photo).
-func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
+func Photos(f form.SearchPhotos, clip *clip.Clip) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
 	if err := f.ParseQueryString(); err != nil {
@@ -89,6 +90,32 @@ func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	// Return primary files only.
 	if f.Primary {
 		s = s.Where("files.file_primary = 1")
+	}
+
+	if f.Query != "" {
+		embedding, err := clip.Api.EncodeText(f.Query)
+		if err != nil {
+			log.Debugf("search: cannot get clip embedding for '%s'", f.Query)
+		} else {
+			resultIds, err := clip.Db.KNearestNeighbors(embedding, uint(f.Count), 0.2)
+			if err != nil {
+				log.Debugf("search: cannot get KNearestNeighbors for '%s'", f.Query)
+			} else {
+				s = s.Where("photos.id IN (?)", resultIds)
+
+				// Take shortcut!
+				s = s.Order("files.file_primary DESC")
+
+				if result := s.Scan(&results); result.Error != nil {
+					return results, 0, result.Error
+				}
+				log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), f.SerializeAll(), time.Since(start))
+				if f.Merged {
+					return results.Merged()
+				}
+				return results, len(results), nil
+			}
+		}
 	}
 
 	if f.UID != "" {

@@ -34,7 +34,7 @@ func AlbumCoverByUID(uid string) (file entity.File, err error) {
 	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
 		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: entity.SortOrderRelevance, Count: 1, Offset: 0, Merged: false}
 
-		if photos, _, err := search.Photos(f); err != nil {
+		if photos, _, err := search.Photos(f, search.Clip()); err != nil {
 			return file, err
 		} else if len(photos) > 0 {
 			for _, photo := range photos {

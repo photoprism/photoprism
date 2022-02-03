@@ -51,3 +51,12 @@ func TestConfig_DisableClassification(t *testing.T) {
 	c.options.DisableTensorFlow = false
 	assert.False(t, c.DisableClassification())
 }
+
+func TestConfig_DisableClip(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.DisableClip())
+	c.options.DisableClip = true
+	assert.True(t, c.DisableClip())
+	c.options.DisableClip = false
+	assert.False(t, c.DisableClip())
+}

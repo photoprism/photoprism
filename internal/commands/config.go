@@ -69,6 +69,7 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %t\n", "disable-places", conf.DisablePlaces())
 	fmt.Printf("%-25s %t\n", "disable-exiftool", conf.DisableExifTool())
 	fmt.Printf("%-25s %t\n", "disable-tensorflow", conf.DisableTensorFlow())
+	fmt.Printf("%-25s %t\n", "disable-clip", conf.DisableClip())
 	fmt.Printf("%-25s %t\n", "disable-faces", conf.DisableFaces())
 	fmt.Printf("%-25s %t\n", "disable-classification", conf.DisableClassification())
 	fmt.Printf("%-25s %t\n", "disable-darktable", conf.DisableDarktable())

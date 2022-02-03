@@ -739,6 +739,13 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 		}
 
 		photo.PhotoQuality = photo.QualityScore()
+		err := ind.Clips(m, photo.ID)
+		if err != nil {
+			log.Errorf("index: err='%s' in '%s' (while Clips)", err, logName)
+			result.Status = IndexFailed
+			result.Err = err
+			return result
+		}
 
 		if err := photo.Save(); err != nil {
 			log.Errorf("index: %s in %s (update metadata)", err, logName)

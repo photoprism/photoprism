@@ -72,6 +72,7 @@ type Options struct {
 	DisableSips           bool    `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
 	DisableHeifConvert    bool    `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
 	DisableTensorFlow     bool    `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
+	DisableClip           bool    `yaml:"DisableClip" json:"DisableClip" flag:"disable-clip"`
 	DisableFaces          bool    `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`
 	DisableClassification bool    `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DetectNSFW            bool    `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
