@@ -60,13 +60,12 @@ var (
 
 // Detector struct contains Pigo face detector general settings.
 type Detector struct {
-	minSize        int
-	angle          float64
-	shiftFactor    float64
-	scaleFactor    float64
-	iouThreshold   float64
-	scoreThreshold float32
-	perturb        int
+	minSize      int
+	angle        float64
+	shiftFactor  float64
+	scaleFactor  float64
+	iouThreshold float64
+	perturb      int
 }
 
 // Detect runs the detection algorithm over the provided source image.
@@ -82,13 +81,12 @@ func Detect(fileName string, findLandmarks bool, minSize int) (faces Faces, err 
 	}
 
 	d := &Detector{
-		minSize:        minSize,
-		angle:          0.0,
-		shiftFactor:    0.1,
-		scaleFactor:    1.1,
-		iouThreshold:   float64(OverlapThresholdFloor) / 100,
-		scoreThreshold: float32(ScoreThreshold),
-		perturb:        63,
+		minSize:      minSize,
+		angle:        0.0,
+		shiftFactor:  0.1,
+		scaleFactor:  1.1,
+		iouThreshold: float64(OverlapThresholdFloor) / 100,
+		perturb:      63,
 	}
 
 	if !fs.FileExists(fileName) {
