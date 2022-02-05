@@ -30,7 +30,7 @@ https://docs.photoprism.app/developer-guide/
 
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
-@import url("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
+@import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
 @import url("themes.css");
 @import url("animate.css");
 @import url("splash.css");
@@ -204,4 +204,51 @@ main {
 }
 .lh-20 {
     line-height: 2.0rem !important;
+}
+
+/* RTL alignments */
+
+#photoprism.is-rtl .text-xs-left,
+#photoprism.is-rtl .text-sm-left {
+    text-align: right!important;
+}
+
+#photoprism.is-rtl .text-xs-right,
+#photoprism.is-rtl .text-sm-right {
+    text-align: left!important;
+}
+
+#photoprism.is-rtl .v-text-field .v-input__prepend-inner {
+    margin-left: auto;
+    padding-left: 4px;
+    padding-right: 0;
+}
+
+#photoprism.is-rtl .v-toolbar.page-toolbar .v-text-field .v-input__slot {
+    padding-left: 12px;
+    padding-right: 0;
+}
+
+#photoprism.is-rtl .card-details button {
+    text-align: right;
+}
+
+#photoprism.is-rtl .p-flex-menuitem .nav-count {
+    margin-left: 48px;
+    margin-right: 8px;
+}
+
+#photoprism.is-rtl .v-list__group__header .p-flex-menuitem .nav-count {
+    margin-left: 0;
+}
+
+#photoprism.is-rtl .v-toolbar__content>:last-child.v-btn--icon,
+#photoprism.is-rtl .v-toolbar__extension>:last-child.v-btn--icon {
+    margin-left: -6px;
+    margin-right: 6px;
+}
+
+ol, ul {
+    padding-left: 24px;
+    padding-right: 24px;
 }

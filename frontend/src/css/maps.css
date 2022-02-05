@@ -1,9 +1,14 @@
-#photoprism .p-map-control {
-    position: fixed;
+#photoprism .map-control {
+    position: absolute;
     background: transparent;
     bottom: 35px;
     right: 30px;
     z-index: 2;
+}
+
+#photoprism.is-rtl .map-control {
+    right: auto;
+    left: 30px;
 }
 
 #photoprism #map .marker {
@@ -16,6 +21,6 @@
     cursor: pointer;
 }
 
-#photoprism .mapboxgl-ctrl-attrib-inner a {
+#photoprism .maplibregl-ctrl-attrib-inner a {
     color: #333 !important;
 }

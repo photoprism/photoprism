@@ -9,7 +9,7 @@ We currently have the following sponsorship options:
 - [Patreon](https://www.patreon.com/photoprism) is priced in Euro and also offers yearly payments
 - Stripe will be available in early 2022, so you can sign up directly in the app without having a Patreon or GitHub
   account
-- you are welcome to [contact us](https://photoprism.app/contact) for [other options](#crypto-wallets)
+- you are welcome to [contact us](https://photoprism.app/contact) for [crypto donations](https://photoprism.app/crypto-donations) and other options
 
 Visit [docs.photoprism.app/funding](https://docs.photoprism.app/funding/) to learn more.
 
@@ -71,13 +71,3 @@ William Kray, Ovace Mamnoon, Clément Caplain Moreau, The Gordon Project, [@pluj
 [@swingstate](https://github.com/photoprism/photoprism/issues/808#issuecomment-997467377)
 
 [Learn more about one-time donation options through GitHub Sponsors.](https://github.com/sponsors/photoprism?frequency=one-time)
-
-## Crypto Donations ##
-
-Donations in Monero (XMR) and IOTA (MIOTA) can be made to the following wallet addresses:
-
-| Monero    | `474qhuQzC59g4i7cn8mN9VeRGRJHvChmUhL5Fh53hntah63QzB7ERxEb5woVvJkc1KZuGZ3GsGh7d5w9d6SUBHmrUzGeEWT` |
-|-----------|---------------------------------------------------------------------------------------------------|
-| IOTA      | `iota1qrcspztm2v2nldpuysq5j5fydn8ulyrnhr86qjymxwmmvzax8zlw7g0jyww`                                |
-
-Please [contact us by email](https://photoprism.app/contact) with a reference to the transaction so we can help you unlock additional features and provide technical support. Thank You! :)

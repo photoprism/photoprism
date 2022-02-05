@@ -11,7 +11,7 @@ services:
   ## Includes test certificates for https://*.traefik.net/
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
-    image: photoprism/traefik:20211218
+    image: photoprism/traefik:20220205
     ports:
       # - "80:80" # HTTP (redirects to HTTPS)
       - "443:443" # HTTPS (required)
@@ -141,7 +141,7 @@ services:
   ## Test Admin: admin / photoprism
   ## Docs: https://www.keycloak.org/getting-started/getting-started-docker
   keycloak:
-    image: quay.io/keycloak/keycloak:16.0.0
+    image: quay.io/keycloak/keycloak:16.1.1
     links:
       - "traefik:photoprism.traefik.net"
     labels:
