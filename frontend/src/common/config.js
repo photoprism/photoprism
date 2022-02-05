@@ -286,11 +286,7 @@ export default class Config {
   setTheme(name) {
     this.themeName = name;
 
-    const el = document.getElementById("photoprism");
-
-    if (el) {
-      el.className = "theme-" + name;
-    }
+    Event.publish("view.refresh", this);
 
     this.theme = themes[name] ? themes[name] : themes["default"];
 
