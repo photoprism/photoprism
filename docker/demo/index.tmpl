@@ -32,16 +32,12 @@
   <link rel="manifest" href="{{ .config.ManifestUri }}" crossorigin="use-credentials">
 
   <script>
-      window.__CONFIG__ = {{ .config }};
+    window.__CONFIG__ = {{ .config }};
   </script>
 
-  <script async defer data-domain="{{ .config.SiteDomain }}" src="https://a.photoprism.app/js/plausible.js"></script>
+  <script async defer data-domain="{{ .config.SiteDomain }}" src="https://a.photoprism.app/js/s.js"></script>
 </head>
 <body class="{{ .config.Flags }}">
-<!--[if lt IE 8]>
-<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-  your browser</a> to improve your experience.</p>
-<![endif]-->
 
 {{template "app.tmpl" .}}
 
