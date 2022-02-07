@@ -9,11 +9,6 @@ msgstr ""
 msgid ""
 msgstr ""
 
-#: src/dialog/photo/files.vue:140
-#: src/dialog/photo/files.vue:137
-msgid "{{ file.Orientation }}"
-msgstr ""
-
 #: src/pages/albums.vue:342
 #: src/share/albums.vue:300
 msgid "%{n} albums found"
@@ -683,7 +678,7 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: src/dialog/photo/files.vue:31
+#: src/dialog/photo/files.vue:32
 msgid "Dimensions"
 msgstr ""
 
@@ -814,7 +809,7 @@ msgstr ""
 #: src/component/photo/list.vue:58
 #: src/component/photo/viewer.vue:158
 #: src/component/subject/clipboard.vue:44
-#: src/dialog/photo/files.vue:44
+#: src/dialog/photo/files.vue:52
 #: src/pages/library/files.vue:99
 #: src/share/album/clipboard.vue:37
 #: src/share/photo/cards.vue:54
@@ -1517,7 +1512,7 @@ msgstr ""
 #: src/dialog/album/edit.vue:106
 #: src/dialog/photo/files.vue:71
 #: src/dialog/photo/files.vue:68
-#: src/dialog/photo/files.vue:30
+#: src/dialog/photo/files.vue:31
 #: src/dialog/photo/info.vue:31
 #: src/dialog/photo/labels.vue:48
 #: src/dialog/photo/people.vue:18
@@ -1822,7 +1817,7 @@ msgstr ""
 msgid "Permanently remove files to free up storage."
 msgstr ""
 
-#: src/model/photo.js:896
+#: src/model/photo.js:904
 msgid "Photo"
 msgstr ""
 
@@ -1921,7 +1916,7 @@ msgstr ""
 #: src/dialog/photo/files.vue:101
 #: src/dialog/photo/files.vue:32
 #: src/dialog/photo/files.vue:98
-#: src/dialog/photo/files.vue:24
+#: src/dialog/photo/files.vue:25
 msgid "Primary"
 msgstr ""
 
@@ -2266,7 +2261,7 @@ msgstr ""
 #: src/dialog/account/edit.vue:220
 #: src/dialog/photo/files.vue:83
 #: src/dialog/photo/files.vue:80
-#: src/dialog/photo/files.vue:32
+#: src/dialog/photo/files.vue:33
 msgid "Size"
 msgstr ""
 
@@ -2345,7 +2340,7 @@ msgstr ""
 msgid "Static Size Limit: %{n}px"
 msgstr ""
 
-#: src/dialog/photo/files.vue:34
+#: src/dialog/photo/files.vue:35
 msgid "Status"
 msgstr ""
 
@@ -2491,7 +2486,7 @@ msgstr ""
 #: src/dialog/account/edit.vue:490
 #: src/dialog/photo/files.vue:89
 #: src/dialog/photo/files.vue:86
-#: src/dialog/photo/files.vue:33
+#: src/dialog/photo/files.vue:34
 #: src/dialog/photo/info.vue:15
 msgid "Type"
 msgstr ""
@@ -2511,8 +2506,8 @@ msgstr ""
 #: src/model/photo.js:588
 #: src/model/photo.js:611
 #: src/model/photo.js:625
-#: src/model/photo.js:702
-#: src/model/photo.js:715
+#: src/model/photo.js:710
+#: src/model/photo.js:723
 #: src/options/options.js:20
 #: src/options/options.js:34
 #: src/options/options.js:51

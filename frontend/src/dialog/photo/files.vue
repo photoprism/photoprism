@@ -116,7 +116,7 @@
                           <td>
                             <translate>Codec</translate>
                           </td>
-                          <td>{{ file.Codec | uppercase }}</td>
+                          <td>{{ codecName(file) }}</td>
                         </tr>
                         <tr v-if="file.Primary">
                           <td>
@@ -152,14 +152,14 @@
                           <td>
                             <translate>Aspect Ratio</translate>
                           </td>
-                          <td>{{ file.AspectRatio }}</td>
+                          <td>{{ file.AspectRatio }} : 1</td>
                         </tr>
                         <tr v-if="file.Orientation">
                           <td>
                             <translate>Orientation</translate>
                           </td>
                           <td>
-                            <translate>{{ file.Orientation }}</translate>
+                            <v-icon :class="`orientation-${file.Orientation}`">portrait</v-icon>
                           </td>
                         </tr>
                         <tr v-if="file.ColorProfile">
@@ -178,7 +178,7 @@
                           <td>
                             <translate>Chroma</translate>
                           </td>
-                          <td>{{ file.Chroma }} / 100</td>
+                          <td><v-progress-linear :value="file.Chroma" style="max-width: 300px;" :title="`${file.Chroma}%`"></v-progress-linear></td>
                         </tr>
                         <tr v-if="file.Missing">
                           <td>
@@ -226,6 +226,7 @@
 import Thumb from "model/thumb";
 import {DateTime} from "luxon";
 import Notify from "../../common/notify";
+import Util from "../../common/util";
 
 export default {
   name: 'PTabPhotoFiles',
@@ -262,6 +263,13 @@ export default {
   },
   computed: {},
   methods: {
+    codecName(file) {
+      if (!file || !file.Codec) {
+        return "";
+      }
+
+      return Util.codecName(file.Codec);
+    },
     openFile(file) {
       this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
     },

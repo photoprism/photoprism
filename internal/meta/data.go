@@ -21,7 +21,7 @@ type Data struct {
 	TakenAtLocal time.Time     `meta:"DateTimeOriginal,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,DateTimeDigitized,DateTime"`
 	TimeZone     string        `meta:"-"`
 	Duration     time.Duration `meta:"Duration,MediaDuration,TrackDuration"`
-	Codec        string        `meta:"CompressorID,Compression,FileType"`
+	Codec        string        `meta:"CompressorID,FileType"`
 	Title        string        `meta:"Title"`
 	Subject      string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets"`
 	Keywords     Keywords      `meta:"Keywords"`

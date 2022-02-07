@@ -35,7 +35,7 @@ require (
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
-	github.com/mandykoh/prism v0.34.0
+	github.com/mandykoh/prism v0.34.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect

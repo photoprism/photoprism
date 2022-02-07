@@ -215,8 +215,8 @@ github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i
 github.com/machinebox/progress v0.2.0/go.mod h1:hl4FywxSjfmkmCrersGhmJH7KwuKl+Ueq9BXkOny+iE=
 github.com/mandykoh/go-parallel v0.1.0 h1:7vJMNMC4dsbgZdkAb2A8tV5ENY1v7VxIO1wzQWZoT8k=
 github.com/mandykoh/go-parallel v0.1.0/go.mod h1:lkYHqG1JNTaSS6lG+PgFCnyMd2VDy8pH9jN9pY899ig=
-github.com/mandykoh/prism v0.34.0 h1:BWwxhdTVMZxhSur2sDmkFFLKzD8mFXOMy6bjJ4WuS4k=
-github.com/mandykoh/prism v0.34.0/go.mod h1:mqzyMed6kgs8cImi+RoXBi5YtuzmSWShTakMRMD94VE=
+github.com/mandykoh/prism v0.34.1 h1:FXEp+vEbm50HNN+cEF+8SWIrph/sY/XotRbh5uBrGS8=
+github.com/mandykoh/prism v0.34.1/go.mod h1:mqzyMed6kgs8cImi+RoXBi5YtuzmSWShTakMRMD94VE=
 github.com/manifoldco/promptui v0.9.0 h1:3V4HzJk1TtXW1MTZMP7mdlwbBpIinw3HztaIlYthEiA=
 github.com/manifoldco/promptui v0.9.0/go.mod h1:ka04sppxSGFAtxX0qhlYQjISsg9mR4GWtQEhdbn6Pgg=
 github.com/matryer/is v1.2.0/go.mod h1:2fLPjFQM9rhQ15aVEtbuwhJinnOqrmgXPNdZsdwlWXA=

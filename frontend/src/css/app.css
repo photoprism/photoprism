@@ -155,18 +155,10 @@ main {
 
 #photoprism .body-1,
 #photoprism .body-2,
+#photoprism .break-word,
+#photoprism .v-datatable td,
 #photoprism .v-card button,
 #photoprism .v-card .caption {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-}
-
-#photoprism .break-word {
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-word;
@@ -204,6 +196,36 @@ main {
 }
 .lh-20 {
     line-height: 2.0rem !important;
+}
+
+/* Image Orientation */
+
+.orientation-0 {
+    transform: rotate(0deg);
+}
+.orientation-1 {
+    transform: rotate(0deg);
+}
+.orientation-2 {
+    transform: rotate(0deg);
+}
+.orientation-3 {
+    transform: rotate(180deg);
+}
+.orientation-4 {
+    transform: rotate(180deg);
+}
+.orientation-5 {
+    transform: rotate(90deg);
+}
+.orientation-6 {
+    transform: rotate(90deg);
+}
+.orientation-7 {
+    transform: rotate(270deg);
+}
+.orientation-8 {
+    transform: rotate(270deg);
 }
 
 /* RTL alignments */
