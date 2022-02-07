@@ -44,7 +44,7 @@
     "core-js": "^3.20.3",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
-    "cssnano": "^5.0.15",
+    "cssnano": "^5.0.17",
     "easygettext": "^2.17.0",
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",

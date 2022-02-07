@@ -1,6 +1,6 @@
 <template>
   <div id="p-navigation">
-    <template v-if="$vuetify.breakpoint.smAndDown || !auth">
+    <template v-if="visible && ($vuetify.breakpoint.smAndDown || !auth)">
       <v-toolbar dark fixed flat scroll-off-screen :dense="$vuetify.breakpoint.smAndDown"  color="navigation darken-1" class="nav-small"
                   @click.stop="showNavigation()">
         <v-toolbar-side-icon v-if="auth" class="nav-show"></v-toolbar-side-icon>
@@ -22,7 +22,7 @@
       </v-toolbar>
     </template>
     <v-navigation-drawer
-        v-if="auth"
+        v-if="visible && auth"
         v-model="drawer"
         :mini-variant="isMini"
         :width="270"
@@ -419,7 +419,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="!isPublic && auth" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
+            <v-list-tile v-show="!isPublic" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
                          @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -438,7 +438,7 @@
           </v-list-group>
         </template>
 
-        <v-list-tile v-show="!auth" to="/login" class="nav-login" @click.stop="">
+        <v-list-tile v-show="!auth" :to="{ name: 'login' }" class="nav-login" @click.stop="">
           <v-list-tile-action :title="$gettext('Login')">
             <v-icon>lock</v-icon>
           </v-list-tile-action>
@@ -466,7 +466,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="!isPublic && auth"  to="/settings/account" class="p-profile">
+        <v-list-tile v-show="auth && !isPublic" to="/settings/account" class="p-profile">
           <v-list-tile-avatar color="grey" size="36">
             <span class="white--text headline">{{ displayName.length >= 1 ? displayName[0].toUpperCase() : "E" }}</span>
           </v-list-tile-avatar>
@@ -478,14 +478,14 @@
             <v-list-tile-sub-title>{{ accountInfo }}</v-list-tile-sub-title>
           </v-list-tile-content>
 
-          <v-list-tile-action :title="$gettext('Logout')">
+          <v-list-tile-action :title="$gettext('Logout')" @click.stop="">
             <v-btn icon @click="logout">
               <v-icon>power_settings_new</v-icon>
             </v-btn>
           </v-list-tile-action>
         </v-list-tile>
 
-        <v-list-tile v-show="!isPublic && auth && isMini" class="nav-logout" @click="logout">
+        <v-list-tile v-show="isMini && auth && !isPublic" class="nav-logout" @click="logout">
           <v-list-tile-action :title="$gettext('Logout')">
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>
@@ -499,6 +499,7 @@
       </v-list>
 
     </v-navigation-drawer>
+
     <div v-if="isTest" id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Browse Your Life in Pictures</a></div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
     <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
@@ -545,6 +546,9 @@ export default {
   computed: {
     auth() {
       return this.session.auth || this.isPublic;
+    },
+    visible() {
+      return !this.$route.meta.hideNav;
     },
     displayName() {
       const user = this.$session.getUser();

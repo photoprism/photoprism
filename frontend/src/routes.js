@@ -38,7 +38,7 @@ import Labels from "pages/labels.vue";
 import People from "pages/people.vue";
 import Library from "pages/library.vue";
 import Settings from "pages/settings.vue";
-import Login from "pages/login.vue";
+import AuthLogin from "pages/auth/login.vue";
 import Discover from "pages/discover.vue";
 import About from "pages/about/about.vue";
 import Feedback from "pages/about/feedback.vue";
@@ -83,9 +83,9 @@ export default [
   },
   {
     name: "login",
-    path: "/login",
-    component: Login,
-    meta: { title: siteTitle, auth: false },
+    path: "/auth/login",
+    component: AuthLogin,
+    meta: { title: siteTitle, auth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
       if (session.isUser()) {
         next({ name: "home" });

@@ -152,21 +152,19 @@
                   <v-icon size="14" :title="labels.taken">date_range</v-icon>
                   {{ photo.getDateString(true) }}
                 </button>
-                <template v-if="!photo.Description">
-                  <br/>
-                  <button v-if="photo.Type === 'video'" :title="labels.video"
-                          @click.exact="openPhoto(index, true)">
-                    <v-icon size="14">movie</v-icon>
-                    {{ photo.getVideoInfo() }}
-                  </button>
-                  <button v-else :title="labels.camera" class="action-camera-edit"
-                          :data-uid="photo.UID" @click.exact="editPhoto(index)">
-                    <v-icon size="14">photo_camera</v-icon>
-                    {{ photo.getPhotoInfo() }}
-                  </button>
-                </template>
+                <br>
+                <button v-if="photo.Type === 'video'" :title="labels.video"
+                        @click.exact="openPhoto(index, true)">
+                  <v-icon size="14">movie</v-icon>
+                  {{ photo.getVideoInfo() }}
+                </button>
+                <button v-else :title="labels.camera" class="action-camera-edit"
+                        :data-uid="photo.UID" @click.exact="editPhoto(index)">
+                  <v-icon size="14">photo_camera</v-icon>
+                  {{ photo.getPhotoInfo() }}
+                </button>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
-                  <br/>
+                  <br>
                   <button :title="labels.name"
                           @click.exact="downloadFile(index)">
                     <v-icon size="14">insert_drive_file</v-icon>
@@ -174,7 +172,7 @@
                   </button>
                 </template>
                 <template v-if="showLocation && photo.Country !== 'zz'">
-                  <br/>
+                  <br>
                   <button :title="labels.location" class="action-location"
                           :data-uid="photo.UID" @click.exact="openLocation(index)">
                     <v-icon size="14">location_on</v-icon>

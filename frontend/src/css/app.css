@@ -31,6 +31,7 @@ https://docs.photoprism.app/developer-guide/
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
+@import url("wallpaper.css");
 @import url("themes.css");
 @import url("animate.css");
 @import url("splash.css");
