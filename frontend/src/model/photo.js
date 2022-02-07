@@ -69,9 +69,9 @@ export const DATE_FULL = {
 
 export const DATE_FULL_TZ = {
   year: num,
-  month: long,
+  month: short,
   day: num,
-  weekday: long,
+  weekday: short,
   hour: num,
   minute: num,
   timeZoneName: short,
@@ -683,9 +683,17 @@ export class Photo extends RestModel {
     let info = [];
 
     if (this.Camera) {
-      info.push(this.Camera.Make + " " + this.Camera.Model);
+      if (this.Camera.Model.length > 7) {
+        info.push(this.Camera.Model);
+      } else {
+        info.push(this.Camera.Make + " " + this.Camera.Model);
+      }
     } else if (this.CameraModel && this.CameraMake) {
-      info.push(this.CameraMake + " " + this.CameraModel);
+      if (this.CameraModel.length > 7) {
+        info.push(this.CameraModel);
+      } else {
+        info.push(this.CameraMake + " " + this.CameraModel);
+      }
     }
 
     let file = this.videoFile();
