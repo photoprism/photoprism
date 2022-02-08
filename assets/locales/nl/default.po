@@ -6,17 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2021-10-10 08:33+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.app>\n"
-"Language-Team: \n"
-"Language: nl_NL\n"
+"PO-Revision-Date: 2022-02-09 16:24+0000\n"
+"Last-Translator: LyssaK <a.y.kurasova@gmail.com>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
+"backend/nl/>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -52,9 +53,8 @@ msgid "Selection not found"
 msgstr "Selectie niet gevonden"
 
 #: messages.go:90
-#| msgid "File not found"
 msgid "Entity not found"
-msgstr "Entity not found"
+msgstr "Entiteit niet gevonden"
 
 #: messages.go:91
 msgid "Account not found"
