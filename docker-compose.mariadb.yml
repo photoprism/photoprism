@@ -7,7 +7,7 @@ services:
     image: mariadb:10.7
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # Database port (internal)
+      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -23,7 +23,7 @@ services:
     image: mariadb:10.5.5
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # Database port (internal)
+      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -38,7 +38,7 @@ services:
     image: mariadb:10.3
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # Database port (internal)
+      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -53,7 +53,7 @@ services:
     image: mariadb:10.2
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # Database port (internal)
+      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -67,7 +67,7 @@ services:
     image: mariadb:10.1
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # Database port (internal)
+      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -82,7 +82,7 @@ services:
     image: mysql:8
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # Database port (internal)
+      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:

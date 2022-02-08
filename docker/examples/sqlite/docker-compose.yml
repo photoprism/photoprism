@@ -52,23 +52,23 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # PLEASE CHANGE: Your initial admin password (min 4 characters)
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Public server URL incl http:// or https:// and /path, :port is optional
-      PHOTOPRISM_ORIGINALS_LIMIT: 5000               # File size limit for originals in MB (increase for high-res video)
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
-      PHOTOPRISM_DEBUG: "false"                      # Run in debug mode (shows additional log messages)
-      PHOTOPRISM_PUBLIC: "false"                     # No authentication required (disables password protection)
-      PHOTOPRISM_READONLY: "false"                   # Don't modify originals directory (reduced functionality)
-      PHOTOPRISM_EXPERIMENTAL: "false"               # Enables experimental features
-      PHOTOPRISM_DISABLE_CHOWN: "false"              # Disables storage permission updates on startup
-      PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # Disables all features depending on TensorFlow
-      PHOTOPRISM_DISABLE_FACES: "false"              # Disables facial recognition
-      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # Disables image classification
-      PHOTOPRISM_DARKTABLE_PRESETS: "true"           # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_DETECT_NSFW: "false"                # Flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "true"                 # Allow uploads that MAY be offensive
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # !!! PLEASE CHANGE YOUR INITIAL "admin" PASSWORD !!!
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # public server URL incl http:// or https:// and /path, :port is optional
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_DEBUG: "false"                      # run in debug mode (shows additional log messages)
+      PHOTOPRISM_PUBLIC: "false"                     # no authentication required (disables password protection)
+      PHOTOPRISM_READONLY: "false"                   # don't modify originals directory (reduced functionality)
+      PHOTOPRISM_EXPERIMENTAL: "false"               # enables experimental features
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # disables storage permission updates on startup
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables Settings in Web UI
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_FACES: "false"              # disables facial recognition
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification
+      PHOTOPRISM_DARKTABLE_PRESETS: "true"           # enables Darktable presets and disables concurrent RAW conversion
+      PHOTOPRISM_DETECT_NSFW: "false"                # flag photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive
       PHOTOPRISM_DATABASE_DRIVER: "sqlite"           # SQLite is an embedded database that doesn't require a server
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
@@ -103,4 +103,4 @@ services:
   #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
   #   volumes:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
-  #     - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
+  #     - "~/.docker/config.json:/config.json" # optional, for authentication if you have a Docker Hub account

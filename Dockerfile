@@ -1,10 +1,13 @@
 FROM photoprism/develop:20220202
 
-# Copy latest entrypoint script
+# update NPM JS package manager
+RUN npm update -g npm
+
+# copy scripts
 COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
 
-# Set up project directory
+# set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 COPY . .

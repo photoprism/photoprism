@@ -30,7 +30,7 @@ services:
       PHOTOPRISM_DETACH_SERVER: "true"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # Improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # improves transfer speed and bandwidth utilization (none or gzip)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
@@ -38,28 +38,28 @@ services:
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
       PHOTOPRISM_TEST_DSN: ".test.db"
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # The initial admin password (min 4 characters)
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism" # the initial admin password (min 4 characters)
       PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
       PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
       PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
-      PHOTOPRISM_DISABLE_CHOWN: "true"        # Disables storage permission updates on startup
-      PHOTOPRISM_DISABLE_BACKUPS: "false"     # Don't backup photo and album metadata to YAML files
-      PHOTOPRISM_DISABLE_WEBDAV: "false"      # Disables built-in WebDAV server
-      PHOTOPRISM_DISABLE_SETTINGS: "false"    # Disables Settings in Web UI
-      PHOTOPRISM_DISABLE_PLACES: "false"      # Disables reverse geocoding and maps
-      PHOTOPRISM_DISABLE_EXIFTOOL: "false"    # Don't create ExifTool JSON files for improved metadata extraction
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # Don't use TensorFlow for image classification
-      PHOTOPRISM_DETECT_NSFW: "false"         # Flag photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "false"         # Allow uploads that may be offensive
-      PHOTOPRISM_DARKTABLE_PRESETS: "false"   # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_THUMB_FILTER: "lanczos"      # Resample filter, best to worst: blackman, lanczos, cubic, linear
-      PHOTOPRISM_THUMB_UNCACHED: "true"       # Enables on-demand thumbnail rendering (high memory and cpu usage)
-      PHOTOPRISM_THUMB_SIZE: 2048             # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
-      # PHOTOPRISM_THUMB_SIZE: 4096           # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
-      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # On-demand rendering size limit (default 7680, min 720, max 7680)
-      PHOTOPRISM_JPEG_SIZE: 7680              # Size limit for converted image files in pixels (720-30000)
-      PHOTOPRISM_JPEG_QUALITY: 92             # Set to 95 for high-quality thumbnails (25-100)
+      PHOTOPRISM_DISABLE_CHOWN: "true"        # disables storage permission updates on startup
+      PHOTOPRISM_DISABLE_BACKUPS: "false"     # don't backup photo and album metadata to YAML files
+      PHOTOPRISM_DISABLE_WEBDAV: "false"      # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"    # disables Settings in Web UI
+      PHOTOPRISM_DISABLE_PLACES: "false"      # disables reverse geocoding and maps
+      PHOTOPRISM_DISABLE_EXIFTOOL: "false"    # don't create ExifTool JSON files for improved metadata extraction
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # don't use TensorFlow for image classification
+      PHOTOPRISM_DETECT_NSFW: "false"         # flag photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "false"         # allow uploads that may be offensive
+      PHOTOPRISM_DARKTABLE_PRESETS: "false"   # enables Darktable presets and disables concurrent RAW conversion
+      PHOTOPRISM_THUMB_FILTER: "lanczos"      # resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096           # retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 7680)
+      PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_QUALITY: 92             # set to 95 for high-quality thumbnails (25-100)
       CODECOV_TOKEN:
       CODECOV_ENV:
       CODECOV_URL:
@@ -148,7 +148,7 @@ services:
     image: mariadb:10.6
     command: mysqld --port=4001 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # Database port (internal)
+      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:

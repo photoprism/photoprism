@@ -298,7 +298,7 @@ CREATE TABLE `CLIENT` (
 
 LOCK TABLES `CLIENT` WRITE;
 /*!40000 ALTER TABLE `CLIENT` DISABLE KEYS */;
-INSERT INTO `CLIENT` VALUES ('4e4977d6-eaa9-4245-ae4c-04d20f5436d9','','\0','account',0,'',NULL,'/realms/master/account/','\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_account}','\0','client-secret','${authBaseUrl}',NULL,NULL,'','\0','\0','\0'),('54905dd0-4ade-494e-9c35-ab2d445a99f5','','\0','account-console',0,'',NULL,'/realms/master/account/','\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_account-console}','\0','client-secret','${authBaseUrl}',NULL,NULL,'','\0','\0','\0'),('5a059221-51fd-434f-84a6-40fa51cda5ce','','','photoprism-develop',0,'\0','9d8351a0-ca01-4556-9c37-85eb634869b9',NULL,'\0','https://photoprism.traefik.net/','\0','master','openid-connect',-1,'\0','\0','PhotoPrism','\0','client-secret','https://photoprism.traefik.net/',NULL,NULL,'','\0','','\0'),('5b62e4f6-f646-4e0b-aa07-83a17a324137','','\0','broker',0,'\0',NULL,NULL,'',NULL,'\0','master','openid-connect',0,'\0','\0','${client_broker}','\0','client-secret',NULL,NULL,NULL,'','\0','\0','\0'),('8a6bade2-ad19-45f1-9923-b357684d765c','','\0','admin-cli',0,'',NULL,NULL,'\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_admin-cli}','\0','client-secret',NULL,NULL,NULL,'\0','\0','','\0'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','','\0','security-admin-console',0,'',NULL,'/admin/master/console/','\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_security-admin-console}','\0','client-secret','${authAdminUrl}',NULL,NULL,'','\0','\0','\0'),('e6b04c6f-e451-49ce-95b1-01b3325b77f7','','\0','master-realm',0,'\0',NULL,NULL,'',NULL,'\0','master',NULL,0,'\0','\0','master Realm','\0','client-secret',NULL,NULL,NULL,'','\0','\0','\0');
+INSERT INTO `CLIENT` VALUES ('4e4977d6-eaa9-4245-ae4c-04d20f5436d9','','\0','account',0,'',NULL,'/realms/master/account/','\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_account}','\0','client-secret','${authBaseUrl}',NULL,NULL,'','\0','\0','\0'),('54905dd0-4ade-494e-9c35-ab2d445a99f5','','\0','account-console',0,'',NULL,'/realms/master/account/','\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_account-console}','\0','client-secret','${authBaseUrl}',NULL,NULL,'','\0','\0','\0'),('5a059221-51fd-434f-84a6-40fa51cda5ce','','','photoprism-develop',0,'\0','9d8351a0-ca01-4556-9c37-85eb634869b9',NULL,'\0','https://app.localssl.dev/','\0','master','openid-connect',-1,'\0','\0','PhotoPrism','\0','client-secret','https://app.localssl.dev/',NULL,NULL,'','\0','','\0'),('5b62e4f6-f646-4e0b-aa07-83a17a324137','','\0','broker',0,'\0',NULL,NULL,'',NULL,'\0','master','openid-connect',0,'\0','\0','${client_broker}','\0','client-secret',NULL,NULL,NULL,'','\0','\0','\0'),('8a6bade2-ad19-45f1-9923-b357684d765c','','\0','admin-cli',0,'',NULL,NULL,'\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_admin-cli}','\0','client-secret',NULL,NULL,NULL,'\0','\0','','\0'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','','\0','security-admin-console',0,'',NULL,'/admin/master/console/','\0',NULL,'\0','master','openid-connect',0,'\0','\0','${client_security-admin-console}','\0','client-secret','${authAdminUrl}',NULL,NULL,'','\0','\0','\0'),('e6b04c6f-e451-49ce-95b1-01b3325b77f7','','\0','master-realm',0,'\0',NULL,NULL,'',NULL,'\0','master',NULL,0,'\0','\0','master Realm','\0','client-secret',NULL,NULL,NULL,'','\0','\0','\0');
 /*!40000 ALTER TABLE `CLIENT` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1871,7 +1871,7 @@ CREATE TABLE `REDIRECT_URIS` (
 
 LOCK TABLES `REDIRECT_URIS` WRITE;
 /*!40000 ALTER TABLE `REDIRECT_URIS` DISABLE KEYS */;
-INSERT INTO `REDIRECT_URIS` VALUES ('4e4977d6-eaa9-4245-ae4c-04d20f5436d9','/realms/master/account/*'),('54905dd0-4ade-494e-9c35-ab2d445a99f5','/realms/master/account/*'),('5a059221-51fd-434f-84a6-40fa51cda5ce','https://photoprism.traefik.net/api/v1/auth/callback'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','/admin/master/console/*');
+INSERT INTO `REDIRECT_URIS` VALUES ('4e4977d6-eaa9-4245-ae4c-04d20f5436d9','/realms/master/account/*'),('54905dd0-4ade-494e-9c35-ab2d445a99f5','/realms/master/account/*'),('5a059221-51fd-434f-84a6-40fa51cda5ce','https://app.localssl.dev/api/v1/auth/callback'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','/admin/master/console/*');
 /*!40000 ALTER TABLE `REDIRECT_URIS` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2686,7 +2686,7 @@ CREATE TABLE `WEB_ORIGINS` (
 
 LOCK TABLES `WEB_ORIGINS` WRITE;
 /*!40000 ALTER TABLE `WEB_ORIGINS` DISABLE KEYS */;
-INSERT INTO `WEB_ORIGINS` VALUES ('5a059221-51fd-434f-84a6-40fa51cda5ce','https://photoprism.traefik.net/'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','+');
+INSERT INTO `WEB_ORIGINS` VALUES ('5a059221-51fd-434f-84a6-40fa51cda5ce','https://app.localssl.dev/'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','+');
 /*!40000 ALTER TABLE `WEB_ORIGINS` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

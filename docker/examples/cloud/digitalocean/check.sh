@@ -412,7 +412,7 @@ function checkFirewall {
 }
 function checkUpdates {
     if [[ $OS == "Ubuntu" ]] || [[ "$OS" =~ Debian.* ]]; then
-        # Ensure /tmp exists and has the proper permissions before
+        # ensure /tmp exists and has the proper permissions before
         # checking for security updates
         # https://github.com/digitalocean/marketplace-partners/issues/94
         if [[ ! -d /tmp ]]; then
