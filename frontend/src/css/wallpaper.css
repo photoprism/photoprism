@@ -8,9 +8,28 @@
     background-image: url(https://da.photoprism.app/wallpaper/default.jpg);
 }
 
-#photoprism.theme-gemstone .auth-login-box
+.dark-theme #photoprism .auth-login-box
 {
     opacity: 98%;
+}
+
+#photoprism .blur-1 {
+    backdrop-filter: blur(2px);
+}
+#photoprism .blur-2 {
+    backdrop-filter: blur(3px);
+}
+#photoprism .blur-3 {
+    backdrop-filter: blur(4px);
+}
+#photoprism .blur-4 {
+    backdrop-filter: blur(6px);
+}
+#photoprism .blur-5 {
+    backdrop-filter: blur(8px);
+}
+#photoprism .blur-6 {
+    backdrop-filter: blur(10px);
 }
 
 #photoprism.theme-gemstone .auth-login.wallpaper {
@@ -20,6 +39,11 @@
 #photoprism.theme-raspberry .auth-login.wallpaper
 {
     background-image: url(https://da.photoprism.app/wallpaper/raspberry.jpg);
+}
+
+#photoprism.theme-cyano .auth-login.wallpaper
+{
+    background-image: url(https://da.photoprism.app/wallpaper/cyano.jpg);
 }
 
 #photoprism.theme-vanta .auth-login.wallpaper

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height class="auth-login wallpaper">
     <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md4>
+      <v-flex xs12 sm8 md4 blur-2>
           <v-card class="elevation-12 auth-login-box">
             <v-toolbar flat dark prominent :dense="false">
               <v-list class="navigation-home">
