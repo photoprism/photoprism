@@ -98,27 +98,27 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "import-path",
-		Usage:  "optional base `PATH` from which files can be imported to originals",
+		Usage:  "base `PATH` from which files can be imported to originals (optional)",
 		EnvVar: "PHOTOPRISM_IMPORT_PATH",
 	},
 	cli.StringFlag{
 		Name:   "cache-path",
-		Usage:  "optional custom cache `PATH` for sessions and thumbnail files",
+		Usage:  "custom cache `PATH` for sessions and thumbnail files (optional)",
 		EnvVar: "PHOTOPRISM_CACHE_PATH",
 	},
 	cli.StringFlag{
 		Name:   "sidecar-path",
-		Usage:  "optional custom relative or absolute sidecar `PATH`",
+		Usage:  "custom relative or absolute sidecar `PATH` (optional)",
 		EnvVar: "PHOTOPRISM_SIDECAR_PATH",
 	},
 	cli.StringFlag{
 		Name:   "temp-path",
-		Usage:  "optional custom temporary file `PATH`",
+		Usage:  "custom temporary file `PATH` (optional)",
 		EnvVar: "PHOTOPRISM_TEMP_PATH",
 	},
 	cli.StringFlag{
 		Name:   "backup-path",
-		Usage:  "optional custom backup `PATH` for index backup files",
+		Usage:  "custom backup `PATH` for index backup files (optional)",
 		EnvVar: "PHOTOPRISM_BACKUP_PATH",
 	},
 	cli.StringFlag{
@@ -239,24 +239,24 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "app-icon",
-		Usage:  "application `ICON` (logo, app, crisp, mint, bold)",
+		Usage:  "web app `ICON` (logo, app, crisp, mint, bold)",
 		EnvVar: "PHOTOPRISM_APP_ICON",
 	},
 	cli.StringFlag{
 		Name:   "app-name",
-		Usage:  "application `NAME` when installed on a device",
+		Usage:  "web app `NAME` when installed on a device",
 		Value:  "PhotoPrism",
 		EnvVar: "PHOTOPRISM_APP_NAME",
 	},
 	cli.StringFlag{
 		Name:   "app-mode",
-		Usage:  "application `MODE` (fullscreen, standalone, minimal-ui, browser)",
+		Usage:  "web app `MODE` (fullscreen, standalone, minimal-ui, browser)",
 		Value:  "standalone",
 		EnvVar: "PHOTOPRISM_APP_MODE",
 	},
 	cli.StringFlag{
 		Name:   "cdn-url",
-		Usage:  "optional content delivery network `URL`",
+		Usage:  "content delivery network `URL` (optional)",
 		EnvVar: "PHOTOPRISM_CDN_URL",
 	},
 	cli.StringFlag{
@@ -267,7 +267,7 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-author",
-		Usage:  "`COPYRIGHT`, artist, or owner name",
+		Usage:  "site `OWNER`, copyright, or artist",
 		EnvVar: "PHOTOPRISM_SITE_AUTHOR",
 	},
 	cli.StringFlag{
@@ -284,13 +284,25 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "site-description",
-		Usage:  "optional site `DESCRIPTION`",
+		Usage:  "site `DESCRIPTION` (optional)",
 		EnvVar: "PHOTOPRISM_SITE_DESCRIPTION",
 	},
 	cli.StringFlag{
 		Name:   "site-preview",
-		Usage:  "optional preview image `URL`",
+		Usage:  "site preview image `URL` (optional)",
 		EnvVar: "PHOTOPRISM_SITE_PREVIEW",
+	},
+	cli.StringFlag{
+		Name:   "imprint",
+		Usage:  "legal `INFO`, displayed in the page footer",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_IMPRINT",
+	},
+	cli.StringFlag{
+		Name:   "imprint-url",
+		Usage:  "legal info `URL` (optional)",
+		Value:  "",
+		EnvVar: "PHOTOPRISM_IMPRINT_URL",
 	},
 	cli.IntFlag{
 		Name:   "http-port",
@@ -429,12 +441,12 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "download-token",
-		Usage:  "custom download URL `TOKEN` (default: random)",
+		Usage:  "`SECRET` download URL token for originals (default: random)",
 		EnvVar: "PHOTOPRISM_DOWNLOAD_TOKEN",
 	},
 	cli.StringFlag{
 		Name:   "preview-token",
-		Usage:  "custom thumbnail and streaming URL `TOKEN` (default: random)",
+		Usage:  "`SECRET` thumbnail and video streaming URL token (default: random)",
 		EnvVar: "PHOTOPRISM_PREVIEW_TOKEN",
 	},
 	cli.StringFlag{

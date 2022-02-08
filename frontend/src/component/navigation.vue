@@ -500,7 +500,10 @@
 
     </v-navigation-drawer>
 
-    <div v-if="isTest" id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Browse Your Life in Pictures</a></div>
+    <div v-if="config.imprint" id="imprint">
+      <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank">{{ config.imprint }}</a>
+      <span v-else>{{ config.imprint }}</span>
+    </div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
     <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
                      @confirm="upload.dialog = false"></p-upload-dialog>
@@ -557,7 +560,7 @@ export default {
     accountInfo() {
       const user = this.$session.getUser();
       return user.PrimaryEmail ? user.PrimaryEmail : this.$gettext("Account");
-    }
+    },
   },
   created() {
     this.reload.subscription = Event.subscribe("dialog.reload", () => this.reload.dialog = true);

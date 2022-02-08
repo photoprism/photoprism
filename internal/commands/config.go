@@ -100,6 +100,10 @@ func configAction(ctx *cli.Context) error {
 	fmt.Printf("%-25s %s\n", "site-description", conf.SiteDescription())
 	fmt.Printf("%-25s %s\n", "site-preview", conf.SitePreview())
 
+	// Legal info.
+	fmt.Printf("%-25s %s\n", "imprint", conf.Imprint())
+	fmt.Printf("%-25s %s\n", "imprint-url", conf.ImprintUrl())
+
 	// URIs.
 	fmt.Printf("%-25s %s\n", "content-uri", conf.ContentUri())
 	fmt.Printf("%-25s %s\n", "static-uri", conf.StaticUri())

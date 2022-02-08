@@ -18,7 +18,7 @@
     </v-toolbar>
     <v-toolbar dark flat :dense="$vuetify.breakpoint.smAndDown" color="#fafafa">
     </v-toolbar>
-    <div id="photoprism-info"><a href="https://photoprism.app/" target="_blank">Shared with PhotoPrism</a></div>
+    <div id="imprint"><a href="https://photoprism.app/" target="_blank">Shared with PhotoPrism</a></div>
   </div>
 </template>
 

@@ -384,6 +384,24 @@ func (c *Config) SitePreview() string {
 	return c.options.SitePreview
 }
 
+// Imprint returns the legal info text for the page footer.
+func (c *Config) Imprint() string {
+	if !c.Sponsor() || c.Test() {
+		return MsgSponsor
+	}
+
+	return c.options.Imprint
+}
+
+// ImprintUrl returns the legal info url.
+func (c *Config) ImprintUrl() string {
+	if !c.Sponsor() || c.Test() {
+		return SignUpURL
+	}
+
+	return c.options.ImprintUrl
+}
+
 // Debug tests if debug mode is enabled.
 func (c *Config) Debug() bool {
 	return c.options.Debug

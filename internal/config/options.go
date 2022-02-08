@@ -88,6 +88,8 @@ type Options struct {
 	SiteCaption           string  `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string  `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string  `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
+	Imprint               string  `yaml:"Imprint" json:"Imprint" flag:"imprint"`
+	ImprintUrl            string  `yaml:"ImprintUrl" json:"ImprintUrl" flag:"imprint-url"`
 	DatabaseDriver        string  `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string  `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseServer        string  `yaml:"DatabaseServer" json:"-" flag:"database-server"`

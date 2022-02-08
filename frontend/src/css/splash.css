@@ -148,7 +148,8 @@
     text-align: center;
 }
 
-#loading-info a {
+#loading-info a,
+#loading-info span {
     text-align: center;
     text-decoration: none;
     font-size: 13px;
