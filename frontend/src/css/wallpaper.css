@@ -5,7 +5,7 @@
 }
 
 .auth-login.wallpaper {
-    background-image: url(https://da.photoprism.app/wallpaper/default.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/default.jpg);
 }
 
 .dark-theme #photoprism .auth-login-box
@@ -33,40 +33,40 @@
 }
 
 #photoprism.theme-gemstone .auth-login.wallpaper {
-    background-image: url(https://da.photoprism.app/wallpaper/gemstone.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/gemstone.jpg);
 }
 
 #photoprism.theme-raspberry .auth-login.wallpaper
 {
-    background-image: url(https://da.photoprism.app/wallpaper/raspberry.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/raspberry.jpg);
 }
 
 #photoprism.theme-cyano .auth-login.wallpaper
 {
-    background-image: url(https://da.photoprism.app/wallpaper/cyano.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/cyano.jpg);
 }
 
 #photoprism.theme-vanta .auth-login.wallpaper
 {
-    background-image: url(https://da.photoprism.app/wallpaper/vanta.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/vanta.jpg);
 }
 
 #photoprism.theme-abyss .auth-login.wallpaper
 {
-    background-image: url(https://da.photoprism.app/wallpaper/abyss.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/abyss.jpg);
 }
 
 #photoprism.theme-grayscale .auth-login.wallpaper
 {
-    background-image: url(https://da.photoprism.app/wallpaper/grayscale.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/grayscale.jpg);
 }
 
 #photoprism.theme-yellowstone .auth-login.wallpaper
 {
-    background-image: url(https://da.photoprism.app/wallpaper/yellowstone.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/yellowstone.jpg);
 }
 
 #photoprism.theme-shadow .auth-login.wallpaper
 {
-    background-image: url(https://da.photoprism.app/wallpaper/shadow.jpg);
+    background-image: url(https://cdn.photoprism.app/wallpaper/shadow.jpg);
 }

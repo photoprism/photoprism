@@ -4,7 +4,7 @@ We welcome contributions of any kind, including blog posts, tutorials, testing, 
 
 ## Join the Community ##
 
-Follow us on [Twitter](https://twitter.com/photoprism_app) and join the [Community Chat](https://gitter.im/browseyourlife/community)
+Follow us on [Twitter](https://link.photoprism.app/twitter) and join the [Community Chat](https://link.photoprism.app/chat)
 to get regular updates, connect with other contributors, and discuss your ideas.
 Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
@@ -16,15 +16,15 @@ Before reporting a bug, please use our [Troubleshooting Checklists](https://docs
 to determine the cause of your problem. If you have a general question, need help, or an issue has not
 (yet) been clearly identified:
 
-- you are welcome to ask in our [Community Chat](https://gitter.im/browseyourlife/community)
-- or post your question in [GitHub Discussions](https://github.com/photoprism/photoprism/discussions)
+- you are welcome to ask in our [Community Chat](https://link.photoprism.app/chat)
+- or post your question in [GitHub Discussions](https://link.photoprism.app/discussions
 
 ### GitHub Issues ###
 
 Never report a bug unless you are certain to have found a fully reproducible and previously unreported issue that
 must be fixed directly in [our source code](https://github.com/photoprism/photoprism):
 
-- [contact us](https://photoprism.app/contact) or [a community member](https://github.com/photoprism/photoprism/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works
+- [contact us](https://photoprism.app/contact) or [a community member](https://link.photoprism.app/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works
 - this gives our team the opportunity to [improve the documentation](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling unclear and/or duplicate bug reports
 - when reporting a problem, always include the software versions you are using and other information about your environment such as [browser, browser plugins](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), operating system, storage type, memory size, and processor
 
@@ -40,7 +40,7 @@ new features, bug fixes, and documentation improvements. Issues labeled [help wa
 
 ### Contributor License Agreement (CLA) ###
 
-After submitting your first pull request, you will automatically be asked to [accept our CLA](https://cla-assistant.io/photoprism/photoprism):
+After submitting your first pull request, you will automatically be asked to [accept our CLA](https://link.photoprism.app/cla):
 
 - this gives us the ability to [(re-)license all code and documentation](https://en.wikipedia.org/wiki/Software_relicensing) at any time, *almost* as if we had created it ourselves (you retain the rights to your own work, which may be different for other CLAs)
 - otherwise, we cannot accept pull requests, as this would mean that we are not able to change the license of our software and documentation at a later time, even though most of it was developed and written by us
@@ -60,4 +60,4 @@ You can also contribute by...
 
 ----
 
-*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://github.com/photoprism/photoprism-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms).*
+*PhotoPrism® is a [registered trademark](https://photoprism.app/trademark). Docs are [available](https://link.photoprism.app/github-docs) under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/); [additional terms](https://github.com/photoprism/photoprism/blob/develop/assets/README.md) may apply. By using our software, you agree to our [terms of service](https://photoprism.app/terms).*

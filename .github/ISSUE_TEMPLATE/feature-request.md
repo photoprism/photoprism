@@ -9,7 +9,7 @@ assignees: ''
 
 ONLY CREATE A NEW FEATURE REQUEST AFTER YOU HAVE VERIFIED THAT NO SIMILAR IDEA ALREADY EXISTS:
 
-- Roadmap: https://github.com/photoprism/photoprism/projects/5
+- Roadmap: https://link.photoprism.app/roadmap
 - Open Issues: https://github.com/photoprism/photoprism/issues
 
 Never use GitHub Issues if you have a general question, need help, or an issue has not (yet) been clearly identified. Thank you! 🙃

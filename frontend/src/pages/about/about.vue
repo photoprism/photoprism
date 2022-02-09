@@ -14,14 +14,14 @@
     <v-container fluid class="px-4 pt-4 pb-1">
       <p class="body-2 lh-17">
           <translate>Our vision is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
-          <a href="https://github.com/photoprism/photoprism/projects/5" target="_blank">
+          <a href="https://link.photoprism.app/roadmap" target="_blank">
             <translate>The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next.</translate>
           </a>
       </p>
 
       <p v-if="!sponsor" class="text-xs-center my-4">
         <v-btn
-            href="https://www.patreon.com/photoprism"
+            href="https://link.photoprism.app/patreon"
             target="_blank"
             color="primary-button"
             class="white--text px-3 py-2 action-sponsor"
@@ -37,7 +37,7 @@
         <translate>Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org.</translate>
       </p>
       <p v-if="!sponsor" class="body-1 pb-2">
-        <a target="_blank" href="https://github.com/photoprism/photoprism">
+        <a target="_blank" href="https://link.photoprism.app/github">
         <translate>Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going.</translate>
         </a>
       </p>
@@ -51,9 +51,9 @@
         </a>
       </p>
       <ul class="body-1 mb-3">
-        <li><a target="_blank" href="https://www.reddit.com/r/photoprism/"><translate>you are welcome to join us on Reddit</translate></a></li>
-        <li><a target="_blank" href="https://github.com/photoprism/photoprism/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
-        <li><a target="_blank" href="https://gitter.im/browseyourlife/community"><translate>or ask in our Community Chat</translate></a></li>
+        <li><a target="_blank" href="https://link.photoprism.app/reddit"><translate>you are welcome to join us on Reddit</translate></a></li>
+        <li><a target="_blank" href="https://link.photoprism.app/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
+        <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
       </ul>
       <p class="body-1">
         <a target="_blank" href="https://photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
@@ -64,31 +64,31 @@
       </p>
 
       <p v-if="sponsor" class="text-xs-center">
-        <img src="https://da.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU">
+        <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU">
       </p>
 
       <p class="text-xs-center pt-2 ma-0 pb-0">
         <router-link to="/about/license">
           <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width:100%;"/>
         </router-link>
-        <a target="_blank" href="https://docs.photoprism.app/" rel="nofollow"><img :src="$config.staticUri + '/img/badge-docs.svg'"
-                                                                                   alt="Documentation"
+        <a target="_blank" href="https://docs.photoprism.app/"><img :src="$config.staticUri + '/img/badge-docs.svg'"
+                                                                                   alt="Official Documentation"
                                                                                    style="max-width:100%;"></a>
-        <a target="_blank" href="https://gitter.im/browseyourlife/community" rel="nofollow"><img
+        <a target="_blank" href="https://link.photoprism.app/chat" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-chat.svg'" alt="Community Chat" style="max-width:100%;"></a>
-        <a target="_blank" href="https://github.com/photoprism/photoprism/discussions" rel="nofollow"><img
+        <a target="_blank" href="https://link.photoprism.app/discussions" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-ask-on-github.svg'" alt="GitHub Discussions" style="max-width:100%;"></a>
-        <a target="_blank" href="https://discuss.pixls.us/photoprism" rel="nofollow"><img
+        <a target="_blank" href="https://link.photoprism.app/pixls-us" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-pixls-us.svg'" alt="PIXLS.US" style="max-width:100%;"></a>
-        <a target="_blank" href="https://twitter.com/photoprism_app" rel="nofollow"><img
+        <a target="_blank" href="https://link.photoprism.app/twitter" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-twitter.svg'" alt="Twitter" style="max-width:100%;"></a>
-        <a target="_blank" href="https://www.reddit.com/r/photoprism/" rel="nofollow"><img
+        <a target="_blank" href="https://link.photoprism.app/reddit" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-reddit.svg'" alt="Reddit" style="max-width:100%;"></a>
       </p>
 
       <p class="caption mt-4 text-xs-center">
         PhotoPrism® is a <a href="https://photoprism.app/trademark" rel="nofollow" target="_blank" class="text-link">registered trademark</a>.
-        Docs are <a href="https://github.com/photoprism/photoprism-docs" rel="nofollow" target="_blank" class="text-link">available</a> under the
+        Docs are <a href="https://link.photoprism.app/github-docs" rel="nofollow" target="_blank" class="text-link">available</a> under the
         <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="nofollow" target="_blank" class="text-link">CC BY-NC-SA 4.0 License</a>; additional terms may apply.
         By using our software, you agree to our <a href="https://photoprism.app/terms" rel="nofollow" target="_blank" class="text-link">terms of service</a>.
       </p>
