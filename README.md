@@ -15,7 +15,7 @@ You can run it at home, on a private server, or in the cloud.
 
 ![](https://dl.photoprism.app/img/ui/desktop-1000px.jpg)
 
-To get a first impression, you are welcome to play with our public demo at [try.photoprism.app](https://try.photoprism.app/).
+To get a first impression, you are welcome to play with our [public demo](https://try.photoprism.app/). Be careful not to upload any private pictures.
 
 ## Feature Overview ##
 
@@ -114,7 +114,7 @@ support to you, instead of handling unclear and/or duplicate bug reports.
 
 Follow us on [Twitter](https://link.photoprism.app/twitter) and join the [Community Chat](https://link.photoprism.app/chat)
 to get regular updates, connect with other users, and discuss your ideas.
-Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
+Our [Code of Conduct](https://photoprism.app/code-of-conduct) explains the "dos and don’ts."
 
 An important part of our journey is to explore new ways in product development and build better software through consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
 
