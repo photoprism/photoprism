@@ -145,11 +145,11 @@ services:
       MYSQL_DATABASE: photoprism
 
   ## Keycloak OpenID Connect Provider
-  ## Test User: user / photoprism
-  ## Test Admin: admin / photoprism
-  ## Docs: https://www.keycloak.org/getting-started/getting-started-docker
+  ## Admin Account: admin / photoprism
+  ## User Account: user / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:16.1.1
+    image: quay.io/keycloak/keycloak:17.0.0
+    command: "start-dev" # development mode, don't use this in production!
     links:
       - "traefik:app.localssl.dev"
     labels:
@@ -160,15 +160,17 @@ services:
       - "traefik.http.routers.keycloak.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.keycloak.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.keycloak.tls=true"
-    environment:
-      KEYCLOAK_USER: "admin"
-      KEYCLOAK_PASSWORD: "photoprism"
-      KEYCLOAK_FRONTEND_URL: "https://keycloak.localssl.dev/auth"
-      DB_VENDOR: "mariadb"
-      DB_PORT: 4001
-      DB_DATABASE: "keycloak"
-      DB_USER: "keycloak"
-      DB_PASSWORD: "keycloak"
+    environment: # see https://www.keycloak.org/server/all-config
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "photoprism"
+      KC_METRICS_ENABLED: "false"
+      KC_HOSTNAME: "keycloak.localssl.dev"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: "edge"
+      KC_DB: "mariadb"
+      KC_DB_URL: "jdbc:mariadb://mariadb:4001/keycloak"
+      KC_DB_USERNAME: "keycloak"
+      KC_DB_PASSWORD: "keycloak"
 
   ## Dummy WebDAV Server
   dummy-webdav:
