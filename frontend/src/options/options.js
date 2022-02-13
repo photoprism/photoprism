@@ -1,8 +1,8 @@
 import { timeZonesNames } from "@vvo/tzdb";
-import { $gettext } from "common/vm";
+import { $gettext } from "../common/vm";
 import { Info } from "luxon";
 import { config } from "../session";
-import { TypeVideo, TypeImage, TypeLive, TypeRaw } from "../model/photo";
+import { TypeImage, TypeLive, TypeRaw, TypeVideo } from "../model/photo";
 
 export const TimeZones = () =>
   [
@@ -81,119 +81,97 @@ export const MonthsShort = () => {
 
 export const Languages = () => [
   {
-    text: "English",
-    translated: $gettext("English"),
+    text: "English", // English
+    translated: "English",
     value: "en",
   },
   {
-    text: "Čeština",
-    translated: $gettext("Czech"),
+    text: "Čeština", // Czech
     value: "cs",
   },
   {
-    text: "Dansk",
-    translated: $gettext("Danish"),
+    text: "Dansk", // Danish
     value: "da",
   },
   {
-    text: "Deutsch",
-    translated: $gettext("German"),
+    text: "Deutsch", // German
     value: "de",
   },
   {
-    text: "Español",
-    translated: $gettext("Spanish"),
+    text: "Español", // Spanish
     value: "es",
   },
   {
-    text: "Français",
-    translated: $gettext("French"),
+    text: "Français", // French
     value: "fr",
   },
   {
-    text: "עברית",
-    translated: $gettext("Hebrew"),
+    text: "עברית", // Hebrew
     value: "he",
     rtl: true,
   },
   {
-    text: "हिन्दी",
-    translated: $gettext("Hindi"),
+    text: "हिन्दी", // Hindi
     value: "hi",
   },
   {
-    text: "Magyar",
-    translated: $gettext("Hungarian"),
+    text: "Magyar", // Hungarian
     value: "hu",
   },
   {
-    text: "Bahasa Indonesia",
-    translated: $gettext("Bahasa Indonesia"),
+    text: "Bahasa Indonesia", // Bahasa Indonesia
     value: "id",
   },
   {
-    text: "Italian",
-    translated: $gettext("Italian"),
+    text: "Italiano", // Italian
     value: "it",
   },
   {
-    text: "한국어",
-    translated: $gettext("Korean"),
+    text: "한국어", // Korean
     value: "ko",
   },
   {
-    text: "Norsk (Bokmål)",
-    translated: $gettext("Norwegian"),
+    text: "Norsk (Bokmål)", // Norwegian
     value: "nb",
   },
   {
-    text: "Nederlands",
-    translated: $gettext("Dutch"),
+    text: "Nederlands", // Dutch
     value: "nl",
   },
   {
-    text: "Polski",
-    translated: $gettext("Polish"),
+    text: "Polski", // Polish
     value: "pl",
   },
   {
-    text: "Português de Portugal",
-    translated: $gettext("Português de Portugal"),
+    text: "Português de Portugal", // Portuguese (Portugal)
     value: "pt",
   },
   {
-    text: "Português do Brasil",
-    translated: $gettext("Brazilian Portuguese"),
+    text: "Português do Brasil", // Portuguese (Brazil)
     value: "pt_BR",
   },
   {
-    text: "Русский",
-    translated: $gettext("Russian"),
+    text: "Русский", // Russian
     value: "ru",
   },
   {
-    text: "Slovenčina",
-    translated: $gettext("Slovak"),
+    text: "Slovenčina", // Slovak
     value: "sk",
   },
   {
-    text: "简体中文",
-    translated: $gettext("Chinese Simplified"),
+    text: "简体中文", // Chinese (Simplified)
     value: "zh",
   },
   {
-    text: "繁体中文",
-    translated: $gettext("Chinese Traditional"),
+    text: "繁体中文", // Chinese (Traditional)
     value: "zh_TW",
   },
   {
-    text: "日本語",
-    translated: $gettext("Japanese"),
+    text: "日本語", // Japanese
     value: "ja_JP",
   },
   {
-    text: "کوردی",
-    translated: $gettext("Kurdish"),
+    text: "کوردی", // Kurdish
     value: "ku",
     rtl: true,
   },
