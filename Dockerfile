@@ -1,4 +1,4 @@
-FROM photoprism/develop:20220202
+FROM photoprism/develop:20220213
 
 # update NPM JS package manager
 RUN npm update -g npm
