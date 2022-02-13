@@ -7,7 +7,8 @@ version: '3.5'
 #   An "exec format" error will occur otherwise.
 # - Try explicitly pulling the ARM64 version if you've booted your device with the "arm_64bit=1" flag and you see
 #   the "no matching manifest" error on Raspberry Pi OS (Raspbian). See documentation for details.
-# - Use https://dl.photoprism.app/docker/armv7/docker-compose.yml for running PhotoPrism on ARMv7-based (32-bit) devices.
+# - Use https://dl.photoprism.app/docker/armv7/docker-compose.yml to run PhotoPrism and MariaDB on ARMv7-based devices
+#   as well as Raspberry Pi OS (Raspbian) installations without 64-bit support.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - If you see Docker errors related to "cgroups", it may help to add the following to /boot/firmware/cmdline.txt:

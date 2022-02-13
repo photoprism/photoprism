@@ -1,18 +1,25 @@
 # Running PhotoPrism on ARMv7-based devices (32-bit)
 
-You have to resort to alternative Docker images to run PhotoPrism and MariaDB on ARMv7-based devices
-and those with a 32-bit operating system:
+You may use the following 32-bit Docker images to run PhotoPrism and MariaDB on ARMv7-based devices
+as well as Raspberry Pi OS (Raspbian) installations without 64-bit support:
 
-PhotoPrism: photoprism/photoprism:armv7
-MariaDB   : linuxserver/mariadb:latest
+Stable Release     : photoprism/photoprism:armv7
+Development Preview: photoprism/photoprism:armv7-preview
+MariaDB            : linuxserver/mariadb:latest
 
-Darktable is not included in the ARMv7 version because it is not 32-bit compatible.
-Pay close attention to changed directory and environment variable names.
+Docker Hub URL:
+
+  https://hub.docker.com/r/photoprism/photoprism/tags?page=1&name=armv7
+
+Note that Darktable is not included in the ARMv7 image because it is not 32-bit compatible.
+Always choose the regular 64-bit version if your device supports it.
 
 If your device meets the system requirements, mostly the same installation instructions as for regular Linux
 servers apply:
 
   https://docs.photoprism.app/getting-started/docker-compose/
+
+Please pay close attention to changed directory and environment variable names!
 
 ### System Requirements ###
 

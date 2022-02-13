@@ -37,7 +37,7 @@ elif [[ $3 =~ $NUMERIC ]]; then
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 \
       --push .
-else
+elif [[ $4 ]]; then
     echo "Building 'photoprism/$1:$3' in docker/${1/-//}$4/Dockerfile..."
     DOCKER_TAG=$(date -u +%Y%m%d)
     docker buildx build \
@@ -48,6 +48,19 @@ else
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
+      -t photoprism/$1:$3 \
+      --push .
+else
+    echo "Building 'photoprism/$1:$3' in docker/${1/-//}/Dockerfile..."
+    DOCKER_TAG=$(date -u +%Y%m%d)
+    docker buildx build \
+      --platform $2 \
+      --pull \
+      --no-cache \
+      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg GOPROXY \
+      --build-arg GODEBUG \
+      -f docker/${1/-//}/Dockerfile \
       -t photoprism/$1:$3 \
       --push .
 fi

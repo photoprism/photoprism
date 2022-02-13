@@ -210,6 +210,10 @@ docker-preview:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64
 docker-release:
 	scripts/docker/multiarch.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
+docker-arm64-preview:
+	scripts/docker/arch.sh photoprism linux/arm64 arm64-preview
+docker-arm64-release:
+	scripts/docker/arch.sh photoprism linux/arm64 arm64
 docker-armv7-develop:
 	docker pull --platform=arm ubuntu:21.10
 	scripts/docker/arch.sh develop linux/arm armv7 /armv7
