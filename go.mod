@@ -30,12 +30,12 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.16.1
-	github.com/klauspost/cpuid/v2 v2.0.10
+	github.com/klauspost/cpuid/v2 v2.0.11
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.5.0
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
-	github.com/mandykoh/prism v0.34.1
+	github.com/mandykoh/prism v0.35.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
@@ -54,7 +54,7 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.5
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838
+	golang.org/x/crypto v0.0.0-20220210151621-f4118a5b28e2
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
