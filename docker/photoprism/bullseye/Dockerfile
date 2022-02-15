@@ -60,7 +60,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     ffmpeg \
     ffmpegthumbnailer \
     libavcodec-extra  && \
-    [ "$TARGETARCH" = "arm" ] || apt-get -qq install -t bullseye-backports darktable && \; \
+    [ "$TARGETARCH" = "arm" ] || apt-get -qq install -t bullseye-backports darktable; \
     apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/
