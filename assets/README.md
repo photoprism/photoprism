@@ -4,7 +4,7 @@
 
 (b) Because some Digital Assets are licensed to us only for direct distribution, we cannot redistribute them under a more permissive license for other purposes. If the author or copyright holder has not released them under a permissive license, you must obtain a license before using them in your own work, whether commercial or non-commercial in nature.
 
-(c) Our [documentation](https://docs.photoprism.app/) is available under the terms of the [CC BY-NC-SA 4.0 License](https://docs.photoprism.app/license/documentation/). Other terms may apply to Digital Assets — in particular illustrations, graphics, and videos — embedded in the documentation if they are licensed solely for direct distribution to us. When in doubt, please ask before distributing or using them for other works.
+(c) Our [documentation](https://docs.photoprism.app/) is available under the terms of the [CC BY-NC-SA 4.0 License](https://docs.photoprism.app/license/docs/). Other terms may apply to Digital Assets — in particular illustrations, graphics, and videos — embedded in the documentation if they are licensed solely for direct distribution to us. When in doubt, please ask before distributing or using them for other works.
 
 (d) PhotoPrism’s Brand Assets — including trademarks, logos, icons, fonts, corporate design, product and service names, and any other brand features and elements, whether registered or unregistered („Brand Assets“) — are proprietary assets owned exclusively by Michael Mayer and his legal successors („PhotoPrism“).
 
