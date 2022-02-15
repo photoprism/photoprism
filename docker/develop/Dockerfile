@@ -83,7 +83,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     fonts-roboto \
     sudo && \
     [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get update && apt-get -qq install nodejs && \
     npm install --unsafe-perm=true --allow-root -g npm && \
     npm config set cache ~/.cache/npm && \
