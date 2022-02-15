@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
 "PO-Revision-Date: 2022-02-15 17:24+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "backend/da/>\n"
 "Language: da\n"
@@ -29,7 +29,7 @@ msgstr "Ugyldig anmodning"
 
 #: messages.go:85
 msgid "Changes could not be saved"
-msgstr ""
+msgstr "Ændringer kunne ikke gemmes"
 
 #: messages.go:86
 msgid "Could not be deleted"
