@@ -202,7 +202,8 @@ clean:
 	rm -rf storage/backup
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
-docker-develop:
+docker-develop: docker-develop-impish docker-develop-buster docker-develop-bullseye
+docker-develop-impish:
 	docker pull --platform=amd64 ubuntu:21.10
 	docker pull --platform=arm64 ubuntu:21.10
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 $(DOCKER_TAG)
@@ -214,12 +215,22 @@ docker-develop-bullseye:
 	docker pull --platform=amd64 golang:bullseye
 	docker pull --platform=arm64 golang:bullseye
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye
-docker-preview:
+docker-preview: docker-preview-impish docker-preview-buster docker-preview-bullseye
+docker-preview-impish:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64
-docker-release:
+docker-preview-buster:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-buster /buster
+docker-preview-bullseye:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bullseye /bullseye
+docker-release: docker-release-impish docker-release-buster docker-release-bullseye
+docker-release-impish:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
+docker-release-buster:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
+docker-release-bullseye:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye
 docker-arm64-preview:
-	scripts/docker/buildx.sh photoprism linux/arm64 arm64-preview
+	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64
 docker-arm64-release:
 	scripts/docker/buildx.sh photoprism linux/arm64 arm64
 docker-armv7-develop:
@@ -227,7 +238,7 @@ docker-armv7-develop:
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
 docker-armv7-preview:
 	docker pull --platform=arm photoprism/develop:armv7
-	scripts/docker/buildx.sh photoprism linux/arm armv7-preview /armv7
+	scripts/docker/buildx.sh photoprism linux/arm preview-armv7 /armv7
 docker-armv7-release:
 	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/buildx.sh photoprism linux/arm armv7 /armv7
