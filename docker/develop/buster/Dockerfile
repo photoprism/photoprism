@@ -27,8 +27,9 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
-# copy scripts to /root/.local/bin
+# copy scripts and backports sources
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
+COPY --chown=root:root --chmod=644 /docker/develop/buster/backports.list /etc/apt/sources.list.d/backports.list
 
 # update image and install build dependencies
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
@@ -74,7 +75,6 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     fonts-roboto \
     tzdata \
     exiftool \
-    darktable \
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
@@ -83,6 +83,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     chrpath \
     lsof \
     apache2-utils && \
+    apt-get -qq install -t buster-backports darktable && \
     curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get update && apt-get -qq install nodejs && \
     npm install --unsafe-perm=true --allow-root -g npm && \
