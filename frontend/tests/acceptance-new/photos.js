@@ -249,6 +249,13 @@ test.meta("testID", "photos-005").meta({ type: "smoke" })("Edit photo/video", as
   await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
 
+  //const expectedValues = [{ FirstPhotoTitle: photoedit.title }, { "bluh bla": photoedit.day }];
+  /*const expectedValues = [
+    [FirstPhotoTitle, photoedit.title],
+    ["blah", photoedit.day],
+  ];
+  await photoedit.checkEditFormValuesNewNew(expectedValues);*/
+
   await photoedit.checkEditFormValues(
     "New Photo Title",
     "15",

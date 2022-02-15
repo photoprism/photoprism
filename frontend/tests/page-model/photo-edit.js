@@ -183,6 +183,24 @@ export default class Page {
       .ok();
   }
 
+  async checkEditFormValue(field, value) {
+    if (value !== "") {
+      console.log(value);
+      await t.expect(field.value).eql(value);
+    }
+  }
+
+  async checkEditFormValuesNewNew(expectedValues) {
+    expectedValues.forEach((el) => {
+      this.checkEditFormValue(el[1], el[0]);
+    });
+  }
+
+  /* async checkEditFormValuesNew(expectedValues) {
+    expectedValues.forEach((el) => {
+      this.checkEditFormValue(el, el.key);
+    });
+  }*/
   //TODO refactor
   async checkEditFormValues(
     title,
