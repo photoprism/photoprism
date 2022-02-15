@@ -4,16 +4,16 @@
 export DOCKER_BUILDKIT=1
 
 if [[ -z $1 ]] || [[ -z $2 ]]; then
-    echo "docker/buildx: image name and target arch required (linux/amd64,linux/arm64,linux/arm)" 1>&2
+    echo "usage: scripts/docker/buildx.sh [image] linux/[amd64|arm64|arm] [tag] [/subimage]" 1>&2
     exit 1
 fi
 
 NUMERIC='^[0-9]+$'
 GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
+DOCKER_TAG=$(date -u +%Y%m%d)
 
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
-    echo "docker/buildx: 'photoprism/$1:preview'..."
-    DOCKER_TAG=$(date -u +%Y%m%d)
+    echo "docker/buildx: building photoprism/$1:preview..."
     docker buildx build \
       --platform $2 \
       --pull \
@@ -25,7 +25,7 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
       -t photoprism/$1:preview \
       --push .
 elif [[ $3 =~ $NUMERIC ]]; then
-    echo "docker/buildx: 'photoprism/$1:$3'..."
+    echo "docker/buildx: building photoprism/$1:$3,$1:latest..."
     docker buildx build \
       --platform $2 \
       --pull \
@@ -37,9 +37,8 @@ elif [[ $3 =~ $NUMERIC ]]; then
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 \
       --push .
-elif [[ $4 ]]; then
-    echo "docker/buildx: 'photoprism/$1:$3' from docker/${1/-//}$4/Dockerfile..."
-    DOCKER_TAG=$(date -u +%Y%m%d)
+elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
+    echo "docker/buildx: building photoprism/$1:$3 from docker/${1/-//}$4/Dockerfile..."
     docker buildx build \
       --platform $2 \
       --pull \
@@ -51,8 +50,7 @@ elif [[ $4 ]]; then
       -t photoprism/$1:$3 \
       --push .
 else
-    echo "docker/buildx: 'photoprism/$1:$3' from docker/${1/-//}/Dockerfile..."
-    DOCKER_TAG=$(date -u +%Y%m%d)
+    echo "docker/buildx: building photoprism/$1:$3,$1:$DOCKER_TAG-$3 from docker/${1/-//}/Dockerfile..."
     docker buildx build \
       --platform $2 \
       --pull \
@@ -62,6 +60,7 @@ else
       --build-arg GODEBUG \
       -f docker/${1/-//}/Dockerfile \
       -t photoprism/$1:$3 \
+      -t photoprism/$1:$DOCKER_TAG-$3 \
       --push .
 fi
 
