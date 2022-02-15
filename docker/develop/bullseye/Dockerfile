@@ -1,4 +1,4 @@
-FROM ubuntu:21.10
+FROM golang:bullseye
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
@@ -8,7 +8,7 @@ ARG BUILD_TAG
 ARG GOPROXY
 ARG GODEBUG
 
-# Set environment variables
+# set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
     LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
@@ -20,76 +20,75 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
-# Configure apt
+# configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
-# Copy scripts to /root/.local/bin
+# copy scripts to /root/.local/bin
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
 # update image and install build dependencies
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     apt-utils \
     gpg-agent \
+    pkg-config \
+    software-properties-common \
     ca-certificates \
     build-essential \
+    gcc \
+    g++ \
+    sudo \
     bash \
     make \
     nano \
     wget \
     curl \
+    rsync \
+    unzip \
+    zip \
     git \
     gettext \
+    chromium \
+    chromium \
+    chromium-driver \
     mariadb-client \
-    davfs2 \
-    chrpath \
+    sqlite3 \
+    libc6-dev \
     libssl-dev \
     libxft-dev \
-    libfreetype6 \
-    libfreetype6-dev \
-    libfontconfig1 \
-    libfontconfig1-dev \
     libhdf5-serial-dev \
     libpng-dev \
+    libheif-examples \
+    librsvg2-bin \
     libzmq3-dev \
     libx264-dev \
     libx265-dev \
     libnss3 \
-    libxtst6 \
-    librsvg2-bin \
-    pkg-config \
-    software-properties-common \
-    rsync \
-    unzip \
-    zip \
-    g++ \
-    gcc \
-    libc6-dev \
-    sqlite3 \
+    libfreetype6 \
+    libfreetype6-dev \
+    libfontconfig1 \
+    libfontconfig1-dev \
+    fonts-roboto \
     tzdata \
-    gconf-service \
-    firefox \
-    libheif-examples \
     exiftool \
+    darktable \
     rawtherapee \
     ffmpeg \
     ffmpegthumbnailer \
     libavcodec-extra \
+    davfs2 \
+    chrpath \
     lsof \
-    apache2-utils \
-    fonts-roboto \
-    sudo && \
-    [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
+    apache2-utils && \
     curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get update && apt-get -qq install nodejs && \
     npm install --unsafe-perm=true --allow-root -g npm && \
     npm config set cache ~/.cache/npm && \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
-    /root/.local/bin/install-devtools.sh ${TARGETARCH} && \
-    /root/.local/bin/install-go.sh ${TARGETARCH} && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go"
 
@@ -109,7 +108,6 @@ COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
     /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
-    [ "$TARGETARCH" = "arm" ] || \
     /usr/local/go/bin/go install github.com/psampaz/go-mod-outdated@latest && \
     /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
     echo "alias go=richgo" > /root/.bash_aliases && \
@@ -135,7 +133,6 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # expose HTTP ports: 2342 (HTTP), 2343 (Acceptance Tests), 9515 (Chromedriver), 40000 (Go)
 EXPOSE 2342 2343 9515 40000
-VOLUME /var/lib/photoprism
 
 # configure entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
