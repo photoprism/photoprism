@@ -1,3 +1,4 @@
+#### Debian 10 (Buster)
 FROM golang:buster
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
@@ -52,7 +53,6 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     zip \
     git \
     gettext \
-    chromium \
     chromium \
     chromium-driver \
     mariadb-client \

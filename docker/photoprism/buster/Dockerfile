@@ -15,6 +15,7 @@ COPY . .
 RUN make npm dep build-js install
 
 ################################################## PRODUCTION STAGE ####################################################
+#### Debian 10 (Buster)
 FROM debian:buster-slim
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"

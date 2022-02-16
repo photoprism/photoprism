@@ -1,3 +1,4 @@
+#### Debian 11 (Bullseye)
 FROM golang:bullseye
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
@@ -53,8 +54,8 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     git \
     gettext \
     chromium \
-    chromium \
     chromium-driver \
+    firefox-esr \
     mariadb-client \
     sqlite3 \
     libc6-dev \

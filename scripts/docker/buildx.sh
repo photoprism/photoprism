@@ -51,6 +51,11 @@ elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
       --push .
 else
     echo "docker/buildx: building photoprism/$1:$3,$1:$DOCKER_TAG-$3 from docker/${1/-//}$4/Dockerfile..."
+
+    if [[ $5 ]]; then
+      echo "extra params: $5"
+    fi
+
     docker buildx build \
       --platform $2 \
       --pull \
@@ -60,7 +65,7 @@ else
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:$3 \
-      -t photoprism/$1:$DOCKER_TAG-$3 \
+      -t photoprism/$1:$DOCKER_TAG-$3 $5 \
       --push .
 fi
 

@@ -16,8 +16,8 @@ DOCKER_TAG=$(date -u +%Y%m%d)
 echo "docker/buildx-multi: removing existing multibuilder..."
 docker buildx rm multibuilder 2>/dev/null
 
-# wait 5 seconds.
-sleep 5
+# wait 3 seconds.
+sleep 3
 
 # create new multibuilder.
 docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
@@ -61,6 +61,11 @@ elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
       --push .
 elif [[ $4 ]]; then
     echo "docker/buildx-multi: building photoprism/$1:$3,$1:$DOCKER_TAG-$3 from docker/${1/-//}$4/Dockerfile..."
+
+    if [[ $5 ]]; then
+      echo "extra params: $5"
+    fi
+
     docker buildx build \
       --platform $2 \
       --pull \
@@ -70,7 +75,7 @@ elif [[ $4 ]]; then
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:$3 \
-      -t photoprism/$1:$DOCKER_TAG-$3 \
+      -t photoprism/$1:$DOCKER_TAG-$3 $5 \
       --push .
 else
     echo "docker/buildx-multi: building photoprism/$1:$3 from docker/${1/-//}/Dockerfile..."

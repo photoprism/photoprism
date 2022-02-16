@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:20220216 as build
+FROM photoprism/develop:impish as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -15,6 +15,7 @@ COPY .. .
 RUN make npm dep build-js install
 
 ################################################## PRODUCTION STAGE ####################################################
+#### Ubuntu 21.10 (Impish Indri)
 FROM ubuntu:impish
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"

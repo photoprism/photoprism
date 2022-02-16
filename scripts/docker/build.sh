@@ -47,6 +47,11 @@ elif [[ $2 == *"preview"* ]]; then
       -f docker/${1/-//}$3/Dockerfile .
 else
     echo "docker/build: building photoprism/$1:$2,$1:$DOCKER_TAG-$2 from docker/${1/-//}$3/Dockerfile...";
+
+    if [[ $5 ]]; then
+      echo "extra params: $5"
+    fi
+
     docker build $4\
       --no-cache \
       --pull \
@@ -54,7 +59,7 @@ else
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:$2 \
-      -t photoprism/$1:$DOCKER_TAG-$2 \
+      -t photoprism/$1:$DOCKER_TAG-$2 $5 \
       -f docker/${1/-//}$3/Dockerfile .
 fi
 
