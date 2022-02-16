@@ -12,18 +12,18 @@ NUMERIC='^[0-9]+$'
 GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
 DOCKER_TAG=$(date -u +%Y%m%d)
 
-# Kill old multibuilder if still alive.
+# kill old multi builder if still alive.
 echo "docker/buildx-multi: removing existing multibuilder..."
 docker buildx rm multibuilder 2>/dev/null
 
-# Wait 5 seconds.
+# wait 5 seconds.
 sleep 5
 
-# Create new multibuilder.
+# create new multibuilder.
 docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
 
-if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
-    echo "docker/buildx-multi: building photoprism/$1:preview..."
+if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
+    echo "docker/buildx-multi: building photoprism/$1:preview from docker/${1/-//}$4/Dockerfile..."
     docker buildx build \
       --platform $2 \
       --pull \
@@ -31,11 +31,11 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 ]]; then
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
-      -f docker/${1/-//}/Dockerfile \
+      -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:preview \
       --push .
 elif [[ $3 =~ $NUMERIC ]]; then
-    echo "docker/buildx-multi: building photoprism/$1:$3,$1:latest..."
+    echo "docker/buildx-multi: building photoprism/$1:$3,$1:latest from docker/${1/-//}$4/Dockerfile..."
     docker buildx build \
       --platform $2 \
       --pull \
@@ -43,7 +43,7 @@ elif [[ $3 =~ $NUMERIC ]]; then
       --build-arg BUILD_TAG=$3 \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
-      -f docker/${1/-//}/Dockerfile \
+      -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 \
       --push .

@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:20220215-buster as build
+FROM photoprism/develop:20220216-buster as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM

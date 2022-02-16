@@ -14,8 +14,8 @@ NUMERIC='^[0-9]+$'
 GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
 DOCKER_TAG=$(date -u +%Y%m%d)
 
-if [[ $1 ]] && [[ -z $2 ]]; then
-    echo "docker/build: building photoprism/$1:preview...";
+if [[ $1 ]] && [[ -z $2 || $2 == "preview" ]]; then
+    echo "docker/build: building photoprism/$1:preview from docker/${1/-//}$3/Dockerfile...";
     docker build \
       --no-cache \
       --pull \
@@ -23,9 +23,9 @@ if [[ $1 ]] && [[ -z $2 ]]; then
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:preview \
-      -f docker/${1/-//}/Dockerfile .
+      -f docker/${1/-//}$3/Dockerfile .
 elif [[ $2 =~ $NUMERIC ]]; then
-    echo "docker/build: building photoprism/$1:$2,$1:latest...";
+    echo "docker/build: building photoprism/$1:$2,$1:latest from docker/${1/-//}$3/Dockerfile...";
     docker build \
       --no-cache \
       --pull \
@@ -34,7 +34,7 @@ elif [[ $2 =~ $NUMERIC ]]; then
       --build-arg GODEBUG \
       -t photoprism/$1:latest \
       -t photoprism/$1:$2 \
-      -f docker/${1/-//}/Dockerfile .
+      -f docker/${1/-//}$3/Dockerfile .
 elif [[ $2 == *"preview"* ]]; then
     echo "docker/build: building photoprism/$1:$2 from docker/${1/-//}$3/Dockerfile...";
     docker build $4\

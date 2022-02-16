@@ -202,43 +202,43 @@ clean:
 	rm -rf storage/backup
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
-docker-develop: docker-develop-impish docker-develop-buster docker-develop-bullseye
+docker-develop: docker-develop-impish docker-develop-bullseye docker-develop-buster docker-develop-armv7
 docker-develop-impish:
-	docker pull --platform=amd64 ubuntu:21.10
-	docker pull --platform=arm64 ubuntu:21.10
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 $(DOCKER_TAG)
-docker-develop-buster:
-	docker pull --platform=amd64 golang:buster
-	docker pull --platform=arm64 golang:buster
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 buster /buster
+	docker pull --platform=amd64 ubuntu:impish
+	docker pull --platform=arm64 ubuntu:impish
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 $(DOCKER_TAG) /impish
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:bullseye
 	docker pull --platform=arm64 golang:bullseye
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye
-docker-preview: docker-preview-impish docker-preview-buster docker-preview-bullseye
-docker-preview-impish:
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64
-docker-preview-buster:
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-buster /buster
-docker-preview-bullseye:
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bullseye /bullseye
-docker-release: docker-release-impish docker-release-buster docker-release-bullseye
-docker-release-impish:
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG)
-docker-release-buster:
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
-docker-release-bullseye:
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye
-docker-preview-arm64:
-	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /bullseye
-docker-release-arm64:
-	scripts/docker/buildx.sh photoprism linux/arm64 arm64 /bullseye
+docker-develop-buster:
+	docker pull --platform=amd64 golang:buster
+	docker pull --platform=arm64 golang:buster
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 buster /buster
 docker-develop-armv7:
 	docker pull --platform=arm golang:bullseye
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
+docker-preview: docker-preview-impish docker-preview-bullseye docker-preview-buster
+docker-preview-impish:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /impish
+docker-preview-bullseye:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bullseye /bullseye
+docker-preview-buster:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-buster /buster
+docker-preview-arm64:
+	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /bullseye
 docker-preview-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/buildx.sh photoprism linux/arm preview-armv7 /armv7
+docker-release: docker-release-impish docker-release-bullseye docker-release-buster
+docker-release-impish:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 $(DOCKER_TAG) /impish
+docker-release-bullseye:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye
+docker-release-buster:
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
+docker-release-arm64:
+	scripts/docker/buildx.sh photoprism linux/arm64 arm64 /bullseye
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/buildx.sh photoprism linux/arm armv7 /armv7
