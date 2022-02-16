@@ -1,5 +1,4 @@
-##################################################### BUILD STAGE ######################################################
-FROM ubuntu:21.10 as build
+FROM golang:bullseye
 
 LABEL maintainer="Michael Mayer <hello@photoprism.org>"
 
@@ -7,7 +6,7 @@ ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
 
-# Set environment variables
+# set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
     LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
@@ -19,20 +18,17 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
-# Configure apt
+# configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
-# Copy scripts to /root/.local/bin
+# copy scripts
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
-# 1. Install distribution packages
-# 2. Install TensorFlow for C
-# 3. Install Chrome, NodeJS, NPM, Puppeteer, TestCafe & ChromeDriver
-# 4. Install Go
+# update image and install build dependencies
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     build-essential \
     ca-certificates \
@@ -77,32 +73,35 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     ffmpegthumbnailer \
     libavcodec-extra \
     sudo && \
+    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get update && apt-get -qq install nodejs && \
+    npm install --unsafe-perm=true --allow-root -g npm && \
+    npm config set cache ~/.cache/npm && \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
-    /root/.local/bin/install-devtools.sh ${TARGETARCH} && \
-    /root/.local/bin/install-go.sh ${TARGETARCH} && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go"
 
-# Download TensorFlow models & example files for testing
+# download TensorFlow models & example files for testing
 RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# Copy additional scripts to image
+# copy additional scripts to image
 COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
 COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
 
-# Install Go tools
+# install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
     /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
     echo "alias go=richgo" > /root/.bash_aliases && \
     cp /go/bin/gosu /bin/gosu
 
-# Create photoprism user and directory for deployment
+# create photoprism user and directory for deployment
 RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism && \
     mkdir -m 777 -p /var/lib/photoprism /tmp/photoprism && \
     echo "alias go=richgo" > /photoprism/.bash_aliases && \
@@ -112,15 +111,14 @@ RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism &
     chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
     find /go -type d -print0 | xargs -0 chmod 777
 
-# Set up project directory
+# set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
-# Expose HTTP port 2342, 2343 plus 9515 for chromedriver
-EXPOSE 2342 2343 9515
-VOLUME /var/lib/photoprism
+# expose HTTP ports: 2342 (HTTP), 2343 (Acceptance Tests), 9515 (Chromedriver), 40000 (Go)
+EXPOSE 2342 2343 9515 40000
 
-# Configure entrypoint
+# configure entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Run server
+# keep container running
 CMD ["tail", "-f", "/dev/null"]

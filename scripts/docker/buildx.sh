@@ -50,7 +50,7 @@ elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
       -t photoprism/$1:$3 \
       --push .
 else
-    echo "docker/buildx: building photoprism/$1:$3,$1:$DOCKER_TAG-$3 from docker/${1/-//}/Dockerfile..."
+    echo "docker/buildx: building photoprism/$1:$3,$1:$DOCKER_TAG-$3 from docker/${1/-//}$4/Dockerfile..."
     docker buildx build \
       --platform $2 \
       --pull \
@@ -58,7 +58,7 @@ else
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
-      -f docker/${1/-//}/Dockerfile \
+      -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:$3 \
       -t photoprism/$1:$DOCKER_TAG-$3 \
       --push .

@@ -8,7 +8,7 @@ ARG BUILD_TAG
 ARG GOPROXY
 ARG GODEBUG
 
-# Set environment variables
+# set environment variables
 ENV DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
     LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
@@ -20,14 +20,14 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr"
 
-# Configure apt
+# configure apt
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
-# Copy scripts to /root/.local/bin
+# copy scripts to /root/.local/bin
 COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
 
 # update image and install build dependencies

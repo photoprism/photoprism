@@ -229,17 +229,17 @@ docker-release-buster:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
 docker-release-bullseye:
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye
-docker-arm64-preview:
-	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64
-docker-arm64-release:
-	scripts/docker/buildx.sh photoprism linux/arm64 arm64
-docker-armv7-develop:
-	docker pull --platform=arm ubuntu:21.10
+docker-preview-arm64:
+	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /bullseye
+docker-release-arm64:
+	scripts/docker/buildx.sh photoprism linux/arm64 arm64 /bullseye
+docker-develop-armv7:
+	docker pull --platform=arm golang:bullseye
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
-docker-armv7-preview:
+docker-preview-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/buildx.sh photoprism linux/arm preview-armv7 /armv7
-docker-armv7-release:
+docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	scripts/docker/buildx.sh photoprism linux/arm armv7 /armv7
 docker-local:
