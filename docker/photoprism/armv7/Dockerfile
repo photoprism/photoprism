@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:armv7 as build
+FROM photoprism/develop:20220216-armv7 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
@@ -35,12 +35,11 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 
 # install additional distribution packages
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+    ca-certificates \
     gpgv \
     wget \
     curl \
     make \
-    davfs2 \
-    ca-certificates \
     mariadb-client \
     sqlite3 \
     tzdata \
@@ -48,10 +47,6 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libatomic1 \
     libheif-examples \
     librsvg2-bin \
-    gnupg \
-    gpg-agent \
-    apt-utils \
-    add-apt-key \
     exiftool \
     rawtherapee \
     ffmpeg \

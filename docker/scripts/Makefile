@@ -1,7 +1,7 @@
 # INSTALLS OPTIONAL PACKAGES AND DRIVERS IN DOCKER IMAGES
 # Maintainer: Michael Mayer <hello@photoprism.app>
 
-.PHONY: apt-upgrade apt-cleanup install-updates install-intel-graphics intel-graphics \
+.PHONY: apt-upgrade apt-cleanup install-davfs install-updates install-intel-graphics intel-graphics \
 		tensorflow-amd64-cpu tensorflow-amd64-cpu-install \
 		tensorflow-amd64-avx tensorflow-amd64-avx-install \
 		tensorflow-amd64-avx2 tensorflow-amd64-avx2-install;
@@ -16,6 +16,8 @@ apt-upgrade:
 	apt-get -y dist-upgrade
 apt-cleanup:
 	apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/*
+install-davfs:
+	apt-get -y install davfs2
 install-intel-graphics:
 	apt-get -y install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders libmfx1
 /tmp/libtensorflow-linux-cpu-1.15.2.tar.gz:

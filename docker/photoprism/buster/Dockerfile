@@ -38,12 +38,12 @@ COPY --chown=root:root --chmod=644 /docker/develop/buster/backports.list /etc/ap
 
 # install additional distribution packages
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
+    ca-certificates \
     gpgv \
     wget \
     curl \
     make \
     davfs2 \
-    ca-certificates \
     mariadb-client \
     sqlite3 \
     tzdata \
@@ -51,10 +51,6 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libatomic1 \
     libheif-examples \
     librsvg2-bin \
-    gnupg \
-    gpg-agent \
-    apt-utils \
-    add-apt-key \
     exiftool \
     rawtherapee \
     ffmpeg \
