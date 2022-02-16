@@ -10,6 +10,19 @@ Our [Code of Conduct](CODE_OF_CONDUCT.md) explains the "dos and don’ts."
 
 An important part of our journey is to explore new ways in product development and build better software through consistent use of community feedback. Feel free to [share your thoughts](https://photoprism.app/contact) with us at any time.
 
+## Not a Developer? No Problem ##
+
+You can also contribute by...
+
+* answering questions in the [Community Chat](https://link.photoprism.app/chat), on [Reddit](https://link.photoprism.app/reddit) and in [GitHub Discussions](https://link.photoprism.app/discussions)
+* helping us [translate](https://docs.photoprism.app/developer-guide/translations-weblate/) the Web UI
+* [conducting research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) and [improving the documentation](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
+* publishing tutorials, blog posts, and podcasts
+* voting for us on pages like:
+  * https://alternativeto.net/software/photoprism/about/
+  * https://www.saashub.com/google-photos-alternatives
+* recommending PhotoPrism to your friends
+
 ## Creating Bug Reports ##
 
 Before reporting a bug, please use our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/)
@@ -46,19 +59,6 @@ After submitting your first pull request, you will automatically be asked to [ac
 - otherwise, we cannot accept pull requests, as this would mean that we are not able to change the license of our software and documentation at a later time, even though most of it was developed and written by us
 - this may be necessary, for example, if the license is incompatible with a larger combined work, we want to remove some restrictions on the AGPL/Creative Commons license, or it turns out that someone is abusing the existing license in a way we don't yet know about
 - the lack of a formal contract [would also lead to legal uncertainty](https://en.wikipedia.org/wiki/SCO%E2%80%93Linux_disputes) for us and all users, as some contributors could later claim that they did not intend to license their code in any way and that it was stolen
-
-## Not a Developer? No Problem ##
-
-You can also contribute by...
-
-* answering questions in the [Community Chat](https://link.photoprism.app/chat), on [Reddit](https://link.photoprism.app/reddit) and in [GitHub Discussions](https://link.photoprism.app/discussions)
-* helping us [translate](https://docs.photoprism.app/developer-guide/translations-weblate/) the Web UI
-* [conducting research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) and [improving the documentation](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
-* publishing tutorials, blog posts, and podcasts
-* voting for us on pages like:
-   * https://alternativeto.net/software/photoprism/about/
-   * https://www.saashub.com/google-photos-alternatives
-* recommending PhotoPrism to your friends
 
 ----
 
