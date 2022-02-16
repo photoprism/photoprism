@@ -17,8 +17,8 @@ DOCKER_TAG=$(date -u +%Y%m%d)
 if [[ $1 ]] && [[ -z $2 || $2 == "preview" ]]; then
     echo "docker/build: building photoprism/$1:preview from docker/${1/-//}$3/Dockerfile...";
     docker build \
-      --no-cache \
       --pull \
+      --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
@@ -32,8 +32,8 @@ elif [[ $2 =~ $NUMERIC ]]; then
     fi
 
     docker build $4\
-      --no-cache \
       --pull \
+      --no-cache \
       --build-arg BUILD_TAG=$2 \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
@@ -48,8 +48,8 @@ elif [[ $2 == *"preview"* ]]; then
     fi
 
     docker build $4\
-      --no-cache \
       --pull \
+      --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
@@ -63,8 +63,8 @@ else
     fi
 
     docker build $4\
-      --no-cache \
       --pull \
+      --no-cache \
       --build-arg BUILD_TAG=$DOCKER_TAG \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
