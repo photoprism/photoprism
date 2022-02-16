@@ -26,7 +26,12 @@ if [[ $1 ]] && [[ -z $2 || $2 == "preview" ]]; then
       -f docker/${1/-//}$3/Dockerfile .
 elif [[ $2 =~ $NUMERIC ]]; then
     echo "docker/build: building photoprism/$1:$2,$1:latest from docker/${1/-//}$3/Dockerfile...";
-    docker build \
+
+    if [[ $4 ]]; then
+      echo "extra params: $4"
+    fi
+
+    docker build $4\
       --no-cache \
       --pull \
       --build-arg BUILD_TAG=$2 \
@@ -37,6 +42,11 @@ elif [[ $2 =~ $NUMERIC ]]; then
       -f docker/${1/-//}$3/Dockerfile .
 elif [[ $2 == *"preview"* ]]; then
     echo "docker/build: building photoprism/$1:$2 from docker/${1/-//}$3/Dockerfile...";
+
+    if [[ $4 ]]; then
+      echo "extra params: $4"
+    fi
+
     docker build $4\
       --no-cache \
       --pull \
@@ -48,8 +58,8 @@ elif [[ $2 == *"preview"* ]]; then
 else
     echo "docker/build: building photoprism/$1:$2,$1:$DOCKER_TAG-$2 from docker/${1/-//}$3/Dockerfile...";
 
-    if [[ $5 ]]; then
-      echo "extra params: $5"
+    if [[ $4 ]]; then
+      echo "extra params: $4"
     fi
 
     docker build $4\

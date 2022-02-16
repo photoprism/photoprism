@@ -26,6 +26,11 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
       --push .
 elif [[ $3 =~ $NUMERIC ]]; then
     echo "docker/buildx: building photoprism/$1:$3,$1:latest from docker/${1/-//}$4/Dockerfile..."
+
+    if [[ $5 ]]; then
+      echo "extra params: $5"
+    fi
+
     docker buildx build \
       --platform $2 \
       --pull \
@@ -35,10 +40,15 @@ elif [[ $3 =~ $NUMERIC ]]; then
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:latest \
-      -t photoprism/$1:$3 \
+      -t photoprism/$1:$3 $5 \
       --push .
 elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
     echo "docker/buildx: building photoprism/$1:$3 from docker/${1/-//}$4/Dockerfile..."
+
+    if [[ $5 ]]; then
+      echo "extra params: $5"
+    fi
+
     docker buildx build \
       --platform $2 \
       --pull \
@@ -47,7 +57,7 @@ elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
-      -t photoprism/$1:$3 \
+      -t photoprism/$1:$3 $5 \
       --push .
 else
     echo "docker/buildx: building photoprism/$1:$3,$1:$DOCKER_TAG-$3 from docker/${1/-//}$4/Dockerfile..."
