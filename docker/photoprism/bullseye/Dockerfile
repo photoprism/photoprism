@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:20220216-bullseye as build
+FROM photoprism/develop:bullseye as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM

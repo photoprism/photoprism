@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:20220216-armv7 as build
+FROM photoprism/develop:armv7 as build
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
