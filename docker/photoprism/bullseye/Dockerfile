@@ -122,6 +122,7 @@ WORKDIR /photoprism
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
 COPY --from=build /root/.photoprism/assets /photoprism/assets
 COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
+COPY --chown=root:root /docker/scripts/cleanup.sh /usr/local/bin/cleanup
 COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
 COPY --chown=root:root /docker/photoprism/entrypoint.sh /entrypoint.sh
 
@@ -135,10 +136,9 @@ RUN mkdir -m 777 -p \
     /photoprism/storage/cache && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
     chmod -Rf a+rwx /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh
-
-# show photoprism version
-RUN photoprism -v
+    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
+    photoprism -v && \
+    /usr/local/bin/cleanup
 
 # expose http port
 EXPOSE 2342
