@@ -1,11 +1,3 @@
-.PHONY: all build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js \
-		test test-js test-go install generate fmt fmt-go fmt-js upgrade start stop \
-		terminal root-terminal packer-digitalocean acceptance clean tidy;
-.SILENT: ;               # no need for @
-.ONESHELL: ;             # recipes execute in same shell
-.NOTPARALLEL: ;          # wait for target to finish
-.EXPORT_ALL_VARIABLES: ; # send all vars to shell
-
 export GO111MODULE=on
 export GODEBUG=http2client=0
 
@@ -286,6 +278,7 @@ docker-goproxy:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(DOCKER_TAG)
 docker-demo:
+	docker pull photoprism/photoprism:preview
 	scripts/docker/build.sh demo $(DOCKER_TAG)
 	scripts/docker/push.sh demo $(DOCKER_TAG)
 docker-demo-local:
@@ -315,3 +308,6 @@ fmt-go:
 	goimports -w pkg internal cmd
 tidy:
 	go mod tidy
+
+.PHONY: all build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
+install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy;
