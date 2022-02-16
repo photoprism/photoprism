@@ -202,7 +202,8 @@ clean:
 	rm -rf storage/backup
 	rm -rf storage/cache
 	rm -rf frontend/node_modules
-docker-develop: docker-develop-bullseye docker-develop-buster docker-develop-impish docker-develop-armv7
+docker-develop-all: docker-develop-bullseye docker-develop-buster docker-develop-impish docker-develop-armv7
+docker-develop: docker-develop-bullseye
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:bullseye
 	docker pull --platform=arm64 golang:bullseye
@@ -218,7 +219,8 @@ docker-develop-impish:
 docker-develop-armv7:
 	docker pull --platform=arm golang:bullseye
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
-docker-preview: docker-preview-bullseye docker-preview-buster docker-preview-impish
+docker-preview-all: docker-preview-bullseye docker-preview-buster docker-preview-impish
+docker-preview: docker-preview-bullseye
 docker-preview-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=arm64 photoprism/develop:bullseye
@@ -245,7 +247,8 @@ docker-preview-impish:
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
-docker-release: docker-release-bullseye docker-release-buster docker-release-impish
+docker-release-all: docker-release-bullseye docker-release-buster docker-release-impish
+docker-release: docker-release-bullseye
 docker-release-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=arm64 photoprism/develop:bullseye
