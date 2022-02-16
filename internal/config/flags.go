@@ -382,7 +382,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "darktable-blacklist",
 		Usage:  "file `EXTENSIONS` incompatible with Darktable",
-		Value:  "dng",
+		Value:  "cr3,dng",
 		EnvVar: "PHOTOPRISM_DARKTABLE_BLACKLIST",
 	},
 	cli.StringFlag{
