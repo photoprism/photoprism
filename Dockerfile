@@ -1,8 +1,8 @@
-FROM photoprism/develop:20220215
+FROM photoprism/develop:20220216-bullseye
 
-## experimental base images
-# FROM photoprism/develop:buster
-# FROM photoprism/develop:bullseye
+## other base images to choose from...
+# FROM photoprism/develop:buster   # Debian 10 (Buster)
+# FROM photoprism/develop:impish   # Ubuntu 21.10 (Impish Indri)
 
 # update NPM JS package manager
 RUN npm install -g npm

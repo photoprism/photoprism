@@ -18,7 +18,7 @@ RUN make npm dep build-js install
 #### Debian 11 (Bullseye)
 FROM debian:bullseye-slim
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
 ARG TARGETPLATFORM

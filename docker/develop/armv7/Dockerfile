@@ -1,7 +1,7 @@
 #### Debian 11 (Bullseye)
 FROM golang:bullseye
 
-LABEL maintainer="Michael Mayer <hello@photoprism.org>"
+LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
 ARG TARGETPLATFORM
