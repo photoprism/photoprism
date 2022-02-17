@@ -12,7 +12,7 @@ NUMERIC='^[0-9]+$'
 GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
 BUILD_DATE=$(date -u +%y%m%d)
 
-echo "Starting 'photoprism/$1' $2 build from docker/${1/-//}$4/Dockerfile..."
+echo "Starting 'photoprism/$1' build from docker/${1/-//}$4/Dockerfile..."
 echo "Build Arch: $2"
 
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
