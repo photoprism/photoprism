@@ -82,10 +82,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     apache2-utils \
     fonts-roboto \
     sudo && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get update && apt-get -qq install nodejs && \
-    npm install --unsafe-perm=true --allow-root -g npm && \
-    npm config set cache ~/.cache/npm && \
+    /root/.local/bin/install-nodejs.sh && \
     /root/.local/bin/install-darktable.sh ${TARGETARCH} && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
     /root/.local/bin/install-devtools.sh ${TARGETARCH} && \

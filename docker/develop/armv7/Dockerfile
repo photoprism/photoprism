@@ -73,10 +73,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     ffmpegthumbnailer \
     libavcodec-extra \
     sudo && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get update && apt-get -qq install nodejs && \
-    npm install --unsafe-perm=true --allow-root -g npm && \
-    npm config set cache ~/.cache/npm && \
+    /root/.local/bin/install-nodejs.sh && \
     apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
     mkdir -p "/go/src" "/go/bin" && \

@@ -85,10 +85,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     chrpath \
     lsof \
     apache2-utils && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get update && apt-get -qq install nodejs && \
-    npm install --unsafe-perm=true --allow-root -g npm && \
-    npm config set cache ~/.cache/npm && \
+    /root/.local/bin/install-nodejs.sh && \
     /root/.local/bin/install-darktable.sh ${TARGETARCH} && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
     apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \
