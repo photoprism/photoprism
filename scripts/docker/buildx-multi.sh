@@ -10,10 +10,10 @@ fi
 
 NUMERIC='^[0-9]+$'
 GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
-DOCKER_TAG=$(date -u +%Y%m%d)
+BUILD_DATE=$(date -u +%y%m%d)
 
 # kill old multi builder if still alive.
-echo "docker/buildx-multi: removing existing multibuilder..."
+echo "Removing existing multibuilder..."
 docker buildx rm multibuilder 2>/dev/null
 
 # wait 3 seconds.
@@ -22,26 +22,27 @@ sleep 3
 # create new multibuilder.
 docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
 
-echo "docker/buildx-multi: building photoprism/$1 from docker/${1/-//}$4/Dockerfile..."
+echo "Starting 'photoprism/$1' multi-arch build from docker/${1/-//}$4/Dockerfile..."
+echo "Build Arch: $2"
 
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
-    echo "build tags: preview"
+    echo "Build Tags: preview"
 
     docker buildx build \
       --platform $2 \
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg BUILD_TAG=$BUILD_DATE \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:preview \
       --push .
 elif [[ $3 =~ $NUMERIC ]]; then
-    echo "build tags: $3, latest"
+    echo "Build Tags: $3, latest"
 
     if [[ $5 ]]; then
-      echo "build params: $5"
+      echo "Build Params: $5"
     fi
 
     docker buildx build \
@@ -56,48 +57,48 @@ elif [[ $3 =~ $NUMERIC ]]; then
       -t photoprism/$1:$3 $5 \
       --push .
 elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
-    echo "build tags: $3"
+    echo "Build Tags: $3"
 
     if [[ $5 ]]; then
-      echo "build params: $5"
+      echo "Build Params: $5"
     fi
 
     docker buildx build \
       --platform $2 \
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg BUILD_TAG=$BUILD_DATE \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:$3 $5 \
       --push .
 elif [[ $4 ]]; then
-    echo "build tags: $DOCKER_TAG-$3, $3"
+    echo "Build Tags: $BUILD_DATE-$3, $3"
 
     if [[ $5 ]]; then
-      echo "build params: $5"
+      echo "Build Params: $5"
     fi
 
     docker buildx build \
       --platform $2 \
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg BUILD_TAG=$BUILD_DATE \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:$3 \
-      -t photoprism/$1:$DOCKER_TAG-$3 $5 \
+      -t photoprism/$1:$BUILD_DATE-$3 $5 \
       --push .
 else
-    echo "build tags: $3"
+    echo "Build Tags: $3"
 
     docker buildx build \
       --platform $2 \
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg BUILD_TAG=$BUILD_DATE \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -f docker/${1/-//}/Dockerfile \
@@ -105,7 +106,7 @@ else
       --push .
 fi
 
-echo "docker/buildx-multi: removing multibuilder..."
+echo "Removing multibuilder..."
 docker buildx rm multibuilder
 
-echo "docker/buildx-multi: done"
+echo "Done."

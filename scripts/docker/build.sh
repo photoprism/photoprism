@@ -12,26 +12,26 @@ fi
 
 NUMERIC='^[0-9]+$'
 GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
-DOCKER_TAG=$(date -u +%Y%m%d)
+BUILD_DATE=$(date -u +%y%m%d)
 
-echo "docker/build: building photoprism/$1 from docker/${1/-//}$3/Dockerfile...";
+echo "Building image 'photoprism/$1' from docker/${1/-//}$3/Dockerfile...";
 
 if [[ $1 ]] && [[ -z $2 || $2 == "preview" ]]; then
-    echo "build tags: preview"
+    echo "Build Tags: preview"
 
     docker build \
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg BUILD_TAG=$BUILD_DATE \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:preview \
       -f docker/${1/-//}$3/Dockerfile .
 elif [[ $2 =~ $NUMERIC ]]; then
-    echo "build tags: $2, latest"
+    echo "Build Tags: $2, latest"
 
     if [[ $4 ]]; then
-      echo "build params: $4"
+      echo "Build Params: $4"
     fi
 
     docker build $4\
@@ -44,36 +44,36 @@ elif [[ $2 =~ $NUMERIC ]]; then
       -t photoprism/$1:$2 \
       -f docker/${1/-//}$3/Dockerfile .
 elif [[ $2 == *"preview"* ]]; then
-    echo "build tags: $2"
+    echo "Build Tags: $2"
 
     if [[ $4 ]]; then
-      echo "build params: $4"
+      echo "Build Params: $4"
     fi
 
     docker build $4\
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg BUILD_TAG=$BUILD_DATE \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:$2 \
       -f docker/${1/-//}$3/Dockerfile .
 else
-    echo "build tags: $DOCKER_TAG-$2, $2"
+    echo "Build Tags: $BUILD_DATE-$2, $2"
 
     if [[ $4 ]]; then
-      echo "build params: $4"
+      echo "Build Params: $4"
     fi
 
     docker build $4\
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$DOCKER_TAG \
+      --build-arg BUILD_TAG=$BUILD_DATE \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:$2 \
-      -t photoprism/$1:$DOCKER_TAG-$2 \
+      -t photoprism/$1:$BUILD_DATE-$2 \
       -f docker/${1/-//}$3/Dockerfile .
 fi
 
-echo "docker/build: done"
+echo "Done."
