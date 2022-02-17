@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
+# abort if the user is not root
 if [[ $(id -u) != "0" ]]; then
-  echo "root privileges required"
+  echo "Usage: run install-devtools.sh as root" 1>&2
   exit 1
 fi
 
 set -e
 
 if [[ -z $1 ]]; then
-    echo "architecture required: amd64, arm64, or arm" 1>&2
+    echo "Usage: install-devtools.sh [amd64|arm64|arm]" 1>&2
     exit 1
 else
     set -eux;

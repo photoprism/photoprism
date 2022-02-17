@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
+# abort if the user is not root
+if [[ $(id -u) != "0" ]]; then
+  echo "Usage: run install-go.sh as root" 1>&2
+  exit 1
+fi
+
 set -e
 
 GOLANG_VERSION=1.17.7
 
 if [[ -z $1 ]]; then
-    echo "architecture required: amd64, arm64, or arm" 1>&2
+    echo "Usage: install-go.sh [amd64|arm64|arm]" 1>&2
     exit 1
 else
     set -eux;
@@ -19,7 +25,7 @@ else
         URL="https://go.dev/dl/go${GOLANG_VERSION}.linux-armv6l.tar.gz"
         CHECKSUM="874774f078b182fa21ffcb3878467eb5cb7e78bbffa6343ea5f0fbe47983433b *go.tgz"
     else
-        echo "unsupported architecture" 1>&2
+        echo "install-go: unsupported architecture" 1>&2
         exit 1
     fi
     wget -O go.tgz $URL

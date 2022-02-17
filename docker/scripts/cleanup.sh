@@ -1,10 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# abort if the user is not root
+if [[ $(id -u) != "0" ]]; then
+  echo "Usage: run cleanup.sh as root" 1>&2
+  exit 1
+fi
 
 set -o errexit
 
 if [[ ! -d /tmp ]]; then
   mkdir /tmp
 fi
+
 chmod 1777 /tmp
 
 apt-get -y autoremove

@@ -34,13 +34,16 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
+# copy scripts
+COPY --chown=root:root --chmod=755 /docker/scripts/* /root/.local/bin/
+
 # copy backports sources
 COPY --chown=root:root --chmod=644 /docker/develop/buster/backports.list /etc/apt/sources.list.d/backports.list
 
 # install additional distribution packages
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     ca-certificates \
-    gpgv \
+    gpg \
     wget \
     curl \
     make \
@@ -57,7 +60,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     ffmpeg \
     ffmpegthumbnailer \
     libavcodec-extra  && \
-    [ "$TARGETARCH" = "arm" ] || apt-get -qq install -t buster-backports darktable; \
+    /root/.local/bin/install-darktable.sh ${TARGETARCH} && \
     apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/*
 
 # set environment variables, see https://docs.photoprism.app/getting-started/config-options/
@@ -122,10 +125,7 @@ WORKDIR /photoprism
 # copy additional files to image
 COPY --from=build /root/.local/bin/photoprism /photoprism/bin/photoprism
 COPY --from=build /root/.photoprism/assets /photoprism/assets
-COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
-COPY --chown=root:root /docker/scripts/cleanup.sh /usr/local/bin/cleanup
-COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
-COPY --chown=root:root /docker/photoprism/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 /docker/photoprism/entrypoint.sh /entrypoint.sh
 
 # create directories
 RUN mkdir -m 777 -p \
@@ -135,11 +135,12 @@ RUN mkdir -m 777 -p \
     /photoprism/import \
     /photoprism/storage/config \
     /photoprism/storage/cache && \
+    mv /root/.local/bin/Makefile /root/Makefile && \
+    cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
     chmod -Rf a+rwx /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
     photoprism -v && \
-    /usr/local/bin/cleanup
+    /root/.local/bin/cleanup.s
 
 # expose http port
 EXPOSE 2342

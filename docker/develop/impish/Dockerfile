@@ -29,12 +29,14 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # copy scripts to /root/.local/bin
-COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
+COPY --chown=root:root --chmod=755 /docker/scripts/* /root/.local/bin/
 
 # update image and install build dependencies
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     apt-utils \
-    gpg-agent \
+    gpg \
+    pkg-config \
+    software-properties-common \
     ca-certificates \
     build-essential \
     g++ \
@@ -65,14 +67,11 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libnss3 \
     libxtst6 \
     librsvg2-bin \
-    pkg-config \
-    software-properties-common \
     rsync \
     unzip \
     zip \
     sqlite3 \
     tzdata \
-    gconf-service \
     libheif-examples \
     exiftool \
     rawtherapee \
@@ -83,14 +82,15 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     apache2-utils \
     fonts-roboto \
     sudo && \
-    [ "$TARGETARCH" = "arm" ] || apt-get -qq install darktable; \
     curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get update && apt-get -qq install nodejs && \
     npm install --unsafe-perm=true --allow-root -g npm && \
     npm config set cache ~/.cache/npm && \
+    /root/.local/bin/install-darktable.sh ${TARGETARCH} && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
     /root/.local/bin/install-devtools.sh ${TARGETARCH} && \
     /root/.local/bin/install-go.sh ${TARGETARCH} && \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go"
 
@@ -102,9 +102,7 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # copy additional scripts to image
-COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
-COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
-COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 /docker/develop/entrypoint.sh /entrypoint.sh
 
 # install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
@@ -123,7 +121,8 @@ RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism &
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
     chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
-    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
+    mv /root/.local/bin/Makefile /root/Makefile && \
+    cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
     find /go -type d -print0 | xargs -0 chmod 777
 
 # copy mysql client config for develop

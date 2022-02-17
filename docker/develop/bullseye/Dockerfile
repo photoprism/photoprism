@@ -28,14 +28,16 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
-# copy scripts and backports sources
-COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
+# copy scripts
+COPY --chown=root:root --chmod=755 /docker/scripts/* /root/.local/bin/
+
+# copy backport packages source list
 COPY --chown=root:root --chmod=644 /docker/develop/bullseye/backports.list /etc/apt/sources.list.d/backports.list
 
 # update image and install build dependencies
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     apt-utils \
-    gpg-agent \
+    gpg \
     pkg-config \
     software-properties-common \
     ca-certificates \
@@ -84,13 +86,13 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     chrpath \
     lsof \
     apache2-utils && \
-    apt-get -qq install -t bullseye-backports darktable && \
     curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get update && apt-get -qq install nodejs && \
     npm install --unsafe-perm=true --allow-root -g npm && \
     npm config set cache ~/.cache/npm && \
-    apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \
+    /root/.local/bin/install-darktable.sh ${TARGETARCH} && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
+    apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go"
 
@@ -102,9 +104,7 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # copy additional scripts to image
-COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
-COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
-COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 /docker/develop/entrypoint.sh /entrypoint.sh
 
 # install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
@@ -122,7 +122,8 @@ RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism &
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
     chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
-    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
+    mv /root/.local/bin/Makefile /root/Makefile && \
+    cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
     find /go -type d -print0 | xargs -0 chmod 777
 
 # copy mysql client config for develop

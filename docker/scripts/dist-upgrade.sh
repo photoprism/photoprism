@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# check if user is root
+# abort if the user is not root
 if [[ $(id -u) != "0" ]]; then
-  echo "failed, please run as root" 1>&2
+  echo "Usage: run dist-upgrade.sh as root" 1>&2
   exit 1
 fi
 

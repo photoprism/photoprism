@@ -4,7 +4,7 @@
 export DOCKER_BUILDKIT=1
 
 if [[ -z $1 ]] || [[ -z $2 ]]; then
-    echo "usage: scripts/docker/buildx-multi.sh [image] [linux/amd64|linux/arm64|linux/arm] [tag] [/subimage]" 1>&2
+    echo "Usage: scripts/docker/buildx-multi.sh [name] [linux/amd64|linux/arm64|linux/arm] [tag] [/subimage]" 1>&2
     exit 1
 fi
 
@@ -22,8 +22,11 @@ sleep 3
 # create new multibuilder.
 docker buildx create --name multibuilder --use  || { echo 'failed'; exit 1; }
 
+echo "docker/buildx-multi: building photoprism/$1 from docker/${1/-//}$4/Dockerfile..."
+
 if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
-    echo "docker/buildx-multi: building photoprism/$1:preview from docker/${1/-//}$4/Dockerfile..."
+    echo "build tags: preview"
+
     docker buildx build \
       --platform $2 \
       --pull \
@@ -35,10 +38,10 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
       -t photoprism/$1:preview \
       --push .
 elif [[ $3 =~ $NUMERIC ]]; then
-    echo "docker/buildx-multi: building photoprism/$1:$3,$1:latest from docker/${1/-//}$4/Dockerfile..."
+    echo "build tags: $3, latest"
 
     if [[ $5 ]]; then
-      echo "extra params: $5"
+      echo "build params: $5"
     fi
 
     docker buildx build \
@@ -53,10 +56,10 @@ elif [[ $3 =~ $NUMERIC ]]; then
       -t photoprism/$1:$3 $5 \
       --push .
 elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
-    echo "docker/buildx-multi: building photoprism/$1:$3 from docker/${1/-//}$4/Dockerfile..."
+    echo "build tags: $3"
 
     if [[ $5 ]]; then
-      echo "extra params: $5"
+      echo "build params: $5"
     fi
 
     docker buildx build \
@@ -70,10 +73,10 @@ elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
       -t photoprism/$1:$3 $5 \
       --push .
 elif [[ $4 ]]; then
-    echo "docker/buildx-multi: building photoprism/$1:$3,$1:$DOCKER_TAG-$3 from docker/${1/-//}$4/Dockerfile..."
+    echo "build tags: $DOCKER_TAG-$3, $3"
 
     if [[ $5 ]]; then
-      echo "extra params: $5"
+      echo "build params: $5"
     fi
 
     docker buildx build \
@@ -88,7 +91,8 @@ elif [[ $4 ]]; then
       -t photoprism/$1:$DOCKER_TAG-$3 $5 \
       --push .
 else
-    echo "docker/buildx-multi: building photoprism/$1:$3 from docker/${1/-//}/Dockerfile..."
+    echo "build tags: $3"
+
     docker buildx build \
       --platform $2 \
       --pull \

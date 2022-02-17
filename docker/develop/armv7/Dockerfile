@@ -27,16 +27,31 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
 # copy scripts
-COPY --chown=root:root --chmod=755 /docker/scripts/*.sh /root/.local/bin/
+COPY --chown=root:root --chmod=755 /docker/scripts/* /root/.local/bin/
 
 # update image and install build dependencies
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-    build-essential \
+    apt-utils \
+    gpg \
+    pkg-config \
+    software-properties-common \
     ca-certificates \
+    build-essential \
+    gcc \
+    g++ \
+    sudo \
+    make \
+    nano \
+    git \
+    zip \
     wget \
     curl \
-    davfs2 \
+    rsync \
+    unzip \
+    sqlite3 \
     chrpath \
+    gettext \
+    libc6-dev \
     libssl-dev \
     libxft-dev \
     libfreetype6 \
@@ -51,23 +66,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     libnss3 \
     libxtst6 \
     librsvg2-bin \
-    pkg-config \
-    software-properties-common \
-    rsync \
-    unzip \
-    zip \
-    g++ \
-    gcc \
-    libc6-dev \
-    gpg-agent \
-    apt-utils \
-    make \
-    nano \
-    git \
-    gettext \
-    sqlite3 \
     tzdata \
-    gconf-service \
     libheif-examples \
     exiftool \
     ffmpeg \
@@ -91,9 +90,7 @@ RUN rm -rf /tmp/* && mkdir -p /tmp/photoprism && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # copy additional scripts to image
-COPY --chown=root:root /docker/scripts/heif-convert.sh /usr/local/bin/heif-convert
-COPY --chown=root:root /docker/scripts/Makefile /root/Makefile
-COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 /docker/develop/entrypoint.sh /entrypoint.sh
 
 # install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
@@ -109,7 +106,6 @@ RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism &
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
     chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
-    chmod 755 /usr/local/bin/heif-convert /entrypoint.sh && \
     find /go -type d -print0 | xargs -0 chmod 777
 
 # set up project directory
