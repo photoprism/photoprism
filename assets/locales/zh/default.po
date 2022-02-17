@@ -6,17 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2021-10-10 08:15+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.app>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-17 12:46+0000\n"
+"Last-Translator: Ke Fei <zer4tul@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
+"projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -299,23 +300,23 @@ msgstr "已上传 %d 个文件, 耗时 %d 秒"
 
 #: messages.go:150
 msgid "Selection approved"
-msgstr "选择已批准"
+msgstr "所选项已批准"
 
 #: messages.go:151
 msgid "Selection archived"
-msgstr "所选项目已被归档"
+msgstr "所选项已归档"
 
 #: messages.go:152
 msgid "Selection restored"
-msgstr "所选项目已被恢复"
+msgstr "所选项已恢复"
 
 #: messages.go:153
 msgid "Selection marked as private"
-msgstr "所选项目已被设为私有"
+msgstr "所选项已设为私有"
 
 #: messages.go:154
 msgid "Albums deleted"
-msgstr "相册已被删除"
+msgstr "相册已删除"
 
 #: messages.go:155
 #, c-format
