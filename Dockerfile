@@ -1,4 +1,4 @@
-FROM photoprism/develop:20220216-bullseye
+FROM photoprism/develop:20220217-bullseye
 
 ## other base images to choose from...
 # FROM photoprism/develop:buster   # Debian 10 (Buster)
