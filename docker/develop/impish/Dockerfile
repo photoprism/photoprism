@@ -35,6 +35,7 @@ COPY --chown=root:root --chmod=755 /docker/scripts/* /root/.local/bin/
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
     apt-utils \
     gpg \
+    gpg-agent \
     pkg-config \
     software-properties-common \
     ca-certificates \

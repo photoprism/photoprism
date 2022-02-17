@@ -58,7 +58,6 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     chromium \
     chromium-driver \
     firefox-esr \
-    mariadb-client \
     sqlite3 \
     libc6-dev \
     libssl-dev \
@@ -87,6 +86,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     lsof \
     apache2-utils && \
     /root/.local/bin/install-nodejs.sh && \
+    /root/.local/bin/install-mariadb-client.sh && \
     /root/.local/bin/install-darktable.sh ${TARGETARCH} && \
     /root/.local/bin/install-tensorflow.sh ${TARGETARCH} && \
     apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/* && \

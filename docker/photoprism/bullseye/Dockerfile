@@ -47,7 +47,6 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     wget \
     curl \
     make \
-    mariadb-client \
     sqlite3 \
     tzdata \
     libc6 \
@@ -59,6 +58,7 @@ RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-insta
     ffmpeg \
     ffmpegthumbnailer \
     libavcodec-extra && \
+    /root/.local/bin/install-mariadb-client.sh && \
     /root/.local/bin/install-darktable.sh ${TARGETARCH} && \
     apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean && rm -rf /var/lib/apt/lists/*
 
