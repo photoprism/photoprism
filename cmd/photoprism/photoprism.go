@@ -42,12 +42,15 @@ import (
 var version = "development"
 var log = event.Log
 
+const appDescription = "The documentation can be found at https://docs.photoprism.app/. This is free software. " +
+	"There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
 	app.HelpName = filepath.Base(os.Args[0])
 	app.Usage = "Browse Your Life in Pictures"
-	app.Description = "For setup instructions and a user guide, visit https://docs.photoprism.app/"
+	app.Description = appDescription
 	app.Version = version
 	app.Copyright = "(c) 2018-2022 Michael Mayer <hello@photoprism.app>"
 	app.EnableBashCompletion = true
