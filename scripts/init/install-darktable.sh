@@ -8,12 +8,14 @@ fi
 
 set -e
 
+SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
+INSTALL_ARCH=${2:-$SYSTEM_ARCH}
+
 . /etc/os-release
 
-if [[ -z $1 ]]; then
-    echo "Usage: install-darktable.sh [amd64|arm64|arm]" 1>&2
-    exit 1
-elif [[ $1 == "amd64" ]]; then
+echo "Installing Darktable for ${INSTALL_ARCH^^}..."
+
+if [[ $INSTALL_ARCH == "amd64" ]]; then
   if [[ $VERSION_CODENAME == "bullseye" ]]; then
     echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/Debian_11/ /' | tee /etc/apt/sources.list.d/graphics:darktable.list
     curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
@@ -28,8 +30,8 @@ elif [[ $1 == "amd64" ]]; then
     echo "install-darktable: installing standard amd64 (Intel 64-bit) package"
     apt-get -qq install darktable
   fi
-  echo "install-darktable: done"
-elif [[ $1 == "arm64" ]]; then
+  echo "Installed."
+elif [[ $INSTALL_ARCH == "arm64" ]]; then
   if [[ $VERSION_CODENAME == "bullseye" ]]; then
     apt-get update
     apt-get -qq install -t bullseye-backports darktable
@@ -40,7 +42,7 @@ elif [[ $1 == "arm64" ]]; then
     echo "install-darktable: installing standard amd64 (ARM 64-bit) package"
     apt-get -qq install darktable
   fi
-  echo "install-darktable: done"
+  echo "Installed."
 else
-  echo "install-darktable: unsupported architecture $1"
+  echo "Unsupported Machine Architecture: $INSTALL_ARCH"
 fi

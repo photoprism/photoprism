@@ -16,3 +16,5 @@ export TMPDIR="/tmp"
 apt-get -y update
 apt-get -y dist-upgrade
 apt-get -y autoremove
+
+echo "Packages updated."

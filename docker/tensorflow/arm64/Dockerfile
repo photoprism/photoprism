@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TMP /tmp
 ENV EXTRA_BAZEL_ARGS "--host_javabase=@local_jdk//:jdk"
 
-# Configure apt
+# apt default settings
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \

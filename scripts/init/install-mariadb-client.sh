@@ -9,3 +9,4 @@ fi
 curl -Ls https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version="mariadb-10.6"
 apt-get update
 apt-get -qq install mariadb-client
+echo "Installed."

@@ -27,15 +27,15 @@ ARG TARGETPLATFORM
 ENV DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp"
 
-# configure apt
+# apt default settings
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
 
-# copy scripts
-COPY --chown=root:root --chmod=755 /docker/scripts/* /root/.local/bin/
+# copy init scripts
+COPY --chown=root:root --chmod=755 /scripts/init/* /root/.local/bin/
 
 # install additional distribution packages
 RUN apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \

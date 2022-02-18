@@ -11,3 +11,4 @@ curl -sL https://deb.nodesource.com/setup_16.x | bash -
 apt-get update && apt-get -qq install nodejs
 npm install --unsafe-perm=true --allow-root -g npm
 npm config set cache ~/.cache/npm
+echo "Installed."
