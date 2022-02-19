@@ -70,8 +70,7 @@ install:
 	scripts/build.sh prod $(DESTDIR)/bin/$(BINARY_NAME)
 	[ -f "$(GOBIN)/gosu" ] || go install github.com/tianon/gosu@latest
 	cp $(GOBIN)/gosu $(DESTDIR)/bin/gosu
-	[ -f "$(GOBIN)/exif-read-tool" ] || go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest
-	cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
+	[ ! -f "$(GOBIN)/exif-read-tool" ] || cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	rsync -r -l --safe-links --exclude-from=scripts/dist/.buildignore --chmod=a+rx,u+rwx ./scripts/dist/ $(DESTDIR)/scripts
 	mv $(DESTDIR)/scripts/heif-convert.sh $(DESTDIR)/bin/heif-convert

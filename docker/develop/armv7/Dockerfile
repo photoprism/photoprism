@@ -97,11 +97,11 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 
 # install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
-    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
-    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest; \
+    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest &&  \
+    /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
     cp /go/bin/gosu /bin/gosu && \
-    echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \
-    echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
+    echo "alias ll='ls -alh'" > /photoprism/.bash_aliases && \
+    echo "alias ll='ls -alh'" > /root/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
     chmod -R a+rwX /go
