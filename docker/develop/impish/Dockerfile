@@ -87,6 +87,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     /root/.local/bin/install-nodejs.sh && \
     /root/.local/bin/install-tensorflow.sh && \
     /root/.local/bin/install-darktable.sh && \
+    /root/.local/bin/install-devtools.sh && \
+    /root/.local/bin/install-go.sh && \
     /root/.local/bin/cleanup.sh && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go" && \
