@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2022-02-15 17:24+0000\n"
+"PO-Revision-Date: 2022-02-19 14:53+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
@@ -224,6 +224,7 @@ msgid "Settings saved"
 msgstr "Instellingen opgeslagen"
 
 #: messages.go:133
+#, fuzzy
 msgid "Password changed"
 msgstr "Wachtwoord aangepast"
 
@@ -270,6 +271,7 @@ msgid "Copying files from %s"
 msgstr "Bestanden kopiëren uit %s"
 
 #: messages.go:143
+#, fuzzy
 msgid "Labels deleted"
 msgstr "Labels verwijderd"
 
