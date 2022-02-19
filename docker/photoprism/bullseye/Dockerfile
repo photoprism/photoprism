@@ -106,7 +106,6 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       libavcodec-extra && \
     install-mariadb.sh mariadb-client && \
     install-darktable.sh && \
-    cleanup.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
@@ -122,9 +121,6 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 
 # define default directory and user
 WORKDIR /photoprism
-
-# test binary and show version
-RUN photoprism -v
 
 # expose default http port 2342
 EXPOSE 2342
