@@ -248,12 +248,19 @@ func TestConfig_ClientConfig(t *testing.T) {
 	cc := c.UserConfig()
 
 	assert.IsType(t, ClientConfig{}, cc)
+
+	if cc.JsUri == "" {
+		t.Error("the JavaScript asset URI must not be empty, make sure that the frontend has been built")
+	}
+
+	if cc.CssUri == "" {
+		t.Error("the CSS asset URI must not be empty, make sure that the frontend has been built")
+	}
+
 	assert.NotEmpty(t, cc.Name)
 	assert.NotEmpty(t, cc.Version)
 	assert.NotEmpty(t, cc.Copyright)
 	assert.NotEmpty(t, cc.Thumbs)
-	assert.NotEmpty(t, cc.JsUri)
-	assert.NotEmpty(t, cc.CssUri)
 	assert.NotEmpty(t, cc.ManifestUri)
 	assert.Equal(t, true, cc.Debug)
 	assert.Equal(t, false, cc.Demo)
