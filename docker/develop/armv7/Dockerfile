@@ -96,9 +96,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
 # install Go tools
-RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
-    /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest &&  \
-    /usr/local/go/bin/go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest; \
+RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest; \
     cp /go/bin/gosu /bin/gosu && \
     echo "alias ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias ll='ls -alh'" > /root/.bash_aliases && \
