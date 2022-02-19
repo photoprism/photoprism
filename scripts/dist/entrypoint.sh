@@ -14,8 +14,6 @@ if [[ $(id -u) == "0" ]]; then
   fi
 fi
 
-set -e
-
 STORAGE_PATH=${PHOTOPRISM_STORAGE_PATH:-/photoprism/storage}
 
 re='^[0-9]+$'
@@ -65,9 +63,9 @@ if [[ $(id -u) == "0" ]]; then
     fi
 
     echo "running as uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
-    gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" doctor.sh
     echo "${@}"
-    gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
+
+    gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" doctor.sh && gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
   elif [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
     # user ID only
     useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d /photoprism "user_${PHOTOPRISM_UID}" 2>/dev/null
@@ -80,23 +78,23 @@ if [[ $(id -u) == "0" ]]; then
     fi
 
     echo "running as uid ${PHOTOPRISM_UID}"
-    gosu "${PHOTOPRISM_UID}" doctor.sh
     echo "${@}"
-    gosu "${PHOTOPRISM_UID}" "$@" &
+
+    gosu "${PHOTOPRISM_UID}" doctor.sh && gosu "${PHOTOPRISM_UID}" "$@" &
   else
     # no user or group ID set via end variable
     echo "running as root"
-    doctor.sh
     echo "${@}"
-    "$@" &
+
+    doctor.sh && "$@" &
   fi
 else
 
   # running as root
   echo "running as uid $(id -u)"
-  doctor.sh
   echo "${@}"
-  "$@" &
+
+   doctor.sh && "$@" &
 fi
 
 PID=$!
