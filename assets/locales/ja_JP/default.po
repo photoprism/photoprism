@@ -6,17 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2021-10-10 08:24+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.app>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-19 14:34+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/"
+"photoprism/backend/ja/>\n"
 "Language: ja_JP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -148,7 +149,6 @@ msgid "Invalid link"
 msgstr "不正なリンク"
 
 #: messages.go:114
-#| msgid "Invalid link"
 msgid "Invalid name"
 msgstr "無効なバケット名"
 
@@ -223,6 +223,7 @@ msgid "Settings saved"
 msgstr "設定が保存されました"
 
 #: messages.go:133
+#, fuzzy
 msgid "Password changed"
 msgstr "パスワードが変更されました"
 
