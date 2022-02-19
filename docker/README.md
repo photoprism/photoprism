@@ -43,7 +43,7 @@ You can build and install PhotoPrism from the publicly available [source code](h
 ```bash
 git clone https://github.com/photoprism/photoprism.git
 cd photoprism
-make all install
+make all install DESTDIR=/opt/photoprism
 ```
 
 Missing build dependencies must be installed manually as shown in our human-readable and versioned
