@@ -183,7 +183,7 @@ func UpdateLabelCounts() (err error) {
 
 // UpdateCounts updates precalculated photo and file counts.
 func UpdateCounts() (err error) {
-	log.Info("index: updating counts")
+	log.Debug("index: updating counts")
 
 	if err = UpdatePlacesCounts(); err != nil {
 		if strings.Contains(err.Error(), "Error 1054") {

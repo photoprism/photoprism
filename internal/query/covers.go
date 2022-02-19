@@ -294,7 +294,7 @@ func UpdateSubjectCovers() (err error) {
 
 // UpdateCovers updates album, subject, and label cover thumbs.
 func UpdateCovers() (err error) {
-	log.Info("index: updating covers")
+	log.Debugf("index: updating covers")
 
 	// Update Albums.
 	if err = UpdateAlbumCovers(); err != nil {
