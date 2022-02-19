@@ -6,17 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2021-10-10 08:16+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.app>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-19 14:34+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Portuguese <https://translate.photoprism.app/projects/"
+"photoprism/backend/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -52,7 +53,6 @@ msgid "Selection not found"
 msgstr "Seleção não encontrada"
 
 #: messages.go:90
-#| msgid "File not found"
 msgid "Entity not found"
 msgstr "Entidade não encontrada"
 
@@ -77,7 +77,6 @@ msgid "Subject not found"
 msgstr "Assunto não encontrado"
 
 #: messages.go:96
-#| msgid "User not found"
 msgid "Person not found"
 msgstr "Pessoa não encontrada"
 
@@ -324,7 +323,6 @@ msgid "Zip created in %d s"
 msgstr "Zip criado em %d"
 
 #: messages.go:156
-#| msgid "Labels deleted"
 msgid "Permanently deleted"
 msgstr "Permanentemente excluídas"
 
