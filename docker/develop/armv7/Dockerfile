@@ -98,22 +98,13 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
 # install Go tools
 RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest && \
     /usr/local/go/bin/go install golang.org/x/tools/cmd/goimports@latest && \
-    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest && \
+    /usr/local/go/bin/go install github.com/kyoh86/richgo@latest; \
     cp /go/bin/gosu /bin/gosu && \
     echo "alias go=richgo ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias go=richgo ll='ls -alh'" > /root/.bash_aliases && \
     echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
     chmod -R a+rwX /go
-
-# create photoprism user and directory for deployment
-RUN useradd -m -U -u 1000 -d /photoprism photoprism && chmod a+rwx /photoprism && \
-    mkdir -m 777 -p /var/lib/photoprism /tmp/photoprism && \
-    echo "alias go=richgo" > /photoprism/.bash_aliases && \
-    echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    chown -Rf photoprism:photoprism /photoprism /var/lib/photoprism /tmp/photoprism && \
-    chmod -Rf a+rw /photoprism /var/lib/photoprism /tmp/photoprism /go && \
-    find /go -type d -print0 | xargs -0 chmod 777
 
 # set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
