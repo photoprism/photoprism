@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2022-02-19 14:59+0000\n"
+"PO-Revision-Date: 2022-02-19 16:21+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
@@ -300,7 +300,6 @@ msgid "%d files uploaded in %d s"
 msgstr "%d bestanden geüpload in %d s"
 
 #: messages.go:150
-#| msgid "Selection archived"
 msgid "Selection approved"
 msgstr "Selectie goedgekeurd"
 
@@ -326,7 +325,6 @@ msgid "Zip created in %d s"
 msgstr "Zip gemaakt in %d s"
 
 #: messages.go:156
-#| msgid "Labels deleted"
 msgid "Permanently deleted"
 msgstr "Permanent verwijderd"
 
