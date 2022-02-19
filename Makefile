@@ -52,11 +52,14 @@ upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
 clean:
 	rm -f *.log .test*
-	[ ! -f " $(BINARY_NAME)" ] || rm -f $(BINARY_NAME)
+	[ ! -f "$(BINARY_NAME)" ] || rm -f $(BINARY_NAME)
 	[ ! -d "node_modules" ] || rm -rf node_modules
 	[ ! -d "frontend/node_modules" ] || rm -rf frontend/node_modules
 	[ ! -d "$(BUILD_PATH)" ] || rm -rf --preserve-root $(BUILD_PATH)
 	[ ! -d "$(JS_BUILD_PATH)" ] || rm -rf --preserve-root $(JS_BUILD_PATH)
+tar.gz:
+	$(info Creating tar.gz archives from the directories in "$(BUILD_PATH)"...)
+	find "$(BUILD_PATH)" -maxdepth 1 -mindepth 1 -type d -exec tar --exclude='.[^/]*' -C {} -czf {}.tar.gz . \;
 install:
 	$(info Installing in "$(DESTDIR)"...)
 	[ ! -d "$(DESTDIR)" ] || rm -rf --preserve-root $(DESTDIR)
@@ -65,8 +68,10 @@ install:
 	rm -rf --preserve-root $(DESTDIR)/include
 	(cd $(DESTDIR) && mkdir -p bin scripts lib assets config config/examples)
 	scripts/build.sh prod $(DESTDIR)/bin/$(BINARY_NAME)
-	[ ! -f "$(GOBIN)/gosu" ] || cp $(GOBIN)/gosu $(DESTDIR)/bin/gosu
-	[ ! -f "$(GOBIN)/exif-read-tool" ] || cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
+	[ -f "$(GOBIN)/gosu" ] || go install github.com/tianon/gosu@latest
+	cp $(GOBIN)/gosu $(DESTDIR)/bin/gosu
+	[ -f "$(GOBIN)/exif-read-tool" ] || go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest
+	cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	rsync -r -l --safe-links --exclude-from=scripts/dist/.buildignore --chmod=a+rx,u+rwx ./scripts/dist/ $(DESTDIR)/scripts
 	mv $(DESTDIR)/scripts/heif-convert.sh $(DESTDIR)/bin/heif-convert
@@ -337,4 +342,4 @@ tidy:
 
 .PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
     install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
-    install-go install-darktable install-tensorflow devtools;
+    install-go install-darktable install-tensorflow devtools tar.gz;
