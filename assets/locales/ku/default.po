@@ -6,17 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2021-10-10 08:22+0200\n"
-"Last-Translator: Michael Mayer <michael@photoprism.app>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2022-02-19 14:34+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
+"backend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: messages.go:82
 msgid "Unexpected error, please try again"
@@ -191,7 +192,7 @@ msgid "One entry added to %s"
 msgstr "یەک تێکراو زیاد کرایە %s"
 
 #: messages.go:126
-#, c-format
+#, c-format, fuzzy
 msgid "%d entries added to %s"
 msgstr "%d تێکراو زیاد کرایە  %s"
 
@@ -218,15 +219,17 @@ msgid "Account deleted"
 msgstr "هەژمارەکە سڕایەوە"
 
 #: messages.go:132
+#, fuzzy
 msgid "Settings saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکرا"
 
 #: messages.go:133
+#, fuzzy
 msgid "Password changed"
 msgstr "تێپەڕەوشە گۆڕدرا"
 
 #: messages.go:134
-#, c-format
+#, c-format, fuzzy
 msgid "Import completed in %d s"
 msgstr "هاوردن تەواو بوو بە %d  چرکە"
 
@@ -253,7 +256,7 @@ msgid "Indexing canceled"
 msgstr "نیشانەکردن هەڵوەشێنرایەوە"
 
 #: messages.go:140
-#, c-format
+#, c-format, fuzzy
 msgid "Removed %d files and %d photos"
 msgstr "لابردنی %d پەڕگە و  %d وێنە"
 
@@ -268,6 +271,7 @@ msgid "Copying files from %s"
 msgstr "کۆپی کردنی پەڕگە لە%s"
 
 #: messages.go:143
+#, fuzzy
 msgid "Labels deleted"
 msgstr "پێناسەکان سڕانەوە"
 
@@ -301,10 +305,12 @@ msgid "Selection approved"
 msgstr "دەستنیشان کراو پەسەند کرا"
 
 #: messages.go:151
+#, fuzzy
 msgid "Selection archived"
 msgstr "هەڵبژاردەکە ئەرشیفکرا"
 
 #: messages.go:152
+#, fuzzy
 msgid "Selection restored"
 msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
@@ -313,6 +319,7 @@ msgid "Selection marked as private"
 msgstr "دەستنیشانکراوەکان کران بە تایبەتی"
 
 #: messages.go:154
+#, fuzzy
 msgid "Albums deleted"
 msgstr "ئەلبومەکان سڕایەوە"
 
