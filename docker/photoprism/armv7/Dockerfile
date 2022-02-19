@@ -93,6 +93,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       wget \
       curl \
       make \
+      mariadb-client \
       sqlite3 \
       tzdata \
       libc6 \
@@ -104,7 +105,6 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       ffmpeg \
       ffmpegthumbnailer \
       libavcodec-extra && \
-    install-mariadb.sh mariadb-client && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
       /tmp/photoprism \
