@@ -311,21 +311,27 @@ func TestConfig_OriginalsPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/originals", c.OriginalsPath())
 	c.options.OriginalsPath = ""
-	assert.Equal(t, "", c.OriginalsPath())
+	if s := c.OriginalsPath(); s != "" && s != "/photoprism/originals" {
+		t.Errorf("unexpected originals path: %s", s)
+	}
 }
 
 func TestConfig_ImportPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/import", c.ImportPath())
 	c.options.ImportPath = ""
-	assert.Equal(t, "", c.ImportPath())
+	if s := c.ImportPath(); s != "" && s != "/photoprism/import" {
+		t.Errorf("unexpected import path: %s", s)
+	}
 }
 
 func TestConfig_AssetsPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets", c.AssetsPath())
 	c.options.AssetsPath = ""
-	assert.Equal(t, "", c.AssetsPath())
+	if s := c.AssetsPath(); s != "" && s != "/opt/photoprism/assets" {
+		t.Errorf("unexpected assets path: %s", s)
+	}
 }
 
 func TestConfig_MysqlBin(t *testing.T) {
