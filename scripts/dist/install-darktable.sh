@@ -30,7 +30,7 @@ if [[ $INSTALL_ARCH == "amd64" ]]; then
     echo "install-darktable: installing standard amd64 (Intel 64-bit) package"
     apt-get -qq install darktable
   fi
-  echo "Installed."
+  echo "Done."
 elif [[ $INSTALL_ARCH == "arm64" ]]; then
   if [[ $VERSION_CODENAME == "bullseye" ]]; then
     apt-get update
@@ -42,7 +42,7 @@ elif [[ $INSTALL_ARCH == "arm64" ]]; then
     echo "install-darktable: installing standard amd64 (ARM 64-bit) package"
     apt-get -qq install darktable
   fi
-  echo "Installed."
+  echo "Done."
 else
   echo "Unsupported Machine Architecture: $INSTALL_ARCH"
 fi

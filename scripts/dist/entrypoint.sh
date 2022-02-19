@@ -3,16 +3,20 @@
 if [[ $(id -u) == "0" ]]; then
   echo "started as root"
 
-  if [ -e /root/.init ]; then
+  if [ -e /opt/photoprism/.init ]; then
     echo "initialized"
   elif [[ ${PHOTOPRISM_INIT} ]]; then
     for target in $PHOTOPRISM_INIT; do
       echo "init ${target}..."
-      make -f /root/Makefile "${target}"
+      make -f /opt/photoprism/scripts/Makefile "${target}"
     done
-    echo 1 >/root/.init
+    echo 1 >/opt/photoprism/.init
   fi
 fi
+
+set -e
+
+STORAGE_PATH=${PHOTOPRISM_STORAGE_PATH:-/photoprism/storage}
 
 re='^[0-9]+$'
 
@@ -57,12 +61,12 @@ if [[ $(id -u) == "0" ]]; then
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
       echo "updating storage permissions..."
-      chown -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /photoprism/storage /photoprism/import /photoprism/assets /var/lib/photoprism /tmp/photoprism
+      chown -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "${STORAGE_PATH}" /photoprism/import /var/lib/photoprism
     fi
 
     echo "running as uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
+    gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" doctor.sh
     echo "${@}"
-
     gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
   elif [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
     # user ID only
@@ -72,25 +76,26 @@ if [[ $(id -u) == "0" ]]; then
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
       echo "updating storage permissions..."
-      chown -Rf "${PHOTOPRISM_UID}" /photoprism/storage /photoprism/import /photoprism/assets /var/lib/photoprism /tmp/photoprism
+      chown -Rf "${PHOTOPRISM_UID}" "${STORAGE_PATH}" /photoprism/import /var/lib/photoprism
     fi
 
     echo "running as uid ${PHOTOPRISM_UID}"
+    gosu "${PHOTOPRISM_UID}" doctor.sh
     echo "${@}"
-
     gosu "${PHOTOPRISM_UID}" "$@" &
   else
     # no user or group ID set via end variable
     echo "running as root"
+    doctor.sh
     echo "${@}"
-
     "$@" &
   fi
 else
+
   # running as root
   echo "running as uid $(id -u)"
+  doctor.sh
   echo "${@}"
-
   "$@" &
 fi
 

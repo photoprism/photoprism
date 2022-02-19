@@ -6,9 +6,15 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
-# install from nodesource.com
-curl -sL https://deb.nodesource.com/setup_16.x | bash -
+set -e
+
+SETUP_URL="https://deb.nodesource.com/setup_16.x"
+
+echo "Installing NodeJS and NPM from \"$SETUP_URL\"..."
+
+curl -sL $SETUP_URL | bash -
 apt-get update && apt-get -qq install nodejs
 npm install --unsafe-perm=true --allow-root -g npm
 npm config set cache ~/.cache/npm
-echo "Installed."
+
+echo "Done."

@@ -239,10 +239,11 @@ func (c *Config) initStorage() error {
 	storageName := filepath.Join(c.StoragePath(), serialName)
 	backupName := filepath.Join(c.BackupPath(), serialName)
 
-	if data, err := os.ReadFile(storageName); err == nil {
+	if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
 		c.serial = string(data)
-	} else if data, err := os.ReadFile(backupName); err == nil {
+	} else if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 {
 		c.serial = string(data)
+		LogError(os.WriteFile(storageName, []byte(c.serial), os.ModePerm))
 	} else if err := os.WriteFile(storageName, []byte(c.serial), os.ModePerm); err != nil {
 		return fmt.Errorf("failed creating %s: %s", storageName, err)
 	} else if err := os.WriteFile(backupName, []byte(c.serial), os.ModePerm); err != nil {

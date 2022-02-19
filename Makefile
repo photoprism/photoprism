@@ -4,7 +4,24 @@ export GODEBUG=http2client=0
 GOIMPORTS=goimports
 BINARY_NAME=photoprism
 
-DOCKER_TAG := $(shell date -u +%Y%m%d)
+# Build Parameters
+BUILD_PATH ?= $(shell realpath "./build")
+BUILD_DATE ?= $(shell date -u +%y%m%d)
+BUILD_VERSION ?= $(shell git describe --always)
+BUILD_TAG ?= $(BUILD_DATE)-$(BUILD_VERSION)
+BUILD_OS ?= $(shell uname -s)
+BUILD_ARCH ?= $(shell scripts/dist/arch.sh)
+JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
+
+# Installation Parameters
+INSTALL_PATH ?= $(BUILD_PATH)/photoprism-$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
+DESTDIR ?= $(INSTALL_PATH)
+DESTUID ?= 1000
+DESTGID ?= 1000
+INSTALL_USER ?= $(DESTUID):$(DESTGID)
+INSTALL_MODE ?= u+rwX,a+rX
+INSTALL_MODE_BIN ?= 755
+
 UID := $(shell id -u)
 HASRICHGO := $(shell which richgo)
 
@@ -15,9 +32,8 @@ else
 endif
 
 all: dep build
-dep: dep-tensorflow dep-js dep-go
-build: generate build-js build-go
-install: install-bin install-assets
+dep: dep-tensorflow dep-npm dep-js dep-go
+build: build-js
 test: test-js test-go
 test-go: reset-testdb run-test-go
 test-pkg: reset-testdb run-test-pkg
@@ -31,13 +47,41 @@ acceptance-run-chromium: acceptance-private-restart acceptance-private acceptanc
 acceptance-run-firefox: acceptance-private-restart acceptance-private-firefox acceptance-private-stop acceptance-restart acceptance-firefox acceptance-stop
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go
-upgrade: dep-upgrade-js dep-upgrade
 clean-local: clean-local-config clean-local-cache
-clean-install: clean-local dep build-js install-bin install-assets
-dev: npm install-go-amd64
-npm:
-	$(info Upgrading NPM version...)
-	sudo npm update -g npm
+upgrade: dep-upgrade-js dep-upgrade
+devtools: install-go dep-npm
+clean:
+	rm -f *.log .test*
+	[ ! -f " $(BINARY_NAME)" ] || rm -f $(BINARY_NAME)
+	[ ! -d "node_modules" ] || rm -rf node_modules
+	[ ! -d "frontend/node_modules" ] || rm -rf frontend/node_modules
+	[ ! -d "$(BUILD_PATH)" ] || rm -rf --preserve-root $(BUILD_PATH)
+	[ ! -d "$(JS_BUILD_PATH)" ] || rm -rf --preserve-root $(JS_BUILD_PATH)
+install:
+	$(info Installing in "$(DESTDIR)"...)
+	[ ! -d "$(DESTDIR)" ] || rm -rf --preserve-root $(DESTDIR)
+	mkdir --mode=$(INSTALL_MODE) -p $(DESTDIR)
+	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-tensorflow.sh $(DESTDIR)
+	rm -rf --preserve-root $(DESTDIR)/include
+	(cd $(DESTDIR) && mkdir -p bin scripts lib assets config config/examples)
+	scripts/build.sh prod $(DESTDIR)/bin/$(BINARY_NAME)
+	[ ! -f "$(GOBIN)/gosu" ] || cp $(GOBIN)/gosu $(DESTDIR)/bin/gosu
+	[ ! -f "$(GOBIN)/exif-read-tool" ] || cp $(GOBIN)/exif-read-tool $(DESTDIR)/bin/exif-read-tool
+	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
+	rsync -r -l --safe-links --exclude-from=scripts/dist/.buildignore --chmod=a+rx,u+rwx ./scripts/dist/ $(DESTDIR)/scripts
+	mv $(DESTDIR)/scripts/heif-convert.sh $(DESTDIR)/bin/heif-convert
+	cp internal/config/testdata/*.yml $(DESTDIR)/config/examples
+	chown -R $(INSTALL_USER) $(DESTDIR)
+	chmod -R $(INSTALL_MODE) $(DESTDIR)
+	chmod -R $(INSTALL_MODE_BIN) $(DESTDIR)/bin $(DESTDIR)/lib $(DESTDIR)/scripts/*.sh
+	echo "PhotoPrism $(BUILD_TAG) has been successfully installed in \"$(DESTDIR)\".\nEnjoy!"
+install-go:
+	sudo scripts/dist/install-go.sh
+	go build -v ./...
+install-tensorflow:
+	sudo scripts/dist/install-tensorflow.sh
+install-darktable:
+	sudo scripts/dist/install-darktable.sh
 acceptance-restart:
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config/settingsBackup.yml storage/acceptance/config/settings.yml
@@ -75,30 +119,16 @@ generate:
 	@if [ ${$(shell git diff --shortstat assets/locales/messages.pot):1:45} == $(POT_UNCHANGED) ]; then\
 		git checkout -- assets/locales/messages.pot;\
 	fi
-install-go-amd64:
-	$(info Installing Go (AMD64)...)
-	sudo docker/scripts/install-go.sh amd64
-	go build -v ./...
-install-bin:
-	scripts/build.sh prod ~/.local/bin/$(BINARY_NAME)
-install-assets:
-	$(info Installing assets)
-	mkdir -p ~/.photoprism/storage/config
-	mkdir -p ~/.photoprism/storage/cache
-	mkdir -p ~/.photoprism/storage
-	mkdir -p ~/.photoprism/assets
-	mkdir -p ~/Pictures/Originals
-	mkdir -p ~/Pictures/Import
-	cp -r assets/locales assets/facenet assets/nasnet assets/nsfw assets/profiles assets/static assets/templates ~/.photoprism/assets
-	find ~/.photoprism/assets -name '.*' -type f -delete
 clean-local-assets:
-	rm -rf ~/.photoprism/assets/*
+	rm -rf $(BUILD_PATH)/assets/*
 clean-local-cache:
-	rm -rf ~/.photoprism/storage/cache/*
+	rm -rf $(BUILD_PATH)/storage/cache/*
 clean-local-config:
-	rm -f ~/.photoprism/storage/config/*
+	rm -f $(BUILD_PATH)/config/*
 dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
+dep-npm:
+	sudo npm install -g npm
 dep-js:
 	(cd frontend &&	npm install --silent --legacy-peer-deps)
 dep-go:
@@ -119,9 +149,13 @@ zip-nsfw:
 	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
-build-go:
+build-go: build-debug
+build-debug:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh debug $(BINARY_NAME)
+build-prod:
+	rm -f $(BINARY_NAME)
+	scripts/build.sh prod $(BINARY_NAME)
 build-race:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh race $(BINARY_NAME)
@@ -156,7 +190,7 @@ reset-mariadb:
 	mysql < scripts/sql/reset-mariadb.sql
 reset-testdb:
 	$(info Removing test database files...)
-	find ./internal -type f -name '.test.*' -delete
+	find ./internal -type f -name ".test.*" -delete
 run-test-short:
 	$(info Running short Go unit tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...
@@ -164,7 +198,7 @@ run-test-go:
 	$(info Running all Go unit tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags slow -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
-	$(info Running all Go unit tests in '/pkg'...)
+	$(info Running all Go unit tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags slow -timeout 20m ./pkg/...
 run-test-api:
 	$(info Running all API unit tests...)
@@ -186,14 +220,6 @@ test-coverage:
 	$(info Running all Go unit tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
-clean:
-	rm -f $(BINARY_NAME)
-	rm -f *.log
-	rm -rf node_modules
-	rm -rf storage/testdata
-	rm -rf storage/backup
-	rm -rf storage/cache
-	rm -rf frontend/node_modules
 docker-develop-all: docker-develop-bullseye docker-develop-buster docker-develop-impish docker-develop-armv7
 docker-develop: docker-develop-bullseye
 docker-develop-bullseye:
@@ -273,26 +299,26 @@ docker-pull:
 	docker pull photoprism/photoprism:preview photoprism/photoprism:latest
 docker-ddns:
 	docker pull golang:alpine
-	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
 docker-goproxy:
 	docker pull golang:alpine
-	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(BUILD_DATE)
 docker-demo:
 	docker pull photoprism/photoprism:preview
-	scripts/docker/build.sh demo $(DOCKER_TAG)
-	scripts/docker/push.sh demo $(DOCKER_TAG)
+	scripts/docker/build.sh demo $(BUILD_DATE)
+	scripts/docker/push.sh demo $(BUILD_DATE)
 docker-demo-local:
 	scripts/docker/build.sh photoprism
-	scripts/docker/build.sh demo $(DOCKER_TAG)
-	scripts/docker/push.sh demo $(DOCKER_TAG)
+	scripts/docker/build.sh demo $(BUILD_DATE)
+	scripts/docker/push.sh demo $(BUILD_DATE)
 docker-dummy-webdav:
 	docker pull --platform=amd64 golang:1
 	docker pull --platform=arm64 golang:1
-	scripts/docker/buildx-multi.sh dummy-webdav linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/buildx-multi.sh dummy-webdav linux/amd64,linux/arm64 $(BUILD_DATE)
 docker-dummy-oidc:
 	docker pull --platform=amd64 golang:1
 	docker pull --platform=arm64 golang:1
-	scripts/docker/buildx-multi.sh dummy-oidc linux/amd64,linux/arm64 $(DOCKER_TAG)
+	scripts/docker/buildx-multi.sh dummy-oidc linux/amd64,linux/arm64 $(BUILD_DATE)
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./docker/examples/cloud && packer build digitalocean.json)
@@ -309,5 +335,6 @@ fmt-go:
 tidy:
 	go mod tidy
 
-.PHONY: all build dev npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
-install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy;
+.PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
+    install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
+    install-go install-darktable install-tensorflow devtools;

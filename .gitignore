@@ -3,6 +3,7 @@
 /photos/originals/*
 /photos/import/*
 /storage/*
+/build/*
 /node_modules
 /frontend/.eslintcache
 /frontend/node_modules/*

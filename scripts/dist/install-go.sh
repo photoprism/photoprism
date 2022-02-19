@@ -45,4 +45,4 @@ rm go.tgz
 
 /usr/local/go/bin/go version
 
-echo "Installed."
+echo "Done."

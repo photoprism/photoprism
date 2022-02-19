@@ -53,4 +53,4 @@ elif [[ $INSTALL_ARCH == "arm64" ]]; then
     npm install --unsafe-perm=true --allow-root -g testcafe chromedriver
 fi
 
-echo "Installed."
+echo "Done."

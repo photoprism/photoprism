@@ -1,17 +1,14 @@
-FROM photoprism/develop:220218-bullseye
+FROM photoprism/develop:220219-bullseye
 
 ## other base images to choose from...
 # FROM photoprism/develop:buster   # Debian 10 (Buster)
 # FROM photoprism/develop:impish   # Ubuntu 21.10 (Impish Indri)
 
-# update NPM JS package manager
-RUN npm install -g npm
-
-# copy scripts to test changes
+# copy entrypoint script to container
 COPY --chown=root:root /docker/develop/entrypoint.sh /entrypoint.sh
-COPY --chown=root:root /scripts/init/Makefile /root/Makefile
 
-# set up project directory
+# define working directory in container
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
+# copy project source code to container
 COPY . .

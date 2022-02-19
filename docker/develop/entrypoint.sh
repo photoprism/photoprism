@@ -8,7 +8,7 @@ if [[ $(id -u) == "0" ]]; then
   elif [[ ${PHOTOPRISM_INIT} ]]; then
     for target in $PHOTOPRISM_INIT; do
       echo "init ${target}..."
-      make -f /root/Makefile "${target}"
+      make -f /go/src/github.com/photoprism/photoprism/scripts/dist/Makefile "${target}"
     done
     echo 1 >/root/.init
   fi
@@ -59,7 +59,7 @@ if [[ $(id -u) == "0" ]]; then
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "develop: set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
       echo "develop: updating storage permissions..."
-      chown -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /photoprism /var/lib/photoprism /tmp/photoprism /go
+      chown -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /photoprism /tmp/photoprism /go
     fi
 
     echo "develop: running as uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"

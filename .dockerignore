@@ -6,6 +6,7 @@
 /assets/nasnet
 /assets/nsfw
 /storage
+/build
 /photoprism
 /coverage.*
 /frontend/tests/acceptance/screenshots
