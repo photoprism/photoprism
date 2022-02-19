@@ -15,7 +15,7 @@ COPY . .
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Debian 10 (Buster)
+#### Base Image: Debian 10, Codename "Buster"
 FROM debian:buster-slim
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"

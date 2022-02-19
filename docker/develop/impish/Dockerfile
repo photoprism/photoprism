@@ -1,4 +1,4 @@
-#### Ubuntu 21.10 (Impish Indri)
+#### Base Image: Ubuntu 21.10, Codename "Impish Indri"
 FROM ubuntu:impish
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"

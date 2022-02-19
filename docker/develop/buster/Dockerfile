@@ -1,4 +1,4 @@
-#### Debian 10 (Buster)
+#### Base Image: Debian 10, Codename "Buster"
 FROM golang:buster
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
