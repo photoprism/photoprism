@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2022-02-17 12:46+0000\n"
-"Last-Translator: Ke Fei <zer4tul@gmail.com>\n"
+"PO-Revision-Date: 2022-02-19 16:21+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -149,7 +149,6 @@ msgid "Invalid link"
 msgstr "无效链接"
 
 #: messages.go:114
-#| msgid "Invalid link"
 msgid "Invalid name"
 msgstr "无效的名称"
 
@@ -203,7 +202,7 @@ msgid "One entry removed from %s"
 msgstr "已从 %s 移除一个条目"
 
 #: messages.go:128
-#, c-format
+#, c-format, fuzzy
 msgid "%d entries removed from %s"
 msgstr "已从 %2$s 移除 %1$d 个条目"
 
@@ -224,6 +223,7 @@ msgid "Settings saved"
 msgstr "设置已保存"
 
 #: messages.go:133
+#, fuzzy
 msgid "Password changed"
 msgstr "密码已修改"
 
@@ -270,6 +270,7 @@ msgid "Copying files from %s"
 msgstr "正在从 %s 中复制文件"
 
 #: messages.go:143
+#, fuzzy
 msgid "Labels deleted"
 msgstr "已删除标签"
 
