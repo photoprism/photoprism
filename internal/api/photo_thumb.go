@@ -63,11 +63,10 @@ func GetThumb(router *gin.RouterGroup) {
 				return
 			}
 
-			AddThumbCacheHeader(c)
-
 			if download {
 				c.FileAttachment(fileName, cropName.Jpeg())
 			} else {
+				AddThumbCacheHeader(c)
 				c.File(fileName)
 			}
 
@@ -108,11 +107,10 @@ func GetThumb(router *gin.RouterGroup) {
 				return
 			}
 
-			AddThumbCacheHeader(c)
-
 			if c.Query("download") != "" {
 				c.FileAttachment(cached.FileName, cached.ShareName)
 			} else {
+				AddThumbCacheHeader(c)
 				c.File(cached.FileName)
 			}
 
@@ -122,6 +120,7 @@ func GetThumb(router *gin.RouterGroup) {
 		// Return existing thumbs straight away.
 		if !download {
 			if fileName, err := thumb.FileName(fileHash, conf.ThumbPath(), size.Width, size.Height, size.Options...); err == nil && fs.FileExists(fileName) {
+				AddThumbCacheHeader(c)
 				c.File(fileName)
 				return
 			}
@@ -202,11 +201,10 @@ func GetThumb(router *gin.RouterGroup) {
 		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase(0)})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
-		AddThumbCacheHeader(c)
-
 		if download {
 			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
 		} else {
+			AddThumbCacheHeader(c)
 			c.File(thumbnail)
 		}
 	})

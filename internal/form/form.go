@@ -2,7 +2,7 @@
 
 Package form contains tagged structs for input value validation.
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
