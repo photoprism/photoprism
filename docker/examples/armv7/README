@@ -4,7 +4,7 @@ You may use the following 32-bit Docker images to run PhotoPrism and MariaDB on 
 as well as Raspberry Pi OS (Raspbian) installations without 64-bit support:
 
 Stable Release     : photoprism/photoprism:armv7
-Development Preview: photoprism/photoprism:armv7-preview
+Development Preview: photoprism/photoprism:preview-armv7
 MariaDB            : linuxserver/mariadb:latest
 
 Docker Hub URL:
