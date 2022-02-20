@@ -4,8 +4,6 @@ DOCKER_ARCH=${DOCKER_ARCH:-arch}
 DOCKER_ENV=${DOCKER_ENV:-unknown}
 DOCKER_TAG=${DOCKER_TAG:-unknown}
 
-echo "image: $DOCKER_ARCH-$DOCKER_ENV (build $DOCKER_TAG)"
-
 if [[ $(id -u) == "0" ]]; then
   echo "started as root"
 
