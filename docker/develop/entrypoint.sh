@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-if [[ $(id -u) == "0" ]]; then
-  echo "develop: base image started as root"
+DOCKER_ARCH=${DOCKER_ARCH:-arch}
+DOCKER_ENV=${DOCKER_ENV:-unknown}
 
-  if [ -e /root/.init ]; then
-    echo "develop: initialized"
-  elif [[ ${PHOTOPRISM_INIT} ]]; then
+echo "image: $DOCKER_ARCH-$DOCKER_ENV $BUILD_TAG"
+
+if [[ $(id -u) == "0" ]]; then
+  echo "started as root"
+
+  if [[ ! -e /root/.init ]] && [[ ${PHOTOPRISM_INIT} ]]; then
     for target in $PHOTOPRISM_INIT; do
       echo "init ${target}..."
       make -f /go/src/github.com/photoprism/photoprism/scripts/dist/Makefile "${target}"
@@ -13,21 +16,23 @@ if [[ $(id -u) == "0" ]]; then
     echo 1 >/root/.init
   fi
 else
-  echo "develop: base image started as uid $(id -u)"
+  echo "started as uid $(id -u)"
 fi
 
 re='^[0-9]+$'
 
-# check for legacy umask env variables
-if [[ -z ${PHOTOPRISM_UMASK} ]] && [[ ${UMASK} =~ $re ]]; then
+# check for alternate umask variable
+if [[ -z ${PHOTOPRISM_UMASK} ]] && [[ ${UMASK} =~ $re ]] && [[ ${#UMASK} == 4 ]]; then
   PHOTOPRISM_UMASK=${UMASK}
-  echo "WARNING: UMASK without PHOTOPRISM_ prefix is deprecated, use PHOTOPRISM_UMASK: \"${PHOTOPRISM_UMASK}\" instead"
 fi
 
-# set file permission mask
-if [[ ${PHOTOPRISM_UMASK} =~ $re ]]; then
-  echo "develop: umask ${PHOTOPRISM_UMASK}"
+# set file-creation mode (umask)
+if [[ ${PHOTOPRISM_UMASK} =~ $re ]] && [[ ${#PHOTOPRISM_UMASK} == 4 ]]; then
   umask "${PHOTOPRISM_UMASK}"
+  echo "custom file-creation mode ($(umask -p)): $(umask -S)"
+else
+  umask 0002
+  echo "default file-creation mode ($(umask -p)): $(umask -S)"
 fi
 
 # script must run as root to perform changes

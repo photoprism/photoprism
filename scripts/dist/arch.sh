@@ -3,8 +3,8 @@
 # This script returns the normalized machine architecture (amd64, arm64, or arm).
 # An error is returned if the architecture is currently not supported by PhotoPrism.
 
-if [[ $TARGETARCH ]]; then
-  SYSTEM_ARCH=$TARGETARCH
+if [[ $DOCKER_ARCH ]]; then
+  SYSTEM_ARCH=$DOCKER_ARCH
 elif [[ $OS == "Windows_NT" ]]; then
   if [[ $PROCESSOR_ARCHITEW6432 == "AMD64" || $PROCESSOR_ARCHITECTURE == "AMD64" ]]; then
     SYSTEM_ARCH=amd64
@@ -18,8 +18,16 @@ fi
 
 BUILD_ARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
+#   Value    Normalized
+#   aarch64  arm64      # the latest v8 arm architecture. Used on Apple M1, AWS Graviton, and Raspberry Pi 3's and 4's
+#   armhf    arm        # 32-bit v7 architecture. Used in Raspberry Pi 3 and  Pi 4 when 32bit Raspbian Linux is used
+#   armel    arm/v6     # 32-bit v6 architecture. Used in Raspberry Pi 1, 2, and Zero
+#   i386     386        # older Intel 32-Bit architecture, originally used in the 386 processor
+#   x86_64   amd64      # all modern Intel-compatible x84 64-Bit architectures
+#   x86-64   amd64      # same
+
 case $BUILD_ARCH in
-  amd64 | AMD64 | x86_64)
+  amd64 | AMD64 | x86_64 | x86-64)
     BUILD_ARCH=amd64
     ;;
 
@@ -27,7 +35,7 @@ case $BUILD_ARCH in
     BUILD_ARCH=arm64
     ;;
 
-  arm | ARM | aarch | armv7l | armhf | arm6l)
+  arm | ARM | aarch | armv7l | armhf)
     BUILD_ARCH=arm
     ;;
 

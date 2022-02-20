@@ -2,14 +2,13 @@
 FROM photoprism/develop:impish as build
 
 ARG TARGETARCH
-ARG TARGETPLATFORM
 ARG BUILD_TAG
 ARG GOPROXY
 ARG GODEBUG
 
 # set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
-COPY .. .
+COPY . .
 
 # build and install dist files for prod env
 RUN make all install DESTDIR=/opt/photoprism
@@ -21,10 +20,13 @@ FROM ubuntu:impish
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
-ARG TARGETPLATFORM
+ARG BUILD_TAG
 
 # set environment variables, see https://docs.photoprism.app/getting-started/config-options/
-ENV PATH="/opt/photoprism/bin:/opt/photoprism/scripts:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
+ENV DOCKER_ARCH=$TARGETARCH \
+    DOCKER_TAG=$BUILD_TAG \
+    DOCKER_ENV="ce" \
+    PATH="/opt/photoprism/bin:/opt/photoprism/scripts:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \

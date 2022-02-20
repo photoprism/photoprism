@@ -4,17 +4,19 @@ FROM golang:bullseye
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
-ARG TARGETPLATFORM
 ARG BUILD_TAG
 ARG GOPROXY
 ARG GODEBUG
 
 # set environment variables
-ENV DEBIAN_FRONTEND="noninteractive" \
+ENV DOCKER_ARCH=$TARGETARCH \
+    DOCKER_TAG=$BUILD_TAG \
+    DOCKER_ENV="develop" \
+    NODE_ENV="production" \
+    DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
     LD_LIBRARY_PATH="/root/.local/lib:/usr/local/lib:/usr/lib:/lib" \
     TF_CPP_MIN_LOG_LEVEL="0" \
-    NODE_ENV="production" \
     GOPATH="/go" \
     GOBIN="/go/bin" \
     PATH="/go/bin:/usr/local/go/bin:~/.local/bin:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \

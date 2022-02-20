@@ -2,7 +2,6 @@
 FROM photoprism/develop:armv7 as build
 
 ARG TARGETARCH
-ARG TARGETPLATFORM
 ARG BUILD_TAG
 ARG GOPROXY
 ARG GODEBUG
@@ -21,10 +20,13 @@ FROM debian:bullseye-slim
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
-ARG TARGETPLATFORM
+ARG BUILD_TAG
 
 # set environment variables, see https://docs.photoprism.app/getting-started/config-options/
-ENV PATH="/opt/photoprism/bin:/opt/photoprism/scripts:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
+ENV DOCKER_ARCH=$TARGETARCH \
+    DOCKER_TAG=$BUILD_TAG \
+    DOCKER_ENV="ce" \
+    PATH="/opt/photoprism/bin:/opt/photoprism/scripts:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
