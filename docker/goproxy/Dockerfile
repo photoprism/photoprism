@@ -1,9 +1,6 @@
 ##################################################### BUILD STAGE ######################################################
 FROM golang:alpine AS build
 
-ARG GOPROXY
-ARG GODEBUG
-
 RUN apk add --no-cache -U make git mercurial subversion
 
 RUN git clone https://github.com/goproxyio/goproxy.git /src/goproxy && \

@@ -5,8 +5,6 @@ LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
 ARG TARGETARCH
 ARG BUILD_TAG
-ARG GOPROXY
-ARG GODEBUG
 
 # set environment variables
 ENV DOCKER_ARCH=$TARGETARCH \

@@ -56,7 +56,6 @@ services:
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
     environment:
-      GOPROXY: "https://proxy.golang.org,direct"
       PHOTOPRISM_UID: ${UID:-1000}                   # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                   # group id
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # "admin" password (min 4 characters)

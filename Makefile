@@ -1,5 +1,4 @@
 export GO111MODULE=on
-export GODEBUG=http2client=0
 
 GOIMPORTS=goimports
 BINARY_NAME=photoprism

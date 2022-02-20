@@ -9,7 +9,6 @@ if [[ -z $1 ]] || [[ -z $2 ]]; then
 fi
 
 NUMERIC='^[0-9]+$'
-GOPROXY=${GOPROXY:-'https://proxy.golang.org,direct'}
 BUILD_DATE=$(date -u +%y%m%d)
 
 # kill old multi builder if still alive.
@@ -33,8 +32,6 @@ if [[ $1 ]] && [[ $2 ]] && [[ -z $3 || $3 == "preview" ]]; then
       --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE \
-      --build-arg GOPROXY \
-      --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:preview \
       --push .
@@ -50,8 +47,6 @@ elif [[ $3 =~ $NUMERIC ]]; then
       --pull \
       --no-cache \
       --build-arg BUILD_TAG=$3 \
-      --build-arg GOPROXY \
-      --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:latest \
       -t photoprism/$1:$3 $5 \
@@ -68,8 +63,6 @@ elif [[ $4 ]] && [[ $3 == *"preview"* ]]; then
       --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE \
-      --build-arg GOPROXY \
-      --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:$3 $5 \
       --push .
@@ -85,8 +78,6 @@ elif [[ $4 ]]; then
       --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE-$3 \
-      --build-arg GOPROXY \
-      --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \
       -t photoprism/$1:$3 \
       -t photoprism/$1:$BUILD_DATE-$3 $5 \
@@ -99,8 +90,6 @@ else
       --pull \
       --no-cache \
       --build-arg BUILD_TAG=$BUILD_DATE \
-      --build-arg GOPROXY \
-      --build-arg GODEBUG \
       -f docker/${1/-//}/Dockerfile \
       -t photoprism/$1:$3 \
       --push .
