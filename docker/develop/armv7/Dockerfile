@@ -104,7 +104,7 @@ RUN /usr/local/go/bin/go install github.com/tianon/gosu@latest; \
     cp /go/bin/gosu /bin/gosu && \
     echo "alias ll='ls -alh'" > /photoprism/.bash_aliases && \
     echo "alias ll='ls -alh'" > /root/.bash_aliases && \
-    echo "photoprism ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/all && \
     cp /root/.local/bin/heif-convert.sh /usr/local/bin/heif-convert && \
     chmod -R a+rwX /go
 
