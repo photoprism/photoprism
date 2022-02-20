@@ -1,5 +1,5 @@
-#### Base Image: Debian 10, Codename "Bullseye"
-FROM golang:bullseye
+#### Base Image: Debian 11, Codename "Bullseye"
+FROM debian:bullseye-slim
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
@@ -25,6 +25,7 @@ ENV DOCKER_ARCH=$TARGETARCH \
 
 # copy scripts and debian backports sources list
 COPY --chown=root:root --chmod=755 /scripts/dist/* /root/.local/bin/
+COPY --chown=root:root --chmod=644 /docker/develop/bullseye/backports.list /etc/apt/sources.list.d/backports.list
 COPY --chown=root:root --chmod=755 /docker/develop/entrypoint.sh /entrypoint.sh
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
@@ -80,6 +81,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       sudo && \
     /root/.local/bin/install-nodejs.sh && \
     /root/.local/bin/install-tensorflow.sh && \
+    /root/.local/bin/install-go.sh && \
     /root/.local/bin/cleanup.sh && \
     mkdir -p "/go/src" "/go/bin" && \
     chmod -R 777 "/go" && \

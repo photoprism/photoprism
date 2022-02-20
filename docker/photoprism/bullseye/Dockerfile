@@ -14,7 +14,7 @@ COPY . .
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Debian 10, Codename "Bullseye"
+#### Base Image: Debian 11, Codename "Bullseye"
 FROM debian:bullseye-slim
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
