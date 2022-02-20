@@ -32,11 +32,11 @@ fi
 # set file-creation mode (umask)
 if [[ ${PHOTOPRISM_UMASK} =~ $re ]] && [[ ${#PHOTOPRISM_UMASK} == 4 ]]; then
   umask "${PHOTOPRISM_UMASK}"
-  echo "custom file-creation mode ($(umask -p)): $(umask -S)"
 else
   umask 0002
-  echo "default file-creation mode ($(umask -p)): $(umask -S)"
 fi
+
+echo "umask: \"$(umask)\" ($(umask -S))"
 
 # script must run as root to perform changes
 if [[ $(id -u) == "0" ]]; then
@@ -65,12 +65,13 @@ if [[ $(id -u) == "0" ]]; then
     usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
       echo "updating storage permissions..."
-      chown -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "${STORAGE_PATH}" /photoprism/import /var/lib/photoprism
+      chown --preserve-root -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /photoprism
+      chmod --preserve-root -Rf u+rwX "${STORAGE_PATH}"
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
-    echo "running as uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
+    echo "switching to uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
     echo "${@}"
 
     gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" audit.sh && gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
@@ -80,12 +81,13 @@ if [[ $(id -u) == "0" ]]; then
     usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
       echo "updating storage permissions..."
-      chown -Rf "${PHOTOPRISM_UID}" "${STORAGE_PATH}" /photoprism/import /var/lib/photoprism
+      chown --preserve-root -Rf "${PHOTOPRISM_UID}" /photoprism
+      chmod --preserve-root -Rf u+rwX "${STORAGE_PATH}"
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
-    echo "running as uid ${PHOTOPRISM_UID}"
+    echo "switching to uid ${PHOTOPRISM_UID}"
     echo "${@}"
 
     gosu "${PHOTOPRISM_UID}" audit.sh && gosu "${PHOTOPRISM_UID}" "$@" &

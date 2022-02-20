@@ -20,6 +20,8 @@ else
   echo "started as uid $(id -u)"
 fi
 
+STORAGE_PATH=${PHOTOPRISM_STORAGE_PATH:-/go/src/github.com/photoprism/photoprism/storage}
+
 re='^[0-9]+$'
 
 # check for alternate umask variable
@@ -30,11 +32,11 @@ fi
 # set file-creation mode (umask)
 if [[ ${PHOTOPRISM_UMASK} =~ $re ]] && [[ ${#PHOTOPRISM_UMASK} == 4 ]]; then
   umask "${PHOTOPRISM_UMASK}"
-  echo "custom file-creation mode ($(umask -p)): $(umask -S)"
 else
   umask 0002
-  echo "default file-creation mode ($(umask -p)): $(umask -S)"
 fi
+
+echo "umask: \"$(umask)\" ($(umask -S))"
 
 # script must run as root to perform changes
 if [[ $(id -u) == "0" ]]; then
@@ -63,12 +65,13 @@ if [[ $(id -u) == "0" ]]; then
     usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "develop: set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
-      echo "develop: updating storage permissions..."
-      chown -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /photoprism /tmp/photoprism /go
+      echo "updating storage permissions..."
+      chown --preserve-root -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /go /photoprism /tmp/photoprism /opt/photoprism
+      chmod --preserve-root -Rf u+rwX "${STORAGE_PATH}"
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
-    echo "develop: running as uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
+    echo "switching to uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
     echo "${@}"
 
     gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
@@ -78,25 +81,26 @@ if [[ $(id -u) == "0" ]]; then
     usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "develop: set PHOTOPRISM_DISABLE_CHOWN: \"true\" to disable storage permission updates"
-      echo "develop: updating storage permissions..."
-      chown -Rf "${PHOTOPRISM_UID}" /photoprism /var/lib/photoprism /tmp/photoprism /go
+      echo "updating storage permissions..."
+      chown --preserve-root -Rf "${PHOTOPRISM_UID}" /go /photoprism /tmp/photoprism /opt/photoprism
+      chmod --preserve-root -Rf u+rwX "${STORAGE_PATH}"
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
-    echo "develop: running as uid ${PHOTOPRISM_UID}"
+    echo "switching to uid ${PHOTOPRISM_UID}"
     echo "${@}"
 
     gosu "${PHOTOPRISM_UID}" "$@" &
   else
     # run as root
-    echo "develop: running as root"
+    echo "running as root"
     echo "${@}"
 
     "$@" &
   fi
 else
   # running as user
-  echo "develop: running as uid $(id -u)"
+  echo "running as uid $(id -u)"
   echo "${@}"
 
   "$@" &
