@@ -84,7 +84,7 @@ elif [[ $4 ]]; then
       --platform $2 \
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$BUILD_DATE \
+      --build-arg BUILD_TAG=$BUILD_DATE-$3 \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -f docker/${1/-//}$4/Dockerfile \

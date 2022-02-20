@@ -68,7 +68,7 @@ else
     docker build $4\
       --pull \
       --no-cache \
-      --build-arg BUILD_TAG=$BUILD_DATE \
+      --build-arg BUILD_TAG=$BUILD_DATE-$2 \
       --build-arg GOPROXY \
       --build-arg GODEBUG \
       -t photoprism/$1:$2 \
