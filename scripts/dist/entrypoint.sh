@@ -34,6 +34,9 @@ else
   umask 0002
 fi
 
+# show info
+echo "image: $DOCKER_ARCH-$DOCKER_ENV"
+echo "build: $DOCKER_TAG"
 echo "umask: \"$(umask)\" ($(umask -S))"
 
 # script must run as root to perform changes
