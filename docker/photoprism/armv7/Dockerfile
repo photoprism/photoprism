@@ -3,8 +3,6 @@ FROM photoprism/develop:armv7 as build
 
 ARG TARGETARCH
 ARG BUILD_TAG
-ARG GOPROXY
-ARG GODEBUG
 
 # set up project directory
 WORKDIR "/go/src/github.com/photoprism/photoprism"
