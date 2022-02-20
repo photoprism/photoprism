@@ -1,6 +1,7 @@
 # Running PhotoPrism on ARM64-based devices (64-bit)
 
-Our stable version and development preview now come as a single multi-arch image for AMD64 and ARM64 (64-bit).
+Our stable version and development preview have been built into a single multi-arch Docker image for 64-bit AMD, Intel,
+and ARM processors:
 
 Stable Release     : photoprism/photoprism:latest
 Development Preview: photoprism/photoprism:preview
@@ -10,6 +11,23 @@ If your device meets the system requirements, mostly the same installation instr
 servers apply:
 
   https://docs.photoprism.app/getting-started/docker-compose/
+
+Existing users are advised to check their "docker-compose.yml" against our examples at dl.photoprism.app/docker from
+time to time in case there are new configuration options or other improvements. Update instructions can be found at
+the bottom of this README file.
+
+Note that Raspberry Pi OS (Raspbian) is a 32-bit user-space Linux with a 64-bit kernel to remain compatible with older
+Raspberry software. This requires special configuration to run modern 64-bit applications and Docker images (see below).
+
+If you do not have legacy software, we recommend choosing a standard 64-bit Linux distribution as it requires less
+experience:
+
+- Raspberry Pi Debian: https://raspi.debian.net/
+- Ubuntu for Raspberry Pi: https://ubuntu.com/raspberry-pi
+- UbuntuDockerPi: https://github.com/guysoft/UbuntuDockerPi (64-bit Ubuntu Server with Docker pre-configured)
+
+Other distributions that target the same use case as Raspbian, such as CoreELEC, may have the same problems and
+should also not be used to run modern server applications.
 
 ### Raspberry Pi OS ###
 
@@ -27,42 +45,28 @@ flag and you see the "no matching manifest" error on Raspberry Pi OS (Raspbian):
 
 It may also help to set the DOCKER_DEFAULT_PLATFORM environment variable to "linux/arm64".
 
-### Raspbian Alternatives ###
-
-Raspberry Pi OS is designed to be compatible with older 32-bit applications. We recommend choosing
-a standard 64-bit Linux distribution to run modern server applications, for example:
-
-- [UbuntuDockerPi](https://github.com/guysoft/UbuntuDockerPi) is a 64-bit Ubuntu Server with Docker pre-configured
-- [Ubuntu for Raspberry Pi](https://ubuntu.com/raspberry-pi)
-- [Ubuntu MATE for Raspberry Pi](https://ubuntu-mate.org/raspberry-pi/)
-
 ### System Requirements ###
 
-- Your device should have at least 3 GB of physical memory and a 64-bit operating system.
-- While PhotoPrism has been reported to work on devices with less memory, we take no responsibility for instability
-  or performance issues. RAW image conversion and TensorFlow are disabled on systems with 1 GB or less memory.
-- If less than 4 GB of swap space is configured or a manual memory/swap limit is set, this can cause unexpected restarts,
-  for example, when the indexer temporarily needs more memory to process large files.
-- If you see Docker errors related to "cgroups", it may help to add the following to `/boot/firmware/cmdline.txt`:
-  ```
-  cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
-  ```
-- We recommend disabling Linux kernel security in your `docker-compose.yml`, especially if you do not have experience
-  with the configuration:
+- Your device should have at least 3 GB of physical memory and a 64-bit operating system
+- While PhotoPrism has been reported to work on devices with less memory, we take no responsibility for instability or
+  performance problems
+- RAW image conversion and TensorFlow are disabled on systems with 1 GB or less memory
+- Indexing large photo and video collections significantly benefits from local SSD storage and plenty of memory for
+  caching, especially the conversion of RAW images and the transcoding of videos are very demanding
+- If less than 4 GB of swap space is configured or a manual memory/swap limit is set, this can cause unexpected
+  restarts, for example, when the indexer temporarily needs more memory to process large files
+- High-resolution panoramic images may require additional swap space and/or physical memory above the recommended
+  minimum
+- We recommend disabling kernel security in your docker-compose.yml, especially if you do not have experience with the
+  configuration:
   ```
   photoprism:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
   ```
-- If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
-  HTTPS reverse proxy such as Traefik or Caddy. Your files and passwords will otherwise be transmitted in
-  clear text and can be intercepted by anyone, including your provider, hackers, and governments:
-  https://docs.photoprism.app/getting-started/proxies/traefik/
-
-!!! Note
-    Indexing large photo and video collections significantly benefits from local SSD storage and plenty of memory
-    for caching. Especially the conversion of RAW images and the transcoding of videos are very demanding.
+- If you install PhotoPrism on a public server outside your home network, always run it behind a secure HTTPS reverse
+  proxy such as Traefik or Caddy https://docs.photoprism.app/getting-started/proxies/traefik/
 
 ### Troubleshooting ###
 
@@ -92,7 +96,7 @@ file formats is not well-supported and software transcoding is generally slow.
 
 ### Getting Updates ###
 
-Open a terminal and change to the folder where the docker-compose.yml file was saved. Now run the
+Open a terminal and change to the folder where the "docker-compose.yml" file was saved. Now run the
 following commands to download the most recent image from Docker Hub and restart your instance
 in the background:
 
