@@ -65,9 +65,9 @@ if [[ $(id -u) == "0" ]]; then
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "updating storage permissions..."
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
       chown --preserve-root -Rcf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /go /photoprism /opt/photoprism /tmp/photoprism
       chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
     echo "switching to uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
@@ -81,9 +81,9 @@ if [[ $(id -u) == "0" ]]; then
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "updating storage permissions..."
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
       chown --preserve-root -Rcf "${PHOTOPRISM_UID}" /go /photoprism /opt/photoprism /tmp/photoprism
       chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
     echo "switching to uid ${PHOTOPRISM_UID}"
