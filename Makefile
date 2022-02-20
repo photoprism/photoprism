@@ -242,6 +242,7 @@ docker-develop-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 impish /impish
 docker-preview-all: docker-preview-bullseye docker-preview-buster docker-preview-impish
+docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview: docker-preview-bullseye
 docker-preview-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
@@ -270,6 +271,7 @@ docker-preview-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
 docker-release-all: docker-release-bullseye docker-release-buster docker-release-impish
+docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release: docker-release-bullseye
 docker-release-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
@@ -341,4 +343,5 @@ tidy:
 
 .PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
     install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
+    docker-develop docker-preview docker-preview-all docker-preview-arm docker-release docker-release-all docker-release-arm \
     install-go install-darktable install-tensorflow devtools tar.gz;
