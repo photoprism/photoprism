@@ -20,8 +20,6 @@ else
   echo "started as uid $(id -u)"
 fi
 
-STORAGE_PATH=${PHOTOPRISM_STORAGE_PATH:-/go/src/github.com/photoprism/photoprism/storage}
-
 re='^[0-9]+$'
 
 # check for alternate umask variable
@@ -58,16 +56,17 @@ if [[ $(id -u) == "0" ]]; then
     fi
   fi
 
-  # create missing user/group if needed
+  # check uid and gid env variables
   if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]] && [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]]; then
+    # RUN AS SPECIFIED USER + GROUP ID
     groupadd -g "${PHOTOPRISM_GID}" "group_${PHOTOPRISM_GID}" 2>/dev/null
     useradd -o -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_GID}" -d /photoprism "user_${PHOTOPRISM_UID}" 2>/dev/null
     usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "updating storage permissions..."
-      chown --preserve-root -Rf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /go /photoprism /tmp/photoprism /opt/photoprism
-      chmod --preserve-root -Rf u+rwX "${STORAGE_PATH}"
+      chown --preserve-root -Rcf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /go /photoprism /opt/photoprism /tmp/photoprism
+      chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism
       echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
@@ -76,14 +75,14 @@ if [[ $(id -u) == "0" ]]; then
 
     gosu "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" "$@" &
   elif [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
-    # user ID only
+    # RUN AS SPECIFIED USER ID
     useradd -o -u "${PHOTOPRISM_UID}" -g 1000 -d /photoprism "user_${PHOTOPRISM_UID}" 2>/dev/null
     usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
       echo "updating storage permissions..."
-      chown --preserve-root -Rf "${PHOTOPRISM_UID}" /go /photoprism /tmp/photoprism /opt/photoprism
-      chmod --preserve-root -Rf u+rwX "${STORAGE_PATH}"
+      chown --preserve-root -Rcf "${PHOTOPRISM_UID}" /go /photoprism /opt/photoprism /tmp/photoprism
+      chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism
       echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
     fi
 
@@ -92,14 +91,14 @@ if [[ $(id -u) == "0" ]]; then
 
     gosu "${PHOTOPRISM_UID}" "$@" &
   else
-    # run as root
+    # RUN AS ROOT
     echo "running as root"
     echo "${@}"
 
     "$@" &
   fi
 else
-  # running as user
+  # RUN AS NON-ROOT USER
   echo "running as uid $(id -u)"
   echo "${@}"
 
