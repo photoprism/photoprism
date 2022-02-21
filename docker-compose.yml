@@ -11,7 +11,7 @@ services:
   ## Includes Let's Encrypt certs for local dev domain "localssl.dev" (all records point to 127.0.0.1)
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
-    image: photoprism/traefik:20220208
+    image: photoprism/traefik:20220221
     ports:
       # - "80:80" # HTTP (redirects to HTTPS)
       - "443:443" # HTTPS (required)
