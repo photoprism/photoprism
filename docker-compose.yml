@@ -51,7 +51,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
-      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`)"
+      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`, `app.localssl.dev`, `photoprism.localssl.dev`)"
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
