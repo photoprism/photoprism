@@ -241,6 +241,10 @@ docker-develop-bullseye:
 	docker pull --platform=amd64 golang:bullseye
 	docker pull --platform=arm64 golang:bullseye
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye "-t photoprism/develop:latest"
+docker-develop-bullseye-slim:
+	docker pull --platform=amd64 debian:bullseye-slim
+	docker pull --platform=arm64 debian:bullseye-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
 docker-develop-armv7:
 	docker pull --platform=arm debian:bullseye-slim
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
