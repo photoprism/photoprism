@@ -65,8 +65,8 @@ if [[ $(id -u) == "0" ]]; then
     usermod -g "${PHOTOPRISM_GID}" "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "updating storage permissions..."
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
+      echo "updating filesystem permissions..."
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables filesystem permission updates"
       chown --preserve-root -Rcf "${PHOTOPRISM_UID}:${PHOTOPRISM_GID}" /go /photoprism /opt/photoprism /tmp/photoprism
       chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism
     fi
@@ -81,8 +81,8 @@ if [[ $(id -u) == "0" ]]; then
     usermod -g 1000 "user_${PHOTOPRISM_UID}" 2>/dev/null
 
     if [[ -z ${PHOTOPRISM_DISABLE_CHOWN} ]]; then
-      echo "updating storage permissions..."
-      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables storage permission updates"
+      echo "updating filesystem permissions..."
+      echo "PHOTOPRISM_DISABLE_CHOWN: \"true\" disables filesystem permission updates"
       chown --preserve-root -Rcf "${PHOTOPRISM_UID}" /go /photoprism /opt/photoprism /tmp/photoprism
       chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism
     fi
