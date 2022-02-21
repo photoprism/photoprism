@@ -145,6 +145,7 @@ module.exports = (config) => {
           path.join(__dirname, "node_modules"),
           path.join(__dirname, "tests/unit"),
         ],
+        preferRelative: true,
         alias: {
           vue: "vue/dist/vue.min.js",
         },
