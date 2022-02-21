@@ -22,6 +22,7 @@ INSTALL_MODE ?= u+rwX,a+rX
 INSTALL_MODE_BIN ?= 755
 
 UID := $(shell id -u)
+GID := $(shell id -g)
 HASRICHGO := $(shell which richgo)
 
 ifdef HASRICHGO
@@ -30,9 +31,9 @@ else
     GOTEST=go test
 endif
 
-all: dep build
+all: dep build-js
 dep: dep-tensorflow dep-npm dep-js dep-go
-build: build-js
+build: build-go
 test: test-js test-go
 test-go: reset-testdb run-test-go
 test-pkg: reset-testdb run-test-pkg
@@ -49,6 +50,17 @@ fmt: fmt-js fmt-go
 clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
+fix-permissions:
+	$(info Updating filesystem permissions...)
+	@if [ $(UID) != 0 ]; then\
+		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
+		sudo chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
+		sudo chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Done."; \
+	else\
+		echo "Running as root. Nothing to do."; \
+	fi
 clean:
 	rm -f *.log .test*
 	[ ! -f "$(BINARY_NAME)" ] || rm -f $(BINARY_NAME)
@@ -343,4 +355,4 @@ tidy:
 .PHONY: all build dev dep-npm dep dep-go dep-js dep-list dep-tensorflow dep-upgrade dep-upgrade-js test test-js test-go \
     install generate fmt fmt-go fmt-js upgrade start stop terminal root-terminal packer-digitalocean acceptance clean tidy \
     docker-develop docker-preview docker-preview-all docker-preview-arm docker-release docker-release-all docker-release-arm \
-    install-go install-darktable install-tensorflow devtools tar.gz;
+    install-go install-darktable install-tensorflow devtools tar.gz fix-permissions;
