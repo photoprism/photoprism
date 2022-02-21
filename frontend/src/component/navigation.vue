@@ -40,7 +40,7 @@
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title">
-                PhotoPrism
+                {{ config.name }}
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action class="hidden-sm-and-down" :title="$gettext('Minimize')">

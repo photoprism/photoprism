@@ -1,5 +1,5 @@
 import "../fixtures";
-import { config } from "session";
+import { config } from "app/session";
 import Session from "common/session";
 import StorageShim from "node-storage-shim";
 

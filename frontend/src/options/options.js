@@ -1,8 +1,8 @@
 import { timeZonesNames } from "@vvo/tzdb";
-import { $gettext } from "../common/vm";
+import { $gettext } from "common/vm";
 import { Info } from "luxon";
-import { config } from "../session";
-import { TypeImage, TypeLive, TypeRaw, TypeVideo } from "../model/photo";
+import { config } from "app/session";
+import { TypeImage, TypeLive, TypeRaw, TypeVideo } from "model/photo";
 
 export const TimeZones = () =>
   [

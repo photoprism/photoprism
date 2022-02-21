@@ -3,7 +3,7 @@
  * (c) 2018 Klokan Technologies GmbH
  */
 import maplibregl from "maplibre-gl";
-import { config } from "../session";
+import { config } from "app/session";
 
 const langFallbackDecorate = function (style, cfg) {
   let layers = style.layers;

@@ -4,7 +4,7 @@ Settings.defaultLocale = "en";
 Settings.defaultZoneName = "UTC";
 
 import clientConfig from "./config";
-import { config } from "session";
+import { config } from "app/session";
 
 config.setValues(clientConfig);
 

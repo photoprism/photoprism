@@ -65,7 +65,6 @@
 import Api from "common/api";
 import Notify from "common/notify";
 import download from "common/download";
-import Photo from "../../model/photo";
 
 export default {
   name: 'PSubjectClipboard',

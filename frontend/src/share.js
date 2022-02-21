@@ -3,22 +3,17 @@
 Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+    <https://docs.photoprism.app/license/agpl>
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
-    to describe our software, run your own server, for educational purposes, but not for
-    offering commercial goods, products, or services without prior written permission.
-    In other words, please ask.
+    The AGPL is supplemented by our Trademark and Brand Guidelines,
+    which describe how our Brand Assets may be used:
+    <https://photoprism.app/trademark>
 
 Feel free to send an e-mail to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -35,7 +30,7 @@ import Notify from "common/notify";
 import Scrollbar from "common/scrollbar";
 import Clipboard from "common/clipboard";
 import Components from "share/components";
-import icons from "./component/icons";
+import icons from "component/icons";
 import Dialogs from "dialog/dialogs";
 import Event from "pubsub-js";
 import GetTextPlugin from "vue-gettext";
@@ -43,7 +38,7 @@ import Log from "common/log";
 import PhotoPrism from "share.vue";
 import Router from "vue-router";
 import Routes from "share/routes";
-import { config, session } from "session";
+import { config, session } from "app/session";
 import { Settings } from "luxon";
 import Socket from "common/websocket";
 import Viewer from "common/viewer";

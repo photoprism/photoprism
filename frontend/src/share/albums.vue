@@ -111,8 +111,8 @@ import Album from "model/album";
 import {DateTime} from "luxon";
 import Event from "pubsub-js";
 import RestModel from "model/rest";
-import {MaxItems} from "../common/clipboard";
-import Notify from "../common/notify";
+import {MaxItems} from "common/clipboard";
+import Notify from "common/notify";
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 
 export default {

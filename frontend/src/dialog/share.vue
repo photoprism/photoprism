@@ -128,7 +128,7 @@
 </template>
 <script>
 import * as options from "options/options";
-import Util from "../common/util";
+import Util from "common/util";
 
 export default {
   name: 'PShareDialog',

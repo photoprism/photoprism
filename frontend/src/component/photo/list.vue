@@ -112,7 +112,7 @@
 </template>
 <script>
 import download from "common/download";
-import Notify from "../../common/notify";
+import Notify from "common/notify";
 
 export default {
   name: 'PPhotoList',

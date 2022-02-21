@@ -1,26 +1,21 @@
 /*
 
-Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.org>
+Copyright (c) 2018 - 2022 Michael Mayer <hello@photoprism.app>
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+    <https://docs.photoprism.app/license/agpl>
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    The AGPL is supplemented by our Trademark and Brand Guidelines,
+    which describe how our Brand Assets may be used:
+    <https://photoprism.app/trademark>
 
-    PhotoPrism® is a registered trademark of Michael Mayer.  You may use it as required
-    to describe our software, run your own server, for educational purposes, but not for
-    offering commercial goods, products, or services without prior written permission.
-    In other words, please ask.
-
-Feel free to send an e-mail to hello@photoprism.org if you have questions,
+Feel free to send an e-mail to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
 
 Additional information can be found in our Developer Guide:
@@ -28,25 +23,25 @@ https://docs.photoprism.app/developer-guide/
 
 */
 
-import PAccountAddDialog from "./account/add.vue";
-import PAccountRemoveDialog from "./account/remove.vue";
-import PAccountEditDialog from "./account/edit.vue";
-import PPhotoArchiveDialog from "./photo/archive.vue";
-import PPhotoAlbumDialog from "./photo/album.vue";
-import PPhotoEditDialog from "./photo/edit.vue";
-import PPhotoDeleteDialog from "./photo/delete.vue";
-import PFileDeleteDialog from "./file/delete.vue";
-import PAlbumEditDialog from "./album/edit.vue";
-import PAlbumDeleteDialog from "./album/delete.vue";
-import PLabelDeleteDialog from "./label/delete.vue";
-import PPeopleMergeDialog from "./people/merge.vue";
-import PUploadDialog from "./upload.vue";
-import PVideoViewer from "./video/viewer.vue";
-import PShareDialog from "./share.vue";
-import PShareUploadDialog from "./share/upload.vue";
-import PWebdavDialog from "./webdav.vue";
-import PReloadDialog from "./reload.vue";
-import PSponsorDialog from "./sponsor.vue";
+import PAccountAddDialog from "dialog/account/add.vue";
+import PAccountRemoveDialog from "dialog/account/remove.vue";
+import PAccountEditDialog from "dialog/account/edit.vue";
+import PPhotoArchiveDialog from "dialog/photo/archive.vue";
+import PPhotoAlbumDialog from "dialog/photo/album.vue";
+import PPhotoEditDialog from "dialog/photo/edit.vue";
+import PPhotoDeleteDialog from "dialog/photo/delete.vue";
+import PFileDeleteDialog from "dialog/file/delete.vue";
+import PAlbumEditDialog from "dialog/album/edit.vue";
+import PAlbumDeleteDialog from "dialog/album/delete.vue";
+import PLabelDeleteDialog from "dialog/label/delete.vue";
+import PPeopleMergeDialog from "dialog/people/merge.vue";
+import PUploadDialog from "dialog/upload.vue";
+import PVideoViewer from "dialog/video/viewer.vue";
+import PShareDialog from "dialog/share.vue";
+import PShareUploadDialog from "dialog/share/upload.vue";
+import PWebdavDialog from "dialog/webdav.vue";
+import PReloadDialog from "dialog/reload.vue";
+import PSponsorDialog from "dialog/sponsor.vue";
 
 const dialogs = {};
 

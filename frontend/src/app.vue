@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import "./css/app.css";
+import "css/app.css";
 import Event from "pubsub-js";
 
 export default {

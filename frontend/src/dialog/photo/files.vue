@@ -225,8 +225,8 @@
 <script>
 import Thumb from "model/thumb";
 import {DateTime} from "luxon";
-import Notify from "../../common/notify";
-import Util from "../../common/util";
+import Notify from "common/notify";
+import Util from "common/util";
 
 export default {
   name: 'PTabPhotoFiles',

@@ -109,11 +109,11 @@
 </template>
 <script>
 import Photo from "model/photo";
-import PhotoDetails from "./details.vue";
-import PhotoLabels from "./labels.vue";
-import PhotoPeople from "./people.vue";
-import PhotoFiles from "./files.vue";
-import PhotoInfo from "./info.vue";
+import PhotoDetails from "details.vue";
+import PhotoLabels from "labels.vue";
+import PhotoPeople from "people.vue";
+import PhotoFiles from "files.vue";
+import PhotoInfo from "info.vue";
 import Event from "pubsub-js";
 
 export default {
