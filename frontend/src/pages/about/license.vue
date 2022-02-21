@@ -11,7 +11,7 @@
         <img :src="$config.staticUri + '/img/agplv3-small.png'" alt="AGPLv3 Logo">
       </a>
     </v-toolbar>
-    <v-container fluid class="pa-4">
+    <v-container fluid class="pa-4 text-selectable">
 
       <h3 style="text-align: center;">GNU AFFERO GENERAL PUBLIC LICENSE</h3>
       <p style="text-align: center;">Version 3, 19 November 2007</p>
@@ -661,38 +661,38 @@
         Program, unless a warranty or assumption of liability accompanies a
         copy of the Program in return for a fee.</p>
 
-      <p>END OF TERMS AND CONDITIONS</p>
-
       <h3 style="text-align: center;"><a name="additional-terms"></a>ADDITIONAL TERMS</h3>
-      <h3><a name="trademark"></a>PhotoPrism® Trademark</h3>
-
+      <p>In accordance with Section 7 of the GNU Affero General Public License:</p>
+      <h4><a name="trademark"></a>18. PhotoPrism® Trademark and Brand Assets</h4>
       <p>
-        PhotoPrism’s Brand Assets — including trademarks, logos, icons, designs, fonts,
-        products, services, and any other brand features and elements, whether registered
-        or unregistered („Brand Assets“) — are proprietary assets owned exclusively by
-        Michael Mayer and his legal successors („PhotoPrism“).
-      </p>
-      <p>
-        Third parties, including licensees, may never claim ownership of PhotoPrism's
-        Brand Assets or brands confusingly similar to PhotoPrism's Brand Assets in any
-        way, including, without limitation, as a trademark, service mark, company name
-        or designation, domain name, social media profile/handle, or in any other manner.
-      </p>
-      <p>
-        You may not include the PhotoPrism trademark in the name of your app, product,
-        or service, whether commercial or non-commercial in nature. This includes online
-        services such as e-commerce, community, blog, information, advertising, and personal
-        home pages, as well as apps, client apps, or third-party apps that interact with
-        PhotoPrism.
-      </p>
-      <p>
+        (a) PhotoPrism’s Brand Assets — including trademarks, logos, icons, fonts,
+        corporate design, product and service names, and any other brand features and
+        elements, whether registered or unregistered („Brand Assets“) — are proprietary
+        assets owned exclusively by Michael Mayer and his legal successors („PhotoPrism“).
         We reserve the right to object to any use or misuse in any jurisdiction worldwide.
-        Visit <a target="_blank" href="https://photoprism.app/trademark">photoprism.app/trademark</a> to learn more.
+        Visit <a target="_blank" href="https://photoprism.app/trademark">photoprism.app/trademark</a>
+        to learn more.
       </p>
       <p>
-        In the event that any provision is found to be unenforceable by a court or other competent
-        jurisdiction, the remaining portions hereof shall remain in full force and effect.
+        (b) Contributors, licensees, business partners, and other third parties may
+        never claim ownership of PhotoPrism's Brand Assets or brands confusingly similar to
+        PhotoPrism's Brand Assets in any way, including, without limitation, as a trademark,
+        service mark, company name or designation, domain name, social media profile/handle,
+        or in any other manner.
       </p>
+      <p>
+        (c) You may not include the PhotoPrism trademark in the name of your app, product,
+        or service, whether commercial or non-commercial in nature. This includes online
+        services such as e-commerce, community, blog, information, advertising, and
+        personal home pages, as well as apps, app stores, client apps, or third-party apps
+        that interact with PhotoPrism.
+      </p>
+      <p>
+        (d) In the event that any provision is found to be unenforceable by a court or
+        other competent jurisdiction, the remaining portions hereof shall remain in full
+        force and effect.
+      </p>
+      <h3><a name="terms-end"></a>END OF TERMS AND CONDITIONS</h3>
     </v-container>
 
     <p-about-footer></p-about-footer>
