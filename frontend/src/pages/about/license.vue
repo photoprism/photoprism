@@ -662,7 +662,7 @@
         copy of the Program in return for a fee.</p>
 
       <h3 style="text-align: center;"><a name="additional-terms"></a>ADDITIONAL TERMS</h3>
-      <p>In accordance with Section 7 of the GNU Affero General Public License:</p>
+
       <h4><a name="trademark"></a>18. PhotoPrism® Trademark and Brand Assets</h4>
       <p>
         (a) PhotoPrism’s Brand Assets — including trademarks, logos, icons, fonts,
