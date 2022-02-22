@@ -13,7 +13,7 @@ RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
 #### Base Image: Debian 11, Codename "Bullseye"
-FROM debian:bullseye-slim
+FROM photoprism/develop:bullseye-slim
 
 LABEL maintainer="Michael Mayer <hello@photoprism.app>"
 
@@ -74,56 +74,17 @@ ENV DOCKER_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# copy app dist files and debian backports sources list
-COPY --from=build /opt/photoprism/ /opt/photoprism
-COPY /docker/develop/bullseye/backports.list /etc/apt/sources.list.d/backports.list
-
-# install additional distribution packages
-RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
-    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
-    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
-    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    cp /opt/photoprism/bin/gosu /bin/gosu && \
-    chown root:root /bin/gosu && \
-    useradd -m -U -u 1000 -d /photoprism photoprism && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-      ca-certificates \
-      gpg \
-      wget \
-      curl \
-      make \
-      sqlite3 \
-      tzdata \
-      libc6 \
-      libatomic1 \
-      libheif-examples \
-      librsvg2-bin \
-      exiftool \
-      rawtherapee \
-      ffmpeg \
-      ffmpegthumbnailer \
-      libavcodec-extra && \
-    install-mariadb.sh mariadb-client && \
-    install-darktable.sh && \
-    install -d -m 0777 -o 1000 -g 1000 \
-      /var/lib/photoprism \
-      /tmp/photoprism \
-      /photoprism/originals \
-      /photoprism/import \
-      /photoprism/storage \
-      /photoprism/storage/sidecar \
-      /photoprism/storage/albums \
-      /photoprism/storage/backups \
-      /photoprism/storage/config \
-      /photoprism/storage/cache && \
-    cleanup.sh
+# update pre-installed packages if needed
+RUN apt-get update && apt-get -qq dist-upgrade && cleanup.sh
 
 # define default directory and user
 WORKDIR /photoprism
 
 # expose default http port 2342
 EXPOSE 2342
+
+# copy app dist files and debian backports sources list
+COPY --from=build /opt/photoprism/ /opt/photoprism
 
 # define container entrypoint script
 ENTRYPOINT ["/opt/photoprism/scripts/entrypoint.sh"]
