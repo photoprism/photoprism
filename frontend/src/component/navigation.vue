@@ -500,7 +500,7 @@
 
     </v-navigation-drawer>
 
-    <div v-if="config.imprint" id="imprint">
+    <div v-if="config.imprint && visible" id="imprint">
       <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank">{{ config.imprint }}</a>
       <span v-else>{{ config.imprint }}</span>
     </div>

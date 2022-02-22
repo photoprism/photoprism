@@ -26,9 +26,9 @@ https://docs.photoprism.app/developer-guide/
 @import url("../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
-@import url("wallpaper.css");
+@import url("wallpapers.css");
 @import url("themes.css");
-@import url("animate.css");
+@import url("effects.css");
 @import url("splash.css");
 @import url("navigation.css");
 @import url("logs.css");
@@ -41,6 +41,7 @@ https://docs.photoprism.app/developer-guide/
 @import url("files.css");
 @import url("pages.css");
 @import url("help.css");
+@import url("auth.css");
 
 @media (min-width: 1750px) {
     .flex.xlg2 {
@@ -75,6 +76,8 @@ body {
     background-color: #fafafa;
     color: #333333;
     font-family: Roboto, sans-serif;
+    min-width: 320px;
+    min-height: 500px;
 }
 
 footer {

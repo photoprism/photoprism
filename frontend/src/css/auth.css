@@ -1,0 +1,52 @@
+/* Auth Form Styles */
+
+#photoprism main .auth-login {
+    min-height: 500px;
+}
+
+#photoprism .auth-login .logo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 190px;
+    height: 30vh;
+    max-height: 190px;
+    margin: 32px auto 16px auto;
+    position: relative;
+    left: unset;
+}
+
+#photoprism main .auth-login .logo img {
+    height: 100%;
+}
+
+
+#photoprism main .auth-login .auth-login-form .v-card
+{
+    background: transparent !important;
+    border-radius: 12px;
+    z-index: 1;
+}
+
+#photoprism main .auth-login .auth-login-form .v-text-field input {
+    color: #000000de !important;
+}
+
+#photoprism main .auth-login a.text-link {
+    color: #c8e3e7!important;
+}
+
+#photoprism main .auth-login footer {
+    position: absolute;
+    bottom: 16px;
+    text-align: left;
+    left: 16px;
+    right: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+#photoprism main .auth-login footer p {
+    padding: 0;
+    margin: 0;
+}

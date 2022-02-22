@@ -1,3 +1,5 @@
+/* Animations */
+
 @-webkit-keyframes rainbow {
     0% {
         background-position: 0 50%
@@ -124,4 +126,31 @@
         -webkit-transform: rotate(359deg);
         transform: rotate(359deg);
     }
+}
+
+/* Backdrop Blur Filters */
+
+#photoprism .blur-1 {
+    backdrop-filter: blur(2px);
+}
+#photoprism .blur-2 {
+    backdrop-filter: blur(3px);
+}
+#photoprism .blur-3 {
+    backdrop-filter: blur(4px);
+}
+#photoprism .blur-4 {
+    backdrop-filter: blur(6px);
+}
+#photoprism .blur-5 {
+    backdrop-filter: blur(8px);
+}
+#photoprism .blur-6 {
+    backdrop-filter: blur(10px);
+}
+#photoprism .blur-7 {
+    backdrop-filter: blur(12px);
+}
+#photoprism .blur-8 {
+    backdrop-filter: blur(14px);
 }
