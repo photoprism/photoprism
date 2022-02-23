@@ -20,7 +20,6 @@
     height: 100%;
 }
 
-
 #photoprism main .auth-login .auth-login-form .v-card
 {
     background: transparent !important;
@@ -39,7 +38,6 @@
 #photoprism main .auth-login footer {
     position: absolute;
     bottom: 16px;
-    text-align: left;
     left: 16px;
     right: 16px;
     padding: 0;

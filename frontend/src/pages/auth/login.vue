@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid fill-height class="auth-login wallpaper">
-    <v-layout align-center justify-center>
+  <v-container fluid fill-height class="auth-login wallpaper pa-0">
+    <v-layout align-center justify-center pa-3>
       <v-flex xs12 sm8 md4>
         <v-form ref="form" dense autocomplete="off" class="auth-login-form" accept-charset="UTF-8"
                 @submit.prevent="login">
@@ -54,13 +54,15 @@
       </v-flex>
     </v-layout>
     <footer>
-      <p class="auth-site float-left white--text body-2">
-        <strong class="white--text">{{ config.siteTitle }}</strong> – {{ config.siteCaption }}
-      </p>
-      <p v-if="config.imprint" class="auth-imprint float-right white--text body-2">
-        <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link">{{ config.imprint }}</a>
-        <span v-else>{{ config.imprint }}</span>
-      </p>
+      <v-layout wrap align-top pa-0 ma-0>
+        <v-flex xs12 class="pa-0 body-2 text-selectable text-xs-center white--text" :class="[config.imprint ? 'text-sm-left sm6' : '']">
+          <strong>{{ config.siteTitle }}</strong> – {{ config.siteCaption }}
+        </v-flex>
+        <v-flex v-if="config.imprint" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
+          <a v-if="config.imprintUrl" :href="config.imprintUrl" target="_blank" class="text-link">{{ config.imprint }}</a>
+          <span v-else>{{ config.imprint }}</span>
+        </v-flex>
+      </v-layout>
     </footer>
   </v-container>
 </template>
