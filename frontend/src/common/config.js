@@ -59,7 +59,7 @@ export default class Config {
       this.values = {};
       this.page = {
         title: "PhotoPrism",
-        caption: "Browse Your Life",
+        caption: "AI-Powered Photos App",
       };
       return;
     } else {

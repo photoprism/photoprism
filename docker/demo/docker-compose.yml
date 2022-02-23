@@ -20,7 +20,7 @@ services:
       # PHOTOPRISM_CDN_URL: "https://demo-cdn.yourdomain.com/"
       PHOTOPRISM_SITE_TITLE: "PhotoPrism"
       PHOTOPRISM_SITE_CAPTION: "Demo"
-      PHOTOPRISM_SITE_DESCRIPTION: "AI-Powered Photos App. Tags and finds pictures without getting in your way!"
+      PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_PREVIEW: "https://i.photoprism.app/logo?cover=17&title=Demo"
       PHOTOPRISM_SITE_AUTHOR: "PhotoPrism"
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"

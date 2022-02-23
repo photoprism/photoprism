@@ -20,10 +20,10 @@ ENV TF_CPP_MIN_LOG_LEVEL=2 \
     PHOTOPRISM_APP_ICON="favicon" \
     PHOTOPRISM_SITE_TITLE="PhotoPrism" \
     PHOTOPRISM_SITE_CAPTION="Demo" \
-    PHOTOPRISM_SITE_DESCRIPTION="AI-Powered Photos App. Tags and finds pictures without getting in your way!"
+    PHOTOPRISM_SITE_DESCRIPTION="Tags and finds pictures without getting in your way!"
 
 # Copy assets
-COPY /docker/demo/index.tmpl /photoprism/assets/templates
+COPY /docker/demo/index.tmpl /opt/photoprism/assets/templates
 
 # Download example photos
 RUN wget -qO- https://dl.photoprism.app/qa/demo.tar.gz | tar xvz -C /photoprism/originals

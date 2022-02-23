@@ -11,7 +11,7 @@ const clientConfig = {
   siteUrl: "http://localhost:2342/",
   sitePreview: "http://localhost:2342/static/img/preview.jpg",
   siteTitle: "PhotoPrism",
-  siteCaption: "Browse Your Life",
+  siteCaption: "AI-Powered Photos App",
   siteDescription: "Open-Source Photo Management",
   siteAuthor: "@photoprism_app",
   debug: false,

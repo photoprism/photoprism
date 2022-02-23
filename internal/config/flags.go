@@ -279,7 +279,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "site-caption",
 		Usage:  "site `CAPTION`",
-		Value:  "Browse Your Life",
+		Value:  "AI-Powered Photos App",
 		EnvVar: "PHOTOPRISM_SITE_CAPTION",
 	},
 	cli.StringFlag{

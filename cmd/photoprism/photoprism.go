@@ -44,7 +44,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "PhotoPrism"
 	app.HelpName = filepath.Base(os.Args[0])
-	app.Usage = "Browse Your Life in Pictures"
+	app.Usage = "AI-Powered Photos App"
 	app.Description = appDescription
 	app.Version = version
 	app.Copyright = appCopyright
