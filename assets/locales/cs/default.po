@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-10-01 12:14+0000\n"
-"PO-Revision-Date: 2022-02-19 14:59+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2022-02-23 10:49+0000\n"
+"Last-Translator: Ladislav Marko <LadislavMarko@seznam.cz>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
 "backend/cs/>\n"
 "Language: cs\n"
@@ -223,9 +223,8 @@ msgid "Settings saved"
 msgstr "Nastavení uloženo"
 
 #: messages.go:133
-#, fuzzy
 msgid "Password changed"
-msgstr "Heslo uloženo"
+msgstr "Heslo změněno"
 
 #: messages.go:134
 #, c-format
@@ -270,7 +269,6 @@ msgid "Copying files from %s"
 msgstr "Kopírování souborů z %s"
 
 #: messages.go:143
-#, fuzzy
 msgid "Labels deleted"
 msgstr "Štítky vymazány"
 
