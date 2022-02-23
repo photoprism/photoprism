@@ -216,7 +216,7 @@ func (c *Config) RemoveTestData(t *testing.T) {
 	}
 
 	if err := os.RemoveAll(c.CachePath()); err != nil {
-		t.Fatal(err)
+		t.Logf("test: %s (remove cache)", err)
 	}
 }
 
