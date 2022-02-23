@@ -327,18 +327,18 @@ var GlobalFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:   "database-driver",
-		Usage:  "database `DRIVER` (sqlite or mysql)",
+		Usage:  "database `DRIVER` (sqlite, mysql)",
 		Value:  "sqlite",
 		EnvVar: "PHOTOPRISM_DATABASE_DRIVER",
 	},
 	cli.StringFlag{
 		Name:   "database-dsn",
-		Usage:  "sqlite file name, providing a `DSN` is optional for other drivers",
+		Usage:  "database connection `DSN` (sqlite filename, optional for mysql)",
 		EnvVar: "PHOTOPRISM_DATABASE_DSN",
 	},
 	cli.StringFlag{
 		Name:   "database-server",
-		Usage:  "database server `HOST` with optional port e.g. mariadb:3306",
+		Usage:  "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
 		EnvVar: "PHOTOPRISM_DATABASE_SERVER",
 	},
 	cli.StringFlag{
