@@ -26,12 +26,18 @@ https://docs.photoprism.app/developer-guide/
 const path = require("path");
 const findChrome = require("chrome-finder");
 const chromeBin = findChrome();
+
 if (chromeBin) {
+  // proceed, chrome/chromium was found
   process.env.CHROME_BIN = chromeBin;
+  console.log(`chrome-bin: ${chromeBin}`);
 } else {
-  process.env.CHROME_BIN = require("puppeteer").executablePath();
+  // abort, no chrome binary was found
+  console.error("Chrome/Chromium not found.");
+  process.exit(1);
 }
 
+// test setup
 module.exports = (config) => {
   config.set({
     logLevel: config.LOG_ERROR,

@@ -56,6 +56,7 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       gettext \
       chromium \
       chromium-driver \
+      chromium-sandbox \
       firefox-esr \
       sqlite3 \
       libc6-dev \
