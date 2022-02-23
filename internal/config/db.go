@@ -49,11 +49,21 @@ func (c *Config) DatabaseDsn() string {
 	if c.options.DatabaseDsn == "" {
 		switch c.DatabaseDriver() {
 		case MySQL, MariaDB:
+			address := c.DatabaseServer()
+
+			// Connect via TCP or Unix Domain Socket?
+			if strings.HasPrefix(address, "/") {
+				log.Debugf("mariadb: connecting via Unix domain socket")
+				address = fmt.Sprintf("unix(%s)", address)
+			} else {
+				address = fmt.Sprintf("tcp(%s)", address)
+			}
+
 			return fmt.Sprintf(
-				"%s:%s@tcp(%s)/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+				"%s:%s@%s/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
-				c.DatabaseServer(),
+				address,
 				c.DatabaseName(),
 			)
 		case Postgres:
