@@ -1,4 +1,4 @@
-FROM photoprism/develop:220220-bullseye
+FROM photoprism/develop:220223-bullseye
 
 ## alternative base images
 # FROM photoprism/develop:buster   # Debian 10, Codename "Buster"
