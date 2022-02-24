@@ -107,6 +107,9 @@ services:
       # - "/example/family:/photoprism/originals/family" # *additional* media folders can be mounted like this
       # - "~/Import:/photoprism/import"                  # *optional* base folder from which files can be imported to originals
       - "./storage:/photoprism/storage"                  # *writable* storage folder for cache, database, and sidecar files (never remove)
+    ## To enable automated container updates via Watchtower
+    # labels:
+    #   - "com.centurylinklabs.watchtower.scope=photoprism"
 
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
@@ -127,6 +130,9 @@ services:
       MYSQL_DATABASE: photoprism
       MYSQL_USER: photoprism
       MYSQL_PASSWORD: insecure
+    ## To enable automated container updates via Watchtower
+    # labels:
+    #   - "com.centurylinklabs.watchtower.scope=photoprism"
 
   ## Watchtower upgrades services automatically (optional)
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower
@@ -135,8 +141,11 @@ services:
   #   restart: unless-stopped
   #   image: containrrr/watchtower
   #   environment:
+  #     WATCHTOWER_SCOPE: photoprism
   #     WATCHTOWER_CLEANUP: "true"
   #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
   #   volumes:
   #     - "/var/run/docker.sock:/var/run/docker.sock"
   #     - "~/.docker/config.json:/config.json" # optional, for authentication if you have a Docker Hub account
+  #   labels:
+  #     - "com.centurylinklabs.watchtower.scope=photoprism"
