@@ -30,10 +30,10 @@ if [[ $TF_DRIVER == "auto" ]]; then
 fi
 
 if [[ -z $TF_DRIVER ]]; then
-  echo "Installing TensorFlow ${TF_VERSION} ${DESTARCH^^} in \"$DESTDIR\"..."
+  echo "Installing TensorFlow ${TF_VERSION} for ${DESTARCH^^} in \"$DESTDIR\"..."
   INSTALL_FILE="${DESTARCH}/libtensorflow-${DESTARCH}-${TF_VERSION}.tar.gz"
 else
-  echo "Installing TensorFlow ${TF_VERSION} ${DESTARCH^^} ${TF_DRIVER^^} in \"$DESTDIR\"..."
+  echo "Installing TensorFlow ${TF_VERSION} for ${DESTARCH^^}-${TF_DRIVER^^} in \"$DESTDIR\"..."
   INSTALL_FILE="${DESTARCH}/libtensorflow-${DESTARCH}-${TF_DRIVER}-${TF_VERSION}.tar.gz"
 fi
 
