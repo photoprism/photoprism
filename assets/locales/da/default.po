@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2021-12-09 00:51+0000\n"
-"PO-Revision-Date: 2022-02-15 17:24+0000\n"
-"Last-Translator: TheresaNoRights <theresagresch+weblate@gmail.com>\n"
+"PO-Revision-Date: 2022-02-25 20:46+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "backend/da/>\n"
 "Language: da\n"
@@ -223,12 +223,14 @@ msgid "Account deleted"
 msgstr ""
 
 #: messages.go:134
+#, fuzzy
 msgid "Settings saved"
-msgstr ""
+msgstr "Indstillinger gemt"
 
 #: messages.go:135
+#, fuzzy
 msgid "Password changed"
-msgstr ""
+msgstr "Adgangskode ændret"
 
 #: messages.go:136
 #, c-format
@@ -273,8 +275,9 @@ msgid "Copying files from %s"
 msgstr ""
 
 #: messages.go:145
+#, fuzzy
 msgid "Labels deleted"
-msgstr ""
+msgstr "Etiketter slettet"
 
 #: messages.go:146
 msgid "Label saved"
@@ -302,24 +305,28 @@ msgid "%d files uploaded in %d s"
 msgstr ""
 
 #: messages.go:152
+#, fuzzy
 msgid "Selection approved"
-msgstr ""
+msgstr "Valgte godkendt"
 
 #: messages.go:153
+#, fuzzy
 msgid "Selection archived"
-msgstr ""
+msgstr "Valgte arkiveret"
 
 #: messages.go:154
+#, fuzzy
 msgid "Selection restored"
-msgstr ""
+msgstr "Valgte gendannet"
 
 #: messages.go:155
 msgid "Selection marked as private"
 msgstr ""
 
 #: messages.go:156
+#, fuzzy
 msgid "Albums deleted"
-msgstr ""
+msgstr "Album slettet"
 
 #: messages.go:157
 #, c-format
@@ -327,5 +334,6 @@ msgid "Zip created in %d s"
 msgstr ""
 
 #: messages.go:158
+#, fuzzy
 msgid "Permanently deleted"
-msgstr ""
+msgstr "Slettet permanent"
