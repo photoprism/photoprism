@@ -76,7 +76,7 @@ ENV DOCKER_ARCH=$TARGETARCH \
 
 # copy app dist files and debian backports sources list
 COPY --from=build /opt/photoprism/ /opt/photoprism
-COPY --chown=root:root --chmod=644 /docker/develop/buster/backports.list /etc/apt/sources.list.d/backports.list
+COPY --chown=root:root --chmod=644 /docker/develop/buster/sources.list /etc/apt/sources.list.d/buster.list
 
 # install additional distribution packages
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
@@ -86,10 +86,13 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     cp /opt/photoprism/bin/gosu /bin/gosu && \
     chown root:root /bin/gosu && \
-    useradd -m -U -u 1000 -d /photoprism photoprism && \
+    groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
+    useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       ca-certificates \
+      jq \
       gpg \
+      lshw \
       wget \
       curl \
       make \
@@ -104,7 +107,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       rawtherapee \
       ffmpeg \
       ffmpegthumbnailer \
-      libavcodec-extra && \
+      libavcodec-extra \
+    && \
     install-darktable.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
       /var/lib/photoprism \
@@ -116,7 +120,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache && \
+      /photoprism/storage/cache \
+    && \
     cleanup.sh
 
 # define default directory and user

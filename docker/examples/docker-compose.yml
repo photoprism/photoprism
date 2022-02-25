@@ -79,14 +79,13 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
+      ## Add/update packages (service must be started as root; options: update, gpu, tensorflow, davfs, clean):
+      # PHOTOPRISM_INIT: "update gpu tensorflow clean"
       ## Hardware video transcoding config (optional)
       # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # use Video4Linux for AVC transcoding (default: libx264)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # use Intel Quick Sync Video for AVC transcoding (default: libx264)
-      # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # enable TensorFlow AVX2 & Intel Graphics support
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root)
-      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       ## Run as a specific user, group, or with a custom umask (does not work together with "user:")
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
@@ -94,11 +93,12 @@ services:
       HOME: "/photoprism"
     ## Start as a non-root user (see https://docs.docker.com/engine/reference/run/#user)
     # user: "1000:1000"
-    ## Hardware devices for video transcoding and machine learning (optional)
+    ## Share hardware devices for video transcoding and machine learning (optional):
     # devices:
+    #  - "/dev/dri:/dev/dri"
+    #  - "/dev/nvidia0:/dev/nvidia0"
+    #  - "/dev/nvidiactl:/dev/nvidiactl"
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
-    #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
-    #  - "/dev/dri/card0:/dev/dri/card0"
     working_dir: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:

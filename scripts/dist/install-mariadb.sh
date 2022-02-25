@@ -2,12 +2,12 @@
 
 # abort if the user is not root
 if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run install-mariadb-client.sh as root" 1>&2
+  echo "Usage: run ${0##*/} as root" 1>&2
   exit 1
 fi
 
 if [[ -z $1 ]]; then
-    echo "Usage: install-mariadb.sh [package names...]" 1>&2
+    echo "Usage: ${0##*/} [package names...]" 1>&2
     exit 1
 fi
 

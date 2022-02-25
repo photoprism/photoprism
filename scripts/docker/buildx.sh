@@ -4,7 +4,7 @@
 export DOCKER_BUILDKIT=1
 
 if [[ -z $1 ]] || [[ -z $2 ]]; then
-    echo "Usage: scripts/docker/buildx.sh [name] linux/[amd64|arm64|arm] [tag] [/subimage]" 1>&2
+    echo "Usage: ${0##*/} [name] linux/[amd64|arm64|arm] [tag] [/subimage]" 1>&2
     exit 1
 fi
 

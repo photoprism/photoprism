@@ -6,7 +6,7 @@ set -e
 export DOCKER_BUILDKIT=1
 
 if [[ -z $1 ]] || [[ -z $2 ]]; then
-    echo "Usage: scripts/docker/build.sh [name] [tag] [/subimage]" 1>&2
+    echo "Usage: ${0##*/} [name] [tag] [/subimage]" 1>&2
     exit 1
 fi
 

@@ -75,8 +75,8 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""
       PHOTOPRISM_SITE_AUTHOR: ""
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root)
-      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
+      ## Add/update packages (service must be started as root; options: update, gpu, tensorflow, davfs, clean):
+      # PHOTOPRISM_INIT: "update gpu tensorflow clean"
       HOME: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:

@@ -2,33 +2,44 @@
 
 set -e
 
-TF_VERSION="1.15.2"
+TF_VERSION=${TF_VERSION:-1.15.2}
 
-DESTDIR=$(realpath "${1:-/usr}")
+SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
+DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
 
-echo "Installing TensorFlow in \"$DESTDIR\"..."
+if [[ $1 == "auto" ]]; then
+  TF_DRIVER="auto";
+  DESTDIR="/usr";
+else
+  DESTDIR=$(realpath "${1:-/usr}")
+fi
+
+TMPDIR=${TMPDIR:-/tmp}
 
 # abort if the user is not root
 if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
-  echo "Error: Run install-tensorflow.sh as root to install in a system directory!" 1>&2
+  echo "Error: Run ${0##*/} as root to install in a system directory!" 1>&2
   exit 1
 fi
 
 mkdir -p "$DESTDIR"
 
-SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
-INSTALL_ARCH=${2:-$SYSTEM_ARCH}
-TMPDIR=${TMPDIR:-/tmp}
+if [[ $TF_DRIVER == "auto" ]]; then
+  echo "Detecting driver..."
+  TF_DRIVER=$("$(dirname "$0")/tensorflow-driver.sh")
+fi
 
-if [[ -z $3 ]]; then
-  INSTALL_FILE="${INSTALL_ARCH}/libtensorflow-${INSTALL_ARCH}-${TF_VERSION}.tar.gz"
+if [[ -z $TF_DRIVER ]]; then
+  echo "Installing TensorFlow ${TF_VERSION} ${DESTARCH^^} in \"$DESTDIR\"..."
+  INSTALL_FILE="${DESTARCH}/libtensorflow-${DESTARCH}-${TF_VERSION}.tar.gz"
 else
-  INSTALL_FILE="${INSTALL_ARCH}/libtensorflow-${INSTALL_ARCH}-${2}-${TF_VERSION}.tar.gz"
+  echo "Installing TensorFlow ${TF_VERSION} ${DESTARCH^^} ${TF_DRIVER^^} in \"$DESTDIR\"..."
+  INSTALL_FILE="${DESTARCH}/libtensorflow-${DESTARCH}-${TF_DRIVER}-${TF_VERSION}.tar.gz"
 fi
 
 if [ ! -f "$TMPDIR/$INSTALL_FILE" ]; then
   URL="https://dl.photoprism.app/tensorflow/${INSTALL_FILE}"
-  echo "Downloading $INSTALL_ARCH libs from \"$URL\". Please wait."
+  echo "Downloading ${DESTARCH} libs from \"$URL\". Please wait."
   curl --create-dirs -fsSL -o "$TMPDIR/$INSTALL_FILE" "$URL"
 fi
 
@@ -37,7 +48,7 @@ echo "Extracting \"$TMPDIR/$INSTALL_FILE\" to \"$DESTDIR\"..."
 if [ -f "$TMPDIR/$INSTALL_FILE" ]; then
   tar --overwrite --mode=755 -C "$DESTDIR" -xzf "$TMPDIR/$INSTALL_FILE"
 else
-  echo "Fatal: \"$TMPDI/$INSTALL_FILE\" not found"
+  echo "Fatal: \"$TMPDIR/$INSTALL_FILE\" not found"
   exit 1
 fi
 

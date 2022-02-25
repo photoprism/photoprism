@@ -2,20 +2,20 @@
 
 # abort if the user is not root
 if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run install-darktable.sh as root" 1>&2
+  echo "Usage: run ${0##*/} as root" 1>&2
   exit 1
 fi
 
 set -e
 
 SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
-INSTALL_ARCH=${2:-$SYSTEM_ARCH}
+DESTARCH=${2:-$SYSTEM_ARCH}
 
 . /etc/os-release
 
-echo "Installing Darktable for ${INSTALL_ARCH^^}..."
+echo "Installing Darktable for ${DESTARCH^^}..."
 
-if [[ $INSTALL_ARCH == "amd64" ]]; then
+if [[ $DESTARCH == "amd64" ]]; then
   if [[ $VERSION_CODENAME == "bullseye" ]]; then
     echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/Debian_11/ /' | tee /etc/apt/sources.list.d/graphics:darktable.list
     curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
@@ -31,7 +31,7 @@ if [[ $INSTALL_ARCH == "amd64" ]]; then
     apt-get -qq install darktable
   fi
   echo "Done."
-elif [[ $INSTALL_ARCH == "arm64" ]]; then
+elif [[ $DESTARCH == "arm64" ]]; then
   if [[ $VERSION_CODENAME == "bullseye" ]]; then
     apt-get update
     apt-get -qq install -t bullseye-backports darktable
@@ -44,5 +44,5 @@ elif [[ $INSTALL_ARCH == "arm64" ]]; then
   fi
   echo "Done."
 else
-  echo "Unsupported Machine Architecture: $INSTALL_ARCH"
+  echo "Unsupported Machine Architecture: $DESTARCH"
 fi

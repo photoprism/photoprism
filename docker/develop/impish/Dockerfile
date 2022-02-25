@@ -32,7 +32,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    useradd -m -U -u 1000 -d /photoprism photoprism && \
+    groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
+    useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       apt-utils \
       gpg \
@@ -43,12 +44,18 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       build-essential \
       g++ \
       gcc \
+      sudo \
       bash \
       make \
       nano \
+      lsof \
+      lshw \
       wget \
       curl \
+      jq \
       git \
+      zip \
+      unzip \
       gettext \
       firefox \
       mariadb-client \
@@ -70,8 +77,6 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       libxtst6 \
       librsvg2-bin \
       rsync \
-      unzip \
-      zip \
       sqlite3 \
       tzdata \
       libheif-examples \
@@ -80,10 +85,9 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       ffmpeg \
       ffmpegthumbnailer \
       libavcodec-extra \
-      lsof \
       apache2-utils \
       fonts-roboto \
-      sudo && \
+    && \
     /root/.local/bin/install-nodejs.sh && \
     /root/.local/bin/install-tensorflow.sh && \
     /root/.local/bin/install-darktable.sh && \
@@ -102,7 +106,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache && \
+      /photoprism/storage/cache \
+    && \
     wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \

@@ -2,21 +2,20 @@
 
 # abort if the user is not root
 if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run install-chrome.sh as root" 1>&2
+  echo "Usage: run ${0##*/} as root" 1>&2
   exit 1
 fi
 
 SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
-INSTALL_ARCH=${2:-$SYSTEM_ARCH}
+DESTARCH=${2:-$SYSTEM_ARCH}
+. /etc/os-release
 
-if [[ $INSTALL_ARCH != "amd64" ]]; then
+if [[ $DESTARCH != "amd64" ]]; then
   echo "Google Chrome (stable) is only available for AMD64."
   exit
 fi
 
-. /etc/os-release
-
-echo "Installing Google Chrome (stable) on ${ID} for ${INSTALL_ARCH^^}..."
+echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
 
 set -e
 

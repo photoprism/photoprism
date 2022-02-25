@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ -z $1 ]] || [[ -z $2 ]]; then
-  echo "Usage: build.sh [debug|race|static|prod] [filename]" 1>&2
+  echo "Usage: ${0##*/} [debug|race|static|prod] [filename]" 1>&2
   exit 1
 fi
 

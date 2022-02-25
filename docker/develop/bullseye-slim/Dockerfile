@@ -17,7 +17,7 @@ ENV DOCKER_ARCH=$TARGETARCH \
 
 # copy scripts and debian backports sources list
 COPY /scripts/dist/ /opt/photoprism/scripts
-COPY /docker/develop/bullseye/backports.list /etc/apt/sources.list.d/backports.list
+COPY /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
 
 # install additional distribution packages
 RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
@@ -25,10 +25,14 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    useradd -m -U -u 1000 -d /photoprism photoprism && \
+    groupadd -f -r -g 44 video && groupadd -f -r -g 109 render && groupadd -f -g 1000 photoprism && \
+    useradd -m -g 1000 -u 1000 -d /photoprism -G video,render photoprism && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
       ca-certificates \
+      jq \
+      zip \
       gpg \
+      lshw \
       wget \
       curl \
       make \
@@ -42,7 +46,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       rawtherapee \
       ffmpeg \
       ffmpegthumbnailer \
-      libavcodec-extra && \
+      libavcodec-extra \
+    && \
     install-mariadb.sh mariadb-client && \
     install-darktable.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
@@ -55,7 +60,8 @@ RUN echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80retry && \
       /photoprism/storage/albums \
       /photoprism/storage/backups \
       /photoprism/storage/config \
-      /photoprism/storage/cache && \
+      /photoprism/storage/cache \
+    && \
     cleanup.sh
 
 # define default directory and user

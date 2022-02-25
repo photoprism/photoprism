@@ -154,7 +154,8 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB or MySQL database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB or MySQL database user name
       PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB or MySQL database user password
-      PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
+      ## Add/update packages (service must be started as root; options: update, gpu, tensorflow, davfs, clean):
+      PHOTOPRISM_INIT: "update tensorflow clean"
       HOME: "/photoprism"
     working_dir: "/photoprism"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
