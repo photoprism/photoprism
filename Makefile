@@ -235,8 +235,8 @@ test-coverage:
 	$(info Running all Go unit tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
-docker-develop: docker-develop-bullseye
-docker-develop-all: docker-develop-bullseye docker-develop-armv7 docker-develop-buster docker-develop-impish
+docker-develop: docker-develop-bullseye docker-develop-bullseye-slim
+docker-develop-all: docker-develop docker-develop-armv7 docker-develop-buster docker-develop-impish
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:bullseye
 	docker pull --platform=arm64 golang:bullseye
@@ -257,7 +257,7 @@ docker-develop-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 impish /impish
 docker-preview: docker-preview-bullseye
-docker-preview-all: docker-preview-bullseye docker-preview-buster docker-preview-impish
+docker-preview-all: docker-preview docker-preview-buster docker-preview-impish
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
@@ -286,7 +286,7 @@ docker-preview-impish:
 	docker pull --platform=arm64 ubuntu:impish
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
 docker-release: docker-release-bullseye
-docker-release-all: docker-release-bullseye docker-release-buster docker-release-impish
+docker-release-all: docker-release docker-release-buster docker-release-impish
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
